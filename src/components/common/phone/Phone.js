@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-27 21:31:26
+ * @Last Modified time: 2018-05-02 12:25:42
  */
 
 import React, { PureComponent } from 'react';
@@ -38,6 +38,8 @@ let popWin = null;
 
 export default class Phone extends PureComponent {
   static propTypes = {
+    // 是否需要展示号码，如果作为HOOK处理FSP上所有电话行为，则为true
+    headless: PropTypes.bool,
     // 电话号码
     number: PropTypes.string.isRequired,
     // 客户类型
@@ -61,6 +63,7 @@ export default class Phone extends PureComponent {
   }
 
   static defaultProps = {
+    headless: false,
     disable: true,
     style: {},
     onClick: _.noop,
@@ -68,10 +71,22 @@ export default class Phone extends PureComponent {
     onConnected: _.noop,
   };
 
-  // 点击号码弹出拨打电话的弹框
+  componentDidMount() {
+    if (this.props.headless === true && window.$) {
+      window.$('body').on(
+        'click',
+        '.callable',
+        (e) => {
+          const number = window.$(e.target).text();
+          this.prepareCall(number);
+        },
+      );
+    }
+  }
+
   @autobind
   handleClick() {
-    const { number, custType, onClick, disable, config, getConfig } = this.props;
+    const { number, custType, onClick, disable } = this.props;
     if (disable === true) {
       return;
     }
@@ -79,20 +94,25 @@ export default class Phone extends PureComponent {
       number,
       custType,
     });
+    this.prepareCall(number);
+  }
+
+  prepareCall(number) {
+    const { config, getConfig } = this.props;
     popWin = window.open(
       'about:blank',
       'phoneDialog',
       OPEN_FEATURES,
     );
     if (_.isEmpty(config)) {
-      getConfig().then(() => this.call());
+      getConfig().then(() => this.call(number));
     } else {
-      this.call();
+      this.call(number);
     }
   }
 
-  call() {
-    const { number, custType, config } = this.props;
+  call(number) {
+    const { custType, config } = this.props;
     const {
       sipInfo: { sipID, sipDomain, sipPasswd, sipIP, sipPort },
       wssInfo: { wssIP, wssPort },
@@ -130,7 +150,10 @@ export default class Phone extends PureComponent {
   }
 
   render() {
-    const { number, style, disable } = this.props;
+    const { headless, number, style, disable } = this.props;
+    if (headless === true) {
+      return null;
+    }
     const className = classnames({
       [styles.number]: true,
       [styles.active]: disable !== true,
