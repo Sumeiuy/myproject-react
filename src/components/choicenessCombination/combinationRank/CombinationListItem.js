@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 17:48:04
+ * @Last Modified time: 2018-05-02 17:25:40
 */
 
 import React, { PureComponent } from 'react';
@@ -21,6 +21,7 @@ const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 // 最大字符长度
 const MAX_SIZE_LENGTH = 35;
+const DEFAULT_REASON = '调仓理由：暂无';
 
 export default class CombinationListItem extends PureComponent {
   static propTypes = {
@@ -75,7 +76,7 @@ export default class CombinationListItem extends PureComponent {
               this.isStock(item.securityType) ?
                 <a
                   title={item.securityName}
-                  onClick={() => openStockPage({ code: item.securityCode })}
+                  onClick={() => openStockPage({ code: item.securityName })}
                 >
                   {item.securityName}
                 </a>
@@ -98,7 +99,7 @@ export default class CombinationListItem extends PureComponent {
           <span className={styles.direction}>{item.directionName}</span>
           <span className={styles.time}>{item.time}</span>
           <span className={styles.cost}>{item.price}</span>
-          <span className={styles.reason} title={item.reason}>{reason}</span>
+          <span className={styles.reason} title={item.reason}>{reason || DEFAULT_REASON}</span>
         </div>
       );
     });
@@ -110,7 +111,7 @@ export default class CombinationListItem extends PureComponent {
       yieldRankValue,
     } = this.props;
     const result = _.filter(yieldRankList, item => (item.value === yieldRankValue))[0];
-    return `${result.label}: `;
+    return `${result.showName}: `;
   }
 
   @autobind
@@ -120,7 +121,7 @@ export default class CombinationListItem extends PureComponent {
       yieldRankValue,
     } = this.props;
     const result = _.filter(yieldRankList, item => (item.value === yieldRankValue))[0];
-    const num = data[result.showNameKey].toFixed(2);
+    const num = (data[result.showNameKey] || 0).toFixed(2);
     const className = classnames({
       [styles.up]: num >= 0,
       [styles.down]: num < 0,
@@ -175,7 +176,7 @@ export default class CombinationListItem extends PureComponent {
     return (
       <div className={classNames}>
         <div className={styles.left}>
-          <div className={styles.headBox}>
+          <div className={`${styles.headBox} clearfix`}>
             <span className={styles.combinationName} title={data.combinationName}>
               <a>{data.combinationName}</a>
             </span>
@@ -198,16 +199,18 @@ export default class CombinationListItem extends PureComponent {
               <a onClick={() => this.openCustomerListPage(data)}> 订购客户</a>
             </span>
           </div>
-          <div className={`${styles.titleBox} clearfix`}>
-            <span className={styles.securityName}>证券名称</span>
-            <span className={styles.securityCode}>证券代码</span>
-            <span className={styles.direction}>调仓方向</span>
-            <span className={styles.time}>时间</span>
-            <span className={styles.cost}>成本价</span>
-            <span className={styles.reason}>理由</span>
-          </div>
-          <div className={styles.bodyBox}>
-            {this.getHistoryList()}
+          <div className={styles.tableBox}>
+            <div className={`${styles.titleBox} clearfix`}>
+              <span className={styles.securityName}>证券名称</span>
+              <span className={styles.securityCode}>证券代码</span>
+              <span className={styles.direction}>调仓方向</span>
+              <span className={styles.time}>时间</span>
+              <span className={styles.cost}>成本价</span>
+              <span className={styles.reason}>理由</span>
+            </div>
+            <div className={styles.bodyBox}>
+              {this.getHistoryList()}
+            </div>
           </div>
         </div>
         <div className={styles.right}>
