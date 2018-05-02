@@ -156,7 +156,7 @@ export default class ServiceLog extends PureComponent {
         ...query,
         serveDateToPaged: null,
         pageNum: PAGE_NUM,
-        keyword: decodeURIComponent(value),
+        keyword: encodeURIComponent(value),
       },
     });
   }
@@ -286,7 +286,7 @@ export default class ServiceLog extends PureComponent {
               <Col span={2} offset={2} className={styles.service_label}>
                 <label htmlFor="dd" >服务时间：</label>
               </Col>
-              <Col span={6} >
+              <Col span={7} >
                 <RangePicker
                   allowClear={false}
                   defaultValue={[moment(sixDate, dateFormat), moment(today, dateFormat)]}
@@ -316,7 +316,7 @@ export default class ServiceLog extends PureComponent {
                   </Select>
                 }
               </Col>
-              <Col span={4} className={styles.searchInput}>
+              <Col span={3} className={styles.searchInput}>
                 <Search
                   placeholder="搜索服务记录"
                   defaultValue={!_.isEmpty(keyword) ? decodeURIComponent(keyword) : ''}

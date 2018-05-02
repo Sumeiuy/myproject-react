@@ -270,20 +270,23 @@ export default class CreateTaskForm extends PureComponent {
   }
 
   // 返回持仓产品发起任务时，任务提示的文字
-  getDefaultMissionDescFromProduct(query) {
-    const condition = JSON.parse(decodeURIComponent(query.condition));
-    const { productName, primaryKey: [id] } = condition;
+  getDefaultMissionDescFromProduct(query = {}) {
     let defaultMissionDesc = '';
-    if (this.isFromProduct(query)) {
-      defaultMissionDesc = `客户当前持有${productName}，数量为 $持仓数量#${id}# ，市值为 $持仓市值#${id}# 。`;
+    if (!_.isEmpty(query.condition)) {
+      const condition = JSON.parse(decodeURIComponent(query.condition));
+      const { productName = '', primaryKey: [id = ''] } = condition;
+      if (this.isFromProduct(query)) {
+        defaultMissionDesc = `客户当前持有${productName}，数量为 $持仓数量#${id}# ，市值为 $持仓市值#${id}# 。`;
+      }
     }
     return defaultMissionDesc;
   }
 
   // 判断是否从持仓产品进入的列表页发起任务的
-  isFromProduct(query) {
-    const condition = JSON.parse(decodeURIComponent(query.condition));
-    const { searchTypeReq } = condition;
+  isFromProduct(query = {}) {
+    const condition = !_.isEmpty(query.condition) ?
+      JSON.parse(decodeURIComponent(query.condition)) : {};
+    const { searchTypeReq = '' } = condition;
     return searchTypeReq === 'PRODUCT';
   }
 
@@ -304,11 +307,15 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   renderProductDesc(value) {
-    const { location: { query } } = this.props;
-    const condition = JSON.parse(decodeURIComponent(query.condition));
-    const { primaryKey: [id] } = condition;
+    const { location: { query = {} } } = this.props;
+    const condition = !_.isEmpty(query.condition) ?
+      JSON.parse(decodeURIComponent(query.condition)) : {};
     const list = value.match(productPattern);
     const newList = _.map(list, item => ({ type: item.slice(1), name: item.slice(1) }));
+    if (_.isEmpty(condition)) {
+      return newList;
+    }
+    const { primaryKey: [id = ''] } = condition;
     const dateList = _.map(PRODUCT_ARGUMENTS, item => ({ type: `${item}#${id}#`, name: `${item}#${id}#` }));
     return [...newList, ...dateList];
   }
