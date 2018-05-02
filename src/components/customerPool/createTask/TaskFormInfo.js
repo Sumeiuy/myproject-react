@@ -28,7 +28,7 @@ const mentionTextStyle = {
 };
 // Mention 弹出下拉框样式
 const suggestionStyle = {
-  maxHeight: '240px',
+  maxHeight: '160px',
   overflow: 'auto',
 };
 // 字数限制，最大长度
