@@ -341,7 +341,6 @@ export default class TaskFormInfo extends PureComponent {
   renderMention() {
     const { defaultMissionDesc } = this.props;
     const { suggestions } = this.state;
-    console.log('this.state.suggestions: ', this.state.suggestions);
     return (
       <div className={styles.wrapper}>
         <Mention
