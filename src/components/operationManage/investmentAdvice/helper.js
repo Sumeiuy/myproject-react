@@ -1,7 +1,9 @@
 // 根据属性值获取dom元素 tagName:标签名,name:属性名,value:匹配的属性值
 function getDomByAttribute(tagName, name, value) {
   const selectDom = [];
-  const dom = document.getElementsByTagName(tagName);
+  // 获取form表单中的标签
+  const templateFormMention = document.querySelector('#templateFormMention');
+  const dom = templateFormMention.getElementsByTagName(tagName);
   for (let i = 0; i < dom.length; i++) {
     if (value === dom[i].getAttribute(name)) {
       selectDom.push(dom[i]);
@@ -14,8 +16,8 @@ function getDomByAttribute(tagName, name, value) {
 function getTextByAttribute(tagName, targetName) {
   const selectText = [];
   // 获取form表单中的标签
-  const TemplateFormItem = document.querySelector('#templateFormMention');
-  const dom = TemplateFormItem.getElementsByTagName(tagName);
+  const templateFormMention = document.querySelector('#templateFormMention');
+  const dom = templateFormMention.getElementsByTagName(tagName);
   for (let i = 0; i < dom.length; i++) {
     if (dom[i].getAttribute(targetName)) {
       selectText.push(dom[i].innerText);

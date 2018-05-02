@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-24 14:14:04
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-02 09:02:50
+ * @Last Modified time: 2018-05-02 12:49:31
  * @Descripter:投资建议模板 Home页面
  */
 
@@ -318,7 +318,7 @@ export default class InvestmentAdvice extends PureComponent {
               readOnly
               multiLines
               prefix={PREFIX}
-              defaultValue={toContentState(item.content)}
+              value={toContentState(item.content)}
             />
             <Button onClick={e => this.editInvestAdviceTemplate(item, e)} >编辑</Button>
           </div>

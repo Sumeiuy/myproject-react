@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-02 12:39:12
+ * @Last Modified time: 2018-05-02 12:47:14
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
@@ -171,10 +171,10 @@ export default class TemplateForm extends PureComponent {
       titleStatusErrorMessage,
     } = this.props;
 
-    const { typeName, title, content } = initialTemplateParams;
+    const { typeCode, title, content } = initialTemplateParams;
 
     // 模板类型选项默认值
-    const missionTypeDefaultValue = typeName || missionType[0].key;
+    const missionTypeDefaultValue = typeCode || missionType[0].key;
     const mentionContent = content || '';
 
     // 模板类型选项列表
