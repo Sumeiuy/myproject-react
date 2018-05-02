@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-24 14:14:04
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-01 22:43:27
+ * @Last Modified time: 2018-05-02 09:02:50
  * @Descripter:投资建议模板 Home页面
  */
 
@@ -263,7 +263,6 @@ export default class InvestmentAdvice extends PureComponent {
         type,
       };
       const { page: { curPageNum = 1 } } = this.props.investmentAdvices;
-
       this.props.modifyInvestAdvice(params).then(() => {
         if (this.props.modifySuccessStatus) {
           this.handleCancel();

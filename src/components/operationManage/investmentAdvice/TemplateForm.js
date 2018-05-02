@@ -2,14 +2,14 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-01 22:34:24
+ * @Last Modified time: 2018-05-02 12:39:12
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Form, Input, Select, Mention, Dropdown, Menu } from 'antd';
-import getDom from './helper';
+import { getDomByAttribute, getTextByAttribute } from './helper';
 import styles from './TemplateForm.less';
 // import logable from '../../../decorators/logable';
 
@@ -111,6 +111,7 @@ export default class TemplateForm extends PureComponent {
     }
     const content = toString(contentState);
     this.props.checkMention(content);
+    // 获取光标位置
     const selection = document.getSelection();
     const { anchorOffset, baseNode } = selection;
     if (baseNode) {
@@ -139,10 +140,19 @@ export default class TemplateForm extends PureComponent {
   insertParameter(item) {
     const { value } = item.item.props;
     const { anchorOffset, dataOffestKey } = this.state;
-    const targetElement = getDom('span', 'data-offset-key', dataOffestKey);
+    // 获取属性是data-offset-key的标签
+    const targetElement = getDomByAttribute('span', 'data-offset-key', dataOffestKey);
     let innerText = targetElement[0].innerText;
-    innerText = innerText.slice(0, anchorOffset) + value + innerText.slice(anchorOffset);
-    targetElement[0].innerText = innerText;
+    innerText = `${innerText.slice(0, anchorOffset)} $${value} ${innerText.slice(anchorOffset)}`;
+    console.warn('innerText', innerText);
+    targetElement[0].children[0].innerText = innerText;
+    // 获取属性是data-text的标签内容
+    const allTextArray = getTextByAttribute('span', 'data-text');
+    console.warn('allTextArray', allTextArray);
+    const content = allTextArray.join('');
+    console.warn('content', content);
+    const contentState = toContentState(content);
+    this.props.form.setFieldsValue({ content: contentState });
   }
 
   render() {
@@ -216,7 +226,7 @@ export default class TemplateForm extends PureComponent {
               </div>
             </li>
             <li>
-              <div className={styles.TemplateFormItem}>
+              <div className={styles.TemplateFormItem} id="templateFormMention">
                 <label htmlFor="dd" className={styles.templateForm_label}><i className={styles.required_i}>*</i>内容:</label>
                 {/* mention */}
                 <FormItem {...contentStatusErrorProps}>
