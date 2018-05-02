@@ -119,6 +119,8 @@ app.model(require('./models/userCenter'));
 app.model(require('./models/choicenessCombination'));
 // 投资建议模版
 app.model(require('./models/investmentAdvice'));
+// 用户标签
+app.model(require('./models/operationCenter'));
 // 4. Route
 app.router(routerConfig);
 

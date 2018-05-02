@@ -2,13 +2,14 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-27 20:32:52
+ * @Last Modified time: 2018-05-02 14:45:25
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Form, Input, Select, Mention, Dropdown, Menu } from 'antd';
+import { getDomByAttribute, getTextByAttribute } from './helper';
 import styles from './TemplateForm.less';
 // import logable from '../../../decorators/logable';
 
@@ -55,6 +56,10 @@ export default class TemplateForm extends PureComponent {
     this.state = {
       // 初始化mention的suggestions
       suggestions: [],
+      // mention中光标偏移
+      anchorOffset: 0,
+      // mention中光标所在的span标签的data-offset-key值
+      dataOffestKey: '',
     };
     // 判断内容是否需要校验，第一次渲染会调用handleMentionChange方法
     this.needCheckContent = false;
@@ -63,6 +68,16 @@ export default class TemplateForm extends PureComponent {
   @autobind
   getForm() {
     return this.props.form;
+  }
+
+  @autobind
+  setMentionRef(mention) {
+    this.mentionRef = mention;
+  }
+
+  @autobind
+  getMention() {
+    return this.mentionRef;
   }
 
   @autobind
@@ -96,6 +111,21 @@ export default class TemplateForm extends PureComponent {
     }
     const content = toString(contentState);
     this.props.checkMention(content);
+    // 获取光标位置
+    const selection = document.getSelection();
+    const { anchorOffset, baseNode } = selection;
+    if (baseNode) {
+      const parentNode = baseNode.parentNode;
+      let dataOffestKey = parentNode.getAttribute('data-offset-key');
+      if (!dataOffestKey) {
+        const targetNode = parentNode.parentNode;
+        dataOffestKey = targetNode.getAttribute('data-offset-key');
+      }
+      this.setState({
+        anchorOffset,
+        dataOffestKey,
+      });
+    }
   }
 
   // 表单标题变化
@@ -108,7 +138,19 @@ export default class TemplateForm extends PureComponent {
   // 插入参数
   @autobind
   insertParameter(item) {
-    console.warn('item', item);
+    const { value } = item.item.props;
+    const { anchorOffset, dataOffestKey } = this.state;
+    // 获取属性是data-offset-key的标签
+    const targetElement = getDomByAttribute('span', 'data-offset-key', dataOffestKey);
+    let innerText = targetElement[0].innerText;
+    innerText = `${innerText.slice(0, anchorOffset)} $${value} ${innerText.slice(anchorOffset)}`;
+    console.warn('innerText', innerText);
+    targetElement[0].children[0].innerText = innerText;
+    // 获取属性是data-text的标签内容
+    const allTextArray = getTextByAttribute('span', 'data-text');
+    const content = allTextArray.join('');
+    const contentState = toContentState(content);
+    this.props.form.setFieldsValue({ content: contentState });
   }
 
   render() {
@@ -127,10 +169,10 @@ export default class TemplateForm extends PureComponent {
       titleStatusErrorMessage,
     } = this.props;
 
-    const { typeName, title, content } = initialTemplateParams;
+    const { typeCode, title, content } = initialTemplateParams;
 
     // 模板类型选项默认值
-    const missionTypeDefaultValue = typeName || missionType[0].key;
+    const missionTypeDefaultValue = typeCode || missionType[0].key;
     const mentionContent = content || '';
 
     // 模板类型选项列表
@@ -144,7 +186,7 @@ export default class TemplateForm extends PureComponent {
       value: item.value.slice(1),
     }));
     const menuItems = slicedSuggestions.map(item => (
-      <Menu.Item key={item.key}>{item.value}</Menu.Item>
+      <Menu.Item key={item.key} value={item.value}>{item.value}</Menu.Item>
     ));
 
     const menu = (
@@ -182,13 +224,15 @@ export default class TemplateForm extends PureComponent {
               </div>
             </li>
             <li>
-              <div className={styles.TemplateFormItem}>
+              <div className={styles.TemplateFormItem} id="templateFormMention">
                 <label htmlFor="dd" className={styles.templateForm_label}><i className={styles.required_i}>*</i>内容:</label>
+                {/* mention */}
                 <FormItem {...contentStatusErrorProps}>
                   {getFieldDecorator('content', {
                     initialValue: toContentState(mentionContent),
                   })(
                     <Mention
+                      ref={this.setMentionRef}
                       mentionStyle={mentionTextStyle}
                       style={{ width: '100%', height: 200 }}
                       prefix={PREFIX}

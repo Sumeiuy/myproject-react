@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 16:10:01
+ * @Last Modified time: 2018-05-02 18:04:57
 */
 
 import React, { PureComponent } from 'react';
@@ -20,7 +20,7 @@ const titleStyle = {
   fontSize: '16px',
 };
 
-const EMPTY_LIST = [];
+// const EMPTY_LIST = [];
 
 export default class CombinationRank extends PureComponent {
   static propTypes = {
@@ -46,7 +46,7 @@ export default class CombinationRank extends PureComponent {
     yieldRankValue: PropTypes.string,
     // 组合排名风险筛选
     riskLevelFilter: PropTypes.func.isRequired,
-    riskLevel: PropTypes.array,
+    riskLevel: PropTypes.string,
     // 打开个股资讯页面
     openStockPage: PropTypes.func.isRequired,
     // 打开持仓查客户页面
@@ -55,7 +55,7 @@ export default class CombinationRank extends PureComponent {
 
   static defaultProps = {
     yieldRankValue: '',
-    riskLevel: EMPTY_LIST,
+    riskLevel: '',
   }
 
   @autobind

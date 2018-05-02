@@ -3,7 +3,7 @@
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 16:02:46
+ * @Last Modified time: 2018-05-02 18:04:20
  */
 
 import React, { PureComponent } from 'react';
@@ -24,7 +24,7 @@ import CombinationModal from '../../components/choicenessCombination/Combination
 import config from '../../components/choicenessCombination/config';
 
 const dispatch = dva.generateEffect;
-const EMPTY_LIST = [];
+// const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const effects = {
   // 获取调仓历史
@@ -111,13 +111,13 @@ export default class ChoicenessCombination extends PureComponent {
     yieldRankValue: PropTypes.string,
     // 组合排名风险筛选
     riskLevelFilter: PropTypes.func.isRequired,
-    riskLevel: PropTypes.array,
+    riskLevel: PropTypes.string,
     push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     yieldRankValue: '',
-    riskLevel: EMPTY_LIST,
+    riskLevel: '',
   }
 
   constructor(props) {

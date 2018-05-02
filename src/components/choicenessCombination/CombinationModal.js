@@ -100,7 +100,12 @@ export default class CombinationModal extends PureComponent {
             code: record.securityCode,
             type: record.securityType,
           };
-          return <a onClick={() => openCustomerListPage(openPayload)}><Icon type="kehuzu" /></a>;
+          return (<a
+            className={styles.customerLink}
+            onClick={() => openCustomerListPage(openPayload)}
+          >
+            <Icon type="kehuzu" />
+          </a>);
         },
       };
       titleArray[5].render = (text, record) => this.renderPopover(record.reason);
@@ -178,7 +183,6 @@ export default class CombinationModal extends PureComponent {
       // 调仓历史
       payload.directionCode = directionCode;
     }
-    console.warn('payload', payload);
     getListData(payload);
   }
 
