@@ -116,6 +116,43 @@ const config = {
         title: '组合名称',
       },
     ],
+    ten: [
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '证券名称及代码',
+        width: '28%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'callInTime',
+        key: 'callInTime',
+        title: '调入时间',
+        width: '22%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'priceLimit',
+        key: 'priceLimit',
+        title: '涨跌幅',
+        width: '13%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'combinationName',
+        key: 'combinationName',
+        title: '组合名称',
+        width: '25%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'title',
+        key: 'title',
+        title: '持仓客户',
+        width: '12%',
+        align: 'right',
+      },
+    ],
   },
   typeList: ['history', 'report'],
   securityType: [

@@ -41,7 +41,6 @@ export default class CombinationAdjustHistory extends PureComponent {
   @autobind
   securityHandle(type, code) {
     if (type === STOCK_CODE) {
-      console.warn('是股票');
       const { openStockPage } = this.props;
       const openPayload = {
         code,
@@ -111,12 +110,15 @@ export default class CombinationAdjustHistory extends PureComponent {
                         </div>
                         <div className={styles.timeBox}>
                           <span>{child.time}</span>
-                          <a onClick={() => openCustomerListPage(openPayload)}>
+                          <a
+                            className={styles.customerLink}
+                            onClick={() => openCustomerListPage(openPayload)}
+                          >
                             <Icon type="kehuzu" />
                           </a>
                         </div>
                         <div className={styles.reasonBox}>
-                          <p title={reason}>{reason || '暂无'}</p>
+                          <p title={reason}>{reason || '调仓理由：暂无'}</p>
                         </div>
                       </dd>
                     );
