@@ -25,6 +25,7 @@ export default class CustomerTotal extends PureComponent {
       case 'search':
         ele = <p className="total-num">满足搜索条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
         break;
+      case 'external':
       case 'association':
         ele = <p className="total-num">满足搜索条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
         break;

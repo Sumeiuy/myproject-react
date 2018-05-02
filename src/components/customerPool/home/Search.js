@@ -155,7 +155,7 @@ export default class Search extends PureComponent {
     },
   })
   handleSelect(value) {
-    const item = _.find(this.state.dataSource, child => child.value === value);
+    const item = _.find(this.state.dataSource, child => child.id === value);
     const sightingScopeBool = isSightingScope(item.source);
     let query = {
       source: sightingScopeBool ? 'sightingTelescope' : 'association',
@@ -233,11 +233,12 @@ export default class Search extends PureComponent {
     const { value } = this.state;
     const newContent = item.value.replace(value, `<em>${value}</em>`);
     const sightingScopeBool = isSightingScope(item.source);
+    console.log('renderOption: ', item);
     // 联想 association
     // 搜索 search
     // 标签 tag
     return (
-      <Option key={item.value} text={item.value}>
+      <Option key={item.id} text={item.value}>
         <a
           dangerouslySetInnerHTML={{ __html: newContent }} // eslint-disable-line
           rel="noopener noreferrer"

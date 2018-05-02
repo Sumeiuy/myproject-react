@@ -403,16 +403,27 @@ export default class MatchArea extends PureComponent {
     const {
       q = '',
       listItem: { holdingProducts },
-      location: { query: { source } },
+      location: { query: { source, productName = '', labelMapping = '' } },
     } = this.props;
-    if (_.includes(['search', 'association'], source) && !_.isEmpty(holdingProducts)) {
-      // 匹配到的持仓产品大于1个时，显示 产品的名称/产品代码
-      const filteredProducts = this.getFilteredProducts(holdingProducts, q);
-      if (filteredProducts.length > 1) {
-        return this.getMultipleHoldingProductNode(filteredProducts, q);
+    if (!_.isEmpty(holdingProducts)) {
+      // 精准搜索，用id取找目标
+      if (_.includes(['association', 'external'], source)) {
+        const keyword = decodeURIComponent(productName);
+        const id = decodeURIComponent(labelMapping);
+        const filteredProducts = this.getFilteredProductsById(holdingProducts, id);
+        // 联想词进入列表并产品id匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
+        return !_.isEmpty(filteredProducts) &&
+          this.getSingleHoldingProductNode(filteredProducts, keyword);
+      } else if (source === 'search') {
+        // 模糊匹配用搜索关键词取匹配产品的code和name
+        // 匹配到的持仓产品大于1个时，显示 产品的名称/产品代码
+        const filteredProducts = this.getFilteredProducts(holdingProducts, q);
+        if (filteredProducts.length > 1) {
+          return this.getMultipleHoldingProductNode(filteredProducts, q);
+        }
+        // 联想词进入列表并匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
+        return this.getSingleHoldingProductNode(filteredProducts, q);
       }
-      // 联想词进入列表并匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
-      return this.getSingleHoldingProductNode(holdingProducts, q);
     }
     return null;
   }
@@ -421,7 +432,15 @@ export default class MatchArea extends PureComponent {
   getFilteredProducts(list, keyword) {
     return _.filter(
       list,
-      item => item && (_.includes(item.id, keyword) || _.includes(item.name, keyword)),
+      item => item && (_.includes(item.code, keyword) || _.includes(item.name, keyword)),
+    );
+  }
+
+  // 产品id匹配到的持仓产品
+  getFilteredProductsById(list, id) {
+    return _.filter(
+      list,
+      item => item && (_.includes(item.id, id)),
     );
   }
 
@@ -461,7 +480,6 @@ export default class MatchArea extends PureComponent {
       formatAsset,
     } = this.props;
     const { empInfo: { empInfo = {} } } = this.context;
-    const filteredProducts = this.getFilteredProducts(list, keyword);
     // 是否显示’持仓详情‘，默认不显示
     let isShowDetailBtn = false;
     // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
@@ -473,12 +491,12 @@ export default class MatchArea extends PureComponent {
     if (hasPCTIQPermission || empInfo.rowId === empId) {
       isShowDetailBtn = true;
     }
-    if (!_.isEmpty(filteredProducts)) {
-      const { name, code } = filteredProducts[0] || {};
+    if (!_.isEmpty(list)) {
+      const { name, code } = list[0] || {};
       const htmlString = `${replaceWord({ value: name, q: keyword })}/${replaceWord({ value: code, q: keyword })}`;
       const props = {
         custId,
-        data: filteredProducts[0] || {},
+        data: list[0] || {},
         queryHoldingProduct,
         holdingProducts,
         queryHoldingProductReqState,
