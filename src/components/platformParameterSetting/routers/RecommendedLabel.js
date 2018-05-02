@@ -62,6 +62,7 @@ export default class RecommendedLabel extends PureComponent {
     const { queryCustLabels,
       location: { query: { sWord = '' } },
     } = props;
+    this.searchLabelsInput = React.createRef();
     // 初始化加载客户标签
     queryCustLabels({ condition: sWord });
     this.state = {
@@ -86,7 +87,7 @@ export default class RecommendedLabel extends PureComponent {
   }
   // 搜索标签
   @autobind
-  onQueryLabel(sWord) {
+  onQueryLabel(sWord = '') {
     const { queryCustLabels } = this.props;
     queryCustLabels({ condition: sWord });
     this.paginationChange({ sWord, pageNum: 1 });
@@ -230,6 +231,7 @@ export default class RecommendedLabel extends PureComponent {
   @autobind
   handleSubmit() {
     const { updataCustLabels, queryHotWds3 } = this.props;
+    const { onQueryLabel, searchLabelsInput } = this;
     const { selectedLabels } = this.state;
     confirm({
       title: '选择标签后请点击预览查看在首页的展示情况，标签文字超出部分将不在首页显示，如已查看，确定后将保存数据实时生效',
@@ -247,6 +249,9 @@ export default class RecommendedLabel extends PureComponent {
         }).then(() => {
           // 加载热词数据
           queryHotWds3();
+          onQueryLabel();
+          // 初始化搜索框(唯一需要主动重置搜索框值得地方，直接通过ref去操作了)
+          searchLabelsInput.current.input.input.value = '';
         });
       },
     });
@@ -293,6 +298,7 @@ export default class RecommendedLabel extends PureComponent {
       </div>
       <div className={styles.searchWrap}>
         <Input.Search
+          ref={this.searchLabelsInput}
           enterButton
           placeholder="标签名称"
           onSearch={this.onQueryLabel}
