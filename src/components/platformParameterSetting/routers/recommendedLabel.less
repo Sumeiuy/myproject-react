@@ -1,0 +1,117 @@
+.recommendedLabelWrap {
+  padding: 20px;
+  min-height: calc(~"100vh - 184px");
+  background: #fff;
+  font-size: 14px;
+  color: #4a4a4a;
+  .headerTip {
+    margin-bottom: 20px;
+  }
+  .title {
+    font-weight: bold;
+    margin-bottom: 14px;
+    .itemDivider {
+      width: 4px;
+      height: 1.4em;
+      background: #108ee9;
+      margin-left: 0;
+    }
+  }
+  .searchWrap {
+    margin: 15px 0;
+    :global {
+      .ant-input-suffix {
+        line-height: 14px;
+        .anticon {
+          font-size: 14px;
+        }
+        button {
+          background-color: transparent;
+          border-color: transparent;
+          color: #c2c2c2;
+        }
+      }
+      .ant-input-search.ant-input-affix-wrapper {
+        input {
+          background: #fff;
+          border: 1px solid #ccc;
+          border-radius: 3px;
+        }
+        // placeholder
+        ::-webkit-input-placeholder {
+          font-size: 14px;
+          color: #d9d9d9;
+        }
+        :-ms-input-placeholder {
+          font-size: 14px;
+          color: #d9d9d9;
+        }
+      }
+    }
+  }
+  .transferWrap {
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    :global {
+      .searchWord {
+        color: #ff784e;
+      }
+      .ant-list {
+        border: 1px solid #ddd;
+      }
+      .ant-list-item {
+        padding: 0;
+      }
+      .ant-list-item-meta-avatar {
+        margin-right: 0;
+        width: 35px;
+        height: 35px;
+        background: #f6f6f6;
+        line-height: 35px;
+        padding: 0 10px;
+      }
+      .ant-list-item-meta-title {
+        font-weight: bold;
+        font-size: 14px;
+        height: 35px;
+        line-height: 35px;
+        background: #f6f6f6;
+        margin: 0;
+      }
+      .ant-list-item-meta-description {
+        padding: 10px 0;
+        color: rgba(0, 0, 0, 0.75);
+        letter-spacing: 0;
+        line-height: 24px;
+        height: 48px;
+        box-sizing: content-box;
+      }
+    }
+  }
+  .btnWrap {
+    text-align: right;
+    :global {
+      .ant-btn {
+        margin-right: 10px;
+      }
+    }
+  }
+  :global {
+    .ant-tag {
+      .anticon-cross {
+        color: #d67c1e;
+      }
+    }
+    .ant-tag-gold {
+      background: #fef7f0;
+      border: 1px solid #fcd2a6;
+      color: #d67c1e;
+      &:hover {
+        color: #faad14;
+        .anticon-cross {
+          color: #faad14;
+        }
+      }
+    }
+  }
+}

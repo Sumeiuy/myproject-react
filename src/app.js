@@ -115,6 +115,8 @@ app.model(require('./models/stock'));
 app.model(require('./models/pointsExchange'));
 // 用户中心
 app.model(require('./models/userCenter'));
+// 用户标签
+app.model(require('./models/operationCenter'));
 // 4. Router
 app.router(routerConfig);
 
