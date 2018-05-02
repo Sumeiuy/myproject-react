@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-02 09:31:39
+ * @Last Modified time: 2018-05-02 09:40:23
  * @description 分割组件
  * 此组件中
  * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
@@ -123,19 +123,19 @@ export default class CutScreen extends PureComponent {
     // 独立开发的页面容器高度就是 viewportHeight
     // 因为新的CutScreen组件使用display: flex;来使用内部高度，
     // 因此组件只需要计算出容器的高度并赋值即可
-    let panelContainerHeight = viewportHeight;
+    let cutScreenContainerHeight = viewportHeight;
     if (env.isInFsp()) {
-      panelContainerHeight = viewportHeight - config.fspHeaderHeight;
+      cutScreenContainerHeight = viewportHeight - config.fspHeaderHeight;
       // 因为FSP系统和独立开发系统均在 '#container', '#content'容器下
     }
     if (env.isInReact()) {
       // React系统下是在'#react-content'容器下
-      panelContainerHeight = viewportHeight - config.reactHeaderHeight;
+      cutScreenContainerHeight = viewportHeight - config.reactHeaderHeight;
     }
-    panelContainerHeight -= extraHeight;
-    dom.setStyle(this.splitPanel, 'height', `${panelContainerHeight}px`);
+    cutScreenContainerHeight -= extraHeight;
+    dom.setStyle(this.splitPanel, 'height', `${cutScreenContainerHeight}px`);
     // 将split的高度保存下来;
-    this.splitHeight = panelContainerHeight;
+    this.splitHeight = cutScreenContainerHeight;
     this.setSplitMainHeight();
   }
 
