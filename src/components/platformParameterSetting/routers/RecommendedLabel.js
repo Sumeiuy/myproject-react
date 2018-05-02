@@ -81,7 +81,7 @@ export default class RecommendedLabel extends PureComponent {
   componentDidMount() {
     const { queryHotWds3 } = this.props;
     // 加载热词数据
-    queryHotWds3({ empNo: '001750', empId: '001750' });
+    queryHotWds3();
   }
   // 搜索标签
   @autobind
@@ -229,7 +229,7 @@ export default class RecommendedLabel extends PureComponent {
           recommendedTags: selectedLabels,
         }).then(() => {
           // 加载热词数据
-          queryHotWds3({ empNo: '001750', empId: '001750' });
+          queryHotWds3();
         });
       },
     });
@@ -250,7 +250,7 @@ export default class RecommendedLabel extends PureComponent {
 
     return (<div className={styles.recommendedLabelWrap}>
       <div className={styles.headerTip}>
-        在此设置的推荐标签将显示在 <b>首页-猜你感兴趣</b> 中，T+1日生效，点击下方 <b>预览</b> 可预览展示效果。
+        在此设置的推荐标签将显示在 <b>首页-猜你感兴趣</b> 中，T日生效，点击下方 <b>预览</b> 可预览展示效果。
       </div>
       <div className={styles.title}>
         <Divider type="vertical" className={styles.itemDivider} />
