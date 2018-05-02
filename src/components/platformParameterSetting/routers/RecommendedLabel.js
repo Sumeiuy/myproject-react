@@ -13,6 +13,7 @@ import { Divider, Tag, Input, List, Checkbox, Button, Modal } from 'antd';
 import { dva, emp, fsp, permission } from '../../../helper';
 import Pagination from '../../../components/common/Pagination';
 import { Search } from '../../../components/customerPool/home';
+import Icon from '../../../components/common/Icon';
 import styles from './recommendedLabel.less';
 import withRouter from '../../../decorators/withRouter';
 
@@ -298,6 +299,10 @@ export default class RecommendedLabel extends PureComponent {
           style={{ width: 200 }}
           defaultValue={sWord}
         />
+        <Button onClick={this.handlePreview} className={styles.preview}>
+          <Icon type="yulan" />
+          预览
+        </Button>
       </div>
       <div className={styles.transferWrap}>
         <List
@@ -319,7 +324,6 @@ export default class RecommendedLabel extends PureComponent {
       </div>
       <div className={styles.btnWrap}>
         <Button onClick={this.cancelSelectedLabel}>取消</Button>
-        <Button onClick={this.handlePreview}>预览</Button>
         <Button type="primary" onClick={this.handleSubmit}>提交</Button>
       </div>
       <Modal
