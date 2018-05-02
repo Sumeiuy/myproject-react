@@ -185,7 +185,7 @@ export default class RecommendedLabel extends PureComponent {
       description = '',
     } = item;
     const replaceTag = `<span class="searchWord">${sWord}</span>`;
-    const regExpSWord = new RegExp(sWord, 'g');
+    const regExpSWord = new RegExp(_.escapeRegExp(sWord), 'g');
     const finalName = name.replace(regExpSWord, replaceTag);
     // 字数超两百打点显示
     let finalDesc = description.length > 200 ? `${description.slice(0, 200)}...` : description;
