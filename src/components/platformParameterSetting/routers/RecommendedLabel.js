@@ -72,10 +72,15 @@ export default class RecommendedLabel extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { hotWds } = nextProps;
+    const {
+      hotWds,
+      location: {
+        query: { sWord = '' } },
+    } = nextProps;
     if (hotWds !== this.props.hotWds) {
       this.setState({
         selectedLabels: hotWds,
+        searchValue: sWord,
       });
     }
   }
