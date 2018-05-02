@@ -1,13 +1,23 @@
 .editInput {
+  flex: 1 1 auto;
   width: 300px;
   i {
     margin-left: 4px;
   }
   .noInput {
-    em {
+    .noTnputText {
       font-style: normal;
       display: inline-block;
       width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+  }
+  .noInput.inHeader {
+    .noTnputText {
+      width: auto;
     }
   }
   .hasInput {

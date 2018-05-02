@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-02 13:54:32
+ * @Last Modified time: 2018-05-02 18:41:09
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -251,6 +251,7 @@ export default class OptionsMaintain extends PureComponent {
       <div className={styles.header}>
         {/** 服务经理可选项，编辑框 */}
         <EditInput
+          isInHeader
           value={item.name}
           item={item}
           edit={item.edit}
@@ -258,6 +259,7 @@ export default class OptionsMaintain extends PureComponent {
         />
         {/** 客户涨乐可选项，编辑框 */}
         <EditInput
+          isInHeader
           value={item.custFeedbackName || ''}
           item={item}
           edit={item.edit}
