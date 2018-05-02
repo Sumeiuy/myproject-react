@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-27 10:35:46
+ * @Last Modified time: 2018-05-02 18:41:09
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -251,6 +251,7 @@ export default class OptionsMaintain extends PureComponent {
       <div className={styles.header}>
         {/** 服务经理可选项，编辑框 */}
         <EditInput
+          isInHeader
           value={item.name}
           item={item}
           edit={item.edit}
@@ -258,6 +259,7 @@ export default class OptionsMaintain extends PureComponent {
         />
         {/** 客户涨乐可选项，编辑框 */}
         <EditInput
+          isInHeader
           value={item.custFeedbackName || ''}
           item={item}
           edit={item.edit}
@@ -366,8 +368,7 @@ export default class OptionsMaintain extends PureComponent {
           <Button type="primary" onClick={this.parentAddHandle} icon="plus" ghost >反馈类型</Button>
         </div>
         <h2 className={styles.title}>
-          请在此维护客户反馈字典，客户反馈由两级内容组成，即反馈大类和反馈子类；可选项分服务经理可选项和客户涨乐可选项，设置了客户涨乐可选项则会显示在涨
-          乐财富通中供客户选择。
+          请在此维护客户反馈字典，客户反馈由两级内容组成，即反馈大类和反馈子类；可选项分服务经理可选项和客户涨乐可选项，设置了客户涨乐可选项则会显示在涨乐财富通中供客户选择。
         </h2>
         {/** 头部添加服务经理可选项|客户涨乐反馈可选项的输入框 */}
         <div className={styles.addParentClassBox}>

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-26 17:27:04
+ * @Last Modified time: 2018-05-02 11:04:52
  * 服务经理维度任务统计
  */
 
@@ -232,7 +232,7 @@ export default class CustManagerDetailScope extends PureComponent {
 
     return (
       <div className={styles.titleSection}>
-        <div className={`${styles.tableTitle} tableTitle`}>服务经理维度</div>
+        <div className={`${styles.tableTitle} tableTitle`}>明细进度</div>
         <div
           className={styles.scopeSelect}
           ref={this.saveFilterRef}

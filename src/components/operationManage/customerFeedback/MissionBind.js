@@ -2,8 +2,8 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-27 14:36:27
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-05-02 17:26:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -171,9 +171,9 @@ export default class MissionBind extends PureComponent {
   }
 
   @autobind
-  handlePageChange(pageNum, pagaSize) {
+  handlePageChange(pageNum, pageSize) {
     const { location: { query: { childActiveKey, keyWord } } } = this.context;
-    this.props.queryMissionList({ type: childActiveKey, pageNum, pagaSize, keyWord });
+    this.props.queryMissionList({ type: childActiveKey, pageNum, pageSize, keyWord });
   }
 
   // 删除任务下所关联客户反馈选项

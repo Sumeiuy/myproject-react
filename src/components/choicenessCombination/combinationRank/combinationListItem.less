@@ -1,0 +1,176 @@
+.itemBox {
+  display: none;
+  position: relative;
+  margin-bottom: 10px;
+  .left {
+    margin-right: 288px;
+    .headBox {
+      height: 40px;
+      border: 1px solid #e9e9e9;
+      background-color: #f7f7f7;
+      line-height: 40px;
+      span {
+        float: left;
+      }
+    }
+    .combinationName {
+      padding-left: 12px;
+      font-size: 14px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 36%;
+      min-width: 222px;
+      a {
+        color: #333;
+      }
+    }
+    .earnings {
+      margin-left: 22px;
+      width: 26%;
+      min-width: 170px;
+      font-size: 14px;
+      i, em {
+        font-style: normal;
+      }
+      .up {
+        color: #e44744;
+      }
+      .down {
+        color: #499d37;
+      }
+    }
+    .tips {
+      margin-top: 11px;
+      width: 13%;
+      min-width: 86px;
+      i {
+        float: left;
+        padding: 0 2px;
+        height: 18px;
+        font-size: 12px;
+        color: #7d9be0;
+        border: 1px solid #7d9be0;
+        line-height: 17px;
+        font-style: normal;
+        text-align: center;
+      }
+      em {
+        float: right;
+        width: 28px;
+        height: 18px;
+        background-color: #ff784e;
+        font-size: 12px;
+        color: #fff;
+        line-height: 17px;
+        font-style: normal;
+        text-align: center;
+      }
+    }
+    .link {
+      float: left;
+      margin-left: 20px;
+      font-size: 12px;
+      min-width: 107px;
+      width: 16%;
+      a {
+        color: #888;
+      }
+    }
+    .tableBox {
+      display: table;
+      width: 100%;
+    }
+    .titleBox {
+      display: table-row;
+      height: 32px;
+      line-height: 32px;
+      font-size: 12px;
+      border-bottom: 1px solid #ccc;
+      span {
+        display: table-cell;
+        border-bottom: 1px solid #ccc;
+      }
+    }
+    .bodyBox {
+      display: table-row-group;
+      height: 166px;
+      font-size: 12px;
+      span {
+        display: table-cell;
+        vertical-align: middle;
+      }
+      .historyItem {
+        display: table-row;
+        height: 44px;
+      }
+    }
+    .securityName {
+      min-width: 82px;
+      width: 12%;
+      text-indent: 12px;
+      a, span {
+        display: inline-block;
+        width: 60px;
+        text-indent: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+        color: #1890ff;
+      }
+    }
+    .securityCode {
+      min-width: 70px;
+      width: 11%;
+      span {
+        color: #1890ff;
+      }
+    }
+    .direction {
+      min-width: 70px;
+      width: 10%;
+    }
+    .time {
+      min-width: 134px;
+      width: 20%;
+    }
+    .cost {
+      min-width: 62px;
+      width: 10%;
+    }
+    .reason {
+      min-width: 222px;
+      width: 34%;
+    }
+    .noData {
+      padding-top: 20px;
+      text-align: center;
+      line-height: normal;
+      i {
+        font-size: 90px;
+        color: #b6d5f9;
+      }
+      span {
+        display: block;
+        float: none;
+        font-size: 14px;
+        color: #666;
+      }
+    }
+  }
+  .right {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-right: 14px;
+    padding: 0 8px 8px;
+    height: 232px;
+    width: 252px;
+    background-color: #f4f8fc;
+    box-sizing: border-box;
+  }
+  &.show {
+    display: block;
+  }
+}
