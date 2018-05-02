@@ -322,13 +322,13 @@ export default class Search extends PureComponent {
                 {...autoCompleteOption}
               >
                 <Input
-                  onPressEnter={isPreview ? this.handlePressEnter : null}
+                  onPressEnter={isPreview ? null : this.handlePressEnter}
                   suffix={(
                     <Button
                       className="search-btn"
                       size="large"
                       type="primary"
-                      onClick={isPreview ? this.handleClickButton : null}
+                      onClick={isPreview ? null : this.handleClickButton}
                     >
                       <AntdIcon type="search" />
                     </Button>

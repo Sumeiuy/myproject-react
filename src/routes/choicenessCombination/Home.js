@@ -3,7 +3,7 @@
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 16:02:46
+ * @Last Modified time: 2018-05-02 18:04:20
  */
 
 import React, { PureComponent } from 'react';
@@ -24,7 +24,7 @@ import CombinationModal from '../../components/choicenessCombination/Combination
 import config from '../../components/choicenessCombination/config';
 
 const dispatch = dva.generateEffect;
-const EMPTY_LIST = [];
+// const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const effects = {
   // 获取调仓历史
@@ -111,13 +111,13 @@ export default class ChoicenessCombination extends PureComponent {
     yieldRankValue: PropTypes.string,
     // 组合排名风险筛选
     riskLevelFilter: PropTypes.func.isRequired,
-    riskLevel: PropTypes.array,
+    riskLevel: PropTypes.string,
     push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     yieldRankValue: '',
-    riskLevel: EMPTY_LIST,
+    riskLevel: '',
   }
 
   constructor(props) {
@@ -227,9 +227,10 @@ export default class ChoicenessCombination extends PureComponent {
       title: '客户列表',
     };
     // GP\JJ\ZQ
+    const labelName = `${name}(${code})`;
     const query = {
       labelMapping: encodeURIComponent(productId),
-      labelName: encodeURIComponent(code),
+      labelName: encodeURIComponent(labelName),
       orgId: hasTkMampPermission ? orgId : 'msm',
       q: encodeURIComponent(code),
       source: 'association',
@@ -331,8 +332,8 @@ export default class ChoicenessCombination extends PureComponent {
 
     return (
       <div className={styles.choicenessCombinationBox}>
-        <div className={styles.choicenessContent}>
-          <div className={`${styles.topContainer} clearfix`}>
+        <div className={`${styles.topContainer} clearfix`}>
+          <div className={styles.topContainerChild}>
             {/* 组合调仓组件 */}
             <CombinationAdjustHistory
               push={push}
@@ -341,6 +342,8 @@ export default class ChoicenessCombination extends PureComponent {
               openCustomerListPage={this.openCustomerListPage}
               openStockPage={this.openStockPage}
             />
+          </div>
+          <div className={styles.topContainerChild}>
             <WeeklySecurityTopTen
               push={push}
               data={weeklySecurityTopTenData}
@@ -350,34 +353,34 @@ export default class ChoicenessCombination extends PureComponent {
               openStockPage={this.openStockPage}
             />
           </div>
-          <CombinationRank
-            combinationTreeList={combinationTreeList}
-            combinationRankList={combinationRankList}
-            tabChange={this.handleTabChange}
-            chartTabChange={this.handleChartTabChange}
-            getCombinationLineChart={getCombinationLineChart}
-            combinationLineChartData={combinationLineChartData}
-            rankTabActiveKey={rankTabActiveKey}
-            yieldRankChange={yieldRankChange}
-            yieldRankValue={yieldRankValue}
-            riskLevelFilter={riskLevelFilter}
-            riskLevel={riskLevel}
-            dict={dict}
-            openStockPage={this.openStockPage}
-            openCustomerListPage={this.openCustomerListPage}
-          />
-          {
-            visible
-            ?
-              <CombinationModal
-                // 关闭弹窗
-                closeModal={this.closeModal}
-                {...modalProps[modalType]}
-              />
-            :
-              null
-          }
         </div>
+        <CombinationRank
+          combinationTreeList={combinationTreeList}
+          combinationRankList={combinationRankList}
+          tabChange={this.handleTabChange}
+          chartTabChange={this.handleChartTabChange}
+          getCombinationLineChart={getCombinationLineChart}
+          combinationLineChartData={combinationLineChartData}
+          rankTabActiveKey={rankTabActiveKey}
+          yieldRankChange={yieldRankChange}
+          yieldRankValue={yieldRankValue}
+          riskLevelFilter={riskLevelFilter}
+          riskLevel={riskLevel}
+          dict={dict}
+          openStockPage={this.openStockPage}
+          openCustomerListPage={this.openCustomerListPage}
+        />
+        {
+          visible
+          ?
+            <CombinationModal
+              // 关闭弹窗
+              closeModal={this.closeModal}
+              {...modalProps[modalType]}
+            />
+          :
+            null
+        }
       </div>
     );
   }

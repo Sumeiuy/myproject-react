@@ -13,6 +13,7 @@ import { Divider, Tag, Input, List, Checkbox, Button, Modal } from 'antd';
 import { dva, emp, fsp, permission } from '../../../helper';
 import Pagination from '../../../components/common/Pagination';
 import { Search } from '../../../components/customerPool/home';
+import Icon from '../../../components/common/Icon';
 import styles from './recommendedLabel.less';
 import withRouter from '../../../decorators/withRouter';
 
@@ -66,14 +67,20 @@ export default class RecommendedLabel extends PureComponent {
     this.state = {
       selectedLabels: EMPTY_LIST, // 以选择标签项
       visible: false, // 是否显示预览model
+      searchValue: sWord,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { hotWds } = nextProps;
+    const {
+      hotWds,
+      location: {
+        query: { sWord = '' } },
+    } = nextProps;
     if (hotWds !== this.props.hotWds) {
       this.setState({
         selectedLabels: hotWds,
+        searchValue: sWord,
       });
     }
   }
@@ -85,7 +92,7 @@ export default class RecommendedLabel extends PureComponent {
   }
   // 搜索标签
   @autobind
-  onQueryLabel(sWord) {
+  onQueryLabel(sWord = '') {
     const { queryCustLabels } = this.props;
     queryCustLabels({ condition: sWord });
     this.paginationChange({ sWord, pageNum: 1 });
@@ -178,9 +185,11 @@ export default class RecommendedLabel extends PureComponent {
       description = '',
     } = item;
     const replaceTag = `<span class="searchWord">${sWord}</span>`;
-    const regExpSWord = new RegExp(sWord, 'g');
+    const regExpSWord = new RegExp(_.escapeRegExp(sWord), 'g');
     const finalName = name.replace(regExpSWord, replaceTag);
-    const finalDesc = description.replace(regExpSWord, replaceTag);
+    // 字数超两百打点显示
+    let finalDesc = description.length > 200 ? `${description.slice(0, 200)}...` : description;
+    finalDesc = finalDesc.replace(regExpSWord, replaceTag);
     const isCludeLabel = _.filter(selectedLabels, selectItem => selectItem.id === item.id).length;
     return (
       <Item.Meta
@@ -193,7 +202,8 @@ export default class RecommendedLabel extends PureComponent {
             dangerouslySetInnerHTML={{ __html: finalName }}
           />
         }
-        description={<span
+        description={<div
+          title={description}
           dangerouslySetInnerHTML={{ __html: finalDesc }}
         />}
       />
@@ -214,7 +224,13 @@ export default class RecommendedLabel extends PureComponent {
       visible: true,
     });
   }
-
+  // 搜索值
+  @autobind
+  handleSearchChange(e) {
+    this.setState({
+      searchValue: e.target.value,
+    });
+  }
   // 关闭预览
   @autobind
   handleClosePreview() {
@@ -226,9 +242,10 @@ export default class RecommendedLabel extends PureComponent {
   @autobind
   handleSubmit() {
     const { updataCustLabels, queryHotWds3 } = this.props;
+    const { onQueryLabel } = this;
     const { selectedLabels } = this.state;
     confirm({
-      title: '选择标签后请点击预览查看在首页的展示情况，标签文字超出部分将不在首页显示，如已查看，确定后将保存数据T+1日生效',
+      title: '选择标签后请点击预览查看在首页的展示情况，标签文字超出部分将不在首页显示，如已查看，确定后将保存数据实时生效',
       cancelText: '取消',
       okText: '确认',
       onOk() {
@@ -243,22 +260,18 @@ export default class RecommendedLabel extends PureComponent {
         }).then(() => {
           // 加载热词数据
           queryHotWds3();
+          onQueryLabel();
         });
       },
     });
   }
 
   render() {
-    const { selectedLabels, visible } = this.state;
+    const { selectedLabels, visible, searchValue } = this.state;
     const { currentLabels, pagination } = this.getPaginationAndData();
     const {
       location,
       push,
-      location: {
-        query: {
-          sWord = '',
-        },
-      },
     } = this.props;
 
     return (<div className={styles.recommendedLabelWrap}>
@@ -293,8 +306,13 @@ export default class RecommendedLabel extends PureComponent {
           placeholder="标签名称"
           onSearch={this.onQueryLabel}
           style={{ width: 200 }}
-          defaultValue={sWord}
+          value={searchValue}
+          onChange={this.handleSearchChange}
         />
+        <Button onClick={this.handlePreview} className={styles.preview}>
+          <Icon type="yulan" />
+          预览
+        </Button>
       </div>
       <div className={styles.transferWrap}>
         <List
@@ -310,12 +328,12 @@ export default class RecommendedLabel extends PureComponent {
         />
         <Pagination
           {...pagination}
+          wrapClassName={styles.PaginationWrap}
           onChange={(pageNum) => { this.paginationChange({ pageNum }); }}
         />
       </div>
       <div className={styles.btnWrap}>
         <Button onClick={this.cancelSelectedLabel}>取消</Button>
-        <Button onClick={this.handlePreview}>预览</Button>
         <Button type="primary" onClick={this.handleSubmit}>提交</Button>
       </div>
       <Modal

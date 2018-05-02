@@ -102,7 +102,7 @@ export default class Stock extends PureComponent {
     },
   })
   rowClickHandle(record) {
-    const { id, code, eventType } = record;
+    const { id, code, eventType, stockName } = record;
     const { push } = this.props;
     const { type, pageSize, pageNum, keyword } = this.state;
     const urlQuery = {
@@ -120,6 +120,8 @@ export default class Stock extends PureComponent {
       code,
       // 事件类型
       eventType,
+      // 股票名称
+      name: stockName,
     };
     push({
       pathname,

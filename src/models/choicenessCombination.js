@@ -3,12 +3,13 @@
  * @Description: 精选组合modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 17:42:20
+ * @Last Modified time: 2018-05-02 17:16:12
 */
 
 import _ from 'lodash';
 import moment from 'moment';
 import { choicenessCombination as api } from '../api';
+import { delay } from '../utils/sagaEffects';
 import { yieldRankList, riskDefaultItem, chartTabList } from '../routes/choicenessCombination/config';
 
 const EMPTY_OBJECT = {};
@@ -40,19 +41,18 @@ function calcDate(value) {
 function combinationRankListSortAndFilter(list, condition) {
   const { yieldRankValue, riskLevel } = condition;
   // 先把对应的收益率列表里面的item找出来
-  const yieldItem = _.filter(yieldRankList, item => item.value === yieldRankValue);
+  const yieldItem = _.filter(yieldRankList, item => item.value === yieldRankValue)[0]
+    || EMPTY_OBJECT;
   // 然后找出对应的收益率的key，进行排序
   const sortList = _.reverse(_.sortBy(list, item => item[yieldItem.showNameKey]));
   return sortList.map((item) => {
-    let show = _.findIndex(riskLevel,
-      conditionItem => (item.riskLevel === conditionItem)) > -1;
+    // 匹配对应风险等级的数据
+    let show = item.riskLevel === riskLevel;
     // 如果是排序条件是近7天收益率并且当前项是资产配置类组合
     if (yieldRankValue === yieldRankList[0].value && _.isNull(item.weekEarnings)) {
       show = false;
-    } else if ((_.findIndex(riskLevel,
-      conditionItem => (conditionItem === riskDefaultItem.value)) > -1)
-      || _.isEmpty(riskLevel)) {
-        // 如果筛选项中有所有的字段
+    } else if (riskLevel === riskDefaultItem.value || _.isEmpty(riskLevel)) {
+        // 如果筛选项中有“全部”的字段
       show = true;
     }
     return {
@@ -74,7 +74,7 @@ export default {
     combinationLineChartData: EMPTY_OBJECT, // 组合折线趋势图
     rankTabActiveKey: '', // 组合排名tab
     yieldRankValue: yieldRankList[0].value, // 收益率排序value  默认显示近7天的
-    riskLevel: EMPTY_LIST, // 所筛选的风险等级
+    riskLevel: '', // 所筛选的风险等级
   },
   reducers: {
     // 风险等级筛选
@@ -231,20 +231,29 @@ export default {
           });
           index++;
         }
-        while (index < list.length && (yield take('getCombinationLineChart')));
+        while (index < list.length && (yield take('getCombinationLineChartComplete')));
       }
     },
     // 根据组合id获取对应趋势图数据
-    * getCombinationLineChart({ payload }, { call, put }) {
+    * getCombinationLineChart({ payload }, { call, put, race }) {
       const newPayload = {
         combinationCode: payload.combinationCode,
         ...calcDate(payload.key),
       };
-      const response = yield call(api.getCombinationChart, newPayload);
-      yield put({
-        type: 'getCombinationLineChartSuccess',
-        payload: response,
+      const { response } = yield race({
+        response: call(api.getCombinationChart, newPayload),
+        filed: delay(15000),
       });
+      // 用于触发下一次查询图表信息
+      yield put({
+        type: 'getCombinationLineChartComplete',
+      });
+      if (!_.isEmpty(response) && !_.isEmpty(response.resultData)) {
+        yield put({
+          type: 'getCombinationLineChartSuccess',
+          payload: response,
+        });
+      }
     },
   },
   subscriptions: {
