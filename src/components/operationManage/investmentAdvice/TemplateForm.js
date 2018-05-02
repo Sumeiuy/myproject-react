@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-02 20:47:51
+ * @Last Modified time: 2018-05-02 23:18:16
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
@@ -94,11 +94,6 @@ export default class TemplateForm extends PureComponent {
       </Nav>
     ));
     this.setState({ suggestions });
-  }
-
-  // 内容提及框内容失去焦点
-  @autobind
-  handleMentionBlur() {
   }
 
   // 内容提及框内容变化
@@ -242,9 +237,7 @@ export default class TemplateForm extends PureComponent {
                       prefix={PREFIX}
                       onSearchChange={this.handleSearchChange}
                       suggestions={suggestions}
-                      onSelect={this.onSelect}
                       onChange={this.handleMentionChange}
-                      onBlur={this.handleMentionBlur}
                       placeholder="请输入服务内容"
                       multiLines
                     />,
