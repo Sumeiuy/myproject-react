@@ -207,14 +207,21 @@ export default class RecommendedLabel extends PureComponent {
       selectedLabels: hotWds,
     });
   }
-  // 预览/关闭预览
+  // 预览
   @autobind
   handlePreview() {
-    this.setState(preState => ({
-      visible: !preState.visible,
-    }));
+    this.setState({
+      visible: true,
+    });
   }
 
+  // 关闭预览
+  @autobind
+  handleClosePreview() {
+    this.setState({
+      visible: false,
+    });
+  }
   // 提交
   @autobind
   handleSubmit() {
@@ -225,8 +232,14 @@ export default class RecommendedLabel extends PureComponent {
       cancelText: '取消',
       okText: '确认',
       onOk() {
+        const finalSelectedLabels = _.map(selectedLabels, item => ({
+          id: item.id,
+          name: item.name,
+          description: item.description,
+          source: item.source,
+        }));
         updataCustLabels({
-          recommendedTags: selectedLabels,
+          recommendedTags: finalSelectedLabels,
         }).then(() => {
           // 加载热词数据
           queryHotWds3();
@@ -250,7 +263,7 @@ export default class RecommendedLabel extends PureComponent {
 
     return (<div className={styles.recommendedLabelWrap}>
       <div className={styles.headerTip}>
-        在此设置的推荐标签将显示在 <b>首页-猜你感兴趣</b> 中，T日生效，点击下方 <b>预览</b> 可预览展示效果。
+        在此设置的推荐标签将显示在 <b>首页-猜你感兴趣</b> 中，实时生效，点击下方 <b>预览</b> 可预览展示效果。
       </div>
       <div className={styles.title}>
         <Divider type="vertical" className={styles.itemDivider} />
@@ -309,7 +322,7 @@ export default class RecommendedLabel extends PureComponent {
         visible={visible}
         width={790}
         footer={null}
-        onCancel={this.handlePreview}
+        onCancel={this.handleClosePreview}
       >
         <Search
           location={location}
