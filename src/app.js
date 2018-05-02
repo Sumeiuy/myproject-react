@@ -46,7 +46,7 @@ const onError = (e) => {
       message.error(errorMessage);
     } else if (messageType === '1') {
       // 错误类型是1，用dialog
-      CommonModal.showErrorDialog(errorMessage);
+      CommonModal.showDialog(errorMessage);
     }
   } else if (e.name === 'SyntaxError'
     && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
@@ -119,6 +119,8 @@ app.model(require('./models/userCenter'));
 app.model(require('./models/choicenessCombination'));
 // 投资建议模版
 app.model(require('./models/investmentAdvice'));
+// 用户标签
+app.model(require('./models/operationCenter'));
 // 4. Route
 app.router(routerConfig);
 

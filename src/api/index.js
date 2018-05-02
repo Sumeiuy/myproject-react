@@ -22,6 +22,7 @@ import pointsExchange from './pointsExchange';
 import userCenter from './userCenter';
 import choicenessCombination from './choicenessCombination';
 import investmentAdvice from './investmentAdvice';
+import operationCenter from './operationCenter';
 
 const api = apiCreator();
 
@@ -74,5 +75,6 @@ export default {
   choicenessCombination: choicenessCombination(api),
   // 投资建议模板
   investmentAdvice: investmentAdvice(api),
+  operationCenter: operationCenter(api),
 };
 
