@@ -62,12 +62,12 @@ export default class RecommendedLabel extends PureComponent {
     const { queryCustLabels,
       location: { query: { sWord = '' } },
     } = props;
-    this.searchLabelsInput = React.createRef();
     // 初始化加载客户标签
     queryCustLabels({ condition: sWord });
     this.state = {
       selectedLabels: EMPTY_LIST, // 以选择标签项
       visible: false, // 是否显示预览model
+      searchValue: sWord,
     };
   }
 
@@ -219,7 +219,13 @@ export default class RecommendedLabel extends PureComponent {
       visible: true,
     });
   }
-
+  // 搜索值
+  @autobind
+  handleSearchChange(e) {
+    this.setState({
+      searchValue: e.target.value,
+    });
+  }
   // 关闭预览
   @autobind
   handleClosePreview() {
@@ -231,7 +237,7 @@ export default class RecommendedLabel extends PureComponent {
   @autobind
   handleSubmit() {
     const { updataCustLabels, queryHotWds3 } = this.props;
-    const { onQueryLabel, searchLabelsInput } = this;
+    const { onQueryLabel } = this;
     const { selectedLabels } = this.state;
     confirm({
       title: '选择标签后请点击预览查看在首页的展示情况，标签文字超出部分将不在首页显示，如已查看，确定后将保存数据实时生效',
@@ -250,24 +256,17 @@ export default class RecommendedLabel extends PureComponent {
           // 加载热词数据
           queryHotWds3();
           onQueryLabel();
-          // 初始化搜索框(唯一需要主动重置搜索框值得地方，直接通过ref去操作了)
-          searchLabelsInput.current.input.input.value = '';
         });
       },
     });
   }
 
   render() {
-    const { selectedLabels, visible } = this.state;
+    const { selectedLabels, visible, searchValue } = this.state;
     const { currentLabels, pagination } = this.getPaginationAndData();
     const {
       location,
       push,
-      location: {
-        query: {
-          sWord = '',
-        },
-      },
     } = this.props;
 
     return (<div className={styles.recommendedLabelWrap}>
@@ -298,12 +297,12 @@ export default class RecommendedLabel extends PureComponent {
       </div>
       <div className={styles.searchWrap}>
         <Input.Search
-          ref={this.searchLabelsInput}
           enterButton
           placeholder="标签名称"
           onSearch={this.onQueryLabel}
           style={{ width: 200 }}
-          defaultValue={sWord}
+          value={searchValue}
+          onChange={this.handleSearchChange}
         />
         <Button onClick={this.handlePreview} className={styles.preview}>
           <Icon type="yulan" />
