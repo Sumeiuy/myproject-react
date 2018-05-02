@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 17:48:04
+ * @Last Modified time: 2018-05-02 14:10:05
 */
 
 import React, { PureComponent } from 'react';
@@ -120,7 +120,7 @@ export default class CombinationListItem extends PureComponent {
       yieldRankValue,
     } = this.props;
     const result = _.filter(yieldRankList, item => (item.value === yieldRankValue))[0];
-    const num = data[result.showNameKey].toFixed(2);
+    const num = (data[result.showNameKey] || 0).toFixed(2);
     const className = classnames({
       [styles.up]: num >= 0,
       [styles.down]: num < 0,
@@ -175,7 +175,7 @@ export default class CombinationListItem extends PureComponent {
     return (
       <div className={classNames}>
         <div className={styles.left}>
-          <div className={styles.headBox}>
+          <div className={`${styles.headBox} clearfix`}>
             <span className={styles.combinationName} title={data.combinationName}>
               <a>{data.combinationName}</a>
             </span>
@@ -198,16 +198,18 @@ export default class CombinationListItem extends PureComponent {
               <a onClick={() => this.openCustomerListPage(data)}> 订购客户</a>
             </span>
           </div>
-          <div className={`${styles.titleBox} clearfix`}>
-            <span className={styles.securityName}>证券名称</span>
-            <span className={styles.securityCode}>证券代码</span>
-            <span className={styles.direction}>调仓方向</span>
-            <span className={styles.time}>时间</span>
-            <span className={styles.cost}>成本价</span>
-            <span className={styles.reason}>理由</span>
-          </div>
-          <div className={styles.bodyBox}>
-            {this.getHistoryList()}
+          <div className={styles.tableBox}>
+            <div className={`${styles.titleBox} clearfix`}>
+              <span className={styles.securityName}>证券名称</span>
+              <span className={styles.securityCode}>证券代码</span>
+              <span className={styles.direction}>调仓方向</span>
+              <span className={styles.time}>时间</span>
+              <span className={styles.cost}>成本价</span>
+              <span className={styles.reason}>理由</span>
+            </div>
+            <div className={styles.bodyBox}>
+              {this.getHistoryList()}
+            </div>
           </div>
         </div>
         <div className={styles.right}>

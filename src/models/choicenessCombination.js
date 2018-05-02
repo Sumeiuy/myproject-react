@@ -3,7 +3,7 @@
  * @Description: 精选组合modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 17:42:20
+ * @Last Modified time: 2018-05-02 13:30:11
 */
 
 import _ from 'lodash';
@@ -40,10 +40,12 @@ function calcDate(value) {
 function combinationRankListSortAndFilter(list, condition) {
   const { yieldRankValue, riskLevel } = condition;
   // 先把对应的收益率列表里面的item找出来
-  const yieldItem = _.filter(yieldRankList, item => item.value === yieldRankValue);
+  const yieldItem = _.filter(yieldRankList, item => item.value === yieldRankValue)[0]
+    || EMPTY_OBJECT;
   // 然后找出对应的收益率的key，进行排序
   const sortList = _.reverse(_.sortBy(list, item => item[yieldItem.showNameKey]));
   return sortList.map((item) => {
+    // 匹配对应风险等级的数据
     let show = _.findIndex(riskLevel,
       conditionItem => (item.riskLevel === conditionItem)) > -1;
     // 如果是排序条件是近7天收益率并且当前项是资产配置类组合
@@ -52,7 +54,7 @@ function combinationRankListSortAndFilter(list, condition) {
     } else if ((_.findIndex(riskLevel,
       conditionItem => (conditionItem === riskDefaultItem.value)) > -1)
       || _.isEmpty(riskLevel)) {
-        // 如果筛选项中有所有的字段
+        // 如果筛选项中有“全部”的字段
       show = true;
     }
     return {
@@ -60,6 +62,10 @@ function combinationRankListSortAndFilter(list, condition) {
       show,
     };
   });
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms, true));
 }
 
 export default {
@@ -231,20 +237,29 @@ export default {
           });
           index++;
         }
-        while (index < list.length && (yield take('getCombinationLineChart')));
+        while (index < list.length && (yield take('getCombinationLineChartComplete')));
       }
     },
     // 根据组合id获取对应趋势图数据
-    * getCombinationLineChart({ payload }, { call, put }) {
+    * getCombinationLineChart({ payload }, { call, put, race }) {
       const newPayload = {
         combinationCode: payload.combinationCode,
         ...calcDate(payload.key),
       };
-      const response = yield call(api.getCombinationChart, newPayload);
-      yield put({
-        type: 'getCombinationLineChartSuccess',
-        payload: response,
+      const { response } = yield race({
+        response: call(api.getCombinationChart, newPayload),
+        filed: delay(15000),
       });
+      // 用于触发下一次查询图表信息
+      yield put({
+        type: 'getCombinationLineChartComplete',
+      });
+      if (!_.isEmpty(response) && !_.isEmpty(response.resultData)) {
+        yield put({
+          type: 'getCombinationLineChartSuccess',
+          payload: response,
+        });
+      }
     },
   },
   subscriptions: {
