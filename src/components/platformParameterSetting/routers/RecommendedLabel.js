@@ -231,7 +231,7 @@ export default class RecommendedLabel extends PureComponent {
     const { updataCustLabels, queryHotWds3 } = this.props;
     const { selectedLabels } = this.state;
     confirm({
-      title: '选择标签后请点击预览查看在首页的展示情况，标签文字超出部分将不在首页显示，如已查看，确定后将保存数据T+1日生效',
+      title: '选择标签后请点击预览查看在首页的展示情况，标签文字超出部分将不在首页显示，如已查看，确定后将保存数据实时生效',
       cancelText: '取消',
       okText: '确认',
       onOk() {
