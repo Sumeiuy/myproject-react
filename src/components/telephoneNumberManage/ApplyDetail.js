@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-27 21:12:26
+ * @Last Modified time: 2018-05-02 14:42:41
  */
 
 import React, { PureComponent } from 'react';
@@ -125,12 +125,15 @@ export default class ApplyDetail extends PureComponent {
     const titleColumn = this.renderColumnTitle();
     const columnSize = _.size(titleColumn);
     let columnWidth;
+    let columnWidthTotal;
     if (columnSize === 6) {
       // 6列全部都有
-      columnWidth = ['14%', '10%', '22%', '15%', '17%', '22%'];
+      columnWidth = ['110px', '100px', '220px', '130px', '160px', '210px'];
+      columnWidthTotal = 860;
     } else if (columnSize === 3) {
       // 开始的时候没有电话号码，手机串号，SIM卡号三列
-      columnWidth = ['30%', '30%', '40%'];
+      columnWidth = ['180px', '170px', '250px'];
+      columnWidthTotal = 600;
     }
 
     const newAdvisorBindList = this.addIdToDataSource(advisorBindList);
@@ -153,6 +156,11 @@ export default class ApplyDetail extends PureComponent {
                 titleColumn={this.renderColumnTitle()}
                 columnWidth={columnWidth}
                 needShowEmptyRow={false}
+                isFixedColumn
+                // 横向滚动，固定服务经理姓名列
+                fixedColumn={[0]}
+                // 列的总宽度加上固定列的宽度
+                scrollX={columnWidthTotal}
               />
             </div>
             <div id="nginformation_module" className={styles.module}>
