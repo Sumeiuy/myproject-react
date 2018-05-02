@@ -19,6 +19,8 @@
   }
   .searchWrap {
     margin: 15px 0;
+    display: flex;
+    justify-content: space-between;
     :global {
       .ant-input-suffix {
         line-height: 14px;
@@ -52,6 +54,9 @@
   .transferWrap {
     box-sizing: border-box;
     margin-bottom: 15px;
+    .PaginationWrap {
+      margin-right: 25px;
+    }
     :global {
       .searchWord {
         color: #ff784e;
@@ -79,17 +84,23 @@
         margin: 0;
       }
       .ant-list-item-meta-description {
-        padding: 10px 0;
         color: rgba(0, 0, 0, 0.75);
         letter-spacing: 0;
         line-height: 24px;
         height: 48px;
         box-sizing: content-box;
+        overflow: hidden;
+        margin: 10px 0;
+        div {
+          font-size: 14px;
+          line-height: 24px;
+        }
       }
     }
   }
   .btnWrap {
     text-align: right;
+    margin-right: 15px;
     :global {
       .ant-btn {
         margin-right: 10px;

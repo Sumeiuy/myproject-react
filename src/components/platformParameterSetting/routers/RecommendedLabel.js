@@ -180,7 +180,9 @@ export default class RecommendedLabel extends PureComponent {
     const replaceTag = `<span class="searchWord">${sWord}</span>`;
     const regExpSWord = new RegExp(sWord, 'g');
     const finalName = name.replace(regExpSWord, replaceTag);
-    const finalDesc = description.replace(regExpSWord, replaceTag);
+    // 字数超两百打点显示
+    let finalDesc = description.length > 200 ? `${description.slice(0, 200)}...` : description;
+    finalDesc = finalDesc.replace(regExpSWord, replaceTag);
     const isCludeLabel = _.filter(selectedLabels, selectItem => selectItem.id === item.id).length;
     return (
       <Item.Meta
@@ -193,7 +195,8 @@ export default class RecommendedLabel extends PureComponent {
             dangerouslySetInnerHTML={{ __html: finalName }}
           />
         }
-        description={<span
+        description={<div
+          title={description}
           dangerouslySetInnerHTML={{ __html: finalDesc }}
         />}
       />
@@ -310,6 +313,7 @@ export default class RecommendedLabel extends PureComponent {
         />
         <Pagination
           {...pagination}
+          wrapClassName={styles.PaginationWrap}
           onChange={(pageNum) => { this.paginationChange({ pageNum }); }}
         />
       </div>
