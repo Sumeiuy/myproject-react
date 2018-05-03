@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Modal, message } from 'antd';
+import { Modal } from 'antd';
 import _ from 'lodash';
 import { fspContainer } from '../../../config';
 import { url } from '../../../helper';
@@ -85,14 +85,10 @@ export default class CreateServiceRecord extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const {
-      onToggleServiceRecordModal,
       loading,
     } = this.props;
     // 添加成功
     if (loading && !nextProps.loading && nextProps.addServeRecordSuccess === true) {
-      // this.serviceRecordContentRef.resetField();
-      onToggleServiceRecordModal(false);
-      message.success('添加服务记录成功');
       // 提交成功后，刷新360视图中的服务记录iframe
       const iframe = document.querySelector(fspContainer.view360Iframe);
       if (iframe) {
@@ -124,11 +120,12 @@ export default class CreateServiceRecord extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '取消' } })
   handleCancel() {
-    const { onToggleServiceRecordModal, handleCloseClick, resetCaller } = this.props;
+    const { onToggleServiceRecordModal, handleCloseClick, caller } = this.props;
     // 手动上传日志
     handleCloseClick();
-    onToggleServiceRecordModal(false);
-    resetCaller();
+    if (caller !== 'phone') {
+      onToggleServiceRecordModal(false);
+    }
   }
 
   @autobind
@@ -186,7 +183,7 @@ export default class CreateServiceRecord extends PureComponent {
         <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
       </div>
     ) : (<div className={styles.customFooter}>
-      <a className={styles.submitBtn} onClick={this.handleCancel}>提交</a>
+      <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
     </div>);
 
     // 从客户列表进入创建服务记录的均是自建任务

@@ -441,12 +441,22 @@ export default {
       yield put({
         type: 'resetServeRecord',
       });
-      const res = yield call(api.addCommonServeRecord, payload);
-      if (res.msg === 'OK') {
-        // yield put({
-        //   type: 'getServiceLog',
-        //   payload: { custId: payload.custId },
-        // });
+      const { noHints = false, ...otherPayload } = payload;
+      const res = yield call(api.addCommonServeRecord, otherPayload);
+      if (res.code === '0' && res.resultData === 'success') {
+        // 添加成功后关闭添加窗口
+        yield put({
+          type: 'app/toggleServiceRecordModal',
+          payload: false,
+        });
+        // 打电话后自动生成服务记录时，不需要弹出提示，其他情况需要提示
+        if (!noHints) {
+          yield put({
+            type: 'toastM',
+            message: '添加服务记录成功',
+            duration: 2,
+          });
+        }
         yield put({
           type: 'addServeRecordSuccess',
           payload: res,

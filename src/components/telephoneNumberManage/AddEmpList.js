@@ -3,7 +3,7 @@
  * @Description 业务手机申请页面添加服务经理
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 17:36:52
+ * @Last Modified time: 2018-04-27 19:24:32
  */
 
 
@@ -92,7 +92,7 @@ export default class AddEmpList extends PureComponent {
       // 判断是否已经存在用该户
       const exist = _.findIndex(empList, o => o.empId === selectedEmp.empId) > -1;
       if (exist) {
-        message.error('此用户已经添加过');
+        message.error('此服务经理已经添加过');
         return;
       }
       // 将单客户添加的数据合并到newList中
@@ -172,18 +172,22 @@ export default class AddEmpList extends PureComponent {
     return [{
       dataIndex: 'empName',
       title: '姓名',
+      width: '25%',
     },
     {
       dataIndex: 'empId',
       title: '工号',
+      width: '25%',
     },
     {
       dataIndex: 'orgName',
       title: '所属营业部',
+      width: '30%',
     },
     {
       dataIndex: 'action',
       title: '操作',
+      width: '20%',
       render: (text, record) => (
         <a onClick={() => this.handleDeleteEmp(record)}>
           <Icon type="shanchu" className={styles.deleteBtn} />
@@ -234,6 +238,7 @@ export default class AddEmpList extends PureComponent {
               showTotal: this.showTotal,
               pageSize: 5,
             }}
+            columnWidth={['25%', '25%', '30%', '20%']}
           />
         </div>
         {

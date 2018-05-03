@@ -289,6 +289,7 @@ export default class CreateContactModal extends PureComponent {
       serveContentDesc: serviceContentDesc,
       serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
       feedBackTime: moment().format('YYYY-MM-DD'),
+      noHints: true,
     };
     addServeRecord(payload).then(() => {
       toggleServiceRecordModal({
@@ -303,7 +304,7 @@ export default class CreateContactModal extends PureComponent {
 
   // 通话开始
   @autobind
-  handlePhoneClick() {
+  handlePhoneConnected() {
     this.phoneStartTime = moment();
   }
 
@@ -335,7 +336,7 @@ export default class CreateContactModal extends PureComponent {
         {
           (!_.isEmpty(mainContactInfo.cellInfo) || personalContactInfo.mainTelInfo.type !== 'none') &&
           <Phone
-            onClick={this.handlePhoneClick}
+            onConnected={this.handlePhoneConnected}
             onEnd={this.handlePhoneEnd}
             number={custType === 'per' ?
               personalContactInfo.mainTelInfo.value :
@@ -488,6 +489,9 @@ export default class CreateContactModal extends PureComponent {
                 custType={custType}
                 personalContactInfo={personalContactInfo.otherTelInfo}
                 orgCustomerContactInfoList={orgCustomerContactInfoList}
+                handlePhoneEnd={this.handlePhoneEnd}
+                handlePhoneConnected={this.handlePhoneConnected}
+                disablePhone={false}
               />
             }
           </div>

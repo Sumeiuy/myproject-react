@@ -1,6 +1,9 @@
-/**
- * 客户列表联系方式弹窗中更多联系方式的悬浮层内容
- * 汪俊俊
+/*
+ * @Description: 客户列表联系方式弹窗中更多联系方式的悬浮层内容
+ * @Author: WangJunjun
+ * @Date: 2018-05-03 14:35:21
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-05-03 14:40:11
  */
 
 import React, { PureComponent } from 'react';
@@ -10,6 +13,7 @@ import _ from 'lodash';
 import { Popover } from 'antd';
 import { fspContainer } from '../../../config';
 import Icon from '../../common/Icon';
+import Phone from '../../common/phone';
 
 import styles from './contactInfoPopover.less';
 
@@ -57,17 +61,20 @@ export default class ContactInfoPopover extends PureComponent {
     custType: PropTypes.string.isRequired,
     personalContactInfo: PropTypes.object,
     orgCustomerContactInfoList: PropTypes.array,
+    onClick: PropTypes.func,
+    handlePhoneConnected: PropTypes.func,
+    handlePhoneEnd: PropTypes.func,
+    disablePhone: PropTypes.bool,
   };
 
   static defaultProps = {
     personalContactInfo: {},
     orgCustomerContactInfoList: [],
+    onClick: _.noop,
+    handlePhoneEnd: _.noop,
+    handlePhoneConnected: _.noop,
+    disablePhone: true,
   };
-
-  constructor(props) {
-    super(props);
-    console.log('Props: ', props);
-  }
 
   getPopupContainer() {
     return document.querySelector(fspContainer.container) || document.body;
@@ -79,13 +86,15 @@ export default class ContactInfoPopover extends PureComponent {
    * @param {*} telList   组内的联系方式列表
    * @param {*} label   组内的联系方式对应的标签
    */
+  @autobind
   generateContactsGroup({ groupTitle, telList, label = '' }) {
     if (_.isEmpty(telList)) {
       return null;
     }
+    const { onClick, disablePhone, custType, handlePhoneConnected, handlePhoneEnd } = this.props;
     const newList = [{}, ...telList];
     return (
-      <ul>
+      <ul key={groupTitle}>
         {
           _.map(newList, (item, index) => {
             if (index === 0) {
@@ -94,7 +103,15 @@ export default class ContactInfoPopover extends PureComponent {
             return (
               <li key={item.rowId} >
                 {label && <span className={styles.label}>{label}</span>}
-                <span className={styles.content}>{item.contactValue}</span>
+                <span className={styles.content} onClick={onClick}>
+                  <Phone
+                    onConnected={handlePhoneConnected}
+                    onEnd={handlePhoneEnd}
+                    number={item.contactValue}
+                    custType={custType}
+                    disable={disablePhone}
+                  />
+                </span>
                 {item.mainFlag && <span className={styles.primary}>主</span>}
               </li>
             );

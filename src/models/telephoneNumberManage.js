@@ -11,6 +11,8 @@ const EMPTY_LIST = [];
 export default {
   namespace: 'telephoneNumberManage',
   state: {
+    // 电话拨号信息
+    config: {},
     // 投顾手机分配页面筛选-服务经理列表
     empList: EMPTY_LIST,
     // 投顾手机分配页面筛选-部门组织机构树
@@ -35,6 +37,14 @@ export default {
     validateResultData: {},
   },
   reducers: {
+    // 获取电话拨号信息成功
+    getConfigSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        config: resultData,
+      };
+    },
     // 投顾手机分配页面筛选-服务经理列表
     queryEmpListSuccess(state, action) {
       const { payload: { resultData = EMPTY_LIST } } = action;
@@ -55,7 +65,7 @@ export default {
           ...resultData.children,
         ];
       } else {
-        custRange = resultData;
+        custRange = [resultData];
       }
       return {
         ...state,
@@ -145,6 +155,14 @@ export default {
     },
   },
   effects: {
+    // 获取电话拨号信息
+    * getConfig({ payload }, { call, put }) {
+      const response = yield call(api.queryPhoneInfo, payload);
+      yield put({
+        type: 'getConfigSuccess',
+        payload: response,
+      });
+    },
     // 获取服务经理
     * queryEmpList({ payload }, { call, put }) {
       const response = yield call(api.queryEmpList, payload);

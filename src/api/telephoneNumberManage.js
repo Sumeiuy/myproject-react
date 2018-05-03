@@ -28,5 +28,7 @@ export default function telephoneNumberManage(api) {
     getButtonList: query => api.post('/groovynoauth/fsp/emp/mobilebinding/queryNextStepInfo', query),
     // 验证提交数据接口
     validateData: query => api.post('/file/mobilebinding/validate', query),
+    // 获取拨号信息
+    queryPhoneInfo: query => api.post('/groovynoauth/fsp/queryPhoneInfo', query),
   };
 }

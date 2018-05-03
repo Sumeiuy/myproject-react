@@ -463,8 +463,7 @@ export default class Pageheader extends PureComponent {
       hasCreatePermission = permission.hasFilialeCustTransferCreate(empInfo) &&
         checkUserIsFiliale();
     } else if (pageType === phoneApplyPageType) {
-      // hasCreatePermission = permission.hasPermissionOfPhoneApplyCreate(empInfo);
-      hasCreatePermission = true;
+      hasCreatePermission = permission.hasPermissionOfPhoneApplyCreate(empInfo);
     }
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
