@@ -17,12 +17,14 @@ import _ from 'lodash';
 import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
 import Icon from '../../components/common/Icon';
+import { openRctTab } from '../../utils';
+import { permission, url as urlHelper, emp } from '../../helper';
 
 import config from './config';
 import styles from './detail.less';
 import logable from '../../decorators/logable';
 
-const { typeList } = config;
+const { typeList, securityType } = config;
 const { Header, Footer, Content } = Layout;
 const EMPTY_PARAM = '暂无';
 const pathname = '/stock';
@@ -77,6 +79,10 @@ export default class StockDetail extends PureComponent {
       code,
       detail,
       filterTypeList,
+      // HTSC 任务管理岗
+      hasTkMampPermission: permission.hasTkMampPermission(),
+      // 组织 ID
+      orgId: emp.getOrgId(),
     };
   }
 
@@ -176,6 +182,44 @@ export default class StockDetail extends PureComponent {
   @logable({ type: 'Click', payload: { name: '下载WORD 全文' } })
   handleDownload() {}
 
+  // 查看持仓客户
+  @autobind
+  openCustomerListPage() {
+    const {
+      location: { query: { code = '', name = '' } } } = this.props;
+    const { push } = this.props;
+    const { hasTkMampPermission, orgId } = this.state;
+    // 组合 productId
+    const productId = `${securityType[0].shortName}${code}`;
+
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_CUSTOMER_LIST',
+      title: '客户列表',
+    };
+    const labelName = `${name}(${code})`;
+    const query = {
+      labelMapping: encodeURIComponent(productId),
+      labelName: encodeURIComponent(labelName),
+      orgId: hasTkMampPermission ? orgId : 'msm',
+      q: encodeURIComponent(code),
+      source: 'association',
+      type: 'PRODUCT',
+      productName: encodeURIComponent(name),
+    };
+    const url = `/customerPool/list?${urlHelper.stringify(query)}`;
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+      pathname: url,
+      query,
+    });
+  }
+
+
   render() {
     const { id, detail: dataDetail = {}, filterTypeList } = this.state;
     let title = '';
@@ -248,7 +292,7 @@ export default class StockDetail extends PureComponent {
               :
                 null
             }
-            { /* <a><Icon type="chakan" />查看持仓客户</a> */ }
+            <a onClick={this.openCustomerListPage}><Icon type="chakan" />查看持仓客户</a>
           </div>
           <div className={styles.right}>
             <a onClick={this.goBackHandle}><Icon type="fanhui1" />返回</a>

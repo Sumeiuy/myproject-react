@@ -12,6 +12,7 @@ import _ from 'lodash';
 
 import InfoTitle from '../common/InfoTitle';
 import Icon from '../common/Icon';
+import { time } from '../../helper';
 import config from './config';
 import styles from './combinationAdjustHistory.less';
 
@@ -41,7 +42,6 @@ export default class CombinationAdjustHistory extends PureComponent {
   @autobind
   securityHandle(type, code) {
     if (type === STOCK_CODE) {
-      console.warn('是股票');
       const { openStockPage } = this.props;
       const openPayload = {
         code,
@@ -110,13 +110,16 @@ export default class CombinationAdjustHistory extends PureComponent {
                           </a>
                         </div>
                         <div className={styles.timeBox}>
-                          <span>{child.time}</span>
-                          <a onClick={() => openCustomerListPage(openPayload)}>
+                          <span>{time.format(child.time, config.formatStr)}</span>
+                          <a
+                            className={styles.customerLink}
+                            onClick={() => openCustomerListPage(openPayload)}
+                          >
                             <Icon type="kehuzu" />
                           </a>
                         </div>
                         <div className={styles.reasonBox}>
-                          <p title={reason}>{reason || '暂无'}</p>
+                          <p title={reason}>{reason || '调仓理由：暂无'}</p>
                         </div>
                       </dd>
                     );

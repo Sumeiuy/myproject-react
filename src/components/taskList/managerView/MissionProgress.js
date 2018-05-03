@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-23 14:16:14
+ * @Last Modified time: 2018-05-02 11:04:08
  * 任务进度
  */
 
@@ -321,7 +321,7 @@ export default class MissionProgress extends PureComponent {
     return (
       <div className={styles.missionProgressSection}>
         <div className={styles.title}>
-          进度
+          总体进度
         </div>
         <div className={styles.content}>
           {this.renderProgressSection()}

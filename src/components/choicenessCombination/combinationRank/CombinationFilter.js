@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-筛选
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 17:40:18
+ * @Last Modified time: 2018-05-02 17:09:23
 */
 
 import React, { PureComponent } from 'react';
@@ -34,12 +34,12 @@ export default class CombinationRank extends PureComponent {
     yieldRankValue: PropTypes.string,
     // 组合排名风险筛选
     riskLevelFilter: PropTypes.func.isRequired,
-    riskLevel: PropTypes.array,
+    riskLevel: PropTypes.string,
   }
 
   static defaultProps = {
     yieldRankValue: '',
-    riskLevel: EMPTY_LIST,
+    riskLevel: '',
   }
 
   @autobind
@@ -81,7 +81,6 @@ export default class CombinationRank extends PureComponent {
       treeData: this.getTreeData(),
       value: riskLevel,
       onChange: this.handleRiskChange,
-      treeCheckable: true,
       showCheckedStrategy: SHOW_PARENT,
       style: {
         width: 220,

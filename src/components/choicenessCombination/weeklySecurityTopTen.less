@@ -1,84 +1,80 @@
 .weeklySecurityTopTenBox {
-  float: right;
-  padding: 16px 20px;
-  width: 542px;
-  height: 404px;
-  background-color: #fff;
-  box-shadow: 2px 1px 5px #bdbcbc;
   .weeklySecurityTopTenContainer {
     padding-left: 14px;
-    ul {
-      padding-top: 8px;
-      height: 276px;
-      box-sizing: border-box;
-      overflow: auto;
-      li {
-        margin-bottom: 4px;
-        height: 50px;
-        font-size: 12px;
-        .summary {
-          line-height: 23px;
-          span, a {
-            float: left;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-          i {
-            font-style: normal;
-          }
-          .securityName {
-            color: #2782d7;
-            margin-right: 4px;
-          }
-          .client {
-            text-align: right;
-          }
-          .up {
-            color: #e33c39;
-          }
-          .down {
-            color: #499d37;
+    :global {
+      .ant-table {
+        .ant-table-thead {
+          height: 26px;
+          line-height: 26px;
+          font-size: 12px;
+          color: #4a4a4a;
+          border-bottom: 1px solid #ccc;
+          tr th {
+            background: #fff;
+            border-bottom: 2px solid #ccc;
           }
         }
-        .reason {
-          width: 470px;
-          line-height: 22px;
-          color: #828282;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+        tr th, tr td {
+          padding: 0;
         }
-        &:nth-child(even) {
-          background-color: #f2f2f2;
+        .ant-table-tbody {
+          tr {
+            background: #fff;
+            position: relative;
+            td {
+              border-bottom: 0;
+              padding: 10px 0 22px;
+            }
+            &:nth-child(even) {
+              background-color: #f2f2f2;
+            }
+          }
         }
       }
     }
+    .securityName, .name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-all;
+    }
+    .securityName {
+      width: 128px;
+    }
+    .name {
+      width: 120px;
+    }
+    .customerLink {
+      margin-right: 6px;
+    }
+    .reason {
+      width: 84%;
+      position: absolute;
+      left: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-all;
+    }
+    .customerLink {
+      i {
+        color: #7d9be0;
+      }
+    }
+    .up {
+      color: #e33c39;
+    }
+    .down {
+      color: #499d37;
+    }
   }
 }
-.titleBox {
-  height: 26px;
-  line-height: 26px;
-  font-size: 12px;
-  color: #4a4a4a;
-  border-bottom: 1px solid #ccc;
-  span {
-    float: left;
+
+@media screen and (min-width: 1400px) {
+  .securityName {
+    width: 188px !important;
   }
-}
-.securityName {
-  width: 118px;
-  margin-right: 4px;
-}
-.adjustTime {
-  width: 110px;
-}
-.upAndDown {
-  width: 62px;
-}
-.combinationName {
-  width: 128px;
-}
-.client {
-  width: 50px;
+  .name {
+    width: 170px !important;
+  }
 }
