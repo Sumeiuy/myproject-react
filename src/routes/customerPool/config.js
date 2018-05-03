@@ -29,10 +29,12 @@ const ENTER_TYPE = {
   custIndicator: 'performanceCustPool',
   numOfCustOpened: 'performanceCustPool',
   sightingTelescope: 'labelSearchCustPool',
+  // 非理财平台
+  external: 'searchCustPool',
 };
 
 // 任务管理岗权限作用的首页入口列表
-const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'business'];
+const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'business', 'external'];
 // 首页指标查询权限作用的首页入口列表
 const ENTERLIST2 = ['custIndicator', 'numOfCustOpened'];
 
