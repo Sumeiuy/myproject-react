@@ -3,7 +3,7 @@
  * @Description 业务手机申请新建页面
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-27 15:58:15
+ * @Last Modified time: 2018-05-03 14:58:32
  */
 
 import React, { PureComponent } from 'react';
@@ -240,7 +240,7 @@ export default class CreateApply extends PureComponent {
               advisorList={advisorList}
               batchAdvisorListData={batchAdvisorListData}
               queryBatchAdvisorList={queryBatchAdvisorList}
-              saveSelectedEmpList={this.saveSelectedEmpList}
+              onAddEmpList={this.saveSelectedEmpList}
             />
           </div>
           <TableDialog {...searchProps} />

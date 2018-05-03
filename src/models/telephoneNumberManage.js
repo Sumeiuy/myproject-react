@@ -262,6 +262,10 @@ export default {
         payload: response,
       });
     },
+    // 删除绑定的服务经理
+    * deleteBindingAdvisor({ payload }, { call }) {
+      yield call(api.deleteBindingAdvisor, payload);
+    },
   },
   subscriptions: {
   },
