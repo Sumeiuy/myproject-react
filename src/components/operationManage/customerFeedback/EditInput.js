@@ -3,14 +3,14 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 14:48:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-25 21:39:16
+ * @Last Modified time: 2018-05-03 13:33:46
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Input } from 'antd';
-import logable from '../../../decorators/logable';
+import { Input, Tooltip } from 'antd';
 
+import logable from '../../../decorators/logable';
 import Icon from '../../common/Icon';
 import styles from './editInput.less';
 
@@ -43,6 +43,7 @@ export default class EditInput extends PureComponent {
     // idx: 0,
     onCancel: () => {},
     item: {},
+    isInHeader: false,
   }
 
   constructor(props) {
@@ -124,6 +125,20 @@ export default class EditInput extends PureComponent {
     }, onCancel);
   }
 
+  // 根据需要显示的文字的长度，来判断是否需要提示框
+  // 文本长度超过20个字符，则显示文本提示框
+  @autobind
+  renderInputTextDomByValue(value) {
+    if (value.length > 20) {
+      return (
+        <Tooltip title={value}>
+          <em className={styles.noTnputText}>{value}</em>
+        </Tooltip>
+      );
+    }
+    return (<em className={styles.noTnputText}>{value}</em>);
+  }
+
   render() {
     const { edit, value } = this.state;
     const { btnGroup } = this.props;
@@ -132,7 +147,7 @@ export default class EditInput extends PureComponent {
         {
           !edit ?
             <div className={styles.noInput}>
-              <em>{value}</em>
+              {this.renderInputTextDomByValue(value)}
               <Icon type="edit" onClick={this.onEdit} title="编辑" />
               {btnGroup}
             </div>

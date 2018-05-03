@@ -12,10 +12,11 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import Icon from '../../common/Icon';
+import { time } from '../../../helper';
 import CombinationYieldChart from '../CombinationYieldChart';
 import styles from './combinationListItem.less';
 import { yieldRankList } from '../../../routes/choicenessCombination/config';
-import { securityType as securityTypeList } from '../config';
+import { securityType as securityTypeList, formatStr } from '../config';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -92,7 +93,7 @@ export default class CombinationListItem extends PureComponent {
             }
           </span>
           <span className={styles.direction}>{item.directionName}</span>
-          <span className={styles.time}>{item.time}</span>
+          <span className={styles.time}>{time.format(item.time, formatStr)}</span>
           <span className={styles.cost}>{item.price}</span>
           <span className={styles.reason} title={item.reason}>{reason || DEFAULT_REASON}</span>
         </div>

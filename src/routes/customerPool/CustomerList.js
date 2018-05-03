@@ -347,10 +347,10 @@ export default class CustomerList extends PureComponent {
           labelDesc,
         };
       }
-    } else if (query.source === 'association') { // 联想词
+    } else if (query.source === 'association' || query.source === 'external') { // 联想词
       // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
       param.searchTypeReq = query.type;
-      param.searchText = keyword;
+      param.searchText = labelName;
       param.primaryKey = [labelMapping];
       param.productName = productName;
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) { // 经营指标或者投顾绩效
@@ -413,6 +413,11 @@ export default class CustomerList extends PureComponent {
 
   // 获取 客户列表接口的orgId入参的值
   getPostOrgId(query = {}) {
+    // 来自非理财平台
+    if (query.source === 'external') {
+      return this.hasTkMampPermission ? emp.getOrgId() : '';
+    }
+    /* 来自理财平台首页 */
     // 服务营业部筛选字段departmentOrgId有值且不等于all
     if (query.departmentOrgId) {
       return query.departmentOrgId !== ALL_DEPARTMENT_ID ? query.departmentOrgId : '';
@@ -432,6 +437,11 @@ export default class CustomerList extends PureComponent {
 
   // 获取 客户列表接口的ptyMngId入参的值
   getPostPtyMngId(query = {}) {
+    // 来自非理财平台
+    if (query.source === 'external') {
+      return this.hasTkMampPermission ? '' : emp.getId();
+    }
+    /* 来自理财平台 */
     // url中存在ptyMng，取id
     if (query.ptyMngId) {
       return query.ptyMngId;

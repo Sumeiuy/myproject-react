@@ -73,7 +73,7 @@ export default class HoldingProductDetail extends PureComponent {
     // 取当前产品的id
     const currentHoldingProductId = data.id;
     // 详情接口返回的数据为null值时
-    if (_.isEmpty(holdingProducts[currentHoldingProductId])) {
+    if (_.isEmpty(holdingProducts[`${custId}${currentHoldingProductId}`])) {
       return <div className={styles.detailItem}>暂无数据</div>;
     }
     // 取当前产品id在本地存储的数据中对应的详情信息，type时产品的类别，detail时产品的具体信息
@@ -88,7 +88,7 @@ export default class HoldingProductDetail extends PureComponent {
           {this.generateDetailItemNode({ name: '持仓市值', value: item.marketValue })}
           {this.generateDetailItemNode({ name: '盈亏', value: item.profit })}
           {this.generateDetailItemNode({ name: '累计收益', value: item.cumulativeProfit })}
-          {this.generateDetailItemNode({ name: '累计到账收益', value: item.incomToAccount })}
+          {this.generateDetailItemNode({ name: '累计到账收益', value: item.incomeToAccount })}
           {this.generateDetailItemNode({ name: '累计预估收益', value: item.estimatedEarnings })}
         </ul>
       </div>

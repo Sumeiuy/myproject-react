@@ -2,8 +2,8 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-04-27 14:36:27
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-05-03 13:57:19
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -29,6 +29,7 @@ const Search = Input.Search;
 
 export default class MissionBind extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 获取任务列表
     queryMissionList: PropTypes.func.isRequired,
     missionData: PropTypes.object.isRequired,
@@ -41,10 +42,6 @@ export default class MissionBind extends PureComponent {
     feedbackData: PropTypes.object.isRequired,
     // 切换tab
     missionBindChangeTab: PropTypes.func.isRequired,
-  }
-
-  static contextTypes = {
-    location: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -104,7 +101,7 @@ export default class MissionBind extends PureComponent {
   @autobind
   getPanelList() {
     const { missionData } = this.props;
-    const { location: { query: { childActiveKey = MOT_TASK.key } } } = this.context;
+    const { location: { query: { childActiveKey = MOT_TASK.key } } } = this.props;
     const missionList = missionData.missionList || [];
     const isMOTMission = childActiveKey === MOT_TASK.key;
     return missionList.map((item) => {
@@ -171,9 +168,9 @@ export default class MissionBind extends PureComponent {
   }
 
   @autobind
-  handlePageChange(pageNum, pagaSize) {
-    const { location: { query: { childActiveKey, keyWord } } } = this.context;
-    this.props.queryMissionList({ type: childActiveKey, pageNum, pagaSize, keyWord });
+  handlePageChange(pageNum, pageSize) {
+    const { location: { query: { childActiveKey, keyWord } } } = this.props;
+    this.props.queryMissionList({ type: childActiveKey, pageNum, pageSize, keyWord });
   }
 
   // 删除任务下所关联客户反馈选项
@@ -181,7 +178,7 @@ export default class MissionBind extends PureComponent {
   handleDelCustomerFeedback(missionId, feedbackId, roleType) {
     const {
       location: { query: { childActiveKey, pageNum = 1, pageSize = 20, keyWord } },
-    } = this.context;
+    } = this.props;
     const { missionData, delCustomerFeedback, queryMissionList } = this.props;
     const { missionList } = missionData;
     const missionItem = _.find(missionList, v => v.id === missionId);
@@ -223,7 +220,7 @@ export default class MissionBind extends PureComponent {
     const { beAddMissionId, roleType } = this.state;
     const {
       location: { query: { childActiveKey, pageNum = 1, pageSize = 20, keyWord } },
-    } = this.context;
+    } = this.props;
     const { addCustomerFeedback, queryMissionList } = this.props;
     if (this.feedbackAddComponent) {
       const feedback = this.feedbackAddComponent.getData();
@@ -274,7 +271,7 @@ export default class MissionBind extends PureComponent {
       beAddMissionId,
       roleType,
     } = this.state;
-    const { location: { query: { childActiveKey = MOT_TASK.key } } } = this.context;
+    const { location: { query: { childActiveKey = MOT_TASK.key } } } = this.props;
     const { missionData, queryFeedbackList, feedbackData } = this.props;
     const missionPage = missionData.page || {};
 
