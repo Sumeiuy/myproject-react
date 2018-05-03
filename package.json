@@ -33,6 +33,7 @@
     "bowser": "^1.6.1",
     "classnames": "^2.2.5",
     "core-decorators": "^0.15.0",
+    "draft-js": "^0.10.5",
     "dva": "^2.1.0",
     "dva-loading": "^1.0.3",
     "echarts": "^3.7.1",
