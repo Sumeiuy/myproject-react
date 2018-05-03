@@ -338,7 +338,7 @@ export default class MatchArea extends PureComponent {
       // 接口返回的接口数据是截断过的，需要前端在后面手动加...
       return (
         <li>
-          <span>
+          <span className={styles.serviceRecord}>
             <i className="label">服务记录：</i>
             <i dangerouslySetInnerHTML={{ __html: markedEle }} />
             <i>...</i>
