@@ -23,23 +23,20 @@ export default class ContextProvider extends Component {
     children: PropTypes.node.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
-    location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
   }
 
   static childContextTypes = {
     empInfo: PropTypes.object,
-    location: PropTypes.object,
     dict: PropTypes.object,
     push: PropTypes.func,
     replace: PropTypes.func,
   };
 
   getChildContext() {
-    const { location, empInfo, dict } = this.props;
+    const { empInfo, dict } = this.props;
     return {
-      location,
       empInfo,
       dict,
       push: this.hackPush,
