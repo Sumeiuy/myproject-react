@@ -18,11 +18,12 @@ import Pagination from '../common/Pagination';
 import Select from '../common/Select';
 import Button from '../common/Button';
 import Icon from '../common/Icon';
+import { time as timeHelper } from '../../helper';
 import config from './config';
 import styles from './combinationModal.less';
 
 const Search = Input.Search;
-const { timeRange, directionRange, titleList } = config;
+const { timeRange, directionRange, titleList, formatStr } = config;
 // 3个月的key
 const THREE_MOUNTH_KEY = '3';
 // 调入的key
@@ -74,7 +75,7 @@ export default class CombinationModal extends PureComponent {
     getTreeData();
     // 时间默认选中为最三个月
     const dateObj = this.calcDate(THREE_MOUNTH_KEY);
-    const titleArray = this.getTitleList(type);
+    const titleArray = this.getTitleColumns(type);
     this.setState({
       startDate: dateObj.begin,
       endDate: dateObj.end,
@@ -84,11 +85,12 @@ export default class CombinationModal extends PureComponent {
 
   // 根据类型配置不同的表格标题
   @autobind
-  getTitleList(type) {
+  getTitleColumns(type) {
     const { openCustomerListPage } = this.props;
     const titleArray = titleList[type];
+    // 持仓历史
     if (type === HISTORY_TYPE) {
-      // 持仓历史
+      // 查看持仓客户
       const lastColumn = {
         dataIndex: 'view',
         key: 'view',
@@ -108,8 +110,13 @@ export default class CombinationModal extends PureComponent {
           </a>);
         },
       };
+      // 时间
+      titleArray[0].render = text => (<div>{timeHelper.format(text, formatStr)}</div>);
+      // 调仓理由
       titleArray[5].render = (text, record) => this.renderPopover(record.reason);
+      // 所属组合
       titleArray[6].render = (text, record) => this.renderPopover(record.combinationName);
+      // 查看持仓客户
       titleArray[7] = lastColumn;
     }
     return titleArray;
@@ -200,6 +207,7 @@ export default class CombinationModal extends PureComponent {
     this.sendRequest(page);
   }
 
+  // 设置单元格的 popover
   @autobind
   renderPopover(value) {
     let reactElement = null;

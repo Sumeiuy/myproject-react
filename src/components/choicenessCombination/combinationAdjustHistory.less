@@ -33,26 +33,24 @@
     dd {
       margin: 0 0 11px 76px;
       .titleBox {
-        font-size: 0;
+        font-size: 14px;
+        position: relative;
+        a {
+          display: block;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
         .securityName {
           color: #2782d7;
           display: inline-block;
-          width: 160px;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
-          font-size: 14px;
+          position: absolute;
+          width: 50%;
         }
         .combinationName {
-          display: block;
-          float: right;
-          width: 154px;
-          font-size: 14px;
           text-align: right;
           color: #4a4a4a;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          overflow: hidden;
+          margin-left: 50%;
         }
       }
       .timeBox {
@@ -100,10 +98,4 @@
   text-align: right;
   color: #2782d7;
   font-size: 12px;
-}
-
-@media screen and (min-width: 1400px) {
-  .securityName {
-    width: 250px !important;
-  }
 }

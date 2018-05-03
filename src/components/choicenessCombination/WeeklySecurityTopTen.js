@@ -38,9 +38,54 @@ export default class WeeklySecurityTopTen extends PureComponent {
     orgId: '',
   }
 
-  // constructor(props) {
-  //   super(props);
-  // }
+  // 设置表格表头
+  @autobind
+  getTitleColumns(array) {
+    const { openCustomerListPage } = this.props;
+    const newTitleList = [...array];
+    // 证券名称与证券代码组合列，点击跳转到个股资讯页面
+    newTitleList[0].render = (text, record) => {
+      const {
+        code,
+        name,
+        securityType,
+        reason,
+      } = record;
+      return (<div className={styles.securityName}>
+        <a
+          title={`${name} ${code}`}
+          onClick={() => this.securityHandle(securityType, code)}
+        >
+          {name}（{code}）
+        </a>
+        <div className={styles.reason}>{reason || '调入理由：暂无'}</div>
+      </div>);
+    };
+    // 证券调入时间
+    newTitleList[1].render = text => (<div>{time.format(text, config.formatStr)}</div>);
+    // 涨跌幅
+    newTitleList[2].render = (text) => {
+      const change = this.percentChange(text.toFixed(2));
+      const bigThanZero = text > 0;
+      const changeClassName = classnames({
+        [styles.up]: bigThanZero,
+        [styles.down]: !bigThanZero,
+      });
+      return (<span className={changeClassName}>{change}%</span>);
+    };
+    // 组合名称
+    newTitleList[3].render = text => (<div className={styles.name} title={text}>{text}</div>);
+    // 查看持仓客户链接，点击打开持仓客户
+    newTitleList[4].render = (text, record) => {
+      const openPayload = {
+        name: record.name,
+        code: record.code,
+        type: record.securityType,
+      };
+      return <a className={styles.customerLink} onClick={() => openCustomerListPage(openPayload)}><Icon type="kehuzu" /></a>;
+    };
+    return newTitleList;
+  }
 
   // 证券名称点击事件
   @autobind
@@ -63,52 +108,9 @@ export default class WeeklySecurityTopTen extends PureComponent {
     return newValue;
   }
 
-  @autobind
-  getTitleList(array) {
-    const { openCustomerListPage } = this.props;
-    const newTitleList = [...array];
-    newTitleList[0].render = (text, record) => {
-      const {
-        code,
-        name,
-        securityType,
-        reason,
-      } = record;
-      return (<div className={styles.securityName}>
-        <a
-          title={`${name} ${code}`}
-          onClick={() => this.securityHandle(securityType, code)}
-        >
-          {name}（{code}）
-        </a>
-        <div className={styles.reason}>{reason || '调入理由：暂无'}</div>
-      </div>);
-    };
-    newTitleList[1].render = text => (<div>{time.format(text, config.formatStr)}</div>);
-    newTitleList[2].render = (text) => {
-      const change = this.percentChange(text.toFixed(2));
-      const bigThanZero = text > 0;
-      const changeClassName = classnames({
-        [styles.up]: bigThanZero,
-        [styles.down]: !bigThanZero,
-      });
-      return (<span className={changeClassName}>{change}%</span>);
-    };
-    newTitleList[3].render = text => (<div className={styles.name} title={text}>{text}</div>);
-    newTitleList[4].render = (text, record) => {
-      const openPayload = {
-        name: record.name,
-        code: record.code,
-        type: record.securityType,
-      };
-      return <a className={styles.customerLink} onClick={() => openCustomerListPage(openPayload)}><Icon type="kehuzu" /></a>;
-    };
-    return newTitleList;
-  }
-
   render() {
     const { data } = this.props;
-    const newTitleList = this.getTitleList(titleList);
+    const newTitleList = this.getTitleColumns(titleList);
     return (
       <div className={styles.weeklySecurityTopTenBox}>
         <div className={styles.weeklyTtitle}>
@@ -123,7 +125,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
               columns={newTitleList}
               dataSource={data}
               pagination={false}
-              scroll={{ y: 276 }}
+              scroll={{ y: 304 }}
             />
           </div>
         </div>
