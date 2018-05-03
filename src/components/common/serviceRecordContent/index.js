@@ -729,6 +729,7 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackList,
       flowStatusCode,
       caller,
+      prevRecordInfo,
     } = this.props;
     const {
       isReject,
@@ -836,7 +837,7 @@ export default class ServiceRecordContent extends PureComponent {
             <div className={styles.content} ref={this.setServeTimeRef}>
               {
                 caller === PHONE ?
-                  moment().format(DATE_FORMAT_SHOW) :
+                  moment(prevRecordInfo.serveTime).format(DATE_FORMAT_SHOW) :
                   <DatePicker
                     style={{ width: 142 }}
                     {...dateCommonProps}
@@ -867,6 +868,7 @@ export default class ServiceRecordContent extends PureComponent {
               value={serviceRecord}
               onChange={this.handleServiceRecordInputChange}
               caller={caller}
+              prevRecordInfo={prevRecordInfo}
             />
           )
         }
@@ -972,6 +974,7 @@ ServiceRecordContent.propTypes = {
   serviceTypeCode: PropTypes.string,
   flowStatusCode: PropTypes.string,
   caller: PropTypes.string.isRequired,
+  prevRecordInfo: PropTypes.object.isRequired,
 };
 
 ServiceRecordContent.defaultProps = {

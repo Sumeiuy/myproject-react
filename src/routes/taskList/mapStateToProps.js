@@ -62,6 +62,8 @@ const mapStateToProps = () => state => ({
   custFeedbackList: state.performerView.custFeedbackList,
    // 涨乐财富通服务方式下的审批人列表
   zhangleApprovalList: state.performerView.zhangleApprovalList,
+  serviceRecordModalVisibleOfCaller: state.app.serviceRecordModalVisibleOfCaller,
+  prevRecordInfo: state.app.prevRecordInfo,
 });
 
 export default mapStateToProps;

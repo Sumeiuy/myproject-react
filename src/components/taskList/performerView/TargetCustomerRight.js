@@ -10,7 +10,7 @@ import { Row, Col, Affix } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
-// import moment from 'moment';
+import moment from 'moment';
 import contains from 'rc-util/lib/Dom/contains';
 
 import styles from './targetCustomerRight.less';
@@ -21,6 +21,7 @@ import SixMonthEarnings from '../../customerPool/list/SixMonthEarnings';
 import { formatAsset } from './formatNum';
 import logable from '../../../decorators/logable';
 import Phone from '../../common/phone';
+import { date } from '../../../helper';
 
 // 信息的完备，用于判断
 const COMPLETION = '完备';
@@ -31,7 +32,7 @@ const PER_CODE = 'per';
 // 一般机构对应的code码
 const ORG_CODE = 'org';
 
-// const PHONE = 'phone';
+const PHONE = 'phone';
 
 // 产品机构对应的code码
 // const PROD_CODE = 'prod';
@@ -45,7 +46,8 @@ const getStickyTarget = (currentNode) => {
     element => contains(element, currentNode),
   )) || containers[0];
 };
-
+// 任务状态为未处理、处理中、已驳回时可打电话
+const CALL_LIST = ['10', '20', '60'];
 
 export default class TargetCustomerRight extends PureComponent {
   static propTypes = {
@@ -61,6 +63,12 @@ export default class TargetCustomerRight extends PureComponent {
     custIncomeReqState: PropTypes.bool.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
+    addServeRecord: PropTypes.func.isRequired,
+    motCustfeedBackDict: PropTypes.array.isRequired,
+    currentMissionFlowId: PropTypes.string.isRequired,
+    currentId: PropTypes.string.isRequired,
+    toggleServiceRecordModal: PropTypes.func.isRequired,
+    currentCustomer: PropTypes.object.isRequired,
   }
   static defaultProps = {
     itemData: {},
@@ -73,6 +81,12 @@ export default class TargetCustomerRight extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
   };
+
+  constructor(props) {
+    super(props);
+    this.phoneEndTime = '';
+    this.phoneStartTime = '';
+  }
 
   getPopupContainer() {
     return document.querySelector(fspContainer.container) || document.body;
@@ -160,43 +174,69 @@ export default class TargetCustomerRight extends PureComponent {
    */
   @autobind
   handlePhoneEnd() {
-    // const {
-    //   currentCustId,
-    //   currentCustName,
-    //   toggleServiceRecordModal,
-    //   addServeRecord,
-    //   motSelfBuiltFeedbackList,
-    // } = this.props;
-    // const list = transformCustFeecbackData(motSelfBuiltFeedbackList);
-    // console.log('list>>>>', data, list);
-    // const [firstServiceType = {}] = list;
-    // const { key: firstServiceTypeKey, children = [] } = firstServiceType;
-    // const [firstFeedback = {}] = children;
-    // const {
-    //   key: firstFeedbackKey,
-    //   children: [secondFeedback],
-    // } = firstFeedback;
-    // const { key: secondFeedbackKey } = secondFeedback;
-    // addServeRecord({
-    //   custId: currentCustId,
-    //   serveWay: 'HTSC Phone',
-    //   taskType: '2',
-    //   type: firstServiceTypeKey,
-    //   serveType: firstServiceTypeKey,
-    //   serveCustFeedBack: firstFeedbackKey,
-    //   serveCustFeedBack2: secondFeedbackKey,
-    //   serveContentDesc: '2222',
-    //   serveTime: '2018-04-27 10:53',
-    //   feedBackTime: moment().format('YYYY-MM-DD'),
-    //   caller: PHONE,
-    // }).then(() => {
-    //   toggleServiceRecordModal({
-    //     custId: currentCustId,
-    //     custName: currentCustName,
-    //     flag: true,
-    //     caller: PHONE,
-    //   });
-    // });
+    this.phoneEndTime = moment();
+    const {
+      itemData,
+      addServeRecord,
+      motCustfeedBackDict,
+      currentMissionFlowId,
+      currentId,
+      toggleServiceRecordModal,
+    } = this.props;
+    const {
+      custId,
+      custName,
+    } = itemData;
+    const [firstServiceType = {}] = motCustfeedBackDict;
+    const { key: firstServiceTypeKey, children = [] } = firstServiceType;
+    const [firstFeedback = {}] = children;
+    const {
+      key: firstFeedbackKey,
+      children: [secondFeedback],
+    } = firstFeedback;
+    const { key: secondFeedbackKey } = secondFeedback;
+    const phoneDuration = date.calculateDuration(
+      this.phoneStartTime.valueOf(),
+      this.phoneEndTime.valueOf(),
+    );
+    const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}`;
+    const payload = {
+      missionFlowId: currentMissionFlowId,
+      missionId: currentId,
+      custId,
+      serveWay: 'HTSC Phone',
+      taskType: '2',
+      flowStatus: '30',
+      type: firstServiceTypeKey,
+      serveType: firstServiceTypeKey,
+      serveCustFeedBack: firstFeedbackKey,
+      serveCustFeedBack2: secondFeedbackKey,
+      serveContentDesc: serviceContentDesc,
+      serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
+      feedBackTime: moment().format('YYYY-MM-DD'),
+    };
+    // 保存默认创建服务记录的信息
+    const saveRecordData = () => {
+      toggleServiceRecordModal({
+        custId,
+        custName,
+        flag: false,
+        caller: PHONE,
+        prevRecordInfo: payload,
+        source: 'taskManage',
+      });
+    };
+    addServeRecord({
+      postBody: payload,
+      callback2: saveRecordData,
+      hasLoading: false,
+    });
+  }
+
+  // 通话开始
+  @autobind
+  handlePhoneClick() {
+    this.phoneStartTime = moment();
   }
 
   /**
@@ -205,14 +245,18 @@ export default class TargetCustomerRight extends PureComponent {
    */
   @autobind
   renderPhone(num) {
-    console.log('num: ', num);
     const {
       itemData,
+      currentCustomer,
     } = this.props;
+    if (!_.includes(CALL_LIST, currentCustomer.missionStatusCode)) {
+      return num;
+    }
     return (
       <Phone
+        onClick={this.handlePhoneClick}
         onEnd={this.handlePhoneEnd}
-        number={'18751964883'}
+        number={num}
         custType={itemData.custNature}
         disable={false}
       />
@@ -357,7 +401,8 @@ export default class TargetCustomerRight extends PureComponent {
     const infoCompletionRate = itemData.infoCompletionRate ?
       `${Number(itemData.infoCompletionRate) * 100}%` : '--';
     const introducerName = this.handleEmpty(itemData.empName);
-
+    // 主电话
+    const mainPhone = this.handleEmpty(itemData.contactPhone);
     return (
       <div className={styles.box} ref={ref => this.container = ref}>
         <Affix target={() => getStickyTarget(this.container)}>
@@ -411,7 +456,7 @@ export default class TargetCustomerRight extends PureComponent {
                     <h5
                       className={styles.phoneRight}
                     >
-                      <span>联系电话：</span><span>{this.handleEmpty(itemData.contactPhone)}</span>
+                      <span>联系电话：</span><span>{this.renderPhone(mainPhone)}</span>
                       {this.renderPhoneNumTips(itemData)}
                     </h5>
                   </Col> : null

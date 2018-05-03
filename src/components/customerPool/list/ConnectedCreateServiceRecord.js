@@ -33,6 +33,8 @@ const mapDispatchToProps = {
   queryCustFeedbackList4ZLFins: fetchDataFunction(true, 'performerView/queryCustFeedbackList4ZLFins'),
   // 查询涨乐财富通服务方式下的审批人列表
   queryApprovalList: fetchDataFunction(false, 'performerView/queryApprovalList4ZLFins'),
+  // 重置打电话时服务记录的显示标志
+  resetCaller: fetchDataFunction(false, 'app/resetCaller'),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateServiceRecord);

@@ -55,6 +55,7 @@ const mapStateToProps = state => ({
   motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
   // 服务弹窗的调用方
   serviceRecordModalVisibleOfCaller: state.app.serviceRecordModalVisibleOfCaller,
+  prevRecordInfo: state.app.prevRecordInfo,
 });
 
 const mapDispatchToProps = {
@@ -92,6 +93,7 @@ export default class Main extends Component {
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
     serviceRecordModalVisibleOfCaller: PropTypes.string,
+    prevRecordInfo: PropTypes.object,
   }
 
   static defaultProps = {
@@ -100,6 +102,7 @@ export default class Main extends Component {
     serviceRecordModalVisibleOfName: '',
     loadingForceFull: false,
     serviceRecordModalVisibleOfCaller: '',
+    prevRecordInfo: {},
   }
 
   componentDidMount() {
@@ -126,6 +129,7 @@ export default class Main extends Component {
       ceFileDelete,
       motSelfBuiltFeedbackList,
       serviceRecordModalVisibleOfCaller,
+      prevRecordInfo,
     } = this.props;
     return (
       <LocaleProvider locale={zhCN}>
@@ -158,6 +162,7 @@ export default class Main extends Component {
                             ceFileDelete={ceFileDelete}
                             taskFeedbackList={motSelfBuiltFeedbackList}
                             caller={serviceRecordModalVisibleOfCaller}
+                            prevRecordInfo={prevRecordInfo}
                           />
                         </div>
                       : null

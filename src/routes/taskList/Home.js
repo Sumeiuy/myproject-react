@@ -487,6 +487,10 @@ export default class PerformerView extends PureComponent {
       queryCustFeedbackList4ZLFins,
       queryApprovalList,
       zhangleApprovalList,
+      toggleServiceRecordModal,
+      serviceRecordModalVisibleOfCaller,
+      prevRecordInfo,
+      addServeRecordOfPhone,
     } = this.props;
     const {
       typeCode,
@@ -543,6 +547,10 @@ export default class PerformerView extends PureComponent {
         queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
         queryApprovalList={queryApprovalList}
         zhangleApprovalList={zhangleApprovalList}
+        toggleServiceRecordModal={toggleServiceRecordModal}
+        serviceRecordModalVisibleOfCaller={serviceRecordModalVisibleOfCaller}
+        prevRecordInfo={prevRecordInfo}
+        addServeRecordOfPhone={addServeRecordOfPhone}
       />
     );
   }

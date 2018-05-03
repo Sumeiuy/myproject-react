@@ -19,14 +19,14 @@ const { TextArea } = Input;
 const FormItem = Form.Item;
 
 export default function ServeRecord(props) {
-  const { showError, value, onChange, caller } = props;
+  const { showError, value, onChange, caller, prevRecordInfo } = props;
 
   const serviceContentErrorProps = showError ? {
     hasFeedback: false,
     validateStatus: 'error',
     help: '服务记录不能为空，最多输入1000汉字',
   } : null;
-
+  const { serveContentDesc = '' } = prevRecordInfo;
   return (
     <div className={styles.serveRecord}>
       <div className={styles.title}>服务记录:</div>
@@ -34,7 +34,7 @@ export default function ServeRecord(props) {
         <div className={styles.content}>
           {
             caller === PHONE &&
-            <p className={styles.yuyintishi}>2017年4月1日给客户发起语音通话，时长3分2秒</p>
+            <p className={styles.yuyintishi}>{serveContentDesc}</p>
           }
           <TextArea
             rows={5}
@@ -59,9 +59,11 @@ ServeRecord.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   caller: PropTypes.string.isRequired,
+  prevRecordInfo: PropTypes.object,
 };
 
 ServeRecord.defaultProps = {
   showError: false,
   value: '',
+  prevRecordInfo: {},
 };

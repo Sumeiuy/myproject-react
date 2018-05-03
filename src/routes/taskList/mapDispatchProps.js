@@ -70,4 +70,8 @@ export default ({ routerRedux, dispatch }) => ({
   queryCustFeedbackList4ZLFins: dispatch(effects.queryCustFeedbackList4ZLFins, { loading: false }),
   // 查询涨乐财富通服务方式下的审批人列表
   queryApprovalList: dispatch(effects.queryApprovalList, { loading: false }),
+  // 保存打电话时默认添加的服务记录的信息
+  toggleServiceRecordModal: dispatch(effects.toggleServiceRecordModal, { loading: false }),
+  // 打电话时添加服务记录，不需要loading
+  addServeRecordOfPhone: dispatch(effects.addServiceRecord, { loading: false }),
 });

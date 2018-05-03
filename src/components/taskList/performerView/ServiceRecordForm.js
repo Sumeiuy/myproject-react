@@ -35,7 +35,10 @@ export default class ServiceRecordForm extends PureComponent {
     if (_.isEmpty(data)) return;
 
     // 添加服务记录
-    this.props.addServeRecord(data, this.handleCancel);
+    this.props.addServeRecord({
+      postBody: data,
+      callback: this.handleCancel,
+    });
   }
 
   @autobind
@@ -64,9 +67,30 @@ export default class ServiceRecordForm extends PureComponent {
       zhangleApprovalList,
       empInfo: { empInfo },
       statusCode,
+      serviceRecordModalVisibleOfCaller,
+      prevRecordInfo,
     } = this.props;
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
+
+    let footerNode;
+    if (!isReadOnly) {
+      // 非手机调用的添加服务记录
+      if (serviceRecordModalVisibleOfCaller !== 'phone') {
+        footerNode = (
+          <div className={styles.operationSection}>
+            <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
+            <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
+          </div>
+        );
+      } else {
+        footerNode = (
+          <div className={styles.operationSection}>
+            <Button className={styles.submitBtn} onClick={this.handleCancel} type="primary" >提交</Button>
+          </div>
+        );
+      }
+    }
 
     return (
       <div className={styles.serviceRecordWrapper}>
@@ -101,15 +125,10 @@ export default class ServiceRecordForm extends PureComponent {
           zhangleApprovalList={zhangleApprovalList}
           queryApprovalList={queryApprovalList}
           flowStatusCode={statusCode}
+          caller={serviceRecordModalVisibleOfCaller}
+          prevRecordInfo={prevRecordInfo}
         />
-
-        {
-          !isReadOnly ?
-            <div className={styles.operationSection}>
-              <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
-              <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
-            </div> : null
-        }
+        {footerNode}
       </div>
     );
   }
@@ -138,4 +157,6 @@ ServiceRecordForm.propTypes = {
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
   statusCode: PropTypes.string.isRequired,
+  prevRecordInfo: PropTypes.object.isRequired,
+  serviceRecordModalVisibleOfCaller: PropTypes.string.isRequired,
 };

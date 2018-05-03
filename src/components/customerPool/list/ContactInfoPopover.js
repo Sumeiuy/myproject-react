@@ -1,3 +1,8 @@
+/**
+ * 客户列表联系方式弹窗中更多联系方式的悬浮层内容
+ * 汪俊俊
+ */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
@@ -7,6 +12,44 @@ import { fspContainer } from '../../../config';
 import Icon from '../../common/Icon';
 
 import styles from './contactInfoPopover.less';
+
+// 联系方式分组对应的中文显示名称
+const DISPLAY_NAME_TEL = {
+  workTels: '公司电话',
+  homeTels: '家庭电话',
+  cellPhones: '移动电话',
+  otherTels: '其他电话',
+};
+
+/**
+ * 个人客户：将联系方式列表中的主要电话提至第一个显示
+ * {cellphones: [{mainFlag: false}, {mainFlag: true}]}
+ * 转成 [ key: 'cellphones', value: [{mainFlag: true}, {mainFlag: false}] ]
+ */
+function headMainContact(list) {
+  const newList = [];
+  Object.keys(list).forEach((item) => {
+    const mainContact = _.filter(list[item], object => object.mainFlag);
+    const notMainContact = _.filter(list[item], object => !object.mainFlag);
+    if (_.isEmpty(mainContact)) {
+      newList.push({ key: item, value: notMainContact });
+    } else {
+      newList.unshift({ key: item, value: [...mainContact, ...notMainContact] });
+    }
+  });
+  return newList;
+}
+
+/**
+ * 机构客户： 主联系人提至第一个
+ * @param {*} list
+ */
+function headMainLinkman(list) {
+  const mainLinkman = _.filter(list, object => object.mainFlag);
+  const notMainLinkman = _.filter(list, object => !object.mainFlag);
+  return [...mainLinkman, ...notMainLinkman];
+}
+
 
 export default class ContactInfoPopover extends PureComponent {
 
@@ -30,19 +73,27 @@ export default class ContactInfoPopover extends PureComponent {
     return document.querySelector(fspContainer.container) || document.body;
   }
 
-  generatePersonalContacts(telList, name) {
-    const hasWorkTels = !_.isEmpty(telList);
-    const newList = hasWorkTels ? [{}, ...telList] : [];
+  /**
+   * 生成悬浮层的联系方式组
+   * @param {*} groupTitle   组名称
+   * @param {*} telList   组内的联系方式列表
+   * @param {*} label   组内的联系方式对应的标签
+   */
+  generateContactsGroup({ groupTitle, telList, label = '' }) {
+    if (_.isEmpty(telList)) {
+      return null;
+    }
+    const newList = [{}, ...telList];
     return (
       <ul>
         {
-          hasWorkTels &&
           _.map(newList, (item, index) => {
             if (index === 0) {
-              return <li className={styles.title} key={name} >{name}</li>;
+              return <li className={styles.title} key={groupTitle} >{groupTitle}</li>;
             }
             return (
               <li key={item.rowId} >
+                {label && <span className={styles.label}>{label}</span>}
                 <span className={styles.content}>{item.contactValue}</span>
                 {item.mainFlag && <span className={styles.primary}>主</span>}
               </li>
@@ -53,18 +104,33 @@ export default class ContactInfoPopover extends PureComponent {
     );
   }
 
+  /**
+   * 根据不同的联系人生成以联系人为组的联系号码列表
+   * @param {*} linkmanList
+   */
   generateOrgLinkmanList(linkmanList) {
-    const hasWorkTels = !_.isEmpty(linkmanList);
+    if (_.isEmpty(linkmanList)) {
+      return null;
+    }
     return (
       <div className={styles.popoverLayer}>
         {
-          hasWorkTels &&
           _.map(linkmanList, item => (this.generateOrgLinkmanItems(item)))
         }
       </div>
     );
   }
 
+  /**
+   * 根据联系人的信息生成联系人的联系号码
+   * @param {*} name 联系人名称
+   * @param {*} custRela 联系人职务
+   * @param {*} workTels 联系人的公司电话
+   * @param {*} homeTels 联系人的家庭电话
+   * @param {*} cellPhones 联系人的移动电话
+   * @param {*} otherTels 联系人的其他联系电话
+   * @param {*} rowId 联系人rowId
+   */
   generateOrgLinkmanItems({
     name = '',
     custRela = '',
@@ -74,75 +140,71 @@ export default class ContactInfoPopover extends PureComponent {
     otherTels = [],
     rowId = '',
   }) {
+    const groupTitle = `${name}(${custRela})`;
     return (
       <div key={rowId}>
         {
-          this.generateOrgContacts({ name, custRela, telList: workTels, label: '公司电话' })
+          this.generateContactsGroup({
+            groupTitle,
+            telList: workTels,
+            label: DISPLAY_NAME_TEL.workTels,
+          })
         }
         {
-          this.generateOrgContacts({ name, custRela, telList: homeTels, label: '家庭电话' })
+          this.generateContactsGroup({
+            groupTitle,
+            telList: homeTels,
+            label: DISPLAY_NAME_TEL.homeTels,
+          })
         }
         {
-          this.generateOrgContacts({ name, custRela, telList: cellPhones, label: '移动电话' })
+          this.generateContactsGroup({
+            groupTitle,
+            telList: cellPhones,
+            label: DISPLAY_NAME_TEL.cellPhones,
+          })
         }
         {
-          this.generateOrgContacts({ name, custRela, telList: otherTels, label: '其他电话' })
+          this.generateContactsGroup({
+            groupTitle,
+            telList: otherTels,
+            label: DISPLAY_NAME_TEL.otherTels,
+          })
         }
       </div>
     );
   }
 
-  generateOrgContacts({ name, custRela, telList, label }) {
-    const hasWorkTels = !_.isEmpty(telList);
-    const newList = hasWorkTels ? [{}, ...telList] : [];
-    return (
-      <ul>
-        {
-          hasWorkTels &&
-          _.map(newList, (item, index) => {
-            if (index === 0) {
-              return <li className={styles.title} key={`${name}${custRela}`} >{name}({custRela})</li>;
-            }
-            return (
-              <li key={item.rowId} >
-                <span className={styles.label}>{label}</span>
-                <span className={styles.content}>{item.contactValue}</span>
-                {item.mainFlag && <span className={styles.primary}>主</span>}
-              </li>
-            );
-          })
-        }
-      </ul>
-    );
-  }
-
+  /**
+   * 生成悬浮框中的电话列表
+   */
   @autobind
   generateSuspensionContent() {
     const {
       custType,
-      personalContactInfo,
+      personalContactInfo = {},
       orgCustomerContactInfoList,
     } = this.props;
+    // 个人
     if (custType === 'per') {
+      const list = headMainContact(personalContactInfo);
       return (
         <div className={styles.popoverLayer}>
           {
-            this.generatePersonalContacts(personalContactInfo.workTels, '公司电话')
-          }
-          {
-            this.generatePersonalContacts(personalContactInfo.homeTels, '家庭电话')
-          }
-          {
-            this.generatePersonalContacts(personalContactInfo.cellPhones, '移动电话')
-          }
-          {
-            this.generatePersonalContacts(personalContactInfo.otherTels, '其他电话')
+            _.map(list, item =>
+              this.generateContactsGroup({
+                groupTitle: DISPLAY_NAME_TEL[item.key],
+                telList: item.value,
+              }),
+            )
           }
         </div>
       );
     }
+    // 机构
     if (custType === 'org') {
-      return this.generateOrgLinkmanList(orgCustomerContactInfoList);
+      const list = headMainLinkman(orgCustomerContactInfoList);
+      return this.generateOrgLinkmanList(list);
     }
     return <div className={styles.popoverLayer} />;
   }

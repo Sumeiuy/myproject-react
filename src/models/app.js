@@ -45,6 +45,8 @@ export default {
     creator: '',
     // mot自建任务的服务类型和反馈类型
     motSelfBuiltFeedbackList: [],
+    // 打电话时默认生成服务记录的信息
+    prevRecordInfo: {},
   },
   reducers: {
     // 获取员工职责与职位
@@ -130,6 +132,7 @@ export default {
         serviceRecordModalVisibleOfId: payload.custId,
         serviceRecordModalVisibleOfName: payload.custName,
         serviceRecordModalVisibleOfCaller: payload.caller,
+        prevRecordInfo: payload.prevRecordInfo,
       };
     },
     getDictionarySuccess(state, action) {
@@ -173,6 +176,13 @@ export default {
       return {
         ...state,
         motSelfBuiltFeedbackList: missionList,
+      };
+    },
+    resetCaller(state) {
+      return {
+        ...state,
+        serviceRecordModalVisibleOfCaller: '',
+        prevRecordInfo: {},
       };
     },
   },

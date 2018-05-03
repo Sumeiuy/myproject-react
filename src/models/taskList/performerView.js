@@ -244,6 +244,10 @@ export default {
           ...payload,
         },
       });
+      // 当客户列表选中的客户流水变化时，清除打电话显示服务记录的标志
+      yield put({
+        type: 'app/resetCaller',
+      });
     },
 
     // 执行者视图的详情基本信息
@@ -253,6 +257,10 @@ export default {
       if (isClear) {
         // 清除查询上次目标客户列表的条件
         yield put({ type: 'clearParameter' });
+        // 当客户列表选中的客户流水变化时，清除打电话显示服务记录的标志
+        yield put({
+          type: 'app/resetCaller',
+        });
       }
       const { resultData } = yield call(api.queryTaskDetailBasicInfo, otherPayload);
       if (resultData) {

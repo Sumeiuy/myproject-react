@@ -56,7 +56,12 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   @autobind
-  addServiceRecord(postBody, callback) {
+  addServiceRecord({
+    postBody,
+    callback = _.noop,
+    callback2 = _.noop,
+    hasLoading = true,
+  }) {
     const {
       addServeRecord,
       reloadTargetCustInfo,
@@ -64,11 +69,13 @@ export default class ServiceImplementation extends PureComponent {
       modifyLocalTaskList,
       currentId,
       getTaskDetailBasicInfo,
+      addServeRecordOfPhone,
     } = this.props;
+    const addServiceRecord = hasLoading ? addServeRecord : addServeRecordOfPhone;
     // 此处需要针对涨乐财富通服务方式特殊处理
     // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
     // 执行提交服务记录的接口
-    addServeRecord(_.omit(postBody), ['zlApprovalCode'])
+    addServiceRecord(_.omit(postBody), ['zlApprovalCode'])
       .then(() => {
         if (this.props.addMotServeRecordSuccess) {
           // 服务记录添加成功后重新加载当前目标客户的详细信息
@@ -85,7 +92,11 @@ export default class ServiceImplementation extends PureComponent {
           // 添加服务记录成功之后，重新获取custUuid
           queryCustUuid();
           // this.updateList(postBody);
-          message.success('添加服务记录成功');
+          if (hasLoading) {
+            message.success('添加服务记录成功');
+          }
+          // 保存打电话自动创建的服务记录的信息
+          callback2();
         }
       });
   }
@@ -198,6 +209,9 @@ export default class ServiceImplementation extends PureComponent {
       eventId,
       zhangleApprovalList,
       queryApprovalList,
+      toggleServiceRecordModal,
+      serviceRecordModalVisibleOfCaller,
+      prevRecordInfo,
     } = this.props;
     // 获取当前选中的数据的custId
     const currentMissionFlowId = targetMissionFlowId || (list[0] || {}).missionFlowId;
@@ -262,7 +276,13 @@ export default class ServiceImplementation extends PureComponent {
     // 判断任务流水客户状态，处理中 和 未开始， 则为可编辑
     // TODO 新需求需要针对涨乐财富通的服务方式来判断状态是否可读
     // 涨乐财富通服务方式下，只有审批中和已完成状态，才属于只读状态
-    const isReadOnly = this.judgeIsReadyOnly({ statusCode, serviceStatusCode, serviceWayCode });
+    let isReadOnly;
+    if (serviceRecordModalVisibleOfCaller === 'phone') {
+      // 打电话调用时，服务记录表单可编辑
+      isReadOnly = false;
+    } else {
+      isReadOnly = this.judgeIsReadyOnly({ statusCode, serviceStatusCode, serviceWayCode });
+    }
 
     // 涨乐财富通中才有审批和驳回状态
     const isReject = this.isRejct({ serviceStatusCode, serviceWayCode });
@@ -287,6 +307,10 @@ export default class ServiceImplementation extends PureComponent {
           getCustDetail={getCustDetail}
           getCeFileList={getCeFileList}
           filesList={filesList}
+          toggleServiceRecordModal={toggleServiceRecordModal}
+          addServeRecord={this.addServiceRecord}
+          motCustfeedBackDict={motCustfeedBackDict}
+          currentCustomer={currentCustomer}
         />
         {
           (!_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict))
@@ -310,6 +334,8 @@ export default class ServiceImplementation extends PureComponent {
             custFeedbackList={custFeedbackList}
             queryApprovalList={queryApprovalList}
             zhangleApprovalList={zhangleApprovalList}
+            serviceRecordModalVisibleOfCaller={serviceRecordModalVisibleOfCaller}
+            prevRecordInfo={prevRecordInfo}
           /> : null
         }
       </div>
@@ -360,6 +386,10 @@ ServiceImplementation.propTypes = {
   // 涨乐财富通服务方式下的审批人列表以及查询方法
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
+  toggleServiceRecordModal: PropTypes.func.isRequired,
+  serviceRecordModalVisibleOfCaller: PropTypes.string.isRequired,
+  prevRecordInfo: PropTypes.object.isRequired,
+  addServeRecordOfPhone: PropTypes.func.isRequired,
 };
 
 ServiceImplementation.defaultProps = {

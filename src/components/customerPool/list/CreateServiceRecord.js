@@ -66,6 +66,8 @@ export default class CreateServiceRecord extends PureComponent {
     custFeedbackList: PropTypes.array.isRequired,
     zhangleApprovalList: PropTypes.array.isRequired,
     caller: PropTypes.string.isRequired,
+    prevRecordInfo: PropTypes.object.isRequired,
+    resetCaller: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -112,19 +114,21 @@ export default class CreateServiceRecord extends PureComponent {
     const data = this.serviceRecordContentRef.getData();
     if (_.isEmpty(data)) return;
 
-    const { id, addServeRecord } = this.props;
+    const { id, addServeRecord, resetCaller } = this.props;
 
     addServeRecord({ ...data, custId: id });
+    resetCaller();
   }
 
   // 关闭弹窗
   @autobind
   @logable({ type: 'Click', payload: { name: '取消' } })
   handleCancel() {
-    const { onToggleServiceRecordModal, handleCloseClick } = this.props;
+    const { onToggleServiceRecordModal, handleCloseClick, resetCaller } = this.props;
     // 手动上传日志
     handleCloseClick();
     onToggleServiceRecordModal(false);
+    resetCaller();
   }
 
   @autobind
@@ -164,6 +168,7 @@ export default class CreateServiceRecord extends PureComponent {
       custFeedbackList,
       zhangleApprovalList,
       caller,
+      prevRecordInfo,
     } = this.props;
     // 此处需要新增一个对 taskFeedbackList为空的判断
     if (_.isEmpty(taskFeedbackList)) return null;
@@ -175,12 +180,14 @@ export default class CreateServiceRecord extends PureComponent {
       </p>
     );
 
-    const footer = (
+    const footer = caller !== 'phone' ? (
       <div className={styles.customFooter}>
         <a className={styles.cancelBtn} onClick={this.handleCancel}>取消</a>
         <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
       </div>
-    );
+    ) : (<div className={styles.customFooter}>
+      <a className={styles.submitBtn} onClick={this.handleCancel}>提交</a>
+    </div>);
 
     // 从客户列表进入创建服务记录的均是自建任务
     const serviceReocrd = {
@@ -214,6 +221,7 @@ export default class CreateServiceRecord extends PureComponent {
                 custFeedbackList={custFeedbackList}
                 zhangleApprovalList={zhangleApprovalList}
                 caller={caller}
+                prevRecordInfo={prevRecordInfo}
               />
             </div>
             :

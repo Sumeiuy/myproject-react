@@ -81,4 +81,8 @@ export default {
   custFeedbackList: PropTypes.array.isRequired,
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
+  toggleServiceRecordModal: PropTypes.func.isRequired,
+  serviceRecordModalVisibleOfCaller: PropTypes.string.isRequired,
+  prevRecordInfo: PropTypes.object.isRequired,
+  addServeRecordOfPhone: PropTypes.func.isRequired,
 };

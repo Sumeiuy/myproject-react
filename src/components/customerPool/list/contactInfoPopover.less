@@ -10,8 +10,15 @@
   font-size: 14px;
 }
 
+.popover {
+  :global {
+    .ant-popover-arrow {
+      box-shadow: -2px -1px 4px 0 rgba(0, 0, 0, .2);
+    }
+  }
+}
+
 .popoverLayer {
-  display: inline-block;
   margin: 0 auto;
   max-height: 270px;
   background-color: #fff;

@@ -12,7 +12,7 @@ import moment from 'moment';
 import { Modal, Button } from 'antd';
 import Icon from '../../common/Icon';
 import Collapse from './CreateCollapse';
-import { check } from '../../../helper';
+import { check, date } from '../../../helper';
 import logable from '../../../decorators/logable';
 import ContactInfoPopover from './ContactInfoPopover';
 import Phone from '../../common/phone';
@@ -86,6 +86,8 @@ export default class CreateContactModal extends PureComponent {
     this.state = {
       visible: props.visible,
     };
+    this.phoneStartTime = '';
+    this.phoneEndTime = '';
   }
 
   @autobind
@@ -253,7 +255,8 @@ export default class CreateContactModal extends PureComponent {
    * 通话结束后要创建一条服务记录，并弹出服务记录框
    */
   @autobind
-  handlePhoneEnd(data) {
+  handlePhoneEnd() {
+    this.phoneEndTime = moment();
     const {
       currentCustId,
       currentCustName,
@@ -262,7 +265,6 @@ export default class CreateContactModal extends PureComponent {
       motSelfBuiltFeedbackList,
     } = this.props;
     const list = transformCustFeecbackData(motSelfBuiltFeedbackList);
-    console.log('list>>>>', data, list);
     const [firstServiceType = {}] = list;
     const { key: firstServiceTypeKey, children = [] } = firstServiceType;
     const [firstFeedback = {}] = children;
@@ -271,7 +273,12 @@ export default class CreateContactModal extends PureComponent {
       children: [secondFeedback],
     } = firstFeedback;
     const { key: secondFeedbackKey } = secondFeedback;
-    addServeRecord({
+    const phoneDuration = date.calculateDuration(
+      this.phoneStartTime.valueOf(),
+      this.phoneEndTime.valueOf(),
+    );
+    const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}`;
+    const payload = {
       custId: currentCustId,
       serveWay: 'HTSC Phone',
       taskType: '2',
@@ -279,18 +286,25 @@ export default class CreateContactModal extends PureComponent {
       serveType: firstServiceTypeKey,
       serveCustFeedBack: firstFeedbackKey,
       serveCustFeedBack2: secondFeedbackKey,
-      serveContentDesc: '2222',
-      serveTime: '2018-04-27 10:53',
+      serveContentDesc: serviceContentDesc,
+      serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
       feedBackTime: moment().format('YYYY-MM-DD'),
-      caller: PHONE,
-    }).then(() => {
+    };
+    addServeRecord(payload).then(() => {
       toggleServiceRecordModal({
         custId: currentCustId,
         custName: currentCustName,
         flag: true,
         caller: PHONE,
+        prevRecordInfo: payload,
       });
     });
+  }
+
+  // 通话开始
+  @autobind
+  handlePhoneClick() {
+    this.phoneStartTime = moment();
   }
 
   /**
@@ -321,8 +335,11 @@ export default class CreateContactModal extends PureComponent {
         {
           (!_.isEmpty(mainContactInfo.cellInfo) || personalContactInfo.mainTelInfo.type !== 'none') &&
           <Phone
+            onClick={this.handlePhoneClick}
             onEnd={this.handlePhoneEnd}
-            number={'18751964883'}
+            number={custType === 'per' ?
+              personalContactInfo.mainTelInfo.value :
+              mainContactInfo.cellInfo}
             custType={custType}
             disable={false}
           />
