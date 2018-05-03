@@ -3,13 +3,12 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 14:48:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-02 18:40:21
+ * @Last Modified time: 2018-05-03 13:33:46
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Input, Tooltip } from 'antd';
-import cx from 'classnames';
 
 import logable from '../../../decorators/logable';
 import Icon from '../../common/Icon';
@@ -32,8 +31,6 @@ export default class EditInput extends PureComponent {
       PropTypes.element,
       PropTypes.node,
     ]),
-    // 用来判断其放在头部一级大类还是二级里面
-    isInHeader: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -144,16 +141,12 @@ export default class EditInput extends PureComponent {
 
   render() {
     const { edit, value } = this.state;
-    const { btnGroup, isInHeader } = this.props;
-    const textShowCls = cx({
-      [styles.noInput]: true,
-      [styles.inHeader]: isInHeader,
-    });
+    const { btnGroup } = this.props;
     return (
       <div className={styles.editInput}>
         {
           !edit ?
-            <div className={textShowCls}>
+            <div className={styles.noInput}>
               {this.renderInputTextDomByValue(value)}
               <Icon type="edit" onClick={this.onEdit} title="编辑" />
               {btnGroup}
