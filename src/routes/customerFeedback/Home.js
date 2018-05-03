@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-26 19:15:33
+ * @Last Modified time: 2018-05-03 16:46:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -73,6 +73,7 @@ const mapDispatchToProps = {
 @withRouter
 export default class CustomerFeedback extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 获取任务列表
     getMissionList: PropTypes.func.isRequired,
     emptyMissionData: PropTypes.func.isRequired,
@@ -93,7 +94,6 @@ export default class CustomerFeedback extends PureComponent {
   }
 
   static contextTypes = {
-    location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
   }
@@ -107,8 +107,8 @@ export default class CustomerFeedback extends PureComponent {
 
   componentDidMount() {
     // 第一次进入页面时将tab状态初始化到url中，避免subscriptions中重复请求
+    const { replace } = this.context;
     const {
-      replace,
       location: {
         pathname,
         query,
@@ -117,7 +117,7 @@ export default class CustomerFeedback extends PureComponent {
           childActiveKey,
         },
       },
-    } = this.context;
+    } = this.props;
     if (_.isEmpty(parentActiveKey) || _.isEmpty(childActiveKey)) {
       replace({
         pathname,
@@ -158,8 +158,10 @@ export default class CustomerFeedback extends PureComponent {
       feedbackData,
       delCustomerFeedback,
       addCustomerFeedback,
+      location,
+      location: { query: { childActiveKey } },
      } = this.props;
-    const { replace, location, location: { query: { childActiveKey } } } = this.context;
+    const { replace } = this.context;
     const missionBindProps = {
       getMissionList,
       missionData,
@@ -184,6 +186,7 @@ export default class CustomerFeedback extends PureComponent {
       delFeedback,
       addFeedback,
       modifyFeedback,
+      location,
      } = this.props;
     const optionsMaintainProps = {
       queryFeedbackList: this.queryFeedbackList,
@@ -191,6 +194,7 @@ export default class CustomerFeedback extends PureComponent {
       delFeedback,
       addFeedback,
       modifyFeedback,
+      location,
     };
 
     return (<OptionsMaintain {...optionsMaintainProps} />);
@@ -199,7 +203,8 @@ export default class CustomerFeedback extends PureComponent {
   // 任务绑定反馈|查询任务列表
   @autobind
   queryMissionList(params) {
-    const { replace, location: { pathname, query } } = this.context;
+    const { replace } = this.context;
+    const { location: { pathname, query } } = this.props;
     this.props.getMissionList(params).then(() => {
       const { missionData: { page = {} } } = this.props;
       replace({
@@ -224,7 +229,8 @@ export default class CustomerFeedback extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '切换Tab：任务绑定客户反馈/客户反馈选项维护' } })
   handleChangeTab(key) {
-    const { replace, location: { pathname, query } } = this.context;
+    const { replace } = this.context;
+    const { location: { pathname, query } } = this.props;
     replace({
       pathname,
       query: {
@@ -238,8 +244,8 @@ export default class CustomerFeedback extends PureComponent {
   // 任务绑定组件切换tab状态更新到url
   @autobind
   missionBindChangeTab(key) {
-    const { emptyMissionData } = this.props;
-    const { replace, location: { pathname, query } } = this.context;
+    const { emptyMissionData, location: { pathname, query } } = this.props;
+    const { replace } = this.context;
     replace({
       pathname,
       query: {
@@ -253,7 +259,7 @@ export default class CustomerFeedback extends PureComponent {
   }
 
   render() {
-    const { location: { query: { parentActiveKey = TAB_LIST[0].key } } } = this.context;
+    const { location: { query: { parentActiveKey = TAB_LIST[0].key } } } = this.props;
     const tabContentComponent = this.getComponentByTabKey(parentActiveKey);
 
     return (

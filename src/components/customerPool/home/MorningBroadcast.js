@@ -35,7 +35,7 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '收起' } })
+  @logable({ type: 'Click', payload: { name: '收听' } })
   onListen(newsId, audioFileId) {
     const { queryAudioFile, sourceList = [] } = this.props;
     const sourceFile = sourceList[newsId];

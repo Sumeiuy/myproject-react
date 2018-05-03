@@ -22,16 +22,16 @@ export function judgeCurrentOrgLevel({ custRange, orgId = emp.getOrgId() }) {
   if (emp.isManagementHeadquarters(orgId)) {
     level = ORG_LEVEL1;
     currentScopeList = [
-      ...currentScopeList,
       EMP_COMPANY_ITEM,
       EMP_DEPARTMENT_ITEM,
+      ...currentScopeList,
     ];
   } else if (emp.isFiliale(custRange, orgId)) {
     // 判断是否是分公司
     level = ORG_LEVEL2;
     currentScopeList = [
-      ...currentScopeList,
       EMP_DEPARTMENT_ITEM,
+      ...currentScopeList,
     ];
   }
   return {
