@@ -149,7 +149,7 @@ export default class CombinationModal extends PureComponent {
 
   // 下拉框 change
   @autobind
-  selectChangeHandle(key, value) {
+  handleSelectChange(key, value) {
     const obj = {
       [key]: value,
     };
@@ -167,7 +167,7 @@ export default class CombinationModal extends PureComponent {
 
   // 树状选择器change
   @autobind
-  treeSelectChangeHandle(value) {
+  handleTreeSelectChange(value) {
     this.setState({
       combinationCode: value,
     }, this.sendRequest);
@@ -195,7 +195,7 @@ export default class CombinationModal extends PureComponent {
 
   // 根据关键字查询客户
   @autobind
-  searchListHandle(v = '') {
+  handleSearchList(v = '') {
     this.setState({
       keyword: v,
     }, this.sendRequest);
@@ -260,7 +260,7 @@ export default class CombinationModal extends PureComponent {
                 name="time"
                 data={timeRange}
                 value={time}
-                onChange={this.selectChangeHandle}
+                onChange={this.handleSelectChange}
               />
             </div>
             <div className={styles.headerItem}>
@@ -271,7 +271,7 @@ export default class CombinationModal extends PureComponent {
                 treeData={treeData}
                 placeholder="Please select"
                 treeDefaultExpandAll
-                onChange={this.treeSelectChangeHandle}
+                onChange={this.handleTreeSelectChange}
                 dropdownClassName={styles.dropdownClassName}
               />
             </div>
@@ -284,7 +284,7 @@ export default class CombinationModal extends PureComponent {
                     name="directionCode"
                     data={directionRange}
                     value={directionCode}
-                    onChange={this.selectChangeHandle}
+                    onChange={this.handleSelectChange}
                   />
                 </div>
               :
@@ -297,7 +297,7 @@ export default class CombinationModal extends PureComponent {
                   width: '235px',
                 }}
                 defaultValue={keyword}
-                onSearch={this.searchListHandle}
+                onSearch={this.handleSearchList}
                 enterButton
               />
             </div>

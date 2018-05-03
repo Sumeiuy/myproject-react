@@ -8,7 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Table } from 'antd';
+import { Table, Popover } from 'antd';
 import classnames from 'classnames';
 
 import InfoTitle from '../common/InfoTitle';
@@ -54,19 +54,19 @@ export default class WeeklySecurityTopTen extends PureComponent {
       return (<div className={styles.securityName}>
         <a
           title={`${name} ${code}`}
-          onClick={() => this.securityHandle(securityType, code)}
+          onClick={() => this.handleSecurityClick(securityType, code)}
         >
           {name}（{code}）
         </a>
-        <div className={styles.reason}>{reason || '调入理由：暂无'}</div>
+        <div className={styles.reason}>{this.renderPopover(reason)}</div>
       </div>);
     };
     // 证券调入时间
     newTitleList[1].render = text => (<div>{time.format(text, config.formatStr)}</div>);
     // 涨跌幅
     newTitleList[2].render = (text) => {
-      const change = this.percentChange(text.toFixed(2));
-      const bigThanZero = text > 0;
+      const change = this.handlePercentChange(text.toFixed(2));
+      const bigThanZero = text >= 0;
       const changeClassName = classnames({
         [styles.up]: bigThanZero,
         [styles.down]: !bigThanZero,
@@ -89,7 +89,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
 
   // 证券名称点击事件
   @autobind
-  securityHandle(type, code) {
+  handleSecurityClick(type, code) {
     if (type === STOCK_CODE) {
       const { openStockPage } = this.props;
       const openPayload = {
@@ -100,12 +100,37 @@ export default class WeeklySecurityTopTen extends PureComponent {
   }
 
   @autobind
-  percentChange(value) {
+  handlePercentChange(value) {
     let newValue = value;
     if (value > 0) {
       newValue = `+${newValue}`;
     }
     return newValue;
+  }
+
+  // 设置单元格的 popover
+  @autobind
+  renderPopover(value) {
+    let reactElement = null;
+    if (value) {
+      reactElement = (<Popover
+        placement="bottomLeft"
+        content={value}
+        trigger="hover"
+        overlayStyle={{
+          width: '240px',
+          padding: '10px',
+          wordBreak: 'break-all',
+        }}
+      >
+        <div className={styles.ellipsis}>
+          {value}
+        </div>
+      </Popover>);
+    } else {
+      reactElement = '调入理由：暂无';
+    }
+    return reactElement;
   }
 
   render() {
