@@ -213,7 +213,7 @@ export default class CombinationModal extends PureComponent {
     let reactElement = null;
     if (value) {
       reactElement = (<Popover
-        placement="top"
+        placement="topLeft"
         content={value}
         trigger="hover"
         overlayClassName={styles.popover}
