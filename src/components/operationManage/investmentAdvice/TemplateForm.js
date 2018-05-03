@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-03 10:16:18
+ * @Last Modified time: 2018-05-03 10:36:23
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
@@ -142,17 +142,22 @@ export default class TemplateForm extends PureComponent {
     const { anchorOffset, dataOffestKey, mentionValue } = this.state;
     let content = '';
     // 判断是否时首次插入参数，首次插入参数dataOffestKey是false
-    if (dataOffestKey && mentionValue) {
-      // 获取属性是data-offset-key的标签
-      const targetElement = getDomByAttribute('span', 'data-offset-key', dataOffestKey);
-      let innerText = targetElement[0].innerText;
-      innerText = `${innerText.slice(0, anchorOffset)} $${value} ${innerText.slice(anchorOffset)}`;
-      targetElement[0].children[0].innerText = innerText;
-      // 获取属性是data-text的标签内容
-      const allTextArray = getTextByAttribute('span', 'data-text');
-      content = allTextArray.join('');
+    if (mentionValue) {
+      //  判断是否时连续插入，连续插入dataOffestKey为空
+      if (dataOffestKey) {
+        // 获取属性是data-offset-key的标签
+        const targetElement = getDomByAttribute('span', 'data-offset-key', dataOffestKey);
+        let innerText = targetElement[0].innerText;
+        innerText = `${innerText.slice(0, anchorOffset)} $${value} ${innerText.slice(anchorOffset)}`;
+        targetElement[0].children[0].innerText = innerText;
+        // 获取属性是data-text的标签内容
+        const allTextArray = getTextByAttribute('span', 'data-text');
+        content = allTextArray.join('');
+      } else {
+        content = `${mentionValue} $${value} `;
+      }
     } else {
-      content = ` $${value}`;
+      content = ` $${value} `;
     }
     const contentState = toContentState(content);
     this.props.form.setFieldsValue({ content: contentState });
