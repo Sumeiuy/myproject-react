@@ -51,9 +51,9 @@ const regexp = {
   returnLine: /[\n\r]/g,
   /**
    * @desc：全量匹配文本中的URL
-   * 至汉字、空格、/ 结束
+   * 至汉字、空格 结束
    */
-  url: /(((?:https?:\/\/)?(?:www\.))[0-9A-Za-z]+\.[0-9A-Za-z]+(\/[^\s\u4e00-\u9fa5/]*)*)/g,
+  url: /((?:https?:\/\/)|(?:www\.))[0-9A-Za-z.]+(\/?[^\s\u4e00-\u9fa5/\r\n]*)*/g,
 };
 
 export default regexp;
