@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号修改页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 18:16:08
+ * @Last Modified time: 2018-05-03 10:53:13
  */
 
 import React, { PureComponent } from 'react';
@@ -38,6 +38,8 @@ const effects = {
   getButtonList: 'telephoneNumberManage/getButtonList',
   // 验证提交数据
   validateData: 'telephoneNumberManage/validateData',
+  // 删除绑定的服务经理
+  deleteBindingAdvisor: 'telephoneNumberManage/deleteBindingAdvisor',
 };
 const mapStateToProps = state => ({
   // 右侧详情数据
@@ -78,6 +80,8 @@ const mapDispatchToProps = {
   getButtonList: effect(effects.getButtonList, { forceFull: true }),
   // 验证提交数据
   validateData: effect(effects.validateData, { forceFull: true }),
+  // 验证提交数据
+  deleteBindingAdvisor: effect(effects.deleteBindingAdvisor, { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -111,6 +115,8 @@ export default class ApplyHome extends PureComponent {
     // 验证提交数据
     validateResultData: PropTypes.object.isRequired,
     validateData: PropTypes.func.isRequired,
+    // 删除绑定的服务经理
+    deleteBindingAdvisor: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -152,6 +158,7 @@ export default class ApplyHome extends PureComponent {
       getButtonList,
       validateResultData,
       validateData,
+      deleteBindingAdvisor,
     } = this.props;
     if (_.isEmpty(detailInfo) || _.isEmpty(empAppBindingList)) {
       return null;
@@ -172,6 +179,7 @@ export default class ApplyHome extends PureComponent {
         getButtonList={getButtonList}
         validateResultData={validateResultData}
         validateData={validateData}
+        deleteBindingAdvisor={deleteBindingAdvisor}
       />
     );
   }
