@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-02 23:18:16
+ * @Last Modified time: 2018-05-03 10:16:18
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
@@ -60,6 +60,8 @@ export default class TemplateForm extends PureComponent {
       anchorOffset: 0,
       // mention中光标所在的span标签的data-offset-key值
       dataOffestKey: '',
+      // mention中的value值
+      mentionValue: '',
     };
     // 判断内容是否需要校验，第一次渲染会调用handleMentionChange方法
     this.needCheckContent = false;
@@ -106,6 +108,9 @@ export default class TemplateForm extends PureComponent {
     }
     const content = toString(contentState);
     this.props.checkMention(content);
+    this.setState({
+      mentionValue: content,
+    });
     // 获取光标位置
     const selection = document.getSelection();
     const { anchorOffset, baseNode } = selection;
@@ -134,10 +139,10 @@ export default class TemplateForm extends PureComponent {
   @autobind
   insertParameter(item) {
     const { value } = item.item.props;
-    const { anchorOffset, dataOffestKey } = this.state;
+    const { anchorOffset, dataOffestKey, mentionValue } = this.state;
     let content = '';
     // 判断是否时首次插入参数，首次插入参数dataOffestKey是false
-    if (dataOffestKey) {
+    if (dataOffestKey && mentionValue) {
       // 获取属性是data-offset-key的标签
       const targetElement = getDomByAttribute('span', 'data-offset-key', dataOffestKey);
       let innerText = targetElement[0].innerText;
