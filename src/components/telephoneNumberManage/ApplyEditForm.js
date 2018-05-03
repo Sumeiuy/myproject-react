@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 20:03:40
+ * @Last Modified time: 2018-05-03 10:17:48
  */
 
 import React, { PureComponent } from 'react';
@@ -42,6 +42,8 @@ export default class ApplyEditForm extends PureComponent {
     // 验证提交数据
     validateResultData: PropTypes.object.isRequired,
     validateData: PropTypes.func.isRequired,
+    // 删除绑定的服务经理
+    deleteBindingAdvisor: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -213,6 +215,7 @@ export default class ApplyEditForm extends PureComponent {
       batchAdvisorListData,
       queryBatchAdvisorList,
       empAppBindingList,
+      deleteBindingAdvisor,
     } = this.props;
     const {
       nextApproverModal,
@@ -253,6 +256,7 @@ export default class ApplyEditForm extends PureComponent {
                 saveSelectedEmpList={this.saveSelectedEmpList}
                 advisorBindList={advisorBindList}
                 pageType="edit"
+                deleteBindingAdvisor={deleteBindingAdvisor}
               />
             </div>
             <div id="nginformation_module" className={styles.module}>
@@ -271,21 +275,17 @@ export default class ApplyEditForm extends PureComponent {
                 </ul>
               </div>
             </div>
-            <div id="approvalRecord_module" className={styles.module}>
-              <ApprovalRecord
-                head="审批记录"
-                info={workflowHistoryBeans}
-                currentApproval={currentApproval}
-                currentNodeName={currentNodeName}
-                statusType="ready"
-              />
-            </div>
-            <div id="button_module" className={styles.buttonModule}>
-              <BottonGroup
-                list={buttonListData}
-                onEmitEvent={this.handleSubmit}
-              />
-            </div>
+            <ApprovalRecord
+              head="审批记录"
+              info={workflowHistoryBeans}
+              currentApproval={currentApproval}
+              currentNodeName={currentNodeName}
+              statusType="ready"
+            />
+            <BottonGroup
+              list={buttonListData}
+              onEmitEvent={this.handleSubmit}
+            />
             <TableDialog {...searchProps} />
           </div>
         </div>

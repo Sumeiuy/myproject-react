@@ -3,7 +3,7 @@
  * @Description 业务手机申请页面添加服务经理
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-27 19:24:32
+ * @Last Modified time: 2018-05-03 12:59:12
  */
 
 
@@ -31,12 +31,15 @@ export default class AddEmpList extends PureComponent {
     queryBatchAdvisorList: PropTypes.func.isRequired,
     // 修改页面初始表格数据
     advisorBindList: PropTypes.array,
+    // 删除绑定的服务经理
+    deleteBindingAdvisor: PropTypes.func,
   }
 
   static defaultProps = {
     advisorList: [],
     pageType: '',
     advisorBindList: [],
+    deleteBindingAdvisor: _.noop,
   }
 
   constructor(props) {
@@ -51,14 +54,6 @@ export default class AddEmpList extends PureComponent {
       // 批量添加弹框是否显示，默认false为不显示
       isShowBatchAddModal: false,
     };
-  }
-
-  componentDidMount() {
-    // 批量展示所有可以做业务手机申请的投顾，由前端分页，且最多业务要求显示200条
-    this.props.queryBatchAdvisorList({
-      pageNum: 1,
-      pageSize: 200,
-    });
   }
 
   // 从添加服务经理页面传递数据给新建页面
@@ -116,12 +111,34 @@ export default class AddEmpList extends PureComponent {
   // 删除选择的用户
   @autobind
   handleDeleteEmp(record) {
+    const { deleteBindingAdvisor } = this.props;
     const { empList } = this.state;
-    const newList = _.filter(empList, item => item.empId !== record.empId);
-    this.setState({
-      empList: newList,
-    });
-    this.passData2Create(newList);
+    let newList;
+    // 若存在id，说明该条已经存在数据库，应该调接口删除该条数据
+    // 保证删除后，说明该服务经理已经不在流程处理中，就可以搜到该服务经理，可以添加该服务经理
+    if (record.id) {
+      deleteBindingAdvisor({
+        id: record.id,
+        appId: record.appId,
+      }).then(
+        () => {
+          newList = _.filter(empList, item => item.empId !== record.empId);
+          this.setState({
+            empList: newList,
+          });
+          this.passData2Create(newList);
+        },
+        () => {
+          message.error('该服务经理删除失败');
+        },
+      );
+    } else {
+      newList = _.filter(empList, item => item.empId !== record.empId);
+      this.setState({
+        empList: newList,
+      });
+      this.passData2Create(newList);
+    }
   }
 
   // 用户批量选择添加的服务经理列表
@@ -153,8 +170,14 @@ export default class AddEmpList extends PureComponent {
   // 点击批量添加按钮，批量添加弹框出现
   @autobind
   handleBatchAddBtnClick() {
-    this.setState({
-      isShowBatchAddModal: true,
+    // 批量展示所有可以做业务手机申请的投顾，由前端分页，且最多业务要求显示200条
+    this.props.queryBatchAdvisorList({
+      pageNum: 1,
+      pageSize: 200,
+    }).then(() => {
+      this.setState({
+        isShowBatchAddModal: true,
+      });
     });
   }
 
