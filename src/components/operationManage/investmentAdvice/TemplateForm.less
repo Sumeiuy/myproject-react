@@ -1,16 +1,6 @@
 .TemplateFormWapper {
   padding: 20px;
 
-  .contentWapper {
-    height: 250px;
-
-    .content {
-      background: #fff;
-      border: 1px solid #d9d9d9;
-      border-radius: 3px;
-    }
-  }
-
   .TemplateFormList {
     li {
       .TemplateFormItem {
@@ -48,6 +38,9 @@
           height: 16px;
           color: #108ee9;
           width: 120px;
+          margin-top: -45px;
+          margin-right: 10px;
+          z-index: 9999;
           text-align: right;
           display: inline-block;
           letter-spacing: -0.09px;
@@ -62,6 +55,11 @@
       .ant-row {
         flex: 1;
 
+        .ant-mention-wrapper {
+          .ant-mention-editor {
+            font-size: 14px;
+          }
+        }
         .ant-form-item-control-wrapper {
           .ant-mention-wrapper.multilines {
             display: block;
@@ -75,6 +73,7 @@
             }
           }
         }
+
         .ant-select {
           width: 228px;
           font-size: 14px;
@@ -82,11 +81,6 @@
 
         .ant-input {
           font-size: 14px;
-        }
-        .ant-mention-wrapper {
-          .ant-mention-editor {
-            font-size: 14px;
-          }
         }
       }
     }
