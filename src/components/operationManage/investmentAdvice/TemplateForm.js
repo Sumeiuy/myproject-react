@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-02 14:45:25
+ * @Last Modified time: 2018-05-03 10:36:23
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
@@ -60,6 +60,8 @@ export default class TemplateForm extends PureComponent {
       anchorOffset: 0,
       // mention中光标所在的span标签的data-offset-key值
       dataOffestKey: '',
+      // mention中的value值
+      mentionValue: '',
     };
     // 判断内容是否需要校验，第一次渲染会调用handleMentionChange方法
     this.needCheckContent = false;
@@ -96,11 +98,6 @@ export default class TemplateForm extends PureComponent {
     this.setState({ suggestions });
   }
 
-  // 内容提及框内容失去焦点
-  @autobind
-  handleMentionBlur() {
-  }
-
   // 内容提及框内容变化
   @autobind
   handleMentionChange(contentState) {
@@ -111,6 +108,9 @@ export default class TemplateForm extends PureComponent {
     }
     const content = toString(contentState);
     this.props.checkMention(content);
+    this.setState({
+      mentionValue: content,
+    });
     // 获取光标位置
     const selection = document.getSelection();
     const { anchorOffset, baseNode } = selection;
@@ -139,16 +139,26 @@ export default class TemplateForm extends PureComponent {
   @autobind
   insertParameter(item) {
     const { value } = item.item.props;
-    const { anchorOffset, dataOffestKey } = this.state;
-    // 获取属性是data-offset-key的标签
-    const targetElement = getDomByAttribute('span', 'data-offset-key', dataOffestKey);
-    let innerText = targetElement[0].innerText;
-    innerText = `${innerText.slice(0, anchorOffset)} $${value} ${innerText.slice(anchorOffset)}`;
-    console.warn('innerText', innerText);
-    targetElement[0].children[0].innerText = innerText;
-    // 获取属性是data-text的标签内容
-    const allTextArray = getTextByAttribute('span', 'data-text');
-    const content = allTextArray.join('');
+    const { anchorOffset, dataOffestKey, mentionValue } = this.state;
+    let content = '';
+    // 判断是否时首次插入参数，首次插入参数dataOffestKey是false
+    if (mentionValue) {
+      //  判断是否时连续插入，连续插入dataOffestKey为空
+      if (dataOffestKey) {
+        // 获取属性是data-offset-key的标签
+        const targetElement = getDomByAttribute('span', 'data-offset-key', dataOffestKey);
+        let innerText = targetElement[0].innerText;
+        innerText = `${innerText.slice(0, anchorOffset)} $${value} ${innerText.slice(anchorOffset)}`;
+        targetElement[0].children[0].innerText = innerText;
+        // 获取属性是data-text的标签内容
+        const allTextArray = getTextByAttribute('span', 'data-text');
+        content = allTextArray.join('');
+      } else {
+        content = `${mentionValue} $${value} `;
+      }
+    } else {
+      content = ` $${value} `;
+    }
     const contentState = toContentState(content);
     this.props.form.setFieldsValue({ content: contentState });
   }
@@ -226,7 +236,6 @@ export default class TemplateForm extends PureComponent {
             <li>
               <div className={styles.TemplateFormItem} id="templateFormMention">
                 <label htmlFor="dd" className={styles.templateForm_label}><i className={styles.required_i}>*</i>内容:</label>
-                {/* mention */}
                 <FormItem {...contentStatusErrorProps}>
                   {getFieldDecorator('content', {
                     initialValue: toContentState(mentionContent),
@@ -238,9 +247,7 @@ export default class TemplateForm extends PureComponent {
                       prefix={PREFIX}
                       onSearchChange={this.handleSearchChange}
                       suggestions={suggestions}
-                      onSelect={this.onSelect}
                       onChange={this.handleMentionChange}
-                      onBlur={this.handleMentionBlur}
                       placeholder="请输入服务内容"
                       multiLines
                     />,

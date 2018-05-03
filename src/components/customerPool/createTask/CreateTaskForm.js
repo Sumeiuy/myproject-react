@@ -182,13 +182,15 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionDesc = `用户已达到办理 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
         defaultInitialValue = 8; // 有效期
         break;
-      case 'association':
+      // 非理财平台
+      case 'external':
         defaultMissionType = '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
         defaultInitialValue = 4; // 有效期4天
         defaultMissionDesc = this.getDefaultMissionDescFromProduct(query);
         break;
+      case 'association':
       case 'search':
       case 'tag':
         defaultMissionType = '请选择';
@@ -315,8 +317,11 @@ export default class CreateTaskForm extends PureComponent {
     if (_.isEmpty(condition)) {
       return newList;
     }
-    const { primaryKey: [id = ''] } = condition;
-    const dateList = _.map(PRODUCT_ARGUMENTS, item => ({ type: `${item}#${id}#`, name: `${item}#${id}#` }));
+    const { searchText = '' } = condition;
+    // 从searchText中匹配出产品代码 晋亿实业(601002) => 601002
+    const result = /\((\S+)\)/.exec(searchText);
+    const productCode = !_.isEmpty(result) && result[1];
+    const dateList = _.map(PRODUCT_ARGUMENTS, item => ({ type: `${item}#${productCode}#`, name: `${item}#${productCode}#` }));
     return [...newList, ...dateList];
   }
 
