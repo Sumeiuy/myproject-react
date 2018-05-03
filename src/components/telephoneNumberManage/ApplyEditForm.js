@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-03 10:17:48
+ * @Last Modified time: 2018-05-03 15:05:00
  */
 
 import React, { PureComponent } from 'react';
@@ -253,7 +253,7 @@ export default class ApplyEditForm extends PureComponent {
                 advisorList={advisorList}
                 batchAdvisorListData={batchAdvisorListData}
                 queryBatchAdvisorList={queryBatchAdvisorList}
-                saveSelectedEmpList={this.saveSelectedEmpList}
+                onAddEmpList={this.saveSelectedEmpList}
                 advisorBindList={advisorBindList}
                 pageType="edit"
                 deleteBindingAdvisor={deleteBindingAdvisor}
