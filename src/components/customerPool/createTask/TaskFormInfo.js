@@ -13,7 +13,6 @@ import { autobind } from 'core-decorators';
 import { regxp } from '../../../helper';
 import styles from './createTaskForm.less';
 import logable from '../../../decorators/logable';
-import { fspContainer } from '../../../config';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -26,6 +25,11 @@ const mentionTextStyle = {
   color: '#2d84cc',
   backgroundColor: '#ebf3fb',
   borderColor: '#ebf3fb',
+};
+// Mention 弹出下拉框样式
+const suggestionStyle = {
+  maxHeight: '160px',
+  overflow: 'auto',
 };
 // 字数限制，最大长度
 const MAX_LENGTH = 1000;
@@ -183,10 +187,6 @@ export default class TaskFormInfo extends PureComponent {
     }
   }
 
-  getSuggestionContainer() {
-    return document.querySelector(fspContainer.container) || document.body;
-  }
-
   getCurrentTaskSubTypes(currentMissionType) {
     const { taskTypes } = this.props;
     const currentTaskTypeCollection = _.find(taskTypes, item =>
@@ -212,7 +212,6 @@ export default class TaskFormInfo extends PureComponent {
       if (_.isEmpty(content) || content.length > MAX_LENGTH) {
         isShowErrorInfo = true;
       }
-
       this.setState({
         currentMention: contentState,
         isShowErrorInfo,
@@ -342,17 +341,17 @@ export default class TaskFormInfo extends PureComponent {
   renderMention() {
     const { defaultMissionDesc } = this.props;
     const { suggestions } = this.state;
-
     return (
       <div className={styles.wrapper}>
         <Mention
           mentionStyle={mentionTextStyle}
+          suggestionStyle={suggestionStyle}
           style={{ width: '100%', height: 100 }}
           placeholder={'请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。'}
           prefix={PREFIX}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
-          getSuggestionContainer={this.getSuggestionContainer}
+          getSuggestionContainer={() => this.fatherMention}
           multiLines
           defaultValue={toContentState(defaultMissionDesc)}
           onChange={this.handleMentionChange}
@@ -591,6 +590,14 @@ export default class TaskFormInfo extends PureComponent {
         </div>
         <div
           className={styles.task_textArea}
+          ref={
+            (ref) => {
+              // ref多次重绘可能是null, 这里要判断一下
+              if (!this.fatherMention && ref) {
+                this.fatherMention = ref;
+              }
+            }
+          }
         >
           <p>
             <label htmlFor="desc"><i>*</i>任务提示:</label>
