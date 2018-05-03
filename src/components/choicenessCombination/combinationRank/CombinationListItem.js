@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-02 17:25:40
+ * @Last Modified time: 2018-05-03 15:39:41
 */
 
 import React, { PureComponent } from 'react';
@@ -57,12 +57,7 @@ export default class CombinationListItem extends PureComponent {
   getHistoryList() {
     const { data, openStockPage } = this.props;
     if (_.isEmpty(data.securityList)) {
-      return (
-        <div className={styles.noData}>
-          <Icon type="meiyouxiangguanjieguo" />
-          <span>此组合暂无调仓记录</span>
-        </div>
-      );
+      return null;
     }
     return data.securityList.map((item, index) => {
       const key = `key${index}`;
@@ -212,6 +207,15 @@ export default class CombinationListItem extends PureComponent {
               {this.getHistoryList()}
             </div>
           </div>
+          {
+            _.isEmpty(data.securityList) ?
+              <div className={styles.noData}>
+                <Icon type="meiyouxiangguanjieguo" />
+                <span>此组合暂无调仓记录</span>
+              </div>
+            :
+              null
+          }
         </div>
         <div className={styles.right}>
           <CombinationYieldChart

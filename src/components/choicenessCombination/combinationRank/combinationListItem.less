@@ -80,6 +80,7 @@
     .tableBox {
       display: table;
       width: 100%;
+      table-layout: fixed;
     }
     .titleBox {
       display: table-row;
@@ -142,9 +143,12 @@
     .reason {
       min-width: 222px;
       width: 35%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .noData {
-      padding-top: 20px;
+      height: 176px;
       text-align: center;
       line-height: normal;
       i {
