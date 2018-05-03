@@ -244,10 +244,10 @@ export default class MissionImplementation extends PureComponent {
     ];
     if (level === ORG_LEVEL1) {
       // 经总层级，维度展示三个可选项
-      currentScopeList = [...currentScopeList, EMP_COMPANY_ITEM, EMP_DEPARTMENT_ITEM];
+      currentScopeList = [EMP_COMPANY_ITEM, EMP_DEPARTMENT_ITEM, ...currentScopeList];
     } else if (level === ORG_LEVEL2) {
       // 分公司层级，维度展示营业部和服务经理
-      currentScopeList = [...currentScopeList, EMP_DEPARTMENT_ITEM];
+      currentScopeList = [EMP_DEPARTMENT_ITEM, ...currentScopeList];
     }
 
     return currentScopeList;
