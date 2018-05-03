@@ -71,8 +71,6 @@ export default class Pageheader extends PureComponent {
     filterCallback: PropTypes.func,
     // 当前视图名称
     filterControl: PropTypes.string,
-    // 判断是否有灰度客户
-    isGrayFlag: PropTypes.bool.isRequired,
     // 执行者视图头部查询客户
     queryCustomer: PropTypes.func,
     // 执行者视图头部查询到的客户列表
@@ -111,14 +109,14 @@ export default class Pageheader extends PureComponent {
   }
 
   componentWillMount() {
-    const { location: { query }, isGrayFlag } = this.props;
+    const { location: { query } } = this.props;
     const { createTimeStart,
       createTimeEnd,
       endTimeStart,
       endTimeEnd,
       missionViewType,
     } = query;
-    if (missionViewType === INITIATOR || !isGrayFlag) {
+    if (missionViewType === INITIATOR) {
       // 判断URL里是否存在日期，若存在设置日期（例如页面跳转，日期已设置）
       this.setState({
         startTime: this.handleURlTime(createTimeStart, beforeToday),
@@ -567,7 +565,6 @@ export default class Pageheader extends PureComponent {
   @autobind
   renderTime() {
     const {
-      isGrayFlag,
       location: {
         query: {
           missionViewType,
@@ -584,7 +581,7 @@ export default class Pageheader extends PureComponent {
       return null;
     }
     let node;
-    if (missionViewType === INITIATOR || !isGrayFlag) {
+    if (missionViewType === INITIATOR) {
       const startTime = createTimeStart ?
         moment(createTimeStart, dateFormat) :
         moment(moment(beforeCurrentDate60Days).format(dateFormat), dateFormat);

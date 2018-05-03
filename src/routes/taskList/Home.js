@@ -21,7 +21,7 @@ import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
 import { getCurrentScopeByOrgId } from '../../components/taskList/managerView/helper';
 import { openRctTab } from '../../utils';
-import { emp, permission, env as envHelper } from '../../helper';
+import { emp, permission } from '../../helper';
 import logable from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
@@ -1053,7 +1053,6 @@ export default class PerformerView extends PureComponent {
         creatSeibelModal={this.handleCreateBtnClick}
         filterControl={currentView}
         filterCallback={this.handleHeaderFilter}
-        isGrayFlag={envHelper.isGrayFlag()}
       />
     );
 
