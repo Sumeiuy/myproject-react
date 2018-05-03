@@ -107,8 +107,8 @@ export default class ProgressList extends PureComponent {
   @autobind
   transformName(name) {
     switch (name) {
-      case '新开有效户':
-        return '新开有效下钻客户';
+      case '新增有效户':
+        return '新增有效下钻客户';
       case '新增非零售客户':
         return '新增非零售下钻客户';
       case '新增高端产品户':
@@ -124,7 +124,7 @@ export default class ProgressList extends PureComponent {
     const { dataSource, location, type } = this.props;
     // 新增客户模块指标说明文案
     const description = {
-      新开有效户: '统计周期内新开客户数量',
+      新增有效户: '统计周期内新增且成为有效户的客户数',
       新增高净值客户: '本考核期新增的高净值客户数-上一考核期末的高净值客户在本考核期内降级为零售客户且资产降幅超过同期市场指数跌幅的客户数量',
       新增高端产品户: '年初到当前新增高端客户数',
       新增产品客户: '年初到当前新增产品客户数',

@@ -93,7 +93,7 @@ function getProgressDataSource({
 export function getPureAddCust({ pureAddData }) {
   const param = {
     dataArray: pureAddData,
-    categoryArray: ['新开有效户', '新增高净值客户', '新增高端产品户', '新增产品客户'],
+    categoryArray: ['新增有效户', '新增高净值客户', '新增高端产品户', '新增产品客户'],
     colorArray: ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'],
     formatterMethod: toFixedCust,
   };
