@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-16 20:27:26
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-05-03 13:24:16
  */
 
 import React, { PureComponent } from 'react';
@@ -416,6 +416,7 @@ export default class CommonTable extends PureComponent {
         this.handlePageChange(page, pageSize);
       },
       onShowSizeChange: this.handlePageSizeChange,
+      wrapClassName: paginationClass,
     };
     const dataSource = this.renderTableDatas(listData);
     const columns = this.renderColumns(paganationOption);

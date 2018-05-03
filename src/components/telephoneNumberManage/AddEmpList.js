@@ -3,7 +3,7 @@
  * @Description 业务手机申请页面添加服务经理
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-03 12:59:12
+ * @Last Modified time: 2018-05-03 13:20:56
  */
 
 
@@ -120,18 +120,13 @@ export default class AddEmpList extends PureComponent {
       deleteBindingAdvisor({
         id: record.id,
         appId: record.appId,
-      }).then(
-        () => {
-          newList = _.filter(empList, item => item.empId !== record.empId);
-          this.setState({
-            empList: newList,
-          });
-          this.passData2Create(newList);
-        },
-        () => {
-          message.error('该服务经理删除失败');
-        },
-      );
+      }).then(() => {
+        newList = _.filter(empList, item => item.empId !== record.empId);
+        this.setState({
+          empList: newList,
+        });
+        this.passData2Create(newList);
+      });
     } else {
       newList = _.filter(empList, item => item.empId !== record.empId);
       this.setState({

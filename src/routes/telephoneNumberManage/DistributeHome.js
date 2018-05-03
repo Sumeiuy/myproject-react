@@ -3,7 +3,7 @@
  * @Descripter: 投顾手机分配状态页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-27 16:21:06
+ * @Last Modified time: 2018-05-03 13:25:06
  */
 
 import React, { PureComponent } from 'react';
@@ -219,6 +219,8 @@ export default class DistributeHome extends PureComponent {
           titleColumn={this.renderColumn()}
           columnWidth={['19%', '12%', '19%', '16%', '16%', '18%']}
           emptyListDataNeedEmptyRow
+          // 分页器class
+          paginationClass={styles.advisorBindListPagination}
         />
       </div>
     );
