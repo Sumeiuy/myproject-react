@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-03 13:57:37
+ * @Last Modified time: 2018-05-03 16:46:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -203,7 +203,8 @@ export default class CustomerFeedback extends PureComponent {
   // 任务绑定反馈|查询任务列表
   @autobind
   queryMissionList(params) {
-    const { replace, location: { pathname, query } } = this.context;
+    const { replace } = this.context;
+    const { location: { pathname, query } } = this.props;
     this.props.getMissionList(params).then(() => {
       const { missionData: { page = {} } } = this.props;
       replace({
