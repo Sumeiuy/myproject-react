@@ -80,6 +80,7 @@
     .tableBox {
       display: table;
       width: 100%;
+      table-layout: fixed;
     }
     .titleBox {
       display: table-row;
@@ -122,14 +123,14 @@
     }
     .securityCode {
       min-width: 70px;
-      width: 11%;
+      width: 12%;
       span {
         color: #1890ff;
       }
     }
     .direction {
       min-width: 70px;
-      width: 10%;
+      width: 11%;
     }
     .time {
       min-width: 134px;
@@ -141,10 +142,13 @@
     }
     .reason {
       min-width: 222px;
-      width: 34%;
+      width: 35%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .noData {
-      padding-top: 20px;
+      height: 176px;
       text-align: center;
       line-height: normal;
       i {
