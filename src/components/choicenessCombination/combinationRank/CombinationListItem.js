@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-03 15:39:41
+ * @Last Modified time: 2018-05-03 17:42:20
 */
 
 import React, { PureComponent } from 'react';
@@ -123,7 +123,7 @@ export default class CombinationListItem extends PureComponent {
       [styles.down]: num < 0,
     });
     return (
-      <em className={className}>{`${num >= 0 ? '+' : ''}${num}%`}</em>
+      <em className={className}>{`${num > 0 ? '+' : ''}${num}%`}</em>
     );
   }
 
