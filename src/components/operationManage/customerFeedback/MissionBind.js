@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-04 13:20:54
+ * @Last Modified time: 2018-05-04 16:28:45
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -90,6 +90,7 @@ export default class MissionBind extends PureComponent {
   // 渲染涨乐客户反馈可选项
   @autobind
   getZLFeedbackItem(list = []) {
+    // 数据中存在一个name,custFeedbackName字段，在渲染涨乐的时候需要使用custFeedbackName
     return list.map(item => (
       <div className={styles.zlfeedbackItem} key={item.id}>
         <span>{item.custFeedbackName}</span>

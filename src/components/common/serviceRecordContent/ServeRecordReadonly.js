@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-28 14:27:55
+ * @Last Modified time: 2018-05-04 20:26:02
  * @description 只读服务记录
  */
 
@@ -39,6 +39,13 @@ export default function ServiceRecordReadOnly(props) {
   // 暂时客户可选反馈选项
   const listText = _.isEmpty(ZLCustFeedbackList) ? '无' : ZLCustFeedbackList.map((item, index) => `${index + 1}、${item.label}`).join('，');
   const custFeedbackText = flowIsApproval ? listText : ZLCustFeedback;
+
+  // 判断在普通服务方式的反馈中，客户反馈显示文字
+  // 如果一级反馈的文本和二级反馈的文本一样，只显示一级文本
+  let normalWayCustFeedbackText = custFeedback;
+  if (!isZL && custFeedback !== custFeedback2) {
+    normalWayCustFeedbackText = `${custFeedback}    ${custFeedback2}`;
+  }
 
   return (
     <div className={styles.serviceRecordContent}>
@@ -91,43 +98,36 @@ export default function ServiceRecordReadOnly(props) {
           )
         }
         <div className={styles.divider} />
-        <div className={styles.custFeedbackSection}>
-          <div className={styles.feedbackType}>
-            {
-              (isZL && flowIsApproval)
-              ? (<div className={cx([styles.title, styles.flowIsApproval])}>客户可选反馈:</div>)
-              : (<div className={styles.title}>客户反馈:</div>)
-            }
-            {
-              isZL
-              ? (
-                <div className={styles.readOnlyText}>
-                  <span className={styles.feedbackTypeL1}>{custFeedbackText}</span>
-                </div>
-              )
-              : (
-                <div className={styles.readOnlyText}>
-                  <span className={styles.feedbackTypeL1}>{custFeedback}</span>
-                  {/** * 二级和一级一样，不展示二级 */}
-                  {
-                    custFeedback === custFeedback2 ? null :
-                      (<span className={styles.feedbackTypeL2}>{custFeedback2}</span>)
-                  }
-                </div>
-              )
-            }
-          </div>
+        <div className={styles.feedbackType}>
           {
-            (isZL && flowIsApproval) || (isZL && custFeedbackText === '暂无反馈')
-            ? null
+            (isZL && flowIsApproval)
+            ? (<div className={cx([styles.title, styles.flowIsApproval])}>客户可选反馈:</div>)
+            : (<div className={styles.title}>客户反馈:</div>)
+          }
+          {
+            isZL
+            ? (
+              <div className={styles.readOnlyText}>
+                <span className={styles.feedbackTypeL1}>{custFeedbackText}</span>
+              </div>
+            )
             : (
-              <div className={styles.feedbackTime}>
-                <div className={styles.title}>反馈时间:</div>
-                <div className={styles.readOnlyText}>{feedbackDateTime}</div>
+              <div className={styles.readOnlyText}>
+                <span className={styles.feedbackTypeL1}>{normalWayCustFeedbackText}</span>
               </div>
             )
           }
         </div>
+        {
+          (isZL && flowIsApproval) || (isZL && custFeedbackText === '暂无反馈')
+          ? null
+          : (
+            <div className={styles.feedbackTime}>
+              <div className={styles.title}>反馈时间:</div>
+              <div className={styles.readOnlyText}>{feedbackDateTime}</div>
+            </div>
+          )
+        }
       </div>
       {
         (isZL && _.isEmpty(attachmentList))
