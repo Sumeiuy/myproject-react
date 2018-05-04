@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-23 23:01:41
+ * @Last Modified time: 2018-05-03 19:33:10
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
-import { permission, emp, env as envHelper, regxp } from '../../../helper';
+import { permission, emp, regxp } from '../../../helper';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 import ResultTrack from '../../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../../components/common/missionInvestigation/ConnectedComponent';
@@ -850,11 +850,6 @@ export default class TaskFormFlowStep extends PureComponent {
           终止
         </Button>
       ) : null;
-
-    // 灰度发布展示结果任务评估，默认不展示
-    if (!envHelper.isGrayFlag()) {
-      steps.splice(1, 1);
-    }
 
     const stepsCount = _.size(steps);
 

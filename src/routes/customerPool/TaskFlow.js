@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-27 14:02:23
+ * @Last Modified time: 2018-05-04 11:12:09
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import { Steps, message, Button, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { removeTab, closeRctTab } from '../../utils';
-import { emp, permission, env as envHelper, number, regxp } from '../../helper';
+import { emp, permission, number, regxp } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../components/common/missionInvestigation/ConnectedComponent';
@@ -1202,11 +1202,6 @@ export default class TaskFlow extends PureComponent {
         checkApproverIsEmpty={this.checkApproverIsEmpty}
       />,
     }];
-
-    // 灰度发布展示结果跟踪和任务调查，默认不展示
-    if (!envHelper.isGrayFlag()) {
-      steps.splice(2, 1);
-    }
 
     const stepsCount = _.size(steps);
 
