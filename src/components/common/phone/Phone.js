@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-05-02 12:25:42
+ * @Last Modified time: 2018-05-03 18:16:29
  */
 
 import React, { PureComponent } from 'react';
@@ -114,8 +114,8 @@ export default class Phone extends PureComponent {
   call(number) {
     const { custType, config } = this.props;
     const {
-      sipInfo: { sipID, sipDomain, sipPasswd, sipIP, sipPort },
-      wssInfo: { wssIP, wssPort },
+      sipInfo: { sipID, sipDomain, sipPasswd },
+      wssInfo: { wssIP, wssPort, sipIP, sipPort },
     } = config;
 
     const configQueryString = [
