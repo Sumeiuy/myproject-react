@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-04 20:26:02
+ * @Last Modified time: 2018-05-04 20:57:40
  * @description 只读服务记录
  */
 
@@ -98,7 +98,7 @@ export default function ServiceRecordReadOnly(props) {
           )
         }
         <div className={styles.divider} />
-        <div className={styles.feedbackType}>
+        <div className={cx([styles.feedbackType, styles.readOnly])}>
           {
             (isZL && flowIsApproval)
             ? (<div className={cx([styles.title, styles.flowIsApproval])}>客户可选反馈:</div>)
