@@ -16,6 +16,7 @@ import { autobind } from 'core-decorators';
 import logable from '../../decorators/logable';
 import Select from '../../components/common/Select';
 import DateRangePicker from '../../components/common/dateRangePicker';
+import { isInclusivelyAfterDay, isInclusivelyBeforeDay } from '../../components/common/dateRangePicker/utils';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import withRouter from '../../decorators/withRouter';
 import styles from './serviceLog.less';
@@ -24,48 +25,7 @@ const Search = Input.Search;
 const dateFormat = 'YYYY-MM-DD';
 const today = moment().format(dateFormat);
 const beforeSixDate = moment().subtract(6, 'months');
-// const afterSixDate = moment(new Date()).format(dateFormat);
 const PAGE_NUM = 1;
-
-/**
- * 时间范围的控制，用于在一个区间内选择时间
- * 复用的是react-dates的原生方法，因为DateRangePicker被改写了，所以需要处理一下
- */
-const isBeforeDay = (a, b) => {
-  if (!moment.isMoment(a) || !moment.isMoment(b)) return false;
-
-  const aYear = a.year();
-  const aMonth = a.month();
-
-  const bYear = b.year();
-  const bMonth = b.month();
-
-  const isSameYear = aYear === bYear;
-  const isSameMonth = aMonth === bMonth;
-
-  if (isSameYear && isSameMonth) return a.date() < b.date();
-  if (isSameYear) return aMonth < bMonth;
-  return aYear < bYear;
-};
-
-const isSameDay = (a, b) => {
-  if (!moment.isMoment(a) || !moment.isMoment(b)) return false;
-  return a.date() === b.date() &&
-    a.month() === b.month() &&
-    a.year() === b.year();
-};
-
-const isAfterDay = (a, b) => !isBeforeDay(a, b) && !isSameDay(a, b);
-
-const isInclusivelyAfterDay = (a, b) => {
-  if (!moment.isMoment(a) || !moment.isMoment(b)) return false;
-  return !isBeforeDay(a, b);
-};
-
-const isInclusivelyBeforeDay = (a, b) => {
-  if (!moment.isMoment(a) || !moment.isMoment(b)) return false;
-  return !isAfterDay(a, b);
-};
 
 const DEFAULT_SERVE_TYPE = '所有类型';
 const DEFAULT_SERVE_SOURCE = '';
