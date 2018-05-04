@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:14:05
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 11:19:24
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-05-04 10:31:36
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapStateToProps移至此处成立独立模块
  */
 const mapStateToProps = () => state => ({
@@ -43,7 +43,7 @@ const mapStateToProps = () => state => ({
   // 任务反馈的字典
   taskFeedbackList: state.performerView.taskFeedbackList,
   // 执行者视图添加服务记录是否成功
-  addMotServeRecordSuccess: state.performerView.addMotServeRecordSuccess,
+  currentMotServiceRecord: state.performerView.currentMotServiceRecord,
   answersList: state.performerView.answersList,
   saveAnswersSucce: state.performerView.saveAnswersSucce,
   // 任务反馈统计数据
@@ -62,7 +62,7 @@ const mapStateToProps = () => state => ({
   custFeedbackList: state.performerView.custFeedbackList,
    // 涨乐财富通服务方式下的审批人列表
   zhangleApprovalList: state.performerView.zhangleApprovalList,
-  serviceRecordModalVisibleOfCaller: state.app.serviceRecordModalVisibleOfCaller,
+  serviceRecordOfCaller: state.app.serviceRecordModalVisibleOfCaller,
   prevRecordInfo: state.app.prevRecordInfo,
 });
 

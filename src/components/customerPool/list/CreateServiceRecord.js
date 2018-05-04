@@ -51,7 +51,7 @@ export default class CreateServiceRecord extends PureComponent {
     isShow: PropTypes.bool,
     onToggleServiceRecordModal: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired,
-    addServeRecordSuccess: PropTypes.bool.isRequired,
+    currentCommonServiceRecord: PropTypes.bool.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     loading: PropTypes.bool,
@@ -87,8 +87,11 @@ export default class CreateServiceRecord extends PureComponent {
     const {
       loading,
     } = this.props;
+    const {
+      currentCommonServiceRecord: { id = null },
+    } = nextProps;
     // 添加成功
-    if (loading && !nextProps.loading && nextProps.addServeRecordSuccess === true) {
+    if (loading && !nextProps.loading && !_.isEmpty(id)) {
       // 提交成功后，刷新360视图中的服务记录iframe
       const iframe = document.querySelector(fspContainer.view360Iframe);
       if (iframe) {
@@ -109,10 +112,15 @@ export default class CreateServiceRecord extends PureComponent {
   handleSubmit() {
     const data = this.serviceRecordContentRef.getData();
     if (_.isEmpty(data)) return;
-
-    const { id, addServeRecord, resetCaller } = this.props;
-
-    addServeRecord({ ...data, custId: id });
+    const {
+      id: custId,
+      addServeRecord,
+      resetCaller,
+      caller,
+      currentCommonServiceRecord: { id },
+    } = this.props;
+    const payload = caller !== 'phone' ? { ...data, custId } : { ...data, custId, id };
+    addServeRecord(payload);
     resetCaller();
   }
 
@@ -123,6 +131,7 @@ export default class CreateServiceRecord extends PureComponent {
     const { onToggleServiceRecordModal, handleCloseClick, caller } = this.props;
     // 手动上传日志
     handleCloseClick();
+    // 打电话调起的弹窗，不能直接手动关闭弹窗，只能提交服务记录进行关闭
     if (caller !== 'phone') {
       onToggleServiceRecordModal(false);
     }

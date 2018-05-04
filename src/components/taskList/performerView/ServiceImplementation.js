@@ -70,35 +70,40 @@ export default class ServiceImplementation extends PureComponent {
       currentId,
       getTaskDetailBasicInfo,
       addServeRecordOfPhone,
+      serviceRecordOfCaller,
+      currentMotServiceRecord: { id },
     } = this.props;
+    // 打电话时需要调用addServeRecordOfPhone（没有loading的添加服务记录）
     const addServiceRecord = hasLoading ? addServeRecord : addServeRecordOfPhone;
+    // 打电话生成服务记录后，再去添加服务记录走的是更新过程，需要传自动生成的那条服务记录的id
+    const payload = serviceRecordOfCaller !== 'phone' ? postBody : { ...postBody, id };
     // 此处需要针对涨乐财富通服务方式特殊处理
     // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
     // 执行提交服务记录的接口
-    addServiceRecord(_.omit(postBody), ['zlApprovalCode'])
-      .then(() => {
-        if (this.props.addMotServeRecordSuccess) {
-          // 服务记录添加成功后重新加载当前目标客户的详细信息
-          reloadTargetCustInfo(() => {
-            this.updateList(postBody, callback);
-            // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载基本信息
-            if (postBody.flowStatus === POSTCOMPLETED_CODE) {
-              // 重新加载基本信息,不清除服务实施客户列表中当前选中客户状态信息和筛选值、页码
-              getTaskDetailBasicInfo({ taskId: currentId, isClear: false });
-              // 更新新左侧列表
-              modifyLocalTaskList({ missionId: currentId });
-            }
-          });
-          // 添加服务记录成功之后，重新获取custUuid
-          queryCustUuid();
-          // this.updateList(postBody);
-          if (hasLoading) {
-            message.success('添加服务记录成功');
+    addServiceRecord(_.omit(payload), ['zlApprovalCode'])
+    .then(() => {
+      if (!_.isEmpty(this.props.currentMotServiceRecord.id)) {
+        // 服务记录添加成功后重新加载当前目标客户的详细信息
+        reloadTargetCustInfo(() => {
+          this.updateList(postBody, callback);
+          // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载基本信息
+          if (postBody.flowStatus === POSTCOMPLETED_CODE) {
+            // 重新加载基本信息,不清除服务实施客户列表中当前选中客户状态信息和筛选值、页码
+            getTaskDetailBasicInfo({ taskId: currentId, isClear: false });
+            // 更新新左侧列表
+            modifyLocalTaskList({ missionId: currentId });
           }
-          // 保存打电话自动创建的服务记录的信息
-          callback2();
+        });
+        // 添加服务记录成功之后，重新获取custUuid
+        queryCustUuid();
+        // this.updateList(postBody);
+        if (hasLoading) {
+          message.success('添加服务记录成功');
         }
-      });
+        // 保存打电话自动创建的服务记录的信息
+        callback2();
+      }
+    });
   }
 
   // 更新组件state的list信息
@@ -199,7 +204,6 @@ export default class ServiceImplementation extends PureComponent {
       filesList,
       deleteFileResult,
       taskFeedbackList,
-      addMotServeRecordSuccess,
       attachmentList,
       statusCode,
       isTaskFeedbackListOfNone,
@@ -210,7 +214,7 @@ export default class ServiceImplementation extends PureComponent {
       zhangleApprovalList,
       queryApprovalList,
       toggleServiceRecordModal,
-      serviceRecordModalVisibleOfCaller,
+      serviceRecordOfCaller,
       prevRecordInfo,
     } = this.props;
     // 获取当前选中的数据的custId
@@ -277,7 +281,7 @@ export default class ServiceImplementation extends PureComponent {
     // TODO 新需求需要针对涨乐财富通的服务方式来判断状态是否可读
     // 涨乐财富通服务方式下，只有审批中和已完成状态，才属于只读状态
     let isReadOnly;
-    if (serviceRecordModalVisibleOfCaller === 'phone') {
+    if (serviceRecordOfCaller === 'phone') {
       // 打电话调用时，服务记录表单可编辑
       isReadOnly = false;
     } else {
@@ -328,13 +332,12 @@ export default class ServiceImplementation extends PureComponent {
             formData={serviceReocrd}
             ceFileDelete={ceFileDelete}
             deleteFileResult={deleteFileResult}
-            addMotServeRecordSuccess={addMotServeRecordSuccess}
             getCeFileList={getCeFileList}
             queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
             custFeedbackList={custFeedbackList}
             queryApprovalList={queryApprovalList}
             zhangleApprovalList={zhangleApprovalList}
-            serviceRecordModalVisibleOfCaller={serviceRecordModalVisibleOfCaller}
+            serviceRecordOfCaller={serviceRecordOfCaller}
             prevRecordInfo={prevRecordInfo}
           /> : null
         }
@@ -369,7 +372,7 @@ ServiceImplementation.propTypes = {
   filesList: PropTypes.array,
   deleteFileResult: PropTypes.array,
   taskFeedbackList: PropTypes.array,
-  addMotServeRecordSuccess: PropTypes.bool.isRequired,
+  currentMotServiceRecord: PropTypes.object.isRequired,
   reloadTargetCustInfo: PropTypes.func.isRequired,
   attachmentList: PropTypes.array.isRequired,
   statusCode: PropTypes.string,
@@ -387,7 +390,7 @@ ServiceImplementation.propTypes = {
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
   toggleServiceRecordModal: PropTypes.func.isRequired,
-  serviceRecordModalVisibleOfCaller: PropTypes.string.isRequired,
+  serviceRecordOfCaller: PropTypes.string.isRequired,
   prevRecordInfo: PropTypes.object.isRequired,
   addServeRecordOfPhone: PropTypes.func.isRequired,
 };

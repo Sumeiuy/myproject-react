@@ -1,12 +1,12 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-03-30 15:46:03
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-09 15:50:48
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-05-04 15:06:43
  * @description 根据需求antd3.x版本下需要重写一个dropdownSelect
  */
 
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import cx from 'classnames';
@@ -18,7 +18,7 @@ import styles from './dropdownSelect.less';
 
 const Search = Input.Search;
 
-export default class DropdownSelect extends PureComponent {
+export default class DropdownSelect extends Component {
   static propTypes = {
     // 组件名称
     name: PropTypes.string,

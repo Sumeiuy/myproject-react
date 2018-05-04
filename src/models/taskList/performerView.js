@@ -40,7 +40,7 @@ export default {
     taskList: EMPTY_OBJ,
     // 任务反馈字典
     taskFeedbackList: [],
-    addMotServeRecordSuccess: false,
+    currentMotServiceRecord: {},
     answersList: {},
     saveAnswersSucce: false,
     // 任务反馈
@@ -131,7 +131,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        addMotServeRecordSuccess: payload === 'success',
+        currentMotServiceRecord: { id: payload },
       };
     },
     getTempQuesAndAnswerSuccess(state, action) {
@@ -222,6 +222,12 @@ export default {
           ...state.taskList,
           resultData: newList,
         },
+      };
+    },
+    resetMotServiceRecord(state) {
+      return {
+        ...state,
+        currentMotServiceRecord: {},
       };
     },
   },
@@ -321,6 +327,7 @@ export default {
     },
     // 添加服务记录
     * addMotServeRecord({ payload }, { call, put }) {
+      yield put({ type: 'resetMotServiceRecord' });
       const { resultData } = yield call(api.addMotServeRecord, payload);
       yield put({
         type: 'addMotServeRecordSuccess',

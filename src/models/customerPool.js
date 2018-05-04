@@ -142,6 +142,8 @@ export default {
     sightingTelescopeFilters: {},
     // 客户分组批量导入客户解析客户列表
     batchCustList: {},
+    // 当前添加的服务记录的信息
+    currentCommonServiceRecord: {},
   },
 
   subscriptions: {
@@ -443,7 +445,7 @@ export default {
       });
       const { noHints = false, ...otherPayload } = payload;
       const res = yield call(api.addCommonServeRecord, otherPayload);
-      if (res.code === '0' && res.resultData === 'success') {
+      if (res.code === '0' && res.resultData !== null) {
         // 添加成功后关闭添加窗口
         yield put({
           type: 'app/toggleServiceRecordModal',
@@ -1076,13 +1078,13 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        addServeRecordSuccess: payload.resultData === 'success',
+        currentCommonServiceRecord: { id: payload.resultData },
       };
     },
     resetServeRecord(state) {
       return {
         ...state,
-        addServeRecordSuccess: false,
+        currentCommonServiceRecord: {},
       };
     },
     // 获取客户分组成功

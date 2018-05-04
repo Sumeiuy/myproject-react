@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-21 00:13:12
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-05-04 10:32:21
  * @description 任务管理首页
  */
 
@@ -475,7 +475,7 @@ export default class PerformerView extends PureComponent {
       getCeFileList,
       filesList,
       deleteFileResult,
-      addMotServeRecordSuccess,
+      currentMotServiceRecord,
       answersList,
       getTempQuesAndAnswer,
       saveAnswersByType,
@@ -488,7 +488,7 @@ export default class PerformerView extends PureComponent {
       queryApprovalList,
       zhangleApprovalList,
       toggleServiceRecordModal,
-      serviceRecordModalVisibleOfCaller,
+      serviceRecordOfCaller,
       prevRecordInfo,
       addServeRecordOfPhone,
     } = this.props;
@@ -534,7 +534,7 @@ export default class PerformerView extends PureComponent {
         filesList={filesList}
         deleteFileResult={deleteFileResult}
         taskFeedbackList={taskFeedbackList}
-        addMotServeRecordSuccess={addMotServeRecordSuccess}
+        currentMotServiceRecord={currentMotServiceRecord}
         getTempQuesAndAnswer={getTempQuesAndAnswer}
         answersList={answersList}
         saveAnswersByType={saveAnswersByType}
@@ -548,7 +548,7 @@ export default class PerformerView extends PureComponent {
         queryApprovalList={queryApprovalList}
         zhangleApprovalList={zhangleApprovalList}
         toggleServiceRecordModal={toggleServiceRecordModal}
-        serviceRecordModalVisibleOfCaller={serviceRecordModalVisibleOfCaller}
+        serviceRecordOfCaller={serviceRecordOfCaller}
         prevRecordInfo={prevRecordInfo}
         addServeRecordOfPhone={addServeRecordOfPhone}
       />

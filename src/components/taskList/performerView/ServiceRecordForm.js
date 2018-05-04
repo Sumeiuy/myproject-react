@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-18 15:25:54
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-05-04 10:37:14
  * 服务记录表单
  */
 
@@ -44,8 +44,12 @@ export default class ServiceRecordForm extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
-    if (this.serviceRecordContentRef) {
-      this.serviceRecordContentRef.resetField();
+    const { serviceRecordOfCaller } = this.props;
+    // 打电话调起的服务记录时，取消按钮不可用
+    if (serviceRecordOfCaller !== 'phone') {
+      if (this.serviceRecordContentRef) {
+        this.serviceRecordContentRef.resetField();
+      }
     }
   }
 
@@ -67,31 +71,11 @@ export default class ServiceRecordForm extends PureComponent {
       zhangleApprovalList,
       empInfo: { empInfo },
       statusCode,
-      serviceRecordModalVisibleOfCaller,
+      serviceRecordOfCaller,
       prevRecordInfo,
     } = this.props;
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
-
-    let footerNode;
-    if (!isReadOnly) {
-      // 非手机调用的添加服务记录
-      if (serviceRecordModalVisibleOfCaller !== 'phone') {
-        footerNode = (
-          <div className={styles.operationSection}>
-            <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
-            <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
-          </div>
-        );
-      } else {
-        footerNode = (
-          <div className={styles.operationSection}>
-            <Button className={styles.submitBtn} onClick={this.handleCancel} type="primary" >提交</Button>
-          </div>
-        );
-      }
-    }
-
     return (
       <div className={styles.serviceRecordWrapper}>
         <div className={styles.title}>服务记录</div>
@@ -125,10 +109,13 @@ export default class ServiceRecordForm extends PureComponent {
           zhangleApprovalList={zhangleApprovalList}
           queryApprovalList={queryApprovalList}
           flowStatusCode={statusCode}
-          caller={serviceRecordModalVisibleOfCaller}
+          caller={serviceRecordOfCaller}
           prevRecordInfo={prevRecordInfo}
         />
-        {footerNode}
+        <div className={styles.operationSection}>
+          <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
+          <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
+        </div>
       </div>
     );
   }
@@ -149,7 +136,6 @@ ServiceRecordForm.propTypes = {
   isReject: PropTypes.bool.isRequired,
   ceFileDelete: PropTypes.func.isRequired,
   deleteFileResult: PropTypes.array.isRequired,
-  addMotServeRecordSuccess: PropTypes.bool.isRequired,
   getCeFileList: PropTypes.func.isRequired,
   // 涨乐财富通服务方式下的客户反馈列表以及查询方法
   queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
@@ -158,5 +144,5 @@ ServiceRecordForm.propTypes = {
   zhangleApprovalList: PropTypes.array.isRequired,
   statusCode: PropTypes.string.isRequired,
   prevRecordInfo: PropTypes.object.isRequired,
-  serviceRecordModalVisibleOfCaller: PropTypes.string.isRequired,
+  serviceRecordOfCaller: PropTypes.string.isRequired,
 };

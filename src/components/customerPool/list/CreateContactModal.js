@@ -256,6 +256,10 @@ export default class CreateContactModal extends PureComponent {
    */
   @autobind
   handlePhoneEnd() {
+    // 没有成功发起通话
+    if (_.isEmpty(this.phoneStartTime)) {
+      return;
+    }
     this.phoneEndTime = moment();
     const {
       currentCustId,

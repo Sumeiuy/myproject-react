@@ -174,6 +174,10 @@ export default class TargetCustomerRight extends PureComponent {
    */
   @autobind
   handlePhoneEnd() {
+    // 没有成功发起通话
+    if (_.isEmpty(this.phoneStartTime)) {
+      return;
+    }
     this.phoneEndTime = moment();
     const {
       itemData,
@@ -215,7 +219,7 @@ export default class TargetCustomerRight extends PureComponent {
       serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
       feedBackTime: moment().format('YYYY-MM-DD'),
     };
-    // 保存默认创建服务记录的信息
+    // 添加服务记录表单共用，把打电话自动生成的默认数据保存到prevRecordInfo
     const saveRecordData = () => {
       toggleServiceRecordModal({
         custId,
@@ -223,7 +227,6 @@ export default class TargetCustomerRight extends PureComponent {
         flag: false,
         caller: PHONE,
         prevRecordInfo: payload,
-        source: 'taskManage',
       });
     };
     addServeRecord({
@@ -235,7 +238,7 @@ export default class TargetCustomerRight extends PureComponent {
 
   // 通话开始
   @autobind
-  handlePhoneClick() {
+  handlePhoneConnected() {
     this.phoneStartTime = moment();
   }
 
@@ -254,7 +257,7 @@ export default class TargetCustomerRight extends PureComponent {
     }
     return (
       <Phone
-        onClick={this.handlePhoneClick}
+        onConnected={this.handlePhoneConnected}
         onEnd={this.handlePhoneEnd}
         number={num}
         custType={itemData.custNature}
