@@ -3,7 +3,7 @@
  * @Description 业务手机申请新建页面
  * @Date: 2018-04-23 21:37:55
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-03 14:58:32
+ * @Last Modified time: 2018-05-03 22:33:05
  */
 
 import React, { PureComponent } from 'react';
@@ -107,7 +107,6 @@ export default class CreateApply extends PureComponent {
   // 提交
   @autobind
   handleSubmit(item) {
-    const { validateData } = this.props;
     const { empList } = this.state;
     // 用empId去重
     const finalEmplists = _.uniqBy(empList, 'empId');
@@ -119,36 +118,18 @@ export default class CreateApply extends PureComponent {
       message.error(`服务经理最多只能添加${MAXSELECTNUM}条`);
       return;
     }
-    // 提交前先对提交的数据调验证接口进行进行验证
-    // 新建，节点是new，后端规定的且必传
-    validateData({
-      advisorBindingList: finalEmplists,
-      currentNodeCode: 'new',
-    }).then(() => {
-      const { validateResultData } = this.props;
-      const { isValid, msg } = validateResultData;
-       // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
-      if (isValid) {
-        this.setState({
-          operate: item.operate,
-          groupName: item.nextGroupName,
-          auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
-          nextApproverList: item.flowAuditors,
-          nextApproverModal: true,
-        });
-      } else {
-        Modal.error({
-          title: '提示信息',
-          okText: '确定',
-          content: msg,
-        });
-      }
+    this.setState({
+      operate: item.operate,
+      groupName: item.nextGroupName,
+      auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
+      nextApproverList: item.flowAuditors,
+      nextApproverModal: true,
     });
   }
 
   @autobind
   sendCreateRequest(value) {
-    const { updateBindingFlow } = this.props;
+    const { updateBindingFlow, validateData } = this.props;
     const { empList } = this.state;
     // 用empId去重
     const finalEmplists = _.uniqBy(empList, 'empId');
@@ -159,10 +140,28 @@ export default class CreateApply extends PureComponent {
     this.setState({
       nextApproverModal: false,
     });
-    updateBindingFlow({
+    // 提交前先对提交的数据调验证接口进行进行验证
+    // 新建，节点是new，后端规定的且必传
+    validateData({
       advisorBindingList: finalEmplists,
+      currentNodeCode: 'new',
     }).then(() => {
-      this.sendDoApproveRequest(value);
+      const { validateResultData } = this.props;
+      const { isValid, msg } = validateResultData;
+       // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
+      if (isValid) {
+        updateBindingFlow({
+          advisorBindingList: finalEmplists,
+        }).then(() => {
+          this.sendDoApproveRequest(value);
+        });
+      } else {
+        Modal.error({
+          title: '提示信息',
+          okText: '确定',
+          content: msg,
+        });
+      }
     });
   }
 
