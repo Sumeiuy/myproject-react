@@ -191,6 +191,9 @@ export default class ServiceLog extends PureComponent {
     }
   }
 
+  /**
+   * 设置间隔日期，只能在大于六个月之前日期和当前日期之间选择
+   */
   @autobind
   disabledRange(day) {
     return !isInclusivelyAfterDay(day, beforeSixDate)
