@@ -44,16 +44,16 @@ const regexp = {
   matchPathList: /\/([^/]*)(?=(\/|$))/g,
   /**
    * @desc: 全量匹配内容中的换行符
-   * window换行: \n\r
+   * window换行: \r\n
    * Unix和OS X : \n
    * Classic Mac: \r
    * */
   returnLine: /[\n\r]/g,
   /**
    * @desc：全量匹配文本中的URL
-   * 至汉字、空格、/ 结束
+   * 至汉字、空格 结束
    */
-  url: /(((?:https?:\/\/)?(?:www\.))[0-9A-Za-z]+\.[0-9A-Za-z]+(\/[^\s\u4e00-\u9fa5/]*)*)/g,
+  url: /((?:https?:\/\/)|(?:www\.))[0-9A-Za-z.]+(\/?[^\s\u4e00-\u9fa5/\r\n]*)*/g,
 };
 
 export default regexp;

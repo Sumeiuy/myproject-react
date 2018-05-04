@@ -24,11 +24,7 @@ export default class PlatformParameterSetting extends PureComponent {
     empInfo: PropTypes.object.isRequired,
   }
   render() {
-    const {
-      match: {
-        path,
-      },
-    } = this.props;
+    const { match: { path } } = this.props;
     const { empInfo: { empRespList = [] } } = this.context;
     const premissionList = empRespList.map(item => item.respId);
     const finalMenu = _.filter(menu, (item) => {

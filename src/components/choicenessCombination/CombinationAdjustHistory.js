@@ -9,6 +9,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { Popover } from 'antd';
 
 import InfoTitle from '../common/InfoTitle';
 import Icon from '../common/Icon';
@@ -40,7 +41,7 @@ export default class CombinationAdjustHistory extends PureComponent {
 
   // 证券名称点击事件
   @autobind
-  securityHandle(type, code) {
+  handleSecurityClick(type, code) {
     if (type === STOCK_CODE) {
       const { openStockPage } = this.props;
       const openPayload = {
@@ -51,13 +52,38 @@ export default class CombinationAdjustHistory extends PureComponent {
   }
 
   @autobind
-  moreHandle(value) {
+  handleMoreClick(value) {
     const { showModal } = this.props;
     const payload = {
       code: value,
       type: HISTORY_TYPE,
     };
     showModal(payload);
+  }
+
+  // 设置 popover
+  @autobind
+  renderPopover(value) {
+    let reactElement = null;
+    if (value) {
+      reactElement = (<Popover
+        placement="bottomLeft"
+        content={value}
+        trigger="hover"
+        overlayStyle={{
+          width: '240px',
+          padding: '10px',
+          wordBreak: 'break-all',
+        }}
+      >
+        <div className={styles.ellipsis}>
+          {value}
+        </div>
+      </Popover>);
+    } else {
+      reactElement = '调仓理由：暂无';
+    }
+    return reactElement;
   }
 
   render() {
@@ -101,7 +127,7 @@ export default class CombinationAdjustHistory extends PureComponent {
                           <a
                             className={styles.securityName}
                             title={securityName}
-                            onClick={() => this.securityHandle(securityType, securityCode)}
+                            onClick={() => this.handleSecurityClick(securityType, securityCode)}
                           >
                             {securityName} ({securityCode})
                           </a>
@@ -119,14 +145,14 @@ export default class CombinationAdjustHistory extends PureComponent {
                           </a>
                         </div>
                         <div className={styles.reasonBox}>
-                          <p title={reason}>{reason || '调仓理由：暂无'}</p>
+                          {this.renderPopover(reason)}
                         </div>
                       </dd>
                     );
                   })
                 }
                 <dd className={styles.more}>
-                  <a onClick={() => this.moreHandle(value)}>{'更多 >'}</a>
+                  <a onClick={() => this.handleMoreClick(value)}>{'更多 >'}</a>
                 </dd>
               </dl>
             );

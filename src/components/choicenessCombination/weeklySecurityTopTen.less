@@ -3,6 +3,10 @@
     padding-left: 14px;
     :global {
       .ant-table {
+        table {
+          table-layout: fixed;
+          width: 100%;
+        }
         .ant-table-thead {
           height: 26px;
           line-height: 26px;
@@ -24,6 +28,27 @@
             td {
               border-bottom: 0;
               padding: 10px 0 22px;
+              div {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                word-break: break-all;
+              }
+              &:first-child {
+                width: 27%;
+              }
+              &:nth-child(2) {
+                width: 22%;
+              }
+              &:nth-child(3) {
+                width: 15%;
+              }
+              &:nth-child(4) {
+                width: 24%;
+              }
+              &:nth-child(5) {
+                width: 12%;
+              }
             }
             &:nth-child(even) {
               background-color: #f2f2f2;
@@ -31,18 +56,6 @@
           }
         }
       }
-    }
-    .securityName, .name {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      word-break: break-all;
-    }
-    .securityName {
-      width: 128px;
-    }
-    .name {
-      width: 120px;
     }
     .customerLink {
       margin-right: 6px;
@@ -67,14 +80,5 @@
     .down {
       color: #499d37;
     }
-  }
-}
-
-@media screen and (min-width: 1400px) {
-  .securityName {
-    width: 188px !important;
-  }
-  .name {
-    width: 170px !important;
   }
 }
