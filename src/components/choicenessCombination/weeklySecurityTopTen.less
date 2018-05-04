@@ -1,3 +1,4 @@
+@import "../../css/util.less";
 .weeklySecurityTopTenBox {
   .weeklySecurityTopTenContainer {
     padding-left: 14px;
@@ -29,10 +30,7 @@
               border-bottom: 0;
               padding: 10px 0 22px;
               div {
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                word-break: break-all;
+                .one-line-elllipsis;
               }
               &:first-child {
                 width: 27%;
@@ -64,10 +62,7 @@
       width: 84%;
       position: absolute;
       left: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      word-break: break-all;
+      .one-line-elllipsis;
     }
     .customerLink {
       i {
