@@ -53,7 +53,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorStrategySuggestion: PropTypes.bool.isRequired,
     isShowErrorTaskName: PropTypes.bool.isRequired,
     templetDesc: PropTypes.string,
-    isSightLabel: PropTypes.bool.isRequired,
+    isSightLabel: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -67,6 +67,7 @@ export default class CreateTaskForm extends PureComponent {
     missionType: '',
     taskBasicInfo: {},
     templetDesc: '',
+    isSightLabel: false,
   }
 
   constructor(props) {

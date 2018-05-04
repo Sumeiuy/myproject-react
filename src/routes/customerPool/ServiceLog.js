@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Select, DatePicker, Row, Col, Button, message, Input } from 'antd';
+import { Row, Col, Button, message, Input } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import classnames from 'classnames';
@@ -14,19 +14,21 @@ import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import logable from '../../decorators/logable';
+import Select from '../../components/common/Select';
+import DateRangePicker from '../../components/common/dateRangePicker';
+import { isInclusivelyAfterDay, isInclusivelyBeforeDay } from '../../components/common/dateRangePicker/utils';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import withRouter from '../../decorators/withRouter';
 import styles from './serviceLog.less';
 
 const Search = Input.Search;
-const Option = Select.Option;
-const RangePicker = DatePicker.RangePicker;
 const dateFormat = 'YYYY-MM-DD';
-const today = moment(new Date()).format(dateFormat);
-
-const sixMonth = moment(today).subtract(6, 'months');
-const sixDate = moment(sixMonth).format(dateFormat);
+const today = moment().format(dateFormat);
+const beforeSixDate = moment().subtract(6, 'months');
 const PAGE_NUM = 1;
+
+const DEFAULT_SERVE_TYPE = '所有类型';
+const DEFAULT_SERVE_SOURCE = '';
 
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
@@ -87,6 +89,8 @@ export default class ServiceLog extends PureComponent {
       showBtn: true,
       logData: [],
       pageNum: 1,
+      serveType: DEFAULT_SERVE_TYPE,
+      serveSource: DEFAULT_SERVE_SOURCE,
     };
   }
 
@@ -128,20 +132,32 @@ export default class ServiceLog extends PureComponent {
 
 
   @autobind
-  handleDateChange(value) {
+  handleDateChange(date) {
     const { location: { query, pathname }, replace } = this.props;
-    const start = moment(value[0]).format(dateFormat);
-    const end = moment(value[1]).format(dateFormat);
-    replace({
-      pathname,
-      query: {
-        ...query,
-        serveDateFrom: start,
-        serveDateTo: end,
-        serveDateToPaged: null,
-        pageNum: PAGE_NUM,
-      },
-    });
+    const { startDate, endDate } = date;
+    if (startDate !== null && endDate !== null) {
+      const endTimeStart = startDate.format(dateFormat);
+      const endTimeEnd = endDate.format(dateFormat);
+      replace({
+        pathname,
+        query: {
+          ...query,
+          serveDateFrom: endTimeStart,
+          serveDateTo: endTimeEnd,
+          serveDateToPaged: null,
+          pageNum: PAGE_NUM,
+        },
+      });
+    }
+  }
+
+  /**
+   * 设置间隔日期，只能在大于六个月之前日期和当前日期之间选择
+   */
+  @autobind
+  disabledRange(day) {
+    return !isInclusivelyAfterDay(day, beforeSixDate)
+      || !isInclusivelyBeforeDay(day, moment());
   }
 
   /**
@@ -162,28 +178,6 @@ export default class ServiceLog extends PureComponent {
   }
 
   @autobind
-  // 设置不可选日期
-  disabledDate(value) {
-    if (!value) {
-      return false;
-    }
-
-    // 设置间隔日期，只能在大于六个月之前日期和当前日期之间选择
-    const nowDay = sixDate;
-    const currentMonth = moment(value).month() + 1;
-    const localMonth = moment(new Date()).month() + 1;
-    const currentDate = moment(value).format(dateFormat);
-    const localDate = moment(new Date()).format(dateFormat);
-
-    if (currentMonth === localMonth) {
-      // endValue
-      return currentDate > localDate;
-    }
-    // startValue
-    return currentDate < nowDay;
-  }
-
-  @autobind
   @logable({ type: 'ButtonClick', payload: { name: '加载更多服务记录' } })
   handleMore() {
     const { location: { query },
@@ -196,8 +190,8 @@ export default class ServiceLog extends PureComponent {
     this.setState({
       pageNum: pageNum + 1,
     });
-    // params.custId = '118000004279'; // 本地测试用的数据 02001404
-    if (moment(lastTime).isBefore(sixDate)) {
+
+    if (moment(lastTime).isBefore(beforeSixDate)) {
       this.setState({
         showBtn: true,
       });
@@ -215,7 +209,7 @@ export default class ServiceLog extends PureComponent {
       value: '$args[0]',
     },
   })
-  serveAllSourceChange(value) {
+  serveAllSourceChange(key, value) {
     const { location: { query, pathname }, replace } = this.props;
     replace({
       pathname,
@@ -226,17 +220,38 @@ export default class ServiceLog extends PureComponent {
         pageNum: PAGE_NUM,
       },
     });
+    this.setState({
+      serveSource: value,
+    });
   }
 
   @autobind
-  handleCreatOptions(data, boolen) {
-    if (!_.isEmpty(data) && boolen === 'serveType') {
-      return data.map(item =>
-        <Option key={`task${item.key}`} value={item.value}>{item.value}</Option>,
-      );
+  constructCreatOptions(data, type) {
+    if (!_.isEmpty(data) && type === 'serveType') {
+      return data.map(item => ({
+        label: item.value,
+        value: item.value,
+        show: true,
+      }));
     }
-    return data.map(item =>
-      <Option key={`task${item.key}`} value={item.key}>{item.value}</Option>,
+    return data.map(item => ({
+      label: item.value,
+      value: item.key,
+      show: true,
+    }));
+  }
+
+  @autobind
+  constructNullCreatOptions() {
+    return (
+      <Select
+        defaultValue="暂无数据"
+        data={[{
+          label: '暂无数据',
+          value: '0',
+          show: true,
+        }]}
+      />
     );
   }
 
@@ -248,7 +263,7 @@ export default class ServiceLog extends PureComponent {
       value: '$args[0]',
     },
   })
-  serveAllTypeChange(value) {
+  serveAllTypeChange(key, value) {
     let type = '';
     const { location: { query, pathname }, replace } = this.props;
     if (value === '所有类型') {
@@ -265,6 +280,9 @@ export default class ServiceLog extends PureComponent {
         pageNum: PAGE_NUM,
       },
     });
+    this.setState({
+      serveType: value,
+    });
   }
 
   render() {
@@ -273,7 +291,7 @@ export default class ServiceLog extends PureComponent {
     // 默认搜索内容
     const { keyword } = query;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
-    const { logData, showBtn } = this.state;
+    const { logData, showBtn, serveSource, serveType } = this.state;
     return (
       <div className={styles.serviceInner}>
         <div
@@ -282,53 +300,51 @@ export default class ServiceLog extends PureComponent {
           onScroll={this.handleScroll}
         >
           <div className={styles.service_from}>
-            <Row>
-              <Col span={2} offset={2} className={styles.service_label}>
-                <label htmlFor="dd" >服务时间：</label>
-              </Col>
-              <Col span={7} >
-                <RangePicker
-                  allowClear={false}
-                  defaultValue={[moment(sixDate, dateFormat), moment(today, dateFormat)]}
-                  format="YYYY-MM-DD"
-                  showTime={false}
-                  disabledDate={this.disabledDate}
-                  onChange={this.handleDateChange}
-                />
-              </Col>
-              <Col span={4}>
-                {!_.isEmpty(serveAllSource) ?
-                  <Select defaultValue="所有渠道" onChange={this.serveAllSourceChange}>
-                    {this.handleCreatOptions(serveAllSource)}
-                  </Select> :
-                  <Select defaultValue="暂无数据">
-                    <Option key="null" value="0" >暂无数据</Option>
-                  </Select>
-                }
-              </Col>
-              <Col span={4}>
-                {!_.isEmpty(serveAllType) ?
-                  <Select defaultValue="所有类型" onChange={this.serveAllTypeChange}>
-                    {this.handleCreatOptions(serveAllType, 'serveType')}
-                  </Select> :
-                  <Select defaultValue="暂无数据">
-                    <Option key="null" value="0" >暂无数据</Option>
-                  </Select>
-                }
-              </Col>
-              <Col span={3} className={styles.searchInput}>
-                <Search
-                  placeholder="搜索服务记录"
-                  defaultValue={!_.isEmpty(keyword) ? decodeURIComponent(keyword) : ''}
-                  onSearch={this.handleSearchServiceRecord}
-                  style={{ width: 160 }}
-                  enterButton
-                />
-              </Col>
-            </Row>
+            <div className={styles.searchInput}>
+              <Search
+                placeholder="搜索服务记录"
+                defaultValue={!_.isEmpty(keyword) ? decodeURIComponent(keyword) : ''}
+                onSearch={this.handleSearchServiceRecord}
+                style={{ width: 160 }}
+                enterButton
+              />
+            </div>
+            <div className={styles.serviceSource}>
+              {!_.isEmpty(serveAllSource) ?
+                <Select
+                  value={serveSource}
+                  onChange={this.serveAllSourceChange}
+                  name="渠道"
+                  data={this.constructCreatOptions(serveAllSource)}
+                /> :
+                this.constructNullCreatOptions()
+              }
+            </div>
+            <div className={styles.serviceType}>
+              {!_.isEmpty(serveAllType) ?
+                <Select
+                  value={serveType}
+                  onChange={this.serveAllTypeChange}
+                  name="类型"
+                  data={this.constructCreatOptions(serveAllType, 'serveType')}
+                /> :
+                this.constructNullCreatOptions()
+              }
+            </div>
+            <div className={styles.serviceTime}>
+              <div className={styles.title}>服务时间：</div>
+              <DateRangePicker
+                hasCustomerOffset
+                initialEndDate={moment(today, dateFormat)}
+                initialStartDate={moment(beforeSixDate, dateFormat)}
+                onChange={this.handleDateChange}
+                key="服务时间"
+                disabledRange={this.disabledRange}
+              />
+            </div>
           </div>
           <Row>
-            <Col span={20} offset={2} className={styles.serviceLog}>
+            <Col span={20} className={styles.serviceLog}>
               <Collapse
                 data={logData}
                 executeTypes={executeTypes}
