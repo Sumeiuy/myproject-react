@@ -44,7 +44,7 @@ const regexp = {
   matchPathList: /\/([^/]*)(?=(\/|$))/g,
   /**
    * @desc: 全量匹配内容中的换行符
-   * window换行: \n\r
+   * window换行: \r\n
    * Unix和OS X : \n
    * Classic Mac: \r
    * */

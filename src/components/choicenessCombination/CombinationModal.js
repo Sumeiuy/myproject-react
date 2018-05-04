@@ -18,11 +18,12 @@ import Pagination from '../common/Pagination';
 import Select from '../common/Select';
 import Button from '../common/Button';
 import Icon from '../common/Icon';
+import { time as timeHelper } from '../../helper';
 import config from './config';
 import styles from './combinationModal.less';
 
 const Search = Input.Search;
-const { timeRange, directionRange, titleList } = config;
+const { timeRange, directionRange, titleList, formatStr } = config;
 // 3个月的key
 const THREE_MOUNTH_KEY = '3';
 // 调入的key
@@ -74,7 +75,7 @@ export default class CombinationModal extends PureComponent {
     getTreeData();
     // 时间默认选中为最三个月
     const dateObj = this.calcDate(THREE_MOUNTH_KEY);
-    const titleArray = this.getTitleList(type);
+    const titleArray = this.getTitleColumns(type);
     this.setState({
       startDate: dateObj.begin,
       endDate: dateObj.end,
@@ -84,11 +85,12 @@ export default class CombinationModal extends PureComponent {
 
   // 根据类型配置不同的表格标题
   @autobind
-  getTitleList(type) {
+  getTitleColumns(type) {
     const { openCustomerListPage } = this.props;
     const titleArray = titleList[type];
+    // 持仓历史
     if (type === HISTORY_TYPE) {
-      // 持仓历史
+      // 查看持仓客户
       const lastColumn = {
         dataIndex: 'view',
         key: 'view',
@@ -108,8 +110,13 @@ export default class CombinationModal extends PureComponent {
           </a>);
         },
       };
+      // 时间
+      titleArray[0].render = text => (<div>{timeHelper.format(text, formatStr)}</div>);
+      // 调仓理由
       titleArray[5].render = (text, record) => this.renderPopover(record.reason);
+      // 所属组合
       titleArray[6].render = (text, record) => this.renderPopover(record.combinationName);
+      // 查看持仓客户
       titleArray[7] = lastColumn;
     }
     return titleArray;
@@ -142,7 +149,7 @@ export default class CombinationModal extends PureComponent {
 
   // 下拉框 change
   @autobind
-  selectChangeHandle(key, value) {
+  handleSelectChange(key, value) {
     const obj = {
       [key]: value,
     };
@@ -160,7 +167,7 @@ export default class CombinationModal extends PureComponent {
 
   // 树状选择器change
   @autobind
-  treeSelectChangeHandle(value) {
+  handleTreeSelectChange(value) {
     this.setState({
       combinationCode: value,
     }, this.sendRequest);
@@ -188,7 +195,7 @@ export default class CombinationModal extends PureComponent {
 
   // 根据关键字查询客户
   @autobind
-  searchListHandle(v = '') {
+  handleSearchList(v = '') {
     this.setState({
       keyword: v,
     }, this.sendRequest);
@@ -200,12 +207,13 @@ export default class CombinationModal extends PureComponent {
     this.sendRequest(page);
   }
 
+  // 设置单元格的 popover
   @autobind
   renderPopover(value) {
     let reactElement = null;
     if (value) {
       reactElement = (<Popover
-        placement="top"
+        placement="topLeft"
         content={value}
         trigger="hover"
         overlayClassName={styles.popover}
@@ -252,7 +260,7 @@ export default class CombinationModal extends PureComponent {
                 name="time"
                 data={timeRange}
                 value={time}
-                onChange={this.selectChangeHandle}
+                onChange={this.handleSelectChange}
               />
             </div>
             <div className={styles.headerItem}>
@@ -263,7 +271,7 @@ export default class CombinationModal extends PureComponent {
                 treeData={treeData}
                 placeholder="Please select"
                 treeDefaultExpandAll
-                onChange={this.treeSelectChangeHandle}
+                onChange={this.handleTreeSelectChange}
                 dropdownClassName={styles.dropdownClassName}
               />
             </div>
@@ -276,7 +284,7 @@ export default class CombinationModal extends PureComponent {
                     name="directionCode"
                     data={directionRange}
                     value={directionCode}
-                    onChange={this.selectChangeHandle}
+                    onChange={this.handleSelectChange}
                   />
                 </div>
               :
@@ -289,7 +297,7 @@ export default class CombinationModal extends PureComponent {
                   width: '235px',
                 }}
                 defaultValue={keyword}
-                onSearch={this.searchListHandle}
+                onSearch={this.handleSearchList}
                 enterButton
               />
             </div>
