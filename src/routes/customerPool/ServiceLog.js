@@ -28,14 +28,17 @@ const sixMonth = moment(today).subtract(6, 'months');
 const sixDate = moment(sixMonth).format(dateFormat);
 const PAGE_NUM = 1;
 
+const DEFAULT_SERVE_TYPE = '所有类型';
+const DEFAULT_SERVE_SOURCE = '所有渠道';
+
 const ALL_SERVE_TYPE = [{
-  label: '所有类型',
+  label: DEFAULT_SERVE_TYPE,
   value: '',
   show: true,
 }];
 
 const ALL_SERVE_SOURCE = [{
-  label: '所有渠道',
+  label: DEFAULT_SERVE_SOURCE,
   value: '',
   show: true,
 }];
@@ -99,8 +102,8 @@ export default class ServiceLog extends PureComponent {
       showBtn: true,
       logData: [],
       pageNum: 1,
-      serveType: '所有类型',
-      serveSource: '所有渠道',
+      serveType: DEFAULT_SERVE_TYPE,
+      serveSource: DEFAULT_SERVE_SOURCE,
     };
   }
 
