@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-24 14:14:04
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-02 22:43:08
+ * @Last Modified time: 2018-05-03 14:53:05
  * @Descripter:投资建议模板 Home页面
  */
 
@@ -369,6 +369,7 @@ export default class InvestmentAdvice extends PureComponent {
             onCancel={this.handleCancel}
             closeModal={this.handleCancel}
             modalKey={modalKey}
+            maskClosable={false}
           >
             <TemplateForm
               wrappedComponentRef={this.setTemplateFormRef}
@@ -380,7 +381,6 @@ export default class InvestmentAdvice extends PureComponent {
               titleStatusErrorMessage={titleStatusErrorMessage}
               checkMention={this.checkMention}
               checkTitle={this.checkTitle}
-              showModal={showModal}
             />
           </CommonModal>)
         }
