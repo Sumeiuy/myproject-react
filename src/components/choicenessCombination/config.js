@@ -80,7 +80,7 @@ const config = {
       {
         dataIndex: 'price',
         key: 'price',
-        title: '调仓价（元）',
+        title: '成交价（元）',
         width: 115,
       },
       {
@@ -122,7 +122,7 @@ const config = {
         dataIndex: 'name',
         key: 'name',
         title: '证券名称及代码',
-        width: '28%',
+        width: '27%',
         align: 'left',
       },
       {
@@ -136,14 +136,14 @@ const config = {
         dataIndex: 'priceLimit',
         key: 'priceLimit',
         title: '涨跌幅',
-        width: '13%',
+        width: '15%',
         align: 'left',
       },
       {
         dataIndex: 'combinationName',
         key: 'combinationName',
         title: '组合名称',
-        width: '25%',
+        width: '24%',
         align: 'left',
       },
       {
