@@ -16,32 +16,19 @@ import { autobind } from 'core-decorators';
 import logable from '../../decorators/logable';
 import Select from '../../components/common/Select';
 import DateRangePicker from '../../components/common/dateRangePicker';
+import { isInclusivelyAfterDay, isInclusivelyBeforeDay } from '../../components/common/dateRangePicker/utils';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import withRouter from '../../decorators/withRouter';
 import styles from './serviceLog.less';
 
 const Search = Input.Search;
 const dateFormat = 'YYYY-MM-DD';
-const today = moment(new Date()).format(dateFormat);
-
-const sixMonth = moment(today).subtract(6, 'months');
-const sixDate = moment(sixMonth).format(dateFormat);
+const today = moment().format(dateFormat);
+const beforeSixDate = moment().subtract(6, 'months');
 const PAGE_NUM = 1;
 
 const DEFAULT_SERVE_TYPE = '所有类型';
-const DEFAULT_SERVE_SOURCE = '所有渠道';
-
-const ALL_SERVE_TYPE = [{
-  label: DEFAULT_SERVE_TYPE,
-  value: '',
-  show: true,
-}];
-
-const ALL_SERVE_SOURCE = [{
-  label: DEFAULT_SERVE_SOURCE,
-  value: '',
-  show: true,
-}];
+const DEFAULT_SERVE_SOURCE = '';
 
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
@@ -165,6 +152,15 @@ export default class ServiceLog extends PureComponent {
   }
 
   /**
+   * 设置间隔日期，只能在大于六个月之前日期和当前日期之间选择
+   */
+  @autobind
+  disabledRange(day) {
+    return !isInclusivelyAfterDay(day, beforeSixDate)
+      || !isInclusivelyBeforeDay(day, moment());
+  }
+
+  /**
    * 搜索服务记录
    */
   @autobind
@@ -182,28 +178,6 @@ export default class ServiceLog extends PureComponent {
   }
 
   @autobind
-  // 设置不可选日期
-  disabledDate(value) {
-    if (!value) {
-      return false;
-    }
-
-    // 设置间隔日期，只能在大于六个月之前日期和当前日期之间选择
-    const nowDay = sixDate;
-    const currentMonth = moment(value).month() + 1;
-    const localMonth = moment(new Date()).month() + 1;
-    const currentDate = moment(value).format(dateFormat);
-    const localDate = moment(new Date()).format(dateFormat);
-
-    if (currentMonth === localMonth) {
-      // endValue
-      return currentDate > localDate;
-    }
-    // startValue
-    return currentDate < nowDay;
-  }
-
-  @autobind
   @logable({ type: 'ButtonClick', payload: { name: '加载更多服务记录' } })
   handleMore() {
     const { location: { query },
@@ -216,8 +190,8 @@ export default class ServiceLog extends PureComponent {
     this.setState({
       pageNum: pageNum + 1,
     });
-    // params.custId = '118000004279'; // 本地测试用的数据 02001404
-    if (moment(lastTime).isBefore(sixDate)) {
+
+    if (moment(lastTime).isBefore(beforeSixDate)) {
       this.setState({
         showBtn: true,
       });
@@ -254,17 +228,17 @@ export default class ServiceLog extends PureComponent {
   @autobind
   constructCreatOptions(data, type) {
     if (!_.isEmpty(data) && type === 'serveType') {
-      return [...data.map(item => ({
+      return data.map(item => ({
         label: item.value,
         value: item.value,
         show: true,
-      })), ...ALL_SERVE_TYPE];
+      }));
     }
-    return [...data.map(item => ({
+    return data.map(item => ({
       label: item.value,
       value: item.key,
       show: true,
-    })), ...ALL_SERVE_SOURCE];
+    }));
   }
 
   @autobind
@@ -307,7 +281,7 @@ export default class ServiceLog extends PureComponent {
       },
     });
     this.setState({
-      serveType: type,
+      serveType: value,
     });
   }
 
@@ -362,10 +336,10 @@ export default class ServiceLog extends PureComponent {
               <DateRangePicker
                 hasCustomerOffset
                 initialEndDate={moment(today, dateFormat)}
-                initialStartDate={moment(sixDate, dateFormat)}
-                disabledRange={this.disabledDate}
+                initialStartDate={moment(beforeSixDate, dateFormat)}
                 onChange={this.handleDateChange}
                 key="服务时间"
+                disabledRange={this.disabledRange}
               />
             </div>
           </div>
