@@ -278,10 +278,10 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           createTimeStart,
-        createTimeEnd,
-        endTimeStart,
-        endTimeEnd,
-        missionViewType,
+          createTimeEnd,
+          endTimeStart,
+          endTimeEnd,
+          missionViewType,
         },
       },
     } = this.props;
@@ -533,11 +533,11 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-      endTimeStart = '',
-      endTimeEnd = '',
-      createTimeEnd = '',
-      createTimeStart = '',
-      status,
+          endTimeStart = '',
+          endTimeEnd = '',
+          createTimeEnd = '',
+          createTimeStart = '',
+          status,
         },
       },
     } = this.props;
@@ -629,11 +629,11 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-        type,
-        creatorId,
-        creatorName,
-        custId = '',
-        custName = '',
+          type,
+          creatorId,
+          creatorName,
+          custId = '',
+          custName = '',
         },
       },
       customerList,
