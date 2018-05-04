@@ -1,3 +1,4 @@
+@import "../../css/util.less";
 .modal {
   :global {
     .ant-modal {
@@ -89,13 +90,6 @@
   .content {
     margin-top: 68px;
     z-index: 1;
-    .ellipsis {
-      width: 174px;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      word-break: break-all;
-    }
     :global {
       table {
         tr td, rt th {
@@ -140,4 +134,8 @@
 }
 .customerLink {
   color: #7d9be0;
+}
+.ellipsis {
+  width: 174px;
+  .one-line-elllipsis;
 }

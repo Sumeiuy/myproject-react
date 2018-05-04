@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-03 13:57:19
+ * @Last Modified time: 2018-05-04 13:20:54
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -92,7 +92,7 @@ export default class MissionBind extends PureComponent {
   getZLFeedbackItem(list = []) {
     return list.map(item => (
       <div className={styles.zlfeedbackItem} key={item.id}>
-        <span>{item.name}</span>
+        <span>{item.custFeedbackName}</span>
       </div>
     ));
   }

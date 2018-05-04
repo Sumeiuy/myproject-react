@@ -2,16 +2,18 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-03 10:36:23
+ * @Last Modified time: 2018-05-03 21:19:27
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import Draft from 'draft-js';
 import { autobind } from 'core-decorators';
 import { Form, Input, Select, Mention, Dropdown, Menu } from 'antd';
-import { getDomByAttribute, getTextByAttribute } from './helper';
 import styles from './TemplateForm.less';
 // import logable from '../../../decorators/logable';
+
+const { EditorState, Modifier } = Draft;
 
 const FormItem = Form.Item;
 const create = Form.create;
@@ -56,15 +58,15 @@ export default class TemplateForm extends PureComponent {
     this.state = {
       // 初始化mention的suggestions
       suggestions: [],
-      // mention中光标偏移
-      anchorOffset: 0,
-      // mention中光标所在的span标签的data-offset-key值
-      dataOffestKey: '',
       // mention中的value值
       mentionValue: '',
     };
     // 判断内容是否需要校验，第一次渲染会调用handleMentionChange方法
     this.needCheckContent = false;
+    // 连续插入参数的个数。判断是否时连续插入参数
+    this.insertParameterStatus = 0;
+    // mention的光标信息selection
+    this.selection = {};
   }
 
   @autobind
@@ -101,6 +103,7 @@ export default class TemplateForm extends PureComponent {
   // 内容提及框内容变化
   @autobind
   handleMentionChange(contentState) {
+    // dom方法开始
     // 第一次没必要校验
     if (!this.needCheckContent) {
       this.needCheckContent = true;
@@ -111,21 +114,12 @@ export default class TemplateForm extends PureComponent {
     this.setState({
       mentionValue: content,
     });
-    // 获取光标位置
-    const selection = document.getSelection();
-    const { anchorOffset, baseNode } = selection;
-    if (baseNode) {
-      const parentNode = baseNode.parentNode;
-      let dataOffestKey = parentNode.getAttribute('data-offset-key');
-      if (!dataOffestKey) {
-        const targetNode = parentNode.parentNode;
-        dataOffestKey = targetNode.getAttribute('data-offset-key');
-      }
-      this.setState({
-        anchorOffset,
-        dataOffestKey,
-      });
-    }
+  }
+
+  // 内容提及框获取焦点
+  @autobind
+  handleMentionFocus() {
+    this.insertParameterStatus = 0;
   }
 
   // 表单标题变化
@@ -139,28 +133,34 @@ export default class TemplateForm extends PureComponent {
   @autobind
   insertParameter(item) {
     const { value } = item.item.props;
-    const { anchorOffset, dataOffestKey, mentionValue } = this.state;
-    let content = '';
-    // 判断是否时首次插入参数，首次插入参数dataOffestKey是false
-    if (mentionValue) {
-      //  判断是否时连续插入，连续插入dataOffestKey为空
-      if (dataOffestKey) {
-        // 获取属性是data-offset-key的标签
-        const targetElement = getDomByAttribute('span', 'data-offset-key', dataOffestKey);
-        let innerText = targetElement[0].innerText;
-        innerText = `${innerText.slice(0, anchorOffset)} $${value} ${innerText.slice(anchorOffset)}`;
-        targetElement[0].children[0].innerText = innerText;
-        // 获取属性是data-text的标签内容
-        const allTextArray = getTextByAttribute('span', 'data-text');
-        content = allTextArray.join('');
-      } else {
-        content = `${mentionValue} $${value} `;
-      }
-    } else {
-      content = ` $${value} `;
+    const editor = this.getMention().mentionEle._editor; // eslint-disable-line
+    const editorState = editor.getEditorState();
+    let contentState = editorState.getCurrentContent();
+    const content = contentState.getPlainText();
+    const contentLength = content.length;
+    let selection = editorState.getSelection();
+    this.insertParameterStatus = this.insertParameterStatus + 1;
+    // 连续插入参数光标会跑到最前面
+    if (this.insertParameterStatus > 1) {
+      // 当连续插入参数，光标会移动到头部，导致连续插入第二次会在头部插入参数
+      // 从第二次开始的连续插入需要将光标的位置修改到前一次插入的末尾
+      // apiUrl: (https://draftjs.org/docs/api-reference-selection-state.html#focusoffset)
+      selection = selection.merge({
+        focusOffset: contentLength,
+        anchorOffset: contentLength,
+      });
     }
-    const contentState = toContentState(content);
-    this.props.form.setFieldsValue({ content: contentState });
+    contentState = Modifier.insertText(
+        contentState,
+        selection,
+        ` $${value} `,
+      );
+    editor.setEditorState(
+      EditorState.createWithContent(
+        contentState,
+        editorState.getDecorator(),
+      ),
+    );
   }
 
   render() {
@@ -248,6 +248,7 @@ export default class TemplateForm extends PureComponent {
                       onSearchChange={this.handleSearchChange}
                       suggestions={suggestions}
                       onChange={this.handleMentionChange}
+                      onFocus={this.handleMentionFocus}
                       placeholder="请输入服务内容"
                       multiLines
                     />,

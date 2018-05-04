@@ -3,7 +3,7 @@
  * @Description: 收益率走势图
  * @Date: 2018-04-25 13:55:06
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-03 14:29:02
+ * @Last Modified time: 2018-05-04 13:36:46
 */
 
 import React, { PureComponent } from 'react';
@@ -140,11 +140,11 @@ export default class CombinationYieldChart extends PureComponent {
   @autobind
   tooltipFormat(params) {
     const { chartData, combinationItemData } = this.props;
-    const combinationNum = (chartData.combinationData || EMPTY_ARRAY)[params[0].dataIndex] || 0;
+    const combinationNum = (chartData.combinationLine || EMPTY_ARRAY)[params[0].dataIndex] || 0;
     const isAsset = _.isNull(combinationItemData.weekEarnings);
     // 如果非资产配置类组合，就多现实一个基准数据
     if (!isAsset) {
-      const baseNum = (chartData.baseData || EMPTY_ARRAY)[params[0].dataIndex] || 0;
+      const baseNum = (chartData.baseLine || EMPTY_ARRAY)[params[0].dataIndex] || 0;
       return `
         <div>${params[0].axisValueLabel}</div>
         <div>${params[0].marker}${params[0].seriesName}: ${combinationNum.toFixed(2)}%</div>
@@ -183,7 +183,7 @@ export default class CombinationYieldChart extends PureComponent {
         itemWidth: 10,
         itemGap: 5,
         textStyle: {
-          fontSize: 8,
+          fontSize: 10,
         },
         selectedMode: false,
         formatter: name => (

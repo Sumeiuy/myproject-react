@@ -61,16 +61,16 @@
           }
         }
         .ant-form-item-control-wrapper {
+          .ant-form-item-children {
+            position: relative;
+          }
           .ant-mention-wrapper.multilines {
             display: block;
-
-            & .DraftEditor-root, .DraftEditor-editorContainer {
-              height: 100%;
-
-              & .public-DraftEditor-content {
-                height: 100%;
-              }
-            }
+          }
+          .ant-mention-wrapper.multilines .DraftEditor-root,
+          .ant-mention-wrapper.multilines .DraftEditor-editorContainer,
+          .ant-mention-wrapper.multilines .DraftEditor-editorContainer .public-DraftEditor-content {
+            height: 100%;
           }
         }
 

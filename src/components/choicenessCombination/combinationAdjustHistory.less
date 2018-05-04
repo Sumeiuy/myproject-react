@@ -1,4 +1,6 @@
+@import "../../css/util.less";
 .combinationAdjustHistoryBox {
+  font-size: 12px;
   dl {
     &:last-child {
       dt {
@@ -26,37 +28,31 @@
         background-color: #f48a8a;
       }
       span {
-        font-size: 12px;
         color: #4a4a4a;
       }
     }
     dd {
       margin: 0 0 11px 76px;
       .titleBox {
-        font-size: 0;
+        font-size: 14px;
+        position: relative;
+        a {
+          display: block;
+          .one-line-elllipsis;
+        }
         .securityName {
           color: #2782d7;
           display: inline-block;
-          width: 160px;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
-          font-size: 14px;
+          position: absolute;
+          width: 50%;
         }
         .combinationName {
-          display: block;
-          float: right;
-          width: 154px;
-          font-size: 14px;
           text-align: right;
           color: #4a4a4a;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          overflow: hidden;
+          margin-left: 50%;
         }
       }
       .timeBox {
-        font-size: 12px;
         .customerLink {
           i {
             color: #7d9be0;
@@ -71,13 +67,8 @@
       }
       .reasonBox {
         line-height: 20px;
-        p {
-          font-size: 12px;
-          color: #828282;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
+        color: #828282;
+        .one-line-elllipsis;
       }
     }
   }
@@ -99,11 +90,8 @@
   right: 0;
   text-align: right;
   color: #2782d7;
-  font-size: 12px;
 }
-
-@media screen and (min-width: 1400px) {
-  .securityName {
-    width: 250px !important;
-  }
+.ellipsis {
+  color: #828282;
+  .one-line-elllipsis;
 }
