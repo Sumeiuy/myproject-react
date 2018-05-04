@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-26 20:03:40
+ * @Last Modified time: 2018-05-03 22:28:50
  */
 
 import React, { PureComponent } from 'react';
@@ -42,6 +42,8 @@ export default class ApplyEditForm extends PureComponent {
     // 验证提交数据
     validateResultData: PropTypes.object.isRequired,
     validateData: PropTypes.func.isRequired,
+    // 删除绑定的服务经理
+    deleteBindingAdvisor: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -93,7 +95,6 @@ export default class ApplyEditForm extends PureComponent {
   // 提交
   @autobind
   handleSubmit(item) {
-    const { validateData } = this.props;
     const { empList } = this.state;
     // 用empId去重
     const finalEmplists = _.uniqBy(empList, 'empId');
@@ -112,28 +113,10 @@ export default class ApplyEditForm extends PureComponent {
       nextApproverList: item.flowAuditors,
     }, () => {
       // approverNum为none代表没有审批人，则不需要弹审批弹框直接走接口
-      // 终止按钮的approverNum为none，提交按钮的approverNum不为none，需要验证提交数据
+      // 终止按钮的approverNum为none，提交按钮的approverNum不为none
       if (item.approverNum !== 'none') {
-        // 提交前先对提交的数据调验证接口进行进行验证
-        // 驳回重新提交，节点是submit，后端规定的且必传
-        validateData({
-          advisorBindingList: finalEmplists,
-          currentNodeCode: 'resubmit',
-        }).then(() => {
-          const { validateResultData } = this.props;
-          const { isValid, msg } = validateResultData;
-          // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
-          if (isValid) {
-            this.setState({
-              nextApproverModal: true,
-            });
-          } else {
-            Modal.error({
-              title: '提示信息',
-              okText: '确定',
-              content: msg,
-            });
-          }
+        this.setState({
+          nextApproverModal: true,
         });
       } else {
         this.sendDoApproveRequest();
@@ -144,7 +127,7 @@ export default class ApplyEditForm extends PureComponent {
   // 发送修改请求,先走修改接口，再走走流程接口
   @autobind
   sendModifyRequest(value) {
-    const { updateBindingFlow, detailInfo } = this.props;
+    const { validateData, detailInfo } = this.props;
     const { flowId, appId, currentNodeCode } = detailInfo;
     const { empList } = this.state;
     // 用empId去重
@@ -156,13 +139,31 @@ export default class ApplyEditForm extends PureComponent {
     this.setState({
       nextApproverModal: false,
     });
-    updateBindingFlow({
-      flowId,
-      appId,
-      currentNodeCode,
+    // 提交前先对提交的数据调验证接口进行进行验证
+    // 驳回重新提交，节点是submit，后端规定的且必传
+    validateData({
       advisorBindingList: finalEmplists,
+      currentNodeCode: 'resubmit',
     }).then(() => {
-      this.sendDoApproveRequest(value);
+      const { updateBindingFlow, validateResultData } = this.props;
+      const { isValid, msg } = validateResultData;
+      // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
+      if (isValid) {
+        updateBindingFlow({
+          flowId,
+          appId,
+          currentNodeCode,
+          advisorBindingList: finalEmplists,
+        }).then(() => {
+          this.sendDoApproveRequest(value);
+        });
+      } else {
+        Modal.error({
+          title: '提示信息',
+          okText: '确定',
+          content: msg,
+        });
+      }
     });
   }
 
@@ -213,6 +214,7 @@ export default class ApplyEditForm extends PureComponent {
       batchAdvisorListData,
       queryBatchAdvisorList,
       empAppBindingList,
+      deleteBindingAdvisor,
     } = this.props;
     const {
       nextApproverModal,
@@ -250,9 +252,10 @@ export default class ApplyEditForm extends PureComponent {
                 advisorList={advisorList}
                 batchAdvisorListData={batchAdvisorListData}
                 queryBatchAdvisorList={queryBatchAdvisorList}
-                saveSelectedEmpList={this.saveSelectedEmpList}
+                onAddEmpList={this.saveSelectedEmpList}
                 advisorBindList={advisorBindList}
                 pageType="edit"
+                deleteBindingAdvisor={deleteBindingAdvisor}
               />
             </div>
             <div id="nginformation_module" className={styles.module}>
@@ -271,21 +274,17 @@ export default class ApplyEditForm extends PureComponent {
                 </ul>
               </div>
             </div>
-            <div id="approvalRecord_module" className={styles.module}>
-              <ApprovalRecord
-                head="审批记录"
-                info={workflowHistoryBeans}
-                currentApproval={currentApproval}
-                currentNodeName={currentNodeName}
-                statusType="ready"
-              />
-            </div>
-            <div id="button_module" className={styles.buttonModule}>
-              <BottonGroup
-                list={buttonListData}
-                onEmitEvent={this.handleSubmit}
-              />
-            </div>
+            <ApprovalRecord
+              head="审批记录"
+              info={workflowHistoryBeans}
+              currentApproval={currentApproval}
+              currentNodeName={currentNodeName}
+              statusType="ready"
+            />
+            <BottonGroup
+              list={buttonListData}
+              onEmitEvent={this.handleSubmit}
+            />
             <TableDialog {...searchProps} />
           </div>
         </div>

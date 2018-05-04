@@ -30,5 +30,7 @@ export default function telephoneNumberManage(api) {
     validateData: query => api.post('/file/mobilebinding/validate', query),
     // 获取拨号信息
     queryPhoneInfo: query => api.post('/groovynoauth/fsp/queryPhoneInfo', query),
+    // 删除绑定的服务经理
+    deleteBindingAdvisor: query => api.post('/groovynoauth/fsp/emp/mobilebinding/deleteBindingAdvisor', query),
   };
 }
