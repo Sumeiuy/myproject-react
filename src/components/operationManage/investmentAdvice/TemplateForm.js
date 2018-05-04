@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-03 18:33:35
+ * @Last Modified time: 2018-05-03 21:19:27
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
