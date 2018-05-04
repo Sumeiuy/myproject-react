@@ -1,12 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
-<<<<<<< HEAD
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-04 14:47:48
-=======
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-03 19:33:10
->>>>>>> 1b501f8d7a7aa9fb42c49964de5026076712fc7f
+ * @Last Modified time: 2018-05-04 14:58:24
  */
 
 import React, { PureComponent } from 'react';
