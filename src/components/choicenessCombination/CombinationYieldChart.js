@@ -3,7 +3,7 @@
  * @Description: 收益率走势图
  * @Date: 2018-04-25 13:55:06
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 16:05:57
+ * @Last Modified time: 2018-05-03 14:29:02
 */
 
 import React, { PureComponent } from 'react';
@@ -18,6 +18,9 @@ import { chartTabList } from '../../routes/choicenessCombination/config';
 const TabPane = Tabs.TabPane;
 // const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+// 图表legend文字显示最大长度
+const LEGEND_MAX_LENGTH = 8;
+
 export default class CombinationYieldChart extends PureComponent {
   static propTypes = {
     // tab切换
@@ -85,20 +88,11 @@ export default class CombinationYieldChart extends PureComponent {
   @autobind
   getLegendData() {
     const { chartData, combinationItemData } = this.props;
-    // const itemData = chartData[combinationCode] || EMPTY_OBJECT;
-    const combinationName = (chartData.combinationName || '').length > 8 ?
-      chartData.combinationName.slice(0, 8)
-      :
-      chartData.combinationName;
-    const baseName = (chartData.baseName || '').length > 8 ?
-      chartData.baseName.slice(0, 8)
-      :
-      chartData.baseName;
-    const legendData = [combinationName];
+    const legendData = [chartData.combinationName];
     const isAsset = _.isNull(combinationItemData.weekEarnings);
     // 如果非资产配置类组合，就多显示一个基准线
     if (!isAsset) {
-      legendData.push(baseName);
+      legendData.push(chartData.baseName);
     }
     return legendData;
   }
@@ -163,17 +157,6 @@ export default class CombinationYieldChart extends PureComponent {
     `;
   }
 
-  // 在组合排名tab切换时用于重置图表组件tab的状态
-  // @autobind
-  // resetActiveKey() {
-  //   const { combinationItemData } = this.props;
-  //   const isAsset = _.isNull(combinationItemData.weekEarnings);
-  //   const activeKey = isAsset ? chartTabList[1].key : chartTabList[0].key;
-  //   this.setState({
-  //     activeKey,
-  //   });
-  // }
-
   @autobind
   handleTabChange(key) {
     const { tabChange, combinationCode } = this.props;
@@ -203,6 +186,9 @@ export default class CombinationYieldChart extends PureComponent {
           fontSize: 8,
         },
         selectedMode: false,
+        formatter: name => (
+          name.length > LEGEND_MAX_LENGTH ? `${name.slice(0, LEGEND_MAX_LENGTH)}...` : name
+        ),
       },
       xAxis: {
         type: 'category',
@@ -233,7 +219,7 @@ export default class CombinationYieldChart extends PureComponent {
         width: 'auto',
         top: 10,
         bottom: 45,
-        left: 30,
+        left: 48,
         right: 30,
       },
     };
