@@ -31,18 +31,6 @@ const PAGE_NUM = 1;
 const DEFAULT_SERVE_TYPE = '所有类型';
 const DEFAULT_SERVE_SOURCE = '所有渠道';
 
-const ALL_SERVE_TYPE = [{
-  label: DEFAULT_SERVE_TYPE,
-  value: '',
-  show: true,
-}];
-
-const ALL_SERVE_SOURCE = [{
-  label: DEFAULT_SERVE_SOURCE,
-  value: '',
-  show: true,
-}];
-
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
   getServiceLogMore: 'customerPool/getServiceLogMore',
@@ -254,17 +242,17 @@ export default class ServiceLog extends PureComponent {
   @autobind
   constructCreatOptions(data, type) {
     if (!_.isEmpty(data) && type === 'serveType') {
-      return [...data.map(item => ({
+      return data.map(item => ({
         label: item.value,
         value: item.value,
         show: true,
-      })), ...ALL_SERVE_TYPE];
+      }));
     }
-    return [...data.map(item => ({
+    return data.map(item => ({
       label: item.value,
       value: item.key,
       show: true,
-    })), ...ALL_SERVE_SOURCE];
+    }));
   }
 
   @autobind
