@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-02 11:04:52
+ * @Last Modified time: 2018-05-05 18:45:02
  * 服务经理维度任务统计
  */
 
@@ -173,10 +173,12 @@ export default class CustManagerDetailScope extends PureComponent {
   handleSelectMenuItem({ key }) {
     this.setState({
       currentSelectScope: key,
-    });
-    this.props.getCustManagerScope({
-      // 当前维度
-      enterType: key,
+    }, () => {
+      // 为了防止数据回来了，但是scope还没更新，导致getPrimaryKey出现问题
+      this.props.getCustManagerScope({
+        // 当前维度
+        enterType: key,
+      });
     });
   }
 
