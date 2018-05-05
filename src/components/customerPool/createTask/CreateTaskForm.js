@@ -315,7 +315,7 @@ export default class CreateTaskForm extends PureComponent {
       JSON.parse(decodeURIComponent(query.condition)) : {};
     const list = value.match(productPattern);
     const newList = _.map(list, item => ({ type: item.slice(1), name: item.slice(1) }));
-    if (_.isEmpty(condition)) {
+    if (query.source !== 'external' || _.isEmpty(condition)) {
       return newList;
     }
     const { searchText = '' } = condition;
