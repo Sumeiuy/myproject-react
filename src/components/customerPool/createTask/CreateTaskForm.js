@@ -278,19 +278,22 @@ export default class CreateTaskForm extends PureComponent {
     if (!_.isEmpty(query.condition)) {
       const condition = JSON.parse(decodeURIComponent(query.condition));
       const { productName = '', primaryKey: [id = ''] } = condition;
-      if (this.isFromProduct(query)) {
+      if (this.isFromExternalProduct(query)) {
         defaultMissionDesc = `客户当前持有${productName}，数量为 $持仓数量#${id}# ，市值为 $持仓市值#${id}# 。`;
       }
     }
     return defaultMissionDesc;
   }
 
-  // 判断是否从持仓产品进入的列表页发起任务的
-  isFromProduct(query = {}) {
-    const condition = !_.isEmpty(query.condition) ?
-      JSON.parse(decodeURIComponent(query.condition)) : {};
-    const { searchTypeReq = '' } = condition;
-    return searchTypeReq === 'PRODUCT';
+  // 判断是否从外部持仓产品进入的列表页发起任务的
+  isFromExternalProduct(query = {}) {
+    if (query.source === 'external') {
+      const condition = !_.isEmpty(query.condition) ?
+        JSON.parse(decodeURIComponent(query.condition)) : {};
+      const { searchTypeReq = '' } = condition;
+      return searchTypeReq === 'PRODUCT';
+    }
+    return false;
   }
 
   /**
@@ -370,7 +373,7 @@ export default class CreateTaskForm extends PureComponent {
       templetDescSuggestion = this.renderMissionDescSuggestion(decodeURIComponent(missionDesc));
     }
 
-    const productDescSuggestions = this.isFromProduct(query) ?
+    const productDescSuggestions = this.isFromExternalProduct(query) ?
       this.renderProductDesc(defaultMissionDesc) : [];
     return (
       <div>
