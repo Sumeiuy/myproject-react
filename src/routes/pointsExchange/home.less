@@ -16,6 +16,28 @@
     }
     .form {
       margin: 20px 0;
+      .filterBox {
+        &:after {
+          content: '';
+          height: 0;
+          line-height: 0;
+          display: block;
+          visibility: hidden;
+          clear: both;
+        }
+        .filter {
+          float: left;
+          margin-right: 30px;
+        }
+        .buttonBox {
+          float: right;
+          .btn {
+            width: 80px;
+            margin-left: 10px;
+            height: 31px;
+          }
+        }
+      }
       .input {
         height: 31px;
       }
@@ -39,30 +61,26 @@
         }
       }
     }
-    .buttonRow {
-      margin-top: 20px;
-      .btn {
-        width: 80px;
-        margin-left: 20px;
-      }
-    }
-    .table {
+    .pointsExchangeTable {
       margin-top: 20px;
       margin-bottom: 20px;
       border: 1px solid #e8e8e8;
       border-bottom: none;
-      span, .nameColum {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        margin: auto;
-      }
-      .nameColum {
-        width: 200px;
-      }
       :global {
-        .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
-          padding: 16px 4px;
+        .ant-table-tbody > tr > td {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 150px;
+          & > div {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 200px;
+          }
+        }
+        table > thead > tr > th:first-child, table > tbody > tr > td:first-child {
+          padding-left: 30px;
         }
       }
     }
