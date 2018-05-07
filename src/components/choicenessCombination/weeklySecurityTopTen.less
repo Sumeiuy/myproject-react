@@ -1,0 +1,79 @@
+@import "../../css/util.less";
+.weeklySecurityTopTenBox {
+  .weeklySecurityTopTenContainer {
+    padding-left: 14px;
+    :global {
+      .ant-table {
+        table {
+          table-layout: fixed;
+          width: 100%;
+        }
+        .ant-table-thead {
+          height: 26px;
+          line-height: 26px;
+          font-size: 12px;
+          color: #4a4a4a;
+          border-bottom: 1px solid #ccc;
+          tr th {
+            background: #fff;
+            border-bottom: 2px solid #ccc;
+          }
+        }
+        tr th, tr td {
+          padding: 0;
+        }
+        .ant-table-tbody {
+          tr {
+            background: #fff;
+            position: relative;
+            td {
+              border-bottom: 0;
+              padding: 10px 0 22px;
+              div {
+                .one-line-elllipsis;
+              }
+              &:first-child {
+                width: 27%;
+              }
+              &:nth-child(2) {
+                width: 22%;
+              }
+              &:nth-child(3) {
+                width: 15%;
+              }
+              &:nth-child(4) {
+                width: 24%;
+              }
+              &:nth-child(5) {
+                width: 12%;
+              }
+            }
+            &:nth-child(even) {
+              background-color: #f2f2f2;
+            }
+          }
+        }
+      }
+    }
+    .customerLink {
+      margin-right: 6px;
+    }
+    .reason {
+      width: 84%;
+      position: absolute;
+      left: 0;
+      .one-line-elllipsis;
+    }
+    .customerLink {
+      i {
+        color: #7d9be0;
+      }
+    }
+    .up {
+      color: #e33c39;
+    }
+    .down {
+      color: #499d37;
+    }
+  }
+}

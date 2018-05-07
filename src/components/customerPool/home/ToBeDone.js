@@ -129,44 +129,27 @@ export default class PerformanceIndicators extends PureComponent {
   handleMotClick() {
     // 点击事件
     const { location: { query }, push } = this.props;
-    if (window.grayFlag) {
-      const url = '/taskList';
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id: 'FSP_MOT_SELFBUILT_TASK',
-        title: '任务管理',
-      };
-      const data = {
-        missionViewType: 'executor',
-      };
-      openRctTab({
-        routerAction: push,
-        url: `${url}?missionViewType=executor`,
-        pathname: url,
-        query: data,
-        param,
-        state: {
-          ...query,
-        },
-      });
-    } else {
-      // 如果该用户无权限则跳转到MOT任务菜单
-      const motTaskUrl = '/mot/manage/showMotTaskSubTabWin?taskType=MOT';
-      const param = {
-        id: 'FSP_MOT_TAB_TASK_MANAGE',
-        title: 'MOT任务',
-        closable: true,
-        forceRefresh: true,
-      };
-      openFspTab({
-        routerAction: push,
-        url: motTaskUrl,
-        pathname: '/fsp/motTask',
-        param,
-      });
-    }
+    const url = '/taskList';
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_MOT_SELFBUILT_TASK',
+      title: '任务管理',
+    };
+    const data = {
+      missionViewType: 'executor',
+    };
+    openRctTab({
+      routerAction: push,
+      url: `${url}?missionViewType=executor`,
+      pathname: url,
+      query: data,
+      param,
+      state: {
+        ...query,
+      },
+    });
   }
 
   @autobind

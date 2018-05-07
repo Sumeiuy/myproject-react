@@ -1,0 +1,231 @@
+.investmentAdviceWrapper {
+  background: #fff;
+  padding: 20px;
+
+  .tipsBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    p {
+      font-size: 14px;
+      color: #4a4a4a;
+    }
+
+    button {
+      font-size: 14px;
+    }
+  }
+
+  .collapseBox {
+    margin-top: 10px;
+    border: 1px solid #ddd;
+
+    .head {
+      margin: 0 auto;
+      height: 38px;
+      line-height: 38px;
+      font-size: 14px;
+      color: #4a4a4a;
+      border-bottom: 1px solid #d9d9d9;
+      font-weight: bold;
+      background: #f7f7f7;
+    }
+
+    span {
+      display: inline-block;
+      box-sizing: border-box;
+      vertical-align: middle;
+
+      &.type {
+        padding-left: 30px;
+        width: 15%;
+      }
+
+      &.title {
+        width: 35%;
+      }
+
+      &.headcontent {
+        width: 35%;
+      }
+
+      &.content {
+        width: 80%;
+        box-sizing: border-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &.operate {
+        width: 15%;
+      }
+    }
+
+    .collapseHead {
+      .contentwapper {
+        display: inline-block;
+        width: 35%;
+        padding-right: 80px;
+        box-sizing: border-box;
+        vertical-align: middle;
+
+        .icon {
+          color: #108ee9;
+          display: inline-block;
+          margin-left: 5px;
+        }
+      }
+
+      span {
+        font-size: 14px;
+        color: #4a4a4a;
+
+        &.operate {
+          i {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            color: #108ee9;
+          }
+        }
+      }
+    }
+
+    .collapsePanel {
+      width: 100%;
+      background: #fff;
+
+      :global {
+        .ant-mention-active {
+          border-color: #fff;
+          outline: 0;
+          border: 0;
+          box-shadow: 0 0 0 #fff;
+          .ant-mention-editor {
+            border-color: #fff;
+            outline: 0;
+            border: 0;
+            box-shadow: 0 0 0 #fff;
+          }
+        }
+        .ant-mention-wrapper {
+          .ant-mention-editor {
+            border: 0;
+            font-size: 14px;
+            color: #4a4a4a;
+          }
+        }
+      }
+      p {
+        font-size: 14px;
+        padding: 0 15px;
+        color: #4a4a4a;
+      }
+      button {
+        margin: 10px 0 0 15px;
+        width: 80px;
+        height: 30px;
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+    }
+
+    :global {
+      .ant-collapse-content {
+        border-top: 0;
+      }
+      .ant-collapse {
+        font-size: 14px;
+        border-radius: 0;
+        .ant-collapse-item {
+          .ant-collapse-header {
+            padding: 0;
+            height: 37px;
+            line-height: 37px;
+            font-size: 14px;
+            color: #4a4a4a;
+            background: #fff;
+            i.arrow {
+              display: none;
+            }
+            &:active {
+              background: none;
+            }
+          }
+          .anticon-up {
+            display: none;
+          }
+          &.ant-collapse-item-active {
+            .anticon-down {
+              display: none;
+            }
+            .anticon-up {
+              display: inline-block;
+            }
+          }
+          .icon-edit {
+            visibility: hidden;
+          }
+          &:hover {
+            .ant-collapse-header > div > div > div .icon-edit {
+              visibility: visible;
+            }
+          }
+        }
+      }
+      .ant-collapse > div {
+        .ant-collapse-header > .arrow {
+          display: none !important;
+        }
+        .ant-collapse-content-box {
+          padding: 8px 0;
+          border-top: 1px solid #d9d9d9;
+          ul {
+            li {
+              margin-top: 6px;
+              height: 28px;
+              line-height: 28px;
+              &:first-child {
+                margin-top: 0;
+              }
+              em {
+                margin-right: 10px;
+                width: auto;
+              }
+              .anticon-delete, .icon-edit {
+                vertical-align: middle;
+                visibility: hidden;
+                color: #108ee9;
+                cursor: pointer;
+              }
+              button {
+                height: 28px;
+              }
+              &:hover {
+                .icon-edit {
+                  visibility: visible;
+                }
+                .anticon-delete {
+                  visibility: visible;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .pageBox {
+    float: right;
+    margin: 20px;
+    margin-right: 40px;
+    :global {
+      .ant-pagination-item {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

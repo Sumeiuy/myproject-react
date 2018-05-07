@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-21 15:55:31
+ * @Last Modified time: 2018-04-28 14:04:30
  */
 
 import React, { PureComponent } from 'react';
@@ -57,25 +57,9 @@ const ZL_QUREY_APPROVAL_BTN_ID = '200000';
 export default class ServiceRecordContent extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = this.getDefaultState(props);
+    this.state = this.initialState(props);
     // 代表是否是删除操作
     this.isDeletingFile = false;
-  }
-
-  componentDidMount() {
-    // 判断如果是 涨乐财富通服务方式下的只读|驳回模式，并且页面在执行者视图下，
-    // 则需要查询下 可选列表
-    const { isEntranceFromPerformerView, isReadOnly, isReject } = this.props;
-    if (isEntranceFromPerformerView && (isReadOnly || isReject)) {
-      const { eventId, taskTypeCode, serviceType } = this.state;
-      const type = `${+taskTypeCode + 1}`;
-      // TODO 如果是mot任务 eventId参数需要使用 eventId
-      // 如果是自建任务 需要使用serviceTypeCode
-      // type 值为2的时候，该任务是自建任务
-      const eventIdParam = type === '2' ? serviceType : eventId;
-      this.props.queryCustFeedbackList4ZLFins({ eventId: eventIdParam, type });
-      this.props.queryApprovalList({ btnId: ZL_QUREY_APPROVAL_BTN_ID });
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -286,7 +270,8 @@ export default class ServiceRecordContent extends PureComponent {
       (flow.isApproval(fd.serviceStatusCode) || flow.isReject(fd.serviceStatusCode))
     ) {
       // 只有涨乐财富通下才需要提取
-      const { title, taskType, content } = fd.serviceContent;
+      // 此处需要做下容错处理，因为渲染的时候可能fd.serviceContent还未取到值
+      const { title = '', taskType = '', content = '' } = fd.serviceContent || {};
       zlSC.ZLServiceContentTitle = title;
       zlSC.ZLServiceContentType = taskType;
       zlSC.ZLServiceContentDesc = content;
@@ -322,8 +307,17 @@ export default class ServiceRecordContent extends PureComponent {
     // 以下为只读状态下的state
     // 获取用户选择的反馈信息
     const customerFeedback = this.fixCustomerFeedback(fd.customerFeedback);
-
+    // 获取涨乐财富通的客户反馈信息
+    // 因为涨乐财富通与普通服务方式使用同一个字段来显示客户反馈信息
+    const ZLCustFeedbackText = (fd.customerFeedback && fd.customerFeedback.name) || '暂无反馈';
     return {
+      // 涨乐财富通服务方式下，是否被驳回状态
+      isReject,
+      // 事件ID，客户反馈中mot任务的事件ID
+      eventId: fd.eventId,
+      // 任务类型Code,
+      taskTypeCode: fd.taskTypeCode,
+      // 任务类型MOT任务或者自建任务的事件类型
       serviceType: fd.serviceTypeCode,
       serviceWayCode,
       serviceWayText: serviceWay.value,
@@ -337,6 +331,7 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackText2: customerFeedback.children.value,
       custFeedbackTime: moment(fd.feedbackDate, DATE_FORMAT_END),
       isSelectZhangleFins: serveWayUtil.isZhangle(serviceWayCode),
+      ZLCustFeedback: ZLCustFeedbackText,
       ...zlSC,
     };
   }
@@ -675,25 +670,26 @@ export default class ServiceRecordContent extends PureComponent {
       ZLServiceContentTitle,
       ZLServiceContentType,
       ZLServiceContentDesc,
-      ZLServiceContentTime,
       custFeedbackText,
       custFeedbackText2,
       custFeedbackTime,
       ZLCustFeedback,
-      ZLCustFeedbackTime,
     } = this.state;
     const { formData: { attachmentList }, custFeedbackList } = this.props;
     const zlServiceRecord = {
       title: ZLServiceContentTitle,
       type: ZLServiceContentType,
       content: ZLServiceContentDesc,
-      time: ZLServiceContentTime,
     };
     // 存在一种情况就是MOT任务已经完结，但是流水还没有开始，导致Seibel那边没有返回相应的服务时间
     // 所以需要针对无反馈时间和服务时间的情况下，做特殊显示处理，显示成空字符
-    const serviceTimeText = serviceTime.isValid() ? serviceTime.format(DATE_FORMAT_SHOW) : '';
-    const feedbackTimeText = serviceTime.isValid() ? custFeedbackTime.format(DATE_FORMAT_SHOW) : '';
-    const ZLCustFeedbackTimeText = serviceTime.isValid() ? ZLCustFeedbackTime.format(DATE_FORMAT_SHOW) : '';
+    // 在只读状态下，涨乐财富通，不会再提供反馈时间了，所以不再需要ZLCustFeedbackTime
+    // 针对 serviceTime,在做一个是否moment对象的判断
+    const isMomentAboutServiceTime = moment.isMoment(serviceTime);
+    const isMomentAboutFeedbackTime = moment.isMoment(custFeedbackTime);
+    const serviceTimeText = isMomentAboutServiceTime ? serviceTime.format(DATE_FORMAT_SHOW) : '';
+    const feedbackTimeText = isMomentAboutFeedbackTime ? custFeedbackTime.format(DATE_FORMAT_SHOW) : '';
+
     return (
       <ServeRecordReadOnly
         isZL={serveWayUtil.isZhangle(serviceWayCode)}
@@ -708,7 +704,6 @@ export default class ServiceRecordContent extends PureComponent {
         custFeedback={custFeedbackText}
         custFeedback2={custFeedbackText2}
         ZLCustFeedback={ZLCustFeedback}
-        ZLCustFeedbackTime={ZLCustFeedbackTimeText}
         ZLCustFeedbackList={custFeedbackList}
       />
     );

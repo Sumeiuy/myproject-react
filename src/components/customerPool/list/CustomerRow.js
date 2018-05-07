@@ -15,6 +15,7 @@ import QuickMenu from './QuickMenu';
 import SixMonthEarnings from './SixMonthEarnings';
 import MatchArea from './MatchArea';
 import { openFspTab } from '../../../utils';
+import { permission } from '../../../helper';
 import styles from './customerRow.less';
 
 import maleAvator from './img/icon-avator.png';
@@ -126,6 +127,11 @@ export default class CustomerRow extends PureComponent {
     empInfo: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     custServedByPostnResult: PropTypes.bool.isRequired,
+    hasNPCTIQPermission: PropTypes.bool.isRequired,
+    hasPCTIQPermission: PropTypes.bool.isRequired,
+    queryHoldingProduct: PropTypes.func.isRequired,
+    holdingProducts: PropTypes.object.isRequired,
+    queryHoldingProductReqState: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -138,6 +144,17 @@ export default class CustomerRow extends PureComponent {
     this.state = {
       checked: false,
     };
+    const { listItem: { empId }, empInfo: { rowId } } = props;
+    // 判断是否主服务经理
+    this.isMainService = empId === rowId;
+    /**
+     * 登录用户拥有 HTSC 客户资料-总部管理岗、HTSC 客户资料-分中心管理岗、
+     * HTSC 客户资料（无隐私）-总部管理岗、HTSC 客户资料（无隐私）-分中心管理岗 时，可访问360视图
+     */
+    this.access360ViewPermission = permission.hasCIHMPPermission()
+      || permission.hasCIBMPPermission()
+      || permission.hasNPCIHMPPermission()
+      || permission.hasNPCIBMPPermission();
   }
 
   @autobind
@@ -216,19 +233,6 @@ export default class CustomerRow extends PureComponent {
     });
   }
 
-  // 判断是否为主服务经理
-  @autobind
-  isMainService() {
-    const {
-      empInfo,
-      listItem: {
-        empId,
-      },
-    } = this.props;
-    // 登录者用户中的rowId和客户的主服务经理的工号是否一致
-    return empInfo.rowId === empId;
-  }
-
   @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
@@ -263,7 +267,7 @@ export default class CustomerRow extends PureComponent {
     } else if (pOrO === PROD_CODE) {
       imgSrc = iconProductAgency;
     }
-    if (this.isMainService()) {
+    if (this.isMainService || this.access360ViewPermission) {
       return (
         <img
           onClick={this.handleAvatarClick}
@@ -296,7 +300,7 @@ export default class CustomerRow extends PureComponent {
       entertype,
       goGroupOrTask,
     } = this.props;
-    if (this.isMainService()) {
+    if (this.isMainService) {
       return (<QuickMenu
         listItem={listItem}
         createModal={this.createModal}
@@ -321,7 +325,7 @@ export default class CustomerRow extends PureComponent {
         name,
       },
     } = this.props;
-    if (this.isMainService()) {
+    if (this.isMainService || this.access360ViewPermission) {
       return name ? (
         <span className="name clickable" onClick={this.handleNameClick}>{name}</span>
       ) : null;
@@ -337,6 +341,11 @@ export default class CustomerRow extends PureComponent {
       dict,
       formatAsset,
       empInfo: { rowId },
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      queryHoldingProduct,
+      holdingProducts,
+      queryHoldingProductReqState,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -453,6 +462,12 @@ export default class CustomerRow extends PureComponent {
                 dict={dict}
                 location={location}
                 listItem={listItem}
+                hasNPCTIQPermission={hasNPCTIQPermission}
+                hasPCTIQPermission={hasPCTIQPermission}
+                queryHoldingProduct={queryHoldingProduct}
+                holdingProducts={holdingProducts}
+                queryHoldingProductReqState={queryHoldingProductReqState}
+                formatAsset={formatAsset}
               />
             </div>
           </div>
