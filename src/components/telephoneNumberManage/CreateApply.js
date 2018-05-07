@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Description 业务手机申请新建页面
  * @Date: 2018-04-23 21:37:55
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-03 22:33:05
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-05-07 11:12:27
  */
 
 import React, { PureComponent } from 'react';
@@ -16,7 +16,7 @@ import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
 import InfoTitle from '../common/InfoTitle';
 import AddEmpList from './AddEmpList';
-import commonConfirm from '../common/Confirm';
+import commonConfirm from '../common/confirm_';
 import config from './config';
 import styles from './createApply.less';
 
