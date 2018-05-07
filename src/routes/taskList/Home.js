@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-05-07 10:25:27
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-28 14:26:17
  * @description 任务管理首页
  */
 
@@ -19,8 +19,9 @@ import CreatorViewDetail from '../../components/taskList/creatorView/RightPanel'
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
 import pageConfig from '../../components/taskList/pageConfig';
+import { getCurrentScopeByOrgId } from '../../components/taskList/managerView/helper';
 import { openRctTab } from '../../utils';
-import { emp, permission, env as envHelper } from '../../helper';
+import { emp, permission } from '../../helper';
 import logable from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
@@ -50,6 +51,9 @@ const { taskList } = pageConfig;
 const GET_CUST_SCOPE_PAGE_NUM = 1;
 const GET_CUST_SCOPE_PAGE_SIZE = 5;
 
+// 查询涨乐财富通的审批人需要的btnId固定值
+const ZL_QUREY_APPROVAL_BTN_ID = '200000';
+
 // 找不到反馈类型的时候，前端写死一个和后端一模一样的其它类型，作容错处理
 const feedbackListOfNone = [{
   id: 99999,
@@ -63,18 +67,22 @@ const feedbackListOfNone = [{
   }],
 }];
 
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
+
 @withRouter
 export default class PerformerView extends PureComponent {
   static propTypes = taskListHomeShape;
 
   static defaultProps = {
-    priviewCustFileData: {},
-    filesList: [],
-    custRange: [],
-    empInfo: {},
-    custFeedback: [],
-    answersList: {},
+    priviewCustFileData: EMPTY_OBJECT,
+    filesList: EMPTY_LIST,
+    custRange: EMPTY_LIST,
+    empInfo: EMPTY_OBJECT,
+    custFeedback: EMPTY_LIST,
+    answersList: EMPTY_OBJECT,
     saveAnswersSucce: false,
+    missionImplementationDetail: EMPTY_OBJECT,
   };
 
   constructor(props) {
@@ -186,7 +194,7 @@ export default class PerformerView extends PureComponent {
         eventId,
       } = item;
       // 根据typeCode找出那个任务的descText的值
-      const { descText } = _.find(missionType, obj => +obj.key === +typeCode) || {};
+      const { descText } = _.find(missionType, obj => +obj.key === +typeCode) || EMPTY_OBJECT;
 
       this.setState({
         taskTypeCode: descText,
@@ -217,12 +225,12 @@ export default class PerformerView extends PureComponent {
   // 执行者视图获取目标客户列表项的对应浮层详情
   @autobind
   getCustDetail({ missionId = '', custId = '', missionFlowId = '', callback = NOOP }) {
-    const { queryTargetCustDetail, targetCustList = {} } = this.props;
-    const { list = [] } = targetCustList;
+    const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;
+    const { list = EMPTY_LIST } = targetCustList;
     if (_.isEmpty(list)) {
       return;
     }
-    const firstItem = list[0] || {};
+    const firstItem = list[0] || EMPTY_OBJECT;
     queryTargetCustDetail({
       missionId,
       custId: custId || firstItem.custId,
@@ -237,11 +245,11 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getCurrentId() {
-    const { list = {}, location: { query: { currentId, missionViewType } } } = this.props;
+    const { list = EMPTY_OBJECT, location: { query: { currentId, missionViewType } } } = this.props;
     if (currentId) {
       return currentId;
     }
-    const [firstItem = {}] = list.resultData;
+    const [firstItem = EMPTY_OBJECT] = list.resultData;
     const currentViewType = getViewInfo(missionViewType).currentViewType;
     if (currentViewType === INITIATOR && this.state.isSourceFromCreatorView) {
       return firstItem.mssnId;
@@ -324,9 +332,11 @@ export default class PerformerView extends PureComponent {
     orgId,
     pageNum = GET_CUST_SCOPE_PAGE_NUM,
     pageSize = GET_CUST_SCOPE_PAGE_SIZE,
+    enterType,
   }) {
     const {
       getCustManagerScope,
+      custRange,
     } = this.props;
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 获取服务经理维度任务数据
@@ -335,6 +345,8 @@ export default class PerformerView extends PureComponent {
       orgId: newOrgId || emp.getOrgId(),
       pageNum,
       pageSize,
+      // 当前任务维度，取入参或者跟着组织机构走
+      enterType: enterType || getCurrentScopeByOrgId({ custRange, orgId }),
     });
   }
 
@@ -342,7 +354,7 @@ export default class PerformerView extends PureComponent {
   getManagerDetailComponentPorps() {
     const {
       dict,
-      dict: { missionType = [], missionProgressStatus = [] },
+      dict: { missionType = EMPTY_LIST, missionProgressStatus = EMPTY_LIST },
       empInfo,
       location,
       replace,
@@ -352,8 +364,8 @@ export default class PerformerView extends PureComponent {
       countFlowFeedBack,
       custFeedback,
       custRange,
-      missionImplementationDetail = {},
-      mngrMissionDetailInfo = {},
+      missionImplementationDetail = EMPTY_OBJECT,
+      mngrMissionDetailInfo = EMPTY_OBJECT,
       clearCreateTaskData,
       missionFeedbackData,
       missionFeedbackCount,
@@ -369,7 +381,7 @@ export default class PerformerView extends PureComponent {
     const {
       typeCode,
     } = this.state;
-    const { empNum = 0 } = missionImplementationDetail || {};
+    const { empNum = 0 } = missionImplementationDetail || EMPTY_OBJECT;
 
     return {
       dict,
@@ -501,7 +513,7 @@ export default class PerformerView extends PureComponent {
       eventId,
       taskTypeCode,
     } = this.state;
-    const [firstItem = {}] = list.resultData;
+    const [firstItem = EMPTY_OBJECT] = list.resultData;
     const { query: { currentId } } = location;
     return (
       <PerformerViewDetail
@@ -583,8 +595,8 @@ export default class PerformerView extends PureComponent {
   // 获取服务经理使用的客户反馈列表，
   @autobind
   getFeedbackList({ typeCode, eventId, currentItem }) {
-    let currentType = {};
-    let taskFeedbackList = [];
+    let currentType = EMPTY_OBJECT;
+    let taskFeedbackList = EMPTY_LIST;
     // descText值为1，是自建任务
     if (+currentItem.descText === 1) {
       currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
@@ -602,6 +614,19 @@ export default class PerformerView extends PureComponent {
       taskFeedbackList,
       isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
     });
+  }
+
+  // 当前筛选的状态为‘结束’时，优先取url中日期的值，再取默认的日期，否则返回空字符串
+  @autobind
+  getFinishedStateDate({
+      status = STATE_EXECUTE_CODE,
+    value,
+    urlDate,
+    }) {
+    if (status === STATE_FINISHED_CODE) {
+      return urlDate || moment(value).format(dateFormat);
+    }
+    return '';
   }
 
   /**
@@ -624,7 +649,7 @@ export default class PerformerView extends PureComponent {
      * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
      * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
      */
-    const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || {};
+    const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || EMPTY_OBJECT;
     getServiceType({ pageNum: 1, pageSize: 10000, type: +currentItem.descText + 1 })
       .then(() => this.getFeedbackList({ typeCode, eventId, currentItem }));
   }
@@ -672,9 +697,9 @@ export default class PerformerView extends PureComponent {
 
     // 默认筛选条件
     getTaskList({ ...params }).then(() => {
-      const { list = {} } = this.props;
-      const { resultData = [] } = list;
-      const firstData = resultData[0] || {};
+      const { list = EMPTY_OBJECT } = this.props;
+      const { resultData = EMPTY_LIST } = list;
+      const firstData = resultData[0] || EMPTY_OBJECT;
       // 当前视图是执行者视图
       if (missionViewType === EXECUTOR) {
         if (!_.isEmpty(list) && !_.isEmpty(resultData)) {
@@ -764,29 +789,26 @@ export default class PerformerView extends PureComponent {
     return finalPostData;
   }
 
-  // 当前筛选的状态为‘结束’时，优先取url中日期的值，再取默认的日期，否则返回空字符串
-  @autobind
-  getFinishedStateDate({
-    status = STATE_EXECUTE_CODE,
-    value,
-    urlDate,
-  }) {
-    if (status === STATE_FINISHED_CODE) {
-      return urlDate || moment(value).format(dateFormat);
-    }
-    return '';
-  }
-
   // 加载右侧panel中的详情内容
   @autobind
   loadDetailContent(obj) {
-    const { getTaskDetailBasicInfo, queryTargetCust } = this.props;
-    getTaskDetailBasicInfo({ taskId: obj.id });
-    queryTargetCust({
-      missionId: obj.id,
-      pageNum: 1,
-      pageSize: 10,
-    });
+    this.props.getTaskDetailBasicInfo({ taskId: obj.id });
+    this.props.queryTargetCust({ missionId: obj.id, pageNum: 1, pageSize: 10 });
+    // 加载右侧详情的时候，查一把涨乐财富通的数据
+    this.queryDataForZhanleServiceWay();
+  }
+
+  // 查询涨乐财富通的数据
+  @autobind
+  queryDataForZhanleServiceWay() {
+    const { eventId, taskTypeCode, typeCode } = this.state;
+    const type = `${+taskTypeCode + 1}`;
+    // TODO 如果是mot任务 eventId参数需要使用 eventId
+    // 如果是自建任务 需要使用serviceType
+    // type 值为2的时候，该任务是自建任务
+    const eventIdParam = type === '2' ? typeCode : eventId;
+    this.props.queryCustFeedbackList4ZLFins({ eventId: eventIdParam, type });
+    this.props.queryApprovalList({ btnId: ZL_QUREY_APPROVAL_BTN_ID });
   }
 
   /**
@@ -794,7 +816,7 @@ export default class PerformerView extends PureComponent {
    * @param {*} record 当前记录
    */
   @autobind
-  loadManagerViewDetailContent(record = {}) {
+  loadManagerViewDetailContent(record = EMPTY_OBJECT) {
     const { missionViewType: viewType, mssnId, id, eventId: tempEventId } = record;
     const {
       queryMngrMissionDetailInfo,
@@ -803,6 +825,7 @@ export default class PerformerView extends PureComponent {
       countAnswersByType,
       countExamineeByType,
       getCustManagerScope,
+      custRange,
     } = this.props;
     // 如果来源是创建者视图，那么取mssnId作为missionId
     // 取id作为eventId
@@ -846,6 +869,8 @@ export default class PerformerView extends PureComponent {
       pageSize: GET_CUST_SCOPE_PAGE_SIZE,
       missionId,
       orgId: emp.getOrgId(),
+      // 当前任务维度，跟着组织机构走
+      enterType: getCurrentScopeByOrgId({ custRange }),
     });
   }
 
@@ -863,7 +888,7 @@ export default class PerformerView extends PureComponent {
 
   // 头部筛选后调用方法
   @autobind
-  handleHeaderFilter(obj = {}) {
+  handleHeaderFilter(obj = EMPTY_OBJECT) {
     const { name = '', ...otherQuery } = obj;
     // 1.将值写入Url
     const { replace, location, push } = this.props;
@@ -945,7 +970,7 @@ export default class PerformerView extends PureComponent {
 
     // 查出任务类型是MOT还是自荐
     const currentMissionTypeObject = _.find(dict.missionType, item =>
-      item.key === typeCode) || {};
+      item.key === typeCode) || EMPTY_OBJECT;
     const { descText } = currentMissionTypeObject;
     replace({
       pathname,
@@ -998,8 +1023,8 @@ export default class PerformerView extends PureComponent {
   @autobind
   renderListRow(record, index) {
     const { activeRowIndex, currentView } = this.state;
-    const { dict = {} } = this.props;
-    const { missionType = [] } = dict;
+    const { dict = EMPTY_OBJECT } = this.props;
+    const { missionType = EMPTY_LIST } = dict;
     const pageName = currentView === CONTROLLER ? 'managerView' : 'performerView';
     return (
       <ViewListRow
@@ -1021,7 +1046,7 @@ export default class PerformerView extends PureComponent {
     const { currentView } = this.state;
 
     const { query: { pageNum = 1, pageSize = 20 } } = location;
-    const { resultData = [], page = {} } = list;
+    const { resultData = EMPTY_LIST, page = EMPTY_OBJECT } = list;
 
     const isEmpty = _.isEmpty(resultData);
 
@@ -1036,7 +1061,6 @@ export default class PerformerView extends PureComponent {
         creatSeibelModal={this.handleCreateBtnClick}
         filterControl={currentView}
         filterCallback={this.handleHeaderFilter}
-        isGrayFlag={envHelper.isGrayFlag()}
       />
     );
 

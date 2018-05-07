@@ -1,24 +1,25 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-03-30 15:46:03
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-05-04 15:06:43
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-07 18:17:19
  * @description 根据需求antd3.x版本下需要重写一个dropdownSelect
  */
 
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import cx from 'classnames';
 import _ from 'lodash';
-import { Popover, Input, Icon } from 'antd';
+import { Popover, Icon } from 'antd';
 
 import { dom } from '../../../helper';
 import styles from './dropdownSelect.less';
 
-const Search = Input.Search;
+// const Search = Input.Search;
+import HackSearch from '../hackSearch';
 
-export default class DropdownSelect extends Component {
+export default class DropdownSelect extends React.Component {
   static propTypes = {
     // 组件名称
     name: PropTypes.string,
@@ -78,8 +79,6 @@ export default class DropdownSelect extends Component {
     this.state = {
       // 弹出层隐藏/显示
       visible: false,
-      // 搜索框的值
-      searchValue: defaultSearchValue,
       // 搜索结果
       optionList,
     };
@@ -118,20 +117,19 @@ export default class DropdownSelect extends Component {
   }
 
   @autobind
-  handleSearchChange(e) {
-    let dataSource = {};
+  handleSearchChange(value) {
     // 清空input时，展示搜索项
-    if (_.isEmpty(e.target.value)) {
-      dataSource = { optionList: this.props.presetOptionList };
+    if (_.isEmpty(value)) {
+      const dataSource = { optionList: this.props.presetOptionList };
+      this.setState({
+        ...dataSource,
+      });
     }
-    this.setState({
-      searchValue: e.target.value,
-      ...dataSource,
-    });
   }
 
   @autobind
-  handleSearch(inputValue) {
+  handleSearch() {
+    const inputValue = this.hackSearchComonent.getValue();
     this.props.emitToSearch(inputValue);
   }
 
@@ -156,15 +154,15 @@ export default class DropdownSelect extends Component {
 
   @autobind
   renderDropdownSearch() {
-    const { searchValue } = this.state;
-    const { placeholder } = this.props;
+    const { placeholder, defaultSearchValue } = this.props;
     return (
-      <Search
-        value={searchValue}
+      <HackSearch
         placeholder={placeholder}
         onSearch={this.handleSearch}
+        defaultValue={defaultSearchValue}
         onChange={this.handleSearchChange}
         enterButton
+        ref={ref => this.hackSearchComonent = ref}
       />
     );
   }
@@ -198,7 +196,7 @@ export default class DropdownSelect extends Component {
     const { optionList } = this.state;
     return (
       <div onClick={this.handleSelect}>
-        { _.map(optionList, this.renderSelectOption) }
+        {_.map(optionList, this.renderSelectOption)}
       </div>
     );
   }

@@ -69,6 +69,8 @@ import userInfoApproval from './routes/userCenter/userInfoApproval';
 import TelephoneNumberManage from './routes/telephoneNumberManage/Home';
 // 公务手机和电话卡号管理修改页面
 import TelephoneNumberManageEdit from './routes/telephoneNumberManage/ApplyEdit';
+// 精选组合
+import ChoicenessCombination from './routes/choicenessCombination/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -184,6 +186,8 @@ const routes = [
     path: '/demote',
     component: Demote,
   },
+  // 从 FSP 消息提醒进入
+  { path: '/userInfoRemind', component: userInfoApproval },
   // 直接进入
   {
     path: '/filialeCustTransfer',
@@ -267,6 +271,8 @@ const routes = [
     component: TelephoneNumberManageEdit,
     exact: false,
   },
+  // 精选组合
+  { path: '/choicenessCombination', component: ChoicenessCombination },
 ];
 
 // 递归创建路由

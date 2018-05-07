@@ -38,10 +38,6 @@ const Search = Input.Search;
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
-// 时间设置
-const today = moment(new Date());
-const beforeToday = moment(today).subtract(60, 'days');
-const afterToday = moment(today).add(60, 'days');
 const allCustomers = '所有客户';
 const allCreators = '所有创建者';
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
@@ -71,8 +67,6 @@ export default class Pageheader extends PureComponent {
     filterCallback: PropTypes.func,
     // 当前视图名称
     filterControl: PropTypes.string,
-    // 判断是否有灰度客户
-    isGrayFlag: PropTypes.bool.isRequired,
     // 执行者视图头部查询客户
     queryCustomer: PropTypes.func,
     // 执行者视图头部查询到的客户列表
@@ -102,36 +96,9 @@ export default class Pageheader extends PureComponent {
       stateAllOptions,
       statusValue,
       showMore: false,
-      startTime: '',
-      endTime: '',
-      disabledEndTime: '',
       // 任务搜索框内容默认取url中的missionName
       missionName,
     };
-  }
-
-  componentWillMount() {
-    const { location: { query }, isGrayFlag } = this.props;
-    const { createTimeStart,
-      createTimeEnd,
-      endTimeStart,
-      endTimeEnd,
-      missionViewType,
-    } = query;
-    if (missionViewType === INITIATOR || !isGrayFlag) {
-      // 判断URL里是否存在日期，若存在设置日期（例如页面跳转，日期已设置）
-      this.setState({
-        startTime: this.handleURlTime(createTimeStart, beforeToday),
-        endTime: this.handleURlTime(createTimeEnd, today),
-        disabledEndTime: this.handleURlTime(createTimeEnd, today),
-      });
-    } else {
-      this.setState({
-        startTime: this.handleURlTime(endTimeStart, today),
-        endTime: this.handleURlTime(endTimeEnd, afterToday),
-        disabledEndTime: this.handleURlTime(endTimeEnd, afterToday),
-      });
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -412,8 +379,6 @@ export default class Pageheader extends PureComponent {
     if (startDate !== null && endDate !== null) {
       const createTimeStart = startDate.format(dateFormat);
       const createTimeEnd = endDate.format(dateFormat);
-      // const createTimeStart = moment(date[0]).format(dateFormat);
-      // const createTimeEnd = moment(date[1]).format(dateFormat);
       this.props.filterCallback({
         createTimeStart,
         createTimeEnd,
@@ -440,8 +405,6 @@ export default class Pageheader extends PureComponent {
     if (startDate !== null && endDate !== null) {
       const endTimeStart = startDate.format(dateFormat);
       const endTimeEnd = endDate.format(dateFormat);
-      // const endTimeStart = moment(date[0]).format(dateFormat);
-      // const endTimeEnd = moment(date[1]).format(dateFormat);
       this.props.filterCallback({
         endTimeStart,
         endTimeEnd,
@@ -567,15 +530,14 @@ export default class Pageheader extends PureComponent {
   @autobind
   renderTime() {
     const {
-      isGrayFlag,
       location: {
         query: {
           missionViewType,
-        endTimeStart = '',
-        endTimeEnd = '',
-        createTimeEnd = '',
-        createTimeStart = '',
-        status,
+          endTimeStart = '',
+          endTimeEnd = '',
+          createTimeEnd = '',
+          createTimeStart = '',
+          status,
         },
       },
     } = this.props;
@@ -584,7 +546,7 @@ export default class Pageheader extends PureComponent {
       return null;
     }
     let node;
-    if (missionViewType === INITIATOR || !isGrayFlag) {
+    if (missionViewType === INITIATOR) {
       const startTime = createTimeStart ?
         moment(createTimeStart, dateFormat) :
         moment(moment(beforeCurrentDate60Days).format(dateFormat), dateFormat);

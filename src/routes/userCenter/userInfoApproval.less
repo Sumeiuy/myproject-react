@@ -63,6 +63,7 @@
             float: left;
             color: #a1a1a1;
             font-size: 14px;
+            font-weight: normal;
           }
         }
       }
@@ -78,11 +79,20 @@
       &:first-child {
         margin-top: 0;
       }
+      &:last-child {
+        :global {
+          .ant-tag {
+            cursor: auto;
+          }
+        }
+      }
     }
     .infoLabel {
       float: left;
       color: #a1a1a1;
       margin-right: 8px;
+      width: 90px;
+      text-align: right;
     }
     .infoDesc {
       color: #333;

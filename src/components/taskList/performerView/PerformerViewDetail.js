@@ -50,6 +50,8 @@ export default class PerformerViewDetail extends PureComponent {
     statusCode: PropTypes.string,
     eventId: PropTypes.string,
     taskTypeCode: PropTypes.string,
+    // 自建任务的类型Code，与mot任务的eventId同理
+    serviceTypeCode: PropTypes.string,
     modifyLocalTaskList: PropTypes.func.isRequired,
     // 涨乐财富通服务方式下的客户反馈列表以及查询方法
     queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
@@ -67,6 +69,7 @@ export default class PerformerViewDetail extends PureComponent {
     statusCode: '',
     eventId: '',
     taskTypeCode: '',
+    serviceTypeCode: '',
   }
 
   constructor(props) {
@@ -81,6 +84,23 @@ export default class PerformerViewDetail extends PureComponent {
       isShowErrorCheckbox: {},
       checkBoxQuesId: [],
     };
+  }
+
+  // 根据dict返回的数据，组合成Select组件的所需要的数据结构
+  @autobind
+  getServeStatusSelectOptionsData(serveStatus) {
+    const allCustOption = {
+      value: '',
+      label: '所有客户',
+      show: true,
+    };
+    const stateData = serveStatus.map(o => ({
+      value: o.key,
+      label: o.value,
+      show: true,
+    }));
+    stateData.unshift(allCustOption);
+    return stateData;
   }
 
   // 查询目标客户的列表和
@@ -344,23 +364,6 @@ export default class PerformerViewDetail extends PureComponent {
       answerText: e.target.value,
     }];
     this.handleRepeatData(initAreaText, params, 'areaTextData');
-  }
-
-  // 根据dict返回的数据，组合成Select组件的所需要的数据结构
-  @autobind
-  getServeStatusSelectOptionsData(serveStatus) {
-    const allCustOption = {
-      value: '',
-      label: '所有客户',
-      show: true,
-    };
-    const stateData = serveStatus.map(o => ({
-      value: o.key,
-      label: o.value,
-      show: true,
-    }));
-    stateData.unshift(allCustOption);
-    return stateData;
   }
 
   render() {

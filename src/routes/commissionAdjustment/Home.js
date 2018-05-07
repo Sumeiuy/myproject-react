@@ -1,8 +1,8 @@
 /**
  * @Author: ouchangzhi
  * @Date: 2018-02-22 15:08:11
- * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-03-09 19:29:27
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-04-26 09:07:06
  * @description 单佣金调整
  */
 
@@ -13,7 +13,7 @@ import { autobind } from 'core-decorators';
 import { Input, message, Button } from 'antd';
 import _ from 'lodash';
 
-import confirm from '../../components/common/Confirm';
+import confirm from '../../components/common/confirm_';
 import InfoTitle from '../../components/common/InfoTitle';
 import CommissionLine from '../../components/commissionAdjustment/CommissionLine';
 import { permission, emp } from '../../helper';

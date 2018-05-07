@@ -200,8 +200,8 @@ export default {
           const curentDoneFlowNum = item.doneFlowNum + 1;
           // 已完成数量和总数量相等
           if (curentDoneFlowNum === item.flowNum) {
-            // 未到期：当前时间小于结束时间
-            if (!moment(moment().format('YYYY-MM-DD')).isAfter(item.processTime)) {
+            // 未到期：当前日期小于结束日期
+            if (!moment().isAfter(item.processTime, 'day')) {
               // 当前选中任务项的已完成数量和总数量相等且任务未过期时，将本地存储的任务列表中的此条任务状态修改为已完成，且此条数据的已完成数量加一
               return {
                 ...item,

@@ -1,13 +1,22 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:03:01
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-13 16:02:11
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-05-04 08:36:54
  * @description 此文件用于存放与操作系统，生产/开发环境，浏览器，使用框架相关的公用方法
  */
 import bowser from 'bowser';
 import qs from 'query-string';
 import { constants, fspContainer } from '../config';
+
+// 归一化浏览器名称
+function formatBowserName(name) {
+  const aliasMap = {
+    IE: 'Internet Explorer',
+  };
+  const result = aliasMap[name] || name;
+  return result.toLowerCase();
+}
 
 const env = {
   /**
@@ -42,7 +51,7 @@ const env = {
       $os: env.getOS(),
       $screen_width: screen.width,
       $screen_height: screen.height,
-      $browser: bowser.name,
+      $browser: formatBowserName(bowser.name),
       $browser_version: `${bowser.name} ${bowser.version}`,
     };
   },

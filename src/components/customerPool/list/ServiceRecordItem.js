@@ -2,17 +2,16 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
-import { stateFromHTML } from 'draft-js-import-html';
-import { Mention, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import Icon from '../../common/Icon';
 import styles from './createCollapse.less';
 import { request } from '../../../config';
 import { emp, getIconType } from '../../../helper';
 import logable from '../../../decorators/logable';
+import ForgeryRichText from '../../common/ForgeryRichText';
 
 const EMPTY_OBJECT = {};
 const NO_EMAIL_HREF = 'javascript:void(0);'; // eslint-disable-line
-const { toString } = Mention;
 
 export default class ServiceRecordItem extends PureComponent {
   static propTypes = {
@@ -41,6 +40,10 @@ export default class ServiceRecordItem extends PureComponent {
     };
   }
 
+  // 空方法，用于日志上传
+  @logable({ type: 'Click', payload: { name: '下载' } })
+  handleDownloadClick() {}
+
   /**
    * 判断是否是空或者字符串null
    * @param {*string} content 内容
@@ -48,10 +51,6 @@ export default class ServiceRecordItem extends PureComponent {
   isNullOrNullString(content) {
     return _.isEmpty(content) || content === 'null';
   }
-
-  // 空方法，用于日志上传
-  @logable({ type: 'Click', payload: { name: '下载' } })
-  handleDownloadClick() { }
 
   renderIcon(value) {
     const renderSpan = _.map(value, (item, index) => {
@@ -99,12 +98,11 @@ export default class ServiceRecordItem extends PureComponent {
       );
     }
 
-    let htmlString = newContent;
-    if (!this.isNullOrNullString(content)) {
-      const htmlToState = stateFromHTML(content);
-      htmlString = toString(htmlToState);
-    }
-    const title = () => <div dangerouslySetInnerHTML={{ __html: newContent }} />;
+    const title = () => (
+      <div>
+        <ForgeryRichText text={newContent} />
+      </div>
+    );
 
     return (
       <Tooltip
@@ -113,7 +111,7 @@ export default class ServiceRecordItem extends PureComponent {
           [styles.globalTips]: true,
         })}
       >
-        <span>{htmlString}</span>
+        <span>{newContent}</span>
       </Tooltip>
     );
   }

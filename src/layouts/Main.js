@@ -14,6 +14,7 @@ import withRouter from '../decorators/withRouter';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
 import ContextProvider from './ContextProvider';
+import Phone from '../components/common/phone';
 import styles from './main.less';
 import '../css/skin.less';
 
@@ -73,9 +74,6 @@ export default class Main extends Component {
     interfaceState: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
-    serviceRecordModalVisible: PropTypes.bool,
-    serviceRecordModalVisibleOfId: PropTypes.string,
-    serviceRecordModalVisibleOfName: PropTypes.string,
     currentCommonServiceRecord: PropTypes.object.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
@@ -84,8 +82,6 @@ export default class Main extends Component {
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
-    serviceRecordModalVisibleOfCaller: PropTypes.string,
-    prevRecordInfo: PropTypes.object,
     serviceRecordInfo: PropTypes.object.isRequired,
   }
 
@@ -154,6 +150,7 @@ export default class Main extends Component {
                   }
                 </div>
               </div>
+              <Phone headless />
             </div>
           </div>
         </ContextProvider>

@@ -123,6 +123,11 @@ export default class CustomerLists extends PureComponent {
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
+    hasNPCTIQPermission: PropTypes.bool.isRequired,
+    hasPCTIQPermission: PropTypes.bool.isRequired,
+    queryHoldingProduct: PropTypes.func.isRequired,
+    holdingProducts: PropTypes.object.isRequired,
+    queryHoldingProductReqState: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -134,6 +139,7 @@ export default class CustomerLists extends PureComponent {
     expandAll: false,
     orgId: null,
     collectCustRange: () => { },
+    queryHoldingProductReqState: false,
   }
 
   static contextTypes = {
@@ -525,6 +531,11 @@ export default class CustomerLists extends PureComponent {
       isSendCustsServedByPostn,
       addServeRecord,
       motSelfBuiltFeedbackList,
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      queryHoldingProduct,
+      holdingProducts,
+      queryHoldingProductReqState,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -670,6 +681,11 @@ export default class CustomerLists extends PureComponent {
                     goGroupOrTask={this.goGroupOrTask}
                     push={push}
                     custServedByPostnResult={custServedByPostnResult}
+                    hasNPCTIQPermission={hasNPCTIQPermission}
+                    hasPCTIQPermission={hasPCTIQPermission}
+                    queryHoldingProduct={queryHoldingProduct}
+                    holdingProducts={holdingProducts}
+                    queryHoldingProductReqState={queryHoldingProductReqState}
                   />,
                 )
               }

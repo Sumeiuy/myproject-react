@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import { AutoComplete } from 'antd';
 import _ from 'lodash';
 
-import confirm from '../Confirm';
+import confirm from '../confirm_';
 import styles from './index.less';
 import logable from '../../../decorators/logable';
 
