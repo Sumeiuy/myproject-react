@@ -14,6 +14,7 @@ import withRouter from '../decorators/withRouter';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
 import ContextProvider from './ContextProvider';
+import Phone from '../components/common/phone';
 import styles from './main.less';
 import '../css/skin.less';
 
@@ -158,6 +159,7 @@ export default class Main extends Component {
                   }
                 </div>
               </div>
+              <Phone headless />
             </div>
           </div>
         </ContextProvider>
