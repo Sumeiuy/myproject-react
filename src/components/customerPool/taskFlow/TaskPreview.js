@@ -16,6 +16,7 @@ import Button from '../../common/Button';
 import { data } from '../../../helper';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
+import ForgeryRichText from '../../common/ForgeryRichText';
 import logable, { logPV } from '../../../decorators/logable';
 import styles from './taskPreview.less';
 
@@ -315,11 +316,10 @@ export default class TaskPreview extends PureComponent {
       custNum,
       // originFileName,
       executionType,
-      serviceStrategyHtml,
+      serviceStrategySuggestion,
       taskName,
       taskType,
       templetDesc,
-      templeteDescHtml,
       timelyIntervalValue,
       // 跟踪窗口期
       // trackWindowDate,
@@ -458,19 +458,15 @@ export default class TaskPreview extends PureComponent {
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>服务策略：</div>
-              <div
-                dangerouslySetInnerHTML={{ __html: serviceStrategyHtml || '--' }}
-              />
+              <div>
+                <ForgeryRichText text={serviceStrategySuggestion} />
+              </div>
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>任务提示：</div>
-              {
-                !_.isEmpty(templetDesc) ?
-                  <div
-                    dangerouslySetInnerHTML={{ __html: templeteDescHtml }}
-                  /> :
-                  <div>--</div>
-              }
+              <div>
+                <ForgeryRichText text={templetDesc} />
+              </div>
             </div>
           </div>
         </div>

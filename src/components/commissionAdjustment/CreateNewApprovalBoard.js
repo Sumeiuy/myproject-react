@@ -11,7 +11,7 @@ import { Input, message } from 'antd';
 import _ from 'lodash';
 
 import { openFspTab, closeRctTab } from '../../utils';
-import confirm from '../common/Confirm';
+import confirm from '../common/confirm_';
 import CommonModal from '../common/biz/CommonModal';
 import InfoTitle from '../common/InfoTitle';
 import Select from '../common/Select';

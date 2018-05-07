@@ -19,6 +19,7 @@ import {
 } from '../../../config/createTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
+import { PRODUCT_ARGUMENTS } from './config';
 
 const NOOP = _.noop;
 // const EMPTY_OBJECT = {};
@@ -26,6 +27,10 @@ const NOOP = _.noop;
 // 瞄准镜发起任务，需要替换的文本，用来构造mention的可选项列表
 // \s*匹配0个或多个空格，尽量可能匹配多个空格
 const sightLabelPattern = /该客户筛选自\s*$/;
+// 正则匹配出'$持仓数量#0002#'
+// eg: 客户当前持有601088，数量为$持仓数量#GP601088#，市值为$持仓市值#GP601088#。
+// 匹配出 ["$持仓数量#GP601088#", "$持仓市值#GP601088#"]
+const productPattern = /\$[\u4e00-\u9fa5]{1,}#[a-zA-Z0-9]{1,}#/g;
 
 @RestoreScrollTop
 export default class CreateTaskForm extends PureComponent {
@@ -48,7 +53,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorStrategySuggestion: PropTypes.bool.isRequired,
     isShowErrorTaskName: PropTypes.bool.isRequired,
     templetDesc: PropTypes.string,
-    isSightLabel: PropTypes.bool.isRequired,
+    isSightLabel: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -62,6 +67,7 @@ export default class CreateTaskForm extends PureComponent {
     missionType: '',
     taskBasicInfo: {},
     templetDesc: '',
+    isSightLabel: false,
   }
 
   constructor(props) {
@@ -105,8 +111,8 @@ export default class CreateTaskForm extends PureComponent {
   }
 
   @autobind
-  getData(isStateData) {
-    return this.taskFormInfoRef.getData(isStateData);
+  getData() {
+    return this.taskFormInfoRef.getData();
   }
 
   // 从业务目标池客户：businessCustPool
@@ -177,14 +183,22 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionDesc = `用户已达到办理 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
         defaultInitialValue = 8; // 有效期
         break;
-      case 'search':
+      // 非理财平台
+      case 'external':
+        defaultMissionType = '请选择';
+        defaultTaskSubType = '请选择'; // 任务子类型
+        defaultExecutionType = 'Chance';
+        defaultInitialValue = 4; // 有效期4天
+        defaultMissionDesc = this.getDefaultMissionDescFromProduct(query);
+        break;
       case 'association':
+      case 'search':
       case 'tag':
         defaultMissionType = '请选择';
         defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
-        defaultInitialValue = 4;
+        defaultInitialValue = 4; // 有效期4天
         break;
       case 'custIndicator':
         defaultMissionName = '新客户回访';
@@ -258,6 +272,30 @@ export default class CreateTaskForm extends PureComponent {
     });
   }
 
+  // 返回持仓产品发起任务时，任务提示的文字
+  getDefaultMissionDescFromProduct(query = {}) {
+    let defaultMissionDesc = '';
+    if (!_.isEmpty(query.condition)) {
+      const condition = JSON.parse(decodeURIComponent(query.condition));
+      const { productName = '', primaryKey: [id = ''] } = condition;
+      if (this.isFromExternalProduct(query)) {
+        defaultMissionDesc = `客户当前持有${productName}，数量为 $持仓数量#${id}# ，市值为 $持仓市值#${id}# 。`;
+      }
+    }
+    return defaultMissionDesc;
+  }
+
+  // 判断是否从外部持仓产品进入的列表页发起任务的
+  isFromExternalProduct(query = {}) {
+    if (query.source === 'external') {
+      const condition = !_.isEmpty(query.condition) ?
+        JSON.parse(decodeURIComponent(query.condition)) : {};
+      const { searchTypeReq = '' } = condition;
+      return searchTypeReq === 'PRODUCT';
+    }
+    return false;
+  }
+
   /**
    * 瞄准镜发起任务时，构造的mention suggestion
    * @param {*string} templetDesc 构造好的任务提示
@@ -271,6 +309,24 @@ export default class CreateTaskForm extends PureComponent {
       name: type,
       isSightingScope: true,
     };
+  }
+
+  @autobind
+  renderProductDesc(value) {
+    const { location: { query = {} } } = this.props;
+    const condition = !_.isEmpty(query.condition) ?
+      JSON.parse(decodeURIComponent(query.condition)) : {};
+    const list = value.match(productPattern);
+    const newList = _.map(list, item => ({ type: item.slice(1), name: item.slice(1) }));
+    if (_.isEmpty(condition)) {
+      return newList;
+    }
+    const { searchText = '' } = condition;
+    // 从searchText中匹配出产品代码 晋亿实业(601002) => 601002
+    const result = /\((\S+)\)/.exec(searchText);
+    const productCode = !_.isEmpty(result) && result[1];
+    const dateList = _.map(PRODUCT_ARGUMENTS, item => ({ type: `${item}#${productCode}#`, name: `${item}#${productCode}#` }));
+    return [...newList, ...dateList];
   }
 
   render() {
@@ -317,6 +373,8 @@ export default class CreateTaskForm extends PureComponent {
       templetDescSuggestion = this.renderMissionDescSuggestion(decodeURIComponent(missionDesc));
     }
 
+    const productDescSuggestions = this.isFromExternalProduct(query) ?
+      this.renderProductDesc(defaultMissionDesc) : [];
     return (
       <div>
         {!isShowTitle ?
@@ -347,6 +405,7 @@ export default class CreateTaskForm extends PureComponent {
             isShowErrorTaskSubType={isShowErrorTaskSubType}
             templetDescSuggestion={templetDescSuggestion}
             wrappedComponentRef={ref => this.taskFormInfoRef = ref}
+            productDescSuggestions={productDescSuggestions}
           />
         </div>
       </div>

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 15:19:30
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-03-15 13:24:09
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-05-07 10:06:14
  * @description 华泰职责ID视图
  * duty的key值取名规范为中文拼音名称首字母小写,使用下划线'_'连接,value值为职责ID
  */
@@ -25,6 +25,12 @@ const duty = {
   HTSC_ZX_MAMPID: '1-4VP1BIC', // HTSC 资讯管理岗
   HTSC_KHFPG: '1-21K11HX', // HTSC 客户分配岗
   HTSC_FGSTGGLG: '1-56Y041G', // HTSC 分公司投顾管理岗
+  HTSC_TIQ_NPC: '1-3S9AVC2', // HTSC 交易信息查询权限（非私密客户）
+  HTSC_TIQ_PC: '1-3S9AVC8', // HTSC 交易信息查询权限（含私密客户）
+  HTSC_CI_HMP: '1-FCQM-23', // HTSC 客户资料-总部管理岗
+  HTSC_CI_BMP: '1-FCQM-31', // HTSC 客户资料-分中心管理岗
+  HTSC_NPCI_HMP: '1-FCQM-41', // HTSC 客户资料（无隐私）-总部管理岗
+  HTSC_NPCI_BMP: '1-FCQM-43', // HTSC 客户资料（无隐私）-分中心管理岗
 };
 
 export default duty;

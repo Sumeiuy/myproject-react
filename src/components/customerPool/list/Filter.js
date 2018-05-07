@@ -14,7 +14,7 @@ import { SingleFilter, MultiFilter } from '../../common/filter';
 // 从搜索、联想词、标签、已开通业务过来的
 const SEARCH_TAG_FILTER = [
   'search', 'tag', 'association', 'business', 'custIndicator',
-  'numOfCustOpened', 'sightingTelescope',
+  'numOfCustOpened', 'sightingTelescope', 'external',
 ];
 
 // 数据转化

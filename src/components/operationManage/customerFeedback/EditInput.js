@@ -2,19 +2,17 @@
  * @Description: 附带编辑图标的 input
  * @Author: LiuJianShu
  * @Date: 2017-12-25 14:48:26
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2018-02-08 10:48:48
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-05-03 13:33:46
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Input } from 'antd';
-import _ from 'lodash';
-import logable from '../../../decorators/logable';
+import { Input, Tooltip } from 'antd';
 
-import Icon from '../Icon';
-// import Button from '../Button';
-import styles from './index.less';
+import logable from '../../../decorators/logable';
+import Icon from '../../common/Icon';
+import styles from './editInput.less';
 
 export default class EditInput extends PureComponent {
   static propTypes = {
@@ -24,8 +22,9 @@ export default class EditInput extends PureComponent {
     edit: PropTypes.bool,
     onCancel: PropTypes.func,
     maxLen: PropTypes.number,
-    data: PropTypes.array,
-    idx: PropTypes.number,
+    // data: PropTypes.array,
+    // idx: PropTypes.number,
+    item: PropTypes.object,
     btnGroup: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
@@ -40,9 +39,11 @@ export default class EditInput extends PureComponent {
     edit: false,
     btnGroup: '',
     maxLen: 30,
-    data: [],
-    idx: 0,
+    // data: [],
+    // idx: 0,
     onCancel: () => {},
+    item: {},
+    isInHeader: false,
   }
 
   constructor(props) {
@@ -98,26 +99,17 @@ export default class EditInput extends PureComponent {
   }
 
   // 提交按钮事件
+  // 此处由于新的需求需要针对服务经理可选项还有涨乐客户可选项进行区分处理
+  // 所以将原有在此处进行，值是否与以前的相等判断挪到外部有调用者来判断，
   @autobind
   @logable({ type: 'Click', payload: { name: '确定' } })
   onSubmit(e) {
     e.stopPropagation();
-    const { value, oldValue } = this.state;
-    const { editCallback, id, onCancel, data, idx } = this.props;
-    // 传入的 data 是否为空
-    const isDataEmpty = _.isEmpty(data);
-    // propsValue 值
-    const propsValue = !isDataEmpty ? data[idx].name : '';
-    // 判断 value 值与 propsValue 是否相等
-    const valueIsEqual = isDataEmpty ? false : value === propsValue;
-    if (value === oldValue || valueIsEqual) {
-      this.setState({
-        value: isDataEmpty ? oldValue : propsValue,
-        edit: false,
-      }, onCancel);
-    } else {
-      editCallback(value, id);
-    }
+    // 此处由于新的需求需要针对服务经理可选项还有涨乐客户可选项进行区分处理
+    // 所以将原有在此处进行，值是否与以前的相等判断挪到外部有调用者来判断，
+    const { value } = this.state;
+    const { item } = this.props;
+    this.props.editCallback(value, item);
   }
 
   // 取消按钮事件
@@ -133,6 +125,20 @@ export default class EditInput extends PureComponent {
     }, onCancel);
   }
 
+  // 根据需要显示的文字的长度，来判断是否需要提示框
+  // 文本长度超过20个字符，则显示文本提示框
+  @autobind
+  renderInputTextDomByValue(value) {
+    if (value.length > 20) {
+      return (
+        <Tooltip title={value}>
+          <em className={styles.noTnputText}>{value}</em>
+        </Tooltip>
+      );
+    }
+    return (<em className={styles.noTnputText}>{value}</em>);
+  }
+
   render() {
     const { edit, value } = this.state;
     const { btnGroup } = this.props;
@@ -141,7 +147,7 @@ export default class EditInput extends PureComponent {
         {
           !edit ?
             <div className={styles.noInput}>
-              <em>{value}</em>
+              {this.renderInputTextDomByValue(value)}
               <Icon type="edit" onClick={this.onEdit} title="编辑" />
               {btnGroup}
             </div>

@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import pageConfig from '../pageConfig';
-
+import ForgeryRichText from '../../common/ForgeryRichText';
 import styles from './detailInfo.less';
 
 const { taskList: { status } } = pageConfig;
@@ -57,17 +57,13 @@ export default class TaskListDetailInfo extends PureComponent {
             <div>
               <span>服务策略&nbsp;:</span>
               <span>
-                <div
-                  dangerouslySetInnerHTML={{ __html: infoData.strategyDescHtml || '--' }}
-                />
+                <ForgeryRichText text={infoData.strategyDesc} />
               </span>
             </div>
             <div>
               <span>任务提示&nbsp;:</span>
               <span>
-                <div
-                  dangerouslySetInnerHTML={{ __html: infoData.infoContentHtml || '--' }}
-                />
+                <ForgeryRichText text={infoData.infoContent} />
               </span>
             </div>
           </div> :
@@ -91,17 +87,13 @@ export default class TaskListDetailInfo extends PureComponent {
             <div>
               <span>服务策略&nbsp;:</span>
               <span>
-                <div
-                  dangerouslySetInnerHTML={{ __html: infoData.strategyDesc || '--' }}
-                />
+                <ForgeryRichText text={infoData.strategyDesc} />
               </span>
             </div>
             <div>
               <span>任务提示&nbsp;:</span>
               <span>
-                <div
-                  dangerouslySetInnerHTML={{ __html: infoData.infoContent || '--' }}
-                />
+                <ForgeryRichText text={infoData.infoContent} />
               </span>
             </div>
           </div>

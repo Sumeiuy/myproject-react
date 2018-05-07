@@ -21,6 +21,9 @@ import stock from './stock';
 import pointsExchange from './pointsExchange';
 import userCenter from './userCenter';
 import telephoneNumberManage from './telephoneNumberManage';
+import choicenessCombination from './choicenessCombination';
+import investmentAdvice from './investmentAdvice';
+import operationCenter from './operationCenter';
 
 const api = apiCreator();
 
@@ -71,5 +74,10 @@ export default {
   userCenter: userCenter(api),
   // 公务手机和电话卡号管理
   telephoneNumberManage: telephoneNumberManage(api),
+  // ========== 精选组合
+  choicenessCombination: choicenessCombination(api),
+  // 投资建议模板
+  investmentAdvice: investmentAdvice(api),
+  operationCenter: operationCenter(api),
 };
 

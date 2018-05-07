@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-29 09:07:42
+ * @Last Modified time: 2018-04-26 15:08:56
  * 管理者视图详情
  */
 
@@ -60,7 +60,7 @@ export default class ManagerViewDetail extends PureComponent {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     // 任务实施进度
-    missionImplementationDetail: PropTypes.object.isRequired,
+    missionImplementationDetail: PropTypes.object,
     // 获取任务实施进度
     countFlowStatus: PropTypes.func.isRequired,
     // 任务基本信息
@@ -101,6 +101,7 @@ export default class ManagerViewDetail extends PureComponent {
     currentId: '',
     custFeedback: EMPTY_LIST,
     missionTypeDict: EMPTY_LIST,
+    missionImplementationDetail: EMPTY_OBJECT,
   }
 
   constructor(props) {
