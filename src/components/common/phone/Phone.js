@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-05-03 18:16:29
+ * @Last Modified time: 2018-05-07 16:15:04
  */
 
 import React, { PureComponent } from 'react';
@@ -41,9 +41,9 @@ export default class Phone extends PureComponent {
     // 是否需要展示号码，如果作为HOOK处理FSP上所有电话行为，则为true
     headless: PropTypes.bool,
     // 电话号码
-    number: PropTypes.string.isRequired,
+    number: PropTypes.string,
     // 客户类型
-    custType: PropTypes.string.isRequired,
+    custType: PropTypes.string,
     // 点击号码回调
     onClick: PropTypes.func,
     // 接通电话回调
@@ -63,6 +63,8 @@ export default class Phone extends PureComponent {
   }
 
   static defaultProps = {
+    number: 0,
+    custType: 'per',
     headless: false,
     disable: true,
     style: {},
