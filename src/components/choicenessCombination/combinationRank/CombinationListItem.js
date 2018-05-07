@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-03 17:42:20
+ * @Last Modified time: 2018-05-07 13:43:10
 */
 
 import React, { PureComponent } from 'react';
@@ -201,7 +201,7 @@ export default class CombinationListItem extends PureComponent {
               <span className={styles.securityCode}>证券代码</span>
               <span className={styles.direction}>调仓方向</span>
               <span className={styles.time}>时间</span>
-              <span className={styles.cost}>成本价</span>
+              <span className={styles.cost}>成本价(元)</span>
               <span className={styles.reason}>理由</span>
             </div>
             <div className={styles.bodyBox}>

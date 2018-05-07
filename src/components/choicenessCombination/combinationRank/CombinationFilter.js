@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-筛选
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-02 17:09:23
+ * @Last Modified time: 2018-05-07 13:35:40
 */
 
 import React, { PureComponent } from 'react';
@@ -19,6 +19,7 @@ const SHOW_PARENT = TreeSelect.SHOW_PARENT;
 
 const labelStyle = {
   width: 'auto',
+  color: 'inherit',
 };
 
 const EMPTY_LIST = [];
