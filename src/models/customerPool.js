@@ -845,14 +845,14 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        performanceIndicators: resultData,
+        performanceIndicators: resultData || EMPTY_OBJECT,
       };
     },
     getManagerIndicatorsSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        managerIndicators: resultData,
+        managerIndicators: resultData || EMPTY_OBJECT,
       };
     },
     getInformationSuccess(state, action) {
