@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-19 09:20:50
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 14:20:07
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-07 17:24:21
  * @description 添加涨乐财富通服务方式下的投资建议的自由话术模块
  */
 
@@ -24,6 +24,8 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
     serveContent: PropTypes.object.isRequired,
     validateContent: PropTypes.bool.isRequired,
     validateTitle: PropTypes.bool.isRequired,
+    // 投资建议文本撞墙检测是否有股票代码
+    testWallCollisionStatus: PropTypes.bool.isRequired,
   }
 
   constructor(props) {
@@ -36,6 +38,8 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
       desc: isUpdate ? serveContent.desc : '',
       validateTitle: false,
       validateContent: false,
+      // 内容错误提示信息
+      descErrorInfo: '',
     };
   }
 
@@ -57,6 +61,21 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
   }
 
   @autobind
+  checkWallCollisionStatus() {
+    if (this.props.testWallCollisionStatus) {
+      this.setState({ descErrorInfo: '推荐的产品未通过合规撞墙检测，请修改投资建议', validateContent: true });
+      return false;
+    }
+    return true;
+  }
+
+
+  @autobind
+  getData() {
+    return this.state;
+  }
+
+  @autobind
   checkData() {
     const { title, desc } = this.state;
     if (_.isEmpty(title) || title.length > 15) {
@@ -64,15 +83,10 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
       return false;
     }
     if (_.isEmpty(desc) || desc.length > 500) {
-      this.setState({ validateContent: true });
+      this.setState({ descErrorInfo: '内容最多500个字符', validateContent: true });
       return false;
     }
     return true;
-  }
-
-  @autobind
-  getData() {
-    return this.state;
   }
 
   @autobind
@@ -88,7 +102,7 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
   }
 
   render() {
-    const { validateTitle, validateContent, title, desc } = this.state;
+    const { validateTitle, validateContent, title, desc, descErrorInfo } = this.state;
     const ctCls = cx([styles.editLine, styles.editLineTextArea]);
 
     const titleErrorCls = cx({
@@ -129,7 +143,7 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
         </div>
         {
           !validateContent ? null
-          : (<div className={styles.validateTips}>内容最多500个字符</div>)
+          : (<div className={styles.validateTips}>{descErrorInfo}</div>)
         }
         <div className={styles.tips}><Icon type="exclamation-circle" /> 注：手动输入的服务内容需要经过审批才能发送到客户手机上</div>
       </div>

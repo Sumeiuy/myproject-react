@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-28 14:04:30
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-07 17:22:37
  */
 
 import React, { PureComponent } from 'react';
@@ -109,21 +109,6 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   setFeedbackTimeRef(input) {
     this.feedbackTimeRef = input;
-  }
-
-  // 将客户反馈的实际值转化数据结构，使用key和value,保持一致
-  @autobind
-  convertFeedback(feedback) {
-    let tempChildFeedback = {};
-    if (!_.isEmpty(feedback.children) && _.isArray(feedback.children)) {
-      tempChildFeedback = this.fixDefaultChildFeedback(feedback.children[0]);
-    } else if (!_.isEmpty(feedback.children) && _.isObject(feedback.children)) {
-      tempChildFeedback = this.fixDefaultChildFeedback(feedback.children);
-    }
-    return {
-      ...this.fixDefaultChildFeedback(feedback),
-      children: tempChildFeedback,
-    };
   }
 
   // 根据服务类型serviceTypeCode找到相关的feedbackList
@@ -569,6 +554,21 @@ export default class ServiceRecordContent extends PureComponent {
     };
   }
 
+  // 将客户反馈的实际值转化数据结构，使用key和value,保持一致
+  @autobind
+  convertFeedback(feedback) {
+    let tempChildFeedback = {};
+    if (!_.isEmpty(feedback.children) && _.isArray(feedback.children)) {
+      tempChildFeedback = this.fixDefaultChildFeedback(feedback.children[0]);
+    } else if (!_.isEmpty(feedback.children) && _.isObject(feedback.children)) {
+      tempChildFeedback = this.fixDefaultChildFeedback(feedback.children);
+    }
+    return {
+      ...this.fixDefaultChildFeedback(feedback),
+      children: tempChildFeedback,
+    };
+  }
+
   // 切换服务时间
   @autobind
   @logable({
@@ -722,6 +722,10 @@ export default class ServiceRecordContent extends PureComponent {
       formData: { motCustfeedBackDict },
       custFeedbackList,
       flowStatusCode,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
     const {
       isReject,
@@ -847,6 +851,8 @@ export default class ServiceRecordContent extends PureComponent {
               approvalList={this.props.zhangleApprovalList}
               isReject={isReject}
               serveContent={zlRejectRecord}
+              testWallCollision={testWallCollision}
+              testWallCollisionStatus={testWallCollisionStatus}
             />
           )
           : (
@@ -958,6 +964,10 @@ ServiceRecordContent.propTypes = {
   eventId: PropTypes.string,
   serviceTypeCode: PropTypes.string,
   flowStatusCode: PropTypes.string,
+  // 投资建议文本撞墙检测
+  testWallCollision: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: PropTypes.bool.isRequired,
 };
 
 ServiceRecordContent.defaultProps = {

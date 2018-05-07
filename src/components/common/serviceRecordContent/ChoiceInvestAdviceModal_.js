@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 14:36:08
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 11:14:26
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-07 17:23:39
  * @description 投资建议弹出层
  */
 import React, { PureComponent } from 'react';
@@ -46,7 +46,14 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     const { mode } = this.state;
     if (mode === 'free' && this.freeModeRef.checkData()) {
       const { title, desc } = this.freeModeRef.getData();
-      this.props.onOK({ title, desc, mode });
+      const params = {
+        content: desc,
+      };
+      this.props.testWallCollision(params).then(() => {
+        if (this.freeModeRef.checkWallCollisionStatus()) {
+          this.props.onOK({ title, desc, mode });
+        }
+      });
     }
   }
 
@@ -57,6 +64,8 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
       wrapClassName,
       serveContent,
       isUpdate,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
 
     const { validateContent, validateTitle } = this.state;
@@ -87,6 +96,7 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
             serveContent={serveContent}
             validateContent={validateContent}
             validateTitle={validateTitle}
+            testWallCollisionStatus={testWallCollisionStatus}
           />
         </div>
       </CommonModal>
@@ -103,6 +113,10 @@ ChoiceInvestAdviceModal.propTypes = {
   serveContent: PropTypes.object,
   visible: PropTypes.bool,
   isUpdate: PropTypes.bool, // 是否编辑修改
+  // 投资建议文本撞墙检测
+  testWallCollision: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: PropTypes.bool.isRequired,
 };
 
 ChoiceInvestAdviceModal.defaultProps = {

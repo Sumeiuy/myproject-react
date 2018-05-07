@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-26 16:04:40
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-07 17:23:23
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -46,6 +46,24 @@ export default class ServeContent extends PureComponent {
     };
   }
 
+  @autobind
+  getData() {
+    const {
+      serveContentDesc,
+      serveContentTitle,
+      serveContentType,
+      approverId,
+      contentMode,
+    } = this.state;
+    return {
+      title: serveContentTitle,
+      content: serveContentDesc,
+      taskType: serveContentType,
+      approval: approverId,
+      mode: contentMode,
+    };
+  }
+
   // 校验必要的数据是否填写选择
   @autobind
   checkData() {
@@ -81,24 +99,6 @@ export default class ServeContent extends PureComponent {
       }
     }
     return true;
-  }
-
-  @autobind
-  getData() {
-    const {
-      serveContentDesc,
-      serveContentTitle,
-      serveContentType,
-      approverId,
-      contentMode,
-    } = this.state;
-    return {
-      title: serveContentTitle,
-      content: serveContentDesc,
-      taskType: serveContentType,
-      approval: approverId,
-      mode: contentMode,
-    };
   }
 
   /** 点击添加内容按钮 | 编辑修改按钮 */
@@ -192,7 +192,13 @@ export default class ServeContent extends PureComponent {
       hasEditContent,
     } = this.state;
 
-    const { approvalList } = this.props;
+    const {
+      approvalList,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
+    } = this.props;
     const newApprovalList = approvalList.map(item => ({
       empNo: item.login,
       empName: item.empName,
@@ -262,6 +268,8 @@ export default class ServeContent extends PureComponent {
               onOK={this.handleServeModalOK}
               isUpdate={hasEditContent}
               serveContent={serveContent}
+              testWallCollision={testWallCollision}
+              testWallCollisionStatus={testWallCollisionStatus}
             />
           )
         }
@@ -274,6 +282,10 @@ ServeContent.propTypes = {
   isReject: PropTypes.bool.isRequired,
   serveContent: PropTypes.object,
   approvalList: PropTypes.array,
+  // 投资建议文本撞墙检测
+  testWallCollision: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: PropTypes.bool.isRequired,
 };
 
 ServeContent.defaultProps = {
