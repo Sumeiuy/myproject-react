@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 10:14:05
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-05-04 10:31:36
+ * @Last Modified time: 2018-05-07 10:36:14
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapStateToProps移至此处成立独立模块
  */
 const mapStateToProps = () => state => ({
@@ -62,8 +62,7 @@ const mapStateToProps = () => state => ({
   custFeedbackList: state.performerView.custFeedbackList,
    // 涨乐财富通服务方式下的审批人列表
   zhangleApprovalList: state.performerView.zhangleApprovalList,
-  serviceRecordOfCaller: state.app.serviceRecordModalVisibleOfCaller,
-  prevRecordInfo: state.app.prevRecordInfo,
+  serviceRecordInfo: state.app.serviceRecordInfo,
 });
 
 export default mapStateToProps;

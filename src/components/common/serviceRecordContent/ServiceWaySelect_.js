@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 17:19:18
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 17:42:10
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-05-05 14:10:49
  * @desc 服务方式的Select
  */
 
@@ -25,7 +25,7 @@ export default class ServiceWaySelect extends PureComponent {
     onChange: PropTypes.func.isRequired,
     options: PropTypes.array.isRequired,
     empInfo: PropTypes.object.isRequired,
-    caller: PropTypes.string.isRequired,
+    serviceRecordInfo: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -66,7 +66,7 @@ export default class ServiceWaySelect extends PureComponent {
 
   render() {
     const { value } = this.state;
-    const { width, options, caller } = this.props;
+    const { width, options, serviceRecordInfo: { caller } } = this.props;
     // const selectValue = !_.isEmpty(value) ? value : options[0].key;
     // const containerCls = cx([styles.serveWayContainer, styles.serveWay]);
     return (

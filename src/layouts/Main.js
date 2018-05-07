@@ -41,21 +41,13 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   empInfo: state.app.empInfo,
   interfaceState: state.loading.effects,
-  // 显示隐藏添加服务记录弹窗
-  serviceRecordModalVisible: state.app.serviceRecordModalVisible,
-  // 发送保存服务记录请求成功状态
+  // 发送保存服务记录请求成功的服务id
   currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
-  // 服务弹窗对应的客户的经纪客户号
-  serviceRecordModalVisibleOfId: state.app.serviceRecordModalVisibleOfId,
-  // 服务弹窗对应的客户的经纪客户名
-  serviceRecordModalVisibleOfName: state.app.serviceRecordModalVisibleOfName,
   // 客户uuid
   custUuid: state.performerView.custUuid,
   // 自建任务平台的服务类型、任务反馈字典
   motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
-  // 服务弹窗的调用方
-  serviceRecordModalVisibleOfCaller: state.app.serviceRecordModalVisibleOfCaller,
-  prevRecordInfo: state.app.prevRecordInfo,
+  serviceRecordInfo: state.app.serviceRecordInfo,
 });
 
 const mapDispatchToProps = {
@@ -94,6 +86,7 @@ export default class Main extends Component {
     location: PropTypes.object.isRequired,
     serviceRecordModalVisibleOfCaller: PropTypes.string,
     prevRecordInfo: PropTypes.object,
+    serviceRecordInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -119,17 +112,13 @@ export default class Main extends Component {
       empInfo: { empInfo = {} },
       currentCommonServiceRecord,
       addServeRecord,
-      serviceRecordModalVisibleOfId,
-      serviceRecordModalVisibleOfName,
-      serviceRecordModalVisible,
       toggleServiceRecordModal,
       loadingForceFull,
       handleCloseClick,
       custUuid,
       ceFileDelete,
       motSelfBuiltFeedbackList,
-      serviceRecordModalVisibleOfCaller,
-      prevRecordInfo,
+      serviceRecordInfo,
     } = this.props;
     return (
       <LocaleProvider locale={zhCN}>
@@ -149,20 +138,16 @@ export default class Main extends Component {
                           <ConnectedCreateServiceRecord
                             handleCloseClick={handleCloseClick}
                             loading={interfaceState[effects.addServeRecord]}
-                            key={serviceRecordModalVisibleOfId}
-                            id={serviceRecordModalVisibleOfId}
-                            name={serviceRecordModalVisibleOfName}
+                            key={serviceRecordInfo.id}
                             dict={dict}
                             empInfo={empInfo}
-                            isShow={serviceRecordModalVisible}
                             addServeRecord={addServeRecord}
                             currentCommonServiceRecord={currentCommonServiceRecord}
                             onToggleServiceRecordModal={toggleServiceRecordModal}
                             custUuid={custUuid}
                             ceFileDelete={ceFileDelete}
                             taskFeedbackList={motSelfBuiltFeedbackList}
-                            caller={serviceRecordModalVisibleOfCaller}
-                            prevRecordInfo={prevRecordInfo}
+                            serviceRecordInfo={serviceRecordInfo}
                           />
                         </div>
                       : null

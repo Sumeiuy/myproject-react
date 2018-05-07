@@ -257,7 +257,7 @@ export default class CreateContactModal extends PureComponent {
   @autobind
   handlePhoneEnd() {
     // 没有成功发起通话
-    if (_.isEmpty(this.phoneStartTime)) {
+    if (!moment.isMoment(this.phoneStartTime)) {
       return;
     }
     this.phoneEndTime = moment();
@@ -267,6 +267,7 @@ export default class CreateContactModal extends PureComponent {
       toggleServiceRecordModal,
       addServeRecord,
       motSelfBuiltFeedbackList,
+      onClose,
     } = this.props;
     const list = transformCustFeecbackData(motSelfBuiltFeedbackList);
     const [firstServiceType = {}] = list;
@@ -296,12 +297,15 @@ export default class CreateContactModal extends PureComponent {
       noHints: true,
     };
     addServeRecord(payload).then(() => {
+      // 回调，关闭电话联系方式弹窗
+      onClose();
+      // 显示添加服务记录弹窗
       toggleServiceRecordModal({
-        custId: currentCustId,
-        custName: currentCustName,
+        id: currentCustId,
+        name: currentCustName,
         flag: true,
         caller: PHONE,
-        prevRecordInfo: payload,
+        autoGenerateRecordInfo: payload,
       });
     });
   }
@@ -340,7 +344,7 @@ export default class CreateContactModal extends PureComponent {
         {
           (!_.isEmpty(mainContactInfo.cellInfo) || personalContactInfo.mainTelInfo.type !== 'none') &&
           <Phone
-            onConnected={this.handlePhoneConnected}
+            onClick={this.handlePhoneConnected}
             onEnd={this.handlePhoneEnd}
             number={custType === 'per' ?
               personalContactInfo.mainTelInfo.value :

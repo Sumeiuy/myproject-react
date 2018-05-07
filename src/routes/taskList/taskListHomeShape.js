@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:07:12
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-05-04 10:31:49
+ * @Last Modified time: 2018-05-07 10:25:09
  * @description 针对taskList > Home 组件的props类型校验模块
  */
 import PropTypes from 'prop-types';
@@ -82,7 +82,7 @@ export default {
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
   toggleServiceRecordModal: PropTypes.func.isRequired,
-  serviceRecordOfCaller: PropTypes.string.isRequired,
-  prevRecordInfo: PropTypes.object.isRequired,
+  serviceRecordInfo: PropTypes.object.isRequired,
   addServeRecordOfPhone: PropTypes.func.isRequired,
+  resetCaller: PropTypes.func.isRequired,
 };

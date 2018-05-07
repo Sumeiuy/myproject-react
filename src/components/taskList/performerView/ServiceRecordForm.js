@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-05-04 10:37:14
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-07 17:36:38
  * 服务记录表单
  */
 
@@ -31,25 +31,36 @@ export default class ServiceRecordForm extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubmit() {
-    const data = this.serviceRecordContentRef.getData();
+    let data = this.serviceRecordContentRef.getData();
     if (_.isEmpty(data)) return;
-
+    const { addServeRecord, serviceRecordInfo, currentMotServiceRecord } = this.props;
+    const { autoGenerateRecordInfo: { serveContentDesc = '' }, caller = '' } = serviceRecordInfo;
+    if (caller === 'phone') {
+      data = {
+        ...data,
+        id: currentMotServiceRecord.id,
+        serveContentDesc: `${serveContentDesc}${data.serveContentDesc}`,
+      };
+    }
     // 添加服务记录
-    this.props.addServeRecord({
+    addServeRecord({
       postBody: data,
-      callback: this.handleCancel,
+      callback2: this.handleCancel,
     });
   }
 
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
-    const { serviceRecordOfCaller } = this.props;
+    const { serviceRecordInfo: { caller }, resetCaller } = this.props;
     // 打电话调起的服务记录时，取消按钮不可用
-    if (serviceRecordOfCaller !== 'phone') {
+    if (caller !== 'phone') {
       if (this.serviceRecordContentRef) {
         this.serviceRecordContentRef.resetField();
       }
+    } else {
+      // 取消打电话时自动生成服务记录时保存的数据
+      resetCaller();
     }
   }
 
@@ -71,8 +82,7 @@ export default class ServiceRecordForm extends PureComponent {
       zhangleApprovalList,
       empInfo: { empInfo },
       statusCode,
-      serviceRecordOfCaller,
-      prevRecordInfo,
+      serviceRecordInfo,
     } = this.props;
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
@@ -109,13 +119,15 @@ export default class ServiceRecordForm extends PureComponent {
           zhangleApprovalList={zhangleApprovalList}
           queryApprovalList={queryApprovalList}
           flowStatusCode={statusCode}
-          caller={serviceRecordOfCaller}
-          prevRecordInfo={prevRecordInfo}
+          serviceRecordInfo={serviceRecordInfo}
         />
-        <div className={styles.operationSection}>
-          <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
-          <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
-        </div>
+        {
+          !isReadOnly ?
+            <div className={styles.operationSection}>
+              <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
+              <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
+            </div> : null
+        }
       </div>
     );
   }
@@ -143,6 +155,7 @@ ServiceRecordForm.propTypes = {
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
   statusCode: PropTypes.string.isRequired,
-  prevRecordInfo: PropTypes.object.isRequired,
-  serviceRecordOfCaller: PropTypes.string.isRequired,
+  serviceRecordInfo: PropTypes.object.isRequired,
+  currentMotServiceRecord: PropTypes.object.isRequired,
+  resetCaller: PropTypes.func.isRequired,
 };

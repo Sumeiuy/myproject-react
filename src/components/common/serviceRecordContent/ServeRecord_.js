@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-20 22:42:39
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-07 14:30:07
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -19,14 +19,14 @@ const { TextArea } = Input;
 const FormItem = Form.Item;
 
 export default function ServeRecord(props) {
-  const { showError, value, onChange, caller, prevRecordInfo } = props;
-
+  const { showError, value, onChange, serviceRecordInfo = {} } = props;
+  const { caller = '', autoGenerateRecordInfo = {} } = serviceRecordInfo;
   const serviceContentErrorProps = showError ? {
     hasFeedback: false,
     validateStatus: 'error',
     help: '服务记录不能为空，最多输入1000汉字',
   } : null;
-  const { serveContentDesc = '' } = prevRecordInfo;
+  const { serveContentDesc = '' } = autoGenerateRecordInfo;
   return (
     <div className={styles.serveRecord}>
       <div className={styles.title}>服务记录:</div>
@@ -58,12 +58,11 @@ ServeRecord.propTypes = {
   showError: PropTypes.bool,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  caller: PropTypes.string.isRequired,
-  prevRecordInfo: PropTypes.object,
+  serviceRecordInfo: PropTypes.object,
 };
 
 ServeRecord.defaultProps = {
   showError: false,
   value: '',
-  prevRecordInfo: {},
+  serviceRecordInfo: {},
 };

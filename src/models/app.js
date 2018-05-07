@@ -16,14 +16,6 @@ export default {
   state: {
     // 字典数据
     dict: {},
-    // 显示隐藏添加服务记录弹窗，默认隐藏
-    serviceRecordModalVisible: false,
-    // 服务弹窗对应的客户的经纪客户号
-    serviceRecordModalVisibleOfId: '',
-    // 服务弹窗对应的客户的经纪客户名
-    serviceRecordModalVisibleOfName: '',
-    // 服务弹窗的调用方
-    serviceRecordModalVisibleOfCaller: '',
     empInfo: EMPTY_OBJECT,
     // 列表
     seibleList: EMPTY_OBJECT,
@@ -45,8 +37,18 @@ export default {
     creator: '',
     // mot自建任务的服务类型和反馈类型
     motSelfBuiltFeedbackList: [],
-    // 打电话时默认生成服务记录的信息
-    prevRecordInfo: {},
+    serviceRecordInfo: {
+      // 显示隐藏添加服务记录弹窗
+      modalVisible: false,
+      // 服务弹窗对应的客户的经纪客户号，mot任务中为任务的流水id
+      id: '',
+      // 服务弹窗对应的客户的名称
+      name: '',
+      // 服务弹窗的调用方
+      caller: '',
+      // 打电话时自动生成的服务记录的信息
+      autoGenerateRecordInfo: {},
+    },
   },
   reducers: {
     // 获取员工职责与职位
@@ -128,11 +130,13 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        serviceRecordModalVisible: payload.flag,
-        serviceRecordModalVisibleOfId: payload.custId,
-        serviceRecordModalVisibleOfName: payload.custName,
-        serviceRecordModalVisibleOfCaller: payload.caller,
-        prevRecordInfo: payload.prevRecordInfo,
+        serviceRecordInfo: {
+          modalVisible: payload.flag,
+          id: payload.id,
+          name: payload.name,
+          caller: payload.caller,
+          autoGenerateRecordInfo: payload.autoGenerateRecordInfo,
+        },
       };
     },
     getDictionarySuccess(state, action) {
@@ -181,8 +185,13 @@ export default {
     resetCaller(state) {
       return {
         ...state,
-        serviceRecordModalVisibleOfCaller: '',
-        prevRecordInfo: {},
+        serviceRecordInfo: {
+          modalVisible: false,
+          id: '',
+          name: '',
+          caller: '',
+          autoGenerateRecordInfo: {},
+        },
       };
     },
   },

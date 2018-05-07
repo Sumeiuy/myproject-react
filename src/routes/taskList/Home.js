@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-05-04 10:32:21
+ * @Last Modified time: 2018-05-07 10:25:27
  * @description 任务管理首页
  */
 
@@ -488,9 +488,9 @@ export default class PerformerView extends PureComponent {
       queryApprovalList,
       zhangleApprovalList,
       toggleServiceRecordModal,
-      serviceRecordOfCaller,
-      prevRecordInfo,
+      serviceRecordInfo,
       addServeRecordOfPhone,
+      resetCaller,
     } = this.props;
     const {
       typeCode,
@@ -548,9 +548,9 @@ export default class PerformerView extends PureComponent {
         queryApprovalList={queryApprovalList}
         zhangleApprovalList={zhangleApprovalList}
         toggleServiceRecordModal={toggleServiceRecordModal}
-        serviceRecordOfCaller={serviceRecordOfCaller}
-        prevRecordInfo={prevRecordInfo}
+        serviceRecordInfo={serviceRecordInfo}
         addServeRecordOfPhone={addServeRecordOfPhone}
+        resetCaller={resetCaller}
       />
     );
   }

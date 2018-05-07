@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:21:18
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-21 15:08:30
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-05-07 10:37:05
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapDispatchToProps移至此处成立独立模块
  */
 import effects from './effects';
@@ -74,4 +74,6 @@ export default ({ routerRedux, dispatch }) => ({
   toggleServiceRecordModal: dispatch(effects.toggleServiceRecordModal, { loading: false }),
   // 打电话时添加服务记录，不需要loading
   addServeRecordOfPhone: dispatch(effects.addServiceRecord, { loading: false }),
+  // 重置打电话时自动生成的服务记录的数据
+  resetCaller: dispatch(effects.resetCaller, { loading: false }),
 });

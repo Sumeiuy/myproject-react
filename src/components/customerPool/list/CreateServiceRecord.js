@@ -46,12 +46,9 @@ const TASK_TYPE_CODES = {
 export default class CreateServiceRecord extends PureComponent {
 
   static propTypes = {
-    id: PropTypes.string,
-    name: PropTypes.string,
-    isShow: PropTypes.bool,
     onToggleServiceRecordModal: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired,
-    currentCommonServiceRecord: PropTypes.bool.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     loading: PropTypes.bool,
@@ -65,15 +62,11 @@ export default class CreateServiceRecord extends PureComponent {
     queryApprovalList: PropTypes.func.isRequired,
     custFeedbackList: PropTypes.array.isRequired,
     zhangleApprovalList: PropTypes.array.isRequired,
-    caller: PropTypes.string.isRequired,
-    prevRecordInfo: PropTypes.object.isRequired,
     resetCaller: PropTypes.func.isRequired,
+    serviceRecordInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
-    id: '',
-    name: '',
-    isShow: false,
     loading: false,
     custUuid: '',
   }
@@ -113,13 +106,25 @@ export default class CreateServiceRecord extends PureComponent {
     const data = this.serviceRecordContentRef.getData();
     if (_.isEmpty(data)) return;
     const {
-      id: custId,
       addServeRecord,
       resetCaller,
-      caller,
       currentCommonServiceRecord: { id },
+      serviceRecordInfo: {
+        id: custId,
+        caller,
+        autoGenerateRecordInfo: { serveContentDesc = '', serveTime = '', serveWay = '' },
+      },
     } = this.props;
-    const payload = caller !== 'phone' ? { ...data, custId } : { ...data, custId, id };
+    let payload = { ...data, custId };
+    if (caller === 'phone') {
+      payload = {
+        ...payload,
+        id,
+        serveTime,
+        serveWay,
+        serveContentDesc: `${serveContentDesc}${data.serveContentDesc}`,
+      };
+    }
     addServeRecord(payload);
     resetCaller();
   }
@@ -128,7 +133,11 @@ export default class CreateServiceRecord extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '取消' } })
   handleCancel() {
-    const { onToggleServiceRecordModal, handleCloseClick, caller } = this.props;
+    const {
+      onToggleServiceRecordModal,
+      handleCloseClick,
+      serviceRecordInfo: { caller },
+    } = this.props;
     // 手动上传日志
     handleCloseClick();
     // 打电话调起的弹窗，不能直接手动关闭弹窗，只能提交服务记录进行关闭
@@ -160,12 +169,9 @@ export default class CreateServiceRecord extends PureComponent {
 
   render() {
     const {
-      isShow,
       dict,
       empInfo,
       loading,
-      name,
-      id,
       custUuid,
       deleteFileResult,
       taskFeedbackList,
@@ -173,12 +179,12 @@ export default class CreateServiceRecord extends PureComponent {
       queryApprovalList,
       custFeedbackList,
       zhangleApprovalList,
-      caller,
-      prevRecordInfo,
+      serviceRecordInfo,
     } = this.props;
     // 此处需要新增一个对 taskFeedbackList为空的判断
     if (_.isEmpty(taskFeedbackList)) return null;
 
+    const { id = '', name = '', modalVisible = false, caller = '' } = serviceRecordInfo;
     const title = (
       <p className={styles.title}>
         创建服务记录:
@@ -201,12 +207,13 @@ export default class CreateServiceRecord extends PureComponent {
       motCustfeedBackDict: transformCustFeecbackData(taskFeedbackList),
     };
 
+
     return (
       <Modal
         width={688}
         className={styles.serviceRecord}
         title={title}
-        visible={isShow}
+        visible={modalVisible}
         onCancel={this.handleCancel}
         maskClosable={false}
         footer={footer}
@@ -226,8 +233,7 @@ export default class CreateServiceRecord extends PureComponent {
                 queryApprovalList={queryApprovalList}
                 custFeedbackList={custFeedbackList}
                 zhangleApprovalList={zhangleApprovalList}
-                caller={caller}
-                prevRecordInfo={prevRecordInfo}
+                serviceRecordInfo={serviceRecordInfo}
               />
             </div>
             :

@@ -47,7 +47,7 @@ const getStickyTarget = (currentNode) => {
   )) || containers[0];
 };
 // 任务状态为未处理、处理中、已驳回时可打电话
-const CALL_LIST = ['10', '20', '60'];
+const CALLABLE_LIST = ['10', '20', '60'];
 
 export default class TargetCustomerRight extends PureComponent {
   static propTypes = {
@@ -175,7 +175,7 @@ export default class TargetCustomerRight extends PureComponent {
   @autobind
   handlePhoneEnd() {
     // 没有成功发起通话
-    if (_.isEmpty(this.phoneStartTime)) {
+    if (!moment.isMoment(this.phoneStartTime)) {
       return;
     }
     this.phoneEndTime = moment();
@@ -196,7 +196,7 @@ export default class TargetCustomerRight extends PureComponent {
     const [firstFeedback = {}] = children;
     const {
       key: firstFeedbackKey,
-      children: [secondFeedback],
+      children: [secondFeedback = {}],
     } = firstFeedback;
     const { key: secondFeedbackKey } = secondFeedback;
     const phoneDuration = date.calculateDuration(
@@ -222,11 +222,11 @@ export default class TargetCustomerRight extends PureComponent {
     // 添加服务记录表单共用，把打电话自动生成的默认数据保存到prevRecordInfo
     const saveRecordData = () => {
       toggleServiceRecordModal({
-        custId,
-        custName,
+        id: currentMissionFlowId,
+        name: custName,
         flag: false,
         caller: PHONE,
-        prevRecordInfo: payload,
+        autoGenerateRecordInfo: payload,
       });
     };
     addServeRecord({
@@ -252,12 +252,12 @@ export default class TargetCustomerRight extends PureComponent {
       itemData,
       currentCustomer,
     } = this.props;
-    if (!_.includes(CALL_LIST, currentCustomer.missionStatusCode)) {
+    if (!_.includes(CALLABLE_LIST, currentCustomer.missionStatusCode)) {
       return num;
     }
     return (
       <Phone
-        onConnected={this.handlePhoneConnected}
+        onClick={this.handlePhoneConnected}
         onEnd={this.handlePhoneEnd}
         number={num}
         custType={itemData.custNature}

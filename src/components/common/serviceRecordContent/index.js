@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-21 15:55:31
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-07 13:50:33
  */
 
 import React, { PureComponent } from 'react';
@@ -351,18 +351,22 @@ export default class ServiceRecordContent extends PureComponent {
   // 针对选择的服务方式，非涨乐财富通下的检测
   @autobind
   checkNotZLFins() {
-    const { isEntranceFromPerformerView } = this.props;
+    const { isEntranceFromPerformerView, serviceRecordInfo: { caller } } = this.props;
     const { serviceStatus, serviceRecord } = this.state;
     let isShowServeStatusError = false;
     let isShowServiceContentError = false;
+    // 校验服务记录
+    isShowServiceContentError = !serviceRecord || serviceRecord.length > 1000;
+    this.setState({ isShowServiceContentError });
+    // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容
+    if (caller === PHONE) {
+      return !isShowServiceContentError;
+    }
     if (isEntranceFromPerformerView) {
       // 在执行者视图中校验 服务状态 是否已经选择
       isShowServeStatusError = _.isEmpty(serviceStatus);
       this.setState({ isShowServeStatusError });
     }
-    // 校验服务记录
-    isShowServiceContentError = !serviceRecord || serviceRecord.length > 1000;
-    this.setState({ isShowServiceContentError });
     return !isShowServeStatusError && !isShowServiceContentError;
   }
 
@@ -728,8 +732,7 @@ export default class ServiceRecordContent extends PureComponent {
       formData: { motCustfeedBackDict },
       custFeedbackList,
       flowStatusCode,
-      caller,
-      prevRecordInfo,
+      serviceRecordInfo,
     } = this.props;
     const {
       isReject,
@@ -786,6 +789,8 @@ export default class ServiceRecordContent extends PureComponent {
       desc: ZLServiceContentDesc,
     };
 
+    const { autoGenerateRecordInfo = {}, caller } = serviceRecordInfo;
+
     return (
       <div className={styles.serviceRecordContent}>
         <div className={styles.gridWrapper}>
@@ -795,24 +800,28 @@ export default class ServiceRecordContent extends PureComponent {
             onChange={this.handleServiceWayChange}
             options={serveWay}
             empInfo={empInfo}
-            caller={caller}
+            serviceRecordInfo={serviceRecordInfo}
           />
           {/* 执行者试图下显示 服务状态；非执行者视图下显示服务类型 */}
           {
             isEntranceFromPerformerView ?
               (<div className={styles.serveStatus}>
                 <div className={styles.title}>服务状态:</div>
-                <FormItem {...serviceStatusErrorProps}>
-                  <div className={styles.content}>
-                    <RadioGroup onChange={this.handleRadioChange} value={serviceStatus}>
-                      {
-                        serveStatusRadioGroupMap.map(radio => (
-                          <Radio key={radio.key} value={radio.key}>{radio.value}</Radio>
-                        ))
-                      }
-                    </RadioGroup>
-                  </div>
-                </FormItem>
+                {
+                  caller === PHONE ?
+                    <div className={styles.content}>完成</div> :
+                    <FormItem {...serviceStatusErrorProps}>
+                      <div className={styles.content}>
+                        <RadioGroup onChange={this.handleRadioChange} value={serviceStatus}>
+                          {
+                            serveStatusRadioGroupMap.map(radio => (
+                              <Radio key={radio.key} value={radio.key}>{radio.value}</Radio>
+                            ))
+                          }
+                        </RadioGroup>
+                      </div>
+                    </FormItem>
+                }
               </div>)
               :
               (
@@ -836,8 +845,8 @@ export default class ServiceRecordContent extends PureComponent {
             <div className={styles.title}>服务时间:</div>
             <div className={styles.content} ref={this.setServeTimeRef}>
               {
-                caller === PHONE ?
-                  moment(prevRecordInfo.serveTime).format(DATE_FORMAT_SHOW) :
+                serviceRecordInfo.caller === PHONE ?
+                  autoGenerateRecordInfo.serveTime :
                   <DatePicker
                     style={{ width: 142 }}
                     {...dateCommonProps}
@@ -867,8 +876,7 @@ export default class ServiceRecordContent extends PureComponent {
               showError={isShowServiceContentError}
               value={serviceRecord}
               onChange={this.handleServiceRecordInputChange}
-              caller={caller}
-              prevRecordInfo={prevRecordInfo}
+              serviceRecordInfo={serviceRecordInfo}
             />
           )
         }
@@ -973,8 +981,7 @@ ServiceRecordContent.propTypes = {
   eventId: PropTypes.string,
   serviceTypeCode: PropTypes.string,
   flowStatusCode: PropTypes.string,
-  caller: PropTypes.string.isRequired,
-  prevRecordInfo: PropTypes.object.isRequired,
+  serviceRecordInfo: PropTypes.object.isRequired,
 };
 
 ServiceRecordContent.defaultProps = {
