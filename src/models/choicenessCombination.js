@@ -3,7 +3,7 @@
  * @Description: 精选组合modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-02 17:16:12
+ * @Last Modified time: 2018-05-07 13:40:44
 */
 
 import _ from 'lodash';
@@ -74,7 +74,7 @@ export default {
     combinationLineChartData: EMPTY_OBJECT, // 组合折线趋势图
     rankTabActiveKey: '', // 组合排名tab
     yieldRankValue: yieldRankList[0].value, // 收益率排序value  默认显示近7天的
-    riskLevel: '', // 所筛选的风险等级
+    riskLevel: riskDefaultItem.value, // 所筛选的风险等级
   },
   reducers: {
     // 风险等级筛选

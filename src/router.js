@@ -71,6 +71,7 @@ import TelephoneNumberManage from './routes/telephoneNumberManage/Home';
 import TelephoneNumberManageEdit from './routes/telephoneNumberManage/ApplyEdit';
 // 精选组合
 import ChoicenessCombination from './routes/choicenessCombination/Home';
+import CombinationDetail from './routes/choicenessCombination/CombinationDetail';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -272,7 +273,17 @@ const routes = [
     exact: false,
   },
   // 精选组合
-  { path: '/choicenessCombination', component: ChoicenessCombination },
+  {
+    path: '/choicenessCombination',
+    component: ChoicenessCombination,
+    children: [
+      {
+        // 组合详情 /choicenessCombination/combinationDetail?id=xxx  id为组合id
+        path: '/combinationDetail',
+        component: CombinationDetail,
+      },
+    ],
+  },
 ];
 
 // 递归创建路由
