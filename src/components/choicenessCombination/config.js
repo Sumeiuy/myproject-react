@@ -2,8 +2,8 @@
  * @Description: 精选组合部分配置项
  * @Author: Liujianshu
  * @Date: 2018-04-25 14:28:07
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-25 16:47:41
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-05-08 15:53:01
  */
 
 const config = {
@@ -152,6 +152,36 @@ const config = {
         title: '持仓客户',
         width: '12%',
         align: 'right',
+      },
+    ],
+    orderCust: [
+      {
+        dataIndex: 'customerId',
+        key: 'customerId',
+        title: '客户号',
+        width: '24%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'customerName',
+        key: 'customerName',
+        title: '客户名称',
+        width: '17%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'coincideScale',
+        key: 'coincideScale',
+        title: '持仓重合比例',
+        width: '22%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'relevance',
+        key: 'relevance',
+        title: '持仓关联',
+        width: '37%',
+        align: 'left',
       },
     ],
   },

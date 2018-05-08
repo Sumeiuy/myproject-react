@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-07 15:52:51
+ * @Last Modified time: 2018-05-08 16:28:04
 */
 
 import _ from 'lodash';
@@ -42,13 +42,9 @@ export default {
     adjustWarehouseHistoryData: EMPTY_OBJECT, // 调仓历史数据
     tableHistoryList: EMPTY_OBJECT,  // 弹窗调仓历史表格数据
     combinationAdjustHistoryData: EMPTY_OBJECT, // 组合调仓数据
-    // weeklySecurityTopTenData: EMPTY_LIST, // 近一周表现前十的证券
     combinationTreeList: EMPTY_LIST, // 组合树
-    // combinationRankList: EMPTY_LIST, // 组合排名列表
     combinationLineChartData: EMPTY_OBJECT, // 组合折线趋势图
-    // rankTabActiveKey: '', // 组合排名tab
-    // yieldRankValue: yieldRankList[0].value, // 收益率排序value  默认显示近7天的
-    // riskLevel: riskDefaultItem.value, // 所筛选的风险等级
+    orderCustData: EMPTY_OBJECT, // 订购客户数据
   },
   reducers: {
     // 获取调仓历史数据
@@ -81,6 +77,14 @@ export default {
       return {
         ...state,
         combinationLineChartData: resultData,
+      };
+    },
+    // 订购客户数据
+    getOrderingCustListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        orderCustData: resultData,
       };
     },
   },
@@ -124,6 +128,14 @@ export default {
           payload: response,
         });
       }
+    },
+    // 查询订购客户
+    * getOrderingCustList({ payload }, { call, put }) {
+      const response = yield call(api.getOrderingCustList, payload);
+      yield put({
+        type: 'getOrderingCustListSuccess',
+        payload: response,
+      });
     },
   },
   subscriptions: {

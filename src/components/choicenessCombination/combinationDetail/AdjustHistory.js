@@ -1,9 +1,9 @@
 /*
  * @Author: XuWenKang
- * @Description: 精选组合-组合调仓组件
+ * @Description: 精选组合-组合详情-组合调仓组件
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-07 17:41:26
+ * @Last Modified time: 2018-05-08 17:37:37
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -26,7 +26,8 @@ const STOCK_CODE = config.securityType[0].value;
 export default class AdjustHistory extends PureComponent {
   static propTypes = {
     showModal: PropTypes.func.isRequired,
-    // data: PropTypes.object.isRequired,
+    // 调仓历史数据
+    data: PropTypes.object.isRequired,
     // openCustomerListPage: PropTypes.func.isRequired,
     openStockPage: PropTypes.func.isRequired,
   }
@@ -68,7 +69,7 @@ export default class AdjustHistory extends PureComponent {
           wordBreak: 'break-all',
         }}
       >
-        <div className={styles.ellipsis}>
+        <div className={styles.reason}>
           {value}
         </div>
       </Popover>);
@@ -76,6 +77,11 @@ export default class AdjustHistory extends PureComponent {
       reactElement = '调仓理由：暂无';
     }
     return reactElement;
+  }
+
+  @autobind
+  getHistoryList() {
+    // const { data: { list } } = this.props;
   }
 
   render() {
@@ -86,7 +92,6 @@ export default class AdjustHistory extends PureComponent {
           <a onClick={this.handleMoreClick}>更多调仓历史</a>
         </div>
         <div className={`${styles.titleBox} clearfix`}>
-          <span className={styles.icon} />
           <span className={styles.security}>证券名称及代码</span>
           <span className={styles.time}>成交时间</span>
           <span className={styles.const}>成交价</span>
@@ -99,14 +104,16 @@ export default class AdjustHistory extends PureComponent {
             </div>
             <div className={styles.text}>
               <div className={`${styles.top} clearfix`}>
-                <span className={styles.security}>证券名称及代码</span>
-                <span className={styles.time}>成交时间</span>
-                <span className={styles.const}>成交价</span>
-                <span className={styles.change}>持仓变化</span>
+                <span className={styles.security}>
+                  <a>神马证券(203223)</a>
+                </span>
+                <span className={styles.time}>2018/2/13 15:00</span>
+                <span className={styles.const}>5.02</span>
+                <span className={styles.change}>0.00% -&gt; 12.65%</span>
               </div>
-              <div className={styles.reason}>
-                理由理由理由理由理由理由理由理由理由理由
-              </div>
+              {
+                this.renderPopover('理由理由理由理由理由理由理由理由')
+              }
             </div>
           </div>
         </div>

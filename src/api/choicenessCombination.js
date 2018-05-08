@@ -3,7 +3,7 @@
  * @Description: 精选组合api
  * @Date: 2018-04-17 10:10:25
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-27 11:02:03
+ * @Last Modified time: 2018-05-08 16:25:44
 */
 
 export default function choicenessCombination(api) {
@@ -20,5 +20,7 @@ export default function choicenessCombination(api) {
     getCombinationChart: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/statisticReturnGraph', query),
     // 历史报告列表
     getReportHistoryList: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/reportHistoryList', query),
+    // 订购客户列表
+    getOrderingCustList: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/orderingCustomerList', query),
   };
 }
