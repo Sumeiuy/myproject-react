@@ -18,7 +18,7 @@ import RemarkList from './RemarkList';
 import Problemdetails from './ProblemDetails';
 import FeedbackUser from './FeedbackUser';
 import UploadFiles from './UploadFiles';
-import { emp } from '../../helper';
+import { emp, dom } from '../../helper';
 import { feedbackOptions, request } from '../../config';
 import './detail.less';
 import logable, { logPV } from '../../decorators/logable';
@@ -200,16 +200,16 @@ export default class Detail extends PureComponent {
   setDOMStyle(newHeight, newWidth) {
     /* eslint-disable */
     const modalElem = ReactDOM.findDOMNode(document.querySelector('.imgModal'));
-    const childrenElem = modalElem.children[0];
-    // let marginTop = 0;
-    /* eslint-enable */
-    modalElem.style.height = `${newHeight}px`;
-    modalElem.style.width = `${newWidth}px`;
-    modalElem.style.margin = 'auto';
-    modalElem.style.overflow = 'hidden';
-    childrenElem.style.top = '50%';
-    childrenElem.style.marginTop = `-${newHeight / 2}px`;
-    childrenElem.style.paddingBottom = '0px';
+    if (modalElem) {
+      const childrenElem = modalElem.children[0];
+      dom.setStyle(modalElem, 'height', `${newHeight}px`);
+      dom.setStyle(modalElem, 'width', `${newWidth}px`);
+      dom.setStyle(modalElem, 'margin', 'auto');
+      dom.setStyle(modalElem, 'overflow', 'hidden');
+      dom.setStyle(childrenElem, 'top', '50%');
+      dom.setStyle(childrenElem, 'marginTop', `-${newHeight / 2}px`);
+      dom.setStyle(childrenElem, 'paddingBottom', '0px');
+    }
   }
 
   /**
@@ -237,20 +237,11 @@ export default class Detail extends PureComponent {
       w *= Ratio;
       h *= Ratio;
     }
-
     this.setState({
       newHeight: h,
       newWidth: w,
     }, () => {
-      if (!this.state.previewVisible) {
-        this.setState({
-          previewVisible: true,
-        }, () => {
-          this.setDOMStyle(h, w);
-        });
-      } else {
-        this.setDOMStyle(h, w);
-      }
+      this.setDOMStyle(h, w);
     });
   }
 
@@ -434,7 +425,9 @@ export default class Detail extends PureComponent {
   @autobind
   @logPV({ pathname: '/modal/imgPreview', title: '缩略图预览' })
   handlePreview() {
-    this.calculateRealSize();
+    this.setState({
+      previewVisible: true,
+    }, this.calculateRealSize);
   }
 
   @autobind
