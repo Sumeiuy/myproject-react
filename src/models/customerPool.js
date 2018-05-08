@@ -148,8 +148,10 @@ export default {
 
   subscriptions: {
     setup({ dispatch, history }) {
-      dispatch({ type: 'getCustRangeByAuthority', loading: true });
       history.listen(({ pathname, search }) => {
+        if (pathname === '/customerPool/list') {
+          dispatch({ type: 'getCustRangeByAuthority', loading: true });
+        }
         const query = queryString.parse(search);
         // 监听location的配置对象
         // 函数名称为路径匹配字符
@@ -740,7 +742,7 @@ export default {
       });
     },
     // 上传文件之前，先查询uuid
-    * queryCustUuid({ payload }, { call, put }) {
+    * queryCustUuid({ payload = {} }, { call, put }) {
       const { resultData } = yield call(api.queryCustUuid, payload);
       yield put({
         type: 'queryCustUuidSuccess',

@@ -56,7 +56,6 @@ export default class CreateServiceRecord extends PureComponent {
     custUuid: PropTypes.string,
     ceFileDelete: PropTypes.func.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
-    queryCustUuid: PropTypes.func.isRequired,
     taskFeedbackList: PropTypes.array.isRequired,
     queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
     queryApprovalList: PropTypes.func.isRequired,
@@ -69,11 +68,6 @@ export default class CreateServiceRecord extends PureComponent {
   static defaultProps = {
     loading: false,
     custUuid: '',
-  }
-
-  componentDidMount() {
-    // 只要改组件初次加载完成，就请求一遍custUuid
-    this.props.queryCustUuid();
   }
 
   componentWillReceiveProps(nextProps) {

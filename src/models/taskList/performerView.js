@@ -338,7 +338,7 @@ export default {
       }
     },
     // 上传文件之前，先查询uuid
-    * queryCustUuid({ payload }, { call, put }) {
+    * queryCustUuid({ payload = {} }, { call, put }) {
       const { resultData } = yield call(api.queryCustUuid, payload);
       yield put({
         type: 'queryCustUuidSuccess',

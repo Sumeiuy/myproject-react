@@ -222,6 +222,8 @@ export default {
         type: 'getMotCustfeedBackDict',
         payload: { pageNum: 1, pageSize: 10000, type: 2 },
       });
+      // 唤起创建服务记录的弹窗时请求Uuid
+      yield put({ type: 'performerView/queryCustUuid' });
       yield put({
         type: 'toggleServiceRecordModalSuccess',
         payload,
@@ -314,20 +316,11 @@ export default {
     },
   },
   subscriptions: {
-    setup({ dispatch, history }) {
+    setup({ dispatch }) {
       // 加载员工职责与职位
       dispatch({ type: 'getEmpInfo' });
       // 获取字典
       dispatch({ type: 'getDictionary' });
-      return history.listen(({ pathname }) => {
-        if (pathname === '/customerPool/list') {
-          // 进入页面查询子类型列表
-          dispatch({
-            type: 'getMotCustfeedBackDict',
-            payload: { pageNum: 1, pageSize: 10000, type: 2 },
-          });
-        }
-      });
     },
   },
 };
