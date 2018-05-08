@@ -43,10 +43,6 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: generateProxy([
-      '/fspa/mcrm/api/groovynoauth/fsp/cust/service/addCommonServeRecord',
-      {
-        target: 'http://168.61.8.81:5090', // DOClever
-      },
       prefix + '/groovynoauth/fsp/queryPhoneInfo',
       {
         target: 'http://168.61.8.81:5090', // DOClever

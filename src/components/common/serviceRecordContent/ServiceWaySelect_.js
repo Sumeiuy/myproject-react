@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 17:19:18
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-05-05 14:10:49
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-08 12:57:48
  * @desc 服务方式的Select
  */
 
@@ -66,7 +66,7 @@ export default class ServiceWaySelect extends PureComponent {
 
   render() {
     const { value } = this.state;
-    const { width, options, serviceRecordInfo: { caller } } = this.props;
+    const { width, options, serviceRecordInfo: { caller, autoGenerateRecordInfo } } = this.props;
     // const selectValue = !_.isEmpty(value) ? value : options[0].key;
     // const containerCls = cx([styles.serveWayContainer, styles.serveWay]);
     return (
@@ -74,7 +74,7 @@ export default class ServiceWaySelect extends PureComponent {
         <div className={styles.title}>服务方式:</div>
         <div className={styles.content} ref={this.setServiceWrapRef}>
           {
-            caller === PHONE ? '电话' :
+            caller === PHONE && autoGenerateRecordInfo.serveWay === 'HTSC Phone' ? '电话' :
             <Select
               value={value}
               style={width}

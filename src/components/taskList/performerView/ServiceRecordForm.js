@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-07 17:36:38
+ * @Last Modified time: 2018-05-08 11:13:31
  * 服务记录表单
  */
 
@@ -36,7 +36,11 @@ export default class ServiceRecordForm extends PureComponent {
     if (_.isEmpty(data)) return;
     const { addServeRecord, serviceRecordInfo, currentMotServiceRecord } = this.props;
     const { autoGenerateRecordInfo: { serveContentDesc = '' }, caller = '' } = serviceRecordInfo;
-    if (caller === 'phone') {
+    if (
+      caller === 'phone' &&
+      !_.isEmpty(currentMotServiceRecord.id) &&
+      currentMotServiceRecord.id !== 'failure'
+    ) {
       data = {
         ...data,
         id: currentMotServiceRecord.id,
@@ -53,7 +57,7 @@ export default class ServiceRecordForm extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
-    const { serviceRecordInfo: { caller }, resetCaller } = this.props;
+    const { serviceRecordInfo: { caller }, resetServiceRecordInfo } = this.props;
     // 打电话调起的服务记录时，取消按钮不可用
     if (caller !== 'phone') {
       if (this.serviceRecordContentRef) {
@@ -61,7 +65,7 @@ export default class ServiceRecordForm extends PureComponent {
       }
     } else {
       // 取消打电话时自动生成服务记录时保存的数据
-      resetCaller();
+      resetServiceRecordInfo();
     }
   }
 
@@ -158,5 +162,5 @@ ServiceRecordForm.propTypes = {
   statusCode: PropTypes.string.isRequired,
   serviceRecordInfo: PropTypes.object.isRequired,
   currentMotServiceRecord: PropTypes.object.isRequired,
-  resetCaller: PropTypes.func.isRequired,
+  resetServiceRecordInfo: PropTypes.func.isRequired,
 };

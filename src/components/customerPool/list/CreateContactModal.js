@@ -273,29 +273,32 @@ export default class CreateContactModal extends PureComponent {
     const [firstServiceType = {}] = list;
     const { key: firstServiceTypeKey, children = [] } = firstServiceType;
     const [firstFeedback = {}] = children;
-    const {
-      key: firstFeedbackKey,
-      children: [secondFeedback],
-    } = firstFeedback;
-    const { key: secondFeedbackKey } = secondFeedback;
     const phoneDuration = date.calculateDuration(
       this.phoneStartTime.valueOf(),
       this.phoneEndTime.valueOf(),
     );
     const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}`;
-    const payload = {
+    let payload = {
       custId: currentCustId,
       serveWay: 'HTSC Phone',
       taskType: '2',
       type: firstServiceTypeKey,
+      // 服务类型
       serveType: firstServiceTypeKey,
-      serveCustFeedBack: firstFeedbackKey,
-      serveCustFeedBack2: secondFeedbackKey,
+      // 客户反馈一级
+      serveCustFeedBack: firstFeedback.key,
       serveContentDesc: serviceContentDesc,
       serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
       feedBackTime: moment().format('YYYY-MM-DD'),
       noHints: true,
     };
+    // 客户反馈的二级
+    if (firstFeedback.children) {
+      payload = {
+        ...payload,
+        serveCustFeedBack2: firstFeedback.children[0].key,
+      };
+    }
     addServeRecord(payload).then(() => {
       // 回调，关闭电话联系方式弹窗
       onClose();

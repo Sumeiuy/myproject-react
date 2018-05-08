@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:07:12
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-05-07 10:25:09
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-08 09:22:55
  * @description 针对taskList > Home 组件的props类型校验模块
  */
 import PropTypes from 'prop-types';
@@ -84,5 +84,5 @@ export default {
   toggleServiceRecordModal: PropTypes.func.isRequired,
   serviceRecordInfo: PropTypes.object.isRequired,
   addServeRecordOfPhone: PropTypes.func.isRequired,
-  resetCaller: PropTypes.func.isRequired,
+  resetServiceRecordInfo: PropTypes.func.isRequired,
 };

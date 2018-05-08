@@ -502,7 +502,7 @@ export default class PerformerView extends PureComponent {
       toggleServiceRecordModal,
       serviceRecordInfo,
       addServeRecordOfPhone,
-      resetCaller,
+      resetServiceRecordInfo,
     } = this.props;
     const {
       typeCode,
@@ -562,7 +562,7 @@ export default class PerformerView extends PureComponent {
         toggleServiceRecordModal={toggleServiceRecordModal}
         serviceRecordInfo={serviceRecordInfo}
         addServeRecordOfPhone={addServeRecordOfPhone}
-        resetCaller={resetCaller}
+        resetServiceRecordInfo={resetServiceRecordInfo}
       />
     );
   }

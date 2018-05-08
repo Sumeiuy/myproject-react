@@ -194,17 +194,12 @@ export default class TargetCustomerRight extends PureComponent {
     const [firstServiceType = {}] = motCustfeedBackDict;
     const { key: firstServiceTypeKey, children = [] } = firstServiceType;
     const [firstFeedback = {}] = children;
-    const {
-      key: firstFeedbackKey,
-      children: [secondFeedback = {}],
-    } = firstFeedback;
-    const { key: secondFeedbackKey } = secondFeedback;
     const phoneDuration = date.calculateDuration(
       this.phoneStartTime.valueOf(),
       this.phoneEndTime.valueOf(),
     );
     const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}`;
-    const payload = {
+    let payload = {
       missionFlowId: currentMissionFlowId,
       missionId: currentId,
       custId,
@@ -213,12 +208,19 @@ export default class TargetCustomerRight extends PureComponent {
       flowStatus: '30',
       type: firstServiceTypeKey,
       serveType: firstServiceTypeKey,
-      serveCustFeedBack: firstFeedbackKey,
-      serveCustFeedBack2: secondFeedbackKey,
+      // 客户反馈一级
+      serveCustFeedBack: firstFeedback.key,
       serveContentDesc: serviceContentDesc,
       serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
       feedBackTime: moment().format('YYYY-MM-DD'),
     };
+    // 客户反馈的二级
+    if (firstFeedback.children) {
+      payload = {
+        ...payload,
+        serveCustFeedBack2: firstFeedback.children[0].key,
+      };
+    }
     // 添加服务记录表单共用，把打电话自动生成的默认数据保存到prevRecordInfo
     const saveRecordData = () => {
       toggleServiceRecordModal({

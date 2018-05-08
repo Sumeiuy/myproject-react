@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-07 14:30:07
+ * @Last Modified time: 2018-05-08 12:59:39
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 

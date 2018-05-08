@@ -802,8 +802,9 @@ export default class ServiceRecordContent extends PureComponent {
             isEntranceFromPerformerView ?
               (<div className={styles.serveStatus}>
                 <div className={styles.title}>服务状态:</div>
+                {/* 打电话调的服务记录切服务状态码为30时，显示‘完成’ */}
                 {
-                  caller === PHONE ?
+                  caller === PHONE && autoGenerateRecordInfo.flowStatus === '30' ?
                     <div className={styles.content}>完成</div> :
                     <FormItem {...serviceStatusErrorProps}>
                       <div className={styles.content}>

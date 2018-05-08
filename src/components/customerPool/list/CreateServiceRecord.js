@@ -62,7 +62,7 @@ export default class CreateServiceRecord extends PureComponent {
     queryApprovalList: PropTypes.func.isRequired,
     custFeedbackList: PropTypes.array.isRequired,
     zhangleApprovalList: PropTypes.array.isRequired,
-    resetCaller: PropTypes.func.isRequired,
+    resetServiceRecordInfo: PropTypes.func.isRequired,
     serviceRecordInfo: PropTypes.object.isRequired,
   }
 
@@ -81,10 +81,10 @@ export default class CreateServiceRecord extends PureComponent {
       loading,
     } = this.props;
     const {
-      currentCommonServiceRecord: { id = null },
+      currentCommonServiceRecord: { id },
     } = nextProps;
     // 添加成功
-    if (loading && !nextProps.loading && !_.isEmpty(id)) {
+    if (loading && !nextProps.loading && !_.isEmpty(id) && id !== 'failure') {
       // 提交成功后，刷新360视图中的服务记录iframe
       const iframe = document.querySelector(fspContainer.view360Iframe);
       if (iframe) {
@@ -107,7 +107,7 @@ export default class CreateServiceRecord extends PureComponent {
     if (_.isEmpty(data)) return;
     const {
       addServeRecord,
-      resetCaller,
+      resetServiceRecordInfo,
       currentCommonServiceRecord: { id },
       serviceRecordInfo: {
         id: custId,
@@ -116,7 +116,7 @@ export default class CreateServiceRecord extends PureComponent {
       },
     } = this.props;
     let payload = { ...data, custId };
-    if (caller === 'phone') {
+    if (caller === 'phone' && !_.isEmpty(id) && id !== 'failure') {
       payload = {
         ...payload,
         id,
@@ -126,7 +126,7 @@ export default class CreateServiceRecord extends PureComponent {
       };
     }
     addServeRecord(payload);
-    resetCaller();
+    resetServiceRecordInfo();
   }
 
   // 关闭弹窗

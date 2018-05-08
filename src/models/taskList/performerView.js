@@ -253,7 +253,7 @@ export default {
       });
       // 当客户列表选中的客户流水变化时，清除打电话显示服务记录的标志
       yield put({
-        type: 'app/resetCaller',
+        type: 'app/resetServiceRecordInfo',
       });
     },
 
@@ -266,7 +266,7 @@ export default {
         yield put({ type: 'clearParameter' });
         // 当客户列表选中的客户流水变化时，清除打电话显示服务记录的标志
         yield put({
-          type: 'app/resetCaller',
+          type: 'app/resetServiceRecordInfo',
         });
       }
       const { resultData } = yield call(api.queryTaskDetailBasicInfo, otherPayload);
@@ -329,11 +329,13 @@ export default {
     // 添加服务记录
     * addMotServeRecord({ payload }, { call, put }) {
       yield put({ type: 'resetMotServiceRecord' });
-      const { resultData } = yield call(api.addMotServeRecord, payload);
-      yield put({
-        type: 'addMotServeRecordSuccess',
-        payload: resultData,
-      });
+      const { code, resultData } = yield call(api.addMotServeRecord, payload);
+      if (code === '0') {
+        yield put({
+          type: 'addMotServeRecordSuccess',
+          payload: resultData,
+        });
+      }
     },
     // 上传文件之前，先查询uuid
     * queryCustUuid({ payload }, { call, put }) {

@@ -182,7 +182,7 @@ export default {
         motSelfBuiltFeedbackList: missionList,
       };
     },
-    resetCaller(state) {
+    resetServiceRecordInfo(state) {
       return {
         ...state,
         serviceRecordInfo: {

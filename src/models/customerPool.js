@@ -71,8 +71,6 @@ export default {
     incomeData: [], // 净收入
     custContactData: {}, // 客户联系方式
     serviceRecordData: {}, // 服务记录
-    // 添加服务记录成功的标记
-    addServeRecordSuccess: true,
     custEmail: {},
     // 分组维度，客户分组列表
     customerGroupList: {},
@@ -451,7 +449,7 @@ export default {
       });
       const { noHints = false, ...otherPayload } = payload;
       const res = yield call(api.addCommonServeRecord, otherPayload);
-      if (res.code === '0' && res.resultData !== null) {
+      if (res.code === '0' && res.resultData !== 'failure') {
         // 添加成功后关闭添加窗口
         yield put({
           type: 'app/toggleServiceRecordModal',

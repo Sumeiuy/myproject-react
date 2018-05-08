@@ -86,12 +86,7 @@ export default class Main extends Component {
   }
 
   static defaultProps = {
-    serviceRecordModalVisible: false,
-    serviceRecordModalVisibleOfId: '',
-    serviceRecordModalVisibleOfName: '',
     loadingForceFull: false,
-    serviceRecordModalVisibleOfCaller: '',
-    prevRecordInfo: {},
   }
 
   componentDidMount() {

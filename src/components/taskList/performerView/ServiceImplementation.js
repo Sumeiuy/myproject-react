@@ -75,19 +75,20 @@ export default class ServiceImplementation extends PureComponent {
     } = this.props;
     const currentMissionFlowId = this.getCurrentMissionFlowId();
     const { caller = '', id: missionFlowId, autoGenerateRecordInfo } = serviceRecordInfo;
-    const { flowStatus, serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
+    const { flowStatus = '', serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
     // 打电话时需要调用addServeRecordOfPhone（没有loading的添加服务记录）
     const addServiceRecord = hasLoading ? addServeRecord : addServeRecordOfPhone;
     // 打电话生成服务记录后，再去添加服务记录走的是更新过程，需要传自动生成的那条服务记录的id,
     // 服务状态为完成，code=30
-    const payload = (caller === 'phone' && currentMissionFlowId === missionFlowId) ?
+    const payload = (caller === 'phone' && currentMissionFlowId === missionFlowId && hasLoading) ?
       { ...postBody, id, flowStatus, serveTime, serveWay } : postBody;
     // 此处需要针对涨乐财富通服务方式特殊处理
     // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
     // 执行提交服务记录的接口
     addServiceRecord(_.omit(payload), ['zlApprovalCode'])
     .then(() => {
-      if (!_.isEmpty(this.props.currentMotServiceRecord.id)) {
+      const { currentMotServiceRecord } = this.props;
+      if (!_.isEmpty(currentMotServiceRecord.id) && currentMotServiceRecord.id !== 'failure') {
         // 服务记录添加成功后重新加载当前目标客户的详细信息
         reloadTargetCustInfo(() => {
           this.updateList(postBody, callback);
@@ -232,7 +233,7 @@ export default class ServiceImplementation extends PureComponent {
       toggleServiceRecordModal,
       serviceRecordInfo,
       currentMotServiceRecord,
-      resetCaller,
+      resetServiceRecordInfo,
     } = this.props;
     // 获取当前选中的数据的missionFlowId
     const currentMissionFlowId = this.getCurrentMissionFlowId();
@@ -356,7 +357,7 @@ export default class ServiceImplementation extends PureComponent {
             zhangleApprovalList={zhangleApprovalList}
             serviceRecordInfo={serviceRecordInfo}
             currentMotServiceRecord={currentMotServiceRecord}
-            resetCaller={resetCaller}
+            resetServiceRecordInfo={resetServiceRecordInfo}
           /> : null
         }
       </div>
@@ -410,7 +411,7 @@ ServiceImplementation.propTypes = {
   toggleServiceRecordModal: PropTypes.func.isRequired,
   serviceRecordInfo: PropTypes.object.isRequired,
   addServeRecordOfPhone: PropTypes.func.isRequired,
-  resetCaller: PropTypes.func.isRequired,
+  resetServiceRecordInfo: PropTypes.func.isRequired,
 };
 
 ServiceImplementation.defaultProps = {
