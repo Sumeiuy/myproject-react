@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-19 09:20:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-07 17:24:21
+ * @Last Modified time: 2018-05-08 10:03:32
  * @description 添加涨乐财富通服务方式下的投资建议的自由话术模块
  */
 
@@ -61,16 +61,6 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
   }
 
   @autobind
-  checkWallCollisionStatus() {
-    if (this.props.testWallCollisionStatus) {
-      this.setState({ descErrorInfo: '推荐的产品未通过合规撞墙检测，请修改投资建议', validateContent: true });
-      return false;
-    }
-    return true;
-  }
-
-
-  @autobind
   getData() {
     return this.state;
   }
@@ -84,6 +74,15 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
     }
     if (_.isEmpty(desc) || desc.length > 500) {
       this.setState({ descErrorInfo: '内容最多500个字符', validateContent: true });
+      return false;
+    }
+    return true;
+  }
+
+  @autobind
+  checkWallCollisionStatus() {
+    if (this.props.testWallCollisionStatus) {
+      this.setState({ descErrorInfo: '推荐的产品未通过合规撞墙检测，请修改投资建议', validateContent: true });
       return false;
     }
     return true;

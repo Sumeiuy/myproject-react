@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-07 17:22:37
+ * @Last Modified time: 2018-05-07 23:05:51
  */
 
 import React, { PureComponent } from 'react';
@@ -109,6 +109,21 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   setFeedbackTimeRef(input) {
     this.feedbackTimeRef = input;
+  }
+
+  // 将客户反馈的实际值转化数据结构，使用key和value,保持一致
+  @autobind
+  convertFeedback(feedback) {
+    let tempChildFeedback = {};
+    if (!_.isEmpty(feedback.children) && _.isArray(feedback.children)) {
+      tempChildFeedback = this.fixDefaultChildFeedback(feedback.children[0]);
+    } else if (!_.isEmpty(feedback.children) && _.isObject(feedback.children)) {
+      tempChildFeedback = this.fixDefaultChildFeedback(feedback.children);
+    }
+    return {
+      ...this.fixDefaultChildFeedback(feedback),
+      children: tempChildFeedback,
+    };
   }
 
   // 根据服务类型serviceTypeCode找到相关的feedbackList
@@ -551,21 +566,6 @@ export default class ServiceRecordContent extends PureComponent {
       feedbackTypeList,
       feedbackTypeChild,
       feedbackTypeChildList,
-    };
-  }
-
-  // 将客户反馈的实际值转化数据结构，使用key和value,保持一致
-  @autobind
-  convertFeedback(feedback) {
-    let tempChildFeedback = {};
-    if (!_.isEmpty(feedback.children) && _.isArray(feedback.children)) {
-      tempChildFeedback = this.fixDefaultChildFeedback(feedback.children[0]);
-    } else if (!_.isEmpty(feedback.children) && _.isObject(feedback.children)) {
-      tempChildFeedback = this.fixDefaultChildFeedback(feedback.children);
-    }
-    return {
-      ...this.fixDefaultChildFeedback(feedback),
-      children: tempChildFeedback,
     };
   }
 

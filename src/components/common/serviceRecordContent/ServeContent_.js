@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-07 17:23:23
+ * @Last Modified time: 2018-05-07 23:07:05
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -46,24 +46,6 @@ export default class ServeContent extends PureComponent {
     };
   }
 
-  @autobind
-  getData() {
-    const {
-      serveContentDesc,
-      serveContentTitle,
-      serveContentType,
-      approverId,
-      contentMode,
-    } = this.state;
-    return {
-      title: serveContentTitle,
-      content: serveContentDesc,
-      taskType: serveContentType,
-      approval: approverId,
-      mode: contentMode,
-    };
-  }
-
   // 校验必要的数据是否填写选择
   @autobind
   checkData() {
@@ -99,6 +81,24 @@ export default class ServeContent extends PureComponent {
       }
     }
     return true;
+  }
+
+  @autobind
+  getData() {
+    const {
+      serveContentDesc,
+      serveContentTitle,
+      serveContentType,
+      approverId,
+      contentMode,
+    } = this.state;
+    return {
+      title: serveContentTitle,
+      content: serveContentDesc,
+      taskType: serveContentType,
+      approval: approverId,
+      mode: contentMode,
+    };
   }
 
   /** 点击添加内容按钮 | 编辑修改按钮 */

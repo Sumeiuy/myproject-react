@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 14:36:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-07 17:23:39
+ * @Last Modified time: 2018-05-08 09:10:42
  * @description 投资建议弹出层
  */
 import React, { PureComponent } from 'react';
