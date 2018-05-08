@@ -111,10 +111,11 @@ export default class CreateServiceRecord extends PureComponent {
       currentCommonServiceRecord: { id },
       serviceRecordInfo: {
         id: custId,
-        caller,
-        autoGenerateRecordInfo: { serveContentDesc = '', serveTime = '', serveWay = '' },
+        caller = '',
+        autoGenerateRecordInfo = {},
       },
     } = this.props;
+    const { serveContentDesc = '', serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
     let payload = { ...data, custId };
     if (caller === 'phone' && !_.isEmpty(id) && id !== 'failure') {
       payload = {
