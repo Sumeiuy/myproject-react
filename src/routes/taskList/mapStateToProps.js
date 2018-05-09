@@ -1,13 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:14:05
-<<<<<<< HEAD
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-09 16:02:04
-=======
- * @Last Modified by: xuxiaoqinnn
- * @Last Modified time: 2018-05-09 16:48:33
->>>>>>> efb1d75e12a1defaa342a372844cf55c2486743c
+ * @Last Modified time: 2018-05-09 16:50:28
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapStateToProps移至此处成立独立模块
  */
 const mapStateToProps = () => state => ({
