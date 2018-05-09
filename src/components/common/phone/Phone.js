@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-05-07 16:15:04
+ * @Last Modified time: 2018-05-09 16:05:25
  */
 
 import React, { PureComponent } from 'react';
@@ -66,7 +66,7 @@ export default class Phone extends PureComponent {
     number: 0,
     custType: 'per',
     headless: false,
-    disable: true,
+    disable: false,
     style: {},
     onClick: _.noop,
     onEnd: _.noop,
@@ -79,17 +79,24 @@ export default class Phone extends PureComponent {
         'click',
         '.callable',
         (e) => {
-          const number = window.$(e.target).text();
-          this.prepareCall(number);
+          if (this.canCall()) {
+            const number = window.$(e.target).text();
+            this.prepareCall(number);
+          }
         },
       );
     }
   }
 
+  canCall() {
+    const { empInfo, disable } = this.props;
+    return empInfo.canCall === true && disable !== true;
+  }
+
   @autobind
   handleClick() {
-    const { number, custType, onClick, disable } = this.props;
-    if (disable === true) {
+    const { number, custType, onClick } = this.props;
+    if (this.canCall() !== true) {
       return;
     }
     onClick({
@@ -152,13 +159,13 @@ export default class Phone extends PureComponent {
   }
 
   render() {
-    const { headless, number, style, disable } = this.props;
+    const { headless, number, style } = this.props;
     if (headless === true) {
       return null;
     }
     const className = classnames({
       [styles.number]: true,
-      [styles.active]: disable !== true,
+      [styles.active]: this.canCall(),
     });
     return (
       <div

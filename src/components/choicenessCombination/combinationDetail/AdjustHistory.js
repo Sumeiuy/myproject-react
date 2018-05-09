@@ -1,16 +1,18 @@
 /*
  * @Author: XuWenKang
- * @Description: 精选组合-组合调仓组件
+ * @Description: 精选组合-组合详情-组合调仓组件
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-07 17:41:26
+ * @Last Modified time: 2018-05-09 13:49:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-// import _ from 'lodash';
+import classnames from 'classnames';
+import _ from 'lodash';
 import { Popover } from 'antd';
 import config from '../config';
+import { time } from '../../../helper';
 import styles from './adjustHistory.less';
 
 // const titleStyle = {
@@ -21,18 +23,63 @@ import styles from './adjustHistory.less';
 // const directionArray = _.filter(directionRange, o => o.value);
 // securityType 里股票对应的值
 const STOCK_CODE = config.securityType[0].value;
-// 持仓历史
-// const HISTORY_TYPE = config.typeList[0];
+const directionRange = config.directionRange;
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
 export default class AdjustHistory extends PureComponent {
   static propTypes = {
     showModal: PropTypes.func.isRequired,
-    // data: PropTypes.object.isRequired,
+    // 调仓历史数据
+    data: PropTypes.object.isRequired,
     // openCustomerListPage: PropTypes.func.isRequired,
     openStockPage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
 
+  }
+
+  @autobind
+  getHistoryList(list) {
+    return list.map((item) => {
+      const directList = _.filter(directionRange, v => item.directionCode === Number(v.value))
+        || EMPTY_LIST;
+      const iconText = (directList[0] || EMPTY_OBJECT).icon;
+      const itemClass = classnames({
+        [styles.itemBox]: true,
+        clearfix: true,
+        [styles.in]: item.directionCode === directionRange[1].value,
+      });
+      return (<div className={itemClass} key={`${item.time}`}>
+        <div className={styles.icon}>
+          {iconText}
+        </div>
+        <div className={styles.text}>
+          <div className={`${styles.top} clearfix`}>
+            <span className={styles.security}>
+              <a
+                title={`${item.securityName} (${item.securityCode}) `}
+                onClick={() => this.handleSecurityClick(item.directionCode, item.securityCode)}
+              >
+                {`${item.securityName} (${item.securityCode}) `}
+              </a>
+            </span>
+            <span className={styles.time}>{time.format(item.time, config.formatStr)}</span>
+            <span className={styles.const}>{item.price}</span>
+            <span className={styles.change}>0.00% -&gt; 12.65%</span>
+          </div>
+          {
+            this.renderPopover(item.reason)
+          }
+        </div>
+      </div>);
+    });
+  }
+
+  @autobind
+  handleMoreClick() {
+    const { showModal } = this.props;
+    showModal();
   }
 
   // 证券名称点击事件
@@ -45,12 +92,6 @@ export default class AdjustHistory extends PureComponent {
       };
       openStockPage(openPayload);
     }
-  }
-
-  @autobind
-  handleMoreClick() {
-    const { showModal } = this.props;
-    showModal();
   }
 
   // 设置 popover
@@ -68,17 +109,18 @@ export default class AdjustHistory extends PureComponent {
           wordBreak: 'break-all',
         }}
       >
-        <div className={styles.ellipsis}>
+        <div className={styles.reason}>
           {value}
         </div>
       </Popover>);
     } else {
-      reactElement = '调仓理由：暂无';
+      reactElement = <div className={styles.reason}>调仓理由：暂无</div>;
     }
     return reactElement;
   }
 
   render() {
+    const { data: { list = EMPTY_LIST } } = this.props;
     return (
       <div className={styles.adjustHistoryBox}>
         <div className={`${styles.headBox} clearfix`}>
@@ -86,29 +128,13 @@ export default class AdjustHistory extends PureComponent {
           <a onClick={this.handleMoreClick}>更多调仓历史</a>
         </div>
         <div className={`${styles.titleBox} clearfix`}>
-          <span className={styles.icon} />
           <span className={styles.security}>证券名称及代码</span>
           <span className={styles.time}>成交时间</span>
-          <span className={styles.const}>成交价</span>
+          <span className={styles.const}>成交价(元)</span>
           <span className={styles.change}>持仓变化</span>
         </div>
         <div className={styles.bodyBox}>
-          <div className={`${styles.itemBox} clearfix`}>
-            <div className={styles.icon}>
-              买
-            </div>
-            <div className={styles.text}>
-              <div className={`${styles.top} clearfix`}>
-                <span className={styles.security}>证券名称及代码</span>
-                <span className={styles.time}>成交时间</span>
-                <span className={styles.const}>成交价</span>
-                <span className={styles.change}>持仓变化</span>
-              </div>
-              <div className={styles.reason}>
-                理由理由理由理由理由理由理由理由理由理由
-              </div>
-            </div>
-          </div>
+          {this.getHistoryList(list)}
         </div>
       </div>
     );

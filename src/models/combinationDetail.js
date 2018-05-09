@@ -3,13 +3,14 @@
  * @Description: 精选组合-组合详情modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-07 15:52:51
+ * @Last Modified time: 2018-05-09 15:03:57
 */
 
 import _ from 'lodash';
 import moment from 'moment';
 import { choicenessCombination as api } from '../api';
-import { chartTabList } from '../routes/choicenessCombination/config';
+import { chartTabList } from '../components/choicenessCombination/config';
+
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -42,13 +43,11 @@ export default {
     adjustWarehouseHistoryData: EMPTY_OBJECT, // 调仓历史数据
     tableHistoryList: EMPTY_OBJECT,  // 弹窗调仓历史表格数据
     combinationAdjustHistoryData: EMPTY_OBJECT, // 组合调仓数据
-    // weeklySecurityTopTenData: EMPTY_LIST, // 近一周表现前十的证券
     combinationTreeList: EMPTY_LIST, // 组合树
-    // combinationRankList: EMPTY_LIST, // 组合排名列表
     combinationLineChartData: EMPTY_OBJECT, // 组合折线趋势图
-    // rankTabActiveKey: '', // 组合排名tab
-    // yieldRankValue: yieldRankList[0].value, // 收益率排序value  默认显示近7天的
-    // riskLevel: riskDefaultItem.value, // 所筛选的风险等级
+    orderCustData: EMPTY_OBJECT, // 订购客户数据
+    reportHistoryData: EMPTY_OBJECT, // 组合详情-历史报告模块数据
+    modalReportHistoryData: EMPTY_OBJECT, // 组合详情-历史报告弹窗数据
   },
   reducers: {
     // 获取调仓历史数据
@@ -83,13 +82,37 @@ export default {
         combinationLineChartData: resultData,
       };
     },
+    // 订购客户数据
+    getOrderingCustListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        orderCustData: resultData,
+      };
+    },
+    // 组合详情-历史报告模块数据
+    getReportHistoryListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        reportHistoryData: resultData,
+      };
+    },
+    // 组合详情-历史报告模块数据
+    getModalReportHistoryListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        modalReportHistoryData: resultData,
+      };
+    },
   },
   effects: {
     // 获取调仓历史数据
     * getAdjustWarehouseHistory({ payload }, { call, put }) {
       const response = yield call(api.getAdjustWarehouseHistory, payload);
-      // 如果调仓方向为 3，走首页历史调仓，否则走弹窗的 table 历史调仓
-      const type = payload.directionCode === '3' ? 'getAdjustWarehouseHistorySuccess' : 'getTableHistorySuccess';
+      // 如果pageSize为5，走页面调仓历史，否则走弹窗的 table 历史调仓
+      const type = payload.pageSize === 5 ? 'getAdjustWarehouseHistorySuccess' : 'getTableHistorySuccess';
       yield put({
         type,
         payload: response,
@@ -124,6 +147,25 @@ export default {
           payload: response,
         });
       }
+    },
+    // 查询订购客户
+    * getOrderingCustList({ payload }, { call, put }) {
+      const response = yield call(api.getOrderingCustList, payload);
+      yield put({
+        type: 'getOrderingCustListSuccess',
+        payload: response,
+      });
+    },
+    // 查询历史报告
+    * getReportHistoryList({ payload }, { call, put }) {
+      const response = yield call(api.getReportHistoryList, payload);
+      // 如果pageSize为6走组合详情-历史报告模块数据，否则走历史报告弹窗
+      const type = payload.pageSize === 6 ?
+        'getReportHistoryListSuccess' : 'getModalReportHistoryListSuccess';
+      yield put({
+        type,
+        payload: response,
+      });
     },
   },
   subscriptions: {

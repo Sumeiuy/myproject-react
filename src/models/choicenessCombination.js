@@ -3,14 +3,18 @@
  * @Description: 精选组合modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-07 13:40:44
+ * @Last Modified time: 2018-05-09 14:19:28
 */
 
 import _ from 'lodash';
 import moment from 'moment';
 import { choicenessCombination as api } from '../api';
 import { delay } from '../utils/sagaEffects';
-import { yieldRankList, riskDefaultItem, chartTabList } from '../routes/choicenessCombination/config';
+import {
+  yieldRankList,
+  riskDefaultItem,
+  chartTabList,
+} from '../components/choicenessCombination/config';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];

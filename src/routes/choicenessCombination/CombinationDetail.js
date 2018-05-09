@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-07 16:27:12
+ * @Last Modified time: 2018-05-09 15:37:12
  */
 
 import React, { PureComponent } from 'react';
@@ -17,48 +17,66 @@ import styles from './combinationDetail.less';
 import { permission, dva, url as urlHelper, emp } from '../../helper';
 import config from '../../components/choicenessCombination/config';
 import { openRctTab } from '../../utils';
+import withRouter from '../../decorators/withRouter';
 import CombinationModal from '../../components/choicenessCombination/CombinationModal';
 import AdjustHistory from '../../components/choicenessCombination/combinationDetail/AdjustHistory';
+import CombinationYieldChart from '../../components/choicenessCombination/CombinationYieldChart';
+import HistoryReport from '../../components/choicenessCombination/combinationDetail/HistoryReport';
+import OrderingCustomer from '../../components/choicenessCombination/combinationDetail/OrderingCustomer';
 
 const dispatch = dva.generateEffect;
 // const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
 const effects = {
   // 获取调仓历史
-  getAdjustWarehouseHistory: 'choicenessCombination/getAdjustWarehouseHistory',
+  getAdjustWarehouseHistory: 'combinationDetail/getAdjustWarehouseHistory',
   // 获取组合证券构成数据/获取近一周表现前十的证券
-  getCombinationSecurityList: 'choicenessCombination/getCombinationSecurityList',
+  getCombinationSecurityList: 'combinationDetail/getCombinationSecurityList',
   // 获取组合树
-  getCombinationTree: 'choicenessCombination/getCombinationTree',
+  getCombinationTree: 'combinationDetail/getCombinationTree',
   // 获取趋势折线图
-  getCombinationLineChart: 'choicenessCombination/getCombinationLineChart',
+  getCombinationLineChart: 'combinationDetail/getCombinationLineChart',
+  // 获取订购客户数据
+  getOrderingCustList: 'combinationDetail/getOrderingCustList',
+  // 请求历史报告数据
+  getReportHistoryList: 'combinationDetail/getReportHistoryList',
 };
 
 const mapStateToProps = state => ({
   // 字典
   dict: state.app.dict,
   // 调仓历史数据
-  adjustWarehouseHistoryData: state.choicenessCombination.adjustWarehouseHistoryData,
+  adjustWarehouseHistoryData: state.combinationDetail.adjustWarehouseHistoryData,
   // 弹窗调仓历史数据
-  tableHistoryList: state.choicenessCombination.tableHistoryList,
+  tableHistoryList: state.combinationDetail.tableHistoryList,
   // 组合调仓数据
-  combinationAdjustHistoryData: state.choicenessCombination.combinationAdjustHistoryData,
+  combinationAdjustHistoryData: state.combinationDetail.combinationAdjustHistoryData,
   // 组合树列表数据
-  combinationTreeList: state.choicenessCombination.combinationTreeList,
+  combinationTreeList: state.combinationDetail.combinationTreeList,
   // 折线图数据
-  combinationLineChartData: state.choicenessCombination.combinationLineChartData,
+  combinationLineChartData: state.combinationDetail.combinationLineChartData,
+  // 订购客户数据
+  orderCustData: state.combinationDetail.orderCustData,
+  // 组合详情-历史报告模块数据
+  reportHistoryData: state.combinationDetail.reportHistoryData,
+  // 组合详情-历史报告弹窗数据
+  modalReportHistoryData: state.combinationDetail.modalReportHistoryData,
 });
 const mapDispatchToProps = {
   getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory, { loading: false }),
   getCombinationSecurityList: dispatch(effects.getCombinationSecurityList, { loading: false }),
   getCombinationTree: dispatch(effects.getCombinationTree, { loading: false }),
   getCombinationLineChart: dispatch(effects.getCombinationLineChart, { loading: true }),
+  getOrderingCustList: dispatch(effects.getOrderingCustList, { loading: false }),
+  getReportHistoryList: dispatch(effects.getReportHistoryList, { loading: false }),
   push: routerRedux.push,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class CombinationDetail extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 字典数据
     dict: PropTypes.object.isRequired,
     // 获取调仓历史数据
@@ -74,6 +92,15 @@ export default class CombinationDetail extends PureComponent {
     getCombinationLineChart: PropTypes.func.isRequired,
     combinationLineChartData: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
+    // 订购客户数据
+    getOrderingCustList: PropTypes.func.isRequired,
+    orderCustData: PropTypes.object.isRequired,
+    // 历史报告数据
+    getReportHistoryList: PropTypes.func.isRequired,
+    // 组合详情-历史报告模块数据
+    reportHistoryData: PropTypes.object.isRequired,
+    // 组合详情-历史报告弹窗数据
+    modalReportHistoryData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -95,17 +122,55 @@ export default class CombinationDetail extends PureComponent {
       getAdjustWarehouseHistory,
       getCombinationSecurityList,
       getCombinationTree,
+      getCombinationLineChart,
+      getOrderingCustList,
+      getReportHistoryList,
+      location: { query: { id } },
     } = this.props;
     // 调仓方向传 3 视为取最新两条数据
     const payload = {
-      directionCode: '3',
+      combinationCode: id,
+      pageSize: 5,
+      pageNum: 1,
     };
+    // 调仓历史
     getAdjustWarehouseHistory(payload);
     getCombinationSecurityList();
     // 获取组合树
     getCombinationTree();
+    // 趋势图
+    getCombinationLineChart({
+      combinationCode: id,
+      key: '3',
+    });
+    // 查询历史报告模块数据, 非历史报告弹窗
+    getReportHistoryList({
+      combinationCode: id,
+      pageNum: 1,
+      pageSize: 6,
+    });
+    // 订购客户
+    getOrderingCustList({
+      pstnId: emp.getPstnId(),
+      orgId: emp.getOrgId(),
+      combinationId: id,
+      pageNum: 1,
+      pageSize: 5,
+    });
   }
 
+  @autobind
+  handleOrderCustPageChange(page) {
+    const {
+      getOrderingCustList,
+      location: { query: { id } },
+    } = this.props;
+    getOrderingCustList({
+      combinationId: id,
+      pageNum: page.current,
+      pageSize: page.pageSize,
+    });
+  }
 
   // 打开弹窗
   @autobind
@@ -203,6 +268,12 @@ export default class CombinationDetail extends PureComponent {
     });
   }
 
+  // 打开历史报告详情
+  @autobind
+  openReportDetail(id) {
+    console.log('id', id);
+  }
+
   render() {
     const {
       dict,
@@ -214,6 +285,9 @@ export default class CombinationDetail extends PureComponent {
       combinationLineChartData,
       getCombinationLineChart,
       getAdjustWarehouseHistory,
+      orderCustData,
+      reportHistoryData,
+      location: { query: { id } },
     } = this.props;
     const {
       visible,
@@ -266,7 +340,30 @@ export default class CombinationDetail extends PureComponent {
       <div className={styles.combinationDetailBox}>
         组合详情
         <div className={styles.floor}>
-          <AdjustHistory />
+          <AdjustHistory
+            data={adjustWarehouseHistoryData}
+            showModal={this.showModal}
+            openStockPage={this.openStockPage}
+          />
+          <div className={styles.yieldChartBox}>
+            <CombinationYieldChart
+              combinationCode={id}
+              tabChange={this.handleChartTabChange}
+              combinationItemData={{}}
+              chartData={combinationLineChartData}
+              chartHeight="270px"
+              title="组合收益率走势"
+            />
+          </div>
+        </div>
+        <div className={styles.floor}>
+          <HistoryReport
+            data={reportHistoryData}
+          />
+          <OrderingCustomer
+            data={orderCustData}
+            pageChange={this.handleOrderCustPageChange}
+          />
         </div>
         {
           visible

@@ -2,8 +2,8 @@
  * @Description: 精选组合部分配置项
  * @Author: Liujianshu
  * @Date: 2018-04-25 14:28:07
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-25 16:47:41
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-05-09 14:42:56
  */
 
 const config = {
@@ -154,6 +154,61 @@ const config = {
         align: 'right',
       },
     ],
+    // 组合详情-订购客户
+    orderCust: [
+      {
+        dataIndex: 'customerId',
+        key: 'customerId',
+        title: '客户号',
+        width: '24%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'customerName',
+        key: 'customerName',
+        title: '客户名称',
+        width: '17%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'coincideScale',
+        key: 'coincideScale',
+        title: '持仓重合比例',
+        width: '22%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'relevance',
+        key: 'relevance',
+        title: '持仓关联',
+        width: '37%',
+        align: 'left',
+      },
+    ],
+    // 组合详情-历史报告
+    historyReport: [
+      {
+        dataIndex: 'title',
+        key: 'title',
+        title: '标题',
+        width: '65%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'author',
+        key: 'author',
+        title: '作者',
+        width: '17%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'time',
+        key: 'time',
+        title: '报告日期',
+        width: '18%',
+        align: 'left',
+      },
+    ],
   },
   typeList: ['history', 'report'],
   securityType: [
@@ -173,6 +228,58 @@ const config = {
       shortName: 'ZQ',
     },
   ],
+  // 趋势图tab
+  chartTabList: [
+    {
+      label: '近3个月',
+      key: '3',
+    },
+    {
+      label: '近一年',
+      key: '12',
+    },
+    {
+      label: '全部',
+      key: 'all',
+    },
+  ],
+  // 收益率排序
+  yieldRankList: [
+    {
+      show: true,
+      value: '1',
+      label: '近7天收益率从高到低',
+      showName: '近7天收益率',
+      showNameKey: 'weekEarnings',
+    },
+    {
+      show: true,
+      value: '2',
+      label: '近30天收益率从高到低',
+      showName: '近30天收益率',
+      showNameKey: 'monthEarnings',
+    },
+    {
+      show: true,
+      value: '3',
+      label: '当年收益率从高到低',
+      showName: '当年收益率',
+      showNameKey: 'yearEarnings',
+    },
+    {
+      show: true,
+      value: '4',
+      label: '累计收益率从高到低',
+      showName: '累计收益率',
+      showNameKey: 'totalEarnings',
+    },
+  ],
+  // 筛选默认值
+  riskDefaultItem: {
+    key: 'all',
+    value: 'all',
+    label: '全部',
+  },
 };
 
 export default config;
