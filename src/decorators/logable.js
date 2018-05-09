@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-12-19 11:01:47
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-09 11:51:28
+ * @Last Modified time: 2018-05-09 15:11:03
  * @description 用于神策日志统一记录的装饰器函数，用于需要记录日志的方法上
  */
 import _ from 'lodash';
@@ -126,5 +126,24 @@ function logPV({ pathname, title, payload = {} }) {
   });
 }
 
+/**
+ * 通用日志打印
+ * @param {Object} action
+ * @param {String} action.type 日志类型：
+ *  1. 表单提交：Submit
+ * @param {object} action.payload 日志数据：
+ *  所有日志均需包含name、path属性，path由系统自动处理，name需指定，标识不同组件
+ * @returns {Function}
+ */
+function logCommon({ type = 'Click', payload = {} }) {
+  dva.dispatch({
+    type,
+    payload: {
+      path: dva.getLastLocation().pathname,
+      ...payload,
+    },
+  });
+}
+
 export default logable;
-export { logPV };
+export { logPV, logCommon };

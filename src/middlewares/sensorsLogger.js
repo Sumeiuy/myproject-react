@@ -156,7 +156,7 @@ function sendAPILog(data) {
 // 发送缓冲区日志
 function flushLog() {
   const data = [...QUEUE];
-  if (data.length > 1) {
+  if (data.length > 0) {
     sendAPILog(data).then(
       () => {
         QUEUE = [];

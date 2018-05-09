@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-09 14:12:59
+ * @Last Modified time: 2018-05-09 15:14:54
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -15,7 +15,7 @@ import _ from 'lodash';
 
 import contractHelper from '../../helper/page/contract';
 import seibelHelper from '../../helper/page/seibel';
-import { emp, dva } from '../../helper';
+import { emp } from '../../helper';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/contract/Detail';
@@ -30,7 +30,7 @@ import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import styles from './home.less';
-import logable, { logPV } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 
 const confirm = Modal.confirm;
 const EMPTY_LIST = [];
@@ -788,10 +788,9 @@ export default class Contract extends PureComponent {
     } else {
       name = '订购';
     }
-    dva.dispatch({
+    logCommon({
       type: 'submit',
       payload: {
-        path: dva.getLastLocation().pathname,
         subtype: contractFormData.subType,
         value: JSON.stringify(payload),
         name,

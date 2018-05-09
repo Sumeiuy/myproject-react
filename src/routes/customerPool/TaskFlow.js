@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-09 12:14:47
+ * @Last Modified time: 2018-05-09 15:15:23
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import { Steps, message, Button, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { removeTab, closeRctTab } from '../../utils';
-import { emp, permission, number, regxp, dva } from '../../helper';
+import { emp, permission, number, regxp } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../components/common/missionInvestigation/ConnectedComponent';
@@ -23,7 +23,7 @@ import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskF
 import SelectTargetCustomer from '../../components/customerPool/taskFlow/step1/SelectTargetCustomer';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import withRouter from '../../decorators/withRouter';
-import logable from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 import styles from './taskFlow.less';
 
 const Step = Steps.Step;
@@ -562,10 +562,10 @@ export default class TaskFlow extends PureComponent {
       });
       this.setState({ subtype });
       // logable日志---目标客户
-      dva.dispatch({
-        type: 'submit',
+      logCommon({
+        type: 'Submit',
         payload: {
-          path: dva.getLastLocation().pathname,
+          // path: dva.getLastLocation().pathname,
           title: '目标客户',
           subtype,
           value: subtype,
@@ -598,10 +598,9 @@ export default class TaskFlow extends PureComponent {
           // logable日志---任务信息
           const { subtype } = this.state;
           this.setState({ taskName: values.taskName });
-          dva.dispatch({
-            type: 'submit',
+          logCommon({
+            type: 'Submit',
             payload: {
-              path: dva.getLastLocation().pathname,
               title: '任务信息',
               subtype,
               value: JSON.stringify(values),
@@ -725,10 +724,9 @@ export default class TaskFlow extends PureComponent {
         ...resultTrackData,
         ...missionInvestigationData,
       };
-      dva.dispatch({
-        type: 'submit',
+      logCommon({
+        type: 'Submit',
         payload: {
-          path: dva.getLastLocation().pathname,
           title: '任务评估',
           subtype,
           value: JSON.stringify(values),
@@ -939,10 +937,9 @@ export default class TaskFlow extends PureComponent {
       ...postBody,
       ...currentSelectRecord,
     };
-    dva.dispatch({
-      type: 'submit',
+    logCommon({
+      type: 'Submit',
       payload: {
-        path: dva.getLastLocation().pathname,
         title: '确认提交',
         subtype,
         value: JSON.stringify(values),
