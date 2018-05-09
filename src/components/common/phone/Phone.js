@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-05-09 16:05:25
+ * @Last Modified time: 2018-05-09 19:47:25
  */
 
 import React, { PureComponent } from 'react';
@@ -107,17 +107,13 @@ export default class Phone extends PureComponent {
   }
 
   prepareCall(number) {
-    const { config, getConfig } = this.props;
+    const { getConfig } = this.props;
     popWin = window.open(
       'about:blank',
       'phoneDialog',
       OPEN_FEATURES,
     );
-    if (_.isEmpty(config)) {
-      getConfig().then(() => this.call(number));
-    } else {
-      this.call(number);
-    }
+    getConfig().then(() => this.call(number));
   }
 
   call(number) {
