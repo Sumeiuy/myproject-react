@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-04 11:12:09
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-09 12:14:47
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import { Steps, message, Button, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { removeTab, closeRctTab } from '../../utils';
-import { emp, permission, number, regxp } from '../../helper';
+import { emp, permission, number, regxp, dva } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../components/common/missionInvestigation/ConnectedComponent';
@@ -261,6 +261,10 @@ export default class TaskFlow extends PureComponent {
       currentFilterNum,
       currentEntry,
       nextStepBtnIsDisabled, // 用来控制下一步按钮的是否可点击状态
+      // logable点击下一步的来源值
+      subtype: '',
+      // logable点击下一步的任务名称
+      taskName: '',
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -404,7 +408,6 @@ export default class TaskFlow extends PureComponent {
    * 点击下一步，校验所有信息，然后下一步界面
    */
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '下一步' } })
   handleNextStep() {
     // 下一步
     const {
@@ -446,14 +449,18 @@ export default class TaskFlow extends PureComponent {
           currentSelectLabelName,
         },
       } = sightingTelescope;
+      // logable日志subtype值
+      let subtype = '';
       // currentEntry为0 时 表示当前是导入客户
       // 为1 时 表示当前是瞄准镜
       if (currentEntry === 0) {
+        subtype = custSegment.custSource;
         if (!uploadedFileKey) {
           isSelectCust = false;
           return;
         }
       } else if (currentEntry === 1) {
+        subtype = currentSelectLabelName;
         if (!labelId) {
           isSelectCust = false;
           return;
@@ -480,9 +487,7 @@ export default class TaskFlow extends PureComponent {
           currentSelectLabelName,
         );
       }
-
       pickTargetCustomerData = { ...pickTargetCustomerData, labelCust, custSegment };
-
       isSendCustsServedByPostn({
         ...postBody,
       }).then(() => {
@@ -555,6 +560,18 @@ export default class TaskFlow extends PureComponent {
           }
         }
       });
+      this.setState({ subtype });
+      // logable日志---目标客户
+      dva.dispatch({
+        type: 'submit',
+        payload: {
+          path: dva.getLastLocation().pathname,
+          title: '目标客户',
+          subtype,
+          value: subtype,
+          name: '',
+        },
+      });
     } else if (current === 1) {
       isAllowGoNextStep = true;
       // 拿到form表单component
@@ -578,6 +595,19 @@ export default class TaskFlow extends PureComponent {
             ...taskForm.getFieldsValue(),
           };
           isFormValidate = true;
+          // logable日志---任务信息
+          const { subtype } = this.state;
+          this.setState({ taskName: values.taskName });
+          dva.dispatch({
+            type: 'submit',
+            payload: {
+              path: dva.getLastLocation().pathname,
+              title: '任务信息',
+              subtype,
+              value: JSON.stringify(values),
+              name: values.taskName,
+            },
+          });
         } else {
           isFormValidate = false;
         }
@@ -688,6 +718,23 @@ export default class TaskFlow extends PureComponent {
           isMissionInvestigationValidate = true;
         }
       }
+
+      // logable日志---任务评估
+      const { subtype, taskName } = this.state;
+      const values = {
+        ...resultTrackData,
+        ...missionInvestigationData,
+      };
+      dva.dispatch({
+        type: 'submit',
+        payload: {
+          path: dva.getLastLocation().pathname,
+          title: '任务评估',
+          subtype,
+          value: JSON.stringify(values),
+          name: taskName,
+        },
+      });
     }
 
     if (isFormValidate
@@ -717,7 +764,7 @@ export default class TaskFlow extends PureComponent {
   @autobind
   @validateFormContent
   checkFormField(values) {
-    console.log(values);
+    return JSON.stringify(values);
   }
 
   @autobind
@@ -886,6 +933,22 @@ export default class TaskFlow extends PureComponent {
       };
     }
     this.decoratorSubmitTaskFlow(postBody);
+    // logable日志---确认提交
+    const { subtype, taskName: name, currentSelectRecord } = this.state;
+    const values = {
+      ...postBody,
+      ...currentSelectRecord,
+    };
+    dva.dispatch({
+      type: 'submit',
+      payload: {
+        path: dva.getLastLocation().pathname,
+        title: '确认提交',
+        subtype,
+        value: JSON.stringify(values),
+        name,
+      },
+    });
   }
 
   // 校验审批人是否为空
