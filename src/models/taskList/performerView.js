@@ -52,6 +52,8 @@ export default {
     attachmentList: [],
     // 执行者视图头部查询到的客户列表
     customerList: [],
+    // 执行者视图右侧查询到的客户列表
+    custListForServiceImplementation: [],
     // 涨乐财富通服务方式下的客户反馈列表
     custFeedbackList: [],
     // 涨乐财富通服务方式下的审批人列表
@@ -174,6 +176,13 @@ export default {
       return {
         ...state,
         customerList: custBriefInfoDTOList || [],
+      };
+    },
+    queryCustomerForServiceImplementationSuccess(state, action) {
+      const { payload: { custBriefInfoDTOList } } = action;
+      return {
+        ...state,
+        custListForServiceImplementation: custBriefInfoDTOList || [],
       };
     },
     queryCustFeedbackList4ZLFinsSuccess(state, action) {
@@ -380,6 +389,17 @@ export default {
       if (resultData) {
         yield put({
           type: 'queryCustomerSuccess',
+          payload: resultData,
+        });
+      }
+    },
+
+    // 执行者视图右侧根据姓名或经纪客户号查询客户
+    * queryCustomerForServiceImplementation({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryCustomer, payload);
+      if (resultData) {
+        yield put({
+          type: 'queryCustomerForServiceImplementationSuccess',
           payload: resultData,
         });
       }

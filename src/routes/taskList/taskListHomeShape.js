@@ -81,4 +81,5 @@ export default {
   custFeedbackList: PropTypes.array.isRequired,
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
+  custListForServiceImplementation: PropTypes.array,
 };

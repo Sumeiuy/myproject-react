@@ -70,4 +70,6 @@ export default ({ routerRedux, effect }) => ({
   queryCustFeedbackList4ZLFins: effect(effects.queryCustFeedbackList4ZLFins, { loading: false }),
   // 查询涨乐财富通服务方式下的审批人列表
   queryApprovalList: effect(effects.queryApprovalList, { loading: false }),
+  // 执行者视图右侧详情查询客户
+  queryCustomer: effect(effects.queryCustomerForServiceImplementation, { loading: false }),
 });

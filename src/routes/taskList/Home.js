@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-28 14:26:17
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-08 15:40:56
  * @description 任务管理首页
  */
 
@@ -83,6 +83,7 @@ export default class PerformerView extends PureComponent {
     answersList: EMPTY_OBJECT,
     saveAnswersSucce: false,
     missionImplementationDetail: EMPTY_OBJECT,
+    custListForServiceImplementation: EMPTY_LIST,
   };
 
   constructor(props) {
@@ -499,6 +500,8 @@ export default class PerformerView extends PureComponent {
       queryCustFeedbackList4ZLFins,
       queryApprovalList,
       zhangleApprovalList,
+      queryCustomer,
+      custListForServiceImplementation,
     } = this.props;
     const {
       typeCode,
@@ -555,6 +558,8 @@ export default class PerformerView extends PureComponent {
         queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
         queryApprovalList={queryApprovalList}
         zhangleApprovalList={zhangleApprovalList}
+        queryCustomer={queryCustomer}
+        customerList={custListForServiceImplementation}
       />
     );
   }

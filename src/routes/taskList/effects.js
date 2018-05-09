@@ -56,6 +56,8 @@ const effects = {
   queryCustFeedbackList4ZLFins: 'performerView/queryCustFeedbackList4ZLFins',
   // 查询涨乐财富通服务方式下的审批人列表
   queryApprovalList: 'performerView/queryApprovalList4ZLFins',
+  // 执行者视图右侧详情查询客户列表
+  queryCustomerForServiceImplementation: 'performerView/queryCustomerForServiceImplementation',
 };
 
 export default effects;
