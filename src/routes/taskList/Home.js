@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-28 14:26:17
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-07 15:18:34
  * @description 任务管理首页
  */
 
@@ -499,6 +499,10 @@ export default class PerformerView extends PureComponent {
       queryCustFeedbackList4ZLFins,
       queryApprovalList,
       zhangleApprovalList,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
     const {
       typeCode,
@@ -555,6 +559,8 @@ export default class PerformerView extends PureComponent {
         queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
         queryApprovalList={queryApprovalList}
         zhangleApprovalList={zhangleApprovalList}
+        testWallCollision={testWallCollision}
+        testWallCollisionStatus={testWallCollisionStatus}
       />
     );
   }
