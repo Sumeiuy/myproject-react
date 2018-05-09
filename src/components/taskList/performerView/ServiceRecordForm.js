@@ -66,6 +66,10 @@ export default class ServiceRecordForm extends PureComponent {
       zhangleApprovalList,
       empInfo: { empInfo },
       statusCode,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
@@ -105,6 +109,8 @@ export default class ServiceRecordForm extends PureComponent {
           zhangleApprovalList={zhangleApprovalList}
           queryApprovalList={queryApprovalList}
           flowStatusCode={statusCode}
+          testWallCollision={testWallCollision}
+          testWallCollisionStatus={testWallCollisionStatus}
         />
 
         {
@@ -142,4 +148,8 @@ ServiceRecordForm.propTypes = {
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
   statusCode: PropTypes.string.isRequired,
+  // 投资建议文本撞墙检测
+  testWallCollision: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: PropTypes.bool.isRequired,
 };

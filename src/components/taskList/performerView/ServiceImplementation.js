@@ -198,6 +198,10 @@ export default class ServiceImplementation extends PureComponent {
       eventId,
       zhangleApprovalList,
       queryApprovalList,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
     // 获取当前选中的数据的custId
     const currentMissionFlowId = targetMissionFlowId || (list[0] || {}).missionFlowId;
@@ -310,6 +314,8 @@ export default class ServiceImplementation extends PureComponent {
             custFeedbackList={custFeedbackList}
             queryApprovalList={queryApprovalList}
             zhangleApprovalList={zhangleApprovalList}
+            testWallCollision={testWallCollision}
+            testWallCollisionStatus={testWallCollisionStatus}
           /> : null
         }
       </div>
@@ -360,6 +366,10 @@ ServiceImplementation.propTypes = {
   // 涨乐财富通服务方式下的审批人列表以及查询方法
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
+  // 投资建议文本撞墙检测
+  testWallCollision: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: PropTypes.bool.isRequired,
 };
 
 ServiceImplementation.defaultProps = {

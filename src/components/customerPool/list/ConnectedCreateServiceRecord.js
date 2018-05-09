@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-01 14:56:05
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 13:00:26
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-08 09:16:30
  * redux连接的创建服务记录
  */
 
@@ -24,6 +24,8 @@ const mapStateToProps = state => ({
   custFeedbackList: state.performerView.custFeedbackList,
   // 涨乐财富通服务方式下的审批人列表
   zhangleApprovalList: state.performerView.zhangleApprovalList,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: state.investmentAdvice.testWallCollisionStatus,
 });
 
 const mapDispatchToProps = {
@@ -33,6 +35,8 @@ const mapDispatchToProps = {
   queryCustFeedbackList4ZLFins: fetchDataFunction(true, 'performerView/queryCustFeedbackList4ZLFins'),
   // 查询涨乐财富通服务方式下的审批人列表
   queryApprovalList: fetchDataFunction(false, 'performerView/queryApprovalList4ZLFins'),
+  // 投资建议文本撞墙检测
+  testWallCollision: fetchDataFunction(true, 'investmentAdvice/testWallCollision'),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateServiceRecord);

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 14:36:08
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 11:14:26
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-08 14:31:06
  * @description 投资建议弹出层
  */
 import React, { PureComponent } from 'react';
@@ -25,7 +25,13 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
       validateTitle: false,
       // 自由话术模式下，需要验证内容是否符合要求,如果为true则显示提示信息
       validateContent: false,
+      // 内容错误提示信息
+      descErrorInfo: '',
     };
+    // 投资建议标题
+    this.title = '';
+    // 投资建议内容
+    this.desc = '';
   }
 
   @autobind
@@ -40,13 +46,40 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     onClose(modalKey);
   }
 
+  // 获取投资建议文本标题和内容
+  @autobind
+  getInvestAdviceFreeModeData(title, desc) {
+    this.title = title;
+    this.desc = desc;
+  }
+
+  @autobind
+  checkWallCollisionStatus() {
+    if (this.props.testWallCollisionStatus) {
+      this.setState({
+        descErrorInfo: '推荐的产品未通过合规撞墙检测，请修改投资建议',
+        validateContent: true,
+      });
+      return false;
+    }
+    return true;
+  }
+
   // 点击服务内容弹出层确认按钮
   @autobind
   handleOK() {
     const { mode } = this.state;
     if (mode === 'free' && this.freeModeRef.checkData()) {
-      const { title, desc } = this.freeModeRef.getData();
-      this.props.onOK({ title, desc, mode });
+      const title = this.title;
+      const desc = this.desc;
+      const params = {
+        content: desc,
+      };
+      this.props.testWallCollision(params).then(() => {
+        if (this.checkWallCollisionStatus()) {
+          this.props.onOK({ title, desc, mode });
+        }
+      });
     }
   }
 
@@ -57,9 +90,11 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
       wrapClassName,
       serveContent,
       isUpdate,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
 
-    const { validateContent, validateTitle } = this.state;
+    const { validateContent, validateTitle, descErrorInfo } = this.state;
 
     return (
       <CommonModal
@@ -87,6 +122,10 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
             serveContent={serveContent}
             validateContent={validateContent}
             validateTitle={validateTitle}
+            descErrorInfo={descErrorInfo}
+            testWallCollisionStatus={testWallCollisionStatus}
+            onGetInvestAdviceFreeModeData={(title, desc) =>
+              this.getInvestAdviceFreeModeData(title, desc)}
           />
         </div>
       </CommonModal>
@@ -103,6 +142,10 @@ ChoiceInvestAdviceModal.propTypes = {
   serveContent: PropTypes.object,
   visible: PropTypes.bool,
   isUpdate: PropTypes.bool, // 是否编辑修改
+  // 投资建议文本撞墙检测
+  testWallCollision: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: PropTypes.bool.isRequired,
 };
 
 ChoiceInvestAdviceModal.defaultProps = {

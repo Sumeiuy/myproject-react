@@ -502,6 +502,10 @@ export default class PerformerView extends PureComponent {
       zhangleApprovalList,
       queryCustomer,
       custListForServiceImplementation,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
     const {
       typeCode,
@@ -560,6 +564,8 @@ export default class PerformerView extends PureComponent {
         zhangleApprovalList={zhangleApprovalList}
         queryCustomer={queryCustomer}
         customerList={custListForServiceImplementation}
+        testWallCollision={testWallCollision}
+        testWallCollisionStatus={testWallCollisionStatus}
       />
     );
   }

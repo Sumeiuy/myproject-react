@@ -68,6 +68,10 @@ export default class PerformerViewDetail extends PureComponent {
     queryCustomer: PropTypes.func,
     // 搜索到的任务下客户列表
     customerList: PropTypes.array,
+    // 投资建议文本撞墙检测
+    testWallCollision: PropTypes.func.isRequired,
+    // 投资建议文本撞墙检测是否有股票代码
+    testWallCollisionStatus: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -441,6 +445,7 @@ export default class PerformerViewDetail extends PureComponent {
       answersList,
       currentId,
       form,
+
     } = this.props;
     const { visible, keyIndex, isDisabled, isShowErrorCheckbox } = this.state;
     const { list, page } = targetCustList;
