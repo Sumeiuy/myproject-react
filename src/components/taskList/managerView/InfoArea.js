@@ -11,6 +11,7 @@ import _ from 'lodash';
 
 import LabelInfo from '../common/LabelInfo';
 import ForgeryRichText from '../../common/ForgeryRichText';
+import OmitMultipleLineText from '../../common/omitMultipleLineText';
 import styles from './infoArea.less';
 
 function InfoArea(props) {
@@ -46,7 +47,9 @@ function InfoArea(props) {
                         (<div
                           className={styles.row}
                         >
-                          <ForgeryRichText text={item.value} />
+                          <OmitMultipleLineText>
+                            <ForgeryRichText text={item.value} />
+                          </OmitMultipleLineText>
                         </div>
                         ) :
                         item.value

@@ -68,6 +68,34 @@
         color: #9b9b9b;
         text-align: left;
         margin-bottom: 10px;
+        .content {
+          position: relative;
+          overflow: hidden;
+          // text-overflow: ellipsis;
+          // display: -webkit-box;
+          // -webkit-line-clamp: 5;
+          // -webkit-box-orient: vertical;
+          & > div:not(.ignoreSymbol) {
+            line-height: 18px;
+          }
+          .ignoreSymbol {
+            position: absolute;
+            right: 0;
+            bottom: 2px;
+            z-index: 100;
+            width: 18px;
+            height: 18px;
+            text-align: left;
+            font-size: 14px;
+            background-color: #ffff;
+          }
+        }
+        .foldedContent {
+          max-height: 90px;
+        }
+        .notFoldedContent {
+          max-height: 100%;
+        }
         & > div:first-child {
           white-space: nowrap;
           text-align: right;

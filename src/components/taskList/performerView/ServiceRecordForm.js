@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-18 15:25:54
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-09 10:49:28
  * 服务记录表单
  */
 
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import ForgeryRichText from '../../common/ForgeryRichText';
+import OmitMultipleLineText from '../../common/omitMultipleLineText';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Button from '../../common/Button';
 import styles from './serviceRecordForm.less';
@@ -79,7 +80,9 @@ export default class ServiceRecordForm extends PureComponent {
            * 标签，需要格式化展示出来
            */}
           <div className={styles.content}>
-            <ForgeryRichText text={serviceTips} />
+            <OmitMultipleLineText>
+              <ForgeryRichText text={serviceTips} />
+            </OmitMultipleLineText>
           </div>
         </div>
 
