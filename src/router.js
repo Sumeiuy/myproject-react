@@ -71,6 +71,8 @@ import TelephoneNumberManage from './routes/telephoneNumberManage/Home';
 import TelephoneNumberManageEdit from './routes/telephoneNumberManage/ApplyEdit';
 // 精选组合
 import ChoicenessCombination from './routes/choicenessCombination/Home';
+// 营业部非投顾签约客户分配页面
+import BussinessDepartmentCustDistribute from './routes/businessDepartmentCustDistribute/ConnectedHome';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -273,6 +275,8 @@ const routes = [
   },
   // 精选组合
   { path: '/choicenessCombination', component: ChoicenessCombination },
+  // 营业部非投顾签约客户分配申请页面，直接进入
+  { path: '/businessDepartmentCustDistribute', component: BussinessDepartmentCustDistribute },
 ];
 
 // 递归创建路由

@@ -123,6 +123,8 @@ app.model(require('./models/choicenessCombination'));
 app.model(require('./models/investmentAdvice'));
 // 用户标签
 app.model(require('./models/operationCenter'));
+// 营业部非投顾签约客户分配
+app.model(require('./models/businessDepartmentCustDistribute'));
 
 // 4. Route
 app.router(routerConfig);

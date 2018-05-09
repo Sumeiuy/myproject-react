@@ -77,6 +77,8 @@ export default class Pageheader extends PureComponent {
     isUseOfCustomer: PropTypes.bool,
     // 判断登录人当前切换的职位所在部门为分公司层级
     checkUserIsFiliale: PropTypes.func,
+    // 提供由用户来判断是否需要显示新建按钮
+    isShowCreateBtn: PropTypes.func,
   }
 
   static defaultProps = {
@@ -89,6 +91,7 @@ export default class Pageheader extends PureComponent {
     filterCallback: _.noop,
     isUseOfCustomer: true,
     checkUserIsFiliale: _.noop,
+    isShowCreateBtn: () => true,
   }
 
   constructor(props) {
@@ -464,6 +467,9 @@ export default class Pageheader extends PureComponent {
         checkUserIsFiliale();
     } else if (pageType === phoneApplyPageType) {
       hasCreatePermission = permission.hasPermissionOfPhoneApplyCreate(empInfo);
+    } else {
+      // 此处,通用的判断是否需要隐藏新建按钮
+      hasCreatePermission = this.props.isShowCreateBtn();
     }
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>

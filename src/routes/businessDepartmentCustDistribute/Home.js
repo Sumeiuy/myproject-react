@@ -1,0 +1,257 @@
+/**
+ * @Author: sunweibin
+ * @Date: 2018-05-08 13:50:40
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-05-09 18:49:46
+ * @description 营业部非投顾签约客户分配首页
+ */
+
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
+import _ from 'lodash';
+
+import { propsShape, defaultProps } from './defaultPropsShape';
+import Barable from '../../decorators/selfBar';
+import withRouter from '../../decorators/withRouter';
+import SplitPanel from '../../components/common/splitPanel/CutScreen';
+import CommissionHeader from '../../components/common/biz/ConnectedSeibelHeader';
+import CommissionList from '../../components/common/appList';
+import ApplyItem from '../../components/businessDepartmentCustDistribute/ApplyItem';
+import NotTGCustDistributeApplyDetail from '../../components/businessDepartmentCustDistribute/NotTGCustDistributeApplyDetail';
+import CreateDistributeApplyBoard from '../../components/businessDepartmentCustDistribute/CreateDistributeApplyBoard';
+
+import { permission } from '../../helper';
+import config from './config';
+import utils from './utils';
+
+@withRouter
+@Barable
+export default class Home extends PureComponent {
+  static contextTypes = {
+    replace: PropTypes.func,
+    // empInfo: PropTypes.object,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 新建营业部非投顾掐约客户分配申请的弹出层
+      createApplyModalShow: false,
+      // 当前选中的列表项的索引
+      activeRowIndex: 0,
+    };
+  }
+
+  componentDidMount() {
+    const { location: { query } } = this.props;
+    this.queryList(query);
+  }
+
+  @autobind
+  getRightDetail() {
+    const { replace } = this.context;
+    const { list, location: { pathname, query, query: { currentId } } } = this.props;
+    if (!_.isEmpty(list.resultData)) {
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const { pageNum, pageSize } = list.page;
+      let item = list.resultData[0];
+      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      } else {
+        // 不存在currentId
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
+          },
+        });
+        itemIndex = 0;
+      }
+      this.setState({
+        activeRowIndex: itemIndex,
+      });
+      // TODO 此处后期需要根据定义的接口修改相应的参数
+      this.props.getDetail({ flowId: item.flowId });
+    }
+  }
+
+  @autobind
+  getDetailComponenet() {
+    // 返回详情组件，目前只有一类,
+    const {
+      location: { query: { currentId = '' } },
+      detailInfo,
+    } = this.props;
+    return (
+      <NotTGCustDistributeApplyDetail
+        currentId={currentId}
+        data={detailInfo}
+      />
+    );
+  }
+
+  @autobind
+  queryList(query) {
+    console.warn('queryList: ', query);
+    // TODO 此处需要将type修改为真实的值
+    const stickQuery = { pageNum: 1, pageSize: 10, type: '07' };
+    const fixedQuery = utils.fixQuery(query);
+    console.warn('fixedQuery: ', fixedQuery);
+    this.props.getList({ ...stickQuery, ...fixedQuery }).then(this.getRightDetail);
+  }
+
+  // 点击右上角新建按钮，打开新建营业部非投顾掐约客户分配申请的弹出层
+  @autobind
+  handleCreateApplyBtnClick() {
+    this.setState({
+      createApplyModalShow: true,
+    });
+  }
+
+  @autobind
+  handleApplyBoardClose() {
+    this.setState({
+      createApplyModalShow: false,
+    });
+  }
+
+  // 处理投顾进行筛选后，进行查询列表
+  @autobind
+  handleHeaderFilter(param) {
+    const { location: { query, pathname } } = this.props;
+    const newQuery = { ...query, pageNum: 1, ...param };
+    this.context.replace({
+      pathname,
+      query: newQuery,
+    });
+    this.queryList(newQuery);
+  }
+
+  @autobind
+  handleShowCreateBtn() {
+    // 如果有 HTSC 开发-营业部执行岗 职责，则显示新建按钮
+    return true || permission.hasKFYYBZXGPermission();
+  }
+
+  @autobind
+  handlePageNumberChange(pageNum, pageSize) {
+    const { location: { query, pathname } } = this.props;
+    this.context.replace({
+      pathname,
+      query: { ...query, pageNum, pageSize },
+    });
+    this.queryList({ ...query, pageNum, pageSize });
+  }
+
+  @autobind
+  handleListRowClick(record, index) {
+    const { id, flowId } = record;
+    const {
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+
+    if (currentId === String(id)) return;
+
+    this.context.replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
+    });
+    this.setState({ activeRowIndex: index });
+    // TODO 此处后期需要根据定义的接口修改相应的参数
+    this.props.getDetail({ flowId });
+  }
+
+  // 渲染左侧列表每一行
+  @autobind
+  renderListRow(record, index) {
+    const { activeRowIndex } = this.state;
+    return (
+      <ApplyItem
+        key={record.id}
+        data={record}
+        active={index === activeRowIndex}
+        onClick={this.handleListRowClick}
+        index={index}
+        pageName="businessDepartmentCustDistribute"
+        type="kehu1"
+        pageData={config}
+      />
+    );
+  }
+
+  render() {
+    const { replace } = this.context;
+    const { location, list } = this.props;
+    const { createApplyModalShow } = this.state;
+    const isEmpty = _.isEmpty(list.resultData);
+
+    const topPanel = (
+      <CommissionHeader
+        location={location}
+        replace={replace}
+        page="businessDepartmentCustDistribute"
+        pageType={config.pageType}
+        needSubType={false}
+        stateOptions={config.status}
+        creatSeibelModal={this.handleCreateApplyBtnClick}
+        filterCallback={this.handleHeaderFilter}
+        isShowCreateBtn={this.handleShowCreateBtn}
+      />
+    );
+
+    // 左侧列表组件机器分页器配置项
+    // 生成页码器，此页码器配置项与Antd的一致
+    const { resultData = [], page = {} } = list;
+    const paginationOptions = {
+      current: page.pageNum,
+      total: page.totalCount,
+      pageSize: page.pageSize,
+      onChange: this.handlePageNumberChange,
+    };
+    const leftPanel = (
+      <CommissionList
+        list={resultData}
+        renderRow={this.renderListRow}
+        pagination={paginationOptions}
+      />
+    );
+
+    // 后期根据不同的参数获取不同的组件,在此方法内修改
+    const rightPanel = this.getDetailComponenet();
+
+    return (
+      <div>
+        <SplitPanel
+          isEmpty={isEmpty}
+          topPanel={topPanel}
+          leftPanel={leftPanel}
+          rightPanel={rightPanel}
+          leftWidth={400}
+        />
+        {
+          !createApplyModalShow ? null
+          : (
+            <CreateDistributeApplyBoard
+              visible={createApplyModalShow}
+              modalKey="CreateDistributeApplyBoard"
+              onClose={this.handleApplyBoardClose}
+            />
+          )
+        }
+      </div>
+    );
+  }
+}
+
+Home.propTypes = propsShape;
+Home.defaultProps = defaultProps;
