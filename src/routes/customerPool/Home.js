@@ -1,8 +1,8 @@
 /**
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-14 20:06:14
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-08 17:05:48
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import { Tabs } from 'antd';
 import _ from 'lodash';
 import moment from 'moment/moment';
 
+import HomeTop from '../../components/customerPool/home/HomeTop';
 import { optionsMap } from '../../config';
 import { emp, time, permission } from '../../helper';
 import withRouter from '../../decorators/withRouter';
@@ -483,6 +484,7 @@ export default class Home extends PureComponent {
 
     return (
       <div className={styles.customerPoolWrap}>
+        <HomeTop push={push} />
         <div className={styles.poolContainer}>
           <div className={styles.content}>
             <Search
