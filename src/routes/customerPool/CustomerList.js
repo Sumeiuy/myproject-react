@@ -420,14 +420,14 @@ export default class CustomerList extends PureComponent {
 
   // 获取 客户列表接口的orgId入参的值
   getPostOrgId(query = {}) {
-    // 来自非理财平台
-    if (query.source === 'external') {
-      return this.hasTkMampPermission ? emp.getOrgId() : '';
-    }
     /* 来自理财平台首页 */
     // 服务营业部筛选字段departmentOrgId有值且不等于all
     if (query.departmentOrgId) {
       return query.departmentOrgId !== ALL_DEPARTMENT_ID ? query.departmentOrgId : '';
+    }
+    // 来自非理财平台
+    if (query.source === 'external') {
+      return this.hasTkMampPermission ? emp.getOrgId() : '';
     }
     // 没有 任务管理权限从首页搜索、联想词、热词、潜在业务 或绩效指标的客户范围为 我的客户 下钻到客户列表页
     if (query.orgId) {
@@ -444,14 +444,14 @@ export default class CustomerList extends PureComponent {
 
   // 获取 客户列表接口的ptyMngId入参的值
   getPostPtyMngId(query = {}) {
-    // 来自非理财平台
-    if (query.source === 'external') {
-      return this.hasTkMampPermission ? '' : emp.getId();
-    }
     /* 来自理财平台 */
     // url中存在ptyMng，取id
     if (query.ptyMngId) {
       return query.ptyMngId;
+    }
+    // 来自非理财平台
+    if (query.source === 'external') {
+      return this.hasTkMampPermission ? '' : emp.getId();
     }
     // 没有 任务管理权限从首页搜索、联想词、热词、潜在业务 或绩效指标的客户范围为 我的客户 下钻到客户列表页
     if (query.orgId === MAIN_MAGEGER_ID) {

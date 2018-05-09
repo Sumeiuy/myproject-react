@@ -234,6 +234,10 @@ export default class ServiceImplementation extends PureComponent {
       serviceRecordInfo,
       currentMotServiceRecord,
       resetServiceRecordInfo,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
     // 获取当前选中的数据的missionFlowId
     const currentMissionFlowId = this.getCurrentMissionFlowId();
@@ -358,6 +362,8 @@ export default class ServiceImplementation extends PureComponent {
             serviceRecordInfo={serviceRecordInfo}
             currentMotServiceRecord={currentMotServiceRecord}
             resetServiceRecordInfo={resetServiceRecordInfo}
+            testWallCollision={testWallCollision}
+            testWallCollisionStatus={testWallCollisionStatus}
           /> : null
         }
       </div>
@@ -412,6 +418,10 @@ ServiceImplementation.propTypes = {
   serviceRecordInfo: PropTypes.object.isRequired,
   addServeRecordOfPhone: PropTypes.func.isRequired,
   resetServiceRecordInfo: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测
+  testWallCollision: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: PropTypes.bool.isRequired,
 };
 
 ServiceImplementation.defaultProps = {

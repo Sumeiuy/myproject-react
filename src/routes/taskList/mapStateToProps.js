@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:14:05
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-05-07 10:36:14
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-09 14:35:11
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapStateToProps移至此处成立独立模块
  */
 const mapStateToProps = () => state => ({
@@ -62,7 +62,10 @@ const mapStateToProps = () => state => ({
   custFeedbackList: state.performerView.custFeedbackList,
    // 涨乐财富通服务方式下的审批人列表
   zhangleApprovalList: state.performerView.zhangleApprovalList,
+  // 添加服务记录的相关信息
   serviceRecordInfo: state.app.serviceRecordInfo,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: state.investmentAdvice.testWallCollisionStatus,
 });
 
 export default mapStateToProps;

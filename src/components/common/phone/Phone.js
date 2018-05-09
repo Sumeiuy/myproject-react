@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-08 09:20:24
+ * @Last Modified time: 2018-05-09 14:42:21
  */
 
 import React, { PureComponent } from 'react';
@@ -74,7 +74,10 @@ export default class Phone extends PureComponent {
   };
 
   componentDidMount() {
-    if (this.props.headless === true && window.$) {
+    if (this.props.headless === true
+      && window.$
+      && this.canCall()
+    ) {
       window.$('body').on(
         'click',
         '.callable',
@@ -86,10 +89,15 @@ export default class Phone extends PureComponent {
     }
   }
 
+  canCall() {
+    const { empInfo, disable } = this.props;
+    return empInfo.canCall === true && disable !== true;
+  }
+
   @autobind
   handleClick() {
-    const { number, custType, onClick, disable } = this.props;
-    if (disable === true) {
+    const { number, custType, onClick } = this.props;
+    if (this.canCall() !== true) {
       return;
     }
     onClick({

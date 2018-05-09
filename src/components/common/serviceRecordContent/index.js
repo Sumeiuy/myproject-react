@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-07 18:16:26
+ * @Last Modified time: 2018-05-09 14:41:37
  */
 
 import React, { PureComponent } from 'react';
@@ -728,6 +728,10 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackList,
       flowStatusCode,
       serviceRecordInfo,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
     const {
       isReject,
@@ -865,6 +869,8 @@ export default class ServiceRecordContent extends PureComponent {
               approvalList={this.props.zhangleApprovalList}
               isReject={isReject}
               serveContent={zlRejectRecord}
+              testWallCollision={testWallCollision}
+              testWallCollisionStatus={testWallCollisionStatus}
             />
           )
           : (
@@ -978,6 +984,10 @@ ServiceRecordContent.propTypes = {
   serviceTypeCode: PropTypes.string,
   flowStatusCode: PropTypes.string,
   serviceRecordInfo: PropTypes.object.isRequired,
+  // 投资建议文本撞墙检测
+  testWallCollision: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: PropTypes.bool.isRequired,
 };
 
 ServiceRecordContent.defaultProps = {

@@ -63,6 +63,10 @@ export default class CreateServiceRecord extends PureComponent {
     zhangleApprovalList: PropTypes.array.isRequired,
     resetServiceRecordInfo: PropTypes.func.isRequired,
     serviceRecordInfo: PropTypes.object.isRequired,
+    // 投资建议文本撞墙检测
+    testWallCollision: PropTypes.func.isRequired,
+    // 投资建议文本撞墙检测是否有股票代码
+    testWallCollisionStatus: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -175,6 +179,10 @@ export default class CreateServiceRecord extends PureComponent {
       custFeedbackList,
       zhangleApprovalList,
       serviceRecordInfo,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
     // 此处需要新增一个对 taskFeedbackList为空的判断
     if (_.isEmpty(taskFeedbackList)) return null;
@@ -229,6 +237,8 @@ export default class CreateServiceRecord extends PureComponent {
                 custFeedbackList={custFeedbackList}
                 zhangleApprovalList={zhangleApprovalList}
                 serviceRecordInfo={serviceRecordInfo}
+                testWallCollision={testWallCollision}
+                testWallCollisionStatus={testWallCollisionStatus}
               />
             </div>
             :

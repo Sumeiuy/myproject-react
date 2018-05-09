@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 10:21:18
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-08 09:23:08
+ * @Last Modified time: 2018-05-09 14:35:40
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapDispatchToProps移至此处成立独立模块
  */
 import effects from './effects';
@@ -76,4 +76,6 @@ export default ({ routerRedux, effect }) => ({
   addServeRecordOfPhone: effect(effects.addServiceRecord, { loading: false }),
   // 重置打电话时自动生成的服务记录的数据
   resetServiceRecordInfo: effect(effects.resetServiceRecordInfo, { loading: false }),
+  // 投资建议文本撞墙检测
+  testWallCollision: effect(effects.testWallCollision),
 });

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-08 11:13:31
+ * @Last Modified time: 2018-05-09 14:38:13
  * 服务记录表单
  */
 
@@ -88,6 +88,10 @@ export default class ServiceRecordForm extends PureComponent {
       empInfo: { empInfo },
       statusCode,
       serviceRecordInfo,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
@@ -125,6 +129,8 @@ export default class ServiceRecordForm extends PureComponent {
           queryApprovalList={queryApprovalList}
           flowStatusCode={statusCode}
           serviceRecordInfo={serviceRecordInfo}
+          testWallCollision={testWallCollision}
+          testWallCollisionStatus={testWallCollisionStatus}
         />
         {
           !isReadOnly ?
@@ -163,4 +169,8 @@ ServiceRecordForm.propTypes = {
   serviceRecordInfo: PropTypes.object.isRequired,
   currentMotServiceRecord: PropTypes.object.isRequired,
   resetServiceRecordInfo: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测
+  testWallCollision: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: PropTypes.bool.isRequired,
 };
