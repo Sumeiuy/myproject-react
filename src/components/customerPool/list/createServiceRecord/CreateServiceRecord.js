@@ -9,11 +9,11 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Modal, message } from 'antd';
 import _ from 'lodash';
-import { fspContainer } from '../../../config';
-import { url } from '../../../helper';
-import logable from '../../../decorators/logable';
-import ServiceRecordContent from '../../common/serviceRecordContent';
-import Loading from '../../../layouts/Loading';
+import { fspContainer } from '../../../../config/index';
+import { url } from '../../../../helper/index';
+import logable from '../../../../decorators/logable';
+import ServiceRecordContent from '../../../common/serviceRecordContent/index';
+import Loading from '../../../../layouts/Loading';
 import styles from './createServiceRecord.less';
 
 /**

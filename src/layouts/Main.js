@@ -12,7 +12,7 @@ import zhCN from 'antd/lib/locale-provider/zh_CN';
 import Loading from './Loading';
 import withRouter from '../decorators/withRouter';
 
-import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
+import ConnectedCreateServiceRecord from '../components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
 import ContextProvider from './ContextProvider';
 import Phone from '../components/common/phone';
 import styles from './main.less';

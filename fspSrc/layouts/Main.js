@@ -18,7 +18,7 @@ import Footer from './Footer';
 import Tab from '../components/layout/Tab';
 import FSPUnwrap from '../components/layout/FSPUnwrap';
 import { constants } from '../../src/config';
-import ConnectedCreateServiceRecord from '../../src/components/customerPool/list/ConnectedCreateServiceRecord';
+import ConnectedCreateServiceRecord from '../../src/components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
 
 import styles from './main.less';
 import '../css/fspFix.less';
