@@ -3,7 +3,7 @@
  * @Description: 收益率走势图
  * @Date: 2018-04-25 13:55:06
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-08 13:58:28
+ * @Last Modified time: 2018-05-09 14:21:54
 */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import IECharts from '../IECharts';
 import styles from './combinationYieldChart.less';
-import { chartTabList } from '../../routes/choicenessCombination/config';
+import { chartTabList } from '../../components/choicenessCombination/config';
 
 const TabPane = Tabs.TabPane;
 // const EMPTY_OBJECT = {};

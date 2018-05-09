@@ -8,6 +8,46 @@
   box-sizing: border-box;
   background-color: #fff;
   box-shadow: 2px 1px 5px #bdbcbc;
+  :global {
+    .ant-table {
+      height: 178px;
+      table {
+        table-layout: fixed;
+      }
+    }
+    .ant-table-thead > tr > th {
+      padding: 4px 8px;
+      background: none;
+    }
+    .ant-table-tbody > tr > td {
+      padding: 6px 8px;
+      background: none;
+      border-bottom: none;
+    }
+    .ant-table-placeholder {
+      padding: 60px 16px 16px;
+      border-bottom: none;
+    }
+    .ant-table-pagination.ant-pagination {
+      margin: 0;
+    }
+    .ant-pagination-item {
+      min-width: 24px;
+      height: 24px;
+      line-height: 22px;
+    }
+    .ant-pagination-prev,
+    .ant-pagination-next,
+    .ant-pagination-jump-prev,
+    .ant-pagination-jump-next {
+      min-width: 24px;
+      height: 24px;
+      line-height: 24px;
+    }
+    .ant-pagination-item-link {
+      height: 24px;
+    }
+  }
 }
 .headBox {
   height: 54px;
@@ -21,4 +61,9 @@
     float: right;
     font-size: 12px;
   }
+}
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

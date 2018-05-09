@@ -3,14 +3,13 @@
  * @Description: 精选组合-组合详情-订购客户
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-08 17:24:29
+ * @Last Modified time: 2018-05-09 14:46:57
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 // import _ from 'lodash';
 import { Popover, Table } from 'antd';
-// import Pagination from '../../common/Pagination';
 import config from '../config';
 import styles from './orderingCustomer.less';
 
@@ -72,12 +71,11 @@ export default class HistoryReport extends PureComponent {
 
   render() {
     const {
-      data,
+      data: {
+        list = EMPTY_LIST,
+        page = EMPTY_OBJECT,
+      },
     } = this.props;
-    const {
-      list = EMPTY_LIST,
-      page = EMPTY_OBJECT,
-    } = data;
     const PaginationOption = {
       current: page.pageNum,
       total: page.totalCount,
@@ -96,7 +94,6 @@ export default class HistoryReport extends PureComponent {
           pagination={PaginationOption}
           onChange={this.handlePaginationChange}
         />
-        {/* <Pagination {...PaginationOption} /> */}
       </div>
     );
   }

@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-08 17:35:32
+ * @Last Modified time: 2018-05-09 15:37:12
  */
 
 import React, { PureComponent } from 'react';
@@ -38,6 +38,8 @@ const effects = {
   getCombinationLineChart: 'combinationDetail/getCombinationLineChart',
   // 获取订购客户数据
   getOrderingCustList: 'combinationDetail/getOrderingCustList',
+  // 请求历史报告数据
+  getReportHistoryList: 'combinationDetail/getReportHistoryList',
 };
 
 const mapStateToProps = state => ({
@@ -55,6 +57,10 @@ const mapStateToProps = state => ({
   combinationLineChartData: state.combinationDetail.combinationLineChartData,
   // 订购客户数据
   orderCustData: state.combinationDetail.orderCustData,
+  // 组合详情-历史报告模块数据
+  reportHistoryData: state.combinationDetail.reportHistoryData,
+  // 组合详情-历史报告弹窗数据
+  modalReportHistoryData: state.combinationDetail.modalReportHistoryData,
 });
 const mapDispatchToProps = {
   getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory, { loading: false }),
@@ -62,6 +68,7 @@ const mapDispatchToProps = {
   getCombinationTree: dispatch(effects.getCombinationTree, { loading: false }),
   getCombinationLineChart: dispatch(effects.getCombinationLineChart, { loading: true }),
   getOrderingCustList: dispatch(effects.getOrderingCustList, { loading: false }),
+  getReportHistoryList: dispatch(effects.getReportHistoryList, { loading: false }),
   push: routerRedux.push,
 };
 
@@ -88,6 +95,12 @@ export default class CombinationDetail extends PureComponent {
     // 订购客户数据
     getOrderingCustList: PropTypes.func.isRequired,
     orderCustData: PropTypes.object.isRequired,
+    // 历史报告数据
+    getReportHistoryList: PropTypes.func.isRequired,
+    // 组合详情-历史报告模块数据
+    reportHistoryData: PropTypes.object.isRequired,
+    // 组合详情-历史报告弹窗数据
+    modalReportHistoryData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -111,13 +124,14 @@ export default class CombinationDetail extends PureComponent {
       getCombinationTree,
       getCombinationLineChart,
       getOrderingCustList,
+      getReportHistoryList,
       location: { query: { id } },
     } = this.props;
     // 调仓方向传 3 视为取最新两条数据
     const payload = {
       combinationCode: id,
-      pageSize: 1,
-      pageNum: 5,
+      pageSize: 5,
+      pageNum: 1,
     };
     // 调仓历史
     getAdjustWarehouseHistory(payload);
@@ -129,8 +143,16 @@ export default class CombinationDetail extends PureComponent {
       combinationCode: id,
       key: '3',
     });
+    // 查询历史报告模块数据, 非历史报告弹窗
+    getReportHistoryList({
+      combinationCode: id,
+      pageNum: 1,
+      pageSize: 6,
+    });
     // 订购客户
     getOrderingCustList({
+      pstnId: emp.getPstnId(),
+      orgId: emp.getOrgId(),
       combinationId: id,
       pageNum: 1,
       pageSize: 5,
@@ -246,6 +268,12 @@ export default class CombinationDetail extends PureComponent {
     });
   }
 
+  // 打开历史报告详情
+  @autobind
+  openReportDetail(id) {
+    console.log('id', id);
+  }
+
   render() {
     const {
       dict,
@@ -258,6 +286,7 @@ export default class CombinationDetail extends PureComponent {
       getCombinationLineChart,
       getAdjustWarehouseHistory,
       orderCustData,
+      reportHistoryData,
       location: { query: { id } },
     } = this.props;
     const {
@@ -311,7 +340,11 @@ export default class CombinationDetail extends PureComponent {
       <div className={styles.combinationDetailBox}>
         组合详情
         <div className={styles.floor}>
-          <AdjustHistory />
+          <AdjustHistory
+            data={adjustWarehouseHistoryData}
+            showModal={this.showModal}
+            openStockPage={this.openStockPage}
+          />
           <div className={styles.yieldChartBox}>
             <CombinationYieldChart
               combinationCode={id}
@@ -324,7 +357,9 @@ export default class CombinationDetail extends PureComponent {
           </div>
         </div>
         <div className={styles.floor}>
-          <HistoryReport data={adjustWarehouseHistoryData} />
+          <HistoryReport
+            data={reportHistoryData}
+          />
           <OrderingCustomer
             data={orderCustData}
             pageChange={this.handleOrderCustPageChange}

@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-07 13:43:10
+ * @Last Modified time: 2018-05-09 14:21:12
 */
 
 import React, { PureComponent } from 'react';
@@ -15,8 +15,11 @@ import Icon from '../../common/Icon';
 import { time } from '../../../helper';
 import CombinationYieldChart from '../CombinationYieldChart';
 import styles from './combinationListItem.less';
-import { yieldRankList } from '../../../routes/choicenessCombination/config';
-import { securityType as securityTypeList, formatStr } from '../config';
+import {
+  yieldRankList,
+  securityType as securityTypeList,
+  formatStr,
+} from '../../../components/choicenessCombination/config';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
