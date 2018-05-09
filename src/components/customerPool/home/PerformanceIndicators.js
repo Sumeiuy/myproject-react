@@ -154,7 +154,7 @@ export default class PerformanceIndicators extends PureComponent {
       const descKey = _.findKey(indicators, o => o.name === value);
       timeout = setTimeout(() => {
         this.setState({
-          isToolTipVisible: true,
+          isToolTipVisible: !!descKey,
           posX,
           posY,
           desc: (indicators[descKey] || {}).description || '',
