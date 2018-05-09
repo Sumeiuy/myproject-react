@@ -10,11 +10,11 @@ import { connect } from 'dva';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import Loading from './Loading';
-import PhoneDialog from '../components/common/phoneDialog';
 import withRouter from '../decorators/withRouter';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
 import ContextProvider from './ContextProvider';
+import Phone from '../components/common/phone';
 import styles from './main.less';
 import '../css/skin.less';
 
@@ -54,12 +54,6 @@ const mapStateToProps = state => ({
   custUuid: state.performerView.custUuid,
   // 自建任务平台的服务类型、任务反馈字典
   motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
-  // 显示拨打电话弹窗
-  phoneDialogOfVisible: state.app.phoneDialogOfVisible,
-  // 电话弹窗对应的电话号码
-  phoneDialogOfPhoneNum: state.app.phoneDialogOfPhoneNum,
-  // 电话弹窗对应的客户类型
-  phoneDialogOfCustType: state.app.phoneDialogOfCustType,
 });
 
 const mapDispatchToProps = {
@@ -71,10 +65,6 @@ const mapDispatchToProps = {
   addServeRecord: fectchDataFunction(false, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
-  togglePhoneDialog: query => ({
-    type: 'app/togglePhoneDialog',
-    payload: query || false,
-  }),
 };
 
 @withRouter
@@ -100,13 +90,6 @@ export default class Main extends Component {
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
-    // 显示拨打电话弹窗
-    phoneDialogOfVisible: PropTypes.bool,
-    // 电话弹窗对应的电话号码
-    phoneDialogOfPhoneNum: PropTypes.string,
-    // 电话弹窗对应的客户类型
-    phoneDialogOfCustType: PropTypes.string,
-    togglePhoneDialog: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -114,9 +97,6 @@ export default class Main extends Component {
     serviceRecordModalVisibleOfId: '',
     serviceRecordModalVisibleOfName: '',
     loadingForceFull: false,
-    phoneDialogOfVisible: false,
-    phoneDialogOfPhoneNum: '',
-    phoneDialogOfCustType: '',
   }
 
   componentDidMount() {
@@ -142,10 +122,6 @@ export default class Main extends Component {
       custUuid,
       ceFileDelete,
       motSelfBuiltFeedbackList,
-      phoneDialogOfVisible,
-      phoneDialogOfPhoneNum,
-      phoneDialogOfCustType,
-      togglePhoneDialog,
     } = this.props;
     return (
       <LocaleProvider locale={zhCN}>
@@ -181,19 +157,9 @@ export default class Main extends Component {
                         </div>
                       : null
                   }
-                  {
-                    phoneDialogOfVisible ?
-                      <PhoneDialog
-                        visible={phoneDialogOfVisible}
-                        phoneNum={phoneDialogOfPhoneNum}
-                        custType={phoneDialogOfCustType}
-                        onTogglePhoneDialog={togglePhoneDialog}
-                      />
-                      :
-                      null
-                  }
                 </div>
               </div>
+              <Phone headless />
             </div>
           </div>
         </ContextProvider>

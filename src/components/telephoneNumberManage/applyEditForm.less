@@ -1,0 +1,58 @@
+.applyEditFormbox {
+  background-color: #f3f3f3;
+  padding: 20px;
+  .approvalTip {
+    font-size: 14px;
+    margin-right: 8px;
+    span {
+      color: #f00;
+      margin-right: 8px;
+    }
+  }
+  .inner {
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 5px 5px 5px #ededee;
+    padding: 20px;
+    height: 100%;
+    overflow: auto;
+    .innerWrap {
+      min-width: 650px;
+    }
+    .title {
+      font-size: 15px;
+      color: #000;
+      border-bottom: 1px solid #c2c2c2;
+      padding: 0 0 15px;
+    }
+    .module {
+      padding: 15px 0;
+      border-bottom: 1px solid #f3f3f4;
+      h2 {
+        font-weight: normal;
+        line-height: 1.5;
+      }
+      .modContent {
+        padding: 5px 0;
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        .propertyList {
+          .item {
+            // padding: 1px 0;
+            position: relative;
+            clear: left;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+          }
+        }
+        &:after {
+          content: " ";
+          display: table;
+          clear: both;
+        }
+      }
+    }
+  }
+}
