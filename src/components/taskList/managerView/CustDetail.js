@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-08 16:43:30
+ * @Last Modified time: 2018-05-09 16:56:46
  * 客户明细数据
  */
 
@@ -123,6 +123,7 @@ export default class CustDetail extends PureComponent {
       feedbackL2List: this.renderFeedbackL2Option(feedbackIdL1, feedbackIdL2),
     };
 
+    // 是否拥有查看非本人名下客户360权限
     this.hasViewCust360Permission = permission.hasViewCust360PermissionForManagerView();
   }
 

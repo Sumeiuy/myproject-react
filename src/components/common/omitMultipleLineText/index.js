@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-09 14:17:46
+ * @Last Modified time: 2018-05-09 16:52:25
  * 多行文本打点组件
  */
 
@@ -71,11 +71,8 @@ export default class OmitMultipleLineText extends PureComponent {
         });
       } else {
         this.setState({
-          // 是否展示展开按钮
           isShowMore: false,
-          // 当前省略的高度
           maxContentHeight: ORIGIN_MAX_CONTENT_HEIGHT,
-          // 如果可以展开，那么需要将原始高度设置成当前省略之后的高度
           originMaxContentHeight: ORIGIN_MAX_CONTENT_HEIGHT,
         });
       }
