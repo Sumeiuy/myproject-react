@@ -31,6 +31,8 @@ const duty = {
   HTSC_CI_BMP: '1-FCQM-31', // HTSC 客户资料-分中心管理岗
   HTSC_NPCI_HMP: '1-FCQM-41', // HTSC 客户资料（无隐私）-总部管理岗
   HTSC_NPCI_BMP: '1-FCQM-43', // HTSC 客户资料（无隐私）-分中心管理岗
+  HTSC_CDM: '1-FCQM-43', // HTSC 客户资料管理岗
+  HTSC_NP_CDM: '1-FCQM-43', // HTSC 客户资料管理岗（无隐私）
 };
 
 export default duty;
