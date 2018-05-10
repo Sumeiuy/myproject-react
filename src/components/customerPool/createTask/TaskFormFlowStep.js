@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-09 21:13:02
+ * @Last Modified time: 2018-05-10 14:14:43
  */
 
 import React, { PureComponent } from 'react';
@@ -334,7 +334,7 @@ export default class TaskFormFlowStep extends PureComponent {
             type: 'Submit',
             payload: {
               title: '任务信息',
-              subtype: '来源值',
+              subtype: source,
               type: custSource,
               value: JSON.stringify(values),
               name: values.taskName,
@@ -477,7 +477,7 @@ export default class TaskFormFlowStep extends PureComponent {
         type: 'Submit',
         payload: {
           title: '任务评估',
-          subtype: '来源值',
+          subtype: source,
           type: custSource,
           value: JSON.stringify(values),
           name: taskName,
@@ -538,7 +538,7 @@ export default class TaskFormFlowStep extends PureComponent {
       createTask,
       storedCreateTaskData: { currentSelectRecord = {} },
       templateId,
-      location: { query: { flowId } },
+      location: { query: { source, flowId } },
       taskBasicInfo,
     } = this.props;
     const {
@@ -681,7 +681,7 @@ export default class TaskFormFlowStep extends PureComponent {
       type: 'Submit',
       payload: {
         title: '确认提交',
-        subtype: '来源值',
+        subtype: source,
         type: custSource,
         value: JSON.stringify(values),
         name,
