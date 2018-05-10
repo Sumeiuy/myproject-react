@@ -248,12 +248,12 @@ const permission = {
     return hasDuty(dutyList, duty.HTSC_NPCI_BMP);
   },
 
-  // HTSC 客户资料管理岗
+  // HTSC 客户资料 营业部执行岗
   hasCDMPermission() {
     return hasDuty(dutyList, duty.HTSC_CDM);
   },
 
-  // HTSC 客户资料管理岗（无隐私）
+  // HTSC 客户资料（无隐私）营业部执行岗
   hasNPCDMPermission() {
     return hasDuty(dutyList, duty.HTSC_NP_CDM);
   },
@@ -263,8 +263,8 @@ const permission = {
   // - HTSC 客户资料-总部管理岗
   // - HTSC 客户资料（无隐私）-分中心管理岗
   // - HTSC 客户资料(无隐私）-总部管理岗
-  // - HTSC 客户资料管理岗
-  // - HTSC 客户资料管理岗（无隐私）
+  // - HTSC 客户资料 营业部执行岗
+  // - HTSC 客户资料（无隐私）营业部执行岗
   hasViewCust360PermissionForManagerView() {
     return permission.hasCIHMPPermission() ||
       permission.hasCIBMPPermission() ||
@@ -280,8 +280,8 @@ const permission = {
   // - HTSC 客户资料-总部管理岗
   // - HTSC 客户资料（无隐私）-分中心管理岗
   // - HTSC 客户资料(无隐私）-总部管理岗
-  // - HTSC 客户资料管理岗
-  // - HTSC 客户资料管理岗（无隐私）
+  // - HTSC 客户资料 营业部执行岗
+  // - HTSC 客户资料（无隐私）营业部执行岗
   hasViewCust360PermissionForCustList() {
     return permission.hasCIHMPPermission() ||
       permission.hasCIBMPPermission() ||

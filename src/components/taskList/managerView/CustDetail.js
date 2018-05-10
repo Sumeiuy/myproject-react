@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-09 16:56:46
+ * @Last Modified time: 2018-05-10 17:50:03
  * 客户明细数据
  */
 
@@ -274,8 +274,8 @@ export default class CustDetail extends PureComponent {
       - HTSC 客户资料-总部管理岗
       - HTSC 客户资料（无隐私）-分中心管理岗
       - HTSC 客户资料(无隐私）-总部管理岗
-      - HTSC 客户资料管理岗
-      - HTSC 客户资料管理岗（无隐私）
+      - HTSC 客户资料 营业部执行岗
+      - HTSC 客户资料（无隐私）营业部执行岗
    */
   @autobind
   toDetail({ custNature, custId, rowId, ptyId, empId }) {

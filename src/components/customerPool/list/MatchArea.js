@@ -62,7 +62,7 @@ export default class MatchArea extends PureComponent {
     const {
       dict: {
         custBusinessType = [],
-      custUnrightBusinessType = [],
+        custUnrightBusinessType = [],
       },
     } = props;
 
