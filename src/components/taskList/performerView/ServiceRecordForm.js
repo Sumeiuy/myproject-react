@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-10 11:12:53
+ * @Last Modified time: 2018-05-10 13:07:10
  * 服务记录表单
  */
 
@@ -39,13 +39,13 @@ export default class ServiceRecordForm extends PureComponent {
     // log日志 --- 添加服务记录
     // 服务类型
     const { serveType } = data;
-    const { dict, custName } = this.props;
+    const { dict, serviceCustId } = this.props;
     const { missionType } = dict;
     const serveTypeName = _.find(missionType, { key: serveType }).value;
     logCommon({
       type: 'Submit',
       payload: {
-        name: custName,
+        name: serviceCustId,
         type: serveTypeName,
         value: JSON.stringify(data),
       },
@@ -159,7 +159,7 @@ ServiceRecordForm.propTypes = {
   zhangleApprovalList: PropTypes.array.isRequired,
   statusCode: PropTypes.string.isRequired,
   // 服务实施客户名次
-  custName: PropTypes.string.isRequired,
+  serviceCustId: PropTypes.string.isRequired,
   // 投资建议文本撞墙检测
   testWallCollision: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测是否有股票代码

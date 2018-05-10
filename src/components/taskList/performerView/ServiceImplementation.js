@@ -40,9 +40,9 @@ export default class ServiceImplementation extends PureComponent {
     super(props);
     this.state = {
       list: props.list,
-      // 服务实施客户名称
-      custName: props.list[0].custName,
     };
+    // 服务实施客户Id
+    this.serviceCustId = props.list[0].custId || '';
   }
 
   componentWillReceiveProps(nextProps) {
@@ -54,6 +54,7 @@ export default class ServiceImplementation extends PureComponent {
       this.setState({
         list: nextList,
       });
+      this.serviceCustId = nextList[0].custId || '';
     }
   }
 
@@ -162,14 +163,15 @@ export default class ServiceImplementation extends PureComponent {
     return false;
   }
 
-  // 点击服务实施设置客户名次
+  // 点击服务实施设置客户Id
   @autobind
-  setCustName(custName) {
-    this.setState({ custName });
+  setServiceCustId(custId) {
+    this.serviceCustId = custId;
   }
 
   render() {
-    const { list, custName } = this.state;
+    const { list } = this.state;
+    const serviceCustId = this.serviceCustId;
     const {
       currentId,
       dict,
@@ -269,6 +271,7 @@ export default class ServiceImplementation extends PureComponent {
       taskTypeCode,
       serviceTypeCode,
     };
+    console.warn('serviceCustId', serviceCustId);
 
     // 判断当前任务状态是结果跟踪或者完成状态，则为只读
     // 判断任务流水客户状态，处理中 和 未开始， 则为可编辑
@@ -299,7 +302,7 @@ export default class ServiceImplementation extends PureComponent {
           getCustDetail={getCustDetail}
           getCeFileList={getCeFileList}
           filesList={filesList}
-          getCustName={name => this.setCustName(name)}
+          getServiceCustId={id => this.setServiceCustId(id)}
         />
         {
           (!_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict))
@@ -325,7 +328,7 @@ export default class ServiceImplementation extends PureComponent {
             zhangleApprovalList={zhangleApprovalList}
             testWallCollision={testWallCollision}
             testWallCollisionStatus={testWallCollisionStatus}
-            custName={custName}
+            serviceCustId={serviceCustId}
           /> : null
         }
       </div>

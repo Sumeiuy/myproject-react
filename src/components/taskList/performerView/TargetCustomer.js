@@ -39,7 +39,7 @@ export default class TargetCustomer extends PureComponent {
     filesList: PropTypes.array,
     currentMissionFlowId: PropTypes.string,
     // 获取客户名称
-    getCustName: PropTypes.func.isRequired,
+    getServiceCustId: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -71,9 +71,7 @@ export default class TargetCustomer extends PureComponent {
       subType: '$props.location.query.subType',
     },
   })
-  handleRowClick(e, item) {
-    const { id, missionFlowId } = e;
-    const { custName } = item;
+  handleRowClick({ id, missionFlowId }) {
     const {
       currentId,
       changeParameter,
@@ -89,7 +87,7 @@ export default class TargetCustomer extends PureComponent {
       missionId: currentId,
       missionFlowId,
     });
-    this.props.getCustName(custName);
+    this.props.getServiceCustId(id);
     // 前置请求
     // 因为上传附件需要前置请求一个custUuid
     queryCustUuid();
@@ -110,7 +108,7 @@ export default class TargetCustomer extends PureComponent {
       item={item}
       isFold={isFold}
       currentMissionFlowId={currentMissionFlowId}
-      onClick={e => this.handleRowClick(e, item)}
+      onClick={this.handleRowClick}
     />);
   }
 
