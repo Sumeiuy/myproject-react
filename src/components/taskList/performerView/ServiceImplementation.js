@@ -40,6 +40,8 @@ export default class ServiceImplementation extends PureComponent {
     super(props);
     this.state = {
       list: props.list,
+      // 服务实施客户名称
+      custName: props.list[0].custName,
     };
   }
 
@@ -160,8 +162,14 @@ export default class ServiceImplementation extends PureComponent {
     return false;
   }
 
+  // 点击服务实施设置客户名次
+  @autobind
+  setCustName(custName) {
+    this.setState({ custName });
+  }
+
   render() {
-    const { list } = this.state;
+    const { list, custName } = this.state;
     const {
       currentId,
       dict,
@@ -291,6 +299,7 @@ export default class ServiceImplementation extends PureComponent {
           getCustDetail={getCustDetail}
           getCeFileList={getCeFileList}
           filesList={filesList}
+          getCustName={name => this.setCustName(name)}
         />
         {
           (!_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict))
@@ -316,6 +325,7 @@ export default class ServiceImplementation extends PureComponent {
             zhangleApprovalList={zhangleApprovalList}
             testWallCollision={testWallCollision}
             testWallCollisionStatus={testWallCollisionStatus}
+            custName={custName}
           /> : null
         }
       </div>

@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-04 14:58:24
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-09 21:13:02
  */
 
 import React, { PureComponent } from 'react';
@@ -22,7 +22,7 @@ import {
   returnTaskEntrySource,
 } from '../../../config/createTaskEntry';
 import styles from './taskFormFlowStep.less';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 
 const noop = _.noop;
 const Step = Steps.Step;
@@ -110,6 +110,8 @@ export default class TaskFormFlowStep extends PureComponent {
       canGoNextStep: canGoNextStepFlow,
       needMissionInvestigation: newNeedMissionInvestigation,
       isDisabled,
+      // logable点击下一步的任务名称
+      taskName: '',
     };
   }
 
@@ -274,7 +276,6 @@ export default class TaskFormFlowStep extends PureComponent {
 
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '下一步' } })
   handleNextStep() {
     const { current } = this.state;
     // 下一步
@@ -327,6 +328,18 @@ export default class TaskFormFlowStep extends PureComponent {
             ...taskForm.getFieldsValue(),
           };
           isFormValidate = true;
+          // logable日志---任务信息
+          this.setState({ taskName: values.taskName });
+          logCommon({
+            type: 'Submit',
+            payload: {
+              title: '任务信息',
+              subtype: '来源值',
+              type: custSource,
+              value: JSON.stringify(values),
+              name: values.taskName,
+            },
+          });
         } else {
           isFormValidate = false;
         }
@@ -446,6 +459,30 @@ export default class TaskFormFlowStep extends PureComponent {
           isMissionInvestigationValidate = true;
         }
       }
+      // logable日志---任务评估
+      const { taskName } = this.state;
+      let values = {};
+      if (needMissionInvestigation) {
+        values = {
+          ...resultTrackData,
+          ...missionInvestigationData,
+        };
+      } else {
+        values = {
+          ...resultTrackData,
+        };
+      }
+
+      logCommon({
+        type: 'Submit',
+        payload: {
+          title: '任务评估',
+          subtype: '来源值',
+          type: custSource,
+          value: JSON.stringify(values),
+          name: taskName,
+        },
+      });
     }
 
     if (isFormValidate && isMissionInvestigationValidate && isResultTrackValidate) {
@@ -495,7 +532,6 @@ export default class TaskFormFlowStep extends PureComponent {
 
   // 自建任务提交
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '确认无误，提交' } })
   handleSubmit() {
     const {
       storedCreateTaskData,
@@ -508,6 +544,7 @@ export default class TaskFormFlowStep extends PureComponent {
     const {
       needApproval,
       needMissionInvestigation,
+      custSource,
     } = this.state;
 
     // 获取重新提交任务参数( flowId, eventId );
@@ -633,6 +670,22 @@ export default class TaskFormFlowStep extends PureComponent {
     createTask({
       ...postBody,
       ...flowParam,
+    });
+    // logable日志---确认提交
+    const { taskName: name } = this.state;
+    const values = {
+      ...postBody,
+      ...flowParam,
+    };
+    logCommon({
+      type: 'Submit',
+      payload: {
+        title: '确认提交',
+        subtype: '来源值',
+        type: custSource,
+        value: JSON.stringify(values),
+        name,
+      },
     });
   }
 

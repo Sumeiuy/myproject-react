@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-09 15:15:23
+ * @Last Modified time: 2018-05-09 20:53:48
  */
 
 import React, { PureComponent } from 'react';
@@ -565,9 +565,9 @@ export default class TaskFlow extends PureComponent {
       logCommon({
         type: 'Submit',
         payload: {
-          // path: dva.getLastLocation().pathname,
           title: '目标客户',
           subtype,
+          type: '客户来源',
           value: subtype,
           name: '',
         },
@@ -603,6 +603,7 @@ export default class TaskFlow extends PureComponent {
             payload: {
               title: '任务信息',
               subtype,
+              type: '客户来源',
               value: JSON.stringify(values),
               name: values.taskName,
             },
@@ -719,16 +720,24 @@ export default class TaskFlow extends PureComponent {
       }
 
       // logable日志---任务评估
-      const { subtype, taskName } = this.state;
-      const values = {
-        ...resultTrackData,
-        ...missionInvestigationData,
-      };
+      const { subtype, taskName, needMissionInvestigation } = this.state;
+      let values = {};
+      if (needMissionInvestigation) {
+        values = {
+          ...resultTrackData,
+          ...missionInvestigationData,
+        };
+      } else {
+        values = {
+          ...resultTrackData,
+        };
+      }
       logCommon({
         type: 'Submit',
         payload: {
           title: '任务评估',
           subtype,
+          type: '客户来源',
           value: JSON.stringify(values),
           name: taskName,
         },
@@ -793,7 +802,6 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '确认无误，提交' } })
   handleSubmitTaskFlow() {
     const { storedTaskFlowData, templateId } = this.props;
     const {
@@ -942,6 +950,7 @@ export default class TaskFlow extends PureComponent {
       payload: {
         title: '确认提交',
         subtype,
+        type: '客户来源',
         value: JSON.stringify(values),
         name,
       },
