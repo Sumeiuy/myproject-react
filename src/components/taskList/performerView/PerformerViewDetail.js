@@ -152,8 +152,8 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState = '',
-        selectCustomerRowId = '',
+      targetCustomerState = '',
+      selectCustomerRowId = '',
       },
       changeParameter,
     } = this.props;
@@ -422,9 +422,14 @@ export default class PerformerViewDetail extends PureComponent {
 
   @autobind
   searchCustomer(value) {
-    const { queryCustomer } = this.props;
+    const { queryCustomer, changeParameter, parameter } = this.props;
     // pageSize传1000000，使能够查到足够的数据
     queryCustomer({
+      keyWord: value,
+    });
+    // 保存搜索的关键字，方便在redux里面需要清空的时候，直接调用changeParameter，将关键字清空
+    changeParameter({
+      ...parameter,
       keyWord: value,
     });
   }
@@ -440,6 +445,7 @@ export default class PerformerViewDetail extends PureComponent {
         targetCustomerState = '',
         selectCustomerCustId,
         selectCustomerCustName,
+        keyWord = '',
       },
       customerList,
       answersList,
@@ -529,6 +535,7 @@ export default class PerformerViewDetail extends PureComponent {
                 emitSelectItem={this.selectCustomerItem}
                 emitToSearch={this.searchCustomer}
                 name="任务下客户筛选"
+                defaultSearchValue={keyWord}
               />
             </div>
             <div className={styles.pagination}>
