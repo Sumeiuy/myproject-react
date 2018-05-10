@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-16 15:05:16
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-10 09:51:53
  * @description 客户池头部搜索组件
  */
 
@@ -18,7 +18,6 @@ import { openRctTab } from '../../../utils';
 import { padSightLabelDesc } from '../../../config';
 import Icon from '../../common/Icon';
 import { isSightingScope } from '../helper';
-import { MAIN_MAGEGER_ID } from '../../../routes/customerPool/config';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
@@ -39,7 +38,6 @@ export default class Search extends PureComponent {
     searchHistoryVal: PropTypes.string,
     saveSearchVal: PropTypes.func,
     location: PropTypes.object.isRequired,
-    authority: PropTypes.bool.isRequired,
     isPreview: PropTypes.bool,
   }
 
@@ -79,15 +77,12 @@ export default class Search extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
   handleOpenTab(options) {
-    const { push, location: { query }, authority, orgId } = this.props;
+    const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.props.saveSearchVal({
       searchVal: this.state.value,
     });
-    // 有任务管理岗权限将orgId带到下一个页面,没权限orgId传msm
-    const newOrgId = authority ? orgId : MAIN_MAGEGER_ID;
-    const newQuery = { ...options, orgId: newOrgId };
-    const condition = urlHelper.stringify(newQuery);
+    const condition = urlHelper.stringify(options);
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
@@ -101,7 +96,7 @@ export default class Search extends PureComponent {
       url,
       param,
       pathname: firstUrl,
-      query: newQuery,
+      query: options,
       // 方便返回页面时，记住首页的query，在本地环境里
       state: {
         ...query,

@@ -347,7 +347,7 @@ export default class CreateContactModal extends PureComponent {
         {
           (!_.isEmpty(mainContactInfo.cellInfo) || personalContactInfo.mainTelInfo.type !== 'none') &&
           <Phone
-            onClick={this.handlePhoneConnected}
+            onConnected={this.handlePhoneConnected}
             onEnd={this.handlePhoneEnd}
             number={custType === 'per' ?
               personalContactInfo.mainTelInfo.value :

@@ -2,7 +2,7 @@
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-08 17:05:48
+ * @Last Modified time: 2018-05-10 10:47:51
  */
 
 import React, { PureComponent } from 'react';
@@ -439,7 +439,7 @@ export default class Home extends PureComponent {
     // 无权限取 MAIN_MAGEGER_ID
     let curOrgId = this.orgId;
     // curCycleSelect  时间周期，先从url中取值，url中没有值时，取时间周期第一个
-    const curCycleSelect = cycleSelect || (_.isArray(cycle) ? cycle[0] : {}).key;
+    const curCycleSelect = cycleSelect || (_.isArray(cycle) ? (cycle[0] || {}) : {}).key;
     if (orgId) {
       curOrgId = orgId;
     } else if (!this.hasIndexViewPermission) {
@@ -477,7 +477,6 @@ export default class Home extends PureComponent {
       initBoradcastList,
       initBoradcastFile,
       queryAudioFile,
-      custRange,
     } = this.props;
     // 是否能看投顾绩效的标记
     const { tgQyFlag = false } = empInfo.empInfo || {};
@@ -496,15 +495,12 @@ export default class Home extends PureComponent {
               searchHistoryVal={searchHistoryVal}
               saveSearchVal={this.handleSaveSearchVal}
               location={location}
-              authority={this.hasTkMampPermission}
             />
             <ToBeDone
               location={location}
               push={push}
               data={process}
               motTaskCountData={motTaskCount}
-              authority={this.hasTkMampPermission}
-              custRange={custRange}
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}

@@ -25,6 +25,8 @@ import {
   ENTER_TYPE,
   ALL_DEPARTMENT_ID,
   MAIN_MAGEGER_ID,
+  ENTERLIST1,
+  ENTERLIST2,
 } from './config';
 
 import styles from './customerlist.less';
@@ -236,6 +238,13 @@ export default class CustomerList extends PureComponent {
       // 初始化没有loading
       isLoadingEnd: true,
     };
+    // 用户默认岗位orgId
+    this.orgId = emp.getOrgId();
+    // 用户工号
+    this.empId = emp.getId();
+    // 判断当前登录用户是否在非营业部（公司或经总）
+    this.isNotSaleDepartment = emp.isManagementHeadquarters(this.orgId)
+      || emp.isFiliale(this.props.custRange, this.orgId);
     // HTSC 首页指标查询
     this.hasIndexViewPermission = permission.hasIndexViewPermission();
     // HTSC 任务管理岗
@@ -420,18 +429,28 @@ export default class CustomerList extends PureComponent {
 
   // 获取 客户列表接口的orgId入参的值
   getPostOrgId(query = {}) {
-    /* 来自理财平台首页 */
     // 服务营业部筛选字段departmentOrgId有值且不等于all
     if (query.departmentOrgId) {
       return query.departmentOrgId !== ALL_DEPARTMENT_ID ? query.departmentOrgId : '';
     }
-    // 来自非理财平台
-    if (query.source === 'external') {
-      return this.hasTkMampPermission ? emp.getOrgId() : '';
+    // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
+    if (_.includes(ENTERLIST1, query.source)) {
+      return this.hasTkMampPermission ? this.orgId : '';
     }
-    // 没有 任务管理权限从首页搜索、联想词、热词、潜在业务 或绩效指标的客户范围为 我的客户 下钻到客户列表页
-    if (query.orgId) {
-      return query.orgId !== MAIN_MAGEGER_ID ? query.orgId : '';
+    // 从首页潜在业务客户过来
+    if (query.source === 'business') {
+      // 营业部登录用户只能看名下客户
+      // 非营业部登录用户有权限时
+      if (this.isNotSaleDepartment && this.hasTkMampPermission) {
+        return this.orgId;
+      }
+    }
+    // 首页新增客户和业务开通进来的
+    if (_.includes(ENTERLIST2, query.source)) {
+      if (query.orgId) {
+        return query.orgId !== MAIN_MAGEGER_ID ? query.orgId : '';
+      }
+      return this.hasIndexViewPermission ? this.orgId : '';
     }
     /**
      * url中存在了orgId等于all,
@@ -444,29 +463,38 @@ export default class CustomerList extends PureComponent {
 
   // 获取 客户列表接口的ptyMngId入参的值
   getPostPtyMngId(query = {}) {
-    /* 来自理财平台 */
     // url中存在ptyMng，取id
     if (query.ptyMngId) {
       return query.ptyMngId;
     }
-    // 来自非理财平台
-    if (query.source === 'external') {
-      return this.hasTkMampPermission ? '' : emp.getId();
+    // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
+    if (_.includes(ENTERLIST1, query.source)) {
+      return this.hasTkMampPermission ? '' : this.empId;
     }
-    // 没有 任务管理权限从首页搜索、联想词、热词、潜在业务 或绩效指标的客户范围为 我的客户 下钻到客户列表页
-    if (query.orgId === MAIN_MAGEGER_ID) {
-      return emp.getId();
+    // 从首页潜在业务客户过来
+    if (query.source === 'business') {
+      // 没有权限时或营业部登录用户只能看名下客户
+      if (!(this.isNotSaleDepartment && this.hasTkMampPermission)) {
+        return this.empId;
+      }
+    }
+    // 首页新增客户和业务开通进来的
+    if (_.includes(ENTERLIST2, query.source)) {
+      if (!this.hasIndexViewPermission ||
+        (query.orgId && query.orgId === MAIN_MAGEGER_ID)) {
+        return this.empId;
+      }
     }
     return '';
   }
 
   // 获取 客户列表接口的custType入参的值
   getPostCustType(query = {}) {
-    if (query.departmentOrgId) {
-      return query.departmentOrgId === ALL_DEPARTMENT_ID ? CUST_MANAGER : ORG;
+    if (query.departmentOrgId && query.departmentOrgId === ALL_DEPARTMENT_ID) {
+      return CUST_MANAGER;
     }
-    // 首页从客户范围组件中我的客户进入客户列表页面custType=1
-    if (query.orgId === MAIN_MAGEGER_ID) {
+    if (!this.hasIndexViewPermission ||
+      (query.orgId && query.orgId === MAIN_MAGEGER_ID)) {
       return CUST_MANAGER;
     }
     return ORG;
@@ -738,6 +766,7 @@ export default class CustomerList extends PureComponent {
           queryHoldingProduct={queryHoldingProduct}
           holdingProducts={holdingProducts}
           queryHoldingProductReqState={interfaceState[effects.queryHoldingProduct]}
+          isNotSaleDepartment={this.isNotSaleDepartment}
         />
       </div>
     );

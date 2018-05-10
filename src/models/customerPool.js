@@ -404,6 +404,11 @@ export default {
         type: 'getCustContactSuccess',
         payload: { resultData, custId },
       });
+      // 唤起电话联系弹窗时，获取自建任务平台的服务类型、任务反馈字典，为打电话做准备
+      yield put({
+        type: 'app/getMotCustfeedBackDict',
+        payload: { pageNum: 1, pageSize: 10000, type: 2 },
+      });
     },
     * getCustEmail({ payload }, { call, put, select }) {
       const custEmailData = yield select(state => state.customerPool.custContactData);
