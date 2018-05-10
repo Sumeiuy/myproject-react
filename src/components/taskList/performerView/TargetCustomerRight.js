@@ -202,18 +202,29 @@ export default class TargetCustomerRight extends PureComponent {
     );
     const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}。`;
     let payload = {
+      // 任务流水id
       missionFlowId: currentMissionFlowId,
+      // 任务id
       missionId: currentId,
+      // 经济客户号
       custId,
+      // 服务方式
       serveWay: 'HTSC Phone',
+      // 任务类型，1：MOT  2：自建
       taskType: '2',
+      // 服务状态
       flowStatus: '30',
+      // 同serveType
       type: firstServiceTypeKey,
+      // 服务类型，即任务类型
       serveType: firstServiceTypeKey,
       // 客户反馈一级
       serveCustFeedBack: firstFeedback.key,
+      // 服务记录内容
       serveContentDesc: serviceContentDesc,
+      // 服务时间
       serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
+      // 反馈时间
       feedBackTime: moment().format('YYYY-MM-DD'),
     };
     // 客户反馈的二级

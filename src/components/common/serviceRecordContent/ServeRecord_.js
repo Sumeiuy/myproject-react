@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-08 12:59:39
+ * @Last Modified time: 2018-05-10 22:00:01
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -33,8 +33,8 @@ export default function ServeRecord(props) {
       <FormItem {...serviceContentErrorProps}>
         <div className={styles.content}>
           {
-            caller === PHONE &&
-            <p className={styles.yuyintishi}>{serveContentDesc}</p>
+            caller === PHONE
+            && <p className={styles.yuyintishi}>{serveContentDesc}</p>
           }
           <TextArea
             rows={5}
@@ -42,8 +42,8 @@ export default function ServeRecord(props) {
             onChange={onChange}
           />
           {
-            caller === PHONE &&
-            <p className={styles.wenxin}>
+            caller === PHONE
+            && <p className={styles.wenxin}>
               <Icon type="wenxintishi" className={styles.wenxinIcon} />
               温馨提醒：请写下您和客户的沟通记录
             </p>

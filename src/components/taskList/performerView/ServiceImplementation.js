@@ -16,6 +16,8 @@ import { POSTCOMPLETED_CODE } from '../../../routes/taskList/config';
 import { flow, task } from './config';
 import { serveWay as serveWayUtil } from './config/code';
 
+const PHONE = 'phone';
+
 /**
  * 将数组对象中的id和name转成对应的key和value
  * @param {*} arr 原数组
@@ -83,7 +85,7 @@ export default class ServiceImplementation extends PureComponent {
     const addServiceRecord = hasLoading ? addServeRecord : addServeRecordOfPhone;
     // 打电话生成服务记录后，再去添加服务记录走的是更新过程，需要传自动生成的那条服务记录的id,
     // 服务状态为完成，code=30
-    const payload = (caller === 'phone' && currentMissionFlowId === missionFlowId && hasLoading) ?
+    const payload = (caller === PHONE && currentMissionFlowId === missionFlowId && hasLoading) ?
       { ...postBody, id, flowStatus, serveTime, serveWay } : postBody;
     // 此处需要针对涨乐财富通服务方式特殊处理
     // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
@@ -91,6 +93,7 @@ export default class ServiceImplementation extends PureComponent {
     addServiceRecord(_.omit(payload), ['zlApprovalCode'])
     .then(() => {
       const { currentMotServiceRecord } = this.props;
+      // 服务记录添加未成功时，后端返回failure
       if (!_.isEmpty(currentMotServiceRecord.id) && currentMotServiceRecord.id !== 'failure') {
         // 服务记录添加成功后重新加载当前目标客户的详细信息
         reloadTargetCustInfo(() => {
@@ -307,7 +310,7 @@ export default class ServiceImplementation extends PureComponent {
     // TODO 新需求需要针对涨乐财富通的服务方式来判断状态是否可读
     // 涨乐财富通服务方式下，只有审批中和已完成状态，才属于只读状态
     let isReadOnly;
-    if (serviceRecordInfo.caller === 'phone') {
+    if (serviceRecordInfo.caller === PHONE) {
       // 打电话调用时，服务记录表单可编辑
       isReadOnly = false;
     } else {

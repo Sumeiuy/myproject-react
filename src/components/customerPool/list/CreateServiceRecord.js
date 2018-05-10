@@ -43,6 +43,8 @@ const TASK_TYPE_CODES = {
   SELF_TASK: '1', // 表示自建任务
 };
 
+const PHONE = 'phone';
+
 export default class CreateServiceRecord extends PureComponent {
 
   static propTypes = {
@@ -81,7 +83,7 @@ export default class CreateServiceRecord extends PureComponent {
     const {
       currentCommonServiceRecord: { id },
     } = nextProps;
-    // 添加成功
+    // 添加未成功时，后端返回failure
     if (loading && !nextProps.loading && !_.isEmpty(id) && id !== 'failure') {
       // 提交成功后，刷新360视图中的服务记录iframe
       const iframe = document.querySelector(fspContainer.view360Iframe);
@@ -115,7 +117,8 @@ export default class CreateServiceRecord extends PureComponent {
     } = this.props;
     const { serveContentDesc = '', serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
     let payload = { ...data, custId };
-    if (caller === 'phone' && !_.isEmpty(id) && id !== 'failure') {
+    // 打电话成功后，服务记录添加未成功时，后端返回failure
+    if (caller === PHONE && !_.isEmpty(id) && id !== 'failure') {
       payload = {
         ...payload,
         id,
@@ -153,7 +156,7 @@ export default class CreateServiceRecord extends PureComponent {
     // 手动上传日志
     handleCloseClick();
     // 打电话调起的弹窗，不能直接手动关闭弹窗，只能提交服务记录进行关闭
-    if (caller !== 'phone') {
+    if (caller !== PHONE) {
       onToggleServiceRecordModal(false);
     }
   }

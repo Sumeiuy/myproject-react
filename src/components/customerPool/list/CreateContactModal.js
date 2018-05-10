@@ -279,17 +279,25 @@ export default class CreateContactModal extends PureComponent {
     );
     const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}。`;
     let payload = {
+      // 经济客户号
       custId: currentCustId,
+      // 服务方式
       serveWay: 'HTSC Phone',
-      taskType: '2',
+      // 任务类型，1：MOT  2：自建
+      taskType: '1',
+      // 同serveType
       type: firstServiceTypeKey,
       // 服务类型
       serveType: firstServiceTypeKey,
       // 客户反馈一级
       serveCustFeedBack: firstFeedback.key,
+      // 服务记录内容
       serveContentDesc: serviceContentDesc,
+      // 服务时间
       serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
+      // 反馈时间
       feedBackTime: moment().format('YYYY-MM-DD'),
+      // 添加成功后需要显示message提示
       noHints: true,
     };
     // 客户反馈的二级

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 19:20:09
+ * @Last Modified time: 2018-05-10 22:01:54
  */
 
 import React, { PureComponent } from 'react';
@@ -54,6 +54,9 @@ const dateCommonProps = {
 
 // 查询涨乐财富通的审批人需要的btnId固定值
 const ZL_QUREY_APPROVAL_BTN_ID = '200000';
+
+// 服务记录内容最大长度
+const serviceContentMaxLength = 1000;
 
 export default class ServiceRecordContent extends PureComponent {
   constructor(props) {
@@ -352,7 +355,7 @@ export default class ServiceRecordContent extends PureComponent {
     let isShowServeStatusError = false;
     let isShowServiceContentError = false;
     // 校验服务记录
-    isShowServiceContentError = !serviceRecord || serviceRecord.length > 1000;
+    isShowServiceContentError = !serviceRecord || serviceRecord.length > serviceContentMaxLength;
     this.setState({ isShowServiceContentError });
     // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容
     if (caller === PHONE) {
@@ -641,7 +644,7 @@ export default class ServiceRecordContent extends PureComponent {
     const value = e.target.value;
     this.setState({
       serviceRecord: value,
-      isShowServiceContentError: _.isEmpty(value) || value.length > 1000,
+      isShowServiceContentError: _.isEmpty(value) || value.length > serviceContentMaxLength,
     });
   }
 

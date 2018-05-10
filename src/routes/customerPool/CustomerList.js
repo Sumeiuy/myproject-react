@@ -481,8 +481,8 @@ export default class CustomerList extends PureComponent {
     }
     // 首页新增客户和业务开通进来的
     if (_.includes(ENTERLIST2, query.source)) {
-      if (!this.hasIndexViewPermission ||
-        (query.orgId && query.orgId === MAIN_MAGEGER_ID)) {
+      if (!this.hasIndexViewPermission
+        || (query.orgId && query.orgId === MAIN_MAGEGER_ID)) {
         return this.empId;
       }
     }
@@ -494,8 +494,8 @@ export default class CustomerList extends PureComponent {
     if (query.departmentOrgId && query.departmentOrgId === ALL_DEPARTMENT_ID) {
       return CUST_MANAGER;
     }
-    if (!this.hasIndexViewPermission ||
-      (query.orgId && query.orgId === MAIN_MAGEGER_ID)) {
+    if (!this.hasIndexViewPermission
+      || (query.orgId && query.orgId === MAIN_MAGEGER_ID)) {
       return CUST_MANAGER;
     }
     return ORG;

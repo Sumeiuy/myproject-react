@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-03 14:35:21
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 19:52:59
+ * @Last Modified time: 2018-05-10 21:56:05
  */
 
 import React, { PureComponent } from 'react';
@@ -12,8 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Popover } from 'antd';
 import { fspContainer } from '../../../config';
-import Phone from '../phone';
-
+import ContactGroup from './ContactGroup';
 import styles from './contactInfoPopover.less';
 
 // 联系方式分组对应的中文显示名称
@@ -34,28 +33,26 @@ const ORG_CODE = 'org';
  * {cellphones: [{mainFlag: false}, {mainFlag: true}]}
  * 转成 [ key: 'cellphones', value: [{mainFlag: true}, {mainFlag: false}] ]
  */
-function headMainContact(list) {
+function headMainContact(object) {
   const newList = [];
-  Object.keys(list).forEach((item) => {
-    const mainContact = _.filter(list[item], object => object.mainFlag);
-    const notMainContact = _.filter(list[item], object => !object.mainFlag);
+  Object.keys(object).forEach((key) => {
+    const mainContact = _.filter(object[key], item => item.mainFlag);
+    const notMainContact = _.filter(object[key], item => !item.mainFlag);
     if (_.isEmpty(mainContact)) {
-      newList.push({ key: item, value: notMainContact });
+      newList.push({ key, value: notMainContact });
     } else {
-      newList.unshift({ key: item, value: [...mainContact, ...notMainContact] });
+      newList.unshift({ key, value: [...mainContact, ...notMainContact] });
     }
   });
   return newList;
 }
 
 /**
- * 机构客户： 主联系人提至第一个
+ * 机构客户： 联系人列表中的主联系人提至最上方
  * @param {*} list
  */
 function headMainLinkman(list) {
-  const mainLinkman = _.filter(list, object => object.mainFlag);
-  const notMainLinkman = _.filter(list, object => !object.mainFlag);
-  return [...mainLinkman, ...notMainLinkman];
+  return _.sortBy(list, item => !item.flag);
 }
 
 
@@ -65,7 +62,6 @@ export default class ContactInfoPopover extends PureComponent {
     custType: PropTypes.string.isRequired,
     personalContactInfo: PropTypes.object,
     orgCustomerContactInfoList: PropTypes.array,
-    onClick: PropTypes.func,
     handlePhoneConnected: PropTypes.func,
     handlePhoneEnd: PropTypes.func,
     disablePhone: PropTypes.bool,
@@ -79,7 +75,6 @@ export default class ContactInfoPopover extends PureComponent {
   static defaultProps = {
     personalContactInfo: {},
     orgCustomerContactInfoList: [],
-    onClick: _.noop,
     handlePhoneEnd: _.noop,
     handlePhoneConnected: _.noop,
     disablePhone: true,
@@ -89,54 +84,6 @@ export default class ContactInfoPopover extends PureComponent {
 
   getPopupContainer() {
     return document.querySelector(fspContainer.container) || document.body;
-  }
-
-  /**
-   * 生成悬浮层的联系方式组
-   * @param {*} groupTitle   组名称
-   * @param {*} telList   组内的联系方式列表
-   * @param {*} label   组内的联系方式对应的标签
-   */
-  @autobind
-  generateContactsGroup({ groupTitle = '', telList = [], mainFlag = false }) {
-    if (_.isEmpty(telList)) {
-      return null;
-    }
-    const { onClick, disablePhone, custType, handlePhoneConnected, handlePhoneEnd } = this.props;
-    const newList = [{}, ...telList];
-    return (
-      <ul key={groupTitle}>
-        {
-          _.map(newList, (item, index) => {
-            if (index === 0) {
-              return (<li className={styles.title} key={groupTitle} >
-                {groupTitle}
-                {mainFlag && <span className={styles.primary}>主</span>}
-              </li>);
-            }
-            return (
-              <li key={item.rowId} >
-                {item.label && <span className={styles.label}>{item.label}</span>}
-                <span className={styles.content} onClick={onClick}>
-                  <Phone
-                    onConnected={handlePhoneConnected}
-                    onEnd={handlePhoneEnd}
-                    number={'18751964883'}
-                    custType={custType}
-                    disable={disablePhone}
-                  />
-                </span>
-                {
-                  custType === PER_CODE &&
-                  item.mainFlag &&
-                  <span className={styles.primary}>主</span>
-                }
-              </li>
-            );
-          })
-        }
-      </ul>
-    );
   }
 
   /**
@@ -190,16 +137,18 @@ export default class ContactInfoPopover extends PureComponent {
       { ...item, label: DISPLAY_NAME_TEL.otherTels }
     ));
     const telList = [...newWorkTels, ...newHomeTels, ...newCellPhones, ...newOtherTels];
+    const props = {
+      groupTitle,
+      telList,
+      mainFlag,
+    };
     return (
       <div key={rowId}>
         <ul key={groupTitle}>
-          {
-            this.generateContactsGroup({
-              groupTitle,
-              telList,
-              mainFlag,
-            })
-          }
+          <ContactGroup
+            {...this.props}
+            {...props}
+          />
         </ul>
       </div>
     );
@@ -221,11 +170,11 @@ export default class ContactInfoPopover extends PureComponent {
       return (
         <div className={styles.popoverLayer}>
           {
-            _.map(list, item =>
-              this.generateContactsGroup({
-                groupTitle: DISPLAY_NAME_TEL[item.key],
-                telList: item.value,
-              }),
+            _.map(list, item => (<ContactGroup
+              {...this.props}
+              groupTitle={DISPLAY_NAME_TEL[item.key]}
+              telList={item.value}
+            />),
             )
           }
         </div>
