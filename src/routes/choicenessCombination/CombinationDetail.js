@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-09 15:37:12
+ * @Last Modified time: 2018-05-10 14:35:48
  */
 
 import React, { PureComponent } from 'react';
@@ -359,11 +359,18 @@ export default class CombinationDetail extends PureComponent {
         <div className={styles.floor}>
           <HistoryReport
             data={reportHistoryData}
+            showModal={this.showModal}
+            openReportDetail={this.openReportDetail}
           />
-          <OrderingCustomer
-            data={orderCustData}
-            pageChange={this.handleOrderCustPageChange}
-          />
+          {
+            hasTkMampPermission ?
+              null
+              :
+              <OrderingCustomer
+                data={orderCustData}
+                pageChange={this.handleOrderCustPageChange}
+              />
+          }
         </div>
         {
           visible

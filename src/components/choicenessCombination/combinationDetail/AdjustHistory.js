@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情-组合调仓组件
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-09 13:49:31
+ * @Last Modified time: 2018-05-10 14:38:07
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -15,12 +15,6 @@ import config from '../config';
 import { time } from '../../../helper';
 import styles from './adjustHistory.less';
 
-// const titleStyle = {
-//   fontSize: '16px',
-// };
-
-// const { directionRange } = config;
-// const directionArray = _.filter(directionRange, o => o.value);
 // securityType 里股票对应的值
 const STOCK_CODE = config.securityType[0].value;
 const directionRange = config.directionRange;
@@ -41,7 +35,7 @@ export default class AdjustHistory extends PureComponent {
 
   @autobind
   getHistoryList(list) {
-    return list.map((item) => {
+    return list.map((item, index) => {
       const directList = _.filter(directionRange, v => item.directionCode === Number(v.value))
         || EMPTY_LIST;
       const iconText = (directList[0] || EMPTY_OBJECT).icon;
@@ -50,7 +44,8 @@ export default class AdjustHistory extends PureComponent {
         clearfix: true,
         [styles.in]: item.directionCode === directionRange[1].value,
       });
-      return (<div className={itemClass} key={`${item.time}`}>
+      const key = `${index}${item.securityCode}`;
+      return (<div className={itemClass} key={key}>
         <div className={styles.icon}>
           {iconText}
         </div>
@@ -66,7 +61,7 @@ export default class AdjustHistory extends PureComponent {
             </span>
             <span className={styles.time}>{time.format(item.time, config.formatStr)}</span>
             <span className={styles.const}>{item.price}</span>
-            <span className={styles.change}>0.00% -&gt; 12.65%</span>
+            <span className={styles.change}>{item.change || '持仓变化：暂无'}</span>
           </div>
           {
             this.renderPopover(item.reason)

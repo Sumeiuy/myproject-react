@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情-历史报告
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-09 15:29:18
+ * @Last Modified time: 2018-05-10 14:35:32
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,12 +13,6 @@ import { Popover, Table } from 'antd';
 import config from '../config';
 import styles from './historyReport.less';
 
-// const { directionRange } = config;
-// const directionArray = _.filter(directionRange, o => o.value);
-// securityType 里股票对应的值
-// const STOCK_CODE = config.securityType[0].value;
-// 持仓历史
-// const HISTORY_TYPE = config.typeList[0];
 const EMPTY_LIST = [];
 const titleList = config.titleList.historyReport;
 export default class HistoryReport extends PureComponent {
