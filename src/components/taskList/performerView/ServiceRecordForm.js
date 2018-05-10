@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-10 13:07:10
+ * @Last Modified time: 2018-05-10 14:55:26
  * 服务记录表单
  */
 
@@ -36,6 +36,7 @@ export default class ServiceRecordForm extends PureComponent {
 
     // 添加服务记录
     this.props.addServeRecord(data, this.handleCancel);
+
     // log日志 --- 添加服务记录
     // 服务类型
     const { serveType } = data;

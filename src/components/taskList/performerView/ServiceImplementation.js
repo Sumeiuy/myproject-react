@@ -58,41 +58,6 @@ export default class ServiceImplementation extends PureComponent {
     }
   }
 
-  @autobind
-  addServiceRecord(postBody, callback) {
-    const {
-      addServeRecord,
-      reloadTargetCustInfo,
-      queryCustUuid,
-      modifyLocalTaskList,
-      currentId,
-      getTaskDetailBasicInfo,
-    } = this.props;
-    // 此处需要针对涨乐财富通服务方式特殊处理
-    // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
-    // 执行提交服务记录的接口
-    addServeRecord(_.omit(postBody), ['zlApprovalCode'])
-      .then(() => {
-        if (this.props.addMotServeRecordSuccess) {
-          // 服务记录添加成功后重新加载当前目标客户的详细信息
-          reloadTargetCustInfo(() => {
-            this.updateList(postBody, callback);
-            // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载基本信息
-            if (postBody.flowStatus === POSTCOMPLETED_CODE) {
-              // 重新加载基本信息,不清除服务实施客户列表中当前选中客户状态信息和筛选值、页码
-              getTaskDetailBasicInfo({ taskId: currentId, isClear: false });
-              // 更新新左侧列表
-              modifyLocalTaskList({ missionId: currentId });
-            }
-          });
-          // 添加服务记录成功之后，重新获取custUuid
-          queryCustUuid();
-          // this.updateList(postBody);
-          message.success('添加服务记录成功');
-        }
-      });
-  }
-
   // 更新组件state的list信息
   @autobind
   updateList({ missionFlowId, flowStatus, zlApprovalCode, serveWay }, callback = _.noop) {
@@ -167,6 +132,41 @@ export default class ServiceImplementation extends PureComponent {
   @autobind
   setServiceCustId(custId) {
     this.serviceCustId = custId;
+  }
+
+  @autobind
+  addServiceRecord(postBody, callback) {
+    const {
+      addServeRecord,
+      reloadTargetCustInfo,
+      queryCustUuid,
+      modifyLocalTaskList,
+      currentId,
+      getTaskDetailBasicInfo,
+    } = this.props;
+    // 此处需要针对涨乐财富通服务方式特殊处理
+    // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
+    // 执行提交服务记录的接口
+    addServeRecord(_.omit(postBody), ['zlApprovalCode'])
+      .then(() => {
+        if (this.props.addMotServeRecordSuccess) {
+          // 服务记录添加成功后重新加载当前目标客户的详细信息
+          reloadTargetCustInfo(() => {
+            this.updateList(postBody, callback);
+            // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载基本信息
+            if (postBody.flowStatus === POSTCOMPLETED_CODE) {
+              // 重新加载基本信息,不清除服务实施客户列表中当前选中客户状态信息和筛选值、页码
+              getTaskDetailBasicInfo({ taskId: currentId, isClear: false });
+              // 更新新左侧列表
+              modifyLocalTaskList({ missionId: currentId });
+            }
+          });
+          // 添加服务记录成功之后，重新获取custUuid
+          queryCustUuid();
+          // this.updateList(postBody);
+          message.success('添加服务记录成功');
+        }
+      });
   }
 
   render() {
@@ -271,7 +271,6 @@ export default class ServiceImplementation extends PureComponent {
       taskTypeCode,
       serviceTypeCode,
     };
-    console.warn('serviceCustId', serviceCustId);
 
     // 判断当前任务状态是结果跟踪或者完成状态，则为只读
     // 判断任务流水客户状态，处理中 和 未开始， 则为可编辑
