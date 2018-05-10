@@ -1,8 +1,8 @@
 /*
  * @Author: xuwenkang
  * @Date: 2017-09-21 13:39:44
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-14 20:15:15
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-10 16:56:46
  * 由于antd-Dropdown组件中直接放输入类组件，setState时会导致在ie下输入框失去焦点，所以单独提出来；
  */
 
@@ -18,32 +18,42 @@ const Search = Input.Search;
 export default class Test extends PureComponent {
   static propTypes = {
     // 默认搜索框值
-    defaultValue: PropTypes.string,
+    searchValue: PropTypes.string,
     onChange: PropTypes.func,
   }
 
   static defaultProps = {
-    defaultValue: '',
-    onChange: () => {},
+    searchValue: '',
+    onChange: () => { },
+  }
+
+  // 取代componentWillReceiveProps
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.searchValue !== prevState.searchValue) {
+      return {
+        searchValue: nextProps.searchValue,
+      };
+    }
+    return null;
   }
 
   constructor(props) {
     super(props);
     this.state = {
       // 查询信息
-      value: props.defaultValue,
+      searchValue: props.searchValue,
     };
   }
 
   @autobind
   getValue() {
-    return this.state.value;
+    return this.state.searchValue;
   }
 
   @autobind
   handleChangeSearchValue(e) {
     this.setState({
-      value: _.trim(e.target.value),
+      searchValue: _.trim(e.target.value),
     });
     this.props.onChange(e.target.value);
   }
@@ -51,17 +61,17 @@ export default class Test extends PureComponent {
   @autobind
   clearValue() {
     this.setState({
-      value: '',
+      searchValue: '',
     });
   }
 
   render() {
-    const props = _.omit(this.props, ['handleChange']);
+    const props = _.omit(this.props, ['handleChange', 'searchValue']);
     return (
       <div>
         <Search
           {...props}
-          value={this.state.value}
+          value={this.state.searchValue}
           onChange={this.handleChangeSearchValue}
         />
       </div>

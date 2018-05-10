@@ -451,7 +451,6 @@ export default class PerformerViewDetail extends PureComponent {
       answersList,
       currentId,
       form,
-
     } = this.props;
     const { visible, keyIndex, isDisabled, isShowErrorCheckbox } = this.state;
     const { list, page } = targetCustList;
