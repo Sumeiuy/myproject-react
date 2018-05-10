@@ -17,7 +17,7 @@ import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { padSightLabelDesc } from '../../../config';
 import Icon from '../../common/Icon';
-import { isSightingScope } from '../helper';
+import { isSightingScope, getFilter } from '../helper';
 import { MAIN_MAGEGER_ID } from '../../../routes/customerPool/config';
 import styles from './search.less';
 
@@ -87,6 +87,7 @@ export default class Search extends PureComponent {
     // 有任务管理岗权限将orgId带到下一个页面,没权限orgId传msm
     const newOrgId = authority ? orgId : MAIN_MAGEGER_ID;
     const newQuery = { ...options, orgId: newOrgId };
+    newQuery.filters = getFilter(newQuery);
     const condition = urlHelper.stringify(newQuery);
     const url = `${firstUrl}?${condition}`;
     const param = {

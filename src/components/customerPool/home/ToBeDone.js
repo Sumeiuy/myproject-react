@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { getFilter } from '../helper';
 import { emp } from '../../../helper';
 
 import styles from './toBeDone.less';
@@ -114,9 +115,12 @@ export default class PerformanceIndicators extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      url: `${url}?source=business&orgId=${authOrgId}`,
+      url: `${url}?source=business&orgId=${authOrgId}&filters=${getFilter(data)}`,
       pathname: url,
-      query: data,
+      query: {
+        ...data,
+        filters: getFilter(data),
+      },
       param,
       state: {
         ...query,
