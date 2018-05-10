@@ -42,6 +42,8 @@ const config = {
     'Click',
     // 手动发送页面浏览
     '$pageview',
+    // 表单提交
+    'Submit',
   ],
   eventPropertyMap: {
     // 页面pv
