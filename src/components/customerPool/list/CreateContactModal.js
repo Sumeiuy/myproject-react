@@ -14,7 +14,7 @@ import Icon from '../../common/Icon';
 import Collapse from './CreateCollapse';
 import { check, date } from '../../../helper';
 import logable from '../../../decorators/logable';
-import ContactInfoPopover from './ContactInfoPopover';
+import ContactInfoPopover from '../../common/contactInfoPopover/ContactInfoPopover';
 import Phone from '../../common/phone';
 
 import styles from './createContactModal.less';
@@ -277,7 +277,7 @@ export default class CreateContactModal extends PureComponent {
       this.phoneStartTime.valueOf(),
       this.phoneEndTime.valueOf(),
     );
-    const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}`;
+    const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}。`;
     let payload = {
       custId: currentCustId,
       serveWay: 'HTSC Phone',
@@ -464,9 +464,7 @@ export default class CreateContactModal extends PureComponent {
         }
       }
     }
-
-    // const columns = this.constructTableColumns();
-    // const newDataSource = this.constructTableDatas(otherContactInfo);
+    console.log('personalContactInfo.otherTelInfo, orgCustomerContactInfoList', personalContactInfo.otherTelInfo, orgCustomerContactInfoList);
     return (
       <Modal
         wrapClassName={styles.contactModal}
@@ -503,7 +501,12 @@ export default class CreateContactModal extends PureComponent {
                 handlePhoneEnd={this.handlePhoneEnd}
                 handlePhoneConnected={this.handlePhoneConnected}
                 disablePhone={false}
-              />
+              >
+                <div className={styles.moreLinkman}>
+                  <Icon type="lianxifangshi" className={styles.phoneIcon} />
+                  <span className={styles.phoneText}>更多联系人</span>
+                </div>
+              </ContactInfoPopover>
             }
           </div>
         </div>

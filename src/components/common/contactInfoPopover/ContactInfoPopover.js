@@ -2,8 +2,8 @@
  * @Description: 客户列表联系方式弹窗中更多联系方式的悬浮层内容
  * @Author: WangJunjun
  * @Date: 2018-05-03 14:35:21
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-05-03 14:40:11
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-10 18:45:38
  */
 
 import React, { PureComponent } from 'react';
@@ -12,8 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Popover } from 'antd';
 import { fspContainer } from '../../../config';
-import Icon from '../../common/Icon';
-import Phone from '../../common/phone';
+import Phone from '../phone';
 
 import styles from './contactInfoPopover.less';
 
@@ -24,6 +23,11 @@ const DISPLAY_NAME_TEL = {
   cellPhones: '移动电话',
   otherTels: '其他电话',
 };
+
+// 个人对应的code码
+const PER_CODE = 'per';
+// 一般机构对应的code码
+const ORG_CODE = 'org';
 
 /**
  * 个人客户：将联系方式列表中的主要电话提至第一个显示
@@ -65,6 +69,11 @@ export default class ContactInfoPopover extends PureComponent {
     handlePhoneConnected: PropTypes.func,
     handlePhoneEnd: PropTypes.func,
     disablePhone: PropTypes.bool,
+    placement: PropTypes.string,
+    children: PropTypes.oneOfType([
+      PropTypes.node,
+      PropTypes.string,
+    ]),
   };
 
   static defaultProps = {
@@ -74,6 +83,8 @@ export default class ContactInfoPopover extends PureComponent {
     handlePhoneEnd: _.noop,
     handlePhoneConnected: _.noop,
     disablePhone: true,
+    placement: 'bottomRight',
+    children: '',
   };
 
   getPopupContainer() {
@@ -87,7 +98,7 @@ export default class ContactInfoPopover extends PureComponent {
    * @param {*} label   组内的联系方式对应的标签
    */
   @autobind
-  generateContactsGroup({ groupTitle, telList, label = '' }) {
+  generateContactsGroup({ groupTitle = '', telList = [], mainFlag = false }) {
     if (_.isEmpty(telList)) {
       return null;
     }
@@ -98,11 +109,14 @@ export default class ContactInfoPopover extends PureComponent {
         {
           _.map(newList, (item, index) => {
             if (index === 0) {
-              return <li className={styles.title} key={groupTitle} >{groupTitle}</li>;
+              return (<li className={styles.title} key={groupTitle} >
+                {groupTitle}
+                {mainFlag && <span className={styles.primary}>主</span>}
+              </li>);
             }
             return (
               <li key={item.rowId} >
-                {label && <span className={styles.label}>{label}</span>}
+                {item.label && <span className={styles.label}>{item.label}</span>}
                 <span className={styles.content} onClick={onClick}>
                   <Phone
                     onConnected={handlePhoneConnected}
@@ -112,7 +126,11 @@ export default class ContactInfoPopover extends PureComponent {
                     disable={disablePhone}
                   />
                 </span>
-                {item.mainFlag && <span className={styles.primary}>主</span>}
+                {
+                  custType === PER_CODE &&
+                  item.mainFlag &&
+                  <span className={styles.primary}>主</span>
+                }
               </li>
             );
           })
@@ -129,6 +147,7 @@ export default class ContactInfoPopover extends PureComponent {
     if (_.isEmpty(linkmanList)) {
       return null;
     }
+    console.log('linkmanList: ', linkmanList);
     return (
       <div className={styles.popoverLayer}>
         {
@@ -156,38 +175,34 @@ export default class ContactInfoPopover extends PureComponent {
     cellPhones = [],
     otherTels = [],
     rowId = '',
+    mainFlag = false,
   }) {
     const groupTitle = `${name}(${custRela})`;
+    const newWorkTels = _.map(workTels, item => (
+      { ...item, label: DISPLAY_NAME_TEL.workTels }
+    ));
+    const newHomeTels = _.map(homeTels, item => (
+      { ...item, label: DISPLAY_NAME_TEL.homeTels }
+    ));
+    const newCellPhones = _.map(cellPhones, item => (
+      { ...item, label: DISPLAY_NAME_TEL.cellPhones }
+    ));
+    const newOtherTels = _.map(otherTels, item => (
+      { ...item, label: DISPLAY_NAME_TEL.otherTels }
+    ));
+    const telList = [...newWorkTels, ...newHomeTels, ...newCellPhones, ...newOtherTels];
+    console.log('telList', telList);
     return (
       <div key={rowId}>
-        {
-          this.generateContactsGroup({
-            groupTitle,
-            telList: workTels,
-            label: DISPLAY_NAME_TEL.workTels,
-          })
-        }
-        {
-          this.generateContactsGroup({
-            groupTitle,
-            telList: homeTels,
-            label: DISPLAY_NAME_TEL.homeTels,
-          })
-        }
-        {
-          this.generateContactsGroup({
-            groupTitle,
-            telList: cellPhones,
-            label: DISPLAY_NAME_TEL.cellPhones,
-          })
-        }
-        {
-          this.generateContactsGroup({
-            groupTitle,
-            telList: otherTels,
-            label: DISPLAY_NAME_TEL.otherTels,
-          })
-        }
+        <ul key={groupTitle}>
+          {
+            this.generateContactsGroup({
+              groupTitle,
+              telList,
+              mainFlag,
+            })
+          }
+        </ul>
       </div>
     );
   }
@@ -203,7 +218,7 @@ export default class ContactInfoPopover extends PureComponent {
       orgCustomerContactInfoList,
     } = this.props;
     // 个人
-    if (custType === 'per') {
+    if (custType === PER_CODE && !_.isEmpty(personalContactInfo)) {
       const list = headMainContact(personalContactInfo);
       return (
         <div className={styles.popoverLayer}>
@@ -219,7 +234,7 @@ export default class ContactInfoPopover extends PureComponent {
       );
     }
     // 机构
-    if (custType === 'org') {
+    if (custType === ORG_CODE && !_.isEmpty(orgCustomerContactInfoList)) {
       const list = headMainLinkman(orgCustomerContactInfoList);
       return this.generateOrgLinkmanList(list);
     }
@@ -228,17 +243,15 @@ export default class ContactInfoPopover extends PureComponent {
 
   render() {
     const content = this.generateSuspensionContent();
+    const { placement, children } = this.props;
     return (
       <Popover
         overlayClassName={styles.popover}
         content={content}
-        placement="bottomRight"
+        placement={placement}
         getPopupContainer={this.getPopupContainer}
       >
-        <div className={styles.moreLinkman}>
-          <Icon type="lianxifangshi" className={styles.phoneIcon} />
-          <span className={styles.phoneText}>更多联系人</span>
-        </div>
+        {children}
       </Popover>
     );
   }

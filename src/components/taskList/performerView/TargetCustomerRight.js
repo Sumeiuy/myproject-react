@@ -20,8 +20,10 @@ import TipsInfo from './TipsInfo';
 import SixMonthEarnings from '../../customerPool/list/SixMonthEarnings';
 import { formatAsset } from './formatNum';
 import logable from '../../../decorators/logable';
-import Phone from '../../common/phone';
+// import Phone from '../../common/phone';
+import Icon from '../../common/Icon';
 import { date } from '../../../helper';
+import ContactInfoPopover from '../../common/contactInfoPopover/ContactInfoPopover';
 
 // 信息的完备，用于判断
 const COMPLETION = '完备';
@@ -198,7 +200,7 @@ export default class TargetCustomerRight extends PureComponent {
       this.phoneStartTime.valueOf(),
       this.phoneEndTime.valueOf(),
     );
-    const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}`;
+    const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}。`;
     let payload = {
       missionFlowId: currentMissionFlowId,
       missionId: currentId,
@@ -245,74 +247,38 @@ export default class TargetCustomerRight extends PureComponent {
   }
 
   /**
-   * 传入电话号码
-   * @param {*} num
+   * 联系方式渲染
    */
   @autobind
-  renderPhone(num) {
-    const {
-      itemData,
-      currentCustomer,
-    } = this.props;
-    if (!_.includes(CALLABLE_LIST, currentCustomer.missionStatusCode)) {
-      return num;
-    }
-    return (
-      <Phone
-        onClick={this.handlePhoneConnected}
-        onEnd={this.handlePhoneEnd}
-        number={num}
-        custType={itemData.custNature}
-        disable={false}
-      />
-    );
-  }
-
-  // 联系电话的浮层信息
-  renderPhoneNumTips(itemData = {}) {
-    const {
-      contactDetail = [],
-      custNature = '',
-    } = itemData;
-    if (_.isEmpty(contactDetail)) {
+  renderContactInfo() {
+    const { itemData, currentCustomer } = this.props;
+    const { custNature, perCustomerContactInfo, orgCustomerContactInfoList } = itemData;
+    // 任务状态为未处理、处理中、已驳回时可打电话
+    const canCall = _.includes(CALLABLE_LIST, currentCustomer.missionStatusCode);
+    // 联系方式为空判断
+    const isEmpty = (custNature === PER_CODE && _.isEmpty(perCustomerContactInfo)) ||
+      (custNature === ORG_CODE && _.isEmpty(orgCustomerContactInfoList));
+    if (isEmpty) {
       return null;
     }
-    let content = '';
-    if (custNature === PER_CODE) {
-      content = (
-        <div className={`${styles.nameTips}`}>
-          {
-            contactDetail.map(obj => (
-              <div key={obj.cellPhone}>
-                <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
-                <h6><span>住宅电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>
-                <h6><span>手机号码：</span><span>{this.handleEmpty(obj.cellPhone)}</span></h6>
-              </div>
-            ))
-          }
-        </div>
-      );
-    } else {
-      content = (
-        <div className={`${styles.nameTips}`}>
-          {
-            contactDetail.map(obj => (
-              <div key={obj.cellPhone}>
-                <h5 className={styles.callName}>{this.handleEmpty(obj.name)}</h5>
-                <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
-                <h6><span>住宅电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>
-                <h6><span>手机号码：</span><span>{this.handleEmpty(obj.cellPhone)}</span></h6>
-              </div>
-            ))
-          }
-        </div>
-      );
-    }
+    const perContactInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'homeTels', 'workTels', 'otherTels']);
     return (
-      <TipsInfo
-        position={'bottomRight'}
-        title={content}
-      />
+      <Col span={16}>
+        <ContactInfoPopover
+          custType={custNature}
+          personalContactInfo={perContactInfo}
+          orgCustomerContactInfoList={orgCustomerContactInfoList}
+          handlePhoneEnd={this.handlePhoneEnd}
+          handlePhoneConnected={this.handlePhoneConnected}
+          disablePhone={!canCall}
+          placement={'top'}
+        >
+          <div className={styles.phoneRight}>
+            <Icon type="lianxifangshi1" className={styles.phoneRightIcon} />
+            <span className={styles.phoneRightText}>联系方式</span>
+          </div>
+        </ContactInfoPopover>
+      </Col>
     );
   }
 
@@ -390,8 +356,6 @@ export default class TargetCustomerRight extends PureComponent {
     const infoCompletionRate = itemData.infoCompletionRate ?
       `${Number(itemData.infoCompletionRate) * 100}%` : '--';
     const introducerName = this.handleEmpty(itemData.empName);
-    // 主电话
-    const mainPhone = this.handleEmpty(itemData.contactPhone);
     return (
       <div className={styles.box} ref={ref => this.container = ref}>
         <Affix target={() => getStickyTarget(this.container)}>
@@ -439,17 +403,7 @@ export default class TargetCustomerRight extends PureComponent {
                   }
                 </h5>
               </Col>
-              {
-                itemData.contactPhone ?
-                  <Col span={16}>
-                    <h5
-                      className={styles.phoneRight}
-                    >
-                      <span>联系电话：</span><span>{this.renderPhone(mainPhone)}</span>
-                      {this.renderPhoneNumTips(itemData)}
-                    </h5>
-                  </Col> : null
-              }
+              {this.renderContactInfo()}
             </Row>
           </div>
         </Affix>

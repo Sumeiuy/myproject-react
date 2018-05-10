@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 12:05:55
+ * @Last Modified time: 2018-05-10 12:20:39
  */
 
 import React, { PureComponent } from 'react';
@@ -66,24 +66,26 @@ export default class Phone extends PureComponent {
     number: '',
     custType: 'per',
     headless: false,
-    disable: true,
+    disable: false,
     style: {},
     onClick: _.noop,
     onEnd: _.noop,
     onConnected: _.noop,
   };
 
+  // 是否已绑定message事件
+  boundMessageEvent = false;
+
   componentDidMount() {
-    if (this.props.headless === true
-      && window.$
-      && this.canCall()
-    ) {
+    if (this.props.headless === true && window.$) {
       window.$('body').on(
         'click',
         '.callable',
         (e) => {
-          const number = window.$(e.target).text();
-          this.prepareCall(number);
+          if (this.canCall()) {
+            const number = window.$(e.target).text();
+            this.prepareCall(number);
+          }
         },
       );
     }
@@ -136,16 +138,18 @@ export default class Phone extends PureComponent {
 
     const srcUrl = `${URL}?number=${number}&custType=${custType}&auto=true&${configQueryString}`;
     popWin.location = srcUrl;
-    window.addEventListener(
-      'message',
-      this.receiveMessage,
-      false,
-    );
+    if (!this.boundMessageEvent) {
+      this.boundMessageEvent = true;
+      window.addEventListener(
+        'message',
+        this.receiveMessage,
+        false,
+      );
+    }
   }
 
   @autobind
   receiveMessage({ data }) {
-    window.removeEventListener('message', this.receiveMessage);
     if (data && data.type === TYPE_END && popWin) {
       this.props.onEnd(data);
       popWin.close();
@@ -156,13 +160,13 @@ export default class Phone extends PureComponent {
   }
 
   render() {
-    const { headless, number, style, disable } = this.props;
+    const { headless, number, style } = this.props;
     if (headless === true) {
       return null;
     }
     const className = classnames({
       [styles.number]: true,
-      [styles.active]: disable !== true,
+      [styles.active]: this.canCall(),
     });
     return (
       <div
@@ -173,5 +177,12 @@ export default class Phone extends PureComponent {
         {number}
       </div>
     );
+  }
+
+  componentWillUnmount() {
+    if (this.boundMessageEvent) {
+      this.boundMessageEvent = false;
+      window.removeEventListener('message', this.receiveMessage);
+    }
   }
 }

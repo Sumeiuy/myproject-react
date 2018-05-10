@@ -187,7 +187,7 @@ export default class CustomerList extends PureComponent {
     isContactLoading: PropTypes.bool,
     // 服务记录接口loading
     isRecordLoading: PropTypes.bool,
-    serviceDepartment: PropTypes.object.isRequired,
+    serviceDepartment: PropTypes.object,
     // 手动上传日志
     handleFilter: PropTypes.func.isRequired,
     handleSelect: PropTypes.func.isRequired,
@@ -222,6 +222,7 @@ export default class CustomerList extends PureComponent {
     isContactLoading: false,
     isRecordLoading: false,
     filesList: [],
+    serviceDepartment: {},
   }
 
   static childContextTypes = {
