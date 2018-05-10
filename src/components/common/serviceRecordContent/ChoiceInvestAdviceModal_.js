@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 14:36:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-10 16:32:08
+ * @Last Modified time: 2018-05-10 17:35:31
  * @description 投资建议弹出层
  */
 import React, { PureComponent } from 'react';
@@ -76,7 +76,7 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
 
   // 点击服务内容弹出层确认按钮
   @autobind
-  handleOK() {
+  async handleOK() {
     const { mode } = this.state;
     this.setState({
       validateTitle: false,
@@ -91,15 +91,18 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
       const descParams = {
         content: desc,
       };
-      this.props.testWallCollision(titleParams).then(() => {
+      try {
+        const { testWallCollision, onOK } = this.props;
+        await testWallCollision(titleParams);
         if (this.checkWallCollisionStatus('title')) {
-          this.props.testWallCollision(descParams).then(() => {
-            if (this.checkWallCollisionStatus('desc')) {
-              this.props.onOK({ title, desc, mode });
-            }
-          });
+          await testWallCollision(descParams);
+          if (this.checkWallCollisionStatus('desc')) {
+            onOK({ title, desc, mode });
+          }
         }
-      });
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
