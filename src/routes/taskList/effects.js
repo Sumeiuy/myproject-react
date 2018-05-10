@@ -60,6 +60,8 @@ const effects = {
   queryCustomerForServiceImplementation: 'performerView/queryCustomerForServiceImplementation',
   // 投资建议文本撞墙检测
   testWallCollision: 'investmentAdvice/testWallCollision',
+  // 清空执行者视图右侧搜索客户
+  clearCustListForServiceImplementation: 'performerView/clearCustListForServiceImplementation',
 };
 
 export default effects;

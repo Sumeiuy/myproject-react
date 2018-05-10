@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-08 15:40:56
+ * @Last Modified time: 2018-05-10 15:52:05
  * @description 任务管理首页
  */
 
@@ -965,7 +965,13 @@ export default class PerformerView extends PureComponent {
   handleListRowClick(record, index) {
     // typeCode为任务类型，通过这个类型，查到字典中missionType的descText
     const { id, missionViewType: st, typeCode, statusCode, typeName, eventId, mssnId } = record;
-    const { queryCustUuid, replace, location: { pathname, query }, dict } = this.props;
+    const {
+      queryCustUuid,
+      replace,
+      location: { pathname, query },
+      dict,
+      clearCustListForServiceImplementation,
+    } = this.props;
     const isSourceFromCreatorView = this.isInitiatorView(st)
       && this.judgeTaskInApproval(statusCode);
     const ci = isSourceFromCreatorView ? mssnId : id;
@@ -984,9 +990,11 @@ export default class PerformerView extends PureComponent {
     });
 
     // 如果所点击的任务需要的是执行者视图，则预先请求custUuid
+    // 将执行者视图右侧搜索客户的列表数据清空
     if (this.isExecutorView(st)) {
       // 前置请求custuuid
       queryCustUuid();
+      clearCustListForServiceImplementation();
     }
 
     this.setState({

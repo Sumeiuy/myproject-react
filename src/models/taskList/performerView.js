@@ -239,6 +239,14 @@ export default {
         },
       };
     },
+    // 清空已经查询出来的客户数据
+    // 执行者视图右侧搜索客户
+    clearCustListForServiceImplementation(state) {
+      return {
+        ...state,
+        custListForServiceImplementation: EMPTY_LIST,
+      };
+    },
   },
   effects: {
     // 执行者视图、管理者视图、创建者视图公共列表

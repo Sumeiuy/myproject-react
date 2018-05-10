@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:21:18
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-07 14:53:58
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-10 15:54:34
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapDispatchToProps移至此处成立独立模块
  */
 import effects from './effects';
@@ -74,4 +74,6 @@ export default ({ routerRedux, effect }) => ({
   queryCustomer: effect(effects.queryCustomerForServiceImplementation, { loading: false }),
   // 投资建议文本撞墙检测
   testWallCollision: effect(effects.testWallCollision),
+  // 清除执行者视图右侧搜索客户列表
+  clearCustListForServiceImplementation: effect(effects.clearCustListForServiceImplementation, { loading: false }),
 });
