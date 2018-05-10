@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 10:21:18
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-10 15:59:16
+ * @Last Modified time: 2018-05-10 17:32:01
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapDispatchToProps移至此处成立独立模块
  */
 import effects from './effects';
@@ -71,7 +71,7 @@ export default ({ routerRedux, effect }) => ({
   // 查询涨乐财富通服务方式下的审批人列表
   queryApprovalList: effect(effects.queryApprovalList, { loading: false }),
   // 执行者视图右侧详情查询客户
-  queryCustomer: effect(effects.queryCustomerForServiceImplementation, { loading: false }),
+  queryCustomer: effect(effects.queryCustomerForServiceImplementation),
   // 投资建议文本撞墙检测
   testWallCollision: effect(effects.testWallCollision),
   // 清除执行者视图右侧搜索客户列表

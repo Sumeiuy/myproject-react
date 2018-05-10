@@ -2,7 +2,7 @@
  * @Author: xuwenkang
  * @Date: 2017-09-21 13:39:44
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-10 16:56:46
+ * @Last Modified time: 2018-05-10 17:10:10
  * 由于antd-Dropdown组件中直接放输入类组件，setState时会导致在ie下输入框失去焦点，所以单独提出来；
  */
 
@@ -27,22 +27,20 @@ export default class Test extends PureComponent {
     onChange: () => { },
   }
 
-  // 取代componentWillReceiveProps
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.searchValue !== prevState.searchValue) {
-      return {
-        searchValue: nextProps.searchValue,
-      };
-    }
-    return null;
-  }
-
   constructor(props) {
     super(props);
     this.state = {
       // 查询信息
       searchValue: props.searchValue,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.searchValue !== this.props.searchValue) {
+      this.setState({
+        searchValue: nextProps.searchValue,
+      });
+    }
   }
 
   @autobind
