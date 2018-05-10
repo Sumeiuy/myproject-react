@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-09 14:41:37
+ * @Last Modified time: 2018-05-10 19:20:09
  */
 
 import React, { PureComponent } from 'react';
@@ -310,7 +310,8 @@ export default class ServiceRecordContent extends PureComponent {
     const customerFeedback = this.fixCustomerFeedback(fd.customerFeedback);
     // 获取涨乐财富通的客户反馈信息
     // 因为涨乐财富通与普通服务方式使用同一个字段来显示客户反馈信息
-    const ZLCustFeedbackText = (fd.customerFeedback && fd.customerFeedback.name) || '暂无反馈';
+    // 涨乐财富通需要显示二级反馈文本
+    const ZLCustFeedbackText = _.get(fd.customerFeedback, 'children.name') || '暂无反馈';
     return {
       // 涨乐财富通服务方式下，是否被驳回状态
       isReject,

@@ -41,6 +41,8 @@ export default class ServiceImplementation extends PureComponent {
     this.state = {
       list: props.list,
     };
+    // 服务实施客户Id
+    this.serviceCustId = props.list[0].custId || '';
   }
 
   componentWillReceiveProps(nextProps) {
@@ -52,6 +54,7 @@ export default class ServiceImplementation extends PureComponent {
       this.setState({
         list: nextList,
       });
+      this.serviceCustId = nextList[0].custId || '';
     }
   }
 
@@ -198,6 +201,7 @@ export default class ServiceImplementation extends PureComponent {
 
   render() {
     const { list } = this.state;
+    const serviceCustId = this.serviceCustId;
     const {
       currentId,
       dict,
@@ -337,6 +341,7 @@ export default class ServiceImplementation extends PureComponent {
           addServeRecord={this.addServiceRecord}
           motCustfeedBackDict={motCustfeedBackDict}
           currentCustomer={currentCustomer}
+          getServiceCustId={id => this.setServiceCustId(id)}
         />
         {
           (!_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict))
@@ -364,6 +369,7 @@ export default class ServiceImplementation extends PureComponent {
             resetServiceRecordInfo={resetServiceRecordInfo}
             testWallCollision={testWallCollision}
             testWallCollisionStatus={testWallCollisionStatus}
+            serviceCustId={serviceCustId}
           /> : null
         }
       </div>

@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-03 14:35:21
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 18:45:38
+ * @Last Modified time: 2018-05-10 19:35:00
  */
 
 import React, { PureComponent } from 'react';
@@ -147,7 +147,6 @@ export default class ContactInfoPopover extends PureComponent {
     if (_.isEmpty(linkmanList)) {
       return null;
     }
-    console.log('linkmanList: ', linkmanList);
     return (
       <div className={styles.popoverLayer}>
         {
@@ -191,7 +190,6 @@ export default class ContactInfoPopover extends PureComponent {
       { ...item, label: DISPLAY_NAME_TEL.otherTels }
     ));
     const telList = [...newWorkTels, ...newHomeTels, ...newCellPhones, ...newOtherTels];
-    console.log('telList', telList);
     return (
       <div key={rowId}>
         <ul key={groupTitle}>

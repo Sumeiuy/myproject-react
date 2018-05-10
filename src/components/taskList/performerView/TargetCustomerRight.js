@@ -256,7 +256,16 @@ export default class TargetCustomerRight extends PureComponent {
     // 任务状态为未处理、处理中、已驳回时可打电话
     const canCall = _.includes(CALLABLE_LIST, currentCustomer.missionStatusCode);
     // 联系方式为空判断
-    const isEmpty = (custNature === PER_CODE && _.isEmpty(perCustomerContactInfo)) ||
+    const isEmpty = (
+      custNature === PER_CODE &&
+      (
+        _.isEmpty(perCustomerContactInfo) ||
+        (_.isEmpty(perCustomerContactInfo.homeTels)
+        && _.isEmpty(perCustomerContactInfo.cellPhones)
+        && _.isEmpty(perCustomerContactInfo.workTels)
+        && _.isEmpty(perCustomerContactInfo.otherTels))
+      )
+    ) ||
       (custNature === ORG_CODE && _.isEmpty(orgCustomerContactInfoList));
     if (isEmpty) {
       return null;

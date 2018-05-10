@@ -42,6 +42,8 @@ export default class TargetCustomer extends PureComponent {
     motCustfeedBackDict: PropTypes.array.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     currentCustomer: PropTypes.object.isRequired,
+    // 获取客户名称
+    getServiceCustId: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -89,6 +91,7 @@ export default class TargetCustomer extends PureComponent {
       missionId: currentId,
       missionFlowId,
     });
+    this.props.getServiceCustId(id);
     // 前置请求
     // 因为上传附件需要前置请求一个custUuid
     queryCustUuid();
