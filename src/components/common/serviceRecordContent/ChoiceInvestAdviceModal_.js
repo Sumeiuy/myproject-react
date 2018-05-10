@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 14:36:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-08 14:31:06
+ * @Last Modified time: 2018-05-10 17:35:31
  * @description 投资建议弹出层
  */
 import React, { PureComponent } from 'react';
@@ -27,6 +27,8 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
       validateContent: false,
       // 内容错误提示信息
       descErrorInfo: '',
+      // 标题错误提示信息
+      titleErrorInfo: '',
     };
     // 投资建议标题
     this.title = '';
@@ -39,6 +41,12 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     this.freeModeRef = input;
   }
 
+  // 获取投资建议文本标题和内容
+  @autobind
+  getInvestAdviceFreeModeData(title, desc) {
+    this.title = title;
+    this.desc = desc;
+  }
   // 关闭弹出层
   @autobind
   closeModal() {
@@ -46,20 +54,21 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     onClose(modalKey);
   }
 
-  // 获取投资建议文本标题和内容
   @autobind
-  getInvestAdviceFreeModeData(title, desc) {
-    this.title = title;
-    this.desc = desc;
-  }
-
-  @autobind
-  checkWallCollisionStatus() {
+  checkWallCollisionStatus(type) {
     if (this.props.testWallCollisionStatus) {
-      this.setState({
-        descErrorInfo: '推荐的产品未通过合规撞墙检测，请修改投资建议',
-        validateContent: true,
-      });
+      if (type === 'title') {
+        this.setState({
+          titleErrorInfo: '推荐的产品未通过合规撞墙检测，请修改投资建议',
+          validateTitle: true,
+        });
+      }
+      if (type === 'desc') {
+        this.setState({
+          descErrorInfo: '推荐的产品未通过合规撞墙检测，请修改投资建议',
+          validateContent: true,
+        });
+      }
       return false;
     }
     return true;
@@ -67,19 +76,33 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
 
   // 点击服务内容弹出层确认按钮
   @autobind
-  handleOK() {
+  async handleOK() {
     const { mode } = this.state;
+    this.setState({
+      validateTitle: false,
+      validateContent: false,
+    });
     if (mode === 'free' && this.freeModeRef.checkData()) {
       const title = this.title;
       const desc = this.desc;
-      const params = {
+      const titleParams = {
+        content: title,
+      };
+      const descParams = {
         content: desc,
       };
-      this.props.testWallCollision(params).then(() => {
-        if (this.checkWallCollisionStatus()) {
-          this.props.onOK({ title, desc, mode });
+      try {
+        const { testWallCollision, onOK } = this.props;
+        await testWallCollision(titleParams);
+        if (this.checkWallCollisionStatus('title')) {
+          await testWallCollision(descParams);
+          if (this.checkWallCollisionStatus('desc')) {
+            onOK({ title, desc, mode });
+          }
         }
-      });
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
@@ -94,7 +117,7 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
       testWallCollisionStatus,
     } = this.props;
 
-    const { validateContent, validateTitle, descErrorInfo } = this.state;
+    const { validateContent, validateTitle, descErrorInfo, titleErrorInfo } = this.state;
 
     return (
       <CommonModal
@@ -123,6 +146,7 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
             validateContent={validateContent}
             validateTitle={validateTitle}
             descErrorInfo={descErrorInfo}
+            titleErrorInfo={titleErrorInfo}
             testWallCollisionStatus={testWallCollisionStatus}
             onGetInvestAdviceFreeModeData={(title, desc) =>
               this.getInvestAdviceFreeModeData(title, desc)}

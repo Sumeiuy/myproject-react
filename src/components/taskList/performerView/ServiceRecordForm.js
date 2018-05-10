@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-09 10:49:28
+ * @Last Modified time: 2018-05-10 19:55:44
  * 服务记录表单
  */
 
@@ -15,7 +15,7 @@ import OmitMultipleLineText from '../../common/omitMultipleLineText';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Button from '../../common/Button';
 import styles from './serviceRecordForm.less';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 
 export default class ServiceRecordForm extends PureComponent {
   static defaultProps = {
@@ -31,13 +31,27 @@ export default class ServiceRecordForm extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubmit() {
     const data = this.serviceRecordContentRef.getData();
     if (_.isEmpty(data)) return;
 
     // 添加服务记录
     this.props.addServeRecord(data, this.handleCancel);
+
+    // log日志 --- 添加服务记录
+    // 服务类型
+    const { serveType } = data;
+    const { dict, serviceCustId } = this.props;
+    const { missionType } = dict;
+    const serveTypeName = _.find(missionType, { key: serveType }).value;
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: serviceCustId,
+        type: serveTypeName,
+        value: JSON.stringify(data),
+      },
+    });
   }
 
   @autobind
@@ -148,6 +162,8 @@ ServiceRecordForm.propTypes = {
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
   statusCode: PropTypes.string.isRequired,
+  // 服务实施客户名次
+  serviceCustId: PropTypes.string.isRequired,
   // 投资建议文本撞墙检测
   testWallCollision: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测是否有股票代码

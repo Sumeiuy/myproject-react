@@ -41,6 +41,8 @@ export default class ServiceImplementation extends PureComponent {
     this.state = {
       list: props.list,
     };
+    // 服务实施客户Id
+    this.serviceCustId = props.list[0].custId || '';
   }
 
   componentWillReceiveProps(nextProps) {
@@ -52,42 +54,8 @@ export default class ServiceImplementation extends PureComponent {
       this.setState({
         list: nextList,
       });
+      this.serviceCustId = nextList[0].custId || '';
     }
-  }
-
-  @autobind
-  addServiceRecord(postBody, callback) {
-    const {
-      addServeRecord,
-      reloadTargetCustInfo,
-      queryCustUuid,
-      modifyLocalTaskList,
-      currentId,
-      getTaskDetailBasicInfo,
-    } = this.props;
-    // 此处需要针对涨乐财富通服务方式特殊处理
-    // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
-    // 执行提交服务记录的接口
-    addServeRecord(_.omit(postBody), ['zlApprovalCode'])
-      .then(() => {
-        if (this.props.addMotServeRecordSuccess) {
-          // 服务记录添加成功后重新加载当前目标客户的详细信息
-          reloadTargetCustInfo(() => {
-            this.updateList(postBody, callback);
-            // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载基本信息
-            if (postBody.flowStatus === POSTCOMPLETED_CODE) {
-              // 重新加载基本信息,不清除服务实施客户列表中当前选中客户状态信息和筛选值、页码
-              getTaskDetailBasicInfo({ taskId: currentId, isClear: false });
-              // 更新新左侧列表
-              modifyLocalTaskList({ missionId: currentId });
-            }
-          });
-          // 添加服务记录成功之后，重新获取custUuid
-          queryCustUuid();
-          // this.updateList(postBody);
-          message.success('添加服务记录成功');
-        }
-      });
   }
 
   // 更新组件state的list信息
@@ -160,8 +128,50 @@ export default class ServiceImplementation extends PureComponent {
     return false;
   }
 
+  // 点击服务实施设置客户Id
+  @autobind
+  setServiceCustId(custId) {
+    this.serviceCustId = custId;
+  }
+
+  @autobind
+  addServiceRecord(postBody, callback) {
+    const {
+      addServeRecord,
+      reloadTargetCustInfo,
+      queryCustUuid,
+      modifyLocalTaskList,
+      currentId,
+      getTaskDetailBasicInfo,
+    } = this.props;
+    // 此处需要针对涨乐财富通服务方式特殊处理
+    // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
+    // 执行提交服务记录的接口
+    addServeRecord(_.omit(postBody), ['zlApprovalCode'])
+      .then(() => {
+        if (this.props.addMotServeRecordSuccess) {
+          // 服务记录添加成功后重新加载当前目标客户的详细信息
+          reloadTargetCustInfo(() => {
+            this.updateList(postBody, callback);
+            // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载基本信息
+            if (postBody.flowStatus === POSTCOMPLETED_CODE) {
+              // 重新加载基本信息,不清除服务实施客户列表中当前选中客户状态信息和筛选值、页码
+              getTaskDetailBasicInfo({ taskId: currentId, isClear: false });
+              // 更新新左侧列表
+              modifyLocalTaskList({ missionId: currentId });
+            }
+          });
+          // 添加服务记录成功之后，重新获取custUuid
+          queryCustUuid();
+          // this.updateList(postBody);
+          message.success('添加服务记录成功');
+        }
+      });
+  }
+
   render() {
     const { list } = this.state;
+    const serviceCustId = this.serviceCustId;
     const {
       currentId,
       dict,
@@ -291,6 +301,7 @@ export default class ServiceImplementation extends PureComponent {
           getCustDetail={getCustDetail}
           getCeFileList={getCeFileList}
           filesList={filesList}
+          getServiceCustId={id => this.setServiceCustId(id)}
         />
         {
           (!_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict))
@@ -316,6 +327,7 @@ export default class ServiceImplementation extends PureComponent {
             zhangleApprovalList={zhangleApprovalList}
             testWallCollision={testWallCollision}
             testWallCollisionStatus={testWallCollisionStatus}
+            serviceCustId={serviceCustId}
           /> : null
         }
       </div>

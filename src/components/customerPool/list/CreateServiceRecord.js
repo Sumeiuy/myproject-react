@@ -11,7 +11,7 @@ import { Modal, message } from 'antd';
 import _ from 'lodash';
 import { fspContainer } from '../../../config';
 import { url } from '../../../helper';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Loading from '../../../layouts/Loading';
 import styles from './createServiceRecord.less';
@@ -110,14 +110,29 @@ export default class CreateServiceRecord extends PureComponent {
 
   // 提交
   @autobind
-  @logable({ type: 'Click', payload: { name: '提交' } })
   handleSubmit() {
     const data = this.serviceRecordContentRef.getData();
     if (_.isEmpty(data)) return;
 
-    const { id, addServeRecord } = this.props;
+    const { id, addServeRecord, dict } = this.props;
 
     addServeRecord({ ...data, custId: id });
+    // 添加服务记录
+    this.props.addServeRecord(data, this.handleCancel);
+
+    // log日志 --- 添加服务记录
+    // 服务类型
+    const { serveType } = data;
+    const { missionType } = dict;
+    const serveTypeName = _.find(missionType, { key: serveType }).value;
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: id,
+        type: serveTypeName,
+        value: JSON.stringify(data),
+      },
+    });
   }
 
   // 关闭弹窗

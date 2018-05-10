@@ -38,6 +38,8 @@ export default class TargetCustomer extends PureComponent {
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
     currentMissionFlowId: PropTypes.string,
+    // 获取客户名称
+    getServiceCustId: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -85,6 +87,7 @@ export default class TargetCustomer extends PureComponent {
       missionId: currentId,
       missionFlowId,
     });
+    this.props.getServiceCustId(id);
     // 前置请求
     // 因为上传附件需要前置请求一个custUuid
     queryCustUuid();
