@@ -235,7 +235,7 @@ export default class TargetCustomerRight extends PureComponent {
     };
     addServeRecord({
       postBody: payload,
-      callback2: saveRecordData,
+      callbackOfPhone: saveRecordData,
       hasLoading: false,
     });
   }

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 19:13:20
+ * @Last Modified time: 2018-05-10 20:01:29
  * 服务记录表单
  */
 
@@ -55,7 +55,7 @@ export default class ServiceRecordForm extends PureComponent {
     // 添加服务记录
     addServeRecord({
       postBody: data,
-      callback2: this.handleCancel,
+      callbackOfPhone: this.handleCancel,
     });
 
     // log日志 --- 添加服务记录

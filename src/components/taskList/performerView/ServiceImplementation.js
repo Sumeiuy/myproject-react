@@ -62,7 +62,7 @@ export default class ServiceImplementation extends PureComponent {
   addServiceRecord({
     postBody,
     callback = _.noop,
-    callback2 = _.noop,
+    callbackOfPhone = _.noop,
     hasLoading = true,
   }) {
     const {
@@ -109,8 +109,8 @@ export default class ServiceImplementation extends PureComponent {
         if (hasLoading) {
           message.success('添加服务记录成功');
         }
-        // 保存打电话自动创建的服务记录的信息
-        callback2();
+        // 保存打电话自动创建的服务记录的信息或更新服务记录后删除打电话保存的服务记录
+        callbackOfPhone();
       }
     });
   }

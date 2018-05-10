@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-03 14:35:21
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 19:35:00
+ * @Last Modified time: 2018-05-10 19:52:59
  */
 
 import React, { PureComponent } from 'react';
@@ -121,7 +121,7 @@ export default class ContactInfoPopover extends PureComponent {
                   <Phone
                     onConnected={handlePhoneConnected}
                     onEnd={handlePhoneEnd}
-                    number={item.contactValue}
+                    number={'18751964883'}
                     custType={custType}
                     disable={disablePhone}
                   />
