@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-09 20:53:48
+ * @Last Modified time: 2018-05-10 18:26:47
  */
 
 import React, { PureComponent } from 'react';
@@ -566,8 +566,7 @@ export default class TaskFlow extends PureComponent {
         type: 'Submit',
         payload: {
           title: '目标客户',
-          subtype,
-          type: '客户来源',
+          type: subtype,
           value: subtype,
           name: '',
         },
@@ -602,8 +601,7 @@ export default class TaskFlow extends PureComponent {
             type: 'Submit',
             payload: {
               title: '任务信息',
-              subtype,
-              type: '客户来源',
+              type: subtype,
               value: JSON.stringify(values),
               name: values.taskName,
             },
@@ -736,8 +734,7 @@ export default class TaskFlow extends PureComponent {
         type: 'Submit',
         payload: {
           title: '任务评估',
-          subtype,
-          type: '客户来源',
+          type: subtype,
           value: JSON.stringify(values),
           name: taskName,
         },
@@ -949,8 +946,7 @@ export default class TaskFlow extends PureComponent {
       type: 'Submit',
       payload: {
         title: '确认提交',
-        subtype,
-        type: '客户来源',
+        type: subtype,
         value: JSON.stringify(values),
         name,
       },
