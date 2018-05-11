@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 15:37:57
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-08 10:03:26
+ * @Last Modified time: 2018-05-10 14:50:35
  */
 import { investmentAdvice as api } from '../api';
 
@@ -48,7 +48,7 @@ export default {
       const { payload = '' } = action;
       return {
         ...state,
-        testWallCollisionStatus: payload === 'success',
+        testWallCollisionStatus: payload === 'failure',
       };
     },
   },

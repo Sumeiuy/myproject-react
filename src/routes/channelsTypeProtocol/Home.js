@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-11 09:26:29
+ * @Last Modified time: 2018-05-11 09:36:57
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -30,7 +30,7 @@ import withRouter from '../../decorators/withRouter';
 import config from './config';
 import { isInvolvePermission } from '../../components/channelsTypeProtocol/auth';
 import styles from './home.less';
-import logable, { logPV } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 
 const confirm = Modal.confirm;
 
@@ -512,6 +512,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 点击提交按钮弹提示框
   @autobind
   showconFirm(formData, btnItem) {
+    console.warn('formData', formData);
     if (
       (_.includes(unSubscribeArray, formData.operationType)
       || _.includes(subscribeArray, formData.operationType))
@@ -540,6 +541,34 @@ export default class ChannelsTypeProtocol extends PureComponent {
         protocolData: formData,
       });
     }
+    // log日志---提交按钮
+    let name = '';
+    switch (formData.operationType) {
+      case 'Subscribe':
+        name = '协议订购';
+        break;
+      case 'Unsubscribe':
+        name = '协议退订';
+        break;
+      case 'Renewal':
+        name = '协议续订';
+        break;
+      case 'AddDel':
+        name = '新增或删除下挂客户';
+        break;
+      default:
+        name = '';
+        break;
+    }
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name,
+        type: '协议管理',
+        subType: formData.subType,
+        value: JSON.stringify(formData),
+      },
+    });
   }
 
   // 审批人弹窗点击确定

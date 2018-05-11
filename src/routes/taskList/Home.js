@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-07 15:18:34
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-09 14:36:59
  * @description 任务管理首页
  */
 
@@ -487,7 +487,7 @@ export default class PerformerView extends PureComponent {
       getCeFileList,
       filesList,
       deleteFileResult,
-      addMotServeRecordSuccess,
+      currentMotServiceRecord,
       answersList,
       getTempQuesAndAnswer,
       saveAnswersByType,
@@ -499,6 +499,10 @@ export default class PerformerView extends PureComponent {
       queryCustFeedbackList4ZLFins,
       queryApprovalList,
       zhangleApprovalList,
+      toggleServiceRecordModal,
+      serviceRecordInfo,
+      addServeRecordOfPhone,
+      resetServiceRecordInfo,
       // 投资建议文本撞墙检测
       testWallCollision,
       // 投资建议文本撞墙检测是否有股票代码
@@ -546,7 +550,7 @@ export default class PerformerView extends PureComponent {
         filesList={filesList}
         deleteFileResult={deleteFileResult}
         taskFeedbackList={taskFeedbackList}
-        addMotServeRecordSuccess={addMotServeRecordSuccess}
+        currentMotServiceRecord={currentMotServiceRecord}
         getTempQuesAndAnswer={getTempQuesAndAnswer}
         answersList={answersList}
         saveAnswersByType={saveAnswersByType}
@@ -559,6 +563,10 @@ export default class PerformerView extends PureComponent {
         queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
         queryApprovalList={queryApprovalList}
         zhangleApprovalList={zhangleApprovalList}
+        toggleServiceRecordModal={toggleServiceRecordModal}
+        serviceRecordInfo={serviceRecordInfo}
+        addServeRecordOfPhone={addServeRecordOfPhone}
+        resetServiceRecordInfo={resetServiceRecordInfo}
         testWallCollision={testWallCollision}
         testWallCollisionStatus={testWallCollisionStatus}
       />

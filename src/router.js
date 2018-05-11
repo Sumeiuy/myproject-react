@@ -72,6 +72,8 @@ import TelephoneNumberManageEdit from './routes/telephoneNumberManage/ApplyEdit'
 // 精选组合
 import ChoicenessCombination from './routes/choicenessCombination/Home';
 import CombinationDetail from './routes/choicenessCombination/CombinationDetail';
+// 投顾业务能力竞赛
+import InvestmentConsultantRace from './routes/investmentConsultantRace/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -284,6 +286,8 @@ const routes = [
       },
     ],
   },
+  // 投顾业务能力竞赛
+  { path: '/investmentConsultantRace', component: InvestmentConsultantRace },
 ];
 
 // 递归创建路由

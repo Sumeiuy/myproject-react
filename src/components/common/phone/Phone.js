@@ -2,8 +2,8 @@
  * @Description: PC电话拨号页面
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-05-09 16:05:25
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-10 12:20:39
  */
 
 import React, { PureComponent } from 'react';
@@ -63,7 +63,7 @@ export default class Phone extends PureComponent {
   }
 
   static defaultProps = {
-    number: 0,
+    number: '',
     custType: 'per',
     headless: false,
     disable: false,
@@ -72,6 +72,9 @@ export default class Phone extends PureComponent {
     onEnd: _.noop,
     onConnected: _.noop,
   };
+
+  // 是否已绑定message事件
+  boundMessageEvent = false;
 
   componentDidMount() {
     if (this.props.headless === true && window.$) {
@@ -107,48 +110,46 @@ export default class Phone extends PureComponent {
   }
 
   prepareCall(number) {
-    const { config, getConfig } = this.props;
+    const { getConfig } = this.props;
     popWin = window.open(
       'about:blank',
       'phoneDialog',
       OPEN_FEATURES,
     );
-    if (_.isEmpty(config)) {
-      getConfig().then(() => this.call(number));
-    } else {
-      this.call(number);
-    }
+    getConfig().then(() => this.call(number));
   }
 
   call(number) {
     const { custType, config } = this.props;
     const {
       sipInfo: { sipID, sipDomain, sipPasswd },
-      wssInfo: { wssIP, wssPort, sipIP, sipPort },
+      wssInfo: { wssIp, wssPort, sipIp, sipPort },
     } = config;
 
     const configQueryString = [
       `sipID=${sipID}`,
       `sipDomain=${sipDomain}`,
       `sipPasswd=${sipPasswd}`,
-      `sipIP=${sipIP}`,
+      `sipIP=${sipIp}`,
       `sipPort=${sipPort}`,
-      `wssIP=${wssIP}`,
+      `wssIP=${wssIp}`,
       `wssPort=${wssPort}`,
     ].join('&');
 
     const srcUrl = `${URL}?number=${number}&custType=${custType}&auto=true&${configQueryString}`;
     popWin.location = srcUrl;
-    window.addEventListener(
-      'message',
-      this.receiveMessage,
-      false,
-    );
+    if (!this.boundMessageEvent) {
+      this.boundMessageEvent = true;
+      window.addEventListener(
+        'message',
+        this.receiveMessage,
+        false,
+      );
+    }
   }
 
   @autobind
   receiveMessage({ data }) {
-    window.removeEventListener('message', this.receiveMessage);
     if (data && data.type === TYPE_END && popWin) {
       this.props.onEnd(data);
       popWin.close();
@@ -176,5 +177,12 @@ export default class Phone extends PureComponent {
         {number}
       </div>
     );
+  }
+
+  componentWillUnmount() {
+    if (this.boundMessageEvent) {
+      this.boundMessageEvent = false;
+      window.removeEventListener('message', this.receiveMessage);
+    }
   }
 }

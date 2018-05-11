@@ -22,7 +22,7 @@ import CreatePrivateClient from '../../components/permission/CreatePrivateClient
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import styles from './home.less';
-import logable, { logPV } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
@@ -386,6 +386,16 @@ export default class Permission extends PureComponent {
   @autobind
   handleCreatePrivateApp(params) {
     const { location: { query } } = this.props;
+    // log日志---创建私密客户申请
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '',
+        type: '权限申请',
+        subType: params.subType,
+        value: JSON.stringify(params),
+      },
+    });
     this.props.getCreateCustApplication(params).then(
       () => this.queryAppList(query, query.pageNum, query.pageSize),
     );
@@ -395,6 +405,16 @@ export default class Permission extends PureComponent {
   @autobind
   handleModifyPrivateApp(params) {
     const { location: { query } } = this.props;
+    // log日志---修改私密客户申请
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '',
+        type: '权限申请',
+        subType: params.subType,
+        value: JSON.stringify(params),
+      },
+    });
     this.props.getModifyCustApplication(params).then(
       () => this.queryAppList(query, query.pageNum, query.pageSize),
     );

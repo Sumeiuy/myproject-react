@@ -38,6 +38,12 @@ export default class TargetCustomer extends PureComponent {
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
     currentMissionFlowId: PropTypes.string,
+    addServeRecord: PropTypes.func.isRequired,
+    motCustfeedBackDict: PropTypes.array.isRequired,
+    toggleServiceRecordModal: PropTypes.func.isRequired,
+    currentCustomer: PropTypes.object.isRequired,
+    // 获取客户名称
+    getServiceCustId: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -85,6 +91,7 @@ export default class TargetCustomer extends PureComponent {
       missionId: currentId,
       missionFlowId,
     });
+    this.props.getServiceCustId(id);
     // 前置请求
     // 因为上传附件需要前置请求一个custUuid
     queryCustUuid();
@@ -123,6 +130,12 @@ export default class TargetCustomer extends PureComponent {
       targetCustDetail,
       getCeFileList,
       filesList,
+      toggleServiceRecordModal,
+      addServeRecord,
+      motCustfeedBackDict,
+      currentMissionFlowId,
+      currentId,
+      currentCustomer,
     } = this.props;
     if (_.isEmpty(list)) {
       return null;
@@ -153,6 +166,12 @@ export default class TargetCustomer extends PureComponent {
                     custIncomeReqState={custIncomeReqState}
                     getCeFileList={getCeFileList}
                     filesList={filesList}
+                    toggleServiceRecordModal={toggleServiceRecordModal}
+                    addServeRecord={addServeRecord}
+                    motCustfeedBackDict={motCustfeedBackDict}
+                    currentMissionFlowId={currentMissionFlowId}
+                    currentId={currentId}
+                    currentCustomer={currentCustomer}
                   /> : null
               }
             </Col>

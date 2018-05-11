@@ -41,7 +41,7 @@ export default {
     taskList: EMPTY_OBJ,
     // 任务反馈字典
     taskFeedbackList: [],
-    addMotServeRecordSuccess: false,
+    currentMotServiceRecord: {},
     answersList: {},
     saveAnswersSucce: false,
     // 任务反馈
@@ -132,7 +132,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        addMotServeRecordSuccess: payload === 'success',
+        currentMotServiceRecord: { id: payload },
       };
     },
     getTempQuesAndAnswerSuccess(state, action) {
@@ -225,6 +225,12 @@ export default {
         },
       };
     },
+    resetMotServiceRecord(state) {
+      return {
+        ...state,
+        currentMotServiceRecord: {},
+      };
+    },
   },
   effects: {
     // 执行者视图、管理者视图、创建者视图公共列表
@@ -245,6 +251,10 @@ export default {
           ...payload,
         },
       });
+      // 当客户列表选中的客户流水变化时，清除打电话显示服务记录的标志
+      yield put({
+        type: 'app/resetServiceRecordInfo',
+      });
     },
 
     // 执行者视图的详情基本信息
@@ -254,6 +264,10 @@ export default {
       if (isClear) {
         // 清除查询上次目标客户列表的条件
         yield put({ type: 'clearParameter' });
+        // 当客户列表选中的客户流水变化时，清除打电话显示服务记录的标志
+        yield put({
+          type: 'app/resetServiceRecordInfo',
+        });
       }
       const { resultData } = yield call(api.queryTaskDetailBasicInfo, otherPayload);
       if (resultData) {
@@ -314,14 +328,17 @@ export default {
     },
     // 添加服务记录
     * addMotServeRecord({ payload }, { call, put }) {
-      const { resultData } = yield call(api.addMotServeRecord, payload);
-      yield put({
-        type: 'addMotServeRecordSuccess',
-        payload: resultData,
-      });
+      yield put({ type: 'resetMotServiceRecord' });
+      const { code, resultData } = yield call(api.addMotServeRecord, payload);
+      if (code === '0') {
+        yield put({
+          type: 'addMotServeRecordSuccess',
+          payload: resultData,
+        });
+      }
     },
     // 上传文件之前，先查询uuid
-    * queryCustUuid({ payload }, { call, put }) {
+    * queryCustUuid({ payload = {} }, { call, put }) {
       const { resultData } = yield call(api.queryCustUuid, payload);
       yield put({
         type: 'queryCustUuidSuccess',
