@@ -43,6 +43,10 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: generateProxy([
+      '/fspa/phone',
+      {
+        target: 'http://168.61.8.82:5086', // uat
+      },
       prefix,
       {
         target: 'http://168.61.8.82:5086', // uat
