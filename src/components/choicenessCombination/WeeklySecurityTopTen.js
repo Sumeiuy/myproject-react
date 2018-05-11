@@ -3,7 +3,7 @@
  * @Description: 精选组合-近一周表现前十的证券
  * @Date: 2018-04-17 16:38:02
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-18 14:26:10
+ * @Last Modified time: 2018-05-11 14:55:24
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -20,13 +20,13 @@ import styles from './weeklySecurityTopTen.less';
 const titleStyle = {
   fontSize: '16px',
 };
+const { sourceType } = config;
 // securityType 里股票对应的值
 const STOCK_CODE = config.securityType[0].value;
 const titleList = config.titleList.ten;
 
 export default class WeeklySecurityTopTen extends PureComponent {
   static propTypes = {
-    push: PropTypes.func.isRequired,
     data: PropTypes.array.isRequired,
     permission: PropTypes.bool.isRequired,
     orgId: PropTypes.string,
@@ -81,6 +81,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
         name: record.name,
         code: record.code,
         type: record.securityType,
+        source: sourceType.security,
       };
       return <a className={styles.customerLink} onClick={() => openCustomerListPage(openPayload)}><Icon type="kehuzu" /></a>;
     };

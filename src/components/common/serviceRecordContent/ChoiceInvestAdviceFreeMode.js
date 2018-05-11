@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-19 09:20:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-08 14:37:21
+ * @Last Modified time: 2018-05-10 16:32:42
  * @description 添加涨乐财富通服务方式下的投资建议的自由话术模块
  */
 
@@ -30,6 +30,8 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
     onGetInvestAdviceFreeModeData: PropTypes.func.isRequired,
     // 内容错误提示信息
     descErrorInfo: PropTypes.string.isRequired,
+    // 标题错误提示信息
+    titleErrorInfo: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -44,6 +46,8 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
       validateContent: false,
       // 内容错误提示信息
       descErrorInfo: '',
+      // 标题错误提示信息
+      titleErrorInfo: '',
     };
   }
 
@@ -53,24 +57,21 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
       validateContent: nextVC,
       validateTitle: nextVT,
       descErrorInfo,
+      titleErrorInfo,
     } = nextProps;
     const { serveContent: prevSC, validateContent: prevVC, validateTitle: prevVT } = this.props;
     if (nextVC !== prevVC || nextVT !== prevVT) {
       this.setState({
         validateTitle: nextVT,
         validateContent: nextVC,
+        descErrorInfo,
+        titleErrorInfo,
       });
     }
     if (!_.isEqual(nextSC, prevSC)) {
       this.setState({
         title: nextSC.title || '',
         desc: nextSC.desc || '',
-      });
-    }
-    if (descErrorInfo) {
-      this.setState({
-        descErrorInfo,
-        validateContent: nextVC,
       });
     }
   }
@@ -84,7 +85,10 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
   checkData() {
     const { title, desc } = this.state;
     if (_.isEmpty(title) || title.length > 15) {
-      this.setState({ validateTitle: true });
+      this.setState({
+        titleErrorInfo: '标题最多15个字符',
+        validateTitle: true,
+      });
       return false;
     }
     if (_.isEmpty(desc) || desc.length > 500) {
@@ -111,7 +115,14 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
   }
 
   render() {
-    const { validateTitle, validateContent, title, desc, descErrorInfo } = this.state;
+    const {
+      validateTitle,
+      validateContent,
+      title,
+      desc,
+      descErrorInfo,
+      titleErrorInfo,
+     } = this.state;
     const ctCls = cx([styles.editLine, styles.editLineTextArea]);
 
     const titleErrorCls = cx({
@@ -138,7 +149,7 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
         </div>
         {
           !validateTitle ? null
-          : (<div className={styles.validateTips}>标题最多15个字符</div>)
+          : (<div className={styles.validateTips}>{titleErrorInfo}</div>)
         }
         <div className={ctCls}>
           <div className={styles.editCaption}>内容:</div>

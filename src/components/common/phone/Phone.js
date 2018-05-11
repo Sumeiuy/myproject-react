@@ -2,8 +2,8 @@
  * @Description: PC电话拨号页面
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-05-10 11:41:35
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-10 12:20:39
  */
 
 import React, { PureComponent } from 'react';
@@ -63,7 +63,7 @@ export default class Phone extends PureComponent {
   }
 
   static defaultProps = {
-    number: 0,
+    number: '',
     custType: 'per',
     headless: false,
     disable: false,

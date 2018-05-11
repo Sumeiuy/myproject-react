@@ -102,8 +102,8 @@ export default class QuickMenu extends PureComponent {
   handleAddServiceRecordClick(listItem) {
     const { toggleServiceRecordModal } = this.props;
     toggleServiceRecordModal({
-      custId: listItem.custId,
-      custName: listItem.name,
+      id: listItem.custId,
+      name: listItem.name,
       flag: true,
     });
   }

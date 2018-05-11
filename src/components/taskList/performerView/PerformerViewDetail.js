@@ -41,7 +41,7 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail: PropTypes.func.isRequired,
     targetCustList: PropTypes.object.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
-    addMotServeRecordSuccess: PropTypes.bool.isRequired,
+    currentMotServiceRecord: PropTypes.object.isRequired,
     answersList: PropTypes.object,
     getTempQuesAndAnswer: PropTypes.func.isRequired,
     saveAnswersSucce: PropTypes.bool,

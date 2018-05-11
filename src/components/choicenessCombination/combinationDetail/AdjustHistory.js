@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情-组合调仓组件
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-10 14:38:07
+ * @Last Modified time: 2018-05-11 15:24:23
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -17,11 +17,13 @@ import styles from './adjustHistory.less';
 
 // securityType 里股票对应的值
 const STOCK_CODE = config.securityType[0].value;
-const directionRange = config.directionRange;
+const { typeList, directionRange } = config;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 export default class AdjustHistory extends PureComponent {
   static propTypes = {
+    // 当前组合code
+    combinationCode: PropTypes.string,
     showModal: PropTypes.func.isRequired,
     // 调仓历史数据
     data: PropTypes.object.isRequired,
@@ -30,7 +32,7 @@ export default class AdjustHistory extends PureComponent {
   }
 
   static defaultProps = {
-
+    combinationCode: '',
   }
 
   @autobind
@@ -52,12 +54,19 @@ export default class AdjustHistory extends PureComponent {
         <div className={styles.text}>
           <div className={`${styles.top} clearfix`}>
             <span className={styles.security}>
-              <a
-                title={`${item.securityName} (${item.securityCode}) `}
-                onClick={() => this.handleSecurityClick(item.directionCode, item.securityCode)}
-              >
-                {`${item.securityName} (${item.securityCode}) `}
-              </a>
+              {
+                item.securityType === STOCK_CODE ?
+                  <a
+                    title={`${item.securityName} (${item.securityCode}) `}
+                    onClick={() => this.handleSecurityClick(item.securityType, item.securityCode)}
+                  >
+                    {`${item.securityName} (${item.securityCode}) `}
+                  </a>
+                  :
+                  <span title={`${item.securityName} (${item.securityCode}) `}>
+                    {`${item.securityName} (${item.securityCode}) `}
+                  </span>
+              }
             </span>
             <span className={styles.time}>{time.format(item.time, config.formatStr)}</span>
             <span className={styles.const}>{item.price}</span>
@@ -73,8 +82,11 @@ export default class AdjustHistory extends PureComponent {
 
   @autobind
   handleMoreClick() {
-    const { showModal } = this.props;
-    showModal();
+    const { showModal, combinationCode } = this.props;
+    showModal({
+      type: typeList[0],
+      combinationCode,
+    });
   }
 
   // 证券名称点击事件

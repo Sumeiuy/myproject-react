@@ -1,0 +1,121 @@
+
+//Color
+@blue: #2782d7;
+.overview {
+  height: 157px;
+  box-sizing: border-box;
+  padding: 15px;
+  background: #fff;
+  box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, .18);
+  border-radius: 2px;
+  position: relative;
+  .title {
+    font-size: 16px;
+    color: #4a4a4a;
+    text-indent: 14px;
+    position: relative;
+    &:before {
+      position: absolute;
+      display: block;
+      content: "";
+      width: 5px;
+      height: 16px;
+      background: #4897f1;
+      top: 5px;
+      left: 0;
+    }
+  }
+  .left {
+    width: 43%;
+    height: 105px;
+    padding-top: 10px;
+    position: absolute;
+    .leftInfo {
+      background: url('overview.png') no-repeat 10px center;
+      background-size: 48px 48px;
+      padding-left: 68px;
+      h3 {
+        font-size: 14px;
+        span {
+          color: @blue;
+        }
+        .fs18 {
+          font-size: 18px;
+        }
+        .fs20 {
+          font-size: 20px;
+        }
+        em {
+          font-style: normal;
+          color: #ff7b53;
+        }
+      }
+    }
+  }
+  .right {
+    margin-left: 43%;
+    height: 105px;
+    padding-top: 10px;
+    display: flex;
+    .rightItem {
+      flex: 0 1 auto;
+      width: 188px;
+      padding: 0 20px;
+      box-sizing: border-box;
+      position: relative;
+      &:after {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 2px;
+        height: 60px;
+        top: 50%;
+        right: 0;
+        margin-top: -30px;
+        background: #ccc;
+      }
+      &:last-child:after {
+        display: none;
+      }
+      .rightIcon {
+        width: 36px;
+        height: 36px;
+        margin: 0 auto;
+        line-height: 36px;
+        border-radius: 50%;
+        font-size: 18px;
+        color: #fff;
+        text-align: center;
+      }
+      .iconWeek {
+        background: #7d9be0;
+      }
+      .iconMonth {
+        background: #7dc856;
+      }
+      .iconYear {
+        background: #f9bf00;
+      }
+      .rightInfo {
+        h3 {
+          font-size: 14px;
+          line-height: 24px;
+          span {
+            float: right;
+            font-size: 18px;
+          }
+          .red {
+            color: #e33c39;
+          }
+          .green {
+            color: #499d37;
+          }
+          .position {
+            font-style: normal;
+            color: @blue;
+          }
+        }
+      }
+    }
+  }
+}

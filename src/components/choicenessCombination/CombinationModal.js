@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-04-24 15:40:21
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 17:39:36
+ * @Last Modified time: 2018-05-11 15:05:41
  */
 
 import React, { PureComponent } from 'react';
@@ -23,7 +23,7 @@ import config from './config';
 import styles from './combinationModal.less';
 
 const Search = Input.Search;
-const { timeRange, directionRange, titleList, formatStr } = config;
+const { timeRange, directionRange, titleList, formatStr, sourceType } = config;
 // 3个月的key
 const THREE_MOUNTH_KEY = '3';
 // 调入的key
@@ -32,9 +32,8 @@ const DIRECT_IN = '1';
 const HISTORY_TYPE = config.typeList[0];
 export default class CombinationModal extends PureComponent {
   static propTypes = {
-    type: PropTypes.string.isRequired,
+    location: PropTypes.object.isRequired,
     title: PropTypes.string,
-    getTreeData: PropTypes.func.isRequired,
     treeData: PropTypes.array,
     getListData: PropTypes.func.isRequired,
     listData: PropTypes.object.isRequired,
@@ -42,7 +41,9 @@ export default class CombinationModal extends PureComponent {
     closeModal: PropTypes.func.isRequired,
     openCustomerListPage: PropTypes.func,
   }
-
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+  }
   static defaultProps = {
     title: '标题',
     treeData: [],
@@ -52,30 +53,46 @@ export default class CombinationModal extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { direction } = this.props;
+    const {
+      treeData = [],
+      location: { query: {
+        modalType = HISTORY_TYPE,
+        directionCode = 1,
+        time = THREE_MOUNTH_KEY,
+        combinationCode = treeData[0] ? treeData[0].value : '',
+        keyword = '' } },
+    } = this.props;
     this.state = {
+      // 弹窗类型
+      modalType,
       // 时间默认值
-      time: THREE_MOUNTH_KEY,
+      time,
       // 调仓方向默认值
-      directionCode: direction,
+      directionCode,
       // 开始日期
       startDate: '',
       // 结束日期
       endDate: '',
       // 组合名称-树状值
-      combinationCode: '',
+      combinationCode,
       // 搜索关键字
-      keyword: '',
+      keyword,
       titleArray: [],
     };
   }
 
   componentWillMount() {
-    const { getTreeData, type } = this.props;
-    getTreeData();
     // 时间默认选中为最三个月
-    const dateObj = this.calcDate(THREE_MOUNTH_KEY);
-    const titleArray = this.getTitleColumns(type);
+    const {
+      location: {
+        query: {
+          modalType = HISTORY_TYPE,
+          time = THREE_MOUNTH_KEY,
+        },
+      },
+    } = this.props;
+    const dateObj = this.calcDate(time);
+    const titleArray = this.getTitleColumns(modalType);
     this.setState({
       startDate: dateObj.begin,
       endDate: dateObj.end,
@@ -101,6 +118,7 @@ export default class CombinationModal extends PureComponent {
             name: record.securityName,
             code: record.securityCode,
             type: record.securityType,
+            source: sourceType.security,
           };
           return (<a
             className={styles.customerLink}
@@ -176,8 +194,17 @@ export default class CombinationModal extends PureComponent {
   // 发送请求
   @autobind
   sendRequest(pageNum = 1, pageSize = 10) {
-    const { getListData, type } = this.props;
-    const { startDate, endDate, combinationCode, directionCode, keyword } = this.state;
+    const { replace } = this.context;
+    const { getListData, location: { query = { }, pathname } } = this.props;
+    const {
+      modalType,
+      time,
+      startDate,
+      endDate,
+      combinationCode,
+      directionCode,
+      keyword,
+    } = this.state;
     const payload = {
       startDate,
       endDate,
@@ -186,7 +213,19 @@ export default class CombinationModal extends PureComponent {
       pageSize,
       pageNum,
     };
-    if (type === HISTORY_TYPE) {
+    replace({
+      pathname,
+      query: {
+        ...query,
+        time,
+        combinationCode,
+        directionCode,
+        keyword,
+        pageNum,
+        pageSize,
+      },
+    });
+    if (modalType === HISTORY_TYPE) {
       // 调仓历史
       payload.directionCode = directionCode;
     }
@@ -229,8 +268,8 @@ export default class CombinationModal extends PureComponent {
   }
 
   render() {
-    const { time, directionCode, combinationCode, keyword, titleArray } = this.state;
-    const { type, title, treeData, listData, closeModal } = this.props;
+    const { modalType, time, directionCode, combinationCode, keyword, titleArray } = this.state;
+    const { title, treeData, listData, closeModal } = this.props;
     const { list = [], page = {} } = listData;
     const PaginationOption = {
       current: page.pageNum,
@@ -276,7 +315,7 @@ export default class CombinationModal extends PureComponent {
               />
             </div>
             {
-              type === HISTORY_TYPE
+              modalType === HISTORY_TYPE
               ?
                 <div className={styles.headerItem}>
                   <span>调仓方向</span>

@@ -10,6 +10,7 @@ import { Row, Col, Affix } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
+import moment from 'moment';
 import contains from 'rc-util/lib/Dom/contains';
 
 import styles from './targetCustomerRight.less';
@@ -19,6 +20,10 @@ import TipsInfo from './TipsInfo';
 import SixMonthEarnings from '../../customerPool/list/SixMonthEarnings';
 import { formatAsset } from './formatNum';
 import logable from '../../../decorators/logable';
+// import Phone from '../../common/phone';
+import Icon from '../../common/Icon';
+import { date } from '../../../helper';
+import ContactInfoPopover from '../../common/contactInfoPopover/ContactInfoPopover';
 
 // 信息的完备，用于判断
 const COMPLETION = '完备';
@@ -28,6 +33,8 @@ const NOTCOMPLETION = '不完备';
 const PER_CODE = 'per';
 // 一般机构对应的code码
 const ORG_CODE = 'org';
+
+const PHONE = 'phone';
 
 // 产品机构对应的code码
 // const PROD_CODE = 'prod';
@@ -41,7 +48,8 @@ const getStickyTarget = (currentNode) => {
     element => contains(element, currentNode),
   )) || containers[0];
 };
-
+// 任务状态为未处理、处理中、已驳回时可打电话
+const CALLABLE_LIST = ['10', '20', '60'];
 
 export default class TargetCustomerRight extends PureComponent {
   static propTypes = {
@@ -57,6 +65,12 @@ export default class TargetCustomerRight extends PureComponent {
     custIncomeReqState: PropTypes.bool.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
+    addServeRecord: PropTypes.func.isRequired,
+    motCustfeedBackDict: PropTypes.array.isRequired,
+    currentMissionFlowId: PropTypes.string.isRequired,
+    currentId: PropTypes.string.isRequired,
+    toggleServiceRecordModal: PropTypes.func.isRequired,
+    currentCustomer: PropTypes.object.isRequired,
   }
   static defaultProps = {
     itemData: {},
@@ -69,6 +83,12 @@ export default class TargetCustomerRight extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
   };
+
+  constructor(props) {
+    super(props);
+    this.phoneEndTime = '';
+    this.phoneStartTime = '';
+  }
 
   getPopupContainer() {
     return document.querySelector(fspContainer.container) || document.body;
@@ -151,51 +171,134 @@ export default class TargetCustomerRight extends PureComponent {
     this.openFsp360TabAction({ itemData, param });
   }
 
-  // 联系电话的浮层信息
-  renderPhoneNumTips(itemData = {}) {
+  /**
+   * 通话结束后要创建一条服务记录，并弹出服务记录框
+   */
+  @autobind
+  handlePhoneEnd() {
+    // 没有成功发起通话
+    if (!moment.isMoment(this.phoneStartTime)) {
+      return;
+    }
+    this.phoneEndTime = moment();
     const {
-      contactDetail = [],
-      custNature = '',
+      itemData,
+      addServeRecord,
+      motCustfeedBackDict,
+      currentMissionFlowId,
+      currentId,
+      toggleServiceRecordModal,
+    } = this.props;
+    const {
+      custId,
+      custName,
     } = itemData;
-    if (_.isEmpty(contactDetail)) {
+    const [firstServiceType = {}] = motCustfeedBackDict;
+    const { key: firstServiceTypeKey, children = [] } = firstServiceType;
+    const [firstFeedback = {}] = children;
+    const phoneDuration = date.calculateDuration(
+      this.phoneStartTime.valueOf(),
+      this.phoneEndTime.valueOf(),
+    );
+    const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}。`;
+    let payload = {
+      // 任务流水id
+      missionFlowId: currentMissionFlowId,
+      // 任务id
+      missionId: currentId,
+      // 经济客户号
+      custId,
+      // 服务方式
+      serveWay: 'HTSC Phone',
+      // 任务类型，1：MOT  2：自建
+      taskType: '2',
+      // 服务状态
+      flowStatus: '30',
+      // 同serveType
+      type: firstServiceTypeKey,
+      // 服务类型，即任务类型
+      serveType: firstServiceTypeKey,
+      // 客户反馈一级
+      serveCustFeedBack: firstFeedback.key,
+      // 服务记录内容
+      serveContentDesc: serviceContentDesc,
+      // 服务时间
+      serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
+      // 反馈时间
+      feedBackTime: moment().format('YYYY-MM-DD'),
+    };
+    // 客户反馈的二级
+    if (firstFeedback.children) {
+      payload = {
+        ...payload,
+        serveCustFeedBack2: firstFeedback.children[0].key,
+      };
+    }
+    // 添加服务记录表单共用，把打电话自动生成的默认数据保存到prevRecordInfo
+    const saveRecordData = () => {
+      toggleServiceRecordModal({
+        id: currentMissionFlowId,
+        name: custName,
+        flag: false,
+        caller: PHONE,
+        autoGenerateRecordInfo: payload,
+      });
+    };
+    addServeRecord({
+      postBody: payload,
+      callbackOfPhone: saveRecordData,
+      hasLoading: false,
+    });
+  }
+
+  // 通话开始
+  @autobind
+  handlePhoneConnected() {
+    this.phoneStartTime = moment();
+  }
+
+  /**
+   * 联系方式渲染
+   */
+  @autobind
+  renderContactInfo() {
+    const { itemData, currentCustomer } = this.props;
+    const { custNature, perCustomerContactInfo, orgCustomerContactInfoList } = itemData;
+    // 任务状态为未处理、处理中、已驳回时可打电话
+    const canCall = _.includes(CALLABLE_LIST, currentCustomer.missionStatusCode);
+    // 联系方式为空判断
+    const isEmpty = (
+      custNature === PER_CODE &&
+      (
+        _.isEmpty(perCustomerContactInfo) ||
+        (_.isEmpty(perCustomerContactInfo.homeTels)
+        && _.isEmpty(perCustomerContactInfo.cellPhones)
+        && _.isEmpty(perCustomerContactInfo.workTels)
+        && _.isEmpty(perCustomerContactInfo.otherTels))
+      )
+    ) ||
+      (custNature === ORG_CODE && _.isEmpty(orgCustomerContactInfoList));
+    if (isEmpty) {
       return null;
     }
-    let content = '';
-    if (custNature === PER_CODE) {
-      content = (
-        <div className={`${styles.nameTips}`}>
-          {
-            contactDetail.map(obj => (
-              <div key={obj.cellPhone}>
-                <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
-                <h6><span>住宅电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>
-                <h6><span>手机号码：</span><span>{this.handleEmpty(obj.cellPhone)}</span></h6>
-              </div>
-            ))
-          }
-        </div>
-      );
-    } else {
-      content = (
-        <div className={`${styles.nameTips}`}>
-          {
-            contactDetail.map(obj => (
-              <div key={obj.cellPhone}>
-                <h5 className={styles.callName}>{this.handleEmpty(obj.name)}</h5>
-                <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
-                <h6><span>住宅电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>
-                <h6><span>手机号码：</span><span>{this.handleEmpty(obj.cellPhone)}</span></h6>
-              </div>
-            ))
-          }
-        </div>
-      );
-    }
+    const perContactInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'homeTels', 'workTels', 'otherTels']);
     return (
-      <TipsInfo
-        position={'bottomRight'}
-        title={content}
-      />
+      <Col span={16}>
+        <ContactInfoPopover
+          custType={custNature}
+          personalContactInfo={perContactInfo}
+          orgCustomerContactInfoList={orgCustomerContactInfoList}
+          handlePhoneEnd={this.handlePhoneEnd}
+          handlePhoneConnected={this.handlePhoneConnected}
+          disablePhone={!canCall}
+          placement={'top'}
+        >
+          <div className={styles.phoneRight}>
+            <Icon type="lianxifangshi1" className={styles.phoneRightIcon} />
+            <span className={styles.phoneRightText}>联系方式</span>
+          </div>
+        </ContactInfoPopover>
+      </Col>
     );
   }
 
@@ -273,7 +376,6 @@ export default class TargetCustomerRight extends PureComponent {
     const infoCompletionRate = itemData.infoCompletionRate ?
       `${Number(itemData.infoCompletionRate) * 100}%` : '--';
     const introducerName = this.handleEmpty(itemData.empName);
-
     return (
       <div className={styles.box} ref={ref => this.container = ref}>
         <Affix target={() => getStickyTarget(this.container)}>
@@ -321,17 +423,7 @@ export default class TargetCustomerRight extends PureComponent {
                   }
                 </h5>
               </Col>
-              {
-                itemData.contactPhone ?
-                  <Col span={16}>
-                    <h5
-                      className={styles.phoneRight}
-                    >
-                      <span>联系电话：</span><span>{this.handleEmpty(itemData.contactPhone)}</span>
-                      {this.renderPhoneNumTips(itemData)}
-                    </h5>
-                  </Col> : null
-              }
+              {this.renderContactInfo()}
             </Row>
           </div>
         </Affix>

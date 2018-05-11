@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情-订购客户
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-09 14:46:57
+ * @Last Modified time: 2018-05-11 15:46:40
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -31,6 +31,16 @@ export default class HistoryReport extends PureComponent {
   @autobind
   getNewTitleList(list) {
     const newTitleList = [...list];
+    newTitleList[0].render = text => (
+      <div className={styles.ellipsis} title={text}>
+        {text}
+      </div>
+    );
+    newTitleList[1].render = text => (
+      <div className={styles.ellipsis} title={text}>
+        {text}
+      </div>
+    );
     newTitleList[3].render = text => (
       this.renderPopover(text)
     );
@@ -39,7 +49,6 @@ export default class HistoryReport extends PureComponent {
 
   @autobind
   handlePaginationChange(page) {
-    console.log('handlePaginationChange', page);
     const { pageChange } = this.props;
     pageChange(page);
   }
@@ -64,7 +73,7 @@ export default class HistoryReport extends PureComponent {
         </div>
       </Popover>);
     } else {
-      reactElement = '标题：暂无';
+      reactElement = '暂无';
     }
     return reactElement;
   }

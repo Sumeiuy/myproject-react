@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-09 14:21:12
+ * @Last Modified time: 2018-05-11 15:12:31
 */
 
 import React, { PureComponent } from 'react';
@@ -12,13 +12,15 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import Icon from '../../common/Icon';
-import { time } from '../../../helper';
+import { time, url as urlHelper } from '../../../helper';
+import { openRctTab } from '../../../utils';
 import CombinationYieldChart from '../CombinationYieldChart';
 import styles from './combinationListItem.less';
 import {
   yieldRankList,
   securityType as securityTypeList,
   formatStr,
+  sourceType,
 } from '../../../components/choicenessCombination/config';
 
 const EMPTY_OBJECT = {};
@@ -26,6 +28,9 @@ const EMPTY_LIST = [];
 // 最大字符长度
 const MAX_SIZE_LENGTH = 35;
 const DEFAULT_REASON = '调仓理由：暂无';
+
+// 历史报告
+const REPORT_TYPE = 'report';
 
 export default class CombinationListItem extends PureComponent {
   static propTypes = {
@@ -46,6 +51,7 @@ export default class CombinationListItem extends PureComponent {
     openStockPage: PropTypes.func.isRequired,
     // 打开持仓查客户页面
     openCustomerListPage: PropTypes.func.isRequired,
+    showModal: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -147,11 +153,23 @@ export default class CombinationListItem extends PureComponent {
   }
 
   @autobind
-  openCustomerListPage(data) {
-    const { openCustomerListPage } = this.props;
-    openCustomerListPage({
-      name: data.combinationName,
-      code: data.combinationCode,
+  viewHistoryReport(name) {
+    const { showModal } = this.props;
+    const payload = {
+      combinationCode: name,
+      type: REPORT_TYPE,
+    };
+    showModal(payload);
+  }
+
+  @autobind
+  openDetail(id) {
+    const query = {
+      id,
+    };
+    const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
+    openRctTab({
+      url,
     });
   }
 
@@ -163,7 +181,7 @@ export default class CombinationListItem extends PureComponent {
       getCombinationLineChart,
       combinationLineChartData,
       rankTabActiveKey,
-      // yieldRankValue,
+      openCustomerListPage,
     } = this.props;
     const chartData = combinationLineChartData[data.combinationCode] || EMPTY_OBJECT;
     const yieldName = this.getYieldName();
@@ -172,12 +190,17 @@ export default class CombinationListItem extends PureComponent {
       clearfix: true,
       [styles.show]: data.show,
     });
+    const openPayload = {
+      name: data.combinationName,
+      code: data.combinationCode,
+      source: sourceType.combination,
+    };
     return (
       <div className={classNames}>
         <div className={styles.left}>
           <div className={`${styles.headBox} clearfix`}>
             <span className={styles.combinationName} title={data.combinationName}>
-              <a>{data.combinationName}</a>
+              <a onClick={() => this.openDetail(data.combinationCode)}>{data.combinationName}</a>
             </span>
             <span className={styles.earnings}>
               <i>{yieldName}</i>
@@ -193,9 +216,9 @@ export default class CombinationListItem extends PureComponent {
               }
             </span>
             <span className={styles.link}>
-              <a>历史报告 </a>
+              <a onClick={() => this.viewHistoryReport(data.combinationCode)}>历史报告 </a>
               |
-              <a onClick={() => this.openCustomerListPage(data)}> 订购客户</a>
+              <a onClick={() => openCustomerListPage(openPayload)}> 订购客户</a>
             </span>
           </div>
           <div className={styles.tableBox}>

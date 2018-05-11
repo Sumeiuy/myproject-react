@@ -71,8 +71,6 @@ export default {
     incomeData: [], // 净收入
     custContactData: {}, // 客户联系方式
     serviceRecordData: {}, // 服务记录
-    // 添加服务记录成功的标记
-    addServeRecordSuccess: true,
     custEmail: {},
     // 分组维度，客户分组列表
     customerGroupList: {},
@@ -142,14 +140,18 @@ export default {
     sightingTelescopeFilters: {},
     // 客户分组批量导入客户解析客户列表
     batchCustList: {},
+    // 当前添加的服务记录的信息
+    currentCommonServiceRecord: {},
     // 持仓产品的详情
     holdingProducts: {},
   },
 
   subscriptions: {
     setup({ dispatch, history }) {
-      dispatch({ type: 'getCustRangeByAuthority', loading: true });
       history.listen(({ pathname, search }) => {
+        if (pathname === '/customerPool/list') {
+          dispatch({ type: 'getCustRangeByAuthority', loading: true });
+        }
         const query = queryString.parse(search);
         // 监听location的配置对象
         // 函数名称为路径匹配字符
@@ -402,6 +404,11 @@ export default {
         type: 'getCustContactSuccess',
         payload: { resultData, custId },
       });
+      // 唤起电话联系弹窗时，获取自建任务平台的服务类型、任务反馈字典，为打电话做准备
+      yield put({
+        type: 'app/getMotCustfeedBackDict',
+        payload: { pageNum: 1, pageSize: 10000, type: 2 },
+      });
     },
     * getCustEmail({ payload }, { call, put, select }) {
       const custEmailData = yield select(state => state.customerPool.custContactData);
@@ -447,12 +454,22 @@ export default {
       yield put({
         type: 'resetServeRecord',
       });
-      const res = yield call(api.addCommonServeRecord, payload);
-      if (res.msg === 'OK') {
-        // yield put({
-        //   type: 'getServiceLog',
-        //   payload: { custId: payload.custId },
-        // });
+      const { noHints = false, ...otherPayload } = payload;
+      const res = yield call(api.addCommonServeRecord, otherPayload);
+      if (res.code === '0' && res.resultData !== 'failure') {
+        // 添加成功后关闭添加窗口
+        yield put({
+          type: 'app/toggleServiceRecordModal',
+          payload: false,
+        });
+        // 打电话后自动生成服务记录时，不需要弹出提示，其他情况需要提示
+        if (!noHints) {
+          yield put({
+            type: 'toastM',
+            message: '添加服务记录成功',
+            duration: 2,
+          });
+        }
         yield put({
           type: 'addServeRecordSuccess',
           payload: res,
@@ -730,7 +747,7 @@ export default {
       });
     },
     // 上传文件之前，先查询uuid
-    * queryCustUuid({ payload }, { call, put }) {
+    * queryCustUuid({ payload = {} }, { call, put }) {
       const { resultData } = yield call(api.queryCustUuid, payload);
       yield put({
         type: 'queryCustUuidSuccess',
@@ -1074,13 +1091,13 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        addServeRecordSuccess: payload.resultData === 'success',
+        currentCommonServiceRecord: { id: payload.resultData },
       };
     },
     resetServeRecord(state) {
       return {
         ...state,
-        addServeRecordSuccess: false,
+        currentCommonServiceRecord: {},
       };
     },
     // 获取客户分组成功

@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合调仓组件
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-17 16:58:53
+ * @Last Modified time: 2018-05-11 14:53:05
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -21,7 +21,7 @@ const titleStyle = {
   fontSize: '16px',
 };
 
-const { directionRange } = config;
+const { directionRange, sourceType } = config;
 const directionArray = _.filter(directionRange, o => o.value);
 // securityType 里股票对应的值
 const STOCK_CODE = config.securityType[0].value;
@@ -55,17 +55,29 @@ export default class CombinationAdjustHistory extends PureComponent {
   handleMoreClick(value) {
     const { showModal } = this.props;
     const payload = {
-      code: value,
+      directionCode: value,
       type: HISTORY_TYPE,
     };
     showModal(payload);
+  }
+
+  @autobind
+  calcReason(list) {
+    let reasonFlag = false;
+    for (let i = 0; i < 2; i++) {
+      console.warn('list', list);
+      if (!_.isEmpty(list[i]) && !_.isEmpty(list[i].reason)) {
+        reasonFlag = true;
+      }
+    }
+    return reasonFlag;
   }
 
   // 设置 popover
   @autobind
   renderPopover(value) {
     let reactElement = null;
-    if (value) {
+    if (!_.isEmpty(value)) {
       reactElement = (<Popover
         placement="bottomLeft"
         content={value}
@@ -96,65 +108,75 @@ export default class CombinationAdjustHistory extends PureComponent {
           titleStyle={titleStyle}
         />
         {
-          directionArray.map((item) => {
+          directionArray.map((item, idx) => {
             const { icon, title, value } = item;
-            const tempList = _.filter(list, o => o.directionCode === Number(value));
-            const showList = _.slice(tempList, 0, 2);
+            const showList = _.filter(list, o => o.directionCode === Number(value));
+            const itemKey = `${value}${idx}`;
+            const flag = this.calcReason(showList);
             return (
-              <dl className={styles.adjustIn} key={value}>
-                <dt>
+              <div className={styles.adjustIn} key={itemKey}>
+                <div className={styles.left}>
                   <i>{icon}</i>
                   <span>{title}</span>
-                </dt>
-                {
-                  showList.map((child, index) => {
-                    const childKey = `${value}${index}`;
-                    const {
-                      securityName,
-                      securityCode,
-                      securityType,
-                      combinationName,
-                      reason,
-                    } = child;
-                    const openPayload = {
-                      name: securityName,
-                      code: securityCode,
-                      type: securityType,
-                    };
-                    return (
-                      <dd key={childKey}>
-                        <div className={styles.titleBox}>
-                          <a
-                            className={styles.securityName}
-                            title={securityName}
-                            onClick={() => this.handleSecurityClick(securityType, securityCode)}
-                          >
-                            {securityName} ({securityCode})
-                          </a>
-                          <a className={styles.combinationName} title={combinationName}>
-                            {combinationName}
-                          </a>
+                </div>
+                <div className={styles.right}>
+                  {
+                    showList.map((child, index) => {
+                      const {
+                        securityName,
+                        securityCode,
+                        securityType,
+                        combinationName,
+                        reason,
+                      } = child;
+                      const openPayload = {
+                        name: securityName,
+                        code: securityCode,
+                        type: securityType,
+                        source: sourceType.security,
+                      };
+                      const childKey = `${securityCode}${index}`;
+                      return (
+                        <div className={styles.rightItem} key={childKey}>
+                          <div className={styles.titleBox}>
+                            <a
+                              className={styles.securityName}
+                              title={securityName}
+                              onClick={() => this.handleSecurityClick(securityType, securityCode)}
+                            >
+                              {securityName} ({securityCode})
+                            </a>
+                            <a className={styles.combinationName} title={combinationName}>
+                              {combinationName}
+                            </a>
+                          </div>
+                          <div className={styles.timeBox}>
+                            <span>{time.format(child.time, config.formatStr)}</span>
+                            <a
+                              className={styles.customerLink}
+                              onClick={() => openCustomerListPage(openPayload)}
+                            >
+                              <Icon type="kehuzu" />
+                            </a>
+                          </div>
+                          {
+                            flag
+                            ?
+                              <div className={styles.reasonBox}>
+                                {this.renderPopover(reason)}
+                              </div>
+                            :
+                              null
+                          }
                         </div>
-                        <div className={styles.timeBox}>
-                          <span>{time.format(child.time, config.formatStr)}</span>
-                          <a
-                            className={styles.customerLink}
-                            onClick={() => openCustomerListPage(openPayload)}
-                          >
-                            <Icon type="kehuzu" />
-                          </a>
-                        </div>
-                        <div className={styles.reasonBox}>
-                          {this.renderPopover(reason)}
-                        </div>
-                      </dd>
-                    );
-                  })
-                }
-                <dd className={styles.more}>
+                      );
+                    })
+                  }
+                </div>
+                <div className={styles.more}>
                   <a onClick={() => this.handleMoreClick(value)}>{'更多 >'}</a>
-                </dd>
-              </dl>
+                </div>
+              </div>
             );
           })
         }

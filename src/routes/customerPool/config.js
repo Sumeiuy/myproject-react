@@ -34,7 +34,7 @@ const ENTER_TYPE = {
 };
 
 // 任务管理岗权限作用的首页入口列表
-const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'business', 'external'];
+const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'external'];
 // 首页指标查询权限作用的首页入口列表
 const ENTERLIST2 = ['custIndicator', 'numOfCustOpened'];
 

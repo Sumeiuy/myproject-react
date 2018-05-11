@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:07:12
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-14 11:20:26
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-08 09:22:55
  * @description 针对taskList > Home 组件的props类型校验模块
  */
 import PropTypes from 'prop-types';
@@ -57,7 +57,7 @@ export default {
   clearCreateTaskData: PropTypes.func.isRequired,
   getServiceType: PropTypes.func.isRequired,
   taskFeedbackList: PropTypes.array.isRequired,
-  addMotServeRecordSuccess: PropTypes.bool.isRequired,
+  currentMotServiceRecord: PropTypes.object.isRequired,
   getTempQuesAndAnswer: PropTypes.func.isRequired,
   answersList: PropTypes.object,
   saveAnswersByType: PropTypes.func.isRequired,
@@ -81,4 +81,8 @@ export default {
   custFeedbackList: PropTypes.array.isRequired,
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
+  toggleServiceRecordModal: PropTypes.func.isRequired,
+  serviceRecordInfo: PropTypes.object.isRequired,
+  addServeRecordOfPhone: PropTypes.func.isRequired,
+  resetServiceRecordInfo: PropTypes.func.isRequired,
 };

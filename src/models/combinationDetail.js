@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合-组合详情modal
  * @Date: 2018-04-17 10:08:03
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-09 15:03:57
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-05-09 16:48:57
 */
 
 import _ from 'lodash';
@@ -40,6 +40,9 @@ function calcDate(value) {
 export default {
   namespace: 'combinationDetail',
   state: {
+    overview: EMPTY_OBJECT,  // 组合概览
+    compositionPie: EMPTY_LIST,  // 组合构成-饼图
+    compositionTable: EMPTY_LIST,  // 组合构成-表格
     adjustWarehouseHistoryData: EMPTY_OBJECT, // 调仓历史数据
     tableHistoryList: EMPTY_OBJECT,  // 弹窗调仓历史表格数据
     combinationAdjustHistoryData: EMPTY_OBJECT, // 组合调仓数据
@@ -50,6 +53,30 @@ export default {
     modalReportHistoryData: EMPTY_OBJECT, // 组合详情-历史报告弹窗数据
   },
   reducers: {
+    // 组合详情-概览
+    getOverviewSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        overview: resultData,
+      };
+    },
+    // 组合构成-饼图
+    getCompositionPieSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        compositionPie: resultData,
+      };
+    },
+    // 组合构成-表格
+    getCompositionTableSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        compositionTable: resultData,
+      };
+    },
     // 获取调仓历史数据
     getAdjustWarehouseHistorySuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
@@ -108,6 +135,30 @@ export default {
     },
   },
   effects: {
+    // 组合详情-概览数据
+    * getOverview({ payload }, { call, put }) {
+      const response = yield call(api.getOverview, payload);
+      yield put({
+        type: 'getOverviewSuccess',
+        payload: response,
+      });
+    },
+    // 组合构成-饼图
+    * getCompositionPie({ payload }, { call, put }) {
+      const response = yield call(api.getCompositionPie, payload);
+      yield put({
+        type: 'getCompositionPieSuccess',
+        payload: response,
+      });
+    },
+    // 组合构成-表格
+    * getCompositionTable({ payload }, { call, put }) {
+      const response = yield call(api.getCompositionTable, payload);
+      yield put({
+        type: 'getCompositionTableSuccess',
+        payload: response,
+      });
+    },
     // 获取调仓历史数据
     * getAdjustWarehouseHistory({ payload }, { call, put }) {
       const response = yield call(api.getAdjustWarehouseHistory, payload);
