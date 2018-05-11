@@ -248,14 +248,9 @@ const permission = {
     return hasDuty(dutyList, duty.HTSC_NPCI_BMP);
   },
 
-  // HTSC 客户资料 营业部执行岗
+  // HTSC 客户资料管理岗（无隐私）
   hasCDMPermission() {
     return hasDuty(dutyList, duty.HTSC_CDM);
-  },
-
-  // HTSC 客户资料（无隐私）营业部执行岗
-  hasNPCDMPermission() {
-    return hasDuty(dutyList, duty.HTSC_NP_CDM);
   },
 
   // 管理者视图客户总数下钻、进度条下钻、饼图下钻查看非本人名下客户360需要的职责
@@ -263,15 +258,13 @@ const permission = {
   // - HTSC 客户资料-总部管理岗
   // - HTSC 客户资料（无隐私）-分中心管理岗
   // - HTSC 客户资料(无隐私）-总部管理岗
-  // - HTSC 客户资料 营业部执行岗
-  // - HTSC 客户资料（无隐私）营业部执行岗
+  // - HTSC 客户资料管理岗（无隐私）
   hasViewCust360PermissionForManagerView() {
     return permission.hasCIHMPPermission() ||
       permission.hasCIBMPPermission() ||
       permission.hasNPCIHMPPermission() ||
       permission.hasNPCIBMPPermission() ||
-      permission.hasCDMPermission() ||
-      permission.hasNPCDMPermission();
+      permission.hasCDMPermission();
   },
 
   // ！！！目前和管理者视图查看360职责一样，但是为了防止以后经常改职责，还是保留两个方法
@@ -280,15 +273,13 @@ const permission = {
   // - HTSC 客户资料-总部管理岗
   // - HTSC 客户资料（无隐私）-分中心管理岗
   // - HTSC 客户资料(无隐私）-总部管理岗
-  // - HTSC 客户资料 营业部执行岗
-  // - HTSC 客户资料（无隐私）营业部执行岗
+  // - HTSC 客户资料管理岗（无隐私）
   hasViewCust360PermissionForCustList() {
     return permission.hasCIHMPPermission() ||
       permission.hasCIBMPPermission() ||
       permission.hasNPCIHMPPermission() ||
       permission.hasNPCIBMPPermission() ||
-      permission.hasCDMPermission() ||
-      permission.hasNPCDMPermission();
+      permission.hasCDMPermission();
   },
 };
 
