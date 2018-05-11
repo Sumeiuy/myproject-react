@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-09 20:53:48
+ * @Last Modified time: 2018-05-11 13:30:01
  */
 
 import React, { PureComponent } from 'react';
@@ -265,6 +265,8 @@ export default class TaskFlow extends PureComponent {
       subtype: '',
       // logable点击下一步的任务名称
       taskName: '',
+      // logable点击下一步的客户来源
+      enterType: '',
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -560,14 +562,19 @@ export default class TaskFlow extends PureComponent {
           }
         }
       });
-      this.setState({ subtype });
+
       // logable日志---目标客户
+      const enterType = currentEntry === 0 ? '导入客户' : '瞄准镜圈人';
+      this.setState({
+        subtype,
+        enterType,
+      });
       logCommon({
         type: 'Submit',
         payload: {
           title: '目标客户',
+          type: enterType,
           subtype,
-          type: '客户来源',
           value: subtype,
           name: '',
         },
@@ -596,14 +603,14 @@ export default class TaskFlow extends PureComponent {
           };
           isFormValidate = true;
           // logable日志---任务信息
-          const { subtype } = this.state;
+          const { subtype, enterType } = this.state;
           this.setState({ taskName: values.taskName });
           logCommon({
             type: 'Submit',
             payload: {
               title: '任务信息',
+              type: enterType,
               subtype,
-              type: '客户来源',
               value: JSON.stringify(values),
               name: values.taskName,
             },
@@ -720,7 +727,7 @@ export default class TaskFlow extends PureComponent {
       }
 
       // logable日志---任务评估
-      const { subtype, taskName, needMissionInvestigation } = this.state;
+      const { subtype, enterType, taskName, needMissionInvestigation } = this.state;
       let values = {};
       if (needMissionInvestigation) {
         values = {
@@ -736,8 +743,8 @@ export default class TaskFlow extends PureComponent {
         type: 'Submit',
         payload: {
           title: '任务评估',
+          type: enterType,
           subtype,
-          type: '客户来源',
           value: JSON.stringify(values),
           name: taskName,
         },
@@ -940,7 +947,7 @@ export default class TaskFlow extends PureComponent {
     }
     this.decoratorSubmitTaskFlow(postBody);
     // logable日志---确认提交
-    const { subtype, taskName: name, currentSelectRecord } = this.state;
+    const { subtype, enterType, taskName: name, currentSelectRecord } = this.state;
     const values = {
       ...postBody,
       ...currentSelectRecord,
@@ -949,8 +956,8 @@ export default class TaskFlow extends PureComponent {
       type: 'Submit',
       payload: {
         title: '确认提交',
+        type: enterType,
         subtype,
-        type: '客户来源',
         value: JSON.stringify(values),
         name,
       },

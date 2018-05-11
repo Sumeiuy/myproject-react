@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-09 17:05:27
+ * @Last Modified time: 2018-05-11 17:38:43
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -480,7 +480,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 点击提交按钮弹提示框
   @autobind
   showconFirm(formData, btnItem) {
-    console.warn('formData', formData);
     if (
       (_.includes(unSubscribeArray, formData.operationType)
       || _.includes(subscribeArray, formData.operationType))
@@ -509,34 +508,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
         protocolData: formData,
       });
     }
-    // log日志---提交按钮
-    let name = '';
-    switch (formData.operationType) {
-      case 'Subscribe':
-        name = '协议订购';
-        break;
-      case 'Unsubscribe':
-        name = '协议退订';
-        break;
-      case 'Renewal':
-        name = '协议续订';
-        break;
-      case 'AddDel':
-        name = '新增或删除下挂客户';
-        break;
-      default:
-        name = '';
-        break;
-    }
-    logCommon({
-      type: 'Submit',
-      payload: {
-        name,
-        type: '协议管理',
-        subType: formData.subType,
-        value: JSON.stringify(formData),
-      },
-    });
   }
 
   // 审批人弹窗点击确定
@@ -564,6 +535,47 @@ export default class ChannelsTypeProtocol extends PureComponent {
         });
       },
     );
+    // log日志---提交按钮
+    let name = '';
+    switch (protocolData.operationType) {
+      case 'Subscribe':
+        name = '协议订购';
+        break;
+      case 'Unsubscribe':
+        name = '协议退订';
+        break;
+      case 'Renewal':
+        name = '协议续订';
+        break;
+      case 'AddDel':
+        name = '新增或删除下挂客户';
+        break;
+      default:
+        break;
+    }
+    let logSubType = '';
+    switch (protocolData.subType) {
+      case '507070':
+        logSubType = '快车道';
+        break;
+      case '507050':
+        logSubType = '高速通道';
+        break;
+      case '507095':
+        logSubType = '套利软件';
+        break;
+      default:
+        break;
+    }
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name,
+        type: '协议管理',
+        subType: logSubType,
+        value: JSON.stringify(protocolData),
+      },
+    });
   }
 
   // 根据当前子类型相应不同的详情组件
