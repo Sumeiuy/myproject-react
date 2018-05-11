@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-09 17:00:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-09 18:19:47
+ * @Last Modified time: 2018-05-10 10:52:30
  * @description 营业部非投顾签约客户分配申请新建
  */
 
@@ -12,24 +12,27 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import CommonModal from '../common/biz/CommonModal';
-// import InfoTitle from '../common/InfoTitle';
+import BussinessDepartCustBoard from './BussinessDepartmentCustBoard';
 
 export default class componentName extends Component {
   static propTypes = {
     modalKey: PropTypes.string.isRequired,
     visible: PropTypes.bool,
     onClose: PropTypes.func,
+    onSubmit: PropTypes.func,
   }
 
   static defaultProps = {
     visible: false,
     onClose: _.noop,
+    onSubmit: _.noop,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      modalLoading: false, // 点击提交后，弹出层区域的Loading
+      // 点击提交后，弹出层区域的Loading
+      modalLoading: false,
     };
   }
 
@@ -61,7 +64,7 @@ export default class componentName extends Component {
           onOk={this.handleSubmitApprovals}
           onCancel={this.handleModalClose}
         >
-          <div />
+          <BussinessDepartCustBoard />
         </CommonModal>
       </div>
     );
