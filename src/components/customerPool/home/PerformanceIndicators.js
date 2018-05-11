@@ -49,8 +49,7 @@ export default class PerformanceIndicators extends PureComponent {
     custCount: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.array,
-    ]), // 问了后端的逻辑，当有报错时，返回的是空对象，当正常时，返回的是数组
-    authority: PropTypes.bool.isRequired,
+    ]), // 问了后端的逻辑，当有报错时，返回的是空对象，当正常时，返回的是数
   }
 
   static defaultProps = {
@@ -97,7 +96,6 @@ export default class PerformanceIndicators extends PureComponent {
     const {
       push,
       cycle,
-      authority,
       location,
     } = this.props;
     const param = {
@@ -106,7 +104,6 @@ export default class PerformanceIndicators extends PureComponent {
       push,
       location,
       bname: arg.name || arg.value,
-      authority,
     };
     // 点击柱子，arg.name，arg.value都有值
     // 点击x轴， arg.value有值，不存在arg.name
@@ -361,7 +358,6 @@ export default class PerformanceIndicators extends PureComponent {
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalData = getProductSale(argument);
     const headLine = { icon: 'shouru', title: param.headLine };
-    const { authority } = this.props;
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
@@ -370,7 +366,6 @@ export default class PerformanceIndicators extends PureComponent {
               dataSource={finalData}
               key={param.key}
               type={'productSale'}
-              authority={authority}
             />
           </IfEmpty>
         </RectFrame>
@@ -458,7 +453,7 @@ export default class PerformanceIndicators extends PureComponent {
   // 新增客户
   @autobind
   renderPureAddCustIndicators(param) {
-    const { cycle, push, location, empInfo, custCount, authority } = this.props;
+    const { cycle, push, location, empInfo, custCount } = this.props;
     const isEmpty = _.isEmpty(custCount);
     const { newUnit: pureAddUnit, items: pureAddItems } = getPureAddCust({
       pureAddData: isEmpty ? [0, 0, 0, 0] : custCount,
@@ -475,7 +470,6 @@ export default class PerformanceIndicators extends PureComponent {
               push={push}
               location={location}
               empInfo={empInfo}
-              authority={authority}
             />
           </IfEmpty>
         </RectFrame>

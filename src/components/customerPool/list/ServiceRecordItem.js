@@ -9,7 +9,7 @@ import { request } from '../../../config';
 import { emp, getIconType } from '../../../helper';
 import logable from '../../../decorators/logable';
 import ForgeryRichText from '../../common/ForgeryRichText';
-import OmitMultipleLineText from '../../common/omitMultipleLineText';
+import EllipsisMultipleLineText from '../../common/ellipsisMultipleLineText';
 
 const EMPTY_OBJECT = {};
 const NO_EMAIL_HREF = 'javascript:void(0);'; // eslint-disable-line
@@ -101,9 +101,9 @@ export default class ServiceRecordItem extends PureComponent {
 
     const title = () => (
       <div>
-        <OmitMultipleLineText>
+        <EllipsisMultipleLineText>
           <ForgeryRichText text={newContent} />
-        </OmitMultipleLineText>
+        </EllipsisMultipleLineText>
       </div>
     );
 

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:14:05
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-09 16:50:28
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-09 14:35:11
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapStateToProps移至此处成立独立模块
  */
 const mapStateToProps = () => state => ({
@@ -43,7 +43,7 @@ const mapStateToProps = () => state => ({
   // 任务反馈的字典
   taskFeedbackList: state.performerView.taskFeedbackList,
   // 执行者视图添加服务记录是否成功
-  addMotServeRecordSuccess: state.performerView.addMotServeRecordSuccess,
+  currentMotServiceRecord: state.performerView.currentMotServiceRecord,
   answersList: state.performerView.answersList,
   saveAnswersSucce: state.performerView.saveAnswersSucce,
   // 任务反馈统计数据
@@ -64,6 +64,8 @@ const mapStateToProps = () => state => ({
   zhangleApprovalList: state.performerView.zhangleApprovalList,
   // 执行者视图右侧详情查询到的客户列表
   custListForServiceImplementation: state.performerView.custListForServiceImplementation,
+  // 添加服务记录的相关信息
+  serviceRecordInfo: state.app.serviceRecordInfo,
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: state.investmentAdvice.testWallCollisionStatus,
 });

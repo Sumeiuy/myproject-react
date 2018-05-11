@@ -45,7 +45,7 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail: PropTypes.func.isRequired,
     targetCustList: PropTypes.object.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
-    addMotServeRecordSuccess: PropTypes.bool.isRequired,
+    currentMotServiceRecord: PropTypes.object.isRequired,
     answersList: PropTypes.object,
     getTempQuesAndAnswer: PropTypes.func.isRequired,
     saveAnswersSucce: PropTypes.bool,
@@ -152,8 +152,8 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-      targetCustomerState = '',
-      selectCustomerRowId = '',
+        targetCustomerState = '',
+        selectCustomerRowId = '',
       },
       changeParameter,
     } = this.props;

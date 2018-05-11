@@ -2,32 +2,33 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-09 16:52:25
+ * @Last Modified time: 2018-05-11 10:15:49
  * 多行文本打点组件
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import Icon from '../Icon';
+
+import { dom as DOMHelper } from '../../../helper';
 
 import styles from './index.less';
 
 const ORIGIN_MAX_CONTENT_HEIGHT = '100%';
 
-export default class OmitMultipleLineText extends PureComponent {
+export default class EllipsisMultipleLineText extends PureComponent {
   static propTypes = {
     // 子元素
     children: PropTypes.node.isRequired,
     // 第几行开始打点
-    omitLine: PropTypes.number,
+    line: PropTypes.number,
   }
 
   static defaultProps = {
     // 默认第五行开始打点
-    omitLine: 5,
+    line: 5,
   }
 
   constructor(props) {
@@ -55,10 +56,10 @@ export default class OmitMultipleLineText extends PureComponent {
   @autobind
   setContentHeight() {
     if (this.mainElem) {
-      const { omitLine } = this.props;
+      const { line } = this.props;
       const contentLineHeight = this.getDOMLineHeight(this.mainElem);
       const contentHeight = this.getDOMHeight(this.mainElem);
-      const maxContentHeight = contentLineHeight * omitLine;
+      const maxContentHeight = contentLineHeight * line;
       // 内容区域的高度大于行高*打点行数
       if (contentHeight > maxContentHeight) {
         this.setState({
@@ -85,7 +86,7 @@ export default class OmitMultipleLineText extends PureComponent {
    */
   @autobind
   getDOMHeight(dom) {
-    return this.replacePx(window.getComputedStyle(dom).getPropertyValue('height'));
+    return parseInt(DOMHelper.getCssStyle(dom, 'height'), 10);
   }
 
   /**
@@ -94,15 +95,7 @@ export default class OmitMultipleLineText extends PureComponent {
    */
   @autobind
   getDOMLineHeight(dom) {
-    return this.replacePx(window.getComputedStyle(dom).getPropertyValue('line-height'));
-  }
-
-  /**
-   * 替换px为空
-   */
-  @autobind
-  replacePx(str) {
-    return _.toInteger(_.replace(str, 'px', ''));
+    return parseInt(DOMHelper.getCssStyle(dom, 'line-height'), 10);
   }
 
   /**

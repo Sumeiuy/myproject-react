@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:10:16
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-07 14:52:32
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-09 14:36:07
  * @description 任务管理页面需要用到的dva的effects,封装此处为了方便Home页面代码的整洁
  */
 
@@ -58,6 +58,8 @@ const effects = {
   queryApprovalList: 'performerView/queryApprovalList4ZLFins',
   // 执行者视图右侧详情查询客户列表
   queryCustomerForServiceImplementation: 'performerView/queryCustomerForServiceImplementation',
+  toggleServiceRecordModal: 'app/toggleServiceRecordModal',
+  resetServiceRecordInfo: 'app/resetServiceRecordInfo',
   // 投资建议文本撞墙检测
   testWallCollision: 'investmentAdvice/testWallCollision',
   // 清空执行者视图右侧搜索客户
