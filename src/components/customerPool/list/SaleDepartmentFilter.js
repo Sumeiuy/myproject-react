@@ -50,7 +50,6 @@ export default class SaleDepartmentFilter extends PureComponent {
     if (custRange && custRange.length <= 0) {
       return null;
     }
-    console.log('SaleDepartmentFilter>>>', this.props);
     return (
       <div>
         <span className={styles.selectLabel}>服务营业部：</span>

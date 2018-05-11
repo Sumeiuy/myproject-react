@@ -64,7 +64,7 @@ export default function customerPool(api) {
     updateTask: query => api.post('/groovynoauth/fsp/cust/task/updateTask', query),
 
     // 客户列表页添加服务记录
-    addCommonServeRecord: query => api.post('/groovynoauth/fsp/cust/service/addCommonServeRecord', query),
+    addCommonServeRecord: query => api.post('/groovynoauth/fsp/cust/service/addCommonServeRecord2', query),
 
     // 净创收数据
     queryKpiIncome: query => api.post('/groovynoauth/fsp/emp/kpi/queryNetIncome', query),
