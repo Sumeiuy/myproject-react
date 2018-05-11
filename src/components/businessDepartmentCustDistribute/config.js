@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 19:36:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-10 15:19:48
+ * @Last Modified time: 2018-05-11 16:00:50
  * @description 营业部非投顾签约客户分配的配置项
  */
 
@@ -63,11 +63,6 @@ export const custTableColumns = [
     key: 'devManager',
     title: '开发经理',
   },
-  {
-    dataIndex: 'action',
-    key: 'action',
-    title: '操作',
-  },
 ];
 
 export const managerTableColumns = [
@@ -81,11 +76,6 @@ export const managerTableColumns = [
     key: 'isTg',
     title: '是否入岗投顾',
   },
-  {
-    dataIndex: 'action',
-    key: 'action',
-    title: '操作',
-  },
 ];
 
 export const tableCommonPagination = {
@@ -94,3 +84,6 @@ export const tableCommonPagination = {
     return `共${total}条`;
   },
 };
+
+// 客户筛选中状态的Select配置项
+export const filterStatusSelectOptions = [];

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 19:34:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-09 16:22:05
+ * @Last Modified time: 2018-05-11 15:01:47
  * @description 营业部非投顾签约客户分配工具函数
  */
 
@@ -35,6 +35,25 @@ const utils = {
       stepName: occupation,
       handleName: `${empName}(${empNum})`,
     };
+  },
+  // 将过滤客户的接口返回的数据，转化为表格需要的数据
+  createAddLayerCustTableDate(custList = []) {
+    return custList.map((item) => {
+      const {
+        custName, brokerNumber,
+        statusText,
+        empName, empId, isTgFlag,
+        managerName, managerId,
+      } = item;
+      return {
+        key: brokerNumber,
+        customer: `${custName}(${brokerNumber})`,
+        status: statusText,
+        isTg: isTgFlag,
+        preManager: `${empName}(${empId})`,
+        devManager: `${managerName}(${managerId})`,
+      };
+    });
   },
 };
 

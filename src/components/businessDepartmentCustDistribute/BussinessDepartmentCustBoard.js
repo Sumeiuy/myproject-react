@@ -2,18 +2,19 @@
  * @Author: sunweibin
  * @Date: 2018-05-10 10:46:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-11 10:55:12
+ * @Last Modified time: 2018-05-11 14:27:38
  * @description 营业部非投顾签约客户分配弹出层Form
  */
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table, Radio, Upload, message } from 'antd';
-import _ from 'lodash';
+// import _ from 'lodash';
 
 import Icon from '../common/Icon';
 import InfoTitle from '../common/InfoTitle';
 import Button from '../common/Button';
+import AddCustListLayer from './AddCustListLayer';
 import { request } from '../../config';
 import { emp, file as fileHelper } from '../../helper';
 import {
@@ -47,6 +48,8 @@ export default class BussinessDepartmentCustBoard extends Component {
       rule: '',
       // 用户已经批量上传过一次客户Excel了
       hasUploaded: false,
+      // 弹出用户选择客户进行添加的弹出层
+      addCustModal: false,
     };
   }
 
@@ -82,7 +85,9 @@ export default class BussinessDepartmentCustBoard extends Component {
 
   @autobind
   handleCustAddBtnClick() {
-    console.warn('点击添加客户列表');
+    this.setState({
+      addCustModal: true,
+    });
   }
 
   @autobind
@@ -105,24 +110,35 @@ export default class BussinessDepartmentCustBoard extends Component {
   }
 
   @autobind
-  updateCustTableColumns(columns, tableName) {
-    // 给最后一个Column的操作，添加render属性
-    return _.map(columns, (column) => {
-      const { dataIndex } = column;
-      if (dataIndex === 'action') {
-        return {
-          ...column,
-          render(text, record) {
-            return (
-              <a onClick={() => this.handleDeleteEmp(tableName, record)}>
-                <Icon type="shanchu" className={styles.deleteBtn} />
-              </a>
-            );
-          },
-        };
-      }
-      return { ...column };
+  handleAddCustLyerClose() {
+    this.setState({
+      addCustModal: false,
     });
+  }
+
+  @autobind
+  handleAddCustLayerSubmit(custList) {
+    console.warn('添加选择的客户到客户Table中： ', custList);
+  }
+
+  @autobind
+  updateCustTableColumns(columns, tableName) {
+    // 给最后一个Column的操作，添加操作action
+    return [
+      ...columns,
+      {
+        dataIndex: 'action',
+        key: 'action',
+        title: '操作',
+        render(text, record) {
+          return (
+            <a onClick={() => this.handleDeleteEmp(tableName, record)}>
+              <Icon type="shanchu" className={styles.deleteBtn} />
+            </a>
+          );
+        },
+      },
+    ];
   }
 
   // 当批量导入客户数据成功之后，需要将批量导入的DOM替换成另一个DOM
@@ -150,7 +166,7 @@ export default class BussinessDepartmentCustBoard extends Component {
   }
 
   render() {
-    const { custList, managerList } = this.state;
+    const { custList, managerList, addCustModal } = this.state;
     const newCustTableColumns = this.updateCustTableColumns(custTableColumns, 'cust');
     const newEmpTableColumns = this.updateCustTableColumns(managerTableColumns, 'emp');
     return (
@@ -191,6 +207,12 @@ export default class BussinessDepartmentCustBoard extends Component {
             <Radio value="b">平均客户净资产</Radio>
           </RadioGroup>
         </div>
+        <AddCustListLayer
+          visible={addCustModal}
+          onOK={this.handleAddCustLayerSubmit}
+          onClose={this.handleAddCustLyerClose}
+          onFilterCust={() => {}}
+        />
       </div>
     );
   }
