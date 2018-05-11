@@ -159,7 +159,7 @@ export default class DropdownSelect extends React.Component {
       <HackSearch
         placeholder={placeholder}
         onSearch={this.handleSearch}
-        defaultValue={defaultSearchValue}
+        searchValue={defaultSearchValue}
         onChange={this.handleSearchChange}
         enterButton
         ref={ref => this.hackSearchComonent = ref}
