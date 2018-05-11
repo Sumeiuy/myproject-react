@@ -158,8 +158,9 @@ export default class CreateServiceRecord extends PureComponent {
     // 打电话调起的弹窗，不能直接手动关闭弹窗，只能提交服务记录进行关闭
     if (caller !== PHONE) {
       onToggleServiceRecordModal(false);
+    } else {
+      message.warn('请提交服务记录');
     }
-    message.warn('请提交服务记录');
   }
 
   @autobind
