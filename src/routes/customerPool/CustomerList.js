@@ -374,6 +374,9 @@ export default class CustomerList extends PureComponent {
       // 业绩中的时间周期
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
       param.custType = this.getPostCustType(query);
+    } else if (query.source === 'orderCombination' || query.source === 'securitiesProducts') {
+      // 订购组合和证券产品
+      param.primaryKeyJxgrps = [labelMapping];
     }
     // 客户业绩参数
     if (query.customerType) {
@@ -672,6 +675,7 @@ export default class CustomerList extends PureComponent {
       q,
       cycleSelect,
       bname,
+      combinationName = '',
     } = location.query;
     // 排序的默认值 ： 总资产降序
     let reorderValue = DEFAULT_SORT;
@@ -697,7 +701,12 @@ export default class CustomerList extends PureComponent {
         <Row type="flex" justify="space-between" align="middle">
           <Col span={12}>
             {
-              <CustomerTotal type={source} num={page.total} bname={bname} />
+              <CustomerTotal
+                type={source}
+                num={page.total}
+                bname={bname}
+                combinationName={combinationName}
+              />
             }
           </Col>
           <Col span={12}>

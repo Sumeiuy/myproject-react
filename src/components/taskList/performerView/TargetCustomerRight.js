@@ -71,6 +71,7 @@ export default class TargetCustomerRight extends PureComponent {
     currentId: PropTypes.string.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     currentCustomer: PropTypes.object.isRequired,
+    taskTypeCode: PropTypes.string.isRequired,
   }
   static defaultProps = {
     itemData: {},
@@ -188,6 +189,7 @@ export default class TargetCustomerRight extends PureComponent {
       currentMissionFlowId,
       currentId,
       toggleServiceRecordModal,
+      taskTypeCode,
     } = this.props;
     const {
       custId,
@@ -211,7 +213,7 @@ export default class TargetCustomerRight extends PureComponent {
       // 服务方式
       serveWay: 'HTSC Phone',
       // 任务类型，1：MOT  2：自建
-      taskType: '2',
+      taskType: `${+taskTypeCode + 1}`,
       // 服务状态
       flowStatus: '30',
       // 同serveType

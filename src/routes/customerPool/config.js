@@ -25,6 +25,10 @@ const ENTER_TYPE = {
   search: 'searchCustPool',
   tag: 'searchCustPool',
   association: 'searchCustPool',
+  // 订购组合
+  orderCombination: 'searchCustPool',
+  // 证券产品
+  securitiesProducts: 'searchCustPool',
   business: 'businessCustPool',
   custIndicator: 'performanceCustPool',
   numOfCustOpened: 'performanceCustPool',
@@ -34,7 +38,8 @@ const ENTER_TYPE = {
 };
 
 // 任务管理岗权限作用的首页入口列表
-const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'external'];
+const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'external',
+  'orderCombination', 'securitiesProducts'];
 // 首页指标查询权限作用的首页入口列表
 const ENTERLIST2 = ['custIndicator', 'numOfCustOpened'];
 

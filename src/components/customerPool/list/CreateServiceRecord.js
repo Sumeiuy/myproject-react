@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Modal } from 'antd';
+import { Modal, message } from 'antd';
 import _ from 'lodash';
 import { fspContainer } from '../../../config';
 import { url } from '../../../helper';
@@ -159,6 +159,7 @@ export default class CreateServiceRecord extends PureComponent {
     if (caller !== PHONE) {
       onToggleServiceRecordModal(false);
     }
+    message.warn('请提交服务记录');
   }
 
   @autobind

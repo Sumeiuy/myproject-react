@@ -43,10 +43,6 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: generateProxy([
-      prefix + '/groovynoauth/fsp/queryPhoneInfo',
-      {
-        target: 'http://168.61.8.81:5090', // DOClever
-      },
       prefix,
       {
         target: 'http://168.61.8.82:5086', // uat
