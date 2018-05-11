@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-11 10:15:49
+ * @Last Modified time: 2018-05-11 15:02:06
  * 多行文本打点组件
  */
 
@@ -136,19 +136,18 @@ export default class EllipsisMultipleLineText extends PureComponent {
     return (
       <div className={styles.content}>
         <div
-          className={styles.main}
+          className={
+            classnames({
+              [styles.main]: true,
+              [styles.ellipsis]: isShowMore && isFold,
+            })
+          }
           style={{
             maxHeight: maxContentHeight,
           }}
           ref={this.saveRef}
         >
           {children}
-          <div
-            className={classnames({
-              [styles.ignoreSymbol]: isShowMore && isFold,
-              [styles.none]: !isShowMore || !isFold,
-            })}
-          >...</div>
         </div>
         <div
           className={classnames({
