@@ -90,7 +90,7 @@ export default class ServiceImplementation extends PureComponent {
     // 此处需要针对涨乐财富通服务方式特殊处理
     // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
     // 执行提交服务记录的接口
-    addServiceRecord(_.omit(payload), ['zlApprovalCode'])
+    addServiceRecord(_.omit(payload, ['zlApprovalCode']))
     .then(() => {
       const { currentMotServiceRecord } = this.props;
       // 服务记录添加未成功时，后端返回failure
