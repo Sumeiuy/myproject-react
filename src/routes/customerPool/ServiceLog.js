@@ -16,7 +16,6 @@ import { autobind } from 'core-decorators';
 import logable from '../../decorators/logable';
 import Select from '../../components/common/Select';
 import DateRangePicker from '../../components/common/dateRangePicker';
-import { isInclusivelyAfterDay, isInclusivelyBeforeDay } from '../../components/common/dateRangePicker/utils';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import withRouter from '../../decorators/withRouter';
 import styles from './serviceLog.less';
@@ -82,6 +81,7 @@ export default class ServiceLog extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { location: { query: { channel = '' } } } = props;
     this.state = {
       custId: '',
       startValue: null,
@@ -90,7 +90,7 @@ export default class ServiceLog extends PureComponent {
       logData: [],
       pageNum: 1,
       serveType: DEFAULT_SERVE_TYPE,
-      serveSource: DEFAULT_SERVE_SOURCE,
+      serveSource: decodeURIComponent(channel) || DEFAULT_SERVE_SOURCE,
     };
   }
 
@@ -151,13 +151,23 @@ export default class ServiceLog extends PureComponent {
     }
   }
 
-  /**
-   * 设置间隔日期，只能在大于六个月之前日期和当前日期之间选择
-   */
+  // 判断当用户选择了第一次日期之后，可选的时间范围
+  // 刻意自由选择一个日期，保证间隔不大于6个月
   @autobind
-  disabledRange(day) {
-    return !isInclusivelyAfterDay(day, beforeSixDate)
-      || !isInclusivelyBeforeDay(day, moment());
+  isInsideOffSet({ day, firstDay, focusedInput, flag }) {
+    // focusedInput 的值 只有两种情况：1.为 endDate 2.为 null
+    if (focusedInput === 'endDate') {
+      // 首次聚焦日历组件为 END_DATE时，开始时间往前推6个月
+      // firstDay之前6个月到当前选择时间firstDay
+      // 代表用户聚焦了结束时间endDate
+      if (flag) {
+        return day <= firstDay.clone().add(6, 'months') && day >= firstDay.clone();
+      }
+      // 代表用户聚焦了开始时间startDate
+      // 当前选择时间firstDay到firstDay之后6个月
+      return day <= firstDay.clone().add(6, 'months') && day >= firstDay.clone().subtract(1, 'days');
+    }
+    return true;
   }
 
   /**
@@ -289,9 +299,15 @@ export default class ServiceLog extends PureComponent {
     const { dict, handleCollapseClick, filesList, getCeFileList, location } = this.props;
     const { query = {} } = location;
     // 默认搜索内容
-    const { keyword } = query;
+    const { keyword, serveDateFrom, serveDateTo } = query;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
     const { logData, showBtn, serveSource, serveType } = this.state;
+
+    const endDate = serveDateTo ?
+    moment(serveDateTo, dateFormat) : moment(today, dateFormat);
+    const startDate = serveDateFrom ?
+    moment(serveDateFrom, dateFormat) : moment(beforeSixDate, dateFormat);
+
     return (
       <div className={styles.serviceInner}>
         <div
@@ -335,11 +351,11 @@ export default class ServiceLog extends PureComponent {
               <div className={styles.title}>服务时间：</div>
               <DateRangePicker
                 hasCustomerOffset
-                initialEndDate={moment(today, dateFormat)}
-                initialStartDate={moment(beforeSixDate, dateFormat)}
+                initialEndDate={endDate}
+                initialStartDate={startDate}
                 onChange={this.handleDateChange}
                 key="服务时间"
-                disabledRange={this.disabledRange}
+                isInsideOffSet={this.isInsideOffSet}
               />
             </div>
           </div>

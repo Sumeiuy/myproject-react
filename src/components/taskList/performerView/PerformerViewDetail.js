@@ -12,17 +12,21 @@ import { message, Form } from 'antd';
 
 import Select from '../../common/Select';
 import LabelInfo from '../common/LabelInfo';
-import { emp } from '../../../helper';
+import { emp, check } from '../../../helper';
 import ServiceImplementation from './ServiceImplementation';
 import EmptyTargetCust from './EmptyTargetCust';
 import QuestionnaireSurvey from './QuestionnaireSurvey';
 import Pagination from '../../common/Pagination';
+import DropDownSelect from '../../common/dropdownSelect';
 import InfoArea from '../managerView/InfoArea';
 import logable, { logPV } from '../../../decorators/logable';
 import styles from './performerViewDetail.less';
 
 // 每页条数
 const PAGE_SIZE = 10;
+const allCustomers = '所有客户';
+const unlimitedCustomers = { name: allCustomers, custId: '' };
+const NOOP = _.noop;
 
 const create = Form.create;
 
@@ -41,7 +45,7 @@ export default class PerformerViewDetail extends PureComponent {
     getCustDetail: PropTypes.func.isRequired,
     targetCustList: PropTypes.object.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
-    addMotServeRecordSuccess: PropTypes.bool.isRequired,
+    currentMotServiceRecord: PropTypes.object.isRequired,
     answersList: PropTypes.object,
     getTempQuesAndAnswer: PropTypes.func.isRequired,
     saveAnswersSucce: PropTypes.bool,
@@ -60,6 +64,10 @@ export default class PerformerViewDetail extends PureComponent {
     queryApprovalList: PropTypes.func.isRequired,
     zhangleApprovalList: PropTypes.array.isRequired,
     form: PropTypes.object.isRequired,
+    // 查询任务下的客户
+    queryCustomer: PropTypes.func,
+    // 搜索到的任务下客户列表
+    customerList: PropTypes.array,
     // 投资建议文本撞墙检测
     testWallCollision: PropTypes.func.isRequired,
     // 投资建议文本撞墙检测是否有股票代码
@@ -74,6 +82,8 @@ export default class PerformerViewDetail extends PureComponent {
     eventId: '',
     taskTypeCode: '',
     serviceTypeCode: '',
+    queryCustomer: NOOP,
+    customerList: [],
   }
 
   constructor(props) {
@@ -95,7 +105,7 @@ export default class PerformerViewDetail extends PureComponent {
   getServeStatusSelectOptionsData(serveStatus) {
     const allCustOption = {
       value: '',
-      label: '所有客户',
+      label: '所有状态',
       show: true,
     };
     const stateData = serveStatus.map(o => ({
@@ -142,7 +152,8 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-      targetCustomerState,
+        targetCustomerState = '',
+        selectCustomerRowId = '',
       },
       changeParameter,
     } = this.props;
@@ -153,6 +164,7 @@ export default class PerformerViewDetail extends PureComponent {
     });
     this.queryTargetCustInfo({
       state: targetCustomerState,
+      rowId: selectCustomerRowId,
       pageSize: targetCustomerPageSize,
       pageNum: pageNo,
     });
@@ -161,7 +173,12 @@ export default class PerformerViewDetail extends PureComponent {
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '状态', value: '$args[1]' } })
   handleStateChange(key, v) {
-    const { changeParameter } = this.props;
+    const {
+      changeParameter,
+      parameter: {
+        selectCustomerRowId,
+      },
+    } = this.props;
 
     changeParameter({
       [key]: v,
@@ -172,6 +189,8 @@ export default class PerformerViewDetail extends PureComponent {
     });
     this.queryTargetCustInfo({
       state: v,
+      // 客户联合查询
+      rowId: selectCustomerRowId,
       pageSize: 10,
       pageNum: 1,
     });
@@ -370,6 +389,51 @@ export default class PerformerViewDetail extends PureComponent {
     this.handleRepeatData(initAreaText, params, 'areaTextData');
   }
 
+  @autobind
+  selectCustomerItem(item) {
+    const { rowId = '', custId = '', name = '' } = item;
+    const {
+      changeParameter,
+      parameter: {
+        targetCustomerState,
+      },
+    } = this.props;
+
+    changeParameter({
+      // 当前选择的客户
+      selectCustomerCustId: custId,
+      selectCustomerCustName: encodeURIComponent(name),
+      selectCustomerRowId: rowId,
+      // 将其他条件恢复
+      targetCustomerPageSize: 10,
+      targetCustomerPageNo: 1,
+      targetCustId: '',
+      targetMissionFlowId: '',
+    });
+    this.queryTargetCustInfo({
+      // rowId传给后台，查询筛选出来的客户
+      rowId,
+      // 联合查询，
+      state: targetCustomerState || '',
+      pageSize: 10,
+      pageNum: 1,
+    });
+  }
+
+  @autobind
+  searchCustomer(value) {
+    const { queryCustomer, changeParameter, parameter } = this.props;
+    // pageSize传1000000，使能够查到足够的数据
+    queryCustomer({
+      keyWord: value,
+    });
+    // 保存搜索的关键字，方便在redux里面需要清空的时候，直接调用changeParameter，将关键字清空
+    changeParameter({
+      ...parameter,
+      keyWord: value,
+    });
+  }
+
   render() {
     const {
       basicInfo,
@@ -379,11 +443,14 @@ export default class PerformerViewDetail extends PureComponent {
         targetCustomerPageNo,
         targetCustomerPageSize,
         targetCustomerState = '',
+        selectCustomerCustId,
+        selectCustomerCustName,
+        keyWord = '',
       },
+      customerList,
       answersList,
       currentId,
       form,
-
     } = this.props;
     const { visible, keyIndex, isDisabled, isShowErrorCheckbox } = this.state;
     const { list, page } = targetCustList;
@@ -401,6 +468,13 @@ export default class PerformerViewDetail extends PureComponent {
       isHideLastButton: true,
       useClearStyle: true,
     };
+
+    const currentCustomer = check.isNull(selectCustomerCustId) ?
+      allCustomers : `${decodeURIComponent(selectCustomerCustName)}(${selectCustomerCustId})`;
+
+    // 执行者视图按客户搜索
+    const allCustomerList = !_.isEmpty(customerList) ?
+      [unlimitedCustomers, ...customerList] : [];
 
     const {
       missionName,
@@ -449,6 +523,18 @@ export default class PerformerViewDetail extends PureComponent {
                 value={targetCustomerState}
                 data={stateData}
                 onChange={this.handleStateChange}
+              />
+              <span className={styles.label}>客户:</span>
+              <DropDownSelect
+                value={currentCustomer}
+                placeholder="姓名/经纪客户号"
+                searchList={allCustomerList}
+                showObjKey="name"
+                objId="custId"
+                emitSelectItem={this.selectCustomerItem}
+                emitToSearch={this.searchCustomer}
+                name="任务下客户筛选"
+                defaultSearchValue={keyWord}
               />
             </div>
             <div className={styles.pagination}>

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-10 14:55:26
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-10 22:25:17
  * 服务记录表单
  */
 
@@ -11,10 +11,13 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import ForgeryRichText from '../../common/ForgeryRichText';
+import EllipsisMultipleLineText from '../../common/ellipsisMultipleLineText';
 import ServiceRecordContent from '../../common/serviceRecordContent';
 import Button from '../../common/Button';
 import styles from './serviceRecordForm.less';
 import logable, { logCommon } from '../../../decorators/logable';
+
+const PHONE = 'phone';
 
 export default class ServiceRecordForm extends PureComponent {
   static defaultProps = {
@@ -31,16 +34,37 @@ export default class ServiceRecordForm extends PureComponent {
 
   @autobind
   handleSubmit() {
-    const data = this.serviceRecordContentRef.getData();
+    let data = this.serviceRecordContentRef.getData();
     if (_.isEmpty(data)) return;
-
+    const {
+      addServeRecord,
+      serviceRecordInfo,
+      currentMotServiceRecord,
+      dict,
+      serviceCustId,
+    } = this.props;
+    const { autoGenerateRecordInfo: { serveContentDesc = '' }, caller = '' } = serviceRecordInfo;
+    // 服务记录添加未成功时，后端返回failure
+    if (
+      caller === PHONE &&
+      !_.isEmpty(currentMotServiceRecord.id) &&
+      currentMotServiceRecord.id !== 'failure'
+    ) {
+      data = {
+        ...data,
+        id: currentMotServiceRecord.id,
+        serveContentDesc: `${serveContentDesc}${data.serveContentDesc}`,
+      };
+    }
     // 添加服务记录
-    this.props.addServeRecord(data, this.handleCancel);
+    addServeRecord({
+      postBody: data,
+      callbackOfPhone: this.handleCancel,
+    });
 
     // log日志 --- 添加服务记录
     // 服务类型
     const { serveType } = data;
-    const { dict, serviceCustId } = this.props;
     const { missionType } = dict;
     const serveTypeName = _.find(missionType, { key: serveType }).value;
     logCommon({
@@ -56,8 +80,15 @@ export default class ServiceRecordForm extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
-    if (this.serviceRecordContentRef) {
-      this.serviceRecordContentRef.resetField();
+    const { serviceRecordInfo: { caller }, resetServiceRecordInfo } = this.props;
+    // 打电话调起的服务记录时，取消按钮不可用
+    if (caller !== PHONE) {
+      if (this.serviceRecordContentRef) {
+        this.serviceRecordContentRef.resetField();
+      }
+    } else {
+      // 取消打电话时自动生成服务记录时保存的数据
+      resetServiceRecordInfo();
     }
   }
 
@@ -79,6 +110,7 @@ export default class ServiceRecordForm extends PureComponent {
       zhangleApprovalList,
       empInfo: { empInfo },
       statusCode,
+      serviceRecordInfo,
       // 投资建议文本撞墙检测
       testWallCollision,
       // 投资建议文本撞墙检测是否有股票代码
@@ -86,7 +118,6 @@ export default class ServiceRecordForm extends PureComponent {
     } = this.props;
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
-
     return (
       <div className={styles.serviceRecordWrapper}>
         <div className={styles.title}>服务记录</div>
@@ -97,7 +128,9 @@ export default class ServiceRecordForm extends PureComponent {
            * 标签，需要格式化展示出来
            */}
           <div className={styles.content}>
-            <ForgeryRichText text={serviceTips} />
+            <EllipsisMultipleLineText>
+              <ForgeryRichText text={serviceTips} />
+            </EllipsisMultipleLineText>
           </div>
         </div>
 
@@ -120,10 +153,10 @@ export default class ServiceRecordForm extends PureComponent {
           zhangleApprovalList={zhangleApprovalList}
           queryApprovalList={queryApprovalList}
           flowStatusCode={statusCode}
+          serviceRecordInfo={serviceRecordInfo}
           testWallCollision={testWallCollision}
           testWallCollisionStatus={testWallCollisionStatus}
         />
-
         {
           !isReadOnly ?
             <div className={styles.operationSection}>
@@ -151,7 +184,6 @@ ServiceRecordForm.propTypes = {
   isReject: PropTypes.bool.isRequired,
   ceFileDelete: PropTypes.func.isRequired,
   deleteFileResult: PropTypes.array.isRequired,
-  addMotServeRecordSuccess: PropTypes.bool.isRequired,
   getCeFileList: PropTypes.func.isRequired,
   // 涨乐财富通服务方式下的客户反馈列表以及查询方法
   queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
@@ -159,6 +191,9 @@ ServiceRecordForm.propTypes = {
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
   statusCode: PropTypes.string.isRequired,
+  serviceRecordInfo: PropTypes.object.isRequired,
+  currentMotServiceRecord: PropTypes.object.isRequired,
+  resetServiceRecordInfo: PropTypes.func.isRequired,
   // 服务实施客户名次
   serviceCustId: PropTypes.string.isRequired,
   // 投资建议文本撞墙检测

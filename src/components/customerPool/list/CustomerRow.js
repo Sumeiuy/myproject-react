@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-14 17:46:40
+ * @Last Modified time: 2018-05-11 10:21:11
  */
 
 import React, { PureComponent } from 'react';
@@ -149,12 +149,11 @@ export default class CustomerRow extends PureComponent {
     this.isMainService = empId === rowId;
     /**
      * 登录用户拥有 HTSC 客户资料-总部管理岗、HTSC 客户资料-分中心管理岗、
-     * HTSC 客户资料（无隐私）-总部管理岗、HTSC 客户资料（无隐私）-分中心管理岗 时，可访问360视图
+     * HTSC 客户资料（无隐私）-总部管理岗、HTSC 客户资料（无隐私）-分中心管理岗
+     * HTSC 客户资料管理岗（无隐私）
+        可访问360视图
      */
-    this.access360ViewPermission = permission.hasCIHMPPermission()
-      || permission.hasCIBMPPermission()
-      || permission.hasNPCIHMPPermission()
-      || permission.hasNPCIBMPPermission();
+    this.access360ViewPermission = permission.hasViewCust360PermissionForCustList();
   }
 
   @autobind
