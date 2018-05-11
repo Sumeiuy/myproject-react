@@ -108,6 +108,8 @@ export default class MatchArea extends PureComponent {
         activeSubTab: ['服务记录'],
         // 服务记录搜索
         serviceRecordKeyword: keyword,
+        // 服务渠道
+        serviceRecordChannel: encodeURIComponent('理财服务平台'),
       },
       state: {
         url,

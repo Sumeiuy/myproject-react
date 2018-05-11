@@ -60,8 +60,10 @@ const mapStateToProps = () => state => ({
   custManagerScopeData: state.managerView.custManagerScopeData,
   // 涨乐财富通服务方式下的客户反馈列表
   custFeedbackList: state.performerView.custFeedbackList,
-   // 涨乐财富通服务方式下的审批人列表
+  // 涨乐财富通服务方式下的审批人列表
   zhangleApprovalList: state.performerView.zhangleApprovalList,
+  // 执行者视图右侧详情查询到的客户列表
+  custListForServiceImplementation: state.performerView.custListForServiceImplementation,
   // 添加服务记录的相关信息
   serviceRecordInfo: state.app.serviceRecordInfo,
   // 投资建议文本撞墙检测是否有股票代码
