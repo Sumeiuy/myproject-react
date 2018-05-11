@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-08 17:13:44
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-09 14:19:24
+ * @Last Modified time: 2018-05-11 15:37:08
  */
 
 import React from 'react';
@@ -14,7 +14,7 @@ const InvestmentConsultantRace = () => (
   <div className={styles.investmentConsultantRacePage}>
     <ReportFormIframe
       name={'investmentConsultantRace'}
-      src={'http://168.61.13.30:56780/finereport/ReportServer'}
+      src={'/finereport/ReportServer'}
     />
   </div>
 );
