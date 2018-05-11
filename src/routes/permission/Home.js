@@ -387,12 +387,26 @@ export default class Permission extends PureComponent {
   handleCreatePrivateApp(params) {
     const { location: { query } } = this.props;
     // log日志---创建私密客户申请
+    let logSubType = '';
+    switch (params.subType) {
+      case '0103':
+        logSubType = '私密客户设置';
+        break;
+      case '0102':
+        logSubType = '私密客户取消';
+        break;
+      case '0101':
+        logSubType = '私密客户交易信息权限分配';
+        break;
+      default:
+        break;
+    }
     logCommon({
       type: 'Submit',
       payload: {
         name: '',
         type: '权限申请',
-        subType: params.subType,
+        subtype: logSubType,
         value: JSON.stringify(params),
       },
     });
