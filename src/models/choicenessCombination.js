@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合modal
  * @Date: 2018-04-17 10:08:03
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-09 14:19:28
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-05-10 10:48:20
 */
 
 import _ from 'lodash';

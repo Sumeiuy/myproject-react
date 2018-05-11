@@ -2,26 +2,27 @@
  * @Author: XuWenKang
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-02 18:04:20
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-05-10 16:08:25
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
 import _ from 'lodash';
 
-import styles from './index.less';
-import { permission, dva, url as urlHelper, emp } from '../../helper';
-import { openRctTab } from '../../utils';
+
+import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
 import CombinationAdjustHistory from '../../components/choicenessCombination/CombinationAdjustHistory';
 import WeeklySecurityTopTen from '../../components/choicenessCombination/WeeklySecurityTopTen';
 import CombinationRank from '../../components/choicenessCombination/combinationRank/CombinationRank';
 import CombinationModal from '../../components/choicenessCombination/CombinationModal';
 import config from '../../components/choicenessCombination/config';
+import { permission, dva, url as urlHelper, emp } from '../../helper';
+import { openRctTab } from '../../utils';
+import styles from './index.less';
 
 const dispatch = dva.generateEffect;
 // const EMPTY_LIST = [];
@@ -78,13 +79,16 @@ const mapDispatchToProps = {
   combinationRankTabchange: dispatch(effects.combinationRankTabchange, { loading: false }),
   yieldRankChange: dispatch(effects.yieldRankChange, { loading: false }),
   riskLevelFilter: dispatch(effects.riskLevelFilter, { loading: false }),
-  push: routerRedux.push,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 @fspPatch()
 export default class ChoicenessCombination extends PureComponent {
   static propTypes = {
+    push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
     // 字典数据
     dict: PropTypes.object.isRequired,
     // 获取调仓历史数据
@@ -112,6 +116,11 @@ export default class ChoicenessCombination extends PureComponent {
     // 组合排名风险筛选
     riskLevelFilter: PropTypes.func.isRequired,
     riskLevel: PropTypes.string,
+
+  }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
   }
 
@@ -123,13 +132,10 @@ export default class ChoicenessCombination extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false,
-      directionCode: '1',
       // HTSC 任务管理岗
       hasTkMampPermission: permission.hasTkMampPermission(),
       // 组织 ID
       orgId: emp.getOrgId(),
-      modalType: '',
     };
   }
 
@@ -157,22 +163,43 @@ export default class ChoicenessCombination extends PureComponent {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { location: { query: { visible: preVisible } } } = this.props;
+    const { location: { query: { visible: nextVisible } } } = nextProps;
+    if (preVisible !== nextVisible) {
+      this.setState({
+        visible: nextVisible,
+      });
+    }
+  }
 
   // 打开弹窗
   @autobind
   showModal(obj) {
-    this.setState({
-      visible: true,
-      directionCode: obj.code || '',
-      modalType: obj.type || '',
+    const { replace } = this.context;
+    const { location: { query = { }, pathname }, combinationTreeList } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        visible: true,
+        modalType: obj.type || '',
+        directionCode: obj.directionCode || '',
+        combinationCode: obj.combinationCode || combinationTreeList[0].value || '',
+      },
     });
   }
 
   // 关闭弹窗
   @autobind
   closeModal() {
-    this.setState({
-      visible: false,
+    const { replace } = this.context;
+    const { location: { pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        visible: false,
+      },
     });
   }
 
@@ -191,13 +218,11 @@ export default class ChoicenessCombination extends PureComponent {
     getCombinationRankList({
       combinationType: key,
     });
-    console.log('tabId', key);
   }
 
   // 图表tab切换
   @autobind
   handleChartTabChange(payload) {
-    console.log('图表tab切换', payload);
     const { getCombinationLineChart } = this.props;
     getCombinationLineChart(payload);
   }
@@ -206,7 +231,7 @@ export default class ChoicenessCombination extends PureComponent {
   @autobind
   openCustomerListPage(obj) {
     const { name, code, type } = obj;
-    const { push } = this.props;
+    const { push } = this.context;
     const { hasTkMampPermission, orgId } = this.state;
     // 组合 productId
     let productId = '';
@@ -250,7 +275,7 @@ export default class ChoicenessCombination extends PureComponent {
   @autobind
   openStockPage(obj) {
     const { code } = obj;
-    const { push } = this.props;
+    const { push } = this.context;
     const param = {
       closable: true,
       forceRefresh: true,
@@ -262,7 +287,6 @@ export default class ChoicenessCombination extends PureComponent {
       keyword: code,
     };
     const url = `/stock?${urlHelper.stringify(query)}`;
-    console.log('打开个股资讯');
     openRctTab({
       routerAction: push,
       url,
@@ -275,8 +299,6 @@ export default class ChoicenessCombination extends PureComponent {
   render() {
     const {
       dict,
-      push,
-      getCombinationTree,
       adjustWarehouseHistoryData,
       tableHistoryList,
       weeklySecurityTopTenData,
@@ -290,23 +312,17 @@ export default class ChoicenessCombination extends PureComponent {
       riskLevelFilter,
       riskLevel,
       getAdjustWarehouseHistory,
+      location,
+      location: { query: { visible = false, modalType = '' } },
     } = this.props;
     const {
-      visible,
-      directionCode,
       hasTkMampPermission,
       orgId,
-      modalType,
     } = this.state;
 
     const modalProps = {
       history: {
-        type: config.typeList[0],
         title: '调仓历史',
-        // 调仓方向集合
-        direction: directionCode,
-        // 获取组合名称树接口
-        getTreeData: getCombinationTree,
         // 组合名称树数据
         treeData: combinationTreeList,
         // 获取列表接口
@@ -317,10 +333,7 @@ export default class ChoicenessCombination extends PureComponent {
         openCustomerListPage: this.openCustomerListPage,
       },
       report: {
-        type: config.typeList[1],
         title: '历史报告',
-        // 获取组合名称树接口
-        getTreeData: getCombinationTree,
         // 组合名称树数据
         treeData: combinationTreeList,
         // 获取列表接口
@@ -329,14 +342,12 @@ export default class ChoicenessCombination extends PureComponent {
         listData: tableHistoryList,
       },
     };
-
     return (
       <div className={styles.choicenessCombinationBox}>
         <div className={`${styles.topContainer} clearfix`}>
           <div className={styles.topContainerChild}>
             {/* 组合调仓组件 */}
             <CombinationAdjustHistory
-              push={push}
               showModal={this.showModal}
               data={adjustWarehouseHistoryData}
               openCustomerListPage={this.openCustomerListPage}
@@ -345,7 +356,6 @@ export default class ChoicenessCombination extends PureComponent {
           </div>
           <div className={styles.topContainerChild}>
             <WeeklySecurityTopTen
-              push={push}
               data={weeklySecurityTopTenData}
               permission={hasTkMampPermission}
               orgId={orgId}
@@ -355,6 +365,7 @@ export default class ChoicenessCombination extends PureComponent {
           </div>
         </div>
         <CombinationRank
+          showModal={this.showModal}
           combinationTreeList={combinationTreeList}
           combinationRankList={combinationRankList}
           tabChange={this.handleTabChange}
@@ -376,6 +387,7 @@ export default class ChoicenessCombination extends PureComponent {
             <CombinationModal
               // 关闭弹窗
               closeModal={this.closeModal}
+              location={location}
               {...modalProps[modalType]}
             />
           :

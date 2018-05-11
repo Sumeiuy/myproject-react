@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合api
  * @Date: 2018-04-17 10:10:25
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-08 16:25:44
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-05-10 16:33:15
 */
 
 export default function choicenessCombination(api) {
@@ -22,5 +22,13 @@ export default function choicenessCombination(api) {
     getReportHistoryList: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/reportHistoryList', query),
     // 订购客户列表
     getOrderingCustList: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/orderingCustomerList', query),
+    // 历史报告详情
+    getHistoryDetail: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/historyDetail', query),
+    // 详情-头部概览
+    getOverview: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/combinationDetailOverview', query),
+    // 详情-组合构成-饼图
+    getCompositionPie: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/composingPie', query),
+    // 详情-组合构成-表格
+    getCompositionTable: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/composing', query),
   };
 }

@@ -2,8 +2,8 @@
  * @Description: 精选组合部分配置项
  * @Author: Liujianshu
  * @Date: 2018-04-25 14:28:07
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-09 14:42:56
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-05-10 20:23:28
  */
 
 const config = {
@@ -279,6 +279,183 @@ const config = {
     key: 'all',
     value: 'all',
     label: '全部',
+  },
+  detailTitleList: {
+    // 模拟实盘组合
+    mnspzh: [
+      {
+        dataIndex: 'code',
+        key: 'code',
+        title: '证券代码',
+        width: 70,
+      },
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '证券名称',
+        width: 110,
+      },
+      {
+        dataIndex: 'industry',
+        key: 'industry',
+        title: '行业',
+        width: 100,
+      },
+      {
+        dataIndex: 'percent',
+        key: 'percent',
+        title: '持仓比例',
+        width: 70,
+      },
+      {
+        dataIndex: 'scNum',
+        key: 'scNum',
+        title: '证券数量（股）',
+        width: 100,
+      },
+      {
+        dataIndex: 'costPrice',
+        key: 'costPrice',
+        title: '成本价（元）',
+        width: 80,
+      },
+      {
+        dataIndex: 'newPrice',
+        key: 'newPrice',
+        title: '最新价格（元）',
+        width: 100,
+      },
+      {
+        dataIndex: 'floatRateReturn',
+        key: 'floatRateReturn',
+        title: '浮动收益（%）',
+        width: 100,
+      },
+      {
+        dataIndex: 'reason',
+        key: 'reason',
+        title: '理由',
+      },
+    ],
+    // 行业股票组合
+    hygpzh: [
+      {
+        dataIndex: 'code',
+        key: 'code',
+        title: '证券代码',
+      },
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '证券名称',
+      },
+      {
+        dataIndex: 'industry',
+        key: 'industry',
+        title: '行业',
+      },
+      {
+        dataIndex: 'callInTime',
+        key: 'callInTime',
+        title: '调入日期',
+      },
+      {
+        dataIndex: 'callInPrice',
+        key: 'callInPrice',
+        title: '调入价格',
+      },
+      {
+        dataIndex: 'percent',
+        key: 'percent',
+        title: '持仓比例',
+      },
+      {
+        dataIndex: 'increase',
+        key: 'increase',
+        title: '累计涨幅',
+      },
+      {
+        dataIndex: 'reason',
+        key: 'reason',
+        title: '理由',
+      },
+    ],
+    // 配置类组合
+    pzlzh: [
+      {
+        dataIndex: 'code',
+        key: 'code',
+        title: '基金代码',
+      },
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '基金简称',
+      },
+      {
+        dataIndex: 'category',
+        key: 'category',
+        title: '分类',
+      },
+      {
+        dataIndex: 'callInTime',
+        key: 'callInTime',
+        title: '调入日期',
+      },
+      {
+        dataIndex: 'callInPrice',
+        key: 'callInPrice',
+        title: '调入价格',
+      },
+      {
+        dataIndex: 'percent',
+        key: 'percent',
+        title: '持仓比例',
+      },
+      {
+        dataIndex: 'increase',
+        key: 'increase',
+        title: '累计涨幅',
+      },
+      {
+        dataIndex: 'reason',
+        key: 'reason',
+        title: '理由',
+      },
+    ],
+    // 配置类组合（资产配置型）
+    pzlzhZCPZ: [
+      {
+        dataIndex: 'code',
+        key: 'code',
+        title: '基金代码',
+      },
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '基金简称',
+      },
+      {
+        dataIndex: 'category',
+        key: 'category',
+        title: '分类',
+      },
+      {
+        dataIndex: 'callInTime',
+        key: 'callInTime',
+        title: '调仓日期',
+      },
+      {
+        dataIndex: 'weight',
+        key: 'weight',
+        title: '本期权重',
+      },
+      {
+        dataIndex: 'rateReturn',
+        key: 'rateReturn',
+        title: '回报率',
+      },
+    ],
   },
 };
 

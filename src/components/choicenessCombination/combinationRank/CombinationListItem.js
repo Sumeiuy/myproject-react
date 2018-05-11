@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-09 14:21:12
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-05-10 16:01:16
 */
 
 import React, { PureComponent } from 'react';
@@ -27,6 +27,9 @@ const EMPTY_LIST = [];
 const MAX_SIZE_LENGTH = 35;
 const DEFAULT_REASON = '调仓理由：暂无';
 
+// 历史报告
+const REPORT_TYPE = 'report';
+
 export default class CombinationListItem extends PureComponent {
   static propTypes = {
     // 字典
@@ -46,6 +49,7 @@ export default class CombinationListItem extends PureComponent {
     openStockPage: PropTypes.func.isRequired,
     // 打开持仓查客户页面
     openCustomerListPage: PropTypes.func.isRequired,
+    showModal: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -155,6 +159,16 @@ export default class CombinationListItem extends PureComponent {
     });
   }
 
+  @autobind
+  viewHistoryReport(name) {
+    const { showModal } = this.props;
+    const payload = {
+      combinationCode: name,
+      type: REPORT_TYPE,
+    };
+    showModal(payload);
+  }
+
   render() {
     const {
       // dict,
@@ -193,7 +207,7 @@ export default class CombinationListItem extends PureComponent {
               }
             </span>
             <span className={styles.link}>
-              <a>历史报告 </a>
+              <a onClick={() => this.viewHistoryReport(data.combinationCode)}>历史报告 </a>
               |
               <a onClick={() => this.openCustomerListPage(data)}> 订购客户</a>
             </span>

@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合-近一周表现前十的证券
  * @Date: 2018-04-17 16:38:02
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-18 14:26:10
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-05-10 14:34:36
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -26,7 +26,6 @@ const titleList = config.titleList.ten;
 
 export default class WeeklySecurityTopTen extends PureComponent {
   static propTypes = {
-    push: PropTypes.func.isRequired,
     data: PropTypes.array.isRequired,
     permission: PropTypes.bool.isRequired,
     orgId: PropTypes.string,

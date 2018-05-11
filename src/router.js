@@ -272,7 +272,7 @@ const routes = [
     component: TelephoneNumberManageEdit,
     exact: false,
   },
-  // 精选组合
+  // 精选组合，直接进入
   {
     path: '/choicenessCombination',
     component: ChoicenessCombination,

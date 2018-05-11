@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合-组合详情
  * @Date: 2018-04-17 09:22:26
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-09 15:37:12
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-05-10 21:08:58
  */
 
 import React, { PureComponent } from 'react';
@@ -13,21 +13,28 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import _ from 'lodash';
 
-import styles from './combinationDetail.less';
-import { permission, dva, url as urlHelper, emp } from '../../helper';
-import config from '../../components/choicenessCombination/config';
-import { openRctTab } from '../../utils';
 import withRouter from '../../decorators/withRouter';
+import fspPatch from '../../decorators/fspPatch';
 import CombinationModal from '../../components/choicenessCombination/CombinationModal';
 import AdjustHistory from '../../components/choicenessCombination/combinationDetail/AdjustHistory';
 import CombinationYieldChart from '../../components/choicenessCombination/CombinationYieldChart';
 import HistoryReport from '../../components/choicenessCombination/combinationDetail/HistoryReport';
 import OrderingCustomer from '../../components/choicenessCombination/combinationDetail/OrderingCustomer';
+import Overview from '../../components/choicenessCombination/combinationDetail/Overview';
+import Composition from '../../components/choicenessCombination/combinationDetail/Composition';
+import { openRctTab } from '../../utils';
+import { permission, dva, url as urlHelper, emp } from '../../helper';
+import config from '../../components/choicenessCombination/config';
+import styles from './combinationDetail.less';
 
 const dispatch = dva.generateEffect;
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
 const effects = {
+  // 组合概览
+  getOverview: 'combinationDetail/getOverview',
+  // 组合构成-饼图
+  getCompositionPie: 'combinationDetail/getCompositionPie',
+  // 组合构成-表格
+  getCompositionTable: 'combinationDetail/getCompositionTable',
   // 获取调仓历史
   getAdjustWarehouseHistory: 'combinationDetail/getAdjustWarehouseHistory',
   // 获取组合证券构成数据/获取近一周表现前十的证券
@@ -45,6 +52,12 @@ const effects = {
 const mapStateToProps = state => ({
   // 字典
   dict: state.app.dict,
+  // 组合概览
+  overview: state.combinationDetail.overview,
+  // 组合构成-饼图
+  compositionPie: state.combinationDetail.compositionPie,
+  // 组合构成-表格
+  compositionTable: state.combinationDetail.compositionTable,
   // 调仓历史数据
   adjustWarehouseHistoryData: state.combinationDetail.adjustWarehouseHistoryData,
   // 弹窗调仓历史数据
@@ -63,6 +76,9 @@ const mapStateToProps = state => ({
   modalReportHistoryData: state.combinationDetail.modalReportHistoryData,
 });
 const mapDispatchToProps = {
+  getOverview: dispatch(effects.getOverview, { loading: true }),
+  getCompositionPie: dispatch(effects.getCompositionPie, { loading: true }),
+  getCompositionTable: dispatch(effects.getCompositionTable, { loading: true }),
   getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory, { loading: false }),
   getCombinationSecurityList: dispatch(effects.getCombinationSecurityList, { loading: false }),
   getCombinationTree: dispatch(effects.getCombinationTree, { loading: false }),
@@ -74,11 +90,21 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
+@fspPatch()
 export default class CombinationDetail extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     // 字典数据
     dict: PropTypes.object.isRequired,
+    // 概览
+    getOverview: PropTypes.func.isRequired,
+    overview: PropTypes.object.isRequired,
+    // 组合构成-饼图
+    getCompositionPie: PropTypes.func.isRequired,
+    compositionPie: PropTypes.array.isRequired,
+    // 组合构成-表格
+    getCompositionTable: PropTypes.func.isRequired,
+    compositionTable: PropTypes.array.isRequired,
     // 获取调仓历史数据
     getAdjustWarehouseHistory: PropTypes.func.isRequired,
     adjustWarehouseHistoryData: PropTypes.object.isRequired,
@@ -119,6 +145,9 @@ export default class CombinationDetail extends PureComponent {
 
   componentDidMount() {
     const {
+      getOverview,
+      getCompositionPie,
+      getCompositionTable,
       getAdjustWarehouseHistory,
       getCombinationSecurityList,
       getCombinationTree,
@@ -133,6 +162,17 @@ export default class CombinationDetail extends PureComponent {
       pageSize: 5,
       pageNum: 1,
     };
+    // 获取概览
+    getOverview({
+      combinationCode: id,
+    });
+    getCompositionPie({
+      combinationCode: id,
+    });
+    getCompositionTable({
+      combinationCode: id,
+      securityType: 0,
+    });
     // 调仓历史
     getAdjustWarehouseHistory(payload);
     getCombinationSecurityList();
@@ -278,6 +318,9 @@ export default class CombinationDetail extends PureComponent {
     const {
       dict,
       push,
+      overview,
+      compositionPie,
+      compositionTable,
       getCombinationTree,
       adjustWarehouseHistoryData,
       tableHistoryList,
@@ -338,7 +381,10 @@ export default class CombinationDetail extends PureComponent {
 
     return (
       <div className={styles.combinationDetailBox}>
-        组合详情
+        <Overview data={overview} />
+        <div className={styles.composition}>
+          <Composition pieData={compositionPie} tableData={compositionTable} />
+        </div>
         <div className={styles.floor}>
           <AdjustHistory
             data={adjustWarehouseHistoryData}
