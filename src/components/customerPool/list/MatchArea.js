@@ -586,6 +586,7 @@ export default class MatchArea extends PureComponent {
           {this.renderStatus()}
           {this.renderServiceRecord()}
           {this.renderSightingTelescope()}
+          {this.renderHoldingProduct()}
           {this.renderOrderCombination()}
           {this.renderSecuritiesProducts()}
         </ul>
