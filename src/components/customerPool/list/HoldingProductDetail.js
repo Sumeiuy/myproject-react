@@ -157,7 +157,7 @@ export default class HoldingProductDetail extends PureComponent {
           onMouseLeave={this.handleMouseLeave}
           getPopupContainer={this.getPopupContainer}
         >
-          （<em className={styles.holdingProductDetailBtn}>持仓详情</em>）
+          <em className={styles.holdingProductDetailBtn}>持仓详情</em>
         </Popover>
       </div>
     );
