@@ -12,7 +12,7 @@ import moment from 'moment';
 import { Modal, Button } from 'antd';
 import Icon from '../../common/Icon';
 import Collapse from './CreateCollapse';
-import { check, date } from '../../../helper';
+import { date } from '../../../helper';
 import logable from '../../../decorators/logable';
 import ContactInfoPopover from '../../common/contactInfoPopover/ContactInfoPopover';
 import Phone from '../../common/phone';
@@ -21,13 +21,6 @@ import styles from './createContactModal.less';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
-const CONTACT_MAP = {
-  cellPhones: '手机',
-  workTels: '单位电话',
-  homeTels: '家庭电话',
-  otherTels: '其他电话',
-};
-
 const PHONE = 'phone';
 
 /**
@@ -98,129 +91,6 @@ export default class CreateContactModal extends PureComponent {
     handleCloseClick();
     onClose();
     this.setState({ visible: false });
-  }
-
-  /**
-  * 构造表格的列数据
-  */
-  @autobind
-  constructTableColumns() {
-    const columns = [{
-      dataIndex: 'contact',
-      title: '其他联系人',
-      width: '20%',
-      render: record =>
-        // 当前行记录
-        <div className="recordSection" title={record}>
-          {record}
-        </div>,
-    },
-    {
-      dataIndex: 'phone',
-      title: '手机',
-      width: '20%',
-      render: record =>
-        // 当前行记录
-        <div className="recordSection" title={record}>
-          {record}
-        </div>,
-    },
-    {
-      dataIndex: 'work',
-      title: '单位电话',
-      width: '20%',
-      render: record =>
-        // 当前行记录
-        <div className="recordSection" title={record}>
-          {record}
-        </div>,
-    },
-    {
-      dataIndex: 'home',
-      title: '住宅电话',
-      width: '20%',
-      render: record =>
-        <div className="recordSection" title={record}>
-          {record}
-        </div>,
-    },
-    {
-      dataIndex: 'personType',
-      title: '人员类型',
-      width: '20%',
-      render: record =>
-        <div className="recordSection" title={record}>
-          {record}
-        </div>,
-    }];
-
-    return columns;
-  }
-
-  /**
-  * 构造数据源
-  */
-  constructTableDatas(dataSource) {
-    const newDataSource = [];
-    if (dataSource.length > 0) {
-      dataSource.forEach((currentValue, index) =>
-        newDataSource.push(_.merge(currentValue, { key: index })),
-      );
-    }
-
-    return newDataSource;
-  }
-
-  @autobind
-  constructOtherContact(contact) {
-    return _.map(contact, (item, index) =>
-      <div className={styles.otherTelsSection} key={index}>
-        <div className={styles.leftSection}>
-          <span className={styles.telName}>{CONTACT_MAP[index]}：</span>
-        </div>
-        <div className={styles.rightSection}>
-          {
-            _.map(item, (unit, flag) =>
-              <div className={styles.telSection} key={flag}>
-                <span>{this.formatPhoneNumber(unit.contactValue)}</span>
-              </div>,
-            )
-          }
-        </div>
-      </div>,
-    );
-  }
-
-  /**
-   * 格式化手机号 15667567889 变成 156-6756-7889形式
-   * 格式化座机号 02588888888 变成 025-88888888形式
-   * @param {*} phone 手机号
-   */
-  formatPhoneNumber(phone) {
-    let count = 0;
-    let newPhone = '';
-    const temp = phone.toString();
-    const len = temp.length;
-    let flag = 4;
-    const isCellPhone = check.isCellPhone(phone);
-    if (!isCellPhone) {
-      // 不是手机号
-      if (phone.indexOf('-') === -1) {
-        // 但是后台没有处理成025-213413421形式
-        flag = 8;
-      }
-    }
-
-    for (let i = len - 1; i >= 0; i--) {
-      if (count % flag === 0 && count !== 0) {
-        newPhone = `${temp.charAt(i)}-${newPhone}`;
-      } else {
-        newPhone = `${temp.charAt(i)}${newPhone}`;
-      }
-      count++;
-    }
-
-    return newPhone;
   }
 
   @autobind
@@ -349,16 +219,16 @@ export default class CreateContactModal extends PureComponent {
         }
         {
           (custType === 'per' && isPersonHasContact
-            && personalContactInfo.mainTelInfo.type !== 'none') &&
+            && personalContactInfo.mainTelInfo) &&
           '主要联系电话：'
         }
         {
-          (!_.isEmpty(mainContactInfo.cellInfo) || personalContactInfo.mainTelInfo.type !== 'none') &&
+          (!_.isEmpty(mainContactInfo.cellInfo) || !_.isEmpty(personalContactInfo.mainTelInfo)) &&
           <Phone
             onConnected={this.handlePhoneConnected}
             onEnd={this.handlePhoneEnd}
             number={custType === 'per' ?
-              personalContactInfo.mainTelInfo.value :
+              personalContactInfo.mainTelInfo :
               mainContactInfo.cellInfo}
             custType={custType}
             disable={false}
@@ -419,7 +289,7 @@ export default class CreateContactModal extends PureComponent {
           mainContactInfo = {
             nameInfo: mainContactNameInfo,
             cellInfo: _.isEmpty(mainContactAllInfo.cellPhones) ? '' :
-              this.formatPhoneNumber(mainContactAllInfo.cellPhones[0].contactValue),
+              mainContactAllInfo.cellPhones[0].contactValue,
             telInfo: _.omitBy(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels']), _.isEmpty),
           };
           if (!_.isEmpty(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels', 'cellPhones']))) {
@@ -437,29 +307,21 @@ export default class CreateContactModal extends PureComponent {
           }
         }
       } else if (!_.isEmpty(perCustomerContactInfo)) {
-        const allTelInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']);
-        isPersonHasContact = !_.isEmpty(_.omitBy(allTelInfo, _.isEmpty));
+        // 选出4中联系方式中不为空的联系方式
+        const allTelInfo = _.omit(_.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']), _.isEmpty);
+        // 将所有联系方式用一个一维数组来存放
+        const phones = _.flatten(Object.values(allTelInfo)) || EMPTY_LIST;
+        // 筛选出联系方式对象中contactValue不为空的，判断是否有联系方式
+        isPersonHasContact = !_.isEmpty(_.filter(phones, item => item.contactValue));
         if (isPersonHasContact) {
-          const cellPhones = allTelInfo.cellPhones || EMPTY_LIST;
-          let mainTelInfo = {
-            type: 'none',
-            value: '',
-          };
-          if (_.find(cellPhones, item => item.mainFlag)) {
-            // 存在主要电话
-            mainTelInfo = {
-              type: 'cellPhones',
-              value: this.formatPhoneNumber(cellPhones && cellPhones[0].contactValue),
-            };
-          }
-
-          // 过滤个人其他联系方式为空的情况
-          const otherTelInfo = _.omitBy(allTelInfo, _.isEmpty);
-
+          let mainTelInfo = '';
+          // 找到主要联系方式
+          const mainContact = _.find(phones, item => item.mainFlag) || EMPTY_LIST;
+          mainTelInfo = mainContact && mainContact.contactValue;
           // 筛选contactValue存在的其他电话
           personalContactInfo = {
             mainTelInfo,
-            otherTelInfo,
+            otherTelInfo: allTelInfo,
           };
         }
       }
