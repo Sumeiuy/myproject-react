@@ -191,6 +191,8 @@ export default class CreateTaskForm extends PureComponent {
         defaultInitialValue = 4; // 有效期4天
         defaultMissionDesc = this.getDefaultMissionDescFromProduct(query);
         break;
+      case 'securitiesProducts':
+      case 'orderCombination':
       case 'association':
       case 'search':
       case 'tag':

@@ -345,6 +345,7 @@ export default class ServiceImplementation extends PureComponent {
           motCustfeedBackDict={motCustfeedBackDict}
           currentCustomer={currentCustomer}
           getServiceCustId={id => this.setServiceCustId(id)}
+          taskTypeCode={taskTypeCode}
         />
         {
           (!_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict))
