@@ -1,0 +1,48 @@
+.addEmpListBox {
+  font-size: 14px;
+  .selectSearchBox {
+    .addButton {
+      font-size: 14px;
+      margin-left: 10px;
+      height: 31px;
+    }
+    .batchAddButton {
+      font-size: 14px;
+      float: right;
+      height: 31px;
+    }
+  }
+  .empListTableList {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    .deleteBtn {
+      font-size: 14px;
+    }
+    :global {
+      .ant-table {
+        font-size: 14px;
+      }
+      table > tbody > tr:nth-child(odd) {
+        background-color: #fff;
+      }
+      table > thead > tr > th {
+        background-color: #f7f7f7;
+        text-align: left;
+      }
+      table > thead > tr > th:first-child {
+        padding-left: 60px;
+      }
+      table > tbody > tr > td:first-child {
+        padding-left: 60px;
+        border-left: 1px solid #e8e8e8;
+      }
+      table > tbody > tr > td:last-child {
+        border-right: 1px solid #e8e8e8;
+      }
+      .ant-table-placeholder {
+        border-left: 1px solid #e8e8e8;
+        border-right: 1px solid #e8e8e8;
+      }
+    }
+  }
+}

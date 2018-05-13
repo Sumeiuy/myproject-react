@@ -20,6 +20,7 @@ import preSaleQuery from './preSaleQuery';
 import stock from './stock';
 import pointsExchange from './pointsExchange';
 import userCenter from './userCenter';
+import telephoneNumberManage from './telephoneNumberManage';
 import choicenessCombination from './choicenessCombination';
 import investmentAdvice from './investmentAdvice';
 import operationCenter from './operationCenter';
@@ -65,16 +66,19 @@ export default {
   morningBoradcast: morningBoradcast(api),
   // ========== 售前适当性查询
   preSaleQuery: preSaleQuery(api),
-  // 个股资讯
+  // ========== 个股资讯
   stock: stock(api),
-  // 积分兑换历史查询
+  // ========== 积分兑换历史查询
   pointsExchange: pointsExchange(api),
-  // 用户中心
+  // ========== 用户中心
   userCenter: userCenter(api),
+  // ========== 公务手机和电话卡号管理
+  telephoneNumberManage: telephoneNumberManage(api),
   // ========== 精选组合
   choicenessCombination: choicenessCombination(api),
-  // 投资建议模板
+  // ========== 投资建议模板
   investmentAdvice: investmentAdvice(api),
+  // ========== 平台参数-运营中心
   operationCenter: operationCenter(api),
 };
 

@@ -17,6 +17,7 @@ import styles from '../../style/jiraLayout.less';
 import contractHelper from '../../../helper/page/contract';
 import { dom, permission } from '../../../helper';
 import { fspContainer, seibelConfig } from '../../../config';
+import config from '../../telephoneNumberManage/config';
 import logable from '../../../decorators/logable';
 
 const {
@@ -24,6 +25,7 @@ const {
   channelsTypeProtocol: { pageType: channelsPageType },
   filialeCustTransfer: { pageType: filialeCustTransfer },
 } = seibelConfig;
+const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
@@ -460,6 +462,8 @@ export default class Pageheader extends PureComponent {
       // 如果分公司客户人工划转,是分公司并且是HTSC 客户分配岗
       hasCreatePermission = permission.hasFilialeCustTransferCreate(empInfo) &&
         checkUserIsFiliale();
+    } else if (pageType === phoneApplyPageType) {
+      hasCreatePermission = permission.hasPermissionOfPhoneApplyCreate(empInfo);
     }
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>

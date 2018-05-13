@@ -141,7 +141,6 @@ const effects = {
   getCustomerList: 'customerPool/getCustomerList',
   getCustIncome: 'customerPool/getCustIncome',
   getCustContact: 'customerPool/getCustContact',
-  getCustEmail: 'customerPool/getCustEmail', // 获取邮件地址
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustomerScope: 'customerPool/getCustomerScope',
   getSearchServerPersonList: 'customerPool/getSearchServerPersonList',
@@ -179,8 +178,6 @@ const mapStateToProps = state => ({
   monthlyProfits: state.customerPool.monthlyProfits,
   // 联系方式数据
   custContactData: state.customerPool.custContactData,
-  // 邮箱地址
-  custEmail: state.customerPool.custEmail,
   // 最近服务记录
   serviceRecordData: state.customerPool.serviceRecordData,
   // 统计周期
@@ -189,10 +186,6 @@ const mapStateToProps = state => ({
   interfaceState: state.loading.effects,
   // 服务人员列表
   searchServerPersonList: state.customerPool.searchServerPersonList,
-  // 联系方式接口loading
-  isContactLoading: state.loading.effects[effects.getCustContact],
-  // 服务记录接口loading
-  isRecordLoading: state.loading.effects[effects.getServiceRecord],
   // 列表页的服务营业部
   serviceDepartment: state.customerPool.serviceDepartment,
   filesList: state.customerPool.filesList,
@@ -213,7 +206,6 @@ const mapDispatchToProps = {
   getCustomerScope: fetchDataFunction(true, effects.getCustomerScope),
   getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
   getCustContact: fetchDataFunction(true, effects.getCustContact),
-  getCustEmail: fetchDataFunction(true, effects.getCustEmail),
   handleFilter: fetchDataFunction(false, effects.handleFilter),
   handleSelect: fetchDataFunction(false, effects.handleSelect),
   handleOrder: fetchDataFunction(false, effects.handleOrder),
@@ -264,9 +256,7 @@ export default class CustomerList extends PureComponent {
     page: PropTypes.object.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     getCustContact: PropTypes.func.isRequired,
-    getCustEmail: PropTypes.func.isRequired,
     custContactData: PropTypes.object,
-    custEmail: PropTypes.object,
     getServiceRecord: PropTypes.func.isRequired,
     serviceRecordData: PropTypes.object,
     cycle: PropTypes.array,
@@ -310,7 +300,6 @@ export default class CustomerList extends PureComponent {
     custRange: [],
     empInfo: {},
     custContactData: EMPTY_OBJECT,
-    custEmail: EMPTY_OBJECT,
     serviceRecordData: EMPTY_OBJECT,
     cycle: EMPTY_LIST,
     isContactLoading: false,
@@ -327,10 +316,7 @@ export default class CustomerList extends PureComponent {
     this.state = {
       expandAll: false,
       queryParam: {},
-      // createCustRange: [],
       cycleSelect: '',
-      // 初始化没有loading
-      isLoadingEnd: true,
     };
     // HTSC 首页指标查询
     this.hasIndexViewPermission = permission.hasIndexViewPermission();
@@ -373,44 +359,21 @@ export default class CustomerList extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const {
-      // custRange: preCustRange,
       location: {
         query: preQuery,
       },
-      isContactLoading = false,
-      isRecordLoading = false,
-      // getFiltersOfSightingTelescope,
     } = this.props;
     const {
-      // custRange,
       location: {
         query,
       },
-      isContactLoading: nextContactLoading = false,
-      isRecordLoading: nextRecordLoading = false,
     } = nextProps;
+
     // query变化、权限列表存在变化和职位切换时，重新获取列表数据
-    const {
-      selectedIds: preSelectedIds,
-      selectAll: preSelectAll,
-      ...preOtherQuery
-    } = preQuery;
-    const {
-      selectedIds,
-      selectAll,
-      ...otherQuery
-    } = query;
+    const preOtherQuery = _.omit(preQuery, ['selectedIds', 'selectAll']);
+    const otherQuery = _.omit(query, ['selectedIds', 'selectAll']);
     if (!_.isEqual(preOtherQuery, otherQuery)) {
       this.getCustomerList(nextProps);
-    }
-
-    // loading状态
-    // 只有全部loading完毕才触发isLoadingEnd
-    if ((isContactLoading && !nextContactLoading && isRecordLoading && !nextRecordLoading)
-      || (!nextContactLoading && !nextRecordLoading)) {
-      this.setState({
-        isLoadingEnd: true,
-      });
     }
   }
 
@@ -518,13 +481,6 @@ export default class CustomerList extends PureComponent {
       return CUST_MANAGER;
     }
     return ORG;
-  }
-
-  @autobind
-  setLoading() {
-    this.setState({
-      isLoadingEnd: false,
-    });
   }
 
   // 组织机构树切换和时间周期切换
@@ -659,10 +615,8 @@ export default class CustomerList extends PureComponent {
       monthlyProfits,
       getCustIncome,
       getCustContact,
-      getCustEmail,
       getServiceRecord,
       custContactData,
-      custEmail,
       serviceRecordData,
       cycle,
       toggleServiceRecordModal,
@@ -705,7 +659,7 @@ export default class CustomerList extends PureComponent {
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
-    const { expandAll, queryParam, isLoadingEnd } = this.state;
+    const { expandAll, queryParam } = this.state;
     const custRangeProps = {
       orgId,
       custRange: serviceDepartment,
@@ -767,10 +721,8 @@ export default class CustomerList extends PureComponent {
           onSizeChange={this.handleSizeChange}
           getCustIncome={getCustIncome}
           getCustContact={getCustContact}
-          getCustEmail={getCustEmail}
           getServiceRecord={getServiceRecord}
           custContactData={custContactData}
-          custEmail={custEmail}
           serviceRecordData={serviceRecordData}
           toggleServiceRecordModal={toggleServiceRecordModal}
           reorderValue={reorderValue}
@@ -778,8 +730,6 @@ export default class CustomerList extends PureComponent {
           searchServerPersonList={searchServerPersonList}
           {...cycleTimeProps}
           {...custRangeProps}
-          isLoadingEnd={isLoadingEnd}
-          onRequestLoading={this.setLoading}
           clearCreateTaskData={clearCreateTaskData}
           queryCustUuid={queryCustUuid}
           getCeFileList={getCeFileList}

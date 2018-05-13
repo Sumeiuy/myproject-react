@@ -1,55 +1,23 @@
 /**
  * @Description: PC电话拨号页面
- * @Author: hongguangqing
+ * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-13 10:50:47
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-04-27 21:30:59
  */
 
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { autobind } from 'core-decorators';
-import styles from './index.less';
+import { connect } from 'dva';
+import Phone from './Phone';
 
-export default class Phone extends PureComponent {
-  static propTypes = {
-    // 电话号码
-    phoneNum: PropTypes.string.isRequired,
-    // 客户类型
-    custType: PropTypes.string.isRequired,
-    // 切换拨打电话弹框是否显示方法
-    onTogglePhoneDialog: PropTypes.func.isRequired,
-    // 页面自定义样式
-    style: PropTypes.object,
-  }
+const mapStateToProps = state => ({
+  config: state.telephoneNumberManage.config,
+  empInfo: state.app.empInfo,
+});
 
-  static defaultProps = {
-    style: {},
-  };
+const mapDispatchToProps = {
+  getConfig: () => ({
+    type: 'telephoneNumberManage/getConfig',
+  }),
+};
 
-  // 点击号码弹出拨打电话的弹框
-  @autobind
-  handleClickPhoneNum() {
-    const { phoneNum, custType, onTogglePhoneDialog } = this.props;
-    onTogglePhoneDialog({
-      flag: true,
-      phoneNum,
-      custType,
-    });
-  }
-
-  render() {
-    const { phoneNum, style } = this.props;
-    return (
-      <div className={styles.wrap}>
-        <div
-          className={styles.phoneNum}
-          onClick={this.handleClickPhoneNum}
-          style={style}
-        >
-          {phoneNum}
-        </div>
-      </div>
-    );
-  }
-}
+export default connect(mapStateToProps, mapDispatchToProps)(Phone);

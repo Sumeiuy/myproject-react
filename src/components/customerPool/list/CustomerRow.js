@@ -111,16 +111,12 @@ export default class CustomerRow extends PureComponent {
     onChange: PropTypes.func.isRequired,
     isAllSelect: PropTypes.bool.isRequired,
     selectedIds: PropTypes.array,
-    onSendEmail: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     createContact: PropTypes.func.isRequired,
-    custEmail: PropTypes.object.isRequired,
-    emailCustId: PropTypes.string.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     formatAsset: PropTypes.func.isRequired,
     handleCheck: PropTypes.func.isRequired,
-    queryCustUuid: PropTypes.func.isRequired,
     condition: PropTypes.object.isRequired,
     entertype: PropTypes.string.isRequired,
     goGroupOrTask: PropTypes.func.isRequired,
@@ -291,10 +287,6 @@ export default class CustomerRow extends PureComponent {
     const {
       listItem,
       toggleServiceRecordModal,
-      custEmail,
-      onSendEmail,
-      emailCustId,
-      queryCustUuid,
       condition,
       location,
       entertype,
@@ -305,10 +297,6 @@ export default class CustomerRow extends PureComponent {
         listItem={listItem}
         createModal={this.createModal}
         toggleServiceRecordModal={toggleServiceRecordModal}
-        custEmail={custEmail}
-        emailCustId={emailCustId}
-        onSendEmail={onSendEmail}
-        queryCustUuid={queryCustUuid}
         condition={condition}
         location={location}
         entertype={entertype}
