@@ -10,6 +10,10 @@ const sourceFilter = {
       filterName: 'primaryKeyPrdts',
       value: ['labelMapping'],
     }], // (持仓产品)：持仓产品过滤器
+    LABEL: [{
+      filterName: 'primaryKeyLabels',
+      value: ['labelMapping'],
+    }],  // (普通标签)：客户标签过滤器
   },
   // 来源于开通业务: 开通业务、可开通业务过滤器
   numOfCustOpened: [{
@@ -18,8 +22,16 @@ const sourceFilter = {
   }, 'Unrights'],
   // 来源于潜在业务机会: 可开通业务过滤器
   business: ['Unrights'],
-  // 来源于热点标签: 可开通业务过滤器
-  sightingTelescope: ['Unrights'],
+  // 来源于普通标签: 客户标签过滤器
+  tag: [{
+    filterName: 'primaryKeyLabels',
+    value: ['labelMapping'],
+  }],
+  // 来源于热点标签: 客户标签，可开通业务过滤器
+  sightingTelescope: [{
+    filterName: 'primaryKeyLabels',
+    value: ['labelMapping'],
+  }, 'Unrights'],
 };
 const helper = {
   /**
