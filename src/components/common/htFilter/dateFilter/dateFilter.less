@@ -1,0 +1,56 @@
+.dateFilter {
+  display: inline-block;
+  font-size: 14px;
+  height: 30px;
+  border-radius: 4px;
+  color: #333;
+  border: 1px solid  transparent;
+  transition: border-color .5s ease-in .1s;
+
+  &[aria-expanded='true'],
+  &:hover,
+  &:focus {
+    color: #333;
+    border-color: #108ee9;
+  }
+
+  .dateLabel {
+    display: inline-block;
+    font-size: 14px;
+    color: #4a4a4a;
+    padding-left: 5px;
+    transform: translateY(-2px);
+  }
+
+  :global {
+    .DateRangePickerInput_arrow {
+      vertical-align: baseline;
+    }
+
+    .DateRangePickerInput.DateRangePickerInput_1 {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.dateFilterContainer {
+  display: inline-block;
+  padding: 5px;
+  vertical-align: bottom;
+}
+
+.closeIcon {
+  display: inline-block;
+  height: 28px;
+  width: 12px;
+  line-height: 28px;
+  margin-left: 10px;
+  vertical-align: top;
+  transform: translateY(1px);
+  cursor: pointer;
+  &:hover {
+      &::before {
+          color: #333;
+      }
+  }
+}

@@ -19,11 +19,10 @@
     "add-module-exports",
     "transform-decorators-legacy"
   ],
-  "env": {
+/*   "env": {
     "production": {},
     "development": {
       "plugins": [
-        "transform-react-jsx-source",
         [
           "dva-hmr", {
             "container": ".react-app",
@@ -32,6 +31,6 @@
         ]
       ]
     }
-  },
+  }, */
   "comments": false
 }

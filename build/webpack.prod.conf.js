@@ -41,6 +41,9 @@ var webpackConfig = merge(baseWebpackConfig, {
       {
         test: /\.less$/,
         include: config.src,
+        exclude: [
+          resolve('src/components/common/htFilter/treeFilter'),
+        ],
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: (cssLoaders.own).concat({
@@ -61,7 +64,7 @@ var webpackConfig = merge(baseWebpackConfig, {
       },
       {
         test: /\.less$/,
-        include: config.appNodeModules,
+        include: [config.appNodeModules, resolve('src/components/common/htFilter/treeFilter')],
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: cssLoaders.nodeModules.concat({

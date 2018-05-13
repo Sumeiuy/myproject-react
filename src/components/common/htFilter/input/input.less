@@ -1,0 +1,43 @@
+.input {
+  display: inline-block;
+  position: relative;
+  font-family: "Microsoft YaHei";
+  width: 150px;
+
+  .searchIcon {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    &::before {
+      color: #c2c2c2;
+      font-size: 14px;
+    }
+  }
+
+  .closeIcon {
+    font-size: 14px;
+    position: absolute;
+    z-index: 10;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    &::before {
+      color: #9b9b9b;
+      font-size: 14px;
+    }
+    &:hover {
+      &::before {
+      color: #4a4a4a;
+      font-size: 14px;
+    }
+    }
+  }
+
+  input {
+    font-size: 14px;
+    height: 30px;
+    padding-right: 24px;
+    padding-left: 10px;
+    vertical-align: bottom;
+  }
+}

@@ -19,7 +19,7 @@ import { dom } from '../../../helper';
 
 import styles from './index.less';
 
-// const START_DATE = 'startDate';
+const START_DATE = 'startDate';
 const END_DATE = 'endDate';
 
 export default class CommonDateRangePicker extends PureComponent {
@@ -33,6 +33,7 @@ export default class CommonDateRangePicker extends PureComponent {
     disabledRange: PropTypes.func,
     isInsideOffSet: PropTypes.func,
     hasCustomerOffset: PropTypes.bool,
+    defaultVisible: PropTypes.bool,
   }
   static defaultProps = {
     displayFormat: 'YYYY-MM-DD',
@@ -48,14 +49,15 @@ export default class CommonDateRangePicker extends PureComponent {
     disabledRange: () => false,
     // 判断时间是否在用户的自定义区间内
     isInsideOffSet: () => true,
+    defaultVisible: false,
   }
 
   constructor(props) {
     super(props);
-    const { initialEndDate, initialStartDate } = props;
+    const { initialEndDate, initialStartDate, defaultVisible } = props;
     this.state = {
       // 渲染日历浮层出现在 startDate or endDate 下面
-      curFocusedInput: null,
+      curFocusedInput: defaultVisible ? START_DATE : null,
       startDate: initialStartDate,
       endDate: initialEndDate,
     };
@@ -286,10 +288,11 @@ export default class CommonDateRangePicker extends PureComponent {
       'isInsideOffSet',
       'initialEndDate',
       'initialStartDate',
+      'defaultVisible',
     ]);
 
     return (
-      <div className={styles.drpWraper} ref={this.drpWraperRef}>
+      <div className={`${styles.drpWraper} dateFilterInside`} ref={this.drpWraperRef}>
         <DateRangePicker
           showDefaultInputIcon
           small
