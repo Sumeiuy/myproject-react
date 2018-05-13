@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-03 14:35:21
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-12 01:52:10
+ * @Last Modified time: 2018-05-12 09:55:58
  */
 
 import React, { PureComponent } from 'react';
@@ -34,8 +34,10 @@ const ORG_CODE = 'org';
  * 转成 [ key: 'cellphones', value: [{mainFlag: true}, {mainFlag: false}] ]
  */
 function headMainContact(object) {
+  // 定义两个临时的数组，分别用来存储mainFlag=true和mainFlag=false的元素
   const list1 = [];
   const list2 = [];
+  // 遍历传入的对象查找有mainFlag=true的属性，并排序属性值
   Object.keys(object).forEach((key) => {
     if (_.findIndex(object[key], { mainFlag: true }) > -1) {
       const newList = _.sortBy(object[key], item => !item.mainFlag);
