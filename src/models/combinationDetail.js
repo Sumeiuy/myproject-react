@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-09 16:48:57
+ * @Last Modified time: 2018-05-12 16:04:39
 */
 
 import _ from 'lodash';
@@ -63,15 +63,15 @@ export default {
     },
     // 组合构成-饼图
     getCompositionPieSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { payload: { resultData = EMPTY_LIST } } = action;
       return {
         ...state,
         compositionPie: resultData,
       };
     },
     // 组合构成-表格
-    getCompositionTableSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
+    querySecurityListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
       return {
         ...state,
         compositionTable: resultData,
@@ -125,7 +125,7 @@ export default {
         reportHistoryData: resultData,
       };
     },
-    // 组合详情-历史报告模块数据
+    // 组合详情-弹窗历史报告模块数据
     getModalReportHistoryListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
@@ -152,10 +152,11 @@ export default {
       });
     },
     // 组合构成-表格
-    * getCompositionTable({ payload }, { call, put }) {
-      const response = yield call(api.getCompositionTable, payload);
+    * querySecurityList({ payload }, { call, put }) {
+      console.warn('payload', payload);
+      const response = yield call(api.getCombinationSecurityList, payload);
       yield put({
-        type: 'getCompositionTableSuccess',
+        type: 'querySecurityListSuccess',
         payload: response,
       });
     },

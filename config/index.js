@@ -43,16 +43,20 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: generateProxy([
-      prefix + '/groovynoauth/fsp/queryPhoneInfo',
+      '/fspa/external', // 报表中心
       {
-        target: 'http://168.61.8.81:5090', // DOClever
+        target: 'http://168.61.8.82:5086', // uat
+      },
+      '/fspa/phone',
+      {
+        target: 'http://168.61.8.82:5086', // uat
       },
       prefix,
       {
         // target: 'http://168.61.8.82:5086', // uat
-        // target: 'http://168.61.8.81:5087', // SIT
+        target: 'http://168.61.8.81:5087', // SIT
         // target: 'http://168.61.8.81:5090', // DOClever
-        target: 'http://160.9.230.153:8082/', // Java开发接口访问地址
+        // target: 'http://160.9.230.153:8082/', // Java开发接口访问地址
       },
       '/fspa/log',
       {

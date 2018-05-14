@@ -2,8 +2,8 @@
  * @Description: 精选组合部分配置项
  * @Author: Liujianshu
  * @Date: 2018-04-25 14:28:07
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-11 16:34:13
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-05-11 19:03:37
  */
 
 const config = {
@@ -106,16 +106,19 @@ const config = {
         dataIndex: 'author',
         key: 'author',
         title: '作者',
+        width: 100,
       },
       {
         dataIndex: 'time',
         key: 'time',
         title: '报告日期',
+        width: 170,
       },
       {
         dataIndex: 'combinationName',
         key: 'combinationName',
         title: '组合名称',
+        width: 174,
       },
     ],
     ten: [
@@ -286,9 +289,9 @@ const config = {
     value: 'all',
     label: '全部',
   },
-  detailTitleList: {
+  detailTitleList: [
     // 模拟实盘组合
-    mnspzh: [
+    [
       {
         dataIndex: 'code',
         key: 'code',
@@ -305,7 +308,7 @@ const config = {
         dataIndex: 'industry',
         key: 'industry',
         title: '行业',
-        width: 100,
+        width: 110,
       },
       {
         dataIndex: 'percent',
@@ -344,7 +347,7 @@ const config = {
       },
     ],
     // 行业股票组合
-    hygpzh: [
+    [
       {
         dataIndex: 'code',
         key: 'code',
@@ -387,7 +390,7 @@ const config = {
       },
     ],
     // 配置类组合
-    pzlzh: [
+    [
       {
         dataIndex: 'code',
         key: 'code',
@@ -430,7 +433,7 @@ const config = {
       },
     ],
     // 配置类组合（资产配置型）
-    pzlzhZCPZ: [
+    [
       {
         dataIndex: 'code',
         key: 'code',
@@ -462,7 +465,31 @@ const config = {
         title: '回报率',
       },
     ],
-  },
+  ],
+  // 概览周月年
+  weekMonthYear: [
+    {
+      name: '周',
+      key: 'Week',
+      percent: 'weekEarnings',
+      ranking: 'weekCurrentRank',
+      total: 'weekAmout',
+    },
+    {
+      name: '月',
+      key: 'Month',
+      percent: 'monthEarnings',
+      ranking: 'monthCurrentRank',
+      total: 'monthAmout',
+    },
+    {
+      name: '年',
+      key: 'Year',
+      percent: 'yearEarnings',
+      ranking: 'yearCurrentRank',
+      total: 'yearAmout',
+    },
+  ],
 };
 
 export default config;

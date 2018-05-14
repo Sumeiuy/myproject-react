@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-14 09:19:41
+ * @Last Modified time: 2018-05-14 11:15:20
 */
 
 import React, { PureComponent } from 'react';
@@ -62,10 +62,6 @@ export default class CombinationListItem extends PureComponent {
     data: EMPTY_OBJECT,
     yieldRankValue: '',
   }
-
-  // constructor(props) {
-  //   super(props);
-  // }
 
   @autobind
   getHistoryList() {

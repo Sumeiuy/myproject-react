@@ -11,17 +11,22 @@ import moment from 'moment';
  * end   结束时间的时间戳
  */
 function calculateDuration(start, end) {
-  const duration = moment('000000', 'HHmmss').add(end - start, 'ms');
-  const hourDuration = duration.format('HH');
-  const minuteDuration = duration.format('mm');
-  const secondDuration = duration.format('ss');
-  if (hourDuration !== '00') {
-    return `${hourDuration}时${minuteDuration}分${secondDuration}秒`;
+  if (!start || !end) {
+    return '0秒';
   }
-  if (minuteDuration !== '00') {
-    return `${minuteDuration}分${secondDuration}秒`;
+  // 毫秒间隔
+  const intervalMs = end - start;
+  if (!intervalMs) {
+    return '0秒';
   }
-  return `${secondDuration}秒`;
+  const duration = moment('000000', 'HHmmss').add(intervalMs, 'ms');
+  if (intervalMs <= 60 * 1000) {
+    return duration.format('ss秒');
+  }
+  if (intervalMs <= 60 * 60 * 1000) {
+    return duration.format('mm分ss秒');
+  }
+  return duration.format('HH时mm分ss秒');
 }
 /**
  * 生成年月日

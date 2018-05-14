@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-12-19 11:01:47
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-10 17:26:41
+ * @Last Modified time: 2018-05-11 09:08:22
  * @description 用于神策日志统一记录的装饰器函数，用于需要记录日志的方法上
  */
 import _ from 'lodash';
@@ -136,11 +136,11 @@ function logPV({ pathname, title, payload = {} }) {
  * @returns {Function}
  */
 function logCommon({ type = 'Click', payload = {} }) {
-  const pathname = dva.getLastLocation().pathname;
+  const location = dva.getLastLocation();
   dva.dispatch({
     type,
     payload: {
-      pathname,
+      ...location,
       ...payload,
     },
   });

@@ -10,7 +10,7 @@ export default function choicenessCombination(api) {
   return {
     // 获取调仓历史
     getAdjustWarehouseHistory: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryCombinationAdjust', query),
-    // 组合证券构成列表/近一周表现前十的证券
+    // 组合证券构成列表/近一周表现前十的证券、组合构成-表格
     getCombinationSecurityList: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/querySecurityList', query),
     // 获取组合树
     getCombinationTree: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryPortfolioCategoryTree', query),
@@ -23,12 +23,10 @@ export default function choicenessCombination(api) {
     // 订购客户列表
     getOrderingCustList: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/querySubscribedCustList', query),
     // 历史报告详情
-    getHistoryDetail: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/historyDetail', query),
+    getHistoryDetail: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryHistoryReportDetail', query),
     // 详情-头部概览
-    getOverview: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/combinationDetailOverview', query),
+    getOverview: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryAdjustmentDetail', query),
     // 详情-组合构成-饼图
-    getCompositionPie: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/composingPie', query),
-    // 详情-组合构成-表格
-    getCompositionTable: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/composing', query),
+    getCompositionPie: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryStatsticSecurityList', query),
   };
 }

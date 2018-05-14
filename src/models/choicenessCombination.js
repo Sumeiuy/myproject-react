@@ -3,7 +3,7 @@
  * @Description: 精选组合modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-10 10:48:20
+ * @Last Modified time: 2018-05-12 16:04:41
 */
 
 import _ from 'lodash';
@@ -79,6 +79,8 @@ export default {
     rankTabActiveKey: '', // 组合排名tab
     yieldRankValue: yieldRankList[0].value, // 收益率排序value  默认显示近7天的
     riskLevel: riskDefaultItem.value, // 所筛选的风险等级
+    reportHistoryList: EMPTY_OBJECT,  // 历史报告
+    reportDetail: EMPTY_OBJECT,  // 历史报告详情
   },
   reducers: {
     // 风险等级筛选
@@ -184,6 +186,21 @@ export default {
         },
       };
     },
+    getReportHistoryListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        reportHistoryList: resultData,
+      };
+    },
+    // 历史报告详情
+    getReportDetailSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        reportDetail: resultData,
+      };
+    },
   },
   effects: {
     // 获取调仓历史数据
@@ -258,6 +275,22 @@ export default {
           payload: response,
         });
       }
+    },
+    // 获取历史报告
+    * getReportHistoryList({ payload }, { call, put }) {
+      const response = yield call(api.getReportHistoryList, payload);
+      yield put({
+        type: 'getReportHistoryListSuccess',
+        payload: response,
+      });
+    },
+    // 根据 ID 查询详情
+    * getReportDetail({ payload }, { call, put }) {
+      const response = yield call(api.getHistoryDetail, payload);
+      yield put({
+        type: 'getReportDetailSuccess',
+        payload: response,
+      });
     },
   },
   subscriptions: {

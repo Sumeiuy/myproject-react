@@ -2,8 +2,8 @@
  * @Description: 精选组合弹窗
  * @Author: Liujianshu
  * @Date: 2018-04-24 15:40:21
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-11 15:05:41
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-05-12 16:01:49
  */
 
 import React, { PureComponent } from 'react';
@@ -18,6 +18,7 @@ import Pagination from '../common/Pagination';
 import Select from '../common/Select';
 import Button from '../common/Button';
 import Icon from '../common/Icon';
+// import { openRctTab } from '../../utils';
 import { time as timeHelper } from '../../helper';
 import config from './config';
 import styles from './combinationModal.less';
@@ -42,6 +43,7 @@ export default class CombinationModal extends PureComponent {
     openCustomerListPage: PropTypes.func,
   }
   static contextTypes = {
+    push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
   }
   static defaultProps = {
@@ -53,6 +55,7 @@ export default class CombinationModal extends PureComponent {
 
   constructor(props) {
     super(props);
+    console.warn('modal props', props);
     const {
       treeData = [],
       location: { query: {
@@ -78,6 +81,8 @@ export default class CombinationModal extends PureComponent {
       // 搜索关键字
       keyword,
       titleArray: [],
+      // 是否第一次请求接口
+      isFirst: true,
     };
   }
 
@@ -136,8 +141,40 @@ export default class CombinationModal extends PureComponent {
       titleArray[6].render = (text, record) => this.renderPopover(record.combinationName);
       // 查看持仓客户
       titleArray[7] = lastColumn;
+    } else {
+      titleArray[0].render = (text, record) => (
+        <div><a onClick={() => this.handleTitleClick(record)}>{text}</a></div>
+      );
     }
     return titleArray;
+  }
+
+  // 历史报告标题点击事件
+  @autobind
+  handleTitleClick(record) {
+    const {
+      location: {
+        query: {
+          combinationCode = '',
+        },
+      },
+    } = this.props;
+    const query = {
+      id: record.id,
+      code: combinationCode,
+    };
+    // const url = `/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
+    // console.warn('url', url);
+    // openRctTab({
+    //   url,
+    // });
+
+    const { push } = this.context;
+    const pathname = '/choicenessCombination/reportDetail';
+    push({
+      pathname,
+      query,
+    });
   }
 
   // 计算事件函数，返回格式化后的开始、结束日期
@@ -204,32 +241,42 @@ export default class CombinationModal extends PureComponent {
       combinationCode,
       directionCode,
       keyword,
+      isFirst,
     } = this.state;
     const payload = {
       startDate,
       endDate,
       combinationCode,
+      directionCode,
       keyword,
       pageSize,
       pageNum,
     };
-    replace({
-      pathname,
-      query: {
-        ...query,
-        time,
-        combinationCode,
-        directionCode,
-        keyword,
-        pageNum,
-        pageSize,
-      },
-    });
+    if (!isFirst) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          time,
+          combinationCode,
+          directionCode,
+          keyword,
+          pageNum,
+          pageSize,
+        },
+      });
+    }
     if (modalType === HISTORY_TYPE) {
       // 调仓历史
       payload.directionCode = directionCode;
     }
-    getListData(payload);
+    this.setState({
+      isFirst: false,
+    }, () => {
+      getListData(payload).then(() => {
+        console.warn('请求发送成功');
+      });
+    });
   }
 
   // 根据关键字查询客户
