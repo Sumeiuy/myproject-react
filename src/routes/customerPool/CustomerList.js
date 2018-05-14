@@ -293,7 +293,7 @@ export default class CustomerList extends PureComponent {
     queryHoldingProduct: PropTypes.func.isRequired,
     queryProduct: PropTypes.func.isRequired,
     holdingProducts: PropTypes.object.isRequired,
-    searchedProductList: PropTypes.array.isRequired,
+    searchedProductList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -305,6 +305,7 @@ export default class CustomerList extends PureComponent {
     isContactLoading: false,
     isRecordLoading: false,
     filesList: [],
+    searchedProductList: [],
   }
 
   static childContextTypes = {

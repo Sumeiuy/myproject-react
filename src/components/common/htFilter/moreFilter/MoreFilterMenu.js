@@ -14,6 +14,7 @@ export default class MoreFilterMenu extends PureComponent {
     onChange: PropTypes.func.isRequired, // 选中某项的回调， function({key, value})
     insideMenuProps: PropTypes.object.isRequired,
     menuStyle: PropTypes.object.isRequired,
+    defaultOpenKeys: PropTypes.array.isRequired,
   }
 
   /**
@@ -89,8 +90,9 @@ export default class MoreFilterMenu extends PureComponent {
   }
 
   render() {
-    const { selectedKeys, data } = this.props;
+    const { selectedKeys, data, defaultOpenKeys } = this.props;
     const menuProps = this.props.insideMenuProps;
+
     return (
       <div className={styles.moreFilterMenu}>
         <Menu
@@ -100,6 +102,7 @@ export default class MoreFilterMenu extends PureComponent {
           inlineIndent={14}
           multiple
           selectedKeys={selectedKeys}
+          defaultOpenKeys={defaultOpenKeys}
           style={this.props.menuStyle}
           {...menuProps}
         >

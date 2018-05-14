@@ -143,7 +143,8 @@ const moreFilters = [
         { key: '518005', value: '本年' },
       ],
       businessType: [
-        { key: 'all', value: '不限' },
+        // 原因是大数据不支持不限，但以后可能支持,如以后支持，添加即可
+       /*  { key: 'all', value: '不限' }, */
         { key: 'ttfCust', value: '天天发' },
         { key: 'shHkCust', value: '沪港通' },
         { key: 'szHkCust', value: '深港通' },
@@ -226,7 +227,7 @@ const moreFilters = [
 ];
 
 // 更多按钮的菜单数据，配置顺序需要与上面的一致
-const MoreFilterData = [
+const moreFilterData = [
   {
     value: '客户属性',
     children: [
@@ -399,10 +400,21 @@ export default class Filter extends PureComponent {
   @autobind
   handleMoreFilterChange(obj) {
     this.selectFilterIdFromMore = obj.name;
-    this.props.onFilterChange({
-      name: obj.name,
-      value: obj.value,
-    }, obj.isDeleteFilterFromLocation);
+
+    // 对于开通业务，目前在更多菜单打开，需要提供默认值
+    // 原因是大数据不支持不限，但以后可能支持
+    // 如以后要支持，删除这段代码即可
+    if (obj.name === 'businessOpened') {
+      this.props.onFilterChange({
+        name: obj.name,
+        value: ['518003', 'ttfCust'].join(','),
+      }, obj.isDeleteFilterFromLocation);
+    } else {
+      this.props.onFilterChange({
+        name: obj.name,
+        value: obj.value,
+      }, obj.isDeleteFilterFromLocation);
+    }
   }
 
   @autobind
@@ -410,7 +422,7 @@ export default class Filter extends PureComponent {
     this.props.onFilterChange({
       name,
       value: '',
-    }, true);
+    }, true); // true表示从loaction上面删除该filter字段
   }
 
   /* 瞄准镜筛选
@@ -491,6 +503,8 @@ export default class Filter extends PureComponent {
 
     const selectedKeys = this.getMoreFilterOpenKeys(currentValue);
 
+    const defaultOpenKeys = moreFilterData.map(obj => obj.value);
+
     return (
       <div>
         <div className="normalFilter">
@@ -516,6 +530,7 @@ export default class Filter extends PureComponent {
           <MoreFilter
             className={styles.filter}
             selectedKeys={selectedKeys}
+            defaultOpenKeys={defaultOpenKeys}
             dropdownStyle={{
               position: 'relactive',
               maxHeight: 324,
@@ -523,7 +538,7 @@ export default class Filter extends PureComponent {
               width: 184,
               zIndex: 10,
             }}
-            data={MoreFilterData}
+            data={moreFilterData}
             onChange={this.handleMoreFilterChange}
           />
         </div>

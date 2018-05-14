@@ -65,17 +65,17 @@ export default class SingleFilterMenu extends PureComponent {
   renderSingleWithSearch = (value) => {
     const renderItems = [];
 
-    renderItems.push({
-      name: '',
-      aliasName: '不限',
-    });
-
     if (_.isArray(value) && value[1] !== '不限') {
+      renderItems.push({
+        name: '',
+        aliasName: '不限',
+      });
       renderItems.push({
         name: value[0],
         aliasName: value[1],
       });
     }
+
 
     return (
       <div>
@@ -86,6 +86,7 @@ export default class SingleFilterMenu extends PureComponent {
             placeholder={this.props.placeholder}
             onChange={this.handleInputChange}
             onPressEnter={this.props.onPressEnter}
+            autoFocus
           />
           {this.state.isShowCloseIcon ?
             <span
@@ -95,36 +96,40 @@ export default class SingleFilterMenu extends PureComponent {
             <span className={`${styles.sousuoIcon} ht-iconfont ht-icon-sousuo`} />
           }
         </div>
-        <div className={styles.currentValue}>
-          {
-            _.map(renderItems, (item, index) => (
+        {
+          renderItems.length !== 0 ?
+            <div className={styles.currentValue}>
+              {
+                _.map(renderItems, (item, index) => (
+                  <li
+                    title={item.aliasName}
+                    key={index}
+                    onClick={() => this.handleItemClick(item)}
+                  >
+                    {item.aliasName}
+                  </li>
+                ))
+              }
+            </div> : null
+        }
+        {
+          this.props.optionList && this.props.optionList.length !== 0 ?
+            _.map(this.props.optionList, (item, index) => (
               <li
-                title={item.aliasName}
                 key={index}
+                title={item.aliasName}
+                className={value[0] === item.name ? styles.activeItem : ''}
                 onClick={() => this.handleItemClick(item)}
               >
                 {item.aliasName}
               </li>
-            ))
-          }
-        </div>
-        {
-          this.props.optionList.length !== 0 ? _.map(this.props.optionList, (item, index) => (
+            )) :
             <li
-              key={index}
-              title={item.aliasName}
-              className={value[0] === item.name ? styles.activeItem : ''}
-              onClick={() => this.handleItemClick(item)}
+              key="noContent"
+              className={styles.noContent}
             >
-              {item.aliasName}
+              请搜索更多结果
             </li>
-          )) :
-          <li
-            key="noContent"
-            className={styles.noContent}
-          >
-            请搜索更多结果
-          </li>
         }
       </div>);
   }
