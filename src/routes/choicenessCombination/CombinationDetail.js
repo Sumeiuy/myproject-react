@@ -37,8 +37,6 @@ const effects = {
   querySecurityList: 'combinationDetail/querySecurityList',
   // 获取调仓历史
   getAdjustWarehouseHistory: 'combinationDetail/getAdjustWarehouseHistory',
-  // 获取组合证券构成数据/获取近一周表现前十的证券
-  getCombinationSecurityList: 'combinationDetail/getCombinationSecurityList',
   // 获取组合树
   getCombinationTree: 'combinationDetail/getCombinationTree',
   // 获取趋势折线图
@@ -47,8 +45,6 @@ const effects = {
   getOrderingCustList: 'combinationDetail/getOrderingCustList',
   // 请求历史报告数据
   getReportHistoryList: 'combinationDetail/getReportHistoryList',
-  // 历史报告详情
-  getReportDetail: 'combinationDetail/getReportDetail',
 };
 
 const mapStateToProps = state => ({
@@ -76,20 +72,16 @@ const mapStateToProps = state => ({
   reportHistoryData: state.combinationDetail.reportHistoryData,
   // 组合详情-历史报告弹窗数据
   modalReportHistoryData: state.combinationDetail.modalReportHistoryData,
-  // 历史报告详情
-  reportDetail: state.combinationDetail.reportDetail,
 });
 const mapDispatchToProps = {
   getOverview: dispatch(effects.getOverview, { loading: true }),
   getCompositionPie: dispatch(effects.getCompositionPie, { loading: true }),
   querySecurityList: dispatch(effects.querySecurityList, { loading: true }),
   getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory, { loading: true }),
-  getCombinationSecurityList: dispatch(effects.getCombinationSecurityList, { loading: true }),
   getCombinationTree: dispatch(effects.getCombinationTree, { loading: true }),
   getCombinationLineChart: dispatch(effects.getCombinationLineChart, { loading: true }),
   getOrderingCustList: dispatch(effects.getOrderingCustList, { loading: true }),
   getReportHistoryList: dispatch(effects.getReportHistoryList, { loading: true }),
-  getReportDetail: dispatch(effects.getReportDetail, { loading: true }),
   push: routerRedux.push,
 };
 
@@ -113,8 +105,6 @@ export default class CombinationDetail extends PureComponent {
     // 获取调仓历史数据
     getAdjustWarehouseHistory: PropTypes.func.isRequired,
     adjustWarehouseHistoryData: PropTypes.object.isRequired,
-    // 获取组合证券构成数据/获取近一周表现前十的证券
-    getCombinationSecurityList: PropTypes.func.isRequired,
     tableHistoryList: PropTypes.object.isRequired,
     // 组合树列表数据
     getCombinationTree: PropTypes.func.isRequired,
@@ -132,9 +122,6 @@ export default class CombinationDetail extends PureComponent {
     reportHistoryData: PropTypes.object.isRequired,
     // 组合详情-历史报告弹窗数据
     modalReportHistoryData: PropTypes.object.isRequired,
-    // 历史报告详情
-    getReportDetail: PropTypes.func.isRequired,
-    reportDetail: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -162,7 +149,6 @@ export default class CombinationDetail extends PureComponent {
       getCompositionPie,
       querySecurityList,
       getAdjustWarehouseHistory,
-      getCombinationSecurityList,
       getCombinationTree,
       getCombinationLineChart,
       getOrderingCustList,
@@ -190,7 +176,6 @@ export default class CombinationDetail extends PureComponent {
     });
     // 调仓历史
     getAdjustWarehouseHistory(payload);
-    getCombinationSecurityList();
     // 获取组合树
     getCombinationTree();
     // 趋势图
@@ -335,7 +320,6 @@ export default class CombinationDetail extends PureComponent {
       overview,
       compositionPie,
       compositionTable,
-      getCombinationTree,
       adjustWarehouseHistoryData,
       tableHistoryList,
       combinationTreeList,
@@ -349,16 +333,11 @@ export default class CombinationDetail extends PureComponent {
       location: { query: { id, visible = false, modalType = '' } },
     } = this.props;
     const {
-      directionCode,
       hasTkMampPermission,
     } = this.state;
     const modalProps = {
       history: {
         title: '调仓历史',
-        // 调仓方向集合
-        direction: directionCode,
-        // 获取组合名称树接口
-        getTreeData: getCombinationTree,
         // 组合名称树数据
         treeData: combinationTreeList,
         // 获取列表接口

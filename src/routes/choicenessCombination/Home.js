@@ -82,7 +82,7 @@ const mapDispatchToProps = {
   combinationRankTabchange: dispatch(effects.combinationRankTabchange, { loading: true }),
   yieldRankChange: dispatch(effects.yieldRankChange, { loading: true }),
   riskLevelFilter: dispatch(effects.riskLevelFilter, { loading: true }),
-  getReportHistoryList: dispatch(effects.reportHistoryList, { loading: true }),
+  getReportHistoryList: dispatch(effects.getReportHistoryList, { loading: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -172,7 +172,6 @@ export default class ChoicenessCombination extends PureComponent {
   // 打开弹窗
   @autobind
   showModal(obj) {
-    console.warn('obj', obj);
     const { replace } = this.context;
     const { location: { query = { }, pathname }, combinationTreeList } = this.props;
     replace({

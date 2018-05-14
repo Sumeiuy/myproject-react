@@ -181,7 +181,6 @@ export default class CombinationYieldChart extends PureComponent {
       chartHeight,
       title,
     } = this.props;
-    console.log('chartData', chartData);
     // const itemData = chartData[combinationCode] || EMPTY_OBJECT;
     const option = {
       legend: {

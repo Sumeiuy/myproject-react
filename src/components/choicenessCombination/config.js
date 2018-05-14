@@ -352,36 +352,43 @@ const config = {
         dataIndex: 'code',
         key: 'code',
         title: '证券代码',
+        width: 70,
       },
       {
         dataIndex: 'name',
         key: 'name',
         title: '证券名称',
+        width: 110,
       },
       {
         dataIndex: 'industry',
         key: 'industry',
         title: '行业',
+        width: 110,
       },
       {
         dataIndex: 'callInTime',
         key: 'callInTime',
         title: '调入日期',
+        width: 170,
       },
       {
         dataIndex: 'callInPrice',
         key: 'callInPrice',
         title: '调入价格',
+        width: 100,
       },
       {
         dataIndex: 'percent',
         key: 'percent',
         title: '持仓比例',
+        width: 70,
       },
       {
         dataIndex: 'increase',
         key: 'increase',
         title: '累计涨幅',
+        width: 100,
       },
       {
         dataIndex: 'reason',
