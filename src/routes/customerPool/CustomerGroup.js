@@ -1,8 +1,8 @@
 /*
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-11 15:00:20
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-11 10:34:54
  * @description: 客户分组功能
  */
 
@@ -22,7 +22,7 @@ import { removeTab, linkTo } from '../../utils';
 import { emp, url } from '../../helper';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import withRouter from '../../decorators/withRouter';
-import logable from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 
 import styles from './customerGroup.less';
 
@@ -174,7 +174,6 @@ export default class CustomerGroup extends PureComponent {
 
   /*  添加到已有分组 */
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '保存' } })
   handleSubmit() {
     const { groupId } = this.state;
     /* groupId不为空，表示已经选中了分组 */
@@ -195,6 +194,31 @@ export default class CustomerGroup extends PureComponent {
           orgId: emp.getOrgId(),
           ...custCondition,
         } : null,
+      });
+
+      // log日志 --- 添加到已有分组
+      const { currentSelect, currentSelectRowKeys, groupName } = this.state;
+      const values = {
+        custIdList,
+        groupId,
+        currentSelect,
+        currentSelectRowKeys,
+        groupName,
+        searchReq: _.isEmpty(custIdList) ? {
+          ptyMngId: emp.getId(),
+          orgId: emp.getOrgId(),
+          ...custCondition,
+        } : null,
+      };
+      const { location: { query: { count = '' } } } = this.props;
+      logCommon({
+        type: 'Submit',
+        payload: {
+          name: groupName,
+          type: '编辑',
+          number: count,
+          value: JSON.stringify(values),
+        },
       });
     } else if (!onOff) {
       message.error('请选择分组', 2, () => {
@@ -226,6 +250,28 @@ export default class CustomerGroup extends PureComponent {
         orgId: emp.getOrgId(),
         ...custCondition,
       } : null,
+    });
+
+    // log日志 --- 添加到新建分组
+    const values = {
+      groupName,
+      groupDesc,
+      custIdList,
+      searchReq: _.isEmpty(custIdList) ? {
+        ptyMngId: emp.getId(),
+        orgId: emp.getOrgId(),
+        ...custCondition,
+      } : null,
+    };
+    const { location: { query: { count = '' } } } = this.props;
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: groupName,
+        type: '新建',
+        number: count,
+        value: JSON.stringify(values),
+      },
     });
   }
 

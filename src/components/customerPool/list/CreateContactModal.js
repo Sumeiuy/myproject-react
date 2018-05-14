@@ -284,7 +284,7 @@ export default class CreateContactModal extends PureComponent {
       // 服务方式
       serveWay: 'HTSC Phone',
       // 任务类型，1：MOT  2：自建
-      taskType: '1',
+      taskType: '2',
       // 同serveType
       type: firstServiceTypeKey,
       // 服务类型
@@ -454,15 +454,7 @@ export default class CreateContactModal extends PureComponent {
           }
 
           // 过滤个人其他联系方式为空的情况
-          let otherTelInfo = _.omitBy(allTelInfo, _.isEmpty);
-
-          const otherCellInfo = _.filter(cellPhones, item => !item.mainFlag) || EMPTY_LIST;
-          if (!_.isEmpty(otherCellInfo)) {
-            // 手机号不止一个
-            otherTelInfo = _.merge({
-              cellPhones: otherCellInfo,
-            }, otherTelInfo);
-          }
+          const otherTelInfo = _.omitBy(allTelInfo, _.isEmpty);
 
           // 筛选contactValue存在的其他电话
           personalContactInfo = {
