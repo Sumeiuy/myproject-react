@@ -226,7 +226,7 @@ const moreFilters = [
 ];
 
 // 更多按钮的菜单数据，配置顺序需要与上面的一致
-const MoreFilterData = [
+const moreFilterData = [
   {
     value: '客户属性',
     children: [
@@ -491,6 +491,8 @@ export default class Filter extends PureComponent {
 
     const selectedKeys = this.getMoreFilterOpenKeys(currentValue);
 
+    const defaultOpenKeys = moreFilterData.map(obj => obj.value);
+
     return (
       <div>
         <div className="normalFilter">
@@ -516,6 +518,7 @@ export default class Filter extends PureComponent {
           <MoreFilter
             className={styles.filter}
             selectedKeys={selectedKeys}
+            defaultOpenKeys={defaultOpenKeys}
             dropdownStyle={{
               position: 'relactive',
               maxHeight: 324,
@@ -523,7 +526,7 @@ export default class Filter extends PureComponent {
               width: 184,
               zIndex: 10,
             }}
-            data={MoreFilterData}
+            data={moreFilterData}
             onChange={this.handleMoreFilterChange}
           />
         </div>

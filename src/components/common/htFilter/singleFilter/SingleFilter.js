@@ -70,7 +70,7 @@ export default class SingleFilter extends PureComponent {
     } = this.props;
 
     const filterValue =
-      this.props.showSearch ? this.props.value[1] : this.getFilterValue(this.props.value);
+      this.props.showSearch ? (this.props.value[1] || '不限') : this.getFilterValue(this.props.value);
 
     const menuProps = {
       value,
