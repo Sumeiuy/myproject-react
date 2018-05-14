@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-14 13:08:57
+ * @Last Modified time: 2018-05-14 14:12:43
  */
 
 import React, { PureComponent } from 'react';

@@ -3,7 +3,7 @@
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-14 13:42:44
+ * @Last Modified time: 2018-05-14 14:13:33
  */
 
 import React, { PureComponent } from 'react';
@@ -82,7 +82,7 @@ const mapDispatchToProps = {
   combinationRankTabchange: dispatch(effects.combinationRankTabchange, { loading: true }),
   yieldRankChange: dispatch(effects.yieldRankChange, { loading: true }),
   riskLevelFilter: dispatch(effects.riskLevelFilter, { loading: true }),
-  getReportHistoryList: dispatch(effects.reportHistoryList, { loading: true }),
+  getReportHistoryList: dispatch(effects.getReportHistoryList, { loading: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
