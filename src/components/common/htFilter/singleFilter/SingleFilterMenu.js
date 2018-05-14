@@ -113,22 +113,23 @@ export default class SingleFilterMenu extends PureComponent {
             </div> : null
         }
         {
-          this.props.optionList.length !== 0 ? _.map(this.props.optionList, (item, index) => (
+          this.props.optionList && this.props.optionList.length !== 0 ?
+            _.map(this.props.optionList, (item, index) => (
+              <li
+                key={index}
+                title={item.aliasName}
+                className={value[0] === item.name ? styles.activeItem : ''}
+                onClick={() => this.handleItemClick(item)}
+              >
+                {item.aliasName}
+              </li>
+            )) :
             <li
-              key={index}
-              title={item.aliasName}
-              className={value[0] === item.name ? styles.activeItem : ''}
-              onClick={() => this.handleItemClick(item)}
+              key="noContent"
+              className={styles.noContent}
             >
-              {item.aliasName}
+              请搜索更多结果
             </li>
-          )) :
-          <li
-            key="noContent"
-            className={styles.noContent}
-          >
-            请搜索更多结果
-          </li>
         }
       </div>);
   }
