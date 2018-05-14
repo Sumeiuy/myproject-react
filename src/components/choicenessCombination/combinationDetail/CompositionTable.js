@@ -68,7 +68,7 @@ export default class CompositionTable extends PureComponent {
         break;
       case detailTitleType.HYGPZH:
         columns[timeIndex].render = text => (<div>{time.format(text, formatStr)}</div>);
-        columns[columns.length - 1].render = text => this.renderPopover(text);
+        columns[reasonIndex].render = text => this.renderPopover(text);
         break;
       case detailTitleType.PZLZH:
         columns[timeIndex].render = text => (<div>{time.format(text, formatStr)}</div>);
@@ -80,7 +80,6 @@ export default class CompositionTable extends PureComponent {
       default:
         break;
     }
-    console.warn('columns', columns);
     return (
       <div className={styles.table}>
         <Table
