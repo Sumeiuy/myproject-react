@@ -511,7 +511,7 @@ export default class Filter extends PureComponent {
           {
             <Input
               className={styles.filter}
-              defaultValue={source === 'serach' ? decodeURIComponent(q) : ''}
+              defaultValue={source === 'search' ? decodeURIComponent(q) : ''}
               placeholder="两融潜在客户"
             />
           }
