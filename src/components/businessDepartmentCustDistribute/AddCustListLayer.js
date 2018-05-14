@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-11 13:45:12
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-11 17:45:22
+ * @Last Modified time: 2018-05-14 16:57:06
  * @description 用户选择添加客户列表
  */
 import React, { Component } from 'react';
@@ -10,11 +10,13 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table } from 'antd';
 import _ from 'lodash';
+import cx from 'classnames';
 
 import CommonModal from '../common/biz/CommonModal';
 import DropdowSelect from '../common/dropdownSelect';
 import Select from '../common/Select';
 import Icon from '../common/Icon';
+import Region from '../common/region';
 import { custTableColumns } from './config';
 import { createAddLayerCustTableDate } from './utils';
 
@@ -70,6 +72,7 @@ export default class AddCustListLayer extends Component {
 
   @autobind
   handleModalOK() {
+    // TODO 此处的custList看是否需要重新获取设置传递
     const { custList } = this.state;
     this.props.onOK(custList);
   }
@@ -158,6 +161,12 @@ export default class AddCustListLayer extends Component {
         }],
       };
 
+    // 过滤条件的第二行的 class 类
+    const filterSecondLineCls = cx({
+      [styles.filterLine]: true,
+      [styles.hideLine]: !showSecondLineFilter,
+    });
+
     return (
       <CommonModal
         title="添加客户"
@@ -167,7 +176,7 @@ export default class AddCustListLayer extends Component {
         size="large"
         visible={visible}
         closeModal={this.handleModalClose}
-        okText="提交"
+        okText="确认"
         onOk={this.handleModalOK}
         onCancel={this.handleModalClose}
       >
@@ -230,7 +239,32 @@ export default class AddCustListLayer extends Component {
                 </span>
               </div>
             </div>
-            <div className={styles.filterLine} />
+            <div className={filterSecondLineCls} >
+              <div className={styles.filterItem}>
+                <span className={styles.filterLabel}>净资产：</span>
+                <Region
+                  onChange={() => {}}
+                />
+              </div>
+              <div className={styles.filterItem}>
+                <span className={styles.filterLabel}>年日均净资产：</span>
+                <Region
+                  onChange={() => {}}
+                />
+              </div>
+              <div className={styles.filterItem}>
+                <span className={styles.filterLabel}>上年净佣金：</span>
+                <Region
+                  onChange={() => {}}
+                />
+              </div>
+              <div className={styles.filterItem}>
+                <span className={styles.filterLabel}>本年净佣金：</span>
+                <Region
+                  onChange={() => {}}
+                />
+              </div>
+            </div>
           </div>
           <Table
             rowSelection={rowSelection}

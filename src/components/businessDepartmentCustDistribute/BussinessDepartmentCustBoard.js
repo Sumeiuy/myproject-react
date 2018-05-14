@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-10 10:46:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-11 14:27:38
+ * @Last Modified time: 2018-05-14 17:27:38
  * @description 营业部非投顾签约客户分配弹出层Form
  */
 import React, { Component } from 'react';
@@ -15,12 +15,15 @@ import Icon from '../common/Icon';
 import InfoTitle from '../common/InfoTitle';
 import Button from '../common/Button';
 import AddCustListLayer from './AddCustListLayer';
+import AddEmpListLayer from './AddEmpListLayer';
+import TableDialog from '../common/biz/TableDialog';
 import { request } from '../../config';
 import { emp, file as fileHelper } from '../../helper';
 import {
   custTableColumns,
   managerTableColumns,
   tableCommonPagination,
+  approvalColumns,
 } from './config';
 
 import custTempleteFile from './custTemplete.xlsx';
@@ -40,16 +43,24 @@ export default class BussinessDepartmentCustBoard extends Component {
     super(props);
 
     this.state = {
+      // 供用户选择的下一步审批人列表
+      approvalList: [],
       // 客户列表
       custList: [],
       // 服务经理列表
       managerList: [],
       // 客户分配规则
       rule: '',
+      // 审批人
+      approval: '',
       // 用户已经批量上传过一次客户Excel了
       hasUploaded: false,
       // 弹出用户选择客户进行添加的弹出层
       addCustModal: false,
+      // 弹出用户选择服务经理进行添加的弹出层
+      addEmpModal: false,
+      // 是否需要添加审批人,如果需要则弹出审批人添加框
+      nextApproverModal: false,
     };
   }
 
@@ -92,7 +103,9 @@ export default class BussinessDepartmentCustBoard extends Component {
 
   @autobind
   handleManagerAddBtnClick() {
-    console.warn('点击添加服务经理列表');
+    this.setState({
+      addEmpModal: true,
+    });
   }
 
   @autobind
@@ -117,8 +130,25 @@ export default class BussinessDepartmentCustBoard extends Component {
   }
 
   @autobind
+  handleAddEmpLyerClose() {
+    this.setState({
+      addEmpModal: false,
+    });
+  }
+
+  @autobind
+  handleApprovalModalCancel() {
+    this.setState({ nextApproverModal: false });
+  }
+
+  @autobind
   handleAddCustLayerSubmit(custList) {
     console.warn('添加选择的客户到客户Table中： ', custList);
+  }
+
+  @autobind
+  handleAddEmpLayerSubmit(empList) {
+    console.warn('添加选择的服务经理到服务经理Table中： ', empList);
   }
 
   @autobind
@@ -166,7 +196,14 @@ export default class BussinessDepartmentCustBoard extends Component {
   }
 
   render() {
-    const { custList, managerList, addCustModal } = this.state;
+    const {
+      approvalList,
+      custList,
+      managerList,
+      addCustModal,
+      addEmpModal,
+      nextApproverModal,
+    } = this.state;
     const newCustTableColumns = this.updateCustTableColumns(custTableColumns, 'cust');
     const newEmpTableColumns = this.updateCustTableColumns(managerTableColumns, 'emp');
     return (
@@ -213,6 +250,28 @@ export default class BussinessDepartmentCustBoard extends Component {
           onClose={this.handleAddCustLyerClose}
           onFilterCust={() => {}}
         />
+        <AddEmpListLayer
+          visible={addEmpModal}
+          onOK={this.handleAddEmpLayerSubmit}
+          onClose={this.handleAddEmpLyerClose}
+          onFilterEmp={() => {}}
+        />
+        {
+          !nextApproverModal ? null
+          : (
+            <TableDialog
+              visible={nextApproverModal}
+              onOk={this.sendCreateRequest}
+              onCancel={this.handleApprovalModalCancel}
+              dataSource={approvalList}
+              columns={approvalColumns}
+              title="选择下一审批人员"
+              modalKey="distributeApplyApprovalModal"
+              rowKey="login"
+              searchShow={false}
+            />
+          )
+        }
       </div>
     );
   }
