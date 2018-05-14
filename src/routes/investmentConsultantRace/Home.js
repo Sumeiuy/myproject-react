@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-08 17:13:44
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-12 02:25:32
+ * @Last Modified time: 2018-05-14 08:58:50
  */
 
 import React from 'react';
@@ -15,6 +15,7 @@ const InvestmentConsultantRace = () => (
     <ReportFormIframe
       name={'investmentConsultantRace'}
       src={'/fspa/external/finereport/ReportServer'}
+      frameborder={'0'}
     />
   </div>
 );
