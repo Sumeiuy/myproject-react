@@ -1,0 +1,111 @@
+.businessMenu {
+  padding: 4px 14px;
+  font-size: 14px;
+
+  .label {
+    padding-bottom: 10px;
+  }
+  .radioGroup {
+    :global {
+      .ant-radio-group {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .ant-radio-button-wrapper {
+        flex: 0 0 auto;
+        font-size: 14px;
+        height: 30px;
+        width: 66px;
+        line-height: 30px;
+        color: #4a4a4a;
+        margin: 0;
+      }
+      .ant-radio-button-wrapper-checked {
+        background: #fff;
+        border: 1px solid #108ee9;
+        border-radius: 3px;
+      }
+    }
+  }
+
+  .menuSelect {
+    :global {
+      .ant-menu.ant-menu-light.ant-menu-inline {
+        border: 0;
+      }
+      .ant-menu-submenu-title {
+        padding-left: 14px;
+        font-size: 14px;
+        color: #4a4a4a;
+        height: 30px;
+        line-height: 30px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        margin: 0;
+
+        span:first-child {
+          padding-left: 14px;
+          line-height: 28px;
+          display: inline-block;
+          height: 28px;
+          vertical-align: top;
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+          border-color: #108ee9;
+        }
+      }
+      .ant-menu.ant-menu-sub.ant-menu-inline {
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0;
+        .ant-menu-item {
+          height: 26px;
+          line-height: 26px;
+          font-size: 14px;
+          color: #4a4a4a;
+          padding: 0;
+          width: auto;
+        }
+        .ant-menu-item.ant-menu-item-active {
+          height: 26px;
+          line-height: 26px;
+          background-color: #e6f3fc;
+          color: #4a4a4a;
+        }
+      }
+
+      .ant-menu-submenu-arrow {
+        right: 14px;
+      }
+
+      .ant-menu-item.ant-menu-item-selected {
+        background-color: #e6f3fc;
+        color: #4a4a4a;
+        border: 0;
+        &::after {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .btnGroup {
+    margin-top: 20px;
+    text-align: end;
+
+    button {
+      margin-left: 10px;
+      font-size: 14px;
+    }
+  }
+
+  .menuItem {
+    padding-left: 14px;
+    display: inline-block;
+  }
+}
+
