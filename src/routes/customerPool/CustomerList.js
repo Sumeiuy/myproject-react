@@ -386,7 +386,6 @@ export default class CustomerList extends PureComponent {
 
     const keyword = decodeURIComponent(query.q);
     const labelName = decodeURIComponent(query.labelName) || null;
-    const labelDesc = decodeURIComponent(query.labelDesc) || null;
 
     const param = {
       // 必传，当前页
@@ -405,11 +404,22 @@ export default class CustomerList extends PureComponent {
       param.searchText = keyword;
     }
 
-    // 瞄准镜标签的名称以及描述
-    param.queryLabelReq = {
-      labelName,
-      labelDesc,
-    };
+    if (query.source === 'association') {
+      param.searchTypeReq = query.type;
+      param.searchText = labelName;
+    }
+
+    if (query.source === 'association') {
+      if (query.type === 'PRODUCT') {
+        param.searchTypeReq = null;
+        param.searchText = null;
+      }
+    }
+
+    if (query.source === 'tag' || query.source === 'sightingTelescope') {
+      param.searchTypeReq = null;
+      param.searchText = null;
+    }
 
     const filterObj = transfromFilterValFromUrl(query.filters);
     const filterParam = getFilterParam(filterObj);
