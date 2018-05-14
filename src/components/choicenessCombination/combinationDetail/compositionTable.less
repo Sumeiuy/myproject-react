@@ -1,0 +1,23 @@
+@import "../../../css/util.less";
+.table {
+  overflow: hidden;
+  :global {
+    .ant-table {
+      table {
+        table-layout: fixed;
+        width: 100%;
+      }
+    }
+    .ant-table-thead > tr > th {
+      background: #fff;
+      padding: 6px 4px;
+    }
+    .ant-table-tbody > tr > td {
+      background: #fff;
+      padding: 16px 4px;
+      div {
+        .multi-line-ellipsis(2);
+      }
+    }
+  }
+}

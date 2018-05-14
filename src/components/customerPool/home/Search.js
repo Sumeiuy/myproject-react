@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 09:51:53
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-14 15:37:35
  * @description 客户池头部搜索组件
  */
 
@@ -12,7 +12,7 @@ import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { padSightLabelDesc } from '../../../config';
@@ -144,13 +144,6 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '目标客户池首页搜索框',
-      value: '$args[0]',
-    },
-  })
   handleSelect(value) {
     const item = _.find(this.state.dataSource, child => child.id === value);
     const sightingScopeBool = isSightingScope(item.source);
@@ -173,6 +166,17 @@ export default class Search extends PureComponent {
     if (item.type === 'PRODUCT' && item.name) {
       query = { ...query, productName: encodeURIComponent(item.name) };
     }
+
+    // log日志 --- 首页搜索选中
+    logCommon({
+      type: 'DropdownSelect',
+      payload: {
+        name: '首页搜索框',
+        value,
+        type: 'dropdownSelect',
+        subtype: item.description,
+      },
+    });
     this.handleOpenTab(query);
   }
 
@@ -182,7 +186,6 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '目标客户池首页回车搜索' } })
   handlePressEnter() {
     // 如果当期有选中项，走select逻辑，不做任何处理
     const activeItemElement = document.querySelector(
@@ -195,13 +198,22 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '目标客户池首页搜索' } })
   handleClickButton() {
     const { value } = this.state;
     const newValue = _.trim(value);
     if (newValue.length === 0) {
       return false;
     }
+    // log日志 --- 首页搜索点击
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: '首页搜索框',
+        value,
+        type: 'click',
+        subtype: '',
+      },
+    });
     this.handleOpenTab({
       source: 'search',
       q: encodeURIComponent(newValue),
