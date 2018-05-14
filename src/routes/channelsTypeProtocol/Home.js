@@ -272,6 +272,35 @@ export default class ChannelsTypeProtocol extends PureComponent {
     }
   }
 
+  // 根据当前子类型相应不同的详情组件
+  @autobind
+  getProtocolDetailComponent(st) {
+    const {
+      protocolDetail,
+      attachmentList,
+      flowHistory,
+    } = this.props;
+    const { currentView } = this.state;
+    if (st === protocolSubs.arbitrage) {
+      return (
+        <ArbitRageDetail
+          protocolDetail={protocolDetail}
+          attachmentList={attachmentList}
+          flowHistory={flowHistory}
+        />
+      );
+    }
+    // 其他情况返回通用的详情组件，高速通道、紫金快车道
+    return (
+      <Detail
+        protocolDetail={protocolDetail}
+        attachmentList={attachmentList}
+        flowHistory={flowHistory}
+        currentView={currentView}
+      />
+    );
+  }
+
   @autobind
   queryAppList(query, pageNum = 1, pageSize = 20) {
     const { getSeibleList } = this.props;
@@ -286,6 +315,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
+    console.warn('pathname', pathname);
+    console.warn('query', query);
+    console.warn('location', location);
     replace({
       pathname,
       query: {
@@ -578,34 +610,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
     });
   }
 
-  // 根据当前子类型相应不同的详情组件
-  @autobind
-  getProtocolDetailComponent(st) {
-    const {
-      protocolDetail,
-      attachmentList,
-      flowHistory,
-    } = this.props;
-    const { currentView } = this.state;
-    if (st === protocolSubs.arbitrage) {
-      return (
-        <ArbitRageDetail
-          protocolDetail={protocolDetail}
-          attachmentList={attachmentList}
-          flowHistory={flowHistory}
-        />
-      );
-    }
-    // 其他情况返回通用的详情组件，高速通道、紫金快车道
-    return (
-      <Detail
-        protocolDetail={protocolDetail}
-        attachmentList={attachmentList}
-        flowHistory={flowHistory}
-        currentView={currentView}
-      />
-    );
-  }
   // 弹窗底部按钮事件
   @autobind
   @logable({ type: 'Click', payload: { name: '$args[0].btnName' } })

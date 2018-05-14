@@ -44,3 +44,11 @@
   white-space: nowrap;
   overflow: hidden;
 }
+// 多行文字省略号， line-number 为参数，例 .multi-line-ellipsis(2);
+.multi-line-ellipsis(@line-number) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: @line-number;
+  -webkit-box-orient: vertical;
+}
