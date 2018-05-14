@@ -147,7 +147,7 @@ export default class CreateContactModal extends PureComponent {
       this.phoneStartTime.valueOf(),
       this.phoneEndTime.valueOf(),
     );
-    const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}。`;
+    const serviceContentDesc = `${date.generateTime(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}。`;
     let payload = {
       // 经济客户号
       custId: currentCustId,

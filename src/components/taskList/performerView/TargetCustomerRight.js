@@ -202,7 +202,7 @@ export default class TargetCustomerRight extends PureComponent {
       this.phoneStartTime.valueOf(),
       this.phoneEndTime.valueOf(),
     );
-    const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}。`;
+    const serviceContentDesc = `${date.generateTime(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}。`;
     let payload = {
       // 任务流水id
       missionFlowId: currentMissionFlowId,

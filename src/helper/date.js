@@ -39,7 +39,19 @@ function generateDate(momentTime) {
   return `${year}年${month}月${day}日`;
 }
 
+/**
+ * 生成时分秒
+ * @param {*} momentTime:moment() 时间
+ */
+function generateTime(momentTime) {
+  const hour = momentTime.get('H');
+  const minutes = momentTime.get('m');
+  const second = momentTime.get('s');
+  return `${hour}时${minutes}分${second}秒`;
+}
+
 export default {
   calculateDuration,
   generateDate,
+  generateTime,
 };
