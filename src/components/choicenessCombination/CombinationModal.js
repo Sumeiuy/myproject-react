@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-04-24 15:40:21
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-14 14:33:26
+ * @Last Modified time: 2018-05-14 15:20:11
  */
 
 import React, { PureComponent } from 'react';
@@ -64,6 +64,8 @@ export default class CombinationModal extends PureComponent {
         combinationCode = treeData[0] ? treeData[0].value : '',
         keyword = '' } },
     } = this.props;
+    const dateObj = this.calcDate(time);
+    const titleArray = this.getTitleColumns(modalType);
     this.state = {
       // 弹窗类型
       modalType,
@@ -72,36 +74,22 @@ export default class CombinationModal extends PureComponent {
       // 调仓方向默认值
       directionCode,
       // 开始日期
-      startDate: '',
+      startDate: dateObj.begin,
       // 结束日期
-      endDate: '',
+      endDate: dateObj.end,
       // 组合名称-树状值
       combinationCode,
       // 搜索关键字
       keyword,
-      titleArray: [],
+      titleArray,
       // 是否第一次请求接口
       isFirst: true,
     };
   }
 
-  componentWillMount() {
-    // 时间默认选中为最三个月
-    const {
-      location: {
-        query: {
-          modalType = HISTORY_TYPE,
-          time = THREE_MOUNTH_KEY,
-        },
-      },
-    } = this.props;
-    const dateObj = this.calcDate(time);
-    const titleArray = this.getTitleColumns(modalType);
-    this.setState({
-      startDate: dateObj.begin,
-      endDate: dateObj.end,
-      titleArray,
-    }, this.sendRequest);
+  componentDidMount() {
+    // 请求历史报告或调仓历史
+    this.sendRequest();
   }
 
   // 根据类型配置不同的表格标题
