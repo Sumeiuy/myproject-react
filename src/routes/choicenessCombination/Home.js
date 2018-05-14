@@ -172,7 +172,6 @@ export default class ChoicenessCombination extends PureComponent {
   // 打开弹窗
   @autobind
   showModal(obj) {
-    console.warn('obj', obj);
     const { replace } = this.context;
     const { location: { query = { }, pathname }, combinationTreeList } = this.props;
     replace({

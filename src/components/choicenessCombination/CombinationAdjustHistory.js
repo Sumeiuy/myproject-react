@@ -65,7 +65,6 @@ export default class CombinationAdjustHistory extends PureComponent {
   calcReason(list) {
     let reasonFlag = false;
     for (let i = 0; i < 2; i++) {
-      console.warn('list', list);
       if (!_.isEmpty(list[i]) && !_.isEmpty(list[i].reason)) {
         reasonFlag = true;
       }

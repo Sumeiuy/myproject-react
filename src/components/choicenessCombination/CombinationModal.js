@@ -55,7 +55,6 @@ export default class CombinationModal extends PureComponent {
 
   constructor(props) {
     super(props);
-    console.warn('modal props', props);
     const {
       treeData = [],
       location: { query: {
@@ -102,7 +101,7 @@ export default class CombinationModal extends PureComponent {
       startDate: dateObj.begin,
       endDate: dateObj.end,
       titleArray,
-    }, () => this.sendRequest());
+    }, this.sendRequest);
   }
 
   // 根据类型配置不同的表格标题
@@ -163,11 +162,6 @@ export default class CombinationModal extends PureComponent {
       id: record.id,
       code: combinationCode,
     };
-    // const url = `/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
-    // console.warn('url', url);
-    // openRctTab({
-    //   url,
-    // });
 
     const { push } = this.context;
     const pathname = '/choicenessCombination/reportDetail';
@@ -215,9 +209,7 @@ export default class CombinationModal extends PureComponent {
     }
     this.setState({
       ...obj,
-    }, () => {
-      this.sendRequest();
-    });
+    }, this.sendRequest);
   }
 
   // 树状选择器change
@@ -272,11 +264,7 @@ export default class CombinationModal extends PureComponent {
     }
     this.setState({
       isFirst: false,
-    }, () => {
-      getListData(payload).then(() => {
-        console.warn('请求发送成功');
-      });
-    });
+    }, () => getListData(payload));
   }
 
   // 根据关键字查询客户
@@ -317,6 +305,9 @@ export default class CombinationModal extends PureComponent {
   render() {
     const { modalType, time, directionCode, combinationCode, keyword, titleArray } = this.state;
     const { title, treeData, listData, closeModal } = this.props;
+    if (_.isEmpty(listData)) {
+      return null;
+    }
     const { list = [], page = {} } = listData;
     const PaginationOption = {
       current: page.pageNum,

@@ -17,16 +17,8 @@ import styles from './composition.less';
 
 export default class Composition extends PureComponent {
   static propTypes = {
-    pieData: PropTypes.object.isRequired,
-    tableData: PropTypes.object.isRequired,
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      // 时间默认值
-      time: '',
-    };
+    pieData: PropTypes.array.isRequired,
+    tableData: PropTypes.array.isRequired,
   }
 
   render() {

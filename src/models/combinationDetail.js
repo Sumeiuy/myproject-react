@@ -153,7 +153,6 @@ export default {
     },
     // 组合构成-表格
     * querySecurityList({ payload }, { call, put }) {
-      console.warn('payload', payload);
       const response = yield call(api.getCombinationSecurityList, payload);
       yield put({
         type: 'querySecurityListSuccess',
@@ -167,14 +166,6 @@ export default {
       const type = payload.pageSize === 5 ? 'getAdjustWarehouseHistorySuccess' : 'getTableHistorySuccess';
       yield put({
         type,
-        payload: response,
-      });
-    },
-    // 获取组合构成证券列表/近一周表现前十的证券
-    * getCombinationSecurityList({ payload }, { call, put }) {
-      const response = yield call(api.getCombinationSecurityList, payload);
-      yield put({
-        type: 'getWeeklySecurityTopTenSuccess',
         payload: response,
       });
     },
