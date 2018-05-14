@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合-组合排名
  * @Date: 2018-04-18 14:26:13
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-02 18:04:57
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-05-10 15:49:04
 */
 
 import React, { PureComponent } from 'react';
@@ -51,6 +51,7 @@ export default class CombinationRank extends PureComponent {
     openStockPage: PropTypes.func.isRequired,
     // 打开持仓查客户页面
     openCustomerListPage: PropTypes.func.isRequired,
+    showModal: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -70,9 +71,11 @@ export default class CombinationRank extends PureComponent {
       dict,
       openStockPage,
       openCustomerListPage,
+      showModal,
     } = this.props;
     return combinationRankList.map(item => (
       <CombinationListItem
+        showModal={showModal}
         rankTabActiveKey={rankTabActiveKey}
         data={item}
         key={item.combinationCode}

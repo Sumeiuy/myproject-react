@@ -7,6 +7,7 @@
 }
 
 .popoverLayer {
+  width: 100%;
   margin: 0 auto;
   max-height: 270px;
   background-color: #fff;
@@ -14,12 +15,17 @@
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, .2);
   border-radius: 3px;
   overflow-y: auto;
+  -ms-overflow-y: scroll;
   ul li {
     height: 32px;
     line-height: 32px;
     margin: 0 14px;
     border-bottom: 1px solid #f2f2f2;
     font-size: 14px;
+    overflow: hidden;
+    span {
+      float: left;
+    }
     .label {
       color: #888;
       margin-right: 10px;

@@ -71,6 +71,8 @@ import TelephoneNumberManage from './routes/telephoneNumberManage/Home';
 import TelephoneNumberManageEdit from './routes/telephoneNumberManage/ApplyEdit';
 // 精选组合
 import ChoicenessCombination from './routes/choicenessCombination/Home';
+import CombinationDetail from './routes/choicenessCombination/CombinationDetail';
+import ReportDetail from './routes/choicenessCombination/ReportDetail';
 // 投顾业务能力竞赛
 import InvestmentConsultantRace from './routes/investmentConsultantRace/Home';
 
@@ -273,8 +275,24 @@ const routes = [
     component: TelephoneNumberManageEdit,
     exact: false,
   },
-  // 精选组合
-  { path: '/choicenessCombination', component: ChoicenessCombination },
+  // 精选组合，直接进入
+  {
+    path: '/choicenessCombination',
+    component: ChoicenessCombination,
+    children: [
+      {
+        // 组合详情 /choicenessCombination/combinationDetail?id=xxx  id为组合id
+        path: '/combinationDetail',
+        component: CombinationDetail,
+      },
+      {
+        // 历史报告详情 /choicenessCombination/reportDetail?id=xxx&combinationCode=xxx
+        // id为报告 id，combinationCode 为组合 id
+        path: '/reportDetail',
+        component: ReportDetail,
+      },
+    ],
+  },
   // 投顾业务能力竞赛
   { path: '/investmentConsultantRace', component: InvestmentConsultantRace },
 ];

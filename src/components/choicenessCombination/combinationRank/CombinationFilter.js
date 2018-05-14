@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-筛选
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-02 17:09:23
+ * @Last Modified time: 2018-05-09 14:20:02
 */
 
 import React, { PureComponent } from 'react';
@@ -13,12 +13,13 @@ import { autobind } from 'core-decorators';
 import InfoForm from '../../common/infoForm';
 import Select from '../../common/Select';
 import styles from './combinationFilter.less';
-import { yieldRankList, riskDefaultItem } from '../../../routes/choicenessCombination/config';
+import { yieldRankList, riskDefaultItem } from '../../../components/choicenessCombination/config';
 
 const SHOW_PARENT = TreeSelect.SHOW_PARENT;
 
 const labelStyle = {
   width: 'auto',
+  color: 'inherit',
 };
 
 const EMPTY_LIST = [];

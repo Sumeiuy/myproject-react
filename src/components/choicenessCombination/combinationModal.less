@@ -92,6 +92,8 @@
     z-index: 1;
     :global {
       table {
+        table-layout: fixed;
+        width: 100%;
         tr td, rt th {
           font-size: 14px;
           line-height: 20px;
@@ -106,6 +108,15 @@
         }
         tr td {
           padding: 10px 14px;
+        }
+        .ant-table-tbody {
+          tr {
+            td {
+              div {
+                .one-line-elllipsis;
+              }
+            }
+          }
         }
       }
     }
