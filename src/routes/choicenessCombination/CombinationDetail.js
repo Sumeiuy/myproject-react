@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-14 14:12:43
+ * @Last Modified time: 2018-05-14 14:22:33
  */
 
 import React, { PureComponent } from 'react';
@@ -318,7 +318,7 @@ export default class CombinationDetail extends PureComponent {
     const { location: { query: { id } } } = this.props;
     const query = {
       id: reportId,
-      combinationCode: id,
+      code: id,
     };
     const url = `/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
     push(url);
