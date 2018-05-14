@@ -14,6 +14,7 @@ import { stringify } from 'query-string';
 const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
+  goBack: routerRedux.goBack,
 };
 
 @connect(null, mapDispatchToProps)
@@ -25,6 +26,7 @@ export default class ContextProvider extends Component {
     empInfo: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
   }
 
   static childContextTypes = {
@@ -32,15 +34,17 @@ export default class ContextProvider extends Component {
     dict: PropTypes.object,
     push: PropTypes.func,
     replace: PropTypes.func,
+    goBack: PropTypes.func,
   };
 
   getChildContext() {
-    const { empInfo, dict } = this.props;
+    const { empInfo, dict, goBack } = this.props;
     return {
       empInfo,
       dict,
       push: this.hackPush,
       replace: this.hackReplace,
+      goBack,
     };
   }
 

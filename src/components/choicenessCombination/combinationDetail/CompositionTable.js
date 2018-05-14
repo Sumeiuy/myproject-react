@@ -3,13 +3,13 @@
  * @Author: Liujianshu
  * @Date: 2018-05-10 09:38:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-11 09:23:24
+ * @Last Modified time: 2018-05-11 15:47:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Table, Popover } from 'antd';
 import { autobind } from 'core-decorators';
-// import _ from 'lodash';
+import _ from 'lodash';
 
 import config from '../config';
 import styles from './compositionTable.less';
@@ -17,15 +17,7 @@ import styles from './compositionTable.less';
 const { detailTitleList } = config;
 export default class CompositionTable extends PureComponent {
   static propTypes = {
-    data: PropTypes.object.isRequired,
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      // 时间默认值
-      time: '',
-    };
+    data: PropTypes.array.isRequired,
   }
 
   // 设置单元格的 popover
@@ -48,19 +40,23 @@ export default class CompositionTable extends PureComponent {
         </div>
       </Popover>);
     } else {
-      reactElement = '调入理由：暂无';
+      reactElement = '暂无';
     }
     return reactElement;
   }
 
   render() {
     const { data } = this.props;
-    const columns = detailTitleList.mnspzh;
+    if (_.isEmpty(data)) {
+      return null;
+    }
+    const tableType = data[0].composeCategory;
+    const columns = detailTitleList[tableType];
     columns[columns.length - 1].render = text => this.renderPopover(text);
     return (
       <div className={styles.table}>
         <Table
-          columns={detailTitleList.mnspzh}
+          columns={columns}
           dataSource={data}
           pagination={false}
           scroll={{ y: 316 }}

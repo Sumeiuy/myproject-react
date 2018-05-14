@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-11 15:17:16
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-05-12 15:33:42
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 import _ from 'lodash';
-
 
 import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
@@ -44,6 +43,8 @@ const effects = {
   yieldRankChange: 'choicenessCombination/yieldRankChange',
   // 组合排名风险筛选
   riskLevelFilter: 'choicenessCombination/riskLevelFilter',
+  // 获取历史报告
+  getReportHistoryList: 'choicenessCombination/getReportHistoryList',
 };
 
 const mapStateToProps = state => ({
@@ -69,16 +70,19 @@ const mapStateToProps = state => ({
   yieldRankValue: state.choicenessCombination.yieldRankValue,
   // 风险等级
   riskLevel: state.choicenessCombination.riskLevel,
+  // 历史报告
+  reportHistoryList: state.choicenessCombination.reportHistoryList,
 });
 const mapDispatchToProps = {
-  getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory, { loading: false }),
-  getCombinationSecurityList: dispatch(effects.getCombinationSecurityList, { loading: false }),
-  getCombinationTree: dispatch(effects.getCombinationTree, { loading: false }),
+  getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory, { loading: true }),
+  getCombinationSecurityList: dispatch(effects.getCombinationSecurityList, { loading: true }),
+  getCombinationTree: dispatch(effects.getCombinationTree, { loading: true }),
   getCombinationRankList: dispatch(effects.getCombinationRankList, { loading: true }),
   getCombinationLineChart: dispatch(effects.getCombinationLineChart, { loading: true }),
-  combinationRankTabchange: dispatch(effects.combinationRankTabchange, { loading: false }),
-  yieldRankChange: dispatch(effects.yieldRankChange, { loading: false }),
-  riskLevelFilter: dispatch(effects.riskLevelFilter, { loading: false }),
+  combinationRankTabchange: dispatch(effects.combinationRankTabchange, { loading: true }),
+  yieldRankChange: dispatch(effects.yieldRankChange, { loading: true }),
+  riskLevelFilter: dispatch(effects.riskLevelFilter, { loading: true }),
+  getReportHistoryList: dispatch(effects.reportHistoryList, { loading: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -116,7 +120,9 @@ export default class ChoicenessCombination extends PureComponent {
     // 组合排名风险筛选
     riskLevelFilter: PropTypes.func.isRequired,
     riskLevel: PropTypes.string,
-
+    // 历史报告
+    getReportHistoryList: PropTypes.func.isRequired,
+    reportHistoryList: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -163,19 +169,10 @@ export default class ChoicenessCombination extends PureComponent {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { location: { query: { visible: preVisible } } } = this.props;
-    const { location: { query: { visible: nextVisible } } } = nextProps;
-    if (preVisible !== nextVisible) {
-      this.setState({
-        visible: nextVisible,
-      });
-    }
-  }
-
   // 打开弹窗
   @autobind
   showModal(obj) {
+    console.warn('obj', obj);
     const { replace } = this.context;
     const { location: { query = { }, pathname }, combinationTreeList } = this.props;
     replace({
@@ -274,6 +271,8 @@ export default class ChoicenessCombination extends PureComponent {
   render() {
     const {
       dict,
+      location,
+      location: { query: { visible = false, modalType = '' } },
       adjustWarehouseHistoryData,
       tableHistoryList,
       weeklySecurityTopTenData,
@@ -287,8 +286,8 @@ export default class ChoicenessCombination extends PureComponent {
       riskLevelFilter,
       riskLevel,
       getAdjustWarehouseHistory,
-      location,
-      location: { query: { visible = false, modalType = '' } },
+      getReportHistoryList,
+      reportHistoryList,
     } = this.props;
     const {
       hasTkMampPermission,
@@ -312,9 +311,9 @@ export default class ChoicenessCombination extends PureComponent {
         // 组合名称树数据
         treeData: combinationTreeList,
         // 获取列表接口
-        getListData: getAdjustWarehouseHistory,
+        getListData: getReportHistoryList,
         // 列表数据
-        listData: tableHistoryList,
+        listData: reportHistoryList,
       },
     };
     return (
@@ -360,9 +359,9 @@ export default class ChoicenessCombination extends PureComponent {
           visible
           ?
             <CombinationModal
+              location={location}
               // 关闭弹窗
               closeModal={this.closeModal}
-              location={location}
               {...modalProps[modalType]}
             />
           :

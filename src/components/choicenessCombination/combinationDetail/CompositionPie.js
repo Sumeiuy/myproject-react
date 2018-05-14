@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-09 15:17:47
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-11 09:24:01
+ * @Last Modified time: 2018-05-11 18:59:03
  */
 
 import React, { PureComponent } from 'react';
@@ -16,7 +16,7 @@ import styles from './compositionPie.less';
 
 export default class CompositionPie extends PureComponent {
   static propTypes = {
-    data: PropTypes.object.isRequired,
+    data: PropTypes.array.isRequired,
   }
 
   constructor(props) {
@@ -29,53 +29,61 @@ export default class CompositionPie extends PureComponent {
 
   render() {
     const { data } = this.props;
-    // const newData = data.map((item) => {
-    //   const newItem = { ...item };
-    //   newItem.label = {
-    //     normal: {
-    //       formatter: [
-    //         `{title}${newItem.name}${newItem.value}`,
-    //       ].join('\n'),
-    //       backgroundColor: '#eee',
-    //       borderColor: '#777',
-    //       borderWidth: 1,
-    //       borderRadius: 4,
-    //       rich: {
-    //         title: {
-    //           color: '#eee',
-    //           align: 'center',
-    //         },
-    //       },
-    //     },
-    //   };
-    //   return newItem;
-    // });
+    const newData = data.map((item) => {
+      const newItem = { ...item };
+      newItem.oldName = newItem.name;
+      newItem.name = `${newItem.name},${newItem.value},${newItem.number}`;
+      return newItem;
+    });
 
-    const labelArray = _.map(data, 'name');
+    const labelArray = _.map(newData, 'name');
     const option = {
       tooltip: {
         trigger: 'item',
         formatter: (params) => {
-          const { data: { name, number }, percent } = params;
-          return `分类名称：${name}<br />持仓占比：${percent}%<br />证券数：${number}`;
+          const { data: { oldName, value, number } } = params;
+          return `<span style="margin-right: 20px">${oldName}</span><span style="margin-right: 20px">${value}%</span>       ${number}`;
         },
       },
       legend: {
         type: 'scroll',
         orient: 'vertical',
         icon: 'circle',
-        right: 15,
+        right: 0,
         top: 10,
         itemWidth: 8,
         itemHeight: 8,
         data: labelArray,
+        formatter: (name) => {
+          const legendArray = name.split(',');
+          return [`{name|${legendArray[0]}}{percent|${legendArray[1]}}{number|${legendArray[2]}}`].join('\n');
+        },
+        textStyle: {
+          rich: {
+            name: {
+              width: 70,
+            },
+            percent: {
+              width: 40,
+            },
+            number: {
+              width: 20,
+            },
+          },
+        },
       },
       series: [
         {
           name: '组合构成',
           type: 'pie',
-          radius: ['45%', '55%'],
-          center: [90, 100],
+          radius: ['30%', '40%'],
+          center: [70, 100],
+          avoidLabelOverlap: false,
+          emphasis: {
+            label: {
+              show: false,
+            },
+          },
           label: {
             normal: {
               show: false,
@@ -83,6 +91,10 @@ export default class CompositionPie extends PureComponent {
             },
             emphasis: {
               show: true,
+              formatter: (params) => {
+                const { data: { oldName } } = params;
+                return oldName;
+              },
               textStyle: {
                 fontSize: '16',
                 fontWeight: 'bold',
@@ -94,7 +106,7 @@ export default class CompositionPie extends PureComponent {
               show: false,
             },
           },
-          data,
+          data: newData,
         },
       ],
       color: ['#23d8f2', '#4897f1', '#756fb8', '#c0bbff', '#a7effa', '#749f83', '#ca8622', '#bda29a', '#6e7074', '#546570', '#c4ccd3'],
