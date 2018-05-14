@@ -2,8 +2,8 @@
  * @Description: 精选组合弹窗
  * @Author: Liujianshu
  * @Date: 2018-04-24 15:40:21
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-12 16:01:49
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-05-14 14:33:26
  */
 
 import React, { PureComponent } from 'react';
@@ -304,10 +304,7 @@ export default class CombinationModal extends PureComponent {
 
   render() {
     const { modalType, time, directionCode, combinationCode, keyword, titleArray } = this.state;
-    const { title, treeData, listData, closeModal } = this.props;
-    if (_.isEmpty(listData)) {
-      return null;
-    }
+    const { title, treeData, listData = {}, closeModal } = this.props;
     const { list = [], page = {} } = listData;
     const PaginationOption = {
       current: page.pageNum,
