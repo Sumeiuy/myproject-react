@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-11 15:12:31
+ * @Last Modified time: 2018-05-14 09:19:41
 */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,6 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import Icon from '../../common/Icon';
 import { time, url as urlHelper } from '../../../helper';
-import { openRctTab } from '../../../utils';
 import CombinationYieldChart from '../CombinationYieldChart';
 import styles from './combinationListItem.less';
 import {
@@ -52,6 +51,11 @@ export default class CombinationListItem extends PureComponent {
     // 打开持仓查客户页面
     openCustomerListPage: PropTypes.func.isRequired,
     showModal: PropTypes.func.isRequired,
+  }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -164,13 +168,12 @@ export default class CombinationListItem extends PureComponent {
 
   @autobind
   openDetail(id) {
+    const { push } = this.context;
     const query = {
       id,
     };
     const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
-    openRctTab({
-      url,
-    });
+    push(url);
   }
 
   render() {

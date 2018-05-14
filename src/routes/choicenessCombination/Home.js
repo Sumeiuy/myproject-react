@@ -3,7 +3,7 @@
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-11 15:17:16
+ * @Last Modified time: 2018-05-14 09:15:17
  */
 
 import React, { PureComponent } from 'react';
@@ -224,10 +224,18 @@ export default class ChoicenessCombination extends PureComponent {
   // 查看持仓客户
   @autobind
   openCustomerListPage(obj) {
+    const { push } = this.context;
     const { name, code, type, source } = obj;
     const { sourceType } = config;
     const query = {
       source,
+    };
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_CUSTOMER_LIST',
+      title: '客户列表',
     };
     // sourceType.security： 证券产品 sourceType.combination：组合类产品
     if (source === sourceType.security) {
@@ -243,7 +251,11 @@ export default class ChoicenessCombination extends PureComponent {
     }
     const url = `/customerPool/list?${urlHelper.stringify(query)}`;
     openRctTab({
+      routerAction: push,
       url,
+      param,
+      pathname: url,
+      query,
     });
   }
 

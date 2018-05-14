@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-11 17:46:07
+ * @Last Modified time: 2018-05-14 09:19:09
  */
 
 import React, { PureComponent } from 'react';
@@ -256,10 +256,18 @@ export default class CombinationDetail extends PureComponent {
   // 查看持仓客户
   @autobind
   openCustomerListPage(obj) {
+    const { push } = this.context;
     const { name, code, type, source } = obj;
     const { sourceType } = config;
     const query = {
       source,
+    };
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_CUSTOMER_LIST',
+      title: '客户列表',
     };
     // sourceType.security： 证券产品 sourceType.combination：组合类产品
     if (source === sourceType.security) {
@@ -275,14 +283,18 @@ export default class CombinationDetail extends PureComponent {
     }
     const url = `/customerPool/list?${urlHelper.stringify(query)}`;
     openRctTab({
+      routerAction: push,
       url,
+      param,
+      pathname: url,
+      query,
     });
   }
 
   @autobind
   openStockPage(obj) {
     const { code } = obj;
-    const { push } = this.props;
+    const { push } = this.context;
     const param = {
       closable: true,
       forceRefresh: true,
@@ -307,15 +319,14 @@ export default class CombinationDetail extends PureComponent {
   // 打开历史报告详情
   @autobind
   openReportDetail(reportId) {
+    const { push } = this.context;
     const { location: { query: { id } } } = this.props;
     const query = {
       id: reportId,
       combinationCode: id,
     };
     const url = `/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
-    openRctTab({
-      url,
-    });
+    push(url);
   }
 
   render() {
