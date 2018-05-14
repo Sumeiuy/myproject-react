@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-10 14:14:43
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-14 12:25:57
  */
 
 import React, { PureComponent } from 'react';
@@ -124,7 +124,6 @@ export default class TaskFormFlowStep extends PureComponent {
     const postBody = {
       ...this.parseParam(),
     };
-
     if (!_.includes(returnTaskEntrySource, source)) {
       this.props.isSendCustsServedByPostn({
         ...postBody,
@@ -187,6 +186,9 @@ export default class TaskFormFlowStep extends PureComponent {
     } else if (source === 'sightingTelescope') {
       // 从瞄准镜过来的，需要加入queryLabelReq参数
       req = { searchReq: custCondition, custIdList, queryLabelReq };
+    } else if (source === 'external') {
+      // 从外部平台过来的不需要传product、productName
+      req = { searchReq: _.omit(custCondition, ['product', 'productName']), custIdList };
     } else {
       req = { searchReq: custCondition, custIdList };
     }

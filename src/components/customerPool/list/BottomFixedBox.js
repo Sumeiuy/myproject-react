@@ -198,7 +198,7 @@ export default class BottomFixedBox extends PureComponent {
     } else {
       const payload = {};
       if (selectAll) {
-        payload.searchReq = condition;
+        payload.searchReq = _.omit(condition, ['product', 'productName']);
       }
       if (selectedIds) {
         const custList = decodeURIComponent(selectedIds).split(',');

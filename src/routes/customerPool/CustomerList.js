@@ -356,7 +356,7 @@ export default class CustomerList extends PureComponent {
       // param.labels = [query.labelMapping];
       param.primaryKey = [labelMapping];
       param.searchTypeReq = query.type;
-      param.searchText = keyword;
+      // param.searchText = keyword;
       if (query.source === 'sightingTelescope') {
         // 如果是瞄准镜，需要加入queryLabelReq
         param.queryLabelReq = {
@@ -367,7 +367,8 @@ export default class CustomerList extends PureComponent {
     } else if (query.source === 'association' || query.source === 'external') { // 联想词
       // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
       param.searchTypeReq = query.type;
-      param.searchText = labelName;
+      // param.searchText = labelName;
+      param.product = labelName;
       param.primaryKey = [labelMapping];
       param.productName = productName;
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) { // 经营指标或者投顾绩效
@@ -428,7 +429,7 @@ export default class CustomerList extends PureComponent {
     this.setState({
       queryParam: param,
     });
-    getCustomerData(_.omit(param, 'productName'));
+    getCustomerData(_.omit(param, ['productName', 'product']));
   }
 
   // 获取 客户列表接口的orgId入参的值

@@ -324,9 +324,9 @@ export default class CreateTaskForm extends PureComponent {
     if (_.isEmpty(condition)) {
       return newList;
     }
-    const { searchText = '' } = condition;
-    // 从searchText中匹配出产品代码 晋亿实业(601002) => 601002
-    const result = /\((\S+)\)/.exec(searchText);
+    const { product = '' } = condition;
+    // 从product中匹配出产品代码 晋亿实业(601002) => 601002
+    const result = /\((\S+)\)/.exec(product);
     const productCode = !_.isEmpty(result) && result[1];
     const dateList = _.map(PRODUCT_ARGUMENTS, item => ({ type: `${item}#${productCode}#`, name: `${item}#${productCode}#` }));
     return [...newList, ...dateList];
