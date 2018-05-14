@@ -11,10 +11,10 @@ import { autobind } from 'core-decorators';
 
 import { SingleFilter, MultiFilter } from '../../common/filter';
 
-// 从搜索、联想词、标签、已开通业务过来的
+// 从搜索、联想词、标签、已开通业务、收益凭证、精选组合的证券产品和订购组合过来的
 const SEARCH_TAG_FILTER = [
   'search', 'tag', 'association', 'business', 'custIndicator',
-  'numOfCustOpened', 'sightingTelescope', 'external',
+  'numOfCustOpened', 'sightingTelescope', 'external', 'orderCombination', 'securitiesProducts',
 ];
 
 // 数据转化

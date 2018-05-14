@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-09 15:14:54
+ * @Last Modified time: 2018-05-11 17:45:50
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -789,9 +789,9 @@ export default class Contract extends PureComponent {
       name = '订购';
     }
     logCommon({
-      type: 'submit',
+      type: 'Submit',
       payload: {
-        subtype: contractFormData.subType,
+        subtype: '受限股解禁',
         value: JSON.stringify(payload),
         name,
         type: '合约管理',
