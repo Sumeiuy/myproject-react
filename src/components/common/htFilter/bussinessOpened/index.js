@@ -62,15 +62,21 @@ export default class BusinessFilterMenu extends PureComponent {
 
   handleResetBtnClick = () => {
     this.setState({
-      dateType: '',
-      businessType: 'all',
+      dateType: '518003',
+      businessType: 'ttfCust',
       openKeys: [],
       visible: false,
     });
 
+    // this.props.onChange({
+    //   dateType: '',
+    //   businessType: 'all',
+    // });
+
+    // 因为开通业务不支持默认，必须有值，但以后可能会变动，先这样写，说明一下
     this.props.onChange({
-      dateType: '',
-      businessType: 'all',
+      dateType: '518003',
+      businessType: 'ttfCust',
     });
   }
 

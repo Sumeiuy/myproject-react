@@ -406,14 +406,15 @@ export default class Filter extends PureComponent {
     // 如以后要支持，删除这段代码即可
     if (obj.name === 'businessOpened') {
       this.props.onFilterChange({
-        name: obj.value,
+        name: obj.name,
         value: ['518003', 'ttfCust'].join(','),
       }, obj.isDeleteFilterFromLocation);
+    } else {
+      this.props.onFilterChange({
+        name: obj.name,
+        value: obj.value,
+      }, obj.isDeleteFilterFromLocation);
     }
-    this.props.onFilterChange({
-      name: obj.name,
-      value: obj.value,
-    }, obj.isDeleteFilterFromLocation);
   }
 
   @autobind
