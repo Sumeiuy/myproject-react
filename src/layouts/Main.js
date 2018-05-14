@@ -57,7 +57,7 @@ const mapDispatchToProps = {
     type: 'app/toggleServiceRecordModal',
     payload: query || false,
   }),
-  addServeRecord: fectchDataFunction(false, effects.addServeRecord),
+  addServeRecord: fectchDataFunction(true, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
 };
