@@ -19,7 +19,7 @@
     "add-module-exports",
     "transform-decorators-legacy"
   ],
-/*   "env": {
+  "env": {
     "production": {},
     "development": {
       "plugins": [
@@ -31,6 +31,6 @@
         ]
       ]
     }
-  }, */
+  },
   "comments": false
 }

@@ -143,7 +143,8 @@ const moreFilters = [
         { key: '518005', value: '本年' },
       ],
       businessType: [
-        { key: 'all', value: '不限' },
+        // 原因是大数据不支持不限，但以后可能支持,如以后支持，添加即可
+       /*  { key: 'all', value: '不限' }, */
         { key: 'ttfCust', value: '天天发' },
         { key: 'shHkCust', value: '沪港通' },
         { key: 'szHkCust', value: '深港通' },
@@ -399,6 +400,16 @@ export default class Filter extends PureComponent {
   @autobind
   handleMoreFilterChange(obj) {
     this.selectFilterIdFromMore = obj.name;
+
+    // 对于开通业务，目前在更多菜单打开，需要提供默认值
+    // 原因是大数据不支持不限，但以后可能支持
+    // 如以后要支持，删除这段代码即可
+    if (obj.name === 'businessOpened') {
+      this.props.onFilterChange({
+        name: obj.value,
+        value: ['518003', 'ttfCust'].join(','),
+      }, obj.isDeleteFilterFromLocation);
+    }
     this.props.onFilterChange({
       name: obj.name,
       value: obj.value,
@@ -410,7 +421,7 @@ export default class Filter extends PureComponent {
     this.props.onFilterChange({
       name,
       value: '',
-    }, true);
+    }, true); // true表示从loaction上面删除该filter字段
   }
 
   /* 瞄准镜筛选
