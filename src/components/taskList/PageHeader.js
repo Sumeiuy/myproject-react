@@ -270,6 +270,18 @@ export default class Pageheader extends PureComponent {
     this.handleSelectChange(key, value);
   }
 
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '方式',
+      value: '$args[1]',
+    },
+  })
+  handleSelctMode(key, value) {
+    this.handleSelectChange(key, value);
+  }
+
   // select改变
   @autobind
   handleSelectChange(key, v) {
@@ -613,7 +625,7 @@ export default class Pageheader extends PureComponent {
           name="executeType"
           value={executeType || executeTypeAll.value}
           data={[executeTypeAll, ...list]}
-          onChange={this.handleSelectChange}
+          onChange={this.handleSelctMode}
         />
       </div>
     );
