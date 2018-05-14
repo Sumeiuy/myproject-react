@@ -61,9 +61,19 @@ function getFilterParam(filterObj) {
   param.customType = filterObj.customType || null;
   param.custClass = filterObj.custClass || null;
   param.riskLvl = filterObj.riskLvl || null;
-  if (filterObj.primaryKeyLabels) {
+
+/*   if (filterObj.primaryKeyLabels) {
     param.primaryKeyLabels = [].concat(filterObj.primaryKeyLabels);
+  } */
+
+  const primaryKeyLabels =
+    _.isArray(filterObj.primaryKeyLabels) ?
+      filterObj.primaryKeyLabels[0] : filterObj.primaryKeyLabels;
+
+  if (primaryKeyLabels) {
+    param.primaryKeyLabels = [].concat(primaryKeyLabels);
   }
+
   if (filterObj.rights) {
     param.rights = [].concat(filterObj.rights);
   }
