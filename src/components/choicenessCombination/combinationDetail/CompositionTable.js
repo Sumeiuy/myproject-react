@@ -11,10 +11,18 @@ import { Table, Popover } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+
+import { time } from '../../../helper';
 import config from '../config';
 import styles from './compositionTable.less';
 
-const { detailTitleList } = config;
+const { detailTitleList, detailTitleType, formatStr } = config;
+// 字符串常量，用于 table columns 对应列的 key 匹配来 render
+// 理由字符串
+const KEY_REASON = 'reason';
+// 时间字符串
+const KEY_TIME = 'callInTime';
+
 export default class CompositionTable extends PureComponent {
   static propTypes = {
     data: PropTypes.array.isRequired,
@@ -52,7 +60,26 @@ export default class CompositionTable extends PureComponent {
     }
     const tableType = data[0].composeCategory;
     const columns = detailTitleList[tableType];
-    columns[columns.length - 1].render = text => this.renderPopover(text);
+    const reasonIndex = _.findIndex(columns, o => o.key === KEY_REASON);
+    const timeIndex = _.findIndex(columns, o => o.key === KEY_TIME);
+    switch (Number(tableType)) {
+      case detailTitleType.MNSPZH:
+        columns[reasonIndex].render = text => this.renderPopover(text);
+        break;
+      case detailTitleType.HYGPZH:
+        columns[timeIndex].render = text => (<div>{time.format(text, formatStr)}</div>);
+        columns[reasonIndex].render = text => this.renderPopover(text);
+        break;
+      case detailTitleType.PZLZH:
+        columns[timeIndex].render = text => (<div>{time.format(text, formatStr)}</div>);
+        columns[reasonIndex].render = text => this.renderPopover(text);
+        break;
+      case detailTitleType.ZCPZZH:
+        columns[timeIndex].render = text => (<div>{time.format(text, formatStr)}</div>);
+        break;
+      default:
+        break;
+    }
     return (
       <div className={styles.table}>
         <Table
