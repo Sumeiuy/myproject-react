@@ -3,7 +3,7 @@
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-14 14:13:33
+ * @Last Modified time: 2018-05-15 14:25:16
  */
 
 import React, { PureComponent } from 'react';
@@ -246,7 +246,10 @@ export default class ChoicenessCombination extends PureComponent {
     if (source === sourceType.security) {
       const filterType = _.filter(config.securityType, o => o.value === type);
       if (filterType.length) {
-        query.labelMapping = `${filterType[0].shortName}${code}`;
+        query.labelMapping = encodeURIComponent(`${filterType[0].shortName}${code}`);
+        query.type = 'PRODUCT';
+        query.labelName = encodeURIComponent(`${name}(${code})`);
+        query.productName = encodeURIComponent(name);
       } else {
         return;
       }
