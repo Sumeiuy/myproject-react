@@ -112,12 +112,13 @@ export default class CombinationModal extends PureComponent {
   getTitleColumns(type) {
     const { openCustomerListPage } = this.props;
     const titleArray = titleList[type];
+    const timeIndex = _.findIndex(titleArray, o => o.key === KEY_TIME);
+    const reasonIndex = _.findIndex(titleArray, o => o.key === KEY_REASON);
+    const nameIndex = _.findIndex(titleArray, o => o.key === KEY_COMBINATIONNAME);
+    const viewIndex = _.findIndex(titleArray, o => o.key === KEY_VIEW);
+    const titleIndex = _.findIndex(titleArray, o => o.key === KEY_TITLE);
     // 持仓历史
     if (type === HISTORY_TYPE) {
-      const timeIndex = _.findIndex(titleArray, o => o.key === KEY_TIME);
-      const reasonIndex = _.findIndex(titleArray, o => o.key === KEY_REASON);
-      const nameIndex = _.findIndex(titleArray, o => o.key === KEY_COMBINATIONNAME);
-      const viewIndex = _.findIndex(titleArray, o => o.key === KEY_VIEW);
       // 时间
       titleArray[timeIndex].render = text => (<div>{timeHelper.format(text, formatStr)}</div>);
       // 调仓理由
@@ -141,8 +142,8 @@ export default class CombinationModal extends PureComponent {
         </a>);
       };
     } else {
-      // 找出标题索引
-      const titleIndex = _.findIndex(titleArray, o => o.key === KEY_TITLE);
+      // 时间
+      titleArray[timeIndex].render = text => (<div>{timeHelper.format(text, formatStr)}</div>);
       // 设置标题渲染
       titleArray[titleIndex].render = (text, record) => (
         <div><a onClick={() => this.handleTitleClick(record)}>{text}</a></div>

@@ -318,13 +318,13 @@ const config = {
         dataIndex: 'name',
         key: 'name',
         title: '证券名称',
-        width: 100,
+        width: 80,
       },
       {
         dataIndex: 'industry',
         key: 'industry',
         title: '行业',
-        width: 110,
+        width: 90,
       },
       {
         dataIndex: 'percent',
@@ -353,8 +353,8 @@ const config = {
       {
         dataIndex: 'floatRateReturn',
         key: 'floatRateReturn',
-        title: '浮动收益(%)',
-        width: 80,
+        title: '浮动收益率(%)',
+        width: 90,
       },
       {
         dataIndex: 'reason',
@@ -374,13 +374,13 @@ const config = {
         dataIndex: 'name',
         key: 'name',
         title: '证券名称',
-        width: 100,
+        width: 80,
       },
       {
         dataIndex: 'industry',
         key: 'industry',
         title: '行业',
-        width: 100,
+        width: 90,
       },
       {
         dataIndex: 'callInTime',
@@ -424,13 +424,13 @@ const config = {
         dataIndex: 'name',
         key: 'name',
         title: '基金简称',
-        width: 100,
+        width: 80,
       },
       {
         dataIndex: 'category',
         key: 'category',
         title: '分类',
-        width: 100,
+        width: 90,
       },
       {
         dataIndex: 'callInTime',
@@ -487,7 +487,7 @@ const config = {
       {
         dataIndex: 'weight',
         key: 'weight',
-        title: '本期权重',
+        title: '本期权重(%)',
       },
       {
         dataIndex: 'rateReturn',

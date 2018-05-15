@@ -74,15 +74,24 @@ const mapStateToProps = state => ({
   reportHistoryList: state.choicenessCombination.reportHistoryList,
 });
 const mapDispatchToProps = {
-  getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory, { loading: true }),
-  getCombinationSecurityList: dispatch(effects.getCombinationSecurityList, { loading: true }),
-  getCombinationTree: dispatch(effects.getCombinationTree, { loading: true }),
-  getCombinationRankList: dispatch(effects.getCombinationRankList, { loading: true }),
-  getCombinationLineChart: dispatch(effects.getCombinationLineChart, { loading: true }),
-  combinationRankTabchange: dispatch(effects.combinationRankTabchange, { loading: true }),
-  yieldRankChange: dispatch(effects.yieldRankChange, { loading: true }),
-  riskLevelFilter: dispatch(effects.riskLevelFilter, { loading: true }),
-  getReportHistoryList: dispatch(effects.getReportHistoryList, { loading: true }),
+  getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory,
+    { loading: true, forceFull: true }),
+  getCombinationSecurityList: dispatch(effects.getCombinationSecurityList,
+    { loading: true, forceFull: true }),
+  getCombinationTree: dispatch(effects.getCombinationTree,
+    { loading: true, forceFull: true }),
+  getCombinationRankList: dispatch(effects.getCombinationRankList,
+    { loading: true, forceFull: true }),
+  getCombinationLineChart: dispatch(effects.getCombinationLineChart,
+    { loading: true, forceFull: true }),
+  combinationRankTabchange: dispatch(effects.combinationRankTabchange,
+    { loading: true, forceFull: true }),
+  yieldRankChange: dispatch(effects.yieldRankChange,
+    { loading: true, forceFull: true }),
+  riskLevelFilter: dispatch(effects.riskLevelFilter,
+    { loading: true, forceFull: true }),
+  getReportHistoryList: dispatch(effects.getReportHistoryList,
+    { loading: true, forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
