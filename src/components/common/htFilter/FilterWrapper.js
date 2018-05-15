@@ -71,7 +71,13 @@ export default class FilterWrapper extends PureComponent {
   getPopupContainer = () => this.elem
 
   handleMousewheel(e) {
-    e.stopPropagation(); // 阻止滚轮滚动事件冒泡，不触发fsp的自定义滚动条
+    if (e.stopPropagation) {
+      e.stopPropagation(); // 阻止滚轮滚动事件冒泡，不触发fsp的自定义滚动条
+    }
+    if (e.cancelBubble) {
+      e.cancelBubble = true;
+    }
+    // console.log('.....................', e);
   }
   handleMenuClick = () => {
     this.setState({ visible: false });
