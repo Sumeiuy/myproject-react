@@ -60,7 +60,11 @@ export default class BatchAddEmpList extends PureComponent {
     const { selectedRowKeys } = this.state;
     // 选中个数
     const selectedRowKeysSize = _.size(selectedRowKeys);
-    return `已选中 ${selectedRowKeysSize} 条 /共${total} 条`;
+    return (
+      <span>
+        已选中 <span className={styles.selectedRowKeysSize}>{selectedRowKeysSize}</span> 条 /共 {total} 条
+      </span>
+    );
   }
   // 关闭新建弹框
   @autobind
