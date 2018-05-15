@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情-组合调仓组件
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-11 15:24:23
+ * @Last Modified time: 2018-05-15 09:50:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -44,7 +44,7 @@ export default class AdjustHistory extends PureComponent {
       const itemClass = classnames({
         [styles.itemBox]: true,
         clearfix: true,
-        [styles.in]: item.directionCode === directionRange[1].value,
+        [styles.in]: item.directionCode === Number(directionRange[1].value),
       });
       const key = `${index}${item.securityCode}`;
       return (<div className={itemClass} key={key}>
