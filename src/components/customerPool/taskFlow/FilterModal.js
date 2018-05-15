@@ -160,15 +160,15 @@ export default class FilterModal extends PureComponent {
 */
   @autobind
   queryPeopleOfLabel({ labelId, curPageNum = 1, pageSize = 10, filter = [] }) {
-    const { isAuthorize, orgId, getLabelPeople, circlePeopleData } = this.props;
+    const { isAuthorize, orgId, getLabelPeople } = this.props;
     const { argsOfQueryCustomer } = this.state;
-    const currentLabel = _.find(circlePeopleData, item => labelId === item.id);
+    // const currentLabel = _.find(circlePeopleData, item => labelId === item.id);
     let payload = {
       curPageNum,
       pageSize,
       enterType: 'labelSearchCustPool',
       searchTypeReq: 'LABEL',
-      searchText: currentLabel.labelName,
+      // searchText: currentLabel.labelName,
       primaryKey: [labelId],
     };
     if (!_.isEmpty(argsOfQueryCustomer[`${labelId}`])) {

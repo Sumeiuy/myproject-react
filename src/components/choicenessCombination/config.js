@@ -289,6 +289,16 @@ const config = {
     value: 'all',
     label: '全部',
   },
+  detailTitleType: {
+    // 模拟实盘组合
+    MNSPZH: 0,
+    // 行业股票组合
+    HYGPZH: 1,
+    // 配置类组合
+    PZLZH: 2,
+    // 资产配置组合
+    ZCPZZH: 3,
+  },
   detailTitleList: [
     // 模拟实盘组合
     [
@@ -308,7 +318,7 @@ const config = {
         dataIndex: 'industry',
         key: 'industry',
         title: '行业',
-        width: 110,
+        width: 120,
       },
       {
         dataIndex: 'percent',
@@ -364,13 +374,13 @@ const config = {
         dataIndex: 'industry',
         key: 'industry',
         title: '行业',
-        width: 110,
+        width: 120,
       },
       {
         dataIndex: 'callInTime',
         key: 'callInTime',
         title: '调入日期',
-        width: 170,
+        width: 120,
       },
       {
         dataIndex: 'callInPrice',
@@ -402,36 +412,43 @@ const config = {
         dataIndex: 'code',
         key: 'code',
         title: '基金代码',
+        width: 70,
       },
       {
         dataIndex: 'name',
         key: 'name',
         title: '基金简称',
+        width: 110,
       },
       {
         dataIndex: 'category',
         key: 'category',
         title: '分类',
+        width: 120,
       },
       {
         dataIndex: 'callInTime',
         key: 'callInTime',
         title: '调入日期',
+        width: 120,
       },
       {
         dataIndex: 'callInPrice',
         key: 'callInPrice',
         title: '调入价格',
+        width: 100,
       },
       {
         dataIndex: 'percent',
         key: 'percent',
         title: '持仓比例',
+        width: 70,
       },
       {
         dataIndex: 'increase',
         key: 'increase',
         title: '累计涨幅',
+        width: 100,
       },
       {
         dataIndex: 'reason',
