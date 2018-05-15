@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-02-28 14:07:50
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-09 15:21:26
+ * @Last Modified time: 2018-05-11 14:28:06
  */
 
 import React, { PureComponent } from 'react';
@@ -18,7 +18,7 @@ import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
 import Icon from '../../components/common/Icon';
 import { openRctTab } from '../../utils';
-import { permission, url as urlHelper, emp } from '../../helper';
+import { url as urlHelper } from '../../helper';
 
 import config from './config';
 import styles from './detail.less';
@@ -79,10 +79,6 @@ export default class StockDetail extends PureComponent {
       code,
       detail,
       filterTypeList,
-      // HTSC 任务管理岗
-      hasTkMampPermission: permission.hasTkMampPermission(),
-      // 组织 ID
-      orgId: emp.getOrgId(),
     };
   }
 
@@ -186,9 +182,8 @@ export default class StockDetail extends PureComponent {
   @autobind
   openCustomerListPage() {
     const {
-      location: { query: { code = '', name = '' } } } = this.props;
+      location: { query: { code = '' } } } = this.props;
     const { push } = this.props;
-    const { hasTkMampPermission, orgId } = this.state;
     // 组合 productId
     const productId = `${securityType[0].shortName}${code}`;
 
@@ -199,15 +194,9 @@ export default class StockDetail extends PureComponent {
       id: 'FSP_CUSTOMER_LIST',
       title: '客户列表',
     };
-    const labelName = `${name}(${code})`;
     const query = {
       labelMapping: encodeURIComponent(productId),
-      labelName: encodeURIComponent(labelName),
-      orgId: hasTkMampPermission ? orgId : 'msm',
-      q: encodeURIComponent(code),
-      source: 'association',
-      type: 'PRODUCT',
-      productName: encodeURIComponent(name),
+      source: 'securitiesProducts',
     };
     const url = `/customerPool/list?${urlHelper.stringify(query)}`;
     openRctTab({

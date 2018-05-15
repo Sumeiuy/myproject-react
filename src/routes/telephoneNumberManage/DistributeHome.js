@@ -128,9 +128,24 @@ export default class DistributeHome extends PureComponent {
    * @param {*} listData 数据源
    */
   @autobind
-  addIdToDataSource(listData) {
+  HandleDataSource(listData) {
+    const { location: { query: { isBinding } } } = this.props;
     if (!_.isEmpty(listData)) {
-      return _.map(listData, (item, index) => ({ ...item, id: `${item.empId}-${index}` }));
+      // 未分配时候不管后端给不给电话号码，手机串号，sim卡号，统一为显示--
+      // isBinding为N代表未分配
+      if (isBinding === 'N') {
+        return _.map(listData, (item, index) => ({
+          ...item,
+          id: `${item.empId}-${index}`,
+          phoneNumber: '--',
+          imsi: '--',
+          sim: '--',
+        }));
+      }
+      return _.map(listData, (item, index) => ({
+        ...item,
+        id: `${item.empId}-${index}`,
+      }));
     }
     return [];
   }
@@ -194,8 +209,8 @@ export default class DistributeHome extends PureComponent {
       advisorBindListData,
     } = this.props;
     const { advisorBindList, page } = advisorBindListData;
-    // 添加id到dataSource
-    const newAdvisorBindList = this.addIdToDataSource(advisorBindList);
+    // 处理dataSource
+    const newAdvisorBindList = this.HandleDataSource(advisorBindList);
     return (
       <div className={styles.distributeHomeBox}>
         <DistributeHeader

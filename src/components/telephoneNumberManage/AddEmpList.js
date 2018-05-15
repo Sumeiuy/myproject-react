@@ -235,11 +235,13 @@ export default class AddEmpList extends PureComponent {
             showNameKey="empName"
             onSelect={this.handleSelectEmplist}
             onSearch={this.handleSearchEmpList}
+            style={{ width: '180px' }}
           />
-          <Button className={styles.addButton} onClick={this.handleAddBtnClick}>添加</Button>
+          <Button className={styles.addButton} onClick={this.handleAddBtnClick} icon="plus">添加</Button>
           <Button
             className={styles.batchAddButton}
             onClick={this.handleBatchAddBtnClick}
+            icon="plus"
           >
             批量添加
           </Button>
