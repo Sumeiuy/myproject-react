@@ -419,20 +419,10 @@ export default class Filter extends PureComponent {
   handleMoreFilterChange(obj) {
     this.selectFilterIdFromMore = obj.name;
 
-    // 对于开通业务，目前在更多菜单打开，需要提供默认值
-    // 原因是大数据不支持不限，但以后可能支持
-    // 如以后要支持，删除这段代码即可
-    if (obj.name === 'businessOpened') {
-      this.props.onFilterChange({
-        name: obj.name,
-        value: ['518003', 'ttfCust'].join(','),
-      }, obj.isDeleteFilterFromLocation);
-    } else {
-      this.props.onFilterChange({
-        name: obj.name,
-        value: obj.value,
-      }, obj.isDeleteFilterFromLocation);
-    }
+    this.props.onFilterChange({
+      name: obj.name,
+      value: obj.value,
+    }, obj.isDeleteFilterFromLocation);
   }
 
   @autobind

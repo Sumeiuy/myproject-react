@@ -86,7 +86,7 @@ function getFilterParam(filterObj) {
   if (filterObj.unrights) {
     param.unrights = [].concat(filterObj.unrights);
   }
-  if (filterObj.businessOpened) {
+  if (filterObj.businessOpened && filterObj.businessOpened[0]) {
     param.businessOpened = {
       dateType: filterObj.businessOpened[0] || null,
       businessType: filterObj.businessOpened[1] || null,
