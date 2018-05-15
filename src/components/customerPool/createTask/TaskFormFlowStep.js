@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-10 14:14:43
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-15 13:00:03
  */
 
 import React, { PureComponent } from 'react';
@@ -124,7 +124,6 @@ export default class TaskFormFlowStep extends PureComponent {
     const postBody = {
       ...this.parseParam(),
     };
-
     if (!_.includes(returnTaskEntrySource, source)) {
       this.props.isSendCustsServedByPostn({
         ...postBody,
@@ -234,6 +233,9 @@ export default class TaskFormFlowStep extends PureComponent {
       case 'search':
         custSources = '搜索目标客户';
         break;
+      // 精选组合的证券产品和订购组合、产品中心
+      case 'securitiesProducts':
+      case 'orderCombination':
       case 'external':
       case 'association':
         custSources = '搜索目标客户';

@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-08 17:13:44
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-12 02:25:32
+ * @Last Modified time: 2018-05-15 10:03:12
  */
 
 import React from 'react';
@@ -13,8 +13,9 @@ import styles from './home.less';
 const InvestmentConsultantRace = () => (
   <div className={styles.investmentConsultantRacePage}>
     <ReportFormIframe
-      name={'investmentConsultantRace'}
-      src={'/fspa/external/finereport/ReportServer'}
+      name="investmentConsultantRace"
+      src="/finereport/ReportServer"
+      frameBorder="0"
     />
   </div>
 );

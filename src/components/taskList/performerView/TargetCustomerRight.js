@@ -202,7 +202,7 @@ export default class TargetCustomerRight extends PureComponent {
       this.phoneStartTime.valueOf(),
       this.phoneEndTime.valueOf(),
     );
-    const serviceContentDesc = `${date.generateDate(this.phoneStartTime)}给客户发起语音通话，时长${phoneDuration}。`;
+    const serviceContentDesc = `${this.phoneStartTime.format('HH时mm分ss秒')}给客户发起语音通话，时长${phoneDuration}。`;
     let payload = {
       // 任务流水id
       missionFlowId: currentMissionFlowId,
@@ -249,7 +249,7 @@ export default class TargetCustomerRight extends PureComponent {
     addServeRecord({
       postBody: payload,
       callbackOfPhone: saveRecordData,
-      hasLoading: false,
+      noHint: true,
     });
   }
 

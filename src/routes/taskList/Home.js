@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-09 14:36:59
+ * @Last Modified time: 2018-05-14 16:24:17
  * @description 任务管理首页
  */
 
@@ -504,7 +504,6 @@ export default class PerformerView extends PureComponent {
       custListForServiceImplementation,
       toggleServiceRecordModal,
       serviceRecordInfo,
-      addServeRecordOfPhone,
       resetServiceRecordInfo,
       // 投资建议文本撞墙检测
       testWallCollision,
@@ -570,7 +569,6 @@ export default class PerformerView extends PureComponent {
         customerList={custListForServiceImplementation}
         toggleServiceRecordModal={toggleServiceRecordModal}
         serviceRecordInfo={serviceRecordInfo}
-        addServeRecordOfPhone={addServeRecordOfPhone}
         resetServiceRecordInfo={resetServiceRecordInfo}
         testWallCollision={testWallCollision}
         testWallCollisionStatus={testWallCollisionStatus}
