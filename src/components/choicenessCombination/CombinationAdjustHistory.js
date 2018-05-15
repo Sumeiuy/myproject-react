@@ -21,7 +21,7 @@ const titleStyle = {
   fontSize: '16px',
 };
 
-const { directionRange, sourceType } = config;
+const { directionRange, sourceType, overlayStyle } = config;
 const directionArray = _.filter(directionRange, o => o.value);
 // securityType 里股票对应的值
 const STOCK_CODE = config.securityType[0].value;
@@ -33,6 +33,7 @@ export default class CombinationAdjustHistory extends PureComponent {
     data: PropTypes.object.isRequired,
     openCustomerListPage: PropTypes.func.isRequired,
     openStockPage: PropTypes.func.isRequired,
+    openDetailPage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -72,6 +73,13 @@ export default class CombinationAdjustHistory extends PureComponent {
     return reasonFlag;
   }
 
+  // 组合名称点击事件
+  @autobind
+  handleNameClick(id) {
+    const { openDetailPage } = this.props;
+    openDetailPage(id);
+  }
+
   // 设置 popover
   @autobind
   renderPopover(value) {
@@ -81,11 +89,7 @@ export default class CombinationAdjustHistory extends PureComponent {
         placement="bottomLeft"
         content={value}
         trigger="hover"
-        overlayStyle={{
-          width: '240px',
-          padding: '10px',
-          wordBreak: 'break-all',
-        }}
+        overlayStyle={overlayStyle}
       >
         <div className={styles.ellipsis}>
           {value}
@@ -96,6 +100,7 @@ export default class CombinationAdjustHistory extends PureComponent {
     }
     return reactElement;
   }
+
 
   render() {
     const { data, openCustomerListPage } = this.props;
@@ -126,6 +131,7 @@ export default class CombinationAdjustHistory extends PureComponent {
                         securityCode,
                         securityType,
                         combinationName,
+                        combinationCode,
                         reason,
                       } = child;
                       const openPayload = {
@@ -145,7 +151,11 @@ export default class CombinationAdjustHistory extends PureComponent {
                             >
                               {securityName} ({securityCode})
                             </a>
-                            <a className={styles.combinationName} title={combinationName}>
+                            <a
+                              className={styles.combinationName}
+                              title={combinationName}
+                              onClick={() => this.handleNameClick(combinationCode)}
+                            >
                               {combinationName}
                             </a>
                           </div>

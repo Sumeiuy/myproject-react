@@ -16,7 +16,7 @@ import { time } from '../../../helper';
 import config from '../config';
 import styles from './compositionTable.less';
 
-const { detailTitleList, detailTitleType, formatStr } = config;
+const { detailTitleList, detailTitleType, formatStr, overlayStyle } = config;
 // 字符串常量，用于 table columns 对应列的 key 匹配来 render
 // 理由字符串
 const KEY_REASON = 'reason';
@@ -37,11 +37,7 @@ export default class CompositionTable extends PureComponent {
         placement="bottomLeft"
         content={value}
         trigger="hover"
-        overlayStyle={{
-          width: '240px',
-          padding: '10px',
-          wordBreak: 'break-all',
-        }}
+        overlayStyle={overlayStyle}
       >
         <div>
           {value}

@@ -277,6 +277,53 @@ export default class ChoicenessCombination extends PureComponent {
     });
   }
 
+  // 打开详情页
+  @autobind
+  openDetailPage(id) {
+    const { push } = this.context;
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_JX_GROUP_DETAIL',
+      title: '组合详情',
+    };
+    const query = {
+      id,
+    };
+    const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+      pathname: url,
+    });
+  }
+  // 打开历史报告详情页
+  @autobind
+  openReportDetailPage(obj) {
+    const { push } = this.context;
+    const { id, code } = obj;
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_JX_GROUP_REPORT_DETAIL',
+      title: '历史报告详情',
+    };
+    const query = {
+      id,
+      code,
+    };
+    const url = `/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+      pathname: url,
+    });
+  }
+
   render() {
     const {
       dict,
@@ -323,6 +370,8 @@ export default class ChoicenessCombination extends PureComponent {
         getListData: getReportHistoryList,
         // 列表数据
         listData: reportHistoryList,
+        // 打开历史报告详情页面
+        openReportDetailPage: this.openReportDetailPage,
       },
     };
     return (
@@ -335,6 +384,7 @@ export default class ChoicenessCombination extends PureComponent {
               data={adjustWarehouseHistoryData}
               openCustomerListPage={this.openCustomerListPage}
               openStockPage={this.openStockPage}
+              openDetailPage={this.openDetailPage}
             />
           </div>
           <div className={styles.topContainerChild}>
@@ -344,6 +394,7 @@ export default class ChoicenessCombination extends PureComponent {
               orgId={orgId}
               openCustomerListPage={this.openCustomerListPage}
               openStockPage={this.openStockPage}
+              openDetailPage={this.openDetailPage}
             />
           </div>
         </div>
@@ -363,6 +414,7 @@ export default class ChoicenessCombination extends PureComponent {
           dict={dict}
           openStockPage={this.openStockPage}
           openCustomerListPage={this.openCustomerListPage}
+          openDetailPage={this.openDetailPage}
         />
         {
           visible

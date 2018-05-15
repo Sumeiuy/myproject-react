@@ -17,7 +17,7 @@ import styles from './adjustHistory.less';
 
 // securityType 里股票对应的值
 const STOCK_CODE = config.securityType[0].value;
-const { typeList, directionRange } = config;
+const { typeList, directionRange, overlayStyle } = config;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 export default class AdjustHistory extends PureComponent {
@@ -110,11 +110,7 @@ export default class AdjustHistory extends PureComponent {
         placement="bottomLeft"
         content={value}
         trigger="hover"
-        overlayStyle={{
-          width: '240px',
-          padding: '10px',
-          wordBreak: 'break-all',
-        }}
+        overlayStyle={overlayStyle}
       >
         <div className={styles.reason}>
           {value}
