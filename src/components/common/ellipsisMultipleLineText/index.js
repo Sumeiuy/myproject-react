@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-11 15:02:06
+ * @Last Modified time: 2018-05-15 15:35:06
  * 多行文本打点组件
  */
 
@@ -24,6 +24,8 @@ export default class EllipsisMultipleLineText extends PureComponent {
     children: PropTypes.node.isRequired,
     // 第几行开始打点
     line: PropTypes.number,
+    // 展示的文本
+    text: PropTypes.node.isRequired,
   }
 
   static defaultProps = {
@@ -43,13 +45,19 @@ export default class EllipsisMultipleLineText extends PureComponent {
       // 记住默认文本区域最大高度，为了在后面恢复
       originMaxContentHeight: ORIGIN_MAX_CONTENT_HEIGHT,
     };
+    // 设置标志位，用来记录组件接受子元素内容是否更新，是否已经打点
+    this.isNeedEllipsis = false;
   }
 
   componentDidMount() {
     this.setContentHeight();
   }
 
-  componentWillReceiveProps() {
+  componentWillReceiveProps(nextProps) {
+    if (this.props.text !== nextProps.text) {
+      // 当内容更新的时候，重置标志位
+      this.isNeedEllipsis = false;
+    }
     this.setContentHeight();
   }
 
@@ -62,6 +70,7 @@ export default class EllipsisMultipleLineText extends PureComponent {
       const maxContentHeight = contentLineHeight * line;
       // 内容区域的高度大于行高*打点行数
       if (contentHeight > maxContentHeight) {
+        this.isNeedEllipsis = true;
         this.setState({
           // 是否展示展开按钮
           isShowMore: true,
@@ -70,7 +79,7 @@ export default class EllipsisMultipleLineText extends PureComponent {
           // 如果可以展开，那么需要将原始高度设置成当前省略之后的高度
           originMaxContentHeight: maxContentHeight,
         });
-      } else {
+      } else if (!this.isNeedEllipsis) {
         this.setState({
           isShowMore: false,
           maxContentHeight: ORIGIN_MAX_CONTENT_HEIGHT,

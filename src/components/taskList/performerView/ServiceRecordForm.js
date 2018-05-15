@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 22:25:17
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-15 15:46:40
  * 服务记录表单
  */
 
@@ -128,7 +128,7 @@ export default class ServiceRecordForm extends PureComponent {
            * 标签，需要格式化展示出来
            */}
           <div className={styles.content}>
-            <EllipsisMultipleLineText>
+            <EllipsisMultipleLineText text={serviceTips}>
               <ForgeryRichText text={serviceTips} />
             </EllipsisMultipleLineText>
           </div>

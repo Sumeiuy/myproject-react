@@ -460,7 +460,7 @@ export default class TaskPreview extends PureComponent {
             <div className={styles.descriptionOrNameSection}>
               <div>服务策略：</div>
               <div>
-                <EllipsisMultipleLineText>
+                <EllipsisMultipleLineText text={serviceStrategySuggestion}>
                   <ForgeryRichText text={serviceStrategySuggestion} />
                 </EllipsisMultipleLineText>
               </div>
@@ -468,7 +468,7 @@ export default class TaskPreview extends PureComponent {
             <div className={styles.descriptionOrNameSection}>
               <div>任务提示：</div>
               <div>
-                <EllipsisMultipleLineText>
+                <EllipsisMultipleLineText text={templetDesc}>
                   <ForgeryRichText text={templetDesc} />
                 </EllipsisMultipleLineText>
               </div>

@@ -58,7 +58,7 @@ export default class TaskListDetailInfo extends PureComponent {
             <div>
               <span>服务策略&nbsp;:</span>
               <span>
-                <EllipsisMultipleLineText>
+                <EllipsisMultipleLineText text={infoData.strategyDesc}>
                   <ForgeryRichText text={infoData.strategyDesc} />
                 </EllipsisMultipleLineText>
               </span>
@@ -66,7 +66,7 @@ export default class TaskListDetailInfo extends PureComponent {
             <div>
               <span>任务提示&nbsp;:</span>
               <span>
-                <EllipsisMultipleLineText>
+                <EllipsisMultipleLineText text={infoData.infoContent}>
                   <ForgeryRichText text={infoData.infoContent} />
                 </EllipsisMultipleLineText>
               </span>
@@ -92,7 +92,7 @@ export default class TaskListDetailInfo extends PureComponent {
             <div>
               <span>服务策略&nbsp;:</span>
               <span>
-                <EllipsisMultipleLineText>
+                <EllipsisMultipleLineText text={infoData.strategyDesc}>
                   <ForgeryRichText text={infoData.strategyDesc} />
                 </EllipsisMultipleLineText>
               </span>
@@ -100,7 +100,7 @@ export default class TaskListDetailInfo extends PureComponent {
             <div>
               <span>任务提示&nbsp;:</span>
               <span>
-                <EllipsisMultipleLineText>
+                <EllipsisMultipleLineText text={infoData.infoContent}>
                   <ForgeryRichText text={infoData.infoContent} />
                 </EllipsisMultipleLineText>
               </span>

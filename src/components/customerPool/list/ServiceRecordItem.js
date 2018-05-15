@@ -101,7 +101,7 @@ export default class ServiceRecordItem extends PureComponent {
 
     const title = () => (
       <div>
-        <EllipsisMultipleLineText>
+        <EllipsisMultipleLineText text={newContent}>
           <ForgeryRichText text={newContent} />
         </EllipsisMultipleLineText>
       </div>
