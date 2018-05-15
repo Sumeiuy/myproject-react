@@ -92,7 +92,7 @@ export default class DistributeHeader extends PureComponent {
               optionList={ptyMngAllList}
               onSelect={this.handleManagerSelect}
               onSearch={this.handleManagerSearch}
-              style={{ width: "180px", marginRight: '10px' }}
+              style={{ width: '180px', marginRight: '10px' }}
             />
           </div>
 
