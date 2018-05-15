@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-09 17:00:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-10 10:52:30
+ * @Last Modified time: 2018-05-15 16:58:09
  * @description 营业部非投顾签约客户分配申请新建
  */
 
@@ -20,6 +20,9 @@ export default class componentName extends Component {
     visible: PropTypes.bool,
     onClose: PropTypes.func,
     onSubmit: PropTypes.func,
+    callbacks: PropTypes.objectOf(PropTypes.func).isRequired,
+    empList: PropTypes.array.isRequired,
+    custListInExcel: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -43,11 +46,12 @@ export default class componentName extends Component {
 
   @autobind
   handleSubmitApprovals() {
-    console.warn('点击提交按钮');
+    // 需要传递提交用参数
+    this.props.onSubmit();
   }
 
   render() {
-    const { modalKey, visible } = this.props;
+    const { modalKey, visible, callbacks, empList, custListInExcel } = this.props;
     const { modalLoading } = this.state;
     return (
       <div>
@@ -64,7 +68,11 @@ export default class componentName extends Component {
           onOk={this.handleSubmitApprovals}
           onCancel={this.handleModalClose}
         >
-          <BussinessDepartCustBoard />
+          <BussinessDepartCustBoard
+            callbacks={callbacks}
+            empList={empList}
+            custListInExcel={custListInExcel}
+          />
         </CommonModal>
       </div>
     );

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 13:50:40
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-09 18:49:46
+ * @Last Modified time: 2018-05-15 16:57:47
  * @description 营业部非投顾签约客户分配首页
  */
 
@@ -30,7 +30,6 @@ import utils from './utils';
 export default class Home extends PureComponent {
   static contextTypes = {
     replace: PropTypes.func,
-    // empInfo: PropTypes.object,
   }
 
   constructor(props) {
@@ -99,11 +98,9 @@ export default class Home extends PureComponent {
 
   @autobind
   queryList(query) {
-    console.warn('queryList: ', query);
-    // TODO 此处需要将type修改为真实的值
+    // TODO 此处需要将 type 修改为真实的值
     const stickQuery = { pageNum: 1, pageSize: 10, type: '07' };
     const fixedQuery = utils.fixQuery(query);
-    console.warn('fixedQuery: ', fixedQuery);
     this.props.getList({ ...stickQuery, ...fixedQuery }).then(this.getRightDetail);
   }
 
@@ -120,6 +117,11 @@ export default class Home extends PureComponent {
     this.setState({
       createApplyModalShow: false,
     });
+  }
+
+  @autobind
+  handleApplyBoardSubmit() {
+    console.warn('点击新建提交');
   }
 
   // 处理投顾进行筛选后，进行查询列表
@@ -191,7 +193,7 @@ export default class Home extends PureComponent {
 
   render() {
     const { replace } = this.context;
-    const { location, list } = this.props;
+    const { location, list, empList, custListInExcel } = this.props;
     const { createApplyModalShow } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
 
@@ -229,6 +231,15 @@ export default class Home extends PureComponent {
     // 后期根据不同的参数获取不同的组件,在此方法内修改
     const rightPanel = this.getDetailComponenet();
 
+    // 将所有的新建页面需要用到的 api 接口封装成 callbacks 对象，
+    // 以便后期扩展，防止页面组件传递过多的 props，
+    const callbacks = {
+      // 新建页面的获取服务经理列表 api
+      getEmpList: this.props.getEmpList,
+      // 新建页面的获取Excel表格中的客户列表
+      getCustListInExcel: this.props.getCustListInExcel,
+    };
+
     return (
       <div>
         <SplitPanel
@@ -245,6 +256,10 @@ export default class Home extends PureComponent {
               visible={createApplyModalShow}
               modalKey="CreateDistributeApplyBoard"
               onClose={this.handleApplyBoardClose}
+              onSubmit={this.handleApplyBoardSubmit}
+              callbacks={callbacks}
+              empList={empList}
+              custListInExcel={custListInExcel}
             />
           )
         }

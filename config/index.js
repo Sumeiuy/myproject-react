@@ -43,7 +43,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: generateProxy([
-      prefix + '/groovynoauth/fsp/cust/manager/queryCustDistributionDetail',
+      prefix + '/groovynoauth/fsp/cust/manager',
       {
         target: 'http://168.61.8.81:5090', // DOClever
       },

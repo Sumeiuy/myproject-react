@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 19:36:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-14 17:25:50
+ * @Last Modified time: 2018-05-15 17:36:55
  * @description 营业部非投顾签约客户分配的配置项
  */
 
@@ -42,8 +42,8 @@ export const custTableColumns = [
     title: '客户',
   },
   {
-    dataIndex: 'status',
-    key: 'status',
+    dataIndex: 'statusText',
+    key: 'statusText',
     title: '状态',
   },
   {
@@ -55,6 +55,9 @@ export const custTableColumns = [
     dataIndex: 'isTg',
     key: 'isTg',
     title: '是否入岗投顾',
+    render(text) {
+      return text ? '是' : '否';
+    },
   },
   {
     dataIndex: 'devManager',
@@ -73,6 +76,9 @@ export const managerTableColumns = [
     dataIndex: 'isTg',
     key: 'isTg',
     title: '是否入岗投顾',
+    render(text) {
+      return text ? '是' : '否';
+    },
   },
 ];
 
@@ -91,6 +97,9 @@ export const empAddTableColumns = [
     dataIndex: 'isTg',
     key: 'isTg',
     title: '是否入岗投顾',
+    render(text) {
+      return text ? '是' : '否';
+    },
   },
 ];
 
@@ -111,7 +120,7 @@ export const approvalColumns = [
 ];
 
 export const tableCommonPagination = {
-  pageSize: 5,
+  pageSize: 10,
   showTotal(total) {
     return `共${total}条`;
   },

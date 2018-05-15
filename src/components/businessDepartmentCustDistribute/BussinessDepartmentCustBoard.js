@@ -2,14 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-05-10 10:46:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-14 17:27:38
+ * @Last Modified time: 2018-05-15 17:35:17
  * @description 营业部非投顾签约客户分配弹出层Form
  */
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table, Radio, Upload, message } from 'antd';
-// import _ from 'lodash';
+import _ from 'lodash';
 
 import Icon from '../common/Icon';
 import InfoTitle from '../common/InfoTitle';
@@ -25,19 +25,29 @@ import {
   tableCommonPagination,
   approvalColumns,
 } from './config';
+import { createAddLayerCustTableDate } from './utils';
 
 import custTempleteFile from './custTemplete.xlsx';
 import styles from './bussinessDepartmentCustBoard.less';
 
 const RadioGroup = Radio.Group;
 // 批量导入数据上传数据的Upload的上传地址
-// const UPLOAD_URL = `${request.prefix}/file/uploadTemp`;
-const UPLOAD_URL = `${request.prefix}/groovynoauth/fsp/cust/manager/batchUploadCustByExcel`;
+const UPLOAD_URL = `${request.prefix}/file/uploadTemp`;
 
 export default class BussinessDepartmentCustBoard extends Component {
-  static propTypes = {}
+  static propTypes = {
+    // 接口回调函数集合
+    callbacks: PropTypes.objectOf(PropTypes.func).isRequired,
+    // 服务经理列表
+    empList: PropTypes.array,
+    // Excel上传的客户列表数据
+    custListInExcel: PropTypes.array,
+  }
 
-  static defaultProps = {}
+  static defaultProps = {
+    empList: [],
+    custListInExcel: [],
+  }
 
   constructor(props) {
     super(props);
@@ -51,6 +61,8 @@ export default class BussinessDepartmentCustBoard extends Component {
       managerList: [],
       // 客户分配规则
       rule: '',
+      // 是否需要显示分配规则
+      isShowRuleRadio: false,
       // 审批人
       approval: '',
       // 用户已经批量上传过一次客户Excel了
@@ -64,6 +76,12 @@ export default class BussinessDepartmentCustBoard extends Component {
     };
   }
 
+  componentDidMount() {
+    // 初始化的时候，需要查询下所有的服务经理列表
+    // 然后在服务经理选择的弹出层中进行筛选
+    this.props.callbacks.getEmpList({ orgId: emp.getOrgId() });
+  }
+
   @autobind
   deleteCust(record) {
     console.warn('deleteCust: ', record);
@@ -71,13 +89,38 @@ export default class BussinessDepartmentCustBoard extends Component {
 
   @autobind
   deleteEmp(record) {
-    console.warn('deleteEmp: ', record);
+    // 数组的 splice 方式会改变原数组，所以先 cloneDeep 一把
+    const { managerList, rule } = this.state;
+    const tempList = _.cloneDeep(managerList);
+    const index = _.findIndex(managerList, manager => manager.empId === record.empId);
+    tempList.splice(index, 1);
+    const isShowRuleRadio = _.size(tempList) > 1;
+    const newRule = isShowRuleRadio ? rule : '';
+    this.setState({ managerList: tempList, isShowRuleRadio, rule: newRule });
+  }
+
+  @autobind
+  addCustInTable(list = []) {
+    if (!_.isEmpty(list)) {
+      const { custList } = this.state;
+      const newList = _.uniqBy([...custList, ...list], 'brokerNumber');
+      this.setState({ custList: newList });
+    }
   }
 
   @autobind
   handleBatchImportCustChange(info) {
     // 批量导入客户列表Excel
-    console.warn('handleBatchImportCustChange: ', info);
+    const { file: { response } } = info;
+    if (response && response.code === '0') {
+      // Excel表格上传成功，此处需要调用获取Excel表格中的客户列表信息的 api
+      // 一次性全部获取
+      const attachment = response.resultData;
+      this.props.callbacks.getCustListInExcel({ attachment })
+      .then(() => this.addCustInTable(this.props.custListInExcel));
+    } else {
+      message.error(response.msg);
+    }
   }
 
   @autobind
@@ -113,7 +156,7 @@ export default class BussinessDepartmentCustBoard extends Component {
     if (tableName === 'cust') {
       this.deleteCust(record);
     } else {
-      this.deleteEmpt(record);
+      this.deleteEmp(record);
     }
   }
 
@@ -147,13 +190,30 @@ export default class BussinessDepartmentCustBoard extends Component {
   }
 
   @autobind
-  handleAddEmpLayerSubmit(empList) {
-    console.warn('添加选择的服务经理到服务经理Table中： ', empList);
+  handleAddEmpLayerSubmit(list = []) {
+    // 此处需要保留以前选中的
+    const { managerList } = this.state;
+    // 挑选出不同的数据，然后将不同的数据与原有的数据合并
+    // 如果原有的 managerList 数据是空，则直接使用list数据
+    let tempList = [...list];
+    if (!_.isEmpty(managerList)) {
+      const diffList = _.differenceBy(list, managerList, 'empId');
+      tempList = [...diffList, ...managerList];
+    }
+    const newList = tempList.map(item => ({
+      emp: `${item.empName}(${item.empId})`,
+      ...item,
+    }));
+    // 如果有多个服务经理，则显示分配规则，
+    // 如果只有1个服务经理，则不显示分配规则
+    const isShowRuleRadio = _.size(list) > 1;
+    this.setState({ managerList: newList, isShowRuleRadio });
   }
 
   @autobind
   updateCustTableColumns(columns, tableName) {
     // 给最后一个Column的操作，添加操作action
+    const deleteRecord = record => () => this.handleDelete(tableName, record);
     return [
       ...columns,
       {
@@ -162,7 +222,7 @@ export default class BussinessDepartmentCustBoard extends Component {
         title: '操作',
         render(text, record) {
           return (
-            <a onClick={() => this.handleDeleteEmp(tableName, record)}>
+            <a onClick={deleteRecord(record)}>
               <Icon type="shanchu" className={styles.deleteBtn} />
             </a>
           );
@@ -197,15 +257,21 @@ export default class BussinessDepartmentCustBoard extends Component {
 
   render() {
     const {
+      empList,
+    } = this.props;
+    const {
       approvalList,
       custList,
       managerList,
       addCustModal,
       addEmpModal,
       nextApproverModal,
+      isShowRuleRadio,
     } = this.state;
     const newCustTableColumns = this.updateCustTableColumns(custTableColumns, 'cust');
     const newEmpTableColumns = this.updateCustTableColumns(managerTableColumns, 'emp');
+    const newCustList = createAddLayerCustTableDate(custList);
+
     return (
       <div className={styles.boardContainer}>
         <InfoTitle head="客户列表" />
@@ -218,7 +284,7 @@ export default class BussinessDepartmentCustBoard extends Component {
             </div>
           </div>
           <Table
-            dataSource={custList}
+            dataSource={newCustList}
             columns={newCustTableColumns}
             pagination={tableCommonPagination}
           />
@@ -234,28 +300,46 @@ export default class BussinessDepartmentCustBoard extends Component {
             pagination={tableCommonPagination}
           />
         </div>
-        <InfoTitle head="客户分配规则" />
-        <div className={styles.blocker}>
-          <div className={styles.distributeRuleText}>
-            <span className={styles.required}>*</span>规则:
-          </div>
-          <RadioGroup onChange={this.handleCustDistributeRuleRadioChange}>
-            <Radio value="a">平均客户数</Radio>
-            <Radio value="b">平均客户净资产</Radio>
-          </RadioGroup>
-        </div>
-        <AddCustListLayer
-          visible={addCustModal}
-          onOK={this.handleAddCustLayerSubmit}
-          onClose={this.handleAddCustLyerClose}
-          onFilterCust={() => {}}
-        />
-        <AddEmpListLayer
-          visible={addEmpModal}
-          onOK={this.handleAddEmpLayerSubmit}
-          onClose={this.handleAddEmpLyerClose}
-          onFilterEmp={() => {}}
-        />
+        {
+          !isShowRuleRadio ? null
+          : (<InfoTitle head="客户分配规则" />)
+        }
+        {
+          !isShowRuleRadio ? null
+          : (
+            <div className={styles.blocker}>
+              <div className={styles.distributeRuleText}>
+                <span className={styles.required}>*</span>规则:
+              </div>
+              <RadioGroup onChange={this.handleCustDistributeRuleRadioChange}>
+                <Radio value="a">平均客户数</Radio>
+                <Radio value="b">平均客户净资产</Radio>
+              </RadioGroup>
+            </div>
+          )
+        }
+        {
+          !addCustModal ? null
+          : (
+            <AddCustListLayer
+              visible={addCustModal}
+              onOK={this.handleAddCustLayerSubmit}
+              onClose={this.handleAddCustLyerClose}
+              onFilterCust={() => {}}
+            />
+          )
+        }
+        {
+          !addEmpModal ? null
+          : (
+            <AddEmpListLayer
+              data={empList}
+              visible={addEmpModal}
+              onOK={this.handleAddEmpLayerSubmit}
+              onClose={this.handleAddEmpLyerClose}
+            />
+          )
+        }
         {
           !nextApproverModal ? null
           : (
