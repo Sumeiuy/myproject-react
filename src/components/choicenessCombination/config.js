@@ -3,11 +3,12 @@
  * @Author: Liujianshu
  * @Date: 2018-04-25 14:28:07
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-25 16:47:41
+ * @Last Modified time: 2018-05-11 19:03:37
  */
 
 const config = {
   formatStr: 'YYYY-MM-DD HH:mm',
+  formatDateStr: 'YYYY-MM-DD',
   timeRange: [
     {
       show: true,
@@ -105,16 +106,19 @@ const config = {
         dataIndex: 'author',
         key: 'author',
         title: '作者',
+        width: 100,
       },
       {
         dataIndex: 'time',
         key: 'time',
         title: '报告日期',
+        width: 170,
       },
       {
         dataIndex: 'combinationName',
         key: 'combinationName',
         title: '组合名称',
+        width: 174,
       },
     ],
     ten: [
@@ -154,6 +158,61 @@ const config = {
         align: 'right',
       },
     ],
+    // 组合详情-订购客户
+    orderCust: [
+      {
+        dataIndex: 'customerId',
+        key: 'customerId',
+        title: '客户号',
+        width: '24%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'customerName',
+        key: 'customerName',
+        title: '客户名称',
+        width: '17%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'coincideScale',
+        key: 'coincideScale',
+        title: '持仓重合比例',
+        width: '22%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'relevance',
+        key: 'relevance',
+        title: '持仓关联',
+        width: '37%',
+        align: 'left',
+      },
+    ],
+    // 组合详情-历史报告
+    historyReport: [
+      {
+        dataIndex: 'title',
+        key: 'title',
+        title: '标题',
+        width: '65%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'author',
+        key: 'author',
+        title: '作者',
+        width: '17%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'time',
+        key: 'time',
+        title: '报告日期',
+        width: '18%',
+        align: 'left',
+      },
+    ],
   },
   typeList: ['history', 'report'],
   securityType: [
@@ -171,6 +230,288 @@ const config = {
       name: '债券',
       value: '3',
       shortName: 'ZQ',
+    },
+  ],
+  // 跳转持仓查客户source
+  sourceType: {
+    security: 'securitiesProducts', // 证券类产品
+    combination: 'orderCombination', // 组合资讯类
+  },
+  // 趋势图tab
+  chartTabList: [
+    {
+      label: '近3个月',
+      key: '3',
+    },
+    {
+      label: '近一年',
+      key: '12',
+    },
+    {
+      label: '全部',
+      key: 'all',
+    },
+  ],
+  // 收益率排序
+  yieldRankList: [
+    {
+      show: true,
+      value: '1',
+      label: '近7天收益率从高到低',
+      showName: '近7天收益率',
+      showNameKey: 'weekEarnings',
+    },
+    {
+      show: true,
+      value: '2',
+      label: '近30天收益率从高到低',
+      showName: '近30天收益率',
+      showNameKey: 'monthEarnings',
+    },
+    {
+      show: true,
+      value: '3',
+      label: '当年收益率从高到低',
+      showName: '当年收益率',
+      showNameKey: 'yearEarnings',
+    },
+    {
+      show: true,
+      value: '4',
+      label: '累计收益率从高到低',
+      showName: '累计收益率',
+      showNameKey: 'totalEarnings',
+    },
+  ],
+  // 筛选默认值
+  riskDefaultItem: {
+    key: 'all',
+    value: 'all',
+    label: '全部',
+  },
+  detailTitleType: {
+    // 模拟实盘组合
+    MNSPZH: 0,
+    // 行业股票组合
+    HYGPZH: 1,
+    // 配置类组合
+    PZLZH: 2,
+    // 资产配置组合
+    ZCPZZH: 3,
+  },
+  detailTitleList: [
+    // 模拟实盘组合
+    [
+      {
+        dataIndex: 'code',
+        key: 'code',
+        title: '证券代码',
+        width: 70,
+      },
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '证券名称',
+        width: 110,
+      },
+      {
+        dataIndex: 'industry',
+        key: 'industry',
+        title: '行业',
+        width: 120,
+      },
+      {
+        dataIndex: 'percent',
+        key: 'percent',
+        title: '持仓比例',
+        width: 70,
+      },
+      {
+        dataIndex: 'scNum',
+        key: 'scNum',
+        title: '证券数量（股）',
+        width: 100,
+      },
+      {
+        dataIndex: 'costPrice',
+        key: 'costPrice',
+        title: '成本价（元）',
+        width: 80,
+      },
+      {
+        dataIndex: 'newPrice',
+        key: 'newPrice',
+        title: '最新价格（元）',
+        width: 100,
+      },
+      {
+        dataIndex: 'floatRateReturn',
+        key: 'floatRateReturn',
+        title: '浮动收益（%）',
+        width: 100,
+      },
+      {
+        dataIndex: 'reason',
+        key: 'reason',
+        title: '理由',
+      },
+    ],
+    // 行业股票组合
+    [
+      {
+        dataIndex: 'code',
+        key: 'code',
+        title: '证券代码',
+        width: 70,
+      },
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '证券名称',
+        width: 110,
+      },
+      {
+        dataIndex: 'industry',
+        key: 'industry',
+        title: '行业',
+        width: 120,
+      },
+      {
+        dataIndex: 'callInTime',
+        key: 'callInTime',
+        title: '调入日期',
+        width: 120,
+      },
+      {
+        dataIndex: 'callInPrice',
+        key: 'callInPrice',
+        title: '调入价格',
+        width: 100,
+      },
+      {
+        dataIndex: 'percent',
+        key: 'percent',
+        title: '持仓比例',
+        width: 70,
+      },
+      {
+        dataIndex: 'increase',
+        key: 'increase',
+        title: '累计涨幅',
+        width: 100,
+      },
+      {
+        dataIndex: 'reason',
+        key: 'reason',
+        title: '理由',
+      },
+    ],
+    // 配置类组合
+    [
+      {
+        dataIndex: 'code',
+        key: 'code',
+        title: '基金代码',
+        width: 70,
+      },
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '基金简称',
+        width: 110,
+      },
+      {
+        dataIndex: 'category',
+        key: 'category',
+        title: '分类',
+        width: 120,
+      },
+      {
+        dataIndex: 'callInTime',
+        key: 'callInTime',
+        title: '调入日期',
+        width: 120,
+      },
+      {
+        dataIndex: 'callInPrice',
+        key: 'callInPrice',
+        title: '调入价格',
+        width: 100,
+      },
+      {
+        dataIndex: 'percent',
+        key: 'percent',
+        title: '持仓比例',
+        width: 70,
+      },
+      {
+        dataIndex: 'increase',
+        key: 'increase',
+        title: '累计涨幅',
+        width: 100,
+      },
+      {
+        dataIndex: 'reason',
+        key: 'reason',
+        title: '理由',
+      },
+    ],
+    // 配置类组合（资产配置型）
+    [
+      {
+        dataIndex: 'code',
+        key: 'code',
+        title: '基金代码',
+      },
+      {
+        dataIndex: 'name',
+        key: 'name',
+        title: '基金简称',
+      },
+      {
+        dataIndex: 'category',
+        key: 'category',
+        title: '分类',
+      },
+      {
+        dataIndex: 'callInTime',
+        key: 'callInTime',
+        title: '调仓日期',
+      },
+      {
+        dataIndex: 'weight',
+        key: 'weight',
+        title: '本期权重',
+      },
+      {
+        dataIndex: 'rateReturn',
+        key: 'rateReturn',
+        title: '回报率',
+      },
+    ],
+  ],
+  // 概览周月年
+  weekMonthYear: [
+    {
+      name: '周',
+      key: 'Week',
+      percent: 'weekEarnings',
+      ranking: 'weekCurrentRank',
+      total: 'weekAmout',
+    },
+    {
+      name: '月',
+      key: 'Month',
+      percent: 'monthEarnings',
+      ranking: 'monthCurrentRank',
+      total: 'monthAmout',
+    },
+    {
+      name: '年',
+      key: 'Year',
+      percent: 'yearEarnings',
+      ranking: 'yearCurrentRank',
+      total: 'yearAmout',
     },
   ],
 };

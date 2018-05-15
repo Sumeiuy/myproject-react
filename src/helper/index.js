@@ -14,6 +14,7 @@ import time from './time';
 import url from './url';
 import encode from './encode';
 import fsp from './fsp';
+import date from './date';
 
 function getIconType(name) {
   const fullName = name.split('.');
@@ -69,4 +70,5 @@ export default {
   encode,
   getIconType,
   fsp,
+  date,
 };

@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import pageConfig from '../pageConfig';
 import ForgeryRichText from '../../common/ForgeryRichText';
+import EllipsisMultipleLineText from '../../common/ellipsisMultipleLineText';
 import styles from './detailInfo.less';
 
 const { taskList: { status } } = pageConfig;
@@ -57,13 +58,17 @@ export default class TaskListDetailInfo extends PureComponent {
             <div>
               <span>服务策略&nbsp;:</span>
               <span>
-                <ForgeryRichText text={infoData.strategyDesc} />
+                <EllipsisMultipleLineText>
+                  <ForgeryRichText text={infoData.strategyDesc} />
+                </EllipsisMultipleLineText>
               </span>
             </div>
             <div>
               <span>任务提示&nbsp;:</span>
               <span>
-                <ForgeryRichText text={infoData.infoContent} />
+                <EllipsisMultipleLineText>
+                  <ForgeryRichText text={infoData.infoContent} />
+                </EllipsisMultipleLineText>
               </span>
             </div>
           </div> :
@@ -87,13 +92,17 @@ export default class TaskListDetailInfo extends PureComponent {
             <div>
               <span>服务策略&nbsp;:</span>
               <span>
-                <ForgeryRichText text={infoData.strategyDesc} />
+                <EllipsisMultipleLineText>
+                  <ForgeryRichText text={infoData.strategyDesc} />
+                </EllipsisMultipleLineText>
               </span>
             </div>
             <div>
               <span>任务提示&nbsp;:</span>
               <span>
-                <ForgeryRichText text={infoData.infoContent} />
+                <EllipsisMultipleLineText>
+                  <ForgeryRichText text={infoData.infoContent} />
+                </EllipsisMultipleLineText>
               </span>
             </div>
           </div>

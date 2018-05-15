@@ -4,6 +4,7 @@
  * @author hongguangqing
  */
 import _ from 'lodash';
+import moment from 'moment';
 import { performerView as api, customerPool as custApi } from '../../api';
 import {
   STATE_COMPLETED_NAME,
@@ -15,6 +16,11 @@ const EMPTY_LIST = [];
 
 const PAGE_SIZE = 10;
 const PAGE_NO = 1;
+
+// 执行者视图头部过滤客户
+const SEARCH_CUSTOMER_FOR_PAGE_HEADER = 'pageHeader';
+// 执行者视图右侧过滤客户
+const SEARCH_CUSTOMER_FOR_RIGHT_DETAIL = 'rightDetail';
 
 export default {
   namespace: 'performerView',
@@ -40,7 +46,7 @@ export default {
     taskList: EMPTY_OBJ,
     // 任务反馈字典
     taskFeedbackList: [],
-    addMotServeRecordSuccess: false,
+    currentMotServiceRecord: {},
     answersList: {},
     saveAnswersSucce: false,
     // 任务反馈
@@ -51,6 +57,8 @@ export default {
     attachmentList: [],
     // 执行者视图头部查询到的客户列表
     customerList: [],
+    // 执行者视图右侧查询到的客户列表
+    custListForServiceImplementation: [],
     // 涨乐财富通服务方式下的客户反馈列表
     custFeedbackList: [],
     // 涨乐财富通服务方式下的审批人列表
@@ -131,7 +139,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        addMotServeRecordSuccess: payload === 'success',
+        currentMotServiceRecord: { id: payload },
       };
     },
     getTempQuesAndAnswerSuccess(state, action) {
@@ -175,6 +183,13 @@ export default {
         customerList: custBriefInfoDTOList || [],
       };
     },
+    queryCustomerForServiceImplementationSuccess(state, action) {
+      const { payload: { custBriefInfoDTOList } } = action;
+      return {
+        ...state,
+        custListForServiceImplementation: custBriefInfoDTOList || [],
+      };
+    },
     queryCustFeedbackList4ZLFinsSuccess(state, action) {
       const { payload: { custFeedbackOptions } } = action;
       return {
@@ -199,8 +214,8 @@ export default {
           const curentDoneFlowNum = item.doneFlowNum + 1;
           // 已完成数量和总数量相等
           if (curentDoneFlowNum === item.flowNum) {
-            // 未到期：当前时间小于结束时间
-            if (Date.now() <= new Date(item.processTime).getTime()) {
+            // 未到期：当前日期小于结束日期
+            if (!moment().isAfter(item.processTime, 'day')) {
               // 当前选中任务项的已完成数量和总数量相等且任务未过期时，将本地存储的任务列表中的此条任务状态修改为已完成，且此条数据的已完成数量加一
               return {
                 ...item,
@@ -224,6 +239,20 @@ export default {
         },
       };
     },
+    // 清空已经查询出来的客户数据
+    // 执行者视图右侧搜索客户
+    clearCustListForServiceImplementation(state) {
+      return {
+        ...state,
+        custListForServiceImplementation: EMPTY_LIST,
+      };
+    },
+    resetMotServiceRecord(state) {
+      return {
+        ...state,
+        currentMotServiceRecord: {},
+      };
+    },
   },
   effects: {
     // 执行者视图、管理者视图、创建者视图公共列表
@@ -244,6 +273,10 @@ export default {
           ...payload,
         },
       });
+      // 当客户列表选中的客户流水变化时，清除打电话显示服务记录的标志
+      yield put({
+        type: 'app/resetServiceRecordInfo',
+      });
     },
 
     // 执行者视图的详情基本信息
@@ -253,6 +286,10 @@ export default {
       if (isClear) {
         // 清除查询上次目标客户列表的条件
         yield put({ type: 'clearParameter' });
+        // 当客户列表选中的客户流水变化时，清除打电话显示服务记录的标志
+        yield put({
+          type: 'app/resetServiceRecordInfo',
+        });
       }
       const { resultData } = yield call(api.queryTaskDetailBasicInfo, otherPayload);
       if (resultData) {
@@ -313,14 +350,17 @@ export default {
     },
     // 添加服务记录
     * addMotServeRecord({ payload }, { call, put }) {
-      const { resultData } = yield call(api.addMotServeRecord, payload);
-      yield put({
-        type: 'addMotServeRecordSuccess',
-        payload: resultData,
-      });
+      yield put({ type: 'resetMotServiceRecord' });
+      const { code, resultData } = yield call(api.addMotServeRecord, payload);
+      if (code === '0') {
+        yield put({
+          type: 'addMotServeRecordSuccess',
+          payload: resultData,
+        });
+      }
     },
     // 上传文件之前，先查询uuid
-    * queryCustUuid({ payload }, { call, put }) {
+    * queryCustUuid({ payload = {} }, { call, put }) {
       const { resultData } = yield call(api.queryCustUuid, payload);
       yield put({
         type: 'queryCustUuidSuccess',
@@ -374,14 +414,39 @@ export default {
       });
     },
     // 执行者视图头部根据姓名或经纪客户号查询客户
-    * queryCustomer({ payload }, { call, put }) {
+    * queryCustomer({ payload }, { put }) {
+      yield put({
+        type: 'searchCustomer',
+        payload,
+        callType: SEARCH_CUSTOMER_FOR_PAGE_HEADER,
+      });
+    },
+
+    // 因为put是异步的，所以将request抽离出来，根据callType来put action
+    // 执行者视图头部根据姓名或经纪客户号查询客户
+    // 执行者视图右侧根据姓名或经纪客户号查询客户
+    * searchCustomer({ payload, callType }, { call, put }) {
       const { resultData } = yield call(api.queryCustomer, payload);
-      if (resultData) {
+      if (callType === SEARCH_CUSTOMER_FOR_PAGE_HEADER) {
         yield put({
           type: 'queryCustomerSuccess',
           payload: resultData,
         });
+      } else if (callType === SEARCH_CUSTOMER_FOR_RIGHT_DETAIL) {
+        yield put({
+          type: 'queryCustomerForServiceImplementationSuccess',
+          payload: resultData,
+        });
       }
+    },
+
+    // 执行者视图右侧根据姓名或经纪客户号查询客户
+    * queryCustomerForServiceImplementation({ payload }, { put }) {
+      yield put({
+        type: 'searchCustomer',
+        payload,
+        callType: SEARCH_CUSTOMER_FOR_RIGHT_DETAIL,
+      });
     },
 
     // 查询涨乐财富通服务方式下的客户反馈列表

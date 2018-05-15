@@ -5,7 +5,7 @@
  */
 import _ from 'lodash';
 import { openRctTab } from '../../../utils';
-import { url as urlHelper, number as numberHelper, emp } from '../../../helper';
+import { url as urlHelper, number as numberHelper } from '../../../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import {
   toFomatterCust,
@@ -324,7 +324,6 @@ export function linkTo({
   push,
   location,
   type = 'rightType',
-  authority,
 }) {
   if (_.isEmpty(location)) {
     return;
@@ -344,12 +343,6 @@ export function linkTo({
     } else {
       obj.orgId = orgId;
     }
-  } else if (!authority) {
-    // 用户没有权限
-    // obj.ptyMng = `${empName}_${empNum}`;
-    obj.orgId = MAIN_MAGEGER_ID;
-  } else {
-    obj.orgId = emp.getOrgId();
   }
   const url = `${pathname}?${urlHelper.stringify(obj)}`;
   const param = {
