@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import FilterWrapper from '../FilterWrapper';
 import SingleFilterMenu from './SingleFilterMenu';
 
@@ -56,6 +57,15 @@ export default class SingleFilter extends PureComponent {
 
   getFilterValue = key => this.props.data.filter(item => item.key === key)[0].value;
 
+  getLabelValue = (item) => {
+    if (_.isArray(item)) {
+      if (item[0]) {
+        return `${item[1]}(${item[0]})`;
+      }
+      return `${item[1]}`;
+    }
+    return '不限';
+  }
 
   render() {
     const {
@@ -70,7 +80,8 @@ export default class SingleFilter extends PureComponent {
     } = this.props;
 
     const filterValue =
-      this.props.showSearch ? (this.props.value[1] || '不限') : this.getFilterValue(this.props.value);
+      this.props.showSearch ?
+        this.getLabelValue(this.props.value) : this.getFilterValue(this.props.value);
 
     const menuProps = {
       value,

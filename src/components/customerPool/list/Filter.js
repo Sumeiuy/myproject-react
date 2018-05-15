@@ -530,7 +530,7 @@ export default class Filter extends PureComponent {
             <Input
               className={styles.filter}
               defaultValue={source === 'search' ? decodeURIComponent(q) : ''}
-              placeholder="两融潜在客户"
+              placeholder="关键字"
             />
           }
           {

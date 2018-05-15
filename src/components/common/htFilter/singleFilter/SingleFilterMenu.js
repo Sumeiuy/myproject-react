@@ -25,6 +25,13 @@ export default class SingleFilterMenu extends PureComponent {
     isShowCloseIcon: false,
   }
 
+  getLabelValue = (item) => {
+    if (item.name) {
+      return `${item.aliasName}(${item.name})`;
+    }
+    return `${item.aliasName}`;
+  }
+
   handleItemClick = (item) => {
     let returnItem = item;
     if (this.props.showSearch) {
@@ -102,11 +109,11 @@ export default class SingleFilterMenu extends PureComponent {
               {
                 _.map(renderItems, (item, index) => (
                   <li
-                    title={item.aliasName}
+                    title={this.getLabelValue(item)}
                     key={index}
                     onClick={() => this.handleItemClick(item)}
                   >
-                    {item.aliasName}
+                    {this.getLabelValue(item)}
                   </li>
                 ))
               }
@@ -117,11 +124,11 @@ export default class SingleFilterMenu extends PureComponent {
             _.map(this.props.optionList, (item, index) => (
               <li
                 key={index}
-                title={item.aliasName}
+                title={this.getLabelValue(item)}
                 className={value[0] === item.name ? styles.activeItem : ''}
                 onClick={() => this.handleItemClick(item)}
               >
-                {item.aliasName}
+                {this.getLabelValue(item)}
               </li>
             )) :
             <li

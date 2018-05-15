@@ -46,6 +46,7 @@ export default class HtInput extends PureComponent {
     return (
       <div className={`${styles.input} ${className}`}>
         <Input
+          value={this.state.inputValue}
           {...restProps}
           onChange={this.handleInputChange}
         />
