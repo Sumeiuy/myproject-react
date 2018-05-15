@@ -151,8 +151,8 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-      targetCustomerState = '',
-      selectCustomerRowId = '',
+        targetCustomerState = '',
+        selectCustomerRowId = '',
       },
       changeParameter,
     } = this.props;
@@ -537,6 +537,9 @@ export default class PerformerViewDetail extends PureComponent {
               />
             </div>
             <div className={styles.pagination}>
+              {/**
+               * 简单分页没有总数，需要自己加
+               */}
               <div className={styles.totalCount}>{`共 ${totalCount} 条`}</div>
               <div className={styles.page}>
                 <Pagination {...paginationOption} />
