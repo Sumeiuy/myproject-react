@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-14 14:22:33
+ * @Last Modified time: 2018-05-15 14:25:31
  */
 
 import React, { PureComponent } from 'react';
@@ -164,6 +164,16 @@ export default class CombinationDetail extends PureComponent {
     // 获取概览
     getOverview({
       combinationCode: id,
+    }).then(() => {
+      const { overview } = this.props;
+      // 如果是资产配置类组合默认查询一年的数据
+      const key = _.isNull(overview.weekEarnings) ?
+        config.chartTabList[1].key : config.chartTabList[0].key;
+      // 趋势图
+      getCombinationLineChart({
+        combinationCode: id,
+        key,
+      });
     });
     // 饼图
     getCompositionPie({
@@ -178,11 +188,6 @@ export default class CombinationDetail extends PureComponent {
     getAdjustWarehouseHistory(payload);
     // 获取组合树
     getCombinationTree();
-    // 趋势图
-    getCombinationLineChart({
-      combinationCode: id,
-      key: '3',
-    });
     // 查询历史报告模块数据, 非历史报告弹窗
     getReportHistoryList({
       combinationCode: id,
@@ -269,7 +274,10 @@ export default class CombinationDetail extends PureComponent {
     if (source === sourceType.security) {
       const filterType = _.filter(config.securityType, o => o.value === type);
       if (filterType.length) {
-        query.labelMapping = `${filterType[0].shortName}${code}`;
+        query.labelMapping = encodeURIComponent(`${filterType[0].shortName}${code}`);
+        query.type = 'PRODUCT';
+        query.labelName = encodeURIComponent(`${name}(${code})`);
+        query.productName = encodeURIComponent(name);
       } else {
         return;
       }
@@ -283,7 +291,6 @@ export default class CombinationDetail extends PureComponent {
       url,
       param,
       pathname: url,
-      query,
     });
   }
 
@@ -307,7 +314,6 @@ export default class CombinationDetail extends PureComponent {
       url,
       param,
       pathname: url,
-      query,
     });
   }
 
@@ -384,7 +390,7 @@ export default class CombinationDetail extends PureComponent {
             <CombinationYieldChart
               combinationCode={id}
               tabChange={this.handleChartTabChange}
-              combinationItemData={{}}
+              combinationItemData={overview}
               chartData={combinationLineChartData}
               chartHeight="270px"
               title="组合收益率走势"
