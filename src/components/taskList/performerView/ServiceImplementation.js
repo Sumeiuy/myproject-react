@@ -66,6 +66,7 @@ export default class ServiceImplementation extends PureComponent {
     callback = _.noop,
     callbackOfPhone = _.noop,
     noHint = false,
+    uuidOfPhone = '',
   }) {
     const {
       addServeRecord,
@@ -111,8 +112,23 @@ export default class ServiceImplementation extends PureComponent {
         }
         // 保存打电话自动创建的服务记录的信息或更新服务记录后删除打电话保存的服务记录
         callbackOfPhone();
+
+        this.saveServiceRecordAndPhoneRelation(this.props, uuidOfPhone);
       }
     });
+  }
+
+  /**
+   * 通话的uuid关联服务记录
+   */
+  @autobind
+  saveServiceRecordAndPhoneRelation({ currentMotServiceRecord = {} }, uuidOfPhone) {
+    if (uuidOfPhone) {
+      this.props.addCallRecord({
+        uuid: uuidOfPhone,
+        projectId: currentMotServiceRecord.id,
+      });
+    }
   }
 
   // 更新组件state的list信息
@@ -343,6 +359,7 @@ export default class ServiceImplementation extends PureComponent {
           currentCustomer={currentCustomer}
           getServiceCustId={id => this.setServiceCustId(id)}
           taskTypeCode={taskTypeCode}
+          currentMotServiceRecord={currentMotServiceRecord}
         />
         {
           (!_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict))
@@ -428,6 +445,7 @@ ServiceImplementation.propTypes = {
   testWallCollision: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: PropTypes.bool.isRequired,
+  addCallRecord: PropTypes.func.isRequired,
 };
 
 ServiceImplementation.defaultProps = {

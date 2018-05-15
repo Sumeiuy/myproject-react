@@ -65,6 +65,8 @@ export default class CreateContactModal extends PureComponent {
     toggleServiceRecordModal: PropTypes.func,
     addServeRecord: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
+    addCallRecord: PropTypes.func.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -178,6 +180,8 @@ export default class CreateContactModal extends PureComponent {
       };
     }
     addServeRecord(payload).then(() => {
+      // 关联通话和服务记录
+      this.saveServiceRecordAndPhoneRelation(this.props);
       // 回调，关闭电话联系方式弹窗
       onClose();
       // 显示添加服务记录弹窗
@@ -193,8 +197,22 @@ export default class CreateContactModal extends PureComponent {
 
   // 通话开始
   @autobind
-  handlePhoneConnected() {
+  handlePhoneConnected(data) {
     this.phoneStartTime = moment();
+    this.uuidOfPhone = data.uuid;
+  }
+
+  /**
+   * 通话的uuid关联服务记录
+   */
+  @autobind
+  saveServiceRecordAndPhoneRelation({ currentCommonServiceRecord = {} }) {
+    if (this.uuidOfPhone) {
+      this.props.addCallRecord({
+        uuid: this.uuidOfPhone,
+        projectId: currentCommonServiceRecord.id,
+      });
+    }
   }
 
   /**

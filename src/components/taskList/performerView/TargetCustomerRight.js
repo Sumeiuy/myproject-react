@@ -72,6 +72,7 @@ export default class TargetCustomerRight extends PureComponent {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     currentCustomer: PropTypes.object.isRequired,
     taskTypeCode: PropTypes.string.isRequired,
+    currentMotServiceRecord: PropTypes.object.isRequired,
   }
   static defaultProps = {
     itemData: {},
@@ -250,13 +251,15 @@ export default class TargetCustomerRight extends PureComponent {
       postBody: payload,
       callbackOfPhone: saveRecordData,
       noHint: true,
+      uuidOfPhone: this.uuidOfPhone,
     });
   }
 
   // 通话开始
   @autobind
-  handlePhoneConnected() {
+  handlePhoneConnected(data) {
     this.phoneStartTime = moment();
+    this.uuidOfPhone = data.uuid;
   }
 
   /**
