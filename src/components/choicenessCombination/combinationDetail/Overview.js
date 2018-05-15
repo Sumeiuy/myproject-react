@@ -28,6 +28,10 @@ export default class Overview extends PureComponent {
     let newValue = value;
     if (newValue) {
       newValue = newValue.toFixed(2);
+      // 数字过小时候，取两位小数可能等于 0 ，等于 0 时，显示 0.00
+      if (Math.abs(newValue) === 0) {
+        newValue = '0.00';
+      }
     }
     return newValue;
   }
@@ -35,11 +39,7 @@ export default class Overview extends PureComponent {
   // 与零作比较，大于 0 则加上 + 符号
   @autobind
   compareWithZero(value) {
-    let newValue = value;
-    if (newValue > 0) {
-      newValue = `+${newValue}`;
-    }
-    return newValue;
+    return value > 0 ? `+${value}` : value;
   }
 
   render() {
