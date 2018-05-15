@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-// import classNames from 'classnames';
+import classNames from 'classnames';
 import { Radio, Menu } from 'antd';
 import Button from '../button';
 import styles from './bussinessOpenedMenu.less';
@@ -21,6 +21,8 @@ export default class BusinessFilterMenu extends PureComponent {
   state = {
     openKeys: [],
     visible: false,
+    dateTypeErr: false,
+    businessTypeErr: false,
     dateType: this.props.value[0] || '',
     businessType: this.props.value[1] || 'all',
   }
@@ -35,6 +37,7 @@ export default class BusinessFilterMenu extends PureComponent {
   handleRidioChange = (e) => {
     this.setState({
       dateType: e.target.value,
+      dateTypeErr: false,
     });
   }
 
@@ -57,44 +60,79 @@ export default class BusinessFilterMenu extends PureComponent {
       openKeys: [],
       businessType: key,
       visible: false,
+      businessTypeErr: false,
     });
   }
 
   handleResetBtnClick = () => {
     this.setState({
-      dateType: '518003',
-      businessType: 'ttfCust',
+      dateType: '',
+      businessType: 'all',
       openKeys: [],
       visible: false,
+      dateTypeErr: false,
+      businessTypeErr: false,
     });
 
-    // this.props.onChange({
-    //   dateType: '',
-    //   businessType: 'all',
-    // });
-
-    // 因为开通业务不支持默认，必须有值，但以后可能会变动，先这样写，说明一下
     this.props.onChange({
-      dateType: '518003',
-      businessType: 'ttfCust',
+      dateType: '',
+      businessType: 'all',
     });
   }
 
   handleSubmitBtnClick = () => {
-    this.setState({
-      openKeys: [],
-      visible: false,
-    });
-    this.props.onChange({
-      dateType: this.state.dateType,
-      businessType: this.state.businessType,
-    }, {
-      inVisible: true,
-    });
+    const { dateType, businessType } = this.state;
+    if ((!dateType && businessType === 'all') ||
+      (dateType && businessType !== 'all')) {
+      this.setState({
+        openKeys: [],
+        visible: false,
+      });
+      this.props.onChange({
+        dateType: this.state.dateType,
+        businessType: this.state.businessType,
+      }, {
+        inVisible: true,
+      });
+    } else if (!dateType) {
+      this.setState({
+        openKeys: [],
+        visible: false,
+        dateTypeErr: true,
+      });
+      this.props.onChange({
+        dateType: this.state.dateType,
+        businessType: this.state.businessType,
+      }, {
+        isUnValid: true,
+      });
+    } else if (businessType === 'all') {
+      this.setState({
+        openKeys: [],
+        visible: false,
+        businessTypeErr: true,
+      });
+      this.props.onChange({
+        dateType: this.state.dateType,
+        businessType: this.state.businessType,
+      }, {
+        isUnValid: true,
+      });
+    }
   }
 
   render() {
     const { data } = this.props;
+    const radioCls = classNames({
+      [styles.errMessage]: true,
+      [styles.show]: this.state.dateTypeErr,
+    });
+
+    const selectCls = classNames({
+      [styles.errMessage]: true,
+      [styles.show]: this.state.businessTypeErr,
+    });
+
     return (
       <div className={styles.businessMenu}>
         <div className={styles.radioGroup} onChange={this.handleRidioChange}>
@@ -106,6 +144,7 @@ export default class BusinessFilterMenu extends PureComponent {
               )))
             }
           </RadioGroup>
+          <div className={radioCls}>请选择周期</div>
         </div>
         <div className={styles.menuSelect} ref={ref => this.elem = ref}>
           <div className={styles.label}>开通业务</div>
@@ -135,6 +174,7 @@ export default class BusinessFilterMenu extends PureComponent {
               }
             </SubMenu>
           </Menu>
+          <div className={selectCls}>请选择开通业务</div>
         </div>
         <div className={styles.btnGroup}>
           <Button onClick={this.handleResetBtnClick} type="cancel">重置</Button>

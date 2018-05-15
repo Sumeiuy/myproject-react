@@ -180,7 +180,7 @@ export default class FilterWrapper extends PureComponent {
               {
                 this.props.isFormFilter ?
                   <div className={styles.contentShowOnButton}>
-                    {this.props.filterValue}
+                    <i className={labelCls} />{this.props.filterValue}
                   </div> :
                   <div className={styles.contentShowOnButton}>
                     <span><i className={labelCls} />{this.props.filterName}{this.props.isMoreButton ? '' : ':'}</span>

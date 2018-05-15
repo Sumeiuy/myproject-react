@@ -7,15 +7,17 @@ export default class HtInput extends PureComponent {
   static propTypes = {
     className: PropTypes.string,
     onChange: PropTypes.func,
+    defaultValue: PropTypes.string,
   }
 
   static defaultProps = {
     className: '',
     onChange: () => {},
+    defaultValue: '',
   }
 
   state = {
-    inputValue: '',
+    inputValue: this.props.defaultValue,
     isShowCloseIcon: false,
   }
 
