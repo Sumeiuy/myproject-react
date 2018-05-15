@@ -16,7 +16,7 @@ import styles from './historyReport.less';
 
 const EMPTY_LIST = [];
 const titleList = config.titleList.historyReport;
-const { typeList, formatDateStr } = config;
+const { typeList, formatDateStr, overlayStyle } = config;
 export default class HistoryReport extends PureComponent {
   static propTypes = {
     // 当前组合code
@@ -25,7 +25,7 @@ export default class HistoryReport extends PureComponent {
     data: PropTypes.object.isRequired,
     showModal: PropTypes.func.isRequired,
     // 打开历史报告详情
-    openReportDetail: PropTypes.func.isRequired,
+    openReportDetailPage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -63,21 +63,17 @@ export default class HistoryReport extends PureComponent {
   // 设置 popover
   @autobind
   renderPopover(value, id) {
-    const { openReportDetail } = this.props;
+    const { openReportDetailPage } = this.props;
     let reactElement = null;
     if (value) {
       reactElement = (<Popover
         placement="bottomLeft"
         content={value}
         trigger="hover"
-        overlayStyle={{
-          width: '240px',
-          padding: '10px',
-          wordBreak: 'break-all',
-        }}
+        overlayStyle={overlayStyle}
       >
         <div className={styles.ellipsis}>
-          <span className={styles.titleLink} onClick={() => openReportDetail(id)}>{value}</span>
+          <span className={styles.titleLink} onClick={() => openReportDetailPage(id)}>{value}</span>
         </div>
       </Popover>);
     } else {
@@ -102,6 +98,7 @@ export default class HistoryReport extends PureComponent {
           dataSource={list}
           pagination={false}
           onChange={this.handlePaginationChange}
+          rowKey="id"
         />
       </div>
     );

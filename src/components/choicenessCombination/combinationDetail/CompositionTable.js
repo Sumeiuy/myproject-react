@@ -11,23 +11,60 @@ import { Table, Popover } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-
-import { time } from '../../../helper';
+import { time, number } from '../../../helper';
 import config from '../config';
 import styles from './compositionTable.less';
 
-const { detailTitleList, detailTitleType, formatStr } = config;
+const { detailTitleList, formatStr, overlayStyle } = config;
 // 字符串常量，用于 table columns 对应列的 key 匹配来 render
 // 理由字符串
 const KEY_REASON = 'reason';
 // 时间字符串
 const KEY_TIME = 'callInTime';
+// 证券名称字符串
+const KEY_NAME = 'name';
+// 行业、分类字符串
+const KEY_INDUSTRY = 'industry';
+// 累计涨幅
+const KEY_INCREASE = 'increase';
+// 浮动收益率
+const KEY_FLOATRATERETURN = 'floatRateReturn';
+// _.findIndex 方法未找到元素时返回 -1
+const noResult = -1;
 
 export default class CompositionTable extends PureComponent {
   static propTypes = {
     data: PropTypes.array.isRequired,
   }
 
+  @autobind
+  getColumnsTitle(columns) {
+    let newColumns = [...columns];
+    // 原因列
+    const reasonIndex = _.findIndex(newColumns, o => o.key === KEY_REASON);
+    // 时间列
+    const timeIndex = _.findIndex(newColumns, o => o.key === KEY_TIME);
+    // 股票、基金名称列
+    const nameIndex = _.findIndex(newColumns, o => o.key === KEY_NAME);
+    // 行业、分类列
+    const industryIndex = _.findIndex(newColumns, o => o.key === KEY_INDUSTRY);
+    // 累计涨幅
+    const increaseIndex = _.findIndex(newColumns, o => o.key === KEY_INCREASE);
+    // 浮动收益率
+    const floatratereturnIndex = _.findIndex(newColumns, o => o.key === KEY_FLOATRATERETURN);
+
+    if (reasonIndex > noResult) {
+      newColumns[reasonIndex].render = text => this.renderPopover(text);
+    }
+    if (timeIndex > noResult) {
+      newColumns[timeIndex].render = text => (<div>{time.format(text, formatStr)}</div>);
+    }
+    newColumns = this.renderNumberOrText(nameIndex, newColumns);
+    newColumns = this.renderNumberOrText(industryIndex, newColumns);
+    newColumns = this.renderNumberOrText(increaseIndex, newColumns, 'number');
+    newColumns = this.renderNumberOrText(floatratereturnIndex, newColumns, 'number');
+    return newColumns;
+  }
   // 设置单元格的 popover
   @autobind
   renderPopover(value) {
@@ -37,13 +74,9 @@ export default class CompositionTable extends PureComponent {
         placement="bottomLeft"
         content={value}
         trigger="hover"
-        overlayStyle={{
-          width: '240px',
-          padding: '10px',
-          wordBreak: 'break-all',
-        }}
+        overlayStyle={overlayStyle}
       >
-        <div>
+        <div className={styles.multiLineEllipsis}>
           {value}
         </div>
       </Popover>);
@@ -53,33 +86,34 @@ export default class CompositionTable extends PureComponent {
     return reactElement;
   }
 
+  // 渲染文字或数字
+  @autobind
+  renderNumberOrText(index, array, type = '') {
+    const newArray = [...array];
+    if (index > noResult) {
+      newArray[index].render = text => (
+        <div className={styles.oneLineEllipsis} title={text}>
+          {
+            _.isEmpty(type)
+            ?
+              text
+            :
+              number.toFixed(text)
+          }
+        </div>
+      );
+    }
+    return newArray;
+  }
+
   render() {
     const { data } = this.props;
     if (_.isEmpty(data)) {
       return null;
     }
     const tableType = data[0].composeCategory;
-    const columns = detailTitleList[tableType];
-    const reasonIndex = _.findIndex(columns, o => o.key === KEY_REASON);
-    const timeIndex = _.findIndex(columns, o => o.key === KEY_TIME);
-    switch (Number(tableType)) {
-      case detailTitleType.MNSPZH:
-        columns[reasonIndex].render = text => this.renderPopover(text);
-        break;
-      case detailTitleType.HYGPZH:
-        columns[timeIndex].render = text => (<div>{time.format(text, formatStr)}</div>);
-        columns[reasonIndex].render = text => this.renderPopover(text);
-        break;
-      case detailTitleType.PZLZH:
-        columns[timeIndex].render = text => (<div>{time.format(text, formatStr)}</div>);
-        columns[reasonIndex].render = text => this.renderPopover(text);
-        break;
-      case detailTitleType.ZCPZZH:
-        columns[timeIndex].render = text => (<div>{time.format(text, formatStr)}</div>);
-        break;
-      default:
-        break;
-    }
+    let columns = detailTitleList[tableType];
+    columns = this.getColumnsTitle(columns);
     return (
       <div className={styles.table}>
         <Table
