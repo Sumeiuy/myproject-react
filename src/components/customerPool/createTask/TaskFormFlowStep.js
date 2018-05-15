@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-14 13:11:01
+ * @Last Modified time: 2018-05-15 13:00:03
  */
 
 import React, { PureComponent } from 'react';
@@ -186,9 +186,6 @@ export default class TaskFormFlowStep extends PureComponent {
     } else if (source === 'sightingTelescope') {
       // 从瞄准镜过来的，需要加入queryLabelReq参数
       req = { searchReq: custCondition, custIdList, queryLabelReq };
-    } else if (source === 'external') {
-      // 从外部平台过来的不需要传product、productName
-      req = { searchReq: _.omit(custCondition, ['product', 'productName']), custIdList };
     } else {
       req = { searchReq: custCondition, custIdList };
     }

@@ -254,6 +254,7 @@ export default class CustomerList extends PureComponent {
     this.hasNPCTIQPermission = permission.hasNPCTIQPermission();
     // HTSC 交易信息查询权限（含私密客户）
     this.hasPCTIQPermission = permission.hasPCTIQPermission();
+    this.dataForNextPage = {};
   }
 
   getChildContext() {
@@ -367,7 +368,7 @@ export default class CustomerList extends PureComponent {
     } else if (query.source === 'association') { // 联想词
       // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
       param.searchTypeReq = query.type;
-      // param.searchText = labelName;
+      param.searchText = labelName;
       param.primaryKey = [labelMapping];
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) { // 经营指标或者投顾绩效
       // 业绩中的时间周期
@@ -379,9 +380,11 @@ export default class CustomerList extends PureComponent {
     } else if (query.source === 'external') { // 外部平台
       param.searchTypeReq = query.type;
       param.primaryKey = [labelMapping];
-      // 下面两个参数用在发起任务页面，不作为入参传给列表接口
-      param.product = labelName;
-      param.productName = productName;
+      // 下面参数用在发起任务页面
+      this.dataForNextPage.type = query.type;
+      this.dataForNextPage.id = labelMapping;
+      this.dataForNextPage.product = labelName;
+      this.dataForNextPage.productName = productName;
     }
     // 客户业绩参数
     if (query.customerType) {
@@ -433,7 +436,7 @@ export default class CustomerList extends PureComponent {
     this.setState({
       queryParam: param,
     });
-    getCustomerData(_.omit(param, ['productName', 'product']));
+    getCustomerData(param);
   }
 
   // 获取 客户列表接口的orgId入参的值
@@ -782,6 +785,7 @@ export default class CustomerList extends PureComponent {
           holdingProducts={holdingProducts}
           queryHoldingProductReqState={interfaceState[effects.queryHoldingProduct]}
           isNotSaleDepartment={this.isNotSaleDepartment}
+          dataForNextPage={this.dataForNextPage}
         />
       </div>
     );
