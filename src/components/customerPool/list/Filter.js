@@ -273,6 +273,12 @@ function transfromFilterValFromUrl(filters) {
       filterValue = code.split(',');
     }
 
+    if (name === 'minFee' || name === 'totAset') {
+      const minVal = filterValue[0] && filterValue[0].replace('-', '.');
+      const maxVal = filterValue[1] && filterValue[1].replace('-', '.');
+      filterValue = [minVal, maxVal];
+    }
+
     // 如果对应的过滤器是普通股基佣金率
     result[name] = filterValue; // eslint-disable-line
     return result;
@@ -369,7 +375,19 @@ export default class Filter extends PureComponent {
 
   @autobind
   handleRangeFilterChange(obj) {
-    const value = _.join(obj.value, ',');
+    let minVal;
+    let maxVal;
+
+    if (obj.value[0]) {
+      minVal = obj.value[0].replace('.', '-');
+    }
+
+    if (obj.value[1]) {
+      maxVal = obj.value[1].replace('.', '-');
+    }
+
+    const value = _.join([minVal, maxVal], ',');
+
     this.props.onFilterChange({
       name: obj.name,
       value,

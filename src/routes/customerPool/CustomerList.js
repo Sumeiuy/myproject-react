@@ -50,6 +50,12 @@ function transfromFilterValFromUrl(filters) {
       filterValue = code.split(',');
     }
 
+    if (name === 'minFee' || name === 'totAset') {
+      const minVal = filterValue[0] && filterValue[0].replace('-', '.');
+      const maxVal = filterValue[1] && filterValue[1].replace('-', '.');
+      filterValue = [minVal, maxVal];
+    }
+
     // 如果对应的过滤器是普通股基佣金率
     result[name] = filterValue; // eslint-disable-line
     return result;
@@ -105,9 +111,12 @@ function getFilterParam(filterObj) {
   }
 
   if (filterObj.minFee) {
+    const min = filterObj.minFee[0];
+    const max = filterObj.minFee[1];
+
     param.minFee = {
-      minVal: filterObj.minFee[0] || null,
-      maxVal: filterObj.minFee[1] || null,
+      minVal: min ? (min / 1000).toFixed(5) : null,
+      maxVal: max ? (max / 1000).toFixed(5) : null,
     };
   }
 
