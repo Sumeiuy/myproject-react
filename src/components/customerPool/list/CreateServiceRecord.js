@@ -166,7 +166,7 @@ export default class CreateServiceRecord extends PureComponent {
   @autobind
   handleDeleteFile(params) {
     const { ceFileDelete } = this.props;
-    ceFileDelete({ ...params });
+    return ceFileDelete({ ...params });
   }
 
   /**
