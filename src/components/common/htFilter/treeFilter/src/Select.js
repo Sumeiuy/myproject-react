@@ -901,9 +901,6 @@ class Select extends Component {
       [`${prefixCls}-allow-clear`]: !!props.allowClear,
     };
 
-    console.log(',,,,,.........', this.renderedTreeData);
-    console.log('.................', this._cachetreeData);
-
     return (
       <SelectTrigger
         {...props}
