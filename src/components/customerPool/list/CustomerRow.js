@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-15 17:11:51
+ * @Last Modified time: 2018-05-15 17:19:31
  */
 
 import React, { PureComponent } from 'react';
@@ -186,9 +186,9 @@ export default class CustomerRow extends PureComponent {
     const {
       listItem: {
         pOrO,
-      custId,
-      rowId,
-      ptyId,
+        custId,
+        rowId,
+        ptyId,
       },
     } = this.props;
     // pOrO代表个人客户，机构客户
