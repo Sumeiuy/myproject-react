@@ -6,6 +6,7 @@
 import _ from 'lodash';
 import { openRctTab } from '../../../utils';
 import { url as urlHelper, number as numberHelper, emp } from '../../../helper';
+import { getFilter } from '../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import {
   toFomatterCust,
@@ -351,6 +352,7 @@ export function linkTo({
   } else {
     obj.orgId = emp.getOrgId();
   }
+  obj.filters = getFilter(obj);
   const url = `${pathname}?${urlHelper.stringify(obj)}`;
   const param = {
     closable: true,

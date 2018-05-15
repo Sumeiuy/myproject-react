@@ -391,14 +391,14 @@ export default class CustomerLists extends PureComponent {
     if (_.includes(ENTERLIST1, source)) {
       // 从首页的潜在业务点击进入的列表页
       if (this.orgIdIsMsm()) {
-        return [allSaleDepartment, ...taskManagerResp];
+        return _.uniqBy([allSaleDepartment, ...taskManagerResp], 'id');
       }
       return taskManagerResp;
     }
     if (_.includes(ENTERLIST2, source)) {
       // 有首页指标查询权限 且 首页绩效指标客户范围选中的是 我的客户
       if (this.orgIdIsMsm()) {
-        return [allSaleDepartment, ...firstPageResp];
+        return _.uniqBy([allSaleDepartment, ...firstPageResp], 'id');
       }
       return firstPageResp;
     }
