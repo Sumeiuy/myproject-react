@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-11 10:21:11
+ * @Last Modified time: 2018-05-15 17:11:51
  */
 
 import React, { PureComponent } from 'react';
@@ -186,9 +186,9 @@ export default class CustomerRow extends PureComponent {
     const {
       listItem: {
         pOrO,
-        custId,
-        rowId,
-        ptyId,
+      custId,
+      rowId,
+      ptyId,
       },
     } = this.props;
     // pOrO代表个人客户，机构客户
@@ -197,6 +197,13 @@ export default class CustomerRow extends PureComponent {
       id: 'FSP_360VIEW_M_TAB',
       title: '客户360视图-客户信息',
       forceRefresh: true,
+      // 解决同一个tab之前存在的情况下，subTab没更新
+      activeSubTab: ['客户信息'],
+      // 因为这个页面存在多处跳转至360信息，所以将服务记录默认信息清空
+      // 服务记录搜索
+      serviceRecordKeyword: '',
+      // 服务渠道
+      serviceRecordChannel: '',
     };
     const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
     // TODOTAB: 如何与后端是动态接口

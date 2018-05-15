@@ -141,12 +141,11 @@ export default class DistributeHome extends PureComponent {
           imsi: '--',
           sim: '--',
         }));
-      } else {
-        return _.map(listData, (item, index) => ({
-          ...item,
-          id: `${item.empId}-${index}`,
-        }));
       }
+      return _.map(listData, (item, index) => ({
+        ...item,
+        id: `${item.empId}-${index}`,
+      }));
     }
     return [];
   }
