@@ -3,7 +3,7 @@
  * @Description: 收益率走势图
  * @Date: 2018-04-25 13:55:06
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-09 14:21:54
+ * @Last Modified time: 2018-05-15 08:53:46
 */
 
 import React, { PureComponent } from 'react';
