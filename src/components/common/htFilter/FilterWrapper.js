@@ -56,19 +56,21 @@ export default class FilterWrapper extends PureComponent {
 
   componentDidMount() {
     if (this.elem) {
-      this.elem.addEventListener('mousewheel', this.handleMousewheel);
-      this.elem.addEventListener('DOMMouseScroll', this.handleMousewheel);
+      this.wheelEventArray.forEach(eventType =>
+        this.elem.addEventListener(eventType, this.handleMousewheel));
     }
   }
 
   componentWillUnmount() {
     if (this.elem) {
-      this.elem.removeEventListener('mousewheel', this.handleMousewheel);
-      this.elem.removeEventListener('DOMMouseScroll', this.handleMousewheel);
+      this.wheelEventArray.forEach(eventType =>
+        this.elem.removeEventListener(eventType, this.handleMousewheel));
     }
   }
 
   getPopupContainer = () => this.elem
+
+  wheelEventArray = ['wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
 
   handleMousewheel(e) {
     if (e.stopPropagation) {
@@ -77,7 +79,6 @@ export default class FilterWrapper extends PureComponent {
     if (e.cancelBubble) {
       e.cancelBubble = true;
     }
-    // console.log('.....................', e);
   }
   handleMenuClick = () => {
     this.setState({ visible: false });
