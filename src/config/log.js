@@ -44,6 +44,8 @@ const config = {
     '$pageview',
     // 表单提交
     'Submit',
+    // 错误信息
+    /Error$/,
   ],
   eventPropertyMap: {
     // 页面pv

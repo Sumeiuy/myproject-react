@@ -176,7 +176,9 @@ function sendLog(action) {
   }
   const data = getLogData(action);
   // profile_set拿到以后单独发送
-  if (data.type === EVENT_PROFILE_KEY) {
+  if (data.type === EVENT_PROFILE_KEY
+    || /Error$/.test(data.event)
+  ) {
     sendAPILog([data]);
     return;
   }

@@ -2,7 +2,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-08 18:03:14
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 22:15:15
+ * @Last Modified time: 2018-05-14 09:58:09
  *
  * src：文件的路径；
  * name:框架的名字，用来进行识别。
@@ -32,7 +32,7 @@ export default class ReportFormIframe extends React.Component {
     window.addEventListener('resize', this.setIframeHeight);
   }
 
-  componentWillUnMount() {
+  componentWillUnmount() {
     window.removeEventListener('resize', this.setIframeHeight);
   }
 
