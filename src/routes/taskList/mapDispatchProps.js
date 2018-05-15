@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 10:21:18
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-09 14:35:40
+ * @Last Modified time: 2018-05-14 16:22:05
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapDispatchToProps移至此处成立独立模块
  */
 import effects from './effects';
@@ -74,8 +74,6 @@ export default ({ routerRedux, effect }) => ({
   queryCustomer: effect(effects.queryCustomerForServiceImplementation),
   // 保存打电话时默认添加的服务记录的信息
   toggleServiceRecordModal: effect(effects.toggleServiceRecordModal, { loading: false }),
-  // 打电话时添加服务记录，不需要loading
-  addServeRecordOfPhone: effect(effects.addServiceRecord, { loading: false }),
   // 重置打电话时自动生成的服务记录的数据
   resetServiceRecordInfo: effect(effects.resetServiceRecordInfo, { loading: false }),
   // 投资建议文本撞墙检测

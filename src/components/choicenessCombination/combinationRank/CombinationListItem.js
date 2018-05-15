@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-14 11:15:20
+ * @Last Modified time: 2018-05-15 13:42:27
 */
 
 import React, { PureComponent } from 'react';
@@ -191,7 +191,7 @@ export default class CombinationListItem extends PureComponent {
     });
     const openPayload = {
       name: data.combinationName,
-      code: data.combinationCode,
+      code: data.productCode,
       source: sourceType.combination,
     };
     return (

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-11 13:30:01
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-14 10:10:09
  */
 
 import React, { PureComponent } from 'react';
@@ -356,7 +356,7 @@ export default class TaskFlow extends PureComponent {
    * @param {*object} postBody post参数
    */
   @autobind
-  addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer = {}, labelId, currentSelectLabelName) {
+  addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer = {}, labelId) {
     let newPostBody = postBody;
     if (this.hasTkMampPermission) {
       // 有权限传orgId
@@ -395,7 +395,7 @@ export default class TaskFlow extends PureComponent {
     newPostBody = _.merge(newPostBody, {
       searchReq: {
         searchTypeReq: 'LABEL',
-        searchText: currentSelectLabelName,
+        // searchText: currentSelectLabelName,
       },
     });
     return newPostBody;

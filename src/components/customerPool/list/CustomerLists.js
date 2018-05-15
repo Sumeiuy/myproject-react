@@ -129,6 +129,7 @@ export default class CustomerLists extends PureComponent {
     holdingProducts: PropTypes.object.isRequired,
     queryHoldingProductReqState: PropTypes.bool,
     isNotSaleDepartment: PropTypes.bool.isRequired,
+    dataForNextPage: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -421,8 +422,8 @@ export default class CustomerLists extends PureComponent {
   // 跳转到分组页面或新建任务页面
   @autobind
   goGroupOrTask({ id, title, url, obj, shouldStay, editPane }) {
-    const { push } = this.props;
-    const newurl = `${url}?${urlHelper.stringify(obj)}`;
+    const { push, dataForNextPage } = this.props;
+    const newurl = `${url}?${urlHelper.stringify({ ...obj, ...dataForNextPage })}`;
     const param = {
       closable: true,
       forceRefresh: true,
