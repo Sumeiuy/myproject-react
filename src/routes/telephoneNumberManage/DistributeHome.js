@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 投顾手机分配状态页面
  * @Date: 2018-04-17 16:49:00
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-03 13:25:06
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-15 17:29:41
  */
 
 import React, { PureComponent } from 'react';
@@ -108,8 +108,8 @@ export default class DistributeHome extends PureComponent {
     this.getAdvisorBindList(newQuery);
   }
 
-   // 切换页码
-   @autobind
+  // 切换页码
+  @autobind
   handlePageNumberChange(nextPage, currentPageSize) {
     const { replace, location } = this.props;
     const { query, pathname } = location;
@@ -141,12 +141,11 @@ export default class DistributeHome extends PureComponent {
           imsi: '--',
           sim: '--',
         }));
-      } else {
-        return _.map(listData, (item, index) => ({
-          ...item,
-          id: `${item.empId}-${index}`,
-        }));
       }
+      return _.map(listData, (item, index) => ({
+        ...item,
+        id: `${item.empId}-${index}`,
+      }));
     }
     return [];
   }
