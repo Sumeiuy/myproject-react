@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
+import helper from '../helper';
 import styles from './filter.less';
 
 import HtFilter, {
@@ -259,27 +260,6 @@ const moreFilterData = [
   },
 ];
 
-// 将url上面的filter编码解析为对象
-function transfromFilterValFromUrl(filters) {
-  // 处理由‘|’分隔的多个过滤器
-  const filtersArray = filters ? filters.split('|') : [];
-
-  return _.reduce(filtersArray, (result, value) => {
-    const [name, code] = value.split('.');
-    let filterValue = code;
-
-    // 如果是多选，需要继续处理','分割的多选值
-    if (code.indexOf(',') > -1) {
-      filterValue = code.split(',');
-    }
-
-    // 如果对应的过滤器是普通股基佣金率
-    result[name] = filterValue; // eslint-disable-line
-    return result;
-  }, {});
-}
-
-
 export default class Filter extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -497,7 +477,7 @@ export default class Filter extends PureComponent {
       q,
     } = location.query;
 
-    const currentValue = transfromFilterValFromUrl(filters);
+    const currentValue = helper.transfromFilterValFromUrl(filters);
 
     // console.log('--------------------------------------currentValue', currentValue);
 
