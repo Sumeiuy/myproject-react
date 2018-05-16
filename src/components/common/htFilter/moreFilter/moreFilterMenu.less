@@ -3,6 +3,7 @@
   position: relative;
   z-index: 10;
   width: 100%;
+  padding: 4px 0;
   :global {
     .ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
       height: 38px;
@@ -34,6 +35,10 @@
       font-size: 14px;
     }
 
+    .ant-menu-inline .ant-menu-submenu-title {
+      margin: 0;
+    }
+
     .ant-menu-sub.ant-menu-inline > .ant-menu-item {
       height: 38px;
       line-height: 38px;
@@ -51,7 +56,10 @@
   :global .ant-checkbox-wrapper {
     & > span {
       font-size: 14px;
+      font-weight: normal;
+      color: #4a4a4a;
     }
     font-size: 14px;
+    font-weight: normal;
   }
 }

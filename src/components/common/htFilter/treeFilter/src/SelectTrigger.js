@@ -317,8 +317,6 @@ class SelectTrigger extends Component {
       </div>
     );
 
-    console.log(".....................................................iiiiii", this.renderTree(keys, halfCheckedKeys, treeNodes, multiple));
-
     const popupStyle = { ...props.dropdownStyle };
     const widthProp = props.dropdownMatchSelectWidth ? 'width' : 'minWidth';
     if (this.state.dropdownWidth) {

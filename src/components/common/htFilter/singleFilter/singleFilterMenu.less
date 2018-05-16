@@ -3,11 +3,26 @@
   padding-left: 0;
 
   .inputWrapper {
-    padding: 4px 14px 14px;
+    padding: 4px 10px 10px;
     position: relative;
     .input {
       display: inline-block;
       height: 30px;
+      padding-top: 0;
+      padding-bottom: 0;
+      font-size: 14px;
+    }
+    input::-webkit-input-placeholder {
+      transform: translateY(-1px);
+    }
+    input::-moz-input-placeholder {
+      transform: translateY(-1px);
+    }
+    input:-moz-input-placeholder {
+      transform: translateY(-1px);
+    }
+    input:-ms-input-placeholder {
+      transform: translateY(-1px);
     }
     .sousuoIcon {
       position: absolute;
@@ -33,9 +48,14 @@
         &::before {
         color: #333;
         font-size: 14px;
+        }
       }
     }
   }
+
+  .optionList {
+    max-height: 270px;
+    overflow-y: auto;
   }
 
   li {
@@ -56,8 +76,7 @@
 
   .noContent {
     color: #ddd;
-    padding-left: 26px;
-    font-size: 12px;
+    font-size: 14px;
 
     &:hover,
     &:focus,
@@ -65,15 +84,25 @@
       background: #fff;
     }
   }
-
-  .activeItem {
-    background-color: #e6f3fc;
-  }
 }
 
 .currentValue {
   padding-bottom: 5px;
   margin-bottom: 14px;
   border-bottom: 1px solid #ddd;
+}
+
+.activeItem {
+  background-color: #e6f3fc;
+  padding: 0 14px;
+}
+
+.searchListItem {
+  padding: 0 14px;
+}
+
+.cleanSelect {
+  padding: 0 14px;
+  color: #108ee9;
 }
 

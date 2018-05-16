@@ -50,6 +50,12 @@ function transfromFilterValFromUrl(filters) {
       filterValue = code.split(',');
     }
 
+    if (name === 'minFee' || name === 'totAset') {
+      const minVal = filterValue[0] && filterValue[0].replace('!', '.');
+      const maxVal = filterValue[1] && filterValue[1].replace('!', '.');
+      filterValue = [minVal, maxVal];
+    }
+
     // 如果对应的过滤器是普通股基佣金率
     result[name] = filterValue; // eslint-disable-line
     return result;
@@ -80,7 +86,7 @@ function getFilterParam(filterObj) {
   if (filterObj.unrights) {
     param.unrights = [].concat(filterObj.unrights);
   }
-  if (filterObj.businessOpened) {
+  if (filterObj.businessOpened && filterObj.businessOpened[0]) {
     param.businessOpened = {
       dateType: filterObj.businessOpened[0] || null,
       businessType: filterObj.businessOpened[1] || null,
@@ -105,9 +111,12 @@ function getFilterParam(filterObj) {
   }
 
   if (filterObj.minFee) {
+    const min = filterObj.minFee[0];
+    const max = filterObj.minFee[1];
+
     param.minFee = {
-      minVal: filterObj.minFee[0] || null,
-      maxVal: filterObj.minFee[1] || null,
+      minVal: min ? (min / 1000).toFixed(5) : null,
+      maxVal: max ? (max / 1000).toFixed(5) : null,
     };
   }
 
@@ -395,7 +404,8 @@ export default class CustomerList extends PureComponent {
     } = props;
 
     const keyword = decodeURIComponent(query.q);
-    const labelName = decodeURIComponent(query.labelName) || null;
+    const labelName = decodeURIComponent(query.labelName);
+    const labelDesc = decodeURIComponent(query.labelDesc);
 
     const param = {
       // 必传，当前页
@@ -412,6 +422,14 @@ export default class CustomerList extends PureComponent {
     if (query.source === 'search') {   // 搜索框模糊下钻
       param.searchTypeReq = 'ALL';
       param.searchText = keyword;
+    }
+
+    if (query.source === 'sightingTelescope') {
+      // 如果是瞄准镜，需要加入queryLabelReq
+      param.queryLabelReq = {
+        labelName,
+        labelDesc,
+      };
     }
 
     if (query.source === 'association') {

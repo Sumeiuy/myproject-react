@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
-import helper from '../helper';
 import styles from './filter.less';
 
 import HtFilter, {
@@ -260,6 +259,33 @@ const moreFilterData = [
   },
 ];
 
+// 将url上面的filter编码解析为对象
+function transfromFilterValFromUrl(filters) {
+  // 处理由‘|’分隔的多个过滤器
+  const filtersArray = filters ? filters.split('|') : [];
+
+  return _.reduce(filtersArray, (result, value) => {
+    const [name, code] = value.split('.');
+    let filterValue = code;
+
+    // 如果是多选，需要继续处理','分割的多选值
+    if (code.indexOf(',') > -1) {
+      filterValue = code.split(',');
+    }
+
+    if (name === 'minFee' || name === 'totAset') {
+      const minVal = filterValue[0] && filterValue[0].replace('!', '.');
+      const maxVal = filterValue[1] && filterValue[1].replace('!', '.');
+      filterValue = [minVal, maxVal];
+    }
+
+    // 如果对应的过滤器是普通股基佣金率
+    result[name] = filterValue; // eslint-disable-line
+    return result;
+  }, {});
+}
+
+
 export default class Filter extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -349,7 +375,19 @@ export default class Filter extends PureComponent {
 
   @autobind
   handleRangeFilterChange(obj) {
-    const value = _.join(obj.value, ',');
+    let minVal;
+    let maxVal;
+
+    if (obj.value[0]) {
+      minVal = obj.value[0].replace('.', '!').replace('-', '');
+    }
+
+    if (obj.value[1]) {
+      maxVal = obj.value[1].replace('.', '!').replace('-', '');
+    }
+
+    const value = _.join([minVal, maxVal], ',');
+
     this.props.onFilterChange({
       name: obj.name,
       value,
@@ -381,20 +419,10 @@ export default class Filter extends PureComponent {
   handleMoreFilterChange(obj) {
     this.selectFilterIdFromMore = obj.name;
 
-    // 对于开通业务，目前在更多菜单打开，需要提供默认值
-    // 原因是大数据不支持不限，但以后可能支持
-    // 如以后要支持，删除这段代码即可
-    if (obj.name === 'businessOpened') {
-      this.props.onFilterChange({
-        name: obj.name,
-        value: ['518003', 'ttfCust'].join(','),
-      }, obj.isDeleteFilterFromLocation);
-    } else {
-      this.props.onFilterChange({
-        name: obj.name,
-        value: obj.value,
-      }, obj.isDeleteFilterFromLocation);
-    }
+    this.props.onFilterChange({
+      name: obj.name,
+      value: obj.value,
+    }, obj.isDeleteFilterFromLocation);
   }
 
   @autobind
@@ -477,7 +505,7 @@ export default class Filter extends PureComponent {
       q,
     } = location.query;
 
-    const currentValue = helper.transfromFilterValFromUrl(filters);
+    const currentValue = transfromFilterValFromUrl(filters);
 
     // console.log('--------------------------------------currentValue', currentValue);
 
@@ -492,7 +520,7 @@ export default class Filter extends PureComponent {
             <Input
               className={styles.filter}
               defaultValue={source === 'search' ? decodeURIComponent(q) : ''}
-              placeholder="两融潜在客户"
+              placeholder="搜索关键字"
             />
           }
           {

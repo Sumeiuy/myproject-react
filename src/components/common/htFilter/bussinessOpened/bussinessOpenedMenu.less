@@ -11,7 +11,6 @@
         display: flex;
         width: 100%;
         justify-content: space-between;
-        margin-bottom: 20px;
       }
       .ant-radio-button-wrapper {
         flex: 0 0 auto;
@@ -32,6 +31,7 @@
   }
 
   .menuSelect {
+    margin-top: 20px;
     :global {
       .ant-menu.ant-menu-light.ant-menu-inline {
         border: 0;
@@ -108,5 +108,16 @@
     padding-left: 14px;
     display: inline-block;
   }
+}
+
+.errMessage {
+  display: none;
+}
+
+.show {
+  display: block;
+  color: #d0021b;
+  font-size: 12px;
+  padding-top: 8px;
 }
 

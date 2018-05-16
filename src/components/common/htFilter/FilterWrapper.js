@@ -56,22 +56,29 @@ export default class FilterWrapper extends PureComponent {
 
   componentDidMount() {
     if (this.elem) {
-      this.elem.addEventListener('mousewheel', this.handleMousewheel);
-      this.elem.addEventListener('DOMMouseScroll', this.handleMousewheel);
+      this.wheelEventArray.forEach(eventType =>
+        this.elem.addEventListener(eventType, this.handleMousewheel));
     }
   }
 
   componentWillUnmount() {
     if (this.elem) {
-      this.elem.removeEventListener('mousewheel', this.handleMousewheel);
-      this.elem.removeEventListener('DOMMouseScroll', this.handleMousewheel);
+      this.wheelEventArray.forEach(eventType =>
+        this.elem.removeEventListener(eventType, this.handleMousewheel));
     }
   }
 
   getPopupContainer = () => this.elem
 
+  wheelEventArray = ['wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
+
   handleMousewheel(e) {
-    e.stopPropagation(); // 阻止滚轮滚动事件冒泡，不触发fsp的自定义滚动条
+    if (e.stopPropagation) {
+      e.stopPropagation(); // 阻止滚轮滚动事件冒泡，不触发fsp的自定义滚动条
+    }
+    if (e.cancelBubble) {
+      e.cancelBubble = true;
+    }
   }
   handleMenuClick = () => {
     this.setState({ visible: false });
@@ -173,7 +180,7 @@ export default class FilterWrapper extends PureComponent {
               {
                 this.props.isFormFilter ?
                   <div className={styles.contentShowOnButton}>
-                    {this.props.filterValue}
+                    <i className={labelCls} />{this.props.filterValue}
                   </div> :
                   <div className={styles.contentShowOnButton}>
                     <span><i className={labelCls} />{this.props.filterName}{this.props.isMoreButton ? '' : ':'}</span>
