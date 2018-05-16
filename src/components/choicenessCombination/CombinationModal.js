@@ -31,6 +31,18 @@ const THREE_MOUNTH_KEY = '3';
 const DIRECT_IN = '1';
 // 持仓历史
 const HISTORY_TYPE = config.typeList[0];
+// 字符串常量，用于 table columns 对应列的 key 匹配来 render
+// 时间字符串
+const KEY_TIME = 'time';
+// 理由字符串
+const KEY_REASON = 'reason';
+// 组合名称字符串
+const KEY_COMBINATIONNAME = 'combinationName';
+// 标题字符串
+const KEY_TITLE = 'title';
+// 查看持仓客户字符串
+const KEY_VIEW = 'view';
+
 export default class CombinationModal extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -41,6 +53,7 @@ export default class CombinationModal extends PureComponent {
     direction: PropTypes.string,
     closeModal: PropTypes.func.isRequired,
     openCustomerListPage: PropTypes.func,
+    openReportDetailPage: PropTypes.func,
   }
   static contextTypes = {
     push: PropTypes.func.isRequired,
@@ -51,6 +64,7 @@ export default class CombinationModal extends PureComponent {
     treeData: [],
     direction: DIRECT_IN,
     openCustomerListPage: _.noop,
+    openReportDetailPage: _.noop,
   }
 
   constructor(props) {
@@ -89,7 +103,8 @@ export default class CombinationModal extends PureComponent {
 
   componentDidMount() {
     // 请求历史报告或调仓历史
-    this.sendRequest();
+    const { location: { query: { pageSize, pageNum } } } = this.props;
+    this.sendRequest(pageNum, pageSize);
   }
 
   // 根据类型配置不同的表格标题
@@ -97,39 +112,40 @@ export default class CombinationModal extends PureComponent {
   getTitleColumns(type) {
     const { openCustomerListPage } = this.props;
     const titleArray = titleList[type];
+    const timeIndex = _.findIndex(titleArray, o => o.key === KEY_TIME);
+    const reasonIndex = _.findIndex(titleArray, o => o.key === KEY_REASON);
+    const nameIndex = _.findIndex(titleArray, o => o.key === KEY_COMBINATIONNAME);
+    const viewIndex = _.findIndex(titleArray, o => o.key === KEY_VIEW);
+    const titleIndex = _.findIndex(titleArray, o => o.key === KEY_TITLE);
     // 持仓历史
     if (type === HISTORY_TYPE) {
-      // 查看持仓客户
-      const lastColumn = {
-        dataIndex: 'view',
-        key: 'view',
-        title: '持仓客户',
-        width: 80,
-        render: (text, record) => {
-          const openPayload = {
-            name: record.securityName,
-            code: record.securityCode,
-            type: record.securityType,
-            source: sourceType.security,
-          };
-          return (<a
-            className={styles.customerLink}
-            onClick={() => openCustomerListPage(openPayload)}
-          >
-            <Icon type="kehuzu" />
-          </a>);
-        },
-      };
       // 时间
-      titleArray[0].render = text => (<div>{timeHelper.format(text, formatStr)}</div>);
+      titleArray[timeIndex].render = text => (<div>{timeHelper.format(text, formatStr)}</div>);
       // 调仓理由
-      titleArray[5].render = (text, record) => this.renderPopover(record.reason);
+      titleArray[reasonIndex].render = (text, record) => this.renderPopover(record.reason);
       // 所属组合
-      titleArray[6].render = (text, record) => this.renderPopover(record.combinationName);
+      titleArray[nameIndex].render = (text, record) => this.renderPopover(record.combinationName);
       // 查看持仓客户
-      titleArray[7] = lastColumn;
+      titleArray[viewIndex].render = (text, record) => {
+        const { securityName, securityCode, securityType } = record;
+        const openPayload = {
+          name: securityName,
+          code: securityCode,
+          type: securityType,
+          source: sourceType.security,
+        };
+        return (<a
+          className={styles.customerLink}
+          onClick={() => openCustomerListPage(openPayload)}
+        >
+          <Icon type="kehuzu" />
+        </a>);
+      };
     } else {
-      titleArray[0].render = (text, record) => (
+      // 时间
+      titleArray[timeIndex].render = text => (<div>{timeHelper.format(text, formatStr)}</div>);
+      // 设置标题渲染
+      titleArray[titleIndex].render = (text, record) => (
         <div><a onClick={() => this.handleTitleClick(record)}>{text}</a></div>
       );
     }
@@ -145,18 +161,13 @@ export default class CombinationModal extends PureComponent {
           combinationCode = '',
         },
       },
+      openReportDetailPage,
     } = this.props;
-    const query = {
+    const payload = {
       id: record.id,
       code: combinationCode,
     };
-
-    const { push } = this.context;
-    const pathname = '/choicenessCombination/reportDetail';
-    push({
-      pathname,
-      query,
-    });
+    openReportDetailPage(payload);
   }
 
   // 计算事件函数，返回格式化后的开始、结束日期

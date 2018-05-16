@@ -52,6 +52,8 @@ export default class CombinationRank extends PureComponent {
     // 打开持仓查客户页面
     openCustomerListPage: PropTypes.func.isRequired,
     showModal: PropTypes.func.isRequired,
+    // 打开详情页面
+    openDetailPage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -72,6 +74,7 @@ export default class CombinationRank extends PureComponent {
       openStockPage,
       openCustomerListPage,
       showModal,
+      openDetailPage,
     } = this.props;
     return combinationRankList.map(item => (
       <CombinationListItem
@@ -86,6 +89,7 @@ export default class CombinationRank extends PureComponent {
         dict={dict}
         openStockPage={openStockPage}
         openCustomerListPage={openCustomerListPage}
+        openDetailPage={openDetailPage}
       />
     ));
   }
