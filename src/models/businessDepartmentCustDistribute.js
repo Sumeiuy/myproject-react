@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 13:27:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-15 16:49:59
+ * @Last Modified time: 2018-05-16 18:41:23
  * @description 营业部非投顾签约客户分配
  */
 
@@ -17,6 +17,14 @@ export default {
     empList: [],
     // 新建页面中Excel表格中的客户列表数据
     custListInExcel: [],
+    // 新建页面中筛选条件后的客户列表数据
+    custListByFilter: {},
+    // 根据关键字获取的客户列表
+    custListByQuery: [],
+    // 根据关键字获取的服务经理列表
+    empListByQuery: [],
+    // 根据关键字获取的开发经理列表
+    devEmpListByQuery: [],
   },
 
   reducers: {
@@ -43,6 +51,39 @@ export default {
         custListInExcel: custList,
       };
     },
+
+    filterCustListSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        custListByFilter: payload,
+      };
+    },
+
+    queryDistributeCustSuccess(state, action) {
+      const { payload: { custList = [] } } = action;
+      return {
+        ...state,
+        custListByQuery: custList,
+      };
+    },
+
+    queryDistributeEmpSuccess(state, action) {
+      const { payload: { empList = [] } } = action;
+      return {
+        ...state,
+        empListByQuery: empList,
+      };
+    },
+
+    queryDistributeDevEmpSuccess(state, action) {
+      const { payload: { empList = [] } } = action;
+      return {
+        ...state,
+        devEmpListByQuery: empList,
+      };
+    },
+
   },
 
   effects: {
@@ -69,6 +110,40 @@ export default {
       const { resultData = {} } = yield call(api.getCustListInExcel, payload);
       yield put({
         type: 'getCustListInExcelSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 根据筛选条件获取客户列表
+    * filterCustList({ payload }, { call, put }) {
+      const { resultData = {} } = yield call(api.filterCustList, payload);
+      yield put({
+        type: 'filterCustListSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 根据关键字查询客户
+    * queryDistributeCust({ payload }, { call, put }) {
+      const { resultData = {} } = yield call(api.queryDistributeCust, payload);
+      yield put({
+        type: 'queryDistributeCustSuccess',
+        payload: resultData,
+      });
+    },
+    // 根据关键字查询服务经理
+    * queryDistributeEmp({ payload }, { call, put }) {
+      const { resultData = {} } = yield call(api.queryDistributeEmp, payload);
+      yield put({
+        type: 'queryDistributeEmpSuccess',
+        payload: resultData,
+      });
+    },
+    // 根据关键字查询开发经理
+    * queryDistributeDevEmp({ payload }, { call, put }) {
+      const { resultData = {} } = yield call(api.queryDistributeDevEmp, payload);
+      yield put({
+        type: 'queryDistributeDevEmpSuccess',
         payload: resultData,
       });
     },

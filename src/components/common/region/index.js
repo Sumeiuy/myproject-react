@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-14 09:35:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-14 15:16:59
+ * @Last Modified time: 2018-05-16 17:38:18
  * @description 获取区间值的组件
  */
 
@@ -93,8 +93,8 @@ export default class Region extends Component {
     });
     // 需要隐藏 Popover
     this.handlePopoverVisibleChange(false);
-    // 将区间值包装成 start,end 属性的对象传递出去
-    this.props.onChange({ start, end });
+    // 将区间值包装成 [start,end] 数组传递出去
+    this.props.onChange([start, end]);
   }
 
   @autobind

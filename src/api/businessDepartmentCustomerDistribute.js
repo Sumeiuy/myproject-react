@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 10:17:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-15 16:48:26
+ * @Last Modified time: 2018-05-16 17:49:54
  * @description 营业部非投顾签约客户分配的API
  */
 
@@ -14,5 +14,13 @@ export default function cust(api) {
     getCustListInExcel: query => api.post('/groovynoauth/fsp/cust/manager/getCustListInExcel', query),
     // 客户分配查询服务经理列表
     queryEmpList: query => api.post('/groovynoauth/fsp/cust/manager/queryDistributeEmpList', query),
+    // 客户分配根据筛选条件获取客户列表
+    filterCustList: query => api.post('/groovynoauth/fsp/cust/manager/filterCustList', query),
+    // 根据关键字查询客户
+    queryDistributeCust: query => api.post('/groovynoauth/fsp/cust/manager/queryDistributeCust', query),
+    // 根据关键字查询服务经理
+    queryDistributeEmp: query => api.post('/groovynoauth/fsp/cust/manager/queryDistributeEmp', query),
+    // 根据关键字查询开发经理
+    queryDistributeDevEmp: query => api.post('/groovynoauth/fsp/cust/manager/queryDistributeDevEmp', query),
   };
 }

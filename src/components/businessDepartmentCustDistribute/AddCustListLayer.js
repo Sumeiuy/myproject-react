@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-11 13:45:12
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-14 16:57:06
+ * @Last Modified time: 2018-05-16 19:42:12
  * @description 用户选择添加客户列表
  */
 import React, { Component } from 'react';
@@ -13,7 +13,7 @@ import _ from 'lodash';
 import cx from 'classnames';
 
 import CommonModal from '../common/biz/CommonModal';
-import DropdowSelect from '../common/dropdownSelect';
+import DropdownSelect from '../common/dropdownSelect';
 import Select from '../common/Select';
 import Icon from '../common/Icon';
 import Region from '../common/region';
@@ -23,6 +23,26 @@ import { createAddLayerCustTableDate } from './utils';
 import styles from './addCustListLayer.less';
 
 export default class AddCustListLayer extends Component {
+
+  static propTypes = {
+    devEmpListByQuery: PropTypes.array,
+    custListByQuery: PropTypes.array,
+    empListByQuery: PropTypes.array,
+    data: PropTypes.object,
+    visible: PropTypes.bool,
+    onOK: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onFilterCust: PropTypes.func.isRequired,
+    onQuery: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+    visible: false,
+    data: {},
+    devEmpListByQuery: [],
+    custListByQuery: [],
+    empListByQuery: [],
+  }
 
   static contextTypes = {
     dict: PropTypes.object,
@@ -35,11 +55,53 @@ export default class AddCustListLayer extends Component {
       custList: [],
       // 用户选中的客户
       selectedRowKeys: [],
+      // 筛选条件-客户
+      cust: {},
+      // 筛选条件-服务经理
+      emp: {},
+      // 筛选条件-开发经理
+      devEmp: {},
       // 筛选的状态条件
       status: ['all'],
+      // 筛选条件-净资产
+      asset: [],
+      // 筛选条件-年日均净资产
+      dailyAsset: [],
+      // 筛选条件-本年净佣金
+      brokerage: [],
+      // 筛选条件-上年净佣金
+      lastBrokerage: [],
       // 控制筛选条件第二行显示与隐藏
       showSecondLineFilter: false,
     };
+  }
+
+  componentDidMount() {
+    // 初始化的时候需要查询一把无筛选条的所有客户
+    this.props.onFilterCust({ pageNum: 1, pageSize: 10 });
+  }
+
+  @autobind
+  filterCustList(pageQuery = {}) {
+    // TOO 需要将 status 值如果是 不限，则需要修改为借口对应的
+    const filterQuery = _.pick(
+      this.state,
+      ['status', 'asset', 'dailyAsset', 'brokerage', 'lastBrokerage'],
+    );
+    // 客户|服务经理|开发经理的query
+    const {
+      cust: { custNumber = '' },
+      emp: { empId = '' },
+      devEmp: { empId: devEmpId = '' },
+    } = this.state;
+    const ids = { custId: custNumber, empId, devEmpId };
+    this.props.onFilterCust({
+      pageNum: 1,
+      pageSize: 10,
+      ...pageQuery,
+      ...ids,
+      ...filterQuery,
+    });
   }
 
   // 分页显示总条数和选中总条数
@@ -54,15 +116,24 @@ export default class AddCustListLayer extends Component {
   }
 
   @autobind
+  handlePaginationChange(pageNum) {
+    this.filterCustList({ pageNum });
+  }
+
+  @autobind
   handleExpandClick() {
     const { showSecondLineFilter } = this.state;
     this.setState({ showSecondLineFilter: !showSecondLineFilter });
   }
 
   @autobind
-  handleSelectChange(selectedRowKeys) {
-    // TODO 此处可能需要进行数据转化，将选中的数据的完整信息给保存下来
-    this.setState({ selectedRowKeys });
+  handleSelectChange(selectedRowKeys = []) {
+    // 可能需要进行数据转化，将选中的数据的完整信息给保存下来
+    const { data } = this.props;
+    const custListData = _.get(data, 'custList') || [];
+    const custList = selectedRowKeys.map(item =>
+      _.find(custListData, cust => cust.brokerNumber === item));
+    this.setState({ selectedRowKeys, custList });
   }
 
   @autobind
@@ -72,51 +143,80 @@ export default class AddCustListLayer extends Component {
 
   @autobind
   handleModalOK() {
-    // TODO 此处的custList看是否需要重新获取设置传递
+    // 因为存在全选，以及用户自己手动勾选
+    // 全选是将所有的条件传递过去获取所有的数据再传递过去
+    // 用户手动勾选选择勾选的
     const { custList } = this.state;
+    console.warn('添加客户确认：', custList);
     this.props.onOK(custList);
   }
 
   // 筛选条件中的客户搜索
   @autobind
   handleCustSearch(keywords) {
-    console.warn('handleCustSearch: ', keywords);
+    this.props.onQuery({ api: 'cust', query: { keywords } });
   }
 
   // 筛选条件中的服务经理搜索
   @autobind
   handleEmpSearch(keywords) {
-    console.warn('handleEmpSearch: ', keywords);
+    this.props.onQuery({ api: 'emp', query: { keywords } });
   }
 
   // 筛选条件中的开发经理搜索
   @autobind
   handleDevEmpSearch(keywords) {
-    console.warn('handleDevEmpSearch: ', keywords);
+    this.props.onQuery({ api: 'devEmp', query: { keywords } });
   }
 
   @autobind
-  handleSelectCustItem(item) {
-    // TODO 需要添加客户筛选的过滤条件进行过滤，客户过滤
-    console.warn('handleSelectCustItem： ', item);
+  handleSelectCustItem(cust) {
+    this.setState({ cust }, this.filterCustList);
   }
 
   @autobind
-  handleSelectEmpItem(item) {
-    // TODO 需要添加客户筛选的过滤条件进行过滤，服务经理过滤
-    console.warn('handleSelectEmpItem ', item);
+  handleSelectEmpItem(emp) {
+    this.setState({ emp }, this.filterCustList);
   }
 
   @autobind
-  handleSelectDevEmpItem(item) {
-    // TODO 需要添加客户筛选的过滤条件进行过滤，开发经理过滤
-    console.warn('handleSelectDevEmpItem ', item);
+  handleSelectDevEmpItem(devEmp) {
+    this.setState({ devEmp }, this.filterCustList);
   }
 
   @autobind
   handleStatusChange(key, v) {
-    // TODO 需要添加客户筛选的过滤条件进行过滤，状态过滤
-    this.setState({ status: v });
+    // 此处默认值是 all : 不限，
+    // 当用户选择了其他的状态值时，需要将 不限 剔除
+    // 如果用户将所有其他的清除，那么需要将 不限 显示出来
+    let status = [...v];
+    if (_.isEmpty(v)) {
+      status = ['all'];
+    } else {
+      // remove 方法会改变原有数组
+      _.remove(status, code => code === 'all');
+    }
+    this.setState({ status }, this.filterCustList);
+  }
+
+  @autobind
+  handleAssetRegionChange(asset) {
+    this.setState({ asset }, this.filterCustList);
+  }
+
+  @autobind
+  handleDailyAssetRegionChange(dailyAsset) {
+    this.setState({ dailyAsset }, this.filterCustList);
+  }
+
+  @autobind
+  handleBrokerageRegionChange(brokerage) {
+    this.setState({ brokerage }, this.filterCustList);
+  }
+
+  @autobind
+  handleLastBrokerageRegionChange(lastBrokerage) {
+    this.setState({ lastBrokerage }, this.filterCustList);
   }
 
   render() {
@@ -131,22 +231,34 @@ export default class AddCustListLayer extends Component {
     const {
       selectedRowKeys, showSecondLineFilter,
       status,
+      asset,
+      dailyAsset,
+      brokerage,
+      lastBrokerage,
+      cust,
+      emp,
+      devEmp,
     } = this.state;
+    const {
+      devEmpListByQuery,
+      custListByQuery,
+      empListByQuery,
+    } = this.props;
     // 转换数据
     const newCustList = createAddLayerCustTableDate(_.get(data, 'custList'));
     const pageObject = _.get(data, 'page') || {};
     // 如果数据无空的情况下，不需要一下的rowSelection
     const selectedRowKeysSize = _.size(selectedRowKeys);
-    const rowSelection = !pageObject.total ? {}
+    const rowSelection = !pageObject.totalCount ? {}
       : {
         selectedRowKeys,
         onChange: this.handleSelectChange,
         hideDefaultSelections: true,
         selections: [{
           key: 'all-data',
-          text: pageObject.total !== selectedRowKeysSize ? '全选' : '取消全选',
+          text: pageObject.totalCount !== selectedRowKeysSize ? '全选' : '取消全选',
           onSelect: () => {
-            if (pageObject.total !== selectedRowKeysSize) {
+            if (pageObject.totalCount !== selectedRowKeysSize) {
               // 选中的个数不等于总数，此时显示的是全选，点击全部选中
               this.setState({
                 selectedRowKeys: newCustList.map(item => item.key),
@@ -167,6 +279,15 @@ export default class AddCustListLayer extends Component {
       [styles.hideLine]: !showSecondLineFilter,
     });
 
+    // 给搜索的客户列表添加所有
+    const newCustListByQuery = [{ custName: '所有', custNumber: '' }, ...custListByQuery];
+    const newEmpListByQuery = [{ empName: '所有', empId: '' }, ...empListByQuery];
+    const newDevEmpListByQuery = [{ empName: '所有', empId: '' }, ...devEmpListByQuery];
+    // 修饰下筛选选择的条件
+    const selectedCust = _.isEmpty(cust) ? '所有' : `${cust.custName}(${cust.custNumber})`;
+    const selectedEmp = _.isEmpty(emp) ? '所有' : `${emp.empName}(${emp.empId})`;
+    const selectedDevEmp = _.isEmpty(devEmp) ? '所有' : `${emp.empName}(${emp.empId})`;
+
     return (
       <CommonModal
         title="添加客户"
@@ -185,10 +306,10 @@ export default class AddCustListLayer extends Component {
             <div className={styles.filterLine}>
               <div className={styles.filterItem}>
                 <span className={styles.filterLabel}>客户：</span>
-                <DropdowSelect
-                  value="孙伟斌（1111111）"
+                <DropdownSelect
+                  value={selectedCust}
                   placeholder="经纪客户号/客户名称"
-                  searchList={[]}
+                  searchList={newCustListByQuery}
                   showObjKey="custName"
                   objId="custNumber"
                   emitSelectItem={this.handleSelectCustItem}
@@ -208,10 +329,10 @@ export default class AddCustListLayer extends Component {
               </div>
               <div className={styles.filterItem}>
                 <span className={styles.filterLabel}>服务经理：</span>
-                <DropdowSelect
-                  value="洪光情（11111111）"
+                <DropdownSelect
+                  value={selectedEmp}
                   placeholder="服务经理工号/名称"
-                  searchList={[]}
+                  searchList={newEmpListByQuery}
                   showObjKey="empName"
                   objId="empId"
                   emitSelectItem={this.handleSelectEmpItem}
@@ -221,12 +342,12 @@ export default class AddCustListLayer extends Component {
               </div>
               <div className={styles.filterItem}>
                 <span className={styles.filterLabel}>开发经理：</span>
-                <DropdowSelect
-                  value="刘建树（222222）"
+                <DropdownSelect
+                  value={selectedDevEmp}
                   placeholder="开发经理工号/名称"
-                  searchList={[]}
-                  showObjKey="devEmpName"
-                  objId="devEmpId"
+                  searchList={newDevEmpListByQuery}
+                  showObjKey="empName"
+                  objId="empId"
                   emitSelectItem={this.handleSelectDevEmpItem}
                   emitToSearch={this.handleDevEmpSearch}
                   name="addCustListLayer-devEmp"
@@ -243,25 +364,29 @@ export default class AddCustListLayer extends Component {
               <div className={styles.filterItem}>
                 <span className={styles.filterLabel}>净资产：</span>
                 <Region
-                  onChange={() => {}}
+                  value={asset}
+                  onChange={this.handleAssetRegionChange}
                 />
               </div>
               <div className={styles.filterItem}>
                 <span className={styles.filterLabel}>年日均净资产：</span>
                 <Region
-                  onChange={() => {}}
+                  value={dailyAsset}
+                  onChange={this.handleDailyAssetRegionChange}
                 />
               </div>
               <div className={styles.filterItem}>
                 <span className={styles.filterLabel}>上年净佣金：</span>
                 <Region
-                  onChange={() => {}}
+                  value={lastBrokerage}
+                  onChange={this.handleLastBrokerageRegionChange}
                 />
               </div>
               <div className={styles.filterItem}>
                 <span className={styles.filterLabel}>本年净佣金：</span>
                 <Region
-                  onChange={() => {}}
+                  value={brokerage}
+                  onChange={this.handleBrokerageRegionChange}
                 />
               </div>
             </div>
@@ -271,8 +396,9 @@ export default class AddCustListLayer extends Component {
             columns={custTableColumns}
             dataSource={newCustList}
             pagination={{
-              total: pageObject.total,
+              total: pageObject.totalCount,
               showTotal: this.showTotal,
+              onChange: this.handlePaginationChange,
             }}
           />
         </div>
@@ -280,16 +406,3 @@ export default class AddCustListLayer extends Component {
     );
   }
 }
-
-AddCustListLayer.propTypes = {
-  data: PropTypes.array,
-  visible: PropTypes.bool,
-  onOK: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onFilterCust: PropTypes.func.isRequired,
-};
-
-AddCustListLayer.defaultProps = {
-  visible: false,
-  data: [],
-};

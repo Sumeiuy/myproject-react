@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-09 17:00:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-15 16:58:09
+ * @Last Modified time: 2018-05-16 18:45:49
  * @description 营业部非投顾签约客户分配申请新建
  */
 
@@ -14,7 +14,7 @@ import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import BussinessDepartCustBoard from './BussinessDepartmentCustBoard';
 
-export default class componentName extends Component {
+export default class CreatDistributeApplyBoard extends Component {
   static propTypes = {
     modalKey: PropTypes.string.isRequired,
     visible: PropTypes.bool,
@@ -23,6 +23,10 @@ export default class componentName extends Component {
     callbacks: PropTypes.objectOf(PropTypes.func).isRequired,
     empList: PropTypes.array.isRequired,
     custListInExcel: PropTypes.array.isRequired,
+    custListByFilter: PropTypes.object.isRequired,
+    custListByQuery: PropTypes.array.isRequired,
+    empListByQuery: PropTypes.array.isRequired,
+    devEmpListByQuery: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -51,7 +55,17 @@ export default class componentName extends Component {
   }
 
   render() {
-    const { modalKey, visible, callbacks, empList, custListInExcel } = this.props;
+    const {
+      modalKey,
+      visible,
+      callbacks,
+      empList,
+      custListInExcel,
+      custListByFilter,
+      custListByQuery,
+      empListByQuery,
+      devEmpListByQuery,
+    } = this.props;
     const { modalLoading } = this.state;
     return (
       <div>
@@ -72,6 +86,10 @@ export default class componentName extends Component {
             callbacks={callbacks}
             empList={empList}
             custListInExcel={custListInExcel}
+            custListByFilter={custListByFilter}
+            custListByQuery={custListByQuery}
+            empListByQuery={empListByQuery}
+            devEmpListByQuery={devEmpListByQuery}
           />
         </CommonModal>
       </div>

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 13:50:40
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-15 16:57:47
+ * @Last Modified time: 2018-05-16 18:46:03
  * @description 营业部非投顾签约客户分配首页
  */
 
@@ -193,7 +193,16 @@ export default class Home extends PureComponent {
 
   render() {
     const { replace } = this.context;
-    const { location, list, empList, custListInExcel } = this.props;
+    const {
+      location,
+      list,
+      empList,
+      custListInExcel,
+      custListByFilter,
+      custListByQuery,
+      empListByQuery,
+      devEmpListByQuery,
+    } = this.props;
     const { createApplyModalShow } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
 
@@ -238,6 +247,14 @@ export default class Home extends PureComponent {
       getEmpList: this.props.getEmpList,
       // 新建页面的获取Excel表格中的客户列表
       getCustListInExcel: this.props.getCustListInExcel,
+      // 新建页面筛选客户列表
+      filterCustList: this.props.filterCustList,
+      // 根据关键字查询客户 api
+      queryDistributeCust: this.props.queryDistributeCust,
+      // 根据关键字查询服务经理 api
+      queryDistributeEmp: this.props.queryDistributeEmp,
+      // 根据关键字查询开发经理 api
+      queryDistributeDevEmp: this.props.queryDistributeDevEmp,
     };
 
     return (
@@ -260,6 +277,10 @@ export default class Home extends PureComponent {
               callbacks={callbacks}
               empList={empList}
               custListInExcel={custListInExcel}
+              custListByFilter={custListByFilter}
+              custListByQuery={custListByQuery}
+              empListByQuery={empListByQuery}
+              devEmpListByQuery={devEmpListByQuery}
             />
           )
         }

@@ -2,13 +2,13 @@
  * @Author: sunweibin
  * @Date: 2018-05-10 10:46:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-16 09:23:17
+ * @Last Modified time: 2018-05-16 19:36:04
  * @description 营业部非投顾签约客户分配弹出层Form
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Table, Radio, Upload, message } from 'antd';
+import { Table, Radio, Upload, message, Modal } from 'antd';
 import _ from 'lodash';
 
 import Icon from '../common/Icon';
@@ -33,6 +33,8 @@ import styles from './bussinessDepartmentCustBoard.less';
 const RadioGroup = Radio.Group;
 // 批量导入数据上传数据的Upload的上传地址
 const UPLOAD_URL = `${request.prefix}/file/uploadTemp`;
+// 客户列表的最大边界值,目前暂定 400
+const CUST_LIST_BOUNDARY_VALUE = 400;
 
 export default class BussinessDepartmentCustBoard extends Component {
   static propTypes = {
@@ -42,11 +44,20 @@ export default class BussinessDepartmentCustBoard extends Component {
     empList: PropTypes.array,
     // Excel上传的客户列表数据
     custListInExcel: PropTypes.array,
+    // 筛选后的客户列表数据
+    custListByFilter: PropTypes.object,
+    custListByQuery: PropTypes.array,
+    empListByQuery: PropTypes.array,
+    devEmpListByQuery: PropTypes.array,
   }
 
   static defaultProps = {
     empList: [],
     custListInExcel: [],
+    custListByQuery: [],
+    empListByQuery: [],
+    devEmpListByQuery: [],
+    custListByFilter: {},
   }
 
   constructor(props) {
@@ -57,6 +68,8 @@ export default class BussinessDepartmentCustBoard extends Component {
       approvalList: [],
       // 客户列表
       custList: [],
+      // 判断客户列表总数有无达到最大值
+      hasReachBoundary: false,
       // 服务经理列表
       managerList: [],
       // 客户分配规则
@@ -88,9 +101,10 @@ export default class BussinessDepartmentCustBoard extends Component {
     const { custList } = this.state;
     // 数组的 splice 方式会改变原数组，所以先 cloneDeep 一把
     const tempList = [...custList];
-    const index = _.findeIndex(custList, cust => cust.brokerNumber === record.brokerNumber);
+    const index = _.findIndex(custList, cust => cust.brokerNumber === record.brokerNumber);
     tempList.splice(index, 1);
-    this.setState({ custList: tempList });
+    // 删除的情况下肯定是不会达到客户列表的最大值的
+    this.setState({ custList: tempList, hasReachBoundary: false });
   }
 
   @autobind
@@ -102,7 +116,11 @@ export default class BussinessDepartmentCustBoard extends Component {
     tempList.splice(index, 1);
     const isShowRuleRadio = _.size(tempList) > 1;
     const newRule = isShowRuleRadio ? rule : '';
-    this.setState({ managerList: tempList, isShowRuleRadio, rule: newRule });
+    this.setState({
+      managerList: tempList,
+      isShowRuleRadio,
+      rule: newRule,
+    });
   }
 
   @autobind
@@ -110,7 +128,12 @@ export default class BussinessDepartmentCustBoard extends Component {
     if (!_.isEmpty(list)) {
       const { custList } = this.state;
       const newList = _.uniqBy([...custList, ...list], 'brokerNumber');
-      this.setState({ custList: newList });
+      // 客户列表的总数不能超过阀值
+      const hasReachBoundary = _.size(newList) >= CUST_LIST_BOUNDARY_VALUE;
+      this.setState({
+        custList: _.slice(newList, 0, CUST_LIST_BOUNDARY_VALUE),
+        hasReachBoundary,
+      });
     }
   }
 
@@ -130,11 +153,6 @@ export default class BussinessDepartmentCustBoard extends Component {
   }
 
   @autobind
-  handleBatchImportClick() {
-    console.warn('已经上传过一次批量导入了');
-  }
-
-  @autobind
   handleBeforeUploadFile(file) {
     const isExcel = fileHelper.isExcel(file.type);
     if (!isExcel) {
@@ -145,8 +163,23 @@ export default class BussinessDepartmentCustBoard extends Component {
 
   @autobind
   handleCustAddBtnClick() {
-    this.setState({
-      addCustModal: true,
+    // 判断如果客户列表数据等于了总数阀值，则弹框提示不能再添加
+    const { custList } = this.state;
+    const isCustListReachBoundaryValue = _.size(custList) >= CUST_LIST_BOUNDARY_VALUE;
+    if (isCustListReachBoundaryValue) {
+      this.showWarningOfReachedBoundary();
+    } else {
+      this.setState({
+        addCustModal: true,
+      });
+    }
+  }
+
+  @autobind
+  showWarningOfReachedBoundary() {
+    // 此方法用于在当客户列表总数达到可添加的最大值时，提醒申请人不能再添加
+    Modal.warning({
+      content: `添加的客户分配数量已经达到${CUST_LIST_BOUNDARY_VALUE},不能再添加更多!`,
     });
   }
 
@@ -179,6 +212,23 @@ export default class BussinessDepartmentCustBoard extends Component {
   }
 
   @autobind
+  handleFilterCustList(query) {
+    this.props.callbacks.filterCustList(query);
+  }
+
+  // 针对添加客户列表中的弹出层的客户、服务经理、开发经理的查询接口
+  @autobind
+  handleDropdownSelectQuery({ api, query }) {
+    if (api === 'cust') {
+      this.props.callbacks.queryDistributeCust(query);
+    } else if (api === 'emp') {
+      this.props.callbacks.queryDistributeEmp(query);
+    } else if (api === 'devEmp') {
+      this.props.callbacks.queryDistributeDevEmp(query);
+    }
+  }
+
+  @autobind
   handleAddEmpLyerClose() {
     this.setState({
       addEmpModal: false,
@@ -192,7 +242,8 @@ export default class BussinessDepartmentCustBoard extends Component {
 
   @autobind
   handleAddCustLayerSubmit(custList) {
-    console.warn('添加选择的客户到客户Table中： ', custList);
+    this.addCustInTable(custList);
+    this.handleAddCustLyerClose();
   }
 
   @autobind
@@ -240,9 +291,13 @@ export default class BussinessDepartmentCustBoard extends Component {
   // 因为当已经上传成功后，再次上传需要提示用户，之前的所有数据将被覆盖
   @autobind
   renderBatchImportDataDom() {
-    const { hasUploaded } = this.state;
-    if (hasUploaded) {
-      return (<a onClick={this.handleBatchImportClick} className={styles.downloadLink}>批量导入数据</a>);
+    // 目前可以连续添加和上传客户，只需要去重就行
+    // 但是客户列表数量有限，如果达到 CUST_LIST_BOUNDARY_VALUE,则不能再上传添加客户
+    const { hasReachBoundary } = this.state;
+    if (hasReachBoundary) {
+      return (
+        <a className={styles.downloadLink} onClick={this.showWarningOfReachedBoundary}>批量导入数据</a>
+      );
     }
     return (
       <Upload
@@ -263,6 +318,10 @@ export default class BussinessDepartmentCustBoard extends Component {
   render() {
     const {
       empList,
+      custListByFilter,
+      devEmpListByQuery,
+      custListByQuery,
+      empListByQuery,
     } = this.props;
     const {
       approvalList,
@@ -327,10 +386,15 @@ export default class BussinessDepartmentCustBoard extends Component {
           !addCustModal ? null
           : (
             <AddCustListLayer
+              devEmpListByQuery={devEmpListByQuery}
+              custListByQuery={custListByQuery}
+              empListByQuery={empListByQuery}
+              data={custListByFilter}
               visible={addCustModal}
               onOK={this.handleAddCustLayerSubmit}
               onClose={this.handleAddCustLyerClose}
-              onFilterCust={() => {}}
+              onFilterCust={this.handleFilterCustList}
+              onQuery={this.handleDropdownSelectQuery}
             />
           )
         }
