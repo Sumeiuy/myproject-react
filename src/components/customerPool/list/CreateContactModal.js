@@ -65,6 +65,8 @@ export default class CreateContactModal extends PureComponent {
     toggleServiceRecordModal: PropTypes.func,
     addServeRecord: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
+    addCallRecord: PropTypes.func.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -79,8 +81,8 @@ export default class CreateContactModal extends PureComponent {
     this.state = {
       visible: props.visible,
     };
-    this.phoneStartTime = '';
-    this.phoneEndTime = '';
+    this.startTime = '';
+    this.endTime = '';
   }
 
   @autobind
@@ -127,10 +129,10 @@ export default class CreateContactModal extends PureComponent {
   @autobind
   handlePhoneEnd() {
     // 没有成功发起通话
-    if (!moment.isMoment(this.phoneStartTime)) {
+    if (!moment.isMoment(this.startTime)) {
       return;
     }
-    this.phoneEndTime = moment();
+    this.endTime = moment();
     const {
       currentCustId,
       currentCustName,
@@ -144,10 +146,10 @@ export default class CreateContactModal extends PureComponent {
     const { key: firstServiceTypeKey, children = [] } = firstServiceType;
     const [firstFeedback = {}] = children;
     const phoneDuration = date.calculateDuration(
-      this.phoneStartTime.valueOf(),
-      this.phoneEndTime.valueOf(),
+      this.startTime.valueOf(),
+      this.endTime.valueOf(),
     );
-    const serviceContentDesc = `${this.phoneStartTime.format('HH时mm分ss秒')}给客户发起语音通话，时长${phoneDuration}。`;
+    const serviceContentDesc = `${this.startTime.format('HH:mm:ss')}给客户发起语音通话，时长${phoneDuration}。`;
     let payload = {
       // 经济客户号
       custId: currentCustId,
@@ -164,7 +166,7 @@ export default class CreateContactModal extends PureComponent {
       // 服务记录内容
       serveContentDesc: serviceContentDesc,
       // 服务时间
-      serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
+      serveTime: this.endTime.format('YYYY-MM-DD HH:mm'),
       // 反馈时间
       feedBackTime: moment().format('YYYY-MM-DD'),
       // 添加成功后需要显示message提示
@@ -178,6 +180,8 @@ export default class CreateContactModal extends PureComponent {
       };
     }
     addServeRecord(payload).then(() => {
+      // 关联通话和服务记录
+      this.saveServiceRecordAndPhoneRelation();
       // 回调，关闭电话联系方式弹窗
       onClose();
       // 显示添加服务记录弹窗
@@ -193,8 +197,23 @@ export default class CreateContactModal extends PureComponent {
 
   // 通话开始
   @autobind
-  handlePhoneConnected() {
-    this.phoneStartTime = moment();
+  handlePhoneConnected(data) {
+    this.startTime = moment();
+    this.callId = data.uuid;
+  }
+
+  /**
+   * 通话的uuid关联服务记录
+   */
+  @autobind
+  saveServiceRecordAndPhoneRelation() {
+    const { currentCommonServiceRecord = {} } = this.props;
+    if (this.callId) {
+      this.props.addCallRecord({
+        uuid: this.callId,
+        projectId: currentCommonServiceRecord.id,
+      });
+    }
   }
 
   /**
@@ -308,7 +327,7 @@ export default class CreateContactModal extends PureComponent {
         }
       } else if (!_.isEmpty(perCustomerContactInfo)) {
         // 选出4中联系方式中不为空的联系方式
-        const allTelInfo = _.omit(_.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']), _.isEmpty);
+        const allTelInfo = _.omitBy(_.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']), _.isEmpty);
         // 将所有联系方式用一个一维数组来存放
         const phones = _.flatten(Object.values(allTelInfo)) || EMPTY_LIST;
         // 筛选出联系方式对象中contactValue不为空的，判断是否有联系方式

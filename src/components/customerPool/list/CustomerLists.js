@@ -130,6 +130,8 @@ export default class CustomerLists extends PureComponent {
     queryHoldingProductReqState: PropTypes.bool,
     isNotSaleDepartment: PropTypes.bool.isRequired,
     dataForNextPage: PropTypes.object.isRequired,
+    addCallRecord: PropTypes.func.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -547,6 +549,8 @@ export default class CustomerLists extends PureComponent {
       queryHoldingProduct,
       holdingProducts,
       queryHoldingProductReqState,
+      addCallRecord,
+      currentCommonServiceRecord,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -750,6 +754,8 @@ export default class CustomerLists extends PureComponent {
               toggleServiceRecordModal={toggleServiceRecordModal}
               addServeRecord={addServeRecord}
               motSelfBuiltFeedbackList={motSelfBuiltFeedbackList}
+              addCallRecord={addCallRecord}
+              currentCommonServiceRecord={currentCommonServiceRecord}
             /> : null
         }
       </div>
