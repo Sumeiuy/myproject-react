@@ -47,7 +47,7 @@ function InfoArea(props) {
                         (<div
                           className={styles.row}
                         >
-                          <EllipsisMultipleLineText text={item.value}>
+                          <EllipsisMultipleLineText>
                             <ForgeryRichText text={item.value} />
                           </EllipsisMultipleLineText>
                         </div>

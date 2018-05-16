@@ -143,7 +143,7 @@ export default class ServiceRecordForm extends PureComponent {
            * 标签，需要格式化展示出来
            */}
           <div className={styles.content}>
-            <EllipsisMultipleLineText text={serviceTips}>
+            <EllipsisMultipleLineText>
               <ForgeryRichText text={serviceTips} />
             </EllipsisMultipleLineText>
           </div>
