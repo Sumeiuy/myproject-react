@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-10 10:46:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-15 17:35:17
+ * @Last Modified time: 2018-05-16 09:23:17
  * @description 营业部非投顾签约客户分配弹出层Form
  */
 import React, { Component } from 'react';
@@ -84,7 +84,13 @@ export default class BussinessDepartmentCustBoard extends Component {
 
   @autobind
   deleteCust(record) {
-    console.warn('deleteCust: ', record);
+    // 目前客户列表数据删除由前端完成
+    const { custList } = this.state;
+    // 数组的 splice 方式会改变原数组，所以先 cloneDeep 一把
+    const tempList = [...custList];
+    const index = _.findeIndex(custList, cust => cust.brokerNumber === record.brokerNumber);
+    tempList.splice(index, 1);
+    this.setState({ custList: tempList });
   }
 
   @autobind
@@ -197,8 +203,7 @@ export default class BussinessDepartmentCustBoard extends Component {
     // 如果原有的 managerList 数据是空，则直接使用list数据
     let tempList = [...list];
     if (!_.isEmpty(managerList)) {
-      const diffList = _.differenceBy(list, managerList, 'empId');
-      tempList = [...diffList, ...managerList];
+      tempList = _.uniqBy([...list, ...managerList], 'empId');
     }
     const newList = tempList.map(item => ({
       emp: `${item.empName}(${item.empId})`,
