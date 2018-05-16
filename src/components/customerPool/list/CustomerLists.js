@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Checkbox, message } from 'antd';
+import { Checkbox } from 'antd';
 import SaleDepartmentFilter from './SaleDepartmentFilter';
 import ServiceManagerFilter from './ServiceManagerFilter';
 import CustomerRow from './CustomerRow';
@@ -88,10 +88,8 @@ export default class CustomerLists extends PureComponent {
     entertype: PropTypes.string.isRequired,
     condition: PropTypes.object.isRequired,
     getCustContact: PropTypes.func.isRequired,
-    getCustEmail: PropTypes.func.isRequired,
     getServiceRecord: PropTypes.func.isRequired,
     custContactData: PropTypes.object.isRequired,
-    custEmail: PropTypes.object.isRequired,
     serviceRecordData: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool,
@@ -103,8 +101,6 @@ export default class CustomerLists extends PureComponent {
     expandAll: PropTypes.bool,
     orgId: PropTypes.string,
     searchServerPersonList: PropTypes.array.isRequired,
-    isLoadingEnd: PropTypes.bool.isRequired,
-    onRequestLoading: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
     handleSelect: PropTypes.func.isRequired,
     handleCheck: PropTypes.func.isRequired,
@@ -150,16 +146,12 @@ export default class CustomerLists extends PureComponent {
       currentCustId: '',
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
-      emailCustId: '',
     };
     this.checkMainServiceManager(props);
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      custContactData: prevCustContactData = EMPTY_OBJECT,
-      serviceRecordData: prevServiceRecordData = EMPTY_ARRAY,
-      custEmail,
       location: {
         query: {
           ptyMngId: prePtyMngId,
@@ -167,53 +159,14 @@ export default class CustomerLists extends PureComponent {
       },
      } = this.props;
     const {
-      custContactData: nextCustContactData = EMPTY_OBJECT,
-      serviceRecordData: nextServiceRecordData = EMPTY_ARRAY,
-      custEmail: nextCustEmail,
       location: {
         query: {
           ptyMngId,
         },
       },
      } = nextProps;
-    const { currentCustId, isShowContactModal } = this.state;
-    const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
-    const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
-    const prevRecord = prevServiceRecordData[currentCustId] || EMPTY_OBJECT;
-    const nextRecord = nextServiceRecordData[currentCustId] || EMPTY_OBJECT;
-    if ((prevContact !== nextContact || prevRecord !== nextRecord)) {
-      if (!isShowContactModal) {
-        this.setState({
-          isShowContactModal: true,
-          modalKey: `modalKeyCount${modalKeyCount++}`,
-        });
-      }
-    }
-    if (custEmail !== nextCustEmail) {
-      this.getEmail(nextCustEmail[currentCustId]);
-    }
     if (prePtyMngId !== ptyMngId) {
       this.checkMainServiceManager(nextProps);
-    }
-  }
-
-  // 判断已有信息邮箱是否存在
-  @autobind
-  getEmail(address) {
-    let finded = 0;// 邮件联系
-    if (!_.isEmpty(address.orgCustomerContactInfoList)) {
-      const index = _.findLastIndex(address.orgCustomerContactInfoList,
-        val => val.mainFlag);
-      finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
-        val => val.mainFlag);
-    } else if (!_.isEmpty(address.perCustomerContactInfo)) {
-      finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
-        val => val.mainFlag);
-    } else {
-      finded = -1;
-    }
-    if (finded === -1) {
-      message.error('暂无客户邮箱，请与客户沟通尽快完善信息');
     }
   }
 
@@ -301,42 +254,17 @@ export default class CustomerLists extends PureComponent {
     const {
       getCustContact,
       getServiceRecord,
-      custContactData,
-      onRequestLoading,
     } = this.props;
-    this.setState({
-      custName,
-      currentCustId: custId,
-      custType,
-    }, () => {
-      if (_.isEmpty(custContactData[custId])) {
-        getCustContact({
-          custId,
-        });
-      } else {
-        this.setState({
-          isShowContactModal: true,
-          modalKey: `modalKeyCount${modalKeyCount++}`,
-        });
-      }
-      // 请求服务记录不需要作缓存
-      getServiceRecord({
-        custId,
+    // 联系人依赖联系人信息和服务记录信息
+    const getContactInfo = Promise.all([getCustContact({ custId }), getServiceRecord({ custId })]);
+    getContactInfo.then(() => {
+      this.setState({
+        custName,
+        currentCustId: custId,
+        custType,
+        isShowContactModal: true,
+        modalKey: `modalKeyCount${modalKeyCount++}`,
       });
-      onRequestLoading();
-    });
-  }
-
-  @autobind
-  handleSendEmail(item) {
-    const { getCustEmail } = this.props;
-    const { custId } = item;
-    getCustEmail({
-      custId,
-    });
-    this.setState({
-      currentCustId: custId,
-      emailCustId: custId,
     });
   }
 
@@ -463,14 +391,14 @@ export default class CustomerLists extends PureComponent {
     if (_.includes(ENTERLIST1, source)) {
       // 从首页的潜在业务点击进入的列表页
       if (this.orgIdIsMsm()) {
-        return [allSaleDepartment, ...taskManagerResp];
+        return _.uniqBy([allSaleDepartment, ...taskManagerResp], 'id');
       }
       return taskManagerResp;
     }
     if (_.includes(ENTERLIST2, source)) {
       // 有首页指标查询权限 且 首页绩效指标客户范围选中的是 我的客户
       if (this.orgIdIsMsm()) {
-        return [allSaleDepartment, ...firstPageResp];
+        return _.uniqBy([allSaleDepartment, ...firstPageResp], 'id');
       }
       return firstPageResp;
     }
@@ -481,7 +409,6 @@ export default class CustomerLists extends PureComponent {
     const {
       isShowContactModal,
       currentCustId,
-      emailCustId,
       custType,
       modalKey,
       custName,
@@ -498,7 +425,6 @@ export default class CustomerLists extends PureComponent {
       getCustIncome,
       monthlyProfits,
       location,
-      custEmail,
       custContactData,
       serviceRecordData,
       dict,
@@ -509,7 +435,6 @@ export default class CustomerLists extends PureComponent {
       orgId,
       collectCustRange,
       expandAll,
-      isLoadingEnd,
       searchServerPersonList,
       empInfo,
       handleCheck,
@@ -537,7 +462,6 @@ export default class CustomerLists extends PureComponent {
     // 服务记录执行方式字典
     const { executeTypes = EMPTY_ARRAY, serveWay = EMPTY_ARRAY } = dict;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
-    const finalEmailData = custEmail[emailCustId] || EMPTY_OBJECT;
     const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
     const {
       selectedIds = '',
@@ -663,11 +587,8 @@ export default class CustomerLists extends PureComponent {
                     isAllSelect={isAllSelectBool}
                     selectedIds={selectIdsArr}
                     onChange={this.handleSingleSelect}
-                    onSendEmail={this.handleSendEmail}
                     createContact={this.showCreateContact}
                     key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
-                    custEmail={finalEmailData}
-                    emailCustId={emailCustId}
                     custIncomeReqState={custIncomeReqState}
                     toggleServiceRecordModal={toggleServiceRecordModal}
                     formatAsset={formatAsset}
@@ -694,16 +615,6 @@ export default class CustomerLists extends PureComponent {
           <Pagination
             {...paginationOption}
           />
-          {
-            /*  <Checkbox
-               checked={isAllSelectBool}
-               onChange={this.selectAll}
-               className={styles.selectAllTwo}
-               disabled={_.isEmpty(custList)}
-             >
-               全选
-           </Checkbox> */
-          }
         </div>
         {
           BottomFixedBoxVisible ?
@@ -724,7 +635,7 @@ export default class CustomerLists extends PureComponent {
             /> : null
         }
         {
-          (isShowContactModal && isLoadingEnd) ?
+          isShowContactModal ?
             <CreateContactModal
               handleCollapseClick={handleCollapseClick}
               handleAddServiceRecord={handleAddServiceRecord}

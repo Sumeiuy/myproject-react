@@ -1,0 +1,60 @@
+.moreFilterMenu {
+  display: inline-block;
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  :global {
+    .ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
+      height: 38px;
+      line-height: 38px;
+      color: #333;
+      font-weight: 600;
+
+      & > span:first-child {
+        display: inline-block;
+        padding-left: 14px;
+      }
+
+      &:hover {
+        background-color: #e6f3fc;
+      }
+
+      .ant-menu-submenu-arrow {
+        left: 10px;
+        color: #333;
+      }
+    }
+
+    .ant-menu-inline, .ant-menu-vertical, .ant-menu-vertical-left {
+      border-right: 0;
+    }
+
+    .ant-menu-inline .ant-menu-item, .ant-menu-inline .ant-menu-submenu-title {
+      width: auto;
+      font-size: 14px;
+    }
+
+    .ant-menu-sub.ant-menu-inline > .ant-menu-item {
+      height: 38px;
+      line-height: 38px;
+      padding-left: 20px;
+      margin: 0;
+
+      &:hover {
+        background-color: #e6f3fc;
+      }
+    }
+  }
+}
+
+.checkbox {
+  :global .ant-checkbox-wrapper {
+    & > span {
+      font-size: 14px;
+      font-weight: normal;
+      color: #4a4a4a;
+    }
+    font-size: 14px;
+    font-weight: normal;
+  }
+}

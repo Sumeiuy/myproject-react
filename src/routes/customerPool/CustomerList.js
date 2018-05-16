@@ -10,15 +10,15 @@ import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Row, Col } from 'antd';
+/* import { Row, Col} from 'antd'; */
 
-import TimeCycle from '../../components/customerPool/list/TimeCycle';
-import CustomerTotal from '../../components/customerPool/list/CustomerTotal';
+/* import TimeCycle from '../../components/customerPool/list/TimeCycle';
+import CustomerTotal from '../../components/customerPool/list/CustomerTotal'; */
 import Filter from '../../components/customerPool/list/Filter';
 import CustomerLists from '../../components/customerPool/list/CustomerLists';
 import { permission, emp } from '../../helper';
 import withRouter from '../../decorators/withRouter';
-import { getCustomerListFilters } from '../../helper/page/customerPool';
+/* import { getCustomerListFilters } from '../../helper/page/customerPool'; */
 import {
   CUST_MANAGER,
   ORG,
@@ -36,13 +36,130 @@ const CUR_PAGESIZE = 20; // 默认页大小
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
 
+// 将url上面的filter编码解析为对象
+function transfromFilterValFromUrl(filters) {
+  // 处理由‘|’分隔的多个过滤器
+  const filtersArray = filters ? filters.split('|') : [];
+
+  return _.reduce(filtersArray, (result, value) => {
+    const [name, code] = value.split('.');
+    let filterValue = code;
+
+    // 如果是多选，需要继续处理','分割的多选值
+    if (code.indexOf(',') > -1) {
+      filterValue = code.split(',');
+    }
+
+    if (name === 'minFee' || name === 'totAset') {
+      const minVal = filterValue[0] && filterValue[0].replace('-', '.');
+      const maxVal = filterValue[1] && filterValue[1].replace('-', '.');
+      filterValue = [minVal, maxVal];
+    }
+
+    // 如果对应的过滤器是普通股基佣金率
+    result[name] = filterValue; // eslint-disable-line
+    return result;
+  }, {});
+}
+
+function getFilterParam(filterObj) {
+  const param = {};
+  param.customType = filterObj.customType || null;
+  param.custClass = filterObj.custClass || null;
+  param.riskLvl = filterObj.riskLvl || null;
+
+/*   if (filterObj.primaryKeyLabels) {
+    param.primaryKeyLabels = [].concat(filterObj.primaryKeyLabels);
+  } */
+
+  const primaryKeyLabels =
+    _.isArray(filterObj.primaryKeyLabels) ?
+      filterObj.primaryKeyLabels[0] : filterObj.primaryKeyLabels;
+
+  if (primaryKeyLabels) {
+    param.primaryKeyLabels = [].concat(primaryKeyLabels);
+  }
+
+  if (filterObj.rights) {
+    param.rights = [].concat(filterObj.rights);
+  }
+  if (filterObj.unrights) {
+    param.unrights = [].concat(filterObj.unrights);
+  }
+  if (filterObj.businessOpened && filterObj.businessOpened[0]) {
+    param.businessOpened = {
+      dateType: filterObj.businessOpened[0] || null,
+      businessType: filterObj.businessOpened[1] || null,
+    };
+    if (param.businessOpened.businessType === 'all') {
+      param.businessOpened.businessType = null;
+    }
+  }
+  if (filterObj.customerLevel) {
+    param.customerLevel = [].concat(filterObj.customerLevel);
+  }
+
+  if (filterObj.dateOpened) {
+    param.dateOpened = {
+      dateOpenedStart: filterObj.dateOpened[0] || null,
+      dateOpenedEnd: filterObj.dateOpened[1] || null,
+    };
+  }
+
+  if (filterObj.accountStatus) {
+    param.accountStatus = [].concat(filterObj.accountStatus);
+  }
+
+  if (filterObj.minFee) {
+    const min = filterObj.minFee[0];
+    const max = filterObj.minFee[1];
+
+    param.minFee = {
+      minVal: min ? (min / 1000).toFixed(5) : null,
+      maxVal: max ? (max / 1000).toFixed(5) : null,
+    };
+  }
+
+  const primaryKeyPrdts =
+    _.isArray(filterObj.primaryKeyPrdts) ? filterObj.primaryKeyPrdts[0] : filterObj.primaryKeyPrdts;
+
+  if (primaryKeyPrdts) {
+    param.primaryKeyPrdts = [].concat(primaryKeyPrdts);
+  }
+
+  if (filterObj.totAset) {
+    param.totAset = {
+      minVal: filterObj.totAset[0] || null,
+      maxVal: filterObj.totAset[1] || null,
+    };
+  }
+
+  return param;
+}
+
+function getSortParam(query) {
+  const sortsReqList = [];
+  if (query.sortType || query.sortDirection) {
+    sortsReqList.push({
+      sortType: query.sortType,
+      sortDirection: query.sortDirection,
+    });
+  } else {
+    sortsReqList.push(DEFAULT_SORT);
+  }
+
+  return {
+    sortsReqList,
+  };
+}
+
+
 const effects = {
   allInfo: 'customerPool/getAllInfo',
   getDictionary: 'customerPool/getDictionary',
   getCustomerList: 'customerPool/getCustomerList',
   getCustIncome: 'customerPool/getCustIncome',
   getCustContact: 'customerPool/getCustContact',
-  getCustEmail: 'customerPool/getCustEmail', // 获取邮件地址
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustomerScope: 'customerPool/getCustomerScope',
   getSearchServerPersonList: 'customerPool/getSearchServerPersonList',
@@ -80,8 +197,6 @@ const mapStateToProps = state => ({
   monthlyProfits: state.customerPool.monthlyProfits,
   // 联系方式数据
   custContactData: state.customerPool.custContactData,
-  // 邮箱地址
-  custEmail: state.customerPool.custEmail,
   // 最近服务记录
   serviceRecordData: state.customerPool.serviceRecordData,
   // 统计周期
@@ -90,10 +205,6 @@ const mapStateToProps = state => ({
   interfaceState: state.loading.effects,
   // 服务人员列表
   searchServerPersonList: state.customerPool.searchServerPersonList,
-  // 联系方式接口loading
-  isContactLoading: state.loading.effects[effects.getCustContact],
-  // 服务记录接口loading
-  isRecordLoading: state.loading.effects[effects.getServiceRecord],
   // 列表页的服务营业部
   serviceDepartment: state.customerPool.serviceDepartment,
   filesList: state.customerPool.filesList,
@@ -104,6 +215,7 @@ const mapStateToProps = state => ({
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
   // 持仓产品详情
   holdingProducts: state.customerPool.holdingProducts,
+  searchedProductList: state.customerPool.productList,
 });
 
 const mapDispatchToProps = {
@@ -113,7 +225,6 @@ const mapDispatchToProps = {
   getCustomerScope: fetchDataFunction(true, effects.getCustomerScope),
   getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
   getCustContact: fetchDataFunction(true, effects.getCustContact),
-  getCustEmail: fetchDataFunction(true, effects.getCustEmail),
   handleFilter: fetchDataFunction(false, effects.handleFilter),
   handleSelect: fetchDataFunction(false, effects.handleSelect),
   handleOrder: fetchDataFunction(false, effects.handleOrder),
@@ -136,6 +247,7 @@ const mapDispatchToProps = {
     type: 'customerPool/clearCreateTaskData',
     payload: query || {},
   }),
+  queryProduct: fetchDataFunction(true, 'customerPool/queryProduct'),
   // 获取uuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
   getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
@@ -163,9 +275,7 @@ export default class CustomerList extends PureComponent {
     page: PropTypes.object.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     getCustContact: PropTypes.func.isRequired,
-    getCustEmail: PropTypes.func.isRequired,
     custContactData: PropTypes.object,
-    custEmail: PropTypes.object,
     getServiceRecord: PropTypes.func.isRequired,
     serviceRecordData: PropTypes.object,
     cycle: PropTypes.array,
@@ -200,19 +310,21 @@ export default class CustomerList extends PureComponent {
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     queryHoldingProduct: PropTypes.func.isRequired,
+    queryProduct: PropTypes.func.isRequired,
     holdingProducts: PropTypes.object.isRequired,
+    searchedProductList: PropTypes.array,
   }
 
   static defaultProps = {
     custRange: [],
     empInfo: {},
     custContactData: EMPTY_OBJECT,
-    custEmail: EMPTY_OBJECT,
     serviceRecordData: EMPTY_OBJECT,
     cycle: EMPTY_LIST,
     isContactLoading: false,
     isRecordLoading: false,
     filesList: [],
+    searchedProductList: [],
   }
 
   static childContextTypes = {
@@ -224,10 +336,7 @@ export default class CustomerList extends PureComponent {
     this.state = {
       expandAll: false,
       queryParam: {},
-      // createCustRange: [],
       cycleSelect: '',
-      // 初始化没有loading
-      isLoadingEnd: true,
     };
     // HTSC 首页指标查询
     this.hasIndexViewPermission = permission.hasIndexViewPermission();
@@ -270,60 +379,33 @@ export default class CustomerList extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const {
-      // custRange: preCustRange,
       location: {
         query: preQuery,
       },
-      isContactLoading = false,
-      isRecordLoading = false,
-      // getFiltersOfSightingTelescope,
     } = this.props;
     const {
-      // custRange,
       location: {
         query,
       },
-      isContactLoading: nextContactLoading = false,
-      isRecordLoading: nextRecordLoading = false,
     } = nextProps;
+
     // query变化、权限列表存在变化和职位切换时，重新获取列表数据
-    const {
-      selectedIds: preSelectedIds,
-      selectAll: preSelectAll,
-      ...preOtherQuery
-    } = preQuery;
-    const {
-      selectedIds,
-      selectAll,
-      ...otherQuery
-    } = query;
+    const preOtherQuery = _.omit(preQuery, ['selectedIds', 'selectAll']);
+    const otherQuery = _.omit(query, ['selectedIds', 'selectAll']);
     if (!_.isEqual(preOtherQuery, otherQuery)) {
       this.getCustomerList(nextProps);
     }
-
-    // loading状态
-    // 只有全部loading完毕才触发isLoadingEnd
-    if ((isContactLoading && !nextContactLoading && isRecordLoading && !nextRecordLoading)
-      || (!nextContactLoading && !nextRecordLoading)) {
-      this.setState({
-        isLoadingEnd: true,
-      });
-    }
   }
 
-  // 获取列表数据
   @autobind
   getCustomerList(props) {
     const {
-      cycle = [],
       getCustomerData, location: { query },
     } = props;
+
     const keyword = decodeURIComponent(query.q);
-    // 标签名字与标签描述
-    const labelName = decodeURIComponent(query.labelName);
-    const labelDesc = decodeURIComponent(query.labelDesc);
-    const labelMapping = decodeURIComponent(query.labelMapping);
-    const productName = query.productName && decodeURIComponent(query.productName);
+    const labelName = decodeURIComponent(query.labelName) || null;
+
     const param = {
       // 必传，当前页
       curPageNum: query.curPageNum || CUR_PAGE,
@@ -332,83 +414,49 @@ export default class CustomerList extends PureComponent {
       // 不同的入口进入列表页面
       enterType: ENTER_TYPE[query.source],
     };
-    if (query.source === 'search') { // 搜索框
-      param.searchTypeReq = 'ALL';
-      param.searchText = keyword;
-    } else if (_.includes(['tag', 'sightingTelescope'], query.source)) { // 热词或者瞄准镜
-      // param.labels = [query.labelMapping];
-      param.primaryKey = [labelMapping];
-      param.searchTypeReq = query.type;
-      param.searchText = keyword;
-      if (query.source === 'sightingTelescope') {
-        // 如果是瞄准镜，需要加入queryLabelReq
-        param.queryLabelReq = {
-          labelName,
-          labelDesc,
-        };
-      }
-    } else if (query.source === 'association' || query.source === 'external') { // 联想词
-      // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
-      param.searchTypeReq = query.type;
-      param.searchText = labelName;
-      param.primaryKey = [labelMapping];
-      param.productName = productName;
-    } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) { // 经营指标或者投顾绩效
-      // 业绩中的时间周期
-      param.dateType = query.cycleSelect || (cycle[0] || {}).key;
-      param.custType = this.getPostCustType(query);
-    }
-    // 客户业绩参数
-    if (query.customerType) {
-      param.performanceForm = {
-        type: 'customerType',
-        value: query.customerType,
-      };
-    }
-    // 业绩业务参数
-    if (query.rightType) {
-      param.performanceForm = {
-        type: 'rightType',
-        value: query.rightType,
-      };
-    }
 
     param.orgId = this.getPostOrgId(query);
     param.ptyMngId = this.getPostPtyMngId(query);
-    // 过滤数组
-    const filtersReq = [];
-    // 排序条件
-    const sortsReqList = [];
-    if (query.filters) {
-      const filtersArray = query.filters ? query.filters.split('|') : [];
-      const {
-        filters,
-        labels,
-      } = getCustomerListFilters(filtersArray, labelMapping, filtersReq);
-      param.filtersReq = filters;
-      if (query.source === 'sightingTelescope') {
-        // param.labels = labels;
-        param.primaryKey = labels;
+
+    if (query.source === 'search') {   // 搜索框模糊下钻
+      param.searchTypeReq = 'ALL';
+      param.searchText = keyword;
+    }
+
+    if (query.source === 'association') {
+      param.searchTypeReq = query.type;
+      param.searchText = labelName;
+    }
+
+    if (query.source === 'association') {
+      if (query.type === 'PRODUCT') {
+        param.searchTypeReq = null;
+        param.searchText = null;
       }
     }
-    if (query.sortType || query.sortDirection) {
-      sortsReqList.push({
-        sortType: query.sortType,
-        sortDirection: query.sortDirection,
-      });
-    } else {
-      sortsReqList.push(DEFAULT_SORT);
+
+    if (query.source === 'tag' || query.source === 'sightingTelescope') {
+      param.searchTypeReq = null;
+      param.searchText = null;
     }
-    if (!_.isEmpty(filtersReq)) {
-      param.filtersReq = filtersReq;
-    }
-    if (!_.isEmpty(sortsReqList)) {
-      param.sortsReqList = sortsReqList;
-    }
+
+    const filterObj = transfromFilterValFromUrl(query.filters);
+    const filterParam = getFilterParam(filterObj);
+    const sortParam = getSortParam(query);
+
+    const finalParam = {
+      ...param,
+      ...filterParam,
+      ...sortParam,
+    };
+
+    // console.log('.................................................filterObj', finalParam);
+
     this.setState({
-      queryParam: param,
+      queryParam: finalParam,
     });
-    getCustomerData(_.omit(param, 'productName'));
+
+    getCustomerData(finalParam);
   }
 
   // 获取 客户列表接口的orgId入参的值
@@ -465,13 +513,6 @@ export default class CustomerList extends PureComponent {
     return ORG;
   }
 
-  @autobind
-  setLoading() {
-    this.setState({
-      isLoadingEnd: false,
-    });
-  }
-
   // 组织机构树切换和时间周期切换
   @autobind
   updateQueryState(state) {
@@ -500,7 +541,7 @@ export default class CustomerList extends PureComponent {
 
   // 筛选变化
   @autobind
-  filterChange(obj) {
+  filterChange(obj, isDeleteFilterFromLocation = false) {
     const {
       replace,
       location: { query, pathname },
@@ -515,18 +556,26 @@ export default class CustomerList extends PureComponent {
     // 手动上传日志
     handleFilter({ name: obj.name, value: obj.value });
     const index = _.findIndex(filtersArray, o => o.split('.')[0] === obj.name);
-    const filterItem = `${obj.name}.${obj.value}`;
-    if (index > -1) {
-      newFilterArray[index] = filterItem;
+    if (isDeleteFilterFromLocation) {
+      if (index > -1) {
+        newFilterArray[index] = '';
+      }
     } else {
-      newFilterArray.push(filterItem);
+      const filterItem = `${obj.name}.${obj.value}`;
+      if (index > -1) {
+        newFilterArray[index] = filterItem;
+      } else {
+        newFilterArray.push(filterItem);
+      }
     }
+
+    const stringifyFilters = newFilterArray.filter(item => item !== '').join(filterSeperator);
     replace({
       pathname,
       query: {
         ...query,
         // [obj.name]: obj.value,
-        filters: newFilterArray.join(filterSeperator),
+        filters: stringifyFilters,
         curPageNum: 1,
         selectAll: false,
         selectedIds: '',
@@ -596,10 +645,8 @@ export default class CustomerList extends PureComponent {
       monthlyProfits,
       getCustIncome,
       getCustContact,
-      getCustEmail,
       getServiceRecord,
       custContactData,
-      custEmail,
       serviceRecordData,
       cycle,
       toggleServiceRecordModal,
@@ -623,6 +670,8 @@ export default class CustomerList extends PureComponent {
       sendCustsServedByPostnResult,
       queryHoldingProduct,
       holdingProducts,
+      queryProduct,
+      searchedProductList,
     } = this.props;
     const {
       sortDirection,
@@ -633,14 +682,14 @@ export default class CustomerList extends PureComponent {
       curPageNum,
       q,
       cycleSelect,
-      bname,
+     /*  bname, */
     } = location.query;
     // 排序的默认值 ： 总资产降序
     let reorderValue = DEFAULT_SORT;
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
-    const { expandAll, queryParam, isLoadingEnd } = this.state;
+    const { expandAll, queryParam } = this.state;
     const custRangeProps = {
       orgId,
       custRange: serviceDepartment,
@@ -656,21 +705,23 @@ export default class CustomerList extends PureComponent {
     }
     return (
       <div className={styles.customerlist}>
-        <Row type="flex" justify="space-between" align="middle">
+        {/*   <Row type="flex" justify="space-between" align="middle">
+            <Col span={12}>
+              {
+                <CustomerTotal type={source} num={page.total} bname={bname} />
+              }
+            </Col>
           <Col span={12}>
-            {
-              <CustomerTotal type={source} num={page.total} bname={bname} />
-            }
-          </Col>
-          <Col span={12}>
-            <TimeCycle
-              source={source}
-              {...cycleTimeProps}
-            />
-          </Col>
-        </Row>
+              <TimeCycle
+                source={source}
+                {...cycleTimeProps}
+              />
+            </Col>
+        </Row> */}
         <Filter
           sightingTelescopeFilters={sightingTelescopeFilters}
+          queryProduct={queryProduct}
+          searchedProductList={searchedProductList}
           dict={dict}
           location={location}
           onFilterChange={this.filterChange}
@@ -700,10 +751,8 @@ export default class CustomerList extends PureComponent {
           onSizeChange={this.handleSizeChange}
           getCustIncome={getCustIncome}
           getCustContact={getCustContact}
-          getCustEmail={getCustEmail}
           getServiceRecord={getServiceRecord}
           custContactData={custContactData}
-          custEmail={custEmail}
           serviceRecordData={serviceRecordData}
           toggleServiceRecordModal={toggleServiceRecordModal}
           reorderValue={reorderValue}
@@ -711,8 +760,6 @@ export default class CustomerList extends PureComponent {
           searchServerPersonList={searchServerPersonList}
           {...cycleTimeProps}
           {...custRangeProps}
-          isLoadingEnd={isLoadingEnd}
-          onRequestLoading={this.setLoading}
           clearCreateTaskData={clearCreateTaskData}
           queryCustUuid={queryCustUuid}
           getCeFileList={getCeFileList}

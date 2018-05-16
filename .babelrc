@@ -23,7 +23,6 @@
     "production": {},
     "development": {
       "plugins": [
-        "transform-react-jsx-source",
         [
           "dva-hmr", {
             "container": ".react-app",
