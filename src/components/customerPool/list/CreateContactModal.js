@@ -11,6 +11,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { Modal, Button } from 'antd';
 import Icon from '../../common/Icon';
+import Mask from '../../common/mask';
 import Collapse from './CreateCollapse';
 import { date } from '../../../helper';
 import logable from '../../../decorators/logable';
@@ -128,6 +129,8 @@ export default class CreateContactModal extends PureComponent {
    */
   @autobind
   handlePhoneEnd() {
+    // 点击挂电话隐藏蒙层
+    this.setState({ showMask: false });
     // 没有成功发起通话
     if (!moment.isMoment(this.startTime)) {
       return;
@@ -202,6 +205,12 @@ export default class CreateContactModal extends PureComponent {
     this.callId = data.uuid;
   }
 
+  // 点击号码开始打电话显示蒙层
+  @autobind
+  handlePhoneClick() {
+    this.setState({ showMask: true });
+  }
+
   /**
    * 通话的uuid关联服务记录
    */
@@ -244,6 +253,7 @@ export default class CreateContactModal extends PureComponent {
         {
           (!_.isEmpty(mainContactInfo.cellInfo) || !_.isEmpty(personalContactInfo.mainTelInfo)) &&
           <Phone
+            onClick={this.handlePhoneClick}
             onConnected={this.handlePhoneConnected}
             onEnd={this.handlePhoneEnd}
             number={custType === 'per' ?
@@ -260,6 +270,7 @@ export default class CreateContactModal extends PureComponent {
   render() {
     const {
       visible,
+      showMask,
     } = this.state;
     const {
       custContactData = EMPTY_OBJECT,
@@ -345,7 +356,6 @@ export default class CreateContactModal extends PureComponent {
         }
       }
     }
-    console.log('personalContactInfo.otherTelInfo, orgCustomerContactInfoList', personalContactInfo.otherTelInfo, orgCustomerContactInfoList);
     return (
       <Modal
         wrapClassName={styles.contactModal}
@@ -381,6 +391,7 @@ export default class CreateContactModal extends PureComponent {
                 orgCustomerContactInfoList={orgCustomerContactInfoList}
                 handlePhoneEnd={this.handlePhoneEnd}
                 handlePhoneConnected={this.handlePhoneConnected}
+                handlePhoneClick={this.handlePhoneClick}
                 disablePhone={false}
               >
                 <div className={styles.moreLinkman}>
@@ -401,6 +412,7 @@ export default class CreateContactModal extends PureComponent {
           getCeFileList={getCeFileList}
           filesList={filesList}
         />
+        <Mask visible={showMask} />
       </Modal>
     );
   }

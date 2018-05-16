@@ -168,13 +168,14 @@ export default class Search extends PureComponent {
     }
 
     // log日志 --- 首页搜索选中
+    const subtype = sightingScopeBool ? '瞄准镜' : item.description;
     logCommon({
       type: 'DropdownSelect',
       payload: {
         name: '首页搜索框',
         value,
         type: 'dropdownSelect',
-        subtype: item.description,
+        subtype,
       },
     });
     this.handleOpenTab(query);
