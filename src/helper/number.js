@@ -70,7 +70,7 @@ const number = {
    */
   toFixed(value = '', length = 2) {
     let newValue = value;
-    if (newValue) {
+    if (_.isNumber(newValue)) {
       newValue = newValue.toFixed(length);
       // 数字过小时，取两位小数可能等于 0 ，等于 0 时，显示 0.00
       if (Math.abs(newValue) === 0) {
