@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { message, Form } from 'antd';
+import { message, Form, Pagination } from 'antd';
 
 import Select from '../../common/Select';
 import LabelInfo from '../common/LabelInfo';
@@ -16,7 +16,6 @@ import { emp, check } from '../../../helper';
 import ServiceImplementation from './ServiceImplementation';
 import EmptyTargetCust from './EmptyTargetCust';
 import QuestionnaireSurvey from './QuestionnaireSurvey';
-import Pagination from '../../common/Pagination';
 import DropDownSelect from '../../common/dropdownSelect';
 import InfoArea from '../managerView/InfoArea';
 import logable, { logPV } from '../../../decorators/logable';
@@ -453,20 +452,20 @@ export default class PerformerViewDetail extends PureComponent {
       form,
     } = this.props;
     const { visible, keyIndex, isDisabled, isShowErrorCheckbox } = this.state;
-    const { list, page } = targetCustList;
+    const { list, page: { totalCount, pageNum, pageSize } } = targetCustList;
     const { serveStatus = [] } = dict;
     // 根据dict返回的数据，组合成Select组件的所需要的数据结构
     const stateData = this.getServeStatusSelectOptionsData(serveStatus);
     // 分页器配置
-    const curPageNo = targetCustomerPageNo || page.pageNum;
-    const curPageSize = targetCustomerPageSize || page.pageSize;
+    const curPageNo = targetCustomerPageNo || pageNum;
+    const curPageSize = targetCustomerPageSize || pageSize;
     const paginationOption = {
       current: curPageNo,
-      total: page.totalCount,
+      total: totalCount,
       pageSize: curPageSize,
       onChange: this.handlePageChange,
-      isHideLastButton: true,
-      useClearStyle: true,
+      // 使用简单分页
+      simple: true,
     };
 
     const currentCustomer = check.isNull(selectCustomerCustId) ?
@@ -538,7 +537,13 @@ export default class PerformerViewDetail extends PureComponent {
               />
             </div>
             <div className={styles.pagination}>
-              <Pagination {...paginationOption} />
+              {/**
+               * 简单分页没有总数，需要自己加
+               */}
+              <div className={styles.totalCount}>{`共 ${totalCount} 条`}</div>
+              <div className={styles.page}>
+                <Pagination {...paginationOption} />
+              </div>
             </div>
           </div>
           {
