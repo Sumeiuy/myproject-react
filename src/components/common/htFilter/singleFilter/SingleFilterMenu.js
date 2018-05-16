@@ -109,6 +109,7 @@ export default class SingleFilterMenu extends PureComponent {
               {
                 _.map(renderItems, (item, index) => (
                   <li
+                    className={styles.searchListItem}
                     title={this.getLabelValue(item)}
                     key={index}
                     onClick={() => this.handleItemClick(item)}
@@ -125,7 +126,7 @@ export default class SingleFilterMenu extends PureComponent {
               <li
                 key={index}
                 title={this.getLabelValue(item)}
-                className={value[0] === item.name ? styles.activeItem : ''}
+                className={value[0] === item.name ? styles.activeItem : styles.searchListItem}
                 onClick={() => this.handleItemClick(item)}
               >
                 {this.getLabelValue(item)}

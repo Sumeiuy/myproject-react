@@ -51,8 +51,8 @@ function transfromFilterValFromUrl(filters) {
     }
 
     if (name === 'minFee' || name === 'totAset') {
-      const minVal = filterValue[0] && filterValue[0].replace('-', '.');
-      const maxVal = filterValue[1] && filterValue[1].replace('-', '.');
+      const minVal = filterValue[0] && filterValue[0].replace('!', '.');
+      const maxVal = filterValue[1] && filterValue[1].replace('!', '.');
       filterValue = [minVal, maxVal];
     }
 

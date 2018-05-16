@@ -274,8 +274,8 @@ function transfromFilterValFromUrl(filters) {
     }
 
     if (name === 'minFee' || name === 'totAset') {
-      const minVal = filterValue[0] && filterValue[0].replace('-', '.');
-      const maxVal = filterValue[1] && filterValue[1].replace('-', '.');
+      const minVal = filterValue[0] && filterValue[0].replace('!', '.');
+      const maxVal = filterValue[1] && filterValue[1].replace('!', '.');
       filterValue = [minVal, maxVal];
     }
 
@@ -379,11 +379,11 @@ export default class Filter extends PureComponent {
     let maxVal;
 
     if (obj.value[0]) {
-      minVal = obj.value[0].replace('.', '-');
+      minVal = obj.value[0].replace('.', '!').replace('-', '');
     }
 
     if (obj.value[1]) {
-      maxVal = obj.value[1].replace('.', '-');
+      maxVal = obj.value[1].replace('.', '!').replace('-', '');
     }
 
     const value = _.join([minVal, maxVal], ',');
@@ -520,7 +520,7 @@ export default class Filter extends PureComponent {
             <Input
               className={styles.filter}
               defaultValue={source === 'search' ? decodeURIComponent(q) : ''}
-              placeholder="关键字"
+              placeholder="搜索关键字"
             />
           }
           {
