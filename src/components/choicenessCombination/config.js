@@ -58,7 +58,7 @@ const config = {
         dataIndex: 'time',
         key: 'time',
         title: '时间',
-        width: 170,
+        width: 136,
       },
       {
         dataIndex: 'directionName',
@@ -76,13 +76,13 @@ const config = {
         dataIndex: 'securityCode',
         key: 'securityCode',
         title: '证券代码',
-        width: 86,
+        width: 106,
       },
       {
         dataIndex: 'price',
         key: 'price',
         title: '成交价（元）',
-        width: 115,
+        width: 125,
       },
       {
         dataIndex: 'reason',
@@ -124,7 +124,7 @@ const config = {
         dataIndex: 'combinationName',
         key: 'combinationName',
         title: '组合名称',
-        width: 174,
+        width: 220,
       },
     ],
     ten: [
@@ -329,8 +329,8 @@ const config = {
       {
         dataIndex: 'percent',
         key: 'percent',
-        title: '持仓比例',
-        width: 60,
+        title: '持仓比例(%)',
+        width: 75,
       },
       {
         dataIndex: 'scNum',
@@ -397,8 +397,8 @@ const config = {
       {
         dataIndex: 'percent',
         key: 'percent',
-        title: '持仓比例',
-        width: 60,
+        title: '持仓比例(%)',
+        width: 75,
       },
       {
         dataIndex: 'increase',
@@ -447,8 +447,8 @@ const config = {
       {
         dataIndex: 'percent',
         key: 'percent',
-        title: '持仓比例',
-        width: 60,
+        title: '持仓比例(%)',
+        width: 75,
       },
       {
         dataIndex: 'increase',

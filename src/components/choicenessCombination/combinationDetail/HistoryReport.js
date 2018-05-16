@@ -36,7 +36,7 @@ export default class HistoryReport extends PureComponent {
   getNewTitleList(list) {
     const newTitleList = [...list];
     newTitleList[0].render = (text, record) => (
-      this.renderPopover(text, record.id)
+      this.renderPopover(text, record)
     );
     newTitleList[1].render = text => (
       <div className={styles.ellipsis} title={text}>
@@ -62,9 +62,13 @@ export default class HistoryReport extends PureComponent {
 
   // 设置 popover
   @autobind
-  renderPopover(value, id) {
+  renderPopover(value, record) {
     const { openReportDetailPage } = this.props;
     let reactElement = null;
+    const payload = {
+      id: record.id,
+      code: record.combinationCode,
+    };
     if (value) {
       reactElement = (<Popover
         placement="bottomLeft"
@@ -73,7 +77,9 @@ export default class HistoryReport extends PureComponent {
         overlayStyle={overlayStyle}
       >
         <div className={styles.ellipsis}>
-          <span className={styles.titleLink} onClick={() => openReportDetailPage(id)}>{value}</span>
+          <span className={styles.titleLink} onClick={() => openReportDetailPage(payload)}>
+            {value}
+          </span>
         </div>
       </Popover>);
     } else {

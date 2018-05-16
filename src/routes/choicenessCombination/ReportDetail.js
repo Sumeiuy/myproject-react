@@ -54,11 +54,10 @@ export default class ReportDetail extends PureComponent {
       location: {
         query: {
           id,
-          code,
         },
       },
     } = this.props;
-    getReportDetail({ id, code });
+    getReportDetail({ id });
   }
 
 

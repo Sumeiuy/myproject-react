@@ -83,9 +83,9 @@ export default class HistoryReport extends PureComponent {
       },
     } = this.props;
     const PaginationOption = {
-      current: page.pageNum,
-      total: page.totalCount,
-      pageSize: page.pageSize,
+      current: page.pageNum || 1,
+      total: page.totalCount || 0,
+      pageSize: page.pageSize || 5,
       showTotal: total => `共 ${total} 条`,
     };
     const newTitleList = this.getNewTitleList(titleList);

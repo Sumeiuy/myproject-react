@@ -315,7 +315,7 @@ export default class ChoicenessCombination extends PureComponent {
   @autobind
   openReportDetailPage(obj) {
     const { push } = this.context;
-    const { id, code } = obj;
+    const { id } = obj;
     const param = {
       closable: true,
       forceRefresh: true,
@@ -325,7 +325,6 @@ export default class ChoicenessCombination extends PureComponent {
     };
     const query = {
       id,
-      code,
     };
     const url = `/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
     openRctTab({
