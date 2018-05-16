@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-14 16:24:17
+ * @Last Modified time: 2018-05-15 16:39:18
  * @description 任务管理首页
  */
 
@@ -509,6 +509,7 @@ export default class PerformerView extends PureComponent {
       testWallCollision,
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
+      addCallRecord,
     } = this.props;
     const {
       typeCode,
@@ -572,6 +573,7 @@ export default class PerformerView extends PureComponent {
         resetServiceRecordInfo={resetServiceRecordInfo}
         testWallCollision={testWallCollision}
         testWallCollisionStatus={testWallCollisionStatus}
+        addCallRecord={addCallRecord}
       />
     );
   }

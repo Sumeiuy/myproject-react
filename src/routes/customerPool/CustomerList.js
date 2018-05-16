@@ -62,6 +62,7 @@ const effects = {
   isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
   addServeRecord: 'customerPool/addCommonServeRecord',
   queryHoldingProduct: 'customerPool/queryHoldingProduct',
+  addCallRecord: 'customerPool/addCallRecord',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -109,6 +110,8 @@ const mapStateToProps = state => ({
   motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
   // 持仓产品详情
   holdingProducts: state.customerPool.holdingProducts,
+  // 添加服务记录成功后返回的服务记录的id
+  currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
 });
 
 const mapDispatchToProps = {
@@ -150,6 +153,8 @@ const mapDispatchToProps = {
   addServeRecord: fetchDataFunction(true, effects.addServeRecord),
   // 根据持仓产品的id查询对应的详情
   queryHoldingProduct: fetchDataFunction(false, effects.queryHoldingProduct),
+  // 添加通话记录关联服务记录
+  addCallRecord: fetchDataFunction(true, effects.addCallRecord),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -210,6 +215,8 @@ export default class CustomerList extends PureComponent {
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     queryHoldingProduct: PropTypes.func.isRequired,
     holdingProducts: PropTypes.object.isRequired,
+    addCallRecord: PropTypes.func.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -365,7 +372,7 @@ export default class CustomerList extends PureComponent {
           labelDesc,
         };
       }
-    } else if (query.source === 'association') { // 联想词
+    } else if (query.source === 'association' || query.source === 'securitiesProducts') { // 联想词
       // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
       param.searchTypeReq = query.type;
       param.searchText = labelName;
@@ -374,7 +381,7 @@ export default class CustomerList extends PureComponent {
       // 业绩中的时间周期
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
       param.custType = this.getPostCustType(query);
-    } else if (query.source === 'orderCombination' || query.source === 'securitiesProducts') {
+    } else if (query.source === 'orderCombination') {
       // 订购组合和证券产品
       param.primaryKeyJxgrps = [labelMapping];
     } else if (query.source === 'external') { // 外部平台
@@ -672,6 +679,8 @@ export default class CustomerList extends PureComponent {
       motSelfBuiltFeedbackList,
       queryHoldingProduct,
       holdingProducts,
+      addCallRecord,
+      currentCommonServiceRecord,
     } = this.props;
     const {
       sortDirection,
@@ -786,6 +795,8 @@ export default class CustomerList extends PureComponent {
           queryHoldingProductReqState={interfaceState[effects.queryHoldingProduct]}
           isNotSaleDepartment={this.isNotSaleDepartment}
           dataForNextPage={this.dataForNextPage}
+          addCallRecord={addCallRecord}
+          currentCommonServiceRecord={currentCommonServiceRecord}
         />
       </div>
     );
