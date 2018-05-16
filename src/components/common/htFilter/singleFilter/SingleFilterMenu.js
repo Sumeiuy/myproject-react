@@ -42,9 +42,12 @@ export default class SingleFilterMenu extends PureComponent {
   handleItemClick = (item) => {
     let returnItem = item;
     if (this.props.showSearch) {
+      if (item.aliasName === '清除选择的内容') {
+        returnItem.aliasName = '不限';
+      }
       returnItem = {
-        key: item.name,
-        value: item.aliasName,
+        key: returnItem.name,
+        value: returnItem.aliasName,
       };
     }
     this.props.onChange({
@@ -70,10 +73,11 @@ export default class SingleFilterMenu extends PureComponent {
     this.props.onInputChange(e.target.value);
   }
 
-  handleClickIcon = () => {
+  handleClickCloseIcon = () => {
     this.setState({
       inputValue: '',
       isShowCloseIcon: false,
+      optionList: [],
     });
   }
 
@@ -83,7 +87,7 @@ export default class SingleFilterMenu extends PureComponent {
     if (_.isArray(value) && value[1] !== '不限') {
       renderItems.push({
         name: '',
-        aliasName: '不限',
+        aliasName: '清除选择的内容',
       });
       renderItems.push({
         name: value[0],
@@ -106,7 +110,7 @@ export default class SingleFilterMenu extends PureComponent {
           {this.state.isShowCloseIcon ?
             <span
               className={`${styles.closeIcon} ht-iconfont ht-icon-guanbi1`}
-              onClick={this.handleClickIcon}
+              onClick={this.handleClickCloseIcon}
             /> :
             <span className={`${styles.sousuoIcon} ht-iconfont ht-icon-sousuo`} />
           }
@@ -118,7 +122,9 @@ export default class SingleFilterMenu extends PureComponent {
                 {
                   _.map(renderItems, (item, index) => (
                     <li
-                      className={styles.searchListItem}
+                      className={
+                        item.name === '' ? styles.cleanSelect : styles.searchListItem
+                      }
                       title={this.getLabelValue(item)}
                       key={index}
                       onClick={() => this.handleItemClick(item)}
