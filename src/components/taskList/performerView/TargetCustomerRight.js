@@ -24,6 +24,7 @@ import logable from '../../../decorators/logable';
 import Icon from '../../common/Icon';
 import { date } from '../../../helper';
 import ContactInfoPopover from '../../common/contactInfoPopover/ContactInfoPopover';
+import Mask from '../../common/mask';
 
 // 信息的完备，用于判断
 const COMPLETION = '完备';
@@ -90,6 +91,7 @@ export default class TargetCustomerRight extends PureComponent {
     super(props);
     this.endTime = '';
     this.startTime = '';
+    this.state = { showMask: false };
   }
 
   getPopupContainer() {
@@ -178,6 +180,8 @@ export default class TargetCustomerRight extends PureComponent {
    */
   @autobind
   handlePhoneEnd() {
+    // 点击挂电话隐藏蒙层
+    this.setState({ showMask: false });
     // 没有成功发起通话
     if (!moment.isMoment(this.startTime)) {
       return;
@@ -262,6 +266,12 @@ export default class TargetCustomerRight extends PureComponent {
     this.callId = data.uuid;
   }
 
+  // 点击号码打电话时显示蒙层
+  @autobind
+  handlePhoneClick() {
+    this.setState({ showMask: true });
+  }
+
   /**
    * 联系方式渲染
    */
@@ -295,6 +305,7 @@ export default class TargetCustomerRight extends PureComponent {
           orgCustomerContactInfoList={orgCustomerContactInfoList}
           handlePhoneEnd={this.handlePhoneEnd}
           handlePhoneConnected={this.handlePhoneConnected}
+          handlePhoneClick={this.handlePhoneClick}
           disablePhone={!canCall}
           placement={'top'}
         >
@@ -315,6 +326,8 @@ export default class TargetCustomerRight extends PureComponent {
       monthlyProfits,
       custIncomeReqState,
     } = this.props;
+
+    const { showMask } = this.state;
 
     const sendSpan = isFold ? 15 : 24;
     const thrSpan = isFold ? 9 : 24;
@@ -560,6 +573,7 @@ export default class TargetCustomerRight extends PureComponent {
             </Row>
           </div>
         </div>
+        <Mask visible={showMask} />
       </div>
     );
   }
