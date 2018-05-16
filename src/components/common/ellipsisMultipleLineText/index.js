@@ -2,11 +2,11 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-16 09:27:20
+ * @Last Modified time: 2018-05-16 09:41:57
  * 多行文本打点组件
  */
 
-import React from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 // import _ from 'lodash';
 import { autobind } from 'core-decorators';
@@ -19,7 +19,7 @@ import styles from './index.less';
 
 const ORIGIN_MAX_CONTENT_HEIGHT = '100%';
 
-export default class EllipsisMultipleLineText extends React.Component {
+export default class EllipsisMultipleLineText extends PureComponent {
   static propTypes = {
     // 子元素
     children: PropTypes.node.isRequired,
