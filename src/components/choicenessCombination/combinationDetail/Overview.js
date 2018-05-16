@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
+import { number } from '../../../helper';
 import config from '../config';
 import styles from './overview.less';
 
@@ -21,19 +22,6 @@ const EMPTY_TEXT = '无';
 export default class Overview extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
-  }
-
-  @autobind
-  toFixed(value = '') {
-    let newValue = value;
-    if (newValue) {
-      newValue = newValue.toFixed(2);
-      // 数字过小时候，取两位小数可能等于 0 ，等于 0 时，显示 0.00
-      if (Math.abs(newValue) === 0) {
-        newValue = '0.00';
-      }
-    }
-    return newValue;
   }
 
   // 与零作比较，大于 0 则加上 + 符号
@@ -76,7 +64,7 @@ export default class Overview extends PureComponent {
             </h3>
             <h3>
               最大回撤
-              <span className={styles.fs18}> {this.toFixed(withdraw)}% </span>
+              <span className={styles.fs18}> {number.toFixed(withdraw)}% </span>
             </h3>
           </div>
         </div>
@@ -85,7 +73,7 @@ export default class Overview extends PureComponent {
             showWeekMonthYear.map((item, index) => {
               const { name, key, percent, ranking, total } = item;
               const nameKey = `$${name}${index}`;
-              const num = this.toFixed(data[percent]);
+              const num = number.toFixed(data[percent]);
               const bigThanZero = num >= 0;
               const percentClassName = classnames({
                 [styles.up]: bigThanZero,
