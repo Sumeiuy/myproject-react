@@ -66,7 +66,7 @@ export default class ServiceImplementation extends PureComponent {
     callback = _.noop,
     callbackOfPhone = _.noop,
     noHint = false,
-    uuidOfPhone = '',
+    callId = '',
   }) {
     const {
       addServeRecord,
@@ -113,7 +113,7 @@ export default class ServiceImplementation extends PureComponent {
         // 保存打电话自动创建的服务记录的信息或更新服务记录后删除打电话保存的服务记录
         callbackOfPhone();
 
-        this.saveServiceRecordAndPhoneRelation(this.props, uuidOfPhone);
+        this.saveServiceRecordAndPhoneRelation(currentMotServiceRecord, callId);
       }
     });
   }
@@ -122,10 +122,10 @@ export default class ServiceImplementation extends PureComponent {
    * 通话的uuid关联服务记录
    */
   @autobind
-  saveServiceRecordAndPhoneRelation({ currentMotServiceRecord = {} }, uuidOfPhone) {
-    if (uuidOfPhone) {
+  saveServiceRecordAndPhoneRelation(currentMotServiceRecord = {}, callId) {
+    if (callId) {
       this.props.addCallRecord({
-        uuid: uuidOfPhone,
+        uuid: callId,
         projectId: currentMotServiceRecord.id,
       });
     }

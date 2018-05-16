@@ -88,8 +88,8 @@ export default class TargetCustomerRight extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.phoneEndTime = '';
-    this.phoneStartTime = '';
+    this.endTime = '';
+    this.startTime = '';
   }
 
   getPopupContainer() {
@@ -179,10 +179,10 @@ export default class TargetCustomerRight extends PureComponent {
   @autobind
   handlePhoneEnd() {
     // 没有成功发起通话
-    if (!moment.isMoment(this.phoneStartTime)) {
+    if (!moment.isMoment(this.startTime)) {
       return;
     }
-    this.phoneEndTime = moment();
+    this.endTime = moment();
     const {
       itemData,
       addServeRecord,
@@ -200,10 +200,10 @@ export default class TargetCustomerRight extends PureComponent {
     const { key: firstServiceTypeKey, children = [] } = firstServiceType;
     const [firstFeedback = {}] = children;
     const phoneDuration = date.calculateDuration(
-      this.phoneStartTime.valueOf(),
-      this.phoneEndTime.valueOf(),
+      this.startTime.valueOf(),
+      this.endTime.valueOf(),
     );
-    const serviceContentDesc = `${this.phoneStartTime.format('HH时mm分ss秒')}给客户发起语音通话，时长${phoneDuration}。`;
+    const serviceContentDesc = `${this.startTime.format('HH:mm:ss')}给客户发起语音通话，时长${phoneDuration}。`;
     let payload = {
       // 任务流水id
       missionFlowId: currentMissionFlowId,
@@ -226,7 +226,7 @@ export default class TargetCustomerRight extends PureComponent {
       // 服务记录内容
       serveContentDesc: serviceContentDesc,
       // 服务时间
-      serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
+      serveTime: this.endTime.format('YYYY-MM-DD HH:mm'),
       // 反馈时间
       feedBackTime: moment().format('YYYY-MM-DD'),
     };
@@ -251,15 +251,15 @@ export default class TargetCustomerRight extends PureComponent {
       postBody: payload,
       callbackOfPhone: saveRecordData,
       noHint: true,
-      uuidOfPhone: this.uuidOfPhone,
+      callId: this.callId,
     });
   }
 
   // 通话开始
   @autobind
   handlePhoneConnected(data) {
-    this.phoneStartTime = moment();
-    this.uuidOfPhone = data.uuid;
+    this.startTime = moment();
+    this.callId = data.uuid;
   }
 
   /**

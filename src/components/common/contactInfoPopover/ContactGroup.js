@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-10 21:34:00
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-15 18:16:31
+ * @Last Modified time: 2018-05-16 10:41:14
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -46,7 +46,7 @@ function ContactGroup({
                 <Phone
                   onConnected={handlePhoneConnected}
                   onEnd={handlePhoneEnd}
-                  number={item.contactValue}
+                  number={'18751964883'}
                   custType={custType}
                   disable={disablePhone}
                 />
