@@ -42,6 +42,8 @@ const KEY_COMBINATIONNAME = 'combinationName';
 const KEY_TITLE = 'title';
 // 查看持仓客户字符串
 const KEY_VIEW = 'view';
+// 证券名称
+const KEY_SECURITYNAME = 'securityName';
 
 export default class CombinationModal extends PureComponent {
   static propTypes = {
@@ -117,14 +119,17 @@ export default class CombinationModal extends PureComponent {
     const nameIndex = _.findIndex(titleArray, o => o.key === KEY_COMBINATIONNAME);
     const viewIndex = _.findIndex(titleArray, o => o.key === KEY_VIEW);
     const titleIndex = _.findIndex(titleArray, o => o.key === KEY_TITLE);
+    const securitynameIndex = _.findIndex(titleArray, o => o.key === KEY_SECURITYNAME);
     // 持仓历史
     if (type === HISTORY_TYPE) {
       // 时间
       titleArray[timeIndex].render = text => (<div>{timeHelper.format(text, formatStr)}</div>);
+      // 证券名称
+      titleArray[securitynameIndex].render = text => this.renderPopover(text);
       // 调仓理由
-      titleArray[reasonIndex].render = (text, record) => this.renderPopover(record.reason);
+      titleArray[reasonIndex].render = text => this.renderPopover(text);
       // 所属组合
-      titleArray[nameIndex].render = (text, record) => this.renderPopover(record.combinationName);
+      titleArray[nameIndex].render = text => this.renderPopover(text);
       // 查看持仓客户
       titleArray[viewIndex].render = (text, record) => {
         const { securityName, securityCode, securityType } = record;
@@ -155,17 +160,10 @@ export default class CombinationModal extends PureComponent {
   // 历史报告标题点击事件
   @autobind
   handleTitleClick(record) {
-    const {
-      location: {
-        query: {
-          combinationCode = '',
-        },
-      },
-      openReportDetailPage,
-    } = this.props;
+    const { openReportDetailPage } = this.props;
     const payload = {
       id: record.id,
-      code: combinationCode,
+      code: record.combinationCode,
     };
     openReportDetailPage(payload);
   }
@@ -306,9 +304,9 @@ export default class CombinationModal extends PureComponent {
     const { title, treeData, listData = {}, closeModal } = this.props;
     const { list = [], page = {} } = listData;
     const PaginationOption = {
-      current: page.pageNum,
-      total: page.totalCount,
-      pageSize: page.pageSize,
+      current: page.pageNum || 1,
+      total: page.totalCount || 0,
+      pageSize: page.pageSize || 10,
       onChange: this.handlePaginationChange,
     };
     const footerContent = (<Button
