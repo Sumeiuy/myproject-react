@@ -23,8 +23,15 @@ export default class SingleFilterMenu extends PureComponent {
   state = {
     inputValue: '',
     isShowCloseIcon: false,
+    optionList: this.props.optionList,
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { optionList } = nextProps;
+    this.setState({
+      optionList,
+    });
+  }
   getLabelValue = (item) => {
     if (item.name) {
       return `${item.aliasName}(${item.name})`;
@@ -35,9 +42,12 @@ export default class SingleFilterMenu extends PureComponent {
   handleItemClick = (item) => {
     let returnItem = item;
     if (this.props.showSearch) {
+      if (item.aliasName === '清除选择的内容') {
+        returnItem.aliasName = '不限';
+      }
       returnItem = {
-        key: item.name,
-        value: item.aliasName,
+        key: returnItem.name,
+        value: returnItem.aliasName,
       };
     }
     this.props.onChange({
@@ -57,15 +67,17 @@ export default class SingleFilterMenu extends PureComponent {
       this.setState({
         inputValue: '',
         isShowCloseIcon: false,
+        optionList: [],
       });
     }
     this.props.onInputChange(e.target.value);
   }
 
-  handleClickIcon = () => {
+  handleClickCloseIcon = () => {
     this.setState({
       inputValue: '',
       isShowCloseIcon: false,
+      optionList: [],
     });
   }
 
@@ -75,7 +87,7 @@ export default class SingleFilterMenu extends PureComponent {
     if (_.isArray(value) && value[1] !== '不限') {
       renderItems.push({
         name: '',
-        aliasName: '不限',
+        aliasName: '清除选择的内容',
       });
       renderItems.push({
         name: value[0],
@@ -92,53 +104,57 @@ export default class SingleFilterMenu extends PureComponent {
             className={styles.input}
             placeholder={this.props.placeholder}
             onChange={this.handleInputChange}
-            onPressEnter={this.props.onPressEnter}
+            onPressEnter={this.handleInputChange}
             autoFocus
           />
           {this.state.isShowCloseIcon ?
             <span
               className={`${styles.closeIcon} ht-iconfont ht-icon-guanbi1`}
-              onClick={this.handleClickIcon}
+              onClick={this.handleClickCloseIcon}
             /> :
             <span className={`${styles.sousuoIcon} ht-iconfont ht-icon-sousuo`} />
           }
         </div>
-        {
-          renderItems.length !== 0 ?
-            <div className={styles.currentValue}>
-              {
-                _.map(renderItems, (item, index) => (
-                  <li
-                    className={styles.searchListItem}
-                    title={this.getLabelValue(item)}
-                    key={index}
-                    onClick={() => this.handleItemClick(item)}
-                  >
-                    {this.getLabelValue(item)}
-                  </li>
-                ))
-              }
-            </div> : null
-        }
-        {
-          this.props.optionList && this.props.optionList.length !== 0 ?
-            _.map(this.props.optionList, (item, index) => (
+        <div className={styles.optionList}>
+          {
+            renderItems.length !== 0 ?
+              <div className={styles.currentValue}>
+                {
+                  _.map(renderItems, (item, index) => (
+                    <li
+                      className={
+                        item.name === '' ? styles.cleanSelect : styles.searchListItem
+                      }
+                      title={this.getLabelValue(item)}
+                      key={index}
+                      onClick={() => this.handleItemClick(item)}
+                    >
+                      {this.getLabelValue(item)}
+                    </li>
+                  ))
+                }
+              </div> : null
+          }
+          {
+            this.state.optionList && this.state.optionList.length !== 0 ?
+              _.map(this.state.optionList, (item, index) => (
+                <li
+                  key={index}
+                  title={this.getLabelValue(item)}
+                  className={value[0] === item.name ? styles.activeItem : styles.searchListItem}
+                  onClick={() => this.handleItemClick(item)}
+                >
+                  {this.getLabelValue(item)}
+                </li>
+              )) :
               <li
-                key={index}
-                title={this.getLabelValue(item)}
-                className={value[0] === item.name ? styles.activeItem : styles.searchListItem}
-                onClick={() => this.handleItemClick(item)}
+                key="noContent"
+                className={styles.noContent}
               >
-                {this.getLabelValue(item)}
-              </li>
-            )) :
-            <li
-              key="noContent"
-              className={styles.noContent}
-            >
-              请搜索更多结果
+                请搜索更多结果
             </li>
-        }
+          }
+        </div>
       </div>);
   }
 
