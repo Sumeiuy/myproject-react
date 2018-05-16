@@ -55,10 +55,31 @@ class SelectTrigger extends Component {
     dropdownWidth: null,
   };
 
+  wheelEventArray = ['wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
+
   componentDidMount() {
     this.setDropdownWidth();
+    if (this.elem) {
+      this.wheelEventArray.forEach(eventType =>
+        this.elem.addEventListener(eventType, this.handleMousewheel));
+    }
   }
 
+  componentWillUnmount() {
+    if (this.elem) {
+      this.wheelEventArray.forEach(eventType =>
+      this.elem.removeEventListener(eventType, this.handleMousewheel));
+    }
+  }
+  
+  handleMousewheel(e) {
+    if (e.stopPropagation) {
+      e.stopPropagation(); // 阻止滚轮滚动事件冒泡，不触发fsp的自定义滚动条
+    }
+    if (e.cancelBubble) {
+      e.cancelBubble = true;
+    }
+  }
   componentWillReceiveProps(nextProps) {
     if (nextProps.inputValue && nextProps.inputValue !== this.props.inputValue) {
       // set autoExpandParent to true
@@ -71,6 +92,10 @@ class SelectTrigger extends Component {
 
   componentDidUpdate() {
     this.setDropdownWidth();
+    if (this.elem) {
+      this.wheelEventArray.forEach(eventType =>
+        this.elem.addEventListener(eventType, this.handleMousewheel));
+    }
   }
 
   onExpand = (expandedKeys) => {
@@ -309,7 +334,7 @@ class SelectTrigger extends Component {
     }
 
     const popupElement = (
-      <div>
+      <div className="ht-tree-dropdown" ref={ref => this.elem = ref}>
         {search}
         {multiple && props.value.length !== 0  ?
           <div className="ht-select-clear" onClick={props.onClearSelected}>清除选择的内容</div> : null}
