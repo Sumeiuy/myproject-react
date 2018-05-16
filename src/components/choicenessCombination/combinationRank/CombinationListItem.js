@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-14 11:15:20
+ * @Last Modified time: 2018-05-15 13:42:27
 */
 
 import React, { PureComponent } from 'react';
@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import Icon from '../../common/Icon';
-import { time, url as urlHelper } from '../../../helper';
+import { time } from '../../../helper';
 import CombinationYieldChart from '../CombinationYieldChart';
 import styles from './combinationListItem.less';
 import {
@@ -51,6 +51,7 @@ export default class CombinationListItem extends PureComponent {
     // 打开持仓查客户页面
     openCustomerListPage: PropTypes.func.isRequired,
     showModal: PropTypes.func.isRequired,
+    openDetailPage: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -162,14 +163,11 @@ export default class CombinationListItem extends PureComponent {
     showModal(payload);
   }
 
+  // 组合名称点击事件
   @autobind
-  openDetail(id) {
-    const { push } = this.context;
-    const query = {
-      id,
-    };
-    const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
-    push(url);
+  handleNameClick(id) {
+    const { openDetailPage } = this.props;
+    openDetailPage(id);
   }
 
   render() {
@@ -191,7 +189,7 @@ export default class CombinationListItem extends PureComponent {
     });
     const openPayload = {
       name: data.combinationName,
-      code: data.combinationCode,
+      code: data.productCode,
       source: sourceType.combination,
     };
     return (
@@ -199,7 +197,9 @@ export default class CombinationListItem extends PureComponent {
         <div className={styles.left}>
           <div className={`${styles.headBox} clearfix`}>
             <span className={styles.combinationName} title={data.combinationName}>
-              <a onClick={() => this.openDetail(data.combinationCode)}>{data.combinationName}</a>
+              <a onClick={() => this.handleNameClick(data.combinationCode)}>
+                {data.combinationName}
+              </a>
             </span>
             <span className={styles.earnings}>
               <i>{yieldName}</i>

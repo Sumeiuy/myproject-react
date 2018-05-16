@@ -95,6 +95,12 @@ const config = {
         title: '所属组合',
         width: 174,
       },
+      {
+        dataIndex: 'view',
+        key: 'view',
+        title: '持仓客户',
+        width: 80,
+      },
     ],
     report: [
       {
@@ -289,6 +295,16 @@ const config = {
     value: 'all',
     label: '全部',
   },
+  detailTitleType: {
+    // 模拟实盘组合
+    MNSPZH: 0,
+    // 行业股票组合
+    HYGPZH: 1,
+    // 配置类组合
+    PZLZH: 2,
+    // 资产配置组合
+    ZCPZZH: 3,
+  },
   detailTitleList: [
     // 模拟实盘组合
     [
@@ -296,49 +312,49 @@ const config = {
         dataIndex: 'code',
         key: 'code',
         title: '证券代码',
-        width: 70,
+        width: 60,
       },
       {
         dataIndex: 'name',
         key: 'name',
         title: '证券名称',
-        width: 110,
+        width: 80,
       },
       {
         dataIndex: 'industry',
         key: 'industry',
         title: '行业',
-        width: 110,
+        width: 90,
       },
       {
         dataIndex: 'percent',
         key: 'percent',
         title: '持仓比例',
-        width: 70,
+        width: 60,
       },
       {
         dataIndex: 'scNum',
         key: 'scNum',
-        title: '证券数量（股）',
-        width: 100,
+        title: '证券数量(股)',
+        width: 80,
       },
       {
         dataIndex: 'costPrice',
         key: 'costPrice',
-        title: '成本价（元）',
-        width: 80,
+        title: '成本价(元)',
+        width: 70,
       },
       {
         dataIndex: 'newPrice',
         key: 'newPrice',
-        title: '最新价格（元）',
-        width: 100,
+        title: '最新价格(元)',
+        width: 80,
       },
       {
         dataIndex: 'floatRateReturn',
         key: 'floatRateReturn',
-        title: '浮动收益（%）',
-        width: 100,
+        title: '浮动收益率(%)',
+        width: 90,
       },
       {
         dataIndex: 'reason',
@@ -352,43 +368,43 @@ const config = {
         dataIndex: 'code',
         key: 'code',
         title: '证券代码',
-        width: 70,
+        width: 60,
       },
       {
         dataIndex: 'name',
         key: 'name',
         title: '证券名称',
-        width: 110,
+        width: 80,
       },
       {
         dataIndex: 'industry',
         key: 'industry',
         title: '行业',
-        width: 110,
+        width: 90,
       },
       {
         dataIndex: 'callInTime',
         key: 'callInTime',
         title: '调入日期',
-        width: 170,
+        width: 110,
       },
       {
         dataIndex: 'callInPrice',
         key: 'callInPrice',
-        title: '调入价格',
-        width: 100,
+        title: '调入价格(元)',
+        width: 80,
       },
       {
         dataIndex: 'percent',
         key: 'percent',
         title: '持仓比例',
-        width: 70,
+        width: 60,
       },
       {
         dataIndex: 'increase',
         key: 'increase',
-        title: '累计涨幅',
-        width: 100,
+        title: '累计涨幅(%)',
+        width: 80,
       },
       {
         dataIndex: 'reason',
@@ -402,36 +418,43 @@ const config = {
         dataIndex: 'code',
         key: 'code',
         title: '基金代码',
+        width: 60,
       },
       {
         dataIndex: 'name',
         key: 'name',
         title: '基金简称',
+        width: 80,
       },
       {
         dataIndex: 'category',
         key: 'category',
         title: '分类',
+        width: 90,
       },
       {
         dataIndex: 'callInTime',
         key: 'callInTime',
         title: '调入日期',
+        width: 110,
       },
       {
         dataIndex: 'callInPrice',
         key: 'callInPrice',
-        title: '调入价格',
+        title: '调入价格(元)',
+        width: 80,
       },
       {
         dataIndex: 'percent',
         key: 'percent',
         title: '持仓比例',
+        width: 60,
       },
       {
         dataIndex: 'increase',
         key: 'increase',
-        title: '累计涨幅',
+        title: '累计涨幅(%)',
+        width: 80,
       },
       {
         dataIndex: 'reason',
@@ -464,7 +487,7 @@ const config = {
       {
         dataIndex: 'weight',
         key: 'weight',
-        title: '本期权重',
+        title: '本期权重(%)',
       },
       {
         dataIndex: 'rateReturn',
@@ -497,6 +520,11 @@ const config = {
       total: 'yearAmout',
     },
   ],
+  overlayStyle: {
+    width: '240px',
+    padding: '10px',
+    wordBreak: 'break-all',
+  },
 };
 
 export default config;

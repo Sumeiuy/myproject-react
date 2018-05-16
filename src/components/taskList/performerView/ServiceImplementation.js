@@ -65,7 +65,8 @@ export default class ServiceImplementation extends PureComponent {
     postBody,
     callback = _.noop,
     callbackOfPhone = _.noop,
-    hasLoading = true,
+    noHint = false,
+    callId = '',
   }) {
     const {
       addServeRecord,
@@ -74,23 +75,20 @@ export default class ServiceImplementation extends PureComponent {
       modifyLocalTaskList,
       currentId,
       getTaskDetailBasicInfo,
-      addServeRecordOfPhone,
       currentMotServiceRecord: { id },
       serviceRecordInfo,
     } = this.props;
     const currentMissionFlowId = this.getCurrentMissionFlowId();
     const { caller = '', id: missionFlowId, autoGenerateRecordInfo } = serviceRecordInfo;
     const { flowStatus = '', serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
-    // 打电话时需要调用addServeRecordOfPhone（没有loading的添加服务记录）
-    const addServiceRecord = hasLoading ? addServeRecord : addServeRecordOfPhone;
     // 打电话生成服务记录后，再去添加服务记录走的是更新过程，需要传自动生成的那条服务记录的id,
     // 服务状态为完成，code=30
-    const payload = (caller === PHONE && currentMissionFlowId === missionFlowId && hasLoading) ?
+    const payload = (caller === PHONE && currentMissionFlowId === missionFlowId) ?
       { ...postBody, id, flowStatus, serveTime, serveWay } : postBody;
     // 此处需要针对涨乐财富通服务方式特殊处理
     // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
     // 执行提交服务记录的接口
-    addServiceRecord(_.omit(payload, ['zlApprovalCode']))
+    addServeRecord(_.omit(payload, ['zlApprovalCode']))
     .then(() => {
       const { currentMotServiceRecord } = this.props;
       // 服务记录添加未成功时，后端返回failure
@@ -109,13 +107,28 @@ export default class ServiceImplementation extends PureComponent {
         // 添加服务记录成功之后，重新获取custUuid
         queryCustUuid();
         // this.updateList(postBody);
-        if (hasLoading) {
+        if (!noHint) {
           message.success('添加服务记录成功');
         }
         // 保存打电话自动创建的服务记录的信息或更新服务记录后删除打电话保存的服务记录
         callbackOfPhone();
+
+        this.saveServiceRecordAndPhoneRelation(currentMotServiceRecord, callId);
       }
     });
+  }
+
+  /**
+   * 通话的uuid关联服务记录
+   */
+  @autobind
+  saveServiceRecordAndPhoneRelation(currentMotServiceRecord = {}, callId) {
+    if (callId) {
+      this.props.addCallRecord({
+        uuid: callId,
+        projectId: currentMotServiceRecord.id,
+      });
+    }
   }
 
   // 更新组件state的list信息
@@ -346,6 +359,7 @@ export default class ServiceImplementation extends PureComponent {
           currentCustomer={currentCustomer}
           getServiceCustId={id => this.setServiceCustId(id)}
           taskTypeCode={taskTypeCode}
+          currentMotServiceRecord={currentMotServiceRecord}
         />
         {
           (!_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict))
@@ -426,12 +440,12 @@ ServiceImplementation.propTypes = {
   zhangleApprovalList: PropTypes.array.isRequired,
   toggleServiceRecordModal: PropTypes.func.isRequired,
   serviceRecordInfo: PropTypes.object.isRequired,
-  addServeRecordOfPhone: PropTypes.func.isRequired,
   resetServiceRecordInfo: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测
   testWallCollision: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: PropTypes.bool.isRequired,
+  addCallRecord: PropTypes.func.isRequired,
 };
 
 ServiceImplementation.defaultProps = {

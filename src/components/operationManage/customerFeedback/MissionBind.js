@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-10 09:34:17
+ * @Last Modified time: 2018-05-16 10:31:52
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -74,10 +74,10 @@ export default class MissionBind extends PureComponent {
           obj.needPopover && item.childList && item.childList.length
           ?
             <Popover placement="bottomLeft" content={content} overlayClassName={styles.opcityPopover}>
-              <span>{item.name}</span>
+              <span className={styles.feedbackText}>{item.name}</span>
             </Popover>
           :
-            <span>{item.name}</span>
+            <span className={styles.feedbackText}>{item.name}</span>
         }
         <Icon
           type="close-circle"
@@ -93,7 +93,12 @@ export default class MissionBind extends PureComponent {
     // 数据中存在一个name,custFeedbackName字段，在渲染涨乐的时候需要使用custFeedbackName
     return list.map(item => (
       <div className={styles.zlfeedbackItem} key={`ZL-${item.id}`}>
-        <span>{item.custFeedbackName ? item.custFeedbackName : ''}</span>
+        <span
+          className={styles.feedbackText}
+          title={item.custFeedbackName ? item.custFeedbackName : ''}
+        >
+          {item.custFeedbackName ? item.custFeedbackName : ''}
+        </span>
       </div>
     ));
   }

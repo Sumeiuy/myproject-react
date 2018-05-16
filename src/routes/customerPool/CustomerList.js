@@ -62,6 +62,7 @@ const effects = {
   isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
   addServeRecord: 'customerPool/addCommonServeRecord',
   queryHoldingProduct: 'customerPool/queryHoldingProduct',
+  addCallRecord: 'customerPool/addCallRecord',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -109,6 +110,8 @@ const mapStateToProps = state => ({
   motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
   // 持仓产品详情
   holdingProducts: state.customerPool.holdingProducts,
+  // 添加服务记录成功后返回的服务记录的id
+  currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
 });
 
 const mapDispatchToProps = {
@@ -146,10 +149,12 @@ const mapDispatchToProps = {
   getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
   // 查询是否包含非本人名下客户和超出1000条数据限制
   isSendCustsServedByPostn: fetchDataFunction(true, effects.isSendCustsServedByPostn),
-  // 天假服务记录
-  addServeRecord: fetchDataFunction(false, effects.addServeRecord),
+  // 添加服务记录
+  addServeRecord: fetchDataFunction(true, effects.addServeRecord),
   // 根据持仓产品的id查询对应的详情
   queryHoldingProduct: fetchDataFunction(false, effects.queryHoldingProduct),
+  // 添加通话记录关联服务记录
+  addCallRecord: fetchDataFunction(true, effects.addCallRecord),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -210,6 +215,8 @@ export default class CustomerList extends PureComponent {
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     queryHoldingProduct: PropTypes.func.isRequired,
     holdingProducts: PropTypes.object.isRequired,
+    addCallRecord: PropTypes.func.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -254,6 +261,7 @@ export default class CustomerList extends PureComponent {
     this.hasNPCTIQPermission = permission.hasNPCTIQPermission();
     // HTSC 交易信息查询权限（含私密客户）
     this.hasPCTIQPermission = permission.hasPCTIQPermission();
+    this.dataForNextPage = {};
   }
 
   getChildContext() {
@@ -356,7 +364,7 @@ export default class CustomerList extends PureComponent {
       // param.labels = [query.labelMapping];
       param.primaryKey = [labelMapping];
       param.searchTypeReq = query.type;
-      param.searchText = keyword;
+      // param.searchText = keyword;
       if (query.source === 'sightingTelescope') {
         // 如果是瞄准镜，需要加入queryLabelReq
         param.queryLabelReq = {
@@ -364,19 +372,26 @@ export default class CustomerList extends PureComponent {
           labelDesc,
         };
       }
-    } else if (query.source === 'association' || query.source === 'external') { // 联想词
+    } else if (query.source === 'association' || query.source === 'securitiesProducts') { // 联想词
       // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
       param.searchTypeReq = query.type;
       param.searchText = labelName;
       param.primaryKey = [labelMapping];
-      param.productName = productName;
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) { // 经营指标或者投顾绩效
       // 业绩中的时间周期
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
       param.custType = this.getPostCustType(query);
-    } else if (query.source === 'orderCombination' || query.source === 'securitiesProducts') {
+    } else if (query.source === 'orderCombination') {
       // 订购组合和证券产品
       param.primaryKeyJxgrps = [labelMapping];
+    } else if (query.source === 'external') { // 外部平台
+      param.searchTypeReq = query.type;
+      param.primaryKey = [labelMapping];
+      // 下面参数用在发起任务页面
+      this.dataForNextPage.type = query.type;
+      this.dataForNextPage.id = labelMapping;
+      this.dataForNextPage.product = labelName;
+      this.dataForNextPage.productName = productName;
     }
     // 客户业绩参数
     if (query.customerType) {
@@ -428,7 +443,7 @@ export default class CustomerList extends PureComponent {
     this.setState({
       queryParam: param,
     });
-    getCustomerData(_.omit(param, 'productName'));
+    getCustomerData(param);
   }
 
   // 获取 客户列表接口的orgId入参的值
@@ -664,6 +679,8 @@ export default class CustomerList extends PureComponent {
       motSelfBuiltFeedbackList,
       queryHoldingProduct,
       holdingProducts,
+      addCallRecord,
+      currentCommonServiceRecord,
     } = this.props;
     const {
       sortDirection,
@@ -777,6 +794,9 @@ export default class CustomerList extends PureComponent {
           holdingProducts={holdingProducts}
           queryHoldingProductReqState={interfaceState[effects.queryHoldingProduct]}
           isNotSaleDepartment={this.isNotSaleDepartment}
+          dataForNextPage={this.dataForNextPage}
+          addCallRecord={addCallRecord}
+          currentCommonServiceRecord={currentCommonServiceRecord}
         />
       </div>
     );

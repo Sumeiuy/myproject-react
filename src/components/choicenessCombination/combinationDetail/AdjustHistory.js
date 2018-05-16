@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情-组合调仓组件
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-11 15:24:23
+ * @Last Modified time: 2018-05-15 09:50:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -17,7 +17,7 @@ import styles from './adjustHistory.less';
 
 // securityType 里股票对应的值
 const STOCK_CODE = config.securityType[0].value;
-const { typeList, directionRange } = config;
+const { typeList, directionRange, overlayStyle } = config;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 export default class AdjustHistory extends PureComponent {
@@ -44,7 +44,7 @@ export default class AdjustHistory extends PureComponent {
       const itemClass = classnames({
         [styles.itemBox]: true,
         clearfix: true,
-        [styles.in]: item.directionCode === directionRange[1].value,
+        [styles.in]: item.directionCode === Number(directionRange[1].value),
       });
       const key = `${index}${item.securityCode}`;
       return (<div className={itemClass} key={key}>
@@ -110,11 +110,7 @@ export default class AdjustHistory extends PureComponent {
         placement="bottomLeft"
         content={value}
         trigger="hover"
-        overlayStyle={{
-          width: '240px',
-          padding: '10px',
-          wordBreak: 'break-all',
-        }}
+        overlayStyle={overlayStyle}
       >
         <div className={styles.reason}>
           {value}

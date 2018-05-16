@@ -129,6 +129,9 @@ export default class CustomerLists extends PureComponent {
     holdingProducts: PropTypes.object.isRequired,
     queryHoldingProductReqState: PropTypes.bool,
     isNotSaleDepartment: PropTypes.bool.isRequired,
+    dataForNextPage: PropTypes.object.isRequired,
+    addCallRecord: PropTypes.func.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -421,8 +424,8 @@ export default class CustomerLists extends PureComponent {
   // 跳转到分组页面或新建任务页面
   @autobind
   goGroupOrTask({ id, title, url, obj, shouldStay, editPane }) {
-    const { push } = this.props;
-    const newurl = `${url}?${urlHelper.stringify(obj)}`;
+    const { push, dataForNextPage } = this.props;
+    const newurl = `${url}?${urlHelper.stringify({ ...obj, ...dataForNextPage })}`;
     const param = {
       closable: true,
       forceRefresh: true,
@@ -546,6 +549,8 @@ export default class CustomerLists extends PureComponent {
       queryHoldingProduct,
       holdingProducts,
       queryHoldingProductReqState,
+      addCallRecord,
+      currentCommonServiceRecord,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -749,6 +754,8 @@ export default class CustomerLists extends PureComponent {
               toggleServiceRecordModal={toggleServiceRecordModal}
               addServeRecord={addServeRecord}
               motSelfBuiltFeedbackList={motSelfBuiltFeedbackList}
+              addCallRecord={addCallRecord}
+              currentCommonServiceRecord={currentCommonServiceRecord}
             /> : null
         }
       </div>

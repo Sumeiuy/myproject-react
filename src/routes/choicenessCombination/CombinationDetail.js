@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-14 14:22:33
+ * @Last Modified time: 2018-05-15 14:25:31
  */
 
 import React, { PureComponent } from 'react';
@@ -74,14 +74,22 @@ const mapStateToProps = state => ({
   modalReportHistoryData: state.combinationDetail.modalReportHistoryData,
 });
 const mapDispatchToProps = {
-  getOverview: dispatch(effects.getOverview, { loading: true }),
-  getCompositionPie: dispatch(effects.getCompositionPie, { loading: true }),
-  querySecurityList: dispatch(effects.querySecurityList, { loading: true }),
-  getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory, { loading: true }),
-  getCombinationTree: dispatch(effects.getCombinationTree, { loading: true }),
-  getCombinationLineChart: dispatch(effects.getCombinationLineChart, { loading: true }),
-  getOrderingCustList: dispatch(effects.getOrderingCustList, { loading: true }),
-  getReportHistoryList: dispatch(effects.getReportHistoryList, { loading: true }),
+  getOverview: dispatch(effects.getOverview,
+    { loading: true, forceFull: true }),
+  getCompositionPie: dispatch(effects.getCompositionPie,
+    { loading: true, forceFull: true }),
+  querySecurityList: dispatch(effects.querySecurityList,
+    { loading: true, forceFull: true }),
+  getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory,
+    { loading: true, forceFull: true }),
+  getCombinationTree: dispatch(effects.getCombinationTree,
+    { loading: true, forceFull: true }),
+  getCombinationLineChart: dispatch(effects.getCombinationLineChart,
+    { loading: true, forceFull: true }),
+  getOrderingCustList: dispatch(effects.getOrderingCustList,
+    { loading: true, forceFull: true }),
+  getReportHistoryList: dispatch(effects.getReportHistoryList,
+    { loading: true, forceFull: true }),
   push: routerRedux.push,
 };
 
@@ -164,6 +172,16 @@ export default class CombinationDetail extends PureComponent {
     // 获取概览
     getOverview({
       combinationCode: id,
+    }).then(() => {
+      const { overview } = this.props;
+      // 如果是资产配置类组合默认查询一年的数据
+      const key = _.isNull(overview.weekEarnings) ?
+        config.chartTabList[1].key : config.chartTabList[0].key;
+      // 趋势图
+      getCombinationLineChart({
+        combinationCode: id,
+        key,
+      });
     });
     // 饼图
     getCompositionPie({
@@ -178,11 +196,6 @@ export default class CombinationDetail extends PureComponent {
     getAdjustWarehouseHistory(payload);
     // 获取组合树
     getCombinationTree();
-    // 趋势图
-    getCombinationLineChart({
-      combinationCode: id,
-      key: '3',
-    });
     // 查询历史报告模块数据, 非历史报告弹窗
     getReportHistoryList({
       combinationCode: id,
@@ -269,7 +282,10 @@ export default class CombinationDetail extends PureComponent {
     if (source === sourceType.security) {
       const filterType = _.filter(config.securityType, o => o.value === type);
       if (filterType.length) {
-        query.labelMapping = `${filterType[0].shortName}${code}`;
+        query.labelMapping = encodeURIComponent(`${filterType[0].shortName}${code}`);
+        query.type = 'PRODUCT';
+        query.labelName = encodeURIComponent(`${name}(${code})`);
+        query.productName = encodeURIComponent(name);
       } else {
         return;
       }
@@ -283,7 +299,6 @@ export default class CombinationDetail extends PureComponent {
       url,
       param,
       pathname: url,
-      query,
     });
   }
 
@@ -307,21 +322,32 @@ export default class CombinationDetail extends PureComponent {
       url,
       param,
       pathname: url,
-      query,
     });
   }
 
-  // 打开历史报告详情
+  // 打开历史报告详情页
   @autobind
-  openReportDetail(reportId) {
+  openReportDetailPage(recordId) {
     const { push } = this.context;
     const { location: { query: { id } } } = this.props;
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_JX_GROUP_REPORT_DETAIL',
+      title: '历史报告详情',
+    };
     const query = {
-      id: reportId,
+      id: recordId,
       code: id,
     };
     const url = `/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
-    push(url);
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+      pathname: url,
+    });
   }
 
   render() {
@@ -364,6 +390,8 @@ export default class CombinationDetail extends PureComponent {
         getListData: getReportHistoryList,
         // 列表数据
         listData: modalReportHistoryData,
+        // 打开历史报告详情页面
+        openReportDetailPage: this.openReportDetailPage,
       },
     };
 
@@ -384,7 +412,7 @@ export default class CombinationDetail extends PureComponent {
             <CombinationYieldChart
               combinationCode={id}
               tabChange={this.handleChartTabChange}
-              combinationItemData={{}}
+              combinationItemData={overview}
               chartData={combinationLineChartData}
               chartHeight="270px"
               title="组合收益率走势"
@@ -396,7 +424,7 @@ export default class CombinationDetail extends PureComponent {
             combinationCode={id}
             data={reportHistoryData}
             showModal={this.showModal}
-            openReportDetail={this.openReportDetail}
+            openReportDetailPage={this.openReportDetailPage}
           />
           {
             hasTkMampPermission ?

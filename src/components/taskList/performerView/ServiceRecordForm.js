@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 22:25:17
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-15 16:13:48
  * 服务记录表单
  */
 
@@ -115,9 +115,24 @@ export default class ServiceRecordForm extends PureComponent {
       testWallCollision,
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
+      serviceRecordInfo: { caller },
     } = this.props;
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
+
+    let footNode;
+    if (!isReadOnly) {
+      footNode = (
+        <div className={styles.operationSection}>
+          <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
+          {
+            caller !== PHONE
+            && <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
+          }
+        </div>
+      );
+    }
+
     return (
       <div className={styles.serviceRecordWrapper}>
         <div className={styles.title}>服务记录</div>
@@ -157,13 +172,7 @@ export default class ServiceRecordForm extends PureComponent {
           testWallCollision={testWallCollision}
           testWallCollisionStatus={testWallCollisionStatus}
         />
-        {
-          !isReadOnly ?
-            <div className={styles.operationSection}>
-              <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
-              <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
-            </div> : null
-        }
+        {footNode}
       </div>
     );
   }

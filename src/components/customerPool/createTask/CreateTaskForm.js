@@ -278,25 +278,16 @@ export default class CreateTaskForm extends PureComponent {
   // 返回持仓产品发起任务时，任务提示的文字
   getDefaultMissionDescFromProduct(query = {}) {
     let defaultMissionDesc = '';
-    if (!_.isEmpty(query.condition)) {
-      const condition = JSON.parse(decodeURIComponent(query.condition));
-      const { productName = '', primaryKey: [id = ''] } = condition;
-      if (this.isFromExternalProduct(query)) {
-        defaultMissionDesc = `客户当前持有${productName}，数量为 $持仓数量#${id}# ，市值为 $持仓市值#${id}# 。`;
-      }
+    if (this.isFromExternalProduct(query)) {
+      const { productName = '', id = '' } = query;
+      defaultMissionDesc = `客户当前持有${productName}，数量为 $持仓数量#${id}# ，市值为 $持仓市值#${id}# 。`;
     }
     return defaultMissionDesc;
   }
 
   // 判断是否从外部持仓产品进入的列表页发起任务的
   isFromExternalProduct(query = {}) {
-    if (query.source === 'external') {
-      const condition = !_.isEmpty(query.condition) ?
-        JSON.parse(decodeURIComponent(query.condition)) : {};
-      const { searchTypeReq = '' } = condition;
-      return searchTypeReq === 'PRODUCT';
-    }
-    return false;
+    return query.source === 'external' && query.type === 'PRODUCT';
   }
 
   /**
@@ -317,16 +308,14 @@ export default class CreateTaskForm extends PureComponent {
   @autobind
   renderProductDesc(value) {
     const { location: { query = {} } } = this.props;
-    const condition = !_.isEmpty(query.condition) ?
-      JSON.parse(decodeURIComponent(query.condition)) : {};
     const list = value.match(productPattern);
     const newList = _.map(list, item => ({ type: item.slice(1), name: item.slice(1) }));
-    if (_.isEmpty(condition)) {
+    if (_.isEmpty(query)) {
       return newList;
     }
-    const { searchText = '' } = condition;
-    // 从searchText中匹配出产品代码 晋亿实业(601002) => 601002
-    const result = /\((\S+)\)/.exec(searchText);
+    const { product = '' } = query;
+    // 从product中匹配出产品代码 晋亿实业(601002) => 601002
+    const result = /\((\S+)\)/.exec(product);
     const productCode = !_.isEmpty(result) && result[1];
     const dateList = _.map(PRODUCT_ARGUMENTS, item => ({ type: `${item}#${productCode}#`, name: `${item}#${productCode}#` }));
     return [...newList, ...dateList];

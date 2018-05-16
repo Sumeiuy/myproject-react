@@ -43,7 +43,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: generateProxy([
-      '/fspa/external', // 报表中心
+      '/finereport/ReportServer', // 报表中心
       {
         target: 'http://168.61.8.82:5086', // uat
       },
@@ -53,8 +53,8 @@ module.exports = {
       },
       prefix,
       {
-        // target: 'http://168.61.8.82:5086', // uat
-        target: 'http://168.61.8.81:5087', // SIT
+        target: 'http://168.61.8.82:5086', // uat
+        // target: 'http://168.61.8.81:5087', // SIT
         // target: 'http://168.61.8.81:5090', // DOClever
         // target: 'http://160.9.230.153:8082/', // Java开发接口访问地址
       },

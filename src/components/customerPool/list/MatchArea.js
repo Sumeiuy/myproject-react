@@ -402,7 +402,7 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
-  // 持仓产品
+  // 持仓产品:首页的模糊搜索、联想词、外部平台、证券产品
   renderHoldingProduct() {
     const {
       q = '',
@@ -411,7 +411,7 @@ export default class MatchArea extends PureComponent {
     } = this.props;
     if (!_.isEmpty(holdingProducts)) {
       // 精准搜索，用id取找目标
-      if (_.includes(['association', 'external'], source)) {
+      if (_.includes(['association', 'external', 'securitiesProducts'], source)) {
         const keyword = decodeURIComponent(productName);
         const id = decodeURIComponent(labelMapping);
         const filteredProducts = this.getFilteredProductsById(holdingProducts, id);
@@ -541,37 +541,6 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
-  // 精选组合页面的证券产品
-  @autobind
-  renderSecuritiesProducts() {
-    const {
-      listItem: { jxgrpProducts },
-      location: { query: { source, labelMapping = '' } },
-    } = this.props;
-    // 来自精选组合页面的证券产品
-    if (!_.isEmpty(jxgrpProducts) && source === 'securitiesProducts') {
-      const id = decodeURIComponent(labelMapping);
-      const filteredProduct = _.filter(
-        jxgrpProducts,
-        item => item && (_.includes(item.id, id)),
-      );
-      const htmlStringList = _.map(
-        filteredProduct,
-        item => `<em class="marked">${item.name}</em>/${item.code}`,
-      );
-      const htmlString = htmlStringList.join(',');
-      return (
-        <li title={htmlString.replace(/<\/?[^>]*>/g, '')}>
-          <span>
-            <i className="label">持仓产品：</i>
-            <i dangerouslySetInnerHTML={{ __html: htmlString }} />
-          </span>
-        </li>
-      );
-    }
-    return null;
-  }
-
   render() {
     return (
       <div className={styles.relatedInfo}>
@@ -588,7 +557,6 @@ export default class MatchArea extends PureComponent {
           {this.renderSightingTelescope()}
           {this.renderHoldingProduct()}
           {this.renderOrderCombination()}
-          {this.renderSecuritiesProducts()}
         </ul>
       </div>
     );
