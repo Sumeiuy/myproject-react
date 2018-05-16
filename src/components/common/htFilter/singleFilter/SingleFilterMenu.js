@@ -84,6 +84,10 @@ export default class SingleFilterMenu extends PureComponent {
   renderSingleWithSearch = (value) => {
     const renderItems = [];
 
+    const shouldRenderOptionList = this.state.optionList &&
+      this.state.optionList.length !== 0 &&
+      this.state.inputValue;
+
     if (_.isArray(value) && value[1] !== '不限') {
       renderItems.push({
         name: '',
@@ -136,7 +140,7 @@ export default class SingleFilterMenu extends PureComponent {
               </div> : null
           }
           {
-            this.state.optionList && this.state.optionList.length !== 0 ?
+            shouldRenderOptionList ?
               _.map(this.state.optionList, (item, index) => (
                 <li
                   key={index}
