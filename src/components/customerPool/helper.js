@@ -64,6 +64,31 @@ const helper = {
     });
     return finalFilterList.join('|');
   },
+  // 将url上面的filter编码解析为对象
+  transfromFilterValFromUrl(filters) {
+    // 处理由‘|’分隔的多个过滤器
+    const filtersArray = filters ? filters.split('|') : [];
+
+    return _.reduce(filtersArray, (result, value) => {
+      const [name, code] = value.split('.');
+      let filterValue = code;
+
+      // 如果是多选，需要继续处理','分割的多选值
+      if (code.indexOf(',') > -1) {
+        filterValue = code.split(',');
+      }
+
+      if (name === 'minFee' || name === 'totAset') {
+        const minVal = filterValue[0] && filterValue[0].replace('!', '.');
+        const maxVal = filterValue[1] && filterValue[1].replace('!', '.');
+        filterValue = [minVal, maxVal];
+      }
+
+      // 如果对应的过滤器是普通股基佣金率
+      result[name] = filterValue; // eslint-disable-line
+      return result;
+    }, {});
+  },
 };
 
 export default helper;

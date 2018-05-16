@@ -11,6 +11,7 @@ import { autobind } from 'core-decorators';
 import { TreeFilter } from '../../common/htFilter';
 import mouseWheel from '../../common/mouseWheel';
 import { constants } from '../../../config';
+import styles from './custFilter.less';
 
 function transformCustRangeData(list, parent = '') {
   return list.map((item) => {
@@ -174,6 +175,7 @@ export default class CustRange extends PureComponent {
     const placeholder = isDown ? '机构范围' : '客户范围';
     return (
       <TreeFilter
+        dropdownClassName={styles.custFilterWrap}
         filterName="服务营业部"
         value={value}
         treeDefaultExpandAll={expandAll}

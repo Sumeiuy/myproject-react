@@ -6,18 +6,18 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
-import DropdownSelect from '../../common/dropdownSelect';
-import { emp } from '../../../helper';
+import SingleFilter from '../../common/htFilter/manageSingleFilter/SingleFilter';
 import logable from '../../../decorators/logable';
-import { fspContainer } from '../../../config';
 import styles from './saleDepartmentFilter.less';
 
 export default class ServiceManagerFilter extends PureComponent {
 
   static propTypes = {
     searchServerPersonList: PropTypes.array.isRequired,
-    serviceManagerDefaultValue: PropTypes.string.isRequired,
+    serviceManagerDefaultValue:
+      PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
     dropdownSelectedItem: PropTypes.func.isRequired,
     dropdownToSearchInfo: PropTypes.func.isRequired,
     disable: PropTypes.bool.isRequired,
@@ -31,8 +31,11 @@ export default class ServiceManagerFilter extends PureComponent {
       value: '$args[0].ptyMngName',
     },
   })
-  handleSelct(value) {
-    this.props.dropdownSelectedItem(value);
+  handleSelect(item) {
+    this.setState({
+      currentValue: item,
+    });
+    this.props.dropdownSelectedItem(item);
   }
 
   @autobind
@@ -47,37 +50,46 @@ export default class ServiceManagerFilter extends PureComponent {
     this.props.dropdownToSearchInfo(value);
   }
 
-  getPopupContainer() {
-    return document.querySelector(fspContainer.container) || document.body;
+  getCurrentValue() {
+    const { serviceManagerDefaultValue } = this.props;
+    if (!serviceManagerDefaultValue) {
+      return serviceManagerDefaultValue;
+    }
+    const { ptyMngName, ptyMngId } = serviceManagerDefaultValue;
+    return {
+      aliasName: `${ptyMngName}(${ptyMngId})`,
+      name: ptyMngId,
+      ...serviceManagerDefaultValue,
+    };
+  }
+
+  getServerManageList() {
+    const { searchServerPersonList } = this.props;
+    return _.map(searchServerPersonList, item => ({
+      name: item.ptyMngId,
+      aliasName: `${item.ptyMngName}(${item.ptyMngId})`,
+      ...item,
+    }));
   }
 
   render() {
     const {
-      searchServerPersonList,
-      serviceManagerDefaultValue,
       disable,
     } = this.props;
     // 预置下拉框数据列表
-    const presetList = [
-      { ptyMngName: '所有人', ptyMngId: '' },
-      { ptyMngName: '我的', ptyMngId: emp.getId() },
-    ];
+    const currentValue = this.getCurrentValue();
     return (
       <div className={styles.managerContainer}>
-        <span className={styles.selectLabel}>服务经理：</span>
-        <DropdownSelect
-          theme="theme2"
-          showObjKey="ptyMngName"
-          objId="ptyMngId"
-          placeholder="输入姓名或工号查询"
-          name="服务经理"
-          disable={disable}
-          value={serviceManagerDefaultValue}
-          searchList={searchServerPersonList}
-          emitSelectItem={this.handleSelct}
-          emitToSearch={this.handleSearch}
-          presetOptionList={presetList}
-          getPopupContainer={this.getPopupContainer}
+        <SingleFilter
+          className={styles.serverManageWrap}
+          value={currentValue}
+          emptyName="所有人"
+          filterName="服务经理"
+          optionList={this.getServerManageList()}
+          showSearch
+          disabled={disable}
+          onChange={this.handleSelect}
+          onInputChange={this.handleSearch}
         />
       </div>
     );
