@@ -16,6 +16,7 @@ import styles from './orderingCustomer.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const titleList = config.titleList.orderCust;
+const { overlayStyle } = config;
 export default class HistoryReport extends PureComponent {
   static propTypes = {
     // 订购客户数据
@@ -62,11 +63,7 @@ export default class HistoryReport extends PureComponent {
         placement="bottomLeft"
         content={value}
         trigger="hover"
-        overlayStyle={{
-          width: '240px',
-          padding: '10px',
-          wordBreak: 'break-all',
-        }}
+        overlayStyle={overlayStyle}
       >
         <div className={styles.ellipsis}>
           {value}
@@ -102,6 +99,7 @@ export default class HistoryReport extends PureComponent {
           dataSource={list}
           pagination={PaginationOption}
           onChange={this.handlePaginationChange}
+          rowKey="customerId"
         />
       </div>
     );

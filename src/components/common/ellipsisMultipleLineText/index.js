@@ -2,12 +2,13 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-11 15:02:06
+ * @Last Modified time: 2018-05-16 09:41:57
  * 多行文本打点组件
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+// import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import Icon from '../Icon';
@@ -46,10 +47,6 @@ export default class EllipsisMultipleLineText extends PureComponent {
   }
 
   componentDidMount() {
-    this.setContentHeight();
-  }
-
-  componentWillReceiveProps() {
     this.setContentHeight();
   }
 

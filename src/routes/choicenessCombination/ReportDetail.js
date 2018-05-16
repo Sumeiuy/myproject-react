@@ -12,6 +12,7 @@ import { connect } from 'dva';
 import { Layout } from 'antd';
 import _ from 'lodash';
 
+import { closeRctTab } from '../../utils';
 import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
 import logable from '../../decorators/logable';
@@ -47,11 +48,6 @@ export default class ReportDetail extends PureComponent {
     reportDetail: PropTypes.object.isRequired,
   }
 
-  static contextTypes = {
-    goBack: PropTypes.func.isRequired,
-    push: PropTypes.func.isRequired,
-  }
-
   componentDidMount() {
     const {
       getReportDetail,
@@ -75,21 +71,20 @@ export default class ReportDetail extends PureComponent {
 
   @autobind
   handleGoBck() {
-    const { goBack } = this.context;
-    goBack();
+    closeRctTab({ id: 'FSP_JX_GROUP_REPORT_DETAIL' });
   }
   render() {
-    const {
-      reportDetail,
-      reportDetail: { title, author, time, detail, wordDownloadUrl, pdfDownloadUrl },
-    } = this.props;
-    if (_.isEmpty(reportDetail)) {
-      return null;
-    }
+    const { reportDetail = {} } = this.props;
+    const { title, author, time, detail = '', wordDownloadUrl, pdfDownloadUrl } = reportDetail;
 
-    // Д 为替换后端返回数据中的换行符而设置，无实际价值
-    const newDetail = detail.replace(/\r\n|\n\t|\t\n|\n/g, 'Д');
-    const splitArray = newDetail.split('Д');
+    let newDetail = '';
+    let splitArray = [];
+    // detail 为空时，返回数据为 null，不能 replace
+    if (!_.isEmpty(detail)) {
+      // Д 为替换后端返回数据中的换行符而设置，无实际价值
+      newDetail = detail.replace(/\r\n|\n\t|\t\n|\n/g, 'Д');
+      splitArray = newDetail.split('Д');
+    }
 
     return (
       <Layout className={styles.detailWrapper}>

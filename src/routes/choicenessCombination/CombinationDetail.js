@@ -74,14 +74,22 @@ const mapStateToProps = state => ({
   modalReportHistoryData: state.combinationDetail.modalReportHistoryData,
 });
 const mapDispatchToProps = {
-  getOverview: dispatch(effects.getOverview, { loading: true }),
-  getCompositionPie: dispatch(effects.getCompositionPie, { loading: true }),
-  querySecurityList: dispatch(effects.querySecurityList, { loading: true }),
-  getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory, { loading: true }),
-  getCombinationTree: dispatch(effects.getCombinationTree, { loading: true }),
-  getCombinationLineChart: dispatch(effects.getCombinationLineChart, { loading: true }),
-  getOrderingCustList: dispatch(effects.getOrderingCustList, { loading: true }),
-  getReportHistoryList: dispatch(effects.getReportHistoryList, { loading: true }),
+  getOverview: dispatch(effects.getOverview,
+    { loading: true, forceFull: true }),
+  getCompositionPie: dispatch(effects.getCompositionPie,
+    { loading: true, forceFull: true }),
+  querySecurityList: dispatch(effects.querySecurityList,
+    { loading: true, forceFull: true }),
+  getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory,
+    { loading: true, forceFull: true }),
+  getCombinationTree: dispatch(effects.getCombinationTree,
+    { loading: true, forceFull: true }),
+  getCombinationLineChart: dispatch(effects.getCombinationLineChart,
+    { loading: true, forceFull: true }),
+  getOrderingCustList: dispatch(effects.getOrderingCustList,
+    { loading: true, forceFull: true }),
+  getReportHistoryList: dispatch(effects.getReportHistoryList,
+    { loading: true, forceFull: true }),
   push: routerRedux.push,
 };
 
@@ -317,17 +325,29 @@ export default class CombinationDetail extends PureComponent {
     });
   }
 
-  // 打开历史报告详情
+  // 打开历史报告详情页
   @autobind
-  openReportDetail(reportId) {
+  openReportDetailPage(recordId) {
     const { push } = this.context;
     const { location: { query: { id } } } = this.props;
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_JX_GROUP_REPORT_DETAIL',
+      title: '历史报告详情',
+    };
     const query = {
-      id: reportId,
+      id: recordId,
       code: id,
     };
     const url = `/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
-    push(url);
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+      pathname: url,
+    });
   }
 
   render() {
@@ -370,6 +390,8 @@ export default class CombinationDetail extends PureComponent {
         getListData: getReportHistoryList,
         // 列表数据
         listData: modalReportHistoryData,
+        // 打开历史报告详情页面
+        openReportDetailPage: this.openReportDetailPage,
       },
     };
 
@@ -402,7 +424,7 @@ export default class CombinationDetail extends PureComponent {
             combinationCode={id}
             data={reportHistoryData}
             showModal={this.showModal}
-            openReportDetail={this.openReportDetail}
+            openReportDetailPage={this.openReportDetailPage}
           />
           {
             hasTkMampPermission ?

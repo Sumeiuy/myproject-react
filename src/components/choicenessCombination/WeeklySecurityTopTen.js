@@ -20,7 +20,7 @@ import styles from './weeklySecurityTopTen.less';
 const titleStyle = {
   fontSize: '16px',
 };
-const { sourceType } = config;
+const { sourceType, overlayStyle } = config;
 // securityType 里股票对应的值
 const STOCK_CODE = config.securityType[0].value;
 const titleList = config.titleList.ten;
@@ -32,6 +32,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
     orgId: PropTypes.string,
     openCustomerListPage: PropTypes.func.isRequired,
     openStockPage: PropTypes.func.isRequired,
+    openDetailPage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -74,7 +75,18 @@ export default class WeeklySecurityTopTen extends PureComponent {
       return (<span className={changeClassName}>{change}%</span>);
     };
     // 组合名称
-    newTitleList[3].render = text => (<div className={styles.name} title={text}>{text}</div>);
+    newTitleList[3].render = (text, record) => (
+      <div
+        className={styles.name}
+      >
+        <a
+          title={text}
+          onClick={() => this.handleNameClick(record.combinationCode)}
+        >
+          {text}
+        </a>
+      </div>
+    );
     // 查看持仓客户链接，点击打开持仓客户
     newTitleList[4].render = (text, record) => {
       const openPayload = {
@@ -86,6 +98,13 @@ export default class WeeklySecurityTopTen extends PureComponent {
       return <a className={styles.customerLink} onClick={() => openCustomerListPage(openPayload)}><Icon type="kehuzu" /></a>;
     };
     return newTitleList;
+  }
+
+  // 组合名称点击事件
+  @autobind
+  handleNameClick(id) {
+    const { openDetailPage } = this.props;
+    openDetailPage(id);
   }
 
   // 证券名称点击事件
@@ -118,11 +137,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
         placement="bottomLeft"
         content={value}
         trigger="hover"
-        overlayStyle={{
-          width: '240px',
-          padding: '10px',
-          wordBreak: 'break-all',
-        }}
+        overlayStyle={overlayStyle}
       >
         <div className={styles.ellipsis}>
           {value}
@@ -152,6 +167,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
               dataSource={data}
               pagination={false}
               scroll={{ y: 304 }}
+              rowKey="code"
             />
           </div>
         </div>
