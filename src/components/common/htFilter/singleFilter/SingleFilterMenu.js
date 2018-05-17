@@ -51,6 +51,7 @@ export default class SingleFilterMenu extends PureComponent {
       };
       this.setState({
         inputValue: '',
+        isShowCloseIcon: false,
       });
     }
     this.props.onChange({

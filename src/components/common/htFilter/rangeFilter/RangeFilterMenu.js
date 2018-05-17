@@ -6,6 +6,8 @@ import Input from '../htInput';
 import Button from '../button';
 import styles from './rangeFilterMenu.less';
 
+const pattern = /([0-9]|\.)*/;
+
 export default class RangeFilterMenu extends PureComponent {
   static propTypes = {
     value: PropTypes.array.isRequired,
@@ -31,7 +33,7 @@ export default class RangeFilterMenu extends PureComponent {
 
   handleMinInputChange = (e) => {
     this.setState({
-      min: _.trim(e.target.value),
+      min: pattern.exec(e.target.value)[0],
       error: {
         isValid: true,
         minError: '',
@@ -42,7 +44,7 @@ export default class RangeFilterMenu extends PureComponent {
 
   handleMaxInputChange = (e) => {
     this.setState({
-      max: _.trim(e.target.value),
+      max: pattern.exec(e.target.value)[0],
       error: {
         isValid: true,
         maxError: '',
