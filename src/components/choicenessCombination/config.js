@@ -360,6 +360,7 @@ const config = {
         dataIndex: 'reason',
         key: 'reason',
         title: '理由',
+        width: 120,
       },
     ],
     // 行业股票组合
@@ -410,6 +411,7 @@ const config = {
         dataIndex: 'reason',
         key: 'reason',
         title: '理由',
+        width: 120,
       },
     ],
     // 配置类组合
@@ -460,6 +462,7 @@ const config = {
         dataIndex: 'reason',
         key: 'reason',
         title: '理由',
+        width: 120,
       },
     ],
     // 配置类组合（资产配置型）
@@ -483,16 +486,17 @@ const config = {
         dataIndex: 'callInTime',
         key: 'callInTime',
         title: '调仓日期',
+        width: 110,
       },
       {
-        dataIndex: 'weight',
-        key: 'weight',
+        dataIndex: 'currHoldRate',
+        key: 'currHoldRate',
         title: '本期权重(%)',
       },
       {
         dataIndex: 'rateReturn',
         key: 'rateReturn',
-        title: '回报率',
+        title: '回报率(%)',
       },
     ],
   ],
