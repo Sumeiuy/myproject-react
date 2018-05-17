@@ -40,6 +40,7 @@ export default class SingleFilterMenu extends PureComponent {
   }
 
   handleItemClick = (item) => {
+    const emptyValue = '';
     let returnItem = item;
     if (this.props.showSearch) {
       if (item.aliasName === '清除选择的内容') {
@@ -53,6 +54,7 @@ export default class SingleFilterMenu extends PureComponent {
         inputValue: '',
         isShowCloseIcon: false,
       });
+      this.props.onInputChange(emptyValue);
     }
     this.props.onChange({
       ...returnItem,
