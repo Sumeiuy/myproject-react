@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 10:10:16
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-09 14:36:07
+ * @Last Modified time: 2018-05-15 16:40:57
  * @description 任务管理页面需要用到的dva的effects,封装此处为了方便Home页面代码的整洁
  */
 
@@ -64,6 +64,8 @@ const effects = {
   testWallCollision: 'investmentAdvice/testWallCollision',
   // 清空执行者视图右侧搜索客户
   clearCustListForServiceImplementation: 'performerView/clearCustListForServiceImplementation',
+  // 添加通话记录关联服务记录
+  addCallRecord: 'customerPool/addCallRecord',
 };
 
 export default effects;

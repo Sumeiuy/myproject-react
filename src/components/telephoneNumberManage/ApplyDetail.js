@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-15 18:57:49
+ * @Last Modified time: 2018-05-16 10:25:10
  */
 
 import React, { PureComponent } from 'react';
@@ -105,11 +105,8 @@ export default class ApplyDetail extends PureComponent {
     const { currentNodeCode } = this.props.data;
     // 按照新增需求，分公司处理时候上传附件，所以只有在总部审核和办结状态才显示附件
     // headAudit表示总部审核状态
-    // trueOver表示办结状态
-    if (currentNodeCode === 'headAudit' || currentNodeCode === 'trueOver') {
-      return true;
-    }
-    return false;
+    // trueOver表示办结状态r
+    return currentNodeCode === 'headAudit' || currentNodeCode === 'trueOver';
   }
 
   render() {
