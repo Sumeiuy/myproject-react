@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-03 14:35:21
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-12 09:55:58
+ * @Last Modified time: 2018-05-17 16:19:57
  */
 
 import React, { PureComponent } from 'react';
@@ -82,6 +82,7 @@ export default class ContactInfoPopover extends PureComponent {
     disablePhone: true,
     placement: 'bottomRight',
     children: '',
+    name: '',
   };
 
   getPopupContainer() {
