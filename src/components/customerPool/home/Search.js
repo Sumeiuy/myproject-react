@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-17 10:48:53
+ * @Last Modified time: 2018-05-17 12:49:18
  * @description 客户池头部搜索组件
  */
 
@@ -224,15 +224,13 @@ export default class Search extends PureComponent {
 
   renderDatasource() {
     const { dataSource, value, hasSearchResult } = this.state;
-    // 给数据按照id去重
-    const uniqueDataSource = _.uniqBy(dataSource, 'id');
     let newData;
     if (hasSearchResult) {
       // 有搜索结果
-      newData = _.map(uniqueDataSource, this.renderOption);
+      newData = _.map(dataSource, this.renderOption);
     } else {
       // 无搜索结果
-      newData = _.map(uniqueDataSource, this.renderNoneSearchResult);
+      newData = _.map(dataSource, this.renderNoneSearchResult);
     }
     if (!_.isEmpty(value)) {
       return newData;
