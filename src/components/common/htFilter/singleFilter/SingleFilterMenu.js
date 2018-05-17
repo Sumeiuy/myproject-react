@@ -49,6 +49,9 @@ export default class SingleFilterMenu extends PureComponent {
         key: returnItem.name,
         value: returnItem.aliasName,
       };
+      this.setState({
+        inputValue: '',
+      });
     }
     this.props.onChange({
       ...returnItem,
