@@ -150,7 +150,7 @@ const moreFilters = [
         { key: 'szHkCust', value: '深港通' },
         { key: 'rzrqCust', value: '融资融券' },
         { key: 'xsb', value: '新三板' },
-        { key: 'optCust', value: '股票期权' },
+        { key: 'optCust', value: '个股期权' },
         { key: 'cyb', value: '创业板' },
       ],
     },
