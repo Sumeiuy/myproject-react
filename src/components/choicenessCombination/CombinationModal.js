@@ -212,6 +212,10 @@ export default class CombinationModal extends PureComponent {
   // 树状选择器change
   @autobind
   handleTreeSelectChange(value) {
+    // 禁用树状选择器的取消选中
+    if (_.isEmpty(value)) {
+      return;
+    }
     this.setState({
       combinationCode: value,
     }, this.sendRequest);
