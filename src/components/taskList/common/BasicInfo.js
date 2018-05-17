@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import { Row, Col } from 'antd';
 import LabelInfo from './LabelInfo';
 import ForgeryRichText from '../../common/ForgeryRichText';
-import EllipsisMultipleLineText from '../../common/ellipsisMultipleLineText';
 import styles from './basicInfo.less';
 
 export default class BasicInfo extends PureComponent {
@@ -78,9 +77,7 @@ export default class BasicInfo extends PureComponent {
             <Col className={styles.colItem}>
               <span className={`${styles.label} ${styles.fl}`}>服务策略:&nbsp;</span>
               <p className={`${styles.content}`}>
-                <EllipsisMultipleLineText>
-                  <ForgeryRichText text={servicePolicy} />
-                </EllipsisMultipleLineText>
+                <ForgeryRichText text={servicePolicy} />
               </p>
             </Col>
           </Row>
@@ -90,9 +87,7 @@ export default class BasicInfo extends PureComponent {
                 <Col className={styles.colItem}>
                   <span className={`${styles.label} ${styles.fl}`}>任务提示:&nbsp;</span>
                   <p className={`${styles.content}`}>
-                    <EllipsisMultipleLineText>
-                      <ForgeryRichText text={missionDescription} />
-                    </EllipsisMultipleLineText>
+                    <ForgeryRichText text={missionDescription} />
                   </p>
                 </Col>
               </Row> :

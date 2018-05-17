@@ -17,7 +17,6 @@ import { data } from '../../../helper';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 import ForgeryRichText from '../../common/ForgeryRichText';
-import EllipsisMultipleLineText from '../../common/ellipsisMultipleLineText';
 import logable, { logPV } from '../../../decorators/logable';
 import styles from './taskPreview.less';
 
@@ -460,17 +459,13 @@ export default class TaskPreview extends PureComponent {
             <div className={styles.descriptionOrNameSection}>
               <div>服务策略：</div>
               <div>
-                <EllipsisMultipleLineText>
-                  <ForgeryRichText text={serviceStrategySuggestion} />
-                </EllipsisMultipleLineText>
+                <ForgeryRichText text={serviceStrategySuggestion} />
               </div>
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>任务提示：</div>
               <div>
-                <EllipsisMultipleLineText>
-                  <ForgeryRichText text={templetDesc} />
-                </EllipsisMultipleLineText>
+                <ForgeryRichText text={templetDesc} />
               </div>
             </div>
           </div>

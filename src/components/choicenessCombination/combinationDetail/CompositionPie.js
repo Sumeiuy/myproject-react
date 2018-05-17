@@ -17,10 +17,11 @@ import styles from './compositionPie.less';
 export default class CompositionPie extends PureComponent {
   static propTypes = {
     data: PropTypes.array.isRequired,
+    height: PropTypes.string.isRequired,
   }
 
   render() {
-    const { data } = this.props;
+    const { data, height } = this.props;
     const newData = data.map((item) => {
       const newItem = { ...item };
       const { name, value, number } = newItem;
@@ -55,9 +56,9 @@ export default class CompositionPie extends PureComponent {
         type: 'scroll',
         orient: 'vertical',
         icon: 'circle',
-        right: 0,
-        top: 30,
-        bottom: 40,
+        right: 10,
+        top: 10,
+        bottom: 20,
         itemWidth: 8,
         itemHeight: 8,
         data: labelArray,
@@ -68,10 +69,10 @@ export default class CompositionPie extends PureComponent {
         textStyle: {
           rich: {
             name: {
-              width: 70,
+              width: 112,
             },
             percent: {
-              width: 50,
+              width: 56,
             },
             number: {
               width: 20,
@@ -83,8 +84,8 @@ export default class CompositionPie extends PureComponent {
         {
           name: '组合构成',
           type: 'pie',
-          radius: ['28%', '38%'],
-          center: [60, 90],
+          radius: ['40%', '50%'],
+          center: [100, 100],
           avoidLabelOverlap: false,
           hoverOffset: 5,
           emphasis: {
@@ -126,7 +127,7 @@ export default class CompositionPie extends PureComponent {
           option={option}
           resizable
           style={{
-            height: '330px',
+            height,
             marginTop: '15px',
           }}
         />
