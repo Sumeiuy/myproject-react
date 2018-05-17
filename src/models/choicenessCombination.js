@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合modal
  * @Date: 2018-04-17 10:08:03
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-12 16:04:41
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-05-17 10:52:27
 */
 
 import _ from 'lodash';
@@ -48,7 +48,7 @@ function combinationRankListSortAndFilter(list, condition) {
   const yieldItem = _.filter(yieldRankList, item => item.value === yieldRankValue)[0]
     || EMPTY_OBJECT;
   // 然后找出对应的收益率的key，进行排序
-  const sortList = _.reverse(_.sortBy(list, item => item[yieldItem.showNameKey]));
+  const sortList = _.reverse(_.sortBy(list, item => (item[yieldItem.showNameKey] || 0)));
   return sortList.map((item) => {
     // 匹配对应风险等级的数据
     let show = item.riskLevel === riskLevel;
