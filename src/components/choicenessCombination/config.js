@@ -2,8 +2,8 @@
  * @Description: 精选组合部分配置项
  * @Author: Liujianshu
  * @Date: 2018-04-25 14:28:07
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-11 19:03:37
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-05-17 14:28:45
  */
 
 const config = {
@@ -170,14 +170,14 @@ const config = {
         dataIndex: 'customerId',
         key: 'customerId',
         title: '客户号',
-        width: '24%',
+        width: '22%',
         align: 'left',
       },
       {
         dataIndex: 'customerName',
         key: 'customerName',
         title: '客户名称',
-        width: '17%',
+        width: '19%',
         align: 'left',
       },
       {
