@@ -324,7 +324,7 @@ const config = {
         dataIndex: 'industry',
         key: 'industry',
         title: '行业',
-        width: 90,
+        width: 60,
       },
       {
         dataIndex: 'percent',
@@ -380,7 +380,7 @@ const config = {
         dataIndex: 'industry',
         key: 'industry',
         title: '行业',
-        width: 90,
+        width: 60,
       },
       {
         dataIndex: 'callInTime',
@@ -430,7 +430,7 @@ const config = {
         dataIndex: 'category',
         key: 'category',
         title: '分类',
-        width: 90,
+        width: 60,
       },
       {
         dataIndex: 'callInTime',
