@@ -128,8 +128,7 @@ export default class CreateContactModal extends PureComponent {
    * 通话结束后要创建一条服务记录，并弹出服务记录框
    */
   @autobind
-  handlePhoneEnd(data) {
-    console.log('handlePhoneEnd: ', data);
+  handlePhoneEnd() {
     // 点击挂电话隐藏蒙层
     this.setState({ showMask: false });
     // 没有成功发起通话
