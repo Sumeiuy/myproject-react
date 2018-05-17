@@ -11,7 +11,6 @@ import _ from 'lodash';
 
 import LabelInfo from '../common/LabelInfo';
 import ForgeryRichText from '../../common/ForgeryRichText';
-import EllipsisMultipleLineText from '../../common/ellipsisMultipleLineText';
 import styles from './infoArea.less';
 
 function InfoArea(props) {
@@ -47,9 +46,7 @@ function InfoArea(props) {
                         (<div
                           className={styles.row}
                         >
-                          <EllipsisMultipleLineText>
-                            <ForgeryRichText text={item.value} />
-                          </EllipsisMultipleLineText>
+                          <ForgeryRichText text={item.value} />
                         </div>
                         ) :
                         item.value
