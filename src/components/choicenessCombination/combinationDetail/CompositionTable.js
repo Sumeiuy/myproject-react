@@ -23,8 +23,10 @@ const KEY_REASON = 'reason';
 const KEY_TIME = 'callInTime';
 // 证券名称字符串
 const KEY_NAME = 'name';
-// 行业、分类字符串
+// 行业字符串
 const KEY_INDUSTRY = 'industry';
+// 分类字符串
+const KEY_CATEGORY = 'category';
 // 累计涨幅
 const KEY_INCREASE = 'increase';
 // 浮动收益率
@@ -46,8 +48,10 @@ export default class CompositionTable extends PureComponent {
     const timeIndex = _.findIndex(newColumns, o => o.key === KEY_TIME);
     // 股票、基金名称列
     const nameIndex = _.findIndex(newColumns, o => o.key === KEY_NAME);
-    // 行业、分类列
+    // 行业
     const industryIndex = _.findIndex(newColumns, o => o.key === KEY_INDUSTRY);
+    // 分类
+    const categoryIndex = _.findIndex(newColumns, o => o.key === KEY_CATEGORY);
     // 累计涨幅
     const increaseIndex = _.findIndex(newColumns, o => o.key === KEY_INCREASE);
     // 浮动收益率
@@ -59,6 +63,7 @@ export default class CompositionTable extends PureComponent {
     if (timeIndex > noResult) {
       newColumns[timeIndex].render = text => (<div>{time.format(text, formatStr)}</div>);
     }
+    newColumns = this.renderNumberOrText(categoryIndex, newColumns);
     newColumns = this.renderNumberOrText(nameIndex, newColumns);
     newColumns = this.renderNumberOrText(industryIndex, newColumns);
     newColumns = this.renderNumberOrText(increaseIndex, newColumns, 'number');
