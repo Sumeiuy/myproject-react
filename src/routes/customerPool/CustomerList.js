@@ -68,7 +68,7 @@ function getFilterParam(filterObj) {
   param.custClass = filterObj.custClass || null;
   param.riskLvl = filterObj.riskLvl || null;
 
-/*   if (filterObj.primaryKeyLabels) {
+  /* if (filterObj.primaryKeyLabels) {
     param.primaryKeyLabels = [].concat(filterObj.primaryKeyLabels);
   } */
 
@@ -176,6 +176,9 @@ const effects = {
   getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
   isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
   queryHoldingProduct: 'customerPool/queryHoldingProduct',
+  clearTaskFlowData: 'customerPool/clearTaskFlowData',
+  queryProduct: 'customerPool/queryProduct',
+  clearProductData: 'customerPool/clearProductData',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -247,7 +250,8 @@ const mapDispatchToProps = {
     type: 'customerPool/clearCreateTaskData',
     payload: query || {},
   }),
-  queryProduct: fetchDataFunction(true, 'customerPool/queryProduct'),
+  queryProduct: fetchDataFunction(false, effects.queryProduct),
+  clearProductData: fetchDataFunction(false, effects.clearProductData),
   // 获取uuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
   getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
@@ -313,6 +317,7 @@ export default class CustomerList extends PureComponent {
     queryProduct: PropTypes.func.isRequired,
     holdingProducts: PropTypes.object.isRequired,
     searchedProductList: PropTypes.array,
+    clearProductData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -681,6 +686,7 @@ export default class CustomerList extends PureComponent {
       holdingProducts,
       queryProduct,
       searchedProductList,
+      clearProductData,
     } = this.props;
     const {
       sortDirection,
@@ -730,6 +736,7 @@ export default class CustomerList extends PureComponent {
         <Filter
           sightingTelescopeFilters={sightingTelescopeFilters}
           queryProduct={queryProduct}
+          clearProductData={clearProductData}
           searchedProductList={searchedProductList}
           dict={dict}
           location={location}

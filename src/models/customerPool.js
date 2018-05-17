@@ -1367,6 +1367,13 @@ export default {
         productList: payload,
       };
     },
+    clearProductData(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        productList: payload,
+      };
+    },
     // 审批流程获取按钮成功
     getApprovalBtnSuccess(state, action) {
       const { payload: { resultData } } = action;

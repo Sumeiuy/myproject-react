@@ -267,6 +267,7 @@ export default class Filter extends PureComponent {
     onFilterChange: PropTypes.func.isRequired,
     sightingTelescopeFilters: PropTypes.object.isRequired,
     queryProduct: PropTypes.func.isRequired,
+    clearProductData: PropTypes.func.isRequired,
     searchedProductList: PropTypes.array,
   }
 
@@ -331,10 +332,13 @@ export default class Filter extends PureComponent {
 
   @autobind
   handleProductFilterSearchChange(value) {
+    const emptyData = [];
     if (!_.isEmpty(value)) {
       this.props.queryProduct({
         keyword: value,
       });
+    } else {
+      this.props.clearProductData(emptyData);
     }
   }
 
