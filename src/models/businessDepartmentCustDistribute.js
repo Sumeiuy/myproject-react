@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 13:27:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-16 18:41:23
+ * @Last Modified time: 2018-05-17 17:18:04
  * @description 营业部非投顾签约客户分配
  */
 
@@ -25,6 +25,10 @@ export default {
     empListByQuery: [],
     // 根据关键字获取的开发经理列表
     devEmpListByQuery: [],
+    // 客户分配审批人列表
+    approvalList: [],
+    // 创建客户分配审批结果
+    createResult: false,
   },
 
   reducers: {
@@ -84,6 +88,21 @@ export default {
       };
     },
 
+    getApprovalsSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        approvalList: payload,
+      };
+    },
+
+    createDistributeApplySuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        createResult: payload === 'Success',
+      };
+    },
   },
 
   effects: {
@@ -144,6 +163,24 @@ export default {
       const { resultData = {} } = yield call(api.queryDistributeDevEmp, payload);
       yield put({
         type: 'queryDistributeDevEmpSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 获取审批人列表
+    * getApprovals({ payload }, { call, put }) {
+      const { resultData = [] } = yield call(api.getApprovals, payload);
+      yield put({
+        type: 'getApprovalsSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 创建客户分配审批
+    * createDistributeApply({ payload }, { call, put }) {
+      const { resultData } = yield call(api.createDistributeApply, payload);
+      yield put({
+        type: 'createDistributeApplySuccess',
         payload: resultData,
       });
     },

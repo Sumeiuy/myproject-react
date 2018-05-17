@@ -2,28 +2,28 @@
  * @Author: sunweibin
  * @Date: 2018-05-10 10:46:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-16 19:36:04
+ * @Last Modified time: 2018-05-17 17:46:02
  * @description 营业部非投顾签约客户分配弹出层Form
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Table, Radio, Upload, message, Modal } from 'antd';
+import { Table, Radio, Upload, message } from 'antd';
 import _ from 'lodash';
 
+import confirm from '../common/confirm_';
 import Icon from '../common/Icon';
 import InfoTitle from '../common/InfoTitle';
 import Button from '../common/Button';
 import AddCustListLayer from './AddCustListLayer';
 import AddEmpListLayer from './AddEmpListLayer';
-import TableDialog from '../common/biz/TableDialog';
 import { request } from '../../config';
 import { emp, file as fileHelper } from '../../helper';
 import {
   custTableColumns,
   managerTableColumns,
   tableCommonPagination,
-  approvalColumns,
+  CUST_LIST_BOUNDARY_VALUE,
 } from './config';
 import { createAddLayerCustTableDate } from './utils';
 
@@ -33,8 +33,6 @@ import styles from './bussinessDepartmentCustBoard.less';
 const RadioGroup = Radio.Group;
 // 批量导入数据上传数据的Upload的上传地址
 const UPLOAD_URL = `${request.prefix}/file/uploadTemp`;
-// 客户列表的最大边界值,目前暂定 400
-const CUST_LIST_BOUNDARY_VALUE = 400;
 
 export default class BussinessDepartmentCustBoard extends Component {
   static propTypes = {
@@ -49,6 +47,7 @@ export default class BussinessDepartmentCustBoard extends Component {
     custListByQuery: PropTypes.array,
     empListByQuery: PropTypes.array,
     devEmpListByQuery: PropTypes.array,
+    onChange: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -64,8 +63,6 @@ export default class BussinessDepartmentCustBoard extends Component {
     super(props);
 
     this.state = {
-      // 供用户选择的下一步审批人列表
-      approvalList: [],
       // 客户列表
       custList: [],
       // 判断客户列表总数有无达到最大值
@@ -76,10 +73,6 @@ export default class BussinessDepartmentCustBoard extends Component {
       rule: '',
       // 是否需要显示分配规则
       isShowRuleRadio: false,
-      // 审批人
-      approval: '',
-      // 用户已经批量上传过一次客户Excel了
-      hasUploaded: false,
       // 弹出用户选择客户进行添加的弹出层
       addCustModal: false,
       // 弹出用户选择服务经理进行添加的弹出层
@@ -95,6 +88,13 @@ export default class BussinessDepartmentCustBoard extends Component {
     this.props.callbacks.getEmpList({ orgId: emp.getOrgId() });
   }
 
+  // 将提交按钮需要的数据使用回调传递给父组件
+  @autobind
+  handleSubmitDataPass(data) {
+    const submitData = _.pick(this.state, ['custList', 'managerList', 'rule']);
+    this.props.onChange({ ...submitData, ...data });
+  }
+
   @autobind
   deleteCust(record) {
     // 目前客户列表数据删除由前端完成
@@ -105,6 +105,7 @@ export default class BussinessDepartmentCustBoard extends Component {
     tempList.splice(index, 1);
     // 删除的情况下肯定是不会达到客户列表的最大值的
     this.setState({ custList: tempList, hasReachBoundary: false });
+    this.handleSubmitDataPass({ custList: tempList });
   }
 
   @autobind
@@ -121,6 +122,7 @@ export default class BussinessDepartmentCustBoard extends Component {
       isShowRuleRadio,
       rule: newRule,
     });
+    this.handleSubmitDataPass({ managerList: tempList, rule: newRule });
   }
 
   @autobind
@@ -129,11 +131,16 @@ export default class BussinessDepartmentCustBoard extends Component {
       const { custList } = this.state;
       const newList = _.uniqBy([...custList, ...list], 'brokerNumber');
       // 客户列表的总数不能超过阀值
-      const hasReachBoundary = _.size(newList) >= CUST_LIST_BOUNDARY_VALUE;
+      const hasReachBoundary = _.size(newList) > CUST_LIST_BOUNDARY_VALUE;
       this.setState({
-        custList: _.slice(newList, 0, CUST_LIST_BOUNDARY_VALUE),
+        custList: newList,
         hasReachBoundary,
       });
+      this.handleSubmitDataPass({ custList: newList });
+      if (hasReachBoundary) {
+        // 如果超过客户列表的临界值，弹框提醒
+        this.showWarningOfReachedBoundary();
+      }
     }
   }
 
@@ -178,7 +185,8 @@ export default class BussinessDepartmentCustBoard extends Component {
   @autobind
   showWarningOfReachedBoundary() {
     // 此方法用于在当客户列表总数达到可添加的最大值时，提醒申请人不能再添加
-    Modal.warning({
+    confirm({
+      title: '',
       content: `添加的客户分配数量已经达到${CUST_LIST_BOUNDARY_VALUE},不能再添加更多!`,
     });
   }
@@ -202,6 +210,7 @@ export default class BussinessDepartmentCustBoard extends Component {
   @autobind
   handleCustDistributeRuleRadioChange(e) {
     this.setState({ rule: e.target.value });
+    this.handleSubmitDataPass({ rule: e.target.value });
   }
 
   @autobind
@@ -236,13 +245,19 @@ export default class BussinessDepartmentCustBoard extends Component {
   }
 
   @autobind
-  handleApprovalModalCancel() {
-    this.setState({ nextApproverModal: false });
-  }
-
-  @autobind
-  handleAddCustLayerSubmit(custList) {
-    this.addCustInTable(custList);
+  handleAddCustLayerSubmit(custList, isSelectAll, filterQuery) {
+    // 如果用户选择的是 全选，则需要根据筛选条件获取数据
+    if (isSelectAll) {
+      this.props.callbacks.filterCustList({
+        ...filterQuery,
+        pageNum: 1,
+        pageSize: CUST_LIST_BOUNDARY_VALUE,
+      }).then(
+        () => this.addCustInTable(_.get(this.props.custListByFilter, 'custList') || []),
+      );
+    } else {
+      this.addCustInTable(custList);
+    }
     this.handleAddCustLyerClose();
   }
 
@@ -264,6 +279,7 @@ export default class BussinessDepartmentCustBoard extends Component {
     // 如果只有1个服务经理，则不显示分配规则
     const isShowRuleRadio = _.size(list) > 1;
     this.setState({ managerList: newList, isShowRuleRadio });
+    this.handleSubmitDataPass({ managerList: newList });
   }
 
   @autobind
@@ -324,12 +340,10 @@ export default class BussinessDepartmentCustBoard extends Component {
       empListByQuery,
     } = this.props;
     const {
-      approvalList,
       custList,
       managerList,
       addCustModal,
       addEmpModal,
-      nextApproverModal,
       isShowRuleRadio,
     } = this.state;
     const newCustTableColumns = this.updateCustTableColumns(custTableColumns, 'cust');
@@ -406,22 +420,6 @@ export default class BussinessDepartmentCustBoard extends Component {
               visible={addEmpModal}
               onOK={this.handleAddEmpLayerSubmit}
               onClose={this.handleAddEmpLyerClose}
-            />
-          )
-        }
-        {
-          !nextApproverModal ? null
-          : (
-            <TableDialog
-              visible={nextApproverModal}
-              onOk={this.sendCreateRequest}
-              onCancel={this.handleApprovalModalCancel}
-              dataSource={approvalList}
-              columns={approvalColumns}
-              title="选择下一审批人员"
-              modalKey="distributeApplyApprovalModal"
-              rowKey="login"
-              searchShow={false}
             />
           )
         }

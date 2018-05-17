@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 13:50:40
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-16 18:46:03
+ * @Last Modified time: 2018-05-17 17:43:42
  * @description 营业部非投顾签约客户分配首页
  */
 
@@ -10,6 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { message } from 'antd';
 
 import { propsShape, defaultProps } from './defaultPropsShape';
 import Barable from '../../decorators/selfBar';
@@ -120,8 +121,16 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  handleApplyBoardSubmit() {
-    console.warn('点击新建提交');
+  handleApplyBoardSubmit(query) {
+    this.props.createDistributeApply(query).then(() => {
+      const { createResult } = this.props;
+      if (createResult) {
+        message.success('创建客户分配申请成功');
+        this.queryList();
+      } else {
+        message.error('创建客户分配申请失败');
+      }
+    });
   }
 
   // 处理投顾进行筛选后，进行查询列表
@@ -202,6 +211,7 @@ export default class Home extends PureComponent {
       custListByQuery,
       empListByQuery,
       devEmpListByQuery,
+      approvalList,
     } = this.props;
     const { createApplyModalShow } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -255,6 +265,8 @@ export default class Home extends PureComponent {
       queryDistributeEmp: this.props.queryDistributeEmp,
       // 根据关键字查询开发经理 api
       queryDistributeDevEmp: this.props.queryDistributeDevEmp,
+      // 查询审批人 api
+      getApprovals: this.props.getApprovals,
     };
 
     return (
@@ -281,6 +293,7 @@ export default class Home extends PureComponent {
               custListByQuery={custListByQuery}
               empListByQuery={empListByQuery}
               devEmpListByQuery={devEmpListByQuery}
+              approvalList={approvalList}
             />
           )
         }

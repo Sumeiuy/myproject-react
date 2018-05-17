@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 13:53:47
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-16 18:46:38
+ * @Last Modified time: 2018-05-17 17:15:55
  * @description 营业部非投顾签约客户分配首页的connect修饰后的组件
  */
 
@@ -32,6 +32,10 @@ const mapStateToProps = state => ({
   empListByQuery: state.custDistribute.empListByQuery,
   // 根据关键字获取的开发经理列表
   devEmpListByQuery: state.custDistribute.devEmpListByQuery,
+  // 客户分配的审批人列表
+  approvalList: state.custDistribute.approvalList,
+  // 客户分配申请新建结果
+  createResult: state.custDistribute.createResult,
 });
 
 const mapDispatchToProps = {
@@ -51,6 +55,10 @@ const mapDispatchToProps = {
   queryDistributeEmp: effect('custDistribute/queryDistributeEmp'),
   // 根据关键字查询开发经理 api
   queryDistributeDevEmp: effect('custDistribute/queryDistributeDevEmp'),
+  // 查询审批人
+  getApprovals: effect('custDistribute/getApprovals', { loading: false }),
+  // 新建客户分配申请
+  createDistributeApply: effect('custDistribute/createDistributeApply'),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

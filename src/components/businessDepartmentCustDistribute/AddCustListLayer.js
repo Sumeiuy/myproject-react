@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-11 13:45:12
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-16 19:42:12
+ * @Last Modified time: 2018-05-17 15:33:16
  * @description 用户选择添加客户列表
  */
 import React, { Component } from 'react';
@@ -48,6 +48,18 @@ export default class AddCustListLayer extends Component {
     dict: PropTypes.object,
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    // 如果用户选择了全选，那么需要将下一页的数据也禁用掉，并且 checked
+    const custList = _.get(nextProps.data, 'custList') || [];
+    const { disabledAll } = prevState;
+    if (disabledAll) {
+      return {
+        selectedRowKeys: custList.map(item => item.brokerNumber),
+      };
+    }
+    return null;
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -73,6 +85,8 @@ export default class AddCustListLayer extends Component {
       lastBrokerage: [],
       // 控制筛选条件第二行显示与隐藏
       showSecondLineFilter: false,
+      // 用来判断用户选择了全选后，禁用所有的checkbox
+      disabledAll: false,
     };
   }
 
@@ -81,9 +95,9 @@ export default class AddCustListLayer extends Component {
     this.props.onFilterCust({ pageNum: 1, pageSize: 10 });
   }
 
+  // 获取所有的筛选条件
   @autobind
-  filterCustList(pageQuery = {}) {
-    // TOO 需要将 status 值如果是 不限，则需要修改为借口对应的
+  getFilterQuery() {
     const filterQuery = _.pick(
       this.state,
       ['status', 'asset', 'dailyAsset', 'brokerage', 'lastBrokerage'],
@@ -95,11 +109,19 @@ export default class AddCustListLayer extends Component {
       devEmp: { empId: devEmpId = '' },
     } = this.state;
     const ids = { custId: custNumber, empId, devEmpId };
+    return {
+      ...ids,
+      ...filterQuery,
+    };
+  }
+
+  @autobind
+  filterCustList(pageQuery = {}) {
+    const filterQuery = this.getFilterQuery();
     this.props.onFilterCust({
       pageNum: 1,
       pageSize: 10,
       ...pageQuery,
-      ...ids,
       ...filterQuery,
     });
   }
@@ -146,9 +168,10 @@ export default class AddCustListLayer extends Component {
     // 因为存在全选，以及用户自己手动勾选
     // 全选是将所有的条件传递过去获取所有的数据再传递过去
     // 用户手动勾选选择勾选的
-    const { custList } = this.state;
-    console.warn('添加客户确认：', custList);
-    this.props.onOK(custList);
+    const { custList, disabledAll } = this.state;
+    const filterQuery = this.getFilterQuery();
+    // 全选需要将条件传递出去，让页面查询一把，然后添加进页面Table
+    this.props.onOK(custList, disabledAll, filterQuery);
   }
 
   // 筛选条件中的客户搜索
@@ -229,7 +252,8 @@ export default class AddCustListLayer extends Component {
       ({ value: item.key || 'all', label: item.value, show: true }));
 
     const {
-      selectedRowKeys, showSecondLineFilter,
+      selectedRowKeys,
+      showSecondLineFilter,
       status,
       asset,
       dailyAsset,
@@ -238,6 +262,7 @@ export default class AddCustListLayer extends Component {
       cust,
       emp,
       devEmp,
+      disabledAll,
     } = this.state;
     const {
       devEmpListByQuery,
@@ -248,30 +273,38 @@ export default class AddCustListLayer extends Component {
     const newCustList = createAddLayerCustTableDate(_.get(data, 'custList'));
     const pageObject = _.get(data, 'page') || {};
     // 如果数据无空的情况下，不需要一下的rowSelection
-    const selectedRowKeysSize = _.size(selectedRowKeys);
-    const rowSelection = !pageObject.totalCount ? {}
-      : {
-        selectedRowKeys,
-        onChange: this.handleSelectChange,
-        hideDefaultSelections: true,
-        selections: [{
-          key: 'all-data',
-          text: pageObject.totalCount !== selectedRowKeysSize ? '全选' : '取消全选',
-          onSelect: () => {
-            if (pageObject.totalCount !== selectedRowKeysSize) {
-              // 选中的个数不等于总数，此时显示的是全选，点击全部选中
-              this.setState({
-                selectedRowKeys: newCustList.map(item => item.key),
-              });
-            } else {
-              // 若选中的个数等于总数，此时显示的是取消全选，点击则全不选
-              this.setState({
-                selectedRowKeys: [],
-              });
-            }
-          },
-        }],
-      };
+    const selectedAllText = !disabledAll ? '全选' : '取消全选';
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.handleSelectChange,
+      hideDefaultSelections: true,
+      selections: [{
+        key: 'all-data',
+        text: selectedAllText,
+        onSelect: () => {
+          if (!disabledAll) {
+            // 选中的个数不等于总数，此时显示的是全选，点击全部选中
+            // 全选之后，按照目前的需求需要将所有的勾选禁用
+            this.setState({
+              disabledAll: true,
+              selectedRowKeys: newCustList.map(item => item.key),
+            });
+          } else {
+            // 若选中的个数等于总数，此时显示的是取消全选，点击则全不选
+            this.setState({
+              disabledAll: false,
+              selectedRowKeys: [],
+            });
+          }
+        },
+      }],
+      getCheckboxProps() {
+        // 此属性用来设置 checkbox 的 disabled 属性
+        return {
+          disabled: disabledAll,
+        };
+      },
+    };
 
     // 过滤条件的第二行的 class 类
     const filterSecondLineCls = cx({
@@ -392,6 +425,7 @@ export default class AddCustListLayer extends Component {
             </div>
           </div>
           <Table
+            className={styles.addLayerTable}
             rowSelection={rowSelection}
             columns={custTableColumns}
             dataSource={newCustList}

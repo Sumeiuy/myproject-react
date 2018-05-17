@@ -2,9 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 19:36:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-15 17:36:55
+ * @Last Modified time: 2018-05-17 16:27:30
  * @description 营业部非投顾签约客户分配的配置项
  */
+
+// 客户列表的最大边界值,目前暂定 400
+export const CUST_LIST_BOUNDARY_VALUE = 400;
+// 客户分配的申请查询审批人的Btn 值
+export const CUST_DISTRIBUTE_BTN = '1000000';
 
 export const detailTableColumns = [
   {

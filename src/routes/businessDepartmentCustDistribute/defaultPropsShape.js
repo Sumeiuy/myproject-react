@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 13:57:55
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-16 18:41:32
+ * @Last Modified time: 2018-05-17 17:17:06
  * @description 营业部非投顾签约客户分配的Props的类型检测以及默认类型
  */
 
@@ -42,6 +42,14 @@ export const propsShape = {
   empListByQuery: PropTypes.array.isRequired,
   // 根据关键字获取的开发经理列表
   devEmpListByQuery: PropTypes.array.isRequired,
+  // 查询审批人
+  getApprovals: PropTypes.func.isRequired,
+  // 审批人列表
+  approvalList: PropTypes.array.isRequired,
+  // 新建客户分配审批结果
+  createResult: PropTypes.bool.isRequired,
+  // 新建客户分配审批
+  createDistributeApply: PropTypes.func.isRequired,
 };
 
 export const defaultProps = {};

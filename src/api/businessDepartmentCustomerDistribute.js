@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 10:17:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-16 17:49:54
+ * @Last Modified time: 2018-05-17 17:10:40
  * @description 营业部非投顾签约客户分配的API
  */
 
@@ -22,5 +22,9 @@ export default function cust(api) {
     queryDistributeEmp: query => api.post('/groovynoauth/fsp/cust/manager/queryDistributeEmp', query),
     // 根据关键字查询开发经理
     queryDistributeDevEmp: query => api.post('/groovynoauth/fsp/cust/manager/queryDistributeDevEmp', query),
+    // 查询客户分配审批人列表
+    getApprovals: query => api.post('/groovynoauth/fsp/biz/developRelationship/queryNextApproval', query),
+    // 创建客户分配申请
+    createDistributeApply: query => api.post('/groovynoauth/fsp/cust/manager/createDistributeApply', query),
   };
 }

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-14 16:23:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-15 17:43:25
+ * @Last Modified time: 2018-05-17 14:14:04
  * @description 添加服务经理弹出层
  */
 
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table, Input } from 'antd';
 import _ from 'lodash';
+import cx from 'classnames';
 
 import CommonModal from '../common/biz/CommonModal';
 
@@ -115,6 +116,8 @@ export default class AddEmpListLayer extends Component {
       hideDefaultSelections: true,
     };
 
+    const tableClassnames = cx([styles.addLayerTable, styles.addEmpListLayerTable]);
+
     return (
       <CommonModal
         title="添加服务经理"
@@ -141,7 +144,7 @@ export default class AddEmpListLayer extends Component {
             </div>
           </div>
           <Table
-            className={styles.addEmpListLayerTable}
+            className={tableClassnames}
             rowKey="empId"
             rowSelection={rowSelection}
             columns={empAddTableColumns}
