@@ -282,7 +282,7 @@ export default class TargetCustomerRight extends PureComponent {
   @autobind
   renderContactInfo() {
     const { itemData, currentCustomer } = this.props;
-    const { custNature, perCustomerContactInfo, orgCustomerContactInfoList } = itemData;
+    const { custNature, perCustomerContactInfo, orgCustomerContactInfoList, custName } = itemData;
     // 任务状态为未处理、处理中、已驳回时可打电话
     const canCall = _.includes(CALLABLE_LIST, currentCustomer.missionStatusCode);
     // 联系方式为空判断
@@ -305,6 +305,7 @@ export default class TargetCustomerRight extends PureComponent {
       <Col span={16}>
         <ContactInfoPopover
           custType={custNature}
+          name={encodeURIComponent(custName)}
           personalContactInfo={perContactInfo}
           orgCustomerContactInfoList={orgCustomerContactInfoList}
           handlePhoneEnd={this.handlePhoneEnd}

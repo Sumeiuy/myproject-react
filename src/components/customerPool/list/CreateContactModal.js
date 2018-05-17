@@ -128,7 +128,8 @@ export default class CreateContactModal extends PureComponent {
    * 通话结束后要创建一条服务记录，并弹出服务记录框
    */
   @autobind
-  handlePhoneEnd() {
+  handlePhoneEnd(data) {
+    console.log('handlePhoneEnd: ', data);
     // 点击挂电话隐藏蒙层
     this.setState({ showMask: false });
     // 没有成功发起通话
@@ -235,10 +236,14 @@ export default class CreateContactModal extends PureComponent {
     mainContactInfo,
     personalContactInfo,
   }) {
-    const { custType, currentCustName } = this.props;
+    const { custType, currentCustName, currentCustId } = this.props;
     if (!isPersonHasContact && !isOrgMainContactHasTel) {
       return <p>客户未预留主要联系方式，请尽快完善信息</p>;
     }
+    const userData = {
+      custId: currentCustId,
+      custName: currentCustName,
+    };
     return (
       <div className={styles.mainContact}>
         {
@@ -260,8 +265,9 @@ export default class CreateContactModal extends PureComponent {
               personalContactInfo.mainTelInfo :
               mainContactInfo.cellInfo}
             custType={custType}
-            name={currentCustName}
+            name={encodeURIComponent(currentCustName)}
             disable={false}
+            userData={userData}
           />
         }
       </div>
@@ -358,6 +364,10 @@ export default class CreateContactModal extends PureComponent {
         }
       }
     }
+    const userData = {
+      custId: currentCustId,
+      custName: currentCustName,
+    };
     return (
       <Modal
         wrapClassName={styles.contactModal}
@@ -395,7 +405,8 @@ export default class CreateContactModal extends PureComponent {
                 handlePhoneConnected={this.handlePhoneConnected}
                 handlePhoneClick={this.handlePhoneClick}
                 disablePhone={false}
-                name={currentCustName}
+                name={encodeURIComponent(currentCustName)}
+                userData={userData}
               >
                 <div className={styles.moreLinkman}>
                   <Icon type="lianxifangshi" className={styles.phoneIcon} />
