@@ -19,20 +19,19 @@ export default class CompositionPie extends PureComponent {
     data: PropTypes.array.isRequired,
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      // 时间默认值
-      time: '',
-    };
-  }
-
   render() {
     const { data } = this.props;
     const newData = data.map((item) => {
       const newItem = { ...item };
-      newItem.oldName = newItem.name;
-      newItem.name = `${newItem.name},${newItem.value},${newItem.number}`;
+      const { name, value, number } = newItem;
+      newItem.oldName = name;
+      // name 为分类名称
+      // value 为百分比，取小数点后两位
+      const newValue = value.toFixed(2);
+      // number 为股票数量，若 name 是现金，则 number 值为 -1，要求不显示
+      const newNumber = number === -1 ? '' : number;
+      // 将三个参数以逗号拼接起来供 legend 使用
+      newItem.name = `${name},${newValue}%,${newNumber}`;
       return newItem;
     });
 
@@ -40,9 +39,16 @@ export default class CompositionPie extends PureComponent {
     const option = {
       tooltip: {
         trigger: 'item',
+        // 参照 legend 参数显示 tooltip
         formatter: (params) => {
           const { data: { oldName, value, number } } = params;
-          return `<span style="margin-right: 20px">${oldName}</span><span style="margin-right: 20px">${value}%</span>       ${number}`;
+          // value 为百分比，取小数点后两位
+          const newValue = value.toFixed(2);
+          // number 为股票数量，若 name 是现金，则 number 值为 -1，要求不显示
+          const newNumber = number === -1 ? '' : number;
+          return `<span style="margin-right: 10px">${oldName}</span>
+          <span style="margin-right: 20px">${newValue}%</span>
+          ${newNumber}`;
         },
       },
       legend: {
@@ -50,7 +56,8 @@ export default class CompositionPie extends PureComponent {
         orient: 'vertical',
         icon: 'circle',
         right: 0,
-        top: 10,
+        top: 30,
+        bottom: 40,
         itemWidth: 8,
         itemHeight: 8,
         data: labelArray,
@@ -64,7 +71,7 @@ export default class CompositionPie extends PureComponent {
               width: 70,
             },
             percent: {
-              width: 40,
+              width: 50,
             },
             number: {
               width: 20,
@@ -76,9 +83,10 @@ export default class CompositionPie extends PureComponent {
         {
           name: '组合构成',
           type: 'pie',
-          radius: ['30%', '40%'],
-          center: [70, 100],
+          radius: ['28%', '38%'],
+          center: [60, 90],
           avoidLabelOverlap: false,
+          hoverOffset: 5,
           emphasis: {
             label: {
               show: false,

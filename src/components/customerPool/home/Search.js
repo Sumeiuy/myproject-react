@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-14 15:37:35
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-16 18:52:13
  * @description 客户池头部搜索组件
  */
 
@@ -168,13 +168,14 @@ export default class Search extends PureComponent {
     }
 
     // log日志 --- 首页搜索选中
+    const subtype = sightingScopeBool ? '瞄准镜' : item.description;
     logCommon({
       type: 'DropdownSelect',
       payload: {
         name: '首页搜索框',
         value,
         type: 'dropdownSelect',
-        subtype: item.description,
+        subtype,
       },
     });
     this.handleOpenTab(query);

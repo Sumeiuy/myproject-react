@@ -132,8 +132,8 @@ export default {
         ...state,
         serviceRecordInfo: {
           modalVisible: payload.flag,
-          id: payload.id,
-          name: payload.name,
+          id: payload.id || payload.custId,
+          name: payload.name || payload.custName,
           caller: payload.caller,
           autoGenerateRecordInfo: payload.autoGenerateRecordInfo,
         },
