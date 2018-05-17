@@ -112,6 +112,10 @@ export default class TargetCustomerRight extends PureComponent {
       title: '客户360视图-客户信息',
       forceRefresh: true,
       activeSubTab,
+      // 服务记录搜索
+      serviceRecordKeyword: '',
+      // 服务渠道
+      serviceRecordChannel: '',
     };
   }
 
@@ -287,9 +291,9 @@ export default class TargetCustomerRight extends PureComponent {
       (
         _.isEmpty(perCustomerContactInfo) ||
         (_.isEmpty(perCustomerContactInfo.homeTels)
-        && _.isEmpty(perCustomerContactInfo.cellPhones)
-        && _.isEmpty(perCustomerContactInfo.workTels)
-        && _.isEmpty(perCustomerContactInfo.otherTels))
+          && _.isEmpty(perCustomerContactInfo.cellPhones)
+          && _.isEmpty(perCustomerContactInfo.workTels)
+          && _.isEmpty(perCustomerContactInfo.otherTels))
       )
     ) ||
       (custNature === ORG_CODE && _.isEmpty(orgCustomerContactInfoList));
