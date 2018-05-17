@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classNames from 'classnames';
 import { Checkbox } from 'antd';
 import SaleDepartmentFilter from './SaleDepartmentFilter';
 import ServiceManagerFilter from './ServiceManagerFilter';
@@ -289,7 +290,6 @@ export default class CustomerLists extends PureComponent {
       replace,
       handleSelect,
     } = this.props;
-
     const ptyMng = `${item.ptyMngName}_${item.ptyMngId}`;
     // 手动上传日志
     handleSelect({ param: ptyMng });
@@ -499,17 +499,26 @@ export default class CustomerLists extends PureComponent {
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
     // 默认服务经理
-    let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
+    let serviceManagerDefaultValue = {
+      ptyMngName: empInfo.empName,
+      ptyMngId: empInfo.empNum,
+    };
     // ‘HTSC 首页指标查询’ 权限, 任务管理权限
     if (hasPermission) {
       if (ptyMngId) {
-        serviceManagerDefaultValue = `${decodeURIComponent(ptyMngName)}（${ptyMngId}）`;
+        serviceManagerDefaultValue = {
+          ptyMngName: decodeURIComponent(ptyMngName),
+          ptyMngId,
+        };
       } else {
-        serviceManagerDefaultValue = '所有人';
+        serviceManagerDefaultValue = ''; // 所有人
       }
     }
     if (orgId && orgIdIsMsm) {
-      serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
+      serviceManagerDefaultValue = {
+        ptyMngName: empInfo.empName,
+        ptyMngId: empInfo.empNum,
+      };
     }
     // 当前所处的orgId,默认所有
     let curOrgId = allSaleDepartment.id;
@@ -549,7 +558,7 @@ export default class CustomerLists extends PureComponent {
               onChange={onReorderChange}
             />
           </div>
-          <div className={styles.reorder}>
+          <div className={classNames(styles.reorder, styles.filterWrap)}>
             <div className={styles.selectBox}>
               <SaleDepartmentFilter
                 orgId={curOrgId}

@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
 import styles from './filter.less';
+import { transfromFilterValFromUrl } from '../helper';
 
 import HtFilter, {
   Input,
@@ -259,33 +260,6 @@ const moreFilterData = [
   },
 ];
 
-// 将url上面的filter编码解析为对象
-function transfromFilterValFromUrl(filters) {
-  // 处理由‘|’分隔的多个过滤器
-  const filtersArray = filters ? filters.split('|') : [];
-
-  return _.reduce(filtersArray, (result, value) => {
-    const [name, code] = value.split('.');
-    let filterValue = code;
-
-    // 如果是多选，需要继续处理','分割的多选值
-    if (code.indexOf(',') > -1) {
-      filterValue = code.split(',');
-    }
-
-    if (name === 'minFee' || name === 'totAset') {
-      const minVal = filterValue[0] && filterValue[0].replace('-', '.');
-      const maxVal = filterValue[1] && filterValue[1].replace('-', '.');
-      filterValue = [minVal, maxVal];
-    }
-
-    // 如果对应的过滤器是普通股基佣金率
-    result[name] = filterValue; // eslint-disable-line
-    return result;
-  }, {});
-}
-
-
 export default class Filter extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -379,11 +353,11 @@ export default class Filter extends PureComponent {
     let maxVal;
 
     if (obj.value[0]) {
-      minVal = obj.value[0].replace('.', '-');
+      minVal = obj.value[0].replace('.', '!').replace('-', '');
     }
 
     if (obj.value[1]) {
-      maxVal = obj.value[1].replace('.', '-');
+      maxVal = obj.value[1].replace('.', '!').replace('-', '');
     }
 
     const value = _.join([minVal, maxVal], ',');
@@ -520,7 +494,7 @@ export default class Filter extends PureComponent {
             <Input
               className={styles.filter}
               defaultValue={source === 'search' ? decodeURIComponent(q) : ''}
-              placeholder="关键字"
+              placeholder="搜索关键字"
             />
           }
           {

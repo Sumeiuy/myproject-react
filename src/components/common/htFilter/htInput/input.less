@@ -20,7 +20,15 @@
 
   input {
     font-size: 14px;
-    padding-left: 10px;
-    padding-right: 34px;
+    padding: 0 34px 0 10px;
+  }
+  input::-webkit-input-placeholder {
+    transform: translateY(-1px);
+  }
+  input::-moz-input-placeholder {
+    transform: translateY(-1px);
+  }
+  input:-moz-input-placeholder {
+    transform: translateY(-1px);
   }
 }

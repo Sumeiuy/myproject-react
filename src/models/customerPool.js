@@ -611,25 +611,18 @@ export default {
       }
     },
     * getSearchServerPersonList({ payload }, { call, put }) {
-      if (!payload.keyword) {
-        // 和之前的用户行为(输入空时，搜索结果为预置数据项)，保持一致
-        yield put({
-          type: 'getSearchServerPersonListSuccess',
-          payload: [
-            { ptyMngName: '所有人', ptyMngId: '' },
-            { ptyMngName: '我的', ptyMngId: emp.getId() },
-          ],
-        });
-      } else {
+      let finalPayload = [];
+      if (payload.keyword) {
         const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
         if (resultData) {
           const { servicePeopleList = EMPTY_LIST } = resultData;
-          yield put({
-            type: 'getSearchServerPersonListSuccess',
-            payload: servicePeopleList,
-          });
+          finalPayload = servicePeopleList;
         }
       }
+      yield put({
+        type: 'getSearchServerPersonListSuccess',
+        payload: finalPayload,
+      });
     },
     // 360服务记录查询更多服务
     * getServiceLogMore({ payload }, { call, put }) {

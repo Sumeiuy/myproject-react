@@ -51,8 +51,8 @@ function transfromFilterValFromUrl(filters) {
     }
 
     if (name === 'minFee' || name === 'totAset') {
-      const minVal = filterValue[0] && filterValue[0].replace('-', '.');
-      const maxVal = filterValue[1] && filterValue[1].replace('-', '.');
+      const minVal = filterValue[0] && filterValue[0].replace('!', '.');
+      const maxVal = filterValue[1] && filterValue[1].replace('!', '.');
       filterValue = [minVal, maxVal];
     }
 
@@ -404,7 +404,8 @@ export default class CustomerList extends PureComponent {
     } = props;
 
     const keyword = decodeURIComponent(query.q);
-    const labelName = decodeURIComponent(query.labelName) || null;
+    const labelName = decodeURIComponent(query.labelName);
+    const labelDesc = decodeURIComponent(query.labelDesc);
 
     const param = {
       // 必传，当前页
@@ -421,6 +422,14 @@ export default class CustomerList extends PureComponent {
     if (query.source === 'search') {   // 搜索框模糊下钻
       param.searchTypeReq = 'ALL';
       param.searchText = keyword;
+    }
+
+    if (query.source === 'sightingTelescope') {
+      // 如果是瞄准镜，需要加入queryLabelReq
+      param.queryLabelReq = {
+        labelName,
+        labelDesc,
+      };
     }
 
     if (query.source === 'association') {
