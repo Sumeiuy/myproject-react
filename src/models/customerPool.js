@@ -951,9 +951,10 @@ export default {
     getHotPossibleWdsSuccess(state, action) {
       const { payload: { response } } = action;
       const { possibleWdsList } = response.resultData;
+      // 返回的数据的primaryKey不能重复
       return {
         ...state,
-        hotPossibleWdsList: possibleWdsList,
+        hotPossibleWdsList: _.uniqBy(possibleWdsList, 'primaryKey'),
       };
     },
     getCustomerListSuccess(state, action) {

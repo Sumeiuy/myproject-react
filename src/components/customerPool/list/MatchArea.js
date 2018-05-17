@@ -524,19 +524,21 @@ export default class MatchArea extends PureComponent {
   renderOrderCombination() {
     const {
       listItem: { jxgrpProducts },
-      location: { query: { source } },
+      location: { query: { source, labelMapping } },
     } = this.props;
     if (source === 'orderCombination' && !_.isEmpty(jxgrpProducts)) {
-      const list = _.map(jxgrpProducts, item => `${item.name}/${item.code}`);
-      const displayInfo = list.join(',');
-      return (
-        <li title={displayInfo}>
-          <span>
-            <i className="label">订购组合：</i>
-            <i>{displayInfo}</i>
-          </span>
-        </li>
-      );
+      const id = decodeURIComponent(labelMapping);
+      const currentItem = _.find(jxgrpProducts, item => item.id === id);
+      if (!_.isEmpty(currentItem)) {
+        return (
+          <li>
+            <span>
+              <i className="label">订购组合：</i>
+              <i><em className="marked">{currentItem.name}</em>/{currentItem.code}</i>
+            </span>
+          </li>
+        );
+      }
     }
     return null;
   }
