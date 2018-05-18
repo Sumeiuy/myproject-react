@@ -45,7 +45,7 @@ export default class HoldingProductDetail extends PureComponent {
 
   /**
    * 获取持仓产品的详情
-   * 判断当前产品的详情是否已经存在，不存在时再去请求，请求成功后显示popover
+   * 判断当前产品的详情是否已经存在，不存在时再去请求
    * 详情已经存在，直接显示popover，不需要发请求
    */
   @autobind
@@ -53,11 +53,9 @@ export default class HoldingProductDetail extends PureComponent {
     const { data, queryHoldingProduct, holdingProducts, custId } = this.props;
     const { id = '' } = data;
     if (_.isEmpty(holdingProducts[`${custId}${id}`])) {
-      queryHoldingProduct({ custId, prdtHold: id })
-        .then(() => { this.setState({ popoverVisible: true }); });
-    } else {
-      this.setState({ popoverVisible: true });
+      queryHoldingProduct({ custId, prdtHold: id });
     }
+    this.setState({ popoverVisible: true });
   }
 
   /**
@@ -157,7 +155,7 @@ export default class HoldingProductDetail extends PureComponent {
           onMouseLeave={this.handleMouseLeave}
           getPopupContainer={this.getPopupContainer}
         >
-          （<em className={styles.holdingProductDetailBtn}>持仓详情</em>）
+          <em className={styles.holdingProductDetailBtn}>持仓详情</em>
         </Popover>
       </div>
     );

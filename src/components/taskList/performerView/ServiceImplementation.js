@@ -16,6 +16,8 @@ import { POSTCOMPLETED_CODE } from '../../../routes/taskList/config';
 import { flow, task } from './config';
 import { serveWay as serveWayUtil } from './config/code';
 
+const PHONE = 'phone';
+
 /**
  * 将数组对象中的id和name转成对应的key和value
  * @param {*} arr 原数组
@@ -41,6 +43,8 @@ export default class ServiceImplementation extends PureComponent {
     this.state = {
       list: props.list,
     };
+    // 服务实施客户Id
+    this.serviceCustId = props.list[0].custId || '';
   }
 
   componentWillReceiveProps(nextProps) {
@@ -52,11 +56,18 @@ export default class ServiceImplementation extends PureComponent {
       this.setState({
         list: nextList,
       });
+      this.serviceCustId = nextList[0].custId || '';
     }
   }
 
   @autobind
-  addServiceRecord(postBody, callback) {
+  addServiceRecord({
+    postBody,
+    callback = _.noop,
+    callbackOfPhone = _.noop,
+    noHint = false,
+    callId = '',
+  }) {
     const {
       addServeRecord,
       reloadTargetCustInfo,
@@ -64,30 +75,60 @@ export default class ServiceImplementation extends PureComponent {
       modifyLocalTaskList,
       currentId,
       getTaskDetailBasicInfo,
+      currentMotServiceRecord: { id },
+      serviceRecordInfo,
     } = this.props;
+    const currentMissionFlowId = this.getCurrentMissionFlowId();
+    const { caller = '', id: missionFlowId, autoGenerateRecordInfo } = serviceRecordInfo;
+    const { flowStatus = '', serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
+    // 打电话生成服务记录后，再去添加服务记录走的是更新过程，需要传自动生成的那条服务记录的id,
+    // 服务状态为完成，code=30
+    const payload = (caller === PHONE && currentMissionFlowId === missionFlowId) ?
+      { ...postBody, id, flowStatus, serveTime, serveWay } : postBody;
     // 此处需要针对涨乐财富通服务方式特殊处理
     // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
     // 执行提交服务记录的接口
-    addServeRecord(_.omit(postBody), ['zlApprovalCode'])
-      .then(() => {
-        if (this.props.addMotServeRecordSuccess) {
-          // 服务记录添加成功后重新加载当前目标客户的详细信息
-          reloadTargetCustInfo(() => {
-            this.updateList(postBody, callback);
-            // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载基本信息
-            if (postBody.flowStatus === POSTCOMPLETED_CODE) {
-              // 重新加载基本信息,不清除服务实施客户列表中当前选中客户状态信息和筛选值、页码
-              getTaskDetailBasicInfo({ taskId: currentId, isClear: false });
-              // 更新新左侧列表
-              modifyLocalTaskList({ missionId: currentId });
-            }
-          });
-          // 添加服务记录成功之后，重新获取custUuid
-          queryCustUuid();
-          // this.updateList(postBody);
+    addServeRecord(_.omit(payload, ['zlApprovalCode']))
+    .then(() => {
+      const { currentMotServiceRecord } = this.props;
+      // 服务记录添加未成功时，后端返回failure
+      if (!_.isEmpty(currentMotServiceRecord.id) && currentMotServiceRecord.id !== 'failure') {
+        // 服务记录添加成功后重新加载当前目标客户的详细信息
+        reloadTargetCustInfo(() => {
+          this.updateList(postBody, callback);
+          // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载基本信息
+          if (postBody.flowStatus === POSTCOMPLETED_CODE) {
+            // 重新加载基本信息,不清除服务实施客户列表中当前选中客户状态信息和筛选值、页码
+            getTaskDetailBasicInfo({ taskId: currentId, isClear: false });
+            // 更新新左侧列表
+            modifyLocalTaskList({ missionId: currentId });
+          }
+        });
+        // 添加服务记录成功之后，重新获取custUuid
+        queryCustUuid();
+        // this.updateList(postBody);
+        if (!noHint) {
           message.success('添加服务记录成功');
         }
+        // 保存打电话自动创建的服务记录的信息或更新服务记录后删除打电话保存的服务记录
+        callbackOfPhone();
+
+        this.saveServiceRecordAndPhoneRelation(currentMotServiceRecord, callId);
+      }
+    });
+  }
+
+  /**
+   * 通话的uuid关联服务记录
+   */
+  @autobind
+  saveServiceRecordAndPhoneRelation(currentMotServiceRecord = {}, callId) {
+    if (callId) {
+      this.props.addCallRecord({
+        uuid: callId,
+        projectId: currentMotServiceRecord.id,
       });
+    }
   }
 
   // 更新组件state的list信息
@@ -160,8 +201,23 @@ export default class ServiceImplementation extends PureComponent {
     return false;
   }
 
+  /**
+   * 获取当前选中的流水任务id
+   */
+  @autobind
+  getCurrentMissionFlowId() {
+    const { list } = this.state;
+    const {
+      parameter: {
+        targetMissionFlowId = '',
+      },
+    } = this.props;
+    return targetMissionFlowId || (list[0] || {}).missionFlowId;
+  }
+
   render() {
     const { list } = this.state;
+    const serviceCustId = this.serviceCustId;
     const {
       currentId,
       dict,
@@ -175,9 +231,6 @@ export default class ServiceImplementation extends PureComponent {
       custIncomeReqState,
       targetCustDetail,
       changeParameter,
-      parameter: {
-        targetMissionFlowId = '',
-      },
       queryCustUuid,
       custUuid,
       getCustDetail,
@@ -188,7 +241,6 @@ export default class ServiceImplementation extends PureComponent {
       filesList,
       deleteFileResult,
       taskFeedbackList,
-      addMotServeRecordSuccess,
       attachmentList,
       statusCode,
       isTaskFeedbackListOfNone,
@@ -198,13 +250,17 @@ export default class ServiceImplementation extends PureComponent {
       eventId,
       zhangleApprovalList,
       queryApprovalList,
+      toggleServiceRecordModal,
+      serviceRecordInfo,
+      currentMotServiceRecord,
+      resetServiceRecordInfo,
       // 投资建议文本撞墙检测
       testWallCollision,
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
     } = this.props;
-    // 获取当前选中的数据的custId
-    const currentMissionFlowId = targetMissionFlowId || (list[0] || {}).missionFlowId;
+    // 获取当前选中的数据的missionFlowId
+    const currentMissionFlowId = this.getCurrentMissionFlowId();
 
     const currentCustomer = _.find(list, o => o.missionFlowId === currentMissionFlowId);
     let serviceStatusName = '';
@@ -266,7 +322,13 @@ export default class ServiceImplementation extends PureComponent {
     // 判断任务流水客户状态，处理中 和 未开始， 则为可编辑
     // TODO 新需求需要针对涨乐财富通的服务方式来判断状态是否可读
     // 涨乐财富通服务方式下，只有审批中和已完成状态，才属于只读状态
-    const isReadOnly = this.judgeIsReadyOnly({ statusCode, serviceStatusCode, serviceWayCode });
+    let isReadOnly;
+    if (serviceRecordInfo.caller === PHONE) {
+      // 打电话调用时，服务记录表单可编辑
+      isReadOnly = false;
+    } else {
+      isReadOnly = this.judgeIsReadyOnly({ statusCode, serviceStatusCode, serviceWayCode });
+    }
 
     // 涨乐财富通中才有审批和驳回状态
     const isReject = this.isRejct({ serviceStatusCode, serviceWayCode });
@@ -291,6 +353,13 @@ export default class ServiceImplementation extends PureComponent {
           getCustDetail={getCustDetail}
           getCeFileList={getCeFileList}
           filesList={filesList}
+          toggleServiceRecordModal={toggleServiceRecordModal}
+          addServeRecord={this.addServiceRecord}
+          motCustfeedBackDict={motCustfeedBackDict}
+          currentCustomer={currentCustomer}
+          getServiceCustId={id => this.setServiceCustId(id)}
+          taskTypeCode={taskTypeCode}
+          currentMotServiceRecord={currentMotServiceRecord}
         />
         {
           (!_.isEmpty(taskFeedbackList) && !_.isEmpty(motCustfeedBackDict))
@@ -308,14 +377,17 @@ export default class ServiceImplementation extends PureComponent {
             formData={serviceReocrd}
             ceFileDelete={ceFileDelete}
             deleteFileResult={deleteFileResult}
-            addMotServeRecordSuccess={addMotServeRecordSuccess}
             getCeFileList={getCeFileList}
             queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
             custFeedbackList={custFeedbackList}
             queryApprovalList={queryApprovalList}
             zhangleApprovalList={zhangleApprovalList}
+            serviceRecordInfo={serviceRecordInfo}
+            currentMotServiceRecord={currentMotServiceRecord}
+            resetServiceRecordInfo={resetServiceRecordInfo}
             testWallCollision={testWallCollision}
             testWallCollisionStatus={testWallCollisionStatus}
+            serviceCustId={serviceCustId}
           /> : null
         }
       </div>
@@ -349,7 +421,7 @@ ServiceImplementation.propTypes = {
   filesList: PropTypes.array,
   deleteFileResult: PropTypes.array,
   taskFeedbackList: PropTypes.array,
-  addMotServeRecordSuccess: PropTypes.bool.isRequired,
+  currentMotServiceRecord: PropTypes.object.isRequired,
   reloadTargetCustInfo: PropTypes.func.isRequired,
   attachmentList: PropTypes.array.isRequired,
   statusCode: PropTypes.string,
@@ -366,10 +438,14 @@ ServiceImplementation.propTypes = {
   // 涨乐财富通服务方式下的审批人列表以及查询方法
   queryApprovalList: PropTypes.func.isRequired,
   zhangleApprovalList: PropTypes.array.isRequired,
+  toggleServiceRecordModal: PropTypes.func.isRequired,
+  serviceRecordInfo: PropTypes.object.isRequired,
+  resetServiceRecordInfo: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测
   testWallCollision: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: PropTypes.bool.isRequired,
+  addCallRecord: PropTypes.func.isRequired,
 };
 
 ServiceImplementation.defaultProps = {

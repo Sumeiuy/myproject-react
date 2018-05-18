@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-02 14:42:41
+ * @Last Modified time: 2018-05-16 10:25:10
  */
 
 import React, { PureComponent } from 'react';
@@ -100,6 +100,15 @@ export default class ApplyDetail extends PureComponent {
     return [];
   }
 
+  @autobind
+  isShowAttachmentModule() {
+    const { currentNodeCode } = this.props.data;
+    // 按照新增需求，分公司处理时候上传附件，所以只有在总部审核和办结状态才显示附件
+    // headAudit表示总部审核状态
+    // trueOver表示办结状态r
+    return currentNodeCode === 'headAudit' || currentNodeCode === 'trueOver';
+  }
+
   render() {
     const {
       id,
@@ -179,13 +188,17 @@ export default class ApplyDetail extends PureComponent {
                 </ul>
               </div>
             </div>
-            <div id="attachment_module" className={styles.module}>
-              <div className={styles.detailWrapper}>
-                <InfoTitle head="附件信息" />
-                <div className={styles.attachmentTitle}><span>*</span> 合规承诺书</div>
-                <CommonUpload attachmentList={attachmentList} />
+            {
+              this.isShowAttachmentModule()
+              ? <div id="attachment_module" className={styles.module}>
+                <div className={styles.detailWrapper}>
+                  <InfoTitle head="附件信息" />
+                  <div className={styles.attachmentTitle}><span>*</span> 合规承诺书</div>
+                  <CommonUpload attachmentList={attachmentList} />
+                </div>
               </div>
-            </div>
+              : null
+            }
             <div id="approvalRecord_module" className={styles.module}>
               <ApprovalRecord
                 head="审批记录"

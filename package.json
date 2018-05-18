@@ -44,6 +44,7 @@
     "immutability-helper": "^2.6.6",
     "localforage": "^1.4.3",
     "lodash": "^4.17.4",
+    "md5": "^2.2.1",
     "moment": "^2.18.1",
     "path-to-regexp": "^2.0.0",
     "prop-types": "^15.5.10",

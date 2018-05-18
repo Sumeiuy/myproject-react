@@ -7,6 +7,7 @@
         table {
           table-layout: fixed;
           width: 100%;
+          margin-top: 3px;
         }
         .ant-table-thead {
           height: 26px;
@@ -17,6 +18,12 @@
           tr th {
             background: #fff;
             border-bottom: 2px solid #ccc;
+            &:first-child {
+              text-indent: 10px;
+            }
+            &:last-child span {
+              margin-right: 6px;
+            }
           }
         }
         tr th, tr td {
@@ -28,12 +35,13 @@
             position: relative;
             td {
               border-bottom: 0;
-              padding: 10px 0 22px;
+              padding: 8px 0 26px;
               div {
                 .one-line-elllipsis;
               }
               &:first-child {
                 width: 27%;
+                text-indent: 10px;
               }
               &:nth-child(2) {
                 width: 22%;
@@ -56,13 +64,18 @@
       }
     }
     .customerLink {
-      margin-right: 6px;
+      margin-right: 10px;
     }
     .reason {
       width: 84%;
       position: absolute;
       left: 0;
       .one-line-elllipsis;
+    }
+    .name {
+      a {
+        color: rgba(0, 0, 0, .65);
+      }
     }
     .customerLink {
       i {

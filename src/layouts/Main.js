@@ -9,9 +9,10 @@ import _ from 'lodash';
 import { connect } from 'dva';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
+
+import ErrorBoundary from './ErrorBoundary';
 import Loading from './Loading';
 import withRouter from '../decorators/withRouter';
-
 import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
 import ContextProvider from './ContextProvider';
 import Phone from '../components/common/phone';
@@ -42,18 +43,13 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   empInfo: state.app.empInfo,
   interfaceState: state.loading.effects,
-  // 显示隐藏添加服务记录弹窗
-  serviceRecordModalVisible: state.app.serviceRecordModalVisible,
-  // 发送保存服务记录请求成功状态
-  addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
-  // 服务弹窗对应的客户的经纪客户号
-  serviceRecordModalVisibleOfId: state.app.serviceRecordModalVisibleOfId,
-  // 服务弹窗对应的客户的经纪客户名
-  serviceRecordModalVisibleOfName: state.app.serviceRecordModalVisibleOfName,
+  // 发送保存服务记录请求成功的服务id
+  currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
   // 客户uuid
   custUuid: state.performerView.custUuid,
   // 自建任务平台的服务类型、任务反馈字典
   motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
+  serviceRecordInfo: state.app.serviceRecordInfo,
 });
 
 const mapDispatchToProps = {
@@ -62,7 +58,7 @@ const mapDispatchToProps = {
     type: 'app/toggleServiceRecordModal',
     payload: query || false,
   }),
-  addServeRecord: fectchDataFunction(false, effects.addServeRecord),
+  addServeRecord: fectchDataFunction(true, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
 };
@@ -79,10 +75,7 @@ export default class Main extends Component {
     interfaceState: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
-    serviceRecordModalVisible: PropTypes.bool,
-    serviceRecordModalVisibleOfId: PropTypes.string,
-    serviceRecordModalVisibleOfName: PropTypes.string,
-    addServeRecordSuccess: PropTypes.bool.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     handleCloseClick: PropTypes.func.isRequired,
@@ -90,12 +83,10 @@ export default class Main extends Component {
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
+    serviceRecordInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
-    serviceRecordModalVisible: false,
-    serviceRecordModalVisibleOfId: '',
-    serviceRecordModalVisibleOfName: '',
     loadingForceFull: false,
   }
 
@@ -111,57 +102,55 @@ export default class Main extends Component {
       interfaceState,
       dict,
       empInfo: { empInfo = {} },
-      addServeRecordSuccess,
+      currentCommonServiceRecord,
       addServeRecord,
-      serviceRecordModalVisibleOfId,
-      serviceRecordModalVisibleOfName,
-      serviceRecordModalVisible,
       toggleServiceRecordModal,
       loadingForceFull,
       handleCloseClick,
       custUuid,
       ceFileDelete,
       motSelfBuiltFeedbackList,
+      serviceRecordInfo,
     } = this.props;
     return (
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
-          <div className={styles.layout}>
-            <div className={styles.main}>
-              <div className={styles.container} id="container">
-                <div className={styles.content} id="content">
-                  <Loading loading={loading} forceFull={loadingForceFull} />
-                  {
-                    (!_.isEmpty(interfaceState) &&
-                      !interfaceState[effects.dictionary] &&
-                      !interfaceState[effects.customerScope] &&
-                      !interfaceState[effects.empInfo]) ?
-                        <div>
-                          {children}
-                          <ConnectedCreateServiceRecord
-                            handleCloseClick={handleCloseClick}
-                            loading={interfaceState[effects.addServeRecord]}
-                            key={serviceRecordModalVisibleOfId}
-                            id={serviceRecordModalVisibleOfId}
-                            name={serviceRecordModalVisibleOfName}
-                            dict={dict}
-                            empInfo={empInfo}
-                            isShow={serviceRecordModalVisible}
-                            addServeRecord={addServeRecord}
-                            addServeRecordSuccess={addServeRecordSuccess}
-                            onToggleServiceRecordModal={toggleServiceRecordModal}
-                            custUuid={custUuid}
-                            ceFileDelete={ceFileDelete}
-                            taskFeedbackList={motSelfBuiltFeedbackList}
-                          />
-                        </div>
-                      : null
-                  }
+          <ErrorBoundary>
+            <div className={styles.layout}>
+              <div className={styles.main}>
+                <div className={styles.container} id="container">
+                  <div className={styles.content} id="content">
+                    <Loading loading={loading} forceFull={loadingForceFull} />
+                    {
+                      (!_.isEmpty(interfaceState) &&
+                        !interfaceState[effects.dictionary] &&
+                        !interfaceState[effects.customerScope] &&
+                        !interfaceState[effects.empInfo]) ?
+                          <div>
+                            {children}
+                            <ConnectedCreateServiceRecord
+                              handleCloseClick={handleCloseClick}
+                              loading={interfaceState[effects.addServeRecord]}
+                              key={serviceRecordInfo.id}
+                              dict={dict}
+                              empInfo={empInfo}
+                              addServeRecord={addServeRecord}
+                              currentCommonServiceRecord={currentCommonServiceRecord}
+                              onToggleServiceRecordModal={toggleServiceRecordModal}
+                              custUuid={custUuid}
+                              ceFileDelete={ceFileDelete}
+                              taskFeedbackList={motSelfBuiltFeedbackList}
+                              serviceRecordInfo={serviceRecordInfo}
+                            />
+                          </div>
+                        : null
+                    }
+                  </div>
                 </div>
+                <Phone headless />
               </div>
-              <Phone headless />
             </div>
-          </div>
+          </ErrorBoundary>
         </ContextProvider>
       </LocaleProvider>
     );
