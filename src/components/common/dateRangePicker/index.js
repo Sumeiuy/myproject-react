@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-03-16 15:21:56
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-12 10:59:30
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-05-18 20:48:31
  * @description 将airbnb的日历组件的样式修改为本项目中需要的样式
  */
 
@@ -14,8 +14,6 @@ import _ from 'lodash';
 import { Icon } from 'antd';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
-
-import { dom } from '../../../helper';
 
 import styles from './index.less';
 
@@ -67,46 +65,11 @@ export default class CommonDateRangePicker extends PureComponent {
   isSetRangeOfEndDate = false; // 首次聚焦组件在 endDate 处的标志，用于圈定日历浮层范围用
   lastDate = null; // 记录上次选中的 startDate 和 endDate，用于回滚数据用
 
-  @autobind
-  drpWraperRef(input) {
-    this.drp = input;
-  }
-
   // 格式化日期
   @autobind
   formateDate(date) {
     const { displayFormat } = this.props;
     return date.format(displayFormat);
-  }
-
-  // 计算日历下拉框的位置
-  @autobind
-  calcCalendarPosition() {
-    const { width: viewWidth } = dom.getRect(document.body);
-    const { left, width: drpWidth, top, height } = dom.getRect(this.drp);
-    const picker = this.drp.querySelector('.DateRangePicker_picker');
-    if (picker) {
-      const { width } = dom.getRect(picker);
-      const leftPlusWidth = left + width;
-      if (leftPlusWidth > viewWidth) {
-        const realLeft = left - (width - drpWidth);
-        dom.setStyle(picker, 'left', `${realLeft}px`);
-      } else {
-        dom.setStyle(picker, 'left', `${left}px`);
-      }
-      dom.setStyle(picker, 'top', `${top + height + 10}px`);
-    }
-  }
-
-  @autobind
-  showCalendar() {
-    if (this.drp && this.drp.querySelector('.DateRangePicker_picker')) {
-      // 弹出层出来了
-      this.calcCalendarPosition();
-    } else {
-      // 还没出来
-      setTimeout(this.showCalendar, 10);
-    }
   }
 
   @autobind
@@ -177,8 +140,6 @@ export default class CommonDateRangePicker extends PureComponent {
     if (this.focusedInput === null && curFocusedInput !== null) {
       // 日历浮层出现前，重置状态
       this.restoreDefault();
-      // 打开日历组件, 此处需要进行第一次打开的时间段进行设置
-      this.showCalendar();
     }
     this.focusedInput = curFocusedInput;
     // 用于 render 显示 日历浮层
@@ -289,7 +250,7 @@ export default class CommonDateRangePicker extends PureComponent {
     ]);
 
     return (
-      <div className={styles.drpWraper} ref={this.drpWraperRef}>
+      <div className={styles.drpWraper}>
         <DateRangePicker
           showDefaultInputIcon
           small
