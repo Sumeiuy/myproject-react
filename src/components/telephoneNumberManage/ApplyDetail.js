@@ -137,7 +137,7 @@ export default class ApplyDetail extends PureComponent {
     let columnWidthTotal;
     if (columnSize === 6) {
       // 6列全部都有
-      columnWidth = ['110px', '100px', '220px', '130px', '160px', '210px'];
+      columnWidth = ['140px', '100px', '200px', '130px', '160px', '200px'];
       columnWidthTotal = 860;
     } else if (columnSize === 3) {
       // 开始的时候没有电话号码，手机串号，SIM卡号三列
