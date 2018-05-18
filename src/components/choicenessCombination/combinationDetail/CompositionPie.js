@@ -57,7 +57,7 @@ export default class CompositionPie extends PureComponent {
         orient: 'vertical',
         icon: 'circle',
         right: 10,
-        top: 10,
+        top: '5%',
         bottom: 20,
         itemWidth: 8,
         itemHeight: 8,
@@ -105,7 +105,7 @@ export default class CompositionPie extends PureComponent {
                 return oldName;
               },
               textStyle: {
-                fontSize: '16',
+                fontSize: '14',
                 fontWeight: 'bold',
               },
             },
