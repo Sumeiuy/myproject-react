@@ -30,7 +30,8 @@ export default class HoldingProductDetail extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      popoverVisible: false,
+      hasData: false,
+      isMouseEnter: false,
     };
     this.debounced = _.debounce(
       this.getDetail,
@@ -53,9 +54,10 @@ export default class HoldingProductDetail extends PureComponent {
     const { data, queryHoldingProduct, holdingProducts, custId } = this.props;
     const { id = '' } = data;
     if (_.isEmpty(holdingProducts[`${custId}${id}`])) {
-      queryHoldingProduct({ custId, prdtHold: id });
+      queryHoldingProduct({ custId, prdtHold: id }).then(() => {
+        this.setState({ hasData: true });
+      });
     }
-    this.setState({ popoverVisible: true });
   }
 
   /**
@@ -122,7 +124,18 @@ export default class HoldingProductDetail extends PureComponent {
   }
 
   @autobind
+  handleMouseEnter() {
+    this.setState({
+      isMouseEnter: true,
+    });
+    this.debounced();
+  }
+
+  @autobind
   handleMouseLeave() {
+    this.setState({
+      isMouseEnter: false,
+    });
     this.debounced.cancel();
     this.setState({
       popoverVisible: false,
@@ -130,7 +143,7 @@ export default class HoldingProductDetail extends PureComponent {
   }
 
   render() {
-    const { popoverVisible } = this.state;
+    const { hasData, isMouseEnter } = this.state;
     const { queryHoldingProductReqState } = this.props;
     const suspendedLayer = (
       <div className={styles.suspendedLayer}>
@@ -150,8 +163,8 @@ export default class HoldingProductDetail extends PureComponent {
           mouseEnterDelay={0.5}
           autoAdjustOverflow
           placement="top"
-          visible={popoverVisible}
-          onMouseEnter={this.debounced}
+          visible={isMouseEnter && hasData}
+          onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
           getPopupContainer={this.getPopupContainer}
         >
