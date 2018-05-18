@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-17 12:49:18
+ * @Last Modified time: 2018-05-18 14:40:16
  * @description 客户池头部搜索组件
  */
 
@@ -241,7 +241,7 @@ export default class Search extends PureComponent {
   @autobind
   renderOption(item) {
     const { value } = this.state;
-    const newContent = item.value.replace(value, `<em>${value}</em>`);
+    const newContent = (item.value || '').replace(value, `<em>${value}</em>`);
     const sightingScopeBool = isSightingScope(item.source);
     // 联想 association
     // 搜索 search
