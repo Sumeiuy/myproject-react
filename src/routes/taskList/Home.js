@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-15 16:39:18
+ * @Last Modified time: 2018-05-18 17:54:44
  * @description 任务管理首页
  */
 
@@ -804,7 +804,8 @@ export default class PerformerView extends PureComponent {
   @autobind
   loadDetailContent(obj) {
     this.props.getTaskDetailBasicInfo({ taskId: obj.id });
-    this.props.queryTargetCust({ missionId: obj.id, pageNum: 1, pageSize: 10 });
+    // 执行者视图服务实施客户列表中 状态筛选默认值 state='10' 未开始
+    this.props.queryTargetCust({ missionId: obj.id, state: '10', pageNum: 1, pageSize: 10 });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
   }

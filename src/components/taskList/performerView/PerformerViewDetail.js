@@ -29,6 +29,9 @@ const NOOP = _.noop;
 
 const create = Form.create;
 
+// 任务默认的状态码
+const defaultState = '10';
+
 @create()
 export default class PerformerViewDetail extends PureComponent {
 
@@ -151,7 +154,7 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       parameter: {
         targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState = '',
+        targetCustomerState = defaultState,
         selectCustomerRowId = '',
       },
       changeParameter,
@@ -413,7 +416,7 @@ export default class PerformerViewDetail extends PureComponent {
       // rowId传给后台，查询筛选出来的客户
       rowId,
       // 联合查询，
-      state: targetCustomerState || '',
+      state: targetCustomerState || defaultState,
       pageSize: 10,
       pageNum: 1,
     });
@@ -441,7 +444,7 @@ export default class PerformerViewDetail extends PureComponent {
       parameter: {
         targetCustomerPageNo,
         targetCustomerPageSize,
-        targetCustomerState = '',
+        targetCustomerState = defaultState,
         selectCustomerCustId,
         selectCustomerCustName,
         keyWord = '',
