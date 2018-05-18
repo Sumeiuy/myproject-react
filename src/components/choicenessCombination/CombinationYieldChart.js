@@ -3,7 +3,7 @@
  * @Description: 收益率走势图
  * @Date: 2018-04-25 13:55:06
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-15 08:53:46
+ * @Last Modified time: 2018-05-18 09:34:05
 */
 
 import React, { PureComponent } from 'react';
@@ -109,11 +109,6 @@ export default class CombinationYieldChart extends PureComponent {
     const seriesData = [{
       data: chartData.combinationLine,
       type: 'line',
-      areaStyle: {
-        normal: {
-          color: 'rgba(141,189,233, 0.5)',
-        },
-      },
       name: chartData.combinationName,
       lineStyle: {
         normal: {
@@ -126,11 +121,6 @@ export default class CombinationYieldChart extends PureComponent {
       seriesData.push({
         data: chartData.baseLine,
         type: 'line',
-        areaStyle: {
-          normal: {
-            color: 'rgba(235,154,154, 0.5)',
-          },
-        },
         name: chartData.baseName,
         lineStyle: {
           normal: {
