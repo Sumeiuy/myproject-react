@@ -70,6 +70,13 @@ export default class CompositionTable extends PureComponent {
     newColumns = this.renderNumberOrText(floatratereturnIndex, newColumns, 'number');
     return newColumns;
   }
+
+  // 与零作比较，大于 0 则加上 + 符号
+  @autobind
+  compareWithZero(value) {
+    return value > 0 ? `+${value}` : value;
+  }
+
   // 设置单元格的 popover
   @autobind
   renderPopover(value) {
@@ -103,7 +110,7 @@ export default class CompositionTable extends PureComponent {
             ?
               text
             :
-              number.toFixed(text)
+              this.compareWithZero(number.toFixed(text))
           }
         </div>
       );
@@ -119,13 +126,14 @@ export default class CompositionTable extends PureComponent {
     const tableType = data[0].composeCategory;
     let columns = detailTitleList[tableType];
     columns = this.getColumnsTitle(columns);
+    const allWidth = _.sumBy(columns, 'width');
     return (
       <div className={styles.table}>
         <Table
           columns={columns}
           dataSource={data}
           pagination={false}
-          scroll={{ y: 316 }}
+          scroll={{ x: allWidth, y: 316 }}
           rowKey="code"
         />
       </div>
