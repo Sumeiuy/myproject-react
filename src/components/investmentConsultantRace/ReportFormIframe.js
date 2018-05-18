@@ -2,7 +2,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-08 18:03:14
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-14 09:58:09
+ * @Last Modified time: 2018-05-18 16:41:46
  *
  * src：文件的路径；
  * name:框架的名字，用来进行识别。
@@ -95,7 +95,7 @@ ReportFormIframe.propTypes = {
 ReportFormIframe.defaultProps = {
   width: '100%',
   height: 'auto',
-  reportlet: 'bap/tgjs.cpt',
+  reportlet: 'FSP/tgjs.cpt',
   platform: 'FSP',
   userLogin: 'FSP',
   key: '6f8cda41e3ce45318c4bad855f2abb37',
