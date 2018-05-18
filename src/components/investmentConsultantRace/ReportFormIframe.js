@@ -1,8 +1,8 @@
 /*
  * @Author: WangJunjun
  * @Date: 2018-05-08 18:03:14
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-18 16:41:46
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-05-18 20:09:06
  *
  * src：文件的路径；
  * name:框架的名字，用来进行识别。
@@ -16,6 +16,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import md5 from 'md5';
 import { emp, url } from '../../helper';
@@ -59,7 +60,8 @@ export default class ReportFormIframe extends React.Component {
       key,
     } = this.props;
     const { height } = this.state;
-    const sign = md5(`${reportlet}${platform}${userLogin}${Date.now() / 28800000}${key}`);
+    const timestamp = parseInt(Date.now() / 28800000, 10);
+    const sign = md5(`${reportlet}${platform}${userLogin}${timestamp}${key}`);
     const query = {
       reportlet,
       userId: emp.getId(),
@@ -68,9 +70,10 @@ export default class ReportFormIframe extends React.Component {
       sign,
     };
     const srcUrl = `${src}?${url.stringify(query)}`;
+    const iframeProps = _.omit(this.props, 'userLogin');
     return (
       <iframe
-        {...this.props}
+        {...iframeProps}
         ref={ref => this.iframeNode = ref}
         name={name}
         src={srcUrl}
