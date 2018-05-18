@@ -16,6 +16,9 @@ import styles from './holdingProductDetail.less';
 // 持仓产品的类型：'finance' 金融产品
 const TYPE_FINANCE = 'finance';
 
+// 一个标志位，判断鼠标是否在详情按钮上
+let flag = false;
+
 export default class HoldingProductDetail extends PureComponent {
 
   static propTypes = {
@@ -53,9 +56,12 @@ export default class HoldingProductDetail extends PureComponent {
     const { data, queryHoldingProduct, holdingProducts, custId } = this.props;
     const { id = '' } = data;
     if (_.isEmpty(holdingProducts[`${custId}${id}`])) {
-      queryHoldingProduct({ custId, prdtHold: id });
+      queryHoldingProduct({ custId, prdtHold: id }).then(() => {
+        this.setState({ popoverVisible: flag });
+      });
+    } else {
+      this.setState({ popoverVisible: flag });
     }
-    this.setState({ popoverVisible: true });
   }
 
   /**
@@ -122,7 +128,14 @@ export default class HoldingProductDetail extends PureComponent {
   }
 
   @autobind
+  handleMouseEnter() {
+    flag = true;
+    this.debounced();
+  }
+
+  @autobind
   handleMouseLeave() {
+    flag = false;
     this.debounced.cancel();
     this.setState({
       popoverVisible: false,
@@ -151,7 +164,7 @@ export default class HoldingProductDetail extends PureComponent {
           autoAdjustOverflow
           placement="top"
           visible={popoverVisible}
-          onMouseEnter={this.debounced}
+          onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
           getPopupContainer={this.getPopupContainer}
         >
