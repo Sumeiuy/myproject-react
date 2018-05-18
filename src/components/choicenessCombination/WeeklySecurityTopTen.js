@@ -166,7 +166,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
               columns={newTitleList}
               dataSource={data}
               pagination={false}
-              scroll={{ y: 304 }}
+              scroll={{ y: 301 }}
               rowKey="code"
             />
           </div>
