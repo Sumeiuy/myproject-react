@@ -31,7 +31,7 @@ export default class HoldingProductDetail extends PureComponent {
     super(props);
     this.state = {
       hasData: false,
-      mouseEnter: false,
+      isMouseEnter: false,
     };
     this.debounced = _.debounce(
       this.getDetail,
@@ -126,7 +126,7 @@ export default class HoldingProductDetail extends PureComponent {
   @autobind
   handleMouseEnter() {
     this.setState({
-      mouseEnter: true,
+      isMouseEnter: true,
     });
     this.debounced();
   }
@@ -134,7 +134,7 @@ export default class HoldingProductDetail extends PureComponent {
   @autobind
   handleMouseLeave() {
     this.setState({
-      mouseEnter: false,
+      isMouseEnter: false,
     });
     this.debounced.cancel();
     this.setState({
@@ -143,7 +143,7 @@ export default class HoldingProductDetail extends PureComponent {
   }
 
   render() {
-    const { hasData, mouseEnter } = this.state;
+    const { hasData, isMouseEnter } = this.state;
     const { queryHoldingProductReqState } = this.props;
     const suspendedLayer = (
       <div className={styles.suspendedLayer}>
@@ -163,7 +163,7 @@ export default class HoldingProductDetail extends PureComponent {
           mouseEnterDelay={0.5}
           autoAdjustOverflow
           placement="top"
-          visible={mouseEnter && hasData}
+          visible={isMouseEnter && hasData}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
           getPopupContainer={this.getPopupContainer}
