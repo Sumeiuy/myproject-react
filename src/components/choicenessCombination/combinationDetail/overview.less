@@ -26,7 +26,7 @@
     }
   }
   .left {
-    width: 43%;
+    width: 420px;
     height: 105px;
     padding-top: 10px;
     position: absolute;
@@ -37,6 +37,12 @@
       h3 {
         font-size: 14px;
         span {
+          color: @blue;
+        }
+        .up {
+          color: #ff7b53;
+        }
+        .down {
           color: @blue;
         }
         .fs18 {
@@ -53,7 +59,7 @@
     }
   }
   .right {
-    margin-left: 43%;
+    margin-left: 420px;
     height: 105px;
     padding-top: 10px;
     display: flex;
@@ -61,6 +67,7 @@
       flex: 0 1 auto;
       width: 188px;
       padding: 0 20px;
+      margin-top: -8px;
       box-sizing: border-box;
       position: relative;
       &:after {
@@ -80,7 +87,7 @@
       .rightIcon {
         width: 36px;
         height: 36px;
-        margin: 0 auto;
+        margin-left: 47px;
         line-height: 36px;
         border-radius: 50%;
         font-size: 18px;
@@ -97,6 +104,7 @@
         background: #f9bf00;
       }
       .rightInfo {
+        margin-top: 6px;
         h3 {
           font-size: 14px;
           line-height: 24px;

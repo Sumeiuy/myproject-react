@@ -45,6 +45,7 @@ export default class TargetCustomer extends PureComponent {
     // 获取客户名称
     getServiceCustId: PropTypes.func.isRequired,
     taskTypeCode: PropTypes.string.isRequired,
+    currentMotServiceRecord: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -138,6 +139,7 @@ export default class TargetCustomer extends PureComponent {
       currentId,
       currentCustomer,
       taskTypeCode,
+      currentMotServiceRecord,
     } = this.props;
     if (_.isEmpty(list)) {
       return null;
@@ -175,6 +177,7 @@ export default class TargetCustomer extends PureComponent {
                     currentId={currentId}
                     currentCustomer={currentCustomer}
                     taskTypeCode={taskTypeCode}
+                    currentMotServiceRecord={currentMotServiceRecord}
                   /> : null
               }
             </Col>

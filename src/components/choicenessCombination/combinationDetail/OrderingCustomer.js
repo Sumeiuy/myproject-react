@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情-订购客户
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-11 15:46:40
+ * @Last Modified time: 2018-05-16 09:53:19
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -48,6 +48,17 @@ export default class HistoryReport extends PureComponent {
     return newTitleList;
   }
 
+  // 由于后端返回的列表数据存在id重复的情况，所以拼一个不会重复的rowKey用作渲染时的key
+  @autobind
+  getTransformList(list) {
+    return list.map((item, index) => (
+      {
+        ...item,
+        rowKey: `${item.customerId}${index}`,
+      }
+    ));
+  }
+
   @autobind
   handlePaginationChange(page) {
     const { pageChange } = this.props;
@@ -83,9 +94,9 @@ export default class HistoryReport extends PureComponent {
       },
     } = this.props;
     const PaginationOption = {
-      current: page.pageNum,
-      total: page.totalCount,
-      pageSize: page.pageSize,
+      current: page.pageNum || 1,
+      total: page.totalCount || 0,
+      pageSize: page.pageSize || 5,
       showTotal: total => `共 ${total} 条`,
     };
     const newTitleList = this.getNewTitleList(titleList);
@@ -96,10 +107,10 @@ export default class HistoryReport extends PureComponent {
         </div>
         <Table
           columns={newTitleList}
-          dataSource={list}
+          dataSource={this.getTransformList(list)}
           pagination={PaginationOption}
           onChange={this.handlePaginationChange}
-          rowKey="customerId"
+          rowKey={'rowKey'}
         />
       </div>
     );

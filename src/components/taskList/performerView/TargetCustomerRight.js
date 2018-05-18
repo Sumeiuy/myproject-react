@@ -24,6 +24,7 @@ import logable from '../../../decorators/logable';
 import Icon from '../../common/Icon';
 import { date } from '../../../helper';
 import ContactInfoPopover from '../../common/contactInfoPopover/ContactInfoPopover';
+import Mask from '../../common/mask';
 
 // 信息的完备，用于判断
 const COMPLETION = '完备';
@@ -72,6 +73,7 @@ export default class TargetCustomerRight extends PureComponent {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     currentCustomer: PropTypes.object.isRequired,
     taskTypeCode: PropTypes.string.isRequired,
+    currentMotServiceRecord: PropTypes.object.isRequired,
   }
   static defaultProps = {
     itemData: {},
@@ -87,8 +89,9 @@ export default class TargetCustomerRight extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.phoneEndTime = '';
-    this.phoneStartTime = '';
+    this.endTime = '';
+    this.startTime = '';
+    this.state = { showMask: false };
   }
 
   getPopupContainer() {
@@ -109,6 +112,10 @@ export default class TargetCustomerRight extends PureComponent {
       title: '客户360视图-客户信息',
       forceRefresh: true,
       activeSubTab,
+      // 服务记录搜索
+      serviceRecordKeyword: '',
+      // 服务渠道
+      serviceRecordChannel: '',
     };
   }
 
@@ -177,11 +184,13 @@ export default class TargetCustomerRight extends PureComponent {
    */
   @autobind
   handlePhoneEnd() {
+    // 点击挂电话隐藏蒙层
+    this.setState({ showMask: false });
     // 没有成功发起通话
-    if (!moment.isMoment(this.phoneStartTime)) {
+    if (!moment.isMoment(this.startTime)) {
       return;
     }
-    this.phoneEndTime = moment();
+    this.endTime = moment();
     const {
       itemData,
       addServeRecord,
@@ -199,10 +208,10 @@ export default class TargetCustomerRight extends PureComponent {
     const { key: firstServiceTypeKey, children = [] } = firstServiceType;
     const [firstFeedback = {}] = children;
     const phoneDuration = date.calculateDuration(
-      this.phoneStartTime.valueOf(),
-      this.phoneEndTime.valueOf(),
+      this.startTime.valueOf(),
+      this.endTime.valueOf(),
     );
-    const serviceContentDesc = `${this.phoneStartTime.format('HH时mm分ss秒')}给客户发起语音通话，时长${phoneDuration}。`;
+    const serviceContentDesc = `${this.startTime.format('HH:mm:ss')}给客户发起语音通话，时长${phoneDuration}。`;
     let payload = {
       // 任务流水id
       missionFlowId: currentMissionFlowId,
@@ -225,7 +234,7 @@ export default class TargetCustomerRight extends PureComponent {
       // 服务记录内容
       serveContentDesc: serviceContentDesc,
       // 服务时间
-      serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
+      serveTime: this.endTime.format('YYYY-MM-DD HH:mm'),
       // 反馈时间
       feedBackTime: moment().format('YYYY-MM-DD'),
     };
@@ -250,13 +259,21 @@ export default class TargetCustomerRight extends PureComponent {
       postBody: payload,
       callbackOfPhone: saveRecordData,
       noHint: true,
+      callId: this.callId,
     });
   }
 
   // 通话开始
   @autobind
-  handlePhoneConnected() {
-    this.phoneStartTime = moment();
+  handlePhoneConnected(data) {
+    this.startTime = moment();
+    this.callId = data.uuid;
+  }
+
+  // 点击号码打电话时显示蒙层
+  @autobind
+  handlePhoneClick() {
+    this.setState({ showMask: true });
   }
 
   /**
@@ -265,7 +282,7 @@ export default class TargetCustomerRight extends PureComponent {
   @autobind
   renderContactInfo() {
     const { itemData, currentCustomer } = this.props;
-    const { custNature, perCustomerContactInfo, orgCustomerContactInfoList } = itemData;
+    const { custNature, perCustomerContactInfo, orgCustomerContactInfoList, custName } = itemData;
     // 任务状态为未处理、处理中、已驳回时可打电话
     const canCall = _.includes(CALLABLE_LIST, currentCustomer.missionStatusCode);
     // 联系方式为空判断
@@ -274,9 +291,9 @@ export default class TargetCustomerRight extends PureComponent {
       (
         _.isEmpty(perCustomerContactInfo) ||
         (_.isEmpty(perCustomerContactInfo.homeTels)
-        && _.isEmpty(perCustomerContactInfo.cellPhones)
-        && _.isEmpty(perCustomerContactInfo.workTels)
-        && _.isEmpty(perCustomerContactInfo.otherTels))
+          && _.isEmpty(perCustomerContactInfo.cellPhones)
+          && _.isEmpty(perCustomerContactInfo.workTels)
+          && _.isEmpty(perCustomerContactInfo.otherTels))
       )
     ) ||
       (custNature === ORG_CODE && _.isEmpty(orgCustomerContactInfoList));
@@ -288,10 +305,12 @@ export default class TargetCustomerRight extends PureComponent {
       <Col span={16}>
         <ContactInfoPopover
           custType={custNature}
+          name={encodeURIComponent(custName)}
           personalContactInfo={perContactInfo}
           orgCustomerContactInfoList={orgCustomerContactInfoList}
           handlePhoneEnd={this.handlePhoneEnd}
           handlePhoneConnected={this.handlePhoneConnected}
+          handlePhoneClick={this.handlePhoneClick}
           disablePhone={!canCall}
           placement={'top'}
         >
@@ -312,6 +331,8 @@ export default class TargetCustomerRight extends PureComponent {
       monthlyProfits,
       custIncomeReqState,
     } = this.props;
+
+    const { showMask } = this.state;
 
     const sendSpan = isFold ? 15 : 24;
     const thrSpan = isFold ? 9 : 24;
@@ -557,6 +578,7 @@ export default class TargetCustomerRight extends PureComponent {
             </Row>
           </div>
         </div>
+        <Mask visible={showMask} />
       </div>
     );
   }

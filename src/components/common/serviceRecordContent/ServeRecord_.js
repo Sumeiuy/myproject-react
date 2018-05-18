@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 22:00:01
+ * @Last Modified time: 2018-05-17 15:25:06
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -10,7 +10,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Input, Form } from 'antd';
 
-import Icon from '../Icon';
 import { PHONE } from './utils';
 
 import styles from './index.less';
@@ -41,13 +40,6 @@ export default function ServeRecord(props) {
             value={value}
             onChange={onChange}
           />
-          {
-            caller === PHONE
-            && <p className={styles.wenxin}>
-              <Icon type="wenxintishi" className={styles.wenxinIcon} />
-              温馨提醒：请写下您和客户的沟通记录
-            </p>
-          }
         </div>
       </FormItem>
     </div>

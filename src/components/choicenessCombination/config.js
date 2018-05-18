@@ -2,8 +2,8 @@
  * @Description: 精选组合部分配置项
  * @Author: Liujianshu
  * @Date: 2018-04-25 14:28:07
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-11 19:03:37
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-05-17 14:28:45
  */
 
 const config = {
@@ -58,7 +58,7 @@ const config = {
         dataIndex: 'time',
         key: 'time',
         title: '时间',
-        width: 170,
+        width: 136,
       },
       {
         dataIndex: 'directionName',
@@ -76,13 +76,13 @@ const config = {
         dataIndex: 'securityCode',
         key: 'securityCode',
         title: '证券代码',
-        width: 86,
+        width: 106,
       },
       {
         dataIndex: 'price',
         key: 'price',
         title: '成交价（元）',
-        width: 115,
+        width: 125,
       },
       {
         dataIndex: 'reason',
@@ -124,7 +124,7 @@ const config = {
         dataIndex: 'combinationName',
         key: 'combinationName',
         title: '组合名称',
-        width: 174,
+        width: 220,
       },
     ],
     ten: [
@@ -170,14 +170,14 @@ const config = {
         dataIndex: 'customerId',
         key: 'customerId',
         title: '客户号',
-        width: '24%',
+        width: '22%',
         align: 'left',
       },
       {
         dataIndex: 'customerName',
         key: 'customerName',
         title: '客户名称',
-        width: '17%',
+        width: '19%',
         align: 'left',
       },
       {
@@ -324,13 +324,13 @@ const config = {
         dataIndex: 'industry',
         key: 'industry',
         title: '行业',
-        width: 90,
+        width: 60,
       },
       {
         dataIndex: 'percent',
         key: 'percent',
-        title: '持仓比例',
-        width: 60,
+        title: '持仓比例(%)',
+        width: 75,
       },
       {
         dataIndex: 'scNum',
@@ -360,6 +360,7 @@ const config = {
         dataIndex: 'reason',
         key: 'reason',
         title: '理由',
+        width: 120,
       },
     ],
     // 行业股票组合
@@ -380,7 +381,7 @@ const config = {
         dataIndex: 'industry',
         key: 'industry',
         title: '行业',
-        width: 90,
+        width: 60,
       },
       {
         dataIndex: 'callInTime',
@@ -397,8 +398,8 @@ const config = {
       {
         dataIndex: 'percent',
         key: 'percent',
-        title: '持仓比例',
-        width: 60,
+        title: '持仓比例(%)',
+        width: 75,
       },
       {
         dataIndex: 'increase',
@@ -410,6 +411,7 @@ const config = {
         dataIndex: 'reason',
         key: 'reason',
         title: '理由',
+        width: 120,
       },
     ],
     // 配置类组合
@@ -430,7 +432,7 @@ const config = {
         dataIndex: 'category',
         key: 'category',
         title: '分类',
-        width: 90,
+        width: 60,
       },
       {
         dataIndex: 'callInTime',
@@ -447,8 +449,8 @@ const config = {
       {
         dataIndex: 'percent',
         key: 'percent',
-        title: '持仓比例',
-        width: 60,
+        title: '持仓比例(%)',
+        width: 75,
       },
       {
         dataIndex: 'increase',
@@ -460,6 +462,7 @@ const config = {
         dataIndex: 'reason',
         key: 'reason',
         title: '理由',
+        width: 120,
       },
     ],
     // 配置类组合（资产配置型）
@@ -483,16 +486,17 @@ const config = {
         dataIndex: 'callInTime',
         key: 'callInTime',
         title: '调仓日期',
+        width: 110,
       },
       {
-        dataIndex: 'weight',
-        key: 'weight',
+        dataIndex: 'currHoldRate',
+        key: 'currHoldRate',
         title: '本期权重(%)',
       },
       {
         dataIndex: 'rateReturn',
         key: 'rateReturn',
-        title: '回报率',
+        title: '回报率(%)',
       },
     ],
   ],

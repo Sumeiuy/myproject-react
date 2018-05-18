@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-筛选
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-09 14:20:02
+ * @Last Modified time: 2018-05-17 14:14:23
 */
 
 import React, { PureComponent } from 'react';
@@ -86,6 +86,7 @@ export default class CombinationRank extends PureComponent {
       style: {
         width: 220,
       },
+      dropdownClassName: styles.treeSelectDropdown,
     };
     return (
       <div className={styles.combinationFilterBox}>

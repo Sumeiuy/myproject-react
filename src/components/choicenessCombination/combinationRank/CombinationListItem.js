@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-15 13:42:27
+ * @Last Modified time: 2018-05-17 14:01:05
 */
 
 import React, { PureComponent } from 'react';
@@ -127,13 +127,16 @@ export default class CombinationListItem extends PureComponent {
       yieldRankValue,
     } = this.props;
     const result = _.filter(yieldRankList, item => (item.value === yieldRankValue))[0];
-    const num = (data[result.showNameKey] || 0).toFixed(2);
+    const num = data[result.showNameKey] || 0;
+    // 后端返回如 -0.0003这样数据时 四舍五入完会是-0.00 需要特殊处理成 0.00
+    const judgeNum = Number(num.toFixed(2));
+    const fiexdNum = judgeNum === 0 ? '0.00' : num.toFixed(2);
     const className = classnames({
-      [styles.up]: num >= 0,
-      [styles.down]: num < 0,
+      [styles.up]: judgeNum >= 0,
+      [styles.down]: judgeNum < 0,
     });
     return (
-      <em className={className}>{`${num > 0 ? '+' : ''}${num}%`}</em>
+      <em className={className}>{`${judgeNum > 0 ? '+' : ''}${fiexdNum}%`}</em>
     );
   }
 

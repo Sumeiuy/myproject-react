@@ -11,6 +11,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { Modal, Button } from 'antd';
 import Icon from '../../common/Icon';
+import Mask from '../../common/mask';
 import Collapse from './CreateCollapse';
 import { date } from '../../../helper';
 import logable from '../../../decorators/logable';
@@ -65,6 +66,8 @@ export default class CreateContactModal extends PureComponent {
     toggleServiceRecordModal: PropTypes.func,
     addServeRecord: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
+    addCallRecord: PropTypes.func.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -79,8 +82,8 @@ export default class CreateContactModal extends PureComponent {
     this.state = {
       visible: props.visible,
     };
-    this.phoneStartTime = '';
-    this.phoneEndTime = '';
+    this.startTime = '';
+    this.endTime = '';
   }
 
   @autobind
@@ -126,11 +129,13 @@ export default class CreateContactModal extends PureComponent {
    */
   @autobind
   handlePhoneEnd() {
+    // 点击挂电话隐藏蒙层
+    this.setState({ showMask: false });
     // 没有成功发起通话
-    if (!moment.isMoment(this.phoneStartTime)) {
+    if (!moment.isMoment(this.startTime)) {
       return;
     }
-    this.phoneEndTime = moment();
+    this.endTime = moment();
     const {
       currentCustId,
       currentCustName,
@@ -144,10 +149,10 @@ export default class CreateContactModal extends PureComponent {
     const { key: firstServiceTypeKey, children = [] } = firstServiceType;
     const [firstFeedback = {}] = children;
     const phoneDuration = date.calculateDuration(
-      this.phoneStartTime.valueOf(),
-      this.phoneEndTime.valueOf(),
+      this.startTime.valueOf(),
+      this.endTime.valueOf(),
     );
-    const serviceContentDesc = `${this.phoneStartTime.format('HH时mm分ss秒')}给客户发起语音通话，时长${phoneDuration}。`;
+    const serviceContentDesc = `${this.startTime.format('HH:mm:ss')}给客户发起语音通话，时长${phoneDuration}。`;
     let payload = {
       // 经济客户号
       custId: currentCustId,
@@ -164,7 +169,7 @@ export default class CreateContactModal extends PureComponent {
       // 服务记录内容
       serveContentDesc: serviceContentDesc,
       // 服务时间
-      serveTime: this.phoneEndTime.format('YYYY-MM-DD HH:mm'),
+      serveTime: this.endTime.format('YYYY-MM-DD HH:mm'),
       // 反馈时间
       feedBackTime: moment().format('YYYY-MM-DD'),
       // 添加成功后需要显示message提示
@@ -178,6 +183,8 @@ export default class CreateContactModal extends PureComponent {
       };
     }
     addServeRecord(payload).then(() => {
+      // 关联通话和服务记录
+      this.saveServiceRecordAndPhoneRelation();
       // 回调，关闭电话联系方式弹窗
       onClose();
       // 显示添加服务记录弹窗
@@ -193,8 +200,29 @@ export default class CreateContactModal extends PureComponent {
 
   // 通话开始
   @autobind
-  handlePhoneConnected() {
-    this.phoneStartTime = moment();
+  handlePhoneConnected(data) {
+    this.startTime = moment();
+    this.callId = data.uuid;
+  }
+
+  // 点击号码开始打电话显示蒙层
+  @autobind
+  handlePhoneClick() {
+    this.setState({ showMask: true });
+  }
+
+  /**
+   * 通话的uuid关联服务记录
+   */
+  @autobind
+  saveServiceRecordAndPhoneRelation() {
+    const { currentCommonServiceRecord = {} } = this.props;
+    if (this.callId) {
+      this.props.addCallRecord({
+        uuid: this.callId,
+        projectId: currentCommonServiceRecord.id,
+      });
+    }
   }
 
   /**
@@ -207,10 +235,14 @@ export default class CreateContactModal extends PureComponent {
     mainContactInfo,
     personalContactInfo,
   }) {
-    const { custType } = this.props;
+    const { custType, currentCustName, currentCustId } = this.props;
     if (!isPersonHasContact && !isOrgMainContactHasTel) {
       return <p>客户未预留主要联系方式，请尽快完善信息</p>;
     }
+    const userData = {
+      custId: currentCustId,
+      custName: currentCustName,
+    };
     return (
       <div className={styles.mainContact}>
         {
@@ -225,13 +257,16 @@ export default class CreateContactModal extends PureComponent {
         {
           (!_.isEmpty(mainContactInfo.cellInfo) || !_.isEmpty(personalContactInfo.mainTelInfo)) &&
           <Phone
+            onClick={this.handlePhoneClick}
             onConnected={this.handlePhoneConnected}
             onEnd={this.handlePhoneEnd}
             number={custType === 'per' ?
               personalContactInfo.mainTelInfo :
               mainContactInfo.cellInfo}
             custType={custType}
+            name={encodeURIComponent(currentCustName)}
             disable={false}
+            userData={userData}
           />
         }
       </div>
@@ -241,6 +276,7 @@ export default class CreateContactModal extends PureComponent {
   render() {
     const {
       visible,
+      showMask,
     } = this.state;
     const {
       custContactData = EMPTY_OBJECT,
@@ -251,6 +287,7 @@ export default class CreateContactModal extends PureComponent {
       serveWay,
       getCeFileList,
       filesList,
+      currentCustName,
     } = this.props;
     if (!currentCustId || !visible) {
       return null;
@@ -308,7 +345,7 @@ export default class CreateContactModal extends PureComponent {
         }
       } else if (!_.isEmpty(perCustomerContactInfo)) {
         // 选出4中联系方式中不为空的联系方式
-        const allTelInfo = _.omit(_.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']), _.isEmpty);
+        const allTelInfo = _.omitBy(_.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']), _.isEmpty);
         // 将所有联系方式用一个一维数组来存放
         const phones = _.flatten(Object.values(allTelInfo)) || EMPTY_LIST;
         // 筛选出联系方式对象中contactValue不为空的，判断是否有联系方式
@@ -326,7 +363,10 @@ export default class CreateContactModal extends PureComponent {
         }
       }
     }
-    console.log('personalContactInfo.otherTelInfo, orgCustomerContactInfoList', personalContactInfo.otherTelInfo, orgCustomerContactInfoList);
+    const userData = {
+      custId: currentCustId,
+      custName: currentCustName,
+    };
     return (
       <Modal
         wrapClassName={styles.contactModal}
@@ -362,7 +402,10 @@ export default class CreateContactModal extends PureComponent {
                 orgCustomerContactInfoList={orgCustomerContactInfoList}
                 handlePhoneEnd={this.handlePhoneEnd}
                 handlePhoneConnected={this.handlePhoneConnected}
+                handlePhoneClick={this.handlePhoneClick}
                 disablePhone={false}
+                name={encodeURIComponent(currentCustName)}
+                userData={userData}
               >
                 <div className={styles.moreLinkman}>
                   <Icon type="lianxifangshi" className={styles.phoneIcon} />
@@ -382,6 +425,7 @@ export default class CreateContactModal extends PureComponent {
           getCeFileList={getCeFileList}
           filesList={filesList}
         />
+        <Mask visible={showMask} />
       </Modal>
     );
   }

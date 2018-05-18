@@ -16,12 +16,21 @@ import { number } from '../../../helper';
 import config from '../config';
 import styles from './overview.less';
 
-const showWeekMonthYear = [...config.weekMonthYear];
 const EMPTY_TEXT = '无';
-
 export default class Overview extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
+  }
+
+
+  @autobind
+  getNumberClassName(num) {
+    const bigThanZero = num >= 0;
+    const numberClassName = classnames({
+      [styles.up]: bigThanZero,
+      [styles.down]: !bigThanZero,
+    });
+    return numberClassName;
   }
 
   // 与零作比较，大于 0 则加上 + 符号
@@ -42,12 +51,13 @@ export default class Overview extends PureComponent {
         weekEarnings,
       },
     } = this.props;
-    if (!_.isEmpty(data) && !weekEarnings) {
+    const showWeekMonthYear = [...config.weekMonthYear];
+    if (!_.isEmpty(data) && !_.isNumber(weekEarnings)) {
       showWeekMonthYear.shift();
     }
     return (
       <div className={styles.overview}>
-        <h2 className={styles.title}>{composeName}</h2>
+        <h2 className={styles.title}>{composeName || EMPTY_TEXT}</h2>
         <div className={styles.left}>
           <div className={styles.leftInfo}>
             <h3>
@@ -64,7 +74,9 @@ export default class Overview extends PureComponent {
             </h3>
             <h3>
               最大回撤
-              <span className={styles.fs18}> {number.toFixed(withdraw)}% </span>
+              <span className={`${this.getNumberClassName(withdraw)} ${styles.fs18}`}>
+                {this.compareWithZero(number.toFixed(withdraw))}%
+              </span>
             </h3>
           </div>
         </div>
@@ -74,11 +86,6 @@ export default class Overview extends PureComponent {
               const { name, key, percent, ranking, total } = item;
               const nameKey = `$${name}${index}`;
               const num = number.toFixed(data[percent]);
-              const bigThanZero = num >= 0;
-              const percentClassName = classnames({
-                [styles.up]: bigThanZero,
-                [styles.down]: !bigThanZero,
-              });
               const cls = `icon${key}`;
               return (
                 <div className={styles.rightItem} key={nameKey}>
@@ -87,7 +94,7 @@ export default class Overview extends PureComponent {
                   </div>
                   <div className={styles.rightInfo}>
                     <h3 className="clearfix">
-                      <span className={percentClassName}>
+                      <span className={this.getNumberClassName(num)}>
                         {this.compareWithZero(num)}%
                       </span>
                       收益率

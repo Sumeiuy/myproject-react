@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-10 21:34:00
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-15 13:13:47
+ * @Last Modified time: 2018-05-17 22:25:25
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -24,6 +24,9 @@ function ContactGroup({
   custType,
   handlePhoneConnected,
   handlePhoneEnd,
+  handlePhoneClick,
+  name,
+  userData,
 }) {
   if (_.isEmpty(telList)) {
     return null;
@@ -44,11 +47,14 @@ function ContactGroup({
               {item.label && <span className={styles.label}>{item.label}</span>}
               <span className={styles.content}>
                 <Phone
+                  onClick={handlePhoneClick}
                   onConnected={handlePhoneConnected}
                   onEnd={handlePhoneEnd}
                   number={item.contactValue}
                   custType={custType}
                   disable={disablePhone}
+                  name={name}
+                  userData={userData}
                 />
               </span>
               {
@@ -75,7 +81,10 @@ ContactGroup.propTypes = {
   custType: PropTypes.string.isRequired,
   handlePhoneConnected: PropTypes.func,
   handlePhoneEnd: PropTypes.func,
+  handlePhoneClick: PropTypes.func,
   disablePhone: PropTypes.bool,
+  name: PropTypes.string,
+  userData: PropTypes.object,
 };
 
 ContactGroup.defaultProps = {
@@ -84,7 +93,10 @@ ContactGroup.defaultProps = {
   mainFlag: false,
   handlePhoneEnd: _.noop,
   handlePhoneConnected: _.noop,
+  handlePhoneClick: _.noop,
   disablePhone: true,
+  name: '',
+  userData: {},
 };
 
 export default ContactGroup;

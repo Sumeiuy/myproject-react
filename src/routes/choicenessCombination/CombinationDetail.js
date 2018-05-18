@@ -251,7 +251,10 @@ export default class CombinationDetail extends PureComponent {
     const { location: { pathname, query: { id } } } = this.props;
     replace({
       pathname,
-      query: { id },
+      query: {
+        id,
+        visible: false,
+      },
     });
   }
 
@@ -327,9 +330,9 @@ export default class CombinationDetail extends PureComponent {
 
   // 打开历史报告详情页
   @autobind
-  openReportDetailPage(recordId) {
+  openReportDetailPage(obj) {
     const { push } = this.context;
-    const { location: { query: { id } } } = this.props;
+    const { id } = obj;
     const param = {
       closable: true,
       forceRefresh: true,
@@ -338,8 +341,7 @@ export default class CombinationDetail extends PureComponent {
       title: '历史报告详情',
     };
     const query = {
-      id: recordId,
-      code: id,
+      id,
     };
     const url = `/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
     openRctTab({

@@ -144,6 +144,8 @@ export default {
     currentCommonServiceRecord: {},
     // 持仓产品的详情
     holdingProducts: {},
+    // 添加通话记录关联服务记录是否成功
+    isAddCallRecordSuccess: false,
   },
 
   subscriptions: {
@@ -837,6 +839,14 @@ export default {
         payload: { ...payload, resultData },
       });
     },
+    // 添加电话记录，关联打电话自动生成的服务记录
+    * addCallRecord({ payload }, { call, put }) {
+      const { resultData } = yield call(commonApi.addCallRecord, payload);
+      yield put({
+        type: 'addCallRecordSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -941,9 +951,10 @@ export default {
     getHotPossibleWdsSuccess(state, action) {
       const { payload: { response } } = action;
       const { possibleWdsList } = response.resultData;
+      // 返回的数据的primaryKey不能重复
       return {
         ...state,
-        hotPossibleWdsList: possibleWdsList,
+        hotPossibleWdsList: _.uniqBy(possibleWdsList, 'primaryKey'),
       };
     },
     getCustomerListSuccess(state, action) {
@@ -1450,6 +1461,13 @@ export default {
           ...state.holdingProducts,
           [`${custId}${prdtHold}`]: resultData,
         },
+      };
+    },
+    addCallRecordSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        isAddCallRecordSuccess: payload.success,
       };
     },
   },

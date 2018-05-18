@@ -7,8 +7,8 @@
  */
 const config = {
   // 只开放个股点评，个股研报、个股公告先隐藏
-  // typeList: ['StockReview'],
-  typeList: ['StockReview', 'StockReport', 'StockEvent'],
+  // typeList: ['StockReview', 'StockReport', 'StockEvent'],
+  typeList: ['StockReport', 'StockEvent'],
   // 个股点评
   StockReview: {
     key: 'StockReview',

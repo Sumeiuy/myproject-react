@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 10:21:18
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-14 16:22:05
+ * @Last Modified time: 2018-05-15 16:40:05
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapDispatchToProps移至此处成立独立模块
  */
 import effects from './effects';
@@ -81,4 +81,6 @@ export default ({ routerRedux, effect }) => ({
   // 清除执行者视图右侧搜索客户列表
   clearCustListForServiceImplementation: effect(effects.clearCustListForServiceImplementation,
     { loading: false }),
+  // 添加通话记录关联服务记录
+  addCallRecord: effect(effects.addCallRecord, { loading: false }),
 });
