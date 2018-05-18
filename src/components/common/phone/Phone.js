@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-17 22:04:52
+ * @Last Modified time: 2018-05-18 09:32:47
  */
 
 import React, { PureComponent } from 'react';
@@ -143,12 +143,9 @@ export default class Phone extends PureComponent {
       `wssPort=${wssPort}`,
     ].join('&');
 
-    const userQueryString = qs.stringify({
-      name,
-      ...userData,
-    });
+    const userQueryString = qs.stringify(userData);
 
-    const srcUrl = `${URL}?number=${number}&custType=${custType}&auto=true&${configQueryString}&${userQueryString}`;
+    const srcUrl = `${URL}?number=${number}&custType=${custType}&auto=true&name=${name}&${configQueryString}&${userQueryString}`;
     popWin.location = srcUrl;
     if (!this.boundMessageEvent) {
       this.boundMessageEvent = true;
