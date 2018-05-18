@@ -239,11 +239,11 @@ export default class Home extends Component {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className={styles.btn}
+                  className={styles.searchBtn}
                 >查询</Button>
                 <Button
                   onClick={this.handleReset}
-                  className={styles.btn}
+                  className={styles.resetBtn}
                 >重置</Button>
               </div>
             </div>
