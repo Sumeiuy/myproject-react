@@ -16,9 +16,6 @@ import styles from './holdingProductDetail.less';
 // 持仓产品的类型：'finance' 金融产品
 const TYPE_FINANCE = 'finance';
 
-// 一个标志位，判断鼠标是否在详情按钮上
-let flag = false;
-
 export default class HoldingProductDetail extends PureComponent {
 
   static propTypes = {
@@ -33,7 +30,8 @@ export default class HoldingProductDetail extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      popoverVisible: false,
+      hasData: false,
+      mouseEnter: false,
     };
     this.debounced = _.debounce(
       this.getDetail,
@@ -57,10 +55,8 @@ export default class HoldingProductDetail extends PureComponent {
     const { id = '' } = data;
     if (_.isEmpty(holdingProducts[`${custId}${id}`])) {
       queryHoldingProduct({ custId, prdtHold: id }).then(() => {
-        this.setState({ popoverVisible: flag });
+        this.setState({ hasData: true });
       });
-    } else {
-      this.setState({ popoverVisible: flag });
     }
   }
 
@@ -129,13 +125,17 @@ export default class HoldingProductDetail extends PureComponent {
 
   @autobind
   handleMouseEnter() {
-    flag = true;
+    this.setState({
+      mouseEnter: true,
+    });
     this.debounced();
   }
 
   @autobind
   handleMouseLeave() {
-    flag = false;
+    this.setState({
+      mouseEnter: false,
+    });
     this.debounced.cancel();
     this.setState({
       popoverVisible: false,
@@ -143,7 +143,7 @@ export default class HoldingProductDetail extends PureComponent {
   }
 
   render() {
-    const { popoverVisible } = this.state;
+    const { hasData, mouseEnter } = this.state;
     const { queryHoldingProductReqState } = this.props;
     const suspendedLayer = (
       <div className={styles.suspendedLayer}>
@@ -163,7 +163,7 @@ export default class HoldingProductDetail extends PureComponent {
           mouseEnterDelay={0.5}
           autoAdjustOverflow
           placement="top"
-          visible={popoverVisible}
+          visible={mouseEnter && hasData}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
           getPopupContainer={this.getPopupContainer}
