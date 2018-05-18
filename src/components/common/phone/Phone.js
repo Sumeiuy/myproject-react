@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 12:20:39
+ * @Last Modified time: 2018-05-17 22:04:52
  */
 
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import bowser from 'bowser';
 import _ from 'lodash';
+import qs from 'query-string';
 import classnames from 'classnames';
 
 import styles from './phone.less';
@@ -60,6 +61,10 @@ export default class Phone extends PureComponent {
     getConfig: PropTypes.func.isRequired,
     // 用户信息
     empInfo: PropTypes.object.isRequired,
+    // 客户的名称
+    name: PropTypes.string,
+    // 用户数据，回调时回传
+    userData: PropTypes.object,
   }
 
   static defaultProps = {
@@ -71,6 +76,8 @@ export default class Phone extends PureComponent {
     onClick: _.noop,
     onEnd: _.noop,
     onConnected: _.noop,
+    name: '',
+    userData: {},
   };
 
   // 是否已绑定message事件
@@ -120,7 +127,7 @@ export default class Phone extends PureComponent {
   }
 
   call(number) {
-    const { custType, config } = this.props;
+    const { custType, config, name, userData } = this.props;
     const {
       sipInfo: { sipID, sipDomain, sipPasswd },
       wssInfo: { wssIp, wssPort, sipIp, sipPort },
@@ -136,7 +143,12 @@ export default class Phone extends PureComponent {
       `wssPort=${wssPort}`,
     ].join('&');
 
-    const srcUrl = `${URL}?number=${number}&custType=${custType}&auto=true&${configQueryString}`;
+    const userQueryString = qs.stringify({
+      name,
+      ...userData,
+    });
+
+    const srcUrl = `${URL}?number=${number}&custType=${custType}&auto=true&${configQueryString}&${userQueryString}`;
     popWin.location = srcUrl;
     if (!this.boundMessageEvent) {
       this.boundMessageEvent = true;
