@@ -16,8 +16,6 @@ import CompositionPie from './CompositionPie';
 import CompositionTable from './CompositionTable';
 import styles from './composition.less';
 
-// 容器要设置的最小高度
-const MINI_HEIGHT = '0';
 export default class Composition extends PureComponent {
   static propTypes = {
     pieData: PropTypes.array.isRequired,
@@ -27,7 +25,7 @@ export default class Composition extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      height: MINI_HEIGHT,
+      height: '0px',
     };
   }
 
