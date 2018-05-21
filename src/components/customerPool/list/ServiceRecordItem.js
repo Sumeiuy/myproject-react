@@ -42,7 +42,7 @@ export default class ServiceRecordItem extends PureComponent {
 
   // 空方法，用于日志上传
   @logable({ type: 'Click', payload: { name: '下载' } })
-  handleDownloadClick() {}
+  handleDownloadClick() { }
 
   /**
    * 判断是否是空或者字符串null

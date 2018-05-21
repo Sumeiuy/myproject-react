@@ -24,6 +24,8 @@ const warning = Modal.warning;
 const ADVISER_INFO = 'ADVISER_INFO';
 // 审批中的状态标识
 const APPROVING = 'approving';
+// 个人介绍最多字数
+const MAX_INTRODUCE = 135;
 
 @Form.create()
 @withRouter
@@ -412,7 +414,7 @@ export default class BasicInfo extends PureComponent {
                                 {
                                   editorState ?
                                     getFieldDecorator('applyingDescription', {
-                                      rules: [{ max: 200, message: '个人介绍最多200个汉字' }],
+                                      rules: [{ max: MAX_INTRODUCE, message: `个人介绍最多${MAX_INTRODUCE}个汉字` }],
                                       initialValue: applyingDescription || userBaseInfo[item.key],
                                     })(
                                       <TextArea

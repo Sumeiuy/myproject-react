@@ -9,8 +9,27 @@
       :global {
         .ant-select {
           width: auto !important;
-          min-width: 220px;
+          min-width: 174px;
+          .ant-select-arrow {
+            transform: scale(.75);
+            border: none;
+            border-top: 10px solid #c2c2c2;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            height: 0;
+            width: 0;
+            overflow: hidden;
+          }
         }
+      }
+    }
+  }
+}
+.treeSelectDropdown {
+  ul li {
+    :global {
+      span.ant-select-tree-switcher-noop {
+        width: 4px;
       }
     }
   }

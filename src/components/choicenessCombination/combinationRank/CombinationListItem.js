@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-03 17:42:20
+ * @Last Modified time: 2018-05-17 14:01:05
 */
 
 import React, { PureComponent } from 'react';
@@ -15,14 +15,21 @@ import Icon from '../../common/Icon';
 import { time } from '../../../helper';
 import CombinationYieldChart from '../CombinationYieldChart';
 import styles from './combinationListItem.less';
-import { yieldRankList } from '../../../routes/choicenessCombination/config';
-import { securityType as securityTypeList, formatStr } from '../config';
+import {
+  yieldRankList,
+  securityType as securityTypeList,
+  formatStr,
+  sourceType,
+} from '../../../components/choicenessCombination/config';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 // 最大字符长度
 const MAX_SIZE_LENGTH = 35;
 const DEFAULT_REASON = '调仓理由：暂无';
+
+// 历史报告
+const REPORT_TYPE = 'report';
 
 export default class CombinationListItem extends PureComponent {
   static propTypes = {
@@ -43,16 +50,19 @@ export default class CombinationListItem extends PureComponent {
     openStockPage: PropTypes.func.isRequired,
     // 打开持仓查客户页面
     openCustomerListPage: PropTypes.func.isRequired,
+    showModal: PropTypes.func.isRequired,
+    openDetailPage: PropTypes.func.isRequired,
+  }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     data: EMPTY_OBJECT,
     yieldRankValue: '',
   }
-
-  // constructor(props) {
-  //   super(props);
-  // }
 
   @autobind
   getHistoryList() {
@@ -117,13 +127,16 @@ export default class CombinationListItem extends PureComponent {
       yieldRankValue,
     } = this.props;
     const result = _.filter(yieldRankList, item => (item.value === yieldRankValue))[0];
-    const num = (data[result.showNameKey] || 0).toFixed(2);
+    const num = data[result.showNameKey] || 0;
+    // 后端返回如 -0.0003这样数据时 四舍五入完会是-0.00 需要特殊处理成 0.00
+    const judgeNum = Number(num.toFixed(2));
+    const fiexdNum = judgeNum === 0 ? '0.00' : num.toFixed(2);
     const className = classnames({
-      [styles.up]: num >= 0,
-      [styles.down]: num < 0,
+      [styles.up]: judgeNum >= 0,
+      [styles.down]: judgeNum < 0,
     });
     return (
-      <em className={className}>{`${num > 0 ? '+' : ''}${num}%`}</em>
+      <em className={className}>{`${judgeNum > 0 ? '+' : ''}${fiexdNum}%`}</em>
     );
   }
 
@@ -144,12 +157,20 @@ export default class CombinationListItem extends PureComponent {
   }
 
   @autobind
-  openCustomerListPage(data) {
-    const { openCustomerListPage } = this.props;
-    openCustomerListPage({
-      name: data.combinationName,
-      code: data.combinationCode,
-    });
+  viewHistoryReport(name) {
+    const { showModal } = this.props;
+    const payload = {
+      combinationCode: name,
+      type: REPORT_TYPE,
+    };
+    showModal(payload);
+  }
+
+  // 组合名称点击事件
+  @autobind
+  handleNameClick(id) {
+    const { openDetailPage } = this.props;
+    openDetailPage(id);
   }
 
   render() {
@@ -160,7 +181,7 @@ export default class CombinationListItem extends PureComponent {
       getCombinationLineChart,
       combinationLineChartData,
       rankTabActiveKey,
-      // yieldRankValue,
+      openCustomerListPage,
     } = this.props;
     const chartData = combinationLineChartData[data.combinationCode] || EMPTY_OBJECT;
     const yieldName = this.getYieldName();
@@ -169,12 +190,19 @@ export default class CombinationListItem extends PureComponent {
       clearfix: true,
       [styles.show]: data.show,
     });
+    const openPayload = {
+      name: data.combinationName,
+      code: data.productCode,
+      source: sourceType.combination,
+    };
     return (
       <div className={classNames}>
         <div className={styles.left}>
           <div className={`${styles.headBox} clearfix`}>
             <span className={styles.combinationName} title={data.combinationName}>
-              <a>{data.combinationName}</a>
+              <a onClick={() => this.handleNameClick(data.combinationCode)}>
+                {data.combinationName}
+              </a>
             </span>
             <span className={styles.earnings}>
               <i>{yieldName}</i>
@@ -190,9 +218,9 @@ export default class CombinationListItem extends PureComponent {
               }
             </span>
             <span className={styles.link}>
-              <a>历史报告 </a>
+              <a onClick={() => this.viewHistoryReport(data.combinationCode)}>历史报告 </a>
               |
-              <a onClick={() => this.openCustomerListPage(data)}> 订购客户</a>
+              <a onClick={() => openCustomerListPage(openPayload)}> 订购客户</a>
             </span>
           </div>
           <div className={styles.tableBox}>
@@ -201,7 +229,7 @@ export default class CombinationListItem extends PureComponent {
               <span className={styles.securityCode}>证券代码</span>
               <span className={styles.direction}>调仓方向</span>
               <span className={styles.time}>时间</span>
-              <span className={styles.cost}>成本价</span>
+              <span className={styles.cost}>成本价(元)</span>
               <span className={styles.reason}>理由</span>
             </div>
             <div className={styles.bodyBox}>

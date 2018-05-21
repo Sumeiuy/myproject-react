@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-03-30 15:46:03
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-28 09:10:06
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-07 18:17:19
  * @description 根据需求antd3.x版本下需要重写一个dropdownSelect
  */
 
@@ -159,7 +159,7 @@ export default class DropdownSelect extends React.Component {
       <HackSearch
         placeholder={placeholder}
         onSearch={this.handleSearch}
-        defaultValue={defaultSearchValue}
+        searchValue={defaultSearchValue}
         onChange={this.handleSearchChange}
         enterButton
         ref={ref => this.hackSearchComonent = ref}

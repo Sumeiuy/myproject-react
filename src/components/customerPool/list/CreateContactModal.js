@@ -8,22 +8,42 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Modal, Button, Table } from 'antd';
+import moment from 'moment';
+import { Modal, Button } from 'antd';
 import Icon from '../../common/Icon';
+import Mask from '../../common/mask';
 import Collapse from './CreateCollapse';
-import { check } from '../../../helper';
+import { date } from '../../../helper';
 import logable from '../../../decorators/logable';
+import ContactInfoPopover from '../../common/contactInfoPopover/ContactInfoPopover';
+import Phone from '../../common/phone';
 
 import styles from './createContactModal.less';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
-const CONTACT_MAP = {
-  cellPhones: '手机',
-  workTels: '单位电话',
-  homeTels: '家庭电话',
-  otherTels: '其他电话',
-};
+const PHONE = 'phone';
+
+/**
+ * 将数组对象中的id和name转成对应的key和value
+ * @param {*} arr 原数组
+ * eg: [{ id: 1, name: '11', childList: [] }] 转成 [{ key: 1, value: '11', children: [] }]
+ */
+function transformCustFeecbackData(arr = []) {
+  return arr.map((item) => {
+    const obj = {
+      key: String(item.id),
+      value: item.name || item.parentClassName,
+    };
+    if (item.feedbackList && item.feedbackList.length) {
+      obj.children = transformCustFeecbackData(item.feedbackList);
+    }
+    if (item.childList && item.childList.length) {
+      obj.children = transformCustFeecbackData(item.childList);
+    }
+    return obj;
+  });
+}
 
 export default class CreateContactModal extends PureComponent {
   static propTypes = {
@@ -42,12 +62,19 @@ export default class CreateContactModal extends PureComponent {
     currentCustName: PropTypes.string.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
+    // 打电话结束弹出创建任务窗口
+    toggleServiceRecordModal: PropTypes.func,
+    addServeRecord: PropTypes.func.isRequired,
+    motSelfBuiltFeedbackList: PropTypes.array.isRequired,
+    addCallRecord: PropTypes.func.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
     data: {},
     custType: '',
     filesList: [],
+    toggleServiceRecordModal: _.noop,
   };
 
   constructor(props) {
@@ -55,6 +82,8 @@ export default class CreateContactModal extends PureComponent {
     this.state = {
       visible: props.visible,
     };
+    this.startTime = '';
+    this.endTime = '';
   }
 
   @autobind
@@ -65,129 +94,6 @@ export default class CreateContactModal extends PureComponent {
     handleCloseClick();
     onClose();
     this.setState({ visible: false });
-  }
-
-  /**
-  * 构造表格的列数据
-  */
-  @autobind
-  constructTableColumns() {
-    const columns = [{
-      dataIndex: 'contact',
-      title: '其他联系人',
-      width: '20%',
-      render: record =>
-        // 当前行记录
-        <div className="recordSection" title={record}>
-          {record}
-        </div>,
-    },
-    {
-      dataIndex: 'phone',
-      title: '手机',
-      width: '20%',
-      render: record =>
-        // 当前行记录
-        <div className="recordSection" title={record}>
-          {record}
-        </div>,
-    },
-    {
-      dataIndex: 'work',
-      title: '单位电话',
-      width: '20%',
-      render: record =>
-        // 当前行记录
-        <div className="recordSection" title={record}>
-          {record}
-        </div>,
-    },
-    {
-      dataIndex: 'home',
-      title: '住宅电话',
-      width: '20%',
-      render: record =>
-        <div className="recordSection" title={record}>
-          {record}
-        </div>,
-    },
-    {
-      dataIndex: 'personType',
-      title: '人员类型',
-      width: '20%',
-      render: record =>
-        <div className="recordSection" title={record}>
-          {record}
-        </div>,
-    }];
-
-    return columns;
-  }
-
-  /**
-  * 构造数据源
-  */
-  constructTableDatas(dataSource) {
-    const newDataSource = [];
-    if (dataSource.length > 0) {
-      dataSource.forEach((currentValue, index) =>
-        newDataSource.push(_.merge(currentValue, { key: index })),
-      );
-    }
-
-    return newDataSource;
-  }
-
-  @autobind
-  constructOtherContact(contact) {
-    return _.map(contact, (item, index) =>
-      <div className={styles.otherTelsSection} key={index}>
-        <div className={styles.leftSection}>
-          <span className={styles.telName}>{CONTACT_MAP[index]}：</span>
-        </div>
-        <div className={styles.rightSection}>
-          {
-            _.map(item, (unit, flag) =>
-              <div className={styles.telSection} key={flag}>
-                <span>{this.formatPhoneNumber(unit.contactValue)}</span>
-              </div>,
-            )
-          }
-        </div>
-      </div>,
-    );
-  }
-
-  /**
-   * 格式化手机号 15667567889 变成 156-6756-7889形式
-   * 格式化座机号 02588888888 变成 025-88888888形式
-   * @param {*} phone 手机号
-   */
-  formatPhoneNumber(phone) {
-    let count = 0;
-    let newPhone = '';
-    const temp = phone.toString();
-    const len = temp.length;
-    let flag = 4;
-    const isCellPhone = check.isCellPhone(phone);
-    if (!isCellPhone) {
-      // 不是手机号
-      if (phone.indexOf('-') === -1) {
-        // 但是后台没有处理成025-213413421形式
-        flag = 8;
-      }
-    }
-
-    for (let i = len - 1; i >= 0; i--) {
-      if (count % flag === 0 && count !== 0) {
-        newPhone = `${temp.charAt(i)}-${newPhone}`;
-      } else {
-        newPhone = `${temp.charAt(i)}${newPhone}`;
-      }
-      count++;
-    }
-
-    return newPhone;
   }
 
   @autobind
@@ -212,17 +118,160 @@ export default class CreateContactModal extends PureComponent {
     onClose();
   }
 
+  /**
+   * 通话结束后要创建一条服务记录，并弹出服务记录框
+   */
   @autobind
-  @logable({ type: 'Click', payload: { name: '最近服务记录展开/折叠' } })
-  handleCollapseClick() {
-    this.props.handleCollapseClick();
+  handlePhoneEnd() {
+    // 点击挂电话隐藏蒙层
+    this.setState({ showMask: false });
+    // 没有成功发起通话
+    if (!moment.isMoment(this.startTime)) {
+      return;
+    }
+    this.endTime = moment();
+    const {
+      currentCustId,
+      currentCustName,
+      toggleServiceRecordModal,
+      addServeRecord,
+      motSelfBuiltFeedbackList,
+      onClose,
+    } = this.props;
+    const list = transformCustFeecbackData(motSelfBuiltFeedbackList);
+    const [firstServiceType = {}] = list;
+    const { key: firstServiceTypeKey, children = [] } = firstServiceType;
+    const [firstFeedback = {}] = children;
+    const phoneDuration = date.calculateDuration(
+      this.startTime.valueOf(),
+      this.endTime.valueOf(),
+    );
+    const serviceContentDesc = `${this.startTime.format('HH:mm:ss')}给客户发起语音通话，时长${phoneDuration}。`;
+    let payload = {
+      // 经济客户号
+      custId: currentCustId,
+      // 服务方式
+      serveWay: 'HTSC Phone',
+      // 任务类型，1：MOT  2：自建
+      taskType: '2',
+      // 同serveType
+      type: firstServiceTypeKey,
+      // 服务类型
+      serveType: firstServiceTypeKey,
+      // 客户反馈一级
+      serveCustFeedBack: firstFeedback.key,
+      // 服务记录内容
+      serveContentDesc: serviceContentDesc,
+      // 服务时间
+      serveTime: this.endTime.format('YYYY-MM-DD HH:mm'),
+      // 反馈时间
+      feedBackTime: moment().format('YYYY-MM-DD'),
+      // 添加成功后需要显示message提示
+      noHints: true,
+    };
+    // 客户反馈的二级
+    if (firstFeedback.children) {
+      payload = {
+        ...payload,
+        serveCustFeedBack2: firstFeedback.children[0].key,
+      };
+    }
+    addServeRecord(payload).then(() => {
+      // 关联通话和服务记录
+      this.saveServiceRecordAndPhoneRelation();
+      // 回调，关闭电话联系方式弹窗
+      onClose();
+      // 显示添加服务记录弹窗
+      toggleServiceRecordModal({
+        id: currentCustId,
+        name: currentCustName,
+        flag: true,
+        caller: PHONE,
+        autoGenerateRecordInfo: payload,
+      });
+    });
+  }
+
+  // 通话开始
+  @autobind
+  handlePhoneConnected(data) {
+    this.startTime = moment();
+    this.callId = data.uuid;
+  }
+
+  // 点击号码开始打电话显示蒙层
+  @autobind
+  handlePhoneClick() {
+    this.setState({ showMask: true });
+  }
+
+  /**
+   * 通话的uuid关联服务记录
+   */
+  @autobind
+  saveServiceRecordAndPhoneRelation() {
+    const { currentCommonServiceRecord = {} } = this.props;
+    if (this.callId) {
+      this.props.addCallRecord({
+        uuid: this.callId,
+        projectId: currentCommonServiceRecord.id,
+      });
+    }
+  }
+
+  /**
+   * 生成头像icon右侧的主联系人信息或主要联系电话
+   *
+   */
+  createMainContact({
+    isPersonHasContact,
+    isOrgMainContactHasTel,
+    mainContactInfo,
+    personalContactInfo,
+  }) {
+    const { custType, currentCustName, currentCustId } = this.props;
+    if (!isPersonHasContact && !isOrgMainContactHasTel) {
+      return <p>客户未预留主要联系方式，请尽快完善信息</p>;
+    }
+    const userData = {
+      custId: currentCustId,
+      custName: currentCustName,
+    };
+    return (
+      <div className={styles.mainContact}>
+        {
+          (custType === 'org' && !_.isEmpty(mainContactInfo.nameInfo)) &&
+          `主要联系人：${mainContactInfo.nameInfo.name || '--'}（${mainContactInfo.nameInfo.custRela || '--'}）`
+        }
+        {
+          (custType === 'per' && isPersonHasContact
+            && personalContactInfo.mainTelInfo) &&
+          '主要联系电话：'
+        }
+        {
+          (!_.isEmpty(mainContactInfo.cellInfo) || !_.isEmpty(personalContactInfo.mainTelInfo)) &&
+          <Phone
+            onClick={this.handlePhoneClick}
+            onConnected={this.handlePhoneConnected}
+            onEnd={this.handlePhoneEnd}
+            number={custType === 'per' ?
+              personalContactInfo.mainTelInfo :
+              mainContactInfo.cellInfo}
+            custType={custType}
+            name={encodeURIComponent(currentCustName)}
+            disable={false}
+            userData={userData}
+          />
+        }
+      </div>
+    );
   }
 
   render() {
     const {
       visible,
+      showMask,
     } = this.state;
-
     const {
       custContactData = EMPTY_OBJECT,
       serviceRecordData = EMPTY_LIST,
@@ -232,6 +281,8 @@ export default class CreateContactModal extends PureComponent {
       serveWay,
       getCeFileList,
       filesList,
+      currentCustName,
+      handleCollapseClick,
     } = this.props;
     if (!currentCustId || !visible) {
       return null;
@@ -244,7 +295,7 @@ export default class CreateContactModal extends PureComponent {
     } = custContactData;
 
     const { custName } = custBaseInfo;
-    let otherContactInfo = EMPTY_LIST;
+    // let otherContactInfo = EMPTY_LIST;
     let mainContactInfo = {
       nameInfo: {},
       cellInfo: '',
@@ -270,7 +321,7 @@ export default class CreateContactModal extends PureComponent {
           mainContactInfo = {
             nameInfo: mainContactNameInfo,
             cellInfo: _.isEmpty(mainContactAllInfo.cellPhones) ? '' :
-              this.formatPhoneNumber(mainContactAllInfo.cellPhones[0].contactValue),
+              mainContactAllInfo.cellPhones[0].contactValue,
             telInfo: _.omitBy(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels']), _.isEmpty),
           };
           if (!_.isEmpty(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels', 'cellPhones']))) {
@@ -287,58 +338,30 @@ export default class CreateContactModal extends PureComponent {
             }, mainContactInfo);
           }
         }
-        // 其他联系人信息
-        const otherContact = _.filter(orgCustomerContactInfoList,
-          (item, index) => index !== mainContactIndex) || EMPTY_LIST;
-        otherContactInfo = !_.isEmpty(otherContact) && _.map(otherContact, item => ({
-          contact: item.name || '--',
-          phone: _.isEmpty(item.cellPhones) ? '--' :
-            this.formatPhoneNumber(item.cellPhones[0].contactValue),
-          work: _.isEmpty(item.workTels) ? '--' :
-            this.formatPhoneNumber(item.workTels[0].contactValue),
-          home: _.isEmpty(item.homeTels) ? '--' :
-            this.formatPhoneNumber(item.homeTels[0].contactValue),
-          personType: item.custRela || '--',
-        }));
       } else if (!_.isEmpty(perCustomerContactInfo)) {
-        const allTelInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']);
-        isPersonHasContact = !_.isEmpty(_.omitBy(allTelInfo, _.isEmpty));
+        // 选出4中联系方式中不为空的联系方式
+        const allTelInfo = _.omitBy(_.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']), _.isEmpty);
+        // 将所有联系方式用一个一维数组来存放
+        const phones = _.flatten(Object.values(allTelInfo)) || EMPTY_LIST;
+        // 筛选出联系方式对象中contactValue不为空的，判断是否有联系方式
+        isPersonHasContact = !_.isEmpty(_.filter(phones, item => item.contactValue));
         if (isPersonHasContact) {
-          const cellPhones = allTelInfo.cellPhones || EMPTY_LIST;
-          let mainTelInfo = {
-            type: 'none',
-            value: '',
-          };
-          if (_.find(cellPhones, item => item.mainFlag)) {
-            // 存在主要电话
-            mainTelInfo = {
-              type: 'cellPhones',
-              value: this.formatPhoneNumber(cellPhones && cellPhones[0].contactValue),
-            };
-          }
-
-          // 过滤个人其他联系方式为空的情况
-          let otherTelInfo = _.omitBy(_.omit(allTelInfo, ['cellPhones']), _.isEmpty);
-
-          const otherCellInfo = _.filter(cellPhones, item => !item.mainFlag) || EMPTY_LIST;
-          if (!_.isEmpty(otherCellInfo)) {
-            // 手机号不止一个
-            otherTelInfo = _.merge({
-              cellPhones: otherCellInfo,
-            }, otherTelInfo);
-          }
-
+          let mainTelInfo = '';
+          // 找到主要联系方式
+          const mainContact = _.find(phones, item => item.mainFlag) || EMPTY_LIST;
+          mainTelInfo = mainContact && mainContact.contactValue;
           // 筛选contactValue存在的其他电话
           personalContactInfo = {
             mainTelInfo,
-            otherTelInfo,
+            otherTelInfo: allTelInfo,
           };
         }
       }
     }
-
-    const columns = this.constructTableColumns();
-    const newDataSource = this.constructTableDatas(otherContactInfo);
+    const userData = {
+      custId: currentCustId,
+      custName: currentCustName,
+    };
     return (
       <Modal
         wrapClassName={styles.contactModal}
@@ -352,80 +375,40 @@ export default class CreateContactModal extends PureComponent {
           (<Button key="close" size="large" onClick={this.handleCancel}>关闭</Button>),
         ]}
       >
-        <div className={styles.custName}>
-          {custName || ''}
-        </div>
-        {
-          custType === 'org' && !_.isEmpty(mainContactInfo.nameInfo) ?
-            <div className={styles.title}>
-              主要联系人：{mainContactInfo.nameInfo.name || '--'}（{mainContactInfo.nameInfo.custRela || '--'}）
+        <div className={styles.headBox}>
+          <div className={styles.left}>
+            <Icon type="touxiang" className={styles.headshot} />
+            <div className={styles.headshotRight}>
+              <p className={styles.customerName}>{custName}</p>
+              {this.createMainContact({
+                isPersonHasContact,
+                isOrgMainContactHasTel,
+                mainContactInfo,
+                personalContactInfo,
+              })}
             </div>
-            : null
-        }
-        {
-          (custType === 'per' && isPersonHasContact
-          && personalContactInfo.mainTelInfo.type !== 'none') ?
-            <div className={styles.title}>
-              主要联系电话（{CONTACT_MAP[personalContactInfo.mainTelInfo.type]}）：
-            </div> : null
-        }
-        {
-          (!isPersonHasContact && !isOrgMainContactHasTel) ?
-            <div className={styles.noneInfoSection}>
-              <div className={styles.noneInfo}>
-                  客户未预留主要联系方式，请尽快完善信息
-              </div>
-              <div className={styles.rightSection}>
-                <Button onClick={this.handleServiceRecordClick}>
-                  <Icon type="jia" className={styles.addIcon} />
-                  <span>添加服务记录</span>
-                </Button>
-              </div>
-            </div> :
-            <div className={styles.number}>
-              {
-                ((isOrgMainContactHasTel && !_.isEmpty(mainContactInfo.cellInfo)) ||
-                (isPersonHasContact && personalContactInfo.mainTelInfo.type !== 'none')) ?
-                  <div className={styles.mainContact}>
-                    <Icon type="dianhua1" className={styles.phoneIcon} />
-                    <span>
-                      {
-                      custType === 'per' ?
-                      personalContactInfo.mainTelInfo.value :
-                      mainContactInfo.cellInfo
-                      }
-                    </span>
-                  </div> : null
-              }
-              <div className={styles.rightSection}>
-                <Button onClick={this.handleServiceRecordClick}>
-                  <Icon type="jia" className={styles.addIcon} />
-                  <span>添加服务记录</span>
-                </Button>
-              </div>
-            </div>
-        }
-        {
-          /* 个人其他联系方式和主联系人其他联系方式 */
-          custType === 'per' ? this.constructOtherContact(personalContactInfo.otherTelInfo)
-          : this.constructOtherContact(mainContactInfo.telInfo)
-        }
-        { /* 机构客户其他联系人与联系方式 */}
-        {
-          (custType === 'org' && !_.isEmpty(newDataSource)) ?
-            <div className={styles.orgCustOtherTelsSection}>
-              <Table
-                className={styles.telTable}
-                columns={columns}
-                dataSource={newDataSource}
-                pagination={false}
-              />
-            </div> : null
-        }
-        { /* 提示信息 */}
-        <div className={styles.tipSection}>
-          <Icon className={styles.tipIcon} type="wenxintishi" />
-          <span>温馨提醒：联系过客户后请及时创建服务记录</span>
+          </div>
+          <div className={styles.right}>
+            {
+              (!isPersonHasContact && !isOrgMainContactHasTel) ? null :
+              <ContactInfoPopover
+                custType={custType}
+                personalContactInfo={personalContactInfo.otherTelInfo}
+                orgCustomerContactInfoList={orgCustomerContactInfoList}
+                handlePhoneEnd={this.handlePhoneEnd}
+                handlePhoneConnected={this.handlePhoneConnected}
+                handlePhoneClick={this.handlePhoneClick}
+                disablePhone={false}
+                name={encodeURIComponent(currentCustName)}
+                userData={userData}
+              >
+                <div className={styles.moreLinkman}>
+                  <Icon type="lianxifangshi" className={styles.phoneIcon} />
+                  <span className={styles.phoneText}>更多联系人</span>
+                </div>
+              </ContactInfoPopover>
+            }
+          </div>
         </div>
         <div className={styles.serviceTitle}>最近服务记录</div>
         {/* 折叠面板 */}
@@ -433,10 +416,11 @@ export default class CreateContactModal extends PureComponent {
           data={serviceRecordData}
           executeTypes={executeTypes}
           serveWay={serveWay}
-          handleCollapseClick={this.handleCollapseClick}
+          handleCollapseClick={handleCollapseClick}
           getCeFileList={getCeFileList}
           filesList={filesList}
         />
+        <Mask visible={showMask} />
       </Modal>
     );
   }

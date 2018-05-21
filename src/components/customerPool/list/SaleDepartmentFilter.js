@@ -49,7 +49,6 @@ export default class SaleDepartmentFilter extends PureComponent {
     if (custRange && custRange.length <= 0) {
       return null;
     }
-
     return (
       <div>
         <CustFilter

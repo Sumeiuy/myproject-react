@@ -3,7 +3,7 @@
  * @Description: 收益率走势图
  * @Date: 2018-04-25 13:55:06
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-04 13:36:46
+ * @Last Modified time: 2018-05-18 09:34:05
 */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import IECharts from '../IECharts';
 import styles from './combinationYieldChart.less';
-import { chartTabList } from '../../routes/choicenessCombination/config';
+import { chartTabList } from '../../components/choicenessCombination/config';
 
 const TabPane = Tabs.TabPane;
 // const EMPTY_OBJECT = {};
@@ -30,15 +30,20 @@ export default class CombinationYieldChart extends PureComponent {
     // 对应的组合数据
     combinationItemData: PropTypes.object.isRequired,
     // 图表数据
-    getCombinationLineChart: PropTypes.func.isRequired,
     chartData: PropTypes.object.isRequired,
     // 组合排名tab当前选择的key
     rankTabActiveKey: PropTypes.string,
+    // 图表高度
+    chartHeight: PropTypes.string,
+    // 标题
+    title: PropTypes.string,
   }
 
   static defaultProps = {
     combinationCode: '',
     rankTabActiveKey: '',
+    chartHeight: '166px',
+    title: '收益率走势',
   }
 
   constructor(props) {
@@ -104,11 +109,6 @@ export default class CombinationYieldChart extends PureComponent {
     const seriesData = [{
       data: chartData.combinationLine,
       type: 'line',
-      areaStyle: {
-        normal: {
-          color: 'rgba(141,189,233, 0.5)',
-        },
-      },
       name: chartData.combinationName,
       lineStyle: {
         normal: {
@@ -121,11 +121,6 @@ export default class CombinationYieldChart extends PureComponent {
       seriesData.push({
         data: chartData.baseLine,
         type: 'line',
-        areaStyle: {
-          normal: {
-            color: 'rgba(235,154,154, 0.5)',
-          },
-        },
         name: chartData.baseName,
         lineStyle: {
           normal: {
@@ -173,6 +168,8 @@ export default class CombinationYieldChart extends PureComponent {
     const { activeKey } = this.state;
     const {
       chartData,
+      chartHeight,
+      title,
     } = this.props;
     // const itemData = chartData[combinationCode] || EMPTY_OBJECT;
     const option = {
@@ -212,8 +209,6 @@ export default class CombinationYieldChart extends PureComponent {
         formatter: this.tooltipFormat,
       },
       color: ['#8dBde9', '#eb9a9a'],
-      height: 166,
-      width: 224,
       grid: {
         height: 'auto',
         width: 'auto',
@@ -227,7 +222,7 @@ export default class CombinationYieldChart extends PureComponent {
     // const defaultActiveKey = true ? chartTabList[1].key : chartTabList[0].key;
     return (
       <div className={styles.yieldChartBox}>
-        <h3>收益率走势</h3>
+        <h3>{title}</h3>
         <div className={styles.tabBox}>
           <Tabs activeKey={activeKey} onChange={this.handleTabChange}>
             {this.getTabPaneList()}
@@ -238,7 +233,7 @@ export default class CombinationYieldChart extends PureComponent {
             option={option}
             resizable
             style={{
-              height: '166px',
+              height: chartHeight,
             }}
           />
         </div>
