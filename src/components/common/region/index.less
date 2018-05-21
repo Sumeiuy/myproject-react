@@ -1,0 +1,52 @@
+.regionToggle {
+  font-size: 14px;
+  color: #333;
+  line-height: 28px;
+  cursor: pointer;
+
+  :global {
+    .anticon {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.25);
+    }
+  }
+
+  & > .regionText {
+    margin-right: 10px;
+  }
+}
+.regionContent {
+  width: 244px;
+  height: 74px;
+}
+.regionInput {
+  display: flex;
+  align-items: center;
+  height: 30px;
+
+  .linker {
+    font-size: 14px;
+    color: #333;
+    line-height: 20px;
+    margin: 0 10px;
+  }
+  // :global {
+  //   .ant-input {
+  //     border-right: none;
+  //   }
+  //   .ant-input-group-addon {
+  //     border-left: none;
+  //     background-color: transparent
+  //   }
+  // }
+}
+.regionBtns {
+  margin-top: 15px;
+  text-align: right;
+
+  :global {
+    .ant-btn {
+      margin-left: 10px;
+    }
+  }
+}

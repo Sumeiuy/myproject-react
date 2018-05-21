@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-02 09:40:23
+ * @Last Modified time: 2018-05-15 10:56:34
  * @description 分割组件
  * 此组件中
  * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
@@ -60,7 +60,8 @@ export default class CutScreen extends PureComponent {
     // 初始化当前系统
     this.UTBContentElem = document.querySelector(config.utb);
     // 将系统的Margin设置为0;
-    this.setUTBContentMargin(0, 0, 0);
+    // 按照需求要求，完全贴边太丑，要求右侧给一点margin所以修改
+    this.setUTBContentMargin(0, '10px', 0);
     // 监听window.onResize事件
     this.registerWindowResize();
     this.initPanel();

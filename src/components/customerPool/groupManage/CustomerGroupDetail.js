@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-12 16:13:49
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-14 13:14:48
  */
 
 import React, { PureComponent } from 'react';
@@ -303,6 +303,13 @@ export default class CustomerGroupDetail extends PureComponent {
 
   // 客户添加方式的 select 切换事件
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '添加方式',
+      value: '$args[1]',
+    },
+  })
   handleSelectChange(key, value) {
     const { includeCustIdList, groupId } = this.state;
     // 新建页面切换客户添加方式，需要将之前已经存在的附件、报错信息置空

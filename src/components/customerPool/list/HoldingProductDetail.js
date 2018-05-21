@@ -30,7 +30,8 @@ export default class HoldingProductDetail extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      popoverVisible: false,
+      hasData: false,
+      isMouseEnter: false,
     };
     this.debounced = _.debounce(
       this.getDetail,
@@ -45,7 +46,7 @@ export default class HoldingProductDetail extends PureComponent {
 
   /**
    * 获取持仓产品的详情
-   * 判断当前产品的详情是否已经存在，不存在时再去请求，请求成功后显示popover
+   * 判断当前产品的详情是否已经存在，不存在时再去请求
    * 详情已经存在，直接显示popover，不需要发请求
    */
   @autobind
@@ -53,10 +54,9 @@ export default class HoldingProductDetail extends PureComponent {
     const { data, queryHoldingProduct, holdingProducts, custId } = this.props;
     const { id = '' } = data;
     if (_.isEmpty(holdingProducts[`${custId}${id}`])) {
-      queryHoldingProduct({ custId, prdtHold: id })
-        .then(() => { this.setState({ popoverVisible: true }); });
-    } else {
-      this.setState({ popoverVisible: true });
+      queryHoldingProduct({ custId, prdtHold: id }).then(() => {
+        this.setState({ hasData: true });
+      });
     }
   }
 
@@ -124,7 +124,18 @@ export default class HoldingProductDetail extends PureComponent {
   }
 
   @autobind
+  handleMouseEnter() {
+    this.setState({
+      isMouseEnter: true,
+    });
+    this.debounced();
+  }
+
+  @autobind
   handleMouseLeave() {
+    this.setState({
+      isMouseEnter: false,
+    });
     this.debounced.cancel();
     this.setState({
       popoverVisible: false,
@@ -132,7 +143,7 @@ export default class HoldingProductDetail extends PureComponent {
   }
 
   render() {
-    const { popoverVisible } = this.state;
+    const { hasData, isMouseEnter } = this.state;
     const { queryHoldingProductReqState } = this.props;
     const suspendedLayer = (
       <div className={styles.suspendedLayer}>
@@ -152,12 +163,12 @@ export default class HoldingProductDetail extends PureComponent {
           mouseEnterDelay={0.5}
           autoAdjustOverflow
           placement="top"
-          visible={popoverVisible}
-          onMouseEnter={this.debounced}
+          visible={isMouseEnter && hasData}
+          onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
           getPopupContainer={this.getPopupContainer}
         >
-          （<em className={styles.holdingProductDetailBtn}>持仓详情</em>）
+          <em className={styles.holdingProductDetailBtn}>持仓详情</em>
         </Popover>
       </div>
     );

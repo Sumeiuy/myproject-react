@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-19 09:20:50
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-19 14:20:07
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-10 16:32:42
  * @description 添加涨乐财富通服务方式下的投资建议的自由话术模块
  */
 
@@ -24,6 +24,14 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
     serveContent: PropTypes.object.isRequired,
     validateContent: PropTypes.bool.isRequired,
     validateTitle: PropTypes.bool.isRequired,
+    // 投资建议文本撞墙检测是否有股票代码
+    testWallCollisionStatus: PropTypes.bool.isRequired,
+    // 获取投资建议文本标题和内容
+    onGetInvestAdviceFreeModeData: PropTypes.func.isRequired,
+    // 内容错误提示信息
+    descErrorInfo: PropTypes.string.isRequired,
+    // 标题错误提示信息
+    titleErrorInfo: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -36,16 +44,28 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
       desc: isUpdate ? serveContent.desc : '',
       validateTitle: false,
       validateContent: false,
+      // 内容错误提示信息
+      descErrorInfo: '',
+      // 标题错误提示信息
+      titleErrorInfo: '',
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { serveContent: nextSC, validateContent: nextVC, validateTitle: nextVT } = nextProps;
+    const {
+      serveContent: nextSC,
+      validateContent: nextVC,
+      validateTitle: nextVT,
+      descErrorInfo,
+      titleErrorInfo,
+    } = nextProps;
     const { serveContent: prevSC, validateContent: prevVC, validateTitle: prevVT } = this.props;
     if (nextVC !== prevVC || nextVT !== prevVT) {
       this.setState({
         validateTitle: nextVT,
         validateContent: nextVC,
+        descErrorInfo,
+        titleErrorInfo,
       });
     }
     if (!_.isEqual(nextSC, prevSC)) {
@@ -57,22 +77,29 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
   }
 
   @autobind
-  checkData() {
-    const { title, desc } = this.state;
-    if (_.isEmpty(title) || title.length > 15) {
-      this.setState({ validateTitle: true });
-      return false;
-    }
-    if (_.isEmpty(desc) || desc.length > 500) {
-      this.setState({ validateContent: true });
-      return false;
-    }
-    return true;
+  getData() {
+    return this.state;
   }
 
   @autobind
-  getData() {
-    return this.state;
+  checkData() {
+    const { title, desc } = this.state;
+    if (_.isEmpty(title) || title.length > 15) {
+      this.setState({
+        titleErrorInfo: '标题最多15个字符',
+        validateTitle: true,
+      });
+      return false;
+    }
+    if (_.isEmpty(desc) || desc.length > 500) {
+      this.setState({
+        descErrorInfo: '内容最多500个字符',
+        validateContent: true,
+      });
+      return false;
+    }
+    this.props.onGetInvestAdviceFreeModeData(title, desc);
+    return true;
   }
 
   @autobind
@@ -88,7 +115,14 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
   }
 
   render() {
-    const { validateTitle, validateContent, title, desc } = this.state;
+    const {
+      validateTitle,
+      validateContent,
+      title,
+      desc,
+      descErrorInfo,
+      titleErrorInfo,
+     } = this.state;
     const ctCls = cx([styles.editLine, styles.editLineTextArea]);
 
     const titleErrorCls = cx({
@@ -115,7 +149,7 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
         </div>
         {
           !validateTitle ? null
-          : (<div className={styles.validateTips}>标题最多15个字符</div>)
+          : (<div className={styles.validateTips}>{titleErrorInfo}</div>)
         }
         <div className={ctCls}>
           <div className={styles.editCaption}>内容:</div>
@@ -129,7 +163,7 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
         </div>
         {
           !validateContent ? null
-          : (<div className={styles.validateTips}>内容最多500个字符</div>)
+          : (<div className={styles.validateTips}>{descErrorInfo}</div>)
         }
         <div className={styles.tips}><Icon type="exclamation-circle" /> 注：手动输入的服务内容需要经过审批才能发送到客户手机上</div>
       </div>

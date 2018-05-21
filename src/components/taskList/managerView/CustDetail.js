@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-16 09:57:17
+ * @Last Modified time: 2018-05-10 17:50:03
  * 客户明细数据
  */
 
@@ -14,6 +14,7 @@ import { Icon, message } from 'antd';
 import classnames from 'classnames';
 import Table from '../../common/commonTable';
 import { openFspTab } from '../../../utils';
+import { permission } from '../../../helper';
 import SingleFilter from '../../customerPool/common/NewSingleFilter';
 import styles from './custDetail.less';
 import tableStyles from '../../common/commonTable/index.less';
@@ -121,6 +122,9 @@ export default class CustDetail extends PureComponent {
       feedbackL1List: this.renderFeedbackL1Option(),
       feedbackL2List: this.renderFeedbackL2Option(feedbackIdL1, feedbackIdL2),
     };
+
+    // 是否拥有查看非本人名下客户360权限
+    this.hasViewCust360Permission = permission.hasViewCust360PermissionForManagerView();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -265,6 +269,12 @@ export default class CustDetail extends PureComponent {
   /**
    * 跳转到fsp的360信息界面
    * empId 为客户的主服务经理的id
+   * 增加职责控制，
+   *  - HTSC 客户资料-分中心管理岗
+      - HTSC 客户资料-总部管理岗
+      - HTSC 客户资料（无隐私）-分中心管理岗
+      - HTSC 客户资料(无隐私）-总部管理岗
+      - HTSC 客户资料管理岗（无隐私）
    */
   @autobind
   toDetail({ custNature, custId, rowId, ptyId, empId }) {
@@ -272,7 +282,8 @@ export default class CustDetail extends PureComponent {
     const { push, hideCustDetailModal } = this.props;
     const { empInfo: { empInfo = {} } } = this.context;
     // 主服务经理判断
-    if (empInfo.rowId === empId) {
+    // 职责判断
+    if (empInfo.rowId === empId || this.hasViewCust360Permission) {
       hideCustDetailModal();
       const param = {
         id: 'FSP_360VIEW_M_TAB',
@@ -290,7 +301,7 @@ export default class CustDetail extends PureComponent {
         },
       });
     } else {
-      message.error('客户非本人名下客户，不能查看客户360视图');
+      message.error('您没有权限查看此客户详细信息');
     }
   }
 

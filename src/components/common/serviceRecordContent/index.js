@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-08 09:42:06
+ * @Last Modified time: 2018-05-21 13:34:27
  */
 
 import React, { PureComponent } from 'react';
@@ -28,6 +28,7 @@ import {
   errorFeedback,
   serveStatusRadioGroupMap,
   getServeWayByCodeOrName,
+  PHONE,
  } from './utils';
 
 import styles from './index.less';
@@ -53,6 +54,9 @@ const dateCommonProps = {
 
 // 查询涨乐财富通的审批人需要的btnId固定值
 const ZL_QUREY_APPROVAL_BTN_ID = '200000';
+
+// 服务记录内容最大长度
+const serviceContentMaxLength = 1000;
 
 export default class ServiceRecordContent extends PureComponent {
   constructor(props) {
@@ -309,6 +313,7 @@ export default class ServiceRecordContent extends PureComponent {
     const customerFeedback = this.fixCustomerFeedback(fd.customerFeedback);
     // 获取涨乐财富通的客户反馈信息
     // 因为涨乐财富通与普通服务方式使用同一个字段来显示客户反馈信息
+    // 涨乐财富通需要显示二级反馈文本
     const ZLCustFeedbackText = _.get(fd.customerFeedback, 'children.name') || '暂无反馈';
     return {
       // 涨乐财富通服务方式下，是否被驳回状态
@@ -345,18 +350,22 @@ export default class ServiceRecordContent extends PureComponent {
   // 针对选择的服务方式，非涨乐财富通下的检测
   @autobind
   checkNotZLFins() {
-    const { isEntranceFromPerformerView } = this.props;
+    const { isEntranceFromPerformerView, serviceRecordInfo: { caller } } = this.props;
     const { serviceStatus, serviceRecord } = this.state;
     let isShowServeStatusError = false;
     let isShowServiceContentError = false;
+    // 校验服务记录
+    isShowServiceContentError = !serviceRecord || serviceRecord.length > serviceContentMaxLength;
+    this.setState({ isShowServiceContentError });
+    // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容
+    if (caller === PHONE) {
+      return !isShowServiceContentError;
+    }
     if (isEntranceFromPerformerView) {
       // 在执行者视图中校验 服务状态 是否已经选择
       isShowServeStatusError = _.isEmpty(serviceStatus);
       this.setState({ isShowServeStatusError });
     }
-    // 校验服务记录
-    isShowServiceContentError = !serviceRecord || serviceRecord.length > 1000;
-    this.setState({ isShowServiceContentError });
     return !isShowServeStatusError && !isShowServiceContentError;
   }
 
@@ -635,7 +644,7 @@ export default class ServiceRecordContent extends PureComponent {
     const value = e.target.value;
     this.setState({
       serviceRecord: value,
-      isShowServiceContentError: _.isEmpty(value) || value.length > 1000,
+      isShowServiceContentError: _.isEmpty(value) || value.length > serviceContentMaxLength,
     });
   }
 
@@ -722,6 +731,11 @@ export default class ServiceRecordContent extends PureComponent {
       formData: { motCustfeedBackDict },
       custFeedbackList,
       flowStatusCode,
+      serviceRecordInfo,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
     const {
       isReject,
@@ -778,6 +792,8 @@ export default class ServiceRecordContent extends PureComponent {
       desc: ZLServiceContentDesc,
     };
 
+    const { autoGenerateRecordInfo = {}, caller } = serviceRecordInfo;
+
     return (
       <div className={styles.serviceRecordContent}>
         <div className={styles.gridWrapper}>
@@ -787,23 +803,29 @@ export default class ServiceRecordContent extends PureComponent {
             onChange={this.handleServiceWayChange}
             options={serveWay}
             empInfo={empInfo}
+            serviceRecordInfo={serviceRecordInfo}
           />
           {/* 执行者试图下显示 服务状态；非执行者视图下显示服务类型 */}
           {
             isEntranceFromPerformerView ?
               (<div className={styles.serveStatus}>
                 <div className={styles.title}>服务状态:</div>
-                <FormItem {...serviceStatusErrorProps}>
-                  <div className={styles.content}>
-                    <RadioGroup onChange={this.handleRadioChange} value={serviceStatus}>
-                      {
-                        serveStatusRadioGroupMap.map(radio => (
-                          <Radio key={radio.key} value={radio.key}>{radio.value}</Radio>
-                        ))
-                      }
-                    </RadioGroup>
-                  </div>
-                </FormItem>
+                {/* 打电话调的服务记录切服务状态码为30时，显示‘完成’ */}
+                {
+                  caller === PHONE && autoGenerateRecordInfo.flowStatus === '30' ?
+                    <div className={styles.content}>完成</div> :
+                    <FormItem {...serviceStatusErrorProps}>
+                      <div className={styles.content}>
+                        <RadioGroup onChange={this.handleRadioChange} value={serviceStatus}>
+                          {
+                            serveStatusRadioGroupMap.map(radio => (
+                              <Radio key={radio.key} value={radio.key}>{radio.value}</Radio>
+                            ))
+                          }
+                        </RadioGroup>
+                      </div>
+                    </FormItem>
+                }
               </div>)
               :
               (
@@ -826,15 +848,19 @@ export default class ServiceRecordContent extends PureComponent {
           <div className={styles.serveTime}>
             <div className={styles.title}>服务时间:</div>
             <div className={styles.content} ref={this.setServeTimeRef}>
-              <DatePicker
-                style={{ width: 142 }}
-                {...dateCommonProps}
-                value={serviceTime}
-                onChange={this.handleServiceDateChange}
-                disabledDate={this.disabledDate}
-                getCalendarContainer={() => this.serviceTimeRef}
-                disabled={isSelectZhangleFins}
-              />
+              {
+                serviceRecordInfo.caller === PHONE ?
+                  autoGenerateRecordInfo.serveTime :
+                  <DatePicker
+                    style={{ width: 142 }}
+                    {...dateCommonProps}
+                    value={serviceTime}
+                    onChange={this.handleServiceDateChange}
+                    disabledDate={this.disabledDate}
+                    getCalendarContainer={() => this.serviceTimeRef}
+                    disabled={isSelectZhangleFins}
+                  />
+              }
             </div>
           </div>
         </div>
@@ -847,6 +873,8 @@ export default class ServiceRecordContent extends PureComponent {
               approvalList={this.props.zhangleApprovalList}
               isReject={isReject}
               serveContent={zlRejectRecord}
+              testWallCollision={testWallCollision}
+              testWallCollisionStatus={testWallCollisionStatus}
             />
           )
           : (
@@ -854,6 +882,7 @@ export default class ServiceRecordContent extends PureComponent {
               showError={isShowServiceContentError}
               value={serviceRecord}
               onChange={this.handleServiceRecordInputChange}
+              serviceRecordInfo={serviceRecordInfo}
             />
           )
         }
@@ -958,6 +987,11 @@ ServiceRecordContent.propTypes = {
   eventId: PropTypes.string,
   serviceTypeCode: PropTypes.string,
   flowStatusCode: PropTypes.string,
+  serviceRecordInfo: PropTypes.object.isRequired,
+  // 投资建议文本撞墙检测
+  testWallCollision: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: PropTypes.bool.isRequired,
 };
 
 ServiceRecordContent.defaultProps = {

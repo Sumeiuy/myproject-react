@@ -132,6 +132,14 @@
     }
     .feedbackItem {
       line-height: 32px;
+      display: flex;
+      align-items: center;
+      padding-right: 15px;
+      & > .feedbackText {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
       :global {
         .anticon {
           display: none;
@@ -152,6 +160,14 @@
     .zlfeedbackItem {
       height: 32px;
       line-height: 32px;
+      display: flex;
+      align-items: center;
+      padding-right: 15px;
+      & > .feedbackText {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
   }
   .pageBox {

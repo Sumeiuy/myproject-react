@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-08 11:03:04
+ * @Last Modified time: 2018-05-21 13:42:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -69,22 +69,21 @@ export default class MissionBind extends PureComponent {
           ))
         }
       </ul>);
-      return (
-        <div className={styles.feedbackItem} key={item.id}>
-          {
-            obj.needPopover && item.childList && item.childList.length
-            ?
-              <Popover placement="bottomLeft" content={content} overlayClassName={styles.opcityPopover}>
-                <span>{item.name}</span>
-              </Popover>
-            :
-              <span>{item.name}</span>
-          }
-          <Icon
-            type="close-circle"
-            onClick={() => this.handleDelCustomerFeedback(missionId, item.id, obj.roleType)}
-          />
-        </div>);
+      return (<div className={styles.feedbackItem} key={item.id}>
+        {
+          obj.needPopover && item.childList && item.childList.length
+          ?
+            <Popover placement="bottomLeft" content={content} overlayClassName={styles.opcityPopover}>
+              <span className={styles.feedbackText}>{item.name}</span>
+            </Popover>
+          :
+            <span className={styles.feedbackText}>{item.name}</span>
+        }
+        <Icon
+          type="close-circle"
+          onClick={() => this.handleDelCustomerFeedback(missionId, item.id, obj.roleType)}
+        />
+      </div>);
     });
   }
 
@@ -94,7 +93,12 @@ export default class MissionBind extends PureComponent {
     // 数据中存在一个name,custFeedbackName字段，在渲染涨乐的时候需要使用custFeedbackName
     return list.map(item => (
       <div className={styles.zlfeedbackItem} key={`ZL-${item.id}`}>
-        <span>{item.custFeedbackName ? item.custFeedbackName : ''}</span>
+        <span
+          className={styles.feedbackText}
+          title={item.custFeedbackName ? item.custFeedbackName : ''}
+        >
+          {item.custFeedbackName ? item.custFeedbackName : ''}
+        </span>
       </div>
     ));
   }

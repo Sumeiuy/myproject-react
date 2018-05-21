@@ -34,8 +34,8 @@ export default class ChartBar extends PureComponent {
       name: '绩效视图下钻',
     },
   })
-  handleUpdateQueryState() {
-    this.props.updateQueryState();
+  handleUpdateQueryState(...args) {
+    this.props.updateQueryState(...args);
   }
 
 

@@ -3,14 +3,18 @@
  * @Description: 精选组合modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-02 17:16:12
+ * @Last Modified time: 2018-05-17 10:52:27
 */
 
 import _ from 'lodash';
 import moment from 'moment';
 import { choicenessCombination as api } from '../api';
 import { delay } from '../utils/sagaEffects';
-import { yieldRankList, riskDefaultItem, chartTabList } from '../routes/choicenessCombination/config';
+import {
+  yieldRankList,
+  riskDefaultItem,
+  chartTabList,
+} from '../components/choicenessCombination/config';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -44,7 +48,7 @@ function combinationRankListSortAndFilter(list, condition) {
   const yieldItem = _.filter(yieldRankList, item => item.value === yieldRankValue)[0]
     || EMPTY_OBJECT;
   // 然后找出对应的收益率的key，进行排序
-  const sortList = _.reverse(_.sortBy(list, item => item[yieldItem.showNameKey]));
+  const sortList = _.reverse(_.sortBy(list, item => (item[yieldItem.showNameKey] || 0)));
   return sortList.map((item) => {
     // 匹配对应风险等级的数据
     let show = item.riskLevel === riskLevel;
@@ -74,7 +78,9 @@ export default {
     combinationLineChartData: EMPTY_OBJECT, // 组合折线趋势图
     rankTabActiveKey: '', // 组合排名tab
     yieldRankValue: yieldRankList[0].value, // 收益率排序value  默认显示近7天的
-    riskLevel: '', // 所筛选的风险等级
+    riskLevel: riskDefaultItem.value, // 所筛选的风险等级
+    reportHistoryList: EMPTY_OBJECT,  // 历史报告
+    reportDetail: EMPTY_OBJECT,  // 历史报告详情
   },
   reducers: {
     // 风险等级筛选
@@ -180,6 +186,21 @@ export default {
         },
       };
     },
+    getReportHistoryListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        reportHistoryList: resultData,
+      };
+    },
+    // 历史报告详情
+    getReportDetailSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        reportDetail: resultData,
+      };
+    },
   },
   effects: {
     // 获取调仓历史数据
@@ -254,6 +275,22 @@ export default {
           payload: response,
         });
       }
+    },
+    // 获取历史报告
+    * getReportHistoryList({ payload }, { call, put }) {
+      const response = yield call(api.getReportHistoryList, payload);
+      yield put({
+        type: 'getReportHistoryListSuccess',
+        payload: response,
+      });
+    },
+    // 根据 ID 查询详情
+    * getReportDetail({ payload }, { call, put }) {
+      const response = yield call(api.getHistoryDetail, payload);
+      yield put({
+        type: 'getReportDetailSuccess',
+        payload: response,
+      });
     },
   },
   subscriptions: {

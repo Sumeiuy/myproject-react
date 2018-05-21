@@ -62,6 +62,20 @@
         margin-right: 0;
       }
       :global {
+        .ant-select {
+          width: auto !important;
+          min-width: 174px;
+          .ant-select-arrow {
+            transform: scale(.75);
+            border: none;
+            border-top: 10px solid #c2c2c2;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            height: 0;
+            width: 0;
+            overflow: hidden;
+          }
+        }
         .ant-select-tree-dropdown {
           width: 230px !important;
         }
@@ -92,6 +106,8 @@
     z-index: 1;
     :global {
       table {
+        table-layout: fixed;
+        width: 100%;
         tr td, rt th {
           font-size: 14px;
           line-height: 20px;
@@ -101,11 +117,20 @@
           height: 38px;
           line-height: 38px;
           th {
-            padding: 0 16px;
+            padding: 0 6px;
           }
         }
         tr td {
-          padding: 10px 14px;
+          padding: 10px 6px;
+        }
+        .ant-table-tbody {
+          tr {
+            td {
+              div {
+                .one-line-elllipsis;
+              }
+            }
+          }
         }
       }
     }
@@ -136,6 +161,5 @@
   color: #7d9be0;
 }
 .ellipsis {
-  width: 174px;
   .one-line-elllipsis;
 }
