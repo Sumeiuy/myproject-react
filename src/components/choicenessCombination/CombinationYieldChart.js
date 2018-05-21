@@ -6,7 +6,7 @@
  * @Last Modified time: 2018-05-21 19:12:51
 */
 
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -21,7 +21,7 @@ const EMPTY_ARRAY = [];
 // 图表legend文字显示最大长度
 const LEGEND_MAX_LENGTH = 8;
 
-export default class CombinationYieldChart extends PureComponent {
+export default class CombinationYieldChart extends Component {
   static propTypes = {
     // tab切换
     tabChange: PropTypes.func.isRequired,
@@ -37,6 +37,7 @@ export default class CombinationYieldChart extends PureComponent {
     chartHeight: PropTypes.string,
     // 标题
     title: PropTypes.string,
+    isDetail: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -44,6 +45,7 @@ export default class CombinationYieldChart extends PureComponent {
     rankTabActiveKey: '',
     chartHeight: '166px',
     title: '收益率走势',
+    isDetail: false,
   }
 
   constructor(props) {
@@ -60,8 +62,13 @@ export default class CombinationYieldChart extends PureComponent {
     } = nextProps;
     const {
       rankTabActiveKey,
-      combinationItemData,
+      chartData,
+      isDetail,
     } = this.props;
+    // 如果是详情,并且图标数据发生变化
+    if (isDetail && chartData.combinationCode !== newChartData.combinationCode) {
+      this.setActiveKeyByIsAsset();
+    }
     // 如果组合排名tab选中的key发生变化，重置chart里面tab的选中key
     if (newRankTabActiveKey !== rankTabActiveKey) {
       this.setState({
@@ -71,12 +78,18 @@ export default class CombinationYieldChart extends PureComponent {
     const { activeKey } = this.state;
     // 判断一下，如果图表数据有并且activeKey是空的话根据组合类型设置预设值
     if (_.isEmpty(activeKey) && !_.isEmpty(newChartData)) {
-      const isAsset = _.isNull(combinationItemData.weekEarnings);
-      this.setState({
-        // 如果是资产配置类组合默认值‘近一年’，否则‘近三个月’
-        activeKey: isAsset ? chartTabList[1].key : chartTabList[0].key,
-      });
+      this.setActiveKeyByIsAsset();
     }
+  }
+
+  @autobind
+  setActiveKeyByIsAsset() {
+    const { combinationItemData } = this.props;
+    const isAsset = _.isNull(combinationItemData.weekEarnings);
+    this.setState({
+      // 如果是资产配置类组合默认值‘近一年’，否则‘近三个月’
+      activeKey: isAsset ? chartTabList[1].key : chartTabList[0].key,
+    });
   }
 
   @autobind
@@ -230,6 +243,7 @@ export default class CombinationYieldChart extends PureComponent {
         </div>
         <div className={styles.chartWrapper}>
           <IECharts
+            key={chartData.combinationCode}
             option={option}
             resizable
             style={{

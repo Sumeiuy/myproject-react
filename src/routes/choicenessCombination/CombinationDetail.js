@@ -419,6 +419,7 @@ export default class CombinationDetail extends PureComponent {
               chartData={combinationLineChartData}
               chartHeight="270px"
               title="组合收益率走势"
+              isDetail
             />
           </div>
         </div>
