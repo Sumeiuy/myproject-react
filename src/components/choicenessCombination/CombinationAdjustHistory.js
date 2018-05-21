@@ -75,9 +75,9 @@ export default class CombinationAdjustHistory extends PureComponent {
 
   // 组合名称点击事件
   @autobind
-  handleNameClick(id) {
+  handleNameClick(obj) {
     const { openDetailPage } = this.props;
-    openDetailPage(id);
+    openDetailPage(obj);
   }
 
   // 设置 popover
@@ -85,14 +85,15 @@ export default class CombinationAdjustHistory extends PureComponent {
   renderPopover(value) {
     let reactElement = null;
     if (!_.isEmpty(value)) {
+      const trimValue = _.trim(value);
       reactElement = (<Popover
         placement="bottomLeft"
-        content={value}
+        content={trimValue}
         trigger="hover"
         overlayStyle={overlayStyle}
       >
         <div className={styles.ellipsis}>
-          {value}
+          {trimValue}
         </div>
       </Popover>);
     } else {
@@ -141,6 +142,10 @@ export default class CombinationAdjustHistory extends PureComponent {
                         source: sourceType.security,
                       };
                       const childKey = `${securityCode}${index}`;
+                      const openDetailPayload = {
+                        id: combinationCode,
+                        name: combinationName,
+                      };
                       return (
                         <div className={styles.rightItem} key={childKey}>
                           <div className={styles.titleBox}>
@@ -154,7 +159,7 @@ export default class CombinationAdjustHistory extends PureComponent {
                             <a
                               className={styles.combinationName}
                               title={combinationName}
-                              onClick={() => this.handleNameClick(combinationCode)}
+                              onClick={() => this.handleNameClick(openDetailPayload)}
                             >
                               {combinationName}
                             </a>

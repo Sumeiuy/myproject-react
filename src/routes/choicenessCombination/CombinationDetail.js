@@ -248,11 +248,12 @@ export default class CombinationDetail extends PureComponent {
   @autobind
   closeModal() {
     const { replace } = this.context;
-    const { location: { pathname, query: { id } } } = this.props;
+    const { location: { pathname, query: { id, name } } } = this.props;
     replace({
       pathname,
       query: {
         id,
+        name,
         visible: false,
       },
     });
@@ -367,7 +368,7 @@ export default class CombinationDetail extends PureComponent {
       reportHistoryData,
       modalReportHistoryData,
       location,
-      location: { query: { id, visible = false, modalType = '' } },
+      location: { query: { id, visible = false, modalType = '', name } },
     } = this.props;
     const {
       hasTkMampPermission,
@@ -399,7 +400,7 @@ export default class CombinationDetail extends PureComponent {
 
     return (
       <div className={styles.combinationDetailBox}>
-        <Overview data={overview} />
+        <Overview data={overview} titleName={name} />
         <div className={styles.composition}>
           <Composition pieData={compositionPie} tableData={compositionTable} />
         </div>

@@ -291,7 +291,7 @@ export default class ChoicenessCombination extends PureComponent {
 
   // 打开详情页
   @autobind
-  openDetailPage(id) {
+  openDetailPage(obj) {
     const { push } = this.context;
     const param = {
       closable: true,
@@ -300,9 +300,8 @@ export default class ChoicenessCombination extends PureComponent {
       id: 'FSP_JX_GROUP_DETAIL',
       title: '组合详情',
     };
-    const query = {
-      id,
-    };
+    // 传入的 obj 为两个参数，id 、 name
+    const query = { ...obj };
     const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
