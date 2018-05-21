@@ -15,6 +15,8 @@ import withRouter from '../decorators/withRouter';
 import ConnectedCreateServiceRecord from '../components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
 import ContextProvider from './ContextProvider';
 import Phone from '../components/common/phone';
+import IEWarningModal from '../components/common/IEWarningModal';
+import env from '../helper/env';
 import styles from './main.less';
 import '../css/skin.less';
 
@@ -102,6 +104,9 @@ export default class Main extends Component {
   componentDidMount() {
     const { getCustomerScope } = this.props;
     getCustomerScope(); // 加载客户池客户范围
+    // 获取环境信息
+    const envs = env.getEnv();
+    console.warn('envs', envs);
   }
 
   render() {
@@ -160,6 +165,7 @@ export default class Main extends Component {
                 </div>
               </div>
               <Phone headless />
+              <IEWarningModal />
             </div>
           </div>
         </ContextProvider>
