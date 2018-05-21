@@ -3,7 +3,7 @@
  * @Description: 收益率走势图
  * @Date: 2018-04-25 13:55:06
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-18 09:34:05
+ * @Last Modified time: 2018-05-21 19:12:51
 */
 
 import React, { PureComponent } from 'react';
@@ -95,8 +95,8 @@ export default class CombinationYieldChart extends PureComponent {
     const { chartData, combinationItemData } = this.props;
     const legendData = [chartData.combinationName];
     const isAsset = _.isNull(combinationItemData.weekEarnings);
-    // 如果非资产配置类组合，就多显示一个基准线
-    if (!isAsset) {
+    // 如果非资产配置类组合，并且查询趋势图接口返回的baseName字段不为空，返回就多显示一个基准线
+    if (!isAsset && !_.isEmpty(chartData.baseName)) {
       legendData.push(chartData.baseName);
     }
     return legendData;
@@ -116,8 +116,8 @@ export default class CombinationYieldChart extends PureComponent {
         },
       },
     }];
-    // 如果非资产配置类组合，就多显示一个基准线
-    if (!isAsset) {
+    // 如果非资产配置类组合，并且查询趋势图接口返回的baseName字段不为空，返回就多显示一个基准线
+    if (!isAsset && !_.isEmpty(chartData.baseName)) {
       seriesData.push({
         data: chartData.baseLine,
         type: 'line',
@@ -137,8 +137,8 @@ export default class CombinationYieldChart extends PureComponent {
     const { chartData, combinationItemData } = this.props;
     const combinationNum = (chartData.combinationLine || EMPTY_ARRAY)[params[0].dataIndex] || 0;
     const isAsset = _.isNull(combinationItemData.weekEarnings);
-    // 如果非资产配置类组合，就多现实一个基准数据
-    if (!isAsset) {
+    // 如果非资产配置类组合，并且查询趋势图接口返回的baseName字段不为空，返回就多显示一个基准数据
+    if (!isAsset && !_.isEmpty(chartData.baseName)) {
       const baseNum = (chartData.baseLine || EMPTY_ARRAY)[params[0].dataIndex] || 0;
       return `
         <div>${params[0].axisValueLabel}</div>
