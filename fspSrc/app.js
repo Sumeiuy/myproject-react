@@ -4,7 +4,6 @@
  * @author 朱飞阳
  */
 
-import 'babel-polyfill';
 import dva from 'dva';
 import createHistory from 'history/createHashHistory';
 import createLoading from 'dva-loading';
