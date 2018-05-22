@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:21:18
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-28 11:17:48
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-15 16:40:05
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapDispatchToProps移至此处成立独立模块
  */
 import effects from './effects';
@@ -70,4 +70,17 @@ export default ({ routerRedux, effect }) => ({
   queryCustFeedbackList4ZLFins: effect(effects.queryCustFeedbackList4ZLFins, { loading: false }),
   // 查询涨乐财富通服务方式下的审批人列表
   queryApprovalList: effect(effects.queryApprovalList, { loading: false }),
+  // 执行者视图右侧详情查询客户
+  queryCustomer: effect(effects.queryCustomerForServiceImplementation),
+  // 保存打电话时默认添加的服务记录的信息
+  toggleServiceRecordModal: effect(effects.toggleServiceRecordModal, { loading: false }),
+  // 重置打电话时自动生成的服务记录的数据
+  resetServiceRecordInfo: effect(effects.resetServiceRecordInfo, { loading: false }),
+  // 投资建议文本撞墙检测
+  testWallCollision: effect(effects.testWallCollision),
+  // 清除执行者视图右侧搜索客户列表
+  clearCustListForServiceImplementation: effect(effects.clearCustListForServiceImplementation,
+    { loading: false }),
+  // 添加通话记录关联服务记录
+  addCallRecord: effect(effects.addCallRecord, { loading: false }),
 });

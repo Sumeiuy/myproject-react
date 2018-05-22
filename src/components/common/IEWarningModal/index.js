@@ -2,15 +2,22 @@
  * @Author: zhangjun
  * @Date: 2018-05-21 14:31:45
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-21 15:07:01
+ * @Last Modified time: 2018-05-21 21:57:44
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Modal } from 'antd';
+import _ from 'lodash';
+import env from '../../../helper/env';
 
 export default class IEWarningModal extends PureComponent {
   componentDidMount() {
-    this.warning();
+    // 获取环境信息
+    const envs = env.getEnv();
+    const browserVersion = envs.$browser_version;
+    if (_.includes(browserVersion, 'Internet Explorer 10')) {
+      this.warning();
+    }
   }
   @autobind
   warning() {

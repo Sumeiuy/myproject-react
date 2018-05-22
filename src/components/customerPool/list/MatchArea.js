@@ -108,6 +108,8 @@ export default class MatchArea extends PureComponent {
         activeSubTab: ['服务记录'],
         // 服务记录搜索
         serviceRecordKeyword: keyword,
+        // 服务渠道
+        serviceRecordChannel: encodeURIComponent('理财服务平台'),
       },
       state: {
         url,
@@ -400,7 +402,7 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
-  // 持仓产品
+  // 持仓产品:首页的模糊搜索、联想词、外部平台、证券产品
   renderHoldingProduct() {
     const {
       q = '',
@@ -409,7 +411,7 @@ export default class MatchArea extends PureComponent {
     } = this.props;
     if (!_.isEmpty(holdingProducts)) {
       // 精准搜索，用id取找目标
-      if (_.includes(['association', 'external'], source)) {
+      if (_.includes(['association', 'external', 'securitiesProducts'], source)) {
         const keyword = decodeURIComponent(productName);
         const id = decodeURIComponent(labelMapping);
         const filteredProducts = this.getFilteredProductsById(holdingProducts, id);
@@ -517,6 +519,30 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  // 精选组合页面的订购组合
+  @autobind
+  renderOrderCombination() {
+    const {
+      listItem: { jxgrpProducts },
+      location: { query: { source, labelMapping } },
+    } = this.props;
+    if (source === 'orderCombination' && !_.isEmpty(jxgrpProducts)) {
+      const id = decodeURIComponent(labelMapping);
+      const currentItem = _.find(jxgrpProducts, item => item.id === id);
+      if (!_.isEmpty(currentItem)) {
+        return (
+          <li>
+            <span>
+              <i className="label">订购组合：</i>
+              <i><em className="marked">{currentItem.name}</em>/{currentItem.code}</i>
+            </span>
+          </li>
+        );
+      }
+    }
+    return null;
+  }
+
   render() {
     return (
       <div className={styles.relatedInfo}>
@@ -532,6 +558,7 @@ export default class MatchArea extends PureComponent {
           {this.renderServiceRecord()}
           {this.renderSightingTelescope()}
           {this.renderHoldingProduct()}
+          {this.renderOrderCombination()}
         </ul>
       </div>
     );

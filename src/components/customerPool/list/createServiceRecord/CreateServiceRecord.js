@@ -11,8 +11,8 @@ import { Modal, message } from 'antd';
 import _ from 'lodash';
 import { fspContainer } from '../../../../config/index';
 import { url } from '../../../../helper/index';
-import logable from '../../../../decorators/logable';
-import ServiceRecordContent from '../../../common/serviceRecordContent/index';
+import logable, { logCommon } from '../../../../decorators/logable';
+import ServiceRecordContent from '../../../common/serviceRecordContent';
 import Loading from '../../../../layouts/Loading';
 import styles from './createServiceRecord.less';
 
@@ -43,15 +43,14 @@ const TASK_TYPE_CODES = {
   SELF_TASK: '1', // 表示自建任务
 };
 
+const PHONE = 'phone';
+
 export default class CreateServiceRecord extends PureComponent {
 
   static propTypes = {
-    id: PropTypes.string,
-    name: PropTypes.string,
-    isShow: PropTypes.bool,
     onToggleServiceRecordModal: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired,
-    addServeRecordSuccess: PropTypes.bool.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     loading: PropTypes.bool,
@@ -59,37 +58,33 @@ export default class CreateServiceRecord extends PureComponent {
     custUuid: PropTypes.string,
     ceFileDelete: PropTypes.func.isRequired,
     deleteFileResult: PropTypes.array.isRequired,
-    queryCustUuid: PropTypes.func.isRequired,
     taskFeedbackList: PropTypes.array.isRequired,
     queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
     queryApprovalList: PropTypes.func.isRequired,
     custFeedbackList: PropTypes.array.isRequired,
     zhangleApprovalList: PropTypes.array.isRequired,
+    resetServiceRecordInfo: PropTypes.func.isRequired,
+    serviceRecordInfo: PropTypes.object.isRequired,
+    // 投资建议文本撞墙检测
+    testWallCollision: PropTypes.func.isRequired,
+    // 投资建议文本撞墙检测是否有股票代码
+    testWallCollisionStatus: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
-    id: '',
-    name: '',
-    isShow: false,
     loading: false,
     custUuid: '',
   }
 
-  componentDidMount() {
-    // 只要改组件初次加载完成，就请求一遍custUuid
-    this.props.queryCustUuid();
-  }
-
   componentWillReceiveProps(nextProps) {
     const {
-      onToggleServiceRecordModal,
       loading,
     } = this.props;
-    // 添加成功
-    if (loading && !nextProps.loading && nextProps.addServeRecordSuccess === true) {
-      // this.serviceRecordContentRef.resetField();
-      onToggleServiceRecordModal(false);
-      message.success('添加服务记录成功');
+    const {
+      currentCommonServiceRecord: { id },
+    } = nextProps;
+    // 添加未成功时，后端返回failure
+    if (loading && !nextProps.loading && !_.isEmpty(id) && id !== 'failure') {
       // 提交成功后，刷新360视图中的服务记录iframe
       const iframe = document.querySelector(fspContainer.view360Iframe);
       if (iframe) {
@@ -106,24 +101,66 @@ export default class CreateServiceRecord extends PureComponent {
 
   // 提交
   @autobind
-  @logable({ type: 'Click', payload: { name: '提交' } })
   handleSubmit() {
     const data = this.serviceRecordContentRef.getData();
     if (_.isEmpty(data)) return;
-
-    const { id, addServeRecord } = this.props;
-
-    addServeRecord({ ...data, custId: id });
+    const {
+      addServeRecord,
+      resetServiceRecordInfo,
+      currentCommonServiceRecord: { id },
+      serviceRecordInfo: {
+        id: custId,
+        caller = '',
+        autoGenerateRecordInfo = {},
+      },
+      dict,
+    } = this.props;
+    const { serveContentDesc = '', serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
+    let payload = { ...data, custId };
+    // 打电话成功后，服务记录添加未成功时，后端返回failure
+    if (caller === PHONE && !_.isEmpty(id) && id !== 'failure') {
+      payload = {
+        ...payload,
+        id,
+        serveTime,
+        serveWay,
+        serveContentDesc: `${serveContentDesc}${data.serveContentDesc}`,
+      };
+    }
+    addServeRecord(payload);
+    resetServiceRecordInfo();
+    // log日志 --- 添加服务记录
+    // 服务类型
+    const { serveType } = data;
+    const { missionType } = dict;
+    const serveTypeName = _.find(missionType, { key: serveType }).value;
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: custId,
+        type: serveTypeName,
+        value: JSON.stringify(data),
+      },
+    });
   }
 
   // 关闭弹窗
   @autobind
   @logable({ type: 'Click', payload: { name: '取消' } })
   handleCancel() {
-    const { onToggleServiceRecordModal, handleCloseClick } = this.props;
+    const {
+      onToggleServiceRecordModal,
+      handleCloseClick,
+      serviceRecordInfo: { caller },
+    } = this.props;
     // 手动上传日志
     handleCloseClick();
-    onToggleServiceRecordModal(false);
+    // 打电话调起的弹窗，不能直接手动关闭弹窗，只能提交服务记录进行关闭
+    if (caller !== PHONE) {
+      onToggleServiceRecordModal(false);
+    } else {
+      message.warn('请提交服务记录');
+    }
   }
 
   @autobind
@@ -149,12 +186,9 @@ export default class CreateServiceRecord extends PureComponent {
 
   render() {
     const {
-      isShow,
       dict,
       empInfo,
       loading,
-      name,
-      id,
       custUuid,
       deleteFileResult,
       taskFeedbackList,
@@ -162,10 +196,16 @@ export default class CreateServiceRecord extends PureComponent {
       queryApprovalList,
       custFeedbackList,
       zhangleApprovalList,
+      serviceRecordInfo,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
     } = this.props;
     // 此处需要新增一个对 taskFeedbackList为空的判断
     if (_.isEmpty(taskFeedbackList)) return null;
 
+    const { id = '', name = '', modalVisible = false, caller = '' } = serviceRecordInfo;
     const title = (
       <p className={styles.title}>
         创建服务记录:
@@ -173,12 +213,14 @@ export default class CreateServiceRecord extends PureComponent {
       </p>
     );
 
-    const footer = (
+    const footer = caller !== 'phone' ? (
       <div className={styles.customFooter}>
         <a className={styles.cancelBtn} onClick={this.handleCancel}>取消</a>
         <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
       </div>
-    );
+    ) : (<div className={styles.customFooter}>
+      <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
+    </div>);
 
     // 从客户列表进入创建服务记录的均是自建任务
     const serviceReocrd = {
@@ -186,12 +228,13 @@ export default class CreateServiceRecord extends PureComponent {
       motCustfeedBackDict: transformCustFeecbackData(taskFeedbackList),
     };
 
+
     return (
       <Modal
         width={688}
         className={styles.serviceRecord}
         title={title}
-        visible={isShow}
+        visible={modalVisible}
         onCancel={this.handleCancel}
         maskClosable={false}
         footer={footer}
@@ -211,6 +254,9 @@ export default class CreateServiceRecord extends PureComponent {
                 queryApprovalList={queryApprovalList}
                 custFeedbackList={custFeedbackList}
                 zhangleApprovalList={zhangleApprovalList}
+                serviceRecordInfo={serviceRecordInfo}
+                testWallCollision={testWallCollision}
+                testWallCollisionStatus={testWallCollisionStatus}
               />
             </div>
             :

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 11:14:36
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-08 16:12:48
+ * @Last Modified time: 2018-05-10 15:58:11
  * @description 此处存放与url数据相关的通用方法
  */
 import qs from 'query-string';

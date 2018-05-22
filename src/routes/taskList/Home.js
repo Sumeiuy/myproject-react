@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-28 14:26:17
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-18 17:54:44
  * @description 任务管理首页
  */
 
@@ -83,6 +83,7 @@ export default class PerformerView extends PureComponent {
     answersList: EMPTY_OBJECT,
     saveAnswersSucce: false,
     missionImplementationDetail: EMPTY_OBJECT,
+    custListForServiceImplementation: EMPTY_LIST,
   };
 
   constructor(props) {
@@ -487,7 +488,7 @@ export default class PerformerView extends PureComponent {
       getCeFileList,
       filesList,
       deleteFileResult,
-      addMotServeRecordSuccess,
+      currentMotServiceRecord,
       answersList,
       getTempQuesAndAnswer,
       saveAnswersByType,
@@ -499,6 +500,16 @@ export default class PerformerView extends PureComponent {
       queryCustFeedbackList4ZLFins,
       queryApprovalList,
       zhangleApprovalList,
+      queryCustomer,
+      custListForServiceImplementation,
+      toggleServiceRecordModal,
+      serviceRecordInfo,
+      resetServiceRecordInfo,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
+      addCallRecord,
     } = this.props;
     const {
       typeCode,
@@ -542,7 +553,7 @@ export default class PerformerView extends PureComponent {
         filesList={filesList}
         deleteFileResult={deleteFileResult}
         taskFeedbackList={taskFeedbackList}
-        addMotServeRecordSuccess={addMotServeRecordSuccess}
+        currentMotServiceRecord={currentMotServiceRecord}
         getTempQuesAndAnswer={getTempQuesAndAnswer}
         answersList={answersList}
         saveAnswersByType={saveAnswersByType}
@@ -555,6 +566,14 @@ export default class PerformerView extends PureComponent {
         queryCustFeedbackList4ZLFins={queryCustFeedbackList4ZLFins}
         queryApprovalList={queryApprovalList}
         zhangleApprovalList={zhangleApprovalList}
+        queryCustomer={queryCustomer}
+        customerList={custListForServiceImplementation}
+        toggleServiceRecordModal={toggleServiceRecordModal}
+        serviceRecordInfo={serviceRecordInfo}
+        resetServiceRecordInfo={resetServiceRecordInfo}
+        testWallCollision={testWallCollision}
+        testWallCollisionStatus={testWallCollisionStatus}
+        addCallRecord={addCallRecord}
       />
     );
   }
@@ -785,7 +804,8 @@ export default class PerformerView extends PureComponent {
   @autobind
   loadDetailContent(obj) {
     this.props.getTaskDetailBasicInfo({ taskId: obj.id });
-    this.props.queryTargetCust({ missionId: obj.id, pageNum: 1, pageSize: 10 });
+    // 执行者视图服务实施客户列表中 状态筛选默认值 state='10' 未开始
+    this.props.queryTargetCust({ missionId: obj.id, state: '10', pageNum: 1, pageSize: 10 });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
   }
@@ -954,7 +974,13 @@ export default class PerformerView extends PureComponent {
   handleListRowClick(record, index) {
     // typeCode为任务类型，通过这个类型，查到字典中missionType的descText
     const { id, missionViewType: st, typeCode, statusCode, typeName, eventId, mssnId } = record;
-    const { queryCustUuid, replace, location: { pathname, query }, dict } = this.props;
+    const {
+      queryCustUuid,
+      replace,
+      location: { pathname, query },
+      dict,
+      clearCustListForServiceImplementation,
+    } = this.props;
     const isSourceFromCreatorView = this.isInitiatorView(st)
       && this.judgeTaskInApproval(statusCode);
     const ci = isSourceFromCreatorView ? mssnId : id;
@@ -973,9 +999,11 @@ export default class PerformerView extends PureComponent {
     });
 
     // 如果所点击的任务需要的是执行者视图，则预先请求custUuid
+    // 将执行者视图右侧搜索客户的列表数据清空
     if (this.isExecutorView(st)) {
       // 前置请求custuuid
       queryCustUuid();
+      clearCustListForServiceImplementation();
     }
 
     this.setState({

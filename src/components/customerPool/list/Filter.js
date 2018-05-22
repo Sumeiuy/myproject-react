@@ -19,24 +19,6 @@ import HtFilter, {
 
 import BusinessOpenedMenu from '../../common/htFilter/bussinessOpened/';
 
-// 从搜索、联想词、标签、已开通业务过来的
-/* const SEARCH_TAG_FILTER = [
-  'search', 'tag', 'association', 'business', 'custIndicator',
-  'numOfCustOpened', 'sightingTelescope', 'external',
-]; */
-
-// 数据转化
-// [{itemCode: '1', itemDesc: 'fg'}] => [{key: '1', value: 'fg'}]
-/* const transformData = list => _.map(list, item => _.mapKeys(item, (value, key) => {
-  if (key === 'itemCode') {
-    return 'key';
-  }
-  if (key === 'itemDesc') {
-    return 'value';
-  }
-  return key;
-})); */
-
 function getBusinessOpenedFilterLabel(obj) {
   const findDateType = _.find(obj.data.dateType,
     item => item.key === obj.value[0]);

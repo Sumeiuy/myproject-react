@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-14 17:46:40
+ * @Last Modified time: 2018-05-15 17:19:31
  */
 
 import React, { PureComponent } from 'react';
@@ -145,12 +145,11 @@ export default class CustomerRow extends PureComponent {
     this.isMainService = empId === rowId;
     /**
      * 登录用户拥有 HTSC 客户资料-总部管理岗、HTSC 客户资料-分中心管理岗、
-     * HTSC 客户资料（无隐私）-总部管理岗、HTSC 客户资料（无隐私）-分中心管理岗 时，可访问360视图
+     * HTSC 客户资料（无隐私）-总部管理岗、HTSC 客户资料（无隐私）-分中心管理岗
+     * HTSC 客户资料管理岗（无隐私）
+        可访问360视图
      */
-    this.access360ViewPermission = permission.hasCIHMPPermission()
-      || permission.hasCIBMPPermission()
-      || permission.hasNPCIHMPPermission()
-      || permission.hasNPCIBMPPermission();
+    this.access360ViewPermission = permission.hasViewCust360PermissionForCustList();
   }
 
   @autobind
@@ -194,6 +193,13 @@ export default class CustomerRow extends PureComponent {
       id: 'FSP_360VIEW_M_TAB',
       title: '客户360视图-客户信息',
       forceRefresh: true,
+      // 解决同一个tab之前存在的情况下，subTab没更新
+      activeSubTab: ['客户信息'],
+      // 因为这个页面存在多处跳转至360信息，所以将服务记录默认信息清空
+      // 服务记录搜索
+      serviceRecordKeyword: '',
+      // 服务渠道
+      serviceRecordChannel: '',
     };
     const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
     // TODOTAB: 如何与后端是动态接口
