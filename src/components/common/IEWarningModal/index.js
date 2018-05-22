@@ -2,9 +2,9 @@
  * @Author: zhangjun
  * @Date: 2018-05-21 14:31:45
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-21 21:57:44
+ * @Last Modified time: 2018-05-22 14:46:06
  */
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Modal } from 'antd';
 import _ from 'lodash';
@@ -28,8 +28,6 @@ export default class IEWarningModal extends PureComponent {
     });
   }
   render() {
-    return (
-      <div />
-    );
+    return null;
   }
 }

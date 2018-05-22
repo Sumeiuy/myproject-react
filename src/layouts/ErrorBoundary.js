@@ -14,6 +14,7 @@ export default class ErrorBoundary extends Component {
 
   static propTypes = {
     children: PropTypes.element.isRequired,
+    location: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -56,7 +57,7 @@ export default class ErrorBoundary extends Component {
     if (error) {
       return (
         <div className={styles.container}>
-          <ErrorPage errorId={errorId} />
+          <ErrorPage errorId={errorId} location={location} />
         </div>
       );
     }

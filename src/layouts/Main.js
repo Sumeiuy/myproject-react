@@ -113,11 +113,12 @@ export default class Main extends Component {
       ceFileDelete,
       motSelfBuiltFeedbackList,
       serviceRecordInfo,
+      location,
     } = this.props;
     return (
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
-          <ErrorBoundary>
+          <ErrorBoundary location={location}>
             <div className={styles.layout}>
               <div className={styles.main}>
                 <div className={styles.container} id="container">
