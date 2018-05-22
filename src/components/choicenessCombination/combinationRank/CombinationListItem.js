@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-17 14:01:05
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-22 11:04:45
 */
 
 import React, { PureComponent } from 'react';

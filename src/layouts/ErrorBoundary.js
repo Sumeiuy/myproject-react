@@ -7,12 +7,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { logCommon } from '../decorators/logable';
+import ErrorPage from '../components/common/errorPage';
 import styles from './errorBoundary.less';
 
 export default class ErrorBoundary extends Component {
 
   static propTypes = {
     children: PropTypes.element.isRequired,
+    location: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -55,7 +57,7 @@ export default class ErrorBoundary extends Component {
     if (error) {
       return (
         <div className={styles.container}>
-          <p className={styles.message}>当前页面遇到问题，请稍后再试（{errorId}）</p>
+          <ErrorPage errorId={errorId} location={location} />
         </div>
       );
     }
