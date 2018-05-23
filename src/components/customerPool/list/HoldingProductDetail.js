@@ -103,7 +103,7 @@ export default class HoldingProductDetail extends PureComponent {
    */
   @autobind
   generateDetailItemNode({ name, value, isFormatAsset = true }) {
-    if (value) {
+    if (!_.isEmpty(value)) {
       let newValue = value;
       if (isFormatAsset) {
         const { formatAsset } = this.props;
