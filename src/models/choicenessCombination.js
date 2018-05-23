@@ -3,7 +3,7 @@
  * @Description: 精选组合modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-17 10:52:27
+ * @Last Modified time: 2018-05-21 19:13:14
 */
 
 import _ from 'lodash';
@@ -159,7 +159,13 @@ export default {
     },
     // 获取组合排名列表
     getCombinationRankListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
+      const { payload: { resultData = EMPTY_LIST, combinationType = '' } } = action;
+      const { rankTabActiveKey } = state;
+      if (rankTabActiveKey !== combinationType) {
+        return {
+          ...state,
+        };
+      }
       // 取到组合排名数据之后先进行筛选，排序
       const combinationRankList = combinationRankListSortAndFilter(resultData, {
         yieldRankValue: state.yieldRankValue,
@@ -231,13 +237,19 @@ export default {
     },
     // 获取组合排名列表
     * getCombinationRankList({ payload }, { call, put, take }) {
+      const { combinationType } = payload;
       const response = yield call(api.getCombinationRankList, payload);
-      const list = response.resultData;
+      // 防止多次请求情况下前面的请求数据覆盖后面的请求数据，添加一个key,用来判断当前返回数据是否和当前tab的key匹配
+      const newResponse = {
+        ...response,
+        combinationType,
+      };
+      const list = newResponse.resultData;
       let index = 0;
 
       yield put({
         type: 'getCombinationRankListSuccess',
-        payload: response,
+        payload: newResponse,
       });
       // 拿到组合排名的列表数据之后，按顺序同步调图表数据接口
       if (!_.isEmpty(list)) {

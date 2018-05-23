@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-16 10:25:10
+ * @Last Modified time: 2018-05-22 17:39:02
  */
 
 import React, { PureComponent } from 'react';
@@ -76,12 +76,13 @@ export default class ApplyDetail extends PureComponent {
     if (currentNodeCode === 'branchHandle' ||
     currentNodeCode === 'headAudit' ||
     currentNodeCode === 'trueOver') {
-      // 处于以上三种状态，表示此时电话号码，手机串号，SIM卡号已经录入
-      // 需要增加展示电话号码，手机串号，SIM卡号三列
+      // 处于以上三种状态，表示此时电话号码，手机串号，SIM卡号（非4G），SIM卡号（4G）已经录入
+      // 需要增加展示电话号码，手机串号，SIM卡号（非4G），SIM卡号（4G）四列
       const increasedColumns = [
         { key: 'phoneNumber', value: '电话号码' },
         { key: 'imsi', value: '手机串号' },
-        { key: 'sim', value: 'SIM卡号' },
+        { key: 'sim2', value: 'SIM卡号（非4G）' },
+        { key: 'sim', value: 'SIM卡号（4G）' },
       ];
       columns = [...columns, ...increasedColumns];
     }
@@ -135,10 +136,10 @@ export default class ApplyDetail extends PureComponent {
     const columnSize = _.size(titleColumn);
     let columnWidth;
     let columnWidthTotal;
-    if (columnSize === 6) {
-      // 6列全部都有
-      columnWidth = ['140px', '100px', '200px', '130px', '160px', '200px'];
-      columnWidthTotal = 860;
+    if (columnSize === 7) {
+      // 7列全部都有
+      columnWidth = ['130px', '100px', '200px', '130px', '160px', '200px'];
+      columnWidthTotal = 1080;
     } else if (columnSize === 3) {
       // 开始的时候没有电话号码，手机串号，SIM卡号三列
       columnWidth = ['180px', '170px', '250px'];

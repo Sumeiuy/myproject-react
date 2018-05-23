@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-17 14:01:05
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-22 11:04:45
 */
 
 import React, { PureComponent } from 'react';
@@ -168,9 +168,9 @@ export default class CombinationListItem extends PureComponent {
 
   // 组合名称点击事件
   @autobind
-  handleNameClick(id) {
+  handleNameClick(obj) {
     const { openDetailPage } = this.props;
-    openDetailPage(id);
+    openDetailPage(obj);
   }
 
   render() {
@@ -195,12 +195,16 @@ export default class CombinationListItem extends PureComponent {
       code: data.productCode,
       source: sourceType.combination,
     };
+    const openDetailPayload = {
+      id: data.combinationCode,
+      name: data.combinationName,
+    };
     return (
       <div className={classNames}>
         <div className={styles.left}>
           <div className={`${styles.headBox} clearfix`}>
             <span className={styles.combinationName} title={data.combinationName}>
-              <a onClick={() => this.handleNameClick(data.combinationCode)}>
+              <a onClick={() => this.handleNameClick(openDetailPayload)}>
                 {data.combinationName}
               </a>
             </span>
