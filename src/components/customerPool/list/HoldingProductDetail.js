@@ -86,10 +86,10 @@ export default class HoldingProductDetail extends PureComponent {
         <ul className={styles.content}>
           {this.generateDetailItemNode({ name: '持仓数量', value: item.holdingNumber, isFormatAsset: false })}
           {this.generateDetailItemNode({ name: '持仓市值', value: item.marketValue })}
-          {this.generateDetailItemNode({ name: '盈亏', value: item.profit })}
-          {this.generateDetailItemNode({ name: '累计收益', value: item.cumulativeProfit })}
-          {this.generateDetailItemNode({ name: '累计到账收益', value: item.incomeToAccount })}
-          {this.generateDetailItemNode({ name: '累计预估收益', value: item.estimatedEarnings })}
+          {/* this.generateDetailItemNode({ name: '盈亏', value: item.profit }) */}
+          {/* this.generateDetailItemNode({ name: '累计收益', value: item.cumulativeProfit }) */}
+          {/* this.generateDetailItemNode({ name: '累计到账收益', value: item.incomeToAccount }) */}
+          {/* this.generateDetailItemNode({ name: '累计预估收益', value: item.estimatedEarnings }) */}
         </ul>
       </div>
     ));
