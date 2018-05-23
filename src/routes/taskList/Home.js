@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-18 17:54:44
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-23 09:38:37
  * @description 任务管理首页
  */
 
@@ -18,6 +18,7 @@ import ManagerViewDetail from '../../components/taskList/managerView/ManagerView
 import CreatorViewDetail from '../../components/taskList/creatorView/RightPanel';
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
+import FixedTitle from '../../components/taskList/FixedTitle';
 import pageConfig from '../../components/taskList/pageConfig';
 import { getCurrentScopeByOrgId } from '../../components/taskList/managerView/helper';
 import { openRctTab } from '../../utils';
@@ -38,6 +39,10 @@ import {
   STATE_EXECUTE_CODE,
   STATE_FINISHED_CODE,
   STATE_ALL_CODE,
+  CREATE_TIME,
+  END_TIME,
+  CREATE_TIME_KEY,
+  END_TIME_KEY,
 } from './config';
 
 // 空函数
@@ -920,6 +925,20 @@ export default class PerformerView extends PureComponent {
     }
   }
 
+  /**
+   * 排序，请求数据
+   */
+  @autobind
+  handleSortChange({ sortKey, sortType }) {
+    console.log('-----', sortKey);
+    console.log('-----', sortType);
+    const { location: { query } } = this.props;
+    this.queryAppList({
+      ...query,
+      [sortKey]: sortType,
+    });
+  }
+
   // 切换页码
   @autobind
   handlePageNumberChange(nextPage) {
@@ -1060,6 +1079,22 @@ export default class PerformerView extends PureComponent {
     );
   }
 
+  /**
+   * 渲染固定的列
+   */
+  @autobind
+  renderFixedTitle() {
+    const { location: { query: { missionViewType } } } = this.props;
+    return (
+      <FixedTitle
+        content={missionViewType === INITIATOR ? CREATE_TIME : END_TIME}
+        sort={'desc'}
+        onSortChange={this.handleSortChange}
+        sortKey={missionViewType === INITIATOR ? CREATE_TIME_KEY : END_TIME_KEY}
+      />
+    );
+  }
+
   render() {
     const { location, replace, list, dict, queryCustUuid } = this.props;
 
@@ -1099,6 +1134,7 @@ export default class PerformerView extends PureComponent {
         renderRow={this.renderListRow}
         pagination={paginationOptions}
         queryCustUuid={queryCustUuid}
+        fixedTitle={this.renderFixedTitle}
       />
     );
     // TODO 此处需要根据不同的子类型使用不同的Detail组件

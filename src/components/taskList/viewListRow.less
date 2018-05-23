@@ -9,15 +9,20 @@
     float: right;
     text-align: right;
   }
+  // 奇行样式
+  .appItem:nth-child(odd) {
+    background: #f4f7fa;
+  }
+  .appItem:nth-child(even) {
+    background: #fff;
+  }
   .appItem {
-    padding: 10px 15px;
-    // width: 512px;
+    padding: 10px 10px 14px 0;
     width: 100%;
-    height: 97px;
+    height: 70px;
     background-color: #fff;
     cursor: pointer;
     box-sizing: border-box;
-    border-bottom: 1px solid #e9e9e9;
     &:hover {
       background-color: #edf6fd;
     }
@@ -30,49 +35,71 @@
   }
   .itemHeader {
     display: flex;
+    justify-content: flex-start;
     align-items: center;
-    height: 26px;
-    line-height: 26px;
+    height: 28px;
+    padding-bottom: 8px;
+    .leftArea {
+      width: 80%;
+      max-width: 80%;
+      .common {
+        width: 16px;
+        margin-right: 4px;
+        display: inline-block;
+      }
+      .appMissionIcon {
+        font-size: 12px;
+        color: #fff;
+        line-height: 16px;
+        background-color: #f9a825;
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+        border-radius: 2px;
+        display: inline-block;
+        text-align: center;
+        &.active {
+          background: #fff;
+          border-radius: 0 2px 2px 0;
+          width: 16px;
+          height: 16px;
+          font-size: 12px;
+          color: #4786f7;
+          line-height: 16px;
+        }
+      }
+      .title {
+        font-size: 14px;
+        color: #333;
+        line-height: 20px;
+        text-align: left;
+        max-width: 187px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        &.active {
+          font-size: 14px;
+          color: #fff;
+          line-height: 20px;
+        }
+      }
+    }
+    .rightArea {
+      text-align: right;
+      font-size: 12px;
+      color: #666;
+      line-height: 18px;
+      width: 20%;
+      &.active {
+        font-size: 12px;
+        color: #fff;
+        line-height: 18px;
+      }
+    }
     &:after {
       content: " ";
       display: table;
       clear: both;
-    }
-    .title {
-      width: 78%;
-      color: #7d9be0;
-      .pullleft;
-      .textEllipse;
-      .appMissionIcon {
-        display: inline-block;
-        background: #fdb02b;
-        color: #fff;
-        font-size: 10px;
-        line-height: 16px;
-        text-align: center;
-        border-radius: 2px;
-        width: 16px;
-        height: 16px;
-        &.active {
-          background-color: #fff;
-          color: #4a90e2;
-        }
-      }
-      .appChanceIcon {
-        display: inline-block;
-        background: #60bbea;
-        color: #fff;
-        font-size: 10px;
-        line-height: 16px;
-        text-align: center;
-        border-radius: 2px;
-        width: 16px;
-        height: 16px;
-        &.active {
-          background-color: #fff;
-          color: #4a90e2;
-        }
-      }
     }
     .tagArea {
       width: 22%;
@@ -103,21 +130,52 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .secondLine, .thirdLine {
-    margin-top: 5px;
-    color: #666;
-    &:after {
-      content: " ";
-      display: table;
-      clear: both;
-    }
-  }
   .secondLine {
-    font-size: 14px;
-  }
-  .thirdLine {
-    font-size: 13px;
-    color: #a1a1a1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    padding-left: 20px;
+    .leftArea {
+      width: 80%;
+      font-size: 12px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .typeName {
+        font-size: 12px;
+        color: #666;
+        line-height: 18px;
+        text-align: left;
+        margin-right: 7px;
+        &.active {
+          color: #fff;
+        }
+      }
+      .creatorArea {
+        font-size: 12px;
+        color: #666;
+        line-height: 18px;
+        text-align: left;
+        .separator {
+          margin-right: 7px;
+        }
+        &.active {
+          color: #fff;
+        }
+      }
+      &.active {
+        color: #fff;
+      }
+    }
+    .rightArea {
+      width: 20%;
+      text-align: right;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
   }
   .subType {
     width: 100%;
@@ -136,7 +194,6 @@
   }
   .serialNumber,
   .secondLine,
-  .thirdLine,
   .type {
     &.active {
       color: #fff;
@@ -190,7 +247,3 @@
       }
     }
   }
-.tag {
-  padding-top: 1px;
-  padding-bottom: 1px;
-}
