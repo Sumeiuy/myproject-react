@@ -2,7 +2,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import Icon from '../common/Icon';
+import DescImg from './img/desc.png';
+import AscImg from './img/asc.png';
 
 import styles from './fixedTitle.less';
 
@@ -13,14 +14,16 @@ const NOOP = _.noop;
 
 export default class FixedTitle extends PureComponent {
   static propTypes = {
-    // 排序文本
-    content: PropTypes.string.isRequired,
+    // 右侧排序文本
+    sortContent: PropTypes.string.isRequired,
     // 默认排序方向
     sortDirection: PropTypes.string,
     // 排序事件发生
     onSortChange: PropTypes.func,
     // 排序key值，传给后台
     sortKey: PropTypes.string.isRequired,
+    // 视图类型
+    viewType: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -28,24 +31,29 @@ export default class FixedTitle extends PureComponent {
     onSortChange: NOOP,
   };
 
-  static getDerivedStateFromProps(nextProps) {
-    const { sortKey } = this.props;
-    const { sortKey: nextSortKey, sortDirection } = nextProps;
-    if (sortKey !== nextSortKey) {
-      this.setState({
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { viewType } = prevState;
+    const { sortKey, sortDirection, viewType: nextViewType } = nextProps;
+    // 视图不一样的时候，update组件
+    if (viewType !== nextViewType) {
+      return {
         sortDirection,
-        isSortDesc: sortDirection === SORT_DESC,
-      });
+        sortKey,
+        viewType: nextViewType,
+      };
     }
+    return null;
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      // 是否是降序，默认是降序
-      isSortDesc: true,
       // 排序方向
       sortDirection: props.sortDirection,
+      // 当前sortKey
+      sortKey: props.sortKey,
+      // 当前视图类型
+      viewType: props.viewType,
     };
   }
 
@@ -55,10 +63,9 @@ export default class FixedTitle extends PureComponent {
   @autobind
   handleSort() {
     const { onSortChange, sortKey } = this.props;
-    const { isSortDesc } = this.state;
+    const { sortDirection } = this.state;
     this.setState({
-      isSortDesc: !isSortDesc,
-      sortDirection: isSortDesc ? SORT_ASC : SORT_DESC,
+      sortDirection: sortDirection === SORT_ASC ? SORT_DESC : SORT_ASC,
     }, () => {
       onSortChange({
         sortKey,
@@ -78,9 +85,22 @@ export default class FixedTitle extends PureComponent {
     return sortIconType;
   }
 
+  /**
+   * 渲染排序图片
+   * @param {*string} sortDirection 排序方向
+   */
+  renderSortImage(sortDirection) {
+    let sortImage = DescImg;
+    if (sortDirection === SORT_ASC) {
+      sortImage = AscImg;
+    }
+
+    return sortImage;
+  }
+
   render() {
     // 默认降序排序
-    const { content } = this.props;
+    const { sortContent } = this.props;
 
     const { sortDirection } = this.state;
 
@@ -90,10 +110,17 @@ export default class FixedTitle extends PureComponent {
           服务内容
         </div>
         <div className={styles.right} onClick={this.handleSort}>
-          <span>{content}</span>
-          <Icon
+          <span>{sortContent}</span>
+          {/* <Icon
             className={styles.icon}
             type={this.renderSortDirection(sortDirection)}
+          /> */}
+          <img
+            src={
+              this.renderSortImage(sortDirection)
+            }
+            alt={this.renderSortDirection(sortDirection)}
+            className={styles.img}
           />
         </div>
       </div>

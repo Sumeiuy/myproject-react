@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-23 10:30:36
+ * @Last Modified time: 2018-05-23 16:27:31
  * @description 任务管理首页
  */
 
@@ -74,6 +74,9 @@ const feedbackListOfNone = [{
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+
+// 三个视图的排序默认都是降序排序
+const DEFAULT_SORT_TYPE = 'desc';
 
 @withRouter
 export default class PerformerView extends PureComponent {
@@ -735,12 +738,12 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   constructViewPostBody(query, newPageNum, newPageSize) {
-    const { missionViewType, status, creatorId } = query;
+    const { missionViewType, status, creatorId, sortParam } = query;
     let finalPostData = {
       pageNum: _.parseInt(newPageNum, 10),
       pageSize: _.parseInt(newPageSize, 10),
     };
-    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum', 'custName', 'creatorName']);
+    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum', 'custName', 'creatorName', 'sortParam']);
     finalPostData = _.merge(
       finalPostData,
       omitData,
@@ -751,6 +754,11 @@ export default class PerformerView extends PureComponent {
     );
     // 获取当前的视图类型
     const currentViewType = getViewInfo(missionViewType).currentViewType;
+    // 入参中，添加排序关键字
+    finalPostData = {
+      ...finalPostData,
+      ...this.addSortParam(currentViewType, sortParam),
+    };
     // 执行者视图中，状态默认选中‘执行中’, status传50
     // url中status为‘all’时传空字符串或者不传，其余传对应的code码
     if (this.isExecutorView(currentViewType)) {
@@ -926,16 +934,61 @@ export default class PerformerView extends PureComponent {
   }
 
   /**
+   * 获取sortKey，createTimeSort或者endTimeSort
+   * 获取sortContent，创建时间或者结束时间
+   */
+  @autobind
+  getSortConfig() {
+    const { location: { query: { missionViewType } } } = this.props;
+    let sortKey = CREATE_TIME_KEY;
+    let sortContent = CREATE_TIME;
+    if (missionViewType === EXECUTOR || missionViewType === CONTROLLER) {
+      sortKey = END_TIME_KEY;
+      sortContent = END_TIME;
+    }
+    return {
+      sortKey,
+      sortContent,
+    };
+  }
+
+  /**
+   * 请求入参中添加排序
+   */
+  @autobind
+  addSortParam(currentViewType, sortParam) {
+    let param = {};
+    // 如果query中没有sortParam，那么取默认的
+    if (_.isEmpty(sortParam)) {
+      // 创建者视图，用createTimeSort,desc
+      if (currentViewType === INITIATOR) {
+        param = {
+          [CREATE_TIME_KEY]: DEFAULT_SORT_TYPE,
+        };
+      } else if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
+        // 执行者视图和管理者视图用endTimeSort,desc
+        param = {
+          [END_TIME_KEY]: DEFAULT_SORT_TYPE,
+        };
+      }
+    } else {
+      param = sortParam;
+    }
+
+    return param;
+  }
+
+  /**
    * 排序，请求数据
    */
   @autobind
   handleSortChange({ sortKey, sortType }) {
-    console.log('-----', sortKey);
-    console.log('-----', sortType);
     const { location: { query } } = this.props;
     this.queryAppList({
       ...query,
-      [sortKey]: sortType,
+      sortParam: {
+        [sortKey]: sortType,
+      },
     });
   }
 
@@ -1084,13 +1137,15 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   renderFixedTitle() {
+    const { sortKey, sortContent } = this.getSortConfig();
     const { location: { query: { missionViewType } } } = this.props;
     return (
       <FixedTitle
-        content={missionViewType === INITIATOR ? CREATE_TIME : END_TIME}
-        sortDirection={'desc'}
+        sortContent={sortContent}
+        sortDirection={DEFAULT_SORT_TYPE}
         onSortChange={this.handleSortChange}
-        sortKey={missionViewType === INITIATOR ? CREATE_TIME_KEY : END_TIME_KEY}
+        sortKey={sortKey}
+        viewType={getViewInfo(missionViewType).currentViewType}
       />
     );
   }
@@ -1134,7 +1189,7 @@ export default class PerformerView extends PureComponent {
         renderRow={this.renderListRow}
         pagination={paginationOptions}
         queryCustUuid={queryCustUuid}
-        fixedTitle={this.renderFixedTitle}
+        fixedTitle={this.renderFixedTitle()}
       />
     );
     // TODO 此处需要根据不同的子类型使用不同的Detail组件
