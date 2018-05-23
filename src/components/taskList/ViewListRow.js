@@ -148,7 +148,7 @@ export default function AppItem(props) {
             })}
           >{renderMissionTypeName(data.typeCode)}</div>
           {
-            isRenderCreator(data.typeCode) ?
+            isRenderCreator(data.typeCode) && data.creator ?
               <div
                 className={cx({
                   [styles.creatorArea]: true,
