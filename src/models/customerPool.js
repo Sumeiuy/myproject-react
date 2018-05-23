@@ -9,6 +9,10 @@ import { customerPool as api, common as commonApi } from '../api';
 import { emp, url } from '../helper';
 import { toastM } from '../utils/sagaEffects';
 
+// 首页客户可用标签分页的页码和每页条数
+const INITIAL_CUSTLABEL_PAGENO = 1;
+const INITIAL_CUSTLABEL_PAGESIZE = 20;
+
 function matchRouteAndexec(pathname, params, routeCallbackObj) {
   _.forOwn(routeCallbackObj, (value, key) => {
     if (url.matchRoute(key, pathname)) {
@@ -17,6 +21,24 @@ function matchRouteAndexec(pathname, params, routeCallbackObj) {
     }
     return true;
   });
+}
+
+// 后端反馈首页查询客户可用标签不好做分页，所以前端做处理
+function custLabelListPaging({
+  list,
+  pageNo = INITIAL_CUSTLABEL_PAGENO,
+  pageSize = INITIAL_CUSTLABEL_PAGESIZE,
+}) {
+  const start = pageNo === 1 ? 0 : ((pageNo - 1) * pageSize) + 1;
+  const end = pageNo === 1 ? pageSize : (pageNo * pageSize) + 1;
+  return {
+    list: list.slice(start, end),
+    page: {
+      pageNo,
+      totalCount: list.length,
+      pageSize,
+    },
+  };
 }
 
 const EMPTY_LIST = [];
@@ -146,6 +168,10 @@ export default {
     holdingProducts: {},
     // 添加通话记录关联服务记录是否成功
     isAddCallRecordSuccess: false,
+    // 首页所有可用客户标签
+    custLabelList: EMPTY_LIST,
+    // 前端处理过的带分页的客户标签数据
+    pagingCustLabelData: EMPTY_OBJECT,
   },
 
   subscriptions: {
@@ -840,6 +866,14 @@ export default {
         payload: resultData,
       });
     },
+    // 首页查询所有可用客户标签列表
+    * queryCustLabelList({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryCustLabelList, payload);
+      yield put({
+        type: 'queryCustLabelListSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -1468,6 +1502,30 @@ export default {
       return {
         ...state,
         isAddCallRecordSuccess: payload.success,
+      };
+    },
+    // 获取首页可用客户列表
+    queryCustLabelListSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        custLabelList: payload,
+        pagingCustLabelData: custLabelListPaging({
+          list: payload,
+          pageNo: INITIAL_CUSTLABEL_PAGENO,
+          pageSize: INITIAL_CUSTLABEL_PAGESIZE,
+        }),
+      };
+    },
+    // 首页客户客户列表数据分页处理
+    custLabelListPaging(state, action) {
+      const { payload: { pageNo, pageSize } } = action;
+      return {
+        pagingCustLabelData: custLabelListPaging({
+          list: state.custLabelList,
+          pageNo,
+          pageSize,
+        }),
       };
     },
   },

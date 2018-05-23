@@ -148,5 +148,8 @@ export default function customerPool(api) {
     submitApproval: query => api.post('/groovynoauth/fsp/flow/submitApproval', query),
     // 查询持仓产品详情
     queryHoldingProduct: query => api.post('/groovynoauth/fsp/cust/custbriefinfo/queryHoldingProduct', query),
+
+    // 首页查询所有可用客户标签列表
+    queryCustLabelList: query => api.post('/groovynoauth/fsp/flow/queryCustLabelList', query),
   };
 }

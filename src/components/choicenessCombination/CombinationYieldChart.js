@@ -3,7 +3,7 @@
  * @Description: 收益率走势图
  * @Date: 2018-04-25 13:55:06
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-18 09:34:05
+ * @Last Modified time: 2018-05-21 19:12:51
 */
 
 import React, { PureComponent } from 'react';
@@ -37,6 +37,7 @@ export default class CombinationYieldChart extends PureComponent {
     chartHeight: PropTypes.string,
     // 标题
     title: PropTypes.string,
+    isDetail: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -44,6 +45,7 @@ export default class CombinationYieldChart extends PureComponent {
     rankTabActiveKey: '',
     chartHeight: '166px',
     title: '收益率走势',
+    isDetail: false,
   }
 
   constructor(props) {
@@ -60,8 +62,13 @@ export default class CombinationYieldChart extends PureComponent {
     } = nextProps;
     const {
       rankTabActiveKey,
-      combinationItemData,
+      chartData,
+      isDetail,
     } = this.props;
+    // 如果是详情,并且图标数据发生变化
+    if (isDetail && chartData.combinationCode !== newChartData.combinationCode) {
+      this.setActiveKeyByIsAsset();
+    }
     // 如果组合排名tab选中的key发生变化，重置chart里面tab的选中key
     if (newRankTabActiveKey !== rankTabActiveKey) {
       this.setState({
@@ -71,12 +78,18 @@ export default class CombinationYieldChart extends PureComponent {
     const { activeKey } = this.state;
     // 判断一下，如果图表数据有并且activeKey是空的话根据组合类型设置预设值
     if (_.isEmpty(activeKey) && !_.isEmpty(newChartData)) {
-      const isAsset = _.isNull(combinationItemData.weekEarnings);
-      this.setState({
-        // 如果是资产配置类组合默认值‘近一年’，否则‘近三个月’
-        activeKey: isAsset ? chartTabList[1].key : chartTabList[0].key,
-      });
+      this.setActiveKeyByIsAsset();
     }
+  }
+
+  @autobind
+  setActiveKeyByIsAsset() {
+    const { combinationItemData } = this.props;
+    const isAsset = _.isNull(combinationItemData.weekEarnings);
+    this.setState({
+      // 如果是资产配置类组合默认值‘近一年’，否则‘近三个月’
+      activeKey: isAsset ? chartTabList[1].key : chartTabList[0].key,
+    });
   }
 
   @autobind
@@ -95,8 +108,8 @@ export default class CombinationYieldChart extends PureComponent {
     const { chartData, combinationItemData } = this.props;
     const legendData = [chartData.combinationName];
     const isAsset = _.isNull(combinationItemData.weekEarnings);
-    // 如果非资产配置类组合，就多显示一个基准线
-    if (!isAsset) {
+    // 如果非资产配置类组合，并且查询趋势图接口返回的baseName字段不为空，返回就多显示一个基准线
+    if (!isAsset && !_.isEmpty(chartData.baseName)) {
       legendData.push(chartData.baseName);
     }
     return legendData;
@@ -116,8 +129,8 @@ export default class CombinationYieldChart extends PureComponent {
         },
       },
     }];
-    // 如果非资产配置类组合，就多显示一个基准线
-    if (!isAsset) {
+    // 如果非资产配置类组合，并且查询趋势图接口返回的baseName字段不为空，返回就多显示一个基准线
+    if (!isAsset && !_.isEmpty(chartData.baseName)) {
       seriesData.push({
         data: chartData.baseLine,
         type: 'line',
@@ -137,8 +150,8 @@ export default class CombinationYieldChart extends PureComponent {
     const { chartData, combinationItemData } = this.props;
     const combinationNum = (chartData.combinationLine || EMPTY_ARRAY)[params[0].dataIndex] || 0;
     const isAsset = _.isNull(combinationItemData.weekEarnings);
-    // 如果非资产配置类组合，就多现实一个基准数据
-    if (!isAsset) {
+    // 如果非资产配置类组合，并且查询趋势图接口返回的baseName字段不为空，返回就多显示一个基准数据
+    if (!isAsset && !_.isEmpty(chartData.baseName)) {
       const baseNum = (chartData.baseLine || EMPTY_ARRAY)[params[0].dataIndex] || 0;
       return `
         <div>${params[0].axisValueLabel}</div>
@@ -235,6 +248,7 @@ export default class CombinationYieldChart extends PureComponent {
             style={{
               height: chartHeight,
             }}
+            notMerge
           />
         </div>
       </div>

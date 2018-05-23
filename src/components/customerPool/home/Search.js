@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 14:12:23
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-05-23 14:10:22
  * @description 客户池头部搜索组件
  */
 
@@ -39,15 +39,18 @@ export default class Search extends PureComponent {
     saveSearchVal: PropTypes.func,
     location: PropTypes.object.isRequired,
     isPreview: PropTypes.bool,
+    // 打开展示所有标签弹窗
+    showMoreLabelModal: PropTypes.func,
   }
 
   static defaultProps = {
     hotWdsList: EMPTY_LIST,
-    queryHotPossibleWds: () => { },
-    saveSearchVal: () => { },
+    queryHotPossibleWds: _.noop,
+    saveSearchVal: _.noop,
     queryHotWdsData: EMPTY_LIST,
     searchHistoryVal: '',
     isPreview: false,
+    showMoreLabelModal: _.noop,
   }
 
   constructor(props) {
@@ -303,7 +306,12 @@ export default class Search extends PureComponent {
   }
 
   render() {
-    const { hotWdsList = EMPTY_LIST, searchHistoryVal, isPreview } = this.props;
+    const {
+      hotWdsList = EMPTY_LIST,
+      searchHistoryVal,
+      isPreview,
+      showMoreLabelModal,
+    } = this.props;
     const autoCompleteOption = isPreview ? {} :
     {
       dataSource: this.renderDatasource(),
@@ -349,7 +357,10 @@ export default class Search extends PureComponent {
             <span className={styles.s_title}>
               <Icon type="dengpao" />猜你感兴趣：
             </span>
-            <div>{this.renderRecommend(hotWdsList)}</div>
+            <div>
+              {this.renderRecommend(hotWdsList)}
+              <a onClick={() => showMoreLabelModal(true)}>更多 &gt;</a>
+            </div>
           </div>
         </div>
       </div>
