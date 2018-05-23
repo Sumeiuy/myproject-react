@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-23 16:27:31
+ * @Last Modified time: 2018-05-23 16:48:02
  * @description 任务管理首页
  */
 
@@ -1190,6 +1190,7 @@ export default class PerformerView extends PureComponent {
         pagination={paginationOptions}
         queryCustUuid={queryCustUuid}
         fixedTitle={this.renderFixedTitle()}
+        footerBordered={false}
       />
     );
     // TODO 此处需要根据不同的子类型使用不同的Detail组件
