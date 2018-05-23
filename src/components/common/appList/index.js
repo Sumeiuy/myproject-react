@@ -20,11 +20,14 @@ export default class ApplicationList extends PureComponent {
     renderRow: PropTypes.func.isRequired,
     pagination: PropTypes.object,
     onShrink: PropTypes.func,
+    // 是否需要一个fixed的title，不随着列表滚动
+    fixedTitle: PropTypes.node,
   }
 
   static defaultProps = {
     pagination: null,
     onShrink: _.noop,
+    fixedTitle: null,
   };
 
   @autobind
@@ -38,6 +41,7 @@ export default class ApplicationList extends PureComponent {
       renderRow,
       pagination,
       list,
+      fixedTitle,
     } = this.props;
 
     if (!list) {
@@ -45,6 +49,12 @@ export default class ApplicationList extends PureComponent {
     }
     return (
       <div className={styles.pageCommonList}>
+        {
+          fixedTitle &&
+          <div className={styles.fixedTitle}>
+            {fixedTitle}
+          </div>
+        }
         <div className={styles.listScroll}>
           {
             list.map((item, index) => renderRow(item, index))
@@ -53,15 +63,15 @@ export default class ApplicationList extends PureComponent {
         <div className={styles.listFoot}>
           {
             _.isEmpty(pagination) ? null
-            : (
-              <div className={styles.pagination}>
-                <Pagination
-                  {...pagination}
-                  isShortPageList
-                  isHideLastButton
-                />
-              </div>
-            )
+              : (
+                <div className={styles.pagination}>
+                  <Pagination
+                    {...pagination}
+                    isShortPageList
+                    isHideLastButton
+                  />
+                </div>
+              )
           }
           <div className={styles.shrinkIcon} onClick={this.handleShrinkClick}>
             <Icon type="shouqi1" />
