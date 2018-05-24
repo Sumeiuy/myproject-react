@@ -15,6 +15,7 @@ import permission from './permission';
 import regxp from './regexp';
 import time from './time';
 import url from './url';
+import date from './date';
 
 function getIconType(name) {
   const fullName = name.split('.');
@@ -71,4 +72,5 @@ export default {
   time,
   url,
   getIconType,
+  date,
 };
