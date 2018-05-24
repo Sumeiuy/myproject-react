@@ -26,6 +26,9 @@ import {
 const EXECUTOR = 'executor'; // 执行者视图
 const CONTROLLER = 'controller'; // 管理者视图
 
+// 执行者视图和创建者视图左侧列表项需要显示进度条
+const needProgress = [EXECUTOR, CONTROLLER];
+
 // 1代表是自建任务类型,0代表非自建任务,MOT任务
 const TASK_TYPE_SELF = '1';
 const TASK_TYPE_NOT_SELF = '0';
@@ -121,6 +124,7 @@ export default function AppItem(props) {
               [styles.title]: true,
               [styles.active]: active,
             })}
+            title={data.missionName || '无'}
           >{data.missionName || '无'}</span>
         </div>
         <div
@@ -168,6 +172,22 @@ export default function AppItem(props) {
             [styles.active]: active,
           })}
         >
+          {
+            _.includes(needProgress, data.missionViewType) ?
+              <div
+                className={
+                  cx({
+                    [styles.progress]: true,
+                    [styles.active]: active,
+                  })
+                }
+              >
+                <span>进度：</span>
+                <span className={styles.done}>{data.doneFlowNum}</span>
+                <span>/</span>
+                <span>{data.flowNum}</span>
+              </div> : null
+          }
           <Tag type={tagStatusType} clsName={styles.tag} text={data.statusName} />
         </div>
       </div>
