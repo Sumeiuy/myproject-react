@@ -97,6 +97,16 @@
     :global {
       .ant-table-fixed-left .ant-table-fixed {
         border-right: none;
+        tbody > tr > td {
+          .column {
+            max-width: 90px;
+          }
+        }
+      }
+      .ant-table-scroll .ant-table-fixed {
+        tbody > tr > td:first-child .column {
+          max-width: 90px;
+        }
       }
       table > thead > tr > th, tbody > tr > td {
         padding: 11px;
