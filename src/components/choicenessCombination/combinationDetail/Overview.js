@@ -20,6 +20,7 @@ const EMPTY_TEXT = '无';
 export default class Overview extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
+    titleName: PropTypes.string.isRequired,
   }
 
 
@@ -43,13 +44,13 @@ export default class Overview extends PureComponent {
     const {
       data,
       data: {
-        composeName,
         adjustNumber,
         earnNumber,
         stockName,
         withdraw,
         weekEarnings,
       },
+      titleName,
     } = this.props;
     const showWeekMonthYear = [...config.weekMonthYear];
     if (!_.isEmpty(data) && !_.isNumber(weekEarnings)) {
@@ -57,7 +58,7 @@ export default class Overview extends PureComponent {
     }
     return (
       <div className={styles.overview}>
-        <h2 className={styles.title}>{composeName || EMPTY_TEXT}</h2>
+        <h2 className={styles.title}>{ titleName || EMPTY_TEXT}</h2>
         <div className={styles.left}>
           <div className={styles.leftInfo}>
             <h3>
