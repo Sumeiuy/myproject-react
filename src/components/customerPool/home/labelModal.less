@@ -1,0 +1,87 @@
+.modal {
+  :global {
+    .ant-modal {
+      position: absolute;
+      width: 1060px !important;
+      height: calc(~"100% - 100px") !important;
+      padding: 0;
+      box-sizing: border-box;
+      overflow: hidden;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      .ant-modal-content {
+        width: 100%;
+        height: 100%;
+      }
+      .ant-modal-header, .ant-modal-footer {
+        height: 56px;
+        background: #f7f7f7;
+      }
+      .ant-modal-footer {
+        .ant-btn {
+          width: 80px;
+          height: 30px;
+          padding: 0;
+          vertical-align: text-bottom;
+        }
+      }
+      .ant-modal-title {
+        color: #333;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .ant-modal-body {
+        width: 100%;
+        height: calc(~"100% - 112px");
+        padding: 0 30px;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+    }
+    .ant-tabs-nav-container {
+      margin-top: 10px;
+      .ant-tabs-nav {
+        margin-top: 1px;
+        .ant-tabs-tab {
+          border-bottom: 1px solid #fafafa;
+          color: #4a4a4a;
+          &.ant-tabs-tab-active {
+            border-bottom: 1px solid #fff;
+            color: #4a4a4a;
+          }
+        }
+      }
+    }
+  }
+  .listBox {
+    height: 380px;
+    border: 1px solid #ddd;
+    .itemBox {
+      float: left;
+      box-sizing: border-box;
+      width: 50%;
+      height: 38px;
+      border-bottom: 1px solid #ddd;
+      line-height: 38px;
+      font-size: 14px;
+      padding-left: 20px;
+      &:nth-child(1) {
+        margin-top: -1px;
+      }
+      &:nth-child(2) {
+        margin-top: -1px;
+      }
+      &:nth-child(odd) {
+        border-right: 1px solid #ddd;
+      }
+      a {
+        color: #4a4a4a;
+        &:hover {
+          color: #10aeff;
+        }
+      }
+    }
+  }
+}

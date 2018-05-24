@@ -1,8 +1,8 @@
 /**
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-10 22:04:29
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-05-23 16:08:19
  */
 
 import React, { PureComponent } from 'react';
@@ -32,6 +32,7 @@ import {
   PerformanceIndicators,
   TabsExtra,
   Search,
+  LabelModal,
 } from '../../components/customerPool/home';
 
 const TabPane = Tabs.TabPane;
@@ -50,6 +51,8 @@ const effects = {
   switchTab: 'customerPoolHome/switchTab',
   homaPageNews: 'morningBoradcast/homaPageNews', // 晨报列表
   queryAudioFile: 'morningBoradcast/queryAudioFile',
+  custLabelListPaging: 'customerPool/custLabelListPaging', // 首页可用客户标签列表弹窗数据分页处理
+  queryCustLabelList: 'customerPool/queryCustLabelList', // 获取首页可用客户标签列表数据
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -73,6 +76,7 @@ const mapStateToProps = state => ({
   custCount: state.customerPool.custCount, // （经营指标）新增客户指标
   initBoradcastList: state.morningBoradcast.initBoradcastList,
   initBoradcastFile: state.morningBoradcast.initBoradcastFile,
+  pagingCustLabelData: state.customerPool.pagingCustLabelData, // 前端处理过的带分页的所有可用客户标签数据
 });
 
 const mapDispatchToProps = {
@@ -89,6 +93,8 @@ const mapDispatchToProps = {
   switchTab: fetchDataFunction(false, effects.switchTab), // 切换，上报日志
   homaPageNews: fetchDataFunction(false, effects.homaPageNews),
   queryAudioFile: fetchDataFunction(false, effects.queryAudioFile),
+  custLabelListPaging: fetchDataFunction(false, effects.custLabelListPaging),
+  queryCustLabelList: fetchDataFunction(false, effects.queryCustLabelList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -128,6 +134,10 @@ export default class Home extends PureComponent {
     initBoradcastFile: PropTypes.object.isRequired,
     homaPageNews: PropTypes.func.isRequired,
     queryAudioFile: PropTypes.func.isRequired,
+    // 首页可用客户标签
+    queryCustLabelList: PropTypes.func.isRequired,
+    custLabelListPaging: PropTypes.func.isRequired,
+    pagingCustLabelData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -152,6 +162,8 @@ export default class Home extends PureComponent {
       cycleSelect: '',
       createCustRange: [],
       expandAll: false,
+      // 是否显示查看更多标签弹窗
+      showMoreLabelModal: false,
     };
     // 登录用户orgId
     this.orgId = emp.getOrgId();
@@ -416,6 +428,14 @@ export default class Home extends PureComponent {
     switchTab({ param });
   }
 
+  // 打开/关闭 更多标签弹窗
+  @autobind
+  handleToggleMoreLabelModal(status) {
+    this.setState({
+      showMoreLabelModal: status,
+    });
+  }
+
   @autobind
   renderTabsExtra() {
     const {
@@ -477,10 +497,24 @@ export default class Home extends PureComponent {
       initBoradcastList,
       initBoradcastFile,
       queryAudioFile,
+      queryCustLabelList,
+      custLabelListPaging,
+      pagingCustLabelData,
     } = this.props;
+    const {
+      showMoreLabelModal,
+    } = this.state;
     // 是否能看投顾绩效的标记
     const { tgQyFlag = false } = empInfo.empInfo || {};
 
+    const labelModalProps = {
+      location,
+      queryCustLabelList,
+      pageChange: custLabelListPaging,
+      data: pagingCustLabelData,
+      show: showMoreLabelModal,
+      toggleModal: this.handleToggleMoreLabelModal,
+    };
     return (
       <div className={styles.customerPoolWrap}>
         <Header push={push} />
@@ -495,6 +529,7 @@ export default class Home extends PureComponent {
               searchHistoryVal={searchHistoryVal}
               saveSearchVal={this.handleSaveSearchVal}
               location={location}
+              showMoreLabelModal={this.handleToggleMoreLabelModal}
             />
             <ToBeDone
               location={location}
@@ -550,6 +585,7 @@ export default class Home extends PureComponent {
             />
           </div>
         </div>
+        <LabelModal {...labelModalProps} />
       </div>
     );
   }
