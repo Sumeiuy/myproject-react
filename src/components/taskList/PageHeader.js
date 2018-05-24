@@ -13,7 +13,6 @@ import { Input } from 'antd';
 import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
-import Button from '../common/Button';
 import { dom, check } from '../../helper';
 import { fspContainer } from '../../config';
 import { getViewInfo } from '../../routes/taskList/helper';
@@ -51,16 +50,12 @@ export default class Pageheader extends PureComponent {
     location: PropTypes.object.isRequired,
     // 页面
     page: PropTypes.string,
-    // 新建
-    creatSeibelModal: PropTypes.func.isRequired,
     // 页面类型
     pageType: PropTypes.string.isRequired,
     // 创建者列表
     drafterList: PropTypes.array.isRequired,
     // 获取创建者列表
     getDrafterList: PropTypes.func.isRequired,
-    // 视图选择
-    chooseMissionViewOptions: PropTypes.array,
     // dict字典
     dict: PropTypes.object,
     // 头部筛选后的回调
@@ -77,7 +72,6 @@ export default class Pageheader extends PureComponent {
     page: '',
     empInfo: {},
     typeOptions: [],
-    chooseMissionViewOptions: [],
     dict: {},
     filterCallback: () => { },
     filterControl: EXECUTOR,
@@ -290,10 +284,10 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           createTimeStart,
-          createTimeEnd,
-          endTimeStart,
-          endTimeEnd,
-          missionViewType,
+        createTimeEnd,
+        endTimeStart,
+        endTimeEnd,
+        missionViewType,
         },
       },
     } = this.props;
@@ -473,11 +467,6 @@ export default class Pageheader extends PureComponent {
       keyWord: value,
     });
   }
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '打开自建任务' } })
-  handleCreateTask() {
-    this.props.creatSeibelModal();
-  }
 
   // 判断当用户选择了第一次日期之后，需要disabled掉的日期
   // 本需求在选择的两个日期的区间范围在60天之内
@@ -545,11 +534,11 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-          endTimeStart = '',
-          endTimeEnd = '',
-          createTimeEnd = '',
-          createTimeStart = '',
-          status,
+      endTimeStart = '',
+      endTimeEnd = '',
+      createTimeEnd = '',
+      createTimeStart = '',
+      status,
         },
       },
     } = this.props;
@@ -636,16 +625,15 @@ export default class Pageheader extends PureComponent {
       getDrafterList,
       drafterList,
       page,
-      chooseMissionViewOptions,
       dict,
       location: {
         query: {
           missionViewType,
-          type,
-          creatorId,
-          creatorName,
-          custId = '',
-          custName = '',
+        type,
+        creatorId,
+        creatorName,
+        custId = '',
+        custName = '',
         },
       },
       customerList,
@@ -681,15 +669,6 @@ export default class Pageheader extends PureComponent {
       missionViewType : getViewInfo().currentViewType;
     return (
       <div className={`${styles.pageCommonHeader} ${styles.HeaderOverflow}`} ref={this.pageCommonHeaderRef}>
-        <div className={`${styles.missionViewType} ${styles.view}`}>
-          <Select
-            name="missionViewType"
-            value={missionViewTypeValue}
-            data={chooseMissionViewOptions}
-            onChange={this.handleSelctView}
-          />
-        </div>
-
         <div className={styles.headerRight}>
           {
             <div
@@ -700,14 +679,6 @@ export default class Pageheader extends PureComponent {
               <span>{showMore ? '更多' : '收起'}</span>
             </div>
           }
-          <Button
-            type="primary"
-            icon="plus"
-            size="small"
-            onClick={this.handleCreateTask}
-          >
-            新建
-          </Button>
         </div>
 
         <div className={styles.filterBox} ref={this.filterBoxRef}>

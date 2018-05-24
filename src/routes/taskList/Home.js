@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-23 16:48:02
+ * @Last Modified time: 2018-05-24 14:15:52
  * @description 任务管理首页
  */
 
@@ -18,6 +18,7 @@ import ManagerViewDetail from '../../components/taskList/managerView/ManagerView
 import CreatorViewDetail from '../../components/taskList/creatorView/RightPanel';
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
+import ViewMenu from '../../components/taskList/ViewMenu';
 import FixedTitle from '../../components/taskList/FixedTitle';
 import pageConfig from '../../components/taskList/pageConfig';
 import { getCurrentScopeByOrgId } from '../../components/taskList/managerView/helper';
@@ -26,6 +27,8 @@ import { emp, permission } from '../../helper';
 import logable from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
+
+import styles from './home.less';
 
 import {
   EXECUTOR,
@@ -1161,17 +1164,23 @@ export default class PerformerView extends PureComponent {
     const isEmpty = _.isEmpty(resultData);
 
     const topPanel = (
-      <ConnectedPageHeader
-        location={location}
-        replace={replace}
-        dict={dict}
-        page={currentView}
-        pageType={taskList.pageType}
-        chooseMissionViewOptions={this.missionView}
-        creatSeibelModal={this.handleCreateBtnClick}
-        filterControl={currentView}
-        filterCallback={this.handleHeaderFilter}
-      />
+      <div>
+        <ViewMenu
+          chooseMissionViewOptions={this.missionView}
+          onViewChange={this.handleHeaderFilter}
+          location={location}
+          creatSeibelModal={this.handleCreateBtnClick}
+        />
+        <ConnectedPageHeader
+          location={location}
+          replace={replace}
+          dict={dict}
+          page={currentView}
+          pageType={taskList.pageType}
+          filterControl={currentView}
+          filterCallback={this.handleHeaderFilter}
+        />
+      </div>
     );
 
     // 生成页码器，此页码器配置项与Antd的一致
@@ -1206,6 +1215,7 @@ export default class PerformerView extends PureComponent {
           leftListClassName="premissionList"
           leftWidth={LEFT_PANEL_WIDTH}
           ref={ref => (this.splitPanelElem = ref)}
+          headerStyle={styles.commonHeader}
         />
       </div>
     );

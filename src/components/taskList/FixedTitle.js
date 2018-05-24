@@ -1,3 +1,11 @@
+/**
+ * @Author: xuxiaoqin
+ * @Date: 2018-04-13 11:57:34
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-24 14:49:29
+ * @description 每一个视图列表的头部区域，不随着列表滚动
+ */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
