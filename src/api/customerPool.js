@@ -150,6 +150,6 @@ export default function customerPool(api) {
     queryHoldingProduct: query => api.post('/groovynoauth/fsp/cust/custbriefinfo/queryHoldingProduct', query),
 
     // 首页查询所有可用客户标签列表
-    queryCustLabelList: query => api.post('/groovynoauth/fsp/flow/queryCustLabelList', query),
+    queryCustLabelList: query => api.post('/groovynoauth/fsp/cust/custlabel/queryAllLabelsInfoByType', query),
   };
 }

@@ -508,6 +508,7 @@ export default class Home extends PureComponent {
     const { tgQyFlag = false } = empInfo.empInfo || {};
 
     const labelModalProps = {
+      location,
       queryCustLabelList,
       pageChange: custLabelListPaging,
       data: pagingCustLabelData,

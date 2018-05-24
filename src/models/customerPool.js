@@ -29,8 +29,8 @@ function custLabelListPaging({
   pageNo = INITIAL_CUSTLABEL_PAGENO,
   pageSize = INITIAL_CUSTLABEL_PAGESIZE,
 }) {
-  const start = pageNo === 1 ? 0 : ((pageNo - 1) * pageSize) + 1;
-  const end = pageNo === 1 ? pageSize : (pageNo * pageSize) + 1;
+  const start = pageNo === 1 ? 0 : (pageNo - 1) * pageSize;
+  const end = pageNo === 1 ? pageSize : pageNo * pageSize;
   return {
     list: list.slice(start, end),
     page: {
@@ -1521,6 +1521,7 @@ export default {
     custLabelListPaging(state, action) {
       const { payload: { pageNo, pageSize } } = action;
       return {
+        ...state,
         pagingCustLabelData: custLabelListPaging({
           list: state.custLabelList,
           pageNo,
