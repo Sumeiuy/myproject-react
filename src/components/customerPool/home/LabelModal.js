@@ -9,7 +9,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Modal, Button, Tabs, Popover } from 'antd';
+import { Modal, Tabs, Popover } from 'antd';
 // import _ from 'lodash';
 import logable from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
@@ -147,6 +147,13 @@ export default class LabelModals extends PureComponent {
     this.handleOpenTab(options);
   }
 
+  @autobind
+  closeModal() {
+    const { toggleModal } = this.props;
+    this.handleTabChange(tabList[0].key);
+    toggleModal(false);
+  }
+
   // 设置 popover
   @autobind
   renderPopover(item) {
@@ -164,16 +171,9 @@ export default class LabelModals extends PureComponent {
   render() {
     const {
       show,
-      toggleModal,
       data,
     } = this.props;
     const { page = EMPTY_OBJECT } = data;
-    const footerContent = (<Button
-      key="close"
-      onClick={() => toggleModal(false)}
-    >
-      关闭
-    </Button>);
     const tabsProps = {
       type: 'card',
       onChange: this.handleTabChange,
@@ -189,9 +189,10 @@ export default class LabelModals extends PureComponent {
       <Modal
         title="所有可用客户标签"
         visible={show}
-        footer={footerContent}
+        footer={null}
         wrapClassName={styles.modal}
-        onCancel={() => toggleModal(false)}
+        onCancel={this.closeModal}
+        maskClosable={false}
       >
         <div>
           <Tabs {...tabsProps}>
