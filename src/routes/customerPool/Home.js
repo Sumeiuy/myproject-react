@@ -94,7 +94,7 @@ const mapDispatchToProps = {
   homaPageNews: fetchDataFunction(false, effects.homaPageNews),
   queryAudioFile: fetchDataFunction(false, effects.queryAudioFile),
   custLabelListPaging: fetchDataFunction(false, effects.custLabelListPaging),
-  queryCustLabelList: fetchDataFunction(false, effects.queryCustLabelList),
+  queryCustLabelList: fetchDataFunction(true, effects.queryCustLabelList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
