@@ -14,19 +14,34 @@ import {
 const EMPTY_OBJ = {};
 const EMPTY_LIST = [];
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 6;
 const PAGE_NO = 1;
 
 // 执行者视图头部过滤客户
 const SEARCH_CUSTOMER_FOR_PAGE_HEADER = 'pageHeader';
 // 执行者视图右侧过滤客户
 const SEARCH_CUSTOMER_FOR_RIGHT_DETAIL = 'rightDetail';
+// 资产降序排列
+const ASSET_DESC = 'desc';
+// 服务实施默认的状态码
+const defaultStateCode = '10';
+// 默认的服务实施的参数
+const defaultParameter = {
+  state: defaultStateCode,
+  rowId: '',
+  assetSort: ASSET_DESC,
+  activeIndex: '1',
+  currentCustomer: {},
+  preciseInputValue: '1',
+};
+// 执行者视图详情中tab的默认项，默认服务实施
+const defaultPerformerViewCurrentTab = 'serviceImplementation';
 
 export default {
   namespace: 'performerView',
   state: {
     // 记录详情中的参数
-    parameter: {},
+    parameter: defaultParameter,
     // 任务详情中基本信息
     taskDetailBasicInfo: EMPTY_OBJ,
     // 任务详情中目标客户列表信息
@@ -63,6 +78,8 @@ export default {
     custFeedbackList: [],
     // 涨乐财富通服务方式下的审批人列表
     zhangleApprovalList: [],
+    // 执行者视图当前的选中的tab的key值, 默认服务实施
+    performerViewCurrentTab: defaultPerformerViewCurrentTab,
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -75,7 +92,7 @@ export default {
     clearParameter(state) {
       return {
         ...state,
-        parameter: {},
+        parameter: defaultParameter,
       };
     },
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -253,6 +270,13 @@ export default {
         currentMotServiceRecord: {},
       };
     },
+    // 执行者视图中tab的切换
+    changePerformerViewTab(state, action) {
+      return {
+        ...state,
+        performerViewCurrentTab: action.payload,
+      };
+    },
   },
   effects: {
     // 执行者视图、管理者视图、创建者视图公共列表
@@ -289,6 +313,11 @@ export default {
         // 当客户列表选中的客户流水变化时，清除打电话显示服务记录的标志
         yield put({
           type: 'app/resetServiceRecordInfo',
+        });
+        // 当前任务发生变化时，详情中的tab默认选中服务实施
+        yield put({
+          type: 'changePerformerViewTab',
+          payload: defaultPerformerViewCurrentTab,
         });
       }
       const { resultData } = yield call(api.queryTaskDetailBasicInfo, otherPayload);
