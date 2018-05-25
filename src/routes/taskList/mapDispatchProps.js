@@ -83,6 +83,8 @@ export default ({ routerRedux, effect }) => ({
     { loading: false }),
   // 添加通话记录关联服务记录
   addCallRecord: effect(effects.addCallRecord, { loading: false }),
+  // 执行者视图详情中tab切换
+  changePerformerViewTab: effect(effects.changePerformerViewTab, { loading: false }),
   // 查询服务结果记录
   queryExecutorFlowStatus: effect(effects.queryExecutorFlowStatus),
   // 查询服务结果反馈

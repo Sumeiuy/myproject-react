@@ -1,0 +1,74 @@
+.listSwiper {
+  position: relative;
+  .swiperContainer {
+    margin: 0 15px;
+    padding: 20px 0 16px;
+  }
+  .listItem {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    .contentBox {
+      width: 50px;
+      cursor: pointer;
+      .avatorImage {
+        width: 20px;
+        height: 20px;
+      }
+      .name {
+        font-size: 14px;
+      }
+      .status {
+        font-size: 12px;
+      }
+      p {
+        margin: 0;
+        white-space: nowrap;
+      }
+    }
+    :global {
+      .iconfont {
+        display: inline-block;
+        font-size: 20px;
+        color: #bcccd6;
+      }
+    }
+    &.active {
+      :global {
+        .iconfont {
+          transform: scale(1.5, 1.5);
+          font-size: 20px;
+          color: #4786f7;
+        }
+      }
+    }
+  }
+  .prevButton, .nextButton {
+    width: 12px;
+    height: 14px;
+    position: absolute;
+    top: 50%;
+    bottom: 0;
+    margin-top: -6px;
+    cursor: pointer;
+    &.disable {
+      color: #ddd;
+      cursor: auto;
+    }
+  }
+  .prevButton {
+    left: 0;
+  }
+  .nextButton {
+    right: 0;
+  }
+  :global {
+    .iconfont {
+      &.icon-zuo, &.icon-you {
+        font-size: 12px;
+      }
+    }
+  }
+}
