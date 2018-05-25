@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-22 17:39:02
+ * @Last Modified time: 2018-05-23 20:40:38
  */
 
 import React, { PureComponent } from 'react';
@@ -138,8 +138,8 @@ export default class ApplyDetail extends PureComponent {
     let columnWidthTotal;
     if (columnSize === 7) {
       // 7列全部都有
-      columnWidth = ['130px', '100px', '200px', '130px', '160px', '200px'];
-      columnWidthTotal = 1080;
+      columnWidth = ['110px', '100px', '180px', '130px', '170px', '190px', '190px'];
+      columnWidthTotal = 1000;
     } else if (columnSize === 3) {
       // 开始的时候没有电话号码，手机串号，SIM卡号三列
       columnWidth = ['180px', '170px', '250px'];

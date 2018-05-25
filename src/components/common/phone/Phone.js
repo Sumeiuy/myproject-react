@@ -2,8 +2,8 @@
  * @Description: PC电话拨号页面
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 13:34:57
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-24 11:02:01
  */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,6 @@ import bowser from 'bowser';
 import _ from 'lodash';
 import qs from 'query-string';
 import classnames from 'classnames';
-
 import styles from './phone.less';
 
 const URL = bowser.msie
@@ -90,7 +89,7 @@ export default class Phone extends PureComponent {
         '.callable',
         (e) => {
           if (this.canCall()) {
-            const number = window.$(e.target).text();
+            const number = window.$(e.target).text() || window.$(e.target).val();
             this.prepareCall(number);
           }
         },
