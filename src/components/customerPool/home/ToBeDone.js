@@ -1,8 +1,8 @@
 /**
  * @Author: xiazhiqiang
  * @Date: 2018-05-21 13:33:05
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 13:33:50
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-25 13:40:45
  */
 
 import React, { PureComponent } from 'react';
@@ -12,7 +12,7 @@ import _ from 'lodash';
 import { getFilter } from '../helper';
 
 import styles from './toBeDone.less';
-import { openRctTab, openFspTab } from '../../../utils';
+import { openRctTab } from '../../../utils';
 import logable from '../../../decorators/logable';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -144,18 +144,19 @@ export default class PerformanceIndicators extends PureComponent {
   handleMessageClick() {
     // 点击事件
     const { push } = this.props;
-    const notificationUrl = '/messgeCenter';
-    const notificationParam = {
-      forceRefresh: false,
-      id: 'MESSAGE_CENTER',
-      title: '消息中心',
-    };
-    openFspTab({
-      routerAction: push,
-      url: notificationUrl,
-      pathname: '/fsp/messageCenter',
-      param: notificationParam,
-    });
+    // const notificationUrl = '/messgeCenter';
+    // const notificationParam = {
+    //   forceRefresh: false,
+    //   id: 'MESSAGE_CENTER',
+    //   title: '消息中心',
+    // };
+    // openFspTab({
+    //   routerAction: push,
+    //   url: notificationUrl,
+    //   pathname: '/fsp/messageCenter',
+    //   param: notificationParam,
+    // });
+    push('/messageRemind');
   }
 
   @autobind
