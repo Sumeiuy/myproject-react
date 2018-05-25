@@ -6,9 +6,10 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { TreeFilter } from 'ht-react-filter';
+import 'ht-react-filter/lib/css/index.css';
 import { autobind } from 'core-decorators';
 
-import { TreeFilter } from '../../common/htFilter';
 import mouseWheel from '../../common/mouseWheel';
 import { constants } from '../../../config';
 
