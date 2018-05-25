@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-24 10:10:45
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-25 13:54:03
  * @description 任务管理首页
  */
 
@@ -18,6 +18,8 @@ import ManagerViewDetail from '../../components/taskList/managerView/ManagerView
 import CreatorViewDetail from '../../components/taskList/creatorView/RightPanel';
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
+import ViewMenu from '../../components/taskList/ViewMenu';
+import FixedTitle from '../../components/taskList/FixedTitle';
 import pageConfig from '../../components/taskList/pageConfig';
 import { getCurrentScopeByOrgId } from '../../components/taskList/managerView/helper';
 import { openRctTab } from '../../utils';
@@ -25,6 +27,8 @@ import { emp, permission } from '../../helper';
 import logable from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
+
+import styles from './home.less';
 
 import {
   EXECUTOR,
@@ -38,6 +42,13 @@ import {
   STATE_EXECUTE_CODE,
   STATE_FINISHED_CODE,
   STATE_ALL_CODE,
+  CREATE_TIME,
+  END_TIME,
+  CREATE_TIME_KEY,
+  END_TIME_KEY,
+  // 三个视图左侧任务列表的请求入参，在config里面配置，后续如果需要新增，或者删除某个param，
+  // 请在config里面配置QUERY_PARAMS
+  QUERY_PARAMS,
 } from './config';
 
 // 空函数
@@ -69,6 +80,9 @@ const feedbackListOfNone = [{
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+
+// 三个视图的排序默认都是降序排序
+const DEFAULT_SORT_TYPE = 'desc';
 
 @withRouter
 export default class PerformerView extends PureComponent {
@@ -708,7 +722,7 @@ export default class PerformerView extends PureComponent {
   queryAppList(query) {
     const { getTaskList } = this.props;
     const { missionViewType, pageNum = 1, pageSize = 20 } = query;
-    const params = this.constructViewPostBody(query, pageNum, pageSize);
+    const params = this.getQueryParams(query, pageNum, pageSize);
 
     // 默认筛选条件
     getTaskList({ ...params }).then(() => {
@@ -733,23 +747,30 @@ export default class PerformerView extends PureComponent {
    * @param {*} newPageSize 当前分页条目数
    */
   @autobind
-  constructViewPostBody(query, newPageNum, newPageSize) {
-    const { missionViewType, status, creatorId } = query;
+  getQueryParams(query, newPageNum, newPageSize) {
+    const { missionViewType, status, creatorId, sortParam } = query;
+    // 从query上筛选出需要的入参
+    const params = _.pick(query, QUERY_PARAMS);
     let finalPostData = {
       pageNum: _.parseInt(newPageNum, 10),
       pageSize: _.parseInt(newPageSize, 10),
     };
-    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum', 'custName', 'creatorName']);
-    finalPostData = _.merge(
-      finalPostData,
-      omitData,
+    finalPostData = {
+      ...params,
+      ...finalPostData,
       // { orgId: 'ZZ001041' },
-      { orgId: emp.getOrgId() },
+      orgId: emp.getOrgId(),
       // 传过来的名字叫creatorId，传给后台需要改成creator
-      { creator: creatorId },
-    );
+      creator: creatorId,
+    };
+
     // 获取当前的视图类型
     const currentViewType = getViewInfo(missionViewType).currentViewType;
+    // 入参中，添加排序关键字
+    finalPostData = {
+      ...finalPostData,
+      ...this.addSortParam(currentViewType, sortParam),
+    };
     // 执行者视图中，状态默认选中‘执行中’, status传50
     // url中status为‘all’时传空字符串或者不传，其余传对应的code码
     if (this.isExecutorView(currentViewType)) {
@@ -924,6 +945,65 @@ export default class PerformerView extends PureComponent {
     }
   }
 
+  /**
+   * 获取sortKey，createTimeSort或者endTimeSort
+   * 获取sortContent，创建时间或者结束时间
+   */
+  @autobind
+  getSortConfig() {
+    const { location: { query: { missionViewType } } } = this.props;
+    let sortKey = CREATE_TIME_KEY;
+    let sortContent = CREATE_TIME;
+    if (missionViewType === EXECUTOR || missionViewType === CONTROLLER) {
+      sortKey = END_TIME_KEY;
+      sortContent = END_TIME;
+    }
+    return {
+      sortKey,
+      sortContent,
+    };
+  }
+
+  /**
+   * 请求入参中添加排序
+   */
+  @autobind
+  addSortParam(currentViewType, sortParam) {
+    let param = {};
+    // 如果query中没有sortParam，那么取默认的
+    if (_.isEmpty(sortParam)) {
+      // 创建者视图，用createTimeSort,desc
+      if (currentViewType === INITIATOR) {
+        param = {
+          [CREATE_TIME_KEY]: DEFAULT_SORT_TYPE,
+        };
+      } else if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
+        // 执行者视图和管理者视图用endTimeSort,desc
+        param = {
+          [END_TIME_KEY]: DEFAULT_SORT_TYPE,
+        };
+      }
+    } else {
+      param = sortParam;
+    }
+
+    return param;
+  }
+
+  /**
+   * 排序，请求数据
+   */
+  @autobind
+  handleSortChange({ sortKey, sortType }) {
+    const { location: { query } } = this.props;
+    this.queryAppList({
+      ...query,
+      sortParam: {
+        [sortKey]: sortType,
+      },
+    });
+  }
+
   // 切换页码
   @autobind
   handlePageNumberChange(nextPage) {
@@ -1064,6 +1144,24 @@ export default class PerformerView extends PureComponent {
     );
   }
 
+  /**
+   * 渲染固定的列
+   */
+  @autobind
+  renderFixedTitle() {
+    const { sortKey, sortContent } = this.getSortConfig();
+    const { location: { query: { missionViewType } } } = this.props;
+    return (
+      <FixedTitle
+        sortContent={sortContent}
+        sortDirection={DEFAULT_SORT_TYPE}
+        onSortChange={this.handleSortChange}
+        sortKey={sortKey}
+        viewType={getViewInfo(missionViewType).currentViewType}
+      />
+    );
+  }
+
   render() {
     const { location, replace, list, dict, queryCustUuid } = this.props;
 
@@ -1075,17 +1173,23 @@ export default class PerformerView extends PureComponent {
     const isEmpty = _.isEmpty(resultData);
 
     const topPanel = (
-      <ConnectedPageHeader
-        location={location}
-        replace={replace}
-        dict={dict}
-        page={currentView}
-        pageType={taskList.pageType}
-        chooseMissionViewOptions={this.missionView}
-        creatSeibelModal={this.handleCreateBtnClick}
-        filterControl={currentView}
-        filterCallback={this.handleHeaderFilter}
-      />
+      <div>
+        <ViewMenu
+          chooseMissionViewOptions={this.missionView}
+          onViewChange={this.handleHeaderFilter}
+          location={location}
+          onLaunchTask={this.handleCreateBtnClick}
+        />
+        <ConnectedPageHeader
+          location={location}
+          replace={replace}
+          dict={dict}
+          page={currentView}
+          pageType={taskList.pageType}
+          filterControl={currentView}
+          filterCallback={this.handleHeaderFilter}
+        />
+      </div>
     );
 
     // 生成页码器，此页码器配置项与Antd的一致
@@ -1103,6 +1207,8 @@ export default class PerformerView extends PureComponent {
         renderRow={this.renderListRow}
         pagination={paginationOptions}
         queryCustUuid={queryCustUuid}
+        fixedTitle={this.renderFixedTitle()}
+        footerBordered={false}
       />
     );
     // TODO 此处需要根据不同的子类型使用不同的Detail组件
@@ -1118,6 +1224,7 @@ export default class PerformerView extends PureComponent {
           leftListClassName="premissionList"
           leftWidth={LEFT_PANEL_WIDTH}
           ref={ref => (this.splitPanelElem = ref)}
+          headerStyle={styles.commonHeader}
         />
       </div>
     );

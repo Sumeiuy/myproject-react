@@ -3,11 +3,14 @@
   height: 32px;
   line-height: 32px;
   overflow: hidden;
-  // 为了干掉父级元素的paddingLeft的17px
-  margin-left: -17px;
   &.HeaderOverflow {
-    height: auto;
+    // height: auto;
     overflow: visible;
+    height: 49px;
+    padding-top: 15px;
+    padding-bottom: 14px;
+    display: flex;
+    align-items: center;
   }
   .missionViewType {
     float: left;
@@ -17,7 +20,7 @@
   }
   .headerRight {
     float: right;
-    width: 138px;
+    // width: 138px;
     height: 32px;
     line-height: 32px;
     .filterMore {
@@ -39,7 +42,7 @@
     }
   }
   .filterBox {
-    margin: 0 145px 0 120px;
+    margin: 0 145px 0 20px;
     line-height: 32px;
     position: relative;
     &:after {
