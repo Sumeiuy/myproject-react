@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-15 10:56:34
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-24 14:25:24
  * @description 分割组件
  * 此组件中
  * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
@@ -37,6 +37,8 @@ export default class CutScreen extends PureComponent {
     // 在头部筛选区域的上方在某些页面上面还有额外的内容，如业务手机申请页面
     // splitPanel计算高度的时候需要减去的额外的高度
     extraHeight: PropTypes.number,
+    // 自定义header样式，覆盖公用的header样式
+    headerStyle: PropTypes.string,
   }
 
   static defaultProps = {
@@ -44,6 +46,7 @@ export default class CutScreen extends PureComponent {
     rightPanel: null,
     leftWidth: 520,
     extraHeight: 0,
+    headerStyle: null,
   }
 
   constructor(props) {
@@ -254,6 +257,7 @@ export default class CutScreen extends PureComponent {
       leftPanel,
       rightPanel,
       isEmpty,
+      headerStyle,
     } = this.props;
     const { isFold } = this.state;
     const noDataClass = classnames({
@@ -276,10 +280,14 @@ export default class CutScreen extends PureComponent {
       [styles.stretchGrow]: true,
       [styles.hideStretch]: !isFold,
     });
+    const headerCls = classnames({
+      [headerStyle]: headerStyle,
+      [styles.header]: true,
+    });
 
     return (
       <div className={styles.splitWrap} ref={this.splitRef}>
-        <div className={styles.header} ref={this.splitTopRef}>
+        <div className={headerCls} ref={this.splitTopRef}>
           {topPanel}
         </div>
         <div className={noDataClass}>

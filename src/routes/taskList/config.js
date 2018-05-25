@@ -20,6 +20,12 @@ const STATE_COMPLETED_CODE = '80'; // 已完成编号
 
 const STATE_COMPLETED_NAME = '已完成'; // 已完成显示文字
 
+const CREATE_TIME = '创建时间'; // 创建时间，创建者视图需要这个字段，排序展示
+const CREATE_TIME_KEY = 'createTimeSort'; // 传给后台
+const END_TIME = '结束时间'; // 结束时间，执行者视图和管理者视图需要这个字段，排序展示
+const END_TIME_KEY = 'endTimeSort'; // 传给后台
+
+
 // 管理者视图
 const STATUS_MANAGER_VIEW = [
   STATE_EXECUTE_CODE,
@@ -60,6 +66,40 @@ const currentDate = moment();
 const beforeCurrentDate60Days = moment(currentDate).subtract(59, 'days');
 const afterCurrentDate60Days = moment(currentDate).add(59, 'days');
 
+// 请求左侧任务列表需要的入参，可能是动态入参的，但是所有需要的入参都在这里配置
+const QUERY_PARAMS = [
+  // 选择任务视图
+  'missionViewType',
+  // 登录人工号
+  'empId',
+  // 机构id
+  'orgId',
+  // 任务创建者
+  'creator',
+  // 类型
+  'type',
+  // 状态
+  'status',
+  // 创建时间开始点
+  'createTimeStart',
+  // 创建时间结束点
+  'createTimeEnd',
+  // 结束时间开始点
+  'endTimeStart',
+  // 结束时间结束点
+  'endTimeEnd',
+  // 任务名称，支持模糊查询
+  'missionName',
+  // 经纪客户号
+  'custId',
+  // 执行类型
+  'executeType',
+  // 分页条目
+  'pageSize',
+  // 当前分页
+  'pageNum',
+];
+
 export default {
   EXECUTOR,
   INITIATOR,
@@ -83,4 +123,9 @@ export default {
   SYSTEMCODE,
   POSTCOMPLETED_CODE,
   STATE_ALL_CODE,
+  CREATE_TIME,
+  END_TIME,
+  CREATE_TIME_KEY,
+  END_TIME_KEY,
+  QUERY_PARAMS,
 };

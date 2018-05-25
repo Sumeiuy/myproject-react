@@ -28,35 +28,48 @@
 }
 
 //以下是执行者视图状态标签的颜色
-//审批中
-.tag-pvprocessing {
-  background-color: #756fb8;
+.common {
+  border-radius: 3px;
+  width: 58px;
+  font-size: 12px;
+  text-align: center;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
 }
-// 终止
-.tag-pvclose {
-  background-color: #a1a1a1;
+// tag-pvclose 终止
+// tag-pvend 结束
+.tag-pvclose, .tag-pvend {
+  .common;
+  background: #e9e9e9;
+  color: #999;
+  height: 18px;
+  padding-top: 2px;
 }
-// 结束
-.tag-pvend {
-  background-color: #929fb9;
+// tag-pvresult 结果跟踪
+// tag-pvexecuting 执行中
+// tag-pvwaitexecute 等待执行
+// tag-pvcompleted
+// tag-pvprocessing 审批中
+.tag-pvresult, .tag-pvexecuting, .tag-pvwaitexecute, .tag-pvcompleted, .tag-pvprocessing {
+  .common;
+  background: #d4ebed;
+  color: #3d99ac;
+  height: 18px;
+  padding-top: 2px;
 }
-//执行中
-.tag-pvexecuting {
-  background-color: #7d9be0;
-}
-// 结果跟踪
-.tag-pvresult {
-  background-color: #60bbea;
-}
-//驳回
+// 驳回
 .tag-pvreject {
-  background-color: #ff784e;
+  .common;
+  background: #fce1e0;
+  color: #e95d62;
+  height: 18px;
+  padding-top: 2px;
 }
-// 等待执行
-.tag-pvwaitexecute {
-  background-color: #fdb02b;
-}
-.tag-pvcompleted {
-  background-color: #2d7bd4;
+.tag-activestatus {
+  .tag-transparent;
+  .common;
+  color: #fff;
+  height: 16px;
 }
 //以上是执行者视图状态标签的颜色
