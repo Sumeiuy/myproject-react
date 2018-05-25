@@ -54,5 +54,11 @@ export default function performerView(api) {
     queryCustFeedbackList: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustOptionsByTaskType', query),
     // 查询涨乐财富通服务方式下的审批人
     queryApproval: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryNextApproval', query),
+    // 查询服务结果进度
+    queryExecutorFlowStatus: query => api.post('/groovynoauth/fsp/campaign/mot/queryExecutorFlowStatus', query),
+    // 查询服务结果客户反馈
+    queryExecutorFeedBack: query => api.post('/groovynoauth/fsp/campaign/mot/queryExecutorFeedBack', query),
+    // 查询客户明细
+    queryExecutorDetail: query => api.post('/groovynoauth/fsp/campaign/mot/queryExecutorDetail', query),
   };
 }

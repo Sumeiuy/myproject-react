@@ -87,4 +87,7 @@ export default {
   serviceRecordInfo: PropTypes.object.isRequired,
   resetServiceRecordInfo: PropTypes.func.isRequired,
   addCallRecord: PropTypes.func.isRequired,
+  serviceProgress: PropTypes.object.isRequired,
+  custFeedBack: PropTypes.array.isRequired,
+  custDetail: PropTypes.object.isRequired,
 };

@@ -510,6 +510,12 @@ export default class PerformerView extends PureComponent {
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
       addCallRecord,
+      serviceProgress,
+      custFeedBack,
+      custDetail,
+      queryExecutorFlowStatus,
+      queryExecutorFeedBack,
+      queryExecutorDetail,
     } = this.props;
     const {
       typeCode,
@@ -574,6 +580,12 @@ export default class PerformerView extends PureComponent {
         testWallCollision={testWallCollision}
         testWallCollisionStatus={testWallCollisionStatus}
         addCallRecord={addCallRecord}
+        serviceProgress={serviceProgress}
+        custFeedBack={custFeedBack}
+        custDetail={custDetail}
+        queryExecutorFlowStatus={queryExecutorFlowStatus}
+        queryExecutorFeedBack={queryExecutorFeedBack}
+        queryExecutorDetail={queryExecutorDetail}
       />
     );
   }

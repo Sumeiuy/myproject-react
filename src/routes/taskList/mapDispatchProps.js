@@ -83,4 +83,10 @@ export default ({ routerRedux, effect }) => ({
     { loading: false }),
   // 添加通话记录关联服务记录
   addCallRecord: effect(effects.addCallRecord, { loading: false }),
+  // 查询服务结果记录
+  queryExecutorFlowStatus: effect(effects.queryExecutorFlowStatus),
+  // 查询服务结果反馈
+  queryExecutorFeedBack: effect(effects.queryExecutorFeedBack),
+  // 查询服务结果明细
+  queryExecutorDetail: effect(effects.queryExecutorDetail),
 });

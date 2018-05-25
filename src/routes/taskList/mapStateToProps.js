@@ -68,6 +68,12 @@ const mapStateToProps = () => state => ({
   serviceRecordInfo: state.app.serviceRecordInfo,
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: state.investmentAdvice.testWallCollisionStatus,
+  // 服务结果记录
+  serviceProgress: state.performerView.serviceProgress,
+  // 服务结果反馈
+  custFeedBack: state.performerView.custFeedBack,
+  // 服务结果明细
+  custDetail: state.performerView.custDetail,
 });
 
 export default mapStateToProps;

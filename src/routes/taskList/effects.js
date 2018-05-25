@@ -64,8 +64,12 @@ const effects = {
   testWallCollision: 'investmentAdvice/testWallCollision',
   // 清空执行者视图右侧搜索客户
   clearCustListForServiceImplementation: 'performerView/clearCustListForServiceImplementation',
-  // 添加通话记录关联服务记录
-  addCallRecord: 'customerPool/addCallRecord',
+  // 查询服务结果进度
+  queryExecutorFlowStatus: 'performerView/queryExecutorFlowStatus',
+  // 查询服务结果反馈
+  queryExecutorFeedBack: 'performerView/queryExecutorFeedBack',
+  // 查询服务结果反馈
+  queryExecutorDetail: 'performerView/queryExecutorDetail',
 };
 
 export default effects;
