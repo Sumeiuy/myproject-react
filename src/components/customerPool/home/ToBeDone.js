@@ -1,16 +1,18 @@
 /**
- * @file customerPool/ToBeDone.js
- *  目标客户池首页-代办流程总数
- * @author yangquanjian
+ * @Author: xiazhiqiang
+ * @Date: 2018-05-21 13:33:05
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-25 18:43:22
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { getFilter } from '../helper';
 
 import styles from './toBeDone.less';
-import { openRctTab, openFspTab } from '../../../utils';
+import { openRctTab } from '../../../utils';
 import logable from '../../../decorators/logable';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -96,9 +98,12 @@ export default class PerformanceIndicators extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      url: `${url}?source=business`,
+      url: `${url}?source=business&filters=${getFilter(data)}`,
       pathname: url,
-      query: data,
+      query: {
+        ...data,
+        filters: getFilter(data),
+      },
       param,
       state: {
         ...query,
@@ -139,18 +144,19 @@ export default class PerformanceIndicators extends PureComponent {
   handleMessageClick() {
     // 点击事件
     const { push } = this.props;
-    const notificationUrl = '/messgeCenter';
-    const notificationParam = {
-      forceRefresh: false,
-      id: 'MESSAGE_CENTER',
-      title: '消息中心',
-    };
-    openFspTab({
-      routerAction: push,
-      url: notificationUrl,
-      pathname: '/fsp/messageCenter',
-      param: notificationParam,
-    });
+    // const notificationUrl = '/messgeCenter';
+    // const notificationParam = {
+    //   forceRefresh: false,
+    //   id: 'MESSAGE_CENTER',
+    //   title: '消息中心',
+    // };
+    // openFspTab({
+    //   routerAction: push,
+    //   url: notificationUrl,
+    //   pathname: '/fsp/messageCenter',
+    //   param: notificationParam,
+    // });
+    push('/messageRemind');
   }
 
   @autobind
