@@ -1,15 +1,13 @@
 /**
- * @Author: xiazhiqiang
- * @Date: 2018-05-21 13:33:05
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 13:33:50
+ * @file customerPool/ToBeDone.js
+ *  目标客户池首页-代办流程总数
+ * @author yangquanjian
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { getFilter } from '../helper';
 
 import styles from './toBeDone.less';
 import { openRctTab, openFspTab } from '../../../utils';
@@ -98,12 +96,9 @@ export default class PerformanceIndicators extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      url: `${url}?source=business&filters=${getFilter(data)}`,
+      url: `${url}?source=business`,
       pathname: url,
-      query: {
-        ...data,
-        filters: getFilter(data),
-      },
+      query: data,
       param,
       state: {
         ...query,
