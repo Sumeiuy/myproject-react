@@ -89,6 +89,7 @@ export default class ListSwiper extends PureComponent {
     const { page: { pageSize, pageNum }, list = [] } = targetCustList;
     const { activeIndex } = parameter;
     console.log('renderListItem: ', this.props);
+    // 当前activeIndex在当前请求回来的客户列表里面计算所在当前客户列表的位置，否则，默认第一个
     const currentIndex = (parseInt(activeIndex, 10) - 1) % pageSize;
     return (
       (list || []).map((item, index) => {
@@ -104,7 +105,7 @@ export default class ListSwiper extends PureComponent {
             className={cls}
             key={item.missionFlowId}
             onClick={() => onCustomerClick({
-              activeIndex: (pageSize * (pageNum - 1)) + index + 1,
+              activeIndex: String((pageSize * (pageNum - 1)) + index + 1),
               currentCustomer: item,
             })}
           >
@@ -112,6 +113,7 @@ export default class ListSwiper extends PureComponent {
               {this.renderAvator({ genderCode: item.genderCode, custNature: item.custNature })}
               <p className={styles.name}>{_.truncate(item.custName, { length: 4, omission: '...' })}</p>
               <p className={styles.status}>-{item.missionStatusValue}-</p>
+              <span className={styles.triangle} />
             </div>
           </div>
         );

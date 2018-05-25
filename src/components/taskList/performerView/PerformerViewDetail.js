@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-24 13:32:48
+ * @Last Modified time: 2018-05-25 16:14:10
  */
 
 
@@ -59,6 +59,7 @@ export default class PerformerViewDetail extends PureComponent {
     testWallCollisionStatus: PropTypes.bool.isRequired,
     performerViewCurrentTab: PropTypes.string.isRequired,
     changePerformerViewTab: PropTypes.func.isRequired,
+    targetCustDetail: PropTypes.object.isRequired,
   }
 
   static defaultProps = {

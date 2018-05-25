@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import { permission } from '../../helper';
+import { permission, env } from '../../helper';
+import { fspContainer } from '../../config';
 import {
   EXECUTOR,
   INITIATOR,
@@ -36,7 +37,16 @@ const getViewInfo = (missionViewType = '') => {
     missionViewList,
   };
 };
+// 判断FSP左侧菜单是否折叠
+function getFspLeftMenuFoldStatus() {
+  if (env.isInFsp()) {
+    const fspLeftMenu = document.querySelector(fspContainer.workspaceSidebar);
+    return fspLeftMenu.style.display === 'none';
+  }
+  return true;
+}
 
 export default {
   getViewInfo,
+  getFspLeftMenuFoldStatus,
 };

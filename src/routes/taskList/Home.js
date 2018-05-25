@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-24 10:10:45
+ * @Last Modified time: 2018-05-25 15:04:41
  * @description 任务管理首页
  */
 
@@ -24,7 +24,7 @@ import { openRctTab } from '../../utils';
 import { emp, permission } from '../../helper';
 import logable from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
-import { getViewInfo } from './helper';
+import { getViewInfo, getFspLeftMenuFoldStatus } from './helper';
 
 import {
   EXECUTOR,
@@ -807,9 +807,17 @@ export default class PerformerView extends PureComponent {
   // 加载右侧panel中的详情内容
   @autobind
   loadDetailContent(obj) {
-    this.props.getTaskDetailBasicInfo({ taskId: obj.id });
+    const {
+      getTaskDetailBasicInfo,
+      queryTargetCust,
+      targetCustList: { page: { pageNum, pageSize } },
+    } = this.props;
+    getTaskDetailBasicInfo({ taskId: obj.id });
+    const isFoldFspLeftMenu = getFspLeftMenuFoldStatus();
+    // fsp左侧菜单折叠pageSize传9，否则传6
+    const newPageSize = isFoldFspLeftMenu ? 9 : pageSize;
     // 执行者视图服务实施客户列表中 状态筛选默认值 state='10' 未开始
-    this.props.queryTargetCust({ missionId: obj.id, state: '10', pageNum: 1, pageSize: 6 });
+    queryTargetCust({ missionId: obj.id, state: '10', pageNum, pageSize: newPageSize });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
   }

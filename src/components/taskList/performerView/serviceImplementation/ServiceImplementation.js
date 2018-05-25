@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-24 19:40:10
+ * @Last Modified time: 2018-05-25 16:12:08
  */
 
 import React, { PureComponent } from 'react';
@@ -12,9 +12,12 @@ import { autobind } from 'core-decorators';
 
 import Header from './Header';
 import ListSwiper from './ListSwiper';
-import { defaultStateCode, ASSET_DESC } from './config';
+import CustomerProfile from './CustomerProfile';
+// import { defaultStateCode, ASSET_DESC } from './config';
 import styles from './serviceImplementation.less';
 
+// fsp页面折叠左侧菜单按钮的id
+const foldFspLeftMenuButtonId = 'sidebar-hide-btn';
 
 export default class ServiceImplementation extends PureComponent {
   static propTypes = {
@@ -29,6 +32,7 @@ export default class ServiceImplementation extends PureComponent {
     changePerformerViewTab: PropTypes.func.isRequired,
     isFold: PropTypes.bool.isRequired,
     getCustDetail: PropTypes.func.isRequired,
+    targetCustDetail: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -42,21 +46,26 @@ export default class ServiceImplementation extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      state: defaultStateCode,
-      rowId: '',
-      assetSort: ASSET_DESC,
-      activeIndex: '',
-      currentCustomer: { id: 3, name: '3' },
+      // Fsp页面左侧菜单是否被折叠
+      isFoldFspLeftMenu: false,
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    // 左侧列表变化时请求服务实施的列表接口
-    if (nextProps.isFold !== this.props.isFold) {
+  componentDidMount() {
+    // 给FSP折叠菜单按钮注册点击事件
+    window.onFspSidebarbtn(this.handleFspLeftMenuClick);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { isFoldFspLeftMenu } = this.state;
+    const { isFold } = this.props;
+    if (
+      prevProps.isFold !== isFold
+      || prevState.isFoldFspLeftMenu !== isFoldFspLeftMenu
+    ) {
       const { parameter } = this.props;
       const { rowId, assetSort, state, activeIndex } = parameter;
-      // 左侧列表收起来的时候，服务实施显示10个客户，展开时显示6个客户
-      const pageSize = nextProps.isFold ? 10 : 6;
+      const pageSize = this.getPageSize(isFoldFspLeftMenu, isFold);
       const pageNum = Math.ceil(parseInt(activeIndex, 10) / pageSize);
       this.queryTargetCustList({
         state,
@@ -66,6 +75,38 @@ export default class ServiceImplementation extends PureComponent {
         pageNum,
       });
     }
+  }
+
+  componentWillUnmount() {
+    // 移除FSP折叠菜单按钮注册的点击事件
+    window.onFspSidebarbtn(this.handleFspLeftMenuClick);
+  }
+
+  // 当左侧列表或fsp中左侧菜单被折叠或者展开时，返回当前的客户列表的pageSize
+  getPageSize(isFoldFspLeftMenu, isFoldLeftList) {
+    // 全部都折叠起来放12个
+    if (isFoldFspLeftMenu && isFoldLeftList) {
+      return 12;
+    }
+    // FSP左侧菜单折叠方9个
+    if (isFoldFspLeftMenu) {
+      return 9;
+    }
+    // 任务列表折叠起来放10个
+    if (isFoldLeftList) {
+      return 10;
+    }
+    return 6;
+  }
+
+  // FSP折叠菜单按钮被点击
+  @autobind
+  handleFspLeftMenuClick(e) {
+    console.log('handleFspLeftSideBarClick: ', e);
+    // 是否折叠了fsp左侧菜单
+    const isFoldFspLeftMenu = e.target.id === foldFspLeftMenuButtonId
+      || e.target.parentNode.id === foldFspLeftMenuButtonId;
+    this.setState({ isFoldFspLeftMenu });
   }
 
   // 状态筛选
@@ -182,15 +223,21 @@ export default class ServiceImplementation extends PureComponent {
   // 客户列表左右按钮翻页
   @autobind
   handlePageChange(pageNum) {
-    const { parameter, targetCustList } = this.props;
+    const { parameter, targetCustList, changeParameter } = this.props;
     const { page: { pageSize } } = targetCustList;
     const { rowId, assetSort, state } = parameter;
-    this.queryTargetCustList({
-      state,
-      rowId,
-      assetSort,
-      pageSize,
-      pageNum,
+    const activeIndex = ((pageNum - 1) * pageSize) + 1;
+    changeParameter({
+      activeIndex,
+      preciseInputValue: activeIndex,
+    }).then(() => {
+      this.queryTargetCustList({
+        state,
+        rowId,
+        assetSort,
+        pageSize,
+        pageNum,
+      });
     });
   }
 
@@ -209,7 +256,7 @@ export default class ServiceImplementation extends PureComponent {
 
   render() {
     const { dict = {} } = this.context;
-    const { parameter } = this.props;
+    const { parameter, targetCustDetail } = this.props;
     console.log('parameter', parameter);
     return (
       <div className={styles.serviceImplementation}>
@@ -229,6 +276,7 @@ export default class ServiceImplementation extends PureComponent {
           onCustomerClick={this.handleCustomerClick}
           onPageChange={this.handlePageChange}
         />
+        <CustomerProfile targetCustDetail={targetCustDetail} />
       </div>
     );
   }

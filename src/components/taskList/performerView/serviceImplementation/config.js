@@ -24,4 +24,14 @@ export const ORG_ICON = 'yibanjigou';
 // 产品机构的头像
 export const PROD_ICON = 'chanpinjigou';
 
+// 风险等级配置, code对应的显示文案
+export const riskLevelConfig = {
+  704010: '激',
+  704040: '低',
+  704030: '保',
+  704020: '稳',
+  704025: '谨',
+  704015: '积',
+};
+
 export default {};
