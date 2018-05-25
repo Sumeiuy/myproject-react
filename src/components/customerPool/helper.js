@@ -47,7 +47,7 @@ const helper = {
       type = '',
     } = data;
     // 将筛选项组装成
-    // type.a|category.b,c,d
+    // type.a|category.b,c,d  形式放到url中
     let filterList = sourceFilter[source];
     filterList = _.isArray(filterList) ? filterList : filterList[type];
     const finalFilterList = _.map(filterList, (filterItem) => {
