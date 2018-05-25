@@ -52,7 +52,7 @@ const mapStateToProps = state => ({
   reformDeleteAttachmentList: state.app.reformDeleteAttachmentList,
   reformDeleteAttachmentLoading: state.loading.effects['app/reformDeleteAttachment'],
   deleteAttachmentList: state.app.deleteAttachmentList,
-  deleteAttachmentLoading: state.loading.effects['app/deleteAttachmentList'],
+  deleteAttachmentLoading: state.loading.effects['app/deleteAttachment'],
 });
 
 const mapDispatchToProps = {
