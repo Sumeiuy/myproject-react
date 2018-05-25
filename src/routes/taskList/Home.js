@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-25 10:38:14
+ * @Last Modified time: 2018-05-25 13:54:03
  * @description 任务管理首页
  */
 
@@ -46,6 +46,9 @@ import {
   END_TIME,
   CREATE_TIME_KEY,
   END_TIME_KEY,
+  // 三个视图左侧任务列表的请求入参，在config里面配置，后续如果需要新增，或者删除某个param，
+  // 请在config里面配置QUERY_PARAMS
+  QUERY_PARAMS,
 } from './config';
 
 // 空函数
@@ -719,7 +722,7 @@ export default class PerformerView extends PureComponent {
   queryAppList(query) {
     const { getTaskList } = this.props;
     const { missionViewType, pageNum = 1, pageSize = 20 } = query;
-    const params = this.constructViewPostBody(query, pageNum, pageSize);
+    const params = this.getQueryParams(query, pageNum, pageSize);
 
     // 默认筛选条件
     getTaskList({ ...params }).then(() => {
@@ -744,21 +747,23 @@ export default class PerformerView extends PureComponent {
    * @param {*} newPageSize 当前分页条目数
    */
   @autobind
-  constructViewPostBody(query, newPageNum, newPageSize) {
+  getQueryParams(query, newPageNum, newPageSize) {
     const { missionViewType, status, creatorId, sortParam } = query;
+    // 从query上筛选出需要的入参
+    const params = _.pick(query, QUERY_PARAMS);
     let finalPostData = {
       pageNum: _.parseInt(newPageNum, 10),
       pageSize: _.parseInt(newPageSize, 10),
     };
-    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum', 'custName', 'creatorName', 'sortParam']);
-    finalPostData = _.merge(
-      finalPostData,
-      omitData,
+    finalPostData = {
+      ...params,
+      ...finalPostData,
       // { orgId: 'ZZ001041' },
-      { orgId: emp.getOrgId() },
+      orgId: emp.getOrgId(),
       // 传过来的名字叫creatorId，传给后台需要改成creator
-      { creator: creatorId },
-    );
+      creator: creatorId,
+    };
+
     // 获取当前的视图类型
     const currentViewType = getViewInfo(missionViewType).currentViewType;
     // 入参中，添加排序关键字
@@ -1173,7 +1178,7 @@ export default class PerformerView extends PureComponent {
           chooseMissionViewOptions={this.missionView}
           onViewChange={this.handleHeaderFilter}
           location={location}
-          creatSeibelModal={this.handleCreateBtnClick}
+          onLaunchTask={this.handleCreateBtnClick}
         />
         <ConnectedPageHeader
           location={location}

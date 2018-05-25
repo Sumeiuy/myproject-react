@@ -29,13 +29,13 @@ export default class ViewMenu extends PureComponent {
     onViewChange: PropTypes.func,
     location: PropTypes.object.isRequired,
     // 自建任务按钮事件
-    creatSeibelModal: PropTypes.func,
+    onLaunchTask: PropTypes.func,
   };
 
   static defaultProps = {
     chooseMissionViewOptions: EMPTY_LIST,
     onViewChange: NOOP,
-    creatSeibelModal: NOOP,
+    onLaunchTask: NOOP,
   };
 
   /**
@@ -54,7 +54,7 @@ export default class ViewMenu extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '打开自建任务' } })
   handleCreateTask() {
-    this.props.creatSeibelModal();
+    this.props.onLaunchTask();
   }
 
   render() {
