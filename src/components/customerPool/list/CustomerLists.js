@@ -1,8 +1,7 @@
 /**
- * @Author: wangjunjun
- * @Date: 2018-05-21 13:39:31
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 14:03:41
+ * @file components/customerPool/list/CustomerLists.js
+ *  客户列表
+ * @author wangjunjun
  */
 
 import React, { PureComponent } from 'react';
