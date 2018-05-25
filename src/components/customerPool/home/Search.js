@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-23 14:10:22
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-04-16 15:05:16
  * @description 客户池头部搜索组件
  */
 
@@ -12,12 +12,12 @@ import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import logable, { logCommon } from '../../../decorators/logable';
+import logable from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { padSightLabelDesc } from '../../../config';
 import Icon from '../../common/Icon';
-import { isSightingScope, getFilter } from '../helper';
+import { isSightingScope } from '../helper';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
@@ -85,7 +85,7 @@ export default class Search extends PureComponent {
     this.props.saveSearchVal({
       searchVal: this.state.value,
     });
-    const condition = urlHelper.stringify({ ...options, filters: getFilter(options) });
+    const condition = urlHelper.stringify({ ...options });
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
@@ -147,6 +147,13 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '目标客户池首页搜索框',
+      value: '$args[0]',
+    },
+  })
   handleSelect(value) {
     const item = _.find(this.state.dataSource, child => child.id === value);
     const sightingScopeBool = isSightingScope(item.source);
@@ -169,18 +176,6 @@ export default class Search extends PureComponent {
     if (item.type === 'PRODUCT' && item.name) {
       query = { ...query, productName: encodeURIComponent(item.name) };
     }
-
-    // log日志 --- 首页搜索选中
-    const subtype = sightingScopeBool ? '瞄准镜' : item.description;
-    logCommon({
-      type: 'DropdownSelect',
-      payload: {
-        name: '首页搜索框',
-        value,
-        type: 'dropdownSelect',
-        subtype,
-      },
-    });
     this.handleOpenTab(query);
   }
 
@@ -190,6 +185,7 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '目标客户池首页回车搜索' } })
   handlePressEnter() {
     // 如果当期有选中项，走select逻辑，不做任何处理
     const activeItemElement = document.querySelector(
@@ -202,22 +198,13 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '目标客户池首页搜索' } })
   handleClickButton() {
     const { value } = this.state;
     const newValue = _.trim(value);
     if (newValue.length === 0) {
       return false;
     }
-    // log日志 --- 首页搜索点击
-    logCommon({
-      type: 'Click',
-      payload: {
-        name: '首页搜索框',
-        value,
-        type: 'click',
-        subtype: '',
-      },
-    });
     this.handleOpenTab({
       source: 'search',
       q: encodeURIComponent(newValue),

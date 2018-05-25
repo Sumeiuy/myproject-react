@@ -57,6 +57,8 @@ export default class HoldingProductDetail extends PureComponent {
       queryHoldingProduct({ custId, prdtHold: id }).then(() => {
         this.setState({ hasData: true });
       });
+    } else {
+      this.setState({ hasData: true });
     }
   }
 
