@@ -1,13 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
-<<<<<<< HEAD
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-25 15:04:41
-=======
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-25 13:54:03
->>>>>>> 77fa5e3b88b8e5f746f538e4c8c47d1b808d9668
+ * @Last Modified time: 2018-05-25 18:11:32
  * @description 任务管理首页
  */
 
