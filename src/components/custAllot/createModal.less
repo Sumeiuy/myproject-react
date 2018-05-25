@@ -1,0 +1,44 @@
+.createModal {
+  :global {
+    .ant-modal-title {
+      line-height: 20px;
+    }
+  }
+  .modalContent {
+    padding: 10px 20px;
+    .contentItem {
+      margin-top: 12px;
+      &:first-child {
+        margin-top: 0;
+      }
+      .title {
+        font-size: 16px;
+        color: #4a4a4a;
+        text-indent: 14px;
+        position: relative;
+        &:before {
+          position: absolute;
+          display: block;
+          content: "";
+          width: 5px;
+          height: 16px;
+          background: #4897f1;
+          top: 5px;
+          left: 0;
+        }
+      }
+      .operateDiv {
+        .linkSpan {
+          float: right;
+          vertical-align: bottom;
+        }
+        .downloadLink {
+          margin-right: 30px;
+        }
+      }
+      .tableDiv {
+        margin-top: 14px;
+      }
+    }
+  }
+}

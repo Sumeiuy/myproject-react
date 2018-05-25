@@ -127,6 +127,8 @@ app.model(require('./models/investmentAdvice'));
 app.model(require('./models/operationCenter'));
 // 营业部非投顾签约客户分配
 app.model(require('./models/businessDepartmentCustDistribute'));
+// 分公司客户分配
+app.model(require('./models/custAllot'));
 
 // 4. Route
 app.router(routerConfig);
