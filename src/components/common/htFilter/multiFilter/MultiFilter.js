@@ -67,10 +67,8 @@ export default class MultiFilter extends PureComponent {
       onChange: this.onChange,
       defaultLabel,
     };
-    let filterValue = value[1] || '不限';
-    if (!this.props.disabled) {
-      filterValue = getFilterValue(renderValue, data, defaultLabel);
-    }
+
+    const filterValue = getFilterValue(renderValue, data, defaultLabel);
 
     return (
       <FilterWrapper
