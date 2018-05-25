@@ -59,6 +59,12 @@ export default class PerformerViewDetail extends PureComponent {
     testWallCollisionStatus: PropTypes.bool.isRequired,
     performerViewCurrentTab: PropTypes.string.isRequired,
     changePerformerViewTab: PropTypes.func.isRequired,
+    serviceProgress: PropTypes.object.isRequired,
+    custFeedBack: PropTypes.array.isRequired,
+    custDetail: PropTypes.object.isRequired,
+    queryExecutorFeedBack: PropTypes.func.isRequired,
+    queryExecutorFlowStatus: PropTypes.func.isRequired,
+    queryExecutorDetail: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -97,11 +103,11 @@ export default class PerformerViewDetail extends PureComponent {
       key: '任务有效期 :',
       value: `${triggerTime || '--'} ~ ${endTime || '--'}`,
     },
-      {
-        id: 'target',
-        key: '任务目标 :',
-        value: missionTarget || '--',
-      }];
+    {
+      id: 'target',
+      key: '任务目标 :',
+      value: missionTarget || '--',
+    }];
   }
 
   @autobind
