@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-25 13:34:40
+ * @Last Modified time: 2018-05-25 18:33:44
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -57,7 +57,7 @@ export default class MessageCenter extends PureComponent {
 
   componentDidMount() {
     this.getRemindMessageList({
-      pageNum: 1,
+      pageNum: 0,
     });
   }
 
