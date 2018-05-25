@@ -10,6 +10,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import { Input } from 'antd';
+import { SingleFilter } from 'ht-react-filter';
+import 'ht-react-filter/lib/css/index.css';
 import DateRangePicker from '../common/dateRangePicker';
 import Select from '../common/Select';
 import DropDownSelect from '../common/dropdownSelect';
@@ -40,8 +42,8 @@ const FILTERBOX_HEIGHT = 32;
 const allCustomers = '所有客户';
 const allCreators = '所有创建者';
 const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
-const typeAll = { label: '所有类型', value: '', show: true };
-const executeTypeAll = { label: '所有方式', value: '', show: true };
+const typeAll = { label: '不限', value: '', show: true }; // 类型
+const executeTypeAll = { label: '所有方式', value: '', show: true }; // 执行方式
 const unlimitedCustomers = { name: allCustomers, custId: '' };
 const NOOP = _.noop;
 
@@ -248,8 +250,9 @@ export default class Pageheader extends PureComponent {
       value: '$args[1]',
     },
   })
-  handleSelctType(key, value) {
-    this.handleSelectChange(key, value);
+  handleSelctType(option) {
+    const { id, value: { value } } = option;
+    this.handleSelectChange(id, value);
   }
 
   @autobind
@@ -260,8 +263,9 @@ export default class Pageheader extends PureComponent {
       value: '$args[1]',
     },
   })
-  handleSelctStatus(key, value) {
-    this.handleSelectChange(key, value);
+  handleSelctStatus(option) {
+    const { id, value: { value } } = option;
+    this.handleSelectChange(id, value);
   }
 
   @autobind
@@ -667,6 +671,7 @@ export default class Pageheader extends PureComponent {
     // 默认取url中的missionViewType，否则从helper的getViewInfo方法中取
     const missionViewTypeValue = !_.isEmpty(missionViewType) ?
       missionViewType : getViewInfo().currentViewType;
+    console.log(stateAllOptions, statusValue);
     return (
       <div className={`${styles.pageCommonHeader} ${styles.HeaderOverflow}`} ref={this.pageCommonHeaderRef}>
         <div className={styles.headerRight}>
@@ -685,7 +690,7 @@ export default class Pageheader extends PureComponent {
           <div className={`${styles.filterFl}`}>
             <Search
               placeholder="任务名称"
-              style={{ width: 110 }}
+              style={{ width: 158 }}
               value={missionNameValue}
               onChange={this.handleSearchChange}
               onSearch={this.handleSearch}
@@ -694,20 +699,27 @@ export default class Pageheader extends PureComponent {
           </div>
 
           <div className={styles.filterFl}>
-            <Select
-              name="type"
+            <SingleFilter
+              filterId="type"
+              filterName="任务状态"
               value={typeValue}
+              defaultSelectLabel="不限"
               data={typeAllOptions}
+              dataMap={['value', 'label']}
               onChange={this.handleSelctType}
+              needItemObj
             />
           </div>
 
           <div className={`${styles.filterFl} ${styles.mlMinux10}`}>
-            <Select
-              name="status"
+            <SingleFilter
+              filterId="status"
+              filterName="任务类型"
               value={statusValue}
               data={stateAllOptions}
+              dataMap={['value', 'label']}
               onChange={this.handleSelctStatus}
+              needItemObj
             />
           </div>
           {missionViewTypeValue === INITIATOR ? null :
