@@ -19,6 +19,19 @@ const DEFAULT_DETIAL_TITLE = '客户明细';
 
 export default class ServiceResult extends PureComponent {
 
+  static getDerivedStateFromProps(props, state) {
+    const { prevProps } = state;
+    const { currentId } = prevProps;
+    if (props.currentId !== currentId) {
+      return {
+        detailTitle: DEFAULT_DETIAL_TITLE,
+        currentParam: {},
+        prevProps: props,
+      };
+    }
+    return null;
+  }
+
   static propTypes = {
     isFold: PropTypes.bool,
     serviceProgress: PropTypes.object.isRequired,
@@ -38,6 +51,8 @@ export default class ServiceResult extends PureComponent {
     super(props);
     this.state = {
       detailTitle: DEFAULT_DETIAL_TITLE,
+      currentParam: {},
+      prevProps: props,
     };
   }
 
@@ -58,7 +73,6 @@ export default class ServiceResult extends PureComponent {
       progressFlag = '',
       feedbackIdL1 = '',
       currentFeedback } = item;
-
     if (missionProgressStatus) {
       const currentMapItem = _.filter(missionProgressMap, mapItem =>
         mapItem.value === item.missionProgressStatus && mapItem.type === item.progressFlag,
@@ -90,17 +104,21 @@ export default class ServiceResult extends PureComponent {
     this.getExecutorDetail();
   }
 
+  @autobind
   getExecutorDetail(option) {
     const { queryExecutorDetail, currentId } = this.props;
     const params = {
       missionId: currentId,
       missionProgressStatus: '',
       progressFlag: '',
-      feedBackIdL1: '',
+      feedbackIdL1: '',
       pageNum: 1,
       pageSize: 5,
       ...option,
     };
+    this.setState({
+      currentParam: params,
+    });
     queryExecutorDetail(params);
   }
 
@@ -190,6 +208,21 @@ export default class ServiceResult extends PureComponent {
     });
   }
 
+  /**
+   * 切换分页
+   * @param {*number} pageNum 当前分页
+   * @param {*number} pageSize 当前页码
+   */
+  @autobind
+  handlePageChange(pageNum, pageSize) {
+    const { currentParam } = this.state;
+    this.getExecutorDetail({
+      ...currentParam,
+      pageNum,
+      pageSize,
+    });
+  }
+
   render() {
     const { isFold, serviceProgress, custFeedBack } = this.props;
     const { list, finalPage } = this.getCustDetail();
@@ -208,6 +241,7 @@ export default class ServiceResult extends PureComponent {
           listData={list}
           titleColumn={this.getTableColumns()}
           paginationInTable
+          onPageChange={this.handlePageChange}
           title={this.renderCustDetailHeader}
           tableClass={
             classnames({

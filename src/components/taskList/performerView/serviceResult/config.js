@@ -31,7 +31,7 @@ const missionProgressMap = [
     name: '已达标',
   },
   {
-    value: 'IS_DONE',
+    value: 'IS_UP_TO_STANDARD',
     type: 'N',
     name: '未达标',
   },
