@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-03 16:46:41
+ * @Last Modified time: 2018-05-25 14:22:40
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -48,6 +48,8 @@ const mapStateToProps = state => ({
   missionData: state.customerFeedback.missionData,
   // 客户反馈列表
   feedbackData: state.customerFeedback.feedbackData,
+  // 修改一级客户反馈后，返回的相关涨乐客户选项超过4个的任务数量
+  taskNum: state.customerFeedback.taskNum,
 });
 
 const mapDispatchToProps = {
@@ -91,6 +93,8 @@ export default class CustomerFeedback extends PureComponent {
     addFeedback: PropTypes.func.isRequired,
     // 编辑客户反馈选项
     modifyFeedback: PropTypes.func.isRequired,
+    // 修改一级客户反馈后，返回的相关涨乐客户选项超过4个的任务数量
+    taskNum: PropTypes.number.isRequired,
   }
 
   static contextTypes = {
@@ -187,6 +191,7 @@ export default class CustomerFeedback extends PureComponent {
       addFeedback,
       modifyFeedback,
       location,
+      taskNum,
      } = this.props;
     const optionsMaintainProps = {
       queryFeedbackList: this.queryFeedbackList,
@@ -195,6 +200,7 @@ export default class CustomerFeedback extends PureComponent {
       addFeedback,
       modifyFeedback,
       location,
+      taskNum,
     };
 
     return (<OptionsMaintain {...optionsMaintainProps} />);

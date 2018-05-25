@@ -3,7 +3,7 @@
  * @Description: 客户反馈modal
  * @Date: 2017-12-13 10:31:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-24 15:15:27
+ * @Last Modified time: 2018-05-25 14:33:13
  */
 
 import { customerFeedback as api } from '../api';
@@ -19,8 +19,12 @@ const SECOND_TAB = '2';
 export default {
   namespace: 'customerFeedback',
   state: {
-    missionData: EMPTY_OBJECT, // 任务列表
-    feedbackData: EMPTY_OBJECT, // 客户反馈列表
+    // 任务列表
+    missionData: EMPTY_OBJECT,
+    // 客户反馈列表
+    feedbackData: EMPTY_OBJECT,
+    // 客户反馈维护修改后，需要提示用户有多少条涨乐可选项超过4个
+    taskNum: 0,
   },
   reducers: {
     getMissionListSuccess(state, action) {
@@ -42,6 +46,13 @@ export default {
       return {
         ...state,
         missionData: payload,
+      };
+    },
+    modifyFeedbackSuccess(state, action) {
+      const { payload: { num = 0 } } = action;
+      return {
+        ...state,
+        taskNum: num,
       };
     },
   },
@@ -79,8 +90,17 @@ export default {
       yield call(api.addFeedback, payload);
     },
     // 编辑客户反馈
-    * modifyFeedback({ payload }, { call }) {
-      yield call(api.modifyFeedback, payload);
+    * modifyFeedback({ payload }, { call, put }) {
+      // 先将taskNum置为零
+      yield put({
+        type: 'modifyFeedbackSuccess',
+        payload: { num: 0 },
+      });
+      const { resultData } = yield call(api.modifyFeedback, payload);
+      yield put({
+        type: 'modifyFeedbackSuccess',
+        payload: resultData,
+      });
     },
     // 清空任务列表数据
     * emptyMissionData({ payload }, { put }) {

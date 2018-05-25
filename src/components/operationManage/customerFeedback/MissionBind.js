@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 13:42:41
+ * @Last Modified time: 2018-05-25 15:36:51
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -115,6 +115,13 @@ export default class MissionBind extends PureComponent {
         <span
           className={isMOTMission ? styles.parentClass : styles.parentClassSelf}
         >
+          {
+            _.size(item.customerList || []) <= 4 ? null :
+            (<Icon
+              type="exclamation-circle"
+              style={{ fontSize: 14, color: '#f9a825', marginRight: '5px' }}
+            />)
+          }
           {item.parentClassName}
         </span>
         {

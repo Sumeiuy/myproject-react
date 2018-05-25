@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-03 13:57:17
+ * @Last Modified time: 2018-05-25 15:14:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -34,6 +34,8 @@ export default class OptionsMaintain extends PureComponent {
     addFeedback: PropTypes.func.isRequired,
     // 编辑客户反馈选项
     modifyFeedback: PropTypes.func.isRequired,
+    // 修改一级客户反馈后，返回的相关涨乐客户选项超过4个的任务数量
+    taskNum: PropTypes.number.isRequired,
   }
 
   static contextTypes = {
@@ -91,6 +93,13 @@ export default class OptionsMaintain extends PureComponent {
     const { id, name } = item;
     const { location: { query: { pageNum } } } = this.props;
     this.props.modifyFeedback({ id, name, custFeedbackName }).then(() => {
+      const { taskNum } = this.props;
+      // 修改一级客户反馈后，返回的相关涨乐客户选项超过4个的任务数量
+      // 如果大于0条，则弹出让用户去任务绑定Tab下修改
+      if (taskNum > 0) {
+        const content = `您的修改导致有${taskNum}条任务的客户反馈超过了4项，请在“任务绑定客户反馈”下调整带警示标记的任务，否则涨乐客户端回无法正常处理`;
+        confirm({ content });
+      }
       this.queryFeedbackList(pageNum);
     });
   }
@@ -252,13 +261,16 @@ export default class OptionsMaintain extends PureComponent {
       <div className={styles.header}>
         {/** 服务经理可选项，编辑框 */}
         <EditInput
+          editName="服务经理可选项"
           value={item.name}
           item={item}
           edit={item.edit}
           editCallback={this.handleUpdateFeedbackOfServiceManager}
         />
-        {/** 客户涨乐可选项，编辑框 */}
+        {/** 客户涨乐可选项，编辑框, 客户可选项字符长度最大为7 */}
         <EditInput
+          editName="客户涨乐可选项"
+          maxLen={7}
           value={item.custFeedbackName || ''}
           item={item}
           edit={item.edit}
