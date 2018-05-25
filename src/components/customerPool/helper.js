@@ -78,12 +78,6 @@ const helper = {
         filterValue = code.split(',');
       }
 
-      if (name === 'minFee' || name === 'totAset') {
-        const minVal = filterValue[0] && filterValue[0].replace('!', '.');
-        const maxVal = filterValue[1] && filterValue[1].replace('!', '.');
-        filterValue = [minVal, maxVal];
-      }
-
       // 如果对应的过滤器是普通股基佣金率
       result[name] = filterValue; // eslint-disable-line
       return result;
