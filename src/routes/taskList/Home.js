@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-24 14:15:52
+ * @Last Modified time: 2018-05-25 10:38:14
  * @description 任务管理首页
  */
 
@@ -521,6 +521,8 @@ export default class PerformerView extends PureComponent {
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
       addCallRecord,
+      changePerformerViewTab,
+      performerViewCurrentTab,
     } = this.props;
     const {
       typeCode,
@@ -585,6 +587,8 @@ export default class PerformerView extends PureComponent {
         testWallCollision={testWallCollision}
         testWallCollisionStatus={testWallCollisionStatus}
         addCallRecord={addCallRecord}
+        changePerformerViewTab={changePerformerViewTab}
+        performerViewCurrentTab={performerViewCurrentTab}
       />
     );
   }
@@ -821,7 +825,7 @@ export default class PerformerView extends PureComponent {
   loadDetailContent(obj) {
     this.props.getTaskDetailBasicInfo({ taskId: obj.id });
     // 执行者视图服务实施客户列表中 状态筛选默认值 state='10' 未开始
-    this.props.queryTargetCust({ missionId: obj.id, state: '10', pageNum: 1, pageSize: 10 });
+    this.props.queryTargetCust({ missionId: obj.id, state: '10', pageNum: 1, pageSize: 6 });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
   }
