@@ -14,6 +14,7 @@ import _ from 'lodash';
 import { SingleFilter } from 'ht-react-filter';
 import { TreeFilter as HTTreeFilter } from 'ht-tree-filter';
 import 'ht-react-filter/lib/css/index.css';
+import 'ht-tree-filter/lib/css/index.css';
 
 import CommonModal from '../common/biz/CommonModal';
 // import Button from '../../components/common/Button';

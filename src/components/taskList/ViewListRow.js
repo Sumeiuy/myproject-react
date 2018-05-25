@@ -11,7 +11,6 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import Tag from '../common/tag';
-import ProgressBar from './ProgressBar';
 import styles from './viewListRow.less';
 import {
   STATE_PROCESSING_CODE,
@@ -24,13 +23,13 @@ import {
   STATE_COMPLETED_CODE,
 } from '../../routes/taskList/config';
 
-// 执行者视图和创建者视图左侧列表项需要显示进度条
-const needProgress = ['executor', 'controller'];
-
 const EXECUTOR = 'executor'; // 执行者视图
 const CONTROLLER = 'controller'; // 管理者视图
 
-// 1代表是自建任务类型,0代表非自建任务
+// 执行者视图和创建者视图左侧列表项需要显示进度条
+const needProgress = [EXECUTOR, CONTROLLER];
+
+// 1代表是自建任务类型,0代表非自建任务,MOT任务
 const TASK_TYPE_SELF = '1';
 const TASK_TYPE_NOT_SELF = '0';
 
@@ -50,19 +49,11 @@ export default function AppItem(props) {
   });
   const appIconCls = cx({
     [styles.appMissionIcon]: data.executionTypeCode === 'Mission',
-    [styles.appChanceIcon]: data.executionTypeCode === 'Chance',
     [styles.active]: active,
-  });
-  const typeCls = cx({
-    [styles.type]: true,
-    [styles.active]: active,
+    [styles.common]: true,
   });
   const secondLineCls = cx({
     [styles.secondLine]: true,
-    [styles.active]: active,
-  });
-  const thirdLineCls = cx({
-    [styles.thirdLine]: true,
     [styles.active]: active,
   });
   const tagStatusType = cx({
@@ -74,11 +65,7 @@ export default function AppItem(props) {
     pvResult: data.statusCode === STATE_RESULTTRACK_CODE && !active,
     pvWaitExecute: data.statusCode === STATE_WAITEXECUTE_CODE && !active,
     pvCompleted: data.statusCode === STATE_COMPLETED_CODE && !active,
-    transparent: active,
-  });
-  const progressCls = cx({
-    [styles.progress]: true,
-    [styles.active]: active,
+    activeStatus: active,
   });
   function handleClick() {
     onClick(data, index);
@@ -94,57 +81,115 @@ export default function AppItem(props) {
     }
     return createTime && moment(createTime).format('YYYY-MM-DD');
   }
-  // 如果是自建任务，需要加自建：
-  function renderMissionTypeName(missionTypeDic, currentMissionTypeCode) {
-    let typeName = '无';
-    const currentMissionTypeObject = _.find(missionTypeDic, item =>
+  // 获取descText
+  function getDescText(currentMissionTypeCode) {
+    const currentMissionTypeObject = _.find(missionTypeDict, item =>
       item.key === currentMissionTypeCode) || {};
-    const { descText } = currentMissionTypeObject;
+    return currentMissionTypeObject;
+  }
+  // 是否渲染出创建者和工号，只有是自建任务才需要展示
+  function isRenderCreator(currentMissionTypeCode) {
+    return getDescText(currentMissionTypeCode).descText === TASK_TYPE_SELF;
+  }
+  // 如果是自建任务，需要加自建：
+  function renderMissionTypeName(currentMissionTypeCode) {
+    let typeName = '无';
+    const { descText, value } = getDescText(currentMissionTypeCode);
     // descText为1代表自建任务
+    // descText为0代表MOT任务
     if (descText === TASK_TYPE_SELF) {
-      typeName = `自建：${currentMissionTypeObject.value}`;
+      typeName = `自建：${value}`;
     } else if (descText === TASK_TYPE_NOT_SELF) {
-      typeName = currentMissionTypeObject.value;
+      typeName = `MOT：${value}`;
     }
 
     return typeName;
   }
+
   return (
     <div className={appItemCls} onClick={handleClick}>
-      {/* 第一行 */}
+      {/**
+       * 第一行
+       */}
       <div className={styles.itemHeader}>
-        <div className={styles.title}>
-          <span className={appIconCls}>{`${data.executionTypeCode === 'Mission' ? '必' : '选'}`}</span>
-          <span className={typeCls}>{renderMissionTypeName(missionTypeDict, data.typeCode)}</span>
+        <div
+          className={cx({
+            [styles.leftArea]: true,
+            [styles.active]: active,
+          })}
+        >
+          <span className={appIconCls}>{`${data.executionTypeCode === 'Mission' ? '必' : ''}`}</span>
+          <span
+            className={cx({
+              [styles.title]: true,
+              [styles.active]: active,
+            })}
+            title={data.missionName || '无'}
+          >{data.missionName || '无'}</span>
         </div>
-        <div className={styles.tagArea}>
-          <Tag type={tagStatusType} clsName={styles.tag} text={data.statusName} />
+        <div
+          className={cx({
+            [styles.rightArea]: true,
+            [styles.active]: active,
+          })}
+        >
+          <span className={styles.time}>{showCreateTimeOrProcessTime(data) || '无'}</span>
         </div>
       </div>
+
       {/* 第二行 */}
       <div className={secondLineCls}>
-        {
-          _.includes(needProgress, data.missionViewType) ?
-            <div className={progressCls}>
-              <ProgressBar
-                servicedCustomer={data.doneFlowNum}
-                totalCustomer={data.flowNum}
-                showInfo={false}
-                size="small"
-                active={active}
-              />
-            </div> : null
-        }
-        <div className={styles.taskName}>{data.missionName || '无'}</div>
-      </div>
-      {/* 第三行 */}
-      <div className={thirdLineCls}>
-        <div className={styles.drafter}>
-          <span>创建者：</span>
-          <span>{!_.isEmpty(data.creator) ? data.creator : ''}</span>
-          <span>{!_.isEmpty(data.creatorId) ? `(${data.creatorId})` : ''}</span>
+        <div
+          className={cx({
+            [styles.leftArea]: true,
+            [styles.active]: active,
+          })}
+        >
+          <div
+            className={cx({
+              [styles.typeName]: true,
+              [styles.active]: active,
+            })}
+          >{renderMissionTypeName(data.typeCode)}</div>
+          {
+            isRenderCreator(data.typeCode) && data.creator ?
+              <div
+                className={cx({
+                  [styles.creatorArea]: true,
+                  [styles.active]: active,
+                })}
+              >
+                <span className={styles.separator}>|</span>
+                <span>{!_.isEmpty(data.creator) ? data.creator : ''}</span>
+                <span>{!_.isEmpty(data.creatorId) ? `(${data.creatorId})` : ''}</span>
+              </div> :
+              null
+          }
         </div>
-        <div className={styles.date}>{judgeMissionViewType(data.missionViewType) ? '结束时间' : '创建于'}：{showCreateTimeOrProcessTime(data) || '无'}</div>
+        <div
+          className={cx({
+            [styles.rightArea]: true,
+            [styles.active]: active,
+          })}
+        >
+          {
+            _.includes(needProgress, data.missionViewType) ?
+              <div
+                className={
+                  cx({
+                    [styles.progress]: true,
+                    [styles.active]: active,
+                  })
+                }
+              >
+                <span>进度：</span>
+                <span className={styles.done}>{data.doneFlowNum}</span>
+                <span>/</span>
+                <span>{data.flowNum}</span>
+              </div> : null
+          }
+          <Tag type={tagStatusType} clsName={styles.tag} text={data.statusName} />
+        </div>
       </div>
     </div>
   );
