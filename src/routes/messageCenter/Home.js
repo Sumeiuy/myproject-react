@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-25 18:33:44
+ * @Last Modified time: 2018-05-25 22:00:43
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -12,9 +12,10 @@ import { Tooltip, Button } from 'antd';
 import { dva, emp } from '../../helper';
 import { openFspTab } from '../../utils';
 import Pagination from '../../components/common/Pagination';
-import ModalLoading from '../../components/common/biz/ModalLoading';
+import Loading from '../../layouts/Loading';
 import { windowOpen } from '../../utils/fspGlobal';
-import { request } from '../../utils/request';
+// import { request } from '../../utils/request';
+import api from '../../api';
 import styles from './home.less';
 
 // 使用helper里面封装的生成effects的方法
@@ -73,7 +74,7 @@ export default class MessageCenter extends PureComponent {
   // 切换当前页
   @autobind
   handlePageChange(pageNum) {
-    this.getRemindMessageList({ pageNum });
+    this.getRemindMessageList({ pageNum: pageNum - 1 });
   }
 
   // 点击消息通知
@@ -129,10 +130,10 @@ export default class MessageCenter extends PureComponent {
   @autobind
   async handleMessageByFSPAllocation(objectVal) {
     try {
-      const response = await request(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
+      const response = await api.getFspData(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
       const { msg } = response.data;
       if (!msg) {
-        const loadCntractResponse = await request(`/fsp/tgcontract/list/loadCntractBasicCustInfoByArgId?argId=${objectVal}`);
+        const loadCntractResponse = await api.getFspData(`/fsp/tgcontract/list/loadCntractBasicCustInfoByArgId?argId=${objectVal}`);
         if (loadCntractResponse.status === 200) {
           const { custId: busiId, custType } = loadCntractResponse.data;
           const routeType = `${custType}:tgcontracttransfer:${objectVal}:::Y:`;
@@ -248,8 +249,7 @@ export default class MessageCenter extends PureComponent {
   async handleMessageByOther(rowId, objectVal) {
     try {
       this.setState({ loadingStatus: true });
-      const response = await request(`/fsp/asset/basis/queryTacticalAllocationSingle?rowId=${objectVal}&notificationId=${rowId}`);
-      console.warn('response', response);
+      const response = await api.getFspData(`/fsp/asset/basis/queryTacticalAllocationSingle?rowId=${objectVal}&notificationId=${rowId}`);
       if (response) {
         this.setState({ loadingStatus: false });
         Window.show({
@@ -321,7 +321,7 @@ export default class MessageCenter extends PureComponent {
             <span className={styles.title}>提醒内容</span>
             <span className={styles.createTime}>创建时间</span>
           </div>
-          <ModalLoading loading={loadingStatus} />
+          <Loading loading={loadingStatus} />
           <div className={styles.listWrapper}>
             <ul className={styles.list}>
               {messageList}
