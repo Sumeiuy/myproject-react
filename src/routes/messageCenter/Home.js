@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-26 09:58:34
+ * @Last Modified time: 2018-05-26 16:55:40
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -14,7 +14,7 @@ import { openFspTab } from '../../utils';
 import Pagination from '../../components/common/Pagination';
 import Loading from '../../layouts/Loading';
 import { windowOpen } from '../../utils/fspGlobal';
-// import { request } from '../../utils/request';
+import { request } from '../../utils/request';
 import api from '../../api';
 import styles from './home.less';
 
@@ -104,7 +104,7 @@ export default class MessageCenter extends PureComponent {
     }
 
     if (this.removeNotice && ((typeName !== 'HTSC FSP TGSign') || (typeName === 'HTSC FSP TGSign' && flag < 0))) {
-      this.handleMessageByRemoveNotice();
+      this.handleMessageByRemoveNotice(rowId);
     }
   }
 
@@ -130,11 +130,11 @@ export default class MessageCenter extends PureComponent {
   @autobind
   async handleMessageByFSPAllocation(objectVal) {
     try {
-      const response = await api.getFspData(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
+      const response = await request(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
       const { msg } = response.data;
       if (!msg) {
-        const loadCntractResponse = await api.getFspData(`/fsp/tgcontract/list/loadCntractBasicCustInfoByArgId?argId=${objectVal}`);
-        if (loadCntractResponse.status === 200) {
+        const loadCntractResponse = await request(`/fsp/tgcontract/list/loadCntractBasicCustInfoByArgId?argId=${objectVal}`);
+        if (loadCntractResponse) {
           const { custId: busiId, custType } = loadCntractResponse.data;
           const routeType = `${custType}:tgcontracttransfer:${objectVal}:::Y:`;
           const busiIdParam = busiId ? `?busiId=${busiId}` : '';
@@ -251,8 +251,6 @@ export default class MessageCenter extends PureComponent {
     api
     .getFspData(`/fsp/asset/basis/queryTacticalAllocationSingle?rowId=${objectVal}&notificationId=${rowId}`)
     .then((response) => {
-      console.warn('response', response);
-      console.warn('$response', $(response));
       this.setState({ loadingStatus: false });
       Window.show({
         id: 'queryTacticalAllocationSingle',
@@ -262,7 +260,7 @@ export default class MessageCenter extends PureComponent {
         scrollY: false,
         scrollX: false,
         title: '大类资产战术配置明细',
-        content: response,
+        content: response.data,
       });
     })
     .catch((e) => {
@@ -272,7 +270,15 @@ export default class MessageCenter extends PureComponent {
 
   // 根据removeNotice处理的消息通知
   @autobind
-  handleMessageByRemoveNotice() {
+  handleMessageByRemoveNotice(rowId) {
+    request(`/fsp/updateSvrNotification?rowid=${rowId}`)
+    .then(() => {
+      // 刷新列表
+      $('#showMessageInfo').EBDataTable('queryData');
+    })
+    .catch((e) => {
+      console.error(e);
+    });
   }
 
   render() {
