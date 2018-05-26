@@ -30,7 +30,7 @@ const { titleList: { manage }, positionTypeArray } = config;
 const empOrgId = 'ZZ001041093';
 // const orgId = emp.getOrgId();
 
-const KEY_POSITIONTYPE = 'positionType';
+const KEY_EMPNAME = 'empName';
 
 export default class AddManageModal extends PureComponent {
   static propTypes = {
@@ -51,51 +51,89 @@ export default class AddManageModal extends PureComponent {
     super(props);
     this.state = {
       positionType: positionTypeArray[0].key,
-      orgId: 0,
+      orgId: '0',
       selectedRowKeys: '',
       selectedArray: [],
+      allSelected: {
+        page1: {
+          row: [],
+          rowKeys: [],
+        },
+      },
+      pageNum: 1,
     };
   }
 
   componentDidMount() {
-    // 获取客户
-    this.props.queryList({});
+    // 查询服务经理
+    this.searchManageList({});
   }
 
   // 选择服务经理
   @autobind
   onSelectChange(selectedRowKeys, selectedRows) {
-    const { data: { list } } = this.props;
-    console.warn('list', list);
-    const selectedArray = selectedRows.map(item => ({
-      smId: item.empId,
-      smPositionId: item.empPositionId,
+    const selectedArrayRow = selectedRows.map(item => ({
+      empId: item.empId,
+      positionId: item.positionId,
     }));
+    const { allSelected, pageNum } = this.state;
+    const page = `page${pageNum}`;
+    const newAllSelected = { ...allSelected };
+    newAllSelected[page].rowKeys = selectedRowKeys;
+    newAllSelected[page].row = selectedArrayRow;
+    console.warn('newAllSelected', newAllSelected);
     this.setState({
+      allSelected: newAllSelected,
       selectedRowKeys,
-      selectedArray,
     });
   }
 
+  // 查询服务经理列表
+  @autobind
+  searchManageList(obj = {}) {
+    const { queryList } = this.props;
+    const { smKeyword, orgId, positionType, pageNum } = this.state;
+    const payload = {
+      smKeyword,
+      orgId: orgId === '0' ? empOrgId : orgId,
+      positionType,
+      pageNum,
+      pageSize: 10,
+      ...obj,
+    };
+    queryList(payload);
+  }
+
+  // 切换职位类型
   @autobind
   handleFilterChange(obj) {
     const { value } = obj;
     this.setState({
       positionType: value,
-    });
+    }, this.searchManageList);
   }
 
+  // 变更所属营业部
   @autobind
   handleTreeSelectChange(value) {
     this.setState({
       orgId: value,
-    });
+    }, this.searchManageList);
+  }
+
+  // 翻页
+  @autobind
+  handlePageChange(page) {
+    this.setState({
+      pageNum: page,
+    }, this.searchManageList);
   }
 
   // 搜索服务经理
   @autobind
   handleSearchManage(value) {
     console.warn('handleSearchManage value', value);
+    // TODO: 发送请求
   }
 
   @autobind
@@ -103,6 +141,7 @@ export default class AddManageModal extends PureComponent {
     return this.modalContent;
   }
 
+  // 发送添加服务经理请求
   @autobind
   sendRequest() {
     const { sendRequest, closeModal, modalKey } = this.props;
@@ -112,8 +151,11 @@ export default class AddManageModal extends PureComponent {
       return;
     }
     const payload = {
+      customer: [],
       manage: selectedArray,
       type: 'add',
+      attachment: '',
+      id: '',
     };
     // 是否需要确认关闭
     const noNeedConfirm = false;
@@ -130,16 +172,16 @@ export default class AddManageModal extends PureComponent {
       closeModal,
       modalKey,
     } = this.props;
-    const { positionType, orgId, selectedRowKeys } = this.state;
-    const { list } = data;
+    const { positionType, orgId, allSelected, pageNum } = this.state;
+    const { list = [], page = {} } = data;
     // 客户列表分页
     const paginationOption = {
-      current: 1,
-      total: 10,
-      pageSize: 10,
-      // current: page.curPageNum || 1,
-      // total: page.totalRecordNum || 10,
-      // pageSize: page.pageSize || 10,
+      // current: 1,
+      // total: 10,
+      // pageSize: 10,
+      current: page.curPageNum || 1,
+      total: page.totalRecordNum || 10,
+      pageSize: page.pageSize || 10,
       onChange: this.handlePageChange,
     };
 
@@ -148,7 +190,7 @@ export default class AddManageModal extends PureComponent {
     if (filterCustRange.length && filterCustRange[0].children.length) {
       treeCustRange = filterCustRange[0].children.map(item => ({
         label: item.name,
-        value: item.id,
+        value: item.pid,
         key: item.value,
       }));
     }
@@ -163,11 +205,14 @@ export default class AddManageModal extends PureComponent {
 
 
     const newTitleList = [...manage];
-    const newEmpIndex = _.findIndex(newTitleList, o => o.key === KEY_POSITIONTYPE);
-    newTitleList[newEmpIndex].render = text => (<div>{positionTypeArray[text].value}</div>);
+    const empNameIndex = _.findIndex(newTitleList, o => o.key === KEY_EMPNAME);
+    newTitleList[empNameIndex].render = (text, record) => (
+      <div>{text} ({record.empId})</div>
+    );
 
+    const pageNumSelect = allSelected[`page${pageNum}`];
     const rowSelection = {
-      selectedRowKeys,
+      selectedRowKeys: _.isEmpty(pageNumSelect) ? [] : pageNumSelect.rowKeys,
       hideDefaultSelections: true,
       columnWidth: 40,
       onChange: this.onSelectChange,
@@ -187,16 +232,16 @@ export default class AddManageModal extends PureComponent {
         <div className={styles.modalContent} ref={modalContent => this.modalContent = modalContent}>
           <div className={styles.contentItem}>
             <div className={styles.operateDiv}>
-              <HTTreeFilter
-                value={''}
-                treeData={[]}
+              <SingleFilter
+                className={styles.firstFilter}
                 filterName={'服务经理'}
                 showSearch
-                searchPlaceholder={'请输入服务经理工号、姓名'}
+                placeholder={'请输入服务经理工号、姓名'}
                 allowClear={false}
-                onSearch={this.handleSearchManage}
-                getPopupContainer={this.findContainer}
-                dropdownClassName={styles.dropdownClassName}
+                data={[]}
+                value={positionType}
+                onPressEnter={this.handleFilterChange}
+                onInputChange={this.handleFilterChange}
               />
               <HTTreeFilter
                 value={orgId}
@@ -216,7 +261,7 @@ export default class AddManageModal extends PureComponent {
             </div>
             <div className={styles.tableDiv}>
               <CommonTable
-                data={list}
+                data={list || []}
                 titleList={newTitleList}
                 align={'left'}
                 rowSelection={rowSelection}

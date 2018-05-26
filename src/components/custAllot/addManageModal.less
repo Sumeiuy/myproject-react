@@ -18,6 +18,21 @@
       width: 0;
       overflow: hidden;
     }
+    .lego-filter-filterContainer {
+      width: 170px;
+      button {
+        width: 170px;
+        text-align: left;
+      }
+    }
+    .lego-tree-select {
+      .lego-selection__rendered {
+        width: 200px;
+        .lego-selection-selected-value {
+          max-width: 85px;
+        }
+      }
+    }
     .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
       padding: 8px 12px;
     }
@@ -26,13 +41,11 @@
       width: 40px;
       min-width: 40px;
     }
-
     .ant-table-thead > tr > th.ant-table-selection-column {
       .ant-table-selection {
         visibility: hidden;
       }
     }
-
     .ant-select-tree-dropdown {
       width: 230px !important;
     }
@@ -44,6 +57,16 @@
           float: right;
           margin-left: 10px;
         }
+      }
+    }
+  }
+  .firstFilter {
+    :global {
+      .lego-filter-filterWrapper .lego-filter-menuContainer .lego-filter-menu {
+        width: 240px;
+      }
+      .lego-single-filter-optionList {
+        display: none;
       }
     }
   }

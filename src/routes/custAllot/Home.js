@@ -211,7 +211,7 @@ export default class CustAllot extends PureComponent {
     const { getList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件
-    getList({ ...params, type: pageType }).then(this.getRightDetail);
+    getList({ ...params, type: '0703' }).then(this.getRightDetail);
   }
 
   // 头部筛选后调用方法
@@ -477,6 +477,7 @@ export default class CustAllot extends PureComponent {
               showModal={this.showModal}
               closeModal={this.closeModal}
               saveChange={saveChange}
+              updateList={updateList}
             />
           :
             null

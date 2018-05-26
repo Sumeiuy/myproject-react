@@ -144,7 +144,7 @@ export default class Detail extends PureComponent {
                 <p>
                   <a
                     onClick={this.handleDownloadClick}
-                    href={`${request.prefix}/excel/custTransfer/exportExcel?appId=${appId || dataId}&empId=${emp.getId()}`}
+                    href={`${request.prefix}/excel/custTransfer/exportAssigumentExcel?appId=${appId || dataId}&empId=${emp.getId()}`}
                     download
                   >
                     下载报错信息

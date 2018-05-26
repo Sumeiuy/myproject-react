@@ -21,7 +21,7 @@ import logable, { logPV } from '../../decorators/logable';
 import { request } from '../../config';
 import { emp } from '../../helper';
 import config from './config';
-import customerTemplet from './customerTemplet.xls';
+import CustAllotXLS from './custAllot.xls';
 import styles from './createModal.less';
 
 // 表头
@@ -61,6 +61,7 @@ export default class CreateModal extends PureComponent {
     visible: PropTypes.bool.isRequired,
     custVisible: PropTypes.bool.isRequired,
     manageVisible: PropTypes.bool.isRequired,
+    updateList: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -81,38 +82,9 @@ export default class CreateModal extends PureComponent {
 
   componentDidMount() {
     // 获取下一步骤按钮列表
-    this.props.queryButtonList({});
-  }
-
-  // 上传事件
-  @autobind
-  @logable({ type: 'Click', payload: { name: '导入' } })
-  onChange(info) {
-    this.setState({
-      importVisible: false,
-    }, () => {
-      const uploadFile = info.file;
-      if (uploadFile.response && uploadFile.response.code) {
-        if (uploadFile.response.code === '0') {
-          // 上传成功
-          // const data = uploadFile.response.resultData;
-          // const { queryCustomerAssignImport } = this.props;
-          // const payload = {
-          //   attachment: data,
-          //   pageNum: 1,
-          //   pageSize: 10,
-          // };
-          // 发送请求
-          // queryCustomerAssignImport(payload).then(() => {
-          //   this.setState({
-          //     attachment: data,
-          //   });
-          // });
-        } else {
-          // 上传失败
-          message.error(uploadFile.response.msg);
-        }
-      }
+    this.props.queryButtonList({
+      flowId: '',
+      operate: 1,
     });
   }
 
@@ -122,6 +94,40 @@ export default class CreateModal extends PureComponent {
   onImportHandle() {
     this.setState({
       importVisible: true,
+    });
+  }
+
+  // 上传事件
+  @autobind
+  @logable({ type: 'Click', payload: { name: '导入' } })
+  handleFileChange(info) {
+    this.setState({
+      importVisible: false,
+    }, () => {
+      const uploadFile = info.file;
+      if (uploadFile.response && uploadFile.response.code) {
+        if (uploadFile.response.code === '0') {
+          // 上传成功
+          const data = uploadFile.response.resultData;
+          const { updateList } = this.props;
+          const payload = {
+            id: '',
+            custtomer: [],
+            manage: [],
+            type: 'add',
+            attachment: data,
+          };
+          // 发送请求
+          updateList(payload).then(() => {
+            this.setState({
+              attachment: data,
+            });
+          });
+        } else {
+          // 上传失败
+          message.error(uploadFile.response.msg);
+        }
+      }
     });
   }
 
@@ -183,7 +189,7 @@ export default class CreateModal extends PureComponent {
       buttonData,
       visible,
       modalKey,
-      custModalKey,
+      // custModalKey,
       manageModalKey,
       showModal,
       closeModal,
@@ -201,7 +207,7 @@ export default class CreateModal extends PureComponent {
       headers: {
         accept: '*/*',
       },
-      onChange: this.onChange,
+      onChange: this.handleFileChange,
       showUploadList: false,
     };
     // const { list: custList, page: custPage } = custData;
@@ -259,13 +265,13 @@ export default class CreateModal extends PureComponent {
             <h3 className={styles.title}>客户列表</h3>
             {/* 操作按钮容器 */}
             <div className={`${styles.operateDiv} clearfix`}>
-              <Button onClick={() => showModal(custModalKey)}>
+              {/* <Button onClick={() => showModal(custModalKey)}>
                 添加
-              </Button>
+              </Button> */}
               <span className={styles.linkSpan}>
                 <a
                   onClick={this.handleDownloadClick}
-                  href={customerTemplet} className={styles.downloadLink}
+                  href={CustAllotXLS} className={styles.downloadLink}
                 >
                   下载导入模板
                 </a>
@@ -305,16 +311,16 @@ export default class CreateModal extends PureComponent {
             onCancel={this.importHandleCancel}
             footer={[
               <Button style={{ marginRight: '10px' }} key="back" onClick={this.importHandleCancel}>
-                否
+                取消
               </Button>,
               <Upload {...uploadProps} {...this.props}>
                 <Button key="submit" type="primary">
-                  是
+                  确定
                 </Button>
               </Upload>,
             ]}
           >
-            <p>已有导入的数据，继续导入将会覆盖之前导入的数据，是否继续？</p>
+            <p>导入后将清空客户列表已有数据，请确认！</p>
           </Modal>
         </div>
         {/* <TableDialog {...searchProps} /> */}

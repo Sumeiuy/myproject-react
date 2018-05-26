@@ -7,16 +7,16 @@
  */
 export default function custAllot(api) {
   return {
-    // 获取详情信息
-    queryDetailInfo: query => api.post('/groovynoauth/fsp/cust/manager/queryApplicationDetail', query),
+    // 获取详情信息--xzx
+    queryDetailInfo: query => api.post('/groovynoauth/fsp/cust/manager/queryCustomerAssigumentDetail', query),
     // 下一步按钮和下一步审批人
     queryButtonList: query => api.post('/groovynoauth/fsp/cust/manager/queryNextStepInfo', query),
     // 查询客户列表
     queryCustList: query => api.post('/groovynoauth/fsp/cust/manager/queryCustList', query),
     // 查询服务经理列表
     queryManageList: query => api.post('/groovynoauth/fsp/cust/manager/queryPriPostn', query),
-    // 批量添加客户或者服务经理、删除、清空
-    updateList: query => api.post('/groovynoauth/fsp/cust/manager/updateList', query),
+    // 批量添加客户或者服务经理、删除、清空--xzx
+    updateList: query => api.post('/groovynoauth/fsp/cust/manager/saveCustomerAssigument', query),
     // 查询已经添加的客户，弹窗与详情中用到
     queryAddedCustList: query => api.post('/groovynoauth/fsp/cust/manager/queryCustomerAssignmentList', query),
     // 查询已经添加的客户
@@ -25,7 +25,7 @@ export default function custAllot(api) {
     saveChange: query => api.post('/groovynoauth/fsp/cust/manager/submit', query),
     // 走流程接口
     doApprove: query => api.post('/groovynoauth/fsp/cust/manager/doApprove', query),
-    // 批量划转的消息提醒数据
-    queryNotifiesList: query => api.post('/groovynoauth/fsp/cust/manager/queryCustomerAssignValidateResult', query),
+    // 批量划转的消息提醒数据--xzx
+    queryNotifiesList: query => api.post('/groovynoauth/fsp/cust/manager/queryNotifiesList', query),
   };
 }

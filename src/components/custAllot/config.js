@@ -88,8 +88,8 @@ const config = {
         title: '所属营业部',
       },
       {
-        dataIndex: 'positionType',
-        key: 'positionType',
+        dataIndex: 'postnType',
+        key: 'postnType',
         title: '职位类型',
       },
     ],
