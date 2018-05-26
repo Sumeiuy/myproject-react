@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-25 22:00:43
+ * @Last Modified time: 2018-05-26 09:15:23
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -246,26 +246,28 @@ export default class MessageCenter extends PureComponent {
 
   // 处理typeName是其他的消息通知
   @autobind
-  async handleMessageByOther(rowId, objectVal) {
-    try {
-      this.setState({ loadingStatus: true });
-      const response = await api.getFspData(`/fsp/asset/basis/queryTacticalAllocationSingle?rowId=${objectVal}&notificationId=${rowId}`);
-      if (response) {
-        this.setState({ loadingStatus: false });
-        Window.show({
-          id: 'queryTacticalAllocationSingle',
-          showExit: true,
-          width: 630,
-          height: 600,
-          scrollY: false,
-          scrollX: false,
-          title: '大类资产战术配置明细',
-          content: response.data,
-        });
-      }
-    } catch (e) {
+  handleMessageByOther(rowId, objectVal) {
+    this.setState({ loadingStatus: true });
+    api
+    .getFspData(`/fsp/asset/basis/queryTacticalAllocationSingle?rowId=${objectVal}&notificationId=${rowId}`)
+    .then((response) => {
+      console.warn('response', response);
+      console.warn('$response', $(response));
+      this.setState({ loadingStatus: false });
+      Window.show({
+        id: 'queryTacticalAllocationSingle',
+        showExit: true,
+        width: 630,
+        height: 600,
+        scrollY: false,
+        scrollX: false,
+        title: '大类资产战术配置明细',
+        content: response.data,
+      });
+    })
+    .catch((e) => {
       console.error(e);
-    }
+    });
   }
 
   // 根据removeNotice处理的消息通知
