@@ -3,21 +3,53 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-25 16:12:08
+ * @Last Modified time: 2018-05-26 18:24:59
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { autobind } from 'core-decorators';
-
+import { Affix } from 'antd';
+import contains from 'rc-util/lib/Dom/contains';
 import Header from './Header';
 import ListSwiper from './ListSwiper';
 import CustomerProfile from './CustomerProfile';
+import CustomerDetail from './CustomerDetail';
 // import { defaultStateCode, ASSET_DESC } from './config';
 import styles from './serviceImplementation.less';
 
 // fsp页面折叠左侧菜单按钮的id
 const foldFspLeftMenuButtonId = 'sidebar-hide-btn';
+
+// 这个是防止页面里有多个class重复，所以做个判断，必须包含当前节点
+// 如果找不到无脑取第一个就行
+const getStickyTarget = (currentNode) => {
+  const containers = document.querySelectorAll('.sticky-container');
+  return (currentNode && _.find(
+    containers,
+    element => contains(element, currentNode),
+  )) || containers[0];
+};
+
+// 当左侧列表或fsp中左侧菜单被折叠或者展开时，返回当前的服务实施列表的pageSize
+// isFoldFspLeftMenu=true fsp的左侧菜单被折叠收起
+// isFoldLeftList=true 执行者视图左侧列表被折叠收起
+const getPageSize = (isFoldFspLeftMenu, isFoldLeftList) => {
+  // 全部都折叠起来放12个
+  if (isFoldFspLeftMenu && isFoldLeftList) {
+    return 12;
+  }
+  // FSP左侧菜单折叠放9个
+  if (isFoldFspLeftMenu) {
+    return 9;
+  }
+  // 任务列表折叠起来放10个
+  if (isFoldLeftList) {
+    return 10;
+  }
+  return 6;
+};
 
 export default class ServiceImplementation extends PureComponent {
   static propTypes = {
@@ -45,15 +77,29 @@ export default class ServiceImplementation extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { targetCustList: { list } } = props;
     this.state = {
       // Fsp页面左侧菜单是否被折叠
       isFoldFspLeftMenu: false,
+      // 当前服务实施列表的数据
+      currentTargetList: list || [],
     };
   }
 
   componentDidMount() {
     // 给FSP折叠菜单按钮注册点击事件
     window.onFspSidebarbtn(this.handleFspLeftMenuClick);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // 将服务实施的列表存到state里面
+    const { targetCustList } = this.props;
+    const { targetCustList: nextTargetCustList } = nextProps;
+    if (targetCustList !== nextTargetCustList) {
+      this.setState({
+        currentTargetList: nextTargetCustList.list,
+      });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -65,7 +111,7 @@ export default class ServiceImplementation extends PureComponent {
     ) {
       const { parameter } = this.props;
       const { rowId, assetSort, state, activeIndex } = parameter;
-      const pageSize = this.getPageSize(isFoldFspLeftMenu, isFold);
+      const pageSize = getPageSize(isFoldFspLeftMenu, isFold);
       const pageNum = Math.ceil(parseInt(activeIndex, 10) / pageSize);
       this.queryTargetCustList({
         state,
@@ -82,27 +128,9 @@ export default class ServiceImplementation extends PureComponent {
     window.onFspSidebarbtn(this.handleFspLeftMenuClick);
   }
 
-  // 当左侧列表或fsp中左侧菜单被折叠或者展开时，返回当前的客户列表的pageSize
-  getPageSize(isFoldFspLeftMenu, isFoldLeftList) {
-    // 全部都折叠起来放12个
-    if (isFoldFspLeftMenu && isFoldLeftList) {
-      return 12;
-    }
-    // FSP左侧菜单折叠方9个
-    if (isFoldFspLeftMenu) {
-      return 9;
-    }
-    // 任务列表折叠起来放10个
-    if (isFoldLeftList) {
-      return 10;
-    }
-    return 6;
-  }
-
   // FSP折叠菜单按钮被点击
   @autobind
   handleFspLeftMenuClick(e) {
-    console.log('handleFspLeftSideBarClick: ', e);
     // 是否折叠了fsp左侧菜单
     const isFoldFspLeftMenu = e.target.id === foldFspLeftMenuButtonId
       || e.target.parentNode.id === foldFspLeftMenuButtonId;
@@ -148,7 +176,6 @@ export default class ServiceImplementation extends PureComponent {
   // 资产排序
   @autobind
   handleAssetSort(obj) {
-    console.log('handleAssetSort:  ', obj);
     const assetSort = obj.isDesc ? 'desc' : 'asc';
     const { parameter, changeParameter, targetCustList } = this.props;
     const { page: { pageSize, pageNum } } = targetCustList;
@@ -204,7 +231,6 @@ export default class ServiceImplementation extends PureComponent {
   // 点击了列表中的客户
   @autobind
   handleCustomerClick(obj = {}) {
-    console.log('handleIndexChange: ', obj);
     const { changeParameter, currentId, getCustDetail } = this.props;
     changeParameter({
       activeIndex: obj.activeIndex,
@@ -257,9 +283,10 @@ export default class ServiceImplementation extends PureComponent {
   render() {
     const { dict = {} } = this.context;
     const { parameter, targetCustDetail } = this.props;
-    console.log('parameter', parameter);
+    const { currentTargetList } = this.state;
+    console.log('parameter', parameter, currentTargetList);
     return (
-      <div className={styles.serviceImplementation}>
+      <div className={styles.serviceImplementation} ref={ref => this.container = ref}>
         <Header
           {...this.props}
           {...this.state}
@@ -270,13 +297,19 @@ export default class ServiceImplementation extends PureComponent {
           handlePreciseQueryChange={this.handlePreciseQueryChange}
           handlePreciseQueryEnterPress={this.handlePreciseQueryEnterPress}
         />
-        <ListSwiper
-          {...this.props}
-          containerClass={styles.listSwiper}
-          onCustomerClick={this.handleCustomerClick}
-          onPageChange={this.handlePageChange}
-        />
-        <CustomerProfile targetCustDetail={targetCustDetail} />
+        <Affix target={() => getStickyTarget(this.container)}>
+          <ListSwiper
+            {...this.props}
+            containerClass={styles.listSwiper}
+            currentTargetList={currentTargetList}
+            onCustomerClick={this.handleCustomerClick}
+            onPageChange={this.handlePageChange}
+          />
+          <CustomerProfile targetCustDetail={targetCustDetail} />
+        </Affix>
+        <div className={styles.taskDetail}>
+          <CustomerDetail targetCustDetail={targetCustDetail} />
+        </div>
       </div>
     );
   }

@@ -34,4 +34,7 @@ export const riskLevelConfig = {
   704015: '积',
 };
 
+// 任务状态为未处理、处理中、已驳回时可打电话
+export const CALLABLE_LIST = ['10', '20', '60'];
+
 export default {};

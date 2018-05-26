@@ -26,12 +26,14 @@ export default class ListSwiper extends PureComponent {
     onCustomerClick: PropTypes.func,
     containerClass: PropTypes.string,
     onPageChange: PropTypes.func,
+    currentTargetList: PropTypes.array,
   }
 
   static defaultProps = {
     onCustomerClick: _.noop,
     onPageChange: _.noop,
     containerClass: '',
+    currentTargetList: [],
   }
 
   @autobind
@@ -85,14 +87,14 @@ export default class ListSwiper extends PureComponent {
 
   @autobind
   renderListItem() {
-    const { targetCustList, parameter, onCustomerClick } = this.props;
-    const { page: { pageSize, pageNum }, list = [] } = targetCustList;
+    const { targetCustList, parameter, onCustomerClick, currentTargetList } = this.props;
+    const { page: { pageSize, pageNum } } = targetCustList;
     const { activeIndex } = parameter;
     console.log('renderListItem: ', this.props);
     // 当前activeIndex在当前请求回来的客户列表里面计算所在当前客户列表的位置，否则，默认第一个
     const currentIndex = (parseInt(activeIndex, 10) - 1) % pageSize;
     return (
-      (list || []).map((item, index) => {
+      currentTargetList.map((item, index) => {
         // 上次选中的客户还在列表里的时候，继续高亮此客户，否则高亮此次列表中的第一条数据
         const cls = cx(
           styles.listItem,

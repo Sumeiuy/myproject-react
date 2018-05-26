@@ -5,13 +5,27 @@
     margin: 0 20px;
     font-size: 16px;
     color: #108ee9;
+    display: flex;
     .col {
       width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      &:first-child {
+        justify-content: flex-start;
+      }
     }
     .item {
+      display: flex;
+      align-items: center;
       padding: 4px 0;
-      line-height: 1;
       margin: 0;
+      &.textRight {
+        text-align: right;
+      }
+      &:first-child {
+        margin-right: 10px;
+      }
     }
     .highWorth, .riskLevel, .sign {
       display: inline-block;
@@ -35,5 +49,28 @@
       margin-right: 4px;
       height: 18px;
     }
+    .basicInfo {
+      font-size: 14px;
+      color: #4a4a4a;
+    }
+    .contact {
+      display: inline-block;
+      padding: 0 6px;
+      height: 24px;
+      line-height: 21px;
+      font-size: 13px;
+      border: 1px solid #108ee9;
+      border-radius: 3px;
+      background: #fff;
+      text-align: center;
+      cursor: pointer;
+      .icon {
+        font-size: 13px;
+        margin-right: 4px;
+      }
+    }
   }
+}
+.clickable {
+  cursor: pointer;
 }
