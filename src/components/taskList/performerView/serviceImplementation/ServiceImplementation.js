@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-26 18:24:59
+ * @Last Modified time: 2018-05-27 16:09:03
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import Header from './Header';
 import ListSwiper from './ListSwiper';
 import CustomerProfile from './CustomerProfile';
 import CustomerDetail from './CustomerDetail';
+import SimpleDisplayBlock from './SimpleDisplayBlock';
 // import { defaultStateCode, ASSET_DESC } from './config';
 import styles from './serviceImplementation.less';
 
@@ -65,10 +66,12 @@ export default class ServiceImplementation extends PureComponent {
     isFold: PropTypes.bool.isRequired,
     getCustDetail: PropTypes.func.isRequired,
     targetCustDetail: PropTypes.object.isRequired,
+    servicePolicy: PropTypes.string,
   }
 
   static defaultProps = {
     customerList: [],
+    servicePolicy: '',
   }
 
   static contextTypes = {
@@ -282,7 +285,7 @@ export default class ServiceImplementation extends PureComponent {
 
   render() {
     const { dict = {} } = this.context;
-    const { parameter, targetCustDetail } = this.props;
+    const { parameter, targetCustDetail, servicePolicy } = this.props;
     const { currentTargetList } = this.state;
     console.log('parameter', parameter, currentTargetList);
     return (
@@ -309,6 +312,8 @@ export default class ServiceImplementation extends PureComponent {
         </Affix>
         <div className={styles.taskDetail}>
           <CustomerDetail targetCustDetail={targetCustDetail} />
+          <SimpleDisplayBlock title="服务策略" data={servicePolicy} />
+          <SimpleDisplayBlock title="任务提示" data={targetCustDetail.serviceTips} />
         </div>
       </div>
     );

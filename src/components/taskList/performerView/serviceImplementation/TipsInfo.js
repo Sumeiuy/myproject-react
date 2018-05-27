@@ -1,15 +1,15 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-12-12 14:56:58
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-12-26 10:22:09
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-27 13:55:36
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'antd';
 import classnames from 'classnames';
-import Icon from '../../common/Icon';
+import Icon from '../../../common/Icon';
 import styles from './tipsInfo.less';
 
 

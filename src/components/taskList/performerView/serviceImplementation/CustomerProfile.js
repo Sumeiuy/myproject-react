@@ -1,3 +1,11 @@
+/*
+ * @Description: 客户的基本信息
+ * @Author: WangJunjun
+ * @Date: 2018-05-27 15:30:44
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-27 15:41:04
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -35,7 +43,7 @@ export default class CustomerProfile extends React.PureComponent {
     targetCustDetail: PropTypes.object.isRequired,
   }
 
-  static contextProps = {
+  static contextTypes = {
     push: PropTypes.func,
   }
 

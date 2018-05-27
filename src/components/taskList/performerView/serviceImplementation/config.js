@@ -37,4 +37,8 @@ export const riskLevelConfig = {
 // 任务状态为未处理、处理中、已驳回时可打电话
 export const CALLABLE_LIST = ['10', '20', '60'];
 
+// 信息的完备，用于判断
+export const COMPLETION = '完备';
+export const NOTCOMPLETION = '不完备';
+
 export default {};
