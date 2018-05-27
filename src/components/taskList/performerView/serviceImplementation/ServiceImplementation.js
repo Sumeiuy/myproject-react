@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-27 16:09:03
+ * @Last Modified time: 2018-05-27 16:44:57
  */
 
 import React, { PureComponent } from 'react';
@@ -67,6 +67,9 @@ export default class ServiceImplementation extends PureComponent {
     getCustDetail: PropTypes.func.isRequired,
     targetCustDetail: PropTypes.object.isRequired,
     servicePolicy: PropTypes.string,
+    getCustIncome: PropTypes.func.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
+    custIncomeReqState: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -285,7 +288,10 @@ export default class ServiceImplementation extends PureComponent {
 
   render() {
     const { dict = {} } = this.context;
-    const { parameter, targetCustDetail, servicePolicy } = this.props;
+    const {
+      parameter, targetCustDetail, servicePolicy,
+      monthlyProfits, custIncomeReqState, getCustIncome,
+    } = this.props;
     const { currentTargetList } = this.state;
     console.log('parameter', parameter, currentTargetList);
     return (
@@ -311,7 +317,12 @@ export default class ServiceImplementation extends PureComponent {
           <CustomerProfile targetCustDetail={targetCustDetail} />
         </Affix>
         <div className={styles.taskDetail}>
-          <CustomerDetail targetCustDetail={targetCustDetail} />
+          <CustomerDetail
+            targetCustDetail={targetCustDetail}
+            monthlyProfits={monthlyProfits}
+            custIncomeReqState={custIncomeReqState}
+            getCustIncome={getCustIncome}
+          />
           <SimpleDisplayBlock title="服务策略" data={servicePolicy} />
           <SimpleDisplayBlock title="任务提示" data={targetCustDetail.serviceTips} />
         </div>

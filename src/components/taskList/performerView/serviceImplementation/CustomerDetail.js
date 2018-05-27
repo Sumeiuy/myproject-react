@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-27 15:40:03
+ * @Last Modified time: 2018-05-27 16:43:20
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ import TipsInfo from './TipsInfo';
 import { formatAsset } from './formatNum';
 import { COMPLETION, NOTCOMPLETION, PER_CODE, ORG_CODE } from './config';
 import { openFspTab } from '../../../../utils';
+import SixMonthEarnings from '../../../customerPool/list/SixMonthEarnings';
 import styles from './customerDetail.less';
 
 // 根据资产的值返回对应的格式化值和单位串起来的字符串
@@ -32,6 +33,9 @@ const handleAssets = (value) => {
 export default class CustomerDetail extends PureComponent {
   static propTypes = {
     targetCustDetail: PropTypes.object.isRequired,
+    getCustIncome: PropTypes.func.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
+    custIncomeReqState: PropTypes.bool.isRequired,
   }
 
   static contextTypes = {
@@ -137,7 +141,7 @@ export default class CustomerDetail extends PureComponent {
   }
 
   render() {
-    const { targetCustDetail = {} } = this.props;
+    const { targetCustDetail = {}, getCustIncome, monthlyProfits, custIncomeReqState } = this.props;
     const {
       assets, openAssets, availablBalance, openedBusiness, openBusiness,
       empName, recentServiceTime, missionType, missionTitle,
@@ -166,7 +170,21 @@ export default class CustomerDetail extends PureComponent {
         <div className={styles.container}>
           <div className={styles.item}>
             <div className={styles.itemLabel}>总资产:</div>
-            <div className={styles.itemContent}>{handleAssets(assets)}</div>
+            <div className={styles.itemContent}>
+              {handleAssets(assets)}
+              {!_.isEmpty(assets) ?
+                <div className={styles.wordTips}>
+                  <SixMonthEarnings
+                    listItem={targetCustDetail}
+                    monthlyProfits={monthlyProfits}
+                    custIncomeReqState={custIncomeReqState}
+                    getCustIncome={getCustIncome}
+                    formatAsset={formatAsset}
+                    displayText="峰值和最近收益"
+                  />
+                </div> : null
+              }
+            </div>
           </div>
           <div className={styles.item}>
             <div className={styles.itemLabel}>股基佣金率:</div>
