@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-28 15:07:41
+ * @Last Modified time: 2018-05-28 16:01:12
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -284,7 +284,7 @@ export default class MessageCenter extends PureComponent {
         if (totalRecordNum > 99) {
           totalRecordNum = '99+';
         }
-        $('.remindMessages').html(infoMessageNum.toString()).css('display', 'inline-block'); //eslint-disable-line
+        $('.remindMessages').html(totalRecordNum.toString()).css('display', 'inline-block'); //eslint-disable-line
       }
     })
     .catch((e) => {
