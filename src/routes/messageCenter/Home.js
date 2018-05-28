@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-28 20:31:23
+ * @Last Modified time: 2018-05-28 20:42:01
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -258,7 +258,7 @@ export default class MessageCenter extends PureComponent {
         scrollY: false,
         scrollX: false,
         title: '大类资产战术配置明细',
-        content: response.data,
+        content: response,
       });
     })
     .catch((e) => {
