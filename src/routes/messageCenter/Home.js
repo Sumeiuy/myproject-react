@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-28 11:06:48
+ * @Last Modified time: 2018-05-28 15:07:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -347,13 +347,14 @@ export default class MessageCenter extends PureComponent {
           </div>
         </div>
         {
-            _.isEmpty(page) ?
-              (<Pagination
+            _.isEmpty(page) ? null
+            : (
+              <Pagination
                 current={curPageNum}
                 total={totalRecordNum}
                 pageSize={pageSize}
                 onChange={this.handlePageChange}
-              />) : null
+              />)
           }
       </div>
     );
