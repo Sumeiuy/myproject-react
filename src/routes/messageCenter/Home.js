@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-28 16:01:12
+ * @Last Modified time: 2018-05-28 19:43:15
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -275,15 +275,18 @@ export default class MessageCenter extends PureComponent {
     .getFspData(`/fsp/updateSvrNotification?rowid=${rowId}`)
     .then(() => {
       // 刷新列表
-      $('#showMessageInfo').EBDataTable('queryData');
+      // $('#showMessageInfo').EBDataTable('queryData');
+      const { page } = this.props.remindMessages;
+      const { curPageNum } = page;
+      let { totalRecordNum } = page;
       this.getRemindMessageList({
-        pageNum: 1,
+        pageNum: curPageNum,
       });
-      let { page: { totalRecordNum } } = this.props.remindMessages;
       if (totalRecordNum > 0) {
         if (totalRecordNum > 99) {
           totalRecordNum = '99+';
         }
+        // 修改fsp页面用户信息的消息提醒条数
         $('.remindMessages').html(totalRecordNum.toString()).css('display', 'inline-block'); //eslint-disable-line
       }
     })
