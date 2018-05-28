@@ -88,9 +88,9 @@ export default class CommonUpload extends PureComponent {
   }
 
   static defaultProps = {
-    reformDeleteAttachment: () => {},
-    deleteAttachment: () => {},
-    uploadAttachment: () => {},
+    reformDeleteAttachment: _.noop,
+    deleteAttachment: _.noop,
+    uploadAttachment: _.noop,
     attachment: '',
     deleteAttachmentList: [],
     reformDeleteAttachmentList: [],
@@ -250,7 +250,7 @@ export default class CommonUpload extends PureComponent {
       needDefaultText,
     } = this.props;
 
-    const actionName = reformEnable ? 'ceFileUpload2' : `ceFileUpload`;
+    const actionName = reformEnable ? 'ceFileUpload2' : 'ceFileUpload';
     const uploadProps = {
       data: {
         empId,
