@@ -8,6 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
@@ -19,18 +20,36 @@ import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHe
 import CreateModal from '../../components/custAllot/CreateModal';
 import AddCustModal from '../../components/custAllot/AddCustModal';
 import AddManageModal from '../../components/custAllot/AddManageModal';
+import TableDialog from '../../components/common/biz/TableDialog';
 
+import BottonGroup from '../../components/permission/BottonGroup';
 import FilialeCustTransferList from '../../components/common/appList';
 import ViewListRow from '../../components/custAllot/ViewListRow';
 import Detail from '../../components/custAllot/Detail';
 import commonConfirm from '../../components/common/confirm_';
 import { seibelConfig } from '../../config';
+import config from '../../components/custAllot/config';
 import { dva, emp } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
 
 const dispatch = dva.generateEffect;
 const { filialeCustTransfer, filialeCustTransfer: { pageType, status } } = seibelConfig;
+
+const { titleList: { approvalColumns } } = config;
+
+// 登陆人的组织 ID
+const empOrgId = emp.getOrgId();
+// 登陆人的职位 ID
+const empPstnId = emp.getPstnId();
+// 新建弹窗的 key 值
+const createModalKey = 'createModal';
+// 服务经理弹窗
+const manageModalKey = 'manageModal';
+// 客户弹窗
+const custModalKey = 'custModal';
+// 审批人弹窗
+const approverModalKey = 'approverModal';
 
 const effects = {
   // 获取左侧列表
@@ -51,6 +70,8 @@ const effects = {
   queryAddedManageList: 'custAllot/queryAddedManageList',
   // 提交客户分配
   saveChange: 'custAllot/saveChange',
+  // 清除数据
+  clearData: 'custAllot/clearData',
 };
 
 const mapStateToProps = state => ({
@@ -72,6 +93,9 @@ const mapStateToProps = state => ({
   addedCustData: state.custAllot.addedCustData,
   // 已添加的服务经理列表
   addedManageData: state.custAllot.addedManageData,
+  // 上传后更新的批次数据
+  updateData: state.custAllot.updateData,
+  saveChangeData: state.custAllot.saveChangeData,
 });
 
 
@@ -95,10 +119,8 @@ const mapDispatchToProps = {
   queryAddedManageList: dispatch(effects.queryAddedManageList, { loading: true, forceFull: true }),
   // 提交客户分配
   saveChange: dispatch(effects.saveChange, { loading: true, forceFull: true }),
-  // 提交成功后清除上一次查询的数据
-  // emptyQueryData: fetchDataFunction(false, 'filialeCustTransfer/emptyQueryData'),
-  // 清空批量划转的数据
-  // clearMultiData: fetchDataFunction(true, 'filialeCustTransfer/clearMultiData', true),
+  // 清除搜索数据
+  clearData: dispatch(effects.clearData, { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -129,6 +151,7 @@ export default class CustAllot extends PureComponent {
     queryManageList: PropTypes.func.isRequired,
     // 添加、删除、清空客户
     updateList: PropTypes.func.isRequired,
+    updateData: PropTypes.object.isRequired,
     // 已添加的客户
     addedCustData: PropTypes.object.isRequired,
     queryAddedCustList: PropTypes.func.isRequired,
@@ -137,6 +160,9 @@ export default class CustAllot extends PureComponent {
     queryAddedManageList: PropTypes.func.isRequired,
     // 提交数据
     saveChange: PropTypes.func.isRequired,
+    saveChangeData: PropTypes.object.isRequired,
+    // 清除搜索数据
+    clearData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -151,6 +177,9 @@ export default class CustAllot extends PureComponent {
       createModal: false,
       custModal: false,
       manageModal: false,
+      approverModal: false,
+      // 审批人
+      flowAuditors: [],
     };
   }
 
@@ -165,6 +194,11 @@ export default class CustAllot extends PureComponent {
       },
     } = this.props;
     this.queryAppList(query, pageNum, pageSize);
+  }
+
+  componentWillUnmount() {
+    const { clearData } = this.props;
+    clearData('clearAllData');
   }
 
   // 获取右侧详情
@@ -201,7 +235,7 @@ export default class CustAllot extends PureComponent {
       this.setState({
         activeRowIndex: itemIndex,
       });
-      queryDetailInfo({ flowId: item.flowId });
+      queryDetailInfo({ flowId: item.flowId, orgId: empOrgId });
     }
   }
 
@@ -210,8 +244,8 @@ export default class CustAllot extends PureComponent {
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
-    // 默认筛选条件
-    getList({ ...params, type: '0703' }).then(this.getRightDetail);
+    // 默认筛选条件 TODO:
+    getList({ ...params, type: '07', subType: '0703' }).then(this.getRightDetail);
   }
 
   // 头部筛选后调用方法
@@ -248,7 +282,6 @@ export default class CustAllot extends PureComponent {
     return isFiliale;
   }
 
-
   // 打开弹窗
   @autobind
   showModal(modalKey) {
@@ -257,30 +290,26 @@ export default class CustAllot extends PureComponent {
     });
   }
 
+  // 关闭弹窗
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户划转弹框' } })
-  closeModal(modalKey, isNeedConfirm = true) {
+  closeModal(obj) {
+    const { clearData } = this.props;
+    const { modalKey, isNeedConfirm = true, clearDataType = '' } = obj;
     // 关闭模态框
     if (isNeedConfirm) {
       commonConfirm({
         shortCut: 'close',
         onOk: () => this.setState({
           [modalKey]: false,
-        }),
-        // onOk: this.clearBoardAllData,
+        }, () => clearData(clearDataType)),
       });
     } else {
       this.setState({
         [modalKey]: false,
-      });
+      }, () => clearData(clearDataType));
     }
   }
-
-  // @autobind
-  // closeModal(modalKey) {
-  //   // 清除模态框组件
-  //   this.setState({ [modalKey]: false });
-  // }
 
   // 打开新建申请的弹出框
   @autobind
@@ -307,28 +336,12 @@ export default class CustAllot extends PureComponent {
     this.queryAppList(query, nextPage, currentPageSize);
   }
 
-  // 切换每一页显示条数
-  @autobind
-  handlePageSizeChange(currentPageNum, changedPageSize) {
-    const { replace, location } = this.props;
-    const { query, pathname } = location;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        pageNum: 1,
-        pageSize: changedPageSize,
-      },
-    });
-    this.queryAppList(query, 1, changedPageSize);
-  }
-
   // 点击列表每条的时候对应请求详情
   @autobind
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '分公司客户人工划转左侧列表项',
+      name: '分公司客户分配左侧列表项',
       type: '$props.location.query.type',
       subType: '$props.location.query.subType',
     },
@@ -352,6 +365,122 @@ export default class CustAllot extends PureComponent {
     queryDetailInfo({ flowId });
   }
 
+
+  // 更新客户或者服务经理接口
+  @autobind
+  updateCustOrEmp(payload, pageData) {
+    const { updateList, queryAddedCustList, queryAddedManageList } = this.props;
+    updateList(payload).then(() => {
+      const { updateData } = this.props;
+      const queryPayload = {
+        id: updateData.appId,
+        positionId: empPstnId,
+        orgId: empOrgId,
+        pageNum: 1,
+        pageSize: 5,
+      };
+      // 从客户弹窗过来请求已添加的客户，否则请求已添加的服务经理
+      const queryFunction = pageData.modalKey === 'custModal' ? queryAddedCustList : queryAddedManageList;
+      queryFunction(queryPayload).then(() => {
+        this.closeModal(pageData);
+      });
+    });
+  }
+
+  // 提交，点击后选择审批人
+  @autobind
+  handleSubmit(btnItem) {
+    // TODO:校验
+    const { addedCustData, addedManageData } = this.props;
+    if (_.isEmpty(addedCustData)) {
+      message.error('请添加客户');
+      return;
+    }
+    if (_.isEmpty(addedManageData)) {
+      message.error('请添加服务经理');
+      return;
+    }
+    const { page: { totalRecordNum: custTotal } } = addedCustData;
+    const { page: { totalRecordNum: manageTotal } } = addedManageData;
+    if (custTotal <= 0) {
+      message.error('请添加客户');
+      return;
+    }
+    if (manageTotal <= 0) {
+      message.error('请添加服务经理');
+      return;
+    }
+    if (custTotal < manageTotal) {
+      message.error('所选客户数量必须大于或者等于所选服务经理数量');
+      return;
+    }
+    this.setState({
+      flowAuditors: btnItem.flowAuditors,
+      approverModal: true,
+    });
+  }
+
+  @autobind
+  closeApprovalAndCreateModal() {
+    const {
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
+    // 关闭审批人弹窗
+    this.closeModal({
+      modalKey: approverModalKey,
+      isNeedConfirm: false,
+      clearDataType: 'clearAllData',
+    });
+    // 关闭新建弹窗
+    this.closeModal({
+      modalKey: createModalKey,
+      isNeedConfirm: false,
+      clearDataType: 'clearAllData',
+    });
+
+    this.queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
+  }
+
+  // 选完审批人后的提交
+  @autobind
+  handleApproverModalOK(auth) {
+    const { saveChange, updateData } = this.props;
+    const { flowAuditors } = this.state;
+    // TODO: ruleType
+    const payload = {
+      id: updateData.appId,
+      ruleType: '0',
+      TGConfirm: '',
+      positionId: empPstnId,
+      orgId: empOrgId,
+      auditors: auth.login,
+      groupName: flowAuditors.nextGroupName,
+      approverIdea: '',
+    };
+    saveChange(payload).then(() => {
+      const { saveChangeData } = this.props;
+      // 提交没有问题
+      if (saveChangeData.errorCode === '0') {
+        message.success('提交成功，后台正在进行数据处理！若数据校验失败，可在首页通知提醒中查看失败原因。');
+        this.closeApprovalAndCreateModal();
+      } else {
+        commonConfirm({
+          shortCut: 'hasTouGu',
+          onOk: () => {
+            payload.TGConfirm = 0;
+            saveChange(payload).then(this.closeApprovalAndCreateModal);
+          },
+        });
+      }
+    });
+  }
+
   // 渲染列表项里面的每一项
   @autobind
   renderListRow(record, index) {
@@ -369,6 +498,7 @@ export default class CustAllot extends PureComponent {
       />
     );
   }
+
 
   render() {
     const {
@@ -397,8 +527,16 @@ export default class CustAllot extends PureComponent {
       saveChange,
       // 添加客户或服务经理后提交事件
       updateList,
+      updateData,
+      clearData,
     } = this.props;
-    const { createModal, custModal, manageModal } = this.state;
+    const {
+      createModal,
+      custModal,
+      manageModal,
+      approverModal,
+      flowAuditors,
+    } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
       <ConnectedSeibelHeader
@@ -423,9 +561,9 @@ export default class CustAllot extends PureComponent {
       total: page.totalCount,
       pageSize: parseInt(pageSize, 10),
       onChange: this.handlePageNumberChange,
-      onShowSizeChange: this.handlePageSizeChange,
     };
 
+    // 左侧列表
     const leftPanel = (
       <FilialeCustTransferList
         list={resultData}
@@ -434,12 +572,34 @@ export default class CustAllot extends PureComponent {
       />
     );
 
+    // 右侧详情
     const rightPanel = (
       <Detail
         location={location}
         data={detailInfo}
       />
     );
+
+    // 新建弹窗按钮
+    const selfBtnGroup = (<BottonGroup
+      list={buttonData}
+      onEmitEvent={this.handleSubmit}
+    />);
+
+
+    // 审批人弹窗
+    const approvalProps = {
+      visible: approverModal,
+      onOk: this.handleApproverModalOK,
+      onCancel: () => { this.setState({ approverModal: false }); },
+      dataSource: flowAuditors,
+      columns: approvalColumns,
+      title: '选择下一审批人员',
+      placeholder: '员工号/员工姓名',
+      modalKey: 'approverModal',
+      rowKey: 'login',
+      searchShow: false,
+    };
 
     return (
       <div>
@@ -454,12 +614,10 @@ export default class CustAllot extends PureComponent {
           createModal
           ?
             <CreateModal
-              modalKey={'createModal'}
-              custModalKey={'custModal'}
-              manageModalKey={'manageModal'}
+              modalKey={createModalKey}
+              custModalKey={custModalKey}
+              manageModalKey={manageModalKey}
               visible={createModal}
-              custVisible={custModal}
-              manageVisible={manageModal}
               location={location}
               empInfo={empInfo}
               custRangeList={custRangeList}
@@ -471,13 +629,15 @@ export default class CustAllot extends PureComponent {
               queryManageList={queryManageList}
               addedManageData={addedManageData}
               queryAddedManageList={queryAddedManageList}
-              buttonData={buttonData}
+              selfBtnGroup={selfBtnGroup}
               queryButtonList={queryButtonList}
               queryAppList={this.queryAppList}
               showModal={this.showModal}
               closeModal={this.closeModal}
               saveChange={saveChange}
               updateList={updateList}
+              updateData={updateData}
+              clearData={clearData}
             />
           :
             null
@@ -486,11 +646,13 @@ export default class CustAllot extends PureComponent {
           custModal
           ?
             <AddCustModal
-              modalKey={'custModal'}
+              modalKey={custModalKey}
               visible={custModal}
               data={custData}
               queryList={queryCustList}
               closeModal={this.closeModal}
+              sendRequest={this.updateCustOrEmp}
+              updateData={updateData}
             />
           :
             null
@@ -499,14 +661,22 @@ export default class CustAllot extends PureComponent {
           manageModal
           ?
             <AddManageModal
-              modalKey={'manageModal'}
+              modalKey={manageModalKey}
               visible={manageModal}
               custRangeList={custRangeList}
               data={manageData}
               queryList={queryManageList}
               closeModal={this.closeModal}
-              sendRequest={updateList}
+              sendRequest={this.updateCustOrEmp}
+              updateData={updateData}
             />
+          :
+            null
+        }
+        {
+          approverModal
+          ?
+            <TableDialog {...approvalProps} />
           :
             null
         }

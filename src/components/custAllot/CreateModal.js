@@ -8,15 +8,16 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, Modal, Upload } from 'antd';
+import { message, Modal, Upload, Radio } from 'antd';
 import _ from 'lodash';
 
+
+import InfoForm from '../common/infoForm';
 import CommonModal from '../common/biz/CommonModal';
-import BottonGroup from '../permission/BottonGroup';
-// import TableDialog from '../common/biz/TableDialog';
 import Button from '../../components/common/Button';
 import Pagination from '../../components/common/Pagination';
 import CommonTable from '../../components/common/biz/CommonTable';
+import Icon from '../../components/common/Icon';
 import logable, { logPV } from '../../decorators/logable';
 import { request } from '../../config';
 import { emp } from '../../helper';
@@ -24,8 +25,22 @@ import config from './config';
 import CustAllotXLS from './custAllot.xls';
 import styles from './createModal.less';
 
+const RadioGroup = Radio.Group;
 // 表头
-const { titleList } = config;
+const { titleList: { cust: custTitleList, manage: manageTitleList }, ruleTypeArray } = config;
+// 登陆人的组织 ID
+const empOrgId = emp.getOrgId();
+// 登陆人的职位 ID
+const empPstnId = emp.getPstnId();
+
+// 客户
+const KEY_CUSTNAME = 'custName';
+// 原服务经理
+const KEY_OLDEMPNAME = 'oldEmpName';
+// 是否入岗投顾
+const KEY_ISTOUGU = 'isTouGu';
+// 开发经理
+const KEY_DMNAME = 'dmName';
 
 export default class CreateModal extends PureComponent {
   static propTypes = {
@@ -33,7 +48,7 @@ export default class CreateModal extends PureComponent {
     custRangeList: PropTypes.array.isRequired,
     queryAppList: PropTypes.func.isRequired,
     // 获取按钮数据和下一步审批人
-    buttonData: PropTypes.object.isRequired,
+    selfBtnGroup: PropTypes.object.isRequired,
     queryButtonList: PropTypes.func.isRequired,
     // 获取客户数据
     custData: PropTypes.object.isRequired,
@@ -59,9 +74,9 @@ export default class CreateModal extends PureComponent {
     closeModal: PropTypes.func.isRequired,
     // 弹窗状态
     visible: PropTypes.bool.isRequired,
-    custVisible: PropTypes.bool.isRequired,
-    manageVisible: PropTypes.bool.isRequired,
     updateList: PropTypes.func.isRequired,
+    updateData: PropTypes.object.isRequired,
+    clearData: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -77,6 +92,7 @@ export default class CreateModal extends PureComponent {
       nextApproverList: [],
       // 审批人弹窗
       nextApproverModal: false,
+      ruleType: ruleTypeArray[0].value,
     };
   }
 
@@ -97,10 +113,88 @@ export default class CreateModal extends PureComponent {
     });
   }
 
+
+  // 生成客户表格标题列表
+  @autobind
+  getColumnsCustTitle() {
+    const titleList = [...custTitleList];
+    // 客户
+    const custNameIndex = _.findIndex(titleList, o => o.key === KEY_CUSTNAME);
+    // 原服务经理
+    const oldEmpNameIndex = _.findIndex(titleList, o => o.key === KEY_OLDEMPNAME);
+    // 是否是投顾
+    const isTouguIndex = _.findIndex(titleList, o => o.key === KEY_ISTOUGU);
+    // 开发经理
+    const dmNameIndex = _.findIndex(titleList, o => o.key === KEY_DMNAME);
+    titleList[custNameIndex].render = (text, record) => (
+      <div>{text} ({record.custId})</div>
+    );
+    titleList[oldEmpNameIndex].render = (text, record) => (
+      <div>
+        {
+          text ?
+            `${text} (${record.oldEmpNameId})`
+          :
+            null
+        }
+      </div>
+    );
+    titleList[isTouguIndex].render = (text, record) => {
+      const isTouGu = text ? '是' : '否';
+      return (<div>
+        {
+          record.oldEmpName ?
+            isTouGu
+          :
+            null
+        }
+      </div>);
+    };
+    titleList[dmNameIndex].render = (text, record) => (
+      <div>
+        {
+          text ?
+            `${text} (${record.dmId})`
+          :
+            null
+        }
+      </div>
+    );
+    titleList[titleList.length] = {
+      dataIndex: 'operate',
+      key: 'operate',
+      title: '操作',
+      render: (text, record) => ((
+        <span>
+          <Icon type="shanchu" onClick={() => this.deleteTableData('cust', record)} />
+        </span>
+      )),
+    };
+    return titleList;
+  }
+
+  // 生成服务经理表格标题列表
+  @autobind
+  getColumnsManageTitle() {
+    const titleList = [...manageTitleList];
+    titleList[titleList.length] = {
+      dataIndex: 'operate',
+      key: 'operate',
+      title: '操作',
+      render: (text, record) => ((
+        <span>
+          <Icon type="shanchu" onClick={() => this.deleteTableData('manage', record)} />
+        </span>
+      )),
+    };
+    return titleList;
+  }
+
   // 上传事件
   @autobind
   @logable({ type: 'Click', payload: { name: '导入' } })
   handleFileChange(info) {
+    const { attachment } = this.state;
     this.setState({
       importVisible: false,
     }, () => {
@@ -109,65 +203,47 @@ export default class CreateModal extends PureComponent {
         if (uploadFile.response.code === '0') {
           // 上传成功
           const data = uploadFile.response.resultData;
-          const { updateList } = this.props;
+          const { updateList, updateData, clearData } = this.props;
+          let tempType = 'add';
+          // TODO:
+          // 有批次 ID，有 attachment = clear
+          // 有批次 ID，没有 attachment = add
+          // 没有批次 ID，有attachment，没有这种清空
+          // 没有批次 ID，没有 attachment = add
+          if (updateData.appId && !_.isEmpty(attachment)) {
+            tempType = 'clear';
+          }
+          // 有批次 ID 并且有 attachment 的时候，需要清空所有数据
+          if (updateData.appId && !_.isEmpty(attachment)) {
+            clearData('clearAllData');
+          }
           const payload = {
-            id: '',
+            id: updateData.appId || '',
             custtomer: [],
             manage: [],
-            type: 'add',
+            type: tempType,
             attachment: data,
           };
           // 发送请求
           updateList(payload).then(() => {
+            const { updateData: { appId }, queryAddedCustList } = this.props;
             this.setState({
               attachment: data,
             });
+            const queryAddedCustListPayload = {
+              id: appId,
+              positionId: empPstnId,
+              orgId: empOrgId,
+              pageNum: 1,
+              pageSize: 5,
+            };
+            queryAddedCustList(queryAddedCustListPayload);
           });
         } else {
           // 上传失败
           message.error(uploadFile.response.msg);
         }
       }
-    });
-  }
-
-  // 发送请求
-  @autobind
-  sendRequest(obj) {
-    const { client, newManager } = this.state;
-    const {
-      saveChange,
-      queryAppList,
-      location: {
-        query,
-        query: {
-          pageNum,
-          pageSize,
-        },
-      },
-    } = this.props;
-    const payload = {
-      custId: client.custId,
-      custType: client.custType,
-      // integrationId: newManager.newIntegrationId,
-      integrationId: emp.getOrgId(),
-      orgName: newManager.newOrgName,
-      postnName: newManager.newPostnName,
-      postnId: newManager.newPostnId,
-      brokerNumber: client.brokerNumber,
-      auditors: obj.auditors,
-      login: newManager.newLogin,
-    };
-    saveChange(payload).then(() => {
-      message.success('划转请求提交成功');
-      this.emptyData();
-      this.setState({
-        // isShowModal: false,
-        // TODO:关闭弹窗事件
-      }, () => {
-        // 清空掉从消息提醒页面带过来的 id,appId
-        queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
-      });
     });
   }
 
@@ -183,20 +259,57 @@ export default class CreateModal extends PureComponent {
   @logable({ type: 'Click', payload: { name: '下载模板' } })
   handleDownloadClick() {}
 
+  // 分配规则切换事件
+  @autobind
+  handleRuleTypeChange(e) {
+    this.setState({
+      ruleType: e.target.value,
+    });
+  }
+
+  // 客户删除事件
+  @autobind
+  deleteTableData(type, record) {
+    const { updateList, updateData, queryAddedCustList } = this.props;
+    const payload = {
+      customer: [],
+      manage: [],
+      type: 'delete',
+      id: updateData.appId,
+    };
+    if (type === 'cust') {
+      payload.customer = [{ brokerNumber: record.custId }];
+    } else {
+      payload.manage = [{ empId: record.empId, positionId: record.positionId }];
+    }
+    updateList(payload).then(() => {
+      const queryAddedCustListPayload = {
+        id: updateData.appId,
+        positionId: empPstnId,
+        orgId: empOrgId,
+        pageNum: 1,
+        pageSize: 5,
+      };
+      queryAddedCustList(queryAddedCustListPayload);
+    });
+  }
 
   render() {
     const {
-      buttonData,
+      selfBtnGroup,
       visible,
       modalKey,
       // custModalKey,
       manageModalKey,
       showModal,
       closeModal,
+      addedCustData: { list: custList = [], page: custPage = {} },
+      addedManageData: { list: manageList = [], page: managePage = {} },
     } = this.props;
     const {
       importVisible,
       attachment,
+      ruleType,
     } = this.state;
     const uploadProps = {
       data: {
@@ -214,16 +327,16 @@ export default class CreateModal extends PureComponent {
     // const { list: manageList, page: managePage } = <manageDa></manageDa>ta;
     // 客户列表分页
     const custListPaginationOption = {
-      current: 1,
-      total: 10,
-      pageSize: 10,
+      current: custPage.curPageNum || 1,
+      total: custPage.totalRecordNum || 0,
+      pageSize: custPage.pageSize || 5,
       onChange: this.custPageChangeHandle,
     };
     // 服务经理列表分页
     const manageListPaginationOption = {
-      current: 1,
-      total: 10,
-      pageSize: 10,
+      current: managePage.curPageNum || 1,
+      total: managePage.totalRecordNum || 0,
+      pageSize: managePage.pageSize || 5,
       onChange: this.managePageChangeHandle,
     };
 
@@ -233,29 +346,30 @@ export default class CreateModal extends PureComponent {
       </Upload>)
     :
       (<span><a onClick={this.onImportHandle}>批量导入数据</a></span>);
-    const selfBtnGroup = (<BottonGroup
-      list={buttonData}
-      onEmitEvent={this.handleSubmit}
-    />);
-    // const searchProps = {
-    //   visible: nextApproverModal,
-    //   onOk: this.sendModifyRequest,
-    //   onCancel: () => { this.setState({ nextApproverModal: false }); },
-    //   dataSource: nextApproverList,
-    //   columns: approvalColumns,
-    //   title: '选择下一审批人员',
-    //   placeholder: '员工号/员工姓名',
-    //   modalKey: 'nextApproverModal',
-    //   rowKey: 'login',
-    //   searchShow: false,
-    // };
+
+    // 客户标题列表
+    const custTitle = this.getColumnsCustTitle();
+    // 服务经理标题列表
+    const manageTitle = this.getColumnsManageTitle();
+
+    // 关闭弹窗
+    const closePayload = {
+      modalKey,
+      isNeedConfirm: true,
+      clearDataType: 'clearAllData',
+    };
+
+    // 客户分配规则显示与否
+    // 服务经理当前页且所有数据都为一条时，不显示
+    const showRuleType = manageList.length === 1 && managePage.totalRecordNum === 1;
+
     return (
       <CommonModal
         title="新建分公司客户分配"
         visible={visible}
-        closeModal={() => closeModal(modalKey)}
+        closeModal={() => closeModal(closePayload)}
         size="large"
-        modalKey="myModal"
+        modalKey={modalKey}
         afterClose={this.afterClose}
         selfBtnGroup={selfBtnGroup}
         wrapClassName={styles.createModal}
@@ -265,6 +379,7 @@ export default class CreateModal extends PureComponent {
             <h3 className={styles.title}>客户列表</h3>
             {/* 操作按钮容器 */}
             <div className={`${styles.operateDiv} clearfix`}>
+              {/* WILLDO: 后期需要加上添加按钮 */}
               {/* <Button onClick={() => showModal(custModalKey)}>
                 添加
               </Button> */}
@@ -280,8 +395,9 @@ export default class CreateModal extends PureComponent {
             </div>
             <div className={styles.tableDiv}>
               <CommonTable
-                data={[]}
-                titleList={titleList.cust}
+                align={'left'}
+                data={custList}
+                titleList={custTitle}
               />
               <Pagination {...custListPaginationOption} />
             </div>
@@ -296,15 +412,29 @@ export default class CreateModal extends PureComponent {
             </div>
             <div className={styles.tableDiv}>
               <CommonTable
-                data={[]}
-                titleList={titleList.manage}
+                align={'left'}
+                data={manageList}
+                titleList={manageTitle}
               />
               <Pagination {...manageListPaginationOption} />
             </div>
           </div>
-          <div className={styles.contentItem}>
-            <h3 className={styles.title}>客户分配规则</h3>
-          </div>
+          {
+            showRuleType
+            ?
+              null
+            :
+              <div className={styles.contentItem}>
+                <h3 className={styles.title}>客户分配规则</h3>
+                <InfoForm label="规则" style={{ width: '96px' }} required>
+                  <RadioGroup onChange={this.handleRuleTypeChange} value={ruleType}>
+                    {
+                      ruleTypeArray.map(item => <Radio value={item.value}>{item.label}</Radio>)
+                    }
+                  </RadioGroup>
+                </InfoForm>
+              </div>
+          }
           <Modal
             visible={importVisible}
             title="提示"
@@ -313,7 +443,7 @@ export default class CreateModal extends PureComponent {
               <Button style={{ marginRight: '10px' }} key="back" onClick={this.importHandleCancel}>
                 取消
               </Button>,
-              <Upload {...uploadProps} {...this.props}>
+              <Upload {...uploadProps} {...this.props} key="uploadAgain">
                 <Button key="submit" type="primary">
                   确定
                 </Button>
@@ -323,7 +453,6 @@ export default class CreateModal extends PureComponent {
             <p>导入后将清空客户列表已有数据，请确认！</p>
           </Modal>
         </div>
-        {/* <TableDialog {...searchProps} /> */}
       </CommonModal>
     );
   }

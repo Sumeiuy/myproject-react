@@ -7,7 +7,8 @@
  */
 const config = {
   // 分配规则
-  allotRule: [
+  // allotRule
+  ruleTypeArray: [
     {
       show: true,
       label: '平均客户数',
@@ -91,6 +92,21 @@ const config = {
         dataIndex: 'postnType',
         key: 'postnType',
         title: '职位类型',
+      },
+    ],
+    approvalColumns: [
+      {
+        title: '工号',
+        dataIndex: 'login',
+        key: 'login',
+      }, {
+        title: '姓名',
+        dataIndex: 'empName',
+        key: 'empName',
+      }, {
+        title: '所属营业部',
+        dataIndex: 'occupation',
+        key: 'occupation',
       },
     ],
     // 详情以及审批页面客户列表标题

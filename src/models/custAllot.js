@@ -19,6 +19,7 @@ export default {
     updateData: EMPTY_OBJECT,  // 更新客户
     addedCustData: EMPTY_OBJECT,  // 已添加客户
     addedManageData: EMPTY_OBJECT,  // 已添加服务经理
+    saveChangeData: EMPTY_OBJECT,  // 提交保存后的数据
     notifiesData: EMPTY_OBJECT,  // 消息提醒页面数据
   },
   reducers: {
@@ -78,12 +79,27 @@ export default {
         addedManageData: resultData,
       };
     },
+    saveChangeSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        saveChangeData: resultData,
+      };
+    },
     // 消息提醒页面数据
     queryNotifiesListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
         notifiesData: resultData,
+      };
+    },
+    // 清除数据
+    clearDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        ...payload,
       };
     },
   },
@@ -145,8 +161,12 @@ export default {
       });
     },
     // 提交
-    * saveChange({ payload }, { call }) {
-      yield call(api.saveChange, payload);
+    * saveChange({ payload }, { call, put }) {
+      const response = yield call(api.saveChange, payload);
+      yield put({
+        type: 'saveChangeSuccess',
+        payload: response,
+      });
     },
     // 提交保存
     * doApprove({ payload }, { call }) {
@@ -157,6 +177,35 @@ export default {
       const response = yield call(api.queryNotifiesList, payload);
       yield put({
         type: 'queryNotifiesListSuccess',
+        payload: response,
+      });
+    },
+    // 清空搜索数据
+    * clearData({ payload }, { put }) {
+      let response = {};
+      // 根据不同类型，清空不同数据
+      switch (payload) {
+        case 'clearAllData':
+          response = {
+            custLData: {}, // 客户列表列表
+            manageData: {},  // 服务经理列表
+            addedCustData: {},  // 已添加客户
+            addedManageData: {},  // 已添加服务经理
+            updateData: {},  // 批量添加、删除、清空客户
+          };
+          break;
+        case 'clearSearchData':
+          response = {
+            custLData: {}, // 客户列表列表
+            manageData: {},  // 服务经理列表
+          };
+          break;
+        default:
+          response = {};
+          break;
+      }
+      yield put({
+        type: 'clearDataSuccess',
         payload: response,
       });
     },

@@ -70,11 +70,18 @@ export default class AddCustModal extends PureComponent {
       onChange: this.pageChangeHandle,
     };
 
+    // 关闭弹窗
+    const closePayload = {
+      modalKey,
+      isNeedConfirm: true,
+      clearDataType: 'clearSearchData',
+    };
+
     return (
       <CommonModal
         title="添加客户"
         visible={visible}
-        closeModal={() => closeModal(modalKey)}
+        closeModal={() => closeModal(closePayload)}
         size="large"
         modalKey="addCustModal"
         afterClose={this.afterClose}

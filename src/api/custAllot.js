@@ -22,7 +22,7 @@ export default function custAllot(api) {
     // 查询已经添加的客户
     queryAddedManageList: query => api.post('/groovynoauth/fsp/cust/manager/queryCustomerAssignmentEmpList', query),
     // 提交客户分配
-    saveChange: query => api.post('/groovynoauth/fsp/cust/manager/submit', query),
+    saveChange: query => api.post('/groovynoauth/fsp/cust/manager/valiateCustomerAssign', query),
     // 走流程接口
     doApprove: query => api.post('/groovynoauth/fsp/cust/manager/doApprove', query),
     // 批量划转的消息提醒数据--xzx

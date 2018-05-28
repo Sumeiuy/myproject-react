@@ -69,10 +69,10 @@ export default class Detail extends PureComponent {
       id,
       empId,
       empName,
-      empPosition,
+      orgName,
       createTime,
       status,
-      currentApproval,
+      currentApproval = {},
       workflowHistoryBeans,
       // currentNodeName,  不清楚是否使用
       errorDesc,
@@ -90,7 +90,7 @@ export default class Detail extends PureComponent {
       return null;
     }
     // 拟稿人信息
-    const drafter = `${empPosition} - ${empName} (${empId})`;
+    const drafter = `${orgName} - ${empName} (${empId})`;
     // 分页
     const paginationOption = {
       current: pageData.curPageNum,
@@ -99,10 +99,10 @@ export default class Detail extends PureComponent {
       onChange: this.handlePageNumberChange,
     };
 
-    const approverName = currentApproval ? `${currentApproval.empName} (${currentApproval.empNum})` : '';
+    const approverName = !_.isEmpty(currentApproval) ? `${currentApproval.empName} (${currentApproval.empNum})` : '暂无';
     const nowStep = {
       // 当前步骤
-      stepName: currentApproval.occupation || '',
+      stepName: !_.isEmpty(currentApproval) ? currentApproval.occupation : '暂无',
       // 当前审批人
       handleName: approverName,
     };
@@ -138,6 +138,7 @@ export default class Detail extends PureComponent {
               :
                 null
             }
+            {/* TODO: orgId */}
             {
               errorDesc === config.errorArray[0]
               ?
@@ -167,6 +168,7 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.module}>
           <InfoTitle head="客户分配规则" />
+          {/* TODO:分配规则 */}
           <InfoItem label="规则" value={'平均客户数'} />
         </div>
         <div className={styles.module}>

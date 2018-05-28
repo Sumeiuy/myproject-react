@@ -29,8 +29,9 @@ const { titleList: { manage }, positionTypeArray } = config;
 // 登陆人的组织ID
 const empOrgId = 'ZZ001041093';
 // const orgId = emp.getOrgId();
-
+// 服务经理
 const KEY_EMPNAME = 'empName';
+const NO_VALUE = '不限';
 
 export default class AddManageModal extends PureComponent {
   static propTypes = {
@@ -45,15 +46,16 @@ export default class AddManageModal extends PureComponent {
     visible: PropTypes.bool.isRequired,
     // 添加后发送请求
     sendRequest: PropTypes.func.isRequired,
+    updateData: PropTypes.object.isRequired,
   }
 
   constructor(props) {
     super(props);
     this.state = {
+      smKeyword: '',
       positionType: positionTypeArray[0].key,
-      orgId: '0',
+      orgId: '',
       selectedRowKeys: '',
-      selectedArray: [],
       allSelected: {
         page1: {
           row: [],
@@ -79,29 +81,32 @@ export default class AddManageModal extends PureComponent {
     const { allSelected, pageNum } = this.state;
     const page = `page${pageNum}`;
     const newAllSelected = { ...allSelected };
+    newAllSelected[page] = {};
     newAllSelected[page].rowKeys = selectedRowKeys;
     newAllSelected[page].row = selectedArrayRow;
-    console.warn('newAllSelected', newAllSelected);
     this.setState({
       allSelected: newAllSelected,
       selectedRowKeys,
     });
   }
 
-  // 查询服务经理列表
+  // 生成服务经理头部列表
   @autobind
-  searchManageList(obj = {}) {
-    const { queryList } = this.props;
-    const { smKeyword, orgId, positionType, pageNum } = this.state;
-    const payload = {
-      smKeyword,
-      orgId: orgId === '0' ? empOrgId : orgId,
-      positionType,
-      pageNum,
-      pageSize: 10,
-      ...obj,
-    };
-    queryList(payload);
+  getColumnsManageTitle() {
+    const newTitleList = [...manage];
+    const empNameIndex = _.findIndex(newTitleList, o => o.key === KEY_EMPNAME);
+    newTitleList[empNameIndex].render = (text, record) => (
+      <div>{text} ({record.empId})</div>
+    );
+    return newTitleList;
+  }
+
+  // 输入服务经理事件
+  @autobind
+  handleEmpChange(value) {
+    this.setState({
+      smKeyword: value,
+    }, this.searchManageList);
   }
 
   // 切换职位类型
@@ -123,17 +128,10 @@ export default class AddManageModal extends PureComponent {
 
   // 翻页
   @autobind
-  handlePageChange(page) {
+  handlePageChange(pageNum) {
     this.setState({
-      pageNum: page,
+      pageNum,
     }, this.searchManageList);
-  }
-
-  // 搜索服务经理
-  @autobind
-  handleSearchManage(value) {
-    console.warn('handleSearchManage value', value);
-    // TODO: 发送请求
   }
 
   @autobind
@@ -141,11 +139,32 @@ export default class AddManageModal extends PureComponent {
     return this.modalContent;
   }
 
+  // 查询服务经理列表
+  @autobind
+  searchManageList(obj = {}) {
+    const { queryList } = this.props;
+    const { smKeyword, orgId, positionType, pageNum } = this.state;
+    const payload = {
+      smKeyword,
+      orgId: _.isEmpty(orgId) ? empOrgId : orgId,
+      positionType,
+      pageNum,
+      pageSize: 10,
+      ...obj,
+    };
+    queryList(payload);
+  }
+
   // 发送添加服务经理请求
   @autobind
   sendRequest() {
-    const { sendRequest, closeModal, modalKey } = this.props;
-    const { selectedArray } = this.state;
+    const { sendRequest, modalKey, updateData } = this.props;
+    const { allSelected } = this.state;
+    const selectedArray = [];
+    _.forIn(allSelected, (value) => {
+      selectedArray.push(...value.row);
+    });
+
     if (selectedArray.length <= 0) {
       message.error('请至少选择一位服务经理');
       return;
@@ -155,30 +174,30 @@ export default class AddManageModal extends PureComponent {
       manage: selectedArray,
       type: 'add',
       attachment: '',
-      id: '',
+      id: updateData.appId || '',
     };
     // 是否需要确认关闭
-    const noNeedConfirm = false;
+    const isNeedConfirm = false;
+    const pageData = {
+      modalKey,
+      type: 'manage',
+      isNeedConfirm,
+    };
     // 发送添加请求，关闭弹窗
-    // TODO:发送请求服务经理接口
-    sendRequest(payload).then(() => closeModal(modalKey, noNeedConfirm));
+    sendRequest(payload, pageData);
   }
 
   render() {
     const {
-      data,
+      data: { list = [], page = {} },
       visible,
       custRangeList,
       closeModal,
       modalKey,
     } = this.props;
-    const { positionType, orgId, allSelected, pageNum } = this.state;
-    const { list = [], page = {} } = data;
+    const { smKeyword, positionType, orgId, allSelected, pageNum } = this.state;
     // 客户列表分页
     const paginationOption = {
-      // current: 1,
-      // total: 10,
-      // pageSize: 10,
       current: page.curPageNum || 1,
       total: page.totalRecordNum || 10,
       pageSize: page.pageSize || 10,
@@ -203,12 +222,8 @@ export default class AddManageModal extends PureComponent {
       ...treeCustRange,
     ];
 
+    const manageTitleList = this.getColumnsManageTitle();
 
-    const newTitleList = [...manage];
-    const empNameIndex = _.findIndex(newTitleList, o => o.key === KEY_EMPNAME);
-    newTitleList[empNameIndex].render = (text, record) => (
-      <div>{text} ({record.empId})</div>
-    );
 
     const pageNumSelect = allSelected[`page${pageNum}`];
     const rowSelection = {
@@ -218,11 +233,18 @@ export default class AddManageModal extends PureComponent {
       onChange: this.onSelectChange,
     };
 
+    // 关闭弹窗
+    const closePayload = {
+      modalKey,
+      isNeedConfirm: true,
+      clearDataType: 'clearSearchData',
+    };
+
     return (
       <CommonModal
         title="添加服务经理"
         visible={visible}
-        closeModal={() => closeModal(modalKey)}
+        closeModal={() => closeModal(closePayload)}
         size="normal"
         modalKey={modalKey}
         afterClose={this.afterClose}
@@ -237,14 +259,14 @@ export default class AddManageModal extends PureComponent {
                 filterName={'服务经理'}
                 showSearch
                 placeholder={'请输入服务经理工号、姓名'}
-                allowClear={false}
+                isCloseable={false}
                 data={[]}
-                value={positionType}
-                onPressEnter={this.handleFilterChange}
-                onInputChange={this.handleFilterChange}
+                defaultSelectLabel={_.isEmpty(smKeyword) ? NO_VALUE : smKeyword}
+                value={smKeyword}
+                onInputChange={_.debounce(this.handleEmpChange, 500)}
               />
               <HTTreeFilter
-                value={orgId}
+                value={_.isEmpty(orgId) ? 0 : orgId}
                 treeData={treeCustRange}
                 filterName={'所属营业部'}
                 treeDefaultExpandAll
@@ -262,7 +284,7 @@ export default class AddManageModal extends PureComponent {
             <div className={styles.tableDiv}>
               <CommonTable
                 data={list || []}
-                titleList={newTitleList}
+                titleList={manageTitleList}
                 align={'left'}
                 rowSelection={rowSelection}
               />
