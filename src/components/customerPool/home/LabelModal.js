@@ -14,7 +14,7 @@ import _ from 'lodash';
 import logable from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
-import { isSightingScope, getFilter } from '../helper';
+import { isSightingScope } from '../helper';
 import { padSightLabelDesc } from '../../../config';
 import Pagination from '../../common/Pagination';
 import styles from './labelModal.less';
@@ -119,7 +119,7 @@ export default class LabelModals extends PureComponent {
     const { push } = this.context;
     const { location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
-    const condition = urlHelper.stringify({ ...options, filters: getFilter(options) });
+    const condition = urlHelper.stringify({ ...options });
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
