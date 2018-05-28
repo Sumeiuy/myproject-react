@@ -2,14 +2,13 @@
  * @Author: xiazhiqiang
  * @Date: 2018-05-21 13:33:05
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-25 18:43:22
+ * @Last Modified time: 2018-05-28 09:08:20
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { getFilter } from '../helper';
 
 import styles from './toBeDone.less';
 import { openRctTab } from '../../../utils';
@@ -98,12 +97,9 @@ export default class PerformanceIndicators extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      url: `${url}?source=business&filters=${getFilter(data)}`,
+      url: `${url}?source=business`,
       pathname: url,
-      query: {
-        ...data,
-        filters: getFilter(data),
-      },
+      query: data,
       param,
       state: {
         ...query,
@@ -156,7 +152,7 @@ export default class PerformanceIndicators extends PureComponent {
     //   pathname: '/fsp/messageCenter',
     //   param: notificationParam,
     // });
-    push('/messageRemind');
+    push('/messgeCenter');
   }
 
   @autobind

@@ -5,7 +5,7 @@
 export default function permission(api) {
   return {
     // 获取详情信息
-    getMessage: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryApplicationDetail', query),
+    getMessage: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryApplicationDetail2', query),
     // 获取服务人员列表
     getServerPersonelList: query =>
     api.post('/groovynoauth/fsp/biz/privateCustApplication/queryApplicationEmpList', query),

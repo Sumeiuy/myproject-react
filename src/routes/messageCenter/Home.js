@@ -2,19 +2,19 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-26 16:55:40
+ * @Last Modified time: 2018-05-28 11:06:48
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import { Tooltip, Button } from 'antd';
+import _ from 'lodash';
 import { dva, emp } from '../../helper';
 import { openFspTab } from '../../utils';
 import Pagination from '../../components/common/Pagination';
 import Loading from '../../layouts/Loading';
 import { windowOpen } from '../../utils/fspGlobal';
-import { request } from '../../utils/request';
 import api from '../../api';
 import styles from './home.less';
 
@@ -58,7 +58,7 @@ export default class MessageCenter extends PureComponent {
 
   componentDidMount() {
     this.getRemindMessageList({
-      pageNum: 0,
+      pageNum: 1,
     });
   }
 
@@ -74,7 +74,7 @@ export default class MessageCenter extends PureComponent {
   // 切换当前页
   @autobind
   handlePageChange(pageNum) {
-    this.getRemindMessageList({ pageNum: pageNum - 1 });
+    this.getRemindMessageList({ pageNum });
   }
 
   // 点击消息通知
@@ -130,10 +130,10 @@ export default class MessageCenter extends PureComponent {
   @autobind
   async handleMessageByFSPAllocation(objectVal) {
     try {
-      const response = await request(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
+      const response = await api.getFspData(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
       const { msg } = response.data;
       if (!msg) {
-        const loadCntractResponse = await request(`/fsp/tgcontract/list/loadCntractBasicCustInfoByArgId?argId=${objectVal}`);
+        const loadCntractResponse = await api.getFspData(`/fsp/tgcontract/list/loadCntractBasicCustInfoByArgId?argId=${objectVal}`);
         if (loadCntractResponse) {
           const { custId: busiId, custType } = loadCntractResponse.data;
           const routeType = `${custType}:tgcontracttransfer:${objectVal}:::Y:`;
@@ -271,10 +271,21 @@ export default class MessageCenter extends PureComponent {
   // 根据removeNotice处理的消息通知
   @autobind
   handleMessageByRemoveNotice(rowId) {
-    request(`/fsp/updateSvrNotification?rowid=${rowId}`)
+    api
+    .getFspData(`/fsp/updateSvrNotification?rowid=${rowId}`)
     .then(() => {
       // 刷新列表
       $('#showMessageInfo').EBDataTable('queryData');
+      this.getRemindMessageList({
+        pageNum: 1,
+      });
+      let { page: { totalRecordNum } } = this.props.remindMessages;
+      if (totalRecordNum > 0) {
+        if (totalRecordNum > 99) {
+          totalRecordNum = '99+';
+        }
+        $('.remindMessages').html(infoMessageNum.toString()).css('display', 'inline-block'); //eslint-disable-line
+      }
     })
     .catch((e) => {
       console.error(e);
@@ -284,10 +295,9 @@ export default class MessageCenter extends PureComponent {
   render() {
     const {
       notificationMsgRespDTOList: list = [],
-      curPageNum,
-      pageSize,
-      totalRecordNum,
+      page = {},
     } = this.props.remindMessages;
+    const { curPageNum, pageSize, totalRecordNum } = page;
     const { loadingStatus } = this.state;
     const messageList = list.map((item) => {
       // 标题长度超过50状态
@@ -337,7 +347,7 @@ export default class MessageCenter extends PureComponent {
           </div>
         </div>
         {
-            totalRecordNum ?
+            _.isEmpty(page) ?
               (<Pagination
                 current={curPageNum}
                 total={totalRecordNum}
