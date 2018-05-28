@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-13 17:54:42
+ * @Last Modified time: 2018-04-26 15:22:38
  * 任务实施简报
  */
 
@@ -10,9 +10,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Tooltip, Mention } from 'antd';
+import { Tooltip } from 'antd';
 import classNames from 'classnames';
-import { stateFromHTML } from 'draft-js-import-html';
 import Icon from '../../common/Icon';
 import LabelInfo from '../common/LabelInfo';
 import MissionProgress from './MissionProgress';
@@ -20,7 +19,13 @@ import CustFeedback from './CustFeedback';
 import CustManagerDetailScope from './CustManagerDetailScope';
 import TabsExtra from '../../customerPool/home/TabsExtra';
 import { env, permission, emp } from '../../../helper';
-import { ORG_LEVEL1, ORG_LEVEL2, ORG_LEVEL3 } from '../../../config/orgTreeLevel';
+import { ORG_LEVEL1, ORG_LEVEL2 } from '../../../config/orgTreeLevel';
+import {
+  EMP_MANAGER_SCOPE_ITEM,
+  EMP_COMPANY_ITEM,
+  EMP_DEPARTMENT_ITEM,
+} from '../../../config/managerViewCustManagerScope';
+import { judgeCurrentOrgLevel } from './helper';
 import { request } from '../../../config';
 import styles from './missionImplementation.less';
 import emptyImg from './img/empty.png';
@@ -33,7 +38,6 @@ const EMPTY_CONTENT = '本机构无服务客户';
 const MAIN_MAGEGER_ID = 'msm';
 const COLLAPSE_WIDTH = 672;
 const MARGIN_LEFT = 16;
-const { toString } = Mention;
 
 export default class MissionImplementation extends PureComponent {
 
@@ -79,16 +83,8 @@ export default class MissionImplementation extends PureComponent {
 
   constructor(props) {
     super(props);
-    const currentOrgId = emp.getOrgId();
-    // 来自营业部
-    let level = ORG_LEVEL3;
-    // 判断是否是经纪总部
-    if (emp.isManagementHeadquarters(currentOrgId)) {
-      level = ORG_LEVEL1;
-    } else if (emp.isFiliale(props.custRange, currentOrgId)) {
-      // 判断是否是分公司
-      level = ORG_LEVEL2;
-    }
+    const { custRange } = props;
+    const { level, currentScopeList } = judgeCurrentOrgLevel({ custRange });
 
     this.state = {
       expandAll: false,
@@ -98,6 +94,7 @@ export default class MissionImplementation extends PureComponent {
       forceRender: true,
       // 当前组织机构树层级
       level,
+      currentScopeList,
     };
     // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
     this.isAuthorize = permission.hasCustomerPoolPermission();
@@ -142,6 +139,14 @@ export default class MissionImplementation extends PureComponent {
     if (currentId !== nextCurrentId) {
       // 当任务切换的时候,清除组织机构树选择项
       this.orgId = this.originOrgId;
+      const { level, currentScopeList } = judgeCurrentOrgLevel({ custRange, orgId: this.orgId });
+      this.setState({
+        // 恢复当前orgId
+        currentOrgId: this.orgId,
+        // orgLevel恢复
+        level,
+        currentScopeList,
+      });
       // 根据岗位orgId生成对应的组织机构树
       this.handleCreateCustRange({
         custRange,
@@ -151,6 +156,9 @@ export default class MissionImplementation extends PureComponent {
     }
   }
 
+  /**
+   * 卸载事件监听
+   */
   componentWillUnmount() {
     window.removeEventListener('resize', this.onResize);
     window.offFspSidebarbtn(this.onResize);
@@ -197,15 +205,11 @@ export default class MissionImplementation extends PureComponent {
       servicePolicy,
     } = urlParams;
 
-    // 转换服务策略和任务提示格式
-    const serviceTipsString = toString(stateFromHTML(serviceTips));
-    const servicePolicyString = toString(stateFromHTML(servicePolicy));
-
     return {
       missionName,
       missionId,
-      serviceTips: serviceTipsString,
-      servicePolicy: servicePolicyString,
+      serviceTips,
+      servicePolicy,
       orgId,
     };
   }
@@ -219,12 +223,34 @@ export default class MissionImplementation extends PureComponent {
    * 获取服务经理维度任务统计
    */
   @autobind
-  getCustManagerScope({ pageNum, pageSize, orgId }) {
+  getCustManagerScope({ pageNum, pageSize, orgId, enterType }) {
     this.props.getCustManagerScope({
       orgId: orgId || this.getCurrentOrgId(),
       pageNum,
       pageSize,
+      enterType,
     });
+  }
+
+  /**
+   * 当前组织机构树变化，更新维度可选项
+   * @param {*string} level 组织机构层级
+   */
+  @autobind
+  getCurrentScopeList(level) {
+    // 默认维度服务经理
+    let currentScopeList = [
+      EMP_MANAGER_SCOPE_ITEM,
+    ];
+    if (level === ORG_LEVEL1) {
+      // 经总层级，维度展示三个可选项
+      currentScopeList = [EMP_COMPANY_ITEM, EMP_DEPARTMENT_ITEM, ...currentScopeList];
+    } else if (level === ORG_LEVEL2) {
+      // 分公司层级，维度展示营业部和服务经理
+      currentScopeList = [EMP_DEPARTMENT_ITEM, ...currentScopeList];
+    }
+
+    return currentScopeList;
   }
 
   /**
@@ -233,15 +259,17 @@ export default class MissionImplementation extends PureComponent {
   @autobind
   collectCustRange(value) {
     const { countFlowStatus, countFlowFeedBack, getCustManagerScope } = this.props;
-    const { level } = value;
+    const { level, orgId } = value;
+
     this.setState({
       // 当前层级
       level,
+      currentScopeList: this.getCurrentScopeList(level),
     });
     countFlowStatus(value);
     countFlowFeedBack(value);
     getCustManagerScope(value);
-    this.orgId = value;
+    this.orgId = orgId;
   }
 
   /**
@@ -307,7 +335,7 @@ export default class MissionImplementation extends PureComponent {
 
   @autobind
   handleExportExcel() {
-    return this.props.exportExcel(this.state.currentOrgId || emp.getOrgId());
+    return this.props.exportExcel(this.getCurrentOrgId());
   }
 
   @autobind
@@ -369,6 +397,7 @@ export default class MissionImplementation extends PureComponent {
     } else if (!this.isAuthorize) {
       curOrgId = MAIN_MAGEGER_ID;
     }
+
     const extraProps = {
       custRange: createCustRange,
       replace,
@@ -432,8 +461,9 @@ export default class MissionImplementation extends PureComponent {
       missionReport,
       currentId,
       custManagerScopeData,
+      custRange,
     } = this.props;
-    const { level } = this.state;
+    const { level, currentScopeList } = this.state;
     const currentMissionReport = currentId ? missionReport[currentId] || {} : {};
     const {
       isCreatingMotReport,
@@ -516,6 +546,11 @@ export default class MissionImplementation extends PureComponent {
                 currentOrgLevel={level}
                 isFold={isFold}
                 getCustManagerScope={this.getCustManagerScope}
+                currentScopeList={currentScopeList}
+                // 当前任务id
+                currentId={currentId}
+                custRange={custRange}
+                orgId={this.getCurrentOrgId()}
               />
             </div> : null
         }

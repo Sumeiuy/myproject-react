@@ -25,6 +25,7 @@
 .collapseBox {
   border: 1px solid #ddd;
   .titleBox {
+    padding-left: 30px;
     margin: 0 auto;
     height: 38px;
     line-height: 38px;
@@ -38,6 +39,7 @@
     }
   }
   .collapseHead {
+    padding-left: 30px;
     span {
       display: inline-block;
       &.optionClass {
@@ -52,21 +54,25 @@
   }
   span {
     &.parentClass {
-      padding-left: 30px;
       width: 15%;
     }
     &.parentClassSelf {
-      padding-left: 30px;
       width: 30%;
     }
     &.missionId {
       width: 15%;
     }
     &.childClass {
-      width: 40%;
+      box-sizing: border-box;
+      width: 60%;
+      padding: 0 20px 0 0;
+      vertical-align: middle;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     &.optionClass {
-      width: 30%;
+      width: 10%;
     }
   }
   :global {
@@ -88,6 +94,7 @@
           }
         }
         .ant-collapse-content {
+          padding: 0 0 0 30px;
           background: none;
           border-top: 0;
           .ant-collapse-content-box {
@@ -112,15 +119,12 @@
     }
   }
   .feedbackListBox {
-    padding: 0 0 4px 30px;
+    position: relative;
+    padding: 0 0 4px;
     font-size: 14px;
     color: #4a4a4a;
-    width: 50%;
+    width: 30%;
     box-sizing: border-box;
-    border-right: 1px solid #d9d9d9;
-    &:last-child {
-      border-right: 0;
-    }
     h2 {
       color: #4a4a4a;
       font-size: 14px;
@@ -128,10 +132,18 @@
     }
     .feedbackItem {
       line-height: 32px;
+      display: flex;
+      align-items: center;
+      padding-right: 15px;
+      & > .feedbackText {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
       :global {
         .anticon {
           display: none;
-          margin-left: 14px;
+          margin: -2px 0 0 14px;
           vertical-align: middle;
           cursor: pointer;
         }
@@ -145,10 +157,16 @@
         }
       }
     }
-    :global {
-      .ant-btn {
-        font-size: 12px;
-        color: #71818d;
+    .zlfeedbackItem {
+      height: 32px;
+      line-height: 32px;
+      display: flex;
+      align-items: center;
+      padding-right: 15px;
+      & > .feedbackText {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
   }

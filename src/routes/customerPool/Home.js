@@ -1,8 +1,8 @@
 /**
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-16 17:34:10
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-10 22:04:29
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import { Tabs } from 'antd';
 import _ from 'lodash';
 import moment from 'moment/moment';
 
+import Header from '../../components/customerPool/home/Header';
 import { optionsMap } from '../../config';
 import { emp, time, permission } from '../../helper';
 import withRouter from '../../decorators/withRouter';
@@ -118,7 +119,7 @@ export default class Home extends PureComponent {
     performanceIndicators: PropTypes.object,
     getPerformanceIndicators: PropTypes.func.isRequired,
     switchTab: PropTypes.func.isRequired,
-    custCount: React.PropTypes.oneOfType([
+    custCount: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.array,
     ]), // 问了后端的逻辑，当有报错时，返回的是空对象，当正常时，返回的是数组
@@ -438,7 +439,7 @@ export default class Home extends PureComponent {
     // 无权限取 MAIN_MAGEGER_ID
     let curOrgId = this.orgId;
     // curCycleSelect  时间周期，先从url中取值，url中没有值时，取时间周期第一个
-    const curCycleSelect = cycleSelect || (_.isArray(cycle) ? cycle[0] : {}).key;
+    const curCycleSelect = cycleSelect || (_.isArray(cycle) ? (cycle[0] || {}) : {}).key;
     if (orgId) {
       curOrgId = orgId;
     } else if (!this.hasIndexViewPermission) {
@@ -476,13 +477,13 @@ export default class Home extends PureComponent {
       initBoradcastList,
       initBoradcastFile,
       queryAudioFile,
-      custRange,
     } = this.props;
     // 是否能看投顾绩效的标记
     const { tgQyFlag = false } = empInfo.empInfo || {};
 
     return (
       <div className={styles.customerPoolWrap}>
+        <Header push={push} />
         <div className={styles.poolContainer}>
           <div className={styles.content}>
             <Search
@@ -494,15 +495,12 @@ export default class Home extends PureComponent {
               searchHistoryVal={searchHistoryVal}
               saveSearchVal={this.handleSaveSearchVal}
               location={location}
-              authority={this.hasTkMampPermission}
             />
             <ToBeDone
               location={location}
               push={push}
               data={process}
               motTaskCountData={motTaskCount}
-              authority={this.hasTkMampPermission}
-              custRange={custRange}
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}

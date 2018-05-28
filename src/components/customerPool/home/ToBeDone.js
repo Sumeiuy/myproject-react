@@ -8,25 +8,20 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { emp } from '../../../helper';
 
 import styles from './toBeDone.less';
 import { openRctTab, openFspTab } from '../../../utils';
 import logable from '../../../decorators/logable';
-import { MAIN_MAGEGER_ID } from '../../../routes/customerPool/config';
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    authority: PropTypes.bool.isRequired,
-    custRange: PropTypes.array,
   }
 
   static defaultProps = {
     data: {},
-    custRange: [],
   }
 
   componentDidMount() {
@@ -87,7 +82,7 @@ export default class PerformanceIndicators extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '潜在业务客户' } })
   linkToBusiness() {
-    const { location: { query }, authority, push, custRange } = this.props;
+    const { location: { query }, push } = this.props;
     const url = '/customerPool/list';
     const param = {
       closable: true,
@@ -96,25 +91,12 @@ export default class PerformanceIndicators extends PureComponent {
       id: 'RCT_FSP_CUSTOMER_LIST',
       title: '客户列表',
     };
-    const currentOrgId = emp.getOrgId();
-    // 判断当前登录用户是否在非营业部
-    const isNotSaleDepartment = emp.isManagementHeadquarters(currentOrgId)
-      || emp.isFiliale(custRange, currentOrgId);
-    // 营业部登录用户只能看名下客户传msm
-    // 非营业部登录用户有权限时，传登陆者的orgId， 没有权限传 msm 给列表页
-    let authOrgId;
-    if (isNotSaleDepartment) {
-      authOrgId = authority ? emp.getOrgId() : MAIN_MAGEGER_ID;
-    } else {
-      authOrgId = MAIN_MAGEGER_ID;
-    }
     const data = {
       source: 'business',
-      orgId: authOrgId,
     };
     openRctTab({
       routerAction: push,
-      url: `${url}?source=business&orgId=${authOrgId}`,
+      url: `${url}?source=business`,
       pathname: url,
       query: data,
       param,
@@ -129,44 +111,27 @@ export default class PerformanceIndicators extends PureComponent {
   handleMotClick() {
     // 点击事件
     const { location: { query }, push } = this.props;
-    if (window.grayFlag) {
-      const url = '/taskList';
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id: 'FSP_MOT_SELFBUILT_TASK',
-        title: '任务管理',
-      };
-      const data = {
-        missionViewType: 'executor',
-      };
-      openRctTab({
-        routerAction: push,
-        url: `${url}?missionViewType=executor`,
-        pathname: url,
-        query: data,
-        param,
-        state: {
-          ...query,
-        },
-      });
-    } else {
-      // 如果该用户无权限则跳转到MOT任务菜单
-      const motTaskUrl = '/mot/manage/showMotTaskSubTabWin?taskType=MOT';
-      const param = {
-        id: 'FSP_MOT_TAB_TASK_MANAGE',
-        title: 'MOT任务',
-        closable: true,
-        forceRefresh: true,
-      };
-      openFspTab({
-        routerAction: push,
-        url: motTaskUrl,
-        pathname: '/fsp/motTask',
-        param,
-      });
-    }
+    const url = '/taskList';
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_MOT_SELFBUILT_TASK',
+      title: '任务管理',
+    };
+    const data = {
+      missionViewType: 'executor',
+    };
+    openRctTab({
+      routerAction: push,
+      url: `${url}?missionViewType=executor`,
+      pathname: url,
+      query: data,
+      param,
+      state: {
+        ...query,
+      },
+    });
   }
 
   @autobind

@@ -7,8 +7,8 @@
  */
 const config = {
   // 只开放个股点评，个股研报、个股公告先隐藏
-  // typeList: ['StockReview'],
-  typeList: ['StockReview', 'StockReport', 'StockEvent'],
+  // typeList: ['StockReview', 'StockReport', 'StockEvent'],
+  typeList: ['StockReport', 'StockEvent'],
   // 个股点评
   StockReview: {
     key: 'StockReview',
@@ -140,6 +140,23 @@ const config = {
       },
     ],
   },
+  securityType: [
+    {
+      name: '股票',
+      value: '1',
+      shortName: 'GP',
+    },
+    {
+      name: '基金',
+      value: '2',
+      shortName: 'JJ',
+    },
+    {
+      name: '债券',
+      value: '3',
+      shortName: 'ZQ',
+    },
+  ],
 };
 
 export default config;

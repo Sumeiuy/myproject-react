@@ -61,6 +61,11 @@
         align-items: flex-start;
         flex-direction: row;
         width: 100%;
+        :global {
+          .ant-row.ant-form-item {
+            margin-bottom: 15px;
+          }
+        }
         & > .remainingContent {
           display: flex;
           align-items: center;
@@ -97,6 +102,9 @@
               font-size: 14px;
             }
           }
+          & > .text {
+            margin-top: -3px;
+          }
           & > div:nth-child(3) {
             span {
               font-size: 14px;
@@ -108,8 +116,12 @@
             font-size: 14px;
           }
         }
-        & > .indicatorLevel3 {
-          display: flex;
+        .indicatorLevel3 {
+          :global {
+            .ant-select-auto-complete.ant-select-lg .ant-input {
+              height: 28px;
+            }
+          }
         }
         .hideSelectArrow {
           display: block;

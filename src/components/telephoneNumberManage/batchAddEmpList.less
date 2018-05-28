@@ -1,0 +1,52 @@
+.batchAddEmpListBox {
+  padding: 10px 30px 0;
+  .tip {
+    font-size: 14px;
+    color: #666;
+    letter-spacing: -0.09px;
+    margin-bottom: 10px;
+  }
+  .selectedRowKeysSize {
+    color: #ff784e;
+  }
+  :global {
+    .ant-table-thead > tr > th {
+      font-weight: bold;
+    }
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td {
+      font-size: 14px;
+      color: #4a4a4a;
+      padding: 8.5px 16px;
+    }
+    table > thead > tr > th {
+      background-color: #f7f7f7;
+      text-align: left;
+    }
+    table > tbody > tr > td:first-child {
+      padding-left: 20px;
+      border-left: 1px solid #e8e8e8;
+    }
+    table > tbody > tr > td:last-child {
+      border-right: 1px solid #e8e8e8;
+    }
+    .ant-table-placeholder {
+      border-left: 1px solid #e8e8e8;
+      border-right: 1px solid #e8e8e8;
+    }
+  }
+}
+.batchAddEmpListModal {
+  :global {
+    .ant-modal {
+      width: 650px !important;
+      height: 620px !important;
+    }
+    .ant-modal-header {
+      height: 50px;
+      .ant-modal-close-x {
+        line-height: 50px;
+      }
+    }
+  }
+}

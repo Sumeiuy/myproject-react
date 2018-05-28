@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 17:19:18
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 17:42:10
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-08 12:57:48
  * @desc 服务方式的Select
  */
 
@@ -11,6 +11,8 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Select } from 'antd';
 import _ from 'lodash';
+
+import { PHONE } from './utils';
 
 import styles from './index.less';
 
@@ -23,6 +25,7 @@ export default class ServiceWaySelect extends PureComponent {
     onChange: PropTypes.func.isRequired,
     options: PropTypes.array.isRequired,
     empInfo: PropTypes.object.isRequired,
+    serviceRecordInfo: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -63,21 +66,24 @@ export default class ServiceWaySelect extends PureComponent {
 
   render() {
     const { value } = this.state;
-    const { width, options } = this.props;
+    const { width, options, serviceRecordInfo: { caller, autoGenerateRecordInfo } } = this.props;
     // const selectValue = !_.isEmpty(value) ? value : options[0].key;
     // const containerCls = cx([styles.serveWayContainer, styles.serveWay]);
     return (
       <div className={styles.serveWay}>
         <div className={styles.title}>服务方式:</div>
         <div className={styles.content} ref={this.setServiceWrapRef}>
-          <Select
-            value={value}
-            style={width}
-            onChange={this.handleSelectChange}
-            getPopupContainer={() => this.serviceWayRef}
-          >
-            { this.renderServiceSelectOptions(options) }
-          </Select>
+          {
+            caller === PHONE && autoGenerateRecordInfo.serveWay === 'HTSC Phone' ? '电话' :
+            <Select
+              value={value}
+              style={width}
+              onChange={this.handleSelectChange}
+              getPopupContainer={() => this.serviceWayRef}
+            >
+              {this.renderServiceSelectOptions(options)}
+            </Select>
+          }
         </div>
       </div>
     );

@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react';
-import { Tabs, Button } from 'antd';
+import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
+import withRouter from '../../decorators/withRouter';
 import styles from './userBasicInfo.less';
 
 import BasicInfo from '../../components/userCenter/BasicInfo';
@@ -22,31 +24,40 @@ const effects = {
   queryAllLabels: 'userCenter/queryAllLabels',
   queryApprovers: 'userCenter/queryApprovers',
   updateEmpInfo: 'userCenter/updateEmpInfo',
+  cacheUserInfoForm: 'userCenter/cacheUserInfoForm',
 };
 
 const mapStateToProps = state => ({
   userBaseInfo: state.userCenter.userBaseInfo,
   allLabels: state.userCenter.allLabels,
   LabelAndDescApprover: state.userCenter.LabelAndDescApprover,
+  userInfoForm: state.userCenter.userInfoForm,
 });
 
 const mapDispatchToProps = {
+  replace: routerRedux.replace,
   queryEmpInfo: fetchDataFunction(true, effects.queryEmpInfo),
   queryAllLabels: fetchDataFunction(true, effects.queryAllLabels),
   queryApprovers: fetchDataFunction(true, effects.queryApprovers),
   updateEmpInfo: fetchDataFunction(true, effects.updateEmpInfo),
+  cacheUserInfoForm: fetchDataFunction(false, effects.cacheUserInfoForm),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class UserBasicInfo extends PureComponent {
   static propTypes = {
     userBaseInfo: PropTypes.object.isRequired,
+    userInfoForm: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
     allLabels: PropTypes.array.isRequired,
     LabelAndDescApprover: PropTypes.array.isRequired,
     queryEmpInfo: PropTypes.func.isRequired,
     queryAllLabels: PropTypes.func.isRequired,
     queryApprovers: PropTypes.func.isRequired,
     updateEmpInfo: PropTypes.func.isRequired,
+    cacheUserInfoForm: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   };
 
   static contextTypes = {
@@ -59,6 +70,17 @@ export default class UserBasicInfo extends PureComponent {
       activeTab: FIRST_TAB,
       editorState: false,
     };
+  }
+
+  componentWillMount() {
+    const { userInfoForm, location: { query } } = this.props;
+    const { cache } = query;
+    const { editorState } = userInfoForm;
+    if (editorState && cache) {
+      this.setState({
+        editorState,
+      });
+    }
   }
 
   componentDidMount() {
@@ -80,27 +102,6 @@ export default class UserBasicInfo extends PureComponent {
       activeTab: activeKey,
     });
   }
-  // 编辑按钮
-  @autobind
-  getEditorBtn() {
-    const APPROVING = 'approving'; // 审批中的状态标识
-    const { userBaseInfo: { flowState = APPROVING } } = this.props;
-    const { activeTab, editorState } = this.state;
-    const { empInfo = {} } = this.context;
-    const { tgFlag } = empInfo.empInfo || {};
-    // 当在第一个tab页的时候有编辑按钮
-    if (activeTab === FIRST_TAB && tgFlag && !editorState) {
-      return (<div className={styles.tabsExtraBtn}>
-        <Button
-          type="primary"
-          size="large"
-          disabled={flowState === APPROVING}
-          onClick={this.changeEditorState}
-        >编辑</Button>
-      </div>);
-    }
-    return null;
-  }
 
   render() {
     const {
@@ -111,6 +112,9 @@ export default class UserBasicInfo extends PureComponent {
       LabelAndDescApprover,
       updateEmpInfo,
       queryEmpInfo,
+      cacheUserInfoForm,
+      userInfoForm,
+      replace,
     } = this.props;
 
     const { editorState } = this.state;
@@ -119,7 +123,6 @@ export default class UserBasicInfo extends PureComponent {
       <div className={styles.userInfoWrap}>
         <Tabs
           defaultActiveKey={FIRST_TAB}
-          tabBarExtraContent={this.getEditorBtn()}
           onChange={this.handleChangeTab}
           tabBarStyle={{
             borderBottom: 'none',
@@ -139,6 +142,9 @@ export default class UserBasicInfo extends PureComponent {
               LabelAndDescApprover={LabelAndDescApprover}
               updateEmpInfo={updateEmpInfo}
               changeEditorState={this.changeEditorState}
+              cacheUserInfoForm={cacheUserInfoForm}
+              userInfoForm={userInfoForm}
+              replace={replace}
             />
           </TabPane>
           <TabPane

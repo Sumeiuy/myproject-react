@@ -36,6 +36,24 @@ const regexp = {
    * 正整数
    */
   positiveInteger: /^\+?[1-9][0-9]*$/,
+  /**
+   * desc: 将pathname分割成集合
+   * pathname: '/a/b/c'
+   * ['/a', '/b', '/c']
+   */
+  matchPathList: /\/([^/]*)(?=(\/|$))/g,
+  /**
+   * @desc: 全量匹配内容中的换行符
+   * window换行: \r\n
+   * Unix和OS X : \n
+   * Classic Mac: \r
+   * */
+  returnLine: /[\n\r]/g,
+  /**
+   * @desc：全量匹配文本中的URL
+   * 至汉字、空格 结束
+   */
+  url: /(((https?:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)(:\d+)?((?:\/[+~%/.\w-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[-+=&;%@.\w/?_]*))?)/g,
 };
 
 export default regexp;

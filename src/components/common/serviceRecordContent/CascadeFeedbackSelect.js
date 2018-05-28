@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 15:26:04
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-14 12:35:42
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -26,16 +26,8 @@ export default class CascadeFeedbackSelect extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    // const { feedbackList: prevList } = this.props;
-    // const { feedbackList: nextList } = nextProps;
-    // if (!_.isEqual(prevList, nextList)) {
-    //   const first = _.get(nextList, '[0].key') || '';
-    //   const second = _.get(nextList, '[0].children[0].key') || '';
-    //   this.setState({ first, second });
-    // }
-
     const { value } = nextProps;
-    this.setState(value);
+    this.setState({ ...value });
   }
 
   @autobind
@@ -77,6 +69,7 @@ export default class CascadeFeedbackSelect extends PureComponent {
 
   render() {
     const { feedbackList } = this.props;
+    if (_.isEmpty(feedbackList)) return null;
     const { first, second } = this.state;
     // 一级客户反馈选项
     const firstOptions = feedbackList.map(this.renderOption);
@@ -85,8 +78,8 @@ export default class CascadeFeedbackSelect extends PureComponent {
     const secondFeedbackList = this.findChildrenByFirstSelect(first);
     const isEmptySecondList = _.isEmpty(secondFeedbackList);
     const secondOptions = secondFeedbackList.map(this.renderOption);
-    // 判断如果一级反馈的文字与二级反馈的文字一样，则不显示二级反馈
-    if (!isEmptySecondList) {
+    // 判断如果一级反馈的文字与二级反馈的文字一样且二级只有一条数据时，则不显示二级反馈
+    if (!isEmptySecondList && secondFeedbackList.length === 1) {
       const firstFeedback = _.find(feedbackList, { key: first });
       const secondFedback = _.find(secondFeedbackList, { key: second });
       showSecondSelect = firstFeedback.value === secondFedback.value;

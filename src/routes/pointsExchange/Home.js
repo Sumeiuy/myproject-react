@@ -3,10 +3,11 @@
  * @Author: zhangjunli
  * @Date: 2018-4-10 13:47:16
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
-import { Form, Input, Button, Row, Col, Table } from 'antd';
+import { Form, Input, Button, Table } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -41,45 +42,43 @@ function columns() {
     title: '产品代码',
     dataIndex: 'productCode',
     key: 'productCode',
-    width: '10%',
+    width: '7%',
     render: item => (<span>{formatString(item)}</span>),
   }, {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
-    width: '15%',
+    width: '10%',
     render: item => (
       <div
         title={formatString(item)}
-        className={styles.nameColum}
       >{formatString(item)}</div>
     ),
   }, {
     title: '兑换数量',
     dataIndex: 'exchangeNum',
     key: 'exchangeNum',
-    width: '10%',
+    width: '6%',
     render: item => (<span>{formatString(item)}</span>),
   }, {
     title: '兑换日期',
     dataIndex: 'exchangeDate',
     key: 'exchangeDate',
-    width: '10%',
+    width: '8%',
     render: item => (<span>{moment(item).format('YYYY-MM-DD') || '--'}</span>),
   }, {
     title: '手机号',
     dataIndex: 'phone',
     key: 'phone',
-    width: '10%',
+    width: '8%',
     render: item => (<span>{formatString(item)}</span>),
   }, {
     title: '服务营业部',
     dataIndex: 'orgName',
     key: 'orgName',
-    width: '15%',
+    width: '12%',
     render: item => (
       <div
-        className={styles.nameColum}
         title={formatString(item)}
       >
         {formatString(item)}
@@ -129,8 +128,8 @@ export default class Home extends Component {
   // 只能选择最近3个月的
   @autobind
   setDisableRange(date) {
-    return date <= moment().subtract(3, 'months')
-   || date >= moment();
+    return (date <= moment().subtract(3, 'months')
+   || date > moment()) && date.format('YY-MM-DD') !== moment().format('YY-MM-DD');
   }
 
   // DateRangePicker 组件，不支持value属性，故不能用 Form 组件的 getFieldDecorator，需要单独处理选中和清除事件
@@ -168,8 +167,8 @@ export default class Home extends Component {
       if (!err) {
         const { productCode = '', brokerNumber = '' } = values;
         const fieldValue = {
-          productCode: _.isEmpty(productCode) ? '' : productCode,
-          brokerNumber: _.isEmpty(brokerNumber) ? '' : brokerNumber,
+          productCode: _.isEmpty(productCode) ? '' : _.trim(productCode),
+          brokerNumber: _.isEmpty(brokerNumber) ? '' : _.trim(brokerNumber),
           pageNum: 1,
           startTime,
           endTime,
@@ -216,18 +215,18 @@ export default class Home extends Component {
             <div className={styles.headLine}>积分兑换产品历史查询报表</div>
           </div>
           <Form className={styles.form} layout="inline" onSubmit={this.handleSearch}>
-            <Row>
-              <Col span={8}>
+            <div className={styles.filterBox}>
+              <div className={styles.filter}>
                 <FormItem label={'产品代码'}>
                   {getFieldDecorator('productCode')(<Input className={styles.input} />)}
                 </FormItem>
-              </Col>
-              <Col span={8} style={{ textAlign: 'center' }}>
+              </div>
+              <div className={styles.filter}>
                 <FormItem label={'经纪客户号'}>
                   {getFieldDecorator('brokerNumber')(<Input className={styles.input} />)}
                 </FormItem>
-              </Col>
-              <Col span={8} className={styles.datePick} style={{ textAlign: 'right' }}>
+              </div>
+              <div className={styles.filter}>
                 <FormItem label="兑换时间">
                   <DateRangePicker
                     ref={this.drpWraperRef}
@@ -235,33 +234,26 @@ export default class Home extends Component {
                     onChange={this.handleCreateDateChange}
                   />
                 </FormItem>
-              </Col>
-            </Row>
-            <Row className={styles.buttonRow}>
-              <Col span={24} style={{ textAlign: 'right' }}>
+              </div>
+              <div className={styles.buttonBox}>
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className={styles.btn}
+                  className={styles.searchBtn}
                 >查询</Button>
                 <Button
                   onClick={this.handleReset}
-                  className={styles.btn}
+                  className={styles.resetBtn}
                 >重置</Button>
-              </Col>
-            </Row>
+              </div>
+            </div>
           </Form>
           <Table
             rowKey={'rowId'}
             columns={columns()}
             dataSource={exchangeList}
             pagination={false}
-            className={styles.table}
-            // 默认文案配置
-            locale={{
-              // 空数据时的文案
-              emptyText: '暂无数据',
-            }}
+            className={styles.pointsExchangeTable}
           />
           <Pagination {...paganationOption} />
         </div>

@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-02-28 14:07:50
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-09 15:21:26
+ * @Last Modified time: 2018-05-11 14:28:06
  */
 
 import React, { PureComponent } from 'react';
@@ -17,12 +17,14 @@ import _ from 'lodash';
 import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
 import Icon from '../../components/common/Icon';
+import { openRctTab } from '../../utils';
+import { url as urlHelper } from '../../helper';
 
 import config from './config';
 import styles from './detail.less';
 import logable from '../../decorators/logable';
 
-const { typeList } = config;
+const { typeList, securityType } = config;
 const { Header, Footer, Content } = Layout;
 const EMPTY_PARAM = '暂无';
 const pathname = '/stock';
@@ -176,6 +178,37 @@ export default class StockDetail extends PureComponent {
   @logable({ type: 'Click', payload: { name: '下载WORD 全文' } })
   handleDownload() {}
 
+  // 查看持仓客户
+  @autobind
+  openCustomerListPage() {
+    const {
+      location: { query: { code = '' } } } = this.props;
+    const { push } = this.props;
+    // 组合 productId
+    const productId = `${securityType[0].shortName}${code}`;
+
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_CUSTOMER_LIST',
+      title: '客户列表',
+    };
+    const query = {
+      labelMapping: encodeURIComponent(productId),
+      source: 'securitiesProducts',
+    };
+    const url = `/customerPool/list?${urlHelper.stringify(query)}`;
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+      pathname: url,
+      query,
+    });
+  }
+
+
   render() {
     const { id, detail: dataDetail = {}, filterTypeList } = this.state;
     let title = '';
@@ -248,7 +281,7 @@ export default class StockDetail extends PureComponent {
               :
                 null
             }
-            { /* <a><Icon type="chakan" />查看持仓客户</a> */ }
+            <a onClick={this.openCustomerListPage}><Icon type="chakan" />查看持仓客户</a>
           </div>
           <div className={styles.right}>
             <a onClick={this.goBackHandle}><Icon type="fanhui1" />返回</a>

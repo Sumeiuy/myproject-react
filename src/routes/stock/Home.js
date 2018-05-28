@@ -2,8 +2,8 @@
  * @Description: 个股页面
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-02 09:53:10
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-16 20:29:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -102,7 +102,7 @@ export default class Stock extends PureComponent {
     },
   })
   rowClickHandle(record) {
-    const { id, code, eventType } = record;
+    const { id, code, eventType, stockName } = record;
     const { push } = this.props;
     const { type, pageSize, pageNum, keyword } = this.state;
     const urlQuery = {
@@ -120,6 +120,8 @@ export default class Stock extends PureComponent {
       code,
       // 事件类型
       eventType,
+      // 股票名称
+      name: stockName,
     };
     push({
       pathname,
@@ -299,11 +301,6 @@ export default class Stock extends PureComponent {
                   onClick: () => this.rowClickHandle(record),       // 点击行
                 })}
                 rowKey="id"
-                // 默认文案配置
-                locale={{
-                  // 空数据时的文案
-                  emptyText: '暂无数据',
-                }}
               />
               <Pagination {...paginationOption} />
             </TabPane>))

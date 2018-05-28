@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-04-16 10:29:44
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-11 17:45:50
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -30,7 +30,7 @@ import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import styles from './home.less';
-import logable, { logPV } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 
 const confirm = Modal.confirm;
 const EMPTY_LIST = [];
@@ -569,7 +569,6 @@ export default class Contract extends PureComponent {
 
   // 弹窗底部按钮事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '$args[0].btnName' } })
   footerBtnHandle(btnItem) {
     const { unsubscribeBaseInfo } = this.props;
     const { editFormModal, contractFormData } = this.state;
@@ -779,6 +778,25 @@ export default class Contract extends PureComponent {
       ...sendPayload,
       currentQuery: query,
     };
+    // logable日志---新建合约申请
+    const { contractFormData } = this.state;
+    // 操作类型
+    const operationType = contractFormData.workflowname;
+    let name = '';
+    if (operationType === unsubscribe) {
+      name = '退订';
+    } else {
+      name = '订购';
+    }
+    logCommon({
+      type: 'Submit',
+      payload: {
+        subtype: '受限股解禁',
+        value: JSON.stringify(payload),
+        name,
+        type: '合约管理',
+      },
+    });
     saveContractData(payload).then(
       () => {
         this.closeModal('addFormModal');

@@ -111,7 +111,7 @@
     width: 40px;
     height: 14px;
     overflow: hidden;
-    vertical-align: middle;
+    vertical-align: -2px;
     &.baijin {
       background: url('./img/n-baijin.png');
     }
@@ -142,7 +142,7 @@
     font-size: 12px;
     text-align: center;
     overflow: hidden;
-    vertical-align: middle;
+    vertical-align: -4px;
     background-color: #fff;
     &.zuidi {
       background-color: #81a3b8;
@@ -170,11 +170,14 @@
     height: 18px;
     line-height: 18px;
     color: #fff;
-    font-size: 14px;
+    font-size: 12px;
     text-align: center;
     background: #ff784e;
     border-radius: 1px;
-    vertical-align: middle;
+    vertical-align: 1px;
+    &.invisible {
+      visibility: hidden;
+    }
   }
   .allocate {
     padding: 0 2px;
@@ -232,6 +235,14 @@
 .textRight {
   text-align: right;
 }
-.invisible {
-  visibility: hidden;
+
+@media screen and (max-width: 1366px) {
+  .rowItem {
+    .iconList.hasAllocate {
+      margin-right: 10px;
+      .sign.invisible {
+        display: none;
+      }
+    }
+  }
 }

@@ -26,14 +26,18 @@
     }
   }
   .phoneRight {
-    text-align: right;
-    span {
-      color: #333;
+    float: right;
+    display: inline-block;
+    cursor: pointer;
+    .phoneRightIcon {
+      color: #108ee9;
+      margin-right: 5px;
     }
-    span:first-child {
-      color: #9b9b9b;
+    .phoneRightText {
       text-align: right;
       display: inline-block;
+      font-size: 14px;
+      color: #108ee9;
     }
   }
   .phone {
@@ -56,11 +60,8 @@
       width: 105px;
       color: #9b9b9b;
       text-align: right;
-      /* clear: both; */
       float: left;
-      /* text-overflow: ellipsis; */
       white-space: nowrap;
-      /* overflow: hidden; */
       min-width: 105px;
     }
     span:first-child:before, span:first-child:after,span:last-child:before {
@@ -71,25 +72,48 @@
       color: #333;
     }
   }
+  .people, .peopleTwo {
+    .title {
+      width: 105px;
+      min-width: 105px;
+      color: #9b9b9b;
+      text-align: right;
+    }
+    .content {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-left: 0;
+      color: #333;
+      .value {
+        margin-right: 5px;
+      }
+    }
+    .openAssets {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      width: 105px;
+      min-width: 105px;
+      color: #9b9b9b;
+      & > div:first-child {
+        height: 20px;
+      }
+    }
+  }
   .peopleTwo {
     display: flex;
     justify-content: flex-start;
-    span, div {
+    span {
       color: #333;
     }
     span:first-child {
       color: #9b9b9b;
       text-align: right;
       display: inline-block;
-      width: 75px;
-    }
-    & > div:first-child {
       width: 105px;
-      color: #9b9b9b;
-      text-align: right;
-    }
-    & > div:last-child {
-      color: #333;
     }
   }
   .peopleThr {
@@ -123,7 +147,7 @@
       color: #9b9b9b;
       text-align: right;
       display: inline-block;
-      width: 90px;
+      width: 105px;
     }
     & > div:first-child {
       width: 105px;
@@ -160,10 +184,6 @@
       }
     }
   }
-  .description {
-    // overflow: hidden;
-    // height: 330px;
-  }
   .asset {
     padding: 5px 15px 0;
     h5 {
@@ -178,24 +198,16 @@
     .wordTips {
       font-size: 12px;
       color: #108ee9;
-      margin-left: 5px;
     }
     .people {
       display: flex;
       justify-content: flex-start;
-      & > div:first-child {
-        width: 105px;
-        color: #9b9b9b;
-        text-align: right;
-        clear: left;
-        float: left;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      & > div:last-child {
-        // width: 80%;
-        color: #333;
-        margin-left: 120px;
+    }
+    :global {
+      .ant-col-9 {
+        h5:nth-child(2) {
+          height: 60px;
+        }
       }
     }
   }

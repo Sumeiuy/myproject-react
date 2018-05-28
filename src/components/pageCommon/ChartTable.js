@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
- * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-03-19 11:46:17
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-25 20:49:28
  */
 
 import React, { PureComponent } from 'react';
@@ -229,6 +229,7 @@ export default class ChartTable extends PureComponent {
           dataIndex: child.key,
           width: this.getColumnWidth(child.name, child.unit),
           key: `key${child.key}${stamp}`,
+          align: 'center',
         };
         const hasThreeEle = child.children;
         if (hasThreeEle) {
@@ -253,6 +254,7 @@ export default class ChartTable extends PureComponent {
           dataIndex: child.key,
           width: this.getColumnWidth(child.name, child.unit),
           key: `key${child.key}${stamp}`,
+          align: 'center',
         };
         return threeEleArr.push(threeEleObj);
       });
@@ -420,6 +422,7 @@ export default class ChartTable extends PureComponent {
           dataIndex: item.key,
           title: this.getTitleHtml(item),
           width: this.getColumnWidth(tempName),
+          align: 'center',
           render: text => (
             <div className={styles.tdWrapperDiv}>
               {text}
@@ -449,6 +452,7 @@ export default class ChartTable extends PureComponent {
         key: 'city',
         width: 170,
         fixed: 'left',
+        align: 'center',
         render: (text, record) => (
           this.toolTipHandle(record)
         ),
@@ -488,11 +492,11 @@ export default class ChartTable extends PureComponent {
     const { chartTableInfo, style } = this.props;
     const { allWidth, scrollDisplay } = this.state;
     const paginationOption = {
-      curPageNum: chartTableInfo.curPageNum || 1,
-      totalRecordNum: chartTableInfo.totalCnt || 1,
-      curPageSize: chartTableInfo.pageSize,
-      onPageChange: this.handlePaginationChange,
-      isShowSizeChanger: false,
+      current: chartTableInfo.curPageNum || 1,
+      total: chartTableInfo.totalCnt || 1,
+      pageSize: chartTableInfo.pageSize,
+      onChange: this.handlePaginationChange,
+      showSizeChanger: false,
     };
     return (
       <div className={styles.tableDiv} style={style} ref={this.saveTableWrapper}>
@@ -503,11 +507,6 @@ export default class ChartTable extends PureComponent {
           className={chartTableInfo.curPageNum === 1 ? styles.firstPage : ''}
           onChange={this.handleChange}
           scroll={{ x: this.state.allWidth }}
-          // 默认文案配置
-          locale={{
-            // 空数据时的文案
-            emptyText: '暂无数据',
-          }}
         />
         <Pagination
           {...paginationOption}

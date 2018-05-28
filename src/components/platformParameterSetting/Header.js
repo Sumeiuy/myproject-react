@@ -10,6 +10,7 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import { backRoutePathList } from '../../helper/url';
 import { linkTo } from '../../utils';
 import Icon from '../../components/common/Icon';
 import styles from './header.less';
@@ -32,9 +33,9 @@ function linkGenerator(menuItem, parentPath, push) {
     pathname: finaPathname,
   };
   return (
-    <span
+    <a
       onClick={() => { linkTo(linkToParam); }}
-    >{menuItem.name}</span>
+    >{menuItem.name}</a>
   );
 }
 
@@ -45,9 +46,9 @@ function getMenus(menu, parentPath, push, preventItem) {
         _.map(menu, menuItem => (
           <Menu.Item key={menuItem.path}>
             {
-              preventItem.path === menuItem.path ?
-                <span>{menuItem.name}</span> :
-                linkGenerator(menuItem, parentPath, push, preventItem)
+              preventItem.path === menuItem.path
+                ? <a>{menuItem.name}</a>
+                : linkGenerator(menuItem, parentPath, push, preventItem)
             }
           </Menu.Item>
         ))
@@ -102,13 +103,7 @@ export default class Header extends PureComponent {
   };
   render() {
     const { location: { pathname }, matchPath, menu, push } = this.props;
-    /**
-     * desc: 获取菜单匹配的pathItem列表
-     * @param pathname: '/a/b/c'
-     * @param matchPath: '/a'
-     * @return ['/b', '/c']
-     */
-    const pathList = pathname.substring(matchPath.length).match(/\/([^/]*)(?=(\/|$))/g) || [];
+    const pathList = backRoutePathList(pathname, matchPath);
     const navItemList = getNavItemList(menu, pathList);
     let parentPath = matchPath;
     return (
@@ -130,9 +125,9 @@ export default class Header extends PureComponent {
                 parentPath += preventItem.path;
                 return dropDownMenu;
               }
-              return _.isString(option) ?
-                (<div key={index} className={styles.navItem}>{option}</div>) :
-                null;
+              return _.isString(option)
+                ? (<div key={index} className={styles.navItem}>{option}</div>)
+                : null;
             })
         }
       </div>

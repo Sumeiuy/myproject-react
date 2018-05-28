@@ -1,15 +1,15 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-16 10:05:00
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-07 23:07:05
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Button, Icon } from 'antd';
+import { Button, Icon, message } from 'antd';
 import cx from 'classnames';
 import _ from 'lodash';
 
@@ -42,19 +42,62 @@ export default class ServeContent extends PureComponent {
       // 服务内容
       serveContentDesc: isReject ? serveContent.desc : '',
       // 判断是否用户已经修改了内容,在只读|驳回下才会已经存在内容,
-      // 先判断是否驳回，在判断是否只读
-      hasEditContent: isReject || false,
+      hasEditContent: isReject,
     };
+  }
+
+  // 校验必要的数据是否填写选择
+  @autobind
+  checkData() {
+    const {
+      serveContentDesc,
+      serveContentTitle,
+      approverId,
+      contentMode,
+    } = this.state;
+    // 这个是初始值
+    const { serveContent, isReject } = this.props;
+    // 判断在驳回状态，初始值与state里面的值是否变化了，
+    // 如果修改了，则可以给用户提交，如果没有则不让用户提交
+    if (isReject) {
+      // 原始值
+      const { desc } = serveContent;
+      if (_.isEqual(desc, serveContentDesc)) {
+        // 如果相同代表，用户并没有修改
+        message.error('服务内容已被驳回，请修改服务内容后再提交');
+        return false;
+      }
+    }
+
+    if (_.isEmpty(serveContentDesc) || _.isEmpty(serveContentTitle)) {
+      message.error('请填写服务内容中的标题和内容');
+      return false;
+    }
+    if (contentMode === 'free') {
+      // 自由话术模式，下需要审批
+      if (_.isEmpty(approverId)) {
+        message.error('自由编辑状态下，需要审批，请选择审批人');
+        return false;
+      }
+    }
+    return true;
   }
 
   @autobind
   getData() {
-    const { serveContentDesc, serveContentTitle, serveContentType, approverId } = this.state;
+    const {
+      serveContentDesc,
+      serveContentTitle,
+      serveContentType,
+      approverId,
+      contentMode,
+    } = this.state;
     return {
       title: serveContentTitle,
       content: serveContentDesc,
       taskType: serveContentType,
       approval: approverId,
+      mode: contentMode,
     };
   }
 
@@ -149,7 +192,13 @@ export default class ServeContent extends PureComponent {
       hasEditContent,
     } = this.state;
 
-    const { approvalList } = this.props;
+    const {
+      approvalList,
+      // 投资建议文本撞墙检测
+      testWallCollision,
+      // 投资建议文本撞墙检测是否有股票代码
+      testWallCollisionStatus,
+    } = this.props;
     const newApprovalList = approvalList.map(item => ({
       empNo: item.login,
       empName: item.empName,
@@ -219,6 +268,8 @@ export default class ServeContent extends PureComponent {
               onOK={this.handleServeModalOK}
               isUpdate={hasEditContent}
               serveContent={serveContent}
+              testWallCollision={testWallCollision}
+              testWallCollisionStatus={testWallCollisionStatus}
             />
           )
         }
@@ -231,6 +282,10 @@ ServeContent.propTypes = {
   isReject: PropTypes.bool.isRequired,
   serveContent: PropTypes.object,
   approvalList: PropTypes.array,
+  // 投资建议文本撞墙检测
+  testWallCollision: PropTypes.func.isRequired,
+  // 投资建议文本撞墙检测是否有股票代码
+  testWallCollisionStatus: PropTypes.bool.isRequired,
 };
 
 ServeContent.defaultProps = {

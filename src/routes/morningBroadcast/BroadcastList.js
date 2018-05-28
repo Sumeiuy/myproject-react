@@ -223,6 +223,7 @@ export default class BroadcastList extends PureComponent {
       key: 'title',
       className: 'tableTitle',
       width: '35%',
+      align: 'left',
       render: (text, record) => {
         const newId = record.newsId;
         return (
@@ -241,17 +242,20 @@ export default class BroadcastList extends PureComponent {
       dataIndex: 'newsTypValue',
       width: '15%',
       key: 'type',
+      align: 'left',
     }, {
       title: '创建日期',
       dataIndex: 'created',
       width: '15%',
       key: 'date',
+      align: 'left',
     }, {
       title: '作者',
       dataIndex: 'createdBy',
       width: '15%',
       className: 'tableAuthor',
       key: 'author',
+      align: 'left',
       render: (text, record) => record.updatedBy || record.createdBy,
     }];
     if (permission.hasZXMampPermission()) {
@@ -261,6 +265,7 @@ export default class BroadcastList extends PureComponent {
         dataIndex: 'newsId',
         width: '6%',
         className: 'tableAction',
+        align: 'left',
         render: newsId => (
           <span>
             <span onClick={() => { this.showModal(newsId); }}><Icon className="edit" type="edit" /></span>
@@ -508,11 +513,6 @@ export default class BroadcastList extends PureComponent {
               columns={this.onHandleTablecolumns()}
               dataSource={newBoradcastList}
               pagination={false}
-              // 默认文案配置
-              locale={{
-                // 空数据时的文案
-                emptyText: '暂无数据',
-              }}
             />
             <Pagination {...paginationOption} />
           </div>

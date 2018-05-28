@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-12 13:41:39
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-05-03 13:24:16
  */
 
 import React, { PureComponent } from 'react';
@@ -416,6 +416,7 @@ export default class CommonTable extends PureComponent {
         this.handlePageChange(page, pageSize);
       },
       onShowSizeChange: this.handlePageSizeChange,
+      wrapClassName: paginationClass,
     };
     const dataSource = this.renderTableDatas(listData);
     const columns = this.renderColumns(paganationOption);
@@ -451,11 +452,6 @@ export default class CommonTable extends PureComponent {
           pagination={(needPagination && totalRecordNum > 0 && !paginationInTable) ?
             paganationOption : false}
           paginationClass={`${styles.pagination} ${paginationClass}`}
-          // 默认文案配置
-          locale={{
-            // 空数据时的文案
-            emptyText: '暂无数据',
-          }}
           {...titleProp}
           {...footerProp}
         />

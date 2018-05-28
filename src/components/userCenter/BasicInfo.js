@@ -5,15 +5,16 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Card, List, Divider, Tag, Form, Input, Button, Popover, Checkbox, Modal } from 'antd';
+import { Card, List, Divider, Tag, Form, Input, Button, Popover, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import ChoiceApproverBoard from '../commissionAdjustment/ChoiceApproverBoard';
+import Icon from '../common/Icon';
 import defaultHeader from './img/defaultHeader.jpg';
 import styles from './basicInfo.less';
+import withRouter from '../../decorators/withRouter';
 
-const { Meta } = Card;
 const { TextArea } = Input;
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -23,8 +24,11 @@ const warning = Modal.warning;
 const ADVISER_INFO = 'ADVISER_INFO';
 // 审批中的状态标识
 const APPROVING = 'approving';
+// 个人介绍最多字数
+const MAX_INTRODUCE = 135;
 
 @Form.create()
+@withRouter
 export default class BasicInfo extends PureComponent {
   static propTypes = {
     userBaseInfo: PropTypes.object.isRequired,
@@ -32,11 +36,19 @@ export default class BasicInfo extends PureComponent {
     allLabels: PropTypes.array.isRequired,
     LabelAndDescApprover: PropTypes.array.isRequired,
     form: PropTypes.object.isRequired,
+    userInfoForm: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
     changeEditorState: PropTypes.func.isRequired,
     queryAllLabels: PropTypes.func.isRequired,
     queryApprovers: PropTypes.func.isRequired,
     updateEmpInfo: PropTypes.func.isRequired,
     queryEmpInfo: PropTypes.func.isRequired,
+    cacheUserInfoForm: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
+  };
+
+  static contextTypes = {
+    empInfo: PropTypes.object,
   };
 
   constructor(props) {
@@ -45,19 +57,68 @@ export default class BasicInfo extends PureComponent {
       newLabel: [],
       // 选择审批人弹窗状态
       approverModal: false,
+      // 选择标签弹窗状态
+      selectLabelState: false,
       approver: {},
+      applyingDescription: '',
     };
+  }
+
+  componentWillMount() {
+    const { userInfoForm, location: { query } } = this.props;
+    const { cache } = query;
+    const { newLabel = [], approver = {}, editorState, applyingDescription } = userInfoForm;
+    if (editorState && cache) {
+      this.setState({
+        newLabel,
+        approver,
+        applyingDescription,
+      });
+    }
+    this.moreLabel();
+  }
+
+  componentDidMount() {
+    const { cacheUserInfoForm,
+      replace,
+      location: { pathname },
+    } = this.props;
+    // 不改动以前的逻辑，保证缓存的数据的生命周期从Unmount到DidMount
+    cacheUserInfoForm({});
+    // 记录入口，判断是通过标签进入还是通过FSP菜单进入
+    replace({
+      pathname,
+      query: {
+        cache: true,
+      },
+    });
   }
 
   componentWillReceiveProps(nextProps) {
     const { userBaseInfo } = this.props;
+    const { newLabel } = this.state;
     const { userBaseInfo: newUserBaseInfo } = nextProps;
     if (userBaseInfo !== newUserBaseInfo) {
       const {
-        labels,
+        labels = [],
       } = newUserBaseInfo;
       this.setState({
-        newLabel: labels || [],
+        newLabel: _.isEmpty(newLabel) ? labels : newLabel,
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    const { cacheUserInfoForm, editorState } = this.props;
+    const { newLabel, approver } = this.state;
+    const { getFieldValue } = this.props.form;
+    const applyingDescription = getFieldValue('applyingDescription');
+    if (editorState) {
+      cacheUserInfoForm({
+        newLabel,
+        applyingDescription,
+        approver,
+        editorState,
       });
     }
   }
@@ -77,6 +138,10 @@ export default class BasicInfo extends PureComponent {
         ];
       default:
         return [
+          {
+            name: '姓名',
+            key: 'name',
+          },
           {
             name: '工号',
             key: 'empId',
@@ -99,33 +164,37 @@ export default class BasicInfo extends PureComponent {
 
   // 头像
   headerImg(headerImgUrl = defaultHeader) {
+    const { empInfo = {} } = this.context;
+    const { tgFlag } = empInfo.empInfo || {};
     return (
       <div className={styles.userImg}>
-        <img src={headerImgUrl} alt="默认头像" />
+        <img src={tgFlag ? headerImgUrl : defaultHeader} alt="用户照片" />
       </div>
     );
   }
 
   // 选择标签事件
   @autobind
-  handleLabelCheckBox(e, labelItem) {
-    if (e.target.checked) {
-      const { newLabel } = this.state;
-      if (newLabel.length >= 4) {
-        warning({
-          title: '标签可选数目不超过4条',
-        });
-        return;
-      }
-      this.setState((preState) => {
-        const nextNewLabel = _.concat(preState.newLabel, labelItem);
-        return { newLabel: nextNewLabel };
+  handleLabelCheckBox(labelItem) {
+    const { newLabel } = this.state;
+    const hasSelected = _.filter(newLabel, item => item.id === labelItem.id);
+    this.setState({
+      selectLabelState: false,
+    });
+    if (hasSelected.length) {
+      return;
+    }
+    if (newLabel.length >= 4) {
+      warning({
+        title: '标签可选数目不超过4条',
+        okText: '确认',
       });
     } else {
       this.setState((preState) => {
-        const nextNewLabel = _.filter(preState.newLabel,
-            removeItem => removeItem.id !== labelItem.id);
-        return { newLabel: nextNewLabel };
+        const nextNewLabel = _.concat(preState.newLabel, labelItem);
+        return {
+          newLabel: nextNewLabel,
+        };
       });
     }
   }
@@ -142,17 +211,16 @@ export default class BasicInfo extends PureComponent {
         {
           <List
             size="small"
+            split={false}
             dataSource={allLabels}
             renderItem={item => (
               <List.Item>
-                <Checkbox
-                  checked={labelsId.includes(item.id)}
-                  onChange={(e) => {
-                    this.handleLabelCheckBox(e, item);
-                  }}
+                <div
+                  onClick={() => this.handleLabelCheckBox(item)}
+                  className={`${labelsId.includes(item.id) ? 'selected' : ''}`}
                 >
                   {item.name}
-                </Checkbox>
+                </div>
               </List.Item>
             )}
           />
@@ -172,7 +240,7 @@ export default class BasicInfo extends PureComponent {
     });
   }
 
-  // 点击更多加载标签并展示
+  // 加载标签
   @autobind
   moreLabel() {
     const {
@@ -183,7 +251,13 @@ export default class BasicInfo extends PureComponent {
       queryAllLabels();
     }
   }
-
+  // 打开标签Popover
+  @autobind
+  openPopover() {
+    this.setState(preState => ({
+      selectLabelState: !preState.selectLabelState,
+    }));
+  }
   // 打开审批人选择审批人model
   @autobind
   openApproverBoard() {
@@ -202,17 +276,6 @@ export default class BasicInfo extends PureComponent {
       approverModal: false,
     });
   }
-  // 当前状态是否有标签
-  hasLabel(preventLabels = []) {
-    const { editorState } = this.props;
-    const { newLabel = [] } = this.state;
-    if (editorState && !newLabel.length) {
-      return true;
-    } else if (!editorState && !preventLabels.length) {
-      return true;
-    }
-    return false;
-  }
   // 取消编辑状态
   @autobind
   cancelEditor() {
@@ -222,6 +285,8 @@ export default class BasicInfo extends PureComponent {
     } = userBaseInfo;
     this.setState({
       newLabel: labels,
+      applyingDescription: '',
+      approver: {},
     });
     changeEditorState();
   }
@@ -238,7 +303,6 @@ export default class BasicInfo extends PureComponent {
   startApproval() {
     const {
       updateEmpInfo,
-      changeEditorState,
       queryEmpInfo,
     } = this.props;
     const { newLabel, approver } = this.state;
@@ -250,11 +314,19 @@ export default class BasicInfo extends PureComponent {
           labels: finalLabels,
           approver: approver.empNo,
         }).then(() => {
-          changeEditorState();
+          this.cancelEditor();
           queryEmpInfo();
         });
       }
     });
+  }
+
+  // 判断是否可以提交
+  canSubmit() {
+    const { approver, newLabel } = this.state;
+    const { getFieldValue } = this.props.form;
+    const applyingDescription = getFieldValue('applyingDescription');
+    return applyingDescription && !_.isEmpty(newLabel) && !_.isEmpty(approver);
   }
 
   render() {
@@ -266,26 +338,27 @@ export default class BasicInfo extends PureComponent {
         getFieldDecorator,
         getFieldError,
       },
+      changeEditorState,
+      userBaseInfo: {
+        labels = [],
+      },
     } = this.props;
-    const { newLabel, approverModal, approver } = this.state;
+    const { newLabel, approverModal, approver, applyingDescription, selectLabelState } = this.state;
     // 当前
     const approveSelectData = _.map(LabelAndDescApprover, item => ({ ...item, empNo: item.login }));
     const isApproving = APPROVING === userBaseInfo.flowState;
     const { empName = '' } = approver;
+    const { empInfo = {} } = this.context;
+    const { tgFlag } = empInfo.empInfo || {};
     return (
-      <div className={styles.basicInfo}>
+      <div
+        className={styles.basicInfo}
+      >
         <div className={styles.userInfo}>
           <div className={styles.headerImg}>
             <Card
-              hoverable
-              style={{ width: 140 }}
               cover={this.headerImg(userBaseInfo.photograph)}
-            >
-              <Meta
-                className={styles.desc}
-                description={userBaseInfo.name}
-              />
-            </Card>
+            />
           </div>
           <div className={styles.userInfoDesc}>
             <List
@@ -293,7 +366,7 @@ export default class BasicInfo extends PureComponent {
               renderItem={
                 item => (
                   <List.Item>
-                    <b>{item.name}:</b>
+                    <b className={styles.infoLabel}>{item.name}:</b>
                     {userBaseInfo[item.key] || '--'}
                   </List.Item>
                 )
@@ -301,120 +374,154 @@ export default class BasicInfo extends PureComponent {
             />
           </div>
         </div>
-        <Divider />
-        <Form layout="inline">
-          <div className={styles.personalDesc}>
-            <List
-              dataSource={this.getBaseInfoMapping(ADVISER_INFO)}
-              renderItem={
-                (item, index) => (
-                    // 个人介绍
-                    (<List.Item>
-                      <div className={styles.label}>
-                        <div>{item.name}:</div>
-                        {
-                          isApproving ?
-                            <div>(审批中)</div> :
-                            null
-                        }
-                      </div>
-                      {
-                        index === 0 ?
-                          // 个人介绍
-                          <div className={styles.inputWrap}>
+        {
+          tgFlag ?
+            (
+              <Form layout="inline">
+                <Divider />
+                <div className={styles.title}>
+                  <Divider type="vertical" className={styles.itemDivider} />
+                  <span>个性化信息</span>
+                  {
+                    !editorState ?
+                      <Icon
+                        onClick={isApproving ? null : changeEditorState}
+                        className={`${styles.editor} ${isApproving ? styles.isApprove : ''}`}
+                        type="bianji"
+                      /> :
+                      null
+                  }
+                </div>
+                <div className={styles.personalDesc}>
+                  <List
+                    dataSource={this.getBaseInfoMapping(ADVISER_INFO)}
+                    renderItem={
+                      (item, index) => (
+                        // 个人介绍
+                        (<List.Item>
+                          <div className={styles.label}>
+                            <div className={editorState ? styles.required : ''}>{item.name}:</div>
                             {
-                              editorState ?
-                                getFieldDecorator('applyingDescription', {
-                                  rules: [{ max: 200, message: '个人介绍最多200个汉字' }],
-                                  initialValue: userBaseInfo[item.key],
-                                })(
-                                  <TextArea
-                                    autosize={{ minRows: 4, maxRows: 6 }}
-                                  />) :
-                                userBaseInfo[item.key] || '--'
-                            }
-                            <span className={styles.errorInfo}>
-                              {
-                                editorState ?
-                                  getFieldError('applyingDescription') || '' :
-                                  null
-                              }
-                            </span>
-                          </div> :
-                          // 个人标签
-                          <div className={styles.inputWrap}>
-                            {editorState ?
-                              newLabel
-                                .map(label =>
-                                  <Tag
-                                    closable
-                                    onClose={(e) => {
-                                      this.deleteUserLabel(e, label.id);
-                                    }}
-                                    color="gold"
-                                    key={label.id}
-                                  >
-                                    {label.name}
-                                  </Tag>,
-                                ) :
-                              (userBaseInfo[item.key] || [])
-                                  .map(label => <Tag color="gold" key={label.id}>{label.name}</Tag>)
-                            }
-                            {
-                              this.hasLabel(userBaseInfo[item.key]) ?
-                                '暂未设置标签' :
+                              isApproving ?
+                                <div>(审批中)</div> :
                                 null
                             }
                           </div>
-                      }
-                    </List.Item>)
-                )
-              }
-            />
-            {
-              editorState ?
-                <div className={styles.selectLabel}>
-                  <Popover
-                    placement="rightTop"
-                    content={this.selectLabelContent()}
-                    trigger="click"
-                    overlayClassName={styles.labelPopover}
-                  >
-                    <Button onClick={this.moreLabel} icon="plus">更多</Button>
-                  </Popover>
-                </div> :
-                null
-            }
-            {
-              editorState ?
-                <div className={styles.selectApprover}>
-                  <FormItem
-                    label="选择审批人"
-                  >
-                    {getFieldDecorator('approver', {
-                      rules: [{
-                        required: true, message: '请选择审批人',
-                      }],
-                      initialValue: empName,
-                    })(
-                      <Search
-                        placeholder="搜索内容"
-                        style={{ width: 200 }}
-                        readOnly
-                        onClick={this.openApproverBoard}
-                      />,
-                    )}
-                  </FormItem>
-                </div> :
-                null
-            }
-          </div>
-        </Form>
+                          {
+                            index === 0 ?
+                              // 个人介绍
+                              <div className={styles.inputWrap}>
+                                {
+                                  editorState ?
+                                    getFieldDecorator('applyingDescription', {
+                                      rules: [{ max: MAX_INTRODUCE, message: `个人介绍最多${MAX_INTRODUCE}个汉字` }],
+                                      initialValue: applyingDescription || userBaseInfo[item.key],
+                                    })(
+                                      <TextArea
+                                        autosize={{ minRows: 4, maxRows: 6 }}
+                                      />) :
+                                    userBaseInfo[item.key] || '--'
+                                }
+                                <span className={styles.errorInfoItem}>
+                                  {
+                                    editorState ?
+                                      getFieldError('applyingDescription') || '' :
+                                      null
+                                  }
+                                </span>
+                              </div> :
+                              // 个人标签
+                              <div className={styles.inputWrap}>
+                                {editorState ?
+                                  newLabel
+                                    .map(label =>
+                                      <Tag
+                                        closable
+                                        onClose={(e) => {
+                                          this.deleteUserLabel(e, label.id);
+                                        }}
+                                        color="gold"
+                                        key={label.id}
+                                      >
+                                        {label.name}
+                                      </Tag>,
+                                    ) :
+                                  (userBaseInfo[item.key] || [])
+                                    .map(label => <Tag color="gold" key={label.id}>{label.name}</Tag>)
+                                }
+                                {
+                                  editorState ?
+                                    <Popover
+                                      placement="topLeft"
+                                      content={this.selectLabelContent()}
+                                      trigger="click"
+                                      overlayClassName={styles.labelPopover}
+                                      visible={selectLabelState}
+                                      onVisibleChange={this.openPopover}
+                                    >
+                                      {
+                                        selectLabelState ?
+                                          <Tag
+                                            className={styles.selectLabelBtn}
+                                          >
+                                            <span>请选择标签<Icon type="xiangxia" /></span>
+                                          </Tag> :
+                                          <Tag
+                                            color="gold"
+                                            className={styles.addLabel}
+                                          >
+                                            <span><Icon type="jia" /> 添加标签</span>
+                                          </Tag>
+                                      }
+                                    </Popover> :
+                                    null
+                                }
+                                {
+                                  !editorState && !labels.length ?
+                                    '暂未设置标签' :
+                                    null
+                                }
+                              </div>
+                          }
+                        </List.Item>)
+                      )
+                    }
+                  />
+                  {
+                    editorState ?
+                      <div className={styles.selectApprover}>
+                        <Divider />
+                        <span onClick={this.openApproverBoard}>
+                          <FormItem
+                            label="选择审批人"
+                          >
+                            {getFieldDecorator('approver', {
+                              rules: [{
+                                required: true, message: '请选择审批人',
+                              }],
+                              initialValue: empName,
+                            })(
+                              <Search
+                                placeholder="搜索内容"
+                                style={{ width: 200 }}
+                                readOnly
+                              />,
+                            )}
+                          </FormItem>
+                        </span>
+                      </div> :
+                      null
+                  }
+                </div>
+              </Form>
+            ) :
+            null
+        }
         {
           editorState ?
             <div className={styles.editorInfoSubmit}>
               <Button onClick={this.cancelEditor}>取消</Button>
-              <Button onClick={this.startApproval} disabled={_.isEmpty(approver)} type="primary">提交审批</Button>
+              <Button onClick={this.startApproval} disabled={!this.canSubmit()} type="primary">提交审批</Button>
             </div> :
             null
         }

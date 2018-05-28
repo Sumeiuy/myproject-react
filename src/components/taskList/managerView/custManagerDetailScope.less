@@ -3,7 +3,7 @@
 .container {
   display: block;
   width: 100%;
-  // ['200px', '100px', '100px', '100px', '100px', '100px' , '200px']
+  // ['150px', '120px', '120px', '120px', '120px', '120px', '180px'];
   .notFoldedScope {
     // 第一列由于是固定列，设置一下最大宽度，不然屏幕分辨率比较大的时候，内容文本宽度其实不长，但是为了自适应
     // 列的宽度会很宽，导致后面的列距离第一个固定的列有很大的距离
@@ -12,28 +12,28 @@
       .ant-table-scroll {
         colgroup {
           col:first-child {
-            max-width: 200px;
+            max-width: 150px;
           }
         }
         table {
           tbody > tr > td:nth-child(1) {
             :global {
               .column {
-                max-width: 170px;
+                max-width: 120px;
               }
             }
           }
           tbody > tr > td:last-child {
             :global {
               .column {
-                max-width: 190px;
+                max-width: 170px;
               }
             }
           }
           tbody > tr > td:not(:first-child):not(:last-child) {
             :global {
               .column {
-                max-width: 90px;
+                max-width: 110px;
               }
             }
           }
@@ -44,7 +44,7 @@
           tbody > tr > td:nth-child(1) {
             :global {
               .column {
-                max-width: 170px;
+                max-width: 120px;
               }
             }
           }
@@ -52,7 +52,7 @@
       }
     }
   }
-  // ['310px', '160px', '160px', '160px', '160px', '160px', '200px']
+  // ['150px', '180px', '180px', '180px', '180px', '180px', '180px'];
   .foldedScope {
     // 第一列由于是固定列，设置一下最大宽度，不然屏幕分辨率比较大的时候，
     // 内容文本宽度其实不长，但是为了自适应
@@ -62,28 +62,21 @@
       .ant-table-scroll {
         colgroup {
           col:first-child {
-            max-width: 310px;
+            max-width: 150px;
           }
         }
         table {
           tbody > tr > td:nth-child(1) {
             :global {
               .column {
-                max-width: 280px;
+                max-width: 120px;
               }
             }
           }
-          tbody > tr > td:not(:first-child):not(:last-child) {
+          tbody > tr > td:not(:first-child) {
             :global {
               .column {
-                max-width: 150px;
-              }
-            }
-          }
-          tbody > tr > td:last-child {
-            :global {
-              .column {
-                max-width: 190px;
+                max-width: 170px;
               }
             }
           }
@@ -94,7 +87,7 @@
           tbody > tr > td:nth-child(1) {
             :global {
               .column {
-                max-width: 280px;
+                max-width: 120px;
               }
             }
           }
@@ -149,11 +142,105 @@
     table > tbody > tr > td:first-child {
       :global {
         .column {
-          margin-left: 20px;
+          margin-left: 40px;
+        }
+      }
+    }
+    .titleSection {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
+      .tableTitle {
+        width: 50%;
+      }
+      .scopeSelect {
+        width: 50%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-right: 15px;
+        .title, .currentSelectScope {
+          font-size: 14px;
+          max-width: 70px;
+        }
+        .title {
+          color: #999;
+        }
+        .currentSelectScope {
+          margin-right: 15px;
+          color: #333;
+        }
+        & > div:first-child {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          :global {
+            .ant-select {
+              max-width: 120px !important;
+            }
+          }
+        }
+        :global {
+          .ant-dropdown-trigger {
+            cursor: pointer;
+          }
+          .ant-dropdown {
+            background: rgb(255, 255, 255);
+            border: 1px solid rgb(217, 217, 217);
+            box-shadow: rgba(0, 0, 0, 0.2) 0 1px 4px 0;
+            border-radius: 3px;
+            width: 168px;
+          }
+          .ant-select-arrow {
+            transform: scale(0.7);
+            display: inline-block;
+            font-style: normal;
+            vertical-align: baseline;
+            text-align: center;
+            text-transform: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            line-height: 1;
+            margin-top: -6px;
+            transform-origin: 50% 50%;
+            color: rgba(0, 0, 0, 0.25);
+            font-size: 12px;
+            user-select: none;
+          }
+          .ant-select-arrow::before {
+            display: block;
+            font-family: "anticon" !important;
+            content: "";
+            height: 0;
+            position: absolute;
+            right: -5px;
+            top: 4px;
+            width: 0;
+            border: none;
+            border-top: 8px solid #c2c2c2;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+          }
+          .ant-dropdown-menu-item {
+            height: 42px;
+            line-height: 42px;
+            padding-bottom: 0;
+            padding-top: 0;
+            font-size: 14px;
+            color: #313131;
+          }
         }
       }
     }
     :global {
+      .commonPage {
+        margin-right: 30px;
+      }
       .ant-table-fixed-left.ant-table-body-inner {
         margin-right: 0;
         padding-right: 0;
@@ -175,6 +262,7 @@
         width: 100%;
         justify-content: flex-start;
         align-items: center;
+        border-bottom: 0;
       }
       .ant-table-footer {
         border: 1px solid #e9e9e9;
@@ -185,24 +273,6 @@
         align-items: center;
         background: #fff;
         height: 54px;
-      }
-      .ant-table-scroll {
-        border-right: 1px solid #e9e9e9;
-        .ant-table-body {
-          border-left: 1px solid #e9e9e9;
-        }
-        table {
-          border-right: 0;
-        }
-      }
-      .ant-table-fixed-left {
-        table {
-          border-right: 1px solid #e9e9e9;
-        }
-      }
-      .commonPage {
-        // margin-top: 0;
-        // padding-top: 0;
       }
       .selfPagination {
         margin-right: 0;
@@ -215,6 +285,41 @@
             margin-top: 10px;
             margin-bottom: 10px;
           }
+        }
+      }
+      // 去除表头的上下不顶头的border
+      .ant-table-scroll {
+        table > thead > tr > th:after,
+        table > thead > tr > th:before {
+          border: 0;
+        }
+        table > thead > tr > th {
+          background-color: #f7f7f7;
+        }
+        table > thead > tr > th:last-child {
+          background-clip: content-box;
+          padding-right: 20px;
+          line-height: 38px;
+          padding-top: 0;
+          padding-bottom: 0;
+          margin: 0;
+        }
+      }
+      // 利用background-clip属性将背景色置为容器内的背景
+      .ant-table-fixed-left {
+        .ant-table-fixed {
+          & > thead > tr > th:after, & > thead > tr > th:last-child:before {
+            border: 0;
+          }
+        }
+        table > thead > tr > th:first-child {
+          background-color: #f7f7f7;
+          background-clip: content-box;
+          padding-left: 20px;
+          line-height: 38px;
+          padding-top: 0;
+          padding-bottom: 0;
+          margin: 0;
         }
       }
     }

@@ -2,17 +2,16 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
-import { stateFromHTML } from 'draft-js-import-html';
-import { Mention, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import Icon from '../../common/Icon';
 import styles from './createCollapse.less';
 import { request } from '../../../config';
 import { emp, getIconType } from '../../../helper';
 import logable from '../../../decorators/logable';
+import ForgeryRichText from '../../common/ForgeryRichText';
 
 const EMPTY_OBJECT = {};
 const NO_EMAIL_HREF = 'javascript:void(0);'; // eslint-disable-line
-const { toString } = Mention;
 
 export default class ServiceRecordItem extends PureComponent {
   static propTypes = {
@@ -43,7 +42,15 @@ export default class ServiceRecordItem extends PureComponent {
 
   // 空方法，用于日志上传
   @logable({ type: 'Click', payload: { name: '下载' } })
-  handleDownloadClick() {}
+  handleDownloadClick() { }
+
+  /**
+   * 判断是否是空或者字符串null
+   * @param {*string} content 内容
+   */
+  isNullOrNullString(content) {
+    return _.isEmpty(content) || content === 'null';
+  }
 
   renderIcon(value) {
     const renderSpan = _.map(value, (item, index) => {
@@ -69,16 +76,34 @@ export default class ServiceRecordItem extends PureComponent {
     return renderSpan;
   }
 
-  renderContent(newContent) {
+  /**
+   * 渲染字符串
+   * @param {*string} content 内容
+   */
+  renderContentString(content) {
+    if (this.isNullOrNullString(content)) {
+      return '--';
+    }
+    return content;
+  }
+
+  renderContent(content) {
     const { panelContent } = this.props;
+    const newContent = this.renderContentString(content);
     if (!panelContent) {
       return (
-        <span title={newContent}>{newContent || '--'}</span>
+        <span title={newContent}>
+          {newContent}
+        </span>
       );
     }
-    const htmlToState = stateFromHTML(newContent);
-    const htmlString = toString(htmlToState);
-    const title = () => <div dangerouslySetInnerHTML={{ __html: newContent }} />;
+
+    const title = () => (
+      <div>
+        <ForgeryRichText text={newContent} />
+      </div>
+    );
+
     return (
       <Tooltip
         title={title}
@@ -86,7 +111,7 @@ export default class ServiceRecordItem extends PureComponent {
           [styles.globalTips]: true,
         })}
       >
-        <span>{htmlString || '--'}</span>
+        <span>{newContent}</span>
       </Tooltip>
     );
   }

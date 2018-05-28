@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { Popover } from 'antd';
 
+import antdStyles from '../../../css/antd.less';
 import styles from './checkLayout.less';
 
 function renderItem(data = {}, itemStyle = null) {
@@ -29,6 +30,7 @@ function renderItem(data = {}, itemStyle = null) {
         content={data.description}
         placement="bottom"
         overlayStyle={{ maxWidth: '320px' }}
+        overlayClassName={antdStyles.popoverClass}
       >
         <div className={styles.title}>{data.title || ''}</div>
       </Popover>
