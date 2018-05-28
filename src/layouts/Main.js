@@ -9,7 +9,6 @@ import _ from 'lodash';
 import { connect } from 'dva';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
-import { autobind } from 'core-decorators';
 
 import ErrorBoundary from './ErrorBoundary';
 import Loading from './Loading';
@@ -17,9 +16,8 @@ import withRouter from '../decorators/withRouter';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
 import ContextProvider from './ContextProvider';
-import Phone from '../components/common/phone';
 import IEWarningModal from '../components/common/IEWarningModal';
-import fspGlobal from '../utils/fspGlobal';
+import PhoneWrapper from './PhoneWrapper';
 import styles from './main.less';
 import '../css/skin.less';
 
@@ -99,12 +97,6 @@ export default class Main extends Component {
     getCustomerScope(); // 加载客户池客户范围
   }
 
-  // 电话挂断和继续回调函数
-  @autobind
-  phoneCallback(args) {
-    fspGlobal.phoneCallback(args);
-  }
-
   render() {
     const {
       children,
@@ -159,7 +151,7 @@ export default class Main extends Component {
                     }
                   </div>
                 </div>
-                <Phone headless onEnd={this.phoneCallback} onConnected={this.phoneCallback} />
+                <PhoneWrapper />
               </div>
             </div>
           </ErrorBoundary>
