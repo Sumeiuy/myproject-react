@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-27 21:31:57
+ * @Last Modified time: 2018-05-28 11:06:48
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -15,7 +15,6 @@ import { openFspTab } from '../../utils';
 import Pagination from '../../components/common/Pagination';
 import Loading from '../../layouts/Loading';
 import { windowOpen } from '../../utils/fspGlobal';
-import { request } from '../../utils/request';
 import api from '../../api';
 import styles from './home.less';
 
@@ -131,10 +130,10 @@ export default class MessageCenter extends PureComponent {
   @autobind
   async handleMessageByFSPAllocation(objectVal) {
     try {
-      const response = await request(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
+      const response = await api.getFspData(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
       const { msg } = response.data;
       if (!msg) {
-        const loadCntractResponse = await request(`/fsp/tgcontract/list/loadCntractBasicCustInfoByArgId?argId=${objectVal}`);
+        const loadCntractResponse = await api.getFspData(`/fsp/tgcontract/list/loadCntractBasicCustInfoByArgId?argId=${objectVal}`);
         if (loadCntractResponse) {
           const { custId: busiId, custType } = loadCntractResponse.data;
           const routeType = `${custType}:tgcontracttransfer:${objectVal}:::Y:`;
@@ -272,7 +271,8 @@ export default class MessageCenter extends PureComponent {
   // 根据removeNotice处理的消息通知
   @autobind
   handleMessageByRemoveNotice(rowId) {
-    request(`/fsp/updateSvrNotification?rowid=${rowId}`)
+    api
+    .getFspData(`/fsp/updateSvrNotification?rowid=${rowId}`)
     .then(() => {
       // 刷新列表
       $('#showMessageInfo').EBDataTable('queryData');
