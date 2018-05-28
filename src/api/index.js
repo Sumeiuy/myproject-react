@@ -25,6 +25,7 @@ import choicenessCombination from './choicenessCombination';
 import investmentAdvice from './investmentAdvice';
 import operationCenter from './operationCenter';
 import businessDepartmentCustomerDistribute from './businessDepartmentCustomerDistribute';
+import messageCenter from './messageCenter';
 
 const api = apiCreator();
 
@@ -83,5 +84,7 @@ export default {
   operationCenter: operationCenter(api),
   // ========== 客户分配-营业部非投顾签约客户的分配
   businessDepartmentCustDistribute: businessDepartmentCustomerDistribute(api),
+  // ========== 消息通知提醒
+  messageCenter: messageCenter(api),
 };
 

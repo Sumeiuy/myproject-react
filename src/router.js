@@ -77,6 +77,8 @@ import CombinationDetail from './routes/choicenessCombination/CombinationDetail'
 import ReportDetail from './routes/choicenessCombination/ReportDetail';
 // 投顾业务能力竞赛
 import InvestmentConsultantRace from './routes/investmentConsultantRace/Home';
+// 消息通知提醒
+import MessageCenter from './routes/messageCenter/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -194,6 +196,9 @@ const routes = [
   },
   // 从 FSP 消息提醒进入
   { path: '/userInfoRemind', component: userInfoApproval },
+
+  // 消息提醒
+  { path: '/messageRemind', component: MessageCenter },
   // 直接进入
   {
     path: '/filialeCustTransfer',
