@@ -84,6 +84,10 @@ const QUERY_PARAMS = [
   'createTimeStart',
   // 创建时间结束点
   'createTimeEnd',
+  // 触发时间开始点
+  'triggerTimeStart',
+  // 触发时间结束点
+  'triggerTimeEnd',
   // 结束时间开始点
   'endTimeStart',
   // 结束时间结束点
@@ -98,6 +102,25 @@ const QUERY_PARAMS = [
   'pageSize',
   // 当前分页
   'pageNum',
+];
+
+// 更多按钮的菜单数据，配置顺序需要与上面的一致
+const moreFilterData = [
+  {
+    value: '触发时间',
+    key: 'triggerTime',
+    filterOption: ['triggerTimeStart', 'triggerTimeEnd'],
+  },
+  {
+    value: '创建者',
+    key: 'creatorId',
+    filterOption: ['creatorId', 'creatorName'],
+  },
+  {
+    value: '客户',
+    key: 'custId',
+    filterOption: ['custId', 'custName'],
+  },
 ];
 
 export default {
@@ -128,4 +151,5 @@ export default {
   CREATE_TIME_KEY,
   END_TIME_KEY,
   QUERY_PARAMS,
+  moreFilterData,
 };

@@ -21,6 +21,26 @@ const START_DATE = 'startDate';
 const END_DATE = 'endDate';
 
 export default class CommonDateRangePicker extends PureComponent {
+  static getDerivedStateFromProps(props, state) {
+    const { prevProps } = state;
+    let nextProps = {};
+    if (props.initialStartDate !== prevProps.initialStartDate) {
+      nextProps = {
+        ...nextProps,
+        startDate: props.initialStartDate,
+        prevProps: props,
+      };
+    }
+    if (props.initialEndDate !== prevProps.initialEndDate) {
+      nextProps = {
+        ...nextProps,
+        endDate: props.initialEndDate,
+        prevProps: props,
+      };
+    }
+    return nextProps;
+  }
+
   static propTypes = {
     displayFormat: PropTypes.string,
     startDatePlaceholderText: PropTypes.string,
@@ -58,6 +78,7 @@ export default class CommonDateRangePicker extends PureComponent {
       curFocusedInput: defaultVisible ? START_DATE : null,
       startDate: initialStartDate,
       endDate: initialEndDate,
+      prevProps: props,
     };
   }
 
