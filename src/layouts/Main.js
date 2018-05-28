@@ -118,12 +118,12 @@ export default class Main extends Component {
     return (
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
+          <IEWarningModal />
           <ErrorBoundary location={location}>
             <div className={styles.layout}>
               <div className={styles.main}>
                 <div className={styles.container} id="container">
                   <div className={styles.content} id="content">
-                    <IEWarningModal />
                     <Loading loading={loading} forceFull={loadingForceFull} />
                     {
                       (!_.isEmpty(interfaceState) &&
