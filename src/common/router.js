@@ -77,7 +77,7 @@ export const getRouterData = (app) => {
     },
     // 在 boardEdit 页面右下角点击预览进入
     '/preview': {
-      component: dynamicWrapper(app, ['reports'], () => import('../routes/reports/PreviewReport')),
+      component: dynamicWrapper(app, ['report'], () => import('../routes/reports/PreviewReport')),
     },
     // 再 report 页面左上角下拉列表-自定义看板-选择一个点击进入
     '/history': {
@@ -109,7 +109,7 @@ export const getRouterData = (app) => {
     },
     // 可直接进入，部分公用组件的展示路由
     '/modal': {
-      component: dynamicWrapper(app, [''], () => import('../routes/templeModal/Home')),
+      component: dynamicWrapper(app, [], () => import('../routes/templeModal/Home')),
     },
     // 需要有权限的角色进入
     '/relation': {

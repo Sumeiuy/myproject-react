@@ -71,7 +71,7 @@ const Routers = ({ history, app }) => {
               ),
             )
           }
-          <Route render={() => (<Redirect to="/empty" />)} />
+          <Route path="*" render={() => (<Redirect to="/empty" />)} />
         </Switch>
       </Main>
     </ConnectedRouter>
