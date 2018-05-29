@@ -85,6 +85,7 @@ export default class CommonUpload extends PureComponent {
     // 标题
     title: PropTypes.string,
     reformEnable: PropTypes.bool,
+    maxFileSize: PropTypes.number,
   }
 
   static defaultProps = {
@@ -101,6 +102,7 @@ export default class CommonUpload extends PureComponent {
     reformDeleteAttachmentLoading: false,
     title: '',
     reformEnable: false,
+    maxFileSize: null,
   }
 
   constructor(props) {
@@ -158,8 +160,15 @@ export default class CommonUpload extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
   onChange(info) {
-    const { uploadAttachment } = this.props;
+    const { uploadAttachment, maxFileSize } = this.props;
     const uploadFile = info.file;
+
+    // 文件上传不能大于maxFileSize
+    const fileSize = uploadFile.size;
+    if (maxFileSize && fileSize >= maxFileSize) {
+      return;
+    }
+
     this.setState({
       percent: info.file.percent,
       fileList: info.fileList,
