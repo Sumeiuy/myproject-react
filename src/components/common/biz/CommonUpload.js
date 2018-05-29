@@ -282,7 +282,7 @@ export default class CommonUpload extends PureComponent {
                       {fileName}
                     </h3>
                     <h3>
-                      <span className="fileListItemSize">大小：{`${item.size} kb`}</span>
+                      <span className="fileListItemSize">大小：{`${item.size} KB`}</span>
                       上传人：{item.creator}
                     </h3>
                     <h3>
