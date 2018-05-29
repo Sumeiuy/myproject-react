@@ -79,7 +79,6 @@ import ReportDetail from './routes/choicenessCombination/ReportDetail';
 import InvestmentConsultantRace from './routes/investmentConsultantRace/Home';
 // 客户划转
 import CustAllot from './routes/custAllot/Home';
-import CustAllotEdit from './routes/custAllot/Edit';
 import CustAllotNotifies from './routes/custAllot/Notifies';
 
 const { ConnectedRouter } = routerRedux;
@@ -308,11 +307,6 @@ const routes = [
     path: '/custAllot',
     component: CustAllot,
     children: [
-      // 从 filialeCustTransfer 页面左侧列表中选择一条数据，找到请求回来的 flowId,
-      // 拼接路由 /filialeCustTransfer/edit?flowId=xxxxxxxx&empId=xxxx,
-      // empId 需要设置为 edit 获取到的详情里的审批人
-      // 由此进入为有数据页面
-      { path: '/edit', component: CustAllotEdit },
       // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type
       { path: '/notifies', component: CustAllotNotifies },
     ],

@@ -17,18 +17,16 @@ import 'ht-react-filter/lib/css/index.css';
 import 'ht-tree-filter/lib/css/index.css';
 
 import CommonModal from '../common/biz/CommonModal';
-// import Button from '../../components/common/Button';
 import Pagination from '../../components/common/Pagination';
 import CommonTable from '../../components/common/biz/CommonTable';
-// import { emp } from '../../helper';
+import { emp } from '../../helper';
 import config from './config';
 import styles from './addManageModal.less';
 
 // 表头
 const { titleList: { manage }, positionTypeArray } = config;
 // 登陆人的组织ID
-const empOrgId = 'ZZ001041093';
-// const orgId = emp.getOrgId();
+const empOrgId = emp.getOrgId();
 // 服务经理
 const KEY_EMPNAME = 'empName';
 const NO_VALUE = '不限';
@@ -146,7 +144,8 @@ export default class AddManageModal extends PureComponent {
     const { smKeyword, orgId, positionType, pageNum } = this.state;
     const payload = {
       smKeyword,
-      orgId: _.isEmpty(orgId) ? empOrgId : orgId,
+      orgId: empOrgId,
+      orgIdKeyWord: orgId,
       positionType,
       pageNum,
       pageSize: 10,
@@ -209,8 +208,8 @@ export default class AddManageModal extends PureComponent {
     if (filterCustRange.length && filterCustRange[0].children.length) {
       treeCustRange = filterCustRange[0].children.map(item => ({
         label: item.name,
-        value: item.pid,
-        key: item.value,
+        value: item.id,
+        key: item.id,
       }));
     }
     treeCustRange = [

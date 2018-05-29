@@ -115,7 +115,7 @@ const config = {
         dataIndex: 'custName',
         key: 'custName',
         title: '客户',
-        width: 130,
+        width: 170,
       },
       {
         dataIndex: 'status',
@@ -127,19 +127,19 @@ const config = {
         dataIndex: 'oldOrgName',
         key: 'oldOrgName',
         title: '原服务营业部',
-        width: 140,
+        width: 160,
       },
       {
         dataIndex: 'oldEmpName',
         key: 'oldEmpName',
         title: '原服务经理',
-        width: 150,
+        width: 160,
       },
       {
         dataIndex: 'dmName',
         key: 'dmName',
         title: '开发经理',
-        width: 120,
+        width: 160,
       },
       {
         dataIndex: 'totalAsset',
@@ -151,13 +151,13 @@ const config = {
         dataIndex: 'newOrgName',
         key: 'newOrgName',
         title: '新服务营业部',
-        width: 140,
+        width: 160,
       },
       {
         dataIndex: 'newEmpName',
         key: 'newEmpName',
         title: '新服务经理',
-        width: 140,
+        width: 160,
       },
       {
         dataIndex: 'positionType',

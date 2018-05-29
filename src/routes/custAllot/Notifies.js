@@ -17,31 +17,35 @@ import CommonTable from '../../components/common/biz/CommonTable';
 import Barable from '../../decorators/selfBar';
 import fspPatch from '../../decorators/fspPatch';
 import withRouter from '../../decorators/withRouter';
-import { dva } from '../../helper';
+import { dva, emp } from '../../helper';
 import config from '../../components/custAllot/config';
 import styles from './notifies.less';
 
 const dispatch = dva.generateEffect;
 
+// 登陆人的组织 ID
+const empOrgId = emp.getOrgId();
+// 登陆人的职位 ID
+const empPstnId = emp.getPstnId();
+
 // 表格标题
-const { positionTypeArray, titleList: { notifiCust } } = config;
+const { titleList: { notifiCust } } = config;
 const PAGE_SIZE = 20;
 const KEY_CUSTNAME = 'custName';
-const KEY_POSITIONTYPE = 'positionType';
 
 const effects = {
   // 获取数据
-  queryNotifiesList: 'custAllot/queryNotifiesList',
+  queryAddedCustList: 'custAllot/queryAddedCustList',
 };
 
 const mapStateToProps = state => ({
   // 数据
-  notifiesData: state.custAllot.notifiesData,
+  addedCustData: state.custAllot.addedCustData,
 });
 
 const mapDispatchToProps = {
   // 获取数据
-  queryNotifiesList: dispatch(effects.queryNotifiesList, { loading: true, forceFull: true }),
+  queryAddedCustList: dispatch(effects.queryAddedCustList, { loading: true, forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -52,8 +56,8 @@ const mapDispatchToProps = {
 export default class CustAllotNotifies extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    notifiesData: PropTypes.object.isRequired,
-    queryNotifiesList: PropTypes.func.isRequired,
+    addedCustData: PropTypes.object.isRequired,
+    queryAddedCustList: PropTypes.func.isRequired,
   }
 
   componentDidMount() {
@@ -63,15 +67,30 @@ export default class CustAllotNotifies extends PureComponent {
           appId,
         },
       },
-      queryNotifiesList,
+      queryAddedCustList,
     } = this.props;
     const payload = {
-      appId,
+      id: appId,
       pageNum: 1,
       pageSize: PAGE_SIZE,
+      orgId: empOrgId,
+      positionId: empPstnId,
+      pageType: 'success',
     };
-    queryNotifiesList(payload);
+    queryAddedCustList(payload);
   }
+
+  // 生成表格标题列表
+  @autobind
+  getColumnsTitle() {
+    const newTitleList = [...notifiCust];
+    const custNameIndex = _.findIndex(newTitleList, o => o.key === KEY_CUSTNAME);
+    newTitleList[custNameIndex].render = (text, record) => (
+      <div>{text}({record.custId})</div>
+    );
+    return newTitleList;
+  }
+
   // 分页
   @autobind
   pageChangeHandle(page, pageSize) {
@@ -81,32 +100,21 @@ export default class CustAllotNotifies extends PureComponent {
           appId,
         },
       },
-      queryNotifiesList,
+      queryAddedCustList,
     } = this.props;
     const payload = {
-      appId,
+      id: appId,
       pageNum: page,
       pageSize,
+      orgId: empOrgId,
+      positionId: empPstnId,
+      pageType: 'success',
     };
-    queryNotifiesList(payload);
-  }
-
-  // 生成表格标题列表
-  @autobind
-  getColumnsTitle() {
-    const newTitleList = [...notifiCust];
-    const custNameIndex = _.findIndex(newTitleList, o => o.key === KEY_CUSTNAME);
-    const newEmpIndex = _.findIndex(newTitleList, o => o.key === KEY_POSITIONTYPE);
-    newTitleList[custNameIndex].render = (text, record) => (
-      <div>{text}({record.custId})</div>
-    );
-    newTitleList[newEmpIndex].render = text => (<div>{positionTypeArray[text].value}</div>);
-    return newTitleList;
+    queryAddedCustList(payload);
   }
 
   render() {
-    const { notifiesData } = this.props;
-    const { list = [], page = {} } = notifiesData;
+    const { addedCustData: { list = [], page = {} } } = this.props;
     const tableTitleList = this.getColumnsTitle();
     // 分页
     const paginationOption = {

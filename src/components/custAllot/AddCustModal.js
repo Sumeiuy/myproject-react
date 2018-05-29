@@ -9,8 +9,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-// import { message } from 'antd';
-// import _ from 'lodash';
 
 import CommonModal from '../common/biz/CommonModal';
 // import Button from '../../components/common/Button';
@@ -37,12 +35,10 @@ export default class AddCustModal extends PureComponent {
     modalKey: PropTypes.string.isRequired,
   }
 
-
   componentDidMount() {
     // 获取客户
-    this.props.queryList({});
+    this.props.queryList();
   }
-
 
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户划转添加客户弹框' } })

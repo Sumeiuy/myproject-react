@@ -36,7 +36,7 @@ import logable, { logPV } from '../../decorators/logable';
 const dispatch = dva.generateEffect;
 const { filialeCustTransfer, filialeCustTransfer: { pageType, status } } = seibelConfig;
 
-const { titleList: { approvalColumns } } = config;
+const { titleList: { approvalColumns }, ruleTypeArray } = config;
 
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
@@ -75,6 +75,8 @@ const effects = {
 };
 
 const mapStateToProps = state => ({
+  // 字典
+  dict: state.app.dict,
   // 员工基本信息
   empInfo: state.app.empInfo,
   // 组织机构树
@@ -128,6 +130,7 @@ const mapDispatchToProps = {
 @Barable
 export default class CustAllot extends PureComponent {
   static propTypes = {
+    dict: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     // 员工信息
@@ -180,6 +183,7 @@ export default class CustAllot extends PureComponent {
       approverModal: false,
       // 审批人
       flowAuditors: [],
+      ruleType: ruleTypeArray[0].value,
     };
   }
 
@@ -235,7 +239,7 @@ export default class CustAllot extends PureComponent {
       this.setState({
         activeRowIndex: itemIndex,
       });
-      queryDetailInfo({ flowId: item.flowId, orgId: empOrgId });
+      queryDetailInfo({ flowId: item.flowId, orgId: empOrgId, pageNum: 1, pageSize: 7 });
     }
   }
 
@@ -244,7 +248,6 @@ export default class CustAllot extends PureComponent {
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
-    // 默认筛选条件 TODO:
     getList({ ...params, type: '07', subType: '0703' }).then(this.getRightDetail);
   }
 
@@ -302,11 +305,13 @@ export default class CustAllot extends PureComponent {
         shortCut: 'close',
         onOk: () => this.setState({
           [modalKey]: false,
+          ruleType: ruleTypeArray[0].value,
         }, () => clearData(clearDataType)),
       });
     } else {
       this.setState({
         [modalKey]: false,
+        ruleType: ruleTypeArray[0].value,
       }, () => clearData(clearDataType));
     }
   }
@@ -362,7 +367,7 @@ export default class CustAllot extends PureComponent {
       },
     });
     this.setState({ activeRowIndex: index });
-    queryDetailInfo({ flowId });
+    queryDetailInfo({ flowId, orgId: empOrgId, pageSize: 7, pageNum: 1 });
   }
 
 
@@ -390,7 +395,6 @@ export default class CustAllot extends PureComponent {
   // 提交，点击后选择审批人
   @autobind
   handleSubmit(btnItem) {
-    // TODO:校验
     const { addedCustData, addedManageData } = this.props;
     if (_.isEmpty(addedCustData)) {
       message.error('请添加客户');
@@ -443,20 +447,26 @@ export default class CustAllot extends PureComponent {
       isNeedConfirm: false,
       clearDataType: 'clearAllData',
     });
-
     this.queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
+  }
+
+  @autobind
+  handleRuleTypePropsChange(value) {
+    console.warn('handleRuleTypePropsChange value', value);
+    this.setState({
+      ruleType: value,
+    });
   }
 
   // 选完审批人后的提交
   @autobind
   handleApproverModalOK(auth) {
     const { saveChange, updateData } = this.props;
-    const { flowAuditors } = this.state;
-    // TODO: ruleType
+    const { flowAuditors, ruleType } = this.state;
     const payload = {
       id: updateData.appId,
-      ruleType: '0',
-      TGConfirm: '',
+      ruleType,
+      TGConfirm: false,
       positionId: empPstnId,
       orgId: empOrgId,
       auditors: auth.login,
@@ -473,7 +483,7 @@ export default class CustAllot extends PureComponent {
         commonConfirm({
           shortCut: 'hasTouGu',
           onOk: () => {
-            payload.TGConfirm = 0;
+            payload.TGConfirm = true;
             saveChange(payload).then(this.closeApprovalAndCreateModal);
           },
         });
@@ -502,6 +512,7 @@ export default class CustAllot extends PureComponent {
 
   render() {
     const {
+      dict,
       replace,
       location,
       empInfo,
@@ -536,6 +547,7 @@ export default class CustAllot extends PureComponent {
       manageModal,
       approverModal,
       flowAuditors,
+      ruleType,
     } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
@@ -577,6 +589,9 @@ export default class CustAllot extends PureComponent {
       <Detail
         location={location}
         data={detailInfo}
+        dict={dict}
+        queryAddedCustList={queryAddedCustList}
+        addedCustData={addedCustData}
       />
     );
 
@@ -614,6 +629,7 @@ export default class CustAllot extends PureComponent {
           createModal
           ?
             <CreateModal
+              dict={dict}
               modalKey={createModalKey}
               custModalKey={custModalKey}
               manageModalKey={manageModalKey}
@@ -621,6 +637,8 @@ export default class CustAllot extends PureComponent {
               location={location}
               empInfo={empInfo}
               custRangeList={custRangeList}
+              ruleType={ruleType}
+              handleRuleTypePropsChange={this.handleRuleTypePropsChange}
               custData={custData}
               queryCustList={queryCustList}
               addedCustData={addedCustData}

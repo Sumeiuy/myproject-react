@@ -11,7 +11,6 @@ import { autobind } from 'core-decorators';
 import { message, Modal, Upload, Radio } from 'antd';
 import _ from 'lodash';
 
-
 import InfoForm from '../common/infoForm';
 import CommonModal from '../common/biz/CommonModal';
 import Button from '../../components/common/Button';
@@ -32,20 +31,27 @@ const { titleList: { cust: custTitleList, manage: manageTitleList }, ruleTypeArr
 const empOrgId = emp.getOrgId();
 // 登陆人的职位 ID
 const empPstnId = emp.getPstnId();
-
 // 客户
 const KEY_CUSTNAME = 'custName';
+const KEY_STATUS = 'status';
 // 原服务经理
 const KEY_OLDEMPNAME = 'oldEmpName';
 // 是否入岗投顾
 const KEY_ISTOUGU = 'isTouGu';
 // 开发经理
 const KEY_DMNAME = 'dmName';
+// 更新客户或者服务经理时的方法类型
+const operateType = ['add', 'delete', 'clear'];
+// 用以区分点击的是客户或者是服务经理
+const CUST = 'cust';
 
 export default class CreateModal extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
+    dict: PropTypes.object.isRequired,
     custRangeList: PropTypes.array.isRequired,
+    ruleType: PropTypes.string.isRequired,
+    handleRuleTypePropsChange: PropTypes.func.isRequired,
     queryAppList: PropTypes.func.isRequired,
     // 获取按钮数据和下一步审批人
     selfBtnGroup: PropTypes.object.isRequired,
@@ -92,7 +98,6 @@ export default class CreateModal extends PureComponent {
       nextApproverList: [],
       // 审批人弹窗
       nextApproverModal: false,
-      ruleType: ruleTypeArray[0].value,
     };
   }
 
@@ -113,13 +118,15 @@ export default class CreateModal extends PureComponent {
     });
   }
 
-
   // 生成客户表格标题列表
   @autobind
   getColumnsCustTitle() {
+    const { dict: { accountStatusList = [] } } = this.props;
     const titleList = [...custTitleList];
     // 客户
     const custNameIndex = _.findIndex(titleList, o => o.key === KEY_CUSTNAME);
+    // 状态
+    const statusIndex = _.findIndex(titleList, o => o.key === KEY_STATUS);
     // 原服务经理
     const oldEmpNameIndex = _.findIndex(titleList, o => o.key === KEY_OLDEMPNAME);
     // 是否是投顾
@@ -129,11 +136,15 @@ export default class CreateModal extends PureComponent {
     titleList[custNameIndex].render = (text, record) => (
       <div>{text} ({record.custId})</div>
     );
+    titleList[statusIndex].render = (text) => {
+      const statusItem = _.filter(accountStatusList, o => o.key === text);
+      return (<div>{statusItem.length ? statusItem[0].value : ''}</div>);
+    };
     titleList[oldEmpNameIndex].render = (text, record) => (
       <div>
         {
           text ?
-            `${text} (${record.oldEmpNameId})`
+            `${text} (${record.oldEmpId})`
           :
             null
         }
@@ -166,7 +177,7 @@ export default class CreateModal extends PureComponent {
       title: '操作',
       render: (text, record) => ((
         <span>
-          <Icon type="shanchu" onClick={() => this.deleteTableData('cust', record)} />
+          <Icon type="shanchu" onClick={() => this.deleteTableData(CUST, record)} />
         </span>
       )),
     };
@@ -204,14 +215,13 @@ export default class CreateModal extends PureComponent {
           // 上传成功
           const data = uploadFile.response.resultData;
           const { updateList, updateData, clearData } = this.props;
-          let tempType = 'add';
-          // TODO:
+          let tempType = operateType[0];
           // 有批次 ID，有 attachment = clear
           // 有批次 ID，没有 attachment = add
-          // 没有批次 ID，有attachment，没有这种清空
+          // 没有批次 ID，有attachment，没有这种情况
           // 没有批次 ID，没有 attachment = add
           if (updateData.appId && !_.isEmpty(attachment)) {
-            tempType = 'clear';
+            tempType = operateType[2];
           }
           // 有批次 ID 并且有 attachment 的时候，需要清空所有数据
           if (updateData.appId && !_.isEmpty(attachment)) {
@@ -262,22 +272,22 @@ export default class CreateModal extends PureComponent {
   // 分配规则切换事件
   @autobind
   handleRuleTypeChange(e) {
-    this.setState({
-      ruleType: e.target.value,
-    });
+    const { handleRuleTypePropsChange } = this.props;
+    handleRuleTypePropsChange(e.target.value);
   }
 
   // 客户删除事件
   @autobind
   deleteTableData(type, record) {
-    const { updateList, updateData, queryAddedCustList } = this.props;
+    const { updateList, updateData, queryAddedCustList, queryAddedManageList } = this.props;
+    const isCust = type === CUST;
     const payload = {
       customer: [],
       manage: [],
-      type: 'delete',
+      type: operateType[1],
       id: updateData.appId,
     };
-    if (type === 'cust') {
+    if (isCust) {
       payload.customer = [{ brokerNumber: record.custId }];
     } else {
       payload.manage = [{ empId: record.empId, positionId: record.positionId }];
@@ -290,8 +300,45 @@ export default class CreateModal extends PureComponent {
         pageNum: 1,
         pageSize: 5,
       };
-      queryAddedCustList(queryAddedCustListPayload);
+      const queryFunction = isCust ? queryAddedCustList : queryAddedManageList;
+      queryFunction(queryAddedCustListPayload).then(() => {
+        if (!isCust) {
+          const { handleRuleTypePropsChange, addedManageData: { page } } = this.props;
+          // 只有一位服务经理时，隐藏分配规则
+          if (page.totalRecordNum <= 1) {
+            handleRuleTypePropsChange('0');
+          }
+        }
+      });
     });
+  }
+
+  // 客户分页事件
+  @autobind
+  handleCustPageChange(pageNum) {
+    const { queryAddedCustList, updateData } = this.props;
+    const payload = {
+      id: updateData.appId,
+      positionId: empPstnId,
+      orgId: empOrgId,
+      pageNum,
+      pageSize: 5,
+    };
+    queryAddedCustList(payload);
+  }
+
+  // 服务经理分页事件
+  @autobind
+  handleManagePageChange(pageNum) {
+    const { queryAddedManageList, updateData } = this.props;
+    const payload = {
+      id: updateData.appId,
+      positionId: empPstnId,
+      orgId: empOrgId,
+      pageNum,
+      pageSize: 5,
+    };
+    queryAddedManageList(payload);
   }
 
   render() {
@@ -305,11 +352,11 @@ export default class CreateModal extends PureComponent {
       closeModal,
       addedCustData: { list: custList = [], page: custPage = {} },
       addedManageData: { list: manageList = [], page: managePage = {} },
+      ruleType,
     } = this.props;
     const {
       importVisible,
       attachment,
-      ruleType,
     } = this.state;
     const uploadProps = {
       data: {
@@ -323,21 +370,19 @@ export default class CreateModal extends PureComponent {
       onChange: this.handleFileChange,
       showUploadList: false,
     };
-    // const { list: custList, page: custPage } = custData;
-    // const { list: manageList, page: managePage } = <manageDa></manageDa>ta;
-    // 客户列表分页
+
     const custListPaginationOption = {
       current: custPage.curPageNum || 1,
       total: custPage.totalRecordNum || 0,
       pageSize: custPage.pageSize || 5,
-      onChange: this.custPageChangeHandle,
+      onChange: this.handleCustPageChange,
     };
     // 服务经理列表分页
     const manageListPaginationOption = {
       current: managePage.curPageNum || 1,
       total: managePage.totalRecordNum || 0,
       pageSize: managePage.pageSize || 5,
-      onChange: this.managePageChangeHandle,
+      onChange: this.handleManagePageChange,
     };
 
     const uploadElement = _.isEmpty(attachment) ?
@@ -429,7 +474,9 @@ export default class CreateModal extends PureComponent {
                 <InfoForm label="规则" style={{ width: '96px' }} required>
                   <RadioGroup onChange={this.handleRuleTypeChange} value={ruleType}>
                     {
-                      ruleTypeArray.map(item => <Radio value={item.value}>{item.label}</Radio>)
+                      ruleTypeArray.map(item => (
+                        <Radio key={item.value} value={item.value}>{item.label}</Radio>
+                      ))
                     }
                   </RadioGroup>
                 </InfoForm>
