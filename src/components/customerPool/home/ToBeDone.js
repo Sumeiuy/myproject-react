@@ -2,7 +2,7 @@
  * @Author: xiazhiqiang
  * @Date: 2018-05-21 13:33:05
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-27 22:35:15
+ * @Last Modified time: 2018-05-28 09:08:20
  */
 
 import React, { PureComponent } from 'react';
@@ -152,7 +152,7 @@ export default class PerformanceIndicators extends PureComponent {
     //   pathname: '/fsp/messageCenter',
     //   param: notificationParam,
     // });
-    push('/messageRemind');
+    push('/messgeCenter');
   }
 
   @autobind

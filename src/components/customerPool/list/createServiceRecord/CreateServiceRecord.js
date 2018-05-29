@@ -218,7 +218,7 @@ export default class CreateServiceRecord extends PureComponent {
         <a className={styles.cancelBtn} onClick={this.handleCancel}>取消</a>
         <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
       </div>
-    ) : (<div className={styles.customFooter}>
+    ) : (<div className={styles.customPhoneFooter}>
       <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
     </div>);
 

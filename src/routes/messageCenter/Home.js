@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-27 21:31:57
+ * @Last Modified time: 2018-05-28 20:42:01
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -15,7 +15,6 @@ import { openFspTab } from '../../utils';
 import Pagination from '../../components/common/Pagination';
 import Loading from '../../layouts/Loading';
 import { windowOpen } from '../../utils/fspGlobal';
-import { request } from '../../utils/request';
 import api from '../../api';
 import styles from './home.less';
 
@@ -84,8 +83,6 @@ export default class MessageCenter extends PureComponent {
     const { objectVal, rowId, typeName, title } = data;
     const allocation = '转签待分配';
     const flag = title.indexOf(allocation);
-    // home_share_var.messageId = rowId;
-    // let removeNotice = true;
     if (typeName === 'HTSC FSP TGSign' && flag < 0) {
       this.handleMessageByFSPNotAllocation(objectVal);
     } else if (typeName === 'HTSC FSP TGSign' && flag >= 0) {
@@ -104,7 +101,7 @@ export default class MessageCenter extends PureComponent {
       this.handleMessageByOther(rowId, objectVal);
     }
 
-    if (this.removeNotice && ((typeName !== 'HTSC FSP TGSign') || (typeName === 'HTSC FSP TGSign' && flag < 0))) {
+    if (this.removeNotice && ((typeName !== 'HTSC FSP TGSign') || (flag < 0))) {
       this.handleMessageByRemoveNotice(rowId);
     }
   }
@@ -131,10 +128,10 @@ export default class MessageCenter extends PureComponent {
   @autobind
   async handleMessageByFSPAllocation(objectVal) {
     try {
-      const response = await request(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
+      const response = await api.getFspData(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
       const { msg } = response.data;
       if (!msg) {
-        const loadCntractResponse = await request(`/fsp/tgcontract/list/loadCntractBasicCustInfoByArgId?argId=${objectVal}`);
+        const loadCntractResponse = await api.getFspData(`/fsp/tgcontract/list/loadCntractBasicCustInfoByArgId?argId=${objectVal}`);
         if (loadCntractResponse) {
           const { custId: busiId, custType } = loadCntractResponse.data;
           const routeType = `${custType}:tgcontracttransfer:${objectVal}:::Y:`;
@@ -261,7 +258,7 @@ export default class MessageCenter extends PureComponent {
         scrollY: false,
         scrollX: false,
         title: '大类资产战术配置明细',
-        content: response.data,
+        content: response,
       });
     })
     .catch((e) => {
@@ -272,19 +269,23 @@ export default class MessageCenter extends PureComponent {
   // 根据removeNotice处理的消息通知
   @autobind
   handleMessageByRemoveNotice(rowId) {
-    request(`/fsp/updateSvrNotification?rowid=${rowId}`)
+    api
+    .getFspData(`/fsp/updateSvrNotification?rowid=${rowId}`)
     .then(() => {
       // 刷新列表
-      $('#showMessageInfo').EBDataTable('queryData');
+      // $('#showMessageInfo').EBDataTable('queryData');
+      const { page } = this.props.remindMessages;
+      const { curPageNum } = page;
+      let { totalRecordNum } = page;
       this.getRemindMessageList({
-        pageNum: 1,
+        pageNum: curPageNum,
       });
-      let { page: { totalRecordNum } } = this.props.remindMessages;
       if (totalRecordNum > 0) {
         if (totalRecordNum > 99) {
           totalRecordNum = '99+';
         }
-        $('.remindMessages').html(infoMessageNum.toString()).css('display', 'inline-block'); //eslint-disable-line
+        // 修改fsp页面用户信息的消息提醒条数
+        $('.remindMessages').html(totalRecordNum.toString()).css('display', 'inline-block'); //eslint-disable-line
       }
     })
     .catch((e) => {
@@ -347,13 +348,14 @@ export default class MessageCenter extends PureComponent {
           </div>
         </div>
         {
-            _.isEmpty(page) ?
-              (<Pagination
+            _.isEmpty(page) ? null
+            : (
+              <Pagination
                 current={curPageNum}
                 total={totalRecordNum}
                 pageSize={pageSize}
                 onChange={this.handlePageChange}
-              />) : null
+              />)
           }
       </div>
     );
