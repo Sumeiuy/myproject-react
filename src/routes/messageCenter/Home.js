@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-29 23:04:04
+ * @Last Modified time: 2018-05-29 23:24:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -299,10 +299,10 @@ export default class MessageCenter extends PureComponent {
       // $('#showMessageInfo').EBDataTable('queryData');
       const { page } = this.props.remindMessages;
       const { curPageNum } = page;
-      let { totalRecordNum } = page;
       this.getRemindMessageList({
         pageNum: curPageNum,
       });
+      let { totalRecordNum } = page;
       if (totalRecordNum > 0) {
         if (totalRecordNum > 99) {
           totalRecordNum = '99+';
