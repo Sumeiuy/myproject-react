@@ -7,6 +7,8 @@
  */
 
 import { stock as api } from '../api';
+import { time } from '../helper';
+import config from '../routes/stock/config';
 
 export default {
   namespace: 'stock',
@@ -18,9 +20,16 @@ export default {
   reducers: {
     getStockListSuccess(state, action) {
       const { payload: { resultData: { list = [], page = {} } } } = action;
+      // 将时间格式转换成YYYY-MM-DD
+      const newList = list.map(item => (
+        {
+          ...item,
+          pubdate: time.format(item.pubdate, config.formatStr),
+        }
+      ));
       return {
         ...state,
-        list,
+        list: newList,
         page,
       };
     },

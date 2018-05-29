@@ -10,11 +10,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Modal, Tabs, Popover } from 'antd';
-// import _ from 'lodash';
+import _ from 'lodash';
 import logable from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
-import { isSightingScope, getFilter } from '../helper';
+import { isSightingScope } from '../helper';
 import { padSightLabelDesc } from '../../../config';
 import Pagination from '../../common/Pagination';
 import styles from './labelModal.less';
@@ -70,11 +70,24 @@ export default class LabelModals extends PureComponent {
   @autobind
   getListItem() {
     const { data: { list = EMPTY_LIST } } = this.props;
-    return list.map(item => (
-      <div className={styles.itemBox} key={item.id}>
-        {this.renderPopover(item)}
-      </div>
-    ));
+    let newList = list;
+    // 列表必须要显示满20条，如果数据不满20条，用空数据填充至20条。
+    if (list.length < PAGE_SIZE) {
+      newList = _.concat(list, [...Array(PAGE_SIZE - list.length)]);
+    }
+    return newList.map((item, index) => {
+      // 判断数据是否为空，为空则渲染空div,用来样式上填满容器
+      let element;
+      if (!_.isEmpty(item)) {
+        element = (<div className={styles.itemBox} key={item.id}>
+          {this.renderPopover(item)}
+        </div>);
+      } else {
+        const key = `key-${index}`;
+        element = <div className={styles.itemBox} key={key} />;
+      }
+      return element;
+    });
   }
 
   // tab切换
@@ -106,7 +119,7 @@ export default class LabelModals extends PureComponent {
     const { push } = this.context;
     const { location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
-    const condition = urlHelper.stringify({ ...options, filters: getFilter(options) });
+    const condition = urlHelper.stringify({ ...options });
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
@@ -182,7 +195,7 @@ export default class LabelModals extends PureComponent {
     const PaginationOption = {
       current: page.pageNum || 1,
       total: page.totalCount || 0,
-      pageSize: page.pageSize || 10,
+      pageSize: page.pageSize || 20,
       onChange: this.handlePageChange,
     };
     return (
@@ -193,6 +206,7 @@ export default class LabelModals extends PureComponent {
         wrapClassName={styles.modal}
         onCancel={this.closeModal}
         maskClosable={false}
+        width={650}
       >
         <div>
           <Tabs {...tabsProps}>

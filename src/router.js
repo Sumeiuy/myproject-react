@@ -198,7 +198,7 @@ const routes = [
   { path: '/userInfoRemind', component: userInfoApproval },
 
   // 消息提醒
-  { path: '/messageRemind', component: MessageCenter },
+  { path: '/messgeCenter', component: MessageCenter },
   // 直接进入
   {
     path: '/filialeCustTransfer',
