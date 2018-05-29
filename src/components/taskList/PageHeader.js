@@ -399,9 +399,9 @@ export default class Pageheader extends PureComponent {
     } = this.props;
     const isFinishedStatus = status === STATE_FINISHED_CODE;
     let node;
+    let startTime;
+    let endTime;
     if (missionViewType === INITIATOR) {
-      let startTime;
-      let endTime;
       if (isFinishedStatus && !createTimeStart && !createTimeEnd) {
         startTime = moment(beforeCurrentDate60Days).format(dateFormat);
         endTime = moment(currentDate).format(dateFormat);
@@ -427,8 +427,6 @@ export default class Pageheader extends PureComponent {
         />
       </div>);
     } else {
-      let startTime;
-      let endTime;
       if (isFinishedStatus && !endTimeStart && !endTimeEnd) {
         startTime = moment(beforeCurrentDate60Days).format(dateFormat);
         endTime = moment(currentDate).format(dateFormat);

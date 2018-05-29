@@ -1,5 +1,5 @@
 /**
- * @Descripter: 通过resize调整布局
+ * @Descripter: 服务进度和已服务客户反馈
  * @Author: K0170179
  * @Date: 2018/5/23
  */

@@ -8,8 +8,6 @@ import isInclusivelyBeforeDay from '../../dateRangePicker/utils/isInclusivelyBef
 
 import styles from './dateFilter.less';
 
-const EMPTY_FUNC = () => {};
-
 export default class DateFilter extends React.Component {
   static propTypes = {
     // example props for the demo
@@ -41,8 +39,8 @@ export default class DateFilter extends React.Component {
     filterName: '开户日期',
     filterId: 'dateOpened',
     isInsideOffSet: () => true,
-    onChange: EMPTY_FUNC,
-    onClose: EMPTY_FUNC,
+    onChange: _.noop,
+    onClose: _.noop,
   };
 
   constructor(props) {
@@ -99,7 +97,7 @@ export default class DateFilter extends React.Component {
             initialEndDate={initialEndDate}
             disabledRange={disabledCurrentEnd ?
                 day => !isInclusivelyBeforeDay(day, moment())
-              : EMPTY_FUNC}
+              : _.noop}
             hasCustomerOffset={hasCustomerOffset}
             onChange={this.onDatesChange}
             defaultVisible={this.props.defaultVisible}
