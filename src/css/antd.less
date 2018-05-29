@@ -1,4 +1,5 @@
 @import '../../node_modules/antd/lib/style/v2-compatible-reset.less';
+@import './variable.less';
 
 :global {
   // 在body上添加一个ant-v2-compatible的calss
@@ -29,6 +30,111 @@
     li a {
       // 关掉动画效果
       transition: none;
+    }
+  }
+}
+// 目标客户池首页指标区域浮层的三角样式
+.popoverClass {
+  :global {
+    .ant-popover-arrow {
+      height: 13px;
+      width: 13px;
+    }
+  }
+}
+// 用于定制的表格
+// 主要用于左边一个fixed的table，然后表格右边区域可以滚动类型的antd-table-scroll
+// 样式：表格的表头底部，上部，表格内容区域，分割线不顶头，保持左右20px距离边缘
+// 针对表格的行高度为39px，以后表格的高度一般都会固定在39px
+.tableHasBetweenSpace {
+  :global {
+    .ant-table {
+      .ant-table-scroll {
+        border-right: 1px solid #e9e9e9;
+        table {
+          border-right: 0;
+          border-top: 0;
+          & > thead > tr > th {
+            padding: 0;
+            line-height: 34px;
+            border-bottom: 0;
+            span {
+              vertical-align: middle;
+            }
+          }
+          & > thead > tr, & > tbody > tr {
+            height: 39px;
+          }
+          & > thead > tr {
+            border-bottom: 0;
+          }
+          & > tbody > tr > td {
+            padding: 0;
+            margin: 0;
+            height: 36px;
+            border-bottom: 0;
+            line-height: 34px;
+          }
+        }
+        table > thead > tr > th:after, table > tbody > tr:not(:last-child) > td:after {
+          .tableSplitLine;
+        }
+        table > thead > tr > th:last-child:after, table > tbody > tr > td:last-child:after {
+          margin-right: 20px;
+          width: auto;
+        }
+        table > thead > tr > th:before {
+          .tableSplitLine;
+        }
+        table > thead > tr > th:last-child:before {
+          width: 90%;
+          margin-right: 20px;
+        }
+        .column {
+          vertical-align: middle;
+        }
+      }
+      .ant-table-fixed-left {
+        table {
+          border-right: 1px solid #e9e9e9;
+        }
+        .ant-table-fixed {
+          border-right: 0;
+          border-top: 0;
+          & > thead > tr > th:after, & > tbody > tr:not(:last-child) > td:after {
+            .tableSplitLine;
+            margin-left: 20px;
+          }
+          & > thead > tr > th:last-child:before {
+            .tableSplitLine;
+            margin-left: 20px;
+          }
+          & > thead > tr > th {
+            padding: 0;
+            line-height: 34px;
+            border-bottom: 0;
+            span {
+              vertical-align: middle;
+            }
+          }
+          & > thead > tr, & > tbody > tr {
+            height: 39px;
+          }
+          & > thead > tr {
+            border-bottom: 0;
+          }
+          & > tbody > tr > td {
+            padding: 0;
+            margin: 0;
+            height: 36px;
+            border-bottom: 0;
+            line-height: 34px;
+          }
+          .column {
+            vertical-align: middle;
+          }
+        }
+      }
     }
   }
 }

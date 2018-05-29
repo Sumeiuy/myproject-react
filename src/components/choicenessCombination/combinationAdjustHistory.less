@@ -1,0 +1,93 @@
+@import "../../css/util.less";
+.combinationAdjustHistoryBox {
+  font-size: 12px;
+  .adjustIn {
+    height: 170px;
+    margin-top: -5px;
+    position: relative;
+    border-bottom: 1px dashed #e9e9e9;
+    .more {
+      position: absolute;
+      bottom: 5px;
+      right: 0;
+    }
+    .left {
+      width: 76px;
+      text-align: center;
+      position: absolute;
+      i {
+        display: block;
+        margin: 4px auto 8px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        line-height: 36px;
+        color: #fff;
+        font-size: 18px;
+        font-style: normal;
+        background: #f48a8a;
+      }
+    }
+    .right {
+      margin-left: 76px;
+      height: 137px;
+      overflow: hidden;
+      .rightItem {
+        margin-top: 10px;
+        &:first-child {
+          margin-top: 0;
+        }
+        .titleBox {
+          font-size: 14px;
+          position: relative;
+          a {
+            display: block;
+            .one-line-elllipsis;
+          }
+          .securityName {
+            color: #2782d7;
+            display: inline-block;
+            position: absolute;
+            width: 50%;
+          }
+          .combinationName {
+            text-align: right;
+            color: #4a4a4a;
+            margin-left: 50%;
+          }
+        }
+        .timeBox {
+          .customerLink {
+            i {
+              color: #7d9be0;
+            }
+          }
+          span {
+            color: #9b9b9b;
+          }
+          a {
+            float: right;
+          }
+        }
+        .reasonBox {
+          line-height: 20px;
+          color: #828282;
+          .one-line-elllipsis;
+        }
+      }
+    }
+    &:last-child {
+      margin-top: 15px;
+      border-bottom: 0;
+      .left {
+        i {
+          background: #756fb8;
+        }
+      }
+    }
+  }
+}
+.ellipsis {
+  color: #828282;
+  .one-line-elllipsis;
+}

@@ -5,7 +5,7 @@
  */
 import _ from 'lodash';
 import { openRctTab } from '../../../utils';
-import { url as urlHelper, number as numberHelper, emp } from '../../../helper';
+import { url as urlHelper, number as numberHelper } from '../../../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import {
   toFomatterCust,
@@ -93,7 +93,7 @@ function getProgressDataSource({
 export function getPureAddCust({ pureAddData }) {
   const param = {
     dataArray: pureAddData,
-    categoryArray: ['新开有效户', '新增高净值客户', '新增高端产品户', '新增产品客户'],
+    categoryArray: ['新增有效户', '新增高净值客户', '新增高端产品户', '新增产品客户'],
     colorArray: ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'],
     formatterMethod: toFixedCust,
   };
@@ -324,7 +324,6 @@ export function linkTo({
   push,
   location,
   type = 'rightType',
-  authority,
 }) {
   if (_.isEmpty(location)) {
     return;
@@ -344,12 +343,6 @@ export function linkTo({
     } else {
       obj.orgId = orgId;
     }
-  } else if (!authority) {
-    // 用户没有权限
-    // obj.ptyMng = `${empName}_${empNum}`;
-    obj.orgId = MAIN_MAGEGER_ID;
-  } else {
-    obj.orgId = emp.getOrgId();
   }
   const url = `${pathname}?${urlHelper.stringify(obj)}`;
   const param = {

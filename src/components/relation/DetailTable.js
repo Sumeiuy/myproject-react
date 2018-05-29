@@ -9,7 +9,8 @@
  * treeData: 不必须，数据源
  * onSelect：不必须，选中事件
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table, Modal } from 'antd';
 import classnames from 'classnames';
@@ -34,6 +35,7 @@ function columnsOne(category) {
     key: name,
     dataIndex: name,
     width: '25%',
+    align: 'center',
     render: item => (
       <div className={classnames(styles.column, styles.title)} title={item}>
         {item || '--'}
@@ -44,6 +46,7 @@ function columnsOne(category) {
     dataIndex: manager,
     key: manager,
     width: '25%',
+    align: 'center',
     render: item => (
       <div className={classnames(styles.column, styles.manager)} title={item}>
         {item || '--'}
@@ -57,6 +60,7 @@ const columnsTwo = [{
   key: 'teamCount',
   dataIndex: 'teamCount',
   width: '25%',
+  align: 'center',
   render: item => (
     <div className={classnames(styles.column, styles.teamNum)} title={item}>
       {item || '0'}
@@ -67,6 +71,7 @@ const columnsTwo = [{
   dataIndex: 'empCount',
   key: 'empCount',
   width: '25%',
+  align: 'center',
   render: item => (
     <div className={classnames(styles.column, styles.adviserNum)} title={item}>
       {item || '0'}
@@ -79,6 +84,7 @@ const columnsTree = [{
   key: 'login',
   dataIndex: 'login',
   width: '33%',
+  align: 'center',
   render: item => (
     <div className={classnames(styles.column, styles.code)} title={item}>
       {item || '--'}
@@ -89,6 +95,7 @@ const columnsTree = [{
   dataIndex: 'loginName',
   key: 'loginName',
   width: '33%',
+  align: 'center',
   render: item => (
     <div className={classnames(styles.column, styles.name)} title={item}>
       {item || '--'}
@@ -264,11 +271,6 @@ export default class DetailTable extends Component {
             dataSource={tableData}
             pagination={false}
             scroll={{ y }}
-            // 默认文案配置
-            locale={{
-              // 空数据时的文案
-              emptyText: '暂无数据',
-            }}
           />
         </div>
       </div>

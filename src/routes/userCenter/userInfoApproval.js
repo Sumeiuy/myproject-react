@@ -124,7 +124,14 @@ export default class PersonalInfoApproval extends PureComponent {
   }
 
   render() {
-    const { approvalInfo } = this.props;
+    const {
+      approvalInfo,
+      location: {
+        query: {
+          remind,
+        },
+      },
+    } = this.props;
     const { flowInfos = [], flowButtons = [] } = approvalInfo;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
@@ -157,7 +164,7 @@ export default class PersonalInfoApproval extends PureComponent {
                           labelDesc.length ?
                           labelDesc
                             .map(label => <Tag color="gold" key={label.id}>{label.name}</Tag>) :
-                            (<div className={styles.infoDesc}>--</div>)
+                            (<div className={styles.infoDesc}>暂未设置标签</div>)
                         }
                       </div>
                     );
@@ -172,27 +179,35 @@ export default class PersonalInfoApproval extends PureComponent {
               />
             </div>
           </div>
-          <Divider className={styles.titleDivider} />
-          <div className={styles.item}>
-            <div className={styles.title}>
-              <Divider type="vertical" className={styles.itemDivider} />
-              审批信息
-            </div>
-            <div className={styles.approvalDesc}>
-              <Form>
-                <FormItem
-                  {...formItemLayout}
-                  label="审批意见"
-                >
-                  {getFieldDecorator('approveDesc', {
-                    rules: [{ required: true, message: '请填写审批意见' }],
-                  })(
-                    <TextArea placeholder="请填写审批意见" autosize={{ minRows: 4, maxRows: 6 }} />,
-                  )}
-                </FormItem>
-              </Form>
-            </div>
-          </div>
+          {
+            // 判断入口，如果是从消息提醒入口进入的则不显示
+            remind ? null :
+              (
+                <span>
+                  <Divider className={styles.titleDivider} />
+                  <div className={styles.item}>
+                    <div className={styles.title}>
+                      <Divider type="vertical" className={styles.itemDivider} />
+                      审批信息
+                    </div>
+                    <div className={styles.approvalDesc}>
+                      <Form>
+                        <FormItem
+                          {...formItemLayout}
+                          label="审批意见"
+                        >
+                          {getFieldDecorator('approveDesc', {
+                            rules: [{ required: true, message: '请填写审批意见' }],
+                          })(
+                            <TextArea placeholder="请填写审批意见" autosize={{ minRows: 4, maxRows: 6 }} />,
+                          )}
+                        </FormItem>
+                      </Form>
+                    </div>
+                  </div>
+                </span>
+              )
+          }
           <Divider className={styles.titleDivider} />
           <div className={styles.item}>
             <div className={styles.title}>
@@ -215,18 +230,24 @@ export default class PersonalInfoApproval extends PureComponent {
               }
             </div>
           </div>
-          <div className={styles.btnGroup}>
-            {
-              flowButtons.map(item => (
-                <Button
-                  key={item.flowBtnId}
-                  size="large"
-                  type={item.operate === BTN_ADOPT_STATE ? 'primary' : ''}
-                  onClick={() => { this.handleApproval(item.operate); }}
-                >{item.btnName}</Button>
-              ))
-            }
-          </div>
+          {
+            // 判断入口，如果是从消息提醒入口进入的则不显示
+            remind ? null :
+              (
+                <div className={styles.btnGroup}>
+                  {
+                    flowButtons.map(item => (
+                      <Button
+                        key={item.flowBtnId}
+                        size="large"
+                        type={item.operate === BTN_ADOPT_STATE ? 'primary' : ''}
+                        onClick={() => { this.handleApproval(item.operate); }}
+                      >{item.btnName}</Button>
+                    ))
+                  }
+                </div>
+              )
+          }
         </div>
       </div>
     );

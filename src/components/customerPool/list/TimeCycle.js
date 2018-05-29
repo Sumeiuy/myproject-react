@@ -56,7 +56,6 @@ export default class TimeCycle extends PureComponent {
         <div className={styles.item}>
           <Icon type="rili" />
           <Select
-            style={{ width: 60 }}
             value={selectValue}
             onChange={this.handleChange}
             key="dateSelect"

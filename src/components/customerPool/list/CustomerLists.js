@@ -121,6 +121,17 @@ export default class CustomerLists extends PureComponent {
     hasIndexViewPermission: PropTypes.bool.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
+    addServeRecord: PropTypes.func.isRequired,
+    motSelfBuiltFeedbackList: PropTypes.array.isRequired,
+    hasNPCTIQPermission: PropTypes.bool.isRequired,
+    hasPCTIQPermission: PropTypes.bool.isRequired,
+    queryHoldingProduct: PropTypes.func.isRequired,
+    holdingProducts: PropTypes.object.isRequired,
+    queryHoldingProductReqState: PropTypes.bool,
+    isNotSaleDepartment: PropTypes.bool.isRequired,
+    dataForNextPage: PropTypes.object.isRequired,
+    addCallRecord: PropTypes.func.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -132,6 +143,7 @@ export default class CustomerLists extends PureComponent {
     expandAll: false,
     orgId: null,
     collectCustRange: () => { },
+    queryHoldingProductReqState: false,
   }
 
   static contextTypes = {
@@ -412,8 +424,8 @@ export default class CustomerLists extends PureComponent {
   // 跳转到分组页面或新建任务页面
   @autobind
   goGroupOrTask({ id, title, url, obj, shouldStay, editPane }) {
-    const { push } = this.props;
-    const newurl = `${url}?${urlHelper.stringify(obj)}`;
+    const { push, dataForNextPage } = this.props;
+    const newurl = `${url}?${urlHelper.stringify({ ...obj, ...dataForNextPage })}`;
     const param = {
       closable: true,
       forceRefresh: true,
@@ -439,9 +451,12 @@ export default class CustomerLists extends PureComponent {
       hasTkMampPermission,
       hasIndexViewPermission,
       location: { query: { source } },
+      isNotSaleDepartment,
     } = this.props;
+    // 潜在业务客户进入，判断当前用户岗位是否在分公司或经总，在分公司或经总，再判断是否任务管理权限，反之dou
     return (_.includes(ENTERLIST1, source) && hasTkMampPermission) ||
-      (_.includes(ENTERLIST2, source) && hasIndexViewPermission);
+      (_.includes(ENTERLIST2, source) && hasIndexViewPermission) ||
+      (source === 'business' && isNotSaleDepartment && hasTkMampPermission);
   }
 
   /**
@@ -452,19 +467,25 @@ export default class CustomerLists extends PureComponent {
     const {
       custRange = {},
       location: { query: { source } },
+      hasTkMampPermission,
+      isNotSaleDepartment,
+      hasIndexViewPermission,
     } = this.props;
     const { taskManagerResp = EMPTY_ARRAY, firstPageResp = EMPTY_ARRAY } = custRange;
     if (_.includes(ENTERLIST1, source)) {
-      // 从首页的潜在业务点击进入的列表页
-      if (this.orgIdIsMsm()) {
-        return [allSaleDepartment, ...taskManagerResp];
+      // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
+      return taskManagerResp;
+    }
+    if (source === 'business') {
+      if (!(isNotSaleDepartment && hasTkMampPermission)) {
+        return _.uniqBy([allSaleDepartment, ...taskManagerResp], 'id');
       }
       return taskManagerResp;
     }
     if (_.includes(ENTERLIST2, source)) {
       // 有首页指标查询权限 且 首页绩效指标客户范围选中的是 我的客户
-      if (this.orgIdIsMsm()) {
-        return [allSaleDepartment, ...firstPageResp];
+      if (!hasIndexViewPermission || this.orgIdIsMsm()) {
+        return _.uniqBy([allSaleDepartment, ...firstPageResp], 'id');
       }
       return firstPageResp;
     }
@@ -521,6 +542,15 @@ export default class CustomerLists extends PureComponent {
       hasTkMampPermission,
       sendCustsServedByPostnResult,
       isSendCustsServedByPostn,
+      addServeRecord,
+      motSelfBuiltFeedbackList,
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      queryHoldingProduct,
+      holdingProducts,
+      queryHoldingProductReqState,
+      addCallRecord,
+      currentCommonServiceRecord,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -626,7 +656,7 @@ export default class CustomerLists extends PureComponent {
             </div>
             <div className={styles.selectBox}>
               <ServiceManagerFilter
-                disable={orgIdIsMsm}
+                disable={orgIdIsMsm || !hasPermission}
                 searchServerPersonList={searchServerPersonList}
                 serviceManagerDefaultValue={serviceManagerDefaultValue}
                 dropdownSelectedItem={this.dropdownSelectedItem}
@@ -666,6 +696,11 @@ export default class CustomerLists extends PureComponent {
                     goGroupOrTask={this.goGroupOrTask}
                     push={push}
                     custServedByPostnResult={custServedByPostnResult}
+                    hasNPCTIQPermission={hasNPCTIQPermission}
+                    hasPCTIQPermission={hasPCTIQPermission}
+                    queryHoldingProduct={queryHoldingProduct}
+                    holdingProducts={holdingProducts}
+                    queryHoldingProductReqState={queryHoldingProductReqState}
                   />,
                 )
               }
@@ -678,16 +713,6 @@ export default class CustomerLists extends PureComponent {
           <Pagination
             {...paginationOption}
           />
-          {
-            /*  <Checkbox
-               checked={isAllSelectBool}
-               onChange={this.selectAll}
-               className={styles.selectAllTwo}
-               disabled={_.isEmpty(custList)}
-             >
-               全选
-           </Checkbox> */
-          }
         </div>
         {
           BottomFixedBoxVisible ?
@@ -726,6 +751,11 @@ export default class CustomerLists extends PureComponent {
               serveWay={serveWay}
               getCeFileList={getCeFileList}
               filesList={filesList}
+              toggleServiceRecordModal={toggleServiceRecordModal}
+              addServeRecord={addServeRecord}
+              motSelfBuiltFeedbackList={motSelfBuiltFeedbackList}
+              addCallRecord={addCallRecord}
+              currentCommonServiceRecord={currentCommonServiceRecord}
             /> : null
         }
       </div>

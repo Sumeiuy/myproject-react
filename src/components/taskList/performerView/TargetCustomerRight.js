@@ -10,6 +10,7 @@ import { Row, Col, Affix } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
+import moment from 'moment';
 import contains from 'rc-util/lib/Dom/contains';
 
 import styles from './targetCustomerRight.less';
@@ -19,6 +20,11 @@ import TipsInfo from './TipsInfo';
 import SixMonthEarnings from '../../customerPool/list/SixMonthEarnings';
 import { formatAsset } from './formatNum';
 import logable from '../../../decorators/logable';
+// import Phone from '../../common/phone';
+import Icon from '../../common/Icon';
+import { date } from '../../../helper';
+import ContactInfoPopover from '../../common/contactInfoPopover/ContactInfoPopover';
+import Mask from '../../common/mask';
 
 // 信息的完备，用于判断
 const COMPLETION = '完备';
@@ -28,6 +34,8 @@ const NOTCOMPLETION = '不完备';
 const PER_CODE = 'per';
 // 一般机构对应的code码
 const ORG_CODE = 'org';
+
+const PHONE = 'phone';
 
 // 产品机构对应的code码
 // const PROD_CODE = 'prod';
@@ -41,7 +49,8 @@ const getStickyTarget = (currentNode) => {
     element => contains(element, currentNode),
   )) || containers[0];
 };
-
+// 任务状态为未处理、处理中、已驳回时可打电话
+const CALLABLE_LIST = ['10', '20', '60'];
 
 export default class TargetCustomerRight extends PureComponent {
   static propTypes = {
@@ -57,6 +66,14 @@ export default class TargetCustomerRight extends PureComponent {
     custIncomeReqState: PropTypes.bool.isRequired,
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
+    addServeRecord: PropTypes.func.isRequired,
+    motCustfeedBackDict: PropTypes.array.isRequired,
+    currentMissionFlowId: PropTypes.string.isRequired,
+    currentId: PropTypes.string.isRequired,
+    toggleServiceRecordModal: PropTypes.func.isRequired,
+    currentCustomer: PropTypes.object.isRequired,
+    taskTypeCode: PropTypes.string.isRequired,
+    currentMotServiceRecord: PropTypes.object.isRequired,
   }
   static defaultProps = {
     itemData: {},
@@ -69,6 +86,13 @@ export default class TargetCustomerRight extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
   };
+
+  constructor(props) {
+    super(props);
+    this.endTime = '';
+    this.startTime = '';
+    this.state = { showMask: false };
+  }
 
   getPopupContainer() {
     return document.querySelector(fspContainer.container) || document.body;
@@ -88,6 +112,10 @@ export default class TargetCustomerRight extends PureComponent {
       title: '客户360视图-客户信息',
       forceRefresh: true,
       activeSubTab,
+      // 服务记录搜索
+      serviceRecordKeyword: '',
+      // 服务渠道
+      serviceRecordChannel: '',
     };
   }
 
@@ -151,51 +179,147 @@ export default class TargetCustomerRight extends PureComponent {
     this.openFsp360TabAction({ itemData, param });
   }
 
-  // 联系电话的浮层信息
-  renderPhoneNumTips(itemData = {}) {
+  /**
+   * 通话结束后要创建一条服务记录，并弹出服务记录框
+   */
+  @autobind
+  handlePhoneEnd() {
+    // 点击挂电话隐藏蒙层
+    this.setState({ showMask: false });
+    // 没有成功发起通话
+    if (!moment.isMoment(this.startTime)) {
+      return;
+    }
+    this.endTime = moment();
     const {
-      contactDetail = [],
-      custNature = '',
+      itemData,
+      addServeRecord,
+      motCustfeedBackDict,
+      currentMissionFlowId,
+      currentId,
+      toggleServiceRecordModal,
+      taskTypeCode,
+    } = this.props;
+    const {
+      custId,
+      custName,
     } = itemData;
-    if (_.isEmpty(contactDetail)) {
+    const [firstServiceType = {}] = motCustfeedBackDict;
+    const { key: firstServiceTypeKey, children = [] } = firstServiceType;
+    const [firstFeedback = {}] = children;
+    const phoneDuration = date.calculateDuration(
+      this.startTime.valueOf(),
+      this.endTime.valueOf(),
+    );
+    const serviceContentDesc = `${this.startTime.format('HH:mm:ss')}给客户发起语音通话，时长${phoneDuration}。`;
+    let payload = {
+      // 任务流水id
+      missionFlowId: currentMissionFlowId,
+      // 任务id
+      missionId: currentId,
+      // 经济客户号
+      custId,
+      // 服务方式
+      serveWay: 'HTSC Phone',
+      // 任务类型，1：MOT  2：自建
+      taskType: `${+taskTypeCode + 1}`,
+      // 服务状态
+      flowStatus: '30',
+      // 同serveType
+      type: firstServiceTypeKey,
+      // 服务类型，即任务类型
+      serveType: firstServiceTypeKey,
+      // 客户反馈一级
+      serveCustFeedBack: firstFeedback.key,
+      // 服务记录内容
+      serveContentDesc: serviceContentDesc,
+      // 服务时间
+      serveTime: this.endTime.format('YYYY-MM-DD HH:mm'),
+      // 反馈时间
+      feedBackTime: moment().format('YYYY-MM-DD'),
+    };
+    // 客户反馈的二级
+    if (firstFeedback.children) {
+      payload = {
+        ...payload,
+        serveCustFeedBack2: firstFeedback.children[0].key,
+      };
+    }
+    // 添加服务记录表单共用，把打电话自动生成的默认数据保存到prevRecordInfo
+    const saveRecordData = () => {
+      toggleServiceRecordModal({
+        id: currentMissionFlowId,
+        name: custName,
+        flag: false,
+        caller: PHONE,
+        autoGenerateRecordInfo: payload,
+      });
+    };
+    addServeRecord({
+      postBody: payload,
+      callbackOfPhone: saveRecordData,
+      noHint: true,
+      callId: this.callId,
+    });
+  }
+
+  // 通话开始
+  @autobind
+  handlePhoneConnected(data) {
+    this.startTime = moment();
+    this.callId = data.uuid;
+  }
+
+  // 点击号码打电话时显示蒙层
+  @autobind
+  handlePhoneClick() {
+    this.setState({ showMask: true });
+  }
+
+  /**
+   * 联系方式渲染
+   */
+  @autobind
+  renderContactInfo() {
+    const { itemData, currentCustomer } = this.props;
+    const { custNature, perCustomerContactInfo, orgCustomerContactInfoList, custName } = itemData;
+    // 任务状态为未处理、处理中、已驳回时可打电话
+    const canCall = _.includes(CALLABLE_LIST, currentCustomer.missionStatusCode);
+    // 联系方式为空判断
+    const isEmpty = (
+      custNature === PER_CODE &&
+      (
+        _.isEmpty(perCustomerContactInfo) ||
+        (_.isEmpty(perCustomerContactInfo.homeTels)
+          && _.isEmpty(perCustomerContactInfo.cellPhones)
+          && _.isEmpty(perCustomerContactInfo.workTels)
+          && _.isEmpty(perCustomerContactInfo.otherTels))
+      )
+    ) ||
+      (custNature === ORG_CODE && _.isEmpty(orgCustomerContactInfoList));
+    if (isEmpty) {
       return null;
     }
-    let content = '';
-    if (custNature === PER_CODE) {
-      content = (
-        <div className={`${styles.nameTips}`}>
-          {
-            contactDetail.map(obj => (
-              <div key={obj.cellPhone}>
-                <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
-                <h6><span>住宅电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>
-                <h6><span>手机号码：</span><span>{this.handleEmpty(obj.cellPhone)}</span></h6>
-              </div>
-            ))
-          }
-        </div>
-      );
-    } else {
-      content = (
-        <div className={`${styles.nameTips}`}>
-          {
-            contactDetail.map(obj => (
-              <div key={obj.cellPhone}>
-                <h5 className={styles.callName}>{this.handleEmpty(obj.name)}</h5>
-                <h6><span>办公电话：</span><span>{this.handleEmpty(obj.officePhone)}</span></h6>
-                <h6><span>住宅电话：</span><span>{this.handleEmpty(obj.homePhone)}</span></h6>
-                <h6><span>手机号码：</span><span>{this.handleEmpty(obj.cellPhone)}</span></h6>
-              </div>
-            ))
-          }
-        </div>
-      );
-    }
+    const perContactInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'homeTels', 'workTels', 'otherTels']);
     return (
-      <TipsInfo
-        position={'bottomRight'}
-        title={content}
-      />
+      <Col span={16}>
+        <ContactInfoPopover
+          custType={custNature}
+          name={encodeURIComponent(custName)}
+          personalContactInfo={perContactInfo}
+          orgCustomerContactInfoList={orgCustomerContactInfoList}
+          handlePhoneEnd={this.handlePhoneEnd}
+          handlePhoneConnected={this.handlePhoneConnected}
+          handlePhoneClick={this.handlePhoneClick}
+          disablePhone={!canCall}
+          placement={'top'}
+        >
+          <div className={styles.phoneRight}>
+            <Icon type="lianxifangshi1" className={styles.phoneRightIcon} />
+            <span className={styles.phoneRightText}>联系方式</span>
+          </div>
+        </ContactInfoPopover>
+      </Col>
     );
   }
 
@@ -207,6 +331,8 @@ export default class TargetCustomerRight extends PureComponent {
       monthlyProfits,
       custIncomeReqState,
     } = this.props;
+
+    const { showMask } = this.state;
 
     const sendSpan = isFold ? 15 : 24;
     const thrSpan = isFold ? 9 : 24;
@@ -269,27 +395,10 @@ export default class TargetCustomerRight extends PureComponent {
         Number(newHsRate.toFixed(2)) :
         `${Number((newHsRate * 100).toFixed(2))}%`;
     }
-    // 总资产不为0时进行计算
-    // 持仓金额不为null或0时，持仓金额占余额的百分比openAssetsPercentNode，否则不展示百分比
-    // 可用余额不为null或0时，可用余额占余额的百分比availablBalancePercentNode，否则不展示百分比
-    let openAssetsPercentNode = '';
-    let availablBalancePercentNode = '';
-    if (Number(itemData.assets)) {
-      const openAssetsRate = itemData.openAssets / itemData.assets;
-      openAssetsPercentNode = itemData.openAssets ?
-        <span>({(openAssetsRate * 100).toFixed(2)}%)</span>
-        :
-        null;
-      availablBalancePercentNode = itemData.availablBalance ?
-        <span>({((itemData.availablBalance / itemData.assets) * 100).toFixed(2)}%)</span>
-        :
-        null;
-    }
     // 信息完备率
     const infoCompletionRate = itemData.infoCompletionRate ?
       `${Number(itemData.infoCompletionRate) * 100}%` : '--';
     const introducerName = this.handleEmpty(itemData.empName);
-
     return (
       <div className={styles.box} ref={ref => this.container = ref}>
         <Affix target={() => getStickyTarget(this.container)}>
@@ -337,17 +446,7 @@ export default class TargetCustomerRight extends PureComponent {
                   }
                 </h5>
               </Col>
-              {
-                itemData.contactPhone ?
-                  <Col span={16}>
-                    <h5
-                      className={styles.phoneRight}
-                    >
-                      <span>联系电话：</span><span>{this.handleEmpty(itemData.contactPhone)}</span>
-                      {this.renderPhoneNumTips(itemData)}
-                    </h5>
-                  </Col> : null
-              }
+              {this.renderContactInfo()}
             </Row>
           </div>
         </Affix>
@@ -361,20 +460,24 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.people]: isFold === false,
                   })}
                 >
-                  <span>总资产：</span><span>{this.handleAssets(itemData.assets)}</span>
-                  {_.isEmpty(itemData.assets) ?
-                    null :
-                    <span className={styles.wordTips}>
-                      <SixMonthEarnings
-                        listItem={itemData}
-                        monthlyProfits={monthlyProfits}
-                        custIncomeReqState={custIncomeReqState}
-                        getCustIncome={getCustIncome}
-                        formatAsset={formatAsset}
-                        displayText="峰值和最近收益"
-                      />
-                    </span>
-                  }
+                  <div className={styles.title}>
+                    <div>总资产：</div>
+                  </div>
+                  <div className={styles.content}>
+                    <div className={styles.value}>{this.handleAssets(itemData.assets)}</div>
+                    {!_.isEmpty(itemData.assets) ?
+                      <div className={styles.wordTips}>
+                        <SixMonthEarnings
+                          listItem={itemData}
+                          monthlyProfits={monthlyProfits}
+                          custIncomeReqState={custIncomeReqState}
+                          getCustIncome={getCustIncome}
+                          formatAsset={formatAsset}
+                          displayText="峰值和最近收益"
+                        />
+                      </div> : null
+                    }
+                  </div>
                 </h5>
                 <h5
                   className={classnames({
@@ -382,9 +485,15 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.people]: isFold === false,
                   })}
                 >
-                  <span>持仓市值：</span>
-                  <span>{this.handleAssets(itemData.openAssets)}</span>
-                  {openAssetsPercentNode}
+                  <div className={styles.openAssets}>
+                    <div className={styles.left}>持仓市值：</div>
+                    <div className={styles.right}>
+                      （含信用）
+                    </div>
+                  </div>
+                  <div className={styles.content}>
+                    {this.handleAssets(itemData.openAssets)}
+                  </div>
                 </h5>
                 <h5
                   className={classnames({
@@ -394,7 +503,6 @@ export default class TargetCustomerRight extends PureComponent {
                 >
                   <span>可用余额：</span>
                   <span>{this.handleAssets(itemData.availablBalance)}</span>
-                  {availablBalancePercentNode}
                 </h5>
               </Col>
               <Col span={thrSpan}>
@@ -403,13 +511,19 @@ export default class TargetCustomerRight extends PureComponent {
                     [styles.peopleThr]: isFold === true,
                     [styles.people]: isFold === false,
                   })}
-                ><span>股基佣金率：</span><span>{miniFee}</span></h5>
+                >
+                  <span>股基佣金率：</span>
+                  <span>{miniFee}</span>
+                </h5>
                 <h5
                   className={classnames({
                     [styles.peopleThr]: isFold === true,
                     [styles.people]: isFold === false,
                   })}
-                ><span>沪深归集率：</span><span>{hsRate}</span></h5>
+                >
+                  <span>沪深归集率：</span>
+                  <span>{hsRate}</span>
+                </h5>
                 <h5
                   className={classnames({
                     [styles.peopleThr]: isFold === true,
@@ -464,6 +578,7 @@ export default class TargetCustomerRight extends PureComponent {
             </Row>
           </div>
         </div>
+        <Mask visible={showMask} />
       </div>
     );
   }

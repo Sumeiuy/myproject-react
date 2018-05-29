@@ -6,7 +6,10 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { autobind } from 'core-decorators';
 import { isSightingScope } from '../helper';
+import { openFspTab } from '../../../utils';
+import HoldingProductDetail from './HoldingProductDetail';
 import styles from './matchArea.less';
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
@@ -24,6 +27,11 @@ const replaceWord = ({ value, q, title = '', type = '' }) => {
     `<em class="marked">${q}${titleDom || ''}</em>${holder}`);
 };
 
+// 个人对应的code码
+const PER_CODE = 'per';
+// 一般机构对应的code码
+const ORG_CODE = 'org';
+
 // const getNewHtml = (value, k) => (`<li><span><i class="label">${value}：</i>${k}</span></li>`);
 
 // 匹配标签区域超过两条显示 展开/收起 按钮
@@ -36,13 +44,25 @@ export default class MatchArea extends PureComponent {
     location: PropTypes.object.isRequired,
     listItem: PropTypes.object.isRequired,
     q: PropTypes.string.isRequired,
+    hasNPCTIQPermission: PropTypes.bool.isRequired,
+    hasPCTIQPermission: PropTypes.bool.isRequired,
+    queryHoldingProduct: PropTypes.func.isRequired,
+    holdingProducts: PropTypes.object.isRequired,
+    queryHoldingProductReqState: PropTypes.bool.isRequired,
+    formatAsset: PropTypes.func.isRequired,
   }
+
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
+    empInfo: PropTypes.object,
+  };
 
   constructor(props) {
     super(props);
     const {
       dict: {
         custBusinessType = [],
+        custUnrightBusinessType = [],
       },
     } = props;
 
@@ -52,6 +72,48 @@ export default class MatchArea extends PureComponent {
     this.businessConfig = new Map();
     custBusinessType.forEach((item) => {
       this.businessConfig.set(item.key, item.value);
+    });
+    // 可开通业务的匹配
+    this.custUnrightBusinessType = {};
+    custUnrightBusinessType.forEach((item) => {
+      this.custUnrightBusinessType[item.key] = item.value;
+    });
+  }
+
+  /**
+   * 跳转到360服务记录页面
+   * @param {*object} itemData 当前列表item数据
+   * @param {*} keyword 当前输入关键字
+   */
+  @autobind
+  handleOpenFsp360TabAction(itemData, keyword) {
+    const { custNature, custId, rowId, ptyId } = itemData;
+    const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
+    const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
+    const pathname = '/customerCenter/fspcustomerDetail';
+    openFspTab({
+      routerAction: this.context.push,
+      url,
+      query: {
+        custId,
+        rowId,
+        ptyId,
+        keyword,
+      },
+      pathname,
+      param: {
+        id: 'FSP_360VIEW_M_TAB',
+        title: '客户360视图-客户信息',
+        forceRefresh: true,
+        activeSubTab: ['服务记录'],
+        // 服务记录搜索
+        serviceRecordKeyword: keyword,
+        // 服务渠道
+        serviceRecordChannel: encodeURIComponent('理财服务平台'),
+      },
+      state: {
+        url,
+      },
     });
   }
 
@@ -203,7 +265,7 @@ export default class MatchArea extends PureComponent {
     } = this.props;
     if (_.includes(['numOfCustOpened', 'business'], source) && listItem.unrightType) {
       const unrightTypeList = listItem.unrightType.split(' ');
-      const tmpList = _.filter(_.map(unrightTypeList, item => this.businessConfig.get(item)));
+      const tmpList = _.map(unrightTypeList, item => this.custUnrightBusinessType[item]);
       if (!_.isEmpty(tmpList)) {
         const data = tmpList.join('、');
         return (
@@ -269,7 +331,7 @@ export default class MatchArea extends PureComponent {
     const {
       q = '',
       listItem,
-      location: { query: { source } },
+      location: { query: { source, q: keyword } },
     } = this.props;
     if (_.includes(['search', 'association'], source)
       && listItem.serviceRecord
@@ -278,17 +340,22 @@ export default class MatchArea extends PureComponent {
       // 接口返回的接口数据是截断过的，需要前端在后面手动加...
       return (
         <li>
-          <span>
+          <span className={styles.serviceRecord}>
             <i className="label">服务记录：</i>
             <i dangerouslySetInnerHTML={{ __html: markedEle }} />
             <i>...</i>
           </span>
+          <span
+            className={styles.more}
+            onClick={() => this.handleOpenFsp360TabAction(listItem, keyword)}
+          >详情</span>
         </li>
       );
     }
     return null;
   }
 
+  // 瞄准镜
   renderSightingTelescope() {
     const {
       q = '',
@@ -335,6 +402,147 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  // 持仓产品:首页的模糊搜索、联想词、外部平台、证券产品
+  renderHoldingProduct() {
+    const {
+      q = '',
+      listItem: { holdingProducts },
+      location: { query: { source, productName = '', labelMapping = '' } },
+    } = this.props;
+    if (!_.isEmpty(holdingProducts)) {
+      // 精准搜索，用id取找目标
+      if (_.includes(['association', 'external', 'securitiesProducts'], source)) {
+        const keyword = decodeURIComponent(productName);
+        const id = decodeURIComponent(labelMapping);
+        const filteredProducts = this.getFilteredProductsById(holdingProducts, id);
+        // 联想词进入列表并产品id匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
+        return !_.isEmpty(filteredProducts) &&
+          this.getSingleHoldingProductNode(filteredProducts, keyword);
+      } else if (source === 'search') {
+        // 模糊匹配用搜索关键词取匹配产品的code和name
+        // 匹配到的持仓产品大于1个时，显示 产品的名称/产品代码
+        const filteredProducts = this.getFilteredProducts(holdingProducts, q);
+        if (filteredProducts.length > 1) {
+          return this.getMultipleHoldingProductNode(filteredProducts, q);
+        }
+        // 联想词进入列表并匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
+        return this.getSingleHoldingProductNode(filteredProducts, q);
+      }
+    }
+    return null;
+  }
+
+  // 关键词匹配到的持仓产品
+  getFilteredProducts(list, keyword) {
+    return _.filter(
+      list,
+      item => item && (_.includes(item.code, keyword) || _.includes(item.name, keyword)),
+    );
+  }
+
+  // 产品id匹配到的持仓产品
+  getFilteredProductsById(list, id) {
+    return _.filter(
+      list,
+      item => item && (_.includes(item.id, id)),
+    );
+  }
+
+  /**
+   * 根据持仓产品的字段返回多个持仓产品的html
+   * @param {*} list [{name: '12345', id:'0008'},{name: '29999', id:'0002'}]
+   * @param {*} keyword '2'
+   */
+  getMultipleHoldingProductNode(list, keyword) {
+    if (!_.isEmpty(list)) {
+      const htmlStringList = _.map(
+        list,
+        item => `${replaceWord({ value: item.name, q: keyword })}/${replaceWord({ value: item.code, q: keyword })}`,
+      );
+      const htmlString = htmlStringList.join(',');
+      return (
+        <li title={htmlString.replace(/<\/?[^>]*>/g, '')}>
+          <span>
+            <i className="label">持仓产品：</i>
+            <i dangerouslySetInnerHTML={{ __html: htmlString }} />
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 根据持仓产品的字段返回单个持仓产品的html
+  getSingleHoldingProductNode(list, keyword) {
+    const {
+      listItem: { isPrivateCustomer, empId, custId },
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      queryHoldingProduct,
+      holdingProducts,
+      queryHoldingProductReqState,
+      formatAsset,
+    } = this.props;
+    const { empInfo: { empInfo = {} } } = this.context;
+    // 是否显示’持仓详情‘，默认不显示
+    let isShowDetailBtn = false;
+    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
+    if (hasNPCTIQPermission && !isPrivateCustomer) {
+      isShowDetailBtn = true;
+    }
+    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
+    // 主服务经理 可以看名下所有客户的持仓信息
+    if (hasPCTIQPermission || empInfo.rowId === empId) {
+      isShowDetailBtn = true;
+    }
+    if (!_.isEmpty(list)) {
+      const { name, code } = list[0] || {};
+      const htmlString = `${replaceWord({ value: name, q: keyword })}/${replaceWord({ value: code, q: keyword })}`;
+      const props = {
+        custId,
+        data: list[0] || {},
+        queryHoldingProduct,
+        holdingProducts,
+        queryHoldingProductReqState,
+        formatAsset,
+      };
+      return (
+        <li>
+          <span>
+            <i className="label">持仓产品：</i>
+            <i dangerouslySetInnerHTML={{ __html: htmlString }} />
+            {isShowDetailBtn && <HoldingProductDetail {...props} />}
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 精选组合页面的订购组合
+  @autobind
+  renderOrderCombination() {
+    const {
+      listItem: { jxgrpProducts },
+      location: { query: { source, labelMapping } },
+    } = this.props;
+    if (source === 'orderCombination' && !_.isEmpty(jxgrpProducts)) {
+      const id = decodeURIComponent(labelMapping);
+      const currentItem = _.find(jxgrpProducts, item => item.id === id);
+      if (!_.isEmpty(currentItem)) {
+        return (
+          <li>
+            <span>
+              <i className="label">订购组合：</i>
+              <i><em className="marked">{currentItem.name}</em>/{currentItem.code}</i>
+            </span>
+          </li>
+        );
+      }
+    }
+    return null;
+  }
+
   render() {
     return (
       <div className={styles.relatedInfo}>
@@ -349,6 +557,8 @@ export default class MatchArea extends PureComponent {
           {this.renderStatus()}
           {this.renderServiceRecord()}
           {this.renderSightingTelescope()}
+          {this.renderHoldingProduct()}
+          {this.renderOrderCombination()}
         </ul>
       </div>
     );

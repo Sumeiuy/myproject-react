@@ -162,17 +162,20 @@ export default class FilterModal extends PureComponent {
   queryPeopleOfLabel({ labelId, curPageNum = 1, pageSize = 10, filter = [] }) {
     const { isAuthorize, orgId, getLabelPeople } = this.props;
     const { argsOfQueryCustomer } = this.state;
+    // const currentLabel = _.find(circlePeopleData, item => labelId === item.id);
     let payload = {
       curPageNum,
       pageSize,
       enterType: 'labelSearchCustPool',
-      labels: [labelId],
+      searchTypeReq: 'LABEL',
+      // searchText: currentLabel.labelName,
+      primaryKey: [labelId],
     };
     if (!_.isEmpty(argsOfQueryCustomer[`${labelId}`])) {
       // 如果data里面存在payload，就恢复数据，不然就取默认数据
       // 查询客户列表时必传的参数
-      const { labels: remberLabels } = argsOfQueryCustomer[`${labelId}`];
-      payload = { ...payload, labels: remberLabels };
+      const { primaryKey: remberLabels } = argsOfQueryCustomer[`${labelId}`];
+      payload = { ...payload, primaryKey: remberLabels };
     }
     // 有权限传orgId，没有权限传ptyMngId
     if (isAuthorize) {
@@ -184,7 +187,7 @@ export default class FilterModal extends PureComponent {
     if (!_.isEmpty(filter)) {
       const { filters, labels } = getCustomerListFilters(filter, labelId);
       payload.filtersReq = filters;
-      payload.labels = labels;
+      payload.primaryKey = labels;
     }
 
     // 获取客户列表, true为全屏loading

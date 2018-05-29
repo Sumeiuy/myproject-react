@@ -204,6 +204,83 @@ const permission = {
     const hasPermission = filterRespKHFPG.length > 0;
     return hasPermission;
   },
+
+  // 公务手机申请，当前用户是否拥有新建按钮权限
+  hasPermissionOfPhoneApplyCreate(empInfo) {
+    // 职责-- HTSC 分公司投顾管理岗
+    const permissionFGSTGGLG = duty.HTSC_FGSTGGLG;
+    // 从 empInfo 中取出 empRespList 职责列表
+    const { empRespList = [] } = empInfo;
+    // 从职责列表中找出 职责名称对应的 id 等于 需要检测的职责名称 id 的数组
+    const filterRespFGSTGGLG = _.filter(empRespList, o => o.respId === permissionFGSTGGLG);
+    // 判断两个职责列表，都有数据则有权限
+    const hasPermission = filterRespFGSTGGLG.length > 0;
+    return hasPermission;
+  },
+
+  // HTSC 交易信息查询权限（非私密客户）
+  hasNPCTIQPermission() {
+    return hasDuty(dutyList, duty.HTSC_TIQ_NPC);
+  },
+
+  // HTSC 交易信息查询权限（含私密客户）
+  hasPCTIQPermission() {
+    return hasDuty(dutyList, duty.HTSC_TIQ_PC);
+  },
+
+  // HTSC 客户资料-总部管理岗
+  hasCIHMPPermission() {
+    return hasDuty(dutyList, duty.HTSC_CI_HMP);
+  },
+
+  // HTSC 客户资料-分中心管理岗
+  hasCIBMPPermission() {
+    return hasDuty(dutyList, duty.HTSC_CI_BMP);
+  },
+
+  // HTSC 客户资料（无隐私）-总部管理岗
+  hasNPCIHMPPermission() {
+    return hasDuty(dutyList, duty.HTSC_NPCI_HMP);
+  },
+
+  // HTSC 客户资料（无隐私）-分中心管理岗
+  hasNPCIBMPPermission() {
+    return hasDuty(dutyList, duty.HTSC_NPCI_BMP);
+  },
+
+  // HTSC 客户资料管理岗（无隐私）
+  hasCDMPermission() {
+    return hasDuty(dutyList, duty.HTSC_CDM);
+  },
+
+  // 管理者视图客户总数下钻、进度条下钻、饼图下钻查看非本人名下客户360需要的职责
+  // - HTSC 客户资料-分中心管理岗
+  // - HTSC 客户资料-总部管理岗
+  // - HTSC 客户资料（无隐私）-分中心管理岗
+  // - HTSC 客户资料(无隐私）-总部管理岗
+  // - HTSC 客户资料管理岗（无隐私）
+  hasViewCust360PermissionForManagerView() {
+    return permission.hasCIHMPPermission() ||
+      permission.hasCIBMPPermission() ||
+      permission.hasNPCIHMPPermission() ||
+      permission.hasNPCIBMPPermission() ||
+      permission.hasCDMPermission();
+  },
+
+  // ！！！目前和管理者视图查看360职责一样，但是为了防止以后经常改职责，还是保留两个方法
+  // 客户列表查看非本人名下客户360需要的职责
+  // - HTSC 客户资料-分中心管理岗
+  // - HTSC 客户资料-总部管理岗
+  // - HTSC 客户资料（无隐私）-分中心管理岗
+  // - HTSC 客户资料(无隐私）-总部管理岗
+  // - HTSC 客户资料管理岗（无隐私）
+  hasViewCust360PermissionForCustList() {
+    return permission.hasCIHMPPermission() ||
+      permission.hasCIBMPPermission() ||
+      permission.hasNPCIHMPPermission() ||
+      permission.hasNPCIBMPPermission() ||
+      permission.hasCDMPermission();
+  },
 };
 
 export default permission;

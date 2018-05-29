@@ -10,6 +10,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import LabelInfo from '../common/LabelInfo';
+import ForgeryRichText from '../../common/ForgeryRichText';
 import styles from './infoArea.less';
 
 function InfoArea(props) {
@@ -27,7 +28,10 @@ function InfoArea(props) {
               const isPoliceOrTip = item.id === 'policy' || item.id === 'tip';
               return (
                 <div
-                  className={`${styles.coloumn} ${isPoliceOrTip ? styles.row : ''}`}
+                  className={classnames(
+                    styles.coloumn,
+                    { [styles.row]: isPoliceOrTip },
+                  )}
                   key={item.id}
                 >
                   <div
@@ -39,10 +43,12 @@ function InfoArea(props) {
                   <div className={styles.infoValue}>
                     {
                       isPoliceOrTip ?
-                        <div
+                        (<div
                           className={styles.row}
-                          dangerouslySetInnerHTML={{ __html: item.value || '--' }}
-                        /> :
+                        >
+                          <ForgeryRichText text={item.value} />
+                        </div>
+                        ) :
                         item.value
                     }
                   </div>

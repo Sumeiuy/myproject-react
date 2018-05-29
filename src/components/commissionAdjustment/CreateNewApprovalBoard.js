@@ -11,7 +11,7 @@ import { Input, message } from 'antd';
 import _ from 'lodash';
 
 import { openFspTab, closeRctTab } from '../../utils';
-import confirm from '../common/Confirm';
+import confirm from '../common/confirm_';
 import CommonModal from '../common/biz/CommonModal';
 import InfoTitle from '../common/InfoTitle';
 import Select from '../common/Select';
@@ -25,7 +25,7 @@ import SingleCreatBoard from './SingleCreatBoard';
 import SubscribeCreateBoard from './SubscribeCreateBoard';
 import UnSubscribeCreateBoard from './UnSubscribeCreateBoard';
 import styles from './createNewApprovalBoard.less';
-import logable from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 
 const { TextArea } = Input;
 const { commission: { subType }, comsubs: commadj } = seibelConfig;
@@ -363,6 +363,16 @@ export default class CreateNewApprovalBoard extends PureComponent {
         this.submitLoadiing(false);
       },
     );
+    // log日志 --- 批量佣金调整提交
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '',
+        type: '服务订购',
+        subtype: '批量佣金调整',
+        value: JSON.stringify(submitParams),
+      },
+    });
   }
 
   // 单佣金调整提交
@@ -405,6 +415,17 @@ export default class CreateNewApprovalBoard extends PureComponent {
       message.error('单佣金调整提交失败');
       this.submitLoadiing(false);
     });
+
+    // log日志 --- 单佣金调整提交
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '',
+        type: '服务订购',
+        subtype: '佣金调整',
+        value: JSON.stringify(params),
+      },
+    });
   }
 
   // 资讯订阅提交
@@ -443,6 +464,17 @@ export default class CreateNewApprovalBoard extends PureComponent {
       message.error('资讯订阅提交失败');
       this.submitLoadiing(false);
     });
+
+    // log日志 --- 资讯订阅提交
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '',
+        type: '服务订购',
+        subtype: '资讯订阅',
+        value: JSON.stringify(params),
+      },
+    });
   }
 
   // 资讯退订提交
@@ -480,6 +512,17 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }, () => {
       message.error('资讯退订提交失败');
       this.submitLoadiing(false);
+    });
+
+    // log日志 --- 资讯退订提交
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '',
+        type: '服务订购',
+        subtype: '资讯退订',
+        value: JSON.stringify(unParams),
+      },
     });
   }
 

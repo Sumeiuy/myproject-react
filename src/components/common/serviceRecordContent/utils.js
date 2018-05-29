@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 16:29:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-15 15:18:58
+ * @Last Modified time: 2018-04-21 13:54:38
  * @description 服务记录页面用到的页面工具或者配置
  */
 import _ from 'lodash';
@@ -53,19 +53,26 @@ const serveWaySelectMap = [
   },
 ];
 
-// 通过服务方式的Label获取到code
-function getServeWayCode(value) {
-  const serveWay = _.find(serveWaySelectMap, way => way.value === value) || serveWaySelectMap[0];
-  return serveWay.key;
+
+// 通过服务方式的name或者code
+function getServeWayByCodeOrName(value) {
+  return _.find(serveWaySelectMap, way => (way.value === value || way.key === value))
+  || serveWaySelectMap[0];
 }
 
+// 通过服务方式的Label获取到code
+function getServeWayCode(value) {
+  // 针对后端传值 有可能是 serviceWayName 也有可能是serviceWayCode
+  const serveWay = getServeWayByCodeOrName(value);
+  return serveWay.key;
+}
 // 其它类型的客户反馈，容错处理，
 // 在某些情况下，后端返回的feedbackList为空，没法展示服务记录界面
 // 需要前端容错一下
 const errorFeedback = {
   key: '99999',
   value: '其他',
-  children: { key: '100000', value: '100000' },
+  children: { key: '100000', value: '其他' },
 };
 
 // 服务状态单选按钮组配置,目前只需要配置这两种状态类型
@@ -80,9 +87,14 @@ const serveStatusRadioGroupMap = [
   },
 ];
 
+// 打电话时的服务记录
+const PHONE = 'phone';
+
 export default {
   serveWaySelectMap,
   errorFeedback,
   getServeWayCode,
+  getServeWayByCodeOrName,
   serveStatusRadioGroupMap,
+  PHONE,
 };

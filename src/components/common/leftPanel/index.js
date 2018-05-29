@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-12 10:39:48
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-08 14:17:56
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-04-16 20:27:35
  */
 
 import React, { PureComponent } from 'react';
@@ -313,11 +313,6 @@ export default class LeftPanel extends PureComponent {
               return 'active';
             }
             return '';
-          }}
-          // 默认文案配置
-          locale={{
-            // 空数据时的文案
-            emptyText: '暂无数据',
           }}
         />
       </div >

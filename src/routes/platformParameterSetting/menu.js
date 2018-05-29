@@ -3,6 +3,7 @@
  * @Author: K0170179
  * @Date: 2018/4/15
  */
+import duty from '../../helper/config/duty';
 
 const menu = [
   {
@@ -17,12 +18,22 @@ const menu = [
         name: '任务问卷调查',
         path: '/taskFeedback',
       },
+      {
+        name: '投资建议模板',
+        path: '/investmentAdvice',
+      },
     ],
   },
   {
     name: '用户中心',
     path: '/labelManager',
     children: '个人标签',
+  },
+  {
+    name: '内容运营',
+    path: '/contentOperate',
+    permission: duty.HTSC_HQ_MAMPID,
+    children: '推荐标签',
   },
 ];
 

@@ -13,6 +13,8 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { linkTo } from './homeIndicators_';
 import logable from '../../../decorators/logable';
+
+import antdStyles from '../../../css/antd.less';
 import styles from './progressList.less';
 
 /* 新增客户传给列表页的参数
@@ -32,7 +34,6 @@ export default class ProgressList extends PureComponent {
     location: PropTypes.object,
     empInfo: PropTypes.object,
     type: PropTypes.string,
-    authority: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -86,7 +87,7 @@ export default class ProgressList extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '新增客户区域下钻' } })
   handleClick(index, item) {
-    const { cycle, push, location, authority } = this.props;
+    const { cycle, push, location } = this.props;
     const bname = this.transformName(item.cust);
     const param = {
       source: 'custIndicator',
@@ -96,7 +97,6 @@ export default class ProgressList extends PureComponent {
       cycle,
       push,
       location,
-      authority,
     };
     linkTo(param);
   }
@@ -105,8 +105,8 @@ export default class ProgressList extends PureComponent {
   @autobind
   transformName(name) {
     switch (name) {
-      case '新开有效户':
-        return '新开有效下钻客户';
+      case '新增有效户':
+        return '新增有效下钻客户';
       case '新增非零售客户':
         return '新增非零售下钻客户';
       case '新增高端产品户':
@@ -122,7 +122,7 @@ export default class ProgressList extends PureComponent {
     const { dataSource, location, type } = this.props;
     // 新增客户模块指标说明文案
     const description = {
-      新开有效户: '统计周期内新开客户数量',
+      新增有效户: '统计周期内新增且成为有效户的客户数',
       新增高净值客户: '本考核期新增的高净值客户数-上一考核期末的高净值客户在本考核期内降级为零售客户且资产降幅超过同期市场指数跌幅的客户数量',
       新增高端产品户: '年初到当前新增高端客户数',
       新增产品客户: '年初到当前新增产品客户数',
@@ -151,6 +151,7 @@ export default class ProgressList extends PureComponent {
                 placement="bottom"
                 overlayStyle={{ maxWidth: '320px' }}
                 mouseEnterDelay={0.2}
+                overlayClassName={antdStyles.popoverClass}
               >
                 <div className={styles.title}>{item.cust}</div>
               </Popover>

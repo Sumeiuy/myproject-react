@@ -5,7 +5,7 @@
 export default function customerPool(api) {
   return {
     // 经营指标新增客户指标区域接口
-    getCustCount: query => api.post('/groovynoauth/fsp/emp/kpi/queryNewCustCount2', query),
+    getCustCount: query => api.post('/groovynoauth/fsp/emp/kpi/queryNewCustCount3', query),
     // 获取资讯中心统一接口
     getInformation: query => api.post('/groovynoauth/fsp/info/infoCenter/queryInfo', query),
     // 获取客户池沪深归集率 和 业务开通指标（经营指标）
@@ -34,16 +34,16 @@ export default function customerPool(api) {
     getMotTaskCount: query => api.post('/groovynoauth/fsp/emp/notification/queryMotTaskCount', query),
 
     // 客户列表
-    getCustomerList: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustList2', query),
+    getCustomerList: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustList3', query),
 
     // 客户列表中的6个月的收益数据
     getCustIncome: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustIncome', query),
 
     // 默认推荐词及热词推荐列表
-    getHotWds: query => api.post('/groovynoauth/fsp/cust/custlabel/queryHotWds2', query),
+    getHotWds: query => api.post('/groovynoauth/fsp/cust/custlabel/queryHotWds3', query),
 
     // 联想的推荐热词列表
-    getHotPossibleWds: query => api.post('/groovynoauth/fsp/cust/custlabel/queryPossibleHotWds2', query),
+    getHotPossibleWds: query => api.post('/groovynoauth/fsp/cust/custlabel/queryPossibleHotWds3', query),
 
     // 客户分组列表信息
     customerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustGroupList', query),
@@ -64,7 +64,7 @@ export default function customerPool(api) {
     updateTask: query => api.post('/groovynoauth/fsp/cust/task/updateTask', query),
 
     // 客户列表页添加服务记录
-    addCommonServeRecord: query => api.post('/groovynoauth/fsp/cust/service/addCommonServeRecord', query),
+    addCommonServeRecord: query => api.post('/groovynoauth/fsp/cust/service/addCommonServeRecord2', query),
 
     // 净创收数据
     queryKpiIncome: query => api.post('/groovynoauth/fsp/emp/kpi/queryNetIncome', query),
@@ -114,9 +114,6 @@ export default function customerPool(api) {
 
     queryLabelInfo: query => api.post('/groovynoauth/fsp/cust/task/queryLabelInfo2', query),
 
-    // 提交任务流程
-    submitTaskFlow: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
-
     // 任务列表-任务详情基本信息
     queryBasicInfo: query => api.post('/groovynoauth/fsp/flow/queryBasicInfo', query),
 
@@ -149,5 +146,7 @@ export default function customerPool(api) {
 
     // 提交审批流程
     submitApproval: query => api.post('/groovynoauth/fsp/flow/submitApproval', query),
+    // 查询持仓产品详情
+    queryHoldingProduct: query => api.post('/groovynoauth/fsp/cust/custbriefinfo/queryHoldingProduct', query),
   };
 }

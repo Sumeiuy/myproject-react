@@ -12,19 +12,24 @@ export default class CustomerTotal extends PureComponent {
     type: PropTypes.string.isRequired,
     num: PropTypes.number.isRequired,
     bname: PropTypes.string,
+    combinationName: PropTypes.string,
   }
 
   static defaultProps = {
     bname: '',
+    combinationName: '',
   }
 
   render() {
-    const { type, num, bname } = this.props;
+    // combinationName 是精选组合的订购组合跳转过来时带的组合名称
+    const { type, num, bname, combinationName } = this.props;
     let ele;
     switch (type) {
       case 'search':
         ele = <p className="total-num">满足搜索条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
         break;
+      case 'securitiesProducts':
+      case 'external':
       case 'association':
         ele = <p className="total-num">满足搜索条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
         break;
@@ -42,6 +47,9 @@ export default class CustomerTotal extends PureComponent {
         break;
       case 'sightingTelescope':
         ele = <p className="total-num">符合瞄准镜搜索条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
+        break;
+      case 'orderCombination':
+        ele = <p className="total-num">找到订购{decodeURIComponent(combinationName)}产品的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
         break;
       default: ele = <p className="total-num" />;
     }

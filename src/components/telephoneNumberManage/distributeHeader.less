@@ -1,0 +1,58 @@
+.distributeHeader {
+  .filterBox {
+    padding: 20px 0 10px;
+    &:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+    .filterFl {
+      float: left;
+      margin-right: 30px;
+      line-height: 32px;
+      .filterTitle {
+        font-size: 14px;
+        color: #aaa;
+        letter-spacing: 0;
+        text-align: left;
+        line-height: 20px;
+      }
+    }
+    :global {
+      //select边框
+      .ant-select {
+        .ant-select-selection {
+          background-color: transparent;
+          border: 1px solid transparent;
+        }
+        .ant-select-selection-selected-value {
+          font-size: 14px;
+        }
+      }
+      // 兼容ie下拉图标旋转样式
+      .ant-select-arrow {
+        transform: scale(0.75);
+      }
+
+      //多选下拉小图标样式
+      .ant-select-arrow:before {
+        content: "";
+        height: 0;
+        position: absolute;
+        right: 2px;
+        top: 5px;
+        width: 0;
+        border: none;
+        border-top: 10px solid #c2c2c2;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+      }
+      //清楚单选select小图标旋转
+      .ant-select-open .ant-select-arrow:before {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+    }
+  }
+}

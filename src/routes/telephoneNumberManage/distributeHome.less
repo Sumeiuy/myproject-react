@@ -1,0 +1,26 @@
+@import '../../css/variable.less';
+
+.distributeHomeBox {
+  background-color: #fff;
+  .advisorBindListTable {
+    .advisorBindListPagination {
+      margin-right: 25px;
+    }
+    margin-top: 10px;
+    :global {
+      table > tbody > tr:nth-child(odd) {
+        background-color: #fff;
+      }
+      table > thead > tr > th {
+        background-color: #f7f7f7;
+        text-align: left;
+      }
+      table > thead > tr > th:first-child {
+        padding-left: 20px;
+      }
+      table > tbody > tr > td:first-child {
+        padding-left: 20px;
+      }
+    }
+  }
+}

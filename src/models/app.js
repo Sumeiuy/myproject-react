@@ -16,12 +16,6 @@ export default {
   state: {
     // 字典数据
     dict: {},
-    // 显示隐藏添加服务记录弹窗，默认隐藏
-    serviceRecordModalVisible: false,
-    // 服务弹窗对应的客户的经纪客户号
-    serviceRecordModalVisibleOfId: '',
-    // 服务弹窗对应的客户的经纪客户名
-    serviceRecordModalVisibleOfName: '',
     empInfo: EMPTY_OBJECT,
     // 列表
     seibleList: EMPTY_OBJECT,
@@ -43,6 +37,18 @@ export default {
     creator: '',
     // mot自建任务的服务类型和反馈类型
     motSelfBuiltFeedbackList: [],
+    serviceRecordInfo: {
+      // 显示隐藏添加服务记录弹窗
+      modalVisible: false,
+      // 服务弹窗对应的客户的经纪客户号，mot任务中为任务的流水id
+      id: '',
+      // 服务弹窗对应的客户的名称
+      name: '',
+      // 服务弹窗的调用方
+      caller: '',
+      // 打电话时自动生成的服务记录的信息
+      autoGenerateRecordInfo: {},
+    },
   },
   reducers: {
     // 获取员工职责与职位
@@ -124,9 +130,13 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        serviceRecordModalVisible: payload.flag,
-        serviceRecordModalVisibleOfId: payload.custId,
-        serviceRecordModalVisibleOfName: payload.custName,
+        serviceRecordInfo: {
+          modalVisible: payload.flag,
+          id: payload.id || payload.custId,
+          name: payload.name || payload.custName,
+          caller: payload.caller,
+          autoGenerateRecordInfo: payload.autoGenerateRecordInfo,
+        },
       };
     },
     getDictionarySuccess(state, action) {
@@ -172,6 +182,18 @@ export default {
         motSelfBuiltFeedbackList: missionList,
       };
     },
+    resetServiceRecordInfo(state) {
+      return {
+        ...state,
+        serviceRecordInfo: {
+          modalVisible: false,
+          id: '',
+          name: '',
+          caller: '',
+          autoGenerateRecordInfo: {},
+        },
+      };
+    },
   },
   effects: {
     // 获取员工职责与职位
@@ -195,6 +217,13 @@ export default {
     },
     // 显示与隐藏创建服务记录弹框
     * toggleServiceRecordModal({ payload }, { put }) {
+      // 获取自建任务平台的服务类型、任务反馈字典
+      yield put({
+        type: 'getMotCustfeedBackDict',
+        payload: { pageNum: 1, pageSize: 10000, type: 2 },
+      });
+      // 唤起创建服务记录的弹窗时请求Uuid
+      yield put({ type: 'performerView/queryCustUuid' });
       yield put({
         type: 'toggleServiceRecordModalSuccess',
         payload,
@@ -287,17 +316,11 @@ export default {
     },
   },
   subscriptions: {
-    setup({ dispatch, history }) {
+    setup({ dispatch }) {
       // 加载员工职责与职位
       dispatch({ type: 'getEmpInfo' });
       // 获取字典
       dispatch({ type: 'getDictionary' });
-      return history.listen(({ pathname }) => {
-        if (pathname === '/customerPool/list') {
-          // 获取自建任务平台的服务类型、任务反馈字典
-          dispatch({ type: 'getMotCustfeedBackDict', payload: { pageNum: 1, pageSize: 1000000, type: 2 } });
-        }
-      });
     },
   },
 };

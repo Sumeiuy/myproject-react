@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-09 15:12:05
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-10 22:24:45
  */
 
 import React, { PureComponent } from 'react';
@@ -22,11 +22,11 @@ import SimpleSearch from '../../components/customerPool/groupManage/CustomerGrou
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import { openRctTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
-import confirm from '../../components/common/Confirm';
+import confirm from '../../components/common/confirm_';
 import withRouter from '../../decorators/withRouter';
 import styles from './customerGroupManage.less';
 import tableStyles from '../../components/common/commonTable/index.less';
-import logable, { logPV } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -473,7 +473,6 @@ export default class CustomerGroupManage extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubmit(e) {
     if (this.detailRef) {
       const { groupId, includeCustIdList } = this.detailRef.getData();
@@ -481,9 +480,24 @@ export default class CustomerGroupManage extends PureComponent {
       e.persist();
       this.detailRef.getForm().validateFields((err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values);
           const { name = '', description } = values;
           this.submitFormContent(name, description, groupId, includeCustIdList);
+          // log日志 --- 新建客户分组
+          const type = groupId ? '编辑' : '新建';
+          const formValues = {
+            ...values,
+            groupId,
+            includeCustIdList,
+          };
+          logCommon({
+            type: 'Submit',
+            payload: {
+              name: values.name,
+              type,
+              number: includeCustIdList.length,
+              value: JSON.stringify(formValues),
+            },
+          });
         } else {
           message.error('请输入分组名称');
         }

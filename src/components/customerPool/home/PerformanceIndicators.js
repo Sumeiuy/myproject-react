@@ -18,7 +18,6 @@ import IfEmpty from '../common/IfEmpty';
 import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
 import ProgressList from './ProgressList';
-import styles from './performanceIndicators.less';
 import logable from '../../../decorators/logable';
 import {
   getHSRate,
@@ -33,6 +32,9 @@ import {
   getTradingVolume,
 } from './homeIndicators_';
 
+import antdStyles from '../../../css/antd.less';
+import styles from './performanceIndicators.less';
+
 // [{name: 1}, {name: 2}] 转成 [1,2]
 const getLabelList = arr => arr.map(v => (v || {}).name);
 
@@ -44,11 +46,10 @@ export default class PerformanceIndicators extends PureComponent {
     cycle: PropTypes.array,
     location: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
-    custCount: React.PropTypes.oneOfType([
+    custCount: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.array,
-    ]), // 问了后端的逻辑，当有报错时，返回的是空对象，当正常时，返回的是数组
-    authority: PropTypes.bool.isRequired,
+    ]), // 问了后端的逻辑，当有报错时，返回的是空对象，当正常时，返回的是数
   }
 
   static defaultProps = {
@@ -95,7 +96,6 @@ export default class PerformanceIndicators extends PureComponent {
     const {
       push,
       cycle,
-      authority,
       location,
     } = this.props;
     const param = {
@@ -104,7 +104,6 @@ export default class PerformanceIndicators extends PureComponent {
       push,
       location,
       bname: arg.name || arg.value,
-      authority,
     };
     // 点击柱子，arg.name，arg.value都有值
     // 点击x轴， arg.value有值，不存在arg.name
@@ -152,11 +151,11 @@ export default class PerformanceIndicators extends PureComponent {
       const descKey = _.findKey(indicators, o => o.name === value);
       timeout = setTimeout(() => {
         this.setState({
-          isToolTipVisible: true,
+          isToolTipVisible: !!descKey,
           posX,
           posY,
-          desc: indicators[descKey].description,
-          title: indicators[descKey].name,
+          desc: (indicators[descKey] || {}).description || '',
+          title: (indicators[descKey] || {}).name || '',
         });
       }, 200);
     });
@@ -359,7 +358,6 @@ export default class PerformanceIndicators extends PureComponent {
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalData = getProductSale(argument);
     const headLine = { icon: 'shouru', title: param.headLine };
-    const { authority } = this.props;
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
@@ -368,7 +366,6 @@ export default class PerformanceIndicators extends PureComponent {
               dataSource={finalData}
               key={param.key}
               type={'productSale'}
-              authority={authority}
             />
           </IfEmpty>
         </RectFrame>
@@ -411,6 +408,7 @@ export default class PerformanceIndicators extends PureComponent {
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
+                  overlayClassName={antdStyles.popoverClass}
                 >
                   <span className={styles.chartLabel}>{data[0].name}</span>
                 </Popover>
@@ -420,6 +418,7 @@ export default class PerformanceIndicators extends PureComponent {
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
+                  overlayClassName={antdStyles.popoverClass}
                 >
                   <span className={styles.chartLabel}>{data[1].name}</span>
                 </Popover>
@@ -429,6 +428,7 @@ export default class PerformanceIndicators extends PureComponent {
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
+                  overlayClassName={antdStyles.popoverClass}
                 >
                   <span className={styles.chartLabel}>{data[2].name}</span>
                 </Popover>
@@ -438,6 +438,7 @@ export default class PerformanceIndicators extends PureComponent {
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
+                  overlayClassName={antdStyles.popoverClass}
                 >
                   <span className={styles.chartLabel}>{data[3].name}</span>
                 </Popover>
@@ -452,7 +453,7 @@ export default class PerformanceIndicators extends PureComponent {
   // 新增客户
   @autobind
   renderPureAddCustIndicators(param) {
-    const { cycle, push, location, empInfo, custCount, authority } = this.props;
+    const { cycle, push, location, empInfo, custCount } = this.props;
     const isEmpty = _.isEmpty(custCount);
     const { newUnit: pureAddUnit, items: pureAddItems } = getPureAddCust({
       pureAddData: isEmpty ? [0, 0, 0, 0] : custCount,
@@ -469,7 +470,6 @@ export default class PerformanceIndicators extends PureComponent {
               push={push}
               location={location}
               empInfo={empInfo}
-              authority={authority}
             />
           </IfEmpty>
         </RectFrame>
@@ -531,6 +531,7 @@ export default class PerformanceIndicators extends PureComponent {
           title={title}
           content={desc}
           placement="bottom"
+          overlayClassName={antdStyles.popoverClass}
         >
           <span style={{ position: 'fixed', left: posX, top: posY }} />
         </Popover>

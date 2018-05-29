@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-16 15:05:16
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-18 14:40:16
  * @description 客户池头部搜索组件
  */
 
@@ -12,18 +12,19 @@ import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { padSightLabelDesc } from '../../../config';
 import Icon from '../../common/Icon';
 import { isSightingScope } from '../helper';
-import { MAIN_MAGEGER_ID } from '../../../routes/customerPool/config';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
 const EMPTY_LIST = [];
 const NONE_INFO = '按回车键发起搜索';
+// 标签的类型值
+const LABEL = 'LABEL';
 let guid = 0;
 
 export default class Search extends PureComponent {
@@ -37,7 +38,7 @@ export default class Search extends PureComponent {
     searchHistoryVal: PropTypes.string,
     saveSearchVal: PropTypes.func,
     location: PropTypes.object.isRequired,
-    authority: PropTypes.bool.isRequired,
+    isPreview: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -46,6 +47,7 @@ export default class Search extends PureComponent {
     saveSearchVal: () => { },
     queryHotWdsData: EMPTY_LIST,
     searchHistoryVal: '',
+    isPreview: false,
   }
 
   constructor(props) {
@@ -75,15 +77,12 @@ export default class Search extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
   handleOpenTab(options) {
-    const { push, location: { query }, authority, orgId } = this.props;
+    const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.props.saveSearchVal({
       searchVal: this.state.value,
     });
-    // 有任务管理岗权限将orgId带到下一个页面,没权限orgId传msm
-    const newOrgId = authority ? orgId : MAIN_MAGEGER_ID;
-    const newQuery = { ...options, orgId: newOrgId };
-    const condition = urlHelper.stringify(newQuery);
+    const condition = urlHelper.stringify(options);
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
@@ -97,7 +96,7 @@ export default class Search extends PureComponent {
       url,
       param,
       pathname: firstUrl,
-      query: newQuery,
+      query: options,
       // 方便返回页面时，记住首页的query，在本地环境里
       state: {
         ...query,
@@ -111,30 +110,23 @@ export default class Search extends PureComponent {
       return [{
         query,
         category: NONE_INFO,
-        name: NONE_INFO,
+        value: NONE_INFO,
         description: NONE_INFO,
         id: NONE_INFO,
       }];
     }
-    return _.map(hotList, (item, index) => {
-      if (item.type === 'label') {
-        return {
-          query,
-          category: `${item.name}${index}`,
-          name: item.name,
-          description: item.description,
-          id: item.id,
-          type: item.source,
-        };
-      }
-      return {
+    return _.map(hotList, (item, index) => (
+      {
         query,
         category: `${item.value}${index}`,
-        name: item.value,
+        value: item.value,
         description: item.description,
+        id: item.primaryKey,
         type: item.type,
-      };
-    });
+        source: item.source,
+        name: item.name,
+      }
+    ));
   }
 
   @autobind
@@ -152,25 +144,41 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '目标客户池首页搜索框',
-      value: '$args[0]',
-    },
-  })
   handleSelect(value) {
-    const item = _.find(this.state.dataSource, child => child.name === value);
-    const sightingScopeBool = isSightingScope(item.type);
-    this.handleOpenTab({
+    const item = _.find(this.state.dataSource, child => child.id === value);
+    const sightingScopeBool = isSightingScope(item.source);
+    let query = {
       source: sightingScopeBool ? 'sightingTelescope' : 'association',
-      labelMapping: sightingScopeBool ? item.id : item.type,
+      labelMapping: item.id,
       // 任务提示
-      missionDesc: padSightLabelDesc(sightingScopeBool, item.id, item.name),
-      labelName: encodeURIComponent(item.name),
+      missionDesc: padSightLabelDesc({
+        sightingScopeBool,
+        labelId: item.id,
+        labelName: item.value,
+        isLabel: item.type === LABEL,
+      }),
+      labelName: encodeURIComponent(item.value),
       labelDesc: encodeURIComponent(item.description),
-      q: encodeURIComponent(item.name),
+      q: encodeURIComponent(item.value),
+      type: item.type,
+    };
+    // 查到的时持仓产品，传持仓产品的名称
+    if (item.type === 'PRODUCT' && item.name) {
+      query = { ...query, productName: encodeURIComponent(item.name) };
+    }
+
+    // log日志 --- 首页搜索选中
+    const subtype = sightingScopeBool ? '瞄准镜' : item.description;
+    logCommon({
+      type: 'DropdownSelect',
+      payload: {
+        name: '首页搜索框',
+        value,
+        type: 'dropdownSelect',
+        subtype,
+      },
     });
+    this.handleOpenTab(query);
   }
 
   @autobind
@@ -179,7 +187,6 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '目标客户池首页回车搜索' } })
   handlePressEnter() {
     // 如果当期有选中项，走select逻辑，不做任何处理
     const activeItemElement = document.querySelector(
@@ -192,13 +199,22 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '目标客户池首页搜索' } })
   handleClickButton() {
     const { value } = this.state;
     const newValue = _.trim(value);
     if (newValue.length === 0) {
       return false;
     }
+    // log日志 --- 首页搜索点击
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: '首页搜索框',
+        value,
+        type: 'click',
+        subtype: '',
+      },
+    });
     this.handleOpenTab({
       source: 'search',
       q: encodeURIComponent(newValue),
@@ -225,13 +241,13 @@ export default class Search extends PureComponent {
   @autobind
   renderOption(item) {
     const { value } = this.state;
-    const newContent = item.name.replace(value, `<em>${value}</em>`);
-    const sightingScopeBool = isSightingScope(item.type);
+    const newContent = (item.value || '').replace(value, `<em>${value}</em>`);
+    const sightingScopeBool = isSightingScope(item.source);
     // 联想 association
     // 搜索 search
     // 标签 tag
     return (
-      <Option key={item.name} text={item.name}>
+      <Option key={item.id} text={item.value}>
         <a
           dangerouslySetInnerHTML={{ __html: newContent }} // eslint-disable-line
           rel="noopener noreferrer"
@@ -244,7 +260,7 @@ export default class Search extends PureComponent {
   @autobind
   renderNoneSearchResult(item) {
     return (
-      <Option key={item.name} text={item.name} disabled>
+      <Option key={item.value} text={item.value} disabled>
         {item.description}
       </Option>
     );
@@ -252,6 +268,7 @@ export default class Search extends PureComponent {
 
   @autobind
   renderRecommend(data) {
+    const { isPreview } = this.props;
     if (data.length <= 0) {
       return null;
     }
@@ -260,15 +277,24 @@ export default class Search extends PureComponent {
         className="item"
         title={item.description}
         rel="noopener noreferrer"
-        onClick={() => this.handleOpenTab({
-          source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
-          labelMapping: item.id || '',
-          labelName: encodeURIComponent(item.name),
-          labelDesc: encodeURIComponent(item.description),
-          // 任务提示
-          missionDesc: padSightLabelDesc(isSightingScope(item.source), item.id, item.name),
-          q: encodeURIComponent(item.name),
-        })}
+        onClick={() => {
+          if (!isPreview) {
+            this.handleOpenTab({
+              source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
+              labelMapping: item.id || '',
+              labelName: encodeURIComponent(item.name),
+              labelDesc: encodeURIComponent(item.description),
+              // 任务提示
+              missionDesc: padSightLabelDesc({
+                sightingScopeBool: isSightingScope(item.source),
+                labelId: item.id,
+                labelName: item.name,
+              }),
+              q: encodeURIComponent(item.name),
+              type: LABEL,
+            });
+          }
+        }}
         key={item.id}
       >
         {item.name}
@@ -277,7 +303,15 @@ export default class Search extends PureComponent {
   }
 
   render() {
-    const { hotWdsList = EMPTY_LIST, searchHistoryVal } = this.props;
+    const { hotWdsList = EMPTY_LIST, searchHistoryVal, isPreview } = this.props;
+    const autoCompleteOption = isPreview ? {} :
+    {
+      dataSource: this.renderDatasource(),
+      onSelect: this.handleSelect,
+      onSearch: this.handleSearch,
+      onChange: this.handleChange,
+      defaultValue: searchHistoryVal,
+    };
 
     return (
       <div className={styles.searchBox}>
@@ -290,23 +324,19 @@ export default class Search extends PureComponent {
                 dropdownClassName={`certain-category-search-dropdown ${this.dropdownClassName}`}
                 size="large"
                 style={{ width: '100%' }}
-                dataSource={this.renderDatasource()}
-                onSelect={this.handleSelect}
-                onSearch={this.handleSearch}
-                onChange={this.handleChange}
                 placeholder={'经纪客户号、姓名、电话、身份证号码或你感兴趣的关键字'}
                 optionLabelProp="text"
-                defaultValue={searchHistoryVal}
                 defaultActiveFirstOption={false}
+                {...autoCompleteOption}
               >
                 <Input
-                  onPressEnter={this.handlePressEnter}
+                  onPressEnter={isPreview ? null : this.handlePressEnter}
                   suffix={(
                     <Button
                       className="search-btn"
                       size="large"
                       type="primary"
-                      onClick={this.handleClickButton}
+                      onClick={isPreview ? null : this.handleClickButton}
                     >
                       <AntdIcon type="search" />
                     </Button>

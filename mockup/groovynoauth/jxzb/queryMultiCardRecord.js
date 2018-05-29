@@ -391,10 +391,10 @@ exports.response = function (req, res) {
             {
               indiModel: {
                 key: 'newCustNum',
-                name: '新开客户数',
+                name: '新增客户数',
                 value: null,
                 unit: '户',
-                description: '统计周期内新开客户数量',
+                description: '统计周期内新增且成为有效户的客户数',
                 categoryKey: null,
                 isBelongsSummury: null,
                 hasChildren: 'Y',

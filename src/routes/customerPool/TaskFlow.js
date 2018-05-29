@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-16 15:45:05
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-14 10:10:09
  */
 
 import React, { PureComponent } from 'react';
@@ -10,12 +10,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import { routerRedux } from 'dva/router';
-import { Steps, message, Button, Mention, Modal } from 'antd';
+import { Steps, message, Button, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { stateToHTML } from 'draft-js-export-html';
 import { removeTab, closeRctTab } from '../../utils';
-import { emp, permission, env as envHelper, number } from '../../helper';
+import { emp, permission, number, regxp } from '../../helper';
 import { validateFormContent } from '../../decorators/validateFormContent';
 import ResultTrack from '../../components/common/resultTrack/ConnectedComponent';
 import MissionInvestigation from '../../components/common/missionInvestigation/ConnectedComponent';
@@ -23,9 +22,8 @@ import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
 import SelectTargetCustomer from '../../components/customerPool/taskFlow/step1/SelectTargetCustomer';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
-// import replaceMissionDesc from '../../components/customerPool/common/MissionDescMention';
 import withRouter from '../../decorators/withRouter';
-import logable from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 import styles from './taskFlow.less';
 
 const Step = Steps.Step;
@@ -33,7 +31,6 @@ const Step = Steps.Step;
 const orgId = emp.getOrgId();
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-const { toString } = Mention;
 // 瞄准镜标签入口
 const SIGHT_LABEL_ENTRY = 1;
 
@@ -264,6 +261,12 @@ export default class TaskFlow extends PureComponent {
       currentFilterNum,
       currentEntry,
       nextStepBtnIsDisabled, // 用来控制下一步按钮的是否可点击状态
+      // logable点击下一步的来源值
+      subtype: '',
+      // logable点击下一步的任务名称
+      taskName: '',
+      // logable点击下一步的客户来源
+      enterType: '',
     };
 
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -381,7 +384,7 @@ export default class TaskFlow extends PureComponent {
       newPostBody = _.merge(newPostBody, {
         searchReq: {
           enterType: 'labelSearchCustPool',
-          labels: [labelId],
+          primaryKey: [labelId],
         },
       });
     } else {
@@ -389,7 +392,12 @@ export default class TaskFlow extends PureComponent {
         searchReq: _.omit(currentLabelQueryCustomerParam, ['curPageNum', 'pageSize']),
       });
     }
-
+    newPostBody = _.merge(newPostBody, {
+      searchReq: {
+        searchTypeReq: 'LABEL',
+        // searchText: currentSelectLabelName,
+      },
+    });
     return newPostBody;
   }
 
@@ -402,7 +410,6 @@ export default class TaskFlow extends PureComponent {
    * 点击下一步，校验所有信息，然后下一步界面
    */
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '下一步' } })
   handleNextStep() {
     // 下一步
     const {
@@ -441,16 +448,21 @@ export default class TaskFlow extends PureComponent {
           custNum,
           customNum,
           missionDesc,
+          currentSelectLabelName,
         },
       } = sightingTelescope;
+      // logable日志subtype值
+      let subtype = '';
       // currentEntry为0 时 表示当前是导入客户
       // 为1 时 表示当前是瞄准镜
       if (currentEntry === 0) {
+        subtype = custSegment.custSource;
         if (!uploadedFileKey) {
           isSelectCust = false;
           return;
         }
       } else if (currentEntry === 1) {
+        subtype = currentSelectLabelName;
         if (!labelId) {
           isSelectCust = false;
           return;
@@ -470,11 +482,14 @@ export default class TaskFlow extends PureComponent {
           return;
         }
 
-        postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
+        postBody = this.addOrgIdOrPtyMngId(
+          postBody,
+          argsOfQueryCustomer,
+          labelId,
+          currentSelectLabelName,
+        );
       }
-
       pickTargetCustomerData = { ...pickTargetCustomerData, labelCust, custSegment };
-
       isSendCustsServedByPostn({
         ...postBody,
       }).then(() => {
@@ -547,6 +562,23 @@ export default class TaskFlow extends PureComponent {
           }
         }
       });
+
+      // logable日志---目标客户
+      const enterType = currentEntry === 0 ? '导入客户' : '瞄准镜圈人';
+      this.setState({
+        subtype,
+        enterType,
+      });
+      logCommon({
+        type: 'Submit',
+        payload: {
+          title: '目标客户',
+          type: enterType,
+          subtype,
+          value: subtype,
+          name: '',
+        },
+      });
     } else if (current === 1) {
       isAllowGoNextStep = true;
       // 拿到form表单component
@@ -562,29 +594,27 @@ export default class TaskFlow extends PureComponent {
           isFormError = true;
           isFormValidate = false;
         }
-        // 获取服务策略内容并进行转换toString(为了按照原有逻辑校验)和HTML
-        const serviceStateData = taskForm.getFieldValue('serviceStrategySuggestion');
-        const serviceStrategyString = toString(serviceStateData);
-        // serviceStateData为空的时候经过stateToHTML方法也会生成标签，进入判断是否为空时会异常所以做个判断
-        // 这边判断长度是用经过stateToHTML方法的字符串进行判断，是带有标签的，所以实际长度和看到的长度会有出入，测试提问的时候需要注意
-        const serviceStrategyHtml = serviceStrategyString ? stateToHTML(serviceStateData) : '';
-
-        const formDataValidation =
-          this.checkFormField({
-            ...values,
-            isFormError,
-            serviceStrategySuggestion: serviceStrategyHtml,
-            serviceStrategyString,
-          });
+        const formDataValidation = this.checkFormField({ ...values, isFormError });
 
         if (formDataValidation) {
           taskFormData = {
             ...taskFormData,
             ...taskForm.getFieldsValue(),
-            serviceStrategySuggestion: serviceStrategyString,
-            serviceStrategyHtml,
           };
           isFormValidate = true;
+          // logable日志---任务信息
+          const { subtype, enterType } = this.state;
+          this.setState({ taskName: values.taskName });
+          logCommon({
+            type: 'Submit',
+            payload: {
+              title: '任务信息',
+              type: enterType,
+              subtype,
+              value: JSON.stringify(values),
+              name: values.taskName,
+            },
+          });
         } else {
           isFormValidate = false;
         }
@@ -592,11 +622,10 @@ export default class TaskFlow extends PureComponent {
 
       // 校验任务提示
       const templetDesc = formComponent.getData();
-      const templeteDescHtml = stateToHTML(formComponent.getData(true));
-
-      taskFormData = { ...taskFormData, templetDesc, templeteDescHtml };
-      if (_.isEmpty(templetDesc)
-        || templeteDescHtml.length > 1000) {
+      let trimTempletDesc = _.replace(templetDesc, regxp.returnLine, '');
+      trimTempletDesc = _.trim(trimTempletDesc);
+      taskFormData = { ...taskFormData, templetDesc };
+      if (_.isEmpty(trimTempletDesc) || trimTempletDesc.length > 1000) {
         isFormValidate = false;
         this.setState({
           isShowErrorInfo: true,
@@ -696,6 +725,30 @@ export default class TaskFlow extends PureComponent {
           isMissionInvestigationValidate = true;
         }
       }
+
+      // logable日志---任务评估
+      const { subtype, enterType, taskName, needMissionInvestigation } = this.state;
+      let values = {};
+      if (needMissionInvestigation) {
+        values = {
+          ...resultTrackData,
+          ...missionInvestigationData,
+        };
+      } else {
+        values = {
+          ...resultTrackData,
+        };
+      }
+      logCommon({
+        type: 'Submit',
+        payload: {
+          title: '任务评估',
+          type: enterType,
+          subtype,
+          value: JSON.stringify(values),
+          name: taskName,
+        },
+      });
     }
 
     if (isFormValidate
@@ -725,7 +778,7 @@ export default class TaskFlow extends PureComponent {
   @autobind
   @validateFormContent
   checkFormField(values) {
-    console.log(values);
+    return JSON.stringify(values);
   }
 
   @autobind
@@ -756,7 +809,6 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '确认无误，提交' } })
   handleSubmitTaskFlow() {
     const { storedTaskFlowData, templateId } = this.props;
     const {
@@ -793,11 +845,11 @@ export default class TaskFlow extends PureComponent {
       labelDesc,
       uploadedFileKey: fileId,
       executionType,
-      serviceStrategyHtml,
+      serviceStrategySuggestion,
       taskName,
       taskType,
       labelId,
-      templeteDescHtml,
+      templetDesc,
       timelyIntervalValue,
       // 跟踪窗口期
       trackWindowDate,
@@ -826,10 +878,10 @@ export default class TaskFlow extends PureComponent {
 
     let postBody = {
       executionType,
-      serviceStrategySuggestion: serviceStrategyHtml, // 转换成html提交
+      serviceStrategySuggestion,
       taskName,
       taskType,
-      templetDesc: templeteDescHtml, // 转换成html提交
+      templetDesc,
       timelyIntervalValue,
     };
 
@@ -884,7 +936,7 @@ export default class TaskFlow extends PureComponent {
         ...postBody,
       };
     } else {
-      postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId);
+      postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId, labelName);
       postBody = {
         ...postBody,
         queryLabelReq: {
@@ -894,6 +946,22 @@ export default class TaskFlow extends PureComponent {
       };
     }
     this.decoratorSubmitTaskFlow(postBody);
+    // logable日志---确认提交
+    const { subtype, enterType, taskName: name, currentSelectRecord } = this.state;
+    const values = {
+      ...postBody,
+      ...currentSelectRecord,
+    };
+    logCommon({
+      type: 'Submit',
+      payload: {
+        title: '确认提交',
+        type: enterType,
+        subtype,
+        value: JSON.stringify(values),
+        name,
+      },
+    });
   }
 
   // 校验审批人是否为空
@@ -1093,6 +1161,7 @@ export default class TaskFlow extends PureComponent {
       getFiltersOfSightingTelescope,
       sightingTelescopeFilters,
       previewCustFile,
+      location,
     } = this.props;
 
     // 拿到自建任务需要的missionType
@@ -1111,7 +1180,7 @@ export default class TaskFlow extends PureComponent {
     // 只有选择了标签或者切换了标签，才需要替换任务提示，并且给出任务提示
     // 变量文字全部高亮显示
     if (missionDesc && currentEntry === 1) {
-      newMissionDesc = missionDesc;
+      newMissionDesc = decodeURIComponent(missionDesc);
     }
 
     const isShowTitle = true;
@@ -1209,11 +1278,6 @@ export default class TaskFlow extends PureComponent {
         checkApproverIsEmpty={this.checkApproverIsEmpty}
       />,
     }];
-
-    // 灰度发布展示结果跟踪和任务调查，默认不展示
-    if (!envHelper.isGrayFlag()) {
-      steps.splice(2, 1);
-    }
 
     const stepsCount = _.size(steps);
 

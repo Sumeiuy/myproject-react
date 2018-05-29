@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-02-01 15:54:07
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-05-15 10:56:34
  * @description 分割组件
  * 此组件中
  * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
@@ -34,12 +34,16 @@ export default class CutScreen extends PureComponent {
     rightPanel: PropTypes.element,
     leftListClassName: PropTypes.string,
     leftWidth: PropTypes.number,
+    // 在头部筛选区域的上方在某些页面上面还有额外的内容，如业务手机申请页面
+    // splitPanel计算高度的时候需要减去的额外的高度
+    extraHeight: PropTypes.number,
   }
 
   static defaultProps = {
     leftListClassName: 'pageCommonList',
     rightPanel: null,
     leftWidth: 520,
+    extraHeight: 0,
   }
 
   constructor(props) {
@@ -56,7 +60,8 @@ export default class CutScreen extends PureComponent {
     // 初始化当前系统
     this.UTBContentElem = document.querySelector(config.utb);
     // 将系统的Margin设置为0;
-    this.setUTBContentMargin(0, 0, 0);
+    // 按照需求要求，完全贴边太丑，要求右侧给一点margin所以修改
+    this.setUTBContentMargin(0, '10px', 0);
     // 监听window.onResize事件
     this.registerWindowResize();
     this.initPanel();
@@ -110,6 +115,7 @@ export default class CutScreen extends PureComponent {
   // 设置分割区域的滚动
   @autobind
   setDocumentScroll() {
+    const { extraHeight } = this.props;
     // 1.首先获取视口高度
     const viewportHeight = this.getViewHeight();
     // 目前CRM系统存在三种情况: 1.嵌入FSP系统页面 2.嵌入React系统页面 3.独立的开发页面
@@ -118,18 +124,19 @@ export default class CutScreen extends PureComponent {
     // 独立开发的页面容器高度就是 viewportHeight
     // 因为新的CutScreen组件使用display: flex;来使用内部高度，
     // 因此组件只需要计算出容器的高度并赋值即可
-    let pch = viewportHeight;
+    let cutScreenContainerHeight = viewportHeight;
     if (env.isInFsp()) {
-      pch = viewportHeight - config.fspHeaderHeight;
+      cutScreenContainerHeight = viewportHeight - config.fspHeaderHeight;
       // 因为FSP系统和独立开发系统均在 '#container', '#content'容器下
     }
     if (env.isInReact()) {
       // React系统下是在'#react-content'容器下
-      pch = viewportHeight - config.reactHeaderHeight;
+      cutScreenContainerHeight = viewportHeight - config.reactHeaderHeight;
     }
-    dom.setStyle(this.splitPanel, 'height', `${pch}px`);
+    cutScreenContainerHeight -= extraHeight;
+    dom.setStyle(this.splitPanel, 'height', `${cutScreenContainerHeight}px`);
     // 将split的高度保存下来;
-    this.splitHeight = pch;
+    this.splitHeight = cutScreenContainerHeight;
     this.setSplitMainHeight();
   }
 

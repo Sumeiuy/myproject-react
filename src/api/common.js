@@ -1,7 +1,7 @@
 /**
  * @Description: 公用的接口
- * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-05 14:36:04
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-15 15:14:45
  */
 export default function common(api) {
   return {
@@ -17,5 +17,7 @@ export default function common(api) {
     getServiceType: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList2', query),
     // 查询瞄准镜筛选条件
     getFiltersOfSightingTelescope: query => api.post('/groovynoauth/fsp/cust/custlist/queryFilters', query),
+    // 增加通话记录接口，关联服务记录
+    addCallRecord: query => api.post('/groovynoauth/fsp/emp/mobilebinding/addCallRecord', query),
   };
 }

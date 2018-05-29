@@ -21,7 +21,8 @@
  * okText：有默认值：确定，按钮的title
  * cancelText: 有默认值：取消，按钮的title
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Input, Modal, message } from 'antd';
 import classnames from 'classnames';
@@ -176,10 +177,10 @@ export default class EditModal extends Component {
           <div className={styles.inputColumn}>
             <AutoComplete
               placeholder="工号/姓名"
-              showObjKey="ptyMngName"
-              objId="ptyMngId"
-              defaultSearchValue={(_.isEmpty(select) ? '' : `${name}（${code}）`)}
-              searchList={list}
+              showNameKey="ptyMngName"
+              showIdKey="ptyMngId"
+              defaultValue={(_.isEmpty(select) ? '' : `${name}（${code}）`)}
+              optionList={list}
               onSelect={this.handleSelect}
               onSearch={this.handleSearch}
             />

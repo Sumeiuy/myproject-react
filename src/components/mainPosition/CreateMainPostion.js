@@ -19,7 +19,7 @@ import TableDialog from '../common/biz/TableDialog';
 import CommonTable from '../../components/common/biz/CommonTable';
 import { emp } from '../../helper';
 import config from './config';
-import commonConfirm from '../common/Confirm';
+import commonConfirm from '../common/confirm_';
 import styles from './createMainPostion.less';
 import logable from '../../decorators/logable';
 
@@ -303,9 +303,9 @@ export default class CreateFilialeCustTransfer extends PureComponent {
             <InfoForm label="服务经理" style={{ width: 'auto' }}>
               <AutoComplete
                 placeholder="工号/姓名"
-                showObjKey="name"
-                objId="login"
-                searchList={employeeList}
+                showNameKey="name"
+                showIdKey="login"
+                optionList={employeeList}
                 onSelect={this.selectHandle}
                 onSearch={this.searchHandle}
                 ref={selectEmployee => this.selectEmployee = selectEmployee}

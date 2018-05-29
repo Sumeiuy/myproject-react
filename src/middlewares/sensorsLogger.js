@@ -93,7 +93,7 @@ function getExtraData(action) {
           }
           const propertyValue = _.get(payload, value);
           if (_.isObject(propertyValue)) {
-            return { ...mergedData, ...propertyValue };
+            return { ...mergedData, [value]: JSON.stringify(propertyValue) };
           }
           return { ...mergedData, [value]: propertyValue };
         },
@@ -156,7 +156,7 @@ function sendAPILog(data) {
 // 发送缓冲区日志
 function flushLog() {
   const data = [...QUEUE];
-  if (data.length > 1) {
+  if (data.length > 0) {
     sendAPILog(data).then(
       () => {
         QUEUE = [];
@@ -176,7 +176,9 @@ function sendLog(action) {
   }
   const data = getLogData(action);
   // profile_set拿到以后单独发送
-  if (data.type === EVENT_PROFILE_KEY) {
+  if (data.type === EVENT_PROFILE_KEY
+    || /Error$/.test(data.event)
+  ) {
     sendAPILog([data]);
     return;
   }

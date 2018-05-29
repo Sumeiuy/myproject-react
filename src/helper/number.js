@@ -60,6 +60,25 @@ const number = {
     }
     return `${itegerF}${decimalF}`;
   },
+
+  /**
+   * 数字取小数点后几位
+   * @author Liujianshu
+   * @param {String|Number} 需要操作的数字
+   * @param {String|Number} 需要取小数点后几位，默认为两位
+   * @returns {String} 格式化后的字符串
+   */
+  toFixed(value = '', length = 2) {
+    let newValue = value;
+    if (_.isNumber(newValue)) {
+      newValue = newValue.toFixed(length);
+      // 数字过小时，取两位小数可能等于 0 ，等于 0 时，显示 0.00
+      if (Math.abs(newValue) === 0) {
+        newValue = '0.00';
+      }
+    }
+    return newValue;
+  },
 };
 
 export default number;

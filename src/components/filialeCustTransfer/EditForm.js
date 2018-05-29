@@ -2,13 +2,14 @@
  * @Author: hongguangqing
  * @Description: 分公司客户人工划转修改页面
  * @Date: 2018-01-30 09:43:02
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-04-16 10:15:05
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-04-20 18:32:32
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, Modal } from 'antd';
+import { message, Modal, AutoComplete as AntdAutoComplete } from 'antd';
 import _ from 'lodash';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
@@ -24,8 +25,10 @@ import { seibelConfig } from '../../config';
 import styles from './editForm.less';
 import logable from '../../decorators/logable';
 
+const Option = AntdAutoComplete.Option;
 const confirm = Modal.confirm;
 const { filialeCustTransfer: { pageType } } = seibelConfig;
+const EMPTY_OBJECT = {};
 // 表头
 const { titleList, approvalColumns } = seibelConfig.filialeCustTransfer;
 const SINGLECUSTTRANSFER = '0701'; // 单客户人工划转
@@ -222,6 +225,16 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     const { getNewManagerList } = this.props;
     getNewManagerList({
       login: v,
+    }).then(() => {
+      const { newManagerList } = this.props;
+      const item = newManagerList[0] || EMPTY_OBJECT;
+      const inputValue = `${item.newEmpName} ${item.newEmpId} ${item.newOrgName} ${item.newPostnName}`;
+      // 查询的新服务经理不为空并且只有一条时，直接回填到AutoComplete组件中去
+      if (!_.isEmpty(newManagerList) && newManagerList.length === 1) {
+        this.queryManagerComponent.handleSelect(inputValue, { key: item.showSelectName });
+        // 数据回填之后触发Autocomplete组件的blur事件，使搜索结果隐藏;
+        this.queryManagerComponent.autoCompleteComponent.blur();
+      }
     });
   }
 
@@ -327,6 +340,21 @@ export default class FilialeCustTransferEditForm extends PureComponent {
     });
   }
 
+  @autobind
+  renderOption(item) {
+    const optionValue = item.showSelectName;
+    const inputValue = `${item.newEmpName} ${item.newEmpId} ${item.newOrgName} ${item.newPostnName}`;
+    return (
+      <Option
+        key={item.showSelectName}
+        className={styles.ddsDrapMenuConItem}
+        value={inputValue}
+        title={optionValue}
+      >
+        {optionValue}
+      </Option>
+    );
+  }
 
   render() {
     const {
@@ -378,6 +406,12 @@ export default class FilialeCustTransferEditForm extends PureComponent {
       pageSize: page.pageSize,
       onChange: this.handlePageNumberChange,
     };
+    const {
+      newEmpName: defaultNewEmpName = '',
+      newLogin: defaultNewLogin = '',
+      newOrgName: defaultNewOrgName = '',
+      newPostnName: defaultNewPostnName = '',
+    } = newManager;
     return (
       <div className={styles.editFormBox}>
         <div className={styles.inner}>
@@ -399,13 +433,12 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                         <InfoForm label="选择客户" required>
                           <AutoComplete
                             placeholder="选择客户"
-                            showObjKey="custName"
-                            objId="brokerNumber"
-                            defaultSearchValue={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
-                            searchList={custList}
+                            showNameKey="custName"
+                            showIdKey="brokerNumber"
+                            defaultValue={`${client.custName || ''} ${client.brokerNumber || ''}` || ''}
+                            optionList={custList}
                             onSelect={this.handleSelectClient}
                             onSearch={this.handleSearchClient}
-                            isImmediatelySearch
                             ref={ref => this.queryCustComponent = ref}
                           />
                         </InfoForm>
@@ -414,13 +447,15 @@ export default class FilialeCustTransferEditForm extends PureComponent {
                         <InfoForm label="选择新服务经理" required>
                           <AutoComplete
                             placeholder="选择新服务经理"
-                            showObjKey="showSelectName"
-                            defaultSearchValue={`${newManager.newEmpName || ''}  ${newManager.newPostnName || ''} ${newManager.newLogin || ''}` || ''}
-                            searchList={newManagerList}
+                            showNameKey="showSelectName"
+                            optionKey="showSelectName"
+                            defaultValue={`${defaultNewEmpName} ${defaultNewLogin} ${defaultNewOrgName} ${defaultNewPostnName} ` || ''}
+                            optionList={newManagerList}
                             onSelect={this.handleSelectNewManager}
                             onSearch={this.handleSearchNewManager}
-                            isImmediatelySearch
+                            dropdownMatchSelectWidth={false}
                             ref={ref => this.queryManagerComponent = ref}
+                            renderOptionNode={this.renderOption}
                           />
                         </InfoForm>
                       </div>
