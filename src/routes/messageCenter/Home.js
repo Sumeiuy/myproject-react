@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-28 20:42:01
+ * @Last Modified time: 2018-05-29 09:01:38
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -83,6 +83,7 @@ export default class MessageCenter extends PureComponent {
     const { objectVal, rowId, typeName, title } = data;
     const allocation = '转签待分配';
     const flag = title.indexOf(allocation);
+    this.removeNotice = false;
     if (typeName === 'HTSC FSP TGSign' && flag < 0) {
       this.handleMessageByFSPNotAllocation(objectVal);
     } else if (typeName === 'HTSC FSP TGSign' && flag >= 0) {
