@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-29 22:16:42
+ * @Last Modified time: 2018-05-29 23:04:04
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -124,7 +124,7 @@ export default class MessageCenter extends PureComponent {
       pathName,
       param,
     });
-    this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
+    this.checkMessageIsNeedRemoveNotice(removeNoticeParams);
   }
 
   // 处理typeName是HTSC FSP TGSign,标题含转签待分配的消息通知
@@ -153,7 +153,7 @@ export default class MessageCenter extends PureComponent {
             pathName,
             param,
           });
-          this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
+          this.checkMessageIsNeedRemoveNotice(removeNoticeParams);
         }
       } else {
         console.error(msg);
@@ -170,7 +170,7 @@ export default class MessageCenter extends PureComponent {
     const { push } = this.context;
     this.removeNotice = false;
     push(`/demote?notifiId=${rowId}`);
-    this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
+    this.checkMessageIsNeedRemoveNotice(removeNoticeParams);
   }
 
   // 处理typeName是HTSC Primary Position Change Inbox Type的消息通知
@@ -180,7 +180,7 @@ export default class MessageCenter extends PureComponent {
     const { push } = this.context;
     this.removeNotice = true;
     push(`/mainPosition/notifies?notifiId=${rowId}&appId=${objectVal}`);
-    this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
+    this.checkMessageIsNeedRemoveNotice(removeNoticeParams);
   }
 
   // 处理typeName是HTSC Investment Advice Inbox Type的消息通知
@@ -188,7 +188,7 @@ export default class MessageCenter extends PureComponent {
   handleMessageByInvestment(objectVal, removeNoticeParams) {
     this.removeNotice = true;
     windowOpen(`/fspa/spy/approval/html/taskListApproval.html?notifiId=${objectVal}&empId=${emp.getId()}`);
-    this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
+    this.checkMessageIsNeedRemoveNotice(removeNoticeParams);
   }
 
   // 处理typeName是HTSC Batch Branch Assignment Inbox Type的消息通知
@@ -229,7 +229,7 @@ export default class MessageCenter extends PureComponent {
         param,
       });
     }
-    this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
+    this.checkMessageIsNeedRemoveNotice(removeNoticeParams);
   }
 
   // 处理typeName是HTSC TG Approval Inbox Type的消息通知
@@ -251,7 +251,7 @@ export default class MessageCenter extends PureComponent {
       param,
     });
     this.removeNotice = true;
-    this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
+    this.checkMessageIsNeedRemoveNotice(removeNoticeParams);
   }
 
   // 处理typeName是其他的消息通知
@@ -273,7 +273,7 @@ export default class MessageCenter extends PureComponent {
         title: '大类资产战术配置明细',
         content: response,
       });
-      this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
+      this.checkMessageIsNeedRemoveNotice(removeNoticeParams);
     })
     .catch((e) => {
       console.error(e);
@@ -282,7 +282,8 @@ export default class MessageCenter extends PureComponent {
 
   // 消息记录已读是否需要刷新列表和消息记录总数
   @autobind
-  checkMessageIsNeedRemoveNotice(typeName, flag, rowId) {
+  checkMessageIsNeedRemoveNotice(removeNoticeParams) {
+    const { typeName, flag, rowId } = removeNoticeParams;
     if (this.removeNotice && ((typeName !== 'HTSC FSP TGSign') || (flag < 0))) {
       this.handleMessageByRemoveNotice(rowId);
     }
