@@ -44,11 +44,6 @@ const STATUS_EXECUTOR_VIEW = [
 const chooseMissionView = [
   {
     show: true,
-    label: '我创建的任务',
-    value: 'initiator',
-  },
-  {
-    show: true,
     label: '我执行的任务',
     value: 'executor',
   },
@@ -56,6 +51,11 @@ const chooseMissionView = [
     show: true,
     label: '我部门的任务',
     value: 'controller',
+  },
+  {
+    show: true,
+    label: '我创建的任务',
+    value: 'initiator',
   },
 ];
 
