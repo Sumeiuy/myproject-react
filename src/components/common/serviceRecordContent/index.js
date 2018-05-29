@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 13:34:27
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-28 20:22:41
  */
 
 import React, { PureComponent } from 'react';
@@ -29,7 +29,7 @@ import {
   serveStatusRadioGroupMap,
   getServeWayByCodeOrName,
   PHONE,
- } from './utils';
+} from './utils';
 
 import styles from './index.less';
 
@@ -168,7 +168,7 @@ export default class ServiceRecordContent extends PureComponent {
   getDefaultFeedback(props) {
     const {
       isEntranceFromPerformerView,
-      formData: { motCustfeedBackDict, isTaskFeedbackListOfNone },
+      formData: { motCustfeedBackDict },
     } = props;
     let feedback = null;
     let { serviceTypeCode } = props.formData;
@@ -176,10 +176,8 @@ export default class ServiceRecordContent extends PureComponent {
     if (!isEntranceFromPerformerView) {
       serviceTypeCode = motCustfeedBackDict[0].key;
     }
-    if (!isTaskFeedbackListOfNone) {
-      const feedbackList = this.findFeedbackListByServiceTypeCode(serviceTypeCode, props);
-      feedback = feedbackList[0];
-    }
+    const feedbackList = this.findFeedbackListByServiceTypeCode(serviceTypeCode, props);
+    feedback = feedbackList[0];
     return this.fixCustomerFeedback(feedback);
   }
 
@@ -774,7 +772,7 @@ export default class ServiceRecordContent extends PureComponent {
     } : null;
 
     // 根据serviceTypeCode获取级联的客户反馈列表
-    let cascadeFeedbackList = motCustfeedBackDict[0].children;
+    let cascadeFeedbackList = (motCustfeedBackDict[0] || {}).children;
     if (!isEntranceFromPerformerView) {
       // 如果是从360视图|客户列表页面进入
       cascadeFeedbackList = this.findFeedbackListByServiceTypeCode(serviceType, this.props);
@@ -838,7 +836,7 @@ export default class ServiceRecordContent extends PureComponent {
                       onChange={this.handleServiceTypeSelectChange}
                       getPopupContainer={() => this.serviceTypeRef}
                     >
-                      { this.renderServiceSelectOptions(motCustfeedBackDict) }
+                      {this.renderServiceSelectOptions(motCustfeedBackDict)}
                     </Select>
                   </div>
                 </div>
@@ -867,24 +865,24 @@ export default class ServiceRecordContent extends PureComponent {
         {/** 此处需要针对 服务方式为 涨乐财富通时 显示服务内容 ,其他情况展示服务记录 */}
         {
           isSelectZhangleFins
-          ? (
-            <ServeContent
-              ref={this.setServeContentRef}
-              approvalList={this.props.zhangleApprovalList}
-              isReject={isReject}
-              serveContent={zlRejectRecord}
-              testWallCollision={testWallCollision}
-              testWallCollisionStatus={testWallCollisionStatus}
-            />
-          )
-          : (
-            <ServeRecord
-              showError={isShowServiceContentError}
-              value={serviceRecord}
-              onChange={this.handleServiceRecordInputChange}
-              serviceRecordInfo={serviceRecordInfo}
-            />
-          )
+            ? (
+              <ServeContent
+                ref={this.setServeContentRef}
+                approvalList={this.props.zhangleApprovalList}
+                isReject={isReject}
+                serveContent={zlRejectRecord}
+                testWallCollision={testWallCollision}
+                testWallCollisionStatus={testWallCollisionStatus}
+              />
+            )
+            : (
+              <ServeRecord
+                showError={isShowServiceContentError}
+                value={serviceRecord}
+                onChange={this.handleServiceRecordInputChange}
+                serviceRecordInfo={serviceRecordInfo}
+              />
+            )
         }
 
         <div className={styles.divider} />
@@ -892,64 +890,64 @@ export default class ServiceRecordContent extends PureComponent {
         {/* 涨乐财富通下显示 客户反馈可选项 */}
         {
           !this.state.isSelectZhangleFins
-          ? (
-            <div className={styles.custFeedbackSection}>
-              <CascadeFeedbackSelect
-                value={cascadeSelectValue}
-                onChange={this.handleCascadeSelectChange}
-                feedbackList={cascadeFeedbackList}
-              />
-              <div className={styles.feedbackTime}>
-                <div className={styles.title}>反馈时间:</div>
-                <div className={styles.content} ref={this.setFeedbackTimeRef}>
-                  <DatePicker
-                    style={{ width: 142 }}
-                    {...dateCommonProps}
-                    onChange={this.handleFeedbackDateChange}
-                    value={custFeedbackTime}
-                    disabledDate={this.disabledDate}
-                    getCalendarContainer={() => this.feedbackTimeRef}
-                  />
+            ? (
+              <div className={styles.custFeedbackSection}>
+                <CascadeFeedbackSelect
+                  value={cascadeSelectValue}
+                  onChange={this.handleCascadeSelectChange}
+                  feedbackList={cascadeFeedbackList}
+                />
+                <div className={styles.feedbackTime}>
+                  <div className={styles.title}>反馈时间:</div>
+                  <div className={styles.content} ref={this.setFeedbackTimeRef}>
+                    <DatePicker
+                      style={{ width: 142 }}
+                      {...dateCommonProps}
+                      onChange={this.handleFeedbackDateChange}
+                      value={custFeedbackTime}
+                      disabledDate={this.disabledDate}
+                      getCalendarContainer={() => this.feedbackTimeRef}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          )
-          : (
-            <ZLFeedback
-              flowStatusCode={flowStatusCode}
-              feedbackList={custFeedbackList}
-              feedbackTime={ZLCustFeedbackTime.format(DATE_FORMAT_SHOW)}
-              feedback={ZLCustFeedback}
-            />
-          )
+            )
+            : (
+              <ZLFeedback
+                flowStatusCode={flowStatusCode}
+                feedbackList={custFeedbackList}
+                feedbackTime={ZLCustFeedbackTime.format(DATE_FORMAT_SHOW)}
+                feedback={ZLCustFeedback}
+              />
+            )
         }
 
         {/* 涨乐财富通下显示 不限上传 */}
         {
           this.state.isSelectZhangleFins ? null
-          : (
-            <div className={styles.uploadSection}>
-              <Uploader
-                ref={this.setUploaderRef}
-                onOperateFile={this.handleFileUpload}
-                attachModel={currentFile}
-                fileKey={uploadedFileKey}
-                originFileName={originFileName}
-                uploadTitle={'上传附件'}
-                upData={{
-                  empId: emp.getId(),
-                  // 第一次上传没有，如果曾经返回过，则必须传
-                  attachment: '',
-                }}
-                beforeUpload={beforeUpload}
-                custUuid={custUuid}
-                uploadTarget={`${request.prefix}/file/ceFileUpload`}
-                isSupportUploadMultiple
-                onDeleteFile={this.handleDeleteFile}
-                deleteFileResult={deleteFileResult}
-              />
-            </div>
-          )
+            : (
+              <div className={styles.uploadSection}>
+                <Uploader
+                  ref={this.setUploaderRef}
+                  onOperateFile={this.handleFileUpload}
+                  attachModel={currentFile}
+                  fileKey={uploadedFileKey}
+                  originFileName={originFileName}
+                  uploadTitle={'上传附件'}
+                  upData={{
+                    empId: emp.getId(),
+                    // 第一次上传没有，如果曾经返回过，则必须传
+                    attachment: '',
+                  }}
+                  beforeUpload={beforeUpload}
+                  custUuid={custUuid}
+                  uploadTarget={`${request.prefix}/file/ceFileUpload`}
+                  isSupportUploadMultiple
+                  onDeleteFile={this.handleDeleteFile}
+                  deleteFileResult={deleteFileResult}
+                />
+              </div>
+            )
         }
       </div>
     );

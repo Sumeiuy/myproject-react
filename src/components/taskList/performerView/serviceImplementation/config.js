@@ -41,4 +41,6 @@ export const CALLABLE_LIST = ['10', '20', '60'];
 export const COMPLETION = '完备';
 export const NOTCOMPLETION = '不完备';
 
+export const PHONE = 'phone';
+
 export default {};

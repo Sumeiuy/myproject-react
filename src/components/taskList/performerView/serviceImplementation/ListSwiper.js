@@ -27,6 +27,7 @@ export default class ListSwiper extends PureComponent {
     containerClass: PropTypes.string,
     onPageChange: PropTypes.func,
     currentTargetList: PropTypes.array,
+    currentId: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -34,6 +35,11 @@ export default class ListSwiper extends PureComponent {
     onPageChange: _.noop,
     containerClass: '',
     currentTargetList: [],
+  }
+
+  constructor(props) {
+    super(props);
+    console.log('XXXXXXXXX');
   }
 
   @autobind
@@ -90,7 +96,6 @@ export default class ListSwiper extends PureComponent {
     const { targetCustList, parameter, onCustomerClick, currentTargetList } = this.props;
     const { page: { pageSize, pageNum } } = targetCustList;
     const { activeIndex } = parameter;
-    console.log('renderListItem: ', this.props);
     // 当前activeIndex在当前请求回来的客户列表里面计算所在当前客户列表的位置，否则，默认第一个
     const currentIndex = (parseInt(activeIndex, 10) - 1) % pageSize;
     return (
@@ -129,7 +134,7 @@ export default class ListSwiper extends PureComponent {
   }
 
   render() {
-    const { targetCustList, containerClass, parameter } = this.props;
+    const { targetCustList, containerClass, parameter, currentId } = this.props;
     const { page: { pageSize, pageNum, totalPage } } = targetCustList;
     const { activeIndex } = parameter;
     const params = {
@@ -149,10 +154,11 @@ export default class ListSwiper extends PureComponent {
       styles.nextButton,
       { [styles.disable]: pageNum === totalPage },
     );
+    console.log('currentId: ', currentId);
     return (
       <div className={containerCls}>
         <Swiper
-          key={`${activeIndex}${pageSize}${pageNum}`}
+          key={`${currentId}${activeIndex}${pageSize}${pageNum}`}
           {...params}
           ref={this.saveSwiperRef}
         >

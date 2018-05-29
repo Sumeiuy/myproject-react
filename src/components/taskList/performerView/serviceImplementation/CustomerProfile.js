@@ -3,25 +3,29 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-27 15:41:04
+ * @Last Modified time: 2018-05-29 15:09:21
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import moment from 'moment';
 import Icon from '../../../common/Icon';
 import { openFspTab } from '../../../../utils';
 import ContactInfoPopover from '../../../common/contactInfoPopover/ContactInfoPopover';
+import Mask from '../../../common/mask';
+import { date } from '../../../../helper';
 import styles from './customerProfile.less';
 
-import { riskLevelConfig, PER_CODE, ORG_CODE, CALLABLE_LIST } from './config';
+import { riskLevelConfig, PER_CODE, ORG_CODE, CALLABLE_LIST, PHONE } from './config';
 
 import iconDiamond from '../img/iconDiamond.png';
 import iconWhiteGold from '../img/iconWhiteGold.png';
 import iconGold from '../img/iconGold.png';
 import iconSliver from '../img/iconSliver.png';
 import iconMoney from '../img/iconMoney.png';
+import iconNull from '../img/iconNull.png';
 
 // 客户等级的图片源
 const rankImgSrcConfig = {
@@ -35,16 +39,38 @@ const rankImgSrcConfig = {
   805025: iconSliver,
   // 理财
   805030: iconMoney,
+  // 空
+  805040: iconNull,
+  // 其他
+  805999: '',
 };
 
 export default class CustomerProfile extends React.PureComponent {
 
   static propTypes = {
     targetCustDetail: PropTypes.object.isRequired,
+    addServeRecord: PropTypes.func,
+    motCustfeedBackDict: PropTypes.array,
+    currentId: PropTypes.string.isRequired,
+    toggleServiceRecordModal: PropTypes.func.isRequired,
+    taskTypeCode: PropTypes.string,
+  }
+
+  static defaultProps = {
+    addServeRecord: _.noop,
+    motCustfeedBackDict: [],
+    taskTypeCode: '',
   }
 
   static contextTypes = {
     push: PropTypes.func,
+  }
+
+  constructor(props) {
+    super(props);
+    this.endTime = '';
+    this.startTime = '';
+    this.state = { showMask: false };
   }
 
   @autobind
@@ -79,6 +105,103 @@ export default class CustomerProfile extends React.PureComponent {
       serviceRecordChannel: '',
     };
     this.openFsp360TabAction(param);
+  }
+
+  /**
+   * 通话结束后要创建一条服务记录，并弹出服务记录框
+   */
+  @autobind
+  handlePhoneEnd() {
+    // 点击挂电话隐藏蒙层
+    this.setState({ showMask: false });
+    // 没有成功发起通话
+    if (!moment.isMoment(this.startTime)) {
+      return;
+    }
+    this.endTime = moment();
+    const {
+      targetCustDetail,
+      addServeRecord,
+      motCustfeedBackDict,
+      currentId,
+      toggleServiceRecordModal,
+      taskTypeCode,
+    } = this.props;
+    const {
+      custId,
+      custName,
+      missionFlowId,
+    } = targetCustDetail;
+    const [firstServiceType = {}] = motCustfeedBackDict;
+    const { key: firstServiceTypeKey, children = [] } = firstServiceType;
+    const [firstFeedback = {}] = children;
+    const phoneDuration = date.calculateDuration(
+      this.startTime.valueOf(),
+      this.endTime.valueOf(),
+    );
+    const serviceContentDesc = `${this.startTime.format('HH:mm:ss')}给客户发起语音通话，时长${phoneDuration}。`;
+    let payload = {
+      // 任务流水id
+      missionFlowId,
+      // 任务id
+      missionId: currentId,
+      // 经济客户号
+      custId,
+      // 服务方式
+      serveWay: 'HTSC Phone',
+      // 任务类型，1：MOT  2：自建
+      taskType: `${+taskTypeCode + 1}`,
+      // 服务状态
+      flowStatus: '30',
+      // 同serveType
+      type: firstServiceTypeKey,
+      // 服务类型，即任务类型
+      serveType: firstServiceTypeKey,
+      // 客户反馈一级
+      serveCustFeedBack: firstFeedback.key,
+      // 服务记录内容
+      serveContentDesc: serviceContentDesc,
+      // 服务时间
+      serveTime: this.endTime.format('YYYY-MM-DD HH:mm'),
+      // 反馈时间
+      feedBackTime: moment().format('YYYY-MM-DD'),
+    };
+    // 客户反馈的二级
+    if (firstFeedback.children) {
+      payload = {
+        ...payload,
+        serveCustFeedBack2: firstFeedback.children[0].key,
+      };
+    }
+    // 添加服务记录表单共用，把打电话自动生成的默认数据保存到prevRecordInfo
+    const saveRecordData = () => {
+      toggleServiceRecordModal({
+        id: missionFlowId,
+        name: custName,
+        flag: false,
+        caller: PHONE,
+        autoGenerateRecordInfo: payload,
+      });
+    };
+    addServeRecord({
+      postBody: payload,
+      callbackOfPhone: saveRecordData,
+      noHint: true,
+      callId: this.callId,
+    });
+  }
+
+  // 通话开始
+  @autobind
+  handlePhoneConnected(data) {
+    this.startTime = moment();
+    this.callId = data.uuid;
+  }
+
+  // 点击号码打电话时显示蒙层
+  @autobind
+  handlePhoneClick() {
+    this.setState({ showMask: true });
   }
 
   /**
@@ -119,7 +242,8 @@ export default class CustomerProfile extends React.PureComponent {
         handlePhoneConnected={this.handlePhoneConnected}
         handlePhoneClick={this.handlePhoneClick}
         disablePhone={!canCall}
-        placement="top"
+        placement="topRight"
+        getPopupContainer={() => this.container}
       >
         <span className={styles.contact}>
           <Icon type="dianhua" className={styles.icon} />联系方式
@@ -128,14 +252,22 @@ export default class CustomerProfile extends React.PureComponent {
     );
   }
 
+  @autobind
+  saveRef(ref) {
+    if (ref) {
+      this.container = ref;
+    }
+  }
+
   render() {
+    const { showMask } = this.state;
     const { targetCustDetail = {} } = this.props;
     const {
       custName, isAllocate, isHighWorth, custId, genderValue, age,
         riskLevelCode, isSign, levelCode, custNature,
     } = targetCustDetail;
     return (
-      <div className={styles.container}>
+      <div className={styles.container} ref={this.saveRef}>
         <div className={styles.row}>
           <div className={styles.col}>
             <p className={styles.item}>
@@ -170,6 +302,7 @@ export default class CustomerProfile extends React.PureComponent {
             </p>
           </div>
         </div>
+        <Mask visible={showMask} />
       </div>
     );
   }

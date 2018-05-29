@@ -146,10 +146,10 @@ export default {
       };
     },
     getServiceTypeSuccess(state, action) {
-      const { payload: { missionList = [] } } = action;
+      const { payload = {} } = action;
       return {
         ...state,
-        taskFeedbackList: missionList,
+        taskFeedbackList: [payload],
       };
     },
     addMotServeRecordSuccess(state, action) {
@@ -320,6 +320,11 @@ export default {
           payload: defaultPerformerViewCurrentTab,
         });
       }
+      // 获取该任务的任务反馈
+      yield put({
+        type: 'getServiceType',
+        payload: { pageNum: 1, pageSize: 100000, mssnId: payload.taskId },
+      });
       const { resultData } = yield call(api.queryTaskDetailBasicInfo, otherPayload);
       if (resultData) {
         yield put({

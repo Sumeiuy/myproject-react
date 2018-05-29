@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-25 16:14:10
+ * @Last Modified time: 2018-05-29 10:31:22
  */
 
 
@@ -119,6 +119,36 @@ export default class PerformerViewDetail extends PureComponent {
     });
   }
 
+  /**
+   * 添加服务记录成功后重新加载当前目标客户的详细信息
+   */
+  @autobind
+  reloadTargetCustInfo(callback) {
+    const { parameter: { targetCustId, targetMissionFlowId } } = this.props;
+    this.requeryTargetCustDetail({
+      custId: targetCustId,
+      missionFlowId: targetMissionFlowId,
+      callback,
+    });
+  }
+
+  /**
+   * 重新查询目标客户的详情信息
+   */
+  @autobind
+  requeryTargetCustDetail({ custId, missionFlowId, callback }) {
+    const {
+      currentId,
+      getCustDetail,
+    } = this.props;
+    getCustDetail({
+      missionId: currentId,
+      custId,
+      missionFlowId,
+      callback,
+    });
+  }
+
   render() {
     const {
       basicInfo = {},
@@ -145,6 +175,7 @@ export default class PerformerViewDetail extends PureComponent {
           servicePolicy={servicePolicy}
           searchCustomer={this.searchCustomer}
           customerList={customerList}
+          reloadTargetCustInfo={this.reloadTargetCustInfo}
         />
       </div>
     );

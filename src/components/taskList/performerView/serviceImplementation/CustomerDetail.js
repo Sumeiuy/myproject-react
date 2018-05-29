@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-27 16:43:20
+ * @Last Modified time: 2018-05-28 16:58:51
  */
 
 import React, { PureComponent } from 'react';
@@ -35,7 +35,11 @@ export default class CustomerDetail extends PureComponent {
     targetCustDetail: PropTypes.object.isRequired,
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
-    custIncomeReqState: PropTypes.bool.isRequired,
+    custIncomeReqState: PropTypes.bool,
+  }
+
+  static defaultProps = {
+    custIncomeReqState: false,
   }
 
   static contextTypes = {
@@ -191,7 +195,7 @@ export default class CustomerDetail extends PureComponent {
             <div className={styles.itemContent}>{miniFee}</div>
           </div>
           <div className={styles.item}>
-            <div className={styles.itemLabel}><p>持仓市值：</p><p>（含信用）</p></div>
+            <div className={styles.itemLabel}>持仓市值:</div>
             <div className={styles.itemContent}>{handleAssets(openAssets)}</div>
           </div>
           <div className={styles.item}>
@@ -227,6 +231,7 @@ export default class CustomerDetail extends PureComponent {
             </div>
           </div>
           <div className={styles.row}>
+            <div className={styles.moreButton} onClick={this.handleSeeMore}>查看更多</div>
             <div className={styles.item}>
               <div className={styles.itemLabel}>最近一次服务:</div>
               <div className={styles.itemContent}>
@@ -235,7 +240,6 @@ export default class CustomerDetail extends PureComponent {
                 {this.handleEmpty(missionTitle)}
               </div>
             </div>
-            <div className={styles.moreButton} onClick={this.handleSeeMore}>查看更多</div>
           </div>
         </div>
       </div>
