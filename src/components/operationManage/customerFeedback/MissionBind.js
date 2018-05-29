@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-25 15:36:51
+ * @Last Modified time: 2018-05-29 11:12:53
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -18,6 +18,7 @@ import logable from '../../../decorators/logable';
 import {
   TABLIST,
   MOT_TASK,
+  SELF_TASK,
   SERVICE_MANAGER_ROLE,
   ZHANGLE_ROLE,
 } from './config';
@@ -42,6 +43,8 @@ export default class MissionBind extends PureComponent {
     feedbackData: PropTypes.object.isRequired,
     // 切换tab
     missionBindChangeTab: PropTypes.func.isRequired,
+    // 查询任务绑定客户反馈列表时，返回的MOT任务和自建任务是否有客户可选项超过4个的任务
+    hasOver4OptionsTask: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -277,6 +280,25 @@ export default class MissionBind extends PureComponent {
     this.props.missionBindChangeTab(key);
   }
 
+  @autobind
+  renderTabPaneContent(tabName, tabKey) {
+    const { hasOver4OptionsTask: { mot = false, self = false } } = this.props;
+    if ((tabKey === MOT_TASK.key && mot) || (tabKey === SELF_TASK.key && self)) {
+      // MOT任务，判断如果 mot 为 true，则表示有任务的涨乐客户可选项超过了4项需要显示警告图标
+      // 自建任务，判断如果 self 为 true，则表示有任务的涨乐客户可选项超过了4项需要显示警告图标
+      return (
+        <span>
+          <Icon
+            type="exclamation-circle"
+            style={{ fontSize: 14, color: '#f9a825', marginRight: '5px' }}
+          />
+          {tabName}
+        </span>
+      );
+    }
+    return tabName;
+  }
+
   render() {
     const {
       showModal,
@@ -317,7 +339,12 @@ export default class MissionBind extends PureComponent {
             }
           >
             {
-              TABLIST.map(item => (<TabPane tab={item.name} key={item.key} />))
+              TABLIST.map(item => (
+                <TabPane
+                  tab={this.renderTabPaneContent(item.name, item.key)}
+                  key={item.key}
+                />),
+                )
             }
           </Tabs>
         </div>

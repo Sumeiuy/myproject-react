@@ -3,7 +3,7 @@
  * @Description: 客户反馈modal
  * @Date: 2017-12-13 10:31:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-25 14:33:13
+ * @Last Modified time: 2018-05-29 10:55:27
  */
 
 import { customerFeedback as api } from '../api';
@@ -25,6 +25,8 @@ export default {
     feedbackData: EMPTY_OBJECT,
     // 客户反馈维护修改后，需要提示用户有多少条涨乐可选项超过4个
     taskNum: 0,
+    // 查询任务绑定客户反馈列表时，返回的MOT任务和自建任务是否有客户可选项超过4个的任务
+    hasOver4OptionsTask: {},
   },
   reducers: {
     getMissionListSuccess(state, action) {
@@ -34,6 +36,15 @@ export default {
         missionData: resultData,
       };
     },
+
+    queryOverFourSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        hasOver4OptionsTask: resultData,
+      };
+    },
+
     getFeedbackListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
@@ -63,6 +74,11 @@ export default {
       yield put({
         type: 'getMissionListSuccess',
         payload: response,
+      });
+      const over4Response = yield call(api.hasOverFour, {});
+      yield put({
+        type: 'queryOverFourSuccess',
+        payload: over4Response,
       });
     },
     // 删除任务下所关联客户反馈选项
