@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-28 20:42:01
+ * @Last Modified time: 2018-05-29 17:40:36
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import { Tooltip, Button } from 'antd';
 import _ from 'lodash';
 import { dva, emp } from '../../helper';
-import { openFspTab } from '../../utils';
+import { openFspTab, openRctTab } from '../../utils';
 import Pagination from '../../components/common/Pagination';
 import Loading from '../../layouts/Loading';
 import { windowOpen } from '../../utils/fspGlobal';
@@ -83,6 +83,7 @@ export default class MessageCenter extends PureComponent {
     const { objectVal, rowId, typeName, title } = data;
     const allocation = '转签待分配';
     const flag = title.indexOf(allocation);
+    this.removeNotice = false;
     if (typeName === 'HTSC FSP TGSign' && flag < 0) {
       this.handleMessageByFSPNotAllocation(objectVal);
     } else if (typeName === 'HTSC FSP TGSign' && flag >= 0) {
@@ -212,7 +213,7 @@ export default class MessageCenter extends PureComponent {
         closable: true,
       };
       const pathName = '/filialeCustTransfer';
-      openFspTab({
+      openRctTab({
         routerAction: this.context.push,
         url,
         pathName,
@@ -233,7 +234,7 @@ export default class MessageCenter extends PureComponent {
       closable: true,
       isSpecialTab: true,
     };
-    openFspTab({
+    openRctTab({
       routerAction: this.context.push,
       url,
       pathName: url,
