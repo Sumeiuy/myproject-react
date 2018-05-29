@@ -1,7 +1,7 @@
 /**
  * @file Pageheader.js
  * 创建者视图、执行者视图头部筛选
- * @author honggaunqging
+ * @author xiaZhiQiang
  */
 
 import React, { PureComponent } from 'react';
@@ -11,9 +11,9 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import moment from 'moment';
 import { Input } from 'antd';
-import { SingleFilter, MoreFilter } from 'ht-react-filter';
+import { SingleFilter } from 'ht-react-filter';
 import 'ht-react-filter/lib/css/index.css';
-import DateFilter from '../common/htFilter/dateFilter/index';
+import { MoreFilter, DateFilter } from '../common/htFilter';
 import { getViewInfo } from '../../routes/taskList/helper';
 import logable from '../../decorators/logable';
 import {
@@ -543,9 +543,9 @@ export default class Pageheader extends PureComponent {
       query,
     } } = this.props;
     const { replace } = this.context;
-    const { isDeleteFilterFromLocation, id } = obj;
+    const { isDeleteFilterFromLocation, name } = obj;
     const currentMoreFilterData = this.getMoreFilterList();
-    const currentFilterItem = _.filter(currentMoreFilterData, item => item.key === id)[0];
+    const currentFilterItem = _.filter(currentMoreFilterData, item => item.key === name)[0];
     const filterOption = currentFilterItem && currentFilterItem.filterOption;
     let finalQuery = query;
     if (isDeleteFilterFromLocation && currentFilterItem) {

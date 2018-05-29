@@ -107,10 +107,10 @@ const QUERY_PARAMS = [
 // 更多按钮的菜单数据，配置顺序需要与上面的一致
 const moreFilterData = [
   {
-    value: '触发时间',
-    key: 'triggerTime',
-    filterOption: ['triggerTimeStart', 'triggerTimeEnd'],
-    type: ['controller', 'executor'],
+    value: '客户',
+    key: 'custId',
+    filterOption: ['custId', 'custName'],
+    type: ['executor'],
   },
   {
     value: '创建者',
@@ -119,10 +119,10 @@ const moreFilterData = [
     type: ['controller', 'executor'],
   },
   {
-    value: '客户',
-    key: 'custId',
-    filterOption: ['custId', 'custName'],
-    type: ['executor'],
+    value: '触发时间',
+    key: 'triggerTime',
+    filterOption: ['triggerTimeStart', 'triggerTimeEnd'],
+    type: ['controller', 'executor'],
   },
 ];
 
