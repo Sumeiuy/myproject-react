@@ -312,7 +312,8 @@ export default class TargetCustomerRight extends PureComponent {
           handlePhoneConnected={this.handlePhoneConnected}
           handlePhoneClick={this.handlePhoneClick}
           disablePhone={!canCall}
-          placement={'top'}
+          placement={'topRight'}
+          getPopupContainer={() => this.container}
         >
           <div className={styles.phoneRight}>
             <Icon type="lianxifangshi1" className={styles.phoneRightIcon} />
