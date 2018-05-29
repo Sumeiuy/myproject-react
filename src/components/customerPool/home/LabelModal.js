@@ -206,6 +206,7 @@ export default class LabelModals extends PureComponent {
         wrapClassName={styles.modal}
         onCancel={this.closeModal}
         maskClosable={false}
+        width={650}
       >
         <div>
           <Tabs {...tabsProps}>
