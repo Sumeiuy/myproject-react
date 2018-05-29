@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-25 13:54:03
+ * @Last Modified time: 2018-05-29 14:20:45
  * @description 任务管理首页
  */
 
@@ -962,11 +962,10 @@ export default class PerformerView extends PureComponent {
    * 获取sortContent，创建时间或者结束时间
    */
   @autobind
-  getSortConfig() {
-    const { location: { query: { missionViewType } } } = this.props;
+  getSortConfig(viewType) {
     let sortKey = CREATE_TIME_KEY;
     let sortContent = CREATE_TIME;
-    if (missionViewType === EXECUTOR || missionViewType === CONTROLLER) {
+    if (viewType === EXECUTOR || viewType === CONTROLLER) {
       sortKey = END_TIME_KEY;
       sortContent = END_TIME;
     }
@@ -1161,15 +1160,16 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   renderFixedTitle() {
-    const { sortKey, sortContent } = this.getSortConfig();
     const { location: { query: { missionViewType } } } = this.props;
+    const viewType = getViewInfo(missionViewType).currentViewType;
+    const { sortKey, sortContent } = this.getSortConfig(viewType);
     return (
       <FixedTitle
         sortContent={sortContent}
         sortDirection={DEFAULT_SORT_TYPE}
         onSortChange={this.handleSortChange}
         sortKey={sortKey}
-        viewType={getViewInfo(missionViewType).currentViewType}
+        viewType={viewType}
       />
     );
   }
