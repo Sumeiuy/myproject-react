@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-29 17:40:36
+ * @Last Modified time: 2018-05-29 20:29:21
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -84,32 +84,34 @@ export default class MessageCenter extends PureComponent {
     const allocation = '转签待分配';
     const flag = title.indexOf(allocation);
     this.removeNotice = false;
+    // 判断删除消息通知需要的参数
+    const removeNoticeParams = {
+      typeName,
+      flag,
+      rowId,
+    };
     if (typeName === 'HTSC FSP TGSign' && flag < 0) {
-      this.handleMessageByFSPNotAllocation(objectVal);
+      this.handleMessageByFSPNotAllocation(objectVal, removeNoticeParams);
     } else if (typeName === 'HTSC FSP TGSign' && flag >= 0) {
-      this.handleMessageByFSPAllocation(objectVal);
+      this.handleMessageByFSPAllocation(objectVal, removeNoticeParams);
     } else if (typeName === 'HTSC Branch Assignment Inbox Type') {
-      this.handleMessageByBranch(rowId);
+      this.handleMessageByBranch(removeNoticeParams);
     } else if (typeName === 'HTSC Primary Position Change Inbox Type') {
-      this.handleMessageByPrimary(rowId, objectVal);
+      this.handleMessageByPrimary(objectVal, removeNoticeParams);
     } else if (typeName === 'HTSC Investment Advice Inbox Type') {
-      this.handleMessageByInvestment(objectVal);
+      this.handleMessageByInvestment(objectVal, removeNoticeParams);
     } else if (typeName === 'HTSC Batch Branch Assignment Inbox Type') {
-      this.handleMessageByBatch(objectVal, title, rowId);
+      this.handleMessageByBatch(objectVal, title, removeNoticeParams);
     } else if (typeName === 'HTSC TG Approval Inbox Type') {
-      this.handleMessageByTG();
+      this.handleMessageByTG(removeNoticeParams);
     } else {
-      this.handleMessageByOther(rowId, objectVal);
-    }
-
-    if (this.removeNotice && ((typeName !== 'HTSC FSP TGSign') || (flag < 0))) {
-      this.handleMessageByRemoveNotice(rowId);
+      this.handleMessageByOther(objectVal, removeNoticeParams);
     }
   }
 
   // 处理typeName是HTSC FSP TGSign,标题不含转签待分配的消息通知
   @autobind
-  handleMessageByFSPNotAllocation(objectVal) {
+  handleMessageByFSPNotAllocation(objectVal, removeNoticeParams) {
     const url = `/customerCenter/360/per/orderDetail?rowId=${objectVal}&flowCode=`;
     const param = {
       id: 'FSP_360VIEW_AGREE_TAB',
@@ -123,11 +125,12 @@ export default class MessageCenter extends PureComponent {
       pathName,
       param,
     });
+    this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
   }
 
   // 处理typeName是HTSC FSP TGSign,标题含转签待分配的消息通知
   @autobind
-  async handleMessageByFSPAllocation(objectVal) {
+  async handleMessageByFSPAllocation(objectVal, removeNoticeParams) {
     try {
       const response = await api.getFspData(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
       const { msg } = response.data;
@@ -151,6 +154,7 @@ export default class MessageCenter extends PureComponent {
             pathName,
             param,
           });
+          this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
         }
       } else {
         console.error(msg);
@@ -162,30 +166,36 @@ export default class MessageCenter extends PureComponent {
 
   // 处理typeName是HTSC Branch Assignment Inbox Type的消息通知
   @autobind
-  handleMessageByBranch(rowId) {
-    this.removeNotice = false;
+  handleMessageByBranch(removeNoticeParams) {
+    const { rowId } = removeNoticeParams;
     const { push } = this.context;
+    this.removeNotice = false;
     push(`/demote?notifiId=${rowId}`);
+    this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
   }
 
   // 处理typeName是HTSC Primary Position Change Inbox Type的消息通知
   @autobind
-  handleMessageByPrimary(rowId, objectVal) {
-    this.removeNotice = true;
+  handleMessageByPrimary(objectVal, removeNoticeParams) {
+    const { rowId } = removeNoticeParams;
     const { push } = this.context;
+    this.removeNotice = true;
     push(`/mainPosition/notifies?notifiId=${rowId}&appId=${objectVal}`);
+    this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
   }
 
   // 处理typeName是HTSC Investment Advice Inbox Type的消息通知
   @autobind
-  handleMessageByInvestment(objectVal) {
+  handleMessageByInvestment(objectVal, removeNoticeParams) {
     this.removeNotice = true;
     windowOpen(`/fspa/spy/approval/html/taskListApproval.html?notifiId=${objectVal}&empId=${emp.getId()}`);
+    this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
   }
 
   // 处理typeName是HTSC Batch Branch Assignment Inbox Type的消息通知
   @autobind
-  handleMessageByBatch(objectVal, title, rowId) {
+  handleMessageByBatch(objectVal, title, removeNoticeParams) {
+    const { rowId } = removeNoticeParams;
     let type = 'faild';
     let appId = '';
     let itemId = '';
@@ -220,11 +230,12 @@ export default class MessageCenter extends PureComponent {
         param,
       });
     }
+    this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
   }
 
   // 处理typeName是HTSC TG Approval Inbox Type的消息通知
   @autobind
-  handleMessageByTG() {
+  handleMessageByTG(removeNoticeParams) {
     this.removeNotice = false;
     const url = '/usercenter';
     const param = {
@@ -241,11 +252,13 @@ export default class MessageCenter extends PureComponent {
       param,
     });
     this.removeNotice = true;
+    this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
   }
 
   // 处理typeName是其他的消息通知
   @autobind
-  handleMessageByOther(rowId, objectVal) {
+  handleMessageByOther(objectVal, removeNoticeParams) {
+    const { rowId } = removeNoticeParams;
     this.setState({ loadingStatus: true });
     api
     .getFspData(`/fsp/asset/basis/queryTacticalAllocationSingle?rowId=${objectVal}&notificationId=${rowId}`)
@@ -261,10 +274,19 @@ export default class MessageCenter extends PureComponent {
         title: '大类资产战术配置明细',
         content: response,
       });
+      this.checkMessageIsNeedRemoveNotice(...removeNoticeParams);
     })
     .catch((e) => {
       console.error(e);
     });
+  }
+
+  // 消息记录已读是否需要刷新列表和消息记录总数
+  @autobind
+  checkMessageIsNeedRemoveNotice(typeName, flag, rowId) {
+    if (this.removeNotice && ((typeName !== 'HTSC FSP TGSign') || (flag < 0))) {
+      this.handleMessageByRemoveNotice(rowId);
+    }
   }
 
   // 根据removeNotice处理的消息通知
