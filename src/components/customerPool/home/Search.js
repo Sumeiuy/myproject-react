@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-16 15:05:16
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-29 17:37:19
  * @description 客户池头部搜索组件
  */
 
@@ -12,7 +12,7 @@ import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { padSightLabelDesc } from '../../../config';
@@ -282,6 +282,15 @@ export default class Search extends PureComponent {
               }),
               q: encodeURIComponent(item.name),
               type: LABEL,
+            });
+
+            // 神策搜索上报
+            logCommon({
+              type: 'Click',
+              payload: {
+                name: '首页搜索',
+                value: item.name,
+              },
             });
           }
         }}

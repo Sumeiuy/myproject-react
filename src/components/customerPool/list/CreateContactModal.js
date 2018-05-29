@@ -81,6 +81,7 @@ export default class CreateContactModal extends PureComponent {
     super(props);
     this.state = {
       visible: props.visible,
+      showMask: false,
     };
     this.startTime = '';
     this.endTime = '';
