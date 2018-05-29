@@ -2,7 +2,7 @@
  * @Author: xiazhiqiang
  * @Date: 2018-05-21 13:33:05
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-28 09:08:20
+ * @Last Modified time: 2018-05-29 10:46:02
  */
 
 import React, { PureComponent } from 'react';
@@ -139,20 +139,24 @@ export default class PerformanceIndicators extends PureComponent {
   @logable({ type: 'Click', payload: { name: '消息提醒' } })
   handleMessageClick() {
     // 点击事件
-    const { push } = this.props;
-    // const notificationUrl = '/messgeCenter';
-    // const notificationParam = {
-    //   forceRefresh: false,
-    //   id: 'MESSAGE_CENTER',
-    //   title: '消息中心',
-    // };
-    // openFspTab({
-    //   routerAction: push,
-    //   url: notificationUrl,
-    //   pathname: '/fsp/messageCenter',
-    //   param: notificationParam,
-    // });
-    push('/messgeCenter');
+    const { location: { query }, push } = this.props;
+    const notificationUrl = '/messgeCenter';
+    const notificationParam = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'MESSAGE_CENTER',
+      title: '消息中心',
+    };
+    openRctTab({
+      routerAction: push,
+      url: notificationUrl,
+      pathname: notificationUrl,
+      param: notificationParam,
+      state: {
+        ...query,
+      },
+    });
   }
 
   @autobind
