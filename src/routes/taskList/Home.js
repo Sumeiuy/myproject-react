@@ -499,6 +499,12 @@ export default class PerformerView extends PureComponent {
       changePerformerViewTab,
       performerViewCurrentTab,
       taskFeedbackList,
+      serviceProgress,
+      custFeedBack,
+      custDetail,
+      queryExecutorFlowStatus,
+      queryExecutorFeedBack,
+      queryExecutorDetail,
     } = this.props;
     const {
       typeCode,
@@ -562,6 +568,12 @@ export default class PerformerView extends PureComponent {
         addCallRecord={addCallRecord}
         changePerformerViewTab={changePerformerViewTab}
         performerViewCurrentTab={performerViewCurrentTab}
+        serviceProgress={serviceProgress}
+        custFeedBack={custFeedBack}
+        custDetail={custDetail}
+        queryExecutorFlowStatus={queryExecutorFlowStatus}
+        queryExecutorFeedBack={queryExecutorFeedBack}
+        queryExecutorDetail={queryExecutorDetail}
       />
     );
   }
@@ -869,11 +881,10 @@ export default class PerformerView extends PureComponent {
    * 获取sortContent，创建时间或者结束时间
    */
   @autobind
-  getSortConfig() {
-    const { location: { query: { missionViewType } } } = this.props;
+  getSortConfig(viewType) {
     let sortKey = CREATE_TIME_KEY;
     let sortContent = CREATE_TIME;
-    if (missionViewType === EXECUTOR || missionViewType === CONTROLLER) {
+    if (viewType === EXECUTOR || viewType === CONTROLLER) {
       sortKey = END_TIME_KEY;
       sortContent = END_TIME;
     }
@@ -1068,15 +1079,16 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   renderFixedTitle() {
-    const { sortKey, sortContent } = this.getSortConfig();
     const { location: { query: { missionViewType } } } = this.props;
+    const viewType = getViewInfo(missionViewType).currentViewType;
+    const { sortKey, sortContent } = this.getSortConfig(viewType);
     return (
       <FixedTitle
         sortContent={sortContent}
         sortDirection={DEFAULT_SORT_TYPE}
         onSortChange={this.handleSortChange}
         sortKey={sortKey}
-        viewType={getViewInfo(missionViewType).currentViewType}
+        viewType={viewType}
       />
     );
   }

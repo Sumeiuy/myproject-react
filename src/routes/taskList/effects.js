@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 10:10:16
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-24 09:25:30
+ * @Last Modified time: 2018-05-15 16:40:57
  * @description 任务管理页面需要用到的dva的effects,封装此处为了方便Home页面代码的整洁
  */
 
@@ -68,6 +68,12 @@ const effects = {
   addCallRecord: 'customerPool/addCallRecord',
   // 执行者视图详情中tab切换
   changePerformerViewTab: 'performerView/changePerformerViewTab',
+  // 查询服务结果进度
+  queryExecutorFlowStatus: 'performerView/queryExecutorFlowStatus',
+  // 查询服务结果反馈
+  queryExecutorFeedBack: 'performerView/queryExecutorFeedBack',
+  // 查询服务结果反馈
+  queryExecutorDetail: 'performerView/queryExecutorDetail',
 };
 
 export default effects;

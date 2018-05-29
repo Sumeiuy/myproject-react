@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-29 15:27:38
+ * @Last Modified time: 2018-05-29 22:46:27
  */
 
 import React, { PureComponent } from 'react';
@@ -95,7 +95,7 @@ export default class ServiceImplementation extends PureComponent {
     servicePolicy: PropTypes.string,
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
-    custIncomeReqState: PropTypes.bool.isRequired,
+    custIncomeReqState: PropTypes.bool,
     addServeRecord: PropTypes.func.isRequired,
     currentMotServiceRecord: PropTypes.object.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
@@ -139,6 +139,7 @@ export default class ServiceImplementation extends PureComponent {
     filesList: [],
     addCallRecord: _.noop,
     toggleServiceRecordModal: _.noop,
+    custIncomeReqState: false,
   }
 
   static contextTypes = {
@@ -535,7 +536,7 @@ export default class ServiceImplementation extends PureComponent {
     // 涨乐财富通中才有审批和驳回状态
     const isReject = this.isRejct({ serviceStatusCode: missionStatusCode, serviceWayCode });
     // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
-    const motCustfeedBackDict = transformCustFeecbackData(taskFeedbackList);
+    const motCustfeedBackDict = transformCustFeecbackData(taskFeedbackList) || [];
     // 服务记录的formData
     const serviceReocrd = {
       serviceTips,
@@ -580,7 +581,6 @@ export default class ServiceImplementation extends PureComponent {
               <Affix target={() => getStickyTarget(this.container)}>
                 <div className={styles.listSwiperBox}>
                   <ListSwiper
-                    currentId={currentId}
                     targetCustList={targetCustList}
                     parameter={parameter}
                     containerClass={styles.listSwiper}

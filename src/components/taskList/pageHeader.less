@@ -1,17 +1,6 @@
 .pageCommonHeader {
   font-size: 14px;
-  height: 32px;
   line-height: 32px;
-  overflow: hidden;
-  &.HeaderOverflow {
-    // height: auto;
-    overflow: visible;
-    height: 49px;
-    padding-top: 15px;
-    padding-bottom: 14px;
-    display: flex;
-    align-items: center;
-  }
   .missionViewType {
     float: left;
     width: 117px;
@@ -41,10 +30,8 @@
       }
     }
   }
-  .filterBox {
-    margin: 0 145px 0 20px;
-    line-height: 32px;
-    position: relative;
+  .filterBox, .moreFilterBox {
+    margin: 5px 0;
     &:after {
       content: "";
       display: table;
@@ -54,6 +41,7 @@
     .filterFl {
       float: left;
       height: 32px;
+      margin: 3px;
       color: #a1a1a1;
       :global {
         .ant-input-suffix {
@@ -66,19 +54,29 @@
       }
     }
     .dateWidget {
-      // margin-right: 20px;
-      // 影响段时间组件的高度
-      font-size: 16px;
-      .dateLable {
-        color: #33393c;
-        font-size: 14px;
-      }
+      line-height: initial;
     }
   }
   .dropDownSelectBox {
     display: inline-block;
     min-width: 70px;
     vertical-align: middle;
+    .customerFilterContent {
+      display: inline-block;
+      height: 28px;
+      line-height: 28px;
+      vertical-align: top;
+      transform: translateY(-1px);
+      .customerFilterValue {
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 9px;
+        max-width: 70px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
     // 日期组件的样式重写
     :global {
       .DateRangePicker {

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-28 20:22:41
+ * @Last Modified time: 2018-05-29 22:46:17
  */
 
 import React, { PureComponent } from 'react';
@@ -772,7 +772,7 @@ export default class ServiceRecordContent extends PureComponent {
     } : null;
 
     // 根据serviceTypeCode获取级联的客户反馈列表
-    let cascadeFeedbackList = (motCustfeedBackDict[0] || {}).children;
+    let cascadeFeedbackList = (motCustfeedBackDict[0] || {}).children || [];
     if (!isEntranceFromPerformerView) {
       // 如果是从360视图|客户列表页面进入
       cascadeFeedbackList = this.findFeedbackListByServiceTypeCode(serviceType, this.props);

@@ -75,18 +75,22 @@ export default class WeeklySecurityTopTen extends PureComponent {
       return (<span className={changeClassName}>{change}%</span>);
     };
     // 组合名称
-    newTitleList[3].render = (text, record) => (
-      <div
+    newTitleList[3].render = (text, record) => {
+      const openDetailPayload = {
+        id: record.combinationCode,
+        name: record.combinationName,
+      };
+      return (<div
         className={styles.name}
       >
         <a
           title={text}
-          onClick={() => this.handleNameClick(record.combinationCode)}
+          onClick={() => this.handleNameClick(openDetailPayload)}
         >
           {text}
         </a>
-      </div>
-    );
+      </div>);
+    };
     // 查看持仓客户链接，点击打开持仓客户
     newTitleList[4].render = (text, record) => {
       const openPayload = {
@@ -102,9 +106,9 @@ export default class WeeklySecurityTopTen extends PureComponent {
 
   // 组合名称点击事件
   @autobind
-  handleNameClick(id) {
+  handleNameClick(obj) {
     const { openDetailPage } = this.props;
-    openDetailPage(id);
+    openDetailPage(obj);
   }
 
   // 证券名称点击事件

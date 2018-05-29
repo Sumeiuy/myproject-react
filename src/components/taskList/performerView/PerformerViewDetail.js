@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-29 10:31:22
+ * @Last Modified time: 2018-05-29 22:30:29
  */
 
 
@@ -48,7 +48,6 @@ export default class PerformerViewDetail extends PureComponent {
     // 涨乐财富通服务方式下的审批人列表以及查询方法
     queryApprovalList: PropTypes.func.isRequired,
     zhangleApprovalList: PropTypes.array.isRequired,
-    form: PropTypes.object.isRequired,
     // 查询任务下的客户
     queryCustomer: PropTypes.func,
     // 搜索到的任务下客户列表
@@ -60,6 +59,12 @@ export default class PerformerViewDetail extends PureComponent {
     performerViewCurrentTab: PropTypes.string.isRequired,
     changePerformerViewTab: PropTypes.func.isRequired,
     targetCustDetail: PropTypes.object.isRequired,
+    serviceProgress: PropTypes.object.isRequired,
+    custFeedBack: PropTypes.array.isRequired,
+    custDetail: PropTypes.object.isRequired,
+    queryExecutorFeedBack: PropTypes.func.isRequired,
+    queryExecutorFlowStatus: PropTypes.func.isRequired,
+    queryExecutorDetail: PropTypes.func.isRequired,
   }
 
   static defaultProps = {

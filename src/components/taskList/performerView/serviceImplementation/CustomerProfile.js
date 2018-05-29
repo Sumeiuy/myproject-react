@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-29 15:09:21
+ * @Last Modified time: 2018-05-29 22:40:13
  */
 
 import React from 'react';
@@ -234,7 +234,7 @@ export default class CustomerProfile extends React.PureComponent {
     const perContactInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'homeTels', 'workTels', 'otherTels']);
     return (
       <ContactInfoPopover
-        custType={custNature}
+        custType={custNature || ''}
         name={encodeURIComponent(custName)}
         personalContactInfo={perContactInfo}
         orgCustomerContactInfoList={orgCustomerContactInfoList}
@@ -243,20 +243,12 @@ export default class CustomerProfile extends React.PureComponent {
         handlePhoneClick={this.handlePhoneClick}
         disablePhone={!canCall}
         placement="topRight"
-        getPopupContainer={() => this.container}
       >
         <span className={styles.contact}>
           <Icon type="dianhua" className={styles.icon} />联系方式
         </span>
       </ContactInfoPopover>
     );
-  }
-
-  @autobind
-  saveRef(ref) {
-    if (ref) {
-      this.container = ref;
-    }
   }
 
   render() {
@@ -267,7 +259,7 @@ export default class CustomerProfile extends React.PureComponent {
         riskLevelCode, isSign, levelCode, custNature,
     } = targetCustDetail;
     return (
-      <div className={styles.container} ref={this.saveRef}>
+      <div className={styles.container}>
         <div className={styles.row}>
           <div className={styles.col}>
             <p className={styles.item}>

@@ -27,7 +27,6 @@ export default class ListSwiper extends PureComponent {
     containerClass: PropTypes.string,
     onPageChange: PropTypes.func,
     currentTargetList: PropTypes.array,
-    currentId: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -35,11 +34,6 @@ export default class ListSwiper extends PureComponent {
     onPageChange: _.noop,
     containerClass: '',
     currentTargetList: [],
-  }
-
-  constructor(props) {
-    super(props);
-    console.log('XXXXXXXXX');
   }
 
   @autobind
@@ -134,13 +128,14 @@ export default class ListSwiper extends PureComponent {
   }
 
   render() {
-    const { targetCustList, containerClass, parameter, currentId } = this.props;
+    const { targetCustList, containerClass } = this.props;
     const { page: { pageSize, pageNum, totalPage } } = targetCustList;
-    const { activeIndex } = parameter;
     const params = {
       containerClass: styles.swiperContainer,
       slidesPerView: pageSize,
       slidesPerGroup: pageSize,
+      noSwiping: true,
+      shouldSwiperUpdate: true,
     };
     const containerCls = cx(
       styles.listSwiper,
@@ -154,11 +149,9 @@ export default class ListSwiper extends PureComponent {
       styles.nextButton,
       { [styles.disable]: pageNum === totalPage },
     );
-    console.log('currentId: ', currentId);
     return (
       <div className={containerCls}>
         <Swiper
-          key={`${currentId}${activeIndex}${pageSize}${pageNum}`}
           {...params}
           ref={this.saveSwiperRef}
         >

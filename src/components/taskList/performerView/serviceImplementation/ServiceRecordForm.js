@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-28 20:28:34
+ * @Last Modified time: 2018-05-29 22:38:45
  * 服务记录表单
  */
 
@@ -191,9 +191,13 @@ ServiceRecordForm.propTypes = {
   currentMotServiceRecord: PropTypes.object.isRequired,
   resetServiceRecordInfo: PropTypes.func.isRequired,
   // 服务实施客户名次
-  serviceCustId: PropTypes.string.isRequired,
+  serviceCustId: PropTypes.string,
   // 投资建议文本撞墙检测
   testWallCollision: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: PropTypes.bool.isRequired,
+};
+
+ServiceRecordForm.defaultProps = {
+  serviceCustId: '',
 };

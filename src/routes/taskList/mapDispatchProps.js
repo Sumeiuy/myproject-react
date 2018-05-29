@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 10:21:18
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-24 09:24:47
+ * @Last Modified time: 2018-05-15 16:40:05
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapDispatchToProps移至此处成立独立模块
  */
 import effects from './effects';
@@ -85,4 +85,10 @@ export default ({ routerRedux, effect }) => ({
   addCallRecord: effect(effects.addCallRecord, { loading: false }),
   // 执行者视图详情中tab切换
   changePerformerViewTab: effect(effects.changePerformerViewTab, { loading: false }),
+  // 查询服务结果记录
+  queryExecutorFlowStatus: effect(effects.queryExecutorFlowStatus),
+  // 查询服务结果反馈
+  queryExecutorFeedBack: effect(effects.queryExecutorFeedBack),
+  // 查询服务结果明细
+  queryExecutorDetail: effect(effects.queryExecutorDetail),
 });

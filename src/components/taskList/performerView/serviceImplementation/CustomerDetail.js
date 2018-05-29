@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-28 16:58:51
+ * @Last Modified time: 2018-05-29 22:25:04
  */
 
 import React, { PureComponent } from 'react';
@@ -132,7 +132,6 @@ export default class CustomerDetail extends PureComponent {
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
     const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
     const pathname = '/customerCenter/fspcustomerDetail';
-    console.log('this.context.push: ', this.context.push);
     openFspTab({
       routerAction: this.context.push,
       url,

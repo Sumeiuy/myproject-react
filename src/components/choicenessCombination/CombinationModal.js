@@ -151,7 +151,7 @@ export default class CombinationModal extends PureComponent {
       titleArray[timeIndex].render = text => (<div>{timeHelper.format(text, formatStr)}</div>);
       // 设置标题渲染
       titleArray[titleIndex].render = (text, record) => (
-        <div><a onClick={() => this.handleTitleClick(record)}>{text}</a></div>
+        <div title={text}><a onClick={() => this.handleTitleClick(record)}>{text}</a></div>
       );
     }
     return titleArray;
