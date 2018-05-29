@@ -26,7 +26,11 @@ import styles from './createModal.less';
 
 const RadioGroup = Radio.Group;
 // 表头
-const { titleList: { cust: custTitleList, manage: manageTitleList }, ruleTypeArray } = config;
+const {
+  titleList: { cust: custTitleList, manage: manageTitleList },
+  ruleTypeArray,
+  clearDataArray,
+} = config;
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
 // 登陆人的职位 ID
@@ -225,7 +229,7 @@ export default class CreateModal extends PureComponent {
           }
           // 有批次 ID 并且有 attachment 的时候，需要清空所有数据
           if (updateData.appId && !_.isEmpty(attachment)) {
-            clearData('clearAllData');
+            clearData(clearDataArray[1]);
           }
           const payload = {
             id: updateData.appId || '',
@@ -401,7 +405,7 @@ export default class CreateModal extends PureComponent {
     const closePayload = {
       modalKey,
       isNeedConfirm: true,
-      clearDataType: 'clearAllData',
+      clearDataType: clearDataArray[1],
     };
 
     // 客户分配规则显示与否

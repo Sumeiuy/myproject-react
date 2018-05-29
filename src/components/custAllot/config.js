@@ -6,6 +6,12 @@
  * @Last Modified time: 2018-05-24 14:18:31
  */
 const config = {
+  // 列表 type
+  listType: '07',
+  // 子类型 type
+  subType: '0703',
+  // 清除数据类型
+  clearDataArray: ['clearSearchData', 'clearAllData'],
   // 分配规则
   // allotRule
   ruleTypeArray: [

@@ -36,7 +36,7 @@ import logable, { logPV } from '../../decorators/logable';
 const dispatch = dva.generateEffect;
 const { filialeCustTransfer, filialeCustTransfer: { pageType, status } } = seibelConfig;
 
-const { titleList: { approvalColumns }, ruleTypeArray } = config;
+const { titleList: { approvalColumns }, ruleTypeArray, listType, subType, clearDataArray } = config;
 
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
@@ -202,7 +202,7 @@ export default class CustAllot extends PureComponent {
 
   componentWillUnmount() {
     const { clearData } = this.props;
-    clearData('clearAllData');
+    clearData(clearDataArray[1]);
   }
 
   // 获取右侧详情
@@ -248,7 +248,7 @@ export default class CustAllot extends PureComponent {
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
-    getList({ ...params, type: '07', subType: '0703' }).then(this.getRightDetail);
+    getList({ ...params, type: listType, subType }).then(this.getRightDetail);
   }
 
   // 头部筛选后调用方法
@@ -439,13 +439,13 @@ export default class CustAllot extends PureComponent {
     this.closeModal({
       modalKey: approverModalKey,
       isNeedConfirm: false,
-      clearDataType: 'clearAllData',
+      clearDataType: clearDataArray[1],
     });
     // 关闭新建弹窗
     this.closeModal({
       modalKey: createModalKey,
       isNeedConfirm: false,
-      clearDataType: 'clearAllData',
+      clearDataType: clearDataArray[1],
     });
     this.queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
   }

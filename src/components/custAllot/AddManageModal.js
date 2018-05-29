@@ -24,7 +24,7 @@ import config from './config';
 import styles from './addManageModal.less';
 
 // 表头
-const { titleList: { manage }, positionTypeArray } = config;
+const { titleList: { manage }, positionTypeArray, clearDataArray } = config;
 // 登陆人的组织ID
 const empOrgId = emp.getOrgId();
 // 服务经理
@@ -66,7 +66,7 @@ export default class AddManageModal extends PureComponent {
 
   componentDidMount() {
     // 查询服务经理
-    this.searchManageList({});
+    this.searchManageList();
   }
 
   // 选择服务经理
@@ -236,7 +236,7 @@ export default class AddManageModal extends PureComponent {
     const closePayload = {
       modalKey,
       isNeedConfirm: true,
-      clearDataType: 'clearSearchData',
+      clearDataType: clearDataArray[0],
     };
 
     return (

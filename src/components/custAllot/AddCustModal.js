@@ -20,7 +20,7 @@ import config from './config';
 import styles from './addCustModal.less';
 
 // 表头
-const { titleList } = config;
+const { titleList, clearDataArray } = config;
 
 export default class AddCustModal extends PureComponent {
   static propTypes = {
@@ -70,7 +70,7 @@ export default class AddCustModal extends PureComponent {
     const closePayload = {
       modalKey,
       isNeedConfirm: true,
-      clearDataType: 'clearSearchData',
+      clearDataType: clearDataArray[0],
     };
 
     return (
