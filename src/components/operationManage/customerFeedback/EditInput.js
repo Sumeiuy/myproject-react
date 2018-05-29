@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 14:48:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-25 15:06:28
+ * @Last Modified time: 2018-05-29 19:54:26
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -64,6 +64,7 @@ export default class EditInput extends PureComponent {
     const { value: nextValue, edit: nextEdit } = nextProps;
     if (preValue !== nextValue) {
       this.setState({
+        oldValue: nextValue,
         value: nextValue,
         edit: false,
       });
