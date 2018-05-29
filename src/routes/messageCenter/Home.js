@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-29 15:18:12
+ * @Last Modified time: 2018-05-29 17:40:36
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -213,7 +213,7 @@ export default class MessageCenter extends PureComponent {
         closable: true,
       };
       const pathName = '/filialeCustTransfer';
-      openFspTab({
+      openRctTab({
         routerAction: this.context.push,
         url,
         pathName,
