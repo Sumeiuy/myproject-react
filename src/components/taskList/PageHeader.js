@@ -530,6 +530,14 @@ export default class Pageheader extends PureComponent {
     );
   }
 
+  // 获取当前moreFilterList
+  @autobind
+  getMoreFilterList() {
+    const { filterControl } = this.props;
+    return _.filter(moreFilterData,
+      item => _.some(item.type, pageTypeItem => pageTypeItem === filterControl));
+  }
+
   @autobind
   moreFilterChange(obj) {
     const { location: {
@@ -538,7 +546,8 @@ export default class Pageheader extends PureComponent {
     } } = this.props;
     const { replace } = this.context;
     const { isDeleteFilterFromLocation, id } = obj;
-    const currentFilterItem = _.filter(moreFilterData, item => item.key === id)[0];
+    const currentMoreFilterData = this.getMoreFilterList();
+    const currentFilterItem = _.filter(currentMoreFilterData, item => item.key === id)[0];
     const filterOption = currentFilterItem && currentFilterItem.filterOption;
     let finalQuery = query;
     if (isDeleteFilterFromLocation && currentFilterItem) {
@@ -562,7 +571,8 @@ export default class Pageheader extends PureComponent {
         query,
       },
     } = this.props;
-    return _.map(moreFilterData, (itemFilter) => {
+    const currentMoreFilterData = this.getMoreFilterList();
+    return _.map(currentMoreFilterData, (itemFilter) => {
       const hasFilterItem = _.every(itemFilter.filterOption, item => _.hasIn(query, item));
       if (hasFilterItem) {
         return itemFilter.key;
@@ -609,6 +619,7 @@ export default class Pageheader extends PureComponent {
       missionViewType : getViewInfo().currentViewType;
 
     const selectFilterKeys = this.selectMoreFilter();
+    const currentMoreFilterData = this.getMoreFilterList();
     return (
       <div className={styles.pageCommonHeader}>
         <div className={styles.filterBox}>
@@ -647,13 +658,16 @@ export default class Pageheader extends PureComponent {
           </div>
           {this.renderExecuteType()}
           {this.renderTime()}
-          <div className={styles.filterFl}>
-            <MoreFilter
-              selectedKeys={this.selectMoreFilter()}
-              data={moreFilterData}
-              onChange={this.moreFilterChange}
-            />
-          </div>
+          {
+            currentMoreFilterData.length ?
+              <div className={styles.filterFl}>
+                <MoreFilter
+                  selectedKeys={this.selectMoreFilter()}
+                  data={currentMoreFilterData}
+                  onChange={this.moreFilterChange}
+                />
+              </div> : null
+          }
         </div>
         <div className={styles.moreFilterBox}>
           {

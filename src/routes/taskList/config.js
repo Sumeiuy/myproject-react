@@ -110,16 +110,19 @@ const moreFilterData = [
     value: '触发时间',
     key: 'triggerTime',
     filterOption: ['triggerTimeStart', 'triggerTimeEnd'],
+    type: ['controller', 'executor'],
   },
   {
     value: '创建者',
     key: 'creatorId',
     filterOption: ['creatorId', 'creatorName'],
+    type: ['controller', 'executor'],
   },
   {
     value: '客户',
     key: 'custId',
     filterOption: ['custId', 'custName'],
+    type: ['executor'],
   },
 ];
 
