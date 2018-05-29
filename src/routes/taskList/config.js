@@ -44,11 +44,6 @@ const STATUS_EXECUTOR_VIEW = [
 const chooseMissionView = [
   {
     show: true,
-    label: '我创建的任务',
-    value: 'initiator',
-  },
-  {
-    show: true,
     label: '我执行的任务',
     value: 'executor',
   },
@@ -56,6 +51,11 @@ const chooseMissionView = [
     show: true,
     label: '我部门的任务',
     value: 'controller',
+  },
+  {
+    show: true,
+    label: '我创建的任务',
+    value: 'initiator',
   },
 ];
 
@@ -84,6 +84,10 @@ const QUERY_PARAMS = [
   'createTimeStart',
   // 创建时间结束点
   'createTimeEnd',
+  // 触发时间开始点
+  'triggerTimeStart',
+  // 触发时间结束点
+  'triggerTimeEnd',
   // 结束时间开始点
   'endTimeStart',
   // 结束时间结束点
@@ -98,6 +102,28 @@ const QUERY_PARAMS = [
   'pageSize',
   // 当前分页
   'pageNum',
+];
+
+// 更多按钮的菜单数据，配置顺序需要与上面的一致
+const moreFilterData = [
+  {
+    value: '客户',
+    key: 'custId',
+    filterOption: ['custId', 'custName'],
+    type: ['executor'],
+  },
+  {
+    value: '创建者',
+    key: 'creatorId',
+    filterOption: ['creatorId', 'creatorName'],
+    type: ['controller', 'executor'],
+  },
+  {
+    value: '触发时间',
+    key: 'triggerTime',
+    filterOption: ['triggerTimeStart', 'triggerTimeEnd'],
+    type: ['controller', 'executor'],
+  },
 ];
 
 export default {
@@ -128,4 +154,5 @@ export default {
   CREATE_TIME_KEY,
   END_TIME_KEY,
   QUERY_PARAMS,
+  moreFilterData,
 };

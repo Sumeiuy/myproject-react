@@ -14,10 +14,9 @@ import { Tooltip } from 'antd';
 import classNames from 'classnames';
 import Icon from '../../common/Icon';
 import LabelInfo from '../common/LabelInfo';
-import MissionProgress from './MissionProgress';
-import CustFeedback from './CustFeedback';
 import CustManagerDetailScope from './CustManagerDetailScope';
 import TabsExtra from '../../customerPool/home/TabsExtra';
+import ServiceResultLayout from '../common/ServiceResultLayout';
 import { env, permission, emp } from '../../../helper';
 import { ORG_LEVEL1, ORG_LEVEL2 } from '../../../config/orgTreeLevel';
 import {
@@ -36,8 +35,6 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const EMPTY_CONTENT = '本机构无服务客户';
 const MAIN_MAGEGER_ID = 'msm';
-const COLLAPSE_WIDTH = 672;
-const MARGIN_LEFT = 16;
 
 export default class MissionImplementation extends PureComponent {
 
@@ -58,8 +55,6 @@ export default class MissionImplementation extends PureComponent {
     // 客户反馈饼图
     countFlowFeedBack: PropTypes.func.isRequired,
     exportExcel: PropTypes.func.isRequired,
-    // 进度条字典
-    missionProgressStatusDic: PropTypes.array.isRequired,
     // current taskId
     currentId: PropTypes.string,
     missionReport: PropTypes.object.isRequired,
@@ -91,7 +86,6 @@ export default class MissionImplementation extends PureComponent {
       currentOrgId: '',
       createCustRange: [],
       isDown: true,
-      forceRender: true,
       // 当前组织机构树层级
       level,
       currentScopeList,
@@ -123,9 +117,6 @@ export default class MissionImplementation extends PureComponent {
       posOrgId: this.orgId,
       empPostnList,
     });
-    window.addEventListener('resize', this.onResize);
-    // fsp侧边菜单折叠按钮click事件处理
-    window.onFspSidebarbtn(this.onResize);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -154,37 +145,6 @@ export default class MissionImplementation extends PureComponent {
         empPostnList,
       });
     }
-  }
-
-  /**
-   * 卸载事件监听
-   */
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onResize);
-    window.offFspSidebarbtn(this.onResize);
-  }
-
-  /**
-   * 为了解决flex-box布局在发生折叠时，两个相邻box之间的原有间距需要取消
-   * 不然会产生对齐bug
-   * 监听resize事件，为了性能考虑，只当flex容器宽度在设定的间断点左右跳跃时，才触发重新render
-   */
-  @autobind
-  onResize() {
-    const contentWidth = this.contentElem && this.contentElem.clientWidth;
-    if (this.memeoryWidth) {
-      if (this.memeoryWidth < COLLAPSE_WIDTH < contentWidth ||
-        contentWidth < COLLAPSE_WIDTH < this.memeoryWidth) {
-        this.setState({
-          forceRender: !this.state.forceRender,
-        });
-      }
-    } else {
-      this.setState({
-        forceRender: !this.state.forceRender,
-      });
-    }
-    this.memeoryWidth = contentWidth;
   }
 
   @autobind
@@ -457,7 +417,6 @@ export default class MissionImplementation extends PureComponent {
       missionImplementationProgress = EMPTY_OBJECT,
       isFold,
       custFeedback = EMPTY_LIST,
-      missionProgressStatusDic = EMPTY_LIST,
       missionReport,
       currentId,
       custManagerScopeData,
@@ -468,14 +427,6 @@ export default class MissionImplementation extends PureComponent {
     const {
       isCreatingMotReport,
     } = currentMissionReport;
-    /**
-     * 下面三个变量是为了解决flex-box布局在发生折叠时，两个相邻box之间的原有间距需要取消
-     * 不然会产生对齐bug
-     * 这里一旦取消box之间的间距，需要考虑到flex的重新伸缩性问题
-     */
-    const contentWidth = this.contentElem && this.contentElem.clientWidth;
-    const shouldnoMargin = (contentWidth && contentWidth < COLLAPSE_WIDTH);
-    const shouldForceCollapse = shouldnoMargin && contentWidth > COLLAPSE_WIDTH - MARGIN_LEFT;
 
     const notMissionCust = _.isEmpty(missionImplementationProgress) && _.isEmpty(custFeedback);
     const canCreateReport = _.isBoolean(isCreatingMotReport) ?
@@ -516,27 +467,11 @@ export default class MissionImplementation extends PureComponent {
               <img src={emptyImg} alt={EMPTY_CONTENT} />
               <div className={styles.tip}>{EMPTY_CONTENT}</div>
             </div> :
-            <div className={styles.content} ref={(ref) => { this.contentElem = ref; }}>
-              <div
-                className={classNames({
-                  [styles.leftContent]: true,
-                  [styles.noMargin]: shouldnoMargin,
-                  [styles.forceCollapse]: shouldForceCollapse,
-                })}
-              >
-                <MissionProgress
-                  missionImplementationProgress={missionImplementationProgress}
-                  onPreviewCustDetail={this.handlePreview}
-                  missionProgressStatusDic={missionProgressStatusDic}
-                />
-              </div>
-              <div className={styles.rightContent}>
-                <CustFeedback
-                  onPreviewCustDetail={this.handlePreview}
-                  custFeedback={custFeedback}
-                />
-              </div>
-            </div>
+            <ServiceResultLayout
+              missionImplementationProgress={missionImplementationProgress}
+              onPreviewCustDetail={this.handlePreview}
+              custFeedback={custFeedback}
+            />
         }
         {
           !notMissionCust ?

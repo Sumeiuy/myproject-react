@@ -80,6 +80,11 @@ export default {
     zhangleApprovalList: [],
     // 执行者视图当前的选中的tab的key值, 默认服务实施
     performerViewCurrentTab: defaultPerformerViewCurrentTab,
+    // 服务结果进度
+    serviceProgress: EMPTY_OBJ,
+    custFeedBack: EMPTY_LIST,
+    // 客户明细
+    custDetail: EMPTY_OBJ,
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -275,6 +280,27 @@ export default {
       return {
         ...state,
         performerViewCurrentTab: action.payload,
+      };
+    },
+    queryExecutorFlowStatusSuccess(state, action) {
+      const { payload: serviceProgress } = action;
+      return {
+        ...state,
+        serviceProgress,
+      };
+    },
+    queryExecutorFeedBackSuccess(state, action) {
+      const { payload: custFeedBack } = action;
+      return {
+        ...state,
+        custFeedBack,
+      };
+    },
+    queryExecutorDetailSuccess(state, action) {
+      const { payload: custDetail } = action;
+      return {
+        ...state,
+        custDetail,
       };
     },
   },
@@ -492,6 +518,30 @@ export default {
       const { resultData } = yield call(api.queryApproval, payload);
       yield put({
         type: 'queryApprovalList4ZLFinsSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取服务结果进度
+    * queryExecutorFlowStatus({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryExecutorFlowStatus, payload);
+      yield put({
+        type: 'queryExecutorFlowStatusSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取客户反馈
+    * queryExecutorFeedBack({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryExecutorFeedBack, payload);
+      yield put({
+        type: 'queryExecutorFeedBackSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取客户明细
+    * queryExecutorDetail({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryExecutorDetail, payload);
+      yield put({
+        type: 'queryExecutorDetailSuccess',
         payload: resultData,
       });
     },

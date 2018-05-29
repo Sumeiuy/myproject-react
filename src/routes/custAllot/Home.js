@@ -452,7 +452,6 @@ export default class CustAllot extends PureComponent {
 
   @autobind
   handleRuleTypePropsChange(value) {
-    console.warn('handleRuleTypePropsChange value', value);
     this.setState({
       ruleType: value,
     });
