@@ -70,6 +70,12 @@ const mapStateToProps = () => state => ({
   testWallCollisionStatus: state.investmentAdvice.testWallCollisionStatus,
   // 执行者视图详情中当前选中的tab
   performerViewCurrentTab: state.performerView.performerViewCurrentTab,
+  // 服务结果记录
+  serviceProgress: state.performerView.serviceProgress,
+  // 服务结果反馈
+  custFeedBack: state.performerView.custFeedBack,
+  // 服务结果明细
+  custDetail: state.performerView.custDetail,
 });
 
 export default mapStateToProps;

@@ -526,6 +526,12 @@ export default class PerformerView extends PureComponent {
       addCallRecord,
       changePerformerViewTab,
       performerViewCurrentTab,
+      serviceProgress,
+      custFeedBack,
+      custDetail,
+      queryExecutorFlowStatus,
+      queryExecutorFeedBack,
+      queryExecutorDetail,
     } = this.props;
     const {
       typeCode,
@@ -592,6 +598,12 @@ export default class PerformerView extends PureComponent {
         addCallRecord={addCallRecord}
         changePerformerViewTab={changePerformerViewTab}
         performerViewCurrentTab={performerViewCurrentTab}
+        serviceProgress={serviceProgress}
+        custFeedBack={custFeedBack}
+        custDetail={custDetail}
+        queryExecutorFlowStatus={queryExecutorFlowStatus}
+        queryExecutorFeedBack={queryExecutorFeedBack}
+        queryExecutorDetail={queryExecutorDetail}
       />
     );
   }

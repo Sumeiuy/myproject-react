@@ -21,20 +21,26 @@ export default class DateFilter extends React.Component {
     defaultVisible: PropTypes.bool,
     isCloseable: PropTypes.bool,
     onClose: PropTypes.func,
+    isInsideOffSet: PropTypes.func,
     value: PropTypes.oneOfType([PropTypes.array, PropTypes.string]).isRequired,
+    disabledCurrentEnd: PropTypes.bool,
+    hasCustomerOffset: PropTypes.bool,
   };
   static defaultProps = {
     // example props for the demo
     defaultVisible: false,
     className: '',
     isCloseable: false,
+    hasCustomerOffset: false,
+    disabledCurrentEnd: true,
     initialStartDate: null,
     initialEndDate: null,
     stateDateWrapper: date => date.format('YYYY-MM-DD'),
     filterName: '开户日期',
     filterId: 'dateOpened',
-    onChange: () => {},
-    onClose: () => {},
+    isInsideOffSet: () => true,
+    onChange: _.noop,
+    onClose: _.noop,
   };
 
   constructor(props) {
@@ -61,7 +67,7 @@ export default class DateFilter extends React.Component {
   }
 
   render() {
-    const { value } = this.props;
+    const { value, isInsideOffSet, disabledCurrentEnd, hasCustomerOffset } = this.props;
     const filterContainerClasses = classNames({
       [styles.dateFilter]: true,
       [styles.dateFilterContainer]: true,
@@ -89,9 +95,13 @@ export default class DateFilter extends React.Component {
             inputIconPosition="after"
             initialStartDate={initialStartDate}
             initialEndDate={initialEndDate}
-            disabledRange={day => !isInclusivelyBeforeDay(day, moment())}
+            disabledRange={disabledCurrentEnd ?
+                day => !isInclusivelyBeforeDay(day, moment())
+              : _.noop}
+            hasCustomerOffset={hasCustomerOffset}
             onChange={this.onDatesChange}
             defaultVisible={this.props.defaultVisible}
+            isInsideOffSet={isInsideOffSet}
             noBorder
             readOnly
           />
