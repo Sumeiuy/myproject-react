@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-29 20:29:21
+ * @Last Modified time: 2018-05-29 22:16:42
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -83,7 +83,6 @@ export default class MessageCenter extends PureComponent {
     const { objectVal, rowId, typeName, title } = data;
     const allocation = '转签待分配';
     const flag = title.indexOf(allocation);
-    this.removeNotice = false;
     // 判断删除消息通知需要的参数
     const removeNoticeParams = {
       typeName,
