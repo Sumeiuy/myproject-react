@@ -23,22 +23,22 @@ const END_DATE = 'endDate';
 export default class CommonDateRangePicker extends PureComponent {
   static getDerivedStateFromProps(props, state) {
     const { prevProps } = state;
-    let nextProps = {};
+    let nextState = {};
     if (props.initialStartDate !== prevProps.initialStartDate) {
-      nextProps = {
-        ...nextProps,
+      nextState = {
+        ...nextState,
         startDate: props.initialStartDate,
         prevProps: props,
       };
     }
     if (props.initialEndDate !== prevProps.initialEndDate) {
-      nextProps = {
-        ...nextProps,
+      nextState = {
+        ...nextState,
         endDate: props.initialEndDate,
         prevProps: props,
       };
     }
-    return nextProps;
+    return nextState;
   }
 
   static propTypes = {
