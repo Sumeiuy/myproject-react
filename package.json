@@ -42,6 +42,7 @@
     "history": "^4.7.2",
     "hoist-non-react-statics": "^2.3.1",
     "ht-react-filter": "^1.1.5",
+    "ht-tree-filter": "^1.0.1",
     "immutability-helper": "^2.6.6",
     "localforage": "^1.4.3",
     "lodash": "^4.17.4",
