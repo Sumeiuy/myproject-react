@@ -50,6 +50,7 @@ export default class CommonDatePicker extends PureComponent {
       disabled,
       dateFormat,
       allowClear,
+      ...resetProps,
     } = this.props;
     // value 的属性有一个是 _i
     const { _i } = value;
@@ -70,6 +71,7 @@ export default class CommonDatePicker extends PureComponent {
           format={dateFormat}
           placeholder={placeholder}
           onChange={this.handleChange}
+          {...resetProps}
           {...addValueToPickProps}
         />
       </div>

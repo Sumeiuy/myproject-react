@@ -24,6 +24,8 @@ import { time } from '../../helper';
 import styles from './baseInfoAdd.less';
 import logable from '../../decorators/logable';
 
+// 用于找到select类组件渲染option时父级容器的方法,以解决在弹窗里页面滚动，option随页面滚动的问题
+const getPopupContainerFunction = () => document.querySelector(`.${styles.editWrapper}`);
 const { TextArea } = Input;
 
 // 操作类型列表,退订的类型
@@ -325,6 +327,7 @@ export default class BaseInfoEdit extends PureComponent {
           optionList={contractNumList}
           onSelect={this.handleSelectContractNum}
           onSearch={this.handleSearchContractNum}
+          getPopupContainer={getPopupContainerFunction}
           ref={selectContractComponent => this.selectContractComponent = selectContractComponent}
         />
       </InfoForm>)
@@ -342,6 +345,7 @@ export default class BaseInfoEdit extends PureComponent {
               }
           onChange={this.handleSeletStartTime}
           boxStyle={datePickerBoxStyle}
+          getCalendarContainer={getPopupContainerFunction}
         />
       </InfoForm>)
       :
@@ -358,6 +362,7 @@ export default class BaseInfoEdit extends PureComponent {
             }
           onChange={this.handleSelectValidityTime}
           boxStyle={datePickerBoxStyle}
+          getCalendarContainer={getPopupContainerFunction}
         />
       </InfoForm>)
       :
@@ -379,6 +384,7 @@ export default class BaseInfoEdit extends PureComponent {
             data={operateType}
             value={this.state.operation}
             onChange={this.handleSelectOperationType}
+            getPopupContainer={getPopupContainerFunction}
           />
         </InfoForm>
         <InfoForm label="子类型" required>
@@ -387,6 +393,7 @@ export default class BaseInfoEdit extends PureComponent {
             data={childTypeList}
             value={this.state.subType}
             onChange={this.handleSelectSubtype}
+            getPopupContainer={getPopupContainerFunction}
           />
         </InfoForm>
         <InfoForm label="客户" required>
@@ -398,6 +405,7 @@ export default class BaseInfoEdit extends PureComponent {
             optionList={custList}
             onSelect={this.handleSelectClient}
             onSearch={this.handleSearchClient}
+            getPopupContainer={getPopupContainerFunction}
             ref={selectCustComponent => this.selectCustComponent = selectCustComponent}
           />
         </InfoForm>
