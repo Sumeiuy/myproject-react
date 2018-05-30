@@ -1,15 +1,14 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-30 10:58:12
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-25 13:54:03
  * @description 任务管理首页
  */
 
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import moment from 'moment';
 import withRouter from '../../decorators/withRouter';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
@@ -34,13 +33,9 @@ import {
   EXECUTOR,
   INITIATOR,
   CONTROLLER,
-  currentDate,
-  beforeCurrentDate60Days,
-  dateFormat,
   STATUS_MANAGER_VIEW,
   SYSTEMCODE,
   STATE_EXECUTE_CODE,
-  STATE_FINISHED_CODE,
   STATE_ALL_CODE,
   CREATE_TIME,
   END_TIME,
@@ -604,19 +599,6 @@ export default class PerformerView extends PureComponent {
     return detailComponent;
   }
 
-  // 当前筛选的状态为‘结束’时，优先取url中日期的值，再取默认的日期，否则返回空字符串
-  @autobind
-  getFinishedStateDate({
-      status = STATE_EXECUTE_CODE,
-    value,
-    urlDate,
-    }) {
-    if (status === STATE_FINISHED_CODE) {
-      return urlDate || moment(value).format(dateFormat);
-    }
-    return '';
-  }
-
   // 帕努单任务是否在执行中，用于管理者视图
   @autobind
   judgeTaskInApproval(status) {
@@ -715,37 +697,6 @@ export default class PerformerView extends PureComponent {
     // 状态默认选中‘执行中’, status传50，其余传对应的code码
     finalPostData.status = status || STATE_EXECUTE_CODE;
     finalPostData = { ...finalPostData, missionViewType: currentViewType };
-    if (this.isInitiatorView(currentViewType)) {
-      const { createTimeEnd, createTimeStart } = finalPostData;
-      finalPostData = {
-        ...finalPostData,
-        createTimeEnd: this.getFinishedStateDate({
-          status,
-          value: currentDate,
-          urlDate: createTimeEnd,
-        }),
-        createTimeStart: this.getFinishedStateDate({
-          status,
-          value: beforeCurrentDate60Days,
-          urlDate: createTimeStart,
-        }),
-      };
-    } else {
-      const { endTimeEnd, endTimeStart } = finalPostData;
-      finalPostData = {
-        ...finalPostData,
-        endTimeEnd: this.getFinishedStateDate({
-          status,
-          value: currentDate,
-          urlDate: endTimeEnd,
-        }),
-        endTimeStart: this.getFinishedStateDate({
-          status,
-          value: beforeCurrentDate60Days,
-          urlDate: endTimeStart,
-        }),
-      };
-    }
     return finalPostData;
   }
 
