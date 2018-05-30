@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-30 14:44:16
+ * @Last Modified time: 2018-05-30 17:09:11
  * @description 任务管理首页
  */
 
@@ -70,9 +70,9 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 // 创建者视图的排序默认降序排序
-const DEFAULT_SORT_DESC = 'desc';
+const SORT_DESC = 'desc';
 // 执行者视图和管理者视图默认升序排序
-const DEFAULT_SORT_ASC = 'asc';
+const SORT_ASC = 'asc';
 
 @withRouter
 export default class PerformerView extends PureComponent {
@@ -887,11 +887,11 @@ export default class PerformerView extends PureComponent {
   getSortConfig(viewType) {
     let sortKey = CREATE_TIME_KEY;
     let sortContent = CREATE_TIME;
-    let sortDirection = DEFAULT_SORT_DESC;
+    let sortDirection = SORT_DESC;
     if (viewType === EXECUTOR || viewType === CONTROLLER) {
       sortKey = END_TIME_KEY;
       sortContent = END_TIME;
-      sortDirection = DEFAULT_SORT_ASC;
+      sortDirection = SORT_ASC;
     }
     return {
       sortKey,
@@ -911,12 +911,12 @@ export default class PerformerView extends PureComponent {
       // 创建者视图，用createTimeSort,desc
       if (currentViewType === INITIATOR) {
         param = {
-          [CREATE_TIME_KEY]: DEFAULT_SORT_DESC,
+          [CREATE_TIME_KEY]: SORT_DESC,
         };
       } else if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
         // 执行者视图和管理者视图用endTimeSort,asc
         param = {
-          [END_TIME_KEY]: DEFAULT_SORT_ASC,
+          [END_TIME_KEY]: SORT_ASC,
         };
       }
     } else {
