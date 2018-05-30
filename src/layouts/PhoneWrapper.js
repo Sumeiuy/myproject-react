@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-28 19:14:00
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-28 19:22:08
+ * @Last Modified time: 2018-05-30 17:34:49
  */
 import React, { Component } from 'react';
 import moment from 'moment';
@@ -26,6 +26,7 @@ export default class PhoneWrapper extends Component {
   @autobind
   phoneCallback(data) {
     const { type } = data;
+    this.startTime = '';
     if (type === 'connected') {
       this.handlePhoneConnected(data);
     }
