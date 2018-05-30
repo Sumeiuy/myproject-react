@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-29 17:40:36
+ * @Last Modified time: 2018-05-30 09:23:48
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -83,7 +83,7 @@ export default class MessageCenter extends PureComponent {
     const { objectVal, rowId, typeName, title } = data;
     const allocation = '转签待分配';
     const flag = title.indexOf(allocation);
-    this.removeNotice = false;
+    this.removeNotice = true;
     if (typeName === 'HTSC FSP TGSign' && flag < 0) {
       this.handleMessageByFSPNotAllocation(objectVal);
     } else if (typeName === 'HTSC FSP TGSign' && flag >= 0) {
@@ -101,7 +101,6 @@ export default class MessageCenter extends PureComponent {
     } else {
       this.handleMessageByOther(rowId, objectVal);
     }
-
     if (this.removeNotice && ((typeName !== 'HTSC FSP TGSign') || (flag < 0))) {
       this.handleMessageByRemoveNotice(rowId);
     }
@@ -277,17 +276,9 @@ export default class MessageCenter extends PureComponent {
       // $('#showMessageInfo').EBDataTable('queryData');
       const { page } = this.props.remindMessages;
       const { curPageNum } = page;
-      let { totalRecordNum } = page;
       this.getRemindMessageList({
         pageNum: curPageNum,
       });
-      if (totalRecordNum > 0) {
-        if (totalRecordNum > 99) {
-          totalRecordNum = '99+';
-        }
-        // 修改fsp页面用户信息的消息提醒条数
-        $('.remindMessages').html(totalRecordNum.toString()).css('display', 'inline-block'); //eslint-disable-line
-      }
     })
     .catch((e) => {
       console.error(e);
