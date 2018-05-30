@@ -15,7 +15,7 @@ import Button from '../Button';
 import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
 import contractHelper from '../../../helper/page/contract';
-import { dom, permission } from '../../../helper';
+import { dom, permission, env } from '../../../helper';
 import { fspContainer, seibelConfig } from '../../../config';
 import config from '../../telephoneNumberManage/config';
 import logable from '../../../decorators/logable';
@@ -470,6 +470,10 @@ export default class Pageheader extends PureComponent {
     } else {
       // 此处,通用的判断是否需要隐藏新建按钮
       hasCreatePermission = this.props.isShowCreateBtn();
+    }
+    // 如果不在 FSP 环境，即本地开发时候，始终显示
+    if (!env.isInFsp()) {
+      hasCreatePermission = true;
     }
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
