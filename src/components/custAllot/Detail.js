@@ -230,6 +230,7 @@ export default class Detail extends PureComponent {
             titleList={newTitleList}
             data={assignmentListData}
             align={'left'}
+            rowKey="custId"
             scroll={{ x: allWidth }}
           />
           <Pagination
