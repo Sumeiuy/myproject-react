@@ -1,6 +1,14 @@
 import { createElement } from 'react';
 import dynamic from 'dva/dynamic';
 
+import CustomerPool from '../routes/customerPool/Home';
+import TaskList from '../routes/taskList/connectedHome';
+import TaskFlow from '../routes/customerPool/TaskFlow';
+import CustomerList from '../routes/customerPool/CustomerList';
+import ReportHome from '../routes/reports/Home';
+import CreateTask from '../routes/customerPool/CreateTask';
+import CustomerGroupManage from '../routes/customerPool/CustomerGroupManage';
+
 let routerDataCache;
 
 const modelNotExisted = (app, model) => (
@@ -65,7 +73,7 @@ export const getRouterData = (app) => {
     },
     // 直接进入
     '/report': {
-      component: dynamicWrapper(app, ['report'], () => import('../routes/reports/Home')),
+      component: ReportHome,
     },
     // 直接进入，
     '/boardManage': {
@@ -117,7 +125,7 @@ export const getRouterData = (app) => {
     },
     // 直接进入，拼接 url 为 localhost:9088/?empId=002332&grayFlag=true#/tasklist 打开所有下拉选项
     '/taskList': {
-      component: dynamicWrapper(app, ['taskList/tasklist'], () => import('../routes/taskList/connectedHome')),
+      component: TaskList,
     },
     // 直接进入
     '/exchange': {
@@ -159,7 +167,7 @@ export const getRouterData = (app) => {
 
     // 直接进入
     '/customerPool': {
-      component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/Home')),
+      component: CustomerPool,
     },
     // 从 customerPool 页面右下角资讯列表任意标题进入
     '/customerPool/viewpointDetail': {
@@ -175,7 +183,7 @@ export const getRouterData = (app) => {
     },
     // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
     '/customerPool/list': {
-      component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/CustomerList')),
+      component: CustomerList,
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
@@ -184,38 +192,38 @@ export const getRouterData = (app) => {
     // 分组管理发起任务
     // customerPool/createTaskFromCustGroup 直接进入，所需数据未知
     '/customerPool/createTaskFromCustGroup': {
-      component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/CreateTask')),
+      component: CreateTask,
     },
     // 管理者视图进度条发起任务
     '/customerPool/createTaskFromProgress': {
-      component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/CreateTask')),
+      component: CreateTask,
     },
     // 管理者视图饼图发起任务
     '/customerPool/createTaskFromPie': {
-      component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/CreateTask')),
+      component: CreateTask,
     },
     // 从代办流程进去，任务驳回修改
     '/customerPool/createTaskFromTaskRejection1': {
-      component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/CreateTask')),
+      component: CreateTask,
     },
     // 从任务管理，创建者视图驳回中的任务，进行任务驳回修改
     '/customerPool/createTaskFromTaskRejection2': {
-      component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/CreateTask')),
+      component: CreateTask,
     },
     // 客户列表发起任务
     '/customerPool/createTask': {
-      component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/CreateTask')),
+      component: CreateTask,
     },
     // 客户分组管理
     '/customerPool/customerGroupManage': {
-      component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/CustomerGroupManage')),
+      component: CustomerGroupManage,
     },
     '/customerPool/serviceLog': {
       component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/ServiceLog')),
     },
     // 从 /taskList 页面，点击右上角新建进入
     '/customerPool/taskFlow': {
-      component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/TaskFlow')),
+      component: TaskFlow,
     },
 
     // 从 FSP 消息提醒进入，亦可直接进入，需要数据需后台配置
