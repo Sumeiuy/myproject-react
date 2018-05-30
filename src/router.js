@@ -77,6 +77,9 @@ import CombinationDetail from './routes/choicenessCombination/CombinationDetail'
 import ReportDetail from './routes/choicenessCombination/ReportDetail';
 // 投顾业务能力竞赛
 import InvestmentConsultantRace from './routes/investmentConsultantRace/Home';
+// 客户划转
+import CustAllot from './routes/custAllot/Home';
+import CustAllotNotifies from './routes/custAllot/Notifies';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -299,6 +302,15 @@ const routes = [
   },
   // 投顾业务能力竞赛
   { path: '/investmentConsultantRace', component: InvestmentConsultantRace },
+  // 直接进入
+  {
+    path: '/custAllot',
+    component: CustAllot,
+    children: [
+      // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type
+      { path: '/notifies', component: CustAllotNotifies },
+    ],
+  },
 ];
 
 // 递归创建路由

@@ -164,7 +164,6 @@ export default class ServiceResult extends PureComponent {
       value: '客户名称',
       dataIndex: 'cust',
       key: 'cust',
-      render: item => `${item.cust}(${item.brokerNum})`,
     }, {
       value: '总资产',
       dataIndex: 'assets',
@@ -198,7 +197,11 @@ export default class ServiceResult extends PureComponent {
       totalCount: totalRecordNum = 0,
     } = page;
     const finalPage = { curPageNum, curPageSize, totalRecordNum };
-    return { list, finalPage };
+    const finalList = _.map(list, item => ({
+      ...item,
+      cust: `${item.cust}(${item.brokerNum})`,
+    }));
+    return { list: finalList, finalPage };
   }
 
   @autobind

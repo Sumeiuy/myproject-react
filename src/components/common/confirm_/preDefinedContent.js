@@ -20,6 +20,7 @@ const preDefine = {
   feedbackMaintainNotEmpty: '服务经理一级可选项名称不能为空',
   feedbackMaintainUpdate: '修改的反馈信息实时生效，会影响到已反馈的服务记录，是否确认修改？',
   feedbackMaintainDelete: '删除的信息在系统中实时生效，会影响到已关联的任务，确认要删除吗？',
+  hasTouGu: '待分配客户涉及投顾名下客户，是否确认分配？',
 };
 
 export default preDefine;
