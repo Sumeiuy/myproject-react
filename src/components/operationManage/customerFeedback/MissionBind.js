@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-29 11:12:53
+ * @Last Modified time: 2018-05-30 13:43:08
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -119,11 +119,8 @@ export default class MissionBind extends PureComponent {
           className={isMOTMission ? styles.parentClass : styles.parentClassSelf}
         >
           {
-            _.size(item.customerList || []) <= 4 ? null :
-            (<Icon
-              type="exclamation-circle"
-              style={{ fontSize: 14, color: '#f9a825', marginRight: '5px' }}
-            />)
+            _.size(item.customerList) <= 4 ? null :
+            (<Icon type="exclamation-circle" className={styles.overWarningIcon} />)
           }
           {item.parentClassName}
         </span>
@@ -288,10 +285,7 @@ export default class MissionBind extends PureComponent {
       // 自建任务，判断如果 self 为 true，则表示有任务的涨乐客户可选项超过了4项需要显示警告图标
       return (
         <span>
-          <Icon
-            type="exclamation-circle"
-            style={{ fontSize: 14, color: '#f9a825', marginRight: '5px' }}
-          />
+          <Icon type="exclamation-circle" className={styles.overWarningIcon} />
           {tabName}
         </span>
       );

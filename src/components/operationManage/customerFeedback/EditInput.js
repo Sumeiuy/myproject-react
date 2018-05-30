@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 14:48:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-29 19:54:26
+ * @Last Modified time: 2018-05-30 13:46:16
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -20,8 +20,8 @@ export default class EditInput extends PureComponent {
     editName: PropTypes.string.isRequired,
     value: PropTypes.string,
     id: PropTypes.string,
-    editCallback: PropTypes.func.isRequired,
-    edit: PropTypes.bool,
+    onEditConfirm: PropTypes.func.isRequired,
+    editable: PropTypes.bool,
     onCancel: PropTypes.func,
     maxLen: PropTypes.number,
     item: PropTypes.object,
@@ -36,7 +36,7 @@ export default class EditInput extends PureComponent {
   static defaultProps = {
     id: '',
     value: '',
-    edit: false,
+    editable: false,
     btnGroup: '',
     maxLen: 30,
     // data: [],
@@ -48,10 +48,10 @@ export default class EditInput extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { edit, value } = props;
+    const { editable, value } = props;
     this.state = {
       // 编辑状态
-      edit,
+      editable,
       // 值
       value,
       // 编辑前的值
@@ -60,18 +60,18 @@ export default class EditInput extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { value: preValue, edit: preEdit } = this.props;
-    const { value: nextValue, edit: nextEdit } = nextProps;
+    const { value: preValue, editable: preEdit } = this.props;
+    const { value: nextValue, editable: nextEdit } = nextProps;
     if (preValue !== nextValue) {
       this.setState({
         oldValue: nextValue,
         value: nextValue,
-        edit: false,
+        editable: false,
       });
     }
     if (preEdit !== nextEdit) {
       this.setState({
-        edit: nextEdit,
+        editable: nextEdit,
       });
     }
   }
@@ -89,9 +89,9 @@ export default class EditInput extends PureComponent {
   @logable({ type: 'Click', payload: { name: '编辑' } })
   onEdit(e) {
     e.stopPropagation();
-    const { edit } = this.state;
+    const { editable } = this.state;
     this.setState({
-      edit: !edit,
+      editable: !editable,
     });
   }
 
@@ -113,9 +113,9 @@ export default class EditInput extends PureComponent {
         okText: '确认',
       });
     } else {
-      this.props.editCallback(value, item);
+      this.props.onEditConfirm(value, item);
       this.setState({
-        edit: false,
+        editable: false,
       });
     }
   }
@@ -129,7 +129,7 @@ export default class EditInput extends PureComponent {
     const { onCancel } = this.props;
     this.setState({
       value: oldValue,
-      edit: false,
+      editable: false,
     }, onCancel);
   }
 
@@ -148,12 +148,12 @@ export default class EditInput extends PureComponent {
   }
 
   render() {
-    const { edit, value } = this.state;
+    const { editable, value } = this.state;
     const { btnGroup } = this.props;
     return (
       <div className={styles.editInput}>
         {
-          !edit ?
+          !editable ?
             <div className={styles.noInput}>
               {this.renderInputTextDomByValue(value)}
               <Icon type="edit" onClick={this.onEdit} title="编辑" />

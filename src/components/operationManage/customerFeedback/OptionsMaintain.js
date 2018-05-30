@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-25 15:14:39
+ * @Last Modified time: 2018-05-30 13:51:51
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -264,8 +264,8 @@ export default class OptionsMaintain extends PureComponent {
           editName="服务经理可选项"
           value={item.name}
           item={item}
-          edit={item.edit}
-          editCallback={this.handleUpdateFeedbackOfServiceManager}
+          editable={item.edit}
+          onEditConfirm={this.handleUpdateFeedbackOfServiceManager}
         />
         {/** 客户涨乐可选项，编辑框, 客户可选项字符长度最大为7 */}
         <EditInput
@@ -273,8 +273,8 @@ export default class OptionsMaintain extends PureComponent {
           maxLen={7}
           value={item.custFeedbackName || ''}
           item={item}
-          edit={item.edit}
-          editCallback={this.handleUpdateFirstFeedbackOfZhangLeCust}
+          editable={item.edit}
+          onEditConfirm={this.handleUpdateFirstFeedbackOfZhangLeCust}
         />
         <div className={styles.lengthDiv}>{item.length || 0}项<Icon type="up" /><Icon type="down" /></div>
         <div className={styles.actionDiv}>
@@ -304,8 +304,8 @@ export default class OptionsMaintain extends PureComponent {
             value={child.name}
             item={{ ...child, parentId }}
             btnGroup={btnGroup}
-            edit={child.edit}
-            editCallback={this.handleUpdateFeedbackOfServiceManager}
+            editable={child.edit}
+            onEditConfirm={this.handleUpdateFeedbackOfServiceManager}
           />
         </li>
       );
