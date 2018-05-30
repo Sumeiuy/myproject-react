@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 14:12:23
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-29 17:37:19
  * @description 客户池头部搜索组件
  */
 
@@ -17,7 +17,7 @@ import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { padSightLabelDesc } from '../../../config';
 import Icon from '../../common/Icon';
-import { isSightingScope, getFilter } from '../helper';
+import { isSightingScope } from '../helper';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
@@ -39,15 +39,18 @@ export default class Search extends PureComponent {
     saveSearchVal: PropTypes.func,
     location: PropTypes.object.isRequired,
     isPreview: PropTypes.bool,
+    // 打开展示所有标签弹窗
+    showMoreLabelModal: PropTypes.func,
   }
 
   static defaultProps = {
     hotWdsList: EMPTY_LIST,
-    queryHotPossibleWds: () => { },
-    saveSearchVal: () => { },
+    queryHotPossibleWds: _.noop,
+    saveSearchVal: _.noop,
     queryHotWdsData: EMPTY_LIST,
     searchHistoryVal: '',
     isPreview: false,
+    showMoreLabelModal: _.noop,
   }
 
   constructor(props) {
@@ -82,7 +85,7 @@ export default class Search extends PureComponent {
     this.props.saveSearchVal({
       searchVal: this.state.value,
     });
-    const condition = urlHelper.stringify({ ...options, filters: getFilter(options) });
+    const condition = urlHelper.stringify({ ...options });
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
@@ -144,6 +147,13 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '目标客户池首页搜索框',
+      value: '$args[0]',
+    },
+  })
   handleSelect(value) {
     const item = _.find(this.state.dataSource, child => child.id === value);
     const sightingScopeBool = isSightingScope(item.source);
@@ -166,18 +176,6 @@ export default class Search extends PureComponent {
     if (item.type === 'PRODUCT' && item.name) {
       query = { ...query, productName: encodeURIComponent(item.name) };
     }
-
-    // log日志 --- 首页搜索选中
-    const subtype = sightingScopeBool ? '瞄准镜' : item.description;
-    logCommon({
-      type: 'DropdownSelect',
-      payload: {
-        name: '首页搜索框',
-        value,
-        type: 'dropdownSelect',
-        subtype,
-      },
-    });
     this.handleOpenTab(query);
   }
 
@@ -187,6 +185,7 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '目标客户池首页回车搜索' } })
   handlePressEnter() {
     // 如果当期有选中项，走select逻辑，不做任何处理
     const activeItemElement = document.querySelector(
@@ -199,22 +198,13 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '目标客户池首页搜索' } })
   handleClickButton() {
     const { value } = this.state;
     const newValue = _.trim(value);
     if (newValue.length === 0) {
       return false;
     }
-    // log日志 --- 首页搜索点击
-    logCommon({
-      type: 'Click',
-      payload: {
-        name: '首页搜索框',
-        value,
-        type: 'click',
-        subtype: '',
-      },
-    });
     this.handleOpenTab({
       source: 'search',
       q: encodeURIComponent(newValue),
@@ -293,6 +283,15 @@ export default class Search extends PureComponent {
               q: encodeURIComponent(item.name),
               type: LABEL,
             });
+
+            // 神策搜索上报
+            logCommon({
+              type: 'Click',
+              payload: {
+                name: '首页搜索',
+                value: item.name,
+              },
+            });
           }
         }}
         key={item.id}
@@ -303,7 +302,12 @@ export default class Search extends PureComponent {
   }
 
   render() {
-    const { hotWdsList = EMPTY_LIST, searchHistoryVal, isPreview } = this.props;
+    const {
+      hotWdsList = EMPTY_LIST,
+      searchHistoryVal,
+      isPreview,
+      showMoreLabelModal,
+    } = this.props;
     const autoCompleteOption = isPreview ? {} :
     {
       dataSource: this.renderDatasource(),
@@ -349,7 +353,15 @@ export default class Search extends PureComponent {
             <span className={styles.s_title}>
               <Icon type="dengpao" />猜你感兴趣：
             </span>
-            <div>{this.renderRecommend(hotWdsList)}</div>
+            <div className={'clearfix'}>
+              {this.renderRecommend(hotWdsList)}
+              <a
+                className={styles.moreLabelBtn}
+                onClick={() => showMoreLabelModal(true)}
+              >
+                更多 &gt;
+              </a>
+            </div>
           </div>
         </div>
       </div>

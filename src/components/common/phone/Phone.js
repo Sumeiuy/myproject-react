@@ -2,8 +2,8 @@
  * @Description: PC电话拨号页面
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 13:34:57
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-28 16:29:30
  */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,6 @@ import bowser from 'bowser';
 import _ from 'lodash';
 import qs from 'query-string';
 import classnames from 'classnames';
-
 import styles from './phone.less';
 
 const URL = bowser.msie
@@ -65,6 +64,8 @@ export default class Phone extends PureComponent {
     name: PropTypes.string,
     // 用户数据，回调时回传
     userData: PropTypes.object,
+    // 显示和隐藏通话蒙版
+    handleShowMask: PropTypes.func,
   }
 
   static defaultProps = {
@@ -78,6 +79,7 @@ export default class Phone extends PureComponent {
     onConnected: _.noop,
     name: '',
     userData: {},
+    handleShowMask: _.noop,
   };
 
   // 是否已绑定message事件
@@ -90,8 +92,10 @@ export default class Phone extends PureComponent {
         '.callable',
         (e) => {
           if (this.canCall()) {
-            const number = window.$(e.target).text();
+            const number = window.$(e.target).text() || window.$(e.target).val();
             this.prepareCall(number);
+            // 显示通话蒙版
+            this.props.handleShowMask(true);
           }
         },
       );
@@ -161,6 +165,8 @@ export default class Phone extends PureComponent {
   receiveMessage({ data }) {
     if (data && data.type === TYPE_END && popWin) {
       this.props.onEnd(data);
+      // 隐藏通话蒙版
+      this.props.handleShowMask(false);
       popWin.close();
       popWin = null;
     } else if (data && data.type === TYPE_CONNECTED) {

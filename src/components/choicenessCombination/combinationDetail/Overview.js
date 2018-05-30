@@ -74,7 +74,7 @@ export default class Overview extends PureComponent {
               <span className={styles.fs18}> {stockName || EMPTY_TEXT} </span>
             </h3>
             <h3>
-              最大回撤
+              组合成立以来最大回撤
               <span className={`${this.getNumberClassName(withdraw)} ${styles.fs18}`}>
                 {this.compareWithZero(number.toFixed(withdraw))}%
               </span>

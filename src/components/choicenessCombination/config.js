@@ -145,7 +145,7 @@ const config = {
       {
         dataIndex: 'priceLimit',
         key: 'priceLimit',
-        title: '涨跌幅',
+        title: '近7天涨跌幅',
         width: '15%',
         align: 'left',
       },
