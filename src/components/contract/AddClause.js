@@ -17,6 +17,8 @@ import AutoComplete from '../common/similarAutoComplete';
 import styles from './addClause.less';
 import logable from '../../decorators/logable';
 
+// 用于找到select类组件渲染option时父级容器的方法,以解决在弹窗里页面滚动，option随页面滚动的问题
+const getPopupContainerFunction = () => document.querySelector(`.${styles.editWrapper}`);
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 export default class EditForm extends PureComponent {
@@ -266,6 +268,7 @@ export default class EditForm extends PureComponent {
                 data={clauseNameList}
                 value={clauseName.value || ''}
                 onChange={this.handleSelectClause}
+                getPopupContainer={getPopupContainerFunction}
               />
             </InfoForm>
             <InfoForm label="明细参数" required>
@@ -274,6 +277,7 @@ export default class EditForm extends PureComponent {
                 data={detailParamList}
                 value={detailParam.val || ''}
                 onChange={this.handleSelectDetail}
+                getPopupContainer={getPopupContainerFunction}
               />
             </InfoForm>
             <InfoForm label="值" required>
@@ -292,6 +296,7 @@ export default class EditForm extends PureComponent {
                 onSelect={this.handleSelectDepartment}
                 onSearch={this.handleSearchDepartment}
                 ref={selectDivComponent => this.selectDivComponent = selectDivComponent}
+                getPopupContainer={getPopupContainerFunction}
               />
             </InfoForm>
           </div>
