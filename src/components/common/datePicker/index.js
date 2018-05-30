@@ -50,7 +50,7 @@ export default class CommonDatePicker extends PureComponent {
       disabled,
       dateFormat,
       allowClear,
-      ...resetProps,
+      ...resetProps
     } = this.props;
     // value 的属性有一个是 _i
     const { _i } = value;
