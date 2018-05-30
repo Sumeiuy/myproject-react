@@ -24,6 +24,8 @@ import logable from '../../decorators/logable';
 
 import styles from './baseInfoEdit.less';
 
+// 用于找到select类组件渲染option时父级容器的方法,以解决在弹窗里页面滚动，option随页面滚动的问题
+const getPopupContainerFunction = () => document.querySelector(`.${styles.editWrapper}`);
 // 操作类型列表
 const { contract: { operationList } } = seibelConfig;
 const { TextArea } = Input;
@@ -189,6 +191,7 @@ export default class BaseInfoEdit extends PureComponent {
                 value={moment(contractStarDate, 'YYYY-MM-DD')}
                 onChange={this.handleSelectStartTime}
                 boxStyle={datePickerBoxStyle}
+                getCalendarContainer={getPopupContainerFunction}
               />
             </InfoForm>
         }
@@ -202,6 +205,7 @@ export default class BaseInfoEdit extends PureComponent {
                 value={moment(contractPalidity, 'YYYY-MM-DD')}
                 onChange={this.handleSelectValidityTime}
                 boxStyle={datePickerBoxStyle}
+                getCalendarContainer={getPopupContainerFunction}
               />
             </InfoForm>
         }
@@ -218,6 +222,7 @@ export default class BaseInfoEdit extends PureComponent {
                   },
                 ]}
                 value={baseInfo.contractNum}
+                getPopupContainer={getPopupContainerFunction}
               />
             </InfoForm>
           :
