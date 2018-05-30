@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-30 09:05:40
+ * @Last Modified time: 2018-05-30 09:23:48
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -279,14 +279,6 @@ export default class MessageCenter extends PureComponent {
       this.getRemindMessageList({
         pageNum: curPageNum,
       });
-      let { totalRecordNum } = page;
-      if (totalRecordNum > 0) {
-        if (totalRecordNum > 99) {
-          totalRecordNum = '99+';
-        }
-        // 修改fsp页面用户信息的消息提醒条数
-        $('.remindMessages').html(totalRecordNum.toString()).css('display', 'inline-block'); //eslint-disable-line
-      }
     })
     .catch((e) => {
       console.error(e);
