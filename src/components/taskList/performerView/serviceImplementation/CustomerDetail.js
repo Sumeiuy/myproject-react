@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-29 22:25:04
+ * @Last Modified time: 2018-05-30 10:38:45
  */
 
 import React, { PureComponent } from 'react';
@@ -19,7 +19,7 @@ import SixMonthEarnings from '../../../customerPool/list/SixMonthEarnings';
 import styles from './customerDetail.less';
 
 // 根据资产的值返回对应的格式化值和单位串起来的字符串
-const handleAssets = (value) => {
+const getFormatedAsset = (value) => {
   let newValue = '0';
   let unit = '元';
   if (!_.isEmpty(value)) {
@@ -35,11 +35,11 @@ export default class CustomerDetail extends PureComponent {
     targetCustDetail: PropTypes.object.isRequired,
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
-    custIncomeReqState: PropTypes.bool,
+    isCustIncomeRequested: PropTypes.bool,
   }
 
   static defaultProps = {
-    custIncomeReqState: false,
+    isCustIncomeRequested: false,
   }
 
   static contextTypes = {
@@ -94,9 +94,18 @@ export default class CustomerDetail extends PureComponent {
     const { targetCustDetail = {} } = this.props;
     return (
       <div className={`${styles.nameTips}`}>
-        <h6><span>工号：</span><span>{this.handleEmpty(targetCustDetail.empId)}</span></h6>
-        <h6><span>联系电话：</span><span>{this.handleEmpty(targetCustDetail.empContactPhone)}</span></h6>
-        <h6><span>所在营业部：</span><span>{this.handleEmpty(targetCustDetail.empDepartment)}</span></h6>
+        <h6>
+          <span>工号：</span>
+          <span>{this.handleEmpty(targetCustDetail.empId)}</span>
+        </h6>
+        <h6>
+          <span>联系电话：</span>
+          <span>{this.handleEmpty(targetCustDetail.empContactPhone)}</span>
+        </h6>
+        <h6>
+          <span>所在营业部：</span>
+          <span>{this.handleEmpty(targetCustDetail.empDepartment)}</span>
+        </h6>
       </div>
     );
   }
@@ -144,7 +153,10 @@ export default class CustomerDetail extends PureComponent {
   }
 
   render() {
-    const { targetCustDetail = {}, getCustIncome, monthlyProfits, custIncomeReqState } = this.props;
+    const {
+      targetCustDetail = {}, getCustIncome, monthlyProfits,
+      isCustIncomeRequested,
+    } = this.props;
     const {
       assets, openAssets, availablBalance, openedBusiness, openBusiness,
       empName, recentServiceTime, missionType, missionTitle,
@@ -174,13 +186,13 @@ export default class CustomerDetail extends PureComponent {
           <div className={styles.item}>
             <div className={styles.itemLabel}>总资产:</div>
             <div className={styles.itemContent}>
-              {handleAssets(assets)}
+              {getFormatedAsset(assets)}
               {!_.isEmpty(assets) ?
                 <div className={styles.wordTips}>
                   <SixMonthEarnings
                     listItem={targetCustDetail}
                     monthlyProfits={monthlyProfits}
-                    custIncomeReqState={custIncomeReqState}
+                    custIncomeReqState={isCustIncomeRequested}
                     getCustIncome={getCustIncome}
                     formatAsset={formatAsset}
                     displayText="峰值和最近收益"
@@ -195,7 +207,7 @@ export default class CustomerDetail extends PureComponent {
           </div>
           <div className={styles.item}>
             <div className={styles.itemLabel}>持仓市值:</div>
-            <div className={styles.itemContent}>{handleAssets(openAssets)}</div>
+            <div className={styles.itemContent}>{getFormatedAsset(openAssets)}</div>
           </div>
           <div className={styles.item}>
             <div className={styles.itemLabel}>沪深归集率:</div>
@@ -203,7 +215,7 @@ export default class CustomerDetail extends PureComponent {
           </div>
           <div className={styles.item}>
             <div className={styles.itemLabel}>可用余额:</div>
-            <div className={styles.itemContent}>{handleAssets(availablBalance)}</div>
+            <div className={styles.itemContent}>{getFormatedAsset(availablBalance)}</div>
           </div>
           <div className={styles.item}>
             <div className={styles.itemLabel}>信息完备率:</div>

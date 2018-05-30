@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-29 22:40:13
+ * @Last Modified time: 2018-05-30 10:41:03
  */
 
 import React from 'react';
@@ -185,7 +185,7 @@ export default class CustomerProfile extends React.PureComponent {
     };
     addServeRecord({
       postBody: payload,
-      callbackOfPhone: saveRecordData,
+      phoneCallback: saveRecordData,
       noHint: true,
       callId: this.callId,
     });

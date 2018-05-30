@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-29 22:46:17
+ * @Last Modified time: 2018-05-30 10:31:29
  */
 
 import React, { PureComponent } from 'react';
@@ -170,14 +170,14 @@ export default class ServiceRecordContent extends PureComponent {
       isEntranceFromPerformerView,
       formData: { motCustfeedBackDict },
     } = props;
-    let feedback = null;
     let { serviceTypeCode } = props.formData;
     // 如果从客户列表|360视图那边过来,给一个默认的服务类型
     if (!isEntranceFromPerformerView) {
       serviceTypeCode = motCustfeedBackDict[0].key;
     }
+    // 通过服务类型找到反馈，并默认取第一个
     const feedbackList = this.findFeedbackListByServiceTypeCode(serviceTypeCode, props);
-    feedback = feedbackList[0];
+    const feedback = feedbackList[0];
     return this.fixCustomerFeedback(feedback);
   }
 

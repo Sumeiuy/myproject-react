@@ -126,6 +126,16 @@ const moreFilterData = [
   },
 ];
 
+// 当左侧列表或fsp中左侧菜单被折叠或者展开时，当前的服务实施列表的pageSize
+// 全部都展开时
+const smallPageSize = 6;
+// FSP左侧菜单折叠放9个
+const mediumPageSize = 9;
+// 任务列表折叠起来放10个
+const largePageSize = 10;
+// 全部都折叠起来放12个
+const extraLargePageSize = 12;
+
 export default {
   EXECUTOR,
   INITIATOR,
@@ -155,4 +165,8 @@ export default {
   END_TIME_KEY,
   QUERY_PARAMS,
   moreFilterData,
+  smallPageSize,
+  mediumPageSize,
+  largePageSize,
+  extraLargePageSize,
 };

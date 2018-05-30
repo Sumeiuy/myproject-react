@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-29 22:46:27
+ * @Last Modified time: 2018-05-30 10:52:27
  */
 
 import React, { PureComponent } from 'react';
@@ -20,10 +20,16 @@ import SimpleDisplayBlock from './SimpleDisplayBlock';
 import ServiceRecordForm from './ServiceRecordForm';
 import EmptyData from './EmptyData';
 import { PHONE } from './config';
-import { POSTCOMPLETED_CODE } from '../../../../routes/taskList/config';
 import { serveWay as serveWayUtil } from '../config/code';
 import { flow, task } from '../config';
 import styles from './serviceImplementation.less';
+import {
+  POSTCOMPLETED_CODE,
+  smallPageSize,
+  mediumPageSize,
+  largePageSize,
+  extraLargePageSize,
+} from '../../../../routes/taskList/config';
 
 // fsp页面折叠左侧菜单按钮的id
 const foldFspLeftMenuButtonId = 'sidebar-hide-btn';
@@ -44,17 +50,18 @@ const getStickyTarget = (currentNode) => {
 const getPageSize = (isFoldFspLeftMenu, isFoldLeftList) => {
   // 全部都折叠起来放12个
   if (isFoldFspLeftMenu && isFoldLeftList) {
-    return 12;
+    return extraLargePageSize;
   }
   // FSP左侧菜单折叠放9个
   if (isFoldFspLeftMenu) {
-    return 9;
+    return mediumPageSize;
   }
   // 任务列表折叠起来放10个
   if (isFoldLeftList) {
-    return 10;
+    return largePageSize;
   }
-  return 6;
+  // 其余的放6个
+  return smallPageSize;
 };
 
 /**
@@ -95,7 +102,7 @@ export default class ServiceImplementation extends PureComponent {
     servicePolicy: PropTypes.string,
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
-    custIncomeReqState: PropTypes.bool,
+    isCustIncomeRequested: PropTypes.bool,
     addServeRecord: PropTypes.func.isRequired,
     currentMotServiceRecord: PropTypes.object.isRequired,
     queryCustUuid: PropTypes.func.isRequired,
@@ -139,7 +146,7 @@ export default class ServiceImplementation extends PureComponent {
     filesList: [],
     addCallRecord: _.noop,
     toggleServiceRecordModal: _.noop,
-    custIncomeReqState: false,
+    isCustIncomeRequested: false,
   }
 
   static contextTypes = {
@@ -197,7 +204,7 @@ export default class ServiceImplementation extends PureComponent {
 
   componentWillUnmount() {
     // 移除FSP折叠菜单按钮注册的点击事件
-    window.onFspSidebarbtn(this.handleFspLeftMenuClick);
+    window.offFspSidebarbtn(this.handleFspLeftMenuClick);
   }
 
   // FSP折叠菜单按钮被点击
@@ -395,7 +402,7 @@ export default class ServiceImplementation extends PureComponent {
   addServiceRecord({
     postBody,
     callback = _.noop,
-    callbackOfPhone = _.noop,
+    phoneCallback = _.noop,
     noHint = false,
     callId = '',
   }) {
@@ -442,7 +449,7 @@ export default class ServiceImplementation extends PureComponent {
             message.success('添加服务记录成功');
           }
           // 保存打电话自动创建的服务记录的信息或更新服务记录后删除打电话保存的服务记录
-          callbackOfPhone();
+          phoneCallback();
 
           this.saveServiceRecordAndPhoneRelation(currentMotServiceRecord, callId);
         }
@@ -509,7 +516,7 @@ export default class ServiceImplementation extends PureComponent {
     const {
       currentId, parameter, targetCustDetail, servicePolicy, isFold,
       serviceRecordInfo, currentMotServiceRecord, resetServiceRecordInfo,
-      monthlyProfits, custIncomeReqState, getCustIncome, statusCode, custUuid,
+      monthlyProfits, isCustIncomeRequested, getCustIncome, statusCode, custUuid,
       serviceTypeCode, ceFileDelete, deleteFileResult, getCeFileList,
       taskFeedbackList, attachmentList, eventId, taskTypeCode,
       queryCustFeedbackList4ZLFins, custFeedbackList, queryApprovalList, zhangleApprovalList,
@@ -602,7 +609,7 @@ export default class ServiceImplementation extends PureComponent {
                 <CustomerDetail
                   targetCustDetail={targetCustDetail}
                   monthlyProfits={monthlyProfits}
-                  custIncomeReqState={custIncomeReqState}
+                  isCustIncomeRequested={isCustIncomeRequested}
                   getCustIncome={getCustIncome}
                 />
                 <SimpleDisplayBlock title="服务策略" data={servicePolicy} />
