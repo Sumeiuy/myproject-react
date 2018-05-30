@@ -80,25 +80,41 @@ export default class Detail extends PureComponent {
     // 新服务经理
     const newEmpIndex = _.findIndex(tempTitleList, o => o.key === KEY_NEWEMPNAME);
 
-    tempTitleList[custIndex].render = (text, record) => (<div>{text}({record.custId})</div>);
+    tempTitleList[custIndex].render = (text, record) => {
+      const custId = record.custId ? ` (${record.custId})` : '';
+      return (<div title={`${text}${custId}`}>
+        {text}{custId}
+      </div>);
+    };
     tempTitleList[statusIndex].render = (text) => {
       const statusItem = _.filter(accountStatusList, o => o.key === text);
-      return (<div>{statusItem.length ? statusItem[0].value : ''}</div>);
+      const statusText = statusItem.length ? statusItem[0].value : '';
+      return (<div title={statusText}>{statusText}</div>);
     };
-    tempTitleList[empIndex].render = (text, record) => (<div>
-      {
-        text
-        ?
-          <div>
-            {text}({record.oldEmpId})
-            <span className={styles.tougu}>{record.isTouGu ? '投顾' : ''}</span>
-          </div>
-        :
-          null
-      }
-    </div>);
-    tempTitleList[dmIndex].render = (text, record) => (<div>{text ? `${text} (${record.dmId})` : null}</div>);
-    tempTitleList[newEmpIndex].render = (text, record) => (<div>{text}({record.newEmpId})</div>);
+    tempTitleList[empIndex].render = (text, record) => {
+      const touGuElement = record.isTouGu ? <span className={styles.tougu}>投顾</span> : '';
+      return (
+        <div>
+          {
+            text
+            ?
+              <div className={styles.oldEmp} title={`${text} (${record.oldEmpId})`}>
+                {text} ({record.oldEmpId})
+                {touGuElement}
+              </div>
+            :
+              null
+          }
+        </div>
+      );
+    };
+    tempTitleList[dmIndex].render = (text, record) => {
+      const dmNameAndId = text ? `${text} (${record.dmId})` : '';
+      return (<div title={dmNameAndId}>{dmNameAndId}</div>);
+    };
+    tempTitleList[newEmpIndex].render = (text, record) => (
+      <div title={`${text} (${record.newEmpId})`}>{text} ({record.newEmpId})</div>
+    );
     return tempTitleList;
   }
 
@@ -136,6 +152,7 @@ export default class Detail extends PureComponent {
         createTime,
         status,
         currentApproval = {},
+        currentNodeName,
         workflowHistoryBeans,
         errorDesc,
         appId: dataId,
@@ -167,7 +184,7 @@ export default class Detail extends PureComponent {
     const approverName = !_.isEmpty(currentApproval) ? `${currentApproval.empName} (${currentApproval.empNum})` : '暂无';
     const nowStep = {
       // 当前步骤
-      stepName: !_.isEmpty(currentApproval) ? currentApproval.occupation : '暂无',
+      stepName: currentNodeName || '暂无',
       // 当前审批人
       handleName: approverName,
     };
