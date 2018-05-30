@@ -14,7 +14,7 @@ import styles from './Loading.less';
 const contentWrapper = document.getElementById('workspace-content');
 
 function Loading({ loading, forceFull }) {
-  if (!loading) {
+  if (loading <= 0) {
     return null;
   }
   let top = contentWrapper ? '55px' : '0';
@@ -37,7 +37,7 @@ function Loading({ loading, forceFull }) {
 }
 
 Loading.propTypes = {
-  loading: PropTypes.bool.isRequired,
+  loading: PropTypes.number.isRequired,
   forceFull: PropTypes.bool,
 };
 Loading.defaultProps = {
