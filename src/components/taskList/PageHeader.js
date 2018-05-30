@@ -580,7 +580,7 @@ export default class Pageheader extends PureComponent {
   }
   @autobind
   closeFilter(filterId) {
-    this.moreFilterChange({ id: filterId, isDeleteFilterFromLocation: true });
+    this.moreFilterChange({ name: filterId, isDeleteFilterFromLocation: true });
   }
   render() {
     const {
