@@ -207,7 +207,7 @@ export default class CreateModal extends PureComponent {
     updateList({
       ...payload,
       attachment,
-      type: operateType[0],
+      type: operateType[0],  // add
     }).then(() => {
       const { updateData: { appId }, queryAddedCustList } = this.props;
       this.setState({
@@ -242,7 +242,7 @@ export default class CreateModal extends PureComponent {
             id: updateData.appId || '',
             custtomer: [],
             manage: [],
-            type: operateType[2],
+            type: operateType[2], // clear
             attachment,
           };
           // 如果上传过，则先调用清空接口，调用成功后，调用添加接口
@@ -288,7 +288,7 @@ export default class CreateModal extends PureComponent {
     const payload = {
       customer: [],
       manage: [],
-      type: operateType[1],
+      type: operateType[1],  // delete
       id: updateData.appId,
     };
     if (isCust) {

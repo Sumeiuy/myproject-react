@@ -70,15 +70,15 @@ export default class AddManageModal extends PureComponent {
   onSelectChange(record, selected) {
     const { selectedRowKeys, selectedRows } = this.state;
     // 选中的 key 值数组
-    const newSelectedRowKeys = [...selectedRowKeys];
+    let newSelectedRowKeys = [...selectedRowKeys];
     // 选中的 row 数组
-    const newSelectedRows = [...selectedRows];
+    let newSelectedRows = [...selectedRows];
     if (selected) {
       newSelectedRowKeys.push(record.positionId);
       newSelectedRows.push(record);
     } else {
-      _.remove(newSelectedRowKeys, o => o === record.positionId);
-      _.remove(newSelectedRows, o => o.positionId === record.positionId);
+      newSelectedRowKeys = _.filter(newSelectedRowKeys, o => o !== record.positionId);
+      newSelectedRows = _.filter(newSelectedRows, o => o.positionId !== record.positionId);
     }
     this.setState({
       selectedRows: newSelectedRows,
