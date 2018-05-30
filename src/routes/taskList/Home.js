@@ -2,14 +2,13 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-29 14:20:45
+ * @Last Modified time: 2018-05-25 13:54:03
  * @description 任务管理首页
  */
 
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import moment from 'moment';
 import withRouter from '../../decorators/withRouter';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
@@ -23,7 +22,7 @@ import FixedTitle from '../../components/taskList/FixedTitle';
 import pageConfig from '../../components/taskList/pageConfig';
 import { getCurrentScopeByOrgId } from '../../components/taskList/managerView/helper';
 import { openRctTab } from '../../utils';
-import { emp, permission } from '../../helper';
+import { emp, permission, fsp } from '../../helper';
 import logable from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
@@ -34,13 +33,9 @@ import {
   EXECUTOR,
   INITIATOR,
   CONTROLLER,
-  currentDate,
-  beforeCurrentDate60Days,
-  dateFormat,
   STATUS_MANAGER_VIEW,
   SYSTEMCODE,
   STATE_EXECUTE_CODE,
-  STATE_FINISHED_CODE,
   STATE_ALL_CODE,
   CREATE_TIME,
   END_TIME,
@@ -49,6 +44,7 @@ import {
   // 三个视图左侧任务列表的请求入参，在config里面配置，后续如果需要新增，或者删除某个param，
   // 请在config里面配置QUERY_PARAMS
   QUERY_PARAMS,
+  mediumPageSize,
 } from './config';
 
 // 空函数
@@ -64,19 +60,6 @@ const GET_CUST_SCOPE_PAGE_SIZE = 5;
 
 // 查询涨乐财富通的审批人需要的btnId固定值
 const ZL_QUREY_APPROVAL_BTN_ID = '200000';
-
-// 找不到反馈类型的时候，前端写死一个和后端一模一样的其它类型，作容错处理
-const feedbackListOfNone = [{
-  id: 99999,
-  name: '其它',
-  length: 1,
-  childList: [{
-    id: 100000,
-    name: '其它',
-    length: null,
-    childList: null,
-  }],
-}];
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -117,7 +100,6 @@ export default class PerformerView extends PureComponent {
       typeName: '',
       eventId: '',
       statusCode: '',
-      isTaskFeedbackListOfNone: false,
       // 执行中创建者视图右侧展示管理者视图
       isSourceFromCreatorView: false,
     };
@@ -135,20 +117,6 @@ export default class PerformerView extends PureComponent {
     const { currentId: prevCurrentId, ...otherPrevQuery } = prevQuery;
     if (!_.isEqual(otherQuery, otherPrevQuery)) {
       this.queryAppList(otherQuery);
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { list: { resultData } } = this.props;
-    if (_.isEmpty(resultData)) {
-      return;
-    }
-    const { typeCode, eventId, currentView } = this.state;
-    // 当前视图是执行者视图
-    if (
-      this.isExecutorView(currentView)
-      && (prevState.typeCode !== typeCode || prevState.eventId !== eventId)) {
-      this.queryMissionList(typeCode, eventId);
     }
   }
 
@@ -526,6 +494,7 @@ export default class PerformerView extends PureComponent {
       addCallRecord,
       changePerformerViewTab,
       performerViewCurrentTab,
+      taskFeedbackList,
       serviceProgress,
       custFeedBack,
       custDetail,
@@ -536,9 +505,7 @@ export default class PerformerView extends PureComponent {
     const {
       typeCode,
       typeName,
-      taskFeedbackList,
       statusCode,
-      isTaskFeedbackListOfNone,
       eventId,
       taskTypeCode,
     } = this.state;
@@ -558,7 +525,7 @@ export default class PerformerView extends PureComponent {
         serviceRecordData={serviceRecordData}
         getCustIncome={getCustIncome}
         monthlyProfits={monthlyProfits}
-        custIncomeReqState={interfaceState['customerPool/getCustIncome']}
+        isCustIncomeRequested={interfaceState['customerPool/getCustIncome']}
         targetCustDetail={targetCustDetail}
         changeParameter={changeParameter}
         queryTargetCust={queryTargetCust}
@@ -581,7 +548,6 @@ export default class PerformerView extends PureComponent {
         saveAnswersByType={saveAnswersByType}
         saveAnswersSucce={saveAnswersSucce}
         attachmentList={attachmentList}
-        isTaskFeedbackListOfNone={isTaskFeedbackListOfNone}
         modifyLocalTaskList={modifyLocalTaskList}
         getTaskDetailBasicInfo={getTaskDetailBasicInfo}
         custFeedbackList={custFeedbackList}
@@ -633,68 +599,6 @@ export default class PerformerView extends PureComponent {
     return detailComponent;
   }
 
-  // 获取服务经理使用的客户反馈列表，
-  @autobind
-  getFeedbackList({ typeCode, eventId, currentItem }) {
-    let currentType = EMPTY_OBJECT;
-    let taskFeedbackList = EMPTY_LIST;
-    // descText值为1，是自建任务
-    if (+currentItem.descText === 1) {
-      currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
-    } else {
-      // 此处为MOT任务
-      currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
-    }
-    if (_.isEmpty(currentType)) {
-      // 找不到反馈类型，则前端做一下处理，手动给一级和二级都塞一个其他类型
-      taskFeedbackList = feedbackListOfNone;
-    } else {
-      taskFeedbackList = currentType.feedbackList;
-    }
-    this.setState({
-      taskFeedbackList,
-      isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
-    });
-  }
-
-  // 当前筛选的状态为‘结束’时，优先取url中日期的值，再取默认的日期，否则返回空字符串
-  @autobind
-  getFinishedStateDate({
-      status = STATE_EXECUTE_CODE,
-    value,
-    urlDate,
-    }) {
-    if (status === STATE_FINISHED_CODE) {
-      return urlDate || moment(value).format(dateFormat);
-    }
-    return '';
-  }
-
-  /**
-   * 发送获取任务反馈字典的请求
-   * @param {*} typeCode 当前左侧列表的选中项的typeCode
-   * @param {*} eventId 当前左侧列表的选中项的eventId
-   */
-  @autobind
-  queryMissionList(typeCode, eventId) {
-    const {
-      getServiceType,
-      dict: { missionType },
-    } = this.props;
-    /**
-     * 区分mot任务和自建任务
-     * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
-     * currentItem 的descText=‘0’表示mot任务，descText=‘1’ 表示自建任务
-     * 根据descText的值请求对应的任务类型和任务反馈的数据
-     * 再判断当前任务是属于mot任务还是自建任务
-     * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
-     * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
-     */
-    const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || EMPTY_OBJECT;
-    getServiceType({ pageNum: 1, pageSize: 10000, type: +currentItem.descText + 1 })
-      .then(() => this.getFeedbackList({ typeCode, eventId, currentItem }));
-  }
-
   // 帕努单任务是否在执行中，用于管理者视图
   @autobind
   judgeTaskInApproval(status) {
@@ -733,21 +637,11 @@ export default class PerformerView extends PureComponent {
   @autobind
   queryAppList(query) {
     const { getTaskList } = this.props;
-    const { missionViewType, pageNum = 1, pageSize = 20 } = query;
+    const { pageNum = 1, pageSize = 20 } = query;
     const params = this.getQueryParams(query, pageNum, pageSize);
 
     // 默认筛选条件
     getTaskList({ ...params }).then(() => {
-      const { list = EMPTY_OBJECT } = this.props;
-      const { resultData = EMPTY_LIST } = list;
-      const firstData = resultData[0] || EMPTY_OBJECT;
-      // 当前视图是执行者视图
-      if (missionViewType === EXECUTOR) {
-        if (!_.isEmpty(list) && !_.isEmpty(resultData)) {
-          const { typeCode, eventId } = firstData;
-          this.queryMissionList(typeCode, eventId);
-        }
-      }
       this.getRightDetail();
     });
   }
@@ -803,46 +697,23 @@ export default class PerformerView extends PureComponent {
     // 状态默认选中‘执行中’, status传50，其余传对应的code码
     finalPostData.status = status || STATE_EXECUTE_CODE;
     finalPostData = { ...finalPostData, missionViewType: currentViewType };
-    if (this.isInitiatorView(currentViewType)) {
-      const { createTimeEnd, createTimeStart } = finalPostData;
-      finalPostData = {
-        ...finalPostData,
-        createTimeEnd: this.getFinishedStateDate({
-          status,
-          value: currentDate,
-          urlDate: createTimeEnd,
-        }),
-        createTimeStart: this.getFinishedStateDate({
-          status,
-          value: beforeCurrentDate60Days,
-          urlDate: createTimeStart,
-        }),
-      };
-    } else {
-      const { endTimeEnd, endTimeStart } = finalPostData;
-      finalPostData = {
-        ...finalPostData,
-        endTimeEnd: this.getFinishedStateDate({
-          status,
-          value: currentDate,
-          urlDate: endTimeEnd,
-        }),
-        endTimeStart: this.getFinishedStateDate({
-          status,
-          value: beforeCurrentDate60Days,
-          urlDate: endTimeStart,
-        }),
-      };
-    }
     return finalPostData;
   }
 
   // 加载右侧panel中的详情内容
   @autobind
   loadDetailContent(obj) {
-    this.props.getTaskDetailBasicInfo({ taskId: obj.id });
+    const {
+      getTaskDetailBasicInfo,
+      queryTargetCust,
+      targetCustList: { page: { pageNum, pageSize } },
+    } = this.props;
+    getTaskDetailBasicInfo({ taskId: obj.id });
+    const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
+    // fsp左侧菜单折叠pageSize传9，否则传6
+    const newPageSize = isFoldFspLeftMenu ? mediumPageSize : pageSize;
     // 执行者视图服务实施客户列表中 状态筛选默认值 state='10' 未开始
-    this.props.queryTargetCust({ missionId: obj.id, state: '10', pageNum: 1, pageSize: 6 });
+    queryTargetCust({ missionId: obj.id, state: '10', pageNum, pageSize: newPageSize });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
   }

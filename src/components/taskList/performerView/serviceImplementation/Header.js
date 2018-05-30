@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 22:49:02
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-24 18:49:09
+ * @Last Modified time: 2018-05-29 09:49:10
  */
 
 import React from 'react';
@@ -43,6 +43,11 @@ export default function Header(props) {
       </div>
     );
   };
+  const handleSearchCustomer = (value) => {
+    if (value) {
+      searchCustomer(value);
+    }
+  };
   const currentCustomer = _.find(customerList, { rowId }) || {};
   const currentCustId = currentCustomer ? currentCustomer.custId : '';
   return (
@@ -65,7 +70,7 @@ export default function Header(props) {
         data={customerList}
         dataMap={['custId', 'name']}
         onChange={handleCustomerChange}
-        onInputChange={searchCustomer}
+        onInputChange={handleSearchCustomer}
         getFilterLabelValue={getFilterLabelValue}
         showSearch
         needItemObj

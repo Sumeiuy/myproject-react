@@ -164,6 +164,42 @@ export default class Pageheader extends PureComponent {
     this.handleSelectChange(id, value);
   }
 
+  // 结束状态设置默认时间
+  @autobind
+  setDefaultTime() {
+    const {
+      location: {
+        query,
+        query: {
+          missionViewType,
+          endTimeStart = '',
+          endTimeEnd = '',
+          createTimeEnd = '',
+          createTimeStart = '',
+        },
+      },
+    } = this.props;
+    const startTime = moment(beforeCurrentDate60Days).format(dateFormat);
+    const endTime = moment(currentDate).format(dateFormat);
+    let finalQuery = query;
+    if (missionViewType === INITIATOR) {
+      if (!createTimeStart && !createTimeEnd) {
+        finalQuery = {
+          ...finalQuery,
+          createTimeStart: startTime,
+          createTimeEnd: endTime,
+        };
+      }
+    } else if (!endTimeStart && !endTimeEnd) {
+      finalQuery = {
+        ...finalQuery,
+        endTimeStart: startTime,
+        endTimeEnd: endTime,
+      };
+    }
+    return finalQuery;
+  }
+
   @autobind
   @logable({
     type: 'DropdownSelect',
@@ -174,7 +210,12 @@ export default class Pageheader extends PureComponent {
   })
   handleSelctStatus(option) {
     const { id, value: { value } } = option;
-    this.handleSelectChange(id, value);
+    let finalQuery = {};
+    // 结束状态下
+    if (value === STATE_FINISHED_CODE) {
+      finalQuery = this.setDefaultTime();
+    }
+    this.handleSelectChange(id, value, finalQuery);
   }
 
   @autobind
@@ -192,9 +233,10 @@ export default class Pageheader extends PureComponent {
 
   // select改变
   @autobind
-  handleSelectChange(key, v) {
+  handleSelectChange(key, v, otherQuery) {
     const { filterCallback } = this.props;
     filterCallback({
+      ...otherQuery,
       [key]: v,
     });
     this.setState({
@@ -393,22 +435,11 @@ export default class Pageheader extends PureComponent {
           endTimeEnd = '',
           createTimeEnd = '',
           createTimeStart = '',
-          status,
         },
       },
     } = this.props;
-    const isFinishedStatus = status === STATE_FINISHED_CODE;
     let node;
-    let startTime;
-    let endTime;
     if (missionViewType === INITIATOR) {
-      if (isFinishedStatus && !createTimeStart && !createTimeEnd) {
-        startTime = moment(beforeCurrentDate60Days).format(dateFormat);
-        endTime = moment(currentDate).format(dateFormat);
-      } else {
-        startTime = createTimeStart || '';
-        endTime = createTimeEnd || '';
-      }
       node = (<div
         className={classNames(
           [styles.filterFl],
@@ -419,7 +450,7 @@ export default class Pageheader extends PureComponent {
           hasCustomerOffset
           filterName="创建时间"
           filterId="startTime"
-          value={[startTime, endTime]}
+          value={[createTimeStart, createTimeEnd]}
           onChange={this.handleCreateDateChange}
           isInsideOffSet={this.isInsideOffSet}
           key={`${missionViewType}创建时间`}
@@ -427,13 +458,6 @@ export default class Pageheader extends PureComponent {
         />
       </div>);
     } else {
-      if (isFinishedStatus && !endTimeStart && !endTimeEnd) {
-        startTime = moment(beforeCurrentDate60Days).format(dateFormat);
-        endTime = moment(currentDate).format(dateFormat);
-      } else {
-        startTime = endTimeStart || '';
-        endTime = endTimeEnd || '';
-      }
       node = (<div
         className={classNames(
           [styles.filterFl],
@@ -444,7 +468,7 @@ export default class Pageheader extends PureComponent {
           hasCustomerOffset
           filterName="结束时间"
           filterId="endTime"
-          value={[startTime, endTime]}
+          value={[endTimeStart, endTimeEnd]}
           onChange={this.handleEndDateChange}
           isInsideOffSet={this.isInsideOffSet}
           key={`${missionViewType}结束时间`}
@@ -580,7 +604,7 @@ export default class Pageheader extends PureComponent {
   }
   @autobind
   closeFilter(filterId) {
-    this.moreFilterChange({ id: filterId, isDeleteFilterFromLocation: true });
+    this.moreFilterChange({ name: filterId, isDeleteFilterFromLocation: true });
   }
   render() {
     const {
@@ -634,7 +658,7 @@ export default class Pageheader extends PureComponent {
           <div className={styles.filterFl}>
             <SingleFilter
               filterId="type"
-              filterName="任务状态"
+              filterName="任务类型"
               value={typeValue}
               defaultSelectLabel="不限"
               data={typeAllOptions}
@@ -646,7 +670,7 @@ export default class Pageheader extends PureComponent {
           <div className={`${styles.filterFl} ${styles.mlMinux10}`}>
             <SingleFilter
               filterId="status"
-              filterName="任务类型"
+              filterName="任务状态"
               value={statusValue}
               data={stateAllOptions}
               dataMap={['value', 'label']}

@@ -34,8 +34,16 @@
   font-size: 12px;
   text-align: center;
   display: inline-block;
-  padding: 0;
   margin: 0;
+  white-space: nowrap;
+  padding: 0 3px;
+  color: #fff;
+  height: 16px;
+}
+.inactivedCommon {
+  height: 18px;
+  padding-top: 2px;
+  padding-bottom: 0;
 }
 // tag-pvclose 终止
 // tag-pvend 结束
@@ -43,8 +51,7 @@
   .common;
   background: #e9e9e9;
   color: #999;
-  height: 18px;
-  padding-top: 2px;
+  .inactivedCommon;
 }
 // tag-pvresult 结果跟踪
 // tag-pvexecuting 执行中
@@ -55,21 +62,17 @@
   .common;
   background: #d4ebed;
   color: #3d99ac;
-  height: 18px;
-  padding-top: 2px;
+  .inactivedCommon;
 }
 // 驳回
 .tag-pvreject {
   .common;
   background: #fce1e0;
   color: #e95d62;
-  height: 18px;
-  padding-top: 2px;
+  .inactivedCommon;
 }
 .tag-activestatus {
   .tag-transparent;
   .common;
-  color: #fff;
-  height: 16px;
 }
 //以上是执行者视图状态标签的颜色

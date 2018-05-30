@@ -1,5 +1,6 @@
 .listSwiper {
   position: relative;
+  background: #fff;
   .swiperContainer {
     margin: 0 15px;
     padding: 20px 0 16px;
@@ -11,6 +12,7 @@
     align-items: center;
     text-align: center;
     .contentBox {
+      position: relative;
       width: 50px;
       cursor: pointer;
       .avatorImage {
@@ -27,6 +29,19 @@
         margin: 0;
         white-space: nowrap;
       }
+      .triangle {
+        position: absolute;
+        bottom: -23px;
+        left: 50%;
+        margin-left: -7px;
+        display: none;
+        width: 14px;
+        height: 14px;
+        border-top: 1px solid #4786f7;
+        border-right: 1px solid #4786f7;
+        background: #fff;
+        transform: rotate(-45deg);
+      }
     }
     :global {
       .iconfont {
@@ -36,6 +51,9 @@
       }
     }
     &.active {
+      .triangle {
+        display: inline-block;
+      }
       :global {
         .iconfont {
           transform: scale(1.5, 1.5);
