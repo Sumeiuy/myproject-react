@@ -70,7 +70,7 @@ export default class Main extends Component {
 
   static propTypes = {
     children: PropTypes.node.isRequired,
-    loading: PropTypes.bool.isRequired,
+    loading: PropTypes.number.isRequired,
     loadingForceFull: PropTypes.bool,
     getCustomerScope: PropTypes.func.isRequired,
     interfaceState: PropTypes.object.isRequired,
