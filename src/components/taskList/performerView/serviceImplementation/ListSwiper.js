@@ -26,12 +26,14 @@ export default class ListSwiper extends PureComponent {
     onCustomerClick: PropTypes.func,
     containerClass: PropTypes.string,
     onPageChange: PropTypes.func,
+    currentTargetList: PropTypes.array,
   }
 
   static defaultProps = {
     onCustomerClick: _.noop,
     onPageChange: _.noop,
     containerClass: '',
+    currentTargetList: [],
   }
 
   @autobind
@@ -85,13 +87,13 @@ export default class ListSwiper extends PureComponent {
 
   @autobind
   renderListItem() {
-    const { targetCustList, parameter, onCustomerClick } = this.props;
-    const { page: { pageSize, pageNum }, list = [] } = targetCustList;
+    const { targetCustList, parameter, onCustomerClick, currentTargetList } = this.props;
+    const { page: { pageSize, pageNum } } = targetCustList;
     const { activeIndex } = parameter;
-    console.log('renderListItem: ', this.props);
+    // 当前activeIndex在当前请求回来的客户列表里面计算所在当前客户列表的位置，否则，默认第一个
     const currentIndex = (parseInt(activeIndex, 10) - 1) % pageSize;
     return (
-      (list || []).map((item, index) => {
+      currentTargetList.map((item, index) => {
         // 上次选中的客户还在列表里的时候，继续高亮此客户，否则高亮此次列表中的第一条数据
         const cls = cx(
           styles.listItem,
@@ -104,7 +106,7 @@ export default class ListSwiper extends PureComponent {
             className={cls}
             key={item.missionFlowId}
             onClick={() => onCustomerClick({
-              activeIndex: (pageSize * (pageNum - 1)) + index + 1,
+              activeIndex: String((pageSize * (pageNum - 1)) + index + 1),
               currentCustomer: item,
             })}
           >
@@ -112,6 +114,7 @@ export default class ListSwiper extends PureComponent {
               {this.renderAvator({ genderCode: item.genderCode, custNature: item.custNature })}
               <p className={styles.name}>{_.truncate(item.custName, { length: 4, omission: '...' })}</p>
               <p className={styles.status}>-{item.missionStatusValue}-</p>
+              <span className={styles.triangle} />
             </div>
           </div>
         );
@@ -125,13 +128,14 @@ export default class ListSwiper extends PureComponent {
   }
 
   render() {
-    const { targetCustList, containerClass, parameter } = this.props;
+    const { targetCustList, containerClass } = this.props;
     const { page: { pageSize, pageNum, totalPage } } = targetCustList;
-    const { activeIndex } = parameter;
     const params = {
       containerClass: styles.swiperContainer,
       slidesPerView: pageSize,
       slidesPerGroup: pageSize,
+      noSwiping: true,
+      shouldSwiperUpdate: true,
     };
     const containerCls = cx(
       styles.listSwiper,
@@ -148,7 +152,6 @@ export default class ListSwiper extends PureComponent {
     return (
       <div className={containerCls}>
         <Swiper
-          key={`${activeIndex}${pageSize}${pageNum}`}
           {...params}
           ref={this.saveSwiperRef}
         >

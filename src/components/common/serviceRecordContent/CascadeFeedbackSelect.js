@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-14 12:35:42
+ * @Last Modified time: 2018-05-28 21:24:20
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -39,7 +39,7 @@ export default class CascadeFeedbackSelect extends PureComponent {
   @autobind
   findChildrenByFirstSelect(value) {
     const { feedbackList } = this.props;
-    return _.find(feedbackList, item => item.key === value).children || [];
+    return (_.find(feedbackList, item => item.key === value) || {}).children || [];
   }
 
   // 改变一级客户反馈

@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-24 13:32:48
+ * @Last Modified time: 2018-05-29 22:30:29
  */
 
 
@@ -48,7 +48,6 @@ export default class PerformerViewDetail extends PureComponent {
     // 涨乐财富通服务方式下的审批人列表以及查询方法
     queryApprovalList: PropTypes.func.isRequired,
     zhangleApprovalList: PropTypes.array.isRequired,
-    form: PropTypes.object.isRequired,
     // 查询任务下的客户
     queryCustomer: PropTypes.func,
     // 搜索到的任务下客户列表
@@ -59,6 +58,7 @@ export default class PerformerViewDetail extends PureComponent {
     testWallCollisionStatus: PropTypes.bool.isRequired,
     performerViewCurrentTab: PropTypes.string.isRequired,
     changePerformerViewTab: PropTypes.func.isRequired,
+    targetCustDetail: PropTypes.object.isRequired,
     serviceProgress: PropTypes.object.isRequired,
     custFeedBack: PropTypes.array.isRequired,
     custDetail: PropTypes.object.isRequired,
@@ -124,6 +124,36 @@ export default class PerformerViewDetail extends PureComponent {
     });
   }
 
+  /**
+   * 添加服务记录成功后重新加载当前目标客户的详细信息
+   */
+  @autobind
+  reloadTargetCustInfo(callback) {
+    const { parameter: { targetCustId, targetMissionFlowId } } = this.props;
+    this.requeryTargetCustDetail({
+      custId: targetCustId,
+      missionFlowId: targetMissionFlowId,
+      callback,
+    });
+  }
+
+  /**
+   * 重新查询目标客户的详情信息
+   */
+  @autobind
+  requeryTargetCustDetail({ custId, missionFlowId, callback }) {
+    const {
+      currentId,
+      getCustDetail,
+    } = this.props;
+    getCustDetail({
+      missionId: currentId,
+      custId,
+      missionFlowId,
+      callback,
+    });
+  }
+
   render() {
     const {
       basicInfo = {},
@@ -150,6 +180,7 @@ export default class PerformerViewDetail extends PureComponent {
           servicePolicy={servicePolicy}
           searchCustomer={this.searchCustomer}
           customerList={customerList}
+          reloadTargetCustInfo={this.reloadTargetCustInfo}
         />
       </div>
     );
