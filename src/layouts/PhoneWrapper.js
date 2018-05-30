@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-28 19:14:00
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-30 17:14:43
+ * @Last Modified time: 2018-05-30 18:24:50
  */
 import React, { Component } from 'react';
 import moment from 'moment';
@@ -26,13 +26,18 @@ export default class PhoneWrapper extends Component {
   @autobind
   phoneCallback(data) {
     const { type } = data;
-    this.startTime = '';
     if (type === 'connected') {
       this.handlePhoneConnected(data);
     }
     if (type === 'end') {
       this.handlePhoneEnd(data);
     }
+  }
+
+  // 点击电话号码打电话
+  @autobind
+  handleClickPhone() {
+    this.startTime = '';
   }
 
   // 电话接通方法
@@ -88,6 +93,7 @@ export default class PhoneWrapper extends Component {
           onEnd={this.phoneCallback}
           onConnected={this.phoneCallback}
           handleShowMask={this.handleShowMask}
+          handleClickPhone={this.handleClickPhone}
         />
         <Mask visible={showMask} />
       </div>
