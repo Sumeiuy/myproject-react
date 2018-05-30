@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-30 09:23:48
+ * @Last Modified time: 2018-05-30 15:26:32
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
