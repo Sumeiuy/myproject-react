@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:21:18
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-29 13:03:00
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-30 13:44:17
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapDispatchToProps移至此处成立独立模块
  */
 import effects from './effects';
@@ -63,7 +63,7 @@ export default ({ routerRedux, effect }) => ({
   queryMOTServeAndFeedBackExcel: effect(effects.queryMOTServeAndFeedBackExcel),
   modifyLocalTaskList: effect(effects.modifyLocalTaskList, { loading: false }),
   // 查询去重后的客户数量
-  queryDistinctCustomerCount: effect(effects.queryDistinctCustomerCount),
+  queryDistinctCustomerCount: effect(effects.queryDistinctCustomerCount, { loading: false }),
   // 服务经理维度任务数据
   getCustManagerScope: effect(effects.getCustManagerScope),
   // 查询涨乐财富通服务方式下的客户反馈列表

@@ -28,6 +28,8 @@ import {
   isInvolveSoftware,
 } from './auth';
 
+// 用于找到select类组件渲染option时父级容器的方法,以解决在弹窗里页面滚动，option随页面滚动的问题
+const getPopupContainerFunction = () => document.querySelector(`.${styles.editWrapper}`);
 const { TextArea } = Input;
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
@@ -833,6 +835,7 @@ export default class EditBaseInfo extends PureComponent {
                   data={subTypeList}
                   value={subType}
                   onChange={this.handleSubTypeSelect}
+                  getPopupContainer={getPopupContainerFunction}
                 />
               </InfoForm>
               <InfoForm label="操作类型" required>
@@ -841,6 +844,7 @@ export default class EditBaseInfo extends PureComponent {
                   data={operationTypeList}
                   value={operationType}
                   onChange={this.handleOperateTypeSelect}
+                  getPopupContainer={getPopupContainerFunction}
                 />
               </InfoForm>
               <InfoForm label="客户" required>
@@ -853,6 +857,7 @@ export default class EditBaseInfo extends PureComponent {
                   onSelect={this.handleSelectClient}
                   onSearch={this.handleSearchClient}
                   ref={ref => this.selectCustComponent = ref}
+                  getPopupContainer={getPopupContainerFunction}
                 />
               </InfoForm>
             </div>
@@ -869,6 +874,7 @@ export default class EditBaseInfo extends PureComponent {
                 onSelect={this.handleSelectTemplate}
                 onSearch={this.handleSearchTemplate}
                 ref={ref => this.selectTemplateComponent = ref}
+                getPopupContainer={getPopupContainerFunction}
               />
             </InfoForm>
             :
@@ -883,6 +889,7 @@ export default class EditBaseInfo extends PureComponent {
                       data={newProtocolList}
                       value={protocolNumber}
                       onChange={this.handleSelectProtocol}
+                      getPopupContainer={getPopupContainerFunction}
                     />
                   </InfoForm>
               }
@@ -905,6 +912,7 @@ export default class EditBaseInfo extends PureComponent {
                 data={businessTypeList}
                 value={businessType}
                 onChange={this.handleBusinessTypeSelect}
+                getPopupContainer={getPopupContainerFunction}
               />
             </InfoForm>
           )

@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-03 14:35:21
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-17 16:29:55
+ * @Last Modified time: 2018-05-29 21:07:17
  */
 
 import React, { PureComponent } from 'react';
@@ -72,6 +72,7 @@ export default class ContactInfoPopover extends PureComponent {
       PropTypes.node,
       PropTypes.string,
     ]),
+    getPopupContainer: PropTypes.func,
   };
 
   static defaultProps = {
@@ -82,11 +83,8 @@ export default class ContactInfoPopover extends PureComponent {
     disablePhone: true,
     placement: 'bottomRight',
     children: '',
+    getPopupContainer: () => document.querySelector(fspContainer.container) || document.body,
   };
-
-  getPopupContainer() {
-    return document.querySelector(fspContainer.container) || document.body;
-  }
 
   /**
    * 根据不同的联系人生成以联系人为组的联系号码列表
@@ -193,13 +191,13 @@ export default class ContactInfoPopover extends PureComponent {
 
   render() {
     const content = this.generateSuspensionContent();
-    const { placement, children } = this.props;
+    const { placement, children, getPopupContainer } = this.props;
     return (
       <Popover
         overlayClassName={styles.popover}
         content={content}
         placement={placement}
-        getPopupContainer={this.getPopupContainer}
+        getPopupContainer={getPopupContainer}
       >
         {children}
       </Popover>

@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description 客户反馈相关接口
  * @Date: 2017-12-21 10:16:45
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-01-02 15:14:10
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-05-29 10:52:38
  */
 
 export default function cust(api) {
@@ -22,5 +22,7 @@ export default function cust(api) {
     getFeedbackList: query => api.post('/groovynoauth/fsp/campaign/mot/queryFeedbackList', query),
     // 添加任务下所关联客户反馈选项
     addCustomerFeedback: query => api.post('/groovynoauth/fsp/campaign/mot/addCustomerFeedback', query),
+    // 查询MOT任务和自建任务绑定的客户反馈中有无涨乐客户可选项超过4项的任务
+    hasOverFour: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionCustOptionsOver4', query),
   };
 }

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-03 16:46:41
+ * @Last Modified time: 2018-05-29 11:00:28
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -12,7 +12,6 @@ import { connect } from 'dva';
 import { Tabs } from 'antd';
 import _ from 'lodash';
 
-// import choosePage from '../../components/operationManage/choosePage';
 import MissionBind from '../../components/operationManage/customerFeedback/MissionBind';
 import OptionsMaintain from '../../components/operationManage/customerFeedback/OptionsMaintain';
 import withRouter from '../../decorators/withRouter';
@@ -48,6 +47,10 @@ const mapStateToProps = state => ({
   missionData: state.customerFeedback.missionData,
   // 客户反馈列表
   feedbackData: state.customerFeedback.feedbackData,
+  // 修改一级客户反馈后，返回的相关涨乐客户选项超过4个的任务数量
+  taskNum: state.customerFeedback.taskNum,
+  // 查询任务绑定客户反馈列表时，返回的MOT任务和自建任务是否有客户可选项超过4个的任务
+  hasOver4OptionsTask: state.customerFeedback.hasOver4OptionsTask,
 });
 
 const mapDispatchToProps = {
@@ -91,6 +94,10 @@ export default class CustomerFeedback extends PureComponent {
     addFeedback: PropTypes.func.isRequired,
     // 编辑客户反馈选项
     modifyFeedback: PropTypes.func.isRequired,
+    // 修改一级客户反馈后，返回的相关涨乐客户选项超过4个的任务数量
+    taskNum: PropTypes.number.isRequired,
+    // 查询任务绑定客户反馈列表时，返回的MOT任务和自建任务是否有客户可选项超过4个的任务
+    hasOver4OptionsTask: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -160,6 +167,7 @@ export default class CustomerFeedback extends PureComponent {
       addCustomerFeedback,
       location,
       location: { query: { childActiveKey } },
+      hasOver4OptionsTask,
      } = this.props;
     const { replace } = this.context;
     const missionBindProps = {
@@ -171,6 +179,7 @@ export default class CustomerFeedback extends PureComponent {
       childActiveKey,
       replace,
       location,
+      hasOver4OptionsTask,
       queryMissionList: this.queryMissionList,
       queryFeedbackList: this.queryFeedbackList,
       missionBindChangeTab: this.missionBindChangeTab,
@@ -187,6 +196,7 @@ export default class CustomerFeedback extends PureComponent {
       addFeedback,
       modifyFeedback,
       location,
+      taskNum,
      } = this.props;
     const optionsMaintainProps = {
       queryFeedbackList: this.queryFeedbackList,
@@ -195,6 +205,7 @@ export default class CustomerFeedback extends PureComponent {
       addFeedback,
       modifyFeedback,
       location,
+      taskNum,
     };
 
     return (<OptionsMaintain {...optionsMaintainProps} />);
