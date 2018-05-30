@@ -24,4 +24,23 @@ export const ORG_ICON = 'yibanjigou';
 // 产品机构的头像
 export const PROD_ICON = 'chanpinjigou';
 
+// 风险等级配置, code对应的显示文案
+export const riskLevelConfig = {
+  704010: '激',
+  704040: '低',
+  704030: '保',
+  704020: '稳',
+  704025: '谨',
+  704015: '积',
+};
+
+// 任务状态为未处理、处理中、已驳回时可打电话
+export const CALLABLE_LIST = ['10', '20', '60'];
+
+// 信息的完备，用于判断
+export const COMPLETION = '完备';
+export const NOTCOMPLETION = '不完备';
+
+export const PHONE = 'phone';
+
 export default {};
