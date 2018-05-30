@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-23 10:30:36
+ * @Last Modified time: 2018-05-23 09:38:37
  * @description 任务管理首页
  */
 
@@ -1088,7 +1088,7 @@ export default class PerformerView extends PureComponent {
     return (
       <FixedTitle
         content={missionViewType === INITIATOR ? CREATE_TIME : END_TIME}
-        sortDirection={'desc'}
+        sort={'desc'}
         onSortChange={this.handleSortChange}
         sortKey={missionViewType === INITIATOR ? CREATE_TIME_KEY : END_TIME_KEY}
       />
