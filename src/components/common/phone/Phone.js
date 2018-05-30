@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-28 16:29:30
+ * @Last Modified time: 2018-05-30 18:16:32
  */
 
 import React, { PureComponent } from 'react';
@@ -66,6 +66,8 @@ export default class Phone extends PureComponent {
     userData: PropTypes.object,
     // 显示和隐藏通话蒙版
     handleShowMask: PropTypes.func,
+    // 点击打电话
+    handleClickPhone: PropTypes.func,
   }
 
   static defaultProps = {
@@ -80,6 +82,7 @@ export default class Phone extends PureComponent {
     name: '',
     userData: {},
     handleShowMask: _.noop,
+    handleClickPhone: _.noop,
   };
 
   // 是否已绑定message事件
@@ -94,6 +97,8 @@ export default class Phone extends PureComponent {
           if (this.canCall()) {
             const number = window.$(e.target).text() || window.$(e.target).val();
             this.prepareCall(number);
+            // 点击打电话
+            this.props.handleClickPhone();
             // 显示通话蒙版
             this.props.handleShowMask(true);
           }
