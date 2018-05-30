@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-28 19:14:00
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-30 18:24:50
+ * @Last Modified time: 2018-05-30 19:51:41
  */
 import React, { Component } from 'react';
 import moment from 'moment';
@@ -92,8 +92,8 @@ export default class PhoneWrapper extends Component {
           headless
           onEnd={this.phoneCallback}
           onConnected={this.phoneCallback}
-          handleShowMask={this.handleShowMask}
-          handleClickPhone={this.handleClickPhone}
+          onShowMask={this.handleShowMask}
+          onClick={this.handleClickPhone}
         />
         <Mask visible={showMask} />
       </div>
