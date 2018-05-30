@@ -28,63 +28,35 @@
 }
 
 //以下是执行者视图状态标签的颜色
-// tag-pvclose 终止
-// tag-pvend 结束
-.tag-pvclose, .tag-pvend {
-  background: #e9e9e9;
-  border-radius: 3px;
-  width: 58px;
-  height: 18px;
-  font-size: 12px;
-  color: #999;
-  text-align: center;
-  display: inline-block;
-  padding: 0;
-  margin: 0;
-  padding-top: 1px;
+//审批中
+.tag-pvprocessing {
+  background-color: #756fb8;
 }
-// tag-pvresult 结果跟踪
-// tag-pvexecuting 执行中
-// tag-pvwaitexecute 等待执行
-// tag-pvcompleted
-// tag-pvprocessing 审批中
-.tag-pvresult, .tag-pvexecuting, .tag-pvwaitexecute, .tag-pvcompleted, .tag-pvprocessing {
-  background: #d4ebed;
-  border-radius: 3px;
-  width: 58px;
-  height: 18px;
-  font-size: 12px;
-  color: #3d99ac;
-  text-align: center;
-  display: inline-block;
-  padding: 0;
-  margin: 0;
-  padding-top: 1px;
+// 终止
+.tag-pvclose {
+  background-color: #a1a1a1;
 }
-// 驳回
+// 结束
+.tag-pvend {
+  background-color: #929fb9;
+}
+//执行中
+.tag-pvexecuting {
+  background-color: #7d9be0;
+}
+// 结果跟踪
+.tag-pvresult {
+  background-color: #60bbea;
+}
+//驳回
 .tag-pvreject {
-  background: #fce1e0;
-  border-radius: 3px;
-  width: 58px;
-  height: 18px;
-  font-size: 12px;
-  color: #e95d62;
-  text-align: center;
-  display: inline-block;
-  padding: 0;
-  margin: 0;
-  padding-top: 1px;
+  background-color: #ff784e;
 }
-.tag-activestatus {
-  .tag-transparent;
-  color: #fff;
-  border-radius: 3px;
-  width: 58px;
-  height: 16px;
-  font-size: 12px;
-  text-align: center;
-  display: inline-block;
-  padding: 0;
-  margin: 0;
+// 等待执行
+.tag-pvwaitexecute {
+  background-color: #fdb02b;
+}
+.tag-pvcompleted {
+  background-color: #2d7bd4;
 }
 //以上是执行者视图状态标签的颜色
