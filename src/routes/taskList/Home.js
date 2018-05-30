@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-30 10:58:12
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-05-30 14:44:16
  * @description 任务管理首页
  */
 
@@ -69,8 +69,10 @@ const ZL_QUREY_APPROVAL_BTN_ID = '200000';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
-// 三个视图的排序默认都是降序排序
-const DEFAULT_SORT_TYPE = 'desc';
+// 创建者视图的排序默认降序排序
+const DEFAULT_SORT_DESC = 'desc';
+// 执行者视图和管理者视图默认升序排序
+const DEFAULT_SORT_ASC = 'asc';
 
 @withRouter
 export default class PerformerView extends PureComponent {
@@ -885,13 +887,16 @@ export default class PerformerView extends PureComponent {
   getSortConfig(viewType) {
     let sortKey = CREATE_TIME_KEY;
     let sortContent = CREATE_TIME;
+    let sortDirection = DEFAULT_SORT_DESC;
     if (viewType === EXECUTOR || viewType === CONTROLLER) {
       sortKey = END_TIME_KEY;
       sortContent = END_TIME;
+      sortDirection = DEFAULT_SORT_ASC;
     }
     return {
       sortKey,
       sortContent,
+      sortDirection,
     };
   }
 
@@ -906,12 +911,12 @@ export default class PerformerView extends PureComponent {
       // 创建者视图，用createTimeSort,desc
       if (currentViewType === INITIATOR) {
         param = {
-          [CREATE_TIME_KEY]: DEFAULT_SORT_TYPE,
+          [CREATE_TIME_KEY]: DEFAULT_SORT_DESC,
         };
       } else if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
-        // 执行者视图和管理者视图用endTimeSort,desc
+        // 执行者视图和管理者视图用endTimeSort,asc
         param = {
-          [END_TIME_KEY]: DEFAULT_SORT_TYPE,
+          [END_TIME_KEY]: DEFAULT_SORT_ASC,
         };
       }
     } else {
@@ -1082,11 +1087,11 @@ export default class PerformerView extends PureComponent {
   renderFixedTitle() {
     const { location: { query: { missionViewType } } } = this.props;
     const viewType = getViewInfo(missionViewType).currentViewType;
-    const { sortKey, sortContent } = this.getSortConfig(viewType);
+    const { sortKey, sortContent, sortDirection } = this.getSortConfig(viewType);
     return (
       <FixedTitle
         sortContent={sortContent}
-        sortDirection={DEFAULT_SORT_TYPE}
+        sortDirection={sortDirection}
         onSortChange={this.handleSortChange}
         sortKey={sortKey}
         viewType={viewType}
