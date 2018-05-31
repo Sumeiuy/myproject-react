@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-30 16:38:49
+ * @Last Modified time: 2018-05-31 14:42:22
  * @description 客户池头部搜索组件
  */
 
@@ -175,7 +175,7 @@ export default class Search extends PureComponent {
     logCommon({
       type: 'Click',
       payload: {
-        name: '目标客户池首页搜索框',
+        name: '目标客户池首页搜索',
         value: item.value,
         type: '联想词选择',
         subtype,
@@ -213,7 +213,7 @@ export default class Search extends PureComponent {
     logCommon({
       type: 'Click',
       payload: {
-        name: '目标客户池首页搜索框',
+        name: '目标客户池首页搜索',
         value,
         type: '搜索',
         subtype: '',
