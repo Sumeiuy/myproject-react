@@ -135,7 +135,7 @@ export default class AddManageModal extends PureComponent {
 
   @autobind
   findContainer() {
-    return this.modalContent;
+    return this.filterWrap;
   }
 
   // 查询服务经理列表
@@ -243,15 +243,14 @@ export default class AddManageModal extends PureComponent {
         wrapClassName={styles.addManageModal}
         onOk={this.sendRequest}
       >
-        <div className={styles.modalContent} ref={modalContent => this.modalContent = modalContent}>
+        <div className={styles.modalContent}>
           <div className={styles.contentItem}>
-            <div className={styles.operateDiv}>
+            <div className={styles.operateDiv} ref={filterWrap => this.filterWrap = filterWrap}>
               <SingleFilter
                 className={styles.firstFilter}
                 filterName={'服务经理'}
                 showSearch
                 placeholder={'请输入服务经理工号、姓名'}
-                isCloseable={false}
                 data={[]}
                 defaultSelectLabel={_.isEmpty(smKeyword) ? NO_VALUE : smKeyword}
                 value={smKeyword}
