@@ -8,7 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
@@ -23,20 +23,25 @@ import AddManageModal from '../../components/custAllot/AddManageModal';
 import TableDialog from '../../components/common/biz/TableDialog';
 
 import BottonGroup from '../../components/permission/BottonGroup';
-import FilialeCustTransferList from '../../components/common/appList';
+import CustAllotList from '../../components/common/appList';
 import ViewListRow from '../../components/custAllot/ViewListRow';
 import Detail from '../../components/custAllot/Detail';
 import commonConfirm from '../../components/common/confirm_';
-import { seibelConfig } from '../../config';
 import config from '../../components/custAllot/config';
 import { dva, emp } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
 
 const dispatch = dva.generateEffect;
-const { filialeCustTransfer, filialeCustTransfer: { pageType, status } } = seibelConfig;
 
-const { titleList: { approvalColumns }, ruleTypeArray, listType, subType, clearDataArray } = config;
+const {
+  titleList: { approvalColumns },
+  ruleTypeArray,
+  custAllot,
+  custAllot: { status, pageType },
+  subType,
+  clearDataArray,
+} = config;
 
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
@@ -248,7 +253,7 @@ export default class CustAllot extends PureComponent {
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
-    getList({ ...params, type: listType, subType }).then(this.getRightDetail);
+    getList({ ...params, type: pageType, subType }).then(this.getRightDetail);
   }
 
   // 头部筛选后调用方法
@@ -424,8 +429,9 @@ export default class CustAllot extends PureComponent {
     });
   }
 
+  // 提交成功之后的回调处理
   @autobind
-  closeApprovalAndCreateModal() {
+  handleSuccessCallback() {
     const {
       location: {
         query,
@@ -435,19 +441,26 @@ export default class CustAllot extends PureComponent {
         },
       },
     } = this.props;
-    // 关闭审批人弹窗
-    this.closeModal({
-      modalKey: approverModalKey,
-      isNeedConfirm: false,
-      clearDataType: clearDataArray[1],
+
+    Modal.success({
+      title: '提示',
+      content: '提交成功，后台正在进行数据处理！若数据校验失败，可在首页通知提醒中查看失败原因。',
+      onOk: () => {
+        // 关闭审批人弹窗
+        this.closeModal({
+          modalKey: approverModalKey,
+          isNeedConfirm: false,
+          clearDataType: clearDataArray[1],
+        });
+        // 关闭新建弹窗
+        this.closeModal({
+          modalKey: createModalKey,
+          isNeedConfirm: false,
+          clearDataType: clearDataArray[1],
+        });
+        this.queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
+      },
     });
-    // 关闭新建弹窗
-    this.closeModal({
-      modalKey: createModalKey,
-      isNeedConfirm: false,
-      clearDataType: clearDataArray[1],
-    });
-    this.queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
   }
 
   @autobind
@@ -476,14 +489,13 @@ export default class CustAllot extends PureComponent {
       const { saveChangeData } = this.props;
       // 提交没有问题
       if (saveChangeData.errorCode === '0') {
-        message.success('提交成功，后台正在进行数据处理！若数据校验失败，可在首页通知提醒中查看失败原因。');
-        this.closeApprovalAndCreateModal();
+        this.handleSuccessCallback();
       } else {
         commonConfirm({
           shortCut: 'hasTouGu',
           onOk: () => {
             payload.TGConfirm = true;
-            saveChange(payload).then(this.closeApprovalAndCreateModal);
+            saveChange(payload).then(this.handleSuccessCallback);
           },
         });
       }
@@ -501,9 +513,9 @@ export default class CustAllot extends PureComponent {
         active={index === activeRowIndex}
         onClick={this.handleListRowClick}
         index={index}
-        pageName="filialeCustTransfer"
+        pageName="custAllot"
         type="kehu1"
-        pageData={filialeCustTransfer}
+        pageData={custAllot}
       />
     );
   }
@@ -553,7 +565,7 @@ export default class CustAllot extends PureComponent {
       <ConnectedSeibelHeader
         location={location}
         replace={replace}
-        page="filialeCustTransferPage"
+        page="custAllotPage"
         pageType={pageType}
         needSubType={false}
         stateOptions={status}
@@ -576,7 +588,7 @@ export default class CustAllot extends PureComponent {
 
     // 左侧列表
     const leftPanel = (
-      <FilialeCustTransferList
+      <CustAllotList
         list={resultData}
         renderRow={this.renderListRow}
         pagination={paginationOptions}
@@ -622,7 +634,7 @@ export default class CustAllot extends PureComponent {
           topPanel={topPanel}
           leftPanel={leftPanel}
           rightPanel={rightPanel}
-          leftListClassName="FilialeCustTransferList"
+          leftListClassName="custAllotList"
         />
         {
           createModal

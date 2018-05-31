@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-24 14:15:52
+ * @Last Modified time: 2018-05-30 16:08:14
  * @description 视图切换组件
  */
 
@@ -84,6 +84,7 @@ export default class ViewMenu extends PureComponent {
                     [styles.active]: missionViewTypeValue === item.value,
                   })
                 }
+                key={item.value}
                 onClick={() => this.handleClick(item.value)}
               >
                 {item.label}

@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-31 14:24:58
+ * @Last Modified time: 2018-05-31 15:16:23
  */
 
 import React, { PureComponent } from 'react';
@@ -298,8 +298,10 @@ export default class ServiceImplementation extends PureComponent {
           assetSort,
           pageSize,
           pageNum,
+          isGetFirstItemDetail: false,
         }).then(() => {
           const { getCustDetail, currentId, targetCustList: { list = [] } } = this.props;
+          // 根据当前的activeIndex找到在当前列表中的数据，再去查询该条数据的详情
           const index = parseInt(value, 10) % pageSize;
           const { custId, missionFlowId } = list[index - 1];
           getCustDetail({

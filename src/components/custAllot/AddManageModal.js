@@ -30,7 +30,7 @@ const empOrgId = emp.getOrgId();
 // 服务经理
 const KEY_EMPNAME = 'empName';
 const NO_VALUE = '不限';
-
+const INIT_PAGENUM = 1;
 export default class AddManageModal extends PureComponent {
   static propTypes = {
     custRangeList: PropTypes.array.isRequired,
@@ -53,14 +53,10 @@ export default class AddManageModal extends PureComponent {
       smKeyword: '',
       positionType: positionTypeArray[0].key,
       orgId: '',
-      selectedRowKeys: '',
-      allSelected: {
-        page1: {
-          row: [],
-          rowKeys: [],
-        },
-      },
-      pageNum: 1,
+      selectedRowKeys: [],
+      selectedRows: [],
+      manageList: [],
+      pageNum: INIT_PAGENUM,
     };
   }
 
@@ -71,20 +67,22 @@ export default class AddManageModal extends PureComponent {
 
   // 选择服务经理
   @autobind
-  onSelectChange(selectedRowKeys, selectedRows) {
-    const selectedArrayRow = selectedRows.map(item => ({
-      empId: item.empId,
-      positionId: item.positionId,
-    }));
-    const { allSelected, pageNum } = this.state;
-    const page = `page${pageNum}`;
-    const newAllSelected = { ...allSelected };
-    newAllSelected[page] = {};
-    newAllSelected[page].rowKeys = selectedRowKeys;
-    newAllSelected[page].row = selectedArrayRow;
+  onSelectChange(record, selected) {
+    const { selectedRowKeys, selectedRows } = this.state;
+    // 选中的 key 值数组
+    let newSelectedRowKeys = [...selectedRowKeys];
+    // 选中的 row 数组
+    let newSelectedRows = [...selectedRows];
+    if (selected) {
+      newSelectedRowKeys.push(record.positionId);
+      newSelectedRows.push(record);
+    } else {
+      newSelectedRowKeys = _.filter(newSelectedRowKeys, o => o !== record.positionId);
+      newSelectedRows = _.filter(newSelectedRows, o => o.positionId !== record.positionId);
+    }
     this.setState({
-      allSelected: newAllSelected,
-      selectedRowKeys,
+      selectedRows: newSelectedRows,
+      selectedRowKeys: newSelectedRowKeys,
     });
   }
 
@@ -104,6 +102,7 @@ export default class AddManageModal extends PureComponent {
   handleEmpChange(value) {
     this.setState({
       smKeyword: value,
+      pageNum: INIT_PAGENUM,
     }, this.searchManageList);
   }
 
@@ -113,6 +112,7 @@ export default class AddManageModal extends PureComponent {
     const { value } = obj;
     this.setState({
       positionType: value,
+      pageNum: INIT_PAGENUM,
     }, this.searchManageList);
   }
 
@@ -121,6 +121,7 @@ export default class AddManageModal extends PureComponent {
   handleTreeSelectChange(value) {
     this.setState({
       orgId: value,
+      pageNum: INIT_PAGENUM,
     }, this.searchManageList);
   }
 
@@ -134,12 +135,12 @@ export default class AddManageModal extends PureComponent {
 
   @autobind
   findContainer() {
-    return this.modalContent;
+    return this.filterWrap;
   }
 
   // 查询服务经理列表
   @autobind
-  searchManageList(obj = {}) {
+  searchManageList() {
     const { queryList } = this.props;
     const { smKeyword, orgId, positionType, pageNum } = this.state;
     const payload = {
@@ -149,7 +150,6 @@ export default class AddManageModal extends PureComponent {
       positionType,
       pageNum,
       pageSize: 10,
-      ...obj,
     };
     queryList(payload);
   }
@@ -158,19 +158,14 @@ export default class AddManageModal extends PureComponent {
   @autobind
   sendRequest() {
     const { sendRequest, modalKey, updateData } = this.props;
-    const { allSelected } = this.state;
-    const selectedArray = [];
-    _.forIn(allSelected, (value) => {
-      selectedArray.push(...value.row);
-    });
-
-    if (selectedArray.length <= 0) {
+    const { selectedRows } = this.state;
+    if (selectedRows.length <= 0) {
       message.error('请至少选择一位服务经理');
       return;
     }
     const payload = {
       customer: [],
-      manage: selectedArray,
+      manage: selectedRows,
       type: 'add',
       attachment: '',
       id: updateData.appId || '',
@@ -194,7 +189,7 @@ export default class AddManageModal extends PureComponent {
       closeModal,
       modalKey,
     } = this.props;
-    const { smKeyword, positionType, orgId, allSelected, pageNum } = this.state;
+    const { smKeyword, positionType, orgId, selectedRowKeys } = this.state;
     // 客户列表分页
     const paginationOption = {
       current: page.curPageNum || 1,
@@ -223,13 +218,11 @@ export default class AddManageModal extends PureComponent {
 
     const manageTitleList = this.getColumnsManageTitle();
 
-
-    const pageNumSelect = allSelected[`page${pageNum}`];
     const rowSelection = {
-      selectedRowKeys: _.isEmpty(pageNumSelect) ? [] : pageNumSelect.rowKeys,
+      selectedRowKeys,
       hideDefaultSelections: true,
       columnWidth: 40,
-      onChange: this.onSelectChange,
+      onSelect: this.onSelectChange,
     };
 
     // 关闭弹窗
@@ -250,15 +243,14 @@ export default class AddManageModal extends PureComponent {
         wrapClassName={styles.addManageModal}
         onOk={this.sendRequest}
       >
-        <div className={styles.modalContent} ref={modalContent => this.modalContent = modalContent}>
+        <div className={styles.modalContent}>
           <div className={styles.contentItem}>
-            <div className={styles.operateDiv}>
+            <div className={styles.operateDiv} ref={filterWrap => this.filterWrap = filterWrap}>
               <SingleFilter
                 className={styles.firstFilter}
                 filterName={'服务经理'}
                 showSearch
                 placeholder={'请输入服务经理工号、姓名'}
-                isCloseable={false}
                 data={[]}
                 defaultSelectLabel={_.isEmpty(smKeyword) ? NO_VALUE : smKeyword}
                 value={smKeyword}
@@ -285,6 +277,7 @@ export default class AddManageModal extends PureComponent {
                 data={list || []}
                 titleList={manageTitleList}
                 align={'left'}
+                rowKey={'positionId'}
                 rowSelection={rowSelection}
               />
               <Pagination {...paginationOption} />
