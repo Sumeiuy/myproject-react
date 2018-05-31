@@ -23,7 +23,7 @@ const EMPTY_LIST = [];
 
 // 获取一级、二级反馈颜色表
 const getLevelColor = (index = 0, childIndex = 0) => {
-  const needIndex = index % 9;
+  const needIndex = index % custFeedbackColorCollection.length;
   const indexColorArray = custFeedbackColorCollection[needIndex].value;
   return indexColorArray[childIndex];
 };
