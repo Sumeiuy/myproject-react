@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-29 17:37:19
+ * @Last Modified time: 2018-05-30 16:38:49
  * @description 客户池头部搜索组件
  */
 
@@ -147,13 +147,6 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '目标客户池首页搜索框',
-      value: '$args[0]',
-    },
-  })
   handleSelect(value) {
     const item = _.find(this.state.dataSource, child => child.id === value);
     const sightingScopeBool = isSightingScope(item.source);
@@ -176,6 +169,18 @@ export default class Search extends PureComponent {
     if (item.type === 'PRODUCT' && item.name) {
       query = { ...query, productName: encodeURIComponent(item.name) };
     }
+
+    // log日志 --- 首页搜索选中
+    const subtype = sightingScopeBool ? '瞄准镜' : item.description;
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: '目标客户池首页搜索框',
+        value: item.value,
+        type: '联想词选择',
+        subtype,
+      },
+    });
     this.handleOpenTab(query);
   }
 
@@ -198,13 +203,22 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '目标客户池首页搜索' } })
   handleClickButton() {
     const { value } = this.state;
     const newValue = _.trim(value);
     if (newValue.length === 0) {
       return false;
     }
+    // log日志 --- 首页搜索点击
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: '目标客户池首页搜索框',
+        value,
+        type: '搜索',
+        subtype: '',
+      },
+    });
     this.handleOpenTab({
       source: 'search',
       q: encodeURIComponent(newValue),
@@ -290,6 +304,7 @@ export default class Search extends PureComponent {
               payload: {
                 name: '首页搜索',
                 value: item.name,
+                type: '猜你感兴趣',
               },
             });
           }

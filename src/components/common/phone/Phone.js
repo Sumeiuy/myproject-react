@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-28 16:29:30
+ * @Last Modified time: 2018-05-30 19:52:08
  */
 
 import React, { PureComponent } from 'react';
@@ -65,7 +65,7 @@ export default class Phone extends PureComponent {
     // 用户数据，回调时回传
     userData: PropTypes.object,
     // 显示和隐藏通话蒙版
-    handleShowMask: PropTypes.func,
+    onShowMask: PropTypes.func,
   }
 
   static defaultProps = {
@@ -79,7 +79,7 @@ export default class Phone extends PureComponent {
     onConnected: _.noop,
     name: '',
     userData: {},
-    handleShowMask: _.noop,
+    onShowMask: _.noop,
   };
 
   // 是否已绑定message事件
@@ -94,8 +94,10 @@ export default class Phone extends PureComponent {
           if (this.canCall()) {
             const number = window.$(e.target).text() || window.$(e.target).val();
             this.prepareCall(number);
+            // 点击打电话
+            this.props.onClick();
             // 显示通话蒙版
-            this.props.handleShowMask(true);
+            this.props.onShowMask(true);
           }
         },
       );
@@ -166,7 +168,7 @@ export default class Phone extends PureComponent {
     if (data && data.type === TYPE_END && popWin) {
       this.props.onEnd(data);
       // 隐藏通话蒙版
-      this.props.handleShowMask(false);
+      this.props.onShowMask(false);
       popWin.close();
       popWin = null;
     } else if (data && data.type === TYPE_CONNECTED) {
