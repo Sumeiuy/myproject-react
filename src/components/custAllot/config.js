@@ -6,8 +6,38 @@
  * @Last Modified time: 2018-05-24 14:18:31
  */
 const config = {
-  // 列表 type
-  listType: '07',
+    // 分公司客户分配
+  custAllot: {
+    pageName: '分公司客户分配',
+    pageType: '07', // 查询列表接口中的type值
+    status: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
+        label: '处理中',
+        value: '01',
+      },
+      {
+        show: true,
+        label: '完成',
+        value: '02',
+      },
+      {
+        show: true,
+        label: '终止',
+        value: '03',
+      },
+      {
+        show: true,
+        label: '失败',
+        value: '05',
+      },
+    ],
+  },
   // 子类型 type
   subType: '0703',
   // 清除数据类型
