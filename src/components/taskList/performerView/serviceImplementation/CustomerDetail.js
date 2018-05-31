@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-30 10:38:45
+ * @Last Modified time: 2018-05-31 14:13:55
  */
 
 import React, { PureComponent } from 'react';
@@ -16,7 +16,13 @@ import { formatAsset } from './formatNum';
 import { COMPLETION, NOTCOMPLETION, PER_CODE, ORG_CODE } from './config';
 import { openFspTab } from '../../../../utils';
 import SixMonthEarnings from '../../../customerPool/list/SixMonthEarnings';
+import TextCollapse from './TextCollapse';
 import styles from './customerDetail.less';
+
+// 展开收起按钮的样式
+const buttonStyle = {
+  bottom: '5px',
+};
 
 // 根据资产的值返回对应的格式化值和单位串起来的字符串
 const getFormatedAsset = (value) => {
@@ -36,10 +42,12 @@ export default class CustomerDetail extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     isCustIncomeRequested: PropTypes.bool,
+    currentId: PropTypes.string,
   }
 
   static defaultProps = {
     isCustIncomeRequested: false,
+    currentId: '',
   }
 
   static contextTypes = {
@@ -155,11 +163,11 @@ export default class CustomerDetail extends PureComponent {
   render() {
     const {
       targetCustDetail = {}, getCustIncome, monthlyProfits,
-      isCustIncomeRequested,
+      isCustIncomeRequested, currentId,
     } = this.props;
     const {
       assets, openAssets, availablBalance, openedBusiness, openBusiness,
-      empName, recentServiceTime, missionType, missionTitle,
+      empName, recentServiceTime, missionType, missionTitle, missionFlowId, custId,
     } = targetCustDetail;
     // 佣金率
     let miniFee = '--';
@@ -183,75 +191,84 @@ export default class CustomerDetail extends PureComponent {
     return (
       <div className={styles.customerDetail}>
         <div className={styles.container}>
-          <div className={styles.item}>
-            <div className={styles.itemLabel}>总资产:</div>
-            <div className={styles.itemContent}>
-              {getFormatedAsset(assets)}
-              {!_.isEmpty(assets) ?
-                <div className={styles.wordTips}>
-                  <SixMonthEarnings
-                    listItem={targetCustDetail}
-                    monthlyProfits={monthlyProfits}
-                    custIncomeReqState={isCustIncomeRequested}
-                    getCustIncome={getCustIncome}
-                    formatAsset={formatAsset}
-                    displayText="峰值和最近收益"
+          <TextCollapse
+            key={`${custId}${currentId}${missionFlowId}`}
+            minHeight="58px"
+            maxHeight="auto"
+            buttonStyle={buttonStyle}
+          >
+            <div className={styles.flexBox}>
+              <div className={styles.item}>
+                <div className={styles.itemLabel}>总资产:</div>
+                <div className={styles.itemContent}>
+                  {getFormatedAsset(assets)}
+                  {!_.isEmpty(assets) ?
+                    <div className={styles.wordTips}>
+                      <SixMonthEarnings
+                        listItem={targetCustDetail}
+                        monthlyProfits={monthlyProfits}
+                        custIncomeReqState={isCustIncomeRequested}
+                        getCustIncome={getCustIncome}
+                        formatAsset={formatAsset}
+                        displayText="峰值和最近收益"
+                      />
+                    </div> : null
+                  }
+                </div>
+              </div>
+              <div className={styles.item}>
+                <div className={styles.itemLabel}>股基佣金率:</div>
+                <div className={styles.itemContent}>{miniFee}</div>
+              </div>
+              <div className={styles.item}>
+                <div className={styles.itemLabel}>持仓市值:</div>
+                <div className={styles.itemContent}>{getFormatedAsset(openAssets)}</div>
+              </div>
+              <div className={styles.item}>
+                <div className={styles.itemLabel}>沪深归集率:</div>
+                <div className={styles.itemContent}>{hsRate}</div>
+              </div>
+              <div className={styles.item}>
+                <div className={styles.itemLabel}>可用余额:</div>
+                <div className={styles.itemContent}>{getFormatedAsset(availablBalance)}</div>
+              </div>
+              <div className={styles.item}>
+                <div className={styles.itemLabel}>信息完备率:</div>
+                <div className={styles.itemContent}>
+                  {infoCompletionRate}
+                  <TipsInfo
+                    title={this.getInFoPerfectRate()}
                   />
-                </div> : null
-              }
-            </div>
-          </div>
-          <div className={styles.item}>
-            <div className={styles.itemLabel}>股基佣金率:</div>
-            <div className={styles.itemContent}>{miniFee}</div>
-          </div>
-          <div className={styles.item}>
-            <div className={styles.itemLabel}>持仓市值:</div>
-            <div className={styles.itemContent}>{getFormatedAsset(openAssets)}</div>
-          </div>
-          <div className={styles.item}>
-            <div className={styles.itemLabel}>沪深归集率:</div>
-            <div className={styles.itemContent}>{hsRate}</div>
-          </div>
-          <div className={styles.item}>
-            <div className={styles.itemLabel}>可用余额:</div>
-            <div className={styles.itemContent}>{getFormatedAsset(availablBalance)}</div>
-          </div>
-          <div className={styles.item}>
-            <div className={styles.itemLabel}>信息完备率:</div>
-            <div className={styles.itemContent}>
-              {infoCompletionRate}
-              <TipsInfo
-                title={this.getInFoPerfectRate()}
-              />
-            </div>
-          </div>
-          <div className={styles.item}>
-            <div className={styles.itemLabel}>已开通业务:</div>
-            <div className={styles.itemContent}>{this.handleEmpty(openedBusiness)}</div>
-          </div>
-          <div className={styles.item}>
-            <div className={styles.itemLabel}>可开通业务:</div>
-            <div className={styles.itemContent}>{this.handleEmpty(openBusiness)}</div>
-          </div>
-          <div className={styles.item}>
-            <div className={styles.itemLabel}>介绍人:</div>
-            <div className={styles.itemContent}>
-              {this.handleEmpty(empName)}
-              {!_.isEmpty(empName) && <TipsInfo title={this.getEmpInfo()} />}
-            </div>
-          </div>
-          <div className={styles.row}>
-            <div className={styles.moreButton} onClick={this.handleSeeMore}>查看更多</div>
-            <div className={styles.item}>
-              <div className={styles.itemLabel}>最近一次服务:</div>
-              <div className={styles.itemContent}>
-                （{this.handleEmpty(recentServiceTime)}）
-                {this.handleEmpty(missionType)} -
-                {this.handleEmpty(missionTitle)}
+                </div>
+              </div>
+              <div className={styles.item}>
+                <div className={styles.itemLabel}>已开通业务:</div>
+                <div className={styles.itemContent}>{this.handleEmpty(openedBusiness)}</div>
+              </div>
+              <div className={styles.item}>
+                <div className={styles.itemLabel}>可开通业务:</div>
+                <div className={styles.itemContent}>{this.handleEmpty(openBusiness)}</div>
+              </div>
+              <div className={styles.item}>
+                <div className={styles.itemLabel}>介绍人:</div>
+                <div className={styles.itemContent}>
+                  {this.handleEmpty(empName)}
+                  {!_.isEmpty(empName) && <TipsInfo title={this.getEmpInfo()} />}
+                </div>
               </div>
             </div>
-          </div>
+            <div className={styles.row}>
+              <div className={styles.moreButton} onClick={this.handleSeeMore}>查看更多</div>
+              <div className={styles.item}>
+                <div className={styles.itemLabel}>最近一次服务:</div>
+                <div className={styles.itemContent}>
+                  （{this.handleEmpty(recentServiceTime)}）
+                  {this.handleEmpty(missionType)} -
+                  {this.handleEmpty(missionTitle)}
+                </div>
+              </div>
+            </div>
+          </TextCollapse>
         </div>
       </div>
     );

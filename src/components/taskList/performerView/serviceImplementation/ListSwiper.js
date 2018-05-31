@@ -135,7 +135,7 @@ export default class ListSwiper extends PureComponent {
       slidesPerView: pageSize,
       slidesPerGroup: pageSize,
       noSwiping: true,
-      shouldSwiperUpdate: true,
+      rebuildOnUpdate: true,
     };
     const containerCls = cx(
       styles.listSwiper,
