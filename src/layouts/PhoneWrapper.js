@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-05-28 19:14:00
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-30 19:51:41
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-31 10:26:25
  */
 import React, { Component } from 'react';
 import moment from 'moment';
@@ -95,7 +95,10 @@ export default class PhoneWrapper extends Component {
           onShowMask={this.handleShowMask}
           onClick={this.handleClickPhone}
         />
-        <Mask visible={showMask} />
+        <Mask
+          visible={showMask}
+          onClick={() => { this.handleShowMask(false); }}
+        />
       </div>
     );
   }

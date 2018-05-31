@@ -323,6 +323,12 @@ export default class TargetCustomerRight extends PureComponent {
     );
   }
 
+  // 电话弹出蒙层的点击事件
+  @autobind
+  handleMaskClick() {
+    this.setState({ showMask: false });
+  }
+
   render() {
     const {
       isFold,
@@ -578,7 +584,7 @@ export default class TargetCustomerRight extends PureComponent {
             </Row>
           </div>
         </div>
-        <Mask visible={showMask} />
+        <Mask visible={showMask} onClick={this.handleMaskClick} />
       </div>
     );
   }
