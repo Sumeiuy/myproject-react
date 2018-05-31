@@ -685,7 +685,7 @@ export default class Pageheader extends PureComponent {
           {this.renderTime()}
           {
             currentMoreFilterData.length ?
-              <div className={styles.filterFl}>
+              <div className={classNames(styles.filterFl, styles.moreFilterBtn)}>
                 <MoreFilter
                   selectedKeys={this.selectMoreFilter()}
                   data={currentMoreFilterData}
