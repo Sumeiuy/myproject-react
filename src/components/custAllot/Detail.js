@@ -92,7 +92,7 @@ export default class Detail extends PureComponent {
       return (<div title={statusText}>{statusText}</div>);
     };
     tempTitleList[empIndex].render = (text, record) => {
-      const touGuElement = record.isTouGu ? <span className={styles.tougu}>投顾</span> : '';
+      const touGuElement = record.touGu ? <span className={styles.tougu}>投顾</span> : '';
       return (
         <div>
           {
@@ -244,7 +244,7 @@ export default class Detail extends PureComponent {
         <div className={styles.module}>
           <InfoTitle head="拟稿信息" />
           <InfoItem label="拟稿人" value={drafter} />
-          <InfoItem label="提请时间" value={time.format(createTime)} />
+          <InfoItem label="申请时间" value={time.format(createTime)} />
           <InfoItem label="状态" value={status} />
         </div>
         <div className={styles.module}>
