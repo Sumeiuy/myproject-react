@@ -11,6 +11,7 @@ import { autobind } from 'core-decorators';
 import { message, Modal, Upload, Radio, Popconfirm } from 'antd';
 import _ from 'lodash';
 
+import InfoTitle from '../common/InfoTitle';
 import InfoForm from '../common/infoForm';
 import CommonModal from '../common/biz/CommonModal';
 import Button from '../../components/common/Button';
@@ -439,7 +440,7 @@ export default class CreateModal extends PureComponent {
       >
         <div className={styles.modalContent}>
           <div className={styles.contentItem}>
-            <h3 className={styles.title}>客户列表</h3>
+            <InfoTitle head="客户列表" />
             {/* 操作按钮容器 */}
             <div className={`${styles.operateDiv} clearfix`}>
               {/* WILLDO: 后期需要加上添加按钮 */}
@@ -466,7 +467,7 @@ export default class CreateModal extends PureComponent {
             </div>
           </div>
           <div className={styles.contentItem}>
-            <h3 className={styles.title}>服务经理列表</h3>
+            <InfoTitle head="服务经理列表" />
             {/* 操作按钮容器 */}
             <div className={`${styles.operateDiv} clearfix`}>
               <Button onClick={() => showModal(manageModalKey)}>
@@ -488,7 +489,7 @@ export default class CreateModal extends PureComponent {
               null
             :
               <div className={styles.contentItem}>
-                <h3 className={styles.title}>客户分配规则</h3>
+                <InfoTitle head="客户分配规则" />
                 <InfoForm label="规则" style={{ width: '96px' }} required>
                   <RadioGroup onChange={this.handleRuleTypeChange} value={ruleType}>
                     {
