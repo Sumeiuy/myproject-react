@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-30 13:43:08
+ * @Last Modified time: 2018-05-31 10:38:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -151,7 +151,15 @@ export default class MissionBind extends PureComponent {
           </Button>
         </div>
         <div className={styles.feedbackListBox}>
-          <h2>{ZHANGLE_ROLE.name}</h2>
+          <h2>
+            {ZHANGLE_ROLE.name}
+            {
+              _.size(item.customerList) <= 4 ? null
+              : (
+                <span className={styles.overWarningText}>客户可选项总数不能大于4项</span>
+              )
+            }
+          </h2>
           {
             this.getZLFeedbackItem(item.feedbackList, item.id, {
               needPopover: false,

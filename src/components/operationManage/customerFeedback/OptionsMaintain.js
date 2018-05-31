@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-30 13:51:51
+ * @Last Modified time: 2018-05-31 10:41:34
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -301,6 +301,7 @@ export default class OptionsMaintain extends PureComponent {
       return (
         <li key={child.id}>
           <EditInput
+            editName="服务经理二级可选项"
             value={child.name}
             item={{ ...child, parentId }}
             btnGroup={btnGroup}
@@ -323,9 +324,10 @@ export default class OptionsMaintain extends PureComponent {
       return (
         <li>
           <EditInput
-            edit
+            editName="服务经理二级可选项"
+            editable
             item={{ parentId: id }}
-            editCallback={this.handleAddSecondClassOfServiceManagerOption}
+            onEditConfirm={this.handleAddSecondClassOfServiceManagerOption}
             onCancel={this.hideAddSecondFeedbackInput}
           />
         </li>
@@ -386,8 +388,9 @@ export default class OptionsMaintain extends PureComponent {
           {
             !addParentClass ? null
               : (<EditInput
-                edit
-                editCallback={this.handleAddFirstClassOfFeedbackOption}
+                editName="服务经理可选项"
+                editable
+                onEditConfirm={this.handleAddFirstClassOfFeedbackOption}
                 onCancel={this.handleCancelAddParent}
               />)
           }
