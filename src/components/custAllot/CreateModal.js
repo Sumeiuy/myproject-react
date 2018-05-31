@@ -8,7 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, Modal, Upload, Radio } from 'antd';
+import { message, Modal, Upload, Radio, Popconfirm } from 'antd';
 import _ from 'lodash';
 
 import InfoForm from '../common/infoForm';
@@ -48,6 +48,7 @@ const KEY_DMNAME = 'dmName';
 const operateType = ['add', 'delete', 'clear'];
 // 用以区分点击的是客户或者是服务经理
 const CUST = 'cust';
+const MANAGE = 'manage';
 
 export default class CreateModal extends PureComponent {
   static propTypes = {
@@ -122,6 +123,7 @@ export default class CreateModal extends PureComponent {
     });
   }
 
+
   // 生成客户表格标题列表
   @autobind
   getColumnsCustTitle() {
@@ -179,11 +181,7 @@ export default class CreateModal extends PureComponent {
       dataIndex: 'operate',
       key: 'operate',
       title: '操作',
-      render: (text, record) => ((
-        <span>
-          <Icon type="shanchu" onClick={() => this.deleteTableData(CUST, record)} />
-        </span>
-      )),
+      render: (text, record) => this.renderPopconfirm(CUST, record),
     };
     return titleList;
   }
@@ -196,15 +194,36 @@ export default class CreateModal extends PureComponent {
       dataIndex: 'operate',
       key: 'operate',
       title: '操作',
-      render: (text, record) => ((
-        <span>
-          <Icon type="shanchu" onClick={() => this.deleteTableData('manage', record)} />
-        </span>
-      )),
+      render: (text, record) => this.renderPopconfirm(MANAGE, record),
     };
     return titleList;
   }
 
+  // 处理更新数据后请求最新数据
+  @autobind
+  handleUpdateDataAndQueryList(payload, attachment) {
+    const { updateList } = this.props;
+    // 执行添加方法
+    updateList({
+      ...payload,
+      attachment,
+      type: operateType[0],  // add
+    }).then(() => {
+      const { updateData: { appId }, queryAddedCustList } = this.props;
+      this.setState({
+        attachment,
+      });
+      // 添加成功后，请求最新数据
+      const queryAddedCustListPayload = {
+        id: appId,
+        positionId: empPstnId,
+        orgId: empOrgId,
+        pageNum: 1,
+        pageSize: 5,
+      };
+      queryAddedCustList(queryAddedCustListPayload);
+    });
+  }
   // 上传事件
   @autobind
   @logable({ type: 'Click', payload: { name: '导入' } })
@@ -217,42 +236,24 @@ export default class CreateModal extends PureComponent {
       if (uploadFile.response && uploadFile.response.code) {
         if (uploadFile.response.code === '0') {
           // 上传成功
-          const data = uploadFile.response.resultData;
-          const { updateList, updateData, clearData } = this.props;
-          let tempType = operateType[0];
-          // 有批次 ID，有 attachment = clear
-          // 有批次 ID，没有 attachment = add
-          // 没有批次 ID，有attachment，没有这种情况
-          // 没有批次 ID，没有 attachment = add
-          if (updateData.appId && !_.isEmpty(attachment)) {
-            tempType = operateType[2];
-          }
-          // 有批次 ID 并且有 attachment 的时候，需要清空所有数据
-          if (updateData.appId && !_.isEmpty(attachment)) {
-            clearData(clearDataArray[1]);
-          }
+          const attachmentData = uploadFile.response.resultData;
+          const { updateList, updateData } = this.props;
           const payload = {
             id: updateData.appId || '',
             custtomer: [],
             manage: [],
-            type: tempType,
-            attachment: data,
+            type: operateType[2], // clear
+            attachment,
           };
-          // 发送请求
-          updateList(payload).then(() => {
-            const { updateData: { appId }, queryAddedCustList } = this.props;
-            this.setState({
-              attachment: data,
+          // 如果上传过，则先调用清空接口，调用成功后，调用添加接口
+          // 添加接口调用成功后，调用查询接口
+          if (!_.isEmpty(attachment)) {
+            updateList(payload).then(() => {
+              this.handleUpdateDataAndQueryList(payload, attachmentData);
             });
-            const queryAddedCustListPayload = {
-              id: appId,
-              positionId: empPstnId,
-              orgId: empOrgId,
-              pageNum: 1,
-              pageSize: 5,
-            };
-            queryAddedCustList(queryAddedCustListPayload);
-          });
+          } else {
+            this.handleUpdateDataAndQueryList(payload, attachmentData);
+          }
         } else {
           // 上传失败
           message.error(uploadFile.response.msg);
@@ -260,7 +261,6 @@ export default class CreateModal extends PureComponent {
       }
     });
   }
-
 
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '否' } })
@@ -288,7 +288,7 @@ export default class CreateModal extends PureComponent {
     const payload = {
       customer: [],
       manage: [],
-      type: operateType[1],
+      type: operateType[1],  // delete
       id: updateData.appId,
     };
     if (isCust) {
@@ -343,6 +343,20 @@ export default class CreateModal extends PureComponent {
       pageSize: 5,
     };
     queryAddedManageList(payload);
+  }
+
+  // 渲染点击删除按钮后的确认框
+  @autobind
+  renderPopconfirm(type, record) {
+    return (<Popconfirm
+      placement="top"
+      onConfirm={() => this.deleteTableData(type, record)}
+      okText="是"
+      cancelText="否"
+      title={'是否删除此条数据？'}
+    >
+      <Icon type="shanchu" />
+    </Popconfirm>);
   }
 
   render() {

@@ -127,7 +127,7 @@ const config = {
         dataIndex: 'status',
         key: 'status',
         title: '状态',
-        width: 60,
+        width: 100,
       },
       {
         dataIndex: 'oldOrgName',
@@ -139,7 +139,7 @@ const config = {
         dataIndex: 'oldEmpName',
         key: 'oldEmpName',
         title: '原服务经理',
-        width: 160,
+        width: 180,
       },
       {
         dataIndex: 'dmName',
