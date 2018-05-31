@@ -244,7 +244,7 @@ export default class Detail extends PureComponent {
         <div className={styles.module}>
           <InfoTitle head="拟稿信息" />
           <InfoItem label="拟稿人" value={drafter} />
-          <InfoItem label="提请时间" value={time.format(createTime)} />
+          <InfoItem label="申请时间" value={time.format(createTime)} />
           <InfoItem label="状态" value={status} />
         </div>
         <div className={styles.module}>
