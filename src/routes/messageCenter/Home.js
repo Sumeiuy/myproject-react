@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-30 15:26:32
+ * @Last Modified time: 2018-05-31 14:38:02
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -128,10 +128,13 @@ export default class MessageCenter extends PureComponent {
   @autobind
   async handleMessageByFSPAllocation(objectVal) {
     try {
-      const response = await api.getFspData(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
+      let response = await api.getFspData(`/fsp/tgcontract/list/findstatus?rowId=${objectVal}`);
+      // 返回数据是string类型，需要转换成JSON类型
+      response = JSON.parse(response);
       const { msg } = response.data;
       if (!msg) {
-        const loadCntractResponse = await api.getFspData(`/fsp/tgcontract/list/loadCntractBasicCustInfoByArgId?argId=${objectVal}`);
+        let loadCntractResponse = await api.getFspData(`/fsp/tgcontract/list/loadCntractBasicCustInfoByArgId?argId=${objectVal}`);
+        loadCntractResponse = JSON.parse(loadCntractResponse);
         if (loadCntractResponse) {
           const { custId: busiId, custType } = loadCntractResponse.data;
           const routeType = `${custType}:tgcontracttransfer:${objectVal}:::Y:`;
