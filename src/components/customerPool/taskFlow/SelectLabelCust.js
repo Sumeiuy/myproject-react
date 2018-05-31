@@ -13,7 +13,7 @@ const EMPTY_OBJECT = {};
 const Search = Input.Search;
 
 // 是否是瞄准镜标签
-const isSightLabel = source => source === 'jzyx';
+const isSightingLabel = source => source === 'jzyx';
 
 export default class SelectLabelCust extends PureComponent {
   static propTypes = {
@@ -123,6 +123,8 @@ export default class SelectLabelCust extends PureComponent {
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
     const { labelDesc = '', labelMapping, labelName = '', customNum = 0, source } = matchedData || EMPTY_OBJECT;
 
+    const sightingScopeBool = isSightingLabel(source);
+
     const labelCust = {
       labelId,
       labelMapping,
@@ -132,7 +134,8 @@ export default class SelectLabelCust extends PureComponent {
       customNum,
       tipsSize,
       labelName,
-      custSource: '瞄准镜标签',
+      // 暂时都写成瞄准镜标签，以后可能会改成瞄准镜标签、普通标签
+      custSource: sightingScopeBool ? '瞄准镜标签' : '瞄准镜标签',
       argsOfQueryCustomer,
       currentFilterObject,
       currentAllFilterState,
@@ -145,12 +148,12 @@ export default class SelectLabelCust extends PureComponent {
       // 来自瞄准镜标签，则展示变量任务提示
       // 来自普通标签，则展示普通任务提示
       missionDesc: padSightLabelDesc({
-        sightingScopeBool: isSightLabel(source),
+        sightingScopeBool,
         labelId,
         labelName,
       }),
       // 是不是瞄准镜标签
-      isSightLabel: isSightLabel(source),
+      isSightLabel: sightingScopeBool,
     };
 
     return {
