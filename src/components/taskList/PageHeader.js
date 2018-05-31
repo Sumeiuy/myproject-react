@@ -164,40 +164,47 @@ export default class Pageheader extends PureComponent {
     this.handleSelectChange(id, value);
   }
 
-  // 结束状态设置默认时间
+  // 状态变化时创建时间和结束时间的处理
   @autobind
-  setDefaultTime() {
+  setDefaultTime(state) {
     const {
       location: {
         query,
         query: {
           missionViewType,
-          endTimeStart = '',
-          endTimeEnd = '',
-          createTimeEnd = '',
-          createTimeStart = '',
         },
       },
     } = this.props;
+
     const startTime = moment(beforeCurrentDate60Days).format(dateFormat);
     const endTime = moment(currentDate).format(dateFormat);
-    let finalQuery = query;
+    // 当切换用户状态时覆盖创建时间或则结束时间
+    let coverQuery = {
+      ...query,
+      endTimeStart: '',
+      endTimeEnd: '',
+      createTimeEnd: '',
+      createTimeStart: '',
+    };
+    const isFinalState = state === STATE_FINISHED_CODE;
+    if (!isFinalState) {
+      return coverQuery;
+    }
+    // 当状态为结束状态时添加默认值
     if (missionViewType === INITIATOR) {
-      if (!createTimeStart && !createTimeEnd) {
-        finalQuery = {
-          ...finalQuery,
-          createTimeStart: startTime,
-          createTimeEnd: endTime,
-        };
-      }
-    } else if (!endTimeStart && !endTimeEnd) {
-      finalQuery = {
-        ...finalQuery,
+      coverQuery = {
+        ...coverQuery,
+        createTimeStart: startTime,
+        createTimeEnd: endTime,
+      };
+    } else {
+      coverQuery = {
+        ...coverQuery,
         endTimeStart: startTime,
         endTimeEnd: endTime,
       };
     }
-    return finalQuery;
+    return coverQuery;
   }
 
   @autobind
@@ -210,12 +217,8 @@ export default class Pageheader extends PureComponent {
   })
   handleSelctStatus(option) {
     const { id, value: { value } } = option;
-    let finalQuery = {};
-    // 结束状态下
-    if (value === STATE_FINISHED_CODE) {
-      finalQuery = this.setDefaultTime();
-    }
-    this.handleSelectChange(id, value, finalQuery);
+    const coverQuery = this.setDefaultTime(value);
+    this.handleSelectChange(id, value, coverQuery);
   }
 
   @autobind
@@ -682,7 +685,7 @@ export default class Pageheader extends PureComponent {
           {this.renderTime()}
           {
             currentMoreFilterData.length ?
-              <div className={styles.filterFl}>
+              <div className={classNames(styles.filterFl, styles.moreFilterBtn)}>
                 <MoreFilter
                   selectedKeys={this.selectMoreFilter()}
                   data={currentMoreFilterData}
