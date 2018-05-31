@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
+import { Tooltip } from 'antd';
 
 import Tag from '../common/tag';
 import styles from './viewListRow.less';
@@ -42,6 +43,7 @@ export default function AppItem(props) {
     index,
     missionTypeDict,
   } = props;
+  let creatorElem = null;
   if (_.isEmpty(data)) return null;
   const appItemCls = cx({
     [styles.appItem]: true,
@@ -105,6 +107,24 @@ export default function AppItem(props) {
 
     return typeName;
   }
+  // 渲染创建者悬浮框
+  function renderCreatorTooltip(creator, creatorId) {
+    return (
+      <div>
+        <span>{!_.isEmpty(creator) ? creator : ''}</span>
+        <span>&nbsp;</span>
+        <span>{!_.isEmpty(creatorId) ? creatorId : ''}</span>
+      </div>
+    );
+  }
+  // 创建者区域的ref
+  function saveCreatorAreaRef(input) {
+    return creatorElem = input;
+  }
+  // 悬浮框渲染的节点
+  function getPopupContainer() {
+    return creatorElem;
+  }
 
   return (
     <div className={appItemCls} onClick={handleClick}>
@@ -153,17 +173,23 @@ export default function AppItem(props) {
           >{renderMissionTypeName(data.typeCode)}</div>
           {
             isRenderCreator(data.typeCode) && data.creator ?
-              <div
-                className={cx({
-                  [styles.creatorArea]: true,
-                  [styles.active]: active,
-                })}
+              <Tooltip
+                placement="right"
+                title={() => renderCreatorTooltip(data.creator, data.creatorId)}
+                getPopupContainer={getPopupContainer}
+                overlayClassName={styles.creatorOverlay}
               >
-                <span className={styles.separator}>|</span>
-                <span>{!_.isEmpty(data.creator) ? data.creator : ''}</span>
-                <span>{!_.isEmpty(data.creatorId) ? `(${data.creatorId})` : ''}</span>
-              </div> :
-              null
+                <div
+                  className={cx({
+                    [styles.creatorArea]: true,
+                    [styles.active]: active,
+                  })}
+                  ref={saveCreatorAreaRef}
+                >
+                  <span className={styles.separator}>|</span>
+                  <span>{!_.isEmpty(data.creator) ? data.creator : ''}</span>
+                </div>
+              </Tooltip> : null
           }
         </div>
         <div
