@@ -34,6 +34,9 @@ const needProgress = [EXECUTOR, CONTROLLER];
 const TASK_TYPE_SELF = '1';
 const TASK_TYPE_NOT_SELF = '0';
 
+// body
+const DOCUMENT_BODY = document.body;
+
 
 export default function AppItem(props) {
   const {
@@ -123,7 +126,7 @@ export default function AppItem(props) {
   }
   // 悬浮框渲染的节点
   function getPopupContainer() {
-    return creatorElem;
+    return creatorElem || DOCUMENT_BODY;
   }
 
   return (
