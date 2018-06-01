@@ -370,6 +370,68 @@
     }
   }
 }
+.performerServiceRecord {
+  .gridWrapper {
+    padding-bottom: 0;
+  }
+  .serveWay, .serveStatus, .serveType, .serveTime, .feedbackTime, .feedbackType {
+    width: auto;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    line-height: unset;
+    vertical-align: middle;
+    margin: 7px 0;
+    flex: 1;
+    .title {
+      text-align: right;
+      width: 82px;
+      margin-left: 16px;
+      padding-right: 10px;
+    }
+    .content {
+      height: 28px;
+    }
+    :global {
+      .ant-form-item-control-wrapper > .ant-form-item-control.has-error {
+        display: flex;
+        align-items: center;
+
+        & > .ant-form-explain {
+          position: absolute;
+          bottom: -20px;
+        }
+      }
+      .ant-radio-group {
+        line-height: unset;
+        vertical-align: baseline;
+      }
+    }
+  }
+  .serveRecord {
+    margin: 7px 0;
+    padding-bottom: 0;
+    .title {
+      text-align: right;
+      width: 82px;
+      margin-left: 16px;
+      padding-right: 10px;
+    }
+    :global {
+      .ant-form-item {
+        width: auto;
+        flex: 1;
+        margin-bottom: 0;
+      }
+    }
+  }
+  .divider {
+    display: none;
+  }
+  .feedbackType {
+    flex: 2;
+  }
+}
 .yuyintishi {
   height: 20px;
   line-height: 20px;
