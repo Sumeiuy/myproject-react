@@ -69,7 +69,7 @@ export default class Overview extends PureComponent {
               次赚了钱。
             </h3>
             <h3>
-              近 3 个月买入了
+              近 3 个月买入的
               <em>涨幅最高</em>的股票
               <span className={styles.fs18}> {stockName || EMPTY_TEXT} </span>
             </h3>

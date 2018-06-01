@@ -369,13 +369,13 @@ export default class Search extends PureComponent {
               <Icon type="dengpao" />猜你感兴趣：
             </span>
             <div className={'clearfix'}>
-              {this.renderRecommend(hotWdsList)}
               <a
                 className={styles.moreLabelBtn}
                 onClick={() => showMoreLabelModal(true)}
               >
                 更多 &gt;
               </a>
+              {this.renderRecommend(hotWdsList)}
             </div>
           </div>
         </div>

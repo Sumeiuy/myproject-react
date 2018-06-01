@@ -222,7 +222,7 @@ export default class CombinationListItem extends PureComponent {
               }
             </span>
             <span className={styles.link}>
-              <a onClick={() => this.handleNameClick(openDetailPayload)}>报告详情 </a>
+              <a onClick={() => this.handleNameClick(openDetailPayload)}>组合详情 </a>
               |
               <a onClick={() => this.viewHistoryReport(data.combinationCode)}> 历史报告 </a>
               |
