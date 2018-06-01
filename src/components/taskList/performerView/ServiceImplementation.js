@@ -162,6 +162,12 @@ export default class ServiceImplementation extends PureComponent {
     });
   }
 
+  // 点击服务实施设置客户Id
+  @autobind
+  setServiceCustId(custId) {
+    this.serviceCustId = custId;
+  }
+
   @autobind
   judgeMissionStatus(typeCode) {
     return task.isResultTrack(typeCode) || task.isFinished(typeCode);
