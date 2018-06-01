@@ -174,7 +174,7 @@ export default class LabelModals extends PureComponent {
       placement="bottomLeft"
       content={item.description}
       trigger="hover"
-      overlayStyle={{}}
+      overlayStyle={{ maxWidth: 600 }}
       title={item.name}
     >
       <a onClick={() => this.openClientListPage(item)}>{item.name}</a>
