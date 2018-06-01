@@ -99,10 +99,11 @@ export default class TextCollapse extends Component {
 TextCollapse.propTypes = {
   children: PropTypes.node.isRequired,
   minHeight: PropTypes.string.isRequired,
-  maxHeight: PropTypes.string.isRequired,
+  maxHeight: PropTypes.string,
   buttonStyle: PropTypes.object,
 };
 
 TextCollapse.defaultProps = {
   buttonStyle: {},
+  maxHeight: 'auto',
 };
