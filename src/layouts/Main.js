@@ -16,7 +16,8 @@ import withRouter from '../decorators/withRouter';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
 import ContextProvider from './ContextProvider';
-import Phone from '../components/common/phone';
+import IEWarningModal from '../components/common/IEWarningModal';
+import PhoneWrapper from './PhoneWrapper';
 import styles from './main.less';
 import '../css/skin.less';
 
@@ -112,11 +113,13 @@ export default class Main extends Component {
       ceFileDelete,
       motSelfBuiltFeedbackList,
       serviceRecordInfo,
+      location,
     } = this.props;
     return (
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
-          <ErrorBoundary>
+          <IEWarningModal />
+          <ErrorBoundary location={location}>
             <div className={styles.layout}>
               <div className={styles.main}>
                 <div className={styles.container} id="container">
@@ -148,7 +151,7 @@ export default class Main extends Component {
                     }
                   </div>
                 </div>
-                <Phone headless />
+                <PhoneWrapper />
               </div>
             </div>
           </ErrorBoundary>

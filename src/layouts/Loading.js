@@ -31,7 +31,7 @@ function Loading({ loading, forceFull }) {
       className={styles.popmask}
       style={{ top, left }}
     >
-      <Spin tip="Loading" spinning={loading} />
+      <Spin tip="Loading" spinning={!!loading} />
     </div>
   );
 }

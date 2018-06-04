@@ -80,6 +80,8 @@ import InvestmentConsultantRace from './routes/investmentConsultantRace/Home';
 // 客户划转
 import CustAllot from './routes/custAllot/Home';
 import CustAllotNotifies from './routes/custAllot/Notifies';
+// 消息通知提醒
+import MessageCenter from './routes/messageCenter/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -197,6 +199,9 @@ const routes = [
   },
   // 从 FSP 消息提醒进入
   { path: '/userInfoRemind', component: userInfoApproval },
+
+  // 消息提醒
+  { path: '/messgeCenter', component: MessageCenter },
   // 直接进入
   {
     path: '/filialeCustTransfer',

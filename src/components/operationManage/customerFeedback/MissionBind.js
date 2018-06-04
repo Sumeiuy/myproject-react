@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 13:42:41
+ * @Last Modified time: 2018-05-31 15:58:35
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -18,6 +18,7 @@ import logable from '../../../decorators/logable';
 import {
   TABLIST,
   MOT_TASK,
+  SELF_TASK,
   SERVICE_MANAGER_ROLE,
   ZHANGLE_ROLE,
 } from './config';
@@ -42,6 +43,8 @@ export default class MissionBind extends PureComponent {
     feedbackData: PropTypes.object.isRequired,
     // 切换tab
     missionBindChangeTab: PropTypes.func.isRequired,
+    // 查询任务绑定客户反馈列表时，返回的MOT任务和自建任务是否有客户可选项超过4个的任务
+    hasOver4OptionsTask: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -115,6 +118,10 @@ export default class MissionBind extends PureComponent {
         <span
           className={isMOTMission ? styles.parentClass : styles.parentClassSelf}
         >
+          {
+            _.size(item.customerList) <= 4 ? null :
+            (<Icon type="exclamation-circle" className={styles.overWarningIcon} />)
+          }
           {item.parentClassName}
         </span>
         {
@@ -144,7 +151,15 @@ export default class MissionBind extends PureComponent {
           </Button>
         </div>
         <div className={styles.feedbackListBox}>
-          <h2>{ZHANGLE_ROLE.name}</h2>
+          <h2>
+            {ZHANGLE_ROLE.name}
+            {
+              _.size(item.customerList) <= 4 ? null
+              : (
+                <span className={styles.overWarningText}>客户可选项总数不能大于4项</span>
+              )
+            }
+          </h2>
           {
             this.getZLFeedbackItem(item.feedbackList, item.id, {
               needPopover: false,
@@ -226,6 +241,7 @@ export default class MissionBind extends PureComponent {
     const { beAddMissionId, roleType } = this.state;
     const {
       location: { query: { childActiveKey, pageNum = 1, pageSize = 20, keyWord } },
+      missionData: { missionList },
     } = this.props;
     const { addCustomerFeedback, queryMissionList } = this.props;
     if (this.feedbackAddComponent) {
@@ -234,16 +250,31 @@ export default class MissionBind extends PureComponent {
         message.error('请选择需要添加的客户反馈');
         return;
       }
-      addCustomerFeedback({
-        missionId: beAddMissionId,
-        feedbackId: feedback.id,
-        type: childActiveKey,
-        roleType,
-      }).then(() => {
-        this.handleCloseModal();
-        // 添加成功之后更新任务列表
-        queryMissionList({ type: childActiveKey, pageNum, pageSize, keyWord });
-      });
+
+      // TODO 此处需要新增需求，如果涨乐客户可选项已经存在4个了，
+      // 并且用户添加的服务经理可选项中还包含涨乐客户可选项，
+      // 则弹出层提示不能添加
+      // 找到添加二级反馈对应的任务
+      const missionTmp = _.find(missionList, mission => mission.id === beAddMissionId);
+      const zhangleOptionsSize = _.size(missionTmp.customerList);
+      if (zhangleOptionsSize >= 4 && !_.isEmpty(feedback.custFeedbackName)) {
+        // 此时需要弹出框，提示用户已经超过4项，不能再添加
+        confirm({
+          title: '提示',
+          content: '每个任务类型（自建）或MOT事件下客户可选反馈不可超过4项，否则客户涨乐端无法正常处理。您选择的这条客户反馈导致此任务下客户可选反馈超过4项，因此请重新选择。',
+        });
+      } else {
+        addCustomerFeedback({
+          missionId: beAddMissionId,
+          feedbackId: feedback.id,
+          type: childActiveKey,
+          roleType,
+        }).then(() => {
+          this.handleCloseModal();
+          // 添加成功之后更新任务列表
+          queryMissionList({ type: childActiveKey, pageNum, pageSize, keyWord });
+        });
+      }
     }
   }
 
@@ -268,6 +299,22 @@ export default class MissionBind extends PureComponent {
   @logable({ type: 'Click', payload: { name: '切换Tab：MOT任务/自建任务' } })
   handleSwitchTabClick(key) {
     this.props.missionBindChangeTab(key);
+  }
+
+  @autobind
+  renderTabPaneContent(tabName, tabKey) {
+    const { hasOver4OptionsTask: { mot = false, self = false } } = this.props;
+    if ((tabKey === MOT_TASK.key && mot) || (tabKey === SELF_TASK.key && self)) {
+      // MOT任务，判断如果 mot 为 true，则表示有任务的涨乐客户可选项超过了4项需要显示警告图标
+      // 自建任务，判断如果 self 为 true，则表示有任务的涨乐客户可选项超过了4项需要显示警告图标
+      return (
+        <span>
+          <Icon type="exclamation-circle" className={styles.overWarningIcon} />
+          {tabName}
+        </span>
+      );
+    }
+    return tabName;
   }
 
   render() {
@@ -310,7 +357,12 @@ export default class MissionBind extends PureComponent {
             }
           >
             {
-              TABLIST.map(item => (<TabPane tab={item.name} key={item.key} />))
+              TABLIST.map(item => (
+                <TabPane
+                  tab={this.renderTabPaneContent(item.name, item.key)}
+                  key={item.key}
+                />),
+                )
             }
           </Tabs>
         </div>

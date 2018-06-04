@@ -6,8 +6,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import CustFilter from './CustFilter';
+import CustRange from '../common/CustRange';
 import logable from '../../../decorators/logable';
+import styles from './saleDepartmentFilter.less';
 
 const custRangeStyle = { width: 'auto', maxWidth: 150 };
 
@@ -49,9 +50,11 @@ export default class SaleDepartmentFilter extends PureComponent {
     if (custRange && custRange.length <= 0) {
       return null;
     }
+    // console.log('SaleDepartmentFilter>>>', this.props);
     return (
       <div>
-        <CustFilter
+        <span className={styles.selectLabel}>服务营业部：</span>
+        <CustRange
           selectBoxStyle={custRangeStyle}
           defaultFirst
           orgId={orgId}

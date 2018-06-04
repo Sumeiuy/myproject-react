@@ -1,15 +1,13 @@
 /**
- * @Author: wangjunjun
- * @Date: 2018-05-21 13:39:31
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 14:03:41
+ * @file components/customerPool/list/CustomerLists.js
+ *  客户列表
+ * @author wangjunjun
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import classNames from 'classnames';
 import { Checkbox } from 'antd';
 import SaleDepartmentFilter from './SaleDepartmentFilter';
 import ServiceManagerFilter from './ServiceManagerFilter';
@@ -297,6 +295,7 @@ export default class CustomerLists extends PureComponent {
       replace,
       handleSelect,
     } = this.props;
+
     const ptyMng = `${item.ptyMngName}_${item.ptyMngId}`;
     // 手动上传日志
     handleSelect({ param: ptyMng });
@@ -519,26 +518,17 @@ export default class CustomerLists extends PureComponent {
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
     // 默认服务经理
-    let serviceManagerDefaultValue = {
-      ptyMngName: empInfo.empName,
-      ptyMngId: empInfo.empNum,
-    };
+    let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
     // ‘HTSC 首页指标查询’ 权限, 任务管理权限
     if (hasPermission) {
       if (ptyMngId) {
-        serviceManagerDefaultValue = {
-          ptyMngName: decodeURIComponent(ptyMngName),
-          ptyMngId,
-        };
+        serviceManagerDefaultValue = `${decodeURIComponent(ptyMngName)}（${ptyMngId}）`;
       } else {
-        serviceManagerDefaultValue = ''; // 所有人
+        serviceManagerDefaultValue = '所有人';
       }
     }
     if (orgId && orgIdIsMsm) {
-      serviceManagerDefaultValue = {
-        ptyMngName: empInfo.empName,
-        ptyMngId: empInfo.empNum,
-      };
+      serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
     }
     // 当前所处的orgId,默认所有
     let curOrgId = allSaleDepartment.id;
@@ -578,7 +568,7 @@ export default class CustomerLists extends PureComponent {
               onChange={onReorderChange}
             />
           </div>
-          <div className={classNames(styles.reorder, styles.filterWrap)}>
+          <div className={styles.reorder}>
             <div className={styles.selectBox}>
               <SaleDepartmentFilter
                 orgId={curOrgId}

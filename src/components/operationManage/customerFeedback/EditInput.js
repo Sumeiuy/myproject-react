@@ -3,12 +3,12 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-25 14:48:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-03 13:33:46
+ * @Last Modified time: 2018-05-30 13:46:16
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Input, Tooltip } from 'antd';
+import { Input, Tooltip, Modal } from 'antd';
 
 import logable from '../../../decorators/logable';
 import Icon from '../../common/Icon';
@@ -16,14 +16,14 @@ import styles from './editInput.less';
 
 export default class EditInput extends PureComponent {
   static propTypes = {
+    // 对应的使用的名称
+    editName: PropTypes.string.isRequired,
     value: PropTypes.string,
     id: PropTypes.string,
-    editCallback: PropTypes.func.isRequired,
-    edit: PropTypes.bool,
+    onEditConfirm: PropTypes.func.isRequired,
+    editable: PropTypes.bool,
     onCancel: PropTypes.func,
     maxLen: PropTypes.number,
-    // data: PropTypes.array,
-    // idx: PropTypes.number,
     item: PropTypes.object,
     btnGroup: PropTypes.oneOfType([
       PropTypes.string,
@@ -36,7 +36,7 @@ export default class EditInput extends PureComponent {
   static defaultProps = {
     id: '',
     value: '',
-    edit: false,
+    editable: false,
     btnGroup: '',
     maxLen: 30,
     // data: [],
@@ -48,10 +48,10 @@ export default class EditInput extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { edit, value } = props;
+    const { editable, value } = props;
     this.state = {
       // 编辑状态
-      edit,
+      editable,
       // 值
       value,
       // 编辑前的值
@@ -60,17 +60,18 @@ export default class EditInput extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { value: preValue, edit: preEdit } = this.props;
-    const { value: nextValue, edit: nextEdit } = nextProps;
+    const { value: preValue, editable: preEdit } = this.props;
+    const { value: nextValue, editable: nextEdit } = nextProps;
     if (preValue !== nextValue) {
       this.setState({
+        oldValue: nextValue,
         value: nextValue,
-        edit: false,
+        editable: false,
       });
     }
     if (preEdit !== nextEdit) {
       this.setState({
-        edit: nextEdit,
+        editable: nextEdit,
       });
     }
   }
@@ -78,10 +79,6 @@ export default class EditInput extends PureComponent {
   // 输入框编辑事件
   @autobind
   onChange(e) {
-    const { maxLen } = this.props;
-    if (e.target.value.length >= maxLen) {
-      return;
-    }
     this.setState({
       value: e.target.value,
     });
@@ -92,9 +89,9 @@ export default class EditInput extends PureComponent {
   @logable({ type: 'Click', payload: { name: '编辑' } })
   onEdit(e) {
     e.stopPropagation();
-    const { edit } = this.state;
+    const { editable } = this.state;
     this.setState({
-      edit: !edit,
+      editable: !editable,
     });
   }
 
@@ -108,8 +105,19 @@ export default class EditInput extends PureComponent {
     // 此处由于新的需求需要针对服务经理可选项还有涨乐客户可选项进行区分处理
     // 所以将原有在此处进行，值是否与以前的相等判断挪到外部有调用者来判断，
     const { value } = this.state;
-    const { item } = this.props;
-    this.props.editCallback(value, item);
+    const { item, maxLen, editName } = this.props;
+    // 如果超长则弹框提示，不给更新
+    if (value.length > maxLen) {
+      Modal.warning({
+        content: `${editName} 反馈文字长度不得超过 ${maxLen} 个字符`,
+        okText: '确认',
+      });
+    } else {
+      this.props.onEditConfirm(value, item);
+      this.setState({
+        editable: false,
+      });
+    }
   }
 
   // 取消按钮事件
@@ -121,7 +129,7 @@ export default class EditInput extends PureComponent {
     const { onCancel } = this.props;
     this.setState({
       value: oldValue,
-      edit: false,
+      editable: false,
     }, onCancel);
   }
 
@@ -140,12 +148,12 @@ export default class EditInput extends PureComponent {
   }
 
   render() {
-    const { edit, value } = this.state;
+    const { editable, value } = this.state;
     const { btnGroup } = this.props;
     return (
       <div className={styles.editInput}>
         {
-          !edit ?
+          !editable ?
             <div className={styles.noInput}>
               {this.renderInputTextDomByValue(value)}
               <Icon type="edit" onClick={this.onEdit} title="编辑" />

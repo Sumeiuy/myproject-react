@@ -26,6 +26,7 @@ import investmentAdvice from './investmentAdvice';
 import operationCenter from './operationCenter';
 import businessDepartmentCustomerDistribute from './businessDepartmentCustomerDistribute';
 import custAllot from './custAllot';
+import messageCenter from './messageCenter';
 
 const api = apiCreator();
 
@@ -86,5 +87,7 @@ export default {
   businessDepartmentCustDistribute: businessDepartmentCustomerDistribute(api),
   // ========== 客户分配分公司客户分配
   custAllot: custAllot(api),
+  // ========== 消息通知提醒
+  messageCenter: messageCenter(api),
 };
 

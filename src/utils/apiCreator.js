@@ -31,12 +31,6 @@ export default function createApi() {
     }
     return url;
   };
-  // 授权信息: empId, deviceId, token
-  // const authInfo = {
-  //   empId: '002332',
-  //   deviceId: '1002',
-  //   token: 'LKOP1SLGT3PPB9ZAV47YAF2WPEJUKZG4',
-  // };
 
   return {
 
@@ -70,7 +64,7 @@ export default function createApi() {
       const finalUrl = padPrefix(url);
       const { ignoreCatch = false, ...resetQuery } = query;
       return request(
-        finalUrl,
+        `${finalUrl}?empId=${emp.getId()}`,
         {
           method: 'POST',
           headers: {
