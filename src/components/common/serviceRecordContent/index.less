@@ -211,6 +211,10 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
+          & > span {
+            // antd样式库里把此处的span设成了block，导致添加服务记录上传组件看不到删除按钮
+            display: inline;
+          }
         }
         .anticon-cross {
           font-size: 15px;
