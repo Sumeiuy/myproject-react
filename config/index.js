@@ -100,5 +100,9 @@ module.exports = {
   appSrc: path.resolve(__dirname, '../src'),
   fspSrc: path.resolve(__dirname, '../fspSrc'),
   appNodeModules: path.resolve(__dirname, '../node_modules'),
-  appStatic: path.resolve(__dirname, '../static')
+  appStatic: path.resolve(__dirname, '../static'),
+  htComponents: [
+    path.resolve(__dirname, '../node_modules/lego-react-filter/src'),
+    path.resolve(__dirname, '../node_modules/lego-tree-filter/src')
+  ]
 };

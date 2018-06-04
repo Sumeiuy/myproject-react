@@ -9,8 +9,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { SingleFilter } from 'ht-react-filter';
-import 'ht-react-filter/lib/css/index.css';
+import { SingleFilter } from 'lego-react-filter/src';
 import Sortbox from './Sortbox';
 import PreciseQuery from './PreciseQuery';
 import { ASSET_DESC } from './config';
