@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-16 11:58:54
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-16 15:04:54
+ * @Last Modified time: 2018-05-31 09:55:25
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -26,11 +26,12 @@ export default class Mask extends React.Component {
 
   render() {
     const { visible } = this.state;
+    const { onClick } = this.props;
     const maskCls = cx(style.mask, {
       [style.invisibility]: !visible,
     });
     return ReactDOM.createPortal(
-      <div className={maskCls} />,
+      <div className={maskCls} onClick={onClick} />,
       document.body,
     );
   }
@@ -38,7 +39,9 @@ export default class Mask extends React.Component {
 
 Mask.propTypes = {
   visible: PropTypes.bool,
+  onClick: PropTypes.func,
 };
 Mask.defaultProps = {
   visible: false,
+  onClick: () => {},
 };

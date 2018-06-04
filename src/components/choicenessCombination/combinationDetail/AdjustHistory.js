@@ -133,7 +133,7 @@ export default class AdjustHistory extends PureComponent {
         <div className={`${styles.titleBox} clearfix`}>
           <span className={styles.security}>证券名称及代码</span>
           <span className={styles.time}>成交时间</span>
-          <span className={styles.const}>成交价(元)</span>
+          <span className={styles.const}>成本价(元)</span>
           <span className={styles.change}>持仓变化</span>
         </div>
         <div className={styles.bodyBox}>

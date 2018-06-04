@@ -118,14 +118,19 @@ export default class CreateServiceRecord extends PureComponent {
     const { serveContentDesc = '', serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
     let payload = { ...data, custId };
     // 打电话成功后，服务记录添加未成功时，后端返回failure
-    if (caller === PHONE && !_.isEmpty(id) && id !== 'failure') {
+    if (caller === PHONE) {
       payload = {
         ...payload,
-        id,
         serveTime,
         serveWay,
         serveContentDesc: `${serveContentDesc}${data.serveContentDesc}`,
       };
+      if (!_.isEmpty(id) && id !== 'failure') {
+        payload = {
+          ...payload,
+          id,
+        };
+      }
     }
     addServeRecord(payload);
     resetServiceRecordInfo();
@@ -218,7 +223,7 @@ export default class CreateServiceRecord extends PureComponent {
         <a className={styles.cancelBtn} onClick={this.handleCancel}>取消</a>
         <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
       </div>
-    ) : (<div className={styles.customFooter}>
+    ) : (<div className={styles.customPhoneFooter}>
       <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
     </div>);
 

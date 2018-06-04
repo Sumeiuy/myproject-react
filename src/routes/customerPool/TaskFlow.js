@@ -34,6 +34,14 @@ const EMPTY_ARRAY = [];
 // 瞄准镜标签入口
 const SIGHT_LABEL_ENTRY = 1;
 
+// 获取标签入参，瞄准镜用labelSearchCustPool,普通标签用searchCustPool
+const getEnterTypeParam = (isSightLabel) => {
+  if (isSightLabel) {
+    return 'labelSearchCustPool';
+  }
+  return 'searchCustPool';
+};
+
 const effects = {
   // 预览客户细分数据
   previewCustFile: 'customerPool/previewCustFile',
@@ -356,7 +364,7 @@ export default class TaskFlow extends PureComponent {
    * @param {*object} postBody post参数
    */
   @autobind
-  addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer = {}, labelId) {
+  addOrgIdOrPtyMngId({ postBody, argsOfQueryCustomer = {}, labelId, isSightLabel }) {
     let newPostBody = postBody;
     if (this.hasTkMampPermission) {
       // 有权限传orgId
@@ -383,7 +391,7 @@ export default class TaskFlow extends PureComponent {
       // 代表当前选中的标签没有进行筛查客户
       newPostBody = _.merge(newPostBody, {
         searchReq: {
-          enterType: 'labelSearchCustPool',
+          enterType: getEnterTypeParam(isSightLabel),
           primaryKey: [labelId],
         },
       });
@@ -395,7 +403,6 @@ export default class TaskFlow extends PureComponent {
     newPostBody = _.merge(newPostBody, {
       searchReq: {
         searchTypeReq: 'LABEL',
-        // searchText: currentSelectLabelName,
       },
     });
     return newPostBody;
@@ -449,6 +456,7 @@ export default class TaskFlow extends PureComponent {
           customNum,
           missionDesc,
           currentSelectLabelName,
+          isSightLabel,
         },
       } = sightingTelescope;
       // logable日志subtype值
@@ -482,12 +490,12 @@ export default class TaskFlow extends PureComponent {
           return;
         }
 
-        postBody = this.addOrgIdOrPtyMngId(
+        postBody = this.addOrgIdOrPtyMngId({
           postBody,
           argsOfQueryCustomer,
           labelId,
-          currentSelectLabelName,
-        );
+          isSightLabel,
+        });
       }
       pickTargetCustomerData = { ...pickTargetCustomerData, labelCust, custSegment };
       isSendCustsServedByPostn({
@@ -843,6 +851,7 @@ export default class TaskFlow extends PureComponent {
     const {
       labelName,
       labelDesc,
+      isSightLabel,
       uploadedFileKey: fileId,
       executionType,
       serviceStrategySuggestion,
@@ -936,7 +945,12 @@ export default class TaskFlow extends PureComponent {
         ...postBody,
       };
     } else {
-      postBody = this.addOrgIdOrPtyMngId(postBody, argsOfQueryCustomer, labelId, labelName);
+      postBody = this.addOrgIdOrPtyMngId({
+        postBody,
+        argsOfQueryCustomer,
+        labelId,
+        isSightLabel,
+      });
       postBody = {
         ...postBody,
         queryLabelReq: {
