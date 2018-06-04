@@ -2,8 +2,8 @@
  * @Description: 执行者视图右侧详情
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-29 22:30:29
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-04 10:06:30
  */
 
 
@@ -13,7 +13,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import BasicInfo from './BasicInfo';
 import TabsArea from './TabsArea';
-// import { emp, check } from '../../../helper';
 import styles from './performerViewDetail.less';
 
 export default class PerformerViewDetail extends PureComponent {

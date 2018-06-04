@@ -145,15 +145,15 @@ const config = {
       {
         dataIndex: 'priceLimit',
         key: 'priceLimit',
-        title: '涨跌幅',
-        width: '15%',
+        title: '近7天涨跌幅',
+        width: '17%',
         align: 'left',
       },
       {
         dataIndex: 'combinationName',
         key: 'combinationName',
         title: '组合名称',
-        width: '24%',
+        width: '22%',
         align: 'left',
       },
       {

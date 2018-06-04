@@ -2,8 +2,8 @@
  * @Description: 客户列表联系方式弹窗中更多联系方式的悬浮层内容
  * @Author: WangJunjun
  * @Date: 2018-05-03 14:35:21
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-29 14:58:42
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-04 10:07:00
  */
 
 import React, { PureComponent } from 'react';

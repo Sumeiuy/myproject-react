@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-17 14:01:05
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-22 11:04:45
 */
 
 import React, { PureComponent } from 'react';
@@ -222,7 +222,9 @@ export default class CombinationListItem extends PureComponent {
               }
             </span>
             <span className={styles.link}>
-              <a onClick={() => this.viewHistoryReport(data.combinationCode)}>历史报告 </a>
+              <a onClick={() => this.handleNameClick(openDetailPayload)}>组合详情 </a>
+              |
+              <a onClick={() => this.viewHistoryReport(data.combinationCode)}> 历史报告 </a>
               |
               <a onClick={() => openCustomerListPage(openPayload)}> 订购客户</a>
             </span>

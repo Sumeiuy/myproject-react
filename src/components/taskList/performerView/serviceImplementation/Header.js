@@ -3,14 +3,13 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 22:49:02
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-29 09:49:10
+ * @Last Modified time: 2018-05-30 12:04:18
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { SingleFilter } from 'ht-react-filter';
-import 'ht-react-filter/lib/css/index.css';
+import { SingleFilter } from 'lego-react-filter/src';
 import Sortbox from './Sortbox';
 import PreciseQuery from './PreciseQuery';
 import { ASSET_DESC } from './config';
@@ -28,6 +27,7 @@ export default function Header(props) {
     handlePreciseQueryEnterPress,
     parameter,
     targetCustList,
+    currentTargetList,
   } = props;
   const { state, assetSort, rowId, preciseInputValue } = parameter;
   const { page: { totalCount } } = targetCustList;
@@ -81,12 +81,15 @@ export default function Header(props) {
         onChange={handleAssetSort}
         isDesc={assetSort === ASSET_DESC}
       />
-      <PreciseQuery
-        value={preciseInputValue}
-        maxValue={totalCount}
-        handlePreciseQueryChange={handlePreciseQueryChange}
-        handlePreciseQueryEnterPress={handlePreciseQueryEnterPress}
-      />
+      {
+        !_.isEmpty(currentTargetList)
+        && <PreciseQuery
+          value={preciseInputValue}
+          maxValue={totalCount}
+          handlePreciseQueryChange={handlePreciseQueryChange}
+          handlePreciseQueryEnterPress={handlePreciseQueryEnterPress}
+        />
+      }
     </div>
   );
 }
@@ -102,6 +105,7 @@ Header.propTypes = {
   handlePreciseQueryEnterPress: PropTypes.func,
   parameter: PropTypes.object.isRequired,
   targetCustList: PropTypes.object.isRequired,
+  currentTargetList: PropTypes.array,
 };
 
 Header.defaultProps = {
@@ -112,5 +116,6 @@ Header.defaultProps = {
   handleAssetSort: _.noop,
   handlePreciseQueryChange: _.noop,
   handlePreciseQueryEnterPress: _.noop,
+  currentTargetList: [],
 };
 

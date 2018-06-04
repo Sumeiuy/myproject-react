@@ -362,14 +362,16 @@ export default {
 
     // 执行者视图的详情目标客户列表
     * queryTargetCust({ payload }, { call, put }) {
-      const { resultData } = yield call(api.queryTargetCust, payload);
+      const { isGetFirstItemDetail = true, ...others } = payload;
+      const { resultData } = yield call(api.queryTargetCust, others);
       if (resultData) {
         yield put({
           type: 'queryTargetCustSuccess',
           payload: resultData,
         });
         const { list = EMPTY_LIST } = resultData;
-        if (!_.isEmpty(list)) {
+        // 返回的列表数据不为空，默认再去查询第一条数据的详情
+        if (!_.isEmpty(list) && isGetFirstItemDetail) {
           const firstItem = list[0] || EMPTY_OBJ;
           yield put({
             type: 'queryTargetCustDetail',

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-30 17:13:31
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-05-31 15:16:43
  * @description 任务管理首页
  */
 
@@ -314,11 +314,11 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getCustManagerScope({
-    orgId,
-    pageNum = GET_CUST_SCOPE_PAGE_NUM,
-    pageSize = GET_CUST_SCOPE_PAGE_SIZE,
-    enterType,
-  }) {
+                        orgId,
+                        pageNum = GET_CUST_SCOPE_PAGE_NUM,
+                        pageSize = GET_CUST_SCOPE_PAGE_SIZE,
+                        enterType,
+                      }) {
     const {
       getCustManagerScope,
       custRange,

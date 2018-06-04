@@ -1,18 +1,17 @@
 /**
  * @Author: xiazhiqiang
  * @Date: 2018-05-21 13:33:05
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 13:33:50
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-29 10:46:02
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { getFilter } from '../helper';
 
 import styles from './toBeDone.less';
-import { openRctTab, openFspTab } from '../../../utils';
+import { openRctTab } from '../../../utils';
 import logable from '../../../decorators/logable';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -98,12 +97,9 @@ export default class PerformanceIndicators extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      url: `${url}?source=business&filters=${getFilter(data)}`,
+      url: `${url}?source=business`,
       pathname: url,
-      query: {
-        ...data,
-        filters: getFilter(data),
-      },
+      query: data,
       param,
       state: {
         ...query,
@@ -143,18 +139,23 @@ export default class PerformanceIndicators extends PureComponent {
   @logable({ type: 'Click', payload: { name: '消息提醒' } })
   handleMessageClick() {
     // 点击事件
-    const { push } = this.props;
+    const { location: { query }, push } = this.props;
     const notificationUrl = '/messgeCenter';
     const notificationParam = {
-      forceRefresh: false,
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
       id: 'MESSAGE_CENTER',
       title: '消息中心',
     };
-    openFspTab({
+    openRctTab({
       routerAction: push,
       url: notificationUrl,
-      pathname: '/fsp/messageCenter',
+      pathname: notificationUrl,
       param: notificationParam,
+      state: {
+        ...query,
+      },
     });
   }
 

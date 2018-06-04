@@ -81,6 +81,7 @@ export default class CreateContactModal extends PureComponent {
     super(props);
     this.state = {
       visible: props.visible,
+      showMask: false,
     };
     this.startTime = '';
     this.endTime = '';
@@ -267,6 +268,12 @@ export default class CreateContactModal extends PureComponent {
     );
   }
 
+  // 电话弹出蒙层的点击事件
+  @autobind
+  handleMaskClick() {
+    this.setState({ showMask: false });
+  }
+
   render() {
     const {
       visible,
@@ -420,7 +427,7 @@ export default class CreateContactModal extends PureComponent {
           getCeFileList={getCeFileList}
           filesList={filesList}
         />
-        <Mask visible={showMask} />
+        <Mask visible={showMask} onClick={this.handleMaskClick} />
       </Modal>
     );
   }

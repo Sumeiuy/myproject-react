@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-30 10:52:27
+ * @Last Modified time: 2018-05-31 15:16:23
  */
 
 import React, { PureComponent } from 'react';
@@ -22,6 +22,7 @@ import EmptyData from './EmptyData';
 import { PHONE } from './config';
 import { serveWay as serveWayUtil } from '../config/code';
 import { flow, task } from '../config';
+import { fsp } from '../../../../helper';
 import styles from './serviceImplementation.less';
 import {
   POSTCOMPLETED_CODE,
@@ -30,9 +31,6 @@ import {
   largePageSize,
   extraLargePageSize,
 } from '../../../../routes/taskList/config';
-
-// fsp页面折叠左侧菜单按钮的id
-const foldFspLeftMenuButtonId = 'sidebar-hide-btn';
 
 // 这个是防止页面里有多个class重复，所以做个判断，必须包含当前节点
 // 如果找不到无脑取第一个就行
@@ -159,7 +157,7 @@ export default class ServiceImplementation extends PureComponent {
     const { targetCustList: { list } } = props;
     this.state = {
       // Fsp页面左侧菜单是否被折叠
-      isFoldFspLeftMenu: false,
+      isFoldFspLeftMenu: true,
       // 当前服务实施列表的数据
       currentTargetList: list || [],
     };
@@ -209,10 +207,9 @@ export default class ServiceImplementation extends PureComponent {
 
   // FSP折叠菜单按钮被点击
   @autobind
-  handleFspLeftMenuClick(e) {
+  handleFspLeftMenuClick() {
     // 是否折叠了fsp左侧菜单
-    const isFoldFspLeftMenu = e.target.id === foldFspLeftMenuButtonId
-      || e.target.parentNode.id === foldFspLeftMenuButtonId;
+    const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
     this.setState({ isFoldFspLeftMenu });
   }
 
@@ -301,6 +298,17 @@ export default class ServiceImplementation extends PureComponent {
           assetSort,
           pageSize,
           pageNum,
+          isGetFirstItemDetail: false,
+        }).then(() => {
+          const { getCustDetail, currentId, targetCustList: { list = [] } } = this.props;
+          // 根据当前的activeIndex找到在当前列表中的数据，再去查询该条数据的详情
+          const index = parseInt(value, 10) % pageSize;
+          const { custId, missionFlowId } = list[index - 1];
+          getCustDetail({
+            custId,
+            missionId: currentId,
+            missionFlowId,
+          });
         });
       });
     }
@@ -352,7 +360,7 @@ export default class ServiceImplementation extends PureComponent {
       currentId,
       queryTargetCust,
     } = this.props;
-    queryTargetCust({
+    return queryTargetCust({
       ...obj,
       missionId: currentId,
     });
@@ -538,7 +546,11 @@ export default class ServiceImplementation extends PureComponent {
       // 打电话调用时，服务记录表单可编辑
       isReadOnly = false;
     } else {
-      isReadOnly = false;
+      isReadOnly = this.judgeIsReadyOnly({
+        statusCode,
+        serviceStatusCode: missionStatusCode,
+        serviceWayCode,
+      });
     }
     // 涨乐财富通中才有审批和驳回状态
     const isReject = this.isRejct({ serviceStatusCode: missionStatusCode, serviceWayCode });
@@ -607,13 +619,24 @@ export default class ServiceImplementation extends PureComponent {
               </Affix>
               <div className={styles.taskDetail}>
                 <CustomerDetail
+                  currentId={currentId}
                   targetCustDetail={targetCustDetail}
                   monthlyProfits={monthlyProfits}
                   isCustIncomeRequested={isCustIncomeRequested}
                   getCustIncome={getCustIncome}
                 />
-                <SimpleDisplayBlock title="服务策略" data={servicePolicy} />
-                <SimpleDisplayBlock title="任务提示" data={targetCustDetail.serviceTips} />
+                <SimpleDisplayBlock
+                  title="服务策略"
+                  data={servicePolicy}
+                  currentId={currentId}
+                  missionFlowId={missionFlowId}
+                />
+                <SimpleDisplayBlock
+                  title="任务提示"
+                  data={targetCustDetail.serviceTips}
+                  currentId={currentId}
+                  missionFlowId={missionFlowId}
+                />
                 <ServiceRecordForm
                   dict={dict}
                   empInfo={empInfo}

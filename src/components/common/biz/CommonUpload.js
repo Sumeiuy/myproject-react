@@ -49,6 +49,8 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
+  reformDeleteAttachmentList: state.app.reformDeleteAttachmentList,
+  reformDeleteAttachmentLoading: state.loading.effects['app/reformDeleteAttachment'],
   deleteAttachmentList: state.app.deleteAttachmentList,
   deleteAttachmentLoading: state.loading.effects['app/deleteAttachment'],
 });
@@ -56,11 +58,15 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   // 删除附件
   deleteAttachment: fetchDataFunction(true, 'app/deleteAttachment'),
+  // api getway 删除附件
+  reformDeleteAttachment: fetchDataFunction(true, 'app/reformDeleteAttachment'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
 export default class CommonUpload extends PureComponent {
   static propTypes = {
+    // api getway 改造 删除附件方法
+    reformDeleteAttachment: PropTypes.func,
     // 删除附件方法
     deleteAttachment: PropTypes.func,
     // 上传附件方法
@@ -73,20 +79,30 @@ export default class CommonUpload extends PureComponent {
     needDefaultText: PropTypes.bool,
     deleteAttachmentList: PropTypes.array,
     deleteAttachmentLoading: PropTypes.bool,
+    // api getway 改造 删除附件返回结果
+    reformDeleteAttachmentList: PropTypes.array,
+    reformDeleteAttachmentLoading: PropTypes.bool,
     // 标题
     title: PropTypes.string,
+    reformEnable: PropTypes.bool,
+    maxFileSize: PropTypes.number,
   }
 
   static defaultProps = {
-    deleteAttachment: () => {},
-    uploadAttachment: () => {},
+    reformDeleteAttachment: _.noop,
+    deleteAttachment: _.noop,
+    uploadAttachment: _.noop,
     attachment: '',
     deleteAttachmentList: [],
+    reformDeleteAttachmentList: [],
     attachmentList: [],
     edit: false,
     needDefaultText: true,
     deleteAttachmentLoading: false,
+    reformDeleteAttachmentLoading: false,
     title: '',
+    reformEnable: false,
+    maxFileSize: null,
   }
 
   constructor(props) {
@@ -107,17 +123,29 @@ export default class CommonUpload extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const {
       deleteAttachmentLoading: preDAL,
+      reformDeleteAttachmentLoading: preReformDAL,
       attachmentList: preAL,
     } = this.props;
     const {
       deleteAttachmentLoading: nextDAL,
+      reformDeleteAttachmentLoading: nextReformDAL,
       attachmentList: nextAL,
+      reformEnable,
     } = nextProps;
-    if ((preDAL && !nextDAL)) {
-      const { deleteAttachmentList } = nextProps;
+
+    if ((preDAL && !nextDAL) ||
+      (reformEnable && preReformDAL && !nextReformDAL)
+    ) {
+      const {
+        deleteAttachmentList,
+        reformDeleteAttachmentList,
+      } = nextProps;
+
+      // 文件列表
+      const fileList = reformEnable ? reformDeleteAttachmentList : deleteAttachmentList;
       this.setState({
-        fileList: deleteAttachmentList, // 文件列表
-        oldFileList: deleteAttachmentList, // 旧的文件列表
+        fileList,
+        oldFileList: fileList, // 旧的文件列表
         percent: 0,
       });
     }
@@ -132,8 +160,15 @@ export default class CommonUpload extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
   onChange(info) {
-    const { uploadAttachment } = this.props;
+    const { uploadAttachment, maxFileSize } = this.props;
     const uploadFile = info.file;
+
+    // 文件上传不能大于maxFileSize
+    const fileSize = uploadFile.size;
+    if (maxFileSize && fileSize >= maxFileSize) {
+      return;
+    }
+
     this.setState({
       percent: info.file.percent,
       fileList: info.fileList,
@@ -173,14 +208,15 @@ export default class CommonUpload extends PureComponent {
     },
   })
   onRemove(attachId) {
-    const { deleteAttachment } = this.props;
+    const { deleteAttachment, reformDeleteAttachment, reformEnable } = this.props;
     const { empId, attachment } = this.state;
     const deleteObj = {
       empId,
       attachId,
       attachment,
     };
-    deleteAttachment(deleteObj);
+    const deleteFunc = reformEnable ? reformDeleteAttachment : deleteAttachment;
+    deleteFunc(deleteObj);
   }
 
   // 空方法，用于日志上传
@@ -205,6 +241,7 @@ export default class CommonUpload extends PureComponent {
       attachment: '', // 上传后的唯一 ID
     });
   }
+
   render() {
     const {
       empId,
@@ -215,14 +252,21 @@ export default class CommonUpload extends PureComponent {
       status,
       statusText,
     } = this.state;
-    const { edit, needDefaultText, title } = this.props;
+    const {
+      edit,
+      title,
+      reformEnable,
+      needDefaultText,
+    } = this.props;
+
+    const actionName = reformEnable ? 'ceFileUpload2' : 'ceFileUpload';
     const uploadProps = {
       data: {
         empId,
         file,
         attachment,
       },
-      action: `${request.prefix}/file/ceFileUpload`,
+      action: `${request.prefix}/file/${actionName}`,
       headers: {
         accept: '*/*',
       },
@@ -231,6 +275,7 @@ export default class CommonUpload extends PureComponent {
       fileList,
     };
 
+    const downloadName = reformEnable ? 'ceFileDownload2' : 'ceFileDownload';
     let fileListElement;
     if (fileList && fileList.length) {
       fileListElement = (
@@ -240,13 +285,13 @@ export default class CommonUpload extends PureComponent {
               fileList.map((item, index) => {
                 const fileName = item.name;
                 const popoverHtml = (
-                  <div>
+                  <div key={item.attachId}>
                     <h3>
                       <Icon type="fujian1" />
                       {fileName}
                     </h3>
                     <h3>
-                      <span className="fileListItemSize">大小：{`${item.size} kb`}</span>
+                      <span className="fileListItemSize">大小：{`${item.size} KB`}</span>
                       上传人：{item.creator}
                     </h3>
                     <h3>
@@ -269,7 +314,7 @@ export default class CommonUpload extends PureComponent {
                         }
                         <em>
                           <a
-                            href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${window.encodeURIComponent(item.name)}`}
+                            href={`${request.prefix}/file/${downloadName}?attachId=${item.attachId}&empId=${empId}&filename=${window.encodeURIComponent(item.name)}`}
                             onClick={this.handleDownloadClick}
                           >
                             <Icon type="xiazai1" />
