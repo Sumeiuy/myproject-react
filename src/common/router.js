@@ -235,6 +235,10 @@ export const getRouterData = (app) => {
     '/userInfoRemind': {
       component: dynamicWrapper(app, ['userCenter'], () => import('../routes/userCenter/userInfoApproval')),
     },
+    // 消息通知提醒
+    '/messgeCenter': {
+      component: dynamicWrapper(app, ['messageCenter'], () => import('./routes/messageCenter/Home')),
+    },
     // 直接进入
     '/filialeCustTransfer': {
       component: dynamicWrapper(app, ['filialeCustTransfer'], () => import('../routes/filialeCustTransfer/Home')),
@@ -328,6 +332,10 @@ export const getRouterData = (app) => {
     // id为报告 id，combinationCode 为组合 id
     '/choicenessCombination/reportDetail': {
       component: dynamicWrapper(app, ['choicenessCombination'], () => import('../routes/choicenessCombination/ReportDetail')),
+    },
+    // 营业部非投顾签约客户分配页面
+    '/businessDepartmentCustDistribute': {
+      component: dynamicWrapper(app, ['businessDepartmentCustDistribute'], () => import('../routes/businessDepartmentCustDistribute/ConnectedHome')),
     },
     // 投顾业务能力竞赛
     '/investmentConsultantRace': {
