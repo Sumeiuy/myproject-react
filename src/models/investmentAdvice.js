@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-04-25 15:37:57
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-10 14:50:35
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-04 17:42:48
  */
 import { investmentAdvice as api } from '../api';
 
@@ -17,6 +17,8 @@ export default {
     modifySuccessStatus: false,
     // 投资建议文本撞墙检测是否有股票代码
     testWallCollisionStatus: false,
+    // 任务绑定投资建议模板列表
+    taskBindTemplate: {},
   },
   reducers: {
     // 投资模板列表
@@ -49,6 +51,14 @@ export default {
       return {
         ...state,
         testWallCollisionStatus: payload === 'failure',
+      };
+    },
+
+    getTaskBindListSuccess(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        taskBindTemplate: payload,
       };
     },
   },
@@ -99,6 +109,15 @@ export default {
       const { resultData } = yield call(api.testWallCollision, payload);
       yield put({
         type: 'testWallCollisionSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 查询任务绑定投资建议模板列表
+    * getTaskBindList({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryTaskBindTemplateList, payload);
+      yield put({
+        type: 'getTaskBindListSuccess',
         payload: resultData,
       });
     },

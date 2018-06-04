@@ -1,42 +1,30 @@
-/*
- * @Author: zhangjun
- * @Date: 2018-04-24 14:14:04
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-23 15:55:19
- * @Descripter:投资建议模板 Home页面
+/**
+ * @Author: sunweibin
+ * @Date: 2018-06-04 11:13:00
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-04 17:44:28
+ * @description 任务绑定投资建议模板与投资建议模板维护的Tab页面
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'dva';
-import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { Button, Collapse, Icon, Mention } from 'antd';
+import { connect } from 'dva';
+import { Tabs } from 'antd';
+// import _ from 'lodash';
 
+import InvestAdviceMaintain from './InvestAdviceMaintain';
+import TaskBindTemplate from './TaskBindTemplate';
+import withRouter from '../../decorators/withRouter';
+import logable from '../../decorators/logable';
 import { dva } from '../../helper';
-import Pagination from '../../components/common/Pagination';
-import CommonModal from '../../components/common/biz/CommonModal';
-import confirm from '../../components/common/confirm_';
-import TemplateForm from '../../components/operationManage/investmentAdvice/TemplateForm';
+import { TAB_LIST, TabKeys } from './config';
 import styles from './home.less';
 
-const Panel = Collapse.Panel;
-const { toString, toContentState } = Mention;
-// Mention属性
-const PREFIX = ['$'];
-const mentionTextStyle = {
-  color: '#2d84cc',
-  backgroundColor: '#ebf3fb',
-  borderColor: '#ebf3fb',
-};
-// 使用helper里面封装的生成effects的方法
-const effect = dva.generateEffect;
+const TabPane = Tabs.TabPane;
 
-const effects = {
-  getList: 'investmentAdvice/getInvestmentAdviceList',
-  delete: 'investmentAdvice/deleteInvestAdvice',
-  modify: 'investmentAdvice/modifyInvestAdvice',
-};
+// 以前的fetchDataFunction提取到helper/dva里面成为公共方法使用
+const effect = dva.generateEffect;
 
 const mapStateToProps = state => ({
   // 投资模板列表
@@ -45,20 +33,26 @@ const mapStateToProps = state => ({
   deleteSuccessStatus: state.investmentAdvice.deleteSuccessStatus,
   // 新建或编辑模版是否成功
   modifySuccessStatus: state.investmentAdvice.modifySuccessStatus,
+  // 任务绑定投资建议模板列表
+  taskBindTemplate: state.investmentAdvice.taskBindTemplate,
 });
 
 const mapDispatchToProps = {
   // 获取投资建议模版列表
-  getInvestAdviceList: effect(effects.getList),
+  getInvestAdviceList: effect('investmentAdvice/getInvestmentAdviceList'),
   // 删除投资建议固定话术模板
-  deleteInvestAdvice: effect(effects.delete, { loading: false }),
+  deleteInvestAdvice: effect('investmentAdvice/deleteInvestAdvice', { loading: false }),
   // 新建或编辑模版
-  modifyInvestAdvice: effect(effects.modify),
+  modifyInvestAdvice: effect('investmentAdvice/modifyInvestAdvice'),
+  // 查询任务绑定投资建议模板列表 api
+  getTaskBindList: effect('investmentAdvice/getTaskBindList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class InvestmentAdvice extends PureComponent {
+@withRouter
+export default class InvestAdviceTabsHome extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 投资模板列表
     investmentAdvices: PropTypes.object.isRequired,
     // 删除是否成功
@@ -71,319 +65,95 @@ export default class InvestmentAdvice extends PureComponent {
     deleteInvestAdvice: PropTypes.func.isRequired,
     // 新建或编辑模版
     modifyInvestAdvice: PropTypes.func.isRequired,
+    // 查询任务绑定投资建议模板列表
+    getTaskBindList: PropTypes.func.isRequired,
+    // 任务绑定投资建议模板列表
+    taskBindTemplate: PropTypes.object.isRequired,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      // 是否显示弹层
-      showModal: false,
-      // 弹层标题
-      modelTitle: '新建模板',
-      // 折叠面板打开的id
-      collapseActiveKey: '',
-      // commonModal组件参数
-      modalKey: 'addInvestAdviceTemplate',
-      // 编辑模板初始化参数
-      initialTemplateParams: {},
-      // 内容提示框错误状态
-      isShowContentStatusError: false,
-      // 内容提示框错误提示信息
-      contentStatusErrorMessage: '',
-      // 标题提示框错误状态
-      isShowTitleStatusError: false,
-      // 标题提示框错误提示信息
-      titleStatusErrorMessage: '',
-      // 当前页码
-      pageNum: 1,
-      // 每页条数
-      pageSize: 10,
+      // 当前激活的是Tab, 默认显示投资建议模板维护的Tab
+      active: TabKeys.TEMPLATE,
     };
   }
 
-  componentDidMount() {
-    this.getInvestAdviceList({ pageNum: 1 });
-  }
-
+  // 根据切换的TabKey，展示相关的内容组件
   @autobind
-  setTemplateFormRef(form) {
-    this.formTemplate = form;
-  }
+  getComponentByTabKey(tabKey) {
+    let component = null;
 
-  // 获取投资建议模版列表
-  @autobind
-  getInvestAdviceList({ pageNum }) {
-    this.props.getInvestAdviceList({
-      pageNum,
-      pageSize: 10,
-    });
-  }
-
-  // 新增投资建议模板
-  @autobind
-  addInvestAdviceTemplate() {
-    this.setState({
-      showModal: true,
-      modelTitle: '新建模板',
-      initialTemplateParams: {},
-      isShowContentStatusError: false,
-      isShowTitleStatusError: false,
-    });
-  }
-
-  // 编辑投资建议模板
-  @autobind
-  editInvestAdviceTemplate(item) {
-    this.setState({
-      showModal: true,
-      modelTitle: '编辑模板',
-      initialTemplateParams: item,
-      isShowContentStatusError: false,
-      isShowTitleStatusError: false,
-    });
-  }
-
-  // 切换折叠面板
-  @autobind
-  handleChangeCollapse(collapseActiveKey) {
-    this.setState({ collapseActiveKey });
-  }
-
-  // 删除投资建议模板确认弹窗
-  @autobind
-  deleteConfirm(id, e) {
-    if (e) {
-      e.stopPropagation();
+    switch (tabKey) {
+      case TabKeys.TEMPLATE:
+        component = this.getInvestAdviceMaintainComponent();
+        break;
+      case TabKeys.TASK_BIND:
+        component = this.getTaskBindInvestAdviceTmplComponent();
+        break;
+      default:
+        component = this.getInvestAdviceMaintainComponent();
+        break;
     }
-    const self = this;
-    confirm({
-      content: '删除的信息在系统中实时生效，会影响到已关联的任务，确认要删除吗？',
-      onOk() {
-        self.deleteInvestAdvice({ id });
-      },
-      onCancel() {
-      },
-    });
+    return component;
   }
 
-  // 删除投资建议模板
   @autobind
-  deleteInvestAdvice(params) {
-    const { list = [], page = {} } = this.props.investmentAdvices;
-    this.props.deleteInvestAdvice(params).then(() => {
-      if (this.props.deleteSuccessStatus) {
-        const { curPageNum } = page;
-        // 判断是否最后一条
-        if (list.length < 2) {
-          // 最后一条数据
-          // 需要查询前一页的数据
-          if (curPageNum === 1) {
-            this.getInvestAdviceList({ pageNum: 1 });
-          } else {
-            this.getInvestAdviceList({ pageNum: curPageNum - 1 });
-          }
-        } else {
-          this.getInvestAdviceList({ pageNum: curPageNum });
-        }
-      }
-    });
-  }
-
-  // 切换当前页
-  @autobind
-  handlePageChange(pageNum) {
-    this.getInvestAdviceList({ pageNum });
-  }
-
-  // 校验mention内容提及框
-  @autobind
-  checkMention(mentions) {
-    if (!mentions) {
-      this.setState({
-        isShowContentStatusError: true,
-        contentStatusErrorMessage: '请输入内容',
-      });
-    } else if (mentions.length > 500) {
-      this.setState({
-        isShowContentStatusError: true,
-        contentStatusErrorMessage: '内容长度不能超过500字',
-      });
-    } else {
-      this.setState({
-        isShowContentStatusError: false,
-      });
-      return true;
-    }
-    return false;
-  }
-
-  // 校验标题
-  @autobind
-  checkTitle(title) {
-    if (!title) {
-      this.setState({
-        isShowTitleStatusError: true,
-        titleStatusErrorMessage: '请输入标题',
-      });
-    } else if (title.length > 15) {
-      this.setState({
-        isShowTitleStatusError: true,
-        titleStatusErrorMessage: '标题长度不能超过15字',
-      });
-    } else {
-      this.setState({
-        isShowTitleStatusError: false,
-      });
-      return true;
-    }
-    return false;
-  }
-
-  // 弹窗确定按钮
-  @autobind
-  handleOk() {
-    const { getFieldValue } = this.formTemplate.getForm();
-    const content = toString(getFieldValue('content'));
-    const title = getFieldValue('title') || '';
-    const type = getFieldValue('type');
-    const checkContentStatus = this.checkMention(content);
-    const checkTitleStatus = this.checkTitle(title);
+  getInvestAdviceMaintainComponent() {
     const {
-      modelTitle,
-      initialTemplateParams,
-     } = this.state;
-    if (checkTitleStatus && checkContentStatus) {
-      const templateId = initialTemplateParams.id || '';
-      const action = modelTitle === '新建模板' ? 'CREATE' : 'UPDATE';
-      const params = {
-        templateId,
-        action,
-        title,
-        content,
-        type,
-      };
-      const { page: { curPageNum = 1 } } = this.props.investmentAdvices;
-      this.props.modifyInvestAdvice(params).then(() => {
-        if (this.props.modifySuccessStatus) {
-          this.handleCancel();
-          this.getInvestAdviceList({ pageNum: curPageNum });
-        }
-      });
-    }
+      investmentAdvices,
+      deleteSuccessStatus,
+      modifySuccessStatus,
+      getInvestAdviceList,
+      deleteInvestAdvice,
+      modifyInvestAdvice,
+    } = this.props;
+    return (
+      <InvestAdviceMaintain
+        investmentAdvices={investmentAdvices}
+        deleteSuccessStatus={deleteSuccessStatus}
+        modifySuccessStatus={modifySuccessStatus}
+        getInvestAdviceList={getInvestAdviceList}
+        deleteInvestAdvice={deleteInvestAdvice}
+        modifyInvestAdvice={modifyInvestAdvice}
+      />
+    );
   }
 
-  // 弹窗取消按钮
   @autobind
-  handleCancel() {
+  getTaskBindInvestAdviceTmplComponent() {
+    const {
+      getTaskBindList,
+      taskBindTemplate,
+    } = this.props;
+    return (
+      <TaskBindTemplate
+        getTaskBindList={getTaskBindList}
+        taskBindTemplate={taskBindTemplate}
+      />
+    );
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '切换Tab：任务绑定投资建议模板/投资建议模板维护' } })
+  handleTabChange(key) {
     this.setState({
-      showModal: false,
-      isShowContentStatusError: false,
-      isShowTitleStatusError: false,
+      active: key,
     });
   }
 
   render() {
-    const {
-      showModal,
-      collapseActiveKey,
-      initialTemplateParams,
-      isShowContentStatusError,
-      contentStatusErrorMessage,
-      isShowTitleStatusError,
-      titleStatusErrorMessage,
-      defaultMissionDesc,
-      modalKey,
-      modelTitle,
-    } = this.state;
-    const { list = [], page = {} } = this.props.investmentAdvices;
-    const { curPageNum, pageSize, totalRecordNum } = page;
-    const investmentAdviceList = list.map((item) => {
-      const header = (<div className={styles.collapseHead}>
-        <span className={styles.type}>{item.typeName}</span>
-        <span className={styles.title}>{item.title}</span>
-        <p className={styles.contentwapper}>
-          <span className={styles.content}>{item.content}</span>
-          <i className={styles.icon}><Icon type="up" /><Icon type="down" /></i>
-        </p>
-        <span className={styles.operate} >
-          <Icon type="delete" onClick={e => this.deleteConfirm(item.id, e)} />
-        </span>
-      </div>);
-      return (
-        <Panel header={header} key={item.id}>
-          <div className={styles.collapsePanel}>
-            <Mention
-              mentionStyle={mentionTextStyle}
-              style={{ width: '100%', height: 50 }}
-              readOnly
-              multiLines
-              prefix={PREFIX}
-              value={toContentState(item.content)}
-            />
-            <Button onClick={e => this.editInvestAdviceTemplate(item, e)} >编辑</Button>
-          </div>
-        </Panel>
-      );
-    });
+    const { active } = this.state;
+    const tabContentComponent = this.getComponentByTabKey(active);
 
     return (
-      <div className={styles.investmentAdviceWrapper}>
-        <div className={styles.tipsBox}>
-          <p>请在此定义投顾可以选择的投资建议固定话术。</p>
-          <Button type="primary" icon="plus" ghost onClick={this.addInvestAdviceTemplate}>模板</Button>
+      <div className={styles.customerFeedbackWapper}>
+        <div className={styles.tabBox}>
+          <Tabs onChange={this.handleTabChange} activeKey={active} type="card">
+            { TAB_LIST.map(v => (<TabPane tab={v.tabName} key={v.key} />)) }
+          </Tabs>
         </div>
-        <div className={styles.collapseBox}>
-          <div className={styles.head}>
-            <span className={styles.type}>类型</span>
-            <span className={styles.title}>标题</span>
-            <span className={styles.headcontent}>内容</span>
-            <span className={styles.operate}>操作</span>
-          </div>
-          <Collapse
-            activeKey={collapseActiveKey}
-            onChange={this.handleChangeCollapse}
-            accordion
-          >
-            {investmentAdviceList}
-          </Collapse>
-        </div>
-        <div className={styles.pageBox}>
-          { _.isEmpty(page) ? null
-            : (
-              <Pagination
-                current={curPageNum}
-                total={totalRecordNum}
-                pageSize={pageSize}
-                onChange={this.handlePageChange}
-              />
-              )
-          }
-
-        </div>
-        {
-          !showModal ? null
-          : (<CommonModal
-            title={modelTitle}
-            visible={showModal}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-            closeModal={this.handleCancel}
-            modalKey={modalKey}
-            maskClosable={false}
-          >
-            <TemplateForm
-              wrappedComponentRef={this.setTemplateFormRef}
-              defaultMissionDesc={defaultMissionDesc}
-              initialTemplateParams={initialTemplateParams}
-              isShowContentStatusError={isShowContentStatusError}
-              contentStatusErrorMessage={contentStatusErrorMessage}
-              isShowTitleStatusError={isShowTitleStatusError}
-              titleStatusErrorMessage={titleStatusErrorMessage}
-              checkMention={this.checkMention}
-              checkTitle={this.checkTitle}
-            />
-          </CommonModal>)
-        }
+        <div className={styles.componentBox}> {tabContentComponent} </div>
       </div>
     );
   }
