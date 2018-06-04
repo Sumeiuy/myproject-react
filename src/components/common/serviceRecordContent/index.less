@@ -391,6 +391,12 @@
     }
     .content {
       height: 28px;
+      :global {
+        .ant-input {
+          font-size: 12px;
+          height: 28px;
+        }
+      }
     }
     :global {
       .ant-form-item-control-wrapper > .ant-form-item-control.has-error {
@@ -430,6 +436,10 @@
   }
   .feedbackType {
     flex: 2;
+  }
+  .uploadSection {
+    padding: 7px 0;
+    margin-top: 0;
   }
 }
 .yuyintishi {
