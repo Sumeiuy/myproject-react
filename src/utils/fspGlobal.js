@@ -20,6 +20,15 @@ function execOpenTab(method, ...args) {
   }
 }
 
+// 打开新窗口
+function windowOpen(...args) {
+  try {
+    window.open.apply(null, args);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 function closeTab(arg) {
   try {
     window.$(`${arg} .close`).click();
@@ -29,6 +38,11 @@ function closeTab(arg) {
 }
 
 const fspGlobal = {
+  // PC打电话fsp页面回调方法
+  phoneCallback: (args) => {
+    exec('phoneCallback', args);
+  },
+
   // 待办流程列表中进入详情页
   openAuditPage: (args) => {
     exec('openAuditPage', args);
@@ -38,6 +52,7 @@ const fspGlobal = {
   myMotTask: (args) => {
     exec('myMotTask', args);
   },
+
 
   /**
    * 初始化暴露给fsp的方法
@@ -98,6 +113,9 @@ const fspGlobal = {
   closeRctTabById(id) {
     closeTab(`#exApp_${id}`);
   },
+
 };
 
 export default fspGlobal;
+
+export { windowOpen };

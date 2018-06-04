@@ -11,4 +11,5 @@ export { default as ManageIndicators } from './ManageIndicators';
 export { default as PerformanceIndicators } from './PerformanceIndicators';
 export { default as TabsExtra } from './TabsExtra';
 export { default as Search } from './Search';
+export { default as LabelModal } from './LabelModal';
 

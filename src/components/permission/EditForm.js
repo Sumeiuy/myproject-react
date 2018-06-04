@@ -161,7 +161,8 @@ export default class EditForm extends PureComponent {
           nextApproverModal: true,
         });
       } else {
-        this.confirmSubmit();
+        const flowAuditors = _.head(item.flowAuditors);
+        this.confirmSubmit(flowAuditors);
       }
     });
   }
@@ -189,7 +190,7 @@ export default class EditForm extends PureComponent {
       // 备注
       remark: this.state.remark,
       // 下一审批人
-      approvalIds: !_.isEmpty(value) ? [value.login] : [],
+      approvalIds: [value.login],
       // 下一组ID
       nextGroupId: this.state.nextGroupId,
       btnName: this.state.btnName,

@@ -3,7 +3,6 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import 'babel-polyfill';
 import dva from 'dva';
 // import { routerRedux } from 'dva/router';
 import createHistory from 'history/createHashHistory';
@@ -13,8 +12,6 @@ import { persistStore, autoRehydrate } from 'redux-persist';
 import { message } from 'antd';
 
 import CommonModal from './components/common/biz/CommonModal';
-// v2兼容样式
-// import 'antd/lib/style/v2-compatible-reset';
 import './css/antd.less';
 
 import createSensorsLogger from './middlewares/sensorsLogger';
@@ -129,6 +126,8 @@ app.model(require('./models/operationCenter'));
 app.model(require('./models/businessDepartmentCustDistribute'));
 // 分公司客户分配
 app.model(require('./models/custAllot'));
+// 消息通知提醒
+app.model(require('./models/messageCenter'));
 
 // 4. Route
 app.router(routerConfig);

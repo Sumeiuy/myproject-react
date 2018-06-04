@@ -249,6 +249,7 @@ export default class CombinationYieldChart extends Component {
             style={{
               height: chartHeight,
             }}
+            notMerge
           />
         </div>
       </div>
