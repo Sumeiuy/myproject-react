@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-03-16 15:21:56
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-05-18 20:48:31
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-05-29 09:02:37
  * @description 将airbnb的日历组件的样式修改为本项目中需要的样式
  */
 
@@ -17,7 +17,7 @@ import 'react-dates/lib/css/_datepicker.css';
 
 import styles from './index.less';
 
-// const START_DATE = 'startDate';
+const START_DATE = 'startDate';
 const END_DATE = 'endDate';
 
 export default class CommonDateRangePicker extends PureComponent {
@@ -31,6 +31,7 @@ export default class CommonDateRangePicker extends PureComponent {
     disabledRange: PropTypes.func,
     isInsideOffSet: PropTypes.func,
     hasCustomerOffset: PropTypes.bool,
+    defaultVisible: PropTypes.bool,
   }
   static defaultProps = {
     displayFormat: 'YYYY-MM-DD',
@@ -46,14 +47,15 @@ export default class CommonDateRangePicker extends PureComponent {
     disabledRange: () => false,
     // 判断时间是否在用户的自定义区间内
     isInsideOffSet: () => true,
+    defaultVisible: false,
   }
 
   constructor(props) {
     super(props);
-    const { initialEndDate, initialStartDate } = props;
+    const { initialEndDate, initialStartDate, defaultVisible } = props;
     this.state = {
       // 渲染日历浮层出现在 startDate or endDate 下面
-      curFocusedInput: null,
+      curFocusedInput: defaultVisible ? START_DATE : null,
       startDate: initialStartDate,
       endDate: initialEndDate,
     };
@@ -247,6 +249,7 @@ export default class CommonDateRangePicker extends PureComponent {
       'isInsideOffSet',
       'initialEndDate',
       'initialStartDate',
+      'defaultVisible',
     ]);
 
     return (

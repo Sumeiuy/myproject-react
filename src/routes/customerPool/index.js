@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import {
   Route,
-  Switch
+  Switch,
 } from 'dva/router';
 import { getRoutes } from '../../utils/router';
 import CustomerPool from './Home';

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-18 14:40:16
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-31 14:42:22
  * @description 客户池头部搜索组件
  */
 
@@ -39,15 +39,18 @@ export default class Search extends PureComponent {
     saveSearchVal: PropTypes.func,
     location: PropTypes.object.isRequired,
     isPreview: PropTypes.bool,
+    // 打开展示所有标签弹窗
+    showMoreLabelModal: PropTypes.func,
   }
 
   static defaultProps = {
     hotWdsList: EMPTY_LIST,
-    queryHotPossibleWds: () => { },
-    saveSearchVal: () => { },
+    queryHotPossibleWds: _.noop,
+    saveSearchVal: _.noop,
     queryHotWdsData: EMPTY_LIST,
     searchHistoryVal: '',
     isPreview: false,
+    showMoreLabelModal: _.noop,
   }
 
   constructor(props) {
@@ -82,7 +85,7 @@ export default class Search extends PureComponent {
     this.props.saveSearchVal({
       searchVal: this.state.value,
     });
-    const condition = urlHelper.stringify(options);
+    const condition = urlHelper.stringify({ ...options });
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
@@ -170,11 +173,11 @@ export default class Search extends PureComponent {
     // log日志 --- 首页搜索选中
     const subtype = sightingScopeBool ? '瞄准镜' : item.description;
     logCommon({
-      type: 'DropdownSelect',
+      type: 'Click',
       payload: {
-        name: '首页搜索框',
-        value,
-        type: 'dropdownSelect',
+        name: '目标客户池首页搜索',
+        value: item.value,
+        type: '联想词选择',
         subtype,
       },
     });
@@ -187,6 +190,7 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '目标客户池首页回车搜索' } })
   handlePressEnter() {
     // 如果当期有选中项，走select逻辑，不做任何处理
     const activeItemElement = document.querySelector(
@@ -209,9 +213,9 @@ export default class Search extends PureComponent {
     logCommon({
       type: 'Click',
       payload: {
-        name: '首页搜索框',
+        name: '目标客户池首页搜索',
         value,
-        type: 'click',
+        type: '搜索',
         subtype: '',
       },
     });
@@ -293,6 +297,16 @@ export default class Search extends PureComponent {
               q: encodeURIComponent(item.name),
               type: LABEL,
             });
+
+            // 神策搜索上报
+            logCommon({
+              type: 'Click',
+              payload: {
+                name: '首页搜索',
+                value: item.name,
+                type: '猜你感兴趣',
+              },
+            });
           }
         }}
         key={item.id}
@@ -303,7 +317,12 @@ export default class Search extends PureComponent {
   }
 
   render() {
-    const { hotWdsList = EMPTY_LIST, searchHistoryVal, isPreview } = this.props;
+    const {
+      hotWdsList = EMPTY_LIST,
+      searchHistoryVal,
+      isPreview,
+      showMoreLabelModal,
+    } = this.props;
     const autoCompleteOption = isPreview ? {} :
     {
       dataSource: this.renderDatasource(),
@@ -349,7 +368,15 @@ export default class Search extends PureComponent {
             <span className={styles.s_title}>
               <Icon type="dengpao" />猜你感兴趣：
             </span>
-            <div>{this.renderRecommend(hotWdsList)}</div>
+            <div className={'clearfix'}>
+              <a
+                className={styles.moreLabelBtn}
+                onClick={() => showMoreLabelModal(true)}
+              >
+                更多 &gt;
+              </a>
+              {this.renderRecommend(hotWdsList)}
+            </div>
           </div>
         </div>
       </div>

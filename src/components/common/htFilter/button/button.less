@@ -1,0 +1,86 @@
+.buttonContainer {
+  display: inline-block;
+  .button {
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+    padding: 0;
+    text-align: center;
+    border: 1px solid #108ee9;
+    border-radius: 3px;
+    color: #108ee9;
+
+    & > span {
+      vertical-align: top;
+      display: inline-block;
+      font-size: 14px;
+      height: 28px;
+      line-height: 28px;
+      transform: translateY(-1px);
+    }
+
+    &.disabled {
+      color: #aaa;
+      background: #f7f7f7;
+      border: 1px solid #aaa;
+    }
+
+    &.disabled:hover,
+    &.disabled:focus,
+    &.disabled:active, {
+      border-color: #aaa;
+    }
+
+    &.primary {
+      color: #fff;
+      background: #108ee9;
+      border-color: #108ee9;
+
+      &:hover,
+      &:focus,
+      &:active {
+         background: #3cadff;
+         border-color: #3cadff;
+      }
+    }
+
+    &.normal {
+      color: #108ee9;
+      background: #fff;
+      border-color: #108ee9;
+
+      &:hover,
+      &:focus,
+      &:active {
+         color: #3cadff;
+         border-color: #3cadff;
+      }
+    }
+
+    &.cancel {
+      background: #fff;
+      border: 1px solid #ddd;
+      color: #4a4a4a;
+
+      &:hover,
+      &:focus,
+      &:active {
+        color: #aaa;
+        border-color: #ddd;
+      }
+    }
+  }
+
+  .button.extraButton {
+    width: auto;
+    padding: 0 14px;
+  }
+
+  :global {
+    .ant-btn:hover,
+    .ant-btn:focus,
+    .ant-btn:active {
+      border-color: #3cadff;
+    }
+  }
+}

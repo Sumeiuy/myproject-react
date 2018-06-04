@@ -52,6 +52,7 @@ module.exports = merge(baseWebpackConfig, {
           resolve('build'),
           resolve('dist'),
           resolve('config'),
+          resolve('src/components/common/htFilter/treeFilter'),
         ],
         use: ['style-loader'].concat(cssLoaders.own).concat({
           loader: 'less-loader',
@@ -62,18 +63,12 @@ module.exports = merge(baseWebpackConfig, {
       },
       {
         test: /\.css$/,
-        include: config.appNodeModules,
+        include: [config.appNodeModules, config.appStatic],
         use: ['style-loader'].concat(cssLoaders.nodeModules)
       },
       {
         test: /\.less$/,
-        include: config.appNodeModules,
-        exclude: [
-          resolve('src'),
-          resolve('build'),
-          resolve('dist'),
-          resolve('config'),
-        ],
+        include: [config.appNodeModules, config.appStatic, resolve('src/components/common/htFilter/treeFilter/src')],
         use: ['style-loader'].concat(cssLoaders.nodeModules).concat({
           loader: 'less-loader',
           options: {

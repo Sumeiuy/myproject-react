@@ -36,7 +36,7 @@ function recursiveRouter(parentPath, routerData) {
     }
   }
   // 增加的二级路由存在，并且不在分布式配置路由名单中
-  childRouterArr = childRouterArr.filter((item) => 
+  childRouterArr = childRouterArr.filter(item =>
     routes.indexOf(item) !== -1 && distributeRouters.indexOf(parentPath + item) === -1);
 
   let renderRoutes = [];

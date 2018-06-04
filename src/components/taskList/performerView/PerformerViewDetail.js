@@ -463,7 +463,7 @@ export default class PerformerViewDetail extends PureComponent {
     const curPageNo = targetCustomerPageNo || pageNum;
     const curPageSize = targetCustomerPageSize || pageSize;
     const paginationOption = {
-      current: curPageNo,
+      current: curPageNo || 1,
       total: totalCount,
       pageSize: curPageSize,
       onChange: this.handlePageChange,

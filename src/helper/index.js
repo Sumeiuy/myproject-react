@@ -5,6 +5,9 @@ import dva from './dva';
 import emp from './emp';
 import env from './env';
 import event from './event';
+import encode from './encode';
+import fsp from './fsp';
+import file from './file';
 import number from './number';
 import os from './os';
 import org from './org';
@@ -12,8 +15,6 @@ import permission from './permission';
 import regxp from './regexp';
 import time from './time';
 import url from './url';
-import encode from './encode';
-import fsp from './fsp';
 import date from './date';
 
 function getIconType(name) {
@@ -57,9 +58,12 @@ export default {
   data,
   dom,
   dva,
+  encode,
   emp,
   env,
   event,
+  file,
+  fsp,
   number,
   os,
   org,
@@ -67,8 +71,6 @@ export default {
   regxp,
   time,
   url,
-  encode,
   getIconType,
-  fsp,
   date,
 };

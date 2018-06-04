@@ -6,6 +6,7 @@
  * @Last Modified time: 2018-03-12 14:45:27
  */
 const config = {
+  formatDateStr: 'YYYY-MM-DD',
   // 只开放个股点评，个股研报、个股公告先隐藏
   // typeList: ['StockReview', 'StockReport', 'StockEvent'],
   typeList: ['StockReport', 'StockEvent'],

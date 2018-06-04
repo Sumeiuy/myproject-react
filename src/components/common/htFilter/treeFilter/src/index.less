@@ -1,0 +1,32 @@
+@selectPrefixCls: ht;
+
+.@{selectPrefixCls}-tree-select {
+    cursor: pointer;
+    display: inline-block;
+    .@{selectPrefixCls}-selection--multiple {
+        height: 30px;
+    }
+}
+
+.@{selectPrefixCls}-closeIcon {
+    display: inline-block;
+    height: 28px;
+    width: 12px;
+    line-height: 28px;
+    margin-left: 10px;
+    vertical-align: top;
+    transform: translateY(1px);
+    cursor: pointer;
+    &:hover {
+        &::before {
+            color: #4a4a4a;
+        }
+    }
+}
+
+.@{selectPrefixCls}-tree.ant-tree li {
+    padding: 4px 2px;
+    .ant-tree-node-content-wrapper {
+        color: #4a4a4a;
+    }
+}

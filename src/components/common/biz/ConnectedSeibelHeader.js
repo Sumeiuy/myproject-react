@@ -4,13 +4,11 @@
  * @author honggaunqging
  */
 import { connect } from 'dva';
+import { dva } from '../../../helper';
 import SeibelHeader from './SeibelHeader';
 
-const fetchDataFunction = (globalLoading, type) => query => ({
-  type,
-  payload: query || {},
-  loading: globalLoading,
-});
+const effect = dva.generateEffect;
+
 const mapStateToProps = state => ({
   // 审批人列表
   approvePersonList: state.app.approvePersonList,
@@ -26,17 +24,17 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   // 搜索服务人员列表
-  getSearchServerPersonList: fetchDataFunction(false, 'permission/getSearchServerPersonList'),
+  getSearchServerPersonList: effect('permission/getSearchServerPersonList', { loading: false }),
   // 获取审批人列表
-  getApprovePersonList: fetchDataFunction(false, 'app/getApprovePersonList'),
+  getApprovePersonList: effect('app/getApprovePersonList', { loading: false }),
   // 获取拟稿人列表
-  getDrafterList: fetchDataFunction(false, 'app/getDrafterList'),
+  getDrafterList: effect('app/getDrafterList', { loading: false }),
   // 获取已申请服务经理列表
-  getPtyMngList: fetchDataFunction(false, 'app/getPtyMngList'),
+  getPtyMngList: effect('app/getPtyMngList', { loading: false }),
   // 获取部门
-  getCustRange: fetchDataFunction(false, 'app/getCustRange'),
+  getCustRange: effect('app/getCustRange', { loading: false }),
   // 获取已申请客户列表
-  getCustomerList: fetchDataFunction(false, 'app/getCustomerList'),
+  getCustomerList: effect('app/getCustomerList', { loading: false }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SeibelHeader);

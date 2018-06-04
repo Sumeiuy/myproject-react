@@ -4,13 +4,14 @@
  * @Date: 2017-09-19 14:27:39
  * @Last Modified by: sunweibin
  * @Last Modified time: 2017-12-25 16:28:38
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-17 09:47:34
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-05-09 18:19:35
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Table, Radio, Switch } from 'antd';
 import _ from 'lodash';
+import cx from 'classnames';
 import Icon from '../Icon';
 import styles from './commonTable.less';
 
@@ -26,6 +27,8 @@ export default class CommonTable extends PureComponent {
       PropTypes.func,
     ]),
     align: PropTypes.string,
+    // 自带分页器的位置, 默认为left
+    pagePosition: PropTypes.string,
   }
 
   static defaultProps = {
@@ -35,10 +38,15 @@ export default class CommonTable extends PureComponent {
     scroll: {},
     rowKey: '',
     align: 'center',
+    pagePosition: 'left',
   }
 
   render() {
-    const { scroll, data, operation, titleList, rowKey, align, ...resetProps } = this.props;
+    const {
+      pagePosition, scroll, data,
+      operation, titleList, rowKey, align,
+      ...resetProps
+    } = this.props;
     let newTitleList = [...titleList];
     if (!_.isEmpty(operation)) {
       const columnKey = operation.column.key;
@@ -127,8 +135,12 @@ export default class CommonTable extends PureComponent {
     );
     // 给每列数据加上对齐方式，默认居中
     const columns = newTitleList.map(item => ({ ...item, align }));
+    const wrapCls = cx({
+      [styles.commonTable]: true,
+      [styles.pageAtRight]: pagePosition === 'right',
+    });
     return (
-      <div className={styles.commonTable}>
+      <div className={wrapCls}>
         <Table
           {...resetProps}
           scroll={scroll}

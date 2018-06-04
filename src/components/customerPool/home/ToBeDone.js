@@ -1,7 +1,8 @@
 /**
- * @file customerPool/ToBeDone.js
- *  目标客户池首页-代办流程总数
- * @author yangquanjian
+ * @Author: xiazhiqiang
+ * @Date: 2018-05-21 13:33:05
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-05-29 10:46:02
  */
 
 import React, { PureComponent } from 'react';
@@ -10,7 +11,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import styles from './toBeDone.less';
-import { openRctTab, openFspTab } from '../../../utils';
+import { openRctTab } from '../../../utils';
 import logable from '../../../decorators/logable';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -138,18 +139,23 @@ export default class PerformanceIndicators extends PureComponent {
   @logable({ type: 'Click', payload: { name: '消息提醒' } })
   handleMessageClick() {
     // 点击事件
-    const { push } = this.props;
+    const { location: { query }, push } = this.props;
     const notificationUrl = '/messgeCenter';
     const notificationParam = {
-      forceRefresh: false,
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
       id: 'MESSAGE_CENTER',
       title: '消息中心',
     };
-    openFspTab({
+    openRctTab({
       routerAction: push,
       url: notificationUrl,
-      pathname: '/fsp/messageCenter',
+      pathname: notificationUrl,
       param: notificationParam,
+      state: {
+        ...query,
+      },
     });
   }
 

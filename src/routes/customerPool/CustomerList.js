@@ -802,3 +802,4 @@ export default class CustomerList extends PureComponent {
     );
   }
 }
+

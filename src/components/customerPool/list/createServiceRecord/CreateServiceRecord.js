@@ -9,11 +9,11 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Modal, message } from 'antd';
 import _ from 'lodash';
-import { fspContainer } from '../../../config';
-import { url } from '../../../helper';
-import logable, { logCommon } from '../../../decorators/logable';
-import ServiceRecordContent from '../../common/serviceRecordContent';
-import Loading from '../../../layouts/Loading';
+import { fspContainer } from '../../../../config/index';
+import { url } from '../../../../helper/index';
+import logable, { logCommon } from '../../../../decorators/logable';
+import ServiceRecordContent from '../../../common/serviceRecordContent';
+import Loading from '../../../../layouts/Loading';
 import styles from './createServiceRecord.less';
 
 /**
@@ -118,14 +118,19 @@ export default class CreateServiceRecord extends PureComponent {
     const { serveContentDesc = '', serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
     let payload = { ...data, custId };
     // 打电话成功后，服务记录添加未成功时，后端返回failure
-    if (caller === PHONE && !_.isEmpty(id) && id !== 'failure') {
+    if (caller === PHONE) {
       payload = {
         ...payload,
-        id,
         serveTime,
         serveWay,
         serveContentDesc: `${serveContentDesc}${data.serveContentDesc}`,
       };
+      if (!_.isEmpty(id) && id !== 'failure') {
+        payload = {
+          ...payload,
+          id,
+        };
+      }
     }
     addServeRecord(payload);
     resetServiceRecordInfo();
@@ -218,7 +223,7 @@ export default class CreateServiceRecord extends PureComponent {
         <a className={styles.cancelBtn} onClick={this.handleCancel}>取消</a>
         <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
       </div>
-    ) : (<div className={styles.customFooter}>
+    ) : (<div className={styles.customPhoneFooter}>
       <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
     </div>);
 

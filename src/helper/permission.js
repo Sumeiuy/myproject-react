@@ -248,6 +248,11 @@ const permission = {
     return hasDuty(dutyList, duty.HTSC_NPCI_BMP);
   },
 
+  // HTSC 开发-营业部执行岗
+  hasKFYYBZXGPermission() {
+    return hasDuty(dutyList, duty.HTSC_KF_YYBZXG);
+  },
+
   // HTSC 客户资料管理岗（无隐私）
   hasCDMPermission() {
     return hasDuty(dutyList, duty.HTSC_CDM);

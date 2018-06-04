@@ -7,16 +7,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'dva';
-
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
-import Loading from './Loading';
 
 import ErrorBoundary from './ErrorBoundary';
+import Loading from './Loading';
 import withRouter from '../decorators/withRouter';
-import ConnectedCreateServiceRecord from '../components/customerPool/list/ConnectedCreateServiceRecord';
+
+import ConnectedCreateServiceRecord from '../components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
 import ContextProvider from './ContextProvider';
-import Phone from '../components/common/phone';
+import IEWarningModal from '../components/common/IEWarningModal';
+import PhoneWrapper from './PhoneWrapper';
 import styles from './main.less';
 import '../css/skin.less';
 
@@ -84,8 +85,6 @@ export default class Main extends Component {
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
-    push: PropTypes.func.isRequired,
-    replace: PropTypes.func.isRequired,
     serviceRecordInfo: PropTypes.object.isRequired,
   }
 
@@ -114,11 +113,13 @@ export default class Main extends Component {
       ceFileDelete,
       motSelfBuiltFeedbackList,
       serviceRecordInfo,
+      location,
     } = this.props;
     return (
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
-          <ErrorBoundary>
+          <IEWarningModal />
+          <ErrorBoundary location={location}>
             <div className={styles.layout}>
               <div className={styles.main}>
                 <div className={styles.container} id="container">
@@ -150,7 +151,7 @@ export default class Main extends Component {
                     }
                   </div>
                 </div>
-                <Phone headless />
+                <PhoneWrapper />
               </div>
             </div>
           </ErrorBoundary>

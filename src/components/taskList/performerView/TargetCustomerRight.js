@@ -312,7 +312,7 @@ export default class TargetCustomerRight extends PureComponent {
           handlePhoneConnected={this.handlePhoneConnected}
           handlePhoneClick={this.handlePhoneClick}
           disablePhone={!canCall}
-          placement={'top'}
+          placement="topRight"
         >
           <div className={styles.phoneRight}>
             <Icon type="lianxifangshi1" className={styles.phoneRightIcon} />
@@ -321,6 +321,12 @@ export default class TargetCustomerRight extends PureComponent {
         </ContactInfoPopover>
       </Col>
     );
+  }
+
+  // 电话弹出蒙层的点击事件
+  @autobind
+  handleMaskClick() {
+    this.setState({ showMask: false });
   }
 
   render() {
@@ -578,7 +584,7 @@ export default class TargetCustomerRight extends PureComponent {
             </Row>
           </div>
         </div>
-        <Mask visible={showMask} />
+        <Mask visible={showMask} onClick={this.handleMaskClick} />
       </div>
     );
   }
