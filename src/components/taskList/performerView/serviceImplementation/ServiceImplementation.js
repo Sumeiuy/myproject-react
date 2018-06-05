@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-05 14:24:25
+ * @Last Modified time: 2018-06-05 20:39:03
  */
 
 import React, { PureComponent } from 'react';
@@ -542,7 +542,11 @@ export default class ServiceImplementation extends PureComponent {
     // TODO 新需求需要针对涨乐财富通的服务方式来判断状态是否可读
     // 涨乐财富通服务方式下，只有审批中和已完成状态，才属于只读状态
     let isReadOnly;
-    if (serviceRecordInfo.caller === PHONE) {
+    const { caller = '', autoGenerateRecordInfo = {} } = serviceRecordInfo;
+    // 判断是不是当前选中任务打的电话
+    const isCurrentMissionPhoneCall = caller === PHONE
+      && missionFlowId === autoGenerateRecordInfo.missionFlowId;
+    if (isCurrentMissionPhoneCall) {
       // 打电话调用时，服务记录表单可编辑
       isReadOnly = false;
     } else {
@@ -552,7 +556,6 @@ export default class ServiceImplementation extends PureComponent {
         serviceWayCode,
       });
     }
-    console.log('isReadOnly, ', isReadOnly);
     // 涨乐财富通中才有审批和驳回状态
     const isReject = this.isRejct({ serviceStatusCode: missionStatusCode, serviceWayCode });
     // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
@@ -582,8 +585,8 @@ export default class ServiceImplementation extends PureComponent {
       taskTypeCode,
       serviceTypeCode,
     };
-    // 强制更新affix
-    const affixKey = `${isFoldFspLeftMenu}${isFold}`;
+    // 右侧详情容器宽度变化，强制更新affix、文字折叠区域
+    const rightDetailWidthChangeValue = `${isFoldFspLeftMenu}${isFold}`;
     return (
       <div className={styles.serviceImplementation} ref={ref => this.container = ref}>
         <Header
@@ -600,7 +603,10 @@ export default class ServiceImplementation extends PureComponent {
           _.isEmpty(currentTargetList) ?
             <EmptyData /> :
             <div>
-              <Affix key={affixKey} target={() => getStickyTarget(this.container)}>
+              <Affix
+                key={rightDetailWidthChangeValue}
+                target={() => getStickyTarget(this.container)}
+              >
                 <div className={styles.listSwiperBox}>
                   <ListSwiper
                     targetCustList={targetCustList}
@@ -627,18 +633,21 @@ export default class ServiceImplementation extends PureComponent {
                   monthlyProfits={monthlyProfits}
                   isCustIncomeRequested={isCustIncomeRequested}
                   getCustIncome={getCustIncome}
+                  rightDetailWidthChangeValue={rightDetailWidthChangeValue}
                 />
                 <SimpleDisplayBlock
                   title="服务策略"
                   data={servicePolicy}
                   currentId={currentId}
                   missionFlowId={missionFlowId}
+                  rightDetailWidthChangeValue={rightDetailWidthChangeValue}
                 />
                 <SimpleDisplayBlock
                   title="任务提示"
                   data={targetCustDetail.serviceTips}
                   currentId={currentId}
                   missionFlowId={missionFlowId}
+                  rightDetailWidthChangeValue={rightDetailWidthChangeValue}
                 />
                 <ServiceRecordForm
                   dict={dict}
@@ -664,6 +673,7 @@ export default class ServiceImplementation extends PureComponent {
                   testWallCollision={testWallCollision}
                   testWallCollisionStatus={testWallCollisionStatus}
                   serviceCustId={custId}
+                  isCurrentMissionPhoneCall={isCurrentMissionPhoneCall}
                 />
               </div>
             </div>

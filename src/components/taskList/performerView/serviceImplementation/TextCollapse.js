@@ -17,6 +17,11 @@ export default class TextCollapse extends Component {
 
   componentDidMount() {
     this.setHeight();
+    window.addEventListener('resize', this.setHeight);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.setHeight);
   }
 
   @autobind
