@@ -290,7 +290,7 @@ export default class CustomerLists extends PureComponent {
     const {
       location: {
         query,
-      pathname,
+        pathname,
       },
       replace,
       handleSelect,
@@ -477,7 +477,7 @@ export default class CustomerLists extends PureComponent {
       addCallRecord,
       currentCommonServiceRecord,
     } = this.props;
-    // console.log('1---', this.props)
+
     // 服务记录执行方式字典
     const { executeTypes = EMPTY_ARRAY, serveWay = EMPTY_ARRAY } = dict;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;

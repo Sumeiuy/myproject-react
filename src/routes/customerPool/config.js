@@ -35,11 +35,14 @@ const ENTER_TYPE = {
   sightingTelescope: 'labelSearchCustPool',
   // 非理财平台
   external: 'searchCustPool',
+  // 产品潜在目标客户，产品中心外部跳转
+  productPotentialTargetCust: 'labelSearchCustPool',
 };
 
 // 任务管理岗权限作用的首页入口列表
+// 新增一个产品潜在目标客户，用的HTSC 任务管理岗职责
 const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'external',
-  'orderCombination', 'securitiesProducts'];
+  'orderCombination', 'securitiesProducts', 'productPotentialTargetCust'];
 // 首页指标查询权限作用的首页入口列表
 const ENTERLIST2 = ['custIndicator', 'numOfCustOpened'];
 

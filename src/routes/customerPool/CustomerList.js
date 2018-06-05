@@ -295,16 +295,13 @@ export default class CustomerList extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const {
-      // custRange: preCustRange,
       location: {
         query: preQuery,
       },
       isContactLoading = false,
       isRecordLoading = false,
-      // getFiltersOfSightingTelescope,
     } = this.props;
     const {
-      // custRange,
       location: {
         query,
       },
@@ -392,6 +389,16 @@ export default class CustomerList extends PureComponent {
       this.dataForNextPage.id = labelMapping;
       this.dataForNextPage.product = labelName;
       this.dataForNextPage.productName = productName;
+    } else if (query.source === 'productPotentialTargetCust') { // 产品潜在目标客户，产品中心外部跳转
+      // type是LABEL
+      // 目前只有一个label，将labelMapping传给后台
+      param.searchTypeReq = query.type;
+      param.primaryKey = [labelMapping];
+      // 产品潜在目标客户进来，默认都是瞄准镜标签，需要加入queryLabelReq
+      param.queryLabelReq = {
+        labelName,
+        labelDesc,
+      };
     }
     // 客户业绩参数
     if (query.customerType) {

@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-15 13:00:03
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-04 17:30:01
  */
 
 import React, { PureComponent } from 'react';
@@ -19,7 +19,19 @@ import {
   PIE_ENTRY,
   PROGRESS_ENTRY,
   CUST_GROUP_LIST,
+  BUSINESS_ENTRY,
+  SEARCH_ENTRY,
+  PRODUCT_POTENTIAL_TARGET_CUST_ENTRY,
+  SECURITIES_PRODUCTS_ENTRY,
+  ORDER_COMBINATION_ENTRY,
+  EXTERNAL_ENTRY,
+  ASSOCIATION_ENTRY,
+  TAG_ENTRY,
+  CUSTINDICATOR_ENTRY,
+  NUMOFCUSTOPENED_ENTRY,
+  SIGHTINGTELESCOPE_ENTRY,
   returnTaskEntrySource,
+  labelSource,
 } from '../../../config/createTaskEntry';
 import styles from './taskFormFlowStep.less';
 import logable, { logCommon } from '../../../decorators/logable';
@@ -27,9 +39,6 @@ import logable, { logCommon } from '../../../decorators/logable';
 const noop = _.noop;
 const Step = Steps.Step;
 const systemCode = '102330';  // 系统代码（理财服务平台为102330）
-
-// 标签来源，热点标签，普通标签，搜索标签
-const SOURCE_FROM_LABEL = ['tag', 'association', 'sightingTelescope'];
 
 export default class TaskFormFlowStep extends PureComponent {
   static propTypes = {
@@ -227,38 +236,34 @@ export default class TaskFormFlowStep extends PureComponent {
   handleCustSource(value) {
     let custSources = '';
     switch (value) {
-      case 'business':
+      case BUSINESS_ENTRY:
         custSources = '业务目标客户';
         break;
-      case 'search':
+      case SEARCH_ENTRY:
         custSources = '搜索目标客户';
         break;
-      // 精选组合的证券产品和订购组合、产品中心
-      case 'securitiesProducts':
-      case 'orderCombination':
-      case 'external':
-      case 'association':
+      case PRODUCT_POTENTIAL_TARGET_CUST_ENTRY:
+      case SECURITIES_PRODUCTS_ENTRY:
+      case ORDER_COMBINATION_ENTRY:
+      case EXTERNAL_ENTRY:
+      case ASSOCIATION_ENTRY:
         custSources = '搜索目标客户';
         break;
-      case 'tag':
+      case TAG_ENTRY:
         custSources = '标签目标客户池';
         break;
-      case 'custIndicator':
-        custSources = '绩效目标客户';
-        break;
-      case 'numOfCustOpened':
+      case CUSTINDICATOR_ENTRY:
+      case NUMOFCUSTOPENED_ENTRY:
         custSources = '绩效目标客户';
         break;
       case PROGRESS_ENTRY:
-        custSources = '已有任务下钻客户';
-        break;
       case PIE_ENTRY:
         custSources = '已有任务下钻客户';
         break;
       case CUST_GROUP_LIST:
         custSources = '客户分组';
         break;
-      case 'sightingTelescope':
+      case SIGHTINGTELESCOPE_ENTRY:
         custSources = '标签圈人';
         break;
       default:
@@ -273,7 +278,7 @@ export default class TaskFormFlowStep extends PureComponent {
   @autobind
   judgeSourceIsFromLabel() {
     const { location: { query: { source } } } = this.props;
-    return _.includes(SOURCE_FROM_LABEL, source);
+    return _.includes(labelSource, source);
   }
 
 
@@ -369,22 +374,12 @@ export default class TaskFormFlowStep extends PureComponent {
         ...resultTrackComponent.getData(),
       };
       const {
-        // 跟踪窗口期
-        // trackWindowDate,
         // 一级指标
         indicatorLevel1Key,
         // 二级指标
         indicatorLevel2Key,
-        // 操作符key,传给后台,譬如>=/<=
-        // operationKey,
-        // 操作符name,展示用到，譬如达到/降到
-        // operationValue,
         // 当前输入的指标值
         inputIndicator,
-        // 单位
-        // unit,
-        // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
-        // hasState,
         // 是否有产品搜索
         hasSearchedProduct,
         // 是否选中
@@ -393,9 +388,7 @@ export default class TaskFormFlowStep extends PureComponent {
         hasState,
         currentSelectedProduct,
       } = resultTrackData;
-      // if (!isResultTrackChecked) {
-      //   message.error('请勾选结果跟踪');
-      // } else
+
       if (isResultTrackChecked) {
         resultTrackComponent.requiredDataValidate();
         let errMsg = '';
@@ -412,7 +405,6 @@ export default class TaskFormFlowStep extends PureComponent {
         if (_.isEmpty(errMsg)) {
           isResultTrackValidate = true;
         } else {
-          // message.error(errMsg);
           isResultTrackValidate = false;
         }
       } else {
@@ -594,8 +586,6 @@ export default class TaskFormFlowStep extends PureComponent {
       currentSelectedProduct,
       // 操作符key,传给后台,譬如>=/<=
       operationKey,
-      // 操作符name,展示用到，譬如达到/降到
-      // operationValue,
       // 当前输入的指标值
       inputIndicator,
       // 单位
@@ -608,8 +598,6 @@ export default class TaskFormFlowStep extends PureComponent {
       isResultTrackChecked,
       // 是否选中
       isMissionInvestigationChecked,
-      // 选择的问题List
-      // questionList,
     } = finalData;
 
     let postBody = {
@@ -619,8 +607,6 @@ export default class TaskFormFlowStep extends PureComponent {
       taskType,
       templetDesc,
       timelyIntervalValue,
-      // // 任务子类型
-      // taskSubType,
       ...req,
     };
 
