@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-29 22:38:45
+ * @Last Modified time: 2018-06-05 16:19:02
  * 服务记录表单
  */
 
@@ -57,7 +57,7 @@ export default class ServiceRecordForm extends PureComponent {
     // 添加服务记录
     addServeRecord({
       postBody: data,
-      callbackOfPhone: this.handleCancel,
+      phoneCallback: this.handleCancel,
     });
 
     // log日志 --- 添加服务记录
@@ -121,11 +121,11 @@ export default class ServiceRecordForm extends PureComponent {
     if (!isReadOnly) {
       footNode = (
         <div className={styles.operationSection}>
-          <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
           {
             caller !== PHONE
             && <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
           }
+          <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
         </div>
       );
     }

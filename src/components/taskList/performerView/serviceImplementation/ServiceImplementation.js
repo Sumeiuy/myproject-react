@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-01 10:59:31
+ * @Last Modified time: 2018-06-05 14:24:25
  */
 
 import React, { PureComponent } from 'react';
@@ -552,6 +552,7 @@ export default class ServiceImplementation extends PureComponent {
         serviceWayCode,
       });
     }
+    console.log('isReadOnly, ', isReadOnly);
     // 涨乐财富通中才有审批和驳回状态
     const isReject = this.isRejct({ serviceStatusCode: missionStatusCode, serviceWayCode });
     // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
