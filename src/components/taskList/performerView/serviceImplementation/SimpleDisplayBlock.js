@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:43:12
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-05 20:35:44
+ * @Last Modified time: 2018-06-05 21:32:16
  */
 
 import React from 'react';
@@ -14,9 +14,9 @@ import styles from './simpleDisplayBlock.less';
 
 export default function SimpleDisplayBlock({
   title, data, missionFlowId, currentId,
-  rightDetailWidthChangeValue,
+  leftFoldState,
  }) {
-  const key = `${title}-${currentId}-${missionFlowId}${rightDetailWidthChangeValue}`;
+  const key = `${title}-${currentId}-${missionFlowId}-${leftFoldState}`;
   return (
     <div className={styles.container}>
       <div className={styles.inner}>
@@ -34,7 +34,7 @@ SimpleDisplayBlock.propTypes = {
   data: PropTypes.string,
   currentId: PropTypes.string,
   missionFlowId: PropTypes.string,
-  rightDetailWidthChangeValue: PropTypes.string,
+  leftFoldState: PropTypes.string,
 };
 
 SimpleDisplayBlock.defaultProps = {
@@ -42,5 +42,5 @@ SimpleDisplayBlock.defaultProps = {
   data: '',
   currentId: '',
   missionFlowId: '',
-  rightDetailWidthChangeValue: '',
+  leftFoldState: '',
 };

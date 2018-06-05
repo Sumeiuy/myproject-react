@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-05 20:39:03
+ * @Last Modified time: 2018-06-05 21:30:22
  */
 
 import React, { PureComponent } from 'react';
@@ -585,8 +585,8 @@ export default class ServiceImplementation extends PureComponent {
       taskTypeCode,
       serviceTypeCode,
     };
-    // 右侧详情容器宽度变化，强制更新affix、文字折叠区域
-    const rightDetailWidthChangeValue = `${isFoldFspLeftMenu}${isFold}`;
+    // fsp左侧菜单和左侧列表折叠状态变化，强制更新affix、文字折叠区域
+    const leftFoldState = `${isFoldFspLeftMenu}${isFold}`;
     return (
       <div className={styles.serviceImplementation} ref={ref => this.container = ref}>
         <Header
@@ -604,7 +604,7 @@ export default class ServiceImplementation extends PureComponent {
             <EmptyData /> :
             <div>
               <Affix
-                key={rightDetailWidthChangeValue}
+                key={leftFoldState}
                 target={() => getStickyTarget(this.container)}
               >
                 <div className={styles.listSwiperBox}>
@@ -633,21 +633,21 @@ export default class ServiceImplementation extends PureComponent {
                   monthlyProfits={monthlyProfits}
                   isCustIncomeRequested={isCustIncomeRequested}
                   getCustIncome={getCustIncome}
-                  rightDetailWidthChangeValue={rightDetailWidthChangeValue}
+                  leftFoldState={leftFoldState}
                 />
                 <SimpleDisplayBlock
                   title="服务策略"
                   data={servicePolicy}
                   currentId={currentId}
                   missionFlowId={missionFlowId}
-                  rightDetailWidthChangeValue={rightDetailWidthChangeValue}
+                  leftFoldState={leftFoldState}
                 />
                 <SimpleDisplayBlock
                   title="任务提示"
                   data={targetCustDetail.serviceTips}
                   currentId={currentId}
                   missionFlowId={missionFlowId}
-                  rightDetailWidthChangeValue={rightDetailWidthChangeValue}
+                  leftFoldState={leftFoldState}
                 />
                 <ServiceRecordForm
                   dict={dict}
