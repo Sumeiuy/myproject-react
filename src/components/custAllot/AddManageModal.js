@@ -11,10 +11,8 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { message } from 'antd';
 import _ from 'lodash';
-import { SingleFilter } from 'ht-react-filter';
-import { TreeFilter as HTTreeFilter } from 'ht-tree-filter';
-import 'ht-react-filter/lib/css/index.css';
-import 'ht-tree-filter/lib/css/index.css';
+import { SingleFilter } from 'lego-react-filter/src';
+import { TreeFilter as HTTreeFilter } from 'lego-tree-filter/src';
 
 import CommonModal from '../common/biz/CommonModal';
 import Pagination from '../../components/common/Pagination';

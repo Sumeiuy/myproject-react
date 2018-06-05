@@ -1,51 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SingleFilter from './singleFilter/SingleFilter';
-import MultiFilter from './multiFilter/MultiFilter';
-import Input from './input/index';
-import MoreFilter from './moreFilter/MoreFilter';
-import RangeFilter from './rangeFilter/RangeFilter';
-import FormFilter from './formFilter/FormFilter';
-import TreeFilter from './treeFilter/src/index';
-import DateFilter from './dateFilter/index';
-
-import '../../../../static/htFont/iconfont.less';
-
-export {
+import LegoFilter, {
   SingleFilter,
   MultiFilter,
   MoreFilter,
   RangeFilter,
-  TreeFilter,
-  DateFilter,
-  Input,
-};
+} from 'lego-react-filter/src';
 
-export default function HtFilter(props) {
+
+import DateFilter from './dateFilter';
+
+export default function Filter(props) {
   switch (props.type) {
-    case 'single':
-    case 'singleSearch':
-      return (<SingleFilter {...props} />);
-    case 'multi':
-      return (<MultiFilter {...props} />);
-    case 'range':
-      return (<RangeFilter {...props} />);
-    case 'form':
-      return (<FormFilter {...props} />);
     case 'date':
       return (<DateFilter {...props} />);
     default:
-      return (
-        <SingleFilter {...props} />
-      );
+      return <LegoFilter {...props} />;
   }
 }
 
-HtFilter.propTypes = {
+export {
+  DateFilter,
+  LegoFilter,
+  SingleFilter,
+  MultiFilter,
+  MoreFilter,
+  RangeFilter,
+};
+
+Filter.propTypes = {
   type: PropTypes.string,
 };
 
-HtFilter.defaultProps = {
+Filter.defaultProps = {
   type: '',
 };
 

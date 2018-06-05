@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "http://github.com/htsc/mobile_crm"
+    "url": "http://gitlab.htzq.htsc.com.cn/crm/performance_report.git"
   },
   "license": "UNLICENSED",
   "description": "华泰证券",
@@ -41,8 +41,8 @@
     "element-resize-detector": "^1.1.12",
     "history": "^4.7.2",
     "hoist-non-react-statics": "^2.3.1",
-    "ht-react-filter": "^1.1.11",
-    "ht-tree-filter": "^1.0.1",
+    "lego-react-filter": "^1.0.0",
+    "lego-tree-filter": "^1.0.0",
     "immutability-helper": "^2.6.6",
     "localforage": "^1.4.3",
     "lodash": "^4.17.4",
