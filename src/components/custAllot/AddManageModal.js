@@ -208,7 +208,7 @@ export default class AddManageModal extends PureComponent {
     treeCustRange = [
       {
         label: '不限',
-        value: 0,
+        value: '',
         key: 0,
       },
       ...treeCustRange,
@@ -255,7 +255,7 @@ export default class AddManageModal extends PureComponent {
                 onInputChange={_.debounce(this.handleEmpChange, 500)}
               />
               <HTTreeFilter
-                value={_.isEmpty(orgId) ? 0 : orgId}
+                value={_.isEmpty(orgId) ? '' : orgId}
                 treeData={treeCustRange}
                 filterName={'所属营业部'}
                 treeDefaultExpandAll
