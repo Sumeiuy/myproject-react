@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 15:18:13
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-04 17:35:07
+ * @Last Modified time: 2018-06-05 20:28:12
  * @Descripter:投资建议模板相关接口
  */
 export default function investmentAdvice(api) {
@@ -16,6 +16,8 @@ export default function investmentAdvice(api) {
     // 投顾自由文本投资建议-增加撞墙检测
     testWallCollision: query => api.post('/groovynoauth/fsp/cust/service/checkFreeServeContent', query),
     // 查询任务绑定投资建议模板的任务列表
-    queryTaskBindTemplateList: query => api.post('/groovynoauth/fsp/campaign/mot/queryTaskBindTemplateList', query),
+    queryTaskBindTemplateList: query => api.post('/groovynoauth/fsp/campaign/investAdvice/queryTaskBindTemplateList', query),
+    // 删除任务绑定的投资建议模板
+    delTaskBindTemplate: query => api.post('/groovynoauth/fsp/campaign/investAdvice/delTaskBindTemplate', query),
   };
 }

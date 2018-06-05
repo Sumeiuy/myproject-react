@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-04 11:13:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-04 17:44:28
+ * @Last Modified time: 2018-06-05 19:01:41
  * @description 任务绑定投资建议模板与投资建议模板维护的Tab页面
  */
 
@@ -35,6 +35,8 @@ const mapStateToProps = state => ({
   modifySuccessStatus: state.investmentAdvice.modifySuccessStatus,
   // 任务绑定投资建议模板列表
   taskBindTemplate: state.investmentAdvice.taskBindTemplate,
+  // 删除任务绑定投资建议模板状态
+  delTaskBindTemplateStatus: state.investmentAdvice.delTaskBindTemplateStatus,
 });
 
 const mapDispatchToProps = {
@@ -46,6 +48,8 @@ const mapDispatchToProps = {
   modifyInvestAdvice: effect('investmentAdvice/modifyInvestAdvice'),
   // 查询任务绑定投资建议模板列表 api
   getTaskBindList: effect('investmentAdvice/getTaskBindList'),
+  // 删除任务绑定的投资建议模板
+  delTaskBindTemplate: effect('investmentAdvice/delTaskBindTemplate'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -69,6 +73,10 @@ export default class InvestAdviceTabsHome extends PureComponent {
     getTaskBindList: PropTypes.func.isRequired,
     // 任务绑定投资建议模板列表
     taskBindTemplate: PropTypes.object.isRequired,
+    // 删除任务绑定的投资建议模板
+    delTaskBindTemplate: PropTypes.func.isRequired,
+    // 删除任务绑定投资建议模板状态
+    delTaskBindTemplateStatus: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -125,11 +133,15 @@ export default class InvestAdviceTabsHome extends PureComponent {
     const {
       getTaskBindList,
       taskBindTemplate,
+      delTaskBindTemplate,
+      delTaskBindTemplateStatus,
     } = this.props;
     return (
       <TaskBindTemplate
         getTaskBindList={getTaskBindList}
         taskBindTemplate={taskBindTemplate}
+        delTaskBindTemplate={delTaskBindTemplate}
+        delTaskBindTemplateStatus={delTaskBindTemplateStatus}
       />
     );
   }
@@ -140,6 +152,7 @@ export default class InvestAdviceTabsHome extends PureComponent {
     this.setState({
       active: key,
     });
+    // TODO 此处切换Tab的时候需要刷新新页面数据
   }
 
   render() {

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 15:37:57
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-04 17:42:48
+ * @Last Modified time: 2018-06-05 18:58:43
  */
 import { investmentAdvice as api } from '../api';
 
@@ -19,6 +19,8 @@ export default {
     testWallCollisionStatus: false,
     // 任务绑定投资建议模板列表
     taskBindTemplate: {},
+    // 删除任务绑定投资建议模板状态
+    delTaskBindTemplateStatus: 'failure',
   },
   reducers: {
     // 投资模板列表
@@ -59,6 +61,14 @@ export default {
       return {
         ...state,
         taskBindTemplate: payload,
+      };
+    },
+
+    delTaskBindTemplateSuccess(state, action) {
+      const { payload = 'failure' } = action;
+      return {
+        ...state,
+        delTaskBindTemplateStatus: payload,
       };
     },
   },
@@ -118,6 +128,19 @@ export default {
       const { resultData } = yield call(api.queryTaskBindTemplateList, payload);
       yield put({
         type: 'getTaskBindListSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 删除任务绑定的投资建议模板
+    * delTaskBindTemplate({ payload }, { call, put }) {
+      yield put({
+        type: 'delTaskBindTemplateSuccess',
+        payload: 'failure',
+      });
+      const { resultData } = yield call(api.delTaskBindTemplate, payload);
+      yield put({
+        type: 'delTaskBindTemplateSuccess',
         payload: resultData,
       });
     },
