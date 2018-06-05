@@ -2,13 +2,14 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-30 10:31:29
+ * @Last Modified time: 2018-06-01 18:02:29
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import cx from 'classnames';
 import { Select, DatePicker, Radio, Form } from 'antd';
 import moment from 'moment';
 import Uploader from '../../common/uploader';
@@ -793,7 +794,12 @@ export default class ServiceRecordContent extends PureComponent {
     const { autoGenerateRecordInfo = {}, caller } = serviceRecordInfo;
 
     return (
-      <div className={styles.serviceRecordContent}>
+      <div
+        className={cx(
+          styles.serviceRecordContent,
+          { [styles.performerServiceRecord]: isEntranceFromPerformerView },
+        )}
+      >
         <div className={styles.gridWrapper}>
           <ServiceWaySelect
             value={serviceWayCode}

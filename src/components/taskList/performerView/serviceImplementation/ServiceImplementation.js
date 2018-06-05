@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-31 15:16:23
+ * @Last Modified time: 2018-06-01 10:59:31
  */
 
 import React, { PureComponent } from 'react';
@@ -530,7 +530,7 @@ export default class ServiceImplementation extends PureComponent {
       queryCustFeedbackList4ZLFins, custFeedbackList, queryApprovalList, zhangleApprovalList,
       testWallCollision, testWallCollisionStatus, toggleServiceRecordModal, targetCustList,
     } = this.props;
-    const { currentTargetList } = this.state;
+    const { currentTargetList, isFoldFspLeftMenu } = this.state;
     const {
       missionStatusCode, missionStatusName, missionFlowId,
       serviceTips, serviceWayName, serviceWayCode, serviceDate,
@@ -581,6 +581,8 @@ export default class ServiceImplementation extends PureComponent {
       taskTypeCode,
       serviceTypeCode,
     };
+    // 强制更新affix
+    const affixKey = `${isFoldFspLeftMenu}${isFold}`;
     return (
       <div className={styles.serviceImplementation} ref={ref => this.container = ref}>
         <Header
@@ -597,7 +599,7 @@ export default class ServiceImplementation extends PureComponent {
           _.isEmpty(currentTargetList) ?
             <EmptyData /> :
             <div>
-              <Affix target={() => getStickyTarget(this.container)}>
+              <Affix key={affixKey} target={() => getStickyTarget(this.container)}>
                 <div className={styles.listSwiperBox}>
                   <ListSwiper
                     targetCustList={targetCustList}

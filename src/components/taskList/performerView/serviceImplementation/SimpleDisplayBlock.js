@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:43:12
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-31 14:32:55
+ * @Last Modified time: 2018-06-01 14:11:35
  */
 
 import React from 'react';
@@ -18,7 +18,7 @@ export default function SimpleDisplayBlock({ title, data, missionFlowId, current
     <div className={styles.container}>
       <div className={styles.inner}>
         <h5 className={styles.title}>{title}</h5>
-        <TextCollapse key={key} minHeight="21px" maxHeight="auto" >
+        <TextCollapse key={key} minHeight="21px">
           <div className={styles.content}><ForgeryRichText text={data} /></div>
         </TextCollapse>
       </div>

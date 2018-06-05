@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 22:49:02
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-30 12:04:18
+ * @Last Modified time: 2018-06-01 10:58:53
  */
 
 import React from 'react';
@@ -14,6 +14,9 @@ import Sortbox from './Sortbox';
 import PreciseQuery from './PreciseQuery';
 import { ASSET_DESC } from './config';
 import styles from './header.less';
+
+// 状态为不限
+const STATE_UNLIMITED = { key: '', value: '不限' };
 
 export default function Header(props) {
   const {
@@ -35,7 +38,6 @@ export default function Header(props) {
   const getFilterLabelValue = (item) => {
     const { filterName, value } = item;
     const displayValue = !_.isEmpty(value.custId) ? `${value.custId}(${value.name})` : value.name;
-    console.log('getFilterLabelValue: ', item);
     return (
       <div className={styles.customerFilterContent}>
         <span className={styles.customerFilterName}>{filterName}:</span>
@@ -48,6 +50,7 @@ export default function Header(props) {
       searchCustomer(value);
     }
   };
+  const stateData = [STATE_UNLIMITED, ...dict.serveStatus];
   const currentCustomer = _.find(customerList, { rowId }) || {};
   const currentCustId = currentCustomer ? currentCustomer.custId : '';
   return (
@@ -58,7 +61,7 @@ export default function Header(props) {
         className={styles.filter}
         value={state}
         defaultSelectLabel="不限"
-        data={dict.serveStatus}
+        data={stateData}
         onChange={handleStateChange}
       />
       <SingleFilter
