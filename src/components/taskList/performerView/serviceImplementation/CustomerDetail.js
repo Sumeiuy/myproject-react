@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-31 14:13:55
+ * @Last Modified time: 2018-06-01 14:11:59
  */
 
 import React, { PureComponent } from 'react';
@@ -194,7 +194,6 @@ export default class CustomerDetail extends PureComponent {
           <TextCollapse
             key={`${custId}${currentId}${missionFlowId}`}
             minHeight="58px"
-            maxHeight="auto"
             buttonStyle={buttonStyle}
           >
             <div className={styles.flexBox}>

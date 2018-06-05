@@ -211,6 +211,10 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
+          & > span {
+            // antd样式库里把此处的span设成了block，导致添加服务记录上传组件看不到删除按钮
+            display: inline;
+          }
         }
         .anticon-cross {
           font-size: 15px;
@@ -370,24 +374,97 @@
     }
   }
 }
+/* 执行者视图优化后样式变动 */
+.performerServiceRecord {
+  .gridWrapper {
+    padding-bottom: 0;
+  }
+  .serveWay, .serveStatus, .serveType, .serveTime, .feedbackTime, .feedbackType {
+    width: auto;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    line-height: unset;
+    vertical-align: middle;
+    margin: 7px 0;
+    flex: 1;
+    .title {
+      text-align: right;
+      width: 82px;
+      height: 28px;
+      line-height: 28px;
+      margin-left: 16px;
+      padding-right: 10px;
+    }
+    .content {
+      height: 28px;
+      flex: 1;
+      :global {
+        .ant-input {
+          font-size: 12px;
+          height: 28px;
+        }
+      }
+    }
+    :global {
+      .ant-form-item {
+        flex: 1;
+      }
+      .ant-form-item-control-wrapper > .ant-form-item-control.has-error {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        & > .ant-form-item-children {
+          display: block;
+          width: 100%;
+        }
+        & > .ant-form-explain {
+          line-height: 1;
+        }
+      }
+      .ant-radio-group {
+        line-height: unset;
+        vertical-align: baseline;
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
+    }
+  }
+  .serveRecord {
+    margin: 7px 0;
+    padding-bottom: 0;
+    .title {
+      text-align: right;
+      width: 82px;
+      margin-left: 16px;
+      padding-right: 10px;
+    }
+    :global {
+      .ant-form-item {
+        width: auto;
+        flex: 1;
+        margin-bottom: 0;
+      }
+    }
+  }
+  .divider {
+    display: none;
+  }
+  .feedbackType {
+    flex: 2;
+  }
+  .uploadSection {
+    padding: 7px 0;
+    margin-top: 0;
+  }
+}
 .yuyintishi {
   height: 20px;
   line-height: 20px;
-  padding-top: 4px;
-  padding-bottom: 8px;
+  padding-bottom: 5px;
   font-size: 14px;
   color: #4a4a4a;
   box-sizing: content-box;
+  margin-bottom: 0;
 }
-.wenxin {
-  padding-top: 8px;
-  height: 16px;
-  line-height: 16px;
-  font-size: 12px;
-  color: #576b95;
-  box-sizing: content-box;
-  .wenxinIcon {
-    color: #df5cce;
-  }
-}
-
