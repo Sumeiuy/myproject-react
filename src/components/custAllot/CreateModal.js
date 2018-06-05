@@ -42,7 +42,7 @@ const KEY_STATUS = 'status';
 // 原服务经理
 const KEY_OLDEMPNAME = 'oldEmpName';
 // 是否入岗投顾
-const KEY_ISTOUGU = 'isTouGu';
+const KEY_ISTOUGU = 'touGu';
 // 开发经理
 const KEY_DMNAME = 'dmName';
 // 更新客户或者服务经理时的方法类型
