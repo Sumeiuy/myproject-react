@@ -39,12 +39,24 @@ const ENTER_TYPE = {
   productPotentialTargetCust: 'labelSearchCustPool',
 };
 
+// 全量的source集合
+const FULL_ENTERLIST = ['search', 'tag', 'sightingTelescope', 'business', 'association', 'external',
+  'orderCombination', 'securitiesProducts', 'productPotentialTargetCust', 'custIndicator', 'numOfCustOpened'];
+
 // 任务管理岗权限作用的首页入口列表
 // 新增一个产品潜在目标客户，用的HTSC 任务管理岗职责
 const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'external',
   'orderCombination', 'securitiesProducts', 'productPotentialTargetCust'];
+
 // 首页指标查询权限作用的首页入口列表
 const ENTERLIST2 = ['custIndicator', 'numOfCustOpened'];
+
+// 是否需要展示客户列表瞄准镜筛选条件source集合
+// 是否需要请求瞄准镜filterList的source集合
+const ENTERLIST3 = ['sightingTelescope', 'productPotentialTargetCust'];
+
+// 是否需要展示可开通业务source集合
+const ENTERLIST4 = ['numOfCustOpened', 'business', 'sightingTelescope'];
 
 export default {
   NOPERMIT,
@@ -56,4 +68,7 @@ export default {
   ENTERLIST1,
   ENTERLIST2,
   ALL_DEPARTMENT_ID,
+  ENTERLIST3,
+  FULL_ENTERLIST,
+  ENTERLIST4,
 };

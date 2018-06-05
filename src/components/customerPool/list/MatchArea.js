@@ -9,6 +9,8 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { isSightingScope } from '../helper';
 import { openFspTab } from '../../../utils';
+// ENTERLIST3-需要展示瞄准镜匹配区域的source集合
+import { ENTERLIST3 } from '../../../routes/customerPool/config';
 import HoldingProductDetail from './HoldingProductDetail';
 import styles from './matchArea.less';
 
@@ -18,7 +20,7 @@ const replaceWord = ({ value, q, title = '', type = '' }) => {
   const titleDom = haveTitle(title);
   const regxp = new RegExp(q, 'g');
   // 瞄准镜标签后面添加字符，用以分割
-  const holder = type === 'sightingTelescope' ? '-' : '';
+  const holder = _.includes(ENTERLIST3, type) ? '-' : '';
   // 容错处理
   if (_.isEmpty(value)) {
     return '';
@@ -62,7 +64,7 @@ export default class MatchArea extends PureComponent {
     const {
       dict: {
         custBusinessType = [],
-        custUnrightBusinessType = [],
+      custUnrightBusinessType = [],
       },
     } = props;
 
@@ -362,7 +364,8 @@ export default class MatchArea extends PureComponent {
       listItem,
       location: { query: { source, labelMapping } },
     } = this.props;
-    if (source === 'sightingTelescope'
+
+    if (_.includes(ENTERLIST3, source)
       && !_.isEmpty(listItem.relatedLabels)) {
       // 筛选出source='jzyx'的数据
       const relatedLabels = _.filter(

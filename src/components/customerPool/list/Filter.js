@@ -9,13 +9,9 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
+import { FULL_ENTERLIST, ENTERLIST3, ENTERLIST4 } from '../../../routes/customerPool/config';
 import { SingleFilter, MultiFilter } from '../../common/filter';
 
-// 从搜索、联想词、标签、已开通业务、收益凭证、精选组合的证券产品和订购组合过来的
-const SEARCH_TAG_FILTER = [
-  'search', 'tag', 'association', 'business', 'custIndicator',
-  'numOfCustOpened', 'sightingTelescope', 'external', 'orderCombination', 'securitiesProducts',
-];
 
 // 数据转化
 // [{itemCode: '1', itemDesc: 'fg'}] => [{key: '1', value: 'fg'}]
@@ -45,8 +41,9 @@ export default class Filter extends PureComponent {
       sightingTelescopeFilters,
       onFilterChange,
     } = this.props;
-    if (source !== 'sightingTelescope' ||
-      _.isEmpty(sightingTelescopeFilters) || _.isEmpty(sightingTelescopeFilters.filterList)) {
+    if (!_.includes(ENTERLIST3, source) ||
+      _.isEmpty(sightingTelescopeFilters) ||
+      _.isEmpty(sightingTelescopeFilters.filterList)) {
       return null;
     }
     const filtersArray = filters ? filters.split('|') : [];
@@ -79,11 +76,12 @@ export default class Filter extends PureComponent {
       result[name] = code; // eslint-disable-line
       return result;
     }, {});
+
     return (
       <div className="filter">
         {this.renderSightingTelescopeFilter()}
         {
-          (_.includes(SEARCH_TAG_FILTER, source)) ?
+          (_.includes(FULL_ENTERLIST, source)) ?
             <SingleFilter
               value={currentValue.CustomType || ''}
               filterLabel="客户性质"
@@ -93,7 +91,7 @@ export default class Filter extends PureComponent {
             /> : null
         }
         {
-          (_.includes(SEARCH_TAG_FILTER, source)) ?
+          (_.includes(FULL_ENTERLIST, source)) ?
             <SingleFilter
               value={currentValue.CustClass || ''}
               filterLabel="客户类型"
@@ -103,7 +101,7 @@ export default class Filter extends PureComponent {
             /> : null
         }
         {
-          (_.includes(SEARCH_TAG_FILTER, source)) ?
+          (_.includes(FULL_ENTERLIST, source)) ?
             <SingleFilter
               value={currentValue.RiskLvl || ''}
               filterLabel="风险等级"
@@ -113,7 +111,7 @@ export default class Filter extends PureComponent {
             /> : null
         }
         {
-          (_.includes(SEARCH_TAG_FILTER, source)) ?
+          (_.includes(FULL_ENTERLIST, source)) ?
             <MultiFilter
               value={currentValue.Rights || ''}
               filterLabel="已开通业务"
@@ -123,7 +121,7 @@ export default class Filter extends PureComponent {
             /> : null
         }
         {
-          _.includes(['numOfCustOpened', 'business', 'sightingTelescope'], source) ?
+          _.includes(ENTERLIST4, source) ?
             <MultiFilter
               value={currentValue.Unrights || ''}
               filterLabel="可开通业务"

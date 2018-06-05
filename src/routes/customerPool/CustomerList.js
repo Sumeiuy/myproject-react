@@ -27,6 +27,7 @@ import {
   MAIN_MAGEGER_ID,
   ENTERLIST1,
   ENTERLIST2,
+  ENTERLIST3,
 } from './config';
 
 import styles from './customerlist.less';
@@ -286,7 +287,7 @@ export default class CustomerList extends PureComponent {
     } = this.props;
     // 请求客户列表
     this.getCustomerList(this.props);
-    if (query.source === 'sightingTelescope') {
+    if (_.includes(ENTERLIST3, query.source)) {
       getFiltersOfSightingTelescope({
         prodId: decodeURIComponent(query.labelMapping),
       });
@@ -358,10 +359,8 @@ export default class CustomerList extends PureComponent {
       param.searchTypeReq = 'ALL';
       param.searchText = keyword;
     } else if (_.includes(['tag', 'sightingTelescope'], query.source)) { // 热词或者瞄准镜
-      // param.labels = [query.labelMapping];
       param.primaryKey = [labelMapping];
       param.searchTypeReq = query.type;
-      // param.searchText = keyword;
       if (query.source === 'sightingTelescope') {
         // 如果是瞄准镜，需要加入queryLabelReq
         param.queryLabelReq = {
@@ -429,7 +428,6 @@ export default class CustomerList extends PureComponent {
       } = getCustomerListFilters(filtersArray, labelMapping, filtersReq);
       param.filtersReq = filters;
       if (query.source === 'sightingTelescope') {
-        // param.labels = labels;
         param.primaryKey = labels;
       }
     }
