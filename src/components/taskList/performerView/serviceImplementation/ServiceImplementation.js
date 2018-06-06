@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-06 10:07:44
+ * @Last Modified time: 2018-06-06 14:18:31
  */
 
 import React, { PureComponent } from 'react';
@@ -157,7 +157,7 @@ export default class ServiceImplementation extends PureComponent {
     const { targetCustList: { list } } = props;
     this.state = {
       // Fsp页面左侧菜单是否被折叠
-      isFoldFspLeftMenu: true,
+      isFoldFspLeftMenu: false,
       // 当前服务实施列表的数据
       currentTargetList: list || [],
     };

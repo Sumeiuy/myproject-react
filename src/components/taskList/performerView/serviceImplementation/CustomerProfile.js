@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-05 17:36:36
+ * @Last Modified time: 2018-06-06 15:09:17
  */
 
 import React from 'react';
@@ -266,7 +266,7 @@ export default class CustomerProfile extends React.PureComponent {
           <div className={styles.col}>
             <p className={styles.item}>
               <span
-                className={styles.clickable}
+                className={`${styles.clickable} ${styles.name}`}
                 onClick={this.handleCustNameClick}
               >
                 {custName}
