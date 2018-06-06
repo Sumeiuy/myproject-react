@@ -1,32 +1,25 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-03 21:19:27
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-04 15:56:26
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Draft from 'draft-js';
 import { autobind } from 'core-decorators';
-import { Form, Input, Select, Mention, Dropdown, Menu } from 'antd';
-import styles from './TemplateForm.less';
-// import logable from '../../../decorators/logable';
+import { Form, Input, Mention, Dropdown, Menu } from 'antd';
+
+import { MENTION_PREFIX, MentionTextStyles } from '../../../routes/investmentAdvice/config';
+import styles from './templateForm.less';
 
 const { EditorState, Modifier } = Draft;
 
 const FormItem = Form.Item;
 const create = Form.create;
-const Option = Select.Option;
 const { toContentState, toString } = Mention;
 const Nav = Mention.Nav;
-
-const PREFIX = ['$'];
-const mentionTextStyle = {
-  color: '#2d84cc',
-  backgroundColor: '#ebf3fb',
-  borderColor: '#ebf3fb',
-};
 
 @create()
 export default class TemplateForm extends PureComponent {
@@ -47,6 +40,8 @@ export default class TemplateForm extends PureComponent {
     checkMention: PropTypes.func.isRequired,
     // 校验form表单title
     checkTitle: PropTypes.func.isRequired,
+    // form 表单数据变化
+    onChange: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -58,8 +53,6 @@ export default class TemplateForm extends PureComponent {
     this.state = {
       // 初始化mention的suggestions
       suggestions: [],
-      // mention中的value值
-      mentionValue: '',
     };
     // 判断内容是否需要校验，第一次渲染会调用handleMentionChange方法
     this.needCheckContent = false;
@@ -100,20 +93,17 @@ export default class TemplateForm extends PureComponent {
     this.setState({ suggestions });
   }
 
-  // 内容提及框内容变化
   @autobind
   handleMentionChange(contentState) {
-    // dom方法开始
     // 第一次没必要校验
     if (!this.needCheckContent) {
       this.needCheckContent = true;
       return;
     }
+    // 将Mention中的contentState对象转化成字符串
     const content = toString(contentState);
     this.props.checkMention(content);
-    this.setState({
-      mentionValue: content,
-    });
+    this.props.onChange({ content });
   }
 
   // 内容提及框获取焦点
@@ -127,6 +117,7 @@ export default class TemplateForm extends PureComponent {
   handleTitleInputChange(e) {
     const { value } = e.target;
     this.props.checkTitle(value);
+    this.props.onChange({ title: value });
   }
 
   // 插入参数
@@ -168,7 +159,7 @@ export default class TemplateForm extends PureComponent {
     const { suggestions } = this.state;
 
     // 字典
-    const { dict: { missionType = [], investAdviceIndexPlaceHolders = [] } } = this.context;
+    const { dict: { investAdviceIndexPlaceHolders = [] } } = this.context;
 
     // 表单初始化数据
     const {
@@ -179,18 +170,11 @@ export default class TemplateForm extends PureComponent {
       titleStatusErrorMessage,
     } = this.props;
 
-    const { typeCode, title, content } = initialTemplateParams;
+    const { title, content } = initialTemplateParams;
 
-    // 模板类型选项默认值
-    const missionTypeDefaultValue = typeCode || missionType[0].key;
     const mentionContent = content || '';
 
-    // 模板类型选项列表
-    const templateOptionsList = missionType.map(item => (
-      <Option key={item.key} value={item.key}>{item.value}</Option>
-    ));
-
-    // 插入参数列表
+    // 插入参数列表，原始数据中本身就含有 $ 符号，所以需要删除，否则Mention组件会再加一个 $
     const slicedSuggestions = investAdviceIndexPlaceHolders.map(item => ({
       ...item,
       value: item.value.slice(1),
@@ -237,22 +221,19 @@ export default class TemplateForm extends PureComponent {
               <div className={styles.TemplateFormItem} id="templateFormMention">
                 <label htmlFor="dd" className={styles.templateForm_label}><i className={styles.required_i}>*</i>内容:</label>
                 <FormItem {...contentStatusErrorProps}>
-                  {getFieldDecorator('content', {
-                    initialValue: toContentState(mentionContent),
-                  })(
-                    <Mention
-                      ref={this.setMentionRef}
-                      mentionStyle={mentionTextStyle}
-                      style={{ width: '100%', height: 200 }}
-                      prefix={PREFIX}
-                      onSearchChange={this.handleSearchChange}
-                      suggestions={suggestions}
-                      onChange={this.handleMentionChange}
-                      onFocus={this.handleMentionFocus}
-                      placeholder="请输入服务内容"
-                      multiLines
-                    />,
-                  )}
+                  <Mention
+                    defaultValue={toContentState(mentionContent)}
+                    ref={this.setMentionRef}
+                    mentionStyle={MentionTextStyles}
+                    style={{ width: '100%', height: 230 }}
+                    prefix={MENTION_PREFIX}
+                    onSearchChange={this.handleSearchChange}
+                    suggestions={suggestions}
+                    onChange={this.handleMentionChange}
+                    onFocus={this.handleMentionFocus}
+                    placeholder="请输入服务内容"
+                    multiLines
+                  />
                 </FormItem>
               </div>
               <p className={styles.tipWapper}>
@@ -263,21 +244,6 @@ export default class TemplateForm extends PureComponent {
                   <span className={styles.tipInsert}>插入参数</span>
                 </Dropdown>
               </p>
-            </li>
-            <li>
-              <div className={styles.TemplateFormItem}>
-                <label htmlFor="dd" className={styles.templateForm_label}><i className={styles.required_i}>*</i>类型:</label>
-                <FormItem >
-                  {getFieldDecorator('type', {
-                    initialValue: missionTypeDefaultValue,
-                    rules: [{
-                      required: true, message: '请选择类型！',
-                    }],
-                  })(
-                    <Select>{templateOptionsList}</Select>,
-                  )}
-                </FormItem>
-              </div>
             </li>
           </ul>
         </Form>
