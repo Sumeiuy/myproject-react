@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-05 21:30:22
+ * @Last Modified time: 2018-06-06 10:07:44
  */
 
 import React, { PureComponent } from 'react';
@@ -532,7 +532,7 @@ export default class ServiceImplementation extends PureComponent {
     } = this.props;
     const { currentTargetList, isFoldFspLeftMenu } = this.state;
     const {
-      missionStatusCode, missionStatusName, missionFlowId,
+      missionStatusCode, missionStatusValue, missionFlowId,
       serviceTips, serviceWayName, serviceWayCode, serviceDate,
       serviceRecord, customerFeedback, feedbackDate, custId,
       serviceContent, // 涨乐财富通的服务内容
@@ -565,7 +565,7 @@ export default class ServiceImplementation extends PureComponent {
       serviceTips,
       serviceWayName,
       serviceWayCode,
-      serviceStatusName: missionStatusName,
+      serviceStatusName: missionStatusValue,
       serviceStatusCode: missionStatusCode,
       serviceDate,
       serviceRecord,
