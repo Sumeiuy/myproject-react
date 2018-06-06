@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-04 11:13:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-05 19:01:41
+ * @Last Modified time: 2018-06-06 16:04:32
  * @description 任务绑定投资建议模板与投资建议模板维护的Tab页面
  */
 
@@ -37,6 +37,10 @@ const mapStateToProps = state => ({
   taskBindTemplate: state.investmentAdvice.taskBindTemplate,
   // 删除任务绑定投资建议模板状态
   delTaskBindTemplateStatus: state.investmentAdvice.delTaskBindTemplateStatus,
+  // 可选投资模板列表
+  templateList: state.investmentAdvice.templateList,
+  // 绑定模板列表状态
+  bindTemplateStatus: state.investmentAdvice.bindTemplateStatus,
 });
 
 const mapDispatchToProps = {
@@ -50,6 +54,10 @@ const mapDispatchToProps = {
   getTaskBindList: effect('investmentAdvice/getTaskBindList'),
   // 删除任务绑定的投资建议模板
   delTaskBindTemplate: effect('investmentAdvice/delTaskBindTemplate'),
+  // 获取可新增的投资模板列表 api
+  queryTemplateList: effect('investmentAdvice/getOptionalTemplateList'),
+  // 为当前任务绑定模板列表
+  bindTemplateListForMission: effect('investmentAdvice/bindTemplateList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -77,6 +85,14 @@ export default class InvestAdviceTabsHome extends PureComponent {
     delTaskBindTemplate: PropTypes.func.isRequired,
     // 删除任务绑定投资建议模板状态
     delTaskBindTemplateStatus: PropTypes.string.isRequired,
+    // 获取投资模板列表
+    queryTemplateList: PropTypes.func.isRequired,
+    // 投资模板列表
+    templateList: PropTypes.array.isRequired,
+    // 为当前任务绑定模板列表
+    bindTemplateListForMission: PropTypes.func.isRequired,
+    // 绑定模板列表状态
+    bindTemplateStatus: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -135,6 +151,10 @@ export default class InvestAdviceTabsHome extends PureComponent {
       taskBindTemplate,
       delTaskBindTemplate,
       delTaskBindTemplateStatus,
+      queryTemplateList,
+      templateList,
+      bindTemplateListForMission,
+      bindTemplateStatus,
     } = this.props;
     return (
       <TaskBindTemplate
@@ -142,6 +162,10 @@ export default class InvestAdviceTabsHome extends PureComponent {
         taskBindTemplate={taskBindTemplate}
         delTaskBindTemplate={delTaskBindTemplate}
         delTaskBindTemplateStatus={delTaskBindTemplateStatus}
+        queryTemplateList={queryTemplateList}
+        templateList={templateList}
+        bindTemplateListForMission={bindTemplateListForMission}
+        bindTemplateStatus={bindTemplateStatus}
       />
     );
   }
