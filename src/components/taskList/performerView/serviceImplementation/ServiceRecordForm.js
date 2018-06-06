@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-29 22:38:45
+ * @Last Modified time: 2018-06-05 19:49:37
  * 服务记录表单
  */
 
@@ -15,15 +15,7 @@ import Button from '../../../common/Button';
 import styles from './serviceRecordForm.less';
 import logable, { logCommon } from '../../../../decorators/logable';
 
-const PHONE = 'phone';
-
 export default class ServiceRecordForm extends PureComponent {
-  static defaultProps = {
-    dict: {},
-    empInfo: {},
-    formData: {},
-    isEntranceFromPerformerView: false,
-  }
 
   @autobind
   setServiceRecordContentRef(input) {
@@ -40,11 +32,12 @@ export default class ServiceRecordForm extends PureComponent {
       currentMotServiceRecord,
       dict,
       serviceCustId,
+      isCurrentMissionPhoneCall,
     } = this.props;
-    const { autoGenerateRecordInfo: { serveContentDesc = '' }, caller = '' } = serviceRecordInfo;
+    const { autoGenerateRecordInfo: { serveContentDesc = '' } } = serviceRecordInfo;
     // 服务记录添加未成功时，后端返回failure
     if (
-      caller === PHONE &&
+      isCurrentMissionPhoneCall &&
       !_.isEmpty(currentMotServiceRecord.id) &&
       currentMotServiceRecord.id !== 'failure'
     ) {
@@ -57,7 +50,7 @@ export default class ServiceRecordForm extends PureComponent {
     // 添加服务记录
     addServeRecord({
       postBody: data,
-      callbackOfPhone: this.handleCancel,
+      phoneCallback: this.handleCancel,
     });
 
     // log日志 --- 添加服务记录
@@ -78,9 +71,9 @@ export default class ServiceRecordForm extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
-    const { serviceRecordInfo: { caller }, resetServiceRecordInfo } = this.props;
+    const { isCurrentMissionPhoneCall, resetServiceRecordInfo } = this.props;
     // 打电话调起的服务记录时，取消按钮不可用
-    if (caller !== PHONE) {
+    if (!isCurrentMissionPhoneCall) {
       if (this.serviceRecordContentRef) {
         this.serviceRecordContentRef.resetField();
       }
@@ -112,7 +105,7 @@ export default class ServiceRecordForm extends PureComponent {
       testWallCollision,
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
-      serviceRecordInfo: { caller },
+      isCurrentMissionPhoneCall,
     } = this.props;
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
@@ -121,11 +114,11 @@ export default class ServiceRecordForm extends PureComponent {
     if (!isReadOnly) {
       footNode = (
         <div className={styles.operationSection}>
-          <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
           {
-            caller !== PHONE
+            !isCurrentMissionPhoneCall
             && <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
           }
+          <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
         </div>
       );
     }
@@ -156,6 +149,7 @@ export default class ServiceRecordForm extends PureComponent {
               serviceRecordInfo={serviceRecordInfo}
               testWallCollision={testWallCollision}
               testWallCollisionStatus={testWallCollisionStatus}
+              isPhoneCall={isCurrentMissionPhoneCall}
             />
             {footNode}
           </div>
@@ -196,8 +190,14 @@ ServiceRecordForm.propTypes = {
   testWallCollision: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: PropTypes.bool.isRequired,
+  isCurrentMissionPhoneCall: PropTypes.bool,
 };
 
 ServiceRecordForm.defaultProps = {
+  dict: {},
+  empInfo: {},
+  formData: {},
+  isEntranceFromPerformerView: false,
   serviceCustId: '',
+  isCurrentMissionPhoneCall: false,
 };
