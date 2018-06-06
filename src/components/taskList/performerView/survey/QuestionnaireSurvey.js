@@ -4,7 +4,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-05-22 12:26:05
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-06 14:06:08
+ * @Last Modified time: 2018-06-06 14:10:31
  * 只是将原先的问卷调查逻辑单独提取成组件
  */
 
@@ -61,14 +61,6 @@ export default class QuestionnaireSurvey extends PureComponent {
     isSubmitSurveySucceed: false,
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...defaultSurveyData,
-      currentId: props.currentId,
-    };
-  }
-
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.currentId !== prevState.currentId) {
       return {
@@ -78,6 +70,14 @@ export default class QuestionnaireSurvey extends PureComponent {
       };
     }
     return null;
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...defaultSurveyData,
+      currentId: props.currentId,
+    };
   }
 
   componentDidMount() {
