@@ -32,6 +32,7 @@ import {
   SIGHTINGTELESCOPE_ENTRY,
   returnTaskEntrySource,
   labelSource,
+  sightingLabelSource,
 } from '../../../config/createTaskEntry';
 import styles from './taskFormFlowStep.less';
 import logable, { logCommon } from '../../../decorators/logable';
@@ -192,8 +193,7 @@ export default class TaskFormFlowStep extends PureComponent {
         enterType,
         groupId,
       };
-    } else if (source === SIGHTINGTELESCOPE_ENTRY
-      || source === PRODUCT_POTENTIAL_TARGET_CUST_ENTRY) {
+    } else if (_.includes(sightingLabelSource, source)) {
       // 从瞄准镜过来的，需要加入queryLabelReq参数
       req = { searchReq: custCondition, custIdList, queryLabelReq };
     } else {

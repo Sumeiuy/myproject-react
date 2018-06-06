@@ -79,3 +79,9 @@ export const returnTaskEntrySource = [
 export const labelSource = [
   TAG_ENTRY, ASSOCIATION_ENTRY, SIGHTINGTELESCOPE_ENTRY,
 ];
+
+// 代表瞄准镜标签发起任务入口集合
+export const sightingLabelSource = [
+  SIGHTINGTELESCOPE_ENTRY,
+  PRODUCT_POTENTIAL_TARGET_CUST_ENTRY,
+];

@@ -268,7 +268,6 @@ export default class ServiceResult extends PureComponent {
           // 列的总宽度加上固定列的宽度
           scrollX={columnWidthTotal}
           emptyListDataNeedEmptyRow
-        // onPageChange={this.handlePageChange}
         />
       </div>
     );
