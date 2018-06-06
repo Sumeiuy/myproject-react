@@ -41,6 +41,8 @@ export default class Filter extends PureComponent {
       sightingTelescopeFilters,
       onFilterChange,
     } = this.props;
+    // ENTERLIST3
+    // 是否需要展示客户列表瞄准镜筛选条件source集合
     if (!_.includes(ENTERLIST3, source) ||
       _.isEmpty(sightingTelescopeFilters) ||
       _.isEmpty(sightingTelescopeFilters.filterList)) {
@@ -120,6 +122,9 @@ export default class Filter extends PureComponent {
               onChange={onFilterChange}
             /> : null
         }
+        {/**
+         * ENTERLIST4-是否需要展示可开通业务source集合
+         */}
         {
           _.includes(ENTERLIST4, source) ?
             <MultiFilter

@@ -91,7 +91,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 点击新建分组或者发起任务按钮
   @autobind
-  handleClick({ url, title, id, shouldStay, editPane, labelDesc, missionDesc }) {
+  switchToRoute({ url, title, id, shouldStay, editPane, labelDesc, missionDesc }) {
     const {
       page,
       condition,
@@ -161,7 +161,7 @@ export default class BottomFixedBox extends PureComponent {
       });
       return;
     }
-    this.handleClick({ url, title, id, shouldStay, editPane });
+    this.switchToRoute({ url, title, id, shouldStay, editPane });
   }
 
   // 跳转到创建任务页面
@@ -191,7 +191,7 @@ export default class BottomFixedBox extends PureComponent {
     // 发起新的任务之前，先清除数据
     this.props.clearCreateTaskData('custList');
 
-    this.handleClick({
+    this.switchToRoute({
       url,
       title,
       id,
