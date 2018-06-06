@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-01 18:02:29
+ * @Last Modified time: 2018-06-05 18:23:13
  */
 
 import React, { PureComponent } from 'react';
@@ -29,7 +29,6 @@ import {
   errorFeedback,
   serveStatusRadioGroupMap,
   getServeWayByCodeOrName,
-  PHONE,
 } from './utils';
 
 import styles from './index.less';
@@ -349,7 +348,7 @@ export default class ServiceRecordContent extends PureComponent {
   // 针对选择的服务方式，非涨乐财富通下的检测
   @autobind
   checkNotZLFins() {
-    const { isEntranceFromPerformerView, serviceRecordInfo: { caller } } = this.props;
+    const { isEntranceFromPerformerView, isPhoneCall } = this.props;
     const { serviceStatus, serviceRecord } = this.state;
     let isShowServeStatusError = false;
     let isShowServiceContentError = false;
@@ -357,7 +356,7 @@ export default class ServiceRecordContent extends PureComponent {
     isShowServiceContentError = !serviceRecord || serviceRecord.length > serviceContentMaxLength;
     this.setState({ isShowServiceContentError });
     // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容
-    if (caller === PHONE) {
+    if (isPhoneCall) {
       return !isShowServiceContentError;
     }
     if (isEntranceFromPerformerView) {
@@ -735,6 +734,7 @@ export default class ServiceRecordContent extends PureComponent {
       testWallCollision,
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
+      isPhoneCall,
     } = this.props;
     const {
       isReject,
@@ -791,7 +791,7 @@ export default class ServiceRecordContent extends PureComponent {
       desc: ZLServiceContentDesc,
     };
 
-    const { autoGenerateRecordInfo = {}, caller } = serviceRecordInfo;
+    const { autoGenerateRecordInfo = {} } = serviceRecordInfo;
 
     return (
       <div
@@ -808,6 +808,7 @@ export default class ServiceRecordContent extends PureComponent {
             options={serveWay}
             empInfo={empInfo}
             serviceRecordInfo={serviceRecordInfo}
+            isPhoneCall={isPhoneCall}
           />
           {/* 执行者试图下显示 服务状态；非执行者视图下显示服务类型 */}
           {
@@ -816,7 +817,7 @@ export default class ServiceRecordContent extends PureComponent {
                 <div className={styles.title}>服务状态:</div>
                 {/* 打电话调的服务记录切服务状态码为30时，显示‘完成’ */}
                 {
-                  caller === PHONE && autoGenerateRecordInfo.flowStatus === '30' ?
+                  isPhoneCall && autoGenerateRecordInfo.flowStatus === '30' ?
                     <div className={styles.content}>完成</div> :
                     <FormItem {...serviceStatusErrorProps}>
                       <div className={styles.content}>
@@ -853,7 +854,7 @@ export default class ServiceRecordContent extends PureComponent {
             <div className={styles.title}>服务时间:</div>
             <div className={styles.content} ref={this.setServeTimeRef}>
               {
-                serviceRecordInfo.caller === PHONE ?
+                isPhoneCall ?
                   autoGenerateRecordInfo.serveTime :
                   <DatePicker
                     style={{ width: 142 }}
@@ -887,6 +888,7 @@ export default class ServiceRecordContent extends PureComponent {
                 value={serviceRecord}
                 onChange={this.handleServiceRecordInputChange}
                 serviceRecordInfo={serviceRecordInfo}
+                isPhoneCall={isPhoneCall}
               />
             )
         }
@@ -996,6 +998,8 @@ ServiceRecordContent.propTypes = {
   testWallCollision: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: PropTypes.bool.isRequired,
+  // 是否由打电话调起的添加服务记录
+  isPhoneCall: PropTypes.bool,
 };
 
 ServiceRecordContent.defaultProps = {
@@ -1013,4 +1017,5 @@ ServiceRecordContent.defaultProps = {
   eventId: '',
   serviceTypeCode: '',
   flowStatusCode: '',
+  isPhoneCall: false,
 };

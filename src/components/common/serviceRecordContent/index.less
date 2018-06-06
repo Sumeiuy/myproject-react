@@ -376,6 +376,11 @@
 }
 /* 执行者视图优化后样式变动 */
 .performerServiceRecord {
+  padding-right: 22px;
+  .readOnlyText {
+    line-height: 28px;
+    flex: 1;
+  }
   .gridWrapper {
     padding-bottom: 0;
   }
@@ -398,6 +403,7 @@
     }
     .content {
       height: 28px;
+      line-height: 28px;
       flex: 1;
       :global {
         .ant-input {
@@ -437,6 +443,8 @@
     .title {
       text-align: right;
       width: 82px;
+      height: 28px;
+      line-height: 28px;
       margin-left: 16px;
       padding-right: 10px;
     }
@@ -456,7 +464,12 @@
   }
   .uploadSection {
     padding: 7px 0;
-    margin-top: 0;
+    margin: 0 0 0 22px;
+    :global {
+      .uploadBox {
+        padding: 0;
+      }
+    }
   }
 }
 .yuyintishi {
