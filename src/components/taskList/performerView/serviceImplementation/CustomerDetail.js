@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-01 14:11:59
+ * @Last Modified time: 2018-06-05 21:30:51
  */
 
 import React, { PureComponent } from 'react';
@@ -43,11 +43,13 @@ export default class CustomerDetail extends PureComponent {
     monthlyProfits: PropTypes.object.isRequired,
     isCustIncomeRequested: PropTypes.bool,
     currentId: PropTypes.string,
+    leftFoldState: PropTypes.string,
   }
 
   static defaultProps = {
     isCustIncomeRequested: false,
     currentId: '',
+    leftFoldState: '',
   }
 
   static contextTypes = {
@@ -163,7 +165,7 @@ export default class CustomerDetail extends PureComponent {
   render() {
     const {
       targetCustDetail = {}, getCustIncome, monthlyProfits,
-      isCustIncomeRequested, currentId,
+      isCustIncomeRequested, currentId, leftFoldState,
     } = this.props;
     const {
       assets, openAssets, availablBalance, openedBusiness, openBusiness,
@@ -192,7 +194,7 @@ export default class CustomerDetail extends PureComponent {
       <div className={styles.customerDetail}>
         <div className={styles.container}>
           <TextCollapse
-            key={`${custId}${currentId}${missionFlowId}`}
+            key={`${custId}${currentId}${missionFlowId}${leftFoldState}`}
             minHeight="58px"
             buttonStyle={buttonStyle}
           >
