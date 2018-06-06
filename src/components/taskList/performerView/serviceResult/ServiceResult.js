@@ -93,9 +93,11 @@ export default class ServiceResult extends PureComponent {
 
   @autobind
   updateServiceResult() {
-    const { currentId,
+    const {
+      currentId,
       queryExecutorFeedBack,
-      queryExecutorFlowStatus } = this.props;
+      queryExecutorFlowStatus,
+    } = this.props;
     const param = {
       missionId: currentId,
     };
@@ -154,7 +156,7 @@ export default class ServiceResult extends PureComponent {
     const { detailTitle } = this.state;
     return (
       <div className={styles.custDetailHeader}>
-        { detailTitle }
+        {detailTitle}
       </div>
     );
   }
@@ -266,7 +268,7 @@ export default class ServiceResult extends PureComponent {
           // 列的总宽度加上固定列的宽度
           scrollX={columnWidthTotal}
           emptyListDataNeedEmptyRow
-         // onPageChange={this.handlePageChange}
+        // onPageChange={this.handlePageChange}
         />
       </div>
     );
