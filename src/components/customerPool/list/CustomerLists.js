@@ -32,7 +32,8 @@ const allSaleDepartment = { id: ALL_DEPARTMENT_ID, name: '所有' };
 
 /*
  * 格式化钱款数据和单位
- * 入参： 190000000 转化成 { value: '1.90', unit: '亿元' }
+ * 入参： num  190000000 转化成 { value: '1.90', unit: '亿元' }
+ *       currency  币种：元、美元、港元
  */
 const formatAsset = (num, currency = '元') => {
   // 数字常量
