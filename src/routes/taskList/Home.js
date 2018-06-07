@@ -80,7 +80,7 @@ export default class PerformerView extends PureComponent {
     empInfo: EMPTY_OBJECT,
     custFeedback: EMPTY_LIST,
     answersList: EMPTY_OBJECT,
-    saveAnswersSucce: false,
+    isSubmitSurveySucceed: false,
     missionImplementationDetail: EMPTY_OBJECT,
     custListForServiceImplementation: EMPTY_LIST,
   };
@@ -476,7 +476,7 @@ export default class PerformerView extends PureComponent {
       answersList,
       getTempQuesAndAnswer,
       saveAnswersByType,
-      saveAnswersSucce,
+      isSubmitSurveySucceed,
       attachmentList,
       getTaskDetailBasicInfo,
       modifyLocalTaskList,
@@ -548,7 +548,7 @@ export default class PerformerView extends PureComponent {
         getTempQuesAndAnswer={getTempQuesAndAnswer}
         answersList={answersList}
         saveAnswersByType={saveAnswersByType}
-        saveAnswersSucce={saveAnswersSucce}
+        isSubmitSurveySucceed={isSubmitSurveySucceed}
         attachmentList={attachmentList}
         modifyLocalTaskList={modifyLocalTaskList}
         getTaskDetailBasicInfo={getTaskDetailBasicInfo}
