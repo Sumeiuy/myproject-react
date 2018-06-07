@@ -205,7 +205,12 @@ export default class CreateTaskForm extends PureComponent {
         defaultInitialValue = 4; // 有效期4天
         defaultMissionDesc = this.getDefaultMissionDescFromProduct(query);
         break;
-      // 产品潜在目标客户跳转、精选组合页面的订购组合、证券产品、首页的联想词、首页的模糊搜索、首页的热词
+      // 产品潜在目标客户跳转
+      // 精选组合页面的订购组合
+      // 证券产品
+      // 首页的联想词
+      // 首页的模糊搜索
+      // 首页的热词
       case PRODUCT_POTENTIAL_TARGET_CUST_ENTRY:
       case SECURITIES_PRODUCTS_ENTRY:
       case ORDER_COMBINATION_ENTRY:

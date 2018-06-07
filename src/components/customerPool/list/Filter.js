@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
-import { FULL_ENTERLIST, ENTERLIST3, ENTERLIST4 } from '../../../routes/customerPool/config';
+import { FULL_ENTERLIST, ENTERLIST_PERMISSION_SIGHTINGLABEL, ENTERLIST_PERMISSION_OPENED_BUSINESS } from '../../../routes/customerPool/config';
 import { SingleFilter, MultiFilter } from '../../common/filter';
 
 
@@ -41,9 +41,9 @@ export default class Filter extends PureComponent {
       sightingTelescopeFilters,
       onFilterChange,
     } = this.props;
-    // ENTERLIST3
+    // ENTERLIST_PERMISSION_SIGHTINGLABEL
     // 是否需要展示客户列表瞄准镜筛选条件source集合
-    if (!_.includes(ENTERLIST3, source) ||
+    if (!_.includes(ENTERLIST_PERMISSION_SIGHTINGLABEL, source) ||
       _.isEmpty(sightingTelescopeFilters) ||
       _.isEmpty(sightingTelescopeFilters.filterList)) {
       return null;
@@ -123,10 +123,10 @@ export default class Filter extends PureComponent {
             /> : null
         }
         {/**
-         * ENTERLIST4-是否需要展示可开通业务source集合
+         * ENTERLIST_PERMISSION_OPENED_BUSINESS-是否需要展示可开通业务source集合
          */}
         {
-          _.includes(ENTERLIST4, source) ?
+          _.includes(ENTERLIST_PERMISSION_OPENED_BUSINESS, source) ?
             <MultiFilter
               value={currentValue.Unrights || ''}
               filterLabel="可开通业务"

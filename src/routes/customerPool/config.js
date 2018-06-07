@@ -45,18 +45,18 @@ const FULL_ENTERLIST = ['search', 'tag', 'sightingTelescope', 'business', 'assoc
 
 // 任务管理岗权限作用的首页入口列表
 // 新增一个产品潜在目标客户，用的HTSC 任务管理岗职责
-const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'external',
+const ENTERLIST_PERMISSION_TASK_MANAGE = ['search', 'tag', 'sightingTelescope', 'association', 'external',
   'orderCombination', 'securitiesProducts', 'productPotentialTargetCust'];
 
 // 首页指标查询权限作用的首页入口列表
-const ENTERLIST2 = ['custIndicator', 'numOfCustOpened'];
+const ENTERLIST_PERMISSION_INDEX_QUERY = ['custIndicator', 'numOfCustOpened'];
 
 // 是否需要展示客户列表瞄准镜筛选条件source集合
 // 是否需要请求瞄准镜filterList的source集合
-const ENTERLIST3 = ['sightingTelescope', 'productPotentialTargetCust'];
+const ENTERLIST_PERMISSION_SIGHTINGLABEL = ['sightingTelescope', 'productPotentialTargetCust'];
 
 // 是否需要展示可开通业务source集合
-const ENTERLIST4 = ['numOfCustOpened', 'business', 'sightingTelescope'];
+const ENTERLIST_PERMISSION_OPENED_BUSINESS = ['numOfCustOpened', 'business', 'sightingTelescope'];
 
 export default {
   NOPERMIT,
@@ -65,10 +65,10 @@ export default {
   ORG,
   MAIN_MAGEGER_ID,
   ENTER_TYPE,
-  ENTERLIST1,
-  ENTERLIST2,
   ALL_DEPARTMENT_ID,
-  ENTERLIST3,
   FULL_ENTERLIST,
-  ENTERLIST4,
+  ENTERLIST_PERMISSION_TASK_MANAGE,
+  ENTERLIST_PERMISSION_INDEX_QUERY,
+  ENTERLIST_PERMISSION_SIGHTINGLABEL,
+  ENTERLIST_PERMISSION_OPENED_BUSINESS,
 };

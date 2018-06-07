@@ -25,9 +25,9 @@ import {
   ENTER_TYPE,
   ALL_DEPARTMENT_ID,
   MAIN_MAGEGER_ID,
-  ENTERLIST1,
-  ENTERLIST2,
-  ENTERLIST3,
+  ENTERLIST_PERMISSION_TASK_MANAGE,
+  ENTERLIST_PERMISSION_INDEX_QUERY,
+  ENTERLIST_PERMISSION_SIGHTINGLABEL,
 } from './config';
 
 import styles from './customerlist.less';
@@ -287,7 +287,7 @@ export default class CustomerList extends PureComponent {
     } = this.props;
     // 请求客户列表
     this.getCustomerList(this.props);
-    if (_.includes(ENTERLIST3, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_SIGHTINGLABEL, query.source)) {
       getFiltersOfSightingTelescope({
         prodId: decodeURIComponent(query.labelMapping),
       });
@@ -458,7 +458,7 @@ export default class CustomerList extends PureComponent {
       return query.departmentOrgId !== ALL_DEPARTMENT_ID ? query.departmentOrgId : '';
     }
     // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
-    if (_.includes(ENTERLIST1, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, query.source)) {
       return this.hasTkMampPermission ? this.orgId : '';
     }
     // 从首页潜在业务客户过来
@@ -470,7 +470,7 @@ export default class CustomerList extends PureComponent {
       }
     }
     // 首页新增客户和业务开通进来的
-    if (_.includes(ENTERLIST2, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, query.source)) {
       if (query.orgId) {
         return query.orgId !== MAIN_MAGEGER_ID ? query.orgId : '';
       }
@@ -492,7 +492,7 @@ export default class CustomerList extends PureComponent {
       return query.ptyMngId;
     }
     // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
-    if (_.includes(ENTERLIST1, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, query.source)) {
       return this.hasTkMampPermission ? '' : this.empId;
     }
     // 从首页潜在业务客户过来
@@ -503,7 +503,7 @@ export default class CustomerList extends PureComponent {
       }
     }
     // 首页新增客户和业务开通进来的
-    if (_.includes(ENTERLIST2, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, query.source)) {
       if (!this.hasIndexViewPermission
         || (query.orgId && query.orgId === MAIN_MAGEGER_ID)) {
         return this.empId;

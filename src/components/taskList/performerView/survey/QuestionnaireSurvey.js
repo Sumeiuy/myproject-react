@@ -4,7 +4,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-05-22 12:26:05
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-06 14:10:31
+ * @Last Modified time: 2018-06-07 10:41:27
  * 只是将原先的问卷调查逻辑单独提取成组件
  */
 
@@ -123,13 +123,13 @@ export default class QuestionnaireSurvey extends PureComponent {
    */
   @autobind
   @logable({ type: 'Click', payload: { name: '问卷调查radios事件' } })
-  handleRadioChange(event) {
+  handleRadioChange({ target }) {
     const { radioData } = this.state;
     const initRadio = radioData;
     const checkedData = [{
-      quesId: event.target.dataQuesId,
-      answerId: event.target.value,
-      answerText: event.target.dataVale,
+      quesId: target.dataQuesId,
+      answerId: target.value,
+      answerText: target.dataVale,
     }];
     this.handleRepeatData(initRadio, checkedData, 'radioData');
   }
@@ -354,14 +354,15 @@ export default class QuestionnaireSurvey extends PureComponent {
                 defaultValue={defaultData}
               >
                 {
-                  item.optionInfoList.map(childItem => <Checkbox
-                    value={`${childItem.optionValue}+-+${childItem.optionId}+-+${quesId}`}
-                    className={styles.radioOption}
-                    key={childItem.optionId}
-                    disabled={isDisabled}
-                  >
-                    {childItem.optionValue}
-                  </Checkbox>,
+                  item.optionInfoList.map(childItem =>
+                    <Checkbox
+                      value={`${childItem.optionValue}+-+${childItem.optionId}+-+${quesId}`}
+                      className={styles.radioOption}
+                      key={childItem.optionId}
+                      disabled={isDisabled}
+                    >
+                      {childItem.optionValue}
+                    </Checkbox>,
                   )
                 }
               </CheckboxGroup>
@@ -375,7 +376,10 @@ export default class QuestionnaireSurvey extends PureComponent {
           {getFieldDecorator(String(quesId), {
             initialValue: defaultData,
             rules: [{
-              required: true, max: 250, min: 10, message: '问题答案不能小于10个字符，最多250个字符',
+              required: true,
+              max: 250,
+              min: 10,
+              message: '问题答案不能小于10个字符，最多250个字符',
             }],
           })(
             <div className={styles.radioContent}>
