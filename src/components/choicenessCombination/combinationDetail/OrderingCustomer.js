@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情-订购客户
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-16 09:53:19
+ * @Last Modified time: 2018-06-05 15:49:11
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -16,17 +16,24 @@ import styles from './orderingCustomer.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const titleList = config.titleList.orderCust;
-const { overlayStyle } = config;
+const { overlayStyle, sourceType } = config;
 export default class HistoryReport extends PureComponent {
   static propTypes = {
+    // 当前组合code
+    combinationCode: PropTypes.string,
     // 订购客户数据
     data: PropTypes.object.isRequired,
     // 翻页
     pageChange: PropTypes.func.isRequired,
+    // 组合数据，用于跳转到客户列表页面
+    combinationData: PropTypes.object,
+    // 打开持仓查客户页面
+    openCustomerListPage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-
+    combinationCode: '',
+    combinationData: EMPTY_OBJECT,
   }
 
   @autobind
@@ -92,6 +99,9 @@ export default class HistoryReport extends PureComponent {
         list = EMPTY_LIST,
         page = EMPTY_OBJECT,
       },
+      openCustomerListPage,
+      combinationData,
+      combinationCode,
     } = this.props;
     const PaginationOption = {
       current: page.pageNum || 1,
@@ -100,10 +110,17 @@ export default class HistoryReport extends PureComponent {
       showTotal: total => `共 ${total} 条`,
     };
     const newTitleList = this.getNewTitleList(titleList);
+    const openPayload = {
+      name: combinationData.composeName,
+      code: combinationData.productCode,
+      source: sourceType.combination,
+      combinationCode,
+    };
     return (
       <div className={styles.orderingCustomerBox}>
         <div className={`${styles.headBox} clearfix`}>
           <h3>订购客户</h3>
+          <a onClick={() => openCustomerListPage(openPayload)}>进入客户列表</a>
         </div>
         <Table
           columns={newTitleList}

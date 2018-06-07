@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import { isSightingScope } from '../helper';
 import { openFspTab } from '../../../utils';
 import HoldingProductDetail from './HoldingProductDetail';
+import HoldingCombinationDetail from './HoldingCombinationDetail';
 import styles from './matchArea.less';
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
@@ -50,6 +51,9 @@ export default class MatchArea extends PureComponent {
     holdingProducts: PropTypes.object.isRequired,
     queryHoldingProductReqState: PropTypes.bool.isRequired,
     formatAsset: PropTypes.func.isRequired,
+    // 组合产品订购客户查询持仓证券重合度
+    queryHoldingSecurityRepetition: PropTypes.func.isRequired,
+    holdingSecurityData: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -523,18 +527,41 @@ export default class MatchArea extends PureComponent {
   @autobind
   renderOrderCombination() {
     const {
-      listItem: { jxgrpProducts },
-      location: { query: { source, labelMapping } },
+      listItem: { jxgrpProducts, isPrivateCustomer, empId, custId },
+      location: { query: { source, labelMapping, combinationCode } },
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      queryHoldingSecurityRepetition,
+      holdingSecurityData,
     } = this.props;
     if (source === 'orderCombination' && !_.isEmpty(jxgrpProducts)) {
+      const { empInfo: { empInfo = {} } } = this.context;
+      // 是否显示’持仓详情‘，默认不显示
+      let isShowDetailBtn = false;
+      // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
+      if (hasNPCTIQPermission && !isPrivateCustomer) {
+        isShowDetailBtn = true;
+      }
+      // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
+      // 主服务经理 可以看名下所有客户的持仓信息
+      if (hasPCTIQPermission || empInfo.rowId === empId) {
+        isShowDetailBtn = true;
+      }
       const id = decodeURIComponent(labelMapping);
       const currentItem = _.find(jxgrpProducts, item => item.id === id);
+      const props = {
+        combinationCode,
+        custId,
+        queryHoldingSecurityRepetition,
+        data: holdingSecurityData,
+      };
       if (!_.isEmpty(currentItem)) {
         return (
           <li>
             <span>
               <i className="label">订购组合：</i>
               <i><em className="marked">{currentItem.name}</em>/{currentItem.code}</i>
+              {isShowDetailBtn && <HoldingCombinationDetail {...props} />}
             </span>
           </li>
         );

@@ -63,6 +63,7 @@ const effects = {
   addServeRecord: 'customerPool/addCommonServeRecord',
   queryHoldingProduct: 'customerPool/queryHoldingProduct',
   addCallRecord: 'customerPool/addCallRecord',
+  queryHoldingSecurityRepetition: 'customerPool/queryHoldingSecurityRepetition',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -112,6 +113,8 @@ const mapStateToProps = state => ({
   holdingProducts: state.customerPool.holdingProducts,
   // 添加服务记录成功后返回的服务记录的id
   currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
+  // 组合产品订购客户重复的持仓证券
+  holdingSecurityData: state.customerPool.holdingSecurityData,
 });
 
 const mapDispatchToProps = {
@@ -155,6 +158,8 @@ const mapDispatchToProps = {
   queryHoldingProduct: fetchDataFunction(false, effects.queryHoldingProduct),
   // 添加通话记录关联服务记录
   addCallRecord: fetchDataFunction(true, effects.addCallRecord),
+  // 组合产品订购客户查询持仓证券重合度
+  queryHoldingSecurityRepetition: fetchDataFunction(false, effects.queryHoldingSecurityRepetition),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -217,6 +222,9 @@ export default class CustomerList extends PureComponent {
     holdingProducts: PropTypes.object.isRequired,
     addCallRecord: PropTypes.func.isRequired,
     currentCommonServiceRecord: PropTypes.object.isRequired,
+    // 组合产品订购客户查询持仓证券重合度
+    queryHoldingSecurityRepetition: PropTypes.func.isRequired,
+    holdingSecurityData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -681,6 +689,8 @@ export default class CustomerList extends PureComponent {
       holdingProducts,
       addCallRecord,
       currentCommonServiceRecord,
+      queryHoldingSecurityRepetition,
+      holdingSecurityData,
     } = this.props;
     const {
       sortDirection,
@@ -797,6 +807,8 @@ export default class CustomerList extends PureComponent {
           dataForNextPage={this.dataForNextPage}
           addCallRecord={addCallRecord}
           currentCommonServiceRecord={currentCommonServiceRecord}
+          queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
+          holdingSecurityData={holdingSecurityData}
         />
       </div>
     );
