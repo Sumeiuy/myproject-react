@@ -76,6 +76,8 @@ const mapStateToProps = () => state => ({
   custFeedBack: state.performerView.custFeedBack,
   // 服务结果明细
   custDetail: state.performerView.custDetail,
+  // // 服务经理维度客户明细
+  // custDetailResultByScope: state.managerView.custDetailResultByScope,
 });
 
 export default mapStateToProps;

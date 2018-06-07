@@ -26,6 +26,7 @@ import {
   TAG_ENTRY,
   CUSTINDICATOR_ENTRY,
   NUMOFCUSTOPENED_ENTRY,
+  TASK_CUST_SCOPE_ENTRY,
 } from '../../../config/createTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
@@ -241,6 +242,7 @@ export default class CreateTaskForm extends PureComponent {
         break;
       case PROGRESS_ENTRY:
       case PIE_ENTRY:
+      case TASK_CUST_SCOPE_ENTRY:
         defaultMissionType = missionType || '请选择';
         defaultExecutionType = '请选择';
         break;

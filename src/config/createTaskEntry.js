@@ -48,6 +48,9 @@ export const NUMOFCUSTOPENED_ENTRY = 'numOfCustOpened';
 // sightingTelescope从首页搜索，搜索一个瞄准镜标签或者从热点标签，这个标签是瞄准镜的标签
 export const SIGHTINGTELESCOPE_ENTRY = 'sightingTelescope';
 
+// 管理者视图下服务经理维度下钻客户，发起任务入口
+export const TASK_CUST_SCOPE_ENTRY = 'taskCustScopeEntry';
+
 // 所有可以发起任务的入口集合
 export const createTaskEntrySource = [
   RETURN_TASK_FROM_TODOLIST,
@@ -66,6 +69,7 @@ export const createTaskEntrySource = [
   CUSTINDICATOR_ENTRY,
   NUMOFCUSTOPENED_ENTRY,
   SIGHTINGTELESCOPE_ENTRY,
+  TASK_CUST_SCOPE_ENTRY,
 ];
 
 // 驳回修改任务入口集合，包含从待办任务发起驳回修改和从任务管理列表发起驳回修改

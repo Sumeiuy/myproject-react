@@ -345,6 +345,7 @@ export default class PerformerView extends PureComponent {
       replace,
       push,
       previewCustDetail,
+      previewCustDetailByScope,
       custDetailResult,
       countFlowFeedBack,
       custFeedback,
@@ -361,6 +362,7 @@ export default class PerformerView extends PureComponent {
       queryDistinctCustomerCount,
       distinctCustomerCount,
       custManagerScopeData,
+      queryDistinctCustListDetailOfMission,
     } = this.props;
 
     const {
@@ -375,6 +377,7 @@ export default class PerformerView extends PureComponent {
       replace,
       push,
       previewCustDetail,
+      previewCustDetailByScope,
       custDetailResult,
       onGetCustFeedback: countFlowFeedBack,
       custFeedback,
@@ -397,6 +400,7 @@ export default class PerformerView extends PureComponent {
       createMotReport,
       queryMOTServeAndFeedBackExcel,
       queryDistinctCustomerCount,
+      queryDistinctCustListDetailOfMission,
       distinctCustomerCount,
       getCustManagerScope: this.getCustManagerScope,
       custManagerScopeData,

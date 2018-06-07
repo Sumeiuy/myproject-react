@@ -60,5 +60,9 @@ export default function performerView(api) {
     queryExecutorFeedBack: query => api.post('/groovynoauth/fsp/campaign/mot/queryExecutorFeedBack', query),
     // 查询客户明细
     queryExecutorDetail: query => api.post('/groovynoauth/fsp/campaign/mot/queryExecutorDetail', query),
+    // 服务经理维度查询客户明细
+    previewCustDetailByScope: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustListDetailOfMission', query),
+    // 获取服务经理维度去重后的客户数量
+    queryDistinctCustListDetailOfMission: query => api.post('/groovynoauth/fsp/campaign/mot/queryDistinctCustListDetailOfMission', query),
   };
 }

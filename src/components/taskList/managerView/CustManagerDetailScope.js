@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-05 18:45:02
+ * @Last Modified time: 2018-06-07 17:46:22
  * 服务经理维度任务统计
  */
 
@@ -41,6 +41,18 @@ const INITIAL_PAGE_NUM = 1;
 
 const Item = Menu.Item;
 
+// 是否服务
+const IS_SERVED_STATUS = 'IS_SERVED';
+
+// 是否完成
+const IS_COMPLETED_STATUS = 'IS_DONE';
+
+// 是否达标
+const IS_UP_TO_STANDARD_STATUS = 'IS_UP_TO_STANDARD';
+
+// 已，结束，标记
+const Y_FLAG = 'Y';
+
 export default class CustManagerDetailScope extends PureComponent {
 
   static propTypes = {
@@ -58,6 +70,8 @@ export default class CustManagerDetailScope extends PureComponent {
     custRange: PropTypes.array,
     // 机构orgId
     orgId: PropTypes.string,
+    // 客户总数、已服务客户、已完成客户、结果达标客户下钻
+    onPreviewCustDetail: PropTypes.func,
   }
 
   static defaultProps = {
@@ -69,6 +83,7 @@ export default class CustManagerDetailScope extends PureComponent {
     currentId: '',
     custRange: EMPTY_LIST,
     orgId: '',
+    onPreviewCustDetail: NOOP,
   }
 
   constructor(props) {
@@ -183,6 +198,73 @@ export default class CustManagerDetailScope extends PureComponent {
   }
 
   /**
+   * 客户总数、已服务客户、已完成客户、结果达标客户下钻
+   * @param {*object} item 每一行数据
+   */
+  @autobind
+  handleCustDrill(item = EMPTY_OBJECT) {
+    const { onPreviewCustDetail } = this.props;
+    const {
+      login,
+      empCompanyCode,
+      empDepartmentCode,
+      isEntryFromCustTotal,
+      isEntryFromProgressDetail,
+      isEntryFromResultStatisfy,
+      missionProgressStatus,
+      progressFlag,
+    } = item;
+
+    // 不是总数下钻，则都添加进度标记入参，
+    // missionProgressStatus代表已服务、已完成、已达标
+    // progressFlag=Y
+    const progressParam = !isEntryFromCustTotal ? {
+      missionProgressStatus,
+      progressFlag,
+    } : null;
+
+    const { currentSelectScope } = this.state;
+    let postBody = {
+      enterType: currentSelectScope,
+    };
+
+    if (currentSelectScope === EMP_MANAGER_SCOPE) {
+      // 服务经理维度
+      postBody = {
+        ...postBody,
+        ptyMngId: login,
+      };
+    } else if (currentSelectScope === EMP_COMPANY_SCOPE) {
+      // 分公司维度
+      postBody = {
+        ...postBody,
+        ptyMngId: empCompanyCode,
+      };
+    } else if (currentSelectScope === EMP_DEPARTMENT_SCOPE) {
+      // 营业部维度
+      postBody = {
+        ...postBody,
+        ptyMngId: empDepartmentCode,
+      };
+    }
+
+    onPreviewCustDetail({
+      ...postBody,
+      // 客户总数下钻
+      isEntryFromCustTotal,
+      // 复用进度条的已服务客户和已完成客户下钻标记，
+      // 因为其实这些下钻是同一个下钻，只是入口不一样
+      isEntryFromProgressDetail,
+      // 来自结果达标下钻
+      isEntryFromResultStatisfy,
+      // 除了总数下钻，其它都能发起任务
+      canLaunchTask: !isEntryFromCustTotal,
+      // 复用进度条的下钻标记位，已服务，已完成，已达标
+      ...progressParam,
+    });
+  }
+
+  /**
    * 设置当前filter对应的element
    * @param {*node} input 当前element
    */
@@ -205,14 +287,52 @@ export default class CustManagerDetailScope extends PureComponent {
 
   /**
    * 渲染各个种类的客户总数和比例
+   * 支持下钻
    * @param {*object} record 当前行记录
    */
   @autobind
-  renderEveryCust(custTotal, everyCust) {
-    const percent = ((everyCust / custTotal) * 100).toFixed(0);
+  renderEveryCust(item = EMPTY_OBJECT) {
+    const { type, flowNum, ...remainingRowData } = item;
+    const percent = ((remainingRowData[type] / flowNum) * 100).toFixed(0);
+    // 总数大于0下钻
+    const clickHandler = remainingRowData[type] > 0
+      ? { onClick: () => this.handleCustDrill(item) } : null;
 
     return (
-      <span>{everyCust}（{percent}%）</span>
+      <span>
+        <span
+          className={
+            classnames({
+              [styles.canClick]: remainingRowData[type] > 0,
+            })
+          }
+          {...clickHandler}
+        >{remainingRowData[type]}</span>
+        <span>（{percent}%）</span>
+      </span>
+    );
+  }
+
+  /**
+   * 渲染客户总数
+   * 支持下钻
+   */
+  @autobind
+  renderCustTotal(item = EMPTY_OBJECT) {
+    const { flowNum } = item;
+    // 总数大于0下钻
+    const clickHandler = Number(flowNum) > 0
+      ? { onClick: () => this.handleCustDrill(item) } : null;
+
+    return (
+      <span
+        className={
+          classnames({
+            [styles.canClick]: Number(flowNum) > 0,
+          })
+        }
+        {...clickHandler}
+      >{flowNum}</span>
     );
   }
 
@@ -336,24 +456,49 @@ export default class CustManagerDetailScope extends PureComponent {
       {
         key: 'flowNum',
         value: '客户总数',
+        render: item =>
+          this.renderCustTotal({
+            ...item,
+            type: 'flowNum',
+            isEntryFromCustTotal: true,
+          }),
       },
       {
         key: 'servFlowNum',
         value: '已服务客户',
-        render: ({ flowNum, servFlowNum: everyCust }) =>
-          this.renderEveryCust(flowNum, everyCust),
+        render: item =>
+          this.renderEveryCust({
+            ...item,
+            type: 'servFlowNum',
+            isEntryFromProgressDetail: true,
+            missionProgressStatus: IS_SERVED_STATUS,
+            progressFlag: Y_FLAG,
+          }),
       },
       {
         key: 'doneFlowNum',
         value: '已完成客户',
-        render: ({ flowNum, doneFlowNum: everyCust }) =>
-          this.renderEveryCust(flowNum, everyCust),
+        render: item =>
+          this.renderEveryCust({
+            ...item,
+            type: 'doneFlowNum',
+            isEntryFromProgressDetail: true,
+            missionProgressStatus: IS_COMPLETED_STATUS,
+            progressFlag: Y_FLAG,
+          }),
       },
       {
         key: 'traceFlowNum',
         value: '结果达标客户',
-        render: ({ flowNum, traceFlowNum: everyCust }) =>
-          this.renderEveryCust(flowNum, everyCust),
+        render: item =>
+          this.renderEveryCust({
+            ...item,
+            type: 'traceFlowNum',
+            isEntryFromProgressDetail: true,
+            isEntryFromResultStatisfy: true,
+            missionProgressStatus: IS_UP_TO_STANDARD_STATUS,
+            progressFlag: Y_FLAG,
+          }),
       },
       ...this.renderLastTwoColumn(),
     ];

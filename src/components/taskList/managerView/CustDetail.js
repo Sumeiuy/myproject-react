@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-10 17:50:03
+ * @Last Modified time: 2018-06-07 17:18:17
  * 客户明细数据
  */
 
@@ -482,17 +482,20 @@ export default class CustDetail extends PureComponent {
               */}
               {isEntryFromPie || isEntryFromCustTotal ?
                 <div className={styles.filterSection}>
-                  <div
-                    className={styles.filter}
-                  >
-                    <SingleFilter
-                      value={currentSelectFeedbackIdL1 || ''}
-                      filterLabel="客户反馈"
-                      filter="custFeedbackL1"
-                      filterField={feedbackL1List}
-                      onChange={this.handleFeedbackL1Change}
-                    />
-                  </div>
+                  {
+                    !_.isEmpty(feedbackL1List) ?
+                      <div
+                        className={styles.filter}
+                      >
+                        <SingleFilter
+                          value={currentSelectFeedbackIdL1 || ''}
+                          filterLabel="客户反馈"
+                          filter="custFeedbackL1"
+                          filterField={feedbackL1List}
+                          onChange={this.handleFeedbackL1Change}
+                        />
+                      </div> : null
+                  }
                   {
                     !_.isEmpty(feedbackL2List) ?
                       <div

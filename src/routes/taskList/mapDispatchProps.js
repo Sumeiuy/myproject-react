@@ -91,4 +91,9 @@ export default ({ routerRedux, effect }) => ({
   queryExecutorFeedBack: effect(effects.queryExecutorFeedBack),
   // 查询服务结果明细
   queryExecutorDetail: effect(effects.queryExecutorDetail),
+  // 任务服务经理维度预览客户明细
+  previewCustDetailByScope: effect(effects.previewCustDetailByScope, { forceFull: true }),
+  // 服务经理维度客户明细去重
+  queryDistinctCustListDetailOfMission: effect(effects.queryDistinctCustListDetailOfMission,
+    { loading: false }),
 });

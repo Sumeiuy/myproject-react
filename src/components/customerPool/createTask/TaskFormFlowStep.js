@@ -33,6 +33,7 @@ import {
   returnTaskEntrySource,
   labelSource,
   sightingLabelSource,
+  TASK_CUST_SCOPE_ENTRY,
 } from '../../../config/createTaskEntry';
 import styles from './taskFormFlowStep.less';
 import logable, { logCommon } from '../../../decorators/logable';
@@ -188,6 +189,9 @@ export default class TaskFormFlowStep extends PureComponent {
     } else if (entrance === PIE_ENTRY) {
       // 管理者视图饼图发起任务
       req = { queryMOTFeedBackCustsReq: _.omit(custCondition, 'entrance') };
+    } else if (entrance === TASK_CUST_SCOPE_ENTRY) {
+      // 管理者视图服务经理维度发起任务
+      req = { queryMssnCustsDetailReq: _.omit(custCondition, 'entrance') };
     } else if (source === CUST_GROUP_LIST) {
       req = {
         enterType,
@@ -259,6 +263,7 @@ export default class TaskFormFlowStep extends PureComponent {
         break;
       case PROGRESS_ENTRY:
       case PIE_ENTRY:
+      case TASK_CUST_SCOPE_ENTRY:
         custSources = '已有任务下钻客户';
         break;
       case CUST_GROUP_LIST:
