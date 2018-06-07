@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-04 15:56:26
+ * @Last Modified time: 2018-06-07 13:38:35
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import { Form, Input, Mention, Dropdown, Menu } from 'antd';
 
 import { MENTION_PREFIX, MentionTextStyles } from '../../../routes/investmentAdvice/config';
-import styles from './templateForm.less';
+import styles from './templateForm_.less';
 
 const { EditorState, Modifier } = Draft;
 
