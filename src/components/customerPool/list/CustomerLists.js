@@ -34,17 +34,17 @@ const allSaleDepartment = { id: ALL_DEPARTMENT_ID, name: '所有' };
  * 格式化钱款数据和单位
  * 入参： 190000000 转化成 { value: '1.90', unit: '亿元' }
  */
-const formatAsset = (num) => {
+const formatAsset = (num, currency = '元') => {
   // 数字常量
   const WAN = 1e4;
   const YI = 1e8;
   const WANYI = 1e12;
 
   // 单位常量
-  const UNIT_DEFAULT = '元';
-  const UNIT_WAN = '万元';
-  const UNIT_YI = '亿元';
-  const UNIT_WANYI = '万亿元';
+  const UNIT_DEFAULT = currency;
+  const UNIT_WAN = `万${currency}`;
+  const UNIT_YI = `亿${currency}`;
+  const UNIT_WANYI = `万亿${currency}`;
 
   const newNum = Number(num);
   const absNum = Math.abs(newNum);
