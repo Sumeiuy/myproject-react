@@ -4,7 +4,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-05-22 12:26:05
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-07 10:41:27
+ * @Last Modified time: 2018-06-07 13:19:31
  * 只是将原先的问卷调查逻辑单独提取成组件
  */
 
@@ -41,6 +41,7 @@ const defaultSurveyData = {
   isDisabled: false,
   isShowErrorCheckbox: EMPTY_OBJECT,
   checkBoxQuesId: EMPTY_ARRAY,
+  visible: false,
 };
 
 @create()
@@ -115,6 +116,7 @@ export default class QuestionnaireSurvey extends PureComponent {
     this.setState({
       // 存储多选题Id
       checkBoxQuesId: _.map(checkBoxQuesId, item => item.quesId),
+      visible: true,
     });
   }
 
@@ -405,9 +407,8 @@ export default class QuestionnaireSurvey extends PureComponent {
   }
 
   render() {
-    const {
-      answersList,
-    } = this.props;
+    const { answersList } = this.props;
+    const { visible } = this.state;
     const { answerVOList } = answersList;
     // 已回答则显示确定按钮，否则显示提交
     const showBtn = _.isEmpty(answerVOList) ?
@@ -432,7 +433,7 @@ export default class QuestionnaireSurvey extends PureComponent {
       <div className={styles.container}>
         <Form layout="vertical">
           {this.renderOption()}
-          {showBtn}
+          {visible ? showBtn : null}
         </Form>
       </div>
     );
