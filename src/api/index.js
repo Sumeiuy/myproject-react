@@ -26,6 +26,7 @@ import investmentAdvice from './investmentAdvice';
 import operationCenter from './operationCenter';
 import businessDepartmentCustomerDistribute from './businessDepartmentCustomerDistribute';
 import messageCenter from './messageCenter';
+import stockOptionEvaluation from './stockOptionEvaluation';
 
 const api = apiCreator();
 
@@ -86,5 +87,7 @@ export default {
   businessDepartmentCustDistribute: businessDepartmentCustomerDistribute(api),
   // ========== 消息通知提醒
   messageCenter: messageCenter(api),
+  // ========== 股票期权评估申请
+  stockOptionEvaluation: stockOptionEvaluation(api),
 };
 

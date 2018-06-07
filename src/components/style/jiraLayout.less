@@ -30,6 +30,11 @@
       top: 3px;
     }
     .dateWidget {
+      .drpWraper {
+        display: inline-block;
+        min-width: 70px;
+        margin-right: 20px;
+      }
       :global {
         .ant-calendar-picker {
           height: 30px;
@@ -42,6 +47,47 @@
           }
           .ant-calendar-picker-icon {
             display: none;
+          }
+        }
+      }
+
+      .dateRangePickerBox {
+        vertical-align: middle;
+        display: inline-block;
+        min-width: 70px;
+        margin-right: 20px;
+        margin-left: 10px;
+
+        // 日期组件的样式重写
+        .DateRangePicker {
+          height: 28px;
+          line-height: 28px;
+          vertical-align: top;
+        }
+        .DateRangePickerInput {
+          height: 28px;
+          line-height: 28px;
+          padding: 0 3px;
+          .DateRangePickerInput_calendarIcon {
+            margin: 3px 2px 0 4px;
+          }
+          .DateInput {
+            height: 26px;
+            line-height: 26px;
+            vertical-align: top;
+            &.DateInput__small {
+              width: 72px;
+            }
+            .DateInput_input {
+              vertical-align: top;
+              padding: 6px 0;
+              border: 0;
+            }
+          }
+          .DateRangePickerInput_arrow {
+            height: 26px;
+            line-height: 26px;
+            vertical-align: top;
           }
         }
       }
