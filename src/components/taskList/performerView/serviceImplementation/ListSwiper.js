@@ -112,7 +112,7 @@ export default class ListSwiper extends PureComponent {
           >
             <div className={styles.contentBox}>
               {this.renderAvator({ genderCode: item.genderCode, custNature: item.custNature })}
-              <p className={styles.name}>{_.truncate(item.custName, { length: 4, omission: '...' })}</p>
+              <p className={styles.name} title={item.custName}>{item.custName}</p>
               <p className={styles.status}>-{item.missionStatusValue}-</p>
               <span className={styles.triangle} />
             </div>

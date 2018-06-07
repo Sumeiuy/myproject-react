@@ -96,8 +96,8 @@ const config = {
         title: '原服务经理',
       },
       {
-        dataIndex: 'isTouGu',
-        key: 'isTouGu',
+        dataIndex: 'touGu',
+        key: 'touGu',
         title: '是否入岗投顾',
       },
       {

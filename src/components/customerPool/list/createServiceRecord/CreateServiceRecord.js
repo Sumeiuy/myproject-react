@@ -43,8 +43,6 @@ const TASK_TYPE_CODES = {
   SELF_TASK: '1', // 表示自建任务
 };
 
-const PHONE = 'phone';
-
 export default class CreateServiceRecord extends PureComponent {
 
   static propTypes = {
@@ -69,11 +67,13 @@ export default class CreateServiceRecord extends PureComponent {
     testWallCollision: PropTypes.func.isRequired,
     // 投资建议文本撞墙检测是否有股票代码
     testWallCollisionStatus: PropTypes.bool.isRequired,
+    isPhoneCall: PropTypes.bool,
   }
 
   static defaultProps = {
     loading: false,
     custUuid: '',
+    isPhoneCall: false,
   }
 
   componentWillReceiveProps(nextProps) {
@@ -110,15 +110,15 @@ export default class CreateServiceRecord extends PureComponent {
       currentCommonServiceRecord: { id },
       serviceRecordInfo: {
         id: custId,
-        caller = '',
         autoGenerateRecordInfo = {},
       },
       dict,
+      isPhoneCall,
     } = this.props;
     const { serveContentDesc = '', serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
     let payload = { ...data, custId };
     // 打电话成功后，服务记录添加未成功时，后端返回failure
-    if (caller === PHONE) {
+    if (isPhoneCall) {
       payload = {
         ...payload,
         serveTime,
@@ -156,12 +156,12 @@ export default class CreateServiceRecord extends PureComponent {
     const {
       onToggleServiceRecordModal,
       handleCloseClick,
-      serviceRecordInfo: { caller },
+      isPhoneCall,
     } = this.props;
     // 手动上传日志
     handleCloseClick();
     // 打电话调起的弹窗，不能直接手动关闭弹窗，只能提交服务记录进行关闭
-    if (caller !== PHONE) {
+    if (!isPhoneCall) {
       onToggleServiceRecordModal(false);
     } else {
       message.warn('请提交服务记录');
@@ -206,11 +206,12 @@ export default class CreateServiceRecord extends PureComponent {
       testWallCollision,
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
+      isPhoneCall,
     } = this.props;
     // 此处需要新增一个对 taskFeedbackList为空的判断
     if (_.isEmpty(taskFeedbackList)) return null;
 
-    const { id = '', name = '', modalVisible = false, caller = '' } = serviceRecordInfo;
+    const { id = '', name = '', modalVisible = false } = serviceRecordInfo;
     const title = (
       <p className={styles.title}>
         创建服务记录:
@@ -218,7 +219,7 @@ export default class CreateServiceRecord extends PureComponent {
       </p>
     );
 
-    const footer = caller !== 'phone' ? (
+    const footer = !isPhoneCall ? (
       <div className={styles.customFooter}>
         <a className={styles.cancelBtn} onClick={this.handleCancel}>取消</a>
         <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
@@ -262,6 +263,7 @@ export default class CreateServiceRecord extends PureComponent {
                 serviceRecordInfo={serviceRecordInfo}
                 testWallCollision={testWallCollision}
                 testWallCollisionStatus={testWallCollisionStatus}
+                isPhoneCall={isPhoneCall}
               />
             </div>
             :

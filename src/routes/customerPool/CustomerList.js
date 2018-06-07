@@ -25,8 +25,9 @@ import {
   ENTER_TYPE,
   ALL_DEPARTMENT_ID,
   MAIN_MAGEGER_ID,
-  ENTERLIST1,
-  ENTERLIST2,
+  ENTERLIST_PERMISSION_TASK_MANAGE,
+  ENTERLIST_PERMISSION_INDEX_QUERY,
+  ENTERLIST_PERMISSION_SIGHTINGLABEL,
 } from './config';
 
 import styles from './customerlist.less';
@@ -294,7 +295,7 @@ export default class CustomerList extends PureComponent {
     } = this.props;
     // 请求客户列表
     this.getCustomerList(this.props);
-    if (query.source === 'sightingTelescope') {
+    if (_.includes(ENTERLIST_PERMISSION_SIGHTINGLABEL, query.source)) {
       getFiltersOfSightingTelescope({
         prodId: decodeURIComponent(query.labelMapping),
       });
@@ -303,16 +304,13 @@ export default class CustomerList extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const {
-      // custRange: preCustRange,
       location: {
         query: preQuery,
       },
       isContactLoading = false,
       isRecordLoading = false,
-      // getFiltersOfSightingTelescope,
     } = this.props;
     const {
-      // custRange,
       location: {
         query,
       },
@@ -369,10 +367,8 @@ export default class CustomerList extends PureComponent {
       param.searchTypeReq = 'ALL';
       param.searchText = keyword;
     } else if (_.includes(['tag', 'sightingTelescope'], query.source)) { // 热词或者瞄准镜
-      // param.labels = [query.labelMapping];
       param.primaryKey = [labelMapping];
       param.searchTypeReq = query.type;
-      // param.searchText = keyword;
       if (query.source === 'sightingTelescope') {
         // 如果是瞄准镜，需要加入queryLabelReq
         param.queryLabelReq = {
@@ -400,6 +396,16 @@ export default class CustomerList extends PureComponent {
       this.dataForNextPage.id = labelMapping;
       this.dataForNextPage.product = labelName;
       this.dataForNextPage.productName = productName;
+    } else if (query.source === 'productPotentialTargetCust') { // 产品潜在目标客户，产品中心外部跳转
+      // type是LABEL
+      // 目前只有一个label，将labelMapping传给后台
+      param.searchTypeReq = query.type;
+      param.primaryKey = [labelMapping];
+      // 产品潜在目标客户进来，默认都是瞄准镜标签，需要加入queryLabelReq
+      param.queryLabelReq = {
+        labelName,
+        labelDesc,
+      };
     }
     // 客户业绩参数
     if (query.customerType) {
@@ -430,7 +436,6 @@ export default class CustomerList extends PureComponent {
       } = getCustomerListFilters(filtersArray, labelMapping, filtersReq);
       param.filtersReq = filters;
       if (query.source === 'sightingTelescope') {
-        // param.labels = labels;
         param.primaryKey = labels;
       }
     }
@@ -461,7 +466,7 @@ export default class CustomerList extends PureComponent {
       return query.departmentOrgId !== ALL_DEPARTMENT_ID ? query.departmentOrgId : '';
     }
     // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
-    if (_.includes(ENTERLIST1, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, query.source)) {
       return this.hasTkMampPermission ? this.orgId : '';
     }
     // 从首页潜在业务客户过来
@@ -473,7 +478,7 @@ export default class CustomerList extends PureComponent {
       }
     }
     // 首页新增客户和业务开通进来的
-    if (_.includes(ENTERLIST2, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, query.source)) {
       if (query.orgId) {
         return query.orgId !== MAIN_MAGEGER_ID ? query.orgId : '';
       }
@@ -495,7 +500,7 @@ export default class CustomerList extends PureComponent {
       return query.ptyMngId;
     }
     // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
-    if (_.includes(ENTERLIST1, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, query.source)) {
       return this.hasTkMampPermission ? '' : this.empId;
     }
     // 从首页潜在业务客户过来
@@ -506,7 +511,7 @@ export default class CustomerList extends PureComponent {
       }
     }
     // 首页新增客户和业务开通进来的
-    if (_.includes(ENTERLIST2, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, query.source)) {
       if (!this.hasIndexViewPermission
         || (query.orgId && query.orgId === MAIN_MAGEGER_ID)) {
         return this.empId;

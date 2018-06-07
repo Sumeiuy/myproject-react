@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:07:12
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-24 10:12:21
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-05 17:32:45
  * @description 针对taskList > Home 组件的props类型校验模块
  */
 import PropTypes from 'prop-types';
@@ -61,7 +61,7 @@ export default {
   getTempQuesAndAnswer: PropTypes.func.isRequired,
   answersList: PropTypes.object,
   saveAnswersByType: PropTypes.func.isRequired,
-  saveAnswersSucce: PropTypes.bool,
+  isSubmitSurveySucceed: PropTypes.bool,
   missionFeedbackData: PropTypes.array.isRequired,
   countAnswersByType: PropTypes.func.isRequired,
   missionFeedbackCount: PropTypes.number.isRequired,

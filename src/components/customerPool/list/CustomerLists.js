@@ -20,7 +20,7 @@ import { url as urlHelper, emp } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
-import { ENTERLIST1, ENTERLIST2, MAIN_MAGEGER_ID, ALL_DEPARTMENT_ID } from '../../../routes/customerPool/config';
+import { ENTERLIST_PERMISSION_TASK_MANAGE, ENTERLIST_PERMISSION_INDEX_QUERY, MAIN_MAGEGER_ID, ALL_DEPARTMENT_ID } from '../../../routes/customerPool/config';
 import logable from '../../../decorators/logable';
 import styles from './customerLists.less';
 
@@ -293,7 +293,7 @@ export default class CustomerLists extends PureComponent {
     const {
       location: {
         query,
-      pathname,
+        pathname,
       },
       replace,
       handleSelect,
@@ -385,8 +385,8 @@ export default class CustomerLists extends PureComponent {
       isNotSaleDepartment,
     } = this.props;
     // 潜在业务客户进入，判断当前用户岗位是否在分公司或经总，在分公司或经总，再判断是否任务管理权限，反之dou
-    return (_.includes(ENTERLIST1, source) && hasTkMampPermission) ||
-      (_.includes(ENTERLIST2, source) && hasIndexViewPermission) ||
+    return (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, source) && hasTkMampPermission) ||
+      (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, source) && hasIndexViewPermission) ||
       (source === 'business' && isNotSaleDepartment && hasTkMampPermission);
   }
 
@@ -403,7 +403,7 @@ export default class CustomerLists extends PureComponent {
       hasIndexViewPermission,
     } = this.props;
     const { taskManagerResp = EMPTY_ARRAY, firstPageResp = EMPTY_ARRAY } = custRange;
-    if (_.includes(ENTERLIST1, source)) {
+    if (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, source)) {
       // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
       return taskManagerResp;
     }
@@ -413,7 +413,7 @@ export default class CustomerLists extends PureComponent {
       }
       return taskManagerResp;
     }
-    if (_.includes(ENTERLIST2, source)) {
+    if (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, source)) {
       // 有首页指标查询权限 且 首页绩效指标客户范围选中的是 我的客户
       if (!hasIndexViewPermission || this.orgIdIsMsm()) {
         return _.uniqBy([allSaleDepartment, ...firstPageResp], 'id');
@@ -482,7 +482,7 @@ export default class CustomerLists extends PureComponent {
       queryHoldingSecurityRepetition,
       holdingSecurityData,
     } = this.props;
-    // console.log('1---', this.props)
+
     // 服务记录执行方式字典
     const { executeTypes = EMPTY_ARRAY, serveWay = EMPTY_ARRAY } = dict;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
