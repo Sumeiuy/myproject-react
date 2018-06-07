@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 首页-展示更多标签弹窗
  * @Date: 2018-05-23 11:10:49
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-23 19:58:20
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-05 14:22:34
  */
 
 import React, { PureComponent } from 'react';

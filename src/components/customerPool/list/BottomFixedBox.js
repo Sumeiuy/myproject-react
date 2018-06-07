@@ -10,8 +10,10 @@ import _ from 'lodash';
 import { Modal } from 'antd';
 import Button from '../../common/Button';
 import Icon from '../../common/Icon';
-import { fspContainer } from '../../../config';
-// import { emp } from '../../../helper';
+import { fspContainer, padSightLabelDesc } from '../../../config';
+import {
+  PRODUCT_POTENTIAL_TARGET_CUST_ENTRY,
+} from '../../../config/createTaskEntry';
 import logable from '../../../decorators/logable';
 
 import styles from './bottomFixedBox.less';
@@ -89,7 +91,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 点击新建分组或者发起任务按钮
   @autobind
-  handleClick({ url, title, id, shouldStay, editPane, labelDesc, missionDesc }) {
+  switchToRoute({ url, title, id, shouldStay, editPane, labelDesc, missionDesc }) {
     const {
       page,
       condition,
@@ -97,8 +99,8 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectedIds,
-        selectAll,
-        source,
+          selectAll,
+          source,
         },
         pathname,
         search,
@@ -151,9 +153,7 @@ export default class BottomFixedBox extends PureComponent {
       name: '新建分组',
     };
 
-    const {
-      selectCount,
-    } = this.props;
+    const { selectCount } = this.props;
     if (Number(selectCount) > 500) {
       this.toggleModal();
       this.setState({
@@ -161,20 +161,43 @@ export default class BottomFixedBox extends PureComponent {
       });
       return;
     }
-    this.handleClick({ url, title, id, shouldStay, editPane });
+    this.switchToRoute({ url, title, id, shouldStay, editPane });
   }
 
   // 跳转到创建任务页面
   @autobind
   toCreateTaskPage() {
-    const { location: { query: { labelDesc, missionDesc } } } = this.props;
+    const { location: { query: {
+      labelDesc,
+      missionDesc,
+      source,
+      labelId,
+      labelName,
+    } } } = this.props;
+    let newMissionDesc = missionDesc;
+    // 如果是外部平台，产品潜在客户跳转进来的，需要添加一个任务提示插入参数，
+    // 在发起任务时，需要用到
+    if (source === PRODUCT_POTENTIAL_TARGET_CUST_ENTRY) {
+      newMissionDesc = padSightLabelDesc({
+        sightingScopeBool: true,
+        labelId,
+        labelName,
+      });
+    }
+
     const url = '/customerPool/createTask';
     const title = '自建任务';
     const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
     // 发起新的任务之前，先清除数据
     this.props.clearCreateTaskData('custList');
 
-    this.handleClick({ url, title, id, labelDesc: decodeURIComponent(labelDesc), missionDesc });
+    this.switchToRoute({
+      url,
+      title,
+      id,
+      labelDesc: decodeURIComponent(labelDesc),
+      missionDesc: newMissionDesc,
+    });
   }
 
   // 验证通过后跳转到创建任务
@@ -188,7 +211,7 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectAll,
-        selectedIds,
+          selectedIds,
         },
       },
     } = this.props;

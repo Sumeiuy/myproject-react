@@ -32,7 +32,7 @@ export default class PerformerViewDetail extends PureComponent {
     currentMotServiceRecord: PropTypes.object.isRequired,
     answersList: PropTypes.object,
     getTempQuesAndAnswer: PropTypes.func.isRequired,
-    saveAnswersSucce: PropTypes.bool,
+    isSubmitSurveySucceed: PropTypes.bool,
     saveAnswersByType: PropTypes.func.isRequired,
     // 左侧列表当前任务的状态码
     statusCode: PropTypes.string,
@@ -69,7 +69,7 @@ export default class PerformerViewDetail extends PureComponent {
   static defaultProps = {
     isFold: true,
     answersList: {},
-    saveAnswersSucce: false,
+    isSubmitSurveySucceed: false,
     statusCode: '',
     eventId: '',
     taskTypeCode: '',

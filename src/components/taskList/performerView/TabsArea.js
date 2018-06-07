@@ -2,8 +2,8 @@
  * @Description: 页签切换显示
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:53:21
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-28 22:08:43
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-05 16:57:32
  */
 
 import React from 'react';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { Tabs } from 'antd';
 import ServiceImplementation from './serviceImplementation/ServiceImplementation';
 import ServiceResult from './serviceResult/ServiceResult';
+import Survey from './survey/QuestionnaireSurvey';
 import styles from './tabsArea.less';
 
 const TabPane = Tabs.TabPane;
@@ -20,14 +21,22 @@ const TabsArea = (props) => {
   const handleTabsChange = (activeKey) => {
     changePerformerViewTab(activeKey);
   };
-  const { isFold,
+  const {
+    isFold,
     serviceProgress,
     custFeedBack,
     currentId,
     queryExecutorFeedBack,
     queryExecutorDetail,
     custDetail,
-    queryExecutorFlowStatus } = props;
+    queryExecutorFlowStatus,
+    answersList,
+    getTempQuesAndAnswer,
+    isSubmitSurveySucceed,
+    saveAnswersByType,
+    basicInfo,
+  } = props;
+
   return (
     <div className={styles.tabsContainer} >
       <Tabs activeKey={performerViewCurrentTab} onChange={handleTabsChange}>
@@ -48,7 +57,17 @@ const TabsArea = (props) => {
             queryExecutorDetail={queryExecutorDetail}
           />
         </TabPane>
-        {hasSurvey && <TabPane tab="任务问卷调查" key="questionnaireSurvey">fff</TabPane>}
+        {hasSurvey &&
+          <TabPane tab="任务问卷调查" key="questionnaireSurvey">
+            <Survey
+              answersList={answersList}
+              getTempQuesAndAnswer={getTempQuesAndAnswer}
+              isSubmitSurveySucceed={isSubmitSurveySucceed}
+              saveAnswersByType={saveAnswersByType}
+              basicInfo={basicInfo}
+              currentId={currentId}
+            />
+          </TabPane>}
       </Tabs>
     </div>
   );
@@ -67,12 +86,19 @@ TabsArea.propTypes = {
   queryExecutorFlowStatus: PropTypes.func.isRequired,
   queryExecutorDetail: PropTypes.func.isRequired,
   currentId: PropTypes.string.isRequired,
+  answersList: PropTypes.object,
+  getTempQuesAndAnswer: PropTypes.func.isRequired,
+  isSubmitSurveySucceed: PropTypes.bool,
+  saveAnswersByType: PropTypes.func.isRequired,
+  basicInfo: PropTypes.object.isRequired,
 };
 
 TabsArea.defaultProps = {
   hasSurvey: false,
   servicePolicy: '',
   isFold: false,
+  answersList: {},
+  isSubmitSurveySucceed: false,
 };
 
 export default TabsArea;

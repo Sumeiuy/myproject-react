@@ -9,6 +9,8 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { isSightingScope } from '../helper';
 import { openFspTab } from '../../../utils';
+// ENTERLIST_PERMISSION_SIGHTINGLABEL-需要展示瞄准镜匹配区域的source集合
+import { ENTERLIST_PERMISSION_SIGHTINGLABEL } from '../../../routes/customerPool/config';
 import HoldingProductDetail from './HoldingProductDetail';
 import styles from './matchArea.less';
 
@@ -18,7 +20,7 @@ const replaceWord = ({ value, q, title = '', type = '' }) => {
   const titleDom = haveTitle(title);
   const regxp = new RegExp(q, 'g');
   // 瞄准镜标签后面添加字符，用以分割
-  const holder = type === 'sightingTelescope' ? '-' : '';
+  const holder = _.includes(ENTERLIST_PERMISSION_SIGHTINGLABEL, type) ? '-' : '';
   // 容错处理
   if (_.isEmpty(value)) {
     return '';
@@ -362,7 +364,8 @@ export default class MatchArea extends PureComponent {
       listItem,
       location: { query: { source, labelMapping } },
     } = this.props;
-    if (source === 'sightingTelescope'
+
+    if (_.includes(ENTERLIST_PERMISSION_SIGHTINGLABEL, source)
       && !_.isEmpty(listItem.relatedLabels)) {
       // 筛选出source='jzyx'的数据
       const relatedLabels = _.filter(
