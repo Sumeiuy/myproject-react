@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-25 15:37:57
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-05 18:58:43
+ * @Last Modified time: 2018-06-06 16:21:26
  */
 import { investmentAdvice as api } from '../api';
 
@@ -20,7 +20,11 @@ export default {
     // 任务绑定投资建议模板列表
     taskBindTemplate: {},
     // 删除任务绑定投资建议模板状态
-    delTaskBindTemplateStatus: 'failure',
+    delTaskBindTemplateStatus: '',
+    // 可选投资模板列表
+    templateList: [],
+    // 绑定模板列表状态
+    bindTemplateStatus: '',
   },
   reducers: {
     // 投资模板列表
@@ -69,6 +73,22 @@ export default {
       return {
         ...state,
         delTaskBindTemplateStatus: payload,
+      };
+    },
+
+    getOptionalTemplateListSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        templateList: resultData.list || [],
+      };
+    },
+
+    bindTemplateListSuccess(state, action) {
+      const { payload: { resultData = 'failure' } } = action;
+      return {
+        ...state,
+        bindTemplateStatus: resultData,
       };
     },
   },
@@ -142,6 +162,28 @@ export default {
       yield put({
         type: 'delTaskBindTemplateSuccess',
         payload: resultData,
+      });
+    },
+
+    // 查询任务绑定模板中的可选模板列表
+    * getOptionalTemplateList({ payload }, { call, put }) {
+      const response = yield call(api.getInvestAdviceList, payload);
+      yield put({
+        type: 'getOptionalTemplateListSuccess',
+        payload: response,
+      });
+    },
+
+    // 给当前任务绑定投资建议模板
+    * bindTemplateList({ payload }, { call, put }) {
+      yield put({
+        type: 'bindTemplateListSuccess',
+        payload: { resultData: 'failure' },
+      });
+      const response = yield call(api.bindTemplateListForMission, payload);
+      yield put({
+        type: 'bindTemplateListSuccess',
+        payload: response,
       });
     },
   },

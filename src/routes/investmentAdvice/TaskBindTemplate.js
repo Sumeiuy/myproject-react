@@ -3,15 +3,17 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-05 20:30:54
+ * @Last Modified time: 2018-06-06 16:46:10
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Tabs, Modal, Collapse, Icon, Popover, Button, Input } from 'antd';
+import { Tabs, Collapse, Icon, Popover, Button, Input } from 'antd';
 import _ from 'lodash';
 import cx from 'classnames';
 
+import TaskBindTemplateModal from '../../components/operationManage/investmentAdvice/TaskBindTemplateModal';
+import confirm from '../../components/common/confirm_';
 import Pagination from '../../components/common/Pagination';
 import logable from '../../decorators/logable';
 import {
@@ -23,7 +25,6 @@ import styles from './taskBindTemplate.less';
 
 const TabPane = Tabs.TabPane;
 const Panel = Collapse.Panel;
-// const confirm = Modal.confirm;
 const Search = Input.Search;
 
 export default class MissionBind extends PureComponent {
@@ -36,6 +37,14 @@ export default class MissionBind extends PureComponent {
     delTaskBindTemplate: PropTypes.func.isRequired,
     // 删除任务绑定投资建议模板状态
     delTaskBindTemplateStatus: PropTypes.string.isRequired,
+    // 获取投资模板列表
+    queryTemplateList: PropTypes.func.isRequired,
+    // 投资模板列表
+    templateList: PropTypes.array.isRequired,
+    // 给当前任务绑定模板列表
+    bindTemplateListForMission: PropTypes.func.isRequired,
+    // 绑定模板列表状态
+    bindTemplateStatus: PropTypes.string.isRequired,
   }
 
   static contextTypes = {
@@ -46,13 +55,15 @@ export default class MissionBind extends PureComponent {
     super(props);
     this.state = {
       // 展示添加投资建议模板的弹出层
-      addTemplateModall: false,
+      addTemplateModal: false,
       // 当前显示 MOT任务页签内容还是自建任务页签内容,默认为MOT
       active: MOT_TASK.key,
-      // 显示哪个折叠面板
+      // 显示哪个折叠面板，此值可以用于确认用户选择的是哪个任务
       collapseActiveKey: '',
       // MOT任务可以根据关键字的搜索任务
       keyWord: '',
+      // 当前页码
+      pageNum: 1,
     };
   }
 
@@ -74,18 +85,21 @@ export default class MissionBind extends PureComponent {
   queryTaskBindList({ type, pageNum = 1, pageSize = 10, keyWord = '' } = {}) {
     const isMot = type === MOT_TASK.key;
     const query = { type, pageNum, pageSize };
+    // 如果是自建任务不存在,根据关键字进行过滤查询
     if (isMot) {
       query.keyWord = keyWord;
     }
     this.props.getTaskBindList(query);
   }
 
-  // 关闭弹窗
   @autobind
   handleCloseModal() {
-    this.setState({
-      addTemplateModall: false,
-    });
+    this.setState({ addTemplateModal: false });
+  }
+
+  @autobind
+  handleAddTemplateClick() {
+    this.setState({ addTemplateModal: true });
   }
 
   // 切换折叠面板
@@ -97,9 +111,31 @@ export default class MissionBind extends PureComponent {
 
   @autobind
   handlePageChange(pageNum) {
+    this.setState({ pageNum });
     const { active, keyWord } = this.state;
     this.queryTaskBindList({ type: active, pageNum, keyWord });
   }
+
+  @autobind
+  handleTaskBindTemplateModalOK(list) {
+    if (!_.isEmpty(list)) {
+      // 选择了弹出层的模板列表后,需要针对该任务下的已经存在的模板和选择添加的模板进行去重
+      // 然后，在调用添加接口，进行添加数据
+      // 获取当前任务下绑定的模板列表, collapseActiveKey 可以用户确认用户目前点击的哪个任务的id
+      const { collapseActiveKey, active } = this.state;
+      const { taskBindTemplate: { missionList = [] } } = this.props;
+      const { templateList } = _.find(missionList, item => item.id === collapseActiveKey);
+      // 在用户选择的模板列表中取消掉当前任务中已经存在的模板
+      const selectedIds = _.filter(list, item => !_.includes(templateList, o => o.id === item));
+      this.props.bindTemplateListForMission({
+        tyep: active,
+        templateList: selectedIds,
+        missionId: collapseActiveKey,
+      }).then(this.refreshListAfterAdd);
+    }
+    this.handleCloseModal();
+  }
+
 
   @autobind
   @logable({ type: 'Click', payload: { name: '搜索Mot任务列表', value: '$args[0]' } })
@@ -116,9 +152,40 @@ export default class MissionBind extends PureComponent {
   }
 
   @autobind
+  openDelConfirm(template) {
+    // 打开是否删除的确认框
+    confirm({
+      content: '确定要将该模板从任务下解绑吗？',
+      onOk: () => {
+        this.handleDelTemplateClick(template);
+      },
+    });
+  }
+
+  @autobind
+  refreshListAfterDel() {
+    // 如果删除成功，则刷新列表
+    const { delTaskBindTemplateStatus } = this.props;
+    if (delTaskBindTemplateStatus === 'success') {
+      const { active, pageNum, keyWord } = this.state;
+      this.queryTaskBindList({ type: active, pageNum, keyWord });
+    }
+  }
+
+  @autobind
+  refreshListAfterAdd() {
+    // 如果删除成功，则刷新列表
+    const { bindTemplateStatus } = this.props;
+    if (bindTemplateStatus === 'success') {
+      const { active, pageNum, keyWord } = this.state;
+      this.queryTaskBindList({ type: active, pageNum, keyWord });
+    }
+  }
+
+  @autobind
   @logable({ type: 'Click', payload: { name: '切换Tab：MOT任务/自建任务' } })
   handleSwitchTabClick(active) {
-    this.setState({ active });
+    this.setState({ active, keyWord: '', pageNum: 1 });
     this.queryTaskBindList({ type: active });
   }
 
@@ -130,15 +197,17 @@ export default class MissionBind extends PureComponent {
       missionId: collapseActiveKey,
       type: active,
       templateId,
-    });
+    }).then(this.refreshListAfterDel);
   }
 
   // 将投资建议模板中的内容里面的 $服务经理 参数进行使用html标签包装文本
   // 使其显示高亮
   @autobind
   replaceInvestAdviceParameterInContent(content) {
-    const reg = this.generateParameterReg();
-    const newContent = content.replace(reg,
+    if (!this.mentionReg) {
+      this.mentionReg = this.generateParameterReg();
+    }
+    const newContent = content.replace(this.mentionReg,
       (a, b) => `<span class=${styles.investAdviceBindMentionHightlight}>${b}</span>`);
     // 此处用于转化成 html 标签字符串 ，传递给 React 的 dangerouslySetInnerHTML 使用
     return { __html: `<span>${newContent}</span>` };
@@ -164,22 +233,32 @@ export default class MissionBind extends PureComponent {
 
   @autobind
   renderInvestAdviceTamplate(list = []) {
-    return list.map(tmpl =>
-      (<div className={styles.templates} key={tmpl.id}>
-        <div className={styles.title}>
-          <div className={styles.titleText}>{tmpl.title}</div>
-          <div className={styles.delIcon} onClick={() => this.handleDelTemplateClick(tmpl.id)}>
-            <Icon type="close-circle" />
+    return list.map((tmpl) => {
+      const tmplContent = (
+        <div
+          className={styles.content}
+          dangerouslySetInnerHTML={this.replaceInvestAdviceParameterInContent(tmpl.content)} // eslint-disable-line
+        />
+      );
+
+      return (
+        <div className={styles.templates} key={tmpl.id}>
+          <div className={styles.title}>
+            <div className={styles.titleText}>{tmpl.title}</div>
+            <div className={styles.delIcon} onClick={() => this.openDelConfirm(tmpl.id)}>
+              <Icon type="close-circle" />
+            </div>
           </div>
+          <Popover
+            placement="topLeft"
+            overlayClassName={styles.tmplContentPopover}
+            content={tmplContent}
+          >
+            {tmplContent}
+          </Popover>
         </div>
-        <Popover content="xoxoxo">
-          <div
-            className={styles.content}
-            dangerouslySetInnerHTML={this.replaceInvestAdviceParameterInContent(tmpl.content)} // eslint-disable-line
-          />
-        </Popover>
-      </div>
-    ));
+      );
+    });
   }
 
   @autobind
@@ -202,6 +281,7 @@ export default class MissionBind extends PureComponent {
               ghost
               icon="plus"
               type="primary"
+              onClick={this.handleAddTemplateClick}
             >
               新增
             </Button>
@@ -212,17 +292,18 @@ export default class MissionBind extends PureComponent {
   }
 
   render() {
-    const { dict } = this.context;
-    if (_.isEmpty(dict)) return null;
-
     const {
-      addTemplateModall,
+      addTemplateModal,
       collapseActiveKey,
       active,
+      pageNum,
     } = this.state;
 
-    const { taskBindTemplate: { page = {}, missionList = [] } } = this.props;
-
+    const {
+      templateList,
+      queryTemplateList,
+      taskBindTemplate: { page = {}, missionList = [] },
+    } = this.props;
     const isMOTMission = active === MOT_TASK.key;
 
     return (
@@ -274,7 +355,7 @@ export default class MissionBind extends PureComponent {
                 </Collapse>
                 <div className={styles.pageBox}>
                   <Pagination
-                    current={page.pageNum}
+                    current={pageNum}
                     total={page.totalCount}
                     pageSize={page.pageSize}
                     onChange={this.handlePageChange}
@@ -291,18 +372,15 @@ export default class MissionBind extends PureComponent {
           <div className={styles.clear} />
         </div>
         {
-          !addTemplateModall ? null
+          !addTemplateModal ? null
           : (
-            <Modal
-              title="请选择恰当的投资建议模板"
-              visible={addTemplateModall}
-              onOk={this.handleAddFeedback}
+            <TaskBindTemplateModal
+              data={templateList}
+              visible={addTemplateModal}
+              onOK={this.handleTaskBindTemplateModalOK}
               onCancel={this.handleCloseModal}
-              width={650}
-              wrapClassName={styles.feedbackAddModalWarp}
-            >
-              <div>暂无</div>
-            </Modal>
+              queryTemplateList={queryTemplateList}
+            />
           )
         }
       </div>
