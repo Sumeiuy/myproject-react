@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-04-24 14:14:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-04 16:12:56
+ * @Last Modified time: 2018-06-06 17:03:33
  * @Descripter:投资建议模板 Home页面
  */
 
@@ -106,6 +106,8 @@ export default class InvestmentAdvice extends PureComponent {
       initialTemplateParams: item,
       isShowContentStatusError: false,
       isShowTitleStatusError: false,
+      title: item.title,
+      content: item.content,
     });
   }
 
@@ -243,6 +245,8 @@ export default class InvestmentAdvice extends PureComponent {
   @autobind
   handleCancel() {
     this.setState({
+      title: '',
+      content: '',
       showModal: false,
       isShowContentStatusError: false,
       isShowTitleStatusError: false,
