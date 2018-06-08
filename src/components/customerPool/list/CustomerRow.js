@@ -1,8 +1,8 @@
 /**
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-15 17:19:31
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-06-05 17:25:18
  */
 
 import React, { PureComponent } from 'react';
@@ -128,6 +128,9 @@ export default class CustomerRow extends PureComponent {
     queryHoldingProduct: PropTypes.func.isRequired,
     holdingProducts: PropTypes.object.isRequired,
     queryHoldingProductReqState: PropTypes.bool.isRequired,
+    // 组合产品订购客户查询持仓证券重合度
+    queryHoldingSecurityRepetition: PropTypes.func.isRequired,
+    holdingSecurityData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -340,6 +343,8 @@ export default class CustomerRow extends PureComponent {
       queryHoldingProduct,
       holdingProducts,
       queryHoldingProductReqState,
+      queryHoldingSecurityRepetition,
+      holdingSecurityData,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -462,6 +467,8 @@ export default class CustomerRow extends PureComponent {
                 holdingProducts={holdingProducts}
                 queryHoldingProductReqState={queryHoldingProductReqState}
                 formatAsset={formatAsset}
+                queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
+                holdingSecurityData={holdingSecurityData}
               />
             </div>
           </div>
