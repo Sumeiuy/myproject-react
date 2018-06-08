@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-06 16:46:10
+ * @Last Modified time: 2018-06-07 17:34:14
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -128,7 +128,7 @@ export default class MissionBind extends PureComponent {
       // 在用户选择的模板列表中取消掉当前任务中已经存在的模板
       const selectedIds = _.filter(list, item => !_.includes(templateList, o => o.id === item));
       this.props.bindTemplateListForMission({
-        tyep: active,
+        type: active,
         templateList: selectedIds,
         missionId: collapseActiveKey,
       }).then(this.refreshListAfterAdd);
@@ -232,8 +232,10 @@ export default class MissionBind extends PureComponent {
   }
 
   @autobind
-  renderInvestAdviceTamplate(list = []) {
-    return list.map((tmpl) => {
+  renderInvestAdviceTamplate(list) {
+    // 此处由于后端如果没有传递templateList为null,而null是无法使用参数默认值的ES6 写法的
+    const newList = _.isEmpty(list) ? [] : list;
+    return newList.map((tmpl) => {
       const tmplContent = (
         <div
           className={styles.content}

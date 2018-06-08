@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-21 09:03:17
+ * @Last Modified time: 2018-06-06 18:58:19
  */
 
 import React, { PureComponent } from 'react';
@@ -440,7 +440,11 @@ export default class Uploader extends PureComponent {
           (isShowUpload && isShowError) ?
             <div className="errorInfo">导入数据失败，上传格式不正确！</div> : null
         }
-        <Loading loading={isLoading} forceFull={false} />
+        {/**
+         * Loading组件本来是bool类型传值，现在被改成number，这边做个处理，不然报错
+         * loading<=0就不会有loading
+         */}
+        <Loading loading={+isLoading} forceFull={false} />
       </div>
     );
   }

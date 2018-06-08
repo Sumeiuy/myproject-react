@@ -3,7 +3,7 @@
  * @Description: 精选组合-组合详情
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-15 14:25:31
+ * @Last Modified time: 2018-06-05 15:47:47
  */
 
 import React, { PureComponent } from 'react';
@@ -270,7 +270,7 @@ export default class CombinationDetail extends PureComponent {
   @autobind
   openCustomerListPage(obj) {
     const { push } = this.context;
-    const { name, code, type, source } = obj;
+    const { name, code, type, source, combinationCode } = obj;
     const { sourceType } = config;
     const query = {
       source,
@@ -296,6 +296,7 @@ export default class CombinationDetail extends PureComponent {
     } else if (source === sourceType.combination) {
       query.combinationName = encodeURIComponent(name);
       query.labelMapping = code;
+      query.combinationCode = combinationCode;
     }
     const url = `/customerPool/list?${urlHelper.stringify(query)}`;
     openRctTab({
@@ -435,8 +436,11 @@ export default class CombinationDetail extends PureComponent {
               null
               :
               <OrderingCustomer
+                combinationCode={id}
                 data={orderCustData}
                 pageChange={this.handleOrderCustPageChange}
+                combinationData={overview}
+                openCustomerListPage={this.openCustomerListPage}
               />
           }
         </div>

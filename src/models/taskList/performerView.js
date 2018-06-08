@@ -62,7 +62,7 @@ export default {
     taskFeedbackList: [],
     currentMotServiceRecord: {},
     answersList: {},
-    saveAnswersSucce: false,
+    isSubmitSurveySucceed: false,
     // 任务反馈
     missionFeedbackData: [],
     // 任务反馈已反馈总数
@@ -174,7 +174,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        saveAnswersSucce: payload === 'success',
+        isSubmitSurveySucceed: payload === 'success',
       };
     },
     countAnswersByTypeSuccess(state, action) {
