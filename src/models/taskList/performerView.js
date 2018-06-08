@@ -9,6 +9,7 @@ import { performerView as api, customerPool as custApi } from '../../api';
 import {
   STATE_COMPLETED_NAME,
   STATE_COMPLETED_CODE,
+  defaultPerformerViewCurrentTab,
 } from '../../routes/taskList/config';
 
 const EMPTY_OBJ = {};
@@ -34,8 +35,6 @@ const defaultParameter = {
   currentCustomer: {},
   preciseInputValue: '1',
 };
-// 执行者视图详情中tab的默认项，默认服务实施
-const defaultPerformerViewCurrentTab = 'serviceImplementation';
 
 export default {
   namespace: 'performerView',
@@ -339,11 +338,6 @@ export default {
         // 当客户列表选中的客户流水变化时，清除打电话显示服务记录的标志
         yield put({
           type: 'app/resetServiceRecordInfo',
-        });
-        // 当前任务发生变化时，详情中的tab默认选中服务实施
-        yield put({
-          type: 'changePerformerViewTab',
-          payload: defaultPerformerViewCurrentTab,
         });
       }
       // 获取该任务的任务反馈

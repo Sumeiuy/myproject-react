@@ -3,10 +3,11 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-06 14:18:31
+ * @Last Modified time: 2018-06-08 16:07:36
  */
 
 import React, { PureComponent } from 'react';
+import { Prompt } from 'dva/router';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
@@ -678,6 +679,12 @@ export default class ServiceImplementation extends PureComponent {
               </div>
             </div>
         }
+        <Prompt
+          message={location => (
+            location.pathname.startsWith('/taskList')
+              ? true : '离开本页面可能会丢失操作的数据，是否离开？'
+          )}
+        />
       </div>
     );
   }
