@@ -17,10 +17,11 @@ export default {
     problem: {
       popVisible: false,
     },
+    personFeedback: EMPTY_OBJECT,
     list: EMPTY_OBJECT,
     fbDetail: EMPTY_OBJECT,
     recordList: EMPTY_OBJECT,
-    updateQuestion: EMPTY_OBJECT,
+    processList: EMPTY_LIST,
   },
   reducers: {
     changeProblemVisible(state, action) {
@@ -43,6 +44,18 @@ export default {
         },
       };
     },
+    getPersonFeedbackListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      const { page = EMPTY_OBJECT, feedbackVOList = EMPTY_LIST } = resultData || EMPTY_OBJECT;
+
+      return {
+        ...state,
+        personFeedback: {
+          page,
+          list: feedbackVOList,
+        },
+      };
+    },
     getFeedbackDetailSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
@@ -61,13 +74,11 @@ export default {
         },
       };
     },
-    updateFeedbackSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
+    getAnserOfQustionListSuccess(state, action) {
+      const { payload: { processList = EMPTY_LIST } } = action;
       return {
         ...state,
-        updateQuestion: {
-          resultData,
-        },
+        processList,
       };
     },
   },
@@ -78,6 +89,16 @@ export default {
         const response = yield call(api.getFeedbackList, payload);
         yield put({
           type: 'getFeedbackListSuccess',
+          payload: response,
+        });
+      }
+    },
+    * getPersonFeedbackList({ payload }, { call, put }) {
+      const { page } = payload;
+      if (!_.isEmpty(page)) {
+        const response = yield call(api.getPersonFeedbackList, payload);
+        yield put({
+          type: 'getPersonFeedbackListSuccess',
           payload: response,
         });
       }
@@ -96,31 +117,71 @@ export default {
         payload: response,
       });
     },
+    * getAnserOfQustionList({ payload }, { call, put }) {
+      const response = yield call(api.getAnserOfQustionList, payload);
+      yield put({
+        type: 'getAnserOfQustionListSuccess',
+        payload: response.resultData || EMPTY_OBJECT,
+      });
+    },
     * updateFeedback({ payload }, { call, put }) {
-      const { currentQuery, request, currentQuery: { curPageNum, curPageSize } } = payload;
-      const response = yield call(api.updateFeedback, request);
-
-      yield put({
-        type: 'updateFeedbackSuccess',
-        payload: response,
-      });
-      message.success('操作成功！');
-      yield put({
-        type: 'getFeedbackRecordList',
-        payload: {
-          feedbackId: request.id,
+      const {
+        flag = '',
+        request,
+        currentQuery,
+        currentQuery: {
+          pageSize,
+          curPageNum,
+          curPageSize,
         },
-      });
+      } = payload;
+
+      const response = yield call(api.updateFeedback, request);
+      const { code } = response || {};
+      if (code !== '0') {
+        return;
+      }
+
+      message.success('操作成功！');
+      // 我的反馈
+      if (flag === 'person') {
+        // 记录列表请求
+        yield put({
+          type: 'getAnserOfQustionList',
+          payload: {
+            feedbackId: request.id,
+          },
+        });
+        // 刷新反馈列表
+        yield put({
+          type: 'getPersonFeedbackList',
+          payload: {
+            userId: request.processerEmpId,
+            page: {
+              curPageNum,
+              pageSize: pageSize || '20',
+            },
+          },
+        });
+      } else { // 反馈管理
+        // 记录列表请求
+        yield put({
+          type: 'getFeedbackRecordList',
+          payload: {
+            feedbackId: request.id,
+          },
+        });
+        // 刷新反馈列表
+        yield put({
+          type: 'getFeedbackList',
+          payload: feedbackHelper.constructPostBody(currentQuery, curPageNum, curPageSize),
+        });
+      }
       yield put({
         type: 'getFeedbackDetail',
         payload: {
           id: request.id,
         },
-      });
-      // 刷新反馈列表
-      yield put({
-        type: 'getFeedbackList',
-        payload: feedbackHelper.constructPostBody(currentQuery, curPageNum, curPageSize),
       });
     },
   },
