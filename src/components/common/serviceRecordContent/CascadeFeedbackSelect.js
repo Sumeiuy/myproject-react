@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-28 21:24:20
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-08 14:27:29
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -83,6 +83,9 @@ export default class CascadeFeedbackSelect extends PureComponent {
       const firstFeedback = _.find(feedbackList, { key: first });
       const secondFedback = _.find(secondFeedbackList, { key: second });
       showSecondSelect = firstFeedback.value === secondFedback.value;
+    }
+    if (first === '请选择') {
+      showSecondSelect = true;
     }
 
     return (

@@ -122,7 +122,7 @@ export default class ManagerViewDetail extends PureComponent {
       feedbackIdL2: '',
       isEntryFromResultStatisfy: false,
       enterType: '',
-      ptyMngId: '',
+      recordId: '',
     };
   }
 
@@ -243,7 +243,7 @@ export default class ManagerViewDetail extends PureComponent {
       // 从任务维度信息下钻，服务经理维度、分公司维度、营业部维度
       enterType = '',
       // 任务维度的id，服务经理id、分公司id、营业部id
-      ptyMngId = '',
+      recordId = '',
     } = params;
 
     const {
@@ -288,7 +288,7 @@ export default class ManagerViewDetail extends PureComponent {
     // 服务维度下钻入参
     let scopeCustParam = {
       enterType,
-      ptyMngId,
+      recordId,
     };
 
     // 任务维度的下钻入参
@@ -417,7 +417,7 @@ export default class ManagerViewDetail extends PureComponent {
       feedbackIdL1,
       feedbackIdL2,
       enterType,
-      ptyMngId,
+      recordId,
     } = this.state;
     const { descText } = _.find(missionTypeDict, item => item.key === missionType) || {};
     let missionTypeObject = {};
@@ -473,7 +473,7 @@ export default class ManagerViewDetail extends PureComponent {
         entrance: TASK_CUST_SCOPE_ENTRY,
         source: TASK_CUST_SCOPE_ENTRY,
         enterType,
-        ptyMngId,
+        recordId,
       };
     }
 

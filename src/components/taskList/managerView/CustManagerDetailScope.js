@@ -232,19 +232,19 @@ export default class CustManagerDetailScope extends PureComponent {
       // 服务经理维度
       postBody = {
         ...postBody,
-        ptyMngId: login,
+        recordId: login,
       };
     } else if (currentSelectScope === EMP_COMPANY_SCOPE) {
       // 分公司维度
       postBody = {
         ...postBody,
-        ptyMngId: empCompanyCode,
+        recordId: empCompanyCode,
       };
     } else if (currentSelectScope === EMP_DEPARTMENT_SCOPE) {
       // 营业部维度
       postBody = {
         ...postBody,
-        ptyMngId: empDepartmentCode,
+        recordId: empDepartmentCode,
       };
     }
 
