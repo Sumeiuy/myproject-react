@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-08 16:07:36
+ * @Last Modified time: 2018-06-08 21:27:06
  */
 
 import React, { PureComponent } from 'react';
@@ -153,6 +153,17 @@ export default class ServiceImplementation extends PureComponent {
     empInfo: PropTypes.object,
   };
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { targetCustList = {} } = nextProps;
+    const { list = [] } = targetCustList;
+    if (list !== prevState.currentTargetList) {
+      return {
+        currentTargetList: list,
+      };
+    }
+    return null;
+  }
+
   constructor(props) {
     super(props);
     const { targetCustList: { list } } = props;
@@ -169,20 +180,10 @@ export default class ServiceImplementation extends PureComponent {
     window.onFspSidebarbtn(this.handleFspLeftMenuClick);
   }
 
-  componentWillReceiveProps(nextProps) {
-    // 将服务实施的列表存到state里面
-    const { targetCustList } = this.props;
-    const { targetCustList: nextTargetCustList } = nextProps;
-    if (targetCustList !== nextTargetCustList) {
-      this.setState({
-        currentTargetList: nextTargetCustList.list,
-      });
-    }
-  }
-
   componentDidUpdate(prevProps, prevState) {
     const { isFoldFspLeftMenu } = this.state;
     const { isFold } = this.props;
+    // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
     if (
       prevProps.isFold !== isFold
       || prevState.isFoldFspLeftMenu !== isFoldFspLeftMenu
