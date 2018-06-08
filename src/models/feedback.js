@@ -3,7 +3,6 @@
  * @author yangquanjian
  */
 
-import { message } from 'antd';
 import _ from 'lodash';
 import { feedback as api } from '../api';
 import feedbackHelper from '../helper/page/feedback';
@@ -142,7 +141,6 @@ export default {
         return;
       }
 
-      message.success('操作成功！');
       // 我的反馈
       if (flag === 'person') {
         // 记录列表请求

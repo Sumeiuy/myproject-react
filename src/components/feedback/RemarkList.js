@@ -6,23 +6,24 @@
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { Table } from 'antd';
 import _ from 'lodash';
 
 import { request } from '../../config';
 import Icon from '../common/Icon';
-import './remarkList.less';
+import styles from './remarkList.less';
 
 const EMPTY_LIST = [];
 export default class RemarkList extends PureComponent {
   static propTypes = {
     remarkList: PropTypes.array.isRequired,
-    wrapperClass: PropTypes.string,
+    className: PropTypes.string,
     category: PropTypes.string,
   }
 
   static defaultProps = {
-    wrapperClass: '',
+    className: '',
     category: 'admin',
   }
 
@@ -56,17 +57,17 @@ export default class RemarkList extends PureComponent {
 
         // 当前行记录
         return (
-          <div className="item">
-            <div className="wrap">
-              <div className="info_dv">
+          <div className={styles.item}>
+            <div className={styles.wrap}>
+              <div className={styles.info}>
                 <span>{record.title}</span>
               </div>
-              <pre className="txt">
+              <pre className={styles.txt}>
                 {record.description}
               </pre>
               {
                 hasAttachment ? (
-                  <div className={'attachContainer'}>
+                  <div className={styles.attachContainer}>
                     {this.renderAttachmentList(attachModelList)}
                   </div>
                 ) : null
@@ -84,7 +85,7 @@ export default class RemarkList extends PureComponent {
       _.map(
         list,
         item => (
-          <div className="attachItem">
+          <div className={styles.attachItem}>
             <a href={`${request.prefix}/file/${item.attachUrl}`}>
               <Icon type={'kehu1'} />{`${item.attachName}`}
             </a>
@@ -96,11 +97,14 @@ export default class RemarkList extends PureComponent {
 
   render() {
     const columns = this.constructTableColumns();
-    const { wrapperClass } = this.props;
+    const { className } = this.props;
     return (
       <Table
         rowKey={'id'}
-        className={`record_list ${wrapperClass}`}
+        className={classnames(
+          styles.recordList,
+          { [className]: !!className },
+        )}
         columns={columns}
         dataSource={this.state.dataSource}
         showHeader={false}

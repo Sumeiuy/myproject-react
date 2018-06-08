@@ -1,5 +1,5 @@
 /*
- * @Description: 非“HTSC CRM系统需求审核员” 反馈 页面
+ * @Description: 我的反馈 页面
  * @Author: 张俊丽
  * @Date: 2018-06-5 14:49:16
  */
@@ -7,20 +7,19 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
-import { Input, Modal } from 'antd';
-// import classnames from 'classnames';
+import { Input, Modal, message } from 'antd';
 import { connect } from 'dva';
 import _ from 'lodash';
 
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import PersonFeedbackList from '../../components/common/appList';
 import FeedbackRow from '../../components/feedback/FeedbackRow';
-import FeedbackDetail from '../../components/feedback/FeedbackDetail';
+import MyDetail from '../../components/feedback/MyDetail';
 import { emp } from '../../helper';
 import { request } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
-import styles from './personFeedback.less';
+import styles from './myFeedback.less';
 
 const width = 540; // modal框的宽度
 const TextArea = Input.TextArea;
@@ -51,7 +50,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-export default class Contract extends PureComponent {
+export default class MyFeedback extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     personFeedback: PropTypes.object.isRequired,
@@ -80,28 +79,28 @@ export default class Contract extends PureComponent {
       location: {
         query: {
           curPageNum = '',
-          activeIndex = '',
+          activeId = '',
         },
       },
     } = this.props;
     if (_.isEmpty(curPageNum) ||
-      _.isEmpty(activeIndex)
+      _.isEmpty(activeId)
     ) {
       this.changeLocation({
-        curPageNum: '1',
-        activeIndex: '0',
+        curPageNum: 1,
       });
     }
     // 请求数据
-    this.requstListInfo({ curPageNum: curPageNum || '1' });
+    this.requstListInfo(curPageNum);
   }
 
+  // componentDidUpdate
   componentWillReceiveProps(nextProps) {
     const {
       location: {
         query: {
           curPageNum,
-          activeIndex,
+          activeId,
         },
       },
     } = nextProps;
@@ -109,59 +108,59 @@ export default class Contract extends PureComponent {
       location: {
         query: {
           curPageNum: prePageNum,
-          activeIndex: preActive,
+          activeId: preActive,
         },
       },
     } = this.props;
 
-    if (prePageNum !== curPageNum) {
-      this.requstListInfo({ curPageNum });
-    } else if (preActive !== activeIndex) {
-      this.requstDetailInfo({ activeIndex });
+    if (prePageNum !== curPageNum && curPageNum) {
+      this.requstListInfo(curPageNum);
+    } else if (preActive !== activeId && activeId) {
+      this.requstDetailInfo(activeId);
     }
   }
 
   @autobind
-  requstListInfo(param) {
-    const {
-      curPageNum,
-      activeIndex,
-    } = param;
-
+  requstListInfo(curPageNum = 1) {
     // 请求数据
     if (!_.isEmpty(curPageNum)) {
       this.props.getFeedbackList({
         page: {
-          pageSize: '20',
+          pageSize: 20,
           curPageNum,
         },
         userId: emp.getId(),
       }).then(
         () => {
-          this.requstDetailInfo({
-            activeIndex: activeIndex || '0',
-          });
+          const {
+            location: {
+              query: {
+                activeId,
+              },
+            },
+          } = this.props;
+          this.requstDetailInfo(activeId);
         },
       );
     }
   }
 
   @autobind
-  requstDetailInfo(param) {
+  requstDetailInfo(detailId) {
     const {
       personFeedback,
       getProcessList,
       getFeedbackDetail,
     } = this.props;
-    const { activeIndex } = param;
-
     const { list = [] } = personFeedback || {};
-    const index = parseInt(activeIndex, 10);
-    const { id = '' } = list.length >= index ?
-      list[index] : _.head(list) || {};
+    const { id = '' } = _.head(list);
 
-    getFeedbackDetail({ id });
-    getProcessList({ feedbackId: id });
+    getFeedbackDetail({
+      id: parseInt(detailId, 10) || id,
+    });
+    getProcessList({
+      feedbackId: parseInt(detailId, 10) || id,
+    });
   }
 
   @autobind
@@ -179,7 +178,7 @@ export default class Contract extends PureComponent {
       query: {
         ...query,
         ...param,
-        pageSize: '20',
+        pageSize: 20,
       },
     });
   }
@@ -187,15 +186,14 @@ export default class Contract extends PureComponent {
   @autobind
   handlePageNumberChange(page) {
     this.changeLocation({
-      curPageNum: `${page}`,
-      activeIndex: '0',
+      curPageNum: page,
     });
   }
 
   @autobind
-  handleRowClick(record, index) {
+  handleRowClick(record) {
     this.changeLocation({
-      activeIndex: `${index}`,
+      activeId: record.id,
     });
   }
 
@@ -241,7 +239,9 @@ export default class Contract extends PureComponent {
         processerEmpId: emp.getId(),
         status: 'CLOSED',
       },
-    });
+    }).then(
+      () => message.success('操作成功！'),
+    );
   }
 
   @autobind
@@ -301,16 +301,18 @@ export default class Contract extends PureComponent {
     const {
       location: {
         query: {
-          activeIndex,
+          activeId = '',
         },
       },
     } = this.props;
+    const activable = _.isEmpty(activeId) ?
+      index === 0 : record.id === parseInt(activeId, 10);
 
     return (
       <FeedbackRow
         key={record.id}
         data={record}
-        active={index === parseInt(activeIndex, 10)}
+        active={activable}
         onClick={this.handleRowClick}
         index={index}
         iconType="kehu1"
@@ -359,7 +361,7 @@ export default class Contract extends PureComponent {
       />
     );
     const rightPanel = (
-      <FeedbackDetail
+      <MyDetail
         processList={processList}
         feedbackDetail={feedbackDetail.resultData || {}}
         handleScreenshot={this.handleScreenShotClick}
@@ -375,6 +377,7 @@ export default class Contract extends PureComponent {
           topPanel={<div />}
           leftPanel={leftPanel}
           rightPanel={rightPanel}
+          headerStyle={styles.topClass}
           leftListClassName="feedbackList"
         />
         <Modal

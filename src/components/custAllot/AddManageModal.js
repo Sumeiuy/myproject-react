@@ -250,7 +250,7 @@ export default class AddManageModal extends PureComponent {
                 showSearch
                 placeholder={'请输入服务经理工号、姓名'}
                 data={[]}
-                defaultSelectLabel={_.isEmpty(smKeyword) ? NO_VALUE : smKeyword}
+                defaultLabel={_.isEmpty(smKeyword) ? NO_VALUE : smKeyword}
                 value={smKeyword}
                 onInputChange={_.debounce(this.handleEmpChange, 500)}
               />

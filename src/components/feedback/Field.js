@@ -1,6 +1,6 @@
 /**
  * @author zhangjunli
- * @description 灵活的信息区域
+ * @description 信息展示区域
  */
 
 import React from 'react';
@@ -9,14 +9,14 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import LabelInfo from '../taskList/common/LabelInfo';
-import styles from './flexibleInfoArea.less';
+import styles from './field.less';
 
-function FlexibleInfoArea(props) {
+function Field(props) {
   const {
     data,
     headLine,
-    columnWrapperClass,
-    contentWrapperClass,
+    columnClass,
+    contentClass,
   } = props;
 
   function renderItem(list) {
@@ -26,8 +26,8 @@ function FlexibleInfoArea(props) {
         item => (
           <div
             className={classnames(
-              styles.coloumn,
-              { [columnWrapperClass]: !!columnWrapperClass },
+              styles.column,
+              { [columnClass]: !!columnClass },
             )}
             key={item.id}
           >
@@ -56,7 +56,7 @@ function FlexibleInfoArea(props) {
       <div
         className={classnames(
           styles.basicInfoContent,
-          { [contentWrapperClass]: !!contentWrapperClass },
+          { [contentClass]: !!contentClass },
         )}
       >
         {renderItem(data)}
@@ -74,17 +74,17 @@ function FlexibleInfoArea(props) {
   );
 }
 
-FlexibleInfoArea.defaultProps = {
+Field.defaultProps = {
   headLine: '',
-  columnWrapperClass: '',
-  contentWrapperClass: '',
+  columnClass: '',
+  contentClass: '',
 };
 
-FlexibleInfoArea.propTypes = {
+Field.propTypes = {
   headLine: PropTypes.string,
   data: PropTypes.array.isRequired,
-  contentWrapperClass: PropTypes.string,
-  columnWrapperClass: PropTypes.string,
+  contentClass: PropTypes.string,
+  columnClass: PropTypes.string,
 };
 
-export default FlexibleInfoArea;
+export default Field;

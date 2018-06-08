@@ -1,51 +1,49 @@
-:global {
-  .react-app {
-    .record_list {
-      .ant-table-thead > tr:nth-child(even), .ant-table-tbody > tr:nth-child(even) {
-        background-color: #f9f9f9;
-      }
-      .ant-table-tbody > tr:nth-child(even):hover {
-        background-color: #f9f9f9;
-      }
-      .ant-table-tbody > tr:hover {
-        background-color: #fff;
-      }
-      .ant-table-tbody > tr > td {
-        border: 0;
-      }
-      .item {
-        text-align: left;
-        .info_dv {
-          font-size: 12px;
-          line-height: 24px;
-          color: #b1afaf;
-        }
-        .txt {
-          line-height: 22px;
-          word-break: break-all;
-          white-space: pre-wrap;
-          word-wrap: break-word;
-          border: 0;
-          background-color: transparent;
-          border-radius: 0;
+.recordList {
+  :global {
+    .ant-table-thead > tr:nth-child(even), .ant-table-tbody > tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .ant-table-tbody > tr:nth-child(even):hover {
+      background-color: #f9f9f9;
+    }
+    .ant-table-tbody > tr:hover {
+      background-color: #fff;
+    }
+    .ant-table-tbody > tr > td {
+      border: 0;
+    }
+  }
+  .item {
+    text-align: left;
+    .info {
+      font-size: 12px;
+      line-height: 24px;
+      color: #b1afaf;
+    }
+    .txt {
+      line-height: 22px;
+      word-break: break-all;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      border: 0;
+      background-color: transparent;
+      border-radius: 0;
+      font-size: 14px;
+      font-family: "Helvetica Neue For Number", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    .attachContainer {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      .attachItem {
+        line-height: 20px;
+        a {
           font-size: 14px;
-          font-family: "Helvetica Neue For Number", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        }
-        .attachContainer {
-          display: flex;
-          flex-wrap: wrap;
-          margin-top: 8px;
-          .attachItem {
-            line-height: 20px;
-            a {
-              font-size: 14px;
-              color: #108ee9;
-              padding-right: 54px;
-              i {
-                margin-right: 4px;
-                margin-left: 8px;
-              }
-            }
+          color: #108ee9;
+          padding-right: 54px;
+          i {
+            margin-right: 4px;
+            margin-left: 8px;
           }
         }
       }
