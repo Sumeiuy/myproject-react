@@ -14,9 +14,10 @@ export default {
   state: {
     detailInfo: EMPTY_OBJECT, // 详情
     buttonData: EMPTY_OBJECT, // 获取按钮列表和下一步审批人
-    custLData: EMPTY_OBJECT, // 客户列表列表
+    custData: EMPTY_OBJECT, // 客户列表列表
     manageData: EMPTY_OBJECT,  // 服务经理列表
     updateData: EMPTY_OBJECT,  // 更新客户
+    detailAddedCustData: EMPTY_OBJECT,  // 详情页已添加客户
     addedCustData: EMPTY_OBJECT,  // 已添加客户
     addedManageData: EMPTY_OBJECT,  // 已添加服务经理
     saveChangeData: EMPTY_OBJECT,  // 提交保存后的数据
@@ -61,6 +62,13 @@ export default {
       return {
         ...state,
         updateData: resultData,
+      };
+    },
+    queryDetailAddedCustListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        detailAddedCustData: resultData,
       };
     },
     // 已添加的客户列表
@@ -147,8 +155,12 @@ export default {
     // 查询已添加的客户列表
     * queryAddedCustList({ payload }, { call, put }) {
       const response = yield call(api.queryAddedCustList, payload);
+      let type = 'queryAddedCustListSuccess';
+      if (payload.type) {
+        type = 'queryDetailAddedCustListSuccess';
+      }
       yield put({
-        type: 'queryAddedCustListSuccess',
+        type,
         payload: response,
       });
     },
@@ -187,7 +199,7 @@ export default {
       switch (payload) {
         case 'clearAllData':
           response = {
-            custLData: {}, // 客户列表列表
+            custData: {}, // 客户列表列表
             manageData: {},  // 服务经理列表
             addedCustData: {},  // 已添加客户
             addedManageData: {},  // 已添加服务经理
@@ -196,7 +208,7 @@ export default {
           break;
         case 'clearSearchData':
           response = {
-            custLData: {}, // 客户列表列表
+            custData: {}, // 客户列表列表
             manageData: {},  // 服务经理列表
           };
           break;

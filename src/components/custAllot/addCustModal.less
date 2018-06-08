@@ -1,5 +1,9 @@
 .addCustModal {
   :global {
+    .ant-modal {
+      width: 80% !important;
+      height: calc(~"100% - 280px") !important;
+    }
     .ant-modal-title {
       line-height: 20px;
     }
@@ -31,12 +35,56 @@
         }
       }
     }
+    .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+      padding: 8px 12px;
+    }
+    .ant-table-thead > tr > th.ant-table-selection-column,
+    .ant-table-tbody > tr > td.ant-table-selection-column {
+      width: 40px;
+      min-width: 40px;
+    }
+    .lego-tree-select {
+      width: 160px;
+      margin-right: 4px;
+      .lego {
+        width: 160px;
+      }
+    }
+    .lego-filter-filterWrapper > button :first-child,
+    .lego-tree.ant-tree li .ant-tree-node-content-wrapper,
+    .lego-filter-filterWrapper .lego-filter-menuContainer .ant-dropdown,
+    .lego-filter-multi-multiFilterMenu > li .ant-checkbox-wrapper,
+    .lego-single-filter-singleFilterMenu .lego-single-filter-inputWrapper .lego-single-filter-searchInput {
+      font-size: 12px;
+    }
   }
   .modalContent {
     padding: 10px 20px;
     .contentItem {
+      .expandDiv {
+        position: relative;
+        display: inline-block;
+        height: 30px;
+        top: -8px;
+      }
+      :global {
+        .lego-filter-filterContainer {
+          width: 160px;
+          margin-right: 4px;
+        }
+        .lego-filter-filterWrapper > button:first-child {
+          width: 160px;
+          text-align: left;
+        }
+        .lego-filter-filterWrapper .lego-filter-menuContainer .lego-filter-menu {
+          width: 240px;
+        }
+        .lego-single-filter-optionList {
+          display: none;
+        }
+      }
       .tableDiv {
-        margin-top: 14px;
+        margin-top: 8px;
       }
     }
   }
@@ -45,5 +93,25 @@
     max-width: 300px;
     max-height: 300px !important;
     overflow: auto;
+  }
+  .rangeDiv {
+    margin-top: -6px;
+    :global {
+      .lego-filter-filterContainer {
+        width: 180px !important;
+        .lego-filter-filterWrapper {
+          width: 180px !important;
+        }
+        .lego-filter-filterWrapper > button:first-child {
+          width: 180px;
+          text-align: left;
+        }
+      }
+      .lego-unit-input-unitInput input,
+      .lego-unit-input-unitInput .lego-unit-input-unit,
+      .lego-btn-buttonContainer .lego-btn-button > span {
+        font-size: 12px;
+      }
+    }
   }
 }

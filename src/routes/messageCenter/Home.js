@@ -98,6 +98,9 @@ export default class MessageCenter extends PureComponent {
       this.handleMessageByBatch(objectVal, title, rowId);
     } else if (typeName === 'HTSC TG Approval Inbox Type') {
       this.handleMessageByTG();
+    } else if (typeName === 'HTSC New Batch Branch Assignment Inbox Type') {
+      // 分公司客户分配
+      this.handleMessageByAssignment();
     } else {
       this.handleMessageByOther(rowId, objectVal);
     }
@@ -168,6 +171,12 @@ export default class MessageCenter extends PureComponent {
     this.removeNotice = false;
     const { push } = this.context;
     push(`/demote?notifiId=${rowId}`);
+  }
+
+  // 新分公司客户分配
+  @autobind
+  handleMessageByAssignment() {
+    console.warn('1', 1);
   }
 
   // 处理typeName是HTSC Primary Position Change Inbox Type的消息通知

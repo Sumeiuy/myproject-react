@@ -93,9 +93,11 @@ const mapStateToProps = state => ({
   // 获取按钮列表和下一步审批人
   buttonData: state.custAllot.buttonData,
   // 客户列表
-  custData: state.custAllot.custLData,
+  custData: state.custAllot.custData,
   // 服务经理列表
   manageData: state.custAllot.manageData,
+  // 详情页已添加的客户列表
+  detailAddedCustData: state.custAllot.detailAddedCustData,
   // 已添加的客户列表
   addedCustData: state.custAllot.addedCustData,
   // 已添加的服务经理列表
@@ -148,6 +150,7 @@ export default class CustAllot extends PureComponent {
     // 详情
     detailInfo: PropTypes.object.isRequired,
     queryDetailInfo: PropTypes.func.isRequired,
+    detailAddedCustData: PropTypes.object.isRequired,
     // 按钮以及下一步审批人列表
     buttonData: PropTypes.object.isRequired,
     queryButtonList: PropTypes.func.isRequired,
@@ -304,19 +307,24 @@ export default class CustAllot extends PureComponent {
   closeModal(obj) {
     const { clearData } = this.props;
     const { modalKey, isNeedConfirm = true, clearDataType = '' } = obj;
+    const { ruleType } = this.state;
+    let newRuleType = ruleType;
+    if (modalKey === createModalKey) {
+      newRuleType = ruleTypeArray[0].value;
+    }
     // 关闭模态框
     if (isNeedConfirm) {
       commonConfirm({
         shortCut: 'close',
         onOk: () => this.setState({
           [modalKey]: false,
-          ruleType: ruleTypeArray[0].value,
+          ruleType: newRuleType,
         }, () => clearData(clearDataType)),
       });
     } else {
       this.setState({
         [modalKey]: false,
-        ruleType: ruleTypeArray[0].value,
+        ruleType: newRuleType,
       }, () => clearData(clearDataType));
     }
   }
@@ -390,9 +398,18 @@ export default class CustAllot extends PureComponent {
         pageSize: 5,
       };
       // 从客户弹窗过来请求已添加的客户，否则请求已添加的服务经理
-      const queryFunction = pageData.modalKey === 'custModal' ? queryAddedCustList : queryAddedManageList;
+      const isCust = pageData.modalKey === 'custModal';
+      const queryFunction = isCust ? queryAddedCustList : queryAddedManageList;
       queryFunction(queryPayload).then(() => {
         this.closeModal(pageData);
+
+        if (!isCust) {
+          const { addedManageData: { page } } = this.props;
+          // 只有一位服务经理时，隐藏分配规则
+          if (page.totalRecordNum <= 1) {
+            this.handleRuleTypePropsChange('0');
+          }
+        }
       });
     });
   }
@@ -537,6 +554,7 @@ export default class CustAllot extends PureComponent {
       custData,
       queryCustList,
       // 已添加客户列表与接口
+      detailAddedCustData,
       addedCustData,
       queryAddedCustList,
       // 服务经理列表与接口
@@ -602,7 +620,7 @@ export default class CustAllot extends PureComponent {
         data={detailInfo}
         dict={dict}
         queryAddedCustList={queryAddedCustList}
-        addedCustData={addedCustData}
+        addedCustData={detailAddedCustData}
       />
     );
 
@@ -677,7 +695,9 @@ export default class CustAllot extends PureComponent {
             <AddCustModal
               modalKey={custModalKey}
               visible={custModal}
+              custRangeList={custRangeList}
               data={custData}
+              addedCustData={addedCustData}
               queryList={queryCustList}
               closeModal={this.closeModal}
               sendRequest={this.updateCustOrEmp}
@@ -697,6 +717,7 @@ export default class CustAllot extends PureComponent {
               queryList={queryManageList}
               closeModal={this.closeModal}
               sendRequest={this.updateCustOrEmp}
+              handleRuleTypePropsChange={this.handleRuleTypePropsChange}
               updateData={updateData}
             />
           :

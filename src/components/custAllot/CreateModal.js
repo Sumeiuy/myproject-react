@@ -238,7 +238,7 @@ export default class CreateModal extends PureComponent {
         if (uploadFile.response.code === '0') {
           // 上传成功
           const attachmentData = uploadFile.response.resultData;
-          const { updateList, updateData } = this.props;
+          const { updateList, updateData, addedCustData: { list = [] } } = this.props;
           const payload = {
             id: updateData.appId || '',
             custtomer: [],
@@ -246,9 +246,13 @@ export default class CreateModal extends PureComponent {
             type: operateType[2], // clear
             attachment,
           };
+          // TODO:未上传已有客户时也需要清空
           // 如果上传过，则先调用清空接口，调用成功后，调用添加接口
           // 添加接口调用成功后，调用查询接口
-          if (!_.isEmpty(attachment)) {
+          // 是否上传过
+          const isUploaded = !_.isEmpty(attachment);
+          // 如果上传过，或者未上传过但是客户有数据
+          if (isUploaded || (!isUploaded && list.length > 0)) {
             updateList(payload).then(() => {
               this.handleUpdateDataAndQueryList(payload, attachmentData);
             });
@@ -365,7 +369,7 @@ export default class CreateModal extends PureComponent {
       selfBtnGroup,
       visible,
       modalKey,
-      // custModalKey,
+      custModalKey,
       manageModalKey,
       showModal,
       closeModal,
@@ -404,13 +408,15 @@ export default class CreateModal extends PureComponent {
       onChange: this.handleManagePageChange,
     };
 
-    const uploadElement = _.isEmpty(attachment) ?
+    // 是否上传过
+    const isUploaded = !_.isEmpty(attachment);
+    // 上传过，或者未上传但有数据
+    const uploadElement = (isUploaded || (!isUploaded && custList.length > 0)) ?
+      (<span><a onClick={this.onImportHandle}>批量导入数据</a></span>)
+    :
       (<Upload {...uploadProps}>
         <a>批量导入数据</a>
-      </Upload>)
-    :
-      (<span><a onClick={this.onImportHandle}>批量导入数据</a></span>);
-
+      </Upload>);
     // 客户标题列表
     const custTitle = this.getColumnsCustTitle();
     // 服务经理标题列表
@@ -443,10 +449,9 @@ export default class CreateModal extends PureComponent {
             <InfoTitle head="客户列表" />
             {/* 操作按钮容器 */}
             <div className={`${styles.operateDiv} clearfix`}>
-              {/* WILLDO: 后期需要加上添加按钮 */}
-              {/* <Button onClick={() => showModal(custModalKey)}>
+              <Button onClick={() => showModal(custModalKey)}>
                 添加
-              </Button> */}
+              </Button>
               <span className={styles.linkSpan}>
                 <a
                   onClick={this.handleDownloadClick}
