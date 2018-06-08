@@ -95,7 +95,7 @@ export default class MyFeedback extends PureComponent {
   }
 
   // componentDidUpdate
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(preProps) {
     const {
       location: {
         query: {
@@ -103,7 +103,7 @@ export default class MyFeedback extends PureComponent {
           activeId,
         },
       },
-    } = nextProps;
+    } = this.props;
     const {
       location: {
         query: {
@@ -111,7 +111,7 @@ export default class MyFeedback extends PureComponent {
           activeId: preActive,
         },
       },
-    } = this.props;
+    } = preProps;
 
     if (prePageNum !== curPageNum && curPageNum) {
       this.requstListInfo(curPageNum);
@@ -187,6 +187,7 @@ export default class MyFeedback extends PureComponent {
   handlePageNumberChange(page) {
     this.changeLocation({
       curPageNum: page,
+      activeId: '',
     });
   }
 
