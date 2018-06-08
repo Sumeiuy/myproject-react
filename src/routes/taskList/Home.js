@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-07 21:04:31
+ * @Last Modified time: 2018-06-08 20:55:26
  * @description 任务管理首页
  */
 
@@ -113,10 +113,10 @@ export default class PerformerView extends PureComponent {
     this.queryAppList(query);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { location: { query } } = nextProps;
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
     const {
-      location: { query: prevQuery },
+      location: { query },
       changePerformerViewTab,
     } = this.props;
     const { currentId, ...otherQuery } = query;
@@ -125,7 +125,7 @@ export default class PerformerView extends PureComponent {
       this.queryAppList(otherQuery);
     }
     // 当前选中的任务变化，需要还原与任务绑定当前详情中选中的tab
-    if (query.currentId !== prevQuery.currentId) {
+    if (currentId !== prevCurrentId) {
       // 还原执行者视图右侧详情中tab的activeKey，默认选中第一个tab
       changePerformerViewTab(defaultPerformerViewCurrentTab);
     }
