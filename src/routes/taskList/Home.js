@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-01 12:06:51
+ * @Last Modified time: 2018-06-07 21:04:31
  * @description 任务管理首页
  */
 
@@ -45,6 +45,7 @@ import {
   // 请在config里面配置QUERY_PARAMS
   QUERY_PARAMS,
   mediumPageSize,
+  defaultPerformerViewCurrentTab,
 } from './config';
 
 // 空函数
@@ -114,11 +115,19 @@ export default class PerformerView extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { location: { query } } = nextProps;
-    const { location: { query: prevQuery } } = this.props;
+    const {
+      location: { query: prevQuery },
+      changePerformerViewTab,
+    } = this.props;
     const { currentId, ...otherQuery } = query;
     const { currentId: prevCurrentId, ...otherPrevQuery } = prevQuery;
     if (!_.isEqual(otherQuery, otherPrevQuery)) {
       this.queryAppList(otherQuery);
+    }
+    // 当前选中的任务变化，需要还原与任务绑定当前详情中选中的tab
+    if (query.currentId !== prevQuery.currentId) {
+      // 还原执行者视图右侧详情中tab的activeKey，默认选中第一个tab
+      changePerformerViewTab(defaultPerformerViewCurrentTab);
     }
   }
 
