@@ -10,11 +10,22 @@ var ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 var MiniCssExtractPlugin = require("mini-css-extract-plugin")
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 var theme = require('../src/theme')
+var UglifyJsPlugin = require("uglifyjs-webpack-plugin")
 
 var env = config.build.env
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
+}
+
+function recursiveIssuer(m) {
+  if (m.issuer) {
+    return recursiveIssuer(m.issuer);
+  } else if (m.name) {
+    return m.name;
+  } else {
+    return false;
+  }
 }
 
 var cssLoaders = utils.getCSSLoaders({
@@ -79,17 +90,55 @@ var webpackConfig = merge(baseWebpackConfig, {
   output: {
     path: config.build.assetsRoot,
     filename: utils.assetsPath('js/[name].[chunkhash].js'),
-    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+    chunkFilename: utils.assetsPath('js/[name].[chunkhash].js')
+  },
+  optimization: {
+    namedModules: true,
+    namedChunks: true,
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: true // set to true if you want JS source maps
+      }),
+      new OptimizeCSSPlugin({
+        cssProcessorOptions: {
+          safe: true
+        }
+      })
+    ],
+    splitChunks: {
+      name: true,
+      cacheGroups: {
+        indexStyle: {
+          name: 'index',
+          test: ((m,c,entry = 'index') => {
+            return (m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry)
+          }),
+          chunks: 'all',
+          enforce: true
+        },
+        newIndexStyle: {
+          name: 'newIndex',
+          test: ((m,c,entry = 'newIndex') => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry),
+          chunks: 'all',
+          enforce: true
+        },
+        vendor: {
+          name: 'vendor',
+          test: (module => module.resource && 
+            /\.js$/.test(module.resource) &&
+            module.resource.indexOf(path.join(__dirname, '../node_modules')) === 0 ),
+          chunks: 'all',
+          enforce: true
+        }
+      }
+    },
+    runtimeChunk: 'single'
   },
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
 
-    // new webpack.optimize.UglifyJsPlugin({
-    //   compress: {
-    //     warnings: false
-    //   },
-    //   sourceMap: true
-    // }),
     // extract css into its own file
     new MiniCssExtractPlugin({
       filename: utils.assetsPath('css/[name].[contenthash].css')
@@ -108,7 +157,8 @@ var webpackConfig = merge(baseWebpackConfig, {
       filename: config.build.index,
       inject: false,
       template: 'index.html',
-      chunks: ['index', 'vendor', 'manifest'],
+      // chunks: ['index', 'vendor', 'manifest'],
+      chunks: ['index', 'vendor', 'runtime'],
       lang: 'en',
       title: '华泰证券理财平台',
       meta: [
@@ -131,7 +181,8 @@ var webpackConfig = merge(baseWebpackConfig, {
       filename: config.build.fspIndex,
       template: 'newIndex.html',
       inject: true,
-      chunks: ['newIndex', 'vendor', 'manifest'],
+      // chunks: ['newIndex', 'vendor', 'manifest'],
+      chunks: ['newIndex', 'vendor', 'runtime'],
       minify: {
         removeComments: true,
         collapseWhitespace: true,
@@ -142,26 +193,6 @@ var webpackConfig = merge(baseWebpackConfig, {
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       chunksSortMode: 'dependency'
     }),
-    // split vendor js into its own file
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: 'vendor',
-    //   minChunks: function (module, count) {
-    //     // any required modules inside node_modules are extracted to vendor
-    //     return (
-    //       module.resource &&
-    //       /\.js$/.test(module.resource) &&
-    //       module.resource.indexOf(
-    //         path.join(__dirname, '../node_modules')
-    //       ) === 0
-    //     )
-    //   }
-    // }),
-    // extract webpack runtime and module manifest to its own file in order to
-    // prevent vendor hash from being updated whenever app bundle is updated
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: 'manifest',
-    //   chunks: ['vendor']
-    // }),
     // copy custom static assets
     new CopyWebpackPlugin([
       {
@@ -201,4 +232,3 @@ if (config.build.bundleAnalyzerReport) {
 }
 
 module.exports = webpackConfig
-
