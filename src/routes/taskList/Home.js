@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-31 15:16:43
+ * @Last Modified time: 2018-06-01 12:06:51
  * @description 任务管理首页
  */
 
@@ -80,7 +80,7 @@ export default class PerformerView extends PureComponent {
     empInfo: EMPTY_OBJECT,
     custFeedback: EMPTY_LIST,
     answersList: EMPTY_OBJECT,
-    saveAnswersSucce: false,
+    isSubmitSurveySucceed: false,
     missionImplementationDetail: EMPTY_OBJECT,
     custListForServiceImplementation: EMPTY_LIST,
   };
@@ -314,11 +314,11 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getCustManagerScope({
-                        orgId,
-                        pageNum = GET_CUST_SCOPE_PAGE_NUM,
-                        pageSize = GET_CUST_SCOPE_PAGE_SIZE,
-                        enterType,
-                      }) {
+    orgId,
+    pageNum = GET_CUST_SCOPE_PAGE_NUM,
+    pageSize = GET_CUST_SCOPE_PAGE_SIZE,
+    enterType,
+  }) {
     const {
       getCustManagerScope,
       custRange,
@@ -476,7 +476,7 @@ export default class PerformerView extends PureComponent {
       answersList,
       getTempQuesAndAnswer,
       saveAnswersByType,
-      saveAnswersSucce,
+      isSubmitSurveySucceed,
       attachmentList,
       getTaskDetailBasicInfo,
       modifyLocalTaskList,
@@ -548,7 +548,7 @@ export default class PerformerView extends PureComponent {
         getTempQuesAndAnswer={getTempQuesAndAnswer}
         answersList={answersList}
         saveAnswersByType={saveAnswersByType}
-        saveAnswersSucce={saveAnswersSucce}
+        isSubmitSurveySucceed={isSubmitSurveySucceed}
         attachmentList={attachmentList}
         modifyLocalTaskList={modifyLocalTaskList}
         getTaskDetailBasicInfo={getTaskDetailBasicInfo}
@@ -708,14 +708,14 @@ export default class PerformerView extends PureComponent {
     const {
       getTaskDetailBasicInfo,
       queryTargetCust,
-      targetCustList: { page: { pageNum, pageSize } },
+      targetCustList: { page: { pageSize } },
     } = this.props;
     getTaskDetailBasicInfo({ taskId: obj.id });
     const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
     // fsp左侧菜单折叠pageSize传9，否则传6
     const newPageSize = isFoldFspLeftMenu ? mediumPageSize : pageSize;
     // 执行者视图服务实施客户列表中 状态筛选默认值 state='10' 未开始
-    queryTargetCust({ missionId: obj.id, state: '10', pageNum, pageSize: newPageSize });
+    queryTargetCust({ missionId: obj.id, state: '10', pageNum: 1, pageSize: newPageSize });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
   }

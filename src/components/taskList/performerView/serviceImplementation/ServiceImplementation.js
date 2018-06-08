@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-31 15:16:23
+ * @Last Modified time: 2018-06-06 14:18:31
  */
 
 import React, { PureComponent } from 'react';
@@ -157,7 +157,7 @@ export default class ServiceImplementation extends PureComponent {
     const { targetCustList: { list } } = props;
     this.state = {
       // Fsp页面左侧菜单是否被折叠
-      isFoldFspLeftMenu: true,
+      isFoldFspLeftMenu: false,
       // 当前服务实施列表的数据
       currentTargetList: list || [],
     };
@@ -530,9 +530,9 @@ export default class ServiceImplementation extends PureComponent {
       queryCustFeedbackList4ZLFins, custFeedbackList, queryApprovalList, zhangleApprovalList,
       testWallCollision, testWallCollisionStatus, toggleServiceRecordModal, targetCustList,
     } = this.props;
-    const { currentTargetList } = this.state;
+    const { currentTargetList, isFoldFspLeftMenu } = this.state;
     const {
-      missionStatusCode, missionStatusName, missionFlowId,
+      missionStatusCode, missionStatusValue, missionFlowId,
       serviceTips, serviceWayName, serviceWayCode, serviceDate,
       serviceRecord, customerFeedback, feedbackDate, custId,
       serviceContent, // 涨乐财富通的服务内容
@@ -542,7 +542,11 @@ export default class ServiceImplementation extends PureComponent {
     // TODO 新需求需要针对涨乐财富通的服务方式来判断状态是否可读
     // 涨乐财富通服务方式下，只有审批中和已完成状态，才属于只读状态
     let isReadOnly;
-    if (serviceRecordInfo.caller === PHONE) {
+    const { caller = '', autoGenerateRecordInfo = {} } = serviceRecordInfo;
+    // 判断是不是当前选中任务打的电话
+    const isCurrentMissionPhoneCall = caller === PHONE
+      && missionFlowId === autoGenerateRecordInfo.missionFlowId;
+    if (isCurrentMissionPhoneCall) {
       // 打电话调用时，服务记录表单可编辑
       isReadOnly = false;
     } else {
@@ -561,7 +565,7 @@ export default class ServiceImplementation extends PureComponent {
       serviceTips,
       serviceWayName,
       serviceWayCode,
-      serviceStatusName: missionStatusName,
+      serviceStatusName: missionStatusValue,
       serviceStatusCode: missionStatusCode,
       serviceDate,
       serviceRecord,
@@ -581,6 +585,8 @@ export default class ServiceImplementation extends PureComponent {
       taskTypeCode,
       serviceTypeCode,
     };
+    // fsp左侧菜单和左侧列表折叠状态变化，强制更新affix、文字折叠区域
+    const leftFoldState = `${isFoldFspLeftMenu}${isFold}`;
     return (
       <div className={styles.serviceImplementation} ref={ref => this.container = ref}>
         <Header
@@ -597,7 +603,10 @@ export default class ServiceImplementation extends PureComponent {
           _.isEmpty(currentTargetList) ?
             <EmptyData /> :
             <div>
-              <Affix target={() => getStickyTarget(this.container)}>
+              <Affix
+                key={leftFoldState}
+                target={() => getStickyTarget(this.container)}
+              >
                 <div className={styles.listSwiperBox}>
                   <ListSwiper
                     targetCustList={targetCustList}
@@ -624,18 +633,21 @@ export default class ServiceImplementation extends PureComponent {
                   monthlyProfits={monthlyProfits}
                   isCustIncomeRequested={isCustIncomeRequested}
                   getCustIncome={getCustIncome}
+                  leftFoldState={leftFoldState}
                 />
                 <SimpleDisplayBlock
                   title="服务策略"
                   data={servicePolicy}
                   currentId={currentId}
                   missionFlowId={missionFlowId}
+                  leftFoldState={leftFoldState}
                 />
                 <SimpleDisplayBlock
                   title="任务提示"
                   data={targetCustDetail.serviceTips}
                   currentId={currentId}
                   missionFlowId={missionFlowId}
+                  leftFoldState={leftFoldState}
                 />
                 <ServiceRecordForm
                   dict={dict}
@@ -661,6 +673,7 @@ export default class ServiceImplementation extends PureComponent {
                   testWallCollision={testWallCollision}
                   testWallCollisionStatus={testWallCollisionStatus}
                   serviceCustId={custId}
+                  isCurrentMissionPhoneCall={isCurrentMissionPhoneCall}
                 />
               </div>
             </div>

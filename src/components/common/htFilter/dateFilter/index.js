@@ -21,24 +21,20 @@ export default class DateFilter extends React.Component {
     defaultVisible: PropTypes.bool,
     isCloseable: PropTypes.bool,
     onClose: PropTypes.func,
-    isInsideOffSet: PropTypes.func,
     value: PropTypes.oneOfType([PropTypes.array, PropTypes.string]).isRequired,
     disabledCurrentEnd: PropTypes.bool,
-    hasCustomerOffset: PropTypes.bool,
   };
   static defaultProps = {
     // example props for the demo
     defaultVisible: false,
     className: '',
     isCloseable: false,
-    hasCustomerOffset: false,
     disabledCurrentEnd: true,
     initialStartDate: null,
     initialEndDate: null,
     stateDateWrapper: date => date.format('YYYY-MM-DD'),
     filterName: '开户日期',
     filterId: 'dateOpened',
-    isInsideOffSet: () => true,
     onChange: _.noop,
     onClose: _.noop,
   };
@@ -67,7 +63,7 @@ export default class DateFilter extends React.Component {
   }
 
   render() {
-    const { value, isInsideOffSet, disabledCurrentEnd, hasCustomerOffset } = this.props;
+    const { value, disabledCurrentEnd } = this.props;
     const filterContainerClasses = classNames({
       [styles.dateFilter]: true,
       [styles.dateFilterContainer]: true,
@@ -84,7 +80,7 @@ export default class DateFilter extends React.Component {
         initialEndDate = moment(value[1]);
       }
     }
-
+    const dateProps = _.omit(this.props, _.keys(DateFilter.propTypes));
     return (
       <div className={this.props.className}>
         <div className={filterContainerClasses}>
@@ -92,16 +88,15 @@ export default class DateFilter extends React.Component {
             {`${this.props.filterName}:`}
           </span>
           <DateRangePicker
+            {...dateProps}
             inputIconPosition="after"
             initialStartDate={initialStartDate}
             initialEndDate={initialEndDate}
             disabledRange={disabledCurrentEnd ?
-                day => !isInclusivelyBeforeDay(day, moment())
+              day => !isInclusivelyBeforeDay(day, moment())
               : _.noop}
-            hasCustomerOffset={hasCustomerOffset}
             onChange={this.onDatesChange}
             defaultVisible={this.props.defaultVisible}
-            isInsideOffSet={isInsideOffSet}
             noBorder
             readOnly
           />

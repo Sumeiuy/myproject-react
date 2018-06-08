@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:43:12
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-31 14:32:55
+ * @Last Modified time: 2018-06-07 10:20:34
  */
 
 import React from 'react';
@@ -12,14 +12,17 @@ import ForgeryRichText from '../../../common/ForgeryRichText';
 import TextCollapse from './TextCollapse';
 import styles from './simpleDisplayBlock.less';
 
-export default function SimpleDisplayBlock({ title, data, missionFlowId, currentId }) {
-  const key = `${title}-${currentId}-${missionFlowId}`;
+export default function SimpleDisplayBlock({
+  title, data, missionFlowId, currentId,
+  leftFoldState,
+ }) {
+  const key = `${title}-${currentId}-${missionFlowId}-${leftFoldState}`;
   return (
     <div className={styles.container}>
       <div className={styles.inner}>
         <h5 className={styles.title}>{title}</h5>
-        <TextCollapse key={key} minHeight="21px" maxHeight="auto" >
-          <div className={styles.content}><ForgeryRichText text={data} /></div>
+        <TextCollapse key={key} minHeight="21px">
+          <div className={styles.content}><ForgeryRichText text={data || '无'} /></div>
         </TextCollapse>
       </div>
     </div>
@@ -31,6 +34,7 @@ SimpleDisplayBlock.propTypes = {
   data: PropTypes.string,
   currentId: PropTypes.string,
   missionFlowId: PropTypes.string,
+  leftFoldState: PropTypes.string,
 };
 
 SimpleDisplayBlock.defaultProps = {
@@ -38,4 +42,5 @@ SimpleDisplayBlock.defaultProps = {
   data: '',
   currentId: '',
   missionFlowId: '',
+  leftFoldState: '',
 };

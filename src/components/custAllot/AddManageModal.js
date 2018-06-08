@@ -11,10 +11,8 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { message } from 'antd';
 import _ from 'lodash';
-import { SingleFilter } from 'ht-react-filter';
-import { TreeFilter as HTTreeFilter } from 'ht-tree-filter';
-import 'ht-react-filter/lib/css/index.css';
-import 'ht-tree-filter/lib/css/index.css';
+import { SingleFilter } from 'lego-react-filter/src';
+import { TreeFilter as HTTreeFilter } from 'lego-tree-filter/src';
 
 import CommonModal from '../common/biz/CommonModal';
 import Pagination from '../../components/common/Pagination';
@@ -210,7 +208,7 @@ export default class AddManageModal extends PureComponent {
     treeCustRange = [
       {
         label: '不限',
-        value: 0,
+        value: '',
         key: 0,
       },
       ...treeCustRange,
@@ -257,7 +255,7 @@ export default class AddManageModal extends PureComponent {
                 onInputChange={_.debounce(this.handleEmpChange, 500)}
               />
               <HTTreeFilter
-                value={_.isEmpty(orgId) ? 0 : orgId}
+                value={_.isEmpty(orgId) ? '' : orgId}
                 treeData={treeCustRange}
                 filterName={'所属营业部'}
                 treeDefaultExpandAll

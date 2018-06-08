@@ -1,0 +1,220 @@
+.tipsBox {
+  margin-bottom: 20px;
+  p {
+    font-size: 14px;
+    color: #4a4a4a;
+  }
+}
+
+.tabBox {
+  :global {
+    .ant-input-suffix {
+      button {
+        background-color: transparent;
+        border-color: transparent;
+        color: #333;
+        &:visited, &:active {
+          background-color: transparent;
+          border-color: transparent;
+        }
+      }
+    }
+  }
+}
+
+.collapseBox {
+  border: 1px solid #ddd;
+  .titleBox {
+    padding-left: 30px;
+    margin: 0 auto;
+    height: 38px;
+    line-height: 38px;
+    font-size: 14px;
+    color: #4a4a4a;
+    border-bottom: 1px solid #d9d9d9;
+    font-weight: bold;
+    background: #f7f7f7;
+    span {
+      display: inline-block;
+    }
+  }
+  .collapseHead {
+    padding-left: 30px;
+    span {
+      display: inline-block;
+      &.optionClass {
+        color: #108ee9;
+        :global {
+          i.anticon {
+            margin-left: 10px;
+          }
+        }
+      }
+    }
+  }
+  span {
+    &.parentClass {
+      width: 15%;
+    }
+    &.parentClassSelf {
+      width: 30%;
+    }
+    &.missionId {
+      width: 15%;
+    }
+    &.childClass {
+      box-sizing: border-box;
+      width: 60%;
+      padding: 0 20px 0 0;
+      vertical-align: middle;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    &.optionClass {
+      width: 10%;
+    }
+  }
+
+  .taskbindBox {
+    width: 100%;
+    padding-bottom: 5px;
+    box-sizing: border-box;
+
+    & > .captions {
+      padding: 8px 0;
+      height: 36px;
+      line-height: 20px;
+      display: flex;
+      font-size: 14px;
+      color: #4a4a4a;
+      text-align: left;
+      font-weight: bold;
+
+      & > .title {
+        flex: 0 0 auto;
+        width: 30%;
+      }
+      & > .content {
+        flex: 0 0 auto;
+        width: 60%;
+      }
+    }
+
+    & > .templates {
+      font-size: 14px;
+      color: #4a4a4a;
+      text-align: left;
+      margin-bottom: 6px;
+      line-height: 20px;
+      display: flex;
+
+      & > .title {
+        flex: 0 0 auto;
+        width: 30%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        cursor: pointer;
+        display: flex;
+        &:hover {
+          color: #108ee9;
+
+          & > .delIcon {
+            color: #108ee9;
+          }
+        }
+        & > .titleText {
+          flex: 0 0 auto;
+        }
+        & > .delIcon {
+          margin-left: 5px;
+          color: #e1e1e1;
+          flex: 0 0 auto;
+        }
+      }
+      & > .content {
+        flex: 0 0 auto;
+        width: 60%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        cursor: default;
+      }
+    }
+  }
+
+  :global {
+    .ant-collapse {
+      border: none;
+      .ant-collapse-item {
+        .ant-collapse-header {
+          margin: 0 auto;
+          padding: 0;
+          height: 37px;
+          line-height: 37px;
+          font-size: 14px;
+          color: #4a4a4a;
+          i.arrow {
+            display: none;
+          }
+          &:active {
+            background: none;
+          }
+        }
+        .ant-collapse-content {
+          padding: 0 0 0 30px;
+          background: none;
+          border-top: 0;
+          .ant-collapse-content-box {
+            display: flex;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            border-top: 1px solid #d9d9d9;
+          }
+        }
+        &.ant-collapse-item-active {
+          .anticon-up {
+            display: inline-block;
+          }
+          .anticon-down {
+            display: none;
+          }
+        }
+        .anticon-up {
+          display: none;
+        }
+      }
+    }
+  }
+  .pageBox {
+    float: right;
+    margin: 20px;
+    margin-right: 40px;
+    :global {
+      .ant-pagination-item {
+        margin-bottom: 0;
+      }
+    }
+  }
+  .emptyContent {
+    position: relative;
+    padding: 16px 8px;
+    background: #fff;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.43);
+    border-bottom: none;
+  }
+}
+
+.investAdviceBindMentionHightlight {
+  margin: 0 5px;
+  color: #2d84cc;
+  background-color: #ebf3fb;
+  border-color: #ebf3fb;
+}
+
+.tmplContentPopover {
+  font-size: 14px;
+}
