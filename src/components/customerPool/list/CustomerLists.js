@@ -128,6 +128,9 @@ export default class CustomerLists extends PureComponent {
     dataForNextPage: PropTypes.object.isRequired,
     addCallRecord: PropTypes.func.isRequired,
     currentCommonServiceRecord: PropTypes.object.isRequired,
+    // 组合产品订购客户查询持仓证券重合度
+    queryHoldingSecurityRepetition: PropTypes.func.isRequired,
+    holdingSecurityData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -476,6 +479,8 @@ export default class CustomerLists extends PureComponent {
       queryHoldingProductReqState,
       addCallRecord,
       currentCommonServiceRecord,
+      queryHoldingSecurityRepetition,
+      holdingSecurityData,
     } = this.props;
 
     // 服务记录执行方式字典
@@ -622,6 +627,8 @@ export default class CustomerLists extends PureComponent {
                     queryHoldingProduct={queryHoldingProduct}
                     holdingProducts={holdingProducts}
                     queryHoldingProductReqState={queryHoldingProductReqState}
+                    queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
+                    holdingSecurityData={holdingSecurityData}
                   />,
                 )
               }
