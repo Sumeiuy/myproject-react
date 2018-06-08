@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-25 09:39:38
+ * @Last Modified time: 2018-06-08 21:29:52
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -246,7 +246,6 @@ export default class CreateModal extends PureComponent {
             type: operateType[2], // clear
             attachment,
           };
-          // TODO:未上传已有客户时也需要清空
           // 如果上传过，则先调用清空接口，调用成功后，调用添加接口
           // 添加接口调用成功后，调用查询接口
           // 是否上传过

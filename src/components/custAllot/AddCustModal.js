@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-24 10:13:17
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-24 11:09:01
+ * @Last Modified time: 2018-06-08 21:30:53
  */
 
 import React, { PureComponent } from 'react';
@@ -394,7 +394,6 @@ export default class AddCustModal extends PureComponent {
 
 
     const statusList = _.get(this.context, 'dict.accountStatusList') || [];
-    // // 因为Select组件的key值不能为空，所以必须将 不限的选项的key设置为'all'
     const decoratedStatusList = statusList.map(item =>
       ({ key: item.key || '', value: item.value }));
 

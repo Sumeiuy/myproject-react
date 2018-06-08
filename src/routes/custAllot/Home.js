@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 09:59:21
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-25 13:48:11
+ * @Last Modified time: 2018-06-08 21:30:25
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -308,10 +308,8 @@ export default class CustAllot extends PureComponent {
     const { clearData } = this.props;
     const { modalKey, isNeedConfirm = true, clearDataType = '' } = obj;
     const { ruleType } = this.state;
-    let newRuleType = ruleType;
-    if (modalKey === createModalKey) {
-      newRuleType = ruleTypeArray[0].value;
-    }
+    // 如果是关闭新建窗口，分配规则恢复默认值，其他窗口则不设置
+    const newRuleType = modalKey === createModalKey ? ruleTypeArray[0].value : ruleType;
     // 关闭模态框
     if (isNeedConfirm) {
       commonConfirm({
