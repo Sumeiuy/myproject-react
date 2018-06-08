@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-30 10:41:03
+ * @Last Modified time: 2018-06-06 15:09:17
  */
 
 import React from 'react';
@@ -111,7 +111,7 @@ export default class CustomerProfile extends React.PureComponent {
    * 通话结束后要创建一条服务记录，并弹出服务记录框
    */
   @autobind
-  handlePhoneEnd() {
+  handlePhoneEnd(data = {}) {
     // 点击挂电话隐藏蒙层
     this.setState({ showMask: false });
     // 没有成功发起通话
@@ -120,18 +120,11 @@ export default class CustomerProfile extends React.PureComponent {
     }
     this.endTime = moment();
     const {
-      targetCustDetail,
       addServeRecord,
       motCustfeedBackDict,
-      currentId,
       toggleServiceRecordModal,
       taskTypeCode,
     } = this.props;
-    const {
-      custId,
-      custName,
-      missionFlowId,
-    } = targetCustDetail;
     const [firstServiceType = {}] = motCustfeedBackDict;
     const { key: firstServiceTypeKey, children = [] } = firstServiceType;
     const [firstFeedback = {}] = children;
@@ -140,11 +133,12 @@ export default class CustomerProfile extends React.PureComponent {
       this.endTime.valueOf(),
     );
     const serviceContentDesc = `${this.startTime.format('HH:mm:ss')}给客户发起语音通话，时长${phoneDuration}。`;
+    const { missionFlowId, custId, missionId, custName } = data.userData || {};
     let payload = {
       // 任务流水id
       missionFlowId,
       // 任务id
-      missionId: currentId,
+      missionId,
       // 经济客户号
       custId,
       // 服务方式
@@ -204,15 +198,21 @@ export default class CustomerProfile extends React.PureComponent {
     this.setState({ showMask: true });
   }
 
+  // 点击号码打电话时显示蒙层时关闭蒙层
+  @autobind
+  handleMaskClick() {
+    this.setState({ showMask: false });
+  }
+
   /**
    * 联系方式渲染
    */
   @autobind
   renderContactInfo() {
-    const { targetCustDetail = {} } = this.props;
+    const { targetCustDetail = {}, currentId } = this.props;
     const {
       custNature, perCustomerContactInfo, orgCustomerContactInfoList,
-      custName, missionStatusCode = '10',
+      custName, missionStatusCode = '10', missionFlowId, custId,
     } = targetCustDetail;
     // 任务状态为未处理、处理中、已驳回时可打电话
     const canCall = _.includes(CALLABLE_LIST, missionStatusCode);
@@ -232,6 +232,7 @@ export default class CustomerProfile extends React.PureComponent {
       return null;
     }
     const perContactInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'homeTels', 'workTels', 'otherTels']);
+    const userData = { missionFlowId, custId, missionId: currentId, custName };
     return (
       <ContactInfoPopover
         custType={custNature || ''}
@@ -242,6 +243,7 @@ export default class CustomerProfile extends React.PureComponent {
         handlePhoneConnected={this.handlePhoneConnected}
         handlePhoneClick={this.handlePhoneClick}
         disablePhone={!canCall}
+        userData={userData}
         placement="topRight"
       >
         <span className={styles.contact}>
@@ -264,7 +266,7 @@ export default class CustomerProfile extends React.PureComponent {
           <div className={styles.col}>
             <p className={styles.item}>
               <span
-                className={styles.clickable}
+                className={`${styles.clickable} ${styles.name}`}
                 onClick={this.handleCustNameClick}
               >
                 {custName}
@@ -294,7 +296,7 @@ export default class CustomerProfile extends React.PureComponent {
             </p>
           </div>
         </div>
-        <Mask visible={showMask} />
+        <Mask visible={showMask} onClick={this.handleMaskClick} />
       </div>
     );
   }

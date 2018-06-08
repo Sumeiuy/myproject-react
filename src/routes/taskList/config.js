@@ -136,6 +136,9 @@ const largePageSize = 10;
 // 全部都折叠起来放12个
 const extraLargePageSize = 12;
 
+// 执行者视图详情中tab的默认项，默认服务实施
+const defaultPerformerViewCurrentTab = 'serviceImplementation';
+
 export default {
   EXECUTOR,
   INITIATOR,
@@ -169,4 +172,5 @@ export default {
   mediumPageSize,
   largePageSize,
   extraLargePageSize,
+  defaultPerformerViewCurrentTab,
 };

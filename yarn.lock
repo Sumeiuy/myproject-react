@@ -267,55 +267,6 @@ antd@3.2.3:
     shallowequal "^1.0.1"
     warning "~3.0.0"
 
-antd@^3.2.3:
-  version "3.6.1"
-  resolved "http://168.61.8.90:4873/antd/-/antd-3.6.1.tgz#5df7823ec03d9991084c1b14fb5fbfaf63f0a885"
-  dependencies:
-    array-tree-filter "^2.0.0"
-    babel-runtime "6.x"
-    classnames "~2.2.0"
-    create-react-class "^15.6.0"
-    css-animation "^1.2.5"
-    dom-closest "^0.2.0"
-    enquire.js "^2.1.1"
-    intersperse "^1.0.0"
-    lodash "^4.17.5"
-    moment "^2.19.3"
-    omit.js "^1.0.0"
-    prop-types "^15.5.7"
-    raf "^3.4.0"
-    rc-animate "^2.4.1"
-    rc-calendar "~9.6.0"
-    rc-cascader "~0.13.0"
-    rc-checkbox "~2.1.5"
-    rc-collapse "~1.9.0"
-    rc-dialog "~7.1.0"
-    rc-dropdown "~2.1.0"
-    rc-editor-mention "^1.0.2"
-    rc-form "^2.1.0"
-    rc-input-number "~4.0.0"
-    rc-menu "~7.0.2"
-    rc-notification "~3.1.1"
-    rc-pagination "~1.16.1"
-    rc-progress "~2.2.2"
-    rc-rate "~2.4.0"
-    rc-select "~8.0.7"
-    rc-slider "~8.6.0"
-    rc-steps "~3.1.0"
-    rc-switch "~1.6.0"
-    rc-table "~6.1.0"
-    rc-tabs "~9.2.0"
-    rc-time-picker "~3.3.0"
-    rc-tooltip "~3.7.0"
-    rc-tree "~1.8.0"
-    rc-tree-select "~1.12.0"
-    rc-upload "~2.4.0"
-    rc-util "^4.0.4"
-    react-lazy-load "^3.0.12"
-    react-slick "~0.23.1"
-    shallowequal "^1.0.1"
-    warning "~4.0.1"
-
 anymatch@^2.0.0:
   version "2.0.0"
   resolved "http://168.61.8.90:4873/anymatch/-/anymatch-2.0.0.tgz#bcb24b4f37934d9aa7ac17b4adaf89e7c76ef2eb"
@@ -3767,18 +3718,6 @@ hosted-git-info@^2.1.4:
   version "2.6.0"
   resolved "http://168.61.8.90:4873/hosted-git-info/-/hosted-git-info-2.6.0.tgz#23235b29ab230c576aab0d4f13fc046b0b038222"
 
-ht-react-filter@^1.0.7, ht-react-filter@^1.1.11:
-  version "1.1.11"
-  resolved "http://168.61.8.90:4873/ht-react-filter/-/ht-react-filter-1.1.11.tgz#5276cc6e4c5e22b187b800b8fb678b0d28b4f1d2"
-  dependencies:
-    antd "^3.2.3"
-
-ht-tree-filter@^1.0.1:
-  version "1.0.1"
-  resolved "http://168.61.8.90:4873/ht-tree-filter/-/ht-tree-filter-1.0.1.tgz#3e7f5204870510f531bab312ab97f91cd4678184"
-  dependencies:
-    ht-react-filter "^1.0.7"
-
 html-comment-regex@^1.1.0:
   version "1.1.1"
   resolved "http://168.61.8.90:4873/html-comment-regex/-/html-comment-regex-1.1.1.tgz#668b93776eaae55ebde8f3ad464b307a4963625e"
@@ -4043,10 +3982,6 @@ inquirer@^0.12.0:
 interpret@^1.0.0:
   version "1.1.0"
   resolved "http://168.61.8.90:4873/interpret/-/interpret-1.1.0.tgz#7ed1b1410c6a0e0f78cf95d3b8440c63f78b8614"
-
-intersperse@^1.0.0:
-  version "1.0.0"
-  resolved "http://168.61.8.90:4873/intersperse/-/intersperse-1.0.0.tgz#f2561fb1cfef9f5277cc3347a22886b4351a5181"
 
 invariant@^2.0.0, invariant@^2.1.0, invariant@^2.2.0, invariant@^2.2.1, invariant@^2.2.2:
   version "2.2.4"
@@ -4570,6 +4505,14 @@ lcid@^1.0.0:
   resolved "http://168.61.8.90:4873/lcid/-/lcid-1.0.0.tgz#308accafa0bc483a3867b4b6f2b9506251d1b835"
   dependencies:
     invert-kv "^1.0.0"
+
+lego-react-filter@^1.0.0:
+  version "1.0.0"
+  resolved "http://168.61.8.90:4873/lego-react-filter/-/lego-react-filter-1.0.0.tgz#f5c6ba0a7181220abd8694123e77c4672df62965"
+
+lego-tree-filter@^1.0.0:
+  version "1.0.0"
+  resolved "http://168.61.8.90:4873/lego-tree-filter/-/lego-tree-filter-1.0.0.tgz#dffda053b64d29adaf87e28bbd16e68c6371f385"
 
 less-loader@^4.0.3:
   version "4.1.0"
@@ -5233,14 +5176,6 @@ min-document@^2.19.0:
 mini-store@^1.0.2:
   version "1.0.4"
   resolved "http://168.61.8.90:4873/mini-store/-/mini-store-1.0.4.tgz#a540fbfdbddd0415daf17a8b0cc8290c9f7d8bd6"
-  dependencies:
-    hoist-non-react-statics "^2.3.1"
-    prop-types "^15.6.0"
-    shallowequal "^1.0.2"
-
-mini-store@^1.1.0:
-  version "1.1.0"
-  resolved "http://168.61.8.90:4873/mini-store/-/mini-store-1.1.0.tgz#4d6b3fb5c89aa0303d9b39475efb3439cd42f04f"
   dependencies:
     hoist-non-react-statics "^2.3.1"
     prop-types "^15.6.0"
@@ -6471,12 +6406,6 @@ quick-lru@^1.0.0:
   version "1.1.0"
   resolved "http://168.61.8.90:4873/quick-lru/-/quick-lru-1.1.0.tgz#4360b17c61136ad38078397ff11416e186dcfbb8"
 
-raf@^3.4.0:
-  version "3.4.0"
-  resolved "http://168.61.8.90:4873/raf/-/raf-3.4.0.tgz#a28876881b4bc2ca9117d4138163ddb80f781575"
-  dependencies:
-    performance-now "^2.1.0"
-
 randomatic@^1.1.3:
   version "1.1.7"
   resolved "http://168.61.8.90:4873/randomatic/-/randomatic-1.1.7.tgz#c7abe9cc8b87c0baa876b19fde83fd464797e38c"
@@ -6540,18 +6469,6 @@ rc-calendar@~9.5.0:
     rc-trigger "^2.2.0"
     rc-util "^4.1.1"
 
-rc-calendar@~9.6.0:
-  version "9.6.1"
-  resolved "http://168.61.8.90:4873/rc-calendar/-/rc-calendar-9.6.1.tgz#eb4fe307224d52ec86dd6229eebf44b24e3dc27c"
-  dependencies:
-    babel-runtime "6.x"
-    classnames "2.x"
-    create-react-class "^15.5.2"
-    moment "2.x"
-    prop-types "^15.5.8"
-    rc-trigger "^2.2.0"
-    rc-util "^4.1.1"
-
 rc-cascader@~0.12.0:
   version "0.12.2"
   resolved "http://168.61.8.90:4873/rc-cascader/-/rc-cascader-0.12.2.tgz#2d08fe44b504364137d3c748f51ac393483e7b3b"
@@ -6562,17 +6479,7 @@ rc-cascader@~0.12.0:
     rc-util "^4.0.4"
     shallow-equal "^1.0.0"
 
-rc-cascader@~0.13.0:
-  version "0.13.1"
-  resolved "http://168.61.8.90:4873/rc-cascader/-/rc-cascader-0.13.1.tgz#157df251c5da734bf134b7a595a9b06446a6db80"
-  dependencies:
-    array-tree-filter "^1.0.0"
-    prop-types "^15.5.8"
-    rc-trigger "^2.2.0"
-    rc-util "^4.0.4"
-    shallow-equal "^1.0.0"
-
-rc-checkbox@~2.1.1, rc-checkbox@~2.1.5:
+rc-checkbox@~2.1.1:
   version "2.1.5"
   resolved "http://168.61.9.74:4873/rc-checkbox/-/rc-checkbox-2.1.5.tgz#411858448c0ee2a797ef8544dac63bcaeef722ef"
   dependencies:
@@ -6584,15 +6491,6 @@ rc-checkbox@~2.1.1, rc-checkbox@~2.1.5:
 rc-collapse@~1.8.0:
   version "1.8.0"
   resolved "http://168.61.8.90:4873/rc-collapse/-/rc-collapse-1.8.0.tgz#107bd9193e36b1ec5381c9ed9ff4f7245a79adb5"
-  dependencies:
-    classnames "2.x"
-    css-animation "1.x"
-    prop-types "^15.5.6"
-    rc-animate "2.x"
-
-rc-collapse@~1.9.0:
-  version "1.9.2"
-  resolved "http://168.61.8.90:4873/rc-collapse/-/rc-collapse-1.9.2.tgz#baa88a724ebbf444ad1f7776fe912f2f894e4099"
   dependencies:
     classnames "2.x"
     css-animation "1.x"
@@ -6683,19 +6581,6 @@ rc-menu@^6.1.0, rc-menu@~6.2.0:
     rc-trigger "^2.3.0"
     rc-util "^4.1.0"
 
-rc-menu@^7.0.2, rc-menu@~7.0.2:
-  version "7.0.5"
-  resolved "http://168.61.8.90:4873/rc-menu/-/rc-menu-7.0.5.tgz#986b65df5ad227aadf399ea374b98d2313802316"
-  dependencies:
-    babel-runtime "6.x"
-    classnames "2.x"
-    dom-scroll-into-view "1.x"
-    mini-store "^1.1.0"
-    prop-types "^15.5.6"
-    rc-animate "2.x"
-    rc-trigger "^2.3.0"
-    rc-util "^4.1.0"
-
 rc-notification@~3.0.0:
   version "3.0.1"
   resolved "http://168.61.8.90:4873/rc-notification/-/rc-notification-3.0.1.tgz#9ddcb831895ad40943a7e1df34951aa705173bce"
@@ -6706,26 +6591,9 @@ rc-notification@~3.0.0:
     rc-animate "2.x"
     rc-util "^4.0.4"
 
-rc-notification@~3.1.1:
-  version "3.1.1"
-  resolved "http://168.61.8.90:4873/rc-notification/-/rc-notification-3.1.1.tgz#14eac6730db1d59adaf569dad9fe82a2f33cd23a"
-  dependencies:
-    babel-runtime "6.x"
-    classnames "2.x"
-    prop-types "^15.5.8"
-    rc-animate "2.x"
-    rc-util "^4.0.4"
-
 rc-pagination@~1.15.0:
   version "1.15.2"
   resolved "http://168.61.9.74:4873/rc-pagination/-/rc-pagination-1.15.2.tgz#26b514014263188765ad38be9969deac4d387aae"
-  dependencies:
-    babel-runtime "6.x"
-    prop-types "^15.5.7"
-
-rc-pagination@~1.16.1:
-  version "1.16.3"
-  resolved "http://168.61.8.90:4873/rc-pagination/-/rc-pagination-1.16.3.tgz#2d3780a129c290c2e2e85a71b6723a8301484c2e"
   dependencies:
     babel-runtime "6.x"
     prop-types "^15.5.7"
@@ -6759,22 +6627,6 @@ rc-select@~7.7.0:
     rc-menu "^6.1.0"
     rc-trigger "^2.2.0"
     rc-util "^4.0.4"
-    warning "^3.0.0"
-
-rc-select@~8.0.7:
-  version "8.0.9"
-  resolved "http://168.61.8.90:4873/rc-select/-/rc-select-8.0.9.tgz#cd80cdc52f0d1566cbf0a0d0e6fab05cee8c16d8"
-  dependencies:
-    babel-runtime "^6.23.0"
-    classnames "2.x"
-    component-classes "1.x"
-    dom-scroll-into-view "1.x"
-    prop-types "^15.5.8"
-    rc-animate "2.x"
-    rc-menu "^7.0.2"
-    rc-trigger "^2.2.0"
-    rc-util "^4.0.4"
-    react-lifecycles-compat "^3.0.2"
     warning "^3.0.0"
 
 rc-slider@~8.6.0:
@@ -6843,16 +6695,6 @@ rc-time-picker@~3.2.1:
     prop-types "^15.5.8"
     rc-trigger "^2.2.0"
 
-rc-time-picker@~3.3.0:
-  version "3.3.1"
-  resolved "http://168.61.8.90:4873/rc-time-picker/-/rc-time-picker-3.3.1.tgz#94f8bbd51e6b93de1f01e78064aef1e6d765b367"
-  dependencies:
-    babel-runtime "6.x"
-    classnames "2.x"
-    moment "2.x"
-    prop-types "^15.5.8"
-    rc-trigger "^2.2.0"
-
 rc-tooltip@^3.7.0, rc-tooltip@~3.7.0:
   version "3.7.2"
   resolved "http://168.61.8.90:4873/rc-tooltip/-/rc-tooltip-3.7.2.tgz#3698656d4bacd51b72d9e327bed15d1d5a9f1b27"
@@ -6877,17 +6719,6 @@ rc-tree-select@~1.12.0:
 rc-tree@~1.7.0, rc-tree@~1.7.1:
   version "1.7.11"
   resolved "http://168.61.8.90:4873/rc-tree/-/rc-tree-1.7.11.tgz#349de6383fc7d22bf4c13b0751794111022adddf"
-  dependencies:
-    babel-runtime "^6.23.0"
-    classnames "2.x"
-    prop-types "^15.5.8"
-    rc-animate "2.x"
-    rc-util "^4.0.4"
-    warning "^3.0.0"
-
-rc-tree@~1.8.0:
-  version "1.8.3"
-  resolved "http://168.61.8.90:4873/rc-tree/-/rc-tree-1.8.3.tgz#2875e83bc951b5ed7577c1038490f8245d79a37f"
   dependencies:
     babel-runtime "^6.23.0"
     classnames "2.x"
@@ -7095,16 +6926,6 @@ react-slick@~0.17.0:
     json2mq "^0.2.0"
     object-assign "^4.1.0"
     opencollective "^1.0.3"
-
-react-slick@~0.23.1:
-  version "0.23.1"
-  resolved "http://168.61.8.90:4873/react-slick/-/react-slick-0.23.1.tgz#15791c4107f0ba3a5688d5bd97b7b7ceaa0dd181"
-  dependencies:
-    classnames "^2.2.5"
-    enquire.js "^2.1.6"
-    json2mq "^0.2.0"
-    lodash.debounce "^4.0.8"
-    resize-observer-polyfill "^1.5.0"
 
 react-split-pane@^0.1.68:
   version "0.1.77"
@@ -7524,10 +7345,6 @@ requires-port@1.x.x:
 reselect@^2.5.4:
   version "2.5.4"
   resolved "http://168.61.8.90:4873/reselect/-/reselect-2.5.4.tgz#b7d23fdf00b83fa7ad0279546f8dbbbd765c7047"
-
-resize-observer-polyfill@^1.5.0:
-  version "1.5.0"
-  resolved "http://168.61.8.90:4873/resize-observer-polyfill/-/resize-observer-polyfill-1.5.0.tgz#660ff1d9712a2382baa2cad450a4716209f9ca69"
 
 resolve-from@^1.0.0:
   version "1.0.1"
@@ -8808,12 +8625,6 @@ warning@2.x:
 warning@^3.0.0, warning@~3.0.0:
   version "3.0.0"
   resolved "http://168.61.8.90:4873/warning/-/warning-3.0.0.tgz#32e5377cb572de4ab04753bdf8821c01ed605b7c"
-  dependencies:
-    loose-envify "^1.0.0"
-
-warning@~4.0.1:
-  version "4.0.1"
-  resolved "http://168.61.8.90:4873/warning/-/warning-4.0.1.tgz#66ce376b7fbfe8a887c22bdf0e7349d73d397745"
   dependencies:
     loose-envify "^1.0.0"
 

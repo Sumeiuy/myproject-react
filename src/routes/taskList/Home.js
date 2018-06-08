@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-31 15:16:43
+ * @Last Modified time: 2018-06-07 21:04:31
  * @description 任务管理首页
  */
 
@@ -45,6 +45,7 @@ import {
   // 请在config里面配置QUERY_PARAMS
   QUERY_PARAMS,
   mediumPageSize,
+  defaultPerformerViewCurrentTab,
 } from './config';
 
 // 空函数
@@ -80,7 +81,7 @@ export default class PerformerView extends PureComponent {
     empInfo: EMPTY_OBJECT,
     custFeedback: EMPTY_LIST,
     answersList: EMPTY_OBJECT,
-    saveAnswersSucce: false,
+    isSubmitSurveySucceed: false,
     missionImplementationDetail: EMPTY_OBJECT,
     custListForServiceImplementation: EMPTY_LIST,
   };
@@ -114,11 +115,19 @@ export default class PerformerView extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { location: { query } } = nextProps;
-    const { location: { query: prevQuery } } = this.props;
+    const {
+      location: { query: prevQuery },
+      changePerformerViewTab,
+    } = this.props;
     const { currentId, ...otherQuery } = query;
     const { currentId: prevCurrentId, ...otherPrevQuery } = prevQuery;
     if (!_.isEqual(otherQuery, otherPrevQuery)) {
       this.queryAppList(otherQuery);
+    }
+    // 当前选中的任务变化，需要还原与任务绑定当前详情中选中的tab
+    if (query.currentId !== prevQuery.currentId) {
+      // 还原执行者视图右侧详情中tab的activeKey，默认选中第一个tab
+      changePerformerViewTab(defaultPerformerViewCurrentTab);
     }
   }
 
@@ -314,11 +323,11 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getCustManagerScope({
-                        orgId,
-                        pageNum = GET_CUST_SCOPE_PAGE_NUM,
-                        pageSize = GET_CUST_SCOPE_PAGE_SIZE,
-                        enterType,
-                      }) {
+    orgId,
+    pageNum = GET_CUST_SCOPE_PAGE_NUM,
+    pageSize = GET_CUST_SCOPE_PAGE_SIZE,
+    enterType,
+  }) {
     const {
       getCustManagerScope,
       custRange,
@@ -476,7 +485,7 @@ export default class PerformerView extends PureComponent {
       answersList,
       getTempQuesAndAnswer,
       saveAnswersByType,
-      saveAnswersSucce,
+      isSubmitSurveySucceed,
       attachmentList,
       getTaskDetailBasicInfo,
       modifyLocalTaskList,
@@ -548,7 +557,7 @@ export default class PerformerView extends PureComponent {
         getTempQuesAndAnswer={getTempQuesAndAnswer}
         answersList={answersList}
         saveAnswersByType={saveAnswersByType}
-        saveAnswersSucce={saveAnswersSucce}
+        isSubmitSurveySucceed={isSubmitSurveySucceed}
         attachmentList={attachmentList}
         modifyLocalTaskList={modifyLocalTaskList}
         getTaskDetailBasicInfo={getTaskDetailBasicInfo}
@@ -708,14 +717,14 @@ export default class PerformerView extends PureComponent {
     const {
       getTaskDetailBasicInfo,
       queryTargetCust,
-      targetCustList: { page: { pageNum, pageSize } },
+      targetCustList: { page: { pageSize } },
     } = this.props;
     getTaskDetailBasicInfo({ taskId: obj.id });
     const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
     // fsp左侧菜单折叠pageSize传9，否则传6
     const newPageSize = isFoldFspLeftMenu ? mediumPageSize : pageSize;
     // 执行者视图服务实施客户列表中 状态筛选默认值 state='10' 未开始
-    queryTargetCust({ missionId: obj.id, state: '10', pageNum, pageSize: newPageSize });
+    queryTargetCust({ missionId: obj.id, state: '10', pageNum: 1, pageSize: newPageSize });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
   }
