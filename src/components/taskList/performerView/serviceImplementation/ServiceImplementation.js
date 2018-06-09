@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-08 21:27:06
+ * @Last Modified time: 2018-06-09 20:13:04
  */
 
 import React, { PureComponent } from 'react';
@@ -153,25 +153,14 @@ export default class ServiceImplementation extends PureComponent {
     empInfo: PropTypes.object,
   };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { targetCustList = {} } = nextProps;
-    const { list = [] } = targetCustList;
-    if (list !== prevState.currentTargetList) {
-      return {
-        currentTargetList: list,
-      };
-    }
-    return null;
-  }
-
   constructor(props) {
     super(props);
-    const { targetCustList: { list } } = props;
+    const { targetCustList } = props;
     this.state = {
       // Fsp页面左侧菜单是否被折叠
       isFoldFspLeftMenu: false,
       // 当前服务实施列表的数据
-      currentTargetList: list || [],
+      targetCustList,
     };
   }
 
@@ -182,7 +171,7 @@ export default class ServiceImplementation extends PureComponent {
 
   componentDidUpdate(prevProps, prevState) {
     const { isFoldFspLeftMenu } = this.state;
-    const { isFold } = this.props;
+    const { isFold, targetCustList } = this.props;
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
     if (
       prevProps.isFold !== isFold
@@ -198,6 +187,12 @@ export default class ServiceImplementation extends PureComponent {
         assetSort,
         pageSize,
         pageNum,
+      });
+    }
+    // props上的服务实施列表上数据变化，将服务实施的列表存到state里面
+    if (targetCustList !== prevProps.targetCustList) {
+      this.setState({ // eslint-disable-line
+        targetCustList,
       });
     }
   }
@@ -480,8 +475,9 @@ export default class ServiceImplementation extends PureComponent {
   // 更新组件state的list信息
   @autobind
   updateList({ missionFlowId, flowStatus, zlApprovalCode, serveWay }, callback = _.noop) {
-    const { currentTargetList } = this.state;
-    const newList = _.map(currentTargetList, (item) => {
+    const { targetCustList } = this.state;
+    const { list = [], page = {} } = targetCustList;
+    const newList = _.map(list, (item) => {
       if (item.missionFlowId === missionFlowId) {
         if (
           flow.isComplete(flowStatus)
@@ -503,8 +499,16 @@ export default class ServiceImplementation extends PureComponent {
       // 如果是处理中，需要将upload list清除
       callback();
     }
+    const newTargetCustList = {
+      list: newList,
+      // 每更新一次状态，当前状态中的数据总数量减1
+      page: {
+        ...page,
+        totalCount: page.totalCount - 1,
+      },
+    };
     this.setState({
-      currentTargetList: newList,
+      targetCustList: { ...newTargetCustList },
     });
   }
 
@@ -530,9 +534,10 @@ export default class ServiceImplementation extends PureComponent {
       serviceTypeCode, ceFileDelete, deleteFileResult, getCeFileList,
       taskFeedbackList, attachmentList, eventId, taskTypeCode,
       queryCustFeedbackList4ZLFins, custFeedbackList, queryApprovalList, zhangleApprovalList,
-      testWallCollision, testWallCollisionStatus, toggleServiceRecordModal, targetCustList,
+      testWallCollision, testWallCollisionStatus, toggleServiceRecordModal,
     } = this.props;
-    const { currentTargetList, isFoldFspLeftMenu } = this.state;
+    const { targetCustList, isFoldFspLeftMenu } = this.state;
+    const { list: currentTargetList } = targetCustList;
     const {
       missionStatusCode, missionStatusValue, missionFlowId,
       serviceTips, serviceWayName, serviceWayCode, serviceDate,
