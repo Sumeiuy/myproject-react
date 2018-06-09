@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-07 11:12:15
+ * @Last Modified time: 2018-06-09 15:12:27
  */
 
 import React, { PureComponent } from 'react';
@@ -19,6 +19,8 @@ import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHe
 import StockOptionApplyList from '../../components/common/appList';
 import config from '../../components/stockOptionEvaluation/config';
 import ViewListRow from '../../components/stockOptionEvaluation/ViewListRow';
+import Detail from '../../components/stockOptionEvaluation/ApplyDetail';
+import CreateApply from '../../components/stockOptionEvaluation/CreateApply';
 import seibelHelper from '../../helper/page/seibel';
 
 const { stockOptionApply, stockOptionApply: { statusOptions, pageType } } = config;
@@ -29,6 +31,8 @@ const effects = {
   getList: 'app/getSeibleList',
   // 右侧详情
   getDetailInfo: 'stockOptionEvaluation/getDetailInfo',
+  // 附件列表
+  getAttachmentList: 'stockOptionEvaluation/getAttachmentList',
 };
 
 const mapStateToProps = state => ({
@@ -38,6 +42,8 @@ const mapStateToProps = state => ({
   list: state.app.seibleList,
   // 右侧详情数据
   detailInfo: state.stockOptionEvaluation.detailInfo,
+  // 附件列表
+  attachmentList: state.stockOptionEvaluation.attachmentList,
 });
 
 const mapDispatchToProps = {
@@ -46,6 +52,8 @@ const mapDispatchToProps = {
   getList: effect(effects.getList, { forceFull: true }),
   // 获取右侧详情信息
   getDetailInfo: effect(effects.getDetailInfo, { forceFull: true }),
+  // 附件列表
+  getAttachmentList: effect(effects.getAttachmentList, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -62,6 +70,13 @@ export default class StockOptionApplication extends PureComponent {
     // 右侧详情数据
     detailInfo: PropTypes.object.isRequired,
     getDetailInfo: PropTypes.func.isRequired,
+    // 详情页面服务经理表格申请数据
+    attachmentList: PropTypes.array,
+    getAttachmentList: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+    attachmentList: [],
   }
 
   constructor(props) {
@@ -99,6 +114,43 @@ export default class StockOptionApplication extends PureComponent {
   // 获取右侧列表
   @autobind
   getRightDetail() {
+    const {
+      replace,
+      list,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (!_.isEmpty(list.resultData)) {
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const { pageNum, pageSize } = list.page;
+      let item = list.resultData[0];
+      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+      } else {
+        // 不存在currentId
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
+          },
+        });
+        itemIndex = 0;
+      }
+      this.setState({
+        activeRowIndex: itemIndex,
+      });
+      this.props.getDetailInfo({ flowId: item.flowId }).then(() => {
+        const { detailInfo, getAttachmentList } = this.props;
+        const { attachment } = detailInfo;
+        // 拿详情接口返回的attachmnet，调详情附件信息
+        getAttachmentList({ attachment: attachment || '' });
+      });
+    }
   }
 
   // 点击列表每条的时候对应请求详情
@@ -140,7 +192,7 @@ export default class StockOptionApplication extends PureComponent {
         onClick={this.handleListRowClick}
         index={index}
         pageName="stockOptionApply"
-        type="kehu1"
+        type="shenqing"
         pageData={stockOptionApply}
       />
     );
@@ -184,7 +236,9 @@ export default class StockOptionApplication extends PureComponent {
       replace,
       empInfo,
       list,
+      detailInfo,
     } = this.props;
+    const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
       <ConnectedSeibelHeader
@@ -220,12 +274,28 @@ export default class StockOptionApplication extends PureComponent {
         pagination={paginationOptions}
       />
     );
-    return (
-      <SplitPanel
-        isEmpty={isEmpty}
-        topPanel={topPanel}
-        leftPanel={leftPanel}
+
+    const rightPanel = (
+      <Detail
+        data={detailInfo}
+        // empAppBindingList={empAppBindingList}
+        // queryEmpAppBindingList={queryEmpAppBindingList}
+        // attachmentList={attachmentList}
       />
+    );
+    return (
+      <div >
+        <SplitPanel
+          isEmpty={isEmpty}
+          topPanel={topPanel}
+          leftPanel={leftPanel}
+          rightPanel={rightPanel}
+        />
+        { isShowCreateModal ?
+          <CreateApply />
+          : null
+        }
+      </div>
     );
   }
 }
