@@ -4,7 +4,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-05-22 12:26:05
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-07 13:19:31
+ * @Last Modified time: 2018-06-08 11:18:04
  * 只是将原先的问卷调查逻辑单独提取成组件
  */
 
@@ -86,7 +86,8 @@ export default class QuestionnaireSurvey extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.currentId !== this.props.currentId) {
+    // 当templateId不一样的时候，请求问卷调查
+    if (prevProps.basicInfo.templateId !== this.props.basicInfo.templateId) {
       this.getQuesAndAnswer();
     }
   }
