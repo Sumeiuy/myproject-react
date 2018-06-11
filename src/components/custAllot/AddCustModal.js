@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-24 10:13:17
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-11 16:41:06
+ * @Last Modified time: 2018-06-11 17:23:34
  */
 
 import React, { PureComponent } from 'react';
@@ -147,10 +147,7 @@ export default class AddCustModal extends PureComponent {
       const isTouGu = text ? '是' : '否';
       return (<div>
         {
-          record.oldEmpName ?
-            isTouGu
-          :
-            null
+          record.oldEmpName ? isTouGu : null
         }
       </div>);
     };
