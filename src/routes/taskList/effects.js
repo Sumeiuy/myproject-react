@@ -74,6 +74,10 @@ const effects = {
   queryExecutorFeedBack: 'performerView/queryExecutorFeedBack',
   // 查询服务结果反馈
   queryExecutorDetail: 'performerView/queryExecutorDetail',
+  // 任务服务经理维度预览客户明细
+  previewCustDetailByScope: 'managerView/previewCustDetailByScope',
+  // 服务经理维度客户明细去重
+  queryDistinctCustListDetailOfMission: 'managerView/queryDistinctCustListDetailOfMission',
 };
 
 export default effects;

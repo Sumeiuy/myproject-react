@@ -92,4 +92,6 @@ export default {
   serviceProgress: PropTypes.object.isRequired,
   custFeedBack: PropTypes.array.isRequired,
   custDetail: PropTypes.object.isRequired,
+  // custDetailResultByScope: PropTypes.object.isRequired,
+  previewCustDetailByScope: PropTypes.func.isRequired,
 };

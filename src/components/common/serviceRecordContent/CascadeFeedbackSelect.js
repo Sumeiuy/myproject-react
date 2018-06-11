@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-28 21:24:20
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-11 09:35:58
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -10,6 +10,8 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Select } from 'antd';
+
+import { defaultFeedbackOption } from './utils';
 
 import styles from './index.less';
 
@@ -83,6 +85,10 @@ export default class CascadeFeedbackSelect extends PureComponent {
       const firstFeedback = _.find(feedbackList, { key: first });
       const secondFedback = _.find(secondFeedbackList, { key: second });
       showSecondSelect = firstFeedback.value === secondFedback.value;
+    }
+    // 代表请选择，前端自定义的key，其实用不到，只是为了加一个非空的默认值
+    if (first === defaultFeedbackOption) {
+      showSecondSelect = true;
     }
 
     return (
