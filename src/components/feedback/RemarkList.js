@@ -100,7 +100,7 @@ export default class RemarkList extends PureComponent {
     const { className } = this.props;
     return (
       <Table
-        rowKey={'id'}
+        rowKey="id"
         className={classnames(
           styles.recordList,
           { [className]: !!className },

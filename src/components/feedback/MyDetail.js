@@ -87,15 +87,15 @@ export default class MyDetail extends PureComponent {
       <div className={styles.detailContainer}>
         <div className={styles.innerContainer}>
           <div className={styles.headLine}>{`问题编号${feedId}`}</div>
-          <LabelInfo value={'问题详情'} wrapperClass={styles.infoTitle} />
+          <LabelInfo value="问题详情" wrapperClass={styles.infoTitle} />
           <Field
             data={detailInfo}
             columnClass={styles.columnContainer}
             contentClass={styles.contentContainer}
           />
-          <LabelInfo value={'问题答复'} wrapperClass={styles.infoTitle} />
+          <LabelInfo value="问题答复" wrapperClass={styles.infoTitle} />
           <RemarkList
-            category={'user'}
+            category="user"
             className={styles.remarkQuestion}
             remarkList={processList}
           />
@@ -107,7 +107,7 @@ export default class MyDetail extends PureComponent {
                   onClick={showQuestionModal}
                 >继续追问</Button>
                 <Button
-                  type={'primary'}
+                  type="primary"
                   className={styles.btn}
                   onClick={resolveQuestion}
                 >已解决</Button>
