@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:53:21
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 12:23:31
+ * @Last Modified time: 2018-06-11 17:28:30
  */
 
 import React from 'react';
@@ -61,20 +61,31 @@ const TabsArea = (props) => {
             queryExecutorDetail={queryExecutorDetail}
           />
         </TabPane>
-        {hasSurvey &&
+        {/**
+          * 当前key等于questionnaireSurvey时，才展示问卷调查
+          * 这么做是为了，清除form的缓存数据，保证组件的卸载，因为
+          * 组件内部用了form的初始化属性，如果组件不卸载，然后重新加载，
+          * 会有缓存
+          */
+        }
+        {hasSurvey ?
           <TabPane tab="任务问卷调查" key="questionnaireSurvey">
-            <Survey
-              answersList={answersList}
-              getTempQuesAndAnswer={getTempQuesAndAnswer}
-              isSubmitSurveySucceed={isSubmitSurveySucceed}
-              saveAnswersByType={saveAnswersByType}
-              basicInfo={basicInfo}
-              currentId={currentId}
-              key={currentId}
-              // 不是结束状态的才可以提交
-              canSubmit={!isEndState(missionStatusCode)}
-            />
-          </TabPane>}
+            {
+              performerViewCurrentTab === 'questionnaireSurvey' ?
+                <Survey
+                  answersList={answersList}
+                  getTempQuesAndAnswer={getTempQuesAndAnswer}
+                  isSubmitSurveySucceed={isSubmitSurveySucceed}
+                  saveAnswersByType={saveAnswersByType}
+                  basicInfo={basicInfo}
+                  currentId={currentId}
+                  key={currentId}
+                  // 不是结束状态的才可以提交
+                  canSubmit={!isEndState(missionStatusCode)}
+                /> : null
+            }
+          </TabPane> : null
+        }
       </Tabs>
     </div>
   );

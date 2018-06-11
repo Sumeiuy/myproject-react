@@ -4,7 +4,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-05-22 12:26:05
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 15:17:49
+ * @Last Modified time: 2018-06-11 21:27:12
  * 只是将原先的问卷调查逻辑单独提取成组件
  */
 
@@ -41,10 +41,15 @@ const defaultSurveyData = {
   checkboxData: EMPTY_OBJECT,
   radioData: EMPTY_ARRAY,
   areaTextData: EMPTY_ARRAY,
-  isShowErrorCheckbox: EMPTY_OBJECT,
+  errorCheckboxIdList: EMPTY_ARRAY,
+  // 所有的多选题Id集合
   checkBoxQuesId: EMPTY_ARRAY,
   visible: false,
 };
+
+// 多选题的value分隔符
+// CHECKBOX_VALUE_SEPARATOR 在CheckBox value中拼接字符，为获取改答案answerId和改问题quesId
+const CHECKBOX_VALUE_SEPARATOR = '+-+';
 
 @create()
 export default class QuestionnaireSurvey extends PureComponent {
@@ -67,17 +72,6 @@ export default class QuestionnaireSurvey extends PureComponent {
     canSubmit: true,
   };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.currentId !== prevState.currentId) {
-      return {
-        currentId: nextProps.currentId,
-        // 恢复表单初始化数据
-        ...defaultSurveyData,
-      };
-    }
-    return null;
-  }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -95,6 +89,14 @@ export default class QuestionnaireSurvey extends PureComponent {
     if (prevProps.basicInfo.templateId !== this.props.basicInfo.templateId) {
       this.getQuesAndAnswer();
     }
+    // 任务切换时，清除form表单缓存数据
+    if (prevProps.currentId !== this.props.currentId) {
+      this.resetFormFields();
+    }
+  }
+
+  componentWillUnmount() {
+    this.resetFormFields();
   }
 
   /**
@@ -113,10 +115,16 @@ export default class QuestionnaireSurvey extends PureComponent {
     }).then(this.handleGetQuesSuccess);
   }
 
+  @autobind
+  resetFormFields() {
+    // 重置组件表单值
+    this.props.form.resetFields();
+  }
+
   // 处理请求问卷题目是否成功
   @autobind
   handleGetQuesSuccess() {
-    const { answersList = {} } = this.props;
+    const { answersList = EMPTY_OBJECT } = this.props;
     const { quesInfoList } = answersList;
     const checkBoxQuesId = _.filter(quesInfoList, ['quesTypeCode', '2']);
     this.setState({
@@ -146,10 +154,9 @@ export default class QuestionnaireSurvey extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '问卷调查check事件' } })
   handleCheckChange(keyIndex, quesId) {
-    const { checkboxData, isShowErrorCheckbox } = this.state;
+    const { checkboxData, errorCheckboxIdList } = this.state;
     const initCheck = checkboxData;
-    // +-+ 在CheckBox value中拼接字符，为获取改答案answerId和改问题quesId
-    const arr = _.map(keyIndex, item => _.split(item, '+-+'));
+    const arr = _.map(keyIndex, item => _.split(item, CHECKBOX_VALUE_SEPARATOR));
     let params = _.flatten(_.map(arr, (item) => {
       const childs = {
         answerId: item[1],
@@ -161,14 +168,12 @@ export default class QuestionnaireSurvey extends PureComponent {
     if (_.isEmpty(keyIndex)) {
       params = keyIndex;
     }
-    initCheck[String(quesId)] = params;
+    initCheck[quesId] = params;
     this.setState({
       checkboxData: initCheck,
       // 存储多选框是否选中状态
-      isShowErrorCheckbox: {
-        ...isShowErrorCheckbox,
-        [quesId]: _.isEmpty(params),
-      },
+      errorCheckboxIdList: _.isEmpty(initCheck[quesId])
+        ? [...errorCheckboxIdList, quesId] : [],
     });
   }
 
@@ -180,33 +185,36 @@ export default class QuestionnaireSurvey extends PureComponent {
   handleOk() {
     const { saveAnswersByType, basicInfo: { templateId }, form } = this.props;
     const {
-      checkboxData: stv,
+      checkboxData,
       radioData,
       areaTextData,
-      isShowErrorCheckbox,
+      errorCheckboxIdList,
       checkBoxQuesId,
     } = this.state;
-    const checkboxData = _.flatten(_.map(stv, item => item));
-    let allCheckbox = null;
-    checkBoxQuesId.forEach((item) => {
-      // 根据存储的多选题ID 判断单个多选题是否勾选
-      if (isShowErrorCheckbox[item]) {
-        allCheckbox = isShowErrorCheckbox[item];
-      }
-      return false;
-    });
-    const checkedData = _.concat(_.concat(checkboxData, radioData), areaTextData);
-    form.validateFields((err, value) => {
-      // 判断多选题是否全部勾选
-      if (_.isEmpty(isShowErrorCheckbox)) {
-        const initError = _.mapValues(value, () => true);
-        this.setState({
-          // 改变多选题状态
-          isShowErrorCheckbox: initError,
-        });
-      }
 
-      if (!err && !allCheckbox) {
+    // 是否有多选题没选答案
+    // 只要isShowErrorCheckbox不为空，就代表有checkbox没选答案
+    // 这次提交，有哪几个checkbox没选答案，需要一个个比较
+    let hasCheckboxError = !_.isEmpty(errorCheckboxIdList);
+
+    // 将checkbox已经选择答案的的id组成questionId
+    const checkedCheckboxIdList = _.map(Object.keys(checkboxData), item => Number(item));
+
+    // 找出已经完成的checkbox与初始化的checkbox之间的questionId
+    const diffQuestionId = _.difference(checkBoxQuesId, checkedCheckboxIdList);
+
+    if (_.isEmpty(diffQuestionId)) {
+      hasCheckboxError = false;
+    } else {
+      hasCheckboxError = true;
+      this.setState({
+        errorCheckboxIdList: diffQuestionId,
+      });
+    }
+
+    form.validateFields((err) => {
+      if (!err && !hasCheckboxError) {
+        const checkedData = [...checkboxData, ...radioData, ...areaTextData];
         const params = {
           // 提交问卷传参测试
           answerReqs: checkedData,
@@ -218,20 +226,6 @@ export default class QuestionnaireSurvey extends PureComponent {
         saveAnswersByType(params).then(this.handleSaveSuccess);
       }
     });
-  }
-
-  /**
-   * 确认按钮
-   */
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
-  handleCancel() {
-    this.setState({
-      // 清除状态
-      isShowErrorCheckbox: {},
-    });
-    // 重置组件表单值
-    this.props.form.resetFields();
   }
 
   /**
@@ -256,7 +250,7 @@ export default class QuestionnaireSurvey extends PureComponent {
         [stv]: checkedData,
       });
     } else {
-      let newRadio = [];
+      let newRadio = EMPTY_ARRAY;
       const ques = _.findIndex(initData, o => o.quesId === checkedData[0].quesId);
       if (ques === -1) {
         newRadio = _.concat(initData, checkedData);
@@ -286,7 +280,7 @@ export default class QuestionnaireSurvey extends PureComponent {
   // 根据返回的问题列表，判断不同类型显示
   @autobind
   renderOption() {
-    const { isShowErrorCheckbox } = this.state;
+    const { errorCheckboxIdList, radioData, checkboxData, areaTextData } = this.state;
     const {
       form,
       answersList,
@@ -295,75 +289,85 @@ export default class QuestionnaireSurvey extends PureComponent {
     const isDisabled = !_.isEmpty(answerVOList);
     const { getFieldDecorator } = form;
     let content = null;
-    const itemForm = _.isEmpty(quesInfoList) ? null : _.map(quesInfoList, (item, key) => {
-      const { quesId } = item;
-      // 自定义多选题校验
-      const CheckboxErrorProps = isShowErrorCheckbox[quesId] ? {
-        validateStatus: 'error',
-        help: '此答案不能为空，请选择你的选项',
-      } : null;
+    const itemForm = _.isEmpty(quesInfoList) ? null
+      : _.map(quesInfoList, (item, key) => {
+        const { quesId } = item;
+        // 自定义多选题校验
+        const CheckboxErrorProps = _.includes(errorCheckboxIdList, quesId) ? {
+          validateStatus: 'error',
+          help: '此答案不能为空，请选择你的选项',
+        } : null;
 
-      // 判断是否已回答问卷
-      const answerData = _.find(answerVOList, o => o.quesId === quesId) || EMPTY_OBJECT;
+        // 判断是否已回答问卷
+        const answerData = _.find(answerVOList, o => o.quesId === quesId)
+          || EMPTY_OBJECT;
 
-      // 已回答则查询该问题答案
-      if (item.quesTypeCode === TYPE.radioType) {
-        // 设置该问题默认值
-        const defaultData = answerData.answerdIds || EMPTY_ARRAY;
+        // 已回答则查询该问题答案
+        if (item.quesTypeCode === TYPE.radioType) {
+          // 设置该问题默认值
+          const defaultData = answerData.answerdIds || EMPTY_ARRAY;
 
-        content = (<FormItem key={quesId}>
-          {getFieldDecorator(String(quesId), {
-            initialValue: defaultData[0] || '',
-            rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }],
-          })(
-            <div className={styles.radioContent}>
-              <p className={styles.title}>{key + 1}.{item.quesValue}</p>
-              <RadioGroup
-                name={item.quesTypeCode}
-                className={styles.radioGroup}
-                onChange={this.handleRadioChange}
-                defaultValue={defaultData[0] || ''}
-              >
-                {
-                  item.optionInfoList.map(childItem =>
-                    <Radio
-                      value={childItem.optionId}
-                      dataVale={childItem.optionValue}
-                      className={styles.radioOption}
-                      dataQuesId={quesId}
-                      key={childItem.optionId}
-                      disabled={isDisabled}
-                    >
-                      {childItem.optionValue}
-                    </Radio>)
-                }
-              </RadioGroup>
-            </div>,
-          )}
-        </FormItem>);
-      } else if (item.quesTypeCode === TYPE.checkboxType) {
-        const defaultData = _.map(answerData.answerdIds, (childVal) => {
-          // 拼接字符串
-          const checkedData = _.find(item.optionInfoList, count => count.optionId === childVal);
-          const values = `${checkedData.optionValue}+-+${childVal}+-+${quesId}`;
-          return values;
-        }) || [];
-        content = (<FormItem key={quesId} {...CheckboxErrorProps}>
-          {getFieldDecorator(String(quesId), {
-            initialValue: defaultData,
-          })(
+          content = (<FormItem key={quesId}>
+            {getFieldDecorator(String(quesId), {
+              rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }],
+            })(
+              <div className={styles.radioContent}>
+                <p className={styles.title}>{key + 1}.{item.quesValue}</p>
+                <RadioGroup
+                  name={item.quesTypeCode}
+                  className={styles.radioGroup}
+                  onChange={this.handleRadioChange}
+                  // 禁用情况下,取defaultData
+                  // 编辑状态下，取radioData第一个
+                  value={isDisabled ? defaultData[0] : (radioData[0]
+                    && radioData[0].answerId)}
+                >
+                  {
+                    item.optionInfoList.map(childItem =>
+                      <Radio
+                        value={childItem.optionId}
+                        dataVale={childItem.optionValue}
+                        className={styles.radioOption}
+                        dataQuesId={quesId}
+                        key={childItem.optionId}
+                        disabled={isDisabled}
+                      >
+                        {childItem.optionValue}
+                      </Radio>)
+                  }
+                </RadioGroup>
+              </div>,
+            )}
+          </FormItem>);
+        } else if (item.quesTypeCode === TYPE.checkboxType) {
+          // 默认值，根据后台返回值来设置默认值，以checkbox分隔符分隔
+          const defaultData = _.map(answerData.answerdIds, (childVal) => {
+            // 拼接字符串
+            const checkedData = _.find(item.optionInfoList, count =>
+              count.optionId === childVal);
+            const values = `${checkedData.optionValue}${CHECKBOX_VALUE_SEPARATOR}${childVal}${CHECKBOX_VALUE_SEPARATOR}${quesId}`;
+            return values;
+          }) || EMPTY_ARRAY;
+
+          // 当前表单处于编辑状态，设置value，受控模式
+          let currentData = EMPTY_ARRAY;
+          const currentCheckboxQuestion = checkboxData[quesId];
+          currentData = _.map(currentCheckboxQuestion, childItem =>
+            `${childItem.answerText}${CHECKBOX_VALUE_SEPARATOR}${childItem.answerId}${CHECKBOX_VALUE_SEPARATOR}${quesId}`);
+
+          content = (<FormItem key={quesId} {...CheckboxErrorProps}>
             <div className={styles.radioContent}>
               <p className={styles.title}>{key + 1}.{item.quesValue}</p>
               <CheckboxGroup
                 style={{ width: '100%' }}
                 className={styles.radioGroup}
                 onChange={keyIndex => this.handleCheckChange(keyIndex, quesId)}
-                defaultValue={defaultData}
+                value={isDisabled ? defaultData : currentData}
               >
                 {
                   item.optionInfoList.map(childItem =>
                     <Checkbox
-                      value={`${childItem.optionValue}+-+${childItem.optionId}+-+${quesId}`}
+                      value={`${childItem.optionValue}${CHECKBOX_VALUE_SEPARATOR}${childItem.optionId}${CHECKBOX_VALUE_SEPARATOR}${quesId}`}
                       className={styles.radioOption}
                       key={childItem.optionId}
                       disabled={isDisabled}
@@ -373,41 +377,45 @@ export default class QuestionnaireSurvey extends PureComponent {
                   )
                 }
               </CheckboxGroup>
-            </div>,
-          )}
-        </FormItem>);
-      } else if (item.quesTypeCode === TYPE.textAreaType) {
-        const defaultData = answerData.answertext || '';
+            </div>
+          </FormItem>);
+        } else if (item.quesTypeCode === TYPE.textAreaType) {
+          // 从后台取主观题答案默认值
+          const defaultData = answerData.answertext || '';
 
-        content = (<FormItem key={quesId}>
-          {getFieldDecorator(String(quesId), {
-            initialValue: defaultData,
-            rules: [{
-              required: true,
-              max: 250,
-              min: 10,
-              message: '问题答案不能小于10个字符，最多250个字符',
-            }],
-          })(
-            <div className={styles.radioContent}>
-              <p className={styles.title}>{key + 1}.{item.quesValue}</p>
-              <TextArea
-                rows={4}
-                className={styles.radioGroup}
-                onChange={this.handleTextAreaChange}
-                data={quesId}
-                defaultValue={defaultData}
-                placeholder={item.quesDesp}
-                disabled={isDisabled}
-                maxLength={250}
-                minLength={10}
-              />
-            </div>,
-          )}
-        </FormItem>);
-      }
-      return content;
-    });
+          // 当前编辑状态下的主观题
+          const currentQuestion = _.find(areaTextData,
+            text => +text.quesId === quesId) || EMPTY_OBJECT;
+          const currentData = currentQuestion.answerText || '';
+
+          content = (<FormItem key={quesId}>
+            {getFieldDecorator(String(quesId), {
+              rules: [{
+                required: true,
+                max: 250,
+                min: 10,
+                message: '问题答案不能小于10个字符，最多250个字符',
+              }],
+            })(
+              <div className={styles.radioContent}>
+                <p className={styles.title}>{key + 1}.{item.quesValue}</p>
+                <TextArea
+                  rows={4}
+                  className={styles.radioGroup}
+                  onChange={this.handleTextAreaChange}
+                  data={quesId}
+                  value={isDisabled ? defaultData : currentData}
+                  placeholder={item.quesDesp}
+                  disabled={isDisabled}
+                  maxLength={250}
+                  minLength={10}
+                />
+              </div>,
+            )}
+          </FormItem>);
+        }
+        return content;
+      });
     return itemForm;
   }
 
@@ -416,7 +424,7 @@ export default class QuestionnaireSurvey extends PureComponent {
     const { visible } = this.state;
     const { answerVOList } = answersList;
     // 已回答则显示确定按钮，否则显示提交
-    const showBtn = _.isEmpty(answerVOList) && canSubmit ?
+    const showBtn = visible && _.isEmpty(answerVOList) && canSubmit ?
       (<Button
         key="submit"
         type="primary"
@@ -430,7 +438,7 @@ export default class QuestionnaireSurvey extends PureComponent {
       <div className={styles.container}>
         <Form layout="vertical">
           {this.renderOption()}
-          {visible ? showBtn : null}
+          {showBtn}
           {!canSubmit ?
             <InfoModal
               visible
