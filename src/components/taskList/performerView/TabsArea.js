@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:53:21
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 10:17:35
+ * @Last Modified time: 2018-06-11 12:23:31
  */
 
 import React from 'react';
@@ -12,6 +12,7 @@ import { Tabs } from 'antd';
 import ServiceImplementation from './serviceImplementation/ServiceImplementation';
 import ServiceResult from './serviceResult/ServiceResult';
 import Survey from './survey/QuestionnaireSurvey';
+import { taskStatusList } from './config';
 import styles from './tabsArea.less';
 
 const TabPane = Tabs.TabPane;
@@ -21,6 +22,8 @@ const TabsArea = (props) => {
   const handleTabsChange = (activeKey) => {
     changePerformerViewTab(activeKey);
   };
+  // 结束状态
+  const isEndState = statusCode => +statusCode === taskStatusList[6].id;
   const {
     isFold,
     serviceProgress,
@@ -35,6 +38,7 @@ const TabsArea = (props) => {
     isSubmitSurveySucceed,
     saveAnswersByType,
     basicInfo,
+    basicInfo: { missionStatusCode },
   } = props;
 
   return (
@@ -67,6 +71,8 @@ const TabsArea = (props) => {
               basicInfo={basicInfo}
               currentId={currentId}
               key={currentId}
+              // 不是结束状态的才可以提交
+              canSubmit={!isEndState(missionStatusCode)}
             />
           </TabPane>}
       </Tabs>

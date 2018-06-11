@@ -4,7 +4,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-05-22 12:26:05
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-08 11:18:04
+ * @Last Modified time: 2018-06-11 13:59:27
  * 只是将原先的问卷调查逻辑单独提取成组件
  */
 
@@ -15,6 +15,8 @@ import { Button, Radio, Checkbox, Input, Form, message } from 'antd';
 import _ from 'lodash';
 
 import { emp } from '../../../../helper';
+// 信息提示框
+import InfoModal from '../../../common/infoModal';
 import logable from '../../../../decorators/logable';
 import styles from './questionnaireSurvey.less';
 
@@ -23,6 +25,7 @@ const CheckboxGroup = Checkbox.Group;
 const { TextArea } = Input;
 const FormItem = Form.Item;
 const create = Form.create;
+
 
 // 后台返回题目类型
 const TYPE = {
@@ -55,11 +58,14 @@ export default class QuestionnaireSurvey extends PureComponent {
     saveAnswersByType: PropTypes.func.isRequired,
     basicInfo: PropTypes.object.isRequired,
     currentId: PropTypes.string.isRequired,
+    // 是否能够提交
+    canSubmit: PropTypes.string,
   }
 
   static defaultProps = {
     answersList: EMPTY_OBJECT,
     isSubmitSurveySucceed: false,
+    canSubmit: true,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -408,11 +414,11 @@ export default class QuestionnaireSurvey extends PureComponent {
   }
 
   render() {
-    const { answersList } = this.props;
+    const { answersList, canSubmit } = this.props;
     const { visible } = this.state;
     const { answerVOList } = answersList;
     // 已回答则显示确定按钮，否则显示提交
-    const showBtn = _.isEmpty(answerVOList) ?
+    const showBtn = _.isEmpty(answerVOList) && canSubmit ?
       (<Button
         key="submit"
         type="primary"
@@ -427,6 +433,11 @@ export default class QuestionnaireSurvey extends PureComponent {
         <Form layout="vertical">
           {this.renderOption()}
           {visible ? showBtn : null}
+          {!canSubmit ?
+            <InfoModal
+              visible
+              content="调查问卷需在任务到期前完成，到期后只可查看不可提交"
+            /> : null}
         </Form>
       </div>
     );

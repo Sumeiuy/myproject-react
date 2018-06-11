@@ -7,9 +7,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Modal } from 'antd';
-import Button from '../../common/Button';
-import Icon from '../../common/Icon';
+import InfoModal from '../../common/infoModal';
 import { fspContainer, padSightLabelDesc } from '../../../config';
 import {
   PRODUCT_POTENTIAL_TARGET_CUST_ENTRY,
@@ -44,6 +42,7 @@ export default class BottomFixedBox extends PureComponent {
     this.state = {
       taskAndGroupLeftPos: '0',
       warningContent: '',
+      visible: false,
     };
   }
 
@@ -99,8 +98,8 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selectAll,
-          source,
+        selectAll,
+        source,
         },
         pathname,
         search,
@@ -155,7 +154,7 @@ export default class BottomFixedBox extends PureComponent {
 
     const { selectCount } = this.props;
     if (Number(selectCount) > 500) {
-      this.toggleModal();
+      this.setVisible();
       this.setState({
         modalContent: '一次添加的客户数不能超过500个',
       });
@@ -211,7 +210,7 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectAll,
-          selectedIds,
+        selectedIds,
         },
       },
     } = this.props;
@@ -244,7 +243,7 @@ export default class BottomFixedBox extends PureComponent {
         } = sendCustsServedByPostnResult;
         // 选择超过1000条数据 或者 没有超过1000条但包含非本人名下客户
         if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
-          this.toggleModal();
+          this.setVisible();
           this.setState({
             modalContent: '您没有“HTSC任务管理”职责，不能对非本人名下客户发起任务',
           });
@@ -325,9 +324,16 @@ export default class BottomFixedBox extends PureComponent {
 
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '确认' } })
-  toggleModal() {
+  setVisible() {
     this.setState({
-      visible: !this.state.visible,
+      visible: true,
+    });
+  }
+
+  @autobind
+  handleConfirm() {
+    this.setState({
+      visible: false,
     });
   }
 
@@ -386,25 +392,14 @@ export default class BottomFixedBox extends PureComponent {
           {this.renderGroup()}
           {this.renderCreateTaskBtn()}
         </div>
-        <Modal
-          title={''}
-          closable
-          okText={'确认'}
-          width={300}
-          height={180}
-          wrapClassName={'infoModal'}
-          visible={visible}
-          onOk={this.toggleModal}
-          onCancel={this.toggleModal}
-          footer={
-            <Button className={'confirm'} type={'primary'} onClick={this.toggleModal}>确认</Button>
-          }
-        >
-          <div className={'info'}>
-            <Icon type="tishi1" className={'tishi'} />
-            <span>{modalContent}</span>
-          </div>
-        </Modal>
+        {
+          visible ?
+            <InfoModal
+              visible
+              content={modalContent}
+              onConfirm={this.handleConfirm}
+            /> : null
+        }
       </div>
     );
   }
