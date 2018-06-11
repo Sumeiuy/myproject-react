@@ -1,4 +1,4 @@
-.basicInfoBox {
+.editBasicInfo {
   .basicInfoWrapper {
     border: 1px solid #e9e9e9;
     height: auto;
@@ -24,11 +24,17 @@
   }
 
   .label {
-    width: 120px;
+    width: 135px;
     display: inline-block;
     font-size: 14px;
     color: #a1a1a1;
     text-align: right;
+
+    .isRequired {
+      color: #ff4058;
+      margin-right: 5px;
+      font-style: normal;
+    }
 
     .colon {
       padding: 0 4px;
@@ -40,6 +46,21 @@
     margin-left: 4px;
     font-size: 14px;
     color: #333;
+
+    :global {
+      .ant-select {
+        border-radius: 4px;
+      }
+      .ant-select-selection__rendered {
+        width: 200px;
+        height: 32px;
+        font-size: 14px;
+      }
+      .ant-select-selection--single {
+        width: 200px;
+        height: 32px;
+      }
+    }
   }
 
   .row {

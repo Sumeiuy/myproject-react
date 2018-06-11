@@ -2,14 +2,13 @@
  * @Author: zhangjun
  * @Date: 2018-06-06 14:23:44
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-06 21:41:26
+ * @Last Modified time: 2018-06-11 17:19:00
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import _ from 'lodash';
 
-import Tag from '../common/tag';
 import Icon from '../common/Icon';
 import styles from './viewListRow.less';
 
@@ -73,8 +72,8 @@ export default function AppItem(props) {
     [styles.active]: active,
   });
   const tagBlueType = cx({
-    blue: !active,
-    transparent: active,
+    [styles.tagType]: true,
+    [styles.active]: active,
   });
   function handleClick() {
     onClick(data, index);
@@ -88,7 +87,9 @@ export default function AppItem(props) {
           <span className={serialCls}>编号{data.id || '暂无'}</span>
         </div>
         <div className={styles.tagArea}>
-          <Tag type={tagBlueType} text={changeDisplay(data.status, statusOptions)} />
+          <div className={tagBlueType}>
+            {changeDisplay(data.status, statusOptions)}
+          </div>
         </div>
       </div>
       {/* 第二行 */}

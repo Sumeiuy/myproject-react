@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-09 15:12:27
+ * @Last Modified time: 2018-06-11 16:27:54
  */
 
 import React, { PureComponent } from 'react';
@@ -33,6 +33,14 @@ const effects = {
   getDetailInfo: 'stockOptionEvaluation/getDetailInfo',
   // 附件列表
   getAttachmentList: 'stockOptionEvaluation/getAttachmentList',
+  // 获取本营业部客户
+  getBusCustList: 'stockOptionEvaluation/getBusCustList',
+  // 获取客户基本信息
+  getCustInfo: 'stockOptionEvaluation/getCustInfo',
+  // 获取基本信息的多个select数据
+  getSelectMap: 'stockOptionEvaluation/getSelectMap',
+  // 清除数据
+  clearProps: 'stockOptionEvaluation/clearProps',
 };
 
 const mapStateToProps = state => ({
@@ -44,6 +52,12 @@ const mapStateToProps = state => ({
   detailInfo: state.stockOptionEvaluation.detailInfo,
   // 附件列表
   attachmentList: state.stockOptionEvaluation.attachmentList,
+  // 本营业部客户
+  busCustList: state.stockOptionEvaluation.busCustList,
+  // 客户基本信息
+  custInfo: state.stockOptionEvaluation.custInfo,
+  // 基本信息的多个select数据
+  selectMapData: state.stockOptionEvaluation.selectMapData,
 });
 
 const mapDispatchToProps = {
@@ -54,6 +68,14 @@ const mapDispatchToProps = {
   getDetailInfo: effect(effects.getDetailInfo, { forceFull: true }),
   // 附件列表
   getAttachmentList: effect(effects.getAttachmentList, { forceFull: true }),
+  // 获取本营业部客户
+  getBusCustList: effect(effects.getBusCustList, { forceFull: true }),
+   // 获取客户基本信息
+  getCustInfo: effect(effects.getCustInfo, { forceFull: true }),
+  // 获取基本信息的多个select数据
+  getSelectMap: effect(effects.getSelectMap, { forceFull: true }),
+  // 清除数据
+  clearProps: effect(effects.getSelectMap, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -73,6 +95,17 @@ export default class StockOptionApplication extends PureComponent {
     // 详情页面服务经理表格申请数据
     attachmentList: PropTypes.array,
     getAttachmentList: PropTypes.func.isRequired,
+    // 本营业部客户
+    busCustList: PropTypes.array.isRequired,
+    getBusCustList: PropTypes.func.isRequired,
+    // 客户基本信息
+    custInfo: PropTypes.object.isRequired,
+    getCustInfo: PropTypes.func.isRequired,
+    // 基本信息的多个select数据
+    selectMapData: PropTypes.object.isRequired,
+    getSelectMap: PropTypes.func.isRequired,
+    // 清除数据
+    clearProps: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -100,15 +133,6 @@ export default class StockOptionApplication extends PureComponent {
       },
     } = this.props;
     this.queryAppList(query, pageNum, pageSize);
-  }
-
-  // 获取左侧列表
-  @autobind
-  queryAppList(query, pageNum = 1, pageSize = 10) {
-    const { getList } = this.props;
-    const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
-    // 默认筛选条件
-    getList({ ...params, type: pageType }).then(this.getRightDetail);
   }
 
   // 获取右侧列表
@@ -153,13 +177,46 @@ export default class StockOptionApplication extends PureComponent {
     }
   }
 
-  // 点击列表每条的时候对应请求详情
+  // 获取左侧列表
   @autobind
-  handleListRowClick() {
+  queryAppList(query, pageNum = 1, pageSize = 10) {
+    const { getList } = this.props;
+    const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
+    // 默认筛选条件
+    getList({ ...params, type: pageType }).then(this.getRightDetail);
   }
 
+
+  // 点击列表每条的时候对应请求详情
   @autobind
-  openCreateModalBoard() {}
+  handleListRowClick(record, index) {
+    const { id, flowId } = record;
+    const {
+      replace,
+      location: { pathname, query, query: { currentId } },
+    } = this.props;
+    if (currentId === String(id)) return;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
+    });
+    this.setState({ activeRowIndex: index });
+    this.props.getDetailInfo({ flowId }).then(() => {
+      const { detailInfo, getAttachmentList } = this.props;
+      const { attachment } = detailInfo;
+      // 拿详情接口返回的attachmnet，调详情附件信息
+      getAttachmentList({ attachment: attachment || '' });
+    });
+  }
+
+  // 新建申请
+  @autobind
+  openCreateModalBoard() {
+    this.setState({ isShowCreateModal: true });
+  }
 
   // 头部筛选后调用方法
   @autobind
@@ -178,24 +235,6 @@ export default class StockOptionApplication extends PureComponent {
     });
     // 2.调用queryApplicationList接口
     this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
-  }
-
-  // 渲染列表项里面的每一项
-  @autobind
-  renderListRow(record, index) {
-    const { activeRowIndex } = this.state;
-    return (
-      <ViewListRow
-        key={record.id}
-        data={record}
-        active={index === activeRowIndex}
-        onClick={this.handleListRowClick}
-        index={index}
-        pageName="stockOptionApply"
-        type="shenqing"
-        pageData={stockOptionApply}
-      />
-    );
   }
 
   // 切换页码
@@ -230,6 +269,31 @@ export default class StockOptionApplication extends PureComponent {
     this.queryAppList(query, 1, changedPageSize);
   }
 
+  // 关闭新建弹窗
+  @autobind
+  handleClearModal() {
+    this.setState({ isShowCreateModal: false });
+  }
+
+
+  // 渲染列表项里面的每一项
+  @autobind
+  renderListRow(record, index) {
+    const { activeRowIndex } = this.state;
+    return (
+      <ViewListRow
+        key={record.id}
+        data={record}
+        active={index === activeRowIndex}
+        onClick={this.handleListRowClick}
+        index={index}
+        pageName="stockOptionApply"
+        type="shenqing"
+        pageData={stockOptionApply}
+      />
+    );
+  }
+
   render() {
     const {
       location,
@@ -237,6 +301,14 @@ export default class StockOptionApplication extends PureComponent {
       empInfo,
       list,
       detailInfo,
+      attachmentList,
+      busCustList,
+      getBusCustList,
+      custInfo,
+      getCustInfo,
+      selectMapData,
+      getSelectMap,
+      clearProps,
     } = this.props;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -278,9 +350,7 @@ export default class StockOptionApplication extends PureComponent {
     const rightPanel = (
       <Detail
         data={detailInfo}
-        // empAppBindingList={empAppBindingList}
-        // queryEmpAppBindingList={queryEmpAppBindingList}
-        // attachmentList={attachmentList}
+        attachmentList={attachmentList}
       />
     );
     return (
@@ -292,7 +362,17 @@ export default class StockOptionApplication extends PureComponent {
           rightPanel={rightPanel}
         />
         { isShowCreateModal ?
-          <CreateApply />
+          <CreateApply
+            empInfo={empInfo}
+            busCustList={busCustList}
+            getBusCustList={getBusCustList}
+            clearProps={clearProps}
+            onEmitClearModal={this.handleClearModal}
+            custInfo={custInfo}
+            getCustInfo={getCustInfo}
+            selectMapData={selectMapData}
+            getSelectMap={getSelectMap}
+          />
           : null
         }
       </div>

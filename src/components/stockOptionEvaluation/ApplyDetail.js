@@ -2,22 +2,22 @@
  * @Author: zhangjun
  * @Date: 2018-06-07 14:29:19
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-09 14:59:53
+ * @Last Modified time: 2018-06-11 15:27:00
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-// import { autobind } from 'core-decorators';
 
 import InfoTitle from '../common/InfoTitle';
-import InfoItem from '../common/infoItem';
 import BasicInfo from './BasicInfo';
 import AssessTable from './AssessTable';
 import CommonUpload from '../common/biz/CommonUpload';
 import ApprovalRecord from '../permission/ApprovalRecord';
-import Approval from '../permission/Approval';
+
 import styles from './applyDetail.less';
+
+const EMPTY_INFO = '--';
 
 export default class ApplyDetail extends PureComponent {
   static propTypes = {
@@ -27,13 +27,12 @@ export default class ApplyDetail extends PureComponent {
   static defaultProps = {
     attachmentList: [],
   }
+
   render() {
     const {
       data,
       data: {
-        bizId,
-        custId,
-        custName,
+        id,
         empId,
         empName,
         orgName,
@@ -43,14 +42,12 @@ export default class ApplyDetail extends PureComponent {
         workflowHistoryBeans,
         currentApproval,
         currentNodeName,
-        approvalSuggestion,
       },
       attachmentList,
     } = this.props;
     if (_.isEmpty(this.props.data)) {
       return null;
     }
-    const custInfo = `${custName}(${custId})`;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
     // 判断是否是个人客户
@@ -59,10 +56,8 @@ export default class ApplyDetail extends PureComponent {
       <div className={styles.applyDetailbox}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
-            <h1 className={styles.title}>编号{bizId}</h1>
+            <h1 className={styles.title}>编号{id}</h1>
             <div className={styles.module}>
-              <InfoTitle head="基本信息" />
-              <InfoItem label="客户" value={custInfo} />
               <BasicInfo data={data} />
             </div>
             <div className={styles.module}>
@@ -78,26 +73,46 @@ export default class ApplyDetail extends PureComponent {
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="拟稿人" value={drafter} />
+                    <div className={styles.coloumn}>
+                      <div className={styles.label}>
+                        拟稿人
+                        <span className={styles.colon}>:</span>
+                      </div>
+                      <div className={styles.value}>
+                        {drafter || EMPTY_INFO}
+                      </div>
+                    </div>
                   </li>
                   <li className={styles.item}>
-                    <InfoItem label="申请请时间" value={createTime} />
+                    <div className={styles.coloumn}>
+                      <div className={styles.label}>
+                        申请请时间
+                        <span className={styles.colon}>:</span>
+                      </div>
+                      <div className={styles.value}>
+                        {createTime || EMPTY_INFO}
+                      </div>
+                    </div>
                   </li>
                   <li className={styles.item}>
-                    <InfoItem label="状态" value={statusDesc} />
+                    <div className={styles.coloumn}>
+                      <div className={styles.label}>
+                        状态
+                        <span className={styles.colon}>:</span>
+                      </div>
+                      <div className={styles.value}>
+                        {statusDesc || EMPTY_INFO}
+                      </div>
+                    </div>
                   </li>
                 </ul>
               </div>
             </div>
             <div className={styles.module}>
               <InfoTitle head="附件信息" />
-              <CommonUpload attachmentList={attachmentList} />
-            </div>
-            <div className={styles.module}>
-              <Approval
-                head="审批"
-                type="suggestion"
-                textValue={approvalSuggestion}
+              <CommonUpload
+                attachmentList={attachmentList}
+                wrapClassName={styles.stockAttachmentList}
               />
             </div>
             <div id="approvalRecord_module" className={styles.module}>
