@@ -665,7 +665,6 @@ export default class Pageheader extends PureComponent {
               filterId="type"
               filterName="任务类型"
               value={typeValue}
-              defaultSelectLabel="不限"
               data={typeAllOptions}
               dataMap={['value', 'label']}
               onChange={this.handleSelctType}
@@ -707,7 +706,6 @@ export default class Pageheader extends PureComponent {
                     filterId={custFilterId}
                     filterName="客户"
                     value={currentCustId}
-                    defaultSelectLabel="不限"
                     data={customerList}
                     dataMap={['custId', 'name']}
                     onChange={this.selectCustomerItem}
@@ -729,7 +727,6 @@ export default class Pageheader extends PureComponent {
                   filterId={creatorFilterId}
                   filterName="创建者"
                   value={creatorId || ''}
-                  defaultSelectLabel="不限"
                   data={drafterList}
                   dataMap={['ptyMngId', 'ptyMngName']}
                   onChange={this.selectItem}

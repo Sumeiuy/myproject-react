@@ -4,17 +4,29 @@
  * @author yangquanjian
  */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { Table } from 'antd';
 import { autobind } from 'core-decorators';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import { Table } from 'antd';
 import _ from 'lodash';
-import './remarkList.less';
+
+import { request } from '../../config';
+import Icon from '../common/Icon';
+import styles from './remarkList.less';
 
 const EMPTY_LIST = [];
 export default class RemarkList extends PureComponent {
   static propTypes = {
     remarkList: PropTypes.array.isRequired,
+    className: PropTypes.string,
+    category: PropTypes.string,
   }
+
+  static defaultProps = {
+    className: '',
+    category: 'admin',
+  }
+
   constructor(props) {
     super(props);
     const { remarkList = EMPTY_LIST } = props;
@@ -22,6 +34,7 @@ export default class RemarkList extends PureComponent {
       dataSource: remarkList,
     };
   }
+
   componentWillReceiveProps(nextProps) {
     const { remarkList: nextList = EMPTY_LIST } = nextProps;
     const { remarkList: prevList = EMPTY_LIST } = this.props;
@@ -31,48 +44,69 @@ export default class RemarkList extends PureComponent {
       });
     }
   }
+
   @autobind
   constructTableColumns() {
     const columns = [{
       dataIndex: 'title.description',
       width: '100%',
-      render: (text, record) =>
+      render: (text, record) => {
+        const { category } = this.props;
+        const { attachModelList = [] } = record;
+        const hasAttachment = category !== 'admin' && !_.isEmpty(attachModelList);
+
         // 当前行记录
-        (
-          <div className="item">
-            <div className="wrap">
-              <div className="info_dv">
+        return (
+          <div className={styles.item}>
+            <div className={styles.wrap}>
+              <div className={styles.info}>
                 <span>{record.title}</span>
               </div>
-              <pre className="txt">
+              <pre className={styles.txt}>
                 {record.description}
               </pre>
+              {
+                hasAttachment ? (
+                  <div className={styles.attachContainer}>
+                    {this.renderAttachmentList(attachModelList)}
+                  </div>
+                ) : null
+              }
             </div>
           </div>
-        ),
+        );
+      },
     }];
     return columns;
   }
-  /**
-   * 构造数据源
-   */
-  constructTableDatas() {
-    const { dataSource } = this.state;
-    const newDataSource = [];
-    if (dataSource.length > 0) {
-      dataSource.forEach((currentValue, index) =>
-        newDataSource.push(_.merge(currentValue, { key: index })),
-      );
-    }
-    return newDataSource;
+
+  renderAttachmentList(list) {
+    return (
+      _.map(
+        list,
+        item => (
+          <div className={styles.attachItem}>
+            <a href={`${request.prefix}/file/${item.attachUrl}`}>
+              <Icon type={'kehu1'} />{`${item.attachName}`}
+            </a>
+          </div>
+        ),
+      )
+    );
   }
+
   render() {
     const columns = this.constructTableColumns();
+    const { className } = this.props;
     return (
       <Table
-        className="record_list"
+        rowKey="id"
+        className={classnames(
+          styles.recordList,
+          { [className]: !!className },
+        )}
         columns={columns}
-        dataSource={this.constructTableDatas()}
+        dataSource={this.state.dataSource}
         showHeader={false}
         pagination={false}
         bordered={false}

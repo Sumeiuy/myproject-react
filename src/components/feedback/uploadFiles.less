@@ -1,25 +1,30 @@
 .uploadBoxWrapper {
   :global {
-    .react-app {
-      .uploadBox {
-        padding: 20px 0;
-        width: 50%;
-        .upload_txt {
-          font-size: 14px;
-          width: 250px;
-          margin-top: -16px;
-        }
-        .upload_txt:hover {
-          color: #108ee9;
-        }
+    .uploadBox {
+      padding: 20px 0;
+      width: 50%;
+      .ant-upload.ant-upload-drag {
+        border: none;
+        background: #fff;
       }
-      .ant-confirm-body {
-        .ant-confirm-title {
-          font-size: 16px;
-        }
-        .ant-confirm-content {
-          font-size: 14px;
-        }
+      .upload_txt {
+        font-size: 14px;
+        width: 100px;
+        margin-top: -16px;
+        border: 1px dashed #d9d9d9;
+        background: #fafafa;
+        border-radius: 4px;
+      }
+      .upload_txt:hover {
+        color: #108ee9;
+      }
+    }
+    .ant-confirm-body {
+      .ant-confirm-title {
+        font-size: 16px;
+      }
+      .ant-confirm-content {
+        font-size: 14px;
       }
     }
   }
