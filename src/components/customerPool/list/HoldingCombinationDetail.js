@@ -3,7 +3,7 @@
  * @Description: 客户列表-订购精选组合客户持仓证券重合度
  * @Date: 2018-06-05 14:44:05
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-06 16:45:55
+ * @Last Modified time: 2018-06-11 17:16:35
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -28,6 +28,8 @@ export default class HoldingCombinationDetail extends PureComponent {
     data: PropTypes.object.isRequired,
     // 查询持仓证券数据
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
+    // 转换价格单位方法
+    formatAsset: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -67,8 +69,13 @@ export default class HoldingCombinationDetail extends PureComponent {
 
   @autobind
   getContent() {
-    const { data, combinationCode, custId } = this.props;
+    const { data, combinationCode, custId, formatAsset } = this.props;
     const list = data[`${custId}_${combinationCode}`] || EMPTY_ARRAY;
+    const newTitleList = [...holdingSecurityTitleList];
+    newTitleList[2].render = (text) => {
+      const price = formatAsset(text);
+      return (<span>{`${price.value}${price.unit}`}</span>);
+    };
     return (
       <Table
         columns={holdingSecurityTitleList}
