@@ -7,7 +7,7 @@
  */
 
 
-export default function telephoneNumberManage(api) {
+export default function custRelationships(api) {
   return {
     // 右侧详情基本信息
     getDetailInfo: query => api.post('/groovynoauth/fsp/cust/custrelationships/queryApplicationDetail', query),

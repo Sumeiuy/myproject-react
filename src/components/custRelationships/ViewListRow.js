@@ -45,27 +45,7 @@ export default function ViewListRow(props) {
   if (_.isEmpty(data)) return null;
   const { statusOptions } = pageData;
   const appItemCls = cx({
-    [styles.appItem]: true,
-    [styles.active]: active,
-  });
-  const appIconCls = cx({
-    [styles.appIcon]: true,
-    [styles.active]: active,
-  });
-  const serialCls = cx({
-    [styles.serialNumber]: true,
-    [styles.active]: active,
-  });
-  const typeCls = cx({
-    [styles.type]: true,
-    [styles.active]: active,
-  });
-  const secondLineCls = cx({
-    [styles.secondLine]: true,
-    [styles.active]: active,
-  });
-  const thirdLineCls = cx({
-    [styles.thirdLine]: true,
+    [styles.custRelationshipsListRow]: true,
     [styles.active]: active,
   });
   const tagBlueType = cx({
@@ -78,25 +58,28 @@ export default function ViewListRow(props) {
   return (
     <div className={appItemCls} onClick={handleClick}>
       {/* 第一行 */}
-      <div className={styles.itemHeader}>
+      <div className={styles.oneLineCls}>
         <div className={styles.title}>
-          <Icon type={type} className={appIconCls} />
-          <span className={serialCls}>编号{data.id || '暂无'}</span>
+          <Icon type={type} className={styles.appIcon} />
+          <span className={styles.serialNumber}>编号{data.id || '暂无'}</span>
         </div>
         <div className={styles.tagArea}>
           <Tag type={tagBlueType} text={changeDisplay(data.status, statusOptions)} />
         </div>
       </div>
       {/* 第二行 */}
-      <div className={secondLineCls}>
-        <span className={typeCls}>{changeTypeDisplay(data.type, pageData)}</span>
+      <div className={styles.secondLine}>
+        <span className={styles.type}>{changeTypeDisplay(data.type, pageData)}</span>
+        <div className={styles.date}>{(data.createTime && data.createTime.slice(0, 10)) || '无'}</div>
       </div>
       {/* 第三行 */}
-      <div className={thirdLineCls}>
+      <div className={styles.thirdLine}>
         <div className={styles.drafter}>
           拟稿人：<span className={styles.drafterName}>{data.empName}({data.empId})</span>{`${data.orgName || ''}` || '无'}
         </div>
-        <div className={styles.date}>{(data.createTime && data.createTime.slice(0, 10)) || '无'}</div>
+        <div className={styles.customer}>
+          客户：<span>{data.custName || '无'}({data.custNumber || '无'})</span>
+        </div>
       </div>
     </div>
   );

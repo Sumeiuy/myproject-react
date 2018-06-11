@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-08 13:59:17
+ * @Last Modified time: 2018-06-08 17:52:52
  */
 
 import React, { PureComponent } from 'react';
@@ -18,13 +18,14 @@ import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import ViewListRow from '../../components/custRelationships/ViewListRow';
 import CustRelationshipsList from '../../components/common/appList';
+import Detail from '../../components/custRelationships/Detail';
 import CreateApply from '../../components/custRelationships/CreateApply';
 import config from '../../components/custRelationships/config';
 import { dva } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 
 // 业务手机申请列表宽度
-const LEFT_PANEL_WIDTH = 450;
+const LEFT_PANEL_WIDTH = 500;
 const { custRelationships, custRelationships: { statusOptions, pageType } } = config;
 const effect = dva.generateEffect;
 const effects = {
@@ -268,6 +269,8 @@ export default class ApplyHome extends PureComponent {
       location,
       list,
       empInfo,
+      detailInfo,
+      attachmentList,
     } = this.props;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -305,7 +308,10 @@ export default class ApplyHome extends PureComponent {
     );
 
     const rightPanel = (
-      <div>123</div>
+      <Detail
+        data={detailInfo}
+        attachmentList={attachmentList}
+      />
     );
 
     return (
@@ -315,7 +321,7 @@ export default class ApplyHome extends PureComponent {
           topPanel={topPanel}
           leftPanel={leftPanel}
           rightPanel={rightPanel}
-          leftListClassName="custRelationships"
+          leftListClassName="custRelationshipsList"
           leftWidth={LEFT_PANEL_WIDTH}
         />
         {
