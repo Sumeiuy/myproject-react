@@ -89,7 +89,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 点击新建分组或者发起任务按钮
   @autobind
-  handleClick({ url, title, id, shouldStay, editPane, labelDesc, missionDesc }) {
+  handleClick({ url, title, id, shouldStay, editPane, missionDesc }) {
     const {
       page,
       condition,
@@ -119,7 +119,6 @@ export default class BottomFixedBox extends PureComponent {
         fr,
         shouldStay,
         editPane,
-        labelDesc,
         missionDesc,
       );
     } else if (selectAll) {
@@ -134,7 +133,6 @@ export default class BottomFixedBox extends PureComponent {
         fr,
         shouldStay,
         editPane,
-        labelDesc,
         missionDesc,
       );
     }
@@ -167,14 +165,14 @@ export default class BottomFixedBox extends PureComponent {
   // 跳转到创建任务页面
   @autobind
   toCreateTaskPage() {
-    const { location: { query: { labelDesc, missionDesc } } } = this.props;
+    const { location: { query: { missionDesc } } } = this.props;
     const url = '/customerPool/createTask';
     const title = '自建任务';
     const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
     // 发起新的任务之前，先清除数据
     this.props.clearCreateTaskData('custList');
 
-    this.handleClick({ url, title, id, labelDesc: decodeURIComponent(labelDesc), missionDesc });
+    this.handleClick({ url, title, id, missionDesc });
   }
 
   // 验证通过后跳转到创建任务
@@ -245,7 +243,6 @@ export default class BottomFixedBox extends PureComponent {
     fr,
     shouldStay,
     editPane,
-    labelDesc,
     missionDesc,
   ) {
     const tmpArr = [];
@@ -261,7 +258,6 @@ export default class BottomFixedBox extends PureComponent {
       entertype,
       source,
       name,
-      labelDesc,
       missionDesc,
       condition: condt,
       fr,
@@ -281,7 +277,6 @@ export default class BottomFixedBox extends PureComponent {
     fr,
     shouldStay,
     editPane,
-    labelDesc,
     missionDesc,
   ) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
@@ -294,7 +289,6 @@ export default class BottomFixedBox extends PureComponent {
       source,
       name,
       fr,
-      labelDesc,
       missionDesc,
     };
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });

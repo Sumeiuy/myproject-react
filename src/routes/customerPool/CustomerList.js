@@ -18,7 +18,7 @@ import Filter from '../../components/customerPool/list/Filter';
 import CustomerLists from '../../components/customerPool/list/CustomerLists';
 import { permission, emp } from '../../helper';
 import withRouter from '../../decorators/withRouter';
-import { getCustomerListFilters } from '../../helper/page/customerPool';
+import { getCustomerListFilters, getLabelDesc } from '../../helper/page/customerPool';
 import {
   CUST_MANAGER,
   ORG,
@@ -338,7 +338,7 @@ export default class CustomerList extends PureComponent {
 
   // 获取列表数据
   @autobind
-  getCustomerList(props) {
+  async getCustomerList(props) {
     const {
       cycle = [],
       getCustomerData, location: { query },
@@ -346,7 +346,6 @@ export default class CustomerList extends PureComponent {
     const keyword = decodeURIComponent(query.q);
     // 标签名字与标签描述
     const labelName = decodeURIComponent(query.labelName);
-    const labelDesc = decodeURIComponent(query.labelDesc);
     const labelMapping = decodeURIComponent(query.labelMapping);
     const productName = query.productName && decodeURIComponent(query.productName);
     const param = {
@@ -367,6 +366,7 @@ export default class CustomerList extends PureComponent {
       // param.searchText = keyword;
       if (query.source === 'sightingTelescope') {
         // 如果是瞄准镜，需要加入queryLabelReq
+        const labelDesc = await getLabelDesc();
         param.queryLabelReq = {
           labelName,
           labelDesc,

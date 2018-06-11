@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-15 13:00:03
+ * @Last Modified time: 2018-06-11 15:32:48
  */
 
 import React, { PureComponent } from 'react';
@@ -21,6 +21,7 @@ import {
   CUST_GROUP_LIST,
   returnTaskEntrySource,
 } from '../../../config/createTaskEntry';
+import { getLabelDesc } from '../../../helper/page/customerPool';
 import styles from './taskFormFlowStep.less';
 import logable, { logCommon } from '../../../decorators/logable';
 
@@ -276,9 +277,8 @@ export default class TaskFormFlowStep extends PureComponent {
     return _.includes(SOURCE_FROM_LABEL, source);
   }
 
-
   @autobind
-  handleNextStep() {
+  async handleNextStep() {
     const { current } = this.state;
     // 下一步
     const {
@@ -287,10 +287,10 @@ export default class TaskFormFlowStep extends PureComponent {
       generateTemplateId,
       // source是来源
       // count是客户数量
-      location: { query: { source, count, labelDesc } },
+      location: { query: { source, count } },
       taskBasicInfo,
     } = this.props;
-
+    const labelDesc = await getLabelDesc();
     const { tagetCustModel } = taskBasicInfo || {};
     const { custNum, custSource: taskSource, custLabelDesc = '' } = tagetCustModel || {};
 
