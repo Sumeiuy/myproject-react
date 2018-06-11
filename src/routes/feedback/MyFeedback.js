@@ -16,7 +16,6 @@ import PersonFeedbackList from '../../components/common/appList';
 import FeedbackRow from '../../components/feedback/FeedbackRow';
 import MyDetail from '../../components/feedback/MyDetail';
 import { emp } from '../../helper';
-import { request } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import styles from './myFeedback.less';
@@ -67,10 +66,8 @@ export default class MyFeedback extends PureComponent {
     super(props);
     this.state = {
       value: '',
-      imgUrl: '',
       showError: false,
       visible: false,
-      previewVisible: false,
     };
   }
 
@@ -195,21 +192,6 @@ export default class MyFeedback extends PureComponent {
   handleRowClick(record) {
     this.changeLocation({
       activeId: record.id,
-    });
-  }
-
-  @autobind
-  handleScreenShotClick(imgUrl) {
-    this.setState({
-      imgUrl,
-      previewVisible: true,
-    });
-  }
-
-  @autobind
-  handlePreviewCancel() {
-    this.setState({
-      previewVisible: false,
     });
   }
 
@@ -340,10 +322,8 @@ export default class MyFeedback extends PureComponent {
 
     const {
       value,
-      imgUrl,
       visible,
       showError,
-      previewVisible,
     } = this.state;
 
     // 生成页码器，此页码器配置项与Antd的一致
@@ -365,7 +345,6 @@ export default class MyFeedback extends PureComponent {
       <MyDetail
         processList={processList}
         feedbackDetail={feedbackDetail.resultData || {}}
-        handleScreenshot={this.handleScreenShotClick}
         showQuestionModal={this.handleQuestionClick}
         resolveQuestion={this.handleResolveClick}
       />
@@ -381,19 +360,6 @@ export default class MyFeedback extends PureComponent {
           headerStyle={styles.topClass}
           leftListClassName="feedbackList"
         />
-        <Modal
-          visible={previewVisible}
-          width={width}
-          footer={null}
-          onCancel={this.handlePreviewCancel}
-          wrapClassName={styles.imgModal}
-        >
-          <img
-            alt="图片"
-            style={{ width: '100%' }}
-            src={`${request.prefix}/file/${imgUrl}`}
-          />
-        </Modal>
         <Modal
           title={'您还有什么需要提问？'}
           visible={visible}
