@@ -10,8 +10,6 @@ import classnames from 'classnames';
 import { Table } from 'antd';
 import _ from 'lodash';
 
-import { request } from '../../config';
-import Icon from '../common/Icon';
 import styles from './remarkList.less';
 
 const EMPTY_LIST = [];
@@ -19,12 +17,12 @@ export default class RemarkList extends PureComponent {
   static propTypes = {
     remarkList: PropTypes.array.isRequired,
     className: PropTypes.string,
-    category: PropTypes.string,
+    renderColumn: PropTypes.func,
   }
 
   static defaultProps = {
     className: '',
-    category: 'admin',
+    renderColumn: null,
   }
 
   constructor(props) {
@@ -51,11 +49,12 @@ export default class RemarkList extends PureComponent {
       dataIndex: 'title.description',
       width: '100%',
       render: (text, record) => {
-        const { category } = this.props;
-        const { attachModelList = [] } = record;
-        const hasAttachment = category !== 'admin' && !_.isEmpty(attachModelList);
-
-        // 当前行记录
+        const { renderColumn } = this.props;
+        // 自定义column
+        if (_.isFunction(renderColumn)) {
+          return renderColumn(record);
+        }
+        // 默认的column
         return (
           <div className={styles.item}>
             <div className={styles.wrap}>
@@ -65,13 +64,6 @@ export default class RemarkList extends PureComponent {
               <pre className={styles.txt}>
                 {record.description}
               </pre>
-              {
-                hasAttachment ? (
-                  <div className={styles.attachContainer}>
-                    {this.renderAttachmentList(attachModelList)}
-                  </div>
-                ) : null
-              }
             </div>
           </div>
         );
@@ -80,27 +72,12 @@ export default class RemarkList extends PureComponent {
     return columns;
   }
 
-  renderAttachmentList(list) {
-    return (
-      _.map(
-        list,
-        item => (
-          <div className={styles.attachItem}>
-            <a href={`${request.prefix}/file/${item.attachUrl}`}>
-              <Icon type={'fujian2'} />{`${item.attachName}`}
-            </a>
-          </div>
-        ),
-      )
-    );
-  }
-
   render() {
     const columns = this.constructTableColumns();
     const { className } = this.props;
     return (
       <Table
-        rowKey="id"
+        rowKey="feedId"
         className={classnames(
           styles.recordList,
           { [className]: !!className },
