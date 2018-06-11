@@ -12,6 +12,7 @@ import moment from 'moment';
 import _ from 'lodash';
 
 import Field from './Field';
+import PreviewImg from './PreviewImg';
 import LabelInfo from '../taskList/common/LabelInfo';
 import { request } from '../../config';
 import RemarkList from './RemarkList';
@@ -25,20 +26,6 @@ export default class MyDetail extends PureComponent {
     feedbackDetail: PropTypes.object.isRequired,
     showQuestionModal: PropTypes.func.isRequired,
     resolveQuestion: PropTypes.func.isRequired,
-    handleScreenshot: PropTypes.func.isRequired,
-  }
-
-  @autobind
-  renderScreenshot(imgUrl) {
-    const { handleScreenshot } = this.props;
-    return (
-      <div
-        className={styles.screenshot}
-        onClick={() => { handleScreenshot(imgUrl); }}
-      >
-        <a><Icon type={'pic'} /> 查看</a>
-      </div>
-    );
   }
 
   @autobind
@@ -98,7 +85,7 @@ export default class MyDetail extends PureComponent {
     const isStatusEmpty = _.isEmpty(status);
     const statusInfo = status === 'PROCESSING' ? '解决中' : '关闭';
     const imageUrl = _.head(feedbackFileUrls) || '';
-    const date = moment(createTime).format('YYYY-MM-DD hh:mm');
+    const date = _.isEmpty(createTime) ? '--' : moment(createTime).format('YYYY-MM-DD hh:mm');
 
     let detailInfo = [{
       id: 'status',
@@ -119,7 +106,7 @@ export default class MyDetail extends PureComponent {
         {
           id: 'screenshot',
           key: '截图 :',
-          value: this.renderScreenshot(imageUrl),
+          value: <PreviewImg icon="pic" previewUrl={`/file/${imageUrl}`} />,
         },
       ];
     }
