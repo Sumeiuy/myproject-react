@@ -4,7 +4,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-05-22 12:26:05
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 13:59:27
+ * @Last Modified time: 2018-06-11 15:17:49
  * 只是将原先的问卷调查逻辑单独提取成组件
  */
 
@@ -41,7 +41,6 @@ const defaultSurveyData = {
   checkboxData: EMPTY_OBJECT,
   radioData: EMPTY_ARRAY,
   areaTextData: EMPTY_ARRAY,
-  isDisabled: false,
   isShowErrorCheckbox: EMPTY_OBJECT,
   checkBoxQuesId: EMPTY_ARRAY,
   visible: false,
@@ -279,10 +278,9 @@ export default class QuestionnaireSurvey extends PureComponent {
       message.error('提交失败');
     } else {
       message.success('提交成功');
+      // 提交成功之后，请求已经提交的问卷调查，禁用表单的再次提交
+      this.getQuesAndAnswer();
     }
-    this.setState({
-      isDisabled: true,
-    });
   }
 
   // 根据返回的问题列表，判断不同类型显示
