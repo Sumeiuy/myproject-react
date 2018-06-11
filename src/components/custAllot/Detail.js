@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 15:19:51
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-23 21:29:52
+ * @Last Modified time: 2018-06-11 13:17:39
  */
 
 import React, { PureComponent } from 'react';
@@ -232,7 +232,7 @@ export default class Detail extends PureComponent {
           <CommonTable
             titleList={newTitleList}
             data={assignmentListData}
-            align={'left'}
+            align="left"
             rowKey="custId"
             scroll={{ x: allWidth }}
           />

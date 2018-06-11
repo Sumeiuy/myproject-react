@@ -3,17 +3,17 @@
  * @Author: Liujianshu
  * @Date: 2018-05-24 10:13:17
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-08 21:30:53
+ * @Last Modified time: 2018-06-11 16:41:06
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
 import { SingleFilter, MultiFilter, RangeFilter } from 'lego-react-filter/src';
 import { TreeFilter as HTTreeFilter } from 'lego-tree-filter/src';
 import _ from 'lodash';
 import { message } from 'antd';
-
 
 import CommonModal from '../common/biz/CommonModal';
 // import Button from '../../components/common/Button';
@@ -35,7 +35,7 @@ const NO_VALUE = '不限';
 const INIT_PAGENUM = 1;
 const INIT_PAGESIZE = 10;
 // 所有条数限制为 2000
-const LIMIT_ALLCOUNT = 2000;
+const LIMIT_ALL_COUNT = 2000;
 // 勾选条数限制为 500
 const LIMIT_COUNT = 500;
 // 状态
@@ -43,10 +43,8 @@ const KEY_STATUS = 'status';
 // 是否入岗投顾
 const KEY_ISTOUGU = 'touGu';
 // 添加客户报错信息
-const errorMsg = {
-  count: '一次勾选的客户数超过500条，请分多次添加。',
-  allCount: '申请单客户列表客户数超过最大数量2000条。',
-};
+const ERROR_MESSAGE_ALL_COUNT = `申请单客户列表客户数超过最大数量${LIMIT_ALL_COUNT}条。`;
+const ERROR_MESSAGE_COUNT = `一次勾选的客户数超过${LIMIT_COUNT}条，请分多次添加。`;
 export default class AddCustModal extends PureComponent {
   static propTypes = {
     // 已添加的客户数据
@@ -83,13 +81,13 @@ export default class AddCustModal extends PureComponent {
       // 营业部
       orgIdKeyWord: '',
       // 净资产
-      naRange: [],
+      totalAsset: [],
       // 年日均净资产
-      naaRange: [],
+      annualDailyAsset: [],
       // 上年净佣金
-      nclyRange: [],
+      lastYearAsset: [],
       // 本年净佣金
-      ncRange: [],
+      annualAsset: [],
       pageNum: INIT_PAGENUM,
       // 客户关键字
       custKeyword: '',
@@ -98,7 +96,6 @@ export default class AddCustModal extends PureComponent {
       // 开发经理关键字
       dmKeyword: '',
       // 选中的客户
-      selectedRowKeys: [],
       selectedRows: [],
     };
   }
@@ -112,29 +109,24 @@ export default class AddCustModal extends PureComponent {
   // 选择客户
   @autobind
   onSelectChange(record, selected) {
-    const { selectedRowKeys, selectedRows } = this.state;
-    // 选中的 key 值数组
-    let newSelectedRowKeys = [...selectedRowKeys];
+    const { selectedRows } = this.state;
     // 选中的 row 数组
     let newSelectedRows = [...selectedRows];
     if (selected) {
-      newSelectedRowKeys.push(record.custId);
       newSelectedRows.push(record);
       if (this.checkCountIsBigThanLimit(newSelectedRows.length)) {
-        message.error(errorMsg.allCount);
+        message.error(ERROR_MESSAGE_ALL_COUNT);
         return;
       }
       if (newSelectedRows.length > LIMIT_COUNT) {
-        message.error(errorMsg.count);
+        message.error(ERROR_MESSAGE_COUNT);
         return;
       }
     } else {
-      newSelectedRowKeys = _.filter(newSelectedRowKeys, o => o !== record.custId);
       newSelectedRows = _.filter(newSelectedRows, o => o.custId !== record.custId);
     }
     this.setState({
       selectedRows: newSelectedRows,
-      selectedRowKeys: newSelectedRowKeys,
     });
   }
 
@@ -186,10 +178,14 @@ export default class AddCustModal extends PureComponent {
       smKeyword,
       dmKeyword,
       pageNum,
-      naRange: [nARangeStart = '', nARangeEnd = ''],
-      naaRange: [nAARangeStart = '', nAARangeEnd = ''],
-      ncRange: [nCRangeStart = '', nCRangeEnd = ''],
-      nclyRange: [nCLYRangeStart = '', nCLYRangeEnd = ''],
+      // 净资产区间
+      totalAsset: [totalAssetStart = '', totalAssetEnd = ''],
+      // 年日均净资产区间
+      annualDailyAsset: [annualDailyAssetStart = '', annualDailyAssetEnd = ''],
+      // 本年净佣金区间
+      annualAsset: [annualAssetStart = '', annualAssetEnd = ''],
+      // 上年净佣金区间
+      lastYearAsset: [lastYearAssetStart = '', lastYearAssetEnd = ''],
     } = this.state;
     // 如果状态数组有数据，且第一个数据为空，则置为空数组
     const newStatus = (status.length && _.isEmpty(status[0])) ? [] : [...status];
@@ -200,14 +196,14 @@ export default class AddCustModal extends PureComponent {
       orgIdKeyWord,
       smKeyword,
       dmKeyword,
-      nARangeStart,
-      nARangeEnd,
-      nAARangeStart,
-      nAARangeEnd,
-      nCLYRangeStart,
-      nCLYRangeEnd,
-      nCRangeStart,
-      nCRangeEnd,
+      totalAssetStart,
+      totalAssetEnd,
+      annualDailyAssetStart,
+      annualDailyAssetEnd,
+      lastYearAssetStart,
+      lastYearAssetEnd,
+      annualAssetStart,
+      annualAssetEnd,
       pageSize: INIT_PAGESIZE,
       pageNum,
     };
@@ -293,40 +289,30 @@ export default class AddCustModal extends PureComponent {
   // 全选事件
   @autobind
   handleSelectAll(selected, selectedAllRows, changeRows) {
-    const { selectedRowKeys, selectedRows } = this.state;
+    const { selectedRows } = this.state;
     const changeRowKeys = _.map(changeRows, 'custId');
     let newSelectedRows = [...selectedRows];
-    let newSelectedRowKeys = [...selectedRowKeys];
     if (selected) {
       newSelectedRows.push(...changeRows);
-      newSelectedRowKeys.push(...changeRowKeys);
       if (this.checkCountIsBigThanLimit(newSelectedRows.length)) {
-        message.error(errorMsg.allCount);
+        message.error(ERROR_MESSAGE_ALL_COUNT);
         return;
       }
       if (newSelectedRows.length > LIMIT_COUNT) {
-        message.error(errorMsg.count);
+        message.error(ERROR_MESSAGE_COUNT);
         return;
       }
     } else {
-      // TODO: 测试
-      newSelectedRows = _.filter(newSelectedRows, (o) => {
-        if (!_.includes(changeRowKeys, o.custId)) {
-          return o;
-        }
-        return null;
-      });
-      newSelectedRowKeys = _.without(newSelectedRowKeys, ...changeRowKeys);
+      newSelectedRows = _.filter(newSelectedRows, o => !_.includes(changeRowKeys, o.custId));
     }
     this.setState({
       selectedRows: newSelectedRows,
-      selectedRowKeys: newSelectedRowKeys,
     });
   }
 
   // 检查添加的客户条数是否超过限制的条数（本方法为两千条）
   @autobind
-  checkCountIsBigThanLimit(length, limit = LIMIT_ALLCOUNT) {
+  checkCountIsBigThanLimit(length, limit = LIMIT_ALL_COUNT) {
     let flag = false;
     const { alreadyCount } = this.state;
     if (alreadyCount + length > limit) {
@@ -385,13 +371,12 @@ export default class AddCustModal extends PureComponent {
     }
     treeCustRange = [
       {
-        label: '不限',
+        label: NO_VALUE,
         value: '',
         key: 0,
       },
       ...treeCustRange,
     ];
-
 
     const statusList = _.get(this.context, 'dict.accountStatusList') || [];
     const decoratedStatusList = statusList.map(item =>
@@ -401,21 +386,35 @@ export default class AddCustModal extends PureComponent {
       isExpand,
       status,
       orgIdKeyWord,
-      naRange,
-      naaRange,
-      nclyRange,
-      ncRange,
+      totalAsset,
+      annualDailyAsset,
+      lastYearAsset,
+      annualAsset,
       custKeyword,
       smKeyword,
       dmKeyword,
-      selectedRowKeys,
+      selectedRows,
     } = this.state;
 
+    // 总条数
+    const totalCount = page.totalRecordNum || 0;
+    // 总条数是否大于限制的条数
+    const bigThanLimitAllCount = totalCount >= LIMIT_ALL_COUNT;
+    // 总条数大于限制总条数则只显示限制的总条数，即 超过 2000 只取 2000
+    const total = bigThanLimitAllCount ? LIMIT_ALL_COUNT : totalCount;
+    // 当前页
+    const current = page.curPageNum || 1;
+    // 每页条数
+    const pageSize = page.pageSize || INIT_PAGESIZE;
+    // 总条数大于限制总条数并且当前页是最后一页
+    const moreThanLimitClassNames = classnames({
+      [styles.moreThanLimitCount]: bigThanLimitAllCount && (current === total / pageSize),
+    });
     // 客户列表分页
     const paginationOption = {
-      current: page.curPageNum || 1,
-      total: page.totalRecordNum || 0,
-      pageSize: page.pageSize || INIT_PAGESIZE,
+      current,
+      total,
+      pageSize,
       onChange: this.handlePageChange,
       isHideLastButton: true,
     };
@@ -427,7 +426,7 @@ export default class AddCustModal extends PureComponent {
       clearDataType: clearDataArray[0],
     };
     const rowSelection = {
-      selectedRowKeys,
+      selectedRowKeys: _.map(selectedRows, 'custId'),
       hideDefaultSelections: true,
       columnWidth: 40,
       onSelect: this.onSelectChange,
@@ -452,9 +451,9 @@ export default class AddCustModal extends PureComponent {
             <div className={styles.operateDiv} ref={filterWrap => this.filterWrap = filterWrap}>
               <SingleFilter
                 className={styles.searchFilter}
-                filterName={'客户'}
+                filterName="客户"
                 showSearch
-                placeholder={'请输入经纪客户号、姓名'}
+                placeholder="请输入经纪客户号、姓名"
                 data={[]}
                 defaultSelectLabel={custKeyword || NO_VALUE}
                 value={custKeyword}
@@ -462,7 +461,7 @@ export default class AddCustModal extends PureComponent {
               />
               <MultiFilter
                 className={styles.firstLineFilter}
-                filterName={'状态'}
+                filterName="状态"
                 data={decoratedStatusList}
                 value={status}
                 onChange={_.debounce(this.handleMultiFilterChange, 500)}
@@ -471,7 +470,7 @@ export default class AddCustModal extends PureComponent {
                 className={styles.firstLineFilter}
                 value={orgIdKeyWord}
                 treeData={treeCustRange}
-                filterName={'原服务营业部'}
+                filterName="原服务营业部"
                 treeDefaultExpandAll
                 onChange={this.handleTreeSelectChange}
                 getPopupContainer={this.findContainer}
@@ -479,9 +478,9 @@ export default class AddCustModal extends PureComponent {
               />
               <SingleFilter
                 className={styles.searchFilter}
-                filterName={'服务经理'}
+                filterName="服务经理"
                 showSearch
-                placeholder={'请输入服务经理工号、姓名'}
+                placeholder="请输入服务经理工号、姓名"
                 data={[]}
                 defaultSelectLabel={smKeyword || NO_VALUE}
                 value={smKeyword}
@@ -489,9 +488,9 @@ export default class AddCustModal extends PureComponent {
               />
               <SingleFilter
                 className={styles.searchFilter}
-                filterName={'开发经理'}
+                filterName="开发经理"
                 showSearch
-                placeholder={'请输入开发经理工号、姓名'}
+                placeholder="请输入开发经理工号、姓名"
                 data={[]}
                 defaultSelectLabel={dmKeyword || NO_VALUE}
                 value={dmKeyword}
@@ -517,35 +516,35 @@ export default class AddCustModal extends PureComponent {
                 ?
                   <div className={styles.rangeDiv}>
                     <RangeFilter
-                      filterId={'naRange'}
-                      filterName={'净资产区间'}
-                      defaultLabel={'不限'}
-                      value={naRange}
-                      unit={'元'}
+                      filterId="totalAsset"
+                      filterName="净资产区间"
+                      defaultLabel={NO_VALUE}
+                      value={totalAsset}
+                      unit="元"
                       onChange={this.handleRangeFilterChange}
                     />
                     <RangeFilter
-                      filterId={'naaRange'}
-                      filterName={'年日均净资产区间'}
-                      defaultLabel={'不限'}
-                      value={naaRange}
-                      unit={'元'}
+                      filterId="annualDailyAsset"
+                      filterName="年日均净资产区间"
+                      defaultLabel={NO_VALUE}
+                      value={annualDailyAsset}
+                      unit="元"
                       onChange={this.handleRangeFilterChange}
                     />
                     <RangeFilter
-                      filterId={'nclyRange'}
-                      filterName={'上年净佣金区间'}
-                      defaultLabel={'不限'}
-                      value={nclyRange}
-                      unit={'元'}
+                      filterId="lastYearAsset"
+                      filterName="上年净佣金区间"
+                      defaultLabel={NO_VALUE}
+                      value={lastYearAsset}
+                      unit="元"
                       onChange={this.handleRangeFilterChange}
                     />
                     <RangeFilter
-                      filterId={'ncRange'}
-                      filterName={'本年净佣金区间'}
-                      defaultLabel={'不限'}
-                      value={ncRange}
-                      unit={'元'}
+                      filterId="annualAsset"
+                      filterName="本年净佣金区间"
+                      defaultLabel={NO_VALUE}
+                      value={annualAsset}
+                      unit="元"
                       onChange={this.handleRangeFilterChange}
                     />
                   </div>
@@ -557,11 +556,13 @@ export default class AddCustModal extends PureComponent {
               <CommonTable
                 data={list}
                 titleList={newTitleList}
-                align={'left'}
-                rowKey={'custId'}
+                align="left"
+                rowKey="custId"
                 rowSelection={rowSelection}
               />
-              <Pagination {...paginationOption} />
+              <div className={moreThanLimitClassNames}>
+                <Pagination {...paginationOption} />
+              </div>
             </div>
           </div>
         </div>

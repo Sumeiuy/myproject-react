@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-24 10:13:17
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-25 13:52:17
+ * @Last Modified time: 2018-06-11 13:16:46
  */
 
 import React, { PureComponent } from 'react';
@@ -246,9 +246,9 @@ export default class AddManageModal extends PureComponent {
             <div className={styles.operateDiv} ref={filterWrap => this.filterWrap = filterWrap}>
               <SingleFilter
                 className={styles.firstFilter}
-                filterName={'服务经理'}
+                filterName="服务经理"
                 showSearch
-                placeholder={'请输入服务经理工号、姓名'}
+                placeholder="请输入服务经理工号、姓名"
                 data={[]}
                 defaultSelectLabel={_.isEmpty(smKeyword) ? NO_VALUE : smKeyword}
                 value={smKeyword}
@@ -257,14 +257,14 @@ export default class AddManageModal extends PureComponent {
               <HTTreeFilter
                 value={_.isEmpty(orgId) ? '' : orgId}
                 treeData={treeCustRange}
-                filterName={'所属营业部'}
+                filterName="所属营业部"
                 treeDefaultExpandAll
                 onChange={this.handleTreeSelectChange}
                 getPopupContainer={this.findContainer}
                 dropdownClassName={styles.dropdownClassName}
               />
               <SingleFilter
-                filterName={'职位类型'}
+                filterName="职位类型"
                 data={positionTypeArray}
                 value={positionType}
                 onChange={this.handleFilterChange}
@@ -274,8 +274,8 @@ export default class AddManageModal extends PureComponent {
               <CommonTable
                 data={list || []}
                 titleList={manageTitleList}
-                align={'left'}
-                rowKey={'positionId'}
+                align="left"
+                rowKey="positionId"
                 rowSelection={rowSelection}
               />
               <Pagination {...paginationOption} />

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-08 21:29:52
+ * @Last Modified time: 2018-06-11 13:17:19
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -463,7 +463,7 @@ export default class CreateModal extends PureComponent {
             </div>
             <div className={styles.tableDiv}>
               <CommonTable
-                align={'left'}
+                align="left"
                 data={custList}
                 titleList={custTitle}
               />
@@ -480,7 +480,7 @@ export default class CreateModal extends PureComponent {
             </div>
             <div className={styles.tableDiv}>
               <CommonTable
-                align={'left'}
+                align="left"
                 data={manageList}
                 titleList={manageTitle}
               />
