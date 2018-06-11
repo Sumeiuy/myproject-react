@@ -60,7 +60,6 @@ export default function Header(props) {
         filterName="服务状态"
         className={styles.filter}
         value={state}
-        defaultSelectLabel="不限"
         data={stateData}
         onChange={handleStateChange}
       />
@@ -69,7 +68,6 @@ export default function Header(props) {
         filterName="客户"
         className={styles.filter}
         value={currentCustId}
-        defaultSelectLabel="不限"
         data={customerList}
         dataMap={['custId', 'name']}
         onChange={handleCustomerChange}
