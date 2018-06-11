@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 16:29:04
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-08 14:15:27
+ * @Last Modified time: 2018-06-11 09:56:28
  * @description 服务记录页面用到的页面工具或者配置
  */
 import _ from 'lodash';
@@ -78,10 +78,10 @@ const errorFeedback = {
 // 新增服务记录时，客户反馈一级不给默认值，给一个请选择选项
 const defaultFeedbackOption = '请选择';
 const defaultFeedback = {
-  key: '-1',
+  key: defaultFeedbackOption,
   value: defaultFeedbackOption,
   children: {
-    key: '-1',
+    key: defaultFeedbackOption,
     value: defaultFeedbackOption,
   },
 };
@@ -109,4 +109,5 @@ export default {
   serveStatusRadioGroupMap,
   PHONE,
   defaultFeedback,
+  defaultFeedbackOption,
 };

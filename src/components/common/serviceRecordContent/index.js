@@ -30,6 +30,7 @@ import {
   serveStatusRadioGroupMap,
   getServeWayByCodeOrName,
   defaultFeedback,
+  defaultFeedbackOption,
 } from './utils';
 
 import styles from './index.less';
@@ -388,7 +389,7 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   checkCustFeedback() {
     // 如果客户反馈没有勾选，提示错误
-    if (this.state.custFeedback === '-1') {
+    if (this.state.custFeedback === defaultFeedbackOption) {
       this.setState({
         isShowErrorCustFeedback: true,
       });

@@ -11,6 +11,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Select } from 'antd';
 
+import { defaultFeedbackOption } from './utils';
+
 import styles from './index.less';
 
 const { Option } = Select;
@@ -84,8 +86,8 @@ export default class CascadeFeedbackSelect extends PureComponent {
       const secondFedback = _.find(secondFeedbackList, { key: second });
       showSecondSelect = firstFeedback.value === secondFedback.value;
     }
-    // -1代表请选择，前端自定义的key，其实用不到，只是为了加一个非空的默认值
-    if (first === '-1') {
+    // 代表请选择，前端自定义的key，其实用不到，只是为了加一个非空的默认值
+    if (first === defaultFeedbackOption) {
       showSecondSelect = true;
     }
 
