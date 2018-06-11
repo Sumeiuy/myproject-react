@@ -2,20 +2,23 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请新建页面
  * @Date: 2018-06-08 13:10:33
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-08 13:59:17
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-11 14:12:10
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+
+import FinanceCustRelationshipForm from './FinanceCustRelationshipForm';
 import CommonModal from '../common/biz/CommonModal';
 import commonConfirm from '../common/confirm_';
 
 export default class CreateApply extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    onEmitClearModal: PropTypes.func.isRequired,
+    onCloseModal: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -29,29 +32,26 @@ export default class CreateApply extends PureComponent {
     };
   }
 
-  // 关闭新建弹框
   @autobind
-  closeModal() {
-    // 关闭模态框
+  handleModalClose() {
+    // 关闭新建申请弹出层的时候，弹出提示是否
     commonConfirm({
       shortCut: 'close',
-      onOk: this.clearBoardAllData,
-    });
-  }
-
-  // 清空弹出层数据
-  @autobind
-  clearBoardAllData() {
-    this.setState({
-      isShowModal: false,
+      onOk: this.handleCloseModalConfim,
     });
   }
 
   @autobind
-  afterClose() {
-    this.props.onEmitClearModal('isShowCreateModal');
+  handleCloseModalConfim() {
+    this.props.onCloseModal('isShowCreateModal');
   }
 
+  @autobind
+  handleModalConfirmClick() {
+    console.warn('点击提交按钮');
+    // TODO 此处需要增加选择审批人的操作
+    this.props.onSubmit({});
+  }
 
   render() {
     const {
@@ -60,14 +60,15 @@ export default class CreateApply extends PureComponent {
 
     return (
       <CommonModal
-        title="新建公务手机申请"
-        visible={isShowModal}
-        closeModal={this.closeModal}
-        afterClose={this.afterClose}
         size="large"
         modalKey="myModal"
+        title="客户关联关系信息申请"
+        visible={isShowModal}
+        onCancel={this.handleModalClose}
+        closeModal={this.handleModalClose}
+        onOk={this.handleModalConfirmClick}
       >
-        123
+        <FinanceCustRelationshipForm />
       </CommonModal>
     );
   }

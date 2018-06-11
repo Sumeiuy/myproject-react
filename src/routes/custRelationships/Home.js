@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-08 17:52:52
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-11 13:51:35
  */
 
 import React, { PureComponent } from 'react';
@@ -175,8 +175,7 @@ export default class ApplyHome extends PureComponent {
   }
 
   @autobind
-  clearModal(name) {
-    // 清除模态框组件
+  handleCloseModal(name) {
     this.setState({ [name]: false });
   }
 
@@ -263,6 +262,16 @@ export default class ApplyHome extends PureComponent {
     );
   }
 
+  @autobind
+  handleCloseCreateModal(name) {
+    this.setState({ [name]: false });
+  }
+
+  @autobind
+  handleModalSubmit(param) {
+    console.warn('点击提交按钮：', param);
+  }
+
   render() {
     const {
       replace,
@@ -325,13 +334,14 @@ export default class ApplyHome extends PureComponent {
           leftWidth={LEFT_PANEL_WIDTH}
         />
         {
-          isShowCreateModal ?
+          !isShowCreateModal ? null :
+          (
             <CreateApply
               location={location}
-              onEmitClearModal={this.clearModal}
+              onCloseModal={this.handleCloseCreateModal}
+              onSubmit={this.handleModalSubmit}
             />
-            :
-            null
+          )
         }
       </div>
     );

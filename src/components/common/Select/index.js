@@ -25,6 +25,8 @@ export default class CommonSelect extends PureComponent {
     ]),
     width: PropTypes.string,
     disabled: PropTypes.bool,
+    // 渲染Option时，是否根据数据总的show字段来判断该选项的显示与否
+    needShowKey: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -32,14 +34,20 @@ export default class CommonSelect extends PureComponent {
     data: [],
     width: '',
     disabled: false,
+    needShowKey: true,
   }
 
   @autobind
   makeSelectOptions(data) {
+    const { needShowKey } = this.props;
     const options = [];
     _.forEach(data, (item) => {
       const { show, value, label } = item;
-      if (show) {
+      if (needShowKey) {
+        if (show) {
+          options.push(<Option key={value} value={value}>{label}</Option>);
+        }
+      } else {
         options.push(<Option key={value} value={value}>{label}</Option>);
       }
     });
