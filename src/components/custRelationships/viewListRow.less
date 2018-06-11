@@ -11,13 +11,22 @@
   &.active {
     background-color: #4897f1;
     color: #fff;
-    .oneLineCls .title {
-      .appIcon {
-        background-color: #fff;
-        color: #4897f1;
+    .oneLineCls {
+      .title {
+        .appIcon {
+          background-color: #fff;
+          color: #4897f1;
+        }
+        .serialNumber {
+          color: #fff;
+        }
       }
-      .serialNumber {
-        color: #fff;
+      .tagArea {
+        .tag {
+          border: 1px solid #fff;
+          background-color: transparent;
+          color: #fff;
+        }
       }
     }
     .secondLine {
@@ -75,8 +84,17 @@
       }
     }
     .tagArea {
-      width: 30%;
       .pullright;
+      .tag {
+        background: #d0f1ff;
+        border-radius: 2px;
+        width: 58px;
+        height: 18px;
+        line-height: 18px;
+        text-align: center;
+        font-size: 12px;
+        color: #3f9dc6;
+      }
     }
   }
   .secondLine, .thirdLine {

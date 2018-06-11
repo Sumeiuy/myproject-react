@@ -3,20 +3,22 @@
  * @Descripter: 客户关联关系详情页面
  * @Date: 2018-06-08 17:39:51
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-11 14:22:24
+ * @Last Modified time: 2018-06-11 15:29:50
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { Table } from 'antd';
 // import { autobind } from 'core-decorators';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import ApprovalRecord from '../permission/ApprovalRecord';
-// import Table from '../common/commonTable';
 import CommonUpload from '../common/biz/CommonUpload';
+import config from './config';
 import styles from './detail.less';
 
+const { custRelationshipColumns } = config;
 export default class ApplyDetail extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
@@ -33,8 +35,8 @@ export default class ApplyDetail extends PureComponent {
       custName,
       custId,
       custTypeValue,
-      custIdType,
-      custIdNumber,
+      IDType,
+      IDNum,
       empId,
       empName,
       orgName,
@@ -43,9 +45,10 @@ export default class ApplyDetail extends PureComponent {
       currentApproval,
       workflowHistoryBeans,
       currentNodeName,
-      isBuyBack,
-      projectManagerId,
-      projectManagerName,
+      businessFlag,
+      empLogin,
+      empLoginName,
+      custRelationshipList,
     } = this.props.data;
     const { attachmentList } = this.props;
     if (_.isEmpty(this.props.data)) {
@@ -56,9 +59,9 @@ export default class ApplyDetail extends PureComponent {
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
     // 服务经理信息
-    const projectManagerInfo = `${projectManagerName} (${projectManagerId})`;
+    const projectManagerInfo = `${empLoginName} (${empLogin})`;
     // 是否回购
-    const isBuyBackValue = isBuyBack ? '是' : '否';
+    const businessFlagValue = businessFlag ? '是' : '否';
 
     return (
       <div className={styles.custRelationshipsDetail}>
@@ -76,13 +79,13 @@ export default class ApplyDetail extends PureComponent {
                     <InfoItem label="客户类型" value={custTypeValue} width="70px" />
                   </li>
                   <li className={styles.item2}>
-                    <InfoItem label="证件类型" value={custIdType} width="70px" />
+                    <InfoItem label="证件类型" value={IDType} width="70px" />
                   </li>
                   <li className={styles.item}>
-                    <InfoItem label="证件号码" value={custIdNumber} width="70px" />
+                    <InfoItem label="证件号码" value={IDNum} width="70px" />
                   </li>
                   <li className={styles.item2}>
-                    <InfoItem label="是否办理股票质押回购业务" value={isBuyBackValue} width="185px" />
+                    <InfoItem label="是否办理股票质押回购业务" value={businessFlagValue} width="185px" />
                   </li>
                   <li className={styles.item2}>
                     <InfoItem label="项目经理" value={projectManagerInfo} width="70px" />
@@ -92,6 +95,13 @@ export default class ApplyDetail extends PureComponent {
             </div>
             <div id="custRelationshipsTable_module" className={styles.module}>
               <InfoTitle head="关联关系" />
+              <Table
+                dataSource={custRelationshipList}
+                columns={custRelationshipColumns}
+                pagination={{
+                  pageSize: 5,
+                }}
+              />
             </div>
             <div id="attachment_module" className={styles.module}>
               <div className={styles.detailWrapper}>

@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请的ViewListRow
  * @Date: 2018-06-08 13:54:33
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-08 13:54:53
+ * @Last Modified time: 2018-06-11 16:46:02
  */
 
 
@@ -12,7 +12,6 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import _ from 'lodash';
 
-import Tag from '../common/tag';
 import Icon from '../common/Icon';
 import styles from './viewListRow.less';
 
@@ -48,10 +47,6 @@ export default function ViewListRow(props) {
     [styles.custRelationshipsListRow]: true,
     [styles.active]: active,
   });
-  const tagBlueType = cx({
-    blue: !active,
-    transparent: active,
-  });
   function handleClick() {
     onClick(data, index);
   }
@@ -64,7 +59,7 @@ export default function ViewListRow(props) {
           <span className={styles.serialNumber}>编号{data.id || '暂无'}</span>
         </div>
         <div className={styles.tagArea}>
-          <Tag type={tagBlueType} text={changeDisplay(data.status, statusOptions)} />
+          <div className={styles.tag}>{changeDisplay(data.status, statusOptions)}</div>
         </div>
       </div>
       {/* 第二行 */}
