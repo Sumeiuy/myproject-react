@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请接口api
  * @Date: 2018-06-08 13:09:53
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-11 11:10:33
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-11 19:51:10
  */
 
 
@@ -21,5 +21,9 @@ export default function custRelationships(api) {
     saveApplication: query => api.post('/groovynoauth/fsp/biz/custrelationships/saveApplication', query),
     // 走流程接口
     doApprove: query => api.post('/groovynoauth/fsp/biz/custrelationships/doApprove', query),
+    // 根据客户名称或者经纪客户号查询客户列表
+    queryCustList: query => api.post('/groovynoauth/fsp/biz/custList', query),
+    // 获取该客户的详情信息
+    getCustDetail: query => api.post('/groovynoauth/fsp/biz/custrelationships/queryCustBasicInfo', query),
   };
 }

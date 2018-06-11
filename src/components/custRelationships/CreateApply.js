@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请新建页面
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-11 14:12:10
+ * @Last Modified time: 2018-06-11 18:08:09
  */
 
 import React, { PureComponent } from 'react';
@@ -16,9 +16,14 @@ import commonConfirm from '../common/confirm_';
 
 export default class CreateApply extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     onCloseModal: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
+    // 获取客户详情
+    getCustDetail: PropTypes.func.isRequired,
+    custDetail: PropTypes.object.isRequired,
+    // 获取可申请客户列表
+    queryCustList: PropTypes.func.isRequired,
+    custList: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -55,6 +60,12 @@ export default class CreateApply extends PureComponent {
 
   render() {
     const {
+      custDetail,
+      custList,
+      getCustDetail,
+      queryCustList,
+    } = this.props;
+    const {
       isShowModal,
     } = this.state;
 
@@ -68,7 +79,13 @@ export default class CreateApply extends PureComponent {
         closeModal={this.handleModalClose}
         onOk={this.handleModalConfirmClick}
       >
-        <FinanceCustRelationshipForm />
+        <FinanceCustRelationshipForm
+          action="CREATE"
+          custDetail={custDetail}
+          custList={custList}
+          getCustDetail={getCustDetail}
+          queryCustList={queryCustList}
+        />
       </CommonModal>
     );
   }

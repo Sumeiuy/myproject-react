@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-11 13:51:35
+ * @Last Modified time: 2018-06-11 18:56:11
  */
 
 import React, { PureComponent } from 'react';
@@ -35,6 +35,12 @@ const effects = {
   getDetailInfo: 'custRelationships/getDetailInfo',
   // 获取附件列表
   getAttachmentList: 'custRelationships/getAttachmentList',
+  // 根据关键字获取可申请的客户列表
+  queryCustList: 'custRelationships/queryCustList',
+  // 获取选中的客户的详情信息
+  getCustDetail: 'custRelationships/getCustDetail',
+  // 清空数据
+  clearReduxData: 'custRelationships/clearReduxData',
 };
 const mapStateToProps = state => ({
   // 员工基本信息
@@ -45,6 +51,10 @@ const mapStateToProps = state => ({
   detailInfo: state.custRelationships.detailInfo,
   // 附件列表
   attachmentList: state.custRelationships.attachmentList,
+  // 可进行关联关系申请的客户列表
+  custList: state.custRelationships.custList,
+  // 用户选中的客户基本信息
+  custDetail: state.custRelationships.custDetail,
 });
 
 const mapDispatchToProps = {
@@ -55,6 +65,12 @@ const mapDispatchToProps = {
   getDetailInfo: effect(effects.getDetailInfo, { forceFull: true }),
   // 获取附件列表
   getAttachmentList: effect(effects.getAttachmentList, { forceFull: true }),
+  // 根据关键字获取可申请的客户列表
+  queryCustList: effect(effects.queryCustList, { forceFull: true }),
+  // 获取选中的客户的详情信息
+  getCustDetail: effect(effects.getCustDetail, { forceFull: true }),
+  // 清除Redux中的数据
+  clearReduxData: effect(effects.clearReduxData, { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -75,6 +91,14 @@ export default class ApplyHome extends PureComponent {
     // 详情页面服务经理表格申请数据
     attachmentList: PropTypes.array,
     getAttachmentList: PropTypes.func.isRequired,
+    // 获取客户详情
+    getCustDetail: PropTypes.func.isRequired,
+    custDetail: PropTypes.object.isRequired,
+    // 获取可申请客户列表
+    queryCustList: PropTypes.func.isRequired,
+    custList: PropTypes.object.isRequired,
+    // 清除Redux中的数据
+    clearReduxData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -174,11 +198,6 @@ export default class ApplyHome extends PureComponent {
     this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
-  @autobind
-  handleCloseModal(name) {
-    this.setState({ [name]: false });
-  }
-
   // 打开新建申请的弹出框
   @autobind
   openCreateModalBoard() {
@@ -265,11 +284,13 @@ export default class ApplyHome extends PureComponent {
   @autobind
   handleCloseCreateModal(name) {
     this.setState({ [name]: false });
+    this.props.clearReduxData({ custDetail: {} });
   }
 
   @autobind
   handleModalSubmit(param) {
     console.warn('点击提交按钮：', param);
+    this.setState({ isShowCreateModal: false });
   }
 
   render() {
@@ -280,6 +301,10 @@ export default class ApplyHome extends PureComponent {
       empInfo,
       detailInfo,
       attachmentList,
+      custDetail,
+      getCustDetail,
+      custList,
+      queryCustList,
     } = this.props;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -337,9 +362,12 @@ export default class ApplyHome extends PureComponent {
           !isShowCreateModal ? null :
           (
             <CreateApply
-              location={location}
               onCloseModal={this.handleCloseCreateModal}
               onSubmit={this.handleModalSubmit}
+              custDetail={custDetail}
+              custList={custList}
+              getCustDetail={getCustDetail}
+              queryCustList={queryCustList}
             />
           )
         }

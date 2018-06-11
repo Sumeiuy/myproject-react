@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:56:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-11 15:29:50
+ * @Last Modified time: 2018-06-11 17:34:17
  * @description 融资类业务客户关联关系表单项
  */
 import React from 'react';
@@ -24,7 +24,7 @@ export default function FormItem(props) {
 }
 
 FormItem.propTypes = {
-  children: PropTypes.number.isRequired,
+  children: PropTypes.node.isRequired,
   label: PropTypes.string.isRequired,
   labelWidth: PropTypes.number,
 };
