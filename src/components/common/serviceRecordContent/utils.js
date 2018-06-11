@@ -76,12 +76,13 @@ const errorFeedback = {
 };
 
 // 新增服务记录时，客户反馈一级不给默认值，给一个请选择选项
+const defaultFeedbackOption = '请选择';
 const defaultFeedback = {
-  key: '请选择',
-  value: '请选择',
+  key: '-1',
+  value: defaultFeedbackOption,
   children: {
-    key: '请选择',
-    value: '请选择',
+    key: '-1',
+    value: defaultFeedbackOption,
   },
 };
 

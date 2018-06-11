@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-08 16:07:47
+ * @Last Modified time: 2018-06-11 09:45:42
  */
 
 import React, { PureComponent } from 'react';
@@ -388,7 +388,7 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   checkCustFeedback() {
     // 如果客户反馈没有勾选，提示错误
-    if (this.state.custFeedback === '请选择') {
+    if (this.state.custFeedback === '-1') {
       this.setState({
         isShowErrorCustFeedback: true,
       });
