@@ -6,12 +6,14 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
 import { Button } from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
 
-import LabelInfo from '../taskList/common/LabelInfo';
 import Field from './Field';
+import LabelInfo from '../taskList/common/LabelInfo';
+import { request } from '../../config';
 import RemarkList from './RemarkList';
 import Icon from '../common/Icon';
 import styles from './myDetail.less';
@@ -34,8 +36,47 @@ export default class MyDetail extends PureComponent {
         className={styles.screenshot}
         onClick={() => { handleScreenshot(imgUrl); }}
       >
-        <a><Icon type={'kehu1'} /> 查看</a>
+        <a><Icon type={'pic'} /> 查看</a>
       </div>
+    );
+  }
+
+  @autobind
+  renderColumn(data) {
+    const { attachModelList = [] } = data;
+    const hasAttachment = !_.isEmpty(attachModelList);
+    // 当前行记录
+    return (
+      <div className={styles.item}>
+        <div className={styles.info}>
+          <span>{data.title}</span>
+        </div>
+        <pre className={styles.txt}>
+          {data.description}
+        </pre>
+        {
+          hasAttachment ? (
+            <div className={styles.attachContainer}>
+              {this.renderAttachmentList(attachModelList)}
+            </div>
+          ) : null
+        }
+      </div>
+    );
+  }
+
+  renderAttachmentList(list) {
+    return (
+      _.map(
+        list,
+        item => (
+          <div className={styles.attachItem}>
+            <a href={`${request.prefix}/file/${item.attachUrl}`}>
+              <Icon type={'fujian2'} />{`${item.attachName}`}
+            </a>
+          </div>
+        ),
+      )
     );
   }
 
@@ -95,7 +136,7 @@ export default class MyDetail extends PureComponent {
           />
           <LabelInfo value="问题答复" wrapperClass={styles.infoTitle} />
           <RemarkList
-            category="user"
+            renderColumn={this.renderColumn}
             className={styles.remarkQuestion}
             remarkList={processList}
           />
@@ -108,7 +149,7 @@ export default class MyDetail extends PureComponent {
                 >继续追问</Button>
                 <Button
                   type="primary"
-                  className={styles.btn}
+                  className={classnames(styles.btn, styles.btnPrimary)}
                   onClick={resolveQuestion}
                 >已解决</Button>
               </div>
