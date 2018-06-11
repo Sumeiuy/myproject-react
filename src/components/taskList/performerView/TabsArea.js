@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:53:21
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-05 16:57:32
+ * @Last Modified time: 2018-06-11 10:17:35
  */
 
 import React from 'react';
@@ -66,6 +66,7 @@ const TabsArea = (props) => {
               saveAnswersByType={saveAnswersByType}
               basicInfo={basicInfo}
               currentId={currentId}
+              key={currentId}
             />
           </TabPane>}
       </Tabs>

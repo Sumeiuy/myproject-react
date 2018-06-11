@@ -186,6 +186,8 @@ const routes = [
       { path: '/createTaskFromTaskRejection1', component: CreateTask },
       // 从任务管理，创建者视图驳回中的任务，进行任务驳回修改
       { path: '/createTaskFromTaskRejection2', component: CreateTask },
+      // 从管理者视图服务经理维度发起任务
+      { path: '/createTaskFromCustScope', component: CreateTask },
       // 客户列表发起任务
       { path: '/createTask', component: CreateTask },
       // 客户分组管理
@@ -204,7 +206,7 @@ const routes = [
   { path: '/userInfoRemind', component: userInfoApproval },
 
   // 消息提醒
-  { path: '/messgeCenter', component: MessageCenter },
+  { path: '/messageCenter', component: MessageCenter },
   // 直接进入
   {
     path: '/filialeCustTransfer',
