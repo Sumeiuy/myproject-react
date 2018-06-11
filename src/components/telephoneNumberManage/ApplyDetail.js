@@ -181,7 +181,7 @@ export default class ApplyDetail extends PureComponent {
                     <InfoItem label="拟稿人" value={drafter} />
                   </li>
                   <li className={styles.item}>
-                    <InfoItem label="申请请时间" value={createTime} />
+                    <InfoItem label="申请时间" value={createTime} />
                   </li>
                   <li className={styles.item}>
                     <InfoItem label="状态" value={statusDesc} />
