@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系详情页面
  * @Date: 2018-06-08 17:39:51
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-08 18:08:52
+ * @Last Modified time: 2018-06-11 14:22:24
  */
 
 import React, { PureComponent } from 'react';
@@ -30,6 +30,11 @@ export default class ApplyDetail extends PureComponent {
   render() {
     const {
       id,
+      custName,
+      custId,
+      custTypeValue,
+      custIdType,
+      custIdNumber,
       empId,
       empName,
       orgName,
@@ -38,43 +43,76 @@ export default class ApplyDetail extends PureComponent {
       currentApproval,
       workflowHistoryBeans,
       currentNodeName,
+      isBuyBack,
+      projectManagerId,
+      projectManagerName,
     } = this.props.data;
     const { attachmentList } = this.props;
     if (_.isEmpty(this.props.data)) {
       return null;
     }
+    // 客户信息
+    const custInfo = `${custName} (${custId})`;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
+    // 服务经理信息
+    const projectManagerInfo = `${projectManagerName} (${projectManagerId})`;
+    // 是否回购
+    const isBuyBackValue = isBuyBack ? '是' : '否';
 
     return (
       <div className={styles.custRelationshipsDetail}>
         <div className={styles.inner}>
           <div className={styles.innerWrap}>
             <h1 className={styles.title}>编号{id}</h1>
+            <div id="basicInfor_module" className={styles.module}>
+              <InfoTitle head="基本信息" />
+              <div className={styles.modContent}>
+                <ul className={styles.propertyList}>
+                  <li className={styles.item}>
+                    <InfoItem label="客户" value={custInfo} width="70px" />
+                  </li>
+                  <li className={styles.item2}>
+                    <InfoItem label="客户类型" value={custTypeValue} width="70px" />
+                  </li>
+                  <li className={styles.item2}>
+                    <InfoItem label="证件类型" value={custIdType} width="70px" />
+                  </li>
+                  <li className={styles.item}>
+                    <InfoItem label="证件号码" value={custIdNumber} width="70px" />
+                  </li>
+                  <li className={styles.item2}>
+                    <InfoItem label="是否办理股票质押回购业务" value={isBuyBackValue} width="185px" />
+                  </li>
+                  <li className={styles.item2}>
+                    <InfoItem label="项目经理" value={projectManagerInfo} width="70px" />
+                  </li>
+                </ul>
+              </div>
+            </div>
             <div id="custRelationshipsTable_module" className={styles.module}>
               <InfoTitle head="关联关系" />
+            </div>
+            <div id="attachment_module" className={styles.module}>
+              <div className={styles.detailWrapper}>
+                <InfoTitle head="附件信息" />
+                <CommonUpload attachmentList={attachmentList} />
+              </div>
             </div>
             <div id="nginformation_module" className={styles.module}>
               <InfoTitle head="拟稿信息" />
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="拟稿人" value={drafter} />
+                    <InfoItem label="拟稿人" value={drafter} width="70px" />
                   </li>
                   <li className={styles.item}>
-                    <InfoItem label="申请请时间" value={createTime} />
+                    <InfoItem label="申请时间" value={createTime} width="70px" />
                   </li>
                   <li className={styles.item}>
-                    <InfoItem label="状态" value={statusDesc} />
+                    <InfoItem label="状态" value={statusDesc} width="70px" />
                   </li>
                 </ul>
-              </div>
-            </div>
-            <div id="attachment_module" className={styles.module}>
-              <div className={styles.detailWrapper}>
-                <InfoTitle head="附件信息" />
-                <div className={styles.attachmentTitle}><span>*</span> 合规承诺书</div>
-                <CommonUpload attachmentList={attachmentList} />
               </div>
             </div>
             <div id="approvalRecord_module" className={styles.module}>

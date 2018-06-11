@@ -51,7 +51,7 @@ module.exports = {
       {
         target: 'http://168.61.8.82:5086', // uat
       },
-      prefix + '/groovynoauth/fsp/cust/custrelationships',
+      prefix + '/groovynoauth/fsp/biz/custrelationships',
       {
         // target: 'http://168.61.8.82:5086', // uat
         // target: 'http://168.61.8.82:5085', // SIT
