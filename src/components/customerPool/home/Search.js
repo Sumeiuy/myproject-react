@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-11 14:28:25
+ * @Last Modified time: 2018-06-11 20:35:17
  * @description 客户池头部搜索组件
  */
 
@@ -80,7 +80,8 @@ export default class Search extends PureComponent {
 
   @autobind
   @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
-  handleOpenTab({ labelDesc, ...options }) {
+  handleOpenTab(data) {
+    const { labelDesc, ...options } = data;
     const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.props.saveSearchVal({
@@ -88,7 +89,10 @@ export default class Search extends PureComponent {
     });
     // 有标签描述需要将描述存到storage
     if (labelDesc) {
-      localForage.setItem('labelDesc', labelDesc);
+      localForage.setItem(`${options.labelMapping}-labelDesc`, {
+        ...data,
+        labelName: decodeURIComponent(options.labelName),
+      });
     }
     const condition = urlHelper.stringify({ ...options });
     const url = `${firstUrl}?${condition}`;

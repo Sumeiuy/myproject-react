@@ -18,7 +18,7 @@ import Filter from '../../components/customerPool/list/Filter';
 import CustomerLists from '../../components/customerPool/list/CustomerLists';
 import { permission, emp } from '../../helper';
 import withRouter from '../../decorators/withRouter';
-import { getCustomerListFilters, getLabelDesc } from '../../helper/page/customerPool';
+import { getCustomerListFilters } from '../../helper/page/customerPool';
 import {
   CUST_MANAGER,
   ORG,
@@ -363,15 +363,6 @@ export default class CustomerList extends PureComponent {
       // param.labels = [query.labelMapping];
       param.primaryKey = [labelMapping];
       param.searchTypeReq = query.type;
-      // param.searchText = keyword;
-      if (query.source === 'sightingTelescope') {
-        // 如果是瞄准镜，需要加入queryLabelReq
-        const labelDesc = await getLabelDesc();
-        param.queryLabelReq = {
-          labelName,
-          labelDesc,
-        };
-      }
     } else if (query.source === 'association' || query.source === 'securitiesProducts') { // 联想词
       // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
       param.searchTypeReq = query.type;
