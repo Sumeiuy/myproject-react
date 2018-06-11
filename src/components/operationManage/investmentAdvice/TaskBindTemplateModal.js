@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-06 09:43:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-07 13:34:49
+ * @Last Modified time: 2018-06-08 17:58:56
  * @description 任务绑定投资建议模板弹出层
  */
 
@@ -13,6 +13,8 @@ import { Input, Checkbox } from 'antd';
 import _ from 'lodash';
 
 import Modal from '../../common/biz/CommonModal';
+import TemplateContent from './TemplateContent';
+import { event } from '../../../helper';
 
 import styles from './taskBindTemplateModal.less';
 
@@ -54,6 +56,8 @@ export default class componentName extends Component {
       optionalList: props.data,
       // 原始的可选模板列表
       originList: props.data,
+      // 列表中每一项的 更多 点击后的弹出层
+      visibleMore: {},
     };
   }
 
@@ -61,6 +65,29 @@ export default class componentName extends Component {
     // 因为目前投资模板列表展示的数量控制在100条以内，所以跟需求和后端确认
     // 由前端传递 pageSize = 100 来直接获取所有的数据，然后由前端来进行过滤
     this.props.queryTemplateList({ pageNum: 1, pageSize: 100 });
+    // event.addWheelEvent(this.listWrapRef, this.handleScrollWraplist);
+  }
+
+  componentDidUpdate() {
+    if (this.listWrapRef && !this.hasAddScrollEvent) {
+      this.hasAddScrollEvent = true;
+      event.addWheelEvent(this.listWrapRef, this.handleScrollWraplist);
+    }
+  }
+
+
+  componentWillUnmount() {
+    event.removeWheelEvent(this.listWrapRef, this.handleScrollWraplist);
+  }
+
+  @autobind
+  setTempLateListWraperRef(input) {
+    this.listWrapRef = input;
+  }
+
+  @autobind
+  getWrapListRef() {
+    return this.listWrapRef;
   }
 
   @autobind
@@ -87,6 +114,17 @@ export default class componentName extends Component {
   }
 
   @autobind
+  handleScrollWraplist() {
+    // 当滚动列表的时候，隐藏列表全部内容的弹出层
+    const { visibleMore } = this.state;
+    if (!_.isEmpty(visibleMore)) {
+      this.setState({
+        visibleMore: {},
+      });
+    }
+  }
+
+  @autobind
   handleModalOKBtnClick() {
     const { templateList } = this.state;
     this.props.onOK(templateList);
@@ -109,7 +147,10 @@ export default class componentName extends Component {
     // 根据标题或者内容中的文字是否含有用户输入的文字来简单进行筛选过滤
     const listAfterFilter = _.filter(originList,
       tmpl => tmpl.title.indexOf(v) > 0 || tmpl.content.indexOf(v) > 0);
-    this.setState({ optionalList: listAfterFilter });
+    this.setState({
+      optionalList: listAfterFilter,
+      visibleMore: {},
+    });
   }
 
   @autobind
@@ -129,8 +170,17 @@ export default class componentName extends Component {
   }
 
   @autobind
+  handlePopoverVisibleChange(id, visible) {
+    this.setState({
+      visibleMore: {
+        [`tmpl${id}`]: visible,
+      },
+    });
+  }
+
+  @autobind
   renderTamplatePanelsComponnet(list = []) {
-    const { templateList } = this.state;
+    const { templateList, visibleMore } = this.state;
     return list.map(item => (
       <div className={styles.templateCard} key={item.id}>
         <div className={styles.cardHeader}>
@@ -142,9 +192,12 @@ export default class componentName extends Component {
             {item.title}
           </Checkbox>
         </div>
-        <div
-          className={styles.cardBody}
-          dangerouslySetInnerHTML={this.replaceInvestAdviceParameterInContent(item.content)} // eslint-disable-line
+        <TemplateContent
+          tempLiateId={`${item.id}`}
+          visiblePopover={visibleMore[`tmpl${item.id}`] || false}
+          getPopupContainer={this.getWrapListRef}
+          content={this.replaceInvestAdviceParameterInContent(item.content)}
+          onPopoverVisibleChange={this.handlePopoverVisibleChange}
         />
       </div>
     ));
@@ -178,7 +231,7 @@ export default class componentName extends Component {
               共有{_.size(optionalList)}条可选模板
             </div>
           </div>
-          <div className={styles.templateListWrapper}>
+          <div className={styles.templateListWrapper} ref={this.setTempLateListWraperRef}>
             {this.renderTamplatePanelsComponnet(optionalList)}
           </div>
         </div>

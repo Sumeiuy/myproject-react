@@ -543,9 +543,12 @@ export default class Pageheader extends PureComponent {
     );
   }
 
+  @autobind
   renderCustFilterName(item) {
+    const { location: { query } } = this.props;
+    const { custName, custId } = query;
     const { filterName, value } = item;
-    const displayValue = !_.isEmpty(value.custId) ? `${value.name}(${value.custId})` : value.name;
+    const displayValue = !_.isEmpty(custId) ? `${custName}(${custId})` : value.name;
     return (
       <div className={styles.customerFilterContent}>
         <span className={styles.customerFilterName}>{filterName}:</span>
@@ -569,9 +572,9 @@ export default class Pageheader extends PureComponent {
       query,
     } } = this.props;
     const { replace } = this.context;
-    const { isDeleteFilterFromLocation, name } = obj;
+    const { isDeleteFilterFromLocation, id } = obj;
     const currentMoreFilterData = this.getMoreFilterList();
-    const currentFilterItem = _.filter(currentMoreFilterData, item => item.key === name)[0];
+    const currentFilterItem = _.filter(currentMoreFilterData, item => item.key === id)[0];
     const filterOption = currentFilterItem && currentFilterItem.filterOption;
     let finalQuery = query;
     if (isDeleteFilterFromLocation && currentFilterItem) {
@@ -606,7 +609,7 @@ export default class Pageheader extends PureComponent {
   }
   @autobind
   closeFilter(filterId) {
-    this.moreFilterChange({ name: filterId, isDeleteFilterFromLocation: true });
+    this.moreFilterChange({ id: filterId, isDeleteFilterFromLocation: true });
   }
   render() {
     const {
@@ -686,7 +689,7 @@ export default class Pageheader extends PureComponent {
             currentMoreFilterData.length ?
               <div className={classNames(styles.filterFl, styles.moreFilterBtn)}>
                 <MoreFilter
-                  selectedKeys={this.selectMoreFilter()}
+                  value={this.selectMoreFilter()}
                   data={currentMoreFilterData}
                   onChange={this.moreFilterChange}
                 />
