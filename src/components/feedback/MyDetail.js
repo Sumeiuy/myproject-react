@@ -34,7 +34,7 @@ export default class MyDetail extends PureComponent {
         className={styles.screenshot}
         onClick={() => { handleScreenshot(imgUrl); }}
       >
-        <a><Icon type={'kehu1'} /> 查看</a>
+        <a><Icon type={'pic'} /> 查看</a>
       </div>
     );
   }

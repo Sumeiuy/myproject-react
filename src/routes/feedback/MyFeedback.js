@@ -316,7 +316,7 @@ export default class MyFeedback extends PureComponent {
         active={activable}
         onClick={this.handleRowClick}
         index={index}
-        iconType="kehu1"
+        iconType="fankui1"
       />
     );
   }

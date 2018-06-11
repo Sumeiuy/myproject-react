@@ -87,7 +87,7 @@ export default class RemarkList extends PureComponent {
         item => (
           <div className={styles.attachItem}>
             <a href={`${request.prefix}/file/${item.attachUrl}`}>
-              <Icon type={'kehu1'} />{`${item.attachName}`}
+              <Icon type={'fujian2'} />{`${item.attachName}`}
             </a>
           </div>
         ),
