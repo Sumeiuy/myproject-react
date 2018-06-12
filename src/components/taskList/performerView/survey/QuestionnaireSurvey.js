@@ -4,7 +4,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-05-22 12:26:05
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 21:27:12
+ * @Last Modified time: 2018-06-11 21:58:03
  * 只是将原先的问卷调查逻辑单独提取成组件
  */
 
@@ -63,7 +63,7 @@ export default class QuestionnaireSurvey extends PureComponent {
     basicInfo: PropTypes.object.isRequired,
     currentId: PropTypes.string.isRequired,
     // 是否能够提交
-    canSubmit: PropTypes.string,
+    canSubmit: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -91,12 +91,10 @@ export default class QuestionnaireSurvey extends PureComponent {
     }
     // 任务切换时，清除form表单缓存数据
     if (prevProps.currentId !== this.props.currentId) {
-      this.resetFormFields();
+      this.setState({
+        ...defaultSurveyData,
+      });
     }
-  }
-
-  componentWillUnmount() {
-    this.resetFormFields();
   }
 
   /**
@@ -173,7 +171,7 @@ export default class QuestionnaireSurvey extends PureComponent {
       checkboxData: initCheck,
       // 存储多选框是否选中状态
       errorCheckboxIdList: _.isEmpty(initCheck[quesId])
-        ? [...errorCheckboxIdList, quesId] : [],
+        ? [...errorCheckboxIdList, quesId] : errorCheckboxIdList,
     });
   }
 
@@ -223,7 +221,7 @@ export default class QuestionnaireSurvey extends PureComponent {
           examineeId: emp.getId(),
           templateId,
         };
-        saveAnswersByType(params).then(this.handleSaveSuccess);
+        // saveAnswersByType(params).then(this.handleSaveSuccess);
       }
     });
   }
@@ -307,6 +305,9 @@ export default class QuestionnaireSurvey extends PureComponent {
           // 设置该问题默认值
           const defaultData = answerData.answerdIds || EMPTY_ARRAY;
 
+          const currentQuestion = _.find(radioData, radio =>
+            radio.quesId === quesId) || EMPTY_OBJECT;
+
           content = (<FormItem key={quesId}>
             {getFieldDecorator(String(quesId), {
               rules: [{ required: true, message: '此答案不能为空，请选择你的选项' }],
@@ -319,8 +320,8 @@ export default class QuestionnaireSurvey extends PureComponent {
                   onChange={this.handleRadioChange}
                   // 禁用情况下,取defaultData
                   // 编辑状态下，取radioData第一个
-                  value={isDisabled ? defaultData[0] : (radioData[0]
-                    && radioData[0].answerId)}
+                  value={isDisabled ? defaultData[0] :
+                    currentQuestion.answerId}
                 >
                   {
                     item.optionInfoList.map(childItem =>
