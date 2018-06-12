@@ -5,6 +5,20 @@
   width: 100%;
   height: 100%;
 
+  :global {
+    .ant-input-suffix {
+      button {
+        background-color: transparent;
+        border-color: transparent;
+        color: #333;
+        &:visited, &:active {
+          background-color: transparent;
+          border-color: transparent;
+        }
+      }
+    }
+  }
+
   & > .containerHeader {
     flex: 0 0 auto;
     height: 87px;
