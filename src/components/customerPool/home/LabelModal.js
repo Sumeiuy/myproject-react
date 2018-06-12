@@ -147,7 +147,6 @@ export default class LabelModals extends PureComponent {
       source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
       labelMapping: item.id || '',
       labelName: encodeURIComponent(item.name),
-      labelDesc: encodeURIComponent(item.description),
       // 任务提示
       missionDesc: padSightLabelDesc({
         sightingScopeBool: isSightingScope(item.source),

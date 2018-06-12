@@ -90,7 +90,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 点击新建分组或者发起任务按钮
   @autobind
-  switchToRoute({ url, title, id, shouldStay, editPane, labelDesc, missionDesc }) {
+  switchToRoute({ url, title, id, shouldStay, editPane, missionDesc }) {
     const {
       page,
       condition,
@@ -98,8 +98,8 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selectAll,
-          source,
+        selectAll,
+        source,
         },
         pathname,
         search,
@@ -120,7 +120,6 @@ export default class BottomFixedBox extends PureComponent {
         fr,
         shouldStay,
         editPane,
-        labelDesc,
         missionDesc,
       );
     } else if (selectAll) {
@@ -135,7 +134,6 @@ export default class BottomFixedBox extends PureComponent {
         fr,
         shouldStay,
         editPane,
-        labelDesc,
         missionDesc,
       );
     }
@@ -167,20 +165,17 @@ export default class BottomFixedBox extends PureComponent {
   @autobind
   toCreateTaskPage() {
     const { location: { query: {
-      labelDesc,
       missionDesc,
       source,
-      labelId,
-      labelName,
+      labelMapping,
     } } } = this.props;
     let newMissionDesc = missionDesc;
     // 如果是外部平台，产品潜在客户跳转进来的，需要添加一个任务提示插入参数，
-    // 在发起任务时，需要用到
+    // 在发起任务时，需要用到，这边是瞄准镜标签，不需要labelName
     if (source === PRODUCT_POTENTIAL_TARGET_CUST_ENTRY) {
       newMissionDesc = padSightLabelDesc({
         sightingScopeBool: true,
-        labelId,
-        labelName,
+        labelId: labelMapping,
       });
     }
 
@@ -194,7 +189,6 @@ export default class BottomFixedBox extends PureComponent {
       url,
       title,
       id,
-      labelDesc: decodeURIComponent(labelDesc),
       missionDesc: newMissionDesc,
     });
   }
@@ -210,7 +204,7 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectAll,
-          selectedIds,
+        selectedIds,
         },
       },
     } = this.props;
@@ -267,7 +261,6 @@ export default class BottomFixedBox extends PureComponent {
     fr,
     shouldStay,
     editPane,
-    labelDesc,
     missionDesc,
   ) {
     const tmpArr = [];
@@ -283,7 +276,6 @@ export default class BottomFixedBox extends PureComponent {
       entertype,
       source,
       name,
-      labelDesc,
       missionDesc,
       condition: condt,
       fr,
@@ -303,7 +295,6 @@ export default class BottomFixedBox extends PureComponent {
     fr,
     shouldStay,
     editPane,
-    labelDesc,
     missionDesc,
   ) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
@@ -316,7 +307,6 @@ export default class BottomFixedBox extends PureComponent {
       source,
       name,
       fr,
-      labelDesc,
       missionDesc,
     };
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-31 14:42:22
+ * @Last Modified by: xuxiaoqinn
+ * @Last Modified time: 2018-06-12 15:42:50
  * @description 客户池头部搜索组件
  */
 
@@ -161,7 +161,6 @@ export default class Search extends PureComponent {
         isLabel: item.type === LABEL,
       }),
       labelName: encodeURIComponent(item.value),
-      labelDesc: encodeURIComponent(item.description),
       q: encodeURIComponent(item.value),
       type: item.type,
     };
@@ -287,7 +286,6 @@ export default class Search extends PureComponent {
               source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
               labelMapping: item.id || '',
               labelName: encodeURIComponent(item.name),
-              labelDesc: encodeURIComponent(item.description),
               // 任务提示
               missionDesc: padSightLabelDesc({
                 sightingScopeBool: isSightingScope(item.source),

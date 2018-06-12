@@ -352,7 +352,6 @@ export default class CustomerList extends PureComponent {
     const keyword = decodeURIComponent(query.q);
     // 标签名字与标签描述
     const labelName = decodeURIComponent(query.labelName);
-    const labelDesc = decodeURIComponent(query.labelDesc);
     const labelMapping = decodeURIComponent(query.labelMapping);
     const productName = query.productName && decodeURIComponent(query.productName);
     const param = {
@@ -371,10 +370,7 @@ export default class CustomerList extends PureComponent {
       param.searchTypeReq = query.type;
       if (query.source === 'sightingTelescope') {
         // 如果是瞄准镜，需要加入queryLabelReq
-        param.queryLabelReq = {
-          labelName,
-          labelDesc,
-        };
+        param.labelId = query.labelMapping;
       }
     } else if (query.source === 'association' || query.source === 'securitiesProducts') { // 联想词
       // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
@@ -402,10 +398,7 @@ export default class CustomerList extends PureComponent {
       param.searchTypeReq = query.type;
       param.primaryKey = [labelMapping];
       // 产品潜在目标客户进来，默认都是瞄准镜标签，需要加入queryLabelReq
-      param.queryLabelReq = {
-        labelName,
-        labelDesc,
-      };
+      param.labelId = query.labelMapping;
     }
     // 客户业绩参数
     if (query.customerType) {

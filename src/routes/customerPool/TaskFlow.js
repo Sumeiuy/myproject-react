@@ -849,8 +849,6 @@ export default class TaskFlow extends PureComponent {
     };
 
     const {
-      labelName,
-      labelDesc,
       isSightLabel,
       uploadedFileKey: fileId,
       executionType,
@@ -951,13 +949,6 @@ export default class TaskFlow extends PureComponent {
         labelId,
         isSightLabel,
       });
-      postBody = {
-        ...postBody,
-        queryLabelReq: {
-          labelDesc,
-          labelName,
-        },
-      };
     }
     this.decoratorSubmitTaskFlow(postBody);
     // logable日志---确认提交
