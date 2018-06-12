@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-04 17:30:01
+ * @Last Modified time: 2018-06-12 17:17:08
  */
 
 import React, { PureComponent } from 'react';
@@ -179,7 +179,7 @@ export default class TaskFormFlowStep extends PureComponent {
     const {
       custIdList,
       custCondition,
-      custCondition: { entrance, queryLabelReq },
+      custCondition: { entrance, labelMapping },
     } = parseQuery();
 
     let req = {};
@@ -199,7 +199,11 @@ export default class TaskFormFlowStep extends PureComponent {
       };
     } else if (_.includes(sightingLabelSource, source)) {
       // 从瞄准镜过来的，需要加入queryLabelReq参数
-      req = { searchReq: custCondition, custIdList, queryLabelReq };
+      req = {
+        searchReq: custCondition,
+        custIdList,
+        queryLabelReq: { labelId: labelMapping },
+      };
     } else {
       req = { searchReq: custCondition, custIdList };
     }
