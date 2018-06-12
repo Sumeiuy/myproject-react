@@ -34,7 +34,10 @@ export default class MyDetail extends PureComponent {
     const hasAttachment = !_.isEmpty(attachModelList);
     // 当前行记录
     return (
-      <div className={styles.item}>
+      <div
+        className={styles.item}
+        key={data.id}
+      >
         <div className={styles.info}>
           <span>{data.title}</span>
         </div>
@@ -57,7 +60,10 @@ export default class MyDetail extends PureComponent {
       _.map(
         list,
         item => (
-          <div className={styles.attachItem}>
+          <div
+            className={styles.attachItem}
+            key={item.attachUrl}
+          >
             <a href={`${request.prefix}/file/${item.attachUrl}`}>
               <Icon type={'fujian2'} />{`${item.attachName}`}
             </a>
