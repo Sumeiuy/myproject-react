@@ -63,7 +63,7 @@ const customerPool = {
   },
 
   // 获取存储在本地的标签的信息
-  async getLabelInfo(id) {
+  async getLabelInfo(id = '') {
     const labelDesc = await localForage.getItem(`${id}-labelDesc`);
     return labelDesc || {};
   },

@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-11 20:13:31
+ * @Last Modified time: 2018-06-12 09:54:41
  */
 
 import React, { PureComponent } from 'react';
@@ -118,7 +118,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
   componentDidMount() {
     // 验证是否自己名下客户
-    this.judgeMyCustomer();
+    this.checkMyCustomer();
   }
 
   @autobind
@@ -133,7 +133,7 @@ export default class TaskFormFlowStep extends PureComponent {
       custCondition,
       custCondition: { entrance, primaryKey = [] },
     } = parseQuery();
-    const { labelDesc = '', labelName = '' } = await getLabelInfo(primaryKey[0] || '');
+    const { labelDesc = '', labelName = '' } = await getLabelInfo(primaryKey[0]);
     const queryLabelReq = {
       labelDesc,
       labelName,
@@ -163,7 +163,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
   // 验证是否自己名下客户
   @autobind
-  async judgeMyCustomer() {
+  async checkMyCustomer() {
     const {
       location: { query: { source } },
       saveCreateTaskData,
