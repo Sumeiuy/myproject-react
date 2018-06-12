@@ -2,29 +2,34 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 15:31:11
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-11 18:37:45
+ * @Last Modified time: 2018-06-12 20:07:36
  * @description 客户信息展示区域
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import cx from 'classnames';
 
 import styles from './custInfo.less';
 
 export default function CustInfo(props) {
-  const { cust } = props;
+  const { cust, isCreate } = props;
+  const wrapCls = cx({
+    [styles.custInfoWrap]: true,
+    [styles.isUpdate]: !isCreate,
+  });
   return (
-    <div className={styles.custInfoWrap}>
+    <div className={wrapCls}>
       <div className={styles.custType}>
         <span className={styles.label}>客户类型：</span>
-        <span className={styles.value}>{cust.custTypeValue}</span>
+        <span className={styles.value}>{cust.custTypeLabel}</span>
       </div>
       <div className={styles.certType}>
         <span className={styles.label}>证件类型：</span>
-        <span className={styles.value}>{cust.IDType}</span>
+        <span className={styles.value}>{cust.IDTypeValue}</span>
       </div>
       <div className={styles.certNo}>
         <span className={styles.label}>证件号码：</span>
-        <span className={styles.value}>{cust.IDNum}</span>
+        <span className={styles.value}>{cust.IDTypeLabel}</span>
       </div>
     </div>
   );
@@ -32,4 +37,5 @@ export default function CustInfo(props) {
 
 CustInfo.propTypes = {
   cust: PropTypes.object.isRequired,
+  isCreate: PropTypes.bool.isRequired,
 };

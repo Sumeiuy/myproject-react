@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 17:11:34
+ * @Last Modified time: 2018-06-12 18:30:07
  */
 
 import React, { PureComponent } from 'react';
@@ -114,7 +114,7 @@ export default class ApplyHome extends PureComponent {
     custDetail: PropTypes.object.isRequired,
     // 获取可申请客户列表
     queryCustList: PropTypes.func.isRequired,
-    custList: PropTypes.object.isRequired,
+    custList: PropTypes.array.isRequired,
     // 获取可申请客户列表
     getRelationshipTree: PropTypes.func.isRequired,
     relationshipTree: PropTypes.array.isRequired,

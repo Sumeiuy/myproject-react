@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 19:59:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 14:32:21
+ * @Last Modified time: 2018-06-12 19:23:50
  * @description 添加关联关系的Modal
  */
 
@@ -121,7 +121,7 @@ export default class AddRelationshipModal extends Component {
   }
 
   render() {
-    const { visible, ralationTree } = this.props;
+    const { visible, ralationTree, action } = this.props;
     const { type, name, subType, person, IDType, IDNo } = this.state;
     // 获取关联关系 Select 树
     const typeSelectData = this.addEmptyOption(ralationTree);
@@ -137,7 +137,7 @@ export default class AddRelationshipModal extends Component {
 
     return (
       <Modal
-        title="添加客户关联关系"
+        title={action === 'CREATE' ? '添加客户关联关系' : '修改客户关联关系'}
         size="normal"
         modalKey="addCustRelationships"
         maskClosable={false}
