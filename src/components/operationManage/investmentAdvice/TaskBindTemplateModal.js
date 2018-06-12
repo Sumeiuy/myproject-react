@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-06 09:43:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 09:26:43
+ * @Last Modified time: 2018-06-12 14:53:24
  * @description 任务绑定投资建议模板弹出层
  */
 
@@ -153,7 +153,7 @@ export default class componentName extends Component {
     const { originList } = this.state;
     // 根据标题或者内容中的文字是否含有用户输入的文字来简单进行筛选过滤
     const listAfterFilter = _.filter(originList,
-      tmpl => tmpl.title.indexOf(v) > 0 || tmpl.content.indexOf(v) > 0);
+      tmpl => _.includes(tmpl.title, v) || _.includes(tmpl.content, v));
     this.setState({
       optionalList: listAfterFilter,
       visibleMore: {},
