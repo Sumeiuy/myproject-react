@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-11 13:17:19
+ * @Last Modified time: 2018-06-11 19:54:09
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -253,7 +253,10 @@ export default class CreateModal extends PureComponent {
           // 如果上传过，或者未上传过但是客户有数据
           if (isUploaded || (!isUploaded && list.length > 0)) {
             updateList(payload).then(() => {
-              this.handleUpdateDataAndQueryList(payload, attachmentData);
+              const { clearData } = this.props;
+              // clearAddedCustData
+              clearData(clearDataArray[2]).then(() =>
+                this.handleUpdateDataAndQueryList(payload, attachmentData));
             });
           } else {
             this.handleUpdateDataAndQueryList(payload, attachmentData);

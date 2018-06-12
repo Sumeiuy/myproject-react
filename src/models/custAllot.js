@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 14:30:12
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-25 14:03:14
+ * @Last Modified time: 2018-06-11 19:50:37
  */
 import { custAllot as api } from '../api';
 
@@ -210,6 +210,11 @@ export default {
           response = {
             custData: {}, // 客户列表列表
             manageData: {},  // 服务经理列表
+          };
+          break;
+        case 'clearAddedCustData':
+          response = {
+            addedCustData: {},
           };
           break;
         default:

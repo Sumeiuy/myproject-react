@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 17:03:23
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-24 14:18:31
+ * @Last Modified time: 2018-06-11 19:50:52
  */
 const config = {
     // 分公司客户分配
@@ -41,7 +41,7 @@ const config = {
   // 子类型 type
   subType: '0703',
   // 清除数据类型
-  clearDataArray: ['clearSearchData', 'clearAllData'],
+  clearDataArray: ['clearSearchData', 'clearAllData', 'clearAddedCustData'],
   // 分配规则
   // allotRule
   ruleTypeArray: [
