@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 14:37:10
+ * @Last Modified time: 2018-06-12 16:13:37
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -147,7 +147,11 @@ export default class FinanceCustRelationshipForm extends Component {
       custRelationshipList,
       relationModalAction,
     } = this.state;
-    const { custList, custDetail, relationshipTree } = this.props;
+    const { action, custList, custDetail, relationshipTree } = this.props;
+    let cust = custDetail;
+    if (action === 'UPDATE') {
+      cust = custDetail.custDetail;
+    }
 
     return (
       <div className={styles.custRelationshipContainer}>
@@ -162,7 +166,7 @@ export default class FinanceCustRelationshipForm extends Component {
             renderOptionNode={this.renderCustAutoCompleteOption}
           />
         </FormItem>
-        <CustInfo cust={custDetail} />
+        <CustInfo cust={cust} />
         <FormItem label="是否办理股票质押回购业务" labelWidth={204}>
           <Select
             name="stockRepurchase"

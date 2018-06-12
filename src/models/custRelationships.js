@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请models
  * @Date: 2018-06-08 13:17:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 10:28:09
+ * @Last Modified time: 2018-06-12 15:51:19
  */
 
 
@@ -14,16 +14,18 @@ const EMPTY_LIST = [];
 export default {
   namespace: 'custRelationships',
   state: {
-    // 手机申请页面-右侧详情
+    // 右侧详情
     detailInfo: EMPTY_OBJECT,
     // 附件列表
     attachmentList: EMPTY_LIST,
     // 可进行关联关系申请的客户列表
     custList: [],
-    // 用户选中的客户基本信息
+    // 新建页面中-用户选中的客户基本信息
     custDetail: {},
     // 关联关系树
     relationshipTree: [],
+    // 驳回后修改页面的详情信息
+    detailForUpdate: {},
   },
   reducers: {
     // 客户关联关系申请页面-右侧详情
@@ -61,6 +63,13 @@ export default {
       return {
         ...state,
         relationshipTree: resultData,
+      };
+    },
+    getDetailForUpdateSuccess(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        detailForUpdate: payload,
       };
     },
     clearReduxDataSuccess(state, action) {
@@ -110,6 +119,18 @@ export default {
       yield put({
         type: 'getRelationshipTreeSuccess',
         payload: response,
+      });
+    },
+    // 获取客户关联信息驳回后修改页面的详情
+    * getDetailForUpdate({ payload }, { call, put }) {
+      const { resultData } = yield call(api.getDetailInfo, payload);
+      const attach = yield call(api.getAttachmentList, { attachment: resultData.attachment });
+      yield put({
+        type: 'getDetailForUpdateSuccess',
+        payload: {
+          ...resultData,
+          attachmentList: attach.resultData,
+        },
       });
     },
     // 清空数据
