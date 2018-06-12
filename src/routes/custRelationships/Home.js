@@ -9,7 +9,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
 import Barable from '../../decorators/selfBar';
@@ -37,8 +36,6 @@ const effects = {
   getAttachmentList: 'custRelationships/getAttachmentList',
 };
 const mapStateToProps = state => ({
-  // 员工基本信息
-  empInfo: state.app.empInfo,
   // 左侧列表数据
   list: state.app.seibleList,
   // 右侧详情数据
@@ -48,7 +45,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  replace: routerRedux.replace,
   // 获取左侧列表
   getList: effect(effects.getList, { forceFull: true }),
   // 获取右侧详情信息
@@ -64,8 +60,6 @@ export default class CustRelationshipsHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
-    // 员工信息
-    empInfo: PropTypes.object.isRequired,
     // 列表
     list: PropTypes.object.isRequired,
     getList: PropTypes.func.isRequired,
@@ -75,6 +69,11 @@ export default class CustRelationshipsHome extends PureComponent {
     // 详情页面服务经理表格申请数据
     attachmentList: PropTypes.array,
     getAttachmentList: PropTypes.func.isRequired,
+  }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    empInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -108,10 +107,10 @@ export default class CustRelationshipsHome extends PureComponent {
   @autobind
   getRightDetail() {
     const {
-      replace,
       list,
       location: { pathname, query, query: { currentId } },
     } = this.props;
+    const { replace } = this.context;
     if (!_.isEmpty(list.resultData)) {
       // 表示左侧列表获取完毕
       // 因此此时获取Detail
@@ -159,7 +158,8 @@ export default class CustRelationshipsHome extends PureComponent {
   @autobind
   handleHeaderFilter(obj) {
     // 1.将值写入Url
-    const { replace, location } = this.props;
+    const { location } = this.props;
+    const { replace } = this.context;
     const { query, pathname } = location;
     // 清空掉消息提醒页面带过来的 id
     replace({
@@ -191,7 +191,8 @@ export default class CustRelationshipsHome extends PureComponent {
   // 切换页码
   @autobind
   handlePageNumberChange(nextPage, currentPageSize) {
-    const { replace, location } = this.props;
+    const { location } = this.props;
+    const { replace } = this.context;
     const { query, pathname } = location;
     replace({
       pathname,
@@ -207,7 +208,8 @@ export default class CustRelationshipsHome extends PureComponent {
   // 切换每一页显示条数
   @autobind
   handlePageSizeChange(currentPageNum, changedPageSize) {
-    const { replace, location } = this.props;
+    const { location } = this.props;
+    const { replace } = this.context;
     const { query, pathname } = location;
     replace({
       pathname,
@@ -224,10 +226,8 @@ export default class CustRelationshipsHome extends PureComponent {
   @autobind
   handleListRowClick(record, index) {
     const { id, flowId } = record;
-    const {
-      replace,
-      location: { pathname, query, query: { currentId } },
-    } = this.props;
+    const { location: { pathname, query, query: { currentId } } } = this.props;
+    const { replace } = this.context;
     if (currentId === String(id)) return;
     replace({
       pathname,
@@ -265,13 +265,12 @@ export default class CustRelationshipsHome extends PureComponent {
 
   render() {
     const {
-      replace,
       location,
       list,
-      empInfo,
       detailInfo,
       attachmentList,
     } = this.props;
+    const { empInfo, replace } = this.context;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
     // 头部筛选
@@ -331,7 +330,7 @@ export default class CustRelationshipsHome extends PureComponent {
           isShowCreateModal ?
             <CreateApply
               location={location}
-              onEmitClearModal={this.clearModal}
+              onCloseModal={this.clearModal}
             />
             :
             null

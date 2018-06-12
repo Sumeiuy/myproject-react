@@ -15,7 +15,7 @@ import commonConfirm from '../common/confirm_';
 export default class CreateApply extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    onEmitClearModal: PropTypes.func.isRequired,
+    onCloseModal: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -49,7 +49,7 @@ export default class CreateApply extends PureComponent {
 
   @autobind
   afterClose() {
-    this.props.onEmitClearModal('isShowCreateModal');
+    this.props.onCloseModal('isShowCreateModal');
   }
 
 
