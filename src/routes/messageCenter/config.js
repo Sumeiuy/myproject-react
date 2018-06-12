@@ -3,10 +3,11 @@
  * @Author: Liujianshu
  * @Date: 2018-06-08 21:11:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-08 21:11:45
+ * @Last Modified time: 2018-06-12 15:03:01
  */
 
 const config = {
+  abort: '终止',
   fail: '失败',
   // 分公司客户分配
   custAllot: 'HTSC New Batch Branch Assignment Inbox Type',
