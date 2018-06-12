@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系详情页面
  * @Date: 2018-06-08 17:39:51
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-11 15:29:50
+ * @Last Modified time: 2018-06-12 13:18:25
  */
 
 import React, { PureComponent } from 'react';
@@ -32,11 +32,6 @@ export default class ApplyDetail extends PureComponent {
   render() {
     const {
       id,
-      custName,
-      custId,
-      custTypeValue,
-      IDType,
-      IDNum,
       empId,
       empName,
       orgName,
@@ -45,11 +40,19 @@ export default class ApplyDetail extends PureComponent {
       currentApproval,
       workflowHistoryBeans,
       currentNodeName,
+      custRelationshipList,
+      custDetail,
+    } = this.props.data;
+    const {
+      custName,
+      custId,
+      custTypeValue,
+      IDType,
+      IDNum,
       businessFlag,
       empLogin,
       empLoginName,
-      custRelationshipList,
-    } = this.props.data;
+    } = custDetail;
     const { attachmentList } = this.props;
     if (_.isEmpty(this.props.data)) {
       return null;
@@ -125,13 +128,14 @@ export default class ApplyDetail extends PureComponent {
                 </ul>
               </div>
             </div>
-            <div id="approvalRecord_module" className={styles.module}>
+            <div id="approvalRecord_module">
               <ApprovalRecord
                 head="审批记录"
                 info={workflowHistoryBeans}
                 currentApproval={currentApproval}
                 currentNodeName={currentNodeName}
                 statusType="ready"
+                approvalRecordListStyle={{padding: '10px'}}
               />
             </div>
           </div>

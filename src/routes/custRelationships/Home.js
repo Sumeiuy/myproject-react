@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-08 17:52:52
+ * @Last Modified time: 2018-06-12 09:40:05
  */
 
 import React, { PureComponent } from 'react';
@@ -24,7 +24,7 @@ import config from '../../components/custRelationships/config';
 import { dva } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 
-// 业务手机申请列表宽度
+// 客户关联关系申请左侧列表宽度
 const LEFT_PANEL_WIDTH = 500;
 const { custRelationships, custRelationships: { statusOptions, pageType } } = config;
 const effect = dva.generateEffect;
@@ -274,6 +274,7 @@ export default class ApplyHome extends PureComponent {
     } = this.props;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
+    // 头部筛选
     const topPanel = (
       <ConnectedSeibelHeader
         location={location}
@@ -299,6 +300,7 @@ export default class ApplyHome extends PureComponent {
       onShowSizeChange: this.handlePageSizeChange,
     };
 
+    // 左侧列表
     const leftPanel = (
       <CustRelationshipsList
         list={resultData}
@@ -307,6 +309,7 @@ export default class ApplyHome extends PureComponent {
       />
     );
 
+    // 右侧详情
     const rightPanel = (
       <Detail
         data={detailInfo}
