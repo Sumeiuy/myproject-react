@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-07 15:42:47
+ * @Last Modified time: 2018-06-12 13:09:37
  * 管理者视图详情
  */
 
@@ -138,7 +138,7 @@ export default class ManagerViewDetail extends PureComponent {
    * 构造客户反馈一级和二级
    */
   @autobind
-  setCustFeedbackList() {
+  getCustFeedbackList() {
     // 构造一二级客户反馈
     let currentFeedback = _.map(this.props.custFeedback, item => ({
       feedbackIdL1: item.key,
@@ -461,7 +461,7 @@ export default class ManagerViewDetail extends PureComponent {
     }
 
     let custScopeParam = {};
-    // 如果是服务经理维度客户下钻，发起任务，包括已服务、已完成、已达标
+    // 如果是服务经理维度客户下钻，发起任务，包括已服务、已完成、已达标、客户总数，四个都能发起任务
     if (!_.isEmpty(enterType)) {
       custScopeParam = {
         feedBackIdL1: feedbackIdL1,
@@ -536,7 +536,7 @@ export default class ManagerViewDetail extends PureComponent {
         onClick={() => this.handlePreview({
           isEntryFromCustTotal: true,
           canLaunchTask: false,
-          currentFeedback: this.setCustFeedbackList(),
+          currentFeedback: this.getCustFeedbackList(),
         })}
       >
         <div
