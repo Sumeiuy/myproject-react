@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-06 09:43:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-08 17:58:56
+ * @Last Modified time: 2018-06-12 09:26:43
  * @description 任务绑定投资建议模板弹出层
  */
 
@@ -13,6 +13,7 @@ import { Input, Checkbox } from 'antd';
 import _ from 'lodash';
 
 import Modal from '../../common/biz/CommonModal';
+import confirm from '../../common/confirm_';
 import TemplateContent from './TemplateContent';
 import { event } from '../../../helper';
 
@@ -127,7 +128,13 @@ export default class componentName extends Component {
   @autobind
   handleModalOKBtnClick() {
     const { templateList } = this.state;
-    this.props.onOK(templateList);
+    if (_.isEmpty(templateList)) {
+      confirm({
+        content: '请选择适当的模板！',
+      });
+    } else {
+      this.props.onOK(templateList);
+    }
   }
 
   @autobind
@@ -179,6 +186,12 @@ export default class componentName extends Component {
   }
 
   @autobind
+  preventKeyDownPropagation(e) {
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+  }
+
+  @autobind
   renderTamplatePanelsComponnet(list = []) {
     const { templateList, visibleMore } = this.state;
     return list.map(item => (
@@ -217,14 +230,17 @@ export default class componentName extends Component {
         modalKey="taskBindInvestAdviceTemplateModal"
         onOk={this.handleModalOKBtnClick}
         closeModal={this.handleCloseModal}
+        maskClosable={false}
       >
         <div className={styles.templateListContainer}>
           <div className={styles.containerHeader}>
             <div className={styles.search}>
               <Search
+                onKeyDown={this.preventKeyDownPropagation}
                 placeholder="搜索内容"
                 onSearch={this.handleTemplateSearch}
                 style={{ width: 200 }}
+                enterButton
               />
             </div>
             <div className={styles.searchResult}>
