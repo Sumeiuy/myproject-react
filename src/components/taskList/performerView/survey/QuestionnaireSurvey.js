@@ -4,7 +4,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-05-22 12:26:05
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 21:58:03
+ * @Last Modified time: 2018-06-12 10:53:07
  * 只是将原先的问卷调查逻辑单独提取成组件
  */
 
@@ -89,12 +89,6 @@ export default class QuestionnaireSurvey extends PureComponent {
     if (prevProps.basicInfo.templateId !== this.props.basicInfo.templateId) {
       this.getQuesAndAnswer();
     }
-    // 任务切换时，清除form表单缓存数据
-    if (prevProps.currentId !== this.props.currentId) {
-      this.setState({
-        ...defaultSurveyData,
-      });
-    }
   }
 
   /**
@@ -170,9 +164,14 @@ export default class QuestionnaireSurvey extends PureComponent {
     this.setState({
       checkboxData: initCheck,
       // 存储多选框是否选中状态
+      // 当前question有选项选中，那么将当前quesId从错误列表中移除
+      // 否则将当前quesId加入错误列表中
       errorCheckboxIdList: _.isEmpty(initCheck[quesId])
-        ? [...errorCheckboxIdList, quesId] : errorCheckboxIdList,
+        ? _.uniq([...errorCheckboxIdList, quesId])
+        : _.filter(errorCheckboxIdList, item => item !== quesId),
     });
+    // 强制checkbox渲染
+    this.forceUpdate();
   }
 
   /**
@@ -196,7 +195,8 @@ export default class QuestionnaireSurvey extends PureComponent {
     let hasCheckboxError = !_.isEmpty(errorCheckboxIdList);
 
     // 将checkbox已经选择答案的的id组成questionId
-    const checkedCheckboxIdList = _.map(Object.keys(checkboxData), item => Number(item));
+    const checkedCheckboxIdList = _.compact(_.map(Object.keys(checkboxData),
+      item => !_.isEmpty(checkboxData[item]) && Number(item)));
 
     // 找出已经完成的checkbox与初始化的checkbox之间的questionId
     const diffQuestionId = _.difference(checkBoxQuesId, checkedCheckboxIdList);
@@ -221,7 +221,7 @@ export default class QuestionnaireSurvey extends PureComponent {
           examineeId: emp.getId(),
           templateId,
         };
-        // saveAnswersByType(params).then(this.handleSaveSuccess);
+        saveAnswersByType(params).then(this.handleSaveSuccess);
       }
     });
   }

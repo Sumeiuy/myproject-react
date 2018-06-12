@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 09:26:35
+ * @Last Modified time: 2018-06-12 11:03:39
  * @description 任务管理首页
  */
 
@@ -105,6 +105,8 @@ export default class PerformerView extends PureComponent {
       statusCode: '',
       // 执行中创建者视图右侧展示管理者视图
       isSourceFromCreatorView: false,
+      // 排序参数
+      sortParam: EMPTY_OBJECT,
     };
   }
 
@@ -119,10 +121,11 @@ export default class PerformerView extends PureComponent {
       location: { query: prevQuery },
       changePerformerViewTab,
     } = this.props;
+    const { sortParam } = this.state;
     const { currentId, ...otherQuery } = query;
     const { currentId: prevCurrentId, ...otherPrevQuery } = prevQuery;
     if (!_.isEqual(otherQuery, otherPrevQuery)) {
-      this.queryAppList(otherQuery);
+      this.queryAppList({ ...otherQuery, sortParam });
     }
     // 当前选中的任务变化，需要还原与任务绑定当前详情中选中的tab
     if (query.currentId !== prevQuery.currentId) {
@@ -898,6 +901,12 @@ export default class PerformerView extends PureComponent {
     const { location: { query } } = this.props;
     this.queryAppList({
       ...query,
+      sortParam: {
+        [sortKey]: sortType,
+      },
+    });
+    // 设置排序方向，用来父组件调用
+    this.setState({
       sortParam: {
         [sortKey]: sortType,
       },
