@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-12 09:40:05
+ * @Last Modified time: 2018-06-12 15:36:22
  */
 
 import React, { PureComponent } from 'react';
@@ -60,7 +60,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-export default class ApplyHome extends PureComponent {
+export default class CustRelationshipsHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
