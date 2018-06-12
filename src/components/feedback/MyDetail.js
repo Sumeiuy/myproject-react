@@ -92,7 +92,7 @@ export default class MyDetail extends PureComponent {
     const isStatusEmpty = _.isEmpty(status);
     const statusInfo = status === 'PROCESSING' ? '解决中' : '关闭';
     const imageUrl = _.head(feedbackFileUrls) || '';
-    const date = _.isEmpty(createTime) ? '--' : moment(createTime).format('YYYY-MM-DD hh:mm');
+    const date = _.isEmpty(createTime) ? '--' : moment(createTime).format('YYYY-MM-DD HH:mm');
 
     let detailInfo = [{
       id: 'status',
