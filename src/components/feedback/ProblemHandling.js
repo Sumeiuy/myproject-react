@@ -10,11 +10,12 @@ import { Select, Row, Col, Input, Form, Modal, message, Upload } from 'antd';
 import { createForm } from 'rc-form';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+
 import { emp } from '../../helper';
 import Icon from '../common/Icon';
 import uploadRequest from '../../utils/uploadRequest';
 import { feedbackOptions, request } from '../../config';
-import './problemHandling.less';
+import styles from './problemHandling.less';
 import logable from '../../decorators/logable';
 
 let COUNT = 0;
@@ -24,6 +25,9 @@ const Option = Select.Option;
 const Dragger = Upload.Dragger;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+
+// 经办人为空时，传入update接口的字段名为 ‘请选择’，现在要求经办人是必填，故判空时，要排除经办人为 ‘请选择’的情况
+const emptyValue = '请选择';
 @createForm()
 export default class ProblemHandling extends PureComponent {
   static propTypes = {
@@ -49,6 +53,7 @@ export default class ProblemHandling extends PureComponent {
     const stateOptions = feedbackOptions.stateOptions || EMPTY_LIST;
     const { problemDetails = EMPTY_OBJECT } = props;
     this.state = {
+      showError: false,
       uploadKey: `uploadHandkey${COUNT++}`,
       newDetails: problemDetails,
       popQuestionTagOptions: questionTagOptions,
@@ -97,7 +102,28 @@ export default class ProblemHandling extends PureComponent {
   @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubChange() {
     const { form, onCreate } = this.props;
-    onCreate(form);
+    form.validateFields((err, values) => {
+      if (err) {
+        message.error(err);
+        return;
+      }
+      const { processer = '' } = values;
+      if (_.isEmpty(processer) || processer === emptyValue) {
+        this.setState({
+          showError: true,
+        });
+        return;
+      }
+
+      onCreate(form);
+    });
+  }
+
+  @autobind
+  handleProcesserChange(value) {
+    this.setState({
+      showError: _.isEmpty(value),
+    });
   }
 
   @autobind
@@ -124,6 +150,7 @@ export default class ProblemHandling extends PureComponent {
       uploadPops,
       uploadKey,
       newDetails,
+      showError,
     } = this.state;
     const {
       processer,
@@ -143,19 +170,19 @@ export default class ProblemHandling extends PureComponent {
         onOk={this.handleSubChange}
         onCancel={this.handleCancel}
         width={width}
-        className="problemwrap"
+        className={styles.problemwrap}
         key={uploadKey}
         okText="提交"
       >
-        <div className="problembox react-app">
-          <div className="pro_title">
-            <Icon type="tishi" className="tishi" />
+        <div className={styles.problembox}>
+          <div className={styles.proTitle}>
+            <Icon type="tishi" className={styles.tishi} />
             {inforTxt}
           </div>
-          <div className="list_box">
+          <div className={styles.listBox}>
             <Form layout="vertical">
               <Row>
-                <Col span="4"><div className="am_label">问题标签：</div></Col>
+                <Col span="4"><div className={styles.amLabel}>问题标签：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('tag', { initialValue: `${tag || '无'}` })(
@@ -167,7 +194,7 @@ export default class ProblemHandling extends PureComponent {
                 </Col>
               </Row>
               <Row>
-                <Col span="4"><div className="am_label">状态：</div></Col>
+                <Col span="4"><div className={styles.amLabel}>状态：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('status', { initialValue: `${title === '重新打开' ? 'PROCESSING' : status}` })(
@@ -180,21 +207,31 @@ export default class ProblemHandling extends PureComponent {
                 </Col>
               </Row>
               <Row>
-                <Col span="4"><div className="am_label">经办人：</div></Col>
+                <Col span="4">
+                  <div className={styles.amLabel}>
+                    <span>*</span>经办人：
+                  </div>
+                </Col>
                 <Col span="19" offset={1}>
                   <FormItem>
+                    {/* initialValue 值为 undefined时，才展示 placeholder */}
                     {getFieldDecorator('processer', {
-                      initialValue: `${_.isEmpty(processer) ? '请选择' : processer}`,
+                      initialValue: processer || undefined,
                     })(
-                      <Select style={{ width: 220 }}>
+                      <Select
+                        placeholder="请选择"
+                        style={{ width: 220 }}
+                        onChange={this.handleProcesserChange}
+                      >
                         {getSelectOption(allOperatorOptions)}
                       </Select>,
                     )}
                   </FormItem>
+                  <div className={styles.errorMsg}>{showError ? '经办人不能为空' : ''}</div>
                 </Col>
               </Row>
               <Row>
-                <Col span="4"><div className="am_label">处理意见：</div></Col>
+                <Col span="4"><div className={styles.amLabel}>处理意见：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('processSuggest')(
@@ -204,14 +241,14 @@ export default class ProblemHandling extends PureComponent {
                 </Col>
               </Row>
               <Row>
-                <Col span="4"><div className="am_label">附件：</div></Col>
+                <Col span="4"><div className={styles.amLabel}>附件：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('uploadedFiles')(
                       <Dragger
                         {...uploadPops}
                       >
-                        <div className="upload_txt">
+                        <div className={styles.uploadTxt}>
                           + 上传附件
                         </div>
                       </Dragger>,

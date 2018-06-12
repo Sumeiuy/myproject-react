@@ -1,60 +1,66 @@
-:global {
-  .problemwrap {
-    .problembox {
-      padding: 0 20px;
-      .pro_title {
-        padding: 0;
-        font-size: 14px;
-        color: #666;
-        .tishi {
-          color: #fdd02b;
-          margin-right: 10px;
-        }
-      }
-      .list_box {
-        padding: 20px 0 0;
-        .am_label {
-          text-align: right;
-          line-height: 30px;
-          color: #808080;
-          font-size: 12px;
-        }
-      }
-    }
-    .problemwrap {
-      .ant-modal-footer {
-        border-top: 0;
-        padding: 0 30px 20px;
-      }
-      .ant-modal-content {
-        background: #fbfbfb;
-      }
-      .ant-modal-header {
-        background: #fbfbfb;
-        .ant-modal-title {
-          color: #33393c;
-          font-size: 14px;
-          font-weight: bold;
-          .ant-modal-close-x {
-            color: #999;
-          }
-        }
-      }
-      .ant-form-item {
-        margin-bottom: 14px;
-      }
-      .ant-modal-content {
-        padding: 0;
-      }
-    }
-    .upload_txt {
+.problemwrap {
+  .problembox {
+    padding: 0 20px;
+    .proTitle {
       padding: 0;
+      font-size: 14px;
+      color: #666;
+      .tishi {
+        color: #fdd02b;
+        margin-right: 10px;
+      }
     }
-    .upload_txt:hover {
-      color: #108ee9;
+    .listBox {
+      padding: 20px 0 0;
+      .amLabel {
+        text-align: right;
+        line-height: 30px;
+        color: #808080;
+        font-size: 12px;
+        span {
+          color: red;
+          margin-right: 6px;
+        }
+      }
+      .errorMsg {
+        color: red;
+        font-size: 12px;
+        position: absolute;
+        bottom: 14px;
+        left: 0;
+      }
+      .uploadTxt {
+        padding: 0;
+      }
+      .uploadTxt:hover {
+        color: #108ee9;
+      }
+      [type=textarea] {
+        resize: none;
+      }
     }
-    [type=textarea] {
-      resize: none;
+  }
+  :global {
+    // .ant-modal-footer {
+    //   border-top: 0;
+    //   padding: 0 30px 20px;
+    // }
+    .ant-modal-header {
+      background: #fbfbfb;
+      .ant-modal-title {
+        color: #33393c;
+        font-size: 14px;
+        font-weight: bold;
+        .ant-modal-close-x {
+          color: #999;
+        }
+      }
+    }
+    .ant-form-item {
+      margin-bottom: 14px;
+    }
+    .ant-modal-content {
+      padding: 0;
     }
   }
 }
