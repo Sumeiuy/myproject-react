@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 10:31:38
+ * @Last Modified time: 2018-06-12 17:11:34
  */
 
 import React, { PureComponent } from 'react';
@@ -41,6 +41,10 @@ const effects = {
   getCustDetail: 'custRelationships/getCustDetail',
   // 获取关联关系树
   getRelationshipTree: 'custRelationships/getRelationshipTree',
+  // 获取新建页面审批人信息和按钮
+  getApprovalInfo: 'custRelationships/getApprovalInfo',
+  // 获取驳回后修改页面审批人信息和按钮
+  getApprovalInfoForUpdate: 'custRelationships/getApprovalInfoForUpdate',
   // 清空数据
   clearReduxData: 'custRelationships/clearReduxData',
 };
@@ -59,6 +63,10 @@ const mapStateToProps = state => ({
   custDetail: state.custRelationships.custDetail,
   // 关联关系树
   relationshipTree: state.custRelationships.relationshipTree,
+  // 新建页面的按钮和审批人信息
+  approval: state.custRelationships.approval,
+  // 驳回修改页面的按钮和审批人信息
+  approvalForUpdate: state.custRelationships.approvalForUpdate,
 });
 
 const mapDispatchToProps = {
@@ -75,6 +83,10 @@ const mapDispatchToProps = {
   getCustDetail: effect(effects.getCustDetail, { forceFull: true }),
   // 获取关联关系树
   getRelationshipTree: effect(effects.getRelationshipTree, { forceFull: true }),
+  // 获取新建页面审批人信息和按钮
+  getApprovalInfo: effect(effects.getApprovalInfo, { forceFull: true }),
+  // 获取驳回后修改页面审批人信息和按钮
+  getApprovalInfoForUpdate: effect(effects.getApprovalInfoForUpdate, { forceFull: true }),
   // 清除Redux中的数据
   clearReduxData: effect(effects.clearReduxData, { loading: false }),
 };
@@ -106,6 +118,12 @@ export default class ApplyHome extends PureComponent {
     // 获取可申请客户列表
     getRelationshipTree: PropTypes.func.isRequired,
     relationshipTree: PropTypes.array.isRequired,
+    // 新建页面的按钮和审批人信息
+    approval: PropTypes.object.isRequired,
+    getApprovalInfo: PropTypes.func.isRequired,
+    // 驳回后修改页面的按钮和审批人信息
+    getApprovalInfoForUpdate: PropTypes.func.isRequired,
+    approvalForUpdate: PropTypes.object.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
   }
@@ -316,6 +334,8 @@ export default class ApplyHome extends PureComponent {
       queryCustList,
       relationshipTree,
       getRelationshipTree,
+      getApprovalInfo,
+      approval,
     } = this.props;
 
     const { isShowCreateModal } = this.state;
@@ -382,6 +402,8 @@ export default class ApplyHome extends PureComponent {
               queryCustList={queryCustList}
               relationshipTree={relationshipTree}
               getRelationshipTree={getRelationshipTree}
+              approval={approval}
+              getApprovalInfo={getApprovalInfo}
             />
           )
         }

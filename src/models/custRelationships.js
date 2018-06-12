@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请models
  * @Date: 2018-06-08 13:17:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 15:51:19
+ * @Last Modified time: 2018-06-12 17:07:01
  */
 
 
@@ -26,6 +26,10 @@ export default {
     relationshipTree: [],
     // 驳回后修改页面的详情信息
     detailForUpdate: {},
+    // 新建页面的按钮以及审批人
+    approval: {},
+    // 驳回后修改页面的按钮以及审批人
+    approvalForUpdate: {},
   },
   reducers: {
     // 客户关联关系申请页面-右侧详情
@@ -72,6 +76,20 @@ export default {
         detailForUpdate: payload,
       };
     },
+    getApprovalInfoForUpdateSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        approvalForUpdate: resultData,
+      };
+    },
+    getApprovalInfoSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        approval: resultData,
+      };
+    },
     clearReduxDataSuccess(state, action) {
       const { payload = {} } = action;
       return {
@@ -113,6 +131,14 @@ export default {
         payload: response,
       });
     },
+    // 获取新建页面的流程按钮和审批人
+    * getApprovalInfo({ payload }, { call, put }) {
+      const response = yield call(api.getButtonList, payload);
+      yield put({
+        type: 'getApprovalInfoSuccess',
+        payload: response,
+      });
+    },
     // 获取关联关系树
     * getRelationshipTree({ payload }, { call, put }) {
       const response = yield call(api.getRelationshipTree, payload);
@@ -131,6 +157,14 @@ export default {
           ...resultData,
           attachmentList: attach.resultData,
         },
+      });
+    },
+    // 获取驳回后修改页面的流程按钮和审批人
+    * getApprovalInfoForUpdate({ payload }, { call, put }) {
+      const response = yield call(api.getButtonList, payload);
+      yield put({
+        type: 'getApprovalInfoForUpdateSuccess',
+        payload: response,
       });
     },
     // 清空数据

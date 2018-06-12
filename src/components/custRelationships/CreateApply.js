@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请新建页面
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 14:36:15
+ * @Last Modified time: 2018-06-12 17:26:51
  */
 
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import { autobind } from 'core-decorators';
 import FinanceCustRelationshipForm from './FinanceCustRelationshipForm';
 import CommonModal from '../common/biz/CommonModal';
 import commonConfirm from '../common/confirm_';
+import ApprovalBtnGroup from '../common/approvalBtns';
 
 export default class CreateApply extends PureComponent {
   static propTypes = {
@@ -27,6 +28,9 @@ export default class CreateApply extends PureComponent {
     // 获取关联关系树
     getRelationshipTree: PropTypes.func.isRequired,
     relationshipTree: PropTypes.array.isRequired,
+    // 新建页面的按钮和审批人信息
+    approval: PropTypes.object.isRequired,
+    getApprovalInfo: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -38,6 +42,10 @@ export default class CreateApply extends PureComponent {
       // 模态框是否显示 默认状态下是隐藏的
       isShowModal: true,
     };
+  }
+  componentDidMount() {
+    // 新建页面获取审批按钮和审批人信息，新建不需要传flowId
+    this.props.getApprovalInfo({});
   }
 
   @autobind
@@ -74,10 +82,18 @@ export default class CreateApply extends PureComponent {
       queryCustList,
       getRelationshipTree,
       relationshipTree,
+      approval,
     } = this.props;
     const {
       isShowModal,
     } = this.state;
+
+    const selfBtnGroup = (
+      <ApprovalBtnGroup
+        approval={approval}
+        onClick={this.handleModalConfirmClick}
+      />
+    );
 
     return (
       <CommonModal
@@ -89,6 +105,7 @@ export default class CreateApply extends PureComponent {
         onCancel={this.handleModalClose}
         closeModal={this.handleModalClose}
         onOk={this.handleModalConfirmClick}
+        selfBtnGroup={selfBtnGroup}
       >
         <FinanceCustRelationshipForm
           action="CREATE"
