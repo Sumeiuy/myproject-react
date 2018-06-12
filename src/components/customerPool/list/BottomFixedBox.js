@@ -154,8 +154,8 @@ export default class BottomFixedBox extends PureComponent {
 
     const { selectCount } = this.props;
     if (Number(selectCount) > 500) {
-      this.setVisible();
       this.setState({
+        visible: true,
         modalContent: '一次添加的客户数不能超过500个',
       });
       return;
@@ -243,8 +243,8 @@ export default class BottomFixedBox extends PureComponent {
         } = sendCustsServedByPostnResult;
         // 选择超过1000条数据 或者 没有超过1000条但包含非本人名下客户
         if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
-          this.setVisible();
           this.setState({
+            visible: true,
             modalContent: '您没有“HTSC任务管理”职责，不能对非本人名下客户发起任务',
           });
         } else {
@@ -320,14 +320,6 @@ export default class BottomFixedBox extends PureComponent {
       missionDesc,
     };
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });
-  }
-
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
-  setVisible() {
-    this.setState({
-      visible: true,
-    });
   }
 
   @autobind

@@ -4,7 +4,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-05-22 12:26:05
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 10:53:07
+ * @Last Modified time: 2018-06-12 13:42:48
  * 只是将原先的问卷调查逻辑单独提取成组件
  */
 
@@ -195,8 +195,19 @@ export default class QuestionnaireSurvey extends PureComponent {
     let hasCheckboxError = !_.isEmpty(errorCheckboxIdList);
 
     // 将checkbox已经选择答案的的id组成questionId
-    const checkedCheckboxIdList = _.compact(_.map(Object.keys(checkboxData),
-      item => !_.isEmpty(checkboxData[item]) && Number(item)));
+    // checkboxData是这种格式：
+    /*
+      {
+        111: [{},{}],
+        222: [{},{}],
+      }
+    */
+    const checkedCheckboxIdList =
+      _.compact(
+        _.map(Object.keys(checkboxData),
+          item => !_.isEmpty(checkboxData[item]) && Number(item),
+        ),
+      );
 
     // 找出已经完成的checkbox与初始化的checkbox之间的questionId
     const diffQuestionId = _.difference(checkBoxQuesId, checkedCheckboxIdList);
