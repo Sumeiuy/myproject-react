@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 09:45:42
+ * @Last Modified time: 2018-06-12 14:32:03
  */
 
 import React, { PureComponent } from 'react';
@@ -381,9 +381,7 @@ export default class ServiceRecordContent extends PureComponent {
       isShowServeStatusError = _.isEmpty(serviceStatus);
       this.setState({ isShowServeStatusError });
     }
-    const isShowErrorCustFeedback = this.checkCustFeedback();
-    return isShowErrorCustFeedback &&
-      !isShowServeStatusError && this.serveContentRef.checkData();
+    return !isShowServeStatusError && this.serveContentRef.checkData();
   }
 
   @autobind
