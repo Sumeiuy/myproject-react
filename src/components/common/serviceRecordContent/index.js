@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 14:32:03
+ * @Last Modified time: 2018-06-12 14:38:15
  */
 
 import React, { PureComponent } from 'react';
@@ -449,8 +449,8 @@ export default class ServiceRecordContent extends PureComponent {
       serveTime: serviceTime.format(DATE_FORMAT_FULL_END),
       serveContentDesc: serviceRecord,
       feedBackTime: custFeedbackTime.format(DATE_FORMAT_END),
-      serveCustFeedBack: custFeedback,
-      serveCustFeedBack2: custFeedback2,
+      serveCustFeedBack: custFeedback === defaultFeedbackOption ? '' : custFeedback,
+      serveCustFeedBack2: custFeedback2 === defaultFeedbackOption ? '' : custFeedback2,
       flowStatus: serviceStatus,
       missionFlowId,
       missionId,
