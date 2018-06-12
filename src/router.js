@@ -15,6 +15,7 @@ import {
 import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
+import MyFeedback from './routes/feedback/MyFeedback';
 import CommissionHome from './routes/commission/Home';
 import CommissionChangeHome from './routes/commissionChange/Home';
 import CommissionAdjustmentHome from './routes/commissionAdjustment/Home';
@@ -101,6 +102,8 @@ const routes = [
   { path: '/history', component: HistoryHome },
   // 直接进入
   { path: '/feedback', component: FeedBack },
+  // 直接进入
+  { path: '/myFeedback', component: MyFeedback },
   // 直接进入
   { path: '/commission', component: CommissionHome },
   // ['佣金调整', '资讯订阅', '资讯退订']
@@ -203,7 +206,7 @@ const routes = [
   { path: '/userInfoRemind', component: userInfoApproval },
 
   // 消息提醒
-  { path: '/messgeCenter', component: MessageCenter },
+  { path: '/messageCenter', component: MessageCenter },
   // 直接进入
   {
     path: '/filialeCustTransfer',
