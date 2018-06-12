@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-08 21:13:43
+ * @Last Modified time: 2018-06-12 15:08:35
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -183,7 +183,8 @@ export default class MessageCenter extends PureComponent {
     const valArray = objectVal.split(',');
     const appId = valArray[0] || '';
     const itemId = valArray[1] || '';
-    if (title.indexOf(config.fail) >= 0) {
+    // 失败或者终止都进入失败页面
+    if (_.includes(title, config.fail) || _.includes(title, config.abort)) {
       const url = `/custAllot?id=${itemId}&appId=${appId}`;
       const param = {
         id: 'FSP_CROSS_DEPARTMENT_NEW',
@@ -229,7 +230,7 @@ export default class MessageCenter extends PureComponent {
     itemId = objectVal.substring(objectVal.indexOf(',') + 1, objectVal.length);
     if (title.indexOf(config.fail) >= 0) {
       this.removeNotice = true;
-    } else if (title.indexOf('终止') >= 0) {
+    } else if (title.indexOf(config.abort) >= 0) {
       type = 'falseOver';
       this.removeNotice = true;
     } else {

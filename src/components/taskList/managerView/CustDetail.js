@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-07 17:18:17
+ * @Last Modified time: 2018-06-12 13:07:25
  * 客户明细数据
  */
 
@@ -498,9 +498,7 @@ export default class CustDetail extends PureComponent {
                   }
                   {
                     !_.isEmpty(feedbackL2List) ?
-                      <div
-                        className={styles.filter}
-                      >
+                      <div className={styles.filter}>
                         <SingleFilter
                           value={currentSelectFeedbackIdL2 || ''}
                           filterLabel=""
