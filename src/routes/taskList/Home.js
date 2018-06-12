@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 11:03:39
+ * @Last Modified time: 2018-06-12 12:34:10
  * @description 任务管理首页
  */
 
@@ -832,6 +832,10 @@ export default class PerformerView extends PureComponent {
     const { replace, location, push } = this.props;
     const { query, pathname } = location;
     if (name === 'switchView') {
+      // 视图切换，将排序重置
+      this.setState({
+        sortParam: this.getDefaultViewSortParam(),
+      });
       push({ pathname, query: otherQuery });
     } else {
       replace({
@@ -868,6 +872,27 @@ export default class PerformerView extends PureComponent {
   }
 
   /**
+   * 视图切换，将排序重置成初始化状态
+   */
+  @autobind
+  getDefaultViewSortParam(currentViewType) {
+    let param = '';
+    if (currentViewType === INITIATOR) {
+      // 创建者视图，用createTimeSort,desc
+      param = {
+        [CREATE_TIME_KEY]: SORT_DESC,
+      };
+    } else if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
+      // 执行者视图和管理者视图用endTimeSort,asc
+      param = {
+        [END_TIME_KEY]: SORT_ASC,
+      };
+    }
+
+    return param;
+  }
+
+  /**
    * 请求入参中添加排序
    */
   @autobind
@@ -875,17 +900,7 @@ export default class PerformerView extends PureComponent {
     let param = {};
     // 如果query中没有sortParam，那么取默认的
     if (_.isEmpty(sortParam)) {
-      // 创建者视图，用createTimeSort,desc
-      if (currentViewType === INITIATOR) {
-        param = {
-          [CREATE_TIME_KEY]: SORT_DESC,
-        };
-      } else if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
-        // 执行者视图和管理者视图用endTimeSort,asc
-        param = {
-          [END_TIME_KEY]: SORT_ASC,
-        };
-      }
+      param = this.getDefaultViewSortParam(currentViewType);
     } else {
       param = sortParam;
     }
