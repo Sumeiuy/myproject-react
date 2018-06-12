@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-14 16:29:04
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-21 13:54:38
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-11 09:56:28
  * @description 服务记录页面用到的页面工具或者配置
  */
 import _ from 'lodash';
@@ -57,7 +57,7 @@ const serveWaySelectMap = [
 // 通过服务方式的name或者code
 function getServeWayByCodeOrName(value) {
   return _.find(serveWaySelectMap, way => (way.value === value || way.key === value))
-  || serveWaySelectMap[0];
+    || serveWaySelectMap[0];
 }
 
 // 通过服务方式的Label获取到code
@@ -73,6 +73,17 @@ const errorFeedback = {
   key: '99999',
   value: '其他',
   children: { key: '100000', value: '其他' },
+};
+
+// 新增服务记录时，客户反馈一级不给默认值，给一个请选择选项
+const defaultFeedbackOption = '请选择';
+const defaultFeedback = {
+  key: defaultFeedbackOption,
+  value: defaultFeedbackOption,
+  children: {
+    key: defaultFeedbackOption,
+    value: defaultFeedbackOption,
+  },
 };
 
 // 服务状态单选按钮组配置,目前只需要配置这两种状态类型
@@ -97,4 +108,6 @@ export default {
   getServeWayByCodeOrName,
   serveStatusRadioGroupMap,
   PHONE,
+  defaultFeedback,
+  defaultFeedbackOption,
 };

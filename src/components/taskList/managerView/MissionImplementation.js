@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-26 15:22:38
+ * @Last Modified time: 2018-06-07 16:30:51
  * 任务实施简报
  */
 
@@ -421,6 +421,7 @@ export default class MissionImplementation extends PureComponent {
       currentId,
       custManagerScopeData,
       custRange,
+      onPreviewCustDetail,
     } = this.props;
     const { level, currentScopeList } = this.state;
     const currentMissionReport = currentId ? missionReport[currentId] || {} : {};
@@ -486,6 +487,7 @@ export default class MissionImplementation extends PureComponent {
                 currentId={currentId}
                 custRange={custRange}
                 orgId={this.getCurrentOrgId()}
+                onPreviewCustDetail={onPreviewCustDetail}
               />
             </div> : null
         }

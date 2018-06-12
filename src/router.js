@@ -15,6 +15,7 @@ import {
 import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
+import MyFeedback from './routes/feedback/MyFeedback';
 import CommissionHome from './routes/commission/Home';
 import CommissionChangeHome from './routes/commissionChange/Home';
 import CommissionAdjustmentHome from './routes/commissionAdjustment/Home';
@@ -102,6 +103,8 @@ const routes = [
   // 直接进入
   { path: '/feedback', component: FeedBack },
   // 直接进入
+  { path: '/myFeedback', component: MyFeedback },
+  // 直接进入
   { path: '/commission', component: CommissionHome },
   // ['佣金调整', '资讯订阅', '资讯退订']
   // const arr = ['SINGLE', 'SUBSCRIBE', 'UNSUBSCRIBE']
@@ -183,6 +186,8 @@ const routes = [
       { path: '/createTaskFromTaskRejection1', component: CreateTask },
       // 从任务管理，创建者视图驳回中的任务，进行任务驳回修改
       { path: '/createTaskFromTaskRejection2', component: CreateTask },
+      // 从管理者视图服务经理维度发起任务
+      { path: '/createTaskFromCustScope', component: CreateTask },
       // 客户列表发起任务
       { path: '/createTask', component: CreateTask },
       // 客户分组管理
@@ -201,7 +206,7 @@ const routes = [
   { path: '/userInfoRemind', component: userInfoApproval },
 
   // 消息提醒
-  { path: '/messgeCenter', component: MessageCenter },
+  { path: '/messageCenter', component: MessageCenter },
   // 直接进入
   {
     path: '/filialeCustTransfer',

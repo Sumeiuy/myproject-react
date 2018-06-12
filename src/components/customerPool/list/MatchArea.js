@@ -536,6 +536,7 @@ export default class MatchArea extends PureComponent {
       hasPCTIQPermission,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
+      formatAsset,
     } = this.props;
     if (source === 'orderCombination' && !_.isEmpty(jxgrpProducts)) {
       const { empInfo: { empInfo = {} } } = this.context;
@@ -557,6 +558,7 @@ export default class MatchArea extends PureComponent {
         custId,
         queryHoldingSecurityRepetition,
         data: holdingSecurityData,
+        formatAsset,
       };
       if (!_.isEmpty(currentItem)) {
         return (

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-08 20:55:26
+ * @Last Modified time: 2018-06-12 10:04:56
  * @description 任务管理首页
  */
 
@@ -354,6 +354,7 @@ export default class PerformerView extends PureComponent {
       replace,
       push,
       previewCustDetail,
+      previewCustDetailByScope,
       custDetailResult,
       countFlowFeedBack,
       custFeedback,
@@ -370,6 +371,7 @@ export default class PerformerView extends PureComponent {
       queryDistinctCustomerCount,
       distinctCustomerCount,
       custManagerScopeData,
+      queryDistinctCustListDetailOfMission,
     } = this.props;
 
     const {
@@ -384,6 +386,7 @@ export default class PerformerView extends PureComponent {
       replace,
       push,
       previewCustDetail,
+      previewCustDetailByScope,
       custDetailResult,
       onGetCustFeedback: countFlowFeedBack,
       custFeedback,
@@ -406,6 +409,7 @@ export default class PerformerView extends PureComponent {
       createMotReport,
       queryMOTServeAndFeedBackExcel,
       queryDistinctCustomerCount,
+      queryDistinctCustListDetailOfMission,
       distinctCustomerCount,
       getCustManagerScope: this.getCustManagerScope,
       custManagerScopeData,

@@ -420,15 +420,7 @@ export default class QuestionnaireSurvey extends PureComponent {
         onClick={_.debounce(this.handleOk, 300, { leading: true })}
       >
         提交
-      </Button>) :
-      (<Button
-        className={styles.btn}
-        key="ok"
-        type="primary"
-        onClick={this.handleCancel}
-      >
-        确定
-      </Button>);
+      </Button>) : null;
 
     return (
       <div className={styles.container}>
