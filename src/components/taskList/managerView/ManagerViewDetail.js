@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 13:09:37
+ * @Last Modified time: 2018-06-12 17:31:54
  * 管理者视图详情
  */
 
@@ -380,7 +380,12 @@ export default class ManagerViewDetail extends PureComponent {
     let currentEntryName = '';
     let currentEntryId = '';
     let currentRoute = '';
-    if (isEntryFromPie) {
+    // 服务经理维度发起任务优先
+    if (!_.isEmpty(enterType)) {
+      currentEntryName = TASK_CUST_SCOPE_ENTRY;
+      currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUST_SCOPE';
+      currentRoute = '/customerPool/createTaskFromCustScope';
+    } else if (isEntryFromPie) {
       currentEntryName = PIE_ENTRY;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PIE';
       currentRoute = '/customerPool/createTaskFromPie';
@@ -388,10 +393,6 @@ export default class ManagerViewDetail extends PureComponent {
       currentEntryName = PROGRESS_ENTRY;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PROGRESS';
       currentRoute = '/customerPool/createTaskFromProgress';
-    } else if (!_.isEmpty(enterType)) {
-      currentEntryName = TASK_CUST_SCOPE_ENTRY;
-      currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUST_SCOPE';
-      currentRoute = '/customerPool/createTaskFromCustScope';
     }
 
     // 发起新的任务之前，先清除数据
