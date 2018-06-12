@@ -171,7 +171,7 @@ export const getRouterData = (app) => {
     },
     // 从 customerPool 页面右下角资讯列表任意标题进入
     '/customerPool/viewpointDetail': {
-      component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/ViewpointDetail')),
+      component: dynamicWrapper(app, ['customerPool'], () => import('../routes/customerPool/ViewpointDetail' /* webpackChunkName: "viewpointDetail" */ )),
     },
     // 从 customerPool 页面右下角资讯列表--更多进入
     '/customerPool/viewpointList': {

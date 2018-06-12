@@ -18,16 +18,6 @@ function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
-function recursiveIssuer(m) {
-  if (m.issuer) {
-    return recursiveIssuer(m.issuer);
-  } else if (m.name) {
-    return m.name;
-  } else {
-    return false;
-  }
-}
-
 var cssLoaders = utils.getCSSLoaders({
   disableCSSModules: !config.cssModules,
   sourceMap: config.build.productionSourceMap
@@ -110,20 +100,6 @@ var webpackConfig = merge(baseWebpackConfig, {
     splitChunks: {
       name: true,
       cacheGroups: {
-        indexStyle: {
-          name: 'index',
-          test: ((m,c,entry = 'index') => {
-            return (m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry)
-          }),
-          chunks: 'all',
-          enforce: true
-        },
-        newIndexStyle: {
-          name: 'newIndex',
-          test: ((m,c,entry = 'newIndex') => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry),
-          chunks: 'all',
-          enforce: true
-        },
         vendor: {
           name: 'vendor',
           test: (module => module.resource && 
