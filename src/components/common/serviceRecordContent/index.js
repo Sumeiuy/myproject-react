@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 14:46:19
+ * @Last Modified time: 2018-06-12 16:28:37
  */
 
 import React, { PureComponent } from 'react';
@@ -356,16 +356,17 @@ export default class ServiceRecordContent extends PureComponent {
     // 校验服务记录
     isShowServiceContentError = !serviceRecord || serviceRecord.length > serviceContentMaxLength;
     this.setState({ isShowServiceContentError });
+    const isShowErrorCustFeedback = this.checkCustFeedback();
     // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容
     if (isPhoneCall) {
-      return !isShowServiceContentError;
+      return isShowErrorCustFeedback && !isShowServiceContentError;
     }
     if (isEntranceFromPerformerView) {
       // 在执行者视图中校验 服务状态 是否已经选择
       isShowServeStatusError = _.isEmpty(serviceStatus);
       this.setState({ isShowServeStatusError });
     }
-    const isShowErrorCustFeedback = this.checkCustFeedback();
+
     return isShowErrorCustFeedback &&
       !isShowServeStatusError && !isShowServiceContentError;
   }
