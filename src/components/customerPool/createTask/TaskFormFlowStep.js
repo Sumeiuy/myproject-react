@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-12 10:28:50
+ * @Last Modified time: 2018-06-12 19:52:26
  */
 
 import React, { PureComponent } from 'react';
@@ -303,8 +303,12 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { source, count, condition } },
       taskBasicInfo,
     } = this.props;
-    const { primaryKey = [] } = JSON.parse(decodeURIComponent(condition));
-    const { labelDesc = '' } = getLabelInfo(primaryKey[0] || '');
+    let labelDesc = '';
+    if (condition) {
+      const { primaryKey = [] } = JSON.parse(decodeURIComponent(condition));
+      const label = getLabelInfo(primaryKey[0]) || {};
+      labelDesc = label.labelDesc;
+    }
     const { tagetCustModel } = taskBasicInfo || {};
     const { custNum, custSource: taskSource, custLabelDesc = '' } = tagetCustModel || {};
 
