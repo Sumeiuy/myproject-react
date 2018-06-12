@@ -56,13 +56,14 @@ export default class MyDetail extends PureComponent {
   }
 
   renderAttachmentList(list) {
+    // recordId 不是唯一的，所以加上index
     return (
       _.map(
         list,
-        item => (
+        (item, index) => (
           <div
             className={styles.attachItem}
-            key={item.attachUrl}
+            key={`${index}_${item.recordId}`}
           >
             <a href={`${request.prefix}/file/${item.attachUrl}`}>
               <Icon type={'fujian2'} />{`${item.attachName}`}
