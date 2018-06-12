@@ -4,7 +4,7 @@
  */
 
 import _ from 'lodash';
-import localForage from 'localforage';
+import store from 'store';
 
 const customerPool = {
   getCustomerListFilters(filtersArray = [], labelId = '', filters = []) {
@@ -63,9 +63,9 @@ const customerPool = {
   },
 
   // 获取存储在本地的标签的信息
-  async getLabelInfo(id = '') {
-    const labelDesc = await localForage.getItem(`${id}-labelDesc`);
-    return labelDesc || {};
+  getLabelInfo(id = '') {
+    const label = store.get(`${id}-labelDesc`);
+    return label || {};
   },
 };
 

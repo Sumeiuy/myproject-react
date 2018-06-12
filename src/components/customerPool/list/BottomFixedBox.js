@@ -89,7 +89,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 点击新建分组或者发起任务按钮
   @autobind
-  handleClick({ url, title, id, shouldStay, editPane, missionDesc }) {
+  handleClick({ url, title, id, shouldStay, editPane }) {
     const {
       page,
       condition,
@@ -119,7 +119,6 @@ export default class BottomFixedBox extends PureComponent {
         fr,
         shouldStay,
         editPane,
-        missionDesc,
       );
     } else if (selectAll) {
       this.openByAllSelect(
@@ -133,7 +132,6 @@ export default class BottomFixedBox extends PureComponent {
         fr,
         shouldStay,
         editPane,
-        missionDesc,
       );
     }
   }
@@ -165,14 +163,13 @@ export default class BottomFixedBox extends PureComponent {
   // 跳转到创建任务页面
   @autobind
   toCreateTaskPage() {
-    const { location: { query: { missionDesc } } } = this.props;
     const url = '/customerPool/createTask';
     const title = '自建任务';
     const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
     // 发起新的任务之前，先清除数据
     this.props.clearCreateTaskData('custList');
 
-    this.handleClick({ url, title, id, missionDesc });
+    this.handleClick({ url, title, id });
   }
 
   // 验证通过后跳转到创建任务
@@ -243,7 +240,6 @@ export default class BottomFixedBox extends PureComponent {
     fr,
     shouldStay,
     editPane,
-    missionDesc,
   ) {
     const tmpArr = [];
     _(ids).forEach((item) => {
@@ -258,7 +254,6 @@ export default class BottomFixedBox extends PureComponent {
       entertype,
       source,
       name,
-      missionDesc,
       condition: condt,
       fr,
     };
@@ -277,7 +272,6 @@ export default class BottomFixedBox extends PureComponent {
     fr,
     shouldStay,
     editPane,
-    missionDesc,
   ) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
@@ -289,7 +283,6 @@ export default class BottomFixedBox extends PureComponent {
       source,
       name,
       fr,
-      missionDesc,
     };
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });
   }

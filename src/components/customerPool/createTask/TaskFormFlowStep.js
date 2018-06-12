@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-12 09:54:41
+ * @Last Modified time: 2018-06-12 10:28:50
  */
 
 import React, { PureComponent } from 'react';
@@ -122,7 +122,7 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   @autobind
-  async parseParam() {
+  parseParam() {
     const {
       parseQuery,
       location: { query: { groupId, enterType, source } },
@@ -133,7 +133,7 @@ export default class TaskFormFlowStep extends PureComponent {
       custCondition,
       custCondition: { entrance, primaryKey = [] },
     } = parseQuery();
-    const { labelDesc = '', labelName = '' } = await getLabelInfo(primaryKey[0]);
+    const { labelDesc = '', labelName = '' } = getLabelInfo(primaryKey[0]);
     const queryLabelReq = {
       labelDesc,
       labelName,
@@ -163,13 +163,13 @@ export default class TaskFormFlowStep extends PureComponent {
 
   // 验证是否自己名下客户
   @autobind
-  async checkMyCustomer() {
+  checkMyCustomer() {
     const {
       location: { query: { source } },
       saveCreateTaskData,
       storedCreateTaskData,
     } = this.props;
-    const queryData = await this.parseParam();
+    const queryData = this.parseParam();
     const postBody = {
       ...queryData,
     };
@@ -291,7 +291,7 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   @autobind
-  async handleNextStep() {
+  handleNextStep() {
     const { current } = this.state;
     // 下一步
     const {
@@ -304,7 +304,7 @@ export default class TaskFormFlowStep extends PureComponent {
       taskBasicInfo,
     } = this.props;
     const { primaryKey = [] } = JSON.parse(decodeURIComponent(condition));
-    const { labelDesc = '' } = await getLabelInfo(primaryKey[0] || '');
+    const { labelDesc = '' } = getLabelInfo(primaryKey[0] || '');
     const { tagetCustModel } = taskBasicInfo || {};
     const { custNum, custSource: taskSource, custLabelDesc = '' } = tagetCustModel || {};
 
@@ -548,7 +548,7 @@ export default class TaskFormFlowStep extends PureComponent {
 
   // 自建任务提交
   @autobind
-  async handleSubmit() {
+  handleSubmit() {
     const {
       storedCreateTaskData,
       createTask,
@@ -575,7 +575,7 @@ export default class TaskFormFlowStep extends PureComponent {
       return;
     }
 
-    const req = await this.parseParam();
+    const req = this.parseParam();
 
     const {
       taskFormData = {},
