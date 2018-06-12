@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系申请的配置文件
  * @Date: 2018-06-08 13:32:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-11 18:21:11
+ * @Last Modified time: 2018-06-12 11:02:49
  */
 
 
@@ -88,6 +88,10 @@ const config = {
   ],
   // 是否办理股票质押回购业务Select下拉选项
   StockRepurchaseOptions: [
+    {
+      value: '',
+      label: '--请选择--',
+    },
     {
       value: 'Y',
       label: '是',

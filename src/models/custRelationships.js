@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请models
  * @Date: 2018-06-08 13:17:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-11 18:56:18
+ * @Last Modified time: 2018-06-12 10:28:09
  */
 
 
@@ -22,6 +22,8 @@ export default {
     custList: [],
     // 用户选中的客户基本信息
     custDetail: {},
+    // 关联关系树
+    relationshipTree: [],
   },
   reducers: {
     // 客户关联关系申请页面-右侧详情
@@ -52,6 +54,13 @@ export default {
       return {
         ...state,
         custDetail: resultData,
+      };
+    },
+    getRelationshipTreeSuccess(state, action) {
+      const { payload: { resultData = [] } } = action;
+      return {
+        ...state,
+        relationshipTree: resultData,
       };
     },
     clearReduxDataSuccess(state, action) {
@@ -92,6 +101,14 @@ export default {
       const response = yield call(api.getCustDetail, payload);
       yield put({
         type: 'getCustDetailSuccess',
+        payload: response,
+      });
+    },
+    // 获取关联关系树
+    * getRelationshipTree({ payload }, { call, put }) {
+      const response = yield call(api.getRelationshipTree, payload);
+      yield put({
+        type: 'getRelationshipTreeSuccess',
         payload: response,
       });
     },

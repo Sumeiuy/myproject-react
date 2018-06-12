@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-11 18:56:11
+ * @Last Modified time: 2018-06-12 10:31:38
  */
 
 import React, { PureComponent } from 'react';
@@ -39,6 +39,8 @@ const effects = {
   queryCustList: 'custRelationships/queryCustList',
   // 获取选中的客户的详情信息
   getCustDetail: 'custRelationships/getCustDetail',
+  // 获取关联关系树
+  getRelationshipTree: 'custRelationships/getRelationshipTree',
   // 清空数据
   clearReduxData: 'custRelationships/clearReduxData',
 };
@@ -55,6 +57,8 @@ const mapStateToProps = state => ({
   custList: state.custRelationships.custList,
   // 用户选中的客户基本信息
   custDetail: state.custRelationships.custDetail,
+  // 关联关系树
+  relationshipTree: state.custRelationships.relationshipTree,
 });
 
 const mapDispatchToProps = {
@@ -69,6 +73,8 @@ const mapDispatchToProps = {
   queryCustList: effect(effects.queryCustList, { forceFull: true }),
   // 获取选中的客户的详情信息
   getCustDetail: effect(effects.getCustDetail, { forceFull: true }),
+  // 获取关联关系树
+  getRelationshipTree: effect(effects.getRelationshipTree, { forceFull: true }),
   // 清除Redux中的数据
   clearReduxData: effect(effects.clearReduxData, { loading: false }),
 };
@@ -97,6 +103,9 @@ export default class ApplyHome extends PureComponent {
     // 获取可申请客户列表
     queryCustList: PropTypes.func.isRequired,
     custList: PropTypes.object.isRequired,
+    // 获取可申请客户列表
+    getRelationshipTree: PropTypes.func.isRequired,
+    relationshipTree: PropTypes.array.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
   }
@@ -305,7 +314,10 @@ export default class ApplyHome extends PureComponent {
       getCustDetail,
       custList,
       queryCustList,
+      relationshipTree,
+      getRelationshipTree,
     } = this.props;
+
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
@@ -368,6 +380,8 @@ export default class ApplyHome extends PureComponent {
               custList={custList}
               getCustDetail={getCustDetail}
               queryCustList={queryCustList}
+              relationshipTree={relationshipTree}
+              getRelationshipTree={getRelationshipTree}
             />
           )
         }

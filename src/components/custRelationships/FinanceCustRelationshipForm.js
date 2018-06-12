@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-11 20:22:01
+ * @Last Modified time: 2018-06-12 14:37:10
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -38,6 +38,11 @@ export default class FinanceCustRelationshipForm extends Component {
     // 获取可申请客户列表
     queryCustList: PropTypes.func.isRequired,
     custList: PropTypes.array.isRequired,
+    // 获取关联关系树
+    getRelationshipTree: PropTypes.func.isRequired,
+    relationshipTree: PropTypes.array.isRequired,
+    // 当用户选的数据发生变化时候的回调
+    onChange: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -47,8 +52,10 @@ export default class FinanceCustRelationshipForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      // 选择的用户
+      cust: {},
       // 是否办理股票质押回购业务选项，默认 是 'Y'
-      stockRepurchase: 'Y',
+      stockRepurchase: '',
       // 添加关联关系Modal
       addAssociateModal: false,
       // 客户的关联关系
@@ -73,14 +80,14 @@ export default class FinanceCustRelationshipForm extends Component {
 
   @autobind
   handleSelectCust(cust) {
-    // TODO 此处需要与后端确认接口请求参数
-    console.warn('获取选中的客户的基本信息：', cust);
-    this.props.getCustDetail({}).then(this.updateAssociateList);
+    this.setState({ cust });
+    this.props.getCustDetail({ custId: cust.brokerNumber }).then(this.updateAssociateList);
+    // 切换客户之后，需要查询下客户类型下的关联关系树
+    this.props.getRelationshipTree({ custType: cust.custType });
   }
 
   @autobind
   handleStockRepurchaseSelectChange(name, stockRepurchase) {
-    console.warn('handleStockRepurchaseSelectChange', stockRepurchase);
     this.setState({ stockRepurchase });
   }
 
@@ -140,7 +147,7 @@ export default class FinanceCustRelationshipForm extends Component {
       custRelationshipList,
       relationModalAction,
     } = this.state;
-    const { custList, custDetail } = this.props;
+    const { custList, custDetail, relationshipTree } = this.props;
 
     return (
       <div className={styles.custRelationshipContainer}>
@@ -159,7 +166,7 @@ export default class FinanceCustRelationshipForm extends Component {
         <FormItem label="是否办理股票质押回购业务" labelWidth={204}>
           <Select
             name="stockRepurchase"
-            width="80px"
+            width="105px"
             needShowKey={false}
             value={stockRepurchase}
             data={StockRepurchaseOptions}
@@ -197,7 +204,7 @@ export default class FinanceCustRelationshipForm extends Component {
           (
             <AddRelationshipModal
               action={relationModalAction}
-              ralationTree={[]}
+              ralationTree={relationshipTree}
               data={{}}
               visible={addAssociateModal}
               onClose={this.handleRelationshipModalClose}

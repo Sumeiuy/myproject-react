@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请新建页面
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-11 18:08:09
+ * @Last Modified time: 2018-06-12 14:36:15
  */
 
 import React, { PureComponent } from 'react';
@@ -24,6 +24,9 @@ export default class CreateApply extends PureComponent {
     // 获取可申请客户列表
     queryCustList: PropTypes.func.isRequired,
     custList: PropTypes.object.isRequired,
+    // 获取关联关系树
+    getRelationshipTree: PropTypes.func.isRequired,
+    relationshipTree: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -52,6 +55,11 @@ export default class CreateApply extends PureComponent {
   }
 
   @autobind
+  handleFinanceCustRelationFormChange(obj) {
+    this.setState(obj);
+  }
+
+  @autobind
   handleModalConfirmClick() {
     console.warn('点击提交按钮');
     // TODO 此处需要增加选择审批人的操作
@@ -64,6 +72,8 @@ export default class CreateApply extends PureComponent {
       custList,
       getCustDetail,
       queryCustList,
+      getRelationshipTree,
+      relationshipTree,
     } = this.props;
     const {
       isShowModal,
@@ -74,6 +84,7 @@ export default class CreateApply extends PureComponent {
         size="large"
         modalKey="myModal"
         title="客户关联关系信息申请"
+        maskClosable={false}
         visible={isShowModal}
         onCancel={this.handleModalClose}
         closeModal={this.handleModalClose}
@@ -85,6 +96,9 @@ export default class CreateApply extends PureComponent {
           custList={custList}
           getCustDetail={getCustDetail}
           queryCustList={queryCustList}
+          getRelationshipTree={getRelationshipTree}
+          relationshipTree={relationshipTree}
+          onChange={this.handleFinanceCustRelationFormChange}
         />
       </CommonModal>
     );
