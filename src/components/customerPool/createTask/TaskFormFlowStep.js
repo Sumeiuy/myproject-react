@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-15 13:00:03
+ * @Last Modified time: 2018-06-12 10:28:50
  */
 
 import React, { PureComponent } from 'react';
@@ -21,6 +21,7 @@ import {
   CUST_GROUP_LIST,
   returnTaskEntrySource,
 } from '../../../config/createTaskEntry';
+import { getLabelInfo } from '../../../helper/page/customerPool';
 import styles from './taskFormFlowStep.less';
 import logable, { logCommon } from '../../../decorators/logable';
 
@@ -116,13 +117,61 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   componentDidMount() {
+    // 验证是否自己名下客户
+    this.checkMyCustomer();
+  }
+
+  @autobind
+  parseParam() {
+    const {
+      parseQuery,
+      location: { query: { groupId, enterType, source } },
+    } = this.props;
+
+    const {
+      custIdList,
+      custCondition,
+      custCondition: { entrance, primaryKey = [] },
+    } = parseQuery();
+    const { labelDesc = '', labelName = '' } = getLabelInfo(primaryKey[0]);
+    const queryLabelReq = {
+      labelDesc,
+      labelName,
+    };
+
+    let req = {};
+    if (entrance === PROGRESS_ENTRY) {
+      // 管理者视图进度条发起任务
+      req = { queryMissionCustsReq: _.omit(custCondition, 'entrance') };
+    } else if (entrance === PIE_ENTRY) {
+      // 管理者视图饼图发起任务
+      req = { queryMOTFeedBackCustsReq: _.omit(custCondition, 'entrance') };
+    } else if (source === CUST_GROUP_LIST) {
+      req = {
+        enterType,
+        groupId,
+      };
+    } else if (source === 'sightingTelescope') {
+      // 从瞄准镜过来的，需要加入queryLabelReq参数
+      req = { searchReq: custCondition, custIdList, queryLabelReq };
+    } else {
+      req = { searchReq: custCondition, custIdList };
+    }
+
+    return req;
+  }
+
+  // 验证是否自己名下客户
+  @autobind
+  checkMyCustomer() {
     const {
       location: { query: { source } },
       saveCreateTaskData,
       storedCreateTaskData,
     } = this.props;
+    const queryData = this.parseParam();
     const postBody = {
-      ...this.parseParam(),
+      ...queryData,
     };
     if (!_.includes(returnTaskEntrySource, source)) {
       this.props.isSendCustsServedByPostn({
@@ -156,41 +205,6 @@ export default class TaskFormFlowStep extends PureComponent {
         }
       });
     }
-  }
-
-  @autobind
-  parseParam() {
-    const {
-      parseQuery,
-      location: { query: { groupId, enterType, source } },
-    } = this.props;
-
-    const {
-      custIdList,
-      custCondition,
-      custCondition: { entrance, queryLabelReq },
-    } = parseQuery();
-
-    let req = {};
-    if (entrance === PROGRESS_ENTRY) {
-      // 管理者视图进度条发起任务
-      req = { queryMissionCustsReq: _.omit(custCondition, 'entrance') };
-    } else if (entrance === PIE_ENTRY) {
-      // 管理者视图饼图发起任务
-      req = { queryMOTFeedBackCustsReq: _.omit(custCondition, 'entrance') };
-    } else if (source === CUST_GROUP_LIST) {
-      req = {
-        enterType,
-        groupId,
-      };
-    } else if (source === 'sightingTelescope') {
-      // 从瞄准镜过来的，需要加入queryLabelReq参数
-      req = { searchReq: custCondition, custIdList, queryLabelReq };
-    } else {
-      req = { searchReq: custCondition, custIdList };
-    }
-
-    return req;
   }
 
   @autobind
@@ -276,7 +290,6 @@ export default class TaskFormFlowStep extends PureComponent {
     return _.includes(SOURCE_FROM_LABEL, source);
   }
 
-
   @autobind
   handleNextStep() {
     const { current } = this.state;
@@ -287,10 +300,11 @@ export default class TaskFormFlowStep extends PureComponent {
       generateTemplateId,
       // source是来源
       // count是客户数量
-      location: { query: { source, count, labelDesc } },
+      location: { query: { source, count, condition } },
       taskBasicInfo,
     } = this.props;
-
+    const { primaryKey = [] } = JSON.parse(decodeURIComponent(condition));
+    const { labelDesc = '' } = getLabelInfo(primaryKey[0] || '');
     const { tagetCustModel } = taskBasicInfo || {};
     const { custNum, custSource: taskSource, custLabelDesc = '' } = tagetCustModel || {};
 
