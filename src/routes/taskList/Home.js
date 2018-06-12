@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 12:34:10
+ * @Last Modified time: 2018-06-12 12:45:13
  * @description 任务管理首页
  */
 
@@ -121,11 +121,10 @@ export default class PerformerView extends PureComponent {
       location: { query: prevQuery },
       changePerformerViewTab,
     } = this.props;
-    const { sortParam } = this.state;
     const { currentId, ...otherQuery } = query;
     const { currentId: prevCurrentId, ...otherPrevQuery } = prevQuery;
     if (!_.isEqual(otherQuery, otherPrevQuery)) {
-      this.queryAppList({ ...otherQuery, sortParam });
+      this.queryAppList(otherQuery);
     }
     // 当前选中的任务变化，需要还原与任务绑定当前详情中选中的tab
     if (query.currentId !== prevQuery.currentId) {
@@ -672,7 +671,8 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getQueryParams(query, newPageNum, newPageSize) {
-    const { missionViewType, status, creatorId, sortParam } = query;
+    const { sortParam } = this.state;
+    const { missionViewType, status, creatorId } = query;
     // 从query上筛选出需要的入参
     const params = _.pick(query, QUERY_PARAMS);
     let finalPostData = {
@@ -835,8 +835,9 @@ export default class PerformerView extends PureComponent {
       // 视图切换，将排序重置
       this.setState({
         sortParam: this.getDefaultViewSortParam(),
+      }, () => {
+        push({ pathname, query: otherQuery });
       });
-      push({ pathname, query: otherQuery });
     } else {
       replace({
         pathname,
@@ -914,17 +915,15 @@ export default class PerformerView extends PureComponent {
   @autobind
   handleSortChange({ sortKey, sortType }) {
     const { location: { query } } = this.props;
-    this.queryAppList({
-      ...query,
-      sortParam: {
-        [sortKey]: sortType,
-      },
-    });
     // 设置排序方向，用来父组件调用
     this.setState({
       sortParam: {
         [sortKey]: sortType,
       },
+    }, () => {
+      this.queryAppList({
+        ...query,
+      });
     });
   }
 
