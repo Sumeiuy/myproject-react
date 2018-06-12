@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-24 10:13:17
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-11 17:23:34
+ * @Last Modified time: 2018-06-11 20:34:45
  */
 
 import React, { PureComponent } from 'react';
@@ -514,7 +514,7 @@ export default class AddCustModal extends PureComponent {
                   <div className={styles.rangeDiv}>
                     <RangeFilter
                       filterId="totalAsset"
-                      filterName="净资产区间"
+                      filterName="净资产"
                       defaultLabel={NO_VALUE}
                       value={totalAsset}
                       unit="元"
@@ -522,7 +522,7 @@ export default class AddCustModal extends PureComponent {
                     />
                     <RangeFilter
                       filterId="annualDailyAsset"
-                      filterName="年日均净资产区间"
+                      filterName="年日均净资产"
                       defaultLabel={NO_VALUE}
                       value={annualDailyAsset}
                       unit="元"
@@ -530,7 +530,7 @@ export default class AddCustModal extends PureComponent {
                     />
                     <RangeFilter
                       filterId="lastYearAsset"
-                      filterName="上年净佣金区间"
+                      filterName="上年净佣金"
                       defaultLabel={NO_VALUE}
                       value={lastYearAsset}
                       unit="元"
@@ -538,7 +538,7 @@ export default class AddCustModal extends PureComponent {
                     />
                     <RangeFilter
                       filterId="annualAsset"
-                      filterName="本年净佣金区间"
+                      filterName="本年净佣金"
                       defaultLabel={NO_VALUE}
                       value={annualAsset}
                       unit="元"

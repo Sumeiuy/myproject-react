@@ -7,13 +7,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import { Modal } from 'antd';
 
 import { request } from '../../config';
 import Icon from '../common/Icon';
 import styles from './previewImg.less';
-
-const width = 520;
 
 export default class PreviewImg extends PureComponent {
   static propTypes = {
@@ -31,6 +30,8 @@ export default class PreviewImg extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      imgHeight: 0,
+      imgWidth: 0,
       visible: false,
     };
   }
@@ -39,28 +40,31 @@ export default class PreviewImg extends PureComponent {
     window.addEventListener('resize', this.handleResize, false);
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize, false);
+  componentDidUpdate(preProps) {
+    const { previewUrl } = this.props;
+    const { previewUrl: preUrl } = preProps;
+    const {
+      imgHeight: height,
+      imgWidth: width,
+    } = this.state;
+    // 请求图片大小
+    if ((!height && !width) || (preUrl !== previewUrl && previewUrl)) {
+      const newImg = new Image();
+      newImg.onload = () => {
+        const imgHeight = newImg.height;
+        const imgWidth = newImg.width;
+        this.setState(
+          { imgHeight, imgWidth },
+          this.calculateRealSize,
+        );
+      };
+      // this must be done AFTER setting onload
+      newImg.src = `${request.prefix}${previewUrl}`;
+    }
   }
 
-  /**
-   * 设置弹出框图片的宽度和高度
-   * @param {*} newHeight 新的高度
-   * @param {*} newWidth 新的宽度
-   */
-  setDOMStyle(newHeight, newWidth) {
-    /* eslint-disable */
-    const modalElem = ReactDOM.findDOMNode(document.querySelector('.imgModal'));
-    if (modalElem) {
-      const childrenElem = modalElem.children[0];
-      dom.setStyle(modalElem, 'height', `${newHeight}px`);
-      dom.setStyle(modalElem, 'width', `${newWidth}px`);
-      dom.setStyle(modalElem, 'margin', 'auto');
-      dom.setStyle(modalElem, 'overflow', 'hidden');
-      dom.setStyle(childrenElem, 'top', '50%');
-      dom.setStyle(childrenElem, 'marginTop', `-${newHeight / 2}px`);
-      dom.setStyle(childrenElem, 'paddingBottom', '0px');
-    }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize, false);
   }
 
   /**
@@ -91,8 +95,6 @@ export default class PreviewImg extends PureComponent {
     this.setState({
       newHeight: h,
       newWidth: w,
-    }, () => {
-      this.setDOMStyle(h, w);
     });
   }
 
@@ -133,14 +135,14 @@ export default class PreviewImg extends PureComponent {
               <Icon type={icon} />
             ) : null
           }
-           {label}
+          {label}
         </a>
       </div>
     );
   }
 
   render() {
-    const { visible } = this.state;
+    const { visible, newWidth } = this.state;
     const { previewUrl } = this.props;
 
     return (
@@ -148,7 +150,7 @@ export default class PreviewImg extends PureComponent {
         {this.renderPreview()}
         <Modal
           visible={visible}
-          width={width}
+          width={newWidth}
           footer={null}
           onCancel={this.handlePreviewCancel}
           wrapClassName={styles.imgModal}
