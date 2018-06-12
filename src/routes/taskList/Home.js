@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 12:45:13
+ * @Last Modified time: 2018-06-12 13:56:09
  * @description 任务管理首页
  */
 
@@ -921,9 +921,7 @@ export default class PerformerView extends PureComponent {
         [sortKey]: sortType,
       },
     }, () => {
-      this.queryAppList({
-        ...query,
-      });
+      this.queryAppList(query);
     });
   }
 
