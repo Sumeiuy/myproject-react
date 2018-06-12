@@ -1,8 +1,8 @@
 /**
  * @Author: xiazhiqiang
  * @Date: 2018-05-21 13:33:05
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-29 10:46:02
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-06-12 09:14:31
  */
 
 import React, { PureComponent } from 'react';
@@ -140,7 +140,7 @@ export default class PerformanceIndicators extends PureComponent {
   handleMessageClick() {
     // 点击事件
     const { location: { query }, push } = this.props;
-    const notificationUrl = '/messgeCenter';
+    const notificationUrl = '/messageCenter';
     const notificationParam = {
       closable: true,
       forceRefresh: true,
