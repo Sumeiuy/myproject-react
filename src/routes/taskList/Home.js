@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-12 10:04:56
+ * @Last Modified time: 2018-06-12 15:37:13
  * @description 任务管理首页
  */
 
@@ -516,6 +516,7 @@ export default class PerformerView extends PureComponent {
       queryExecutorFlowStatus,
       queryExecutorFeedBack,
       queryExecutorDetail,
+      queryTargetCustDetail,
     } = this.props;
     const {
       typeCode,
@@ -585,6 +586,7 @@ export default class PerformerView extends PureComponent {
         queryExecutorFlowStatus={queryExecutorFlowStatus}
         queryExecutorFeedBack={queryExecutorFeedBack}
         queryExecutorDetail={queryExecutorDetail}
+        queryTargetCustDetail={queryTargetCustDetail}
       />
     );
   }
