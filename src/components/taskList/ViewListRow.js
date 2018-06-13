@@ -12,6 +12,7 @@ import moment from 'moment';
 import { Tooltip } from 'antd';
 
 import Tag from '../common/tag';
+import Icon from '../common/Icon';
 import styles from './viewListRow.less';
 import {
   STATE_PROCESSING_CODE,
@@ -51,11 +52,6 @@ export default function AppItem(props) {
   const appItemCls = cx({
     [styles.appItem]: true,
     [styles.active]: active,
-  });
-  const appIconCls = cx({
-    [styles.appMissionIcon]: data.executionTypeCode === 'Mission',
-    [styles.active]: active,
-    [styles.common]: true,
   });
   const secondLineCls = cx({
     [styles.secondLine]: true,
@@ -141,7 +137,30 @@ export default function AppItem(props) {
             [styles.active]: active,
           })}
         >
-          <span className={appIconCls}>{`${data.executionTypeCode === 'Mission' ? '必' : ''}`}</span>
+          {
+            data.executionTypeCode === 'Mission' ?
+              <span>
+                <span
+                  className={
+                    cx({
+                      [styles.biText]: true,
+                      [styles.active]: active,
+                    })
+                  }
+                >
+                  必
+                </span>
+                <Icon
+                  className={
+                    cx({
+                      [styles.biIcon]: true,
+                      [styles.active]: active,
+                    })
+                  }
+                  type="bi"
+                />
+              </span> : null
+          }
           <span
             className={cx({
               [styles.title]: true,
