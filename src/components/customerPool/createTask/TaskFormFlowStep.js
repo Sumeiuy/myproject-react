@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-04 17:30:01
+ * @Last Modified time: 2018-06-13 13:39:45
  */
 
 import React, { PureComponent } from 'react';
@@ -32,8 +32,8 @@ import {
   SIGHTINGTELESCOPE_ENTRY,
   returnTaskEntrySource,
   labelSource,
-  sightingLabelSource,
   TASK_CUST_SCOPE_ENTRY,
+  sightingLabelSource,
 } from '../../../config/createTaskEntry';
 import styles from './taskFormFlowStep.less';
 import logable, { logCommon } from '../../../decorators/logable';
@@ -127,13 +127,21 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   componentDidMount() {
+    // 验证是否自己名下客户
+    this.checkMyCustomer();
+  }
+
+  // 验证是否自己名下客户
+  @autobind
+  checkMyCustomer() {
     const {
       location: { query: { source } },
       saveCreateTaskData,
       storedCreateTaskData,
     } = this.props;
+    const queryData = this.constructParam();
     const postBody = {
-      ...this.parseParam(),
+      ...queryData,
     };
     if (!_.includes(returnTaskEntrySource, source)) {
       this.props.isSendCustsServedByPostn({
@@ -170,7 +178,7 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   @autobind
-  parseParam() {
+  constructParam() {
     const {
       parseQuery,
       location: { query: { groupId, enterType, source } },
@@ -179,27 +187,34 @@ export default class TaskFormFlowStep extends PureComponent {
     const {
       custIdList,
       custCondition,
-      custCondition: { entrance, queryLabelReq },
+      custCondition: { entrance, labelId },
     } = parseQuery();
+    // 去除entrance字段
+    const omitedCondition = _.omit(custCondition, 'entrance');
 
     let req = {};
     if (entrance === PROGRESS_ENTRY) {
       // 管理者视图进度条发起任务
-      req = { queryMissionCustsReq: _.omit(custCondition, 'entrance') };
+      req = { queryMissionCustsReq: omitedCondition };
     } else if (entrance === PIE_ENTRY) {
       // 管理者视图饼图发起任务
-      req = { queryMOTFeedBackCustsReq: _.omit(custCondition, 'entrance') };
+      req = { queryMOTFeedBackCustsReq: omitedCondition };
     } else if (entrance === TASK_CUST_SCOPE_ENTRY) {
       // 管理者视图服务经理维度发起任务
-      req = { queryMssnCustsDetailReq: _.omit(custCondition, 'entrance') };
+      req = { queryMssnCustsDetailReq: omitedCondition };
     } else if (source === CUST_GROUP_LIST) {
       req = {
         enterType,
         groupId,
       };
     } else if (_.includes(sightingLabelSource, source)) {
-      // 从瞄准镜过来的，需要加入queryLabelReq参数
-      req = { searchReq: custCondition, custIdList, queryLabelReq };
+      // 从瞄准镜过来的
+      req = {
+        searchReq: custCondition,
+        custIdList,
+        // 带入queryLabelReq参数
+        queryLabelReq: { labelId },
+      };
     } else {
       req = { searchReq: custCondition, custIdList };
     }
@@ -287,7 +302,6 @@ export default class TaskFormFlowStep extends PureComponent {
     return _.includes(labelSource, source);
   }
 
-
   @autobind
   handleNextStep() {
     const { current } = this.state;
@@ -298,10 +312,9 @@ export default class TaskFormFlowStep extends PureComponent {
       generateTemplateId,
       // source是来源
       // count是客户数量
-      location: { query: { source, count, labelDesc } },
+      location: { query: { source, count } },
       taskBasicInfo,
     } = this.props;
-
     const { tagetCustModel } = taskBasicInfo || {};
     const { custNum, custSource: taskSource, custLabelDesc = '' } = tagetCustModel || {};
 
@@ -496,7 +509,7 @@ export default class TaskFormFlowStep extends PureComponent {
         custTotal: count || custNum,
         labelCust: {
           // 标签描述
-          labelDesc: labelDesc || custLabelDesc,
+          labelDesc: custLabelDesc,
         },
         // 如果当前客户来源是标签圈人，则代表是第二个入口
         currentEntry: (custSource === '标签圈人' || this.judgeSourceIsFromLabel()) ? 1 : 0,
@@ -559,7 +572,7 @@ export default class TaskFormFlowStep extends PureComponent {
       return;
     }
 
-    const req = this.parseParam();
+    const req = this.constructParam();
 
     const {
       taskFormData = {},

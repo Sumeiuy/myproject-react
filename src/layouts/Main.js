@@ -117,9 +117,9 @@ export default class Main extends Component {
       serviceRecordInfo,
       location,
     } = this.props;
-    const { caller = '', id = '', autoGenerateRecordInfo = {} } = serviceRecordInfo;
+    const { caller = '' } = serviceRecordInfo;
     // 当前服务记录弹窗是否由电话调起的
-    const isPhoneCall = caller === PHONE && id === autoGenerateRecordInfo.custId;
+    const isPhoneCall = caller === PHONE;
     return (
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >

@@ -72,6 +72,8 @@ export default class CustManagerDetailScope extends PureComponent {
     orgId: PropTypes.string,
     // 客户总数、已服务客户、已完成客户、结果达标客户下钻
     onPreviewCustDetail: PropTypes.func,
+    // 客户反馈一二级
+    currentFeedback: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -203,7 +205,7 @@ export default class CustManagerDetailScope extends PureComponent {
    */
   @autobind
   handleCustDrill(item = EMPTY_OBJECT) {
-    const { onPreviewCustDetail } = this.props;
+    const { onPreviewCustDetail, currentFeedback } = this.props;
     const {
       login,
       empCompanyCode,
@@ -261,6 +263,7 @@ export default class CustManagerDetailScope extends PureComponent {
       canLaunchTask: true,
       // 复用进度条的下钻标记位，已服务，已完成，已达标
       ...progressParam,
+      currentFeedback,
     });
   }
 
