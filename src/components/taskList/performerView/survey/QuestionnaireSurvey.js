@@ -4,7 +4,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-05-22 12:26:05
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 13:42:48
+ * @Last Modified time: 2018-06-13 16:15:31
  * 只是将原先的问卷调查逻辑单独提取成组件
  */
 
@@ -36,17 +36,6 @@ const TYPE = {
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 
-// 静态变量，用于重置和初始化state
-const defaultSurveyData = {
-  checkboxData: EMPTY_OBJECT,
-  radioData: EMPTY_ARRAY,
-  areaTextData: EMPTY_ARRAY,
-  errorCheckboxIdList: EMPTY_ARRAY,
-  // 所有的多选题Id集合
-  checkBoxQuesId: EMPTY_ARRAY,
-  visible: false,
-};
-
 // 多选题的value分隔符
 // CHECKBOX_VALUE_SEPARATOR 在CheckBox value中拼接字符，为获取改答案answerId和改问题quesId
 const CHECKBOX_VALUE_SEPARATOR = '+-+';
@@ -75,7 +64,13 @@ export default class QuestionnaireSurvey extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      ...defaultSurveyData,
+      checkboxData: {},
+      radioData: [],
+      areaTextData: [],
+      errorCheckboxIdList: [],
+      // 所有的多选题Id集合
+      checkBoxQuesId: [],
+      visible: false,
       currentId: props.currentId,
     };
   }

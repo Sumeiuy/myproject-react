@@ -380,7 +380,17 @@ export default class ManagerViewDetail extends PureComponent {
     let currentEntryName = '';
     let currentEntryId = '';
     let currentRoute = '';
-    if (isEntryFromPie) {
+
+    // 服务经理维度发起任务优先
+    // 发起任务有以下几个入口，客户总数，饼图，进度条，服务经理维度客户总数，已服务，已完成，已达标
+    // 服务经理维度发起任务source复用了isEntryFromProgressDetail，但是source需要单独区分一下，
+    // 所以优先判断enterType
+    // enterType有值，代表是从服务经理维度发起的任务
+    if (!_.isEmpty(enterType)) {
+      currentEntryName = TASK_CUST_SCOPE_ENTRY;
+      currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUST_SCOPE';
+      currentRoute = '/customerPool/createTaskFromCustScope';
+    } else if (isEntryFromPie) {
       currentEntryName = PIE_ENTRY;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PIE';
       currentRoute = '/customerPool/createTaskFromPie';
@@ -388,10 +398,6 @@ export default class ManagerViewDetail extends PureComponent {
       currentEntryName = PROGRESS_ENTRY;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PROGRESS';
       currentRoute = '/customerPool/createTaskFromProgress';
-    } else if (!_.isEmpty(enterType)) {
-      currentEntryName = TASK_CUST_SCOPE_ENTRY;
-      currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUST_SCOPE';
-      currentRoute = '/customerPool/createTaskFromCustScope';
     }
 
     // 发起新的任务之前，先清除数据
