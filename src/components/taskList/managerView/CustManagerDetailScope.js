@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-07 17:46:22
+ * @Last Modified time: 2018-06-12 13:08:38
  * 服务经理维度任务统计
  */
 
@@ -257,8 +257,8 @@ export default class CustManagerDetailScope extends PureComponent {
       isEntryFromProgressDetail,
       // 来自结果达标下钻
       isEntryFromResultStatisfy,
-      // 除了总数下钻，其它都能发起任务
-      canLaunchTask: !isEntryFromCustTotal,
+      // 在这里，都能发起任务
+      canLaunchTask: true,
       // 复用进度条的下钻标记位，已服务，已完成，已达标
       ...progressParam,
     });

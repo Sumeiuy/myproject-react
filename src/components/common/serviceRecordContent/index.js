@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 09:45:42
+ * @Last Modified time: 2018-06-12 14:46:19
  */
 
 import React, { PureComponent } from 'react';
@@ -381,15 +381,15 @@ export default class ServiceRecordContent extends PureComponent {
       isShowServeStatusError = _.isEmpty(serviceStatus);
       this.setState({ isShowServeStatusError });
     }
-    const isShowErrorCustFeedback = this.checkCustFeedback();
-    return isShowErrorCustFeedback &&
-      !isShowServeStatusError && this.serveContentRef.checkData();
+    return !isShowServeStatusError && this.serveContentRef.checkData();
   }
 
   @autobind
   checkCustFeedback() {
-    // 如果客户反馈没有勾选，提示错误
-    if (this.state.custFeedback === defaultFeedbackOption) {
+    const { custFeedback, custFeedback2 } = this.state;
+    // 如果客户反馈一级或者二级没有勾选，提示错误
+    if (custFeedback === defaultFeedbackOption ||
+      custFeedback2 === defaultFeedbackOption) {
       this.setState({
         isShowErrorCustFeedback: true,
       });
@@ -451,8 +451,8 @@ export default class ServiceRecordContent extends PureComponent {
       serveTime: serviceTime.format(DATE_FORMAT_FULL_END),
       serveContentDesc: serviceRecord,
       feedBackTime: custFeedbackTime.format(DATE_FORMAT_END),
-      serveCustFeedBack: custFeedback,
-      serveCustFeedBack2: custFeedback2,
+      serveCustFeedBack: custFeedback === defaultFeedbackOption ? '' : custFeedback,
+      serveCustFeedBack2: custFeedback2 === defaultFeedbackOption ? '' : custFeedback2,
       flowStatus: serviceStatus,
       missionFlowId,
       missionId,

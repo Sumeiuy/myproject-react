@@ -32,15 +32,18 @@
     }
     .remarkQuestion {
       :global {
-        .ant-table-tbody {
-          & > tr:nth-child(odd) {
-            background-color: #fafcff;
-          }
-          & > tr:nth-child(even) {
-            background-color: #fff;
-          }
-          & > tr > td {
-            padding: 8px 10px 10px;
+        .ant-table table {
+          table-layout: fixed;
+          .ant-table-tbody {
+            & > tr:nth-child(odd) {
+              background-color: #fafcff;
+            }
+            & > tr:nth-child(even) {
+              background-color: #fff;
+            }
+            & > tr > td {
+              padding: 8px 10px 10px;
+            }
           }
         }
       }
@@ -58,6 +61,9 @@
         color: #333;
         line-height: 20px;
         margin-bottom: 0;
+        word-break: break-all;
+        white-space: pre-wrap;
+        word-wrap: break-word;
       }
       .attachContainer {
         display: flex;

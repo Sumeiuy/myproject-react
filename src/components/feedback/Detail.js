@@ -58,7 +58,6 @@ export default class Detail extends PureComponent {
     getFeedbackRecordList: PropTypes.func.isRequired,
     updateFeedback: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {

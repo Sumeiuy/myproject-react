@@ -46,7 +46,7 @@ export default class RemarkList extends PureComponent {
   @autobind
   constructTableColumns() {
     const columns = [{
-      dataIndex: 'title.description',
+      key: 'id',
       width: '100%',
       render: (text, record) => {
         const { renderColumn } = this.props;
@@ -56,7 +56,10 @@ export default class RemarkList extends PureComponent {
         }
         // 默认的column
         return (
-          <div className={styles.item}>
+          <div
+            className={styles.item}
+            key={record.id}
+          >
             <div className={styles.wrap}>
               <div className={styles.info}>
                 <span>{record.title}</span>
@@ -77,7 +80,7 @@ export default class RemarkList extends PureComponent {
     const { className } = this.props;
     return (
       <Table
-        rowKey="feedId"
+        rowKey="id"
         className={classnames(
           styles.recordList,
           { [className]: !!className },
