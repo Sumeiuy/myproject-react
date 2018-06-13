@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-13 17:00:47
+ * @Last Modified time: 2018-06-13 22:31:41
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -23,8 +23,12 @@ export default class CascadeFeedbackSelect extends PureComponent {
     const { feedbackList, value } = this.props;
     const first = _.get(feedbackList, '[0].key') || '';
     const second = _.get(feedbackList, '[0].children[0].key') || '';
-
-    this.state = _.isEmpty(value) ? { first, second } : value;
+    const initialState = _.isEmpty(value) ? { first, second } : value;
+    this.state = {
+      ...initialState,
+      // 是否展示二级反馈，默认不展示
+      isShowSecondSelect: false,
+    };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -33,8 +37,51 @@ export default class CascadeFeedbackSelect extends PureComponent {
   }
 
   @autobind
+  getCustFeedback2() {
+    const { feedbackList } = this.props;
+    const { first } = this.state;
+    // 二级客户反馈选项
+    let isShowSecondSelect = true;
+    let secondFeedback = defaultFeedbackOption;
+    const secondFeedbackList = this.findChildrenByFirstSelect(first);
+    const isEmptySecondList = _.isEmpty(secondFeedbackList);
+
+    // 判断如果一级反馈的文字与二级反馈的文字一样且二级只有一条数据时，则不显示二级反馈
+    if (!isEmptySecondList && secondFeedbackList.length === 1) {
+      const firstFeedback = _.find(feedbackList, { key: first }) || {};
+      isShowSecondSelect = firstFeedback.value !== secondFeedbackList[0].value;
+      secondFeedback = isShowSecondSelect ? defaultFeedbackOption : secondFeedbackList[0].value;
+    }
+
+    // 如果二级反馈没数据，不展示二级反馈
+    if (isEmptySecondList) {
+      isShowSecondSelect = false;
+      // 二级不展示，而且二级反馈没有，
+      secondFeedback = '';
+    }
+
+    return {
+      isShowSecondSelect,
+      secondFeedback,
+    };
+  }
+
+  @autobind
   setCustFeedbackRef(input) {
     this.customerFeedbackRef = input;
+  }
+
+  // 改变一级客户反馈
+  @autobind
+  handleFirstFeedbakSelectChange(value) {
+    const { isShowSecondSelect, secondFeedback } = this.getCustFeedback2();
+    // 切换一级，将二级设置成请选择
+    this.setState({
+      first: value,
+      second: secondFeedback,
+      isShowSecondSelect,
+    });
+    this.props.onChange({ first: value, second: secondFeedback });
   }
 
   // 根据选中的一级客户反馈，获取二级客户反馈列表
@@ -42,17 +89,6 @@ export default class CascadeFeedbackSelect extends PureComponent {
   findChildrenByFirstSelect(value) {
     const { feedbackList } = this.props;
     return (_.find(feedbackList, item => item.key === value) || {}).children || [];
-  }
-
-  // 改变一级客户反馈
-  @autobind
-  handleFirstFeedbakSelectChange(value) {
-    // 切换一级，将二级设置成请选择
-    this.setState({
-      first: value,
-      second: defaultFeedbackOption,
-    });
-    this.props.onChange({ first: value, second: defaultFeedbackOption });
   }
 
   // 改变二级客户反馈
@@ -70,25 +106,12 @@ export default class CascadeFeedbackSelect extends PureComponent {
   render() {
     const { feedbackList } = this.props;
     if (_.isEmpty(feedbackList)) return null;
-    const { first, second } = this.state;
+    const { first, second, isShowSecondSelect } = this.state;
     // 一级客户反馈选项
     const firstOptions = feedbackList.map(this.renderOption);
     // 二级客户反馈选项
-    let showSecondSelect = false;
     const secondFeedbackList = this.findChildrenByFirstSelect(first);
-    const isEmptySecondList = _.isEmpty(secondFeedbackList);
     const secondOptions = secondFeedbackList.map(this.renderOption);
-    // 判断如果一级反馈的文字与二级反馈的文字一样且二级只有一条数据时，则不显示二级反馈
-    if (!isEmptySecondList && secondFeedbackList.length === 1) {
-      const firstFeedback = _.find(feedbackList, { key: first }) || {};
-      const secondFedback = _.find(secondFeedbackList, { key: second }) || {};
-      showSecondSelect = firstFeedback.value === secondFedback.value;
-    }
-    // 代表请选择，前端自定义的key，其实用不到，只是为了加一个非空的默认值
-    // 如果二级反馈没数据，不展示二级反馈
-    if (first === defaultFeedbackOption || isEmptySecondList) {
-      showSecondSelect = true;
-    }
 
     return (
       <div className={styles.feedbackType}>
@@ -102,8 +125,12 @@ export default class CascadeFeedbackSelect extends PureComponent {
           >
             {firstOptions}
           </Select>
+          {/**
+           * isShowSecondSelect
+           * 代表是否展示二级反馈
+           */}
           {
-            showSecondSelect ? null :
+            !isShowSecondSelect ? null :
               (<Select
                 value={second}
                 style={{ width: 142 }}
