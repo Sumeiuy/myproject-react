@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 16:28:37
+ * @Last Modified time: 2018-06-13 13:32:19
  */
 
 import React, { PureComponent } from 'react';
@@ -346,6 +346,13 @@ export default class ServiceRecordContent extends PureComponent {
     this.serveContentRef = ref;
   }
 
+  @autobind
+  toggleFormContentState(state) {
+    this.setState({
+      ...state,
+    });
+  }
+
   // 针对选择的服务方式，非涨乐财富通下的检测
   @autobind
   checkNotZLFins() {
@@ -355,17 +362,24 @@ export default class ServiceRecordContent extends PureComponent {
     let isShowServiceContentError = false;
     // 校验服务记录
     isShowServiceContentError = !serviceRecord || serviceRecord.length > serviceContentMaxLength;
-    this.setState({ isShowServiceContentError });
+
     const isShowErrorCustFeedback = this.checkCustFeedback();
     // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容
     if (isPhoneCall) {
       return isShowErrorCustFeedback && !isShowServiceContentError;
     }
+
     if (isEntranceFromPerformerView) {
       // 在执行者视图中校验 服务状态 是否已经选择
       isShowServeStatusError = _.isEmpty(serviceStatus);
-      this.setState({ isShowServeStatusError });
     }
+
+    // 设置内部状态
+    this.toggleFormContentState({
+      isShowServiceContentError,
+      isShowErrorCustFeedback,
+      isShowServeStatusError,
+    });
 
     return isShowErrorCustFeedback &&
       !isShowServeStatusError && !isShowServiceContentError;
@@ -380,8 +394,8 @@ export default class ServiceRecordContent extends PureComponent {
     if (isEntranceFromPerformerView) {
       // 在执行者视图中校验 服务状态 是否已经选择
       isShowServeStatusError = _.isEmpty(serviceStatus);
-      this.setState({ isShowServeStatusError });
     }
+    this.toggleFormContentState({ isShowServeStatusError });
     return !isShowServeStatusError && this.serveContentRef.checkData();
   }
 
@@ -391,9 +405,6 @@ export default class ServiceRecordContent extends PureComponent {
     // 如果客户反馈一级或者二级没有勾选，提示错误
     if (custFeedback === defaultFeedbackOption ||
       custFeedback2 === defaultFeedbackOption) {
-      this.setState({
-        isShowErrorCustFeedback: true,
-      });
       return false;
     }
     return true;
