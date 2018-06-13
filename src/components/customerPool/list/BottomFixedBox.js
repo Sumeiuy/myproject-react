@@ -98,8 +98,8 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectedIds,
-        selectAll,
-        source,
+          selectAll,
+          source,
         },
         pathname,
         search,
