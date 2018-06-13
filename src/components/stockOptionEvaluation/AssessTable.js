@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-08 09:10:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-09 14:11:59
+ * @Last Modified time: 2018-06-12 20:23:42
  */
 
 import React, { PureComponent } from 'react';
@@ -35,6 +35,7 @@ export default class AssessTable extends PureComponent {
               {value}</div>,
             props: {},
           };
+          // 第4行和第5行的第1列评估要素需要合并成一行，第6行和第7行的第1列评估要素需要合并成一行，所以把第4行和第6行rowSpan设置成2
           if (index === 3 || index === 5) {
             const resultArr = value.split('\n');
             const valueStr = resultArr.join('');
@@ -42,6 +43,7 @@ export default class AssessTable extends PureComponent {
               {resultArr[0]}<br />{resultArr[1]}</div>);
             obj.props.rowSpan = 2;
           }
+          // 第4行与第5行的第1列评估要素合成了一行，第6行与第7行的第1列评估要素合成了一行，所以把第5行和第7行rowSpan设置成0
           if (index === 4 || index === 6) {
             obj.props.rowSpan = 0;
           }
@@ -56,15 +58,19 @@ export default class AssessTable extends PureComponent {
             children: value,
             props: {},
           };
+          // 第1行，第3行，第4行，第6行的第3列评估结果显示格式，比如：符合条件: (XXX)的形式
           if (index === 0 || index === 2 || index === 3 || index === 5) {
             obj.children = this.handleResultByCondRight(record);
           }
+          // 第2行的第3列评估结果的显示格式
           if (index === 1) {
             obj.children = this.handleResultByRisK(record);
           }
+          // 第5行和第8行的第3列评估结果的显示格式，比如：已通过 (XXX) 学历证明材料
           if (index === 4 || index === 7) {
             obj.children = this.handleResultByCondMiddle(record);
           }
+          // 第7行的第3列评估结果的显示格式
           if (index === 6) {
             obj.children = this.handleResultByMoreCond(record);
           }
@@ -90,11 +96,13 @@ export default class AssessTable extends PureComponent {
             children: value,
             props: {},
           };
+           // 第3行和第4行的第1列评估要素需要合并成一行，所以把第3行rowSpan设置成2
           if (index === 2) {
             const valueArr = value.split('\n');
             obj.children = (<div> {valueArr[0]}<br />{valueArr[1]}</div>);
             obj.props.rowSpan = 2;
           }
+          // 第4行与第3行的第1列评估要素合成了一行，所以把第4行和第6行rowSpan设置成0
           if (index === 3) {
             obj.props.rowSpan = 0;
           }
@@ -109,12 +117,15 @@ export default class AssessTable extends PureComponent {
             children: value,
             props: {},
           };
+          // 第1行，第3行的第3列评估结果显示格式，比如：符合条件: (XXX)的形式
           if (index === 0 || index === 2) {
             obj.children = this.handleResultByCondRight(record);
           }
+          // 第2行的第3列评估结果的显示格式
           if (index === 1) {
             obj.children = this.handleResultByRisK(record);
           }
+          // 第4行和第5行的第3列评估结果的显示格式，比如：已通过 (XXX) 学历证明材料
           if (index === 3 || index === 4) {
             obj.children = this.handleResultByCondMiddle(record);
           }
@@ -142,9 +153,11 @@ export default class AssessTable extends PureComponent {
             children: value,
             props: {},
           };
+          // 第1行的第3列评估结果的显示格式
           if (index === 0) {
             obj.children = this.handleResultByRisK(record);
           }
+          // 第2行，第3行的第3列评估结果显示格式，比如：符合条件: (XXX)的形式
           if (index === 1) {
             obj.children = this.handleResultByCondRight(record);
           }
@@ -162,8 +175,13 @@ export default class AssessTable extends PureComponent {
       assessResult,
     } = record;
     const valueStr = `${defaultResult}（${assessResult}）`;
-    return (<div title={valueStr} className={styles.assessItem}>
-      {defaultResult}（<span>{assessResult}</span>）</div>);
+    return (
+      <div title={valueStr} className={styles.assessItem}>
+        {defaultResult}（
+        <span>{assessResult}</span>
+        ）
+      </div>
+    );
   }
 
   // 处理风险评估的评估结果
@@ -175,9 +193,15 @@ export default class AssessTable extends PureComponent {
       defaultResult2,
     } = record;
     const valueStr = `${defaultResult1}（${assessResult}）${defaultResult2}`;
-    return (<div title={valueStr} className={styles.assessItem}>
-      {defaultResult1}（<span>{assessResult}</span>）<br />
-      {defaultResult2}</div>);
+    return (
+      <div title={valueStr} className={styles.assessItem}>
+        {defaultResult1}（
+        <span>{assessResult}</span>
+        ）
+        <br />
+        {defaultResult2}
+      </div>
+    );
   }
 
   // 处理评估结果在中间的评估结果
@@ -190,9 +214,13 @@ export default class AssessTable extends PureComponent {
       defaultResult2,
     } = record;
     const valueStr = `${defaultResult1}（${assessResult}）${defaultResult2}`;
-    return (<div title={valueStr} className={styles.assessItem}>
-      {defaultResult1}（<span>{assessResult}</span>）
-      {defaultResult2}</div>);
+    return (
+      <div title={valueStr} className={styles.assessItem}>
+        {defaultResult1}（
+        <span>{assessResult}</span>
+        ）{defaultResult2}
+      </div>
+    );
   }
 
   // 返回多个评估结果的处理
@@ -207,10 +235,22 @@ export default class AssessTable extends PureComponent {
       jrqhjyFlag,
     } = record;
     const valueStr = `${defaultResult1}（${aAcctOpenTimeFlag}）${defaultResult2}（${rzrqzqAcctFlag}）${defaultResult3}（${jrqhjyFlag}）`;
-    return (<div title={valueStr} className={styles.assessItem}>
-      {defaultResult1}（<span>{aAcctOpenTimeFlag}</span>）<br />
-      {defaultResult2}（<span>{rzrqzqAcctFlag}</span>）<br />
-      {defaultResult2}（<span>{rzrqzqAcctFlag}</span>）<br /></div>);
+    return (
+      <div title={valueStr} className={styles.assessItem}>
+        {defaultResult1}（
+        <span>{aAcctOpenTimeFlag}</span>
+        ）
+        <br />
+        {defaultResult2}（
+        <span>{rzrqzqAcctFlag}</span>
+        ）
+        <br />
+        {defaultResult2}（
+        <span>{rzrqzqAcctFlag}</span>
+        ）
+        <br />
+      </div>
+    );
   }
 
   @autobind
@@ -256,11 +296,12 @@ export default class AssessTable extends PureComponent {
       assessResultColumn,
     };
     let columns = [];
+    // 客户类型是新开客户和申请类型是初次申请的TableColumn
     if (stockCustType === 'New' && reqType === 'New') {
       columns = this.handleColumnTypeIsNew(defaultColumns);
-    } else if (stockCustType === 'New' && reqType !== 'New') {
+    } else if (stockCustType === 'New' && reqType !== 'New') { // 客户类型是新开客户和申请类型是投资级别变更申请的TableColumn
       columns = this.handleColumncustTypeIsNew(defaultColumns);
-    } else if (stockCustType !== 'New') {
+    } else if (stockCustType !== 'New') { // 客户类型是多开客户的TableColumn
       columns = this.handleColumnTypeIsMore(defaultColumns);
     }
     return columns;
@@ -275,13 +316,13 @@ export default class AssessTable extends PureComponent {
         riskOp, // 风险评级
         riskOptTime, // 风险评级时间
         riskOptTimeFlag, // 风险评级结果
-        ageFlag, // 年龄条件
-        degreeFlag,  // 学历
-        invFlag, // 关联A股账户在我公司开户6个月以上并具备融资融券业务资格
-        aAcctOpenTimeFlag, // A股开立时间6个月以上
-        rzrqzqAcctFlag, // 已开立融资融券证券账号
-        jrqhjyFlag, // 已提供金融期货交易证明
-        mTransLevel, // 交易级别
+        ageFlagCn, // 年龄条件
+        degreeFlagCn,  // 学历
+        invFlagCn, // 关联A股账户在我公司开户6个月以上并具备融资融券业务资格
+        aAcctOpenTimeFlagCn, // A股开立时间6个月以上
+        rzrqzqAcctFlagCn, // 已开立融资融券证券账号
+        jrqhjyFlagCn, // 已提供金融期货交易证明
+        mTransLevelCn, // 交易级别
       },
     } = this.props.data;
 
@@ -317,7 +358,7 @@ export default class AssessTable extends PureComponent {
       assessEle: assessTable[3].assessEle,
       aptitudeEle: assessTable[3].aptitudeEleAge,
       defaultResult: assessTable[3].assessResultAge,
-      assessResult: ageFlag,
+      assessResult: ageFlagCn,
     };
     // 基本情况（二选一）学历数据
     const basicDegreeData = {
@@ -325,7 +366,7 @@ export default class AssessTable extends PureComponent {
       assessEle: assessTable[3].assessEle,
       aptitudeEle: assessTable[3].aptitudeEleDegree,
       defaultResult1: assessTable[3].assessResultDegree1,
-      assessResult: degreeFlag,
+      assessResult: degreeFlagCn,
       defaultResult2: assessTable[3].assessResultDegree2,
     };
     // 关联A股账户在我公司开户6个月以上并具备融资融券业务资格数据
@@ -334,7 +375,7 @@ export default class AssessTable extends PureComponent {
       assessEle: assessTable[4].assessEle,
       aptitudeEle: assessTable[4].aptitudeEleInv,
       defaultResult: assessTable[4].assessResultInv,
-      assessResult: invFlag,
+      assessResult: invFlagCn,
     };
     // 投资经历评估数据
     const experData = {
@@ -342,11 +383,11 @@ export default class AssessTable extends PureComponent {
       assessEle: assessTable[4].assessEle,
       aptitudeEle: assessTable[4].aptitudeEleExper,
       defaultResult1: assessTable[4].assessResultaAcct,
-      aAcctOpenTimeFlag,
+      aAcctOpenTimeFlagCn,
       defaultResult2: assessTable[4].assessResultrzrqzq,
-      rzrqzqAcctFlag,
+      rzrqzqAcctFlagCn,
       defaultResult3: assessTable[4].assessResultjrqhjy,
-      jrqhjyFlag,
+      jrqhjyFlagCn,
     };
     // 交易级别数据
     const mTransData = {
@@ -354,7 +395,7 @@ export default class AssessTable extends PureComponent {
       assessEle: assessTable[5].assessEle,
       aptitudeEle: assessTable[5].aptitudeEle,
       defaultResult1: assessTable[5].assessResult1,
-      assessResult: mTransLevel,
+      assessResult: mTransLevelCn,
       defaultResult2: assessTable[5].assessResult2,
     };
     let dataSource = [];

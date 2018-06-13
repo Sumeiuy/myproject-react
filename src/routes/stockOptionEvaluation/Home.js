@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-11 16:27:54
+ * @Last Modified time: 2018-06-13 12:48:02
  */
 
 import React, { PureComponent } from 'react';
@@ -56,8 +56,14 @@ const mapStateToProps = state => ({
   busCustList: state.stockOptionEvaluation.busCustList,
   // 客户基本信息
   custInfo: state.stockOptionEvaluation.custInfo,
-  // 基本信息的多个select数据
-  selectMapData: state.stockOptionEvaluation.selectMapData,
+  // 客户类型下拉列表
+  stockCustTypeMap: state.stockOptionEvaluation.stockCustTypeMap,
+  // 申请类型下拉列表
+  reqTypeMap: state.stockOptionEvaluation.reqTypeMap,
+  // 开立期权市场类别下拉列表
+  klqqsclbMap: state.stockOptionEvaluation.klqqsclbMap,
+  // 业务受理营业部下拉列表
+  busDivisionMap: state.stockOptionEvaluation.busDivisionMap,
 });
 
 const mapDispatchToProps = {
@@ -75,7 +81,7 @@ const mapDispatchToProps = {
   // 获取基本信息的多个select数据
   getSelectMap: effect(effects.getSelectMap, { forceFull: true }),
   // 清除数据
-  clearProps: effect(effects.getSelectMap, { forceFull: true }),
+  clearProps: effect(effects.clearProps, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -101,8 +107,15 @@ export default class StockOptionApplication extends PureComponent {
     // 客户基本信息
     custInfo: PropTypes.object.isRequired,
     getCustInfo: PropTypes.func.isRequired,
-    // 基本信息的多个select数据
-    selectMapData: PropTypes.object.isRequired,
+    // 客户类型下拉列表
+    stockCustTypeMap: PropTypes.array.isRequired,
+    // 申请类型下拉列表
+    reqTypeMap: PropTypes.array.isRequired,
+    // 开立期权市场类别下拉列表
+    klqqsclbMap: PropTypes.array.isRequired,
+    // 业务受理营业部下拉列表
+    busDivisionMap: PropTypes.array.isRequired,
+    // 获取基本信息的多个select数据
     getSelectMap: PropTypes.func.isRequired,
     // 清除数据
     clearProps: PropTypes.func.isRequired,
@@ -306,7 +319,10 @@ export default class StockOptionApplication extends PureComponent {
       getBusCustList,
       custInfo,
       getCustInfo,
-      selectMapData,
+      stockCustTypeMap,
+      reqTypeMap,
+      klqqsclbMap,
+      busDivisionMap,
       getSelectMap,
       clearProps,
     } = this.props;
@@ -370,7 +386,10 @@ export default class StockOptionApplication extends PureComponent {
             onEmitClearModal={this.handleClearModal}
             custInfo={custInfo}
             getCustInfo={getCustInfo}
-            selectMapData={selectMapData}
+            stockCustTypeMap={stockCustTypeMap}
+            reqTypeMap={reqTypeMap}
+            klqqsclbMap={klqqsclbMap}
+            busDivisionMap={busDivisionMap}
             getSelectMap={getSelectMap}
           />
           : null

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-11 17:02:49
+ * @Last Modified time: 2018-06-12 15:33:36
  */
 
 import React, { PureComponent } from 'react';
@@ -32,8 +32,15 @@ export default class CreateApply extends PureComponent {
     // 客户基本信息
     custInfo: PropTypes.object.isRequired,
     getCustInfo: PropTypes.func.isRequired,
-    // 基本信息的多个select数据
-    selectMapData: PropTypes.object.isRequired,
+    // 客户类型下拉列表
+    stockCustTypeMap: PropTypes.array.isRequired,
+    // 申请类型下拉列表
+    reqTypeMap: PropTypes.array.isRequired,
+    // 开立期权市场类别下拉列表
+    klqqsclbMap: PropTypes.array.isRequired,
+    // 业务受理营业部下拉列表
+    busDivisionMap: PropTypes.array.isRequired,
+    // 获取基本信息的多个select数据
     getSelectMap: PropTypes.func.isRequired,
   }
 
@@ -56,12 +63,17 @@ export default class CreateApply extends PureComponent {
       custName: '',
       // 新建时流程Id是空
       flowId: '',
-      selectMapData: {
-        stockCustTypeMap: [],
-        klqqsclbMap: [],
-        reqTypeMap: [],
-        busDivisionMap: [],
-      },
+      // 股票客户类型
+      stockCustType: '',
+      // 申请类型
+      reqType: '',
+      // 开立期权市场类别
+      openOptMktCatg: '',
+      // 业务受理营业部
+      busPrcDivId: '',
+      // 申报事项
+      declareBus: '',
+
     };
   }
   // 点击提交按钮
@@ -85,6 +97,11 @@ export default class CreateApply extends PureComponent {
       isShowModal: false,
       nextApproverModal: false,
     }, this.props.clearProps);
+  }
+
+  @autobind
+  afterClose() {
+    this.props.onEmitClearModal();
   }
 
   // 更新数据
@@ -154,12 +171,21 @@ export default class CreateApply extends PureComponent {
       getSelectMap({ flowId });
     }
   }
+
+  // 基本信息select选择后修改相应的值
+  @autobind
+  handleEmitEvent(name, value) {
+    this.setState({ [name]: value });
+  }
   render() {
     const {
       busCustList,
       custInfo,
       getCustInfo,
-      selectMapData,
+      stockCustTypeMap,
+      reqTypeMap,
+      klqqsclbMap,
+      busDivisionMap,
       getSelectMap,
     } = this.props;
     const {
@@ -174,6 +200,7 @@ export default class CreateApply extends PureComponent {
         modalKey="stockOptionModal"
         onOk={this.handleOk}
         closeModal={this.handleCloseModal}
+        afterClose={this.afterClose}
         visible={isShowModal}
         size="large"
       >
@@ -198,12 +225,16 @@ export default class CreateApply extends PureComponent {
             </div>
           </div>
           <EditBasicInfo
-            selectMapData={selectMapData}
+            stockCustTypeMap={stockCustTypeMap}
+            reqTypeMap={reqTypeMap}
+            klqqsclbMap={klqqsclbMap}
+            busDivisionMap={busDivisionMap}
             getSelectMap={getSelectMap}
             customer={custAccount}
             custInfo={custInfo}
             getCustInfo={getCustInfo}
             flowId={flowId}
+            onEmitEvent={this.handleEmitEvent}
           />
         </div>
       </CommonModal>

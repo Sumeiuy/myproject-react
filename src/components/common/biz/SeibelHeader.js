@@ -643,7 +643,6 @@ export default class Pageheader extends PureComponent {
                   <DateRangePicker
                     onChange={this.handleCreateDateChange}
                     disabledRange={this.setDisableRange}
-                    isFixed
                   />
                 </div>
               </div>

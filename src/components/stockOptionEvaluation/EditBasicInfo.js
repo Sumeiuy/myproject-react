@@ -2,18 +2,24 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-11 17:53:51
+ * @Last Modified time: 2018-06-13 13:00:17
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { Radio } from 'antd';
+
 
 import Select from '../common/Select';
+import Icon from '../common/Icon';
 import styles from './EditBasicInfo.less';
 
+const RadioGroup = Radio.Group;
 const EMPTY_INFO = '--';
+// const EMPTY_OBJECT = {};
+const EMPTY_LIST = [];
 
 export default class EditBasicInfo extends PureComponent {
   static propTypes = {
@@ -21,11 +27,20 @@ export default class EditBasicInfo extends PureComponent {
     custInfo: PropTypes.object.isRequired,
     // 客户Id和客户名称信息
     customer: PropTypes.string.isRequired,
-    // 基本信息的多个select数据
-    selectMapData: PropTypes.object.isRequired,
+    // 客户类型下拉列表
+    stockCustTypeMap: PropTypes.array.isRequired,
+    // 申请类型下拉列表
+    reqTypeMap: PropTypes.array.isRequired,
+    // 开立期权市场类别下拉列表
+    klqqsclbMap: PropTypes.array.isRequired,
+    // 业务受理营业部下拉列表
+    busDivisionMap: PropTypes.array.isRequired,
+    // 获取基本信息的多个select数据
     getSelectMap: PropTypes.func.isRequired,
     // 流程Id
     flowId: PropTypes.string.isRequired,
+    // select选择后触发父组件数据变化
+    onEmitEvent: PropTypes.func.isRequired,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -33,11 +48,14 @@ export default class EditBasicInfo extends PureComponent {
       return null;
     }
     return {
-      selectMapData: nextProps.selectMapData,
-      stockCustType: nextProps.stockCustType,
-      reqType: nextProps.reqType,
-      openOptMktCatg: nextProps.openOptMktCatg,
-      busPrcDivId: nextProps.busPrcDivId,
+      stockCustTypeMap: nextProps.stockCustTypeMap,
+      reqTypeMap: nextProps.reqTypeMap,
+      klqqsclbMap: nextProps.klqqsclbMap,
+      busDivisionMap: nextProps.busDivisionMap,
+      // stockCustType: nextProps.stockCustType,
+      // reqType: nextProps.reqType,
+      // openOptMktCatg: nextProps.openOptMktCatg,
+      // busPrcDivId: nextProps.busPrcDivId,
     };
   }
 
@@ -46,41 +64,98 @@ export default class EditBasicInfo extends PureComponent {
     this.state = {
       pageNum: 1,
       pageSize: 10,
+      // 股票客户类型
       stockCustType: '',
+      // 申请类型
       reqType: '',
+      // 开立期权市场类别
       openOptMktCatg: '',
+      // 业务受理营业部
       busPrcDivId: '',
-      selectMapData: {
-        stockCustTypeMap: [],
-        reqTypeMap: [],
-        klqqsclbMap: [],
-        busDivisionMap: [],
-      },
+      // 股票客户类型下拉列表
+      stockCustTypeMap: EMPTY_LIST,
+      // 申请类型下拉列表
+      reqTypeMap: EMPTY_LIST,
+      // 开立期权市场类别下拉列表
+      klqqsclbMap: EMPTY_LIST,
+      // 业务受理营业部下拉列表
+      busDivisionMap: EMPTY_LIST,
+      // 申报事项
+      declareBus: '',
+      // 已提供大专及以上的学历证明材料
+      degreeFlag: '',
+      // A股账户开立时间6个月以上
+      aAcctOpenTimeFlag: '',
+      // 已开立融资融券账户
+      rzrqzqAcctFlag: '',
+      // 已提供金融期货交易证明
+      jrqhjyFlag: '',
+      // 是否显示学历提示，默认是false
+      isShowDegreePrompt: false,
+      // 是否显示投资经历提示，默认是false
+      isShowInvPrompt: false,
     };
   }
 
-  // 选择客户类型
+  // 客户类型,申请类型 select选择后设置value
   @autobind
-  updateStockCustType(value) {
-    this.setState({ stockCustType: value });
+  updateSelect(name, value) {
+    this.setState({ [name]: value });
+    this.props.onEmitEvent(name, value);
+    this.checkType();
   }
 
-  // 选择申请类型
+  // 检测是否是新开客户，初次申请，然后判断是否显示学历提示选项，和投资经历评估提示选项
   @autobind
-  updateReqType(value) {
-    this.setState({ reqType: value });
+  checkType() {
+    const {
+      custInfo: {
+        invFlag,
+        ageFlag,
+      },
+    } = this.props;
+    const {
+      stockCustType,
+      reqType,
+    } = this.state;
+    if (stockCustType === 'New' && reqType === 'New') {
+      if (ageFlag === 'N') {
+        this.setState({ isShowDegreePrompt: true });
+      }
+      if (invFlag === 'N') {
+        this.setState({ isShowInvPrompt: true });
+      }
+    }
   }
 
   // 选择开立期权市场类别
   @autobind
-  updateOpenOptMktCatg(value) {
-    this.setState({ openOptMktCatg: value });
+  updateOpenOptMktCatg(name, value) {
+    this.setState({ [name]: value });
+    this.props.onEmitEvent(name, value);
   }
 
   // 选择业务受理营业部
   @autobind
-  updateBusPrcDiv(value) {
+  updateBusPrcDiv(name, value) {
     this.setState({ busPrcDivId: value });
+    this.props.onEmitEvent('busPrcDivId', value);
+  }
+
+  // 申报事项改变
+  @autobind
+  changeDeclareBus(e) {
+    const value = e.target.value;
+    this.setState({ declareBus: value });
+    this.props.onEmitEvent('declareBus', value);
+  }
+
+  // 提示选择变化
+  @autobind
+  changePrompt(e, name) {
+    const value = e.target.value;
+    this.setState({ [name]: value });
+    this.props.onEmitEvent(name, value);
   }
 
   render() {
@@ -95,25 +170,27 @@ export default class EditBasicInfo extends PureComponent {
         aAcct,
         openSysName,
         custTransLvName,
-        stockCustType,
         // stockCustTypeName,
-        reqType,
         // reqTypeName,
-        openOptMktCatg,
         // openOptMktCatgName,
-        busPrcDivId,
         // busPrcDivName,
         accptTime,
-        declareBus,
       },
     } = this.props;
     const {
-      selectMapData: {
-        stockCustTypeMap,
-        reqTypeMap,
-        klqqsclbMap,
-        busDivisionMap,
-      },
+      stockCustType,
+      reqType,
+      openOptMktCatg,
+      busPrcDivId,
+      stockCustTypeMap,
+      reqTypeMap,
+      klqqsclbMap,
+      busDivisionMap,
+      declareBus,
+      degreeFlag,
+      aAcctOpenTimeFlag,
+      rzrqzqAcctFlag,
+      jrqhjyFlag,
     } = this.state;
     let isProfessInvsetor = '';
     if (isProfessInvset) {
@@ -208,7 +285,7 @@ export default class EditBasicInfo extends PureComponent {
                 name="stockCustType"
                 data={stockCustTypeMap}
                 disabled={isSelectDisabled}
-                onChange={this.updateStockCustType}
+                onChange={this.updateSelect}
                 value={stockCustType || '请选择'}
               />
             </div>
@@ -224,7 +301,7 @@ export default class EditBasicInfo extends PureComponent {
                 name="reqType"
                 data={reqTypeMap}
                 disabled={isSelectDisabled}
-                onChange={this.updateReqType}
+                onChange={this.updateSelect}
                 value={reqType || '请选择'}
               />
             </div>
@@ -276,7 +353,87 @@ export default class EditBasicInfo extends PureComponent {
               <span className={styles.colon}>:</span>
             </div>
             <div className={styles.value} >
-              {declareBus || EMPTY_INFO}
+              <div className={styles.applyContent}>
+                <textarea
+                  className={styles.applyTextarea}
+                  value={declareBus}
+                  onChange={this.changeDeclareBus}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={styles.promptBox}>
+          <div className={styles.head}>
+            <Icon type="jingshi" className={styles.promptIcon} />
+            <span className={styles.title}>客户在我公司投资经历评估不符合要求，请确认客户是否满足以下条件：</span>
+          </div>
+          <div className={styles.row}>
+            <div className={`${styles.label} ${styles.labelDegree}`}>
+              <i className={styles.isRequired}>*</i>
+                已提供大专及以上的学历证明材料
+              <span className={styles.colon}>:</span>
+            </div>
+            <div className={styles.value} >
+              <div className={styles.radioBox}>
+                <RadioGroup onChange={e => this.changePrompt(e, 'degreeFlag')} value={degreeFlag}>
+                  <Radio value="Y">是</Radio>
+                  <Radio value="N">否</Radio>
+                </RadioGroup>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={styles.promptBox}>
+          <div className={styles.head}>
+            <Icon type="jingshi" className={styles.promptIcon} />
+            <span className={styles.title}>客户在我公司投资经历评估不符合要求，请确认客户是否满足以下条件：</span>
+          </div>
+          <div className={styles.options}>
+            <div className={styles.coloumn}>
+              <div className={`${styles.label} ${styles.labelPrompt}`}>
+                <i className={styles.isRequired}>*</i>
+                A股账户开立时间6个月以上
+                <span className={styles.colon}>:</span>
+              </div>
+              <div className={styles.value} >
+                <div className={styles.radioBox}>
+                  <RadioGroup onChange={e => this.changePrompt(e, 'aAcctOpenTimeFlag')} value={aAcctOpenTimeFlag}>
+                    <Radio value="Y">是</Radio>
+                    <Radio value="N">否</Radio>
+                  </RadioGroup>
+                </div>
+              </div>
+            </div>
+            <div className={styles.coloumn}>
+              <div className={`${styles.label} ${styles.labelPrompt}`}>
+                <i className={styles.isRequired}>*</i>
+                已开立融资融券账户
+                <span className={styles.colon}>:</span>
+              </div>
+              <div className={styles.value} >
+                <div className={styles.radioBox}>
+                  <RadioGroup onChange={e => this.changePrompt(e, 'rzrqzqAcctFlag')} value={rzrqzqAcctFlag}>
+                    <Radio value="Y">是</Radio>
+                    <Radio value="N">否</Radio>
+                  </RadioGroup>
+                </div>
+              </div>
+            </div>
+            <div className={styles.coloumn}>
+              <div className={`${styles.label} ${styles.labelPrompt}`}>
+                <i className={styles.isRequired}>*</i>
+                已提供金融期货交易证明
+                <span className={styles.colon}>:</span>
+              </div>
+              <div className={styles.value} >
+                <div className={styles.radioBox}>
+                  <RadioGroup onChange={e => this.changePrompt(e, 'jrqhjyFlag')} value={jrqhjyFlag}>
+                    <Radio value="Y">是</Radio>
+                    <Radio value="N">否</Radio>
+                  </RadioGroup>
+                </div>
+              </div>
             </div>
           </div>
         </div>

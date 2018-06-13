@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-16 15:21:56
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-07 10:18:24
+ * @Last Modified time: 2018-06-13 10:59:40
  * @description 将airbnb的日历组件的样式修改为本项目中需要的样式
  */
 
@@ -10,12 +10,10 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { DateRangePicker } from 'react-dates';
 import { autobind } from 'core-decorators';
-import cx from 'classnames';
 import _ from 'lodash';
 import { Icon } from 'antd';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
-import { dom } from '../../../helper';
 
 import styles from './index.less';
 
@@ -34,8 +32,6 @@ export default class CommonDateRangePicker extends PureComponent {
     isInsideOffSet: PropTypes.func,
     hasCustomerOffset: PropTypes.bool,
     defaultVisible: PropTypes.bool,
-    // DateRangePicker_picker定位是否需要成positive:fixed
-    isFixed: PropTypes.bool,
   }
   static defaultProps = {
     displayFormat: 'YYYY-MM-DD',
@@ -52,7 +48,6 @@ export default class CommonDateRangePicker extends PureComponent {
     // 判断时间是否在用户的自定义区间内
     isInsideOffSet: () => true,
     defaultVisible: false,
-    isFixed: false,
   }
 
   constructor(props) {
@@ -77,29 +72,6 @@ export default class CommonDateRangePicker extends PureComponent {
   formateDate(date) {
     const { displayFormat } = this.props;
     return date.format(displayFormat);
-  }
-
-  @autobind
-  drpWraperRef(input) {
-    this.drp = input;
-  }
-
-  // 计算日历下拉框的位置
-  @autobind
-  calcCalendarPosition() {
-    const { width: viewWidth } = dom.getRect(document.body);
-    const { left, width: drpWidth } = dom.getRect(this.drp);
-    const picker = this.drp.querySelector('.DateRangePicker_picker');
-    if (picker) {
-      const { width } = dom.getRect(picker);
-      const leftPlusWidth = left + width;
-      if (leftPlusWidth > viewWidth) {
-        const realLeft = left - (width - drpWidth);
-        dom.setStyle(picker, 'left', `${realLeft}px`);
-      } else {
-        dom.setStyle(picker, 'left', `${left}px`);
-      }
-    }
   }
 
   @autobind
@@ -180,13 +152,6 @@ export default class CommonDateRangePicker extends PureComponent {
       this.firstDateUserSelect = this.props.initialStartDate;
       // 日历浮层未展示，设置状态
       this.isSetRangeOfEndDate = true;
-    }
-    const { isFixed } = this.props;
-    if (this.focusedInput !== null && isFixed) {
-      // focusedInput为null时候,就是隐藏
-      // 不为null则就是显示日历,isFixed判断日历弹窗是否是fixed显示
-      // 此处需要对弹出框的位置进行重新计算
-      setTimeout(() => { this.calcCalendarPosition(); }, 200);
     }
   }
 
@@ -285,16 +250,10 @@ export default class CommonDateRangePicker extends PureComponent {
       'initialEndDate',
       'initialStartDate',
       'defaultVisible',
-      'isFixed',
     ]);
 
-    const { isFixed } = this.props;
-    const drpWraperCls = cx({
-      [styles.drpWraper]: true,
-      [styles.drpWraperFixed]: isFixed,
-    });
     return (
-      <div className={drpWraperCls} ref={this.drpWraperRef}>
+      <div className={styles.drpWraper}>
         <DateRangePicker
           showDefaultInputIcon
           small
