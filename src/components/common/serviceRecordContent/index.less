@@ -393,6 +393,7 @@
   .readOnlyText {
     line-height: 28px;
     flex: 1;
+    min-width: 142px;
   }
   .gridWrapper {
     padding-bottom: 0;
@@ -420,8 +421,17 @@
       flex: 1;
       :global {
         .ant-input {
-          font-size: 12px;
+          font-size: 14px;
           height: 28px;
+          color: #4a4a4a;
+        }
+        .ant-radio-wrapper, .ant-select-selection-selected-value {
+          font-size: 14px;
+          color: #4a4a4a;
+        }
+        // 字体变成14px后，日期组件后面的小图标会被遮挡，此处调整小图标的位置
+        .ant-calendar-picker-clear, .ant-calendar-picker-icon {
+          right: 6px;
         }
       }
     }
