@@ -50,7 +50,10 @@ function FeedbackRow(props) {
         <div
           className={classnames(
             styles.status,
-            { [styles.none]: isStatusEmpty },
+            {
+              [styles.none]: isStatusEmpty,
+              [styles.close]: status === 'CLOSED',
+            },
           )}
         >{statusInfo}</div>
       </div>
