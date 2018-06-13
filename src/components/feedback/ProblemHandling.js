@@ -26,7 +26,6 @@ const Dragger = Upload.Dragger;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
-// 经办人为空时，传入update接口的字段名为 ‘请选择’，现在要求经办人是必填，故判空时，要排除经办人为 ‘请选择’的情况
 const EMPTY_TEXT = '请选择';
 const EMPTY_VALUE = '';
 @createForm()
@@ -164,6 +163,7 @@ export default class ProblemHandling extends PureComponent {
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
     const allOperatorOptions = feedbackOptions.allOperatorOptions;
+    // processer 值为 “请选择”，是脏数据（线上有）
     const initProcessValue = processer === EMPTY_TEXT ? EMPTY_VALUE : processer;
     return (
       <Modal
