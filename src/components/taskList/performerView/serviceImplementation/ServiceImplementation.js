@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-13 11:18:26
+ * @Last Modified time: 2018-06-13 16:56:03
  */
 
 import React, { PureComponent } from 'react';
@@ -261,7 +261,7 @@ export default class ServiceImplementation extends PureComponent {
     const { parameter, changeParameter } = this.props;
     const { targetCustList: { page: { pageSize, pageNum } } } = this.state;
     const { state, rowId } = parameter;
-    changeParameter({ assetSort })
+    changeParameter({ assetSort, activeIndex: '1', preciseInputValue: '1' })
       .then(() => {
         this.queryTargetCustList({
           rowId,
