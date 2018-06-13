@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 09:15:31
+ * @Last Modified time: 2018-06-13 17:54:09
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -126,7 +126,8 @@ export default class MissionBind extends PureComponent {
     const { taskBindTemplate: { missionList = [] } } = this.props;
     // templateList 是已经添加的模板列表
     const { templateList } = _.find(missionList, item => item.id === collapseActiveKey);
-    const templateIds = templateList.map(item => item.id);
+    // 此处后端返回的接口数据可能为null, 使用 _.map 来获取 id 数据
+    const templateIds = _.map(templateList, 'id');
     // 在用户选择的模板列表中取消掉当前任务中已经存在的模板
     const selectedIds = _.filter(list, item => !_.includes(templateIds, item));
     // 此处增加一个判断如果用户选择的模板列表去重后，selectedIds 为空数据，
