@@ -162,6 +162,7 @@ export default class LabelModals extends PureComponent {
         labelId: item.id,
         labelName: item.name,
       }),
+      labelDesc: item.description,
       q: encodeURIComponent(item.name),
       type: LABEL,
     };
