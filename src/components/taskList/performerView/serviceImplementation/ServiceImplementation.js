@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-12 21:57:25
+ * @Last Modified time: 2018-06-13 11:18:26
  */
 
 import React, { PureComponent } from 'react';
@@ -155,11 +155,12 @@ export default class ServiceImplementation extends PureComponent {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    const { targetCustList } = nextProps;
     // props上的服务实施列表上数据变化，将服务实施的列表存到state里面
-    if (nextProps.targetCustList !== prevState.propsData.targetCustList) {
+    if (targetCustList !== prevState.propsTargetCustList) {
       return {
-        targetCustList: nextProps.targetCustList,
-        propsData: nextProps,
+        targetCustList,
+        propsTargetCustList: targetCustList,
       };
     }
     return null;
@@ -173,7 +174,7 @@ export default class ServiceImplementation extends PureComponent {
       isFoldFspLeftMenu: false,
       // 当前服务实施列表的数据
       targetCustList,
-      propsData: props,
+      propsTargetCustList: targetCustList,
     };
   }
 
@@ -221,8 +222,7 @@ export default class ServiceImplementation extends PureComponent {
   @autobind
   handleStateChange({ value = '' }) {
     const { parameter, changeParameter } = this.props;
-    const { targetCustList = {} } = this.state;
-    const { page: { pageSize } } = targetCustList;
+    const { targetCustList: { page: { pageSize } } } = this.state;
     const { rowId, assetSort } = parameter;
     changeParameter({ state: value, activeIndex: '1', preciseInputValue: '1' })
       .then(() => {
@@ -240,8 +240,7 @@ export default class ServiceImplementation extends PureComponent {
   @autobind
   handleCustomerChange({ value = {} }) {
     const { parameter, changeParameter } = this.props;
-    const { targetCustList = {} } = this.state;
-    const { page: { pageSize } } = targetCustList;
+    const { targetCustList: { page: { pageSize } } } = this.state;
     const { state, assetSort } = parameter;
     changeParameter({ rowId: value.rowId || '', activeIndex: '1', preciseInputValue: '1' })
       .then(() => {
@@ -260,8 +259,7 @@ export default class ServiceImplementation extends PureComponent {
   handleAssetSort(obj) {
     const assetSort = obj.isDesc ? 'desc' : 'asc';
     const { parameter, changeParameter } = this.props;
-    const { targetCustList = {} } = this.state;
-    const { page: { pageSize, pageNum } } = targetCustList;
+    const { targetCustList: { page: { pageSize, pageNum } } } = this.state;
     const { state, rowId } = parameter;
     changeParameter({ assetSort })
       .then(() => {
@@ -281,8 +279,7 @@ export default class ServiceImplementation extends PureComponent {
     const value = e.target.value;
     const reg = /^([0-9]*)?$/;
     const { changeParameter } = this.props;
-    const { targetCustList = {} } = this.state;
-    const { page: { totalCount } } = targetCustList;
+    const { targetCustList: { page: { totalCount } } } = this.state;
     // 限制输入框中只能输1到客户总数之间的正整数
     if (value === '' || (!isNaN(value) && reg.test(value) && value > 0 && value <= totalCount)) {
       changeParameter({ preciseInputValue: value });
@@ -296,8 +293,7 @@ export default class ServiceImplementation extends PureComponent {
       const value = e.target.value;
       if (!value) return;
       const { parameter, changeParameter } = this.props;
-      const { targetCustList = {} } = this.state;
-      const { page: { pageSize } } = targetCustList;
+      const { targetCustList: { page: { pageSize } } } = this.state;
       // const newValue = value > totalCount ? totalCount : value;
       changeParameter({ activeIndex: value }).then(() => {
         const { rowId, state, assetSort } = parameter;
@@ -349,8 +345,7 @@ export default class ServiceImplementation extends PureComponent {
   @autobind
   handlePageChange(pageNum) {
     const { parameter, changeParameter } = this.props;
-    const { targetCustList = {} } = this.state;
-    const { page: { pageSize } } = targetCustList;
+    const { targetCustList: { page: { pageSize } } } = this.state;
     const { rowId, assetSort, state } = parameter;
     const activeIndex = ((pageNum - 1) * pageSize) + 1;
     changeParameter({
@@ -492,8 +487,7 @@ export default class ServiceImplementation extends PureComponent {
   // 更新组件state的list信息
   @autobind
   updateList({ missionFlowId, flowStatus, zlApprovalCode, serveWay }, callback = _.noop) {
-    const { targetCustList = {} } = this.state;
-    const { list = [] } = targetCustList;
+    const { targetCustList = {}, targetCustList: { list = [] } } = this.state;
     const newList = _.map(list, (item) => {
       if (item.missionFlowId === missionFlowId) {
         if (
@@ -548,8 +542,11 @@ export default class ServiceImplementation extends PureComponent {
       queryCustFeedbackList4ZLFins, custFeedbackList, queryApprovalList, zhangleApprovalList,
       testWallCollision, testWallCollisionStatus, toggleServiceRecordModal,
     } = this.props;
-    const { targetCustList, isFoldFspLeftMenu } = this.state;
-    const { list: currentTargetList } = targetCustList;
+    const {
+      targetCustList,
+      targetCustList: { list: currentTargetList },
+      isFoldFspLeftMenu,
+    } = this.state;
     const {
       missionStatusCode, missionStatusValue, missionFlowId,
       serviceTips, serviceWayName, serviceWayCode, serviceDate,
