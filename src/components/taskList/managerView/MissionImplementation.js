@@ -64,6 +64,8 @@ export default class MissionImplementation extends PureComponent {
     // 服务经理维度任务数据
     custManagerScopeData: PropTypes.object.isRequired,
     getCustManagerScope: PropTypes.func.isRequired,
+    // 当前一级二级反馈
+    currentFeedback: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -422,6 +424,7 @@ export default class MissionImplementation extends PureComponent {
       custManagerScopeData,
       custRange,
       onPreviewCustDetail,
+      currentFeedback,
     } = this.props;
     const { level, currentScopeList } = this.state;
     const currentMissionReport = currentId ? missionReport[currentId] || {} : {};
@@ -488,6 +491,7 @@ export default class MissionImplementation extends PureComponent {
                 custRange={custRange}
                 orgId={this.getCurrentOrgId()}
                 onPreviewCustDetail={onPreviewCustDetail}
+                currentFeedback={currentFeedback}
               />
             </div> : null
         }

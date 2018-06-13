@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-13 09:35:34
+ * @Last Modified time: 2018-06-13 12:05:25
  * 管理者视图详情
  */
 
@@ -595,6 +595,8 @@ export default class ManagerViewDetail extends PureComponent {
       progressFlag,
       feedbackIdL2,
       isEntryFromResultStatisfy,
+      enterType,
+      recordId,
     } = this.state;
 
     const {
@@ -765,6 +767,10 @@ export default class ManagerViewDetail extends PureComponent {
                       isShowFeedbackFilter={servedNums > 0}
                       // 结果达标进度条下钻标记
                       isEntryFromResultStatisfy={isEntryFromResultStatisfy}
+                      // 服务经理维度entertype
+                      enterType={enterType}
+                      // recordId
+                      recordId={recordId}
                     />
                   }
                   modalStyle={{
@@ -798,6 +804,8 @@ export default class ManagerViewDetail extends PureComponent {
               queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
               custManagerScopeData={custManagerScopeData}
               getCustManagerScope={getCustManagerScope}
+              // 当前一级二级反馈
+              currentFeedback={this.getCustFeedbackList()}
             />
           </div>
           <div className={styles.missionFeedbackSection}>
