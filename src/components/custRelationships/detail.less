@@ -1,0 +1,71 @@
+.custRelationshipsDetail {
+  height: 100%;
+  h1 {
+    font-size: 14px;
+    color: #000;
+  }
+  .inner {
+    border-radius: 5px;
+    background-color: #fff;
+    padding: 20px;
+    height: 100%;
+    overflow: auto;
+    .innerWrap {
+      min-width: 650px;
+    }
+    .title {
+      border-bottom: 1px solid #c2c2c2;
+      padding: 0 0 15px;
+    }
+    .module {
+      padding-top: 15px;
+      border-bottom: 1px solid #f3f3f4;
+      h2 {
+        font-weight: normal;
+        line-height: 1.5;
+      }
+      .modContent {
+        padding: 5px 0;
+        width: 100%;
+        .propertyList {
+          .item {
+            position: relative;
+            clear: left;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 4px;
+          }
+          .item2 {
+            float: left;
+            width: 50%;
+            margin-bottom: 4px;
+          }
+        }
+        &:after {
+          content: "";
+          height: 0;
+          line-height: 0;
+          display: block;
+          clear: both;
+          visibility: hidden;
+        }
+      }
+      .attachmentTitle {
+        font-size: 14px;
+        color: #151515;
+        line-height: 20px;
+        margin-bottom: 15px;
+        span {
+          color: #f00;
+        }
+      }
+    }
+  }
+  :global {
+    .ant-table table {
+      border: 1px solid #e9e9e9;
+      border-bottom: none;
+      font-size: 14px;
+    }
+  }
+}

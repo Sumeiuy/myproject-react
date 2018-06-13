@@ -79,6 +79,8 @@ import ReportDetail from './routes/choicenessCombination/ReportDetail';
 import InvestmentConsultantRace from './routes/investmentConsultantRace/Home';
 // 消息通知提醒
 import MessageCenter from './routes/messageCenter/Home';
+// 客户关联关系信息申请
+import CustRelationships from './routes/custRelationships/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -304,6 +306,8 @@ const routes = [
   },
   // 投顾业务能力竞赛
   { path: '/investmentConsultantRace', component: InvestmentConsultantRace },
+  // 客户关联关系信息申请，直接进入
+  { path: '/custRelationships', component: CustRelationships },
 ];
 
 // 递归创建路由

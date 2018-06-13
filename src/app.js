@@ -128,6 +128,8 @@ app.model(require('./models/operationCenter'));
 app.model(require('./models/businessDepartmentCustDistribute'));
 // 消息通知提醒
 app.model(require('./models/messageCenter'));
+// 客户关联关系
+app.model(require('./models/custRelationships'));
 
 // 4. Route
 app.router(routerConfig);
