@@ -84,7 +84,7 @@ export default class MyDetail extends PureComponent {
     const {
       status = '',
       feedId = '--',
-      createTime = '--',
+      createTime = '',
       description = '--',
       feedbackFileUrls = [],
     } = feedbackDetail || {};
