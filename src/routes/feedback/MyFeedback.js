@@ -150,7 +150,7 @@ export default class MyFeedback extends PureComponent {
       getFeedbackDetail,
     } = this.props;
     const { list = [] } = personFeedback || {};
-    const { id = '' } = _.head(list);
+    const { id = '' } = _.head(list) || {};
 
     getFeedbackDetail({
       id: parseInt(detailId, 10) || id,
