@@ -187,7 +187,7 @@ export default class TaskFormFlowStep extends PureComponent {
     const {
       custIdList,
       custCondition,
-      custCondition: { entrance },
+      custCondition: { entrance, labelId },
     } = parseQuery();
     // 去除entrance字段
     const omitedCondition = _.omit(custCondition, 'entrance');
@@ -212,6 +212,8 @@ export default class TaskFormFlowStep extends PureComponent {
       req = {
         searchReq: custCondition,
         custIdList,
+        // 带入queryLabelReq参数
+        queryLabelReq: { labelId },
       };
     } else {
       req = { searchReq: custCondition, custIdList };
