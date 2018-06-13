@@ -2,13 +2,14 @@
  * @Author: XuWenKang
  * @Description: 首页-展示更多标签弹窗
  * @Date: 2018-05-23 11:10:49
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-05 14:22:34
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-13 09:50:42
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import store from 'store';
 import { Modal, Tabs, Popover } from 'antd';
 import _ from 'lodash';
 import logable from '../../../decorators/logable';
@@ -115,9 +116,17 @@ export default class LabelModals extends PureComponent {
   // 打开持仓查客户
   @autobind
   @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
-  handleOpenTab(options) {
+  handleOpenTab(data) {
+    const { labelDesc, missionDesc, ...options } = data;
     const { push } = this.context;
     const { location: { query } } = this.props;
+    // 有标签描述需要将描述存到storage
+    if (labelDesc) {
+      store.set(`${options.labelMapping}-labelDesc`, {
+        ...data,
+        labelName: decodeURIComponent(options.labelName),
+      });
+    }
     const firstUrl = '/customerPool/list';
     const condition = urlHelper.stringify({ ...options });
     const url = `${firstUrl}?${condition}`;
@@ -147,7 +156,7 @@ export default class LabelModals extends PureComponent {
       source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
       labelMapping: item.id || '',
       labelName: encodeURIComponent(item.name),
-      labelDesc: encodeURIComponent(item.description),
+      labelDesc: item.description,
       // 任务提示
       missionDesc: padSightLabelDesc({
         sightingScopeBool: isSightingScope(item.source),
