@@ -27,7 +27,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 // 经办人为空时，传入update接口的字段名为 ‘请选择’，现在要求经办人是必填，故判空时，要排除经办人为 ‘请选择’的情况
-const emptyValue = '请选择';
+const EMPTY_TEXT = '请选择';
 @createForm()
 export default class ProblemHandling extends PureComponent {
   static propTypes = {
@@ -108,7 +108,7 @@ export default class ProblemHandling extends PureComponent {
         return;
       }
       const { processer = '' } = values;
-      if (_.isEmpty(processer) || processer === emptyValue) {
+      if (_.isEmpty(processer) || processer === EMPTY_TEXT) {
         this.setState({
           showError: true,
         });
