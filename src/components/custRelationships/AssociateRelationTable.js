@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 16:36:40
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-11 19:45:16
+ * @Last Modified time: 2018-06-13 15:22:29
  * @description 关联关系展示表格
  */
 
@@ -23,6 +23,7 @@ export default function AssociateRelationTable(props) {
   const columns = [...custRelationshipColumns, {
     title: '操作',
     key: 'action',
+    width: 110,
     render(text, record) {
       const hasEcifId = !_.isEmpty(record.ecifId);
       if (hasEcifId) {
@@ -41,7 +42,7 @@ export default function AssociateRelationTable(props) {
             <Icon type="bianji" />
           </span>
           <span className={styles.action} onClick={() => onDelRelation(record)}>
-            <Icon type="shanchu" />
+            <Icon type="shanchu" className={styles.fixDelIcon} />
           </span>
         </span>
       );

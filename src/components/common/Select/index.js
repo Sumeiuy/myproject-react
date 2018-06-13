@@ -54,6 +54,12 @@ export default class CommonSelect extends PureComponent {
     return options;
   }
 
+  @autobind
+  handSelectChange(key) {
+    const { name, data } = this.props;
+    const option = _.find(data, item => item.value === key);
+    this.props.onChange(name, key, option);
+  }
 
   render() {
     const { data, name, value, onChange, width, ...resetProps } = this.props;
@@ -63,7 +69,7 @@ export default class CommonSelect extends PureComponent {
         <Select
           placeholder="全部"
           value={value}
-          onChange={key => onChange(name, key)}
+          onChange={this.handSelectChange}
           dropdownMatchSelectWidth={false}
           style={{ width }}
           dropdownStyle={{ width }}

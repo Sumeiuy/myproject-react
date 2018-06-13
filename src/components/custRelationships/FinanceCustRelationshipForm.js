@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 20:07:49
+ * @Last Modified time: 2018-06-13 16:00:13
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -15,6 +15,7 @@ import _ from 'lodash';
 import InfoTitle from '../common/InfoTitle';
 import SimilarAutoComplete from '../common/similarAutoComplete';
 import Select from '../common/Select';
+import confirm from '../common/confirm_';
 import CommonUpload from '../common/biz/CommonUpload';
 import FormItem from './FormItem';
 import CustInfo from './CustInfo';
@@ -22,6 +23,7 @@ import AssociateRelationTable from './AssociateRelationTable';
 import AddRelationshipModal from './AddRelationshipModal';
 
 import { StockRepurchaseOptions, custRelationships } from './config';
+import { data } from '../../helper';
 
 import styles from './financeCustRelationshipForm.less';
 
@@ -57,22 +59,25 @@ export default class FinanceCustRelationshipForm extends Component {
     super(props);
     const { action, custDetail } = props;
     const isCreate = action === 'CREATE';
-
+    const custRelationshipList = isCreate ? []
+    : _.map(_.get(custDetail, 'custRelationshipList'), item => ({ ...item, key: item.ecifId }));
     this.state = {
       // 选择的用户
       cust: {},
-      // 是否办理股票质押回购业务选项，默认 是 'Y'
-      stockRepurchase: isCreate ? '' : _.get(custDetail, 'custDetail.stockRepurchase'),
+      // 是否办理股票质押回购业务选项
+      stockRepurchase: isCreate ? '' : _.get(custDetail, 'custDetail.businessFlag'),
       // 添加关联关系Modal
       addAssociateModal: false,
       // 客户的关联关系
-      custRelationshipList: isCreate ? [] : _.get(custDetail, 'custRelationshipList'),
+      custRelationshipList,
       // 上传后的附件ID
       attachment: isCreate ? '' : _.get(custDetail, 'attachment'),
       // 用户驳回后修改的初始化展示的附件列表
       attachList: isCreate ? [] : _.get(custDetail, 'attachmentList'),
       // 判断是修改关联关系，还是添加关联关系
       relationModalAction: 'CREATE',
+      // 进行修改的关联关系对象数据
+      relationForUpdate: {},
     };
   }
 
@@ -106,16 +111,29 @@ export default class FinanceCustRelationshipForm extends Component {
 
   @autobind
   handlAddAssociateRelationBtnClick() {
-    this.setState({
-      addAssociateModal: true,
-      relationModalAction: 'CREATE',
+    const { cust } = this.state;
+    if (_.isEmpty(cust)) {
+      confirm({ content: '请先选择要申请的客户' });
+    } else {
+      this.setState({
+        addAssociateModal: true,
+        relationModalAction: 'CREATE',
+      });
+    }
+  }
+
+  @autobind
+  handleDelRelationConifrm(record) {
+    confirm({
+      content: '确定要删除该条关联关系吗？',
+      onOk: () => {
+        this.handleDelRelation(record);
+      },
     });
   }
 
   @autobind
   handleDelRelation(record) {
-    // TODO 确定要删除关联关系吗？
-    console.warn('删除关联关系:', record);
     const { key } = record;
     const { custRelationshipList } = this.state;
     const newList = _.filter(custRelationshipList, item => item.key !== key);
@@ -125,9 +143,11 @@ export default class FinanceCustRelationshipForm extends Component {
 
   @autobind
   handleUpdateRelation(record) {
-    // TODO 需要将数据回填给添加关联关系的弹出层
-    console.warn('handleUpdateRelation: ', record);
-    this.setState({ relationModalAction: 'UPDATE' });
+    this.setState({
+      addAssociateModal: true,
+      relationModalAction: 'UPDATE',
+      relationForUpdate: record,
+    });
   }
 
   @autobind
@@ -137,15 +157,41 @@ export default class FinanceCustRelationshipForm extends Component {
 
   @autobind
   handleRelationshipModalClose() {
-    this.setState({ addAssociateModal: false });
+    this.setState({
+      addAssociateModal: false,
+      relationForUpdate: {},
+    });
   }
 
   @autobind
   handleAddRelationModalConfirm(param) {
-    console.warn('点击添加关联关系确认按钮:', param);
+    const { action, ...reset } = param;
+    const { custRelationshipList } = this.state;
+    let newList = [];
+    if (action === 'CREATE') {
+      // 新增
+      const uuid = data.uuid();
+      const key = `REAL-${uuid}`;
+      newList = [{ ...reset, key }, ...custRelationshipList];
+    } else {
+      // 修改,需要将原有的拿出来进行替换
+      newList = _.map(custRelationshipList, (item) => {
+        const { key } = item;
+        if (key === param.key) {
+          return {
+            ...item,
+            ...reset,
+          };
+        }
+        return item;
+      });
+    }
     this.setState({
       addAssociateModal: false,
+      custRelationshipList: newList,
+      relationForUpdate: {},
     });
+    this.props.onChange({ relationships: newList });
   }
 
   @autobind
@@ -168,6 +214,7 @@ export default class FinanceCustRelationshipForm extends Component {
       relationModalAction,
       attachList,
       attachment,
+      relationForUpdate,
     } = this.state;
     const { action, custList, custDetail, relationshipTree } = this.props;
     // 判断当前组件是否在驳回后修改页面里面
@@ -227,7 +274,7 @@ export default class FinanceCustRelationshipForm extends Component {
         </div>
         <AssociateRelationTable
           data={custRelationshipList}
-          onDelRelation={this.handleDelRelation}
+          onDelRelation={this.handleDelRelationConifrm}
           onUpdateRelation={this.handleUpdateRelation}
         />
         <div className={styles.divider} />
@@ -245,7 +292,7 @@ export default class FinanceCustRelationshipForm extends Component {
             <AddRelationshipModal
               action={relationModalAction}
               ralationTree={relationshipTree}
-              data={{}}
+              data={relationForUpdate}
               visible={addAssociateModal}
               onClose={this.handleRelationshipModalClose}
               onOK={this.handleAddRelationModalConfirm}

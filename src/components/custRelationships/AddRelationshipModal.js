@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 19:59:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 19:23:50
+ * @Last Modified time: 2018-06-13 17:34:29
  * @description 添加关联关系的Modal
  */
 
@@ -10,7 +10,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Input, Icon } from 'antd';
+import { Input, Icon, Popover } from 'antd';
 
 import Modal from '../common/biz/CommonModal';
 import FormItem from './FormItem';
@@ -40,20 +40,29 @@ export default class AddRelationshipModal extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
+    const { action, data } = props;
+    const isCreate = action === 'CREATE';
+    // 默认的state值
+    const DEFAULT_STATE = {
       // 关联关系类型
-      type: '',
+      relationTypeValue: '',
+      relationTypeLable: '',
       // 关联关系名称
-      name: '',
+      relationNameValue: '',
+      relationNameLable: '',
       // 关联关系子类型
-      subType: '',
+      relationSubTypeValue: '',
+      relationSubTypeLable: '',
       // 关联人名称
-      person: '',
+      partyName: '',
       // 证件类型
-      IDType: '',
+      partyIDTypeValue: '',
+      partyIDTypeLabel: '',
       // 证件号
-      IDNo: '',
+      partyIDNum: '',
     };
+    const realState = isCreate ? DEFAULT_STATE : _.omit(data, ['ecifId, processFlag']);
+    this.state = realState;
   }
 
   // 根据用户选择的Select，得到其级联的下一个Select的可选项
@@ -65,6 +74,22 @@ export default class AddRelationshipModal extends Component {
     if (_.isEmpty(value)) return [];
     const data = _.find(tree, item => item.value === value);
     return (data && data[key]) || [];
+  }
+
+  @autobind
+  getPopoverContent(name = '', tree) {
+    if (_.isEmpty(name)) return (<div className={styles.notip}>暂无提示</div>);
+    const { remark = '' } = _.find(tree, item => item.value === name);
+    if (_.isEmpty(remark)) return (<div className={styles.notip}>暂无提示</div>);
+    const tips = _.split(remark, /：|\|/g);
+    return (
+      <div className={styles.tipsWrap}>
+        <div className={styles.tipTitle}>{`${tips[0]}：`}</div>
+        <div className={styles.tipContent}>{tips[1]}</div>
+        <div className={styles.tipTitle}>{`${tips[2]}：`}</div>
+        <div className={styles.tipContent}>{tips[3]}</div>
+      </div>
+    );
   }
 
   @autobind
@@ -86,60 +111,83 @@ export default class AddRelationshipModal extends Component {
   handleModalConfirm() {
     // 此处在传递数据之前需要先进行一把非空和格式校验
     if (this.checkData()) {
-      this.props.onOK();
+      const { action } = this.props;
+      this.props.onOK({ ...this.state, action });
     }
   }
 
   @autobind
-  handleRelationTypeSelectChange(select, type) {
-    this.setState({ type });
+  handleRelationTypeSelectChange(select, relationTypeValue, option) {
+    this.setState({
+      relationTypeValue,
+      relationTypeLable: option.label,
+    });
   }
 
   @autobind
-  handleRelationNameSelectChange(select, name) {
-    this.setState({ name });
+  handleRelationNameSelectChange(select, relationNameValue, option) {
+    this.setState({
+      relationNameValue,
+      relationNameLable: option.label,
+    });
   }
 
   @autobind
-  handleRelationSubTypeSelectChange(select, subType) {
-    this.setState({ subType });
+  handleRelationSubTypeSelectChange(select, relationSubTypeValue, option) {
+    this.setState({
+      relationSubTypeValue,
+      relationSubTypeLable: option.label,
+    });
   }
 
   @autobind
   handleRelationPersonChange(e) {
-    this.setState({ person: e.target.value });
+    this.setState({ partyName: e.target.value });
   }
 
   @autobind
-  handleRelationIDTypeSelectChange(select, IDType) {
-    this.setState({ IDType });
+  handleRelationIDTypeSelectChange(select, partyIDTypeValue, option) {
+    this.setState({
+      partyIDTypeValue,
+      partyIDTypeLable: option.label,
+    });
   }
 
   @autobind
   handleRelationIDNoChange(e) {
-    this.setState({ IDNo: e.target.value });
+    this.setState({ partyIDNum: e.target.value });
   }
 
   render() {
     const { visible, ralationTree, action } = this.props;
-    const { type, name, subType, person, IDType, IDNo } = this.state;
+    const {
+      relationTypeValue,
+      relationNameValue,
+      relationSubTypeValue,
+      partyName,
+      partyIDTypeValue,
+      partyIDNum,
+    } = this.state;
     // 获取关联关系 Select 树
     const typeSelectData = this.addEmptyOption(ralationTree);
     // 根据 type 值获取 name Select的选项数据
-    const nameSelectTree = this.getNextSelectData(type, ralationTree);
+    const nameSelectTree = this.getNextSelectData(relationTypeValue, ralationTree);
     const nameSelectData = this.addEmptyOption(nameSelectTree);
     // 根据 name 值获取 subType Select的选项数据
-    const subTypeSelectTree = this.getNextSelectData(name, nameSelectTree);
+    const subTypeSelectTree = this.getNextSelectData(relationNameValue, nameSelectTree);
     const subTypeSelectData = this.addEmptyOption(subTypeSelectTree);
     // 根据 name 值获取 证件类型 Select的选项数据
-    const IDTypeSelectTree = this.getNextSelectData(name, nameSelectTree, 'certiValue');
+    const IDTypeSelectTree = this.getNextSelectData(relationNameValue, nameSelectTree, 'certificateDTOs');
     const IDTypeSelectData = this.addEmptyOption(IDTypeSelectTree);
+    // 生成 子类型 旁 提示图标的弹出层
+    const popoverContent = this.getPopoverContent(relationNameValue, nameSelectTree);
 
     return (
       <Modal
         title={action === 'CREATE' ? '添加客户关联关系' : '修改客户关联关系'}
         size="normal"
         modalKey="addCustRelationships"
+        wrapClassName={styles.addRelationshipModal}
         maskClosable={false}
         visible={visible}
         closeModal={this.handleModalClose}
@@ -150,10 +198,10 @@ export default class AddRelationshipModal extends Component {
           <div className={styles.relationItem}>
             <FormItem label="关联关系类型" labelWidth={130}>
               <Select
-                name="type"
+                name="relationTypeValue"
                 width="130px"
                 needShowKey={false}
-                value={type}
+                value={relationTypeValue}
                 data={typeSelectData}
                 onChange={this.handleRelationTypeSelectChange}
               />
@@ -162,10 +210,10 @@ export default class AddRelationshipModal extends Component {
           <div className={styles.relationItem}>
             <FormItem label="关联关系名称" labelWidth={130}>
               <Select
-                name="name"
+                name="relationNameValue"
                 width="130px"
                 needShowKey={false}
-                value={name}
+                value={relationNameValue}
                 data={nameSelectData}
                 onChange={this.handleRelationNameSelectChange}
               />
@@ -174,21 +222,23 @@ export default class AddRelationshipModal extends Component {
           <div className={styles.relationItem}>
             <FormItem label="关联关系子类型" labelWidth={130}>
               <Select
-                name="subType"
+                name="relationSubTypeValue"
                 width="130px"
                 needShowKey={false}
-                value={subType}
+                value={relationSubTypeValue}
                 data={subTypeSelectData}
                 onChange={this.handleRelationSubTypeSelectChange}
               />
-              <Icon type="info-circle-o" className={styles.tipsIcon} />
+              <Popover placement="right" content={popoverContent}>
+                <Icon type="info-circle-o" className={styles.tipsIcon} />
+              </Popover>
             </FormItem>
           </div>
           <div className={styles.relationItem}>
             <FormItem label="关系人名称" labelWidth={130}>
               <Input
                 className={styles.relationInput}
-                value={person}
+                value={partyName}
                 onChange={this.handleRelationPersonChange}
               />
             </FormItem>
@@ -196,10 +246,10 @@ export default class AddRelationshipModal extends Component {
           <div className={styles.relationItem}>
             <FormItem label="关系人证件类型" labelWidth={130}>
               <Select
-                name="IDType"
+                name="partyIDTypeValue"
                 width="130px"
                 needShowKey={false}
-                value={IDType}
+                value={partyIDTypeValue}
                 data={IDTypeSelectData}
                 onChange={this.handleRelationIDTypeSelectChange}
               />
@@ -209,7 +259,7 @@ export default class AddRelationshipModal extends Component {
             <FormItem label="关系人证件号码" labelWidth={130}>
               <Input
                 className={styles.relationInput}
-                value={IDNo}
+                value={partyIDNum}
                 onChange={this.handleRelationIDNoChange}
               />
             </FormItem>

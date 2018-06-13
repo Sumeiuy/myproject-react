@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-12 15:12:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 20:35:11
+ * @Last Modified time: 2018-06-13 09:10:00
  * @description 融资类业务驳回后修改页面
  */
 import React, { Component } from 'react';
@@ -12,6 +12,7 @@ import { connect } from 'dva';
 import _ from 'lodash';
 import { Input } from 'antd';
 
+import ApproveList from '../../components/common/approveList';
 import InfoTitle from '../../components/common/InfoTitle';
 import InfoItem from '../../components/common/infoItem';
 import FinanceCustRelationshipForm from '../../components/custRelationships/FinanceCustRelationshipForm';
@@ -59,7 +60,8 @@ export default class RejectUpdateHome extends Component {
     super(props);
 
     this.state = {
-
+      // 审批意见
+      idea: '',
     };
     // 此处为 React 16.3 API
     this.rejectHomeRef = React.createRef();
@@ -92,10 +94,19 @@ export default class RejectUpdateHome extends Component {
     this.setState(obj);
   }
 
+  @autobind
+  handleApprovalIdeaChange(e) {
+    this.setState({
+      idea: e.target.value,
+    });
+  }
+
 
   render() {
     const { detailForUpdate, relationshipTree } = this.props;
     if (_.isEmpty(detailForUpdate)) return null;
+
+    const { idea } = this.state;
     return (
       <div className={styles.rejectUpdateHome} ref={this.rejectHomeRef}>
         <div className={styles.rejectHeader}>
@@ -130,10 +141,14 @@ export default class RejectUpdateHome extends Component {
             <div className={styles.approvalIdeaArea}>
               <div className={styles.leftLabel}>审批意见：</div>
               <div className={styles.rightInput}>
-                <TextArea />
+                <TextArea rows="3" value={idea} onChange={this.handleApprovalIdeaChange} />
               </div>
             </div>
           </div>
+        </div>
+        <div className={styles.module}>
+          <InfoTitle head="审批记录" />
+          <ApproveList data={detailForUpdate.workflowHistoryBeans} />
         </div>
       </div>
     );
