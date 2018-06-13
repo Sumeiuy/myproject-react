@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 14:49:14
+ * @Last Modified time: 2018-06-13 16:58:20
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -86,6 +86,11 @@ export default class CascadeFeedbackSelect extends PureComponent {
     }
     // 代表请选择，前端自定义的key，其实用不到，只是为了加一个非空的默认值
     if (first === defaultFeedbackOption) {
+      showSecondSelect = true;
+    }
+
+    // 如果二级反馈没数据，不展示二级反馈
+    if (isEmptySecondList) {
       showSecondSelect = true;
     }
 
