@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-13 10:09:30
+ * @Last Modified time: 2018-06-13 12:13:02
  */
 
 import React, { PureComponent } from 'react';
@@ -32,8 +32,8 @@ import {
   SIGHTINGTELESCOPE_ENTRY,
   returnTaskEntrySource,
   labelSource,
-  sightingLabelSource,
   TASK_CUST_SCOPE_ENTRY,
+  sightingLabelSource,
 } from '../../../config/createTaskEntry';
 import styles from './taskFormFlowStep.less';
 import logable, { logCommon } from '../../../decorators/logable';
@@ -127,13 +127,21 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   componentDidMount() {
+    // 验证是否自己名下客户
+    this.checkMyCustomer();
+  }
+
+  // 验证是否自己名下客户
+  @autobind
+  checkMyCustomer() {
     const {
       location: { query: { source } },
       saveCreateTaskData,
       storedCreateTaskData,
     } = this.props;
+    const queryData = this.parseParam();
     const postBody = {
-      ...this.parseParam(),
+      ...queryData,
     };
     if (!_.includes(returnTaskEntrySource, source)) {
       this.props.isSendCustsServedByPostn({
@@ -291,7 +299,6 @@ export default class TaskFormFlowStep extends PureComponent {
     return _.includes(labelSource, source);
   }
 
-
   @autobind
   handleNextStep() {
     const { current } = this.state;
@@ -305,7 +312,6 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { source, count } },
       taskBasicInfo,
     } = this.props;
-
     const { tagetCustModel } = taskBasicInfo || {};
     const { custNum, custSource: taskSource, custLabelDesc = '' } = tagetCustModel || {};
 

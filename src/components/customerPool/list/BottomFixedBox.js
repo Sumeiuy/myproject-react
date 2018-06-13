@@ -7,11 +7,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import store from 'store';
+
 import InfoModal from '../../common/infoModal';
 import { fspContainer, padSightLabelDesc } from '../../../config';
-import {
-  PRODUCT_POTENTIAL_TARGET_CUST_ENTRY,
-} from '../../../config/createTaskEntry';
+import { PRODUCT_POTENTIAL_TARGET_CUST_ENTRY } from '../../../config/createTaskEntry';
+
 import logable from '../../../decorators/logable';
 
 import styles from './bottomFixedBox.less';
@@ -90,7 +91,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 点击新建分组或者发起任务按钮
   @autobind
-  switchToRoute({ url, title, id, shouldStay, editPane, missionDesc }) {
+  switchToRoute({ url, title, id, shouldStay, editPane }) {
     const {
       page,
       condition,
@@ -98,8 +99,8 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selectAll,
-          source,
+        selectAll,
+        source,
         },
         pathname,
         search,
@@ -120,7 +121,6 @@ export default class BottomFixedBox extends PureComponent {
         fr,
         shouldStay,
         editPane,
-        missionDesc,
       );
     } else if (selectAll) {
       this.openByAllSelect(
@@ -134,7 +134,6 @@ export default class BottomFixedBox extends PureComponent {
         fr,
         shouldStay,
         editPane,
-        missionDesc,
       );
     }
   }
@@ -165,17 +164,20 @@ export default class BottomFixedBox extends PureComponent {
   @autobind
   toCreateTaskPage() {
     const { location: { query: {
-      missionDesc,
       source,
       labelMapping,
     } } } = this.props;
-    let newMissionDesc = missionDesc;
-    // 如果是外部平台，产品潜在客户跳转进来的，需要添加一个任务提示插入参数，
-    // 在发起任务时，需要用到，这边是瞄准镜标签，不需要labelName
+
+    // 有标签描述需要将描述存到storage
     if (source === PRODUCT_POTENTIAL_TARGET_CUST_ENTRY) {
-      newMissionDesc = padSightLabelDesc({
+      // 如果是外部平台，产品潜在客户跳转进来的，需要添加一个任务提示插入参数，
+      // 在发起任务时，需要用到，这边是瞄准镜标签，不需要labelName
+      const missionDesc = padSightLabelDesc({
         sightingScopeBool: true,
         labelId: labelMapping,
+      });
+      store.set(`${labelMapping}-labelDesc`, {
+        missionDesc,
       });
     }
 
@@ -189,7 +191,6 @@ export default class BottomFixedBox extends PureComponent {
       url,
       title,
       id,
-      missionDesc: newMissionDesc,
     });
   }
 
@@ -261,7 +262,6 @@ export default class BottomFixedBox extends PureComponent {
     fr,
     shouldStay,
     editPane,
-    missionDesc,
   ) {
     const tmpArr = [];
     _(ids).forEach((item) => {
@@ -276,7 +276,6 @@ export default class BottomFixedBox extends PureComponent {
       entertype,
       source,
       name,
-      missionDesc,
       condition: condt,
       fr,
     };
@@ -295,7 +294,6 @@ export default class BottomFixedBox extends PureComponent {
     fr,
     shouldStay,
     editPane,
-    missionDesc,
   ) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
@@ -307,7 +305,6 @@ export default class BottomFixedBox extends PureComponent {
       source,
       name,
       fr,
-      missionDesc,
     };
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });
   }

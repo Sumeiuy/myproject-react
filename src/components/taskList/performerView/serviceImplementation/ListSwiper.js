@@ -64,7 +64,7 @@ export default class ListSwiper extends PureComponent {
   // 区分产品机构、一般机构、个人客户：男、女 ，四种头像
   @autobind
   renderAvator({ genderCode = '', custNature = '' }) {
-    let type = '';
+    let type = MALE_ICON;
     if (custNature === PER_CODE) {
       if (genderCode === MALE_CODE) {
         type = MALE_ICON;
@@ -79,8 +79,10 @@ export default class ListSwiper extends PureComponent {
       type = PROD_ICON;
     }
     return (
-      <div className={styles.avatarWrap}>
-        <Icon type={type} />
+      <div className={styles.avatorWrap}>
+        <div className={styles.avatorBox}>
+          <Icon type={type} />
+        </div>
       </div>
     );
   }
@@ -88,10 +90,12 @@ export default class ListSwiper extends PureComponent {
   @autobind
   renderListItem() {
     const { targetCustList, parameter, onCustomerClick, currentTargetList } = this.props;
-    const { page: { pageSize, pageNum } } = targetCustList;
+    const { page: { pageSize, pageNum, totalCount } } = targetCustList;
     const { activeIndex } = parameter;
+    // 当activeIndex大于总数的时候，取最后一个
+    const newIndex = activeIndex > totalCount ? totalCount : activeIndex;
     // 当前activeIndex在当前请求回来的客户列表里面计算所在当前客户列表的位置，否则，默认第一个
-    const currentIndex = (parseInt(activeIndex, 10) - 1) % pageSize;
+    const currentIndex = (parseInt(newIndex, 10) - 1) % pageSize;
     return (
       currentTargetList.map((item, index) => {
         // 上次选中的客户还在列表里的时候，继续高亮此客户，否则高亮此次列表中的第一条数据
