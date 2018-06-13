@@ -166,7 +166,11 @@ export default class BottomFixedBox extends PureComponent {
     const { location: { query: {
       source,
       labelMapping,
-    } } } = this.props;
+    } }, clearCreateTaskData } = this.props;
+
+    const url = '/customerPool/createTask';
+    const title = '自建任务';
+    const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
 
     // 有标签描述需要将描述存到storage
     if (source === PRODUCT_POTENTIAL_TARGET_CUST_ENTRY) {
@@ -181,11 +185,9 @@ export default class BottomFixedBox extends PureComponent {
       });
     }
 
-    const url = '/customerPool/createTask';
-    const title = '自建任务';
-    const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
     // 发起新的任务之前，先清除数据
-    this.props.clearCreateTaskData('custList');
+    // custList代表所有从客户列表发起任务的入口
+    clearCreateTaskData('custList');
 
     this.switchToRoute({
       url,
