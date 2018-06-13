@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-12 12:01:39
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-13 12:57:38
  * @description 客户池头部搜索组件
  */
 
@@ -296,13 +296,13 @@ export default class Search extends PureComponent {
               source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
               labelMapping: item.id || '',
               labelName: encodeURIComponent(item.name),
-              labelDesc: item.description,
               // 任务提示
               missionDesc: padSightLabelDesc({
                 sightingScopeBool: isSightingScope(item.source),
                 labelId: item.id,
                 labelName: item.name,
               }),
+              labelDesc: item.description,
               q: encodeURIComponent(item.name),
               type: LABEL,
             });
