@@ -78,7 +78,7 @@ export default class Detail extends PureComponent {
     // 服务经理信息
     const projectManagerInfo = `${empLoginName} (${empLogin})`;
     // 是否回购
-    const businessFlagValue = businessFlag ? '是' : '否';
+    const businessFlagValue = businessFlag === 'Y' ? '是' : '否';
     // 为表格数据增加key
     const newCustRelationshipList = this.attachKeyToDataSource(custRelationshipList);
     return (
@@ -149,7 +149,6 @@ export default class Detail extends PureComponent {
               currentApproval={currentApproval}
               currentNodeName={currentNodeName}
               statusType="ready"
-              approvalRecordListStyle={{ padding: '10px' }}
             />
           </div>
         </div>

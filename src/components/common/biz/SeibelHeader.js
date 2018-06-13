@@ -33,7 +33,6 @@ const FILTERBOX_HEIGHT = 32;
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
     // 页面
     page: PropTypes.string,
     // 子类型
@@ -47,8 +46,6 @@ export default class Pageheader extends PureComponent {
     // 是否需要子类型
     needSubType: PropTypes.bool,
     operateOptions: PropTypes.array,
-    // 新建权限
-    empInfo: PropTypes.object,
     // 页面类型
     pageType: PropTypes.string.isRequired,
     // 部门列表
@@ -79,6 +76,11 @@ export default class Pageheader extends PureComponent {
     checkUserIsFiliale: PropTypes.func,
     // 提供由用户来判断是否需要显示新建按钮
     isShowCreateBtn: PropTypes.func,
+  }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    empInfo: PropTypes.object,
   }
 
   static defaultProps = {
@@ -387,13 +389,11 @@ export default class Pageheader extends PureComponent {
       approvePersonList,
       customerList,
       custRange,
-      replace,
       page,
       pageType,
       operateOptions,
       needOperate,
       needSubType,
-      empInfo,
       isUseOfCustomer,
       ptyMngList,
       checkUserIsFiliale,
@@ -410,7 +410,7 @@ export default class Pageheader extends PureComponent {
         },
       },
     } = this.props;
-
+    const { replace, empInfo } = this.context;
     const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
     // 客户增加全部
     const customerAllList = !_.isEmpty(customerList) ?

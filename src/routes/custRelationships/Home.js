@@ -73,7 +73,6 @@ export default class CustRelationshipsHome extends PureComponent {
 
   static contextTypes = {
     replace: PropTypes.func.isRequired,
-    empInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -119,7 +118,7 @@ export default class CustRelationshipsHome extends PureComponent {
       let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
       if (!_.isEmpty(currentId) && itemIndex > -1) {
         // 此时url中存在currentId
-        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+        item = _.filter(list.resultData, o => String(o.id) === currentId)[0];
       } else {
         // 不存在currentId
         replace({
@@ -270,19 +269,16 @@ export default class CustRelationshipsHome extends PureComponent {
       detailInfo,
       attachmentList,
     } = this.props;
-    const { empInfo, replace } = this.context;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
     // 头部筛选
     const topPanel = (
       <ConnectedSeibelHeader
         location={location}
-        replace={replace}
         page="custRelationships"
         pageType={pageType}
         needSubType={false}
         stateOptions={statusOptions}
-        empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
       />

@@ -23,7 +23,6 @@ export default function ApprovalRecord(props) {
         <div
           className={mapElementClass}
           key={key}
-          style={props.approvalRecordListStyle}
         >
           <p className={style.arlistContentOne}>
             审批人： {item.handler}于{item.handleTime}，步骤名称：{item.stepName}
@@ -77,12 +76,10 @@ ApprovalRecord.propTypes = {
   currentApproval: PropTypes.object,
   statusType: PropTypes.string.isRequired,
   currentNodeName: PropTypes.string,
-  approvalRecordListStyle: PropTypes.object,
 };
 
 ApprovalRecord.defaultProps = {
   info: [],
   currentApproval: {},
   currentNodeName: '',
-  approvalRecordListStyle: {},
 };
