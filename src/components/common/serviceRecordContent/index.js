@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-13 16:02:13
+ * @Last Modified time: 2018-06-13 16:50:48
  */
 
 import React, { PureComponent } from 'react';
@@ -363,7 +363,7 @@ export default class ServiceRecordContent extends PureComponent {
     // 校验服务记录
     isShowServiceContentError = !serviceRecord || serviceRecord.length > serviceContentMaxLength;
 
-    const isShowErrorCustFeedback = this.checkCustFeedback();
+    const isShowErrorCustFeedback = this.checkCustFeedbackError();
     // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容
     if (isPhoneCall) {
       return isShowErrorCustFeedback && !isShowServiceContentError;
@@ -400,14 +400,14 @@ export default class ServiceRecordContent extends PureComponent {
   }
 
   @autobind
-  checkCustFeedback() {
+  checkCustFeedbackError() {
     const { custFeedback, custFeedback2 } = this.state;
     // 如果客户反馈一级或者二级没有勾选，提示错误
     if (custFeedback === defaultFeedbackOption ||
       custFeedback2 === defaultFeedbackOption) {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   // 提交时候，进行数据校验
