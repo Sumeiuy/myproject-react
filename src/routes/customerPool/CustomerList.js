@@ -344,7 +344,7 @@ export default class CustomerList extends PureComponent {
 
   // 获取列表数据
   @autobind
-  getCustomerList(props) {
+  async getCustomerList(props) {
     const {
       cycle = [],
       getCustomerData, location: { query },
@@ -352,7 +352,6 @@ export default class CustomerList extends PureComponent {
     const keyword = decodeURIComponent(query.q);
     // 标签名字与标签描述
     const labelName = decodeURIComponent(query.labelName);
-    const labelDesc = decodeURIComponent(query.labelDesc);
     const labelMapping = decodeURIComponent(query.labelMapping);
     const productName = query.productName && decodeURIComponent(query.productName);
     const param = {
@@ -369,13 +368,6 @@ export default class CustomerList extends PureComponent {
     } else if (_.includes(['tag', 'sightingTelescope'], query.source)) { // 热词或者瞄准镜
       param.primaryKey = [labelMapping];
       param.searchTypeReq = query.type;
-      if (query.source === 'sightingTelescope') {
-        // 如果是瞄准镜，需要加入queryLabelReq
-        param.queryLabelReq = {
-          labelName,
-          labelDesc,
-        };
-      }
     } else if (query.source === 'association' || query.source === 'securitiesProducts') { // 联想词
       // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
       param.searchTypeReq = query.type;
@@ -401,11 +393,6 @@ export default class CustomerList extends PureComponent {
       // 目前只有一个label，将labelMapping传给后台
       param.searchTypeReq = query.type;
       param.primaryKey = [labelMapping];
-      // 产品潜在目标客户进来，默认都是瞄准镜标签，需要加入queryLabelReq
-      param.queryLabelReq = {
-        labelName,
-        labelDesc,
-      };
     }
     // 客户业绩参数
     if (query.customerType) {
