@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-13 16:50:48
+ * @Last Modified time: 2018-06-13 16:55:01
  */
 
 import React, { PureComponent } from 'react';
@@ -366,7 +366,7 @@ export default class ServiceRecordContent extends PureComponent {
     const isShowErrorCustFeedback = this.checkCustFeedbackError();
     // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容
     if (isPhoneCall) {
-      return isShowErrorCustFeedback && !isShowServiceContentError;
+      return !isShowErrorCustFeedback && !isShowServiceContentError;
     }
 
     if (isEntranceFromPerformerView) {
@@ -381,7 +381,7 @@ export default class ServiceRecordContent extends PureComponent {
       isShowServeStatusError,
     });
 
-    return isShowErrorCustFeedback &&
+    return !isShowErrorCustFeedback &&
       !isShowServeStatusError && !isShowServiceContentError;
   }
 
