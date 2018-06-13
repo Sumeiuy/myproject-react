@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 17:16:16
+ * @Last Modified time: 2018-06-13 13:41:18
  */
 
 import React, { PureComponent } from 'react';
@@ -949,13 +949,6 @@ export default class TaskFlow extends PureComponent {
         labelId,
         isSightLabel,
       });
-      // 瞄准镜标签添加queryLabelReq
-      postBody = {
-        ...postBody,
-        queryLabelReq: {
-          labelId,
-        },
-      };
     }
     this.decoratorSubmitTaskFlow(postBody);
     // logable日志---确认提交
