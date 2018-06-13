@@ -17,8 +17,6 @@ import styles from './holdingProductDetail.less';
 const TYPE_STOCK = 'stock';
 // 持仓产品的类型：'fund' 基金
 const TYPE_FUND = 'fund';
-// 其他金融产品
-const TYPE_OTHER = 'other';
 
 export default class HoldingProductDetail extends PureComponent {
 
@@ -87,10 +85,8 @@ export default class HoldingProductDetail extends PureComponent {
       return <div className={styles.detailItem}>暂无数据</div>;
     }
 
-    // 当前产品为股票、基金且返回的数据detail字段中大于一条数据时，需要显示类型
-    const isShowCategory = (type === TYPE_STOCK || type === TYPE_FUND) && detail.length > 1;
-    // 当前产品不是股票、基金、债券
-    const isOther = type === TYPE_OTHER;
+    // 当前产品为股票、基金时，需要显示类型
+    const isShowCategory = type === TYPE_STOCK || type === TYPE_FUND;
     return _.map(detail, (item = {}) => (
       <div className={styles.detailItem} key={`${item.holdingNumber}-${item.marketValue}`}>
         {isShowCategory && <p className={styles.category}>{item.category}</p>}
@@ -98,8 +94,8 @@ export default class HoldingProductDetail extends PureComponent {
           {this.generateDetailItemNode({ name: '持仓数量', value: item.holdingNumber, isFormatAsset: false })}
           {this.generateDetailItemNode({ name: '持仓市值', value: item.marketValue, currency: item.unit })}
           {this.generateDetailItemNode({ name: '累计收益', value: item.cumulativeProfit, currency: item.unit })}
-          {isOther && this.generateDetailItemNode({ name: '昨日到账收益', value: item.ytdIncomeToAccount, currency: item.unit })}
-          {isOther && this.generateDetailItemNode({ name: '昨日预估收益', value: item.ytdEstimatedEarnings, currency: item.unit })}
+          {this.generateDetailItemNode({ name: '昨日到账收益', value: item.ytdIncomeToAccount, currency: item.unit })}
+          {this.generateDetailItemNode({ name: '昨日预估收益', value: item.ytdEstimatedEarnings, currency: item.unit })}
         </ul>
       </div>
     ));

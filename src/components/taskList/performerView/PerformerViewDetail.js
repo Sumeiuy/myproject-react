@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-08 21:46:11
+ * @Last Modified time: 2018-06-13 21:55:34
  */
 
 
@@ -13,7 +13,35 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import BasicInfo from './BasicInfo';
 import TabsArea from './TabsArea';
+import { fsp } from '../../../helper';
 import styles from './performerViewDetail.less';
+
+import {
+  smallPageSize,
+  mediumPageSize,
+  largePageSize,
+  extraLargePageSize,
+} from '../../../routes/taskList/config';
+
+// 当左侧列表或fsp中左侧菜单被折叠或者展开时，返回当前的服务实施列表的pageSize
+// isFoldFspLeftMenu=true fsp的左侧菜单被折叠收起
+// isFoldLeftList=true 执行者视图左侧列表被折叠收起
+const getPageSize = (isFoldFspLeftMenu, isFoldLeftList) => {
+  // 全部都折叠起来放12个
+  if (isFoldFspLeftMenu && isFoldLeftList) {
+    return extraLargePageSize;
+  }
+  // FSP左侧菜单折叠放9个
+  if (isFoldFspLeftMenu) {
+    return mediumPageSize;
+  }
+  // 任务列表折叠起来放10个
+  if (isFoldLeftList) {
+    return largePageSize;
+  }
+  // 其余的放6个
+  return smallPageSize;
+};
 
 export default class PerformerViewDetail extends PureComponent {
 
@@ -77,10 +105,16 @@ export default class PerformerViewDetail extends PureComponent {
     customerList: [],
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
+  componentDidMount() {
+    const {
+      queryTargetCust,
+      currentId,
+      isFold,
+    } = this.props;
+    const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
+    const newPageSize = getPageSize(isFoldFspLeftMenu, isFold);
+    // 执行者视图服务实施客户列表中 状态筛选默认值 state='10' 未开始
+    queryTargetCust({ missionId: currentId, state: '10', pageNum: 1, pageSize: newPageSize });
   }
 
   // 生成基本信息中的内容

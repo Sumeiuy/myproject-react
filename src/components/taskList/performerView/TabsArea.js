@@ -2,13 +2,14 @@
  * @Description: 页签切换显示
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:53:21
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 13:40:20
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-13 21:49:39
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Tabs } from 'antd';
+import cx from 'classnames';
 import ServiceImplementation from './serviceImplementation/ServiceImplementation';
 import ServiceResult from './serviceResult/ServiceResult';
 import Survey from './survey/QuestionnaireSurvey';
@@ -40,13 +41,17 @@ const TabsArea = (props) => {
     basicInfo,
     basicInfo: { missionStatusCode },
   } = props;
-
+  const tabsContainer = cx(
+    [styles.tabsContainer],
+    'lego-filter-menuContainer',
+  );
   return (
-    <div className={styles.tabsContainer} >
+    <div className={tabsContainer} >
       <Tabs activeKey={performerViewCurrentTab} onChange={handleTabsChange}>
         <TabPane tab="服务实施" key="serviceImplementation">
           <ServiceImplementation
             {...props}
+            popupContainer={styles.tabsContainer}
           />
         </TabPane>
         <TabPane tab="服务结果" key="serviceResult">

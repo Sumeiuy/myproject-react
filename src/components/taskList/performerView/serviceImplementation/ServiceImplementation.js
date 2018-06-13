@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-13 16:56:03
+ * @Last Modified time: 2018-06-13 21:02:20
  */
 
 import React, { PureComponent } from 'react';
@@ -135,6 +135,7 @@ export default class ServiceImplementation extends PureComponent {
     addCallRecord: PropTypes.func,
     toggleServiceRecordModal: PropTypes.func,
     queryTargetCustDetail: PropTypes.func.isRequired,
+    popupContainer: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -171,7 +172,7 @@ export default class ServiceImplementation extends PureComponent {
     const { targetCustList } = props;
     this.state = {
       // Fsp页面左侧菜单是否被折叠
-      isFoldFspLeftMenu: false,
+      isFoldFspLeftMenu: fsp.isFSPLeftMenuFold(),
       // 当前服务实施列表的数据
       targetCustList,
       propsTargetCustList: targetCustList,
