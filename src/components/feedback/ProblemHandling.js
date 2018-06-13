@@ -28,6 +28,7 @@ const EMPTY_OBJECT = {};
 
 // 经办人为空时，传入update接口的字段名为 ‘请选择’，现在要求经办人是必填，故判空时，要排除经办人为 ‘请选择’的情况
 const EMPTY_TEXT = '请选择';
+const EMPTY_VALUE = '';
 @createForm()
 export default class ProblemHandling extends PureComponent {
   static propTypes = {
@@ -108,7 +109,7 @@ export default class ProblemHandling extends PureComponent {
         return;
       }
       const { processer = '' } = values;
-      if (_.isEmpty(processer) || processer === EMPTY_TEXT) {
+      if (_.isEmpty(processer)) {
         this.setState({
           showError: true,
         });
@@ -163,6 +164,7 @@ export default class ProblemHandling extends PureComponent {
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
     const allOperatorOptions = feedbackOptions.allOperatorOptions;
+    const initProcessValue = processer === EMPTY_TEXT ? EMPTY_VALUE : processer;
     return (
       <Modal
         title={title}
@@ -216,7 +218,7 @@ export default class ProblemHandling extends PureComponent {
                   <FormItem>
                     {/* initialValue 值为 undefined时，才展示 placeholder */}
                     {getFieldDecorator('processer', {
-                      initialValue: processer || undefined,
+                      initialValue: initProcessValue || undefined,
                     })(
                       <Select
                         placeholder="请选择"
