@@ -7,8 +7,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import store from 'store';
+
 import InfoModal from '../../common/infoModal';
-import { fspContainer } from '../../../config';
+import { fspContainer, padSightLabelDesc } from '../../../config';
+import { PRODUCT_POTENTIAL_TARGET_CUST_ENTRY } from '../../../config/createTaskEntry';
+
 import logable from '../../../decorators/logable';
 
 import styles from './bottomFixedBox.less';
@@ -159,11 +163,31 @@ export default class BottomFixedBox extends PureComponent {
   // 跳转到创建任务页面
   @autobind
   toCreateTaskPage() {
+    const { location: { query: {
+      source,
+      labelMapping,
+    } }, clearCreateTaskData } = this.props;
+
     const url = '/customerPool/createTask';
     const title = '自建任务';
     const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
+
+    // 有标签描述需要将描述存到storage
+    if (source === PRODUCT_POTENTIAL_TARGET_CUST_ENTRY) {
+      // 如果是外部平台，产品潜在客户跳转进来的，需要添加一个任务提示插入参数，
+      // 在发起任务时，需要用到，这边是瞄准镜标签，不需要labelName
+      const missionDesc = padSightLabelDesc({
+        sightingScopeBool: true,
+        labelId: labelMapping,
+      });
+      store.set(`${labelMapping}-labelDesc`, {
+        missionDesc,
+      });
+    }
+
     // 发起新的任务之前，先清除数据
-    this.props.clearCreateTaskData('custList');
+    // custList代表所有从客户列表发起任务的入口
+    clearCreateTaskData('custList');
 
     this.switchToRoute({
       url,
