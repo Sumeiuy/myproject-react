@@ -338,7 +338,7 @@ export default class CustomerList extends PureComponent {
 
   // 获取列表数据
   @autobind
-  async getCustomerList(props) {
+  getCustomerList(props) {
     const {
       cycle = [],
       getCustomerData, location: { query },
