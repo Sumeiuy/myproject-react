@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-13 22:31:41
+ * @Last Modified time: 2018-06-13 22:53:29
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -74,14 +74,17 @@ export default class CascadeFeedbackSelect extends PureComponent {
   // 改变一级客户反馈
   @autobind
   handleFirstFeedbakSelectChange(value) {
-    const { isShowSecondSelect, secondFeedback } = this.getCustFeedback2();
     // 切换一级，将二级设置成请选择
     this.setState({
       first: value,
-      second: secondFeedback,
-      isShowSecondSelect,
+    }, () => {
+      const { isShowSecondSelect, secondFeedback } = this.getCustFeedback2();
+      this.setState({
+        second: secondFeedback,
+        isShowSecondSelect,
+      });
+      this.props.onChange({ first: value, second: secondFeedback });
     });
-    this.props.onChange({ first: value, second: secondFeedback });
   }
 
   // 根据选中的一级客户反馈，获取二级客户反馈列表
