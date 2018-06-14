@@ -3,13 +3,12 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 14:10:00
+ * @Last Modified time: 2018-06-14 16:36:48
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
 import Barable from '../../decorators/selfBar';
@@ -24,7 +23,7 @@ import config from '../../components/custRelationships/config';
 import { dva } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 
-// 业务手机申请列表宽度
+// 客户关联关系申请左侧列表宽度
 const LEFT_PANEL_WIDTH = 500;
 const { custRelationships, custRelationships: { statusOptions, pageType } } = config;
 const effect = dva.generateEffect;
@@ -55,8 +54,6 @@ const effects = {
   clearReduxData: 'custRelationships/clearReduxData',
 };
 const mapStateToProps = state => ({
-  // 员工基本信息
-  empInfo: state.app.empInfo,
   // 左侧列表数据
   list: state.app.seibleList,
   // 右侧详情数据
@@ -82,7 +79,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  replace: routerRedux.replace,
   // 获取左侧列表
   getList: effect(effects.getList, { forceFull: true }),
   // 获取右侧详情信息
@@ -112,12 +108,10 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-export default class ApplyHome extends PureComponent {
+export default class CustRelationshipsHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
-    // 员工信息
-    empInfo: PropTypes.object.isRequired,
     // 列表
     list: PropTypes.object.isRequired,
     getList: PropTypes.func.isRequired,
@@ -155,6 +149,10 @@ export default class ApplyHome extends PureComponent {
     clearReduxData: PropTypes.func.isRequired,
   }
 
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+  }
+
   static defaultProps = {
     attachmentList: [],
   }
@@ -183,10 +181,10 @@ export default class ApplyHome extends PureComponent {
   @autobind
   getRightDetail() {
     const {
-      replace,
       list,
       location: { pathname, query, query: { currentId } },
     } = this.props;
+    const { replace } = this.context;
     if (!_.isEmpty(list.resultData)) {
       // 表示左侧列表获取完毕
       // 因此此时获取Detail
@@ -195,7 +193,7 @@ export default class ApplyHome extends PureComponent {
       let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
       if (!_.isEmpty(currentId) && itemIndex > -1) {
         // 此时url中存在currentId
-        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+        item = _.filter(list.resultData, o => String(o.id) === currentId)[0];
       } else {
         // 不存在currentId
         replace({
@@ -234,7 +232,8 @@ export default class ApplyHome extends PureComponent {
   @autobind
   handleHeaderFilter(obj) {
     // 1.将值写入Url
-    const { replace, location } = this.props;
+    const { location } = this.props;
+    const { replace } = this.context;
     const { query, pathname } = location;
     // 清空掉消息提醒页面带过来的 id
     replace({
@@ -260,7 +259,8 @@ export default class ApplyHome extends PureComponent {
   // 切换页码
   @autobind
   handlePageNumberChange(nextPage, currentPageSize) {
-    const { replace, location } = this.props;
+    const { location } = this.props;
+    const { replace } = this.context;
     const { query, pathname } = location;
     replace({
       pathname,
@@ -276,7 +276,8 @@ export default class ApplyHome extends PureComponent {
   // 切换每一页显示条数
   @autobind
   handlePageSizeChange(currentPageNum, changedPageSize) {
-    const { replace, location } = this.props;
+    const { location } = this.props;
+    const { replace } = this.context;
     const { query, pathname } = location;
     replace({
       pathname,
@@ -293,10 +294,8 @@ export default class ApplyHome extends PureComponent {
   @autobind
   handleListRowClick(record, index) {
     const { id, flowId } = record;
-    const {
-      replace,
-      location: { pathname, query, query: { currentId } },
-    } = this.props;
+    const { location: { pathname, query, query: { currentId } } } = this.props;
+    const { replace } = this.context;
     if (currentId === String(id)) return;
     replace({
       pathname,
@@ -349,10 +348,8 @@ export default class ApplyHome extends PureComponent {
 
   render() {
     const {
-      replace,
       location,
       list,
-      empInfo,
       detailInfo,
       attachmentList,
       custDetail,
@@ -373,15 +370,14 @@ export default class ApplyHome extends PureComponent {
 
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
+    // 头部筛选
     const topPanel = (
       <ConnectedSeibelHeader
         location={location}
-        replace={replace}
         page="custRelationships"
         pageType={pageType}
         needSubType={false}
         stateOptions={statusOptions}
-        empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
       />
@@ -398,6 +394,7 @@ export default class ApplyHome extends PureComponent {
       onShowSizeChange: this.handlePageSizeChange,
     };
 
+    // 左侧列表
     const leftPanel = (
       <CustRelationshipsList
         list={resultData}
@@ -406,6 +403,7 @@ export default class ApplyHome extends PureComponent {
       />
     );
 
+    // 右侧详情
     const rightPanel = (
       <Detail
         data={detailInfo}
