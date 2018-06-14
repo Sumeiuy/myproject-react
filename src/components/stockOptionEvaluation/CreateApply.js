@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-14 22:47:04
+ * @Last Modified time: 2018-06-14 23:28:05
  */
 
 import React, { PureComponent } from 'react';
@@ -346,7 +346,6 @@ export default class CreateApply extends PureComponent {
       rzrqzqAcctFlag,
       jrqhjyFlag,
     } = this.state;
-    console.warn('state', this.state);
     // 客户校验
     if (_.isEmpty(customer)) {
       this.setCustomerErrorProps();
@@ -398,10 +397,8 @@ export default class CreateApply extends PureComponent {
   @autobind
   handleOk() {
     this.checkIsRequired();
-    if (!this.isValidateError) {
-      console.warn('通过校验！');
-    }
   }
+
   // 关闭弹窗
   @autobind
   handleCloseModal() {
@@ -496,30 +493,39 @@ export default class CreateApply extends PureComponent {
     this.setState({ [name]: value }, () => {
       if (value) {
         switch (name) {
+          // 客户交易级别
           case 'custTransLvName':
             this.reSetCustTransLvErrorProps();
             break;
+          // 股票申请客户
           case 'stockCustType':
             this.reSetStockCustTypeErrorProps();
             break;
+          // 申报事项
           case 'reqType':
             this.reSetReqTypeErrorProps();
             break;
+          // 开立期权市场类别
           case 'openOptMktCatg':
             this.reSetOpenOptMktCatgErrorProps();
             break;
+          // 申报事项
           case 'declareBus':
             this.reSetDeclareBusErrorProps();
             break;
+          // 学历
           case 'degreeFlag':
             this.reSetDegreeFlagErrorProps();
             break;
+          // A股账户开立时间6个月以上
           case 'aAcctOpenTimeFlag':
             this.reSetAAcctOpenTimeFlagErrorProps();
             break;
+          // 已开立融资融券账户
           case 'rzrqzqAcctFlag':
             this.reSetRzrqzqAcctFlagErrorProps();
             break;
+          // 已提供金融期货交易证明
           case 'jrqhjyFlag':
             this.reSetJrqhjyFlagErrorProps();
             break;
