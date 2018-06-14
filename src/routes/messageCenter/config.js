@@ -23,6 +23,8 @@ const config = {
   filialeCustTransfer: 'HTSC Batch Branch Assignment Inbox Type',
   // 用户中心
   userCenter: 'HTSC TG Approval Inbox Type',
+  // 我的反馈
+  myFeedback: 'HTSC FeedBack Management Inbox Type',
 };
 
 export default config;
