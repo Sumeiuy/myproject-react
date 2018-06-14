@@ -63,10 +63,11 @@ function findOrgNameByOrgId(orgId) {
 }
 
 export default class CustRange extends PureComponent {
-
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+  }
   static propTypes = {
     location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
     collectData: PropTypes.func,
     updateQueryState: PropTypes.func,
     custRange: PropTypes.array.isRequired,

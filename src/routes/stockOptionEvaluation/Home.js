@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-13 20:14:52
+ * @Last Modified time: 2018-06-14 23:01:51
  */
 
 import React, { PureComponent } from 'react';
@@ -21,6 +21,7 @@ import ViewListRow from '../../components/stockOptionEvaluation/ViewListRow';
 import Detail from '../../components/stockOptionEvaluation/ApplyDetail';
 import CreateApply from '../../components/stockOptionEvaluation/CreateApply';
 import seibelHelper from '../../helper/page/seibel';
+import permission from '../../helper/permission';
 
 const { stockOptionApply, stockOptionApply: { statusOptions, pageType } } = config;
 
@@ -40,6 +41,8 @@ const effects = {
   getSelectMap: 'stockOptionEvaluation/getSelectMap',
   // 清除数据
   clearProps: 'stockOptionEvaluation/clearProps',
+  // 受理营业部变更
+  queryAcceptOrg: 'stockOptionEvaluation/queryAcceptOrg',
 };
 
 const mapStateToProps = state => ({
@@ -63,6 +66,8 @@ const mapStateToProps = state => ({
   klqqsclbMap: state.stockOptionEvaluation.klqqsclbMap,
   // 业务受理营业部下拉列表
   busDivisionMap: state.stockOptionEvaluation.busDivisionMap,
+  // 受理营业部变更
+  acceptOrgData: state.stockOptionEvaluation.acceptOrgData,
 });
 
 const mapDispatchToProps = {
@@ -80,6 +85,8 @@ const mapDispatchToProps = {
   getSelectMap: effect(effects.getSelectMap, { forceFull: true }),
   // 清除数据
   clearProps: effect(effects.clearProps, { forceFull: true }),
+  // 受理营业部变更
+  queryAcceptOrg: effect(effects.queryAcceptOrg, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -114,6 +121,9 @@ export default class StockOptionApplication extends PureComponent {
     getSelectMap: PropTypes.func.isRequired,
     // 清除数据
     clearProps: PropTypes.func.isRequired,
+    // 受理营业部变更
+    acceptOrgData: PropTypes.object.isRequired,
+    queryAcceptOrg: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -182,7 +192,10 @@ export default class StockOptionApplication extends PureComponent {
       this.setState({
         activeRowIndex: itemIndex,
       });
-      this.props.getDetailInfo({ flowId: item.flowId }).then(() => {
+      this.props.getDetailInfo({
+        id: item.id,
+        flowId: item.flowId,
+      }).then(() => {
         const { detailInfo, getAttachmentList } = this.props;
         const { attachment } = detailInfo;
         // 拿详情接口返回的attachmnet，调详情附件信息
@@ -218,7 +231,10 @@ export default class StockOptionApplication extends PureComponent {
       },
     });
     this.setState({ activeRowIndex: index });
-    this.props.getDetailInfo({ flowId }).then(() => {
+    this.props.getDetailInfo({
+      id,
+      flowId,
+    }).then(() => {
       const { detailInfo, getAttachmentList } = this.props;
       const { attachment } = detailInfo;
       // 拿详情接口返回的attachmnet，调详情附件信息
@@ -311,6 +327,11 @@ export default class StockOptionApplication extends PureComponent {
     );
   }
 
+  // 申请新建按钮是否显示
+  handleShowCreateBtn() {
+    return permission.hasPermissionOfStockApplyCreate();
+  }
+
   render() {
     const { empInfo } = this.context;
     const {
@@ -328,6 +349,8 @@ export default class StockOptionApplication extends PureComponent {
       busDivisionMap,
       getSelectMap,
       clearProps,
+      acceptOrgData,
+      queryAcceptOrg,
     } = this.props;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -341,6 +364,7 @@ export default class StockOptionApplication extends PureComponent {
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
+        isShowCreateBtn={this.handleShowCreateBtn}
         isUseOfCustomer
         needApplyTime
       />
@@ -393,6 +417,8 @@ export default class StockOptionApplication extends PureComponent {
             klqqsclbMap={klqqsclbMap}
             busDivisionMap={busDivisionMap}
             getSelectMap={getSelectMap}
+            acceptOrgData={acceptOrgData}
+            queryAcceptOrg={queryAcceptOrg}
           />
           : null
         }

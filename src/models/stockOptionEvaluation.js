@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 17:15:59
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-12 14:32:53
+ * @Last Modified time: 2018-06-14 14:01:52
  */
 
 import { stockOptionEvaluation as api } from '../api';
@@ -28,6 +28,8 @@ export default {
     klqqsclbMap: EMPTY_LIST,
     // 业务受理营业部下拉列表
     busDivisionMap: EMPTY_LIST,
+    // 受理营业部变更
+    acceptOrgData: EMPTY_OBJECT,
   },
   reducers: {
     // 股票期权申请页面-右侧详情
@@ -90,7 +92,6 @@ export default {
         ...item,
         show: true,
       }));
-      console.warn('stockCustTypeMapModel', stockCustTypeMap);
       return {
         ...state,
         stockCustTypeMap,
@@ -109,6 +110,15 @@ export default {
         reqTypeMap: EMPTY_LIST,
         klqqsclbMap: EMPTY_LIST,
         busDivisionMap: EMPTY_LIST,
+      };
+    },
+
+    // 受理营业部变更成功
+    queryAcceptOrgSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        acceptOrgData: resultData,
       };
     },
   },
@@ -163,6 +173,15 @@ export default {
       yield put({
         type: 'clearPropsSuccess',
         payload: [],
+      });
+    },
+
+    // 受理营业部变更
+    * queryAcceptOrg({ payload }, { call, put }) {
+      const response = yield call(api.queryAcceptOrg, payload);
+      yield put({
+        type: 'queryAcceptOrgSuccess',
+        payload: response,
       });
     },
   },

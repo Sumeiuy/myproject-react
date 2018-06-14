@@ -219,16 +219,8 @@ const permission = {
   },
 
   // 股票期权申请，当前用户是否拥有新建按钮权限
-  hasPermissionOfStockApplyCreate(empInfo) {
-    // 职责-- HTSC 股票期权申请岗
-    const permissionGPQQSQG = duty.HTSC_GPQQSQG;
-    // 从 empInfo 中取出 empRespList 职责列表
-    const { empRespList = [] } = empInfo;
-    // 从职责列表中找出 职责名称对应的 id 等于 需要检测的职责名称 id 的数组
-    const filterRespGPQQSQG = _.find(empRespList, o => o.respId === permissionGPQQSQG);
-    // 判断两个职责列表，都有数据则有权限
-    const hasPermission = filterRespGPQQSQG.length > 0;
-    return hasPermission;
+  hasPermissionOfStockApplyCreate() {
+    return hasDuty(dutyList, duty.HTSC_GPQQSQG);
   },
 
   // HTSC 交易信息查询权限（非私密客户）

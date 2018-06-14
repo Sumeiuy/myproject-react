@@ -4,8 +4,11 @@
     height: auto;
     display: flex;
     flex-wrap: wrap;
-    padding-bottom: 14px;
-    margin-top: 14px;
+    margin-bottom: 20px;
+
+    .coloumn {
+      margin-top: 20px;
+    }
   }
 
   .basicInfo, .options {
@@ -18,7 +21,6 @@
     display: flex;
     flex: 1;
     flex-grow: 1;
-    margin-top: 14px;
     min-width: 340px;
     max-width: 33.3333%;
   }
@@ -100,19 +102,28 @@
         width: 200px;
         height: 32px;
       }
+
+      .ant-form-item {
+        margin-bottom: 20px;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .ant-form-item-control {
+        line-height: 20px;
+      }
     }
   }
 
   .row {
     display: flex;
     width: 100%;
-    margin-top: 14px;
   }
 
   .promptBox {
-    margin-top: 20px;
-
     .head {
+      margin-bottom: 14px;
+
       .promptIcon {
         color: #f5a623;
         vertical-align: middle;
