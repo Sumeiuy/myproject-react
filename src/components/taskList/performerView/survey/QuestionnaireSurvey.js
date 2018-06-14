@@ -4,7 +4,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-05-22 12:26:05
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-13 22:32:14
+ * @Last Modified time: 2018-06-14 13:18:13
  * 只是将原先的问卷调查逻辑单独提取成组件
  */
 
@@ -219,8 +219,9 @@ export default class QuestionnaireSurvey extends PureComponent {
     form.validateFields((err) => {
       if (!err && !hasCheckboxError) {
         // 最后的checkboxData提交给后台
-        const finalCheckboxData = _.flatten(_.map(checkboxData, item => item));
+        const finalCheckboxData = _.flatten(_.values(checkboxData));
         const checkedData = [...finalCheckboxData, ...radioData, ...areaTextData];
+
         const params = {
           // 提交问卷传参测试
           answerReqs: checkedData,
