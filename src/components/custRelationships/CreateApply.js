@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请新建页面
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 14:09:44
+ * @Last Modified time: 2018-06-14 16:26:25
  */
 
 import React, { PureComponent } from 'react';
@@ -248,8 +248,8 @@ export default class CreateApply extends PureComponent {
       custId: cust.custId,
       custRowId: cust.custRowId,
       custType: cust.custTypeValue,
-      IDTypeValue: cust.IDTypeValue,
-      IDNum: cust.IDNum,
+      IDTypeValue: cust.custIDTypeValue,
+      IDNum: cust.custIDNum,
     }).then(this.doApprovalFlow);
   }
 
@@ -361,7 +361,7 @@ export default class CreateApply extends PureComponent {
       dataSource: nextApproverList,
       columns: approvalColumns,
       title: '选择下一审批人员',
-      modalKey: 'phoneApplyNextApproverModal',
+      modalKey: 'relationApplyNextApproverModal',
       rowKey: 'login',
       searchShow: false,
     };

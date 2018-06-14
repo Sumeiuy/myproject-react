@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 15:31:11
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-13 17:21:52
+ * @Last Modified time: 2018-06-14 16:26:20
  * @description 客户信息展示区域
  */
 import React from 'react';
@@ -25,11 +25,11 @@ export default function CustInfo(props) {
       </div>
       <div className={styles.certType}>
         <span className={styles.label}>证件类型：</span>
-        <span className={styles.value}>{cust.IDTypeLabel}</span>
+        <span className={styles.value}>{cust.custIDTypeLabel}</span>
       </div>
       <div className={styles.certNo}>
         <span className={styles.label}>证件号码：</span>
-        <span className={styles.value}>{cust.IDNum}</span>
+        <span className={styles.value}>{cust.custIDNum}</span>
       </div>
     </div>
   );

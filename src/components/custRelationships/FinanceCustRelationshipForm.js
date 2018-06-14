@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 13:40:59
+ * @Last Modified time: 2018-06-14 16:14:56
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -23,7 +23,7 @@ import AssociateRelationTable from './AssociateRelationTable';
 import AddRelationshipModal from './AddRelationshipModal';
 
 import { StockRepurchaseOptions, custRelationships } from './config';
-import { data } from '../../helper';
+import { data, emp } from '../../helper';
 
 import styles from './financeCustRelationshipForm.less';
 
@@ -60,7 +60,13 @@ export default class FinanceCustRelationshipForm extends Component {
     const { action, custDetail } = props;
     const isCreate = action === 'CREATE';
     const custRelationshipList = isCreate ? []
-    : _.map(_.get(custDetail, 'custRelationshipList'), item => ({ ...item, key: item.ecifId }));
+    : _.map(_.get(custDetail, 'custRelationshipList'), (item) => {
+      const uuid = data.uuid();
+      return {
+        ...item,
+        key: uuid,
+      };
+    });
     this.state = {
       // 选择的用户
       cust: {},
@@ -98,7 +104,12 @@ export default class FinanceCustRelationshipForm extends Component {
   @autobind
   handleSearchCustList(keyword) {
     this.isSelectAfterSearch = true;
-    this.props.queryCustList({ keyword, type: APPLY_TYPE_CODE });
+    this.props.queryCustList({
+      keyword,
+      type: APPLY_TYPE_CODE,
+      deptCode: emp.getOrgId(),
+      postnId: emp.getPstnId(),
+    });
   }
 
   @autobind
@@ -154,8 +165,10 @@ export default class FinanceCustRelationshipForm extends Component {
 
   @autobind
   handlAddAssociateRelationBtnClick() {
+    // 如果是驳回后修改页面则不需要对客户进行校验
+    const { action } = this.props;
     const { cust } = this.state;
-    if (_.isEmpty(cust)) {
+    if (action === 'CREATE' && _.isEmpty(cust)) {
       confirm({ content: '请先选择要申请的客户' });
     } else {
       this.setState({
