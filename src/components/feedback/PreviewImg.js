@@ -7,6 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
 import _ from 'lodash';
 import { Modal } from 'antd';
 
@@ -19,12 +20,14 @@ export default class PreviewImg extends PureComponent {
     previewUrl: PropTypes.string,
     icon: PropTypes.string,
     label: PropTypes.string,
+    className: PropTypes.string,
   }
 
   static defaultProps = {
     icon: '',
     previewUrl: '',
     label: '查看',
+    className: '',
   }
 
   constructor(props) {
@@ -122,11 +125,14 @@ export default class PreviewImg extends PureComponent {
 
   @autobind
   renderPreview() {
-    const { icon, label } = this.props;
+    const { icon, label, className } = this.props;
     const hasIcon = !_.isEmpty(icon);
     return (
       <div
-        className={styles.preview}
+        className={classnames(
+          styles.preview,
+          { [className]: !!className },
+        )}
         onClick={this.handlePreview}
       >
         <a>
