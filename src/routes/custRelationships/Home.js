@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-14 16:09:25
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-14 17:46:00
  */
 
 import React, { PureComponent } from 'react';
@@ -34,6 +34,24 @@ const effects = {
   getDetailInfo: 'custRelationships/getDetailInfo',
   // 获取附件列表
   getAttachmentList: 'custRelationships/getAttachmentList',
+  // 根据关键字获取可申请的客户列表
+  queryCustList: 'custRelationships/queryCustList',
+  // 获取选中的客户的详情信息
+  getCustDetail: 'custRelationships/getCustDetail',
+  // 获取关联关系树
+  getRelationshipTree: 'custRelationships/getRelationshipTree',
+  // 获取新建页面审批人信息和按钮
+  getApprovalInfo: 'custRelationships/getApprovalInfo',
+  // 获取驳回后修改页面审批人信息和按钮
+  getApprovalInfoForUpdate: 'custRelationships/getApprovalInfoForUpdate',
+  // 校验数据接口
+  validateData: 'custRelationships/validateData',
+  // 提交申请
+  submitApply: 'custRelationships/submitApply',
+  // 走流程接口
+  doApproveFlow: 'custRelationships/doApproveFlow',
+  // 清空数据
+  clearReduxData: 'custRelationships/clearReduxData',
 };
 const mapStateToProps = state => ({
   // 左侧列表数据
@@ -42,6 +60,22 @@ const mapStateToProps = state => ({
   detailInfo: state.custRelationships.detailInfo,
   // 附件列表
   attachmentList: state.custRelationships.attachmentList,
+  // 可进行关联关系申请的客户列表
+  custList: state.custRelationships.custList,
+  // 用户选中的客户基本信息
+  custDetail: state.custRelationships.custDetail,
+  // 关联关系树
+  relationshipTree: state.custRelationships.relationshipTree,
+  // 新建页面的按钮和审批人信息
+  approval: state.custRelationships.approval,
+  // 驳回修改页面的按钮和审批人信息
+  approvalForUpdate: state.custRelationships.approvalForUpdate,
+  // 数据校验结果
+  validateResult: state.custRelationships.validateResult,
+  // 提交申请的结果
+  submitResult: state.custRelationships.submitResult,
+  // 流程接口结果
+  flowResult: state.custRelationships.flowResult,
 });
 
 const mapDispatchToProps = {
@@ -51,6 +85,24 @@ const mapDispatchToProps = {
   getDetailInfo: effect(effects.getDetailInfo, { forceFull: true }),
   // 获取附件列表
   getAttachmentList: effect(effects.getAttachmentList, { forceFull: true }),
+  // 根据关键字获取可申请的客户列表
+  queryCustList: effect(effects.queryCustList, { forceFull: true }),
+  // 获取选中的客户的详情信息
+  getCustDetail: effect(effects.getCustDetail, { forceFull: true }),
+  // 获取关联关系树
+  getRelationshipTree: effect(effects.getRelationshipTree, { forceFull: true }),
+  // 获取新建页面审批人信息和按钮
+  getApprovalInfo: effect(effects.getApprovalInfo, { forceFull: true }),
+  // 获取驳回后修改页面审批人信息和按钮
+  getApprovalInfoForUpdate: effect(effects.getApprovalInfoForUpdate, { forceFull: true }),
+  // 校验数据接口
+  validateData: effect(effects.validateData, { forceFull: true }),
+  // 提交申请接口
+  submitApply: effect(effects.submitApply, { forceFull: true }),
+  // 走流程接口
+  doApproveFlow: effect(effects.doApproveFlow, { forceFull: true }),
+  // 清除Redux中的数据
+  clearReduxData: effect(effects.clearReduxData, { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -69,6 +121,32 @@ export default class CustRelationshipsHome extends PureComponent {
     // 详情页面服务经理表格申请数据
     attachmentList: PropTypes.array,
     getAttachmentList: PropTypes.func.isRequired,
+    // 获取客户详情
+    getCustDetail: PropTypes.func.isRequired,
+    custDetail: PropTypes.object.isRequired,
+    // 获取可申请客户列表
+    queryCustList: PropTypes.func.isRequired,
+    custList: PropTypes.array.isRequired,
+    // 获取可申请客户列表
+    getRelationshipTree: PropTypes.func.isRequired,
+    relationshipTree: PropTypes.array.isRequired,
+    // 新建页面的按钮和审批人信息
+    approval: PropTypes.object.isRequired,
+    getApprovalInfo: PropTypes.func.isRequired,
+    // 驳回后修改页面的按钮和审批人信息
+    getApprovalInfoForUpdate: PropTypes.func.isRequired,
+    approvalForUpdate: PropTypes.object.isRequired,
+    // 校验数据
+    validateData: PropTypes.func.isRequired,
+    validateResult: PropTypes.object.isRequired,
+    // 提交申请
+    submitResult: PropTypes.string.isRequired,
+    submitApply: PropTypes.func.isRequired,
+    // 走流程
+    flowResult: PropTypes.string.isRequired,
+    doApproveFlow: PropTypes.func.isRequired,
+    // 清除Redux中的数据
+    clearReduxData: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -90,15 +168,12 @@ export default class CustRelationshipsHome extends PureComponent {
   }
 
   componentDidMount() {
-    const {
-      location: {
-        query,
-        query: {
-          pageNum,
-          pageSize,
-        },
-      },
-    } = this.props;
+    this.getAppList();
+  }
+
+  @autobind
+  getAppList() {
+    const { location: { query, query: { pageNum, pageSize } } } = this.props;
     this.queryAppList(query, pageNum, pageSize);
   }
 
@@ -173,12 +248,6 @@ export default class CustRelationshipsHome extends PureComponent {
     this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
-  @autobind
-  clearModal(name) {
-    // 清除模态框组件
-    this.setState({ [name]: false });
-  }
-
   // 打开新建申请的弹出框
   @autobind
   openCreateModalBoard() {
@@ -250,6 +319,19 @@ export default class CustRelationshipsHome extends PureComponent {
     });
   }
 
+  @autobind
+  handleCloseCreateModal(name, isNeedRefresh) {
+    this.setState({ [name]: false });
+    this.props.clearReduxData({
+      custDetail: {},
+      custList: [],
+      approval: {},
+    });
+    if (isNeedRefresh) {
+      this.getAppList();
+    }
+  }
+
   // 渲染列表项里面的每一项
   @autobind
   renderListRow(record, index) {
@@ -274,7 +356,22 @@ export default class CustRelationshipsHome extends PureComponent {
       list,
       detailInfo,
       attachmentList,
+      custDetail,
+      getCustDetail,
+      custList,
+      queryCustList,
+      relationshipTree,
+      getRelationshipTree,
+      getApprovalInfo,
+      approval,
+      validateData,
+      validateResult,
+      submitApply,
+      submitResult,
+      flowResult,
+      doApproveFlow,
     } = this.props;
+
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
     // 头部筛选
@@ -331,13 +428,26 @@ export default class CustRelationshipsHome extends PureComponent {
           leftWidth={LEFT_PANEL_WIDTH}
         />
         {
-          isShowCreateModal ?
+          !isShowCreateModal ? null :
+          (
             <CreateApply
-              location={location}
-              onCloseModal={this.clearModal}
+              onCloseModal={this.handleCloseCreateModal}
+              custDetail={custDetail}
+              custList={custList}
+              getCustDetail={getCustDetail}
+              queryCustList={queryCustList}
+              relationshipTree={relationshipTree}
+              getRelationshipTree={getRelationshipTree}
+              approval={approval}
+              getApprovalInfo={getApprovalInfo}
+              validateData={validateData}
+              validateResult={validateResult}
+              submitResult={submitResult}
+              submitApply={submitApply}
+              flowResult={flowResult}
+              doApproveFlow={doApproveFlow}
             />
-            :
-            null
+          )
         }
       </div>
     );

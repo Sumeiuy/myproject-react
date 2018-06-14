@@ -1,21 +1,27 @@
 /**
- * @Author: hongguangqing
- * @Descripter: 客户关联关系信息申请新建页面
- * @Date: 2018-06-08 13:10:33
+ * @Author: sunweibin
+ * @Date: 2018-06-12 15:12:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 17:54:38
+ * @Last Modified time: 2018-06-14 17:54:31
+ * @description 融资类业务驳回后修改页面
  */
-
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { connect } from 'dva';
 import _ from 'lodash';
+import { Input } from 'antd';
 
-import FinanceCustRelationshipForm from './FinanceCustRelationshipForm';
-import Modal from '../common/biz/CommonModal';
-import confirm from '../common/confirm_';
-import ApprovalBtnGroup from '../common/approvalBtns';
-import TableDialog from '../common/biz/TableDialog';
+import TableDialog from '../../components/common/biz/TableDialog';
+import confirm from '../../components/common/confirm_';
+import ApprovalBtnGroup from '../../components/common/approvalBtns';
+import ApproveList from '../../components/common/approveList';
+import InfoTitle from '../../components/common/InfoTitle';
+import InfoItem from '../../components/common/infoItem';
+import FinanceCustRelationshipForm from '../../components/custRelationships/FinanceCustRelationshipForm';
+import Barable from '../../decorators/selfBar';
+import withRouter from '../../decorators/withRouter';
+import { env, dom, dva } from '../../helper';
 
 import {
   approvalColumns,
@@ -23,23 +29,64 @@ import {
   realControllerTypeCode,
   fuqiTypeCode,
   productManagerTypeCode,
-} from './config';
+} from '../../components/custRelationships/config';
 
-export default class CreateApply extends PureComponent {
+import styles from './rejectUpdateHome.less';
+
+const TextArea = Input.TextArea;
+
+const effect = dva.generateEffect;
+
+const mapStateToProps = state => ({
+  // 驳回后修改页面的详情数据
+  detailForUpdate: state.custRelationships.detailForUpdate,
+  // 关联关系树
+  relationshipTree: state.custRelationships.relationshipTree,
+  // 驳回后修改页面的按钮和审批人信息
+  approvalForUpdate: state.custRelationships.approvalForUpdate,
+  // 数据校验结果
+  validateResult: state.custRelationships.validateResult,
+  // 提交申请的结果
+  submitResult: state.custRelationships.submitResult,
+  // 流程接口结果
+  flowResult: state.custRelationships.flowResult,
+});
+
+const mapDispatchToProps = {
+  // 获取驳回后修改页面的详情数据 api
+  getDetailForUpdate: effect('custRelationships/getDetailForUpdate'),
+  // 根据客户类型获取关联关系树 api
+  getRelationshipTree: effect('custRelationships/getRelationshipTree'),
+  // 驳回后修改页面的按钮和审批人信息
+  getApprovalInfoForUpdate: effect('custRelationships/getApprovalInfoForUpdate'),
+  // 校验数据接口
+  validateData: effect('custRelationships/validateData'),
+  // 提交申请接口
+  submitApply: effect('custRelationships/submitApply'),
+  // 走流程接口
+  doApproveFlow: effect('custRelationships/doApproveFlow'),
+  // 清除Redux中的数据
+  clearReduxData: effect('custRelationships/clearReduxData', { loading: false }),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
+@withRouter
+@Barable
+export default class RejectUpdateHome extends Component {
   static propTypes = {
-    onCloseModal: PropTypes.func.isRequired,
-    // 获取客户详情
-    getCustDetail: PropTypes.func.isRequired,
-    custDetail: PropTypes.object.isRequired,
-    // 获取可申请客户列表
-    queryCustList: PropTypes.func.isRequired,
-    custList: PropTypes.array.isRequired,
-    // 获取关联关系树
-    getRelationshipTree: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    // 驳回后修改页面的详情数据
+    detailForUpdate: PropTypes.object.isRequired,
+    // 关联关系树
     relationshipTree: PropTypes.array.isRequired,
-    // 新建页面的按钮和审批人信息
-    approval: PropTypes.object.isRequired,
-    getApprovalInfo: PropTypes.func.isRequired,
+    // 根据客户类型获取关联关系树 api
+    getRelationshipTree: PropTypes.func.isRequired,
+    // 获取驳回后修改页面的详情数据 api
+    getDetailForUpdate: PropTypes.func.isRequired,
+    // 驳回后修改页面按钮和审批人信息
+    approvalForUpdate: PropTypes.object.isRequired,
+    // 获取驳回后修改页面的按钮和审批人信息
+    getApprovalInfoForUpdate: PropTypes.func.isRequired,
     // 校验数据
     validateData: PropTypes.func.isRequired,
     validateResult: PropTypes.object.isRequired,
@@ -49,37 +96,57 @@ export default class CreateApply extends PureComponent {
     // 走流程
     flowResult: PropTypes.string.isRequired,
     doApproveFlow: PropTypes.func.isRequired,
-  }
-
-  static defaultProps = {
+    // 清除Redux中的数据
+    clearReduxData: PropTypes.func.isRequired,
   }
 
   constructor(props) {
     super(props);
+
     this.state = {
-      // 选择下一步审批人
-      nextApprovalModal: false,
-      // 下一步审批人列表
-      nextApproverList: [],
-      // 用户选择的客户
-      cust: {},
+      // 审批意见
+      idea: '',
       // 是否办理股票质押回购业务
       stockRepurchase: '',
-      // 关联关系
+      // 关联关系数据
       relationships: [],
-      // 附件uuid
-      attachment: '',
+      // 选择审批人弹框
+      nextApprovalModal: false,
     };
+    // 此处为 React 16.3 API
+    this.rejectHomeRef = React.createRef();
   }
+
   componentDidMount() {
-    // 新建页面获取审批按钮和审批人信息，新建不需要传flowId
-    this.props.getApprovalInfo({});
+    this.setHomeHeight();
+    // 初始化的时候，根据 flowId查询详情数据
+    const { location: { query: { flowId = '' } } } = this.props;
+    // 获取到详情数据后，在根据详情数据获取关联关系树
+    this.props.getDetailForUpdate({ flowId }).then(() => {
+      const {
+        detailForUpdate: { custDetail = {}, appId, attachment },
+      } = this.props;
+      this.props.getRelationshipTree({ custType: custDetail.custTypeValue });
+      // 保存客户信息
+      this.setState({
+        attachment,
+        appId,
+        cust: custDetail,
+        stockRepurchase: custDetail.businessFlag,
+        relationships: this.props.detailForUpdate.custRelationshipList,
+      });
+    });
+    // 获取流程审批按钮和审批人信息
+    this.props.getApprovalInfoForUpdate({ flowId });
   }
 
   @autobind
-  hasCust() {
-    const { cust } = this.state;
-    return !_.isEmpty(cust);
+  setHomeHeight() {
+    let height = dom.getCssStyle(document.documentElement, 'height');
+    if (env.isInFsp()) {
+      height = `${Number.parseInt(height, 10) - 55}px`;
+    }
+    dom.setStyle(this.rejectHomeRef.current, 'height', height);
   }
 
   @autobind
@@ -196,17 +263,12 @@ export default class CreateApply extends PureComponent {
 
   @autobind
   checkSubmitData() {
-    // 1 校验客户
-    if (!this.hasCust()) {
-      confirm({ content: '客户不能为空' });
-      return false;
-    }
-    // 2.校验是否选择了是否办理股票质押回购业务
+    // 此处客户信息是固定的，并且肯定存在
     if (!this.hasStockRepurchase()) {
       confirm({ content: '请选择是否办理股票质押回购业务' });
       return false;
     }
-    // 3.校验关联关系
+    // 校验关联关系
     return this.checkeRelationships();
   }
 
@@ -239,7 +301,9 @@ export default class CreateApply extends PureComponent {
       auditors,
       stockRepurchase,
       cust,
+      appId,
     } = this.state;
+    const { location: { query: { flowId = '' } } } = this.props;
     this.props.submitApply({
       relationshipList: relationships,
       attachment,
@@ -250,12 +314,14 @@ export default class CreateApply extends PureComponent {
       custType: cust.custTypeValue,
       IDTypeValue: cust.custIDTypeValue,
       IDNum: cust.custIDNum,
+      flowCode: flowId,
+      appId,
     }).then(this.doApprovalFlow);
   }
 
   @autobind
   doApprovalFlow() {
-    const { submitResult } = this.props;
+    const { submitResult, location: { query: { flowId = '' } } } = this.props;
     if (!_.isEmpty(submitResult)) {
       const { groupName, operate, auditors, cust } = this.state;
       this.props.doApproveFlow({
@@ -264,41 +330,35 @@ export default class CreateApply extends PureComponent {
         auditors,
         operate,
         custId: cust.custId,
+        wobNum: flowId,
+        flowId,
       }).then(() => {
         const { flowResult } = this.props;
         if (flowResult === 'success') {
-          this.props.onCloseModal('isShowCreateModal', true);
+          // 此处流程走成功了之后，需要将按钮注销
+          // this.props.onCloseModal('isShowCreateModal', true);
         }
       });
     }
   }
 
   @autobind
-  handleModalClose() {
-    // 关闭新建申请弹出层的时候，弹出提示是否
-    confirm({
-      shortCut: 'close',
-      onOk: this.handleCloseModalConfim,
-    });
-  }
-
-  @autobind
-  handleCloseModalConfim() {
-    this.props.onCloseModal('isShowCreateModal');
-  }
-
-  @autobind
-  handleFinanceCustRelationFormChange(obj) {
+  handleRejectUpdateChange(obj) {
     this.setState(obj);
   }
 
   @autobind
-  handleModalBtnGroupClick(btn) {
+  handleApprovalIdeaChange(e) {
+    this.setState({
+      idea: e.target.value,
+    });
+  }
+
+  @autobind
+  handleBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
     if (!this.checkSubmitData()) return;
-    // 此处需要增加选择审批人的操作
-    // 将用户选择的按钮信息保存下来
-    // 弹出审批人选择框
+    // 保存用户点击的按钮的相关信息
     this.setState({
       operate: btn.operate,
       groupName: btn.nextGroupName,
@@ -318,11 +378,6 @@ export default class CreateApply extends PureComponent {
   }
 
   @autobind
-  handleCancelSelectApproval() {
-    this.setState({ nextApprovalModal: false });
-  }
-
-  @autobind
   handleSelectApproval(approver) {
     this.setState({
       nextApprovalModal: false,
@@ -332,27 +387,21 @@ export default class CreateApply extends PureComponent {
     });
   }
 
+  @autobind
+  handleCancelSelectApproval() {
+    this.setState({ nextApprovalModal: false });
+  }
+
+
   render() {
     const {
-      custDetail,
-      custList,
-      getCustDetail,
-      queryCustList,
-      getRelationshipTree,
+      detailForUpdate,
       relationshipTree,
-      approval,
+      approvalForUpdate,
     } = this.props;
-    const {
-      nextApprovalModal,
-      nextApproverList,
-    } = this.state;
+    if (_.isEmpty(detailForUpdate)) return null;
 
-    const selfBtnGroup = (
-      <ApprovalBtnGroup
-        approval={approval}
-        onClick={this.handleModalBtnGroupClick}
-      />
-    );
+    const { idea, nextApprovalModal, nextApproverList } = this.state;
 
     const nextApprovalProps = {
       visible: nextApprovalModal,
@@ -361,34 +410,61 @@ export default class CreateApply extends PureComponent {
       dataSource: nextApproverList,
       columns: approvalColumns,
       title: '选择下一审批人员',
-      modalKey: 'relationApplyNextApproverModal',
+      modalKey: 'relationRejectApplyNextApproverModal',
       rowKey: 'login',
       searchShow: false,
     };
 
     return (
-      <Modal
-        visible
-        size="large"
-        modalKey="myModal"
-        title="客户关联关系信息申请"
-        maskClosable={false}
-        onCancel={this.handleModalClose}
-        closeModal={this.handleModalClose}
-        selfBtnGroup={selfBtnGroup}
-      >
+      <div className={styles.rejectUpdateHome} ref={this.rejectHomeRef}>
+        <div className={styles.rejectHeader}>
+          <div className={styles.rejectAppId}>{`编号${detailForUpdate.id}`}</div>
+        </div>
         <FinanceCustRelationshipForm
-          action="CREATE"
-          custDetail={custDetail}
-          custList={custList}
-          getCustDetail={getCustDetail}
-          queryCustList={queryCustList}
-          getRelationshipTree={getRelationshipTree}
+          action="UPDATE"
+          custDetail={detailForUpdate}
           relationshipTree={relationshipTree}
-          onChange={this.handleFinanceCustRelationFormChange}
+          onChange={this.handleRejectUpdateChange}
         />
+        <div className={styles.module}>
+          <InfoTitle head="拟稿信息" />
+          <div className={styles.modContent}>
+            <ul className={styles.propertyList}>
+              <li className={styles.item}>
+                <InfoItem label="拟稿人" value={detailForUpdate.empName} width="70px" />
+              </li>
+              <li className={styles.item}>
+                <InfoItem label="申请时间" value={detailForUpdate.createTime} width="70px" />
+              </li>
+              <li className={styles.item}>
+                <InfoItem label="状态" value={detailForUpdate.statusDesc} width="70px" />
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className={styles.module}>
+          <InfoTitle head="审批" />
+          <div className={styles.modContent}>
+            <div className={styles.approvalIdeaArea}>
+              <div className={styles.leftLabel}>审批意见：</div>
+              <div className={styles.rightInput}>
+                <TextArea rows="3" value={idea} onChange={this.handleApprovalIdeaChange} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={styles.module}>
+          <InfoTitle head="审批记录" />
+          <ApproveList data={detailForUpdate.workflowHistoryBeans} />
+        </div>
+        <div className={styles.approvalBtns}>
+          <ApprovalBtnGroup
+            approval={approvalForUpdate}
+            onClick={this.handleBtnGroupClick}
+          />
+        </div>
         <TableDialog {...nextApprovalProps} />
-      </Modal>
+      </div>
     );
   }
 }
