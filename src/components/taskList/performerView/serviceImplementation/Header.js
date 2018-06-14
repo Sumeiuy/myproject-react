@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 22:49:02
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-04 17:50:51
+ * @Last Modified time: 2018-06-13 20:15:42
  */
 
 import React from 'react';
@@ -30,10 +30,10 @@ export default function Header(props) {
     handlePreciseQueryEnterPress,
     parameter,
     targetCustList,
-    currentTargetList,
+    popupContainer,
   } = props;
   const { state, assetSort, rowId, preciseInputValue } = parameter;
-  const { page: { totalCount } } = targetCustList;
+  const { page: { totalCount }, list } = targetCustList;
   // 客户筛选组件的自定义显示
   const getFilterLabelValue = (item) => {
     const { filterName, value } = item;
@@ -62,6 +62,7 @@ export default function Header(props) {
         value={state}
         data={stateData}
         onChange={handleStateChange}
+        menuContainer={popupContainer}
       />
       <SingleFilter
         filterId="rowId"
@@ -73,6 +74,7 @@ export default function Header(props) {
         onChange={handleCustomerChange}
         onInputChange={handleSearchCustomer}
         getFilterLabelValue={getFilterLabelValue}
+        menuContainer={popupContainer}
         showSearch
         needItemObj
       />
@@ -83,7 +85,7 @@ export default function Header(props) {
         isDesc={assetSort === ASSET_DESC}
       />
       {
-        !_.isEmpty(currentTargetList)
+        !_.isEmpty(list)
         && <PreciseQuery
           value={preciseInputValue}
           maxValue={totalCount}
@@ -106,7 +108,7 @@ Header.propTypes = {
   handlePreciseQueryEnterPress: PropTypes.func,
   parameter: PropTypes.object.isRequired,
   targetCustList: PropTypes.object.isRequired,
-  currentTargetList: PropTypes.array,
+  popupContainer: PropTypes.object.isRequired,
 };
 
 Header.defaultProps = {
@@ -117,6 +119,5 @@ Header.defaultProps = {
   handleAssetSort: _.noop,
   handlePreciseQueryChange: _.noop,
   handlePreciseQueryEnterPress: _.noop,
-  currentTargetList: [],
 };
 

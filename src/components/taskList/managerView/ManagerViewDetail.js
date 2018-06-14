@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-07 15:42:47
+ * @Last Modified time: 2018-06-13 12:05:25
  * 管理者视图详情
  */
 
@@ -138,7 +138,7 @@ export default class ManagerViewDetail extends PureComponent {
    * 构造客户反馈一级和二级
    */
   @autobind
-  setCustFeedbackList() {
+  getCustFeedbackList() {
     // 构造一二级客户反馈
     let currentFeedback = _.map(this.props.custFeedback, item => ({
       feedbackIdL1: item.key,
@@ -380,7 +380,17 @@ export default class ManagerViewDetail extends PureComponent {
     let currentEntryName = '';
     let currentEntryId = '';
     let currentRoute = '';
-    if (isEntryFromPie) {
+
+    // 服务经理维度发起任务优先
+    // 发起任务有以下几个入口，客户总数，饼图，进度条，服务经理维度客户总数，已服务，已完成，已达标
+    // 服务经理维度发起任务source复用了isEntryFromProgressDetail，但是source需要单独区分一下，
+    // 所以优先判断enterType
+    // enterType有值，代表是从服务经理维度发起的任务
+    if (!_.isEmpty(enterType)) {
+      currentEntryName = TASK_CUST_SCOPE_ENTRY;
+      currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUST_SCOPE';
+      currentRoute = '/customerPool/createTaskFromCustScope';
+    } else if (isEntryFromPie) {
       currentEntryName = PIE_ENTRY;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PIE';
       currentRoute = '/customerPool/createTaskFromPie';
@@ -388,10 +398,6 @@ export default class ManagerViewDetail extends PureComponent {
       currentEntryName = PROGRESS_ENTRY;
       currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUSTFEEDBACK_PROGRESS';
       currentRoute = '/customerPool/createTaskFromProgress';
-    } else if (!_.isEmpty(enterType)) {
-      currentEntryName = TASK_CUST_SCOPE_ENTRY;
-      currentEntryId = 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUST_SCOPE';
-      currentRoute = '/customerPool/createTaskFromCustScope';
     }
 
     // 发起新的任务之前，先清除数据
@@ -461,7 +467,7 @@ export default class ManagerViewDetail extends PureComponent {
     }
 
     let custScopeParam = {};
-    // 如果是服务经理维度客户下钻，发起任务，包括已服务、已完成、已达标
+    // 如果是服务经理维度客户下钻，发起任务，包括已服务、已完成、已达标、客户总数，四个都能发起任务
     if (!_.isEmpty(enterType)) {
       custScopeParam = {
         feedBackIdL1: feedbackIdL1,
@@ -536,7 +542,7 @@ export default class ManagerViewDetail extends PureComponent {
         onClick={() => this.handlePreview({
           isEntryFromCustTotal: true,
           canLaunchTask: false,
-          currentFeedback: this.setCustFeedbackList(),
+          currentFeedback: this.getCustFeedbackList(),
         })}
       >
         <div
@@ -589,6 +595,8 @@ export default class ManagerViewDetail extends PureComponent {
       progressFlag,
       feedbackIdL2,
       isEntryFromResultStatisfy,
+      enterType,
+      recordId,
     } = this.state;
 
     const {
@@ -759,6 +767,10 @@ export default class ManagerViewDetail extends PureComponent {
                       isShowFeedbackFilter={servedNums > 0}
                       // 结果达标进度条下钻标记
                       isEntryFromResultStatisfy={isEntryFromResultStatisfy}
+                      // 服务经理维度entertype
+                      enterType={enterType}
+                      // recordId
+                      recordId={recordId}
                     />
                   }
                   modalStyle={{
@@ -792,6 +804,8 @@ export default class ManagerViewDetail extends PureComponent {
               queryMOTServeAndFeedBackExcel={queryMOTServeAndFeedBackExcel}
               custManagerScopeData={custManagerScopeData}
               getCustManagerScope={getCustManagerScope}
+              // 当前一级二级反馈
+              currentFeedback={this.getCustFeedbackList()}
             />
           </div>
           <div className={styles.missionFeedbackSection}>

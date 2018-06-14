@@ -2,16 +2,18 @@
  * @Description: 页签切换显示
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:53:21
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 10:17:35
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-13 21:49:39
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Tabs } from 'antd';
+import cx from 'classnames';
 import ServiceImplementation from './serviceImplementation/ServiceImplementation';
 import ServiceResult from './serviceResult/ServiceResult';
 import Survey from './survey/QuestionnaireSurvey';
+import { taskStatusList } from './config';
 import styles from './tabsArea.less';
 
 const TabPane = Tabs.TabPane;
@@ -21,6 +23,8 @@ const TabsArea = (props) => {
   const handleTabsChange = (activeKey) => {
     changePerformerViewTab(activeKey);
   };
+  // 结束状态
+  const isEndState = statusCode => +statusCode === taskStatusList[6].id;
   const {
     isFold,
     serviceProgress,
@@ -35,14 +39,19 @@ const TabsArea = (props) => {
     isSubmitSurveySucceed,
     saveAnswersByType,
     basicInfo,
+    basicInfo: { missionStatusCode },
   } = props;
-
+  const tabsContainer = cx(
+    [styles.tabsContainer],
+    'lego-filter-menuContainer',
+  );
   return (
-    <div className={styles.tabsContainer} >
+    <div className={tabsContainer} >
       <Tabs activeKey={performerViewCurrentTab} onChange={handleTabsChange}>
         <TabPane tab="服务实施" key="serviceImplementation">
           <ServiceImplementation
             {...props}
+            popupContainer={styles.tabsContainer}
           />
         </TabPane>
         <TabPane tab="服务结果" key="serviceResult">
@@ -57,18 +66,24 @@ const TabsArea = (props) => {
             queryExecutorDetail={queryExecutorDetail}
           />
         </TabPane>
-        {hasSurvey &&
+        {hasSurvey ?
           <TabPane tab="任务问卷调查" key="questionnaireSurvey">
-            <Survey
-              answersList={answersList}
-              getTempQuesAndAnswer={getTempQuesAndAnswer}
-              isSubmitSurveySucceed={isSubmitSurveySucceed}
-              saveAnswersByType={saveAnswersByType}
-              basicInfo={basicInfo}
-              currentId={currentId}
-              key={currentId}
-            />
-          </TabPane>}
+            {
+              performerViewCurrentTab === 'questionnaireSurvey' ?
+                <Survey
+                  answersList={answersList}
+                  getTempQuesAndAnswer={getTempQuesAndAnswer}
+                  isSubmitSurveySucceed={isSubmitSurveySucceed}
+                  saveAnswersByType={saveAnswersByType}
+                  basicInfo={basicInfo}
+                  currentId={currentId}
+                  key={currentId}
+                  // 不是结束状态的才可以提交
+                  canSubmit={!isEndState(missionStatusCode)}
+                /> : null
+            }
+          </TabPane> : null
+        }
       </Tabs>
     </div>
   );

@@ -56,13 +56,14 @@ export default class MyDetail extends PureComponent {
   }
 
   renderAttachmentList(list) {
+    // recordId 不是唯一的，所以加上index
     return (
       _.map(
         list,
-        item => (
+        (item, index) => (
           <div
             className={styles.attachItem}
-            key={item.attachUrl}
+            key={`${index}_${item.recordId}`}
           >
             <a href={`${request.prefix}/file/${item.attachUrl}`}>
               <Icon type={'fujian2'} />{`${item.attachName}`}
@@ -83,7 +84,7 @@ export default class MyDetail extends PureComponent {
     const {
       status = '',
       feedId = '--',
-      createTime = '--',
+      createTime = '',
       description = '--',
       feedbackFileUrls = [],
     } = feedbackDetail || {};
@@ -91,7 +92,7 @@ export default class MyDetail extends PureComponent {
     const isStatusEmpty = _.isEmpty(status);
     const statusInfo = status === 'PROCESSING' ? '解决中' : '关闭';
     const imageUrl = _.head(feedbackFileUrls) || '';
-    const date = _.isEmpty(createTime) ? '--' : moment(createTime).format('YYYY-MM-DD hh:mm');
+    const date = _.isEmpty(createTime) ? '--' : moment(createTime).format('YYYY-MM-DD HH:mm');
 
     let detailInfo = [{
       id: 'status',
@@ -112,7 +113,11 @@ export default class MyDetail extends PureComponent {
         {
           id: 'screenshot',
           key: '截图 :',
-          value: <PreviewImg icon="pic" previewUrl={`/file/${imageUrl}`} />,
+          value: <PreviewImg
+            className={styles.screenshot}
+            label="【点击查看】"
+            previewUrl={`/file/${imageUrl}`}
+          />,
         },
       ];
     }

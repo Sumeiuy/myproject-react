@@ -24,6 +24,9 @@
       div:last-child {
         color: #333;
       }
+      .screenshot {
+        margin-left: -6px;
+      }
     }
     .contentContainer {
       flex-direction: column;
@@ -32,15 +35,18 @@
     }
     .remarkQuestion {
       :global {
-        .ant-table-tbody {
-          & > tr:nth-child(odd) {
-            background-color: #fafcff;
-          }
-          & > tr:nth-child(even) {
-            background-color: #fff;
-          }
-          & > tr > td {
-            padding: 8px 10px 10px;
+        .ant-table table {
+          table-layout: fixed;
+          .ant-table-tbody {
+            & > tr:nth-child(odd) {
+              background-color: #fafcff;
+            }
+            & > tr:nth-child(even) {
+              background-color: #fff;
+            }
+            & > tr > td {
+              padding: 8px 10px 10px;
+            }
           }
         }
       }

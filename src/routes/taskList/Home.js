@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 09:26:35
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-13 21:55:48
  * @description 任务管理首页
  */
 
@@ -22,7 +22,7 @@ import FixedTitle from '../../components/taskList/FixedTitle';
 import pageConfig from '../../components/taskList/pageConfig';
 import { getCurrentScopeByOrgId } from '../../components/taskList/managerView/helper';
 import { openRctTab } from '../../utils';
-import { emp, permission, fsp } from '../../helper';
+import { emp, permission } from '../../helper';
 import logable from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
@@ -44,7 +44,6 @@ import {
   // 三个视图左侧任务列表的请求入参，在config里面配置，后续如果需要新增，或者删除某个param，
   // 请在config里面配置QUERY_PARAMS
   QUERY_PARAMS,
-  mediumPageSize,
   defaultPerformerViewCurrentTab,
 } from './config';
 
@@ -105,6 +104,8 @@ export default class PerformerView extends PureComponent {
       statusCode: '',
       // 执行中创建者视图右侧展示管理者视图
       isSourceFromCreatorView: false,
+      // 排序参数
+      sortParam: EMPTY_OBJECT,
     };
   }
 
@@ -113,10 +114,10 @@ export default class PerformerView extends PureComponent {
     this.queryAppList(query);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { location: { query } } = nextProps;
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
     const {
-      location: { query: prevQuery },
+      location: { query },
       changePerformerViewTab,
     } = this.props;
     const { currentId, ...otherQuery } = query;
@@ -125,7 +126,7 @@ export default class PerformerView extends PureComponent {
       this.queryAppList(otherQuery);
     }
     // 当前选中的任务变化，需要还原与任务绑定当前详情中选中的tab
-    if (query.currentId !== prevQuery.currentId) {
+    if (currentId !== prevCurrentId) {
       // 还原执行者视图右侧详情中tab的activeKey，默认选中第一个tab
       changePerformerViewTab(defaultPerformerViewCurrentTab);
     }
@@ -516,6 +517,7 @@ export default class PerformerView extends PureComponent {
       queryExecutorFlowStatus,
       queryExecutorFeedBack,
       queryExecutorDetail,
+      queryTargetCustDetail,
     } = this.props;
     const {
       typeCode,
@@ -585,6 +587,7 @@ export default class PerformerView extends PureComponent {
         queryExecutorFlowStatus={queryExecutorFlowStatus}
         queryExecutorFeedBack={queryExecutorFeedBack}
         queryExecutorDetail={queryExecutorDetail}
+        queryTargetCustDetail={queryTargetCustDetail}
       />
     );
   }
@@ -669,7 +672,8 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getQueryParams(query, newPageNum, newPageSize) {
-    const { missionViewType, status, creatorId, sortParam } = query;
+    const { sortParam } = this.state;
+    const { missionViewType, status, creatorId } = query;
     // 从query上筛选出需要的入参
     const params = _.pick(query, QUERY_PARAMS);
     let finalPostData = {
@@ -720,15 +724,8 @@ export default class PerformerView extends PureComponent {
   loadDetailContent(obj) {
     const {
       getTaskDetailBasicInfo,
-      queryTargetCust,
-      targetCustList: { page: { pageSize } },
     } = this.props;
     getTaskDetailBasicInfo({ taskId: obj.id });
-    const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
-    // fsp左侧菜单折叠pageSize传9，否则传6
-    const newPageSize = isFoldFspLeftMenu ? mediumPageSize : pageSize;
-    // 执行者视图服务实施客户列表中 状态筛选默认值 state='10' 未开始
-    queryTargetCust({ missionId: obj.id, state: '10', pageNum: 1, pageSize: newPageSize });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
   }
@@ -829,7 +826,12 @@ export default class PerformerView extends PureComponent {
     const { replace, location, push } = this.props;
     const { query, pathname } = location;
     if (name === 'switchView') {
-      push({ pathname, query: otherQuery });
+      // 视图切换，将排序重置
+      this.setState({
+        sortParam: this.getDefaultViewSortParam(),
+      }, () => {
+        push({ pathname, query: otherQuery });
+      });
     } else {
       replace({
         pathname,
@@ -865,6 +867,27 @@ export default class PerformerView extends PureComponent {
   }
 
   /**
+   * 视图切换，将排序重置成初始化状态
+   */
+  @autobind
+  getDefaultViewSortParam(currentViewType) {
+    let param = '';
+    if (currentViewType === INITIATOR) {
+      // 创建者视图，用createTimeSort,desc
+      param = {
+        [CREATE_TIME_KEY]: SORT_DESC,
+      };
+    } else if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
+      // 执行者视图和管理者视图用endTimeSort,asc
+      param = {
+        [END_TIME_KEY]: SORT_ASC,
+      };
+    }
+
+    return param;
+  }
+
+  /**
    * 请求入参中添加排序
    */
   @autobind
@@ -872,17 +895,7 @@ export default class PerformerView extends PureComponent {
     let param = {};
     // 如果query中没有sortParam，那么取默认的
     if (_.isEmpty(sortParam)) {
-      // 创建者视图，用createTimeSort,desc
-      if (currentViewType === INITIATOR) {
-        param = {
-          [CREATE_TIME_KEY]: SORT_DESC,
-        };
-      } else if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
-        // 执行者视图和管理者视图用endTimeSort,asc
-        param = {
-          [END_TIME_KEY]: SORT_ASC,
-        };
-      }
+      param = this.getDefaultViewSortParam(currentViewType);
     } else {
       param = sortParam;
     }
@@ -896,11 +909,13 @@ export default class PerformerView extends PureComponent {
   @autobind
   handleSortChange({ sortKey, sortType }) {
     const { location: { query } } = this.props;
-    this.queryAppList({
-      ...query,
+    // 设置排序方向，用来父组件调用
+    this.setState({
       sortParam: {
         [sortKey]: sortType,
       },
+    }, () => {
+      this.queryAppList(query);
     });
   }
 

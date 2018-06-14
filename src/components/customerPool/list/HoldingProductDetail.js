@@ -84,7 +84,8 @@ export default class HoldingProductDetail extends PureComponent {
     if (_.isEmpty(customerProductInfo) || _.isEmpty(detail)) {
       return <div className={styles.detailItem}>暂无数据</div>;
     }
-    // 当前产品为股票或者基金时，需要显示类型
+
+    // 当前产品为股票、基金时，需要显示类型
     const isShowCategory = type === TYPE_STOCK || type === TYPE_FUND;
     return _.map(detail, (item = {}) => (
       <div className={styles.detailItem} key={`${item.holdingNumber}-${item.marketValue}`}>
@@ -92,10 +93,7 @@ export default class HoldingProductDetail extends PureComponent {
         <ul className={styles.content}>
           {this.generateDetailItemNode({ name: '持仓数量', value: item.holdingNumber, isFormatAsset: false })}
           {this.generateDetailItemNode({ name: '持仓市值', value: item.marketValue, currency: item.unit })}
-          {/* this.generateDetailItemNode({ name: '盈亏', value: item.profit }) */}
           {this.generateDetailItemNode({ name: '累计收益', value: item.cumulativeProfit, currency: item.unit })}
-          {/* this.generateDetailItemNode({ name: '累计到账收益', value: item.incomeToAccount }) */}
-          {/* this.generateDetailItemNode({ name: '累计预估收益', value: item.estimatedEarnings }) */}
           {this.generateDetailItemNode({ name: '昨日到账收益', value: item.ytdIncomeToAccount, currency: item.unit })}
           {this.generateDetailItemNode({ name: '昨日预估收益', value: item.ytdEstimatedEarnings, currency: item.unit })}
         </ul>

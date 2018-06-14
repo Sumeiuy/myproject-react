@@ -2,8 +2,8 @@
  * @Description: 执行者视图右侧详情
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-04 10:06:30
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-14 09:59:01
  */
 
 
@@ -13,7 +13,35 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import BasicInfo from './BasicInfo';
 import TabsArea from './TabsArea';
+import { fsp } from '../../../helper';
 import styles from './performerViewDetail.less';
+
+import {
+  SMALL_PAGESIZE,
+  MEDIUM_PAGESIZE,
+  LARGE_PAGESIZE,
+  EXTRALARGE_PAGESIZE,
+} from '../../../routes/taskList/config';
+
+// 当左侧列表或fsp中左侧菜单被折叠或者展开时，返回当前的服务实施列表的pageSize
+// isFoldFspLeftMenu=true fsp的左侧菜单被折叠收起
+// isFoldLeftList=true 执行者视图左侧列表被折叠收起
+const getPageSize = (isFoldFspLeftMenu, isFoldLeftList) => {
+  // 全部都折叠起来放12个
+  if (isFoldFspLeftMenu && isFoldLeftList) {
+    return EXTRALARGE_PAGESIZE;
+  }
+  // FSP左侧菜单折叠放9个
+  if (isFoldFspLeftMenu) {
+    return MEDIUM_PAGESIZE;
+  }
+  // 任务列表折叠起来放10个
+  if (isFoldLeftList) {
+    return LARGE_PAGESIZE;
+  }
+  // 其余的放6个
+  return SMALL_PAGESIZE;
+};
 
 export default class PerformerViewDetail extends PureComponent {
 
@@ -40,7 +68,6 @@ export default class PerformerViewDetail extends PureComponent {
     taskTypeCode: PropTypes.string,
     // 自建任务的类型Code，与mot任务的eventId同理
     serviceTypeCode: PropTypes.string,
-    modifyLocalTaskList: PropTypes.func.isRequired,
     // 涨乐财富通服务方式下的客户反馈列表以及查询方法
     queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
     custFeedbackList: PropTypes.array.isRequired,
@@ -78,10 +105,28 @@ export default class PerformerViewDetail extends PureComponent {
     customerList: [],
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
+  componentDidMount() {
+    this.getServiceImplementationList(this.props);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.currentId !== this.props.currentId) {
+      this.getServiceImplementationList(this.props);
+    }
+  }
+
+  // 获取服务实施列表
+  @autobind
+  getServiceImplementationList(props) {
+    const {
+      queryTargetCust,
+      currentId,
+      isFold,
+    } = props;
+    const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
+    const newPageSize = getPageSize(isFoldFspLeftMenu, isFold);
+    // 执行者视图服务实施客户列表中 状态筛选默认值 state='10' 未开始
+    queryTargetCust({ missionId: currentId, state: '10', pageNum: 1, pageSize: newPageSize });
   }
 
   // 生成基本信息中的内容
@@ -180,6 +225,7 @@ export default class PerformerViewDetail extends PureComponent {
           searchCustomer={this.searchCustomer}
           customerList={customerList}
           reloadTargetCustInfo={this.reloadTargetCustInfo}
+          getPageSize={getPageSize}
         />
       </div>
     );
