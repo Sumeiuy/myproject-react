@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 16:14:56
+ * @Last Modified time: 2018-06-14 17:01:42
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -135,7 +135,7 @@ export default class FinanceCustRelationshipForm extends Component {
       this.handleClearDataBySwitchCust();
     } else {
       this.setState({ cust });
-      this.props.getCustDetail({ custId: cust.brokerNumber }).then(this.updateAssociateList);
+      this.props.getCustDetail({ custNumber: cust.brokerNumber }).then(this.updateAssociateList);
       // 切换客户之后，需要查询下客户类型下的关联关系树
       this.props.getRelationshipTree({ custType: cust.custType });
     }

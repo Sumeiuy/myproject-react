@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-12 15:12:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 16:31:32
+ * @Last Modified time: 2018-06-14 17:54:31
  * @description 融资类业务驳回后修改页面
  */
 import React, { Component } from 'react';
@@ -284,8 +284,8 @@ export default class RejectUpdateHome extends Component {
 
   @autobind
   doSomethindAfterValid() {
-    const { validateResult: { msg = '接口错误', isValid = false } } = this.props;
-    if (isValid) {
+    const { validateResult: { msg = '接口错误', valid = false } } = this.props;
+    if (valid) {
       // 校验通过之后提交数据
       this.doSubmit();
     } else {

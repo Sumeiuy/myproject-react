@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系申请的配置文件
  * @Date: 2018-06-08 13:32:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 09:13:23
+ * @Last Modified time: 2018-06-14 17:02:55
  */
 
 
@@ -42,20 +42,20 @@ const config = {
   custRelationshipColumns: [
     {
       title: '关联关系类型',
-      dataIndex: 'relationTypeLable',
-      key: 'relationTypeLable',
+      dataIndex: 'relationTypeLabel',
+      key: 'relationTypeLabel',
       width: 120,
     },
     {
       title: '关联关系名称',
-      dataIndex: 'relationNameLable',
-      key: 'relationNameLable',
+      dataIndex: 'relationNameLabel',
+      key: 'relationNameLabel',
       width: 150,
     },
     {
       title: '关联关系子类型',
-      dataIndex: 'relationSubTypeLable',
-      key: 'relationSubTypeLable',
+      dataIndex: 'relationSubTypeLabel',
+      key: 'relationSubTypeLabel',
       width: 130,
     },
     {
@@ -70,8 +70,8 @@ const config = {
     },
     {
       title: '关系人证件类型',
-      dataIndex: 'partyIDTypeLable',
-      key: 'partyIDTypeLable',
+      dataIndex: 'partyIDTypeLabel',
+      key: 'partyIDTypeLabel',
       width: 140,
     },
     {

@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 16:36:48
+ * @Last Modified time: 2018-06-14 17:46:00
  */
 
 import React, { PureComponent } from 'react';
@@ -316,16 +316,14 @@ export default class CustRelationshipsHome extends PureComponent {
   @autobind
   handleCloseCreateModal(name, isNeedRefresh) {
     this.setState({ [name]: false });
-    this.props.clearReduxData({ custDetail: {} });
+    this.props.clearReduxData({
+      custDetail: {},
+      custList: [],
+      approval: {},
+    });
     if (isNeedRefresh) {
       this.getAppList();
     }
-  }
-
-  @autobind
-  handleModalSubmit(param) {
-    console.warn('点击提交按钮：', param);
-    this.handleCloseCreateModal();
   }
 
   // 渲染列表项里面的每一项

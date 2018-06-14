@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 19:59:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-13 20:00:01
+ * @Last Modified time: 2018-06-14 17:20:04
  * @description 添加关联关系的Modal
  */
 
@@ -56,13 +56,13 @@ export default class AddRelationshipModal extends Component {
     const DEFAULT_STATE = {
       // 关联关系类型
       relationTypeValue: '',
-      relationTypeLable: '',
+      relationTypeLabel: '',
       // 关联关系名称
       relationNameValue: '',
-      relationNameLable: '',
+      relationNameLabel: '',
       // 关联关系子类型
       relationSubTypeValue: '',
-      relationSubTypeLable: '',
+      relationSubTypeLabel: '',
       // 关联人名称
       partyName: '',
       // 证件类型
@@ -197,17 +197,39 @@ export default class AddRelationshipModal extends Component {
 
   @autobind
   handleRelationTypeSelectChange(select, relationTypeValue, option) {
+    // 切换关联关系，需要将关联关系名称，关联关系子类型，身份证件类型全部置空
     this.setState({
       relationTypeValue,
-      relationTypeLable: option.label,
+      relationTypeLabel: option.label,
+      // 关联关系名称
+      relationNameValue: '',
+      relationNameLabel: '',
+      // 关联关系子类型
+      relationSubTypeValue: '',
+      relationSubTypeLabel: '',
+      // 证件类型
+      partyIDTypeValue: '',
+      partyIDTypeLabel: '',
+      // 证件号
+      partyIDNum: '',
+      partyName: '',
     });
   }
 
   @autobind
   handleRelationNameSelectChange(select, relationNameValue, option) {
+    // 切换名称，则需要将子类型，身份证类型相关数据置空
     this.setState({
       relationNameValue,
-      relationNameLable: option.label,
+      relationNameLabel: option.label,
+      // 关联关系子类型
+      relationSubTypeValue: '',
+      relationSubTypeLabel: '',
+      // 证件类型
+      partyIDTypeValue: '',
+      partyIDTypeLabel: '',
+      // 证件号
+      partyIDNum: '',
     });
   }
 
@@ -215,7 +237,7 @@ export default class AddRelationshipModal extends Component {
   handleRelationSubTypeSelectChange(select, relationSubTypeValue, option) {
     this.setState({
       relationSubTypeValue,
-      relationSubTypeLable: option.label,
+      relationSubTypeLabel: option.label,
     });
   }
 
@@ -228,7 +250,8 @@ export default class AddRelationshipModal extends Component {
   handleRelationIDTypeSelectChange(select, partyIDTypeValue, option) {
     this.setState({
       partyIDTypeValue,
-      partyIDTypeLable: option.label,
+      partyIDTypeLabel: option.label,
+      partyIDNum: '',
     });
   }
 

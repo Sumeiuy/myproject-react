@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请新建页面
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 16:38:40
+ * @Last Modified time: 2018-06-14 17:54:38
  */
 
 import React, { PureComponent } from 'react';
@@ -222,8 +222,8 @@ export default class CreateApply extends PureComponent {
 
   @autobind
   doSomethindAfterValid() {
-    const { validateResult: { msg = '接口错误', isValid = false } } = this.props;
-    if (isValid) {
+    const { validateResult: { msg = '接口错误', valid = false } } = this.props;
+    if (valid) {
       // 校验通过之后提交数据
       this.doSubmit();
     } else {
