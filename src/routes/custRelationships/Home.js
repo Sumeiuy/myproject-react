@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 17:46:00
+ * @Last Modified time: 2018-06-14 18:20:46
  */
 
 import React, { PureComponent } from 'react';
@@ -296,7 +296,9 @@ export default class CustRelationshipsHome extends PureComponent {
     const { id, flowId } = record;
     const { location: { pathname, query, query: { currentId } } } = this.props;
     const { replace } = this.context;
-    if (currentId === String(id)) return;
+    if (currentId === String(id)) {
+      return;
+    }
     replace({
       pathname,
       query: {

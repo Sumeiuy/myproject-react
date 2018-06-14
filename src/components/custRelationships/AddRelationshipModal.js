@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 19:59:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 17:20:04
+ * @Last Modified time: 2018-06-14 18:18:37
  * @description 添加关联关系的Modal
  */
 
@@ -81,16 +81,22 @@ export default class AddRelationshipModal extends Component {
   // 如果Value值为空，则返回默认空数据
   @autobind
   getNextSelectData(value, tree, key = 'children') {
-    if (_.isEmpty(value)) return [];
+    if (_.isEmpty(value)) {
+      return [];
+    }
     const data = _.find(tree, item => item.value === value);
     return (data && data[key]) || [];
   }
 
   @autobind
   getPopoverContent(name = '', tree) {
-    if (_.isEmpty(name)) return (<div className={styles.notip}>暂无提示</div>);
+    if (_.isEmpty(name)) {
+      return (<div className={styles.notip}>暂无提示</div>);
+    }
     const { remark = '' } = _.find(tree, item => item.value === name);
-    if (_.isEmpty(remark)) return (<div className={styles.notip}>暂无提示</div>);
+    if (_.isEmpty(remark)) {
+      return (<div className={styles.notip}>暂无提示</div>);
+    }
     const tips = _.split(remark, /：|\|/g);
     return (
       <div className={styles.tipsWrap}>
@@ -175,9 +181,13 @@ export default class AddRelationshipModal extends Component {
   @autobind
   checkData() {
     // 1. 判断所有的值是否为空
-    if (!this.hasSetAllData()) return false;
+    if (!this.hasSetAllData()) {
+      return false;
+    }
     // 2. 校验证件号码格式是否正确， 目前前端帮助校验 三种: 社会统一信用证、18位身份证、15位身份证
-    if (!this.checkIDNumFormat()) return false;
+    if (!this.checkIDNumFormat()) {
+      return false;
+    }
     return true;
   }
 

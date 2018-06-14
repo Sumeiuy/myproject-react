@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-12 15:12:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 17:54:31
+ * @Last Modified time: 2018-06-14 21:00:32
  * @description 融资类业务驳回后修改页面
  */
 import React, { Component } from 'react';
@@ -23,13 +23,8 @@ import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { env, dom, dva } from '../../helper';
 
-import {
-  approvalColumns,
-  marriagedCode,
-  realControllerTypeCode,
-  fuqiTypeCode,
-  productManagerTypeCode,
-} from '../../components/custRelationships/config';
+import { approvalColumns } from '../../components/custRelationships/config';
+import { validateData } from '../../helper/page/custRelationship';
 
 import styles from './rejectUpdateHome.less';
 
@@ -150,132 +145,10 @@ export default class RejectUpdateHome extends Component {
   }
 
   @autobind
-  hasStockRepurchase() {
-    const { stockRepurchase } = this.state;
-    return !_.isEmpty(stockRepurchase);
-  }
-
-  @autobind
-  checkRelationForCustMarriage() {
-    // 检测客户的婚姻状态与关联关系
-    // 若所选客户的婚姻状况为“已婚”
-    // 则“家庭成员”中“夫妻”类必填，且同一申请单中夫妻关系只能填写一条
-    const { cust, relationships } = this.state;
-    if (cust.custTypeValue === 'per' && marriagedCode === cust.marriageValue) {
-      const count = _.countBy(relationships, ship => ship.relationSubTypeValue === fuqiTypeCode);
-      if (count.true === 0) {
-        confirm({ content: '没有维护家庭成员夫妻类关联关系！' });
-        return false;
-      } else if (count.true > 1) {
-        confirm({ content: '家庭成员夫妻类关联关系超过1条！' });
-        return false;
-      }
-    }
-    return true;
-  }
-
-  @autobind
-  checkRelationForOrgCust() {
-    // 若所选客户为普通机构客户，则关联关系中，
-    // “实际控制人”类别必填，且同一申请单中实际控制人关系只能填写一条
-    const { cust, relationships } = this.state;
-    if (cust.custTypeValue === 'org') {
-      const count = _.countBy(relationships,
-        ship => ship.relationSubTypeValue === realControllerTypeCode);
-      if (count.true === 0) {
-        confirm({ content: '没有维护实际控制人关联关系！' });
-        return false;
-      } else if (count.true > 1) {
-        confirm({ content: '实际控制人关联关系超过1条！' });
-        return false;
-      }
-    }
-    return true;
-  }
-
-  @autobind
-  checkRelationForProductCust() {
-    // 若所选客户为产品客户，则关联关系中，
-    // “产品管理人”类别必填，且同一申请单中产品管理人关系只能填写一条
-    const { cust, relationships } = this.state;
-    if (cust.custTypeValue === 'prod') {
-      const count = _.countBy(relationships,
-        ship => ship.relationSubTypeValue === productManagerTypeCode);
-      if (count.true === 0) {
-        confirm({ content: '没有维护产品管理人关联关系！' });
-        return false;
-      } else if (count.true > 1) {
-        confirm({ content: '产品管理人关联关系超过1条！' });
-        return false;
-      }
-    }
-    return true;
-  }
-
-  @autobind
-  checkRealtionDuplicate() {
-    // 同一申请单中同一类型的关系信息关系人三要素（关系人名称、关系人证件类型、关系人证件号码）不得重复
-    // 首先将关联关
-    const { relationships } = this.state;
-    const result = [];
-    let resultBool = true;
-    _.each(relationships, (item) => {
-      const {
-        relationTypeValue,
-        relationTypeLable,
-        partyName,
-        partyIDTypeValue,
-        partyIDNum,
-      } = item;
-      // 将三要素合并成字符串，放入到result数组中，来判断是否已经存在该值，
-      // 如果该值存在，则表示有关联关系的三要素是相同的，弹出提示框
-      const threeKeyMergeStr = `${relationTypeValue}${partyName}${partyIDTypeValue}${partyIDNum}`;
-      if (_.includes(result, threeKeyMergeStr)) {
-        // 如果已经存在了
-        confirm({ content: `${relationTypeLable}关联关系三要素信息填写重复！` });
-        resultBool = false;
-        return false;
-      }
-      result.push(threeKeyMergeStr);
-      return true;
-    });
-    return resultBool;
-  }
-
-  @autobind
-  checkeRelationships() {
-    const { relationships } = this.state;
-    // 校验关联关系比较复杂，
-    if (_.isEmpty(relationships)) {
-      confirm({ content: '关联关系不能为空' });
-      return false;
-    }
-    // 个人客户校验夫妻关系
-    if (!this.checkRelationForCustMarriage()) return false;
-    // 普通机构客户校验实际控制人关系
-    if (!this.checkRelationForOrgCust()) return false;
-    // 产品客户校验产品管理人关联关系
-    if (!this.checkRelationForProductCust()) return false;
-    // 校验同一关联关系中中 三要素
-    if (!this.checkRealtionDuplicate()) return false;
-    return true;
-  }
-
-  @autobind
-  checkSubmitData() {
-    // 此处客户信息是固定的，并且肯定存在
-    if (!this.hasStockRepurchase()) {
-      confirm({ content: '请选择是否办理股票质押回购业务' });
-      return false;
-    }
-    // 校验关联关系
-    return this.checkeRelationships();
-  }
-
-  @autobind
   doValidateBeforeSubmit() {
-    const { cust, relationships } = this.state;
+    const { cust, relationships, appId } = this.state;
     this.props.validateData({
+      appId,
       custId: cust.custId,
       custType: cust.custTypeValue,
       relationshipList: relationships,
@@ -323,7 +196,7 @@ export default class RejectUpdateHome extends Component {
   doApprovalFlow() {
     const { submitResult, location: { query: { flowId = '' } } } = this.props;
     if (!_.isEmpty(submitResult)) {
-      const { groupName, operate, auditors, cust } = this.state;
+      const { groupName, operate, auditors, cust, idea } = this.state;
       this.props.doApproveFlow({
         itemId: submitResult,
         groupName,
@@ -332,11 +205,13 @@ export default class RejectUpdateHome extends Component {
         custId: cust.custId,
         wobNum: flowId,
         flowId,
+        approverIdea: idea,
       }).then(() => {
         const { flowResult } = this.props;
         if (flowResult === 'success') {
           // 此处流程走成功了之后，需要将按钮注销
-          // this.props.onCloseModal('isShowCreateModal', true);
+          // 把审批人信息删除掉
+          this.props.clearReduxData({ approvalForUpdate: {} });
         }
       });
     }
@@ -357,7 +232,11 @@ export default class RejectUpdateHome extends Component {
   @autobind
   handleBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
-    if (!this.checkSubmitData()) return;
+    const { valid, msg } = validateData(this.state);
+    if (!valid) {
+      confirm({ content: msg });
+      return;
+    }
     // 保存用户点击的按钮的相关信息
     this.setState({
       operate: btn.operate,
@@ -392,14 +271,15 @@ export default class RejectUpdateHome extends Component {
     this.setState({ nextApprovalModal: false });
   }
 
-
   render() {
     const {
       detailForUpdate,
       relationshipTree,
       approvalForUpdate,
     } = this.props;
-    if (_.isEmpty(detailForUpdate)) return null;
+    if (_.isEmpty(detailForUpdate)) {
+      return null;
+    }
 
     const { idea, nextApprovalModal, nextApproverList } = this.state;
 
