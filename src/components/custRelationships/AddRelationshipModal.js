@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 19:59:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-13 17:34:29
+ * @Last Modified time: 2018-06-13 20:00:01
  * @description 添加关联关系的Modal
  */
 
@@ -15,6 +15,16 @@ import { Input, Icon, Popover } from 'antd';
 import Modal from '../common/biz/CommonModal';
 import FormItem from './FormItem';
 import Select from '../common/Select';
+import confirm from '../common/confirm_';
+
+import {
+  socialNumRegExp,
+  eighteenIDRegExp,
+  fifteenIDRegExp,
+  otherIDRegExp,
+  IDCardTypeCode,
+  socialCardTypeCode,
+} from './config';
 
 import styles from './addRelationshipModal.less';
 
@@ -61,7 +71,7 @@ export default class AddRelationshipModal extends Component {
       // 证件号
       partyIDNum: '',
     };
-    const realState = isCreate ? DEFAULT_STATE : _.omit(data, ['ecifId, processFlag']);
+    const realState = isCreate ? DEFAULT_STATE : _.omit(data, ['ecifId']);
     this.state = realState;
   }
 
@@ -98,7 +108,76 @@ export default class AddRelationshipModal extends Component {
   }
 
   @autobind
+  hasSetAllData() {
+    const {
+      relationTypeValue,
+      relationNameValue,
+      relationSubTypeValue,
+      partyName,
+      partyIDTypeValue,
+      partyIDNum,
+    } = this.state;
+    const valueWaitForCheck = [
+      {
+        value: relationTypeValue,
+        checkTip: '请选择关联关系类型',
+      },
+      {
+        value: relationNameValue,
+        checkTip: '请选择关联关系名称',
+      },
+      {
+        value: relationSubTypeValue,
+        checkTip: '请选择关联关系子类型',
+      },
+      {
+        value: partyName,
+        checkTip: '请填写关系人名称',
+      },
+      {
+        value: partyIDTypeValue,
+        checkTip: '请选择关联关系证件类型',
+      },
+      {
+        value: partyIDNum,
+        checkTip: '请填写关系人证件号码',
+      },
+    ];
+    const checkResult = _.find(valueWaitForCheck, item => _.isEmpty(item.value));
+    if (!_.isEmpty(checkResult)) {
+      confirm({ content: checkResult.checkTip });
+      return false;
+    }
+    return true;
+  }
+
+  @autobind
+  checkIDNumFormat() {
+    const { partyIDNum, partyIDTypeValue } = this.state;
+    let result = true;
+    if (partyIDTypeValue === IDCardTypeCode) {
+      // 身份证
+      result = eighteenIDRegExp.test(partyIDNum) || fifteenIDRegExp.test(partyIDNum);
+    } else if (partyIDTypeValue === socialCardTypeCode) {
+      // 统一社会信用证
+      result = socialNumRegExp.test(partyIDNum);
+    } else {
+      // 其余的号码，暂时之校验数字和字母
+      result = otherIDRegExp.test(partyIDNum);
+    }
+    if (!result) {
+      confirm({ content: '证件号码格式错误！' });
+    }
+    // 其余均通过校验
+    return result;
+  }
+
+  @autobind
   checkData() {
+    // 1. 判断所有的值是否为空
+    if (!this.hasSetAllData()) return false;
+    // 2. 校验证件号码格式是否正确， 目前前端帮助校验 三种: 社会统一信用证、18位身份证、15位身份证
+    if (!this.checkIDNumFormat()) return false;
     return true;
   }
 

@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请models
  * @Date: 2018-06-08 13:17:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 19:46:31
+ * @Last Modified time: 2018-06-14 13:58:39
  */
 
 
@@ -30,6 +30,12 @@ export default {
     approval: {},
     // 驳回后修改页面的按钮以及审批人
     approvalForUpdate: {},
+    // 数据校验结果
+    validateResult: {},
+    // 提交申请后的结果
+    submitResult: '',
+    // 提交流程接口的结果
+    flowResult: '',
   },
   reducers: {
     // 客户关联关系申请页面-右侧详情
@@ -88,6 +94,27 @@ export default {
       return {
         ...state,
         approval: resultData,
+      };
+    },
+    validateDataSuccess(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        validateResult: payload,
+      };
+    },
+    submitApplySuccess(state, action) {
+      const { payload = '' } = action;
+      return {
+        ...state,
+        submitResult: payload,
+      };
+    },
+    doApproveFlowSuccess(state, action) {
+      const { payload = '' } = action;
+      return {
+        ...state,
+        flowResult: payload,
       };
     },
     clearReduxDataSuccess(state, action) {
@@ -165,6 +192,42 @@ export default {
       yield put({
         type: 'getApprovalInfoForUpdateSuccess',
         payload: response,
+      });
+    },
+    // 提交前校验数据
+    * validateData({ payload }, { call, put }) {
+      yield put({
+        type: 'validateDataSuccess',
+        payload: { isValid: false },
+      });
+      const { resultData } = yield call(api.validateData, payload);
+      yield put({
+        type: 'validateDataSuccess',
+        payload: resultData,
+      });
+    },
+    // 提交申请
+    * submitApply({ payload }, { call, put }) {
+      yield put({
+        type: 'submitApplySuccess',
+        payload: '',
+      });
+      const { resultData } = yield call(api.saveApplication, payload);
+      yield put({
+        type: 'submitApplySuccess',
+        payload: resultData,
+      });
+    },
+    // 走流程
+    * doApproveFlow({ payload }, { call, put }) {
+      yield put({
+        type: 'doApproveFlowSuccess',
+        payload: '',
+      });
+      const { resultData } = yield call(api.doApprove, payload);
+      yield put({
+        type: 'doApproveFlowSuccess',
+        payload: resultData.msg,
       });
     },
     // 清空数据

@@ -39,19 +39,18 @@ export default class CommonSelect extends PureComponent {
 
   @autobind
   makeSelectOptions(data) {
+    // 如果 needShowKey = true 时，需要通过 数据的 show 属性来判断该下拉选项是否显示
+    // 如果 needShowKey = false 时，则直接显示所有数据选项
     const { needShowKey } = this.props;
-    const options = [];
-    _.forEach(data, (item) => {
+    const options = _.map(data, (item) => {
       const { show, value, label } = item;
-      if (needShowKey) {
-        if (show) {
-          options.push(<Option key={value} value={value}>{label}</Option>);
-        }
-      } else {
-        options.push(<Option key={value} value={value}>{label}</Option>);
+      if (needShowKey && !show) {
+        return null;
       }
+      return (<Option key={value} value={value}>{label}</Option>);
     });
-    return options;
+    // 将数组中的 null 值删除
+    return _.compact(options);
   }
 
   @autobind

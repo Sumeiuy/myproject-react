@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-13 16:00:13
+ * @Last Modified time: 2018-06-14 13:40:59
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -79,28 +79,71 @@ export default class FinanceCustRelationshipForm extends Component {
       // 进行修改的关联关系对象数据
       relationForUpdate: {},
     };
+    // 用于判断是否搜索客户后选择的客户，如果是搜索后选择客户则不需要弹出提示框
+    this.isSelectAfterSearch = false;
   }
 
   @autobind
   updateAssociateList() {
-    const { custDetail: { custRelationshipList = [] } } = this.props;
+    const { custDetail: { custRelationshipList = [], ...reset } } = this.props;
     const listWithKey = custRelationshipList.map((item, index) => ({ ...item, key: index }));
     this.setState({ custRelationshipList: listWithKey });
-    this.props.onChange({ relationships: custRelationshipList });
+    this.props.onChange({
+      relationships: custRelationshipList,
+      cust: reset,
+      attachment: '',
+    });
   }
 
   @autobind
   handleSearchCustList(keyword) {
+    this.isSelectAfterSearch = true;
     this.props.queryCustList({ keyword, type: APPLY_TYPE_CODE });
   }
 
   @autobind
+  handleSelectCustConfirm(cust) {
+    if (this.isSelectAfterSearch) {
+      this.isSelectAfterSearch = false;
+      this.handleSelectCust(cust);
+    } else {
+      confirm({
+        content: '切换或者删除客户，将导致所有的数据清空或者重置',
+        onOk: () => {
+          this.handleSelectCust(cust);
+        },
+      });
+    }
+  }
+
+  @autobind
   handleSelectCust(cust) {
-    this.setState({ cust });
-    this.props.onChange({ cust });
-    this.props.getCustDetail({ custId: cust.brokerNumber }).then(this.updateAssociateList);
-    // 切换客户之后，需要查询下客户类型下的关联关系树
-    this.props.getRelationshipTree({ custType: cust.custType });
+    // 如果切换客户，则提示会将之前的所有数据清空
+    // 如果删除客户，则需要清空数据
+    if (_.isEmpty(cust)) {
+      this.handleClearDataBySwitchCust();
+    } else {
+      this.setState({ cust });
+      this.props.getCustDetail({ custId: cust.brokerNumber }).then(this.updateAssociateList);
+      // 切换客户之后，需要查询下客户类型下的关联关系树
+      this.props.getRelationshipTree({ custType: cust.custType });
+    }
+  }
+
+  @autobind
+  handleClearDataBySwitchCust() {
+    this.setState({
+      cust: {},
+      custRelationshipList: [],
+      stockRepurchase: '',
+      attachment: '',
+      attachList: [],
+    });
+    this.props.onChange({
+      relationships: [],
+      cust: {},
+      attachment: '',
+    });
   }
 
   @autobind
@@ -153,6 +196,7 @@ export default class FinanceCustRelationshipForm extends Component {
   @autobind
   handleUploadCallBack(attachment) {
     this.setState({ attachment });
+    this.props.onChange({ attachment });
   }
 
   @autobind
@@ -169,12 +213,13 @@ export default class FinanceCustRelationshipForm extends Component {
     const { custRelationshipList } = this.state;
     let newList = [];
     if (action === 'CREATE') {
-      // 新增
+      // 新增的关联关系的 processFlag 为 'N'
       const uuid = data.uuid();
       const key = `REAL-${uuid}`;
-      newList = [{ ...reset, key }, ...custRelationshipList];
+      newList = [{ ...reset, key, processFlag: 'N' }, ...custRelationshipList];
     } else {
-      // 修改,需要将原有的拿出来进行替换
+      // 修改,需要将原有的拿出来进行替换,
+      // 修改关联关系的 processFlag 不变，即使修改的是新增的
       newList = _.map(custRelationshipList, (item) => {
         const { key } = item;
         if (key === param.key) {
@@ -235,7 +280,7 @@ export default class FinanceCustRelationshipForm extends Component {
                 placeholder="经纪客户号/客户名称"
                 optionList={custList}
                 optionKey="brokerNumber"
-                onSelect={this.handleSelectCust}
+                onSelect={this.handleSelectCustConfirm}
                 onSearch={this.handleSearchCustList}
                 renderOptionNode={this.renderCustAutoCompleteOption}
               />

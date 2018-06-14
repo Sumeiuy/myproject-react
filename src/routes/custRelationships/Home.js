@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 18:30:07
+ * @Last Modified time: 2018-06-14 14:10:00
  */
 
 import React, { PureComponent } from 'react';
@@ -45,6 +45,12 @@ const effects = {
   getApprovalInfo: 'custRelationships/getApprovalInfo',
   // 获取驳回后修改页面审批人信息和按钮
   getApprovalInfoForUpdate: 'custRelationships/getApprovalInfoForUpdate',
+  // 校验数据接口
+  validateData: 'custRelationships/validateData',
+  // 提交申请
+  submitApply: 'custRelationships/submitApply',
+  // 走流程接口
+  doApproveFlow: 'custRelationships/doApproveFlow',
   // 清空数据
   clearReduxData: 'custRelationships/clearReduxData',
 };
@@ -67,6 +73,12 @@ const mapStateToProps = state => ({
   approval: state.custRelationships.approval,
   // 驳回修改页面的按钮和审批人信息
   approvalForUpdate: state.custRelationships.approvalForUpdate,
+  // 数据校验结果
+  validateResult: state.custRelationships.validateResult,
+  // 提交申请的结果
+  submitResult: state.custRelationships.submitResult,
+  // 流程接口结果
+  flowResult: state.custRelationships.flowResult,
 });
 
 const mapDispatchToProps = {
@@ -87,6 +99,12 @@ const mapDispatchToProps = {
   getApprovalInfo: effect(effects.getApprovalInfo, { forceFull: true }),
   // 获取驳回后修改页面审批人信息和按钮
   getApprovalInfoForUpdate: effect(effects.getApprovalInfoForUpdate, { forceFull: true }),
+  // 校验数据接口
+  validateData: effect(effects.validateData, { forceFull: true }),
+  // 提交申请接口
+  submitApply: effect(effects.submitApply, { forceFull: true }),
+  // 走流程接口
+  doApproveFlow: effect(effects.doApproveFlow, { forceFull: true }),
   // 清除Redux中的数据
   clearReduxData: effect(effects.clearReduxData, { loading: false }),
 };
@@ -124,6 +142,15 @@ export default class ApplyHome extends PureComponent {
     // 驳回后修改页面的按钮和审批人信息
     getApprovalInfoForUpdate: PropTypes.func.isRequired,
     approvalForUpdate: PropTypes.object.isRequired,
+    // 校验数据
+    validateData: PropTypes.func.isRequired,
+    validateResult: PropTypes.object.isRequired,
+    // 提交申请
+    submitResult: PropTypes.string.isRequired,
+    submitApply: PropTypes.func.isRequired,
+    // 走流程
+    flowResult: PropTypes.string.isRequired,
+    doApproveFlow: PropTypes.func.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
   }
@@ -143,15 +170,12 @@ export default class ApplyHome extends PureComponent {
   }
 
   componentDidMount() {
-    const {
-      location: {
-        query,
-        query: {
-          pageNum,
-          pageSize,
-        },
-      },
-    } = this.props;
+    this.getAppList();
+  }
+
+  @autobind
+  getAppList() {
+    const { location: { query, query: { pageNum, pageSize } } } = this.props;
     this.queryAppList(query, pageNum, pageSize);
   }
 
@@ -290,6 +314,21 @@ export default class ApplyHome extends PureComponent {
     });
   }
 
+  @autobind
+  handleCloseCreateModal(name, isNeedRefresh) {
+    this.setState({ [name]: false });
+    this.props.clearReduxData({ custDetail: {} });
+    if (isNeedRefresh) {
+      this.getAppList();
+    }
+  }
+
+  @autobind
+  handleModalSubmit(param) {
+    console.warn('点击提交按钮：', param);
+    this.handleCloseCreateModal();
+  }
+
   // 渲染列表项里面的每一项
   @autobind
   renderListRow(record, index) {
@@ -308,18 +347,6 @@ export default class ApplyHome extends PureComponent {
     );
   }
 
-  @autobind
-  handleCloseCreateModal(name) {
-    this.setState({ [name]: false });
-    this.props.clearReduxData({ custDetail: {} });
-  }
-
-  @autobind
-  handleModalSubmit(param) {
-    console.warn('点击提交按钮：', param);
-    this.setState({ isShowCreateModal: false });
-  }
-
   render() {
     const {
       replace,
@@ -336,6 +363,12 @@ export default class ApplyHome extends PureComponent {
       getRelationshipTree,
       getApprovalInfo,
       approval,
+      validateData,
+      validateResult,
+      submitApply,
+      submitResult,
+      flowResult,
+      doApproveFlow,
     } = this.props;
 
     const { isShowCreateModal } = this.state;
@@ -395,7 +428,6 @@ export default class ApplyHome extends PureComponent {
           (
             <CreateApply
               onCloseModal={this.handleCloseCreateModal}
-              onSubmit={this.handleModalSubmit}
               custDetail={custDetail}
               custList={custList}
               getCustDetail={getCustDetail}
@@ -404,6 +436,12 @@ export default class ApplyHome extends PureComponent {
               getRelationshipTree={getRelationshipTree}
               approval={approval}
               getApprovalInfo={getApprovalInfo}
+              validateData={validateData}
+              validateResult={validateResult}
+              submitResult={submitResult}
+              submitApply={submitApply}
+              flowResult={flowResult}
+              doApproveFlow={doApproveFlow}
             />
           )
         }

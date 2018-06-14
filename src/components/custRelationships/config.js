@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系申请的配置文件
  * @Date: 2018-06-08 13:32:19
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-13 14:56:17
+ * @Last Modified time: 2018-06-14 09:13:23
  */
 
 
@@ -111,6 +111,28 @@ const config = {
       label: '否',
     },
   ],
+  // 社会统一信用证号码 RegExp
+  socialNumRegExp: /[^_IOZSVa-z\W]{2}\d{6}[^_IOZSVa-z\W]{10}$/,
+  // 18位身份证号码 RegExp
+  eighteenIDRegExp: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
+  // 15位身份证号码 RegExp
+  fifteenIDRegExp: /^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$/,
+  // 其余之校验是否字母数字
+  otherIDRegExp: /^[A-Za-z0-9]+$/,
+  // 身份证类型Code
+  IDCardTypeCode: '103100',
+  // 社会统一信用证Code
+  socialCardTypeCode: '103270',
+  // 客户婚姻状态为已婚的Code
+  marriagedCode: '108020',
+  // 家庭关系Code
+  familyRelationCode: '127110',
+  // 夫妻类型Code
+  fuqiTypeCode: '127111',
+  // 普通机构-实际控制人
+  realControllerTypeCode: '127151',
+  // 产品客户-产品管理人
+  productManagerTypeCode: '127371',
 };
 
 export default config;
