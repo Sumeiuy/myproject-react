@@ -113,7 +113,7 @@ export default class MyDetail extends PureComponent {
         {
           id: 'screenshot',
           key: '截图 :',
-          value: <PreviewImg icon="pic" previewUrl={`/file/${imageUrl}`} />,
+          value: <PreviewImg label="【点击查看】" previewUrl={`/file/${imageUrl}`} />,
         },
       ];
     }
