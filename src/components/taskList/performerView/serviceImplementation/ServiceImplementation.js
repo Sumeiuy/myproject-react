@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-12 21:57:25
+ * @Last Modified time: 2018-06-14 09:02:24
  */
 
 import React, { PureComponent } from 'react';
@@ -27,10 +27,6 @@ import { fsp } from '../../../../helper';
 import styles from './serviceImplementation.less';
 import {
   POSTCOMPLETED_CODE,
-  smallPageSize,
-  mediumPageSize,
-  largePageSize,
-  extraLargePageSize,
 } from '../../../../routes/taskList/config';
 
 // 这个是防止页面里有多个class重复，所以做个判断，必须包含当前节点
@@ -41,26 +37,6 @@ const getStickyTarget = (currentNode) => {
     containers,
     element => contains(element, currentNode),
   )) || containers[0];
-};
-
-// 当左侧列表或fsp中左侧菜单被折叠或者展开时，返回当前的服务实施列表的pageSize
-// isFoldFspLeftMenu=true fsp的左侧菜单被折叠收起
-// isFoldLeftList=true 执行者视图左侧列表被折叠收起
-const getPageSize = (isFoldFspLeftMenu, isFoldLeftList) => {
-  // 全部都折叠起来放12个
-  if (isFoldFspLeftMenu && isFoldLeftList) {
-    return extraLargePageSize;
-  }
-  // FSP左侧菜单折叠放9个
-  if (isFoldFspLeftMenu) {
-    return mediumPageSize;
-  }
-  // 任务列表折叠起来放10个
-  if (isFoldLeftList) {
-    return largePageSize;
-  }
-  // 其余的放6个
-  return smallPageSize;
 };
 
 /**
@@ -135,6 +111,8 @@ export default class ServiceImplementation extends PureComponent {
     addCallRecord: PropTypes.func,
     toggleServiceRecordModal: PropTypes.func,
     queryTargetCustDetail: PropTypes.func.isRequired,
+    popupContainer: PropTypes.string.isRequired,
+    getPageSize: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -155,11 +133,12 @@ export default class ServiceImplementation extends PureComponent {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    const { targetCustList } = nextProps;
     // props上的服务实施列表上数据变化，将服务实施的列表存到state里面
-    if (nextProps.targetCustList !== prevState.propsData.targetCustList) {
+    if (targetCustList !== prevState.propsTargetCustList) {
       return {
-        targetCustList: nextProps.targetCustList,
-        propsData: nextProps,
+        targetCustList,
+        propsTargetCustList: targetCustList,
       };
     }
     return null;
@@ -170,10 +149,10 @@ export default class ServiceImplementation extends PureComponent {
     const { targetCustList } = props;
     this.state = {
       // Fsp页面左侧菜单是否被折叠
-      isFoldFspLeftMenu: false,
+      isFoldFspLeftMenu: fsp.isFSPLeftMenuFold(),
       // 当前服务实施列表的数据
       targetCustList,
-      propsData: props,
+      propsTargetCustList: targetCustList,
     };
   }
 
@@ -184,7 +163,7 @@ export default class ServiceImplementation extends PureComponent {
 
   componentDidUpdate(prevProps, prevState) {
     const { isFoldFspLeftMenu } = this.state;
-    const { isFold } = this.props;
+    const { isFold, getPageSize } = this.props;
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
     if (
       prevProps.isFold !== isFold
@@ -221,8 +200,7 @@ export default class ServiceImplementation extends PureComponent {
   @autobind
   handleStateChange({ value = '' }) {
     const { parameter, changeParameter } = this.props;
-    const { targetCustList = {} } = this.state;
-    const { page: { pageSize } } = targetCustList;
+    const { targetCustList: { page: { pageSize } } } = this.state;
     const { rowId, assetSort } = parameter;
     changeParameter({ state: value, activeIndex: '1', preciseInputValue: '1' })
       .then(() => {
@@ -240,8 +218,7 @@ export default class ServiceImplementation extends PureComponent {
   @autobind
   handleCustomerChange({ value = {} }) {
     const { parameter, changeParameter } = this.props;
-    const { targetCustList = {} } = this.state;
-    const { page: { pageSize } } = targetCustList;
+    const { targetCustList: { page: { pageSize } } } = this.state;
     const { state, assetSort } = parameter;
     changeParameter({ rowId: value.rowId || '', activeIndex: '1', preciseInputValue: '1' })
       .then(() => {
@@ -260,10 +237,9 @@ export default class ServiceImplementation extends PureComponent {
   handleAssetSort(obj) {
     const assetSort = obj.isDesc ? 'desc' : 'asc';
     const { parameter, changeParameter } = this.props;
-    const { targetCustList = {} } = this.state;
-    const { page: { pageSize, pageNum } } = targetCustList;
+    const { targetCustList: { page: { pageSize, pageNum } } } = this.state;
     const { state, rowId } = parameter;
-    changeParameter({ assetSort })
+    changeParameter({ assetSort, activeIndex: '1', preciseInputValue: '1' })
       .then(() => {
         this.queryTargetCustList({
           rowId,
@@ -281,8 +257,7 @@ export default class ServiceImplementation extends PureComponent {
     const value = e.target.value;
     const reg = /^([0-9]*)?$/;
     const { changeParameter } = this.props;
-    const { targetCustList = {} } = this.state;
-    const { page: { totalCount } } = targetCustList;
+    const { targetCustList: { page: { totalCount } } } = this.state;
     // 限制输入框中只能输1到客户总数之间的正整数
     if (value === '' || (!isNaN(value) && reg.test(value) && value > 0 && value <= totalCount)) {
       changeParameter({ preciseInputValue: value });
@@ -296,8 +271,7 @@ export default class ServiceImplementation extends PureComponent {
       const value = e.target.value;
       if (!value) return;
       const { parameter, changeParameter } = this.props;
-      const { targetCustList = {} } = this.state;
-      const { page: { pageSize } } = targetCustList;
+      const { targetCustList: { page: { pageSize } } } = this.state;
       // const newValue = value > totalCount ? totalCount : value;
       changeParameter({ activeIndex: value }).then(() => {
         const { rowId, state, assetSort } = parameter;
@@ -349,8 +323,7 @@ export default class ServiceImplementation extends PureComponent {
   @autobind
   handlePageChange(pageNum) {
     const { parameter, changeParameter } = this.props;
-    const { targetCustList = {} } = this.state;
-    const { page: { pageSize } } = targetCustList;
+    const { targetCustList: { page: { pageSize } } } = this.state;
     const { rowId, assetSort, state } = parameter;
     const activeIndex = ((pageNum - 1) * pageSize) + 1;
     changeParameter({
@@ -492,8 +465,7 @@ export default class ServiceImplementation extends PureComponent {
   // 更新组件state的list信息
   @autobind
   updateList({ missionFlowId, flowStatus, zlApprovalCode, serveWay }, callback = _.noop) {
-    const { targetCustList = {} } = this.state;
-    const { list = [] } = targetCustList;
+    const { targetCustList = {}, targetCustList: { list = [] } } = this.state;
     const newList = _.map(list, (item) => {
       if (item.missionFlowId === missionFlowId) {
         if (
@@ -548,8 +520,11 @@ export default class ServiceImplementation extends PureComponent {
       queryCustFeedbackList4ZLFins, custFeedbackList, queryApprovalList, zhangleApprovalList,
       testWallCollision, testWallCollisionStatus, toggleServiceRecordModal,
     } = this.props;
-    const { targetCustList, isFoldFspLeftMenu } = this.state;
-    const { list: currentTargetList } = targetCustList;
+    const {
+      targetCustList,
+      targetCustList: { list: currentTargetList },
+      isFoldFspLeftMenu,
+    } = this.state;
     const {
       missionStatusCode, missionStatusValue, missionFlowId,
       serviceTips, serviceWayName, serviceWayCode, serviceDate,

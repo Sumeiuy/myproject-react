@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 16:47:05
+ * @Last Modified time: 2018-06-13 18:34:15
  */
 
 import React, { PureComponent } from 'react';
@@ -336,6 +336,8 @@ export default class ServiceRecordContent extends PureComponent {
       isSelectZhangleFins: serveWayUtil.isZhangle(serviceWayCode),
       ZLCustFeedback: ZLCustFeedbackText,
       isShowErrorCustFeedback: false,
+      isShowServeStatusError: false,
+      isShowServiceContentError: false,
       ...zlSC,
     };
   }
@@ -346,61 +348,98 @@ export default class ServiceRecordContent extends PureComponent {
     this.serveContentRef = ref;
   }
 
+  /**
+   * 改变当前表单错误的状态
+   * @param {*object} state 当前状态
+   */
+  @autobind
+  toggleFormContentErrorState(state) {
+    this.setState({
+      ...state,
+    });
+  }
+
   // 针对选择的服务方式，非涨乐财富通下的检测
   @autobind
   checkNotZLFins() {
-    const { isEntranceFromPerformerView, isPhoneCall } = this.props;
-    const { serviceStatus, serviceRecord } = this.state;
-    let isShowServeStatusError = false;
-    let isShowServiceContentError = false;
+    const { isPhoneCall } = this.props;
+    const { serviceRecord } = this.state;
+    // 校验服务状态
+    const isShowServeStatusError = this.checkServiceStatus();
     // 校验服务记录
-    isShowServiceContentError = !serviceRecord || serviceRecord.length > serviceContentMaxLength;
-    this.setState({ isShowServiceContentError });
-    // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容
+    const isShowServiceContentError = !serviceRecord
+      || serviceRecord.length > serviceContentMaxLength;
+    // 校验客户反馈
+    const isShowErrorCustFeedback = this.checkCustFeedbackError();
+    // 默认是校验结果正确
+    let hasError = false;
+
+    // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容和客户反馈一二级
     if (isPhoneCall) {
-      return !isShowServiceContentError;
+      hasError = isShowErrorCustFeedback || isShowServiceContentError;
+    } else {
+      hasError = isShowErrorCustFeedback || isShowServiceContentError || isShowServeStatusError;
     }
+
+    return {
+      hasError,
+      errorState: {
+        isShowServeStatusError,
+        isShowErrorCustFeedback,
+        isShowServiceContentError,
+      },
+    };
+  }
+
+  /**
+   * 校验执行者视图下面的服务状态
+   */
+  @autobind
+  checkServiceStatus() {
+    const { isEntranceFromPerformerView } = this.props;
+    const { serviceStatus } = this.state;
+    // 在执行者视图中校验 服务状态 是否已经选择
     if (isEntranceFromPerformerView) {
-      // 在执行者视图中校验 服务状态 是否已经选择
-      isShowServeStatusError = _.isEmpty(serviceStatus);
-      this.setState({ isShowServeStatusError });
+      return _.isEmpty(serviceStatus);
     }
-    const isShowErrorCustFeedback = this.checkCustFeedback();
-    return isShowErrorCustFeedback &&
-      !isShowServeStatusError && !isShowServiceContentError;
+    return false;
   }
 
   // 针对选的服务方式，是涨乐财富通的检测
   @autobind
   checkZLFins() {
-    const { isEntranceFromPerformerView } = this.props;
-    const { serviceStatus } = this.state;
-    let isShowServeStatusError = false;
-    if (isEntranceFromPerformerView) {
-      // 在执行者视图中校验 服务状态 是否已经选择
-      isShowServeStatusError = _.isEmpty(serviceStatus);
-      this.setState({ isShowServeStatusError });
-    }
-    return !isShowServeStatusError && this.serveContentRef.checkData();
+    // 校验服务内容
+    const isShowServiceContentError = this.serveContentRef.checkData();
+    // 校验服务状态
+    const isShowServeStatusError = this.checkServiceStatus();
+    const hasError = isShowServeStatusError || !isShowServiceContentError;
+
+    return {
+      hasError,
+      errorState: {
+        isShowServeStatusError,
+        isShowServiceContentError,
+      },
+    };
   }
 
+  /**
+   * 校验客户反馈
+   */
   @autobind
-  checkCustFeedback() {
+  checkCustFeedbackError() {
     const { custFeedback, custFeedback2 } = this.state;
     // 如果客户反馈一级或者二级没有勾选，提示错误
     if (custFeedback === defaultFeedbackOption ||
       custFeedback2 === defaultFeedbackOption) {
-      this.setState({
-        isShowErrorCustFeedback: true,
-      });
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   // 提交时候，进行数据校验
   @autobind
-  checkForSubmit() {
+  checkFormError() {
     const { isSelectZhangleFins } = this.state;
     if (isSelectZhangleFins) {
       return this.checkZLFins();
@@ -411,7 +450,12 @@ export default class ServiceRecordContent extends PureComponent {
   // 向组件外部提供所有数据
   @autobind
   getData() {
-    if (!this.checkForSubmit()) return null;
+    // 有错，直接返回，设置错误状态
+    const { hasError, errorState } = this.checkFormError();
+    if (hasError) {
+      this.toggleFormContentErrorState(errorState);
+      return null;
+    }
 
     const {
       // 服务类型
@@ -636,7 +680,7 @@ export default class ServiceRecordContent extends PureComponent {
   }
 
   /**
-   * @param {*} result 本次上传结果
+   * @param {*} file 本次上传结果
    */
   @autobind
   handleFileUpload(file) {
@@ -767,6 +811,7 @@ export default class ServiceRecordContent extends PureComponent {
       serviceRecord,
       isShowServeStatusError,
       isShowServiceContentError,
+      isShowErrorCustFeedback,
       isSelectZhangleFins,
       ZLCustFeedback,
       ZLCustFeedbackTime,
@@ -775,7 +820,6 @@ export default class ServiceRecordContent extends PureComponent {
       ZLServiceContentTitle,
       ZLServiceContentType,
       ZLServiceContentDesc,
-      isShowErrorCustFeedback,
     } = this.state;
     if (_.isEmpty(dict) || _.isEmpty(empInfo)) return null;
 

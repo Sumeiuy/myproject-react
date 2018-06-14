@@ -128,13 +128,13 @@ const moreFilterData = [
 
 // 当左侧列表或fsp中左侧菜单被折叠或者展开时，当前的服务实施列表的pageSize
 // 全部都展开时
-const smallPageSize = 6;
+const SMALL_PAGESIZE = 6;
 // FSP左侧菜单折叠放9个
-const mediumPageSize = 9;
+const MEDIUM_PAGESIZE = 9;
 // 任务列表折叠起来放10个
-const largePageSize = 10;
+const LARGE_PAGESIZE = 10;
 // 全部都折叠起来放12个
-const extraLargePageSize = 12;
+const EXTRALARGE_PAGESIZE = 12;
 
 // 执行者视图详情中tab的默认项，默认服务实施
 const defaultPerformerViewCurrentTab = 'serviceImplementation';
@@ -168,9 +168,9 @@ export default {
   END_TIME_KEY,
   QUERY_PARAMS,
   moreFilterData,
-  smallPageSize,
-  mediumPageSize,
-  largePageSize,
-  extraLargePageSize,
+  SMALL_PAGESIZE,
+  MEDIUM_PAGESIZE,
+  LARGE_PAGESIZE,
+  EXTRALARGE_PAGESIZE,
   defaultPerformerViewCurrentTab,
 };
