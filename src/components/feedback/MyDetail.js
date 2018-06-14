@@ -113,7 +113,11 @@ export default class MyDetail extends PureComponent {
         {
           id: 'screenshot',
           key: '截图 :',
-          value: <PreviewImg label="【点击查看】" previewUrl={`/file/${imageUrl}`} />,
+          value: <PreviewImg
+            className={styles.screenshot}
+            label="【点击查看】"
+            previewUrl={`/file/${imageUrl}`}
+          />,
         },
       ];
     }
