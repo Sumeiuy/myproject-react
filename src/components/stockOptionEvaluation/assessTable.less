@@ -1,0 +1,95 @@
+.assessTableBox {
+  // padding: 15px 20px 20px 15px;
+  padding-bottom: 0;
+  table {
+    border: 1px solid #e9e9e9;
+  }
+  table > thead > tr > th, tbody > tr > td {
+    padding: 8px 20px;
+    font-size: 14px;
+    color: #727272;
+    text-align: left;
+  }
+  table > tbody > tr > td {
+    .assessItem {
+      span {
+        color: #333;
+      }
+    }
+  }
+  table > thead > tr > th {
+    padding: 8px 20px;
+    background-color: #f7f7f7;
+    color: #333;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  :global {
+    .mini {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .ant-select-selection {
+      border: 1px solid #ddd;
+    }
+    .emptyRow {
+      pointer-events: none;
+      cursor: none;
+      :global {
+        // 空白行，清除选中项
+        .ant-checkbox-wrapper {
+          display: none;
+        }
+        .ant-radio-wrapper {
+          display: none;
+        }
+      }
+      .operation {
+        display: none;
+      }
+    }
+    .column {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+    }
+  }
+  .totalPageSection {
+    font-size: 12px;
+    & > .totalPage {
+      color: #108ee9;
+      font-size: 12px;
+    }
+  }
+  .operation {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    & > .link {
+      color: #108ee9;
+      background: transparent;
+      text-decoration: none;
+      outline: none;
+      cursor: pointer;
+      transition: color .3s ease;
+      padding-right: 8px;
+    }
+  }
+  .rowSelected {
+    background-color: rgb(237, 246, 253) !important;
+  }
+  :global {
+    .ant-table-wrapper {
+      .ant-table-thead {
+        span {
+          font-size: 14px;
+          color: #4a4a4a;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}

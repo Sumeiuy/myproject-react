@@ -8,9 +8,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import moment from 'moment';
+import cx from 'classnames';
 import Select from '../Select';
 import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
+import DateRangePicker from '../dateRangePicker';
 import Button from '../Button';
 import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
@@ -18,6 +21,7 @@ import contractHelper from '../../../helper/page/contract';
 import { dom, permission } from '../../../helper';
 import { fspContainer, seibelConfig } from '../../../config';
 import config from '../../telephoneNumberManage/config';
+import stockOptionConfig from '../../stockOptionEvaluation/config';
 import logable from '../../../decorators/logable';
 
 const {
@@ -26,14 +30,16 @@ const {
   filialeCustTransfer: { pageType: filialeCustTransfer },
 } = seibelConfig;
 const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
-
+const { stockOptionApply: { pageType: stockApplyPageType } } = stockOptionConfig;
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
+const dateFormat = 'YYYY-MM-DD';
+// 当前时间
+const currentDate = moment();
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
     // 页面
     page: PropTypes.string,
     // 子类型
@@ -47,8 +53,6 @@ export default class Pageheader extends PureComponent {
     // 是否需要子类型
     needSubType: PropTypes.bool,
     operateOptions: PropTypes.array,
-    // 新建权限
-    empInfo: PropTypes.object,
     // 页面类型
     pageType: PropTypes.string.isRequired,
     // 部门列表
@@ -79,14 +83,22 @@ export default class Pageheader extends PureComponent {
     checkUserIsFiliale: PropTypes.func,
     // 提供由用户来判断是否需要显示新建按钮
     isShowCreateBtn: PropTypes.func,
+    // 是否需要申请时间
+    needApplyTime: PropTypes.bool,
+  }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    // 员工信息
+    empInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
     page: '',
     needOperate: false,
     needSubType: true,
+    needApplyTime: false,
     operateOptions: [],
-    empInfo: {},
     subtypeOptions: [],
     filterCallback: _.noop,
     isUseOfCustomer: true,
@@ -379,7 +391,40 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '申请时间',
+      value: (instance, args) => {
+        const dateArr = _.map(
+          args[0],
+          item => moment(item).format(dateFormat),
+        );
+        return _.join(dateArr, '~');
+      },
+    },
+  })
+  handleCreateDateChange(date) {
+    const { startDate, endDate } = date;
+    if (startDate !== null && endDate !== null) {
+      const applyTimeStart = startDate.format(dateFormat);
+      const applyTimeEnd = endDate.format(dateFormat);
+      this.props.filterCallback({
+        applyTimeStart,
+        applyTimeEnd,
+      });
+    }
+  }
+
+  // 只能选择今天之前的时间
+  @autobind
+  setDisableRange(date) {
+    return date > currentDate;
+  }
+
   render() {
+    const { empInfo } = this.context;
     const {
       subtypeOptions,
       stateOptions,
@@ -387,13 +432,12 @@ export default class Pageheader extends PureComponent {
       approvePersonList,
       customerList,
       custRange,
-      replace,
       page,
       pageType,
       operateOptions,
       needOperate,
       needSubType,
-      empInfo,
+      needApplyTime,
       isUseOfCustomer,
       ptyMngList,
       checkUserIsFiliale,
@@ -467,10 +511,17 @@ export default class Pageheader extends PureComponent {
         checkUserIsFiliale();
     } else if (pageType === phoneApplyPageType) {
       hasCreatePermission = permission.hasPermissionOfPhoneApplyCreate(empInfo);
+    } else if (pageType === stockApplyPageType) {
+      hasCreatePermission = permission.hasPermissionOfStockApplyCreate(empInfo);
     } else {
       // 此处,通用的判断是否需要隐藏新建按钮
       hasCreatePermission = this.props.isShowCreateBtn();
     }
+
+    const dateFilterCls = cx({
+      [styles.filterFl]: true,
+      [styles.dateWidget]: true,
+    });
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
@@ -564,12 +615,10 @@ export default class Pageheader extends PureComponent {
               style={{ width: '20%' }}
               custRange={custRange}
               location={location}
-              replace={replace}
               updateQueryState={this.selectCustRange}
               orgId={orgId}
             />
           </div>
-
           <div className={styles.filterFl}>
             审批人:
             <div className={styles.dropDownSelectBox}>
@@ -585,6 +634,21 @@ export default class Pageheader extends PureComponent {
               />
             </div>
           </div>
+          {
+            needApplyTime ?
+            (
+              <div className={dateFilterCls}>
+                申请时间:
+                <div className={styles.dateRangePickerBox}>
+                  <DateRangePicker
+                    onChange={this.handleCreateDateChange}
+                    disabledRange={this.setDisableRange}
+                  />
+                </div>
+              </div>
+            )
+            : null
+          }
           {
             this.state.showMore ?
               <div

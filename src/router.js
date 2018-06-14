@@ -79,6 +79,8 @@ import ReportDetail from './routes/choicenessCombination/ReportDetail';
 import InvestmentConsultantRace from './routes/investmentConsultantRace/Home';
 // 消息通知提醒
 import MessageCenter from './routes/messageCenter/Home';
+// 股票期权评估申请
+import StockOptionEvaluation from './routes/stockOptionEvaluation/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -304,6 +306,10 @@ const routes = [
   },
   // 投顾业务能力竞赛
   { path: '/investmentConsultantRace', component: InvestmentConsultantRace },
+
+  // 股票期权评估申请
+  {
+    path: '/stockOptionEvaluation', component: StockOptionEvaluation },
 ];
 
 // 递归创建路由

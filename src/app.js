@@ -128,6 +128,8 @@ app.model(require('./models/operationCenter'));
 app.model(require('./models/businessDepartmentCustDistribute'));
 // 消息通知提醒
 app.model(require('./models/messageCenter'));
+// 股票期权评估申请
+app.model(require('./models/stockOptionEvaluation'));
 
 // 4. Route
 app.router(routerConfig);

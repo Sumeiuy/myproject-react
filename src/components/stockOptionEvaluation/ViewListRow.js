@@ -1,17 +1,14 @@
-/**
- * @Author: hongguangqing
- * @Description: 业务手机申请页面ViewListRow
- * @Date: 2018-01-29 14:25:26
+/*
+ * @Author: zhangjun
+ * @Date: 2018-06-06 14:23:44
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-06 14:36:40
+ * @Last Modified time: 2018-06-11 17:19:00
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import _ from 'lodash';
 
-import Tag from '../common/tag';
 import Icon from '../common/Icon';
 import styles from './viewListRow.less';
 
@@ -32,7 +29,14 @@ const changeDisplay = (st, options) => {
   return '无';
 };
 
-export default function ViewListRow(props) {
+function showCustomerBySubtype(data) {
+  if (data.subType === '0202') {
+    return `共${data.business2 || 0}人,已完成${data.business3 || 0}人`;
+  }
+  return `客户：${data.custName || '无'}(${data.custNumber || '无'})`;
+}
+
+export default function AppItem(props) {
   const {
     data,
     type,
@@ -68,8 +72,8 @@ export default function ViewListRow(props) {
     [styles.active]: active,
   });
   const tagBlueType = cx({
-    blue: !active,
-    transparent: active,
+    [styles.tagType]: true,
+    [styles.active]: active,
   });
   function handleClick() {
     onClick(data, index);
@@ -83,25 +87,28 @@ export default function ViewListRow(props) {
           <span className={serialCls}>编号{data.id || '暂无'}</span>
         </div>
         <div className={styles.tagArea}>
-          <Tag type={tagBlueType} text={changeDisplay(data.status, statusOptions)} />
+          <div className={tagBlueType}>
+            {changeDisplay(data.status, statusOptions)}
+          </div>
         </div>
       </div>
       {/* 第二行 */}
       <div className={secondLineCls}>
-        <span className={typeCls}>{changeTypeDisplay(data.type, pageData)}</span>
+        <div className={typeCls}>{changeTypeDisplay(data.type, pageData)}</div>
+        <div className={styles.date}>{(data.createTime && data.createTime.slice(0, 10)) || '无'}</div>
       </div>
       {/* 第三行 */}
       <div className={thirdLineCls}>
-        <div className={styles.drafter}>
-          拟稿人：<span className={styles.drafterName}>{data.empName}({data.empId})</span>{`${data.orgName || ''}` || '无'}
+        <div className={styles.drafter}>拟稿人：<span className={styles.drafterName}>{data.empName}({data.empId})</span>{`${data.orgName || ''}` || '无'}</div>
+        <div className={styles.customer} title={showCustomerBySubtype(data)}>
+          {showCustomerBySubtype(data)}
         </div>
-        <div className={styles.date}>{(data.createTime && data.createTime.slice(0, 10)) || '无'}</div>
       </div>
     </div>
   );
 }
 
-ViewListRow.propTypes = {
+AppItem.propTypes = {
   data: PropTypes.object.isRequired,
   pageName: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
