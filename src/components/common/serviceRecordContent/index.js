@@ -967,7 +967,7 @@ export default class ServiceRecordContent extends PureComponent {
                   <CascadeFeedbackSelect
                     value={cascadeSelectValue}
                     onChange={this.handleCascadeSelectChange}
-                    feedbackList={cascadeFeedbackList}
+                    dataSource={cascadeFeedbackList}
                   />
                   {isShowErrorCustFeedback ?
                     <div className={styles.error}>请选择客户反馈</div> : null}
