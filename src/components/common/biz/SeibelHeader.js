@@ -40,7 +40,6 @@ const currentDate = moment();
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
     // 页面
     page: PropTypes.string,
     // 子类型
@@ -54,8 +53,6 @@ export default class Pageheader extends PureComponent {
     // 是否需要子类型
     needSubType: PropTypes.bool,
     operateOptions: PropTypes.array,
-    // 新建权限
-    empInfo: PropTypes.object,
     // 页面类型
     pageType: PropTypes.string.isRequired,
     // 部门列表
@@ -90,13 +87,18 @@ export default class Pageheader extends PureComponent {
     needApplyTime: PropTypes.bool,
   }
 
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    // 员工信息
+    empInfo: PropTypes.object.isRequired,
+  }
+
   static defaultProps = {
     page: '',
     needOperate: false,
     needSubType: true,
     needApplyTime: false,
     operateOptions: [],
-    empInfo: {},
     subtypeOptions: [],
     filterCallback: _.noop,
     isUseOfCustomer: true,
@@ -422,6 +424,7 @@ export default class Pageheader extends PureComponent {
   }
 
   render() {
+    const { empInfo } = this.context;
     const {
       subtypeOptions,
       stateOptions,
@@ -429,14 +432,12 @@ export default class Pageheader extends PureComponent {
       approvePersonList,
       customerList,
       custRange,
-      replace,
       page,
       pageType,
       operateOptions,
       needOperate,
       needSubType,
       needApplyTime,
-      empInfo,
       isUseOfCustomer,
       ptyMngList,
       checkUserIsFiliale,
@@ -614,7 +615,6 @@ export default class Pageheader extends PureComponent {
               style={{ width: '20%' }}
               custRange={custRange}
               location={location}
-              replace={replace}
               updateQueryState={this.selectCustRange}
               orgId={orgId}
             />

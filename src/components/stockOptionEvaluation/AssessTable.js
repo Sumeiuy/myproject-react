@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-08 09:10:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-12 20:23:42
+ * @Last Modified time: 2018-06-13 18:07:55
  */
 
 import React, { PureComponent } from 'react';
@@ -174,6 +174,8 @@ export default class AssessTable extends PureComponent {
       defaultResult,
       assessResult,
     } = record;
+    // 鼠标放到表格上，显示的字符串进行重组
+    // 格式为：符合条件: (XXX)
     const valueStr = `${defaultResult}（${assessResult}）`;
     return (
       <div title={valueStr} className={styles.assessItem}>
@@ -192,12 +194,13 @@ export default class AssessTable extends PureComponent {
       assessResult,
       defaultResult2,
     } = record;
+    // 鼠标放到表格上，显示的字符串进行重组
+    // 格式为：风险评级：XXX 个人客户稳健型以下、普通机构客户积极型以下不予授予交易权限
     const valueStr = `${defaultResult1}（${assessResult}）${defaultResult2}`;
     return (
       <div title={valueStr} className={styles.assessItem}>
-        {defaultResult1}（
+        {defaultResult1}
         <span>{assessResult}</span>
-        ）
         <br />
         {defaultResult2}
       </div>
@@ -213,6 +216,8 @@ export default class AssessTable extends PureComponent {
       assessResult,
       defaultResult2,
     } = record;
+    // 鼠标放到表格上，显示的字符串进行重组
+    // 格式为：模拟交易经历符合（xxx）权限
     const valueStr = `${defaultResult1}（${assessResult}）${defaultResult2}`;
     return (
       <div title={valueStr} className={styles.assessItem}>
@@ -228,25 +233,27 @@ export default class AssessTable extends PureComponent {
   handleResultByMoreCond(record) {
     const {
       defaultResult1,
-      aAcctOpenTimeFlag,
+      aAcctOpenTimeFlagCn,
       defaultResult2,
-      rzrqzqAcctFlag,
+      rzrqzqAcctFlagCn,
       defaultResult3,
-      jrqhjyFlag,
+      jrqhjyFlagCn,
     } = record;
-    const valueStr = `${defaultResult1}（${aAcctOpenTimeFlag}）${defaultResult2}（${rzrqzqAcctFlag}）${defaultResult3}（${jrqhjyFlag}）`;
+    // 鼠标放到表格上，显示的字符串进行重组
+    // 格式为：A股账户开立时间6个月以上（XXX）已开立融资融券证券账户（XXX）已提供金融期货交易证明（XXX）
+    const valueStr = `${defaultResult1}（${aAcctOpenTimeFlagCn}）${defaultResult2}（${rzrqzqAcctFlagCn}）${defaultResult3}（${jrqhjyFlagCn}）`;
     return (
       <div title={valueStr} className={styles.assessItem}>
         {defaultResult1}（
-        <span>{aAcctOpenTimeFlag}</span>
+        <span>{aAcctOpenTimeFlagCn}</span>
+        ）
+        <br />
+        {defaultResult3}（
+        <span>{rzrqzqAcctFlagCn}</span>
         ）
         <br />
         {defaultResult2}（
-        <span>{rzrqzqAcctFlag}</span>
-        ）
-        <br />
-        {defaultResult2}（
-        <span>{rzrqzqAcctFlag}</span>
+        <span>{jrqhjyFlagCn}</span>
         ）
         <br />
       </div>
@@ -322,7 +329,7 @@ export default class AssessTable extends PureComponent {
         aAcctOpenTimeFlagCn, // A股开立时间6个月以上
         rzrqzqAcctFlagCn, // 已开立融资融券证券账号
         jrqhjyFlagCn, // 已提供金融期货交易证明
-        mTransLevelCn, // 交易级别
+        mTransLevel, // 交易级别
       },
     } = this.props.data;
 
@@ -395,7 +402,7 @@ export default class AssessTable extends PureComponent {
       assessEle: assessTable[5].assessEle,
       aptitudeEle: assessTable[5].aptitudeEle,
       defaultResult1: assessTable[5].assessResult1,
-      assessResult: mTransLevelCn,
+      assessResult: mTransLevel,
       defaultResult2: assessTable[5].assessResult2,
     };
     let dataSource = [];

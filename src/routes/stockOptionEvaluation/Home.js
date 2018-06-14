@@ -2,14 +2,13 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-13 12:48:02
+ * @Last Modified time: 2018-06-13 20:14:52
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 
 import { dva } from '../../helper';
@@ -67,7 +66,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  replace: routerRedux.replace,
   // 获取左侧列表
   getList: effect(effects.getList, { forceFull: true }),
   // 获取右侧详情信息
@@ -89,9 +87,6 @@ const mapDispatchToProps = {
 export default class StockOptionApplication extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
-    // 员工信息
-    empInfo: PropTypes.object.isRequired,
     // 列表
     list: PropTypes.object.isRequired,
     getList: PropTypes.func.isRequired,
@@ -119,6 +114,12 @@ export default class StockOptionApplication extends PureComponent {
     getSelectMap: PropTypes.func.isRequired,
     // 清除数据
     clearProps: PropTypes.func.isRequired,
+  }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    // 员工信息
+    empInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -151,8 +152,8 @@ export default class StockOptionApplication extends PureComponent {
   // 获取右侧列表
   @autobind
   getRightDetail() {
+    const { replace } = this.context;
     const {
-      replace,
       list,
       location: { pathname, query, query: { currentId } },
     } = this.props;
@@ -164,7 +165,7 @@ export default class StockOptionApplication extends PureComponent {
       let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
       if (!_.isEmpty(currentId) && itemIndex > -1) {
         // 此时url中存在currentId
-        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+        item = _.filter(list.resultData, o => o.id.toString() === currentId)[0];
       } else {
         // 不存在currentId
         replace({
@@ -204,8 +205,8 @@ export default class StockOptionApplication extends PureComponent {
   @autobind
   handleListRowClick(record, index) {
     const { id, flowId } = record;
+    const { replace } = this.context;
     const {
-      replace,
       location: { pathname, query, query: { currentId } },
     } = this.props;
     if (currentId === String(id)) return;
@@ -235,7 +236,8 @@ export default class StockOptionApplication extends PureComponent {
   @autobind
   handleHeaderFilter(obj) {
     // 1.将值写入Url
-    const { replace, location } = this.props;
+    const { replace } = this.context;
+    const { location } = this.props;
     const { query, pathname } = location;
     // 清空掉消息提醒页面带过来的 id
     replace({
@@ -253,7 +255,8 @@ export default class StockOptionApplication extends PureComponent {
   // 切换页码
   @autobind
   handlePageNumberChange(nextPage, currentPageSize) {
-    const { replace, location } = this.props;
+    const { replace } = this.context;
+    const { location } = this.props;
     const { query, pathname } = location;
     replace({
       pathname,
@@ -269,7 +272,8 @@ export default class StockOptionApplication extends PureComponent {
   // 切换每一页显示条数
   @autobind
   handlePageSizeChange(currentPageNum, changedPageSize) {
-    const { replace, location } = this.props;
+    const { replace } = this.context;
+    const { location } = this.props;
     const { query, pathname } = location;
     replace({
       pathname,
@@ -308,10 +312,9 @@ export default class StockOptionApplication extends PureComponent {
   }
 
   render() {
+    const { empInfo } = this.context;
     const {
       location,
-      replace,
-      empInfo,
       list,
       detailInfo,
       attachmentList,
@@ -331,7 +334,6 @@ export default class StockOptionApplication extends PureComponent {
     const topPanel = (
       <ConnectedSeibelHeader
         location={location}
-        replace={replace}
         page="stockOptionApplyPage"
         pageType={pageType}
         needSubType={false}
