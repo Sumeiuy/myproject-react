@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-14 16:46:04
+ * @Last Modified time: 2018-06-14 16:49:07
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -33,7 +33,6 @@ export default class CascadeFeedbackSelect extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { value } = nextProps;
-    // 外部变化，不显示二级反馈
     this.setState({ ...value });
   }
 
