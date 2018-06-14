@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-13 21:55:34
+ * @Last Modified time: 2018-06-14 09:00:56
  */
 
 
@@ -17,10 +17,10 @@ import { fsp } from '../../../helper';
 import styles from './performerViewDetail.less';
 
 import {
-  smallPageSize,
-  mediumPageSize,
-  largePageSize,
-  extraLargePageSize,
+  SMALL_PAGESIZE,
+  MEDIUM_PAGESIZE,
+  LARGE_PAGESIZE,
+  EXTRALARGE_PAGESIZE,
 } from '../../../routes/taskList/config';
 
 // 当左侧列表或fsp中左侧菜单被折叠或者展开时，返回当前的服务实施列表的pageSize
@@ -29,18 +29,18 @@ import {
 const getPageSize = (isFoldFspLeftMenu, isFoldLeftList) => {
   // 全部都折叠起来放12个
   if (isFoldFspLeftMenu && isFoldLeftList) {
-    return extraLargePageSize;
+    return EXTRALARGE_PAGESIZE;
   }
   // FSP左侧菜单折叠放9个
   if (isFoldFspLeftMenu) {
-    return mediumPageSize;
+    return MEDIUM_PAGESIZE;
   }
   // 任务列表折叠起来放10个
   if (isFoldLeftList) {
-    return largePageSize;
+    return LARGE_PAGESIZE;
   }
   // 其余的放6个
-  return smallPageSize;
+  return SMALL_PAGESIZE;
 };
 
 export default class PerformerViewDetail extends PureComponent {
@@ -213,6 +213,7 @@ export default class PerformerViewDetail extends PureComponent {
           searchCustomer={this.searchCustomer}
           customerList={customerList}
           reloadTargetCustInfo={this.reloadTargetCustInfo}
+          getPageSize={getPageSize}
         />
       </div>
     );
