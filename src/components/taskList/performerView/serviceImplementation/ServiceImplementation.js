@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-13 21:02:20
+ * @Last Modified time: 2018-06-14 09:02:24
  */
 
 import React, { PureComponent } from 'react';
@@ -27,10 +27,6 @@ import { fsp } from '../../../../helper';
 import styles from './serviceImplementation.less';
 import {
   POSTCOMPLETED_CODE,
-  smallPageSize,
-  mediumPageSize,
-  largePageSize,
-  extraLargePageSize,
 } from '../../../../routes/taskList/config';
 
 // 这个是防止页面里有多个class重复，所以做个判断，必须包含当前节点
@@ -41,26 +37,6 @@ const getStickyTarget = (currentNode) => {
     containers,
     element => contains(element, currentNode),
   )) || containers[0];
-};
-
-// 当左侧列表或fsp中左侧菜单被折叠或者展开时，返回当前的服务实施列表的pageSize
-// isFoldFspLeftMenu=true fsp的左侧菜单被折叠收起
-// isFoldLeftList=true 执行者视图左侧列表被折叠收起
-const getPageSize = (isFoldFspLeftMenu, isFoldLeftList) => {
-  // 全部都折叠起来放12个
-  if (isFoldFspLeftMenu && isFoldLeftList) {
-    return extraLargePageSize;
-  }
-  // FSP左侧菜单折叠放9个
-  if (isFoldFspLeftMenu) {
-    return mediumPageSize;
-  }
-  // 任务列表折叠起来放10个
-  if (isFoldLeftList) {
-    return largePageSize;
-  }
-  // 其余的放6个
-  return smallPageSize;
 };
 
 /**
@@ -136,6 +112,7 @@ export default class ServiceImplementation extends PureComponent {
     toggleServiceRecordModal: PropTypes.func,
     queryTargetCustDetail: PropTypes.func.isRequired,
     popupContainer: PropTypes.string.isRequired,
+    getPageSize: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -186,7 +163,7 @@ export default class ServiceImplementation extends PureComponent {
 
   componentDidUpdate(prevProps, prevState) {
     const { isFoldFspLeftMenu } = this.state;
-    const { isFold } = this.props;
+    const { isFold, getPageSize } = this.props;
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
     if (
       prevProps.isFold !== isFold
