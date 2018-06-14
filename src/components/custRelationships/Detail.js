@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系详情页面
  * @Date: 2018-06-08 17:39:51
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-12 16:34:55
+ * @Last Modified time: 2018-06-14 16:26:14
  */
 
 import React, { PureComponent } from 'react';
@@ -64,8 +64,8 @@ export default class Detail extends PureComponent {
       custName,
       custId,
       custTypeLabel,
-      IDTypeValue,
-      IDTypeLabel,
+      custIDTypeLabel,
+      custIDNum,
       businessFlag,
       empLogin,
       empLoginName,
@@ -97,10 +97,10 @@ export default class Detail extends PureComponent {
                     <InfoItem label="客户类型" value={custTypeLabel} width="70px" />
                   </li>
                   <li className={styles.item2}>
-                    <InfoItem label="证件类型" value={IDTypeValue} width="70px" />
+                    <InfoItem label="证件类型" value={custIDTypeLabel} width="70px" />
                   </li>
                   <li className={styles.item}>
-                    <InfoItem label="证件号码" value={IDTypeLabel} width="70px" />
+                    <InfoItem label="证件号码" value={custIDNum} width="70px" />
                   </li>
                   <li className={styles.item2}>
                     <InfoItem label="是否办理股票质押回购业务" value={businessFlagValue} width="185px" />

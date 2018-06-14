@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import moment from 'moment';
 import Select from '../Select';
 import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
@@ -16,6 +17,7 @@ import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
 import contractHelper from '../../../helper/page/contract';
 import { dom, permission } from '../../../helper';
+import DateRangePicker from '../dateRangePicker';
 import { fspContainer, seibelConfig } from '../../../config';
 import config from '../../telephoneNumberManage/config';
 import logable from '../../../decorators/logable';
@@ -29,6 +31,9 @@ const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
+const dateFormat = 'YYYY/MM/DD';
+// 当前时间
+const currentDate = moment();
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -76,10 +81,11 @@ export default class Pageheader extends PureComponent {
     checkUserIsFiliale: PropTypes.func,
     // 提供由用户来判断是否需要显示新建按钮
     isShowCreateBtn: PropTypes.func,
+    // 是否需要申请时间
+    needApplyTime: PropTypes.bool,
   }
 
   static contextTypes = {
-    replace: PropTypes.func.isRequired,
     empInfo: PropTypes.object,
   }
 
@@ -87,6 +93,7 @@ export default class Pageheader extends PureComponent {
     page: '',
     needOperate: false,
     needSubType: true,
+    needApplyTime: false,
     operateOptions: [],
     empInfo: {},
     subtypeOptions: [],
@@ -381,6 +388,39 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+
+  @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '申请时间',
+      value: (instance, args) => {
+        const dateArr = _.map(
+          args[0],
+          item => moment(item).format(dateFormat),
+        );
+        return _.join(dateArr, '~');
+      },
+    },
+  })
+  handleCreateDateChange(date) {
+    const { startDate, endDate } = date;
+    if (startDate !== null && endDate !== null) {
+      const createTime = startDate.format(dateFormat);
+      const createTimeTo = endDate.format(dateFormat);
+      this.props.filterCallback({
+        createTime,
+        createTimeTo,
+      });
+    }
+  }
+
+  // 只能选择今天之前的时间
+  @autobind
+  setDisableRange(date) {
+    return date > currentDate;
+  }
+
   render() {
     const {
       subtypeOptions,
@@ -394,6 +434,7 @@ export default class Pageheader extends PureComponent {
       operateOptions,
       needOperate,
       needSubType,
+      needApplyTime,
       isUseOfCustomer,
       ptyMngList,
       checkUserIsFiliale,
@@ -410,7 +451,7 @@ export default class Pageheader extends PureComponent {
         },
       },
     } = this.props;
-    const { replace, empInfo } = this.context;
+    const { empInfo } = this.context;
     const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
     // 客户增加全部
     const customerAllList = !_.isEmpty(customerList) ?
@@ -471,6 +512,7 @@ export default class Pageheader extends PureComponent {
       // 此处,通用的判断是否需要隐藏新建按钮
       hasCreatePermission = this.props.isShowCreateBtn();
     }
+
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
@@ -564,7 +606,6 @@ export default class Pageheader extends PureComponent {
               style={{ width: '20%' }}
               custRange={custRange}
               location={location}
-              replace={replace}
               updateQueryState={this.selectCustRange}
               orgId={orgId}
             />
@@ -585,6 +626,22 @@ export default class Pageheader extends PureComponent {
               />
             </div>
           </div>
+
+          {
+            needApplyTime ?
+            (
+              <div className={styles.filterFl}>
+                申请时间:
+                <div className={styles.dateRangePickerBox}>
+                  <DateRangePicker
+                    onChange={this.handleCreateDateChange}
+                    disabledRange={this.setDisableRange}
+                  />
+                </div>
+              </div>
+            )
+            : null
+          }
           {
             this.state.showMore ?
               <div

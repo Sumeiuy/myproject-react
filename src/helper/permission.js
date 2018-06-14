@@ -286,6 +286,11 @@ const permission = {
       permission.hasNPCIBMPPermission() ||
       permission.hasCDMPermission();
   },
+
+  // HTSC 融资类业务客户关联关系管理岗
+  hasGLGXGLGPermission() {
+    return hasDuty(dutyList, duty.HTSC_GLGXGLG);
+  },
 };
 
 export default permission;
