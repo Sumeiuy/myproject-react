@@ -29,6 +29,8 @@ const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
+// 分公司客户分配
+const PAGE_CUST_ALLOT = 'custAllotPage';
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -475,25 +477,31 @@ export default class Pageheader extends PureComponent {
     if (!env.isInFsp()) {
       hasCreatePermission = true;
     }
+    // 分公司客户分配不显示客户搜索
+    const custElement = page !== PAGE_CUST_ALLOT ?
+      (<div className={styles.filterFl}>
+        <div className={styles.dropDownSelectBox}>
+          <DropDownSelect
+            value={curCust}
+            placeholder="经纪客户号/客户名称"
+            searchList={customerAllList}
+            showObjKey="custName"
+            objId="custNumber"
+            emitSelectItem={this.selectCustItem}
+            emitToSearch={this.handleCustSearch}
+            name={`${page}-custName`}
+          />
+        </div>
+      </div>)
+    :
+      null;
+
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
           {
             isUseOfCustomer ?
-              <div className={styles.filterFl}>
-                <div className={styles.dropDownSelectBox}>
-                  <DropDownSelect
-                    value={curCust}
-                    placeholder="经纪客户号/客户名称"
-                    searchList={customerAllList}
-                    showObjKey="custName"
-                    objId="custNumber"
-                    emitSelectItem={this.selectCustItem}
-                    emitToSearch={this.handleCustSearch}
-                    name={`${page}-custName`}
-                  />
-                </div>
-              </div>
+              custElement
             :
               <div className={styles.filterFl}>
                 <div className={styles.dropDownSelectBox}>
