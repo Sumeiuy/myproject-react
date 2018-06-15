@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-14 20:00:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 10:22:14
+ * @Last Modified time: 2018-06-15 14:45:32
  * @description 融资类业务提交数据时的校验函数
  */
 import _ from 'lodash';
@@ -26,7 +26,7 @@ function getCountOfSomeRelation(code) {
 
 // 获取个人客户的关联关系中的夫妻关联关系条数
 function getMarriageRelactionCount() {
-  return this.getCountOfSomeRelation(FUQI_TYPE_CODE);
+  return getCountOfSomeRelation(FUQI_TYPE_CODE);
 }
 
 // 获取普通机构客户的关联关系中的实际控制人关系的条数
