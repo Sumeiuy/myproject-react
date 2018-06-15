@@ -338,7 +338,7 @@ export default class CustomerList extends PureComponent {
 
   // 获取列表数据
   @autobind
-  getCustomerList(props) {
+  async getCustomerList(props) {
     const {
       cycle = [],
       getCustomerData, location: { query },
@@ -346,7 +346,6 @@ export default class CustomerList extends PureComponent {
     const keyword = decodeURIComponent(query.q);
     // 标签名字与标签描述
     const labelName = decodeURIComponent(query.labelName);
-    const labelDesc = decodeURIComponent(query.labelDesc);
     const labelMapping = decodeURIComponent(query.labelMapping);
     const productName = query.productName && decodeURIComponent(query.productName);
     const param = {
@@ -364,14 +363,6 @@ export default class CustomerList extends PureComponent {
       // param.labels = [query.labelMapping];
       param.primaryKey = [labelMapping];
       param.searchTypeReq = query.type;
-      // param.searchText = keyword;
-      if (query.source === 'sightingTelescope') {
-        // 如果是瞄准镜，需要加入queryLabelReq
-        param.queryLabelReq = {
-          labelName,
-          labelDesc,
-        };
-      }
     } else if (query.source === 'association' || query.source === 'securitiesProducts') { // 联想词
       // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
       param.searchTypeReq = query.type;
