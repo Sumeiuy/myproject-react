@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 17:14:45
+ * @Last Modified time: 2018-06-15 17:34:49
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -330,6 +330,7 @@ export default class FinanceCustRelationshipForm extends Component {
         <InfoTitle head="附件信息" />
         <CommonUpload
           edit
+          reformEnable
           key={uploadKey}
           attachment={attachment}
           needDefaultText={false}
