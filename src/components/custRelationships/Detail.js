@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系详情页面
  * @Date: 2018-06-08 17:39:51
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 10:35:57
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-06-15 14:41:38
  */
 
 import React, { PureComponent } from 'react';
@@ -119,6 +119,7 @@ export default class Detail extends PureComponent {
                 pagination={{
                   pageSize: 5,
                 }}
+                scroll={{ x: 810 }}
               />
             </div>
             <div className={styles.module}>

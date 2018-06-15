@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-06-11 16:36:40
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 09:53:19
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-06-15 14:52:41
  * @description 关联关系展示表格
  */
 
@@ -57,6 +57,7 @@ export default function AssociateRelationTable(props) {
           position: 'bottom',
           pageSize: 5,
         }}
+        scroll={{ x: 810 }}
       />
     </div>
   );

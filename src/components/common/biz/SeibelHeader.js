@@ -30,7 +30,7 @@ const {
 const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
 
 // 头部筛选filterBox的高度
-const FILTERBOX_HEIGHT = 32;
+const FILTERBOX_HEIGHT = 36;
 const dateFormat = 'YYYY/MM/DD';
 // 当前时间
 const currentDate = moment();
