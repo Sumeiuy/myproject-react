@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-13 18:34:15
+ * @Last Modified time: 2018-06-15 15:43:07
  */
 
 import React, { PureComponent } from 'react';
@@ -534,6 +534,8 @@ export default class ServiceRecordContent extends PureComponent {
     this.clearUploadedFileList();
     this.setState({
       ...this.getDefaultState(this.props),
+      // 客户反馈的报错是自定义的，不是通过FormItem定义的，需要手动清除
+      isShowErrorCustFeedback: false,
     });
   }
 
