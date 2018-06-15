@@ -130,13 +130,17 @@ export default class MyFeedback extends PureComponent {
       }).then(
         () => {
           const {
+            personFeedback,
             location: {
               query: {
                 activeId,
               },
             },
           } = this.props;
-          this.requstDetailInfo(activeId);
+          const { list = [] } = personFeedback || {};
+          if (!_.isEmpty(list)) {
+            this.requstDetailInfo(activeId);
+          }
         },
       );
     }
@@ -349,7 +353,6 @@ export default class MyFeedback extends PureComponent {
         resolveQuestion={this.handleResolveClick}
       />
     );
-
     return (
       <div className={styles.personFeedbackContainer} >
         <SplitPanel
