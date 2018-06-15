@@ -4,6 +4,7 @@
  */
 
 import _ from 'lodash';
+import store from 'store';
 
 const customerPool = {
   getCustomerListFilters(filtersArray = [], labelId = '', filters = []) {
@@ -59,6 +60,12 @@ const customerPool = {
       filters: newFilters,
       labels: _.filter(newLabels, item => item !== ''),
     };
+  },
+
+  // 获取存储在本地的标签的信息
+  getLabelInfo(id = '') {
+    const label = store.get(`${id}-labelDesc`);
+    return label || {};
   },
 };
 

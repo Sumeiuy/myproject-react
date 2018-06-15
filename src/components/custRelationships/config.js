@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系申请的配置文件
  * @Date: 2018-06-08 13:32:19
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 17:02:55
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-06-15 11:11:31
  */
 
 
@@ -39,49 +39,39 @@ const config = {
       },
     ],
   },
-  custRelationshipColumns: [
+  CUST_RELATIONSHIP_COLUMNS: [
     {
       title: '关联关系类型',
       dataIndex: 'relationTypeLabel',
       key: 'relationTypeLabel',
-      width: 120,
     },
     {
       title: '关联关系名称',
       dataIndex: 'relationNameLabel',
       key: 'relationNameLabel',
-      width: 150,
     },
     {
       title: '关联关系子类型',
       dataIndex: 'relationSubTypeLabel',
       key: 'relationSubTypeLabel',
-      width: 130,
     },
     {
       title: '关系人名称',
       dataIndex: 'partyName',
       key: 'partyName',
-      onCell() {
-        return {
-          className: 'associateRelationTableCell',
-        };
-      },
     },
     {
       title: '关系人证件类型',
       dataIndex: 'partyIDTypeLabel',
       key: 'partyIDTypeLabel',
-      width: 140,
     },
     {
       title: '关系人证件号码',
       dataIndex: 'partyIDNum',
       key: 'partyIDNum',
-      width: 180,
     },
   ],
-  approvalColumns: [
+  APPROVAL_COLUMNS: [
     {
       title: '工号',
       dataIndex: 'login',
@@ -97,7 +87,7 @@ const config = {
     },
   ],
   // 是否办理股票质押回购业务Select下拉选项
-  StockRepurchaseOptions: [
+  STOCK_REPURCHASE_OPTIONS: [
     {
       value: '',
       label: '--请选择--',
@@ -111,28 +101,10 @@ const config = {
       label: '否',
     },
   ],
-  // 社会统一信用证号码 RegExp
-  socialNumRegExp: /[^_IOZSVa-z\W]{2}\d{6}[^_IOZSVa-z\W]{10}$/,
-  // 18位身份证号码 RegExp
-  eighteenIDRegExp: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
-  // 15位身份证号码 RegExp
-  fifteenIDRegExp: /^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$/,
-  // 其余之校验是否字母数字
-  otherIDRegExp: /^[A-Za-z0-9]+$/,
   // 身份证类型Code
-  IDCardTypeCode: '103100',
-  // 社会统一信用证Code
-  socialCardTypeCode: '103270',
-  // 客户婚姻状态为已婚的Code
-  marriagedCode: '108020',
-  // 家庭关系Code
-  familyRelationCode: '127110',
-  // 夫妻类型Code
-  fuqiTypeCode: '127111',
-  // 普通机构-实际控制人
-  realControllerTypeCode: '127151',
-  // 产品客户-产品管理人
-  productManagerTypeCode: '127371',
+  IDCARD_TYPE_CODE: '103100',
+  // 统一社会信用证Code
+  UNIFIED_SOCIALCARD_TYPE_CODE: '103270',
 };
 
 export default config;

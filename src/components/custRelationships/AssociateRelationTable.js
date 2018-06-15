@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 16:36:40
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 16:03:01
+ * @Last Modified time: 2018-06-15 09:53:19
  * @description 关联关系展示表格
  */
 
@@ -13,14 +13,14 @@ import _ from 'lodash';
 
 import Icon from '../common/Icon';
 
-import { custRelationshipColumns } from './config';
+import { CUST_RELATIONSHIP_COLUMNS } from './config';
 
 import styles from './associateRelationTable.less';
 
 export default function AssociateRelationTable(props) {
   const { data, onDelRelation, onUpdateRelation } = props;
   // 此处的Table的Columns需要增加操作一列
-  const columns = [...custRelationshipColumns, {
+  const columns = [...CUST_RELATIONSHIP_COLUMNS, {
     title: '操作',
     key: 'action',
     width: 110,

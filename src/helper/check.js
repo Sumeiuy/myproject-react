@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:17:50
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-22 15:08:38
+ * @Last Modified time: 2018-06-15 10:12:42
  * @description 此处存放与校验相关的公用方法(非直接与正则表达式相关)
  */
 import reg from './regexp';
@@ -52,6 +52,45 @@ const check = {
    */
   isEmail(v) {
     return reg.email.test(v);
+  },
+
+  /**
+   * 判断一个字符串是否符合统一社会信用码的格式
+   * @author sunweibin
+   * @param {String} v 要验证的字符串
+   * @return {Boolean}
+   */
+  isUnifiedSocialCreditCode(v) {
+    return reg.uscc.test(v);
+  },
+
+  /**
+   * 判断一个字符串是否符合18位身份证号码的格式
+   * @author sunweibin
+   * @param {String} v 要验证的字符串
+   * @return {Boolean}
+   */
+  is18gitiIDCardCode(v) {
+    return reg.idNo18Digit.text(v);
+  },
+
+  /**
+   * 判断一个字符串是否符合15位身份证号码的格式
+   * @author sunweibin
+   * @param {String} v 要验证的字符串
+   * @return {Boolean}
+   */
+  is15gitiIDCardCode(v) {
+    return reg.idNo15Digit.text(v);
+  },
+  /**
+   * 判断一个字符串是否只含有字母和数字
+   * @author sunweibin
+   * @param {String} v 要验证的字符串
+   * @return {Boolean}
+   */
+  isOnlyAlphabetAndNumber(v) {
+    return reg.onlyAlphabetAndNumber.text(v);
   },
 };
 

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 17:01:42
+ * @Last Modified time: 2018-06-15 09:55:38
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -22,7 +22,7 @@ import CustInfo from './CustInfo';
 import AssociateRelationTable from './AssociateRelationTable';
 import AddRelationshipModal from './AddRelationshipModal';
 
-import { StockRepurchaseOptions, custRelationships } from './config';
+import { STOCK_REPURCHASE_OPTIONS, custRelationships } from './config';
 import { data, emp } from '../../helper';
 
 import styles from './financeCustRelationshipForm.less';
@@ -314,7 +314,7 @@ export default class FinanceCustRelationshipForm extends Component {
             width="105px"
             needShowKey={false}
             value={stockRepurchase}
-            data={StockRepurchaseOptions}
+            data={STOCK_REPURCHASE_OPTIONS}
             onChange={this.handleStockRepurchaseSelectChange}
           />
         </FormItem>
