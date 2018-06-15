@@ -2,8 +2,8 @@
  * @Description: PC电话拨号页面
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-30 19:52:08
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-15 15:47:10
  */
 
 import React, { PureComponent } from 'react';
@@ -33,8 +33,6 @@ const OPEN_FEATURES = `
 
 const TYPE_CONNECTED = 'connected';
 const TYPE_END = 'end';
-
-let popWin = null;
 
 export default class Phone extends PureComponent {
   static propTypes = {
@@ -82,6 +80,11 @@ export default class Phone extends PureComponent {
     onShowMask: _.noop,
   };
 
+  constructor(props) {
+    super(props);
+    this.popWin = null;
+  }
+
   // 是否已绑定message事件
   boundMessageEvent = false;
 
@@ -124,7 +127,7 @@ export default class Phone extends PureComponent {
 
   prepareCall(number) {
     const { getConfig } = this.props;
-    popWin = window.open(
+    this.popWin = window.open(
       'about:blank',
       'phoneDialog',
       OPEN_FEATURES,
@@ -152,7 +155,7 @@ export default class Phone extends PureComponent {
     const userQueryString = qs.stringify(userData);
 
     const srcUrl = `${URL}?number=${number}&custType=${custType}&auto=true&name=${name}&${configQueryString}&${userQueryString}`;
-    popWin.location = srcUrl;
+    this.popWin.location = srcUrl;
     if (!this.boundMessageEvent) {
       this.boundMessageEvent = true;
       window.addEventListener(
@@ -165,12 +168,12 @@ export default class Phone extends PureComponent {
 
   @autobind
   receiveMessage({ data }) {
-    if (data && data.type === TYPE_END && popWin) {
+    if (data && data.type === TYPE_END && this.popWin) {
       this.props.onEnd(data);
       // 隐藏通话蒙版
       this.props.onShowMask(false);
-      popWin.close();
-      popWin = null;
+      this.popWin.close();
+      this.popWin = null;
     } else if (data && data.type === TYPE_CONNECTED) {
       this.props.onConnected(data);
     }

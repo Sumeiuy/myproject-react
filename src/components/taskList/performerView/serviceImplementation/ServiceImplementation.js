@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-14 14:10:47
+ * @Last Modified time: 2018-06-15 15:02:11
  */
 
 import React, { PureComponent } from 'react';
@@ -27,6 +27,7 @@ import { fsp } from '../../../../helper';
 import styles from './serviceImplementation.less';
 import {
   POSTCOMPLETED_CODE,
+  defaultPerformerViewCurrentTab,
 } from '../../../../routes/taskList/config';
 // 默认的任务筛选值
 const TASKSTATE_NOTSTARTED = '10';
@@ -113,7 +114,6 @@ export default class ServiceImplementation extends PureComponent {
     addCallRecord: PropTypes.func,
     toggleServiceRecordModal: PropTypes.func,
     queryTargetCustDetail: PropTypes.func.isRequired,
-    popupContainer: PropTypes.string.isRequired,
     getPageSize: PropTypes.func.isRequired,
   }
 
@@ -537,7 +537,7 @@ export default class ServiceImplementation extends PureComponent {
       serviceTypeCode, ceFileDelete, deleteFileResult, getCeFileList,
       taskFeedbackList, attachmentList, eventId, taskTypeCode,
       queryCustFeedbackList4ZLFins, custFeedbackList, queryApprovalList, zhangleApprovalList,
-      testWallCollision, testWallCollisionStatus, toggleServiceRecordModal,
+      testWallCollision, testWallCollisionStatus, toggleServiceRecordModal, performerViewCurrentTab,
     } = this.props;
     const {
       targetCustList,
@@ -600,6 +600,29 @@ export default class ServiceImplementation extends PureComponent {
     };
     // fsp左侧菜单和左侧列表折叠状态变化，强制更新affix、文字折叠区域
     const leftFoldState = `${isFoldFspLeftMenu}${isFold}`;
+
+    const affixNode = (
+      <div>
+        <div className={styles.listSwiperBox}>
+          <ListSwiper
+            targetCustList={targetCustList}
+            parameter={parameter}
+            containerClass={styles.listSwiper}
+            currentTargetList={currentTargetList}
+            onCustomerClick={this.handleCustomerClick}
+            onPageChange={this.handlePageChange}
+          />
+        </div>
+        <CustomerProfile
+          currentId={currentId}
+          taskTypeCode={taskTypeCode}
+          addServeRecord={this.addServiceRecord}
+          motCustfeedBackDict={motCustfeedBackDict}
+          targetCustDetail={targetCustDetail}
+          toggleServiceRecordModal={toggleServiceRecordModal}
+        />
+      </div>
+    );
     return (
       <div className={styles.serviceImplementation} ref={ref => this.container = ref}>
         <Header
@@ -616,29 +639,17 @@ export default class ServiceImplementation extends PureComponent {
           _.isEmpty(currentTargetList) ?
             <EmptyData /> :
             <div>
-              <Affix
-                key={leftFoldState}
-                target={() => getStickyTarget(this.container)}
-              >
-                <div className={styles.listSwiperBox}>
-                  <ListSwiper
-                    targetCustList={targetCustList}
-                    parameter={parameter}
-                    containerClass={styles.listSwiper}
-                    currentTargetList={currentTargetList}
-                    onCustomerClick={this.handleCustomerClick}
-                    onPageChange={this.handlePageChange}
-                  />
-                </div>
-                <CustomerProfile
-                  currentId={currentId}
-                  taskTypeCode={taskTypeCode}
-                  addServeRecord={this.addServiceRecord}
-                  motCustfeedBackDict={motCustfeedBackDict}
-                  targetCustDetail={targetCustDetail}
-                  toggleServiceRecordModal={toggleServiceRecordModal}
-                />
-              </Affix>
+              {
+                /** 当选中服务实施列表tab的时候，给头部加一个固定效果 */
+                performerViewCurrentTab === defaultPerformerViewCurrentTab ?
+                  <Affix
+                    key={leftFoldState}
+                    target={() => getStickyTarget(this.container)}
+                  >
+                    {affixNode}
+                  </Affix>
+                  : affixNode
+              }
               <div className={styles.taskDetail}>
                 <CustomerDetail
                   currentId={currentId}
