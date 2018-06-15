@@ -3,14 +3,14 @@
  * @Descripter: 客户关联关系申请的配置文件
  * @Date: 2018-06-08 13:32:19
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-11 15:19:41
+ * @Last Modified time: 2018-06-14 16:18:32
  */
 
 
 const config = {
   custRelationships: {
     pageName: '客户关联关系信息申请',
-    pageType: '01', // 查询列表接口中的type值
+    pageType: '10', // 查询列表接口中的type值
     statusOptions: [
       {
         show: true,
@@ -42,18 +42,18 @@ const config = {
   custRelationshipColumns: [
     {
       title: '关联关系类型',
-      dataIndex: 'relationTypeLable',
-      key: 'relationTypeLable',
+      dataIndex: 'relationTypeLabel',
+      key: 'relationTypeLabel',
     },
     {
       title: '关联关系名称',
-      dataIndex: 'relationNameLable',
-      key: 'relationNameLable',
+      dataIndex: 'relationNameLabel',
+      key: 'relationNameLabel',
     },
     {
       title: '关联关系子类型',
-      dataIndex: 'relationSubTypeLable',
-      key: 'relationSubTypeLable',
+      dataIndex: 'relationSubTypeLabel',
+      key: 'relationSubTypeLabel',
     },
     {
       title: '关系人名称',
@@ -62,8 +62,8 @@ const config = {
     },
     {
       title: '关系人证件类型',
-      dataIndex: 'partyIDTypeLable',
-      key: 'partyIDTypeLable',
+      dataIndex: 'partyIDTypeLabel',
+      key: 'partyIDTypeLabel',
     },
     {
       title: '关系人证件号码',
