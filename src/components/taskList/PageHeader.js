@@ -146,7 +146,7 @@ export default class Pageheader extends PureComponent {
     const { value: { custId, name } } = item;
     this.props.filterCallback({
       custId,
-      custName: encodeURIComponent(name),
+      custName: decodeURIComponent(name),
     });
   }
 
