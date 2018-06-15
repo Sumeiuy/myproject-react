@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-24 10:13:17
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-11 13:16:46
+ * @Last Modified time: 2018-06-14 15:39:08
  */
 
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { message } from 'antd';
 import _ from 'lodash';
+
 import { SingleFilter } from 'lego-react-filter/src';
 import { TreeFilter as HTTreeFilter } from 'lego-tree-filter/src';
 
@@ -250,7 +251,7 @@ export default class AddManageModal extends PureComponent {
                 showSearch
                 placeholder="请输入服务经理工号、姓名"
                 data={[]}
-                defaultLabel={_.isEmpty(smKeyword) ? NO_VALUE : smKeyword}
+                defaultSelectLabel={smKeyword || NO_VALUE}
                 value={smKeyword}
                 onInputChange={_.debounce(this.handleEmpChange, 500)}
               />

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-14 20:52:53
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-14 14:13:59
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-15 16:42:54
  * @description 非涨乐财富通服务方式下的客户反馈级联Select
  */
 import React, { PureComponent } from 'react';
@@ -16,6 +16,9 @@ import { defaultFeedbackOption } from './utils';
 import styles from './index.less';
 
 const { Option } = Select;
+
+// 二级反馈的选择框样式
+const STYLE_SECONDSELECT = { width: 142, marginLeft: 18 };
 
 export default class CascadeFeedbackSelect extends PureComponent {
   constructor(props) {
@@ -131,12 +134,14 @@ export default class CascadeFeedbackSelect extends PureComponent {
           {/**
            * isShowSecond
            * 代表是否展示二级反馈
+           * first === defaultFeedbackOption
+           * 用来更新组件时，不显示客户反馈
            */}
           {
-            !isShowSecond ? null :
+            !isShowSecond || first === defaultFeedbackOption ? null :
               (<Select
                 value={second}
-                style={{ width: 142 }}
+                style={STYLE_SECONDSELECT}
                 onChange={this.handleSecondFeedbackSelectChange}
                 getPopupContainer={() => this.customerFeedbackRef}
               >

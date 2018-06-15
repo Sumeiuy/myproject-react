@@ -9,7 +9,7 @@ import createHistory from 'history/createHashHistory';
 import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
-import { message, Modal } from 'antd';
+import { message } from 'antd';
 
 import CommonModal from './components/common/biz/CommonModal';
 import './css/antd.less';
@@ -57,12 +57,13 @@ const onError = (e) => {
 
 // 离开某个页面，弹出确认框，配合页面中的Prompt使用
 const getConfirmation = (msg, callback) => {
-  Modal.confirm({
-    title: '请确认',
-    content: msg,
-    onOk() { callback(true); },
-    onCancel() { callback(false); },
-  });
+  // Modal.confirm({
+  //   title: '请确认',
+  //   content: msg,
+  //   onOk() { callback(true); },
+  //   onCancel() { callback(false); },
+  // });
+  callback(true);
 };
 
 const history = createHistory({

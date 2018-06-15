@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 22:49:02
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-13 20:15:42
+ * @Last Modified time: 2018-06-15 10:38:35
  */
 
 import React from 'react';
@@ -17,6 +17,8 @@ import styles from './header.less';
 
 // 状态为不限
 const STATE_UNLIMITED = { key: '', value: '不限' };
+// 筛选列表的浮层父节点id
+const popupContainer = '#performerViewDetail';
 
 export default function Header(props) {
   const {
@@ -30,7 +32,6 @@ export default function Header(props) {
     handlePreciseQueryEnterPress,
     parameter,
     targetCustList,
-    popupContainer,
   } = props;
   const { state, assetSort, rowId, preciseInputValue } = parameter;
   const { page: { totalCount }, list } = targetCustList;
@@ -108,7 +109,6 @@ Header.propTypes = {
   handlePreciseQueryEnterPress: PropTypes.func,
   parameter: PropTypes.object.isRequired,
   targetCustList: PropTypes.object.isRequired,
-  popupContainer: PropTypes.object.isRequired,
 };
 
 Header.defaultProps = {
