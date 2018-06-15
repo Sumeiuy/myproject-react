@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-14 10:10:09
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-13 14:02:41
  */
 
 import React, { PureComponent } from 'react';
@@ -849,8 +849,6 @@ export default class TaskFlow extends PureComponent {
     };
 
     const {
-      labelName,
-      labelDesc,
       isSightLabel,
       uploadedFileKey: fileId,
       executionType,
@@ -951,11 +949,11 @@ export default class TaskFlow extends PureComponent {
         labelId,
         isSightLabel,
       });
+      // 瞄准镜标签添加queryLabelReq
       postBody = {
         ...postBody,
         queryLabelReq: {
-          labelDesc,
-          labelName,
+          labelId,
         },
       };
     }

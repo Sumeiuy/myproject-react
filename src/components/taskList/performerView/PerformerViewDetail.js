@@ -2,8 +2,8 @@
  * @Description: 执行者视图右侧详情
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-04 10:06:30
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-08 21:46:11
  */
 
 
@@ -40,7 +40,6 @@ export default class PerformerViewDetail extends PureComponent {
     taskTypeCode: PropTypes.string,
     // 自建任务的类型Code，与mot任务的eventId同理
     serviceTypeCode: PropTypes.string,
-    modifyLocalTaskList: PropTypes.func.isRequired,
     // 涨乐财富通服务方式下的客户反馈列表以及查询方法
     queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
     custFeedbackList: PropTypes.array.isRequired,

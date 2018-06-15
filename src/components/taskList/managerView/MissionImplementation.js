@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-26 15:22:38
+ * @Last Modified time: 2018-06-07 16:30:51
  * 任务实施简报
  */
 
@@ -64,6 +64,8 @@ export default class MissionImplementation extends PureComponent {
     // 服务经理维度任务数据
     custManagerScopeData: PropTypes.object.isRequired,
     getCustManagerScope: PropTypes.func.isRequired,
+    // 当前一级二级反馈
+    currentFeedback: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -421,6 +423,8 @@ export default class MissionImplementation extends PureComponent {
       currentId,
       custManagerScopeData,
       custRange,
+      onPreviewCustDetail,
+      currentFeedback,
     } = this.props;
     const { level, currentScopeList } = this.state;
     const currentMissionReport = currentId ? missionReport[currentId] || {} : {};
@@ -486,6 +490,8 @@ export default class MissionImplementation extends PureComponent {
                 currentId={currentId}
                 custRange={custRange}
                 orgId={this.getCurrentOrgId()}
+                onPreviewCustDetail={onPreviewCustDetail}
+                currentFeedback={currentFeedback}
               />
             </div> : null
         }

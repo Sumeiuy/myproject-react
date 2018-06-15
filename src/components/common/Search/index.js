@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-21 13:39:44
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-14 20:08:37
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-12 15:39:05
  * 通用搜索组件，包含搜索历史记录，搜索热词联想，添加按钮
  */
 

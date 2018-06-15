@@ -172,6 +172,8 @@ export default {
     custLabelList: EMPTY_LIST,
     // 前端处理过的带分页的客户标签数据
     pagingCustLabelData: EMPTY_OBJECT,
+    // 订购组合产品-持仓证券列表
+    holdingSecurityData: EMPTY_OBJECT,
   },
 
   subscriptions: {
@@ -881,6 +883,18 @@ export default {
         payload: resultData,
       });
     },
+    // 客户列表-组合产品订购客户查询持仓证券重合度
+    * queryHoldingSecurityRepetition({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryHoldingSecurityRepetition, payload);
+      const newResultData = {
+        key: `${payload.custId}_${payload.combinationCode}`,
+        value: resultData,
+      };
+      yield put({
+        type: 'queryHoldingSecurityRepetitionSuccess',
+        payload: newResultData,
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -1534,6 +1548,17 @@ export default {
           pageNo,
           pageSize,
         }),
+      };
+    },
+    queryHoldingSecurityRepetitionSuccess(state, action) {
+      const { payload } = action;
+      const { holdingSecurityData } = state;
+      return {
+        ...state,
+        holdingSecurityData: {
+          ...holdingSecurityData,
+          [payload.key]: payload.value,
+        },
       };
     },
   },

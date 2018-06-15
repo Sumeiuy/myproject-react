@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:14:05
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-24 09:26:31
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-08 09:35:05
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapStateToProps移至此处成立独立模块
  */
 const mapStateToProps = () => state => ({
@@ -45,7 +45,7 @@ const mapStateToProps = () => state => ({
   // 执行者视图添加服务记录是否成功
   currentMotServiceRecord: state.performerView.currentMotServiceRecord,
   answersList: state.performerView.answersList,
-  saveAnswersSucce: state.performerView.saveAnswersSucce,
+  isSubmitSurveySucceed: state.performerView.isSubmitSurveySucceed,
   // 任务反馈统计数据
   missionFeedbackData: state.performerView.missionFeedbackData,
   // 任务反馈已反馈
@@ -76,6 +76,8 @@ const mapStateToProps = () => state => ({
   custFeedBack: state.performerView.custFeedBack,
   // 服务结果明细
   custDetail: state.performerView.custDetail,
+  // // 服务经理维度客户明细
+  // custDetailResultByScope: state.managerView.custDetailResultByScope,
 });
 
 export default mapStateToProps;

@@ -101,11 +101,22 @@ export default {
       const { payload } = action;
       return { ...state, distinctCustomerCount: payload };
     },
+    queryDistinctCustListDetailOfMissionSuccess(state, action) {
+      const { payload } = action;
+      return { ...state, distinctCustomerCount: payload };
+    },
     getCustManagerScopeDataSuccess(state, action) {
       const { payload } = action;
       return {
         ...state,
         custManagerScopeData: payload,
+      };
+    },
+    previewCustDetailByScopeSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        custDetailResult: payload,
       };
     },
   },
@@ -125,7 +136,6 @@ export default {
         type: 'previewCustDetailSuccess',
         payload: resultData,
       });
-      // return yield select(state => state.custDetailResult);
     },
     // 查询任务详细信息
     * queryMngrMissionDetailInfo({ payload }, { call, put }) {
@@ -204,6 +214,16 @@ export default {
         });
       }
     },
+    // 获取服务经理维度去重后的客户数量
+    * queryDistinctCustListDetailOfMission({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryDistinctCustListDetailOfMission, payload);
+      if (resultData) {
+        yield put({
+          type: 'queryDistinctCustListDetailOfMissionSuccess',
+          payload: resultData.totalRecordNum,
+        });
+      }
+    },
     * getCustManagerScope({ payload }, { call, put }) {
       const { resultData } = yield call(api.getCustManagerScope, payload);
       if (resultData) {
@@ -212,6 +232,13 @@ export default {
           payload: resultData,
         });
       }
+    },
+    * previewCustDetailByScope({ payload }, { call, put }) {
+      const { resultData } = yield call(api.previewCustDetailByScope, payload);
+      yield put({
+        type: 'previewCustDetailByScopeSuccess',
+        payload: resultData,
+      });
     },
   },
   subscriptions: {

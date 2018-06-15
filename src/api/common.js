@@ -1,7 +1,7 @@
 /**
  * @Description: 公用的接口
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-15 15:14:45
+ * @Last Modified time: 2018-06-08 16:42:04
  */
 export default function common(api) {
   return {
