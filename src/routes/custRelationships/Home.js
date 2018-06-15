@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 18:20:46
+ * @Last Modified time: 2018-06-15 10:34:12
  */
 
 import React, { PureComponent } from 'react';
@@ -20,7 +20,7 @@ import CustRelationshipsList from '../../components/common/appList';
 import Detail from '../../components/custRelationships/Detail';
 import CreateApply from '../../components/custRelationships/CreateApply';
 import config from '../../components/custRelationships/config';
-import { dva } from '../../helper';
+import { permission, dva } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 
 // 客户关联关系申请左侧列表宽度
@@ -29,7 +29,7 @@ const { custRelationships, custRelationships: { statusOptions, pageType } } = co
 const effect = dva.generateEffect;
 const effects = {
   // 左侧列表
-  getList: 'app/getSeibleList',
+  getList: 'app/getNewSeibleList',
   // 右侧详情
   getDetailInfo: 'custRelationships/getDetailInfo',
   // 获取附件列表
@@ -55,7 +55,7 @@ const effects = {
 };
 const mapStateToProps = state => ({
   // 左侧列表数据
-  list: state.app.seibleList,
+  list: state.app.newSeibleList,
   // 右侧详情数据
   detailInfo: state.custRelationships.detailInfo,
   // 附件列表
@@ -256,6 +256,12 @@ export default class CustRelationshipsHome extends PureComponent {
     });
   }
 
+  @autobind
+  handleShowCreateBtn() {
+    // 如果有 HTSC 融资类业务客户关联关系管理岗职责，则显示新建按钮
+    return permission.hasGLGXGLGPermission();
+  }
+
   // 切换页码
   @autobind
   handlePageNumberChange(nextPage, currentPageSize) {
@@ -380,6 +386,8 @@ export default class CustRelationshipsHome extends PureComponent {
         stateOptions={statusOptions}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
+        isShowCreateBtn={this.handleShowCreateBtn}
+        needApplyTime
       />
     );
 
