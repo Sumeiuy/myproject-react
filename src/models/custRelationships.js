@@ -177,7 +177,7 @@ export default {
     // 获取客户关联信息驳回后修改页面的详情
     * getDetailForUpdate({ payload }, { call, put }) {
       const { resultData } = yield call(api.getDetailInfo, payload);
-      const attach = yield call(api.getAttachmentList, { attachment: resultData.attachment });
+      const attach = yield call(api.getAttachmentList, { attachment: resultData.attachment || '' });
       yield put({
         type: 'getDetailForUpdateSuccess',
         payload: {
