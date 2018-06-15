@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系申请的配置文件
  * @Date: 2018-06-08 13:32:19
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-14 16:18:32
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-15 10:35:31
  */
 
 
@@ -39,7 +39,7 @@ const config = {
       },
     ],
   },
-  custRelationshipColumns: [
+  CUST_RELATIONSHIP_COLUMNS: [
     {
       title: '关联关系类型',
       dataIndex: 'relationTypeLabel',
@@ -71,7 +71,7 @@ const config = {
       key: 'partyIDNum',
     },
   ],
-  approvalColumns: [
+  APPROVAL_COLUMNS: [
     {
       title: '工号',
       dataIndex: 'login',
@@ -86,6 +86,25 @@ const config = {
       key: 'occupation',
     },
   ],
+  // 是否办理股票质押回购业务Select下拉选项
+  STOCK_REPURCHASE_OPTIONS: [
+    {
+      value: '',
+      label: '--请选择--',
+    },
+    {
+      value: 'Y',
+      label: '是',
+    },
+    {
+      value: 'N',
+      label: '否',
+    },
+  ],
+  // 身份证类型Code
+  IDCARD_TYPE_CODE: '103100',
+  // 统一社会信用证Code
+  UNIFIED_SOCIALCARD_TYPE_CODE: '103270',
 };
 
 export default config;

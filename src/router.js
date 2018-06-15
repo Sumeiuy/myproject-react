@@ -81,6 +81,8 @@ import InvestmentConsultantRace from './routes/investmentConsultantRace/Home';
 import MessageCenter from './routes/messageCenter/Home';
 // 客户关联关系信息申请
 import CustRelationships from './routes/custRelationships/Home';
+// 客户关联关系信息申请驳回后修改页面
+import RejectUpdateHome from './routes/custRelationships/RejectUpdateHome';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -308,6 +310,8 @@ const routes = [
   { path: '/investmentConsultantRace', component: InvestmentConsultantRace },
   // 客户关联关系信息申请，直接进入
   { path: '/custRelationships', component: CustRelationships },
+  // 客户关联关系信息申请，传递参数flowId
+  { path: '/custRelationshipsReject', component: RejectUpdateHome },
 ];
 
 // 递归创建路由

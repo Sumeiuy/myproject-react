@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系详情页面
  * @Date: 2018-06-08 17:39:51
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-14 16:26:14
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-15 10:35:57
  */
 
 import React, { PureComponent } from 'react';
@@ -18,7 +18,7 @@ import CommonUpload from '../common/biz/CommonUpload';
 import config from './config';
 import styles from './detail.less';
 
-const { custRelationshipColumns } = config;
+const { CUST_RELATIONSHIP_COLUMNS } = config;
 export default class Detail extends PureComponent {
   static propTypes = {
     // 数据
@@ -115,7 +115,7 @@ export default class Detail extends PureComponent {
               <InfoTitle head="关联关系" />
               <Table
                 dataSource={newCustRelationshipList}
-                columns={custRelationshipColumns}
+                columns={CUST_RELATIONSHIP_COLUMNS}
                 pagination={{
                   pageSize: 5,
                 }}
