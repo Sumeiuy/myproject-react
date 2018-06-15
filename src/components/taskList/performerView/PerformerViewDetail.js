@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-14 14:05:48
+ * @Last Modified time: 2018-06-15 10:35:37
  */
 
 
@@ -11,6 +11,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import cx from 'classnames';
 import BasicInfo from './BasicInfo';
 import TabsArea from './TabsArea';
 import styles from './performerViewDetail.less';
@@ -186,8 +187,13 @@ export default class PerformerViewDetail extends PureComponent {
       servicePolicy,
     } = basicInfo;
     // sticky-container 作为子元素悬停参照物
+    const containerCls = cx(
+      [styles.performerViewDetail],
+      'sticky-container',
+      'lego-filter-menuContainer',
+    );
     return (
-      <div className={`sticky-container ${styles.performerViewDetail}`}>
+      <div className={containerCls} id="performerViewDetail">
         <BasicInfo
           missionName={missionName}
           missionStatusName={missionStatusName}

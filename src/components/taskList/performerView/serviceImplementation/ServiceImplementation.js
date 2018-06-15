@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-14 14:10:47
+ * @Last Modified time: 2018-06-15 10:36:47
  */
 
 import React, { PureComponent } from 'react';
@@ -113,7 +113,6 @@ export default class ServiceImplementation extends PureComponent {
     addCallRecord: PropTypes.func,
     toggleServiceRecordModal: PropTypes.func,
     queryTargetCustDetail: PropTypes.func.isRequired,
-    popupContainer: PropTypes.string.isRequired,
     getPageSize: PropTypes.func.isRequired,
   }
 
