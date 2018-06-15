@@ -8,6 +8,9 @@ import { autobind } from 'core-decorators';
 import { Icon, Input, AutoComplete } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
+
+import confirm from '../confirm_';
+
 import styles from './style.less';
 
 const Option = AutoComplete.Option;
@@ -39,6 +42,9 @@ export default class SimilarAutoComplete extends PureComponent {
     showIdKey: PropTypes.string,
     optionKey: PropTypes.string,
     style: PropTypes.object,
+    // 是否要求用户确认清除操作
+    isConfirmClear: PropTypes.bool,
+    clearConfirmTips: PropTypes.string,
   }
 
   static defaultProps = {
@@ -51,6 +57,8 @@ export default class SimilarAutoComplete extends PureComponent {
     isImmediatelySearch: false, // 是否开启即时搜索
     onChange: () => {},
     style: defaultStyle,
+    isConfirmClear: false,
+    clearConfirmTips: '确认要清除数据吗？',
   }
 
   constructor(props) {
@@ -164,25 +172,38 @@ export default class SimilarAutoComplete extends PureComponent {
     }
   }
 
+  @autobind
+  handleClearSelect() {
+    this.setState({
+      value: '',
+      typeStyle: 'search',
+    }, () => {
+      // 手动清空选中值，传递到组件外
+      this.props.onSelect({});
+    });
+  }
+
   // 触发查询搜索信息的方法
   @autobind
-  handleSearch() {
+  handleSearch(e) {
     const { typeStyle, value } = this.state;
     if (typeStyle === 'search') {
       // 发起搜索
       this.props.onSearch(value);
     } else if (typeStyle === 'clear') {
       // 清空输入框，并设置为搜索状态
-      this.setState(
-        {
-          value: '',
-          typeStyle: 'search',
-        },
-        () => {
-          // 手动清空选中值，传递到组件外
-          this.props.onSelect({});
-        },
-      );
+      // 增加清空之前的判断
+      // 清空之前询问用户是否清空数据
+      if (this.props.isConfirmClear) {
+        // 阻止React合成事件传播
+        e.stopPropagation();
+        confirm({
+          content: this.props.clearConfirmTips,
+          onOk: this.handleClearSelect,
+        });
+      } else {
+        this.handleClearSelect();
+      }
     }
   }
 
