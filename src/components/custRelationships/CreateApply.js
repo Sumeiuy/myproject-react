@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请新建页面
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 20:29:24
+ * @Last Modified time: 2018-06-15 09:54:17
  */
 
 import React, { PureComponent } from 'react';
@@ -17,7 +17,7 @@ import confirm from '../common/confirm_';
 import ApprovalBtnGroup from '../common/approvalBtns';
 import TableDialog from '../common/biz/TableDialog';
 
-import { approvalColumns } from './config';
+import { APPROVAL_COLUMNS } from './config';
 import { validateData } from '../../helper/page/custRelationship';
 
 export default class CreateApply extends PureComponent {
@@ -68,7 +68,7 @@ export default class CreateApply extends PureComponent {
   }
   componentDidMount() {
     // 新建页面获取审批按钮和审批人信息，新建不需要传flowId
-    this.props.getApprovalInfo({});
+    this.props.getApprovalInfo();
   }
 
   @autobind
@@ -222,7 +222,7 @@ export default class CreateApply extends PureComponent {
       onOk: this.handleSelectApproval,
       onCancel: this.handleCancelSelectApproval,
       dataSource: nextApproverList,
-      columns: approvalColumns,
+      columns: APPROVAL_COLUMNS,
       title: '选择下一审批人员',
       modalKey: 'relationApplyNextApproverModal',
       rowKey: 'login',

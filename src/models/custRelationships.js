@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请models
  * @Date: 2018-06-08 13:17:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 13:58:39
+ * @Last Modified time: 2018-06-15 09:49:49
  */
 
 
@@ -159,7 +159,7 @@ export default {
       });
     },
     // 获取新建页面的流程按钮和审批人
-    * getApprovalInfo({ payload }, { call, put }) {
+    * getApprovalInfo({ payload = {} }, { call, put }) {
       const response = yield call(api.getButtonList, payload);
       yield put({
         type: 'getApprovalInfoSuccess',
@@ -187,7 +187,7 @@ export default {
       });
     },
     // 获取驳回后修改页面的流程按钮和审批人
-    * getApprovalInfoForUpdate({ payload }, { call, put }) {
+    * getApprovalInfoForUpdate({ payload = {} }, { call, put }) {
       const response = yield call(api.getButtonList, payload);
       yield put({
         type: 'getApprovalInfoForUpdateSuccess',

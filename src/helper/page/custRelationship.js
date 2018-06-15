@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-14 20:00:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 20:31:03
+ * @Last Modified time: 2018-06-15 10:22:14
  * @description 融资类业务提交数据时的校验函数
  */
 import _ from 'lodash';
@@ -10,13 +10,13 @@ import _ from 'lodash';
 // 用到的参数关联关系数组
 let relations = [];
 // 客户婚姻状态为已婚的Code
-const marriagedCode = '108020';
+const MARRIAGED_TYPE_CODE = '108020';
 // 夫妻类型Code
-const fuqiTypeCode = '127111';
+const FUQI_TYPE_CODE = '127111';
 // 普通机构-实际控制人
-const realControllerTypeCode = '127151';
+const REALCONTROLLER_TYPE_CODE = '127151';
 // 产品客户-产品管理人
-const productManagerTypeCode = '127371';
+const PRODUCTMANAGER_TYPE_CODE = '127371';
 
 // 获取关联关系中某一个关系的数量
 function getCountOfSomeRelation(code) {
@@ -26,17 +26,17 @@ function getCountOfSomeRelation(code) {
 
 // 获取个人客户的关联关系中的夫妻关联关系条数
 function getMarriageRelactionCount() {
-  return this.getCountOfSomeRelation(fuqiTypeCode);
+  return this.getCountOfSomeRelation(FUQI_TYPE_CODE);
 }
 
 // 获取普通机构客户的关联关系中的实际控制人关系的条数
 function getRealControllerRelationCount() {
-  return getCountOfSomeRelation(realControllerTypeCode);
+  return getCountOfSomeRelation(REALCONTROLLER_TYPE_CODE);
 }
 
 // 获取产品客户的关联关系中的产品管理人关系的条数
 function getProduceManagerRelationCount() {
-  return getCountOfSomeRelation(productManagerTypeCode);
+  return getCountOfSomeRelation(PRODUCTMANAGER_TYPE_CODE);
 }
 
 function hasCust(cust) {
@@ -140,7 +140,7 @@ function validateSubmitData(state) {
   // 检测客户的婚姻状态与关联关系
   // 若所选客户的婚姻状况为“已婚”
   // 则“家庭成员”中“夫妻”类必填，且同一申请单中夫妻关系只能填写一条
-  if (custTypeValue === 'per' && marriagedCode === marriageValue) {
+  if (custTypeValue === 'per' && MARRIAGED_TYPE_CODE === marriageValue) {
     if (!hasMarriageRelation()) {
       return {
         msg: '没有维护家庭成员夫妻类关联关系！',

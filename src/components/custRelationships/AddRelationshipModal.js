@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 19:59:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 18:18:37
+ * @Last Modified time: 2018-06-15 10:23:47
  * @description 添加关联关系的Modal
  */
 
@@ -17,14 +17,9 @@ import FormItem from './FormItem';
 import Select from '../common/Select';
 import confirm from '../common/confirm_';
 
-import {
-  socialNumRegExp,
-  eighteenIDRegExp,
-  fifteenIDRegExp,
-  otherIDRegExp,
-  IDCardTypeCode,
-  socialCardTypeCode,
-} from './config';
+import { check } from '../../helper';
+
+import { IDCARD_TYPE_CODE, UNIFIED_SOCIALCARD_TYPE_CODE } from './config';
 
 import styles from './addRelationshipModal.less';
 
@@ -161,15 +156,15 @@ export default class AddRelationshipModal extends Component {
   checkIDNumFormat() {
     const { partyIDNum, partyIDTypeValue } = this.state;
     let result = true;
-    if (partyIDTypeValue === IDCardTypeCode) {
+    if (partyIDTypeValue === IDCARD_TYPE_CODE) {
       // 身份证
-      result = eighteenIDRegExp.test(partyIDNum) || fifteenIDRegExp.test(partyIDNum);
-    } else if (partyIDTypeValue === socialCardTypeCode) {
+      result = check.is18gitiIDCardCode(partyIDNum) || check.is15gitiIDCardCode(partyIDNum);
+    } else if (partyIDTypeValue === UNIFIED_SOCIALCARD_TYPE_CODE) {
       // 统一社会信用证
-      result = socialNumRegExp.test(partyIDNum);
+      result = check.isUnifiedSocialCreditCode(partyIDNum);
     } else {
       // 其余的号码，暂时之校验数字和字母
-      result = otherIDRegExp.test(partyIDNum);
+      result = check.isOnlyAlphabetAndNumber(partyIDNum);
     }
     if (!result) {
       confirm({ content: '证件号码格式错误！' });

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-12 15:12:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-14 21:00:32
+ * @Last Modified time: 2018-06-15 10:27:34
  * @description 融资类业务驳回后修改页面
  */
 import React, { Component } from 'react';
@@ -23,7 +23,7 @@ import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { env, dom, dva } from '../../helper';
 
-import { approvalColumns } from '../../components/custRelationships/config';
+import { APPROVAL_COLUMNS } from '../../components/custRelationships/config';
 import { validateData } from '../../helper/page/custRelationship';
 
 import styles from './rejectUpdateHome.less';
@@ -261,9 +261,7 @@ export default class RejectUpdateHome extends Component {
     this.setState({
       nextApprovalModal: false,
       auditors: approver.login,
-    }, () => {
-      this.doValidateBeforeSubmit();
-    });
+    }, this.doValidateBeforeSubmit);
   }
 
   @autobind
@@ -288,7 +286,7 @@ export default class RejectUpdateHome extends Component {
       onOk: this.handleSelectApproval,
       onCancel: this.handleCancelSelectApproval,
       dataSource: nextApproverList,
-      columns: approvalColumns,
+      columns: APPROVAL_COLUMNS,
       title: '选择下一审批人员',
       modalKey: 'relationRejectApplyNextApproverModal',
       rowKey: 'login',
