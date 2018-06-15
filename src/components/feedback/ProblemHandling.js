@@ -130,6 +130,9 @@ export default class ProblemHandling extends PureComponent {
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancel() {
     this.props.onCancel();
+    this.setState({
+      showError: false,
+    });
   }
 
   @autobind
