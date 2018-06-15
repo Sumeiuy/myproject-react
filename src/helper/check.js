@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:17:50
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 10:12:42
+ * @Last Modified time: 2018-06-15 11:02:18
  * @description 此处存放与校验相关的公用方法(非直接与正则表达式相关)
  */
 import reg from './regexp';
@@ -71,7 +71,7 @@ const check = {
    * @return {Boolean}
    */
   is18gitiIDCardCode(v) {
-    return reg.idNo18Digit.text(v);
+    return reg.idNo18Digit.test(v);
   },
 
   /**
@@ -81,7 +81,7 @@ const check = {
    * @return {Boolean}
    */
   is15gitiIDCardCode(v) {
-    return reg.idNo15Digit.text(v);
+    return reg.idNo15Digit.test(v);
   },
   /**
    * 判断一个字符串是否只含有字母和数字
@@ -90,7 +90,7 @@ const check = {
    * @return {Boolean}
    */
   isOnlyAlphabetAndNumber(v) {
-    return reg.onlyAlphabetAndNumber.text(v);
+    return reg.onlyAlphabetAndNumber.test(v);
   },
 };
 
