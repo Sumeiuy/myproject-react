@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-14 09:59:01
+ * @Last Modified time: 2018-06-14 14:05:48
  */
 
 
@@ -13,7 +13,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import BasicInfo from './BasicInfo';
 import TabsArea from './TabsArea';
-import { fsp } from '../../../helper';
 import styles from './performerViewDetail.less';
 
 import {
@@ -103,30 +102,6 @@ export default class PerformerViewDetail extends PureComponent {
     serviceTypeCode: '',
     queryCustomer: _.noop,
     customerList: [],
-  }
-
-  componentDidMount() {
-    this.getServiceImplementationList(this.props);
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.currentId !== this.props.currentId) {
-      this.getServiceImplementationList(this.props);
-    }
-  }
-
-  // 获取服务实施列表
-  @autobind
-  getServiceImplementationList(props) {
-    const {
-      queryTargetCust,
-      currentId,
-      isFold,
-    } = props;
-    const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
-    const newPageSize = getPageSize(isFoldFspLeftMenu, isFold);
-    // 执行者视图服务实施客户列表中 状态筛选默认值 state='10' 未开始
-    queryTargetCust({ missionId: currentId, state: '10', pageNum: 1, pageSize: newPageSize });
   }
 
   // 生成基本信息中的内容

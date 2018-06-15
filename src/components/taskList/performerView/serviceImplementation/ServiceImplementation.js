@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-14 09:02:24
+ * @Last Modified time: 2018-06-14 14:10:47
  */
 
 import React, { PureComponent } from 'react';
@@ -28,6 +28,8 @@ import styles from './serviceImplementation.less';
 import {
   POSTCOMPLETED_CODE,
 } from '../../../../routes/taskList/config';
+// 默认的任务筛选值
+const TASKSTATE_NOTSTARTED = '10';
 
 // 这个是防止页面里有多个class重复，所以做个判断，必须包含当前节点
 // 如果找不到无脑取第一个就行
@@ -157,13 +159,23 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   componentDidMount() {
+    const { isFold, getPageSize } = this.props;
+    const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
+    const newPageSize = getPageSize(isFoldFspLeftMenu, isFold);
+    // 首次进入，请求服务实施列表，参数为默认值
+    this.queryTargetCustList({
+      state: TASKSTATE_NOTSTARTED,
+      pageSize: newPageSize,
+      pageNum: 1,
+    });
     // 给FSP折叠菜单按钮注册点击事件
     window.onFspSidebarbtn(this.handleFspLeftMenuClick);
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { isFoldFspLeftMenu } = this.state;
-    const { isFold, getPageSize } = this.props;
+    const { isFold, getPageSize, currentId } = this.props;
+    const pageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
     if (
       prevProps.isFold !== isFold
@@ -171,7 +183,6 @@ export default class ServiceImplementation extends PureComponent {
     ) {
       const { parameter } = this.props;
       const { rowId, assetSort, state, activeIndex } = parameter;
-      const pageSize = getPageSize(isFoldFspLeftMenu, isFold);
       const pageNum = Math.ceil(parseInt(activeIndex, 10) / pageSize);
       this.queryTargetCustList({
         state,
@@ -179,6 +190,14 @@ export default class ServiceImplementation extends PureComponent {
         assetSort,
         pageSize,
         pageNum,
+      });
+    }
+    // 任务切换时，重新请求服务实施列表，参数为默认值
+    if (prevProps.currentId !== currentId) {
+      this.queryTargetCustList({
+        state: TASKSTATE_NOTSTARTED,
+        pageSize,
+        pageNum: 1,
       });
     }
   }
