@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请接口api
  * @Date: 2018-06-08 13:09:53
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-12 10:25:53
+ * @Last Modified time: 2018-06-15 11:02:58
  */
 
 
@@ -22,7 +22,7 @@ export default function custRelationships(api) {
     // 走流程接口
     doApprove: query => api.post('/groovynoauth/fsp/biz/custrelationships/doApprove', query),
     // 根据客户名称或者经纪客户号查询客户列表
-    queryCustList: query => api.post('/groovynoauth/fsp/biz/custList', query),
+    queryCustList: query => api.post('/groovynoauth/fsp/biz/custList2', query),
     // 获取该客户的详情信息
     getCustDetail: query => api.post('/groovynoauth/fsp/biz/custrelationships/queryCustBasicInfo', query),
     // 根据用户选择的客户类型获取关联关系Select树
