@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 19:59:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 10:23:47
+ * @Last Modified time: 2018-06-19 15:56:38
  * @description 添加关联关系的Modal
  */
 
@@ -83,6 +83,12 @@ export default class AddRelationshipModal extends Component {
     return (data && data[key]) || [];
   }
 
+  // 处理 remark 中每段的内容将第一个冒号及其前面的标题文字删除
+  @autobind
+  getFixedTip(tip) {
+    return tip.replace(/([^：])+：/, '');
+  }
+
   @autobind
   getPopoverContent(name = '', tree) {
     if (_.isEmpty(name)) {
@@ -92,13 +98,17 @@ export default class AddRelationshipModal extends Component {
     if (_.isEmpty(remark)) {
       return (<div className={styles.notip}>暂无提示</div>);
     }
-    const tips = _.split(remark, /：|\|/g);
+    // 此处由于第二段的定义文档中还会存在中文冒号，
+    // 导致有可能第四段文字如果使用全局的冒号分割会将后续的文字也给截断，展示无法展示全
+    // 此处先根据 | 将 remark 分割成两段
+    // 其头部的标题字段为固定的值因此只需要处理每一段的内容值即可
+    const tips = _.split(remark, /\|/g);
     return (
       <div className={styles.tipsWrap}>
-        <div className={styles.tipTitle}>{`${tips[0]}：`}</div>
-        <div className={styles.tipContent}>{tips[1]}</div>
-        <div className={styles.tipTitle}>{`${tips[2]}：`}</div>
-        <div className={styles.tipContent}>{tips[3]}</div>
+        <div className={styles.tipTitle}>关联关系定义：</div>
+        <div className={styles.tipContent}>{this.getFixedTip(tips[0])}</div>
+        <div className={styles.tipTitle}>提交关联信息标准：</div>
+        <div className={styles.tipContent}>{this.getFixedTip(tips[1])}</div>
       </div>
     );
   }
