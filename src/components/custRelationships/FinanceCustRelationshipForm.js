@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 17:34:49
+ * @Last Modified time: 2018-06-19 09:47:29
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -141,6 +141,7 @@ export default class FinanceCustRelationshipForm extends Component {
       relationships: [],
       cust: {},
       attachment: '',
+      stockRepurchase: '',
     });
   }
 
