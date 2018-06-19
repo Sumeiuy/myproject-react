@@ -83,6 +83,8 @@ import CustAllot from './routes/custAllot/Home';
 import CustAllotNotifies from './routes/custAllot/Notifies';
 // 消息通知提醒
 import MessageCenter from './routes/messageCenter/Home';
+// 重点监控账户
+import KeyMonitorAccount from './routes/keyMonitorAccount/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -321,6 +323,8 @@ const routes = [
       { path: '/notifies', component: CustAllotNotifies },
     ],
   },
+  // 直接进入
+  { path: '/keyMonitorAccount', component: KeyMonitorAccount },
 ];
 
 // 递归创建路由
