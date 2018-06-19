@@ -244,11 +244,13 @@ export default {
     },
     // 显示与隐藏创建服务记录弹框
     * toggleServiceRecordModal({ payload }, { put }) {
-      // 获取自建任务平台的服务类型、任务反馈字典
-      yield put({
-        type: 'getMotCustfeedBackDict',
-        payload: { pageNum: 1, pageSize: 10000, type: 2 },
-      });
+      if (payload.flag) {
+        // 获取自建任务平台的服务类型、任务反馈字典
+        yield put({
+          type: 'getMotCustfeedBackDict',
+          payload: { pageNum: 1, pageSize: 10000, type: 2 },
+        });
+      }
       // 唤起创建服务记录的弹窗时请求Uuid
       yield put({ type: 'performerView/queryCustUuid' });
       yield put({

@@ -93,7 +93,7 @@ const fspRoutes = [
   {
     path: '/fsp/messageCenter',
     action: 'loadInTab',
-    url: '/messgeCenter',
+    url: '/messageCenter',
   },
   // 产品中心
   {

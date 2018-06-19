@@ -1,8 +1,8 @@
 /**
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-15 17:19:31
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-13 22:07:59
  */
 
 import React, { PureComponent } from 'react';
@@ -128,6 +128,9 @@ export default class CustomerRow extends PureComponent {
     queryHoldingProduct: PropTypes.func.isRequired,
     holdingProducts: PropTypes.object.isRequired,
     queryHoldingProductReqState: PropTypes.bool.isRequired,
+    // 组合产品订购客户查询持仓证券重合度
+    queryHoldingSecurityRepetition: PropTypes.func.isRequired,
+    holdingSecurityData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -340,6 +343,8 @@ export default class CustomerRow extends PureComponent {
       queryHoldingProduct,
       holdingProducts,
       queryHoldingProductReqState,
+      queryHoldingSecurityRepetition,
+      holdingSecurityData,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -363,6 +368,7 @@ export default class CustomerRow extends PureComponent {
         Number(listItem.hsRate.toFixed(2)) :
         `${Number((listItem.hsRate * 100).toFixed(2))}%`;
     }
+    const currentRiskLevel = riskLevelConfig[rskLev] || {};
     return (
       <div
         className={styles.customerRow}
@@ -406,13 +412,13 @@ export default class CustomerRow extends PureComponent {
                 {`${listItem.openDt.slice(0, 4)}-${listItem.openDt.slice(4, 6)}-${listItem.openDt.slice(6, 8)} 开户`}
               </span>
               {
-                (rskLev === '' || rskLev === 'null')
+                (rskLev === '' || rskLev === 'null' || _.isEmpty(currentRiskLevel))
                   ? '' :
                   <div
-                    className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
+                    className={`riskLevel ${currentRiskLevel.colorCls}`}
                   >
-                    <div className="itemText">{`风险等级：${riskLevelConfig[rskLev].title}`}</div>
-                    {riskLevelConfig[rskLev].name}
+                    <div className="itemText">{`风险等级：${currentRiskLevel.title}`}</div>
+                    {currentRiskLevel.name}
                   </div>
               }
               {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
@@ -462,6 +468,8 @@ export default class CustomerRow extends PureComponent {
                 holdingProducts={holdingProducts}
                 queryHoldingProductReqState={queryHoldingProductReqState}
                 formatAsset={formatAsset}
+                queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
+                holdingSecurityData={holdingSecurityData}
               />
             </div>
           </div>

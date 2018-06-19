@@ -1,0 +1,26 @@
+.tabsContainer {
+  padding-top: 30px;
+  :global {
+    // 重写antd的tabs样式
+    .ant-tabs {
+      .ant-tabs-bar {
+        margin: 0 20px;
+        margin-bottom: 0;
+        .ant-tabs-nav-wrap .ant-tabs-nav {
+          .ant-tabs-tab {
+            padding: 0 0 6px;
+            font-size: 16px;
+            color: #000;
+            &.ant-tabs-tab-active {
+              font-weight: bold;
+            }
+          }
+          .ant-tabs-ink-bar {
+            height: 3px;
+            background: #108ee9;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-12 19:52:26
+ * @Last Modified time: 2018-06-13 22:04:31
  */
 
 import React, { PureComponent } from 'react';
@@ -19,18 +19,28 @@ import {
   PIE_ENTRY,
   PROGRESS_ENTRY,
   CUST_GROUP_LIST,
+  BUSINESS_ENTRY,
+  SEARCH_ENTRY,
+  PRODUCT_POTENTIAL_TARGET_CUST_ENTRY,
+  SECURITIES_PRODUCTS_ENTRY,
+  ORDER_COMBINATION_ENTRY,
+  EXTERNAL_ENTRY,
+  ASSOCIATION_ENTRY,
+  TAG_ENTRY,
+  CUSTINDICATOR_ENTRY,
+  NUMOFCUSTOPENED_ENTRY,
+  SIGHTINGTELESCOPE_ENTRY,
   returnTaskEntrySource,
+  labelSource,
+  TASK_CUST_SCOPE_ENTRY,
+  sightingLabelSource,
 } from '../../../config/createTaskEntry';
-import { getLabelInfo } from '../../../helper/page/customerPool';
 import styles from './taskFormFlowStep.less';
 import logable, { logCommon } from '../../../decorators/logable';
 
 const noop = _.noop;
 const Step = Steps.Step;
 const systemCode = '102330';  // 系统代码（理财服务平台为102330）
-
-// 标签来源，热点标签，普通标签，搜索标签
-const SOURCE_FROM_LABEL = ['tag', 'association', 'sightingTelescope'];
 
 export default class TaskFormFlowStep extends PureComponent {
   static propTypes = {
@@ -121,46 +131,6 @@ export default class TaskFormFlowStep extends PureComponent {
     this.checkMyCustomer();
   }
 
-  @autobind
-  parseParam() {
-    const {
-      parseQuery,
-      location: { query: { groupId, enterType, source } },
-    } = this.props;
-
-    const {
-      custIdList,
-      custCondition,
-      custCondition: { entrance, primaryKey = [] },
-    } = parseQuery();
-    const { labelDesc = '', labelName = '' } = getLabelInfo(primaryKey[0]);
-    const queryLabelReq = {
-      labelDesc,
-      labelName,
-    };
-
-    let req = {};
-    if (entrance === PROGRESS_ENTRY) {
-      // 管理者视图进度条发起任务
-      req = { queryMissionCustsReq: _.omit(custCondition, 'entrance') };
-    } else if (entrance === PIE_ENTRY) {
-      // 管理者视图饼图发起任务
-      req = { queryMOTFeedBackCustsReq: _.omit(custCondition, 'entrance') };
-    } else if (source === CUST_GROUP_LIST) {
-      req = {
-        enterType,
-        groupId,
-      };
-    } else if (source === 'sightingTelescope') {
-      // 从瞄准镜过来的，需要加入queryLabelReq参数
-      req = { searchReq: custCondition, custIdList, queryLabelReq };
-    } else {
-      req = { searchReq: custCondition, custIdList };
-    }
-
-    return req;
-  }
-
   // 验证是否自己名下客户
   @autobind
   checkMyCustomer() {
@@ -169,7 +139,7 @@ export default class TaskFormFlowStep extends PureComponent {
       saveCreateTaskData,
       storedCreateTaskData,
     } = this.props;
-    const queryData = this.parseParam();
+    const queryData = this.constructParam();
     const postBody = {
       ...queryData,
     };
@@ -208,6 +178,51 @@ export default class TaskFormFlowStep extends PureComponent {
   }
 
   @autobind
+  constructParam() {
+    const {
+      parseQuery,
+      location: { query: { groupId, enterType, source } },
+    } = this.props;
+
+    const {
+      custIdList,
+      custCondition,
+      custCondition: { entrance, labelId },
+    } = parseQuery();
+    // 去除entrance字段
+    const omitedCondition = _.omit(custCondition, 'entrance');
+
+    let req = {};
+    if (entrance === PROGRESS_ENTRY) {
+      // 管理者视图进度条发起任务
+      req = { queryMissionCustsReq: omitedCondition };
+    } else if (entrance === PIE_ENTRY) {
+      // 管理者视图饼图发起任务
+      req = { queryMOTFeedBackCustsReq: omitedCondition };
+    } else if (entrance === TASK_CUST_SCOPE_ENTRY) {
+      // 管理者视图服务经理维度发起任务
+      req = { queryMssnCustsDetailReq: omitedCondition };
+    } else if (source === CUST_GROUP_LIST) {
+      req = {
+        enterType,
+        groupId,
+      };
+    } else if (_.includes(sightingLabelSource, source)) {
+      // 从瞄准镜过来的
+      req = {
+        searchReq: custCondition,
+        custIdList,
+        // 带入queryLabelReq参数
+        queryLabelReq: { labelId },
+      };
+    } else {
+      req = { searchReq: custCondition, custIdList };
+    }
+
+    return req;
+  }
+
+  @autobind
   @logable({ type: 'ButtonClick', payload: { name: '上一步' } })
   handlePreviousStep() {
     const { storedCreateTaskData,
@@ -241,38 +256,35 @@ export default class TaskFormFlowStep extends PureComponent {
   handleCustSource(value) {
     let custSources = '';
     switch (value) {
-      case 'business':
+      case BUSINESS_ENTRY:
         custSources = '业务目标客户';
         break;
-      case 'search':
+      case SEARCH_ENTRY:
         custSources = '搜索目标客户';
         break;
-      // 精选组合的证券产品和订购组合、产品中心
-      case 'securitiesProducts':
-      case 'orderCombination':
-      case 'external':
-      case 'association':
+      case PRODUCT_POTENTIAL_TARGET_CUST_ENTRY:
+      case SECURITIES_PRODUCTS_ENTRY:
+      case ORDER_COMBINATION_ENTRY:
+      case EXTERNAL_ENTRY:
+      case ASSOCIATION_ENTRY:
         custSources = '搜索目标客户';
         break;
-      case 'tag':
+      case TAG_ENTRY:
         custSources = '标签目标客户池';
         break;
-      case 'custIndicator':
-        custSources = '绩效目标客户';
-        break;
-      case 'numOfCustOpened':
+      case CUSTINDICATOR_ENTRY:
+      case NUMOFCUSTOPENED_ENTRY:
         custSources = '绩效目标客户';
         break;
       case PROGRESS_ENTRY:
-        custSources = '已有任务下钻客户';
-        break;
       case PIE_ENTRY:
+      case TASK_CUST_SCOPE_ENTRY:
         custSources = '已有任务下钻客户';
         break;
       case CUST_GROUP_LIST:
         custSources = '客户分组';
         break;
-      case 'sightingTelescope':
+      case SIGHTINGTELESCOPE_ENTRY:
         custSources = '标签圈人';
         break;
       default:
@@ -287,7 +299,7 @@ export default class TaskFormFlowStep extends PureComponent {
   @autobind
   judgeSourceIsFromLabel() {
     const { location: { query: { source } } } = this.props;
-    return _.includes(SOURCE_FROM_LABEL, source);
+    return _.includes(labelSource, source);
   }
 
   @autobind
@@ -300,15 +312,9 @@ export default class TaskFormFlowStep extends PureComponent {
       generateTemplateId,
       // source是来源
       // count是客户数量
-      location: { query: { source, count, condition } },
+      location: { query: { source, count } },
       taskBasicInfo,
     } = this.props;
-    let labelDesc = '';
-    if (condition) {
-      const { primaryKey = [] } = JSON.parse(decodeURIComponent(condition));
-      const label = getLabelInfo(primaryKey[0]) || {};
-      labelDesc = label.labelDesc;
-    }
     const { tagetCustModel } = taskBasicInfo || {};
     const { custNum, custSource: taskSource, custLabelDesc = '' } = tagetCustModel || {};
 
@@ -387,22 +393,12 @@ export default class TaskFormFlowStep extends PureComponent {
         ...resultTrackComponent.getData(),
       };
       const {
-        // 跟踪窗口期
-        // trackWindowDate,
         // 一级指标
         indicatorLevel1Key,
         // 二级指标
         indicatorLevel2Key,
-        // 操作符key,传给后台,譬如>=/<=
-        // operationKey,
-        // 操作符name,展示用到，譬如达到/降到
-        // operationValue,
         // 当前输入的指标值
         inputIndicator,
-        // 单位
-        // unit,
-        // 是否没有判断标准，只是有一个状态，譬如手机号码，状态，完善
-        // hasState,
         // 是否有产品搜索
         hasSearchedProduct,
         // 是否选中
@@ -411,9 +407,7 @@ export default class TaskFormFlowStep extends PureComponent {
         hasState,
         currentSelectedProduct,
       } = resultTrackData;
-      // if (!isResultTrackChecked) {
-      //   message.error('请勾选结果跟踪');
-      // } else
+
       if (isResultTrackChecked) {
         resultTrackComponent.requiredDataValidate();
         let errMsg = '';
@@ -430,7 +424,6 @@ export default class TaskFormFlowStep extends PureComponent {
         if (_.isEmpty(errMsg)) {
           isResultTrackValidate = true;
         } else {
-          // message.error(errMsg);
           isResultTrackValidate = false;
         }
       } else {
@@ -516,7 +509,7 @@ export default class TaskFormFlowStep extends PureComponent {
         custTotal: count || custNum,
         labelCust: {
           // 标签描述
-          labelDesc: labelDesc || custLabelDesc,
+          labelDesc: custLabelDesc,
         },
         // 如果当前客户来源是标签圈人，则代表是第二个入口
         currentEntry: (custSource === '标签圈人' || this.judgeSourceIsFromLabel()) ? 1 : 0,
@@ -579,7 +572,7 @@ export default class TaskFormFlowStep extends PureComponent {
       return;
     }
 
-    const req = this.parseParam();
+    const req = this.constructParam();
 
     const {
       taskFormData = {},
@@ -612,8 +605,6 @@ export default class TaskFormFlowStep extends PureComponent {
       currentSelectedProduct,
       // 操作符key,传给后台,譬如>=/<=
       operationKey,
-      // 操作符name,展示用到，譬如达到/降到
-      // operationValue,
       // 当前输入的指标值
       inputIndicator,
       // 单位
@@ -626,8 +617,6 @@ export default class TaskFormFlowStep extends PureComponent {
       isResultTrackChecked,
       // 是否选中
       isMissionInvestigationChecked,
-      // 选择的问题List
-      // questionList,
     } = finalData;
 
     let postBody = {
@@ -637,8 +626,6 @@ export default class TaskFormFlowStep extends PureComponent {
       taskType,
       templetDesc,
       timelyIntervalValue,
-      // // 任务子类型
-      // taskSubType,
       ...req,
     };
 

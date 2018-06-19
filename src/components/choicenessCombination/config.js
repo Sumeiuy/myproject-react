@@ -3,8 +3,10 @@
  * @Author: Liujianshu
  * @Date: 2018-04-25 14:28:07
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-17 14:28:45
+ * @Last Modified time: 2018-06-05 13:28:45
  */
+import React from 'react';
+import IconPopover from './IconPopover';
 
 const config = {
   formatStr: 'YYYY-MM-DD HH:mm',
@@ -183,7 +185,7 @@ const config = {
       {
         dataIndex: 'coincideScale',
         key: 'coincideScale',
-        title: '持仓重合比例',
+        title: <IconPopover title="持仓重合比例" />,
         width: '22%',
         align: 'left',
       },

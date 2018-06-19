@@ -45,14 +45,12 @@ export default class TaskFormInfo extends PureComponent {
     defaultMissionDesc: PropTypes.string.isRequired,
     defaultServiceStrategySuggestion: PropTypes.string,
     defaultInitialValue: PropTypes.number,
-    defaultTaskSubType: PropTypes.string,
     users: PropTypes.array.isRequired,
     taskTypes: PropTypes.array,
     executeTypes: PropTypes.array,
     isShowErrorInfo: PropTypes.bool,
     isShowErrorTaskType: PropTypes.bool,
     isShowErrorExcuteType: PropTypes.bool,
-    isShowErrorTaskSubType: PropTypes.bool,
     isShowErrorIntervalValue: PropTypes.bool,
     isShowErrorStrategySuggestion: PropTypes.bool,
     isShowErrorTaskName: PropTypes.bool,
@@ -65,11 +63,9 @@ export default class TaskFormInfo extends PureComponent {
     executeTypes: [],
     defaultServiceStrategySuggestion: '',
     defaultInitialValue: null,
-    defaultTaskSubType: '',
     isShowErrorInfo: false,
     isShowErrorTaskType: false,
     isShowErrorExcuteType: false,
-    isShowErrorTaskSubType: false,
     defaultExecutionType: '',
     isShowErrorIntervalValue: false,
     isShowErrorStrategySuggestion: false,
@@ -87,7 +83,6 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorExcuteType,
       isShowErrorTaskType,
       isShowErrorInfo,
-      isShowErrorTaskSubType,
       isShowErrorIntervalValue,
       isShowErrorTaskName,
       isShowErrorStrategySuggestion,
@@ -122,7 +117,6 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorInfo,
       isShowErrorTaskType,
       isShowErrorExcuteType,
-      isShowErrorTaskSubType,
       isShowErrorIntervalValue,
       isShowErrorTaskName,
       isShowErrorStrategySuggestion,
@@ -135,7 +129,6 @@ export default class TaskFormInfo extends PureComponent {
     const { isShowErrorInfo: nextError,
       isShowErrorExcuteType: nextExcuteTypeError,
       isShowErrorTaskType: nextTaskTypeError,
-      isShowErrorTaskSubType: nextTaskSubTypeError,
       isShowErrorIntervalValue: nextErrorIntervalValue,
       isShowErrorTaskName: nextErrorTaskName,
       isShowErrorStrategySuggestion: nextErrorStrategySuggestion,
@@ -144,7 +137,6 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorInfo,
       isShowErrorExcuteType,
       isShowErrorTaskType,
-      isShowErrorTaskSubType,
       isShowErrorIntervalValue,
       isShowErrorTaskName,
       isShowErrorStrategySuggestion,
@@ -163,11 +155,6 @@ export default class TaskFormInfo extends PureComponent {
     if (nextTaskTypeError !== isShowErrorTaskType) {
       this.setState({
         isShowErrorTaskType: nextTaskTypeError,
-      });
-    }
-    if (nextTaskSubTypeError !== isShowErrorTaskSubType) {
-      this.setState({
-        isShowErrorTaskSubType: nextTaskSubTypeError,
       });
     }
     if (nextErrorIntervalValue !== isShowErrorIntervalValue) {
@@ -256,13 +243,6 @@ export default class TaskFormInfo extends PureComponent {
   handleExcuteTypeChange(value) {
     this.setState({
       isShowErrorExcuteType: _.isEmpty(value) || value === '请选择' || value === '暂无数据',
-    });
-  }
-
-  @autobind
-  handleTaskSubTypeChange(value) {
-    this.setState({
-      isShowErrorTaskSubType: _.isEmpty(value) || value === '请选择' || value === '暂无数据',
     });
   }
 
@@ -357,7 +337,6 @@ export default class TaskFormInfo extends PureComponent {
           onChange={this.handleMentionChange}
           onBlur={this.handleMentionBlur}
         />
-        {/* <span className={styles.insert}>插入参数</span> */}
       </div>
     );
   }
@@ -375,8 +354,6 @@ export default class TaskFormInfo extends PureComponent {
       isShowErrorInfo,
       isShowErrorTaskType,
       isShowErrorExcuteType,
-      // isShowErrorTaskSubType,
-      // taskSubTypes,
       isShowErrorIntervalValue,
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
@@ -390,7 +367,6 @@ export default class TaskFormInfo extends PureComponent {
       taskTypes,
       executeTypes,
       form,
-      // defaultTaskSubType,
     } = this.props;
 
     const { getFieldDecorator } = form;
@@ -404,12 +380,6 @@ export default class TaskFormInfo extends PureComponent {
       validateStatus: 'error',
       help: '请选择任务类型',
     } : null;
-
-    // const taskSubTypeErrorSelectProps = isShowErrorTaskSubType ? {
-    //   hasFeedback: true,
-    //   validateStatus: 'error',
-    //   help: '请选择任务子类型',
-    // } : null;
 
     const excuteTypeErrorSelectProps = isShowErrorExcuteType ? {
       validateStatus: 'error',
@@ -486,37 +456,6 @@ export default class TaskFormInfo extends PureComponent {
             }
           </li>
           {/**
-           * 任务子类型
-           */}
-          {/* <li>
-            <label htmlFor="dd" className={styles.task_label}>
-            <i className={styles.required_i}>*</i>任务子类型</label>
-            {
-              !_.isEmpty(taskSubTypes) ?
-                <FormItem
-                  wrapperCol={{ span: 12 }}
-                  {...taskSubTypeErrorSelectProps}
-                >
-                  {getFieldDecorator('taskSubType',
-                    {
-                      initialValue: defaultTaskSubType,
-                    })(<Select onChange={this.handleTaskSubTypeChange}>
-                      {this.handleCreateTaskSubType(taskSubTypes)}
-                    </Select>,
-                  )}
-                </FormItem>
-                :
-                <FormItem
-                  wrapperCol={{ span: 12 }}
-                  {...taskSubTypeErrorSelectProps}
-                >
-                  <Select defaultValue="暂无数据">
-                    <Option key="null" value="0">暂无数据</Option>
-                  </Select>
-                </FormItem>
-            }
-          </li> */}
-          {/**
            * 执行方式
            */}
           <li>
@@ -564,7 +503,6 @@ export default class TaskFormInfo extends PureComponent {
                   onChange={this.handleIntervalValueChange}
                 />)}
             </FormItem>
-            {/* <div className={styles.tip}>有效期自任务审批通过后开始计算</div> */}
           </li>
         </ul>
         <div className={styles.task_textArea}>

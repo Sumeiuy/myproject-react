@@ -1,0 +1,22 @@
+.container {
+  position: relative;
+  display: flex;
+  .contentWrapper {
+    flex: 1;
+    overflow: hidden;
+    transition: height .5s;
+  }
+  .btnWrapper {
+    width: 28px;
+    height: 100%;
+    .icon {
+      position: absolute;
+      bottom: 0;
+      right: 3px;
+      color: #108ee9;
+      font-size: 12px;
+      transform: scale(0.7);
+      cursor: pointer;
+    }
+  }
+}

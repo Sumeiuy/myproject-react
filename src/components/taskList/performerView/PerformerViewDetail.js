@@ -1,38 +1,48 @@
-/**
- * @fileOverview components/customerPool/PerformerViewDetail.js
- * @author wangjunjun
- * @description 执行者视图右侧详情
+/*
+ * @Description: 执行者视图右侧详情
+ * @Author: WangJunjun
+ * @Date: 2018-05-22 12:25:35
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-15 10:35:37
  */
+
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { message, Form, Pagination } from 'antd';
-
-import Select from '../../common/Select';
-import LabelInfo from '../common/LabelInfo';
-import { emp, check } from '../../../helper';
-import ServiceImplementation from './ServiceImplementation';
-import EmptyTargetCust from './EmptyTargetCust';
-import QuestionnaireSurvey from './QuestionnaireSurvey';
-import DropDownSelect from '../../common/dropdownSelect';
-import InfoArea from '../managerView/InfoArea';
-import logable, { logPV } from '../../../decorators/logable';
+import cx from 'classnames';
+import BasicInfo from './BasicInfo';
+import TabsArea from './TabsArea';
 import styles from './performerViewDetail.less';
 
-// 每页条数
-const PAGE_SIZE = 10;
-const allCustomers = '所有客户';
-const unlimitedCustomers = { name: allCustomers, custId: '' };
-const NOOP = _.noop;
+import {
+  SMALL_PAGESIZE,
+  MEDIUM_PAGESIZE,
+  LARGE_PAGESIZE,
+  EXTRALARGE_PAGESIZE,
+} from '../../../routes/taskList/config';
 
-const create = Form.create;
+// 当左侧列表或fsp中左侧菜单被折叠或者展开时，返回当前的服务实施列表的pageSize
+// isFoldFspLeftMenu=true fsp的左侧菜单被折叠收起
+// isFoldLeftList=true 执行者视图左侧列表被折叠收起
+const getPageSize = (isFoldFspLeftMenu, isFoldLeftList) => {
+  // 全部都折叠起来放12个
+  if (isFoldFspLeftMenu && isFoldLeftList) {
+    return EXTRALARGE_PAGESIZE;
+  }
+  // FSP左侧菜单折叠放9个
+  if (isFoldFspLeftMenu) {
+    return MEDIUM_PAGESIZE;
+  }
+  // 任务列表折叠起来放10个
+  if (isFoldLeftList) {
+    return LARGE_PAGESIZE;
+  }
+  // 其余的放6个
+  return SMALL_PAGESIZE;
+};
 
-// 任务默认的状态码
-const defaultState = '10';
-
-@create()
 export default class PerformerViewDetail extends PureComponent {
 
   static propTypes = {
@@ -50,7 +60,7 @@ export default class PerformerViewDetail extends PureComponent {
     currentMotServiceRecord: PropTypes.object.isRequired,
     answersList: PropTypes.object,
     getTempQuesAndAnswer: PropTypes.func.isRequired,
-    saveAnswersSucce: PropTypes.bool,
+    isSubmitSurveySucceed: PropTypes.bool,
     saveAnswersByType: PropTypes.func.isRequired,
     // 左侧列表当前任务的状态码
     statusCode: PropTypes.string,
@@ -58,14 +68,12 @@ export default class PerformerViewDetail extends PureComponent {
     taskTypeCode: PropTypes.string,
     // 自建任务的类型Code，与mot任务的eventId同理
     serviceTypeCode: PropTypes.string,
-    modifyLocalTaskList: PropTypes.func.isRequired,
     // 涨乐财富通服务方式下的客户反馈列表以及查询方法
     queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
     custFeedbackList: PropTypes.array.isRequired,
     // 涨乐财富通服务方式下的审批人列表以及查询方法
     queryApprovalList: PropTypes.func.isRequired,
     zhangleApprovalList: PropTypes.array.isRequired,
-    form: PropTypes.object.isRequired,
     // 查询任务下的客户
     queryCustomer: PropTypes.func,
     // 搜索到的任务下客户列表
@@ -74,61 +82,78 @@ export default class PerformerViewDetail extends PureComponent {
     testWallCollision: PropTypes.func.isRequired,
     // 投资建议文本撞墙检测是否有股票代码
     testWallCollisionStatus: PropTypes.bool.isRequired,
+    performerViewCurrentTab: PropTypes.string.isRequired,
+    changePerformerViewTab: PropTypes.func.isRequired,
+    targetCustDetail: PropTypes.object.isRequired,
+    serviceProgress: PropTypes.object.isRequired,
+    custFeedBack: PropTypes.array.isRequired,
+    custDetail: PropTypes.object.isRequired,
+    queryExecutorFeedBack: PropTypes.func.isRequired,
+    queryExecutorFlowStatus: PropTypes.func.isRequired,
+    queryExecutorDetail: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     isFold: true,
     answersList: {},
-    saveAnswersSucce: false,
+    isSubmitSurveySucceed: false,
     statusCode: '',
     eventId: '',
     taskTypeCode: '',
     serviceTypeCode: '',
-    queryCustomer: NOOP,
+    queryCustomer: _.noop,
     customerList: [],
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      visible: false,
-      checkboxData: {},
-      radioData: [],
-      areaTextData: [],
-      keyIndex: Number(emp.getId()),
-      isDisabled: false,
-      isShowErrorCheckbox: {},
-      checkBoxQuesId: [],
-    };
-  }
-
-  // 根据dict返回的数据，组合成Select组件的所需要的数据结构
+  // 生成基本信息中的内容
   @autobind
-  getServeStatusSelectOptionsData(serveStatus) {
-    const allCustOption = {
-      value: '',
-      label: '所有状态',
-      show: true,
-    };
-    const stateData = serveStatus.map(o => ({
-      value: o.key,
-      label: o.value,
-      show: true,
-    }));
-    stateData.unshift(allCustOption);
-    return stateData;
-  }
-
-  // 查询目标客户的列表和
-  @autobind
-  queryTargetCustInfo(obj) {
+  getBasicInfoData() {
+    const { basicInfo = {}, currentId } = this.props;
     const {
-      currentId,
-      queryTargetCust,
-    } = this.props;
-    queryTargetCust({
-      ...obj,
-      missionId: currentId,
+      triggerTime,
+      endTime,
+      missionTarget,
+    } = basicInfo;
+    return [{
+      id: 'id',
+      key: '任务编号 :',
+      value: `${currentId || '--'}`,
+    }, {
+      id: 'date',
+      key: '任务有效期 :',
+      value: `${triggerTime || '--'} ~ ${endTime || '--'}`,
+    },
+    {
+      id: 'target',
+      key: '任务目标 :',
+      value: missionTarget || '--',
+    }];
+  }
+
+  @autobind
+  searchCustomer(value) {
+    const { queryCustomer, changeParameter, parameter } = this.props;
+    // pageSize传1000000，使能够查到足够的数据
+    queryCustomer({
+      keyWord: value,
+    });
+    // 保存搜索的关键字，方便在redux里面需要清空的时候，直接调用changeParameter，将关键字清空
+    changeParameter({
+      ...parameter,
+      keyWord: value,
+    });
+  }
+
+  /**
+   * 添加服务记录成功后重新加载当前目标客户的详细信息
+   */
+  @autobind
+  reloadTargetCustInfo(callback) {
+    const { parameter: { targetCustId, targetMissionFlowId } } = this.props;
+    this.requeryTargetCustDetail({
+      custId: targetCustId,
+      missionFlowId: targetMissionFlowId,
+      callback,
     });
   }
 
@@ -149,433 +174,40 @@ export default class PerformerViewDetail extends PureComponent {
     });
   }
 
-  @autobind
-  handlePageChange(pageNo) {
-    const {
-      parameter: {
-        targetCustomerPageSize = PAGE_SIZE,
-        targetCustomerState = defaultState,
-        selectCustomerRowId = '',
-      },
-      changeParameter,
-    } = this.props;
-    changeParameter({
-      targetCustomerPageNo: pageNo,
-      targetCustId: '',
-      targetMissionFlowId: '',
-    });
-    this.queryTargetCustInfo({
-      state: targetCustomerState,
-      rowId: selectCustomerRowId,
-      pageSize: targetCustomerPageSize,
-      pageNum: pageNo,
-    });
-  }
-
-  @autobind
-  @logable({ type: 'DropdownSelect', payload: { name: '状态', value: '$args[1]' } })
-  handleStateChange(key, v) {
-    const {
-      changeParameter,
-      parameter: {
-        selectCustomerRowId,
-      },
-    } = this.props;
-
-    changeParameter({
-      [key]: v,
-      targetCustomerPageSize: 10,
-      targetCustomerPageNo: 1,
-      targetCustId: '',
-      targetMissionFlowId: '',
-    });
-    this.queryTargetCustInfo({
-      state: v,
-      // 客户联合查询
-      rowId: selectCustomerRowId,
-      pageSize: 10,
-      pageNum: 1,
-    });
-  }
-
-  /**
-   * 添加服务记录成功后重新加载当前目标客户的详细信息
-   */
-  @autobind
-  reloadTargetCustInfo(callback) {
-    const { parameter: { targetCustId, targetMissionFlowId } } = this.props;
-    this.requeryTargetCustDetail({
-      custId: targetCustId,
-      missionFlowId: targetMissionFlowId,
-      callback,
-    });
-  }
-
-  @autobind
-  @logPV({ pathname: '/modal/questionnaireSurvey', title: '任务问卷调查' })
-  showModal() {
-    const { getTempQuesAndAnswer, basicInfo: { templateId } } = this.props;
-    getTempQuesAndAnswer({
-      // 问卷传参测试
-      templateId,
-      // 分页信息固定参数
-      pageNum: 1,
-      pageSize: 200,
-      examineeId: emp.getId(),
-    }).then(this.handleGetQuesSuccess);
-  }
-
-  // 处理请求问卷题目是否成功
-  @autobind
-  handleGetQuesSuccess() {
-    const { answersList = {} } = this.props;
-    const { quesInfoList } = answersList;
-    const checkBoxQuesId = _.filter(quesInfoList, ['quesTypeCode', '2']);
-    this.setState({
-      // 存储多选题Id
-      checkBoxQuesId: _.map(checkBoxQuesId, item => item.quesId),
-    });
-    if (!_.isEmpty(answersList)) {
-      this.setState({ visible: true });
-    }
-  }
-
-  @autobind
-  handleOk() {
-    const { saveAnswersByType, basicInfo: { templateId }, form } = this.props;
-    const {
-      checkboxData: stv,
-      radioData,
-      areaTextData,
-      isShowErrorCheckbox,
-      checkBoxQuesId,
-    } = this.state;
-    const checkboxData = _.flatten(_.map(stv, item => item));
-    let allCheckbox = null;
-    checkBoxQuesId.forEach((item) => {
-      // 根据存储的多选题ID 判断单个多选题是否勾选
-      if (isShowErrorCheckbox[item]) {
-        allCheckbox = isShowErrorCheckbox[item];
-      }
-      return false;
-    });
-    const checkedData = _.concat(_.concat(checkboxData, radioData), areaTextData);
-    form.validateFields((err, value) => {
-      // 判断多选题是否全部勾选
-      if (_.isEmpty(isShowErrorCheckbox)) {
-        const initError = _.mapValues(value, () => true);
-        this.setState({
-          // 改变多选题状态
-          isShowErrorCheckbox: initError,
-        });
-      }
-
-      if (!_.isEmpty(err)) {
-        this.setState({ visible: true });
-        // 判断单个单选题是否勾选
-      } else if (!allCheckbox) {
-        const params = {
-          // 提交问卷传参测试
-          answerReqs: checkedData,
-          // 答题者类型参数固定
-          examineetype: 'employee',
-          examineeId: emp.getId(),
-          templateId,
-        };
-        saveAnswersByType(params).then(this.handleSaveSuccess);
-      }
-    });
-  }
-
-  // 处理问卷提交成功
-  @autobind
-  handleSaveSuccess() {
-    const { saveAnswersSucce } = this.props;
-    let isShow = false;
-    if (!saveAnswersSucce) {
-      isShow = true;
-      message.error('提交失败');
-    } else {
-      message.success('提交成功');
-    }
-    this.setState({
-      visible: isShow,
-      isDisabled: true,
-    });
-  }
-
-  // 关闭modal
-  @autobind
-  handleCancel() {
-    this.setState({
-      visible: false,
-      keyIndex: this.state.keyIndex + 1,
-      // 清除状态
-      isShowErrorCheckbox: {},
-    });
-    // 重置组件表单值
-    this.props.form.resetFields();
-  }
-
-  // 处理选中答案数据
-  @autobind
-  handleCheckboxChange(key, quesId) {
-    const { checkboxData, isShowErrorCheckbox } = this.state;
-    const initCheck = checkboxData;
-    // +-+ 在CheckBox value中拼接字符，为获取改答案answerId和改问题quesId
-    const arr = _.map(key, item => _.split(item, '+-+'));
-    let params = _.flatten(_.map(arr, (item) => {
-      const childs = {
-        answerId: item[1],
-        answerText: item[0],
-        quesId: item[2],
-      };
-      return childs;
-    }));
-    if (_.isEmpty(key)) {
-      params = key;
-    }
-    initCheck[String(quesId)] = params;
-    this.setState({
-      checkboxData: initCheck,
-      // 存储多选框是否选中状态
-      isShowErrorCheckbox: {
-        ...isShowErrorCheckbox,
-        [quesId]: _.isEmpty(params),
-      },
-    });
-  }
-
-  @autobind
-  handleRadioChange(key) {
-    const { radioData } = this.state;
-    const initRadio = radioData;
-    const checkedData = [{
-      quesId: key.target.dataQuesId,
-      answerId: key.target.value,
-      answerText: key.target.dataVale,
-    }];
-    this.handleRepeatData(initRadio, checkedData, 'radioData');
-  }
-
-  // 处理问卷选中重复答案
-  @autobind
-  handleRepeatData(initData, checkedData, stv) {
-    if (_.isEmpty(initData)) {
-      this.setState({
-        [stv]: checkedData,
-      });
-    } else {
-      let newRadio = [];
-      const ques = _.findIndex(initData, o => o.quesId === checkedData[0].quesId);
-      if (ques === -1) {
-        newRadio = _.concat(initData, checkedData);
-      } else {
-        newRadio = initData.splice(ques, 1, checkedData[0]);
-        newRadio = initData;
-      }
-      this.setState({
-        [stv]: newRadio,
-      });
-    }
-  }
-
-  @autobind
-  handleAreaText(e) {
-    const { areaTextData } = this.state;
-    const initAreaText = areaTextData;
-    const params = [{
-      quesId: e.target.getAttribute('data'),
-      answerText: e.target.value,
-    }];
-    this.handleRepeatData(initAreaText, params, 'areaTextData');
-  }
-
-  @autobind
-  selectCustomerItem(item) {
-    const { rowId = '', custId = '', name = '' } = item;
-    const {
-      changeParameter,
-      parameter: {
-        targetCustomerState,
-      },
-    } = this.props;
-
-    changeParameter({
-      // 当前选择的客户
-      selectCustomerCustId: custId,
-      selectCustomerCustName: encodeURIComponent(name),
-      selectCustomerRowId: rowId,
-      // 将其他条件恢复
-      targetCustomerPageSize: 10,
-      targetCustomerPageNo: 1,
-      targetCustId: '',
-      targetMissionFlowId: '',
-    });
-    this.queryTargetCustInfo({
-      // rowId传给后台，查询筛选出来的客户
-      rowId,
-      // 联合查询，
-      state: targetCustomerState || defaultState,
-      pageSize: 10,
-      pageNum: 1,
-    });
-  }
-
-  @autobind
-  searchCustomer(value) {
-    const { queryCustomer, changeParameter, parameter } = this.props;
-    // pageSize传1000000，使能够查到足够的数据
-    queryCustomer({
-      keyWord: value,
-    });
-    // 保存搜索的关键字，方便在redux里面需要清空的时候，直接调用changeParameter，将关键字清空
-    changeParameter({
-      ...parameter,
-      keyWord: value,
-    });
-  }
-
   render() {
     const {
-      basicInfo,
-      dict,
-      targetCustList,
-      parameter: {
-        targetCustomerPageNo,
-        targetCustomerPageSize,
-        targetCustomerState = defaultState,
-        selectCustomerCustId,
-        selectCustomerCustName,
-        keyWord = '',
-      },
+      basicInfo = {},
       customerList,
-      answersList,
-      currentId,
-      form,
     } = this.props;
-    const { visible, keyIndex, isDisabled, isShowErrorCheckbox } = this.state;
-    const { list, page: { totalCount, pageNum, pageSize } } = targetCustList;
-    const { serveStatus = [] } = dict;
-    // 根据dict返回的数据，组合成Select组件的所需要的数据结构
-    const stateData = this.getServeStatusSelectOptionsData(serveStatus);
-    // 分页器配置
-    const curPageNo = targetCustomerPageNo || pageNum;
-    const curPageSize = targetCustomerPageSize || pageSize;
-    const paginationOption = {
-      current: curPageNo || 1,
-      total: totalCount,
-      pageSize: curPageSize,
-      onChange: this.handlePageChange,
-      // 使用简单分页
-      simple: true,
-    };
-
-    const currentCustomer = check.isNull(selectCustomerCustId) ?
-      allCustomers : `${decodeURIComponent(selectCustomerCustName)}(${selectCustomerCustId})`;
-
-    // 执行者视图按客户搜索
-    const allCustomerList = !_.isEmpty(customerList) ?
-      [unlimitedCustomers, ...customerList] : [];
 
     const {
       missionName,
       missionStatusName,
       hasSurvey,
-      triggerTime,
-      endTime,
-      missionTarget,
       servicePolicy,
     } = basicInfo;
-
-    const basicInfoData = [{
-      id: 'id',
-      key: '任务编号 :',
-      value: `${currentId || '--'}`,
-    }, {
-      id: 'date',
-      key: '任务有效期 :',
-      value: `${triggerTime || '--'} ~ ${endTime || '--'}`,
-    },
-    {
-      id: 'target',
-      key: '任务目标 :',
-      value: missionTarget || '--',
-    },
-    {
-      id: 'policy',
-      key: '服务策略 :',
-      value: servicePolicy || '--',
-    }];
     // sticky-container 作为子元素悬停参照物
+    const containerCls = cx(
+      [styles.performerViewDetail],
+      'sticky-container',
+      'lego-filter-menuContainer',
+    );
     return (
-      <div className={`sticky-container ${styles.performerViewDetail}`}>
-        <p className={styles.taskTitle}>
-          {`${missionName || '--'}: ${missionStatusName || '--'}`}
-          {hasSurvey ? <a className={styles.survey} onClick={this.showModal}>任务问卷调查</a> : null}
-        </p>
-        <InfoArea data={basicInfoData} headLine={'基本信息'} />
-        <div className={styles.serviceImplementation}>
-          <LabelInfo value="服务实施" />
-          <div className={styles.listControl}>
-            <div className={styles.stateWidget}>
-              <span className={styles.label}>状态:</span>
-              <Select
-                name="targetCustomerState"
-                value={targetCustomerState}
-                data={stateData}
-                onChange={this.handleStateChange}
-              />
-              <span className={styles.label}>客户:</span>
-              <DropDownSelect
-                value={currentCustomer}
-                placeholder="姓名/经纪客户号"
-                searchList={allCustomerList}
-                showObjKey="name"
-                objId="custId"
-                emitSelectItem={this.selectCustomerItem}
-                emitToSearch={this.searchCustomer}
-                name="任务下客户筛选"
-                defaultSearchValue={keyWord}
-              />
-            </div>
-            <div className={styles.pagination}>
-              {/**
-               * 简单分页没有总数，需要自己加
-               */}
-              <div className={styles.totalCount}>{`共 ${totalCount} 条`}</div>
-              <div className={styles.page}>
-                <Pagination {...paginationOption} />
-              </div>
-            </div>
-          </div>
-          {
-            _.isEmpty(list) ?
-              <EmptyTargetCust /> :
-              <ServiceImplementation
-                {...this.props}
-                list={list}
-                reloadTargetCustInfo={this.reloadTargetCustInfo}
-              />
-          }
-        </div>
-        {
-          visible ?
-            <QuestionnaireSurvey
-              ref={ref => this.questionForm = ref}
-              visible={visible}
-              onOk={this.handleOk}
-              onCancel={this.handleCancel}
-              onCheckChange={this.handleCheckboxChange}
-              onRadioChange={this.handleRadioChange}
-              onAreaText={this.handleAreaText}
-              answersList={answersList}
-              key={keyIndex}
-              isDisabled={isDisabled}
-              isShowErrorCheckbox={isShowErrorCheckbox}
-              form={form}
-            /> : null
-        }
+      <div className={containerCls} id="performerViewDetail">
+        <BasicInfo
+          missionName={missionName}
+          missionStatusName={missionStatusName}
+          basicInfoData={this.getBasicInfoData()}
+        />
+        <TabsArea
+          {...this.props}
+          hasSurvey={hasSurvey}
+          servicePolicy={servicePolicy}
+          searchCustomer={this.searchCustomer}
+          customerList={customerList}
+          reloadTargetCustInfo={this.reloadTargetCustInfo}
+          getPageSize={getPageSize}
+        />
       </div>
     );
   }
