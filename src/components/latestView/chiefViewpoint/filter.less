@@ -1,0 +1,44 @@
+.filterBox {
+  margin-bottom: 10px;
+  .inputBox {
+    display: inline-block;
+    margin-right: 30px;
+  }
+  .selectBox {
+    display: inline-block;
+    margin-right: 30px;
+    :global {
+      .ant-select-selection {
+        border: none;
+        font-size: 14px;
+        color: #4a4a4a;
+        .ant-select-arrow:before {
+          content: "\E606";
+        }
+      }
+    }
+  }
+  .dateBox {
+    display: inline-block;
+    :global {
+      .ant-calendar-picker {
+        width: 200px;
+      }
+      .ant-calendar-picker-input {
+        padding: 4px 0;
+        border: none;
+        .ant-calendar-range-picker-input {
+          font-size: 14px;
+          color: #4a4a4a;
+        }
+      }
+      .ant-calendar-picker-icon, .ant-calendar-picker-clear {
+        right: 0;
+      }
+    }
+  }
+  .title {
+    font-size: 14px;
+    color: #333;
+  }
+}

@@ -140,6 +140,8 @@ app.model(require('./models/businessDepartmentCustDistribute'));
 app.model(require('./models/custAllot'));
 // 消息通知提醒
 app.model(require('./models/messageCenter'));
+// 最新观点
+app.model(require('./models/latestView'));
 
 // 4. Route
 app.router(routerConfig);

@@ -31,8 +31,11 @@ import CustomerList from './routes/customerPool/CustomerList';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
-import ViewpointList from './routes/customerPool/ViewpointList';
-import ViewpointDetail from './routes/customerPool/ViewpointDetail';
+// 老的资讯列表即将被替代
+// import ViewpointList from './routes/customerPool/ViewpointList';
+import ViewpointList from './routes/latestView/ViewpointList';
+// import ViewpointDetail from './routes/customerPool/ViewpointDetail';
+import ViewpointDetail from './routes/latestView/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
 import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
@@ -83,6 +86,8 @@ import CustAllot from './routes/custAllot/Home';
 import CustAllotNotifies from './routes/custAllot/Notifies';
 // 消息通知提醒
 import MessageCenter from './routes/messageCenter/Home';
+// 最新观点
+import LatestView from './routes/latestView/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -319,6 +324,17 @@ const routes = [
     children: [
       // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type
       { path: '/notifies', component: CustAllotNotifies },
+    ],
+  },
+  // 最新观点-直接进入
+  {
+    path: '/latestView',
+    component: LatestView,
+    children: [
+      // 首席观点列表页面
+      { path: '/viewpointList', component: ViewpointList },
+      // 首席观点详情页
+      { path: '/viewpointDetail', component: ViewpointDetail },
     ],
   },
 ];
