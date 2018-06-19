@@ -43,7 +43,7 @@ export default class SimilarAutoComplete extends PureComponent {
     optionKey: PropTypes.string,
     style: PropTypes.object,
     // 是否要求用户确认清除操作
-    isConfirmClear: PropTypes.bool,
+    needConfirmWhenClear: PropTypes.bool,
     clearConfirmTips: PropTypes.string,
   }
 
@@ -57,7 +57,7 @@ export default class SimilarAutoComplete extends PureComponent {
     isImmediatelySearch: false, // 是否开启即时搜索
     onChange: () => {},
     style: defaultStyle,
-    isConfirmClear: false,
+    needConfirmWhenClear: false,
     clearConfirmTips: '确认要清除数据吗？',
   }
 
@@ -194,7 +194,7 @@ export default class SimilarAutoComplete extends PureComponent {
       // 清空输入框，并设置为搜索状态
       // 增加清空之前的判断
       // 清空之前询问用户是否清空数据
-      if (this.props.isConfirmClear) {
+      if (this.props.needConfirmWhenClear) {
         // 阻止React合成事件传播
         e.stopPropagation();
         confirm({

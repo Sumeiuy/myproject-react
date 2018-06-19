@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-19 09:47:29
+ * @Last Modified time: 2018-06-19 10:13:03
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -283,7 +283,7 @@ export default class FinanceCustRelationshipForm extends Component {
                 placeholder="经纪客户号/客户名称"
                 optionList={custList}
                 optionKey="brokerNumber"
-                isConfirmClear
+                needConfirmWhenClear
                 clearConfirmTips="切换或者删除客户，将导致所有的数据清空或者重置"
                 onSelect={this.handleSelectCust}
                 onSearch={this.handleSearchCustList}
