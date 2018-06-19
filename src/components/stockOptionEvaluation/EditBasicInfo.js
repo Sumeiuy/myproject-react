@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-14 22:36:00
+ * @Last Modified time: 2018-06-19 09:49:16
  */
 
 import React, { PureComponent } from 'react';
@@ -17,15 +17,15 @@ import Icon from '../common/Icon';
 import styles from './EditBasicInfo.less';
 
 const FormItem = Form.Item;
-const create = Form.create;
 const RadioGroup = Radio.Group;
 const EMPTY_INFO = '--';
 // const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 
-@create()
 export default class EditBasicInfo extends PureComponent {
   static propTypes = {
+    // 是否是编辑页面
+    isEdit: PropTypes.bool,
     // 客户基本信息
     custInfo: PropTypes.object.isRequired,
     // 客户Id和客户名称信息
@@ -38,14 +38,12 @@ export default class EditBasicInfo extends PureComponent {
     klqqsclbMap: PropTypes.array.isRequired,
     // 业务受理营业部下拉列表
     busDivisionMap: PropTypes.array.isRequired,
-    // 获取基本信息的多个select数据
-    getSelectMap: PropTypes.func.isRequired,
-    // 流程Id
-    flowId: PropTypes.string.isRequired,
     // select选择后触发父组件数据变化
     onEmitEvent: PropTypes.func.isRequired,
     // 受理时间
     accptTime: PropTypes.string.isRequired,
+    // 受理营业部Id
+    busPrcDivId: PropTypes.string.isRequired,
     // 客户交易级别
     custTransLv: PropTypes.string.isRequired,
     custTransLvName: PropTypes.string.isRequired,
@@ -82,20 +80,32 @@ export default class EditBasicInfo extends PureComponent {
     queryAcceptOrg: PropTypes.func.isRequired,
   }
 
+  static defaultProps = {
+    isEdit: false,
+  }
+
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps === prevState) {
-      return null;
+    if (nextProps.stockCustTypeMap !== prevState.stockCustTypeMap) {
+      return {
+        stockCustTypeMap: nextProps.stockCustTypeMap,
+      };
     }
-    return {
-      stockCustTypeMap: nextProps.stockCustTypeMap,
-      reqTypeMap: nextProps.reqTypeMap,
-      klqqsclbMap: nextProps.klqqsclbMap,
-      busDivisionMap: nextProps.busDivisionMap,
-      // stockCustType: nextProps.stockCustType,
-      // reqType: nextProps.reqType,
-      // openOptMktCatg: nextProps.openOptMktCatg,
-      // busPrcDivId: nextProps.busPrcDivId,
-    };
+    if (nextProps.reqTypeMap !== prevState.reqTypeMap) {
+      return {
+        reqTypeMap: nextProps.reqTypeMap,
+      };
+    }
+    if (nextProps.klqqsclbMap !== prevState.klqqsclbMap) {
+      return {
+        klqqsclbMap: nextProps.klqqsclbMap,
+      };
+    }
+    if (nextProps.busDivisionMap !== prevState.busDivisionMap) {
+      return {
+        busDivisionMap: nextProps.busDivisionMap,
+      };
+    }
+    return null;
   }
 
   constructor(props) {
@@ -187,12 +197,6 @@ export default class EditBasicInfo extends PureComponent {
       customer: {
         brokerNumber,
       },
-      acceptOrgData,
-      acceptOrgData: {
-        accptTime,
-        custTransLv,
-        custTransLvName,
-      },
     } = this.props;
     this.setState({ busPrcDivId: value });
     onEmitEvent('busPrcDivId', value);
@@ -200,12 +204,21 @@ export default class EditBasicInfo extends PureComponent {
     queryAcceptOrg({
       econNum: brokerNumber,
       acceptOrg: value,
+    }).then(() => {
+      const {
+        acceptOrgData,
+        acceptOrgData: {
+          accptTime,
+          custTransLv,
+          custTransLvName,
+        },
+      } = this.props;
+      if (!_.isEmpty(acceptOrgData)) {
+        onEmitEvent('accptTime', accptTime);
+        onEmitEvent('custTransLv', custTransLv);
+        onEmitEvent('custTransLvName', custTransLvName);
+      }
     });
-    if (!_.isEmpty(acceptOrgData)) {
-      onEmitEvent('accptTime', accptTime);
-      onEmitEvent('custTransLv', custTransLv);
-      onEmitEvent('custTransLvName', custTransLvName);
-    }
   }
 
   // 申报事项改变
@@ -236,20 +249,30 @@ export default class EditBasicInfo extends PureComponent {
 
   render() {
     const {
+      isEdit,
       // 选择客户带出的客户基本信息
       custInfo,
       custInfo: {
         divisionName,
         openDivName,
         idTypeName,
+        // 证件号码
         idNum,
+        // 是否专业投资者
         isProfessInvset,
+        // 上海A股股东账号
         aAcct,
+        // 开户系统
         openSysName,
-        busPrcDivId,
+        // 股票客户类型
+        stockCustTypeName,
+        // 申请类型
+        reqTypeName,
       },
       // 受理时间
       accptTime,
+      // 受理营业部Id
+      busPrcDivId,
       // 客户交易级别
       custTransLvName,
       // 客户交易级别校验
@@ -300,8 +323,7 @@ export default class EditBasicInfo extends PureComponent {
     if (isProfessInvset) {
       isProfessInvsetor = isProfessInvset === 'Y' ? '是' : '否';
     }
-    const isSelectDisabled = _.isEmpty(custInfo);
-
+    const isSelectDisabled = _.isEmpty(custInfo) && !isEdit;
     return (
       <div className={styles.editBasicInfo}>
         <Form>
@@ -395,20 +417,29 @@ export default class EditBasicInfo extends PureComponent {
                 <span className={styles.colon}>:</span>
               </div>
               <div className={styles.value} >
-                <FormItem
-                  {
-                  ...this.renderErrorMessage(isShowStockCustTypeStatusError,
-                    stockCustTypeStatusErrorMessage)
-                  }
-                >
-                  <Select
-                    name="stockCustType"
-                    data={stockCustTypeMap}
-                    disabled={isSelectDisabled}
-                    onChange={this.updateSelect}
-                    value={stockCustType || '请选择'}
-                  />
-                </FormItem>
+                {
+                  isEdit ? (
+                    <FormItem>
+                      {stockCustTypeName || EMPTY_INFO}
+                    </FormItem>
+                    )
+                  : (
+                    <FormItem
+                      {
+                      ...this.renderErrorMessage(isShowStockCustTypeStatusError,
+                        stockCustTypeStatusErrorMessage)
+                      }
+                    >
+                      <Select
+                        name="stockCustType"
+                        data={stockCustTypeMap}
+                        disabled={isSelectDisabled}
+                        onChange={this.updateSelect}
+                        value={stockCustType || '请选择'}
+                      />
+                    </FormItem>
+                  )
+                }
               </div>
             </div>
             <div className={styles.coloumn}>
@@ -418,20 +449,29 @@ export default class EditBasicInfo extends PureComponent {
                 <span className={styles.colon}>:</span>
               </div>
               <div className={styles.value}>
-                <FormItem
-                  {
-                  ...this.renderErrorMessage(isShowReqTypeStatusError,
-                    reqTypeStatusErrorMessage)
-                  }
-                >
-                  <Select
-                    name="reqType"
-                    data={reqTypeMap}
-                    disabled={isSelectDisabled}
-                    onChange={this.updateSelect}
-                    value={reqType || '请选择'}
-                  />
-                </FormItem>
+                {
+                    isEdit ? (
+                      <FormItem>
+                        {reqTypeName || EMPTY_INFO}
+                      </FormItem>
+                    )
+                    : (
+                      <FormItem
+                        {
+                        ...this.renderErrorMessage(isShowReqTypeStatusError,
+                          reqTypeStatusErrorMessage)
+                        }
+                      >
+                        <Select
+                          name="reqType"
+                          data={reqTypeMap}
+                          disabled={isSelectDisabled}
+                          onChange={this.updateSelect}
+                          value={reqType || '请选择'}
+                        />
+                      </FormItem>
+                    )
+                }
               </div>
             </div>
             <div className={styles.coloumn}>

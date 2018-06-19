@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-14 23:28:05
+ * @Last Modified time: 2018-06-19 09:57:45
  */
 
 import React, { PureComponent } from 'react';
@@ -10,22 +10,26 @@ import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-import { Form } from 'antd';
+import { Form, message, Modal } from 'antd';
 import CommonModal from '../common/biz/CommonModal';
 import commonConfirm from '../common/confirm_';
+import TableDialog from '../common/biz/TableDialog';
 import InfoTitle from '../common/InfoTitle';
 import AutoComplete from '../common/similarAutoComplete';
+import BottonGroup from '../permission/BottonGroup';
 import EditBasicInfo from './EditBasicInfo';
 import UploadFile from './UploadFile';
+import config from './config';
 
 import styles from './createApply.less';
 
 const FormItem = Form.Item;
-const create = Form.create;
+const { approvalColumns } = config;
+const SRTYPE = 'SRStkOpReq';
 
-@create()
 export default class CreateApply extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 员工信息
     empInfo: PropTypes.object.isRequired,
     // 清除数据
@@ -51,6 +55,28 @@ export default class CreateApply extends PureComponent {
     // 受理营业部变更
     acceptOrgData: PropTypes.object.isRequired,
     queryAcceptOrg: PropTypes.func.isRequired,
+    // 新建页面获取下一步按钮和审批人
+    createButtonList: PropTypes.object.isRequired,
+    getCreateButtonList: PropTypes.func.isRequired,
+    // 验证提交数据结果
+    validateResultData: PropTypes.object.isRequired,
+    validateResult: PropTypes.func.isRequired,
+    // 新建修改的更新接口
+    updateBindingFlowAppId: PropTypes.string.isRequired,
+    updateBindingFlow: PropTypes.func.isRequired,
+    // 更新申请列表
+    queryAppList: PropTypes.func.isRequired,
+    // 走流程接口
+    doApprove: PropTypes.func.isRequired,
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.createButtonList !== prevState.createButtonList) {
+      return {
+        createButtonList: nextProps.createButtonList,
+      };
+    }
+    return null;
   }
 
   constructor(props) {
@@ -60,6 +86,8 @@ export default class CreateApply extends PureComponent {
       pageSize: 10,
       // 模态框是否显示 默认状态下是隐藏的
       isShowModal: true,
+      // 下一步按钮
+      createButtonList: {},
       // 下一步审批人列表
       nextApproverList: [],
       // 审批人弹窗
@@ -137,6 +165,13 @@ export default class CreateApply extends PureComponent {
     this.isValidateError = false;
   }
 
+  componentDidMount() {
+    const { getSelectMap } = this.props;
+    const { flowId } = this.state;
+    // 获取股票客户类型,申请类型,开立期权市场类别,业务受理营业部的下拉选择
+    getSelectMap({ flowId });
+  }
+
   // 客户校验必填错误时设置错误状态和错误提示
   @autobind
   setCustomerErrorProps() {
@@ -164,7 +199,6 @@ export default class CreateApply extends PureComponent {
       isShowStockCustTypeStatusError: true,
       stockCustTypeStatusErrorMessage: '请选择客户类型',
     });
-    this.isValidateError = true;
   }
 
   // 申请类型校验必填错误时设置错误状态和错误提示
@@ -204,6 +238,7 @@ export default class CreateApply extends PureComponent {
       isShowDegreeFlagStatusError: true,
       degreeFlagStatusErrorMessage: '请选择已提供大专及以上的学历证明材料',
     });
+
     this.isValidateError = true;
   }
 
@@ -393,12 +428,6 @@ export default class CreateApply extends PureComponent {
     }
   }
 
-  // 点击提交按钮
-  @autobind
-  handleOk() {
-    this.checkIsRequired();
-  }
-
   // 关闭弹窗
   @autobind
   handleCloseModal() {
@@ -452,39 +481,259 @@ export default class CreateApply extends PureComponent {
   // 选择本营业部客户
   @autobind
   selectCustomer(item) {
-    const {
-      getCustInfo,
-      getSelectMap,
-    } = this.props;
-
-    const {
-      flowId,
-    } = this.state;
     // 选中客户
     this.setState({ customer: item });
     if (!_.isEmpty(item)) {
       this.reSetCustomerErrorProps();
-      const {
-        brokerNumber,
-        custType,
-      } = item;
-      // 根据经济客户号查询客户附带信息
-      getCustInfo({
-        brokerNumber,
-        custType,
-      }).then(() => {
-        const { custInfo } = this.props;
-        if (!_.isEmpty(custInfo)) {
-          this.handleEmitEvent('custInfo', custInfo);
-          // 设置客户交易级别
-          this.handleEmitEvent('custTransLv', custInfo.custTransLv);
-          this.handleEmitEvent('custTransLvName', custInfo.custTransLvName);
-          this.handleEmitEvent('accptTime', custInfo.accptTime);
+      this.getCustInfo(item);
+    }
+  }
+
+  // 根据经济客户号查询客户附带信息
+  @autobind
+  getCustInfo(item) {
+    const { getCustInfo } = this.props;
+    const {
+      brokerNumber,
+      custType,
+    } = item;
+    // 根据经济客户号查询客户附带信息
+    getCustInfo({
+      brokerNumber,
+      custType,
+    }).then(() => {
+      const { custInfo } = this.props;
+      if (!_.isEmpty(custInfo)) {
+        const {
+          custTransLv,
+          custTransLvName,
+          accptTime,
+          busPrcDivId,
+          divisionName,
+          openDivName,
+          busPrcDivName,
+        } = custInfo;
+        this.handleEmitEvent('custInfo', custInfo);
+        // 设置客户交易级别
+        this.handleEmitEvent('custTransLv', custTransLv);
+        this.handleEmitEvent('custTransLvName', custTransLvName);
+        // 受理时间
+        this.handleEmitEvent('accptTime', accptTime);
+        // 受理营业部Id
+        this.handleEmitEvent('busPrcDivId', busPrcDivId);
+        // 获取下一步按钮和审批人
+        const { flowId } = this.state;
+        const param = {
+          flowId,
+          divisionName,
+          openDivName,
+          busPrcDivName,
+        };
+        this.getCreateButtonList(param);
+      }
+    });
+  }
+
+  // 获取下一步按钮和审批人
+  @autobind
+  getCreateButtonList(param) {
+    this.props.getCreateButtonList(param);
+  }
+
+  @autobind
+  handleSubmit(item) {
+    // 校验必填项
+    this.isValidateError = false;
+    this.checkIsRequired();
+    if (!this.isValidateError) {
+      this.setState({
+        operate: item.operate,
+        groupName: item.nextGroupName,
+        auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
+        nextApproverList: item.flowAuditors,
+        nextApproverModal: true,
+      });
+    }
+  }
+
+  @autobind
+  validateResult(value) {
+    if (_.isEmpty(value)) {
+      message.error('请选择审批人');
+      return;
+    }
+    this.setState({
+      nextApproverModal: false,
+    });
+    // 校验的数据
+    const {
+      customer: {
+        brokerNumber: econNum,
+      },
+      custTransLvl,
+      stockCustType,
+      reqType,
+      aAcctOpenTimeFlag,
+      rzrqzqAcctFlag,
+      jrqhjyFlag,
+      custInfo: {
+        invFlag,
+        nonAlertblackFlag,
+        riskEval,
+        riskEvalTime,
+        age,
+        ageFlag,
+      },
+      degreeFlag,
+    } = this.state;
+    const query = {
+      bizId: '',
+      econNum,
+      custTransLvl,
+      stockCustType,
+      reqType,
+      aAcctOpenTimeFlag,
+      rzrqzqAcctFlag,
+      jrqhjyFlag,
+      invFlag,
+      nonAlertblackFlag,
+      riskEval,
+      riskEvalTime,
+      age,
+      ageFlag,
+      degreeFlag,
+    };
+    // 提交前先对提交的数据调验证接口进行进行验证
+    this.props.validateResult(query)
+      .then(() => {
+        const {
+          validateResultData: {
+            isValid,
+            msg,
+          },
+        } = this.props;
+        // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
+        if (isValid) {
+          this.sendCreateRequest(value);
+        } else {
+          Modal.error({
+            title: '提示信息',
+            okText: '确定',
+            content: msg,
+          });
         }
       });
-      // 获取股票客户类型,申请类型,开立期权市场类别,业务受理营业部的下拉选择
-      getSelectMap({ flowId });
-    }
+  }
+
+  // 发送请求，先走新建（修改）接口，再走
+  @autobind
+  sendCreateRequest(value) {
+    const {
+      flowId,
+      customer: {
+        brokerNumber: econNum,
+        cusId: custId,
+        custName,
+        custType,
+      },
+      custTransLvl,
+      stockCustType,
+      reqType,
+      aAcctOpenTimeFlag,
+      rzrqzqAcctFlag,
+      jrqhjyFlag,
+      custInfo: {
+        divisionId,
+        openDivId,
+        idType,
+        idNum,
+        aAcct,
+        openSys,
+        isProfessInvset,
+        invFlag,
+        nonAlertblackFlag,
+        riskEval,
+        riskEvalTime,
+        age,
+        ageFlag,
+        investPrefer,
+      },
+      degreeFlag,
+      openOptMktCatg,
+      busPrcDivId,
+      accptTime,
+      declareBus,
+      attachment,
+      auditors,
+    } = this.state;
+    const query = {
+      id: '',
+      bizId: '',
+      flowId,
+      custId,
+      custName,
+      custType,
+      econNum,
+      divisionId,
+      openDivId,
+      idType,
+      idNum,
+      aAcct,
+      openSys,
+      isProfessInvset,
+      custTransLvl,
+      stockCustType,
+      reqType,
+      openOptMktCatg,
+      busPrcDivId,
+      accptTime,
+      declareBus,
+      srType: SRTYPE,
+      attachment,
+      aAcctOpenTimeFlag,
+      rzrqzqAcctFlag,
+      jrqhjyFlag,
+      invFlag,
+      nonAlertblackFlag,
+      riskEval,
+      riskEvalTime,
+      age,
+      ageFlag,
+      degreeFlag,
+      investPrefer,
+      auditors: !_.isEmpty(value) ? value.login : auditors,
+    };
+    this.props.updateBindingFlow(query)
+      .then(() => {
+        this.sendDoApproveRequest(value);
+      });
+  }
+
+  // 走流程接口
+  @autobind
+  sendDoApproveRequest(value) {
+    const {
+      doApprove,
+      updateBindingFlowAppId,
+      queryAppList,
+      location: { query, query: { pageNum, pageSize } },
+    } = this.props;
+    const { groupName, auditors, operate } = this.state;
+    doApprove({
+      itemId: updateBindingFlowAppId,
+      groupName,
+      auditors: !_.isEmpty(value) ? value.login : auditors,
+      operate,
+    }).then(() => {
+      message.success('股票期权申请新建成功');
+      this.setState({
+        isShowModal: false,
+      }, () => {
+        // 新建成功，清楚新建弹框的数据
+        this.props.clearProps();
+        queryAppList(query, pageNum, pageSize);
+      });
+    });
   }
 
   // 更新基本信息数据
@@ -539,22 +788,21 @@ export default class CreateApply extends PureComponent {
     const {
       busCustList,
       custInfo,
-      getCustInfo,
       stockCustTypeMap,
       reqTypeMap,
       klqqsclbMap,
       busDivisionMap,
-      getSelectMap,
       acceptOrgData,
       queryAcceptOrg,
     } = this.props;
     const {
       isShowModal,
+      createButtonList,
       customer,
       accptTime,
+      busPrcDivId,
       custTransLv,
       custTransLvName,
-      flowId,
       isShowCustomerStatusError,
       customerStatusErrorMessage,
       // 客户交易级别校验
@@ -584,6 +832,8 @@ export default class CreateApply extends PureComponent {
       // 已提供金融期货交易证明校验
       isShowJrqhjyFlagStatusError,
       jrqhjyFlagStatusErrorMessage,
+      nextApproverModal,
+      nextApproverList,
     } = this.state;
     // 客户交易级别校验
     const customerStatusErrorProps = isShowCustomerStatusError ? {
@@ -591,6 +841,22 @@ export default class CreateApply extends PureComponent {
       validateStatus: 'error',
       help: customerStatusErrorMessage,
     } : null;
+    // 下一步按钮
+    const selfBtnGroup = (<BottonGroup
+      list={createButtonList}
+      onEmitEvent={this.handleSubmit}
+    />);
+    const searchProps = {
+      visible: nextApproverModal,
+      onOk: this.validateResult,
+      onCancel: () => { this.setState({ nextApproverModal: false }); },
+      dataSource: nextApproverList,
+      columns: approvalColumns,
+      title: '选择下一审批人员',
+      modalKey: 'phoneApplyNextApproverModal',
+      rowKey: 'login',
+      searchShow: false,
+    };
     return (
       <CommonModal
         title="新增股票期权评估申请"
@@ -599,6 +865,7 @@ export default class CreateApply extends PureComponent {
         closeModal={this.handleCloseModal}
         afterClose={this.afterClose}
         visible={isShowModal}
+        selfBtnGroup={selfBtnGroup}
         size="large"
       >
         <div className={styles.createApplyBox}>
@@ -631,14 +898,12 @@ export default class CreateApply extends PureComponent {
               reqTypeMap={reqTypeMap}
               klqqsclbMap={klqqsclbMap}
               busDivisionMap={busDivisionMap}
-              getSelectMap={getSelectMap}
               customer={customer}
               custInfo={custInfo}
               accptTime={accptTime}
+              busPrcDivId={busPrcDivId}
               custTransLv={custTransLv}
               custTransLvName={custTransLvName}
-              getCustInfo={getCustInfo}
-              flowId={flowId}
               onEmitEvent={this.handleEmitEvent}
               isShowCustTransLvStatusError={isShowCustTransLvStatusError}
               custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
@@ -672,6 +937,7 @@ export default class CreateApply extends PureComponent {
               needDefaultText={false}
             />
           </div>
+          <TableDialog {...searchProps} />
         </div>
       </CommonModal>
     );

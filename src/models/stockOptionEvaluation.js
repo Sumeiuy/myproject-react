@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 17:15:59
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-14 14:01:52
+ * @Last Modified time: 2018-06-18 20:13:54
  */
 
 import { stockOptionEvaluation as api } from '../api';
@@ -30,6 +30,12 @@ export default {
     busDivisionMap: EMPTY_LIST,
     // 受理营业部变更
     acceptOrgData: EMPTY_OBJECT,
+    // 新建页面获取下一步按钮和审批人
+    createButtonList: EMPTY_OBJECT,
+    // 验证提交数据结果
+    validateResultData: {},
+    // 新建修改的更新接口
+    updateBindingFlowAppId: '',
   },
   reducers: {
     // 股票期权申请页面-右侧详情
@@ -121,6 +127,33 @@ export default {
         acceptOrgData: resultData,
       };
     },
+
+    // 新建页面获取下一步按钮和审批人
+    getCreateButtonListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        createButtonList: resultData,
+      };
+    },
+
+    // 验证提交数据成功
+    validateResultSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        validateResultData: resultData,
+      };
+    },
+
+    // 新建修改的更新接口
+    updateBindingFlowSuccess(state, action) {
+      const { payload: { resultData = '' } } = action;
+      return {
+        ...state,
+        updateBindingFlowAppId: resultData,
+      };
+    },
   },
   effects: {
     // 股票期权申请页面-右侧详情
@@ -181,6 +214,38 @@ export default {
       const response = yield call(api.queryAcceptOrg, payload);
       yield put({
         type: 'queryAcceptOrgSuccess',
+        payload: response,
+      });
+    },
+
+    // 新建页面获取下一步按钮和审批人
+    * getCreateButtonList({ payload }, { call, put }) {
+      const response = yield call(api.queryNextApproval, payload);
+      yield put({
+        type: 'getCreateButtonListSuccess',
+        payload: response,
+      });
+    },
+
+    // 验证提交数据
+    * validateResult({ payload }, { call, put }) {
+      const response = yield call(api.validateData, payload);
+      yield put({
+        type: 'validateResultSuccess',
+        payload: response,
+      });
+    },
+
+    // 走流程接口
+    * doApprove({ payload }, { call }) {
+      yield call(api.doApprove, payload);
+    },
+
+    // 更新接口
+    * updateBindingFlow({ payload }, { call, put }) {
+      const response = yield call(api.updateBindingFlow, payload);
+      yield put({
+        type: 'updateBindingFlowSuccess',
         payload: response,
       });
     },

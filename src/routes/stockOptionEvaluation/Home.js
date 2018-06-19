@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-14 23:01:51
+ * @Last Modified time: 2018-06-18 20:49:50
  */
 
 import React, { PureComponent } from 'react';
@@ -43,6 +43,14 @@ const effects = {
   clearProps: 'stockOptionEvaluation/clearProps',
   // 受理营业部变更
   queryAcceptOrg: 'stockOptionEvaluation/queryAcceptOrg',
+  // 新建页面获取下一步按钮和审批人
+  getCreateButtonList: 'stockOptionEvaluation/getCreateButtonList',
+  // 验证提交数据结果
+  validateResult: 'stockOptionEvaluation/validateResult',
+  // 走流程接口
+  doApprove: 'stockOptionEvaluation/doApprove',
+  // 新建修改的更新接口
+  updateBindingFlow: 'stockOptionEvaluation/updateBindingFlow',
 };
 
 const mapStateToProps = state => ({
@@ -68,6 +76,12 @@ const mapStateToProps = state => ({
   busDivisionMap: state.stockOptionEvaluation.busDivisionMap,
   // 受理营业部变更
   acceptOrgData: state.stockOptionEvaluation.acceptOrgData,
+  // 新建页面获取下一步按钮和审批人
+  createButtonList: state.stockOptionEvaluation.createButtonList,
+  // 验证提交数据结果
+  validateResultData: state.stockOptionEvaluation.validateResultData,
+  // 新建修改的更新接口
+  updateBindingFlowAppId: state.stockOptionEvaluation.updateBindingFlowAppId,
 });
 
 const mapDispatchToProps = {
@@ -87,6 +101,14 @@ const mapDispatchToProps = {
   clearProps: effect(effects.clearProps, { forceFull: true }),
   // 受理营业部变更
   queryAcceptOrg: effect(effects.queryAcceptOrg, { forceFull: true }),
+  // 新建页面获取下一步按钮和审批人
+  getCreateButtonList: effect(effects.getCreateButtonList, { forceFull: true }),
+  // 验证提交数据结果
+  validateResult: effect(effects.validateResult, { forceFull: true }),
+  // 走流程接口
+  doApprove: effect(effects.doApprove, { forceFull: true }),
+  // 新建修改的更新接口
+  updateBindingFlow: effect(effects.updateBindingFlow, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -100,7 +122,7 @@ export default class StockOptionApplication extends PureComponent {
     // 右侧详情数据
     detailInfo: PropTypes.object.isRequired,
     getDetailInfo: PropTypes.func.isRequired,
-    // 详情页面服务经理表格申请数据
+    // 附件数据
     attachmentList: PropTypes.array,
     getAttachmentList: PropTypes.func.isRequired,
     // 本营业部客户
@@ -124,6 +146,17 @@ export default class StockOptionApplication extends PureComponent {
     // 受理营业部变更
     acceptOrgData: PropTypes.object.isRequired,
     queryAcceptOrg: PropTypes.func.isRequired,
+    // 新建页面获取下一步按钮和审批人
+    createButtonList: PropTypes.object.isRequired,
+    getCreateButtonList: PropTypes.func.isRequired,
+    // 验证提交数据结果
+    validateResultData: PropTypes.object.isRequired,
+    validateResult: PropTypes.func.isRequired,
+    // 走流程接口
+    doApprove: PropTypes.func.isRequired,
+    // 新建修改的更新接口
+    updateBindingFlowAppId: PropTypes.string.isRequired,
+    updateBindingFlow: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -308,6 +341,10 @@ export default class StockOptionApplication extends PureComponent {
     this.setState({ isShowCreateModal: false });
   }
 
+  // 申请新建按钮是否显示
+  handleShowCreateBtn() {
+    return permission.hasPermissionOfStockApplyCreate();
+  }
 
   // 渲染列表项里面的每一项
   @autobind
@@ -325,11 +362,6 @@ export default class StockOptionApplication extends PureComponent {
         pageData={stockOptionApply}
       />
     );
-  }
-
-  // 申请新建按钮是否显示
-  handleShowCreateBtn() {
-    return permission.hasPermissionOfStockApplyCreate();
   }
 
   render() {
@@ -351,6 +383,13 @@ export default class StockOptionApplication extends PureComponent {
       clearProps,
       acceptOrgData,
       queryAcceptOrg,
+      createButtonList,
+      getCreateButtonList,
+      validateResultData,
+      validateResult,
+      doApprove,
+      updateBindingFlowAppId,
+      updateBindingFlow,
     } = this.props;
     const { isShowCreateModal } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
@@ -391,7 +430,7 @@ export default class StockOptionApplication extends PureComponent {
 
     const rightPanel = (
       <Detail
-        data={detailInfo}
+        detailInfo={detailInfo}
         attachmentList={attachmentList}
       />
     );
@@ -405,6 +444,7 @@ export default class StockOptionApplication extends PureComponent {
         />
         { isShowCreateModal ?
           <CreateApply
+            location={location}
             empInfo={empInfo}
             busCustList={busCustList}
             getBusCustList={getBusCustList}
@@ -419,6 +459,14 @@ export default class StockOptionApplication extends PureComponent {
             getSelectMap={getSelectMap}
             acceptOrgData={acceptOrgData}
             queryAcceptOrg={queryAcceptOrg}
+            createButtonList={createButtonList}
+            getCreateButtonList={getCreateButtonList}
+            validateResultData={validateResultData}
+            validateResult={validateResult}
+            doApprove={doApprove}
+            updateBindingFlowAppId={updateBindingFlowAppId}
+            updateBindingFlow={updateBindingFlow}
+            queryAppList={this.queryAppList}
           />
           : null
         }

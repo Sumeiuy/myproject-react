@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 16:24:22
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-14 13:55:21
+ * @Last Modified time: 2018-06-18 21:55:31
  */
 export default function stockOptionEvaluation(api) {
   return {
@@ -21,15 +21,15 @@ export default function stockOptionEvaluation(api) {
     // 删除附件
     deleteAttachment: query => api.post('/file/ceFileDelete2', query),
     // 更新接口（新建和修改）
-    updateApplication: query => api.post('/groovynoauth/fsp/stockOptionApplication/update', query),
+    updateBindingFlow: query => api.post('/groovynoauth/fsp/biz/stockOptionApplication/update', query),
     // 走流程接口
     doApprove: query => api.post('/groovynoauth/fsp/stockOptionApplication/doApprove', query),
     // 验证提交数据接口
-    validateData: query => api.post('/groovynoauth/fsp/stockOptionApplication/validate', query),
+    validateData: query => api.post('/groovynoauth/fsp/biz/stockOptionApplication/validate', query),
     // 选择客户获取用户信息
     getCustInfo: query => api.post('/groovynoauth/fsp/biz/stockOptionApplication/custInfo', query),
     // 查询本营业部客户
-    getBusCustList: query => api.post('/groovynoauth/fsp/biz/queryBusCustList', query),
+    getBusCustList: query => api.post('/groovynoauth/fsp/biz/custList2', query),
     // 基本信息的多个select数据
     getSelectMap: query => api.post('/groovynoauth/fsp/biz/stockOptionApplication/typeMap', query),
     // 受理营业部变更查询
