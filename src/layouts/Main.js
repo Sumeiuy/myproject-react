@@ -65,13 +65,15 @@ const mapDispatchToProps = {
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
 };
 
+const PHONE = 'phone';
+
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Main extends Component {
 
   static propTypes = {
     children: PropTypes.node.isRequired,
-    loading: PropTypes.bool.isRequired,
+    loading: PropTypes.number.isRequired,
     loadingForceFull: PropTypes.bool,
     getCustomerScope: PropTypes.func.isRequired,
     interfaceState: PropTypes.object.isRequired,
@@ -115,6 +117,9 @@ export default class Main extends Component {
       serviceRecordInfo,
       location,
     } = this.props;
+    const { caller = '' } = serviceRecordInfo;
+    // 当前服务记录弹窗是否由电话调起的
+    const isPhoneCall = caller === PHONE;
     return (
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
@@ -145,6 +150,7 @@ export default class Main extends Component {
                               ceFileDelete={ceFileDelete}
                               taskFeedbackList={motSelfBuiltFeedbackList}
                               serviceRecordInfo={serviceRecordInfo}
+                              isPhoneCall={isPhoneCall}
                             />
                           </div>
                         : null

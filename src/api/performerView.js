@@ -29,7 +29,7 @@ export default function performerView(api) {
     // 管理者视图任务实施进度
     countFlowStatus: query => api.post('/groovynoauth/fsp/campaign/mot/countFlowStatus', query),
     // 添加服务记录中 服务类型
-    getServiceType: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList2', query),
+    getServiceType: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList22ForTask', query),
     // 问卷调查
     getTempQuesAndAnswer: query => api.post('/groovynoauth/fsp/assess/common/queryTempQuesAndAnswer', query),
     // 问卷调查保存答案
@@ -54,5 +54,15 @@ export default function performerView(api) {
     queryCustFeedbackList: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustOptionsByTaskType', query),
     // 查询涨乐财富通服务方式下的审批人
     queryApproval: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryNextApproval', query),
+    // 查询服务结果进度
+    queryExecutorFlowStatus: query => api.post('/groovynoauth/fsp/campaign/mot/queryExecutorFlowStatus', query),
+    // 查询服务结果客户反馈
+    queryExecutorFeedBack: query => api.post('/groovynoauth/fsp/campaign/mot/queryExecutorFeedBack', query),
+    // 查询客户明细
+    queryExecutorDetail: query => api.post('/groovynoauth/fsp/campaign/mot/queryExecutorDetail', query),
+    // 服务经理维度查询客户明细
+    previewCustDetailByScope: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustListDetailOfMission', query),
+    // 获取服务经理维度去重后的客户数量
+    queryDistinctCustListDetailOfMission: query => api.post('/groovynoauth/fsp/campaign/mot/queryDistinctCustListDetailOfMission', query),
   };
 }

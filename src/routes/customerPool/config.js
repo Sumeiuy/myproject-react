@@ -35,13 +35,28 @@ const ENTER_TYPE = {
   sightingTelescope: 'labelSearchCustPool',
   // 非理财平台
   external: 'searchCustPool',
+  // 产品潜在目标客户，产品中心外部跳转
+  productPotentialTargetCust: 'labelSearchCustPool',
 };
 
+// 全量的source集合
+const FULL_ENTERLIST = ['search', 'tag', 'sightingTelescope', 'business', 'association', 'external',
+  'orderCombination', 'securitiesProducts', 'productPotentialTargetCust', 'custIndicator', 'numOfCustOpened'];
+
 // 任务管理岗权限作用的首页入口列表
-const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'external',
-  'orderCombination', 'securitiesProducts'];
+// 新增一个产品潜在目标客户，用的HTSC 任务管理岗职责
+const ENTERLIST_PERMISSION_TASK_MANAGE = ['search', 'tag', 'sightingTelescope', 'association', 'external',
+  'orderCombination', 'securitiesProducts', 'productPotentialTargetCust'];
+
 // 首页指标查询权限作用的首页入口列表
-const ENTERLIST2 = ['custIndicator', 'numOfCustOpened'];
+const ENTERLIST_PERMISSION_INDEX_QUERY = ['custIndicator', 'numOfCustOpened'];
+
+// 是否需要展示客户列表瞄准镜筛选条件source集合
+// 是否需要请求瞄准镜filterList的source集合
+const ENTERLIST_PERMISSION_SIGHTINGLABEL = ['sightingTelescope', 'productPotentialTargetCust'];
+
+// 是否需要展示可开通业务source集合
+const ENTERLIST_PERMISSION_OPENED_BUSINESS = ['numOfCustOpened', 'business', 'sightingTelescope'];
 
 export default {
   NOPERMIT,
@@ -50,7 +65,10 @@ export default {
   ORG,
   MAIN_MAGEGER_ID,
   ENTER_TYPE,
-  ENTERLIST1,
-  ENTERLIST2,
   ALL_DEPARTMENT_ID,
+  FULL_ENTERLIST,
+  ENTERLIST_PERMISSION_TASK_MANAGE,
+  ENTERLIST_PERMISSION_INDEX_QUERY,
+  ENTERLIST_PERMISSION_SIGHTINGLABEL,
+  ENTERLIST_PERMISSION_OPENED_BUSINESS,
 };

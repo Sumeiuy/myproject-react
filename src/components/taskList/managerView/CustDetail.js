@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-10 17:50:03
+ * @Last Modified time: 2018-06-15 09:46:16
  * 客户明细数据
  */
 
@@ -18,12 +18,12 @@ import { permission } from '../../../helper';
 import SingleFilter from '../../customerPool/common/NewSingleFilter';
 import styles from './custDetail.less';
 import tableStyles from '../../common/commonTable/index.less';
-import iconMoney from './img/icon-money.png';
-import iconDiamond from './img/icon-diamond-card.png';
-import iconGold from './img/icon-gold-card.png';
-import iconSliver from './img/icon-sliver-card.png';
-import iconWhiteGold from './img/icon-white-gold.png';
-import iconEmpty from './img/icon-empty.png';
+import iconMoney from '../performerView/img/iconMoney.png';
+import iconDiamond from '../performerView/img/iconDiamond.png';
+import iconGold from '../performerView/img/iconGold.png';
+import iconSliver from '../performerView/img/iconSliver.png';
+import iconWhiteGold from '../performerView/img/iconWhiteGold.png';
+import iconEmpty from '../performerView/img/iconNull.png';
 import logable from '../../../decorators/logable';
 
 const EMPTY_LIST = [];
@@ -482,22 +482,23 @@ export default class CustDetail extends PureComponent {
               */}
               {isEntryFromPie || isEntryFromCustTotal ?
                 <div className={styles.filterSection}>
-                  <div
-                    className={styles.filter}
-                  >
-                    <SingleFilter
-                      value={currentSelectFeedbackIdL1 || ''}
-                      filterLabel="客户反馈"
-                      filter="custFeedbackL1"
-                      filterField={feedbackL1List}
-                      onChange={this.handleFeedbackL1Change}
-                    />
-                  </div>
                   {
-                    !_.isEmpty(feedbackL2List) ?
+                    !_.isEmpty(feedbackL1List) ?
                       <div
                         className={styles.filter}
                       >
+                        <SingleFilter
+                          value={currentSelectFeedbackIdL1 || ''}
+                          filterLabel="客户反馈"
+                          filter="custFeedbackL1"
+                          filterField={feedbackL1List}
+                          onChange={this.handleFeedbackL1Change}
+                        />
+                      </div> : null
+                  }
+                  {
+                    !_.isEmpty(feedbackL2List) ?
+                      <div className={styles.filter}>
                         <SingleFilter
                           value={currentSelectFeedbackIdL2 || ''}
                           filterLabel=""

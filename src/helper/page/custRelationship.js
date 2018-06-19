@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-14 20:00:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 14:45:32
+ * @Last Modified time: 2018-06-15 16:00:04
  * @description 融资类业务提交数据时的校验函数
  */
 import _ from 'lodash';
@@ -147,7 +147,7 @@ function validateSubmitData(state) {
         valid: false,
       };
     }
-    if (!hasOneMoreMarriageRelation()) {
+    if (hasOneMoreMarriageRelation()) {
       return {
         msg: '家庭成员夫妻类关联关系超过1条！',
         valid: false,
@@ -162,7 +162,7 @@ function validateSubmitData(state) {
         valid: false,
       };
     }
-    if (!hasOneMoreRealControllerRelation()) {
+    if (hasOneMoreRealControllerRelation()) {
       return {
         msg: '实际控制人关联关系超过1条！',
         valid: false,
@@ -177,7 +177,7 @@ function validateSubmitData(state) {
         valid: false,
       };
     }
-    if (!hasOneMoreProduceManagerRelation()) {
+    if (hasOneMoreProduceManagerRelation()) {
       return {
         msg: '产品管理人关联关系超过1条！',
         valid: false,

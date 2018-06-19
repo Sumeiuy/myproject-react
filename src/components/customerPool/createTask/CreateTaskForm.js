@@ -13,9 +13,20 @@ import { isSightingScope } from '../helper';
 import {
   RETURN_TASK_FROM_TODOLIST,
   RETURN_TASK_FROM_TASKLIST,
+  CUST_GROUP_LIST,
   PIE_ENTRY,
   PROGRESS_ENTRY,
-  CUST_GROUP_LIST,
+  BUSINESS_ENTRY,
+  SEARCH_ENTRY,
+  PRODUCT_POTENTIAL_TARGET_CUST_ENTRY,
+  SECURITIES_PRODUCTS_ENTRY,
+  ORDER_COMBINATION_ENTRY,
+  EXTERNAL_ENTRY,
+  ASSOCIATION_ENTRY,
+  TAG_ENTRY,
+  CUSTINDICATOR_ENTRY,
+  NUMOFCUSTOPENED_ENTRY,
+  TASK_CUST_SCOPE_ENTRY,
 } from '../../../config/createTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
@@ -23,7 +34,6 @@ import { PRODUCT_ARGUMENTS } from './config';
 import { getLabelInfo } from '../../../helper/page/customerPool';
 
 const NOOP = _.noop;
-// const EMPTY_OBJECT = {};
 
 // 瞄准镜发起任务，需要替换的文本，用来构造mention的可选项列表
 // \s*匹配0个或多个空格，尽量可能匹配多个空格
@@ -46,7 +56,6 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorInfo: PropTypes.bool,
     isShowErrorTaskType: PropTypes.bool.isRequired,
     isShowErrorExcuteType: PropTypes.bool.isRequired,
-    isShowErrorTaskSubType: PropTypes.bool.isRequired,
     custCount: PropTypes.number,
     missionType: PropTypes.string,
     taskBasicInfo: PropTypes.object,
@@ -101,8 +110,7 @@ export default class CreateTaskForm extends PureComponent {
     } else {
       this.setState({
         defaultMissionName: previousData.taskName,
-        defaultMissionType: previousData.taskType, // 'Mission'
-        defaultTaskSubType: previousData.taskSubType, // ''
+        defaultMissionType: previousData.taskType,
         defaultExecutionType: previousData.executionType,
         defaultMissionDesc: templetDesc || previousData.templetDesc,
         defaultInitialValue: previousData.timelyIntervalValue,
@@ -114,6 +122,16 @@ export default class CreateTaskForm extends PureComponent {
   @autobind
   getData() {
     return this.taskFormInfoRef.getData();
+  }
+
+  // 返回持仓产品发起任务时，任务提示的文字
+  getDefaultMissionDescFromProduct(query = {}) {
+    let defaultMissionDesc = '';
+    if (this.isFromExternalProduct(query)) {
+      const { productName = '', id = '' } = query;
+      defaultMissionDesc = `客户当前持有${productName}，数量为 $持仓数量#${id}# ，市值为 $持仓市值#${id}# 。`;
+    }
+    return defaultMissionDesc;
   }
 
   // 从业务目标池客户：businessCustPool
@@ -148,7 +166,6 @@ export default class CreateTaskForm extends PureComponent {
     const { motDetailModel = {} } = taskBasicInfo;
     let defaultMissionName = '';
     let defaultMissionType = '';
-    let defaultTaskSubType = '';
     let defaultExecutionType = '';
     let defaultServiceStrategySuggestion = '';
     let defaultInitialValue = null;
@@ -175,10 +192,9 @@ export default class CreateTaskForm extends PureComponent {
     }
     // 判断source不同值，从什么页面进来，给不同的默认值
     switch (source) {
-      case 'business':
+      case BUSINESS_ENTRY:
         defaultMissionName = '提醒客户办理已满足条件的业务'; // 任务名称
         defaultMissionType = '25'; // 任务类型
-        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Mission'; // 执行方式
         defaultKey = 'UNRIGHTS';
         // 任务提示
@@ -186,38 +202,40 @@ export default class CreateTaskForm extends PureComponent {
         defaultInitialValue = 8; // 有效期
         break;
       // 非理财平台
-      case 'external':
+      case EXTERNAL_ENTRY:
         defaultMissionType = '请选择';
-        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
         defaultInitialValue = 4; // 有效期4天
         defaultMissionDesc = this.getDefaultMissionDescFromProduct(query);
         break;
-      // 精选组合页面的订购组合、证券产品、首页的联想词、首页的模糊搜索、首页的热词
-      case 'securitiesProducts':
-      case 'orderCombination':
-      case 'association':
-      case 'search':
-      case 'tag':
+      // 产品潜在目标客户跳转
+      // 精选组合页面的订购组合
+      // 证券产品
+      // 首页的联想词
+      // 首页的模糊搜索
+      // 首页的热词
+      case PRODUCT_POTENTIAL_TARGET_CUST_ENTRY:
+      case SECURITIES_PRODUCTS_ENTRY:
+      case ORDER_COMBINATION_ENTRY:
+      case ASSOCIATION_ENTRY:
+      case SEARCH_ENTRY:
+      case TAG_ENTRY:
         defaultMissionType = '请选择';
-        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
         defaultInitialValue = 4; // 有效期4天
         break;
-      case 'custIndicator':
+      case CUSTINDICATOR_ENTRY:
         defaultMissionName = '新客户回访';
         defaultMissionType = '26';
-        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
         defaultKey = 'ACCOUNT_OPEN_DATE';
         defaultMissionDesc = `用户在 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 开户，建议跟踪服务了解客户是否有问题需要解决。`;
         defaultInitialValue = 8;
         break;
-      case 'numOfCustOpened':
+      case NUMOFCUSTOPENED_ENTRY:
         defaultMissionName = '业务开通回访';
         defaultMissionType = '26';
-        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = 'Chance';
         defaultKey = 'RIGHTS';
         defaultMissionDesc = `用户在 2 周内办理了 ${this.handleKey(defaultKey, custIndexPlaceHolders)} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
@@ -226,21 +244,19 @@ export default class CreateTaskForm extends PureComponent {
         break;
       case PROGRESS_ENTRY:
       case PIE_ENTRY:
+      case TASK_CUST_SCOPE_ENTRY:
         defaultMissionType = missionType || '请选择';
-        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
         break;
       case CUST_GROUP_LIST:
         defaultMissionName = '';
         defaultMissionType = '请选择';
-        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
         break;
       case RETURN_TASK_FROM_TODOLIST:
       case RETURN_TASK_FROM_TASKLIST:
         defaultMissionName = motDetailModel.eventName; // 任务名称
         defaultMissionType = motDetailModel.eventType; // 任务类型
-        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = this.handleTaskType(motDetailModel.exeType); // 执行方式
         defaultKey = 'UNRIGHTS';
         defaultServiceStrategySuggestion = motDetailModel.strategyDesc;
@@ -250,7 +266,6 @@ export default class CreateTaskForm extends PureComponent {
         break;
       default:
         defaultMissionType = '请选择';
-        defaultTaskSubType = '请选择'; // 任务子类型
         defaultExecutionType = '请选择';
         break;
     }
@@ -273,23 +288,12 @@ export default class CreateTaskForm extends PureComponent {
       count,
       custIdList,
       searchReq,
-      defaultTaskSubType,
     });
-  }
-
-  // 返回持仓产品发起任务时，任务提示的文字
-  getDefaultMissionDescFromProduct(query = {}) {
-    let defaultMissionDesc = '';
-    if (this.isFromExternalProduct(query)) {
-      const { productName = '', id = '' } = query;
-      defaultMissionDesc = `客户当前持有${productName}，数量为 $持仓数量#${id}# ，市值为 $持仓市值#${id}# 。`;
-    }
-    return defaultMissionDesc;
   }
 
   // 判断是否从外部持仓产品进入的列表页发起任务的
   isFromExternalProduct(query = {}) {
-    return query.source === 'external' && query.type === 'PRODUCT';
+    return query.source === EXTERNAL_ENTRY && query.type === 'PRODUCT';
   }
 
   /**
@@ -342,7 +346,6 @@ export default class CreateTaskForm extends PureComponent {
       isShowErrorInfo,
       isShowErrorTaskType,
       isShowErrorExcuteType,
-      isShowErrorTaskSubType,
       isShowErrorIntervalValue,
       isShowErrorStrategySuggestion,
       isShowErrorTaskName,
@@ -362,7 +365,6 @@ export default class CreateTaskForm extends PureComponent {
       defaultMissionDesc,
       defaultInitialValue,
       defaultServiceStrategySuggestion,
-      defaultTaskSubType,
       firstUserName,
       count,
       statusData,
@@ -408,8 +410,6 @@ export default class CreateTaskForm extends PureComponent {
             isShowErrorIntervalValue={isShowErrorIntervalValue}
             isShowErrorStrategySuggestion={isShowErrorStrategySuggestion}
             isShowErrorTaskName={isShowErrorTaskName}
-            defaultTaskSubType={defaultTaskSubType}
-            isShowErrorTaskSubType={isShowErrorTaskSubType}
             templetDescSuggestion={templetDescSuggestion}
             wrappedComponentRef={ref => this.taskFormInfoRef = ref}
             productDescSuggestions={productDescSuggestions}

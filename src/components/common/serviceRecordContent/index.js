@@ -1,14 +1,15 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-21 13:34:27
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-15 15:43:07
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import cx from 'classnames';
 import { Select, DatePicker, Radio, Form } from 'antd';
 import moment from 'moment';
 import Uploader from '../../common/uploader';
@@ -28,8 +29,9 @@ import {
   errorFeedback,
   serveStatusRadioGroupMap,
   getServeWayByCodeOrName,
-  PHONE,
- } from './utils';
+  defaultFeedback,
+  defaultFeedbackOption,
+} from './utils';
 
 import styles from './index.less';
 
@@ -168,18 +170,16 @@ export default class ServiceRecordContent extends PureComponent {
   getDefaultFeedback(props) {
     const {
       isEntranceFromPerformerView,
-      formData: { motCustfeedBackDict, isTaskFeedbackListOfNone },
+      formData: { motCustfeedBackDict },
     } = props;
-    let feedback = null;
     let { serviceTypeCode } = props.formData;
     // 如果从客户列表|360视图那边过来,给一个默认的服务类型
     if (!isEntranceFromPerformerView) {
       serviceTypeCode = motCustfeedBackDict[0].key;
     }
-    if (!isTaskFeedbackListOfNone) {
-      const feedbackList = this.findFeedbackListByServiceTypeCode(serviceTypeCode, props);
-      feedback = feedbackList[0];
-    }
+    // 通过服务类型找到反馈，并默认取第一个
+    const feedbackList = this.findFeedbackListByServiceTypeCode(serviceTypeCode, props);
+    const feedback = feedbackList[0];
     return this.fixCustomerFeedback(feedback);
   }
 
@@ -193,9 +193,7 @@ export default class ServiceRecordContent extends PureComponent {
       dict: { serveWay },
     } = props;
     let { serviceTypeCode } = fd;
-    // 默认取第一个客户反馈
-    const defaultFeedback = this.getDefaultFeedback(props);
-    // 如果从客户列表|360视图那边过来,给一个默认的服务类型
+    // 不是只读状态下，也就是新增状态下，默认客户反馈只展示一级，并且给一个默认值：请选择
     if (!isEntranceFromPerformerView) {
       serviceTypeCode = fd.motCustfeedBackDict[0].key;
     }
@@ -228,9 +226,9 @@ export default class ServiceRecordContent extends PureComponent {
       serviceRecord: '',
       // 客户反馈, 非涨乐财富通下，存在二级客户反馈的情况
       custFeedback: defaultFeedback.key,
-      custFeedback2: defaultFeedback.children.key,
+      custFeedback2: defaultFeedback.children && defaultFeedback.children.key,
       custFeedbackText: defaultFeedback.value,
-      custFeedbackText2: defaultFeedback.children.value,
+      custFeedbackText2: defaultFeedback.children && defaultFeedback.children.value,
       // 客户反馈时间, 年月日
       custFeedbackTime: moment(),
       // 涨乐财富通服务方式下的客户反馈
@@ -337,6 +335,9 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackTime: moment(fd.feedbackDate, DATE_FORMAT_END),
       isSelectZhangleFins: serveWayUtil.isZhangle(serviceWayCode),
       ZLCustFeedback: ZLCustFeedbackText,
+      isShowErrorCustFeedback: false,
+      isShowServeStatusError: false,
+      isShowServiceContentError: false,
       ...zlSC,
     };
   }
@@ -347,45 +348,98 @@ export default class ServiceRecordContent extends PureComponent {
     this.serveContentRef = ref;
   }
 
+  /**
+   * 改变当前表单错误的状态
+   * @param {*object} state 当前状态
+   */
+  @autobind
+  toggleFormContentErrorState(state) {
+    this.setState({
+      ...state,
+    });
+  }
+
   // 针对选择的服务方式，非涨乐财富通下的检测
   @autobind
   checkNotZLFins() {
-    const { isEntranceFromPerformerView, serviceRecordInfo: { caller } } = this.props;
-    const { serviceStatus, serviceRecord } = this.state;
-    let isShowServeStatusError = false;
-    let isShowServiceContentError = false;
+    const { isPhoneCall } = this.props;
+    const { serviceRecord } = this.state;
+    // 校验服务状态
+    const isShowServeStatusError = this.checkServiceStatus();
     // 校验服务记录
-    isShowServiceContentError = !serviceRecord || serviceRecord.length > serviceContentMaxLength;
-    this.setState({ isShowServiceContentError });
-    // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容
-    if (caller === PHONE) {
-      return !isShowServiceContentError;
+    const isShowServiceContentError = !serviceRecord
+      || serviceRecord.length > serviceContentMaxLength;
+    // 校验客户反馈
+    const isShowErrorCustFeedback = this.checkCustFeedbackError();
+    // 默认是校验结果正确
+    let hasError = false;
+
+    // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容和客户反馈一二级
+    if (isPhoneCall) {
+      hasError = isShowErrorCustFeedback || isShowServiceContentError;
+    } else {
+      hasError = isShowErrorCustFeedback || isShowServiceContentError || isShowServeStatusError;
     }
+
+    return {
+      hasError,
+      errorState: {
+        isShowServeStatusError,
+        isShowErrorCustFeedback,
+        isShowServiceContentError,
+      },
+    };
+  }
+
+  /**
+   * 校验执行者视图下面的服务状态
+   */
+  @autobind
+  checkServiceStatus() {
+    const { isEntranceFromPerformerView } = this.props;
+    const { serviceStatus } = this.state;
+    // 在执行者视图中校验 服务状态 是否已经选择
     if (isEntranceFromPerformerView) {
-      // 在执行者视图中校验 服务状态 是否已经选择
-      isShowServeStatusError = _.isEmpty(serviceStatus);
-      this.setState({ isShowServeStatusError });
+      return _.isEmpty(serviceStatus);
     }
-    return !isShowServeStatusError && !isShowServiceContentError;
+    return false;
   }
 
   // 针对选的服务方式，是涨乐财富通的检测
   @autobind
   checkZLFins() {
-    const { isEntranceFromPerformerView } = this.props;
-    const { serviceStatus } = this.state;
-    let isShowServeStatusError = false;
-    if (isEntranceFromPerformerView) {
-      // 在执行者视图中校验 服务状态 是否已经选择
-      isShowServeStatusError = _.isEmpty(serviceStatus);
-      this.setState({ isShowServeStatusError });
+    // 校验服务内容
+    const isShowServiceContentError = this.serveContentRef.checkData();
+    // 校验服务状态
+    const isShowServeStatusError = this.checkServiceStatus();
+    const hasError = isShowServeStatusError || !isShowServiceContentError;
+
+    return {
+      hasError,
+      errorState: {
+        isShowServeStatusError,
+        isShowServiceContentError,
+      },
+    };
+  }
+
+  /**
+   * 校验客户反馈
+   */
+  @autobind
+  checkCustFeedbackError() {
+    const { custFeedback, custFeedback2 } = this.state;
+    // 如果客户反馈一级或者二级没有勾选，提示错误
+    if (custFeedback === defaultFeedbackOption ||
+      custFeedback2 === defaultFeedbackOption) {
+      return true;
     }
-    return !isShowServeStatusError && this.serveContentRef.checkData();
+    return false;
   }
 
   // 提交时候，进行数据校验
   @autobind
-  checkForSubmit() {
+  checkFormError() {
     const { isSelectZhangleFins } = this.state;
     if (isSelectZhangleFins) {
       return this.checkZLFins();
@@ -396,7 +450,12 @@ export default class ServiceRecordContent extends PureComponent {
   // 向组件外部提供所有数据
   @autobind
   getData() {
-    if (!this.checkForSubmit()) return null;
+    // 有错，直接返回，设置错误状态
+    const { hasError, errorState } = this.checkFormError();
+    if (hasError) {
+      this.toggleFormContentErrorState(errorState);
+      return null;
+    }
 
     const {
       // 服务类型
@@ -436,8 +495,8 @@ export default class ServiceRecordContent extends PureComponent {
       serveTime: serviceTime.format(DATE_FORMAT_FULL_END),
       serveContentDesc: serviceRecord,
       feedBackTime: custFeedbackTime.format(DATE_FORMAT_END),
-      serveCustFeedBack: custFeedback,
-      serveCustFeedBack2: custFeedback2,
+      serveCustFeedBack: custFeedback === defaultFeedbackOption ? '' : custFeedback,
+      serveCustFeedBack2: custFeedback2 === defaultFeedbackOption ? '' : custFeedback2,
       flowStatus: serviceStatus,
       missionFlowId,
       missionId,
@@ -475,6 +534,8 @@ export default class ServiceRecordContent extends PureComponent {
     this.clearUploadedFileList();
     this.setState({
       ...this.getDefaultState(this.props),
+      // 客户反馈的报错是自定义的，不是通过FormItem定义的，需要手动清除
+      isShowErrorCustFeedback: false,
     });
   }
 
@@ -610,6 +671,7 @@ export default class ServiceRecordContent extends PureComponent {
     this.setState({
       custFeedback: first,
       custFeedback2: second,
+      isShowErrorCustFeedback: false,
     });
   }
 
@@ -620,7 +682,7 @@ export default class ServiceRecordContent extends PureComponent {
   }
 
   /**
-   * @param {*} result 本次上传结果
+   * @param {*} file 本次上传结果
    */
   @autobind
   handleFileUpload(file) {
@@ -736,6 +798,7 @@ export default class ServiceRecordContent extends PureComponent {
       testWallCollision,
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
+      isPhoneCall,
     } = this.props;
     const {
       isReject,
@@ -750,6 +813,7 @@ export default class ServiceRecordContent extends PureComponent {
       serviceRecord,
       isShowServeStatusError,
       isShowServiceContentError,
+      isShowErrorCustFeedback,
       isSelectZhangleFins,
       ZLCustFeedback,
       ZLCustFeedbackTime,
@@ -774,7 +838,7 @@ export default class ServiceRecordContent extends PureComponent {
     } : null;
 
     // 根据serviceTypeCode获取级联的客户反馈列表
-    let cascadeFeedbackList = motCustfeedBackDict[0].children;
+    let cascadeFeedbackList = (motCustfeedBackDict[0] || {}).children || [];
     if (!isEntranceFromPerformerView) {
       // 如果是从360视图|客户列表页面进入
       cascadeFeedbackList = this.findFeedbackListByServiceTypeCode(serviceType, this.props);
@@ -792,10 +856,15 @@ export default class ServiceRecordContent extends PureComponent {
       desc: ZLServiceContentDesc,
     };
 
-    const { autoGenerateRecordInfo = {}, caller } = serviceRecordInfo;
+    const { autoGenerateRecordInfo = {} } = serviceRecordInfo;
 
     return (
-      <div className={styles.serviceRecordContent}>
+      <div
+        className={cx(
+          styles.serviceRecordContent,
+          { [styles.performerServiceRecord]: isEntranceFromPerformerView },
+        )}
+      >
         <div className={styles.gridWrapper}>
           <ServiceWaySelect
             value={serviceWayCode}
@@ -804,6 +873,7 @@ export default class ServiceRecordContent extends PureComponent {
             options={serveWay}
             empInfo={empInfo}
             serviceRecordInfo={serviceRecordInfo}
+            isPhoneCall={isPhoneCall}
           />
           {/* 执行者试图下显示 服务状态；非执行者视图下显示服务类型 */}
           {
@@ -812,7 +882,7 @@ export default class ServiceRecordContent extends PureComponent {
                 <div className={styles.title}>服务状态:</div>
                 {/* 打电话调的服务记录切服务状态码为30时，显示‘完成’ */}
                 {
-                  caller === PHONE && autoGenerateRecordInfo.flowStatus === '30' ?
+                  isPhoneCall && autoGenerateRecordInfo.flowStatus === '30' ?
                     <div className={styles.content}>完成</div> :
                     <FormItem {...serviceStatusErrorProps}>
                       <div className={styles.content}>
@@ -838,7 +908,7 @@ export default class ServiceRecordContent extends PureComponent {
                       onChange={this.handleServiceTypeSelectChange}
                       getPopupContainer={() => this.serviceTypeRef}
                     >
-                      { this.renderServiceSelectOptions(motCustfeedBackDict) }
+                      {this.renderServiceSelectOptions(motCustfeedBackDict)}
                     </Select>
                   </div>
                 </div>
@@ -849,7 +919,7 @@ export default class ServiceRecordContent extends PureComponent {
             <div className={styles.title}>服务时间:</div>
             <div className={styles.content} ref={this.setServeTimeRef}>
               {
-                serviceRecordInfo.caller === PHONE ?
+                isPhoneCall ?
                   autoGenerateRecordInfo.serveTime :
                   <DatePicker
                     style={{ width: 142 }}
@@ -867,24 +937,25 @@ export default class ServiceRecordContent extends PureComponent {
         {/** 此处需要针对 服务方式为 涨乐财富通时 显示服务内容 ,其他情况展示服务记录 */}
         {
           isSelectZhangleFins
-          ? (
-            <ServeContent
-              ref={this.setServeContentRef}
-              approvalList={this.props.zhangleApprovalList}
-              isReject={isReject}
-              serveContent={zlRejectRecord}
-              testWallCollision={testWallCollision}
-              testWallCollisionStatus={testWallCollisionStatus}
-            />
-          )
-          : (
-            <ServeRecord
-              showError={isShowServiceContentError}
-              value={serviceRecord}
-              onChange={this.handleServiceRecordInputChange}
-              serviceRecordInfo={serviceRecordInfo}
-            />
-          )
+            ? (
+              <ServeContent
+                ref={this.setServeContentRef}
+                approvalList={this.props.zhangleApprovalList}
+                isReject={isReject}
+                serveContent={zlRejectRecord}
+                testWallCollision={testWallCollision}
+                testWallCollisionStatus={testWallCollisionStatus}
+              />
+            )
+            : (
+              <ServeRecord
+                showError={isShowServiceContentError}
+                value={serviceRecord}
+                onChange={this.handleServiceRecordInputChange}
+                serviceRecordInfo={serviceRecordInfo}
+                isPhoneCall={isPhoneCall}
+              />
+            )
         }
 
         <div className={styles.divider} />
@@ -892,64 +963,68 @@ export default class ServiceRecordContent extends PureComponent {
         {/* 涨乐财富通下显示 客户反馈可选项 */}
         {
           !this.state.isSelectZhangleFins
-          ? (
-            <div className={styles.custFeedbackSection}>
-              <CascadeFeedbackSelect
-                value={cascadeSelectValue}
-                onChange={this.handleCascadeSelectChange}
-                feedbackList={cascadeFeedbackList}
-              />
-              <div className={styles.feedbackTime}>
-                <div className={styles.title}>反馈时间:</div>
-                <div className={styles.content} ref={this.setFeedbackTimeRef}>
-                  <DatePicker
-                    style={{ width: 142 }}
-                    {...dateCommonProps}
-                    onChange={this.handleFeedbackDateChange}
-                    value={custFeedbackTime}
-                    disabledDate={this.disabledDate}
-                    getCalendarContainer={() => this.feedbackTimeRef}
+            ? (
+              <div className={styles.custFeedbackSection}>
+                <div className={styles.left}>
+                  <CascadeFeedbackSelect
+                    value={cascadeSelectValue}
+                    onChange={this.handleCascadeSelectChange}
+                    dataSource={cascadeFeedbackList}
                   />
+                  {isShowErrorCustFeedback ?
+                    <div className={styles.error}>请选择客户反馈</div> : null}
+                </div>
+                <div className={styles.feedbackTime}>
+                  <div className={styles.title}>反馈时间:</div>
+                  <div className={styles.content} ref={this.setFeedbackTimeRef}>
+                    <DatePicker
+                      style={{ width: 142 }}
+                      {...dateCommonProps}
+                      onChange={this.handleFeedbackDateChange}
+                      value={custFeedbackTime}
+                      disabledDate={this.disabledDate}
+                      getCalendarContainer={() => this.feedbackTimeRef}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          )
-          : (
-            <ZLFeedback
-              flowStatusCode={flowStatusCode}
-              feedbackList={custFeedbackList}
-              feedbackTime={ZLCustFeedbackTime.format(DATE_FORMAT_SHOW)}
-              feedback={ZLCustFeedback}
-            />
-          )
+            )
+            : (
+              <ZLFeedback
+                flowStatusCode={flowStatusCode}
+                feedbackList={custFeedbackList}
+                feedbackTime={ZLCustFeedbackTime.format(DATE_FORMAT_SHOW)}
+                feedback={ZLCustFeedback}
+              />
+            )
         }
 
         {/* 涨乐财富通下显示 不限上传 */}
         {
           this.state.isSelectZhangleFins ? null
-          : (
-            <div className={styles.uploadSection}>
-              <Uploader
-                ref={this.setUploaderRef}
-                onOperateFile={this.handleFileUpload}
-                attachModel={currentFile}
-                fileKey={uploadedFileKey}
-                originFileName={originFileName}
-                uploadTitle={'上传附件'}
-                upData={{
-                  empId: emp.getId(),
-                  // 第一次上传没有，如果曾经返回过，则必须传
-                  attachment: '',
-                }}
-                beforeUpload={beforeUpload}
-                custUuid={custUuid}
-                uploadTarget={`${request.prefix}/file/ceFileUpload`}
-                isSupportUploadMultiple
-                onDeleteFile={this.handleDeleteFile}
-                deleteFileResult={deleteFileResult}
-              />
-            </div>
-          )
+            : (
+              <div className={styles.uploadSection}>
+                <Uploader
+                  ref={this.setUploaderRef}
+                  onOperateFile={this.handleFileUpload}
+                  attachModel={currentFile}
+                  fileKey={uploadedFileKey}
+                  originFileName={originFileName}
+                  uploadTitle={'上传附件'}
+                  upData={{
+                    empId: emp.getId(),
+                    // 第一次上传没有，如果曾经返回过，则必须传
+                    attachment: '',
+                  }}
+                  beforeUpload={beforeUpload}
+                  custUuid={custUuid}
+                  uploadTarget={`${request.prefix}/file/ceFileUpload`}
+                  isSupportUploadMultiple
+                  onDeleteFile={this.handleDeleteFile}
+                  deleteFileResult={deleteFileResult}
+                />
+              </div>
+            )
         }
       </div>
     );
@@ -992,6 +1067,8 @@ ServiceRecordContent.propTypes = {
   testWallCollision: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: PropTypes.bool.isRequired,
+  // 是否由打电话调起的添加服务记录
+  isPhoneCall: PropTypes.bool,
 };
 
 ServiceRecordContent.defaultProps = {
@@ -1009,4 +1086,5 @@ ServiceRecordContent.defaultProps = {
   eventId: '',
   serviceTypeCode: '',
   flowStatusCode: '',
+  isPhoneCall: false,
 };

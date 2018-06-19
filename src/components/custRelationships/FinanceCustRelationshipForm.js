@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 09:55:38
+ * @Last Modified time: 2018-06-19 10:13:03
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Button, AutoComplete } from 'antd';
 import _ from 'lodash';
+import cx from 'classnames';
 
 import InfoTitle from '../common/InfoTitle';
 import SimilarAutoComplete from '../common/similarAutoComplete';
@@ -69,7 +70,7 @@ export default class FinanceCustRelationshipForm extends Component {
     });
     this.state = {
       // 选择的用户
-      cust: {},
+      cust: isCreate ? {} : _.get(custDetail, 'custDetail'),
       // 是否办理股票质押回购业务选项
       stockRepurchase: isCreate ? '' : _.get(custDetail, 'custDetail.businessFlag'),
       // 添加关联关系Modal
@@ -84,16 +85,16 @@ export default class FinanceCustRelationshipForm extends Component {
       relationModalAction: 'CREATE',
       // 进行修改的关联关系对象数据
       relationForUpdate: {},
+      // 用于重新渲染上传组件的key
+      uploadKey: data.uuid(),
     };
-    // 用于判断是否搜索客户后选择的客户，如果是搜索后选择客户则不需要弹出提示框
-    this.isSelectAfterSearch = false;
   }
 
   @autobind
   updateAssociateList() {
     const { custDetail: { custRelationshipList = [], ...reset } } = this.props;
     const listWithKey = custRelationshipList.map((item, index) => ({ ...item, key: index }));
-    this.setState({ custRelationshipList: listWithKey });
+    this.setState({ custRelationshipList: listWithKey, cust: reset });
     this.props.onChange({
       relationships: custRelationshipList,
       cust: reset,
@@ -103,28 +104,12 @@ export default class FinanceCustRelationshipForm extends Component {
 
   @autobind
   handleSearchCustList(keyword) {
-    this.isSelectAfterSearch = true;
     this.props.queryCustList({
       keyword,
       type: APPLY_TYPE_CODE,
       deptCode: emp.getOrgId(),
       postnId: emp.getPstnId(),
     });
-  }
-
-  @autobind
-  handleSelectCustConfirm(cust) {
-    if (this.isSelectAfterSearch) {
-      this.isSelectAfterSearch = false;
-      this.handleSelectCust(cust);
-    } else {
-      confirm({
-        content: '切换或者删除客户，将导致所有的数据清空或者重置',
-        onOk: () => {
-          this.handleSelectCust(cust);
-        },
-      });
-    }
   }
 
   @autobind
@@ -143,17 +128,20 @@ export default class FinanceCustRelationshipForm extends Component {
 
   @autobind
   handleClearDataBySwitchCust() {
+    // 重新渲染附件组件，直接修改上传组件的key值得方式
     this.setState({
       cust: {},
       custRelationshipList: [],
       stockRepurchase: '',
       attachment: '',
       attachList: [],
+      uploadKey: data.uuid(),
     });
     this.props.onChange({
       relationships: [],
       cust: {},
       attachment: '',
+      stockRepurchase: '',
     });
   }
 
@@ -273,17 +261,19 @@ export default class FinanceCustRelationshipForm extends Component {
       attachList,
       attachment,
       relationForUpdate,
+      uploadKey,
+      cust,
     } = this.state;
-    const { action, custList, custDetail, relationshipTree } = this.props;
+    const { action, custList, relationshipTree } = this.props;
     // 判断当前组件是否在驳回后修改页面里面
     const isCreate = action === 'CREATE';
-    let cust = custDetail;
-    if (!isCreate) {
-      cust = custDetail.custDetail;
-    }
+    const wrapCls = cx({
+      [styles.custRelationshipContainer]: true,
+      [styles.reject]: !isCreate,
+    });
 
     return (
-      <div className={styles.custRelationshipContainer}>
+      <div className={wrapCls}>
         <InfoTitle head="基本信息" />
         {
           isCreate ?
@@ -293,7 +283,9 @@ export default class FinanceCustRelationshipForm extends Component {
                 placeholder="经纪客户号/客户名称"
                 optionList={custList}
                 optionKey="brokerNumber"
-                onSelect={this.handleSelectCustConfirm}
+                needConfirmWhenClear
+                clearConfirmTips="切换或者删除客户，将导致所有的数据清空或者重置"
+                onSelect={this.handleSelectCust}
                 onSearch={this.handleSearchCustList}
                 renderOptionNode={this.renderCustAutoCompleteOption}
               />
@@ -339,6 +331,8 @@ export default class FinanceCustRelationshipForm extends Component {
         <InfoTitle head="附件信息" />
         <CommonUpload
           edit
+          reformEnable
+          key={uploadKey}
           attachment={attachment}
           needDefaultText={false}
           attachmentList={attachList}

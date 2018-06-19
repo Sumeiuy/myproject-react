@@ -19,6 +19,7 @@ import {
   RETURN_TASK_FROM_TASKLIST,
   RETURN_TASK_FROM_TODOLIST,
   returnTaskEntrySource,
+  TASK_CUST_SCOPE_ENTRY,
 } from '../../config/createTaskEntry';
 import withRouter from '../../decorators/withRouter';
 import styles from './createTask.less';
@@ -233,6 +234,9 @@ export default class CreateTask extends PureComponent {
     } else if (source === RETURN_TASK_FROM_TASKLIST) {
       // 任务管理，创建者视图，驳回后编辑任务，创建者视图驳回修改，用的是任务管理的tab
       closeRctTab({ id: 'FSP_MOT_SELFBUILT_TASK' });
+    } else if (source === TASK_CUST_SCOPE_ENTRY) {
+      // 从管理者视图服务经理维度发起任务
+      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUST_SCOPE' });
     } else {
       // 从客户列表发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });

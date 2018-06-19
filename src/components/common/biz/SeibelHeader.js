@@ -34,6 +34,8 @@ const FILTERBOX_HEIGHT = 36;
 const dateFormat = 'YYYY/MM/DD';
 // 当前时间
 const currentDate = moment();
+// 分公司客户分配
+const PAGE_CUST_ALLOT = 'custAllotPage';
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -504,34 +506,39 @@ export default class Pageheader extends PureComponent {
       hasCreatePermission = permission.hasPermissionOfProtocolCreate(empInfo);
     } else if (pageType === filialeCustTransfer) {
       // 如果分公司客户人工划转,是分公司并且是HTSC 客户分配岗
-      hasCreatePermission = permission.hasFilialeCustTransferCreate(empInfo) &&
-        checkUserIsFiliale();
+      hasCreatePermission = permission.hasFilialeCustTransferCreate(empInfo)
+        && checkUserIsFiliale();
     } else if (pageType === phoneApplyPageType) {
       hasCreatePermission = permission.hasPermissionOfPhoneApplyCreate(empInfo);
     } else {
       // 此处,通用的判断是否需要隐藏新建按钮
       hasCreatePermission = this.props.isShowCreateBtn();
     }
+    // 分公司客户分配不显示客户搜索
+    const custElement = page !== PAGE_CUST_ALLOT ?
+      (<div className={styles.filterFl}>
+        <div className={styles.dropDownSelectBox}>
+          <DropDownSelect
+            value={curCust}
+            placeholder="经纪客户号/客户名称"
+            searchList={customerAllList}
+            showObjKey="custName"
+            objId="custNumber"
+            emitSelectItem={this.selectCustItem}
+            emitToSearch={this.handleCustSearch}
+            name={`${page}-custName`}
+          />
+        </div>
+      </div>)
+    :
+      null;
 
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
           {
             isUseOfCustomer ?
-              <div className={styles.filterFl}>
-                <div className={styles.dropDownSelectBox}>
-                  <DropDownSelect
-                    value={curCust}
-                    placeholder="经纪客户号/客户名称"
-                    searchList={customerAllList}
-                    showObjKey="custName"
-                    objId="custNumber"
-                    emitSelectItem={this.selectCustItem}
-                    emitToSearch={this.handleCustSearch}
-                    name={`${page}-custName`}
-                  />
-                </div>
-              </div>
+              custElement
             :
               <div className={styles.filterFl}>
                 <div className={styles.dropDownSelectBox}>

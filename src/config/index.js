@@ -20,6 +20,7 @@ import contract from './contract';
 import fspRoutes from './fspRoutes';
 import orgTreeLevel from './orgTreeLevel';
 import padSightLabelDesc from './constructSightLabelDesc';
+import createTaskEntry from './createTaskEntry';
 
 export default {
   constants,
@@ -45,4 +46,5 @@ export default {
   fspRoutes,
   orgTreeLevel,
   padSightLabelDesc,
+  createTaskEntry,
 };
