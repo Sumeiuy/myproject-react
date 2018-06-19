@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-19 17:32:45
+ * @Last Modified time: 2018-06-19 17:44:51
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import { Form, Radio } from 'antd';
 import Select from '../common/Select';
 import commonConfirm from '../common/confirm_';
 import Icon from '../common/Icon';
-import styles from './editBasicInfo_.less';
+import styles from './editBasicInfo.less';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
