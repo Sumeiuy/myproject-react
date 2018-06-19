@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-18 20:49:50
+ * @Last Modified time: 2018-06-19 15:35:56
  */
 
 import React, { PureComponent } from 'react';
@@ -77,7 +77,7 @@ const mapStateToProps = state => ({
   // 受理营业部变更
   acceptOrgData: state.stockOptionEvaluation.acceptOrgData,
   // 新建页面获取下一步按钮和审批人
-  createButtonList: state.stockOptionEvaluation.createButtonList,
+  createButtonListData: state.stockOptionEvaluation.createButtonListData,
   // 验证提交数据结果
   validateResultData: state.stockOptionEvaluation.validateResultData,
   // 新建修改的更新接口
@@ -147,7 +147,7 @@ export default class StockOptionApplication extends PureComponent {
     acceptOrgData: PropTypes.object.isRequired,
     queryAcceptOrg: PropTypes.func.isRequired,
     // 新建页面获取下一步按钮和审批人
-    createButtonList: PropTypes.object.isRequired,
+    createButtonListData: PropTypes.object.isRequired,
     getCreateButtonList: PropTypes.func.isRequired,
     // 验证提交数据结果
     validateResultData: PropTypes.object.isRequired,
@@ -383,7 +383,7 @@ export default class StockOptionApplication extends PureComponent {
       clearProps,
       acceptOrgData,
       queryAcceptOrg,
-      createButtonList,
+      createButtonListData,
       getCreateButtonList,
       validateResultData,
       validateResult,
@@ -459,7 +459,7 @@ export default class StockOptionApplication extends PureComponent {
             getSelectMap={getSelectMap}
             acceptOrgData={acceptOrgData}
             queryAcceptOrg={queryAcceptOrg}
-            createButtonList={createButtonList}
+            createButtonListData={createButtonListData}
             getCreateButtonList={getCreateButtonList}
             validateResultData={validateResultData}
             validateResult={validateResult}

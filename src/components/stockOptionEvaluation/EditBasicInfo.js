@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-19 09:49:16
+ * @Last Modified time: 2018-06-19 17:32:45
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import { Form, Radio } from 'antd';
 import Select from '../common/Select';
 import commonConfirm from '../common/confirm_';
 import Icon from '../common/Icon';
-import styles from './EditBasicInfo.less';
+import styles from './editBasicInfo_.less';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -85,32 +85,50 @@ export default class EditBasicInfo extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    const newState = {};
     if (nextProps.stockCustTypeMap !== prevState.stockCustTypeMap) {
-      return {
-        stockCustTypeMap: nextProps.stockCustTypeMap,
-      };
+      newState.stockCustTypeMap = nextProps.stockCustTypeMap;
     }
     if (nextProps.reqTypeMap !== prevState.reqTypeMap) {
-      return {
-        reqTypeMap: nextProps.reqTypeMap,
-      };
+      newState.reqTypeMap = nextProps.reqTypeMap;
     }
     if (nextProps.klqqsclbMap !== prevState.klqqsclbMap) {
-      return {
-        klqqsclbMap: nextProps.klqqsclbMap,
-      };
+      newState.klqqsclbMap = nextProps.klqqsclbMap;
     }
     if (nextProps.busDivisionMap !== prevState.busDivisionMap) {
-      return {
-        busDivisionMap: nextProps.busDivisionMap,
-      };
+      newState.busDivisionMap = nextProps.busDivisionMap;
     }
-    return null;
+    if (nextProps.custInfo !== prevState.custInfo) {
+      newState.custInfo = nextProps.custInfo;
+      newState.isSelectDisabled = _.isEmpty(nextProps.custInfo);
+    }
+    return newState;
   }
 
   constructor(props) {
     super(props);
+    let isShowDegreePrompt = false;
+    let isShowInvPrompt = false;
+    const {
+      stockCustType,
+      reqType,
+      ageFlag,
+      invFlag,
+      isEdit,
+    } = this.props.custInfo;
+    if (isEdit && stockCustType === 'New' && reqType === 'New') {
+      if (ageFlag === 'N') {
+        isShowDegreePrompt = true;
+      }
+      if (invFlag === 'N') {
+        isShowInvPrompt = true;
+      }
+    }
     this.state = {
+      // 基本信息
+      custInfo: {},
+      // select初始状态为禁用
+      isSelectDisabled: true,
       // 股票客户类型
       stockCustType: '',
       // 申请类型
@@ -138,9 +156,9 @@ export default class EditBasicInfo extends PureComponent {
       // 已提供金融期货交易证明
       jrqhjyFlag: '',
       // 是否显示学历提示，默认是false
-      isShowDegreePrompt: false,
+      isShowDegreePrompt,
       // 是否显示投资经历提示，默认是false
-      isShowInvPrompt: false,
+      isShowInvPrompt,
     };
   }
 
@@ -249,9 +267,9 @@ export default class EditBasicInfo extends PureComponent {
 
   render() {
     const {
+      // 是否是编辑页面
       isEdit,
       // 选择客户带出的客户基本信息
-      custInfo,
       custInfo: {
         divisionName,
         openDivName,
@@ -304,6 +322,7 @@ export default class EditBasicInfo extends PureComponent {
       jrqhjyFlagStatusErrorMessage,
     } = this.props;
     const {
+      isSelectDisabled,
       stockCustType,
       reqType,
       openOptMktCatg,
@@ -323,7 +342,6 @@ export default class EditBasicInfo extends PureComponent {
     if (isProfessInvset) {
       isProfessInvsetor = isProfessInvset === 'Y' ? '是' : '否';
     }
-    const isSelectDisabled = _.isEmpty(custInfo) && !isEdit;
     return (
       <div className={styles.editBasicInfo}>
         <Form>
@@ -334,7 +352,9 @@ export default class EditBasicInfo extends PureComponent {
                 <span className={styles.colon}>:</span>
               </div>
               <div className={styles.value}>
-                {divisionName || EMPTY_INFO}
+                <FormItem>
+                  {divisionName || EMPTY_INFO}
+                </FormItem>
               </div>
             </div>
             <div className={styles.coloumn}>
@@ -343,7 +363,9 @@ export default class EditBasicInfo extends PureComponent {
                 <span className={styles.colon}>:</span>
               </div>
               <div className={styles.value}>
-                {openDivName || EMPTY_INFO}
+                <FormItem>
+                  {openDivName || EMPTY_INFO}
+                </FormItem>
               </div>
             </div>
             <div className={styles.coloumn}>
@@ -352,7 +374,9 @@ export default class EditBasicInfo extends PureComponent {
                 <span className={styles.colon}>:</span>
               </div>
               <div className={styles.value}>
-                {idTypeName || EMPTY_INFO}
+                <FormItem>
+                  {idTypeName || EMPTY_INFO}
+                </FormItem>
               </div>
             </div>
             <div className={styles.coloumn}>
@@ -361,7 +385,9 @@ export default class EditBasicInfo extends PureComponent {
                 <span className={styles.colon}>:</span>
               </div>
               <div className={styles.value}>
-                {idNum || EMPTY_INFO}
+                <FormItem>
+                  {idNum || EMPTY_INFO}
+                </FormItem>
               </div>
             </div>
             <div className={styles.coloumn}>
@@ -370,7 +396,9 @@ export default class EditBasicInfo extends PureComponent {
                 <span className={styles.colon}>:</span>
               </div>
               <div className={styles.value}>
-                {isProfessInvsetor || EMPTY_INFO}
+                <FormItem>
+                  {isProfessInvsetor || EMPTY_INFO}
+                </FormItem>
               </div>
             </div>
             <div className={styles.coloumn}>
@@ -379,7 +407,9 @@ export default class EditBasicInfo extends PureComponent {
                 <span className={styles.colon}>:</span>
               </div>
               <div className={styles.value}>
-                {aAcct || EMPTY_INFO}
+                <FormItem>
+                  {aAcct || EMPTY_INFO}
+                </FormItem>
               </div>
             </div>
             <div className={styles.coloumn}>
@@ -388,7 +418,9 @@ export default class EditBasicInfo extends PureComponent {
                 <span className={styles.colon}>:</span>
               </div>
               <div className={styles.value}>
-                {openSysName || EMPTY_INFO}
+                <FormItem>
+                  {openSysName || EMPTY_INFO}
+                </FormItem>
               </div>
             </div>
             <div className={styles.coloumn}>

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-19 09:57:45
+ * @Last Modified time: 2018-06-19 16:03:39
  */
 
 import React, { PureComponent } from 'react';
@@ -56,7 +56,7 @@ export default class CreateApply extends PureComponent {
     acceptOrgData: PropTypes.object.isRequired,
     queryAcceptOrg: PropTypes.func.isRequired,
     // 新建页面获取下一步按钮和审批人
-    createButtonList: PropTypes.object.isRequired,
+    createButtonListData: PropTypes.object.isRequired,
     getCreateButtonList: PropTypes.func.isRequired,
     // 验证提交数据结果
     validateResultData: PropTypes.object.isRequired,
@@ -71,9 +71,9 @@ export default class CreateApply extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.createButtonList !== prevState.createButtonList) {
+    if (nextProps.createButtonListData !== prevState.createButtonListData) {
       return {
-        createButtonList: nextProps.createButtonList,
+        createButtonListData: nextProps.createButtonListData,
       };
     }
     return null;
@@ -87,7 +87,7 @@ export default class CreateApply extends PureComponent {
       // 模态框是否显示 默认状态下是隐藏的
       isShowModal: true,
       // 下一步按钮
-      createButtonList: {},
+      createButtonListData: {},
       // 下一步审批人列表
       nextApproverList: [],
       // 审批人弹窗
@@ -238,7 +238,6 @@ export default class CreateApply extends PureComponent {
       isShowDegreeFlagStatusError: true,
       degreeFlagStatusErrorMessage: '请选择已提供大专及以上的学历证明材料',
     });
-
     this.isValidateError = true;
   }
 
@@ -556,6 +555,7 @@ export default class CreateApply extends PureComponent {
     }
   }
 
+  // 校验数据
   @autobind
   validateResult(value) {
     if (_.isEmpty(value)) {
@@ -625,7 +625,7 @@ export default class CreateApply extends PureComponent {
       });
   }
 
-  // 发送请求，先走新建（修改）接口，再走
+  // 发送请求，先走新建（修改）接口，再走流程接口
   @autobind
   sendCreateRequest(value) {
     const {
@@ -797,7 +797,7 @@ export default class CreateApply extends PureComponent {
     } = this.props;
     const {
       isShowModal,
-      createButtonList,
+      createButtonListData,
       customer,
       accptTime,
       busPrcDivId,
@@ -843,7 +843,7 @@ export default class CreateApply extends PureComponent {
     } : null;
     // 下一步按钮
     const selfBtnGroup = (<BottonGroup
-      list={createButtonList}
+      list={createButtonListData}
       onEmitEvent={this.handleSubmit}
     />);
     const searchProps = {
@@ -853,7 +853,7 @@ export default class CreateApply extends PureComponent {
       dataSource: nextApproverList,
       columns: approvalColumns,
       title: '选择下一审批人员',
-      modalKey: 'phoneApplyNextApproverModal',
+      modalKey: 'stockApplyNextApproverModal',
       rowKey: 'login',
       searchShow: false,
     };
@@ -872,7 +872,7 @@ export default class CreateApply extends PureComponent {
           <div className={styles.module}>
             <InfoTitle head="基本信息" />
             <Form>
-              <div className={styles.coloumn}>
+              <div className={`${styles.coloumn} ${styles.custInfo}`}>
                 <div className={styles.label}>
                   <i className={styles.isRequired}>*</i>
                   客户

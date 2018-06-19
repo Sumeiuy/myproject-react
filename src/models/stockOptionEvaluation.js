@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 17:15:59
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-18 20:13:54
+ * @Last Modified time: 2018-06-19 16:47:12
  */
 
 import { stockOptionEvaluation as api } from '../api';
@@ -31,7 +31,9 @@ export default {
     // 受理营业部变更
     acceptOrgData: EMPTY_OBJECT,
     // 新建页面获取下一步按钮和审批人
-    createButtonList: EMPTY_OBJECT,
+    createButtonListData: EMPTY_OBJECT,
+    // 修改获取按钮列表和下一步审批人
+    editButtonListData: EMPTY_OBJECT,
     // 验证提交数据结果
     validateResultData: {},
     // 新建修改的更新接口
@@ -116,6 +118,7 @@ export default {
         reqTypeMap: EMPTY_LIST,
         klqqsclbMap: EMPTY_LIST,
         busDivisionMap: EMPTY_LIST,
+        createButtonListData: EMPTY_OBJECT,
       };
     },
 
@@ -133,7 +136,16 @@ export default {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
-        createButtonList: resultData,
+        createButtonListData: resultData,
+      };
+    },
+
+    // 修改获取按钮列表和下一步审批人
+    getEditButtonListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        editButtonListData: resultData,
       };
     },
 
@@ -223,6 +235,15 @@ export default {
       const response = yield call(api.queryNextApproval, payload);
       yield put({
         type: 'getCreateButtonListSuccess',
+        payload: response,
+      });
+    },
+
+    // 修改获取按钮列表和下一步审批人
+    * getEditButtonList({ payload }, { call, put }) {
+      const response = yield call(api.getButtonList, payload);
+      yield put({
+        type: 'getEditButtonListSuccess',
         payload: response,
       });
     },

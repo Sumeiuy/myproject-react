@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 10:34:44
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-15 17:42:02
+ * @Last Modified time: 2018-06-19 17:23:30
  */
 
 import React, { PureComponent } from 'react';
@@ -28,6 +28,14 @@ const effects = {
   getSelectMap: 'stockOptionEvaluation/getSelectMap',
   // 受理营业部变更
   queryAcceptOrg: 'stockOptionEvaluation/queryAcceptOrg',
+  // 验证提交数据结果
+  validateResult: 'stockOptionEvaluation/validateResult',
+  // 编辑页面获取下一步按钮和审批人
+  editButtonList: 'stockOptionEvaluation/getEditButtonList',
+  // 走流程接口
+  doApprove: 'stockOptionEvaluation/doApprove',
+  // 新建修改的更新接口
+  updateBindingFlow: 'stockOptionEvaluation/updateBindingFlow',
 };
 
 const mapStateToProps = state => ({
@@ -49,6 +57,12 @@ const mapStateToProps = state => ({
   busDivisionMap: state.stockOptionEvaluation.busDivisionMap,
   // 受理营业部变更
   acceptOrgData: state.stockOptionEvaluation.acceptOrgData,
+  // 编辑页面获取下一步按钮和审批人
+  editButtonListData: state.stockOptionEvaluation.editButtonListData,
+  // 验证提交数据结果
+  validateResultData: state.stockOptionEvaluation.validateResultData,
+  // 新建修改的更新接口
+  updateBindingFlowAppId: state.stockOptionEvaluation.updateBindingFlowAppId,
 });
 
 const mapDispatchToProps = {
@@ -62,6 +76,14 @@ const mapDispatchToProps = {
   getSelectMap: effect(effects.getSelectMap, { forceFull: true }),
   // 受理营业部变更
   queryAcceptOrg: effect(effects.queryAcceptOrg, { forceFull: true }),
+  // 验证提交数据结果
+  validateResult: effect(effects.validateResult, { forceFull: true }),
+  // 编辑页面获取下一步按钮和审批人
+  getEditButtonList: effect(effects.editButtonList, { forceFull: true }),
+  // 走流程接口
+  doApprove: effect(effects.doApprove, { forceFull: true }),
+  // 新建修改的更新接口
+  updateBindingFlow: effect(effects.updateBindingFlow, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -91,6 +113,17 @@ export default class ApplyEdit extends PureComponent {
     // 受理营业部变更
     acceptOrgData: PropTypes.object.isRequired,
     queryAcceptOrg: PropTypes.func.isRequired,
+    // 编辑页面获取下一步按钮和审批人
+    editButtonListData: PropTypes.object.isRequired,
+    getEditButtonList: PropTypes.func.isRequired,
+    // 验证提交数据结果
+    validateResultData: PropTypes.object.isRequired,
+    validateResult: PropTypes.func.isRequired,
+    // 走流程接口
+    doApprove: PropTypes.func.isRequired,
+    // 新建修改的更新接口
+    updateBindingFlowAppId: PropTypes.string.isRequired,
+    updateBindingFlow: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -120,7 +153,18 @@ export default class ApplyEdit extends PureComponent {
       busDivisionMap,
       acceptOrgData,
       queryAcceptOrg,
+      editButtonListData,
+      getEditButtonList,
+      validateResultData,
+      validateResult,
+      doApprove,
+      updateBindingFlowAppId,
+      updateBindingFlow,
+      getDetailInfo,
     } = this.props;
+    if (_.isEmpty(detailInfo)) {
+      return null;
+    }
     return (
       <div>
         <ApplyEditForm
@@ -133,6 +177,14 @@ export default class ApplyEdit extends PureComponent {
           busDivisionMap={busDivisionMap}
           acceptOrgData={acceptOrgData}
           queryAcceptOrg={queryAcceptOrg}
+          editButtonListData={editButtonListData}
+          getEditButtonList={getEditButtonList}
+          validateResultData={validateResultData}
+          validateResult={validateResult}
+          doApprove={doApprove}
+          updateBindingFlowAppId={updateBindingFlowAppId}
+          updateBindingFlow={updateBindingFlow}
+          getDetailInfo={getDetailInfo}
         />
       </div>
     );

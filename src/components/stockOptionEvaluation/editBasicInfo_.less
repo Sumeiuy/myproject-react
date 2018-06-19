@@ -4,10 +4,13 @@
     height: auto;
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
+    padding-top: 14px;
 
-    .coloumn {
-      margin-top: 20px;
+    :global {
+      .ant-form-item-control {
+        line-height: 20px;
+      }
     }
   }
 
@@ -104,13 +107,9 @@
       }
 
       .ant-form-item {
-        margin-bottom: 20px;
+        margin-bottom: 14px;
         font-size: 14px;
         color: #333;
-      }
-
-      .ant-form-item-control {
-        line-height: 20px;
       }
     }
   }
@@ -118,6 +117,19 @@
   .row {
     display: flex;
     width: 100%;
+  }
+
+  .basicInfo {
+    .label {
+      margin-bottom: 14px;
+      line-height: 32px;
+    }
+
+    :global {
+      .ant-form-item {
+        min-height: 32px;
+      }
+    }
   }
 
   .promptBox {
