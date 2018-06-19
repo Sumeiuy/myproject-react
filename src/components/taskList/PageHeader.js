@@ -1,21 +1,18 @@
 /**
  * @file Pageheader.js
  * 创建者视图、执行者视图头部筛选
- * @author honggaunqging
+ * @author xiaZhiQiang
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classNames from 'classnames';
 import moment from 'moment';
 import { Input } from 'antd';
-import DateRangePicker from '../common/dateRangePicker';
-import Select from '../common/Select';
-import DropDownSelect from '../common/dropdownSelect';
-import Button from '../common/Button';
-import { dom, check } from '../../helper';
-import { fspContainer } from '../../config';
+import { SingleFilter } from 'lego-react-filter/src';
+import { MoreFilter, DateFilter } from '../common/htFilter';
 import { getViewInfo } from '../../routes/taskList/helper';
 import logable from '../../decorators/logable';
 import {
@@ -30,20 +27,17 @@ import {
   STATE_COMPLETED_CODE,
   STATE_EXECUTE_CODE,
   STATE_FINISHED_CODE,
+  moreFilterData,
 } from '../../routes/taskList/config';
 
 import styles from './pageHeader.less';
 
 const Search = Input.Search;
 
-// 头部筛选filterBox的高度
-const FILTERBOX_HEIGHT = 32;
-const allCustomers = '所有客户';
-const allCreators = '所有创建者';
-const ptyMngAll = { ptyMngName: '所有创建者', ptyMngId: '' };
-const typeAll = { label: '所有类型', value: '', show: true };
-const executeTypeAll = { label: '所有方式', value: '', show: true };
-const unlimitedCustomers = { name: allCustomers, custId: '' };
+const typeAll = { label: '不限', value: '', show: true }; // 不限
+const creatorFilterId = 'creatorId'; // 创建者filterId
+const custFilterId = 'custId'; // 客户filterId
+const triggerFilterId = 'triggerTime'; // 触发时间filterId
 const NOOP = _.noop;
 
 export default class Pageheader extends PureComponent {
@@ -51,16 +45,12 @@ export default class Pageheader extends PureComponent {
     location: PropTypes.object.isRequired,
     // 页面
     page: PropTypes.string,
-    // 新建
-    creatSeibelModal: PropTypes.func.isRequired,
     // 页面类型
     pageType: PropTypes.string.isRequired,
     // 创建者列表
     drafterList: PropTypes.array.isRequired,
     // 获取创建者列表
     getDrafterList: PropTypes.func.isRequired,
-    // 视图选择
-    chooseMissionViewOptions: PropTypes.array,
     // dict字典
     dict: PropTypes.object,
     // 头部筛选后的回调
@@ -77,7 +67,6 @@ export default class Pageheader extends PureComponent {
     page: '',
     empInfo: {},
     typeOptions: [],
-    chooseMissionViewOptions: [],
     dict: {},
     filterCallback: () => { },
     filterControl: EXECUTOR,
@@ -95,10 +84,13 @@ export default class Pageheader extends PureComponent {
     this.state = {
       stateAllOptions,
       statusValue,
-      showMore: false,
       // 任务搜索框内容默认取url中的missionName
       missionName,
     };
+  }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
   }
 
   componentWillReceiveProps(nextProps) {
@@ -124,84 +116,6 @@ export default class Pageheader extends PureComponent {
     }
   }
 
-  componentDidUpdate() {
-    this.onWindowResize();
-    window.addEventListener('resize', this.onWindowResize, false);
-    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
-    if (sidebarHideBtn && sidebarShowBtn) {
-      sidebarHideBtn.addEventListener('click', this.onWindowResize, false);
-      sidebarShowBtn.addEventListener('click', this.onWindowResize, false);
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onWindowResize, false);
-    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
-    if (sidebarHideBtn && sidebarShowBtn) {
-      sidebarHideBtn.removeEventListener('click', this.onWindowResize, false);
-      sidebarShowBtn.removeEventListener('click', this.onWindowResize, false);
-    }
-  }
-
-  @autobind
-  onWindowResize() {
-    const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
-    if (filterBoxHeight <= FILTERBOX_HEIGHT) {
-      dom.removeClass(this.filterMore, styles.filterMoreIcon);
-      dom.addClass(this.filterMore, styles.filterNoneIcon);
-    } else {
-      dom.removeClass(this.filterMore, styles.filterNoneIcon);
-      dom.addClass(this.filterMore, styles.filterMoreIcon);
-    }
-  }
-
-  // 判断url里是否有时间设置
-  @autobind
-  handleURlTime(urlTime, time) {
-    return _.isEmpty(urlTime) ? time : moment(urlTime);
-  }
-
-  @autobind
-  pageCommonHeaderRef(input) {
-    this.pageCommonHeader = input;
-  }
-
-  @autobind
-  filterBoxRef(input) {
-    this.filterBox = input;
-  }
-
-  @autobind
-  filterMoreRef(input) {
-    this.filterMore = input;
-  }
-  @autobind
-  @logable({ type: 'Click', payload: { name: '更多' } })
-  handleMore() {
-    this.handleMoreChange();
-  }
-  @autobind
-  @logable({ type: 'Click', payload: { name: '收起' } })
-  handleShrink() {
-    this.handleMoreChange();
-  }
-
-  @autobind
-  handleMoreChange() {
-    this.setState({
-      showMore: !this.state.showMore,
-    });
-    if (this.state.showMore) {
-      dom.addClass(this.pageCommonHeader, styles.HeaderOverflow);
-    } else {
-      dom.removeClass(this.pageCommonHeader, styles.HeaderOverflow);
-    }
-    this.onWindowResize();
-  }
-
-
   // 选中创建者下拉对象中对应的某个对象s
   @autobind
   @logable({
@@ -212,9 +126,10 @@ export default class Pageheader extends PureComponent {
     },
   })
   selectItem(item) {
+    const { value: { ptyMngId, ptyMngName } } = item;
     this.props.filterCallback({
-      creatorId: item.ptyMngId,
-      creatorName: encodeURIComponent(item.ptyMngName),
+      creatorId: ptyMngId,
+      creatorName: encodeURIComponent(ptyMngName),
     });
   }
 
@@ -228,22 +143,11 @@ export default class Pageheader extends PureComponent {
     },
   })
   selectCustomerItem(item) {
+    const { value: { custId, name } } = item;
     this.props.filterCallback({
-      custId: item.custId,
-      custName: encodeURIComponent(item.name),
+      custId,
+      custName: encodeURIComponent(name),
     });
-  }
-
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '视图选择',
-      value: '$args[1]',
-    },
-  })
-  handleSelctView(key, value) {
-    this.handleSelectChange(key, value);
   }
 
   @autobind
@@ -254,8 +158,52 @@ export default class Pageheader extends PureComponent {
       value: '$args[1]',
     },
   })
-  handleSelctType(key, value) {
-    this.handleSelectChange(key, value);
+  handleSelctType(option) {
+    const { id, value: { value } } = option;
+    this.handleSelectChange(id, value);
+  }
+
+  // 状态变化时创建时间和结束时间的处理
+  @autobind
+  setDefaultTime(state) {
+    const {
+      location: {
+        query,
+        query: {
+          missionViewType,
+        },
+      },
+    } = this.props;
+
+    const startTime = moment(beforeCurrentDate60Days).format(dateFormat);
+    const endTime = moment(currentDate).format(dateFormat);
+    // 当切换用户状态时覆盖创建时间或则结束时间
+    let coverQuery = {
+      ...query,
+      endTimeStart: '',
+      endTimeEnd: '',
+      createTimeEnd: '',
+      createTimeStart: '',
+    };
+    const isFinalState = state === STATE_FINISHED_CODE;
+    if (!isFinalState) {
+      return coverQuery;
+    }
+    // 当状态为结束状态时添加默认值
+    if (missionViewType === INITIATOR) {
+      coverQuery = {
+        ...coverQuery,
+        createTimeStart: startTime,
+        createTimeEnd: endTime,
+      };
+    } else {
+      coverQuery = {
+        ...coverQuery,
+        endTimeStart: startTime,
+        endTimeEnd: endTime,
+      };
+    }
+    return coverQuery;
   }
 
   @autobind
@@ -266,8 +214,10 @@ export default class Pageheader extends PureComponent {
       value: '$args[1]',
     },
   })
-  handleSelctStatus(key, value) {
-    this.handleSelectChange(key, value);
+  handleSelctStatus(option) {
+    const { id, value: { value } } = option;
+    const coverQuery = this.setDefaultTime(value);
+    this.handleSelectChange(id, value, coverQuery);
   }
 
   @autobind
@@ -278,59 +228,20 @@ export default class Pageheader extends PureComponent {
       value: '$args[1]',
     },
   })
-  handleSelctMode(key, value) {
-    this.handleSelectChange(key, value);
+  handleSelctMode(option) {
+    const { id, value: { value } } = option;
+    this.handleSelectChange(id, value);
   }
 
   // select改变
   @autobind
-  handleSelectChange(key, v) {
-    const {
-      filterCallback,
-      location: {
-        query: {
-          createTimeStart,
-          createTimeEnd,
-          endTimeStart,
-          endTimeEnd,
-          missionViewType,
-        },
-      },
-    } = this.props;
-
-    // 判断是否改变的是视图选择
-    if (key === 'missionViewType') {
-      this.handleViewTypeTime(key, v);
-    } else {
-      // 获取当前的视图类型
-      const { currentViewType } = getViewInfo(missionViewType);
-      // 当状态选择的不是 结束 的时候需要清除url中的日期
-      const isClearUrlDate = key === 'status' && v !== STATE_FINISHED_CODE;
-      if (currentViewType === INITIATOR) {
-        filterCallback({
-          [key]: v,
-          createTimeStart: !isClearUrlDate ? createTimeStart : '',
-          createTimeEnd: !isClearUrlDate ? createTimeEnd : '',
-        });
-      } else {
-        filterCallback({
-          [key]: v,
-          endTimeStart: !isClearUrlDate ? endTimeStart : '',
-          endTimeEnd: !isClearUrlDate ? endTimeEnd : '',
-        });
-      }
-    }
-    this.setState({
-      [key]: v,
-    });
-  }
-
-  // 选择不同视图给定时间入参
-  @autobind
-  handleViewTypeTime(key, v) {
+  handleSelectChange(key, v, otherQuery) {
     const { filterCallback } = this.props;
     filterCallback({
-      name: 'switchView',
+      ...otherQuery,
+      [key]: v,
+    });
+    this.setState({
       [key]: v,
     });
   }
@@ -351,7 +262,6 @@ export default class Pageheader extends PureComponent {
     },
   })
   handleSearch(value) {
-    console.warn('点击了搜索', value);
     this.props.filterCallback({
       missionName: value,
     });
@@ -366,10 +276,13 @@ export default class Pageheader extends PureComponent {
       value: '$args[1]',
     },
   })
-  toSearch(method, value) {
-    method({
-      keyword: value,
-    });
+  toSearch(value) {
+    const { getDrafterList } = this.props;
+    if (value) {
+      getDrafterList({
+        keyword: value,
+      });
+    }
   }
 
   @autobind
@@ -387,15 +300,11 @@ export default class Pageheader extends PureComponent {
     },
   })
   handleCreateDateChange(date) {
-    const { startDate, endDate } = date;
-    if (startDate !== null && endDate !== null) {
-      const createTimeStart = startDate.format(dateFormat);
-      const createTimeEnd = endDate.format(dateFormat);
-      this.props.filterCallback({
-        createTimeStart,
-        createTimeEnd,
-      });
-    }
+    const { value } = date;
+    this.props.filterCallback({
+      createTimeStart: value[0],
+      createTimeEnd: value[1],
+    });
   }
 
   @autobind
@@ -413,31 +322,20 @@ export default class Pageheader extends PureComponent {
     },
   })
   handleEndDateChange(date) {
-    const { startDate, endDate } = date;
-    if (startDate !== null && endDate !== null) {
-      const endTimeStart = startDate.format(dateFormat);
-      const endTimeEnd = endDate.format(dateFormat);
-      this.props.filterCallback({
-        endTimeStart,
-        endTimeEnd,
-      });
-    }
+    const { value } = date;
+    this.props.filterCallback({
+      endTimeStart: value[0],
+      endTimeEnd: value[1],
+    });
   }
 
-  // 视图不变下，判断视图是否为创建视图，修改时间入参
   @autobind
-  handleIsCreateTime({ missionViewType, createTimeStarts, createTimeEnds }) {
-    let endTimeStart = null;
-    let endTimeEnd = null;
-    let createTimeStart = createTimeStarts;
-    let createTimeEnd = createTimeEnds;
-    if (missionViewType !== INITIATOR) {
-      endTimeStart = createTimeStarts;
-      endTimeEnd = createTimeEnds;
-      createTimeStart = null;
-      createTimeEnd = null;
-    }
-    return { createTimeStart, createTimeEnd, endTimeStart, endTimeEnd };
+  handleTriggerTimeChange(date) {
+    const { value } = date;
+    this.props.filterCallback({
+      triggerTimeStart: value[0],
+      triggerTimeEnd: value[1],
+    });
   }
 
   // 从字典里面拿来的数据进行数据转化
@@ -468,19 +366,15 @@ export default class Pageheader extends PureComponent {
   })
   searchCustomer(value) {
     const { queryCustomer } = this.props;
-    // pageSize传1000000，使能够查到足够的数据
-    queryCustomer({
-      keyWord: value,
-    });
-  }
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '打开自建任务' } })
-  handleCreateTask() {
-    this.props.creatSeibelModal();
+    if (value) {
+      queryCustomer({
+        keyWord: value,
+      });
+    }
   }
 
   // 判断当用户选择了第一次日期之后，需要disabled掉的日期
-  // 本需求在选择的两个日期的区间范围在60天之内
+  // 在任务状态为结束时选择的两个日期的区间范围在60天之内
   @autobind
   isInsideOffSet({ day, firstDay, focusedInput, flag }) {
     // focusedInput 的值 只有两种情况：1.为 endDate 2.为 null
@@ -493,12 +387,6 @@ export default class Pageheader extends PureComponent {
       return day <= firstDay.clone().add(59, 'days') && day >= firstDay.clone().subtract(1, 'days');
     }
     return true;
-  }
-
-  // 只能选择最近3个月的
-  @autobind
-  setDisableRange(date) {
-    return date > currentDate && date.format('YY-MM-DD') !== currentDate.format('YY-MM-DD');
   }
 
   /**
@@ -538,7 +426,7 @@ export default class Pageheader extends PureComponent {
     };
   }
 
-  // 选择不同视图创建时间不同
+  // 时间选择器
   @autobind
   renderTime() {
     const {
@@ -549,66 +437,87 @@ export default class Pageheader extends PureComponent {
           endTimeEnd = '',
           createTimeEnd = '',
           createTimeStart = '',
-          status,
         },
       },
     } = this.props;
-    // 当头部的筛选状态不是‘结束’时，不显示时间组件
-    if (status !== STATE_FINISHED_CODE) {
-      return null;
-    }
     let node;
     if (missionViewType === INITIATOR) {
-      const startTime = createTimeStart ?
-        moment(createTimeStart, dateFormat) :
-        moment(moment(beforeCurrentDate60Days).format(dateFormat), dateFormat);
-      const endTime = createTimeEnd ?
-        moment(createTimeEnd, dateFormat) :
-        moment(moment(currentDate).format(dateFormat), dateFormat);
-      node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        <span className={styles.dateLable}>
-          创建时间&nbsp;:&nbsp;
-        </span>
-        <div className={styles.dropDownSelectBox}>
-          {/* 新的日历范围组件 */}
-          <DateRangePicker
-            hasCustomerOffset
-            initialEndDate={endTime}
-            initialStartDate={startTime}
-            disabledRange={this.setDisableRange}
-            onChange={this.handleCreateDateChange}
-            isInsideOffSet={this.isInsideOffSet}
-            key={`${missionViewType}创建时间`}
-          />
-        </div>
+      node = (<div
+        className={classNames(
+          [styles.filterFl],
+          [styles.dateWidget])
+        }
+      >
+        <DateFilter
+          hasCustomerOffset
+          filterName="创建时间"
+          filterId="startTime"
+          value={[createTimeStart, createTimeEnd]}
+          onChange={this.handleCreateDateChange}
+          isInsideOffSet={this.isInsideOffSet}
+          key={`${missionViewType}创建时间`}
+          disabledCurrentEnd={false}
+        />
       </div>);
     } else {
-      const startTime = endTimeStart ?
-        moment(endTimeStart, dateFormat) :
-        moment(moment(beforeCurrentDate60Days).format(dateFormat), dateFormat);
-      const endTime = endTimeEnd ?
-        moment(endTimeEnd, dateFormat) :
-        moment(moment(currentDate).format(dateFormat), dateFormat);
-      node = (<div className={`${styles.filterFl} ${styles.dateWidget}`}>
-        <span className={styles.dateLable}>
-          结束时间&nbsp;:&nbsp;
-        </span>
-        <div className={styles.dropDownSelectBox}>
-          <DateRangePicker
-            hasCustomerOffset
-            initialEndDate={endTime}
-            initialStartDate={startTime}
-            disabledRange={this.setDisableRange}
-            onChange={this.handleEndDateChange}
-            isInsideOffSet={this.isInsideOffSet}
-            key={`${missionViewType}结束时间`}
-          />
-        </div>
+      node = (<div
+        className={classNames(
+          [styles.filterFl],
+          [styles.dateWidget])
+        }
+      >
+        <DateFilter
+          hasCustomerOffset
+          filterName="结束时间"
+          filterId="endTime"
+          value={[endTimeStart, endTimeEnd]}
+          onChange={this.handleEndDateChange}
+          isInsideOffSet={this.isInsideOffSet}
+          key={`${missionViewType}结束时间`}
+          disabledCurrentEnd={false}
+        />
       </div>);
     }
     return node;
   }
 
+  // 触发时间
+  renderTriggerTimer() {
+    const {
+      location: {
+        query: {
+          missionViewType,
+          triggerTimeStart,
+          triggerTimeEnd,
+        },
+      },
+    } = this.props;
+    const selectedFilter = this.selectMoreFilter();
+    if (selectedFilter.includes(triggerFilterId)) {
+      return (
+        <div
+          className={classNames(
+            [styles.filterFl],
+            [styles.dateWidget])
+          }
+        >
+          <DateFilter
+            hasCustomerOffset
+            filterName="触发时间"
+            filterId={triggerFilterId}
+            value={[triggerTimeStart, triggerTimeEnd]}
+            onChange={this.handleTriggerTimeChange}
+            isInsideOffSet={this.isInsideOffSet}
+            key={`${missionViewType}触发时间`}
+            disabledCurrentEnd={false}
+            onClose={() => { this.closeFilter(triggerFilterId); }}
+            isCloseable
+          />
+        </div>
+      );
+    }
+    return null;
+  }
   /**
    * 渲染'执行方式'筛选组件
    * 默认显示'所有方式'
@@ -621,56 +530,112 @@ export default class Pageheader extends PureComponent {
     const { location: { query: { executeType } } } = this.props;
     return (
       <div className={styles.filterFl}>
-        <Select
-          name="executeType"
-          value={executeType || executeTypeAll.value}
-          data={[executeTypeAll, ...list]}
+        <SingleFilter
+          filterId="executeType"
+          filterName="执行方式"
+          value={executeType || typeAll.value}
+          data={[typeAll, ...list]}
+          dataMap={['value', 'label']}
           onChange={this.handleSelctMode}
+          needItemObj
         />
       </div>
     );
   }
 
+  @autobind
+  renderCustFilterName(item) {
+    const { location: { query } } = this.props;
+    const { custName, custId } = query;
+    const { filterName, value } = item;
+    const displayValue = !_.isEmpty(custId) ? `${custName}(${custId})` : value.name;
+    return (
+      <div className={styles.customerFilterContent}>
+        <span className={styles.customerFilterName}>{filterName}:</span>
+        <span className={styles.customerFilterValue} title={displayValue}>{displayValue}</span>
+      </div>
+    );
+  }
+
+  // 获取当前moreFilterList
+  @autobind
+  getMoreFilterList() {
+    const { filterControl } = this.props;
+    return _.filter(moreFilterData,
+      item => _.some(item.type, pageTypeItem => pageTypeItem === filterControl));
+  }
+
+  @autobind
+  moreFilterChange(obj) {
+    const { location: {
+      pathname,
+      query,
+    } } = this.props;
+    const { replace } = this.context;
+    const { isDeleteFilterFromLocation, id } = obj;
+    const currentMoreFilterData = this.getMoreFilterList();
+    const currentFilterItem = _.filter(currentMoreFilterData, item => item.key === id)[0];
+    const filterOption = currentFilterItem && currentFilterItem.filterOption;
+    let finalQuery = query;
+    if (isDeleteFilterFromLocation && currentFilterItem) {
+      finalQuery = _.omit(query, filterOption);
+    } else {
+      // ['a','b'] => {a:'', b: ''}
+      const filterMap = _.reduce(filterOption,
+        (filterQuery, itemQuery) => ({ ...filterQuery, [itemQuery]: '' }), {});
+      finalQuery = _.merge(query, filterMap);
+    }
+    replace({
+      pathname,
+      query: finalQuery,
+    });
+  }
+
+  @autobind
+  selectMoreFilter() {
+    const {
+      location: {
+        query,
+      },
+    } = this.props;
+    const currentMoreFilterData = this.getMoreFilterList();
+    return _.map(currentMoreFilterData, (itemFilter) => {
+      const hasFilterItem = _.every(itemFilter.filterOption, item => _.hasIn(query, item));
+      if (hasFilterItem) {
+        return itemFilter.key;
+      }
+      return null;
+    });
+  }
+  @autobind
+  closeFilter(filterId) {
+    this.moreFilterChange({ id: filterId, isDeleteFilterFromLocation: true });
+  }
   render() {
     const {
-      getDrafterList,
       drafterList,
-      page,
-      chooseMissionViewOptions,
       dict,
       location: {
         query: {
           missionViewType,
           type,
           creatorId,
-          creatorName,
           custId = '',
-          custName = '',
         },
       },
       customerList,
     } = this.props;
 
-    const { missionName, statusValue, stateAllOptions, showMore } = this.state;
+    const { missionName, statusValue, stateAllOptions } = this.state;
     const { missionType } = dict;
     const typeOptions = this.constructorDataType(missionType);
     // 类型增加全部
     const typeAllOptions = !_.isEmpty(typeOptions) ?
       [typeAll, ...typeOptions] : typeOptions;
 
-    // 创建者增加全部
-    const drafterAllList = !_.isEmpty(drafterList) ?
-      [ptyMngAll, ...drafterList] : [];
-
-    // 创建者回填
-    const curDrafter = check.isNull(creatorId) ?
-      allCreators : `${decodeURIComponent(creatorName)}(${creatorId})`;
-
-    // 执行者视图按客户搜索
-    const allCustomerList = !_.isEmpty(customerList) ?
-      [unlimitedCustomers, ...customerList] : [];
-    const currentCustomer = check.isNull(custId) ?
-      allCustomers : `${decodeURIComponent(custName)}(${custId})`;
+    // 过滤器当前客户id
+    const currentCustomer = _.find(customerList, { custId }) || {};
+    const currentCustId = currentCustomer ? currentCustomer.custId : '';
 
     // 搜索框回填
     const missionNameValue = !_.isEmpty(missionName) ? missionName : '';
@@ -679,102 +644,102 @@ export default class Pageheader extends PureComponent {
     // 默认取url中的missionViewType，否则从helper的getViewInfo方法中取
     const missionViewTypeValue = !_.isEmpty(missionViewType) ?
       missionViewType : getViewInfo().currentViewType;
+
+    const selectFilterKeys = this.selectMoreFilter();
+    const currentMoreFilterData = this.getMoreFilterList();
     return (
-      <div className={`${styles.pageCommonHeader} ${styles.HeaderOverflow}`} ref={this.pageCommonHeaderRef}>
-        <div className={`${styles.missionViewType} ${styles.view}`}>
-          <Select
-            name="missionViewType"
-            value={missionViewTypeValue}
-            data={chooseMissionViewOptions}
-            onChange={this.handleSelctView}
-          />
-        </div>
-
-        <div className={styles.headerRight}>
-          {
-            <div
-              className={styles.filterMore}
-              onClick={showMore ? this.handleMore : this.handleShrink}
-              ref={this.filterMoreRef}
-            >
-              <span>{showMore ? '更多' : '收起'}</span>
-            </div>
-          }
-          <Button
-            type="primary"
-            icon="plus"
-            size="small"
-            onClick={this.handleCreateTask}
-          >
-            新建
-          </Button>
-        </div>
-
-        <div className={styles.filterBox} ref={this.filterBoxRef}>
+      <div className={styles.pageCommonHeader}>
+        <div className={styles.filterBox}>
           <div className={`${styles.filterFl}`}>
             <Search
               placeholder="任务名称"
-              style={{ width: 110 }}
+              style={{ width: 158 }}
               value={missionNameValue}
               onChange={this.handleSearchChange}
               onSearch={this.handleSearch}
               enterButton
             />
           </div>
-
           <div className={styles.filterFl}>
-            <Select
-              name="type"
+            <SingleFilter
+              filterId="type"
+              filterName="任务类型"
               value={typeValue}
               data={typeAllOptions}
+              dataMap={['value', 'label']}
               onChange={this.handleSelctType}
+              needItemObj
             />
           </div>
-
           <div className={`${styles.filterFl} ${styles.mlMinux10}`}>
-            <Select
-              name="status"
+            <SingleFilter
+              filterId="status"
+              filterName="任务状态"
               value={statusValue}
               data={stateAllOptions}
+              dataMap={['value', 'label']}
               onChange={this.handleSelctStatus}
+              needItemObj
             />
           </div>
-          {missionViewTypeValue === INITIATOR ? null :
-          <div className={styles.filterFl}>
-            <div className={styles.dropDownSelectBox}>
-              <DropDownSelect
-                value={curDrafter}
-                placeholder="工号/名称"
-                searchList={drafterAllList}
-                showObjKey="ptyMngName"
-                objId="ptyMngId"
-                emitSelectItem={item => this.selectItem(item)}
-                emitToSearch={value => this.toSearch(getDrafterList, value)}
-                name={`${page}-ptyMngName`}
-              />
-            </div>
-          </div>
+          {this.renderExecuteType()}
+          {this.renderTime()}
+          {
+            currentMoreFilterData.length ?
+              <div className={classNames(styles.filterFl, styles.moreFilterBtn)}>
+                <MoreFilter
+                  value={this.selectMoreFilter()}
+                  data={currentMoreFilterData}
+                  onChange={this.moreFilterChange}
+                />
+              </div> : null
           }
+        </div>
+        <div className={styles.moreFilterBox}>
           {
             /* 执行者视图中增加客户筛选 */
-            missionViewTypeValue === EXECUTOR ?
+            missionViewTypeValue === EXECUTOR &&
+            _.includes(selectFilterKeys, custFilterId) ?
               <div className={styles.filterFl}>
                 <div className={styles.dropDownSelectBox}>
-                  <DropDownSelect
-                    value={currentCustomer}
-                    placeholder="姓名/经纪客户号"
-                    searchList={allCustomerList}
-                    showObjKey="name"
-                    objId="custId"
-                    emitSelectItem={this.selectCustomerItem}
-                    emitToSearch={this.searchCustomer}
-                    name={`${page}-name`}
+                  <SingleFilter
+                    filterId={custFilterId}
+                    filterName="客户"
+                    value={currentCustId}
+                    data={customerList}
+                    dataMap={['custId', 'name']}
+                    onChange={this.selectCustomerItem}
+                    onInputChange={this.searchCustomer}
+                    getFilterLabelValue={this.renderCustFilterName}
+                    showSearch
+                    needItemObj
+                    onClose={() => { this.closeFilter(custFilterId); }}
+                    isCloseable
                   />
                 </div>
               </div> : null
           }
-          {this.renderExecuteType()}
-          {this.renderTime()}
+          {missionViewTypeValue !== INITIATOR &&
+          _.includes(selectFilterKeys, creatorFilterId) ?
+            <div className={styles.filterFl}>
+              <div className={styles.dropDownSelectBox}>
+                <SingleFilter
+                  filterId={creatorFilterId}
+                  filterName="创建者"
+                  value={creatorId || ''}
+                  data={drafterList}
+                  dataMap={['ptyMngId', 'ptyMngName']}
+                  onChange={this.selectItem}
+                  onInputChange={this.toSearch}
+                  showSearch
+                  needItemObj
+                  onClose={() => { this.closeFilter(creatorFilterId); }}
+                  isCloseable
+                />
+              </div>
+            </div> : null
+          }
+          {this.renderTriggerTimer()}
         </div>
       </div>
     );

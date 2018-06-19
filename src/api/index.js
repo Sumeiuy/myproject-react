@@ -25,6 +25,7 @@ import choicenessCombination from './choicenessCombination';
 import investmentAdvice from './investmentAdvice';
 import operationCenter from './operationCenter';
 import businessDepartmentCustomerDistribute from './businessDepartmentCustomerDistribute';
+import custAllot from './custAllot';
 import messageCenter from './messageCenter';
 import stockOptionEvaluation from './stockOptionEvaluation';
 
@@ -85,6 +86,8 @@ export default {
   operationCenter: operationCenter(api),
   // ========== 客户分配-营业部非投顾签约客户的分配
   businessDepartmentCustDistribute: businessDepartmentCustomerDistribute(api),
+  // ========== 客户分配分公司客户分配
+  custAllot: custAllot(api),
   // ========== 消息通知提醒
   messageCenter: messageCenter(api),
   // ========== 股票期权评估申请

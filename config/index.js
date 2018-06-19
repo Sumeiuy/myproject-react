@@ -54,11 +54,9 @@ module.exports = {
       prefix,
       {
         target: 'http://168.61.8.82:5086', // uat
-        // target: 'http://168.61.8.82:5085', // SIT
+        // target: 'http://168.61.8.81:5087', // SIT
         // target: 'http://168.61.8.81:5090', // DOClever
-        // target: 'http://160.9.230.9:8082', // Java开发接口访问地址
         // target: 'http://160.9.230.159:8082', // 王必强
-        // target: 'http://160.10.6.250:8082',
       },
       '/fspa/log',
       {
@@ -102,5 +100,9 @@ module.exports = {
   appSrc: path.resolve(__dirname, '../src'),
   fspSrc: path.resolve(__dirname, '../fspSrc'),
   appNodeModules: path.resolve(__dirname, '../node_modules'),
-  appStatic: path.resolve(__dirname, '../static')
+  appStatic: path.resolve(__dirname, '../static'),
+  htComponents: [
+    path.resolve(__dirname, '../node_modules/lego-react-filter/src'),
+    path.resolve(__dirname, '../node_modules/lego-tree-filter/src')
+  ]
 };

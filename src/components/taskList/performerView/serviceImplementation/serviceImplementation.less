@@ -1,0 +1,19 @@
+.serviceImplementation {
+  background: #fff;
+  .listSwiperBox {
+    background-color: #fff;
+    padding: 0 20px;
+  }
+  .listSwiper {
+    position: relative;
+  }
+  .taskDetail {
+    background: #f9f9f9;
+  }
+  :global {
+    // 解决执行者视图中，affix遮住头部的筛选组件的弹层问题
+    .ant-affix {
+      z-index: 8;
+    }
+  }
+}

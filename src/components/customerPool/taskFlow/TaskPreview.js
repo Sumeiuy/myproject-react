@@ -312,7 +312,6 @@ export default class TaskPreview extends PureComponent {
     }
 
     const {
-      labelDesc,
       custNum,
       // originFileName,
       executionType,
@@ -419,15 +418,6 @@ export default class TaskPreview extends PureComponent {
                 <div>创建人：</div>
                 <div>{creator || '--'}</div>
               </div>
-            </div>
-            <div className={styles.taskSection}>
-              {
-                currentEntry === 1 ?
-                  <div className={styles.labelDesc}>
-                    <div>标签描述：</div>
-                    <div>{labelDesc || '--'}</div>
-                  </div> : null
-              }
             </div>
           </div>
         </div>

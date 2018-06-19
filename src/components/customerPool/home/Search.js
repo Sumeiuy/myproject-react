@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-31 14:42:22
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-06-13 15:52:38
  * @description 客户池头部搜索组件
  */
 
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import store from 'store';
 
 import logable, { logCommon } from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
@@ -78,13 +79,20 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
-  handleOpenTab(options) {
+  handleOpenTab(data) {
+    const { labelDesc, missionDesc, ...options } = data;
     const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.props.saveSearchVal({
       searchVal: this.state.value,
     });
+    // 有标签描述需要将描述存到storage
+    if (labelDesc) {
+      store.set(`${options.labelMapping}-labelDesc`, {
+        ...data,
+        labelName: decodeURIComponent(options.labelName),
+      });
+    }
     const condition = urlHelper.stringify({ ...options });
     const url = `${firstUrl}?${condition}`;
     const param = {
@@ -161,7 +169,7 @@ export default class Search extends PureComponent {
         isLabel: item.type === LABEL,
       }),
       labelName: encodeURIComponent(item.value),
-      labelDesc: encodeURIComponent(item.description),
+      labelDesc: item.description,
       q: encodeURIComponent(item.value),
       type: item.type,
     };
@@ -283,21 +291,6 @@ export default class Search extends PureComponent {
         rel="noopener noreferrer"
         onClick={() => {
           if (!isPreview) {
-            this.handleOpenTab({
-              source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
-              labelMapping: item.id || '',
-              labelName: encodeURIComponent(item.name),
-              labelDesc: encodeURIComponent(item.description),
-              // 任务提示
-              missionDesc: padSightLabelDesc({
-                sightingScopeBool: isSightingScope(item.source),
-                labelId: item.id,
-                labelName: item.name,
-              }),
-              q: encodeURIComponent(item.name),
-              type: LABEL,
-            });
-
             // 神策搜索上报
             logCommon({
               type: 'Click',
@@ -306,6 +299,20 @@ export default class Search extends PureComponent {
                 value: item.name,
                 type: '猜你感兴趣',
               },
+            });
+            this.handleOpenTab({
+              source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
+              labelMapping: item.id || '',
+              labelName: encodeURIComponent(item.name),
+              // 任务提示
+              missionDesc: padSightLabelDesc({
+                sightingScopeBool: isSightingScope(item.source),
+                labelId: item.id,
+                labelName: item.name,
+              }),
+              labelDesc: item.description,
+              q: encodeURIComponent(item.name),
+              type: LABEL,
             });
           }
         }}

@@ -21,7 +21,7 @@ var cssLoaders = utils.getCSSLoaders({
   sourceMap: config.dev.cssSourceMap
 });
 
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 
@@ -31,13 +31,7 @@ module.exports = merge(baseWebpackConfig, {
       {
         test: /\.jsx?$/,
         loader: 'happypack/loader?id=jsx',
-        include: config.src,
-        exclude: [
-          resolve('node_modules'),
-          resolve('build'),
-          resolve('dist'),
-          resolve('config'),
-        ],
+        include: [config.src].concat(config.htComponents)
       },
       {
         test: /\.css$/,
@@ -47,13 +41,6 @@ module.exports = merge(baseWebpackConfig, {
       {
         test: /\.less$/,
         include: config.src,
-        exclude: [
-          resolve('node_modules'),
-          resolve('build'),
-          resolve('dist'),
-          resolve('config'),
-          resolve('src/components/common/htFilter/treeFilter'),
-        ],
         use: ['style-loader'].concat(cssLoaders.own).concat({
           loader: 'less-loader',
           options: {
@@ -63,12 +50,12 @@ module.exports = merge(baseWebpackConfig, {
       },
       {
         test: /\.css$/,
-        include: [config.appNodeModules, config.appStatic],
+        include: config.appNodeModules,
         use: ['style-loader'].concat(cssLoaders.nodeModules)
       },
       {
         test: /\.less$/,
-        include: [config.appNodeModules, config.appStatic, resolve('src/components/common/htFilter/treeFilter/src')],
+        include: config.appNodeModules,
         use: ['style-loader'].concat(cssLoaders.nodeModules).concat({
           loader: 'less-loader',
           options: {
@@ -116,7 +103,7 @@ module.exports = merge(baseWebpackConfig, {
     new HappyPack({
       id: 'jsx',
       threads: 4,
-      loaders: [ 'babel-loader' ]
+      loaders: ['babel-loader']
     }),
     new FriendlyErrorsPlugin()
   ]

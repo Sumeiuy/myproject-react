@@ -166,6 +166,19 @@
         padding: 7px 8px !important;
       }
     }
+    .left {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-direction: column;
+      flex: 2;
+      white-space: nowrap;
+      .error {
+        font-size: 12px;
+        color: #e33c39;
+        margin-left: 100px;
+      }
+    }
   }
   .uploadSection {
     padding: 10px 0;
@@ -211,6 +224,10 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
+          & > span {
+            // antd样式库里把此处的span设成了block，导致添加服务记录上传组件看不到删除按钮
+            display: inline;
+          }
         }
         .anticon-cross {
           font-size: 15px;
@@ -326,6 +343,9 @@
         .ant-calendar-picker {
           float: left;
         }
+        .ant-input {
+          font-size: 12px;
+        }
       }
     }
     :global {
@@ -367,24 +387,123 @@
     }
   }
 }
+/* 执行者视图优化后样式变动 */
+.performerServiceRecord {
+  padding-right: 22px;
+  .readOnlyText {
+    line-height: 28px;
+    flex: 1;
+    min-width: 142px;
+  }
+  .gridWrapper {
+    padding-bottom: 0;
+  }
+  .serveWay, .serveStatus, .serveType, .serveTime, .feedbackTime, .feedbackType {
+    width: auto;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    line-height: unset;
+    vertical-align: middle;
+    margin: 7px 0;
+    flex: 1;
+    .title {
+      text-align: right;
+      width: 82px;
+      height: 28px;
+      line-height: 28px;
+      margin-left: 16px;
+      padding-right: 10px;
+    }
+    .content {
+      height: 28px;
+      line-height: 28px;
+      flex: 1;
+      :global {
+        .ant-input {
+          font-size: 14px;
+          height: 28px;
+          color: #4a4a4a;
+        }
+        .ant-radio-wrapper, .ant-select-selection-selected-value {
+          font-size: 14px;
+          color: #4a4a4a;
+        }
+        // 字体变成14px后，日期组件后面的小图标会被遮挡，此处调整小图标的位置
+        .ant-calendar-picker-clear, .ant-calendar-picker-icon {
+          right: 6px;
+        }
+      }
+    }
+    :global {
+      .ant-form-item {
+        flex: 1;
+      }
+      .ant-form-item-control-wrapper > .ant-form-item-control.has-error {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        & > .ant-form-item-children {
+          display: block;
+          width: 100%;
+        }
+        & > .ant-form-explain {
+          line-height: 1;
+        }
+      }
+      .ant-radio-group {
+        line-height: unset;
+        vertical-align: baseline;
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
+    }
+  }
+  .serveRecord {
+    margin: 7px 0;
+    padding-bottom: 0;
+    .title {
+      text-align: right;
+      width: 82px;
+      height: 28px;
+      line-height: 28px;
+      margin-left: 16px;
+      padding-right: 10px;
+    }
+    :global {
+      .ant-form-item {
+        width: auto;
+        flex: 1;
+        margin-bottom: 0;
+      }
+    }
+  }
+  .divider {
+    display: none;
+  }
+  .feedbackType {
+    flex: 2;
+    .content {
+      display: flex;
+    }
+  }
+  .uploadSection {
+    padding: 7px 0;
+    margin: 0 0 0 22px;
+    :global {
+      .uploadBox {
+        padding: 0;
+      }
+    }
+  }
+}
 .yuyintishi {
   height: 20px;
   line-height: 20px;
-  padding-top: 4px;
-  padding-bottom: 8px;
+  padding-bottom: 5px;
   font-size: 14px;
   color: #4a4a4a;
   box-sizing: content-box;
+  margin-bottom: 0;
 }
-.wenxin {
-  padding-top: 8px;
-  height: 16px;
-  line-height: 16px;
-  font-size: 12px;
-  color: #576b95;
-  box-sizing: content-box;
-  .wenxinIcon {
-    color: #df5cce;
-  }
-}
-
