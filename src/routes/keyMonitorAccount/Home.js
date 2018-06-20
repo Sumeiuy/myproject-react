@@ -2,13 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-19 16:41:38
+ * @Last Modified time: 2018-06-20 09:29:38
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
+import { Row, Col } from 'antd';
 
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
@@ -78,7 +79,14 @@ export default class KeyMonitorAccountHome extends Component {
   render() {
     return (
       <div className={styles.keyMonitorAccountWrap}>
-        首页
+        <div className={styles.filterArea}>
+          <Row align="middle" gutter={16} type="flex">
+            <Col>1</Col>
+            <Col>2</Col>
+            <Col>3</Col>
+            <Col>4</Col>
+          </Row>
+        </div>
       </div>
     );
   }
