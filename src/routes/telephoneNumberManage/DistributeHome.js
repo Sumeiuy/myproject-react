@@ -3,7 +3,7 @@
  * @Descripter: 投顾手机分配状态页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-22 17:09:38
+ * @Last Modified time: 2018-06-20 14:33:17
  */
 
 import React, { PureComponent } from 'react';
@@ -139,8 +139,9 @@ export default class DistributeHome extends PureComponent {
           id: `${item.empId}-${index}`,
           phoneNumber: '--',
           imsi: '--',
-          sim2: '--',
           sim: '--',
+          sim2: '--',
+          modifyTime: '--',
         }));
       }
       return _.map(listData, (item, index) => ({
@@ -191,12 +192,16 @@ export default class DistributeHome extends PureComponent {
         value: '手机串号',
       },
       {
-        key: 'sim2',
-        value: 'SIM卡号（非4G）',
+        key: 'sim',
+        value: 'SIM卡1',
       },
       {
-        key: 'sim',
-        value: 'SIM卡号（4G）',
+        key: 'sim2',
+        value: 'SIM卡2',
+      },
+      {
+        key: 'modifyTime',
+        value: '办结时间',
       },
     ];
     return titleColumn;
@@ -237,7 +242,7 @@ export default class DistributeHome extends PureComponent {
           onPageChange={this.handlePageNumberChange}
           tableClass={styles.advisorBindListTable}
           titleColumn={this.renderColumn()}
-          columnWidth={['16%', '10%', '16%', '12%', '14%', '16%', '16%']}
+          columnWidth={['14%', '10%', '14%', '10%', '12%', '14%', '14%', '12%']}
           emptyListDataNeedEmptyRow
           // 分页器class
           paginationClass={styles.advisorBindListPagination}
