@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-19 16:03:39
+ * @Last Modified time: 2018-06-20 14:56:51
  */
 
 import React, { PureComponent } from 'react';
@@ -273,7 +273,7 @@ export default class CreateApply extends PureComponent {
 
   // 客户校验填完值后重置错误状态和错误提示
   @autobind
-  reSetCustomerErrorProps() {
+  resetCustomerErrorProps() {
     this.setState({
       isShowCustomerStatusError: false,
       customerStatusErrorMessage: '',
@@ -282,7 +282,7 @@ export default class CreateApply extends PureComponent {
 
   // 客户交易级别校验填完值后重置错误状态和错误提示
   @autobind
-  reSetCustTransLvErrorProps() {
+  resetCustTransLvErrorProps() {
     this.setState({
       isShowCustTransLvStatusError: false,
       custTransLvStatusErrorMessage: '',
@@ -291,7 +291,7 @@ export default class CreateApply extends PureComponent {
 
   // 客户类型校验填完值后重置错误状态和错误提示
   @autobind
-  reSetStockCustTypeErrorProps() {
+  resetStockCustTypeErrorProps() {
     this.setState({
       isShowStockCustTypeStatusError: false,
       stockCustTypeStatusErrorMessage: '',
@@ -300,7 +300,7 @@ export default class CreateApply extends PureComponent {
 
   // 申请类型校验填完值后重置错误状态和错误提示
   @autobind
-  reSetReqTypeErrorProps() {
+  resetReqTypeErrorProps() {
     this.setState({
       isShowReqTypeStatusError: false,
       reqTypeStatusErrorMessage: '',
@@ -309,7 +309,7 @@ export default class CreateApply extends PureComponent {
 
   // 开立期权市场类别校验填完值后重置错误状态和错误提示
   @autobind
-  reSetOpenOptMktCatgErrorProps() {
+  resetOpenOptMktCatgErrorProps() {
     this.setState({
       isShowOpenOptMktCatgStatusError: false,
       openOptMktCatgStatusErrorMessage: '',
@@ -318,7 +318,7 @@ export default class CreateApply extends PureComponent {
 
   // 申报事项校验填完值后重置错误状态和错误提示
   @autobind
-  reSetDeclareBusErrorProps() {
+  resetDeclareBusErrorProps() {
     this.setState({
       isShowDeclareBusStatusError: false,
       declareBusStatusErrorMessage: '',
@@ -327,7 +327,7 @@ export default class CreateApply extends PureComponent {
 
   // 学历证明材料校验填完值后重置错误状态和错误提示
   @autobind
-  reSetDegreeFlagErrorProps() {
+  resetDegreeFlagErrorProps() {
     this.setState({
       isShowDegreeFlagStatusError: false,
       degreeFlagStatusErrorMessage: '',
@@ -336,7 +336,7 @@ export default class CreateApply extends PureComponent {
 
   // A股账户开立时间6个月以上校验填完值后重置错误状态和错误提示
   @autobind
-  reSetAAcctOpenTimeFlagErrorProps() {
+  resetAAcctOpenTimeFlagErrorProps() {
     this.setState({
       isShowAAcctOpenTimeFlagStatusError: false,
       aAcctOpenTimeFlagStatusErrorMessage: '',
@@ -345,7 +345,7 @@ export default class CreateApply extends PureComponent {
 
   // 已开立融资融券账户校验填完值后重置错误状态和错误提示
   @autobind
-  reSetRzrqzqAcctFlagErrorProps() {
+  resetRzrqzqAcctFlagErrorProps() {
     this.setState({
       isShowRzrqzqAcctFlagStatusError: false,
       rzrqzqAcctFlagStatusErrorMessage: '',
@@ -354,7 +354,7 @@ export default class CreateApply extends PureComponent {
 
   // 已提供金融期货交易证明校验填完值后重置错误状态和错误提示
   @autobind
-  reSetJrqhjyFlagErrorProps() {
+  resetJrqhjyFlagErrorProps() {
     this.setState({
       isShowJrqhjyFlagStatusError: false,
       jrqhjyFlagStatusErrorMessage: '',
@@ -483,7 +483,7 @@ export default class CreateApply extends PureComponent {
     // 选中客户
     this.setState({ customer: item });
     if (!_.isEmpty(item)) {
-      this.reSetCustomerErrorProps();
+      this.resetCustomerErrorProps();
       this.getCustInfo(item);
     }
   }
@@ -512,14 +512,14 @@ export default class CreateApply extends PureComponent {
           openDivName,
           busPrcDivName,
         } = custInfo;
-        this.handleEmitEvent('custInfo', custInfo);
+        this.handleChange('custInfo', custInfo);
         // 设置客户交易级别
-        this.handleEmitEvent('custTransLv', custTransLv);
-        this.handleEmitEvent('custTransLvName', custTransLvName);
+        this.handleChange('custTransLv', custTransLv);
+        this.handleChange('custTransLvName', custTransLvName);
         // 受理时间
-        this.handleEmitEvent('accptTime', accptTime);
+        this.handleChange('accptTime', accptTime);
         // 受理营业部Id
-        this.handleEmitEvent('busPrcDivId', busPrcDivId);
+        this.handleChange('busPrcDivId', busPrcDivId);
         // 获取下一步按钮和审批人
         const { flowId } = this.state;
         const param = {
@@ -545,14 +545,40 @@ export default class CreateApply extends PureComponent {
     this.isValidateError = false;
     this.checkIsRequired();
     if (!this.isValidateError) {
-      this.setState({
-        operate: item.operate,
-        groupName: item.nextGroupName,
-        auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
-        nextApproverList: item.flowAuditors,
-        nextApproverModal: true,
-      });
+      const {
+        customer: {
+          custType,
+        },
+        custInfo: {
+          isProfessInvset,
+        },
+      } = this.state;
+      // 个人客户且是专业投资者
+      if (custType === 'per' && isProfessInvset) {
+        commonConfirm({
+          content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
+          onOk: () => this.showNextApprover(item),
+        });
+      } else {
+        commonConfirm({
+          content: '请确认是否已上传相关附件。',
+          onOk: () => this.showNextApprover(item),
+        });
+      }
     }
+  }
+
+  // 展示下一步审批人
+  @autobind
+  showNextApprover(item) {
+    console.warn('item', item);
+    this.setState({
+      operate: item.operate,
+      groupName: item.nextGroupName,
+      auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
+      nextApproverList: item.flowAuditors,
+      nextApproverModal: true,
+    });
   }
 
   // 校验数据
@@ -570,7 +596,7 @@ export default class CreateApply extends PureComponent {
       customer: {
         brokerNumber: econNum,
       },
-      custTransLvl,
+      custTransLv,
       stockCustType,
       reqType,
       aAcctOpenTimeFlag,
@@ -589,7 +615,7 @@ export default class CreateApply extends PureComponent {
     const query = {
       bizId: '',
       econNum,
-      custTransLvl,
+      custTransLv,
       stockCustType,
       reqType,
       aAcctOpenTimeFlag,
@@ -636,7 +662,7 @@ export default class CreateApply extends PureComponent {
         custName,
         custType,
       },
-      custTransLvl,
+      custTransLv,
       stockCustType,
       reqType,
       aAcctOpenTimeFlag,
@@ -681,7 +707,7 @@ export default class CreateApply extends PureComponent {
       aAcct,
       openSys,
       isProfessInvset,
-      custTransLvl,
+      custTransLv,
       stockCustType,
       reqType,
       openOptMktCatg,
@@ -738,45 +764,45 @@ export default class CreateApply extends PureComponent {
 
   // 更新基本信息数据
   @autobind
-  handleEmitEvent(name, value) {
+  handleChange(name, value) {
     this.setState({ [name]: value }, () => {
       if (value) {
         switch (name) {
           // 客户交易级别
           case 'custTransLvName':
-            this.reSetCustTransLvErrorProps();
+            this.resetCustTransLvErrorProps();
             break;
           // 股票申请客户
           case 'stockCustType':
-            this.reSetStockCustTypeErrorProps();
+            this.resetStockCustTypeErrorProps();
             break;
           // 申报事项
           case 'reqType':
-            this.reSetReqTypeErrorProps();
+            this.resetReqTypeErrorProps();
             break;
           // 开立期权市场类别
           case 'openOptMktCatg':
-            this.reSetOpenOptMktCatgErrorProps();
+            this.resetOpenOptMktCatgErrorProps();
             break;
           // 申报事项
           case 'declareBus':
-            this.reSetDeclareBusErrorProps();
+            this.resetDeclareBusErrorProps();
             break;
           // 学历
           case 'degreeFlag':
-            this.reSetDegreeFlagErrorProps();
+            this.resetDegreeFlagErrorProps();
             break;
           // A股账户开立时间6个月以上
           case 'aAcctOpenTimeFlag':
-            this.reSetAAcctOpenTimeFlagErrorProps();
+            this.resetAAcctOpenTimeFlagErrorProps();
             break;
           // 已开立融资融券账户
           case 'rzrqzqAcctFlag':
-            this.reSetRzrqzqAcctFlagErrorProps();
+            this.resetRzrqzqAcctFlagErrorProps();
             break;
           // 已提供金融期货交易证明
           case 'jrqhjyFlag':
-            this.reSetJrqhjyFlagErrorProps();
+            this.resetJrqhjyFlagErrorProps();
             break;
           default:
             break;
@@ -803,6 +829,10 @@ export default class CreateApply extends PureComponent {
       busPrcDivId,
       custTransLv,
       custTransLvName,
+      degreeFlag,
+      aAcctOpenTimeFlag,
+      rzrqzqAcctFlag,
+      jrqhjyFlag,
       isShowCustomerStatusError,
       customerStatusErrorMessage,
       // 客户交易级别校验
@@ -904,7 +934,11 @@ export default class CreateApply extends PureComponent {
               busPrcDivId={busPrcDivId}
               custTransLv={custTransLv}
               custTransLvName={custTransLvName}
-              onEmitEvent={this.handleEmitEvent}
+              degreeFlag={degreeFlag}
+              aAcctOpenTimeFlag={aAcctOpenTimeFlag}
+              rzrqzqAcctFlag={rzrqzqAcctFlag}
+              jrqhjyFlag={jrqhjyFlag}
+              onChange={this.handleChange}
               isShowCustTransLvStatusError={isShowCustTransLvStatusError}
               custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
               isShowStockCustTypeStatusError={isShowStockCustTypeStatusError}
@@ -930,10 +964,9 @@ export default class CreateApply extends PureComponent {
           <div className={styles.moduleAttachment}>
             <InfoTitle head="附件信息" />
             <UploadFile
-              fileList={[]}
               edit
               type="attachment"
-              onEmitEvent={this.handleEmitEvent}
+              onEmitEvent={this.handleChange}
               needDefaultText={false}
             />
           </div>

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 10:34:44
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-19 17:23:30
+ * @Last Modified time: 2018-06-20 15:01:48
  */
 
 import React, { PureComponent } from 'react';
@@ -166,27 +166,25 @@ export default class ApplyEdit extends PureComponent {
       return null;
     }
     return (
-      <div>
-        <ApplyEditForm
-          location={location}
-          detailInfo={detailInfo}
-          attachmentList={attachmentList}
-          stockCustTypeMap={stockCustTypeMap}
-          reqTypeMap={reqTypeMap}
-          klqqsclbMap={klqqsclbMap}
-          busDivisionMap={busDivisionMap}
-          acceptOrgData={acceptOrgData}
-          queryAcceptOrg={queryAcceptOrg}
-          editButtonListData={editButtonListData}
-          getEditButtonList={getEditButtonList}
-          validateResultData={validateResultData}
-          validateResult={validateResult}
-          doApprove={doApprove}
-          updateBindingFlowAppId={updateBindingFlowAppId}
-          updateBindingFlow={updateBindingFlow}
-          getDetailInfo={getDetailInfo}
-        />
-      </div>
+      <ApplyEditForm
+        location={location}
+        detailInfo={detailInfo}
+        attachmentList={attachmentList}
+        stockCustTypeMap={stockCustTypeMap}
+        reqTypeMap={reqTypeMap}
+        klqqsclbMap={klqqsclbMap}
+        busDivisionMap={busDivisionMap}
+        acceptOrgData={acceptOrgData}
+        queryAcceptOrg={queryAcceptOrg}
+        editButtonListData={editButtonListData}
+        getEditButtonList={getEditButtonList}
+        validateResultData={validateResultData}
+        validateResult={validateResult}
+        doApprove={doApprove}
+        updateBindingFlowAppId={updateBindingFlowAppId}
+        updateBindingFlow={updateBindingFlow}
+        getDetailInfo={getDetailInfo}
+      />
     );
   }
 }

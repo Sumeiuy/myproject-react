@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-19 17:22:34
+ * @Last Modified time: 2018-06-20 14:53:34
  */
 
 import React, { PureComponent } from 'react';
@@ -74,6 +74,7 @@ export default class ApplyEditForm extends PureComponent {
   constructor(props) {
     super(props);
     const { editButtonListData } = this.props;
+    const { detailInfo } = this.props;
     this.state = {
       // 是否是编辑页面
       isEdit: true,
@@ -86,35 +87,35 @@ export default class ApplyEditForm extends PureComponent {
       // 客户信息
       customer: {},
       // 客户类型
-      custType: '',
+      custType: detailInfo.custType,
       // 新建时 选择的该客户姓名
-      custName: '',
+      custName: detailInfo.custName,
       // 客户交易级别
-      custTransLv: '',
+      custTransLv: detailInfo.custTransLv,
       // 客户交易级别Name
-      custTransLvName: '',
+      custTransLvName: detailInfo.custTransLvName,
       // 股票客户类型
-      stockCustType: '',
+      stockCustType: detailInfo.stockCustType,
       // 申请类型
-      reqType: '',
+      reqType: detailInfo.reqType,
       // 开立期权市场类别
-      openOptMktCatg: '',
+      openOptMktCatg: detailInfo.openOptMktCatg,
       // 业务受理营业部
-      busPrcDivId: '',
+      busPrcDivId: detailInfo.busPrcDivId,
       // 受理时间
-      accptTime: '',
+      accptTime: detailInfo.accptTime,
       // 申报事项
-      declareBus: '',
+      declareBus: detailInfo.declareBus,
       // 已提供大专及以上的学历证明材料
-      degreeFlag: '',
+      degreeFlag: detailInfo.degreeFlag,
       // A股账户开立时间6个月以上
-      aAcctOpenTimeFlag: '',
+      aAcctOpenTimeFlag: detailInfo.aAcctOpenTimeFlag,
       // 已开立融资融券账户
-      rzrqzqAcctFlag: '',
+      rzrqzqAcctFlag: detailInfo.rzrqzqAcctFlag,
       // 已提供金融期货交易证明
-      jrqhjyFlag: '',
+      jrqhjyFlag: detailInfo.jrqhjyFlag,
       // 附件
-      attachment: '',
+      attachment: detailInfo.attachment,
       // 按钮组信息
       editButtonListData,
       // 必填项校验错误提示信息
@@ -233,7 +234,7 @@ export default class ApplyEditForm extends PureComponent {
 
   // 客户交易级别校验填完值后重置错误状态和错误提示
   @autobind
-  reSetCustTransLvErrorProps() {
+  resetCustTransLvErrorProps() {
     this.setState({
       isShowCustTransLvStatusError: false,
       custTransLvStatusErrorMessage: '',
@@ -242,7 +243,7 @@ export default class ApplyEditForm extends PureComponent {
 
   // 开立期权市场类别校验填完值后重置错误状态和错误提示
   @autobind
-  reSetOpenOptMktCatgErrorProps() {
+  resetOpenOptMktCatgErrorProps() {
     this.setState({
       isShowOpenOptMktCatgStatusError: false,
       openOptMktCatgStatusErrorMessage: '',
@@ -251,7 +252,7 @@ export default class ApplyEditForm extends PureComponent {
 
   // 申报事项校验填完值后重置错误状态和错误提示
   @autobind
-  reSetDeclareBusErrorProps() {
+  resetDeclareBusErrorProps() {
     this.setState({
       isShowDeclareBusStatusError: false,
       declareBusStatusErrorMessage: '',
@@ -260,7 +261,7 @@ export default class ApplyEditForm extends PureComponent {
 
   // 学历证明材料校验填完值后重置错误状态和错误提示
   @autobind
-  reSetDegreeFlagErrorProps() {
+  resetDegreeFlagErrorProps() {
     this.setState({
       isShowDegreeFlagStatusError: false,
       degreeFlagStatusErrorMessage: '',
@@ -269,7 +270,7 @@ export default class ApplyEditForm extends PureComponent {
 
   // A股账户开立时间6个月以上校验填完值后重置错误状态和错误提示
   @autobind
-  reSetAAcctOpenTimeFlagErrorProps() {
+  resetAAcctOpenTimeFlagErrorProps() {
     this.setState({
       isShowAAcctOpenTimeFlagStatusError: false,
       aAcctOpenTimeFlagStatusErrorMessage: '',
@@ -278,7 +279,7 @@ export default class ApplyEditForm extends PureComponent {
 
   // 已开立融资融券账户校验填完值后重置错误状态和错误提示
   @autobind
-  reSetRzrqzqAcctFlagErrorProps() {
+  resetRzrqzqAcctFlagErrorProps() {
     this.setState({
       isShowRzrqzqAcctFlagStatusError: false,
       rzrqzqAcctFlagStatusErrorMessage: '',
@@ -287,7 +288,7 @@ export default class ApplyEditForm extends PureComponent {
 
   // 已提供金融期货交易证明校验填完值后重置错误状态和错误提示
   @autobind
-  reSetJrqhjyFlagErrorProps() {
+  resetJrqhjyFlagErrorProps() {
     this.setState({
       isShowJrqhjyFlagStatusError: false,
       jrqhjyFlagStatusErrorMessage: '',
@@ -296,37 +297,37 @@ export default class ApplyEditForm extends PureComponent {
 
   // 更新基本信息数据
   @autobind
-  handleEmitEvent(name, value) {
+  handleChange(name, value) {
     this.setState({ [name]: value }, () => {
       if (value) {
         switch (name) {
           // 客户交易级别
           case 'custTransLvName':
-            this.reSetCustTransLvErrorProps();
+            this.resetCustTransLvErrorProps();
             break;
           // 开立期权市场类别
           case 'openOptMktCatg':
-            this.reSetOpenOptMktCatgErrorProps();
+            this.resetOpenOptMktCatgErrorProps();
             break;
           // 申报事项
           case 'declareBus':
-            this.reSetDeclareBusErrorProps();
+            this.resetDeclareBusErrorProps();
             break;
           // 学历
           case 'degreeFlag':
-            this.reSetDegreeFlagErrorProps();
+            this.resetDegreeFlagErrorProps();
             break;
           // A股账户开立时间6个月以上
           case 'aAcctOpenTimeFlag':
-            this.reSetAAcctOpenTimeFlagErrorProps();
+            this.resetAAcctOpenTimeFlagErrorProps();
             break;
           // 已开立融资融券账户
           case 'rzrqzqAcctFlag':
-            this.reSetRzrqzqAcctFlagErrorProps();
+            this.resetRzrqzqAcctFlagErrorProps();
             break;
           // 已提供金融期货交易证明
           case 'jrqhjyFlag':
-            this.reSetJrqhjyFlagErrorProps();
+            this.resetJrqhjyFlagErrorProps();
             break;
           default:
             break;
@@ -438,7 +439,7 @@ export default class ApplyEditForm extends PureComponent {
       },
     } = this.props;
     const {
-      custTransLvl,
+      custTransLv,
       aAcctOpenTimeFlag,
       rzrqzqAcctFlag,
       jrqhjyFlag,
@@ -447,7 +448,7 @@ export default class ApplyEditForm extends PureComponent {
     const query = {
       bizId,
       econNum,
-      custTransLvl,
+      custTransLv,
       stockCustType,
       reqType,
       aAcctOpenTimeFlag,
@@ -514,7 +515,7 @@ export default class ApplyEditForm extends PureComponent {
       },
     } = this.props;
     const {
-      custTransLvl,
+      custTransLv,
       aAcctOpenTimeFlag,
       rzrqzqAcctFlag,
       jrqhjyFlag,
@@ -541,7 +542,7 @@ export default class ApplyEditForm extends PureComponent {
       aAcct,
       openSys,
       isProfessInvset,
-      custTransLvl,
+      custTransLv,
       stockCustType,
       reqType,
       openOptMktCatg,
@@ -632,6 +633,10 @@ export default class ApplyEditForm extends PureComponent {
       busPrcDivId,
       custTransLv,
       custTransLvName,
+      degreeFlag,
+      aAcctOpenTimeFlag,
+      rzrqzqAcctFlag,
+      jrqhjyFlag,
       // 客户交易级别校验
       isShowCustTransLvStatusError,
       custTransLvStatusErrorMessage,
@@ -709,7 +714,11 @@ export default class ApplyEditForm extends PureComponent {
                 busPrcDivId={busPrcDivId}
                 custTransLv={custTransLv}
                 custTransLvName={custTransLvName}
-                onEmitEvent={this.handleEmitEvent}
+                degreeFlag={degreeFlag}
+                aAcctOpenTimeFlag={aAcctOpenTimeFlag}
+                rzrqzqAcctFlag={rzrqzqAcctFlag}
+                jrqhjyFlag={jrqhjyFlag}
+                onChange={this.handleChange}
                 isShowCustTransLvStatusError={isShowCustTransLvStatusError}
                 custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
                 isShowStockCustTypeStatusError={isShowStockCustTypeStatusError}

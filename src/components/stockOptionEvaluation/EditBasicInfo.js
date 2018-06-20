@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-19 17:44:51
+ * @Last Modified time: 2018-06-20 15:00:47
  */
 
 import React, { PureComponent } from 'react';
@@ -12,7 +12,6 @@ import _ from 'lodash';
 import { Form, Radio } from 'antd';
 
 import Select from '../common/Select';
-import commonConfirm from '../common/confirm_';
 import Icon from '../common/Icon';
 import styles from './editBasicInfo.less';
 
@@ -38,8 +37,8 @@ export default class EditBasicInfo extends PureComponent {
     klqqsclbMap: PropTypes.array.isRequired,
     // 业务受理营业部下拉列表
     busDivisionMap: PropTypes.array.isRequired,
-    // select选择后触发父组件数据变化
-    onEmitEvent: PropTypes.func.isRequired,
+    // 触发父组件数据变化
+    onChange: PropTypes.func.isRequired,
     // 受理时间
     accptTime: PropTypes.string.isRequired,
     // 受理营业部Id
@@ -47,6 +46,17 @@ export default class EditBasicInfo extends PureComponent {
     // 客户交易级别
     custTransLv: PropTypes.string.isRequired,
     custTransLvName: PropTypes.string.isRequired,
+    // 受理营业部变更
+    acceptOrgData: PropTypes.object.isRequired,
+    queryAcceptOrg: PropTypes.func.isRequired,
+    // 已提供大专及以上的学历证明材料
+    degreeFlag: PropTypes.string,
+    // A股账户开立时间6个月以上
+    aAcctOpenTimeFlag: PropTypes.string,
+    // 已开立融资融券账户
+    rzrqzqAcctFlag: PropTypes.string,
+    // 已提供金融期货交易证明
+    jrqhjyFlag: PropTypes.string,
     // 必填项校验错误提示信息
     // 客户交易级别校验
     isShowCustTransLvStatusError: PropTypes.bool.isRequired,
@@ -75,13 +85,14 @@ export default class EditBasicInfo extends PureComponent {
     // 已提供金融期货交易证明校验
     isShowJrqhjyFlagStatusError: PropTypes.bool.isRequired,
     jrqhjyFlagStatusErrorMessage: PropTypes.string.isRequired,
-    // 受理营业部变更
-    acceptOrgData: PropTypes.object.isRequired,
-    queryAcceptOrg: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     isEdit: false,
+    degreeFlag: '',
+    aAcctOpenTimeFlag: '',
+    rzrqzqAcctFlag: '',
+    jrqhjyFlag: '',
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -110,12 +121,14 @@ export default class EditBasicInfo extends PureComponent {
     let isShowDegreePrompt = false;
     let isShowInvPrompt = false;
     const {
-      stockCustType,
-      reqType,
-      ageFlag,
-      invFlag,
       isEdit,
-    } = this.props.custInfo;
+      custInfo: {
+        stockCustType,
+        reqType,
+        ageFlag,
+        invFlag,
+      },
+    } = this.props;
     if (isEdit && stockCustType === 'New' && reqType === 'New') {
       if (ageFlag === 'N') {
         isShowDegreePrompt = true;
@@ -166,7 +179,7 @@ export default class EditBasicInfo extends PureComponent {
   @autobind
   updateSelect(name, value) {
     this.setState({ [name]: value }, this.checkType);
-    this.props.onEmitEvent(name, value);
+    this.props.onChange(name, value);
   }
 
   // 检测是否是新开客户，初次申请，然后判断是否显示学历提示选项，和投资经历评估提示选项
@@ -185,15 +198,9 @@ export default class EditBasicInfo extends PureComponent {
     // 新开客户，初次申请
     if (stockCustType === 'New' && reqType === 'New') {
       if (ageFlag === 'N') {
-        commonConfirm({
-          content: '客户的年龄条件不符合要求，请确认客户是否满足以下条件：',
-        });
         this.setState({ isShowDegreePrompt: true });
       }
       if (invFlag === 'N') {
-        commonConfirm({
-          content: '客户在我公司投资经历评估不符合要求，请确认客户是否满足以下条件：',
-        });
         this.setState({ isShowInvPrompt: true });
       }
     }
@@ -203,21 +210,21 @@ export default class EditBasicInfo extends PureComponent {
   @autobind
   updateOpenOptMktCatg(name, value) {
     this.setState({ [name]: value });
-    this.props.onEmitEvent(name, value);
+    this.props.onChange(name, value);
   }
 
   // 选择业务受理营业部
   @autobind
   updateBusPrcDiv(name, value) {
     const {
-      onEmitEvent,
+      onChange,
       queryAcceptOrg,
       customer: {
         brokerNumber,
       },
     } = this.props;
     this.setState({ busPrcDivId: value });
-    onEmitEvent('busPrcDivId', value);
+    onChange('busPrcDivId', value);
     // 受理营业部变更，连带受理时间和交易级别变更
     queryAcceptOrg({
       econNum: brokerNumber,
@@ -232,9 +239,9 @@ export default class EditBasicInfo extends PureComponent {
         },
       } = this.props;
       if (!_.isEmpty(acceptOrgData)) {
-        onEmitEvent('accptTime', accptTime);
-        onEmitEvent('custTransLv', custTransLv);
-        onEmitEvent('custTransLvName', custTransLvName);
+        onChange('accptTime', accptTime);
+        onChange('custTransLv', custTransLv);
+        onChange('custTransLvName', custTransLvName);
       }
     });
   }
@@ -244,7 +251,7 @@ export default class EditBasicInfo extends PureComponent {
   changeDeclareBus(e) {
     const value = e.target.value;
     this.setState({ declareBus: value });
-    this.props.onEmitEvent('declareBus', value);
+    this.props.onChange('declareBus', value);
   }
 
   // 提示选择变化
@@ -252,12 +259,12 @@ export default class EditBasicInfo extends PureComponent {
   changePrompt(e, name) {
     const value = e.target.value;
     this.setState({ [name]: value });
-    this.props.onEmitEvent(name, value);
+    this.props.onChange(name, value);
   }
 
   // 必填项校验,显示错误信息
   @autobind
-  renderErrorMessage(status, message) {
+  getErrorMessage(status, message) {
     return status ? {
       hasFeedback: false,
       validateStatus: 'error',
@@ -293,6 +300,14 @@ export default class EditBasicInfo extends PureComponent {
       busPrcDivId,
       // 客户交易级别
       custTransLvName,
+      // 已提供大专及以上的学历证明材料
+      degreeFlag,
+      // A股账户开立时间6个月以上
+      aAcctOpenTimeFlag,
+      // 已开立融资融券账户
+      rzrqzqAcctFlag,
+      // 已提供金融期货交易证明
+      jrqhjyFlag,
       // 客户交易级别校验
       isShowCustTransLvStatusError,
       custTransLvStatusErrorMessage,
@@ -331,10 +346,6 @@ export default class EditBasicInfo extends PureComponent {
       klqqsclbMap,
       busDivisionMap,
       declareBus,
-      degreeFlag,
-      aAcctOpenTimeFlag,
-      rzrqzqAcctFlag,
-      jrqhjyFlag,
       isShowDegreePrompt,
       isShowInvPrompt,
     } = this.state;
@@ -432,7 +443,7 @@ export default class EditBasicInfo extends PureComponent {
               <div className={styles.value}>
                 <FormItem
                   {
-                  ...this.renderErrorMessage(isShowCustTransLvStatusError,
+                  ...this.getErrorMessage(isShowCustTransLvStatusError,
                     custTransLvStatusErrorMessage)
                   }
                 >
@@ -458,7 +469,7 @@ export default class EditBasicInfo extends PureComponent {
                   : (
                     <FormItem
                       {
-                      ...this.renderErrorMessage(isShowStockCustTypeStatusError,
+                      ...this.getErrorMessage(isShowStockCustTypeStatusError,
                         stockCustTypeStatusErrorMessage)
                       }
                     >
@@ -490,7 +501,7 @@ export default class EditBasicInfo extends PureComponent {
                     : (
                       <FormItem
                         {
-                        ...this.renderErrorMessage(isShowReqTypeStatusError,
+                        ...this.getErrorMessage(isShowReqTypeStatusError,
                           reqTypeStatusErrorMessage)
                         }
                       >
@@ -515,7 +526,7 @@ export default class EditBasicInfo extends PureComponent {
               <div className={styles.value}>
                 <FormItem
                   {
-                  ...this.renderErrorMessage(isShowOpenOptMktCatgStatusError,
+                  ...this.getErrorMessage(isShowOpenOptMktCatgStatusError,
                     openOptMktCatgStatusErrorMessage)
                   }
                 >
@@ -567,7 +578,7 @@ export default class EditBasicInfo extends PureComponent {
                 <div className={styles.applyContent}>
                   <FormItem
                     {
-                    ...this.renderErrorMessage(isShowDeclareBusStatusError,
+                    ...this.getErrorMessage(isShowDeclareBusStatusError,
                       declareBusStatusErrorMessage)
                     }
                   >
@@ -598,7 +609,7 @@ export default class EditBasicInfo extends PureComponent {
                   <div className={styles.value} >
                     <FormItem
                       {
-                      ...this.renderErrorMessage(isShowDegreeFlagStatusError,
+                      ...this.getErrorMessage(isShowDegreeFlagStatusError,
                         degreeFlagStatusErrorMessage)
                       }
                     >
@@ -632,7 +643,7 @@ export default class EditBasicInfo extends PureComponent {
                     <div className={styles.value} >
                       <FormItem
                         {
-                        ...this.renderErrorMessage(isShowAAcctOpenTimeFlagStatusError,
+                        ...this.getErrorMessage(isShowAAcctOpenTimeFlagStatusError,
                           aAcctOpenTimeFlagStatusErrorMessage)
                         }
                       >
@@ -654,7 +665,7 @@ export default class EditBasicInfo extends PureComponent {
                     <div className={styles.value} >
                       <FormItem
                         {
-                        ...this.renderErrorMessage(isShowRzrqzqAcctFlagStatusError,
+                        ...this.getErrorMessage(isShowRzrqzqAcctFlagStatusError,
                           rzrqzqAcctFlagStatusErrorMessage)
                         }
                       >
@@ -676,7 +687,7 @@ export default class EditBasicInfo extends PureComponent {
                     <div className={styles.value} >
                       <FormItem
                         {
-                        ...this.renderErrorMessage(isShowJrqhjyFlagStatusError,
+                        ...this.getErrorMessage(isShowJrqhjyFlagStatusError,
                           jrqhjyFlagStatusErrorMessage)
                         }
                       >

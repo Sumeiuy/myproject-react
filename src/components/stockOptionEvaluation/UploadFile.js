@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-13 14:32:27
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-14 17:12:01
+ * @Last Modified time: 2018-06-20 13:15:56
  */
 
 import React, { PureComponent } from 'react';
@@ -72,15 +72,7 @@ export default class UploadFile extends PureComponent {
       <div className={styles.uploadFile}>
         <div className={styles.attachmentInfo}>
           <div className={styles.coloumn}>
-            <div className={styles.label}>
-              附件
-              <span className={styles.colon}>:</span>
-            </div>
-            <div className={styles.value}>
-              <div className={styles.uploadAttachment}>
-                <CommonUpload {...uploadProps} />
-              </div>
-            </div>
+            <CommonUpload {...uploadProps} />
           </div>
         </div>
       </div>
