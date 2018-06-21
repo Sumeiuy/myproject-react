@@ -344,7 +344,6 @@ const routes = [
       { path: '/viewpointDetail', component: ViewpointDetail },
     ],
   },
-  { path: '/stockOptionEvaluation', component: StockOptionEvaluation },
   // 股票期权评估申请修改
   { path: '/stockOptionEvaluationEdit', component: StockOptionEvaluationEdit },
 ];

@@ -3,7 +3,7 @@
  * @Description: 最新观点modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-20 14:55:30
+ * @Last Modified time: 2018-06-21 16:45:37
 */
 
 // import _ from 'lodash';
@@ -54,9 +54,14 @@ export default {
     // 获取首席观点详情
     queryChiefViewpointDetailSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { id } = resultData;
+      const { viewpointDetail } = state;
       return {
         ...state,
-        viewpointDetail: resultData,
+        viewpointDetail: {
+          ...viewpointDetail,
+          [id]: resultData,
+        },
       };
     },
   },

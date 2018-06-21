@@ -26,10 +26,6 @@ const dispatch = dva.generateEffect;
 const effects = {
   // 首席观点模块数据
   queryChiefViewpoint: 'latestView/queryChiefViewpoint',
-  // 获取首席观点列表数据
-  queryChiefViewpointList: 'latestView/queryChiefViewpointList',
-  // 获取首席观点详情数据
-  queryChiefViewpointDetail: 'latestView/queryChiefViewpointDetail',
 };
 
 const mapStateToProps = state => ({
@@ -37,17 +33,9 @@ const mapStateToProps = state => ({
   dayViewpointData: state.latestView.dayViewpointData,
   // 首页每周首席观点
   monthViewpointData: state.latestView.monthViewpointData,
-  // 首席观点列表数据
-  viewpointData: state.latestView.viewpointData,
-  // 首席观点详情
-  viewpointDetail: state.latestView.viewpointDetail,
 });
 const mapDispatchToProps = {
   queryChiefViewpoint: dispatch(effects.queryChiefViewpoint,
-    { loading: true, forceFull: true }),
-  queryChiefViewpointList: dispatch(effects.queryChiefViewpointList,
-    { loading: true, forceFull: true }),
-  queryChiefViewpointDetail: dispatch(effects.queryChiefViewpointDetail,
     { loading: true, forceFull: true }),
 };
 
@@ -62,12 +50,6 @@ export default class LatestView extends PureComponent {
     dayViewpointData: PropTypes.object.isRequired,
     // 首页每周首席观点
     monthViewpointData: PropTypes.object.isRequired,
-    // 首席观点列表数据
-    queryChiefViewpointList: PropTypes.func.isRequired,
-    viewpointData: PropTypes.object.isRequired,
-    // 首席观点详情
-    queryChiefViewpointDetail: PropTypes.func.isRequired,
-    viewpointDetail: PropTypes.object.isRequired,
 
   }
 

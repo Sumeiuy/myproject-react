@@ -3,7 +3,7 @@
  * @Description: 首席观点列表页-筛选组件
  * @Date: 2018-06-19 13:58:32
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-21 10:38:09
+ * @Last Modified time: 2018-06-21 16:31:01
  */
 
 import React, { PureComponent } from 'react';
@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
-// import Select from '../../common/Select';
+// import DateRangePicker from '../../common/dateRangePicker';
 import config from '../config';
 import styles from './filter.less';
 
@@ -46,13 +46,6 @@ export default class Filter extends PureComponent {
     endDate: '',
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      type: '',
-    };
-  }
-
   @autobind
   getOptionList() {
     return typeList.map(item => (
@@ -78,8 +71,8 @@ export default class Filter extends PureComponent {
       onFilter,
     } = this.props;
     const defaultDate = [
-      _.isEmpty(startDate) ? '' : moment(startDate, dateFormatStr),
-      _.isEmpty(endDate) ? '' : moment(endDate, dateFormatStr),
+      _.isEmpty(startDate) ? null : moment(startDate, dateFormatStr),
+      _.isEmpty(endDate) ? null : moment(endDate, dateFormatStr),
     ];
     return (
       <div className={styles.filterBox}>
@@ -110,6 +103,7 @@ export default class Filter extends PureComponent {
             defaultValue={defaultDate}
             format={dateFormatStr}
             onChange={this.handleDateChange}
+            disabledDate={current => current > moment()}
           />
         </div>
       </div>

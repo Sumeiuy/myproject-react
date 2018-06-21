@@ -1,3 +1,10 @@
+/**
+ * @Author: XuWenKang
+ * @Description: 最新观点-首页首席观点
+ * @Date: 2018-06-21 16:50:10
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2018-06-21 16:50:10
+ */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
@@ -48,9 +55,12 @@ export default class ChiefViewpoint extends PureComponent {
   toDetailPage() {
     const { data: { id }, location: { query } } = this.props;
     const { push } = this.context;
-    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
+    const param = {
+      id: 'RTC_TAB_VIEWPOINT',
+      title: '资讯',
+    };
     const url = '/latestView/viewpointDetail';
-    const newQuery = { id, ...query };
+    const newQuery = { ...query, id, sourceUrl: '/latestView' };
     linkTo({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(newQuery)}`,

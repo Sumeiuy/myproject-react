@@ -3,7 +3,7 @@
  * @Description: 首席观点列表页面
  * @Date: 2018-06-19 13:27:04
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-21 11:09:59
+ * @Last Modified time: 2018-06-21 15:26:14
  */
 
 import React, { PureComponent } from 'react';
@@ -131,7 +131,7 @@ export default class ViewpointList extends PureComponent {
     const { push } = this.context;
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const url = '/latestView/viewpointDetail';
-    const newQuery = { id, ...query };
+    const newQuery = { ...query, id, sourceUrl: '/latestView/viewpointList' };
     linkTo({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(newQuery)}`,
