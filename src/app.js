@@ -151,6 +151,8 @@ app.model(require('./models/businessDepartmentCustDistribute'));
 app.model(require('./models/custAllot'));
 // 消息通知提醒
 app.model(require('./models/messageCenter'));
+// 重点监控账户
+app.model(require('./models/keyMonitorAccount'));
 
 // 4. Route
 app.router(routerConfig);
