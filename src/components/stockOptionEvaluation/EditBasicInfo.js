@@ -2,27 +2,29 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-20 15:00:47
+ * @Last Modified time: 2018-06-21 08:59:02
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Form, Radio } from 'antd';
+import { Form, Radio, Select } from 'antd';
 
-import Select from '../common/Select';
 import Icon from '../common/Icon';
 import styles from './editBasicInfo.less';
 
 const FormItem = Form.Item;
+const create = Form.create;
 const RadioGroup = Radio.Group;
 const EMPTY_INFO = '--';
-// const EMPTY_OBJECT = {};
+const Option = Select.Option;
 const EMPTY_LIST = [];
 
+@create()
 export default class EditBasicInfo extends PureComponent {
   static propTypes = {
+    form: PropTypes.object.isRequired,
     // 是否是编辑页面
     isEdit: PropTypes.bool,
     // 客户基本信息
@@ -57,34 +59,6 @@ export default class EditBasicInfo extends PureComponent {
     rzrqzqAcctFlag: PropTypes.string,
     // 已提供金融期货交易证明
     jrqhjyFlag: PropTypes.string,
-    // 必填项校验错误提示信息
-    // 客户交易级别校验
-    isShowCustTransLvStatusError: PropTypes.bool.isRequired,
-    custTransLvStatusErrorMessage: PropTypes.string.isRequired,
-    // 股票申请客户类型校验
-    isShowStockCustTypeStatusError: PropTypes.bool.isRequired,
-    stockCustTypeStatusErrorMessage: PropTypes.string.isRequired,
-    // 申请类型校验
-    isShowReqTypeStatusError: PropTypes.bool.isRequired,
-    reqTypeStatusErrorMessage: PropTypes.string.isRequired,
-    // 开立期权市场类别校验
-    isShowOpenOptMktCatgStatusError: PropTypes.bool.isRequired,
-    openOptMktCatgStatusErrorMessage: PropTypes.string.isRequired,
-    // 申报事项校验
-    isShowDeclareBusStatusError: PropTypes.bool.isRequired,
-    declareBusStatusErrorMessage: PropTypes.string.isRequired,
-    // 已提供大专及以上的学历证明材料校验
-    isShowDegreeFlagStatusError: PropTypes.bool.isRequired,
-    degreeFlagStatusErrorMessage: PropTypes.string.isRequired,
-    // A股账户开立时间6个月以上校验
-    isShowAAcctOpenTimeFlagStatusError: PropTypes.bool.isRequired,
-    aAcctOpenTimeFlagStatusErrorMessage: PropTypes.string.isRequired,
-    // 已开立融资融券账户校验
-    isShowRzrqzqAcctFlagStatusError: PropTypes.bool.isRequired,
-    rzrqzqAcctFlagStatusErrorMessage: PropTypes.string.isRequired,
-    // 已提供金融期货交易证明校验
-    isShowJrqhjyFlagStatusError: PropTypes.bool.isRequired,
-    jrqhjyFlagStatusErrorMessage: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -160,14 +134,6 @@ export default class EditBasicInfo extends PureComponent {
       busDivisionMap: EMPTY_LIST,
       // 申报事项
       declareBus: '',
-      // 已提供大专及以上的学历证明材料
-      degreeFlag: '',
-      // A股账户开立时间6个月以上
-      aAcctOpenTimeFlag: '',
-      // 已开立融资融券账户
-      rzrqzqAcctFlag: '',
-      // 已提供金融期货交易证明
-      jrqhjyFlag: '',
       // 是否显示学历提示，默认是false
       isShowDegreePrompt,
       // 是否显示投资经历提示，默认是false
@@ -175,11 +141,16 @@ export default class EditBasicInfo extends PureComponent {
     };
   }
 
+  @autobind
+  getForm() {
+    return this.props.form;
+  }
+
   // 客户类型,申请类型 select选择后设置value
   @autobind
   updateSelect(name, value) {
     this.setState({ [name]: value }, this.checkType);
-    this.props.onChange(name, value);
+    this.props.onChange({ [name]: value });
   }
 
   // 检测是否是新开客户，初次申请，然后判断是否显示学历提示选项，和投资经历评估提示选项
@@ -210,7 +181,7 @@ export default class EditBasicInfo extends PureComponent {
   @autobind
   updateOpenOptMktCatg(name, value) {
     this.setState({ [name]: value });
-    this.props.onChange(name, value);
+    this.props.onChange({ [name]: value });
   }
 
   // 选择业务受理营业部
@@ -224,7 +195,7 @@ export default class EditBasicInfo extends PureComponent {
       },
     } = this.props;
     this.setState({ busPrcDivId: value });
-    onChange('busPrcDivId', value);
+    onChange({ busPrcDivId: value });
     // 受理营业部变更，连带受理时间和交易级别变更
     queryAcceptOrg({
       econNum: brokerNumber,
@@ -239,9 +210,11 @@ export default class EditBasicInfo extends PureComponent {
         },
       } = this.props;
       if (!_.isEmpty(acceptOrgData)) {
-        onChange('accptTime', accptTime);
-        onChange('custTransLv', custTransLv);
-        onChange('custTransLvName', custTransLvName);
+        onChange({
+          accptTime,
+          custTransLv,
+          custTransLvName,
+        });
       }
     });
   }
@@ -251,7 +224,7 @@ export default class EditBasicInfo extends PureComponent {
   changeDeclareBus(e) {
     const value = e.target.value;
     this.setState({ declareBus: value });
-    this.props.onChange('declareBus', value);
+    this.props.onChange({ declareBus: value });
   }
 
   // 提示选择变化
@@ -259,7 +232,7 @@ export default class EditBasicInfo extends PureComponent {
   changePrompt(e, name) {
     const value = e.target.value;
     this.setState({ [name]: value });
-    this.props.onChange(name, value);
+    this.props.onChange({ [name]: value });
   }
 
   // 必填项校验,显示错误信息
@@ -272,8 +245,19 @@ export default class EditBasicInfo extends PureComponent {
     } : null;
   }
 
+  // 生产select的option
+  @autobind
+  getSelectOption(item) {
+    return !_.isEmpty(item) ? item.map(i =>
+      <Option key={i.value} value={i.value}>{i.label}</Option>,
+    ) : null;
+  }
+
   render() {
     const {
+      form: {
+        getFieldDecorator,
+      },
       // 是否是编辑页面
       isEdit,
       // 选择客户带出的客户基本信息
@@ -308,33 +292,6 @@ export default class EditBasicInfo extends PureComponent {
       rzrqzqAcctFlag,
       // 已提供金融期货交易证明
       jrqhjyFlag,
-      // 客户交易级别校验
-      isShowCustTransLvStatusError,
-      custTransLvStatusErrorMessage,
-      // 股票申请客户类型校验
-      isShowStockCustTypeStatusError,
-      stockCustTypeStatusErrorMessage,
-      // 申请类型校验
-      isShowReqTypeStatusError,
-      reqTypeStatusErrorMessage,
-      // 开立期权市场类别校验
-      isShowOpenOptMktCatgStatusError,
-      openOptMktCatgStatusErrorMessage,
-      // 申报事项校验
-      isShowDeclareBusStatusError,
-      declareBusStatusErrorMessage,
-      // 已提供大专及以上的学历证明材料校验
-      isShowDegreeFlagStatusError,
-      degreeFlagStatusErrorMessage,
-      // A股账户开立时间6个月以上校验
-      isShowAAcctOpenTimeFlagStatusError,
-      aAcctOpenTimeFlagStatusErrorMessage,
-      // 已开立融资融券账户校验
-      isShowRzrqzqAcctFlagStatusError,
-      rzrqzqAcctFlagStatusErrorMessage,
-      // 已提供金融期货交易证明校验
-      isShowJrqhjyFlagStatusError,
-      jrqhjyFlagStatusErrorMessage,
     } = this.props;
     const {
       isSelectDisabled,
@@ -440,14 +397,18 @@ export default class EditBasicInfo extends PureComponent {
                 客户交易级别
                 <span className={styles.colon}>:</span>
               </div>
-              <div className={styles.value}>
-                <FormItem
+              <div className={`${styles.value} ${styles.custTransLv}`}>
+                <FormItem>
                   {
-                  ...this.getErrorMessage(isShowCustTransLvStatusError,
-                    custTransLvStatusErrorMessage)
+                    getFieldDecorator('custTransLvName', {
+                      rules: [{
+                        required: true, message: '客户交易级别不能为空',
+                      }],
+                      initialValue: custTransLvName || EMPTY_INFO,
+                    })(
+                      <input readOnly />,
+                    )
                   }
-                >
-                  {custTransLvName || EMPTY_INFO}
                 </FormItem>
               </div>
             </div>
@@ -467,19 +428,22 @@ export default class EditBasicInfo extends PureComponent {
                     </FormItem>
                     )
                   : (
-                    <FormItem
+                    <FormItem>
                       {
-                      ...this.getErrorMessage(isShowStockCustTypeStatusError,
-                        stockCustTypeStatusErrorMessage)
+                        getFieldDecorator('stockCustType', {
+                          rules: [{
+                            required: true, message: '请选择客户类型',
+                          }],
+                          initialValue: stockCustType,
+                        })(
+                          <Select
+                            disabled={isSelectDisabled}
+                            onChange={key => this.updateSelect('stockCustType', key)}
+                          >
+                            { this.getSelectOption(stockCustTypeMap) }
+                          </Select>,
+                        )
                       }
-                    >
-                      <Select
-                        name="stockCustType"
-                        data={stockCustTypeMap}
-                        disabled={isSelectDisabled}
-                        onChange={this.updateSelect}
-                        value={stockCustType || '请选择'}
-                      />
                     </FormItem>
                   )
                 }
@@ -499,19 +463,22 @@ export default class EditBasicInfo extends PureComponent {
                       </FormItem>
                     )
                     : (
-                      <FormItem
+                      <FormItem>
                         {
-                        ...this.getErrorMessage(isShowReqTypeStatusError,
-                          reqTypeStatusErrorMessage)
+                          getFieldDecorator('reqType', {
+                            rules: [{
+                              required: true, message: '请选择申请类型',
+                            }],
+                            initialValue: reqType,
+                          })(
+                            <Select
+                              disabled={isSelectDisabled}
+                              onChange={key => this.updateSelect('reqType', key)}
+                            >
+                              { this.getSelectOption(reqTypeMap) }
+                            </Select>,
+                          )
                         }
-                      >
-                        <Select
-                          name="reqType"
-                          data={reqTypeMap}
-                          disabled={isSelectDisabled}
-                          onChange={this.updateSelect}
-                          value={reqType || '请选择'}
-                        />
                       </FormItem>
                     )
                 }
@@ -524,19 +491,22 @@ export default class EditBasicInfo extends PureComponent {
                 <span className={styles.colon}>:</span>
               </div>
               <div className={styles.value}>
-                <FormItem
+                <FormItem>
                   {
-                  ...this.getErrorMessage(isShowOpenOptMktCatgStatusError,
-                    openOptMktCatgStatusErrorMessage)
+                    getFieldDecorator('openOptMktCatg', {
+                      rules: [{
+                        required: true, message: '请选择开立期权市场类别',
+                      }],
+                      initialValue: openOptMktCatg,
+                    })(
+                      <Select
+                        disabled={isSelectDisabled}
+                        onChange={key => this.updateOpenOptMktCatg('openOptMktCatg', key)}
+                      >
+                        { this.getSelectOption(klqqsclbMap) }
+                      </Select>,
+                    )
                   }
-                >
-                  <Select
-                    name="openOptMktCatg"
-                    data={klqqsclbMap}
-                    disabled={isSelectDisabled}
-                    onChange={this.updateOpenOptMktCatg}
-                    value={openOptMktCatg || '请选择'}
-                  />
                 </FormItem>
               </div>
             </div>
@@ -548,12 +518,12 @@ export default class EditBasicInfo extends PureComponent {
               <div className={styles.value}>
                 <FormItem>
                   <Select
-                    name="busPrcDiv"
-                    data={busDivisionMap}
                     disabled={isSelectDisabled}
-                    onChange={this.updateBusPrcDiv}
-                    value={busPrcDivId || '请选择'}
-                  />
+                    onChange={key => this.updateBusPrcDiv('busPrcDivId', key)}
+                    value={busPrcDivId}
+                  >
+                    { this.getSelectOption(busDivisionMap) }
+                  </Select>
                 </FormItem>
               </div>
             </div>
@@ -576,17 +546,20 @@ export default class EditBasicInfo extends PureComponent {
               </div>
               <div className={styles.value} >
                 <div className={styles.applyContent}>
-                  <FormItem
+                  <FormItem>
                     {
-                    ...this.getErrorMessage(isShowDeclareBusStatusError,
-                      declareBusStatusErrorMessage)
+                      getFieldDecorator('declareBus', {
+                        rules: [{
+                          required: true, message: '申报事项不能为空',
+                        }],
+                        initialValue: declareBus,
+                      })(
+                        <textarea
+                          className={styles.applyTextarea}
+                          onChange={this.changeDeclareBus}
+                        />,
+                      )
                     }
-                  >
-                    <textarea
-                      className={styles.applyTextarea}
-                      value={declareBus}
-                      onChange={this.changeDeclareBus}
-                    />
                   </FormItem>
                 </div>
               </div>
@@ -607,18 +580,20 @@ export default class EditBasicInfo extends PureComponent {
                     <span className={styles.colon}>:</span>
                   </div>
                   <div className={styles.value} >
-                    <FormItem
+                    <FormItem>
                       {
-                      ...this.getErrorMessage(isShowDegreeFlagStatusError,
-                        degreeFlagStatusErrorMessage)
+                        getFieldDecorator('degreeFlag', {
+                          rules: [{
+                            required: true, message: '请选择已提供大专及以上的学历证明材料',
+                          }],
+                          initialValue: degreeFlag,
+                        })(
+                          <RadioGroup onChange={e => this.changePrompt(e, 'degreeFlag')}>
+                            <Radio value="Y">是</Radio>
+                            <Radio value="N">否</Radio>
+                          </RadioGroup>,
+                        )
                       }
-                    >
-                      <div className={styles.radioBox}>
-                        <RadioGroup onChange={e => this.changePrompt(e, 'degreeFlag')} value={degreeFlag}>
-                          <Radio value="Y">是</Radio>
-                          <Radio value="N">否</Radio>
-                        </RadioGroup>
-                      </div>
                     </FormItem>
                   </div>
                 </div>
@@ -641,18 +616,20 @@ export default class EditBasicInfo extends PureComponent {
                       <span className={styles.colon}>:</span>
                     </div>
                     <div className={styles.value} >
-                      <FormItem
+                      <FormItem>
                         {
-                        ...this.getErrorMessage(isShowAAcctOpenTimeFlagStatusError,
-                          aAcctOpenTimeFlagStatusErrorMessage)
+                          getFieldDecorator('aAcctOpenTimeFlag', {
+                            rules: [{
+                              required: true, message: '请选择A股账户开立时间6个月以上',
+                            }],
+                            initialValue: aAcctOpenTimeFlag,
+                          })(
+                            <RadioGroup onChange={e => this.changePrompt(e, 'aAcctOpenTimeFlag')}>
+                              <Radio value="Y">是</Radio>
+                              <Radio value="N">否</Radio>
+                            </RadioGroup>,
+                          )
                         }
-                      >
-                        <div className={styles.radioBox}>
-                          <RadioGroup onChange={e => this.changePrompt(e, 'aAcctOpenTimeFlag')} value={aAcctOpenTimeFlag}>
-                            <Radio value="Y">是</Radio>
-                            <Radio value="N">否</Radio>
-                          </RadioGroup>
-                        </div>
                       </FormItem>
                     </div>
                   </div>
@@ -663,18 +640,20 @@ export default class EditBasicInfo extends PureComponent {
                       <span className={styles.colon}>:</span>
                     </div>
                     <div className={styles.value} >
-                      <FormItem
+                      <FormItem>
                         {
-                        ...this.getErrorMessage(isShowRzrqzqAcctFlagStatusError,
-                          rzrqzqAcctFlagStatusErrorMessage)
+                          getFieldDecorator('rzrqzqAcctFlag', {
+                            rules: [{
+                              required: true, message: '请选择已开立融资融券账户',
+                            }],
+                            initialValue: rzrqzqAcctFlag,
+                          })(
+                            <RadioGroup onChange={e => this.changePrompt(e, 'rzrqzqAcctFlag')}>
+                              <Radio value="Y">是</Radio>
+                              <Radio value="N">否</Radio>
+                            </RadioGroup>,
+                          )
                         }
-                      >
-                        <div className={styles.radioBox}>
-                          <RadioGroup onChange={e => this.changePrompt(e, 'rzrqzqAcctFlag')} value={rzrqzqAcctFlag}>
-                            <Radio value="Y">是</Radio>
-                            <Radio value="N">否</Radio>
-                          </RadioGroup>
-                        </div>
                       </FormItem>
                     </div>
                   </div>
@@ -685,18 +664,20 @@ export default class EditBasicInfo extends PureComponent {
                       <span className={styles.colon}>:</span>
                     </div>
                     <div className={styles.value} >
-                      <FormItem
+                      <FormItem>
                         {
-                        ...this.getErrorMessage(isShowJrqhjyFlagStatusError,
-                          jrqhjyFlagStatusErrorMessage)
+                          getFieldDecorator('jrqhjyFlag', {
+                            rules: [{
+                              required: true, message: '请选择已提供金融期货交易证明',
+                            }],
+                            initialValue: jrqhjyFlag,
+                          })(
+                            <RadioGroup onChange={e => this.changePrompt(e, 'jrqhjyFlag')}>
+                              <Radio value="Y">是</Radio>
+                              <Radio value="N">否</Radio>
+                            </RadioGroup>,
+                          )
                         }
-                      >
-                        <div className={styles.radioBox}>
-                          <RadioGroup onChange={e => this.changePrompt(e, 'jrqhjyFlag')} value={jrqhjyFlag}>
-                            <Radio value="Y">是</Radio>
-                            <Radio value="N">否</Radio>
-                          </RadioGroup>
-                        </div>
                       </FormItem>
                     </div>
                   </div>

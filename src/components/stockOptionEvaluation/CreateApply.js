@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-20 14:56:51
+ * @Last Modified time: 2018-06-21 10:14:52
  */
 
 import React, { PureComponent } from 'react';
@@ -134,33 +134,6 @@ export default class CreateApply extends PureComponent {
       // 客户校验
       isShowCustomerStatusError: false,
       customerStatusErrorMessage: '',
-      // 客户交易级别校验
-      isShowCustTransLvStatusError: false,
-      custTransLvStatusErrorMessage: '',
-      // 股票申请客户类型校验
-      isShowStockCustTypeStatusError: false,
-      stockCustTypeStatusErrorMessage: '',
-      // 申请类型校验
-      isShowReqTypeStatusError: false,
-      reqTypeStatusErrorMessage: '',
-      // 开立期权市场类别校验
-      isShowOpenOptMktCatgStatusError: false,
-      openOptMktCatgStatusErrorMessage: '',
-      // 申报事项校验
-      isShowDeclareBusStatusError: false,
-      declareBusStatusErrorMessage: '',
-      // 已提供大专及以上的学历证明材料校验
-      isShowDegreeFlagStatusError: false,
-      degreeFlagStatusErrorMessage: '',
-      // A股账户开立时间6个月以上校验
-      isShowAAcctOpenTimeFlagStatusError: false,
-      aAcctOpenTimeFlagStatusErrorMessage: '',
-      // 已开立融资融券账户校验
-      isShowRzrqzqAcctFlagStatusError: false,
-      rzrqzqAcctFlagStatusErrorMessage: '',
-      // 已提供金融期货交易证明校验
-      isShowJrqhjyFlagStatusError: false,
-      jrqhjyFlagStatusErrorMessage: '',
     };
     this.isValidateError = false;
   }
@@ -170,6 +143,11 @@ export default class CreateApply extends PureComponent {
     const { flowId } = this.state;
     // 获取股票客户类型,申请类型,开立期权市场类别,业务受理营业部的下拉选择
     getSelectMap({ flowId });
+  }
+
+  @autobind
+  setBasicInfoFormRef(form) {
+    this.basicInfoForm = form;
   }
 
   // 客户校验必填错误时设置错误状态和错误提示
@@ -182,95 +160,6 @@ export default class CreateApply extends PureComponent {
     this.isValidateError = true;
   }
 
-  // 客户交易级别必填错误时设置错误状态和错误提示
-  @autobind
-  setCustTransLvErrorProps() {
-    this.setState({
-      isShowCustTransLvStatusError: true,
-      custTransLvStatusErrorMessage: '客户交易级别不能为空',
-    });
-    this.isValidateError = true;
-  }
-
-  // 股票申请客户类型校验必填错误时设置错误状态和错误提示
-  @autobind
-  setStockCustTypeErrorProps() {
-    this.setState({
-      isShowStockCustTypeStatusError: true,
-      stockCustTypeStatusErrorMessage: '请选择客户类型',
-    });
-  }
-
-  // 申请类型校验必填错误时设置错误状态和错误提示
-  @autobind
-  setReqTypeErrorProps() {
-    this.setState({
-      isShowReqTypeStatusError: true,
-      reqTypeStatusErrorMessage: '请选择申请类型',
-    });
-    this.isValidateError = true;
-  }
-
-  // 开立期权市场类别校验必填错误时设置错误状态和错误提示
-  @autobind
-  setOpenOptMktCatgErrorProps() {
-    this.setState({
-      isShowOpenOptMktCatgStatusError: true,
-      openOptMktCatgStatusErrorMessage: '请选择开立期权市场类别',
-    });
-    this.isValidateError = true;
-  }
-
-  // 申报事项校验必填错误时设置错误状态和错误提示
-  @autobind
-  setOpenDeclareBusErrorProps() {
-    this.setState({
-      isShowDeclareBusStatusError: true,
-      declareBusStatusErrorMessage: '申报事项不能为空',
-    });
-    this.isValidateError = true;
-  }
-
-  // 学历证明材料校验必填错误时设置错误状态和错误提示
-  @autobind
-  setDegreeFlagErrorProps() {
-    this.setState({
-      isShowDegreeFlagStatusError: true,
-      degreeFlagStatusErrorMessage: '请选择已提供大专及以上的学历证明材料',
-    });
-    this.isValidateError = true;
-  }
-
-  // A股账户校验必填错误时设置错误状态和错误提示
-  @autobind
-  setAAcctOpenTimeFlagErrorProps() {
-    this.setState({
-      isShowAAcctOpenTimeFlagStatusError: true,
-      aAcctOpenTimeFlagStatusErrorMessage: '请选择A股账户开立时间6个月以上',
-    });
-    this.isValidateError = true;
-  }
-
-  // 已开立融资融券账户校验必填错误时设置错误状态和错误提示
-  @autobind
-  setRzrqzqAcctFlagErrorProps() {
-    this.setState({
-      isShowRzrqzqAcctFlagStatusError: true,
-      rzrqzqAcctFlagStatusErrorMessage: '请选择已开立融资融券账户',
-    });
-    this.isValidateError = true;
-  }
-
-  // 已提供金融期货交易证明校验必填错误时设置错误状态和错误提示
-  @autobind
-  setJrqhjyFlagErrorProps() {
-    this.setState({
-      isShowJrqhjyFlagStatusError: true,
-      jrqhjyFlagStatusErrorMessage: '请选择已提供金融期货交易证明',
-    });
-    this.isValidateError = true;
-  }
-
   // 客户校验填完值后重置错误状态和错误提示
   @autobind
   resetCustomerErrorProps() {
@@ -278,153 +167,6 @@ export default class CreateApply extends PureComponent {
       isShowCustomerStatusError: false,
       customerStatusErrorMessage: '',
     });
-  }
-
-  // 客户交易级别校验填完值后重置错误状态和错误提示
-  @autobind
-  resetCustTransLvErrorProps() {
-    this.setState({
-      isShowCustTransLvStatusError: false,
-      custTransLvStatusErrorMessage: '',
-    });
-  }
-
-  // 客户类型校验填完值后重置错误状态和错误提示
-  @autobind
-  resetStockCustTypeErrorProps() {
-    this.setState({
-      isShowStockCustTypeStatusError: false,
-      stockCustTypeStatusErrorMessage: '',
-    });
-  }
-
-  // 申请类型校验填完值后重置错误状态和错误提示
-  @autobind
-  resetReqTypeErrorProps() {
-    this.setState({
-      isShowReqTypeStatusError: false,
-      reqTypeStatusErrorMessage: '',
-    });
-  }
-
-  // 开立期权市场类别校验填完值后重置错误状态和错误提示
-  @autobind
-  resetOpenOptMktCatgErrorProps() {
-    this.setState({
-      isShowOpenOptMktCatgStatusError: false,
-      openOptMktCatgStatusErrorMessage: '',
-    });
-  }
-
-  // 申报事项校验填完值后重置错误状态和错误提示
-  @autobind
-  resetDeclareBusErrorProps() {
-    this.setState({
-      isShowDeclareBusStatusError: false,
-      declareBusStatusErrorMessage: '',
-    });
-  }
-
-  // 学历证明材料校验填完值后重置错误状态和错误提示
-  @autobind
-  resetDegreeFlagErrorProps() {
-    this.setState({
-      isShowDegreeFlagStatusError: false,
-      degreeFlagStatusErrorMessage: '',
-    });
-  }
-
-  // A股账户开立时间6个月以上校验填完值后重置错误状态和错误提示
-  @autobind
-  resetAAcctOpenTimeFlagErrorProps() {
-    this.setState({
-      isShowAAcctOpenTimeFlagStatusError: false,
-      aAcctOpenTimeFlagStatusErrorMessage: '',
-    });
-  }
-
-  // 已开立融资融券账户校验填完值后重置错误状态和错误提示
-  @autobind
-  resetRzrqzqAcctFlagErrorProps() {
-    this.setState({
-      isShowRzrqzqAcctFlagStatusError: false,
-      rzrqzqAcctFlagStatusErrorMessage: '',
-    });
-  }
-
-  // 已提供金融期货交易证明校验填完值后重置错误状态和错误提示
-  @autobind
-  resetJrqhjyFlagErrorProps() {
-    this.setState({
-      isShowJrqhjyFlagStatusError: false,
-      jrqhjyFlagStatusErrorMessage: '',
-    });
-  }
-
-  // 校验必填项
-  @autobind
-  checkIsRequired() {
-    const {
-      customer,
-      custInfo: {
-        invFlag,
-        ageFlag,
-      },
-      custTransLvName,
-      stockCustType,
-      reqType,
-      openOptMktCatg,
-      declareBus,
-      degreeFlag,
-      aAcctOpenTimeFlag,
-      rzrqzqAcctFlag,
-      jrqhjyFlag,
-    } = this.state;
-    // 客户校验
-    if (_.isEmpty(customer)) {
-      this.setCustomerErrorProps();
-    }
-    // 客户交易级别校验
-    if (!custTransLvName) {
-      this.setCustTransLvErrorProps();
-    }
-    // 股票申请客户类型校验
-    if (!stockCustType) {
-      this.setStockCustTypeErrorProps();
-    }
-    // 申请类型校验
-    if (!reqType) {
-      this.setReqTypeErrorProps();
-    }
-    // 开立期权市场类别校验
-    if (!openOptMktCatg) {
-      this.setOpenOptMktCatgErrorProps();
-    }
-    // 申报事项校验
-    if (!declareBus) {
-      this.setOpenDeclareBusErrorProps();
-    }
-    // 检测是否是新开客户，初次申请，学历提示选项校验，和投资经历评估3个提示选项校验
-    if (stockCustType === 'New' && reqType === 'New') {
-      // 学历不符合
-      if (ageFlag === 'N') {
-        if (!degreeFlag) {
-          this.setDegreeFlagErrorProps();
-        }
-      }
-      // 投资经历不符合
-      if (invFlag === 'N') {
-        if (!aAcctOpenTimeFlag) {
-          this.setAAcctOpenTimeFlagErrorProps();
-        }
-        if (!rzrqzqAcctFlag) {
-          this.setRzrqzqAcctFlagErrorProps();
-        }
-        if (!jrqhjyFlag) {
-          this.setJrqhjyFlagErrorProps();
-        }
-      }
-    }
   }
 
   // 关闭弹窗
@@ -512,14 +254,13 @@ export default class CreateApply extends PureComponent {
           openDivName,
           busPrcDivName,
         } = custInfo;
-        this.handleChange('custInfo', custInfo);
-        // 设置客户交易级别
-        this.handleChange('custTransLv', custTransLv);
-        this.handleChange('custTransLvName', custTransLvName);
-        // 受理时间
-        this.handleChange('accptTime', accptTime);
-        // 受理营业部Id
-        this.handleChange('busPrcDivId', busPrcDivId);
+        this.handleChange({
+          custInfo,
+          custTransLv,
+          custTransLvName,
+          accptTime,
+          busPrcDivId,
+        });
         // 获取下一步按钮和审批人
         const { flowId } = this.state;
         const param = {
@@ -542,36 +283,40 @@ export default class CreateApply extends PureComponent {
   @autobind
   handleSubmit(item) {
     // 校验必填项
-    this.isValidateError = false;
-    this.checkIsRequired();
-    if (!this.isValidateError) {
-      const {
-        customer: {
-          custType,
-        },
-        custInfo: {
-          isProfessInvset,
-        },
-      } = this.state;
-      // 个人客户且是专业投资者
-      if (custType === 'per' && isProfessInvset) {
-        commonConfirm({
-          content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
-          onOk: () => this.showNextApprover(item),
-        });
-      } else {
-        commonConfirm({
-          content: '请确认是否已上传相关附件。',
-          onOk: () => this.showNextApprover(item),
-        });
-      }
+    const { customer } = this.state;
+    if (_.isEmpty(customer)) {
+      return;
     }
+    const { validateFieldsAndScroll } = this.basicInfoForm.getForm();
+    validateFieldsAndScroll((err) => {
+      if (!err) {
+        const {
+          customer: {
+            custType,
+          },
+          custInfo: {
+            isProfessInvset,
+          },
+        } = this.state;
+        // 个人客户且是专业投资者
+        if (custType === 'per' && isProfessInvset) {
+          commonConfirm({
+            content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
+            onOk: () => this.showNextApprover(item),
+          });
+        } else {
+          commonConfirm({
+            content: '请确认是否已上传相关附件。',
+            onOk: () => this.showNextApprover(item),
+          });
+        }
+      }
+    });
   }
 
   // 展示下一步审批人
   @autobind
   showNextApprover(item) {
-    console.warn('item', item);
     this.setState({
       operate: item.operate,
       groupName: item.nextGroupName,
@@ -764,52 +509,10 @@ export default class CreateApply extends PureComponent {
 
   // 更新基本信息数据
   @autobind
-  handleChange(name, value) {
-    this.setState({ [name]: value }, () => {
-      if (value) {
-        switch (name) {
-          // 客户交易级别
-          case 'custTransLvName':
-            this.resetCustTransLvErrorProps();
-            break;
-          // 股票申请客户
-          case 'stockCustType':
-            this.resetStockCustTypeErrorProps();
-            break;
-          // 申报事项
-          case 'reqType':
-            this.resetReqTypeErrorProps();
-            break;
-          // 开立期权市场类别
-          case 'openOptMktCatg':
-            this.resetOpenOptMktCatgErrorProps();
-            break;
-          // 申报事项
-          case 'declareBus':
-            this.resetDeclareBusErrorProps();
-            break;
-          // 学历
-          case 'degreeFlag':
-            this.resetDegreeFlagErrorProps();
-            break;
-          // A股账户开立时间6个月以上
-          case 'aAcctOpenTimeFlag':
-            this.resetAAcctOpenTimeFlagErrorProps();
-            break;
-          // 已开立融资融券账户
-          case 'rzrqzqAcctFlag':
-            this.resetRzrqzqAcctFlagErrorProps();
-            break;
-          // 已提供金融期货交易证明
-          case 'jrqhjyFlag':
-            this.resetJrqhjyFlagErrorProps();
-            break;
-          default:
-            break;
-        }
-      }
-    });
+  handleChange(obj) {
+    this.setState({ ...obj });
   }
+
   render() {
     const {
       busCustList,
@@ -833,35 +536,9 @@ export default class CreateApply extends PureComponent {
       aAcctOpenTimeFlag,
       rzrqzqAcctFlag,
       jrqhjyFlag,
+      attachment,
       isShowCustomerStatusError,
       customerStatusErrorMessage,
-      // 客户交易级别校验
-      isShowCustTransLvStatusError,
-      custTransLvStatusErrorMessage,
-      // 股票申请客户类型校验
-      isShowStockCustTypeStatusError,
-      stockCustTypeStatusErrorMessage,
-      // 申请类型校验
-      isShowReqTypeStatusError,
-      reqTypeStatusErrorMessage,
-      // 开立期权市场类别校验
-      isShowOpenOptMktCatgStatusError,
-      openOptMktCatgStatusErrorMessage,
-      // 申报事项校验
-      isShowDeclareBusStatusError,
-      declareBusStatusErrorMessage,
-      // 已提供大专及以上的学历证明材料校验
-      isShowDegreeFlagStatusError,
-      degreeFlagStatusErrorMessage,
-      // A股账户开立时间6个月以上校验
-      isShowAAcctOpenTimeFlagStatusError,
-      aAcctOpenTimeFlagStatusErrorMessage,
-      // 已开立融资融券账户校验
-      isShowRzrqzqAcctFlagStatusError,
-      rzrqzqAcctFlagStatusErrorMessage,
-      // 已提供金融期货交易证明校验
-      isShowJrqhjyFlagStatusError,
-      jrqhjyFlagStatusErrorMessage,
       nextApproverModal,
       nextApproverList,
     } = this.state;
@@ -924,6 +601,7 @@ export default class CreateApply extends PureComponent {
               </div>
             </Form>
             <EditBasicInfo
+              wrappedComponentRef={this.setBasicInfoFormRef}
               stockCustTypeMap={stockCustTypeMap}
               reqTypeMap={reqTypeMap}
               klqqsclbMap={klqqsclbMap}
@@ -939,24 +617,6 @@ export default class CreateApply extends PureComponent {
               rzrqzqAcctFlag={rzrqzqAcctFlag}
               jrqhjyFlag={jrqhjyFlag}
               onChange={this.handleChange}
-              isShowCustTransLvStatusError={isShowCustTransLvStatusError}
-              custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
-              isShowStockCustTypeStatusError={isShowStockCustTypeStatusError}
-              stockCustTypeStatusErrorMessage={stockCustTypeStatusErrorMessage}
-              isShowReqTypeStatusError={isShowReqTypeStatusError}
-              reqTypeStatusErrorMessage={reqTypeStatusErrorMessage}
-              isShowOpenOptMktCatgStatusError={isShowOpenOptMktCatgStatusError}
-              openOptMktCatgStatusErrorMessage={openOptMktCatgStatusErrorMessage}
-              isShowDeclareBusStatusError={isShowDeclareBusStatusError}
-              declareBusStatusErrorMessage={declareBusStatusErrorMessage}
-              isShowDegreeFlagStatusError={isShowDegreeFlagStatusError}
-              degreeFlagStatusErrorMessage={degreeFlagStatusErrorMessage}
-              isShowAAcctOpenTimeFlagStatusError={isShowAAcctOpenTimeFlagStatusError}
-              aAcctOpenTimeFlagStatusErrorMessage={aAcctOpenTimeFlagStatusErrorMessage}
-              isShowRzrqzqAcctFlagStatusError={isShowRzrqzqAcctFlagStatusError}
-              rzrqzqAcctFlagStatusErrorMessage={rzrqzqAcctFlagStatusErrorMessage}
-              isShowJrqhjyFlagStatusError={isShowJrqhjyFlagStatusError}
-              jrqhjyFlagStatusErrorMessage={jrqhjyFlagStatusErrorMessage}
               acceptOrgData={acceptOrgData}
               queryAcceptOrg={queryAcceptOrg}
             />
@@ -964,8 +624,10 @@ export default class CreateApply extends PureComponent {
           <div className={styles.moduleAttachment}>
             <InfoTitle head="附件信息" />
             <UploadFile
+              fileList={[]}
               edit
               type="attachment"
+              attachment={attachment}
               onEmitEvent={this.handleChange}
               needDefaultText={false}
             />

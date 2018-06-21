@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-20 14:53:34
+ * @Last Modified time: 2018-06-20 23:02:31
  */
 
 import React, { PureComponent } from 'react';
@@ -118,36 +118,7 @@ export default class ApplyEditForm extends PureComponent {
       attachment: detailInfo.attachment,
       // 按钮组信息
       editButtonListData,
-      // 必填项校验错误提示信息
-      // 客户交易级别校验
-      isShowCustTransLvStatusError: false,
-      custTransLvStatusErrorMessage: '',
-      // 股票申请客户类型校验
-      isShowStockCustTypeStatusError: false,
-      stockCustTypeStatusErrorMessage: '',
-      // 申请类型校验
-      isShowReqTypeStatusError: false,
-      reqTypeStatusErrorMessage: '',
-      // 开立期权市场类别校验
-      isShowOpenOptMktCatgStatusError: false,
-      openOptMktCatgStatusErrorMessage: '',
-      // 申报事项校验
-      isShowDeclareBusStatusError: false,
-      declareBusStatusErrorMessage: '',
-      // 已提供大专及以上的学历证明材料校验
-      isShowDegreeFlagStatusError: false,
-      degreeFlagStatusErrorMessage: '',
-      // A股账户开立时间6个月以上校验
-      isShowAAcctOpenTimeFlagStatusError: false,
-      aAcctOpenTimeFlagStatusErrorMessage: '',
-      // 已开立融资融券账户校验
-      isShowRzrqzqAcctFlagStatusError: false,
-      rzrqzqAcctFlagStatusErrorMessage: '',
-      // 已提供金融期货交易证明校验
-      isShowJrqhjyFlagStatusError: false,
-      jrqhjyFlagStatusErrorMessage: '',
     };
-    this.isValidateError = false;
   }
 
   componentDidMount() {
@@ -162,178 +133,10 @@ export default class ApplyEditForm extends PureComponent {
     this.props.getEditButtonList({ flowId });
   }
 
-  // 客户交易级别必填错误时设置错误状态和错误提示
-  @autobind
-  setCustTransLvErrorProps() {
-    this.setState({
-      isShowCustTransLvStatusError: true,
-      custTransLvStatusErrorMessage: '客户交易级别不能为空',
-    });
-    this.isValidateError = true;
-  }
-
-  // 开立期权市场类别校验必填错误时设置错误状态和错误提示
-  @autobind
-  setOpenOptMktCatgErrorProps() {
-    this.setState({
-      isShowOpenOptMktCatgStatusError: true,
-      openOptMktCatgStatusErrorMessage: '请选择开立期权市场类别',
-    });
-    this.isValidateError = true;
-  }
-
-  // 申报事项校验必填错误时设置错误状态和错误提示
-  @autobind
-  setOpenDeclareBusErrorProps() {
-    this.setState({
-      isShowDeclareBusStatusError: true,
-      declareBusStatusErrorMessage: '申报事项不能为空',
-    });
-    this.isValidateError = true;
-  }
-
-  // 学历证明材料校验必填错误时设置错误状态和错误提示
-  @autobind
-  setDegreeFlagErrorProps() {
-    this.setState({
-      isShowDegreeFlagStatusError: true,
-      degreeFlagStatusErrorMessage: '请选择已提供大专及以上的学历证明材料',
-    });
-    this.isValidateError = true;
-  }
-
-  // A股账户校验必填错误时设置错误状态和错误提示
-  @autobind
-  setAAcctOpenTimeFlagErrorProps() {
-    this.setState({
-      isShowAAcctOpenTimeFlagStatusError: true,
-      aAcctOpenTimeFlagStatusErrorMessage: '请选择A股账户开立时间6个月以上',
-    });
-    this.isValidateError = true;
-  }
-
-  // 已开立融资融券账户校验必填错误时设置错误状态和错误提示
-  @autobind
-  setRzrqzqAcctFlagErrorProps() {
-    this.setState({
-      isShowRzrqzqAcctFlagStatusError: true,
-      rzrqzqAcctFlagStatusErrorMessage: '请选择已开立融资融券账户',
-    });
-    this.isValidateError = true;
-  }
-
-  // 已提供金融期货交易证明校验必填错误时设置错误状态和错误提示
-  @autobind
-  setJrqhjyFlagErrorProps() {
-    this.setState({
-      isShowJrqhjyFlagStatusError: true,
-      jrqhjyFlagStatusErrorMessage: '请选择已提供金融期货交易证明',
-    });
-    this.isValidateError = true;
-  }
-
-  // 客户交易级别校验填完值后重置错误状态和错误提示
-  @autobind
-  resetCustTransLvErrorProps() {
-    this.setState({
-      isShowCustTransLvStatusError: false,
-      custTransLvStatusErrorMessage: '',
-    });
-  }
-
-  // 开立期权市场类别校验填完值后重置错误状态和错误提示
-  @autobind
-  resetOpenOptMktCatgErrorProps() {
-    this.setState({
-      isShowOpenOptMktCatgStatusError: false,
-      openOptMktCatgStatusErrorMessage: '',
-    });
-  }
-
-  // 申报事项校验填完值后重置错误状态和错误提示
-  @autobind
-  resetDeclareBusErrorProps() {
-    this.setState({
-      isShowDeclareBusStatusError: false,
-      declareBusStatusErrorMessage: '',
-    });
-  }
-
-  // 学历证明材料校验填完值后重置错误状态和错误提示
-  @autobind
-  resetDegreeFlagErrorProps() {
-    this.setState({
-      isShowDegreeFlagStatusError: false,
-      degreeFlagStatusErrorMessage: '',
-    });
-  }
-
-  // A股账户开立时间6个月以上校验填完值后重置错误状态和错误提示
-  @autobind
-  resetAAcctOpenTimeFlagErrorProps() {
-    this.setState({
-      isShowAAcctOpenTimeFlagStatusError: false,
-      aAcctOpenTimeFlagStatusErrorMessage: '',
-    });
-  }
-
-  // 已开立融资融券账户校验填完值后重置错误状态和错误提示
-  @autobind
-  resetRzrqzqAcctFlagErrorProps() {
-    this.setState({
-      isShowRzrqzqAcctFlagStatusError: false,
-      rzrqzqAcctFlagStatusErrorMessage: '',
-    });
-  }
-
-  // 已提供金融期货交易证明校验填完值后重置错误状态和错误提示
-  @autobind
-  resetJrqhjyFlagErrorProps() {
-    this.setState({
-      isShowJrqhjyFlagStatusError: false,
-      jrqhjyFlagStatusErrorMessage: '',
-    });
-  }
-
   // 更新基本信息数据
   @autobind
-  handleChange(name, value) {
-    this.setState({ [name]: value }, () => {
-      if (value) {
-        switch (name) {
-          // 客户交易级别
-          case 'custTransLvName':
-            this.resetCustTransLvErrorProps();
-            break;
-          // 开立期权市场类别
-          case 'openOptMktCatg':
-            this.resetOpenOptMktCatgErrorProps();
-            break;
-          // 申报事项
-          case 'declareBus':
-            this.resetDeclareBusErrorProps();
-            break;
-          // 学历
-          case 'degreeFlag':
-            this.resetDegreeFlagErrorProps();
-            break;
-          // A股账户开立时间6个月以上
-          case 'aAcctOpenTimeFlag':
-            this.resetAAcctOpenTimeFlagErrorProps();
-            break;
-          // 已开立融资融券账户
-          case 'rzrqzqAcctFlag':
-            this.resetRzrqzqAcctFlagErrorProps();
-            break;
-          // 已提供金融期货交易证明
-          case 'jrqhjyFlag':
-            this.resetJrqhjyFlagErrorProps();
-            break;
-          default:
-            break;
-        }
-      }
-    });
+  handleChange(obj) {
+    this.setState({ ...obj });
   }
 
   // 修改审批意见
@@ -400,17 +203,18 @@ export default class ApplyEditForm extends PureComponent {
   @autobind
   handleSubmit(item) {
     // 校验必填项
-    this.isValidateError = false;
-    this.checkIsRequired();
-    if (!this.isValidateError) {
-      this.setState({
-        operate: item.operate,
-        groupName: item.nextGroupName,
-        auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
-        nextApproverList: item.flowAuditors,
-        nextApproverModal: true,
-      });
-    }
+    const { validateFieldsAndScroll } = this.basicInfoForm.getForm();
+    validateFieldsAndScroll((err) => {
+      if (!err) {
+        this.setState({
+          operate: item.operate,
+          groupName: item.nextGroupName,
+          auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
+          nextApproverList: item.flowAuditors,
+          nextApproverModal: true,
+        });
+      }
+    });
   }
 
   // 校验数据
@@ -599,6 +403,11 @@ export default class ApplyEditForm extends PureComponent {
     });
   }
 
+  @autobind
+  setBasicInfoFormRef(form) {
+    this.basicInfoForm = form;
+  }
+
   render() {
     const {
       detailInfo,
@@ -637,33 +446,6 @@ export default class ApplyEditForm extends PureComponent {
       aAcctOpenTimeFlag,
       rzrqzqAcctFlag,
       jrqhjyFlag,
-      // 客户交易级别校验
-      isShowCustTransLvStatusError,
-      custTransLvStatusErrorMessage,
-      // 股票申请客户类型校验
-      isShowStockCustTypeStatusError,
-      stockCustTypeStatusErrorMessage,
-      // 申请类型校验
-      isShowReqTypeStatusError,
-      reqTypeStatusErrorMessage,
-      // 开立期权市场类别校验
-      isShowOpenOptMktCatgStatusError,
-      openOptMktCatgStatusErrorMessage,
-      // 申报事项校验
-      isShowDeclareBusStatusError,
-      declareBusStatusErrorMessage,
-      // 已提供大专及以上的学历证明材料校验
-      isShowDegreeFlagStatusError,
-      degreeFlagStatusErrorMessage,
-      // A股账户开立时间6个月以上校验
-      isShowAAcctOpenTimeFlagStatusError,
-      aAcctOpenTimeFlagStatusErrorMessage,
-      // 已开立融资融券账户校验
-      isShowRzrqzqAcctFlagStatusError,
-      rzrqzqAcctFlagStatusErrorMessage,
-      // 已提供金融期货交易证明校验
-      isShowJrqhjyFlagStatusError,
-      jrqhjyFlagStatusErrorMessage,
       nextApproverModal,
       nextApproverList,
     } = this.state;
@@ -703,6 +485,7 @@ export default class ApplyEditForm extends PureComponent {
                 </div>
               </div>
               <EditBasicInfo
+                wrappedComponentRef={this.setBasicInfoFormRef}
                 isEdit={isEdit}
                 stockCustTypeMap={stockCustTypeMap}
                 reqTypeMap={reqTypeMap}
@@ -719,24 +502,6 @@ export default class ApplyEditForm extends PureComponent {
                 rzrqzqAcctFlag={rzrqzqAcctFlag}
                 jrqhjyFlag={jrqhjyFlag}
                 onChange={this.handleChange}
-                isShowCustTransLvStatusError={isShowCustTransLvStatusError}
-                custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
-                isShowStockCustTypeStatusError={isShowStockCustTypeStatusError}
-                stockCustTypeStatusErrorMessage={stockCustTypeStatusErrorMessage}
-                isShowReqTypeStatusError={isShowReqTypeStatusError}
-                reqTypeStatusErrorMessage={reqTypeStatusErrorMessage}
-                isShowOpenOptMktCatgStatusError={isShowOpenOptMktCatgStatusError}
-                openOptMktCatgStatusErrorMessage={openOptMktCatgStatusErrorMessage}
-                isShowDeclareBusStatusError={isShowDeclareBusStatusError}
-                declareBusStatusErrorMessage={declareBusStatusErrorMessage}
-                isShowDegreeFlagStatusError={isShowDegreeFlagStatusError}
-                degreeFlagStatusErrorMessage={degreeFlagStatusErrorMessage}
-                isShowAAcctOpenTimeFlagStatusError={isShowAAcctOpenTimeFlagStatusError}
-                aAcctOpenTimeFlagStatusErrorMessage={aAcctOpenTimeFlagStatusErrorMessage}
-                isShowRzrqzqAcctFlagStatusError={isShowRzrqzqAcctFlagStatusError}
-                rzrqzqAcctFlagStatusErrorMessage={rzrqzqAcctFlagStatusErrorMessage}
-                isShowJrqhjyFlagStatusError={isShowJrqhjyFlagStatusError}
-                jrqhjyFlagStatusErrorMessage={jrqhjyFlagStatusErrorMessage}
                 acceptOrgData={acceptOrgData}
                 queryAcceptOrg={queryAcceptOrg}
               />
