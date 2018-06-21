@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-20 14:44:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-20 15:48:44
+ * @Last Modified time: 2018-06-21 15:34:12
  * @description 重点监控账户的配置项
  */
 
@@ -118,6 +118,11 @@ const config = {
       width: 150,
     },
   ],
+  // 下拉选项的默认选项
+  DEFAULT_OPTION: {
+    key: '',
+    value: '不限',
+  },
 };
 
 export default config;
