@@ -34,6 +34,8 @@ const CUR_PAGESIZE = 20; // 默认页大小
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
 
+const FILTER_SELECT_FROM_MOREFILTER = 'FILTER_SELECT_FROM_MOREFILTER';
+
 function getFilterArray(labels) {
   const filtersArray = [];
   const labelList = [].concat(labels);
@@ -211,6 +213,14 @@ function getFilterParam(filterObj) {
     param.primaryKeyPrdts = [].concat(primaryKeyPrdts);
   }
 
+  // 订购组合
+  const primaryKeyJxgrps = filterObj.primaryKeyJxgrps[0];
+
+  if (primaryKeyJxgrps) {
+    param.primaryKeyJxgrps = [].concat(primaryKeyJxgrps);
+  }
+
+
   // 最近一次服务 unServiced
   if (filterObj.lastServDt) {
     if (filterObj.lastServDt[1] === 'serviced') {
@@ -291,8 +301,10 @@ const effects = {
   addServeRecord: 'customerPool/addCommonServeRecord',
   queryHoldingProduct: 'customerPool/queryHoldingProduct',
   queryProduct: 'customerPool/queryProduct',
+  queryJxGroupProduct: 'customerPool/queryJxGroupProduct',
   getTagList: 'customerPool/getTagList',
   clearProductData: 'customerPool/clearProductData',
+  clearJxGroupProductData: 'customerPool/clearJxGroupProductData',
   addCallRecord: 'customerPool/addCallRecord',
 };
 
@@ -337,6 +349,7 @@ const mapStateToProps = state => ({
   holdingProducts: state.customerPool.holdingProducts,
   searchedProductList: state.customerPool.productList,
   tagList: state.customerPool.tagList,
+  jxGroupProductList: state.customerPool.jxGroupProductList,
   // 添加服务记录成功后返回的服务记录的id
   currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
 });
@@ -371,8 +384,10 @@ const mapDispatchToProps = {
     payload: query || {},
   }),
   queryProduct: fetchDataFunction(false, effects.queryProduct),
+  queryJxGroupProduct: fetchDataFunction(false, effects.queryJxGroupProduct),
   getTagList: fetchDataFunction(false, effects.getTagList),
   clearProductData: fetchDataFunction(false, effects.clearProductData),
+  clearJxGroupProductData: fetchDataFunction(false, effects.clearJxGroupProductData),
   // 获取uuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
   getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
@@ -438,10 +453,13 @@ export default class CustomerList extends PureComponent {
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     queryHoldingProduct: PropTypes.func.isRequired,
     queryProduct: PropTypes.func.isRequired,
+    queryJxGroupProduct: PropTypes.func.isRequired,
     getTagList: PropTypes.func.isRequired,
     searchedProductList: PropTypes.array,
+    jxGroupProductList: PropTypes.array,
     tagList: PropTypes.array,
     clearProductData: PropTypes.func.isRequired,
+    clearJxGroupProductData: PropTypes.func.isRequired,
     holdingProducts: PropTypes.object.isRequired,
     addCallRecord: PropTypes.func.isRequired,
     currentCommonServiceRecord: PropTypes.object.isRequired,
@@ -455,6 +473,7 @@ export default class CustomerList extends PureComponent {
     cycle: EMPTY_LIST,
     filesList: [],
     searchedProductList: [],
+    jxGroupProductList: [],
     tagList: [],
     serviceDepartment: {},
   }
@@ -487,6 +506,7 @@ export default class CustomerList extends PureComponent {
     // HTSC 交易信息查询权限（含私密客户）
     this.hasPCTIQPermission = permission.hasPCTIQPermission();
     this.dataForNextPage = {};
+    store.set(FILTER_SELECT_FROM_MOREFILTER, false);
   }
 
   getChildContext() {
@@ -535,11 +555,11 @@ export default class CustomerList extends PureComponent {
     const otherQuery = _.omit(query, ['selectedIds', 'selectAll']);
 
     // TODO：根据location请求相应的所有子标签条件
-
-    if (!_.isEqual(preOtherQuery, otherQuery)) {
+    if (!_.isEqual(preOtherQuery, otherQuery) && !store.get(FILTER_SELECT_FROM_MOREFILTER)) {
       this.getCustomerList(nextProps);
       this.getFiltersOfAllSightingTelescope(query);
     }
+    store.set(FILTER_SELECT_FROM_MOREFILTER, false);
   }
 
   @autobind
@@ -626,7 +646,6 @@ export default class CustomerList extends PureComponent {
     this.setState({
       queryParam: finalParam,
     });
-
     getCustomerData(finalParam);
   }
 
@@ -888,9 +907,12 @@ export default class CustomerList extends PureComponent {
       queryHoldingProduct,
       holdingProducts,
       queryProduct,
+      queryJxGroupProduct,
       searchedProductList,
+      jxGroupProductList,
       tagList,
       clearProductData,
+      clearJxGroupProductData,
       addCallRecord,
       currentCommonServiceRecord,
       getFiltersOfSightingTelescope,
@@ -933,8 +955,11 @@ export default class CustomerList extends PureComponent {
           filtersOfAllSightingTelescope={filtersOfAllSightingTelescope}
           tagList={tagList}
           queryProduct={queryProduct}
+          queryJxGroupProduct={queryJxGroupProduct}
           clearProductData={clearProductData}
           searchedProductList={searchedProductList}
+          jxGroupProductList={jxGroupProductList}
+          clearJxGroupProductData={clearJxGroupProductData}
           dict={dict}
           location={location}
           onFilterChange={this.filterChange}
