@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-07 14:29:19
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-11 15:27:00
+ * @Last Modified time: 2018-06-15 15:32:07
  */
 
 import React, { PureComponent } from 'react';
@@ -21,7 +21,7 @@ const EMPTY_INFO = '--';
 
 export default class ApplyDetail extends PureComponent {
   static propTypes = {
-    data: PropTypes.object.isRequired,
+    detailInfo: PropTypes.object.isRequired,
     attachmentList: PropTypes.array,
   }
   static defaultProps = {
@@ -30,8 +30,8 @@ export default class ApplyDetail extends PureComponent {
 
   render() {
     const {
-      data,
-      data: {
+      detailInfo,
+      detailInfo: {
         id,
         empId,
         empName,
@@ -45,7 +45,7 @@ export default class ApplyDetail extends PureComponent {
       },
       attachmentList,
     } = this.props;
-    if (_.isEmpty(this.props.data)) {
+    if (_.isEmpty(this.props.detailInfo)) {
       return null;
     }
     // 拟稿人信息
@@ -58,13 +58,13 @@ export default class ApplyDetail extends PureComponent {
           <div className={styles.innerWrap}>
             <h1 className={styles.title}>编号{id}</h1>
             <div className={styles.module}>
-              <BasicInfo data={data} />
+              <BasicInfo data={detailInfo} />
             </div>
             <div className={styles.module}>
               <InfoTitle head="适当性评估表" />
               {
                 isPerCustType ?
-                  <AssessTable data={data} />
+                  <AssessTable data={detailInfo} />
                 : null
               }
             </div>
