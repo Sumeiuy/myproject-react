@@ -10,7 +10,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { Helmet } from 'react-helmet';
 import { autobind } from 'core-decorators';
-import { routerRedux, withRouter } from 'dva/router';
+import { routerRedux } from 'dva/router';
+import withRouter from '../../src/decorators/withRouter';
 import { Modal, Input } from 'antd';
 
 import Header from './Header';
@@ -20,6 +21,12 @@ import FSPUnwrap from '../components/layout/FSPUnwrap';
 import { constants } from '../../src/config';
 import ConnectedCreateServiceRecord from '../../src/components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
 
+import { LocaleProvider } from 'antd';
+import zhCN from 'antd/lib/locale-provider/zh_CN';
+import ContextProvider from '../../src/layouts/ContextProvider';
+import IEWarningModal from '../../src/components/common/IEWarningModal';
+import ErrorBoundary from '../../src/layouts/ErrorBoundary';
+import PhoneWrapper from '../../src/layouts/PhoneWrapper';
 import styles from './main.less';
 import '../css/fspFix.less';
 import '../../src/css/skin.less';
@@ -28,7 +35,7 @@ const effects = {
   dictionary: 'app/getDictionary',
   customerScope: 'customerPool/getCustomerScope',
   empInfo: 'app/getEmpInfo',
-  addServeRecord: 'customerPool/addServeRecord',
+  addServeRecord: 'customerPool/addCommonServeRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
   // 删除文件
   ceFileDelete: 'performerView/ceFileDelete',
@@ -51,6 +58,8 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   empInfo: state.app.empInfo,
   interfaceState: state.loading.effects,
+  // 发送保存服务记录请求成功的服务id
+  currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
   // 显示隐藏添加服务记录弹窗
   serviceRecordModalVisible: state.app.serviceRecordModalVisible,
   // 发送保存服务记录请求成功状态
@@ -61,6 +70,9 @@ const mapStateToProps = state => ({
   serviceRecordModalVisibleOfName: state.app.serviceRecordModalVisibleOfName,
   // 客户uuid
   custUuid: state.performerView.custUuid,
+  // 自建任务平台的服务类型、任务反馈字典
+  motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
+  serviceRecordInfo: state.app.serviceRecordInfo,
   // 任务反馈的字典
   taskFeedbackList: state.performerView.taskFeedbackList,
 });
@@ -72,11 +84,13 @@ const mapDispatchToProps = {
     type: 'app/toggleServiceRecordModal',
     payload: query || false,
   }),
-  addServeRecord: fectchDataFunction(false, effects.addServeRecord),
+  addServeRecord: fectchDataFunction(true, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
   switchPosition: fectchDataFunction(false, effects.switchPosition),
 };
+
+const PHONE = 'phone';
 
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
@@ -100,6 +114,7 @@ export default class Main extends PureComponent {
     interfaceState: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
     navs: PropTypes.object.isRequired,
     serviceRecordModalVisible: PropTypes.bool,
     serviceRecordModalVisibleOfId: PropTypes.string,
@@ -110,6 +125,8 @@ export default class Main extends PureComponent {
     handleCloseClick: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
+    motSelfBuiltFeedbackList: PropTypes.array.isRequired,
+    serviceRecordInfo: PropTypes.object.isRequired,
     changePost: PropTypes.bool.isRequired,
     taskFeedbackList: PropTypes.array.isRequired,
     switchPosition: PropTypes.func.isRequired,
@@ -170,6 +187,7 @@ export default class Main extends PureComponent {
       empInfo: { empInfo = {}, empPostnList = [], loginInfo = {} },
       navs: { secondaryMenu = [] },
       addServeRecordSuccess,
+      currentCommonServiceRecord,
       addServeRecord,
       serviceRecordModalVisibleOfId,
       serviceRecordModalVisibleOfName,
@@ -178,76 +196,89 @@ export default class Main extends PureComponent {
       handleCloseClick,
       custUuid,
       ceFileDelete,
+      motSelfBuiltFeedbackList,
+      serviceRecordInfo,
       taskFeedbackList,
     } = this.props;
-
+    const { caller = '' } = serviceRecordInfo;
+    // 当前服务记录弹窗是否由电话调起的
+    const isPhoneCall = caller === PHONE;
     return (
-      <div>
-        <Helmet>
-          <link rel="icon" href={constants.logoSrc} type="image/x-icon" />
-        </Helmet>
-        <div
-          className={styles.layout}
-        >
-          <Header
-            navs={secondaryMenu}
-            loginInfo={loginInfo}
-            empInfo={empInfo}
-            empRspList={empPostnList}
-            onSwitchRsp={this.handleHeaderSwitchRsp}
-            onIsolationWallModalShow={this.handleIsolationWallModalShow}
-          />
-          <div className={styles.main}>
-            <Tab
-              location={location}
-              push={push}
-              isBlockRemovePane={isBlockRemovePane}
-            />
-            <FSPUnwrap
-              path={location.pathname}
-              loading={loading}
-              loadingForceFull={loadingForceFull}
+      <LocaleProvider locale={zhCN}>
+        <ContextProvider {...this.props} >
+          <IEWarningModal />
+          <ErrorBoundary location={location}>
+            <Helmet>
+              <link rel="icon" href={constants.logoSrc} type="image/x-icon" />
+            </Helmet>
+            <div
+              className={styles.layout}
             >
-              <div id="react-content" className={styles.content}>
-                {
-                  (!_.isEmpty(interfaceState) &&
-                    !interfaceState[effects.dictionary] &&
-                    !interfaceState[effects.customerScope] &&
-                    !interfaceState[effects.empInfo] &&
-                    React.isValidElement(children)) ?
-                      children :
-                      <div />
-                }
+              <Header
+                navs={secondaryMenu}
+                loginInfo={loginInfo}
+                empInfo={empInfo}
+                empRspList={empPostnList}
+                onSwitchRsp={this.handleHeaderSwitchRsp}
+                onIsolationWallModalShow={this.handleIsolationWallModalShow}
+              />
+              <div className={styles.main}>
+                <Tab
+                  location={location}
+                  push={push}
+                  isBlockRemovePane={isBlockRemovePane}
+                />
+                <FSPUnwrap
+                  path={location.pathname}
+                  loading={loading}
+                  loadingForceFull={loadingForceFull}
+                >
+                  <div id="react-content" className={styles.content}>
+                    {
+                      (!_.isEmpty(interfaceState) &&
+                        !interfaceState[effects.dictionary] &&
+                        !interfaceState[effects.customerScope] &&
+                        !interfaceState[effects.empInfo] &&
+                        React.isValidElement(children)) ?
+                          children :
+                          <div />
+                    }
+                  </div>
+                  <Footer />
+                </FSPUnwrap>
+                <ConnectedCreateServiceRecord
+                  handleCloseClick={handleCloseClick}
+                  loading={interfaceState[effects.addServeRecord]}
+                  key={serviceRecordModalVisibleOfId}
+                  id={serviceRecordModalVisibleOfId}
+                  name={serviceRecordModalVisibleOfName}
+                  dict={dict}
+                  empInfo={empInfo}
+                  isShow={serviceRecordModalVisible}
+                  addServeRecord={addServeRecord}
+                  currentCommonServiceRecord={currentCommonServiceRecord}
+                  addServeRecordSuccess={addServeRecordSuccess}
+                  onToggleServiceRecordModal={toggleServiceRecordModal}
+                  custUuid={custUuid}
+                  ceFileDelete={ceFileDelete}
+                  taskFeedbackList={taskFeedbackList}
+                  serviceRecordInfo={serviceRecordInfo}
+                  isPhoneCall={isPhoneCall}
+                />
+                <Modal
+                  title="隔离墙"
+                  visible={this.state.isolationWallModalVisible}
+                  onCancel={this.handleIsolationWallModalHide}
+                >
+                  <span>股票代码：</span>
+                  <Input />
+                </Modal>
+                <PhoneWrapper />
               </div>
-              <Footer />
-            </FSPUnwrap>
-            <ConnectedCreateServiceRecord
-              handleCloseClick={handleCloseClick}
-              loading={interfaceState[effects.addServeRecord]}
-              key={serviceRecordModalVisibleOfId}
-              id={serviceRecordModalVisibleOfId}
-              name={serviceRecordModalVisibleOfName}
-              dict={dict}
-              empInfo={empInfo}
-              isShow={serviceRecordModalVisible}
-              addServeRecord={addServeRecord}
-              addServeRecordSuccess={addServeRecordSuccess}
-              onToggleServiceRecordModal={toggleServiceRecordModal}
-              custUuid={custUuid}
-              ceFileDelete={ceFileDelete}
-              taskFeedbackList={taskFeedbackList}
-            />
-            <Modal
-              title="隔离墙"
-              visible={this.state.isolationWallModalVisible}
-              onCancel={this.handleIsolationWallModalHide}
-            >
-              <span>股票代码：</span>
-              <Input />
-            </Modal>
-          </div>
-        </div>
-      </div>
+            </div>
+          </ErrorBoundary>
+        </ContextProvider>
+      </LocaleProvider>
     );
   }
 }

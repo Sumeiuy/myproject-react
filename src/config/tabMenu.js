@@ -119,7 +119,7 @@ const primaryMenu = [
   {
     name: '任务中心',
     id: 'FSP_MOT_M_TASK',
-    path: '/taskCenter',
+    path: '/taskList',
     pid: 'ROOT',
   },
   {
