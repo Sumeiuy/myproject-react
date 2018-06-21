@@ -147,6 +147,8 @@ export default {
     currentEntry: 0,
     // 产品列表
     productList: [],
+    // 所有标签列表
+    tagList: [],
     // 审批流程按钮
     approvalBtn: {},
     // 审批按钮提交成功
@@ -719,6 +721,15 @@ export default {
       const { resultData } = response;
       yield put({
         type: 'getLabelInfoSuccess',
+        payload: { resultData },
+      });
+    },
+    // 获取所有的可用标签
+    * getTagList({ payload }, { call, put }) {
+      const response = yield call(api.queryTagList, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getTagListSuccess',
         payload: { resultData },
       });
     },
@@ -1354,6 +1365,14 @@ export default {
       return {
         ...state,
         circlePeopleData: resultData,
+      };
+    },
+    // 获取全部标签信息成功
+    getTagListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        tagList: resultData,
       };
     },
     // 标签圈人-id客户列表查询

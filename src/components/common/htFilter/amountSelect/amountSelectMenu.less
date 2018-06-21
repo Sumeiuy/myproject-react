@@ -1,9 +1,13 @@
+@import "../../../../css/variable.less";
+
 .amountSelectMenu {
   padding: 4px 14px;
   font-size: 14px;
 
   .label {
     padding-bottom: 10px;
+    color: @font-color;
+    font-family: @font-family;
   }
   .radioGroup {
     :global {
@@ -18,7 +22,8 @@
         height: 30px;
         width: 66px;
         line-height: 30px;
-        color: #4a4a4a;
+        color: @font-color;
+        font-family: @font-family;
         font-weight: normal;
         margin: 0;
       }
@@ -42,7 +47,7 @@
       display: inline-block;
       width: 8px;
       height: 1px;
-      background: #4a4a4a;
+      background: #333;
       vertical-align: middle;
       margin: 0 10px 3px;
     }
