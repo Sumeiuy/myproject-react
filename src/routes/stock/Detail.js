@@ -2,8 +2,8 @@
  * @Description: 个股详情页面
  * @Author: Liujianshu
  * @Date: 2018-02-28 14:07:50
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-11 14:28:06
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-21 10:56:17
  */
 
 import React, { PureComponent } from 'react';
@@ -182,7 +182,7 @@ export default class StockDetail extends PureComponent {
   @autobind
   openCustomerListPage() {
     const {
-      location: { query: { code = '' } } } = this.props;
+      location: { query: { code = '', name = '' } } } = this.props;
     const { push } = this.props;
     // 组合 productId
     const productId = `${securityType[0].shortName}${code}`;
@@ -191,19 +191,23 @@ export default class StockDetail extends PureComponent {
       closable: true,
       forceRefresh: true,
       isSpecialTab: true,
-      id: 'FSP_CUSTOMER_LIST',
+      id: 'RCT_FSP_CUSTOMER_LIST',
       title: '客户列表',
     };
     const query = {
       labelMapping: encodeURIComponent(productId),
       source: 'securitiesProducts',
+      type: 'PRODUCT',
+      labelName: encodeURIComponent(`${name}(${code})`),
+      productName: encodeURIComponent(name),
     };
-    const url = `/customerPool/list?${urlHelper.stringify(query)}`;
+    const customerListPathname = '/customerPool/list';
+    const url = `${customerListPathname}?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: url,
+      pathname: customerListPathname,
       query,
     });
   }

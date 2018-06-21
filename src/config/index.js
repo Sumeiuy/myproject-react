@@ -21,6 +21,7 @@ import fspRoutes from './fspRoutes';
 import orgTreeLevel from './orgTreeLevel';
 import padSightLabelDesc from './constructSightLabelDesc';
 import createTaskEntry from './createTaskEntry';
+import seperator from './filterSeperator';
 
 export default {
   constants,
@@ -47,4 +48,5 @@ export default {
   orgTreeLevel,
   padSightLabelDesc,
   createTaskEntry,
+  seperator,
 };

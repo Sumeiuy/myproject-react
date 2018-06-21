@@ -147,6 +147,10 @@ export default {
     currentEntry: 0,
     // 产品列表
     productList: [],
+    // 精选组合
+    jxGroupProductList: [],
+    // 所有标签列表
+    tagList: [],
     // 审批流程按钮
     approvalBtn: {},
     // 审批按钮提交成功
@@ -722,6 +726,15 @@ export default {
         payload: { resultData },
       });
     },
+    // 获取所有的可用标签
+    * getTagList({ payload }, { call, put }) {
+      const response = yield call(api.queryTagList, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getTagListSuccess',
+        payload: { resultData },
+      });
+    },
     // 标签圈人-id查询客户列表
     * getLabelPeople({ payload }, { call, put }) {
       const response = yield call(api.getCustomerList, payload);
@@ -815,6 +828,14 @@ export default {
         const { resultData } = yield call(api.queryProduct, payload);
         yield put({
           type: 'queryProductDataSuccess',
+          payload: resultData,
+        });
+      }, { type: 'takeLatest' }],
+    queryJxGroupProduct: [
+      function* queryJxGroupProduct({ payload }, { call, put }) {
+        const { resultData } = yield call(api.queryJxGroupProduct, payload);
+        yield put({
+          type: 'queryJxGroupProductDataSuccess',
           payload: resultData,
         });
       }, { type: 'takeLatest' }],
@@ -1356,6 +1377,14 @@ export default {
         circlePeopleData: resultData,
       };
     },
+    // 获取全部标签信息成功
+    getTagListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        tagList: resultData,
+      };
+    },
     // 标签圈人-id客户列表查询
     getLabelPeopleSuccess(state, action) {
       const { payload } = action;
@@ -1448,6 +1477,20 @@ export default {
       return {
         ...state,
         productList: payload,
+      };
+    },
+    queryJxGroupProductDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        jxGroupProductList: payload,
+      };
+    },
+    clearJxGroupProductData(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        jxGroupProductList: payload,
       };
     },
     clearProductData(state, action) {

@@ -58,6 +58,13 @@ module.exports = {
         target: 'http://168.61.8.81:5090', // DOClever
         // target: 'http://160.9.230.159:8082', // 王必强
       },
+      prefix + '/groovynoauth/fsp/dictionary',
+      {
+        // target: 'http://168.61.8.82:5086', // uat
+        // target: 'http://168.61.8.81:5087', // SIT
+        target: 'http://168.61.8.81:5090', // DOClever
+        // target: 'http://160.9.230.159:8082', // 王必强
+      },
       prefix,
       {
         target: 'http://168.61.8.82:5086', // uat

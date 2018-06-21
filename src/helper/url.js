@@ -2,10 +2,11 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 11:14:36
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-10 15:58:11
+ * @Last Modified time: 2018-06-21 18:35:17
  * @description 此处存放与url数据相关的通用方法
  */
 import qs from 'query-string';
+import _ from 'lodash';
 import regexp from './regexp';
 
 const url = {
@@ -58,6 +59,29 @@ const url = {
    */
   backRoutePathList(pathname, matchPath = '') {
     return pathname.substring(matchPath.length).match(regexp.matchPathList) || [];
+  },
+
+  // 从url query上解析出filter对象
+  transfromFilterValFromUrl(filters, seperator = {
+    filterSeperator: '|', // 在location上filter对象之间使用该变量分割
+    filterInsideSeperator: '#^$', // 在location上filter的name与value之间使用该变量分割
+    filterValueSeperator: ',', // filter value对应多个
+  }) {
+    // 处理由‘|’分隔的多个过滤器
+    const filtersArray = filters ? filters.split(seperator.filterSeperator) : [];
+
+    return _.reduce(filtersArray, (result, value) => {
+      const [name, code] = value.split(seperator.filterInsideSeperator);
+      let filterValue = code;
+
+      // 如果是多选，需要继续处理','分割的多选值
+      if (code && code.indexOf(seperator.filterValueSeperator) > -1) {
+        filterValue = code.split(seperator.filterValueSeperator);
+      }
+
+      result[name] = filterValue; // eslint-disable-line
+      return result;
+    }, {});
   },
 };
 
