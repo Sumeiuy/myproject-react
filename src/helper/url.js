@@ -59,6 +59,29 @@ const url = {
   backRoutePathList(pathname, matchPath = '') {
     return pathname.substring(matchPath.length).match(regexp.matchPathList) || [];
   },
+
+  // 从url query上解析出filter对象
+  transfromFilterValFromUrl(filters, seperator = {
+    filterSeperator: '|', // 在location上filter对象之间使用该变量分割
+    filterInsideSeperator: '#^$', // 在location上filter的name与value之间使用该变量分割
+    filterValueSeperator: ',', // filter value对应多个
+  }) {
+    // 处理由‘|’分隔的多个过滤器
+    const filtersArray = filters ? filters.split(seperator.filterSeperator) : [];
+
+    return _.reduce(filtersArray, (result, value) => {
+      const [name, code] = value.split(seperator.filterInsideSeperator);
+      let filterValue = code;
+
+      // 如果是多选，需要继续处理','分割的多选值
+      if (code && code.indexOf(seperator.filterValueSeperator) > -1) {
+        filterValue = code.split(seperator.filterValueSeperator);
+      }
+
+      result[name] = filterValue; // eslint-disable-line
+      return result;
+    }, {});
+  },
 };
 
 export default url;

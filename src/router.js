@@ -28,6 +28,7 @@ import HistoryHome from './routes/history/Home';
 import CustomerPoolHome from './routes/customerPool/Home';
 import ToDo from './routes/customerPool/ToDo';
 import CustomerList from './routes/customerPool/CustomerList';
+import CustomerList__ from './routes/customerPool/CustomerList__';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
@@ -86,7 +87,16 @@ import MessageCenter from './routes/messageCenter/Home';
 // 重点监控账户
 import KeyMonitorAccount from './routes/keyMonitorAccount/Home';
 
+import { env } from './helper';
+
 const { ConnectedRouter } = routerRedux;
+
+function getCustomerListComponent() {
+  if (env.isGrayFlag()) {
+    return CustomerList__;
+  }
+  return CustomerList;
+}
 
 // 路由Collection
 const routes = [
@@ -174,7 +184,7 @@ const routes = [
       // 从 customerPool 搜索框下方--任务概览--第三个选项【代办流程】进入
       { path: '/todo', component: ToDo },
       // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
-      { path: '/list', component: CustomerList },
+      { path: '/list', component: getCustomerListComponent() },
       // customerPool/customerGroup 直接进入，所需数据未知
       { path: '/customerGroup', component: CustomerGroup },
       // 分组管理发起任务
