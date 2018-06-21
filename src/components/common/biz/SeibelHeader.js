@@ -157,6 +157,11 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
+  getCalendarContainer() {
+    return this.pageCommonHeader;
+  }
+
+  @autobind
   filterBoxRef(input) {
     this.filterBox = input;
   }
@@ -498,8 +503,8 @@ export default class Pageheader extends PureComponent {
     }
 
     // 时间组件的回填
-    const startTime = createTime ? moment(createTime, dateFormat) : '';
-    const endTime = createTimeTo ? moment(createTimeTo, dateFormat) : '';
+    const startTime = createTime ? moment(createTime, dateFormat) : null;
+    const endTime = createTimeTo ? moment(createTimeTo, dateFormat) : null;
 
     // 新建按钮权限
     let hasCreatePermission = true;
@@ -646,6 +651,7 @@ export default class Pageheader extends PureComponent {
                 申请时间:
                 <div className={styles.dateRangePickerBox}>
                   <DateRangePicker
+                    getCalendarContainer={this.getCalendarContainer}
                     onChange={this.handleCreateDateChange}
                     disabledRange={this.setDisableRange}
                     initialEndDate={endTime}
