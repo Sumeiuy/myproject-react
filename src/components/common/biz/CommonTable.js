@@ -147,6 +147,7 @@ export default class CommonTable extends PureComponent {
           pagination={_.isEmpty(this.props.pagination) ? false : this.props.pagination}
           dataSource={newData}
           columns={columns}
+          rowKey={rowKey || ''}
         />
       </div>
     );

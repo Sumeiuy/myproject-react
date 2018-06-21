@@ -12,8 +12,6 @@ import { persistStore, autoRehydrate } from 'redux-persist';
 import { message } from 'antd';
 
 import CommonModal from './components/common/biz/CommonModal';
-// v2兼容样式
-// import 'antd/lib/style/v2-compatible-reset';
 import './css/antd.less';
 
 import createSensorsLogger from './middlewares/sensorsLogger';
@@ -57,7 +55,20 @@ const onError = (e) => {
   }
 };
 
-const history = createHistory();
+// 离开某个页面，弹出确认框，配合页面中的Prompt使用
+const getConfirmation = (msg, callback) => {
+  // Modal.confirm({
+  //   title: '请确认',
+  //   content: msg,
+  //   onOk() { callback(true); },
+  //   onCancel() { callback(false); },
+  // });
+  callback(true);
+};
+
+const history = createHistory({
+  getUserConfirmation: getConfirmation,
+});
 // 1. Initialize
 const app = dva({
   history,
@@ -126,6 +137,8 @@ app.model(require('./models/investmentAdvice'));
 app.model(require('./models/operationCenter'));
 // 营业部非投顾签约客户分配
 app.model(require('./models/businessDepartmentCustDistribute'));
+// 分公司客户分配
+app.model(require('./models/custAllot'));
 // 消息通知提醒
 app.model(require('./models/messageCenter'));
 // 客户关联关系

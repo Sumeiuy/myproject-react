@@ -15,6 +15,7 @@ import {
 import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
+import MyFeedback from './routes/feedback/MyFeedback';
 import CommissionHome from './routes/commission/Home';
 import CommissionChangeHome from './routes/commissionChange/Home';
 import CommissionAdjustmentHome from './routes/commissionAdjustment/Home';
@@ -77,6 +78,9 @@ import CombinationDetail from './routes/choicenessCombination/CombinationDetail'
 import ReportDetail from './routes/choicenessCombination/ReportDetail';
 // 投顾业务能力竞赛
 import InvestmentConsultantRace from './routes/investmentConsultantRace/Home';
+// 客户划转
+import CustAllot from './routes/custAllot/Home';
+import CustAllotNotifies from './routes/custAllot/Notifies';
 // 消息通知提醒
 import MessageCenter from './routes/messageCenter/Home';
 // 客户关联关系信息申请
@@ -102,6 +106,8 @@ const routes = [
   { path: '/history', component: HistoryHome },
   // 直接进入
   { path: '/feedback', component: FeedBack },
+  // 直接进入
+  { path: '/myFeedback', component: MyFeedback },
   // 直接进入
   { path: '/commission', component: CommissionHome },
   // ['佣金调整', '资讯订阅', '资讯退订']
@@ -184,6 +190,8 @@ const routes = [
       { path: '/createTaskFromTaskRejection1', component: CreateTask },
       // 从任务管理，创建者视图驳回中的任务，进行任务驳回修改
       { path: '/createTaskFromTaskRejection2', component: CreateTask },
+      // 从管理者视图服务经理维度发起任务
+      { path: '/createTaskFromCustScope', component: CreateTask },
       // 客户列表发起任务
       { path: '/createTask', component: CreateTask },
       // 客户分组管理
@@ -202,7 +210,7 @@ const routes = [
   { path: '/userInfoRemind', component: userInfoApproval },
 
   // 消息提醒
-  { path: '/messgeCenter', component: MessageCenter },
+  { path: '/messageCenter', component: MessageCenter },
   // 直接进入
   {
     path: '/filialeCustTransfer',
@@ -312,6 +320,15 @@ const routes = [
   { path: '/custRelationships', component: CustRelationships },
   // 客户关联关系信息申请，传递参数flowId
   { path: '/custRelationshipsReject', component: RejectUpdateHome },
+  // 直接进入
+  {
+    path: '/custAllot',
+    component: CustAllot,
+    children: [
+      // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type
+      { path: '/notifies', component: CustAllotNotifies },
+    ],
+  },
 ];
 
 // 递归创建路由

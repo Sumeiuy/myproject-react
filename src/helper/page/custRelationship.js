@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-14 20:00:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 14:45:32
+ * @Last Modified time: 2018-06-20 09:54:44
  * @description 融资类业务提交数据时的校验函数
  */
 import _ from 'lodash';
@@ -89,7 +89,7 @@ function checkRealtionDuplicate() {
   _.each(relations, (item) => {
     const {
       relationTypeValue,
-      relationTypeLable,
+      relationTypeLabel,
       partyName,
       partyIDTypeValue,
       partyIDTypeLabel,
@@ -100,7 +100,7 @@ function checkRealtionDuplicate() {
     const threeKeyMergeStr = `${relationTypeValue}${partyName}${partyIDTypeValue}${partyIDNum}`;
     if (_.includes(result, threeKeyMergeStr)) {
       // 如果已经存在了
-      msg = `${relationTypeLable}-${partyName}-${partyIDTypeLabel}-${partyIDNum} 关联关系三要素信息填写重复！`;
+      msg = `${relationTypeLabel}-${partyName}-${partyIDTypeLabel}-${partyIDNum} 关联关系三要素信息填写重复！`;
       resultBool = false;
       return false;
     }
@@ -147,7 +147,7 @@ function validateSubmitData(state) {
         valid: false,
       };
     }
-    if (!hasOneMoreMarriageRelation()) {
+    if (hasOneMoreMarriageRelation()) {
       return {
         msg: '家庭成员夫妻类关联关系超过1条！',
         valid: false,
@@ -162,7 +162,7 @@ function validateSubmitData(state) {
         valid: false,
       };
     }
-    if (!hasOneMoreRealControllerRelation()) {
+    if (hasOneMoreRealControllerRelation()) {
       return {
         msg: '实际控制人关联关系超过1条！',
         valid: false,
@@ -177,7 +177,7 @@ function validateSubmitData(state) {
         valid: false,
       };
     }
-    if (!hasOneMoreProduceManagerRelation()) {
+    if (hasOneMoreProduceManagerRelation()) {
       return {
         msg: '产品管理人关联关系超过1条！',
         valid: false,

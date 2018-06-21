@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 首页-展示更多标签弹窗
  * @Date: 2018-05-23 11:10:49
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-12 12:01:27
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-13 12:13:39
  */
 
 import React, { PureComponent } from 'react';
@@ -156,13 +156,13 @@ export default class LabelModals extends PureComponent {
       source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
       labelMapping: item.id || '',
       labelName: encodeURIComponent(item.name),
-      labelDesc: item.description,
       // 任务提示
       missionDesc: padSightLabelDesc({
         sightingScopeBool: isSightingScope(item.source),
         labelId: item.id,
         labelName: item.name,
       }),
+      labelDesc: item.description,
       q: encodeURIComponent(item.name),
       type: LABEL,
     };

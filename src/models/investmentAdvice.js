@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-04-25 15:37:57
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-10 14:50:35
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-06 16:21:26
  */
 import { investmentAdvice as api } from '../api';
 
@@ -17,6 +17,14 @@ export default {
     modifySuccessStatus: false,
     // 投资建议文本撞墙检测是否有股票代码
     testWallCollisionStatus: false,
+    // 任务绑定投资建议模板列表
+    taskBindTemplate: {},
+    // 删除任务绑定投资建议模板状态
+    delTaskBindTemplateStatus: '',
+    // 可选投资模板列表
+    templateList: [],
+    // 绑定模板列表状态
+    bindTemplateStatus: '',
   },
   reducers: {
     // 投资模板列表
@@ -49,6 +57,38 @@ export default {
       return {
         ...state,
         testWallCollisionStatus: payload === 'failure',
+      };
+    },
+
+    getTaskBindListSuccess(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        taskBindTemplate: payload,
+      };
+    },
+
+    delTaskBindTemplateSuccess(state, action) {
+      const { payload = 'failure' } = action;
+      return {
+        ...state,
+        delTaskBindTemplateStatus: payload,
+      };
+    },
+
+    getOptionalTemplateListSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        templateList: resultData.list || [],
+      };
+    },
+
+    bindTemplateListSuccess(state, action) {
+      const { payload: { resultData = 'failure' } } = action;
+      return {
+        ...state,
+        bindTemplateStatus: resultData,
       };
     },
   },
@@ -100,6 +140,50 @@ export default {
       yield put({
         type: 'testWallCollisionSuccess',
         payload: resultData,
+      });
+    },
+
+    // 查询任务绑定投资建议模板列表
+    * getTaskBindList({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryTaskBindTemplateList, payload);
+      yield put({
+        type: 'getTaskBindListSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 删除任务绑定的投资建议模板
+    * delTaskBindTemplate({ payload }, { call, put }) {
+      yield put({
+        type: 'delTaskBindTemplateSuccess',
+        payload: 'failure',
+      });
+      const { resultData } = yield call(api.delTaskBindTemplate, payload);
+      yield put({
+        type: 'delTaskBindTemplateSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 查询任务绑定模板中的可选模板列表
+    * getOptionalTemplateList({ payload }, { call, put }) {
+      const response = yield call(api.getInvestAdviceList, payload);
+      yield put({
+        type: 'getOptionalTemplateListSuccess',
+        payload: response,
+      });
+    },
+
+    // 给当前任务绑定投资建议模板
+    * bindTemplateList({ payload }, { call, put }) {
+      yield put({
+        type: 'bindTemplateListSuccess',
+        payload: { resultData: 'failure' },
+      });
+      const response = yield call(api.bindTemplateListForMission, payload);
+      yield put({
+        type: 'bindTemplateListSuccess',
+        payload: response,
       });
     },
   },

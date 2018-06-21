@@ -9,24 +9,38 @@ import { performerView as api, customerPool as custApi } from '../../api';
 import {
   STATE_COMPLETED_NAME,
   STATE_COMPLETED_CODE,
+  defaultPerformerViewCurrentTab,
 } from '../../routes/taskList/config';
 
 const EMPTY_OBJ = {};
 const EMPTY_LIST = [];
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 6;
 const PAGE_NO = 1;
 
 // 执行者视图头部过滤客户
 const SEARCH_CUSTOMER_FOR_PAGE_HEADER = 'pageHeader';
 // 执行者视图右侧过滤客户
 const SEARCH_CUSTOMER_FOR_RIGHT_DETAIL = 'rightDetail';
+// 资产降序排列
+const ASSET_DESC = 'desc';
+// 服务实施默认的状态码
+const defaultStateCode = '10';
+// 默认的服务实施的参数
+const defaultParameter = {
+  state: defaultStateCode,
+  rowId: '',
+  assetSort: ASSET_DESC,
+  activeIndex: '1',
+  currentCustomer: {},
+  preciseInputValue: '1',
+};
 
 export default {
   namespace: 'performerView',
   state: {
     // 记录详情中的参数
-    parameter: {},
+    parameter: defaultParameter,
     // 任务详情中基本信息
     taskDetailBasicInfo: EMPTY_OBJ,
     // 任务详情中目标客户列表信息
@@ -48,7 +62,7 @@ export default {
     taskFeedbackList: [],
     currentMotServiceRecord: {},
     answersList: {},
-    saveAnswersSucce: false,
+    isSubmitSurveySucceed: false,
     // 任务反馈
     missionFeedbackData: [],
     // 任务反馈已反馈总数
@@ -63,6 +77,13 @@ export default {
     custFeedbackList: [],
     // 涨乐财富通服务方式下的审批人列表
     zhangleApprovalList: [],
+    // 执行者视图当前的选中的tab的key值, 默认服务实施
+    performerViewCurrentTab: defaultPerformerViewCurrentTab,
+    // 服务结果进度
+    serviceProgress: EMPTY_OBJ,
+    custFeedBack: EMPTY_LIST,
+    // 客户明细
+    custDetail: EMPTY_OBJ,
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -75,7 +96,7 @@ export default {
     clearParameter(state) {
       return {
         ...state,
-        parameter: {},
+        parameter: defaultParameter,
       };
     },
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -129,10 +150,10 @@ export default {
       };
     },
     getServiceTypeSuccess(state, action) {
-      const { payload: { missionList = [] } } = action;
+      const { payload = {} } = action;
       return {
         ...state,
-        taskFeedbackList: missionList,
+        taskFeedbackList: [payload],
       };
     },
     addMotServeRecordSuccess(state, action) {
@@ -153,7 +174,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        saveAnswersSucce: payload === 'success',
+        isSubmitSurveySucceed: payload === 'success',
       };
     },
     countAnswersByTypeSuccess(state, action) {
@@ -253,6 +274,34 @@ export default {
         currentMotServiceRecord: {},
       };
     },
+    // 执行者视图中tab的切换
+    changePerformerViewTab(state, action) {
+      return {
+        ...state,
+        performerViewCurrentTab: action.payload,
+      };
+    },
+    queryExecutorFlowStatusSuccess(state, action) {
+      const { payload: serviceProgress } = action;
+      return {
+        ...state,
+        serviceProgress,
+      };
+    },
+    queryExecutorFeedBackSuccess(state, action) {
+      const { payload: custFeedBack } = action;
+      return {
+        ...state,
+        custFeedBack,
+      };
+    },
+    queryExecutorDetailSuccess(state, action) {
+      const { payload: custDetail } = action;
+      return {
+        ...state,
+        custDetail,
+      };
+    },
   },
   effects: {
     // 执行者视图、管理者视图、创建者视图公共列表
@@ -291,6 +340,11 @@ export default {
           type: 'app/resetServiceRecordInfo',
         });
       }
+      // 获取该任务的任务反馈
+      yield put({
+        type: 'getServiceType',
+        payload: { pageNum: 1, pageSize: 100000, mssnId: payload.taskId },
+      });
       const { resultData } = yield call(api.queryTaskDetailBasicInfo, otherPayload);
       if (resultData) {
         yield put({
@@ -302,14 +356,16 @@ export default {
 
     // 执行者视图的详情目标客户列表
     * queryTargetCust({ payload }, { call, put }) {
-      const { resultData } = yield call(api.queryTargetCust, payload);
+      const { isGetFirstItemDetail = true, ...others } = payload;
+      const { resultData } = yield call(api.queryTargetCust, others);
       if (resultData) {
         yield put({
           type: 'queryTargetCustSuccess',
           payload: resultData,
         });
         const { list = EMPTY_LIST } = resultData;
-        if (!_.isEmpty(list)) {
+        // 返回的列表数据不为空，默认再去查询第一条数据的详情
+        if (!_.isEmpty(list) && isGetFirstItemDetail) {
           const firstItem = list[0] || EMPTY_OBJ;
           yield put({
             type: 'queryTargetCustDetail',
@@ -463,6 +519,30 @@ export default {
       const { resultData } = yield call(api.queryApproval, payload);
       yield put({
         type: 'queryApprovalList4ZLFinsSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取服务结果进度
+    * queryExecutorFlowStatus({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryExecutorFlowStatus, payload);
+      yield put({
+        type: 'queryExecutorFlowStatusSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取客户反馈
+    * queryExecutorFeedBack({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryExecutorFeedBack, payload);
+      yield put({
+        type: 'queryExecutorFeedBackSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取客户明细
+    * queryExecutorDetail({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryExecutorDetail, payload);
+      yield put({
+        type: 'queryExecutorDetailSuccess',
         payload: resultData,
       });
     },

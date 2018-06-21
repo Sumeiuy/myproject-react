@@ -2393,6 +2393,12 @@ dom-walk@^0.1.0:
   version "0.1.1"
   resolved "http://168.61.8.90:4873/dom-walk/-/dom-walk-0.1.1.tgz#672226dc74c8f799ad35307df936aba11acd6018"
 
+dom7@^2.0.6:
+  version "2.0.6"
+  resolved "http://168.61.8.90:4873/dom7/-/dom7-2.0.6.tgz#ea9f187de68635783cd5985fde52842763632903"
+  dependencies:
+    ssr-window "^1.0.0"
+
 domain-browser@^1.1.1:
   version "1.2.0"
   resolved "http://168.61.8.90:4873/domain-browser/-/domain-browser-1.2.0.tgz#3d31f50191a6749dd1375a7f522e823d42e54eda"
@@ -4500,6 +4506,14 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
+lego-react-filter@^1.0.0:
+  version "1.0.0"
+  resolved "http://168.61.8.90:4873/lego-react-filter/-/lego-react-filter-1.0.0.tgz#f5c6ba0a7181220abd8694123e77c4672df62965"
+
+lego-tree-filter@^1.0.0:
+  version "1.0.0"
+  resolved "http://168.61.8.90:4873/lego-tree-filter/-/lego-tree-filter-1.0.0.tgz#dffda053b64d29adaf87e28bbd16e68c6371f385"
+
 less-loader@^4.0.3:
   version "4.1.0"
   resolved "http://168.61.8.90:4873/less-loader/-/less-loader-4.1.0.tgz#2c1352c5b09a4f84101490274fd51674de41363e"
@@ -6293,7 +6307,7 @@ prop-types-exact@^1.1.2:
     has "^1.0.1"
     object.assign "^4.1.0"
 
-prop-types@15.x, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.5.9, prop-types@^15.6.0, prop-types@^15.6.1:
+prop-types@15.6.1, prop-types@15.x, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.5.9, prop-types@^15.6.0, prop-types@^15.6.1:
   version "15.6.1"
   resolved "http://168.61.8.90:4873/prop-types/-/prop-types-15.6.1.tgz#36644453564255ddda391191fb3a125cbdf654ca"
   dependencies:
@@ -6818,6 +6832,14 @@ react-helmet@^5.0.3:
     object-assign "^4.1.1"
     prop-types "^15.5.4"
     react-side-effect "^1.1.0"
+
+react-id-swiper@^1.6.4:
+  version "1.6.4"
+  resolved "http://168.61.8.90:4873/react-id-swiper/-/react-id-swiper-1.6.4.tgz#38fccf4ca482416f7e8b6a3ea8026403d28d4e4b"
+  dependencies:
+    object-assign "^4.1.1"
+    prop-types "15.6.1"
+    swiper "^4.2.6"
 
 react-lazy-load@^3.0.12:
   version "3.0.13"
@@ -7825,6 +7847,10 @@ sshpk@^1.7.0:
     jsbn "~0.1.0"
     tweetnacl "~0.14.0"
 
+ssr-window@^1.0.0:
+  version "1.0.0"
+  resolved "http://168.61.8.90:4873/ssr-window/-/ssr-window-1.0.0.tgz#8ed1b6beaa0a371ba7e74d6515d584c3f1cf973c"
+
 ssri@^5.2.4:
   version "5.3.0"
   resolved "http://168.61.8.90:4873/ssri/-/ssri-5.3.0.tgz#ba3872c9c6d33a0704a7d71ff045e5ec48999d06"
@@ -8106,6 +8132,13 @@ svgo@^0.7.0:
     mkdirp "~0.5.1"
     sax "~1.2.1"
     whet.extend "~0.9.9"
+
+swiper@^4.2.6:
+  version "4.3.2"
+  resolved "http://168.61.8.90:4873/swiper/-/swiper-4.3.2.tgz#752f2262c74dbdaab8be0e047fe59bf726d7cba1"
+  dependencies:
+    dom7 "^2.0.6"
+    ssr-window "^1.0.0"
 
 symbol-observable@1.0.1:
   version "1.0.1"

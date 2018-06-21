@@ -1,0 +1,83 @@
+.TemplateFormWapper {
+  padding: 20px;
+
+  .TemplateFormList {
+    li {
+      .TemplateFormItem {
+        position: relative;
+        display: flex;
+
+        .templateForm_label {
+          width: 52px;
+          font-size: 14px;
+          margin-top: 5px;
+          display: inline-block;
+
+          .required_i {
+            color: #f00;
+            font-style: normal;
+          }
+        }
+      }
+
+      .tipWapper {
+        display: flex;
+        margin: -5px 0 20px 52px;
+        justify-content: space-between;
+
+        .tipNormal {
+          font-size: 14px;
+          color: #666;
+          line-height: 20px;
+          letter-spacing: -0.09px;
+        }
+
+        .tipInsert {
+          font-size: 14px;
+          line-height: 20px;
+          height: 16px;
+          color: #108ee9;
+          width: 120px;
+          margin-top: -45px;
+          margin-right: 10px;
+          z-index: 9999;
+          text-align: right;
+          display: inline-block;
+          letter-spacing: -0.09px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  :global {
+    .ant-form {
+      .ant-row {
+        flex: 1;
+
+        .ant-mention-wrapper {
+          .ant-mention-editor {
+            font-size: 14px;
+          }
+        }
+        .ant-form-item-control-wrapper {
+          .ant-form-item-children {
+            position: relative;
+          }
+          .ant-mention-wrapper.multilines {
+            display: block;
+          }
+          .ant-mention-wrapper.multilines .DraftEditor-root,
+          .ant-mention-wrapper.multilines .DraftEditor-editorContainer,
+          .ant-mention-wrapper.multilines .DraftEditor-editorContainer .public-DraftEditor-content {
+            height: 100%;
+          }
+        }
+
+        .ant-input {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
