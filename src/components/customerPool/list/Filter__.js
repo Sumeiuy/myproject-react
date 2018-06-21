@@ -26,6 +26,8 @@ const TAG_SIGN = 'TAG_SIGN';
 
 const MORE_FILTER_STORAGE = 'MORE_FILTER_STORAGE';
 
+const FILTER_SELECT_FROM_MOREFILTER = 'FILTER_SELECT_FROM_MOREFILTER';
+
 const MORE_FILTER_TYPE = {
   more: 1,
   tag: 2,
@@ -188,6 +190,23 @@ const moreFilters = [
     filterName: '最近一次服务',
     filterId: 'lastServDt',
     type: 'lastServiceDate',
+  },
+  {
+    filterName: '订购组合',
+    filterId: 'primaryKeyJxgrps',
+    type: 'singleSearch',
+    showSearch: true,
+    placeholder: '产品代码或名称',
+    handleInputChange: 'handleJxGroupProductSearchChange',
+    dataList: ['props', 'jxGroupProductList'],
+    dataMap: ['prodId', 'prodName'],
+    needItemObj: true,
+    useLabelInValue: true,
+    dropdownStyle: {
+      maxHeight: 324,
+      overflowY: 'auto',
+      width: 250,
+    },
   },
 
   // 客户属性
@@ -509,7 +528,7 @@ const moreFilterData = [
   { value: '介绍人', key: 'devMngId' },
   { value: '年龄范围', key: 'birthDt' },
   { value: '最近一次服务', key: 'lastServDt' },
-  { value: '订购组合', key: 'primaryKeyJxgrps' }, // 订购组合没有搞
+  { value: '订购组合', key: 'primaryKeyJxgrps' },
   { value: '新增高端产品户', key: 'highPrdtDt' },
   { value: '新增产品户', key: 'buyProdDt' },
   { value: '新增高净值', key: 'gjzDt' },
@@ -607,6 +626,9 @@ export default class Filter extends PureComponent {
     queryProduct: PropTypes.func.isRequired,
     clearProductData: PropTypes.func.isRequired,
     searchedProductList: PropTypes.array,
+    clearJxGroupProductData: PropTypes.func.isRequired,
+    queryJxGroupProduct: PropTypes.func.isRequired,
+    jxGroupProductList: PropTypes.array,
     tagList: PropTypes.array,
     filtersOfAllSightingTelescope: PropTypes.array.isRequired,
     searchServerPersonList: PropTypes.array.isRequired,
@@ -648,6 +670,9 @@ export default class Filter extends PureComponent {
   getFilterOnChange(filter) {
     if (filter.filterId === 'devMngId') {
       return this.handleDevMngIdFilterChange;
+    }
+    if (filter.filterId === 'primaryKeyJxgrps') {
+      return this.handleJxGroupProductChange;
     }
     switch (filter.type) {
       case 'single':
@@ -733,6 +758,27 @@ export default class Filter extends PureComponent {
   handleDevMngFilterSearchChange(value) {
     if (!_.isEmpty(value)) {
       this.context.getSearchServerPersonList(value);
+    }
+  }
+
+  @autobind
+  handleJxGroupProductChange({ id, value }) {
+    const renderValue = _.join([value.prodId, value.prodName], seperator.filterValueSeperator);
+    this.props.onFilterChange({
+      name: id,
+      value: renderValue,
+    });
+  }
+
+  @autobind
+  handleJxGroupProductSearchChange(value) {
+    const emptyData = [];
+    if (!_.isEmpty(value)) {
+      this.props.queryJxGroupProduct({
+        keyword: value,
+      });
+    } else {
+      this.props.clearJxGroupProductData(emptyData);
     }
   }
 
@@ -847,6 +893,10 @@ export default class Filter extends PureComponent {
         name: obj.id,
         value: obj.value,
       }, obj.isDeleteFilterFromLocation);
+
+      if (!obj.isDeleteFilterFromLocation) {
+        store.set(FILTER_SELECT_FROM_MOREFILTER, true);
+      }
     }
   }
 

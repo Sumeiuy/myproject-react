@@ -147,6 +147,8 @@ export default {
     currentEntry: 0,
     // 产品列表
     productList: [],
+    // 精选组合
+    jxGroupProductList: [],
     // 所有标签列表
     tagList: [],
     // 审批流程按钮
@@ -829,6 +831,14 @@ export default {
           payload: resultData,
         });
       }, { type: 'takeLatest' }],
+    queryJxGroupProduct: [
+      function* queryJxGroupProduct({ payload }, { call, put }) {
+        const { resultData } = yield call(api.queryJxGroupProduct, payload);
+        yield put({
+          type: 'queryJxGroupProductDataSuccess',
+          payload: resultData,
+        });
+      }, { type: 'takeLatest' }],
     // 审批流程获取按钮
     * getApprovalBtn({ payload }, { call, put }) {
       const response = yield call(api.queryApprovalBtn, payload);
@@ -1467,6 +1477,20 @@ export default {
       return {
         ...state,
         productList: payload,
+      };
+    },
+    queryJxGroupProductDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        jxGroupProductList: payload,
+      };
+    },
+    clearJxGroupProductData(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        jxGroupProductList: payload,
       };
     },
     clearProductData(state, action) {
