@@ -5,15 +5,22 @@ import LegoFilter, {
   MultiFilter,
   MoreFilter,
   RangeFilter,
+  MultiFilterWithSearch,
 } from 'lego-react-filter/src';
 
-
 import DateFilter from './dateFilter';
+import TagFilter from './tagFilter';
+import AmountRangeFilter from './amountSelect';
+import LastServiceDate from './lastServiceDate';
 
 export default function Filter(props) {
   switch (props.type) {
     case 'date':
       return (<DateFilter {...props} />);
+    case 'amountRangeSelect':
+      return (<AmountRangeFilter {...props} />);
+    case 'lastServiceDate':
+      return (<LastServiceDate {...props} />);
     default:
       return <LegoFilter {...props} />;
   }
@@ -26,6 +33,9 @@ export {
   MultiFilter,
   MoreFilter,
   RangeFilter,
+  TagFilter,
+  MultiFilterWithSearch,
+  AmountRangeFilter,
 };
 
 Filter.propTypes = {
@@ -35,4 +45,3 @@ Filter.propTypes = {
 Filter.defaultProps = {
   type: '',
 };
-
