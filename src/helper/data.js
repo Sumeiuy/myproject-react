@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-02-12 10:21:57
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-06-21 10:12:50
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 import _ from 'lodash';
@@ -94,6 +94,41 @@ const data = {
    */
   toPercent(num, toFixedNum = 0) {
     return `${(Math.round(num * 10000) / 100).toFixed(toFixedNum)}%`;
+  },
+
+   /**
+   * 生成一个唯一的ID值
+   * @param {*} len
+   * @param {*} radix
+   */
+  uuid(len = 8, radix = 16) {
+    /* eslint-disable */
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+    const uuid = [];
+
+    if (len) {
+      // Compact form
+      for (let i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
+    } else {
+     // rfc4122, version 4 form
+      let r;
+
+     // rfc4122 requires these characters
+      uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+      uuid[14] = '4';
+
+     // Fill in random data. At i==19 set the high bits of clock sequence as
+     // per rfc4122, sec. 4.1.5
+      for (let i = 0; i < 36; i++) {
+        if (!uuid[i]) {
+         let r = 0 | Math.random() * 16;
+         uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
+       }
+      }
+    }
+
+    return uuid.join('');
+    /* eslint-enable */
   },
 };
 

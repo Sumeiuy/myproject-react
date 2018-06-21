@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
-import cx from 'classnames';
 import Select from '../Select';
 import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
@@ -21,7 +20,6 @@ import contractHelper from '../../../helper/page/contract';
 import { dom, permission } from '../../../helper';
 import { fspContainer, seibelConfig } from '../../../config';
 import config from '../../telephoneNumberManage/config';
-import stockOptionConfig from '../../stockOptionEvaluation/config';
 import logable from '../../../decorators/logable';
 
 const {
@@ -30,7 +28,6 @@ const {
   filialeCustTransfer: { pageType: filialeCustTransfer },
 } = seibelConfig;
 const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
-const { stockOptionApply: { pageType: stockApplyPageType } } = stockOptionConfig;
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
 const dateFormat = 'YYYY-MM-DD';
@@ -511,17 +508,11 @@ export default class Pageheader extends PureComponent {
         checkUserIsFiliale();
     } else if (pageType === phoneApplyPageType) {
       hasCreatePermission = permission.hasPermissionOfPhoneApplyCreate(empInfo);
-    } else if (pageType === stockApplyPageType) {
-      hasCreatePermission = permission.hasPermissionOfStockApplyCreate(empInfo);
     } else {
       // 此处,通用的判断是否需要隐藏新建按钮
       hasCreatePermission = this.props.isShowCreateBtn();
     }
 
-    const dateFilterCls = cx({
-      [styles.filterFl]: true,
-      [styles.dateWidget]: true,
-    });
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
@@ -637,7 +628,7 @@ export default class Pageheader extends PureComponent {
           {
             needApplyTime ?
             (
-              <div className={dateFilterCls}>
+              <div className={styles.filterFl}>
                 申请时间:
                 <div className={styles.dateRangePickerBox}>
                   <DateRangePicker

@@ -2,12 +2,12 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 15:39:47
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-08 17:22:52
+ * @Last Modified time: 2018-06-17 22:01:34
  */
 const config = {
   stockOptionApply: {
     pageName: '股票期权评估申请',
-    pageType: '05', // 查询列表接口中的type值
+    pageType: '10', // 查询列表接口中的type值
     statusOptions: [
       {
         show: true,
@@ -77,6 +77,21 @@ const config = {
       },
     ],
   },
+  approvalColumns: [
+    {
+      title: '工号',
+      dataIndex: 'login',
+      key: 'login',
+    }, {
+      title: '姓名',
+      dataIndex: 'empName',
+      key: 'empName',
+    }, {
+      title: '所属营业部',
+      dataIndex: 'occupation',
+      key: 'occupation',
+    },
+  ],
 };
 
 export default config;

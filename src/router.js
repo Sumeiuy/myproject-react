@@ -81,6 +81,8 @@ import InvestmentConsultantRace from './routes/investmentConsultantRace/Home';
 import MessageCenter from './routes/messageCenter/Home';
 // 股票期权评估申请
 import StockOptionEvaluation from './routes/stockOptionEvaluation/Home';
+// 股票期权评估申请修改页面
+import StockOptionEvaluationEdit from './routes/stockOptionEvaluation/ApplyEdit';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -306,10 +308,10 @@ const routes = [
   },
   // 投顾业务能力竞赛
   { path: '/investmentConsultantRace', component: InvestmentConsultantRace },
-
   // 股票期权评估申请
-  {
-    path: '/stockOptionEvaluation', component: StockOptionEvaluation },
+  { path: '/stockOptionEvaluation', component: StockOptionEvaluation },
+  // 股票期权评估申请修改
+  { path: '/stockOptionEvaluationEdit', component: StockOptionEvaluationEdit },
 ];
 
 // 递归创建路由
