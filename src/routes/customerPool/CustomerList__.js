@@ -214,10 +214,8 @@ function getFilterParam(filterObj) {
   }
 
   // 订购组合
-  const primaryKeyJxgrps = filterObj.primaryKeyJxgrps[0];
-
-  if (primaryKeyJxgrps) {
-    param.primaryKeyJxgrps = [].concat(primaryKeyJxgrps);
+  if (filterObj.primaryKeyJxgrps) {
+    param.primaryKeyJxgrps = [].concat(filterObj.primaryKeyJxgrps[0]);
   }
 
 
