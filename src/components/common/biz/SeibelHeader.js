@@ -448,6 +448,8 @@ export default class Pageheader extends PureComponent {
           subType,
           status,
           business2,
+          createTime,
+          createTimeTo,
         },
       },
     } = this.props;
@@ -493,6 +495,9 @@ export default class Pageheader extends PureComponent {
       curApprovePerson = `${curApprovePersonInfo.ptyMngName}(${curApprovePersonInfo.ptyMngId})`;
     }
 
+    // 时间组件的回填
+    const startTime = createTime ? moment(createTime, dateFormat) : '';
+    const endTime = createTimeTo ? moment(createTimeTo, dateFormat) : '';
 
     // 新建按钮权限
     let hasCreatePermission = true;
@@ -636,6 +641,9 @@ export default class Pageheader extends PureComponent {
                   <DateRangePicker
                     onChange={this.handleCreateDateChange}
                     disabledRange={this.setDisableRange}
+                    initialEndDate={endTime}
+                    initialStartDate={startTime}
+                    isCalcCalendarPosition
                   />
                 </div>
               </div>
