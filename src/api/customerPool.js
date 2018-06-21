@@ -114,6 +114,7 @@ export default function customerPool(api) {
 
     queryLabelInfo: query => api.post('/groovynoauth/fsp/cust/task/queryLabelInfo2', query),
 
+    queryTagList: query => api.post('/groovynoauth/fsp/cust/custlabel/queryAllLabelsInfo', query),
     // 任务列表-任务详情基本信息
     queryBasicInfo: query => api.post('/groovynoauth/fsp/flow/queryBasicInfo', query),
 
