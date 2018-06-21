@@ -102,6 +102,8 @@ export default class MessageCenter extends PureComponent {
     } else if (typeName === config.custAllot) {
       // 分公司客户分配
       this.handleCustAllotMessage(data);
+    } else if (typeName === config.myFeedback) {
+      this.handleMessageByMyFeedback();
     } else {
       this.handleMessageByOther(rowId, objectVal);
     }
@@ -126,6 +128,27 @@ export default class MessageCenter extends PureComponent {
       pathName,
       param,
     });
+  }
+
+  // 我的反馈
+  @autobind
+  handleMessageByMyFeedback() {
+    this.removeNotice = false;
+    const url = '/myFeedback';
+    const param = {
+      id: 'FSP_MYFEEDBACK',
+      title: '我的反馈',
+      forceRefresh: true,
+      closable: true,
+      isSpecialTab: true,
+    };
+    openRctTab({
+      routerAction: this.context.push,
+      url,
+      pathName: url,
+      param,
+    });
+    this.removeNotice = true;
   }
 
   // 处理typeName是HTSC FSP TGSign,标题含转签待分配的消息通知
