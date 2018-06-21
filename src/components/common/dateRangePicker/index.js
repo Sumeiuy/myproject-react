@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { DateRangePicker } from 'react-dates';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classnames from 'classnames';
 import { Icon } from 'antd';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
@@ -55,6 +56,8 @@ export default class CommonDateRangePicker extends PureComponent {
     defaultVisible: PropTypes.bool,
     // 日期组件位置是否需要自己计算,默认不需要
     isCalcCalendarPosition: PropTypes.bool,
+    // 定义日期控件浮层容器
+    getCalendarContainer: PropTypes.func,
   }
   static defaultProps = {
     displayFormat: 'YYYY-MM-DD',
@@ -72,6 +75,7 @@ export default class CommonDateRangePicker extends PureComponent {
     isInsideOffSet: () => true,
     defaultVisible: false,
     isCalcCalendarPosition: false,
+    getCalendarContainer: _.noop,
   }
 
   constructor(props) {
@@ -195,18 +199,24 @@ export default class CommonDateRangePicker extends PureComponent {
   // 计算日历下拉框的位置
   @autobind
   calcCalendarPosition() {
-    const { width: viewWidth } = dom.getRect(document.body);
-    const { left, width: drpWidth } = dom.getRect(this.drpWraper);
+    // 定义日期控件浮层容器
+    const calendarContainer = this.props.getCalendarContainer();
+    const { left: containerLeft, width: containerWidth } = dom.getRect(calendarContainer);
+    // 日期包裹容器
+    const { left: drpWraperLeft, width: drpWraperWidth } = dom.getRect(this.drpWraper);
+    // 下拉可选择日期组件
     const picker = this.drpWraper.querySelector('.DateRangePicker_picker');
+    const left = drpWraperLeft - containerLeft;
     if (picker) {
       const { width } = dom.getRect(picker);
       const leftPlusWidth = left + width;
-      if (leftPlusWidth > viewWidth) {
-        const realLeft = left - (width - drpWidth);
+      if (leftPlusWidth > containerWidth) {
+        const realLeft = left - (width - drpWraperWidth);
         dom.setStyle(picker, 'margin-left', `${realLeft}px`);
       } else {
         dom.setStyle(picker, 'margin-left', `${left}px`);
       }
+      dom.setStyle(picker, 'visibility', 'visible');
     }
   }
 
@@ -305,10 +315,18 @@ export default class CommonDateRangePicker extends PureComponent {
       'initialEndDate',
       'initialStartDate',
       'defaultVisible',
+      'isCalcCalendarPosition',
+      'getCalendarContainer',
     ]);
 
+    const { isCalcCalendarPosition } = this.props;
+    const drpWraperCls = classnames({
+      [styles.drpWraper]: true,
+      [styles.calcCalendarWraper]: isCalcCalendarPosition,
+    });
+
     return (
-      <div className={styles.drpWraper} ref={this.drpWraperRef}>
+      <div className={drpWraperCls} ref={this.drpWraperRef}>
         <DateRangePicker
           showDefaultInputIcon
           small
