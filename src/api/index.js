@@ -28,6 +28,7 @@ import businessDepartmentCustomerDistribute from './businessDepartmentCustomerDi
 import custAllot from './custAllot';
 import messageCenter from './messageCenter';
 import stockOptionEvaluation from './stockOptionEvaluation';
+import latestView from './latestView';
 
 const api = apiCreator();
 
@@ -92,5 +93,7 @@ export default {
   messageCenter: messageCenter(api),
   // ========== 股票期权评估申请
   stockOptionEvaluation: stockOptionEvaluation(api),
+  // ========== 最新观点
+  latestView: latestView(api),
 };
 

@@ -3,228 +3,237 @@
  * @Description: 首席观点列表页面
  * @Date: 2018-06-19 13:27:04
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-19 14:48:36
+ * @Last Modified time: 2018-06-21 11:09:59
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { Table } from 'antd';
 import _ from 'lodash';
 import { linkTo } from '../../utils';
-import { url as urlHelper } from '../../helper';
+import { url as urlHelper, dva } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import Pagination from '../../components/common/Pagination';
 import Fiter from '../../components/latestView/chiefViewpoint/Filter';
 import styles from './viewpointList.less';
-import logable from '../../decorators/logable';
+// import logable from '../../decorators/logable';
+import config from '../../components/latestView/config';
+
+const titleList = config.viewpointTitleList;
+const dispatch = dva.generateEffect;
+const EMPTY_OBJECT = {};
+const EMPTY_ARRAY = [];
 
 function formatString(str) {
   return _.isEmpty(str) ? '--' : str;
 }
 
-const columns = ({ actionClick }) => {
-  function handleClick(item) {
-    if (_.isFunction(actionClick)) {
-      actionClick(item);
-    }
+const effects = {
+  // 获取首席观点列表数据
+  queryChiefViewpointList: 'latestView/queryChiefViewpointList',
+};
+
+const mapStateToProps = state => ({
+  // 首席观点列表数据
+  viewpointData: state.latestView.viewpointData,
+});
+const mapDispatchToProps = {
+  queryChiefViewpointList: dispatch(effects.queryChiefViewpointList,
+    { loading: true, forceFull: true }),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
+@withRouter
+export default class ViewpointList extends PureComponent {
+  static propTypes = {
+    location: PropTypes.object.isRequired,
+    // 首席观点列表数据
+    queryChiefViewpointList: PropTypes.func.isRequired,
+    viewpointData: PropTypes.object.isRequired,
   }
-  return [{
-    title: '标题',
-    key: 'texttitle',
-    width: '30%',
-    render: item => (
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
+  }
+
+  componentDidMount() {
+    const {
+      location: {
+        query: {
+          pageSize = 20,
+          pageNum = 1,
+          type,
+          keyword,
+          startDate,
+          endDate,
+        },
+      },
+      queryChiefViewpointList,
+    } = this.props;
+    queryChiefViewpointList({
+      pageSize,
+      pageNum,
+      type,
+      keyword,
+      startDate,
+      endDate,
+    });
+  }
+
+  @autobind
+  getColumns() {
+    const newTitleList = [...titleList];
+    newTitleList[0].render = (item, record) => (
       <div
         className={classnames(styles.td, styles.headLine)}
-        title={formatString(item.texttitle)}
-        onClick={() => { handleClick(item); }}
+        title={formatString(item)}
+        onClick={() => { this.toDetailPage(record); }}
       >
-        <a>{formatString(item.texttitle)}</a>
+        <a>{formatString(item)}</a>
       </div>
-    ),
-  }, {
-    title: '类型',
-    dataIndex: 'textcategorychinese',
-    key: 'textcategorychinese',
-    width: '14%',
-    render: item => (
+    );
+    newTitleList[1].render = item => (
       <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
-    ),
-  }, {
-    title: '相关股票',
-    dataIndex: 'aboutStock',
-    key: 'aboutStock',
-    width: '16%',
-    render: item => (
+    );
+    newTitleList[2].render = item => (
       <div className={classnames(styles.td, styles.stock)}>{formatString(item)}</div>
-    ),
-  }, {
-    title: '行业',
-    dataIndex: 'induname',
-    key: 'induname',
-    width: '13%',
-    render: item => (
+    );
+    newTitleList[3].render = item => (
       <div className={classnames(styles.td, styles.induname)}>{formatString(item)}</div>
-    ),
-  }, {
-    title: '报告日期',
-    dataIndex: 'pubdatelist',
-    key: 'pubdatelist',
-    width: '13%',
-    render: (item) => {
+    );
+    newTitleList[4].render = (item) => {
       const dateArray = _.split(item, ' ');
       const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
       return (
         <div className={classnames(styles.td, styles.pubdatelist)}>{formatString(date)}</div>
       );
-    },
-  }, {
-    title: '作者',
-    dataIndex: 'authors',
-    key: 'authors',
-    width: '13%',
-    render: item => (
+    };
+    newTitleList[5].render = item => (
       <div
         className={classnames(styles.td, styles.authors)}
         title={formatString(item)}
       >
         {formatString(item)}
       </div>
-    ),
-  }];
-};
-
-const fetchDataFunction = (globalLoading, type) => query => ({
-  type,
-  payload: query || {},
-  loading: globalLoading,
-});
-
-const mapStateToProps = state => ({
-  information: state.customerPool.information, // 首席投顾观点
-});
-const mapDispatchToProps = {
-  getInformation: fetchDataFunction(true, 'customerPool/getInformation'),
-  push: routerRedux.push,
-  replace: routerRedux.replace,
-};
-@connect(mapStateToProps, mapDispatchToProps)
-@withRouter
-export default class ViewpointList extends PureComponent {
-  static propTypes = {
-    push: PropTypes.func.isRequired,
-    location: PropTypes.object.isRequired,
-    information: PropTypes.object,
-    getInformation: PropTypes.func.isRequired,
-    replace: PropTypes.func.isRequired,
+    );
+    return newTitleList;
   }
 
-  static defaultProps = {
-    information: {},
-  }
-
-  constructor(props) {
-    super(props);
-    const {
-      information: { infoVOList = [] },
-      location: { query: { curPageNum = '1', pageSize = '20' } },
-    } = props;
-    // 注意 location的query中的字段，无论是key还是value都是字符串
-    this.state = {
-      curPageNum: _.toNumber(curPageNum), // 记录当前展示的页码
-      curPageSize: _.toNumber(pageSize), // 记录当前每页的容量
-      pageList: infoVOList, // 当前页码对应的列表数据
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { information: { infoVOList = [] } } = nextProps;
-    this.setState({ pageList: infoVOList });
-  }
-
+  // 当前页跳转到详情页
   @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '咨询列表项',
-      value: '$args[0].texttitle',
-    },
-  })
-  handleTitleClick(item) {
-    const { curPageSize, curPageNum } = this.state;
-    const { push } = this.props;
+  toDetailPage(data) {
+    const { location: { query } } = this.props;
+    const { id } = data;
+    const { push } = this.context;
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
-    const url = '/customerPool/viewpointDetail';
-    const query = { detailIndex: item.id, pageSize: curPageSize, curPageNum };
+    const url = '/latestView/viewpointDetail';
+    const newQuery = { id, ...query };
     linkTo({
       routerAction: push,
-      url: `${url}?${urlHelper.stringify(query)}`,
+      url: `${url}?${urlHelper.stringify(newQuery)}`,
       param,
       pathname: url,
-      query,
+      query: newQuery,
       name: '资讯详情',
     });
   }
 
   @autobind
-  handlePageClick(page) {
-    const { getInformation, replace, location: { pathname, query } } = this.props;
-    const { curPageSize } = this.state;
-    this.setState(
-      { curPageNum: page },
-      () => {
-        const newQuery = { curPageNum: page, pageSize: curPageSize };
-        getInformation(newQuery);
-        replace({ pathname, query: { ...query, ...newQuery } });
+  handlePageChange(pageNum) {
+    const { replace } = this.context;
+    const {
+      location: {
+        pathname,
+        query,
+        query: {
+          type,
+          keyword,
+          startDate,
+          endDate,
+        },
       },
-    );
+      queryChiefViewpointList,
+    } = this.props;
+    queryChiefViewpointList({
+      pageNum,
+      pageSize: 20,
+      type,
+      keyword,
+      startDate,
+      endDate,
+    }).then(() => {
+      replace({ pathname, query: { ...query, pageNum } });
+    });
   }
 
   @autobind
-  handlePageSizeClick(current, size) {
-    const { getInformation, replace, location: { pathname, query } } = this.props;
-    this.setState(
-      { curPageSize: size, curPageNum: 1 },
-      () => {
-        const newQuery = { curPageNum: 1, pageSize: size };
-        getInformation(newQuery);
-        replace({ pathname, query: { ...query, ...newQuery } });
+  handleQueryList(param) {
+    const { replace } = this.context;
+    const {
+      location: {
+        pathname,
+        query,
+        query: {
+          pageNum,
+        },
       },
-    );
+      queryChiefViewpointList,
+    } = this.props;
+    const newQuery = {
+      ...query,
+      ...param,
+    };
+    queryChiefViewpointList({
+      pageNum,
+      pageSize: 20,
+      ...newQuery,
+    }).then(() => {
+      replace({ pathname, query: { ...newQuery } });
+    });
   }
 
   render() {
-    const { information: { totalCount } } = this.props;
-    const { curPageNum = 1, pageList = [], curPageSize = 20 } = this.state;
-    const newInfoVOList = _.map(
-      pageList,
-      (item, index) => ({
-        ...item,
-        aboutStock: `${formatString(item.secuabbr)} / ${formatString(item.tradingcode)}`,
-        id: `${index}`,
-      }),
-    );
+    const {
+      location: {
+        query: {
+          type,
+          keyword,
+          startDate,
+          endDate,
+        },
+      },
+      viewpointData,
+    } = this.props;
+    const {
+      list = EMPTY_ARRAY,
+      page = EMPTY_OBJECT,
+    } = viewpointData;
     const paganationOption = {
-      current: curPageNum,
-      pageSize: curPageSize,
-      total: totalCount,
-      onChange: this.handlePageClick,
-      onShowSizeChange: this.handlePageSizeClick,
+      current: page.curPageNum,
+      pageSize: page.pageSize,
+      total: page.totalRecordNum,
+      onChange: this.handlePageChange,
     };
-    const tableColumns = columns({ actionClick: this.handleTitleClick });
     return (
       <div className={styles.listContainer}>
         <div
           className={styles.inner}
         >
-          <Fiter />
+          <Fiter
+            type={type}
+            keyword={keyword}
+            startDate={startDate}
+            endDate={endDate}
+            onFilter={this.handleQueryList}
+          />
           <Table
             rowKey={'id'}
-            columns={tableColumns}
-            dataSource={newInfoVOList}
+            columns={this.getColumns()}
+            dataSource={list}
             pagination={false}
             scroll={{ x: 1100 }}
           />

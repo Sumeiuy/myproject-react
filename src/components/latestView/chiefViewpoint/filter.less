@@ -3,6 +3,13 @@
   .inputBox {
     display: inline-block;
     margin-right: 30px;
+    :global {
+      .ant-input-search-button {
+        background-color: transparent;
+        border-color: transparent;
+        color: #333;
+      }
+    }
   }
   .selectBox {
     display: inline-block;
@@ -12,9 +19,6 @@
         border: none;
         font-size: 14px;
         color: #4a4a4a;
-        .ant-select-arrow:before {
-          content: "\E606";
-        }
       }
     }
   }
@@ -31,6 +35,9 @@
           font-size: 14px;
           color: #4a4a4a;
         }
+      }
+      .ant-calendar-picker-icon:after {
+        content: "\E606";
       }
       .ant-calendar-picker-icon, .ant-calendar-picker-clear {
         right: 0;

@@ -132,7 +132,7 @@ export default class ViewpointDetail extends PureComponent {
                   <div className={styles.iconContainer}>
                     <Icon type="fanhui" className={styles.backIcon} />
                   </div>
-                  <div className={styles.backTitle}>资讯列表</div>
+                  <div className={styles.backTitle}>返回列表</div>
                 </div>
                 <div className={styles.title}>
                   {_.isEmpty(texttitle) ? '暂无标题' : texttitle}
@@ -196,7 +196,7 @@ export default class ViewpointDetail extends PureComponent {
                 <div className={styles.iconContainer}>
                   <Icon type="fanhui" className={styles.backIcon} />
                 </div>
-                <div className={styles.backTitle}>资讯列表</div>
+                <div className={styles.backTitle}>返回列表</div>
               </div>
             </div>
           </div>
