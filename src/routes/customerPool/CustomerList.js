@@ -65,6 +65,7 @@ const effects = {
   queryHoldingProduct: 'customerPool/queryHoldingProduct',
   addCallRecord: 'customerPool/addCallRecord',
   queryHoldingSecurityRepetition: 'customerPool/queryHoldingSecurityRepetition',
+  getCustRangeByAuthority: 'customerPool/getCustRangeByAuthority',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -161,6 +162,8 @@ const mapDispatchToProps = {
   addCallRecord: fetchDataFunction(true, effects.addCallRecord),
   // 组合产品订购客户查询持仓证券重合度
   queryHoldingSecurityRepetition: fetchDataFunction(false, effects.queryHoldingSecurityRepetition),
+  // 获取服务营业部的数据
+  getCustRangeByAuthority: fetchDataFunction(true, effects.getCustRangeByAuthority),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -226,6 +229,7 @@ export default class CustomerList extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    getCustRangeByAuthority: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -289,10 +293,13 @@ export default class CustomerList extends PureComponent {
   componentDidMount() {
     const {
       getFiltersOfSightingTelescope,
+      getCustRangeByAuthority,
       location: {
         query,
       },
     } = this.props;
+    // 请求服务营业部筛选器的数据
+    getCustRangeByAuthority();
     // 请求客户列表
     this.getCustomerList(this.props);
     if (_.includes(ENTERLIST_PERMISSION_SIGHTINGLABEL, query.source)) {
