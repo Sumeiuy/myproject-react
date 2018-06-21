@@ -6,6 +6,7 @@
  * @description 此处存放与url数据相关的通用方法
  */
 import qs from 'query-string';
+import _ from 'lodash';
 import regexp from './regexp';
 
 const url = {
