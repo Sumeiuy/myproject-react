@@ -92,45 +92,52 @@ export default class AmountSelectMenu extends PureComponent {
 
   handleSubmitBtnClick = () => {
     const { dateType } = this.state;
-    const isValid = this.validData();
+    const validData = this.validData();
     const isInputHasValue = this.checkInputValue();
 
-    if ((!dateType && !isInputHasValue) ||
-      (dateType && isInputHasValue)) {
-      this.props.onChange({
-        dateType: this.state.dateType,
-        min: this.state.min,
-        max: this.state.max,
-      }, {
-        inVisible: true,
-      });
-    } else if (!dateType) {
-      this.setState({
-        dateTypeErr: true,
-      });
-      this.props.onChange({
-        dateType: this.state.dateType,
-        min: this.state.min,
-        max: this.state.max,
-      }, {
-        isUnValid: true,
-      });
-    } else if (!isInputHasValue) {
-      this.setState({
-        error: {
-          isValid: false,
-          commmonError: '请输入最小值或者最大值',
-        },
-      });
+    // 通过了input输入校验
+    if (validData.isValid) {
+      // 周期与金额都选或者都不选
+      if ((!dateType && !isInputHasValue) ||
+        (dateType && isInputHasValue)) {
+        this.props.onChange({
+          dateType: this.state.dateType,
+          min: this.state.min,
+          max: this.state.max,
+        }, {
+          inVisible: true,
+        });
+      } else if (!dateType) { // 没有选择周期
+        this.setState({
+          dateTypeErr: true,
+        });
+        this.props.onChange({
+          dateType: this.state.dateType,
+          min: this.state.min,
+          max: this.state.max,
+        }, {
+          isUnValid: true,
+        });
+      } else if (!isInputHasValue) { // 没有选择金额
+        this.setState({
+          error: {
+            isValid: false,
+            commmonError: '请输入最小值或者最大值',
+          },
+        });
 
-      this.props.onChange({
-        dateType: this.state.dateType,
-        min: this.state.min,
-        max: this.state.max,
-      }, {
-        isUnValid: true,
+        this.props.onChange({
+          dateType: this.state.dateType,
+          min: this.state.min,
+          max: this.state.max,
+        }, {
+          isUnValid: true,
+        });
+      }
+    } else { // 没有通过数据校验
+      this.setState({
+        error: validData,
       });
-    } else if (!isValid) {
       this.props.onChange({
         dateType: this.state.dateType,
         min: this.state.min,
@@ -153,46 +160,38 @@ export default class AmountSelectMenu extends PureComponent {
     const maxNum = _.toNumber(max);
 
     const minError = this.valid(minNum);
-
     if (minError) {
-      this.setState({
-        error: {
-          isValid: false,
-          minError,
-        },
-      });
-      return false;
+      return {
+        isValid: false,
+        minError,
+      };
     }
 
     const maxError = this.valid(maxNum);
     if (maxError) {
-      this.setState({
-        error: {
-          isValid: false,
-          maxError,
-        },
-      });
-
-      return false;
+      return {
+        isValid: false,
+        maxError,
+      };
     }
 
     if (!min || !max) {
-      return true;
+      return {
+        isValid: true,
+      };
     }
 
     const commmonError = this.commonValid({ minNum, maxNum });
     if (commmonError) {
-      this.setState({
-        error: {
-          isValid: false,
-          commmonError,
-        },
-      });
-
-      return false;
+      return {
+        isValid: false,
+        commmonError,
+      };
     }
 
-    return true;
+    return {
+      isValid: true,
+    };
   }
 
   valid = (num) => {
@@ -231,6 +230,14 @@ export default class AmountSelectMenu extends PureComponent {
       [styles.show]: !this.state.error.isValid,
     });
 
+    const maxInputCls = classNames({
+      [styles.inputError]: this.state.error.maxError || this.state.error.commmonError,
+    });
+
+    const minInputCls = classNames({
+      [styles.inputError]: this.state.error.minError || this.state.error.commmonError,
+    });
+
     return (
       <div className={styles.amountSelectMenu}>
         <div className={styles.radioGroup} onChange={this.handleRidioChange}>
@@ -247,11 +254,8 @@ export default class AmountSelectMenu extends PureComponent {
         <div className={styles.menuRange}>
           <div className={styles.label}>金额</div>
           <UnitInput
-            className={
-              this.state.error.minError || this.state.error.commmonError ?
-                styles.inputError : null
-            }
             placeholder="最小"
+            className={minInputCls}
             value={this.state.min}
             unit={this.props.unit}
             unitStyle={this.props.unitStyle}
@@ -261,10 +265,7 @@ export default class AmountSelectMenu extends PureComponent {
           <span><i className={styles.divider} /></span>
           <UnitInput
             placeholder="最大"
-            className={
-              this.state.error.maxError || this.state.error.commmonError ?
-                styles.inputError : null
-            }
+            className={maxInputCls}
             value={this.state.max}
             unit={this.props.unit}
             unitStyle={this.props.unitStyle}
