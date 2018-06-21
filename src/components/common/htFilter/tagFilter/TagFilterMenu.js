@@ -24,9 +24,9 @@ export default class TagFilterMenu extends PureComponent {
   }
 
   static defaultProps = {
-    onCheck: () => {},
-    onSelect: () => {},
-    onChange: () => {},
+    onCheck: _.noop,
+    onSelect: _.noop,
+    onChange: _.noop,
     value: [],
   }
 
