@@ -8,6 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import cx from 'classnames';
 import { autobind } from 'core-decorators';
 import { Select } from 'antd';
 import styles from './index.less';
@@ -27,6 +28,7 @@ export default class CommonSelect extends PureComponent {
     disabled: PropTypes.bool,
     // 渲染Option时，是否根据数据总的show字段来判断该选项的显示与否
     needShowKey: PropTypes.bool,
+    dropdownClassName: PropTypes.string,
   }
 
   static defaultProps = {
@@ -35,6 +37,7 @@ export default class CommonSelect extends PureComponent {
     width: '',
     disabled: false,
     needShowKey: true,
+    dropdownClassName: '',
   }
 
   @autobind
@@ -61,8 +64,9 @@ export default class CommonSelect extends PureComponent {
   }
 
   render() {
-    const { data, name, value, onChange, width, ...resetProps } = this.props;
+    const { data, name, value, onChange, width, dropdownClassName, ...resetProps } = this.props;
     const options = this.makeSelectOptions(data);
+    const newDropdownClassName = cx([dropdownClassName, styles.selectFont]);
     return (
       <div className={styles.commomSelect}>
         <Select
@@ -72,6 +76,7 @@ export default class CommonSelect extends PureComponent {
           dropdownMatchSelectWidth={false}
           style={{ width }}
           dropdownStyle={{ width }}
+          dropdownClassName={newDropdownClassName}
           {...resetProps}
         >
           {options}
