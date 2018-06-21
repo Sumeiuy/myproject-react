@@ -8,7 +8,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { isSightingScope } from '../helper';
-import { openFspTab } from '../../../utils';
+import { url as urlHelper } from '../../../helper';
+import { openFspTab, openRctTab } from '../../../utils';
 // ENTERLIST_PERMISSION_SIGHTINGLABEL-需要展示瞄准镜匹配区域的source集合
 import { ENTERLIST_PERMISSION_SIGHTINGLABEL } from '../../../routes/customerPool/config';
 import HoldingProductDetail from './HoldingProductDetail';
@@ -565,7 +566,15 @@ export default class MatchArea extends PureComponent {
           <li>
             <span>
               <i className="label">订购组合：</i>
-              <i><em className="marked">{currentItem.name}</em>/{currentItem.code}</i>
+              <i>
+                <em
+                  className={`marked ${styles.clickable}`}
+                  onClick={() => this.handleOrderCombinationClick(currentItem.name)}
+                >
+                  {currentItem.name}
+                </em>
+                /{currentItem.code}
+              </i>
               {isShowDetailBtn && <HoldingCombinationDetail {...props} />}
             </span>
           </li>
@@ -573,6 +582,33 @@ export default class MatchArea extends PureComponent {
       }
     }
     return null;
+  }
+
+  // 点击订购组合名称跳转到详情页面
+  @autobind
+  handleOrderCombinationClick(name) {
+    const { push } = this.context;
+    const { location: { query: { combinationCode } } } = this.props;
+    const query = { id: combinationCode, name };
+    const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
+    const pathname = '/choicenessCombination/combinationDetail';
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_JX_GROUP_DETAIL',
+      title: '组合详情',
+    };
+    openRctTab({
+      routerAction: push,
+      url,
+      query,
+      pathname,
+      param,
+      state: {
+        url,
+      },
+    });
   }
 
   render() {

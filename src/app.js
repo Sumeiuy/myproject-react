@@ -19,6 +19,7 @@ import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';
 import { request as requestConfig, persist as persistConfig } from './config';
 import { dva as dvaHelper, dom } from './helper';
+import { logCommon } from './decorators/logable';
 
 // 尝试通过给body添加class来达到覆盖antd v3的样式
 dom.addClass(document.body, 'ant-v2-compatible');
@@ -44,6 +45,15 @@ const onError = (e) => {
     } else if (messageType === '1') {
       // 错误类型是1，用dialog
       CommonModal.showErrorDialog(errorMessage);
+    } else if (messageType === '2') {
+      // 业务错误
+      logCommon({
+        type: 'bizError',
+        payload: {
+          name: '业务错误',
+          value: errorMessage,
+        },
+      });
     }
   } else if (e.name === 'SyntaxError'
     && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
