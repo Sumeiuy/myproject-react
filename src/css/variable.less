@@ -17,7 +17,17 @@
 @invest-content-container-margin: 20px;
 @invest-block-gutter:16px;
 // font
-@font-family: "Microsoft YaHei", Helvetica, Tahoma, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", STXihei, STHeiti, Heiti, SimSun, sans-serif;
+@font-family: "Microsoft YaHei", Helvetica, Tahoma, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", STXihei, STHeiti, Heiti, SimSun, sans-serif !important;
+
+// 用于设置font-family
+.fsp-fontfamily() {
+  div, ul, ol, li, p,
+  h1, h2, h3, h4, h5, h6,
+  form, fieldset, legend, input, textarea,
+  th, td {
+    font-family: @font-family;
+  }
+}
 
 .text-overflow() {
   overflow: hidden;
