@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+import { getFilter } from '../helper';
 import styles from './toBeDone.less';
 import { openRctTab } from '../../../utils';
 import logable from '../../../decorators/logable';
@@ -97,12 +98,13 @@ export default class PerformanceIndicators extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      url: `${url}?source=business`,
+      url: `${url}?source=business&filters=${getFilter(data)}`,
       pathname: url,
       query: data,
       param,
       state: {
         ...query,
+        filters: getFilter(data),
       },
     });
   }
