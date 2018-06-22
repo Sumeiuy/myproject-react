@@ -2,14 +2,13 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-18 17:54:44
+ * @Last Modified time: 2018-06-13 21:55:48
  * @description 任务管理首页
  */
 
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import moment from 'moment';
 import withRouter from '../../decorators/withRouter';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
@@ -18,6 +17,8 @@ import ManagerViewDetail from '../../components/taskList/managerView/ManagerView
 import CreatorViewDetail from '../../components/taskList/creatorView/RightPanel';
 import ViewList from '../../components/common/appList';
 import ViewListRow from '../../components/taskList/ViewListRow';
+import ViewMenu from '../../components/taskList/ViewMenu';
+import FixedTitle from '../../components/taskList/FixedTitle';
 import pageConfig from '../../components/taskList/pageConfig';
 import { getCurrentScopeByOrgId } from '../../components/taskList/managerView/helper';
 import { openRctTab } from '../../utils';
@@ -26,18 +27,24 @@ import logable from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
 
+import styles from './home.less';
+
 import {
   EXECUTOR,
   INITIATOR,
   CONTROLLER,
-  currentDate,
-  beforeCurrentDate60Days,
-  dateFormat,
   STATUS_MANAGER_VIEW,
   SYSTEMCODE,
   STATE_EXECUTE_CODE,
-  STATE_FINISHED_CODE,
   STATE_ALL_CODE,
+  CREATE_TIME,
+  END_TIME,
+  CREATE_TIME_KEY,
+  END_TIME_KEY,
+  // 三个视图左侧任务列表的请求入参，在config里面配置，后续如果需要新增，或者删除某个param，
+  // 请在config里面配置QUERY_PARAMS
+  QUERY_PARAMS,
+  defaultPerformerViewCurrentTab,
 } from './config';
 
 // 空函数
@@ -54,21 +61,13 @@ const GET_CUST_SCOPE_PAGE_SIZE = 5;
 // 查询涨乐财富通的审批人需要的btnId固定值
 const ZL_QUREY_APPROVAL_BTN_ID = '200000';
 
-// 找不到反馈类型的时候，前端写死一个和后端一模一样的其它类型，作容错处理
-const feedbackListOfNone = [{
-  id: 99999,
-  name: '其它',
-  length: 1,
-  childList: [{
-    id: 100000,
-    name: '其它',
-    length: null,
-    childList: null,
-  }],
-}];
-
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+
+// 创建者视图的排序默认降序排序
+const SORT_DESC = 'desc';
+// 执行者视图和管理者视图默认升序排序
+const SORT_ASC = 'asc';
 
 @withRouter
 export default class PerformerView extends PureComponent {
@@ -81,7 +80,7 @@ export default class PerformerView extends PureComponent {
     empInfo: EMPTY_OBJECT,
     custFeedback: EMPTY_LIST,
     answersList: EMPTY_OBJECT,
-    saveAnswersSucce: false,
+    isSubmitSurveySucceed: false,
     missionImplementationDetail: EMPTY_OBJECT,
     custListForServiceImplementation: EMPTY_LIST,
   };
@@ -103,9 +102,10 @@ export default class PerformerView extends PureComponent {
       typeName: '',
       eventId: '',
       statusCode: '',
-      isTaskFeedbackListOfNone: false,
       // 执行中创建者视图右侧展示管理者视图
       isSourceFromCreatorView: false,
+      // 排序参数
+      sortParam: EMPTY_OBJECT,
     };
   }
 
@@ -114,27 +114,21 @@ export default class PerformerView extends PureComponent {
     this.queryAppList(query);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { location: { query } } = nextProps;
-    const { location: { query: prevQuery } } = this.props;
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+      changePerformerViewTab,
+    } = this.props;
     const { currentId, ...otherQuery } = query;
     const { currentId: prevCurrentId, ...otherPrevQuery } = prevQuery;
     if (!_.isEqual(otherQuery, otherPrevQuery)) {
       this.queryAppList(otherQuery);
     }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { list: { resultData } } = this.props;
-    if (_.isEmpty(resultData)) {
-      return;
-    }
-    const { typeCode, eventId, currentView } = this.state;
-    // 当前视图是执行者视图
-    if (
-      this.isExecutorView(currentView)
-      && (prevState.typeCode !== typeCode || prevState.eventId !== eventId)) {
-      this.queryMissionList(typeCode, eventId);
+    // 当前选中的任务变化，需要还原与任务绑定当前详情中选中的tab
+    if (currentId !== prevCurrentId) {
+      // 还原执行者视图右侧详情中tab的activeKey，默认选中第一个tab
+      changePerformerViewTab(defaultPerformerViewCurrentTab);
     }
   }
 
@@ -361,6 +355,7 @@ export default class PerformerView extends PureComponent {
       replace,
       push,
       previewCustDetail,
+      previewCustDetailByScope,
       custDetailResult,
       countFlowFeedBack,
       custFeedback,
@@ -377,6 +372,7 @@ export default class PerformerView extends PureComponent {
       queryDistinctCustomerCount,
       distinctCustomerCount,
       custManagerScopeData,
+      queryDistinctCustListDetailOfMission,
     } = this.props;
 
     const {
@@ -391,6 +387,7 @@ export default class PerformerView extends PureComponent {
       replace,
       push,
       previewCustDetail,
+      previewCustDetailByScope,
       custDetailResult,
       onGetCustFeedback: countFlowFeedBack,
       custFeedback,
@@ -413,6 +410,7 @@ export default class PerformerView extends PureComponent {
       createMotReport,
       queryMOTServeAndFeedBackExcel,
       queryDistinctCustomerCount,
+      queryDistinctCustListDetailOfMission,
       distinctCustomerCount,
       getCustManagerScope: this.getCustManagerScope,
       custManagerScopeData,
@@ -492,7 +490,7 @@ export default class PerformerView extends PureComponent {
       answersList,
       getTempQuesAndAnswer,
       saveAnswersByType,
-      saveAnswersSucce,
+      isSubmitSurveySucceed,
       attachmentList,
       getTaskDetailBasicInfo,
       modifyLocalTaskList,
@@ -510,13 +508,21 @@ export default class PerformerView extends PureComponent {
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
       addCallRecord,
+      changePerformerViewTab,
+      performerViewCurrentTab,
+      taskFeedbackList,
+      serviceProgress,
+      custFeedBack,
+      custDetail,
+      queryExecutorFlowStatus,
+      queryExecutorFeedBack,
+      queryExecutorDetail,
+      queryTargetCustDetail,
     } = this.props;
     const {
       typeCode,
       typeName,
-      taskFeedbackList,
       statusCode,
-      isTaskFeedbackListOfNone,
       eventId,
       taskTypeCode,
     } = this.state;
@@ -536,7 +542,7 @@ export default class PerformerView extends PureComponent {
         serviceRecordData={serviceRecordData}
         getCustIncome={getCustIncome}
         monthlyProfits={monthlyProfits}
-        custIncomeReqState={interfaceState['customerPool/getCustIncome']}
+        isCustIncomeRequested={interfaceState['customerPool/getCustIncome']}
         targetCustDetail={targetCustDetail}
         changeParameter={changeParameter}
         queryTargetCust={queryTargetCust}
@@ -557,9 +563,8 @@ export default class PerformerView extends PureComponent {
         getTempQuesAndAnswer={getTempQuesAndAnswer}
         answersList={answersList}
         saveAnswersByType={saveAnswersByType}
-        saveAnswersSucce={saveAnswersSucce}
+        isSubmitSurveySucceed={isSubmitSurveySucceed}
         attachmentList={attachmentList}
-        isTaskFeedbackListOfNone={isTaskFeedbackListOfNone}
         modifyLocalTaskList={modifyLocalTaskList}
         getTaskDetailBasicInfo={getTaskDetailBasicInfo}
         custFeedbackList={custFeedbackList}
@@ -574,6 +579,15 @@ export default class PerformerView extends PureComponent {
         testWallCollision={testWallCollision}
         testWallCollisionStatus={testWallCollisionStatus}
         addCallRecord={addCallRecord}
+        changePerformerViewTab={changePerformerViewTab}
+        performerViewCurrentTab={performerViewCurrentTab}
+        serviceProgress={serviceProgress}
+        custFeedBack={custFeedBack}
+        custDetail={custDetail}
+        queryExecutorFlowStatus={queryExecutorFlowStatus}
+        queryExecutorFeedBack={queryExecutorFeedBack}
+        queryExecutorDetail={queryExecutorDetail}
+        queryTargetCustDetail={queryTargetCustDetail}
       />
     );
   }
@@ -601,68 +615,6 @@ export default class PerformerView extends PureComponent {
     }
 
     return detailComponent;
-  }
-
-  // 获取服务经理使用的客户反馈列表，
-  @autobind
-  getFeedbackList({ typeCode, eventId, currentItem }) {
-    let currentType = EMPTY_OBJECT;
-    let taskFeedbackList = EMPTY_LIST;
-    // descText值为1，是自建任务
-    if (+currentItem.descText === 1) {
-      currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +typeCode);
-    } else {
-      // 此处为MOT任务
-      currentType = _.find(this.props.taskFeedbackList, obj => +obj.id === +eventId);
-    }
-    if (_.isEmpty(currentType)) {
-      // 找不到反馈类型，则前端做一下处理，手动给一级和二级都塞一个其他类型
-      taskFeedbackList = feedbackListOfNone;
-    } else {
-      taskFeedbackList = currentType.feedbackList;
-    }
-    this.setState({
-      taskFeedbackList,
-      isTaskFeedbackListOfNone: taskFeedbackList === feedbackListOfNone,
-    });
-  }
-
-  // 当前筛选的状态为‘结束’时，优先取url中日期的值，再取默认的日期，否则返回空字符串
-  @autobind
-  getFinishedStateDate({
-      status = STATE_EXECUTE_CODE,
-    value,
-    urlDate,
-    }) {
-    if (status === STATE_FINISHED_CODE) {
-      return urlDate || moment(value).format(dateFormat);
-    }
-    return '';
-  }
-
-  /**
-   * 发送获取任务反馈字典的请求
-   * @param {*} typeCode 当前左侧列表的选中项的typeCode
-   * @param {*} eventId 当前左侧列表的选中项的eventId
-   */
-  @autobind
-  queryMissionList(typeCode, eventId) {
-    const {
-      getServiceType,
-      dict: { missionType },
-    } = this.props;
-    /**
-     * 区分mot任务和自建任务
-     * 用当前任务的typeCode与字典接口中missionType数据比较，找到对应的任务类型currentItem
-     * currentItem 的descText=‘0’表示mot任务，descText=‘1’ 表示自建任务
-     * 根据descText的值请求对应的任务类型和任务反馈的数据
-     * 再判断当前任务是属于mot任务还是自建任务
-     * 自建任务时：用当前任务的typeCode与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
-     * mot任务时：用当前任务的eventId与请求回来的任务类型和任务反馈的数据比较，找到typeCode对应的任务反馈
-     */
-    const currentItem = _.find(missionType, obj => +obj.key === +typeCode) || EMPTY_OBJECT;
-    getServiceType({ pageNum: 1, pageSize: 10000, type: +currentItem.descText + 1 })
-      .then(() => this.getFeedbackList({ typeCode, eventId, currentItem }));
   }
 
   // 帕努单任务是否在执行中，用于管理者视图
@@ -703,21 +655,11 @@ export default class PerformerView extends PureComponent {
   @autobind
   queryAppList(query) {
     const { getTaskList } = this.props;
-    const { missionViewType, pageNum = 1, pageSize = 20 } = query;
-    const params = this.constructViewPostBody(query, pageNum, pageSize);
+    const { pageNum = 1, pageSize = 20 } = query;
+    const params = this.getQueryParams(query, pageNum, pageSize);
 
     // 默认筛选条件
     getTaskList({ ...params }).then(() => {
-      const { list = EMPTY_OBJECT } = this.props;
-      const { resultData = EMPTY_LIST } = list;
-      const firstData = resultData[0] || EMPTY_OBJECT;
-      // 当前视图是执行者视图
-      if (missionViewType === EXECUTOR) {
-        if (!_.isEmpty(list) && !_.isEmpty(resultData)) {
-          const { typeCode, eventId } = firstData;
-          this.queryMissionList(typeCode, eventId);
-        }
-      }
       this.getRightDetail();
     });
   }
@@ -729,23 +671,31 @@ export default class PerformerView extends PureComponent {
    * @param {*} newPageSize 当前分页条目数
    */
   @autobind
-  constructViewPostBody(query, newPageNum, newPageSize) {
+  getQueryParams(query, newPageNum, newPageSize) {
+    const { sortParam } = this.state;
     const { missionViewType, status, creatorId } = query;
+    // 从query上筛选出需要的入参
+    const params = _.pick(query, QUERY_PARAMS);
     let finalPostData = {
       pageNum: _.parseInt(newPageNum, 10),
       pageSize: _.parseInt(newPageSize, 10),
     };
-    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum', 'custName', 'creatorName']);
-    finalPostData = _.merge(
-      finalPostData,
-      omitData,
+    finalPostData = {
+      ...params,
+      ...finalPostData,
       // { orgId: 'ZZ001041' },
-      { orgId: emp.getOrgId() },
+      orgId: emp.getOrgId(),
       // 传过来的名字叫creatorId，传给后台需要改成creator
-      { creator: creatorId },
-    );
+      creator: creatorId,
+    };
+
     // 获取当前的视图类型
     const currentViewType = getViewInfo(missionViewType).currentViewType;
+    // 入参中，添加排序关键字
+    finalPostData = {
+      ...finalPostData,
+      ...this.addSortParam(currentViewType, sortParam),
+    };
     // 执行者视图中，状态默认选中‘执行中’, status传50
     // url中status为‘all’时传空字符串或者不传，其余传对应的code码
     if (this.isExecutorView(currentViewType)) {
@@ -766,46 +716,16 @@ export default class PerformerView extends PureComponent {
     // 状态默认选中‘执行中’, status传50，其余传对应的code码
     finalPostData.status = status || STATE_EXECUTE_CODE;
     finalPostData = { ...finalPostData, missionViewType: currentViewType };
-    if (this.isInitiatorView(currentViewType)) {
-      const { createTimeEnd, createTimeStart } = finalPostData;
-      finalPostData = {
-        ...finalPostData,
-        createTimeEnd: this.getFinishedStateDate({
-          status,
-          value: currentDate,
-          urlDate: createTimeEnd,
-        }),
-        createTimeStart: this.getFinishedStateDate({
-          status,
-          value: beforeCurrentDate60Days,
-          urlDate: createTimeStart,
-        }),
-      };
-    } else {
-      const { endTimeEnd, endTimeStart } = finalPostData;
-      finalPostData = {
-        ...finalPostData,
-        endTimeEnd: this.getFinishedStateDate({
-          status,
-          value: currentDate,
-          urlDate: endTimeEnd,
-        }),
-        endTimeStart: this.getFinishedStateDate({
-          status,
-          value: beforeCurrentDate60Days,
-          urlDate: endTimeStart,
-        }),
-      };
-    }
     return finalPostData;
   }
 
   // 加载右侧panel中的详情内容
   @autobind
   loadDetailContent(obj) {
-    this.props.getTaskDetailBasicInfo({ taskId: obj.id });
-    // 执行者视图服务实施客户列表中 状态筛选默认值 state='10' 未开始
-    this.props.queryTargetCust({ missionId: obj.id, state: '10', pageNum: 1, pageSize: 10 });
+    const {
+      getTaskDetailBasicInfo,
+    } = this.props;
+    getTaskDetailBasicInfo({ taskId: obj.id });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
   }
@@ -906,7 +826,12 @@ export default class PerformerView extends PureComponent {
     const { replace, location, push } = this.props;
     const { query, pathname } = location;
     if (name === 'switchView') {
-      push({ pathname, query: otherQuery });
+      // 视图切换，将排序重置
+      this.setState({
+        sortParam: this.getDefaultViewSortParam(),
+      }, () => {
+        push({ pathname, query: otherQuery });
+      });
     } else {
       replace({
         pathname,
@@ -918,6 +843,80 @@ export default class PerformerView extends PureComponent {
         },
       });
     }
+  }
+
+  /**
+   * 获取sortKey，createTimeSort或者endTimeSort
+   * 获取sortContent，创建时间或者结束时间
+   */
+  @autobind
+  getSortConfig(viewType) {
+    let sortKey = CREATE_TIME_KEY;
+    let sortContent = CREATE_TIME;
+    let sortDirection = SORT_DESC;
+    if (viewType === EXECUTOR || viewType === CONTROLLER) {
+      sortKey = END_TIME_KEY;
+      sortContent = END_TIME;
+      sortDirection = SORT_ASC;
+    }
+    return {
+      sortKey,
+      sortContent,
+      sortDirection,
+    };
+  }
+
+  /**
+   * 视图切换，将排序重置成初始化状态
+   */
+  @autobind
+  getDefaultViewSortParam(currentViewType) {
+    let param = '';
+    if (currentViewType === INITIATOR) {
+      // 创建者视图，用createTimeSort,desc
+      param = {
+        [CREATE_TIME_KEY]: SORT_DESC,
+      };
+    } else if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
+      // 执行者视图和管理者视图用endTimeSort,asc
+      param = {
+        [END_TIME_KEY]: SORT_ASC,
+      };
+    }
+
+    return param;
+  }
+
+  /**
+   * 请求入参中添加排序
+   */
+  @autobind
+  addSortParam(currentViewType, sortParam) {
+    let param = {};
+    // 如果query中没有sortParam，那么取默认的
+    if (_.isEmpty(sortParam)) {
+      param = this.getDefaultViewSortParam(currentViewType);
+    } else {
+      param = sortParam;
+    }
+
+    return param;
+  }
+
+  /**
+   * 排序，请求数据
+   */
+  @autobind
+  handleSortChange({ sortKey, sortType }) {
+    const { location: { query } } = this.props;
+    // 设置排序方向，用来父组件调用
+    this.setState({
+      sortParam: {
+        [sortKey]: sortType,
+      },
+    }, () => {
+      this.queryAppList(query);
+    });
   }
 
   // 切换页码
@@ -1060,6 +1059,25 @@ export default class PerformerView extends PureComponent {
     );
   }
 
+  /**
+   * 渲染固定的列
+   */
+  @autobind
+  renderFixedTitle() {
+    const { location: { query: { missionViewType } } } = this.props;
+    const viewType = getViewInfo(missionViewType).currentViewType;
+    const { sortKey, sortContent, sortDirection } = this.getSortConfig(viewType);
+    return (
+      <FixedTitle
+        sortContent={sortContent}
+        sortDirection={sortDirection}
+        onSortChange={this.handleSortChange}
+        sortKey={sortKey}
+        viewType={viewType}
+      />
+    );
+  }
+
   render() {
     const { location, replace, list, dict, queryCustUuid } = this.props;
 
@@ -1071,17 +1089,23 @@ export default class PerformerView extends PureComponent {
     const isEmpty = _.isEmpty(resultData);
 
     const topPanel = (
-      <ConnectedPageHeader
-        location={location}
-        replace={replace}
-        dict={dict}
-        page={currentView}
-        pageType={taskList.pageType}
-        chooseMissionViewOptions={this.missionView}
-        creatSeibelModal={this.handleCreateBtnClick}
-        filterControl={currentView}
-        filterCallback={this.handleHeaderFilter}
-      />
+      <div>
+        <ViewMenu
+          chooseMissionViewOptions={this.missionView}
+          onViewChange={this.handleHeaderFilter}
+          location={location}
+          onLaunchTask={this.handleCreateBtnClick}
+        />
+        <ConnectedPageHeader
+          location={location}
+          replace={replace}
+          dict={dict}
+          page={currentView}
+          pageType={taskList.pageType}
+          filterControl={currentView}
+          filterCallback={this.handleHeaderFilter}
+        />
+      </div>
     );
 
     // 生成页码器，此页码器配置项与Antd的一致
@@ -1099,6 +1123,8 @@ export default class PerformerView extends PureComponent {
         renderRow={this.renderListRow}
         pagination={paginationOptions}
         queryCustUuid={queryCustUuid}
+        fixedTitle={this.renderFixedTitle()}
+        footerBordered={false}
       />
     );
     // TODO 此处需要根据不同的子类型使用不同的Detail组件
@@ -1114,6 +1140,7 @@ export default class PerformerView extends PureComponent {
           leftListClassName="premissionList"
           leftWidth={LEFT_PANEL_WIDTH}
           ref={ref => (this.splitPanelElem = ref)}
+          headerStyle={styles.commonHeader}
         />
       </div>
     );

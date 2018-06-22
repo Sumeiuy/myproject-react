@@ -123,7 +123,7 @@ export default class CreateContactModal extends PureComponent {
    * 通话结束后要创建一条服务记录，并弹出服务记录框
    */
   @autobind
-  handlePhoneEnd() {
+  handlePhoneEnd(data = {}) {
     // 点击挂电话隐藏蒙层
     this.setState({ showMask: false });
     // 没有成功发起通话
@@ -132,13 +132,12 @@ export default class CreateContactModal extends PureComponent {
     }
     this.endTime = moment();
     const {
-      currentCustId,
-      currentCustName,
       toggleServiceRecordModal,
       addServeRecord,
       motSelfBuiltFeedbackList,
       onClose,
     } = this.props;
+    const { custId, custName } = data.userData || {};
     const list = transformCustFeecbackData(motSelfBuiltFeedbackList);
     const [firstServiceType = {}] = list;
     const { key: firstServiceTypeKey, children = [] } = firstServiceType;
@@ -150,7 +149,7 @@ export default class CreateContactModal extends PureComponent {
     const serviceContentDesc = `${this.startTime.format('HH:mm:ss')}给客户发起语音通话，时长${phoneDuration}。`;
     let payload = {
       // 经济客户号
-      custId: currentCustId,
+      custId,
       // 服务方式
       serveWay: 'HTSC Phone',
       // 任务类型，1：MOT  2：自建
@@ -184,8 +183,8 @@ export default class CreateContactModal extends PureComponent {
       onClose();
       // 显示添加服务记录弹窗
       toggleServiceRecordModal({
-        id: currentCustId,
-        name: currentCustName,
+        id: custId,
+        name: custName,
         flag: true,
         caller: PHONE,
         autoGenerateRecordInfo: payload,

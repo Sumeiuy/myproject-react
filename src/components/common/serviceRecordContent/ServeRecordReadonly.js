@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-04 20:57:40
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-05 20:04:40
  * @description 只读服务记录
  */
 
@@ -46,9 +46,12 @@ export default function ServiceRecordReadOnly(props) {
   if (!isZL && custFeedback !== custFeedback2) {
     normalWayCustFeedbackText = `${custFeedback}    ${custFeedback2}`;
   }
-
+  const wrapperCls = cx(
+    styles.serviceRecordContent,
+    styles.performerServiceRecord,
+  );
   return (
-    <div className={styles.serviceRecordContent}>
+    <div className={wrapperCls}>
       <div className={styles.gridWrapper}>
         <div className={styles.serveWay}>
           <div className={styles.title}>服务方式:</div>

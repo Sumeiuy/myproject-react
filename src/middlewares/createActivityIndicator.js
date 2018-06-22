@@ -11,24 +11,25 @@ const NAMESPACE = 'activity';
 export default function createActivityIndicator(opts = {}) {
   const namespace = opts.namespace || NAMESPACE;
   const initialState = {
-    global: false,
+    global: 0,
   };
 
   const extraReducers = {
     [namespace](state = initialState, { type, forceFull }) {
+      let glebalStateNumber = state.global;
       let ret;
       switch (type) {
         case SHOW:
           ret = {
             ...state,
-            global: true,
+            global: ++glebalStateNumber,
             forceFull,
           };
           break;
         case HIDE:
           ret = {
             ...state,
-            global: false,
+            global: --glebalStateNumber,
             forceFull,
           };
           break;

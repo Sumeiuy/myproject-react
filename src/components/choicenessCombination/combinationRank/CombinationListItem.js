@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合-组合排名-列表项
  * @Date: 2018-04-18 14:26:13
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-22 11:04:45
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-06-05 15:46:16
 */
 
 import React, { PureComponent } from 'react';
@@ -20,7 +20,7 @@ import {
   securityType as securityTypeList,
   formatStr,
   sourceType,
-} from '../../../components/choicenessCombination/config';
+} from '../config';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -194,6 +194,7 @@ export default class CombinationListItem extends PureComponent {
       name: data.combinationName,
       code: data.productCode,
       source: sourceType.combination,
+      combinationCode: data.combinationCode,
     };
     const openDetailPayload = {
       id: data.combinationCode,

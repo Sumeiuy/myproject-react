@@ -241,7 +241,7 @@ export default class SplitPanel extends PureComponent {
     this.rightSection = input;
   }
 
-   // 动态配置pane参数
+  // 动态配置pane参数
   @autobind
   initPane() {
     const boxWidth = this.splitPanel.getBoundingClientRect().width;
@@ -331,7 +331,10 @@ export default class SplitPanel extends PureComponent {
     });
     return (
       <div className={styles.splitPanel}>
-        <div className={styles.header} ref={this.splitTPRef}>
+        <div
+          className={styles.header}
+          ref={this.splitTPRef}
+        >
           {topPanel}
         </div>
         <div className={noDataClass} ref={this.noDataRef}>

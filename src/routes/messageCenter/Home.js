@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-31 14:38:02
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-06-12 15:08:35
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -16,6 +16,7 @@ import Pagination from '../../components/common/Pagination';
 import Loading from '../../layouts/Loading';
 import { windowOpen } from '../../utils/fspGlobal';
 import api from '../../api';
+import config from './config';
 import styles from './home.less';
 
 // 使用helper里面封装的生成effects的方法
@@ -84,24 +85,29 @@ export default class MessageCenter extends PureComponent {
     const allocation = '转签待分配';
     const flag = title.indexOf(allocation);
     this.removeNotice = true;
-    if (typeName === 'HTSC FSP TGSign' && flag < 0) {
+    if (typeName === config.tgSign && flag < 0) {
       this.handleMessageByFSPNotAllocation(objectVal);
-    } else if (typeName === 'HTSC FSP TGSign' && flag >= 0) {
+    } else if (typeName === config.tgSign && flag >= 0) {
       this.handleMessageByFSPAllocation(objectVal);
-    } else if (typeName === 'HTSC Branch Assignment Inbox Type') {
+    } else if (typeName === config.demote) {
       this.handleMessageByBranch(rowId);
-    } else if (typeName === 'HTSC Primary Position Change Inbox Type') {
+    } else if (typeName === config.mainPosition) {
       this.handleMessageByPrimary(rowId, objectVal);
-    } else if (typeName === 'HTSC Investment Advice Inbox Type') {
+    } else if (typeName === config.taskList) {
       this.handleMessageByInvestment(objectVal);
-    } else if (typeName === 'HTSC Batch Branch Assignment Inbox Type') {
+    } else if (typeName === config.filialeCustTransfer) {
       this.handleMessageByBatch(objectVal, title, rowId);
-    } else if (typeName === 'HTSC TG Approval Inbox Type') {
+    } else if (typeName === config.userCenter) {
       this.handleMessageByTG();
+    } else if (typeName === config.custAllot) {
+      // 分公司客户分配
+      this.handleCustAllotMessage(data);
+    } else if (typeName === config.myFeedback) {
+      this.handleMessageByMyFeedback();
     } else {
       this.handleMessageByOther(rowId, objectVal);
     }
-    if (this.removeNotice && ((typeName !== 'HTSC FSP TGSign') || (flag < 0))) {
+    if (this.removeNotice && ((typeName !== config.tgSign) || (flag < 0))) {
       this.handleMessageByRemoveNotice(rowId);
     }
   }
@@ -122,6 +128,27 @@ export default class MessageCenter extends PureComponent {
       pathName,
       param,
     });
+  }
+
+  // 我的反馈
+  @autobind
+  handleMessageByMyFeedback() {
+    this.removeNotice = false;
+    const url = '/myFeedback';
+    const param = {
+      id: 'FSP_MYFEEDBACK',
+      title: '我的反馈',
+      forceRefresh: true,
+      closable: true,
+      isSpecialTab: true,
+    };
+    openRctTab({
+      routerAction: this.context.push,
+      url,
+      pathName: url,
+      param,
+    });
+    this.removeNotice = true;
   }
 
   // 处理typeName是HTSC FSP TGSign,标题含转签待分配的消息通知
@@ -170,6 +197,37 @@ export default class MessageCenter extends PureComponent {
     push(`/demote?notifiId=${rowId}`);
   }
 
+  // 新分公司客户分配
+  @autobind
+  handleCustAllotMessage(data) {
+    const { push } = this.context;
+    const { objectVal, rowId, title } = data;
+    this.removeNotice = true;
+    const valArray = objectVal.split(',');
+    const appId = valArray[0] || '';
+    const itemId = valArray[1] || '';
+    // 失败或者终止都进入失败页面
+    if (_.includes(title, config.fail) || _.includes(title, config.abort)) {
+      const url = `/custAllot?id=${itemId}&appId=${appId}`;
+      const param = {
+        id: 'FSP_CROSS_DEPARTMENT_NEW',
+        title: '分公司客户分配',
+        forceRefresh: true,
+        isSpecialTab: true,
+        closable: true,
+      };
+      const pathName = '/custAllot';
+      openRctTab({
+        routerAction: push,
+        url,
+        pathName,
+        param,
+      });
+    } else {
+      push(`/custAllot/notifies?notifiId=${rowId}&appId=${appId}&currentId=${itemId}`);
+    }
+  }
+
   // 处理typeName是HTSC Primary Position Change Inbox Type的消息通知
   @autobind
   handleMessageByPrimary(rowId, objectVal) {
@@ -193,9 +251,9 @@ export default class MessageCenter extends PureComponent {
     let itemId = '';
     appId = objectVal.substring(0, objectVal.indexOf(','));
     itemId = objectVal.substring(objectVal.indexOf(',') + 1, objectVal.length);
-    if (title.indexOf('失败') >= 0) {
+    if (title.indexOf(config.fail) >= 0) {
       this.removeNotice = true;
-    } else if (title.indexOf('终止') >= 0) {
+    } else if (title.indexOf(config.abort) >= 0) {
       type = 'falseOver';
       this.removeNotice = true;
     } else {

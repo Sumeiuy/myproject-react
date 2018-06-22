@@ -1,0 +1,29 @@
+.serviceRecordWrapper {
+  padding: 10px 10px 0;
+  .inner {
+    background: #fff;
+    padding: 12px 20px;
+    .title {
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #000;
+    }
+    .content {
+      font-size: 14px;
+      color: #4a4a4a;
+      .operationSection {
+        display: flex;
+        justify-content: flex-end;
+        :global {
+          .commonBtn {
+            padding-left: 20px;
+            button {
+              padding: 0 24px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
