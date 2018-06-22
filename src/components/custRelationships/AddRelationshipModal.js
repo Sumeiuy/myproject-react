@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 19:59:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-21 20:49:53
+ * @Last Modified time: 2018-06-22 20:08:06
  * @description 添加关联关系的Modal
  */
 
@@ -272,8 +272,10 @@ export default class AddRelationshipModal extends Component {
     const isProdCust = cust.custTypeValue === 'prod';
     const isSelectPM = relationSubTypeValue === PM_SUBTYPE_CODE
       && relationNameValue === PM_NAME_CODE;
+    // 判断证件类型是统一社会信用证类型
+    const isUSCC = cust.custIDTypeValue === UNIFIED_SOCIALCARD_TYPE_CODE;
 
-    if (!hasEcifId && isProdCust && isSelectPM) {
+    if (!hasEcifId && isUSCC && isProdCust && isSelectPM) {
       // 此处需要将值反显后三个输入值
       this.setState({
         partyName: cust.custName,
