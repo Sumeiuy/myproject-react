@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-20 18:22:30
+ * @Last Modified time: 2018-06-21 19:44:40
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -264,7 +264,6 @@ export default class FinanceCustRelationshipForm extends Component {
       uploadKey,
       cust,
     } = this.state;
-    console.warn('state:attachment>', attachment);
     const { action, custList, relationshipTree } = this.props;
     // 判断当前组件是否在驳回后修改页面里面
     const isCreate = action === 'CREATE';
@@ -343,6 +342,7 @@ export default class FinanceCustRelationshipForm extends Component {
           !addAssociateModal ? null :
           (
             <AddRelationshipModal
+              cust={cust}
               action={relationModalAction}
               ralationTree={relationshipTree}
               data={relationForUpdate}

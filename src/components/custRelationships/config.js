@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系申请的配置文件
  * @Date: 2018-06-08 13:32:19
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-15 14:42:45
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-21 20:17:15
  */
 
 
@@ -111,6 +111,10 @@ const config = {
   IDCARD_TYPE_CODE: '103100',
   // 统一社会信用证Code
   UNIFIED_SOCIALCARD_TYPE_CODE: '103270',
+  // 关联关系名称-产品管理人Code
+  PM_NAME_CODE: '127370',
+  // 关联关系子类型-产品管理人Code
+  PM_SUBTYPE_CODE: '127371',
 };
 
 export default config;
