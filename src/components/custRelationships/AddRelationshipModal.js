@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 19:59:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-19 15:56:38
+ * @Last Modified time: 2018-06-21 20:49:53
  * @description 添加关联关系的Modal
  */
 
@@ -19,7 +19,12 @@ import confirm from '../common/confirm_';
 
 import { check } from '../../helper';
 
-import { IDCARD_TYPE_CODE, UNIFIED_SOCIALCARD_TYPE_CODE } from './config';
+import {
+  IDCARD_TYPE_CODE,
+  UNIFIED_SOCIALCARD_TYPE_CODE,
+  PM_NAME_CODE,
+  PM_SUBTYPE_CODE,
+} from './config';
 
 import styles from './addRelationshipModal.less';
 
@@ -28,6 +33,7 @@ const DEFAULT_EMPTY_OPTION = { value: '', label: '--请选择--' };
 
 export default class AddRelationshipModal extends Component {
   static propTypes = {
+    cust: PropTypes.object.isRequired,
     visible: PropTypes.bool.isRequired,
     action: PropTypes.oneOf(['CREATE', 'UPDATE']),
     // 如果是修改状态，则data有值
@@ -65,6 +71,8 @@ export default class AddRelationshipModal extends Component {
       partyIDTypeLabel: '',
       // 证件号
       partyIDNum: '',
+      // 用于在产品客户下关联关系名称和子类型均选择产品管理人的情况下，需要禁用后三项的修改权限
+      disabledForProdCust: false,
     };
     const realState = isCreate ? DEFAULT_STATE : _.omit(data, ['ecifId']);
     this.state = realState;
@@ -228,6 +236,7 @@ export default class AddRelationshipModal extends Component {
       // 证件号
       partyIDNum: '',
       partyName: '',
+      disabledForProdCust: false,
     });
   }
 
@@ -245,15 +254,43 @@ export default class AddRelationshipModal extends Component {
       partyIDTypeLabel: '',
       // 证件号
       partyIDNum: '',
+      disabledForProdCust: false,
     });
   }
 
   @autobind
   handleRelationSubTypeSelectChange(select, relationSubTypeValue, option) {
-    this.setState({
-      relationSubTypeValue,
-      relationSubTypeLabel: option.label,
-    });
+    // 如果是选择关联关系名称和关联关系均是 产品管理人，
+    // 则自动添加关系人名称为客户名称
+    // 证件类型选择 统一社会信用证
+    // 号码为客户的证件号码
+    // 并且非入库到ecif系统的均不可以修改这三个值
+    // 但是如果已经入库到ecif中，该六个值均可以修改
+    const { relationNameValue } = this.state;
+    const { data, cust } = this.props;
+    const hasEcifId = !_.isEmpty(_.get(data, 'ecifId'));
+    const isProdCust = cust.custTypeValue === 'prod';
+    const isSelectPM = relationSubTypeValue === PM_SUBTYPE_CODE
+      && relationNameValue === PM_NAME_CODE;
+
+    if (!hasEcifId && isProdCust && isSelectPM) {
+      // 此处需要将值反显后三个输入值
+      this.setState({
+        partyName: cust.custName,
+        partyIDNum: cust.custIDNum,
+        partyIDTypeValue: cust.custIDTypeValue,
+        partyIDTypeLabel: cust.custIDTypeLabel,
+        relationSubTypeValue,
+        relationSubTypeLabel: option.label,
+        disabledForProdCust: true,
+      });
+    } else {
+      this.setState({
+        relationSubTypeValue,
+        relationSubTypeLabel: option.label,
+        disabledForProdCust: false,
+      });
+    }
   }
 
   @autobind
@@ -284,6 +321,7 @@ export default class AddRelationshipModal extends Component {
       partyName,
       partyIDTypeValue,
       partyIDNum,
+      disabledForProdCust,
     } = this.state;
     // 获取关联关系 Select 树
     const typeSelectData = this.addEmptyOption(ralationTree);
@@ -354,6 +392,7 @@ export default class AddRelationshipModal extends Component {
           <div className={styles.relationItem}>
             <FormItem label="关系人名称" labelWidth={130}>
               <Input
+                disabled={disabledForProdCust}
                 className={styles.relationInput}
                 value={partyName}
                 onChange={this.handleRelationPersonChange}
@@ -366,6 +405,7 @@ export default class AddRelationshipModal extends Component {
                 name="partyIDTypeValue"
                 width="130px"
                 needShowKey={false}
+                disabled={disabledForProdCust}
                 value={partyIDTypeValue}
                 data={IDTypeSelectData}
                 onChange={this.handleRelationIDTypeSelectChange}
@@ -375,6 +415,7 @@ export default class AddRelationshipModal extends Component {
           <div className={styles.relationItem}>
             <FormItem label="关系人证件号码" labelWidth={130}>
               <Input
+                disabled={disabledForProdCust}
                 className={styles.relationInput}
                 value={partyIDNum}
                 onChange={this.handleRelationIDNoChange}

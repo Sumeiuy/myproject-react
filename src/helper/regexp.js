@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:16:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 10:11:22
+ * @Last Modified time: 2018-06-22 10:09:22
  * @description 此处存放通用的正则表达式
  */
 const regexp = {
@@ -57,7 +57,7 @@ const regexp = {
   /**
    * @desc 统一社会信用码正则
    */
-  uscc: /[^_IOZSVa-z\W]{2}\d{6}[^_IOZSVa-z\W]{10}$/,
+  uscc: /[0123456789ABCDEFGHJKLMNPQRTUWXY]{2}\d{6}[0123456789ABCDEFGHJKLMNPQRTUWXY]{10}$/,
   /**
    * @desc 18位身份证号码正则
    */
