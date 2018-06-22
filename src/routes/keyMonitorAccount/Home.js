@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-22 09:28:38
+ * @Last Modified time: 2018-06-22 17:13:31
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -17,7 +17,7 @@ import confirm from '../../components/common/confirm_';
 
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
-import { dva, emp, env } from '../../helper';
+import { dva, emp, permission } from '../../helper';
 import { openFspTab } from '../../utils';
 import { LIST_TABLE_COLUMNS, DEFAULT_OPTION } from './config';
 
@@ -181,8 +181,17 @@ export default class KeyMonitorAccountHome extends Component {
   }
 
   @autobind
+  hasJumpTo360CustViewPermission(record) {
+    // 若登录人是该客户的主服务经理
+    const isMainManager = emp.getId() === record.managerNo;
+    const hasPermission = permission.hasJumpTo360CustViewKeyMonitorAccountPermission();
+    return isMainManager || hasPermission;
+  }
+
+  @autobind
   handleCustNumberCellClick(record) {
-    if (!env.isInFsp()) {
+    // 此处需要增加权限控制
+    if (!this.hasJumpTo360CustViewPermission(record)) {
       return;
     }
     const { custType, custNumber } = record;
@@ -214,9 +223,15 @@ export default class KeyMonitorAccountHome extends Component {
     this.setState({ exchangeType: value });
   }
 
+  // 暂时保留，以便需求后期又要改回下拉形式
+  // @autobind
+  // handlePunishTypeSelectChange(select, value) {
+  //   this.setState({ punishType: value });
+  // }
+
   @autobind
-  handlePunishTypeSelectChange(select, value) {
-    this.setState({ punishType: value });
+  handlePunishTypeInputChange(e) {
+    this.setState({ punishType: e.target.value });
   }
 
   @autobind
@@ -279,13 +294,14 @@ export default class KeyMonitorAccountHome extends Component {
     }
     const {
       exchangeType: EXCHANGETYPE,
-      SZSEPunishType,
-      SHSEPunishType,
+      // SZSEPunishType,
+      // SHSEPunishType,
     } = dict;
     const { accountListInfo: { accountList = [], page = {} } } = this.props;
     const columns = this.addOnCellPropsForColumns(LIST_TABLE_COLUMNS);
     const exchangeTypeSelectOptions = this.getSelectOptions(EXCHANGETYPE);
-    const punishTypeSelectOptions = this.getSelectOptions([...SHSEPunishType, ...SZSEPunishType]);
+    // const punishTypeSelectOptions =
+    // this.getSelectOptions([...SHSEPunishType, ...SZSEPunishType]);
 
     return (
       <div className={styles.keyMonitorAccountWrap}>
@@ -305,13 +321,18 @@ export default class KeyMonitorAccountHome extends Component {
           <div className={styles.filterItem}>
             <div className={styles.item}>
               <span className={styles.label}>监管措施类型：</span>
-              <Select
+              {/* <Select
                 data={punishTypeSelectOptions}
                 style={{ width: 130 }}
                 className={styles.selectItem}
                 name="punishType"
                 value={punishType}
                 onChange={this.handlePunishTypeSelectChange}
+              /> */}
+              <Input
+                className={styles.inputItem}
+                value={punishType}
+                onChange={this.handlePunishTypeInputChange}
               />
             </div>
           </div>
