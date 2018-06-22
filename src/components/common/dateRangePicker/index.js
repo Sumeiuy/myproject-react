@@ -197,7 +197,7 @@ export default class CommonDateRangePicker extends PureComponent {
   @autobind
   calcCalendarPosition() {
     const { width: viewWidth } = dom.getRect(document.body);
-    const { left, top, width: drpWidth, height: drpHeight, } = dom.getRect(this.drpWraper);
+    const { left, top, width: drpWidth, height: drpHeight } = dom.getRect(this.drpWraper);
     const picker = this.drpWraper.querySelector('.DateRangePicker_picker');
     if (picker) {
       const { width } = dom.getRect(picker);
