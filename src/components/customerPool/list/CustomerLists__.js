@@ -125,7 +125,7 @@ export default class CustomerLists extends PureComponent {
     holdingProducts: PropTypes.object.isRequired,
     queryHoldingProductReqState: PropTypes.bool,
     isNotSaleDepartment: PropTypes.bool.isRequired,
-    dataForNextPage: PropTypes.object.isRequired,
+    dataForNextPage: PropTypes.object,
     addCallRecord: PropTypes.func.isRequired,
     currentCommonServiceRecord: PropTypes.object.isRequired,
     currentPytMng: PropTypes.object.isRequired,
@@ -141,6 +141,7 @@ export default class CustomerLists extends PureComponent {
     orgId: null,
     collectCustRange: () => { },
     queryHoldingProductReqState: false,
+    dataForNextPage: {},
   }
 
   static contextTypes = {
