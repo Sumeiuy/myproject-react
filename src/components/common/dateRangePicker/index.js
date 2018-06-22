@@ -54,10 +54,8 @@ export default class CommonDateRangePicker extends PureComponent {
     isInsideOffSet: PropTypes.func,
     hasCustomerOffset: PropTypes.bool,
     defaultVisible: PropTypes.bool,
-    // 日期组件位置是否需要自己计算,默认不需要
-    isCalcCalendarPosition: PropTypes.bool,
-    // 定义日期控件浮层容器
-    getCalendarContainer: PropTypes.func,
+    // 日期组件是否需要position: fixed,默认不需要
+    isFixed: PropTypes.bool,
   }
   static defaultProps = {
     displayFormat: 'YYYY-MM-DD',
@@ -74,8 +72,7 @@ export default class CommonDateRangePicker extends PureComponent {
     // 判断时间是否在用户的自定义区间内
     isInsideOffSet: () => true,
     defaultVisible: false,
-    isCalcCalendarPosition: false,
-    getCalendarContainer: _.noop,
+    isFixed: false,
   }
 
   constructor(props) {
@@ -187,8 +184,8 @@ export default class CommonDateRangePicker extends PureComponent {
       // 日历浮层未展示，设置状态
       this.isSetRangeOfEndDate = true;
     }
-    const { isCalcCalendarPosition } = this.props;
-    if (this.focusedInput !== null && isCalcCalendarPosition) {
+    const { isFixed } = this.props;
+    if (this.focusedInput !== null && isFixed) {
       // focusedInput为null时候,就是隐藏
       // 不为null则就是显示日历,isCalcCalendarPosition判断日历弹窗是否需要去计算位置
       // 此处需要对弹出框的位置进行重新计算
@@ -199,23 +196,20 @@ export default class CommonDateRangePicker extends PureComponent {
   // 计算日历下拉框的位置
   @autobind
   calcCalendarPosition() {
-    // 定义日期控件浮层容器
-    const calendarContainer = this.props.getCalendarContainer();
-    const { left: containerLeft, width: containerWidth } = dom.getRect(calendarContainer);
-    // 日期包裹容器
-    const { left: drpWraperLeft, width: drpWraperWidth } = dom.getRect(this.drpWraper);
-    // 下拉可选择日期组件
+    const { width: viewWidth } = dom.getRect(document.body);
+    const { left, top, width: drpWidth, height: drpHeight, } = dom.getRect(this.drpWraper);
     const picker = this.drpWraper.querySelector('.DateRangePicker_picker');
-    const left = drpWraperLeft - containerLeft;
     if (picker) {
       const { width } = dom.getRect(picker);
       const leftPlusWidth = left + width;
-      if (leftPlusWidth > containerWidth) {
-        const realLeft = left - (width - drpWraperWidth);
-        dom.setStyle(picker, 'margin-left', `${realLeft}px`);
+      const realTop = top + drpHeight;
+      if (leftPlusWidth > viewWidth) {
+        const realLeft = left - (width - drpWidth);
+        dom.setStyle(picker, 'left', `${realLeft}px`);
       } else {
-        dom.setStyle(picker, 'margin-left', `${left}px`);
+        dom.setStyle(picker, 'left', `${left}px`);
       }
+      dom.setStyle(picker, 'top', `${realTop}px`);
       dom.setStyle(picker, 'visibility', 'visible');
     }
   }
@@ -315,14 +309,13 @@ export default class CommonDateRangePicker extends PureComponent {
       'initialEndDate',
       'initialStartDate',
       'defaultVisible',
-      'isCalcCalendarPosition',
-      'getCalendarContainer',
+      'isFixed',
     ]);
 
-    const { isCalcCalendarPosition } = this.props;
+    const { isFixed } = this.props;
     const drpWraperCls = classnames({
       [styles.drpWraper]: true,
-      [styles.calcCalendarWraper]: isCalcCalendarPosition,
+      [styles.drpWraperFixed]: isFixed,
     });
 
     return (

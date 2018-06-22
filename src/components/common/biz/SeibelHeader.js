@@ -651,12 +651,11 @@ export default class Pageheader extends PureComponent {
                 申请时间:
                 <div className={styles.dateRangePickerBox}>
                   <DateRangePicker
-                    getCalendarContainer={this.getCalendarContainer}
                     onChange={this.handleCreateDateChange}
                     disabledRange={this.setDisableRange}
                     initialEndDate={endTime}
                     initialStartDate={startTime}
-                    isCalcCalendarPosition
+                    isFixed
                   />
                 </div>
               </div>

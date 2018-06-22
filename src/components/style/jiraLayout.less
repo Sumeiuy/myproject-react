@@ -6,6 +6,7 @@
   .filterBox {
     width: 90%;
     display: inline-block;
+    position: relative;
     &:after {
       content: "";
       display: table;
@@ -25,8 +26,8 @@
       float: right;
       height: 32px;
       position: absolute;
-      right: 120px;
-      top: 25px;
+      right: 0;
+      top: 3px;
     }
     .dateWidget {
       :global {
@@ -51,11 +52,6 @@
       min-width: 70px;
       margin-right: 20px;
       margin-left: 10px;
-      :global {
-        .DateRangePicker {
-          position: static;
-        }
-      }
     }
     :global {
       .filterNoneIcon {
