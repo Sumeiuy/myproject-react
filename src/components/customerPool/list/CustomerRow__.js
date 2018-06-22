@@ -13,7 +13,7 @@ import _ from 'lodash';
 
 import QuickMenu from './QuickMenu';
 import SixMonthEarnings from './SixMonthEarnings';
-import MatchArea from './MatchArea__';
+import MatchArea from './individualInfo/MatchArea';
 import { openFspTab } from '../../../utils';
 import { permission } from '../../../helper';
 import styles from './customerRow__.less';
