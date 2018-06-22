@@ -2,13 +2,14 @@
  * @Description: PC电话拨号页面
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-15 15:47:10
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-06-22 13:33:41
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { Modal } from 'antd';
 import bowser from 'bowser';
 import _ from 'lodash';
 import qs from 'query-string';
@@ -33,6 +34,7 @@ const OPEN_FEATURES = `
 
 const TYPE_CONNECTED = 'connected';
 const TYPE_END = 'end';
+const TYPE_ERROR = 'error';
 
 export default class Phone extends PureComponent {
   static propTypes = {
@@ -168,15 +170,24 @@ export default class Phone extends PureComponent {
 
   @autobind
   receiveMessage({ data }) {
-    if (data && data.type === TYPE_END && this.popWin) {
+    if (!data) {
+      return null;
+    }
+    if (data.type === TYPE_END && this.popWin) {
       this.props.onEnd(data);
       // 隐藏通话蒙版
       this.props.onShowMask(false);
       this.popWin.close();
       this.popWin = null;
-    } else if (data && data.type === TYPE_CONNECTED) {
+    } else if (data.type === TYPE_CONNECTED) {
       this.props.onConnected(data);
+    } else if (data.type === TYPE_ERROR) {
+      Modal.error({
+        title: '提示',
+        content: '您还没有下载打电话插件，请点击下载XXXXXX',
+      });
     }
+    return null;
   }
 
   render() {
