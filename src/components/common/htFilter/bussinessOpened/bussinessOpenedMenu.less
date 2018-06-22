@@ -1,9 +1,13 @@
+@import "../../../../css/variable.less";
+
 .businessMenu {
   padding: 4px 14px;
   font-size: 14px;
 
   .label {
     padding-bottom: 10px;
+    color: @font-color;
+    font-family: @font-family;
   }
   .radioGroup {
     :global {
@@ -18,7 +22,8 @@
         height: 30px;
         width: 66px;
         line-height: 30px;
-        color: #4a4a4a;
+        color: @font-color;
+        font-family: @font-family;
         font-weight: normal;
         margin: 0;
       }
@@ -39,7 +44,8 @@
       .ant-menu-submenu-title {
         padding-left: 14px;
         font-size: 14px;
-        color: #4a4a4a;
+        color: @font-color;
+        font-family: @font-family;
         height: 30px;
         line-height: 30px;
         border: 1px solid #ddd;
@@ -67,7 +73,8 @@
           height: 26px;
           line-height: 26px;
           font-size: 14px;
-          color: #4a4a4a;
+          color: @font-color;
+          font-family: @font-family;
           padding: 0;
           width: auto;
         }
@@ -75,7 +82,8 @@
           height: 26px;
           line-height: 26px;
           background-color: #e6f3fc;
-          color: #4a4a4a;
+          color: @font-color;
+          font-family: @font-family;
         }
       }
 
@@ -85,7 +93,8 @@
 
       .ant-menu-item.ant-menu-item-selected {
         background-color: #e6f3fc;
-        color: #4a4a4a;
+        color: @font-color;
+        font-family: @font-family;
         border: 0;
         &::after {
           display: none;

@@ -9,12 +9,13 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import store from 'store';
-
 import {
   SearchInput,
   NormalTag,
 } from 'lego-react-filter/src';
 
+
+import logable from '../../../decorators/logable';
 import HtFilter, { TagFilter } from '../../common/htFilter';
 import BusinessOpenedMenu from '../../common/htFilter/bussinessOpened/';
 import { url, check } from '../../../helper';
@@ -717,6 +718,13 @@ export default class Filter extends PureComponent {
   labelFilter = '';
 
   @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
+      name: '客户筛选',
+      value: '$args[0].value',
+    },
+  })
   handleSingleFilterChange(obj) {
     this.props.onFilterChange({
       name: obj.id,
@@ -725,6 +733,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
+      name: '客户筛选',
+      value: '$args[0].value',
+    },
+  })
   handleSingleSearchFilterChange({ id, value }) {
     const renderValue = _.join([value.name, value.aliasName], seperator.filterValueSeperator);
     this.props.onFilterChange({
@@ -746,6 +761,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
+      name: '客户筛选-介绍人',
+      value: '$args[0].value',
+    },
+  })
   handleDevMngIdFilterChange({ id, value }) {
     const renderValue = _.join([value.ptyMngId, value.ptyMngName], seperator.filterValueSeperator);
     this.props.onFilterChange({
@@ -762,6 +784,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
+      name: '客户筛选-订购组合',
+      value: '$args[0].value',
+    },
+  })
   handleJxGroupProductChange({ id, value }) {
     const renderValue = _.join([value.prodId, value.prodName], seperator.filterValueSeperator);
     this.props.onFilterChange({
@@ -783,6 +812,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
+      name: '客户筛选-最后一次服务',
+      value: '$args[0].value',
+    },
+  })
   handleLastServiceDateChange({ id, value }) {
     const renderValue = _.join([value.date, value.radioValue], seperator.filterValueSeperator);
     this.props.onFilterChange({
@@ -792,6 +828,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
+      name: '客户筛选',
+      value: '$args[0].value',
+    },
+  })
   handleAmountRangeSelectChange({ id, value }) {
     const renderValue =
       _.join([value.dateType, value.min, value.max], seperator.filterValueSeperator);
@@ -802,6 +845,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
+      name: '客户筛选',
+      value: '$args[0].value',
+    },
+  })
   handleMultiFilterChange(obj) {
     const value = _.join(obj.value, seperator.filterValueSeperator);
     this.props.onFilterChange({
@@ -811,6 +861,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
+      name: '客户筛选',
+      value: '$args[0].value',
+    },
+  })
   handleRangeFilterChange(obj) {
     const value = _.join(obj.value, seperator.filterValueSeperator);
 
@@ -821,6 +878,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
+      name: '客户筛选',
+      value: '$args[0].value',
+    },
+  })
   handleFormFilterChange(obj) {
     const valueArray = [];
     valueArray.push(obj.value.dateType);
@@ -833,6 +897,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].name',
+    payload: {
+      name: '客户筛选',
+      value: '$args[0].value',
+    },
+  })
   handleDateFilterChange(obj) {
     const value = _.join(obj.value, seperator.filterValueSeperator);
     this.props.onFilterChange({
@@ -842,6 +913,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
+      name: '客户筛选',
+      value: '$args[0].value',
+    },
+  })
   handleLabelChange(obj, key) {
     updateLocalLabelStorage(obj.value, key);
     this.labelFilter = key;
@@ -854,6 +932,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0]',
+    payload: {
+      name: '客户筛选',
+      value: '$args[1]',
+    },
+  })
   handleNormalfiterClose(id, labels) {
     const labelList = [].concat(labels);
     const value = _.join(_.filter(labelList, item => item !== id), seperator.filterValueSeperator);
@@ -868,6 +953,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
+      name: '客户筛选',
+      value: '$args[0].value',
+    },
+  })
   handleTagfilterChange(value) {
     const { id } = value;
     store.remove(id);
@@ -879,6 +971,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
+      name: '客户筛选-更多',
+      value: '$args[0].value',
+    },
+  })
   handleMoreFilterChange(obj) {
     updateLocalMoreFilterStorage(obj);
     if (obj.key === 'clearAll') {
@@ -901,6 +1000,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: '$args[0].name',
+    payload: {
+      name: '客户筛选-关闭过滤条件',
+      value: '',
+    },
+  })
   handleCloseFilter({ name }) {
     updateLocalFilterStorage(name);
     this.props.onFilterChange({
@@ -939,8 +1045,10 @@ export default class Filter extends PureComponent {
         return false;
       });
 
-    const normalTagList = _.map(normalTag, tag => _.find(tagList, item => item.id === tag));
-    const tagFilterList = _.map(tagFilters, tag => _.find(tagList, item => item.id === tag));
+    const normalTagList =
+      _.compact(_.map(normalTag, tag => _.find(tagList, item => item.id === tag)));
+    const tagFilterList =
+      _.compact(_.map(tagFilters, tag => _.find(tagList, item => item.id === tag)));
 
     return {
       normalTagList,
