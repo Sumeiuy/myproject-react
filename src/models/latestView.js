@@ -3,7 +3,7 @@
  * @Description: 最新观点modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-21 16:45:37
+ * @Last Modified time: 2018-06-22 15:19:55
 */
 
 // import _ from 'lodash';
@@ -12,7 +12,7 @@ import config from '../components/latestView/config';
 
 
 const EMPTY_OBJECT = {};
-// const EMPTY_LIST = [];
+const EMPTY_LIST = [];
 
 export default {
   namespace: 'latestView',
@@ -25,6 +25,10 @@ export default {
     viewpointData: EMPTY_OBJECT,
     // 首席观点详情
     viewpointDetail: EMPTY_OBJECT,
+    // 首页紫金时钟当前周期数据
+    ziJinCycleData: EMPTY_OBJECT,
+    // 首页紫金时钟列表
+    ziJinClockList: EMPTY_LIST,
   },
   reducers: {
     // 获取首页-每日首席观点
@@ -64,6 +68,22 @@ export default {
         },
       };
     },
+    // 获取首页紫金时钟当前周期数据
+    queryZiJinClockCycleSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        ziJinCycleData: resultData,
+      };
+    },
+    // 获取首页紫金时钟列表数据
+    queryZiJinViewpointListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        ziJinClockList: resultData,
+      };
+    },
   },
   effects: {
     // 根据类型获取首页-首席观点模块数据
@@ -98,6 +118,22 @@ export default {
       const response = yield call(api.queryChiefViewpointDetail, payload);
       yield put({
         type: 'queryChiefViewpointDetailSuccess',
+        payload: response,
+      });
+    },
+    // 获取首页紫金时钟当前周期数据
+    * queryZiJinClockCycle({ payload }, { call, put }) {
+      const response = yield call(api.queryZiJinClockCycle, payload);
+      yield put({
+        type: 'queryZiJinClockCycleSuccess',
+        payload: response,
+      });
+    },
+    // 获取首页紫金时钟列表数据
+    * queryZiJinViewpointList({ payload }, { call, put }) {
+      const response = yield call(api.queryZiJinViewpointList, payload);
+      yield put({
+        type: 'queryZiJinViewpointListSuccess',
         payload: response,
       });
     },

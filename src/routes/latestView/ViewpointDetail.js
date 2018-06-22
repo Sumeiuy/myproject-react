@@ -3,7 +3,7 @@
  * @Description: 首席观点详情
  * @Date: 2018-06-21 16:49:57
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-21 16:58:29
+ * @Last Modified time: 2018-06-22 09:47:03
  */
 
 import React, { PureComponent } from 'react';
@@ -43,7 +43,6 @@ const mapDispatchToProps = {
 export default class ViewpointDetail extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    push: PropTypes.func.isRequired,
     // 首席观点详情
     queryChiefViewpointDetail: PropTypes.func.isRequired,
     viewpointDetail: PropTypes.object.isRequired,
