@@ -18,7 +18,7 @@ import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { padSightLabelDesc } from '../../../config';
 import Icon from '../../common/Icon';
-import { isSightingScope } from '../helper';
+import { isSightingScope, getFilter } from '../helper';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
@@ -79,8 +79,9 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
   handleOpenTab(data) {
-    const { labelDesc, missionDesc, ...options } = data;
+    const { labelDesc, missionDesc, q, ...options } = data;
     const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.props.saveSearchVal({
@@ -93,7 +94,11 @@ export default class Search extends PureComponent {
         labelName: decodeURIComponent(options.labelName),
       });
     }
-    const condition = urlHelper.stringify({ ...options });
+    const newQuery = {
+      ...options,
+      filters: getFilter(data),
+    };
+    const condition = urlHelper.stringify({ ...newQuery });
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
@@ -107,7 +112,7 @@ export default class Search extends PureComponent {
       url,
       param,
       pathname: firstUrl,
-      query: options,
+      query: newQuery,
       // 方便返回页面时，记住首页的query，在本地环境里
       state: {
         ...query,

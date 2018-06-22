@@ -13,6 +13,7 @@ import _ from 'lodash';
 import store from 'store';
 import Filter from '../../components/customerPool/list/Filter__';
 import CustomerLists from '../../components/customerPool/list/CustomerLists__';
+import MatchArea from '../../components/customerPool/list/individualInfo/MatchArea';
 import { permission, emp, url, check } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { seperator } from '../../config';
@@ -808,13 +809,14 @@ export default class CustomerList extends PureComponent {
         }
       }
     }
-
+    MatchArea.setFilterOrder(obj.name, obj.value);
     const stringifyFilters = newFilterArray.filter(item => item !== '').join(filterSeperator);
 
     replace({
       pathname,
       query: {
         ...query,
+        individualInfo: true,
         filters: stringifyFilters,
         curPageNum: 1,
         selectAll: false,
