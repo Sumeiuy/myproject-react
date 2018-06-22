@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-21 17:40:58
+ * @Last Modified time: 2018-06-22 09:28:38
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -36,6 +36,9 @@ const mapDispatchToProps = {
   // 清空数据 api
   clearRedux: effect('keyMonitorAccount/clearReduxState', { loading: false }),
 };
+
+// 筛选条件的key的集合
+const FILTER_INPUT_KEYS = ['exchangeType', 'punishType', 'idNo', 'custNumber'];
 
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -96,8 +99,8 @@ export default class KeyMonitorAccountHome extends Component {
       punishType,
       idNo,
       custNumber,
-      pageNum: Number.parseInt(pageNum, 10),
-      pageSize: Number.parseInt(pageSize, 10),
+      pageNum: parseInt(pageNum, 10),
+      pageSize: parseInt(pageSize, 10),
     };
   }
 
@@ -154,8 +157,7 @@ export default class KeyMonitorAccountHome extends Component {
   @autobind
   judgeUserHasInput() {
     // 判断用户有无输入筛选值
-    const { exchangeType, punishType, idNo, custNumber } = this.state;
-    return exchangeType !== '' || punishType !== '' || idNo !== '' || custNumber !== '';
+    return _.some(FILTER_INPUT_KEYS, key => this.state[key] !== '');
   }
 
   @autobind
@@ -249,7 +251,7 @@ export default class KeyMonitorAccountHome extends Component {
     if (!this.judgeUserHasInput()) {
       confirm({ content: '请输入筛选条件' });
     } else {
-      const query = _.pick(this.state, ['exchangeType', 'punishType', 'idNo', 'custNumber']);
+      const query = _.pick(this.state, FILTER_INPUT_KEYS);
       this.mapObjectToLocation({ pageNum: 1, ...query });
       this.queryAccountList({ pageNum: 1, ...query });
       this.resetFilter({ pageNum: 1 });
