@@ -304,6 +304,7 @@ const effects = {
   clearProductData: 'customerPool/clearProductData',
   clearJxGroupProductData: 'customerPool/clearJxGroupProductData',
   addCallRecord: 'customerPool/addCallRecord',
+  getCustRangeByAuthority: 'customerPool/getCustRangeByAuthority',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -397,6 +398,8 @@ const mapDispatchToProps = {
   queryHoldingProduct: fetchDataFunction(false, effects.queryHoldingProduct),
   // 添加通话记录关联服务记录
   addCallRecord: fetchDataFunction(true, effects.addCallRecord),
+  // 获取服务营业部的数据
+  getCustRangeByAuthority: fetchDataFunction(true, effects.getCustRangeByAuthority),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -461,6 +464,7 @@ export default class CustomerList extends PureComponent {
     holdingProducts: PropTypes.object.isRequired,
     addCallRecord: PropTypes.func.isRequired,
     currentCommonServiceRecord: PropTypes.object.isRequired,
+    getCustRangeByAuthority: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -526,6 +530,7 @@ export default class CustomerList extends PureComponent {
       location: {
         query,
       },
+      getCustRangeByAuthority,
     } = this.props;
     // 请求客户列表
     this.getCustomerList(this.props);
@@ -533,6 +538,8 @@ export default class CustomerList extends PureComponent {
     getTagList();
     // 请求瞄准镜标签相关的子标签
     this.getFiltersOfAllSightingTelescope(query);
+    // 请求服务营业部筛选器的数据
+    getCustRangeByAuthority();
   }
 
   componentWillReceiveProps(nextProps) {
