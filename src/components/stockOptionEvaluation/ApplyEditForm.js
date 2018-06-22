@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-20 23:02:31
+ * @Last Modified time: 2018-06-22 16:48:08
  */
 
 import React, { PureComponent } from 'react';
@@ -330,6 +330,7 @@ export default class ApplyEditForm extends PureComponent {
       declareBus,
       attachment,
       auditors,
+      suggestion,
     } = this.state;
     const query = {
       id,
@@ -367,6 +368,7 @@ export default class ApplyEditForm extends PureComponent {
       degreeFlag,
       investPrefer,
       auditors: !_.isEmpty(value) ? value.login : auditors,
+      suggestion,
     };
     this.props.updateBindingFlow(query)
       .then(() => {
