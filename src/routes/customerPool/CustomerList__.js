@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import store from 'store';
 import Filter from '../../components/customerPool/list/Filter__';
-import CustomerLists from '../../components/customerPool/list/CustomerLists';
+import CustomerLists from '../../components/customerPool/list/CustomerLists__';
 import { permission, emp, url, check } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { seperator } from '../../config';
@@ -214,10 +214,8 @@ function getFilterParam(filterObj) {
   }
 
   // 订购组合
-  const primaryKeyJxgrps = filterObj.primaryKeyJxgrps[0];
-
-  if (primaryKeyJxgrps) {
-    param.primaryKeyJxgrps = [].concat(primaryKeyJxgrps);
+  if (filterObj.primaryKeyJxgrps) {
+    param.primaryKeyJxgrps = [].concat(filterObj.primaryKeyJxgrps[0]);
   }
 
 
