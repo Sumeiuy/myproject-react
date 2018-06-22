@@ -183,9 +183,6 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname, search }) => {
-        if (pathname === '/customerPool/list') {
-          dispatch({ type: 'getCustRangeByAuthority', loading: true });
-        }
         const query = queryString.parse(search);
         // 监听location的配置对象
         // 函数名称为路径匹配字符

@@ -39,6 +39,12 @@ const ENTER_TYPE = {
   productPotentialTargetCust: 'labelSearchCustPool',
 };
 
+// 任务管理岗权限作用的首页入口列表
+const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'external',
+  'orderCombination', 'securitiesProducts'];
+// 首页指标查询权限作用的首页入口列表
+const ENTERLIST2 = ['custIndicator', 'numOfCustOpened'];
+
 // 全量的source集合
 const FULL_ENTERLIST = ['search', 'tag', 'sightingTelescope', 'business', 'association', 'external',
   'orderCombination', 'securitiesProducts', 'productPotentialTargetCust', 'custIndicator', 'numOfCustOpened'];
@@ -65,6 +71,8 @@ export default {
   ORG,
   MAIN_MAGEGER_ID,
   ENTER_TYPE,
+  ENTERLIST1,
+  ENTERLIST2,
   ALL_DEPARTMENT_ID,
   FULL_ENTERLIST,
   ENTERLIST_PERMISSION_TASK_MANAGE,
