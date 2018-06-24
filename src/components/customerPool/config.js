@@ -19,6 +19,13 @@ export const kPIDateScopeType = {
   },
 };
 
+const productSaleChildDefaultVal = {
+  value: ['cycleSelect', 'minVal', 'maxVal'],
+  defaultVal: {
+    minVal: '0',
+    maxVal: '',
+  },
+};
 // 设置进入客户列表页的过滤器
 export const sourceFilter = {
   // 来源于搜索词
@@ -89,30 +96,59 @@ export const sourceFilter = {
   assetsTransactions: {
     purFinAset: [{
       filterName: 'purFinAset',
-      value: ['cycleSelect', 'minVal', 'maxVal'],
-      defaultVal: {
-        minVal: '0',
-        maxVal: '',
-      },
+      ...productSaleChildDefaultVal,
     }],
     gjAmt: [{
       filterName: 'gjAmt',
-      value: ['cycleSelect', 'minVal', 'maxVal'],
-      defaultVal: {
-        minVal: '0',
-        maxVal: '',
-      },
+      ...productSaleChildDefaultVal,
     }],
     gjPurRake: [{
       filterName: 'gjPurRake',
-      value: ['cycleSelect', 'minVal', 'maxVal'],
-      defaultVal: {
-        minVal: '0',
-        maxVal: '',
-      },
+      ...productSaleChildDefaultVal,
+    }],
+  },
+  productSale: {
+    kfBuyAmt: [{
+      filterName: 'kfBuyAmt',
+      ...productSaleChildDefaultVal,
+    }],
+    smBuyAmt: [{
+      filterName: 'smBuyAmt',
+      ...productSaleChildDefaultVal,
+    }],
+    finaBuyAmt: [{
+      filterName: 'finaBuyAmt',
+      ...productSaleChildDefaultVal,
+    }],
+    otcBuyAmt: [{
+      filterName: 'otcBuyAmt',
+      ...productSaleChildDefaultVal,
+    }],
+  },
+  income: {
+    purRake: [{
+      filterName: 'purRake',
+      ...productSaleChildDefaultVal,
+    }],
+    saleFare: [{
+      filterName: 'saleFare',
+      ...productSaleChildDefaultVal,
+    }],
+    netIncome: [{
+      filterName: 'netIncome',
+      ...productSaleChildDefaultVal,
     }],
   },
 };
 
-// 新增客户相关ID
+// 首页各模块中不同类别的标识
+export const homeModelType = {
+  // 新增客户相关类别
+  custIndicator: ['effective', 'netValue', 'highProduct', 'productCus'],
+  // 产品销售相关类别
+  productSale: ['kfBuyAmt', 'smBuyAmt', 'finaBuyAmt', 'otcBuyAmt'],
+  // 净创收
+  income: ['purRake', 'saleFare', 'netIncome'],
+};
+
 export const addCustomer = ['effective', 'netValue', 'highProduct', 'productCus'];

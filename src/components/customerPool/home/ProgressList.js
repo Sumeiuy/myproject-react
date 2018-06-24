@@ -24,7 +24,7 @@ import styles from './progressList.less';
  * 新增产品客户： 817004
 */
 
-import { addCustomer } from '../config';
+import { homeModelType } from '../config';
 
 const newCustomerLinkIdx = ['817001', '817002', '817003', '817004'];
 
@@ -90,19 +90,27 @@ export default class ProgressList extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '新增客户区域下钻' } })
   handleClick(index, item) {
-    const { cycle, push, location } = this.props;
-    const bname = this.transformName(item.cust);
-    const param = {
-      source: 'custIndicator',
-      modalType: 'customerType',
-      value: newCustomerLinkIdx[index],  // 提供给列表页传给后端的customerType的值
-      bname,
-      cycle,
-      push,
-      location,
-      type: addCustomer[item.id],
-    };
-    linkTo(param);
+    const { cycle, push, location, type } = this.props;
+    const modelTypeList = homeModelType[type];
+    if (modelTypeList) {
+      const bname = this.transformName(item.cust);
+      let param = {
+        source: type,
+        bname,
+        cycle,
+        push,
+        location,
+        type: modelTypeList[item.id],
+      };
+      if (type === 'custIndicator') {
+        param = {
+          ...param,
+          modalType: 'customerType',
+          value: newCustomerLinkIdx[index],  // 提供给列表页传给后端的customerType的值
+        };
+      }
+      linkTo(param);
+    }
   }
 
   // 根据现有的name返回列表页所需要展示的 name文案

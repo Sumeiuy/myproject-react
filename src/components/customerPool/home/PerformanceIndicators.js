@@ -35,6 +35,8 @@ import {
 import antdStyles from '../../../css/antd.less';
 import styles from './performanceIndicators.less';
 
+const SOURCE_PRODUCT_SALE = 'chanpinxiaoshou';
+
 // [{name: 1}, {name: 2}] 转成 [1,2]
 const getLabelList = arr => arr.map(v => (v || {}).name);
 
@@ -258,7 +260,7 @@ export default class PerformanceIndicators extends PureComponent {
       return this.renderBusinessIndicator(item);
     } else if (item.key === 'hushenguijilv') {
       return this.renderHSRateIndicators(item);
-    } else if (item.key === 'chanpinxiaoshou' || item.key === 'jingchuangshou') {
+    } else if (item.key === SOURCE_PRODUCT_SALE || item.key === 'jingchuangshou') {
       return this.renderProductSaleAndPureIcomeIndicators(item);
     } else if (item.key === 'fuwuzhibiao' && category === 'performance') {
       return this.renderServiceIndicators(item);
@@ -354,10 +356,13 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   // 产品销售 & 净创收（投顾绩效）
+  @autobind
   renderProductSaleAndPureIcomeIndicators(param) {
+    const { cycle, location, push, empInfo } = this.props;
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalData = getProductSale(argument);
     const headLine = { icon: 'shouru', title: param.headLine };
+    const type = param.key === SOURCE_PRODUCT_SALE ? 'productSale' : 'income';
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
@@ -365,7 +370,11 @@ export default class PerformanceIndicators extends PureComponent {
             <ProgressList
               dataSource={finalData}
               key={param.key}
-              type={'productSale'}
+              type={type}
+              cycle={cycle}
+              push={push}
+              location={location}
+              empInfo={empInfo}
             />
           </IfEmpty>
         </RectFrame>
@@ -470,6 +479,7 @@ export default class PerformanceIndicators extends PureComponent {
               push={push}
               location={location}
               empInfo={empInfo}
+              type="custIndicator"
             />
           </IfEmpty>
         </RectFrame>

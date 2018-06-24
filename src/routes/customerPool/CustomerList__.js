@@ -605,8 +605,8 @@ export default class CustomerList extends PureComponent {
       curPageNum: query.curPageNum || CUR_PAGE,
       // 必传，页大小
       pageSize: query.pageSize || CUR_PAGESIZE,
-      // 不同的入口进入列表页面
-      enterType: ENTER_TYPE[query.source],
+      // 不同的入口进入列表页面, 后端约定该字段默认传‘searchCustPool’
+      enterType: ENTER_TYPE[query.source] || 'searchCustPool',
     };
     const orgId = this.getPostOrgId(query);
     param.orgId = orgId;
