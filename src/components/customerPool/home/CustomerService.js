@@ -7,16 +7,23 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Popover } from 'antd';
 import IECharts from '../../IECharts';
+import { linkTo } from './homeIndicators_';
 
 import antdStyles from '../../../css/antd.less';
 import styles from './customerService.less';
 
+const SOURCE = 'manageService';
+
 export default class CustomerService extends PureComponent {
 
   static propTypes = {
+    cycle: PropTypes.string.isRequired,
+    location: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
     data: PropTypes.array,
   }
 
@@ -77,6 +84,19 @@ export default class CustomerService extends PureComponent {
     ];
   }
 
+  @autobind
+  handleToList() {
+    const { cycle, location, push } = this.props;
+    const params = {
+      cycle,
+      location,
+      push,
+      source: SOURCE,
+      type: 'lastServDt',
+    };
+    linkTo(params);
+  }
+
   render() {
     const { data } = this.props;
     const motOption = this.getOption(_.head(data), ['#33D0E2', '#d6d6d6']);
@@ -103,7 +123,10 @@ export default class CustomerService extends PureComponent {
             <div className={styles.text}>{_.head(data).name || '--'}</div>
           </Popover>
         </div>
-        <div className={classnames(styles.column, styles.secondColumn)}>
+        <div
+          className={classnames(styles.column, styles.secondColumn)}
+          onClick={this.handleToList}
+        >
           <IECharts
             option={serviceOption}
             resizable

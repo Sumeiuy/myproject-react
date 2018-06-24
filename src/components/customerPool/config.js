@@ -75,17 +75,17 @@ export const sourceFilter = {
     // 新增有效户
     effective: [{
       filterName: 'validDt',
-      value: ['cycleEndTime', 'cycleStartTime'],
+      value: ['cycleStartTime', 'cycleEndTime'],
     }],
     // 新增高净值
     netValue: [{
       filterName: 'gjzDt',
-      value: ['cycleEndTime', 'cycleStartTime'],
+      value: ['cycleStartTime', 'cycleEndTime'],
     }],
     // 新增高端产品户
     highProduct: [{
       filterName: 'highPrdtDt',
-      value: ['cycleEndTime', 'cycleStartTime'],
+      value: ['cycleStartTime', 'cycleEndTime'],
     }],
     // 新增产品户
     productCus: [{
@@ -137,6 +137,15 @@ export const sourceFilter = {
     netIncome: [{
       filterName: 'netIncome',
       ...productSaleChildDefaultVal,
+    }],
+  },
+  manageService: {
+    lastServDt: [{
+      filterName: 'lastServDt',
+      value: ['cycleStartTime', 'serviced'],
+      defaultVal: {
+        serviced: 'unServiced',
+      },
     }],
   },
 };

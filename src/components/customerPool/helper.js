@@ -7,8 +7,8 @@ import { sourceFilter, kPIDateScopeType } from './config';
 import filterMark from '../../config/filterSeperator';
 
 function transformCycle(cycle) {
-  const cycleStartTime = moment().format('L');
-  const transToEndTime = (period, several) => moment().subtract(several, period).format('L');
+  const cycleEndTime = moment().format('YYYY-MM-DD');
+  const transToEndTime = (period, several) => moment().subtract(several, period).format('YYYY-MM-DD');
   const cycleEndTimeMap = {
     month: transToEndTime('month', 1),
     season: transToEndTime('month', 3),
@@ -16,8 +16,8 @@ function transformCycle(cycle) {
   };
   const cycleKey = _.findKey(kPIDateScopeType, ['id', cycle]);
   return {
-    cycleStartTime,
-    cycleEndTime: cycleEndTimeMap[cycleKey],
+    cycleEndTime,
+    cycleStartTime: cycleEndTimeMap[cycleKey],
   };
 }
 
@@ -54,7 +54,7 @@ const helper = {
         const filterValue = _.map(filterItem.value, (item) => {
           const currentValue = filterData[item];
           if (currentValue) {
-            return decodeURIComponent(currentValue);
+            return currentValue;
           }
           return defaultVal[item];
         });
