@@ -23,6 +23,9 @@ import styles from './progressList.less';
  * 净新增高端产品户： 817003
  * 新增产品客户： 817004
 */
+
+import { addCustomer } from '../config';
+
 const newCustomerLinkIdx = ['817001', '817002', '817003', '817004'];
 
 export default class ProgressList extends PureComponent {
@@ -91,12 +94,13 @@ export default class ProgressList extends PureComponent {
     const bname = this.transformName(item.cust);
     const param = {
       source: 'custIndicator',
-      type: 'customerType',
+      modalType: 'customerType',
       value: newCustomerLinkIdx[index],  // 提供给列表页传给后端的customerType的值
       bname,
       cycle,
       push,
       location,
+      type: addCustomer[item.id],
     };
     linkTo(param);
   }

@@ -480,6 +480,10 @@ export default class PerformanceIndicators extends PureComponent {
   // 资产和交易量
   @autobind
   renderAssetAndTradeIndicators(param) {
+    const {
+      cycle,
+      location,
+    } = this.props;
     // 资产和交易量（经营指标）
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalTradeingVolumeData = getTradingVolume(argument);
@@ -488,7 +492,11 @@ export default class PerformanceIndicators extends PureComponent {
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <CheckLayout dataSource={finalTradeingVolumeData} />
+            <CheckLayout
+              dataSource={finalTradeingVolumeData}
+              location={location}
+              cycle={cycle}
+            />
           </IfEmpty>
         </RectFrame>
       </Col>

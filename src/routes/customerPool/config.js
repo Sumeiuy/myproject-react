@@ -37,6 +37,7 @@ const ENTER_TYPE = {
   external: 'searchCustPool',
   // 产品潜在目标客户，产品中心外部跳转
   productPotentialTargetCust: 'labelSearchCustPool',
+  assetsTransactions: 'searchCustPool',
 };
 
 // 任务管理岗权限作用的首页入口列表
