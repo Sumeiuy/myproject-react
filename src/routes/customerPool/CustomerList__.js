@@ -624,8 +624,10 @@ export default class CustomerList extends PureComponent {
     }
 
     if (query.source === 'association') { // 热词
-      param.searchTypeReq = query.type;
-      param.searchText = labelName;
+      if (query.type !== 'LABEL') {  // 热词里面竟然有普通标签，sb瞎写，这里把普通标签的处理去掉
+        param.searchTypeReq = query.type;
+        param.searchText = labelName;
+      }
     }
 
     if (query.source === 'association') {
