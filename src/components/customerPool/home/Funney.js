@@ -7,14 +7,15 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { Popover } from 'antd';
 
+
+import { linkTo } from './homeIndicators_';
+import { homeModelType } from '../config';
 import IECharts from '../../IECharts';
-import { openFspTab } from '../../../utils';
 
 import antdStyles from '../../../css/antd.less';
 import styles from './funney.less';
-
-// 服务客户数的 key
-const SERVICE_CUST_NUM = 'custNum';
+// 客户与资产模块的source
+const SOURCE_CUST_ASSETS = 'custAssets';
 
 function getDataConfig(data) {
   return data.map(item => ({
@@ -28,30 +29,12 @@ function getDataConfig(data) {
   }));
 }
 
-function linkToList(item, push) {
-  if (item.key !== SERVICE_CUST_NUM) {
-    return;
-  }
-  openFspTab({
-    routerAction: push,
-    url: '/customer/manage/showCustManageTabWin',
-    param: {
-      id: 'FSP_CUST_TAB_CENTER_MANAGE',
-      title: '客户管理',
-      forceRefresh: true,
-    },
-  });
-}
-
-function renderIntro(data, push) {
+function renderIntro(data) {
   return _.map(
     data,
     (item, index) => (
       <div className={styles.row} key={`row${index}`}>
-        <div
-          className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}
-          onClick={() => linkToList(item, push)}
-        >
+        <div>
           <Popover
             title={`${item.value}`}
             content={item.description}
@@ -81,7 +64,7 @@ function renderIntro(data, push) {
   );
 }
 
-function Funney({ dataSource, push }) {
+function Funney({ dataSource, push, cycle, location }) {
   const { data, color } = dataSource;
   const funnelOption = {
     series: [
@@ -120,19 +103,15 @@ function Funney({ dataSource, push }) {
       if (arg.componentType !== 'series') {
         return;
       }
-      // 点击'服务客户数'时，跳转到 客户中心 > 客户管理 页面
-      if (arg.name === '服务客户数') {
-        openFspTab({
-          routerAction: push,
-          url: '/customer/manage/showCustManageTabWin',
-          param: {
-            id: 'FSP_CUST_TAB_CENTER_MANAGE',
-            title: '客户管理',
-            forceRefresh: true,
-          },
-          pathname: '/fsp/customerCenter/customerManage',
-        });
-      }
+      const modalTypeList = homeModelType[SOURCE_CUST_ASSETS];
+      const params = {
+        source: SOURCE_CUST_ASSETS,
+        type: modalTypeList[arg.dataIndex],
+        push,
+        cycle,
+        location,
+      };
+      linkTo(params);
     });
   };
 
@@ -164,6 +143,8 @@ function Funney({ dataSource, push }) {
 Funney.propTypes = {
   dataSource: PropTypes.object.isRequired,
   push: PropTypes.func.isRequired,
+  location: PropTypes.object.isRequired,
+  cycle: PropTypes.string.isRequired,
 };
 
 export default Funney;

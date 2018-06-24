@@ -19,6 +19,7 @@ import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
 import ProgressList from './ProgressList';
 import logable from '../../../decorators/logable';
+import { homeModelType } from '../config';
 import {
   getHSRate,
   getProductSale,
@@ -36,6 +37,8 @@ import antdStyles from '../../../css/antd.less';
 import styles from './performanceIndicators.less';
 
 const SOURCE_PRODUCT_SALE = 'chanpinxiaoshou';
+// 服务指标（投顾绩效）source
+const SOURCE_SERVICER = 'serviceTarget';
 
 // [{name: 1}, {name: 2}] 转成 [1,2]
 const getLabelList = arr => arr.map(v => (v || {}).name);
@@ -296,14 +299,21 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   // 客户及资产（投顾绩效）
+  @autobind
   renderCustAndPropertyIndicator(param) {
+    const { push, cycle, location } = this.props;
     const data = getCustAndProperty(param.data);
     const headLine = { icon: 'kehu', title: param.headLine };
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <Funney dataSource={data} push={this.props.push} />
+            <Funney
+              location={location}
+              push={push}
+              cycle={cycle}
+              dataSource={data}
+            />
           </IfEmpty>
         </RectFrame>
       </Col>
@@ -389,6 +399,30 @@ export default class PerformanceIndicators extends PureComponent {
     );
   }
 
+  // 服务指标（投顾绩效）下钻
+  @autobind
+  handleServiceToListClick(instance) {
+    instance.on('click', (arg) => {
+      const {
+        push,
+        cycle,
+        location,
+      } = this.props;
+      const modalTypeList = homeModelType[SOURCE_SERVICER];
+      const type = modalTypeList[arg.dataIndex];
+      if (type) {
+        const param = {
+          source: SOURCE_SERVICER,
+          cycle,
+          push,
+          location,
+          bname: arg.name || arg.value,
+          type,
+        };
+        linkTo(param);
+      }
+    });
+  }
   // 服务指标（投顾绩效）
   renderServiceIndicators(param) {
     const performanceData = [];
@@ -411,6 +445,7 @@ export default class PerformanceIndicators extends PureComponent {
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <div>
               <IECharts
+                onReady={this.handleServiceToListClick}
                 option={option}
                 resizable
                 style={{

@@ -90,7 +90,7 @@ export const sourceFilter = {
     // 新增产品户
     productCus: [{
       filterName: 'buyProdDt',
-      value: ['cycleEndTime', 'cycleStartTime'],
+      value: ['cycleStartTime', 'cycleEndTime'],
     }],
   },
   assetsTransactions: {
@@ -148,6 +148,36 @@ export const sourceFilter = {
       },
     }],
   },
+  serviceTarget: {
+    lastServDt: [{
+      filterName: 'lastServDt',
+      value: ['cycleStartTime', 'serviced'],
+      defaultVal: {
+        serviced: 'unServiced',
+      },
+    }],
+    completedRate: [{
+      filterName: 'completedRate',
+      value: [],
+    }],
+  },
+  custAssets: {
+    newOpen: [{
+      filterName: 'newOpen',
+      value: ['cycleStartTime', 'cycleEndTime'],
+    }],
+    lastServDt: [{
+      filterName: 'lastServDt',
+      value: ['cycleStartTime', 'serviced'],
+      defaultVal: {
+        serviced: 'unServiced',
+      },
+    }],
+    tgSignDate: [{
+      filterName: 'tgSignDate',
+      value: ['cycleStartTime', 'cycleEndTime'],
+    }],
+  },
 };
 
 // 首页各模块中不同类别的标识
@@ -158,6 +188,10 @@ export const homeModelType = {
   productSale: ['kfBuyAmt', 'smBuyAmt', 'finaBuyAmt', 'otcBuyAmt'],
   // 净创收
   income: ['purRake', 'saleFare', 'netIncome'],
+  // 服务指标（投顾绩效） 一个模块中不需要下钻的指标名直接设置为null
+  serviceTarget: [null, 'lastServDt', null, 'completedRate'],
+  // 客户及资产（投顾绩效）
+  custAssets: ['newOpen', 'lastServDt', 'tgSignDate'],
 };
 
 export const addCustomer = ['effective', 'netValue', 'highProduct', 'productCus'];
