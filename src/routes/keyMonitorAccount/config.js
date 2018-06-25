@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-20 14:44:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-21 15:34:12
+ * @Last Modified time: 2018-06-22 15:06:36
  * @description 重点监控账户的配置项
  */
 
@@ -116,6 +116,9 @@ const config = {
       key: 'managerName',
       dataIndex: 'managerName',
       width: 150,
+      render(text, record) {
+        return `${text}(${record.managerNo})`;
+      },
     },
   ],
   // 下拉选项的默认选项
