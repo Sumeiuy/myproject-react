@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-22 17:13:31
+ * @Last Modified time: 2018-06-25 14:17:33
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -40,7 +40,6 @@ const mapDispatchToProps = {
 // 筛选条件的key的集合
 const FILTER_INPUT_KEYS = ['exchangeType', 'punishType', 'idNo', 'custNumber'];
 
-
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
@@ -69,6 +68,8 @@ export default class KeyMonitorAccountHome extends Component {
       idNo: '',
       // 经纪客户号
       custNumber: '',
+      // 用于判断交易所下拉框用户有无切换值
+      exchangeTypeHasChange: false,
       pageNum: 1,
       pageSize: 10,
     };
@@ -109,27 +110,23 @@ export default class KeyMonitorAccountHome extends Component {
     if (_.isEmpty(list)) {
       return [];
     }
-    // TODO 此处下个迭代合并0622分支后，需要将 show 取消掉
-    // 在 Select 组件中使用新增的 needShowKey={false} 来控制
     return _.map([DEFAULT_OPTION, ...list], (option) => {
       const { key, value } = option;
       return {
         label: value,
         value: key,
-        show: true,
       };
     });
   }
 
   @autobind
   queryAccountList(query) {
-    this.props.getAccountList({ ...query, orgId: emp.getOrgId(), postnId: emp.getPstnId() });
+    this.props.getAccountList({ ...query, orgId: emp.getOrgId() });
   }
 
   @autobind
   resetFilter(otherObj = {}) {
     this.setState({
-      exchangeType: '',
       punishType: '',
       idNo: '',
       custNumber: '',
@@ -157,7 +154,12 @@ export default class KeyMonitorAccountHome extends Component {
   @autobind
   judgeUserHasInput() {
     // 判断用户有无输入筛选值
-    return _.some(FILTER_INPUT_KEYS, key => this.state[key] !== '');
+    return _.some(FILTER_INPUT_KEYS, (key) => {
+      if (key === 'exchangeType') {
+        return this.state.exchangeTypeHasChange;
+      }
+      return this.state[key] !== '';
+    });
   }
 
   @autobind
@@ -220,14 +222,8 @@ export default class KeyMonitorAccountHome extends Component {
 
   @autobind
   handleExchangeTypeSelectChange(select, value) {
-    this.setState({ exchangeType: value });
+    this.setState({ exchangeType: value, exchangeTypeHasChange: true });
   }
-
-  // 暂时保留，以便需求后期又要改回下拉形式
-  // @autobind
-  // handlePunishTypeSelectChange(select, value) {
-  //   this.setState({ punishType: value });
-  // }
 
   @autobind
   handlePunishTypeInputChange(e) {
@@ -246,7 +242,7 @@ export default class KeyMonitorAccountHome extends Component {
 
   @autobind
   handleRestBtnClick() {
-    // 重置按钮，查询默认值
+    // 重置按钮，查询默认值,交易所的值不变
     this.mapObjectToLocation();
     this.queryAccountList({
       exchangeType: '',
@@ -256,7 +252,7 @@ export default class KeyMonitorAccountHome extends Component {
       pageNum: 1,
       pageSize: 10,
     });
-    this.resetFilter({ pageNum: 1 });
+    this.resetFilter({ pageNum: 1, exchangeTypeHasChange: false });
   }
 
   @autobind
@@ -268,8 +264,8 @@ export default class KeyMonitorAccountHome extends Component {
     } else {
       const query = _.pick(this.state, FILTER_INPUT_KEYS);
       this.mapObjectToLocation({ pageNum: 1, ...query });
-      this.queryAccountList({ pageNum: 1, ...query });
-      this.resetFilter({ pageNum: 1 });
+      this.queryAccountList({ pageNum: 1, pageSize: 10, ...query });
+      // this.resetFilter({ pageNum: 1, exchangeTypeHasChange: false });
     }
   }
 
@@ -277,7 +273,7 @@ export default class KeyMonitorAccountHome extends Component {
   handlePaginationChange(pageNum) {
     const query = this.getQueryFromLocation(this.props.location);
     this.setState({ pageNum });
-    this.queryAccountList({ ...query, pageNum });
+    this.queryAccountList({ ...query, pageNum, pageSize: 10 });
     this.mapObjectToLocation({ pageNum });
   }
 
@@ -294,14 +290,10 @@ export default class KeyMonitorAccountHome extends Component {
     }
     const {
       exchangeType: EXCHANGETYPE,
-      // SZSEPunishType,
-      // SHSEPunishType,
     } = dict;
     const { accountListInfo: { accountList = [], page = {} } } = this.props;
     const columns = this.addOnCellPropsForColumns(LIST_TABLE_COLUMNS);
     const exchangeTypeSelectOptions = this.getSelectOptions(EXCHANGETYPE);
-    // const punishTypeSelectOptions =
-    // this.getSelectOptions([...SHSEPunishType, ...SZSEPunishType]);
 
     return (
       <div className={styles.keyMonitorAccountWrap}>
@@ -310,6 +302,7 @@ export default class KeyMonitorAccountHome extends Component {
             <div className={styles.item}>
               <span className={styles.label}>交易所：</span>
               <Select
+                needShowKey={false}
                 data={exchangeTypeSelectOptions}
                 style={{ width: 90 }}
                 name="exchangeType"
@@ -365,7 +358,7 @@ export default class KeyMonitorAccountHome extends Component {
           <Table
             rowKey="moniKey"
             pagination={false}
-            scroll={{ x: 3000 }}
+            scroll={{ x: 3050 }}
             dataSource={accountList}
             columns={columns}
           />
@@ -377,7 +370,7 @@ export default class KeyMonitorAccountHome extends Component {
               <Pagination
                 current={page.pageNum}
                 pageSize={page.pageSize}
-                total={page.totalCount}
+                total={page.totalRecordNum}
                 onChange={this.handlePaginationChange}
               />
             )
