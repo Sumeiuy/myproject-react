@@ -136,6 +136,26 @@ export default class MatchArea extends PureComponent {
     return url.transfromFilterValFromUrl(filters);
   }
 
+  // 直接取后端返回值渲染的情况
+  renderDefaultVal(item) {
+    const {
+      listItem,
+    } = this.props;
+    const { name, id, unit = '' } = item;
+    const currentVal = listItem[id];
+    if (currentVal) {
+      return (
+        <li title={currentVal}>
+          <span>
+            <i className="label">{name}：</i>
+            {currentVal}{unit}
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
   // 匹配姓名
   renderName() {
     const {
@@ -570,19 +590,23 @@ export default class MatchArea extends PureComponent {
   renderIndividual(filterOrder) {
     let individualInfo = [];
     let individualId = [];
-    _.map(filterOrder, (filterItem) => {
+    _.map(filterOrder, (filterItem, index) => {
       const currentIndividual = matchAreaConfig[filterItem];
-      const { key = [] } = currentIndividual;
-      _.map(key, (individualItem) => {
-        const { render: renderName, id } = individualItem;
-        if (!_.includes(individualId, id)) {
-          let itemNode = this[renderName]();
-          individualId = [...individualId, id];
-          itemNode = _.isArray(itemNode) ? itemNode : [itemNode];
-          individualInfo = [...individualInfo, ...itemNode];
-        }
-      });
+      const { key = [], inset } = currentIndividual;
+      const isEnd = filterOrder.length === index + 1;
+      if (inset || isEnd) {
+        _.map(key, (individualItem) => {
+          const { render: renderName, id } = individualItem;
+          if (!_.includes(individualId, id)) {
+            let itemNode = this[renderName](individualItem);
+            individualId = [...individualId, id];
+            itemNode = _.isArray(itemNode) ? itemNode : [itemNode];
+            individualInfo = [...individualInfo, ...itemNode];
+          }
+        });
+      }
     });
+    individualInfo = _.compact(individualInfo);
     if (filterOrder.length && individualInfo.length) {
       return individualInfo;
     }
