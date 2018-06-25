@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 15:39:47
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-17 22:01:34
+ * @Last Modified time: 2018-06-21 14:51:22
  */
 const config = {
   stockOptionApply: {
@@ -63,7 +63,7 @@ const config = {
       {
         assessEle: '投资经历评估\n(二选一)',
         aptitudeEleInv: '关联A股账户在我公司开立时间6个月以上并开立融资融券证券账户。',
-        aptitudeEleExper: '关联A股账户在我公司开立时间6个月以上，开立融资融券证券账户，或具有金融期货交易经历。',
+        aptitudeEleExper: '关联A股账户在其他机构累计开立时间6个月以上，开立融资融券证券账户，或具有金融期货交易经历。',
         assessResultInv: '符合条件',
         assessResultaAcct: 'A股账户开立时间6个月以上',
         assessResultrzrqzq: '已开立融资融券证券账户',
