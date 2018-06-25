@@ -2,9 +2,10 @@
  * @Author: sunweibin
  * @Date: 2018-06-20 14:44:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-22 15:06:36
+ * @Last Modified time: 2018-06-25 14:28:49
  * @description 重点监控账户的配置项
  */
+import _ from 'lodash';
 
 const config = {
   // 表格Columns
@@ -19,7 +20,7 @@ const config = {
       title: '名单类型',
       key: 'listType',
       dataIndex: 'listType',
-      width: 140,
+      width: 200,
     },
     {
       title: '一码通号码',
@@ -50,24 +51,48 @@ const config = {
       key: 'tradelimitBeginDate',
       dataIndex: 'tradelimitBeginDate',
       width: 150,
+      render(text) {
+        if (typeof text === 'string') {
+          return text.substr(0, 10);
+        }
+        return '';
+      },
     },
     {
       title: '盘后限制截止日期',
       key: 'tradelimitEndDate',
       dataIndex: 'tradelimitEndDate',
       width: 150,
+      render(text) {
+        if (typeof text === 'string') {
+          return text.substr(0, 10);
+        }
+        return '';
+      },
     },
     {
       title: '重点监控开始日期',
       key: 'beginDate',
       dataIndex: 'beginDate',
       width: 150,
+      render(text) {
+        if (typeof text === 'string') {
+          return text.substr(0, 10);
+        }
+        return '';
+      },
     },
     {
       title: '重点监控结束日期',
       key: 'endDate',
       dataIndex: 'endDate',
       width: 150,
+      render(text) {
+        if (typeof text === 'string') {
+          return text.substr(0, 10);
+        }
+        return '';
+      },
     },
     {
       title: '客户名称',
@@ -92,6 +117,9 @@ const config = {
       key: 'isSelfclient',
       dataIndex: 'isSelfclient',
       width: 120,
+      render(text) {
+        return text === '1' ? '是' : '否';
+      },
     },
     {
       title: '客户号',
@@ -117,6 +145,9 @@ const config = {
       dataIndex: 'managerName',
       width: 150,
       render(text, record) {
+        if (_.isNull(text) || _.isNull(record.managerNo)) {
+          return '';
+        }
         return `${text}(${record.managerNo})`;
       },
     },
