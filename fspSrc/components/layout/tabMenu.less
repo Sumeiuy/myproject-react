@@ -75,20 +75,19 @@
 
   .menuItem.widerItem.moreButton {
     position: absolute;
-    top: 6px;
     right: 35px;
     width: 44px;
-    height: 18px;
+    height: 39px;
     margin-left: 10px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
     .text {
-      transform: translateY(0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       i {
         font-size: 12px;
         margin-left: 2px;
-        color: #2e669a;
-        transform: translateY(-4px);
+        color: #108ee9;
+        padding: 0;
         transition: transform .3s linear;
         transform-origin: center 37%;
         &:hover {
@@ -106,17 +105,16 @@
       }
     }
     .link {
+      height: 39px;
+      line-height: 39px;
       font-size: 12px;
       width: auto;
-      height: auto;
       padding: 0;
-      color: #2e669a;
-      transform: translateY(-1px);
+      color: #108ee9;
     }
     &.activeLink {
       border: none;
-      border-radius: 3px;
-      background: #2e669a;
+      background: #108ee9;
       .link, i {
         color: #fff;
       }

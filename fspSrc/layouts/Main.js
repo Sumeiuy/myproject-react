@@ -62,8 +62,6 @@ const mapStateToProps = state => ({
   currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
   // 显示隐藏添加服务记录弹窗
   serviceRecordModalVisible: state.app.serviceRecordModalVisible,
-  // 发送保存服务记录请求成功状态
-  addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   // 服务弹窗对应的客户的经纪客户号
   serviceRecordModalVisibleOfId: state.app.serviceRecordModalVisibleOfId,
   // 服务弹窗对应的客户的经纪客户名
@@ -106,7 +104,7 @@ export default class Main extends PureComponent {
   static propTypes = {
     children: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
-    loading: PropTypes.bool.isRequired,
+    loading: PropTypes.number.isRequired,
     loadingForceFull: PropTypes.bool,
     isBlockRemovePane: PropTypes.bool.isRequired,
     push: PropTypes.func.isRequired,
@@ -119,7 +117,6 @@ export default class Main extends PureComponent {
     serviceRecordModalVisible: PropTypes.bool,
     serviceRecordModalVisibleOfId: PropTypes.string,
     serviceRecordModalVisibleOfName: PropTypes.string,
-    addServeRecordSuccess: PropTypes.bool.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     handleCloseClick: PropTypes.func.isRequired,
@@ -186,7 +183,6 @@ export default class Main extends PureComponent {
       dict,
       empInfo: { empInfo = {}, empPostnList = [], loginInfo = {} },
       navs: { secondaryMenu = [] },
-      addServeRecordSuccess,
       currentCommonServiceRecord,
       addServeRecord,
       serviceRecordModalVisibleOfId,
@@ -257,7 +253,6 @@ export default class Main extends PureComponent {
                   isShow={serviceRecordModalVisible}
                   addServeRecord={addServeRecord}
                   currentCommonServiceRecord={currentCommonServiceRecord}
-                  addServeRecordSuccess={addServeRecordSuccess}
                   onToggleServiceRecordModal={toggleServiceRecordModal}
                   custUuid={custUuid}
                   ceFileDelete={ceFileDelete}
