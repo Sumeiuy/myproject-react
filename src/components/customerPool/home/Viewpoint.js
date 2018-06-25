@@ -42,21 +42,23 @@ export default class Viewpoint extends PureComponent {
   @logable({ type: 'Click', payload: { name: '更多 >' } })
   handleMoreClick() {
     // 跳转到资讯列表界面
-    this.openNewTab('/customerPool/viewpointList', null,
+    this.openNewTab('/latestView/viewpointList', null,
       {
         name: '资讯列表',
-        path: '/customerPool/viewpointList',
+        path: '/latestView/viewpointList',
       });
   }
 
   @autobind
   @logable({ type: 'Click', payload: { name: '详情' } })
-  handleDetailClick(index) {
+  handleDetailClick(id) {
     // 跳转到资讯详情界面
-    this.openNewTab('/customerPool/viewpointDetail', { detailIndex: index },
+    this.openNewTab('/latestView/viewpointDetail', {
+      id,
+    },
       {
         name: '资讯详情',
-        path: '/customerPool/viewpointDetail',
+        path: '/latestView/viewpointDetail',
       });
   }
 
@@ -68,9 +70,9 @@ export default class Viewpoint extends PureComponent {
       value: 'args[0]',
     },
   })
-  handleListClick(title, index) {
+  handleListClick(title, id) {
     if (!_.isEmpty(title)) {
-      this.handleDetailClick(index);
+      this.handleDetailClick(id);
     }
   }
 
@@ -79,7 +81,7 @@ export default class Viewpoint extends PureComponent {
     return titleArray.map((item, index) => (
       <div
         className={classnames(styles.row, { [styles.none]: (index >= 12) })}
-        onClick={() => { this.handleListClick(item.subtitle, index); }}
+        onClick={() => { this.handleListClick(item.subtitle, item.idlist); }}
         key={item.id}
       >
         <a
@@ -96,7 +98,7 @@ export default class Viewpoint extends PureComponent {
     const { information = {} } = this.props;
     const { infoVOList = [] } = _.isEmpty(information) ? {} : information;
     // 展示第一个新闻
-    const { texttitle = '', abstract = '' } = _.isEmpty(infoVOList) ? {} : _.head(infoVOList);
+    const { texttitle = '', abstract = '', idlist: firstNewsId } = _.isEmpty(infoVOList) ? {} : _.head(infoVOList);
     // : 为中文符号，英文的：不匹配
     const titleArray = _.split(texttitle, '：');
     const newTitle = _.last(titleArray);
@@ -140,7 +142,7 @@ export default class Viewpoint extends PureComponent {
                 { [styles.detailsNone]: isHiddenDetail },
               )}
             >
-              <a onClick={() => { this.handleDetailClick(0); }}>[详情]</a>
+              <a onClick={() => { this.handleDetailClick(firstNewsId); }}>[详情]</a>
             </div>
           </div>
         </div>

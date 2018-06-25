@@ -2,14 +2,15 @@
  * @Author: XuWenKang
  * @Description: 最新观点-首页首席观点
  * @Date: 2018-06-21 16:50:10
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-06-21 16:50:10
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-06-25 14:26:49
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { linkTo, openRctTab } from '../../../utils';
-import { url as urlHelper } from '../../../helper';
+import { url as urlHelper, time } from '../../../helper';
+import config from '../config';
 import Icon from '../../common/Icon';
 import styles from './chiefViewpoint.less';
 
@@ -74,8 +75,10 @@ export default class ChiefViewpoint extends PureComponent {
   render() {
     const { data, title } = this.props;
     const { content = '' } = data;
-    const slicedContent = content.length > MAX_LENGTH ?
-      `${content.slice(0, MAX_LENGTH)}...` : content;
+    // 去除内容所有html标签
+    const newContent = content.replace(/<[^>]*>/g, '');
+    const slicedContent = newContent.length > MAX_LENGTH ?
+      `${newContent.slice(0, MAX_LENGTH)}...` : newContent;
     return (
       <div className={styles.chiefViewpointBox}>
         <div className={`${styles.headerBox} clearfix`}>
@@ -83,8 +86,8 @@ export default class ChiefViewpoint extends PureComponent {
           <span>{title}</span>
           <a onClick={this.toListPage}>更多</a>
         </div>
-        <h4 className={styles.title}>{data.title}</h4>
-        <p className={styles.time}>{data.time}</p>
+        <h4 className={styles.title} title={data.title}>{data.title}</h4>
+        <p className={styles.time}>{time.format(data.time, config.dateFormatStr)}</p>
         <p className={styles.content}>
           {slicedContent}
         </p>
