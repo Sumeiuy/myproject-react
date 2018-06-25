@@ -425,14 +425,11 @@ export default class CustomerLists extends PureComponent {
       }
       return taskManagerResp;
     }
-    if (_.includes(ENTERLIST2, source)) {
-      // 有首页指标查询权限 且 首页绩效指标客户范围选中的是 我的客户
-      if (!hasIndexViewPermission || this.orgIdIsMsm()) {
-        return _.uniqBy([allSaleDepartment, ...firstPageResp], 'id');
-      }
-      return firstPageResp;
+    // 有首页指标查询权限 且 首页绩效指标客户范围选中的是 我的客户
+    if (!hasIndexViewPermission || this.orgIdIsMsm()) {
+      return _.uniqBy([allSaleDepartment, ...firstPageResp], 'id');
     }
-    return EMPTY_ARRAY;
+    return firstPageResp;
   }
 
   render() {

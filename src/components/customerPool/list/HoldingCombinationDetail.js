@@ -22,8 +22,8 @@ export default class HoldingCombinationDetail extends PureComponent {
   static propTypes = {
     // 经济客户号
     custId: PropTypes.string.isRequired,
-    // 组合code
-    combinationCode: PropTypes.string.isRequired,
+    // 产品code
+    productCode: PropTypes.string.isRequired,
     // 持仓证券数据
     data: PropTypes.object.isRequired,
     // 查询持仓证券数据
@@ -53,13 +53,13 @@ export default class HoldingCombinationDetail extends PureComponent {
   @autobind
   getDetail() {
     const {
-      combinationCode,
+      productCode,
       queryHoldingSecurityRepetition,
       data,
       custId,
     } = this.props;
-    if (_.isEmpty(data[`${custId}_${combinationCode}`])) {
-      queryHoldingSecurityRepetition({ custId, combinationCode }).then(() => {
+    if (_.isEmpty(data[`${custId}_${productCode}`])) {
+      queryHoldingSecurityRepetition({ custId, productCode }).then(() => {
         this.setState({ hasData: true });
       });
     } else {
@@ -69,8 +69,8 @@ export default class HoldingCombinationDetail extends PureComponent {
 
   @autobind
   getContent() {
-    const { data, combinationCode, custId, formatAsset } = this.props;
-    const list = data[`${custId}_${combinationCode}`] || EMPTY_ARRAY;
+    const { data, productCode, custId, formatAsset } = this.props;
+    const list = data[`${custId}_${productCode}`] || EMPTY_ARRAY;
     const newTitleList = [...holdingSecurityTitleList];
     newTitleList[2].render = (text) => {
       const price = formatAsset(text);

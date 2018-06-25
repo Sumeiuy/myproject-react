@@ -164,7 +164,7 @@ export default class MatchArea extends PureComponent {
   @autobind
   renderOrderCombination() {
     const {
-      listItem: { jxgrpProducts, isPrivateCustomer, empId, custId, combinationCode = '2' },
+      listItem: { jxgrpProducts, isPrivateCustomer, empId, custId },
       hasNPCTIQPermission,
       hasPCTIQPermission,
       queryHoldingSecurityRepetition,
@@ -188,7 +188,7 @@ export default class MatchArea extends PureComponent {
       const id = decodeURIComponent(primaryKeyJxgrps[0]);
       const currentItem = _.find(jxgrpProducts, item => item.id === id);
       const props = {
-        combinationCode,
+        productCode: id,
         custId,
         queryHoldingSecurityRepetition,
         data: holdingSecurityData,
