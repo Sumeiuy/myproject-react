@@ -31,10 +31,7 @@ import CustomerList from './routes/customerPool/CustomerList';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
-// 老的资讯列表即将被替代
-// import ViewpointList from './routes/customerPool/ViewpointList';
 import ViewpointList from './routes/latestView/ViewpointList';
-// import ViewpointDetail from './routes/customerPool/ViewpointDetail';
 import ViewpointDetail from './routes/latestView/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
@@ -94,6 +91,10 @@ import LatestView from './routes/latestView/Home';
 import MajorAssetsList from './routes/latestView/MajorAssetsList';
 // 股票期权评估申请修改页面
 import StockOptionEvaluationEdit from './routes/stockOptionEvaluation/ApplyEdit';
+// 客户关联关系信息申请
+import CustRelationships from './routes/custRelationships/Home';
+// 客户关联关系信息申请驳回后修改页面
+import RejectUpdateHome from './routes/custRelationships/RejectUpdateHome';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -176,10 +177,6 @@ const routes = [
     path: '/customerPool',
     component: CustomerPoolHome,
     children: [
-      // 从 customerPool 页面右下角资讯列表任意标题进入
-      { path: '/viewpointDetail', component: ViewpointDetail },
-      // 从 customerPool 页面右下角资讯列表--更多进入
-      { path: '/viewpointList', component: ViewpointList },
       // 从 customerPool 搜索框下方--任务概览--第三个选项【代办流程】进入
       { path: '/todo', component: ToDo },
       // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
@@ -323,6 +320,10 @@ const routes = [
   },
   // 投顾业务能力竞赛
   { path: '/investmentConsultantRace', component: InvestmentConsultantRace },
+  // 客户关联关系信息申请，直接进入
+  { path: '/custRelationships', component: CustRelationships },
+  // 客户关联关系信息申请，传递参数flowId
+  { path: '/custRelationshipsReject', component: RejectUpdateHome },
   // 直接进入
   {
     path: '/custAllot',

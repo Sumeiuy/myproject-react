@@ -194,13 +194,15 @@ export default class TableDialog extends Component {
             :
             null
         }
-        <Table
-          rowKey={record => record[rowKey]}
-          rowSelection={rowSelection}
-          columns={newColumns}
-          dataSource={dataSource}
-          pagination={false}
-        />
+        <div className={styles.tableWrap}>
+          <Table
+            rowKey={record => record[rowKey]}
+            rowSelection={rowSelection}
+            columns={newColumns}
+            dataSource={dataSource}
+            pagination={false}
+          />
+        </div>
       </Modal>
     );
   }

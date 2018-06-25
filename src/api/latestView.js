@@ -9,19 +9,20 @@
 export default function latestView(api) {
   return {
     // 最新观点-首页首席观点
-    queryChiefViewpoint: query => api.post('/groovynoauth/fsp/product/queryChiefViewpoint', query),
-
+    queryChiefViewpoint: query => api.post('/groovynoauth/fsp/info/newest/queryChiefViewTop', query),
     // 最新观点-首席观点列表
-    queryChiefViewpointList: query => api.post('/groovynoauth/fsp/product/queryChiefViewpointList', query),
-
+    queryChiefViewpointList: query => api.post('/groovynoauth/fsp/info/newest/queryChiefViewList', query),
     // 最新观点-首席观点详情
-    queryChiefViewpointDetail: query => api.post('/groovynoauth/fsp/product/queryChiefViewpointDetail', query),
-
+    queryChiefViewpointDetail: query => api.post('/groovynoauth/fsp/info/newest/queryChiefViewDetail', query),
     // 大类资产配置分析-首页列表
     queryMajorAssetsIndexList: query => api.post('/groovynoauth/fsp/info/newest/queryAssetAllocationAnalysis', query),
     // 大类资产配置分析-更多列表
     queryMajorAssetsList: query => api.post('/groovynoauth/fsp/info/newest/queryAssetAllocationAnalysisList', query),
     // 大类资产配置分析-详情
     queryMajorAssetsDetail: query => api.post('/groovynoauth/fsp/info/newest/queryAssetAllocationAnalysisDetail', query),
+    // 最新观点-首页紫金时钟最当前周期
+    queryZiJinClockCycle: query => api.post('/groovynoauth/fsp/info/newest/zjClockQueryCycle', query),
+    // 最新观点-首页紫金时钟列表
+    queryZiJinViewpointList: query => api.post('/groovynoauth/fsp/info/newest/zjClockTop', query),
   };
 }

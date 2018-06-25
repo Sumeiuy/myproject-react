@@ -186,7 +186,7 @@ export default class CustRange extends PureComponent {
         style={selectBoxStyle}
         labelInValue
         dropdownMatchSelectWidth={false}
-        dropdownStyle={{ width: widthDown, maxHeight: 400, overflow: 'auto' }}
+        dropdownStyle={{ width: widthDown, maxHeight: 300, overflow: 'auto' }}
         getPopupContainer={() => document.querySelector(constants.container)}
         searchPlaceholder={placeholder}
       />

@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-24 10:13:17
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-11 20:34:45
+ * @Last Modified time: 2018-06-14 15:54:21
  */
 
 import React, { PureComponent } from 'react';
@@ -93,7 +93,7 @@ export default class AddCustModal extends PureComponent {
       custKeyword: '',
       // 服务经理关键字
       smKeyword: '',
-      // 开发经理关键字
+      // 介绍人关键字
       dmKeyword: '',
       // 选中的客户
       selectedRows: [],
@@ -248,7 +248,7 @@ export default class AddCustModal extends PureComponent {
     }, this.searchCustList);
   }
 
-  // 更改开发经理
+  // 更改介绍人
   @autobind
   handleDMChange(value) {
     this.setState({
@@ -485,9 +485,9 @@ export default class AddCustModal extends PureComponent {
               />
               <SingleFilter
                 className={styles.searchFilter}
-                filterName="开发经理"
+                filterName="介绍人"
                 showSearch
-                placeholder="请输入开发经理工号、姓名"
+                placeholder="请输入介绍人工号、姓名"
                 data={[]}
                 defaultSelectLabel={dmKeyword || NO_VALUE}
                 value={dmKeyword}

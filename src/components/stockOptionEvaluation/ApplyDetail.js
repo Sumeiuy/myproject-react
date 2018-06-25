@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-07 14:29:19
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-15 15:32:07
+ * @Last Modified time: 2018-06-21 11:08:32
  */
 
 import React, { PureComponent } from 'react';
@@ -86,7 +86,7 @@ export default class ApplyDetail extends PureComponent {
                   <li className={styles.item}>
                     <div className={styles.coloumn}>
                       <div className={styles.label}>
-                        申请请时间
+                        申请时间
                         <span className={styles.colon}>:</span>
                       </div>
                       <div className={styles.value}>

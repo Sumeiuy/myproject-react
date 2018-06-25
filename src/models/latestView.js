@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 最新观点modal
  * @Date: 2018-04-17 10:08:03
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-21 15:26:30
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-06-22 15:19:55
 */
 
 // import _ from 'lodash';
@@ -12,7 +12,7 @@ import config from '../components/latestView/config';
 
 
 const EMPTY_OBJECT = {};
-// const EMPTY_LIST = [];
+const EMPTY_LIST = [];
 
 export default {
   namespace: 'latestView',
@@ -31,6 +31,10 @@ export default {
     majorAssetsData: EMPTY_OBJECT,
     // 大类资产配置分析-详情
     majorAssetsDetail: EMPTY_OBJECT,
+    // 首页紫金时钟当前周期数据
+    ziJinCycleData: EMPTY_OBJECT,
+    // 首页紫金时钟列表
+    ziJinClockList: EMPTY_LIST,
   },
   reducers: {
     // 获取首页-每日首席观点
@@ -60,9 +64,30 @@ export default {
     // 获取首席观点详情
     queryChiefViewpointDetailSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { id } = resultData;
+      const { viewpointDetail } = state;
       return {
         ...state,
-        viewpointDetail: resultData,
+        viewpointDetail: {
+          ...viewpointDetail,
+          [id]: resultData,
+        },
+      };
+    },
+    // 获取首页紫金时钟当前周期数据
+    queryZiJinClockCycleSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        ziJinCycleData: resultData,
+      };
+    },
+    // 获取首页紫金时钟列表数据
+    queryZiJinViewpointListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        ziJinClockList: resultData,
       };
     },
     // 大类资产配置分析-首页列表
@@ -134,7 +159,7 @@ export default {
         payload: response,
       });
     },
-    // 大类资产配置分析-首页列表
+    // 大类资产配置分析-更多列表
     * queryMajorAssetsList({ payload }, { call, put }) {
       const response = yield call(api.queryMajorAssetsList, payload);
       yield put({
@@ -142,11 +167,27 @@ export default {
         payload: response,
       });
     },
-    // 大类资产配置分析-首页列表
+    // 大类资产配置分析-详情
     * queryMajorAssetsDetail({ payload }, { call, put }) {
       const response = yield call(api.queryMajorAssetsDetail, payload);
       yield put({
         type: 'queryMajorAssetsDetailSuccess',
+        payload: response,
+      });
+    },
+    // 获取首页紫金时钟当前周期数据
+    * queryZiJinClockCycle({ payload }, { call, put }) {
+      const response = yield call(api.queryZiJinClockCycle, payload);
+      yield put({
+        type: 'queryZiJinClockCycleSuccess',
+        payload: response,
+      });
+    },
+    // 获取首页紫金时钟列表数据
+    * queryZiJinViewpointList({ payload }, { call, put }) {
+      const response = yield call(api.queryZiJinViewpointList, payload);
+      yield put({
+        type: 'queryZiJinViewpointListSuccess',
         payload: response,
       });
     },

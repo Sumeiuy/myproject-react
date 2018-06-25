@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-11 19:54:09
+ * @Last Modified time: 2018-06-14 15:50:54
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -451,7 +451,7 @@ export default class CreateModal extends PureComponent {
             <InfoTitle head="客户列表" />
             {/* 操作按钮容器 */}
             <div className={`${styles.operateDiv} clearfix`}>
-              <Button onClick={() => showModal(custModalKey)}>
+              <Button ghost type="primary" onClick={() => showModal(custModalKey)}>
                 添加
               </Button>
               <span className={styles.linkSpan}>
@@ -477,7 +477,7 @@ export default class CreateModal extends PureComponent {
             <InfoTitle head="服务经理列表" />
             {/* 操作按钮容器 */}
             <div className={`${styles.operateDiv} clearfix`}>
-              <Button onClick={() => showModal(manageModalKey)}>
+              <Button ghost type="primary" onClick={() => showModal(manageModalKey)}>
                 添加
               </Button>
             </div>

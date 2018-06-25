@@ -12,12 +12,12 @@ import moment from 'moment';
 import Select from '../Select';
 import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
-import DateRangePicker from '../dateRangePicker';
 import Button from '../Button';
 import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
 import contractHelper from '../../../helper/page/contract';
 import { dom, permission } from '../../../helper';
+import DateRangePicker from '../dateRangePicker';
 import { fspContainer, seibelConfig } from '../../../config';
 import config from '../../telephoneNumberManage/config';
 import logable from '../../../decorators/logable';
@@ -28,11 +28,14 @@ const {
   filialeCustTransfer: { pageType: filialeCustTransfer },
 } = seibelConfig;
 const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
+
 // 头部筛选filterBox的高度
-const FILTERBOX_HEIGHT = 32;
-const dateFormat = 'YYYY-MM-DD';
+const FILTERBOX_HEIGHT = 36;
+const dateFormat = 'YYYY/MM/DD';
 // 当前时间
 const currentDate = moment();
+// 分公司客户分配
+const PAGE_CUST_ALLOT = 'custAllotPage';
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -85,9 +88,7 @@ export default class Pageheader extends PureComponent {
   }
 
   static contextTypes = {
-    replace: PropTypes.func.isRequired,
-    // 员工信息
-    empInfo: PropTypes.object.isRequired,
+    empInfo: PropTypes.object,
   }
 
   static defaultProps = {
@@ -96,6 +97,7 @@ export default class Pageheader extends PureComponent {
     needSubType: true,
     needApplyTime: false,
     operateOptions: [],
+    empInfo: {},
     subtypeOptions: [],
     filterCallback: _.noop,
     isUseOfCustomer: true,
@@ -152,6 +154,11 @@ export default class Pageheader extends PureComponent {
   @autobind
   pageCommonHeaderRef(input) {
     this.pageCommonHeader = input;
+  }
+
+  @autobind
+  getCalendarContainer() {
+    return this.pageCommonHeader;
   }
 
   @autobind
@@ -388,6 +395,7 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+
   @autobind
   @logable({
     type: 'CalendarSelect',
@@ -405,11 +413,11 @@ export default class Pageheader extends PureComponent {
   handleCreateDateChange(date) {
     const { startDate, endDate } = date;
     if (startDate !== null && endDate !== null) {
-      const applyTimeStart = startDate.format(dateFormat);
-      const applyTimeEnd = endDate.format(dateFormat);
+      const createTime = startDate.format(dateFormat);
+      const createTimeTo = endDate.format(dateFormat);
       this.props.filterCallback({
-        applyTimeStart,
-        applyTimeEnd,
+        createTime,
+        createTimeTo,
       });
     }
   }
@@ -421,7 +429,6 @@ export default class Pageheader extends PureComponent {
   }
 
   render() {
-    const { empInfo } = this.context;
     const {
       subtypeOptions,
       stateOptions,
@@ -448,10 +455,12 @@ export default class Pageheader extends PureComponent {
           subType,
           status,
           business2,
+          createTime,
+          createTimeTo,
         },
       },
     } = this.props;
-
+    const { empInfo } = this.context;
     const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
     // 客户增加全部
     const customerAllList = !_.isEmpty(customerList) ?
@@ -493,6 +502,9 @@ export default class Pageheader extends PureComponent {
       curApprovePerson = `${curApprovePersonInfo.ptyMngName}(${curApprovePersonInfo.ptyMngId})`;
     }
 
+    // 时间组件的回填
+    const startTime = createTime ? moment(createTime, dateFormat) : null;
+    const endTime = createTimeTo ? moment(createTimeTo, dateFormat) : null;
 
     // 新建按钮权限
     let hasCreatePermission = true;
@@ -504,34 +516,39 @@ export default class Pageheader extends PureComponent {
       hasCreatePermission = permission.hasPermissionOfProtocolCreate(empInfo);
     } else if (pageType === filialeCustTransfer) {
       // 如果分公司客户人工划转,是分公司并且是HTSC 客户分配岗
-      hasCreatePermission = permission.hasFilialeCustTransferCreate(empInfo) &&
-        checkUserIsFiliale();
+      hasCreatePermission = permission.hasFilialeCustTransferCreate(empInfo)
+        && checkUserIsFiliale();
     } else if (pageType === phoneApplyPageType) {
       hasCreatePermission = permission.hasPermissionOfPhoneApplyCreate(empInfo);
     } else {
       // 此处,通用的判断是否需要隐藏新建按钮
       hasCreatePermission = this.props.isShowCreateBtn();
     }
+    // 分公司客户分配不显示客户搜索
+    const custElement = page !== PAGE_CUST_ALLOT ?
+      (<div className={styles.filterFl}>
+        <div className={styles.dropDownSelectBox}>
+          <DropDownSelect
+            value={curCust}
+            placeholder="经纪客户号/客户名称"
+            searchList={customerAllList}
+            showObjKey="custName"
+            objId="custNumber"
+            emitSelectItem={this.selectCustItem}
+            emitToSearch={this.handleCustSearch}
+            name={`${page}-custName`}
+          />
+        </div>
+      </div>)
+    :
+      null;
 
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
           {
             isUseOfCustomer ?
-              <div className={styles.filterFl}>
-                <div className={styles.dropDownSelectBox}>
-                  <DropDownSelect
-                    value={curCust}
-                    placeholder="经纪客户号/客户名称"
-                    searchList={customerAllList}
-                    showObjKey="custName"
-                    objId="custNumber"
-                    emitSelectItem={this.selectCustItem}
-                    emitToSearch={this.handleCustSearch}
-                    name={`${page}-custName`}
-                  />
-                </div>
-              </div>
+              custElement
             :
               <div className={styles.filterFl}>
                 <div className={styles.dropDownSelectBox}>
@@ -610,6 +627,7 @@ export default class Pageheader extends PureComponent {
               orgId={orgId}
             />
           </div>
+
           <div className={styles.filterFl}>
             审批人:
             <div className={styles.dropDownSelectBox}>
@@ -625,6 +643,7 @@ export default class Pageheader extends PureComponent {
               />
             </div>
           </div>
+
           {
             needApplyTime ?
             (
@@ -634,6 +653,9 @@ export default class Pageheader extends PureComponent {
                   <DateRangePicker
                     onChange={this.handleCreateDateChange}
                     disabledRange={this.setDisableRange}
+                    initialEndDate={endTime}
+                    initialStartDate={startTime}
+                    isFixed
                   />
                 </div>
               </div>

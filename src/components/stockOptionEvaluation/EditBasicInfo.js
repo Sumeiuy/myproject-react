@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-21 08:59:02
+ * @Last Modified time: 2018-06-22 16:01:17
  */
 
 import React, { PureComponent } from 'react';
@@ -59,6 +59,9 @@ export default class EditBasicInfo extends PureComponent {
     rzrqzqAcctFlag: PropTypes.string,
     // 已提供金融期货交易证明
     jrqhjyFlag: PropTypes.string,
+    // 客户交易级别校验
+    isShowCustTransLvStatusError: PropTypes.bool,
+    custTransLvStatusErrorMessage: PropTypes.string,
   }
 
   static defaultProps = {
@@ -67,6 +70,8 @@ export default class EditBasicInfo extends PureComponent {
     aAcctOpenTimeFlag: '',
     rzrqzqAcctFlag: '',
     jrqhjyFlag: '',
+    isShowCustTransLvStatusError: false,
+    custTransLvStatusErrorMessage: '',
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -278,12 +283,11 @@ export default class EditBasicInfo extends PureComponent {
         // 申请类型
         reqTypeName,
       },
+      custTransLvName,
       // 受理时间
       accptTime,
       // 受理营业部Id
       busPrcDivId,
-      // 客户交易级别
-      custTransLvName,
       // 已提供大专及以上的学历证明材料
       degreeFlag,
       // A股账户开立时间6个月以上
@@ -292,6 +296,9 @@ export default class EditBasicInfo extends PureComponent {
       rzrqzqAcctFlag,
       // 已提供金融期货交易证明
       jrqhjyFlag,
+      // 客户交易级别校验
+      isShowCustTransLvStatusError,
+      custTransLvStatusErrorMessage,
     } = this.props;
     const {
       isSelectDisabled,
@@ -397,18 +404,14 @@ export default class EditBasicInfo extends PureComponent {
                 客户交易级别
                 <span className={styles.colon}>:</span>
               </div>
-              <div className={`${styles.value} ${styles.custTransLv}`}>
-                <FormItem>
+              <div className={styles.value}>
+                <FormItem
                   {
-                    getFieldDecorator('custTransLvName', {
-                      rules: [{
-                        required: true, message: '客户交易级别不能为空',
-                      }],
-                      initialValue: custTransLvName || EMPTY_INFO,
-                    })(
-                      <input readOnly />,
-                    )
+                    ...this.getErrorMessage(isShowCustTransLvStatusError,
+                    custTransLvStatusErrorMessage)
                   }
+                >
+                  {custTransLvName || EMPTY_INFO}
                 </FormItem>
               </div>
             </div>
