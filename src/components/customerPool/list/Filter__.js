@@ -9,10 +9,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import store from 'store';
-import {
-  SearchInput,
-  NormalTag,
-} from 'lego-react-filter/src';
+import { NormalTag } from 'lego-react-filter/src';
 
 
 import logable from '../../../decorators/logable';
@@ -157,6 +154,17 @@ const basicFilters = [
       width: 184,
     },
   },
+  {
+    filterName: '已开通业务',  // 过滤器中文名称
+    filterId: 'rights', // 过滤器英文代号, 首字母小写
+    type: 'multi', // 过滤器类型
+    dictField: 'custBusinessType', // 过滤器数据在字典中对应的字段
+    dropdownStyle: {
+      maxHeight: 324,
+      overflowY: 'auto',
+      width: 195,
+    },
+  },
 ];
 
 // 需要在更多里选择展示与否的过滤器
@@ -241,17 +249,6 @@ const moreFilters = [
     filterId: 'completedRate', // 过滤器英文代号, 首字母小写
     type: 'multi', // 过滤器类型
     dictField: 'completenessRateList', // 过滤器数据在字典中对应的字段
-    dropdownStyle: {
-      maxHeight: 324,
-      overflowY: 'auto',
-      width: 195,
-    },
-  },
-  {
-    filterName: '已开通业务',  // 过滤器中文名称
-    filterId: 'rights', // 过滤器英文代号, 首字母小写
-    type: 'multi', // 过滤器类型
-    dictField: 'custBusinessType', // 过滤器数据在字典中对应的字段
     dropdownStyle: {
       maxHeight: 324,
       overflowY: 'auto',
@@ -517,7 +514,6 @@ const moreFilters = [
 
 // 更多按钮的菜单数据
 const moreFilterData = [
-  { value: '已开通业务', key: 'rights' },
   { value: '可开通业务', key: 'unrights' },
   { value: '开通业务', key: 'businessOpened' },
   { value: '客户等级', key: 'customerLevel' },
@@ -572,7 +568,6 @@ const moreFilterCategories = [
   {
     type: '客户属性',
     children: [
-      'rights',
       'unrights',
       'businessOpened',
       'customerLevel',
@@ -715,6 +710,7 @@ export default class Filter extends PureComponent {
 
   // 区分是否是从更多里面打开filter，从而控制filter菜单的默认打开
   selectFilterIdFromMore = '';
+  // 区分是否从标签条件里面打开标签， 从而控制标签菜单的默认打开
   labelFilter = '';
 
   @autobind
@@ -1152,21 +1148,12 @@ export default class Filter extends PureComponent {
     } = location.query;
 
     const currentValue = url.transfromFilterValFromUrl(filters);
-    const keyword = currentValue.searchText;
 
     const selectedKeys = this.getMoreFilterOpenKeys(currentValue);
 
     return (
       <div className={styles.filterContainer}>
         <div className={styles.normalFilter}>
-          {
-            <SearchInput
-              className={styles.filter}
-              iconStyle={{ top: 13, right: 13 }}
-              defaultValue={keyword}
-              placeholder="搜索关键字"
-            />
-          }
           {
             basicFilters.map(filter => (
               <HtFilter
