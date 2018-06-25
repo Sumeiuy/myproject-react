@@ -551,6 +551,13 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  clearSelectFilterMemory() {
+    // 每次渲染完还原该值
+    this.selectFilterIdFromMore = '';
+    this.labelFilterVisible = true;
+  }
+
+  @autobind
   renderMoreFilter(obj, moreFilterList, splitLabelList, currentValue) {
     let renderItem;
     if (obj.type === MORE_FILTER_TYPE.more) {
@@ -614,28 +621,12 @@ export default class Filter extends PureComponent {
       />) : null;
   }
 
-  @autobind
-  renderMoreFilters(moreFilterListOpened, currentValue) {
-    const { filtersOfAllSightingTelescope } = this.props;
-    // 按照是否有子标签分类渲染
-    const splitLabelList =
-      this.splitLabelList(currentValue.primaryKeyLabels, filtersOfAllSightingTelescope);
-
-
-    const filters = (
-          _.map(moreFilterListOpened,
-            obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
-    );
-
-    // 每次渲染完还原该值
-    this.selectFilterIdFromMore = '';
-    this.labelFilterVisible = true;
-
-    return filters;
-  }
-
   render() {
-    const { dict, location } = this.props;
+    const {
+      dict,
+      location,
+      filtersOfAllSightingTelescope,
+    } = this.props;
     const {
       filters = '',
     } = location.query;
@@ -645,6 +636,10 @@ export default class Filter extends PureComponent {
     const moreFilterListOpened = store.get(MORE_FILTER_STORAGE);
 
     const selectedKeys = this.getMoreFilterOpenKeys(currentValue);
+
+    // 按照是否有子标签分类渲染
+    const splitLabelList =
+      this.splitLabelList(currentValue.primaryKeyLabels, filtersOfAllSightingTelescope);
 
     return (
       <div className={styles.filterContainer}>
@@ -661,7 +656,11 @@ export default class Filter extends PureComponent {
               />
             ))
           }
-          {this.renderMoreFilters(moreFilterListOpened, currentValue)}
+          {
+            _.map(
+              moreFilterListOpened,
+                obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
+          }
         </div>
         <div className={styles.moreFilterController}>
           {
@@ -702,6 +701,7 @@ export default class Filter extends PureComponent {
             onChange={this.handleMoreFilterChange}
           />
         </div>
+        {this.clearSelectFilterMemory()}
       </div>
     );
   }
