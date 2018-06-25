@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-25 22:33:38
+ * @Last Modified time: 2018-06-25 22:52:43
  */
 
 import React, { PureComponent } from 'react';
@@ -17,10 +17,8 @@ import TableDialog from '../common/biz/TableDialog';
 import InfoTitle from '../common/InfoTitle';
 import CommonUpload from '../common/biz/CommonUpload';
 import AutoComplete from '../common/similarAutoComplete';
-// import BottonGroup from '../permission/BottonGroup';
 import ApprovalBtnGroup from '../common/approvalBtns';
 import EditBasicInfo from './EditBasicInfo';
-// import UploadFile from '../permission/UploadFile';
 import config from './config';
 import { data } from '../../helper';
 
