@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-22 16:48:08
+ * @Last Modified time: 2018-06-25 17:57:02
  */
 
 import React, { PureComponent } from 'react';
@@ -37,13 +37,13 @@ export default class ApplyEditForm extends PureComponent {
     // 附件列表
     attachmentList: PropTypes.array,
     // 客户类型下拉列表
-    stockCustTypeMap: PropTypes.array.isRequired,
+    stockCustTypeList: PropTypes.array.isRequired,
     // 申请类型下拉列表
-    reqTypeMap: PropTypes.array.isRequired,
+    reqTypeList: PropTypes.array.isRequired,
     // 开立期权市场类别下拉列表
-    klqqsclbMap: PropTypes.array.isRequired,
+    optionMarketTypeList: PropTypes.array.isRequired,
     // 业务受理营业部下拉列表
-    busDivisionMap: PropTypes.array.isRequired,
+    busDivisionList: PropTypes.array.isRequired,
     // 受理营业部变更
     acceptOrgData: PropTypes.object.isRequired,
     queryAcceptOrg: PropTypes.func.isRequired,
@@ -428,10 +428,10 @@ export default class ApplyEditForm extends PureComponent {
         currentNodeName,
       },
       attachmentList,
-      stockCustTypeMap,
-      reqTypeMap,
-      klqqsclbMap,
-      busDivisionMap,
+      stockCustTypeList,
+      optionMarketTypeList,
+      reqTypeList,
+      busDivisionList,
       acceptOrgData,
       queryAcceptOrg,
       editButtonListData,
@@ -489,10 +489,10 @@ export default class ApplyEditForm extends PureComponent {
               <EditBasicInfo
                 wrappedComponentRef={this.setBasicInfoFormRef}
                 isEdit={isEdit}
-                stockCustTypeMap={stockCustTypeMap}
-                reqTypeMap={reqTypeMap}
-                klqqsclbMap={klqqsclbMap}
-                busDivisionMap={busDivisionMap}
+                stockCustTypeList={stockCustTypeList}
+                optionMarketTypeList={optionMarketTypeList}
+                reqTypeList={reqTypeList}
+                busDivisionList={busDivisionList}
                 customer={customer}
                 custInfo={detailInfo}
                 accptTime={accptTime}

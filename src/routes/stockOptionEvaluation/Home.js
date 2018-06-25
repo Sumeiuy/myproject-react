@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-19 15:35:56
+ * @Last Modified time: 2018-06-25 18:39:00
  */
 
 import React, { PureComponent } from 'react';
@@ -28,7 +28,7 @@ const { stockOptionApply, stockOptionApply: { statusOptions, pageType } } = conf
 const effect = dva.generateEffect;
 const effects = {
   // 左侧列表
-  getList: 'app/getSeibleList',
+  getList: 'app/getNewSeibleList',
   // 右侧详情
   getDetailInfo: 'stockOptionEvaluation/getDetailInfo',
   // 附件列表
@@ -57,7 +57,7 @@ const mapStateToProps = state => ({
   // 员工基本信息
   empInfo: state.app.empInfo,
   // 左侧列表数据
-  list: state.app.seibleList,
+  list: state.app.newSeibleList,
   // 右侧详情数据
   detailInfo: state.stockOptionEvaluation.detailInfo,
   // 附件列表
@@ -67,13 +67,13 @@ const mapStateToProps = state => ({
   // 客户基本信息
   custInfo: state.stockOptionEvaluation.custInfo,
   // 客户类型下拉列表
-  stockCustTypeMap: state.stockOptionEvaluation.stockCustTypeMap,
+  stockCustTypeList: state.stockOptionEvaluation.stockCustTypeList,
   // 申请类型下拉列表
-  reqTypeMap: state.stockOptionEvaluation.reqTypeMap,
+  reqTypeList: state.stockOptionEvaluation.reqTypeList,
   // 开立期权市场类别下拉列表
-  klqqsclbMap: state.stockOptionEvaluation.klqqsclbMap,
+  optionMarketTypeList: state.stockOptionEvaluation.optionMarketTypeList,
   // 业务受理营业部下拉列表
-  busDivisionMap: state.stockOptionEvaluation.busDivisionMap,
+  busDivisionList: state.stockOptionEvaluation.busDivisionList,
   // 受理营业部变更
   acceptOrgData: state.stockOptionEvaluation.acceptOrgData,
   // 新建页面获取下一步按钮和审批人
@@ -132,13 +132,13 @@ export default class StockOptionApplication extends PureComponent {
     custInfo: PropTypes.object.isRequired,
     getCustInfo: PropTypes.func.isRequired,
     // 客户类型下拉列表
-    stockCustTypeMap: PropTypes.array.isRequired,
+    stockCustTypeList: PropTypes.array.isRequired,
     // 申请类型下拉列表
-    reqTypeMap: PropTypes.array.isRequired,
+    reqTypeList: PropTypes.array.isRequired,
     // 开立期权市场类别下拉列表
-    klqqsclbMap: PropTypes.array.isRequired,
+    optionMarketTypeList: PropTypes.array.isRequired,
     // 业务受理营业部下拉列表
-    busDivisionMap: PropTypes.array.isRequired,
+    busDivisionList: PropTypes.array.isRequired,
     // 获取基本信息的多个select数据
     getSelectMap: PropTypes.func.isRequired,
     // 清除数据
@@ -375,10 +375,10 @@ export default class StockOptionApplication extends PureComponent {
       getBusCustList,
       custInfo,
       getCustInfo,
-      stockCustTypeMap,
-      reqTypeMap,
-      klqqsclbMap,
-      busDivisionMap,
+      stockCustTypeList,
+      optionMarketTypeList,
+      reqTypeList,
+      busDivisionList,
       getSelectMap,
       clearProps,
       acceptOrgData,
@@ -452,10 +452,10 @@ export default class StockOptionApplication extends PureComponent {
             onEmitClearModal={this.handleClearModal}
             custInfo={custInfo}
             getCustInfo={getCustInfo}
-            stockCustTypeMap={stockCustTypeMap}
-            reqTypeMap={reqTypeMap}
-            klqqsclbMap={klqqsclbMap}
-            busDivisionMap={busDivisionMap}
+            stockCustTypeList={stockCustTypeList}
+            optionMarketTypeList={optionMarketTypeList}
+            reqTypeList={reqTypeList}
+            busDivisionList={busDivisionList}
             getSelectMap={getSelectMap}
             acceptOrgData={acceptOrgData}
             queryAcceptOrg={queryAcceptOrg}
