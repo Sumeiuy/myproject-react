@@ -12,7 +12,6 @@ export const PerformanceIndicators = env.isGrayFlag() ?
 export { default as MorningBroadcast } from './MorningBroadcast';
 export { default as ToBeDone } from './ToBeDone';
 export { default as Viewpoint } from './Viewpoint';
-export { default as ManageIndicators } from './ManageIndicators';
 export { default as TabsExtra } from './TabsExtra';
 export { default as Search } from './Search';
 export { default as LabelModal } from './LabelModal';
