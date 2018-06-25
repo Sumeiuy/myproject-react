@@ -3,7 +3,7 @@
  * @Description: 首席观点详情
  * @Date: 2018-06-21 16:49:57
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-25 10:32:44
+ * @Last Modified time: 2018-06-25 16:07:12
  */
 
 import React, { PureComponent } from 'react';
@@ -74,7 +74,7 @@ export default class ViewpointDetail extends PureComponent {
     const {
       location: {
         query,
-        query: { sourceUrl = '/latestView' },
+        query: { sourceUrl = '/latestView/viewpointList' },
       },
     } = this.props;
     const { push } = this.context;

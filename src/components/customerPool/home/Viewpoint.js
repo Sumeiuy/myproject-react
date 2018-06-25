@@ -55,7 +55,6 @@ export default class Viewpoint extends PureComponent {
     // 跳转到资讯详情界面
     this.openNewTab('/latestView/viewpointDetail', {
       id,
-      sourceUrl: '/customerPool',
     },
       {
         name: '资讯详情',
