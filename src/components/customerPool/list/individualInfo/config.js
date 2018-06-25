@@ -214,7 +214,7 @@ const matchRule = {
     key: [
       {
         name: '开户日期',
-        id: 'openDt',
+        id: 'accountOpenDate',
         render: 'renderDefaultVal',
       },
       accountState,
@@ -387,6 +387,15 @@ const matchRule = {
         unit: '元',
       },
     ],
+  },
+  gjlRate: {
+    inset: true,
+    key: [{
+      name: '外部市值',
+      id: 'outMktVal',
+      render: 'renderDefaultVal',
+      unit: '元',
+    }],
   },
 };
 

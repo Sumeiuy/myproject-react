@@ -5,7 +5,7 @@
  */
 import _ from 'lodash';
 import { openRctTab } from '../../../utils';
-import { url as urlHelper, number as numberHelper } from '../../../helper';
+import { url as urlHelper, number as numberHelper, env } from '../../../helper';
 import { getFilter } from '../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import {
@@ -332,13 +332,25 @@ export function linkTo({
   }
   const { query: { orgId, cycleSelect } } = location;
   const pathname = '/customerPool/list';
-  const obj = {
+  let obj = {
     source,
-    type,
-    [modalType]: value,
     bname: encodeURIComponent(bname),
     cycleSelect: cycleSelect || (cycle[0] || {}).key,
   };
+  // 客户列表参数灰度处理
+  if (env.isGrayFlag()) {
+    obj = {
+      ...obj,
+      type,
+      [modalType]: value,
+    };
+  } else {
+    const modalTypeOld = type || 'rightType';
+    obj = {
+      ...obj,
+      [modalTypeOld]: value,
+    };
+  }
   if (orgId) {
     if (orgId === MAIN_MAGEGER_ID) {
       // obj.ptyMng = `${empName}_${empNum}`;

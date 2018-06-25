@@ -182,6 +182,13 @@ export const sourceFilter = {
       value: ['cycleStartTime', 'cycleEndTime'],
     }],
   },
+  aggregationRate: [{
+    filterName: 'gjlRate',
+    value: ['minVal', 'maxVal'],
+    defaultVal: {
+      minVal: '50',
+    },
+  }],
 };
 
 // 首页各模块中不同类别的标识

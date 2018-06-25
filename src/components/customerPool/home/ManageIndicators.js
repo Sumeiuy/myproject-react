@@ -14,8 +14,8 @@ import _ from 'lodash';
 import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
 import IfEmpty from '../common/IfEmpty';
-import CheckLayout from './CheckLayout';
-import ProgressList from './ProgressList';
+import CheckLayout from './CheckLayout__';
+import ProgressList from './ProgressList__';
 import CustomerService from './CustomerService';
 import styles from './performanceIndicators.less';
 import {

@@ -11,14 +11,15 @@ import { Row, Col, Popover } from 'antd';
 import _ from 'lodash';
 import 'echarts-liquidfill';
 
-import CheckLayout from './CheckLayout';
+import CheckLayout from './CheckLayout__';
 import CustomerService from './CustomerService';
-import Funney from './Funney';
+import Funney from './Funney__';
 import IfEmpty from '../common/IfEmpty';
 import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
-import ProgressList from './ProgressList';
+import ProgressList from './ProgressList__';
 import logable from '../../../decorators/logable';
+import { homeModelType } from '../config';
 import {
   getHSRate,
   getProductSale,
@@ -34,6 +35,10 @@ import {
 
 import antdStyles from '../../../css/antd.less';
 import styles from './performanceIndicators.less';
+
+const SOURCE_PRODUCT_SALE = 'chanpinxiaoshou';
+// 服务指标（投顾绩效）source
+const SOURCE_SERVICER = 'serviceTarget';
 
 // [{name: 1}, {name: 2}] 转成 [1,2]
 const getLabelList = arr => arr.map(v => (v || {}).name);
@@ -258,7 +263,7 @@ export default class PerformanceIndicators extends PureComponent {
       return this.renderBusinessIndicator(item);
     } else if (item.key === 'hushenguijilv') {
       return this.renderHSRateIndicators(item);
-    } else if (item.key === 'chanpinxiaoshou' || item.key === 'jingchuangshou') {
+    } else if (item.key === SOURCE_PRODUCT_SALE || item.key === 'jingchuangshou') {
       return this.renderProductSaleAndPureIcomeIndicators(item);
     } else if (item.key === 'fuwuzhibiao' && category === 'performance') {
       return this.renderServiceIndicators(item);
@@ -273,13 +278,20 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   // 服务指标（经营指标）
+  @autobind
   renderManagerServiceIndicators(param) {
+    const { cycle, location, push } = this.props;
     const headLine = { icon: 'kehufuwu', title: param.headLine };
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <CustomerService data={param.data} />
+            <CustomerService
+              cycle={cycle}
+              location={location}
+              push={push}
+              data={param.data}
+            />
           </IfEmpty>
         </RectFrame>
       </Col>
@@ -287,14 +299,21 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   // 客户及资产（投顾绩效）
+  @autobind
   renderCustAndPropertyIndicator(param) {
+    const { push, cycle, location } = this.props;
     const data = getCustAndProperty(param.data);
     const headLine = { icon: 'kehu', title: param.headLine };
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <Funney dataSource={data} push={this.props.push} />
+            <Funney
+              location={location}
+              push={push}
+              cycle={cycle}
+              dataSource={data}
+            />
           </IfEmpty>
         </RectFrame>
       </Col>
@@ -324,7 +343,25 @@ export default class PerformanceIndicators extends PureComponent {
     );
   }
 
-  // 沪深归集率（投顾绩效）
+  @autobind
+  @logable({ type: 'Click', payload: { name: '沪深归集率下钻' } })
+  AggregationToList() {
+    const {
+      push,
+      cycle,
+      location,
+    } = this.props;
+    const param = {
+      source: 'aggregationRate',
+      cycle,
+      push,
+      location,
+    };
+    linkTo(param);
+  }
+
+
+  // 沪深归集率
   renderHSRateIndicators(param) {
     const { value = '' } = param.data[0] || {};
     const data = getHSRate([filterEmptyToNumber(value)]);
@@ -340,6 +377,7 @@ export default class PerformanceIndicators extends PureComponent {
         <RectFrame dataSource={headLine} desc={description}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
+              onEvents={{ click: this.AggregationToList }}
               option={data}
               resizable
               style={{
@@ -354,10 +392,13 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   // 产品销售 & 净创收（投顾绩效）
+  @autobind
   renderProductSaleAndPureIcomeIndicators(param) {
+    const { cycle, location, push, empInfo } = this.props;
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalData = getProductSale(argument);
     const headLine = { icon: 'shouru', title: param.headLine };
+    const type = param.key === SOURCE_PRODUCT_SALE ? 'productSale' : 'income';
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
@@ -365,12 +406,45 @@ export default class PerformanceIndicators extends PureComponent {
             <ProgressList
               dataSource={finalData}
               key={param.key}
-              type={'productSale'}
+              type={type}
+              cycle={cycle}
+              push={push}
+              location={location}
+              empInfo={empInfo}
             />
           </IfEmpty>
         </RectFrame>
       </Col>
     );
+  }
+
+  @autobind
+  handleServiceToListClick(instance) {
+    instance.on('click', (arg) => {
+      this.toList(arg.dataIndex);
+    });
+  }
+
+  // 服务指标（投顾绩效）下钻
+  @autobind
+  toList(dataIndex) {
+    const {
+      push,
+      cycle,
+      location,
+    } = this.props;
+    const modalTypeList = homeModelType[SOURCE_SERVICER];
+    const type = modalTypeList[dataIndex];
+    if (type) {
+      const param = {
+        source: SOURCE_SERVICER,
+        cycle,
+        push,
+        location,
+        type,
+      };
+      linkTo(param);
+    }
   }
 
   // 服务指标（投顾绩效）
@@ -395,6 +469,7 @@ export default class PerformanceIndicators extends PureComponent {
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <div>
               <IECharts
+                onReady={this.handleServiceToListClick}
                 option={option}
                 resizable
                 style={{
@@ -410,7 +485,12 @@ export default class PerformanceIndicators extends PureComponent {
                   overlayStyle={{ maxWidth: '320px' }}
                   overlayClassName={antdStyles.popoverClass}
                 >
-                  <span className={styles.chartLabel}>{data[0].name}</span>
+                  <span
+                    className={styles.chartLabel}
+                    onClick={() => { this.toList(0); }}
+                  >
+                    {data[0].name}
+                  </span>
                 </Popover>
                 <Popover
                   title={`${data[1].name}`}
@@ -420,7 +500,10 @@ export default class PerformanceIndicators extends PureComponent {
                   overlayStyle={{ maxWidth: '320px' }}
                   overlayClassName={antdStyles.popoverClass}
                 >
-                  <span className={styles.chartLabel}>{data[1].name}</span>
+                  <span
+                    className={styles.chartLabel}
+                    onClick={() => { this.toList(1); }}
+                  >{data[1].name}</span>
                 </Popover>
                 <Popover
                   title={`${data[2].name}`}
@@ -430,7 +513,10 @@ export default class PerformanceIndicators extends PureComponent {
                   overlayStyle={{ maxWidth: '320px' }}
                   overlayClassName={antdStyles.popoverClass}
                 >
-                  <span className={styles.chartLabel}>{data[2].name}</span>
+                  <span
+                    onClick={() => { this.toList(2); }}
+                    className={styles.chartLabel}
+                  >{data[2].name}</span>
                 </Popover>
                 <Popover
                   title={`${data[3].name}`}
@@ -440,7 +526,10 @@ export default class PerformanceIndicators extends PureComponent {
                   overlayStyle={{ maxWidth: '320px' }}
                   overlayClassName={antdStyles.popoverClass}
                 >
-                  <span className={styles.chartLabel}>{data[3].name}</span>
+                  <span
+                    onClick={() => { this.toList(3); }}
+                    className={styles.chartLabel}
+                  >{data[3].name}</span>
                 </Popover>
               </div>
             </div>
@@ -470,6 +559,7 @@ export default class PerformanceIndicators extends PureComponent {
               push={push}
               location={location}
               empInfo={empInfo}
+              type="custIndicator"
             />
           </IfEmpty>
         </RectFrame>
@@ -480,6 +570,10 @@ export default class PerformanceIndicators extends PureComponent {
   // 资产和交易量
   @autobind
   renderAssetAndTradeIndicators(param) {
+    const {
+      cycle,
+      location,
+    } = this.props;
     // 资产和交易量（经营指标）
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalTradeingVolumeData = getTradingVolume(argument);
@@ -488,7 +582,11 @@ export default class PerformanceIndicators extends PureComponent {
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <CheckLayout dataSource={finalTradeingVolumeData} />
+            <CheckLayout
+              dataSource={finalTradeingVolumeData}
+              location={location}
+              cycle={cycle}
+            />
           </IfEmpty>
         </RectFrame>
       </Col>
