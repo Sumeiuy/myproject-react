@@ -66,7 +66,6 @@ export default class CustRange extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
     collectData: PropTypes.func,
     updateQueryState: PropTypes.func,
     custRange: PropTypes.array.isRequired,

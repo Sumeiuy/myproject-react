@@ -17,8 +17,15 @@
 @invest-content-container-margin: 20px;
 @invest-block-gutter:16px;
 // font
-@font-family: "Microsoft YaHei", Helvetica, Tahoma, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", STXihei, STHeiti, Heiti, SimSun, sans-serif;
 @font-color: #333;
+@font-family: "Microsoft YaHei", Helvetica, Tahoma, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", STXihei, STHeiti, Heiti, SimSun, sans-serif !important;
+
+// 用于设置font-family
+.fsp-fontfamily() {
+  div, ul, ol, li, p {
+    font-family: @font-family;
+  }
+}
 
 .text-overflow() {
   overflow: hidden;

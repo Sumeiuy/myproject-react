@@ -28,6 +28,7 @@ import businessDepartmentCustomerDistribute from './businessDepartmentCustomerDi
 import custAllot from './custAllot';
 import messageCenter from './messageCenter';
 import keyMonitorAccount from './keyMonitorAccount';
+import custRelationships from './custRelationships';
 
 const api = apiCreator();
 
@@ -92,5 +93,7 @@ export default {
   messageCenter: messageCenter(api),
   // ========== 消息通知提醒
   keyMonitorAccount: keyMonitorAccount(api),
+  // ========== 客户关联关系
+  custRelationships: custRelationships(api),
 };
 

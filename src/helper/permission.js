@@ -299,6 +299,11 @@ const permission = {
   hasJumpTo360CustViewKeyMonitorAccountPermission() {
     return hasDutyInCollection(dutyList, keyMonitorAccount.jumpTo360DutyCollection);
   },
+
+  // HTSC 融资类业务客户关联关系管理岗
+  hasGLGXGLGPermission() {
+    return hasDuty(dutyList, duty.HTSC_GLGXGLG);
+  },
 };
 
 export default permission;
