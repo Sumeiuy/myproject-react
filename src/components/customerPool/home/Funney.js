@@ -144,7 +144,7 @@ Funney.propTypes = {
   dataSource: PropTypes.object.isRequired,
   push: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
-  cycle: PropTypes.string.isRequired,
+  cycle: PropTypes.array.isRequired,
 };
 
 export default Funney;

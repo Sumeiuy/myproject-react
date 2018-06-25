@@ -29,6 +29,58 @@ const matchRule = {
       unit: '元',
     }],
   },
+  cashAmt: {
+    inset: false,
+    key: [{
+      name: '资金余额（含信用）',
+      id: 'cashAmt',
+      render: 'renderDefaultVal',
+      unit: '元',
+    }],
+  },
+  avlAmt: {
+    inset: false,
+    key: [{
+      name: '普通可用资金',
+      id: 'avlAmt',
+      render: 'renderDefaultVal',
+      unit: '元',
+    }],
+  },
+  avlAmtCrdt: {
+    inset: false,
+    key: [{
+      name: '信用可用资金',
+      id: 'avlAmtCrdt',
+      render: 'renderDefaultVal',
+      unit: '元',
+    }],
+  },
+  totMktVal: {
+    inset: true,
+    key: [{
+      name: '总市值(含信用)',
+      id: 'totMktVal',
+      render: 'renderDefaultVal',
+      unit: '元',
+    }],
+  },
+  primaryKeyJxgrps: {
+    inset: true,
+    key: [{
+      name: '订购组合',
+      id: 'primaryKeyJxgrps',
+      render: 'renderOrderCombination',
+    }],
+  },
+  name: {
+    inset: true,
+    key: [{
+      name: '姓名',
+      id: 'empName',
+      render: 'renderDefaultVal',
+    }],
+  },
   accountStatus: {
     inset: false,
     key: [accountState],

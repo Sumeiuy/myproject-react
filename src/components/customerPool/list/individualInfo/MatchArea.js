@@ -11,10 +11,11 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import store from 'store';
 import { isSightingScope } from '../../helper';
-import { url } from '../../../../helper';
+import { url as urlHelper, url } from '../../../../helper';
 import seperator from '../../../../config/filterSeperator';
-import { openFspTab } from '../../../../utils/index';
+import { openFspTab, openRctTab } from '../../../../utils/index';
 import HoldingProductDetail from '../HoldingProductDetail';
+import HoldingCombinationDetail from '../HoldingCombinationDetail';
 import matchAreaConfig from './config';
 import styles from './matchArea.less';
 
@@ -65,7 +66,10 @@ export default class MatchArea extends PureComponent {
     holdingProducts: PropTypes.object.isRequired,
     queryHoldingProductReqState: PropTypes.bool.isRequired,
     formatAsset: PropTypes.func.isRequired,
-  }
+    // 组合产品订购客户查询持仓证券重合度
+    queryHoldingSecurityRepetition: PropTypes.func.isRequired,
+    holdingSecurityData: PropTypes.object.isRequired,
+  };
 
   static contextTypes = {
     push: PropTypes.func.isRequired,
@@ -154,6 +158,90 @@ export default class MatchArea extends PureComponent {
       );
     }
     return null;
+  }
+
+  // 精选组合页面的订购组合
+  @autobind
+  renderOrderCombination() {
+    const {
+      listItem: { jxgrpProducts, isPrivateCustomer, empId, custId, combinationCode = '2' },
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      queryHoldingSecurityRepetition,
+      holdingSecurityData,
+      formatAsset,
+    } = this.props;
+    const { primaryKeyJxgrps } = this.getFilters();
+    if (!_.isEmpty(jxgrpProducts)) {
+      const { empInfo: { empInfo = {} } } = this.context;
+      // 是否显示’持仓详情‘，默认不显示
+      let isShowDetailBtn = false;
+      // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
+      if (hasNPCTIQPermission && !isPrivateCustomer) {
+        isShowDetailBtn = true;
+      }
+      // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
+      // 主服务经理 可以看名下所有客户的持仓信息
+      if (hasPCTIQPermission || empInfo.rowId === empId) {
+        isShowDetailBtn = true;
+      }
+      const id = decodeURIComponent(primaryKeyJxgrps[0]);
+      const currentItem = _.find(jxgrpProducts, item => item.id === id);
+      const props = {
+        combinationCode,
+        custId,
+        queryHoldingSecurityRepetition,
+        data: holdingSecurityData,
+        formatAsset,
+      };
+      if (!_.isEmpty(currentItem)) {
+        return (
+          <li>
+            <span>
+              <i className="label">订购组合：</i>
+              <i>
+                <em
+                  className={`marked ${styles.clickable}`}
+                  onClick={() => this.handleOrderCombinationClick(currentItem.name)}
+                >
+                  {currentItem.name}
+                </em>
+                /{currentItem.code}
+              </i>
+              {isShowDetailBtn && <HoldingCombinationDetail {...props} />}
+            </span>
+          </li>
+        );
+      }
+    }
+    return null;
+  }
+
+  // 点击订购组合名称跳转到详情页面
+  @autobind
+  handleOrderCombinationClick(name) {
+    const { push } = this.context;
+    const { location: { query: { combinationCode } } } = this.props;
+    const query = { id: combinationCode, name };
+    const sUrl = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
+    const pathname = '/choicenessCombination/combinationDetail';
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_JX_GROUP_DETAIL',
+      title: '组合详情',
+    };
+    openRctTab({
+      routerAction: push,
+      sUrl,
+      query,
+      pathname,
+      param,
+      state: {
+        sUrl,
+      },
+    });
   }
 
   // 匹配姓名
@@ -520,30 +608,6 @@ export default class MatchArea extends PureComponent {
           </span>
         </li>
       );
-    }
-    return null;
-  }
-
-  // 精选组合页面的订购组合
-  @autobind
-  renderOrderCombination() {
-    const {
-      listItem: { jxgrpProducts },
-      location: { query: { source, labelMapping } },
-    } = this.props;
-    if (source === 'orderCombination' && !_.isEmpty(jxgrpProducts)) {
-      const id = decodeURIComponent(labelMapping);
-      const currentItem = _.find(jxgrpProducts, item => item.id === id);
-      if (!_.isEmpty(currentItem)) {
-        return (
-          <li>
-            <span>
-              <i className="label">订购组合：</i>
-              <i><em className="marked">{currentItem.name}</em>/{currentItem.code}</i>
-            </span>
-          </li>
-        );
-      }
     }
     return null;
   }

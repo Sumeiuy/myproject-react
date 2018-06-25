@@ -21,7 +21,7 @@ const SOURCE = 'manageService';
 export default class CustomerService extends PureComponent {
 
   static propTypes = {
-    cycle: PropTypes.string.isRequired,
+    cycle: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     data: PropTypes.array,

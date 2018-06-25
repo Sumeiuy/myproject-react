@@ -88,7 +88,7 @@ function CheckLayout(props, { push }) {
 CheckLayout.propTypes = {
   dataSource: PropTypes.array.isRequired,
   location: PropTypes.object.isRequired,
-  cycle: PropTypes.string.isRequired,
+  cycle: PropTypes.array.isRequired,
 };
 
 CheckLayout.contextTypes = {

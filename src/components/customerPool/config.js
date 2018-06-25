@@ -50,6 +50,10 @@ export const sourceFilter = {
       filterName: 'mobile',
       value: ['labelMapping'],
     }],
+    NAME: [{
+      filterName: 'name',
+      value: ['labelName'],
+    }],
   },
   // 来源于开通业务: 开通业务、可开通业务过滤器
   numOfCustOpened: [{
