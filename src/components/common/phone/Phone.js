@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-22 13:33:41
+ * @Last Modified time: 2018-06-25 15:15:02
  */
 
 import React, { PureComponent } from 'react';
@@ -34,7 +34,7 @@ const OPEN_FEATURES = `
 
 const TYPE_CONNECTED = 'connected';
 const TYPE_END = 'end';
-const TYPE_ERROR = 'error';
+const TYPE_ERROR = 'pluginError';
 
 export default class Phone extends PureComponent {
   static propTypes = {
@@ -182,9 +182,19 @@ export default class Phone extends PureComponent {
     } else if (data.type === TYPE_CONNECTED) {
       this.props.onConnected(data);
     } else if (data.type === TYPE_ERROR) {
-      Modal.error({
+      // 隐藏通话蒙版
+      this.props.onShowMask(false);
+      this.popWin.close();
+      this.popWin = null;
+      Modal.confirm({
         title: '提示',
-        content: '您还没有下载打电话插件，请点击下载XXXXXX',
+        content: '您尚未安装通话插件，是否立即安装',
+        onOk() {
+          console.log('OK');
+        },
+        onCancel() {
+          console.log('Cancel');
+        },
       });
     }
     return null;
