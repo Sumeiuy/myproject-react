@@ -3,7 +3,7 @@
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-22 15:19:55
+ * @Last Modified time: 2018-06-25 10:02:59
  */
 
 import React, { PureComponent } from 'react';
@@ -102,7 +102,7 @@ export default class LatestView extends PureComponent {
     queryZiJinClockCycle();
     // 首页紫金时钟列表
     queryZiJinViewpointList({
-      active: 0, // 根据后端要求暂时写死
+      active: '0', // 根据后端要求暂时写死
     });
   }
 
