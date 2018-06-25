@@ -623,12 +623,8 @@ export default class Filter extends PureComponent {
 
 
     const filters = (
-      <span>
-        {
           _.map(moreFilterListOpened,
             obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
-        }
-      </span>
     );
 
     // 每次渲染完还原该值
