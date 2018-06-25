@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-25 17:57:02
+ * @Last Modified time: 2018-06-25 22:16:54
  */
 
 import React, { PureComponent } from 'react';
@@ -20,6 +20,7 @@ import CommonUpload from '../common/biz/CommonUpload';
 import Approval from '../permission/Approval';
 import ApprovalRecord from '../permission/ApprovalRecord';
 import config from './config';
+import { data } from '../../helper';
 
 import styles from './applyEditForm.less';
 
@@ -118,6 +119,8 @@ export default class ApplyEditForm extends PureComponent {
       attachment: detailInfo.attachment,
       // 按钮组信息
       editButtonListData,
+      // 用于重新渲染上传组件的key
+      uploadKey: data.uuid(),
     };
   }
 
@@ -410,6 +413,11 @@ export default class ApplyEditForm extends PureComponent {
     this.basicInfoForm = form;
   }
 
+  @autobind
+  updateValue(attachment) {
+    this.setState({ attachment });
+  }
+
   render() {
     const {
       detailInfo,
@@ -450,6 +458,8 @@ export default class ApplyEditForm extends PureComponent {
       jrqhjyFlag,
       nextApproverModal,
       nextApproverList,
+      attachment,
+      uploadKey,
     } = this.state;
     if (_.isEmpty(this.props.detailInfo)) {
       return null;
@@ -558,9 +568,14 @@ export default class ApplyEditForm extends PureComponent {
             </div>
             <div className={styles.module}>
               <CommonUpload
+                edit
+                reformEnable
+                key={uploadKey}
+                attachment={attachment || ''}
+                needDefaultText={false}
                 attachmentList={attachmentList}
                 wrapClassName={styles.stockAttachmentList}
-                edit
+                uploadAttachment={this.updateValue}
               />
             </div>
             <Approval

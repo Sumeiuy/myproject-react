@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-25 20:36:18
+ * @Last Modified time: 2018-06-25 22:33:38
  */
 
 import React, { PureComponent } from 'react';
@@ -100,12 +100,6 @@ export default class CreateApply extends PureComponent {
       customer: {},
       // 客户基本信息
       custInfo: {},
-      // 新建时 选择的客户
-      custId: '',
-      // 新建时 选择的该客户类型
-      custType: '',
-      // 新建时 选择的该客户姓名
-      custName: '',
       // 新建时流程Id是空
       flowId: '',
       // 客户交易级别

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-25 18:53:26
+ * @Last Modified time: 2018-06-25 21:45:51
  */
 
 import React, { PureComponent } from 'react';
@@ -20,6 +20,8 @@ const RadioGroup = Radio.Group;
 const EMPTY_INFO = '--';
 const Option = Select.Option;
 const EMPTY_LIST = [];
+// 默认的空对象
+const DEFAULT_EMPTY_OPTION = { value: '', label: '--请选择--' };
 
 @create()
 export default class EditBasicInfo extends PureComponent {
@@ -189,6 +191,11 @@ export default class EditBasicInfo extends PureComponent {
     }
   }
 
+  @autobind
+  addEmptyOption(list) {
+    return [DEFAULT_EMPTY_OPTION, ...list];
+  }
+
   // 选择开立期权市场类别
   @autobind
   updateOpenOptMktCatg(name, value) {
@@ -324,6 +331,10 @@ export default class EditBasicInfo extends PureComponent {
     if (isProfessInvset) {
       isProfessInvsetor = isProfessInvset === 'Y' ? '是' : '否';
     }
+    const stockCustTypeListData = this.addEmptyOption(stockCustTypeList);
+    const reqTypeListData = this.addEmptyOption(reqTypeList);
+    const optionMarketTypeListData = this.addEmptyOption(optionMarketTypeList);
+    const busDivisionListData = this.addEmptyOption(busDivisionList);
     return (
       <div className={styles.editBasicInfo}>
         <Form>
@@ -450,7 +461,7 @@ export default class EditBasicInfo extends PureComponent {
                             disabled={isSelectDisabled}
                             onChange={key => this.updateSelect('stockCustType', key)}
                           >
-                            { this.getSelectOption(stockCustTypeList) }
+                            { this.getSelectOption(stockCustTypeListData) }
                           </Select>,
                         )
                       }
@@ -485,7 +496,7 @@ export default class EditBasicInfo extends PureComponent {
                               disabled={isSelectDisabled}
                               onChange={key => this.updateSelect('reqType', key)}
                             >
-                              { this.getSelectOption(reqTypeList) }
+                              { this.getSelectOption(reqTypeListData) }
                             </Select>,
                           )
                         }
@@ -513,7 +524,7 @@ export default class EditBasicInfo extends PureComponent {
                         disabled={isSelectDisabled}
                         onChange={key => this.updateOpenOptMktCatg('openOptMktCatg', key)}
                       >
-                        { this.getSelectOption(optionMarketTypeList) }
+                        { this.getSelectOption(optionMarketTypeListData) }
                       </Select>,
                     )
                   }
@@ -532,7 +543,7 @@ export default class EditBasicInfo extends PureComponent {
                     onChange={key => this.updateBusPrcDiv('busPrcDivId', key)}
                     value={busPrcDivId}
                   >
-                    { this.getSelectOption(busDivisionList) }
+                    { this.getSelectOption(busDivisionListData) }
                   </Select>
                 </FormItem>
               </div>
