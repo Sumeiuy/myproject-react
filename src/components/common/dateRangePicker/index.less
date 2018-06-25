@@ -47,7 +47,7 @@
       color: #333;
     }
     .CalendarDay__selected,
-    .CalendarDay__selected:hover, {
+    .CalendarDay__selected:hover {
       color: #fff;
     }
     .CalendarDay__selected,
@@ -63,6 +63,15 @@
       border: 1px solid #e4e7e7;
       color: #cacccd;
       cursor: not-allowed;
+    }
+  }
+}
+
+.drpWraperFixed {
+  :global {
+    .DateRangePicker_picker {
+      position: fixed;
+      visibility: hidden;
     }
   }
 }

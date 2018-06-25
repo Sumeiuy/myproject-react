@@ -1,0 +1,33 @@
+.custInfoWrap {
+  margin: 14px 0;
+  padding: 14px 20px;
+  border: 1px solid #e9e9e9;
+  height: 50px;
+  display: flex;
+  align-items: center;
+
+  &.isUpdate {
+    border: none;
+    padding: 14px 0;
+  }
+
+  & > .custType,
+  & > .certType {
+    flex: 1 1 auto;
+  }
+  & > .certNo {
+    flex: 2 2 auto;
+  }
+
+  .label {
+    font-size: 14px;
+    color: #a1a1a1;
+    line-height: 20px;
+  }
+
+  .value {
+    font-size: 14px;
+    color: #333;
+    line-height: 20px;
+  }
+}

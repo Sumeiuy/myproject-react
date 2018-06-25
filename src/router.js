@@ -15,6 +15,7 @@ import {
 import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
+import MyFeedback from './routes/feedback/MyFeedback';
 import CommissionHome from './routes/commission/Home';
 import CommissionChangeHome from './routes/commissionChange/Home';
 import CommissionAdjustmentHome from './routes/commissionAdjustment/Home';
@@ -30,8 +31,11 @@ import CustomerList from './routes/customerPool/CustomerList';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
-import ViewpointList from './routes/customerPool/ViewpointList';
-import ViewpointDetail from './routes/customerPool/ViewpointDetail';
+// 老的资讯列表即将被替代
+// import ViewpointList from './routes/customerPool/ViewpointList';
+import ViewpointList from './routes/latestView/ViewpointList';
+// import ViewpointDetail from './routes/customerPool/ViewpointDetail';
+import ViewpointDetail from './routes/latestView/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
 import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
@@ -77,12 +81,21 @@ import CombinationDetail from './routes/choicenessCombination/CombinationDetail'
 import ReportDetail from './routes/choicenessCombination/ReportDetail';
 // 投顾业务能力竞赛
 import InvestmentConsultantRace from './routes/investmentConsultantRace/Home';
+// 客户划转
+import CustAllot from './routes/custAllot/Home';
+import CustAllotNotifies from './routes/custAllot/Notifies';
 // 消息通知提醒
 import MessageCenter from './routes/messageCenter/Home';
 // 股票期权评估申请
 import StockOptionEvaluation from './routes/stockOptionEvaluation/Home';
+// 最新观点
+import LatestView from './routes/latestView/Home';
 // 股票期权评估申请修改页面
 import StockOptionEvaluationEdit from './routes/stockOptionEvaluation/ApplyEdit';
+// 客户关联关系信息申请
+import CustRelationships from './routes/custRelationships/Home';
+// 客户关联关系信息申请驳回后修改页面
+import RejectUpdateHome from './routes/custRelationships/RejectUpdateHome';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -102,6 +115,8 @@ const routes = [
   { path: '/history', component: HistoryHome },
   // 直接进入
   { path: '/feedback', component: FeedBack },
+  // 直接进入
+  { path: '/myFeedback', component: MyFeedback },
   // 直接进入
   { path: '/commission', component: CommissionHome },
   // ['佣金调整', '资讯订阅', '资讯退订']
@@ -184,6 +199,8 @@ const routes = [
       { path: '/createTaskFromTaskRejection1', component: CreateTask },
       // 从任务管理，创建者视图驳回中的任务，进行任务驳回修改
       { path: '/createTaskFromTaskRejection2', component: CreateTask },
+      // 从管理者视图服务经理维度发起任务
+      { path: '/createTaskFromCustScope', component: CreateTask },
       // 客户列表发起任务
       { path: '/createTask', component: CreateTask },
       // 客户分组管理
@@ -202,7 +219,7 @@ const routes = [
   { path: '/userInfoRemind', component: userInfoApproval },
 
   // 消息提醒
-  { path: '/messgeCenter', component: MessageCenter },
+  { path: '/messageCenter', component: MessageCenter },
   // 直接进入
   {
     path: '/filialeCustTransfer',
@@ -310,6 +327,30 @@ const routes = [
   { path: '/investmentConsultantRace', component: InvestmentConsultantRace },
   // 股票期权评估申请
   { path: '/stockOptionEvaluation', component: StockOptionEvaluation },
+  // 客户关联关系信息申请，直接进入
+  { path: '/custRelationships', component: CustRelationships },
+  // 客户关联关系信息申请，传递参数flowId
+  { path: '/custRelationshipsReject', component: RejectUpdateHome },
+  // 直接进入
+  {
+    path: '/custAllot',
+    component: CustAllot,
+    children: [
+      // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type
+      { path: '/notifies', component: CustAllotNotifies },
+    ],
+  },
+  // 最新观点-直接进入
+  {
+    path: '/latestView',
+    component: LatestView,
+    children: [
+      // 首席观点列表页面
+      { path: '/viewpointList', component: ViewpointList },
+      // 首席观点详情页
+      { path: '/viewpointDetail', component: ViewpointDetail },
+    ],
+  },
   // 股票期权评估申请修改
   { path: '/stockOptionEvaluationEdit', component: StockOptionEvaluationEdit },
 ];

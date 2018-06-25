@@ -19,6 +19,8 @@ export default {
     empInfo: EMPTY_OBJECT,
     // 列表
     seibleList: EMPTY_OBJECT,
+    // 新的左侧列表
+    newSeibleList: EMPTY_OBJECT,
     // 部门组织机构树
     custRange: EMPTY_LIST,
     // 拟稿人
@@ -104,6 +106,21 @@ export default {
       return {
         ...state,
         seibleList: {
+          page,
+          resultData: applicationBaseInfoList,
+        },
+      };
+    },
+    // 获取公共左侧列表（后端新的接口）
+    getNewSeibleListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const {
+        page = EMPTY_OBJECT,
+        applicationBaseInfoList = EMPTY_LIST,
+      } = resultData || EMPTY_OBJECT;
+      return {
+        ...state,
+        newSeibleList: {
           page,
           resultData: applicationBaseInfoList,
         },
@@ -227,11 +244,13 @@ export default {
     },
     // 显示与隐藏创建服务记录弹框
     * toggleServiceRecordModal({ payload }, { put }) {
-      // 获取自建任务平台的服务类型、任务反馈字典
-      yield put({
-        type: 'getMotCustfeedBackDict',
-        payload: { pageNum: 1, pageSize: 10000, type: 2 },
-      });
+      if (payload.flag) {
+        // 获取自建任务平台的服务类型、任务反馈字典
+        yield put({
+          type: 'getMotCustfeedBackDict',
+          payload: { pageNum: 1, pageSize: 10000, type: 2 },
+        });
+      }
       // 唤起创建服务记录的弹窗时请求Uuid
       yield put({ type: 'performerView/queryCustUuid' });
       yield put({
@@ -276,6 +295,14 @@ export default {
       const listResponse = yield call(seibelApi.getSeibleList, payload);
       yield put({
         type: 'getSeibleListSuccess',
+        payload: listResponse,
+      });
+    },
+    // 获取公用列表
+    * getNewSeibleList({ payload }, { call, put }) {
+      const listResponse = yield call(seibelApi.getNewSeibleList, payload);
+      yield put({
+        type: 'getNewSeibleListSuccess',
         payload: listResponse,
       });
     },

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { Radio, Menu } from 'antd';
-import Button from '../button';
+import { Button } from 'lego-react-filter/src';
 import styles from './bussinessOpenedMenu.less';
 
 const RadioButton = Radio.Button;

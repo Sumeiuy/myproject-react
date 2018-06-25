@@ -11,16 +11,38 @@ import PropTypes from 'prop-types';
 import { DateRangePicker } from 'react-dates';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classnames from 'classnames';
 import { Icon } from 'antd';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 
+import { dom } from '../../../helper';
 import styles from './index.less';
 
 const START_DATE = 'startDate';
 const END_DATE = 'endDate';
 
 export default class CommonDateRangePicker extends PureComponent {
+  static getDerivedStateFromProps(props, state) {
+    const { prevProps } = state;
+    let nextState = {
+      prevProps: props,
+    };
+    if (props.initialStartDate !== prevProps.initialStartDate) {
+      nextState = {
+        ...nextState,
+        startDate: props.initialStartDate,
+      };
+    }
+    if (props.initialEndDate !== prevProps.initialEndDate) {
+      nextState = {
+        ...nextState,
+        endDate: props.initialEndDate,
+      };
+    }
+    return nextState;
+  }
+
   static propTypes = {
     displayFormat: PropTypes.string,
     startDatePlaceholderText: PropTypes.string,
@@ -32,6 +54,8 @@ export default class CommonDateRangePicker extends PureComponent {
     isInsideOffSet: PropTypes.func,
     hasCustomerOffset: PropTypes.bool,
     defaultVisible: PropTypes.bool,
+    // 日期组件是否需要position: fixed,默认不需要
+    isFixed: PropTypes.bool,
   }
   static defaultProps = {
     displayFormat: 'YYYY-MM-DD',
@@ -48,6 +72,7 @@ export default class CommonDateRangePicker extends PureComponent {
     // 判断时间是否在用户的自定义区间内
     isInsideOffSet: () => true,
     defaultVisible: false,
+    isFixed: false,
   }
 
   constructor(props) {
@@ -58,6 +83,7 @@ export default class CommonDateRangePicker extends PureComponent {
       curFocusedInput: defaultVisible ? START_DATE : null,
       startDate: initialStartDate,
       endDate: initialEndDate,
+      prevProps: props,
     };
   }
 
@@ -111,6 +137,11 @@ export default class CommonDateRangePicker extends PureComponent {
     return isFocuseEndDate ? { startDate, endDate: newDate } : { startDate: newDate, endDate };
   }
 
+  @autobind
+  drpWraperRef(input) {
+    this.drpWraper = input;
+  }
+
   // 切换了日期
   // 如果修改了 起始时间 或者 结束时间段， 则必须同步修改相应的时间
   // 来确保所选则的时间段在可选择的范围内
@@ -152,6 +183,34 @@ export default class CommonDateRangePicker extends PureComponent {
       this.firstDateUserSelect = this.props.initialStartDate;
       // 日历浮层未展示，设置状态
       this.isSetRangeOfEndDate = true;
+    }
+    const { isFixed } = this.props;
+    if (this.focusedInput !== null && isFixed) {
+      // focusedInput为null时候,就是隐藏
+      // 不为null则就是显示日历,isCalcCalendarPosition判断日历弹窗是否需要去计算位置
+      // 此处需要对弹出框的位置进行重新计算
+      setTimeout(() => { this.calcCalendarPosition(); }, 200);
+    }
+  }
+
+  // 计算日历下拉框的位置
+  @autobind
+  calcCalendarPosition() {
+    const { width: viewWidth } = dom.getRect(document.body);
+    const { left, top, width: drpWidth, height: drpHeight } = dom.getRect(this.drpWraper);
+    const picker = this.drpWraper.querySelector('.DateRangePicker_picker');
+    if (picker) {
+      const { width } = dom.getRect(picker);
+      const leftPlusWidth = left + width;
+      const realTop = top + drpHeight;
+      if (leftPlusWidth > viewWidth) {
+        const realLeft = left - (width - drpWidth);
+        dom.setStyle(picker, 'left', `${realLeft}px`);
+      } else {
+        dom.setStyle(picker, 'left', `${left}px`);
+      }
+      dom.setStyle(picker, 'top', `${realTop}px`);
+      dom.setStyle(picker, 'visibility', 'visible');
     }
   }
 
@@ -250,10 +309,17 @@ export default class CommonDateRangePicker extends PureComponent {
       'initialEndDate',
       'initialStartDate',
       'defaultVisible',
+      'isFixed',
     ]);
 
+    const { isFixed } = this.props;
+    const drpWraperCls = classnames({
+      [styles.drpWraper]: true,
+      [styles.drpWraperFixed]: isFixed,
+    });
+
     return (
-      <div className={styles.drpWraper}>
+      <div className={drpWraperCls} ref={this.drpWraperRef}>
         <DateRangePicker
           showDefaultInputIcon
           small

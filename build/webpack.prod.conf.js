@@ -28,7 +28,11 @@ var webpackConfig = merge(baseWebpackConfig, {
       {
         test: /\.jsx?$/,
         loader: 'babel-loader',
-        include: [resolve('config/index.js')].concat(config.src)
+        include:
+          [
+            resolve('config/index.js'),
+            config.src
+          ].concat(config.htComponents)
       },
       {
         test: /\.css$/,
@@ -41,9 +45,6 @@ var webpackConfig = merge(baseWebpackConfig, {
       {
         test: /\.less$/,
         include: config.src,
-        exclude: [
-          resolve('src/components/common/htFilter/treeFilter'),
-        ],
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: (cssLoaders.own).concat({
@@ -64,7 +65,7 @@ var webpackConfig = merge(baseWebpackConfig, {
       },
       {
         test: /\.less$/,
-        include: [config.appNodeModules, config.appStatic, resolve('src/components/common/htFilter/treeFilter')],
+        include: config.appNodeModules,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: cssLoaders.nodeModules.concat({
@@ -205,3 +206,4 @@ if (config.build.bundleAnalyzerReport) {
 }
 
 module.exports = webpackConfig
+

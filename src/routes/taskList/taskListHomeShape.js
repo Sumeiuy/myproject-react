@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:07:12
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-15 16:40:21
+ * @Last Modified time: 2018-06-08 17:48:34
  * @description 针对taskList > Home 组件的props类型校验模块
  */
 import PropTypes from 'prop-types';
@@ -61,7 +61,7 @@ export default {
   getTempQuesAndAnswer: PropTypes.func.isRequired,
   answersList: PropTypes.object,
   saveAnswersByType: PropTypes.func.isRequired,
-  saveAnswersSucce: PropTypes.bool,
+  isSubmitSurveySucceed: PropTypes.bool,
   missionFeedbackData: PropTypes.array.isRequired,
   countAnswersByType: PropTypes.func.isRequired,
   missionFeedbackCount: PropTypes.number.isRequired,
@@ -87,4 +87,11 @@ export default {
   serviceRecordInfo: PropTypes.object.isRequired,
   resetServiceRecordInfo: PropTypes.func.isRequired,
   addCallRecord: PropTypes.func.isRequired,
+  performerViewCurrentTab: PropTypes.string.isRequired,
+  changePerformerViewTab: PropTypes.func.isRequired,
+  serviceProgress: PropTypes.object.isRequired,
+  custFeedBack: PropTypes.array.isRequired,
+  custDetail: PropTypes.object.isRequired,
+  // custDetailResultByScope: PropTypes.object.isRequired,
+  previewCustDetailByScope: PropTypes.func.isRequired,
 };

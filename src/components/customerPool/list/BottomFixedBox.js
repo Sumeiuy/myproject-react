@@ -7,11 +7,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Modal } from 'antd';
-import Button from '../../common/Button';
-import Icon from '../../common/Icon';
-import { fspContainer } from '../../../config';
-// import { emp } from '../../../helper';
+import store from 'store';
+
+import InfoModal from '../../common/infoModal';
+import { fspContainer, padSightLabelDesc } from '../../../config';
+import { PRODUCT_POTENTIAL_TARGET_CUST_ENTRY } from '../../../config/createTaskEntry';
+
 import logable from '../../../decorators/logable';
 
 import styles from './bottomFixedBox.less';
@@ -42,6 +43,7 @@ export default class BottomFixedBox extends PureComponent {
     this.state = {
       taskAndGroupLeftPos: '0',
       warningContent: '',
+      visible: false,
     };
   }
 
@@ -89,7 +91,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 点击新建分组或者发起任务按钮
   @autobind
-  handleClick({ url, title, id, shouldStay, editPane, labelDesc, missionDesc }) {
+  switchToRoute({ url, title, id, shouldStay, editPane }) {
     const {
       page,
       condition,
@@ -97,8 +99,8 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectedIds,
-        selectAll,
-        source,
+          selectAll,
+          source,
         },
         pathname,
         search,
@@ -119,8 +121,6 @@ export default class BottomFixedBox extends PureComponent {
         fr,
         shouldStay,
         editPane,
-        labelDesc,
-        missionDesc,
       );
     } else if (selectAll) {
       this.openByAllSelect(
@@ -134,8 +134,6 @@ export default class BottomFixedBox extends PureComponent {
         fr,
         shouldStay,
         editPane,
-        labelDesc,
-        missionDesc,
       );
     }
   }
@@ -151,30 +149,51 @@ export default class BottomFixedBox extends PureComponent {
       name: '新建分组',
     };
 
-    const {
-      selectCount,
-    } = this.props;
+    const { selectCount } = this.props;
     if (Number(selectCount) > 500) {
-      this.toggleModal();
       this.setState({
+        visible: true,
         modalContent: '一次添加的客户数不能超过500个',
       });
       return;
     }
-    this.handleClick({ url, title, id, shouldStay, editPane });
+    this.switchToRoute({ url, title, id, shouldStay, editPane });
   }
 
   // 跳转到创建任务页面
   @autobind
   toCreateTaskPage() {
-    const { location: { query: { labelDesc, missionDesc } } } = this.props;
+    const { location: { query: {
+      source,
+      labelMapping,
+    } }, clearCreateTaskData } = this.props;
+
     const url = '/customerPool/createTask';
     const title = '自建任务';
     const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
-    // 发起新的任务之前，先清除数据
-    this.props.clearCreateTaskData('custList');
 
-    this.handleClick({ url, title, id, labelDesc: decodeURIComponent(labelDesc), missionDesc });
+    // 有标签描述需要将描述存到storage
+    if (source === PRODUCT_POTENTIAL_TARGET_CUST_ENTRY) {
+      // 如果是外部平台，产品潜在客户跳转进来的，需要添加一个任务提示插入参数，
+      // 在发起任务时，需要用到，这边是瞄准镜标签，不需要labelName
+      const missionDesc = padSightLabelDesc({
+        sightingScopeBool: true,
+        labelId: labelMapping,
+      });
+      store.set(`${labelMapping}-labelDesc`, {
+        missionDesc,
+      });
+    }
+
+    // 发起新的任务之前，先清除数据
+    // custList代表所有从客户列表发起任务的入口
+    clearCreateTaskData('custList');
+
+    this.switchToRoute({
+      url,
+      title,
+      id,
+    });
   }
 
   // 验证通过后跳转到创建任务
@@ -188,7 +207,7 @@ export default class BottomFixedBox extends PureComponent {
       location: {
         query: {
           selectAll,
-        selectedIds,
+          selectedIds,
         },
       },
     } = this.props;
@@ -221,8 +240,8 @@ export default class BottomFixedBox extends PureComponent {
         } = sendCustsServedByPostnResult;
         // 选择超过1000条数据 或者 没有超过1000条但包含非本人名下客户
         if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
-          this.toggleModal();
           this.setState({
+            visible: true,
             modalContent: '您没有“HTSC任务管理”职责，不能对非本人名下客户发起任务',
           });
         } else {
@@ -245,8 +264,6 @@ export default class BottomFixedBox extends PureComponent {
     fr,
     shouldStay,
     editPane,
-    labelDesc,
-    missionDesc,
   ) {
     const tmpArr = [];
     _(ids).forEach((item) => {
@@ -261,8 +278,6 @@ export default class BottomFixedBox extends PureComponent {
       entertype,
       source,
       name,
-      labelDesc,
-      missionDesc,
       condition: condt,
       fr,
     };
@@ -281,8 +296,6 @@ export default class BottomFixedBox extends PureComponent {
     fr,
     shouldStay,
     editPane,
-    labelDesc,
-    missionDesc,
   ) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
@@ -294,17 +307,14 @@ export default class BottomFixedBox extends PureComponent {
       source,
       name,
       fr,
-      labelDesc,
-      missionDesc,
     };
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
-  toggleModal() {
+  handleConfirm() {
     this.setState({
-      visible: !this.state.visible,
+      visible: false,
     });
   }
 
@@ -363,25 +373,14 @@ export default class BottomFixedBox extends PureComponent {
           {this.renderGroup()}
           {this.renderCreateTaskBtn()}
         </div>
-        <Modal
-          title={''}
-          closable
-          okText={'确认'}
-          width={300}
-          height={180}
-          wrapClassName={'infoModal'}
-          visible={visible}
-          onOk={this.toggleModal}
-          onCancel={this.toggleModal}
-          footer={
-            <Button className={'confirm'} type={'primary'} onClick={this.toggleModal}>确认</Button>
-          }
-        >
-          <div className={'info'}>
-            <Icon type="tishi1" className={'tishi'} />
-            <span>{modalContent}</span>
-          </div>
-        </Modal>
+        {
+          visible ?
+            <InfoModal
+              visible
+              content={modalContent}
+              onConfirm={this.handleConfirm}
+            /> : null
+        }
       </div>
     );
   }

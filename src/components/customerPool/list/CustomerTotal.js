@@ -46,6 +46,7 @@ export default class CustomerTotal extends PureComponent {
         ele = <p className="total-num">办理{decodeURIComponent(bname)}的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
         break;
       case 'sightingTelescope':
+      case 'productPotentialTargetCust':
         ele = <p className="total-num">符合瞄准镜搜索条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
         break;
       case 'orderCombination':
