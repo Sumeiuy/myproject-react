@@ -29,6 +29,7 @@ import custAllot from './custAllot';
 import messageCenter from './messageCenter';
 import stockOptionEvaluation from './stockOptionEvaluation';
 import latestView from './latestView';
+import custRelationships from './custRelationships';
 
 const api = apiCreator();
 
@@ -95,5 +96,7 @@ export default {
   stockOptionEvaluation: stockOptionEvaluation(api),
   // ========== 最新观点
   latestView: latestView(api),
+  // ========== 客户关联关系
+  custRelationships: custRelationships(api),
 };
 
