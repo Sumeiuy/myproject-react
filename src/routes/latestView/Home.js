@@ -180,14 +180,16 @@ export default class LatestView extends PureComponent {
               type={config.chiefViewpointType[2].value}
             />
           </div>
-          <MajorAssets
-            data={majorAssetsData}
-            indexData={majorAssetsIndexData}
-            detail={majorAssetsDetail}
-            getDetail={queryMajorAssetsDetail}
-          />
         </div>
         <div className={`${styles.floor} clearfix`}>
+          <div className={styles.left}>
+            <MajorAssets
+              data={majorAssetsData}
+              indexData={majorAssetsIndexData}
+              detail={majorAssetsDetail}
+              getDetail={queryMajorAssetsDetail}
+            />
+          </div>
           <div className={styles.right}>
             <ZiJinClockViewpoint
               data={ziJinCycleData}
