@@ -210,5 +210,3 @@ export const homeModelType = {
   // 客户及资产（投顾绩效）
   custAssets: ['newOpen', 'lastServDt', 'tgSignDate'],
 };
-
-export const addCustomer = ['effective', 'netValue', 'highProduct', 'productCus'];
