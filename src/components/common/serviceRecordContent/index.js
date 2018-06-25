@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-05 18:23:13
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2018-06-15 15:43:07
  */
 
 import React, { PureComponent } from 'react';
@@ -29,6 +29,8 @@ import {
   errorFeedback,
   serveStatusRadioGroupMap,
   getServeWayByCodeOrName,
+  defaultFeedback,
+  defaultFeedbackOption,
 } from './utils';
 
 import styles from './index.less';
@@ -191,9 +193,7 @@ export default class ServiceRecordContent extends PureComponent {
       dict: { serveWay },
     } = props;
     let { serviceTypeCode } = fd;
-    // 默认取第一个客户反馈
-    const defaultFeedback = this.getDefaultFeedback(props);
-    // 如果从客户列表|360视图那边过来,给一个默认的服务类型
+    // 不是只读状态下，也就是新增状态下，默认客户反馈只展示一级，并且给一个默认值：请选择
     if (!isEntranceFromPerformerView) {
       serviceTypeCode = fd.motCustfeedBackDict[0].key;
     }
@@ -226,9 +226,9 @@ export default class ServiceRecordContent extends PureComponent {
       serviceRecord: '',
       // 客户反馈, 非涨乐财富通下，存在二级客户反馈的情况
       custFeedback: defaultFeedback.key,
-      custFeedback2: defaultFeedback.children.key,
+      custFeedback2: defaultFeedback.children && defaultFeedback.children.key,
       custFeedbackText: defaultFeedback.value,
-      custFeedbackText2: defaultFeedback.children.value,
+      custFeedbackText2: defaultFeedback.children && defaultFeedback.children.value,
       // 客户反馈时间, 年月日
       custFeedbackTime: moment(),
       // 涨乐财富通服务方式下的客户反馈
@@ -335,6 +335,9 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackTime: moment(fd.feedbackDate, DATE_FORMAT_END),
       isSelectZhangleFins: serveWayUtil.isZhangle(serviceWayCode),
       ZLCustFeedback: ZLCustFeedbackText,
+      isShowErrorCustFeedback: false,
+      isShowServeStatusError: false,
+      isShowServiceContentError: false,
       ...zlSC,
     };
   }
@@ -345,45 +348,98 @@ export default class ServiceRecordContent extends PureComponent {
     this.serveContentRef = ref;
   }
 
+  /**
+   * 改变当前表单错误的状态
+   * @param {*object} state 当前状态
+   */
+  @autobind
+  toggleFormContentErrorState(state) {
+    this.setState({
+      ...state,
+    });
+  }
+
   // 针对选择的服务方式，非涨乐财富通下的检测
   @autobind
   checkNotZLFins() {
-    const { isEntranceFromPerformerView, isPhoneCall } = this.props;
-    const { serviceStatus, serviceRecord } = this.state;
-    let isShowServeStatusError = false;
-    let isShowServiceContentError = false;
+    const { isPhoneCall } = this.props;
+    const { serviceRecord } = this.state;
+    // 校验服务状态
+    const isShowServeStatusError = this.checkServiceStatus();
     // 校验服务记录
-    isShowServiceContentError = !serviceRecord || serviceRecord.length > serviceContentMaxLength;
-    this.setState({ isShowServiceContentError });
-    // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容
+    const isShowServiceContentError = !serviceRecord
+      || serviceRecord.length > serviceContentMaxLength;
+    // 校验客户反馈
+    const isShowErrorCustFeedback = this.checkCustFeedbackError();
+    // 默认是校验结果正确
+    let hasError = false;
+
+    // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容和客户反馈一二级
     if (isPhoneCall) {
-      return !isShowServiceContentError;
+      hasError = isShowErrorCustFeedback || isShowServiceContentError;
+    } else {
+      hasError = isShowErrorCustFeedback || isShowServiceContentError || isShowServeStatusError;
     }
+
+    return {
+      hasError,
+      errorState: {
+        isShowServeStatusError,
+        isShowErrorCustFeedback,
+        isShowServiceContentError,
+      },
+    };
+  }
+
+  /**
+   * 校验执行者视图下面的服务状态
+   */
+  @autobind
+  checkServiceStatus() {
+    const { isEntranceFromPerformerView } = this.props;
+    const { serviceStatus } = this.state;
+    // 在执行者视图中校验 服务状态 是否已经选择
     if (isEntranceFromPerformerView) {
-      // 在执行者视图中校验 服务状态 是否已经选择
-      isShowServeStatusError = _.isEmpty(serviceStatus);
-      this.setState({ isShowServeStatusError });
+      return _.isEmpty(serviceStatus);
     }
-    return !isShowServeStatusError && !isShowServiceContentError;
+    return false;
   }
 
   // 针对选的服务方式，是涨乐财富通的检测
   @autobind
   checkZLFins() {
-    const { isEntranceFromPerformerView } = this.props;
-    const { serviceStatus } = this.state;
-    let isShowServeStatusError = false;
-    if (isEntranceFromPerformerView) {
-      // 在执行者视图中校验 服务状态 是否已经选择
-      isShowServeStatusError = _.isEmpty(serviceStatus);
-      this.setState({ isShowServeStatusError });
+    // 校验服务内容
+    const isShowServiceContentError = this.serveContentRef.checkData();
+    // 校验服务状态
+    const isShowServeStatusError = this.checkServiceStatus();
+    const hasError = isShowServeStatusError || !isShowServiceContentError;
+
+    return {
+      hasError,
+      errorState: {
+        isShowServeStatusError,
+        isShowServiceContentError,
+      },
+    };
+  }
+
+  /**
+   * 校验客户反馈
+   */
+  @autobind
+  checkCustFeedbackError() {
+    const { custFeedback, custFeedback2 } = this.state;
+    // 如果客户反馈一级或者二级没有勾选，提示错误
+    if (custFeedback === defaultFeedbackOption ||
+      custFeedback2 === defaultFeedbackOption) {
+      return true;
     }
-    return !isShowServeStatusError && this.serveContentRef.checkData();
+    return false;
   }
 
   // 提交时候，进行数据校验
   @autobind
-  checkForSubmit() {
+  checkFormError() {
     const { isSelectZhangleFins } = this.state;
     if (isSelectZhangleFins) {
       return this.checkZLFins();
@@ -394,7 +450,12 @@ export default class ServiceRecordContent extends PureComponent {
   // 向组件外部提供所有数据
   @autobind
   getData() {
-    if (!this.checkForSubmit()) return null;
+    // 有错，直接返回，设置错误状态
+    const { hasError, errorState } = this.checkFormError();
+    if (hasError) {
+      this.toggleFormContentErrorState(errorState);
+      return null;
+    }
 
     const {
       // 服务类型
@@ -434,8 +495,8 @@ export default class ServiceRecordContent extends PureComponent {
       serveTime: serviceTime.format(DATE_FORMAT_FULL_END),
       serveContentDesc: serviceRecord,
       feedBackTime: custFeedbackTime.format(DATE_FORMAT_END),
-      serveCustFeedBack: custFeedback,
-      serveCustFeedBack2: custFeedback2,
+      serveCustFeedBack: custFeedback === defaultFeedbackOption ? '' : custFeedback,
+      serveCustFeedBack2: custFeedback2 === defaultFeedbackOption ? '' : custFeedback2,
       flowStatus: serviceStatus,
       missionFlowId,
       missionId,
@@ -473,6 +534,8 @@ export default class ServiceRecordContent extends PureComponent {
     this.clearUploadedFileList();
     this.setState({
       ...this.getDefaultState(this.props),
+      // 客户反馈的报错是自定义的，不是通过FormItem定义的，需要手动清除
+      isShowErrorCustFeedback: false,
     });
   }
 
@@ -608,6 +671,7 @@ export default class ServiceRecordContent extends PureComponent {
     this.setState({
       custFeedback: first,
       custFeedback2: second,
+      isShowErrorCustFeedback: false,
     });
   }
 
@@ -618,7 +682,7 @@ export default class ServiceRecordContent extends PureComponent {
   }
 
   /**
-   * @param {*} result 本次上传结果
+   * @param {*} file 本次上传结果
    */
   @autobind
   handleFileUpload(file) {
@@ -749,6 +813,7 @@ export default class ServiceRecordContent extends PureComponent {
       serviceRecord,
       isShowServeStatusError,
       isShowServiceContentError,
+      isShowErrorCustFeedback,
       isSelectZhangleFins,
       ZLCustFeedback,
       ZLCustFeedbackTime,
@@ -900,11 +965,15 @@ export default class ServiceRecordContent extends PureComponent {
           !this.state.isSelectZhangleFins
             ? (
               <div className={styles.custFeedbackSection}>
-                <CascadeFeedbackSelect
-                  value={cascadeSelectValue}
-                  onChange={this.handleCascadeSelectChange}
-                  feedbackList={cascadeFeedbackList}
-                />
+                <div className={styles.left}>
+                  <CascadeFeedbackSelect
+                    value={cascadeSelectValue}
+                    onChange={this.handleCascadeSelectChange}
+                    dataSource={cascadeFeedbackList}
+                  />
+                  {isShowErrorCustFeedback ?
+                    <div className={styles.error}>请选择客户反馈</div> : null}
+                </div>
                 <div className={styles.feedbackTime}>
                   <div className={styles.title}>反馈时间:</div>
                   <div className={styles.content} ref={this.setFeedbackTimeRef}>

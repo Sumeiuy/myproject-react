@@ -55,7 +55,20 @@ const onError = (e) => {
   }
 };
 
-const history = createHistory();
+// 离开某个页面，弹出确认框，配合页面中的Prompt使用
+const getConfirmation = (msg, callback) => {
+  // Modal.confirm({
+  //   title: '请确认',
+  //   content: msg,
+  //   onOk() { callback(true); },
+  //   onCancel() { callback(false); },
+  // });
+  callback(true);
+};
+
+const history = createHistory({
+  getUserConfirmation: getConfirmation,
+});
 // 1. Initialize
 const app = dva({
   history,
@@ -128,6 +141,8 @@ app.model(require('./models/businessDepartmentCustDistribute'));
 app.model(require('./models/custAllot'));
 // 消息通知提醒
 app.model(require('./models/messageCenter'));
+// 客户关联关系
+app.model(require('./models/custRelationships'));
 
 // 4. Route
 app.router(routerConfig);

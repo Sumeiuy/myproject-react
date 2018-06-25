@@ -166,6 +166,19 @@
         padding: 7px 8px !important;
       }
     }
+    .left {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-direction: column;
+      flex: 2;
+      white-space: nowrap;
+      .error {
+        font-size: 12px;
+        color: #e33c39;
+        margin-left: 100px;
+      }
+    }
   }
   .uploadSection {
     padding: 10px 0;
@@ -380,12 +393,14 @@
   .readOnlyText {
     line-height: 28px;
     flex: 1;
+    min-width: 142px;
   }
   .gridWrapper {
     padding-bottom: 0;
   }
-  .serveWay, .serveStatus, .serveType, .serveTime, .feedbackTime, .feedbackType {
+  .serveWay, .serveStatus, .serveType, .serveTime, .feedbackTime, .feedbackType, .custFeedbackSection > .left {
     width: auto;
+    min-width: 240px;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
@@ -407,8 +422,17 @@
       flex: 1;
       :global {
         .ant-input {
-          font-size: 12px;
+          font-size: 14px;
           height: 28px;
+          color: #4a4a4a;
+        }
+        .ant-radio-wrapper, .ant-select-selection-selected-value {
+          font-size: 14px;
+          color: #4a4a4a;
+        }
+        // 字体变成14px后，日期组件后面的小图标会被遮挡，此处调整小图标的位置
+        .ant-calendar-picker-clear, .ant-calendar-picker-icon {
+          right: 6px;
         }
       }
     }
@@ -459,8 +483,15 @@
   .divider {
     display: none;
   }
-  .feedbackType {
+  .custFeedbackSection > .left {
+    min-width: 480px;
+    min-height: 30px;
     flex: 2;
+  }
+  .feedbackType {
+    margin: 0;
+    width: 100%;
+    flex: 0 1 auto;
     .content {
       display: flex;
     }

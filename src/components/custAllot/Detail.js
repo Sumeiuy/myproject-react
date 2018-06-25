@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 15:19:51
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-23 21:29:52
+ * @Last Modified time: 2018-06-11 13:17:39
  */
 
 import React, { PureComponent } from 'react';
@@ -36,6 +36,8 @@ const KEY_STATUS = 'status';
 const KEY_OLDEMPNAME = 'oldEmpName';
 const KEY_DMNAME = 'dmName';
 const KEY_NEWEMPNAME = 'newEmpName';
+// 详情页面
+const DETAIL_PAGE = 'detail';
 export default class Detail extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -128,6 +130,7 @@ export default class Detail extends PureComponent {
       orgId: empOrgId,
       pageNum,
       pageSize: 7,
+      type: DETAIL_PAGE,
     };
     queryAddedCustList(payload).then(() => {
       const { addedCustData: { list, page } } = this.props;
@@ -229,7 +232,7 @@ export default class Detail extends PureComponent {
           <CommonTable
             titleList={newTitleList}
             data={assignmentListData}
-            align={'left'}
+            align="left"
             rowKey="custId"
             scroll={{ x: allWidth }}
           />
@@ -239,7 +242,7 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.module}>
           <InfoTitle head="客户分配规则" />
-          <InfoItem label="规则" value={ruleTypeArray[ruleType].label} />
+          <InfoItem label="规则" value={ruleType ? ruleTypeArray[ruleType].label : ''} />
         </div>
         <div className={styles.module}>
           <InfoTitle head="拟稿信息" />

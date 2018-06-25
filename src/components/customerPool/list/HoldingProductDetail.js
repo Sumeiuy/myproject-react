@@ -13,8 +13,10 @@ import { fspContainer } from '../../../config';
 
 import styles from './holdingProductDetail.less';
 
-// 持仓产品的类型：'finance' 金融产品
-const TYPE_FINANCE = 'finance';
+// 持仓产品的类型：'stock' 股票
+const TYPE_STOCK = 'stock';
+// 持仓产品的类型：'fund' 基金
+const TYPE_FUND = 'fund';
 
 export default class HoldingProductDetail extends PureComponent {
 
@@ -74,24 +76,26 @@ export default class HoldingProductDetail extends PureComponent {
     } = this.props;
     // 取当前产品的id
     const currentHoldingProductId = data.id;
-    // 详情接口返回的数据为null值时
-    if (_.isEmpty(holdingProducts[`${custId}${currentHoldingProductId}`])) {
+    // 当前客户所持有的当前产品的信息
+    const customerProductInfo = holdingProducts[`${custId}${currentHoldingProductId}`] || {};
+    // 取当前客户所持有的当前产品在本地存储的数据中对应的详情信息，type时产品的类别，detail时产品的具体信息
+    const { type = '', detail = [] } = customerProductInfo;
+    // 详情接口返回的数据为null值或detail为空数组时，显示暂无数据
+    if (_.isEmpty(customerProductInfo) || _.isEmpty(detail)) {
       return <div className={styles.detailItem}>暂无数据</div>;
     }
-    // 取当前产品id在本地存储的数据中对应的详情信息，type时产品的类别，detail时产品的具体信息
-    const { type = '', detail = [] } = holdingProducts[`${custId}${currentHoldingProductId}`] || {};
-    // 当前产品的类别是否为金融产品
-    const isNotFinance = type !== TYPE_FINANCE;
+
+    // 当前产品为股票、基金时，需要显示类型
+    const isShowCategory = type === TYPE_STOCK || type === TYPE_FUND;
     return _.map(detail, (item = {}) => (
       <div className={styles.detailItem} key={`${item.holdingNumber}-${item.marketValue}`}>
-        {isNotFinance && <p className={styles.category}>{item.category}</p>}
+        {isShowCategory && <p className={styles.category}>{item.category}</p>}
         <ul className={styles.content}>
           {this.generateDetailItemNode({ name: '持仓数量', value: item.holdingNumber, isFormatAsset: false })}
-          {this.generateDetailItemNode({ name: '持仓市值', value: item.marketValue })}
-          {/* this.generateDetailItemNode({ name: '盈亏', value: item.profit }) */}
-          {/* this.generateDetailItemNode({ name: '累计收益', value: item.cumulativeProfit }) */}
-          {/* this.generateDetailItemNode({ name: '累计到账收益', value: item.incomeToAccount }) */}
-          {/* this.generateDetailItemNode({ name: '累计预估收益', value: item.estimatedEarnings }) */}
+          {this.generateDetailItemNode({ name: '持仓市值', value: item.marketValue, currency: item.unit })}
+          {this.generateDetailItemNode({ name: '累计收益', value: item.cumulativeProfit, currency: item.unit })}
+          {this.generateDetailItemNode({ name: '昨日到账收益', value: item.ytdIncomeToAccount, currency: item.unit })}
+          {this.generateDetailItemNode({ name: '昨日预估收益', value: item.ytdEstimatedEarnings, currency: item.unit })}
         </ul>
       </div>
     ));
@@ -104,14 +108,14 @@ export default class HoldingProductDetail extends PureComponent {
    * @param {*} isFormatAsset 表示value传入的数字需要格式成资产类别来显示，eg: 12.23万，默认为true
    */
   @autobind
-  generateDetailItemNode({ name, value, isFormatAsset = true }) {
+  generateDetailItemNode({ name, value, currency, isFormatAsset = true }) {
     if (value !== null) {
       let newValue = value;
       if (isFormatAsset) {
         const { formatAsset } = this.props;
         newValue = 0;
         if (value !== 0) {
-          const obj = formatAsset(value);
+          const obj = formatAsset(value, currency);
           newValue = `${obj.value}${obj.unit}`;
         }
       }

@@ -26,10 +26,12 @@ import {
   TAG_ENTRY,
   CUSTINDICATOR_ENTRY,
   NUMOFCUSTOPENED_ENTRY,
+  TASK_CUST_SCOPE_ENTRY,
 } from '../../../config/createTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 import { PRODUCT_ARGUMENTS } from './config';
+import { getLabelInfo } from '../../../helper/page/customerPool';
 
 const NOOP = _.noop;
 
@@ -158,7 +160,8 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   handleInit(query = {}) {
-    const { source = '', count = '0', missionDesc = '' } = query;
+    const { source = '', count = '0' } = query;
+    const missionDesc = this.getMissionDesc();
     const { dict: { custIndexPlaceHolders }, missionType, taskBasicInfo, templetDesc } = this.props;
     const { motDetailModel = {} } = taskBasicInfo;
     let defaultMissionName = '';
@@ -241,6 +244,7 @@ export default class CreateTaskForm extends PureComponent {
         break;
       case PROGRESS_ENTRY:
       case PIE_ENTRY:
+      case TASK_CUST_SCOPE_ENTRY:
         defaultMissionType = missionType || '请选择';
         defaultExecutionType = '请选择';
         break;
@@ -323,6 +327,18 @@ export default class CreateTaskForm extends PureComponent {
     return [...newList, ...dateList];
   }
 
+  // 获取瞄准镜标签在mention中默认显示的信息
+  @autobind
+  getMissionDesc() {
+    const { location: { query: { condition } } } = this.props;
+    if (condition) {
+      const { primaryKey = [] } = JSON.parse(decodeURIComponent(condition));
+      const { missionDesc } = getLabelInfo(primaryKey[0]);
+      return missionDesc || '';
+    }
+    return '';
+  }
+
   render() {
     const {
       dict,
@@ -353,7 +369,8 @@ export default class CreateTaskForm extends PureComponent {
       count,
       statusData,
     } = this.state;
-    const { missionDesc, source } = query || {};
+    const { source } = query || {};
+    const missionDesc = this.getMissionDesc();
     // 构造suggestion给mention
     let templetDescSuggestion = {};
 

@@ -2,8 +2,8 @@
  * @Description: 执行者视图右侧详情
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-04 10:06:30
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-15 10:35:37
  */
 
 
@@ -11,9 +11,37 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import cx from 'classnames';
 import BasicInfo from './BasicInfo';
 import TabsArea from './TabsArea';
 import styles from './performerViewDetail.less';
+
+import {
+  SMALL_PAGESIZE,
+  MEDIUM_PAGESIZE,
+  LARGE_PAGESIZE,
+  EXTRALARGE_PAGESIZE,
+} from '../../../routes/taskList/config';
+
+// 当左侧列表或fsp中左侧菜单被折叠或者展开时，返回当前的服务实施列表的pageSize
+// isFoldFspLeftMenu=true fsp的左侧菜单被折叠收起
+// isFoldLeftList=true 执行者视图左侧列表被折叠收起
+const getPageSize = (isFoldFspLeftMenu, isFoldLeftList) => {
+  // 全部都折叠起来放12个
+  if (isFoldFspLeftMenu && isFoldLeftList) {
+    return EXTRALARGE_PAGESIZE;
+  }
+  // FSP左侧菜单折叠放9个
+  if (isFoldFspLeftMenu) {
+    return MEDIUM_PAGESIZE;
+  }
+  // 任务列表折叠起来放10个
+  if (isFoldLeftList) {
+    return LARGE_PAGESIZE;
+  }
+  // 其余的放6个
+  return SMALL_PAGESIZE;
+};
 
 export default class PerformerViewDetail extends PureComponent {
 
@@ -40,7 +68,6 @@ export default class PerformerViewDetail extends PureComponent {
     taskTypeCode: PropTypes.string,
     // 自建任务的类型Code，与mot任务的eventId同理
     serviceTypeCode: PropTypes.string,
-    modifyLocalTaskList: PropTypes.func.isRequired,
     // 涨乐财富通服务方式下的客户反馈列表以及查询方法
     queryCustFeedbackList4ZLFins: PropTypes.func.isRequired,
     custFeedbackList: PropTypes.array.isRequired,
@@ -76,12 +103,6 @@ export default class PerformerViewDetail extends PureComponent {
     serviceTypeCode: '',
     queryCustomer: _.noop,
     customerList: [],
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
   }
 
   // 生成基本信息中的内容
@@ -166,8 +187,13 @@ export default class PerformerViewDetail extends PureComponent {
       servicePolicy,
     } = basicInfo;
     // sticky-container 作为子元素悬停参照物
+    const containerCls = cx(
+      [styles.performerViewDetail],
+      'sticky-container',
+      'lego-filter-menuContainer',
+    );
     return (
-      <div className={`sticky-container ${styles.performerViewDetail}`}>
+      <div className={containerCls} id="performerViewDetail">
         <BasicInfo
           missionName={missionName}
           missionStatusName={missionStatusName}
@@ -180,6 +206,7 @@ export default class PerformerViewDetail extends PureComponent {
           searchCustomer={this.searchCustomer}
           customerList={customerList}
           reloadTargetCustInfo={this.reloadTargetCustInfo}
+          getPageSize={getPageSize}
         />
       </div>
     );

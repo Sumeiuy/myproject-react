@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-07 17:34:14
+ * @Last Modified time: 2018-06-13 17:54:09
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -118,22 +118,32 @@ export default class MissionBind extends PureComponent {
 
   @autobind
   handleTaskBindTemplateModalOK(list) {
-    if (!_.isEmpty(list)) {
-      // 选择了弹出层的模板列表后,需要针对该任务下的已经存在的模板和选择添加的模板进行去重
-      // 然后，在调用添加接口，进行添加数据
-      // 获取当前任务下绑定的模板列表, collapseActiveKey 可以用户确认用户目前点击的哪个任务的id
-      const { collapseActiveKey, active } = this.state;
-      const { taskBindTemplate: { missionList = [] } } = this.props;
-      const { templateList } = _.find(missionList, item => item.id === collapseActiveKey);
-      // 在用户选择的模板列表中取消掉当前任务中已经存在的模板
-      const selectedIds = _.filter(list, item => !_.includes(templateList, o => o.id === item));
+    // 此处确保穿过来的 list 为非空
+    // 选择了弹出层的模板列表后,需要针对该任务下的已经存在的模板和选择添加的模板进行去重
+    // 然后，在调用添加接口，进行添加数据
+    // 获取当前任务下绑定的模板列表, collapseActiveKey 可以用户确认用户目前点击的哪个任务的id
+    const { collapseActiveKey, active } = this.state;
+    const { taskBindTemplate: { missionList = [] } } = this.props;
+    // templateList 是已经添加的模板列表
+    const { templateList } = _.find(missionList, item => item.id === collapseActiveKey);
+    // 此处后端返回的接口数据可能为null, 使用 _.map 来获取 id 数据
+    const templateIds = _.map(templateList, 'id');
+    // 在用户选择的模板列表中取消掉当前任务中已经存在的模板
+    const selectedIds = _.filter(list, item => !_.includes(templateIds, item));
+    // 此处增加一个判断如果用户选择的模板列表去重后，selectedIds 为空数据，
+    // 即用户选择的为全部存在了，则提示用户已经添加
+    if (_.isEmpty(selectedIds)) {
+      confirm({
+        content: '您选择的模板已经全部存在,请重新选择！',
+      });
+    } else {
       this.props.bindTemplateListForMission({
         type: active,
         templateList: selectedIds,
         missionId: collapseActiveKey,
       }).then(this.refreshListAfterAdd);
+      this.handleCloseModal();
     }
-    this.handleCloseModal();
   }
 
 

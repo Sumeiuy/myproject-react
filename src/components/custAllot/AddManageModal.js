@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-24 10:13:17
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-25 13:52:17
+ * @Last Modified time: 2018-06-14 15:39:08
  */
 
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { message } from 'antd';
 import _ from 'lodash';
+
 import { SingleFilter } from 'lego-react-filter/src';
 import { TreeFilter as HTTreeFilter } from 'lego-tree-filter/src';
 
@@ -246,25 +247,25 @@ export default class AddManageModal extends PureComponent {
             <div className={styles.operateDiv} ref={filterWrap => this.filterWrap = filterWrap}>
               <SingleFilter
                 className={styles.firstFilter}
-                filterName={'服务经理'}
+                filterName="服务经理"
                 showSearch
-                placeholder={'请输入服务经理工号、姓名'}
+                placeholder="请输入服务经理工号、姓名"
                 data={[]}
-                defaultSelectLabel={_.isEmpty(smKeyword) ? NO_VALUE : smKeyword}
+                defaultSelectLabel={smKeyword || NO_VALUE}
                 value={smKeyword}
                 onInputChange={_.debounce(this.handleEmpChange, 500)}
               />
               <HTTreeFilter
                 value={_.isEmpty(orgId) ? '' : orgId}
                 treeData={treeCustRange}
-                filterName={'所属营业部'}
+                filterName="所属营业部"
                 treeDefaultExpandAll
                 onChange={this.handleTreeSelectChange}
                 getPopupContainer={this.findContainer}
                 dropdownClassName={styles.dropdownClassName}
               />
               <SingleFilter
-                filterName={'职位类型'}
+                filterName="职位类型"
                 data={positionTypeArray}
                 value={positionType}
                 onChange={this.handleFilterChange}
@@ -274,8 +275,8 @@ export default class AddManageModal extends PureComponent {
               <CommonTable
                 data={list || []}
                 titleList={manageTitleList}
-                align={'left'}
-                rowKey={'positionId'}
+                align="left"
+                rowKey="positionId"
                 rowSelection={rowSelection}
               />
               <Pagination {...paginationOption} />

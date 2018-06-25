@@ -35,7 +35,6 @@ const TabPane = Tabs.TabPane;
 const mapStateToProps = state => ({
   fbDetail: state.feedback.fbDetail,
   recordList: state.feedback.recordList,
-  updateQuestion: state.feedback.updateQuestion,
 });
 
 const getDataFunction = loading => totype => query => ({
@@ -55,12 +54,10 @@ export default class Detail extends PureComponent {
   static propTypes = {
     fbDetail: PropTypes.object.isRequired,
     recordList: PropTypes.object.isRequired,
-    updateQuestion: PropTypes.object.isRequired,
     getFeedbackDetail: PropTypes.func.isRequired,
     getFeedbackRecordList: PropTypes.func.isRequired,
     updateFeedback: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -319,8 +316,11 @@ export default class Detail extends PureComponent {
         );
         detail.uploadedFiles = removeEmpty(files) || [];
       }
+      // 必传字段 processSuggest
+      const { processSuggest = '' } = detail || {};
       updateFeedback({
         request: {
+          processSuggest,
           ...detail,
           id: currentId,
           feedbackId: currentId,
@@ -486,8 +486,9 @@ export default class Detail extends PureComponent {
     const { remarkList = EMPTY_LIST,
       processList = EMPTY_LIST,
       suggestList = EMPTY_LIST,
+      questionList = EMPTY_LIST,
      } = voList; // 处理记录
-    const processRecordList = _.concat(remarkList, suggestList);
+    const processRecordList = _.concat(questionList, remarkList, suggestList);
     const handleRecordList = _.concat(remarkList, suggestList, processList);
     const {
       attachModelList,

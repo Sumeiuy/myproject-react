@@ -102,6 +102,11 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['feedback'], () => 
         import('../routes/feedback/Home' /* webpackChunkName: "feedback" */ )),
     },
+    // // 直接进入
+    '/myFeedback': {
+      component: dynamicWrapper(app, ['feedback'], () => 
+        import('../routes/feedback/MyFeedback' /* webpackChunkName: "myFeedback" */ )),
+    },
     // 直接进入
     '/commission': {
       component: dynamicWrapper(app, ['commission'], () => 
@@ -390,6 +395,16 @@ export const getRouterData = (app) => {
     '/investmentConsultantRace': {
       component: dynamicWrapper(app, [], () => 
         import('../routes/investmentConsultantRace/Home' /* webpackChunkName: "investmentConsultantRace" */ )),
+    },
+    // 客户关联关系信息申请，直接进入
+    '/custRelationships': {
+      component: dynamicWrapper(app, ['custRelationships'], () => 
+        import('../routes/custRelationships/Home' /* webpackChunkName: "custRelationships" */ )),
+    },
+    // 客户关联关系信息申请，传递参数flowId
+    '/custRelationshipsReject': {
+      component: dynamicWrapper(app, ['custRelationships'], () => 
+        import('../routes/custRelationships/RejectUpdateHome' /* webpackChunkName: "custRelationshipsReject" */ )),
     },
     // 直接进入
     '/custAllot': {

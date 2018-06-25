@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: xiaZhiQiang
- * @Last Modified time: 2018-02-05 13:51:27
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-06-15 17:34:18
  */
 /**
  * 常用说明
@@ -84,6 +84,9 @@ export default class CommonUpload extends PureComponent {
     reformDeleteAttachmentLoading: PropTypes.bool,
     // 标题
     title: PropTypes.string,
+    // 判断使用附件相关何种接口的，
+    // 对于上传路径来说 false代表使用原来的 ceFileUpload ， true 代表使用新的 ceFileUpload2
+    // 对于下载路径来说 false代表使用原来的 ceFileDownload, true 代表使用新的 ceFileDownload2
     reformEnable: PropTypes.bool,
     maxFileSize: PropTypes.number,
   }
