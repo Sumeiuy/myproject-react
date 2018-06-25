@@ -1,9 +1,9 @@
 /*
+ * @Description: 最新观点
  * @Author: XuWenKang
- * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-20 15:25:23
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-06-25 14:03:02
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
 import { dva } from '../../helper';
 import ChiefViewpoint from '../../components/latestView/chiefViewpoint/ChiefViewpoint';
+import MajorAssets from '../../components/latestView/majorAssets/Home';
 // import { openRctTab } from '../../utils';
 import config from '../../components/latestView/config';
 import styles from './index.less';
@@ -30,6 +31,12 @@ const effects = {
   queryChiefViewpointList: 'latestView/queryChiefViewpointList',
   // 获取首席观点详情数据
   queryChiefViewpointDetail: 'latestView/queryChiefViewpointDetail',
+  // 大类资产配置分析-首页列表
+  queryMajorAssetsIndexList: 'latestView/queryMajorAssetsIndexList',
+  // 大类资产配置分析-更多列表
+  queryMajorAssetsList: 'latestView/queryMajorAssetsList',
+  // 大类资产配置分析-详情
+  queryMajorAssetsDetail: 'latestView/queryMajorAssetsDetail',
 };
 
 const mapStateToProps = state => ({
@@ -41,6 +48,12 @@ const mapStateToProps = state => ({
   viewpointData: state.latestView.viewpointData,
   // 首席观点详情
   viewpointDetail: state.latestView.viewpointDetail,
+  // 大类资产配置分析-首页列表
+  majorAssetsIndexData: state.latestView.majorAssetsIndexData,
+  // 大类资产配置分析-更多列表
+  majorAssetsData: state.latestView.majorAssetsData,
+  // 大类资产配置分析-详情
+  majorAssetsDetail: state.latestView.majorAssetsDetail,
 });
 const mapDispatchToProps = {
   queryChiefViewpoint: dispatch(effects.queryChiefViewpoint,
@@ -48,6 +61,12 @@ const mapDispatchToProps = {
   queryChiefViewpointList: dispatch(effects.queryChiefViewpointList,
     { loading: true, forceFull: true }),
   queryChiefViewpointDetail: dispatch(effects.queryChiefViewpointDetail,
+    { loading: true, forceFull: true }),
+  queryMajorAssetsIndexList: dispatch(effects.queryMajorAssetsIndexList,
+    { loading: true, forceFull: true }),
+  queryMajorAssetsList: dispatch(effects.queryMajorAssetsList,
+    { loading: true, forceFull: true }),
+  queryMajorAssetsDetail: dispatch(effects.queryMajorAssetsDetail,
     { loading: true, forceFull: true }),
 };
 
@@ -68,7 +87,15 @@ export default class LatestView extends PureComponent {
     // 首席观点详情
     queryChiefViewpointDetail: PropTypes.func.isRequired,
     viewpointDetail: PropTypes.object.isRequired,
-
+    // 大类资产配置分析-首页列表
+    queryMajorAssetsIndexList: PropTypes.func.isRequired,
+    majorAssetsIndexData: PropTypes.object.isRequired,
+    // 大类资产配置分析-更多列表
+    queryMajorAssetsList: PropTypes.func.isRequired,
+    majorAssetsData: PropTypes.object.isRequired,
+    // 大类资产配置分析-详情
+    queryMajorAssetsDetail: PropTypes.func.isRequired,
+    majorAssetsDetail: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -87,6 +114,7 @@ export default class LatestView extends PureComponent {
   componentDidMount() {
     const {
       queryChiefViewpoint,
+      queryMajorAssetsIndexList,
     } = this.props;
     // 每日首席观点
     queryChiefViewpoint({
@@ -96,6 +124,8 @@ export default class LatestView extends PureComponent {
     queryChiefViewpoint({
       type: config.chiefViewpointType[2].value,
     });
+    // 大类资产配置分析
+    queryMajorAssetsIndexList();
   }
 
   render() {
@@ -103,6 +133,10 @@ export default class LatestView extends PureComponent {
       location,
       dayViewpointData,
       monthViewpointData,
+      majorAssetsData,
+      majorAssetsIndexData,
+      majorAssetsDetail,
+      queryMajorAssetsDetail,
     } = this.props;
     return (
       <div className={styles.latestViewBox}>
@@ -123,6 +157,12 @@ export default class LatestView extends PureComponent {
               type={config.chiefViewpointType[2].value}
             />
           </div>
+          <MajorAssets
+            data={majorAssetsData}
+            indexData={majorAssetsIndexData}
+            detail={majorAssetsDetail}
+            getDetail={queryMajorAssetsDetail}
+          />
         </div>
       </div>
     );
