@@ -1,29 +1,31 @@
+@import "../../../css/util.less";
+
 .filter {
   padding: 5px;
   display: inline-block;
 }
 
 .filterContainer {
+  position: relative;
   background: #fff;
   padding: 5px 0;
 }
 
 .normalFilter {
   position: relative;
-  .filterfixRight {
-    position: absolute;
-    right: 115px;
-    padding: 5px;
-  }
+  display: inline-block;
+  padding-right: 214px;
+}
 
-  .filterfixEnd {
-    position: absolute;
-    right: 10px;
-    padding: 5px;
-  }
+.moreFilterController {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 5px 0;
 }
 
 .moreFilter {
+  display: inline-block;
   position: relative;
 }
 

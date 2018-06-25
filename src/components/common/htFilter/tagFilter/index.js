@@ -124,7 +124,7 @@ export default class TagFilter extends PureComponent {
         dropdownStyle={this.props.dropdownStyle}
         isAlwaysVisible
         tooltipValue={tooltipValue}
-        disableTitle
+        usetoolTip
         isCloseable
         {...restProps}
       />
