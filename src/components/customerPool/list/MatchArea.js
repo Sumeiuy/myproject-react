@@ -532,7 +532,7 @@ export default class MatchArea extends PureComponent {
   renderOrderCombination() {
     const {
       listItem: { jxgrpProducts, isPrivateCustomer, empId, custId },
-      location: { query: { source, labelMapping } },
+      location: { query: { source, labelMapping, combinationCode } },
       hasNPCTIQPermission,
       hasPCTIQPermission,
       queryHoldingSecurityRepetition,
@@ -555,7 +555,7 @@ export default class MatchArea extends PureComponent {
       const id = decodeURIComponent(labelMapping);
       const currentItem = _.find(jxgrpProducts, item => item.id === id);
       const props = {
-        productCode: id,
+        combinationCode,
         custId,
         queryHoldingSecurityRepetition,
         data: holdingSecurityData,

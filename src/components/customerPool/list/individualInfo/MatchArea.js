@@ -207,8 +207,9 @@ export default class MatchArea extends PureComponent {
       }
       const id = decodeURIComponent(primaryKeyJxgrps[0]);
       const currentItem = _.find(jxgrpProducts, item => item.id === id);
+      const { code: combinationCode } = currentItem;
       const props = {
-        productCode: id,
+        combinationCode,
         custId,
         queryHoldingSecurityRepetition,
         data: holdingSecurityData,

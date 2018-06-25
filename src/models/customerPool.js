@@ -905,7 +905,7 @@ export default {
     * queryHoldingSecurityRepetition({ payload }, { call, put }) {
       const { resultData } = yield call(api.queryHoldingSecurityRepetition, payload);
       const newResultData = {
-        key: `${payload.custId}_${payload.productCode}`,
+        key: `${payload.custId}_${payload.combinationCode}`,
         value: resultData,
       };
       yield put({
