@@ -7,6 +7,8 @@ export default function seibelCommon(api) {
   return {
     // Home左侧列表
     getSeibleList: query => api.post('/groovynoauth/fsp/biz/queryApplicationList', query),
+    // Home左侧列表
+    getNewSeibleList: query => api.post('/groovynoauth/fsp/biz/queryApplicationList2', query),
     // 通过用户输入的关键字，获取已申请的客户列表
     getCustList: query => api.post('/groovynoauth/fsp/biz/empCustList', query),
     // 通过用户输入的关键字，获取可选的拟稿人列表

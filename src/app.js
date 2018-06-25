@@ -145,6 +145,8 @@ app.model(require('./models/messageCenter'));
 app.model(require('./models/stockOptionEvaluation'));
 // 最新观点
 app.model(require('./models/latestView'));
+// 客户关联关系
+app.model(require('./models/custRelationships'));
 
 // 4. Route
 app.router(routerConfig);
