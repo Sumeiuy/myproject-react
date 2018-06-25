@@ -126,11 +126,9 @@ export default class CustomerService extends PureComponent {
             <div className={styles.text}>{_.head(data).name || '--'}</div>
           </Popover>
         </div>
-        <div
-          className={classnames(styles.column, styles.secondColumn)}
-          onClick={this.handleToList}
-        >
+        <div className={classnames(styles.column, styles.secondColumn)}>
           <IECharts
+            onEvents={{ click: this.handleToList }}
             option={serviceOption}
             resizable
             style={{
@@ -145,7 +143,10 @@ export default class CustomerService extends PureComponent {
             placement="bottom"
             overlayClassName={antdStyles.popoverClass}
           >
-            <div className={styles.text}>{_.last(data).name || '--'}</div>
+            <div
+              onClick={this.handleToList}
+              className={styles.text}
+            >{_.last(data).name || '--'}</div>
           </Popover>
         </div>
       </div>

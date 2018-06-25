@@ -162,7 +162,13 @@ export const sourceFilter = {
     }],
     completedRate: [{
       filterName: 'completedRate',
-      value: [],
+      value: ['addrFlag', 'mobileFlag', 'emailFlag', 'riskFlag'],
+      defaultVal: {
+        mobileFlag: 'mobile',
+        emailFlag: 'email',
+        addrFlag: 'address',
+        riskFlag: 'risklover',
+      },
     }],
   },
   custAssets: {
