@@ -17,6 +17,12 @@ import HtFilter, { TagFilter } from '../../common/htFilter';
 import { url, check } from '../../../helper';
 import { seperator } from '../../../config';
 import {
+  FILTER_SELECT_FROM_MOREFILTER,
+  MORE_FILTER_STORAGE,
+  RANDOM,
+} from '../../../config/filterContant';
+
+import {
   basicFilters,
   moreFilterData,
   moreFilterCategories,
@@ -26,10 +32,6 @@ import {
 import styles from './filter__.less';
 
 const TAG_SIGN = 'TAG_SIGN';
-
-const MORE_FILTER_STORAGE = 'MORE_FILTER_STORAGE';
-
-const FILTER_SELECT_FROM_MOREFILTER = 'FILTER_SELECT_FROM_MOREFILTER';
 
 const MORE_FILTER_TYPE = {
   more: 1,
@@ -42,7 +44,7 @@ function UpdateLocalStorage(currentValue, moreFilterOpenedList) {
   // 如果是瞄准镜标签下钻过来，清除瞄准镜标签子标签缓存
   if (!currentValue[TAG_SIGN]) {
     const labelList = [].concat(currentValue.primaryKeyLabels).filter(value => value);
-    _.each(labelList, key => store.remove(key));
+    _.each(labelList, key => store.remove(`${key}_${RANDOM}`));
     if (!_.isEmpty(labelList)) {
       labelFilters = _.map(labelList, label => ({
         type: MORE_FILTER_TYPE.tag,
@@ -151,10 +153,10 @@ export default class Filter extends PureComponent {
   // 获取更多按钮里面需要打开的过滤器id
   @autobind
   getMoreFilterOpenKeys(currentValue) {
-    return moreFilterData
+    return moreFilters
       .filter(
-      item => _.some(_.keysIn(currentValue), key => key === item.key))
-      .map(item => item.key);
+      item => _.some(_.keysIn(currentValue), key => key === item.filterId))
+      .map(item => item.filterId);
   }
 
   // 获取对应filter的onChange函数
@@ -415,7 +417,7 @@ export default class Filter extends PureComponent {
   handleLabelChange(obj, key) {
     updateLocalLabelStorage(obj.value, key);
     this.labelFilter = key;
-    store.remove(key);
+    store.remove(`${key}_${RANDOM}`);
     const value = _.join(obj.value, seperator.filterValueSeperator);
     this.props.onFilterChange({
       name: obj.id,
@@ -441,7 +443,7 @@ export default class Filter extends PureComponent {
 
     updateLocalFilterStorage(id);
 
-    store.remove(id);
+    store.remove(`${id}_${RANDOM}`);
   }
 
   @autobind
@@ -454,8 +456,8 @@ export default class Filter extends PureComponent {
   })
   handleTagfilterChange(value) {
     const { id } = value;
-    store.remove(id);
-    store.set(id, value.value);
+    store.remove(`${id}_${RANDOM}`);
+    store.set(`${id}_${RANDOM}`, value.value);
     this.props.onFilterChange({
       name: TAG_SIGN,
       value: _.random(1, 1000000),
@@ -602,7 +604,7 @@ export default class Filter extends PureComponent {
         filterName={renderItem.name}
         filterId={renderItem.id}
         defaultVisible={this.labelFilterVisible && renderItem.id === this.labelFilter}
-        value={store.get(renderItem.id) || []}
+        value={store.get(`${renderItem.id}_${RANDOM}`) || []}
         data={tagfilters}
         onChange={this.handleTagfilterChange}
         onClose={
@@ -613,13 +615,12 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
-  renderMoreFilters(selectedKeys, currentValue) {
+  renderMoreFilters(moreFilterListOpened, currentValue) {
     const { filtersOfAllSightingTelescope } = this.props;
     // 按照是否有子标签分类渲染
     const splitLabelList =
       this.splitLabelList(currentValue.primaryKeyLabels, filtersOfAllSightingTelescope);
 
-    const moreFilterListOpened = store.get(MORE_FILTER_STORAGE);
 
     const filters = (
       <span>
@@ -645,6 +646,8 @@ export default class Filter extends PureComponent {
 
     const currentValue = url.transfromFilterValFromUrl(filters);
 
+    const moreFilterListOpened = store.get(MORE_FILTER_STORAGE);
+
     const selectedKeys = this.getMoreFilterOpenKeys(currentValue);
 
     return (
@@ -662,7 +665,7 @@ export default class Filter extends PureComponent {
               />
             ))
           }
-          {this.renderMoreFilters(selectedKeys, currentValue)}
+          {this.renderMoreFilters(moreFilterListOpened, currentValue)}
         </div>
         <div className={styles.moreFilterController}>
           {
