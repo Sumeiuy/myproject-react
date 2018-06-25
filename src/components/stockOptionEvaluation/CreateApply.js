@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-22 16:23:11
+ * @Last Modified time: 2018-06-25 13:19:46
  */
 
 import React, { PureComponent } from 'react';
@@ -142,13 +142,6 @@ export default class CreateApply extends PureComponent {
     this.isValidateError = false;
   }
 
-  componentDidMount() {
-    const { getSelectMap } = this.props;
-    const { flowId } = this.state;
-    // 获取股票客户类型,申请类型,开立期权市场类别,业务受理营业部的下拉选择
-    getSelectMap({ flowId });
-  }
-
   @autobind
   setBasicInfoFormRef(form) {
     this.basicInfoForm = form;
@@ -273,7 +266,7 @@ export default class CreateApply extends PureComponent {
   // 根据经济客户号查询客户附带信息
   @autobind
   getCustInfo(item) {
-    const { getCustInfo } = this.props;
+    const { getCustInfo, getSelectMap } = this.props;
     const {
       brokerNumber,
       custType,
@@ -311,6 +304,11 @@ export default class CreateApply extends PureComponent {
         };
         this.getCreateButtonList(param);
       }
+    });
+    // 获取股票客户类型,申请类型,开立期权市场类别,业务受理营业部的下拉选择
+    getSelectMap({
+      econNum: brokerNumber,
+      custType,
     });
   }
 
@@ -638,7 +636,7 @@ export default class CreateApply extends PureComponent {
                       optionList={busCustList}
                       showNameKey="custName"
                       showIdKey="cusId"
-                      style={{ width: 200 }}
+                      style={{ width: 160 }}
                       onSelect={this.selectCustomer}
                       onSearch={this.searchCanApplyCustList}
                     />
