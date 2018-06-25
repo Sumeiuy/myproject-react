@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-25 14:17:33
+ * @Last Modified time: 2018-06-25 16:52:36
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -121,7 +121,10 @@ export default class KeyMonitorAccountHome extends Component {
 
   @autobind
   queryAccountList(query) {
-    this.props.getAccountList({ ...query, orgId: emp.getOrgId() });
+    this.props.getAccountList({
+      ...query,
+      orgId: emp.getOrgId(),
+    });
   }
 
   @autobind
@@ -140,7 +143,10 @@ export default class KeyMonitorAccountHome extends Component {
     const { location: { query, pathname } } = this.props;
     if (_.isEmpty(obj)) {
       // 如果未传obj，则表示清空参数
-      replace({ pathname, query: {} });
+      replace({
+        pathname,
+        query: {},
+      });
     }
     replace({
       pathname,
@@ -204,8 +210,7 @@ export default class KeyMonitorAccountHome extends Component {
       // 必须要写上，否则，在360视图存在的情况下，再跳转到360视图时，
       // 360视图不会刷新，且React界面如果有弹框存在，不会消失
       forceRefresh: true,
-      // 解决同一个tab之前存在的情况下，subTab没更新
-      activeSubTab: ['客户信息'],
+      activeSubTab: ['客户信息', '重点监控账户'],
     };
     const url = `/customerCenter/360/${custType}/main?id=${custNumber}`;
     openFspTab({
@@ -222,7 +227,10 @@ export default class KeyMonitorAccountHome extends Component {
 
   @autobind
   handleExchangeTypeSelectChange(select, value) {
-    this.setState({ exchangeType: value, exchangeTypeHasChange: true });
+    this.setState({
+      exchangeType: value,
+      exchangeTypeHasChange: true,
+    });
   }
 
   @autobind
@@ -252,7 +260,10 @@ export default class KeyMonitorAccountHome extends Component {
       pageNum: 1,
       pageSize: 10,
     });
-    this.resetFilter({ pageNum: 1, exchangeTypeHasChange: false });
+    this.resetFilter({
+      pageNum: 1,
+      exchangeTypeHasChange: false,
+    });
   }
 
   @autobind
@@ -263,8 +274,15 @@ export default class KeyMonitorAccountHome extends Component {
       confirm({ content: '请输入筛选条件' });
     } else {
       const query = _.pick(this.state, FILTER_INPUT_KEYS);
-      this.mapObjectToLocation({ pageNum: 1, ...query });
-      this.queryAccountList({ pageNum: 1, pageSize: 10, ...query });
+      this.mapObjectToLocation({
+        pageNum: 1,
+        ...query,
+      });
+      this.queryAccountList({
+        pageNum: 1,
+        pageSize: 10,
+        ...query,
+      });
       // this.resetFilter({ pageNum: 1, exchangeTypeHasChange: false });
     }
   }
@@ -273,7 +291,11 @@ export default class KeyMonitorAccountHome extends Component {
   handlePaginationChange(pageNum) {
     const query = this.getQueryFromLocation(this.props.location);
     this.setState({ pageNum });
-    this.queryAccountList({ ...query, pageNum, pageSize: 10 });
+    this.queryAccountList({
+      ...query,
+      pageNum,
+      pageSize: 10,
+    });
     this.mapObjectToLocation({ pageNum });
   }
 
