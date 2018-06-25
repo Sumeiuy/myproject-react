@@ -1,0 +1,143 @@
+.ziJinBox {
+  height: 650px;
+  padding: 14px 20px;
+  box-sizing: border-box;
+  border: 1px solid #a6b8e2;
+  border-radius: 3px;
+  .headerBox {
+    margin-bottom: 10px;
+    :global {
+      .icon-zijinshizhongguandian {
+        margin-right: 10px;
+        color: #7d9be0;
+      }
+    }
+    span {
+      font-weight: bold;
+      font-size: 16px;
+      color: #4a4a4a;
+    }
+    a {
+      float: right;
+      font-size: 14px;
+    }
+  }
+  .chartBox {
+    height: 190px;
+    .chartContent {
+      position: relative;
+      margin: 0 auto 20px;
+      width: 160px;
+      height: 160px;
+      .chartItem {
+        position: absolute;
+        .cycleText {
+          font-size: 12px;
+          color: #ed7f00;
+          position: absolute;
+          cursor: default;
+        }
+      }
+      .chartItem:nth-child(1) {
+        top: 0;
+        left: 29px;
+        width: 100px;
+        height: 47px;
+        background: url('./img/top.png') no-repeat center / contain;
+        .cycleText {
+          left: 43px;
+          top: 10px;
+        }
+        &.active {
+          background: url('./img/top-active.png') no-repeat center / contain;
+          .cycleText {
+            color: #fff;
+            cursor: pointer;
+          }
+        }
+      }
+      .chartItem:nth-child(2) {
+        top: 13px;
+        right: -6px;
+        width: 58px;
+        height: 98px;
+        background: url('./img/rightTop.png') no-repeat center / contain;
+        .cycleText {
+          left: 12px;
+          top: 44px;
+          transform: rotate(74deg);
+          width: 55px;
+        }
+        &.active {
+          background: url('./img/rightTop-active.png') no-repeat center / contain;
+          .cycleText {
+            color: #fff;
+            cursor: pointer;
+          }
+        }
+      }
+      .chartItem:nth-child(3) {
+        top: 91px;
+        right: -4px;
+        width: 96px;
+        height: 73px;
+        background: url('./img/rightBottom.png') no-repeat center / contain;
+        .cycleText {
+          left: 42px;
+          top: 35px;
+          transform: rotate(-34deg);
+        }
+        &.active {
+          background: url('./img/rightBottom-active.png') no-repeat center / contain;
+          .cycleText {
+            color: #fff;
+            cursor: pointer;
+          }
+        }
+      }
+      .chartItem:nth-child(4) {
+        top: 91px;
+        left: 8px;
+        width: 76px;
+        height: 73px;
+        background: url('./img/leftBottom.png') no-repeat center / contain;
+        .cycleText {
+          left: 21px;
+          top: 31px;
+          transform: rotate(39deg);
+        }
+        &.active {
+          background: url('./img/leftBottom-active.png') no-repeat center / contain;
+          .cycleText {
+            color: #fff;
+            cursor: pointer;
+          }
+        }
+      }
+      .chartItem:nth-child(5) {
+        top: 22px;
+        left: 0;
+        width: 54px;
+        height: 91px;
+        background: url('./img/leftTop.png') no-repeat center / contain;
+        .cycleText {
+          left: -3px;
+          top: 25px;
+          width: 55px;
+          transform: rotate(-72deg);
+        }
+        &.active {
+          background: url('./img/leftTop-active.png') no-repeat center / contain;
+          .cycleText {
+            color: #fff;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+  .listBox {
+    height: 408px;
+    overflow: auto;
+  }
+}

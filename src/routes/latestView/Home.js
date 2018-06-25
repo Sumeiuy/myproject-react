@@ -3,7 +3,7 @@
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-20 15:25:23
+ * @Last Modified time: 2018-06-22 15:19:55
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
 import { dva } from '../../helper';
 import ChiefViewpoint from '../../components/latestView/chiefViewpoint/ChiefViewpoint';
+import ZiJinClockViewpoint from '../../components/latestView/ziJinClockView/ZiJinClockViewpoint';
 // import { openRctTab } from '../../utils';
 import config from '../../components/latestView/config';
 import styles from './index.less';
@@ -26,6 +27,10 @@ const dispatch = dva.generateEffect;
 const effects = {
   // 首席观点模块数据
   queryChiefViewpoint: 'latestView/queryChiefViewpoint',
+  // 获取首页紫金时钟当前周期数据
+  queryZiJinClockCycle: 'latestView/queryZiJinClockCycle',
+  // 获取首页紫金时钟列表数据
+  queryZiJinViewpointList: 'latestView/queryZiJinViewpointList',
 };
 
 const mapStateToProps = state => ({
@@ -33,9 +38,17 @@ const mapStateToProps = state => ({
   dayViewpointData: state.latestView.dayViewpointData,
   // 首页每周首席观点
   monthViewpointData: state.latestView.monthViewpointData,
+  // 首页紫金时钟当前周期数据
+  ziJinCycleData: state.latestView.ziJinCycleData,
+  // 首页紫金时钟列表
+  ziJinClockList: state.latestView.ziJinClockList,
 });
 const mapDispatchToProps = {
   queryChiefViewpoint: dispatch(effects.queryChiefViewpoint,
+    { loading: true, forceFull: true }),
+  queryZiJinClockCycle: dispatch(effects.queryZiJinClockCycle,
+    { loading: true, forceFull: true }),
+  queryZiJinViewpointList: dispatch(effects.queryZiJinViewpointList,
     { loading: true, forceFull: true }),
 };
 
@@ -50,7 +63,12 @@ export default class LatestView extends PureComponent {
     dayViewpointData: PropTypes.object.isRequired,
     // 首页每周首席观点
     monthViewpointData: PropTypes.object.isRequired,
-
+    // 首页紫金时钟当前周期数据
+    queryZiJinClockCycle: PropTypes.func.isRequired,
+    ziJinCycleData: PropTypes.object.isRequired,
+    // 首页紫金时钟列表
+    queryZiJinViewpointList: PropTypes.func.isRequired,
+    ziJinClockList: PropTypes.array.isRequired,
   }
 
   static contextTypes = {
@@ -69,6 +87,8 @@ export default class LatestView extends PureComponent {
   componentDidMount() {
     const {
       queryChiefViewpoint,
+      queryZiJinClockCycle,
+      queryZiJinViewpointList,
     } = this.props;
     // 每日首席观点
     queryChiefViewpoint({
@@ -78,6 +98,12 @@ export default class LatestView extends PureComponent {
     queryChiefViewpoint({
       type: config.chiefViewpointType[2].value,
     });
+    // 首页紫金时钟当前周期数据
+    queryZiJinClockCycle();
+    // 首页紫金时钟列表
+    queryZiJinViewpointList({
+      active: 0, // 根据后端要求暂时写死
+    });
   }
 
   render() {
@@ -85,6 +111,8 @@ export default class LatestView extends PureComponent {
       location,
       dayViewpointData,
       monthViewpointData,
+      ziJinCycleData,
+      ziJinClockList,
     } = this.props;
     return (
       <div className={styles.latestViewBox}>
@@ -103,6 +131,14 @@ export default class LatestView extends PureComponent {
               title="每周首席观点"
               data={monthViewpointData}
               type={config.chiefViewpointType[2].value}
+            />
+          </div>
+        </div>
+        <div className={`${styles.floor} clearfix`}>
+          <div className={styles.right}>
+            <ZiJinClockViewpoint
+              data={ziJinCycleData}
+              list={ziJinClockList}
             />
           </div>
         </div>
