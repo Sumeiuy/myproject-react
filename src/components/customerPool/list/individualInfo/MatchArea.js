@@ -2,29 +2,40 @@
  * @file components/customerPool/list/MatchArea.js
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
+ * @Last Modified by: xiaZhiQiang
+ * @Last Modified time: 2018-06-21 12:12:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { isSightingScope } from '../helper';
-import { openFspTab } from '../../../utils';
-import HoldingProductDetail from './HoldingProductDetail';
+import store from 'store';
+import { isSightingScope } from '../../helper';
+import { url } from '../../../../helper';
+import seperator from '../../../../config/filterSeperator';
+import { openFspTab } from '../../../../utils/index';
+import HoldingProductDetail from '../HoldingProductDetail';
+import matchAreaConfig from './config';
 import styles from './matchArea.less';
+
+const FILTER_ORDER = 'filterOrder'; // 作为过滤器触发顺利在localStorage存储的key
+const MORE_FILTER_STORAGE = 'MORE_FILTER_STORAGE'; // 存在localStorage中选择的标签的id的key
+const unlimited = '不限'; // filter 可能暴露出的值
+const AIM_LABEL_ID = 'sightingTelescope'; // 瞄准镜标签标识
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
-const replaceWord = ({ value, q, title = '', type = '' }) => {
+const replaceWord = ({ value, searchText, title = '', type = '' }) => {
   const titleDom = haveTitle(title);
-  const regxp = new RegExp(q, 'g');
+  const regxp = new RegExp(searchText, 'g');
   // 瞄准镜标签后面添加字符，用以分割
-  const holder = type === 'sightingTelescope' ? '-' : '';
+  const holder = type === AIM_LABEL_ID ? '-' : '';
   // 容错处理
   if (_.isEmpty(value)) {
     return '';
   }
   return value.replace(regxp,
-    `<em class="marked">${q}${titleDom || ''}</em>${holder}`);
+    `<em class="marked">${searchText}${titleDom || ''}</em>${holder}`);
 };
 
 // 个人对应的code码
@@ -32,12 +43,16 @@ const PER_CODE = 'per';
 // 一般机构对应的code码
 const ORG_CODE = 'org';
 
-// const getNewHtml = (value, k) => (`<li><span><i class="label">${value}：</i>${k}</span></li>`);
-
-// 匹配标签区域超过两条显示 展开/收起 按钮
-// const FOLD_NUM = 2;
-
 export default class MatchArea extends PureComponent {
+  static setFilterOrder(id, value) {
+    const filterOrder = store.get('filterOrder') || [];
+    const finalId = _.isArray(id) ? id : [id];
+    let finalOrder = _.difference(filterOrder, finalId);
+    if (value && !_.includes(value, unlimited)) {
+      finalOrder = [...finalId, ...finalOrder];
+    }
+    store.set(FILTER_ORDER, [...new Set(finalOrder)]);
+  }
 
   static propTypes = {
     dict: PropTypes.object.isRequired,
@@ -62,13 +77,10 @@ export default class MatchArea extends PureComponent {
     const {
       dict: {
         custBusinessType = [],
-      custUnrightBusinessType = [],
+        custUnrightBusinessType = [],
       },
     } = props;
 
-    this.state = {
-      showAll: false,
-    };
     this.businessConfig = new Map();
     custBusinessType.forEach((item) => {
       this.businessConfig.set(item.key, item.value);
@@ -89,11 +101,11 @@ export default class MatchArea extends PureComponent {
   handleOpenFsp360TabAction(itemData, keyword) {
     const { custNature, custId, rowId, ptyId } = itemData;
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
-    const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
+    const url360 = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
     const pathname = '/customerCenter/fspcustomerDetail';
     openFspTab({
       routerAction: this.context.push,
-      url,
+      url360,
       query: {
         custId,
         rowId,
@@ -117,17 +129,22 @@ export default class MatchArea extends PureComponent {
     });
   }
 
+  getFilters() {
+    const {
+      location: { query: { filters } },
+    } = this.props;
+    return url.transfromFilterValFromUrl(filters);
+  }
+
   // 匹配姓名
   renderName() {
     const {
-      q = '',
       listItem,
-      location: { query: { source } },
     } = this.props;
-    if (_.includes(['search', 'association'], source)
-      && listItem.name
-      && listItem.name.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.name, q });
+    const { searchText = '' } = this.getFilters();
+    if (listItem.name
+      && listItem.name.indexOf(searchText) > -1) {
+      const markedEle = replaceWord({ value: listItem.name, searchText });
       return (
         <li>
           <span>
@@ -145,14 +162,12 @@ export default class MatchArea extends PureComponent {
   // 匹配身份证号码
   renderIdNum() {
     const {
-      q = '',
       listItem,
-      location: { query: { source } },
     } = this.props;
-    if (_.includes(['search', 'association'], source)
-      && listItem.idNum
-      && listItem.idNum.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.idNum, q });
+    const { searchText = '' } = this.getFilters();
+    if (listItem.idNum
+      && listItem.idNum.indexOf(searchText) > -1) {
+      const markedEle = replaceWord({ value: listItem.idNum, searchText });
       return (
         <li>
           <span>
@@ -170,14 +185,12 @@ export default class MatchArea extends PureComponent {
   // 匹配联系电话
   renderTelephone() {
     const {
-      q = '',
       listItem,
-      location: { query: { source } },
     } = this.props;
-    if (_.includes(['search', 'association'], source)
-      && listItem.telephone
-      && listItem.telephone.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.telephone, q });
+    const { searchText = '' } = this.getFilters();
+    if (listItem.telephone
+      && listItem.telephone.indexOf(searchText) > -1) {
+      const markedEle = replaceWord({ value: listItem.telephone, searchText });
       return (
         <li>
           <span>
@@ -195,14 +208,12 @@ export default class MatchArea extends PureComponent {
   // 匹配经纪客户号
   renderCustId() {
     const {
-      q = '',
       listItem,
-      location: { query: { source } },
     } = this.props;
-    if (_.includes(['search', 'association'], source)
-      && listItem.custId
-      && listItem.custId.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.custId, q });
+    const { searchText = '' } = this.getFilters();
+    if (listItem.custId
+      && listItem.custId.indexOf(searchText) > -1) {
+      const markedEle = replaceWord({ value: listItem.custId, searchText });
       return (
         <li>
           <span>
@@ -218,28 +229,29 @@ export default class MatchArea extends PureComponent {
   }
 
   // 匹配标签
-  renderRelatedLabels() {
+  renderRelatedLabels(matchLabels) {
     const {
-      q = '',
       listItem,
-      location: { query: { source } },
     } = this.props;
-    if (_.includes(['search', 'association', 'tag'], source) && !_.isEmpty(listItem.relatedLabels)) {
-      const relatedLabels = _.filter(
+    if (matchLabels && !matchLabels.length) {
+      return [];
+    }
+    const { searchText = '' } = this.getFilters();
+    if (!_.isEmpty(listItem.relatedLabels)) {
+      let relatedLabels = _.filter(
         listItem.relatedLabels,
-        item => item && _.includes(item.name, q),
+        item => item && _.includes(item.name, searchText),
       );
-      // 有描述
-      // const markedEle = relatedLabels.map(item => (
-      //   replaceWord({ value: item, q, title: listItem.reasonDesc });
-      // ));
+      if (matchLabels) {
+        relatedLabels = matchLabels;
+      }
       if (!_.isEmpty(relatedLabels)) {
         const markedEle = relatedLabels.map((item) => {
           // 防止热点标签展示重复，这里从query上取source
           if (!isSightingScope(item.source)) {
-            return replaceWord({ value: item.name, q });
+            return replaceWord({ value: item.name, searchText });
           }
-          return `${replaceWord({ value: item.name, q })}-${q}`;
+          return `${replaceWord({ value: item.name, searchText })}-${searchText}`;
         });
         return (
           <li>
@@ -256,14 +268,59 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  // 模糊搜索匹配持仓产品
+  renderSearchProduct() {
+    const {
+      listItem: { holdingProducts },
+    } = this.props;
+    const { searchText = '' } = this.getFilters();
+    if (!_.isEmpty(holdingProducts)) {
+      // 模糊匹配用搜索关键词取匹配产品的code和name
+      // 匹配到的持仓产品大于1个时，显示 产品的名称/产品代码
+      const filteredProducts = this.getFilteredProducts(holdingProducts, searchText);
+      if (filteredProducts.length > 1) {
+        return this.getMultipleHoldingProductNode(filteredProducts, searchText);
+      }
+      // 联想词进入列表并匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
+      return this.getSingleHoldingProductNode(filteredProducts, searchText);
+    }
+    return null;
+  }
+
+  // 服务记录的匹配
+  renderServiceRecord() {
+    const {
+      listItem,
+      location: { query: { filters } },
+    } = this.props;
+    const { searchText = '' } = url.transfromFilterValFromUrl(filters);
+    if (listItem.serviceRecord
+      && listItem.serviceRecord.indexOf(searchText) > -1) {
+      const markedEle = replaceWord({ value: listItem.serviceRecord, searchText });
+      // 接口返回的接口数据是截断过的，需要前端在后面手动加...
+      return (
+        <li>
+          <span className={styles.serviceRecord}>
+            <i className="label">服务记录：</i>
+            <i dangerouslySetInnerHTML={{ __html: markedEle }} />
+            <i>...</i>
+          </span>
+          <span
+            className={styles.more}
+            onClick={() => this.handleOpenFsp360TabAction(listItem, searchText)}
+          >详情</span>
+        </li>
+      );
+    }
+    return null;
+  }
+
   // 匹配可开通业务
   renderUnrightType() {
     const {
-      // q = '',
       listItem,
-      location: { query: { source } },
     } = this.props;
-    if (_.includes(['numOfCustOpened', 'business'], source) && listItem.unrightType) {
+    if (listItem.unrightType) {
       const unrightTypeList = listItem.unrightType.split(' ');
       const tmpList = _.map(unrightTypeList, item => this.custUnrightBusinessType[item]);
       if (!_.isEmpty(tmpList)) {
@@ -284,11 +341,9 @@ export default class MatchArea extends PureComponent {
   // 匹配已开通业务
   renderUserRights() {
     const {
-      // q = '',
       listItem,
-      location: { query: { source } },
     } = this.props;
-    if (_.includes(['numOfCustOpened', 'business'], source) && listItem.userRights) {
+    if (listItem.userRights) {
       const userRightsList = listItem.userRights.split(' ');
       const tmpList = _.filter(_.map(userRightsList, item => this.businessConfig.get(item)));
       if (!_.isEmpty(tmpList)) {
@@ -306,128 +361,58 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
-  // 显示账户状态
-  renderStatus() {
-    const {
-      // q = '',
-      listItem,
-      location: { query: { source } },
-    } = this.props;
-    if (source === 'custIndicator' && listItem.accountStausName) {
-      return (
-        <li title={listItem.accountStausName}>
-          <span>
-            <i className="label">账户状态：</i>
-            {listItem.accountStausName}
-          </span>
-        </li>
-      );
-    }
-    return null;
-  }
-
-  // 服务记录的匹配
-  renderServiceRecord() {
-    const {
-      q = '',
-      listItem,
-      location: { query: { source, q: keyword } },
-    } = this.props;
-    if (_.includes(['search', 'association'], source)
-      && listItem.serviceRecord
-      && listItem.serviceRecord.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.serviceRecord, q });
-      // 接口返回的接口数据是截断过的，需要前端在后面手动加...
-      return (
-        <li>
-          <span className={styles.serviceRecord}>
-            <i className="label">服务记录：</i>
-            <i dangerouslySetInnerHTML={{ __html: markedEle }} />
-            <i>...</i>
-          </span>
-          <span
-            className={styles.more}
-            onClick={() => this.handleOpenFsp360TabAction(listItem, keyword)}
-          >详情</span>
-        </li>
-      );
-    }
-    return null;
-  }
-
   // 瞄准镜
-  renderSightingTelescope() {
+  renderSightingTelescope(aimLabel) {
     const {
-      q = '',
       listItem,
-      location: { query: { source, labelMapping } },
     } = this.props;
-    if (source === 'sightingTelescope'
-      && !_.isEmpty(listItem.relatedLabels)) {
-      // 筛选出source='jzyx'的数据
-      const relatedLabels = _.filter(
-        listItem.relatedLabels,
-        item => item && _.includes(item.source, 'jzyx') && _.includes(item.id, labelMapping),
-      );
-      // 有描述
-      // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));
-      if (!_.isEmpty(relatedLabels)) {
-        // 构造成这种格式,父标签-子标签：标签值；子标签：标签值；子标签：标签值；子标签：标签值；
-        let markedEle = relatedLabels.map(item =>
-          (replaceWord({ value: item.name, q, type: source })));
-        // 去除空字符串
-        markedEle = _.filter(markedEle, item => !_.isEmpty(item));
-        // 只有一个标签，去除-符号
-        if (_.size(markedEle) === 1) {
-          markedEle[0].replace('-', '');
-        }
-        const first = _.head(markedEle);
-        let remain = _.slice(markedEle, 1);
-        remain = remain.join('；');
-        markedEle = _.concat(first, remain).join('');
-
-        return (
-          <li>
-            <span>
-              <i className="label">瞄准镜：</i>
-              <i
-                title={markedEle.replace(/<\/?[^>]*>/g, '')}
-                dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
-              />
-            </span>
-          </li>
-        );
-      }
+    const { id: labelMapping, name } = aimLabel;
+    const relatedLabels = _.filter(
+      listItem.relatedLabels,
+      item => item && _.includes(item.source, 'jzyx') && _.includes(item.id, labelMapping),
+    );
+    // 构造成这种格式,父标签-子标签：标签值；子标签：标签值；子标签：标签值；子标签：标签值；
+    let markedEle = relatedLabels.map(item =>
+      (replaceWord({
+        value: item.name,
+        searchText: name,
+        type: AIM_LABEL_ID,
+      })));
+    // 去除空字符串
+    markedEle = _.filter(markedEle, item => !_.isEmpty(item));
+    // 只有一个标签，去除-符号
+    if (_.size(markedEle) === 1) {
+      markedEle[0].replace('-', '');
     }
-    return null;
+    const first = _.head(markedEle);
+    let remain = _.slice(markedEle, 1);
+    remain = remain.join('；');
+    markedEle = _.concat(first, remain).join('');
+
+    return (
+      <li key={labelMapping}>
+        <span>
+          <i className="label">瞄准镜：</i>
+          <i
+            title={markedEle.replace(/<\/?[^>]*>/g, '')}
+            dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
+          />
+        </span>
+      </li>
+    );
   }
 
-  // 持仓产品:首页的模糊搜索、联想词、外部平台、证券产品
+  // 持仓产品
   renderHoldingProduct() {
     const {
-      q = '',
       listItem: { holdingProducts },
-      location: { query: { source, productName = '', labelMapping = '' } },
     } = this.props;
     if (!_.isEmpty(holdingProducts)) {
-      // 精准搜索，用id取找目标
-      if (_.includes(['association', 'external', 'securitiesProducts'], source)) {
-        const keyword = decodeURIComponent(productName);
-        const id = decodeURIComponent(labelMapping);
-        const filteredProducts = this.getFilteredProductsById(holdingProducts, id);
-        // 联想词进入列表并产品id匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
-        return !_.isEmpty(filteredProducts) &&
-          this.getSingleHoldingProductNode(filteredProducts, keyword);
-      } else if (source === 'search') {
-        // 模糊匹配用搜索关键词取匹配产品的code和name
-        // 匹配到的持仓产品大于1个时，显示 产品的名称/产品代码
-        const filteredProducts = this.getFilteredProducts(holdingProducts, q);
-        if (filteredProducts.length > 1) {
-          return this.getMultipleHoldingProductNode(filteredProducts, q);
-        }
-        // 联想词进入列表并匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
-        return this.getSingleHoldingProductNode(filteredProducts, q);
-      }
+      const { primaryKeyPrdts: [id, name] } = this.getFilters();
+      const filteredProducts = this.getFilteredProductsById(holdingProducts, id);
+      // 联想词进入列表并产品id匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
+      return !_.isEmpty(filteredProducts) &&
+        this.getSingleHoldingProductNode(filteredProducts, name);
     }
     return null;
   }
@@ -457,7 +442,7 @@ export default class MatchArea extends PureComponent {
     if (!_.isEmpty(list)) {
       const htmlStringList = _.map(
         list,
-        item => `${replaceWord({ value: item.name, q: keyword })}/${replaceWord({ value: item.code, q: keyword })}`,
+        item => `${replaceWord({ value: item.name, searchText: keyword })}/${replaceWord({ value: item.code, searchText: keyword })}`,
       );
       const htmlString = htmlStringList.join(',');
       return (
@@ -497,7 +482,7 @@ export default class MatchArea extends PureComponent {
     }
     if (!_.isEmpty(list)) {
       const { name, code } = list[0] || {};
-      const htmlString = `${replaceWord({ value: name, q: keyword })}/${replaceWord({ value: code, q: keyword })}`;
+      const htmlString = `${replaceWord({ value: name, searchText: keyword })}/${replaceWord({ value: code, searchText: keyword })}`;
       const props = {
         custId,
         data: list[0] || {},
@@ -543,22 +528,76 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  @autobind
+  getFilterOrder() {
+    const { location: { query: { filters, individualInfo } } } = this.props;
+    const needInfoFilter = _.keys(matchAreaConfig);
+    if (!individualInfo) {
+      store.remove(FILTER_ORDER);
+      const filtersArray = filters ? filters.split(seperator.filterSeperator) : [];
+      const filterList = _.map(filtersArray, item =>
+        item.split(seperator.filterInsideSeperator)[0]);
+      const filterOrder = _.filter(needInfoFilter, item => _.includes(filterList, item));
+      MatchArea.setFilterOrder(filterOrder, true);
+      return filterOrder;
+    }
+    return _.filter(store.get(FILTER_ORDER), item => _.includes(needInfoFilter, item));
+  }
+
+  @autobind
+  renderCustomerLabels() {
+    const labelList = store.get(MORE_FILTER_STORAGE);
+    const labelListId = _.map(labelList, item => item.key);
+    const {
+      listItem: { relatedLabels },
+    } = this.props;
+    if (!_.isEmpty(relatedLabels)
+      && labelList.length) {
+      // 瞄准镜标签对应的个性化信息
+      const aimLabelList = _.filter(relatedLabels, item =>
+        item.name && _.includes(labelListId, item.id) && isSightingScope(item.source));
+      const amiListNode = _.map(aimLabelList, item => this.renderSightingTelescope(item));
+      // 普通标签对应的个性化信息
+      const normalLabelList = _.filter(relatedLabels, item =>
+        item.name && _.includes(labelListId, item.id) && !isSightingScope(item.source));
+      const normalListNode = this.renderRelatedLabels(normalLabelList);
+      return [normalListNode, ...amiListNode];
+    }
+    return [];
+  }
+
+  @autobind
+  renderIndividual(filterOrder) {
+    let individualInfo = [];
+    let individualId = [];
+    _.map(filterOrder, (filterItem) => {
+      const currentIndividual = matchAreaConfig[filterItem];
+      const { key = [] } = currentIndividual;
+      _.map(key, (individualItem) => {
+        const { render: renderName, id } = individualItem;
+        if (!_.includes(individualId, id)) {
+          let itemNode = this[renderName]();
+          individualId = [...individualId, id];
+          itemNode = _.isArray(itemNode) ? itemNode : [itemNode];
+          individualInfo = [...individualInfo, ...itemNode];
+        }
+      });
+    });
+    if (filterOrder.length && individualInfo.length) {
+      return individualInfo;
+    }
+    return [
+      this.renderUserRights(),
+      this.renderUnrightType(),
+    ];
+  }
+
   render() {
+    const filterOrder = this.getFilterOrder();
     return (
       <div className={styles.relatedInfo}>
         <ul>
-          {this.renderName()}
-          {this.renderIdNum()}
-          {this.renderTelephone()}
-          {this.renderCustId()}
-          {this.renderRelatedLabels()}
-          {this.renderUnrightType()}
-          {this.renderUserRights()}
-          {this.renderStatus()}
-          {this.renderServiceRecord()}
-          {this.renderSightingTelescope()}
-          {this.renderHoldingProduct()}
-          {this.renderOrderCombination()}
+          {this.renderIndividual(filterOrder)}
         </ul>
       </div>
     );
