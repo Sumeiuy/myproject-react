@@ -153,6 +153,8 @@ app.model(require('./models/custAllot'));
 app.model(require('./models/messageCenter'));
 // 重点监控账户
 app.model(require('./models/keyMonitorAccount'));
+// 客户关联关系
+app.model(require('./models/custRelationships'));
 
 // 4. Route
 app.router(routerConfig);
