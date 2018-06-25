@@ -160,6 +160,26 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  @autobind
+  renderNoCompleted(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { name, id, descMap } = currentItem;
+    let noCompleteIdList = _.omitBy(descMap, (value, key) => listItem[key] === 'N');
+    noCompleteIdList = _.values(noCompleteIdList);
+    if (noCompleteIdList.length) {
+      return (
+        <li key={id}>
+          <span>
+            <i className="label">{name}：</i>
+            {_.join(noCompleteIdList, ',')}
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
   // 精选组合页面的订购组合
   @autobind
   renderOrderCombination() {
@@ -196,7 +216,7 @@ export default class MatchArea extends PureComponent {
       };
       if (!_.isEmpty(currentItem)) {
         return (
-          <li>
+          <li key={id}>
             <span>
               <i className="label">订购组合：</i>
               <i>
@@ -254,7 +274,7 @@ export default class MatchArea extends PureComponent {
       && listItem.name.indexOf(searchText) > -1) {
       const markedEle = replaceWord({ value: listItem.name, searchText });
       return (
-        <li>
+        <li key={listItem.name}>
           <span>
             <i className="label">姓名：</i>
             <i
@@ -277,7 +297,7 @@ export default class MatchArea extends PureComponent {
       && listItem.idNum.indexOf(searchText) > -1) {
       const markedEle = replaceWord({ value: listItem.idNum, searchText });
       return (
-        <li>
+        <li key={listItem.idNum}>
           <span>
             <i className="label">身份证号码：</i>
             <i
@@ -300,7 +320,7 @@ export default class MatchArea extends PureComponent {
       && listItem.telephone.indexOf(searchText) > -1) {
       const markedEle = replaceWord({ value: listItem.telephone, searchText });
       return (
-        <li>
+        <li key={listItem.telephone}>
           <span>
             <i className="label">联系电话：</i>
             <i
@@ -323,7 +343,7 @@ export default class MatchArea extends PureComponent {
       && listItem.custId.indexOf(searchText) > -1) {
       const markedEle = replaceWord({ value: listItem.custId, searchText });
       return (
-        <li>
+        <li key={listItem.custId}>
           <span>
             <i className="label">经纪客户号：</i>
             <i
@@ -362,7 +382,7 @@ export default class MatchArea extends PureComponent {
           return `${replaceWord({ value: item.name, searchText })}-${searchText}`;
         });
         return (
-          <li>
+          <li key={markedEle}>
             <span>
               <i className="label">匹配标签：</i>
               <i
@@ -407,7 +427,7 @@ export default class MatchArea extends PureComponent {
       const markedEle = replaceWord({ value: listItem.serviceRecord, searchText });
       // 接口返回的接口数据是截断过的，需要前端在后面手动加...
       return (
-        <li>
+        <li key={listItem.serviceRecord}>
           <span className={styles.serviceRecord}>
             <i className="label">服务记录：</i>
             <i dangerouslySetInnerHTML={{ __html: markedEle }} />
@@ -434,7 +454,7 @@ export default class MatchArea extends PureComponent {
       if (!_.isEmpty(tmpList)) {
         const data = tmpList.join('、');
         return (
-          <li title={data}>
+          <li key={listItem.unrightType} title={data}>
             <span>
               <i className="label">{`可开通业务(${tmpList.length})`}：</i>
               {data}
@@ -457,7 +477,7 @@ export default class MatchArea extends PureComponent {
       if (!_.isEmpty(tmpList)) {
         const data = tmpList.join('、');
         return (
-          <li title={data}>
+          <li key={data} title={data}>
             <span>
               <i className="label">{`已开通业务(${tmpList.length})`}：</i>
               {data}
@@ -554,7 +574,7 @@ export default class MatchArea extends PureComponent {
       );
       const htmlString = htmlStringList.join(',');
       return (
-        <li title={htmlString.replace(/<\/?[^>]*>/g, '')}>
+        <li key={htmlString} title={htmlString.replace(/<\/?[^>]*>/g, '')}>
           <span>
             <i className="label">持仓产品：</i>
             <i dangerouslySetInnerHTML={{ __html: htmlString }} />
@@ -600,7 +620,7 @@ export default class MatchArea extends PureComponent {
         formatAsset,
       };
       return (
-        <li>
+        <li key={htmlString}>
           <span>
             <i className="label">持仓产品：</i>
             <i dangerouslySetInnerHTML={{ __html: htmlString }} />

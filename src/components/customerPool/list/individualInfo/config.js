@@ -397,6 +397,20 @@ const matchRule = {
       unit: '元',
     }],
   },
+  completedRate: {
+    inset: true,
+    key: [{
+      name: '未完备信息',
+      id: 'completedRate',
+      descMap: {
+        mobileFlag: '手机号码',
+        emailFlag: '邮箱',
+        addrFlag: '地址',
+        riskFlag: '风险测评',
+      },
+      render: 'renderNoCompleted',
+    }],
+  },
 };
 
 export default matchRule;
