@@ -569,7 +569,7 @@ export default class MatchArea extends PureComponent {
               <i>
                 <em
                   className={`marked ${styles.clickable}`}
-                  onClick={() => this.handleOrderCombinationClick(currentItem.name)}
+                  onClick={() => this.handleOrderCombinationClick(currentItem)}
                 >
                   {currentItem.name}
                 </em>
@@ -586,12 +586,11 @@ export default class MatchArea extends PureComponent {
 
   // 点击订购组合名称跳转到详情页面
   @autobind
-  handleOrderCombinationClick(name) {
+  handleOrderCombinationClick({ name, code }) {
     const { push } = this.context;
-    const { location: { query: { combinationCode } } } = this.props;
-    const query = { id: combinationCode, name };
-    const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
+    const query = { id: code, name };
     const pathname = '/choicenessCombination/combinationDetail';
+    const url = `${pathname}?${urlHelper.stringify(query)}`;
     const param = {
       closable: true,
       forceRefresh: true,
