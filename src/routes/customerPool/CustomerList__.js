@@ -26,6 +26,8 @@ import {
   ENTERLIST2,
 } from './config';
 
+import { FILTER_SELECT_FROM_MOREFILTER } from '../../config/filterContant';
+
 import styles from './customerlist__.less';
 
 const EMPTY_LIST = [];
@@ -34,8 +36,6 @@ const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 20; // 默认页大小
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
-
-const FILTER_SELECT_FROM_MOREFILTER = 'FILTER_SELECT_FROM_MOREFILTER';
 
 function getFilterArray(labels) {
   const filtersArray = [];
