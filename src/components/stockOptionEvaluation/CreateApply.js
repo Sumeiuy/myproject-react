@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-21 10:14:52
+ * @Last Modified time: 2018-06-22 16:23:11
  */
 
 import React, { PureComponent } from 'react';
@@ -18,7 +18,7 @@ import InfoTitle from '../common/InfoTitle';
 import AutoComplete from '../common/similarAutoComplete';
 import BottonGroup from '../permission/BottonGroup';
 import EditBasicInfo from './EditBasicInfo';
-import UploadFile from './UploadFile';
+import UploadFile from '../permission/UploadFile';
 import config from './config';
 
 import styles from './createApply.less';
@@ -26,6 +26,7 @@ import styles from './createApply.less';
 const FormItem = Form.Item;
 const { approvalColumns } = config;
 const SRTYPE = 'SRStkOpReq';
+const EMPTY_INFO = '--';
 
 export default class CreateApply extends PureComponent {
   static propTypes = {
@@ -134,6 +135,9 @@ export default class CreateApply extends PureComponent {
       // 客户校验
       isShowCustomerStatusError: false,
       customerStatusErrorMessage: '',
+      // 客户交易级别校验
+      isShowCustTransLvStatusError: false,
+      custTransLvStatusErrorMessage: '',
     };
     this.isValidateError = false;
   }
@@ -160,6 +164,16 @@ export default class CreateApply extends PureComponent {
     this.isValidateError = true;
   }
 
+  // 客户交易级别必填错误时设置错误状态和错误提示
+  @autobind
+  setCustTransLvErrorProps() {
+    this.setState({
+      isShowCustTransLvStatusError: true,
+      custTransLvStatusErrorMessage: '客户交易级别不能为空',
+    });
+    this.isValidateError = true;
+  }
+
   // 客户校验填完值后重置错误状态和错误提示
   @autobind
   resetCustomerErrorProps() {
@@ -167,6 +181,32 @@ export default class CreateApply extends PureComponent {
       isShowCustomerStatusError: false,
       customerStatusErrorMessage: '',
     });
+  }
+
+  // 客户交易级别校验填完值后重置错误状态和错误提示
+  @autobind
+  resetCustTransLvErrorProps() {
+    this.setState({
+      isShowCustTransLvStatusError: false,
+      custTransLvStatusErrorMessage: '',
+    });
+  }
+
+  // 校验必填项
+  @autobind
+  checkIsRequired() {
+    const {
+      customer,
+      custTransLvName,
+    } = this.state;
+    // 客户校验
+    if (_.isEmpty(customer)) {
+      this.setCustomerErrorProps();
+    }
+    // 客户交易级别校验
+    if (!custTransLvName || custTransLvName === EMPTY_INFO) {
+      this.setCustTransLvErrorProps();
+    }
   }
 
   // 关闭弹窗
@@ -283,12 +323,11 @@ export default class CreateApply extends PureComponent {
   @autobind
   handleSubmit(item) {
     // 校验必填项
-    const { customer } = this.state;
-    if (_.isEmpty(customer)) {
-      return;
-    }
+    this.isValidateError = false;
     const { validateFieldsAndScroll } = this.basicInfoForm.getForm();
     validateFieldsAndScroll((err) => {
+      this.checkIsRequired();
+      if (this.isValidateError) return;
       if (!err) {
         const {
           customer: {
@@ -510,7 +549,12 @@ export default class CreateApply extends PureComponent {
   // 更新基本信息数据
   @autobind
   handleChange(obj) {
-    this.setState({ ...obj });
+    this.setState({ ...obj }, () => {
+      const { custTransLvName } = this.state;
+      if (custTransLvName && custTransLvName !== EMPTY_INFO) {
+        this.resetCustTransLvErrorProps();
+      }
+    });
   }
 
   render() {
@@ -541,6 +585,8 @@ export default class CreateApply extends PureComponent {
       customerStatusErrorMessage,
       nextApproverModal,
       nextApproverList,
+      isShowCustTransLvStatusError,
+      custTransLvStatusErrorMessage,
     } = this.state;
     // 客户交易级别校验
     const customerStatusErrorProps = isShowCustomerStatusError ? {
@@ -619,19 +665,18 @@ export default class CreateApply extends PureComponent {
               onChange={this.handleChange}
               acceptOrgData={acceptOrgData}
               queryAcceptOrg={queryAcceptOrg}
+              isShowCustTransLvStatusError={isShowCustTransLvStatusError}
+              custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
             />
           </div>
-          <div className={styles.moduleAttachment}>
-            <InfoTitle head="附件信息" />
-            <UploadFile
-              fileList={[]}
-              edit
-              type="attachment"
-              attachment={attachment}
-              onEmitEvent={this.handleChange}
-              needDefaultText={false}
-            />
-          </div>
+          <UploadFile
+            fileList={[]}
+            edit
+            type="attachment"
+            attachment={attachment}
+            onEmitEvent={this.handleChange}
+            needDefaultText={false}
+          />
           <TableDialog {...searchProps} />
         </div>
       </CommonModal>

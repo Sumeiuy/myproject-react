@@ -7,9 +7,29 @@
     margin-bottom: 14px;
     padding-top: 14px;
 
+    .coloumn {
+      min-width: 400px;
+      max-width: 33.3333%;
+    }
+
     :global {
       .ant-form-item-control {
         line-height: 20px;
+      }
+    }
+  }
+
+  .basicInfo {
+    .coloumn {
+      min-width: 400px;
+      max-width: 33.3333%;
+    }
+
+    .value {
+      :global {
+        .ant-form-item-control-wrapper {
+          width: 200px;
+        }
       }
     }
   }
@@ -24,8 +44,6 @@
     display: flex;
     flex: 1;
     flex-grow: 1;
-    min-width: 340px;
-    max-width: 33.3333%;
   }
 
   .label {
@@ -56,6 +74,12 @@
     .applyContent {
       flex: 1;
       height: auto;
+
+      :global {
+        .ant-form-item-control-wrapper {
+          width: 100%;
+        }
+      }
     }
 
     .applyTextarea {
@@ -100,10 +124,14 @@
         width: 200px;
         height: 32px;
         font-size: 14px;
+        line-height: 32px;
       }
       .ant-select-selection--single {
         width: 200px;
         height: 32px;
+        line-height: 32px;
+        font-size: 14px;
+        color: #333;
       }
 
       .ant-form-item {
@@ -135,12 +163,6 @@
         -ms-transform: rotate(0deg);
         transform: rotate(0deg);
       }
-    }
-  }
-
-  .custTransLv {
-    input {
-      border: 0;
     }
   }
 
@@ -179,12 +201,16 @@
       }
     }
 
+    .coloumn {
+      max-width: 50%;
+    }
+
     .labelDegree {
       width: 245px;
     }
 
     .labelPrompt {
-      width: 200px;
+      width: 210px;
     }
   }
 }
