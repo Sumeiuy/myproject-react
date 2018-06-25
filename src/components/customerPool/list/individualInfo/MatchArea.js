@@ -13,13 +13,13 @@ import store from 'store';
 import { isSightingScope } from '../../helper';
 import { url } from '../../../../helper';
 import seperator from '../../../../config/filterSeperator';
+import { MORE_FILTER_STORAGE } from '../../../../config/filterContant';
 import { openFspTab } from '../../../../utils/index';
 import HoldingProductDetail from '../HoldingProductDetail';
 import matchAreaConfig from './config';
 import styles from './matchArea.less';
 
-const FILTER_ORDER = 'filterOrder'; // 作为过滤器触发顺利在localStorage存储的key
-const MORE_FILTER_STORAGE = 'MORE_FILTER_STORAGE'; // 存在localStorage中选择的标签的id的key
+const FILTER_ORDER = `FILTER_ORDER_${_.random(1, 100000)}`; // 作为过滤器触发顺利在localStorage存储的key
 const unlimited = '不限'; // filter 可能暴露出的值
 const AIM_LABEL_ID = 'sightingTelescope'; // 瞄准镜标签标识
 
