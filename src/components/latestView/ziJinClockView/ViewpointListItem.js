@@ -3,7 +3,7 @@
  * @Description: 首页紫金时钟观点列表 Item
  * @Date: 2018-06-22 13:55:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-22 17:03:35
+ * @Last Modified time: 2018-06-25 14:49:52
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,8 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import Icon from '../../common/Icon';
 import { openRctTab } from '../../../utils';
-import { url as urlHelper } from '../../../helper';
+import { url as urlHelper, time } from '../../../helper';
+import config from '../config';
 import styles from './viewpointListItem.less';
 
 const EMPTY_LIST = [];
@@ -47,10 +48,15 @@ export default class ViewpointListItem extends PureComponent {
   @autobind
   getStockList() {
     const { data: { commend = EMPTY_LIST } } = this.props;
-    return commend.map(item => (
+    return commend.map((item, index) => (
       <span className={styles.stockItem} key={item.code}>
         <a onClick={() => this.openStockPage(item)}>{`${item.name}(${item.code})`}</a>
-        <em>、</em>
+        {
+          index === commend.length - 1 ?
+          null
+          :
+          <em>、</em>
+        }
       </span>
     ));
   }
@@ -101,7 +107,7 @@ export default class ViewpointListItem extends PureComponent {
       <div className={styles.itemBox} style={{ backgroundColor }}>
         <div className={`${styles.top} clearfix`}>
           <h4 title={data.title}>{data.title}</h4>
-          <span className={styles.time}>{data.time}</span>
+          <span className={styles.time}>{time.format(data.time, config.dateFormatStr)}</span>
         </div>
         <div className={styles.middle}>
           <span className={styles.label}>推荐理由：</span>

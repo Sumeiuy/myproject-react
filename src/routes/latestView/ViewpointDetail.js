@@ -3,7 +3,7 @@
  * @Description: 首席观点详情
  * @Date: 2018-06-21 16:49:57
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-22 09:47:03
+ * @Last Modified time: 2018-06-25 16:07:12
  */
 
 import React, { PureComponent } from 'react';
@@ -15,7 +15,8 @@ import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
 import { linkTo } from '../../utils';
-import { url as urlHelper, dva } from '../../helper';
+import { url as urlHelper, dva, time as timeUtil } from '../../helper';
+import config from '../../components/latestView/config';
 import wordSrc from './img/word.png';
 import pdfSrc from './img/pdf.png';
 import logable from '../../decorators/logable';
@@ -73,7 +74,7 @@ export default class ViewpointDetail extends PureComponent {
     const {
       location: {
         query,
-        query: { sourceUrl = '/latestView' },
+        query: { sourceUrl = '/latestView/viewpointList' },
       },
     } = this.props;
     const { push } = this.context;
@@ -113,11 +114,11 @@ export default class ViewpointDetail extends PureComponent {
     } = this.props;
     const currentDetail = viewpointDetail[id] || EMPTY_OBJECT;
     const {
-      title = '暂无标题',
-      content = '暂无内容',
-      stockName = '--',
-      author = '--',
-      time = '--',
+      title = '',
+      content = '',
+      stockName = '',
+      author = '',
+      time = '',
       pdfDownloadUrl = '',
       wordDownloadUrl = '',
     } = currentDetail;
@@ -141,21 +142,26 @@ export default class ViewpointDetail extends PureComponent {
                   <div className={styles.backTitle}>返回列表</div>
                 </div>
                 <div className={styles.title}>
-                  {title}
+                  {title || '暂无标题'}
                 </div>
               </div>
               <div className={styles.infoRow}>
                 <div className={styles.column}>
                   相关股票：
-                  {stockName}
+                  {stockName || '--'}
                 </div>
                 <div className={classnames(styles.column, styles.middle)}>
                   作者：
-                  {author}
+                  {author || '--'}
                 </div>
                 <div className={styles.column}>
                   发布日期：
-                  {time}
+                  {
+                    time ?
+                    timeUtil.format(time, config.dateFormatStr)
+                    :
+                    '--'
+                  }
                 </div>
               </div>
             </div>

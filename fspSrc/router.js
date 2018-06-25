@@ -30,8 +30,8 @@ import CustomerList from '../src/routes/customerPool/CustomerList';
 import CustomerGroup from '../src/routes/customerPool/CustomerGroup';
 import CreateTask from '../src/routes/customerPool/CreateTask';
 import CustomerGroupManage from '../src/routes/customerPool/CustomerGroupManage';
-import ViewpointList from '../src/routes/customerPool/ViewpointList';
-import ViewpointDetail from '../src/routes/customerPool/ViewpointDetail';
+import ViewpointList from '../src/routes/latestView/ViewpointList';
+import ViewpointDetail from '../src/routes/latestView/ViewpointDetail';
 import ServiceLog from '../src/routes/customerPool/ServiceLog';
 import TaskFlow from '../src/routes/customerPool/TaskFlow';
 import ChannelsTypeProtocol from '../src/routes/channelsTypeProtocol/Home';
@@ -47,6 +47,8 @@ import RelationHome from '../src/routes/relation/Home';
 import TaskFeedback from '../src/routes/taskFeedback/Home';
 import FSPComponent from './routes/fspPage/FSPComponent';
 import PreSaleQuery from '../src/routes/preSaleQuery/Home';
+// 最新观点
+import LatestView from '../src/routes/latestView/Home';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -156,8 +158,6 @@ const routes = [
     path: '/customerPool',
     component: CustomerPoolHome,
     children: [
-      { path: '/viewpointDetail', component: ViewpointDetail },
-      { path: '/viewpointList', component: ViewpointList },
       { path: '/todo', component: ToDo },
       { path: '/list', component: CustomerList },
       { path: '/customerGroup', component: CustomerGroup },
@@ -181,6 +181,17 @@ const routes = [
   { path: '/relation', component: RelationHome },
   // 不可匹配的路由会显示空白页
   { path: '/empty', component: Empty },
+  // 最新观点-直接进入
+  {
+    path: '/latestView',
+    component: LatestView,
+    children: [
+      // 首席观点列表页面
+      { path: '/viewpointList', component: ViewpointList },
+      // 首席观点详情页
+      { path: '/viewpointDetail', component: ViewpointDetail },
+    ],
+  },
 ];
 
 // 递归创建路由
