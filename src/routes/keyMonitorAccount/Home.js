@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-26 09:50:09
+ * @Last Modified time: 2018-06-26 10:09:26
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -390,9 +390,9 @@ export default class KeyMonitorAccountHome extends Component {
             _.isEmpty(page) ? null :
             (
               <Pagination
-                current={page.pageNum}
+                current={page.curPageNum}
                 pageSize={page.pageSize}
-                total={page.totalCount}
+                total={page.totalRecordNum}
                 onChange={this.handlePaginationChange}
               />
             )
