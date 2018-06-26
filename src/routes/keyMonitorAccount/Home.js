@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-26 10:09:26
+ * @Last Modified time: 2018-06-26 15:57:52
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -198,6 +198,9 @@ export default class KeyMonitorAccountHome extends Component {
 
   @autobind
   handleCustNumberCellClick(record) {
+    if (_.isEmpty(record.custNumber)) {
+      return;
+    }
     // 此处需要增加权限控制
     if (!this.hasJumpTo360CustViewPermission(record)) {
       return;
