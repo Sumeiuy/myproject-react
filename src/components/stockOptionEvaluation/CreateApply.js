@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-25 22:52:43
+ * @Last Modified time: 2018-06-26 14:50:27
  */
 
 import React, { PureComponent } from 'react';
@@ -579,6 +579,11 @@ export default class CreateApply extends PureComponent {
     });
   }
 
+  @autobind
+  updateValue(attachment) {
+    this.setState({ attachment });
+  }
+
   render() {
     const {
       busCustList,
@@ -695,14 +700,6 @@ export default class CreateApply extends PureComponent {
               custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
             />
           </div>
-          {/* <UploadFile
-            fileList={[]}
-            edit
-            type="attachment"
-            attachment={attachment}
-            onEmitEvent={this.handleChange}
-            needDefaultText={false}
-          /> */}
           <div className={styles.moduleAttachment}>
             <InfoTitle head="附件信息" />
             <CommonUpload
@@ -712,7 +709,7 @@ export default class CreateApply extends PureComponent {
               attachment={attachment || ''}
               needDefaultText={false}
               attachmentList={attachList}
-              uploadAttachment={this.handleChange}
+              uploadAttachment={this.updateValue}
             />
           </div>
           <TableDialog {...searchProps} />

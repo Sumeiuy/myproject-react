@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-25 22:16:54
+ * @Last Modified time: 2018-06-26 15:43:44
  */
 
 import React, { PureComponent } from 'react';
@@ -18,7 +18,7 @@ import EditBasicInfo from './EditBasicInfo';
 import AssessTable from './AssessTable';
 import CommonUpload from '../common/biz/CommonUpload';
 import Approval from '../permission/Approval';
-import ApprovalRecord from '../permission/ApprovalRecord';
+import ApproveList from '../common/approveList';
 import config from './config';
 import { data } from '../../helper';
 
@@ -87,10 +87,6 @@ export default class ApplyEditForm extends PureComponent {
       nextApproverModal: false,
       // 客户信息
       customer: {},
-      // 客户类型
-      custType: detailInfo.custType,
-      // 新建时 选择的该客户姓名
-      custName: detailInfo.custName,
       // 客户交易级别
       custTransLv: detailInfo.custTransLv,
       // 客户交易级别Name
@@ -241,7 +237,9 @@ export default class ApplyEditForm extends PureComponent {
         nonAlertblackFlag,
         riskEval,
         riskEvalTime,
-        age,
+        assessment: {
+          age,
+        },
         ageFlag,
       },
     } = this.props;
@@ -316,7 +314,9 @@ export default class ApplyEditForm extends PureComponent {
         nonAlertblackFlag,
         riskEval,
         riskEvalTime,
-        age,
+        assessment: {
+          age,
+        },
         ageFlag,
         investPrefer,
       },
@@ -432,8 +432,6 @@ export default class ApplyEditForm extends PureComponent {
         statusDesc,
         custType,
         workflowHistoryBeans,
-        currentApproval,
-        currentNodeName,
       },
       attachmentList,
       stockCustTypeList,
@@ -584,13 +582,10 @@ export default class ApplyEditForm extends PureComponent {
               textValue={suggestion}
               onEmitEvent={this.changeTextValue}
             />
-            <ApprovalRecord
-              head="审批记录"
-              info={workflowHistoryBeans}
-              currentApproval={currentApproval}
-              currentNodeName={currentNodeName}
-              statusType="ready"
-            />
+            <div className={styles.approveList}>
+              <InfoTitle head="审批记录" />
+              <ApproveList data={workflowHistoryBeans} />
+            </div>
             <BottonGroup
               list={editButtonListData}
               onEmitEvent={this.handleSubmit}

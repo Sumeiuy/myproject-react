@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-25 21:45:51
+ * @Last Modified time: 2018-06-26 14:25:47
  */
 
 import React, { PureComponent } from 'react';
@@ -291,7 +291,7 @@ export default class EditBasicInfo extends PureComponent {
         // 上海A股股东账号
         aAcct,
         // 开户系统
-        openSysName,
+        openSys,
         // 股票客户类型
         stockCustTypeName,
         // 申请类型
@@ -412,7 +412,7 @@ export default class EditBasicInfo extends PureComponent {
               </div>
               <div className={styles.value}>
                 <FormItem>
-                  {openSysName || EMPTY_INFO}
+                  {openSys || EMPTY_INFO}
                 </FormItem>
               </div>
             </div>
