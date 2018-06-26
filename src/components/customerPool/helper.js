@@ -50,7 +50,7 @@ const helper = {
     filterList = _.isArray(filterList) ? filterList : filterList[type];
     const finalFilterList = _.map(filterList, (filterItem) => {
       if (_.isPlainObject(filterItem)) {
-        const { defaultVal } = filterItem;
+        const { defaultVal = {} } = filterItem;
         const filterValue = _.map(filterItem.value, (item) => {
           const currentValue = filterData[item];
           if (currentValue) {

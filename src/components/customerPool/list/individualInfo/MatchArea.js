@@ -259,12 +259,12 @@ export default class MatchArea extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      detailURL,
+      url: detailURL,
       query,
       pathname,
       param,
       state: {
-        detailURL,
+        url: detailURL,
       },
     });
   }

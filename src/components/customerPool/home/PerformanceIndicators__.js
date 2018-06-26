@@ -47,6 +47,7 @@ export default class PerformanceIndicators extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
+    dict: PropTypes.object.isRequired,
   }
 
   static propTypes = {
@@ -105,33 +106,18 @@ export default class PerformanceIndicators extends PureComponent {
       cycle,
       location,
     } = this.props;
-    const { push } = this.context;
+    const { push, dict: { singleBusinessTypeList } } = this.context;
+    const { name, value } = arg;
     const param = {
       source: 'numOfCustOpened',
       cycle,
       push,
       location,
-      bname: arg.name || arg.value,
+      bname: name || value,
     };
-    // 点击柱子，arg.name，arg.value都有值
-    // 点击x轴， arg.value有值，不存在arg.name
-    // 数组的顺序不能变
-    const businessList = [arg.name, arg.value];
-    if (_.includes(businessList, labelList[0])) {
-      param.value = 'ttfCust';
-    } else if (_.includes(businessList, labelList[1])) {
-      param.value = 'shHkCust';
-    } else if (_.includes(businessList, labelList[2])) {
-      param.value = 'szHkCust';
-    } else if (_.includes(businessList, labelList[3])) {
-      param.value = 'rzrqCust';
-    } else if (_.includes(businessList, labelList[4])) {
-      param.value = 'xsb';
-    } else if (_.includes(businessList, labelList[5])) {
-      param.value = 'optCust';
-    } else if (_.includes(businessList, labelList[6])) {
-      param.value = 'cyb';
-    }
+    const currentSingleBusinessType = _.find(singleBusinessTypeList,
+        item => _.includes(item.value, name)) || {};
+    param.value = currentSingleBusinessType.key;
     linkTo(param);
   }
 
