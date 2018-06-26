@@ -118,13 +118,16 @@ export default class Filter extends PureComponent {
     onFilterChange: PropTypes.func.isRequired,
     queryProduct: PropTypes.func.isRequired,
     clearProductData: PropTypes.func.isRequired,
+    clearSearchPersonList: PropTypes.func.isRequired,
     searchedProductList: PropTypes.array,
     clearJxGroupProductData: PropTypes.func.isRequired,
     queryJxGroupProduct: PropTypes.func.isRequired,
     jxGroupProductList: PropTypes.array,
     tagList: PropTypes.array,
     filtersOfAllSightingTelescope: PropTypes.array.isRequired,
+    getFiltersOfSightingTelescopeSequence: PropTypes.func.isRequired,
     searchServerPersonList: PropTypes.array.isRequired,
+    getSearchPersonList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -201,6 +204,12 @@ export default class Filter extends PureComponent {
     if (filter.dataList) {
       return this[filter.dataList[0]][filter.dataList[1]];
     } else if (filter.dictField) {
+      if (filter.filterId === 'businessOpened') {
+        return {
+          dateType: dict[filter.dictField[0]],
+          businessType: dict[filter.dictField[1]],
+        };
+      }
       return dict[filter.dictField];
     }
     return filter.data;
@@ -272,8 +281,15 @@ export default class Filter extends PureComponent {
 
   @autobind
   handleDevMngFilterSearchChange(value) {
+    const emptyData = [];
     if (!_.isEmpty(value)) {
-      this.context.getSearchServerPersonList(value);
+      this.props.getSearchPersonList({
+        keyword: value,
+        pageSize: 10,
+        pageNum: 1,
+      });
+    } else {
+      this.props.clearSearchPersonList(emptyData);
     }
   }
 
@@ -418,11 +434,22 @@ export default class Filter extends PureComponent {
     updateLocalLabelStorage(obj.value, key);
     this.labelFilter = key;
     store.remove(`${key}_${RANDOM}`);
+    const sightingTelescopeList = this.checkPrimaryKeyLabel(obj.value);
+    this.props.getFiltersOfSightingTelescopeSequence({ sightingTelescopeList });
     const value = _.join(obj.value, seperator.filterValueSeperator);
     this.props.onFilterChange({
       name: obj.id,
       value,
     });
+  }
+
+  @autobind
+  checkPrimaryKeyLabel(primaryKeyLabels) {
+    const labelList = []
+      .concat(primaryKeyLabels)
+      .filter(item => item && check.isSightingTelescope(item));
+
+    return labelList;
   }
 
   @autobind
