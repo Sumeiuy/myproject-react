@@ -12,6 +12,7 @@ import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import { Table, Select, DatePicker } from 'antd';
 import _ from 'lodash';
+import moment from 'moment';
 
 import { dva, time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
@@ -38,7 +39,7 @@ const KEY_TITLE = 'title';
 const KEY_TIME = 'time';
 
 // 详情弹窗的 key
-const MODAL_KEY = 'detailModal';
+const MODAL_KEY = 'detailModalVisible';
 
 const effects = {
   // 大类资产配置分析-更多列表
@@ -88,7 +89,7 @@ export default class MajorAssetsList extends PureComponent {
       endDate: '',
       pageNum: 1,
       pageSize: 20,
-      detailModal: false,
+      [MODAL_KEY]: false,
     };
   }
 
@@ -96,12 +97,22 @@ export default class MajorAssetsList extends PureComponent {
     this.sendRequest();
   }
 
-  // 生成下拉选择选项
+  // 根据部分字段生成表格标题
   @autobind
-  getOptionList(array) {
-    return array.map(item => (
-      <Option key={item.value} value={item.value}>{item.label}</Option>
-    ));
+  getColumnsTitle(array) {
+    const newArray = [...array];
+    // 标题
+    const titleIndex = _.findIndex(newArray, o => o.key === KEY_TITLE);
+    // 报告日期
+    const timeIndex = _.findIndex(newArray, o => o.key === KEY_TIME);
+    newArray[titleIndex].render = (text, record) => <div
+      title={text}
+      onClick={() => this.handleTitleClick(record)}
+    >
+      {text}
+    </div>;
+    newArray[timeIndex].render = text => time.format(text, dateFormatStr);
+    return newArray;
   }
 
   // 翻页
@@ -129,10 +140,10 @@ export default class MajorAssetsList extends PureComponent {
   }
 
   @autobind
-  handleDateChange(moments, dateStrs) {
+  handleDateChange(moments, dateStrings) {
     this.setState({
-      startDate: dateStrs[0],
-      endDate: dateStrs[1],
+      startDate: dateStrings[0],
+      endDate: dateStrings[1],
     }, this.sendRequest);
   }
 
@@ -156,30 +167,10 @@ export default class MajorAssetsList extends PureComponent {
     const { queryMajorAssetsDetail } = this.props;
     const { id = '' } = record;
     this.setState({
-      detailModal: true,
+      [MODAL_KEY]: true,
     }, () => {
       queryMajorAssetsDetail({ id });
     });
-  }
-
-  @autobind
-  getColumnsTitle(array) {
-    const newArray = [...array];
-
-    // 标题
-    const titleIndex = _.findIndex(newArray, o => o.key === KEY_TITLE);
-    // 报告日期
-    const timeIndex = _.findIndex(newArray, o => o.key === KEY_TIME);
-
-    newArray[titleIndex].render = (text, record) => <div
-      title={text}
-      onClick={() => this.handleTitleClick(record)}
-    >
-      {text}
-    </div>;
-
-    newArray[timeIndex].render = text => time.format(text, dateFormatStr);
-    return newArray;
   }
 
   // 关闭弹窗
@@ -190,9 +181,18 @@ export default class MajorAssetsList extends PureComponent {
     });
   }
 
+  // 生成下拉选择选项
+  @autobind
+  renderOptionList(array) {
+    return array.map(item => (
+      <Option key={item.value} value={item.value}>{item.label}</Option>
+    ));
+  }
+
+
   render() {
     const { majorAssetsData, majorAssetsDetail } = this.props;
-    const { type, category, detailModal } = this.state;
+    const { type, category, startDate, endDate } = this.state;
     const {
       list = EMPTY_ARRAY,
       page = EMPTY_OBJECT,
@@ -203,6 +203,11 @@ export default class MajorAssetsList extends PureComponent {
       total: page.totalRecordNum || 0,
       onChange: this.handlePageChange,
     };
+
+    const defaultDate = [
+      _.isEmpty(startDate) ? null : moment(startDate, dateFormatStr),
+      _.isEmpty(endDate) ? null : moment(endDate, dateFormatStr),
+    ];
 
     const titleList = this.getColumnsTitle(titleArray);
     return (
@@ -219,7 +224,7 @@ export default class MajorAssetsList extends PureComponent {
                 onChange={this.handleTypeChange}
               >
                 {
-                  this.getOptionList(typeArray)
+                  this.renderOptionList(typeArray)
                 }
               </Select>
             </div>
@@ -231,21 +236,21 @@ export default class MajorAssetsList extends PureComponent {
                 onChange={this.handleCategoryChange}
               >
                 {
-                  this.getOptionList(categoryArray)
+                  this.renderOptionList(categoryArray)
                 }
               </Select>
             </div>
             <div className={styles.dateBox}>
               <span className={styles.title}>报告日期：</span>
               <RangePicker
-                defaultValue={''}
+                defaultValue={defaultDate}
                 format={dateFormatStr}
                 onChange={this.handleDateChange}
               />
             </div>
           </div>
           <Table
-            rowKey={'id'}
+            rowKey="id"
             columns={titleList}
             dataSource={list}
             pagination={false}
@@ -253,7 +258,7 @@ export default class MajorAssetsList extends PureComponent {
           <Pagination {...paganationOption} />
           <Modal
             modalKey={MODAL_KEY}
-            visible={detailModal}
+            visible={this.state[MODAL_KEY]}
             closeModal={this.closeModal}
             data={majorAssetsDetail}
           />

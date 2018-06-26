@@ -20,7 +20,7 @@ import styles from './home.less';
 const TabPane = Tabs.TabPane;
 const { majorAssets: { tabArray } } = config;
 // 详情弹窗的 key
-const MODAL_KEY = 'detailModal';
+const MODAL_KEY = 'detailModalVisible';
 export default class MajorAssets extends PureComponent {
   static propTypes = {
     indexData: PropTypes.object.isRequired,
@@ -36,7 +36,7 @@ export default class MajorAssets extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      detailModal: false,
+      [MODAL_KEY]: false,
       activeKey: tabArray[0].key,
     };
   }
@@ -82,7 +82,7 @@ export default class MajorAssets extends PureComponent {
 
   render() {
     const { indexData, detail, getDetail } = this.props;
-    const { detailModal, activeKey } = this.state;
+    const { activeKey } = this.state;
     if (_.isEmpty(indexData)) {
       return null;
     }
@@ -125,7 +125,7 @@ export default class MajorAssets extends PureComponent {
         </Tabs>
         <Modal
           modalKey={MODAL_KEY}
-          visible={detailModal}
+          visible={this.state[MODAL_KEY]}
           closeModal={this.closeModal}
           data={detail}
         />
