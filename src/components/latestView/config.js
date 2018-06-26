@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 最新观点页面相关配置
  * @Date: 2018-06-20 13:46:41
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-20 17:41:39
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-06-25 11:03:12
  */
 
 export default {
@@ -63,4 +63,110 @@ export default {
     },
   ],
   dateFormatStr: 'YYYY-MM-DD',
+  majorAssets: {
+    tabArray: [
+      {
+        id: 1,
+        key: 'weeklyMajorAssetList',
+        name: '每周观点',
+      },
+      {
+        id: 2,
+        key: 'monthlyMajorAssetList',
+        name: '战术配置',
+      },
+      {
+        id: 3,
+        key: 'yearlyMajorAssetList',
+        name: '战略配置',
+      },
+    ],
+    titleArray: [
+      {
+        title: '标题',
+        dataIndex: 'title',
+        key: 'title',
+        width: '40%',
+      },
+      {
+        title: '类型',
+        dataIndex: 'typeName',
+        key: 'typeName',
+      },
+      {
+        title: '资产大类',
+        dataIndex: 'categoryName',
+        key: 'categoryName',
+      },
+      {
+        title: '评级',
+        dataIndex: 'gradeName',
+        key: 'gradeName',
+      },
+      {
+        title: '报告日期',
+        dataIndex: 'time',
+        key: 'time',
+      },
+    ],
+    typeArray: [
+      {
+        show: true,
+        label: '不限',
+        value: '',
+      },
+      {
+        show: true,
+        label: '每周观点',
+        value: '1',
+      },
+      {
+        show: true,
+        label: '战术配置',
+        value: '2',
+      },
+      {
+        show: true,
+        label: '战略配置',
+        value: '3',
+      },
+    ],
+    categoryArray: [
+      {
+        show: true,
+        label: '不限',
+        value: '',
+      },
+      {
+        show: true,
+        label: '国内权益类资产',
+        value: '1',
+      },
+      {
+        show: true,
+        label: '固定收益类资产',
+        value: '2',
+      },
+      {
+        show: true,
+        label: '股权类资产',
+        value: '3',
+      },
+      {
+        show: true,
+        label: '另类资产',
+        value: '4',
+      },
+      {
+        show: true,
+        label: '海外资产',
+        value: '5',
+      },
+      {
+        show: true,
+        label: '大宗资产',
+        value: '6',
+      },
+    ],
+  },
 };

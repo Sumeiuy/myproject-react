@@ -87,6 +87,8 @@ import MessageCenter from './routes/messageCenter/Home';
 import StockOptionEvaluation from './routes/stockOptionEvaluation/Home';
 // 最新观点
 import LatestView from './routes/latestView/Home';
+// 最新观点-大类资产配置分析
+import MajorAssetsList from './routes/latestView/MajorAssetsList';
 // 股票期权评估申请修改页面
 import StockOptionEvaluationEdit from './routes/stockOptionEvaluation/ApplyEdit';
 // 客户关联关系信息申请
@@ -318,8 +320,6 @@ const routes = [
   },
   // 投顾业务能力竞赛
   { path: '/investmentConsultantRace', component: InvestmentConsultantRace },
-  // 股票期权评估申请
-  { path: '/stockOptionEvaluation', component: StockOptionEvaluation },
   // 客户关联关系信息申请，直接进入
   { path: '/custRelationships', component: CustRelationships },
   // 客户关联关系信息申请，传递参数flowId
@@ -342,8 +342,12 @@ const routes = [
       { path: '/viewpointList', component: ViewpointList },
       // 首席观点详情页
       { path: '/viewpointDetail', component: ViewpointDetail },
+      // 大类资产配置分析列表
+      { path: '/majorAssetsList', component: MajorAssetsList },
     ],
   },
+  // 股票期权评估申请
+  { path: '/stockOptionEvaluation', component: StockOptionEvaluation },
   // 股票期权评估申请修改
   { path: '/stockOptionEvaluationEdit', component: StockOptionEvaluationEdit },
 ];

@@ -25,6 +25,12 @@ export default {
     viewpointData: EMPTY_OBJECT,
     // 首席观点详情
     viewpointDetail: EMPTY_OBJECT,
+    // 大类资产配置分析-首页列表
+    majorAssetsIndexData: EMPTY_OBJECT,
+    // 大类资产配置分析-更多列表
+    majorAssetsData: EMPTY_OBJECT,
+    // 大类资产配置分析-详情
+    majorAssetsDetail: EMPTY_OBJECT,
     // 首页紫金时钟当前周期数据
     ziJinCycleData: EMPTY_OBJECT,
     // 首页紫金时钟列表
@@ -84,6 +90,30 @@ export default {
         ziJinClockList: resultData,
       };
     },
+    // 大类资产配置分析-首页列表
+    queryMajorAssetsIndexListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        majorAssetsIndexData: resultData,
+      };
+    },
+    // 大类资产配置分析-更多列表
+    queryMajorAssetsListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        majorAssetsData: resultData,
+      };
+    },
+    // 大类资产配置分析-详情
+    queryMajorAssetsDetailSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        majorAssetsDetail: resultData,
+      };
+    },
   },
   effects: {
     // 根据类型获取首页-首席观点模块数据
@@ -118,6 +148,30 @@ export default {
       const response = yield call(api.queryChiefViewpointDetail, payload);
       yield put({
         type: 'queryChiefViewpointDetailSuccess',
+        payload: response,
+      });
+    },
+    // 大类资产配置分析-首页列表
+    * queryMajorAssetsIndexList({ payload }, { call, put }) {
+      const response = yield call(api.queryMajorAssetsIndexList, payload);
+      yield put({
+        type: 'queryMajorAssetsIndexListSuccess',
+        payload: response,
+      });
+    },
+    // 大类资产配置分析-更多列表
+    * queryMajorAssetsList({ payload }, { call, put }) {
+      const response = yield call(api.queryMajorAssetsList, payload);
+      yield put({
+        type: 'queryMajorAssetsListSuccess',
+        payload: response,
+      });
+    },
+    // 大类资产配置分析-详情
+    * queryMajorAssetsDetail({ payload }, { call, put }) {
+      const response = yield call(api.queryMajorAssetsDetail, payload);
+      yield put({
+        type: 'queryMajorAssetsDetailSuccess',
         payload: response,
       });
     },
