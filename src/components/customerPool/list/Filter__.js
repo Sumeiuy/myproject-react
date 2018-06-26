@@ -124,6 +124,7 @@ export default class Filter extends PureComponent {
     jxGroupProductList: PropTypes.array,
     tagList: PropTypes.array,
     filtersOfAllSightingTelescope: PropTypes.array.isRequired,
+    getFiltersOfSightingTelescopeSequence: PropTypes.func.isRequired,
     searchServerPersonList: PropTypes.array.isRequired,
   }
 
@@ -418,11 +419,22 @@ export default class Filter extends PureComponent {
     updateLocalLabelStorage(obj.value, key);
     this.labelFilter = key;
     store.remove(`${key}_${RANDOM}`);
+    const sightingTelescopeList = this.checkPrimaryKeyLabel(obj.value);
+    this.props.getFiltersOfSightingTelescopeSequence({ sightingTelescopeList });
     const value = _.join(obj.value, seperator.filterValueSeperator);
     this.props.onFilterChange({
       name: obj.id,
       value,
     });
+  }
+
+  @autobind
+  checkPrimaryKeyLabel(primaryKeyLabels) {
+    const labelList = []
+      .concat(primaryKeyLabels)
+      .filter(item => item && check.isSightingTelescope(item));
+
+    return labelList;
   }
 
   @autobind

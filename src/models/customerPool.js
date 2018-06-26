@@ -164,6 +164,7 @@ export default {
     custServedByPostnResult: true,
     // 瞄准镜的筛选项
     sightingTelescopeFilters: {},
+    allSightingTelescopeFilters: [],
     // 客户分组批量导入客户解析客户列表
     batchCustList: {},
     // 当前添加的服务记录的信息
@@ -869,6 +870,36 @@ export default {
         payload: resultData,
       });
     },
+    // 序列化
+    * getFiltersOfSightingTelescopeSequence({ payload }, { call, put, select }) {
+      function* getFiltersOfSightingTelescopewithKey(key) {
+        const { resultData } = yield call(commonApi.getFiltersOfSightingTelescope, {
+          prodId: key,
+        });
+        return {
+          key,
+          list: resultData.object || {},
+        };
+      }
+      const allSightingTelescopeFilters =
+        yield select(state => state.customerPool.allSightingTelescopeFilters);
+
+      const { sightingTelescopeList } = payload;
+      let resultData = [];
+
+      const reqestSightingTelescopes = _.filter(sightingTelescopeList, key =>
+        !_.some(allSightingTelescopeFilters, item => item.key === key));
+
+      if (!_.isEmpty(reqestSightingTelescopes)) {
+        resultData =
+          yield _.map(reqestSightingTelescopes, key => getFiltersOfSightingTelescopewithKey(key));
+      }
+      resultData = allSightingTelescopeFilters.concat(resultData);
+      yield put({
+        type: 'getFiltersOfSightingTelescopeSequenceSuccess',
+        payload: resultData,
+      });
+    },
     // 获取瞄准镜的筛选条件
     * getFiltersOfSightingTelescope({ payload }, { call, put }) {
       const { resultData } = yield call(commonApi.getFiltersOfSightingTelescope, payload);
@@ -1534,6 +1565,13 @@ export default {
       return {
         ...state,
         sightingTelescopeFilters: object || {},
+      };
+    },
+    getFiltersOfSightingTelescopeSequenceSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        allSightingTelescopeFilters: payload,
       };
     },
     // 审批成功更新代办数据
