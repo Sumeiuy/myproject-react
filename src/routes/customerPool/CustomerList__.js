@@ -143,7 +143,7 @@ function addRadioRangeParams(filterObj) {
       param[key] = {
         dateType: filterObj[key][0] || null,
         minVal: filterObj[key][1] || null,
-        maxVal: filterObj[key][1] || null,
+        maxVal: filterObj[key][2] || null,
       };
     }
   });
