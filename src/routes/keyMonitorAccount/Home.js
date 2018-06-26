@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-26 09:42:15
+ * @Last Modified time: 2018-06-26 10:09:26
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -210,7 +210,7 @@ export default class KeyMonitorAccountHome extends Component {
       // 必须要写上，否则，在360视图存在的情况下，再跳转到360视图时，
       // 360视图不会刷新，且React界面如果有弹框存在，不会消失
       forceRefresh: true,
-      activeSubTab: ['客户信息', '重点监控账户'],
+      activeSubTab: ['投资者评估管理', '重点监控账户'],
     };
     const url = `/customerCenter/360/${custType}/main?id=${custNumber}`;
     openFspTab({
@@ -390,9 +390,9 @@ export default class KeyMonitorAccountHome extends Component {
             _.isEmpty(page) ? null :
             (
               <Pagination
-                current={page.pageNum}
+                current={page.curPageNum}
                 pageSize={page.pageSize}
-                total={page.totalCount}
+                total={page.totalRecordNum}
                 onChange={this.handlePaginationChange}
               />
             )
