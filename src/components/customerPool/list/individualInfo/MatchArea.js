@@ -2,12 +2,13 @@
  * @file components/customerPool/list/MatchArea.js
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-26 13:00:33
+ * @Last Modified by: xiaZhiQiang
+ * @Last Modified time: 2018-06-21 12:12:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import classNames from 'classnames';
 import { autobind } from 'core-decorators';
 import store from 'store';
 import { isSightingScope } from '../../helper';
@@ -17,6 +18,7 @@ import { openFspTab, openRctTab } from '../../../../utils/index';
 import { MORE_FILTER_STORAGE } from '../../../../config/filterContant';
 import HoldingProductDetail from '../HoldingProductDetail';
 import HoldingCombinationDetail from '../HoldingCombinationDetail';
+import Icon from '../../../common/Icon';
 import matchAreaConfig from './config';
 import styles from './matchArea.less';
 
@@ -46,7 +48,7 @@ const ORG_CODE = 'org';
 
 export default class MatchArea extends PureComponent {
   static setFilterOrder(id, value) {
-    const filterOrder = store.get('filterOrder') || [];
+    const filterOrder = store.get(FILTER_ORDER) || [];
     const finalId = _.isArray(id) ? id : [id];
     let finalOrder = _.difference(filterOrder, finalId);
     if (value && !_.includes(value, unlimited)) {
@@ -94,6 +96,9 @@ export default class MatchArea extends PureComponent {
     custUnrightBusinessType.forEach((item) => {
       this.custUnrightBusinessType[item.key] = item.value;
     });
+    this.state = {
+      showAll: false,
+    };
   }
 
   /**
@@ -254,12 +259,12 @@ export default class MatchArea extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      url: detailURL,
+      detailURL,
       query,
       pathname,
       param,
       state: {
-        url: detailURL,
+        detailURL,
       },
     });
   }
@@ -691,7 +696,7 @@ export default class MatchArea extends PureComponent {
       }
     });
     individualInfo = _.compact(individualInfo);
-    if (filterOrder.length && individualInfo.length) {
+    if (individualInfo.length) {
       return individualInfo;
     }
     return [
@@ -700,13 +705,39 @@ export default class MatchArea extends PureComponent {
     ];
   }
 
+  @autobind
+  showAllIndividual() {
+    const { showAll } = this.state;
+    this.setState({
+      showAll: !showAll,
+    });
+  }
+
   render() {
+    const { showAll } = this.state;
     const filterOrder = this.getFilterOrder();
+    const individualList = this.renderIndividual(filterOrder);
     return (
-      <div className={styles.relatedInfo}>
+      <div
+        className={classNames({
+          [styles.relatedInfo]: true,
+          [styles.collapseItem]: !showAll,
+        })}
+      >
         <ul>
-          {this.renderIndividual(filterOrder)}
+          {individualList}
         </ul>
+        {
+          individualList.length > 2 ?
+            <div className={styles.showAll}>
+              <Icon
+                type={showAll ? 'shouqi2' : 'zhankai1'}
+                className={styles.icon}
+                onClick={this.showAllIndividual}
+              />
+            </div> :
+            null
+        }
       </div>
     );
   }
