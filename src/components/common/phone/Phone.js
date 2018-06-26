@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-25 15:15:02
+ * @Last Modified time: 2018-06-26 22:13:04
  */
 
 import React, { PureComponent } from 'react';
@@ -14,13 +14,14 @@ import bowser from 'bowser';
 import _ from 'lodash';
 import qs from 'query-string';
 import classnames from 'classnames';
+import { Phone as XPhone } from 'lego-soft-phone';
 import styles from './phone.less';
 
 const URL = bowser.msie
   // IE10跨域无法和父页面通信，部署在同域下
   ? '/fspa/phone/'
   // Chrome等WebRTC只可用在https域下,所以部署到移动端server
-  : 'https://crm.htsc.com.cn:2443/phone/';
+  : 'https://crm.htsc.com.cn:1443/phone/';
 
 const OPEN_FEATURES = `
   width=300,
@@ -34,7 +35,6 @@ const OPEN_FEATURES = `
 
 const TYPE_CONNECTED = 'connected';
 const TYPE_END = 'end';
-const TYPE_ERROR = 'pluginError';
 
 export default class Phone extends PureComponent {
   static propTypes = {
@@ -114,11 +114,51 @@ export default class Phone extends PureComponent {
     return empInfo.canCall === true && disable !== true;
   }
 
+  // 检查是否安装打电话插件
+  @autobind
+  checkIEHasCallPlugin() {
+    const { userData } = this.props;
+    // ie下才会调此方法
+    const xPhone = new XPhone(userData);
+    try {
+      // 初始化
+      xPhone.phone.Init2('');
+    } catch (e) {
+      console.log(e);
+      this.handlePluginError();
+      return false;
+    } finally {
+      xPhone.release();
+    }
+    return true;
+  }
+
+  // 未安装插件弹框提示
+  @autobind
+  handlePluginError() {
+    Modal.error({
+      title: '提示',
+      content: (
+        <div>
+          您尚未安装通话插件，点击
+          <a href={'../../../../static/download/SotfCallInstall0426.msi'}>下载</a>
+        </div>
+      ),
+    });
+  }
+
+
   @autobind
   handleClick() {
     const { number, custType, onClick } = this.props;
     if (this.canCall() !== true) {
       return;
+    }
+    if (bowser.msie) {
+      const memoizeCheck = _.memoize(this.checkIEHasCallPlugin);
+      if (!memoizeCheck()) {
+        return;
+      }
     }
     onClick({
       number,
@@ -170,34 +210,15 @@ export default class Phone extends PureComponent {
 
   @autobind
   receiveMessage({ data }) {
-    if (!data) {
-      return null;
-    }
-    if (data.type === TYPE_END && this.popWin) {
+    if (data && data.type === TYPE_END && this.popWin) {
       this.props.onEnd(data);
       // 隐藏通话蒙版
       this.props.onShowMask(false);
       this.popWin.close();
       this.popWin = null;
-    } else if (data.type === TYPE_CONNECTED) {
+    } else if (data && data.type === TYPE_CONNECTED) {
       this.props.onConnected(data);
-    } else if (data.type === TYPE_ERROR) {
-      // 隐藏通话蒙版
-      this.props.onShowMask(false);
-      this.popWin.close();
-      this.popWin = null;
-      Modal.confirm({
-        title: '提示',
-        content: '您尚未安装通话插件，是否立即安装',
-        onOk() {
-          console.log('OK');
-        },
-        onCancel() {
-          console.log('Cancel');
-        },
-      });
     }
-    return null;
   }
 
   render() {
