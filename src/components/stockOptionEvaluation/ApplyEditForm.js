@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-26 15:43:44
+ * @Last Modified time: 2018-06-26 17:17:35
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import _ from 'lodash';
 import InfoTitle from '../common/InfoTitle';
 import BottonGroup from '../permission/BottonGroup';
 import TableDialog from '../common/biz/TableDialog';
+import commonConfirm from '../common/confirm_';
 import EditBasicInfo from './EditBasicInfo';
 import AssessTable from './AssessTable';
 import CommonUpload from '../common/biz/CommonUpload';
@@ -85,8 +86,6 @@ export default class ApplyEditForm extends PureComponent {
       nextApproverList: [],
       // 审批人弹窗
       nextApproverModal: false,
-      // 客户信息
-      customer: {},
       // 客户交易级别
       custTransLv: detailInfo.custTransLv,
       // 客户交易级别Name
@@ -205,14 +204,37 @@ export default class ApplyEditForm extends PureComponent {
     const { validateFieldsAndScroll } = this.basicInfoForm.getForm();
     validateFieldsAndScroll((err) => {
       if (!err) {
-        this.setState({
-          operate: item.operate,
-          groupName: item.nextGroupName,
-          auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
-          nextApproverList: item.flowAuditors,
-          nextApproverModal: true,
-        });
+        const {
+          detailInfo: {
+            custType,
+            isProfessInvset,
+          },
+        } = this.props;
+        // 个人客户且是专业投资者
+        if (custType === 'per' && isProfessInvset === 'Y') {
+          commonConfirm({
+            content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
+            onOk: () => this.showNextApprover(item),
+          });
+        } else {
+          commonConfirm({
+            content: '请确认是否已上传相关附件。',
+            onOk: () => this.showNextApprover(item),
+          });
+        }
       }
+    });
+  }
+
+  // 展示下一步审批人
+  @autobind
+  showNextApprover(item) {
+    this.setState({
+      operate: item.operate,
+      groupName: item.nextGroupName,
+      auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
+      nextApproverList: item.flowAuditors,
+      nextApproverModal: true,
     });
   }
 
@@ -445,7 +467,6 @@ export default class ApplyEditForm extends PureComponent {
     const {
       isEdit,
       suggestion,
-      customer,
       accptTime,
       busPrcDivId,
       custTransLv,
@@ -501,7 +522,6 @@ export default class ApplyEditForm extends PureComponent {
                 optionMarketTypeList={optionMarketTypeList}
                 reqTypeList={reqTypeList}
                 busDivisionList={busDivisionList}
-                customer={customer}
                 custInfo={detailInfo}
                 accptTime={accptTime}
                 busPrcDivId={busPrcDivId}

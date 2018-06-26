@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-26 14:25:47
+ * @Last Modified time: 2018-06-26 17:15:04
  */
 
 import React, { PureComponent } from 'react';
@@ -31,8 +31,6 @@ export default class EditBasicInfo extends PureComponent {
     isEdit: PropTypes.bool,
     // 客户基本信息
     custInfo: PropTypes.object.isRequired,
-    // 客户Id和客户名称信息
-    customer: PropTypes.object.isRequired,
     // 客户类型下拉列表
     stockCustTypeList: PropTypes.array.isRequired,
     // 申请类型下拉列表
@@ -209,15 +207,15 @@ export default class EditBasicInfo extends PureComponent {
     const {
       onChange,
       queryAcceptOrg,
-      customer: {
-        brokerNumber,
+      custInfo: {
+        econNum,
       },
     } = this.props;
     this.setState({ busPrcDivId: value });
     onChange({ busPrcDivId: value });
     // 受理营业部变更，连带受理时间和交易级别变更
     queryAcceptOrg({
-      econNum: brokerNumber,
+      econNum,
       acceptOrg: value,
     }).then(() => {
       const {
