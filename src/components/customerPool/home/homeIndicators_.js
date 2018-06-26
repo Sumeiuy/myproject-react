@@ -332,35 +332,35 @@ export function linkTo({
   }
   const { query: { orgId, cycleSelect } } = location;
   const pathname = '/customerPool/list';
-  let obj = {
+  let params = {
     source,
     bname: encodeURIComponent(bname),
     cycleSelect: cycleSelect || (cycle[0] || {}).key,
   };
   // 客户列表参数灰度处理
   if (env.isGrayFlag()) {
-    obj = {
-      ...obj,
+    params = {
+      ...params,
       type,
       [modalType]: value,
     };
   } else {
     const modalTypeOld = type || 'rightType';
-    obj = {
-      ...obj,
+    params = {
+      ...params,
       [modalTypeOld]: value,
     };
   }
   if (orgId) {
     if (orgId === MAIN_MAGEGER_ID) {
       // obj.ptyMng = `${empName}_${empNum}`;
-      obj.orgId = MAIN_MAGEGER_ID;
+      params.orgId = MAIN_MAGEGER_ID;
     } else {
-      obj.orgId = orgId;
+      params.orgId = orgId;
     }
   }
-  obj.filters = getFilter(obj);
-  const url = `${pathname}?${urlHelper.stringify(obj)}`;
+  params.filters = getFilter(params);
+  const url = `${pathname}?${urlHelper.stringify(params)}`;
   const param = {
     closable: true,
     forceRefresh: true,
@@ -373,6 +373,6 @@ export function linkTo({
     url,
     param,
     pathname,
-    query: obj,
+    query: params,
   });
 }

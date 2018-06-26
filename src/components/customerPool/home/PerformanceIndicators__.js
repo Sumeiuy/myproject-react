@@ -44,13 +44,16 @@ const SOURCE_SERVICER = 'serviceTarget';
 const getLabelList = arr => arr.map(v => (v || {}).name);
 
 export default class PerformanceIndicators extends PureComponent {
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
+    empInfo: PropTypes.object.isRequired,
+  }
+
   static propTypes = {
     category: PropTypes.string,
     indicators: PropTypes.object,
-    push: PropTypes.func.isRequired,
     cycle: PropTypes.array,
     location: PropTypes.object.isRequired,
-    empInfo: PropTypes.object.isRequired,
     custCount: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.array,
@@ -99,10 +102,10 @@ export default class PerformanceIndicators extends PureComponent {
   @logable({ type: 'Click', payload: { name: '业务开通区域下钻' } })
   handleClick(labelList, arg) {
     const {
-      push,
       cycle,
       location,
     } = this.props;
+    const { push } = this.context;
     const param = {
       source: 'numOfCustOpened',
       cycle,
@@ -113,27 +116,27 @@ export default class PerformanceIndicators extends PureComponent {
     // 点击柱子，arg.name，arg.value都有值
     // 点击x轴， arg.value有值，不存在arg.name
     // 数组的顺序不能变
-    const arr = [arg.name, arg.value];
-    if (_.includes(arr, labelList[0])) {
+    const businessList = [arg.name, arg.value];
+    if (_.includes(businessList, labelList[0])) {
       param.value = 'ttfCust';
-    } else if (_.includes(arr, labelList[1])) {
+    } else if (_.includes(businessList, labelList[1])) {
       param.value = 'shHkCust';
-    } else if (_.includes(arr, labelList[2])) {
+    } else if (_.includes(businessList, labelList[2])) {
       param.value = 'szHkCust';
-    } else if (_.includes(arr, labelList[3])) {
+    } else if (_.includes(businessList, labelList[3])) {
       param.value = 'rzrqCust';
-    } else if (_.includes(arr, labelList[4])) {
+    } else if (_.includes(businessList, labelList[4])) {
       param.value = 'xsb';
-    } else if (_.includes(arr, labelList[5])) {
+    } else if (_.includes(businessList, labelList[5])) {
       param.value = 'optCust';
-    } else if (_.includes(arr, labelList[6])) {
+    } else if (_.includes(businessList, labelList[6])) {
       param.value = 'cyb';
     }
     linkTo(param);
   }
 
   @autobind
-  handleBusinessOpenClick(instance) {
+  handleBusinessOpenReady(instance) {
     const {
       indicators,
     } = this.props;
@@ -280,7 +283,8 @@ export default class PerformanceIndicators extends PureComponent {
   // 服务指标（经营指标）
   @autobind
   renderManagerServiceIndicators(param) {
-    const { cycle, location, push } = this.props;
+    const { push } = this.context;
+    const { cycle, location } = this.props;
     const headLine = { icon: 'kehufuwu', title: param.headLine };
     return (
       <Col span={8} key={param.key}>
@@ -301,7 +305,8 @@ export default class PerformanceIndicators extends PureComponent {
   // 客户及资产（投顾绩效）
   @autobind
   renderCustAndPropertyIndicator(param) {
-    const { push, cycle, location } = this.props;
+    const { push } = this.context;
+    const { cycle, location } = this.props;
     const data = getCustAndProperty(param.data);
     const headLine = { icon: 'kehu', title: param.headLine };
     return (
@@ -330,7 +335,7 @@ export default class PerformanceIndicators extends PureComponent {
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
-              onReady={this.handleBusinessOpenClick}
+              onReady={this.handleBusinessOpenReady}
               option={items}
               resizable
               style={{
@@ -346,8 +351,8 @@ export default class PerformanceIndicators extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '沪深归集率下钻' } })
   AggregationToList() {
+    const { push } = this.context;
     const {
-      push,
       cycle,
       location,
     } = this.props;
@@ -394,7 +399,8 @@ export default class PerformanceIndicators extends PureComponent {
   // 产品销售 & 净创收（投顾绩效）
   @autobind
   renderProductSaleAndPureIcomeIndicators(param) {
-    const { cycle, location, push, empInfo } = this.props;
+    const { push, empInfo } = this.context;
+    const { cycle, location } = this.props;
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalData = getProductSale(argument);
     const headLine = { icon: 'shouru', title: param.headLine };
@@ -428,8 +434,8 @@ export default class PerformanceIndicators extends PureComponent {
   // 服务指标（投顾绩效）下钻
   @autobind
   toList(dataIndex) {
+    const { push } = this.context;
     const {
-      push,
       cycle,
       location,
     } = this.props;
@@ -542,7 +548,8 @@ export default class PerformanceIndicators extends PureComponent {
   // 新增客户
   @autobind
   renderPureAddCustIndicators(param) {
-    const { cycle, push, location, empInfo, custCount } = this.props;
+    const { empInfo, push } = this.context;
+    const { cycle, location, custCount } = this.props;
     const isEmpty = _.isEmpty(custCount);
     const { newUnit: pureAddUnit, items: pureAddItems } = getPureAddCust({
       pureAddData: isEmpty ? [0, 0, 0, 0] : custCount,

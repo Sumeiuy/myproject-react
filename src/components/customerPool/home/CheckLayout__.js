@@ -13,10 +13,8 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { Popover } from 'antd';
 import _ from 'lodash';
-
 import antdStyles from '../../../css/antd.less';
 import styles from './checkLayout.less';
-
 import {
   linkTo,
 } from './homeIndicators_';

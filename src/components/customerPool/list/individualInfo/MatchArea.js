@@ -244,7 +244,7 @@ export default class MatchArea extends PureComponent {
     const { push } = this.context;
     const query = { id: code, name };
     const pathname = '/choicenessCombination/combinationDetail';
-    const sUrl = `${pathname}?${urlHelper.stringify(query)}`;
+    const detailURL = `${pathname}?${urlHelper.stringify(query)}`;
     const param = {
       closable: true,
       forceRefresh: true,
@@ -254,12 +254,12 @@ export default class MatchArea extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      sUrl,
+      detailURL,
       query,
       pathname,
       param,
       state: {
-        sUrl,
+        detailURL,
       },
     });
   }
@@ -674,12 +674,12 @@ export default class MatchArea extends PureComponent {
   renderIndividual(filterOrder) {
     let individualInfo = [];
     let individualId = [];
-    _.map(filterOrder, (filterItem, index) => {
+    _.forEach(filterOrder, (filterItem, index) => {
       const currentIndividual = matchAreaConfig[filterItem];
       const { key = [], inset } = currentIndividual;
       const isEnd = filterOrder.length === index + 1;
       if (inset || isEnd) {
-        _.map(key, (individualItem) => {
+        _.forEach(key, (individualItem) => {
           const { render: renderName, id } = individualItem;
           if (!_.includes(individualId, id)) {
             let itemNode = this[renderName](individualItem);

@@ -16,6 +16,8 @@ import logable from '../../../decorators/logable';
 
 import antdStyles from '../../../css/antd.less';
 import styles from './progressList.less';
+import { homeModelType } from '../config';
+
 
 /* 新增客户传给列表页的参数
  * 净开增有效户： 817001
@@ -23,27 +25,23 @@ import styles from './progressList.less';
  * 净新增高端产品户： 817003
  * 新增产品客户： 817004
 */
-
-import { homeModelType } from '../config';
-
 const newCustomerLinkIdx = ['817001', '817002', '817003', '817004'];
 
 export default class ProgressList extends PureComponent {
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
+  }
 
   static propTypes = {
     dataSource: PropTypes.array.isRequired,
     cycle: PropTypes.array,
-    push: PropTypes.func,
     location: PropTypes.object,
-    empInfo: PropTypes.object,
     type: PropTypes.string,
   }
 
   static defaultProps = {
     cycle: [],
     location: {},
-    push: () => { },
-    empInfo: {},
     type: '',
   }
 
@@ -90,7 +88,8 @@ export default class ProgressList extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '新增客户区域下钻' } })
   handleClick(index, item) {
-    const { cycle, push, location, type } = this.props;
+    const { push } = this.context;
+    const { cycle, location, type } = this.props;
     const modelTypeList = homeModelType[type];
     if (modelTypeList) {
       const bname = this.transformName(item.cust);
@@ -130,7 +129,6 @@ export default class ProgressList extends PureComponent {
 
   @autobind
   renderList() {
-    // const { cycle, push, location, empInfo } = this.props;
     const { dataSource, location, type } = this.props;
     // 新增客户模块指标说明文案
     const description = {
