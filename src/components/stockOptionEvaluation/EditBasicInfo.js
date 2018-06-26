@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-22 16:01:17
+ * @Last Modified time: 2018-06-25 21:45:51
  */
 
 import React, { PureComponent } from 'react';
@@ -20,6 +20,8 @@ const RadioGroup = Radio.Group;
 const EMPTY_INFO = '--';
 const Option = Select.Option;
 const EMPTY_LIST = [];
+// 默认的空对象
+const DEFAULT_EMPTY_OPTION = { value: '', label: '--请选择--' };
 
 @create()
 export default class EditBasicInfo extends PureComponent {
@@ -32,13 +34,13 @@ export default class EditBasicInfo extends PureComponent {
     // 客户Id和客户名称信息
     customer: PropTypes.object.isRequired,
     // 客户类型下拉列表
-    stockCustTypeMap: PropTypes.array.isRequired,
+    stockCustTypeList: PropTypes.array.isRequired,
     // 申请类型下拉列表
-    reqTypeMap: PropTypes.array.isRequired,
+    reqTypeList: PropTypes.array.isRequired,
     // 开立期权市场类别下拉列表
-    klqqsclbMap: PropTypes.array.isRequired,
+    optionMarketTypeList: PropTypes.array.isRequired,
     // 业务受理营业部下拉列表
-    busDivisionMap: PropTypes.array.isRequired,
+    busDivisionList: PropTypes.array.isRequired,
     // 触发父组件数据变化
     onChange: PropTypes.func.isRequired,
     // 受理时间
@@ -76,21 +78,28 @@ export default class EditBasicInfo extends PureComponent {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const newState = {};
-    if (nextProps.stockCustTypeMap !== prevState.stockCustTypeMap) {
-      newState.stockCustTypeMap = nextProps.stockCustTypeMap;
+    if (nextProps.stockCustTypeList !== prevState.stockCustTypeList) {
+      newState.stockCustTypeList = nextProps.stockCustTypeList;
     }
-    if (nextProps.reqTypeMap !== prevState.reqTypeMap) {
-      newState.reqTypeMap = nextProps.reqTypeMap;
+    if (nextProps.reqTypeList !== prevState.reqTypeList) {
+      newState.reqTypeList = nextProps.reqTypeList;
     }
-    if (nextProps.klqqsclbMap !== prevState.klqqsclbMap) {
-      newState.klqqsclbMap = nextProps.klqqsclbMap;
+    if (nextProps.optionMarketTypeList !== prevState.optionMarketTypeList) {
+      newState.optionMarketTypeList = nextProps.optionMarketTypeList;
     }
-    if (nextProps.busDivisionMap !== prevState.busDivisionMap) {
-      newState.busDivisionMap = nextProps.busDivisionMap;
+    if (nextProps.busDivisionList !== prevState.busDivisionList) {
+      newState.busDivisionList = nextProps.busDivisionList;
     }
     if (nextProps.custInfo !== prevState.custInfo) {
       newState.custInfo = nextProps.custInfo;
       newState.isSelectDisabled = _.isEmpty(nextProps.custInfo);
+      // 用户是空，基本信息的select需要清空
+      if (_.isEmpty(nextProps.custInfo)) {
+        newState.stockCustTypeList = EMPTY_LIST;
+        newState.reqTypeList = EMPTY_LIST;
+        newState.optionMarketTypeList = EMPTY_LIST;
+        newState.busDivisionList = EMPTY_LIST;
+      }
     }
     return newState;
   }
@@ -130,13 +139,13 @@ export default class EditBasicInfo extends PureComponent {
       // 业务受理营业部
       busPrcDivId: '',
       // 股票客户类型下拉列表
-      stockCustTypeMap: EMPTY_LIST,
+      stockCustTypeList: EMPTY_LIST,
       // 申请类型下拉列表
-      reqTypeMap: EMPTY_LIST,
+      reqTypeList: EMPTY_LIST,
       // 开立期权市场类别下拉列表
-      klqqsclbMap: EMPTY_LIST,
+      optionMarketTypeList: EMPTY_LIST,
       // 业务受理营业部下拉列表
-      busDivisionMap: EMPTY_LIST,
+      busDivisionList: EMPTY_LIST,
       // 申报事项
       declareBus: '',
       // 是否显示学历提示，默认是false
@@ -180,6 +189,11 @@ export default class EditBasicInfo extends PureComponent {
         this.setState({ isShowInvPrompt: true });
       }
     }
+  }
+
+  @autobind
+  addEmptyOption(list) {
+    return [DEFAULT_EMPTY_OPTION, ...list];
   }
 
   // 选择开立期权市场类别
@@ -305,10 +319,10 @@ export default class EditBasicInfo extends PureComponent {
       stockCustType,
       reqType,
       openOptMktCatg,
-      stockCustTypeMap,
-      reqTypeMap,
-      klqqsclbMap,
-      busDivisionMap,
+      stockCustTypeList,
+      optionMarketTypeList,
+      reqTypeList,
+      busDivisionList,
       declareBus,
       isShowDegreePrompt,
       isShowInvPrompt,
@@ -317,6 +331,10 @@ export default class EditBasicInfo extends PureComponent {
     if (isProfessInvset) {
       isProfessInvsetor = isProfessInvset === 'Y' ? '是' : '否';
     }
+    const stockCustTypeListData = this.addEmptyOption(stockCustTypeList);
+    const reqTypeListData = this.addEmptyOption(reqTypeList);
+    const optionMarketTypeListData = this.addEmptyOption(optionMarketTypeList);
+    const busDivisionListData = this.addEmptyOption(busDivisionList);
     return (
       <div className={styles.editBasicInfo}>
         <Form>
@@ -443,7 +461,7 @@ export default class EditBasicInfo extends PureComponent {
                             disabled={isSelectDisabled}
                             onChange={key => this.updateSelect('stockCustType', key)}
                           >
-                            { this.getSelectOption(stockCustTypeMap) }
+                            { this.getSelectOption(stockCustTypeListData) }
                           </Select>,
                         )
                       }
@@ -478,7 +496,7 @@ export default class EditBasicInfo extends PureComponent {
                               disabled={isSelectDisabled}
                               onChange={key => this.updateSelect('reqType', key)}
                             >
-                              { this.getSelectOption(reqTypeMap) }
+                              { this.getSelectOption(reqTypeListData) }
                             </Select>,
                           )
                         }
@@ -506,7 +524,7 @@ export default class EditBasicInfo extends PureComponent {
                         disabled={isSelectDisabled}
                         onChange={key => this.updateOpenOptMktCatg('openOptMktCatg', key)}
                       >
-                        { this.getSelectOption(klqqsclbMap) }
+                        { this.getSelectOption(optionMarketTypeListData) }
                       </Select>,
                     )
                   }
@@ -525,7 +543,7 @@ export default class EditBasicInfo extends PureComponent {
                     onChange={key => this.updateBusPrcDiv('busPrcDivId', key)}
                     value={busPrcDivId}
                   >
-                    { this.getSelectOption(busDivisionMap) }
+                    { this.getSelectOption(busDivisionListData) }
                   </Select>
                 </FormItem>
               </div>

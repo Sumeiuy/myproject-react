@@ -8,7 +8,7 @@
     padding-top: 14px;
 
     .coloumn {
-      min-width: 400px;
+      min-width: 380px;
       max-width: 33.3333%;
     }
 
@@ -21,14 +21,14 @@
 
   .basicInfo {
     .coloumn {
-      min-width: 400px;
+      min-width: 380px;
       max-width: 33.3333%;
     }
 
     .value {
       :global {
         .ant-form-item-control-wrapper {
-          width: 200px;
+          width: 160px;
         }
       }
     }
@@ -119,19 +119,29 @@
     :global {
       .ant-select {
         border-radius: 4px;
+        color: #333;
+      }
+      .ant-select-disabled {
+        color: rgba(0, 0, 0, 0.25);
       }
       .ant-select-selection__rendered {
-        width: 200px;
+        width: 160px;
         height: 32px;
         font-size: 14px;
         line-height: 32px;
       }
       .ant-select-selection--single {
-        width: 200px;
+        width: 160px;
         height: 32px;
         line-height: 32px;
         font-size: 14px;
-        color: #333;
+      }
+
+      .ant-select-selection-selected-value {
+        padding-right: 26px !important;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
 
       .ant-form-item {

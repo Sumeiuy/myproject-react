@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 17:15:59
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-19 16:47:12
+ * @Last Modified time: 2018-06-25 20:38:44
  */
 
 import { stockOptionEvaluation as api } from '../api';
@@ -21,13 +21,13 @@ export default {
     // 客户基本信息
     custInfo: EMPTY_OBJECT,
     // 客户类型下拉列表
-    stockCustTypeMap: EMPTY_LIST,
+    stockCustTypeList: EMPTY_LIST,
     // 申请类型下拉列表
-    reqTypeMap: EMPTY_LIST,
+    reqTypeList: EMPTY_LIST,
     // 开立期权市场类别下拉列表
-    klqqsclbMap: EMPTY_LIST,
+    optionMarketTypeList: EMPTY_LIST,
     // 业务受理营业部下拉列表
-    busDivisionMap: EMPTY_LIST,
+    busDivisionList: EMPTY_LIST,
     // 受理营业部变更
     acceptOrgData: EMPTY_OBJECT,
     // 新建页面获取下一步按钮和审批人
@@ -79,33 +79,21 @@ export default {
 
     // 基本信息的多个select数据成功
     getSelectMapSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      let stockCustTypeMap = EMPTY_LIST;
-      let reqTypeMap = EMPTY_LIST;
-      let klqqsclbMap = EMPTY_LIST;
-      let busDivisionMap = EMPTY_LIST;
-      stockCustTypeMap = resultData.stockCustTypeMap.map(item => ({
-        ...item,
-        show: true,
-      }));
-      reqTypeMap = resultData.reqTypeMap.map(item => ({
-        ...item,
-        show: true,
-      }));
-      klqqsclbMap = resultData.klqqsclbMap.map(item => ({
-        ...item,
-        show: true,
-      }));
-      busDivisionMap = resultData.busDivisionMap.map(item => ({
-        ...item,
-        show: true,
-      }));
+      const { payload: {
+          resultData: {
+            stockCustTypeList = EMPTY_LIST,
+            optionMarketTypeList = EMPTY_LIST,
+            reqTypeList = EMPTY_LIST,
+            busDivisionList = EMPTY_LIST,
+          },
+        },
+      } = action;
       return {
         ...state,
-        stockCustTypeMap,
-        reqTypeMap,
-        klqqsclbMap,
-        busDivisionMap,
+        stockCustTypeList,
+        optionMarketTypeList,
+        reqTypeList,
+        busDivisionList,
       };
     },
 
@@ -114,10 +102,10 @@ export default {
       return {
         ...state,
         custInfo: EMPTY_OBJECT,
-        stockCustTypeMap: EMPTY_LIST,
-        reqTypeMap: EMPTY_LIST,
-        klqqsclbMap: EMPTY_LIST,
-        busDivisionMap: EMPTY_LIST,
+        stockCustTypeList: EMPTY_LIST,
+        reqTypeList: EMPTY_LIST,
+        optionMarketTypeList: EMPTY_LIST,
+        busDivisionList: EMPTY_LIST,
         createButtonListData: EMPTY_OBJECT,
       };
     },
