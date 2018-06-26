@@ -404,9 +404,9 @@ const matchRule = {
       id: 'completedRate',
       descMap: {
         mobileFlag: '手机号码',
-        emailFlag: '邮箱',
-        addrFlag: '地址',
-        riskFlag: '风险测评',
+        emailFlag: '电子邮箱',
+        addrFlag: '联系地址',
+        riskFlag: '风险偏好',
       },
       render: 'renderNoCompleted',
     }],

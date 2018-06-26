@@ -168,13 +168,14 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  // 未完备信息
   @autobind
   renderNoCompleted(currentItem) {
     const {
       listItem,
     } = this.props;
     const { name, id, descMap } = currentItem;
-    let noCompleteIdList = _.omitBy(descMap, (value, key) => listItem[key] === 'N');
+    let noCompleteIdList = _.omitBy(descMap, (value, key) => listItem[key] === 'Y');
     noCompleteIdList = _.values(noCompleteIdList);
     if (noCompleteIdList.length) {
       return (
@@ -262,12 +263,12 @@ export default class MatchArea extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      detailURL,
+      url: detailURL,
       query,
       pathname,
       param,
       state: {
-        detailURL,
+        url: detailURL,
       },
     });
   }
