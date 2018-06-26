@@ -86,7 +86,11 @@ export default {
     {
       filterName: '年龄范围',
       filterId: 'birthDt',
-      type: 'date',
+      type: 'range',
+      unit: '岁',
+      unitStyle: {
+        right: 8,
+      },
     },
 
     // 服务
@@ -171,24 +175,7 @@ export default {
         overflowY: 'auto',
         width: 274,
       },
-      data: {
-        dateType: [
-          { key: '518003', value: '本月' },
-          { key: '518004', value: '本季' },
-          { key: '518005', value: '本年' },
-        ],
-        businessType: [
-          // 原因是大数据不支持不限，但以后可能支持,如以后支持，添加即可
-          /*  { key: 'all', value: '不限' }, */
-          { key: 'ttfCust', value: '天天发' },
-          { key: 'shHkCust', value: '沪港通' },
-          { key: 'szHkCust', value: '深港通' },
-          { key: 'rzrqCust', value: '融资融券' },
-          { key: 'xsb', value: '新三板' },
-          { key: 'optCust', value: '个股期权' },
-          { key: 'cyb', value: '创业板' },
-        ],
-      },
+      dictField: ['kPIDateScopeType', 'singleBusinessTypeList'],
       getFilterLabelValue: getBusinessOpenedFilterLabel,
     },
     {

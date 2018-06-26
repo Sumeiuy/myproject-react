@@ -57,6 +57,7 @@ function addRangeParams(filterObj) {
   const param = {};
   const rangeParam = [
     'totAset', // 总资产
+    'birthDt', // 年龄范围
     'cashAmt', // 资金余额
     'avlAmt', // 普通可用资金
     'avlAmtCrdt', // 信用可用资金
@@ -103,7 +104,6 @@ function addDateParams(filterObj) {
   const param = {};
   const dateParam = [
     'dateOpened', // 开户日期
-    'birthDt', // 年龄范围
     'highPrdtDt', // 新增高端产品户
     'buyProdDt', // buyProdDt
     'gjzDt', // 新增高净值
@@ -211,12 +211,12 @@ function getFilterParam(filterObj) {
     _.isArray(filterObj.primaryKeyPrdts) ? filterObj.primaryKeyPrdts[0] : filterObj.primaryKeyPrdts;
 
   if (primaryKeyPrdts) {
-    param.primaryKeyPrdts = [].concat(primaryKeyPrdts);
+    param.primaryKeyPrdts = _.compact([].concat(primaryKeyPrdts));
   }
 
   // 订购组合
   if (filterObj.primaryKeyJxgrps) {
-    param.primaryKeyJxgrps = [].concat(filterObj.primaryKeyJxgrps[0]);
+    param.primaryKeyJxgrps = _.compact([].concat(filterObj.primaryKeyJxgrps[0]));
   }
 
 
@@ -284,6 +284,7 @@ const effects = {
   getCustContact: 'customerPool/getCustContact',
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustomerScope: 'customerPool/getCustomerScope',
+  getSearchPersonList: 'customerPool/getSearchPersonList',
   getSearchServerPersonList: 'customerPool/getSearchServerPersonList',
   handleFilter: 'customerList/handleFilter',  // 手动上传日志
   handleSelect: 'customerList/handleDropDownSelect',  // 手动上传日志
@@ -303,6 +304,7 @@ const effects = {
   queryJxGroupProduct: 'customerPool/queryJxGroupProduct',
   getTagList: 'customerPool/getTagList',
   clearProductData: 'customerPool/clearProductData',
+  clearSearchPersonList: 'customerPool/clearSearchPersonList',
   clearJxGroupProductData: 'customerPool/clearJxGroupProductData',
   addCallRecord: 'customerPool/addCallRecord',
   getCustRangeByAuthority: 'customerPool/getCustRangeByAuthority',
@@ -372,6 +374,7 @@ const mapDispatchToProps = {
   getCeFileList: fetchDataFunction(false, effects.getCeFileList),
   // 搜索服务服务经理
   getSearchServerPersonList: fetchDataFunction(true, effects.getSearchServerPersonList),
+  getSearchPersonList: fetchDataFunction(false, effects.getSearchPersonList),
   push: routerRedux.push,
   replace: routerRedux.replace,
   toggleServiceRecordModal: query => ({
@@ -387,6 +390,7 @@ const mapDispatchToProps = {
   queryJxGroupProduct: fetchDataFunction(false, effects.queryJxGroupProduct),
   getTagList: fetchDataFunction(false, effects.getTagList),
   clearProductData: fetchDataFunction(false, effects.clearProductData),
+  clearSearchPersonList: fetchDataFunction(false, effects.clearSearchPersonList),
   clearJxGroupProductData: fetchDataFunction(false, effects.clearJxGroupProductData),
   // 获取uuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
@@ -432,6 +436,7 @@ export default class CustomerList extends PureComponent {
     // 接口的loading状态
     interfaceState: PropTypes.object.isRequired,
     getSearchServerPersonList: PropTypes.func.isRequired,
+    getSearchPersonList: PropTypes.func.isRequired,
     searchServerPersonList: PropTypes.array.isRequired,
     serviceDepartment: PropTypes.object.isRequired,
     // 手动上传日志
@@ -462,6 +467,7 @@ export default class CustomerList extends PureComponent {
     jxGroupProductList: PropTypes.array,
     tagList: PropTypes.array,
     clearProductData: PropTypes.func.isRequired,
+    clearSearchPersonList: PropTypes.func.isRequired,
     clearJxGroupProductData: PropTypes.func.isRequired,
     holdingProducts: PropTypes.object.isRequired,
     addCallRecord: PropTypes.func.isRequired,
@@ -587,7 +593,7 @@ export default class CustomerList extends PureComponent {
     } = props;
 
     const filterObj = url.transfromFilterValFromUrl(query.filters);
-    const keyword = filterObj.searchText;
+    const keyword = decodeURIComponent(filterObj.searchText || '');
     const labelName = decodeURIComponent(query.labelName);
 
     const param = {
@@ -909,11 +915,13 @@ export default class CustomerList extends PureComponent {
       jxGroupProductList,
       tagList,
       clearProductData,
+      clearSearchPersonList,
       clearJxGroupProductData,
       addCallRecord,
       currentCommonServiceRecord,
       allSightingTelescopeFilters,
       getFiltersOfSightingTelescopeSequence,
+      getSearchPersonList,
     } = this.props;
     const {
       sortDirection,
@@ -951,10 +959,12 @@ export default class CustomerList extends PureComponent {
         <Filter
           filtersOfAllSightingTelescope={allSightingTelescopeFilters}
           getFiltersOfSightingTelescopeSequence={getFiltersOfSightingTelescopeSequence}
+          getSearchPersonList={getSearchPersonList}
           tagList={tagList}
           queryProduct={queryProduct}
           queryJxGroupProduct={queryJxGroupProduct}
           clearProductData={clearProductData}
+          clearSearchPersonList={clearSearchPersonList}
           searchedProductList={searchedProductList}
           jxGroupProductList={jxGroupProductList}
           clearJxGroupProductData={clearJxGroupProductData}

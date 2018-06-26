@@ -680,6 +680,17 @@ export default {
         }
       }
     },
+    getSearchPersonList: [
+      function* getSearchPersonList({ payload }, { call, put }) {
+        const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
+        if (resultData) {
+          const { servicePeopleList = EMPTY_LIST } = resultData;
+          yield put({
+            type: 'getSearchServerPersonListSuccess',
+            payload: servicePeopleList,
+          });
+        }
+      }, { type: 'takeLatest' }],
     // 360服务记录查询更多服务
     * getServiceLogMore({ payload }, { call, put }) {
       const response = yield call(api.queryAllServiceRecord, payload);
@@ -1526,6 +1537,13 @@ export default {
       return {
         ...state,
         productList: payload,
+      };
+    },
+    clearSearchPersonList(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        searchServerPersonList: payload,
       };
     },
     // 审批流程获取按钮成功
