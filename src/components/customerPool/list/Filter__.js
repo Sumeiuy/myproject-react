@@ -465,7 +465,6 @@ export default class Filter extends PureComponent {
       name: 'primaryKeyLabels',
       value,
     });
-
     updateLocalFilterStorage(id, hashString);
 
     store.remove(`${id}_${hashString}`);
@@ -529,7 +528,7 @@ export default class Filter extends PureComponent {
     },
   })
   handleCloseFilter({ name }) {
-    updateLocalFilterStorage(name);
+    updateLocalFilterStorage(name, this.props.hashString);
     this.props.onFilterChange({
       name,
       value: '',
