@@ -57,6 +57,7 @@ function addRangeParams(filterObj) {
   const param = {};
   const rangeParam = [
     'totAset', // 总资产
+    'birthDt', // 年龄范围
     'cashAmt', // 资金余额
     'avlAmt', // 普通可用资金
     'avlAmtCrdt', // 信用可用资金
@@ -103,7 +104,6 @@ function addDateParams(filterObj) {
   const param = {};
   const dateParam = [
     'dateOpened', // 开户日期
-    'birthDt', // 年龄范围
     'highPrdtDt', // 新增高端产品户
     'buyProdDt', // buyProdDt
     'gjzDt', // 新增高净值
@@ -211,12 +211,12 @@ function getFilterParam(filterObj) {
     _.isArray(filterObj.primaryKeyPrdts) ? filterObj.primaryKeyPrdts[0] : filterObj.primaryKeyPrdts;
 
   if (primaryKeyPrdts) {
-    param.primaryKeyPrdts = [].concat(primaryKeyPrdts);
+    param.primaryKeyPrdts = _.compact([].concat(primaryKeyPrdts));
   }
 
   // 订购组合
   if (filterObj.primaryKeyJxgrps) {
-    param.primaryKeyJxgrps = [].concat(filterObj.primaryKeyJxgrps[0]);
+    param.primaryKeyJxgrps = _.compact([].concat(filterObj.primaryKeyJxgrps[0]));
   }
 
 
@@ -284,6 +284,7 @@ const effects = {
   getCustContact: 'customerPool/getCustContact',
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustomerScope: 'customerPool/getCustomerScope',
+  getSearchPersonList: 'customerPool/getSearchPersonList',
   getSearchServerPersonList: 'customerPool/getSearchServerPersonList',
   handleFilter: 'customerList/handleFilter',  // 手动上传日志
   handleSelect: 'customerList/handleDropDownSelect',  // 手动上传日志
@@ -295,7 +296,7 @@ const effects = {
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   queryCustUuid: 'performerView/queryCustUuid',
   getCeFileList: 'customerPool/getCeFileList',
-  getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
+  getFiltersOfSightingTelescopeSequence: 'customerPool/getFiltersOfSightingTelescopeSequence',
   isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
   addServeRecord: 'customerPool/addCommonServeRecord',
   queryHoldingProduct: 'customerPool/queryHoldingProduct',
@@ -303,6 +304,7 @@ const effects = {
   queryJxGroupProduct: 'customerPool/queryJxGroupProduct',
   getTagList: 'customerPool/getTagList',
   clearProductData: 'customerPool/clearProductData',
+  clearSearchPersonList: 'customerPool/clearSearchPersonList',
   clearJxGroupProductData: 'customerPool/clearJxGroupProductData',
   addCallRecord: 'customerPool/addCallRecord',
   queryHoldingSecurityRepetition: 'customerPool/queryHoldingSecurityRepetition',
@@ -341,7 +343,7 @@ const mapStateToProps = state => ({
   filesList: state.customerPool.filesList,
   // 是否是本人名下客户
   custServedByPostnResult: state.customerPool.custServedByPostnResult,
-  sightingTelescopeFilters: state.customerPool.sightingTelescopeFilters,
+  allSightingTelescopeFilters: state.customerPool.allSightingTelescopeFilters,
   // 是否包含非本人名下客户和超出1000条数据限制
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
   // 自建任务平台的服务类型、任务反馈字典
@@ -375,6 +377,7 @@ const mapDispatchToProps = {
   getCeFileList: fetchDataFunction(false, effects.getCeFileList),
   // 搜索服务服务经理
   getSearchServerPersonList: fetchDataFunction(true, effects.getSearchServerPersonList),
+  getSearchPersonList: fetchDataFunction(false, effects.getSearchPersonList),
   push: routerRedux.push,
   replace: routerRedux.replace,
   toggleServiceRecordModal: query => ({
@@ -390,10 +393,12 @@ const mapDispatchToProps = {
   queryJxGroupProduct: fetchDataFunction(false, effects.queryJxGroupProduct),
   getTagList: fetchDataFunction(false, effects.getTagList),
   clearProductData: fetchDataFunction(false, effects.clearProductData),
+  clearSearchPersonList: fetchDataFunction(false, effects.clearSearchPersonList),
   clearJxGroupProductData: fetchDataFunction(false, effects.clearJxGroupProductData),
   // 获取uuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
-  getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
+  getFiltersOfSightingTelescopeSequence:
+    fetchDataFunction(true, effects.getFiltersOfSightingTelescopeSequence),
   // 查询是否包含非本人名下客户和超出1000条数据限制
   isSendCustsServedByPostn: fetchDataFunction(true, effects.isSendCustsServedByPostn),
   // 添加服务记录
@@ -436,6 +441,7 @@ export default class CustomerList extends PureComponent {
     // 接口的loading状态
     interfaceState: PropTypes.object.isRequired,
     getSearchServerPersonList: PropTypes.func.isRequired,
+    getSearchPersonList: PropTypes.func.isRequired,
     searchServerPersonList: PropTypes.array.isRequired,
     serviceDepartment: PropTypes.object.isRequired,
     // 手动上传日志
@@ -452,8 +458,8 @@ export default class CustomerList extends PureComponent {
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
     custServedByPostnResult: PropTypes.bool.isRequired,
-    getFiltersOfSightingTelescope: PropTypes.func.isRequired,
-    sightingTelescopeFilters: PropTypes.object.isRequired,
+    getFiltersOfSightingTelescopeSequence: PropTypes.func.isRequired,
+    allSightingTelescopeFilters: PropTypes.array.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired,
@@ -466,6 +472,7 @@ export default class CustomerList extends PureComponent {
     jxGroupProductList: PropTypes.array,
     tagList: PropTypes.array,
     clearProductData: PropTypes.func.isRequired,
+    clearSearchPersonList: PropTypes.func.isRequired,
     clearJxGroupProductData: PropTypes.func.isRequired,
     holdingProducts: PropTypes.object.isRequired,
     addCallRecord: PropTypes.func.isRequired,
@@ -499,7 +506,6 @@ export default class CustomerList extends PureComponent {
       expandAll: false,
       queryParam: {},
       cycleSelect: '',
-      filtersOfAllSightingTelescope: [],
     };
     // 用户默认岗位orgId
     this.orgId = emp.getOrgId();
@@ -571,29 +577,19 @@ export default class CustomerList extends PureComponent {
     // TODO：根据location请求相应的所有子标签条件
     if (!_.isEqual(preOtherQuery, otherQuery) && !store.get(FILTER_SELECT_FROM_MOREFILTER)) {
       this.getCustomerList(nextProps);
-      this.getFiltersOfAllSightingTelescope(query);
     }
     store.set(FILTER_SELECT_FROM_MOREFILTER, false);
   }
 
   @autobind
   getFiltersOfAllSightingTelescope(query) {
-    const { getFiltersOfSightingTelescope } = this.props;
+    const { getFiltersOfSightingTelescopeSequence } = this.props;
     const filters = query.filters || '';
     const primaryKeyLabels = url.transfromFilterValFromUrl(filters).primaryKeyLabels;
     if (primaryKeyLabels) {
       const sightingTelescopeList = this.checkPrimaryKeyLabel(primaryKeyLabels);
-      _.forEach(sightingTelescopeList, (key) => {
-        getFiltersOfSightingTelescope({
-          prodId: key,
-        }).then(() => {
-          this.setState({
-            filtersOfAllSightingTelescope: this.state.filtersOfAllSightingTelescope.concat({
-              key,
-              list: this.props.sightingTelescopeFilters,
-            }),
-          });
-        });
+      getFiltersOfSightingTelescopeSequence({
+        sightingTelescopeList,
       });
     }
   }
@@ -605,7 +601,7 @@ export default class CustomerList extends PureComponent {
     } = props;
 
     const filterObj = url.transfromFilterValFromUrl(query.filters);
-    const keyword = filterObj.searchText;
+    const keyword = decodeURIComponent(filterObj.searchText || '');
     const labelName = decodeURIComponent(query.labelName);
 
     const param = {
@@ -744,9 +740,7 @@ export default class CustomerList extends PureComponent {
       .concat(primaryKeyLabels)
       .filter(item => check.isSightingTelescope(item));
 
-    const { filtersOfAllSightingTelescope } = this.state;
-    return _.filter(labelList, label =>
-      !_.find(filtersOfAllSightingTelescope, item => item.key === label));
+    return labelList;
   }
 
   // 组织机构树切换和时间周期切换
@@ -929,10 +923,13 @@ export default class CustomerList extends PureComponent {
       jxGroupProductList,
       tagList,
       clearProductData,
+      clearSearchPersonList,
       clearJxGroupProductData,
       addCallRecord,
       currentCommonServiceRecord,
-      getFiltersOfSightingTelescope,
+      allSightingTelescopeFilters,
+      getFiltersOfSightingTelescopeSequence,
+      getSearchPersonList,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
     } = this.props;
@@ -952,7 +949,7 @@ export default class CustomerList extends PureComponent {
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
-    const { expandAll, queryParam, filtersOfAllSightingTelescope } = this.state;
+    const { expandAll, queryParam } = this.state;
 
     const custRangeProps = {
       orgId,
@@ -970,12 +967,14 @@ export default class CustomerList extends PureComponent {
     return (
       <div className={styles.customerlist}>
         <Filter
-          getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
-          filtersOfAllSightingTelescope={filtersOfAllSightingTelescope}
+          filtersOfAllSightingTelescope={allSightingTelescopeFilters}
+          getFiltersOfSightingTelescopeSequence={getFiltersOfSightingTelescopeSequence}
+          getSearchPersonList={getSearchPersonList}
           tagList={tagList}
           queryProduct={queryProduct}
           queryJxGroupProduct={queryJxGroupProduct}
           clearProductData={clearProductData}
+          clearSearchPersonList={clearSearchPersonList}
           searchedProductList={searchedProductList}
           jxGroupProductList={jxGroupProductList}
           clearJxGroupProductData={clearJxGroupProductData}

@@ -164,6 +164,7 @@ export default {
     custServedByPostnResult: true,
     // 瞄准镜的筛选项
     sightingTelescopeFilters: {},
+    allSightingTelescopeFilters: [],
     // 客户分组批量导入客户解析客户列表
     batchCustList: {},
     // 当前添加的服务记录的信息
@@ -679,6 +680,17 @@ export default {
         }
       }
     },
+    getSearchPersonList: [
+      function* getSearchPersonList({ payload }, { call, put }) {
+        const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
+        if (resultData) {
+          const { servicePeopleList = EMPTY_LIST } = resultData;
+          yield put({
+            type: 'getSearchServerPersonListSuccess',
+            payload: servicePeopleList,
+          });
+        }
+      }, { type: 'takeLatest' }],
     // 360服务记录查询更多服务
     * getServiceLogMore({ payload }, { call, put }) {
       const response = yield call(api.queryAllServiceRecord, payload);
@@ -866,6 +878,36 @@ export default {
       const { resultData } = yield call(api.isCustServedByPostn, payload);
       yield put({
         type: 'isCustServedByPostnSuccess',
+        payload: resultData,
+      });
+    },
+    // 序列化
+    * getFiltersOfSightingTelescopeSequence({ payload }, { call, put, select }) {
+      function* getFiltersOfSightingTelescopewithKey(key) {
+        const { resultData } = yield call(commonApi.getFiltersOfSightingTelescope, {
+          prodId: key,
+        });
+        return {
+          key,
+          list: resultData.object || {},
+        };
+      }
+      const allSightingTelescopeFilters =
+        yield select(state => state.customerPool.allSightingTelescopeFilters);
+
+      const { sightingTelescopeList } = payload;
+      let resultData = [];
+
+      const reqestSightingTelescopes = _.filter(sightingTelescopeList, key =>
+        !_.some(allSightingTelescopeFilters, item => item.key === key));
+
+      if (!_.isEmpty(reqestSightingTelescopes)) {
+        resultData =
+          yield _.map(reqestSightingTelescopes, key => getFiltersOfSightingTelescopewithKey(key));
+      }
+      resultData = allSightingTelescopeFilters.concat(resultData);
+      yield put({
+        type: 'getFiltersOfSightingTelescopeSequenceSuccess',
         payload: resultData,
       });
     },
@@ -1497,6 +1539,13 @@ export default {
         productList: payload,
       };
     },
+    clearSearchPersonList(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        searchServerPersonList: payload,
+      };
+    },
     // 审批流程获取按钮成功
     getApprovalBtnSuccess(state, action) {
       const { payload: { resultData } } = action;
@@ -1534,6 +1583,13 @@ export default {
       return {
         ...state,
         sightingTelescopeFilters: object || {},
+      };
+    },
+    getFiltersOfSightingTelescopeSequenceSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        allSightingTelescopeFilters: payload,
       };
     },
     // 审批成功更新代办数据
