@@ -15,14 +15,13 @@ import { isSightingScope } from '../../helper';
 import { url as urlHelper, url } from '../../../../helper';
 import seperator from '../../../../config/filterSeperator';
 import { openFspTab, openRctTab } from '../../../../utils/index';
-import { MORE_FILTER_STORAGE } from '../../../../config/filterContant';
+import { RANDOM } from '../../../../config/filterContant';
 import HoldingProductDetail from '../HoldingProductDetail';
 import HoldingCombinationDetail from '../HoldingCombinationDetail';
 import Icon from '../../../common/Icon';
 import matchAreaConfig from './config';
 import styles from './matchArea.less';
 
-const FILTER_ORDER = `FILTER_ORDER_${_.random(1, 100000)}`; // 作为过滤器触发顺利在localStorage存储的key
 const unlimited = '不限'; // filter 可能暴露出的值
 const AIM_LABEL_ID = 'sightingTelescope'; // 瞄准镜标签标识
 
@@ -47,14 +46,14 @@ const PER_CODE = 'per';
 const ORG_CODE = 'org';
 
 export default class MatchArea extends PureComponent {
-  static setFilterOrder(id, value) {
-    const filterOrder = store.get(FILTER_ORDER) || [];
+  static setFilterOrder(id, value, hashString) {
+    const filterOrder = store.get(`FILTER_ORDER_${hashString}`) || [];
     const finalId = _.isArray(id) ? id : [id];
     let finalOrder = _.difference(filterOrder, finalId);
     if (value && !_.includes(value, unlimited)) {
       finalOrder = [...finalId, ...finalOrder];
     }
-    store.set(FILTER_ORDER, [...new Set(finalOrder)]);
+    store.set(`FILTER_ORDER_${hashString}`, [...new Set(finalOrder)]);
   }
 
   static propTypes = {
@@ -85,9 +84,13 @@ export default class MatchArea extends PureComponent {
         custBusinessType = [],
         custUnrightBusinessType = [],
       },
+      location: {
+        query,
+      },
     } = props;
 
     this.businessConfig = new Map();
+    this.hashString = query.hashString || RANDOM;
     custBusinessType.forEach((item) => {
       this.businessConfig.set(item.key, item.value);
     });
@@ -643,20 +646,20 @@ export default class MatchArea extends PureComponent {
     const { location: { query: { filters, individualInfo } } } = this.props;
     const needInfoFilter = _.keys(matchAreaConfig);
     if (!individualInfo) {
-      store.remove(FILTER_ORDER);
+      store.remove(`FILTER_ORDER_${this.hashString}`);
       const filtersArray = filters ? filters.split(seperator.filterSeperator) : [];
       const filterList = _.map(filtersArray, item =>
         item.split(seperator.filterInsideSeperator)[0]);
       const filterOrder = _.filter(needInfoFilter, item => _.includes(filterList, item));
-      MatchArea.setFilterOrder(filterOrder, true);
+      MatchArea.setFilterOrder(filterOrder, true, this.hashString);
       return filterOrder;
     }
-    return _.filter(store.get(FILTER_ORDER), item => _.includes(needInfoFilter, item));
+    return _.filter(store.get(`FILTER_ORDER_${this.hashString}`), item => _.includes(needInfoFilter, item));
   }
 
   @autobind
   renderCustomerLabels() {
-    const labelList = store.get(MORE_FILTER_STORAGE);
+    const labelList = store.get(`MORE_FILTER_STORAGE_${this.hashString}`);
     const labelListId = _.map(labelList, item => item.key);
     const {
       listItem: { relatedLabels },

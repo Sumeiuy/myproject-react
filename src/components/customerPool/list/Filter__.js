@@ -16,11 +16,6 @@ import logable from '../../../decorators/logable';
 import HtFilter, { TagFilter } from '../../common/htFilter';
 import { url, check } from '../../../helper';
 import { seperator } from '../../../config';
-import {
-  FILTER_SELECT_FROM_MOREFILTER,
-  MORE_FILTER_STORAGE,
-  RANDOM,
-} from '../../../config/filterContant';
 
 import {
   basicFilters,
@@ -39,12 +34,12 @@ const MORE_FILTER_TYPE = {
 };
 
 // 初始化组件时，更新本地缓存
-function UpdateLocalStorage(currentValue, moreFilterOpenedList) {
+function UpdateLocalStorage(currentValue, moreFilterOpenedList, hashString) {
   let labelFilters = [];
   // 如果是瞄准镜标签下钻过来，清除瞄准镜标签子标签缓存
   if (!currentValue[TAG_SIGN]) {
     const labelList = [].concat(currentValue.primaryKeyLabels).filter(value => value);
-    _.each(labelList, key => store.remove(`${key}_${RANDOM}`));
+    _.each(labelList, key => store.remove(`${key}_${hashString}`));
     if (!_.isEmpty(labelList)) {
       labelFilters = _.map(labelList, label => ({
         type: MORE_FILTER_TYPE.tag,
@@ -52,21 +47,21 @@ function UpdateLocalStorage(currentValue, moreFilterOpenedList) {
       }));
     }
     // 清除非固定过滤组件的打开记录缓存
-    store.remove(MORE_FILTER_STORAGE);
+    store.remove(`MORE_FILTER_STORAGE_${hashString}`);
 
     const moreFiltersList = _.map(moreFilterOpenedList, filter => ({
       type: MORE_FILTER_TYPE.more,
       key: filter,
     }));
 
-    store.set(MORE_FILTER_STORAGE, _.compact([].concat(labelFilters, moreFiltersList)));
+    store.set(`MORE_FILTER_STORAGE_${hashString}`, _.compact([].concat(labelFilters, moreFiltersList)));
   }
 }
 
 // 客户标签组件交互时，更新本地缓存
-function updateLocalLabelStorage(labels, key) {
+function updateLocalLabelStorage(labels, key, hashString) {
   let nextMoreFilterListOpened = [];
-  const moreFilterListOpened = store.get(MORE_FILTER_STORAGE);
+  const moreFilterListOpened = store.get(`MORE_FILTER_STORAGE_${hashString}`);
   if (key === 'clearAll') {
     nextMoreFilterListOpened =
       _.filter(moreFilterListOpened, obj => obj.type === MORE_FILTER_TYPE.more);
@@ -82,20 +77,20 @@ function updateLocalLabelStorage(labels, key) {
     }
   }
 
-  store.set(MORE_FILTER_STORAGE, _.compact(nextMoreFilterListOpened));
+  store.set(`MORE_FILTER_STORAGE_${hashString}`, _.compact(nextMoreFilterListOpened));
 }
 
 // 点击清除时更新本地缓存
-function updateLocalFilterStorage(key) {
-  const moreFilterListOpened = store.get(MORE_FILTER_STORAGE);
+function updateLocalFilterStorage(key, hashString) {
+  const moreFilterListOpened = store.get(`MORE_FILTER_STORAGE_${hashString}`);
   const nextMoreFilterListOpened = _.filter(moreFilterListOpened, obj => obj.key !== key);
-  store.set(MORE_FILTER_STORAGE, _.compact(nextMoreFilterListOpened));
+  store.set(`MORE_FILTER_STORAGE_${hashString}`, _.compact(nextMoreFilterListOpened));
 }
 
 // 更多组件交互时，更新本地缓存
-function updateLocalMoreFilterStorage(item) {
+function updateLocalMoreFilterStorage(item, hashString) {
   let nextMoreFilterListOpened = [];
-  const moreFilterListOpened = store.get(MORE_FILTER_STORAGE);
+  const moreFilterListOpened = store.get(`MORE_FILTER_STORAGE_${hashString}`);
 
   if (item.key === 'clearAll') {
     nextMoreFilterListOpened =
@@ -108,7 +103,7 @@ function updateLocalMoreFilterStorage(item) {
       key: item.id,
     });
   }
-  store.set(MORE_FILTER_STORAGE, _.compact(nextMoreFilterListOpened));
+  store.set(`MORE_FILTER_STORAGE_${hashString}`, _.compact(nextMoreFilterListOpened));
 }
 
 export default class Filter extends PureComponent {
@@ -128,6 +123,7 @@ export default class Filter extends PureComponent {
     getFiltersOfSightingTelescopeSequence: PropTypes.func.isRequired,
     searchServerPersonList: PropTypes.array.isRequired,
     getSearchPersonList: PropTypes.func.isRequired,
+    hashString: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -142,14 +138,14 @@ export default class Filter extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { location } = props;
+    const { location, hashString } = props;
     const {
       filters = '',
     } = location.query;
 
     const currentValue = url.transfromFilterValFromUrl(filters);
     const moreFilterOpenedList = this.getMoreFilterOpenKeys(currentValue);
-    UpdateLocalStorage(currentValue, moreFilterOpenedList);
+    UpdateLocalStorage(currentValue, moreFilterOpenedList, hashString);
     this.labelFilterVisible = false;
   }
 
@@ -431,9 +427,10 @@ export default class Filter extends PureComponent {
     },
   })
   handleLabelChange(obj, key) {
-    updateLocalLabelStorage(obj.value, key);
+    const { hashString } = this.props;
+    updateLocalLabelStorage(obj.value, key, hashString);
     this.labelFilter = key;
-    store.remove(`${key}_${RANDOM}`);
+    store.remove(`${key}_${hashString}`);
     const sightingTelescopeList = this.checkPrimaryKeyLabel(obj.value);
     this.props.getFiltersOfSightingTelescopeSequence({ sightingTelescopeList });
     const value = _.join(obj.value, seperator.filterValueSeperator);
@@ -461,6 +458,7 @@ export default class Filter extends PureComponent {
     },
   })
   handleNormalfiterClose(id, labels) {
+    const { hashString } = this.props;
     const labelList = [].concat(labels);
     const value = _.join(_.filter(labelList, item => item !== id), seperator.filterValueSeperator);
     this.props.onFilterChange({
@@ -468,9 +466,9 @@ export default class Filter extends PureComponent {
       value,
     });
 
-    updateLocalFilterStorage(id);
+    updateLocalFilterStorage(id, hashString);
 
-    store.remove(`${id}_${RANDOM}`);
+    store.remove(`${id}_${hashString}`);
   }
 
   @autobind
@@ -483,8 +481,9 @@ export default class Filter extends PureComponent {
   })
   handleTagfilterChange(value) {
     const { id } = value;
-    store.remove(`${id}_${RANDOM}`);
-    store.set(`${id}_${RANDOM}`, value.value);
+    const { hashString } = this.props;
+    store.remove(`${id}_${hashString}`);
+    store.set(`${id}_${hashString}`, value.value);
     this.props.onFilterChange({
       name: TAG_SIGN,
       value: _.random(1, 1000000),
@@ -500,7 +499,8 @@ export default class Filter extends PureComponent {
     },
   })
   handleMoreFilterChange(obj) {
-    updateLocalMoreFilterStorage(obj);
+    const { hashString } = this.props;
+    updateLocalMoreFilterStorage(obj, hashString);
     if (obj.key === 'clearAll') {
       this.props.onFilterChange({
         name: obj.id,
@@ -515,7 +515,7 @@ export default class Filter extends PureComponent {
       }, obj.isDeleteFilterFromLocation);
 
       if (!obj.isDeleteFilterFromLocation) {
-        store.set(FILTER_SELECT_FROM_MOREFILTER, true);
+        store.set(`FILTER_SELECT_FROM_MOREFILTER_${hashString}`, true);
       }
     }
   }
@@ -587,6 +587,7 @@ export default class Filter extends PureComponent {
   @autobind
   renderMoreFilter(obj, moreFilterList, splitLabelList, currentValue) {
     let renderItem;
+    const { hashString } = this.props;
     if (obj.type === MORE_FILTER_TYPE.more) {
       renderItem = _.find(moreFilterList, filter => filter.filterId === obj.key);
       return renderItem ?
@@ -638,7 +639,7 @@ export default class Filter extends PureComponent {
         filterName={renderItem.name}
         filterId={renderItem.id}
         defaultVisible={this.labelFilterVisible && renderItem.id === this.labelFilter}
-        value={store.get(`${renderItem.id}_${RANDOM}`) || []}
+        value={store.get(`${renderItem.id}_${hashString}`) || []}
         data={tagfilters}
         onChange={this.handleTagfilterChange}
         onClose={
@@ -653,6 +654,7 @@ export default class Filter extends PureComponent {
       dict,
       location,
       filtersOfAllSightingTelescope,
+      hashString,
     } = this.props;
     const {
       filters = '',
@@ -660,7 +662,7 @@ export default class Filter extends PureComponent {
 
     const currentValue = url.transfromFilterValFromUrl(filters);
 
-    const moreFilterListOpened = store.get(MORE_FILTER_STORAGE);
+    const moreFilterListOpened = store.get(`MORE_FILTER_STORAGE_${hashString}`);
 
     const selectedKeys = this.getMoreFilterOpenKeys(currentValue);
 
