@@ -11,11 +11,12 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import store from 'store';
 import { isSightingScope } from '../../helper';
-import { url } from '../../../../helper';
+import { url as urlHelper, url } from '../../../../helper';
 import seperator from '../../../../config/filterSeperator';
+import { openFspTab, openRctTab } from '../../../../utils/index';
 import { MORE_FILTER_STORAGE } from '../../../../config/filterContant';
-import { openFspTab } from '../../../../utils/index';
 import HoldingProductDetail from '../HoldingProductDetail';
+import HoldingCombinationDetail from '../HoldingCombinationDetail';
 import matchAreaConfig from './config';
 import styles from './matchArea.less';
 
@@ -65,7 +66,10 @@ export default class MatchArea extends PureComponent {
     holdingProducts: PropTypes.object.isRequired,
     queryHoldingProductReqState: PropTypes.bool.isRequired,
     formatAsset: PropTypes.func.isRequired,
-  }
+    // 组合产品订购客户查询持仓证券重合度
+    queryHoldingSecurityRepetition: PropTypes.func.isRequired,
+    holdingSecurityData: PropTypes.object.isRequired,
+  };
 
   static contextTypes = {
     push: PropTypes.func.isRequired,
@@ -136,6 +140,130 @@ export default class MatchArea extends PureComponent {
     return url.transfromFilterValFromUrl(filters);
   }
 
+  // 直接取后端返回值渲染的情况
+  renderDefaultVal(item) {
+    const {
+      listItem,
+    } = this.props;
+    const { name, id, unit = '' } = item;
+    const currentVal = listItem[id];
+    if (currentVal) {
+      return (
+        <li title={currentVal}>
+          <span>
+            <i className="label">{name}：</i>
+            {currentVal}{unit}
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  @autobind
+  renderNoCompleted(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { name, id, descMap } = currentItem;
+    let noCompleteIdList = _.omitBy(descMap, (value, key) => listItem[key] === 'N');
+    noCompleteIdList = _.values(noCompleteIdList);
+    if (noCompleteIdList.length) {
+      return (
+        <li key={id}>
+          <span>
+            <i className="label">{name}：</i>
+            {_.join(noCompleteIdList, ',')}
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+  // 精选组合页面的订购组合
+  @autobind
+  renderOrderCombination() {
+    const {
+      listItem: { jxgrpProducts, isPrivateCustomer, empId, custId },
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      queryHoldingSecurityRepetition,
+      holdingSecurityData,
+      formatAsset,
+    } = this.props;
+    const { primaryKeyJxgrps } = this.getFilters();
+    if (!_.isEmpty(jxgrpProducts)) {
+      const { empInfo: { empInfo = {} } } = this.context;
+      // 是否显示’持仓详情‘，默认不显示
+      let isShowDetailBtn = false;
+      // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
+      if (hasNPCTIQPermission && !isPrivateCustomer) {
+        isShowDetailBtn = true;
+      }
+      // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
+      // 主服务经理 可以看名下所有客户的持仓信息
+      if (hasPCTIQPermission || empInfo.rowId === empId) {
+        isShowDetailBtn = true;
+      }
+      const id = decodeURIComponent(primaryKeyJxgrps[0]);
+      const currentItem = _.find(jxgrpProducts, item => item.id === id);
+      const { code: combinationCode } = currentItem;
+      const props = {
+        combinationCode,
+        custId,
+        queryHoldingSecurityRepetition,
+        data: holdingSecurityData,
+        formatAsset,
+      };
+      if (!_.isEmpty(currentItem)) {
+        return (
+          <li key={id}>
+            <span>
+              <i className="label">订购组合：</i>
+              <i>
+                <em
+                  className={`marked ${styles.clickable}`}
+                  onClick={() => this.handleOrderCombinationClick(currentItem)}
+                >
+                  {currentItem.name}
+                </em>
+                /{currentItem.code}
+              </i>
+              {isShowDetailBtn && <HoldingCombinationDetail {...props} />}
+            </span>
+          </li>
+        );
+      }
+    }
+    return null;
+  }
+
+  // 点击订购组合名称跳转到详情页面
+  @autobind
+  handleOrderCombinationClick({ name, code }) {
+    const { push } = this.context;
+    const query = { id: code, name };
+    const pathname = '/choicenessCombination/combinationDetail';
+    const detailURL = `${pathname}?${urlHelper.stringify(query)}`;
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_JX_GROUP_DETAIL',
+      title: '组合详情',
+    };
+    openRctTab({
+      routerAction: push,
+      detailURL,
+      query,
+      pathname,
+      param,
+      state: {
+        detailURL,
+      },
+    });
+  }
+
   // 匹配姓名
   renderName() {
     const {
@@ -146,7 +274,7 @@ export default class MatchArea extends PureComponent {
       && listItem.name.indexOf(searchText) > -1) {
       const markedEle = replaceWord({ value: listItem.name, searchText });
       return (
-        <li>
+        <li key={listItem.name}>
           <span>
             <i className="label">姓名：</i>
             <i
@@ -169,7 +297,7 @@ export default class MatchArea extends PureComponent {
       && listItem.idNum.indexOf(searchText) > -1) {
       const markedEle = replaceWord({ value: listItem.idNum, searchText });
       return (
-        <li>
+        <li key={listItem.idNum}>
           <span>
             <i className="label">身份证号码：</i>
             <i
@@ -192,7 +320,7 @@ export default class MatchArea extends PureComponent {
       && listItem.telephone.indexOf(searchText) > -1) {
       const markedEle = replaceWord({ value: listItem.telephone, searchText });
       return (
-        <li>
+        <li key={listItem.telephone}>
           <span>
             <i className="label">联系电话：</i>
             <i
@@ -215,7 +343,7 @@ export default class MatchArea extends PureComponent {
       && listItem.custId.indexOf(searchText) > -1) {
       const markedEle = replaceWord({ value: listItem.custId, searchText });
       return (
-        <li>
+        <li key={listItem.custId}>
           <span>
             <i className="label">经纪客户号：</i>
             <i
@@ -254,7 +382,7 @@ export default class MatchArea extends PureComponent {
           return `${replaceWord({ value: item.name, searchText })}-${searchText}`;
         });
         return (
-          <li>
+          <li key={markedEle}>
             <span>
               <i className="label">匹配标签：</i>
               <i
@@ -299,7 +427,7 @@ export default class MatchArea extends PureComponent {
       const markedEle = replaceWord({ value: listItem.serviceRecord, searchText });
       // 接口返回的接口数据是截断过的，需要前端在后面手动加...
       return (
-        <li>
+        <li key={listItem.serviceRecord}>
           <span className={styles.serviceRecord}>
             <i className="label">服务记录：</i>
             <i dangerouslySetInnerHTML={{ __html: markedEle }} />
@@ -326,7 +454,7 @@ export default class MatchArea extends PureComponent {
       if (!_.isEmpty(tmpList)) {
         const data = tmpList.join('、');
         return (
-          <li title={data}>
+          <li key={listItem.unrightType} title={data}>
             <span>
               <i className="label">{`可开通业务(${tmpList.length})`}：</i>
               {data}
@@ -349,7 +477,7 @@ export default class MatchArea extends PureComponent {
       if (!_.isEmpty(tmpList)) {
         const data = tmpList.join('、');
         return (
-          <li title={data}>
+          <li key={data} title={data}>
             <span>
               <i className="label">{`已开通业务(${tmpList.length})`}：</i>
               {data}
@@ -446,7 +574,7 @@ export default class MatchArea extends PureComponent {
       );
       const htmlString = htmlStringList.join(',');
       return (
-        <li title={htmlString.replace(/<\/?[^>]*>/g, '')}>
+        <li key={htmlString} title={htmlString.replace(/<\/?[^>]*>/g, '')}>
           <span>
             <i className="label">持仓产品：</i>
             <i dangerouslySetInnerHTML={{ __html: htmlString }} />
@@ -492,7 +620,7 @@ export default class MatchArea extends PureComponent {
         formatAsset,
       };
       return (
-        <li>
+        <li key={htmlString}>
           <span>
             <i className="label">持仓产品：</i>
             <i dangerouslySetInnerHTML={{ __html: htmlString }} />
@@ -500,30 +628,6 @@ export default class MatchArea extends PureComponent {
           </span>
         </li>
       );
-    }
-    return null;
-  }
-
-  // 精选组合页面的订购组合
-  @autobind
-  renderOrderCombination() {
-    const {
-      listItem: { jxgrpProducts },
-      location: { query: { source, labelMapping } },
-    } = this.props;
-    if (source === 'orderCombination' && !_.isEmpty(jxgrpProducts)) {
-      const id = decodeURIComponent(labelMapping);
-      const currentItem = _.find(jxgrpProducts, item => item.id === id);
-      if (!_.isEmpty(currentItem)) {
-        return (
-          <li>
-            <span>
-              <i className="label">订购组合：</i>
-              <i><em className="marked">{currentItem.name}</em>/{currentItem.code}</i>
-            </span>
-          </li>
-        );
-      }
     }
     return null;
   }
@@ -570,19 +674,23 @@ export default class MatchArea extends PureComponent {
   renderIndividual(filterOrder) {
     let individualInfo = [];
     let individualId = [];
-    _.map(filterOrder, (filterItem) => {
+    _.forEach(filterOrder, (filterItem, index) => {
       const currentIndividual = matchAreaConfig[filterItem];
-      const { key = [] } = currentIndividual;
-      _.map(key, (individualItem) => {
-        const { render: renderName, id } = individualItem;
-        if (!_.includes(individualId, id)) {
-          let itemNode = this[renderName]();
-          individualId = [...individualId, id];
-          itemNode = _.isArray(itemNode) ? itemNode : [itemNode];
-          individualInfo = [...individualInfo, ...itemNode];
-        }
-      });
+      const { key = [], inset } = currentIndividual;
+      const isEnd = filterOrder.length === index + 1;
+      if (inset || isEnd) {
+        _.forEach(key, (individualItem) => {
+          const { render: renderName, id } = individualItem;
+          if (!_.includes(individualId, id)) {
+            let itemNode = this[renderName](individualItem);
+            individualId = [...individualId, id];
+            itemNode = _.isArray(itemNode) ? itemNode : [itemNode];
+            individualInfo = [...individualInfo, ...itemNode];
+          }
+        });
+      }
     });
+    individualInfo = _.compact(individualInfo);
     if (filterOrder.length && individualInfo.length) {
       return individualInfo;
     }
