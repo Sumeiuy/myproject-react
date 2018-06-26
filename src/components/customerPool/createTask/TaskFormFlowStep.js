@@ -27,8 +27,6 @@ import {
   EXTERNAL_ENTRY,
   ASSOCIATION_ENTRY,
   TAG_ENTRY,
-  CUSTINDICATOR_ENTRY,
-  NUMOFCUSTOPENED_ENTRY,
   SIGHTINGTELESCOPE_ENTRY,
   returnTaskEntrySource,
   labelSource,
@@ -272,10 +270,6 @@ export default class TaskFormFlowStep extends PureComponent {
       case TAG_ENTRY:
         custSources = '标签目标客户池';
         break;
-      case CUSTINDICATOR_ENTRY:
-      case NUMOFCUSTOPENED_ENTRY:
-        custSources = '绩效目标客户';
-        break;
       case PROGRESS_ENTRY:
       case PIE_ENTRY:
       case TASK_CUST_SCOPE_ENTRY:
@@ -288,6 +282,7 @@ export default class TaskFormFlowStep extends PureComponent {
         custSources = '标签圈人';
         break;
       default:
+        custSources = '绩效目标客户';
         break;
     }
     return custSources;
