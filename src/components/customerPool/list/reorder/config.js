@@ -10,19 +10,19 @@ const ASC = 'asc'; // 升序
 
 const reorder = [
   {
-    sortType: 'Aset',
+    sortType: 'totAset',
     name: '总资产',
     sortDirections: [ASC, DESC],
     defaultDirections: DESC,
   },
   {
-    sortType: 'OpenDt',
+    sortType: 'openDt',
     name: '开户时间',
     sortDirections: [ASC, DESC],
     defaultDirections: DESC,
   },
   {
-    sortType: 'Fee',
+    sortType: 'minFee',
     name: '佣金率',
     sortDirections: [ASC, DESC],
     defaultDirections: DESC,
