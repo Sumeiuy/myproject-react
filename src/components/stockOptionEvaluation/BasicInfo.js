@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-07 23:20:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-11 10:17:09
+ * @Last Modified time: 2018-06-26 21:34:03
  */
 
 import React, { PureComponent } from 'react';
@@ -27,7 +27,7 @@ export default class BasicInfo extends PureComponent {
       idNum,
       isProfessInvset,
       aAcct,
-      openSysName,
+      openSys,
       custTransLvName,
       stockCustTypeName,
       reqTypeName,
@@ -111,7 +111,7 @@ export default class BasicInfo extends PureComponent {
               <span className={styles.colon}>:</span>
             </div>
             <div className={styles.value}>
-              {openSysName || EMPTY_INFO}
+              {openSys || EMPTY_INFO}
             </div>
           </div>
           <div className={styles.coloumn}>

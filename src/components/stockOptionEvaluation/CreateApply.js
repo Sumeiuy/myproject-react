@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-26 17:17:09
+ * @Last Modified time: 2018-06-26 18:00:47
  */
 
 import React, { PureComponent } from 'react';
@@ -321,6 +321,7 @@ export default class CreateApply extends PureComponent {
       uploadKey: data.uuid(),
       stockCustType: '',
       reqType: '',
+      custTransLvName: '',
       openOptMktCatg: '',
       busPrcDivId: '',
       accptTime: '',

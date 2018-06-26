@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-26 17:15:04
+ * @Last Modified time: 2018-06-26 22:42:50
  */
 
 import React, { PureComponent } from 'react';
@@ -97,6 +97,10 @@ export default class EditBasicInfo extends PureComponent {
         newState.reqTypeList = EMPTY_LIST;
         newState.optionMarketTypeList = EMPTY_LIST;
         newState.busDivisionList = EMPTY_LIST;
+        newState.stockCustType = '';
+        newState.reqType = '';
+        newState.openOptMktCatg = '';
+        newState.declareBus = '';
       }
     }
     return newState;
@@ -113,15 +117,16 @@ export default class EditBasicInfo extends PureComponent {
         reqType,
         ageFlag,
         invFlag,
+        custType,
       },
     } = this.props;
-    if (isEdit && stockCustType === 'New' && reqType === 'New') {
-      if (ageFlag === 'N') {
-        isShowDegreePrompt = true;
-      }
-      if (invFlag === 'N') {
-        isShowInvPrompt = true;
-      }
+    // 个人客户，客户类型为新开客户,年龄条件不符合要求
+    if (isEdit && custType === 'per' && stockCustType === 'New' && ageFlag === 'N') {
+      isShowDegreePrompt = true;
+    }
+    // 个人客户，申请类型为初次申请，投资经历评估不符合要求
+    if (isEdit && custType === 'per' && reqType === 'New' && invFlag === 'N') {
+      isShowInvPrompt = true;
     }
     this.state = {
       // 基本信息
@@ -172,20 +177,24 @@ export default class EditBasicInfo extends PureComponent {
       custInfo: {
         invFlag,
         ageFlag,
+        custType,
       },
     } = this.props;
     const {
       stockCustType,
       reqType,
     } = this.state;
-    // 新开客户，初次申请
-    if (stockCustType === 'New' && reqType === 'New') {
-      if (ageFlag === 'N') {
-        this.setState({ isShowDegreePrompt: true });
-      }
-      if (invFlag === 'N') {
-        this.setState({ isShowInvPrompt: true });
-      }
+    // 个人客户，客户类型为新开客户,年龄条件不符合要求
+    if (custType === 'per' && stockCustType === 'New' && ageFlag === 'N') {
+      this.setState({ isShowDegreePrompt: true });
+    } else {
+      this.setState({ isShowDegreePrompt: false });
+    }
+    // 个人客户，申请类型为初次申请，投资经历评估不符合要求
+    if (custType === 'per' && reqType === 'New' && invFlag === 'N') {
+      this.setState({ isShowInvPrompt: true });
+    } else {
+      this.setState({ isShowInvPrompt: false });
     }
   }
 
