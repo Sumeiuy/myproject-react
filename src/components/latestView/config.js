@@ -150,22 +150,22 @@ export default {
       {
         show: true,
         label: '股权类资产',
-        value: '3',
-      },
-      {
-        show: true,
-        label: '另类资产',
-        value: '4',
-      },
-      {
-        show: true,
-        label: '海外资产',
         value: '5',
       },
       {
         show: true,
-        label: '大宗资产',
+        label: '另类资产',
         value: '6',
+      },
+      {
+        show: true,
+        label: '海外资产',
+        value: '4',
+      },
+      {
+        show: true,
+        label: '大宗资产',
+        value: '3',
       },
     ],
   },

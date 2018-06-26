@@ -102,16 +102,16 @@ export default class MajorAssetsList extends PureComponent {
   getColumnsTitle(array) {
     const newArray = [...array];
     // 标题
-    const titleIndex = _.findIndex(newArray, o => o.key === KEY_TITLE);
-    // 报告日期
-    const timeIndex = _.findIndex(newArray, o => o.key === KEY_TIME);
-    newArray[titleIndex].render = (text, record) => <div
+    const titleColumn = _.find(newArray, o => o.key === KEY_TITLE);
+    titleColumn.render = (text, record) => <div
       title={text}
       onClick={() => this.handleTitleClick(record)}
     >
       {text}
     </div>;
-    newArray[timeIndex].render = text => time.format(text, dateFormatStr);
+    // 报告日期
+    const timeColumn = _.find(newArray, o => o.key === KEY_TIME);
+    timeColumn.render = text => time.format(text, dateFormatStr);
     return newArray;
   }
 

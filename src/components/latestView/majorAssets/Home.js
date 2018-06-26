@@ -11,6 +11,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Tabs } from 'antd';
 
+import { openRctTab } from '../../../utils';
+import { url as urlHelper } from '../../../helper';
 import Icon from '../../common/Icon';
 import Item from './Item';
 import Modal from './Modal';
@@ -71,12 +73,19 @@ export default class MajorAssets extends PureComponent {
     const { push } = this.context;
     const { activeKey } = this.state;
     const activeObj = _.find(tabArray, o => o.key === activeKey);
-    const urlQuery = {
+    const param = {
+      id: 'RTC_TAB_MAJOR_ASSETS_LIST',
+      title: '大类资产配置分析最新观点',
+    };
+    const query = {
       type: activeObj.id || '',
     };
-    push({
-      pathname: 'latestView/majorAssetsList',
-      query: urlQuery,
+    const url = `/latestView/majorAssetsList?${urlHelper.stringify(query)}`;
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+      pathname: url,
     });
   }
 
