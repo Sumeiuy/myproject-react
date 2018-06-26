@@ -56,7 +56,7 @@ module.exports = {
         target: 'http://168.61.8.82:5086', // uat
         // target: 'http://168.61.8.81:5087', // SIT
         // target: 'http://168.61.8.81:5090', // DOClever
-        // target: 'http://160.9.229.179:8082', // 朱兴伟
+        // target: 'http://160.9.229.98:8082', // 王必强
       },
       '/fspa/log',
       {

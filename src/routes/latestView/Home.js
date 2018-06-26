@@ -1,23 +1,22 @@
 /*
+ * @Description: 最新观点
  * @Author: XuWenKang
- * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-25 10:02:59
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-06-25 14:03:02
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-// import { autobind } from 'core-decorators';
 import { connect } from 'dva';
-// import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
 import { dva } from '../../helper';
 import ChiefViewpoint from '../../components/latestView/chiefViewpoint/ChiefViewpoint';
+import MajorAssets from '../../components/latestView/majorAssets/Home';
 import ZiJinClockViewpoint from '../../components/latestView/ziJinClockView/ZiJinClockViewpoint';
-// import { openRctTab } from '../../utils';
+
 import config from '../../components/latestView/config';
 import styles from './index.less';
 
@@ -27,6 +26,16 @@ const dispatch = dva.generateEffect;
 const effects = {
   // 首席观点模块数据
   queryChiefViewpoint: 'latestView/queryChiefViewpoint',
+  // 获取首席观点列表数据
+  queryChiefViewpointList: 'latestView/queryChiefViewpointList',
+  // 获取首席观点详情数据
+  queryChiefViewpointDetail: 'latestView/queryChiefViewpointDetail',
+  // 大类资产配置分析-首页列表
+  queryMajorAssetsIndexList: 'latestView/queryMajorAssetsIndexList',
+  // 大类资产配置分析-更多列表
+  queryMajorAssetsList: 'latestView/queryMajorAssetsList',
+  // 大类资产配置分析-详情
+  queryMajorAssetsDetail: 'latestView/queryMajorAssetsDetail',
   // 获取首页紫金时钟当前周期数据
   queryZiJinClockCycle: 'latestView/queryZiJinClockCycle',
   // 获取首页紫金时钟列表数据
@@ -38,6 +47,16 @@ const mapStateToProps = state => ({
   dayViewpointData: state.latestView.dayViewpointData,
   // 首页每周首席观点
   monthViewpointData: state.latestView.monthViewpointData,
+  // 首席观点列表数据
+  viewpointData: state.latestView.viewpointData,
+  // 首席观点详情
+  viewpointDetail: state.latestView.viewpointDetail,
+  // 大类资产配置分析-首页列表
+  majorAssetsIndexData: state.latestView.majorAssetsIndexData,
+  // 大类资产配置分析-更多列表
+  majorAssetsData: state.latestView.majorAssetsData,
+  // 大类资产配置分析-详情
+  majorAssetsDetail: state.latestView.majorAssetsDetail,
   // 首页紫金时钟当前周期数据
   ziJinCycleData: state.latestView.ziJinCycleData,
   // 首页紫金时钟列表
@@ -49,6 +68,12 @@ const mapDispatchToProps = {
   queryZiJinClockCycle: dispatch(effects.queryZiJinClockCycle,
     { loading: true, forceFull: true }),
   queryZiJinViewpointList: dispatch(effects.queryZiJinViewpointList,
+    { loading: true, forceFull: true }),
+  queryMajorAssetsIndexList: dispatch(effects.queryMajorAssetsIndexList,
+    { loading: true, forceFull: true }),
+  queryMajorAssetsList: dispatch(effects.queryMajorAssetsList,
+    { loading: true, forceFull: true }),
+  queryMajorAssetsDetail: dispatch(effects.queryMajorAssetsDetail,
     { loading: true, forceFull: true }),
 };
 
@@ -63,6 +88,21 @@ export default class LatestView extends PureComponent {
     dayViewpointData: PropTypes.object.isRequired,
     // 首页每周首席观点
     monthViewpointData: PropTypes.object.isRequired,
+    // 首席观点列表数据
+    queryChiefViewpointList: PropTypes.func.isRequired,
+    viewpointData: PropTypes.object.isRequired,
+    // 首席观点详情
+    queryChiefViewpointDetail: PropTypes.func.isRequired,
+    viewpointDetail: PropTypes.object.isRequired,
+    // 大类资产配置分析-首页列表
+    queryMajorAssetsIndexList: PropTypes.func.isRequired,
+    majorAssetsIndexData: PropTypes.object.isRequired,
+    // 大类资产配置分析-更多列表
+    queryMajorAssetsList: PropTypes.func.isRequired,
+    majorAssetsData: PropTypes.object.isRequired,
+    // 大类资产配置分析-详情
+    queryMajorAssetsDetail: PropTypes.func.isRequired,
+    majorAssetsDetail: PropTypes.object.isRequired,
     // 首页紫金时钟当前周期数据
     queryZiJinClockCycle: PropTypes.func.isRequired,
     ziJinCycleData: PropTypes.object.isRequired,
@@ -87,6 +127,7 @@ export default class LatestView extends PureComponent {
   componentDidMount() {
     const {
       queryChiefViewpoint,
+      queryMajorAssetsIndexList,
       queryZiJinClockCycle,
       queryZiJinViewpointList,
     } = this.props;
@@ -98,6 +139,8 @@ export default class LatestView extends PureComponent {
     queryChiefViewpoint({
       type: config.chiefViewpointType[2].value,
     });
+    // 大类资产配置分析
+    queryMajorAssetsIndexList();
     // 首页紫金时钟当前周期数据
     queryZiJinClockCycle();
     // 首页紫金时钟列表
@@ -111,6 +154,10 @@ export default class LatestView extends PureComponent {
       location,
       dayViewpointData,
       monthViewpointData,
+      majorAssetsData,
+      majorAssetsIndexData,
+      majorAssetsDetail,
+      queryMajorAssetsDetail,
       ziJinCycleData,
       ziJinClockList,
     } = this.props;
@@ -135,6 +182,14 @@ export default class LatestView extends PureComponent {
           </div>
         </div>
         <div className={`${styles.floor} clearfix`}>
+          <div className={styles.left}>
+            <MajorAssets
+              data={majorAssetsData}
+              indexData={majorAssetsIndexData}
+              detail={majorAssetsDetail}
+              getDetail={queryMajorAssetsDetail}
+            />
+          </div>
           <div className={styles.right}>
             <ZiJinClockViewpoint
               data={ziJinCycleData}
