@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-26 22:13:04
+ * @Last Modified time: 2018-06-26 22:29:35
  */
 
 import React, { PureComponent } from 'react';
@@ -115,10 +115,10 @@ export default class Phone extends PureComponent {
   }
 
   // 检查是否安装打电话插件
+  // ie下才会调此方法
   @autobind
   checkIEHasCallPlugin() {
     const { userData } = this.props;
-    // ie下才会调此方法
     const xPhone = new XPhone(userData);
     try {
       // 初始化
