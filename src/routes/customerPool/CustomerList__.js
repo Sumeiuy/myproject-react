@@ -307,6 +307,7 @@ const effects = {
   clearSearchPersonList: 'customerPool/clearSearchPersonList',
   clearJxGroupProductData: 'customerPool/clearJxGroupProductData',
   addCallRecord: 'customerPool/addCallRecord',
+  queryHoldingSecurityRepetition: 'customerPool/queryHoldingSecurityRepetition',
   getCustRangeByAuthority: 'customerPool/getCustRangeByAuthority',
 };
 
@@ -354,6 +355,8 @@ const mapStateToProps = state => ({
   jxGroupProductList: state.customerPool.jxGroupProductList,
   // 添加服务记录成功后返回的服务记录的id
   currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
+  // 组合产品订购客户重复的持仓证券
+  holdingSecurityData: state.customerPool.holdingSecurityData,
 });
 
 const mapDispatchToProps = {
@@ -406,6 +409,8 @@ const mapDispatchToProps = {
   addCallRecord: fetchDataFunction(true, effects.addCallRecord),
   // 获取服务营业部的数据
   getCustRangeByAuthority: fetchDataFunction(true, effects.getCustRangeByAuthority),
+  // 组合产品订购客户查询持仓证券重合度
+  queryHoldingSecurityRepetition: fetchDataFunction(false, effects.queryHoldingSecurityRepetition),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -473,6 +478,9 @@ export default class CustomerList extends PureComponent {
     addCallRecord: PropTypes.func.isRequired,
     currentCommonServiceRecord: PropTypes.object.isRequired,
     getCustRangeByAuthority: PropTypes.func.isRequired,
+    // 组合产品订购客户查询持仓证券重合度
+    queryHoldingSecurityRepetition: PropTypes.func.isRequired,
+    holdingSecurityData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -601,8 +609,8 @@ export default class CustomerList extends PureComponent {
       curPageNum: query.curPageNum || CUR_PAGE,
       // 必传，页大小
       pageSize: query.pageSize || CUR_PAGESIZE,
-      // 不同的入口进入列表页面
-      enterType: ENTER_TYPE[query.source],
+      // 不同的入口进入列表页面, 后端约定该字段默认传‘searchCustPool’
+      enterType: ENTER_TYPE[query.source] || 'searchCustPool',
     };
     const orgId = this.getPostOrgId(query);
     param.orgId = orgId;
@@ -922,6 +930,8 @@ export default class CustomerList extends PureComponent {
       allSightingTelescopeFilters,
       getFiltersOfSightingTelescopeSequence,
       getSearchPersonList,
+      queryHoldingSecurityRepetition,
+      holdingSecurityData,
     } = this.props;
     const {
       sortDirection,
@@ -1027,6 +1037,8 @@ export default class CustomerList extends PureComponent {
           addCallRecord={addCallRecord}
           currentCommonServiceRecord={currentCommonServiceRecord}
           currentPytMng={this.getPostPtyMngId()}
+          queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
+          holdingSecurityData={holdingSecurityData}
         />
       </div>
     );
