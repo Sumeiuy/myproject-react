@@ -23,6 +23,7 @@ import {
   CUST_MANAGER,
   ORG,
   ENTER_TYPE,
+  DEFAULT_ENTER_TYPE,
   ALL_DEPARTMENT_ID,
   MAIN_MAGEGER_ID,
   ENTERLIST_PERMISSION_TASK_MANAGE,
@@ -367,7 +368,7 @@ export default class CustomerList extends PureComponent {
       // 必传，页大小
       pageSize: query.pageSize || CUR_PAGESIZE,
       // 不同的入口进入列表页面
-      enterType: ENTER_TYPE[query.source],
+      enterType: ENTER_TYPE[query.source] || DEFAULT_ENTER_TYPE,
     };
     if (query.source === 'search') { // 搜索框
       param.searchTypeReq = 'ALL';
@@ -764,7 +765,7 @@ export default class CustomerList extends PureComponent {
           dict={dict}
           empInfo={empInfo}
           condition={queryParam}
-          entertype={ENTER_TYPE[source]}
+          entertype={ENTER_TYPE[source] || DEFAULT_ENTER_TYPE}
           location={location}
           replace={replace}
           push={push}
