@@ -16,6 +16,8 @@ import logable from '../../../decorators/logable';
 
 import antdStyles from '../../../css/antd.less';
 import styles from './progressList.less';
+import { homeModelType } from '../config';
+
 
 /* 新增客户传给列表页的参数
  * 净开增有效户： 817001
@@ -26,21 +28,20 @@ import styles from './progressList.less';
 const newCustomerLinkIdx = ['817001', '817002', '817003', '817004'];
 
 export default class ProgressList extends PureComponent {
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
+  }
 
   static propTypes = {
     dataSource: PropTypes.array.isRequired,
     cycle: PropTypes.array,
-    push: PropTypes.func,
     location: PropTypes.object,
-    empInfo: PropTypes.object,
     type: PropTypes.string,
   }
 
   static defaultProps = {
     cycle: [],
     location: {},
-    push: () => { },
-    empInfo: {},
     type: '',
   }
 
@@ -87,18 +88,28 @@ export default class ProgressList extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '新增客户区域下钻' } })
   handleClick(index, item) {
-    const { cycle, push, location } = this.props;
-    const bname = this.transformName(item.cust);
-    const param = {
-      source: 'custIndicator',
-      type: 'customerType',
-      value: newCustomerLinkIdx[index],  // 提供给列表页传给后端的customerType的值
-      bname,
-      cycle,
-      push,
-      location,
-    };
-    linkTo(param);
+    const { push } = this.context;
+    const { cycle, location, type } = this.props;
+    const modelTypeList = homeModelType[type];
+    if (modelTypeList) {
+      const bname = this.transformName(item.cust);
+      let param = {
+        source: type,
+        bname,
+        cycle,
+        push,
+        location,
+        type: modelTypeList[item.id],
+      };
+      if (type === 'custIndicator') {
+        param = {
+          ...param,
+          modalType: 'customerType',
+          value: newCustomerLinkIdx[index],  // 提供给列表页传给后端的customerType的值
+        };
+      }
+      linkTo(param);
+    }
   }
 
   // 根据现有的name返回列表页所需要展示的 name文案
@@ -118,7 +129,6 @@ export default class ProgressList extends PureComponent {
 
   @autobind
   renderList() {
-    // const { cycle, push, location, empInfo } = this.props;
     const { dataSource, location, type } = this.props;
     // 新增客户模块指标说明文案
     const description = {
@@ -164,7 +174,7 @@ export default class ProgressList extends PureComponent {
                 {
                   /**
                    * 当为产品销售的时候，特殊处理一下展示单位和数值
-                   */
+                  */
                 }
                 {
                   type === 'productSale' ?

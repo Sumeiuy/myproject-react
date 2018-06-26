@@ -37,7 +37,10 @@ const ENTER_TYPE = {
   external: 'searchCustPool',
   // 产品潜在目标客户，产品中心外部跳转
   productPotentialTargetCust: 'labelSearchCustPool',
+  assetsTransactions: 'searchCustPool',
 };
+// 与后端约定默认的enterType
+const DEFAULT_ENTER_TYPE = 'searchCustPool';
 
 // 任务管理岗权限作用的首页入口列表
 const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'external',
@@ -70,6 +73,7 @@ export default {
   CUST_MANAGER,
   ORG,
   MAIN_MAGEGER_ID,
+  DEFAULT_ENTER_TYPE,
   ENTER_TYPE,
   ENTERLIST1,
   ENTERLIST2,

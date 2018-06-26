@@ -1,8 +1,23 @@
 .relatedInfo {
   margin-top: 10px;
-  margin-right: 10px;
+  margin-right: 20px;
   border-top: 1px dashed #c2c2c2;
   position: relative;
+  .showAll {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 15px;
+    height: 20px;
+    box-sizing: border-box;
+    font-size: 14px;
+    .icon {
+      color: #108ee9;
+      font-size: 12px;
+      transform: scale(0.7);
+      cursor: pointer;
+    }
+  }
   ul {
     list-style-type: none;
     font-size: 13px;
@@ -48,6 +63,10 @@
           font-size: 13px;
         }
       }
+      .clickable {
+        cursor: pointer;
+        color: #108ee9;
+      }
       .serviceRecord {
         display: inline-block;
         overflow: hidden;
@@ -68,11 +87,7 @@
 }
 
 .collapseItem {
-  float: right;
-  font-size: 12px;
-  .itemA {
-    color: #b9b9b9;
-    cursor: pointer;
-    padding-right: 10px;
-  }
+  height: 55px;
+  overflow: hidden;
 }
+

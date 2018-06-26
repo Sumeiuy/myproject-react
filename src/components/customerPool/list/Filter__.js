@@ -16,6 +16,7 @@ import logable from '../../../decorators/logable';
 import HtFilter, { TagFilter } from '../../common/htFilter';
 import { url, check } from '../../../helper';
 import { seperator } from '../../../config';
+
 import {
   basicFilters,
   moreFilterData,
@@ -27,22 +28,18 @@ import styles from './filter__.less';
 
 const TAG_SIGN = 'TAG_SIGN';
 
-const MORE_FILTER_STORAGE = 'MORE_FILTER_STORAGE';
-
-const FILTER_SELECT_FROM_MOREFILTER = 'FILTER_SELECT_FROM_MOREFILTER';
-
 const MORE_FILTER_TYPE = {
   more: 1,
   tag: 2,
 };
 
 // 初始化组件时，更新本地缓存
-function UpdateLocalStorage(currentValue, moreFilterOpenedList) {
+function UpdateLocalStorage(currentValue, moreFilterOpenedList, hashString) {
   let labelFilters = [];
   // 如果是瞄准镜标签下钻过来，清除瞄准镜标签子标签缓存
   if (!currentValue[TAG_SIGN]) {
     const labelList = [].concat(currentValue.primaryKeyLabels).filter(value => value);
-    _.each(labelList, key => store.remove(key));
+    _.each(labelList, key => store.remove(`${key}_${hashString}`));
     if (!_.isEmpty(labelList)) {
       labelFilters = _.map(labelList, label => ({
         type: MORE_FILTER_TYPE.tag,
@@ -50,21 +47,21 @@ function UpdateLocalStorage(currentValue, moreFilterOpenedList) {
       }));
     }
     // 清除非固定过滤组件的打开记录缓存
-    store.remove(MORE_FILTER_STORAGE);
+    store.remove(`MORE_FILTER_STORAGE_${hashString}`);
 
     const moreFiltersList = _.map(moreFilterOpenedList, filter => ({
       type: MORE_FILTER_TYPE.more,
       key: filter,
     }));
 
-    store.set(MORE_FILTER_STORAGE, _.compact([].concat(labelFilters, moreFiltersList)));
+    store.set(`MORE_FILTER_STORAGE_${hashString}`, _.compact([].concat(labelFilters, moreFiltersList)));
   }
 }
 
 // 客户标签组件交互时，更新本地缓存
-function updateLocalLabelStorage(labels, key) {
+function updateLocalLabelStorage(labels, key, hashString) {
   let nextMoreFilterListOpened = [];
-  const moreFilterListOpened = store.get(MORE_FILTER_STORAGE);
+  const moreFilterListOpened = store.get(`MORE_FILTER_STORAGE_${hashString}`);
   if (key === 'clearAll') {
     nextMoreFilterListOpened =
       _.filter(moreFilterListOpened, obj => obj.type === MORE_FILTER_TYPE.more);
@@ -80,20 +77,20 @@ function updateLocalLabelStorage(labels, key) {
     }
   }
 
-  store.set(MORE_FILTER_STORAGE, _.compact(nextMoreFilterListOpened));
+  store.set(`MORE_FILTER_STORAGE_${hashString}`, _.compact(nextMoreFilterListOpened));
 }
 
 // 点击清除时更新本地缓存
-function updateLocalFilterStorage(key) {
-  const moreFilterListOpened = store.get(MORE_FILTER_STORAGE);
+function updateLocalFilterStorage(key, hashString) {
+  const moreFilterListOpened = store.get(`MORE_FILTER_STORAGE_${hashString}`);
   const nextMoreFilterListOpened = _.filter(moreFilterListOpened, obj => obj.key !== key);
-  store.set(MORE_FILTER_STORAGE, _.compact(nextMoreFilterListOpened));
+  store.set(`MORE_FILTER_STORAGE_${hashString}`, _.compact(nextMoreFilterListOpened));
 }
 
 // 更多组件交互时，更新本地缓存
-function updateLocalMoreFilterStorage(item) {
+function updateLocalMoreFilterStorage(item, hashString) {
   let nextMoreFilterListOpened = [];
-  const moreFilterListOpened = store.get(MORE_FILTER_STORAGE);
+  const moreFilterListOpened = store.get(`MORE_FILTER_STORAGE_${hashString}`);
 
   if (item.key === 'clearAll') {
     nextMoreFilterListOpened =
@@ -106,7 +103,7 @@ function updateLocalMoreFilterStorage(item) {
       key: item.id,
     });
   }
-  store.set(MORE_FILTER_STORAGE, _.compact(nextMoreFilterListOpened));
+  store.set(`MORE_FILTER_STORAGE_${hashString}`, _.compact(nextMoreFilterListOpened));
 }
 
 export default class Filter extends PureComponent {
@@ -116,13 +113,17 @@ export default class Filter extends PureComponent {
     onFilterChange: PropTypes.func.isRequired,
     queryProduct: PropTypes.func.isRequired,
     clearProductData: PropTypes.func.isRequired,
+    clearSearchPersonList: PropTypes.func.isRequired,
     searchedProductList: PropTypes.array,
     clearJxGroupProductData: PropTypes.func.isRequired,
     queryJxGroupProduct: PropTypes.func.isRequired,
     jxGroupProductList: PropTypes.array,
     tagList: PropTypes.array,
     filtersOfAllSightingTelescope: PropTypes.array.isRequired,
+    getFiltersOfSightingTelescopeSequence: PropTypes.func.isRequired,
     searchServerPersonList: PropTypes.array.isRequired,
+    getSearchPersonList: PropTypes.func.isRequired,
+    hashString: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -137,24 +138,24 @@ export default class Filter extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { location } = props;
+    const { location, hashString } = props;
     const {
       filters = '',
     } = location.query;
 
     const currentValue = url.transfromFilterValFromUrl(filters);
     const moreFilterOpenedList = this.getMoreFilterOpenKeys(currentValue);
-    UpdateLocalStorage(currentValue, moreFilterOpenedList);
+    UpdateLocalStorage(currentValue, moreFilterOpenedList, hashString);
     this.labelFilterVisible = false;
   }
 
   // 获取更多按钮里面需要打开的过滤器id
   @autobind
   getMoreFilterOpenKeys(currentValue) {
-    return moreFilterData
+    return moreFilters
       .filter(
-      item => _.some(_.keysIn(currentValue), key => key === item.key))
-      .map(item => item.key);
+      item => _.some(_.keysIn(currentValue), key => key === item.filterId))
+      .map(item => item.filterId);
   }
 
   // 获取对应filter的onChange函数
@@ -199,6 +200,12 @@ export default class Filter extends PureComponent {
     if (filter.dataList) {
       return this[filter.dataList[0]][filter.dataList[1]];
     } else if (filter.dictField) {
+      if (filter.filterId === 'businessOpened') {
+        return {
+          dateType: dict[filter.dictField[0]],
+          businessType: dict[filter.dictField[1]],
+        };
+      }
       return dict[filter.dictField];
     }
     return filter.data;
@@ -270,8 +277,15 @@ export default class Filter extends PureComponent {
 
   @autobind
   handleDevMngFilterSearchChange(value) {
+    const emptyData = [];
     if (!_.isEmpty(value)) {
-      this.context.getSearchServerPersonList(value);
+      this.props.getSearchPersonList({
+        keyword: value,
+        pageSize: 10,
+        pageNum: 1,
+      });
+    } else {
+      this.props.clearSearchPersonList(emptyData);
     }
   }
 
@@ -413,14 +427,26 @@ export default class Filter extends PureComponent {
     },
   })
   handleLabelChange(obj, key) {
-    updateLocalLabelStorage(obj.value, key);
+    const { hashString } = this.props;
+    updateLocalLabelStorage(obj.value, key, hashString);
     this.labelFilter = key;
-    store.remove(key);
+    store.remove(`${key}_${hashString}`);
+    const sightingTelescopeList = this.checkPrimaryKeyLabel(obj.value);
+    this.props.getFiltersOfSightingTelescopeSequence({ sightingTelescopeList });
     const value = _.join(obj.value, seperator.filterValueSeperator);
     this.props.onFilterChange({
       name: obj.id,
       value,
     });
+  }
+
+  @autobind
+  checkPrimaryKeyLabel(primaryKeyLabels) {
+    const labelList = []
+      .concat(primaryKeyLabels)
+      .filter(item => item && check.isSightingTelescope(item));
+
+    return labelList;
   }
 
   @autobind
@@ -432,16 +458,16 @@ export default class Filter extends PureComponent {
     },
   })
   handleNormalfiterClose(id, labels) {
+    const { hashString } = this.props;
     const labelList = [].concat(labels);
     const value = _.join(_.filter(labelList, item => item !== id), seperator.filterValueSeperator);
     this.props.onFilterChange({
       name: 'primaryKeyLabels',
       value,
     });
+    updateLocalFilterStorage(id, hashString);
 
-    updateLocalFilterStorage(id);
-
-    store.remove(id);
+    store.remove(`${id}_${hashString}`);
   }
 
   @autobind
@@ -454,8 +480,9 @@ export default class Filter extends PureComponent {
   })
   handleTagfilterChange(value) {
     const { id } = value;
-    store.remove(id);
-    store.set(id, value.value);
+    const { hashString } = this.props;
+    store.remove(`${id}_${hashString}`);
+    store.set(`${id}_${hashString}`, value.value);
     this.props.onFilterChange({
       name: TAG_SIGN,
       value: _.random(1, 1000000),
@@ -471,7 +498,8 @@ export default class Filter extends PureComponent {
     },
   })
   handleMoreFilterChange(obj) {
-    updateLocalMoreFilterStorage(obj);
+    const { hashString } = this.props;
+    updateLocalMoreFilterStorage(obj, hashString);
     if (obj.key === 'clearAll') {
       this.props.onFilterChange({
         name: obj.id,
@@ -486,7 +514,7 @@ export default class Filter extends PureComponent {
       }, obj.isDeleteFilterFromLocation);
 
       if (!obj.isDeleteFilterFromLocation) {
-        store.set(FILTER_SELECT_FROM_MOREFILTER, true);
+        store.set(`FILTER_SELECT_FROM_MOREFILTER_${hashString}`, true);
       }
     }
   }
@@ -500,7 +528,7 @@ export default class Filter extends PureComponent {
     },
   })
   handleCloseFilter({ name }) {
-    updateLocalFilterStorage(name);
+    updateLocalFilterStorage(name, this.props.hashString);
     this.props.onFilterChange({
       name,
       value: '',
@@ -549,8 +577,16 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  clearSelectFilterMemory() {
+    // 每次渲染完还原该值
+    this.selectFilterIdFromMore = '';
+    this.labelFilterVisible = true;
+  }
+
+  @autobind
   renderMoreFilter(obj, moreFilterList, splitLabelList, currentValue) {
     let renderItem;
+    const { hashString } = this.props;
     if (obj.type === MORE_FILTER_TYPE.more) {
       renderItem = _.find(moreFilterList, filter => filter.filterId === obj.key);
       return renderItem ?
@@ -602,7 +638,7 @@ export default class Filter extends PureComponent {
         filterName={renderItem.name}
         filterId={renderItem.id}
         defaultVisible={this.labelFilterVisible && renderItem.id === this.labelFilter}
-        value={store.get(renderItem.id) || []}
+        value={store.get(`${renderItem.id}_${hashString}`) || []}
         data={tagfilters}
         onChange={this.handleTagfilterChange}
         onClose={
@@ -612,40 +648,26 @@ export default class Filter extends PureComponent {
       />) : null;
   }
 
-  @autobind
-  renderMoreFilters(selectedKeys, currentValue) {
-    const { filtersOfAllSightingTelescope } = this.props;
-    // 按照是否有子标签分类渲染
-    const splitLabelList =
-      this.splitLabelList(currentValue.primaryKeyLabels, filtersOfAllSightingTelescope);
-
-    const moreFilterListOpened = store.get(MORE_FILTER_STORAGE);
-
-    const filters = (
-      <span>
-        {
-          _.map(moreFilterListOpened,
-            obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
-        }
-      </span>
-    );
-
-    // 每次渲染完还原该值
-    this.selectFilterIdFromMore = '';
-    this.labelFilterVisible = true;
-
-    return filters;
-  }
-
   render() {
-    const { dict, location } = this.props;
+    const {
+      dict,
+      location,
+      filtersOfAllSightingTelescope,
+      hashString,
+    } = this.props;
     const {
       filters = '',
     } = location.query;
 
     const currentValue = url.transfromFilterValFromUrl(filters);
 
+    const moreFilterListOpened = store.get(`MORE_FILTER_STORAGE_${hashString}`);
+
     const selectedKeys = this.getMoreFilterOpenKeys(currentValue);
+
+    // 按照是否有子标签分类渲染
+    const splitLabelList =
+      this.splitLabelList(currentValue.primaryKeyLabels, filtersOfAllSightingTelescope);
 
     return (
       <div className={styles.filterContainer}>
@@ -662,7 +684,11 @@ export default class Filter extends PureComponent {
               />
             ))
           }
-          {this.renderMoreFilters(selectedKeys, currentValue)}
+          {
+            _.map(
+              moreFilterListOpened,
+                obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
+          }
         </div>
         <div className={styles.moreFilterController}>
           {
@@ -703,6 +729,7 @@ export default class Filter extends PureComponent {
             onChange={this.handleMoreFilterChange}
           />
         </div>
+        {this.clearSelectFilterMemory()}
       </div>
     );
   }

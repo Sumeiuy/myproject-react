@@ -86,7 +86,12 @@ export default {
     {
       filterName: '年龄范围',
       filterId: 'birthDt',
-      type: 'date',
+      type: 'range',
+      unit: '岁',
+      onlyNumber: true,
+      unitStyle: {
+        right: 8,
+      },
     },
 
     // 服务
@@ -115,32 +120,32 @@ export default {
 
     // 客户属性
     {
-      filterName: '新增高端产品户',
+      filterName: '高端产品户认定日期',
       filterId: 'highPrdtDt',
       type: 'date',
     },
     {
-      filterName: '新增产品户',
+      filterName: '产品户认定日期',
       filterId: 'buyProdDt',
       type: 'date',
     },
     {
-      filterName: '新增高净值',
+      filterName: '高净值户认定日期',
       filterId: 'gjzDt',
       type: 'date',
     },
     {
-      filterName: '签约客户',
+      filterName: '签约日期',
       filterId: 'tgSignDate',
       type: 'date',
     },
     {
-      filterName: '新增有效户',
+      filterName: '有效户生效日期',
       filterId: 'validDt',
       type: 'date',
     },
     {
-      filterName: '信息完备率',  // 过滤器中文名称
+      filterName: '未完备信息',  // 过滤器中文名称
       filterId: 'completedRate', // 过滤器英文代号, 首字母小写
       type: 'multi', // 过滤器类型
       dictField: 'completenessRateList', // 过滤器数据在字典中对应的字段
@@ -171,24 +176,7 @@ export default {
         overflowY: 'auto',
         width: 274,
       },
-      data: {
-        dateType: [
-          { key: '518003', value: '本月' },
-          { key: '518004', value: '本季' },
-          { key: '518005', value: '本年' },
-        ],
-        businessType: [
-          // 原因是大数据不支持不限，但以后可能支持,如以后支持，添加即可
-          /*  { key: 'all', value: '不限' }, */
-          { key: 'ttfCust', value: '天天发' },
-          { key: 'shHkCust', value: '沪港通' },
-          { key: 'szHkCust', value: '深港通' },
-          { key: 'rzrqCust', value: '融资融券' },
-          { key: 'xsb', value: '新三板' },
-          { key: 'optCust', value: '个股期权' },
-          { key: 'cyb', value: '创业板' },
-        ],
-      },
+      dictField: ['kPIDateScopeType', 'singleBusinessTypeList'],
       getFilterLabelValue: getBusinessOpenedFilterLabel,
     },
     {
@@ -224,7 +212,7 @@ export default {
     // 交易
 
     {
-      filterName: '普通股基佣金率',
+      filterName: '佣金率',
       filterId: 'minFee',
       type: 'range',
       unit: '‰',
@@ -233,7 +221,7 @@ export default {
       },
     },
     {
-      filterName: '公募基金',
+      filterName: '公募基金购买金额',
       filterId: 'kfBuyAmt',
       type: 'amountRangeSelect',
       unit: '元',
@@ -242,7 +230,7 @@ export default {
       },
     },
     {
-      filterName: '私募基金',
+      filterName: '私募基金购买金额',
       filterId: 'smBuyAmt',
       type: 'amountRangeSelect',
       unit: '元',
@@ -251,7 +239,7 @@ export default {
       },
     },
     {
-      filterName: '紫金产品',
+      filterName: '紫金产品购买金额',
       filterId: 'finaBuyAmt',
       type: 'amountRangeSelect',
       unit: '元',
@@ -260,7 +248,7 @@ export default {
       },
     },
     {
-      filterName: 'OTC',
+      filterName: 'OTC购买金额',
       filterId: 'otcBuyAmt',
       type: 'amountRangeSelect',
       unit: '元',
@@ -269,7 +257,7 @@ export default {
       },
     },
     {
-      filterName: '股基交易量',
+      filterName: '基础股基交易量',
       filterId: 'gjAmt',
       type: 'amountRangeSelect',
       unit: '元',
@@ -287,7 +275,7 @@ export default {
       },
     },
     {
-      filterName: '净利息收入',
+      filterName: '净利息额',
       filterId: 'netIncome',
       type: 'amountRangeSelect',
       unit: '元',
@@ -296,7 +284,7 @@ export default {
       },
     },
     {
-      filterName: '净佣金',
+      filterName: '净佣金额',
       filterId: 'purRake',
       type: 'amountRangeSelect',
       unit: '元',
@@ -343,7 +331,7 @@ export default {
       },
     },
     {
-      filterName: '资金余额',
+      filterName: '资金余额（含信用）',
       filterId: 'cashAmt',
       type: 'range',
       unit: '元',
@@ -370,7 +358,7 @@ export default {
       },
     },
     {
-      filterName: '总市值',
+      filterName: '总市值（含信用）',
       filterId: 'totMktVal',
       type: 'range',
       unit: '元',
@@ -397,7 +385,7 @@ export default {
       },
     },
     {
-      filterName: '净转入',
+      filterName: '净转入资产',
       filterId: 'purFinAset',
       type: 'amountRangeSelect',
       unit: '元',
@@ -412,35 +400,35 @@ export default {
     { value: '客户等级', key: 'customerLevel' },
     { value: '开户日期', key: 'dateOpened' },
     { value: '账户状态', key: 'accountStatus' },
-    { value: '普通股基佣金率', key: 'minFee' },
+    { value: '佣金率', key: 'minFee' },
     { value: '持仓产品', key: 'primaryKeyPrdts' },
     { value: '总资产', key: 'totAset' },
     { value: '介绍人', key: 'devMngId' },
     { value: '年龄范围', key: 'birthDt' },
     { value: '最近一次服务', key: 'lastServDt' },
     { value: '订购组合', key: 'primaryKeyJxgrps' },
-    { value: '新增高端产品户', key: 'highPrdtDt' },
-    { value: '新增产品户', key: 'buyProdDt' },
-    { value: '新增高净值', key: 'gjzDt' },
-    { value: '签约客户', key: 'tgSignDate' },
-    { value: '新增有效户', key: 'validDt' },
-    { value: '信息完备率', key: 'completedRate' },
-    { value: '公募基金', key: 'kfBuyAmt' },
-    { value: '私募基金', key: 'smBuyAmt' },
-    { value: '紫金产品', key: 'finaBuyAmt' },
-    { value: 'OTC', key: 'otcBuyAmt' },
-    { value: '股基交易量', key: 'gjAmt' },
+    { value: '高端产品户认定日期', key: 'highPrdtDt' },
+    { value: '产品户认定日期', key: 'buyProdDt' },
+    { value: '高净值户认定日期', key: 'gjzDt' },
+    { value: '签约日期', key: 'tgSignDate' },
+    { value: '有效户生效日期', key: 'validDt' },
+    { value: '未完备信息', key: 'completedRate' },
+    { value: '公募基金购买金额', key: 'kfBuyAmt' },
+    { value: '私募基金购买金额', key: 'smBuyAmt' },
+    { value: '紫金产品购买金额', key: 'finaBuyAmt' },
+    { value: 'OTC购买金额', key: 'otcBuyAmt' },
+    { value: '基础股基交易量', key: 'gjAmt' },
     { value: '股基净佣金', key: 'gjPurRake' },
-    { value: '净利息收入', key: 'netIncome' },
-    { value: '净佣金', key: 'purRake' },
+    { value: '净利息额', key: 'netIncome' },
+    { value: '净佣金额', key: 'purRake' },
     { value: '产品净手续费', key: 'saleFare' },
-    { value: '资金余额', key: 'cashAmt' },
+    { value: '资金余额（含信用）', key: 'cashAmt' },
     { value: '普通可用资金', key: 'avlAmt' },
     { value: '信用可用资金', key: 'avlAmtCrdt' },
-    { value: '总市值', key: 'totMktVal' },
+    { value: '总市值（含信用）', key: 'totMktVal' },
     { value: '归集率', key: 'gjlRate' },
     { value: '外部市值', key: 'outMktVal' },
-    { value: '净转入', key: 'purFinAset' },
+    { value: '净转入资产', key: 'purFinAset' },
   ],
   moreFilterCategories: [
     {

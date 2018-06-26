@@ -129,6 +129,9 @@ export default class CustomerLists extends PureComponent {
     addCallRecord: PropTypes.func.isRequired,
     currentCommonServiceRecord: PropTypes.object.isRequired,
     currentPytMng: PropTypes.object.isRequired,
+    // 组合产品订购客户查询持仓证券重合度
+    queryHoldingSecurityRepetition: PropTypes.func.isRequired,
+    holdingSecurityData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -422,14 +425,11 @@ export default class CustomerLists extends PureComponent {
       }
       return taskManagerResp;
     }
-    if (_.includes(ENTERLIST2, source)) {
-      // 有首页指标查询权限 且 首页绩效指标客户范围选中的是 我的客户
-      if (!hasIndexViewPermission || this.orgIdIsMsm()) {
-        return _.uniqBy([allSaleDepartment, ...firstPageResp], 'id');
-      }
-      return firstPageResp;
+    // 有首页指标查询权限 且 首页绩效指标客户范围选中的是 我的客户
+    if (!hasIndexViewPermission || this.orgIdIsMsm()) {
+      return _.uniqBy([allSaleDepartment, ...firstPageResp], 'id');
     }
-    return EMPTY_ARRAY;
+    return firstPageResp;
   }
 
   render() {
@@ -489,6 +489,8 @@ export default class CustomerLists extends PureComponent {
       addCallRecord,
       currentCommonServiceRecord,
       currentPytMng,
+      queryHoldingSecurityRepetition,
+      holdingSecurityData,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -623,6 +625,8 @@ export default class CustomerLists extends PureComponent {
                     queryHoldingProduct={queryHoldingProduct}
                     holdingProducts={holdingProducts}
                     queryHoldingProductReqState={queryHoldingProductReqState}
+                    queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
+                    holdingSecurityData={holdingSecurityData}
                   />,
                 )
               }

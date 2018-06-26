@@ -26,6 +26,8 @@ import {
   ENTERLIST2,
 } from './config';
 
+import { RANDOM } from '../../config/filterContant';
+
 import styles from './customerlist__.less';
 
 const EMPTY_LIST = [];
@@ -35,14 +37,12 @@ const CUR_PAGESIZE = 20; // 默认页大小
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
 
-const FILTER_SELECT_FROM_MOREFILTER = 'FILTER_SELECT_FROM_MOREFILTER';
-
-function getFilterArray(labels) {
+function getFilterArray(labels, hashString) {
   const filtersArray = [];
   const labelList = [].concat(labels);
 
   const labelFilters = labelList
-    .map(key => store.get(key));
+    .map(key => store.get(`${key}_${hashString}`));
 
   if (!_.isEmpty(labelFilters)) {
     _.each(labelFilters,
@@ -57,6 +57,7 @@ function addRangeParams(filterObj) {
   const param = {};
   const rangeParam = [
     'totAset', // 总资产
+    'birthDt', // 年龄范围
     'cashAmt', // 资金余额
     'avlAmt', // 普通可用资金
     'avlAmtCrdt', // 信用可用资金
@@ -103,7 +104,6 @@ function addDateParams(filterObj) {
   const param = {};
   const dateParam = [
     'dateOpened', // 开户日期
-    'birthDt', // 年龄范围
     'highPrdtDt', // 新增高端产品户
     'buyProdDt', // buyProdDt
     'gjzDt', // 新增高净值
@@ -143,7 +143,7 @@ function addRadioRangeParams(filterObj) {
       param[key] = {
         dateType: filterObj[key][0] || null,
         minVal: filterObj[key][1] || null,
-        maxVal: filterObj[key][1] || null,
+        maxVal: filterObj[key][2] || null,
       };
     }
   });
@@ -186,11 +186,11 @@ function addMultiParams(filterObj) {
   return param;
 }
 
-function getFilterParam(filterObj) {
+function getFilterParam(filterObj, hashString) {
   const param = {};
 
   // 标签
-  const filtersArray = getFilterArray(filterObj.primaryKeyLabels);
+  const filtersArray = getFilterArray(filterObj.primaryKeyLabels, hashString);
   param.primaryKeyLabels = _.compact(
     []
       .concat(filterObj.primaryKeyLabels)
@@ -211,12 +211,12 @@ function getFilterParam(filterObj) {
     _.isArray(filterObj.primaryKeyPrdts) ? filterObj.primaryKeyPrdts[0] : filterObj.primaryKeyPrdts;
 
   if (primaryKeyPrdts) {
-    param.primaryKeyPrdts = [].concat(primaryKeyPrdts);
+    param.primaryKeyPrdts = _.compact([].concat(primaryKeyPrdts));
   }
 
   // 订购组合
   if (filterObj.primaryKeyJxgrps) {
-    param.primaryKeyJxgrps = [].concat(filterObj.primaryKeyJxgrps[0]);
+    param.primaryKeyJxgrps = _.compact([].concat(filterObj.primaryKeyJxgrps[0]));
   }
 
 
@@ -284,6 +284,7 @@ const effects = {
   getCustContact: 'customerPool/getCustContact',
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustomerScope: 'customerPool/getCustomerScope',
+  getSearchPersonList: 'customerPool/getSearchPersonList',
   getSearchServerPersonList: 'customerPool/getSearchServerPersonList',
   handleFilter: 'customerList/handleFilter',  // 手动上传日志
   handleSelect: 'customerList/handleDropDownSelect',  // 手动上传日志
@@ -295,7 +296,7 @@ const effects = {
   handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
   queryCustUuid: 'performerView/queryCustUuid',
   getCeFileList: 'customerPool/getCeFileList',
-  getFiltersOfSightingTelescope: 'customerPool/getFiltersOfSightingTelescope',
+  getFiltersOfSightingTelescopeSequence: 'customerPool/getFiltersOfSightingTelescopeSequence',
   isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
   addServeRecord: 'customerPool/addCommonServeRecord',
   queryHoldingProduct: 'customerPool/queryHoldingProduct',
@@ -303,8 +304,10 @@ const effects = {
   queryJxGroupProduct: 'customerPool/queryJxGroupProduct',
   getTagList: 'customerPool/getTagList',
   clearProductData: 'customerPool/clearProductData',
+  clearSearchPersonList: 'customerPool/clearSearchPersonList',
   clearJxGroupProductData: 'customerPool/clearJxGroupProductData',
   addCallRecord: 'customerPool/addCallRecord',
+  queryHoldingSecurityRepetition: 'customerPool/queryHoldingSecurityRepetition',
   getCustRangeByAuthority: 'customerPool/getCustRangeByAuthority',
 };
 
@@ -340,7 +343,7 @@ const mapStateToProps = state => ({
   filesList: state.customerPool.filesList,
   // 是否是本人名下客户
   custServedByPostnResult: state.customerPool.custServedByPostnResult,
-  sightingTelescopeFilters: state.customerPool.sightingTelescopeFilters,
+  allSightingTelescopeFilters: state.customerPool.allSightingTelescopeFilters,
   // 是否包含非本人名下客户和超出1000条数据限制
   sendCustsServedByPostnResult: state.customerPool.sendCustsServedByPostnResult,
   // 自建任务平台的服务类型、任务反馈字典
@@ -352,6 +355,8 @@ const mapStateToProps = state => ({
   jxGroupProductList: state.customerPool.jxGroupProductList,
   // 添加服务记录成功后返回的服务记录的id
   currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
+  // 组合产品订购客户重复的持仓证券
+  holdingSecurityData: state.customerPool.holdingSecurityData,
 });
 
 const mapDispatchToProps = {
@@ -372,6 +377,7 @@ const mapDispatchToProps = {
   getCeFileList: fetchDataFunction(false, effects.getCeFileList),
   // 搜索服务服务经理
   getSearchServerPersonList: fetchDataFunction(true, effects.getSearchServerPersonList),
+  getSearchPersonList: fetchDataFunction(false, effects.getSearchPersonList),
   push: routerRedux.push,
   replace: routerRedux.replace,
   toggleServiceRecordModal: query => ({
@@ -387,10 +393,12 @@ const mapDispatchToProps = {
   queryJxGroupProduct: fetchDataFunction(false, effects.queryJxGroupProduct),
   getTagList: fetchDataFunction(false, effects.getTagList),
   clearProductData: fetchDataFunction(false, effects.clearProductData),
+  clearSearchPersonList: fetchDataFunction(false, effects.clearSearchPersonList),
   clearJxGroupProductData: fetchDataFunction(false, effects.clearJxGroupProductData),
   // 获取uuid
   queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
-  getFiltersOfSightingTelescope: fetchDataFunction(true, effects.getFiltersOfSightingTelescope),
+  getFiltersOfSightingTelescopeSequence:
+    fetchDataFunction(true, effects.getFiltersOfSightingTelescopeSequence),
   // 查询是否包含非本人名下客户和超出1000条数据限制
   isSendCustsServedByPostn: fetchDataFunction(true, effects.isSendCustsServedByPostn),
   // 添加服务记录
@@ -401,6 +409,8 @@ const mapDispatchToProps = {
   addCallRecord: fetchDataFunction(true, effects.addCallRecord),
   // 获取服务营业部的数据
   getCustRangeByAuthority: fetchDataFunction(true, effects.getCustRangeByAuthority),
+  // 组合产品订购客户查询持仓证券重合度
+  queryHoldingSecurityRepetition: fetchDataFunction(false, effects.queryHoldingSecurityRepetition),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -431,6 +441,7 @@ export default class CustomerList extends PureComponent {
     // 接口的loading状态
     interfaceState: PropTypes.object.isRequired,
     getSearchServerPersonList: PropTypes.func.isRequired,
+    getSearchPersonList: PropTypes.func.isRequired,
     searchServerPersonList: PropTypes.array.isRequired,
     serviceDepartment: PropTypes.object.isRequired,
     // 手动上传日志
@@ -447,8 +458,8 @@ export default class CustomerList extends PureComponent {
     getCeFileList: PropTypes.func.isRequired,
     filesList: PropTypes.array,
     custServedByPostnResult: PropTypes.bool.isRequired,
-    getFiltersOfSightingTelescope: PropTypes.func.isRequired,
-    sightingTelescopeFilters: PropTypes.object.isRequired,
+    getFiltersOfSightingTelescopeSequence: PropTypes.func.isRequired,
+    allSightingTelescopeFilters: PropTypes.array.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired,
@@ -461,11 +472,15 @@ export default class CustomerList extends PureComponent {
     jxGroupProductList: PropTypes.array,
     tagList: PropTypes.array,
     clearProductData: PropTypes.func.isRequired,
+    clearSearchPersonList: PropTypes.func.isRequired,
     clearJxGroupProductData: PropTypes.func.isRequired,
     holdingProducts: PropTypes.object.isRequired,
     addCallRecord: PropTypes.func.isRequired,
     currentCommonServiceRecord: PropTypes.object.isRequired,
     getCustRangeByAuthority: PropTypes.func.isRequired,
+    // 组合产品订购客户查询持仓证券重合度
+    queryHoldingSecurityRepetition: PropTypes.func.isRequired,
+    holdingSecurityData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -487,14 +502,19 @@ export default class CustomerList extends PureComponent {
 
   constructor(props) {
     super(props);
+    const {
+      location: {
+        query,
+      },
+    } = props;
     this.state = {
       expandAll: false,
       queryParam: {},
       cycleSelect: '',
-      filtersOfAllSightingTelescope: [],
     };
     // 用户默认岗位orgId
     this.orgId = emp.getOrgId();
+    this.hashString = query.hashString || RANDOM;
     // 用户工号
     this.empId = emp.getId();
     // 判断当前登录用户是否在非营业部（公司或经总）
@@ -509,7 +529,7 @@ export default class CustomerList extends PureComponent {
     // HTSC 交易信息查询权限（含私密客户）
     this.hasPCTIQPermission = permission.hasPCTIQPermission();
     this.dataForNextPage = {};
-    store.set(FILTER_SELECT_FROM_MOREFILTER, false);
+    store.set(`FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
   }
 
   getChildContext() {
@@ -561,31 +581,22 @@ export default class CustomerList extends PureComponent {
     const otherQuery = _.omit(query, ['selectedIds', 'selectAll']);
 
     // TODO：根据location请求相应的所有子标签条件
-    if (!_.isEqual(preOtherQuery, otherQuery) && !store.get(FILTER_SELECT_FROM_MOREFILTER)) {
+    if (!_.isEqual(preOtherQuery, otherQuery) &&
+      !store.get(`FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`)) {
       this.getCustomerList(nextProps);
-      this.getFiltersOfAllSightingTelescope(query);
     }
-    store.set(FILTER_SELECT_FROM_MOREFILTER, false);
+    store.set(`FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
   }
 
   @autobind
   getFiltersOfAllSightingTelescope(query) {
-    const { getFiltersOfSightingTelescope } = this.props;
+    const { getFiltersOfSightingTelescopeSequence } = this.props;
     const filters = query.filters || '';
     const primaryKeyLabels = url.transfromFilterValFromUrl(filters).primaryKeyLabels;
     if (primaryKeyLabels) {
       const sightingTelescopeList = this.checkPrimaryKeyLabel(primaryKeyLabels);
-      _.forEach(sightingTelescopeList, (key) => {
-        getFiltersOfSightingTelescope({
-          prodId: key,
-        }).then(() => {
-          this.setState({
-            filtersOfAllSightingTelescope: this.state.filtersOfAllSightingTelescope.concat({
-              key,
-              list: this.props.sightingTelescopeFilters,
-            }),
-          });
-        });
+      getFiltersOfSightingTelescopeSequence({
+        sightingTelescopeList,
       });
     }
   }
@@ -597,7 +608,7 @@ export default class CustomerList extends PureComponent {
     } = props;
 
     const filterObj = url.transfromFilterValFromUrl(query.filters);
-    const keyword = filterObj.searchText;
+    const keyword = decodeURIComponent(filterObj.searchText || '');
     const labelName = decodeURIComponent(query.labelName);
 
     const param = {
@@ -605,8 +616,8 @@ export default class CustomerList extends PureComponent {
       curPageNum: query.curPageNum || CUR_PAGE,
       // 必传，页大小
       pageSize: query.pageSize || CUR_PAGESIZE,
-      // 不同的入口进入列表页面
-      enterType: ENTER_TYPE[query.source],
+      // 不同的入口进入列表页面, 后端约定该字段默认传‘searchCustPool’
+      enterType: ENTER_TYPE[query.source] || 'searchCustPool',
     };
     const orgId = this.getPostOrgId(query);
     param.orgId = orgId;
@@ -642,7 +653,7 @@ export default class CustomerList extends PureComponent {
       param.searchText = null;
     }
 
-    const filterParam = getFilterParam(filterObj);
+    const filterParam = getFilterParam(filterObj, this.hashString);
     const sortParam = getSortParam(query);
 
     const finalParam = {
@@ -736,9 +747,7 @@ export default class CustomerList extends PureComponent {
       .concat(primaryKeyLabels)
       .filter(item => check.isSightingTelescope(item));
 
-    const { filtersOfAllSightingTelescope } = this.state;
-    return _.filter(labelList, label =>
-      !_.find(filtersOfAllSightingTelescope, item => item.key === label));
+    return labelList;
   }
 
   // 组织机构树切换和时间周期切换
@@ -811,7 +820,7 @@ export default class CustomerList extends PureComponent {
         }
       }
     }
-    MatchArea.setFilterOrder(obj.name, obj.value);
+    MatchArea.setFilterOrder(obj.name, obj.value, this.hashString);
     const stringifyFilters = newFilterArray.filter(item => item !== '').join(filterSeperator);
 
     replace({
@@ -823,6 +832,7 @@ export default class CustomerList extends PureComponent {
         curPageNum: 1,
         selectAll: false,
         selectedIds: '',
+        hashString: this.hashString, // 唯一的本地缓存hash
       },
     });
   }
@@ -921,10 +931,15 @@ export default class CustomerList extends PureComponent {
       jxGroupProductList,
       tagList,
       clearProductData,
+      clearSearchPersonList,
       clearJxGroupProductData,
       addCallRecord,
       currentCommonServiceRecord,
-      getFiltersOfSightingTelescope,
+      allSightingTelescopeFilters,
+      getFiltersOfSightingTelescopeSequence,
+      getSearchPersonList,
+      queryHoldingSecurityRepetition,
+      holdingSecurityData,
     } = this.props;
     const {
       sortDirection,
@@ -942,7 +957,7 @@ export default class CustomerList extends PureComponent {
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
-    const { expandAll, queryParam, filtersOfAllSightingTelescope } = this.state;
+    const { expandAll, queryParam } = this.state;
 
     const custRangeProps = {
       orgId,
@@ -960,12 +975,15 @@ export default class CustomerList extends PureComponent {
     return (
       <div className={styles.customerlist}>
         <Filter
-          getFiltersOfSightingTelescope={getFiltersOfSightingTelescope}
-          filtersOfAllSightingTelescope={filtersOfAllSightingTelescope}
+          filtersOfAllSightingTelescope={allSightingTelescopeFilters}
+          getFiltersOfSightingTelescopeSequence={getFiltersOfSightingTelescopeSequence}
+          getSearchPersonList={getSearchPersonList}
           tagList={tagList}
+          hashString={this.hashString}
           queryProduct={queryProduct}
           queryJxGroupProduct={queryJxGroupProduct}
           clearProductData={clearProductData}
+          clearSearchPersonList={clearSearchPersonList}
           searchedProductList={searchedProductList}
           jxGroupProductList={jxGroupProductList}
           clearJxGroupProductData={clearJxGroupProductData}
@@ -1028,6 +1046,8 @@ export default class CustomerList extends PureComponent {
           addCallRecord={addCallRecord}
           currentCommonServiceRecord={currentCommonServiceRecord}
           currentPytMng={this.getPostPtyMngId()}
+          queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
+          holdingSecurityData={holdingSecurityData}
         />
       </div>
     );
