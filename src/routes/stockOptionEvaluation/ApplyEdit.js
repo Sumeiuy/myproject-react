@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 10:34:44
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-20 15:01:48
+ * @Last Modified time: 2018-06-25 18:05:58
  */
 
 import React, { PureComponent } from 'react';
@@ -48,13 +48,13 @@ const mapStateToProps = state => ({
   // 客户基本信息
   custInfo: state.stockOptionEvaluation.custInfo,
   // 客户类型下拉列表
-  stockCustTypeMap: state.stockOptionEvaluation.stockCustTypeMap,
+  stockCustTypeList: state.stockOptionEvaluation.stockCustTypeList,
   // 申请类型下拉列表
-  reqTypeMap: state.stockOptionEvaluation.reqTypeMap,
+  reqTypeList: state.stockOptionEvaluation.reqTypeList,
   // 开立期权市场类别下拉列表
-  klqqsclbMap: state.stockOptionEvaluation.klqqsclbMap,
+  optionMarketTypeList: state.stockOptionEvaluation.optionMarketTypeList,
   // 业务受理营业部下拉列表
-  busDivisionMap: state.stockOptionEvaluation.busDivisionMap,
+  busDivisionList: state.stockOptionEvaluation.busDivisionList,
   // 受理营业部变更
   acceptOrgData: state.stockOptionEvaluation.acceptOrgData,
   // 编辑页面获取下一步按钮和审批人
@@ -101,13 +101,13 @@ export default class ApplyEdit extends PureComponent {
     custInfo: PropTypes.object.isRequired,
     getCustInfo: PropTypes.func.isRequired,
     // 客户类型下拉列表
-    stockCustTypeMap: PropTypes.array.isRequired,
+    stockCustTypeList: PropTypes.array.isRequired,
     // 申请类型下拉列表
-    reqTypeMap: PropTypes.array.isRequired,
+    reqTypeList: PropTypes.array.isRequired,
     // 开立期权市场类别下拉列表
-    klqqsclbMap: PropTypes.array.isRequired,
+    optionMarketTypeList: PropTypes.array.isRequired,
     // 业务受理营业部下拉列表
-    busDivisionMap: PropTypes.array.isRequired,
+    busDivisionList: PropTypes.array.isRequired,
     // 获取基本信息的多个select数据
     getSelectMap: PropTypes.func.isRequired,
     // 受理营业部变更
@@ -147,10 +147,10 @@ export default class ApplyEdit extends PureComponent {
       location,
       detailInfo,
       attachmentList,
-      stockCustTypeMap,
-      reqTypeMap,
-      klqqsclbMap,
-      busDivisionMap,
+      stockCustTypeList,
+      optionMarketTypeList,
+      reqTypeList,
+      busDivisionList,
       acceptOrgData,
       queryAcceptOrg,
       editButtonListData,
@@ -170,10 +170,10 @@ export default class ApplyEdit extends PureComponent {
         location={location}
         detailInfo={detailInfo}
         attachmentList={attachmentList}
-        stockCustTypeMap={stockCustTypeMap}
-        reqTypeMap={reqTypeMap}
-        klqqsclbMap={klqqsclbMap}
-        busDivisionMap={busDivisionMap}
+        stockCustTypeList={stockCustTypeList}
+        optionMarketTypeList={optionMarketTypeList}
+        reqTypeList={reqTypeList}
+        busDivisionList={busDivisionList}
         acceptOrgData={acceptOrgData}
         queryAcceptOrg={queryAcceptOrg}
         editButtonListData={editButtonListData}

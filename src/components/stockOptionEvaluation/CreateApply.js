@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-22 16:23:11
+ * @Last Modified time: 2018-06-25 22:52:43
  */
 
 import React, { PureComponent } from 'react';
@@ -15,11 +15,12 @@ import CommonModal from '../common/biz/CommonModal';
 import commonConfirm from '../common/confirm_';
 import TableDialog from '../common/biz/TableDialog';
 import InfoTitle from '../common/InfoTitle';
+import CommonUpload from '../common/biz/CommonUpload';
 import AutoComplete from '../common/similarAutoComplete';
-import BottonGroup from '../permission/BottonGroup';
+import ApprovalBtnGroup from '../common/approvalBtns';
 import EditBasicInfo from './EditBasicInfo';
-import UploadFile from '../permission/UploadFile';
 import config from './config';
+import { data } from '../../helper';
 
 import styles from './createApply.less';
 
@@ -44,13 +45,13 @@ export default class CreateApply extends PureComponent {
     custInfo: PropTypes.object.isRequired,
     getCustInfo: PropTypes.func.isRequired,
     // 客户类型下拉列表
-    stockCustTypeMap: PropTypes.array.isRequired,
+    stockCustTypeList: PropTypes.array.isRequired,
     // 申请类型下拉列表
-    reqTypeMap: PropTypes.array.isRequired,
+    reqTypeList: PropTypes.array.isRequired,
     // 开立期权市场类别下拉列表
-    klqqsclbMap: PropTypes.array.isRequired,
+    optionMarketTypeList: PropTypes.array.isRequired,
     // 业务受理营业部下拉列表
-    busDivisionMap: PropTypes.array.isRequired,
+    busDivisionList: PropTypes.array.isRequired,
     // 获取基本信息的多个select数据
     getSelectMap: PropTypes.func.isRequired,
     // 受理营业部变更
@@ -97,12 +98,6 @@ export default class CreateApply extends PureComponent {
       customer: {},
       // 客户基本信息
       custInfo: {},
-      // 新建时 选择的客户
-      custId: '',
-      // 新建时 选择的该客户类型
-      custType: '',
-      // 新建时 选择的该客户姓名
-      custName: '',
       // 新建时流程Id是空
       flowId: '',
       // 客户交易级别
@@ -131,6 +126,9 @@ export default class CreateApply extends PureComponent {
       jrqhjyFlag: '',
       // 附件信息
       attachment: '',
+      attachList: [],
+      // 用于重新渲染上传组件的key
+      uploadKey: data.uuid(),
       // 必填项校验错误提示信息
       // 客户校验
       isShowCustomerStatusError: false,
@@ -140,13 +138,6 @@ export default class CreateApply extends PureComponent {
       custTransLvStatusErrorMessage: '',
     };
     this.isValidateError = false;
-  }
-
-  componentDidMount() {
-    const { getSelectMap } = this.props;
-    const { flowId } = this.state;
-    // 获取股票客户类型,申请类型,开立期权市场类别,业务受理营业部的下拉选择
-    getSelectMap({ flowId });
   }
 
   @autobind
@@ -267,13 +258,16 @@ export default class CreateApply extends PureComponent {
     if (!_.isEmpty(item)) {
       this.resetCustomerErrorProps();
       this.getCustInfo(item);
+    } else {
+      // 删除用户，清除用户带出的信息和附件
+      this.handleClearDataBySwitchCust();
     }
   }
 
   // 根据经济客户号查询客户附带信息
   @autobind
   getCustInfo(item) {
-    const { getCustInfo } = this.props;
+    const { getCustInfo, getSelectMap } = this.props;
     const {
       brokerNumber,
       custType,
@@ -311,6 +305,34 @@ export default class CreateApply extends PureComponent {
         };
         this.getCreateButtonList(param);
       }
+    });
+    // 获取股票客户类型,申请类型,开立期权市场类别,业务受理营业部的下拉选择
+    getSelectMap({
+      econNum: brokerNumber,
+      custType,
+    });
+  }
+
+  @autobind
+  handleClearDataBySwitchCust() {
+    // 重新渲染附件组件，直接修改上传组件的key值得方式
+    this.setState({
+      custInfo: {},
+      uploadKey: data.uuid(),
+      stockCustType: '',
+      reqType: '',
+      openOptMktCatg: '',
+      busPrcDivId: '',
+      accptTime: '',
+      declareBus: '',
+      degreeFlag: '',
+      aAcctOpenTimeFlag: '',
+      rzrqzqAcctFlag: '',
+      jrqhjyFlag: '',
+      attachment: '',
+      attachList: [],
+      isShowCustTransLvStatusError: false,
+      custTransLvStatusErrorMessage: '',
     });
   }
 
@@ -560,15 +582,15 @@ export default class CreateApply extends PureComponent {
   render() {
     const {
       busCustList,
-      custInfo,
-      stockCustTypeMap,
-      reqTypeMap,
-      klqqsclbMap,
-      busDivisionMap,
+      stockCustTypeList,
+      optionMarketTypeList,
+      reqTypeList,
+      busDivisionList,
       acceptOrgData,
       queryAcceptOrg,
     } = this.props;
     const {
+      custInfo,
       isShowModal,
       createButtonListData,
       customer,
@@ -581,6 +603,8 @@ export default class CreateApply extends PureComponent {
       rzrqzqAcctFlag,
       jrqhjyFlag,
       attachment,
+      attachList,
+      uploadKey,
       isShowCustomerStatusError,
       customerStatusErrorMessage,
       nextApproverModal,
@@ -595,9 +619,9 @@ export default class CreateApply extends PureComponent {
       help: customerStatusErrorMessage,
     } : null;
     // 下一步按钮
-    const selfBtnGroup = (<BottonGroup
-      list={createButtonListData}
-      onEmitEvent={this.handleSubmit}
+    const selfBtnGroup = (<ApprovalBtnGroup
+      approval={createButtonListData}
+      onClick={this.handleSubmit}
     />);
     const searchProps = {
       visible: nextApproverModal,
@@ -638,7 +662,9 @@ export default class CreateApply extends PureComponent {
                       optionList={busCustList}
                       showNameKey="custName"
                       showIdKey="cusId"
-                      style={{ width: 200 }}
+                      needConfirmWhenClear
+                      clearConfirmTips="切换或者删除客户，将导致所有的数据清空或者重置"
+                      style={{ width: 160 }}
                       onSelect={this.selectCustomer}
                       onSearch={this.searchCanApplyCustList}
                     />
@@ -648,10 +674,10 @@ export default class CreateApply extends PureComponent {
             </Form>
             <EditBasicInfo
               wrappedComponentRef={this.setBasicInfoFormRef}
-              stockCustTypeMap={stockCustTypeMap}
-              reqTypeMap={reqTypeMap}
-              klqqsclbMap={klqqsclbMap}
-              busDivisionMap={busDivisionMap}
+              stockCustTypeList={stockCustTypeList}
+              optionMarketTypeList={optionMarketTypeList}
+              reqTypeList={reqTypeList}
+              busDivisionList={busDivisionList}
               customer={customer}
               custInfo={custInfo}
               accptTime={accptTime}
@@ -669,14 +695,26 @@ export default class CreateApply extends PureComponent {
               custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
             />
           </div>
-          <UploadFile
+          {/* <UploadFile
             fileList={[]}
             edit
             type="attachment"
             attachment={attachment}
             onEmitEvent={this.handleChange}
             needDefaultText={false}
-          />
+          /> */}
+          <div className={styles.moduleAttachment}>
+            <InfoTitle head="附件信息" />
+            <CommonUpload
+              edit
+              reformEnable
+              key={uploadKey}
+              attachment={attachment || ''}
+              needDefaultText={false}
+              attachmentList={attachList}
+              uploadAttachment={this.handleChange}
+            />
+          </div>
           <TableDialog {...searchProps} />
         </div>
       </CommonModal>
