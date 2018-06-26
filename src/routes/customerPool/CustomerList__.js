@@ -26,7 +26,7 @@ import {
   ENTERLIST2,
 } from './config';
 
-import { FILTER_SELECT_FROM_MOREFILTER } from '../../config/filterContant';
+import { RANDOM } from '../../config/filterContant';
 
 import styles from './customerlist__.less';
 
@@ -37,12 +37,12 @@ const CUR_PAGESIZE = 20; // 默认页大小
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
 
-function getFilterArray(labels) {
+function getFilterArray(labels, hashString) {
   const filtersArray = [];
   const labelList = [].concat(labels);
 
   const labelFilters = labelList
-    .map(key => store.get(key));
+    .map(key => store.get(`${key}_${hashString}`));
 
   if (!_.isEmpty(labelFilters)) {
     _.each(labelFilters,
@@ -186,11 +186,11 @@ function addMultiParams(filterObj) {
   return param;
 }
 
-function getFilterParam(filterObj) {
+function getFilterParam(filterObj, hashString) {
   const param = {};
 
   // 标签
-  const filtersArray = getFilterArray(filterObj.primaryKeyLabels);
+  const filtersArray = getFilterArray(filterObj.primaryKeyLabels, hashString);
   param.primaryKeyLabels = _.compact(
     []
       .concat(filterObj.primaryKeyLabels)
@@ -502,6 +502,11 @@ export default class CustomerList extends PureComponent {
 
   constructor(props) {
     super(props);
+    const {
+      location: {
+        query,
+      },
+    } = props;
     this.state = {
       expandAll: false,
       queryParam: {},
@@ -509,6 +514,7 @@ export default class CustomerList extends PureComponent {
     };
     // 用户默认岗位orgId
     this.orgId = emp.getOrgId();
+    this.hashString = query.hashString || RANDOM;
     // 用户工号
     this.empId = emp.getId();
     // 判断当前登录用户是否在非营业部（公司或经总）
@@ -523,7 +529,7 @@ export default class CustomerList extends PureComponent {
     // HTSC 交易信息查询权限（含私密客户）
     this.hasPCTIQPermission = permission.hasPCTIQPermission();
     this.dataForNextPage = {};
-    store.set(FILTER_SELECT_FROM_MOREFILTER, false);
+    store.set(`FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
   }
 
   getChildContext() {
@@ -575,10 +581,11 @@ export default class CustomerList extends PureComponent {
     const otherQuery = _.omit(query, ['selectedIds', 'selectAll']);
 
     // TODO：根据location请求相应的所有子标签条件
-    if (!_.isEqual(preOtherQuery, otherQuery) && !store.get(FILTER_SELECT_FROM_MOREFILTER)) {
+    if (!_.isEqual(preOtherQuery, otherQuery) &&
+      !store.get(`FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`)) {
       this.getCustomerList(nextProps);
     }
-    store.set(FILTER_SELECT_FROM_MOREFILTER, false);
+    store.set(`FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
   }
 
   @autobind
@@ -646,7 +653,7 @@ export default class CustomerList extends PureComponent {
       param.searchText = null;
     }
 
-    const filterParam = getFilterParam(filterObj);
+    const filterParam = getFilterParam(filterObj, this.hashString);
     const sortParam = getSortParam(query);
 
     const finalParam = {
@@ -813,7 +820,7 @@ export default class CustomerList extends PureComponent {
         }
       }
     }
-    MatchArea.setFilterOrder(obj.name, obj.value);
+    MatchArea.setFilterOrder(obj.name, obj.value, this.hashString);
     const stringifyFilters = newFilterArray.filter(item => item !== '').join(filterSeperator);
 
     replace({
@@ -825,6 +832,7 @@ export default class CustomerList extends PureComponent {
         curPageNum: 1,
         selectAll: false,
         selectedIds: '',
+        hashString: this.hashString, // 唯一的本地缓存hash
       },
     });
   }
@@ -971,6 +979,7 @@ export default class CustomerList extends PureComponent {
           getFiltersOfSightingTelescopeSequence={getFiltersOfSightingTelescopeSequence}
           getSearchPersonList={getSearchPersonList}
           tagList={tagList}
+          hashString={this.hashString}
           queryProduct={queryProduct}
           queryJxGroupProduct={queryJxGroupProduct}
           clearProductData={clearProductData}

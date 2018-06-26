@@ -88,6 +88,7 @@ export default {
       filterId: 'birthDt',
       type: 'range',
       unit: '岁',
+      onlyNumber: true,
       unitStyle: {
         right: 8,
       },
