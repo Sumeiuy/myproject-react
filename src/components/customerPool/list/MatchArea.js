@@ -532,7 +532,7 @@ export default class MatchArea extends PureComponent {
   renderOrderCombination() {
     const {
       listItem: { jxgrpProducts, isPrivateCustomer, empId, custId },
-      location: { query: { source, labelMapping, combinationCode } },
+      location: { query: { source, labelMapping } },
       hasNPCTIQPermission,
       hasPCTIQPermission,
       queryHoldingSecurityRepetition,
@@ -554,14 +554,15 @@ export default class MatchArea extends PureComponent {
       }
       const id = decodeURIComponent(labelMapping);
       const currentItem = _.find(jxgrpProducts, item => item.id === id);
-      const props = {
-        combinationCode,
-        custId,
-        queryHoldingSecurityRepetition,
-        data: holdingSecurityData,
-        formatAsset,
-      };
       if (!_.isEmpty(currentItem)) {
+        const { code: combinationCode, name } = currentItem;
+        const props = {
+          combinationCode,
+          custId,
+          queryHoldingSecurityRepetition,
+          data: holdingSecurityData,
+          formatAsset,
+        };
         return (
           <li>
             <span>
@@ -571,9 +572,9 @@ export default class MatchArea extends PureComponent {
                   className={`marked ${styles.clickable}`}
                   onClick={() => this.handleOrderCombinationClick(currentItem)}
                 >
-                  {currentItem.name}
+                  {name}
                 </em>
-                /{currentItem.code}
+                /{combinationCode}
               </i>
               {isShowDetailBtn && <HoldingCombinationDetail {...props} />}
             </span>

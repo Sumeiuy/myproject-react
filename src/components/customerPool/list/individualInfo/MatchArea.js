@@ -2,8 +2,8 @@
  * @file components/customerPool/list/MatchArea.js
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
- * @Last Modified by: xiaZhiQiang
- * @Last Modified time: 2018-06-21 12:12:31
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-26 13:00:33
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -207,15 +207,15 @@ export default class MatchArea extends PureComponent {
       }
       const id = decodeURIComponent(primaryKeyJxgrps[0]);
       const currentItem = _.find(jxgrpProducts, item => item.id === id);
-      const { code: combinationCode } = currentItem;
-      const props = {
-        combinationCode,
-        custId,
-        queryHoldingSecurityRepetition,
-        data: holdingSecurityData,
-        formatAsset,
-      };
       if (!_.isEmpty(currentItem)) {
+        const { code: combinationCode, name } = currentItem;
+        const props = {
+          combinationCode,
+          custId,
+          queryHoldingSecurityRepetition,
+          data: holdingSecurityData,
+          formatAsset,
+        };
         return (
           <li key={id}>
             <span>
@@ -225,9 +225,9 @@ export default class MatchArea extends PureComponent {
                   className={`marked ${styles.clickable}`}
                   onClick={() => this.handleOrderCombinationClick(currentItem)}
                 >
-                  {currentItem.name}
+                  {name}
                 </em>
-                /{currentItem.code}
+                /{combinationCode}
               </i>
               {isShowDetailBtn && <HoldingCombinationDetail {...props} />}
             </span>
@@ -254,12 +254,12 @@ export default class MatchArea extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      detailURL,
+      url: detailURL,
       query,
       pathname,
       param,
       state: {
-        detailURL,
+        url: detailURL,
       },
     });
   }
