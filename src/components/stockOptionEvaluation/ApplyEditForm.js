@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-26 17:17:35
+ * @Last Modified time: 2018-06-27 10:02:09
  */
 
 import React, { PureComponent } from 'react';
@@ -536,14 +536,16 @@ export default class ApplyEditForm extends PureComponent {
                 queryAcceptOrg={queryAcceptOrg}
               />
             </div>
-            <div className={styles.module}>
-              <InfoTitle head="适当性评估表" />
-              {
-                isPerCustType ?
-                  <AssessTable data={detailInfo} />
-                : null
-              }
-            </div>
+            {
+              isPerCustType ?
+                (
+                  <div className={styles.module}>
+                    <InfoTitle head="适当性评估表" />
+                    <AssessTable data={detailInfo} />
+                  </div>
+                )
+              : null
+            }
             <div className={styles.module}>
               <InfoTitle head="拟稿信息" />
               <div className={styles.modContent}>
