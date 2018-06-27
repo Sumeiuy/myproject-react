@@ -85,7 +85,7 @@ export default {
     },
     {
       filterName: '年龄范围',
-      filterId: 'birthDt',
+      filterId: 'age',
       type: 'range',
       unit: '岁',
       onlyNumber: true,
@@ -404,7 +404,7 @@ export default {
     { value: '持仓产品', key: 'primaryKeyPrdts' },
     { value: '总资产', key: 'totAset' },
     { value: '介绍人', key: 'devMngId' },
-    { value: '年龄范围', key: 'birthDt' },
+    { value: '年龄范围', key: 'age' },
     { value: '最近一次服务', key: 'lastServDt' },
     { value: '订购组合', key: 'primaryKeyJxgrps' },
     { value: '高端产品户认定日期', key: 'highPrdtDt' },
@@ -435,7 +435,7 @@ export default {
       type: '基本信息',
       children: [
         'devMngId',
-        'birthDt',
+        'age',
       ],
     },
     {
