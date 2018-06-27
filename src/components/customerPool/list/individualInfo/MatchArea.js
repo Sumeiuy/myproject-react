@@ -155,7 +155,7 @@ export default class MatchArea extends PureComponent {
     } = this.props;
     const { name, id, unit = '' } = item;
     const currentVal = listItem[id];
-    if (currentVal) {
+    if (!_.isNull(currentVal)) {
       return (
         <li title={currentVal}>
           <span>
