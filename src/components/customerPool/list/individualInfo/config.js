@@ -220,6 +220,17 @@ const matchRule = {
       accountState,
     ],
   },
+  dateOpened: {
+    inset: false,
+    key: [
+      {
+        name: '开户日期',
+        id: 'accountOpenDate',
+        render: 'renderDefaultVal',
+      },
+      accountState,
+    ],
+  },
   gjzDt: {
     inset: false,
     key: [
