@@ -9,7 +9,7 @@ export const kPIDateScopeType = {
     id: '518003',
     desc: '本月',
   },
-  season: {
+  quarter: {
     id: '518004',
     desc: '本季',
   },
