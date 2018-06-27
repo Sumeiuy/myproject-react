@@ -51,12 +51,6 @@ const primaryMenu = [
     pid: 'FSP_NEW_HOMEPAGE',
   },
   {
-    name: '资讯列表',
-    id: 'FSP_VIEWPOINT',
-    path: '/customerPool/viewpoint',
-    pid: 'FSP_NEW_HOMEPAGE',
-  },
-  {
     name: '消息提醒',
     id: 'FSP_MESSAGE',
     path: '/fsp/messageCenter',
@@ -180,10 +174,13 @@ export const indexPaneKey = 'FSP_NEW_HOMEPAGE';
 // 主导航默认的几个菜单项
 export const defaultMenu = [
   'FSP_NEW_HOMEPAGE',
+  'FSP_CUST_M_CENTER',
+  'FSP_MOT_M_TASK',
+  'FSP_PRD_REPOSITORY',
   'FSP_SERVICE_CENTER',
   'FSP_STRATEGY_CENTER',
-  'FSP_MOT_M_TASK',
-  'FSP_CUST_M_CENTER',
-  'FSP_PRD_REPOSITORY',
+  'FSP_BUSINESS_APPLICATION',
+  'FSP_STATISTICAL_QUERY',
+  'FSP_OM_MANAGEMENT'
 ];
 

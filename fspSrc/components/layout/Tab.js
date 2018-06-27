@@ -37,8 +37,8 @@ function getFinalPanes(panes, addPanes = [], removePanes = []) {
 function splitPanesArray(panes, menuWidth) {
   // 预设置按钮的大小
   const moreButtonWidth = 90;
-  const firstButtonWidth = 121;
-  const menuButtonWidth = 96;
+  const firstButtonWidth = 104;
+  const menuButtonWidth = 90;
   // tab菜单除了必有的首页之外，所有其他的tab都是96px，可以由此算出视口宽度内可以放下多少个
   const tabCount = Math.floor((menuWidth - moreButtonWidth - firstButtonWidth) / menuButtonWidth);
   return {
@@ -268,9 +268,26 @@ export default class Tab extends PureComponent {
     }
   }
 
+  // 判断是否为menu里的pane
+  isPaneInMenu(pathname) {
+    return menuConfig.find(element => {
+      return element.path === pathname 
+        || (element.children && element.children.find(item => item.path === pathname))
+    });
+  }
+
   // 从配置文件中获取pathname对应的tabPane对象
   getConfig(pathname) {
-    return os.findBestMatch(pathname, tabConfig, 'path');
+    let pane = {};
+    let paneMenu = this.isPaneInMenu(pathname);
+    if (paneMenu) {
+      pane.id = paneMenu.id;
+      pane.path = pathname;
+      pane.pid = paneMenu.id;
+      return pane;
+    } else {
+      return os.findBestMatch(pathname, tabConfig, 'path');
+    }
   }
 
   // 根据pathname获取一个初步的pane数组

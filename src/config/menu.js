@@ -199,7 +199,7 @@ const menus = [
         url: '',
         type: 'link',
         action: 'loadInTab',
-        path: '/strategyCenter/stockInformation',
+        path: '/stock',
       },
       {
         id: 'FSP_FEATURED_COMBINATION',
@@ -209,7 +209,7 @@ const menus = [
         url: '',
         type: 'link',
         action: 'loadInTab',
-        path: '',
+        path: '/choicenessCombination',
       },
       {
         id: 'FSP_DAILY_PAPER',
@@ -219,7 +219,7 @@ const menus = [
         url: '',
         type: 'link',
         action: 'loadInTab',
-        path: '/productCenter/dailyPaper',
+        path: '/broadcastList',
       },
     ],
   },
