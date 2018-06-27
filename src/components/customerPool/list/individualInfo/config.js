@@ -290,7 +290,7 @@ const matchRule = {
     inset: true,
     key: [
       {
-        name: '股基净佣金',
+        name: '累计股基净佣金',
         id: 'gjPurRake',
         render: 'renderDefaultVal',
         unit: '元',
