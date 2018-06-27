@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-27 15:46:11
+ * @Last Modified time: 2018-06-27 16:31:13
  */
 
 import React, { PureComponent } from 'react';
@@ -90,7 +90,8 @@ export default class EditBasicInfo extends PureComponent {
     }
     if (nextProps.custInfo !== prevState.custInfo) {
       newState.custInfo = nextProps.custInfo;
-      // 用户是空，基本信息的select需要清空
+      newState.isSelectDisabled = _.isEmpty(nextProps.custInfo);
+      // 用户是空，基本信息的数据需要清空
       if (_.isEmpty(nextProps.custInfo)) {
         newState = {
           ...newState,
@@ -106,7 +107,6 @@ export default class EditBasicInfo extends PureComponent {
           isShowInvPrompt: false,
         };
       }
-      newState.isSelectDisabled = _.isEmpty(nextProps.custInfo);
     }
     return newState;
   }
