@@ -3,7 +3,7 @@
  * @Descripter: 投顾手机分配状态页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-25 17:54:41
+ * @Last Modified time: 2018-06-27 10:20:41
  */
 
 import React, { PureComponent } from 'react';
@@ -193,11 +193,11 @@ export default class DistributeHome extends PureComponent {
       },
       {
         key: 'sim',
-        value: 'SIM卡1',
+        value: 'SIM卡号1',
       },
       {
         key: 'sim2',
-        value: 'SIM卡2',
+        value: 'SIM卡号2',
       },
       {
         key: 'modifyTime',

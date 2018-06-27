@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-26 22:29:35
+ * @Last Modified time: 2018-06-27 14:54:31
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ import _ from 'lodash';
 import qs from 'query-string';
 import classnames from 'classnames';
 import { Phone as XPhone } from 'lego-soft-phone';
+import sotfCallInstall from './SotfCallInstall0426.msi';
 import styles from './phone.less';
 
 const URL = bowser.msie
@@ -35,6 +36,24 @@ const OPEN_FEATURES = `
 
 const TYPE_CONNECTED = 'connected';
 const TYPE_END = 'end';
+
+// 检查是否安装打电话插件
+function checkIEHasCallPlugin() {
+  const xPhone = new XPhone({});
+  try {
+    // 初始化
+    xPhone.phone.Init2('');
+  } catch (e) {
+    console.log(e);
+    return false;
+  } finally {
+    xPhone.release();
+  }
+  return true;
+}
+
+// 创建一个会缓存 checkIEHasCallPlugin 结果的函数
+const memoizeCheck = _.memoize(checkIEHasCallPlugin);
 
 export default class Phone extends PureComponent {
   static propTypes = {
@@ -114,25 +133,6 @@ export default class Phone extends PureComponent {
     return empInfo.canCall === true && disable !== true;
   }
 
-  // 检查是否安装打电话插件
-  // ie下才会调此方法
-  @autobind
-  checkIEHasCallPlugin() {
-    const { userData } = this.props;
-    const xPhone = new XPhone(userData);
-    try {
-      // 初始化
-      xPhone.phone.Init2('');
-    } catch (e) {
-      console.log(e);
-      this.handlePluginError();
-      return false;
-    } finally {
-      xPhone.release();
-    }
-    return true;
-  }
-
   // 未安装插件弹框提示
   @autobind
   handlePluginError() {
@@ -141,9 +141,10 @@ export default class Phone extends PureComponent {
       content: (
         <div>
           您尚未安装通话插件，点击
-          <a href={'../../../../static/download/SotfCallInstall0426.msi'}>下载</a>
+          <a href={sotfCallInstall}>下载</a>
         </div>
       ),
+      okText: '确定',
     });
   }
 
@@ -154,9 +155,10 @@ export default class Phone extends PureComponent {
     if (this.canCall() !== true) {
       return;
     }
+    // 在ie下才需要检测打电话控件是否安装
     if (bowser.msie) {
-      const memoizeCheck = _.memoize(this.checkIEHasCallPlugin);
       if (!memoizeCheck()) {
+        this.handlePluginError();
         return;
       }
     }
