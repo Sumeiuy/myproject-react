@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-26 18:00:47
+ * @Last Modified time: 2018-06-27 15:41:57
  */
 
 import React, { PureComponent } from 'react';
@@ -335,6 +335,8 @@ export default class CreateApply extends PureComponent {
       isShowCustTransLvStatusError: false,
       custTransLvStatusErrorMessage: '',
     });
+    // 清除客户后，重置form表单
+    this.basicInfoForm.getForm().resetFields();
   }
 
   // 获取下一步按钮和审批人
@@ -382,6 +384,7 @@ export default class CreateApply extends PureComponent {
       groupName: item.nextGroupName,
       auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
       nextApproverList: item.flowAuditors,
+      currentNodeName: item.currentNodeName,
       nextApproverModal: true,
     });
   }
@@ -545,12 +548,22 @@ export default class CreateApply extends PureComponent {
       queryAppList,
       location: { query, query: { pageNum, pageSize } },
     } = this.props;
-    const { groupName, auditors, operate } = this.state;
+    const {
+      groupName,
+      auditors,
+      operate,
+      custInfo: {
+        custName,
+      },
+      currentNodeName,
+    } = this.state;
     doApprove({
       itemId: updateBindingFlowAppId,
       groupName,
       auditors: !_.isEmpty(value) ? value.login : auditors,
       operate,
+      custName,
+      currentNodeName,
     }).then(() => {
       message.success('股票期权申请新建成功');
       this.setState({

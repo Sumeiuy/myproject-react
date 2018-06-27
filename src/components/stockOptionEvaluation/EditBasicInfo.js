@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-27 12:06:00
+ * @Last Modified time: 2018-06-27 15:46:11
  */
 
 import React, { PureComponent } from 'react';
@@ -75,7 +75,7 @@ export default class EditBasicInfo extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const newState = {};
+    let newState = {};
     if (nextProps.stockCustTypeList !== prevState.stockCustTypeList) {
       newState.stockCustTypeList = nextProps.stockCustTypeList;
     }
@@ -90,18 +90,23 @@ export default class EditBasicInfo extends PureComponent {
     }
     if (nextProps.custInfo !== prevState.custInfo) {
       newState.custInfo = nextProps.custInfo;
-      newState.isSelectDisabled = _.isEmpty(nextProps.custInfo);
       // 用户是空，基本信息的select需要清空
       if (_.isEmpty(nextProps.custInfo)) {
-        newState.stockCustTypeList = EMPTY_LIST;
-        newState.reqTypeList = EMPTY_LIST;
-        newState.optionMarketTypeList = EMPTY_LIST;
-        newState.busDivisionList = EMPTY_LIST;
-        newState.stockCustType = '';
-        newState.reqType = '';
-        newState.openOptMktCatg = '';
-        newState.declareBus = '';
+        newState = {
+          ...newState,
+          stockCustTypeList: EMPTY_LIST,
+          reqTypeList: EMPTY_LIST,
+          optionMarketTypeList: EMPTY_LIST,
+          busDivisionList: EMPTY_LIST,
+          stockCustType: '',
+          reqType: '',
+          openOptMktCatg: '',
+          declareBus: '',
+          isShowDegreePrompt: false,
+          isShowInvPrompt: false,
+        };
       }
+      newState.isSelectDisabled = _.isEmpty(nextProps.custInfo);
     }
     return newState;
   }
