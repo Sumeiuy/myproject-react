@@ -52,7 +52,7 @@ export default class Item extends PureComponent {
         </div>
         <h3><span>{gradeName}</span>{timeHelper.format(time, dateFormatStr)}</h3>
         <p>{content}</p>
-        <a onClick={this.handleDetailClick}>[详情]</a>
+        <div className={styles.link}><a onClick={this.handleDetailClick}>[详情]</a></div>
       </div>
     );
   }
