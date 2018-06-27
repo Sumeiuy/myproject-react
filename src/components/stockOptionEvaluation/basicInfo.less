@@ -6,6 +6,15 @@
     flex-wrap: wrap;
     padding-bottom: 14px;
     margin-top: 14px;
+
+    .coloumn {
+      display: flex;
+      flex: 1;
+      flex-grow: 1;
+      margin-top: 14px;
+      min-width: 315px;
+      max-width: 33.3333%;
+    }
   }
 
   .basicInfo {
@@ -13,15 +22,15 @@
     display: flex;
     flex-wrap: wrap;
     padding-bottom: 14px;
-  }
 
-  .coloumn {
-    display: flex;
-    flex: 1;
-    flex-grow: 1;
-    margin-top: 14px;
-    min-width: 315px;
-    max-width: 33.3333%;
+    .coloumn {
+      display: flex;
+      flex: 1;
+      flex-grow: 1;
+      margin-top: 14px;
+      min-width: 315px;
+      max-width: 33.3333%;
+    }
   }
 
   .label {
@@ -41,11 +50,21 @@
     margin-left: 4px;
     font-size: 14px;
     color: #333;
+    box-sizing: border-box;
   }
 
   .row {
     display: block;
     width: 100%;
     margin-top: 14px;
+
+    .label {
+      vertical-align: top;
+    }
+
+    .value {
+      vertical-align: top;
+      width: calc(~"100% - 124px");
+    }
   }
 }

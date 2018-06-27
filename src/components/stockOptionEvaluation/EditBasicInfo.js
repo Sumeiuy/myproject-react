@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-26 17:15:04
+ * @Last Modified time: 2018-06-27 16:31:13
  */
 
 import React, { PureComponent } from 'react';
@@ -75,7 +75,7 @@ export default class EditBasicInfo extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const newState = {};
+    let newState = {};
     if (nextProps.stockCustTypeList !== prevState.stockCustTypeList) {
       newState.stockCustTypeList = nextProps.stockCustTypeList;
     }
@@ -91,12 +91,21 @@ export default class EditBasicInfo extends PureComponent {
     if (nextProps.custInfo !== prevState.custInfo) {
       newState.custInfo = nextProps.custInfo;
       newState.isSelectDisabled = _.isEmpty(nextProps.custInfo);
-      // 用户是空，基本信息的select需要清空
+      // 用户是空，基本信息的数据需要清空
       if (_.isEmpty(nextProps.custInfo)) {
-        newState.stockCustTypeList = EMPTY_LIST;
-        newState.reqTypeList = EMPTY_LIST;
-        newState.optionMarketTypeList = EMPTY_LIST;
-        newState.busDivisionList = EMPTY_LIST;
+        newState = {
+          ...newState,
+          stockCustTypeList: EMPTY_LIST,
+          reqTypeList: EMPTY_LIST,
+          optionMarketTypeList: EMPTY_LIST,
+          busDivisionList: EMPTY_LIST,
+          stockCustType: '',
+          reqType: '',
+          openOptMktCatg: '',
+          declareBus: '',
+          isShowDegreePrompt: false,
+          isShowInvPrompt: false,
+        };
       }
     }
     return newState;
@@ -113,16 +122,14 @@ export default class EditBasicInfo extends PureComponent {
         reqType,
         ageFlag,
         invFlag,
+        custType,
       },
     } = this.props;
-    if (isEdit && stockCustType === 'New' && reqType === 'New') {
-      if (ageFlag === 'N') {
-        isShowDegreePrompt = true;
-      }
-      if (invFlag === 'N') {
-        isShowInvPrompt = true;
-      }
-    }
+    // 个人客户，客户类型为新开客户,年龄条件不符合要求
+    isShowDegreePrompt = isEdit && custType === 'per' && stockCustType === 'New' && ageFlag === 'N';
+    // 个人客户，申请类型为初次申请，投资经历评估不符合要求
+    isShowInvPrompt = isEdit && custType === 'per' && reqType === 'New' && invFlag === 'N';
+
     this.state = {
       // 基本信息
       custInfo: {},
@@ -172,21 +179,21 @@ export default class EditBasicInfo extends PureComponent {
       custInfo: {
         invFlag,
         ageFlag,
+        custType,
       },
     } = this.props;
     const {
       stockCustType,
       reqType,
     } = this.state;
-    // 新开客户，初次申请
-    if (stockCustType === 'New' && reqType === 'New') {
-      if (ageFlag === 'N') {
-        this.setState({ isShowDegreePrompt: true });
-      }
-      if (invFlag === 'N') {
-        this.setState({ isShowInvPrompt: true });
-      }
-    }
+    // 个人客户，客户类型为新开客户,年龄条件不符合要求
+    this.setState({
+      isShowDegreePrompt: custType === 'per' && stockCustType === 'New' && ageFlag === 'N',
+    });
+    // 个人客户，申请类型为初次申请，投资经历评估不符合要求
+    this.setState({
+      isShowInvPrompt: custType === 'per' && reqType === 'New' && invFlag === 'N',
+    });
   }
 
   @autobind
@@ -285,7 +292,7 @@ export default class EditBasicInfo extends PureComponent {
         // 证件号码
         idNum,
         // 是否专业投资者
-        isProfessInvset,
+        isProfessInvsetCn,
         // 上海A股股东账号
         aAcct,
         // 开户系统
@@ -325,10 +332,6 @@ export default class EditBasicInfo extends PureComponent {
       isShowDegreePrompt,
       isShowInvPrompt,
     } = this.state;
-    let isProfessInvsetor = '';
-    if (isProfessInvset) {
-      isProfessInvsetor = isProfessInvset === 'Y' ? '是' : '否';
-    }
     const stockCustTypeListData = this.addEmptyOption(stockCustTypeList);
     const reqTypeListData = this.addEmptyOption(reqTypeList);
     const optionMarketTypeListData = this.addEmptyOption(optionMarketTypeList);
@@ -388,7 +391,7 @@ export default class EditBasicInfo extends PureComponent {
               </div>
               <div className={styles.value}>
                 <FormItem>
-                  {isProfessInvsetor || EMPTY_INFO}
+                  {isProfessInvsetCn || EMPTY_INFO}
                 </FormItem>
               </div>
             </div>

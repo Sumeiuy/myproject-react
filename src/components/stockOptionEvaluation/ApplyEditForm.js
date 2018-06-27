@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-26 17:17:35
+ * @Last Modified time: 2018-06-27 14:58:01
  */
 
 import React, { PureComponent } from 'react';
@@ -406,7 +406,12 @@ export default class ApplyEditForm extends PureComponent {
   sendDoApproveRequest(value) {
     const { doApprove, detailInfo, getDetailInfo } = this.props;
     const { appId, flowId } = detailInfo;
-    const { groupName, auditors, operate } = this.state;
+    const {
+      groupName,
+      auditors,
+      operate,
+      suggestion,
+    } = this.state;
     doApprove({
       itemId: appId,
       flowId,
@@ -416,6 +421,7 @@ export default class ApplyEditForm extends PureComponent {
       operate,
       // 审批人
       auditors: !_.isEmpty(value) ? value.login : auditors,
+      approverIdea: suggestion,
     }).then(() => {
       if (operate === COMMITOPERATE) {
         message.success('股票期权申请修改成功');
@@ -536,14 +542,16 @@ export default class ApplyEditForm extends PureComponent {
                 queryAcceptOrg={queryAcceptOrg}
               />
             </div>
-            <div className={styles.module}>
-              <InfoTitle head="适当性评估表" />
-              {
-                isPerCustType ?
-                  <AssessTable data={detailInfo} />
-                : null
-              }
-            </div>
+            {
+              isPerCustType ?
+                (
+                  <div className={styles.module}>
+                    <InfoTitle head="适当性评估表" />
+                    <AssessTable data={detailInfo} />
+                  </div>
+                )
+              : null
+            }
             <div className={styles.module}>
               <InfoTitle head="拟稿信息" />
               <div className={styles.modContent}>

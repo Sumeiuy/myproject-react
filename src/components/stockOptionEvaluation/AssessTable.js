@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-08 09:10:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-13 18:07:55
+ * @Last Modified time: 2018-06-26 17:53:35
  */
 
 import React, { PureComponent } from 'react';
@@ -270,6 +270,7 @@ export default class AssessTable extends PureComponent {
       title: '评估要素',
       dataIndex: 'assessEle',
       key: 'assessEle',
+      width: '20%',
       render: (value) => {
         const obj = {
           children: (<div title={value} className={styles.assessItem}>
@@ -283,6 +284,7 @@ export default class AssessTable extends PureComponent {
       title: '资质要素',
       dataIndex: 'aptitudeEle',
       key: 'aptitudeEle',
+      width: '50%',
       render: (value) => {
         const obj = {
           children: (<div title={value} className={styles.assessItem}>
@@ -296,6 +298,7 @@ export default class AssessTable extends PureComponent {
       title: '评估结果',
       dataIndex: 'assessResult',
       key: 'assessResult',
+      width: '30%',
     };
     const defaultColumns = {
       assessEleColumn,

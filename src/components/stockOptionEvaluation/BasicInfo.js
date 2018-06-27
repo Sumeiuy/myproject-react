@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-07 23:20:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-11 10:17:09
+ * @Last Modified time: 2018-06-27 11:11:40
  */
 
 import React, { PureComponent } from 'react';
@@ -25,9 +25,9 @@ export default class BasicInfo extends PureComponent {
       openDivName,
       idTypeName,
       idNum,
-      isProfessInvset,
+      isProfessInvsetCn,
       aAcct,
-      openSysName,
+      openSys,
       custTransLvName,
       stockCustTypeName,
       reqTypeName,
@@ -37,7 +37,6 @@ export default class BasicInfo extends PureComponent {
       declareBus,
     } = this.props.data;
     const custInfo = `${custName}(${custId})`;
-    const isProfessInvsetor = isProfessInvset === 'Y' ? '是' : '否';
     return (
       <div className={styles.basicInfoBox}>
         <InfoTitle head="基本信息" />
@@ -93,7 +92,7 @@ export default class BasicInfo extends PureComponent {
               <span className={styles.colon}>:</span>
             </div>
             <div className={styles.value}>
-              {isProfessInvsetor || EMPTY_INFO}
+              {isProfessInvsetCn || EMPTY_INFO}
             </div>
           </div>
           <div className={styles.coloumn}>
@@ -111,7 +110,7 @@ export default class BasicInfo extends PureComponent {
               <span className={styles.colon}>:</span>
             </div>
             <div className={styles.value}>
-              {openSysName || EMPTY_INFO}
+              {openSys || EMPTY_INFO}
             </div>
           </div>
           <div className={styles.coloumn}>
