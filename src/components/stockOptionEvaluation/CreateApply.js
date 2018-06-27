@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-25 22:52:43
+ * @Last Modified time: 2018-06-26 17:17:09
  */
 
 import React, { PureComponent } from 'react';
@@ -352,15 +352,13 @@ export default class CreateApply extends PureComponent {
       if (this.isValidateError) return;
       if (!err) {
         const {
-          customer: {
-            custType,
-          },
           custInfo: {
+            custType,
             isProfessInvset,
           },
         } = this.state;
         // 个人客户且是专业投资者
-        if (custType === 'per' && isProfessInvset) {
+        if (custType === 'per' && isProfessInvset === 'Y') {
           commonConfirm({
             content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
             onOk: () => this.showNextApprover(item),
@@ -399,9 +397,6 @@ export default class CreateApply extends PureComponent {
     });
     // 校验的数据
     const {
-      customer: {
-        brokerNumber: econNum,
-      },
       custTransLv,
       stockCustType,
       reqType,
@@ -409,6 +404,7 @@ export default class CreateApply extends PureComponent {
       rzrqzqAcctFlag,
       jrqhjyFlag,
       custInfo: {
+        econNum,
         invFlag,
         nonAlertblackFlag,
         riskEval,
@@ -462,12 +458,6 @@ export default class CreateApply extends PureComponent {
   sendCreateRequest(value) {
     const {
       flowId,
-      customer: {
-        brokerNumber: econNum,
-        cusId: custId,
-        custName,
-        custType,
-      },
       custTransLv,
       stockCustType,
       reqType,
@@ -475,6 +465,10 @@ export default class CreateApply extends PureComponent {
       rzrqzqAcctFlag,
       jrqhjyFlag,
       custInfo: {
+        econNum,
+        custId,
+        custName,
+        custType,
         divisionId,
         openDivId,
         idType,
@@ -579,6 +573,11 @@ export default class CreateApply extends PureComponent {
     });
   }
 
+  @autobind
+  updateValue(attachment) {
+    this.setState({ attachment });
+  }
+
   render() {
     const {
       busCustList,
@@ -593,7 +592,6 @@ export default class CreateApply extends PureComponent {
       custInfo,
       isShowModal,
       createButtonListData,
-      customer,
       accptTime,
       busPrcDivId,
       custTransLv,
@@ -678,7 +676,6 @@ export default class CreateApply extends PureComponent {
               optionMarketTypeList={optionMarketTypeList}
               reqTypeList={reqTypeList}
               busDivisionList={busDivisionList}
-              customer={customer}
               custInfo={custInfo}
               accptTime={accptTime}
               busPrcDivId={busPrcDivId}
@@ -695,14 +692,6 @@ export default class CreateApply extends PureComponent {
               custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
             />
           </div>
-          {/* <UploadFile
-            fileList={[]}
-            edit
-            type="attachment"
-            attachment={attachment}
-            onEmitEvent={this.handleChange}
-            needDefaultText={false}
-          /> */}
           <div className={styles.moduleAttachment}>
             <InfoTitle head="附件信息" />
             <CommonUpload
@@ -712,7 +701,7 @@ export default class CreateApply extends PureComponent {
               attachment={attachment || ''}
               needDefaultText={false}
               attachmentList={attachList}
-              uploadAttachment={this.handleChange}
+              uploadAttachment={this.updateValue}
             />
           </div>
           <TableDialog {...searchProps} />

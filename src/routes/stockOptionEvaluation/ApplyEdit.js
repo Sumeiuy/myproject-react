@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 10:34:44
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-25 18:05:58
+ * @Last Modified time: 2018-06-26 09:22:22
  */
 
 import React, { PureComponent } from 'react';
@@ -136,11 +136,18 @@ export default class ApplyEdit extends PureComponent {
     getDetailInfo({ flowId: newFolwId })
       .then(() => {
         const { detailInfo, getAttachmentList } = this.props;
-        const { attachment } = detailInfo;
+        const {
+          attachment,
+          econNum,
+          custType,
+        } = detailInfo;
         // 拿详情接口返回的attachmnet，调详情附件信息
         getAttachmentList({ attachment: attachment || '' });
+        getSelectMap({
+          econNum,
+          custType,
+        });
       });
-    getSelectMap({ flowId: newFolwId });
   }
   render() {
     const {
