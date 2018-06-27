@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-27 14:54:31
+ * @Last Modified time: 2018-06-27 18:45:46
  */
 
 import React, { PureComponent } from 'react';
@@ -117,6 +117,13 @@ export default class Phone extends PureComponent {
         (e) => {
           if (this.canCall()) {
             const number = window.$(e.target).text() || window.$(e.target).val();
+            // 在ie下才需要检测打电话控件是否安装
+            if (bowser.msie) {
+              if (!memoizeCheck()) {
+                this.handlePluginError();
+                return;
+              }
+            }
             this.prepareCall(number);
             // 点击打电话
             this.props.onClick();
@@ -140,8 +147,8 @@ export default class Phone extends PureComponent {
       title: '提示',
       content: (
         <div>
-          您尚未安装通话插件，点击
-          <a href={sotfCallInstall}>下载</a>
+          您尚未安装通话插件，请先下载并安装通话插件，安装完成后请关闭浏览器并重新打开。
+          <p className={styles.pluginDownload}><a href={sotfCallInstall}>立即下载</a></p>
         </div>
       ),
       okText: '确定',
