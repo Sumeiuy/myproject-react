@@ -9,7 +9,8 @@ import _ from 'lodash';
 import { connect } from 'dva';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
-
+import { autobind } from 'core-decorators';
+import store from 'store';
 import ErrorBoundary from './ErrorBoundary';
 import Loading from './Loading';
 import withRouter from '../decorators/withRouter';
@@ -97,6 +98,16 @@ export default class Main extends Component {
   componentDidMount() {
     const { getCustomerScope } = this.props;
     getCustomerScope(); // 加载客户池客户范围
+    window.addEventListener('beforeunload', this.clearLocalStorage);
+  }
+
+  componentWillUnMount() {
+    window.removeEventListener('beforeunload', this.clearLocalStorage);
+  }
+
+  @autobind
+  clearLocalStorage() {
+    store.clearAll();
   }
 
   render() {
