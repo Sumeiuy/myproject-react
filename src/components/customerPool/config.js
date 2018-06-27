@@ -9,7 +9,7 @@ export const kPIDateScopeType = {
     id: '518003',
     desc: '本月',
   },
-  season: {
+  quarter: {
     id: '518004',
     desc: '本季',
   },
@@ -198,7 +198,7 @@ export const sourceFilter = {
   custAssets: {
     newOpen: [{
       // 新开客户
-      filterName: 'newOpen',
+      filterName: 'dateOpened',
       value: ['cycleStartTime', 'cycleEndTime'],
     }],
     lastServDt: [{
