@@ -371,7 +371,7 @@ export default class MatchArea extends PureComponent {
       listItem,
     } = this.props;
     if (matchLabels && !matchLabels.length) {
-      return [];
+      return null;
     }
     const { searchText = '' } = this.getFilters();
     if (!_.isEmpty(listItem.relatedLabels)) {
@@ -676,7 +676,7 @@ export default class MatchArea extends PureComponent {
       const normalListNode = this.renderRelatedLabels(normalLabelList);
       return [normalListNode, ...amiListNode];
     }
-    return [];
+    return null;
   }
 
   @autobind
