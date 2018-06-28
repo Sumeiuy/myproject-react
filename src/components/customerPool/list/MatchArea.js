@@ -555,7 +555,7 @@ export default class MatchArea extends PureComponent {
       const id = decodeURIComponent(labelMapping);
       const currentItem = _.find(jxgrpProducts, item => item.id === id);
       if (!_.isEmpty(currentItem)) {
-        const { code: combinationCode, name } = currentItem;
+        const { code: combinationCode, name, id: combinationId } = currentItem;
         const props = {
           combinationCode,
           custId,
@@ -574,7 +574,7 @@ export default class MatchArea extends PureComponent {
                 >
                   {name}
                 </em>
-                /{combinationCode}
+                /{combinationId}
               </i>
               {isShowDetailBtn && <HoldingCombinationDetail {...props} />}
             </span>
