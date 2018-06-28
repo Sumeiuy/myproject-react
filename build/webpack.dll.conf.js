@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 module.exports = {
+  mode: 'none',
   entry: {
     vendor: [
       'react',
