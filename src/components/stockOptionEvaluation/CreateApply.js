@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-27 16:45:44
+ * @Last Modified time: 2018-06-28 19:36:40
  */
 
 import React, { PureComponent } from 'react';
@@ -269,12 +269,12 @@ export default class CreateApply extends PureComponent {
   getCustInfo(item) {
     const { getCustInfo, getSelectMap } = this.props;
     const {
-      brokerNumber,
+      brokerNumber: econNum,
       custType,
     } = item;
     // 根据经济客户号查询客户附带信息
     getCustInfo({
-      brokerNumber,
+      econNum,
       custType,
     }).then(() => {
       const { custInfo } = this.props;
@@ -308,7 +308,7 @@ export default class CreateApply extends PureComponent {
     });
     // 获取股票客户类型,申请类型,开立期权市场类别,业务受理营业部的下拉选择
     getSelectMap({
-      econNum: brokerNumber,
+      econNum,
       custType,
     });
   }
@@ -415,6 +415,7 @@ export default class CreateApply extends PureComponent {
         riskEvalTime,
         age,
         ageFlag,
+        custType,
       },
       degreeFlag,
     } = this.state;
@@ -422,6 +423,7 @@ export default class CreateApply extends PureComponent {
       bizId: '',
       econNum,
       custTransLv,
+      custType,
       stockCustType,
       reqType,
       aAcctOpenTimeFlag,

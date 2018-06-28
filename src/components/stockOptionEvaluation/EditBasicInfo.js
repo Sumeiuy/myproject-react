@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-28 10:05:19
+ * @Last Modified time: 2018-06-28 16:19:03
  */
 
 import React, { PureComponent } from 'react';
@@ -42,12 +42,12 @@ export default class EditBasicInfo extends PureComponent {
     // 触发父组件数据变化
     onChange: PropTypes.func.isRequired,
     // 受理时间
-    accptTime: PropTypes.string.isRequired,
+    accptTime: PropTypes.string,
     // 受理营业部Id
-    busPrcDivId: PropTypes.string.isRequired,
+    busPrcDivId: PropTypes.string,
     // 客户交易级别
-    custTransLv: PropTypes.string.isRequired,
-    custTransLvName: PropTypes.string.isRequired,
+    custTransLv: PropTypes.string,
+    custTransLvName: PropTypes.string,
     // 受理营业部变更
     acceptOrgData: PropTypes.object.isRequired,
     queryAcceptOrg: PropTypes.func.isRequired,
@@ -66,6 +66,10 @@ export default class EditBasicInfo extends PureComponent {
 
   static defaultProps = {
     isEdit: false,
+    accptTime: '',
+    busPrcDivId: '',
+    custTransLv: '',
+    custTransLvName: '',
     degreeFlag: '',
     aAcctOpenTimeFlag: '',
     rzrqzqAcctFlag: '',
@@ -539,13 +543,18 @@ export default class EditBasicInfo extends PureComponent {
               </div>
               <div className={styles.value}>
                 <FormItem>
-                  <Select
-                    disabled={isSelectDisabled}
-                    onChange={key => this.updateBusPrcDiv('busPrcDivId', key)}
-                    value={busPrcDivId}
-                  >
-                    { this.getSelectOption(busDivisionListData) }
-                  </Select>
+                  {
+                    getFieldDecorator('busPrcDivId', {
+                      initialValue: busPrcDivId || '',
+                    })(
+                      <Select
+                        disabled={isSelectDisabled}
+                        onChange={key => this.updateBusPrcDiv('busPrcDivId', key)}
+                      >
+                        { this.getSelectOption(busDivisionListData) }
+                      </Select>,
+                    )
+                  }
                 </FormItem>
               </div>
             </div>
