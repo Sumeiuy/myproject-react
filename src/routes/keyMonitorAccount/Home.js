@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-27 14:55:36
+ * @Last Modified time: 2018-06-28 11:56:36
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -66,8 +66,6 @@ export default class KeyMonitorAccountHome extends Component {
       idNo: '',
       // 经纪客户号
       custNumber: '',
-      // 用于判断交易所下拉框用户有无切换值
-      exchangeTypeHasChange: false,
       pageNum: 1,
       pageSize: 10,
     };
@@ -221,7 +219,6 @@ export default class KeyMonitorAccountHome extends Component {
   handleExchangeTypeSelectChange(select, value) {
     this.setState({
       exchangeType: value,
-      exchangeTypeHasChange: true,
     });
   }
 
@@ -317,14 +314,6 @@ export default class KeyMonitorAccountHome extends Component {
           <div className={styles.filterItem}>
             <div className={styles.item}>
               <span className={styles.label}>监管措施类型：</span>
-              {/* <Select
-                data={punishTypeSelectOptions}
-                style={{ width: 130 }}
-                className={styles.selectItem}
-                name="punishType"
-                value={punishType}
-                onChange={this.handlePunishTypeSelectChange}
-              /> */}
               <Input
                 className={styles.inputItem}
                 value={punishType}
