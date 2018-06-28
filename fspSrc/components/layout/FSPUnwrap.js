@@ -27,6 +27,6 @@ export default function FSPUnwrap({ path, children, loading, loadingForceFull })
 FSPUnwrap.propTypes = {
   path: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
-  loading: PropTypes.bool.isRequired,
+  loading: PropTypes.number.isRequired,
   loadingForceFull: PropTypes.bool.isRequired,
 };

@@ -105,6 +105,13 @@ export default class TabMenu extends PureComponent {
   }
 
   @autobind
+  handDropClick(menuItem, activeKey) {
+    if(menuItem.path !== '') {
+      this.change(menuItem.id, activeKey);
+    }
+  }
+
+  @autobind
   renderDropdownMenu(menu, isMoreMenu = false) {
     const { activeKey } = this.props;
     const isActiveLink = isMoreMenu ? isInMoremenu(menu, activeKey) : (menu.id === activeKey);
@@ -136,7 +143,7 @@ export default class TabMenu extends PureComponent {
             tabIndex="0"
             className={styles.text}
           >
-            <div className={styles.link} title={`${menu.name}`}>{menu.name}</div>
+            <div className={styles.link} title={`${menu.name}`} onClick={() => this.handDropClick(menu, activeKey)}>{menu.name}</div>
             <i className="anticon anticon-change" />
           </div>
         </Dropdown>

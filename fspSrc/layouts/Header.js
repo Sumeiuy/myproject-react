@@ -69,18 +69,44 @@ export default class Header extends PureComponent {
     const commonTools = (
       <Menu>
         <Menu.Item>
+          <Link to="/customerPool">投顾签约</Link>
+        </Menu.Item>
+        <Menu.Item>
+          服务订阅
+        </Menu.Item>
+        <Menu.Item>
           <a onClick={this.handleShowDialog}>隔离墙</a>
         </Menu.Item>
         <Menu.Item>
-          <Link to="/customerPool">投顾签约</Link>
+          产品适当性售前查询
         </Menu.Item>
       </Menu>
     );
     const mobileVersion = (
       <img src={QRCode} alt="移动端二维码" />
     );
+    const knowledgeBase = (
+      <Menu>
+        <Menu.Item>
+          基础业务知识
+        </Menu.Item>
+      </Menu>
+    );
+    const helpMenu = (
+      <Menu>
+        <Menu.Item>
+          反馈管理
+        </Menu.Item>
+        <Menu.Item>
+          专项业务知识
+        </Menu.Item>
+        <Menu.Item>
+          更新日志
+        </Menu.Item>
+      </Menu>
+    );
     return (
-      <div className={styles.header}>
+      <div className={styles.fspHeader}>
         <div onClick={this.fakeLogin}><Logo /></div>
         <div className={styles.headerContent}>
           {/* <div className={styles.search}>
@@ -105,21 +131,37 @@ export default class Header extends PureComponent {
               null
           }
 
-          <Dropdown overlay={mobileVersion}>
+          <Dropdown overlay={commonTools}>
             <div>
               <span className={styles.navItem}>
-                <span>移动版</span>
-                <Icon type="down" className={styles.icon} />
+                <span>常用工具</span>
               </span>
               <span className={styles.splitLine} />
             </div>
           </Dropdown>
 
-          <Dropdown overlay={commonTools}>
+          <Dropdown overlay={mobileVersion}>
             <div>
               <span className={styles.navItem}>
-                <span>常用工具</span>
-                <Icon type="down" className={styles.icon} />
+                <span>移动版</span>
+              </span>
+              <span className={styles.splitLine} />
+            </div>
+          </Dropdown>
+
+          <Dropdown overlay={knowledgeBase}>
+            <div>
+              <span className={styles.navItem}>
+                <span>知识库</span>
+              </span>
+              <span className={styles.splitLine} />
+            </div>
+          </Dropdown>
+
+          <Dropdown overlay={helpMenu}>
+            <div>
+              <span className={styles.navItem}>
+                <span>帮助</span>
               </span>
             </div>
           </Dropdown>

@@ -18,7 +18,8 @@ exports.getCSSLoaders = function (options) {
   var baseOptions = {
     minimize: process.env.NODE_ENV === 'production',
     sourceMap: options.sourceMap,
-    importLoaders: 1
+    importLoaders: 1,
+    url: false
   };
   var ownOptions = Object.assign({}, baseOptions);
   if (!options.disableCSSModules) {
