@@ -38,7 +38,7 @@ function renderItem(data = {}, params, itemStyle = null) {
   return (
     <div className={classnames(styles.check, itemStyle)}>
       <div
-        className={styles.count}
+        className={classnames(styles.count, styles.countGray)}
         onClick={linkToList}
       >
         <span title={`${data.item || ''}${data.unit || ''}`}>
