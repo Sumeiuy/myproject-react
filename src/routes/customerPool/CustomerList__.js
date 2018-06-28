@@ -376,7 +376,7 @@ const mapDispatchToProps = {
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
   getCeFileList: fetchDataFunction(false, effects.getCeFileList),
   // 搜索服务服务经理
-  getSearchServerPersonList: fetchDataFunction(true, effects.getSearchServerPersonList),
+  getSearchServerPersonList: fetchDataFunction(false, effects.getSearchServerPersonList),
   getSearchPersonList: fetchDataFunction(false, effects.getSearchPersonList),
   push: routerRedux.push,
   replace: routerRedux.replace,
