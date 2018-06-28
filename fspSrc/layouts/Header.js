@@ -106,7 +106,7 @@ export default class Header extends PureComponent {
       </Menu>
     );
     return (
-      <div className={styles.header}>
+      <div className={styles.fspHeader}>
         <div onClick={this.fakeLogin}><Logo /></div>
         <div className={styles.headerContent}>
           {/* <div className={styles.search}>
