@@ -57,7 +57,7 @@ function addRangeParams(filterObj) {
   const param = {};
   const rangeParam = [
     'totAset', // 总资产
-    'birthDt', // 年龄范围
+    'age', // 年龄范围
     'cashAmt', // 资金余额
     'avlAmt', // 普通可用资金
     'avlAmtCrdt', // 信用可用资金

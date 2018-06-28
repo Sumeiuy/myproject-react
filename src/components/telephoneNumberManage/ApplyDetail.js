@@ -3,7 +3,7 @@
  * @Description: 公务手机卡号申请详情页面
  * @Date: 2018-04-19 18:46:58
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-20 14:30:34
+ * @Last Modified time: 2018-06-27 10:21:14
  */
 
 import React, { PureComponent } from 'react';
@@ -76,13 +76,13 @@ export default class ApplyDetail extends PureComponent {
     if (currentNodeCode === 'branchHandle' ||
     currentNodeCode === 'headAudit' ||
     currentNodeCode === 'trueOver') {
-      // 处于以上三种状态，表示此时电话号码，手机串号，SIM卡1，SIM卡2已经录入
+      // 处于以上三种状态，表示此时电话号码，手机串号，SIM卡号1，SIM卡号2已经录入
       // 需要增加展示电话号码，手机串号，SIM卡1，SIM卡2四列
       const increasedColumns = [
         { key: 'phoneNumber', value: '电话号码' },
         { key: 'imsi', value: '手机串号' },
-        { key: 'sim', value: 'SIM卡1' },
-        { key: 'sim2', value: 'SIM卡2' },
+        { key: 'sim', value: 'SIM卡号1' },
+        { key: 'sim2', value: 'SIM卡号2' },
       ];
       columns = [...columns, ...increasedColumns];
     }
@@ -141,7 +141,7 @@ export default class ApplyDetail extends PureComponent {
       columnWidth = ['110px', '100px', '180px', '130px', '170px', '190px', '190px'];
       columnWidthTotal = 1000;
     } else if (columnSize === 3) {
-      // 开始的时候没有电话号码，手机串号，SIM卡1，SIM卡2四列
+      // 开始的时候没有电话号码，手机串号，SIM卡号1，SIM卡号2四列
       columnWidth = ['180px', '170px', '250px'];
       columnWidthTotal = 600;
     }
