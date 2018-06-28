@@ -83,6 +83,10 @@ import CustAllot from './routes/custAllot/Home';
 import CustAllotNotifies from './routes/custAllot/Notifies';
 // 消息通知提醒
 import MessageCenter from './routes/messageCenter/Home';
+// 客户关联关系信息申请
+import CustRelationships from './routes/custRelationships/Home';
+// 客户关联关系信息申请驳回后修改页面
+import RejectUpdateHome from './routes/custRelationships/RejectUpdateHome';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -312,6 +316,10 @@ const routes = [
   },
   // 投顾业务能力竞赛
   { path: '/investmentConsultantRace', component: InvestmentConsultantRace },
+  // 客户关联关系信息申请，直接进入
+  { path: '/custRelationships', component: CustRelationships },
+  // 客户关联关系信息申请，传递参数flowId
+  { path: '/custRelationshipsReject', component: RejectUpdateHome },
   // 直接进入
   {
     path: '/custAllot',

@@ -1,0 +1,140 @@
+.custRelationshipsListRow {
+  padding: 10px 8px 10px 20px;
+  height: 98px;
+  background-color: #fff;
+  cursor: pointer;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e9e9e9;
+  &:hover {
+    background-color: #edf6fd;
+  }
+  &.active {
+    background-color: #4897f1;
+    color: #fff;
+    .oneLineCls {
+      .title {
+        .appIcon {
+          background-color: #fff;
+          color: #4897f1;
+        }
+        .serialNumber {
+          color: #fff;
+        }
+      }
+      .tagArea {
+        .tag {
+          border: 1px solid #fff;
+          background-color: transparent;
+          color: #fff;
+          box-sizing: content-box;
+        }
+      }
+    }
+    .secondLine {
+      .type, .date {
+        color: #fff;
+      }
+    }
+    .thirdLine {
+      color: #fff;
+    }
+    &:hover {
+      background-color: #4897f1;
+    }
+  }
+  .pullleft {
+    float: left;
+    text-align: left;
+  }
+  .pullright {
+    float: right;
+    text-align: right;
+  }
+  .textEllipse {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .oneLineCls {
+    height: 26px;
+    line-height: 26px;
+    &:after {
+      content: " ";
+      display: table;
+      clear: both;
+    }
+    .title {
+      width: 70%;
+      .pullleft;
+      .appIcon {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        display: inline-block;
+        border-radius: 50%;
+        background-color: #7d9be0;
+        font-size: 13px;
+        color: #fff;
+        vertical-align: middle;
+      }
+      .serialNumber {
+        margin-left: 10px;
+        font-size: 12px;
+        color: #666;
+      }
+    }
+    .tagArea {
+      .pullright;
+      .tag {
+        background: #d0f1ff;
+        border-radius: 2px;
+        width: 58px;
+        height: 18px;
+        line-height: 18px;
+        text-align: center;
+        font-size: 12px;
+        color: #3f9dc6;
+      }
+    }
+  }
+  .secondLine, .thirdLine {
+    margin-top: 5px;
+    &:after {
+      content: " ";
+      display: table;
+      clear: both;
+    }
+  }
+  .secondLine {
+    font-size: 14px;
+    .type {
+      color: #333;
+      font-size: 14px;
+    }
+    .date {
+      width: 21%;
+      font-size: 12px;
+      color: #aaa;
+      .pullright;
+    }
+  }
+  .thirdLine {
+    font-size: 12px;
+    color: #aaa;
+    .drafter {
+      width: 60%;
+      font-size: 12px;
+      .pullleft;
+      .textEllipse;
+    }
+    .drafterName {
+      margin-right: 10px;
+    }
+    .customer {
+      width: 35%;
+      .pullright;
+      .textEllipse;
+    }
+  }
+}
