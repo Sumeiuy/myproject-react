@@ -131,6 +131,8 @@ export default class CustomerLists extends PureComponent {
     currentPytMng: PropTypes.object.isRequired,
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
+    getSearchPersonList: PropTypes.func.isRequired,
+    clearSearchPersonList: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
   }
 
@@ -145,10 +147,6 @@ export default class CustomerLists extends PureComponent {
     collectCustRange: () => { },
     queryHoldingProductReqState: false,
     dataForNextPage: {},
-  }
-
-  static contextTypes = {
-    getSearchServerPersonList: PropTypes.func,
   }
 
   constructor(props) {
@@ -319,10 +317,14 @@ export default class CustomerLists extends PureComponent {
 
   @autobind
   dropdownToSearchInfo(value) {
-    const { handleSearch } = this.props;
+    const { handleSearch, getSearchPersonList } = this.props;
     handleSearch({ param: `keyword_${value}` });
-    // 下拉菜单搜错查询关键字
-    this.context.getSearchServerPersonList(value);
+    // 下拉菜单搜索查询关键字
+    getSearchPersonList({
+      keyword: value,
+      pageSize: 10,
+      pageNum: 1,
+    });
   }
 
   // 服务营业部
@@ -491,6 +493,7 @@ export default class CustomerLists extends PureComponent {
       currentPytMng,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
+      clearSearchPersonList,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -581,6 +584,7 @@ export default class CustomerLists extends PureComponent {
               <ServiceManagerFilter
                 disable={this.canSelectSM()}
                 searchServerPersonList={searchServerPersonList}
+                clearSearchPersonList={clearSearchPersonList}
                 currentPytMng={currentPytMng}
                 dropdownSelectedItem={this.dropdownSelectedItem}
                 dropdownToSearchInfo={this.dropdownToSearchInfo}

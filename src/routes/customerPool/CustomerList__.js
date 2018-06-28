@@ -993,6 +993,8 @@ export default class CustomerList extends PureComponent {
           searchServerPersonList={searchServerPersonList}
         />
         <CustomerLists
+          getSearchPersonList={getSearchPersonList}
+          clearSearchPersonList={clearSearchPersonList}
           handleCollapseClick={handleCollapseClick}
           handleAddServiceRecord={handleAddServiceRecord}
           handleCloseClick={handleCloseClick}

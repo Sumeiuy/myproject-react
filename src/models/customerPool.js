@@ -659,29 +659,27 @@ export default {
         });
       }
     },
-    getSearchServerPersonList: [
-      function* getSearchServerPersonList({ payload }, { call, put }) {
-        if (!payload.keyword) {
-          // 和之前的用户行为(输入空时，搜索结果为预置数据项)，保持一致
+    * getSearchServerPersonList({ payload }, { call, put }) {
+      if (!payload.keyword) {
+        // 和之前的用户行为(输入空时，搜索结果为预置数据项)，保持一致
+        yield put({
+          type: 'getSearchServerPersonListSuccess',
+          payload: [
+            { ptyMngName: '所有人', ptyMngId: '' },
+            { ptyMngName: '我的', ptyMngId: emp.getId() },
+          ],
+        });
+      } else {
+        const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
+        if (resultData) {
+          const { servicePeopleList = EMPTY_LIST } = resultData;
           yield put({
             type: 'getSearchServerPersonListSuccess',
-            payload: [
-              { ptyMngName: '所有人', ptyMngId: '' },
-              { ptyMngName: '我的', ptyMngId: emp.getId() },
-            ],
+            payload: servicePeopleList,
           });
-        } else {
-          const { resultData = EMPTY_OBJECT } =
-            yield call(api.getSearchServerPersonelList, payload);
-          if (resultData) {
-            const { servicePeopleList = EMPTY_LIST } = resultData;
-            yield put({
-              type: 'getSearchServerPersonListSuccess',
-              payload: servicePeopleList,
-            });
-          }
         }
-      }, { type: 'takeLatest' }],
+      }
+    },
     getSearchPersonList: [
       function* getSearchPersonList({ payload }, { call, put }) {
         const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
