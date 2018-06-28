@@ -2,6 +2,7 @@
   display: inline-block;
   min-width: 70px;
   height: 30px;
+  transform: translateY(-1px); // IE下定位有问题，特此修复，请勿删除
   :global {
     .DateRangePickerInput__withBorder {
       border-radius: 4px;
