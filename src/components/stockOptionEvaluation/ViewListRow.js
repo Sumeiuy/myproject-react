@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-06 14:23:44
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-11 17:19:00
+ * @Last Modified time: 2018-06-28 11:16:07
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -29,10 +29,7 @@ const changeDisplay = (st, options) => {
   return '无';
 };
 
-function showCustomerBySubtype(data) {
-  if (data.subType === '0202') {
-    return `共${data.business2 || 0}人,已完成${data.business3 || 0}人`;
-  }
+function showCustomer(data) {
   return `客户：${data.custName || '无'}(${data.custNumber || '无'})`;
 }
 
@@ -100,8 +97,8 @@ export default function AppItem(props) {
       {/* 第三行 */}
       <div className={thirdLineCls}>
         <div className={styles.drafter}>拟稿人：<span className={styles.drafterName}>{data.empName}({data.empId})</span>{`${data.orgName || ''}` || '无'}</div>
-        <div className={styles.customer} title={showCustomerBySubtype(data)}>
-          {showCustomerBySubtype(data)}
+        <div className={styles.customer} title={showCustomer(data)}>
+          {showCustomer(data)}
         </div>
       </div>
     </div>
