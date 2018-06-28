@@ -168,7 +168,7 @@ const menus = [
         type: 'link',
         action: '',
         path: '',
-      },     
+      },
     ],
   },
   {

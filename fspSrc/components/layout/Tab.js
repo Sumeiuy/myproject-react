@@ -270,10 +270,11 @@ export default class Tab extends PureComponent {
 
   // 判断是否为menu里的pane
   isPaneInMenu(pathname) {
-    return menuConfig.find(element => {
-      return element.path === pathname 
-        || (element.children && element.children.find(item => item.path === pathname))
-    });
+    let mainPath = pathname.split("?")[0];
+    
+    return menuConfig.find(elem => {
+      return elem.path === mainPath || (elem.children && elem.children.find(item => item.path === mainPath))
+    })
   }
 
   // 从配置文件中获取pathname对应的tabPane对象
