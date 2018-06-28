@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-27 16:31:13
+ * @Last Modified time: 2018-06-28 10:05:19
  */
 
 import React, { PureComponent } from 'react';
@@ -556,7 +556,7 @@ export default class EditBasicInfo extends PureComponent {
               </div>
               <div className={styles.value} >
                 <FormItem>
-                  {accptTime || EMPTY_INFO}
+                  {(accptTime && accptTime.slice(0, 10)) || EMPTY_INFO}
                 </FormItem>
               </div>
             </div>

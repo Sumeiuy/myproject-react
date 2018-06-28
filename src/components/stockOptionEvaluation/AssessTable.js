@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-08 09:10:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-26 17:53:35
+ * @Last Modified time: 2018-06-28 10:15:22
  */
 
 import React, { PureComponent } from 'react';
@@ -358,7 +358,7 @@ export default class AssessTable extends PureComponent {
     const riskOptTimeData = {
       key: '2',
       assessEle: assessTable[2].assessEle,
-      aptitudeEle: riskOptTime,
+      aptitudeEle: riskOptTime && riskOptTime.slice(0, 10),
       defaultResult: assessTable[2].assessResult,
       assessResult: riskOptTimeFlag,
     };

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-07 23:20:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-27 11:11:40
+ * @Last Modified time: 2018-06-28 10:04:38
  */
 
 import React, { PureComponent } from 'react';
@@ -166,7 +166,7 @@ export default class BasicInfo extends PureComponent {
               <span className={styles.colon}>:</span>
             </div>
             <div className={styles.value}>
-              {accptTime || EMPTY_INFO}
+              {(accptTime && accptTime.slice(0, 10)) || EMPTY_INFO}
             </div>
           </div>
           <div className={styles.row}>
