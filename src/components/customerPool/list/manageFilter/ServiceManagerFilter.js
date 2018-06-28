@@ -20,6 +20,7 @@ export default class ServiceManagerFilter extends PureComponent {
     currentPytMng: PropTypes.object.isRequired,
     dropdownSelectedItem: PropTypes.func.isRequired,
     dropdownToSearchInfo: PropTypes.func.isRequired,
+    clearSearchPersonList: PropTypes.func.isRequired,
     disable: PropTypes.bool.isRequired,
   }
 
@@ -45,8 +46,11 @@ export default class ServiceManagerFilter extends PureComponent {
     },
   })
   handleSearch(value) {
+    const { dropdownToSearchInfo, clearSearchPersonList } = this.props;
     if (value) {
-      this.props.dropdownToSearchInfo(value);
+      dropdownToSearchInfo(value);
+    } else {
+      clearSearchPersonList();
     }
   }
 
