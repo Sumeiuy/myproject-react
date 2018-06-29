@@ -239,11 +239,14 @@ export const homeModelType = {
   custAssets: [{
     key: 'newOpen',
     desc: '新开客户数',
+    id: 'newCustNum',
   }, {
     key: 'lastServDt',
     desc: '服务客户数',
+    id: 'custNum',
   }, {
     key: 'tgSignDate',
     desc: '签约客户数',
+    id: 'currSignCustNum',
   }],
 };

@@ -21,6 +21,7 @@ function getDataConfig(data) {
   return data.map(item => ({
     value: item.value,
     name: item.name,
+    key: item.key,
     itemStyle: {
       normal: {
         color: item.bgColor,
@@ -103,8 +104,9 @@ function Funney({ dataSource, push, cycle, location }) {
       if (arg.componentType !== 'series') {
         return;
       }
+      const { data: { key = '' } } = arg;
       const modalTypeList = homeModelType[SOURCE_CUST_ASSETS];
-      const { key: modalType } = _.find(modalTypeList, item => item.desc === arg.name) || {};
+      const { key: modalType } = _.find(modalTypeList, item => item.id === key) || {};
       const params = {
         source: SOURCE_CUST_ASSETS,
         type: modalType,
