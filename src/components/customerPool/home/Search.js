@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-06-13 15:52:38
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-28 14:23:52
  * @description 客户池头部搜索组件
  */
 
@@ -180,7 +180,7 @@ export default class Search extends PureComponent {
     };
     // 查到的时持仓产品，传持仓产品的名称
     if (item.type === 'PRODUCT' && item.name) {
-      query = { ...query, productName: encodeURIComponent(item.name) };
+      query = { ...query, productName: item.name };
     }
 
     // log日志 --- 首页搜索选中

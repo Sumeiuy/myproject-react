@@ -362,11 +362,11 @@ export default class CustomerRow extends PureComponent {
       miniFee = `${(listItem.miniFee * 1000).toFixed(2)}‰`;
     }
     // 归集率
-    let hsRate = '--';
-    if (listItem.hsRate !== null) {
-      hsRate = listItem.hsRate < 0 ?
-        Number(listItem.hsRate.toFixed(2)) :
-        `${Number((listItem.hsRate * 100).toFixed(2))}%`;
+    let gjlRate = '--';
+    if (listItem.gjlRate !== null) {
+      gjlRate = listItem.gjlRate < 0 ?
+        Number(listItem.gjlRate.toFixed(2)) :
+        `${Number((listItem.gjlRate * 100).toFixed(2))}%`;
     }
     return (
       <div
@@ -430,7 +430,7 @@ export default class CustomerRow extends PureComponent {
               }
             </div>
             <div className="row-two">
-              <span className="imputation">归集率: <em>{hsRate}</em></span>
+              <span className="imputation">归集率: <em>{gjlRate}</em></span>
               <span className="cutOffLine">|</span>
               <span className="commission">佣金率: <em>{miniFee}</em></span>
               <span className="cutOffLine">|</span>
