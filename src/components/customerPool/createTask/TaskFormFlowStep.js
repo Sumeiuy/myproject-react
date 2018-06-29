@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-28 17:52:23
+ * @Last Modified time: 2018-06-29 15:22:47
  */
 
 import React, { PureComponent } from 'react';
@@ -265,10 +265,8 @@ export default class TaskFormFlowStep extends PureComponent {
       case ORDER_COMBINATION_ENTRY:
       case EXTERNAL_ENTRY:
       case ASSOCIATION_ENTRY:
-        custSources = '搜索目标客户';
-        break;
       case TAG_ENTRY:
-        custSources = '标签目标客户池';
+        custSources = '搜索目标客户';
         break;
       case PROGRESS_ENTRY:
       case PIE_ENTRY:
