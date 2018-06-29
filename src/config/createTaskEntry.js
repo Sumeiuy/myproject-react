@@ -42,6 +42,15 @@ export const TAG_ENTRY = 'tag';
 // custIndicator从绩效目标客户池进来
 export const CUSTINDICATOR_ENTRY = 'custIndicator';
 
+// 绩效目标客户部分模块下钻
+export const ASSETS_TRANSACTIONS = 'assetsTransactions'; // productSale income manageService serviceTarget custAssets aggregationRate;
+export const PRODUCT_SALE = 'productSale';
+export const INCOME = 'income';
+export const MANAGE_SERVICE = 'manageService';
+export const SERVICE_TARGET = 'serviceTarget';
+export const CUST_ASSETS = 'custAssets';
+export const AGGREGATION_RATE = 'aggregationRate';
+
 // numOfCustOpened从绩效目标客户池进来
 export const NUMOFCUSTOPENED_ENTRY = 'numOfCustOpened';
 
