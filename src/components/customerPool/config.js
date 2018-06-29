@@ -220,7 +220,7 @@ export const sourceFilter = {
     filterName: 'gjlRate',
     value: ['minVal', 'maxVal'],
     defaultVal: {
-      minVal: '50',
+      maxVal: '50',
     },
   }],
 };
@@ -236,5 +236,14 @@ export const homeModelType = {
   // 服务指标（投顾绩效） 一个模块中不需要下钻的指标名直接设置为null：、最近一次服务、、信息完备率
   serviceTarget: [null, 'lastServDt', null, 'completedRate'],
   // 客户及资产（投顾绩效）：新开客户、最近一次服务、签约日期
-  custAssets: ['newOpen', 'lastServDt', 'tgSignDate'],
+  custAssets: [{
+    key: 'newOpen',
+    desc: '新开客户数',
+  }, {
+    key: 'lastServDt',
+    desc: '服务客户数',
+  }, {
+    key: 'tgSignDate',
+    desc: '签约客户数',
+  }],
 };

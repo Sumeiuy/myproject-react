@@ -104,9 +104,10 @@ function Funney({ dataSource, push, cycle, location }) {
         return;
       }
       const modalTypeList = homeModelType[SOURCE_CUST_ASSETS];
+      const { key: modalType } = _.find(modalTypeList, item => item.desc === arg.name) || {};
       const params = {
         source: SOURCE_CUST_ASSETS,
-        type: modalTypeList[arg.dataIndex],
+        type: modalType,
         push,
         cycle,
         location,

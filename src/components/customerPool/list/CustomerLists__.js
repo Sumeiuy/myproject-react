@@ -307,7 +307,7 @@ export default class CustomerLists extends PureComponent {
       query: {
         ...query,
         ptyMngId: item.ptyMngId,
-        ptyMngName: encodeURIComponent(item.ptyMngName),
+        ptyMngName: item.ptyMngName,
         curPageNum: 1,
         selectAll: false,
         selectedIds: '',
