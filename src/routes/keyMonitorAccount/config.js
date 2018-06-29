@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-20 14:44:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-27 14:20:21
+ * @Last Modified time: 2018-06-28 11:51:51
  * @description 重点监控账户的配置项
  */
 import _ from 'lodash';
@@ -35,7 +35,7 @@ const config = {
       width: 150,
     },
     {
-      title: '指定交易员/托管会员',
+      title: '指定交易会员/托管会员',
       key: 'memberCode',
       dataIndex: 'memberCode',
       width: 200,
