@@ -22,7 +22,7 @@ export const kPIDateScopeType = {
 const productSaleChildDefaultVal = {
   value: ['cycleSelect', 'minVal', 'maxVal'],
   defaultVal: {
-    minVal: '0',
+    minVal: '1',
     maxVal: '',
   },
 };
