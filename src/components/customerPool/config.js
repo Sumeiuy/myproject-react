@@ -220,7 +220,7 @@ export const sourceFilter = {
     filterName: 'gjlRate',
     value: ['minVal', 'maxVal'],
     defaultVal: {
-      minVal: '50',
+      maxVal: '50',
     },
   }],
 };
