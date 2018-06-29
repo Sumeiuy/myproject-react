@@ -425,7 +425,7 @@ export default class Pageheader extends PureComponent {
   // 只能选择今天之前的时间
   @autobind
   setDisableRange(date) {
-    return date > currentDate;
+    return date >= currentDate;
   }
 
   render() {
