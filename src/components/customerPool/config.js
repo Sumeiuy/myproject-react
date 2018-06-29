@@ -22,7 +22,7 @@ export const kPIDateScopeType = {
 const productSaleChildDefaultVal = {
   value: ['cycleSelect', 'minVal', 'maxVal'],
   defaultVal: {
-    minVal: '0',
+    minVal: '1',
     maxVal: '',
   },
 };
@@ -198,7 +198,7 @@ export const sourceFilter = {
   custAssets: {
     newOpen: [{
       // 新开客户
-      filterName: 'newOpen',
+      filterName: 'dateOpened',
       value: ['cycleStartTime', 'cycleEndTime'],
     }],
     lastServDt: [{

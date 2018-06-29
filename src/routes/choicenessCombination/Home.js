@@ -240,7 +240,7 @@ export default class ChoicenessCombination extends PureComponent {
       closable: true,
       forceRefresh: true,
       isSpecialTab: true,
-      id: 'FSP_CUSTOMER_LIST',
+      id: 'RCT_FSP_CUSTOMER_LIST',
       title: '客户列表',
     };
     // sourceType.security： 证券产品 sourceType.combination：组合类产品

@@ -180,7 +180,7 @@ export default class Search extends PureComponent {
     };
     // 查到的时持仓产品，传持仓产品的名称
     if (item.type === 'PRODUCT' && item.name) {
-      query = { ...query, productName: encodeURIComponent(item.name) };
+      query = { ...query, productName: item.name };
     }
 
     // log日志 --- 首页搜索选中

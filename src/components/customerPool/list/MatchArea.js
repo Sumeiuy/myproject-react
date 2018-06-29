@@ -420,7 +420,7 @@ export default class MatchArea extends PureComponent {
     if (!_.isEmpty(holdingProducts)) {
       // 精准搜索，用id取找目标
       if (_.includes(['association', 'external', 'securitiesProducts'], source)) {
-        const keyword = decodeURIComponent(productName);
+        const keyword = productName;
         const id = decodeURIComponent(labelMapping);
         const filteredProducts = this.getFilteredProductsById(holdingProducts, id);
         // 联想词进入列表并产品id匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)

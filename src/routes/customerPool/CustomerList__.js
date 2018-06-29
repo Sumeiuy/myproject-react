@@ -35,7 +35,7 @@ const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 20; // 默认页大小
 
-const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
+const DEFAULT_SORT = { sortType: 'totAset', sortDirection: 'desc' }; // 默认排序方式
 
 function getFilterArray(labels, hashString) {
   const filtersArray = [];
@@ -57,7 +57,7 @@ function addRangeParams(filterObj) {
   const param = {};
   const rangeParam = [
     'totAset', // 总资产
-    'birthDt', // 年龄范围
+    'age', // 年龄范围
     'cashAmt', // 资金余额
     'avlAmt', // 普通可用资金
     'avlAmtCrdt', // 信用可用资金
@@ -376,7 +376,7 @@ const mapDispatchToProps = {
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
   getCeFileList: fetchDataFunction(false, effects.getCeFileList),
   // 搜索服务服务经理
-  getSearchServerPersonList: fetchDataFunction(true, effects.getSearchServerPersonList),
+  getSearchServerPersonList: fetchDataFunction(false, effects.getSearchServerPersonList),
   getSearchPersonList: fetchDataFunction(false, effects.getSearchPersonList),
   push: routerRedux.push,
   replace: routerRedux.replace,
@@ -993,6 +993,8 @@ export default class CustomerList extends PureComponent {
           searchServerPersonList={searchServerPersonList}
         />
         <CustomerLists
+          getSearchPersonList={getSearchPersonList}
+          clearSearchPersonList={clearSearchPersonList}
           handleCollapseClick={handleCollapseClick}
           handleAddServiceRecord={handleAddServiceRecord}
           handleCloseClick={handleCloseClick}

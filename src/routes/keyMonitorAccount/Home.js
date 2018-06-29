@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-26 15:57:52
+ * @Last Modified time: 2018-06-28 11:56:36
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -13,8 +13,6 @@ import { Input, Button, Table, Pagination } from 'antd';
 import _ from 'lodash';
 
 import Select from '../../components/common/Select';
-import confirm from '../../components/common/confirm_';
-
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { dva, emp, permission } from '../../helper';
@@ -68,8 +66,6 @@ export default class KeyMonitorAccountHome extends Component {
       idNo: '',
       // 经纪客户号
       custNumber: '',
-      // 用于判断交易所下拉框用户有无切换值
-      exchangeTypeHasChange: false,
       pageNum: 1,
       pageSize: 10,
     };
@@ -128,12 +124,13 @@ export default class KeyMonitorAccountHome extends Component {
   }
 
   @autobind
-  resetFilter(otherObj = {}) {
+  resetFilter() {
     this.setState({
       punishType: '',
       idNo: '',
       custNumber: '',
-      ...otherObj,
+      pageNum: 1,
+      exchangeType: '',
     });
   }
 
@@ -147,25 +144,15 @@ export default class KeyMonitorAccountHome extends Component {
         pathname,
         query: {},
       });
+    } else {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          ...obj,
+        },
+      });
     }
-    replace({
-      pathname,
-      query: {
-        ...query,
-        ...obj,
-      },
-    });
-  }
-
-  @autobind
-  judgeUserHasInput() {
-    // 判断用户有无输入筛选值
-    return _.some(FILTER_INPUT_KEYS, (key) => {
-      if (key === 'exchangeType') {
-        return this.state.exchangeTypeHasChange;
-      }
-      return this.state[key] !== '';
-    });
   }
 
   @autobind
@@ -232,7 +219,6 @@ export default class KeyMonitorAccountHome extends Component {
   handleExchangeTypeSelectChange(select, value) {
     this.setState({
       exchangeType: value,
-      exchangeTypeHasChange: true,
     });
   }
 
@@ -253,7 +239,6 @@ export default class KeyMonitorAccountHome extends Component {
 
   @autobind
   handleRestBtnClick() {
-    // 重置按钮，查询默认值,交易所的值不变
     this.mapObjectToLocation();
     this.queryAccountList({
       exchangeType: '',
@@ -263,31 +248,21 @@ export default class KeyMonitorAccountHome extends Component {
       pageNum: 1,
       pageSize: 10,
     });
-    this.resetFilter({
-      pageNum: 1,
-      exchangeTypeHasChange: false,
-    });
+    this.resetFilter();
   }
 
   @autobind
   handleQueryBtnClick() {
-    // 每次点击都是查询,查询完条件之后需要清空筛选项
-    // 判断如果用户没有输入值，则需要提示请输入值
-    if (!this.judgeUserHasInput()) {
-      confirm({ content: '请输入筛选条件' });
-    } else {
-      const query = _.pick(this.state, FILTER_INPUT_KEYS);
-      this.mapObjectToLocation({
-        pageNum: 1,
-        ...query,
-      });
-      this.queryAccountList({
-        pageNum: 1,
-        pageSize: 10,
-        ...query,
-      });
-      // this.resetFilter({ pageNum: 1, exchangeTypeHasChange: false });
-    }
+    const query = _.pick(this.state, FILTER_INPUT_KEYS);
+    this.mapObjectToLocation({
+      pageNum: 1,
+      ...query,
+    });
+    this.queryAccountList({
+      pageNum: 1,
+      pageSize: 10,
+      ...query,
+    });
   }
 
   @autobind
@@ -339,14 +314,6 @@ export default class KeyMonitorAccountHome extends Component {
           <div className={styles.filterItem}>
             <div className={styles.item}>
               <span className={styles.label}>监管措施类型：</span>
-              {/* <Select
-                data={punishTypeSelectOptions}
-                style={{ width: 130 }}
-                className={styles.selectItem}
-                name="punishType"
-                value={punishType}
-                onChange={this.handlePunishTypeSelectChange}
-              /> */}
               <Input
                 className={styles.inputItem}
                 value={punishType}
