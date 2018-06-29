@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-28 16:19:03
+ * @Last Modified time: 2018-06-29 13:48:41
  */
 
 import React, { PureComponent } from 'react';
@@ -602,7 +602,7 @@ export default class EditBasicInfo extends PureComponent {
               <div className={styles.promptBox}>
                 <div className={styles.head}>
                   <Icon type="jingshi" className={styles.promptIcon} />
-                  <span className={styles.title}>客户在我公司投资经历评估不符合要求，请确认客户是否满足以下条件：</span>
+                  <span className={styles.title}>客户的年龄条件不符合要求，请确认客户是否满足以下条件：</span>
                 </div>
                 <div className={styles.row}>
                   <div className={`${styles.label} ${styles.labelDegree}`}>

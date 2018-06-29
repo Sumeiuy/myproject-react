@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-28 19:36:40
+ * @Last Modified time: 2018-06-29 14:26:36
  */
 
 import React, { PureComponent } from 'react';
@@ -299,9 +299,9 @@ export default class CreateApply extends PureComponent {
         const { flowId } = this.state;
         const param = {
           flowId,
-          divisionName,
-          openDivName,
-          busPrcDivName,
+          divisionName: _.isEmpty(divisionName) ? '' : divisionName,
+          openDivName: _.isEmpty(openDivName) ? '' : openDivName,
+          busPrcDivName: _.isEmpty(busPrcDivName) ? '' : busPrcDivName,
         };
         this.getCreateButtonList(param);
       }

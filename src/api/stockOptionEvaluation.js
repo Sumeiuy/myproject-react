@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 16:24:22
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-19 17:12:08
+ * @Last Modified time: 2018-06-29 13:25:52
  */
 export default function stockOptionEvaluation(api) {
   return {
@@ -13,7 +13,7 @@ export default function stockOptionEvaluation(api) {
     // 上传附件
     uploadAttachment: query => api.post('/file/ceFileUpload2', query),
     // 新建页面查询下一步审批人
-    queryNextApproval: query => api.post('/groovynoauth/fsp/stockOptionApplication/queryNextApproval', query),
+    queryNextApproval: query => api.post('/groovynoauth/fsp/biz/stockOptionApplication/queryNextApproval', query),
     // 下一步按钮和下一步审批人
     getButtonList: query => api.post('/groovynoauth/fsp/biz/stockOptionApplication/queryNextStepInfo', query),
     // 下载附件
