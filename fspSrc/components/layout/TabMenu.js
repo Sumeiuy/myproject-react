@@ -175,10 +175,7 @@ export default class TabMenu extends PureComponent {
       >
         <div className={styles.text}>
           <div
-            className={classnames({
-              [styles.link]: true,
-              [styles.hasHomePage]: true,
-            })}
+            className={`${styles.link} ${styles.hasHomePage}`}
             title={`${menu.name}`}
             onClick={() => this.change(menu.id, activeKey)}
           >
