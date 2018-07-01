@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-27 14:58:01
+ * @Last Modified time: 2018-07-01 19:31:51
  */
 
 import React, { PureComponent } from 'react';
@@ -263,6 +263,7 @@ export default class ApplyEditForm extends PureComponent {
           age,
         },
         ageFlag,
+        investPrefer,
       },
     } = this.props;
     const {
@@ -288,6 +289,7 @@ export default class ApplyEditForm extends PureComponent {
       age,
       ageFlag,
       degreeFlag,
+      investPrefer,
     };
     // 提交前先对提交的数据调验证接口进行进行验证
     this.props.validateResult(query)
@@ -593,6 +595,7 @@ export default class ApplyEditForm extends PureComponent {
               </div>
             </div>
             <div className={styles.module}>
+              <InfoTitle head="附件信息" />
               <CommonUpload
                 edit
                 reformEnable

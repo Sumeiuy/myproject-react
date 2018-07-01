@@ -75,6 +75,10 @@ export default class Pageheader extends PureComponent {
     customerList: PropTypes.array.isRequired,
     // 获取客户列表
     getCustomerList: PropTypes.func.isRequired,
+    // 新的客户列表
+    newCustomerList: PropTypes.array.isRequired,
+    // 获取新的客户列表
+    getNewCustomerList: PropTypes.func.isRequired,
     // 筛选后调用的Function
     filterCallback: PropTypes.func,
     // 该项目是针对客户还是针对服务经理的，为false代表针对服务经理的，默认为true针对客户的
@@ -85,6 +89,8 @@ export default class Pageheader extends PureComponent {
     isShowCreateBtn: PropTypes.func,
     // 是否需要申请时间
     needApplyTime: PropTypes.bool,
+    // 是否调用新的客户列表接口，若为true，则使用新的获取客户列表接口，为false，则使用原来的获取客户列表接口，默认为false
+    useNewCustList: PropTypes.bool,
   }
 
   static contextTypes = {
@@ -103,6 +109,7 @@ export default class Pageheader extends PureComponent {
     isUseOfCustomer: true,
     checkUserIsFiliale: _.noop,
     isShowCreateBtn: () => true,
+    useNewCustList: false,
   }
 
   constructor(props) {
@@ -344,10 +351,23 @@ export default class Pageheader extends PureComponent {
     },
   })
   handleCustSearch(value) {
-    this.props.getCustomerList({
-      keyword: value,
-      type: this.props.pageType,
-    });
+    const {
+      pageType,
+      useNewCustList,
+      getCustomerList,
+      getNewCustomerList,
+    } = this.props;
+    if (useNewCustList) {
+      getNewCustomerList({
+        keyword: value,
+        type: pageType,
+      });
+    } else {
+      getCustomerList({
+        keyword: value,
+        type: pageType,
+      });
+    }
   }
 
   @autobind
