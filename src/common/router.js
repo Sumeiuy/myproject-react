@@ -5,11 +5,20 @@ import CustomerPool from '../routes/customerPool/Home';
 import TaskList from '../routes/taskList/connectedHome';
 import TaskFlow from '../routes/customerPool/TaskFlow';
 import CustomerList from '../routes/customerPool/CustomerList';
+import CustomerList__ from '../routes/customerPool/CustomerList__';
 import ReportHome from '../routes/reports/Home';
 import CreateTask from '../routes/customerPool/CreateTask';
 import CustomerGroupManage from '../routes/customerPool/CustomerGroupManage';
+import { env } from '../helper';
 
 let routerDataCache;
+
+function getCustomerListComponent() {
+  if (env.isGrayFlag()) {
+    return CustomerList__;
+  }
+  return CustomerList;
+}
 
 const modelNotExisted = (app, model) => (
   // eslint-disable-next-line
@@ -211,7 +220,7 @@ export const getRouterData = (app) => {
     },
     // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
     '/customerPool/list': {
-      component: CustomerList,
+      component: getCustomerListComponent(),
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
@@ -238,6 +247,10 @@ export const getRouterData = (app) => {
     // 从任务管理，创建者视图驳回中的任务，进行任务驳回修改
     '/customerPool/createTaskFromTaskRejection2': {
       component: CreateTask,
+    },
+    // 从管理者视图服务经理维度发起任务
+    '/customerPool/createTaskFromCustScope': {
+      component: CreateTask 
     },
     // 客户列表发起任务
     '/customerPool/createTask': {
@@ -268,7 +281,7 @@ export const getRouterData = (app) => {
         import('../routes/userCenter/userInfoApproval' /* webpackChunkName: "userInfoRemind" */)),
     },
     // 消息通知提醒
-    '/messgeCenter': {
+    '/messageCenter': {
       component: dynamicWrapper(app, ['messageCenter'], () =>
         import('../routes/messageCenter/Home' /* webpackChunkName: "messgeCenter" */)),
     },
@@ -415,6 +428,11 @@ export const getRouterData = (app) => {
     '/custAllot/notifies': {
       component: dynamicWrapper(app, ['custAllot'], () =>
         import('../routes/custAllot/Notifies' /* webpackChunkName: "custAllot_notifies" */)),
+    },
+    // 直接进入，重点监控账户
+    '/keyMonitorAccount': {
+      component: dynamicWrapper(app, ['keyMonitorAccount'], () => 
+        import('../routes/keyMonitorAccount/Home' /* webpackChunkName: "keyMonitorAccount" */)),
     },
   };
   return routerConfig;

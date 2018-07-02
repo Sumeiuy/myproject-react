@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { commission } from './config/auth';
+import { commission, keyMonitorAccount } from './config/auth';
 import duty from './config/duty';
 import channelType from './page/channelType';
 import emp from './emp';
@@ -7,6 +7,8 @@ import emp from './emp';
 // 根据ID是否存在职责列表中
 // 判断用户是否存在某个职责
 const hasDuty = (list, id) => !!_.find(list, obj => (obj.respId === id));
+// 判断用户是否含有某类权限集合collection中的一个
+const hasDutyInCollection = (list, collection) => _.some(collection, item => hasDuty(list, item));
 
 let dutyList = [];
 
@@ -285,6 +287,17 @@ const permission = {
       permission.hasNPCIHMPPermission() ||
       permission.hasNPCIBMPPermission() ||
       permission.hasCDMPermission();
+  },
+
+  // 若登录人是该客户的主服务经理或登录人具有如下任意一个职责
+  //  HTSC 客户资料-分中心管理岗
+  //  HTSC 客户资料-总部管理岗
+  //  HTSC 客户资料（无隐私）-分中心管理岗
+  //  HTSC 客户资料(无隐私）-总部管理岗
+  //  HTSC 客户资料管理岗（无隐私）
+  // 点击客户号链接进入客户360-投资者评估管理-重点监控账户模块
+  hasJumpTo360CustViewKeyMonitorAccountPermission() {
+    return hasDutyInCollection(dutyList, keyMonitorAccount.jumpTo360DutyCollection);
   },
 
   // HTSC 融资类业务客户关联关系管理岗
