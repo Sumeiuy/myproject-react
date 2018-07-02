@@ -155,7 +155,6 @@ function addSingleParams(filterObj) {
   const singleParams = [
     'customType',  // 客户性质
     'custClass',  // 客户类型
-    'riskLvl', // 风险等级
   ];
 
   _.each(singleParams, (key) => {
@@ -175,6 +174,7 @@ function addMultiParams(filterObj) {
     'customerLevel', // 客户等级
     'accountStatus', // 账户状态
     'completedRate', // 信息完备率
+    'riskLevels', // 风险等级
   ];
 
   _.each(multiParams, (key) => {
