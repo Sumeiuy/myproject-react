@@ -8,7 +8,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { isSightingScope } from '../helper';
-import { openFspTab } from '../../../utils';
+import { url as urlHelper } from '../../../helper';
+import { openFspTab, openRctTab } from '../../../utils';
 // ENTERLIST_PERMISSION_SIGHTINGLABEL-需要展示瞄准镜匹配区域的source集合
 import { ENTERLIST_PERMISSION_SIGHTINGLABEL } from '../../../routes/customerPool/config';
 import HoldingProductDetail from './HoldingProductDetail';
@@ -419,7 +420,7 @@ export default class MatchArea extends PureComponent {
     if (!_.isEmpty(holdingProducts)) {
       // 精准搜索，用id取找目标
       if (_.includes(['association', 'external', 'securitiesProducts'], source)) {
-        const keyword = decodeURIComponent(productName);
+        const keyword = productName;
         const id = decodeURIComponent(labelMapping);
         const filteredProducts = this.getFilteredProductsById(holdingProducts, id);
         // 联想词进入列表并产品id匹配到的持仓产品等于1个，显示 产品的名称/产品代码(持仓详情)
@@ -531,7 +532,7 @@ export default class MatchArea extends PureComponent {
   renderOrderCombination() {
     const {
       listItem: { jxgrpProducts, isPrivateCustomer, empId, custId },
-      location: { query: { source, labelMapping, combinationCode } },
+      location: { query: { source, labelMapping } },
       hasNPCTIQPermission,
       hasPCTIQPermission,
       queryHoldingSecurityRepetition,
@@ -553,19 +554,28 @@ export default class MatchArea extends PureComponent {
       }
       const id = decodeURIComponent(labelMapping);
       const currentItem = _.find(jxgrpProducts, item => item.id === id);
-      const props = {
-        combinationCode,
-        custId,
-        queryHoldingSecurityRepetition,
-        data: holdingSecurityData,
-        formatAsset,
-      };
       if (!_.isEmpty(currentItem)) {
+        const { code: combinationCode, name, id: combinationId } = currentItem;
+        const props = {
+          combinationCode,
+          custId,
+          queryHoldingSecurityRepetition,
+          data: holdingSecurityData,
+          formatAsset,
+        };
         return (
           <li>
             <span>
               <i className="label">订购组合：</i>
-              <i><em className="marked">{currentItem.name}</em>/{currentItem.code}</i>
+              <i>
+                <em
+                  className={`marked ${styles.clickable}`}
+                  onClick={() => this.handleOrderCombinationClick(currentItem)}
+                >
+                  {name}
+                </em>
+                /{combinationId}
+              </i>
               {isShowDetailBtn && <HoldingCombinationDetail {...props} />}
             </span>
           </li>
@@ -573,6 +583,32 @@ export default class MatchArea extends PureComponent {
       }
     }
     return null;
+  }
+
+  // 点击订购组合名称跳转到详情页面
+  @autobind
+  handleOrderCombinationClick({ name, code }) {
+    const { push } = this.context;
+    const query = { id: code, name };
+    const pathname = '/choicenessCombination/combinationDetail';
+    const url = `${pathname}?${urlHelper.stringify(query)}`;
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_JX_GROUP_DETAIL',
+      title: '组合详情',
+    };
+    openRctTab({
+      routerAction: push,
+      url,
+      query,
+      pathname,
+      param,
+      state: {
+        url,
+      },
+    });
   }
 
   render() {

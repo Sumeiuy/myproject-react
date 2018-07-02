@@ -2,24 +2,27 @@
  * @Description: PC电话拨号页面
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-15 15:47:10
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-06-27 18:45:46
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { Modal } from 'antd';
 import bowser from 'bowser';
 import _ from 'lodash';
 import qs from 'query-string';
 import classnames from 'classnames';
+import { Phone as XPhone } from 'lego-soft-phone';
+import sotfCallInstall from './SotfCallInstall0426.msi';
 import styles from './phone.less';
 
 const URL = bowser.msie
   // IE10跨域无法和父页面通信，部署在同域下
   ? '/fspa/phone/'
   // Chrome等WebRTC只可用在https域下,所以部署到移动端server
-  : 'https://crm.htsc.com.cn:2443/phone/';
+  : 'https://crm.htsc.com.cn:1443/phone/';
 
 const OPEN_FEATURES = `
   width=300,
@@ -33,6 +36,24 @@ const OPEN_FEATURES = `
 
 const TYPE_CONNECTED = 'connected';
 const TYPE_END = 'end';
+
+// 检查是否安装打电话插件
+function checkIEHasCallPlugin() {
+  const xPhone = new XPhone({});
+  try {
+    // 初始化
+    xPhone.phone.Init2('');
+  } catch (e) {
+    console.log(e);
+    return false;
+  } finally {
+    xPhone.release();
+  }
+  return true;
+}
+
+// 创建一个会缓存 checkIEHasCallPlugin 结果的函数
+const memoizeCheck = _.memoize(checkIEHasCallPlugin);
 
 export default class Phone extends PureComponent {
   static propTypes = {
@@ -96,6 +117,13 @@ export default class Phone extends PureComponent {
         (e) => {
           if (this.canCall()) {
             const number = window.$(e.target).text() || window.$(e.target).val();
+            // 在ie下才需要检测打电话控件是否安装
+            if (bowser.msie) {
+              if (!memoizeCheck()) {
+                this.handlePluginError();
+                return;
+              }
+            }
             this.prepareCall(number);
             // 点击打电话
             this.props.onClick();
@@ -112,11 +140,34 @@ export default class Phone extends PureComponent {
     return empInfo.canCall === true && disable !== true;
   }
 
+  // 未安装插件弹框提示
+  @autobind
+  handlePluginError() {
+    Modal.error({
+      title: '提示',
+      content: (
+        <div>
+          您尚未安装通话插件，请先下载并安装通话插件，安装完成后请关闭浏览器并重新打开。
+          <p className={styles.pluginDownload}><a href={sotfCallInstall}>立即下载</a></p>
+        </div>
+      ),
+      okText: '确定',
+    });
+  }
+
+
   @autobind
   handleClick() {
     const { number, custType, onClick } = this.props;
     if (this.canCall() !== true) {
       return;
+    }
+    // 在ie下才需要检测打电话控件是否安装
+    if (bowser.msie) {
+      if (!memoizeCheck()) {
+        this.handlePluginError();
+        return;
+      }
     }
     onClick({
       number,
