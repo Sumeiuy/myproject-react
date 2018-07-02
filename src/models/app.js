@@ -27,8 +27,6 @@ export default {
     drafterList: EMPTY_LIST,
     // 已申请的客户列表
     customerList: EMPTY_LIST,
-    // 新的已申请的客户列表
-    newCustomerList: EMPTY_LIST,
     // 可申请客户列表
     canApplyCustList: EMPTY_LIST,
     // 删除后的附件列表
@@ -78,15 +76,6 @@ export default {
       return {
         ...state,
         customerList: custList,
-      };
-    },
-    // 获取新的已申请客户列表
-    getNewCustomerListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { custList = EMPTY_LIST } = resultData || EMPTY_OBJECT;
-      return {
-        ...state,
-        newCustomerList: custList,
       };
     },
     // 获取可申请客户列表
@@ -279,17 +268,14 @@ export default {
     },
     // 获取已申请的客户列表
     * getCustomerList({ payload }, { call, put }) {
-      const response = yield call(seibelApi.getCustList, payload);
+      let response = EMPTY_OBJECT;
+      if (payload.isUseNewCustList) {
+        response = yield call(seibelApi.getCustList2, payload);
+      } else {
+        response = yield call(seibelApi.getCustList, payload);
+      }
       yield put({
         type: 'getCustomerListSuccess',
-        payload: response,
-      });
-    },
-    // 获取新的已申请的客户列表
-    * getNewCustomerList({ payload }, { call, put }) {
-      const response = yield call(seibelApi.getCustList2, payload);
-      yield put({
-        type: 'getNewCustomerListSuccess',
         payload: response,
       });
     },

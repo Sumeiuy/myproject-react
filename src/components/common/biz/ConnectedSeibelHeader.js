@@ -18,8 +18,6 @@ const mapStateToProps = state => ({
   custRange: state.app.custRange,
   // 已申请客户
   customerList: state.app.customerList,
-  // 新的已申请客户
-  newCustomerList: state.app.newCustomerList,
   // 已申请服务经理
   ptyMngList: state.app.ptyMngList,
 });
@@ -37,8 +35,6 @@ const mapDispatchToProps = {
   getCustRange: effect('app/getCustRange', { loading: false }),
   // 获取已申请客户列表
   getCustomerList: effect('app/getCustomerList', { loading: false }),
-  // 获取新的已申请客户列表
-  getNewCustomerList: effect('app/getNewCustomerList', { loading: false }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SeibelHeader);
