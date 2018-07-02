@@ -147,12 +147,12 @@ export default class Detail extends PureComponent {
             {
               businessFlag === 'Y'
               ? <ApprovalRecord
-                  head="审批记录"
-                  info={workflowHistoryBeans}
-                  currentApproval={currentApproval}
-                  currentNodeName={currentNodeName}
-                  statusType="ready"
-                />
+                head="审批记录"
+                info={workflowHistoryBeans}
+                currentApproval={currentApproval}
+                currentNodeName={currentNodeName}
+                statusType="ready"
+              />
               : null
             }
           </div>
