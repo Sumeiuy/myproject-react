@@ -296,7 +296,6 @@ export default class CombinationDetail extends PureComponent {
         query.labelName = encodeURIComponent(`${name}(${code})`);
         query.productName = encodeURIComponent(name);
         query.filters = `primaryKeyPrdts${filterInsideSeperator}${productId}${filterValueSeperator}${name}`;
-
       } else {
         return;
       }
