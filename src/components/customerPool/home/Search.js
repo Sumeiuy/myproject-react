@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-06-13 15:52:38
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-02 15:39:18
  * @description 客户池头部搜索组件
  */
 
@@ -13,7 +13,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import store from 'store';
 
-import logable, { logCommon } from '../../../decorators/logable';
+import { logCommon } from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { padSightLabelDesc } from '../../../config';
@@ -198,7 +198,6 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '目标客户池首页回车搜索' } })
   handlePressEnter() {
     // 如果当期有选中项，走select逻辑，不做任何处理
     const activeItemElement = document.querySelector(
