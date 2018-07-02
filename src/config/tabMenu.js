@@ -153,6 +153,12 @@ const primaryMenu = [
     pid: 'ROOT',
   },
   {
+    name: '晨报详情',
+    id: 'FSP_BROADCAST_DETAIL',
+    path: '/broadcastDetail',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
     name: '业务申请',
     id: 'FSP_BUSINESS_APPLICATION',
     path: '/application',
@@ -176,12 +182,6 @@ const primaryMenu = [
     name: '精选组合-temp',
     id: 'FSP_STRATEGY_CENTER',
     path: '/choicenessCombination',
-    pid: 'FSP_STRATEGY_CENTER',
-  },
-  {
-    name: '每日晨报-temp',
-    id: 'FSP_STRATEGY_CENTER',
-    path: '/broadcastList',
     pid: 'FSP_STRATEGY_CENTER',
   },
 ];

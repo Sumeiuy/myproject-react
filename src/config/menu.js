@@ -219,7 +219,7 @@ const menus = [
         url: '',
         type: 'link',
         action: 'loadInTab',
-        path: '/broadcastList',
+        path: '/strategyCenter/broadcastList',
       },
     ],
   },
