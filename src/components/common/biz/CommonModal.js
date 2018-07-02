@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-14 14:44:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-09 12:33:13
+ * @Last Modified time: 2018-06-22 16:33:25
  */
 /**
  * 常用说明
@@ -75,6 +75,8 @@ export default class CommonModal extends PureComponent {
       PropTypes.element,
       PropTypes.node,
     ]),
+    // 确认弹出框是否否需要动画
+    animate: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -90,6 +92,7 @@ export default class CommonModal extends PureComponent {
     wrapClassName: '',
     selfBtnGroup: {},
     onOk: () => { },
+    animate: false,
   }
 
   static showErrorDialog = (content) => {
@@ -149,12 +152,21 @@ export default class CommonModal extends PureComponent {
     if (!_.isEmpty(selfBtnGroup)) {
       footerContent = selfBtnGroup;
     }
+    // 用来控制弹出层动画效果的 props
+    let animateProps = {
+      transitionName: '',
+      maskTransitionName: '',
+    };
+    if (this.props.animate) {
+      animateProps = {};
+    }
     return (
       <Modal
         {...this.props}
         onCancel={() => this.handleCancel(modalKey)}
         wrapClassName={`${styles.commonModal} ${styles[modalSize]} ${this.props.wrapClassName}`}
         footer={footerContent}
+        {...animateProps}
       >
         {children}
         <ModalLoading loading={this.props.modalLoading} />

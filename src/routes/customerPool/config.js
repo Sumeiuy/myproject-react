@@ -37,7 +37,17 @@ const ENTER_TYPE = {
   external: 'searchCustPool',
   // 产品潜在目标客户，产品中心外部跳转
   productPotentialTargetCust: 'labelSearchCustPool',
+  assetsTransactions: 'searchCustPool',
 };
+// 与后端约定默认的enterType
+const DEFAULT_ENTER_TYPE = 'searchCustPool';
+
+// 任务管理岗权限作用的首页入口列表
+const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'external',
+  'orderCombination', 'securitiesProducts'];
+// 首页指标查询权限作用的首页入口列表
+const ENTERLIST2 = ['custIndicator', 'numOfCustOpened', 'assetsTransactions', 'productSale',
+  'income', 'manageService', 'serviceTarget', 'custAssets', 'aggregationRate'];
 
 // 全量的source集合
 const FULL_ENTERLIST = ['search', 'tag', 'sightingTelescope', 'business', 'association', 'external',
@@ -49,7 +59,8 @@ const ENTERLIST_PERMISSION_TASK_MANAGE = ['search', 'tag', 'sightingTelescope', 
   'orderCombination', 'securitiesProducts', 'productPotentialTargetCust'];
 
 // 首页指标查询权限作用的首页入口列表
-const ENTERLIST_PERMISSION_INDEX_QUERY = ['custIndicator', 'numOfCustOpened'];
+const ENTERLIST_PERMISSION_INDEX_QUERY = ['custIndicator', 'numOfCustOpened', 'assetsTransactions', 'productSale',
+  'income', 'manageService', 'serviceTarget', 'custAssets', 'aggregationRate'];
 
 // 是否需要展示客户列表瞄准镜筛选条件source集合
 // 是否需要请求瞄准镜filterList的source集合
@@ -64,7 +75,10 @@ export default {
   CUST_MANAGER,
   ORG,
   MAIN_MAGEGER_ID,
+  DEFAULT_ENTER_TYPE,
   ENTER_TYPE,
+  ENTERLIST1,
+  ENTERLIST2,
   ALL_DEPARTMENT_ID,
   FULL_ENTERLIST,
   ENTERLIST_PERMISSION_TASK_MANAGE,
