@@ -206,7 +206,7 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType = '请选择';
         defaultExecutionType = 'Chance';
         defaultInitialValue = 4; // 有效期4天
-        defaultMissionDesc = this.getDefaultMissionDescFromProduct(query);
+        // defaultMissionDesc = this.getDefaultMissionDescFromProduct(query);
         break;
       // 产品潜在目标客户跳转
       // 精选组合页面的订购组合

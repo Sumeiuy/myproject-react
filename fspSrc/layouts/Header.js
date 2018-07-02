@@ -69,10 +69,10 @@ export default class Header extends PureComponent {
     const commonTools = (
       <Menu>
         <Menu.Item>
-          <Link to="/customerPool">投顾签约</Link>
+          <Link to="/fsp/serviceCenter/investContract">投顾签约</Link>
         </Menu.Item>
         <Menu.Item>
-          服务订阅
+          <Link to="/commission">服务订阅</Link>
         </Menu.Item>
         <Menu.Item>
           <a onClick={this.handleShowDialog}>隔离墙</a>

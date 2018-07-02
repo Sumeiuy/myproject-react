@@ -152,6 +152,38 @@ const primaryMenu = [
     path: '/strategyCenter',
     pid: 'ROOT',
   },
+  {
+    name: '业务申请',
+    id: 'FSP_BUSINESS_APPLICATION',
+    path: '/application',
+    pid: 'Root',
+  },
+  // 对于二级和三级菜单，合理的逻辑是根据路由的层次判断并展示其属于的主菜单
+  // 在路由未完全修改完毕的时候，可以采用配置临时指定高亮的菜单，用以过渡
+  {
+    name: '服务订阅-temp',
+    id: 'FSP_BUSINESS_APPLICATION',
+    path: '/commission',
+    pid: 'FSP_BUSINESS_APPLICATION',
+  },
+  {
+    name: '个股资讯-temp',
+    id: 'FSP_STRATEGY_CENTER',
+    path: '/stock',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
+    name: '精选组合-temp',
+    id: 'FSP_STRATEGY_CENTER',
+    path: '/choicenessCombination',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
+    name: '每日晨报-temp',
+    id: 'FSP_STRATEGY_CENTER',
+    path: '/broadcastList',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
 ];
 
 // 次级导航页面内部跳转新建的tab配置项

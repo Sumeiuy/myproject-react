@@ -106,7 +106,7 @@ export default class TabMenu extends PureComponent {
 
   @autobind
   handDropClick(menuItem, activeKey) {
-    if(menuItem.path !== '') {
+    if (menuItem.path !== '') {
       this.change(menuItem.id, activeKey);
     }
   }
@@ -116,6 +116,7 @@ export default class TabMenu extends PureComponent {
     const { activeKey } = this.props;
     const isActiveLink = isMoreMenu ? isInMoremenu(menu, activeKey) : (menu.id === activeKey);
     const placement = isMoreMenu ? 'bottomRight' : 'bottomLeft';
+    const hasHomePage = menu.path !== '';
     const menus = (
       <Menu>
         {
@@ -143,7 +144,16 @@ export default class TabMenu extends PureComponent {
             tabIndex="0"
             className={styles.text}
           >
-            <div className={styles.link} title={`${menu.name}`} onClick={() => this.handDropClick(menu, activeKey)}>{menu.name}</div>
+            <div
+              className={classnames({
+                [styles.link]: true,
+                [styles.hasHomePage]: hasHomePage,
+              })}
+              title={`${menu.name}`}
+              onClick={() => this.handDropClick(menu, activeKey)}
+            >
+              {menu.name}
+            </div>
             <i className="anticon anticon-change" />
           </div>
         </Dropdown>
@@ -164,7 +174,13 @@ export default class TabMenu extends PureComponent {
         })}
       >
         <div className={styles.text}>
-          <div className={styles.link} title={`${menu.name}`} onClick={() => this.change(menu.id, activeKey)}>{menu.name}</div>
+          <div
+            className={`${styles.link} ${styles.hasHomePage}`}
+            title={`${menu.name}`}
+            onClick={() => this.change(menu.id, activeKey)}
+          >
+            {menu.name}
+          </div>
           {
             closeable ?
               <div id={menu.id === activeKey ? 'activeTabPane' : null} className={styles.close} onClick={() => this.remove(menu.id)}>

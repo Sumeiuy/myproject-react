@@ -147,6 +147,10 @@ export default {
     currentEntry: 0,
     // 产品列表
     productList: [],
+    // 精选组合
+    jxGroupProductList: [],
+    // 所有标签列表
+    tagList: [],
     // 审批流程按钮
     approvalBtn: {},
     // 审批按钮提交成功
@@ -160,6 +164,7 @@ export default {
     custServedByPostnResult: true,
     // 瞄准镜的筛选项
     sightingTelescopeFilters: {},
+    allSightingTelescopeFilters: [],
     // 客户分组批量导入客户解析客户列表
     batchCustList: {},
     // 当前添加的服务记录的信息
@@ -179,9 +184,6 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname, search }) => {
-        if (pathname === '/customerPool/list') {
-          dispatch({ type: 'getCustRangeByAuthority', loading: true });
-        }
         const query = queryString.parse(search);
         // 监听location的配置对象
         // 函数名称为路径匹配字符
@@ -678,6 +680,17 @@ export default {
         }
       }
     },
+    getSearchPersonList: [
+      function* getSearchPersonList({ payload }, { call, put }) {
+        const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
+        if (resultData) {
+          const { servicePeopleList = EMPTY_LIST } = resultData;
+          yield put({
+            type: 'getSearchServerPersonListSuccess',
+            payload: servicePeopleList,
+          });
+        }
+      }, { type: 'takeLatest' }],
     // 360服务记录查询更多服务
     * getServiceLogMore({ payload }, { call, put }) {
       const response = yield call(api.queryAllServiceRecord, payload);
@@ -719,6 +732,15 @@ export default {
       const { resultData } = response;
       yield put({
         type: 'getLabelInfoSuccess',
+        payload: { resultData },
+      });
+    },
+    // 获取所有的可用标签
+    * getTagList({ payload }, { call, put }) {
+      const response = yield call(api.queryTagList, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getTagListSuccess',
         payload: { resultData },
       });
     },
@@ -818,6 +840,14 @@ export default {
           payload: resultData,
         });
       }, { type: 'takeLatest' }],
+    queryJxGroupProduct: [
+      function* queryJxGroupProduct({ payload }, { call, put }) {
+        const { resultData } = yield call(api.queryJxGroupProduct, payload);
+        yield put({
+          type: 'queryJxGroupProductDataSuccess',
+          payload: resultData,
+        });
+      }, { type: 'takeLatest' }],
     // 审批流程获取按钮
     * getApprovalBtn({ payload }, { call, put }) {
       const response = yield call(api.queryApprovalBtn, payload);
@@ -848,6 +878,36 @@ export default {
       const { resultData } = yield call(api.isCustServedByPostn, payload);
       yield put({
         type: 'isCustServedByPostnSuccess',
+        payload: resultData,
+      });
+    },
+    // 序列化
+    * getFiltersOfSightingTelescopeSequence({ payload }, { call, put, select }) {
+      function* getFiltersOfSightingTelescopewithKey(key) {
+        const { resultData } = yield call(commonApi.getFiltersOfSightingTelescope, {
+          prodId: key,
+        });
+        return {
+          key,
+          list: resultData.object || {},
+        };
+      }
+      const allSightingTelescopeFilters =
+        yield select(state => state.customerPool.allSightingTelescopeFilters);
+
+      const { sightingTelescopeList } = payload;
+      let resultData = [];
+
+      const reqestSightingTelescopes = _.filter(sightingTelescopeList, key =>
+        !_.some(allSightingTelescopeFilters, item => item.key === key));
+
+      if (!_.isEmpty(reqestSightingTelescopes)) {
+        resultData =
+          yield _.map(reqestSightingTelescopes, key => getFiltersOfSightingTelescopewithKey(key));
+      }
+      resultData = allSightingTelescopeFilters.concat(resultData);
+      yield put({
+        type: 'getFiltersOfSightingTelescopeSequenceSuccess',
         payload: resultData,
       });
     },
@@ -1356,6 +1416,14 @@ export default {
         circlePeopleData: resultData,
       };
     },
+    // 获取全部标签信息成功
+    getTagListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        tagList: resultData,
+      };
+    },
     // 标签圈人-id客户列表查询
     getLabelPeopleSuccess(state, action) {
       const { payload } = action;
@@ -1450,11 +1518,32 @@ export default {
         productList: payload,
       };
     },
+    queryJxGroupProductDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        jxGroupProductList: payload,
+      };
+    },
+    clearJxGroupProductData(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        jxGroupProductList: payload,
+      };
+    },
     clearProductData(state, action) {
       const { payload } = action;
       return {
         ...state,
         productList: payload,
+      };
+    },
+    clearSearchPersonList(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        searchServerPersonList: payload,
       };
     },
     // 审批流程获取按钮成功
@@ -1494,6 +1583,13 @@ export default {
       return {
         ...state,
         sightingTelescopeFilters: object || {},
+      };
+    },
+    getFiltersOfSightingTelescopeSequenceSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        allSightingTelescopeFilters: payload,
       };
     },
     // 审批成功更新代办数据
