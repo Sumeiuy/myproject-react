@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系详情页面
  * @Date: 2018-06-08 17:39:51
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-15 14:41:38
+ * @Last Modified time: 2018-07-02 15:17:04
  */
 
 import React, { PureComponent } from 'react';
@@ -144,13 +144,17 @@ export default class Detail extends PureComponent {
                 </ul>
               </div>
             </div>
-            <ApprovalRecord
-              head="审批记录"
-              info={workflowHistoryBeans}
-              currentApproval={currentApproval}
-              currentNodeName={currentNodeName}
-              statusType="ready"
-            />
+            {
+              businessFlag === 'Y'
+              ? <ApprovalRecord
+                  head="审批记录"
+                  info={workflowHistoryBeans}
+                  currentApproval={currentApproval}
+                  currentNodeName={currentNodeName}
+                  statusType="ready"
+                />
+              : null
+            }
           </div>
         </div>
       </div>
