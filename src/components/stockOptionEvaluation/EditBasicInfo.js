@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-02 11:00:44
+ * @Last Modified time: 2018-07-02 20:09:09
  */
 
 import React, { PureComponent } from 'react';
@@ -62,6 +62,8 @@ export default class EditBasicInfo extends PureComponent {
     // 客户交易级别校验
     isShowCustTransLvStatusError: PropTypes.bool,
     custTransLvStatusErrorMessage: PropTypes.string,
+    // 新建时，业务受理营业部变化获取下一步按钮和审批人列表
+    getCreateButtonList: PropTypes.func,
   }
 
   static defaultProps = {
@@ -74,6 +76,7 @@ export default class EditBasicInfo extends PureComponent {
     aAcctOpenTimeFlag: '',
     rzrqzqAcctFlag: '',
     jrqhjyFlag: '',
+    getCreateButtonList: _.noop,
     isShowCustTransLvStatusError: false,
     custTransLvStatusErrorMessage: '',
   }
@@ -230,13 +233,29 @@ export default class EditBasicInfo extends PureComponent {
       acceptOrg: value,
     }).then(() => {
       const {
+        isEdit,
         acceptOrgData,
         acceptOrgData: {
           accptTime,
           custTransLv,
           custTransLvName,
+          busPrcDivName,
         },
+        custInfo: {
+          divisionName,
+          openDivName,
+        },
+        getCreateButtonList,
       } = this.props;
+      // 新建申请时，受理营业部变更需要重新获取审批人列表
+      if (!isEdit) {
+        getCreateButtonList({
+          flowId: '',
+          divisionName,
+          openDivName,
+          busPrcDivName,
+        });
+      }
       if (!_.isEmpty(acceptOrgData)) {
         onChange({
           accptTime,

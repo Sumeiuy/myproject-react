@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-01 19:31:51
+ * @Last Modified time: 2018-07-02 20:23:29
  */
 
 import React, { PureComponent } from 'react';
@@ -200,40 +200,50 @@ export default class ApplyEditForm extends PureComponent {
 
   @autobind
   handleSubmit(item) {
-    // 校验必填项
-    const { validateFieldsAndScroll } = this.basicInfoForm.getForm();
-    validateFieldsAndScroll((err) => {
-      if (!err) {
-        const {
-          detailInfo: {
-            custType,
-            isProfessInvset,
-          },
-        } = this.props;
-        // 个人客户且是专业投资者
-        if (custType === 'per' && isProfessInvset === 'Y') {
-          commonConfirm({
-            content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
-            onOk: () => this.showNextApprover(item),
-          });
-        } else {
-          commonConfirm({
-            content: '请确认是否已上传相关附件。',
-            onOk: () => this.showNextApprover(item),
-          });
-        }
+    this.setState({
+      operate: item.operate,
+      groupName: item.nextGroupName,
+      auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
+      nextApproverList: item.flowAuditors,
+      currentNodeName: item.currentNodeName,
+    }, () => {
+      // approverNum为none代表没有审批人，则不需要弹审批弹框直接走接口
+      // 终止按钮的approverNum为none，提交按钮的approverNum不为none
+      if (item.approverNum !== 'none') {
+        // 校验必填项
+        const { validateFieldsAndScroll } = this.basicInfoForm.getForm();
+        validateFieldsAndScroll((err) => {
+          if (!err) {
+            const {
+              detailInfo: {
+                custType,
+                isProfessInvset,
+              },
+            } = this.props;
+            // 个人客户且是专业投资者
+            if (custType === 'per' && isProfessInvset === 'Y') {
+              commonConfirm({
+                content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
+                onOk: () => this.showNextApprover(),
+              });
+            } else {
+              commonConfirm({
+                content: '请确认是否已上传相关附件。',
+                onOk: () => this.showNextApprover(),
+              });
+            }
+          }
+        });
+      } else {
+        this.sendDoApproveRequest();
       }
     });
   }
 
   // 展示下一步审批人
   @autobind
-  showNextApprover(item) {
+  showNextApprover() {
     this.setState({
-      operate: item.operate,
-      groupName: item.nextGroupName,
-      auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
-      nextApproverList: item.flowAuditors,
       nextApproverModal: true,
     });
   }
@@ -253,6 +263,7 @@ export default class ApplyEditForm extends PureComponent {
       detailInfo: {
         bizId,
         econNum,
+        custType,
         stockCustType,
         reqType,
         invFlag,
@@ -277,6 +288,7 @@ export default class ApplyEditForm extends PureComponent {
       bizId,
       econNum,
       custTransLv,
+      custType,
       stockCustType,
       reqType,
       aAcctOpenTimeFlag,
@@ -407,15 +419,16 @@ export default class ApplyEditForm extends PureComponent {
   @autobind
   sendDoApproveRequest(value) {
     const { doApprove, detailInfo, getDetailInfo } = this.props;
-    const { appId, flowId } = detailInfo;
+    const { bizId, flowId } = detailInfo;
     const {
       groupName,
       auditors,
       operate,
+      currentNodeName,
       suggestion,
     } = this.state;
     doApprove({
-      itemId: appId,
+      itemId: bizId,
       flowId,
       wobNum: flowId,
       // 下一组ID
@@ -423,6 +436,7 @@ export default class ApplyEditForm extends PureComponent {
       operate,
       // 审批人
       auditors: !_.isEmpty(value) ? value.login : auditors,
+      currentNodeName,
       approverIdea: suggestion,
     }).then(() => {
       if (operate === COMMITOPERATE) {

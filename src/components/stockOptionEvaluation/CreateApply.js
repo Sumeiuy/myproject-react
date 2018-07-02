@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-01 20:13:42
+ * @Last Modified time: 2018-07-02 19:45:23
  */
 
 import React, { PureComponent } from 'react';
@@ -607,6 +607,7 @@ export default class CreateApply extends PureComponent {
       busDivisionList,
       acceptOrgData,
       queryAcceptOrg,
+      getCreateButtonList,
     } = this.props;
     const {
       custInfo,
@@ -708,6 +709,7 @@ export default class CreateApply extends PureComponent {
               onChange={this.handleChange}
               acceptOrgData={acceptOrgData}
               queryAcceptOrg={queryAcceptOrg}
+              getCreateButtonList={getCreateButtonList}
               isShowCustTransLvStatusError={isShowCustTransLvStatusError}
               custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
             />
