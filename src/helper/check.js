@@ -17,6 +17,11 @@ const check = {
   isChinese(char) {
     return reg.chinese.test(char);
   },
+
+  // 判断是否为瞄准镜标签
+  isSightingTelescope(str) {
+    return str.indexOf('J') === 0;
+  },
   /**
    * 判断一个值是否为空，null || undefined || 'null' || ''
    * @author sunweibin

@@ -5,7 +5,8 @@
  */
 import _ from 'lodash';
 import { openRctTab } from '../../../utils';
-import { url as urlHelper, number as numberHelper } from '../../../helper';
+import { url as urlHelper, number as numberHelper, env } from '../../../helper';
+import { getFilter } from '../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import {
   toFomatterCust,
@@ -323,28 +324,43 @@ export function linkTo({
   cycle,
   push,
   location,
-  type = 'rightType',
+  modalType = 'rightType',
+  type,
 }) {
   if (_.isEmpty(location)) {
     return;
   }
   const { query: { orgId, cycleSelect } } = location;
   const pathname = '/customerPool/list';
-  const obj = {
+  let params = {
     source,
-    [type]: value,
     bname: encodeURIComponent(bname),
     cycleSelect: cycleSelect || (cycle[0] || {}).key,
   };
+  // 客户列表参数灰度处理
+  if (env.isGrayFlag()) {
+    params = {
+      ...params,
+      type,
+      [modalType]: value,
+    };
+  } else {
+    const modalTypeOld = type || 'rightType';
+    params = {
+      ...params,
+      [modalTypeOld]: value,
+    };
+  }
   if (orgId) {
     if (orgId === MAIN_MAGEGER_ID) {
       // obj.ptyMng = `${empName}_${empNum}`;
-      obj.orgId = MAIN_MAGEGER_ID;
+      params.orgId = MAIN_MAGEGER_ID;
     } else {
-      obj.orgId = orgId;
+      params.orgId = orgId;
     }
   }
-  const url = `${pathname}?${urlHelper.stringify(obj)}`;
+  params.filters = getFilter(params);
+  const url = `${pathname}?${urlHelper.stringify(params)}`;
   const param = {
     closable: true,
     forceRefresh: true,
@@ -357,6 +373,6 @@ export function linkTo({
     url,
     param,
     pathname,
-    query: obj,
+    query: params,
   });
 }

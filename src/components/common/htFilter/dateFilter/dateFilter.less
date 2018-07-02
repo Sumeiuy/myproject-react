@@ -1,3 +1,5 @@
+@import "../../../../css/variable.less";
+
 .dateFilter {
   display: inline-block;
   cursor: pointer;
@@ -18,7 +20,8 @@
   .dateLabel {
     display: inline-block;
     font-size: 14px;
-    color: #4a4a4a;
+    color: @font-color;
+    font-family: @font-family;
     padding-left: 5px;
     transform: translateY(-2px);
   }
@@ -26,6 +29,11 @@
   :global {
     .DateRangePickerInput_arrow {
       vertical-align: baseline;
+    }
+
+    .DateInput_input_1 {
+      color: @font-color;
+      font-family: @font-family;
     }
 
     .DateRangePickerInput.DateRangePickerInput_1 {
@@ -38,6 +46,10 @@
   display: inline-block;
   padding: 5px;
   vertical-align: bottom;
+}
+
+.dateFilterTransform {
+  transform: translateY(-1px);
 }
 
 .closeIcon {

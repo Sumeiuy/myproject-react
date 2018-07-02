@@ -217,7 +217,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       location: { query: { source } },
       storedCreateTaskData,
      } = this.props;
-    if (this.judgeSource(source)) {
+    if (_.includes(returnTaskEntrySource, source) || this.judgeSource(source)) {
       saveCreateTaskData({
         ...storedCreateTaskData,
         [source]: data,

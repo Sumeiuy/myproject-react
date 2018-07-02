@@ -19,6 +19,7 @@ import WeeklySecurityTopTen from '../../components/choicenessCombination/WeeklyS
 import CombinationRank from '../../components/choicenessCombination/combinationRank/CombinationRank';
 import CombinationModal from '../../components/choicenessCombination/CombinationModal';
 import config from '../../components/choicenessCombination/config';
+import { seperator } from '../../config';
 import { permission, dva, url as urlHelper, emp } from '../../helper';
 import { openRctTab } from '../../utils';
 import styles from './index.less';
@@ -239,17 +240,23 @@ export default class ChoicenessCombination extends PureComponent {
       closable: true,
       forceRefresh: true,
       isSpecialTab: true,
-      id: 'FSP_CUSTOMER_LIST',
+      id: 'RCT_FSP_CUSTOMER_LIST',
       title: '客户列表',
     };
     // sourceType.security： 证券产品 sourceType.combination：组合类产品
+
+    // 在location上filter的name与value之间使用该变量分割
+    // filter value对应多个
+    const { filterInsideSeperator, filterValueSeperator } = seperator;
     if (source === sourceType.security) {
       const filterType = _.filter(config.securityType, o => o.value === type);
+      const productId = `${filterType[0].shortName}${code}`;
       if (filterType.length) {
-        query.labelMapping = encodeURIComponent(`${filterType[0].shortName}${code}`);
+        query.labelMapping = encodeURIComponent(productId);
         query.type = 'PRODUCT';
         query.labelName = encodeURIComponent(`${name}(${code})`);
         query.productName = encodeURIComponent(name);
+        query.filters = `primaryKeyPrdts${filterInsideSeperator}${productId}${filterValueSeperator}${name}`;
       } else {
         return;
       }
@@ -257,6 +264,7 @@ export default class ChoicenessCombination extends PureComponent {
       query.combinationName = encodeURIComponent(name);
       query.labelMapping = code;
       query.combinationCode = combinationCode;
+      query.filters = `primaryKeyJxgrps${filterInsideSeperator}${code}${filterValueSeperator}${name}`;
     }
     const url = `/customerPool/list?${urlHelper.stringify(query)}`;
     openRctTab({
