@@ -90,7 +90,7 @@ export default class Pageheader extends PureComponent {
     // 是否需要申请时间
     needApplyTime: PropTypes.bool,
     // 是否调用新的客户列表接口，若为true，则使用新的获取客户列表接口，为false，则使用原来的获取客户列表接口，默认为false
-    useNewCustList: PropTypes.bool,
+    isUseNewCustList: PropTypes.bool,
   }
 
   static contextTypes = {
@@ -109,7 +109,7 @@ export default class Pageheader extends PureComponent {
     isUseOfCustomer: true,
     checkUserIsFiliale: _.noop,
     isShowCreateBtn: () => true,
-    useNewCustList: false,
+    isUseNewCustList: false,
   }
 
   constructor(props) {
@@ -353,11 +353,11 @@ export default class Pageheader extends PureComponent {
   handleCustSearch(value) {
     const {
       pageType,
-      useNewCustList,
+      isUseNewCustList,
       getCustomerList,
       getNewCustomerList,
     } = this.props;
-    if (useNewCustList) {
+    if (isUseNewCustList) {
       getNewCustomerList({
         keyword: value,
         type: pageType,

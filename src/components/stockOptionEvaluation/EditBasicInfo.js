@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-29 16:28:59
+ * @Last Modified time: 2018-07-02 11:00:44
  */
 
 import React, { PureComponent } from 'react';
@@ -582,10 +582,13 @@ export default class EditBasicInfo extends PureComponent {
                       getFieldDecorator('declareBus', {
                         rules: [{
                           required: true, message: '申报事项不能为空',
+                        }, {
+                          max: 200, message: '最大长度不能超过200个字符',
                         }],
                         initialValue: declareBus,
                       })(
                         <textarea
+                          disabled={isSelectDisabled}
                           className={styles.applyTextarea}
                           onChange={this.changeDeclareBus}
                         />,
