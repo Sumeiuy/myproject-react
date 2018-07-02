@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系详情页面
  * @Date: 2018-06-08 17:39:51
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-07-02 15:17:04
+ * @Last Modified time: 2018-07-02 15:59:39
  */
 
 import React, { PureComponent } from 'react';
@@ -105,9 +105,13 @@ export default class Detail extends PureComponent {
                   <li className={styles.item2}>
                     <InfoItem label="是否办理股票质押回购业务" value={businessFlagValue} width="185px" />
                   </li>
-                  <li className={styles.item2}>
-                    <InfoItem label="项目经理" value={projectManagerInfo} width="70px" />
-                  </li>
+                  {
+                    businessFlag === 'Y'
+                    ? <li className={styles.item2}>
+                        <InfoItem label="项目经理" value={projectManagerInfo} width="70px" />
+                      </li>
+                    : null
+                  }
                 </ul>
               </div>
             </div>
