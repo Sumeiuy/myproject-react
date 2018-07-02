@@ -108,8 +108,8 @@ export default class Detail extends PureComponent {
                   {
                     businessFlag === 'Y'
                     ? <li className={styles.item2}>
-                        <InfoItem label="项目经理" value={projectManagerInfo} width="70px" />
-                      </li>
+                      <InfoItem label="项目经理" value={projectManagerInfo} width="70px" />
+                    </li>
                     : null
                   }
                 </ul>
