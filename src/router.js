@@ -28,6 +28,7 @@ import HistoryHome from './routes/history/Home';
 import CustomerPoolHome from './routes/customerPool/Home';
 import ToDo from './routes/customerPool/ToDo';
 import CustomerList from './routes/customerPool/CustomerList';
+import CustomerList__ from './routes/customerPool/CustomerList__';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
@@ -95,12 +96,23 @@ import ViewpointDetail from './routes/latestView/ViewpointDetail';
 import IndustryThemeList from './routes/latestView/IndustryThemeList';
 // 股票期权评估申请修改页面
 import StockOptionEvaluationEdit from './routes/stockOptionEvaluation/ApplyEdit';
+// 重点监控账户
+import KeyMonitorAccount from './routes/keyMonitorAccount/Home';
 // 客户关联关系信息申请
 import CustRelationships from './routes/custRelationships/Home';
 // 客户关联关系信息申请驳回后修改页面
 import RejectUpdateHome from './routes/custRelationships/RejectUpdateHome';
 
+import { env } from './helper';
+
 const { ConnectedRouter } = routerRedux;
+
+function getCustomerListComponent() {
+  if (env.isGrayFlag()) {
+    return CustomerList__;
+  }
+  return CustomerList;
+}
 
 // 路由Collection
 const routes = [
@@ -184,7 +196,7 @@ const routes = [
       // 从 customerPool 搜索框下方--任务概览--第三个选项【代办流程】进入
       { path: '/todo', component: ToDo },
       // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
-      { path: '/list', component: CustomerList },
+      { path: '/list', component: getCustomerListComponent() },
       // customerPool/customerGroup 直接进入，所需数据未知
       { path: '/customerGroup', component: CustomerGroup },
       // 分组管理发起任务
@@ -356,6 +368,8 @@ const routes = [
   { path: '/stockOptionEvaluation', component: StockOptionEvaluation },
   // 股票期权评估申请修改
   { path: '/stockOptionEvaluationEdit', component: StockOptionEvaluationEdit },
+  // 直接进入
+  { path: '/keyMonitorAccount', component: KeyMonitorAccount },
 ];
 
 // 递归创建路由

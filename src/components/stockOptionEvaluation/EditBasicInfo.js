@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-28 16:19:03
+ * @Last Modified time: 2018-07-02 20:09:09
  */
 
 import React, { PureComponent } from 'react';
@@ -62,6 +62,8 @@ export default class EditBasicInfo extends PureComponent {
     // 客户交易级别校验
     isShowCustTransLvStatusError: PropTypes.bool,
     custTransLvStatusErrorMessage: PropTypes.string,
+    // 新建时，业务受理营业部变化获取下一步按钮和审批人列表
+    getCreateButtonList: PropTypes.func,
   }
 
   static defaultProps = {
@@ -74,6 +76,7 @@ export default class EditBasicInfo extends PureComponent {
     aAcctOpenTimeFlag: '',
     rzrqzqAcctFlag: '',
     jrqhjyFlag: '',
+    getCreateButtonList: _.noop,
     isShowCustTransLvStatusError: false,
     custTransLvStatusErrorMessage: '',
   }
@@ -230,13 +233,29 @@ export default class EditBasicInfo extends PureComponent {
       acceptOrg: value,
     }).then(() => {
       const {
+        isEdit,
         acceptOrgData,
         acceptOrgData: {
           accptTime,
           custTransLv,
           custTransLvName,
+          busPrcDivName,
         },
+        custInfo: {
+          divisionName,
+          openDivName,
+        },
+        getCreateButtonList,
       } = this.props;
+      // 新建申请时，受理营业部变更需要重新获取审批人列表
+      if (!isEdit) {
+        getCreateButtonList({
+          flowId: '',
+          divisionName,
+          openDivName,
+          busPrcDivName,
+        });
+      }
       if (!_.isEmpty(acceptOrgData)) {
         onChange({
           accptTime,
@@ -582,10 +601,13 @@ export default class EditBasicInfo extends PureComponent {
                       getFieldDecorator('declareBus', {
                         rules: [{
                           required: true, message: '申报事项不能为空',
+                        }, {
+                          max: 200, message: '最大长度不能超过200个字符',
                         }],
                         initialValue: declareBus,
                       })(
                         <textarea
+                          disabled={isSelectDisabled}
                           className={styles.applyTextarea}
                           onChange={this.changeDeclareBus}
                         />,
@@ -602,7 +624,7 @@ export default class EditBasicInfo extends PureComponent {
               <div className={styles.promptBox}>
                 <div className={styles.head}>
                   <Icon type="jingshi" className={styles.promptIcon} />
-                  <span className={styles.title}>客户在我公司投资经历评估不符合要求，请确认客户是否满足以下条件：</span>
+                  <span className={styles.title}>客户的年龄条件不符合要求，请确认客户是否满足以下条件：</span>
                 </div>
                 <div className={styles.row}>
                   <div className={`${styles.label} ${styles.labelDegree}`}>
