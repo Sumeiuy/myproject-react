@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-28 11:56:36
+ * @Last Modified time: 2018-07-03 16:27:20
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import { Input, Button, Table, Pagination } from 'antd';
 import _ from 'lodash';
 
+import CheckInfoModal from '../../components/keyMonitorAccount/CheckInfoListModal';
 import Select from '../../components/common/Select';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
@@ -26,11 +27,15 @@ const effect = dva.generateEffect;
 const mapStateToProps = state => ({
   // 重点监控账户列表
   accountListInfo: state.keyMonitorAccount.accountListInfo,
+  // 客户的核查信息列表
+  checkListInfo: state.keyMonitorAccount.checkListInfo,
 });
 
 const mapDispatchToProps = {
   // 重点监控账户列表获取 api
   getAccountList: effect('keyMonitorAccount/getAccountList', { forceFull: true }),
+  // 客户的核查信息列表
+  getCheckInfoList: effect('keyMonitorAccount/getCheckInfoList', { forceFull: true }),
   // 清空数据 api
   clearRedux: effect('keyMonitorAccount/clearReduxState', { loading: false }),
 };
@@ -46,6 +51,8 @@ export default class KeyMonitorAccountHome extends Component {
     location: PropTypes.object.isRequired,
     accountListInfo: PropTypes.object.isRequired,
     getAccountList: PropTypes.func.isRequired,
+    checkListInfo: PropTypes.object.isRequired,
+    getCheckInfoList: PropTypes.func.isRequired,
     clearRedux: PropTypes.func.isRequired,
   }
 
@@ -68,6 +75,10 @@ export default class KeyMonitorAccountHome extends Component {
       custNumber: '',
       pageNum: 1,
       pageSize: 10,
+      // 展示核查信息列表的Modal
+      checkInfoModal: false,
+      // 展示核查信息里列表需要的数据
+      moniKey: '',
     };
   }
 
@@ -176,22 +187,7 @@ export default class KeyMonitorAccountHome extends Component {
   }
 
   @autobind
-  hasJumpTo360CustViewPermission(record) {
-    // 若登录人是该客户的主服务经理
-    const isMainManager = emp.getId() === record.managerNo;
-    const hasPermission = permission.hasJumpTo360CustViewKeyMonitorAccountPermission();
-    return isMainManager || hasPermission;
-  }
-
-  @autobind
-  handleCustNumberCellClick(record) {
-    if (_.isEmpty(record.custNumber)) {
-      return;
-    }
-    // 此处需要增加权限控制
-    if (!this.hasJumpTo360CustViewPermission(record)) {
-      return;
-    }
+  openFSP360CustInfoViewTab(record) {
     const { custType, custNumber } = record;
     const { push } = this.context;
     const param = {
@@ -212,6 +208,47 @@ export default class KeyMonitorAccountHome extends Component {
         url,
       },
     });
+  }
+
+  @autobind
+  openCheckInfoModal(record) {
+    this.setState({
+      checkInfoModal: true,
+      moniKey: record.moniKey,
+    });
+  }
+
+  @autobind
+  hasJumpTo360CustViewPermission(record) {
+    // 若登录人是该客户的主服务经理
+    const isMainManager = emp.getId() === record.managerNo;
+    const hasPermission = permission.hasJumpTo360CustViewKeyMonitorAccountPermission();
+    return isMainManager || hasPermission;
+  }
+
+  @autobind
+  handleCheckInfoModalClose() {
+    this.setState({
+      checkInfoModal: false,
+      moniKey: '',
+    });
+    this.props.clearRedux({ checkListInfo: {} });
+  }
+
+  @autobind
+  handleCustNumberCellClick(record) {
+    if (_.isEmpty(record.custNumber)) {
+      return;
+    }
+    // 此处需要增加权限控制
+    // 如果没有权限的则直接弹出核查信息弹出层
+    if (true || !this.hasJumpTo360CustViewPermission(record)) { /* eslint-disable-line */
+      // TODO 目前先使用true，用于测试在FSP框架下详情展示组件的问题，
+      // TODO 完成后需要将true删除
+      this.openCheckInfoModal(record);
+    } else {
+      this.openFSP360CustInfoViewTab(record);
+    }
   }
 
 
@@ -283,6 +320,8 @@ export default class KeyMonitorAccountHome extends Component {
       punishType,
       idNo,
       custNumber,
+      checkInfoModal,
+      moniKey,
     } = this.state;
     const { dict } = this.context;
     if (_.isEmpty(dict)) {
@@ -291,7 +330,11 @@ export default class KeyMonitorAccountHome extends Component {
     const {
       exchangeType: EXCHANGETYPE,
     } = dict;
-    const { accountListInfo: { accountList = [], page = {} } } = this.props;
+    const {
+      accountListInfo: { accountList = [], page = {} },
+      checkListInfo,
+      getCheckInfoList,
+    } = this.props;
     const columns = this.addOnCellPropsForColumns(LIST_TABLE_COLUMNS);
     const exchangeTypeSelectOptions = this.getSelectOptions(EXCHANGETYPE);
 
@@ -368,6 +411,18 @@ export default class KeyMonitorAccountHome extends Component {
             )
           }
         </div>
+        {
+          !checkInfoModal ? null
+          : (
+            <CheckInfoModal
+              moniKey={moniKey}
+              visible={checkInfoModal}
+              data={checkListInfo}
+              getCheckInfoList={getCheckInfoList}
+              onClose={this.handleCheckInfoModalClose}
+            />
+          )
+        }
       </div>
     );
   }
