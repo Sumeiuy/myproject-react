@@ -343,7 +343,7 @@ const menus = [
         url: '',
         type: 'link',
         action: '',
-        path: '',
+        path: '/statisticalQuery/report',
       },
       {
         id: 'FSP_INTEGRAL_EXCHANGE',

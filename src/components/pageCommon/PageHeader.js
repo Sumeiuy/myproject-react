@@ -14,7 +14,7 @@ import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
 import { fspContainer, optionsMap, constants } from '../../config';
 import DurationSelect from './DurationSelect';
-import { dom } from '../../helper';
+import { dom, env } from '../../helper';
 import logable from '../../decorators/logable';
 // 选择项字典
 import styles from './PageHeader.less';
@@ -66,15 +66,17 @@ export default class PageHeader extends PureComponent {
     let contentWidth;
     let scrollX;
     let leftWidth;
+    const top = env.isInReact() ? '99px' : 0;
     const { custRange } = props;
     if (fsp) {
       contentWidth = dom.getCssStyle(contentWrapper, 'width');
       scrollX = window.scrollX;
       leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     }
+
     this.state = {
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
-      top: fsp ? '55px' : 0,
+      top: fsp ? '55px' : top,
       left: fsp ? `${leftWidth - scrollX}px` : 0,
       summaryTypeValue: custRange[0].level !== jingZongLevel ? hbgxSummaryType : jxstSummaryType,
     };

@@ -82,7 +82,7 @@ export const getRouterData = (app) => {
         import('../routes/phone/Home' /* webpackChunkName: "phone" */)),
     },
     // 直接进入
-    '/report': {
+    '/statisticalQuery/report': {
       component: ReportHome,
     },
     // 直接进入，

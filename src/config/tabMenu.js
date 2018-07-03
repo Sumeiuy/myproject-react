@@ -164,6 +164,30 @@ const primaryMenu = [
     path: '/application',
     pid: 'Root',
   },
+  {
+    name: '统计查询',
+    id: 'FSP_STATISTICAL_QUERY',
+    path: '/statisticalQuery',
+    pid: 'ROOT',
+  },
+  {
+    name: '看板管理',
+    id: 'FSP_BOARDMANAGE',
+    path: '/boardManage',
+    pid: 'FSP_STATISTICAL_QUERY',
+  },
+  {
+    name: '看板编辑',
+    id: 'FSP_BOARDEDIT',
+    path: '/boardEdit',
+    pid: 'FSP_STATISTICAL_QUERY',
+  },
+  {
+    name: '看板预览',
+    id: 'FSP_PREVIEW',
+    path: '/preview',
+    pid: 'FSP_STATISTICAL_QUERY',
+  },
   // 对于二级和三级菜单，合理的逻辑是根据路由的层次判断并展示其属于的主菜单
   // 在路由未完全修改完毕的时候，可以采用配置临时指定高亮的菜单，用以过渡
   {
