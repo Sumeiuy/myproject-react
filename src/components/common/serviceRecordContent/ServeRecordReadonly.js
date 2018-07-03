@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-05 20:04:40
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-07-03 13:33:07
  * @description 只读服务记录
  */
 
@@ -31,14 +31,33 @@ export default function ServiceRecordReadOnly(props) {
     custFeedback2,
     ZLCustFeedback,
     ZLCustFeedbackList,
+    ZLFeedbackStatus,
   } = props;
 
   const investAdviceTip = isZL ? '给客户发送了以下投资建议:' : '';
   // 判断当前的流水状态是否审批中
   const flowIsApproval = flow.isApproval(serviceStatusCode);
   // 暂时客户可选反馈选项
+  // 此处需要针对涨乐财富通的情况下
+  // 如果 客户未阅       显示 客户未阅
+  // 如果 客户已阅未反馈 显示 已阅未反馈
+  // 如果 客户已反馈     显示 反馈内容
+  let feedbackText = ZLCustFeedback;
+  switch (ZLFeedbackStatus) {
+    case 'UNREAD':
+      feedbackText = '客户未阅';
+      break;
+    case 'READED':
+      feedbackText = '已阅未反馈';
+      break;
+    case 'FEEDBACK':
+      feedbackText = ZLCustFeedback;
+      break;
+    default:
+      break;
+  }
   const listText = _.isEmpty(ZLCustFeedbackList) ? '无' : ZLCustFeedbackList.map((item, index) => `${index + 1}、${item.label}`).join('，');
-  const custFeedbackText = flowIsApproval ? listText : ZLCustFeedback;
+  const custFeedbackText = flowIsApproval ? listText : feedbackText;
 
   // 判断在普通服务方式的反馈中，客户反馈显示文字
   // 如果一级反馈的文本和二级反馈的文本一样，只显示一级文本
@@ -156,6 +175,7 @@ ServiceRecordReadOnly.propTypes = {
   ZLServiceContentTime: PropTypes.string,
   ZLCustFeedback: PropTypes.string,
   ZLCustFeedbackList: PropTypes.array,
+  ZLFeedbackStatus: PropTypes.string,
 };
 ServiceRecordReadOnly.defaultProps = {
   attachmentList: [],
@@ -173,4 +193,5 @@ ServiceRecordReadOnly.defaultProps = {
   ZLServiceContentTime: '',
   ZLCustFeedback: '',
   ZLCustFeedbackList: [],
+  ZLFeedbackStatus: '',
 };
