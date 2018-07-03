@@ -69,7 +69,7 @@ export default class ApplyEditForm extends PureComponent {
     if (nextProps.editButtonListData !== prevState.editButtonList) {
       return {
         editButtonList: nextProps.editButtonListData,
-      }
+      };
     }
     return null;
   }
@@ -446,7 +446,7 @@ export default class ApplyEditForm extends PureComponent {
       }
       getDetailInfo({ flowId }).then(() => {
         this.setState({ editButtonList: {} });
-      })
+      });
     });
   }
 
