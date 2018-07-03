@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请接口api
  * @Date: 2018-06-08 13:09:53
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 11:02:58
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-07-02 15:14:12
  */
 
 
@@ -17,8 +17,10 @@ export default function custRelationships(api) {
     getButtonList: query => api.post('/groovynoauth/fsp/biz/custrelationships/queryNextStepInfo', query),
     // 验证提交数据接口
     validateData: query => api.post('/groovynoauth/fsp/biz/custrelationships/validate', query),
-    // 更新接口（新建和修改提交）
+    // “是否办理股票质押回购业务“选“是”时，更新接口（新建和修改提交）
     saveApplication: query => api.post('/groovynoauth/fsp/biz/custrelationships/saveApplication', query),
+    // “是否办理股票质押回购业务“选“否”时，提交后不需走审批流程，直接调这个接口
+    chgCustRelaiton: query => api.post('/groovynoauth/fsp/biz/custrelationships/chgCustRelation', query),
     // 走流程接口
     doApprove: query => api.post('/groovynoauth/fsp/biz/custrelationships/doApprove', query),
     // 根据客户名称或者经纪客户号查询客户列表

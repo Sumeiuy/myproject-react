@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-27 14:58:01
+ * @Last Modified time: 2018-07-03 13:03:08
  */
 
 import React, { PureComponent } from 'react';
@@ -28,7 +28,7 @@ import styles from './applyEditForm.less';
 const { approvalColumns } = config;
 const EMPTY_INFO = '--';
 const SRTYPE = 'SRStkOpReq';
-const COMMITOPERATE = 'commit'; // 提交的operate值
+const COMMITOPERATE = 'commit2'; // 提交的operate值
 
 export default class ApplyEditForm extends PureComponent {
   static propTypes = {
@@ -75,7 +75,6 @@ export default class ApplyEditForm extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { editButtonListData } = this.props;
     const { detailInfo } = this.props;
     this.state = {
       // 是否是编辑页面
@@ -113,7 +112,7 @@ export default class ApplyEditForm extends PureComponent {
       // 附件
       attachment: detailInfo.attachment,
       // 按钮组信息
-      editButtonListData,
+      editButtonListData: {},
       // 用于重新渲染上传组件的key
       uploadKey: data.uuid(),
     };
@@ -200,40 +199,50 @@ export default class ApplyEditForm extends PureComponent {
 
   @autobind
   handleSubmit(item) {
-    // 校验必填项
-    const { validateFieldsAndScroll } = this.basicInfoForm.getForm();
-    validateFieldsAndScroll((err) => {
-      if (!err) {
-        const {
-          detailInfo: {
-            custType,
-            isProfessInvset,
-          },
-        } = this.props;
-        // 个人客户且是专业投资者
-        if (custType === 'per' && isProfessInvset === 'Y') {
-          commonConfirm({
-            content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
-            onOk: () => this.showNextApprover(item),
-          });
-        } else {
-          commonConfirm({
-            content: '请确认是否已上传相关附件。',
-            onOk: () => this.showNextApprover(item),
-          });
-        }
+    this.setState({
+      operate: item.operate,
+      groupName: item.nextGroupName,
+      auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
+      nextApproverList: item.flowAuditors,
+      currentNodeName: item.currentNodeName,
+    }, () => {
+      // approverNum为none代表没有审批人，则不需要弹审批弹框直接走接口
+      // 终止按钮的approverNum为none，提交按钮的approverNum不为none
+      if (item.approverNum !== 'none') {
+        // 校验必填项
+        const { validateFieldsAndScroll } = this.basicInfoForm.getForm();
+        validateFieldsAndScroll((err) => {
+          if (!err) {
+            const {
+              detailInfo: {
+                custType,
+                isProfessInvset,
+              },
+            } = this.props;
+            // 个人客户且是专业投资者
+            if (custType === 'per' && isProfessInvset === 'Y') {
+              commonConfirm({
+                content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
+                onOk: () => this.showNextApprover(),
+              });
+            } else {
+              commonConfirm({
+                content: '请确认是否已上传相关附件。',
+                onOk: () => this.showNextApprover(),
+              });
+            }
+          }
+        });
+      } else {
+        this.sendDoApproveRequest();
       }
     });
   }
 
   // 展示下一步审批人
   @autobind
-  showNextApprover(item) {
+  showNextApprover() {
     this.setState({
-      operate: item.operate,
-      groupName: item.nextGroupName,
-      auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
-      nextApproverList: item.flowAuditors,
       nextApproverModal: true,
     });
   }
@@ -253,6 +262,7 @@ export default class ApplyEditForm extends PureComponent {
       detailInfo: {
         bizId,
         econNum,
+        custType,
         stockCustType,
         reqType,
         invFlag,
@@ -263,6 +273,7 @@ export default class ApplyEditForm extends PureComponent {
           age,
         },
         ageFlag,
+        investPrefer,
       },
     } = this.props;
     const {
@@ -276,6 +287,7 @@ export default class ApplyEditForm extends PureComponent {
       bizId,
       econNum,
       custTransLv,
+      custType,
       stockCustType,
       reqType,
       aAcctOpenTimeFlag,
@@ -288,6 +300,7 @@ export default class ApplyEditForm extends PureComponent {
       age,
       ageFlag,
       degreeFlag,
+      investPrefer,
     };
     // 提交前先对提交的数据调验证接口进行进行验证
     this.props.validateResult(query)
@@ -405,15 +418,16 @@ export default class ApplyEditForm extends PureComponent {
   @autobind
   sendDoApproveRequest(value) {
     const { doApprove, detailInfo, getDetailInfo } = this.props;
-    const { appId, flowId } = detailInfo;
+    const { bizId, flowId } = detailInfo;
     const {
       groupName,
       auditors,
       operate,
+      currentNodeName,
       suggestion,
     } = this.state;
     doApprove({
-      itemId: appId,
+      itemId: bizId,
       flowId,
       wobNum: flowId,
       // 下一组ID
@@ -421,6 +435,7 @@ export default class ApplyEditForm extends PureComponent {
       operate,
       // 审批人
       auditors: !_.isEmpty(value) ? value.login : auditors,
+      currentNodeName,
       approverIdea: suggestion,
     }).then(() => {
       if (operate === COMMITOPERATE) {
@@ -468,7 +483,6 @@ export default class ApplyEditForm extends PureComponent {
       busDivisionList,
       acceptOrgData,
       queryAcceptOrg,
-      editButtonListData,
     } = this.props;
     const {
       isEdit,
@@ -485,6 +499,7 @@ export default class ApplyEditForm extends PureComponent {
       nextApproverList,
       attachment,
       uploadKey,
+      editButtonListData,
     } = this.state;
     if (_.isEmpty(this.props.detailInfo)) {
       return null;
@@ -593,6 +608,7 @@ export default class ApplyEditForm extends PureComponent {
               </div>
             </div>
             <div className={styles.module}>
+              <InfoTitle head="附件信息" />
               <CommonUpload
                 edit
                 reformEnable

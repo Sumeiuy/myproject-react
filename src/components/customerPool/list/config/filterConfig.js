@@ -42,8 +42,8 @@ export default {
     },
     {
       filterName: '风险等级',
-      filterId: 'riskLvl',
-      type: 'single',
+      filterId: 'riskLevels',
+      type: 'multi',
       dictField: 'custRiskBearing',
       dropdownStyle: {
         maxHeight: 324,
