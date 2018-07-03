@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 16:24:22
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-29 13:25:52
+ * @Last Modified time: 2018-06-29 16:59:49
  */
 export default function stockOptionEvaluation(api) {
   return {
@@ -23,7 +23,7 @@ export default function stockOptionEvaluation(api) {
     // 更新接口（新建和修改）
     updateBindingFlow: query => api.post('/groovynoauth/fsp/biz/stockOptionApplication/update', query),
     // 走流程接口
-    doApprove: query => api.post('/groovynoauth/fsp/stockOptionApplication/doApprove', query),
+    doApprove: query => api.post('/groovynoauth/fsp/biz/stockOptionApplication/doApprove', query),
     // 验证提交数据接口
     validateData: query => api.post('/groovynoauth/fsp/biz/stockOptionApplication/validate', query),
     // 选择客户获取用户信息

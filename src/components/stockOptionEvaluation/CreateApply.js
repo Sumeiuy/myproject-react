@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-29 14:26:36
+ * @Last Modified time: 2018-07-02 19:45:23
  */
 
 import React, { PureComponent } from 'react';
@@ -299,10 +299,11 @@ export default class CreateApply extends PureComponent {
         const { flowId } = this.state;
         const param = {
           flowId,
-          divisionName: _.isEmpty(divisionName) ? '' : divisionName,
-          openDivName: _.isEmpty(openDivName) ? '' : openDivName,
-          busPrcDivName: _.isEmpty(busPrcDivName) ? '' : busPrcDivName,
+          divisionName: divisionName || '',
+          openDivName: openDivName || '',
+          busPrcDivName: busPrcDivName || '',
         };
+
         this.getCreateButtonList(param);
       }
     });
@@ -416,6 +417,7 @@ export default class CreateApply extends PureComponent {
         age,
         ageFlag,
         custType,
+        investPrefer,
       },
       degreeFlag,
     } = this.state;
@@ -436,7 +438,9 @@ export default class CreateApply extends PureComponent {
       age,
       ageFlag,
       degreeFlag,
+      investPrefer,
     };
+
     // 提交前先对提交的数据调验证接口进行进行验证
     this.props.validateResult(query)
       .then(() => {
@@ -603,6 +607,7 @@ export default class CreateApply extends PureComponent {
       busDivisionList,
       acceptOrgData,
       queryAcceptOrg,
+      getCreateButtonList,
     } = this.props;
     const {
       custInfo,
@@ -704,6 +709,7 @@ export default class CreateApply extends PureComponent {
               onChange={this.handleChange}
               acceptOrgData={acceptOrgData}
               queryAcceptOrg={queryAcceptOrg}
+              getCreateButtonList={getCreateButtonList}
               isShowCustTransLvStatusError={isShowCustTransLvStatusError}
               custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
             />
