@@ -75,6 +75,10 @@ export default class Pageheader extends PureComponent {
     customerList: PropTypes.array.isRequired,
     // 获取客户列表
     getCustomerList: PropTypes.func.isRequired,
+    // 新的客户列表
+    newCustomerList: PropTypes.array.isRequired,
+    // 获取新的客户列表
+    getNewCustomerList: PropTypes.func.isRequired,
     // 筛选后调用的Function
     filterCallback: PropTypes.func,
     // 该项目是针对客户还是针对服务经理的，为false代表针对服务经理的，默认为true针对客户的
@@ -112,6 +116,9 @@ export default class Pageheader extends PureComponent {
     super(props);
     this.state = {
       showMore: true,
+      customerAllList: [],
+      curCustInfo: {},
+      curCust: '',
     };
   }
 
@@ -351,12 +358,19 @@ export default class Pageheader extends PureComponent {
       pageType,
       isUseNewCustList,
       getCustomerList,
+      getNewCustomerList,
     } = this.props;
-    getCustomerList({
-      keyword: value,
-      type: pageType,
-      isUseNewCustList,
-    });
+    if (isUseNewCustList) {
+      getNewCustomerList({
+        keyword: value,
+        type: pageType,
+      });
+    } else {
+      getCustomerList({
+        keyword: value,
+        type: pageType,
+      });
+    }
   }
 
   @autobind
@@ -437,13 +451,23 @@ export default class Pageheader extends PureComponent {
     return date >= currentDate;
   }
 
+  // 获取客户列表
+  @autobind
+  getCustList() {
+    const {
+      customerList,
+      newCustomerList,
+      isUseNewCustList,
+    } = this.props;
+    return isUseNewCustList ? newCustomerList : customerList;
+  }
+
   render() {
     const {
       subtypeOptions,
       stateOptions,
       drafterList,
       approvePersonList,
-      customerList,
       custRange,
       page,
       pageType,
@@ -471,11 +495,13 @@ export default class Pageheader extends PureComponent {
     } = this.props;
     const { empInfo } = this.context;
     const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
+    // 根据是否传入isUseNewCustList这个字段，获取不同的客户列表
+    const custList = this.getCustList();
     // 客户增加全部
-    const customerAllList = !_.isEmpty(customerList) ?
-      [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
+    const customerAllList = !_.isEmpty(custList) ?
+      [{ custName: '全部', custNumber: '' }, ...custList] : custList;
     // 客户回填
-    const curCustInfo = _.find(customerList, o => o.custNumber === custNumber);
+    const curCustInfo = _.find(custList, o => o.custNumber === custNumber);
     let curCust = '全部';
     if (curCustInfo && curCustInfo.custNumber) {
       curCust = `${curCustInfo.custName}(${curCustInfo.custNumber})`;

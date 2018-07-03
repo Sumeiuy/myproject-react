@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-02 20:23:29
+ * @Last Modified time: 2018-07-03 13:03:08
  */
 
 import React, { PureComponent } from 'react';
@@ -28,7 +28,7 @@ import styles from './applyEditForm.less';
 const { approvalColumns } = config;
 const EMPTY_INFO = '--';
 const SRTYPE = 'SRStkOpReq';
-const COMMITOPERATE = 'commit'; // 提交的operate值
+const COMMITOPERATE = 'commit2'; // 提交的operate值
 
 export default class ApplyEditForm extends PureComponent {
   static propTypes = {
@@ -75,7 +75,6 @@ export default class ApplyEditForm extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { editButtonListData } = this.props;
     const { detailInfo } = this.props;
     this.state = {
       // 是否是编辑页面
@@ -113,7 +112,7 @@ export default class ApplyEditForm extends PureComponent {
       // 附件
       attachment: detailInfo.attachment,
       // 按钮组信息
-      editButtonListData,
+      editButtonListData: {},
       // 用于重新渲染上传组件的key
       uploadKey: data.uuid(),
     };
@@ -484,7 +483,6 @@ export default class ApplyEditForm extends PureComponent {
       busDivisionList,
       acceptOrgData,
       queryAcceptOrg,
-      editButtonListData,
     } = this.props;
     const {
       isEdit,
@@ -501,6 +499,7 @@ export default class ApplyEditForm extends PureComponent {
       nextApproverList,
       attachment,
       uploadKey,
+      editButtonListData,
     } = this.state;
     if (_.isEmpty(this.props.detailInfo)) {
       return null;
