@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-29 17:48:28
+ * @Last Modified time: 2018-07-03 13:12:12
  */
 
 import React, { PureComponent } from 'react';
@@ -46,7 +46,9 @@ const effects = {
   getApprovalInfoForUpdate: 'custRelationships/getApprovalInfoForUpdate',
   // 校验数据接口
   validateData: 'custRelationships/validateData',
-  // 提交申请
+  // “是否办理股票质押回购业务“选“否”时，新建提交后不需走审批流程，直接调这个接口
+  chgCustRelaiton: 'custRelationships/chgCustRelaiton',
+  // “是否办理股票质押回购业务“选“是”时，提交申请接口
   submitApply: 'custRelationships/submitApply',
   // 走流程接口
   doApproveFlow: 'custRelationships/doApproveFlow',
@@ -97,7 +99,9 @@ const mapDispatchToProps = {
   getApprovalInfoForUpdate: effect(effects.getApprovalInfoForUpdate, { forceFull: true }),
   // 校验数据接口
   validateData: effect(effects.validateData, { forceFull: true }),
-  // 提交申请接口
+  // “是否办理股票质押回购业务“选“否”时，新建提交后不需走审批流程，直接调这个接口
+  chgCustRelaiton: effect(effects.chgCustRelaiton, { forceFull: true }),
+  // “是否办理股票质押回购业务“选“是”时，提交申请接口
   submitApply: effect(effects.submitApply, { forceFull: true }),
   // 走流程接口
   doApproveFlow: effect(effects.doApproveFlow, { forceFull: true }),
@@ -142,6 +146,8 @@ export default class CustRelationshipsHome extends PureComponent {
     // 提交申请
     submitResult: PropTypes.string.isRequired,
     submitApply: PropTypes.func.isRequired,
+    // “是否办理股票质押回购业务“选“否”时，新建提交后不需走审批流程，直接调这个接口
+    chgCustRelaiton: PropTypes.func.isRequired,
     // 走流程
     flowResult: PropTypes.string.isRequired,
     doApproveFlow: PropTypes.func.isRequired,
@@ -210,7 +216,11 @@ export default class CustRelationshipsHome extends PureComponent {
       this.setState({
         activeRowIndex: itemIndex,
       });
-      this.props.getDetailInfo({ flowId: item.flowId }).then(() => {
+      // “是否办理股票质押回购业务“选“否”时，新建提交后不需走审批流程,没有flowId，此时用id
+      this.props.getDetailInfo({
+        flowId: item.flowId,
+        id: item.id,
+      }).then(() => {
         const { detailInfo, getAttachmentList } = this.props;
         const { attachment } = detailInfo;
         // 拿详情接口返回的attachmnet，调详情附件信息
@@ -313,7 +323,11 @@ export default class CustRelationshipsHome extends PureComponent {
       },
     });
     this.setState({ activeRowIndex: index });
-    this.props.getDetailInfo({ flowId }).then(() => {
+    // “是否办理股票质押回购业务“选“否”时，新建提交后不需走审批流程,没有flowId，此时用id
+    this.props.getDetailInfo({
+      flowId,
+      id,
+    }).then(() => {
       const { detailInfo, getAttachmentList } = this.props;
       const { attachment } = detailInfo;
       // 拿详情接口返回的attachmnet，调详情附件信息
@@ -370,6 +384,7 @@ export default class CustRelationshipsHome extends PureComponent {
       validateResult,
       submitApply,
       submitResult,
+      chgCustRelaiton,
       flowResult,
       doApproveFlow,
     } = this.props;
@@ -447,6 +462,7 @@ export default class CustRelationshipsHome extends PureComponent {
               validateResult={validateResult}
               submitResult={submitResult}
               submitApply={submitApply}
+              chgCustRelaiton={chgCustRelaiton}
               flowResult={flowResult}
               doApproveFlow={doApproveFlow}
             />
