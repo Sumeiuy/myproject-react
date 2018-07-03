@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 14:36:08
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-10 17:35:31
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-03 16:55:31
  * @description 投资建议弹出层
  */
 import React, { PureComponent } from 'react';
@@ -115,6 +115,7 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
       isUpdate,
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
+      onFormDataChange,
     } = this.props;
 
     const { validateContent, validateTitle, descErrorInfo, titleErrorInfo } = this.state;
@@ -150,6 +151,7 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
             testWallCollisionStatus={testWallCollisionStatus}
             onGetInvestAdviceFreeModeData={(title, desc) =>
               this.getInvestAdviceFreeModeData(title, desc)}
+            onFormDataChange={onFormDataChange}
           />
         </div>
       </CommonModal>
@@ -170,6 +172,7 @@ ChoiceInvestAdviceModal.propTypes = {
   testWallCollision: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: PropTypes.bool.isRequired,
+  onFormDataChange: PropTypes.func,
 };
 
 ChoiceInvestAdviceModal.defaultProps = {
@@ -177,4 +180,5 @@ ChoiceInvestAdviceModal.defaultProps = {
   isUpdate: false,
   wrapClassName: 'serveContentADD',
   serveContent: {},
+  onFormDataChange: () => {},
 };

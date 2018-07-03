@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-15 15:43:07
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-03 17:40:24
  */
 
 import React, { PureComponent } from 'react';
@@ -525,6 +525,8 @@ export default class ServiceRecordContent extends PureComponent {
       // 不显示错误信息
       isShowServeStatusError: false,
     });
+    // 调用了此方法说明表单的数据发生了变化
+    this.props.onFormDataChange();
   }
 
   // 清空数据，恢复默认
@@ -593,6 +595,8 @@ export default class ServiceRecordContent extends PureComponent {
     if (serveWayUtil.isZhangle(value)) {
       this.preQueryDateForZLFins();
     }
+    // 调用了此方法说明表单的数据发生了变化
+    this.props.onFormDataChange();
   }
 
   // 切换 服务类型
@@ -650,6 +654,8 @@ export default class ServiceRecordContent extends PureComponent {
   })
   handleServiceDateChange(date) {
     this.setState({ serviceTime: date });
+    // 调用了此方法说明表单数据发生了变化
+    this.props.onFormDataChange();
   }
 
   // 切换客户反馈时间
@@ -663,6 +669,8 @@ export default class ServiceRecordContent extends PureComponent {
   })
   handleFeedbackDateChange(date) {
     this.setState({ custFeedbackTime: date });
+    // 调用了此方法说明表单数据发生了变化
+    this.props.onFormDataChange();
   }
 
   @autobind
@@ -673,6 +681,8 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedback2: second,
       isShowErrorCustFeedback: false,
     });
+    // 调用了此方法说明表单数据发生了变化
+    this.props.onFormDataChange();
   }
 
   // 服务时间，反馈时间不能选择大于今天的日期
@@ -708,6 +718,8 @@ export default class ServiceRecordContent extends PureComponent {
       serviceRecord: value,
       isShowServiceContentError: _.isEmpty(value) || value.length > serviceContentMaxLength,
     });
+    // 调用了此方法说明表单的数据发生了变化
+    this.props.onFormDataChange();
   }
 
   @autobind
@@ -799,6 +811,7 @@ export default class ServiceRecordContent extends PureComponent {
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
       isPhoneCall,
+      onFormDataChange,
     } = this.props;
     const {
       isReject,
@@ -945,6 +958,7 @@ export default class ServiceRecordContent extends PureComponent {
                 serveContent={zlRejectRecord}
                 testWallCollision={testWallCollision}
                 testWallCollisionStatus={testWallCollisionStatus}
+                onFormDataChange={onFormDataChange}
               />
             )
             : (
@@ -954,6 +968,7 @@ export default class ServiceRecordContent extends PureComponent {
                 onChange={this.handleServiceRecordInputChange}
                 serviceRecordInfo={serviceRecordInfo}
                 isPhoneCall={isPhoneCall}
+                onFormDataChange={onFormDataChange}
               />
             )
         }
@@ -995,6 +1010,7 @@ export default class ServiceRecordContent extends PureComponent {
                 feedbackList={custFeedbackList}
                 feedbackTime={ZLCustFeedbackTime.format(DATE_FORMAT_SHOW)}
                 feedback={ZLCustFeedback}
+                onFormDataChange={onFormDataChange}
               />
             )
         }
@@ -1022,6 +1038,7 @@ export default class ServiceRecordContent extends PureComponent {
                   isSupportUploadMultiple
                   onDeleteFile={this.handleDeleteFile}
                   deleteFileResult={deleteFileResult}
+                  onUploadDataChange={onFormDataChange}
                 />
               </div>
             )
@@ -1069,6 +1086,7 @@ ServiceRecordContent.propTypes = {
   testWallCollisionStatus: PropTypes.bool.isRequired,
   // 是否由打电话调起的添加服务记录
   isPhoneCall: PropTypes.bool,
+  onFormDataChange: PropTypes.func,
 };
 
 ServiceRecordContent.defaultProps = {
@@ -1087,4 +1105,5 @@ ServiceRecordContent.defaultProps = {
   serviceTypeCode: '',
   flowStatusCode: '',
   isPhoneCall: false,
+  onFormDataChange: _.noop,
 };

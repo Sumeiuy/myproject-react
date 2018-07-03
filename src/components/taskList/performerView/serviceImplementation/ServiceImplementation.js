@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-15 15:02:11
+ * @Last Modified time: 2018-07-03 17:37:57
  */
 
 import React, { PureComponent } from 'react';
@@ -155,6 +155,7 @@ export default class ServiceImplementation extends PureComponent {
       // 当前服务实施列表的数据
       targetCustList,
       propsTargetCustList: targetCustList,
+      isFormHalfFilledOut: false,
     };
   }
 
@@ -528,6 +529,14 @@ export default class ServiceImplementation extends PureComponent {
     }
   }
 
+  // 添加服务记录表单数据发生变化
+  @autobind
+  formDataChange() {
+    this.setState({
+      isFormHalfFilledOut: true,
+    });
+  }
+
   render() {
     const { dict = {}, empInfo } = this.context;
     const {
@@ -542,7 +551,7 @@ export default class ServiceImplementation extends PureComponent {
     const {
       targetCustList,
       targetCustList: { list: currentTargetList },
-      isFoldFspLeftMenu,
+      isFoldFspLeftMenu, isFormHalfFilledOut,
     } = this.state;
     const {
       missionStatusCode, missionStatusValue, missionFlowId,
@@ -600,7 +609,7 @@ export default class ServiceImplementation extends PureComponent {
     };
     // fsp左侧菜单和左侧列表折叠状态变化，强制更新affix、文字折叠区域
     const leftFoldState = `${isFoldFspLeftMenu}${isFold}`;
-
+    console.log('isFormHalfFilledOut: ', isFormHalfFilledOut);
     const affixNode = (
       <div>
         <div className={styles.listSwiperBox}>
@@ -698,11 +707,13 @@ export default class ServiceImplementation extends PureComponent {
                   testWallCollisionStatus={testWallCollisionStatus}
                   serviceCustId={custId}
                   isCurrentMissionPhoneCall={isCurrentMissionPhoneCall}
+                  onFormDataChange={this.formDataChange}
                 />
               </div>
             </div>
         }
         <Prompt
+          when={isFormHalfFilledOut}
           message={location => (
             location.pathname.startsWith('/taskList')
               ? true : '离开本页面可能会丢失操作的数据，是否离开？'

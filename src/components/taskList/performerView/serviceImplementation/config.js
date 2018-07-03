@@ -24,14 +24,32 @@ export const ORG_ICON = 'yibanjigou';
 // 产品机构的头像
 export const PROD_ICON = 'chanpinjigou';
 
-// 风险等级配置, code对应的显示文案
+// 风险等级配置
 export const riskLevelConfig = {
-  704010: '激',
-  704040: '低',
-  704030: '保',
-  704020: '稳',
-  704025: '谨',
-  704015: '积',
+  704010: {
+    name: '激',
+    title: '激进型',
+  },
+  704040: {
+    name: '低',
+    title: '保守型（最低类别）',
+  },
+  704030: {
+    name: '保',
+    title: '保守型',
+  },
+  704020: {
+    name: '稳',
+    title: '稳健型',
+  },
+  704025: {
+    name: '谨',
+    title: '谨慎型',
+  },
+  704015: {
+    name: '积',
+    title: '积极型',
+  },
 };
 
 // 任务状态为未处理、处理中、已驳回时可打电话
