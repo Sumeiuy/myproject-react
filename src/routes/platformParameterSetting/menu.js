@@ -35,6 +35,11 @@ const menu = [
     permission: duty.HTSC_HQ_MAMPID,
     children: '推荐标签',
   },
+  {
+    name: '客户标签',
+    path: '/customerLabel',
+  //  permission: duty.HTSC_HQ_MAMPID,
+  },
 ];
 
 export default menu;
