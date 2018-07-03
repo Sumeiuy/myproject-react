@@ -116,9 +116,6 @@ export default class Pageheader extends PureComponent {
     super(props);
     this.state = {
       showMore: true,
-      customerAllList: [],
-      curCustInfo: {},
-      curCust: '',
     };
   }
 
@@ -360,16 +357,14 @@ export default class Pageheader extends PureComponent {
       getCustomerList,
       getNewCustomerList,
     } = this.props;
+    const params = {
+      keyword: value,
+      type: pageType,
+    };
     if (isUseNewCustList) {
-      getNewCustomerList({
-        keyword: value,
-        type: pageType,
-      });
+      getNewCustomerList(params);
     } else {
-      getCustomerList({
-        keyword: value,
-        type: pageType,
-      });
+      getCustomerList(params);
     }
   }
 
