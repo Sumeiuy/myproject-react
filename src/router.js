@@ -31,8 +31,6 @@ import CustomerList from './routes/customerPool/CustomerList';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
-import ViewpointList from './routes/latestView/ViewpointList';
-import ViewpointDetail from './routes/latestView/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
 import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
@@ -89,6 +87,12 @@ import StockOptionEvaluation from './routes/stockOptionEvaluation/Home';
 import LatestView from './routes/latestView/Home';
 // 最新观点-大类资产配置分析
 import MajorAssetsList from './routes/latestView/MajorAssetsList';
+// 最新观点列表
+import ViewpointList from './routes/latestView/ViewpointList';
+// 最新观点详情
+import ViewpointDetail from './routes/latestView/ViewpointDetail';
+// 行业主题调整列表
+import IndustryThemeList from './routes/latestView/IndustryThemeList';
 // 股票期权评估申请修改页面
 import StockOptionEvaluationEdit from './routes/stockOptionEvaluation/ApplyEdit';
 // 客户关联关系信息申请
@@ -344,6 +348,8 @@ const routes = [
       { path: '/viewpointDetail', component: ViewpointDetail },
       // 大类资产配置分析列表
       { path: '/majorAssetsList', component: MajorAssetsList },
+      // 行业主题调整信息列表
+      { path: '/industryThemeList', component: IndustryThemeList },
     ],
   },
   // 股票期权评估申请
