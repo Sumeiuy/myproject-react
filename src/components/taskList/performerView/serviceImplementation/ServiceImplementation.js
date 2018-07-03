@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-15 15:02:11
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-07-03 10:27:43
  */
 
 import React, { PureComponent } from 'react';
@@ -549,6 +549,7 @@ export default class ServiceImplementation extends PureComponent {
       serviceTips, serviceWayName, serviceWayCode, serviceDate,
       serviceRecord, customerFeedback, feedbackDate, custId,
       serviceContent, // 涨乐财富通的服务内容
+      zlcftMsgStatus, // 新增的涨乐财富通服务方式的反馈状态
     } = targetCustDetail;
     // 判断当前任务状态是结果跟踪或者完成状态，则为只读
     // 判断任务流水客户状态，处理中 和 未开始， 则为可编辑
@@ -597,6 +598,8 @@ export default class ServiceImplementation extends PureComponent {
       eventId,
       taskTypeCode,
       serviceTypeCode,
+      // 涨乐财富通服务方式反馈状态
+      zlcftMsgStatus,
     };
     // fsp左侧菜单和左侧列表折叠状态变化，强制更新affix、文字折叠区域
     const leftFoldState = `${isFoldFspLeftMenu}${isFold}`;

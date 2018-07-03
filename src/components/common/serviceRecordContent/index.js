@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-15 15:43:07
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-07-03 14:30:10
  */
 
 import React, { PureComponent } from 'react';
@@ -56,6 +56,8 @@ const dateCommonProps = {
 
 // 查询涨乐财富通的审批人需要的btnId固定值
 const ZL_QUREY_APPROVAL_BTN_ID = '200000';
+// 涨乐财富通服务方式下，服务状态 完成的Code
+const SERVICE_STATUS_COMPLETE_CODE = '30';
 
 // 服务记录内容最大长度
 const serviceContentMaxLength = 1000;
@@ -115,6 +117,24 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   setFeedbackTimeRef(input) {
     this.feedbackTimeRef = input;
+  }
+
+  // 根据服务类型获取相关的客户反馈信息
+  @autobind
+  getFeedbackDataByServiceType(code) {
+    if (_.isEmpty(code)) return {};
+    const feedbackTypeList = this.serviceTypeObj[code] || [];
+    const feedbackType = (feedbackTypeList[0] || {}).key || '';
+    const feedbackTypeChildList = (feedbackTypeList[0] || {}).children || [];
+    const feedbackTypeChild = (feedbackTypeChildList[0] || {}).key || '';
+
+    return {
+      serviceType: code,
+      feedbackType,
+      feedbackTypeList,
+      feedbackTypeChild,
+      feedbackTypeChildList,
+    };
   }
 
   // 将客户反馈的实际值转化数据结构，使用key和value,保持一致
@@ -214,6 +234,8 @@ export default class ServiceRecordContent extends PureComponent {
       serviceWayCode: serveWay[0].key,
       // 服务方式文本
       serviceWayText: serveWay[0].value,
+      // 是否禁用服务状态Radio
+      statusDisabled: false,
       // 服务状态
       serviceStatus: '',
       // 服务状态文本
@@ -235,6 +257,8 @@ export default class ServiceRecordContent extends PureComponent {
       ZLCustFeedback: '暂无反馈',
       // 涨乐财富通服务方式下的客户反馈时间
       ZLCustFeedbackTime: moment(),
+      // 涨乐财富通下的反馈状态
+      zlcftMsgStatus: fd.zlcftMsgStatus,
       // 附件上传相关
       currentFile: {},
       uploadedFileKey: '',
@@ -303,6 +327,8 @@ export default class ServiceRecordContent extends PureComponent {
       const rejectState = {
         serviceWayCode,
         isSelectZhangleFins: true,
+        serviceStatus: SERVICE_STATUS_COMPLETE_CODE,
+        statusDisabled: true,
       };
       return { ...this.getDefaultState(props), ...rejectState, ...zlSC };
     }
@@ -339,6 +365,7 @@ export default class ServiceRecordContent extends PureComponent {
       isShowServeStatusError: false,
       isShowServiceContentError: false,
       ...zlSC,
+      zlcftMsgStatus: fd.zlcftMsgStatus,
     };
   }
 
@@ -571,7 +598,8 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '服务方式', value: '$args[0]' } })
   handleServiceWayChange(value) {
-    // TODO 此处需要新增在 驳回后 修改的状态下，切换下需要将之前的驳回后的内容清空
+    // 此处需要新增在 驳回后 修改的状态下，切换下需要将之前的驳回后的内容清空
+    // 此处需要增加一个当用户选择的服务方式为 涨乐财富通 时，服务状态为完成，并且不能切换
     const { isReject } = this.state;
     // 判断之前的流水状态是否是  被驳回
     if (isReject) {
@@ -591,7 +619,17 @@ export default class ServiceRecordContent extends PureComponent {
       });
     }
     if (serveWayUtil.isZhangle(value)) {
+      this.setState({
+        serviceStatus: SERVICE_STATUS_COMPLETE_CODE,
+        statusDisabled: true,
+        isShowServeStatusError: false,
+      });
       this.preQueryDateForZLFins();
+    } else {
+      this.setState({
+        serviceStatus: '',
+        statusDisabled: false,
+      });
     }
   }
 
@@ -619,24 +657,6 @@ export default class ServiceRecordContent extends PureComponent {
         type: '2',
       });
     }
-  }
-
-  // 根据服务类型获取相关的客户反馈信息
-  @autobind
-  getFeedbackDataByServiceType(code) {
-    if (_.isEmpty(code)) return {};
-    const feedbackTypeList = this.serviceTypeObj[code] || [];
-    const feedbackType = (feedbackTypeList[0] || {}).key || '';
-    const feedbackTypeChildList = (feedbackTypeList[0] || {}).children || [];
-    const feedbackTypeChild = (feedbackTypeChildList[0] || {}).key || '';
-
-    return {
-      serviceType: code,
-      feedbackType,
-      feedbackTypeList,
-      feedbackTypeChild,
-      feedbackTypeChildList,
-    };
   }
 
   // 切换服务时间
@@ -745,6 +765,7 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackText2,
       custFeedbackTime,
       ZLCustFeedback,
+      zlcftMsgStatus,
     } = this.state;
     const { formData: { attachmentList }, custFeedbackList } = this.props;
     const zlServiceRecord = {
@@ -776,6 +797,7 @@ export default class ServiceRecordContent extends PureComponent {
         custFeedback2={custFeedbackText2}
         ZLCustFeedback={ZLCustFeedback}
         ZLCustFeedbackList={custFeedbackList}
+        ZLFeedbackStatus={zlcftMsgStatus}
       />
     );
   }
@@ -822,6 +844,7 @@ export default class ServiceRecordContent extends PureComponent {
       ZLServiceContentTitle,
       ZLServiceContentType,
       ZLServiceContentDesc,
+      statusDisabled,
     } = this.state;
     if (_.isEmpty(dict) || _.isEmpty(empInfo)) return null;
 
@@ -882,11 +905,16 @@ export default class ServiceRecordContent extends PureComponent {
                 <div className={styles.title}>服务状态:</div>
                 {/* 打电话调的服务记录切服务状态码为30时，显示‘完成’ */}
                 {
-                  isPhoneCall && autoGenerateRecordInfo.flowStatus === '30' ?
+                  isPhoneCall
+                  && autoGenerateRecordInfo.flowStatus === SERVICE_STATUS_COMPLETE_CODE ?
                     <div className={styles.content}>完成</div> :
                     <FormItem {...serviceStatusErrorProps}>
                       <div className={styles.content}>
-                        <RadioGroup onChange={this.handleRadioChange} value={serviceStatus}>
+                        <RadioGroup
+                          onChange={this.handleRadioChange}
+                          value={serviceStatus}
+                          disabled={statusDisabled}
+                        >
                           {
                             serveStatusRadioGroupMap.map(radio => (
                               <Radio key={radio.key} value={radio.key}>{radio.value}</Radio>
