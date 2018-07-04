@@ -81,22 +81,18 @@ export default class ServiceRecordItem extends PureComponent {
 
   @autobind
   renderZLContent(feedbackStatus) {
-    const { content } = this.props;
-    let feedbackText = '--';
-    switch (feedbackStatus) {
-      case 'UNREAD':
-        feedbackText = '客户未阅';
-        break;
-      case 'READED':
-        feedbackText = '已阅未反馈';
-        break;
-      case 'FEEDBACK':
-        feedbackText = content;
-        break;
-      default:
-        break;
+    let statusKey = feedbackStatus;
+    if (_.isNull(feedbackStatus)) {
+      statusKey = 'NULL';
     }
-    return feedbackText;
+    const { content } = this.props;
+    const feedbackMap = {
+      UNREAD: '客户未阅',
+      READED: '已阅未反馈',
+      FEEDBACK: content,
+      NULL: '',
+    };
+    return feedbackMap[statusKey];
   }
 
   /**

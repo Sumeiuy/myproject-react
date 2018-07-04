@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-03 14:30:10
+ * @Last Modified time: 2018-07-04 10:03:53
  */
 
 import React, { PureComponent } from 'react';
@@ -122,7 +122,9 @@ export default class ServiceRecordContent extends PureComponent {
   // 根据服务类型获取相关的客户反馈信息
   @autobind
   getFeedbackDataByServiceType(code) {
-    if (_.isEmpty(code)) return {};
+    if (_.isEmpty(code)) {
+      return {};
+    }
     const feedbackTypeList = this.serviceTypeObj[code] || [];
     const feedbackType = (feedbackTypeList[0] || {}).key || '';
     const feedbackTypeChildList = (feedbackTypeList[0] || {}).children || [];
@@ -797,7 +799,7 @@ export default class ServiceRecordContent extends PureComponent {
         custFeedback2={custFeedbackText2}
         ZLCustFeedback={ZLCustFeedback}
         ZLCustFeedbackList={custFeedbackList}
-        ZLFeedbackStatus={zlcftMsgStatus}
+        ZLFeedbackStatus={zlcftMsgStatus || 'NULL'}
       />
     );
   }

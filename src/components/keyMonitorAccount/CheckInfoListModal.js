@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-02 15:49:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-03 16:23:15
+ * @Last Modified time: 2018-07-04 10:20:07
  * @description 重点监控账户的核查信息列表Modal
  */
 
@@ -14,6 +14,7 @@ import { autobind } from 'core-decorators';
 
 import Modal from '../common/biz/CommonModal';
 import { env } from '../../helper';
+import { openFspEBWindow } from '../../utils/fspGlobal';
 import {
   CHECKINFO_LIST_COLUMNS,
 } from './config';
@@ -67,15 +68,11 @@ export default class CheckInfoListModal extends PureComponent {
   handleCheckDateCellClick(record) {
     if (env.isInFsp()) {
       // 此处是调用 FSP 框架下的EB弹出层组件，因此添加 env 判断
-      const url = `/fsp/customer/invEvaluate/showMonitorCheckedInfoWindow?checkedInfomationRowId=${record.rowId}`;
-      $('body').EBWindow({
+      const sourceURL = `/fsp/customer/invEvaluate/showMonitorCheckedInfoWindow?checkedInfomationRowId=${record.rowId}`;
+      openFspEBWindow({
         id: 'bz_win_view360KeyMonitorDetailPage',
-        width: 800,
-        height: 600,
-        show_cover: true,
-        scrollY: true,
         title: '重点监控账户核查信息',
-        sourceURL: url,
+        sourceURL,
       });
     }
   }
