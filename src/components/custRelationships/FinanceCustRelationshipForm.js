@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-21 19:44:40
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-07-04 14:27:22
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -94,11 +94,19 @@ export default class FinanceCustRelationshipForm extends Component {
   updateAssociateList() {
     const { custDetail: { custRelationshipList = [], ...reset } } = this.props;
     const listWithKey = custRelationshipList.map((item, index) => ({ ...item, key: index }));
-    this.setState({ custRelationshipList: listWithKey, cust: reset });
+    this.setState({
+      custRelationshipList: listWithKey,
+      cust: reset,
+      stockRepurchase: '',
+      attachment: '',
+      attachList: [],
+      uploadKey: data.uuid(),
+    });
     this.props.onChange({
       relationships: custRelationshipList,
       cust: reset,
       attachment: '',
+      stockRepurchase: '',
     });
   }
 
@@ -271,6 +279,7 @@ export default class FinanceCustRelationshipForm extends Component {
       [styles.custRelationshipContainer]: true,
       [styles.reject]: !isCreate,
     });
+    const stockRepurchaseValue = stockRepurchase === 'Y' ? '是' : '否';
 
     return (
       <div className={wrapCls}>
@@ -300,16 +309,27 @@ export default class FinanceCustRelationshipForm extends Component {
           )
         }
         <CustInfo cust={cust} isCreate={isCreate} />
-        <FormItem label="是否办理股票质押回购业务" labelWidth={204}>
-          <Select
-            name="stockRepurchase"
-            width="105px"
-            needShowKey={false}
-            value={stockRepurchase}
-            data={STOCK_REPURCHASE_OPTIONS}
-            onChange={this.handleStockRepurchaseSelectChange}
-          />
-        </FormItem>
+        {
+          isCreate
+          ? (
+            <FormItem label="是否办理股票质押回购业务" labelWidth={204}>
+              <Select
+                name="stockRepurchase"
+                width="105px"
+                needShowKey={false}
+                value={stockRepurchase}
+                data={STOCK_REPURCHASE_OPTIONS}
+                onChange={this.handleStockRepurchaseSelectChange}
+              />
+            </FormItem>
+          )
+          : (
+            <div className={styles.rejectStockRepurchase}>
+              <span className={styles.rejectStockRepurchaseLabel}>是否办理股票质押回购业务:</span>
+              <span className={styles.rejectStockRepurchaseName}>{stockRepurchaseValue}</span>
+            </div>
+          )
+        }
         <div className={styles.divider} />
         <InfoTitle head="关联信息" />
         <div className={styles.associateBtn}>
