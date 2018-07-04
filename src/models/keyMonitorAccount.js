@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 16:19:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-19 17:26:12
+ * @Last Modified time: 2018-07-02 15:46:48
  * @description models/keyMonitorAccount.js
  */
 
@@ -13,6 +13,8 @@ export default {
   state: {
     // 重点监控账户列表
     accountListInfo: {},
+    // 客户的核查信息列表
+    checkListInfo: {},
   },
   reducers: {
     getAccountListInfoSuccess(state, action) {
@@ -20,6 +22,14 @@ export default {
       return {
         ...state,
         accountListInfo: resultData,
+      };
+    },
+
+    getCheckInfoListSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        checkListInfo: resultData,
       };
     },
 
@@ -37,6 +47,15 @@ export default {
       const response = yield call(api.getAccountList, payload);
       yield put({
         type: 'getAccountListInfoSuccess',
+        payload: response,
+      });
+    },
+
+    // 获取核查信息列表
+    * getCheckInfoList({ payload = {} }, { call, put }) {
+      const response = yield call(api.getCheckInfoList, payload);
+      yield put({
+        type: 'getCheckInfoListSuccess',
         payload: response,
       });
     },
