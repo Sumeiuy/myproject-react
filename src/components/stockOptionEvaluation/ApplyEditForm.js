@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-04 11:14:41
+ * @Last Modified time: 2018-07-04 13:39:40
  */
 
 import React, { PureComponent } from 'react';
@@ -224,12 +224,12 @@ export default class ApplyEditForm extends PureComponent {
             if (custType === 'per' && isProfessInvset === 'Y') {
               commonConfirm({
                 content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
-                onOk: () => this.validateResult(),
+                onOk: this.validateResult,
               });
             } else {
               commonConfirm({
                 content: '请确认是否已上传相关附件。',
-                onOk: () => this.validateResult(),
+                onOk: this.validateResult,
               });
             }
           }
