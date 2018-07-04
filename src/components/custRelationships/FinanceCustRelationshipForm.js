@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-11 14:09:17
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-07-04 14:27:22
+ * @Last Modified time: 2018-07-04 14:59:00
  * @description 融资类业务客户关联关系数据填写表单
  */
 
@@ -325,7 +325,7 @@ export default class FinanceCustRelationshipForm extends Component {
           )
           : (
             <div className={styles.rejectStockRepurchase}>
-              <span className={styles.rejectStockRepurchaseLabel}>是否办理股票质押回购业务:</span>
+              <span className={styles.rejectStockRepurchaseLabel}>是否办理股票质押回购业务：</span>
               <span className={styles.rejectStockRepurchaseName}>{stockRepurchaseValue}</span>
             </div>
           )
