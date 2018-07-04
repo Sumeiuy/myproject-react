@@ -114,6 +114,30 @@ const fspGlobal = {
     closeTab(`#exApp_${id}`);
   },
 
+  /**
+   * 打开FSP框架下的EBWindow
+   */
+  openFspEBWindow({
+    id,
+    title,
+    sourceURL,
+    scrollY = true,
+    width = 800,
+    height = 600,
+    ...resetParams
+  }) {
+    $('body').EBWindow({
+      id,
+      width,
+      height,
+      show_cover: true,
+      scrollY,
+      title,
+      sourceURL,
+      ...resetParams,
+    });
+  },
+
 };
 
 export default fspGlobal;

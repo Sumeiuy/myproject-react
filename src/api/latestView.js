@@ -24,5 +24,7 @@ export default function latestView(api) {
     queryZiJinClockCycle: query => api.post('/groovynoauth/fsp/info/newest/zjClockQueryCycle', query),
     // 最新观点-首页紫金时钟列表
     queryZiJinViewpointList: query => api.post('/groovynoauth/fsp/info/newest/zjClockTop', query),
+    // 最新观点-行业主题调整列表
+    queryIndustryThemeList: query => api.post('/groovynoauth/fsp/info/newest/zjClockAdjuestList', query),
   };
 }
