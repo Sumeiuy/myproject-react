@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-03 13:03:08
+ * @Last Modified time: 2018-07-03 15:57:32
  */
 
 import React, { PureComponent } from 'react';
@@ -66,11 +66,12 @@ export default class ApplyEditForm extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const newState = {};
-    if (nextProps.editButtonListData !== prevState.editButtonListData) {
-      newState.editButtonListData = nextProps.editButtonListData;
+    if (nextProps.editButtonListData !== prevState.editButtonList) {
+      return {
+        editButtonList: nextProps.editButtonListData,
+      };
     }
-    return newState;
+    return null;
   }
 
   constructor(props) {
@@ -112,7 +113,7 @@ export default class ApplyEditForm extends PureComponent {
       // 附件
       attachment: detailInfo.attachment,
       // 按钮组信息
-      editButtonListData: {},
+      editButtonList: {},
       // 用于重新渲染上传组件的key
       uploadKey: data.uuid(),
     };
@@ -443,10 +444,8 @@ export default class ApplyEditForm extends PureComponent {
       } else {
         message.success('该股票期权申请已被终止');
       }
-      this.setState({
-        editButtonListData: {},
-      }, () => {
-        getDetailInfo({ flowId });
+      getDetailInfo({ flowId }).then(() => {
+        this.setState({ editButtonList: {} });
       });
     });
   }
@@ -499,7 +498,7 @@ export default class ApplyEditForm extends PureComponent {
       nextApproverList,
       attachment,
       uploadKey,
-      editButtonListData,
+      editButtonList,
     } = this.state;
     if (_.isEmpty(this.props.detailInfo)) {
       return null;
@@ -631,7 +630,7 @@ export default class ApplyEditForm extends PureComponent {
               <ApproveList data={workflowHistoryBeans} />
             </div>
             <BottonGroup
-              list={editButtonListData}
+              list={editButtonList}
               onEmitEvent={this.handleSubmit}
             />
             <TableDialog {...searchProps} />
