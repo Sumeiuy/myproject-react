@@ -165,12 +165,20 @@ export const sourceFilter = {
     }],
   },
   manageService: {
-    lastServDt: [{
+    highNetValue: [{
       // 最近一次服务
       filterName: 'lastServDt',
       value: ['cycleStartTime', 'serviced'],
       defaultVal: {
         serviced: 'unServiced',
+      },
+    },
+    {
+      // 客户类型
+      filterName: 'custClass',
+      value: ['custClass'],
+      defaultVal: {
+        custClass: 'N',
       },
     }],
   },
@@ -220,6 +228,7 @@ export const sourceFilter = {
     filterName: 'gjlRate',
     value: ['minVal', 'maxVal'],
     defaultVal: {
+      minVal: '0',
       maxVal: '50',
     },
   }],
