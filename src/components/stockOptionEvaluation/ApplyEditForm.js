@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-03 15:57:32
+ * @Last Modified time: 2018-07-04 11:14:41
  */
 
 import React, { PureComponent } from 'react';
@@ -224,12 +224,12 @@ export default class ApplyEditForm extends PureComponent {
             if (custType === 'per' && isProfessInvset === 'Y') {
               commonConfirm({
                 content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
-                onOk: () => this.showNextApprover(),
+                onOk: () => this.validateResult(),
               });
             } else {
               commonConfirm({
                 content: '请确认是否已上传相关附件。',
-                onOk: () => this.showNextApprover(),
+                onOk: () => this.validateResult(),
               });
             }
           }
@@ -250,14 +250,7 @@ export default class ApplyEditForm extends PureComponent {
 
   // 校验数据
   @autobind
-  validateResult(value) {
-    if (_.isEmpty(value)) {
-      message.error('请选择审批人');
-      return;
-    }
-    this.setState({
-      nextApproverModal: false,
-    });
+  validateResult() {
     // 校验的数据
     const {
       detailInfo: {
@@ -314,7 +307,7 @@ export default class ApplyEditForm extends PureComponent {
         } = this.props;
         // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
         if (isValid) {
-          this.sendEditRequest(value);
+          this.showNextApprover();
         } else {
           Modal.error({
             title: '提示信息',
@@ -325,9 +318,16 @@ export default class ApplyEditForm extends PureComponent {
       });
   }
 
-  // 发送请求，先走新修改接口，再走流程
+  // 发送请求，先走修改接口，再走流程
   @autobind
   sendEditRequest(value) {
+    if (_.isEmpty(value)) {
+      message.error('请选择审批人');
+      return;
+    }
+    this.setState({
+      nextApproverModal: false,
+    });
     const {
       detailInfo: {
         id,
@@ -510,7 +510,7 @@ export default class ApplyEditForm extends PureComponent {
     const isPerCustType = custType === 'per';
     const searchProps = {
       visible: nextApproverModal,
-      onOk: this.validateResult,
+      onOk: this.sendEditRequest,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
       dataSource: nextApproverList,
       columns: approvalColumns,
