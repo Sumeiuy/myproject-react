@@ -22,7 +22,7 @@ import styles from './industryThemeList.less';
 import config from '../../components/latestView/config';
 
 const titleList = config.industryTitleList;
-const dispatch = dva.generateEffect;
+const { generateEffect } = dva;
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 
@@ -40,7 +40,7 @@ const mapStateToProps = state => ({
   industryThemeData: state.latestView.industryThemeData,
 });
 const mapDispatchToProps = {
-  queryIndustryThemeList: dispatch(effects.queryIndustryThemeList,
+  queryIndustryThemeList: generateEffect(effects.queryIndustryThemeList,
     { loading: true, forceFull: true }),
 };
 
@@ -86,7 +86,7 @@ export default class IndustryThemeList extends PureComponent {
   @autobind
   getColumns() {
     const newTitleList = [...titleList];
-    newTitleList[0].render = (item, record) => (
+    _.find(newTitleList, item => item.key === 'title').render = (item, record) => (
       <div
         className={classnames(styles.td, styles.headLine)}
         title={formatString(record.title || record.industry)}
@@ -95,13 +95,13 @@ export default class IndustryThemeList extends PureComponent {
         <a>{formatString(record.title || record.industry)}</a>
       </div>
     );
-    newTitleList[1].render = item => (
+    _.find(newTitleList, item => item.key === 'direction').render = item => (
       <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
     );
-    newTitleList[2].render = item => (
+    _.find(newTitleList, item => item.key === 'reason').render = item => (
       <div className={classnames(styles.td, styles.stock)}>{formatString(item)}</div>
     );
-    newTitleList[3].render = (item) => {
+    _.find(newTitleList, item => item.key === 'time').render = (item) => {
       const date = time.format(item, config.dateFormatStr);
       return <div className={classnames(styles.td, styles.induname)}>{formatString(date)}</div>;
     };

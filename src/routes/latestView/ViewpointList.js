@@ -23,7 +23,7 @@ import styles from './viewpointList.less';
 import config from '../../components/latestView/config';
 
 const titleList = config.viewpointTitleList;
-const dispatch = dva.generateEffect;
+const { generateEffect } = dva;
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 
@@ -41,7 +41,7 @@ const mapStateToProps = state => ({
   viewpointData: state.latestView.viewpointData,
 });
 const mapDispatchToProps = {
-  queryChiefViewpointList: dispatch(effects.queryChiefViewpointList,
+  queryChiefViewpointList: generateEffect(effects.queryChiefViewpointList,
     { loading: true, forceFull: true }),
 };
 
@@ -87,7 +87,7 @@ export default class ViewpointList extends PureComponent {
   @autobind
   getColumns() {
     const newTitleList = [...titleList];
-    newTitleList[0].render = (item, record) => (
+    _.find(newTitleList, item => item.key === 'title').render = (item, record) => (
       <div
         className={classnames(styles.td, styles.headLine)}
         title={formatString(item)}
@@ -96,22 +96,22 @@ export default class ViewpointList extends PureComponent {
         <a>{formatString(item)}</a>
       </div>
     );
-    newTitleList[1].render = item => (
+    _.find(newTitleList, item => item.key === 'typeName').render = item => (
       <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
     );
-    newTitleList[2].render = item => (
+    _.find(newTitleList, item => item.key === 'stockName').render = item => (
       <div className={classnames(styles.td, styles.stock)}>{formatString(item)}</div>
     );
-    newTitleList[3].render = item => (
+    _.find(newTitleList, item => item.key === 'industryName').render = item => (
       <div className={classnames(styles.td, styles.induname)}>{formatString(item)}</div>
     );
-    newTitleList[4].render = (item) => {
+    _.find(newTitleList, item => item.key === 'time').render = (item) => {
       const date = time.format(item, config.dateFormatStr);
       return (
         <div className={classnames(styles.td, styles.pubdatelist)}>{formatString(date)}</div>
       );
     };
-    newTitleList[5].render = item => (
+    _.find(newTitleList, item => item.key === 'author').render = item => (
       <div
         className={classnames(styles.td, styles.authors)}
         title={formatString(item)}
