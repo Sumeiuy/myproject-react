@@ -219,7 +219,7 @@ const menus = [
         url: '',
         type: 'link',
         action: 'loadInTab',
-        path: '/broadcastList',
+        path: '/strategyCenter/broadcastList',
       },
     ],
   },
@@ -343,7 +343,7 @@ const menus = [
         url: '',
         type: 'link',
         action: '',
-        path: '',
+        path: '/statisticalQuery/report',
       },
       {
         id: 'FSP_INTEGRAL_EXCHANGE',

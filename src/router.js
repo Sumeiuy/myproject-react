@@ -57,7 +57,7 @@ const Routers = ({ history, app }) => {
       <Main>
         <Switch>
           <Redirect exact from="/" to="/empty" />
-          <Redirect exact from="/invest" to="/report" />
+          <Redirect exact from="/invest" to="/statisticalQuery/report" />
           {
             recursiveRouter('/', routerData).map(
               item => (

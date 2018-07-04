@@ -81,6 +81,12 @@ const env = {
     return !!rc;
   },
   /**
+   * 获取react content容器
+   */
+  getReactContainer() {
+    return document.querySelector('#react-content');
+  },
+  /**
    * 判断当前浏览器是否IE
    * @author sunweibin
    * @returns {Boolean}

@@ -52,21 +52,20 @@ const dynamicWrapper = (app, models, component) => {
   // () => import('module')
   return dynamic({
     app,
-    models: () => models.filter(
-      model => modelNotExisted(app, model)).map(m => import(`../models/${m}.js`),
-    ),
+    models: () =>
+      models.filter(model => modelNotExisted(app, model)).map(m => import(`../models/${m}.js`)),
     // add routerData prop
     component: () => {
       if (!routerDataCache) {
-        // eslint-disable-next-line
         routerDataCache = getRouterData(app);
       }
-      return component().then((raw) => {
+      return component().then(raw => {
         const Component = raw.default || raw;
-        return props => createElement(Component, {
-          ...props,
-          routerData: routerDataCache,
-        });
+        return props =>
+          createElement(Component, {
+            ...props,
+            routerData: routerDataCache,
+          });
       });
     },
   });
@@ -83,7 +82,7 @@ export const getRouterData = (app) => {
         import('../routes/phone/Home' /* webpackChunkName: "phone" */)),
     },
     // 直接进入
-    '/report': {
+    '/statisticalQuery/report': {
       component: ReportHome,
     },
     // 直接进入，
@@ -334,14 +333,14 @@ export const getRouterData = (app) => {
 
     // 晨间播报
     // 直接进入，或从 customerPool 页面右侧-晨间播报-更多进入
-    '/broadcastList': {
+    '/strategyCenter/broadcastList': {
       component: dynamicWrapper(app, ['morningBoradcast'], () =>
         import('../routes/morningBroadcast/BroadcastList' /* webpackChunkName: "broadcastList" */)),
     },
     // 从 broadcastList 点击任意记录进入
     '/broadcastDetail': {
       component: dynamicWrapper(app, ['morningBoradcast'], () =>
-        import('../routes/morningBroadcast/BroadcastDetail' /* webpackChunkName: "broadcastList_broadcastDetail" */)),
+        import('../routes/morningBroadcast/BroadcastDetail' /* webpackChunkName: "broadcastDetail" */)),
     },
     // 个股点评
     // 直接进入

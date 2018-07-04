@@ -99,7 +99,7 @@ export default class MorningBroadcast extends PureComponent {
       <div className={styles.morning_broadcast}>
         <div className={styles.title}>
           <span>晨间播报</span>
-          <span className={styles.more} onClick={() => this.openNewTab('/broadcastList')} >
+          <span className={styles.more} onClick={() => this.openNewTab('/strategyCenter/broadcastList')} >
             <span>更多</span>
             <img src={more} alt="" />
           </span>
