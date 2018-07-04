@@ -422,6 +422,14 @@ const matchRule = {
       render: 'renderNoCompleted',
     }],
   },
+  holdingIndustry: {
+    inset: true,
+    key: [{
+      name: '持仓行业',
+      id: 'holdingIndustry',
+      render: 'renderHoldingIndustry',
+    }],
+  },
 };
 
 export default matchRule;

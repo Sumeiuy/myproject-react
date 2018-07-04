@@ -134,6 +134,9 @@ export default class CustomerLists extends PureComponent {
     getSearchPersonList: PropTypes.func.isRequired,
     clearSearchPersonList: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryHoldingIndustryDetail: PropTypes.func.isRequired,
+    industryDetail: PropTypes.object.isRequired,
+    queryHoldingIndustryDetailReqState: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -147,6 +150,7 @@ export default class CustomerLists extends PureComponent {
     collectCustRange: () => { },
     queryHoldingProductReqState: false,
     dataForNextPage: {},
+    queryHoldingIndustryDetailReqState: false,
   }
 
   constructor(props) {
@@ -494,6 +498,9 @@ export default class CustomerLists extends PureComponent {
       queryHoldingSecurityRepetition,
       holdingSecurityData,
       clearSearchPersonList,
+      queryHoldingIndustryDetail,
+      industryDetail,
+      queryHoldingIndustryDetailReqState,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -631,6 +638,9 @@ export default class CustomerLists extends PureComponent {
                     queryHoldingProductReqState={queryHoldingProductReqState}
                     queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
                     holdingSecurityData={holdingSecurityData}
+                    queryHoldingIndustryDetail={queryHoldingIndustryDetail}
+                    industryDetail={industryDetail}
+                    queryHoldingIndustryDetailReqState={queryHoldingIndustryDetailReqState}
                   />,
                 )
               }

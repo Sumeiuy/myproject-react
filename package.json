@@ -43,7 +43,7 @@
     "hoist-non-react-statics": "^2.3.1",
     "immutability-helper": "^2.6.6",
     "intro.js": "^2.9.3",
-    "lego-react-filter": "^1.0.21",
+    "lego-react-filter": "^1.0.29",
     "lego-soft-phone": "^1.0.3",
     "lego-tree-filter": "^1.0.4",
     "localforage": "^1.4.3",

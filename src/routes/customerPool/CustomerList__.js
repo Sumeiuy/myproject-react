@@ -219,6 +219,13 @@ function getFilterParam(filterObj, hashString) {
     param.primaryKeyJxgrps = _.compact([].concat(filterObj.primaryKeyJxgrps[0]));
   }
 
+  // 持仓行业
+  const industryId =
+    _.isArray(filterObj.holdingIndustry) ? filterObj.holdingIndustry[0] : filterObj.holdingIndustry;
+  if (industryId) {
+    param.primaryKeyIndustry = _.compact([].concat(industryId));
+  }
+
 
   // 最近一次服务 unServiced
   if (filterObj.lastServDt) {
@@ -309,6 +316,9 @@ const effects = {
   addCallRecord: 'customerPool/addCallRecord',
   queryHoldingSecurityRepetition: 'customerPool/queryHoldingSecurityRepetition',
   getCustRangeByAuthority: 'customerPool/getCustRangeByAuthority',
+  queryIndustryList: 'customerPool/queryIndustryList',
+  clearIndustryList: 'customerPool/clearIndustryList',
+  queryHoldingIndustryDetail: 'customerPool/queryHoldingIndustryDetail',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -357,6 +367,10 @@ const mapStateToProps = state => ({
   currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
   // 组合产品订购客户重复的持仓证券
   holdingSecurityData: state.customerPool.holdingSecurityData,
+  // 持仓行业过滤器的数据
+  industryList: state.customerPool.industryList,
+  // 持仓行业的详情
+  industryDetail: state.customerPool.industryDetail,
 });
 
 const mapDispatchToProps = {
@@ -411,6 +425,9 @@ const mapDispatchToProps = {
   getCustRangeByAuthority: fetchDataFunction(true, effects.getCustRangeByAuthority),
   // 组合产品订购客户查询持仓证券重合度
   queryHoldingSecurityRepetition: fetchDataFunction(false, effects.queryHoldingSecurityRepetition),
+  queryIndustryList: fetchDataFunction(true, effects.queryIndustryList),
+  clearIndustryList: fetchDataFunction(false, effects.clearIndustryList),
+  queryHoldingIndustryDetail: fetchDataFunction(false, effects.queryHoldingIndustryDetail),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -481,6 +498,11 @@ export default class CustomerList extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryIndustryList: PropTypes.func.isRequired,
+    industryList: PropTypes.array.isRequired,
+    clearIndustryList: PropTypes.func.isRequired,
+    queryHoldingIndustryDetail: PropTypes.func.isRequired,
+    industryDetail: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -552,6 +574,7 @@ export default class CustomerList extends PureComponent {
         query,
       },
       getCustRangeByAuthority,
+      queryIndustryList,
     } = this.props;
     // 请求客户列表
     this.getCustomerList(this.props);
@@ -561,6 +584,8 @@ export default class CustomerList extends PureComponent {
     this.getFiltersOfAllSightingTelescope(query);
     // 请求服务营业部筛选器的数据
     getCustRangeByAuthority();
+    // 请求持仓行业数据
+    queryIndustryList();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -940,6 +965,11 @@ export default class CustomerList extends PureComponent {
       getSearchPersonList,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
+      queryIndustryList,
+      industryList,
+      clearIndustryList,
+      queryHoldingIndustryDetail,
+      industryDetail,
     } = this.props;
     const {
       sortDirection,
@@ -991,6 +1021,9 @@ export default class CustomerList extends PureComponent {
           location={location}
           onFilterChange={this.filterChange}
           searchServerPersonList={searchServerPersonList}
+          queryIndustryList={queryIndustryList}
+          clearIndustryList={clearIndustryList}
+          industryList={industryList}
         />
         <CustomerLists
           getSearchPersonList={getSearchPersonList}
@@ -1050,6 +1083,9 @@ export default class CustomerList extends PureComponent {
           currentPytMng={this.getPostPtyMngId()}
           queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
           holdingSecurityData={holdingSecurityData}
+          queryHoldingIndustryDetail={queryHoldingIndustryDetail}
+          industryDetail={industryDetail}
+          queryHoldingIndustryDetailReqState={interfaceState[effects.queryHoldingIndustryDetail]}
         />
       </div>
     );
