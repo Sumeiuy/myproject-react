@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-04 13:39:40
+ * @Last Modified time: 2018-07-04 14:20:41
  */
 
 import React, { PureComponent } from 'react';
@@ -464,7 +464,7 @@ export default class ApplyEditForm extends PureComponent {
     const {
       detailInfo,
       detailInfo: {
-        custId,
+        econNum,
         custName,
         id,
         empId,
@@ -503,7 +503,7 @@ export default class ApplyEditForm extends PureComponent {
     if (_.isEmpty(this.props.detailInfo)) {
       return null;
     }
-    const custInfo = `${custName}(${custId})`;
+    const custInfo = `${custName}(${econNum})`;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
     // 判断是否是个人客户
