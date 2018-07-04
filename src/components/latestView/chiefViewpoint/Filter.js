@@ -20,6 +20,7 @@ const Search = Input.Search;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 const typeList = config.chiefViewpointType;
+const directTypeList = config.directType;
 const dateFormatStr = config.dateFormatStr;
 
 const searchStyle = {
@@ -37,6 +38,7 @@ export default class Filter extends PureComponent {
     startDate: PropTypes.string,
     endDate: PropTypes.string,
     onFilter: PropTypes.func.isRequired,
+    filterType: PropTypes.string,
   }
 
   static defaultProps = {
@@ -44,11 +46,18 @@ export default class Filter extends PureComponent {
     keyword: '',
     startDate: '',
     endDate: '',
+    filterType: config.viewpointFilterType,
   }
 
   @autobind
   getOptionList() {
-    return typeList.map(item => (
+    const { filterType } = this.props;
+    if (filterType === config.viewpointFilterType) {
+      return typeList.map(item => (
+        <Option key={item.value} value={item.value}>{item.label}</Option>
+      ));
+    }
+    return directTypeList.map(item => (
       <Option key={item.value} value={item.value}>{item.label}</Option>
     ));
   }

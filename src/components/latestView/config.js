@@ -169,4 +169,51 @@ export default {
       },
     ],
   },
+  directType: [
+    {
+      show: true,
+      label: '不限',
+      value: '',
+    },
+    {
+      show: true,
+      label: '调入',
+      value: '1',
+    },
+    {
+      show: true,
+      label: '调出',
+      value: '2',
+    },
+  ],
+  // 首席观点筛选类型
+  viewpointFilterType: '1',
+  // 行业主题调整筛选类型
+  industryThemeFilterType: '2',
+  industryTitleList: [
+    {
+      title: '行业/主题',
+      dataIndex: 'title',
+      key: 'title',
+      width: '40%',
+    },
+    {
+      title: '调整方向',
+      dataIndex: 'direction',
+      key: 'direction',
+      width: '10%',
+    },
+    {
+      title: '理由',
+      dataIndex: 'reason',
+      key: 'reason',
+      width: '40%',
+    },
+    {
+      title: '调整时间',
+      dataIndex: 'time',
+      key: 'time',
+      width: '10%',
+    },
+  ],
 };

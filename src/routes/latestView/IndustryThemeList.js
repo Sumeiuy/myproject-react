@@ -1,9 +1,9 @@
 /**
  * @Author: XuWenKang
- * @Description: 首席观点列表页面
+ * @Description: 行业主题调整列表页面
  * @Date: 2018-06-19 13:27:04
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-25 11:09:09
+ * @Last Modified time: 2018-06-29 13:50:06
  */
 
 import React, { PureComponent } from 'react';
@@ -13,16 +13,15 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { Table } from 'antd';
 import _ from 'lodash';
-import { linkTo } from '../../utils';
-import { url as urlHelper, dva, time } from '../../helper';
+import { dva, time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import Pagination from '../../components/common/Pagination';
 import Fiter from '../../components/latestView/chiefViewpoint/Filter';
-import styles from './viewpointList.less';
+import styles from './industryThemeList.less';
 // import logable from '../../decorators/logable';
 import config from '../../components/latestView/config';
 
-const titleList = config.viewpointTitleList;
+const titleList = config.industryTitleList;
 const { generateEffect } = dva;
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
@@ -33,26 +32,26 @@ function formatString(str) {
 
 const effects = {
   // 获取首席观点列表数据
-  queryChiefViewpointList: 'latestView/queryChiefViewpointList',
+  queryIndustryThemeList: 'latestView/queryIndustryThemeList',
 };
 
 const mapStateToProps = state => ({
   // 首席观点列表数据
-  viewpointData: state.latestView.viewpointData,
+  industryThemeData: state.latestView.industryThemeData,
 });
 const mapDispatchToProps = {
-  queryChiefViewpointList: generateEffect(effects.queryChiefViewpointList,
+  queryIndustryThemeList: generateEffect(effects.queryIndustryThemeList,
     { loading: true, forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class ViewpointList extends PureComponent {
+export default class IndustryThemeList extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    // 首席观点列表数据
-    queryChiefViewpointList: PropTypes.func.isRequired,
-    viewpointData: PropTypes.object.isRequired,
+    // 行业主题调整列表数据
+    queryIndustryThemeList: PropTypes.func.isRequired,
+    industryThemeData: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -72,9 +71,9 @@ export default class ViewpointList extends PureComponent {
           endDate,
         },
       },
-      queryChiefViewpointList,
+      queryIndustryThemeList,
     } = this.props;
-    queryChiefViewpointList({
+    queryIndustryThemeList({
       pageSize,
       pageNum,
       type,
@@ -90,55 +89,29 @@ export default class ViewpointList extends PureComponent {
     _.find(newTitleList, item => item.key === 'title').render = (item, record) => (
       <div
         className={classnames(styles.td, styles.headLine)}
-        title={formatString(item)}
-        onClick={() => { this.toDetailPage(record); }}
+        title={formatString(record.title || record.industry)}
+        onClick={() => { this.showDetailModal(record); }}
       >
-        <a>{formatString(item)}</a>
+        <a>{formatString(record.title || record.industry)}</a>
       </div>
     );
-    _.find(newTitleList, item => item.key === 'typeName').render = item => (
+    _.find(newTitleList, item => item.key === 'direction').render = item => (
       <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
     );
-    _.find(newTitleList, item => item.key === 'stockName').render = item => (
+    _.find(newTitleList, item => item.key === 'reason').render = item => (
       <div className={classnames(styles.td, styles.stock)}>{formatString(item)}</div>
-    );
-    _.find(newTitleList, item => item.key === 'industryName').render = item => (
-      <div className={classnames(styles.td, styles.induname)}>{formatString(item)}</div>
     );
     _.find(newTitleList, item => item.key === 'time').render = (item) => {
       const date = time.format(item, config.dateFormatStr);
-      return (
-        <div className={classnames(styles.td, styles.pubdatelist)}>{formatString(date)}</div>
-      );
+      return <div className={classnames(styles.td, styles.induname)}>{formatString(date)}</div>;
     };
-    _.find(newTitleList, item => item.key === 'author').render = item => (
-      <div
-        className={classnames(styles.td, styles.authors)}
-        title={formatString(item)}
-      >
-        {formatString(item)}
-      </div>
-    );
     return newTitleList;
   }
 
-  // 当前页跳转到详情页
+  // 打开详情弹窗
   @autobind
-  toDetailPage(data) {
-    const { location: { query } } = this.props;
-    const { id } = data;
-    const { push } = this.context;
-    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
-    const url = '/latestView/viewpointDetail';
-    const newQuery = { ...query, id, sourceUrl: '/latestView/viewpointList' };
-    linkTo({
-      routerAction: push,
-      url: `${url}?${urlHelper.stringify(newQuery)}`,
-      param,
-      pathname: url,
-      query: newQuery,
-      name: '资讯详情',
-    });
+  showDetailModal(data) {
+    console.log('detail', data);
   }
 
   @autobind
@@ -155,9 +128,9 @@ export default class ViewpointList extends PureComponent {
           endDate,
         },
       },
-      queryChiefViewpointList,
+      queryIndustryThemeList,
     } = this.props;
-    queryChiefViewpointList({
+    queryIndustryThemeList({
       pageNum,
       pageSize: 20,
       type,
@@ -177,14 +150,14 @@ export default class ViewpointList extends PureComponent {
         pathname,
         query,
       },
-      queryChiefViewpointList,
+      queryIndustryThemeList,
     } = this.props;
     const newQuery = {
       ...query,
       ...param,
       pageNum: 1,
     };
-    queryChiefViewpointList({
+    queryIndustryThemeList({
       pageNum: 1,
       pageSize: 20,
       type: newQuery.type,
@@ -206,12 +179,12 @@ export default class ViewpointList extends PureComponent {
           endDate,
         },
       },
-      viewpointData,
+      industryThemeData,
     } = this.props;
     const {
       list = EMPTY_ARRAY,
       page = EMPTY_OBJECT,
-    } = viewpointData;
+    } = industryThemeData;
     const paganationOption = {
       current: page.curPageNum,
       pageSize: page.pageSize,
@@ -229,13 +202,13 @@ export default class ViewpointList extends PureComponent {
             startDate={startDate}
             endDate={endDate}
             onFilter={this.handleQueryList}
+            filterType={config.industryThemeFilterType}
           />
           <Table
             rowKey={'id'}
             columns={this.getColumns()}
             dataSource={list}
             pagination={false}
-            scroll={{ x: 1100 }}
           />
           <Pagination {...paganationOption} />
         </div>
