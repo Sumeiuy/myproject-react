@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-02 20:09:09
+ * @Last Modified time: 2018-07-03 16:58:19
  */
 
 import React, { PureComponent } from 'react';
@@ -130,6 +130,8 @@ export default class EditBasicInfo extends PureComponent {
         ageFlag,
         invFlag,
         custType,
+        openOptMktCatg,
+        declareBus,
       },
     } = this.props;
     // 个人客户，客户类型为新开客户,年龄条件不符合要求
@@ -147,7 +149,7 @@ export default class EditBasicInfo extends PureComponent {
       // 申请类型
       reqType: '',
       // 开立期权市场类别
-      openOptMktCatg: '',
+      openOptMktCatg: openOptMktCatg || '',
       // 业务受理营业部
       busPrcDivId: '',
       // 股票客户类型下拉列表
@@ -159,7 +161,7 @@ export default class EditBasicInfo extends PureComponent {
       // 业务受理营业部下拉列表
       busDivisionList: EMPTY_LIST,
       // 申报事项
-      declareBus: '',
+      declareBus: declareBus || '',
       // 是否显示学历提示，默认是false
       isShowDegreePrompt,
       // 是否显示投资经历提示，默认是false
