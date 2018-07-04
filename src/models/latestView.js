@@ -3,10 +3,9 @@
  * @Description: 最新观点modal
  * @Date: 2018-04-17 10:08:03
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-22 15:19:55
+ * @Last Modified time: 2018-06-29 13:59:00
 */
 
-// import _ from 'lodash';
 import { latestView as api } from '../api';
 import config from '../components/latestView/config';
 
@@ -35,6 +34,8 @@ export default {
     ziJinCycleData: EMPTY_OBJECT,
     // 首页紫金时钟列表
     ziJinClockList: EMPTY_LIST,
+    // 行业主题调整列表数据
+    industryThemeData: EMPTY_OBJECT,
   },
   reducers: {
     // 获取首页-每日首席观点
@@ -114,6 +115,14 @@ export default {
         majorAssetsDetail: resultData,
       };
     },
+    // 获取行业主题调整列表数据
+    queryIndustryThemeListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        industryThemeData: resultData,
+      };
+    },
   },
   effects: {
     // 根据类型获取首页-首席观点模块数据
@@ -188,6 +197,19 @@ export default {
       const response = yield call(api.queryZiJinViewpointList, payload);
       yield put({
         type: 'queryZiJinViewpointListSuccess',
+        payload: response,
+      });
+    },
+    // 获取行业主题调整列表数据
+    * queryIndustryThemeList({ payload }, { call, put }) {
+      const newPayload = {
+        ...payload,
+        // 后端要求写死传0
+        hasQuery: 0,
+      };
+      const response = yield call(api.queryIndustryThemeList, newPayload);
+      yield put({
+        type: 'queryIndustryThemeListSuccess',
         payload: response,
       });
     },

@@ -26,10 +26,6 @@ const dispatch = dva.generateEffect;
 const effects = {
   // 首席观点模块数据
   queryChiefViewpoint: 'latestView/queryChiefViewpoint',
-  // 获取首席观点列表数据
-  queryChiefViewpointList: 'latestView/queryChiefViewpointList',
-  // 获取首席观点详情数据
-  queryChiefViewpointDetail: 'latestView/queryChiefViewpointDetail',
   // 大类资产配置分析-首页列表
   queryMajorAssetsIndexList: 'latestView/queryMajorAssetsIndexList',
   // 大类资产配置分析-更多列表
@@ -47,10 +43,6 @@ const mapStateToProps = state => ({
   dayViewpointData: state.latestView.dayViewpointData,
   // 首页每周首席观点
   monthViewpointData: state.latestView.monthViewpointData,
-  // 首席观点列表数据
-  viewpointData: state.latestView.viewpointData,
-  // 首席观点详情
-  viewpointDetail: state.latestView.viewpointDetail,
   // 大类资产配置分析-首页列表
   majorAssetsIndexData: state.latestView.majorAssetsIndexData,
   // 大类资产配置分析-更多列表
@@ -88,12 +80,6 @@ export default class LatestView extends PureComponent {
     dayViewpointData: PropTypes.object.isRequired,
     // 首页每周首席观点
     monthViewpointData: PropTypes.object.isRequired,
-    // 首席观点列表数据
-    queryChiefViewpointList: PropTypes.func.isRequired,
-    viewpointData: PropTypes.object.isRequired,
-    // 首席观点详情
-    queryChiefViewpointDetail: PropTypes.func.isRequired,
-    viewpointDetail: PropTypes.object.isRequired,
     // 大类资产配置分析-首页列表
     queryMajorAssetsIndexList: PropTypes.func.isRequired,
     majorAssetsIndexData: PropTypes.object.isRequired,
