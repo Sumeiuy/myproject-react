@@ -23,6 +23,9 @@ const helper = {
   isSightingScope(value) {
     return value === 'jzyx';
   },
+  transformDateTypeToDate(cycle) {
+    return transformCycle(cycle);
+  },
   getFilter(data) {
     const {
       source,

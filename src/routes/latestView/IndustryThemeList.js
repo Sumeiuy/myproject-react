@@ -17,8 +17,8 @@ import { dva, time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import Pagination from '../../components/common/Pagination';
 import Fiter from '../../components/latestView/chiefViewpoint/Filter';
+import ViewpointDetailModal from '../../components/latestView/ziJinClockView/ViewpointDetailModal';
 import styles from './industryThemeList.less';
-// import logable from '../../decorators/logable';
 import config from '../../components/latestView/config';
 
 const titleList = config.industryTitleList;
@@ -30,6 +30,7 @@ function formatString(str) {
   return _.isEmpty(str) ? '--' : str;
 }
 
+const DETAIL_MODAL_VISIBLE = 'detailModalVisible';
 const effects = {
   // 获取首席观点列表数据
   queryIndustryThemeList: 'latestView/queryIndustryThemeList',
@@ -57,6 +58,14 @@ export default class IndustryThemeList extends PureComponent {
   static contextTypes = {
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      [DETAIL_MODAL_VISIBLE]: false,
+      modalData: {},
+    };
   }
 
   componentDidMount() {
@@ -90,7 +99,7 @@ export default class IndustryThemeList extends PureComponent {
       <div
         className={classnames(styles.td, styles.headLine)}
         title={formatString(record.title || record.industry)}
-        onClick={() => { this.showDetailModal(record); }}
+        onClick={() => { this.openModal(record); }}
       >
         <a>{formatString(record.title || record.industry)}</a>
       </div>
@@ -108,10 +117,21 @@ export default class IndustryThemeList extends PureComponent {
     return newTitleList;
   }
 
-  // 打开详情弹窗
+  // 打开弹窗
   @autobind
-  showDetailModal(data) {
-    console.log('detail', data);
+  openModal(data) {
+    this.setState({
+      modalData: data,
+      [DETAIL_MODAL_VISIBLE]: true,
+    });
+  }
+
+  // 关闭弹窗
+  @autobind
+  closeModal(modalKey) {
+    this.setState({
+      [modalKey]: false,
+    });
   }
 
   @autobind
@@ -181,6 +201,7 @@ export default class IndustryThemeList extends PureComponent {
       },
       industryThemeData,
     } = this.props;
+    const { modalData } = this.state;
     const {
       list = EMPTY_ARRAY,
       page = EMPTY_OBJECT,
@@ -212,6 +233,12 @@ export default class IndustryThemeList extends PureComponent {
           />
           <Pagination {...paganationOption} />
         </div>
+        <ViewpointDetailModal
+          modalKey={DETAIL_MODAL_VISIBLE}
+          visible={this.state[DETAIL_MODAL_VISIBLE]}
+          closeModal={this.closeModal}
+          data={modalData}
+        />
       </div>
     );
   }
