@@ -2,26 +2,35 @@
  * @Author: XuWenKang
  * @Description: 最新观点首页-紫金时钟观点
  * @Date: 2018-06-22 09:50:10
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-22 15:49:19
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-07-02 14:46:37
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+
 import Icon from '../../common/Icon';
 import ViewpointListItem from './ViewpointListItem';
+import ZijinClockDetailModal from './ZijinClockDetailModal';
 import styles from './ziJinClockViewpoint.less';
 
 const EMPTY_LIST = [];
-
+const DETAIL_MODAL_VISIBLE = 'detailModalVisible';
 export default class ZiJinClockViewpoint extends PureComponent {
   static propTypes = {
     // 首页紫金时钟当前周期数据
     data: PropTypes.object.isRequired,
     // 首页紫金时钟列表
     list: PropTypes.array.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      [DETAIL_MODAL_VISIBLE]: false,
+    };
   }
 
   @autobind
@@ -32,7 +41,7 @@ export default class ZiJinClockViewpoint extends PureComponent {
       <div key={item.id} className={classnames(styles.chartItem, { [styles.active]: item.active })}>
         {
           item.active ?
-            <a className={styles.cycleText} onClick={this.showModal}>{item.name}</a>
+            <a className={styles.cycleText} onClick={this.openModal}>{item.name}</a>
             :
             <span className={styles.cycleText}>{item.name}</span>
         }
@@ -56,9 +65,20 @@ export default class ZiJinClockViewpoint extends PureComponent {
     });
   }
 
+  // 打开弹窗
   @autobind
-  showModal() {
-    console.log('当前周期');
+  openModal() {
+    this.setState({
+      [DETAIL_MODAL_VISIBLE]: true,
+    });
+  }
+
+  // 关闭弹窗
+  @autobind
+  closeModal(modalKey) {
+    this.setState({
+      [modalKey]: false,
+    });
   }
 
   @autobind
@@ -67,6 +87,7 @@ export default class ZiJinClockViewpoint extends PureComponent {
   }
 
   render() {
+    const { activeCycle } = this.props.data;
     return (
       <div className={styles.ziJinBox}>
         <div className={`${styles.headerBox} clearfix`}>
@@ -86,6 +107,12 @@ export default class ZiJinClockViewpoint extends PureComponent {
             this.getViewpointList()
           }
         </div>
+        <ZijinClockDetailModal
+          modalKey={DETAIL_MODAL_VISIBLE}
+          visible={this.state[DETAIL_MODAL_VISIBLE]}
+          closeModal={this.closeModal}
+          data={activeCycle}
+        />
       </div>
     );
   }
