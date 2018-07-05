@@ -51,6 +51,7 @@ export default {
     orderCustData: EMPTY_OBJECT, // 订购客户数据
     reportHistoryData: EMPTY_OBJECT, // 组合详情-历史报告模块数据
     modalReportHistoryData: EMPTY_OBJECT, // 组合详情-历史报告弹窗数据
+    custRepeatData: EMPTY_OBJECT,  // 客户持仓重合数据
   },
   reducers: {
     // 组合详情-概览
@@ -133,6 +134,14 @@ export default {
         modalReportHistoryData: resultData,
       };
     },
+    // 持仓客户重复数据
+    queryHoldRepeatProportionSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        custRepeatData: resultData,
+      };
+    },
   },
   effects: {
     // 组合详情-概览数据
@@ -207,6 +216,14 @@ export default {
         'getReportHistoryListSuccess' : 'getModalReportHistoryListSuccess';
       yield put({
         type,
+        payload: response,
+      });
+    },
+    // 查询持仓客户重合数据
+    * queryHoldRepeatProportion({ payload }, { call, put }) {
+      const response = yield call(api.queryHoldRepeatProportion, payload);
+      yield put({
+        type: 'queryHoldRepeatProportionSuccess',
         payload: response,
       });
     },
