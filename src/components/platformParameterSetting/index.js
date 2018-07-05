@@ -5,6 +5,6 @@
  */
 
 
-export { default as CustomerLabel } from './routers/CustomerLabel';
+export { default as CustomerLabel } from './routers/customerLabel/index';
 export { default as LabelManager } from './routers/LabelManager';
 export { default as RecommendedLabel } from './routers/RecommendedLabel';

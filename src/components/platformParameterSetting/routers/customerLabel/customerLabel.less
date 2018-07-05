@@ -20,6 +20,10 @@
   }
   .customerLabelList {
     margin-top: 15px;
+    .remove {
+      color: #108ee9;
+      cursor: pointer;
+    }
     :global {
       .ant-table-wrapper .column {
         max-width: none;
@@ -47,6 +51,22 @@
       font-size: 14px;
       box-sizing: border-box;
       padding-top: 50px;
+    }
+  }
+}
+
+.addLabel {
+  :global {
+    .ant-modal-header, .ant-modal-footer {
+      background: #f7f7f7;
+    }
+    .ant-modal-title {
+      font-size: 16px;
+    }
+    .ant-modal-body {
+      font-size: 14px;
+      box-sizing: border-box;
+      padding-top: 20px;
     }
   }
 }
