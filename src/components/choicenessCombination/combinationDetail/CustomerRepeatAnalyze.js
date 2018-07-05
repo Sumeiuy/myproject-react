@@ -1,6 +1,6 @@
 /*
  * @Author: XuWenKang
- * @Description: 精选组合-组合详情-订购客户
+ * @Description: 精选组合-组合详情-重复客户分析
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
  * @Last Modified time: 2018-06-05 15:49:11
@@ -8,23 +8,22 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-// import _ from 'lodash';
-import { Popover, Table } from 'antd';
+import _ from 'lodash';
+import { Table } from 'antd';
+import { number } from '../../../helper/';
 import config from '../config';
-import styles from './orderingCustomer.less';
+import styles from './customerRepeatAnalyze.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const titleList = config.titleList.orderCust;
-const { overlayStyle, sourceType } = config;
-export default class OrderingCustomer extends PureComponent {
+const titleList = config.titleList.custRepeat;
+const { sourceType } = config;
+export default class CustomerRepeatAnalyze extends PureComponent {
   static propTypes = {
     // 当前组合code
     combinationCode: PropTypes.string,
     // 订购客户数据
     data: PropTypes.object.isRequired,
-    // 翻页
-    pageChange: PropTypes.func.isRequired,
     // 组合数据，用于跳转到客户列表页面
     combinationData: PropTypes.object,
     // 打开持仓查客户页面
@@ -39,18 +38,13 @@ export default class OrderingCustomer extends PureComponent {
   @autobind
   getNewTitleList(list) {
     const newTitleList = [...list];
-    newTitleList[0].render = text => (
-      <div className={styles.ellipsis} title={text}>
-        {text}
+    _.find(newTitleList, item => item.key === 'custProportion').render = text => (
+      <div className={styles.processBox}>
+        <div className={styles.processContainer}>
+          <span style={{ width: text }} />
+        </div>
+        <em>{text}</em>
       </div>
-    );
-    newTitleList[1].render = text => (
-      <div className={styles.ellipsis} title={text}>
-        {text}
-      </div>
-    );
-    newTitleList[3].render = text => (
-      this.renderPopover(text)
     );
     return newTitleList;
   }
@@ -66,48 +60,15 @@ export default class OrderingCustomer extends PureComponent {
     ));
   }
 
-  @autobind
-  handlePaginationChange(page) {
-    const { pageChange } = this.props;
-    pageChange(page);
-  }
-
-  // 设置 popover
-  @autobind
-  renderPopover(value) {
-    let reactElement = null;
-    if (value) {
-      reactElement = (<Popover
-        placement="bottomLeft"
-        content={value}
-        trigger="hover"
-        overlayStyle={overlayStyle}
-      >
-        <div className={styles.ellipsis}>
-          {value}
-        </div>
-      </Popover>);
-    } else {
-      reactElement = '暂无';
-    }
-    return reactElement;
-  }
-
   render() {
     const {
       data: {
         list = EMPTY_LIST,
-        page = EMPTY_OBJECT,
       },
       openCustomerListPage,
       combinationData,
       combinationCode,
     } = this.props;
-    const PaginationOption = {
-      current: page.pageNum || 1,
-      total: page.totalCount || 0,
-      pageSize: page.pageSize || 5,
-    };
     const newTitleList = this.getNewTitleList(titleList);
     const openPayload = {
       name: combinationData.composeName,
@@ -118,14 +79,17 @@ export default class OrderingCustomer extends PureComponent {
     return (
       <div className={styles.orderingCustomerBox}>
         <div className={`${styles.headBox} clearfix`}>
-          <h3>订购客户</h3>
+          <h3>客户持仓重合比例分析</h3>
           <a onClick={() => openCustomerListPage(openPayload)}>进入客户列表</a>
+        </div>
+        <div className={styles.tipsBox}>
+          截止2018年5月24日，当前组合订购客户共计
+          <span className={styles.total}>{number.thousandFormat(11223, true)}</span>人
         </div>
         <Table
           columns={newTitleList}
           dataSource={this.getTransformList(list)}
-          pagination={PaginationOption}
-          onChange={this.handlePaginationChange}
+          pagination={false}
           rowKey={'rowKey'}
         />
       </div>
