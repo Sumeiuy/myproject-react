@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-02 15:49:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-04 16:00:20
+ * @Last Modified time: 2018-07-05 14:48:22
  * @description 重点监控账户的核查信息列表Modal
  */
 
@@ -73,6 +73,7 @@ export default class CheckInfoListModal extends PureComponent {
         id: 'bz_win_view360KeyMonitorDetailPage',
         title: '重点监控账户核查信息',
         sourceURL,
+        z_index: 1100,
       });
     }
   }
@@ -100,6 +101,7 @@ export default class CheckInfoListModal extends PureComponent {
         modalKey="custCheckInfoListModal"
         title="重点监控账户核查信息"
         needBtn={false}
+        maskClosable={false}
         size="large"
         visible={visible}
         closeModal={this.handleCloseModal}

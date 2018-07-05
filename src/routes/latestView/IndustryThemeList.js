@@ -17,8 +17,8 @@ import { dva, time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import Pagination from '../../components/common/Pagination';
 import Fiter from '../../components/latestView/chiefViewpoint/Filter';
+import ViewpointDetailModal from '../../components/latestView/ziJinClockView/ViewpointDetailModal';
 import styles from './industryThemeList.less';
-// import logable from '../../decorators/logable';
 import config from '../../components/latestView/config';
 
 const titleList = config.industryTitleList;
@@ -30,6 +30,7 @@ function formatString(str) {
   return _.isEmpty(str) ? '--' : str;
 }
 
+const DETAIL_MODAL_VISIBLE = 'detailModalVisible';
 const effects = {
   // 获取首席观点列表数据
   queryIndustryThemeList: 'latestView/queryIndustryThemeList',
@@ -59,6 +60,14 @@ export default class IndustryThemeList extends PureComponent {
     push: PropTypes.func.isRequired,
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      [DETAIL_MODAL_VISIBLE]: false,
+      modalData: {},
+    };
+  }
+
   componentDidMount() {
     const {
       location: {
@@ -86,32 +95,78 @@ export default class IndustryThemeList extends PureComponent {
   @autobind
   getColumns() {
     const newTitleList = [...titleList];
-    _.find(newTitleList, item => item.key === 'title').render = (item, record) => (
-      <div
-        className={classnames(styles.td, styles.headLine)}
-        title={formatString(record.title || record.industry)}
-        onClick={() => { this.showDetailModal(record); }}
-      >
-        <a>{formatString(record.title || record.industry)}</a>
-      </div>
-    );
-    _.find(newTitleList, item => item.key === 'direction').render = item => (
-      <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
-    );
-    _.find(newTitleList, item => item.key === 'reason').render = item => (
-      <div className={classnames(styles.td, styles.stock)}>{formatString(item)}</div>
-    );
-    _.find(newTitleList, item => item.key === 'time').render = (item) => {
-      const date = time.format(item, config.dateFormatStr);
-      return <div className={classnames(styles.td, styles.induname)}>{formatString(date)}</div>;
-    };
-    return newTitleList;
+    return newTitleList.map((item) => {
+      if (item.key === 'title') {
+        return {
+          ...item,
+          render: (text, record) => (
+            <div
+              className={classnames(styles.td, styles.headLine)}
+              title={formatString(record.title || record.industry)}
+              onClick={() => { this.openModal(record); }}
+            >
+              <a>{formatString(record.title || record.industry)}</a>
+            </div>
+          ),
+        };
+      }
+      if (item.key === 'direction') {
+        return {
+          ...item,
+          render: text => (
+            <div className={classnames(styles.td, styles.category)}>{formatString(text)}</div>
+          ),
+        };
+      }
+      if (item.key === 'reason') {
+        return {
+          ...item,
+          render: text => (
+            <div className={classnames(styles.td, styles.stock)}>{formatString(text)}</div>
+          ),
+        };
+      }
+      if (item.key === 'time') {
+        return {
+          ...item,
+          render: (text) => {
+            const date = time.format(text, config.dateFormatStr);
+            return (<div className={classnames(styles.td, styles.induname)}>
+              {formatString(date)}
+            </div>);
+          },
+        };
+      }
+      return item;
+    });
   }
 
-  // 打开详情弹窗
+  // 由于后端返回的列表数据没有唯一的key值，所以拼一个不会重复的rowKey用作渲染时的key
   @autobind
-  showDetailModal(data) {
-    console.log('detail', data);
+  getTransformList(list) {
+    return list.map((item, index) => (
+      {
+        ...item,
+        rowKey: index,
+      }
+    ));
+  }
+
+  // 打开弹窗
+  @autobind
+  openModal(data) {
+    this.setState({
+      modalData: data,
+      [DETAIL_MODAL_VISIBLE]: true,
+    });
+  }
+
+  // 关闭弹窗
+  @autobind
+  closeModal(modalKey) {
+    this.setState({
+      [modalKey]: false,
+    });
   }
 
   @autobind
@@ -181,6 +236,7 @@ export default class IndustryThemeList extends PureComponent {
       },
       industryThemeData,
     } = this.props;
+    const { modalData } = this.state;
     const {
       list = EMPTY_ARRAY,
       page = EMPTY_OBJECT,
@@ -205,13 +261,19 @@ export default class IndustryThemeList extends PureComponent {
             filterType={config.industryThemeFilterType}
           />
           <Table
-            rowKey={'id'}
+            rowKey={'rowKey'}
             columns={this.getColumns()}
-            dataSource={list}
+            dataSource={this.getTransformList(list)}
             pagination={false}
           />
           <Pagination {...paganationOption} />
         </div>
+        <ViewpointDetailModal
+          modalKey={DETAIL_MODAL_VISIBLE}
+          visible={this.state[DETAIL_MODAL_VISIBLE]}
+          closeModal={this.closeModal}
+          data={modalData}
+        />
       </div>
     );
   }

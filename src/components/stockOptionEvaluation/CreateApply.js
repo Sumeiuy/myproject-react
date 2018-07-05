@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-04 11:19:35
+ * @Last Modified time: 2018-07-05 12:58:08
  */
 
 import React, { PureComponent } from 'react';
@@ -283,6 +283,7 @@ export default class CreateApply extends PureComponent {
           custTransLv,
           custTransLvName,
           accptTime,
+          openOptMktCatg,
           busPrcDivId,
           divisionName,
           openDivName,
@@ -293,6 +294,7 @@ export default class CreateApply extends PureComponent {
           custTransLv,
           custTransLvName,
           accptTime,
+          openOptMktCatg,
           busPrcDivId,
         });
         // 获取下一步按钮和审批人
@@ -614,6 +616,7 @@ export default class CreateApply extends PureComponent {
       isShowModal,
       createButtonListData,
       accptTime,
+      openOptMktCatg,
       busPrcDivId,
       custTransLv,
       custTransLvName,
@@ -699,6 +702,7 @@ export default class CreateApply extends PureComponent {
               busDivisionList={busDivisionList}
               custInfo={custInfo}
               accptTime={accptTime}
+              openOptMktCatg={openOptMktCatg}
               busPrcDivId={busPrcDivId}
               custTransLv={custTransLv}
               custTransLvName={custTransLvName}
