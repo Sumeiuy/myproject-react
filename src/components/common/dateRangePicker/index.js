@@ -312,6 +312,7 @@ export default class CommonDateRangePicker extends PureComponent {
       'initialStartDate',
       'defaultVisible',
       'isFixed',
+      'className',
     ]);
 
     const { isFixed } = this.props;
