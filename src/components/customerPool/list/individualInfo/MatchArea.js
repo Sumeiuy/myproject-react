@@ -145,9 +145,10 @@ export default class MatchArea extends PureComponent {
     const {
       location: { query: { filters } },
     } = this.props;
-    const { primaryKeyJxgrps = {}, searchText = '' } = url.transfromFilterValFromUrl(filters);
+    const query = url.transfromFilterValFromUrl(filters);
+    const { searchText = '' } = query;
     return {
-      primaryKeyJxgrps,
+      ...query,
       searchText: window.decodeURIComponent(searchText),
     };
   }
