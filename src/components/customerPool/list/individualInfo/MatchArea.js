@@ -3,7 +3,7 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-04 17:27:54
+ * @Last Modified time: 2018-07-05 15:00:40
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -688,7 +688,7 @@ export default class MatchArea extends PureComponent {
   renderHoldingIndustry() {
     const {
       listItem,
-      listItem: { isPrivateCustomer, empId, custId, holdingIndustry = [{ name: '持仓行业', id: '123333' }] },
+      listItem: { isPrivateCustomer, empId, custId, holdingIndustry },
       hasNPCTIQPermission,
       hasPCTIQPermission,
       queryHoldingIndustryDetail,

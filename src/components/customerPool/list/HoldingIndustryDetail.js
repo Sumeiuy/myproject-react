@@ -3,7 +3,7 @@
  * @Description: 客户列表-订购精选组合客户持仓证券重合度
  * @Date: 2018-06-05 14:44:05
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-04 17:40:36
+ * @Last Modified time: 2018-07-05 17:36:00
  */
 
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import { autobind } from 'core-decorators';
 import { Popover, Table } from 'antd';
 import { fspContainer } from '../../../config';
 import titleList from './config/titleList';
+import { number } from '../../../helper';
 import styles from './holdingCombinationDetail.less';
 
 const getPopupContainer = () => document.querySelector(fspContainer.container) || document.body;
@@ -70,6 +71,7 @@ export default class HoldingIndustryDetail extends PureComponent {
     const { data, id, formatAsset, listItem: { custId } } = this.props;
     const list = data[`${custId}_${id}`] || EMPTY_ARRAY;
     const newTitleList = [...holdingIndustryTitleList];
+    newTitleList[1].render = value => number.thousandFormat(value);
     newTitleList[2].render = (value) => {
       const asset = formatAsset(value);
       return (<span>{`${asset.value}${asset.unit}`}</span>);

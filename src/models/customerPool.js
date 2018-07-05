@@ -976,7 +976,7 @@ export default {
       if (code === '0') {
         yield put({
           type: 'queryHoldingIndustryDetailSuccess',
-          payload: { ...payload, resultData },
+          payload: { ...payload, resultData: resultData.detail },
         });
       }
     },
@@ -1698,11 +1698,13 @@ export default {
     },
     queryHoldingIndustryDetailSuccess(state, action) {
       const { payload: { industryId, custId, resultData } } = action;
+      // 在集合里面添加一个industryNameCode，存的是已经组合在一起的name/code，方便页面中展示
+      const currentList = _.map(resultData, item => ({ ...item, industryNameCode: `${item.name}/${item.code}` }));
       return {
         ...state,
         industryDetail: {
           ...state.industryDetail,
-          [`${custId}_${industryId}`]: resultData,
+          [`${custId}_${industryId}`]: currentList,
         },
       };
     },

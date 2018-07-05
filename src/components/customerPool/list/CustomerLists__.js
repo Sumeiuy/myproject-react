@@ -16,7 +16,7 @@ import CreateContactModal from './CreateContactModal';
 import Reorder from './reorder/Reorder';
 import BottomFixedBox from './BottomFixedBox';
 import { openInTab } from '../../../utils';
-import { url as urlHelper, emp } from '../../../helper';
+import { url as urlHelper, emp, number } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
@@ -51,23 +51,23 @@ const formatAsset = (num) => {
 
   if (absNum >= WANYI) {
     return {
-      value: Number((newNum / WANYI).toFixed(2)),
+      value: number.thousandFormat(Number((newNum / WANYI).toFixed(2))),
       unit: UNIT_WANYI,
     };
   }
   if (absNum >= YI) {
     return {
-      value: Number((newNum / YI).toFixed(2)),
+      value: number.thousandFormat(Number((newNum / YI).toFixed(2))),
       unit: UNIT_YI,
     };
   }
   if (absNum >= WAN) {
     return {
-      value: Number((newNum / WAN).toFixed(2)),
+      value: number.thousandFormat(Number((newNum / WAN).toFixed(2))),
       unit: UNIT_WAN,
     };
   }
-  return { value: Number(newNum.toFixed(2)), unit: UNIT_DEFAULT };
+  return { value: number.thousandFormat(Number(newNum.toFixed(2))), unit: UNIT_DEFAULT };
 };
 
 @RestoreScrollTop
