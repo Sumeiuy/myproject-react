@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-03 16:27:20
+ * @Last Modified time: 2018-07-05 14:35:46
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -242,9 +242,7 @@ export default class KeyMonitorAccountHome extends Component {
     }
     // 此处需要增加权限控制
     // 如果没有权限的则直接弹出核查信息弹出层
-    if (true || !this.hasJumpTo360CustViewPermission(record)) { /* eslint-disable-line */
-      // TODO 目前先使用true，用于测试在FSP框架下详情展示组件的问题，
-      // TODO 完成后需要将true删除
+    if (!this.hasJumpTo360CustViewPermission(record)) {
       this.openCheckInfoModal(record);
     } else {
       this.openFSP360CustInfoViewTab(record);
