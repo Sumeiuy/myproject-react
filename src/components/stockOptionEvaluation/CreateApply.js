@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-02 19:45:23
+ * @Last Modified time: 2018-07-04 11:19:35
  */
 
 import React, { PureComponent } from 'react';
@@ -365,12 +365,12 @@ export default class CreateApply extends PureComponent {
         if (custType === 'per' && isProfessInvset === 'Y') {
           commonConfirm({
             content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
-            onOk: () => this.showNextApprover(item),
+            onOk: () => this.validateResult(item),
           });
         } else {
           commonConfirm({
             content: '请确认是否已上传相关附件。',
-            onOk: () => this.showNextApprover(item),
+            onOk: () => this.validateResult(item),
           });
         }
       }
@@ -392,14 +392,7 @@ export default class CreateApply extends PureComponent {
 
   // 校验数据
   @autobind
-  validateResult(value) {
-    if (_.isEmpty(value)) {
-      message.error('请选择审批人');
-      return;
-    }
-    this.setState({
-      nextApproverModal: false,
-    });
+  validateResult(item) {
     // 校验的数据
     const {
       custTransLv,
@@ -452,7 +445,7 @@ export default class CreateApply extends PureComponent {
         } = this.props;
         // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
         if (isValid) {
-          this.sendCreateRequest(value);
+          this.showNextApprover(item);
         } else {
           Modal.error({
             title: '提示信息',
@@ -466,6 +459,13 @@ export default class CreateApply extends PureComponent {
   // 发送请求，先走新建（修改）接口，再走流程接口
   @autobind
   sendCreateRequest(value) {
+    if (_.isEmpty(value)) {
+      message.error('请选择审批人');
+      return;
+    }
+    this.setState({
+      nextApproverModal: false,
+    });
     const {
       flowId,
       custTransLv,
@@ -644,7 +644,7 @@ export default class CreateApply extends PureComponent {
     />);
     const searchProps = {
       visible: nextApproverModal,
-      onOk: this.validateResult,
+      onOk: this.sendCreateRequest,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
       dataSource: nextApproverList,
       columns: approvalColumns,
