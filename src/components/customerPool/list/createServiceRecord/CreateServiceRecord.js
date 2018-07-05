@@ -142,9 +142,9 @@ export default class CreateServiceRecord extends PureComponent {
     logCommon({
       type: 'Submit',
       payload: {
-        name: custId,
+        name: '服务记录',
         type: serveTypeName,
-        value: JSON.stringify(data),
+        value: JSON.stringify({ ...data, custId }),
       },
     });
   }
