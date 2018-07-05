@@ -95,26 +95,61 @@ export default class IndustryThemeList extends PureComponent {
   @autobind
   getColumns() {
     const newTitleList = [...titleList];
-    _.find(newTitleList, item => item.key === 'title').render = (item, record) => (
-      <div
-        className={classnames(styles.td, styles.headLine)}
-        title={formatString(record.title || record.industry)}
-        onClick={() => { this.openModal(record); }}
-      >
-        <a>{formatString(record.title || record.industry)}</a>
-      </div>
-    );
-    _.find(newTitleList, item => item.key === 'direction').render = item => (
-      <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
-    );
-    _.find(newTitleList, item => item.key === 'reason').render = item => (
-      <div className={classnames(styles.td, styles.stock)}>{formatString(item)}</div>
-    );
-    _.find(newTitleList, item => item.key === 'time').render = (item) => {
-      const date = time.format(item, config.dateFormatStr);
-      return <div className={classnames(styles.td, styles.induname)}>{formatString(date)}</div>;
-    };
-    return newTitleList;
+    return newTitleList.map((item) => {
+      if (item.key === 'title') {
+        return {
+          ...item,
+          render: (text, record) => (
+            <div
+              className={classnames(styles.td, styles.headLine)}
+              title={formatString(record.title || record.industry)}
+              onClick={() => { this.openModal(record); }}
+            >
+              <a>{formatString(record.title || record.industry)}</a>
+            </div>
+          ),
+        };
+      }
+      if (item.key === 'direction') {
+        return {
+          ...item,
+          render: text => (
+            <div className={classnames(styles.td, styles.category)}>{formatString(text)}</div>
+          ),
+        };
+      }
+      if (item.key === 'reason') {
+        return {
+          ...item,
+          render: text => (
+            <div className={classnames(styles.td, styles.stock)}>{formatString(text)}</div>
+          ),
+        };
+      }
+      if (item.key === 'time') {
+        return {
+          ...item,
+          render: (text) => {
+            const date = time.format(text, config.dateFormatStr);
+            return (<div className={classnames(styles.td, styles.induname)}>
+              {formatString(date)}
+            </div>);
+          },
+        };
+      }
+      return item;
+    });
+  }
+
+  // 由于后端返回的列表数据没有唯一的key值，所以拼一个不会重复的rowKey用作渲染时的key
+  @autobind
+  getTransformList(list) {
+    return list.map((item, index) => (
+      {
+        ...item,
+        rowKey: index,
+      }
+    ));
   }
 
   // 打开弹窗
@@ -187,17 +222,6 @@ export default class IndustryThemeList extends PureComponent {
     }).then(() => {
       replace({ pathname, query: { ...newQuery } });
     });
-  }
-
-  // 由于后端返回的列表数据没有唯一的key值，所以拼一个不会重复的rowKey用作渲染时的key
-  @autobind
-  getTransformList(list) {
-    return list.map((item, index) => (
-      {
-        ...item,
-        rowKey: index,
-      }
-    ));
   }
 
   render() {
