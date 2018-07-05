@@ -207,11 +207,8 @@ function getFilterParam(filterObj, hashString) {
     }
   }
   // 持仓产品
-  const primaryKeyPrdts =
-    _.isArray(filterObj.primaryKeyPrdts) ? filterObj.primaryKeyPrdts[0] : filterObj.primaryKeyPrdts;
-
-  if (primaryKeyPrdts) {
-    param.primaryKeyPrdts = _.compact([].concat(primaryKeyPrdts));
+  if (filterObj.primaryKeyPrdts) {
+    param.primaryKeyPrdts = _.compact([].concat(filterObj.primaryKeyPrdts[0]));
   }
 
   // 订购组合
