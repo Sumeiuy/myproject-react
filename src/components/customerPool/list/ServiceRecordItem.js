@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
 import { Tooltip } from 'antd';
+import { autobind } from 'core-decorators';
 import Icon from '../../common/Icon';
 import styles from './createCollapse.less';
 import { request } from '../../../config';
@@ -22,6 +23,7 @@ export default class ServiceRecordItem extends PureComponent {
     isShowChild: PropTypes.bool,
     filesList: PropTypes.array,
     panelContent: PropTypes.bool,
+    feedbackStatus: PropTypes.node,
   }
   static defaultProps = {
     content: '--',
@@ -31,6 +33,7 @@ export default class ServiceRecordItem extends PureComponent {
     isShowChild: false,
     panelContent: false,
     filesList: [],
+    feedbackStatus: null,
   }
 
   constructor(props) {
@@ -76,11 +79,33 @@ export default class ServiceRecordItem extends PureComponent {
     return renderSpan;
   }
 
+  @autobind
+  renderZLContent(feedbackStatus) {
+    let statusKey = feedbackStatus;
+    if (_.isNull(feedbackStatus)) {
+      statusKey = 'NULL';
+    }
+    const { content } = this.props;
+    const feedbackMap = {
+      UNREAD: '客户未阅',
+      READED: '已阅未反馈',
+      FEEDBACK: content,
+      NULL: '',
+    };
+    return feedbackMap[statusKey];
+  }
+
   /**
    * 渲染字符串
    * @param {*string} content 内容
    */
   renderContentString(content) {
+    const { feedbackStatus } = this.props;
+    if (!_.isEmpty(feedbackStatus)) {
+      // 如果是feedbackStatus不为空，则表示是涨乐财富通服务方式，
+      // 因为只有涨乐财富通才有feedbackStatus
+      return this.renderZLContent(feedbackStatus);
+    }
     if (this.isNullOrNullString(content)) {
       return '--';
     }

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-13 21:55:48
+ * @Last Modified time: 2018-07-05 11:24:48
  * @description 任务管理首页
  */
 
@@ -118,7 +118,6 @@ export default class PerformerView extends PureComponent {
     const { location: { query: prevQuery } } = prevProps;
     const {
       location: { query },
-      changePerformerViewTab,
     } = this.props;
     const { currentId, ...otherQuery } = query;
     const { currentId: prevCurrentId, ...otherPrevQuery } = prevQuery;
@@ -127,8 +126,7 @@ export default class PerformerView extends PureComponent {
     }
     // 当前选中的任务变化，需要还原与任务绑定当前详情中选中的tab
     if (currentId !== prevCurrentId) {
-      // 还原执行者视图右侧详情中tab的activeKey，默认选中第一个tab
-      changePerformerViewTab(defaultPerformerViewCurrentTab);
+      this.handleCurrentIdChangeDetail();
     }
   }
 
@@ -588,6 +586,7 @@ export default class PerformerView extends PureComponent {
         queryExecutorFeedBack={queryExecutorFeedBack}
         queryExecutorDetail={queryExecutorDetail}
         queryTargetCustDetail={queryTargetCustDetail}
+        location={location}
       />
     );
   }
@@ -724,10 +723,16 @@ export default class PerformerView extends PureComponent {
   loadDetailContent(obj) {
     const {
       getTaskDetailBasicInfo,
+      queryCustUuid,
+      clearCustListForServiceImplementation,
     } = this.props;
     getTaskDetailBasicInfo({ taskId: obj.id });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
+    // 如果所点击的任务需要的是执行者视图，则预先请求custUuid
+    queryCustUuid();
+    // 将执行者视图右侧搜索客户的列表数据清空
+    clearCustListForServiceImplementation();
   }
 
   // 查询涨乐财富通的数据
@@ -887,6 +892,42 @@ export default class PerformerView extends PureComponent {
     return param;
   }
 
+  // url中currentId改变后驱动右侧的变化
+  @autobind
+  handleCurrentIdChangeDetail() {
+    const {
+      changePerformerViewTab,
+      list: { resultData = EMPTY_LIST },
+      dict,
+    } = this.props;
+    // 当前选中的任务变化，需要还原与任务绑定当前详情中选中的tab，还原执行者视图右侧详情中tab的activeKey，默认选中第一个tab
+    changePerformerViewTab(defaultPerformerViewCurrentTab);
+    // 当前选中的任务变化，获取对应的右侧内容
+    const id = this.getCurrentId();
+    const currentItemIndex = _.findIndex(resultData, item => item.mssnId === id || item.id === id);
+    const currentItem = resultData[currentItemIndex] || {};
+    // typeCode为任务类型，通过这个类型，查到字典中missionType的descText
+    const { missionViewType: st, typeCode, statusCode, typeName, eventId } = currentItem;
+    // 查出任务类型是MOT还是自荐
+    const currentMissionTypeObject = _.find(dict.missionType, item =>
+      item.key === typeCode) || EMPTY_OBJECT;
+    const { descText } = currentMissionTypeObject;
+    const isSourceFromCreatorView = this.isInitiatorView(st)
+      && this.judgeTaskInApproval(statusCode);
+    this.setState({
+      currentView: st,
+      activeRowIndex: currentItemIndex,
+      typeCode,
+      typeName,
+      eventId,
+      statusCode,
+      isSourceFromCreatorView,
+      taskTypeCode: descText,
+    }, () => {
+      this.getDetailByView(currentItem);
+    });
+  }
+
   /**
    * 请求入参中添加排序
    */
@@ -970,52 +1011,23 @@ export default class PerformerView extends PureComponent {
       subType: '$props.location.query.subType',
     },
   })
-  handleListRowClick(record, index) {
+  handleListRowClick(record) {
     // typeCode为任务类型，通过这个类型，查到字典中missionType的descText
-    const { id, missionViewType: st, typeCode, statusCode, typeName, eventId, mssnId } = record;
+    const { id, missionViewType: st, statusCode, mssnId } = record;
     const {
-      queryCustUuid,
       replace,
       location: { pathname, query },
-      dict,
-      clearCustListForServiceImplementation,
     } = this.props;
     const isSourceFromCreatorView = this.isInitiatorView(st)
       && this.judgeTaskInApproval(statusCode);
     const ci = isSourceFromCreatorView ? mssnId : id;
     if (this.getCurrentId() === ci) return;
-
-    // 查出任务类型是MOT还是自荐
-    const currentMissionTypeObject = _.find(dict.missionType, item =>
-      item.key === typeCode) || EMPTY_OBJECT;
-    const { descText } = currentMissionTypeObject;
     replace({
       pathname,
       query: {
         ...query,
         currentId: ci,
       },
-    });
-
-    // 如果所点击的任务需要的是执行者视图，则预先请求custUuid
-    // 将执行者视图右侧搜索客户的列表数据清空
-    if (this.isExecutorView(st)) {
-      // 前置请求custuuid
-      queryCustUuid();
-      clearCustListForServiceImplementation();
-    }
-
-    this.setState({
-      currentView: st,
-      activeRowIndex: index,
-      typeCode,
-      typeName,
-      eventId,
-      statusCode,
-      isSourceFromCreatorView,
-      taskTypeCode: descText,
-    }, () => {
-      this.getDetailByView(record);
     });
   }
 

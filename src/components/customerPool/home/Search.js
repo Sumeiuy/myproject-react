@@ -80,7 +80,7 @@ export default class Search extends PureComponent {
 
   @autobind
   handleOpenTab(data) {
-    const { labelDesc, missionDesc, q, ...options } = data;
+    const { labelDesc, missionDesc, ...options } = data;
     const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.props.saveSearchVal({

@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-03 17:37:57
+ * @Last Modified time: 2018-07-05 12:27:53
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,7 @@ import { Prompt } from 'dva/router';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { Affix, message } from 'antd';
+import { Affix, message, Modal } from 'antd';
 import contains from 'rc-util/lib/Dom/contains';
 import Header from './Header';
 import ListSwiper from './ListSwiper';
@@ -20,7 +20,7 @@ import CustomerDetail from './CustomerDetail';
 import SimpleDisplayBlock from './SimpleDisplayBlock';
 import ServiceRecordForm from './ServiceRecordForm';
 import EmptyData from './EmptyData';
-import { PHONE } from './config';
+import { PHONE, MSG_ROUTEFORWARD } from './config';
 import { serveWay as serveWayUtil } from '../config/code';
 import { flow, task } from '../config';
 import { fsp } from '../../../../helper';
@@ -115,6 +115,7 @@ export default class ServiceImplementation extends PureComponent {
     toggleServiceRecordModal: PropTypes.func,
     queryTargetCustDetail: PropTypes.func.isRequired,
     getPageSize: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -155,6 +156,7 @@ export default class ServiceImplementation extends PureComponent {
       // 当前服务实施列表的数据
       targetCustList,
       propsTargetCustList: targetCustList,
+      // 当前用户是否操作了表单
       isFormHalfFilledOut: false,
     };
   }
@@ -175,7 +177,7 @@ export default class ServiceImplementation extends PureComponent {
 
   componentDidUpdate(prevProps, prevState) {
     const { isFoldFspLeftMenu } = this.state;
-    const { isFold, getPageSize, currentId } = this.props;
+    const { isFold, getPageSize, currentId, location: { query } } = this.props;
     const pageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
     if (
@@ -201,6 +203,12 @@ export default class ServiceImplementation extends PureComponent {
         pageNum: 1,
       });
     }
+    if (query !== prevProps.location.query) {
+      // 先判断再setState，避免不必要的渲染
+      if (this.state.isFormHalfFilledOut) {
+        this.setState({ isFormHalfFilledOut: false }); // eslint-disable-line
+      }
+    }
   }
 
   componentWillUnmount() {
@@ -216,13 +224,34 @@ export default class ServiceImplementation extends PureComponent {
     this.setState({ isFoldFspLeftMenu });
   }
 
+  // 路由发生变化前确认
+  @autobind
+  handleRouteForwardComfirmation(callback = _.noop) {
+    const self = this;
+    // 当前用户操作了页面的表单
+    if (this.state.isFormHalfFilledOut) {
+      Modal.confirm({
+        title: '请确认',
+        content: MSG_ROUTEFORWARD,
+        onOk() {
+          callback();
+          self.setState({ isFormHalfFilledOut: false });
+        },
+        onCancel() { },
+      });
+    } else {
+      callback();
+    }
+  }
+
   // 状态筛选
   @autobind
   handleStateChange({ value = '' }) {
-    const { parameter, changeParameter } = this.props;
-    const { targetCustList: { page: { pageSize } } } = this.state;
-    const { rowId, assetSort } = parameter;
-    changeParameter({ state: value, activeIndex: '1', preciseInputValue: '1' })
+    const toChange = () => {
+      const { parameter, changeParameter } = this.props;
+      const { targetCustList: { page: { pageSize } } } = this.state;
+      const { rowId, assetSort } = parameter;
+      changeParameter({ state: value, activeIndex: '1', preciseInputValue: '1' })
       .then(() => {
         this.queryTargetCustList({
           state: value,
@@ -232,43 +261,51 @@ export default class ServiceImplementation extends PureComponent {
           pageNum: 1,
         });
       });
+    };
+    this.handleRouteForwardComfirmation(toChange);
   }
 
   // 客户筛选
   @autobind
   handleCustomerChange({ value = {} }) {
-    const { parameter, changeParameter } = this.props;
-    const { targetCustList: { page: { pageSize } } } = this.state;
-    const { state, assetSort } = parameter;
-    changeParameter({ rowId: value.rowId || '', activeIndex: '1', preciseInputValue: '1' })
-      .then(() => {
-        this.queryTargetCustList({
-          rowId: value.rowId || '',
-          state,
-          assetSort,
-          pageSize,
-          pageNum: 1,
+    const toChange = () => {
+      const { parameter, changeParameter } = this.props;
+      const { targetCustList: { page: { pageSize } } } = this.state;
+      const { state, assetSort } = parameter;
+      changeParameter({ rowId: value.rowId || '', activeIndex: '1', preciseInputValue: '1' })
+        .then(() => {
+          this.queryTargetCustList({
+            rowId: value.rowId || '',
+            state,
+            assetSort,
+            pageSize,
+            pageNum: 1,
+          });
         });
-      });
+    };
+    this.handleRouteForwardComfirmation(toChange);
   }
 
   // 资产排序
   @autobind
   handleAssetSort(obj) {
-    const assetSort = obj.isDesc ? 'desc' : 'asc';
-    const { parameter, changeParameter } = this.props;
-    const { targetCustList: { page: { pageSize, pageNum } } } = this.state;
-    const { state, rowId } = parameter;
-    changeParameter({ assetSort, activeIndex: '1', preciseInputValue: '1' })
-      .then(() => {
-        this.queryTargetCustList({
-          rowId,
-          state,
-          assetSort,
-          pageSize,
-          pageNum,
+    const toChange = () => {
+      const assetSort = obj.isDesc ? 'desc' : 'asc';
+      const { parameter, changeParameter } = this.props;
+      const { targetCustList: { page: { pageSize, pageNum } } } = this.state;
+      const { state, rowId } = parameter;
+      changeParameter({ assetSort, activeIndex: '1', preciseInputValue: '1' })
+        .then(() => {
+          this.queryTargetCustList({
+            rowId,
+            state,
+            assetSort,
+            pageSize,
+            pageNum,
+          });
         });
-      });
+    };
+    this.handleRouteForwardComfirmation(toChange);
   }
 
   // 精准搜索框输入值变化
@@ -290,74 +327,83 @@ export default class ServiceImplementation extends PureComponent {
     if (e.keyCode === 13) {
       const value = e.target.value;
       if (!value) return;
-      const { parameter, changeParameter } = this.props;
-      const { targetCustList: { page: { pageSize } } } = this.state;
-      // const newValue = value > totalCount ? totalCount : value;
-      changeParameter({ activeIndex: value }).then(() => {
-        const { rowId, state, assetSort } = parameter;
-        const pageNum = Math.ceil(parseInt(value, 10) / pageSize);
-        this.queryTargetCustList({
-          rowId,
-          state,
-          assetSort,
-          pageSize,
-          pageNum,
-          isGetFirstItemDetail: false,
-        }).then(() => {
-          const { queryTargetCustDetail, currentId } = this.props;
-          const { targetCustList: { list = [], page: { totalCount } } } = this.state;
-          // 当value大于总数totalCount的时候，取totalCount
-          const newValue = value > totalCount ? totalCount : value;
-          // 根据当前的activeIndex找到在当前列表中的数据，再去查询该条数据的详情
-          const index = parseInt(newValue, 10) % pageSize;
-          const { custId, missionFlowId } = list[index - 1];
-          queryTargetCustDetail({
-            custId,
-            missionId: currentId,
-            missionFlowId,
+      const toChange = () => {
+        const { parameter, changeParameter } = this.props;
+        const { targetCustList: { page: { pageSize } } } = this.state;
+        // const newValue = value > totalCount ? totalCount : value;
+        changeParameter({ activeIndex: value }).then(() => {
+          const { rowId, state, assetSort } = parameter;
+          const pageNum = Math.ceil(parseInt(value, 10) / pageSize);
+          this.queryTargetCustList({
+            rowId,
+            state,
+            assetSort,
+            pageSize,
+            pageNum,
+            isGetFirstItemDetail: false,
+          }).then(() => {
+            const { queryTargetCustDetail, currentId } = this.props;
+            const { targetCustList: { list = [], page: { totalCount } } } = this.state;
+            // 当value大于总数totalCount的时候，取totalCount
+            const newValue = value > totalCount ? totalCount : value;
+            // 根据当前的activeIndex找到在当前列表中的数据，再去查询该条数据的详情
+            const index = parseInt(newValue, 10) % pageSize;
+            const { custId, missionFlowId } = list[index - 1];
+            queryTargetCustDetail({
+              custId,
+              missionId: currentId,
+              missionFlowId,
+            });
           });
         });
-      });
+      };
+      this.handleRouteForwardComfirmation(toChange);
     }
   }
 
   // 点击了列表中的客户
   @autobind
   handleCustomerClick(obj = {}) {
-    const { changeParameter, currentId, queryTargetCustDetail } = this.props;
-    changeParameter({
-      activeIndex: obj.activeIndex,
-      currentCustomer: obj.currentCustomer,
-      preciseInputValue: obj.activeIndex,
-    }).then(() => {
-      const { custId, missionFlowId } = obj.currentCustomer;
-      queryTargetCustDetail({
-        custId,
-        missionId: currentId,
-        missionFlowId,
+    const toChange = () => {
+      const { changeParameter, currentId, queryTargetCustDetail } = this.props;
+      changeParameter({
+        activeIndex: obj.activeIndex,
+        currentCustomer: obj.currentCustomer,
+        preciseInputValue: obj.activeIndex,
+      }).then(() => {
+        const { custId, missionFlowId } = obj.currentCustomer;
+        queryTargetCustDetail({
+          custId,
+          missionId: currentId,
+          missionFlowId,
+        });
       });
-    });
+    };
+    this.handleRouteForwardComfirmation(toChange);
   }
 
   // 客户列表左右按钮翻页
   @autobind
   handlePageChange(pageNum) {
-    const { parameter, changeParameter } = this.props;
-    const { targetCustList: { page: { pageSize } } } = this.state;
-    const { rowId, assetSort, state } = parameter;
-    const activeIndex = ((pageNum - 1) * pageSize) + 1;
-    changeParameter({
-      activeIndex,
-      preciseInputValue: activeIndex,
-    }).then(() => {
-      this.queryTargetCustList({
-        state,
-        rowId,
-        assetSort,
-        pageSize,
-        pageNum,
+    const toChange = () => {
+      const { parameter, changeParameter } = this.props;
+      const { targetCustList: { page: { pageSize } } } = this.state;
+      const { rowId, assetSort, state } = parameter;
+      const activeIndex = ((pageNum - 1) * pageSize) + 1;
+      changeParameter({
+        activeIndex,
+        preciseInputValue: activeIndex,
+      }).then(() => {
+        this.queryTargetCustList({
+          state,
+          rowId,
+          assetSort,
+          pageSize,
+          pageNum,
+        });
       });
-    });
+    };
+    this.handleRouteForwardComfirmation(toChange);
   }
 
   // 查询服务实施客户的列表
@@ -558,6 +604,7 @@ export default class ServiceImplementation extends PureComponent {
       serviceTips, serviceWayName, serviceWayCode, serviceDate,
       serviceRecord, customerFeedback, feedbackDate, custId,
       serviceContent, // 涨乐财富通的服务内容
+      zlcftMsgStatus, // 新增的涨乐财富通服务方式的反馈状态
     } = targetCustDetail;
     // 判断当前任务状态是结果跟踪或者完成状态，则为只读
     // 判断任务流水客户状态，处理中 和 未开始， 则为可编辑
@@ -606,10 +653,11 @@ export default class ServiceImplementation extends PureComponent {
       eventId,
       taskTypeCode,
       serviceTypeCode,
+      // 涨乐财富通服务方式反馈状态
+      zlcftMsgStatus,
     };
     // fsp左侧菜单和左侧列表折叠状态变化，强制更新affix、文字折叠区域
     const leftFoldState = `${isFoldFspLeftMenu}${isFold}`;
-    console.log('isFormHalfFilledOut: ', isFormHalfFilledOut);
     const affixNode = (
       <div>
         <div className={styles.listSwiperBox}>
@@ -714,10 +762,7 @@ export default class ServiceImplementation extends PureComponent {
         }
         <Prompt
           when={isFormHalfFilledOut}
-          message={location => (
-            location.pathname.startsWith('/taskList')
-              ? true : '离开本页面可能会丢失操作的数据，是否离开？'
-          )}
+          message={MSG_ROUTEFORWARD}
         />
       </div>
     );

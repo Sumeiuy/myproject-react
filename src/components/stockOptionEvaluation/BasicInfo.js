@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-07 23:20:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-28 10:04:38
+ * @Last Modified time: 2018-07-04 14:21:02
  */
 
 import React, { PureComponent } from 'react';
@@ -19,7 +19,7 @@ export default class BasicInfo extends PureComponent {
   }
   render() {
     const {
-      custId,
+      econNum,
       custName,
       divisionName,
       openDivName,
@@ -36,7 +36,7 @@ export default class BasicInfo extends PureComponent {
       accptTime,
       declareBus,
     } = this.props.data;
-    const custInfo = `${custName}(${custId})`;
+    const custInfo = `${custName}(${econNum})`;
     return (
       <div className={styles.basicInfoBox}>
         <InfoTitle head="基本信息" />

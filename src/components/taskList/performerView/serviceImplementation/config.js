@@ -61,4 +61,6 @@ export const NOTCOMPLETION = '不完备';
 
 export const PHONE = 'phone';
 
+export const MSG_ROUTEFORWARD = '您输入的表单中信息还未保存，如切换窗口信息将丢失，确定要切换吗？';
+
 export default {};

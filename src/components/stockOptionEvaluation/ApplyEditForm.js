@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-03 13:03:08
+ * @Last Modified time: 2018-07-04 14:20:41
  */
 
 import React, { PureComponent } from 'react';
@@ -66,11 +66,12 @@ export default class ApplyEditForm extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const newState = {};
-    if (nextProps.editButtonListData !== prevState.editButtonListData) {
-      newState.editButtonListData = nextProps.editButtonListData;
+    if (nextProps.editButtonListData !== prevState.editButtonList) {
+      return {
+        editButtonList: nextProps.editButtonListData,
+      };
     }
-    return newState;
+    return null;
   }
 
   constructor(props) {
@@ -112,7 +113,7 @@ export default class ApplyEditForm extends PureComponent {
       // 附件
       attachment: detailInfo.attachment,
       // 按钮组信息
-      editButtonListData: {},
+      editButtonList: {},
       // 用于重新渲染上传组件的key
       uploadKey: data.uuid(),
     };
@@ -223,12 +224,12 @@ export default class ApplyEditForm extends PureComponent {
             if (custType === 'per' && isProfessInvset === 'Y') {
               commonConfirm({
                 content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
-                onOk: () => this.showNextApprover(),
+                onOk: this.validateResult,
               });
             } else {
               commonConfirm({
                 content: '请确认是否已上传相关附件。',
-                onOk: () => this.showNextApprover(),
+                onOk: this.validateResult,
               });
             }
           }
@@ -249,14 +250,7 @@ export default class ApplyEditForm extends PureComponent {
 
   // 校验数据
   @autobind
-  validateResult(value) {
-    if (_.isEmpty(value)) {
-      message.error('请选择审批人');
-      return;
-    }
-    this.setState({
-      nextApproverModal: false,
-    });
+  validateResult() {
     // 校验的数据
     const {
       detailInfo: {
@@ -313,7 +307,7 @@ export default class ApplyEditForm extends PureComponent {
         } = this.props;
         // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
         if (isValid) {
-          this.sendEditRequest(value);
+          this.showNextApprover();
         } else {
           Modal.error({
             title: '提示信息',
@@ -324,9 +318,16 @@ export default class ApplyEditForm extends PureComponent {
       });
   }
 
-  // 发送请求，先走新修改接口，再走流程
+  // 发送请求，先走修改接口，再走流程
   @autobind
   sendEditRequest(value) {
+    if (_.isEmpty(value)) {
+      message.error('请选择审批人');
+      return;
+    }
+    this.setState({
+      nextApproverModal: false,
+    });
     const {
       detailInfo: {
         id,
@@ -443,10 +444,8 @@ export default class ApplyEditForm extends PureComponent {
       } else {
         message.success('该股票期权申请已被终止');
       }
-      this.setState({
-        editButtonListData: {},
-      }, () => {
-        getDetailInfo({ flowId });
+      getDetailInfo({ flowId }).then(() => {
+        this.setState({ editButtonList: {} });
       });
     });
   }
@@ -465,7 +464,7 @@ export default class ApplyEditForm extends PureComponent {
     const {
       detailInfo,
       detailInfo: {
-        custId,
+        econNum,
         custName,
         id,
         empId,
@@ -499,19 +498,19 @@ export default class ApplyEditForm extends PureComponent {
       nextApproverList,
       attachment,
       uploadKey,
-      editButtonListData,
+      editButtonList,
     } = this.state;
     if (_.isEmpty(this.props.detailInfo)) {
       return null;
     }
-    const custInfo = `${custName}(${custId})`;
+    const custInfo = `${custName}(${econNum})`;
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
     // 判断是否是个人客户
     const isPerCustType = custType === 'per';
     const searchProps = {
       visible: nextApproverModal,
-      onOk: this.validateResult,
+      onOk: this.sendEditRequest,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
       dataSource: nextApproverList,
       columns: approvalColumns,
@@ -631,7 +630,7 @@ export default class ApplyEditForm extends PureComponent {
               <ApproveList data={workflowHistoryBeans} />
             </div>
             <BottonGroup
-              list={editButtonListData}
+              list={editButtonList}
               onEmitEvent={this.handleSubmit}
             />
             <TableDialog {...searchProps} />
