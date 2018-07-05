@@ -145,7 +145,11 @@ export default class MatchArea extends PureComponent {
     const {
       location: { query: { filters } },
     } = this.props;
-    return url.transfromFilterValFromUrl(filters);
+    const { primaryKeyJxgrps = {}, searchText = '' } = url.transfromFilterValFromUrl(filters);
+    return {
+      primaryKeyJxgrps,
+      searchText: window.decodeURIComponent(searchText),
+    };
   }
 
   // 直接取后端返回值渲染的情况
@@ -370,7 +374,7 @@ export default class MatchArea extends PureComponent {
     const {
       listItem,
     } = this.props;
-    if (matchLabels && !matchLabels.length) {
+    if (_.isArray(matchLabels) && !matchLabels.length) {
       return null;
     }
     const { searchText = '' } = this.getFilters();
@@ -379,7 +383,7 @@ export default class MatchArea extends PureComponent {
         listItem.relatedLabels,
         item => item && _.includes(item.name, searchText),
       );
-      if (matchLabels) {
+      if (_.isArray(matchLabels)) {
         relatedLabels = matchLabels;
       }
       if (!_.isEmpty(relatedLabels)) {
@@ -428,9 +432,8 @@ export default class MatchArea extends PureComponent {
   renderServiceRecord() {
     const {
       listItem,
-      location: { query: { filters } },
     } = this.props;
-    const { searchText = '' } = url.transfromFilterValFromUrl(filters);
+    const { searchText = '' } = this.getFilters();
     if (listItem.serviceRecord
       && listItem.serviceRecord.indexOf(searchText) > -1) {
       const markedEle = replaceWord({ value: listItem.serviceRecord, searchText });
