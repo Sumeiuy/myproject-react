@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-05 12:27:53
+ * @Last Modified time: 2018-07-05 20:00:11
  */
 
 import React, { PureComponent } from 'react';
@@ -226,86 +226,85 @@ export default class ServiceImplementation extends PureComponent {
 
   // 路由发生变化前确认
   @autobind
-  handleRouteForwardComfirmation(callback = _.noop) {
-    const self = this;
+  handleRouteForwardComfirmation(callback = _.noop, data) {
     // 当前用户操作了页面的表单
     if (this.state.isFormHalfFilledOut) {
       Modal.confirm({
         title: '请确认',
         content: MSG_ROUTEFORWARD,
-        onOk() {
-          callback();
-          self.setState({ isFormHalfFilledOut: false });
+        onOk: () => {
+          callback(data);
+          this.setState({ isFormHalfFilledOut: false });
         },
-        onCancel() { },
+        onCancel: () => { },
       });
     } else {
-      callback();
+      callback(data);
     }
+  }
+
+  // 筛选前加一个确认
+  @autobind
+  handlePrepareFilter(callback = _.noop) {
+    return (data) => {
+      this.handleRouteForwardComfirmation(callback, data);
+    };
   }
 
   // 状态筛选
   @autobind
   handleStateChange({ value = '' }) {
-    const toChange = () => {
-      const { parameter, changeParameter } = this.props;
-      const { targetCustList: { page: { pageSize } } } = this.state;
-      const { rowId, assetSort } = parameter;
-      changeParameter({ state: value, activeIndex: '1', preciseInputValue: '1' })
+    const { parameter, changeParameter } = this.props;
+    const { targetCustList: { page: { pageSize } } } = this.state;
+    const { rowId, assetSort } = parameter;
+    changeParameter({ state: value, activeIndex: '1', preciseInputValue: '1' })
+    .then(() => {
+      this.queryTargetCustList({
+        state: value,
+        rowId,
+        assetSort,
+        pageSize,
+        pageNum: 1,
+      });
+    });
+  }
+
+
+  // 客户筛选
+  @autobind
+  handleCustomerChange({ value = {} }) {
+    const { parameter, changeParameter } = this.props;
+    const { targetCustList: { page: { pageSize } } } = this.state;
+    const { state, assetSort } = parameter;
+    changeParameter({ rowId: value.rowId || '', activeIndex: '1', preciseInputValue: '1' })
       .then(() => {
         this.queryTargetCustList({
-          state: value,
-          rowId,
+          rowId: value.rowId || '',
+          state,
           assetSort,
           pageSize,
           pageNum: 1,
         });
       });
-    };
-    this.handleRouteForwardComfirmation(toChange);
-  }
-
-  // 客户筛选
-  @autobind
-  handleCustomerChange({ value = {} }) {
-    const toChange = () => {
-      const { parameter, changeParameter } = this.props;
-      const { targetCustList: { page: { pageSize } } } = this.state;
-      const { state, assetSort } = parameter;
-      changeParameter({ rowId: value.rowId || '', activeIndex: '1', preciseInputValue: '1' })
-        .then(() => {
-          this.queryTargetCustList({
-            rowId: value.rowId || '',
-            state,
-            assetSort,
-            pageSize,
-            pageNum: 1,
-          });
-        });
-    };
-    this.handleRouteForwardComfirmation(toChange);
   }
 
   // 资产排序
   @autobind
   handleAssetSort(obj) {
-    const toChange = () => {
-      const assetSort = obj.isDesc ? 'desc' : 'asc';
-      const { parameter, changeParameter } = this.props;
-      const { targetCustList: { page: { pageSize, pageNum } } } = this.state;
-      const { state, rowId } = parameter;
-      changeParameter({ assetSort, activeIndex: '1', preciseInputValue: '1' })
-        .then(() => {
-          this.queryTargetCustList({
-            rowId,
-            state,
-            assetSort,
-            pageSize,
-            pageNum,
-          });
+    const assetSort = obj.isDesc ? 'desc' : 'asc';
+    const { parameter, changeParameter } = this.props;
+    const { targetCustList: { page: { pageSize, pageNum } } } = this.state;
+    const { state, rowId } = parameter;
+    changeParameter({ assetSort, activeIndex: '1', preciseInputValue: '1' })
+      .then(() => {
+        this.queryTargetCustList({
+          rowId,
+          state,
+          assetSort,
+          pageSize,
+          pageNum,
         });
-    };
-    this.handleRouteForwardComfirmation(toChange);
+      });
   }
 
   // 精准搜索框输入值变化
@@ -364,46 +363,40 @@ export default class ServiceImplementation extends PureComponent {
   // 点击了列表中的客户
   @autobind
   handleCustomerClick(obj = {}) {
-    const toChange = () => {
-      const { changeParameter, currentId, queryTargetCustDetail } = this.props;
-      changeParameter({
-        activeIndex: obj.activeIndex,
-        currentCustomer: obj.currentCustomer,
-        preciseInputValue: obj.activeIndex,
-      }).then(() => {
-        const { custId, missionFlowId } = obj.currentCustomer;
-        queryTargetCustDetail({
-          custId,
-          missionId: currentId,
-          missionFlowId,
-        });
+    const { changeParameter, currentId, queryTargetCustDetail } = this.props;
+    changeParameter({
+      activeIndex: obj.activeIndex,
+      currentCustomer: obj.currentCustomer,
+      preciseInputValue: obj.activeIndex,
+    }).then(() => {
+      const { custId, missionFlowId } = obj.currentCustomer;
+      queryTargetCustDetail({
+        custId,
+        missionId: currentId,
+        missionFlowId,
       });
-    };
-    this.handleRouteForwardComfirmation(toChange);
+    });
   }
 
   // 客户列表左右按钮翻页
   @autobind
   handlePageChange(pageNum) {
-    const toChange = () => {
-      const { parameter, changeParameter } = this.props;
-      const { targetCustList: { page: { pageSize } } } = this.state;
-      const { rowId, assetSort, state } = parameter;
-      const activeIndex = ((pageNum - 1) * pageSize) + 1;
-      changeParameter({
-        activeIndex,
-        preciseInputValue: activeIndex,
-      }).then(() => {
-        this.queryTargetCustList({
-          state,
-          rowId,
-          assetSort,
-          pageSize,
-          pageNum,
-        });
+    const { parameter, changeParameter } = this.props;
+    const { targetCustList: { page: { pageSize } } } = this.state;
+    const { rowId, assetSort, state } = parameter;
+    const activeIndex = ((pageNum - 1) * pageSize) + 1;
+    changeParameter({
+      activeIndex,
+      preciseInputValue: activeIndex,
+    }).then(() => {
+      this.queryTargetCustList({
+        state,
+        rowId,
+        assetSort,
+        pageSize,
+        pageNum,
       });
-    };
-    this.handleRouteForwardComfirmation(toChange);
+    });
   }
 
   // 查询服务实施客户的列表
@@ -666,8 +659,8 @@ export default class ServiceImplementation extends PureComponent {
             parameter={parameter}
             containerClass={styles.listSwiper}
             currentTargetList={currentTargetList}
-            onCustomerClick={this.handleCustomerClick}
-            onPageChange={this.handlePageChange}
+            onCustomerClick={this.handlePrepareFilter(this.handleCustomerClick)}
+            onPageChange={this.handlePrepareFilter(this.handlePageChange)}
           />
         </div>
         <CustomerProfile
@@ -686,9 +679,9 @@ export default class ServiceImplementation extends PureComponent {
           {...this.props}
           {...this.state}
           dict={dict}
-          handleStateChange={this.handleStateChange}
-          handleCustomerChange={this.handleCustomerChange}
-          handleAssetSort={this.handleAssetSort}
+          handleStateChange={this.handlePrepareFilter(this.handleStateChange)}
+          handleCustomerChange={this.handlePrepareFilter(this.handleCustomerChange)}
+          handleAssetSort={this.handlePrepareFilter(this.handleAssetSort)}
           handlePreciseQueryChange={this.handlePreciseQueryChange}
           handlePreciseQueryEnterPress={this.handlePreciseQueryEnterPress}
         />

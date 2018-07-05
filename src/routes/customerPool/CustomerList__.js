@@ -220,10 +220,8 @@ function getFilterParam(filterObj, hashString) {
   }
 
   // 持仓行业
-  const industryId =
-    _.isArray(filterObj.holdingIndustry) ? filterObj.holdingIndustry[0] : filterObj.holdingIndustry;
-  if (industryId) {
-    param.primaryKeyIndustry = _.compact([].concat(industryId));
+  if (filterObj.holdingIndustry) {
+    param.primaryKeyIndustry = _.compact([].concat(filterObj.holdingIndustry));
   }
 
 
@@ -317,7 +315,6 @@ const effects = {
   queryHoldingSecurityRepetition: 'customerPool/queryHoldingSecurityRepetition',
   getCustRangeByAuthority: 'customerPool/getCustRangeByAuthority',
   queryIndustryList: 'customerPool/queryIndustryList',
-  clearIndustryList: 'customerPool/clearIndustryList',
   queryHoldingIndustryDetail: 'customerPool/queryHoldingIndustryDetail',
 };
 
@@ -426,7 +423,6 @@ const mapDispatchToProps = {
   // 组合产品订购客户查询持仓证券重合度
   queryHoldingSecurityRepetition: fetchDataFunction(false, effects.queryHoldingSecurityRepetition),
   queryIndustryList: fetchDataFunction(true, effects.queryIndustryList),
-  clearIndustryList: fetchDataFunction(false, effects.clearIndustryList),
   queryHoldingIndustryDetail: fetchDataFunction(false, effects.queryHoldingIndustryDetail),
 };
 
@@ -500,7 +496,6 @@ export default class CustomerList extends PureComponent {
     holdingSecurityData: PropTypes.object.isRequired,
     queryIndustryList: PropTypes.func.isRequired,
     industryList: PropTypes.array.isRequired,
-    clearIndustryList: PropTypes.func.isRequired,
     queryHoldingIndustryDetail: PropTypes.func.isRequired,
     industryDetail: PropTypes.object.isRequired,
   }
@@ -967,7 +962,6 @@ export default class CustomerList extends PureComponent {
       holdingSecurityData,
       queryIndustryList,
       industryList,
-      clearIndustryList,
       queryHoldingIndustryDetail,
       industryDetail,
     } = this.props;
@@ -1022,7 +1016,6 @@ export default class CustomerList extends PureComponent {
           onFilterChange={this.filterChange}
           searchServerPersonList={searchServerPersonList}
           queryIndustryList={queryIndustryList}
-          clearIndustryList={clearIndustryList}
           industryList={industryList}
         />
         <CustomerLists

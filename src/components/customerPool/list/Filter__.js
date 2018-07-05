@@ -126,7 +126,6 @@ export default class Filter extends PureComponent {
     hashString: PropTypes.string.isRequired,
     queryIndustryList: PropTypes.func.isRequired,
     industryList: PropTypes.array.isRequired,
-    clearIndustryList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -331,9 +330,7 @@ export default class Filter extends PureComponent {
       value: '$args[0].value',
     },
   })
-  handleHoldingIndustryChange(v) {
-    const { id, value } = v;
-    console.log('handleHoldingIndustryChange: ', v);
+  handleHoldingIndustryChange({ id, value }) {
     this.props.onFilterChange({
       name: id,
       value,

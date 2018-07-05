@@ -960,16 +960,15 @@ export default {
       });
     },
     // 查询客户列表持仓行业过滤器的数据
-    queryIndustryList: [
-      function* queryIndustryList({ payload }, { call, put }) {
-        const { code, resultData } = yield call(api.queryIndustryList, payload);
-        if (code === '0') {
-          yield put({
-            type: 'queryIndustryListSuccess',
-            payload: resultData,
-          });
-        }
-      }, { type: 'takeLatest' }],
+    * queryIndustryList({ payload }, { call, put }) {
+      const { code, resultData } = yield call(api.queryIndustryList, payload);
+      if (code === '0') {
+        yield put({
+          type: 'queryIndustryListSuccess',
+          payload: resultData,
+        });
+      }
+    },
     // 查询持仓行业详情
     * queryHoldingIndustryDetail({ payload }, { call, put }) {
       const { code, resultData } = yield call(api.queryHoldingIndustryDetail, payload);
@@ -1687,13 +1686,6 @@ export default {
       return {
         ...state,
         industryList: payload,
-      };
-    },
-    // 清空持仓行业的过滤器数据
-    clearIndustryList(state) {
-      return {
-        ...state,
-        industryList: EMPTY_LIST,
       };
     },
     queryHoldingIndustryDetailSuccess(state, action) {
