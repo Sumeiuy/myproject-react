@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-03 16:58:19
+ * @Last Modified time: 2018-07-05 16:46:46
  */
 
 import React, { PureComponent } from 'react';
@@ -43,6 +43,8 @@ export default class EditBasicInfo extends PureComponent {
     onChange: PropTypes.func.isRequired,
     // 受理时间
     accptTime: PropTypes.string,
+    // 开立期权市场类别
+    openOptMktCatg: PropTypes.string,
     // 受理营业部Id
     busPrcDivId: PropTypes.string,
     // 客户交易级别
@@ -70,6 +72,7 @@ export default class EditBasicInfo extends PureComponent {
     isEdit: false,
     accptTime: '',
     busPrcDivId: '',
+    openOptMktCatg: '',
     custTransLv: '',
     custTransLvName: '',
     degreeFlag: '',
@@ -130,7 +133,6 @@ export default class EditBasicInfo extends PureComponent {
         ageFlag,
         invFlag,
         custType,
-        openOptMktCatg,
         declareBus,
       },
     } = this.props;
@@ -149,7 +151,7 @@ export default class EditBasicInfo extends PureComponent {
       // 申请类型
       reqType: '',
       // 开立期权市场类别
-      openOptMktCatg: openOptMktCatg || '',
+      openOptMktCatg: '',
       // 业务受理营业部
       busPrcDivId: '',
       // 股票客户类型下拉列表
@@ -177,8 +179,21 @@ export default class EditBasicInfo extends PureComponent {
   // 客户类型,申请类型 select选择后设置value
   @autobind
   updateSelect(name, value) {
+    const { onChange } = this.props;
     this.setState({ [name]: value }, this.checkType);
-    this.props.onChange({ [name]: value });
+    onChange({ [name]: value });
+    // 重选客户类型，需要把学历提示项清空
+    if (name === 'stockCustType') {
+      onChange({ degreeFlag: '' });
+    }
+    // 重选申请类型，需要把投资经历评估选项清空
+    if (name === 'reqType') {
+      onChange({
+        aAcctOpenTimeFlag: '',
+        rzrqzqAcctFlag: '',
+        jrqhjyFlag: '',
+      });
+    }
   }
 
   // 检测是否是新开客户，初次申请，然后判断是否显示学历提示选项，和投资经历评估提示选项
@@ -309,6 +324,7 @@ export default class EditBasicInfo extends PureComponent {
       },
       // 是否是编辑页面
       isEdit,
+      custInfo,
       // 选择客户带出的客户基本信息
       custInfo: {
         divisionName,
@@ -330,6 +346,8 @@ export default class EditBasicInfo extends PureComponent {
       custTransLvName,
       // 受理时间
       accptTime,
+      // 开立期权市场类别
+      openOptMktCatg,
       // 受理营业部Id
       busPrcDivId,
       // 已提供大专及以上的学历证明材料
@@ -346,9 +364,7 @@ export default class EditBasicInfo extends PureComponent {
     } = this.props;
     const {
       isSelectDisabled,
-      stockCustType,
       reqType,
-      openOptMktCatg,
       stockCustTypeList,
       optionMarketTypeList,
       reqTypeList,
@@ -357,7 +373,13 @@ export default class EditBasicInfo extends PureComponent {
       isShowDegreePrompt,
       isShowInvPrompt,
     } = this.state;
+    // 个人客户，客户类型可选择，机构客户，客户类型不可选择,并且是默认值
     const stockCustTypeListData = this.addEmptyOption(stockCustTypeList);
+    let { stockCustType } = this.state;
+    if (!_.isEmpty(custInfo)) {
+      const { custType } = custInfo;
+      stockCustType = custType === 'org' ? stockCustTypeList[0].value : '';
+    }
     const reqTypeListData = this.addEmptyOption(reqTypeList);
     const optionMarketTypeListData = this.addEmptyOption(optionMarketTypeList);
     const busDivisionListData = this.addEmptyOption(busDivisionList);

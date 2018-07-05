@@ -262,6 +262,7 @@ export default class Home extends PureComponent {
     const param = {
       custType, // 客户范围类型
       orgId, // 组织ID
+      dateType: this.getDateType(cycleSelect), // 周期类型
       dateStart: cycleDate.cycleStartTime,
       dateEnd: cycleDate.cycleEndTime,
       empId: emp.getId(),
