@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-26 17:15:04
+ * @Last Modified time: 2018-07-03 16:58:19
  */
 
 import React, { PureComponent } from 'react';
@@ -42,12 +42,12 @@ export default class EditBasicInfo extends PureComponent {
     // 触发父组件数据变化
     onChange: PropTypes.func.isRequired,
     // 受理时间
-    accptTime: PropTypes.string.isRequired,
+    accptTime: PropTypes.string,
     // 受理营业部Id
-    busPrcDivId: PropTypes.string.isRequired,
+    busPrcDivId: PropTypes.string,
     // 客户交易级别
-    custTransLv: PropTypes.string.isRequired,
-    custTransLvName: PropTypes.string.isRequired,
+    custTransLv: PropTypes.string,
+    custTransLvName: PropTypes.string,
     // 受理营业部变更
     acceptOrgData: PropTypes.object.isRequired,
     queryAcceptOrg: PropTypes.func.isRequired,
@@ -62,20 +62,27 @@ export default class EditBasicInfo extends PureComponent {
     // 客户交易级别校验
     isShowCustTransLvStatusError: PropTypes.bool,
     custTransLvStatusErrorMessage: PropTypes.string,
+    // 新建时，业务受理营业部变化获取下一步按钮和审批人列表
+    getCreateButtonList: PropTypes.func,
   }
 
   static defaultProps = {
     isEdit: false,
+    accptTime: '',
+    busPrcDivId: '',
+    custTransLv: '',
+    custTransLvName: '',
     degreeFlag: '',
     aAcctOpenTimeFlag: '',
     rzrqzqAcctFlag: '',
     jrqhjyFlag: '',
+    getCreateButtonList: _.noop,
     isShowCustTransLvStatusError: false,
     custTransLvStatusErrorMessage: '',
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const newState = {};
+    let newState = {};
     if (nextProps.stockCustTypeList !== prevState.stockCustTypeList) {
       newState.stockCustTypeList = nextProps.stockCustTypeList;
     }
@@ -91,12 +98,21 @@ export default class EditBasicInfo extends PureComponent {
     if (nextProps.custInfo !== prevState.custInfo) {
       newState.custInfo = nextProps.custInfo;
       newState.isSelectDisabled = _.isEmpty(nextProps.custInfo);
-      // 用户是空，基本信息的select需要清空
+      // 用户是空，基本信息的数据需要清空
       if (_.isEmpty(nextProps.custInfo)) {
-        newState.stockCustTypeList = EMPTY_LIST;
-        newState.reqTypeList = EMPTY_LIST;
-        newState.optionMarketTypeList = EMPTY_LIST;
-        newState.busDivisionList = EMPTY_LIST;
+        newState = {
+          ...newState,
+          stockCustTypeList: EMPTY_LIST,
+          reqTypeList: EMPTY_LIST,
+          optionMarketTypeList: EMPTY_LIST,
+          busDivisionList: EMPTY_LIST,
+          stockCustType: '',
+          reqType: '',
+          openOptMktCatg: '',
+          declareBus: '',
+          isShowDegreePrompt: false,
+          isShowInvPrompt: false,
+        };
       }
     }
     return newState;
@@ -113,16 +129,16 @@ export default class EditBasicInfo extends PureComponent {
         reqType,
         ageFlag,
         invFlag,
+        custType,
+        openOptMktCatg,
+        declareBus,
       },
     } = this.props;
-    if (isEdit && stockCustType === 'New' && reqType === 'New') {
-      if (ageFlag === 'N') {
-        isShowDegreePrompt = true;
-      }
-      if (invFlag === 'N') {
-        isShowInvPrompt = true;
-      }
-    }
+    // 个人客户，客户类型为新开客户,年龄条件不符合要求
+    isShowDegreePrompt = isEdit && custType === 'per' && stockCustType === 'New' && ageFlag === 'N';
+    // 个人客户，申请类型为初次申请，投资经历评估不符合要求
+    isShowInvPrompt = isEdit && custType === 'per' && reqType === 'New' && invFlag === 'N';
+
     this.state = {
       // 基本信息
       custInfo: {},
@@ -133,7 +149,7 @@ export default class EditBasicInfo extends PureComponent {
       // 申请类型
       reqType: '',
       // 开立期权市场类别
-      openOptMktCatg: '',
+      openOptMktCatg: openOptMktCatg || '',
       // 业务受理营业部
       busPrcDivId: '',
       // 股票客户类型下拉列表
@@ -145,7 +161,7 @@ export default class EditBasicInfo extends PureComponent {
       // 业务受理营业部下拉列表
       busDivisionList: EMPTY_LIST,
       // 申报事项
-      declareBus: '',
+      declareBus: declareBus || '',
       // 是否显示学历提示，默认是false
       isShowDegreePrompt,
       // 是否显示投资经历提示，默认是false
@@ -172,21 +188,21 @@ export default class EditBasicInfo extends PureComponent {
       custInfo: {
         invFlag,
         ageFlag,
+        custType,
       },
     } = this.props;
     const {
       stockCustType,
       reqType,
     } = this.state;
-    // 新开客户，初次申请
-    if (stockCustType === 'New' && reqType === 'New') {
-      if (ageFlag === 'N') {
-        this.setState({ isShowDegreePrompt: true });
-      }
-      if (invFlag === 'N') {
-        this.setState({ isShowInvPrompt: true });
-      }
-    }
+    // 个人客户，客户类型为新开客户,年龄条件不符合要求
+    this.setState({
+      isShowDegreePrompt: custType === 'per' && stockCustType === 'New' && ageFlag === 'N',
+    });
+    // 个人客户，申请类型为初次申请，投资经历评估不符合要求
+    this.setState({
+      isShowInvPrompt: custType === 'per' && reqType === 'New' && invFlag === 'N',
+    });
   }
 
   @autobind
@@ -219,13 +235,29 @@ export default class EditBasicInfo extends PureComponent {
       acceptOrg: value,
     }).then(() => {
       const {
+        isEdit,
         acceptOrgData,
         acceptOrgData: {
           accptTime,
           custTransLv,
           custTransLvName,
+          busPrcDivName,
         },
+        custInfo: {
+          divisionName,
+          openDivName,
+        },
+        getCreateButtonList,
       } = this.props;
+      // 新建申请时，受理营业部变更需要重新获取审批人列表
+      if (!isEdit) {
+        getCreateButtonList({
+          flowId: '',
+          divisionName,
+          openDivName,
+          busPrcDivName,
+        });
+      }
       if (!_.isEmpty(acceptOrgData)) {
         onChange({
           accptTime,
@@ -285,7 +317,7 @@ export default class EditBasicInfo extends PureComponent {
         // 证件号码
         idNum,
         // 是否专业投资者
-        isProfessInvset,
+        isProfessInvsetCn,
         // 上海A股股东账号
         aAcct,
         // 开户系统
@@ -325,10 +357,6 @@ export default class EditBasicInfo extends PureComponent {
       isShowDegreePrompt,
       isShowInvPrompt,
     } = this.state;
-    let isProfessInvsetor = '';
-    if (isProfessInvset) {
-      isProfessInvsetor = isProfessInvset === 'Y' ? '是' : '否';
-    }
     const stockCustTypeListData = this.addEmptyOption(stockCustTypeList);
     const reqTypeListData = this.addEmptyOption(reqTypeList);
     const optionMarketTypeListData = this.addEmptyOption(optionMarketTypeList);
@@ -388,7 +416,7 @@ export default class EditBasicInfo extends PureComponent {
               </div>
               <div className={styles.value}>
                 <FormItem>
-                  {isProfessInvsetor || EMPTY_INFO}
+                  {isProfessInvsetCn || EMPTY_INFO}
                 </FormItem>
               </div>
             </div>
@@ -536,13 +564,18 @@ export default class EditBasicInfo extends PureComponent {
               </div>
               <div className={styles.value}>
                 <FormItem>
-                  <Select
-                    disabled={isSelectDisabled}
-                    onChange={key => this.updateBusPrcDiv('busPrcDivId', key)}
-                    value={busPrcDivId}
-                  >
-                    { this.getSelectOption(busDivisionListData) }
-                  </Select>
+                  {
+                    getFieldDecorator('busPrcDivId', {
+                      initialValue: busPrcDivId || '',
+                    })(
+                      <Select
+                        disabled={isSelectDisabled}
+                        onChange={key => this.updateBusPrcDiv('busPrcDivId', key)}
+                      >
+                        { this.getSelectOption(busDivisionListData) }
+                      </Select>,
+                    )
+                  }
                 </FormItem>
               </div>
             </div>
@@ -553,7 +586,7 @@ export default class EditBasicInfo extends PureComponent {
               </div>
               <div className={styles.value} >
                 <FormItem>
-                  {accptTime || EMPTY_INFO}
+                  {(accptTime && accptTime.slice(0, 10)) || EMPTY_INFO}
                 </FormItem>
               </div>
             </div>
@@ -570,10 +603,13 @@ export default class EditBasicInfo extends PureComponent {
                       getFieldDecorator('declareBus', {
                         rules: [{
                           required: true, message: '申报事项不能为空',
+                        }, {
+                          max: 200, message: '最大长度不能超过200个字符',
                         }],
                         initialValue: declareBus,
                       })(
                         <textarea
+                          disabled={isSelectDisabled}
                           className={styles.applyTextarea}
                           onChange={this.changeDeclareBus}
                         />,
@@ -590,7 +626,7 @@ export default class EditBasicInfo extends PureComponent {
               <div className={styles.promptBox}>
                 <div className={styles.head}>
                   <Icon type="jingshi" className={styles.promptIcon} />
-                  <span className={styles.title}>客户在我公司投资经历评估不符合要求，请确认客户是否满足以下条件：</span>
+                  <span className={styles.title}>客户的年龄条件不符合要求，请确认客户是否满足以下条件：</span>
                 </div>
                 <div className={styles.row}>
                   <div className={`${styles.label} ${styles.labelDegree}`}>

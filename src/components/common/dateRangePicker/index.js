@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-03-16 15:21:56
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-13 10:59:40
+ * @Last Modified time: 2018-07-02 20:39:08
  * @description 将airbnb的日历组件的样式修改为本项目中需要的样式
  */
 
@@ -56,8 +56,10 @@ export default class CommonDateRangePicker extends PureComponent {
     defaultVisible: PropTypes.bool,
     // 日期组件是否需要position: fixed,默认不需要
     isFixed: PropTypes.bool,
+    className: PropTypes.string,
   }
   static defaultProps = {
+    className: '',
     displayFormat: 'YYYY-MM-DD',
     startDatePlaceholderText: '开始时间',
     endDatePlaceholderText: '结束时间',
@@ -310,12 +312,14 @@ export default class CommonDateRangePicker extends PureComponent {
       'initialStartDate',
       'defaultVisible',
       'isFixed',
+      'className',
     ]);
 
     const { isFixed } = this.props;
     const drpWraperCls = classnames({
       [styles.drpWraper]: true,
       [styles.drpWraperFixed]: isFixed,
+      [this.props.className]: true,
     });
 
     return (

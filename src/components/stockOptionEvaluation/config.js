@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 15:39:47
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-25 10:08:28
+ * @Last Modified time: 2018-06-27 13:09:27
  */
 const config = {
   stockOptionApply: {
@@ -11,7 +11,7 @@ const config = {
     statusOptions: [
       {
         show: true,
-        label: '不限',
+        label: '全部',
         value: '',
       },
       {

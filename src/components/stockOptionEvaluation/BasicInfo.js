@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-07 23:20:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-11 10:17:09
+ * @Last Modified time: 2018-07-04 14:21:02
  */
 
 import React, { PureComponent } from 'react';
@@ -19,15 +19,15 @@ export default class BasicInfo extends PureComponent {
   }
   render() {
     const {
-      custId,
+      econNum,
       custName,
       divisionName,
       openDivName,
       idTypeName,
       idNum,
-      isProfessInvset,
+      isProfessInvsetCn,
       aAcct,
-      openSysName,
+      openSys,
       custTransLvName,
       stockCustTypeName,
       reqTypeName,
@@ -36,8 +36,7 @@ export default class BasicInfo extends PureComponent {
       accptTime,
       declareBus,
     } = this.props.data;
-    const custInfo = `${custName}(${custId})`;
-    const isProfessInvsetor = isProfessInvset === 'Y' ? '是' : '否';
+    const custInfo = `${custName}(${econNum})`;
     return (
       <div className={styles.basicInfoBox}>
         <InfoTitle head="基本信息" />
@@ -93,7 +92,7 @@ export default class BasicInfo extends PureComponent {
               <span className={styles.colon}>:</span>
             </div>
             <div className={styles.value}>
-              {isProfessInvsetor || EMPTY_INFO}
+              {isProfessInvsetCn || EMPTY_INFO}
             </div>
           </div>
           <div className={styles.coloumn}>
@@ -111,7 +110,7 @@ export default class BasicInfo extends PureComponent {
               <span className={styles.colon}>:</span>
             </div>
             <div className={styles.value}>
-              {openSysName || EMPTY_INFO}
+              {openSys || EMPTY_INFO}
             </div>
           </div>
           <div className={styles.coloumn}>
@@ -167,7 +166,7 @@ export default class BasicInfo extends PureComponent {
               <span className={styles.colon}>:</span>
             </div>
             <div className={styles.value}>
-              {accptTime || EMPTY_INFO}
+              {(accptTime && accptTime.slice(0, 10)) || EMPTY_INFO}
             </div>
           </div>
           <div className={styles.row}>

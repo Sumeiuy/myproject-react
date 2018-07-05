@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-07 14:29:19
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-21 11:08:32
+ * @Last Modified time: 2018-06-27 10:04:16
  */
 
 import React, { PureComponent } from 'react';
@@ -60,14 +60,16 @@ export default class ApplyDetail extends PureComponent {
             <div className={styles.module}>
               <BasicInfo data={detailInfo} />
             </div>
-            <div className={styles.module}>
-              <InfoTitle head="适当性评估表" />
-              {
-                isPerCustType ?
-                  <AssessTable data={detailInfo} />
-                : null
-              }
-            </div>
+            {
+              isPerCustType ?
+                (
+                  <div className={styles.module}>
+                    <InfoTitle head="适当性评估表" />
+                    <AssessTable data={detailInfo} />
+                  </div>
+                )
+              : null
+            }
             <div className={styles.module}>
               <InfoTitle head="拟稿信息" />
               <div className={styles.modContent}>

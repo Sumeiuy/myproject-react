@@ -89,6 +89,7 @@ export default class DateFilter extends React.Component {
           </span>
           <DateRangePicker
             {...dateProps}
+            className={styles.dateFilterTransform}
             inputIconPosition="after"
             initialStartDate={initialStartDate}
             initialEndDate={initialEndDate}

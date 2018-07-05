@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-06-12 15:12:22
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 10:27:34
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-07-04 13:20:35
  * @description 融资类业务驳回后修改页面
  */
 import React, { Component } from 'react';

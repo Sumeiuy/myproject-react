@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-26 17:17:09
+ * @Last Modified time: 2018-07-04 11:19:35
  */
 
 import React, { PureComponent } from 'react';
@@ -269,12 +269,12 @@ export default class CreateApply extends PureComponent {
   getCustInfo(item) {
     const { getCustInfo, getSelectMap } = this.props;
     const {
-      brokerNumber,
+      brokerNumber: econNum,
       custType,
     } = item;
     // 根据经济客户号查询客户附带信息
     getCustInfo({
-      brokerNumber,
+      econNum,
       custType,
     }).then(() => {
       const { custInfo } = this.props;
@@ -299,16 +299,17 @@ export default class CreateApply extends PureComponent {
         const { flowId } = this.state;
         const param = {
           flowId,
-          divisionName,
-          openDivName,
-          busPrcDivName,
+          divisionName: divisionName || '',
+          openDivName: openDivName || '',
+          busPrcDivName: busPrcDivName || '',
         };
+
         this.getCreateButtonList(param);
       }
     });
     // 获取股票客户类型,申请类型,开立期权市场类别,业务受理营业部的下拉选择
     getSelectMap({
-      econNum: brokerNumber,
+      econNum,
       custType,
     });
   }
@@ -321,6 +322,7 @@ export default class CreateApply extends PureComponent {
       uploadKey: data.uuid(),
       stockCustType: '',
       reqType: '',
+      custTransLvName: '',
       openOptMktCatg: '',
       busPrcDivId: '',
       accptTime: '',
@@ -334,6 +336,8 @@ export default class CreateApply extends PureComponent {
       isShowCustTransLvStatusError: false,
       custTransLvStatusErrorMessage: '',
     });
+    // 清除客户后，重置form表单
+    this.basicInfoForm.getForm().resetFields();
   }
 
   // 获取下一步按钮和审批人
@@ -361,12 +365,12 @@ export default class CreateApply extends PureComponent {
         if (custType === 'per' && isProfessInvset === 'Y') {
           commonConfirm({
             content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
-            onOk: () => this.showNextApprover(item),
+            onOk: () => this.validateResult(item),
           });
         } else {
           commonConfirm({
             content: '请确认是否已上传相关附件。',
-            onOk: () => this.showNextApprover(item),
+            onOk: () => this.validateResult(item),
           });
         }
       }
@@ -381,20 +385,14 @@ export default class CreateApply extends PureComponent {
       groupName: item.nextGroupName,
       auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
       nextApproverList: item.flowAuditors,
+      currentNodeName: item.currentNodeName,
       nextApproverModal: true,
     });
   }
 
   // 校验数据
   @autobind
-  validateResult(value) {
-    if (_.isEmpty(value)) {
-      message.error('请选择审批人');
-      return;
-    }
-    this.setState({
-      nextApproverModal: false,
-    });
+  validateResult(item) {
     // 校验的数据
     const {
       custTransLv,
@@ -411,6 +409,8 @@ export default class CreateApply extends PureComponent {
         riskEvalTime,
         age,
         ageFlag,
+        custType,
+        investPrefer,
       },
       degreeFlag,
     } = this.state;
@@ -418,6 +418,7 @@ export default class CreateApply extends PureComponent {
       bizId: '',
       econNum,
       custTransLv,
+      custType,
       stockCustType,
       reqType,
       aAcctOpenTimeFlag,
@@ -430,7 +431,9 @@ export default class CreateApply extends PureComponent {
       age,
       ageFlag,
       degreeFlag,
+      investPrefer,
     };
+
     // 提交前先对提交的数据调验证接口进行进行验证
     this.props.validateResult(query)
       .then(() => {
@@ -442,7 +445,7 @@ export default class CreateApply extends PureComponent {
         } = this.props;
         // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
         if (isValid) {
-          this.sendCreateRequest(value);
+          this.showNextApprover(item);
         } else {
           Modal.error({
             title: '提示信息',
@@ -456,6 +459,13 @@ export default class CreateApply extends PureComponent {
   // 发送请求，先走新建（修改）接口，再走流程接口
   @autobind
   sendCreateRequest(value) {
+    if (_.isEmpty(value)) {
+      message.error('请选择审批人');
+      return;
+    }
+    this.setState({
+      nextApproverModal: false,
+    });
     const {
       flowId,
       custTransLv,
@@ -544,12 +554,22 @@ export default class CreateApply extends PureComponent {
       queryAppList,
       location: { query, query: { pageNum, pageSize } },
     } = this.props;
-    const { groupName, auditors, operate } = this.state;
+    const {
+      groupName,
+      auditors,
+      operate,
+      custInfo: {
+        custName,
+      },
+      currentNodeName,
+    } = this.state;
     doApprove({
       itemId: updateBindingFlowAppId,
       groupName,
       auditors: !_.isEmpty(value) ? value.login : auditors,
       operate,
+      custName,
+      currentNodeName,
     }).then(() => {
       message.success('股票期权申请新建成功');
       this.setState({
@@ -587,6 +607,7 @@ export default class CreateApply extends PureComponent {
       busDivisionList,
       acceptOrgData,
       queryAcceptOrg,
+      getCreateButtonList,
     } = this.props;
     const {
       custInfo,
@@ -623,7 +644,7 @@ export default class CreateApply extends PureComponent {
     />);
     const searchProps = {
       visible: nextApproverModal,
-      onOk: this.validateResult,
+      onOk: this.sendCreateRequest,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
       dataSource: nextApproverList,
       columns: approvalColumns,
@@ -688,6 +709,7 @@ export default class CreateApply extends PureComponent {
               onChange={this.handleChange}
               acceptOrgData={acceptOrgData}
               queryAcceptOrg={queryAcceptOrg}
+              getCreateButtonList={getCreateButtonList}
               isShowCustTransLvStatusError={isShowCustTransLvStatusError}
               custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
             />
