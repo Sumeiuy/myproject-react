@@ -218,9 +218,9 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].id',
+    type: 'DropdownSelect',
     payload: {
-      name: '客户筛选',
+      name: '$args[0].name',
       value: '$args[0].value',
     },
   })
@@ -233,10 +233,10 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].id',
+    type: 'DropdownSelect',
     payload: {
-      name: '客户筛选',
-      value: '$args[0].value',
+      name: '持仓产品',
+      value: '$args[0].value.aliasName',
     },
   })
   handleSingleSearchFilterChange({ id, value }) {
@@ -261,10 +261,10 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].id',
+    type: 'DropdownSelect',
     payload: {
       name: '客户筛选-介绍人',
-      value: '$args[0].value',
+      value: '$args[0].value.ptyMngName',
     },
   })
   handleDevMngIdFilterChange({ id, value }) {
@@ -291,10 +291,10 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].id',
+    type: 'DropdownSelect',
     payload: {
       name: '客户筛选-订购组合',
-      value: '$args[0].value',
+      value: '$args[0].value.prodName',
     },
   })
   handleJxGroupProductChange({ id, value }) {
@@ -319,10 +319,11 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].id',
+    type: 'DropdownSelect',
     payload: {
       name: '客户筛选-最后一次服务',
-      value: '$args[0].value',
+      date: '$args[0].value.date',
+      radioValue: '$args[0].value.radioValue',
     },
   })
   handleLastServiceDateChange({ id, value }) {
@@ -335,10 +336,12 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].id',
+    type: 'DropdownSelect',
     payload: {
-      name: '客户筛选',
-      value: '$args[0].value',
+      name: '$args[0].filterName',
+      dateType: '$args[0].value.dateType',
+      min: '$args[0].value.min',
+      max: '$args[0].value.max',
     },
   })
   handleAmountRangeSelectChange({ id, value }) {
@@ -352,9 +355,9 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].id',
+    type: 'DropdownSelect',
     payload: {
-      name: '客户筛选',
+      name: '$args[0].name',
       value: '$args[0].value',
     },
   })
@@ -368,9 +371,9 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].id',
+    type: 'DropdownSelect',
     payload: {
-      name: '客户筛选',
+      name: '$args[0].name',
       value: '$args[0].value',
     },
   })
@@ -385,10 +388,11 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].id',
+    type: 'DropdownSelect',
     payload: {
-      name: '客户筛选',
-      value: '$args[0].value',
+      name: '开通业务',
+      dateType: '$args[0].value.dateType',
+      businessType: '$args[0].value.businessType',
     },
   })
   handleFormFilterChange(obj) {
@@ -404,9 +408,9 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].name',
+    type: 'DropdownSelect',
     payload: {
-      name: '客户筛选',
+      name: '$args[0].filterName',
       value: '$args[0].value',
     },
   })
@@ -420,9 +424,9 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].id',
+    type: 'DropdownSelect',
     payload: {
-      name: '客户筛选',
+      name: '$args[0].name',
       value: '$args[0].value',
     },
   })
@@ -451,10 +455,10 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0]',
+    type: 'DropdownSelect',
     payload: {
-      name: '客户筛选',
-      value: '$args[1]',
+      name: '标签-关闭',
+      value: '$args[0]',
     },
   })
   handleNormalfiterClose(id, labels) {
@@ -472,10 +476,10 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].id',
+    type: 'DropdownSelect',
     payload: {
-      name: '客户筛选',
-      value: '$args[0].value',
+      name: '$args[0].name',
+      value: '',
     },
   })
   handleTagfilterChange(value) {
@@ -491,10 +495,10 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].id',
+    type: 'DropdownSelect',
     payload: {
-      name: '客户筛选-更多',
-      value: '$args[0].value',
+      name: '客户筛选-更多条件',
+      value: '$args[0].id',
     },
   })
   handleMoreFilterChange(obj) {
@@ -521,10 +525,10 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: '$args[0].name',
+    type: 'DropdownSelect',
     payload: {
       name: '客户筛选-关闭过滤条件',
-      value: '',
+      value: '$args[0].name',
     },
   })
   handleCloseFilter({ name }) {
