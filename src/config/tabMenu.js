@@ -153,6 +153,24 @@ const primaryMenu = [
     pid: 'ROOT',
   },
   {
+    name: '个股详情',
+    id: 'FSP_STOCK_DETAIL',
+    path: '/stock/detail',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
+    name: '组合详情',
+    id: 'FSP_COMBINATION_DETAIL',
+    path: '/choicenessCombination/combinationDetail',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
+    name: '历史报告',
+    id: 'FSP_REPORT_DETAIL',
+    path: '/choicenessCombination/reportDetail',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
     name: '晨报详情',
     id: 'FSP_BROADCAST_DETAIL',
     path: '/broadcastDetail',
@@ -195,18 +213,6 @@ const primaryMenu = [
     id: 'FSP_BUSINESS_APPLICATION',
     path: '/commission',
     pid: 'FSP_BUSINESS_APPLICATION',
-  },
-  {
-    name: '个股资讯-temp',
-    id: 'FSP_STRATEGY_CENTER',
-    path: '/stock',
-    pid: 'FSP_STRATEGY_CENTER',
-  },
-  {
-    name: '精选组合-temp',
-    id: 'FSP_STRATEGY_CENTER',
-    path: '/choicenessCombination',
-    pid: 'FSP_STRATEGY_CENTER',
   },
 ];
 

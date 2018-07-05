@@ -28,7 +28,7 @@ import logable from '../../decorators/logable';
 const { typeList, securityType } = config;
 const { Header, Footer, Content } = Layout;
 const EMPTY_PARAM = '暂无';
-const pathname = '/stock';
+const pathname = '/strategyCenter/stock';
 
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
