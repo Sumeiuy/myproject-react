@@ -78,6 +78,7 @@ export default class Filter extends PureComponent {
       startDate,
       endDate,
       onFilter,
+      filterType,
     } = this.props;
     const defaultDate = [
       _.isEmpty(startDate) ? null : moment(startDate, dateFormatStr),
@@ -88,14 +89,24 @@ export default class Filter extends PureComponent {
         <div className={styles.inputBox}>
           <Search
             defaultValue={keyword}
-            placeholder="标题"
+            placeholder={
+              filterType === config.viewpointFilterType ?
+              '标题'
+              :
+              '行业/主题'
+            }
             onSearch={value => onFilter({ keyword: value })}
             style={searchStyle}
             enterButton
           />
         </div>
         <div className={styles.selectBox}>
-          <span className={styles.title}>类型：</span>
+          <span className={styles.title}>{
+            filterType === config.viewpointFilterType ?
+            '类型'
+            :
+            '调整方向'
+          }：</span>
           <Select
             style={selectStyle}
             defaultValue={type}
@@ -107,7 +118,12 @@ export default class Filter extends PureComponent {
           </Select>
         </div>
         <div className={styles.dateBox}>
-          <span className={styles.title}>报告日期：</span>
+          <span className={styles.title}>{
+            filterType === config.viewpointFilterType ?
+            '报告日期'
+            :
+            '调整时间'
+          }：</span>
           <RangePicker
             defaultValue={defaultDate}
             format={dateFormatStr}

@@ -28,5 +28,7 @@ export default function choicenessCombination(api) {
     getOverview: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryAdjustmentDetail', query),
     // 详情-组合构成-饼图
     getCompositionPie: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryStatsticSecurityList', query),
+    // 订购客户列表
+    queryHoldRepeatProportion: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryHoldRepeatProportion', query),
   };
 }
