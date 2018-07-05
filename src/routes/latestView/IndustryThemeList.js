@@ -189,6 +189,17 @@ export default class IndustryThemeList extends PureComponent {
     });
   }
 
+  // 由于后端返回的列表数据没有唯一的key值，所以拼一个不会重复的rowKey用作渲染时的key
+  @autobind
+  getTransformList(list) {
+    return list.map((item, index) => (
+      {
+        ...item,
+        rowKey: index,
+      }
+    ));
+  }
+
   render() {
     const {
       location: {
@@ -226,9 +237,9 @@ export default class IndustryThemeList extends PureComponent {
             filterType={config.industryThemeFilterType}
           />
           <Table
-            rowKey={'id'}
+            rowKey={'rowKey'}
             columns={this.getColumns()}
-            dataSource={list}
+            dataSource={this.getTransformList(list)}
             pagination={false}
           />
           <Pagination {...paganationOption} />
