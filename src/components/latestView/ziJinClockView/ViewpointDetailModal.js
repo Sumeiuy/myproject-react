@@ -8,14 +8,17 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-// import _ from 'lodash';
+import _ from 'lodash';
 
 import CommonModal from '../../common/biz/CommonModal';
-// import { time as timeHelper } from '../../../helper';
-// import config from '../config';
+import { time as timeHelper } from '../../../helper';
+import config from '../config';
 import styles from './viewpointDetailModal.less';
 
-// const { dateFormatStr } = config;
+const { dateFormatStr } = config;
+
+const INDUSTRY = '行业';
+const TITLE = '主题';
 
 export default class ViewpointDetailModal extends PureComponent {
   static propTypes = {
@@ -27,25 +30,22 @@ export default class ViewpointDetailModal extends PureComponent {
 
   render() {
     const {
-      // data: {
-        // title,
-        // time,
-        // categoryName,
-        // typeName,
-        // content,
-        // gradeName,
-      // },
+      data: {
+        title,
+        time,
+        reason,
+        direction,
+        industry,
+      },
       visible,
       modalKey,
       closeModal,
     } = this.props;
-    // Д 为替换后端返回数据中的换行符而设置，无实际价值
-    // const newContent = _.isEmpty(content) ? '' : content;
-    // const newDetail = newContent.replace(/\r\n|\n\t|\t\n|\n/g, 'Д');
-    // const splitArray = newDetail.split('Д');
+    const titleName = _.isEmpty(title) ? INDUSTRY : TITLE;
+    const modalTitle = `${titleName}调整信息`;
     return (
       <CommonModal
-        title="行业/主题调整信息"
+        title={modalTitle}
         visible={visible}
         closeModal={() => closeModal(modalKey)}
         size="normal"
@@ -55,14 +55,14 @@ export default class ViewpointDetailModal extends PureComponent {
         wrapClassName={styles.detailModal}
         onOk={() => closeModal(modalKey)}
       >
-        <h3>行业/主题：金牛实盘模拟投资组合20170918</h3>
+        <h3>{titleName}: {title || industry}</h3>
         <dl className={styles.modalDl}>
           <dt>调整方向：</dt>
-          <dd>调入</dd>
+          <dd>{direction}</dd>
           <dt>调整时间：</dt>
-          <dd>2018-06-20</dd>
+          <dd>{timeHelper.format(time, dateFormatStr)}</dd>
           <dt>调整理由：</dt>
-          <dd>这里是理由</dd>
+          <dd>{reason}</dd>
         </dl>
       </CommonModal>
     );

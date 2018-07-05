@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 
 import Icon from '../../common/Icon';
+import { openRctTab } from '../../../utils';
 import ViewpointListItem from './ViewpointListItem';
 import ZijinClockDetailModal from './ZijinClockDetailModal';
 import styles from './ziJinClockViewpoint.less';
@@ -24,6 +25,11 @@ export default class ZiJinClockViewpoint extends PureComponent {
     data: PropTypes.object.isRequired,
     // 首页紫金时钟列表
     list: PropTypes.array.isRequired,
+  }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -83,11 +89,22 @@ export default class ZiJinClockViewpoint extends PureComponent {
 
   @autobind
   toListPage() {
-    console.log('toListPage');
+    const { push } = this.context;
+    const param = {
+      id: 'RTC_TAB_ZIJIN_CLOCK_VIEWPOINT_LIST',
+      title: '行业/主题调整',
+    };
+    const url = 'latestView/industryThemeList';
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+      pathname: url,
+    });
   }
 
   render() {
-    const { activeCycle } = this.props.data;
+    const { activeCycle = {} } = this.props.data;
     return (
       <div className={styles.ziJinBox}>
         <div className={`${styles.headerBox} clearfix`}>

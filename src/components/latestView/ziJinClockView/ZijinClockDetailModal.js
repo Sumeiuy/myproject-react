@@ -11,11 +11,11 @@ import PropTypes from 'prop-types';
 // import _ from 'lodash';
 
 import CommonModal from '../../common/biz/CommonModal';
-// import { time as timeHelper } from '../../../helper';
-// import config from '../config';
+import { time as timeHelper } from '../../../helper';
+import config from '../config';
 import styles from './zijinClockDetailModal.less';
 
-// const { dateFormatStr } = config;
+const { dateFormatStr } = config;
 
 export default class ZijinClockDetailModal extends PureComponent {
   static propTypes = {
@@ -54,7 +54,7 @@ export default class ZijinClockDetailModal extends PureComponent {
         <h3>当前周期：{name}</h3>
         <dl className={styles.modalDl}>
           <dt>发布日期：</dt>
-          <dd>{time}</dd>
+          <dd>{timeHelper.format(time, dateFormatStr)}</dd>
           <dt>周期描述：</dt>
           <dd>{cyclePoint}</dd>
           <dt>宏观观点：</dt>
