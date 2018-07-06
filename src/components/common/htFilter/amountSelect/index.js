@@ -45,10 +45,19 @@ function getAmountSelectFilterLabel(obj) {
 }
 
 export default function AmountSelectFilter(props) {
-  const restProps = _.omit(props, ['type']);
+  const restProps = _.omit(props, ['type', 'onChange']);
+
+  const onChange = (obj) => {
+    props.onChange({
+      ...obj,
+      filterName: props.filterName,
+    });
+  };
+
   return (
     <HtFilter
       {...restProps}
+      onChange={onChange}
       type="form"
       menuComponent={AmountSelectMenu}
       data={data}
@@ -69,9 +78,12 @@ export default function AmountSelectFilter(props) {
 AmountSelectFilter.propTypes = {
   unit: PropTypes.string,
   unitStyle: PropTypes.object,
+  onChange: PropTypes.func.isRequired,
+  filterName: PropTypes.string,
 };
 
 AmountSelectFilter.defaultProps = {
+  filterName: '',
   unit: '元',
   unitStyle: {
     right: 8,
