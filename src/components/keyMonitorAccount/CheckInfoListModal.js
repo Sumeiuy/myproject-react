@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-02 15:49:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-05 14:48:22
+ * @Last Modified time: 2018-07-06 13:44:02
  * @description 重点监控账户的核查信息列表Modal
  */
 
@@ -25,6 +25,7 @@ export default class CheckInfoListModal extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool.isRequired,
     moniKey: PropTypes.string.isRequired,
+    stockAccount: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
     onClose: PropTypes.func.isRequired,
     getCheckInfoList: PropTypes.func.isRequired,
@@ -65,6 +66,12 @@ export default class CheckInfoListModal extends PureComponent {
   }
 
   @autobind
+  insertStockAccountToData(list) {
+    const { stockAccount } = this.props;
+    return list.map(i => ({ ...i, stockAccount }));
+  }
+
+  @autobind
   handleCheckDateCellClick(record) {
     if (env.isInFsp()) {
       // 此处是调用 FSP 框架下的EB弹出层组件，因此添加 env 判断
@@ -95,6 +102,8 @@ export default class CheckInfoListModal extends PureComponent {
     } = this.props;
 
     const columns = this.addOnCellPropsForColumns(CHECKINFO_LIST_COLUMNS);
+    // 将客户的证券账号写进数据中
+    const newCheckInfoList = this.insertStockAccountToData(checkInfoList);
 
     return (
       <Modal
@@ -111,7 +120,7 @@ export default class CheckInfoListModal extends PureComponent {
             <Table
               columns={columns}
               rowKey="rowId"
-              dataSource={checkInfoList}
+              dataSource={newCheckInfoList}
               pagination={{
                 pageSize: 5,
                 showTotal(total) {
