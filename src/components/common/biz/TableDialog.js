@@ -50,6 +50,8 @@ export default class TableDialog extends Component {
     onCancel: PropTypes.func.isRequired,
     modalKey: PropTypes.string.isRequired,
     searchShow: PropTypes.bool,
+    // 是否需要分页，默认不需要分页
+    pagination: PropTypes.object,
   }
 
   static defaultProps = {
@@ -60,6 +62,7 @@ export default class TableDialog extends Component {
     rowKey: '',
     searchShow: true,
     onSearch: () => {},
+    pagination: {},
   }
 
   constructor(props) {
@@ -157,6 +160,7 @@ export default class TableDialog extends Component {
       visible,
       rowKey,
       searchShow,
+      pagination,
     } = this.props;
 
     if (!visible) {
@@ -174,6 +178,8 @@ export default class TableDialog extends Component {
       onChange: this.onSelectChange,
       selectedRowKeys,
     };
+
+    const paginationData = _.isEmpty(pagination) ? false : pagination;
     return (
       <Modal
         title={title}
@@ -200,7 +206,7 @@ export default class TableDialog extends Component {
             rowSelection={rowSelection}
             columns={newColumns}
             dataSource={dataSource}
-            pagination={false}
+            pagination={paginationData}
           />
         </div>
       </Modal>
