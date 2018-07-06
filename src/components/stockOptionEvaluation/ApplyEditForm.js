@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-04 14:20:41
+ * @Last Modified time: 2018-07-05 12:59:29
  */
 
 import React, { PureComponent } from 'react';
@@ -487,6 +487,7 @@ export default class ApplyEditForm extends PureComponent {
       isEdit,
       suggestion,
       accptTime,
+      openOptMktCatg,
       busPrcDivId,
       custTransLv,
       custTransLvName,
@@ -544,6 +545,7 @@ export default class ApplyEditForm extends PureComponent {
                 busDivisionList={busDivisionList}
                 custInfo={detailInfo}
                 accptTime={accptTime}
+                openOptMktCatg={openOptMktCatg}
                 busPrcDivId={busPrcDivId}
                 custTransLv={custTransLv}
                 custTransLvName={custTransLvName}

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-02 15:56:41
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-03 16:34:48
+ * @Last Modified time: 2018-07-06 13:40:38
  * @description 重点监控账户组件的配置项
  */
 
@@ -29,8 +29,8 @@ const config = {
     },
     {
       title: '证券账户',
-      key: 'account',
-      dataIndex: 'account',
+      key: 'stockAccount',
+      dataIndex: 'stockAccount',
       width: 150,
     },
     {

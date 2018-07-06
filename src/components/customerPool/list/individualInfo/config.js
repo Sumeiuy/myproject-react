@@ -77,7 +77,7 @@ const matchRule = {
     inset: true,
     key: [{
       name: '姓名',
-      id: 'empName',
+      id: 'name',
       render: 'renderDefaultVal',
     }],
   },
@@ -104,8 +104,8 @@ const matchRule = {
   sorPtyId: {
     inset: true,
     key: [{
-      name: '经济客户号',
-      id: 'sorPtyId',
+      name: '经纪客户号',
+      id: 'custId',
       render: 'renderDefaultVal',
     }],
   },
@@ -113,7 +113,7 @@ const matchRule = {
     inset: true,
     key: [{
       name: '联系电话',
-      id: 'mobile',
+      id: 'telephone',
       render: 'renderDefaultVal',
     }],
   },
