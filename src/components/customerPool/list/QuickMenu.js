@@ -96,15 +96,19 @@ export default class QuickMenu extends PureComponent {
         <ul className={styles.operationIcon}>
           <li onClick={() => this.handleTelephoneClick(listItem)}>
             <Icon type="dianhua" />
-            <span>电话联系</span>
+            <span>联系客户</span>
           </li>
           <li onClick={() => this.addToGroup(listItem)}>
             <Icon type="fenzu" />
-            <span>添加到分组</span>
+            <span>加到分组</span>
           </li>
           <li onClick={() => this.handleAddServiceRecordClick(listItem)}>
             <Icon type="jilu" />
-            <span>添加服务记录</span>
+            <span>服务记录</span>
+          </li>
+          <li>
+            <Icon type="jilu" />
+            <span>客户标签</span>
           </li>
         </ul>
       </div>
