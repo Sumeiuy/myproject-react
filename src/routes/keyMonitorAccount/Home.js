@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-05 14:35:46
+ * @Last Modified time: 2018-07-06 13:39:41
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -79,6 +79,8 @@ export default class KeyMonitorAccountHome extends Component {
       checkInfoModal: false,
       // 展示核查信息里列表需要的数据
       moniKey: '',
+      // 用于在核查信息列表展示正确账户
+      stockAccount: '',
     };
   }
 
@@ -215,6 +217,7 @@ export default class KeyMonitorAccountHome extends Component {
     this.setState({
       checkInfoModal: true,
       moniKey: record.moniKey,
+      stockAccount: record.stockAccount,
     });
   }
 
@@ -320,6 +323,7 @@ export default class KeyMonitorAccountHome extends Component {
       custNumber,
       checkInfoModal,
       moniKey,
+      stockAccount,
     } = this.state;
     const { dict } = this.context;
     if (_.isEmpty(dict)) {
@@ -414,6 +418,7 @@ export default class KeyMonitorAccountHome extends Component {
           : (
             <CheckInfoModal
               moniKey={moniKey}
+              stockAccount={stockAccount}
               visible={checkInfoModal}
               data={checkListInfo}
               getCheckInfoList={getCheckInfoList}
