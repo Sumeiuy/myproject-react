@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-06 15:26:40
+ * @Last Modified time: 2018-07-06 17:48:23
  */
 
 import React, { PureComponent } from 'react';
@@ -206,6 +206,7 @@ export default class ApplyEditForm extends PureComponent {
       auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
       nextApproverList: item.flowAuditors,
       currentNodeName: item.currentNodeName,
+      approverNum: item.approverNum,
     }, () => {
       // approverNum为none代表没有审批人，则不需要弹审批弹框直接走接口
       // 终止按钮的approverNum为none，提交按钮的approverNum不为none
@@ -409,13 +410,16 @@ export default class ApplyEditForm extends PureComponent {
   // 流程接口
   @autobind
   sendDoApproveRequest(value) {
-    if (_.isEmpty(value)) {
-      message.error('请选择审批人');
-      return;
+    const { approverNum } = this.state;
+    if (approverNum !== 'none') {
+      if (_.isEmpty(value)) {
+        message.error('请选择审批人');
+        return;
+      }
+      this.setState({
+        nextApproverModal: false,
+      });
     }
-    this.setState({
-      nextApproverModal: false,
-    });
     const { doApprove, detailInfo, getDetailInfo } = this.props;
     const { bizId, flowId } = detailInfo;
     const {
