@@ -309,6 +309,9 @@ const effects = {
   addCallRecord: 'customerPool/addCallRecord',
   queryHoldingSecurityRepetition: 'customerPool/queryHoldingSecurityRepetition',
   getCustRangeByAuthority: 'customerPool/getCustRangeByAuthority',
+  queryCustSignedLabels: 'customerLabel/queryCustSignedLabels',
+  queryLikeLabelInfo: 'customerLabel/queryLikeLabelInfo',
+  signCustLabels: 'customerLabel/signCustLabels',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -357,6 +360,10 @@ const mapStateToProps = state => ({
   currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
   // 组合产品订购客户重复的持仓证券
   holdingSecurityData: state.customerPool.holdingSecurityData,
+  // 客户已标记标签
+  custLabel: state.customerLabel.custLabel,
+  // 模糊搜索客户标签
+  custLikeLabel: state.customerLabel.custLikeLabel,
 });
 
 const mapDispatchToProps = {
@@ -411,6 +418,10 @@ const mapDispatchToProps = {
   getCustRangeByAuthority: fetchDataFunction(true, effects.getCustRangeByAuthority),
   // 组合产品订购客户查询持仓证券重合度
   queryHoldingSecurityRepetition: fetchDataFunction(false, effects.queryHoldingSecurityRepetition),
+  // 查询客户已标记标签
+  queryCustSignedLabels: fetchDataFunction(true, effects.queryCustSignedLabels),
+  queryLikeLabelInfo: fetchDataFunction(false, effects.queryLikeLabelInfo),
+  signCustLabels: fetchDataFunction(true, effects.signCustLabels),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -481,6 +492,11 @@ export default class CustomerList extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryCustSignedLabels: PropTypes.func.isRequired,
+    queryLikeLabelInfo: PropTypes.func.isRequired,
+    signCustLabels: PropTypes.func.isRequired,
+    custLabel: PropTypes.object.isRequired,
+    custLikeLabel: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -940,6 +956,11 @@ export default class CustomerList extends PureComponent {
       getSearchPersonList,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
+      queryCustSignedLabels,
+      queryLikeLabelInfo,
+      signCustLabels,
+      custLabel,
+      custLikeLabel,
     } = this.props;
     const {
       sortDirection,
@@ -1050,6 +1071,11 @@ export default class CustomerList extends PureComponent {
           currentPytMng={this.getPostPtyMngId()}
           queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
           holdingSecurityData={holdingSecurityData}
+          queryCustSignedLabels={queryCustSignedLabels}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          signCustLabels={signCustLabels}
+          custLabel={custLabel}
+          custLikeLabel={custLikeLabel}
         />
       </div>
     );

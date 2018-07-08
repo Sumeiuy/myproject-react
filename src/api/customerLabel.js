@@ -19,5 +19,9 @@ export default function customerPool(api) {
     queryLabelType: query => api.post('/groovynoauth/fsp/cust/custlabel/queryLabelType', query),
     // 标签名重名校验
     checkDuplicationName: query => api.post('/groovynoauth/fsp/cust/custlabel/checkDuplicationName', query),
+    // 查询客户已标记标签
+    queryCustSignedLabels: query => api.post('/groovynoauth/fsp/cust/custlabel/queryCustSignedLabels', query),
+    // 给客户打标签
+    signCustLabels: query => api.post('/groovynoauth/fsp/cust/custlabel/signCustLabels', query),
   };
 }

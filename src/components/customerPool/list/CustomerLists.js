@@ -8,13 +8,14 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Checkbox } from 'antd';
+import { Checkbox, Button } from 'antd';
 import SaleDepartmentFilter from './SaleDepartmentFilter';
 import ServiceManagerFilter from './ServiceManagerFilter';
 import CustomerRow from './CustomerRow';
 import CreateContactModal from './CreateContactModal';
 import Reorder from './Reorder';
 import BottomFixedBox from './BottomFixedBox';
+import SignCustomerLabel from './modal/SignCustomerLabel';
 import { openInTab } from '../../../utils';
 import { url as urlHelper, emp } from '../../../helper';
 import NoData from '../common/NoData';
@@ -132,6 +133,11 @@ export default class CustomerLists extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryCustSignedLabels: PropTypes.func.isRequired,
+    queryLikeLabelInfo: PropTypes.func.isRequired,
+    signCustLabels: PropTypes.func.isRequired,
+    custLabel: PropTypes.object.isRequired,
+    custLikeLabel: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -156,6 +162,7 @@ export default class CustomerLists extends PureComponent {
       currentCustId: '',
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
+      currentSignLabelCustId: '',
     };
     this.checkMainServiceManager(props);
   }
@@ -424,6 +431,24 @@ export default class CustomerLists extends PureComponent {
     return EMPTY_ARRAY;
   }
 
+  // 添加客户标签 -- start
+  @autobind
+  getCustSignLabel(custId) {
+    const { queryCustSignedLabels } = this.props;
+    queryCustSignedLabels({ custId }).then(() => {
+      this.setState({
+        currentSignLabelCustId: custId,
+      });
+    });
+  }
+
+  @autobind
+  removeSignLabelCust() {
+    this.setState({
+      currentSignLabelCustId: '',
+    });
+  }
+  // 添加客户标签 -- end
   render() {
     const {
       isShowContactModal,
@@ -431,6 +456,7 @@ export default class CustomerLists extends PureComponent {
       custType,
       modalKey,
       custName,
+      currentSignLabelCustId,
     } = this.state;
 
     const {
@@ -482,6 +508,10 @@ export default class CustomerLists extends PureComponent {
       currentCommonServiceRecord,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
+      custLabel,
+      custLikeLabel,
+      queryLikeLabelInfo,
+      signCustLabels,
     } = this.props;
 
     // 服务记录执行方式字典
@@ -525,16 +555,20 @@ export default class CustomerLists extends PureComponent {
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
     // 默认服务经理
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
+    let currentPtyMngId = { ptyMngId: empInfo.empNum };
     // ‘HTSC 首页指标查询’ 权限, 任务管理权限
     if (hasPermission) {
       if (ptyMngId) {
         serviceManagerDefaultValue = `${decodeURIComponent(ptyMngName)}（${ptyMngId}）`;
+        currentPtyMngId = { ptyMngId };
       } else {
         serviceManagerDefaultValue = '所有人';
+        currentPtyMngId = { ptyMngId: '' };
       }
     }
     if (orgId && orgIdIsMsm) {
       serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
+      currentPtyMngId = { ptyMngId: empInfo.empNum };
     }
     // 当前所处的orgId,默认所有
     let curOrgId = allSaleDepartment.id;
@@ -557,6 +591,7 @@ export default class CustomerLists extends PureComponent {
     };
     return (
       <div className="list-box">
+        <Button onClick={() => { this.getCustSignLabel('123'); }}>测试</Button>
         <div className={styles.listHeader}>
           <div className="selectAll">
             <Checkbox
@@ -630,6 +665,7 @@ export default class CustomerLists extends PureComponent {
                     queryHoldingProductReqState={queryHoldingProductReqState}
                     queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
                     holdingSecurityData={holdingSecurityData}
+                    getCustSignLabel={this.getCustSignLabel}
                   />,
                 )
               }
@@ -687,6 +723,15 @@ export default class CustomerLists extends PureComponent {
               currentCommonServiceRecord={currentCommonServiceRecord}
             /> : null
         }
+        <SignCustomerLabel
+          currentPytMng={currentPtyMngId}
+          custId={currentSignLabelCustId}
+          custLabel={custLabel}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          custLikeLabel={custLikeLabel}
+          signCustLabels={signCustLabels}
+          removeSignLabelCustId={this.removeSignLabelCust}
+        />
       </div>
     );
   }

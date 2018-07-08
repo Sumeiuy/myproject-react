@@ -13,6 +13,8 @@ export default {
   state: {
     labelTypeList: EMPTY_LIST,
     labelInfo: EMPTY_OBJECT,
+    custLabel: EMPTY_OBJECT,
+    custLikeLabel: EMPTY_LIST,
   },
   reducers: {
     queryLabelTypeSuccess(state, action) {
@@ -27,6 +29,22 @@ export default {
         labelInfo: action.payload,
       };
     },
+    queryLikeLabelInfoSuccess(state, action) {
+      return {
+        ...state,
+        custLikeLabel: action.payload,
+      };
+    },
+    queryCustSignedLabelsSuccess(state, action) {
+      const { custId, resultData } = action.payload;
+      return {
+        ...state,
+        custLabel: {
+          ...state.custLabel,
+          [custId]: resultData,
+        },
+      };
+    },
   },
   effects: {
     // 查询客户标签类型
@@ -39,7 +57,7 @@ export default {
         });
       }
     },
-    // 查询客户标签
+    // 查询所有客户标签
     * queryLabelInfo({ payload }, { call, put }) {
       const { resultData } = yield call(api.queryLabelInfo, payload);
       if (resultData) {
@@ -71,6 +89,38 @@ export default {
         return !resultData;
       },
       { type: 'takeLatest' }],
+    // 查询客户已标记标签
+    * queryCustSignedLabels({ payload }, { call, put }) {
+      const { custId = '' } = payload;
+      const { resultData } = yield call(api.queryCustSignedLabels, payload);
+      if (resultData) {
+        yield put({
+          type: 'queryCustSignedLabelsSuccess',
+          payload: {
+            custId,
+            resultData,
+          },
+        });
+      }
+    },
+    // 模糊查询客户标签
+    queryLikeLabelInfo: [
+      function* queryLikeLabelInfo({ payload }, { call, put }) {
+        const { resultData } = yield call(api.queryLabelInfo, payload);
+        if (resultData) {
+          const { labelList } = resultData;
+          yield put({
+            type: 'queryLikeLabelInfoSuccess',
+            payload: labelList,
+          });
+        }
+      },
+      { type: 'takeLatest' }],
+    // 给客户打标签
+    * signCustLabels({ payload }, { call }) {
+      const { resultData } = yield call(api.signCustLabels, payload);
+      return resultData;
+    },
   },
   subscriptions: {
   },

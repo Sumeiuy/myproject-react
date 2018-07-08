@@ -8,13 +8,14 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Checkbox } from 'antd';
+import { Checkbox, Button } from 'antd';
 import SaleDepartmentFilter from './manageFilter/SaleDepartmentFilter';
 import ServiceManagerFilter from './manageFilter/ServiceManagerFilter';
 import CustomerRow from './CustomerRow__';
 import CreateContactModal from './CreateContactModal';
 import Reorder from './reorder/Reorder';
 import BottomFixedBox from './BottomFixedBox';
+import SignCustomerLabel from './modal/SignCustomerLabel';
 import { openInTab } from '../../../utils';
 import { url as urlHelper, emp } from '../../../helper';
 import NoData from '../common/NoData';
@@ -134,6 +135,11 @@ export default class CustomerLists extends PureComponent {
     getSearchPersonList: PropTypes.func.isRequired,
     clearSearchPersonList: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryCustSignedLabels: PropTypes.func.isRequired,
+    queryLikeLabelInfo: PropTypes.func.isRequired,
+    signCustLabels: PropTypes.func.isRequired,
+    custLabel: PropTypes.object.isRequired,
+    custLikeLabel: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -155,6 +161,7 @@ export default class CustomerLists extends PureComponent {
       currentCustId: '',
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
+      currentSignLabelCustId: '',
     };
     this.checkMainServiceManager(props);
   }
@@ -434,6 +441,24 @@ export default class CustomerLists extends PureComponent {
     return firstPageResp;
   }
 
+  // 添加客户标签 -- start
+  @autobind
+  getCustSignLabel(custId) {
+    const { queryCustSignedLabels } = this.props;
+    queryCustSignedLabels({ custId }).then(() => {
+      this.setState({
+        currentSignLabelCustId: custId,
+      });
+    });
+  }
+
+  @autobind
+  removeSignLabelCust() {
+    this.setState({
+      currentSignLabelCustId: '',
+    });
+  }
+  // 添加客户标签 -- end
   render() {
     const {
       isShowContactModal,
@@ -441,6 +466,7 @@ export default class CustomerLists extends PureComponent {
       custType,
       modalKey,
       custName,
+      currentSignLabelCustId,
     } = this.state;
 
     const {
@@ -494,6 +520,10 @@ export default class CustomerLists extends PureComponent {
       queryHoldingSecurityRepetition,
       holdingSecurityData,
       clearSearchPersonList,
+      custLabel,
+      custLikeLabel,
+      queryLikeLabelInfo,
+      signCustLabels,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -553,6 +583,7 @@ export default class CustomerLists extends PureComponent {
     };
     return (
       <div className="list-box">
+        <Button onClick={() => { this.getCustSignLabel('123'); }}>测试</Button>
         <div className={styles.listHeader}>
           <div className="selectAll">
             <Checkbox
@@ -631,6 +662,7 @@ export default class CustomerLists extends PureComponent {
                     queryHoldingProductReqState={queryHoldingProductReqState}
                     queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
                     holdingSecurityData={holdingSecurityData}
+                    getCustSignLabel={this.getCustSignLabel}
                   />,
                 )
               }
@@ -689,6 +721,15 @@ export default class CustomerLists extends PureComponent {
               currentCommonServiceRecord={currentCommonServiceRecord}
             /> : null
         }
+        <SignCustomerLabel
+          currentPytMng={currentPytMng}
+          custId={currentSignLabelCustId}
+          custLabel={custLabel}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          custLikeLabel={custLikeLabel}
+          signCustLabels={signCustLabels}
+          removeSignLabelCustId={this.removeSignLabelCust}
+        />
       </div>
     );
   }

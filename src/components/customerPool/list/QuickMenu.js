@@ -22,6 +22,7 @@ export default class QuickMenu extends PureComponent {
     location: PropTypes.object.isRequired,
     entertype: PropTypes.string.isRequired,
     goGroupOrTask: PropTypes.func.isRequired,
+    getCustSignLabel: PropTypes.func.isRequired,
   }
 
   @autobind
@@ -89,6 +90,8 @@ export default class QuickMenu extends PureComponent {
   render() {
     const {
       listItem,
+      listItem: { custId },
+      getCustSignLabel,
     } = this.props;
 
     return (
@@ -107,8 +110,10 @@ export default class QuickMenu extends PureComponent {
             <span>服务记录</span>
           </li>
           <li>
-            <Icon type="jilu" />
-            <span>客户标签</span>
+            <div onClick={() => { getCustSignLabel(custId); }}>
+              <Icon type="jilu" />
+              <span>客户标签</span>
+            </div>
           </li>
         </ul>
       </div>
