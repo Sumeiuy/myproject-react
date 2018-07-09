@@ -39,7 +39,7 @@ const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 20; // 默认页大小
 
-const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
+const DEFAULT_SORT = { sortType: 'totAset', sortDirection: 'desc' }; // 默认排序方式
 
 const effects = {
   allInfo: 'customerPool/getAllInfo',
@@ -823,4 +823,3 @@ export default class CustomerList extends PureComponent {
     );
   }
 }
-
