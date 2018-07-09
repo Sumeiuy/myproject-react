@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-09 14:11:18
+ * @Last Modified time: 2018-07-09 18:51:25
  * @description 任务管理首页
  */
 
@@ -104,8 +104,6 @@ export default class PerformerView extends PureComponent {
       statusCode: '',
       // 执行中创建者视图右侧展示管理者视图
       isSourceFromCreatorView: false,
-      // 排序参数
-      sortParam: EMPTY_OBJECT,
     };
   }
 
@@ -671,7 +669,6 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getQueryParams(query, newPageNum, newPageSize) {
-    // const { sortParam } = this.state;
     const { missionViewType, status, creatorId } = query;
     // 从query上筛选出需要的入参
     const params = _.pick(query, QUERY_PARAMS);
@@ -831,12 +828,6 @@ export default class PerformerView extends PureComponent {
     const { replace, location, push } = this.props;
     const { query, pathname } = location;
     if (name === 'switchView') {
-      // 视图切换，将排序重置
-      // this.setState({
-      //   sortParam: this.getDefaultViewSortParam(),
-      // }, () => {
-      //   push({ pathname, query: otherQuery });
-      // });
       push({ pathname, query: otherQuery });
     } else {
       replace({
@@ -871,27 +862,6 @@ export default class PerformerView extends PureComponent {
       sortDirection,
     };
   }
-
-  /**
-   * 视图切换，将排序重置成初始化状态
-   */
-  // @autobind
-  // getDefaultViewSortParam(currentViewType) {
-  //   let param = '';
-  //   if (currentViewType === INITIATOR) {
-  //     // 创建者视图，用createTimeSort,desc
-  //     param = {
-  //       [CREATE_TIME_KEY]: SORT_DESC,
-  //     };
-  //   } else if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
-  //     // 执行者视图和管理者视图用endTimeSort,asc
-  //     param = {
-  //       [END_TIME_KEY]: SORT_ASC,
-  //     };
-  //   }
-
-  //   return param;
-  // }
 
   // url中currentId改变后驱动右侧的变化
   @autobind
@@ -934,15 +904,6 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   addSortParam(currentViewType, query) {
-    // let param = {};
-    // // 如果query中没有sortParam，那么取默认的
-    // if (_.isEmpty(sortParam)) {
-    //   param = this.getDefaultViewSortParam(currentViewType);
-    // } else {
-    //   param = sortParam;
-    // }
-
-    // return param;
     const { sortKey, sortDirection } = this.getSortConfig(currentViewType);
     if (query[sortKey]) {
       return { [sortKey]: query[sortKey] };
@@ -956,14 +917,6 @@ export default class PerformerView extends PureComponent {
   @autobind
   handleSortChange({ sortKey, sortType }) {
     const { location: { query, pathname }, replace } = this.props;
-    // 设置排序方向，用来父组件调用
-    // this.setState({
-    //   sortParam: {
-    //     [sortKey]: sortType,
-    //   },
-    // }, () => {
-    //   this.queryAppList(query);
-    // });
     replace({
       pathname,
       query: {
