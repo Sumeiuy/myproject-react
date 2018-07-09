@@ -24,7 +24,6 @@ import {
   MAIN_MAGEGER_ID,
   ENTERLIST1,
   ENTERLIST2,
-  BIZ,
 } from './config';
 
 import { RANDOM } from '../../config/filterContant';
@@ -43,7 +42,7 @@ function getFilterArray(labels, hashString) {
   const labelList = [].concat(labels);
 
   const labelFilters = labelList
-    .map(key => store.get(`${key}_${hashString}`));
+    .map(key => store.get(`CUSTOMERPOOL_${key}_${hashString}`));
 
   if (!_.isEmpty(labelFilters)) {
     _.each(labelFilters,
@@ -241,6 +240,11 @@ function getFilterParam(filterObj, hashString) {
     param.devMngId = filterObj.devMngId[0] || null;
   }
 
+  // 潜在业务客户
+  if (filterObj.bizFlag) {
+    param.bizFlag = filterObj.bizFlag || null;
+  }
+
   // 处理所有的单选类参数
   const singleParams = addSingleParams(filterObj);
   // 处理所有的多选类参数
@@ -276,6 +280,17 @@ function getSortParam(query) {
   return {
     sortsReqList,
   };
+}
+
+// 当query中不存在hashString时，即判断为初次进入客户列表
+function clearCustomerPoolLocalStorage(query) {
+  if (!query.hashString) {
+    store.each((value, key) => {
+      if (/^CUSTOMERPOOL_/.test(key)) {
+        store.remove(key);
+      }
+    });
+  }
 }
 
 
@@ -529,6 +544,7 @@ export default class CustomerList extends PureComponent {
     };
     // 用户默认岗位orgId
     this.orgId = emp.getOrgId();
+    clearCustomerPoolLocalStorage(query);
     this.hashString = query.hashString || RANDOM;
     // 用户工号
     this.empId = emp.getId();
@@ -544,7 +560,7 @@ export default class CustomerList extends PureComponent {
     // HTSC 交易信息查询权限（含私密客户）
     this.hasPCTIQPermission = permission.hasPCTIQPermission();
     this.dataForNextPage = {};
-    store.set(`FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
+    store.set(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
   }
 
   getChildContext() {
@@ -600,10 +616,10 @@ export default class CustomerList extends PureComponent {
 
     // TODO：根据location请求相应的所有子标签条件
     if (!_.isEqual(preOtherQuery, otherQuery) &&
-      !store.get(`FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`)) {
+      !store.get(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`)) {
       this.getCustomerList(nextProps);
     }
-    store.set(`FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
+    store.set(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
   }
 
   @autobind
@@ -626,7 +642,6 @@ export default class CustomerList extends PureComponent {
     } = props;
 
     const filterObj = url.transfromFilterValFromUrl(query.filters);
-    console.log('filterObj: ', filterObj);
     const keyword = decodeURIComponent(filterObj.searchText || '');
     const labelName = decodeURIComponent(query.labelName);
 
@@ -636,10 +651,6 @@ export default class CustomerList extends PureComponent {
       // 必传，页大小
       pageSize: query.pageSize || CUR_PAGESIZE,
     };
-    // 潜在业务进入客户列表需要传bizFlag='biz'
-    if (query.source === 'buiseness') {
-      param.bizFlag = BIZ;
-    }
     const orgId = this.getPostOrgId(query);
     param.orgId = orgId;
     const { ptyMngId } = this.getPostPtyMngId(query);

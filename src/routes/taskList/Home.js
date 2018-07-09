@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-05 11:24:48
+ * @Last Modified time: 2018-07-09 14:11:18
  * @description 任务管理首页
  */
 
@@ -671,7 +671,7 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getQueryParams(query, newPageNum, newPageSize) {
-    const { sortParam } = this.state;
+    // const { sortParam } = this.state;
     const { missionViewType, status, creatorId } = query;
     // 从query上筛选出需要的入参
     const params = _.pick(query, QUERY_PARAMS);
@@ -693,7 +693,7 @@ export default class PerformerView extends PureComponent {
     // 入参中，添加排序关键字
     finalPostData = {
       ...finalPostData,
-      ...this.addSortParam(currentViewType, sortParam),
+      ...this.addSortParam(currentViewType, query),
     };
     // 执行者视图中，状态默认选中‘执行中’, status传50
     // url中status为‘all’时传空字符串或者不传，其余传对应的code码
@@ -832,11 +832,12 @@ export default class PerformerView extends PureComponent {
     const { query, pathname } = location;
     if (name === 'switchView') {
       // 视图切换，将排序重置
-      this.setState({
-        sortParam: this.getDefaultViewSortParam(),
-      }, () => {
-        push({ pathname, query: otherQuery });
-      });
+      // this.setState({
+      //   sortParam: this.getDefaultViewSortParam(),
+      // }, () => {
+      //   push({ pathname, query: otherQuery });
+      // });
+      push({ pathname, query: otherQuery });
     } else {
       replace({
         pathname,
@@ -874,23 +875,23 @@ export default class PerformerView extends PureComponent {
   /**
    * 视图切换，将排序重置成初始化状态
    */
-  @autobind
-  getDefaultViewSortParam(currentViewType) {
-    let param = '';
-    if (currentViewType === INITIATOR) {
-      // 创建者视图，用createTimeSort,desc
-      param = {
-        [CREATE_TIME_KEY]: SORT_DESC,
-      };
-    } else if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
-      // 执行者视图和管理者视图用endTimeSort,asc
-      param = {
-        [END_TIME_KEY]: SORT_ASC,
-      };
-    }
+  // @autobind
+  // getDefaultViewSortParam(currentViewType) {
+  //   let param = '';
+  //   if (currentViewType === INITIATOR) {
+  //     // 创建者视图，用createTimeSort,desc
+  //     param = {
+  //       [CREATE_TIME_KEY]: SORT_DESC,
+  //     };
+  //   } else if (currentViewType === EXECUTOR || currentViewType === CONTROLLER) {
+  //     // 执行者视图和管理者视图用endTimeSort,asc
+  //     param = {
+  //       [END_TIME_KEY]: SORT_ASC,
+  //     };
+  //   }
 
-    return param;
-  }
+  //   return param;
+  // }
 
   // url中currentId改变后驱动右侧的变化
   @autobind
@@ -932,16 +933,21 @@ export default class PerformerView extends PureComponent {
    * 请求入参中添加排序
    */
   @autobind
-  addSortParam(currentViewType, sortParam) {
-    let param = {};
-    // 如果query中没有sortParam，那么取默认的
-    if (_.isEmpty(sortParam)) {
-      param = this.getDefaultViewSortParam(currentViewType);
-    } else {
-      param = sortParam;
-    }
+  addSortParam(currentViewType, query) {
+    // let param = {};
+    // // 如果query中没有sortParam，那么取默认的
+    // if (_.isEmpty(sortParam)) {
+    //   param = this.getDefaultViewSortParam(currentViewType);
+    // } else {
+    //   param = sortParam;
+    // }
 
-    return param;
+    // return param;
+    const { sortKey, sortDirection } = this.getSortConfig(currentViewType);
+    if (query[sortKey]) {
+      return { [sortKey]: query[sortKey] };
+    }
+    return { [sortKey]: sortDirection };
   }
 
   /**
@@ -949,14 +955,21 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   handleSortChange({ sortKey, sortType }) {
-    const { location: { query } } = this.props;
+    const { location: { query, pathname }, replace } = this.props;
     // 设置排序方向，用来父组件调用
-    this.setState({
-      sortParam: {
+    // this.setState({
+    //   sortParam: {
+    //     [sortKey]: sortType,
+    //   },
+    // }, () => {
+    //   this.queryAppList(query);
+    // });
+    replace({
+      pathname,
+      query: {
+        ...query,
         [sortKey]: sortType,
       },
-    }, () => {
-      this.queryAppList(query);
     });
   }
 

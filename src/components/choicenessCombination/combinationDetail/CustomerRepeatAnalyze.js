@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Table } from 'antd';
-import { number } from '../../../helper/';
+import { number, time } from '../../../helper/';
 import config from '../config';
 import styles from './customerRepeatAnalyze.less';
 
@@ -18,6 +18,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const titleList = config.titleList.custRepeat;
 const { sourceType } = config;
+const timeFormater = 'YYYY年MM月DD日';
 export default class CustomerRepeatAnalyze extends PureComponent {
   static propTypes = {
     // 当前组合code
@@ -62,6 +63,7 @@ export default class CustomerRepeatAnalyze extends PureComponent {
 
   render() {
     const {
+      data,
       data: {
         list = EMPTY_LIST,
       },
@@ -83,8 +85,8 @@ export default class CustomerRepeatAnalyze extends PureComponent {
           <a onClick={() => openCustomerListPage(openPayload)}>进入客户列表</a>
         </div>
         <div className={styles.tipsBox}>
-          截止2018年5月24日，当前组合订购客户共计
-          <span className={styles.total}>{number.thousandFormat(11223, true)}</span>人
+          截止{time.format(data.time, timeFormater)}，当前组合订购客户共计
+          <span className={styles.total}>{number.thousandFormat(data.total, true)}</span>人
         </div>
         <Table
           columns={newTitleList}

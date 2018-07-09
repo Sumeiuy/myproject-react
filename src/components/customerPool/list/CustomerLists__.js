@@ -188,9 +188,9 @@ export default class CustomerLists extends PureComponent {
    */
   @autobind
   checkMainServiceManager(props) {
-    const { currentPytMng } = props;
+    const { currentPytMng, location: { query } } = props;
     const { ptyMngId } = currentPytMng;
-    this.mainServiceManager = ptyMngId === emp.getId() || !this.hasPermission();
+    this.mainServiceManager = _.has(query, 'ptyMngId') ? ptyMngId === emp.getId() : !this.hasPermission();
   }
 
   // 没有 任务管理权限从首页搜索、热词、联想和潜在业务 或 绩效指标的客户范围为 我的客户 下钻到列表
@@ -547,7 +547,7 @@ export default class CustomerLists extends PureComponent {
     } else if (orgId) {
       // url中orgId=msm 时,服务营业部选中所有
       curOrgId = orgIdIsMsm ? allSaleDepartment.id : orgId;
-    } else if (!this.mainServiceManager) {
+    } else if (this.hasPermission()) {
       curOrgId = emp.getOrgId();
     }
     const paginationOption = {

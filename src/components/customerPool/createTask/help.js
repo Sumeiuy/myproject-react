@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-09 11:30:44
+ * @Last Modified time: 2018-07-09 18:32:49
  */
 
 import _ from 'lodash';
@@ -59,12 +59,12 @@ function getLabelInfo(filterObj, labelInfos) {
   if (!_.isEmpty(nameAndIdList)) {
     suggestionList = getFormattedData(nameAndIdList);
     _.each(nameAndIdList, (item) => {
-      htmlStr += `瞄准镜标签： $${item}`;
+      htmlStr += `瞄准镜标签： $${item} `;
     });
   }
   if (!_.isEmpty(normalLabelList)) {
     _.each(normalLabelList, (item) => {
-      htmlStr += `标签条件： ${item.name}`;
+      htmlStr += `标签条件： ${item.name} `;
     });
   }
 
@@ -85,7 +85,7 @@ function getHoldingProductInfo(filterObj) {
   if (!_.isEmpty(holdingProduct)) {
     const list = [`持仓数量#${holdingProduct[0]}#`, `持仓市值#${holdingProduct[0]}#`];
     suggestionList = getFormattedData(list);
-    htmlStr += `持仓产品 ${holdingProduct[1]}, 数量为 $${list[0]} ，市值为 $${list[1]}`;
+    htmlStr += `持仓产品 ${holdingProduct[1]}, 数量为 $${list[0]} ，市值为 $${list[1]} `;
   }
   return {
     htmlStr,
@@ -290,6 +290,14 @@ function getCapitalRangInfo({ filterField, labelName }, filterObj) {
   return '';
 }
 
+// 潜在业务客户
+function getBizInfo(field) {
+  if (!_.isEmpty(field)) {
+    return '可开通业务： $可开通业务 ';
+  }
+  return '';
+}
+
 // 新版客户表发起任务，在新建任务的任务提示的显示的信息
 function getFilterInfo({ filterObj, dict, industryList }) {
   const {
@@ -315,8 +323,9 @@ function getFilterInfo({ filterObj, dict, industryList }) {
     const ageHtmlStr = getAgeFilterInfo(filterObj.age);
     const lastServiceHtmlStr = getLatestServiceInfo(filterObj.lastServDt, serviceCustomerState);
     const minFeeHtmlStr = getMinfeeInfo(filterObj.minFee);
+    const bizInfo = getBizInfo(filterObj.bizFlag);
     const list = [
-      labelHtmlStr, holdingProductHtmlStr, businessOpenedHtmlStr,
+      bizInfo, labelHtmlStr, holdingProductHtmlStr, businessOpenedHtmlStr,
       ageHtmlStr, lastServiceHtmlStr, minFeeHtmlStr,
     ];
     _.each(commonFilterList, (item) => {
