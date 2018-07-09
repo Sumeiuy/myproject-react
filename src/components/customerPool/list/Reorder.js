@@ -22,9 +22,9 @@ const DESC = 'desc';
 const ASC = 'asc';
 
 // 排序的字段
-const OPENDT = 'OpenDt';
-const FEE = 'Fee';
-const ASET = 'Aset';
+const OPENDT = 'openDt';
+const FEE = 'minFee';
+const ASET = 'totAset';
 
 // 排序的字段配置，方便后面修改
 const openTimeAsc = { sortType: OPENDT, sortDirection: ASC };
