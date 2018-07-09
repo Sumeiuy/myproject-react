@@ -14,7 +14,7 @@ import ServiceManagerFilter from './manageFilter/ServiceManagerFilter';
 import CustomerRow from './CustomerRow__';
 import CreateContactModal from './CreateContactModal';
 import Reorder from './reorder/Reorder';
-import BottomFixedBox from './BottomFixedBox';
+import BottomFixedBox from './BottomFixedBox__';
 import { openInTab } from '../../../utils';
 import { url as urlHelper, emp, number } from '../../../helper';
 import NoData from '../common/NoData';

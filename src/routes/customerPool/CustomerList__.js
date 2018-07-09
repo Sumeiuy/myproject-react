@@ -24,6 +24,7 @@ import {
   MAIN_MAGEGER_ID,
   ENTERLIST1,
   ENTERLIST2,
+  BIZ,
 } from './config';
 
 import { RANDOM } from '../../config/filterContant';
@@ -625,6 +626,7 @@ export default class CustomerList extends PureComponent {
     } = props;
 
     const filterObj = url.transfromFilterValFromUrl(query.filters);
+    console.log('filterObj: ', filterObj);
     const keyword = decodeURIComponent(filterObj.searchText || '');
     const labelName = decodeURIComponent(query.labelName);
 
@@ -633,9 +635,11 @@ export default class CustomerList extends PureComponent {
       curPageNum: query.curPageNum || CUR_PAGE,
       // 必传，页大小
       pageSize: query.pageSize || CUR_PAGESIZE,
-      // 不同的入口进入列表页面, 后端约定该字段默认传‘searchCustPool’
-      enterType: ENTER_TYPE[query.source] || 'searchCustPool',
     };
+    // 潜在业务进入客户列表需要传bizFlag='biz'
+    if (query.source === 'buiseness') {
+      param.bizFlag = BIZ;
+    }
     const orgId = this.getPostOrgId(query);
     param.orgId = orgId;
     const { ptyMngId } = this.getPostPtyMngId(query);
