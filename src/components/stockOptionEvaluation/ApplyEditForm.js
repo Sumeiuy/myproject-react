@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-05 12:59:29
+ * @Last Modified time: 2018-07-06 17:48:23
  */
 
 import React, { PureComponent } from 'react';
@@ -206,6 +206,7 @@ export default class ApplyEditForm extends PureComponent {
       auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
       nextApproverList: item.flowAuditors,
       currentNodeName: item.currentNodeName,
+      approverNum: item.approverNum,
     }, () => {
       // approverNum为none代表没有审批人，则不需要弹审批弹框直接走接口
       // 终止按钮的approverNum为none，提交按钮的approverNum不为none
@@ -307,7 +308,7 @@ export default class ApplyEditForm extends PureComponent {
         } = this.props;
         // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
         if (isValid) {
-          this.showNextApprover();
+          this.sendEditRequest();
         } else {
           Modal.error({
             title: '提示信息',
@@ -320,14 +321,7 @@ export default class ApplyEditForm extends PureComponent {
 
   // 发送请求，先走修改接口，再走流程
   @autobind
-  sendEditRequest(value) {
-    if (_.isEmpty(value)) {
-      message.error('请选择审批人');
-      return;
-    }
-    this.setState({
-      nextApproverModal: false,
-    });
+  sendEditRequest() {
     const {
       detailInfo: {
         id,
@@ -368,7 +362,6 @@ export default class ApplyEditForm extends PureComponent {
       accptTime,
       declareBus,
       attachment,
-      auditors,
       suggestion,
     } = this.state;
     const query = {
@@ -406,18 +399,27 @@ export default class ApplyEditForm extends PureComponent {
       ageFlag,
       degreeFlag,
       investPrefer,
-      auditors: !_.isEmpty(value) ? value.login : auditors,
       suggestion,
     };
     this.props.updateBindingFlow(query)
       .then(() => {
-        this.sendDoApproveRequest(value);
+        this.showNextApprover();
       });
   }
 
   // 流程接口
   @autobind
   sendDoApproveRequest(value) {
+    const { approverNum } = this.state;
+    if (approverNum !== 'none') {
+      if (_.isEmpty(value)) {
+        message.error('请选择审批人');
+        return;
+      }
+      this.setState({
+        nextApproverModal: false,
+      });
+    }
     const { doApprove, detailInfo, getDetailInfo } = this.props;
     const { bizId, flowId } = detailInfo;
     const {
@@ -511,7 +513,7 @@ export default class ApplyEditForm extends PureComponent {
     const isPerCustType = custType === 'per';
     const searchProps = {
       visible: nextApproverModal,
-      onOk: this.sendEditRequest,
+      onOk: this.sendDoApproveRequest,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
       dataSource: nextApproverList,
       columns: approvalColumns,
@@ -519,6 +521,9 @@ export default class ApplyEditForm extends PureComponent {
       modalKey: 'stockApplyNextApproverModal',
       rowKey: 'login',
       searchShow: false,
+      pagination: {
+        pageSize: 10,
+      },
     };
     return (
       <div className={styles.applyEditForm}>

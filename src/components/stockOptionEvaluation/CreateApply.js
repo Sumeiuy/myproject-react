@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-05 12:58:08
+ * @Last Modified time: 2018-07-06 16:31:57
  */
 
 import React, { PureComponent } from 'react';
@@ -413,6 +413,7 @@ export default class CreateApply extends PureComponent {
         ageFlag,
         custType,
         investPrefer,
+        riskEvalEndTime,
       },
       degreeFlag,
     } = this.state;
@@ -434,6 +435,7 @@ export default class CreateApply extends PureComponent {
       ageFlag,
       degreeFlag,
       investPrefer,
+      riskEvalEndTime,
     };
 
     // 提交前先对提交的数据调验证接口进行进行验证
@@ -447,7 +449,7 @@ export default class CreateApply extends PureComponent {
         } = this.props;
         // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
         if (isValid) {
-          this.showNextApprover(item);
+          this.sendCreateRequest(item);
         } else {
           Modal.error({
             title: '提示信息',
@@ -460,14 +462,7 @@ export default class CreateApply extends PureComponent {
 
   // 发送请求，先走新建（修改）接口，再走流程接口
   @autobind
-  sendCreateRequest(value) {
-    if (_.isEmpty(value)) {
-      message.error('请选择审批人');
-      return;
-    }
-    this.setState({
-      nextApproverModal: false,
-    });
+  sendCreateRequest(item) {
     const {
       flowId,
       custTransLv,
@@ -502,7 +497,6 @@ export default class CreateApply extends PureComponent {
       accptTime,
       declareBus,
       attachment,
-      auditors,
     } = this.state;
     const query = {
       id: '',
@@ -539,17 +533,23 @@ export default class CreateApply extends PureComponent {
       ageFlag,
       degreeFlag,
       investPrefer,
-      auditors: !_.isEmpty(value) ? value.login : auditors,
     };
     this.props.updateBindingFlow(query)
       .then(() => {
-        this.sendDoApproveRequest(value);
+        this.showNextApprover(item);
       });
   }
 
   // 走流程接口
   @autobind
   sendDoApproveRequest(value) {
+    if (_.isEmpty(value)) {
+      message.error('请选择审批人');
+      return;
+    }
+    this.setState({
+      nextApproverModal: false,
+    });
     const {
       doApprove,
       updateBindingFlowAppId,
@@ -647,7 +647,7 @@ export default class CreateApply extends PureComponent {
     />);
     const searchProps = {
       visible: nextApproverModal,
-      onOk: this.sendCreateRequest,
+      onOk: this.sendDoApproveRequest,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
       dataSource: nextApproverList,
       columns: approvalColumns,
@@ -655,6 +655,9 @@ export default class CreateApply extends PureComponent {
       modalKey: 'stockApplyNextApproverModal',
       rowKey: 'login',
       searchShow: false,
+      pagination: {
+        pageSize: 10,
+      },
     };
     return (
       <CommonModal
