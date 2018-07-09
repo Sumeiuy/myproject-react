@@ -11,6 +11,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import { Menu, Dropdown, Icon } from 'antd';
 import styles from './tabMenu.less';
+import MoreTab from './MoreTab';
 
 function isInMoremenu(moreMenu, activeKey) {
   return !!_.find(moreMenu.children, item => item.id === activeKey);
@@ -192,6 +193,21 @@ export default class TabMenu extends PureComponent {
     );
   }
 
+  @autobind
+  renderMoreTab() {
+    const { onRemove, onChange, activeKey, moreMenuObject } = this.props;
+    return (
+      <div className={styles.moreTab}> 
+        <MoreTab 
+          moreTabArray={moreMenuObject.children}
+          onChange={onChange}
+          activeKey={activeKey}
+          onRemove={onRemove}
+        />
+      </div>
+    );
+  }
+
   render() {
     const { mainArray, moreMenuObject } = this.props;
     return (
@@ -207,8 +223,7 @@ export default class TabMenu extends PureComponent {
           })
         }
         {
-          moreMenuObject.children.length === 0 ?
-            null : this.renderDropdownMenu(moreMenuObject, true)
+          moreMenuObject.children.length !== 0 ? this.renderMoreTab() : null
         }
       </div>
     );

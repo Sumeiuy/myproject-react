@@ -1,0 +1,41 @@
+.moreTab {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.text {
+  color: #4a4a4a;
+  font-size: 14px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.active {
+  color: #108ee9;
+}
+
+.activeItem {
+  .active;
+  background: #ecf6fd;
+  :global {
+    .ant-dropdown-menu-submenu-title, .ant-dropdown-menu-submenu-title::after {
+      color: #2e669a !important;
+    }
+  }
+}
+
+.subMenuItem {
+  width: 120px;
+  display: inline-flex;
+  justify-content: space-between;
+}
+
+.close {
+  &:hover {
+    font-weight: bolder;
+  }
+}
