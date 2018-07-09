@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-19 09:20:50
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-10 16:32:42
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-03 16:57:19
  * @description 添加涨乐财富通服务方式下的投资建议的自由话术模块
  */
 
@@ -32,6 +32,7 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
     descErrorInfo: PropTypes.string.isRequired,
     // 标题错误提示信息
     titleErrorInfo: PropTypes.string.isRequired,
+    onFormDataChange: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -106,12 +107,16 @@ export default class ChoiceInvestAdviceFreeMode extends PureComponent {
   handleFreeEditTitleChange(e) {
     const title = e.target.value;
     this.setState({ title, validateTitle: false });
+    // 调用了此方法说明表单数据发生了变化
+    this.props.onFormDataChange();
   }
 
   @autobind
   handleFreeEditDescChange(e) {
     const desc = e.target.value;
     this.setState({ desc, validateContent: false });
+    // 调用了此方法说明表单数据发生了变化
+    this.props.onFormDataChange();
   }
 
   render() {
