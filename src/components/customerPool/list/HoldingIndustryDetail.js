@@ -3,7 +3,7 @@
  * @Description: 客户列表-订购精选组合客户持仓证券重合度
  * @Date: 2018-06-05 14:44:05
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-05 17:36:00
+ * @Last Modified time: 2018-07-09 12:50:48
  */
 
 import React, { PureComponent } from 'react';
@@ -39,6 +39,7 @@ export default class HoldingIndustryDetail extends PureComponent {
     super(props);
     this.state = {
       isMouseEnter: false,
+      hasData: false,
     };
     this.debounced = _.debounce(
       this.getDetail,
@@ -62,7 +63,11 @@ export default class HoldingIndustryDetail extends PureComponent {
     } = this.props;
     const productList = _.map(holdingProducts, item => item.id);
     if (_.isEmpty(data[`${custId}_${id}`])) {
-      queryHoldingIndustryDetail({ custId, industryId: id, productList });
+      queryHoldingIndustryDetail({ custId, industryId: id, productList }).then(() => {
+        this.setState({ hasData: true });
+      });
+    } else {
+      this.setState({ hasData: true });
     }
   }
 
@@ -103,9 +108,8 @@ export default class HoldingIndustryDetail extends PureComponent {
   }
 
   render() {
-    const { isMouseEnter } = this.state;
-    const { data, id, listItem: { custId }, queryHoldingIndustryDetailReqState } = this.props;
-    const hasData = !_.isEmpty(data[`${custId}_${id}`]);
+    const { isMouseEnter, hasData } = this.state;
+    const { queryHoldingIndustryDetailReqState } = this.props;
     return (
       <span style={{ cursor: queryHoldingIndustryDetailReqState ? 'wait' : 'pointer' }} >
         <Popover

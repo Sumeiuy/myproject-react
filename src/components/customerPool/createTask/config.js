@@ -72,7 +72,6 @@ const capitalFilterList = [
   { labelName: '总市值（含信用）', filterField: 'totMktVal' },
   { labelName: '归集率', filterField: 'gjlRate' },
   { labelName: '外部市值', filterField: 'outMktVal' },
-  { labelName: '总资产', filterField: 'totAset' },
 ];
 
 export default {

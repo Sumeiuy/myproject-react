@@ -277,6 +277,8 @@ export default class CreateTaskForm extends PureComponent {
         defaultInitialValue = motDetailModel.timelyIntervalValue; // 有效期
         break;
       case SOURCE_CUSTLIST:
+        defaultMissionType = '请选择';
+        defaultExecutionType = '请选择';
         defaultMissionDesc = this.getFilterInfo();
         break;
       default:

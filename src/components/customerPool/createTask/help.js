@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-09 09:27:59
+ * @Last Modified time: 2018-07-09 11:30:44
  */
 
 import _ from 'lodash';
@@ -59,12 +59,12 @@ function getLabelInfo(filterObj, labelInfos) {
   if (!_.isEmpty(nameAndIdList)) {
     suggestionList = getFormattedData(nameAndIdList);
     _.each(nameAndIdList, (item) => {
-      htmlStr += `<div>瞄准镜标签： $${item} </div>`;
+      htmlStr += `瞄准镜标签： $${item}`;
     });
   }
   if (!_.isEmpty(normalLabelList)) {
     _.each(normalLabelList, (item) => {
-      htmlStr += `<div>标签条件： ${item.name} </div>`;
+      htmlStr += `标签条件： ${item.name}`;
     });
   }
 
@@ -85,7 +85,7 @@ function getHoldingProductInfo(filterObj) {
   if (!_.isEmpty(holdingProduct)) {
     const list = [`持仓数量#${holdingProduct[0]}#`, `持仓市值#${holdingProduct[0]}#`];
     suggestionList = getFormattedData(list);
-    htmlStr += `<div>持仓产品 ${holdingProduct[1]}, 数量为 $${list[0]} ，市值为 $${list[1]} </div>`;
+    htmlStr += `持仓产品 ${holdingProduct[1]}, 数量为 $${list[0]} ，市值为 $${list[1]}`;
   }
   return {
     htmlStr,
@@ -119,7 +119,7 @@ function getCommonFilterInfo({ filterField, dictField, labelName }, filterObj, d
       item => _.includes(_.compact([].concat(tempFilterField)), item.key),
     );
     const displayValue = _.map(list, item => item.value).join('、');
-    htmlStr += `<div>${labelName}： ${displayValue} </div>`;
+    htmlStr += `${labelName}： ${displayValue}`;
   }
   return htmlStr;
 }
@@ -137,7 +137,7 @@ function getBusinessOpenedInfo(filterObj, kPIDateScopeType, singleBusinessTypeLi
     const { value: time } = _.find(kPIDateScopeType, item => item.key === businessOpened[0]);
     const { value: business } =
       _.find(singleBusinessTypeList, item => item.key === businessOpened[1]);
-    htmlStr += `<div>${time}开通业务： ${business} </div>`;
+    htmlStr += `${time}开通业务： ${business}`;
   }
   return htmlStr;
 }
@@ -151,7 +151,7 @@ function getBusinessOpenedInfo(filterObj, kPIDateScopeType, singleBusinessTypeLi
 function getKeywordInfo({ filterField, labelName }, filterObj) {
   let htmlStr = '';
   if (!_.isEmpty(filterObj[filterField])) {
-    htmlStr += `<div>${labelName}：${filterObj[filterField]} </div>`;
+    htmlStr += `${labelName}：${filterObj[filterField]}`;
   }
   return htmlStr;
 }
@@ -166,7 +166,7 @@ function getSingleWithSearchFilterInfo({ filterField, labelName }, filterObj) {
   let htmlStr = '';
   const tempFilterField = filterObj[filterField];
   if (!_.isEmpty(tempFilterField)) {
-    htmlStr += `<div>${labelName}： ${tempFilterField[1]} </div>`;
+    htmlStr += `${labelName}： ${tempFilterField[1]}`;
   }
   return htmlStr;
 }
@@ -178,13 +178,13 @@ function getSingleWithSearchFilterInfo({ filterField, labelName }, filterObj) {
 function getAgeFilterInfo(ageRange) {
   if (!_.isEmpty(ageRange)) {
     if (ageRange[0] && ageRange[1]) {
-      return `<div>年龄范围： ${ageRange[0]}岁 - ${ageRange[1]}岁 </div>`;
+      return `年龄范围： ${ageRange[0]}岁 - ${ageRange[1]}岁`;
     }
     if (ageRange[0]) {
-      return `<div>年龄范围： 大于等于${ageRange[0]}岁 </div>`;
+      return `年龄范围： 大于等于${ageRange[0]}岁`;
     }
     if (ageRange[1]) {
-      return `<div>年龄范围： 小于等于${ageRange[1]}岁 </div>`;
+      return `年龄范围： 小于等于${ageRange[1]}岁`;
     }
   }
   return '';
@@ -197,7 +197,7 @@ function getAgeFilterInfo(ageRange) {
  */
 function getLatestServiceInfo(lastServDt, serviceCustState) {
   if (lastServDt) {
-    return `<div>最近一次服务时间：${m(lastServDt[0]).format(FORMAT)}后${serviceCustState[lastServDt[1]]}</div>`;
+    return `最近一次服务时间：${m(lastServDt[0]).format(FORMAT)}后${serviceCustState[lastServDt[1]]}`;
   }
   return '';
 }
@@ -210,26 +210,34 @@ function getLatestServiceInfo(lastServDt, serviceCustState) {
  */
 function getDateRangInfo({ filterField, labelName }, filterObj) {
   const dateRange = filterObj[filterField];
-  if (!_.isEmpty(dateRange) && dateRange[0] && dateRange[1]) {
-    return `<div>${labelName}： ${dateRange[0]} - ${dateRange[1]} </div>`;
+  if (!_.isEmpty(dateRange)) {
+    if (dateRange[0] && dateRange[1]) {
+      return `${labelName}： ${dateRange[0]} - ${dateRange[1]}`;
+    }
+    if (dateRange[0]) {
+      return `${labelName}： ${dateRange[0]}之后`;
+    }
+    if (dateRange[1]) {
+      return `${labelName}： ${dateRange[1]}之前`;
+    }
   }
   return '';
 }
 
 /**
  * 获取佣金率信息
- * @param {*} minfee url中解析出来的filter字段中当前要获取信息的字段
+ * @param {*} minFee url中解析出来的filter字段中当前要获取信息的字段
  */
 function getMinfeeInfo(minFee) {
   if (!_.isEmpty(minFee)) {
     if (minFee[0] && minFee[1]) {
-      return `<div>佣金率： ${minFee[0]}‰ - ${minFee[1]}‰ </div>`;
+      return `佣金率： ${minFee[0]}‰ - ${minFee[1]}‰`;
     }
     if (minFee[0]) {
-      return `<div>佣金率： 大于等于${minFee[0]}‰ </div>`;
+      return `佣金率： 大于等于${minFee[0]}‰`;
     }
     if (minFee[1]) {
-      return `<div>佣金率： 小于等于${minFee[1]}‰ </div>`;
+      return `佣金率： 小于等于${minFee[1]}‰`;
     }
   }
   return '';
@@ -248,13 +256,13 @@ function getBuyAmtInfo({ filterField, labelName }, filterObj, kPIDateScopeType) 
     const [dateScope = '', start = '', end = ''] = currentItem;
     const { value: time } = _.find(kPIDateScopeType, item => item.key === dateScope);
     if (start && end) {
-      return `<div>${time}${labelName}： ${start}元 - ${end}元 </div>`;
+      return `${time}${labelName}： ${start}元 - ${end}元`;
     }
     if (start) {
-      return `<div>${time}${labelName}： 大于等于${start}元 </div>`;
+      return `${time}${labelName}： 大于等于${start}元`;
     }
     if (end) {
-      return `<div>${time}${labelName}： 小于等于${end}元 </div>`;
+      return `${time}${labelName}： 小于等于${end}元`;
     }
   }
   return '';
@@ -270,13 +278,13 @@ function getCapitalRangInfo({ filterField, labelName }, filterObj) {
   const range = filterObj[filterField];
   if (!_.isEmpty(range)) {
     if (range[0] && range[1]) {
-      return `<div>${labelName}： ${range[0]}元 - ${range[1]}元 </div>`;
+      return `${labelName}： ${range[0]}元 - ${range[1]}元`;
     }
     if (range[0]) {
-      return `<div>${labelName}： 大于等于${range[0]}元 </div>`;
+      return `${labelName}： 大于等于${range[0]}元`;
     }
     if (range[1]) {
-      return `<div>${labelName}： 小于等于${range[1]}元 </div>`;
+      return `${labelName}： 小于等于${range[1]}元`;
     }
   }
   return '';
@@ -292,7 +300,7 @@ function getFilterInfo({ filterObj, dict, industryList }) {
   let suggestionList = [];
   // url中filter没有值时，只显示’可开通业务‘
   if (_.isEmpty(filterObj)) {
-    htmlStr += '<div>可开通业务： $可开通业务 </div>';
+    htmlStr += '<div>1.可开通业务： $可开通业务 </div>';
   } else {
     const {
       htmlStr: labelHtmlStr,
@@ -307,27 +315,32 @@ function getFilterInfo({ filterObj, dict, industryList }) {
     const ageHtmlStr = getAgeFilterInfo(filterObj.age);
     const lastServiceHtmlStr = getLatestServiceInfo(filterObj.lastServDt, serviceCustomerState);
     const minFeeHtmlStr = getMinfeeInfo(filterObj.minFee);
-    htmlStr += labelHtmlStr + holdingProductHtmlStr + businessOpenedHtmlStr + ageHtmlStr
-      + lastServiceHtmlStr + minFeeHtmlStr;
+    const list = [
+      labelHtmlStr, holdingProductHtmlStr, businessOpenedHtmlStr,
+      ageHtmlStr, lastServiceHtmlStr, minFeeHtmlStr,
+    ];
     _.each(commonFilterList, (item) => {
-      htmlStr += getCommonFilterInfo(item, filterObj, { ...dict, industryList });
+      list.push(getCommonFilterInfo(item, filterObj, { ...dict, industryList }));
     });
     _.each(basicInfoList, (item) => {
-      htmlStr += getKeywordInfo(item, filterObj);
+      list.push(getKeywordInfo(item, filterObj));
     });
     _.each(singleWithSearchFilterList, (item) => {
-      htmlStr += getSingleWithSearchFilterInfo(item, filterObj);
+      list.push(getSingleWithSearchFilterInfo(item, filterObj));
     });
     _.each(dateRangeFilterList, (item) => {
-      htmlStr += getDateRangInfo(item, filterObj);
+      list.push(getDateRangInfo(item, filterObj));
     });
     _.each(buyAmtFilterList, (item) => {
-      htmlStr += getBuyAmtInfo(item, filterObj, kPIDateScopeType);
+      list.push(getBuyAmtInfo(item, filterObj, kPIDateScopeType));
     });
     _.each(capitalFilterList, (item) => {
-      htmlStr += getCapitalRangInfo(item, filterObj);
+      list.push(getCapitalRangInfo(item, filterObj));
     });
     suggestionList = [...labelSuggestionList, ...holdingProductSuggestionList];
+    _.each(_.compact(list), (item, index) => {
+      htmlStr += `<div>${index + 1}.${item}</div>`;
+    });
   }
   htmlStr += '</div>';
   return {
