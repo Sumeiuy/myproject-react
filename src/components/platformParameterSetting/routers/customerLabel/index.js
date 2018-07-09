@@ -124,13 +124,18 @@ export default class LabelManager extends PureComponent {
     const { replace } = this.context;
     const preParams = _.pick(query, ['labelTypeId', 'currentPage', 'pageSize']);
     const params = {
+      currentPage: 1,
+      pageSize: 10,
       ...preParams,
       ...option,
     };
     queryLabelInfo(params);
     replace({
       pathname,
-      query: params,
+      query: {
+        ...query,
+        ...params,
+      },
     });
   }
 

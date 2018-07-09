@@ -84,7 +84,7 @@ export default class CreateLabelType extends PureComponent {
             {...formItemLayout}
             label="名称"
           >
-            {getFieldDecorator('labelType', {
+            {getFieldDecorator('typeName', {
               rules: [{
                 required: true, message: '请输入标签类型名称',
               }, {
