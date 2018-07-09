@@ -42,7 +42,7 @@
     "history": "^4.7.2",
     "hoist-non-react-statics": "^2.3.1",
     "immutability-helper": "^2.6.6",
-    "lego-react-filter": "^1.0.21",
+    "lego-react-filter": "^1.0.29",
     "lego-soft-phone": "^1.0.2",
     "lego-tree-filter": "^1.0.4",
     "localforage": "^1.4.3",

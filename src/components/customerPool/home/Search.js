@@ -81,7 +81,7 @@ export default class Search extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
   handleOpenTab(data) {
-    const { labelDesc, missionDesc, q, ...options } = data;
+    const { labelDesc, missionDesc, ...options } = data;
     const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.props.saveSearchVal({
