@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-07-02 14:54:29
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-03 13:12:12
  */
 
 import React, { PureComponent } from 'react';
@@ -403,6 +403,7 @@ export default class CustRelationshipsHome extends PureComponent {
         filterCallback={this.handleHeaderFilter}
         isShowCreateBtn={this.handleShowCreateBtn}
         needApplyTime
+        isUseNewCustList
       />
     );
 

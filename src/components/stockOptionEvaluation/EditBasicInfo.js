@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-29 13:48:41
+ * @Last Modified time: 2018-07-09 13:26:54
  */
 
 import React, { PureComponent } from 'react';
@@ -43,6 +43,10 @@ export default class EditBasicInfo extends PureComponent {
     onChange: PropTypes.func.isRequired,
     // 受理时间
     accptTime: PropTypes.string,
+    // 股票客户类型
+    stockCustType: PropTypes.string,
+    // 开立期权市场类别
+    openOptMktCatg: PropTypes.string,
     // 受理营业部Id
     busPrcDivId: PropTypes.string,
     // 客户交易级别
@@ -62,18 +66,23 @@ export default class EditBasicInfo extends PureComponent {
     // 客户交易级别校验
     isShowCustTransLvStatusError: PropTypes.bool,
     custTransLvStatusErrorMessage: PropTypes.string,
+    // 新建时，业务受理营业部变化获取下一步按钮和审批人列表
+    getCreateButtonList: PropTypes.func,
   }
 
   static defaultProps = {
     isEdit: false,
     accptTime: '',
     busPrcDivId: '',
+    stockCustType: '',
+    openOptMktCatg: '',
     custTransLv: '',
     custTransLvName: '',
     degreeFlag: '',
     aAcctOpenTimeFlag: '',
     rzrqzqAcctFlag: '',
     jrqhjyFlag: '',
+    getCreateButtonList: _.noop,
     isShowCustTransLvStatusError: false,
     custTransLvStatusErrorMessage: '',
   }
@@ -127,6 +136,7 @@ export default class EditBasicInfo extends PureComponent {
         ageFlag,
         invFlag,
         custType,
+        declareBus,
       },
     } = this.props;
     // 个人客户，客户类型为新开客户,年龄条件不符合要求
@@ -156,7 +166,7 @@ export default class EditBasicInfo extends PureComponent {
       // 业务受理营业部下拉列表
       busDivisionList: EMPTY_LIST,
       // 申报事项
-      declareBus: '',
+      declareBus: declareBus || '',
       // 是否显示学历提示，默认是false
       isShowDegreePrompt,
       // 是否显示投资经历提示，默认是false
@@ -172,8 +182,21 @@ export default class EditBasicInfo extends PureComponent {
   // 客户类型,申请类型 select选择后设置value
   @autobind
   updateSelect(name, value) {
+    const { onChange } = this.props;
     this.setState({ [name]: value }, this.checkType);
-    this.props.onChange({ [name]: value });
+    onChange({ [name]: value });
+    // 重选客户类型，需要把学历提示项清空
+    if (name === 'stockCustType') {
+      onChange({ degreeFlag: '' });
+    }
+    // 重选申请类型，需要把投资经历评估选项清空
+    if (name === 'reqType') {
+      onChange({
+        aAcctOpenTimeFlag: '',
+        rzrqzqAcctFlag: '',
+        jrqhjyFlag: '',
+      });
+    }
   }
 
   // 检测是否是新开客户，初次申请，然后判断是否显示学历提示选项，和投资经历评估提示选项
@@ -230,13 +253,29 @@ export default class EditBasicInfo extends PureComponent {
       acceptOrg: value,
     }).then(() => {
       const {
+        isEdit,
         acceptOrgData,
         acceptOrgData: {
           accptTime,
           custTransLv,
           custTransLvName,
+          busPrcDivName,
         },
+        custInfo: {
+          divisionName,
+          openDivName,
+        },
+        getCreateButtonList,
       } = this.props;
+      // 新建申请时，受理营业部变更需要重新获取审批人列表
+      if (!isEdit) {
+        getCreateButtonList({
+          flowId: '',
+          divisionName,
+          openDivName,
+          busPrcDivName,
+        });
+      }
       if (!_.isEmpty(acceptOrgData)) {
         onChange({
           accptTime,
@@ -309,6 +348,10 @@ export default class EditBasicInfo extends PureComponent {
       custTransLvName,
       // 受理时间
       accptTime,
+      // 股票客户类型
+      stockCustType,
+      // 开立期权市场类别
+      openOptMktCatg,
       // 受理营业部Id
       busPrcDivId,
       // 已提供大专及以上的学历证明材料
@@ -325,9 +368,7 @@ export default class EditBasicInfo extends PureComponent {
     } = this.props;
     const {
       isSelectDisabled,
-      stockCustType,
       reqType,
-      openOptMktCatg,
       stockCustTypeList,
       optionMarketTypeList,
       reqTypeList,
@@ -336,6 +377,7 @@ export default class EditBasicInfo extends PureComponent {
       isShowDegreePrompt,
       isShowInvPrompt,
     } = this.state;
+    // 个人客户，客户类型可选择，机构客户，客户类型不可选择,并且是默认值
     const stockCustTypeListData = this.addEmptyOption(stockCustTypeList);
     const reqTypeListData = this.addEmptyOption(reqTypeList);
     const optionMarketTypeListData = this.addEmptyOption(optionMarketTypeList);
@@ -582,10 +624,13 @@ export default class EditBasicInfo extends PureComponent {
                       getFieldDecorator('declareBus', {
                         rules: [{
                           required: true, message: '申报事项不能为空',
+                        }, {
+                          max: 200, message: '最大长度不能超过200个字符',
                         }],
                         initialValue: declareBus,
                       })(
                         <textarea
+                          disabled={isSelectDisabled}
                           className={styles.applyTextarea}
                           onChange={this.changeDeclareBus}
                         />,

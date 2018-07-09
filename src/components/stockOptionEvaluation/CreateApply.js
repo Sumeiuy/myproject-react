@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-29 14:26:36
+ * @Last Modified time: 2018-07-09 13:18:04
  */
 
 import React, { PureComponent } from 'react';
@@ -283,26 +283,36 @@ export default class CreateApply extends PureComponent {
           custTransLv,
           custTransLvName,
           accptTime,
+          openOptMktCatg,
           busPrcDivId,
           divisionName,
           openDivName,
           busPrcDivName,
         } = custInfo;
+        let { stockCustType } = this.state;
+        // 机构客户，股票客户类型固定
+        if (custType === 'org') {
+          stockCustType = 'Org';
+        }
         this.handleChange({
           custInfo,
           custTransLv,
           custTransLvName,
           accptTime,
+          openOptMktCatg,
           busPrcDivId,
+          stockCustType,
         });
+
         // 获取下一步按钮和审批人
         const { flowId } = this.state;
         const param = {
           flowId,
-          divisionName: _.isEmpty(divisionName) ? '' : divisionName,
-          openDivName: _.isEmpty(openDivName) ? '' : openDivName,
-          busPrcDivName: _.isEmpty(busPrcDivName) ? '' : busPrcDivName,
+          divisionName: divisionName || '',
+          openDivName: openDivName || '',
+          busPrcDivName: busPrcDivName || '',
         };
+
         this.getCreateButtonList(param);
       }
     });
@@ -364,12 +374,12 @@ export default class CreateApply extends PureComponent {
         if (custType === 'per' && isProfessInvset === 'Y') {
           commonConfirm({
             content: '请确认是否上传客户朗读风险揭示书确认条款的视频及其它适当性评估材料。',
-            onOk: () => this.showNextApprover(item),
+            onOk: () => this.validateResult(item),
           });
         } else {
           commonConfirm({
             content: '请确认是否已上传相关附件。',
-            onOk: () => this.showNextApprover(item),
+            onOk: () => this.validateResult(item),
           });
         }
       }
@@ -391,14 +401,7 @@ export default class CreateApply extends PureComponent {
 
   // 校验数据
   @autobind
-  validateResult(value) {
-    if (_.isEmpty(value)) {
-      message.error('请选择审批人');
-      return;
-    }
-    this.setState({
-      nextApproverModal: false,
-    });
+  validateResult(item) {
     // 校验的数据
     const {
       custTransLv,
@@ -416,6 +419,8 @@ export default class CreateApply extends PureComponent {
         age,
         ageFlag,
         custType,
+        investPrefer,
+        riskEvalEndTime,
       },
       degreeFlag,
     } = this.state;
@@ -436,7 +441,10 @@ export default class CreateApply extends PureComponent {
       age,
       ageFlag,
       degreeFlag,
+      investPrefer,
+      riskEvalEndTime,
     };
+
     // 提交前先对提交的数据调验证接口进行进行验证
     this.props.validateResult(query)
       .then(() => {
@@ -448,7 +456,7 @@ export default class CreateApply extends PureComponent {
         } = this.props;
         // isValid为true，代码数据验证通过，此时可以往下走，为false弹出错误信息
         if (isValid) {
-          this.sendCreateRequest(value);
+          this.sendCreateRequest(item);
         } else {
           Modal.error({
             title: '提示信息',
@@ -461,7 +469,7 @@ export default class CreateApply extends PureComponent {
 
   // 发送请求，先走新建（修改）接口，再走流程接口
   @autobind
-  sendCreateRequest(value) {
+  sendCreateRequest(item) {
     const {
       flowId,
       custTransLv,
@@ -496,7 +504,6 @@ export default class CreateApply extends PureComponent {
       accptTime,
       declareBus,
       attachment,
-      auditors,
     } = this.state;
     const query = {
       id: '',
@@ -533,17 +540,23 @@ export default class CreateApply extends PureComponent {
       ageFlag,
       degreeFlag,
       investPrefer,
-      auditors: !_.isEmpty(value) ? value.login : auditors,
     };
     this.props.updateBindingFlow(query)
       .then(() => {
-        this.sendDoApproveRequest(value);
+        this.showNextApprover(item);
       });
   }
 
   // 走流程接口
   @autobind
   sendDoApproveRequest(value) {
+    if (_.isEmpty(value)) {
+      message.error('请选择审批人');
+      return;
+    }
+    this.setState({
+      nextApproverModal: false,
+    });
     const {
       doApprove,
       updateBindingFlowAppId,
@@ -603,12 +616,15 @@ export default class CreateApply extends PureComponent {
       busDivisionList,
       acceptOrgData,
       queryAcceptOrg,
+      getCreateButtonList,
     } = this.props;
     const {
       custInfo,
       isShowModal,
       createButtonListData,
       accptTime,
+      stockCustType,
+      openOptMktCatg,
       busPrcDivId,
       custTransLv,
       custTransLvName,
@@ -639,7 +655,7 @@ export default class CreateApply extends PureComponent {
     />);
     const searchProps = {
       visible: nextApproverModal,
-      onOk: this.validateResult,
+      onOk: this.sendDoApproveRequest,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
       dataSource: nextApproverList,
       columns: approvalColumns,
@@ -647,6 +663,9 @@ export default class CreateApply extends PureComponent {
       modalKey: 'stockApplyNextApproverModal',
       rowKey: 'login',
       searchShow: false,
+      pagination: {
+        pageSize: 10,
+      },
     };
     return (
       <CommonModal
@@ -694,6 +713,8 @@ export default class CreateApply extends PureComponent {
               busDivisionList={busDivisionList}
               custInfo={custInfo}
               accptTime={accptTime}
+              stockCustType={stockCustType}
+              openOptMktCatg={openOptMktCatg}
               busPrcDivId={busPrcDivId}
               custTransLv={custTransLv}
               custTransLvName={custTransLvName}
@@ -704,6 +725,7 @@ export default class CreateApply extends PureComponent {
               onChange={this.handleChange}
               acceptOrgData={acceptOrgData}
               queryAcceptOrg={queryAcceptOrg}
+              getCreateButtonList={getCreateButtonList}
               isShowCustTransLvStatusError={isShowCustTransLvStatusError}
               custTransLvStatusErrorMessage={custTransLvStatusErrorMessage}
             />

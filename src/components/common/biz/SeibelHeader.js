@@ -75,6 +75,10 @@ export default class Pageheader extends PureComponent {
     customerList: PropTypes.array.isRequired,
     // 获取客户列表
     getCustomerList: PropTypes.func.isRequired,
+    // 新的客户列表
+    newCustomerList: PropTypes.array.isRequired,
+    // 获取新的客户列表
+    getNewCustomerList: PropTypes.func.isRequired,
     // 筛选后调用的Function
     filterCallback: PropTypes.func,
     // 该项目是针对客户还是针对服务经理的，为false代表针对服务经理的，默认为true针对客户的
@@ -85,6 +89,8 @@ export default class Pageheader extends PureComponent {
     isShowCreateBtn: PropTypes.func,
     // 是否需要申请时间
     needApplyTime: PropTypes.bool,
+    // 是否调用新的客户列表接口，若为true，则使用新的获取客户列表接口，为false，则使用原来的获取客户列表接口，默认为false
+    isUseNewCustList: PropTypes.bool,
   }
 
   static contextTypes = {
@@ -103,6 +109,7 @@ export default class Pageheader extends PureComponent {
     isUseOfCustomer: true,
     checkUserIsFiliale: _.noop,
     isShowCreateBtn: () => true,
+    isUseNewCustList: false,
   }
 
   constructor(props) {
@@ -344,10 +351,21 @@ export default class Pageheader extends PureComponent {
     },
   })
   handleCustSearch(value) {
-    this.props.getCustomerList({
+    const {
+      pageType,
+      isUseNewCustList,
+      getCustomerList,
+      getNewCustomerList,
+    } = this.props;
+    const params = {
       keyword: value,
-      type: this.props.pageType,
-    });
+      type: pageType,
+    };
+    if (isUseNewCustList) {
+      getNewCustomerList(params);
+    } else {
+      getCustomerList(params);
+    }
   }
 
   @autobind
@@ -428,13 +446,23 @@ export default class Pageheader extends PureComponent {
     return date >= currentDate;
   }
 
+  // 获取客户列表
+  @autobind
+  getCustList() {
+    const {
+      customerList,
+      newCustomerList,
+      isUseNewCustList,
+    } = this.props;
+    return isUseNewCustList ? newCustomerList : customerList;
+  }
+
   render() {
     const {
       subtypeOptions,
       stateOptions,
       drafterList,
       approvePersonList,
-      customerList,
       custRange,
       page,
       pageType,
@@ -462,11 +490,13 @@ export default class Pageheader extends PureComponent {
     } = this.props;
     const { empInfo } = this.context;
     const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
+    // 根据是否传入isUseNewCustList这个字段，获取不同的客户列表
+    const custList = this.getCustList();
     // 客户增加全部
-    const customerAllList = !_.isEmpty(customerList) ?
-      [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
+    const customerAllList = !_.isEmpty(custList) ?
+      [{ custName: '全部', custNumber: '' }, ...custList] : custList;
     // 客户回填
-    const curCustInfo = _.find(customerList, o => o.custNumber === custNumber);
+    const curCustInfo = _.find(custList, o => o.custNumber === custNumber);
     let curCust = '全部';
     if (curCustInfo && curCustInfo.custNumber) {
       curCust = `${curCustInfo.custName}(${curCustInfo.custNumber})`;
