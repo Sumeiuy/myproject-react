@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-05 16:46:46
+ * @Last Modified time: 2018-07-09 13:26:54
  */
 
 import React, { PureComponent } from 'react';
@@ -43,6 +43,8 @@ export default class EditBasicInfo extends PureComponent {
     onChange: PropTypes.func.isRequired,
     // 受理时间
     accptTime: PropTypes.string,
+    // 股票客户类型
+    stockCustType: PropTypes.string,
     // 开立期权市场类别
     openOptMktCatg: PropTypes.string,
     // 受理营业部Id
@@ -72,6 +74,7 @@ export default class EditBasicInfo extends PureComponent {
     isEdit: false,
     accptTime: '',
     busPrcDivId: '',
+    stockCustType: '',
     openOptMktCatg: '',
     custTransLv: '',
     custTransLvName: '',
@@ -324,7 +327,6 @@ export default class EditBasicInfo extends PureComponent {
       },
       // 是否是编辑页面
       isEdit,
-      custInfo,
       // 选择客户带出的客户基本信息
       custInfo: {
         divisionName,
@@ -346,6 +348,8 @@ export default class EditBasicInfo extends PureComponent {
       custTransLvName,
       // 受理时间
       accptTime,
+      // 股票客户类型
+      stockCustType,
       // 开立期权市场类别
       openOptMktCatg,
       // 受理营业部Id
@@ -375,11 +379,6 @@ export default class EditBasicInfo extends PureComponent {
     } = this.state;
     // 个人客户，客户类型可选择，机构客户，客户类型不可选择,并且是默认值
     const stockCustTypeListData = this.addEmptyOption(stockCustTypeList);
-    let { stockCustType } = this.state;
-    if (!_.isEmpty(custInfo)) {
-      const { custType } = custInfo;
-      stockCustType = custType === 'org' ? stockCustTypeList[0].value : '';
-    }
     const reqTypeListData = this.addEmptyOption(reqTypeList);
     const optionMarketTypeListData = this.addEmptyOption(optionMarketTypeList);
     const busDivisionListData = this.addEmptyOption(busDivisionList);

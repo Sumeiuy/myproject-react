@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-06 16:31:57
+ * @Last Modified time: 2018-07-09 13:18:04
  */
 
 import React, { PureComponent } from 'react';
@@ -289,6 +289,11 @@ export default class CreateApply extends PureComponent {
           openDivName,
           busPrcDivName,
         } = custInfo;
+        let { stockCustType } = this.state;
+        // 机构客户，股票客户类型固定
+        if (custType === 'org') {
+          stockCustType = 'Org';
+        }
         this.handleChange({
           custInfo,
           custTransLv,
@@ -296,7 +301,9 @@ export default class CreateApply extends PureComponent {
           accptTime,
           openOptMktCatg,
           busPrcDivId,
+          stockCustType,
         });
+
         // 获取下一步按钮和审批人
         const { flowId } = this.state;
         const param = {
@@ -616,6 +623,7 @@ export default class CreateApply extends PureComponent {
       isShowModal,
       createButtonListData,
       accptTime,
+      stockCustType,
       openOptMktCatg,
       busPrcDivId,
       custTransLv,
@@ -705,6 +713,7 @@ export default class CreateApply extends PureComponent {
               busDivisionList={busDivisionList}
               custInfo={custInfo}
               accptTime={accptTime}
+              stockCustType={stockCustType}
               openOptMktCatg={openOptMktCatg}
               busPrcDivId={busPrcDivId}
               custTransLv={custTransLv}
