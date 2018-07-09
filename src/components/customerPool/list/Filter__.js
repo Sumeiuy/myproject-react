@@ -125,6 +125,8 @@ export default class Filter extends PureComponent {
     searchServerPersonList: PropTypes.array.isRequired,
     getSearchPersonList: PropTypes.func.isRequired,
     hashString: PropTypes.string.isRequired,
+    queryIndustryList: PropTypes.func.isRequired,
+    industryList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -167,6 +169,9 @@ export default class Filter extends PureComponent {
     }
     if (filter.filterId === 'primaryKeyJxgrps') {
       return this.handleJxGroupProductChange;
+    }
+    if (filter.filterId === 'holdingIndustry') {
+      return this.handleHoldingIndustryChange;
     }
     switch (filter.type) {
       case 'single':
@@ -321,6 +326,21 @@ export default class Filter extends PureComponent {
   @autobind
   @logable({
     type: 'DropdownSelect',
+    payload: {
+      name: '客户筛选-持仓行业',
+      value: '$args[0].value',
+    },
+  })
+  handleHoldingIndustryChange({ id, value }) {
+    this.props.onFilterChange({
+      name: id,
+      value,
+    });
+  }
+
+  @autobind
+  @logable({
+    type: '$args[0].id',
     payload: {
       name: '客户筛选-最后一次服务',
       date: '$args[0].value.date',

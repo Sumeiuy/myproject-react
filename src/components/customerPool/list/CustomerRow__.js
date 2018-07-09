@@ -1,8 +1,8 @@
 /**
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-15 17:19:31
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-04 17:27:11
  */
 
 import React, { PureComponent } from 'react';
@@ -131,6 +131,9 @@ export default class CustomerRow extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryHoldingIndustryDetail: PropTypes.func.isRequired,
+    industryDetail: PropTypes.object.isRequired,
+    queryHoldingIndustryDetailReqState: PropTypes.bool.isRequired,
     getCustSignLabel: PropTypes.func.isRequired,
   }
 
@@ -348,6 +351,9 @@ export default class CustomerRow extends PureComponent {
       queryHoldingProductReqState,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
+      queryHoldingIndustryDetail,
+      industryDetail,
+      queryHoldingIndustryDetailReqState,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -474,6 +480,9 @@ export default class CustomerRow extends PureComponent {
                 formatAsset={formatAsset}
                 queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
                 holdingSecurityData={holdingSecurityData}
+                queryHoldingIndustryDetail={queryHoldingIndustryDetail}
+                industryDetail={industryDetail}
+                queryHoldingIndustryDetailReqState={queryHoldingIndustryDetailReqState}
               />
             </div>
           </div>

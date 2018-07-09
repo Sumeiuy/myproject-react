@@ -232,6 +232,14 @@ export const sourceFilter = {
       maxVal: '50',
     },
   }],
+  business: [{
+    // 潜在业务
+    filterName: 'bizFlag',
+    value: ['bizFlag'],
+    defaultVal: {
+      bizFlag: 'biz',
+    },
+  }],
 };
 
 // 首页各模块中不同类别的标识

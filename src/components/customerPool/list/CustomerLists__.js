@@ -14,11 +14,11 @@ import ServiceManagerFilter from './manageFilter/ServiceManagerFilter';
 import CustomerRow from './CustomerRow__';
 import CreateContactModal from './CreateContactModal';
 import Reorder from './reorder/Reorder';
-import BottomFixedBox from './BottomFixedBox';
+import BottomFixedBox from './BottomFixedBox__';
 import SignCustomerLabel from './modal/SignCustomerLabel';
 import MultiCustomerLabel from './modal/MultiCustomerLabel';
 import { openInTab } from '../../../utils';
-import { url as urlHelper, emp } from '../../../helper';
+import { url as urlHelper, emp, number } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
@@ -53,23 +53,23 @@ const formatAsset = (num) => {
 
   if (absNum >= WANYI) {
     return {
-      value: Number((newNum / WANYI).toFixed(2)),
+      value: number.thousandFormat(Number((newNum / WANYI).toFixed(2))),
       unit: UNIT_WANYI,
     };
   }
   if (absNum >= YI) {
     return {
-      value: Number((newNum / YI).toFixed(2)),
+      value: number.thousandFormat(Number((newNum / YI).toFixed(2))),
       unit: UNIT_YI,
     };
   }
   if (absNum >= WAN) {
     return {
-      value: Number((newNum / WAN).toFixed(2)),
+      value: number.thousandFormat(Number((newNum / WAN).toFixed(2))),
       unit: UNIT_WAN,
     };
   }
-  return { value: Number(newNum.toFixed(2)), unit: UNIT_DEFAULT };
+  return { value: number.thousandFormat(Number(newNum.toFixed(2))), unit: UNIT_DEFAULT };
 };
 
 @RestoreScrollTop
@@ -136,6 +136,9 @@ export default class CustomerLists extends PureComponent {
     getSearchPersonList: PropTypes.func.isRequired,
     clearSearchPersonList: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryHoldingIndustryDetail: PropTypes.func.isRequired,
+    industryDetail: PropTypes.object.isRequired,
+    queryHoldingIndustryDetailReqState: PropTypes.bool,
     queryCustSignedLabels: PropTypes.func.isRequired,
     queryLikeLabelInfo: PropTypes.func.isRequired,
     signCustLabels: PropTypes.func.isRequired,
@@ -154,6 +157,7 @@ export default class CustomerLists extends PureComponent {
     collectCustRange: () => { },
     queryHoldingProductReqState: false,
     dataForNextPage: {},
+    queryHoldingIndustryDetailReqState: false,
   }
 
   constructor(props) {
@@ -193,9 +197,9 @@ export default class CustomerLists extends PureComponent {
    */
   @autobind
   checkMainServiceManager(props) {
-    const { currentPytMng } = props;
+    const { currentPytMng, location: { query } } = props;
     const { ptyMngId } = currentPytMng;
-    this.mainServiceManager = ptyMngId === emp.getId() || !this.hasPermission();
+    this.mainServiceManager = _.has(query, 'ptyMngId') ? ptyMngId === emp.getId() : !this.hasPermission();
   }
 
   // 没有 任务管理权限从首页搜索、热词、联想和潜在业务 或 绩效指标的客户范围为 我的客户 下钻到列表
@@ -531,6 +535,9 @@ export default class CustomerLists extends PureComponent {
       queryHoldingSecurityRepetition,
       holdingSecurityData,
       clearSearchPersonList,
+      queryHoldingIndustryDetail,
+      industryDetail,
+      queryHoldingIndustryDetailReqState,
       custLabel,
       custLikeLabel,
       queryLikeLabelInfo,
@@ -581,7 +588,7 @@ export default class CustomerLists extends PureComponent {
     } else if (orgId) {
       // url中orgId=msm 时,服务营业部选中所有
       curOrgId = orgIdIsMsm ? allSaleDepartment.id : orgId;
-    } else if (!this.mainServiceManager) {
+    } else if (this.hasPermission()) {
       curOrgId = emp.getOrgId();
     }
     const paginationOption = {
@@ -672,6 +679,9 @@ export default class CustomerLists extends PureComponent {
                     queryHoldingProductReqState={queryHoldingProductReqState}
                     queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
                     holdingSecurityData={holdingSecurityData}
+                    queryHoldingIndustryDetail={queryHoldingIndustryDetail}
+                    industryDetail={industryDetail}
+                    queryHoldingIndustryDetailReqState={queryHoldingIndustryDetailReqState}
                     getCustSignLabel={this.getCustSignLabel}
                   />,
                 )

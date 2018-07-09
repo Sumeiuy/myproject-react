@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-03 10:27:43
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-05 20:00:11
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,7 @@ import { Prompt } from 'dva/router';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { Affix, message } from 'antd';
+import { Affix, message, Modal } from 'antd';
 import contains from 'rc-util/lib/Dom/contains';
 import Header from './Header';
 import ListSwiper from './ListSwiper';
@@ -20,7 +20,7 @@ import CustomerDetail from './CustomerDetail';
 import SimpleDisplayBlock from './SimpleDisplayBlock';
 import ServiceRecordForm from './ServiceRecordForm';
 import EmptyData from './EmptyData';
-import { PHONE } from './config';
+import { PHONE, MSG_ROUTEFORWARD } from './config';
 import { serveWay as serveWayUtil } from '../config/code';
 import { flow, task } from '../config';
 import { fsp } from '../../../../helper';
@@ -115,6 +115,7 @@ export default class ServiceImplementation extends PureComponent {
     toggleServiceRecordModal: PropTypes.func,
     queryTargetCustDetail: PropTypes.func.isRequired,
     getPageSize: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -155,6 +156,8 @@ export default class ServiceImplementation extends PureComponent {
       // 当前服务实施列表的数据
       targetCustList,
       propsTargetCustList: targetCustList,
+      // 当前用户是否操作了表单
+      isFormHalfFilledOut: false,
     };
   }
 
@@ -174,7 +177,7 @@ export default class ServiceImplementation extends PureComponent {
 
   componentDidUpdate(prevProps, prevState) {
     const { isFoldFspLeftMenu } = this.state;
-    const { isFold, getPageSize, currentId } = this.props;
+    const { isFold, getPageSize, currentId, location: { query } } = this.props;
     const pageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
     if (
@@ -200,6 +203,12 @@ export default class ServiceImplementation extends PureComponent {
         pageNum: 1,
       });
     }
+    if (query !== prevProps.location.query) {
+      // 先判断再setState，避免不必要的渲染
+      if (this.state.isFormHalfFilledOut) {
+        this.setState({ isFormHalfFilledOut: false }); // eslint-disable-line
+      }
+    }
   }
 
   componentWillUnmount() {
@@ -215,6 +224,33 @@ export default class ServiceImplementation extends PureComponent {
     this.setState({ isFoldFspLeftMenu });
   }
 
+  // 路由发生变化前确认
+  @autobind
+  handleRouteForwardComfirmation(callback = _.noop, data) {
+    // 当前用户操作了页面的表单
+    if (this.state.isFormHalfFilledOut) {
+      Modal.confirm({
+        title: '请确认',
+        content: MSG_ROUTEFORWARD,
+        onOk: () => {
+          callback(data);
+          this.setState({ isFormHalfFilledOut: false });
+        },
+        onCancel: () => { },
+      });
+    } else {
+      callback(data);
+    }
+  }
+
+  // 筛选前加一个确认
+  @autobind
+  handlePrepareFilter(callback = _.noop) {
+    return (data) => {
+      this.handleRouteForwardComfirmation(callback, data);
+    };
+  }
+
   // 状态筛选
   @autobind
   handleStateChange({ value = '' }) {
@@ -222,16 +258,17 @@ export default class ServiceImplementation extends PureComponent {
     const { targetCustList: { page: { pageSize } } } = this.state;
     const { rowId, assetSort } = parameter;
     changeParameter({ state: value, activeIndex: '1', preciseInputValue: '1' })
-      .then(() => {
-        this.queryTargetCustList({
-          state: value,
-          rowId,
-          assetSort,
-          pageSize,
-          pageNum: 1,
-        });
+    .then(() => {
+      this.queryTargetCustList({
+        state: value,
+        rowId,
+        assetSort,
+        pageSize,
+        pageNum: 1,
       });
+    });
   }
+
 
   // 客户筛选
   @autobind
@@ -289,34 +326,37 @@ export default class ServiceImplementation extends PureComponent {
     if (e.keyCode === 13) {
       const value = e.target.value;
       if (!value) return;
-      const { parameter, changeParameter } = this.props;
-      const { targetCustList: { page: { pageSize } } } = this.state;
-      // const newValue = value > totalCount ? totalCount : value;
-      changeParameter({ activeIndex: value }).then(() => {
-        const { rowId, state, assetSort } = parameter;
-        const pageNum = Math.ceil(parseInt(value, 10) / pageSize);
-        this.queryTargetCustList({
-          rowId,
-          state,
-          assetSort,
-          pageSize,
-          pageNum,
-          isGetFirstItemDetail: false,
-        }).then(() => {
-          const { queryTargetCustDetail, currentId } = this.props;
-          const { targetCustList: { list = [], page: { totalCount } } } = this.state;
-          // 当value大于总数totalCount的时候，取totalCount
-          const newValue = value > totalCount ? totalCount : value;
-          // 根据当前的activeIndex找到在当前列表中的数据，再去查询该条数据的详情
-          const index = parseInt(newValue, 10) % pageSize;
-          const { custId, missionFlowId } = list[index - 1];
-          queryTargetCustDetail({
-            custId,
-            missionId: currentId,
-            missionFlowId,
+      const toChange = () => {
+        const { parameter, changeParameter } = this.props;
+        const { targetCustList: { page: { pageSize } } } = this.state;
+        // const newValue = value > totalCount ? totalCount : value;
+        changeParameter({ activeIndex: value }).then(() => {
+          const { rowId, state, assetSort } = parameter;
+          const pageNum = Math.ceil(parseInt(value, 10) / pageSize);
+          this.queryTargetCustList({
+            rowId,
+            state,
+            assetSort,
+            pageSize,
+            pageNum,
+            isGetFirstItemDetail: false,
+          }).then(() => {
+            const { queryTargetCustDetail, currentId } = this.props;
+            const { targetCustList: { list = [], page: { totalCount } } } = this.state;
+            // 当value大于总数totalCount的时候，取totalCount
+            const newValue = value > totalCount ? totalCount : value;
+            // 根据当前的activeIndex找到在当前列表中的数据，再去查询该条数据的详情
+            const index = parseInt(newValue, 10) % pageSize;
+            const { custId, missionFlowId } = list[index - 1];
+            queryTargetCustDetail({
+              custId,
+              missionId: currentId,
+              missionFlowId,
+            });
           });
         });
-      });
+      };
+      this.handleRouteForwardComfirmation(toChange);
     }
   }
 
@@ -528,6 +568,14 @@ export default class ServiceImplementation extends PureComponent {
     }
   }
 
+  // 添加服务记录表单数据发生变化
+  @autobind
+  formDataChange() {
+    this.setState({
+      isFormHalfFilledOut: true,
+    });
+  }
+
   render() {
     const { dict = {}, empInfo } = this.context;
     const {
@@ -542,7 +590,7 @@ export default class ServiceImplementation extends PureComponent {
     const {
       targetCustList,
       targetCustList: { list: currentTargetList },
-      isFoldFspLeftMenu,
+      isFoldFspLeftMenu, isFormHalfFilledOut,
     } = this.state;
     const {
       missionStatusCode, missionStatusValue, missionFlowId,
@@ -603,7 +651,6 @@ export default class ServiceImplementation extends PureComponent {
     };
     // fsp左侧菜单和左侧列表折叠状态变化，强制更新affix、文字折叠区域
     const leftFoldState = `${isFoldFspLeftMenu}${isFold}`;
-
     const affixNode = (
       <div>
         <div className={styles.listSwiperBox}>
@@ -612,8 +659,8 @@ export default class ServiceImplementation extends PureComponent {
             parameter={parameter}
             containerClass={styles.listSwiper}
             currentTargetList={currentTargetList}
-            onCustomerClick={this.handleCustomerClick}
-            onPageChange={this.handlePageChange}
+            onCustomerClick={this.handlePrepareFilter(this.handleCustomerClick)}
+            onPageChange={this.handlePrepareFilter(this.handlePageChange)}
           />
         </div>
         <CustomerProfile
@@ -632,9 +679,9 @@ export default class ServiceImplementation extends PureComponent {
           {...this.props}
           {...this.state}
           dict={dict}
-          handleStateChange={this.handleStateChange}
-          handleCustomerChange={this.handleCustomerChange}
-          handleAssetSort={this.handleAssetSort}
+          handleStateChange={this.handlePrepareFilter(this.handleStateChange)}
+          handleCustomerChange={this.handlePrepareFilter(this.handleCustomerChange)}
+          handleAssetSort={this.handlePrepareFilter(this.handleAssetSort)}
           handlePreciseQueryChange={this.handlePreciseQueryChange}
           handlePreciseQueryEnterPress={this.handlePreciseQueryEnterPress}
         />
@@ -701,15 +748,14 @@ export default class ServiceImplementation extends PureComponent {
                   testWallCollisionStatus={testWallCollisionStatus}
                   serviceCustId={custId}
                   isCurrentMissionPhoneCall={isCurrentMissionPhoneCall}
+                  onFormDataChange={this.formDataChange}
                 />
               </div>
             </div>
         }
         <Prompt
-          message={location => (
-            location.pathname.startsWith('/taskList')
-              ? true : '离开本页面可能会丢失操作的数据，是否离开？'
-          )}
+          when={isFormHalfFilledOut}
+          message={MSG_ROUTEFORWARD}
         />
       </div>
     );
