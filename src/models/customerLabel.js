@@ -106,14 +106,18 @@ export default {
     // 模糊查询客户标签
     queryLikeLabelInfo: [
       function* queryLikeLabelInfo({ payload }, { call, put }) {
-        const { resultData } = yield call(api.queryLabelInfo, payload);
-        if (resultData) {
-          const { labelList } = resultData;
-          yield put({
-            type: 'queryLikeLabelInfoSuccess',
-            payload: labelList,
-          });
+        const { labelNameLike } = payload;
+        let labelList = EMPTY_LIST;
+        if (labelNameLike) {
+          const { resultData } = yield call(api.queryLabelInfo, payload);
+          if (resultData) {
+            labelList = resultData.labelList;
+          }
         }
+        yield put({
+          type: 'queryLikeLabelInfoSuccess',
+          payload: labelList,
+        });
       },
       { type: 'takeLatest' }],
     // 给客户打标签

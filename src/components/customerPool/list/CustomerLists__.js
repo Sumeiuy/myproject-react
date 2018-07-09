@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Checkbox, Button } from 'antd';
+import { Checkbox } from 'antd';
 import SaleDepartmentFilter from './manageFilter/SaleDepartmentFilter';
 import ServiceManagerFilter from './manageFilter/ServiceManagerFilter';
 import CustomerRow from './CustomerRow__';
@@ -16,6 +16,7 @@ import CreateContactModal from './CreateContactModal';
 import Reorder from './reorder/Reorder';
 import BottomFixedBox from './BottomFixedBox';
 import SignCustomerLabel from './modal/SignCustomerLabel';
+import MultiCustomerLabel from './modal/MultiCustomerLabel';
 import { openInTab } from '../../../utils';
 import { url as urlHelper, emp } from '../../../helper';
 import NoData from '../common/NoData';
@@ -162,6 +163,7 @@ export default class CustomerLists extends PureComponent {
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
       currentSignLabelCustId: '',
+      multiSignLabelVisible: false,
     };
     this.checkMainServiceManager(props);
   }
@@ -458,6 +460,14 @@ export default class CustomerLists extends PureComponent {
       currentSignLabelCustId: '',
     });
   }
+
+  @autobind
+  switchMultiCustSignLabel() {
+    const { multiSignLabelVisible } = this.state;
+    this.setState({
+      multiSignLabelVisible: !multiSignLabelVisible,
+    });
+  }
   // 添加客户标签 -- end
   render() {
     const {
@@ -467,6 +477,7 @@ export default class CustomerLists extends PureComponent {
       modalKey,
       custName,
       currentSignLabelCustId,
+      multiSignLabelVisible,
     } = this.state;
 
     const {
@@ -583,7 +594,6 @@ export default class CustomerLists extends PureComponent {
     };
     return (
       <div className="list-box">
-        <Button onClick={() => { this.getCustSignLabel('123'); }}>测试</Button>
         <div className={styles.listHeader}>
           <div className="selectAll">
             <Checkbox
@@ -693,6 +703,7 @@ export default class CustomerLists extends PureComponent {
               hasTkMampPermission={hasTkMampPermission}
               sendCustsServedByPostnResult={sendCustsServedByPostnResult}
               isSendCustsServedByPostn={isSendCustsServedByPostn}
+              addMultiSignLabel={this.switchMultiCustSignLabel}
             /> : null
         }
         {
@@ -729,6 +740,16 @@ export default class CustomerLists extends PureComponent {
           custLikeLabel={custLikeLabel}
           signCustLabels={signCustLabels}
           removeSignLabelCustId={this.removeSignLabelCust}
+        />
+        <MultiCustomerLabel
+          visible={multiSignLabelVisible}
+          closeMultiCustSignLabel={this.switchMultiCustSignLabel}
+          currentPytMng={currentPytMng}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          custLikeLabel={custLikeLabel}
+          signCustLabels={signCustLabels}
+          condition={condition}
+          location={location}
         />
       </div>
     );

@@ -8,11 +8,22 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Modal, Select, Spin } from 'antd';
-import styles from './signCustomerLabel.less';
+import styles from './addCustomerLabel.less';
 
 const Option = Select.Option;
 
 const EMPTY_LIST = [];
+
+export function replaceKeyWord(text, word = '') {
+  if (!word) {
+    return text;
+  }
+  const keyWordRegex = new RegExp(_.escapeRegExp(word), 'g');
+  const keyWordText = _.replace(text, keyWordRegex, match => (
+    `<span class=${styles.keyWord}>${match}</span>`
+  ));
+  return <div dangerouslySetInnerHTML={{ __html: keyWordText }} />;
+}
 
 export default class SignCustomerLabel extends PureComponent {
   static getDerivedStateFromProps(props, state) {
@@ -48,6 +59,7 @@ export default class SignCustomerLabel extends PureComponent {
     this.state = {
       data: EMPTY_LIST,
       selectedLabels: EMPTY_LIST,
+      value: '',
       fetching: false,
       preProps: props,
     };
@@ -56,14 +68,31 @@ export default class SignCustomerLabel extends PureComponent {
   @autobind
   handleSearchCustLabel(value) {
     const { queryLikeLabelInfo } = this.props;
-    this.setState({ data: EMPTY_LIST, fetching: true });
+    this.setState({
+      data: EMPTY_LIST,
+      fetching: true,
+      value,
+    });
     queryLikeLabelInfo({ labelNameLike: value });
   }
 
   @autobind
   handleChange(selectedLabels) {
+    const { data } = this.state;
+    let lastSelectLabel = _.last(selectedLabels);
+    let finalSelectedLabels = selectedLabels;
+    const { key, label } = lastSelectLabel;
+    if (_.isPlainObject(label)) {
+      finalSelectedLabels = _.pull(finalSelectedLabels, lastSelectLabel);
+      const selectedLabel = _.find(data, item => item.id === key);
+      lastSelectLabel = {
+        ...lastSelectLabel,
+        label: selectedLabel.labelName,
+      };
+      finalSelectedLabels = [...finalSelectedLabels, lastSelectLabel];
+    }
     this.setState({
-      selectedLabels,
+      selectedLabels: finalSelectedLabels,
       data: EMPTY_LIST,
     });
   }
@@ -81,9 +110,13 @@ export default class SignCustomerLabel extends PureComponent {
     }).then(removeSignLabelCustId);
   }
 
+  @autobind
+  handleBlur() {
+    this.setState({ value: '' });
+  }
   render() {
     const { custId, removeSignLabelCustId } = this.props;
-    const { fetching, data, selectedLabels } = this.state;
+    const { fetching, data, selectedLabels, value = '' } = this.state;
 
     return (
       <Modal
@@ -93,6 +126,7 @@ export default class SignCustomerLabel extends PureComponent {
         wrapClassName={styles.signCustomerLabel}
         onCancel={removeSignLabelCustId}
         destroyOnClose
+        maskClosable={false}
         onOk={this.handleSubmitSignLabel}
       >
         <div className={styles.selectedInfo}>已选标签（{ selectedLabels.length }）</div>
@@ -105,9 +139,12 @@ export default class SignCustomerLabel extends PureComponent {
           filterOption={false}
           onSearch={this.handleSearchCustLabel}
           onChange={this.handleChange}
+          onBlur={this.handleBlur}
           style={{ width: '100%' }}
         >
-          {data.map(lableItem => <Option key={lableItem.id}>{lableItem.labelName}</Option>)}
+          {value ? data.map(lableItem =>
+            <Option key={lableItem.id}>{replaceKeyWord(lableItem.labelName, value)}</Option>,
+          ) : null}
         </Select>
       </Modal>
     );

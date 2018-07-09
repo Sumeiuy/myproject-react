@@ -32,6 +32,7 @@ export default class BottomFixedBox extends PureComponent {
     hasTkMampPermission: PropTypes.bool.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
+    addMultiSignLabel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -318,13 +319,13 @@ export default class BottomFixedBox extends PureComponent {
     });
   }
 
-  // 分组只针对服务经理，也就是说：
-  // 有首页指标查看权限或者服务经理筛选选的是当前登录用户时显示用户分组
+  // 当是主服务经理时，可以拥有创建用户分组和给客户打标签的功能
   renderGroup() {
+    const { addMultiSignLabel } = this.props;
     if (this.props.mainServiceManager) {
-      return (
-        <button onClick={this.handleCustomerGroupClick}>用户分组</button>
-      );
+      return [
+        <button onClick={addMultiSignLabel}>客户标签</button>,
+        <button onClick={this.handleCustomerGroupClick}>用户分组</button>];
     }
     return null;
   }
