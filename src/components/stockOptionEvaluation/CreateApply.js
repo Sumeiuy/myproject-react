@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-09 13:18:04
+ * @Last Modified time: 2018-07-09 22:07:56
  */
 
 import React, { PureComponent } from 'react';
@@ -694,7 +694,7 @@ export default class CreateApply extends PureComponent {
                       placeholder="客户号/客户名称"
                       optionList={busCustList}
                       showNameKey="custName"
-                      showIdKey="cusId"
+                      showIdKey="brokerNumber"
                       needConfirmWhenClear
                       clearConfirmTips="切换或者删除客户，将导致所有的数据清空或者重置"
                       style={{ width: 160 }}
