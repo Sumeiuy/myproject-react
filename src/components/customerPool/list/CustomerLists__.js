@@ -32,6 +32,11 @@ let modalKeyCount = 0;
 // 服务营业中的'所有'选项
 const allSaleDepartment = { id: ALL_DEPARTMENT_ID, name: '不限' };
 
+// 数字千分位格式
+function thousandFormat(num) {
+  return number.thousandFormat(num, true, ',', true);
+}
+
 /*
  * 格式化钱款数据和单位
  * 入参： 190000000 转化成 { value: '1.90', unit: '亿元' }
@@ -53,23 +58,26 @@ const formatAsset = (num) => {
 
   if (absNum >= WANYI) {
     return {
-      value: number.thousandFormat(Number((newNum / WANYI).toFixed(2))),
+      value: thousandFormat((newNum / WANYI).toFixed(2)),
       unit: UNIT_WANYI,
     };
   }
   if (absNum >= YI) {
     return {
-      value: number.thousandFormat(Number((newNum / YI).toFixed(2))),
+      value: thousandFormat((newNum / YI).toFixed(2)),
       unit: UNIT_YI,
     };
   }
   if (absNum >= WAN) {
     return {
-      value: number.thousandFormat(Number((newNum / WAN).toFixed(2))),
+      value: thousandFormat((newNum / WAN).toFixed(2)),
       unit: UNIT_WAN,
     };
   }
-  return { value: number.thousandFormat(Number(newNum.toFixed(2))), unit: UNIT_DEFAULT };
+  return {
+    value: thousandFormat(newNum.toFixed(2)),
+    unit: UNIT_DEFAULT,
+  };
 };
 
 @RestoreScrollTop

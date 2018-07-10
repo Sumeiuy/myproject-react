@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 13:38:29
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-22 13:41:35
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-10 15:43:51
  * @description 此处存放针对数字的通用处理方法
  */
 import _ from 'lodash';

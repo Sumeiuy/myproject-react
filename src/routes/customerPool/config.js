@@ -69,9 +69,6 @@ const ENTERLIST_PERMISSION_SIGHTINGLABEL = ['sightingTelescope', 'productPotenti
 // 是否需要展示可开通业务source集合
 const ENTERLIST_PERMISSION_OPENED_BUSINESS = ['numOfCustOpened', 'business', 'sightingTelescope'];
 
-// 潜在业务客户进入列表需要传bizFlag='biz'
-const BIZ = 'biz';
-
 export default {
   NOPERMIT,
   PERMITS1,
@@ -88,5 +85,4 @@ export default {
   ENTERLIST_PERMISSION_INDEX_QUERY,
   ENTERLIST_PERMISSION_SIGHTINGLABEL,
   ENTERLIST_PERMISSION_OPENED_BUSINESS,
-  BIZ,
 };

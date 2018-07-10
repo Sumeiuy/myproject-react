@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-09 18:32:49
+ * @Last Modified time: 2018-07-10 09:55:29
  */
 
 import _ from 'lodash';
@@ -12,7 +12,7 @@ import { isSightingScope } from '../helper';
 import {
   basicInfoList, commonFilterList, singleWithSearchFilterList,
   serviceCustomerState, dateRangeFilterList, buyAmtFilterList, capitalFilterList,
-} from './config';
+} from '../config';
 
 const FORMAT = 'YYYY年M月D日';
 
@@ -299,7 +299,7 @@ function getBizInfo(field) {
 }
 
 // 新版客户表发起任务，在新建任务的任务提示的显示的信息
-function getFilterInfo({ filterObj, dict, industryList }) {
+function getFilterInfo({ filterObj, dict, industryList, query }) {
   const {
     labelInfos, kPIDateScopeType,
     singleBusinessTypeList,
@@ -323,7 +323,7 @@ function getFilterInfo({ filterObj, dict, industryList }) {
     const ageHtmlStr = getAgeFilterInfo(filterObj.age);
     const lastServiceHtmlStr = getLatestServiceInfo(filterObj.lastServDt, serviceCustomerState);
     const minFeeHtmlStr = getMinfeeInfo(filterObj.minFee);
-    const bizInfo = getBizInfo(filterObj.bizFlag);
+    const bizInfo = getBizInfo(query.bizFlag);
     const list = [
       bizInfo, labelHtmlStr, holdingProductHtmlStr, businessOpenedHtmlStr,
       ageHtmlStr, lastServiceHtmlStr, minFeeHtmlStr,

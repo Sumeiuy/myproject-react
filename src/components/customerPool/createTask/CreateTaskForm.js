@@ -361,7 +361,7 @@ export default class CreateTaskForm extends PureComponent {
     const { dict } = this.context;
     const { location: { query }, industryList } = this.props;
     const filterObj = url.transfromFilterValFromUrl(query.filters);
-    const { htmlStr, suggestionList } = getFilterInfo({ filterObj, dict, industryList });
+    const { htmlStr, suggestionList } = getFilterInfo({ filterObj, dict, industryList, query });
     this.setState(state => ({
       statusData: [
         ...state.statusData,

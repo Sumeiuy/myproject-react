@@ -239,11 +239,6 @@ function getFilterParam(filterObj, hashString) {
     param.devMngId = filterObj.devMngId[0] || null;
   }
 
-  // 潜在业务客户
-  if (filterObj.bizFlag) {
-    param.bizFlag = filterObj.bizFlag || null;
-  }
-
   // 处理所有的单选类参数
   const singleParams = addSingleParams(filterObj);
   // 处理所有的多选类参数
@@ -657,6 +652,11 @@ export default class CustomerList extends PureComponent {
     param.orgId = orgId;
     const { ptyMngId } = this.getPostPtyMngId(query);
     param.ptyMngId = ptyMngId;
+
+    // 潜在业务客户增加一个bizFlag入参
+    if (query.bizFlag) {
+      param.bizFlag = query.bizFlag;
+    }
 
     // 当服务营业部为不限时, 如果服务经理不是当前用户，则营业部默认条件为当前职位归属机构
     if (!orgId && ptyMngId !== emp.getId()) {
