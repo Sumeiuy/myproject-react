@@ -15,6 +15,8 @@ import CustomerRow from './CustomerRow__';
 import CreateContactModal from './CreateContactModal';
 import Reorder from './reorder/Reorder';
 import BottomFixedBox from './BottomFixedBox__';
+import SignCustomerLabel from './modal/SignCustomerLabel';
+import MultiCustomerLabel from './modal/MultiCustomerLabel';
 import { openInTab } from '../../../utils';
 import { url as urlHelper, emp, number } from '../../../helper';
 import NoData from '../common/NoData';
@@ -137,6 +139,11 @@ export default class CustomerLists extends PureComponent {
     queryHoldingIndustryDetail: PropTypes.func.isRequired,
     industryDetail: PropTypes.object.isRequired,
     queryHoldingIndustryDetailReqState: PropTypes.bool,
+    queryCustSignedLabels: PropTypes.func.isRequired,
+    queryLikeLabelInfo: PropTypes.func.isRequired,
+    signCustLabels: PropTypes.func.isRequired,
+    custLabel: PropTypes.object.isRequired,
+    custLikeLabel: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -159,6 +166,8 @@ export default class CustomerLists extends PureComponent {
       currentCustId: '',
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
+      currentSignLabelCustId: '',
+      multiSignLabelVisible: false,
     };
     this.checkMainServiceManager(props);
   }
@@ -438,6 +447,32 @@ export default class CustomerLists extends PureComponent {
     return firstPageResp;
   }
 
+  // 添加客户标签 -- start
+  @autobind
+  queryCustSignLabel(custId) {
+    const { queryCustSignedLabels } = this.props;
+    queryCustSignedLabels({ custId }).then(() => {
+      this.setState({
+        currentSignLabelCustId: custId,
+      });
+    });
+  }
+
+  @autobind
+  removeSignLabelCust() {
+    this.setState({
+      currentSignLabelCustId: '',
+    });
+  }
+
+  @autobind
+  switchMultiCustSignLabel() {
+    const { multiSignLabelVisible } = this.state;
+    this.setState({
+      multiSignLabelVisible: !multiSignLabelVisible,
+    });
+  }
+  // 添加客户标签 -- end
   render() {
     const {
       isShowContactModal,
@@ -445,6 +480,8 @@ export default class CustomerLists extends PureComponent {
       custType,
       modalKey,
       custName,
+      currentSignLabelCustId,
+      multiSignLabelVisible,
     } = this.state;
 
     const {
@@ -501,6 +538,10 @@ export default class CustomerLists extends PureComponent {
       queryHoldingIndustryDetail,
       industryDetail,
       queryHoldingIndustryDetailReqState,
+      custLabel,
+      custLikeLabel,
+      queryLikeLabelInfo,
+      signCustLabels,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -641,6 +682,7 @@ export default class CustomerLists extends PureComponent {
                     queryHoldingIndustryDetail={queryHoldingIndustryDetail}
                     industryDetail={industryDetail}
                     queryHoldingIndustryDetailReqState={queryHoldingIndustryDetailReqState}
+                    queryCustSignLabel={this.queryCustSignLabel}
                   />,
                 )
               }
@@ -671,6 +713,7 @@ export default class CustomerLists extends PureComponent {
               hasTkMampPermission={hasTkMampPermission}
               sendCustsServedByPostnResult={sendCustsServedByPostnResult}
               isSendCustsServedByPostn={isSendCustsServedByPostn}
+              handleSignLabelClick={this.switchMultiCustSignLabel}
             /> : null
         }
         {
@@ -699,6 +742,25 @@ export default class CustomerLists extends PureComponent {
               currentCommonServiceRecord={currentCommonServiceRecord}
             /> : null
         }
+        <SignCustomerLabel
+          currentPytMng={currentPytMng}
+          custId={currentSignLabelCustId}
+          custLabel={custLabel}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          custLikeLabel={custLikeLabel}
+          signCustLabels={signCustLabels}
+          handleCancelSignLabelCustId={this.removeSignLabelCust}
+        />
+        <MultiCustomerLabel
+          visible={multiSignLabelVisible}
+          closeMultiCustSignLabel={this.switchMultiCustSignLabel}
+          currentPytMng={currentPytMng}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          custLikeLabel={custLikeLabel}
+          signCustLabels={signCustLabels}
+          condition={condition}
+          location={location}
+        />
       </div>
     );
   }

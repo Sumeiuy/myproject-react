@@ -1,5 +1,7 @@
 /**
  * @file components/customerPool/list/MatchArea.js
+ *  客户列表个性化信息
+ * @author xiaZhiQiang
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: WangJunjun

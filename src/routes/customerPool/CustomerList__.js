@@ -329,6 +329,9 @@ const effects = {
   getCustRangeByAuthority: 'customerPool/getCustRangeByAuthority',
   queryIndustryList: 'customerPool/queryIndustryList',
   queryHoldingIndustryDetail: 'customerPool/queryHoldingIndustryDetail',
+  queryCustSignedLabels: 'customerLabel/queryCustSignedLabels',
+  queryLikeLabelInfo: 'customerLabel/queryLikeLabelInfo',
+  signCustLabels: 'customerLabel/signCustLabels',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -381,6 +384,10 @@ const mapStateToProps = state => ({
   industryList: state.customerPool.industryList,
   // 持仓行业的详情
   industryDetail: state.customerPool.industryDetail,
+  // 客户已标记标签
+  custLabel: state.customerLabel.custLabel,
+  // 模糊搜索客户标签
+  custLikeLabel: state.customerLabel.custLikeLabel,
 });
 
 const mapDispatchToProps = {
@@ -437,6 +444,10 @@ const mapDispatchToProps = {
   queryHoldingSecurityRepetition: fetchDataFunction(false, effects.queryHoldingSecurityRepetition),
   queryIndustryList: fetchDataFunction(true, effects.queryIndustryList),
   queryHoldingIndustryDetail: fetchDataFunction(false, effects.queryHoldingIndustryDetail),
+  // 查询客户已标记标签
+  queryCustSignedLabels: fetchDataFunction(true, effects.queryCustSignedLabels),
+  queryLikeLabelInfo: fetchDataFunction(false, effects.queryLikeLabelInfo),
+  signCustLabels: fetchDataFunction(true, effects.signCustLabels),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -511,6 +522,11 @@ export default class CustomerList extends PureComponent {
     industryList: PropTypes.array.isRequired,
     queryHoldingIndustryDetail: PropTypes.func.isRequired,
     industryDetail: PropTypes.object.isRequired,
+    queryCustSignedLabels: PropTypes.func.isRequired,
+    queryLikeLabelInfo: PropTypes.func.isRequired,
+    signCustLabels: PropTypes.func.isRequired,
+    custLabel: PropTypes.object.isRequired,
+    custLikeLabel: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -976,6 +992,11 @@ export default class CustomerList extends PureComponent {
       industryList,
       queryHoldingIndustryDetail,
       industryDetail,
+      queryCustSignedLabels,
+      queryLikeLabelInfo,
+      signCustLabels,
+      custLabel,
+      custLikeLabel,
     } = this.props;
     const {
       sortDirection,
@@ -1091,6 +1112,11 @@ export default class CustomerList extends PureComponent {
           queryHoldingIndustryDetail={queryHoldingIndustryDetail}
           industryDetail={industryDetail}
           queryHoldingIndustryDetailReqState={interfaceState[effects.queryHoldingIndustryDetail]}
+          queryCustSignedLabels={queryCustSignedLabels}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          signCustLabels={signCustLabels}
+          custLabel={custLabel}
+          custLikeLabel={custLikeLabel}
         />
       </div>
     );
