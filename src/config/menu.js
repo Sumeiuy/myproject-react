@@ -135,7 +135,7 @@ const menus = [
         url: '',
         type: 'menu',
         action: '',
-        path: '/serviceCenter/asset',
+        path: '',
         children: [
           {
             id: 'FSP_ASSET_ALLOCATION_IMPLEMENTATION',

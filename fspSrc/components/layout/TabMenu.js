@@ -88,9 +88,20 @@ export default class TabMenu extends PureComponent {
   }
 
   @autobind
-  handDropClick(menuItem, activeKey) {
+  getFirstChild(menu) {
+    const firstChild = menu.children[0];
+    if (firstChild.path === '' && firstChild.children) {
+      return this.getFirstChild(firstChild);
+    }
+    return firstChild;
+  }
+  
+  @autobind
+  handDropClick(menuItem) {
     if (menuItem.path !== '') {
-      this.change(menuItem.id, activeKey);
+      this.handleLinkClick(menuItem);
+    } else {
+      this.handleLinkClick(this.getFirstChild(menuItem));
     }
   }
 
@@ -98,7 +109,6 @@ export default class TabMenu extends PureComponent {
   renderDropdownMenu(menu) {
     const { activeKey } = this.props;
     const isActiveLink = menu.id === activeKey;
-    const placement = 'bottomLeft';
     const hasHomePage = menu.path !== '';
     const menus = (
       <Menu>
@@ -112,16 +122,10 @@ export default class TabMenu extends PureComponent {
         key={menu.id}
         className={classnames({
           [styles.menuItem]: true,
-          [styles.widerItem]: true,
           [styles.activeLink]: isActiveLink,
         })}
       >
-        {/*
-          <Dropdown.Button onClick={this.change} overlay={menus} trigger={['click']}>
-              <div classnames={styles.text}>{menu.name}</div>
-          </Dropdown.Button>
-        */}
-        <Dropdown placement={placement} overlay={menus} trigger={['hover']}>
+        <Dropdown placement='bottomLeft' overlay={menus} trigger={['hover']}>
           <div
             tabIndex="0"
             className={styles.text}
@@ -131,7 +135,7 @@ export default class TabMenu extends PureComponent {
                 [styles.link]: true,
                 [styles.hasHomePage]: hasHomePage,
               })}
-              title={`${menu.name}`}
+              title={menu.name}
               onClick={() => this.handDropClick(menu, activeKey)}
             >
               {menu.name}
