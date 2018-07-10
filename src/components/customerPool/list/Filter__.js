@@ -328,13 +328,13 @@ export default class Filter extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '客户筛选-持仓行业',
-      value: '$args[0].value',
+      value: '$args[0].value.induName',
     },
   })
   handleHoldingIndustryChange({ id, value }) {
     this.props.onFilterChange({
       name: id,
-      value,
+      value: value.induCode,
     });
   }
 

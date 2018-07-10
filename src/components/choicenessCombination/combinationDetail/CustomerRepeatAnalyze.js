@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Table } from 'antd';
+import moment from 'moment';
 import { number, time } from '../../../helper/';
 import config from '../config';
 import styles from './customerRepeatAnalyze.less';
@@ -19,6 +20,8 @@ const EMPTY_OBJECT = {};
 const titleList = config.titleList.custRepeat;
 const { sourceType } = config;
 const timeFormater = 'YYYY年MM月DD日';
+// 当前日期减一天为默认日期
+const DEFAULT_TIME = moment().subtract(1, 'days').format('YYYY-MM-DD');
 export default class CustomerRepeatAnalyze extends PureComponent {
   static propTypes = {
     // 当前组合code
@@ -85,8 +88,8 @@ export default class CustomerRepeatAnalyze extends PureComponent {
           <a onClick={() => openCustomerListPage(openPayload)}>进入客户列表</a>
         </div>
         <div className={styles.tipsBox}>
-          截止{time.format(data.time, timeFormater)}，当前组合订购客户共计
-          <span className={styles.total}>{number.thousandFormat(data.total, true)}</span>人
+          截止{time.format(data.time || DEFAULT_TIME, timeFormater)}，当前组合订购客户共计
+          <span className={styles.total}>{number.thousandFormat(data.total || 0, true)}</span>人
         </div>
         <Table
           columns={newTitleList}

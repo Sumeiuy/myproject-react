@@ -35,6 +35,7 @@ const duty = {
   HTSC_CDM: '1-5A5ML0O', // HTSC 客户资料管理岗（无隐私）
   HTSC_GPQQSQG: '1-3LVZOPS', // HTSC 股票期权申请岗
   HTSC_GLGXGLG: '1-5DKN4AZ', // HTSC 融资类业务客户关联关系管理岗
+  HTSC_BMXTGLY: '1-1QF7Z', // HTSC 部门系统管理员
 };
 
 export default duty;

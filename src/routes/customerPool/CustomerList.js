@@ -38,7 +38,7 @@ const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 20; // 默认页大小
 
-const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
+const DEFAULT_SORT = { sortType: 'totAset', sortDirection: 'desc' }; // 默认排序方式
 
 const effects = {
   allInfo: 'customerPool/getAllInfo',
@@ -67,6 +67,9 @@ const effects = {
   addCallRecord: 'customerPool/addCallRecord',
   queryHoldingSecurityRepetition: 'customerPool/queryHoldingSecurityRepetition',
   getCustRangeByAuthority: 'customerPool/getCustRangeByAuthority',
+  queryCustSignedLabels: 'customerLabel/queryCustSignedLabels',
+  queryLikeLabelInfo: 'customerLabel/queryLikeLabelInfo',
+  signCustLabels: 'customerLabel/signCustLabels',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -118,6 +121,10 @@ const mapStateToProps = state => ({
   currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
   // 组合产品订购客户重复的持仓证券
   holdingSecurityData: state.customerPool.holdingSecurityData,
+  // 客户已标记标签
+  custLabel: state.customerLabel.custLabel,
+  // 模糊搜索客户标签
+  custLikeLabel: state.customerLabel.custLikeLabel,
 });
 
 const mapDispatchToProps = {
@@ -165,6 +172,10 @@ const mapDispatchToProps = {
   queryHoldingSecurityRepetition: fetchDataFunction(false, effects.queryHoldingSecurityRepetition),
   // 获取服务营业部的数据
   getCustRangeByAuthority: fetchDataFunction(true, effects.getCustRangeByAuthority),
+  // 查询客户已标记标签
+  queryCustSignedLabels: fetchDataFunction(true, effects.queryCustSignedLabels),
+  queryLikeLabelInfo: fetchDataFunction(false, effects.queryLikeLabelInfo),
+  signCustLabels: fetchDataFunction(true, effects.signCustLabels),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -231,6 +242,11 @@ export default class CustomerList extends PureComponent {
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
     getCustRangeByAuthority: PropTypes.func.isRequired,
+    queryCustSignedLabels: PropTypes.func.isRequired,
+    queryLikeLabelInfo: PropTypes.func.isRequired,
+    signCustLabels: PropTypes.func.isRequired,
+    custLabel: PropTypes.object.isRequired,
+    custLikeLabel: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -699,6 +715,11 @@ export default class CustomerList extends PureComponent {
       currentCommonServiceRecord,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
+      queryCustSignedLabels,
+      queryLikeLabelInfo,
+      signCustLabels,
+      custLabel,
+      custLikeLabel,
     } = this.props;
     const {
       sortDirection,
@@ -817,9 +838,13 @@ export default class CustomerList extends PureComponent {
           currentCommonServiceRecord={currentCommonServiceRecord}
           queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
           holdingSecurityData={holdingSecurityData}
+          queryCustSignedLabels={queryCustSignedLabels}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          signCustLabels={signCustLabels}
+          custLabel={custLabel}
+          custLikeLabel={custLikeLabel}
         />
       </div>
     );
   }
 }
-
