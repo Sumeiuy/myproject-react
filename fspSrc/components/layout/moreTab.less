@@ -1,9 +1,5 @@
-.moreTab {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
-}
+@width: 120px;
+@active-color: #108ee9;
 
 .text {
   color: #4a4a4a;
@@ -14,28 +10,58 @@
   flex-grow: 1;
 }
 
-.active {
-  color: #108ee9;
+.activeStyle {
+  color: @active-color;
+  background-color: #ecf6fd;
 }
 
-.activeItem {
-  .active;
-  background: #ecf6fd;
+.moreTab {
+  line-height: 39px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  .tabActive {
+    color: @active-color;
+  }
+}
+
+.subMenu {
   :global {
-    .ant-dropdown-menu-submenu-title, .ant-dropdown-menu-submenu-title::after {
-      color: #2e669a !important;
+    .ant-dropdown-menu-submenu-title {
+      .text;
+      width: @width;
+    }
+  }
+
+  &.menuActive {
+    :global {
+      .ant-dropdown-menu-submenu-title {
+        .activeStyle;
+      } 
     }
   }
 }
 
-.subMenuItem {
-  width: 120px;
-  display: inline-flex;
-  justify-content: space-between;
-}
+.menuItem {
+  width: @width;
+  .menuTab {
+    width: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+    .close {
+      &:hover {
+        font-weight: bolder;
+      }
+    }
+  }
 
-.close {
-  &:hover {
-    font-weight: bolder;
+  .textActive {
+    color: @active-color;
+  }
+
+  &.itemActive {
+    .activeStyle;
   }
 }
+

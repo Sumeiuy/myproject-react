@@ -8,14 +8,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import _ from 'lodash';
 import { Menu, Dropdown, Icon } from 'antd';
 import styles from './tabMenu.less';
 import MoreTab from './MoreTab';
-
-function isInMoremenu(moreMenu, activeKey) {
-  return !!_.find(moreMenu.children, item => item.id === activeKey);
-}
 
 export default class TabMenu extends PureComponent {
   static propTypes = {
@@ -28,9 +23,8 @@ export default class TabMenu extends PureComponent {
     path: PropTypes.string.isRequired,
   }
 
-  getMenus(array, isMoreMenu) {
-    const { path, activeKey } = this.props;
-
+  getMenus(array) {
+    const { path } = this.props;
     return array.map((item) => {
       if (item.children) {
         return (
@@ -39,11 +33,10 @@ export default class TabMenu extends PureComponent {
             title={item.name}
             className={classnames({
               [styles.activeItem]: item.path ? path.indexOf(item.path) !== -1 : false,
-              [styles.subMenuItem]: isMoreMenu,
-              [styles.subMenuLink]: !isMoreMenu,
+              [styles.subMenuLink]: true,
             })}
           >
-            {this.getMenus(item.children, isMoreMenu)}
+            {this.getMenus(item.children)}
           </Menu.SubMenu>
         );
       }
@@ -55,24 +48,13 @@ export default class TabMenu extends PureComponent {
             [styles.activeItem]: item.path === path,
           })}
         >
-          {
-            isMoreMenu ?
-              <div className={styles.moreMenuItem}>
-                <div className={styles.link} title={`${item.name}`} onClick={() => this.change(item.id, activeKey)}>{item.name}</div>
-                {
-                  <div id={item.path === path ? 'activeTabPane' : null} className={styles.close} onClick={() => this.remove(item.id)}>
-                    <Icon type="close" />
-                  </div>
-                }
-              </div> :
-              <div
-                title={item.name}
-                className={styles.linkItem}
-                onClick={() => this.handleLinkClick(item)}
-              >
-                {item.name}
-              </div>
-          }
+          <div
+            title={item.name}
+            className={styles.linkItem}
+            onClick={() => this.handleLinkClick(item)}
+          >
+            {item.name}
+          </div>
         </Menu.Item>
       );
     });
@@ -113,15 +95,15 @@ export default class TabMenu extends PureComponent {
   }
 
   @autobind
-  renderDropdownMenu(menu, isMoreMenu = false) {
+  renderDropdownMenu(menu) {
     const { activeKey } = this.props;
-    const isActiveLink = isMoreMenu ? isInMoremenu(menu, activeKey) : (menu.id === activeKey);
-    const placement = isMoreMenu ? 'bottomRight' : 'bottomLeft';
+    const isActiveLink = menu.id === activeKey;
+    const placement = 'bottomLeft';
     const hasHomePage = menu.path !== '';
     const menus = (
       <Menu>
         {
-          this.getMenus(menu.children, isMoreMenu)
+          this.getMenus(menu.children)
         }
       </Menu>
     );
@@ -132,7 +114,6 @@ export default class TabMenu extends PureComponent {
           [styles.menuItem]: true,
           [styles.widerItem]: true,
           [styles.activeLink]: isActiveLink,
-          [styles.moreButton]: isMoreMenu,
         })}
       >
         {/*
@@ -195,7 +176,7 @@ export default class TabMenu extends PureComponent {
 
   @autobind
   renderMoreTab() {
-    const { onRemove, onChange, activeKey, moreMenuObject } = this.props;
+    const { onRemove, onChange, activeKey, moreMenuObject, path } = this.props;
     return (
       <div className={styles.moreTab}> 
         <MoreTab 
@@ -203,6 +184,8 @@ export default class TabMenu extends PureComponent {
           onChange={onChange}
           activeKey={activeKey}
           onRemove={onRemove}
+          onLinkClick={this.handleLinkClick}
+          path={path}
         />
       </div>
     );
@@ -213,9 +196,9 @@ export default class TabMenu extends PureComponent {
     return (
       <div id="tabMenu" className={styles.tabMenu}>
         {
-          mainArray.map((menu, index) => {
+          mainArray.map((menu) => {
             if (menu.children) {
-              return this.renderDropdownMenu(menu, false, index);
+              return this.renderDropdownMenu(menu);
             } else if (menu.pid === 'ROOT') {
               return this.renderLinkMenu(menu, false);
             }

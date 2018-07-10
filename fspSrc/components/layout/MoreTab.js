@@ -18,6 +18,7 @@ export default class TabMenu extends PureComponent {
     moreTabArray: PropTypes.array.isRequired,
     onRemove: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
+    path: PropTypes.string.isRequired,
   }
 
   @autobind
@@ -34,43 +35,89 @@ export default class TabMenu extends PureComponent {
     }
   }
 
-  getMenus(array) {
-    const { activeKey } = this.props;
-    return array.map((item) => {
-      const active = item.id === activeKey;
-      return (
-        <Menu.Item 
-          key={item.id}
-          className={active ? styles.activeItem : null}
-        >
-          <div className={styles.subMenuItem}>
+  @autobind
+  LinkClick(menuItem) {
+    const { onLinkClick } = this.props;
+    onLinkClick(menuItem);
+  }
+
+  getMenuItem(menuItem, closeable) {
+    const { activeKey, path } = this.props;
+    // 可关闭 tab 通过 activeKey 判断是否高亮
+    // 递归菜单通过 path 判断是否高亮
+    const isActive = menuItem.id === activeKey || (menuItem.path !== '' && path.indexOf(menuItem.path) !== -1);
+    
+    return (
+      <Menu.Item
+        key={menuItem.id}
+        className={classnames({
+          [styles.menuItem]: true,
+          [styles.itemActive]: isActive,
+        })}
+      >
+        {
+          closeable ?
+            <div className={styles.menuTab}>
+              <div
+                className={classnames({
+                  [styles.text]: true,
+                  [styles.textActive]: isActive,
+                })}
+                title={`${menuItem.name}`}
+                onClick={() => this.change(menuItem.id, activeKey)}
+              >
+                {menuItem.name}
+              </div>
+              <div className={styles.close} onClick={() => this.remove(menuItem.id)}>
+                <Icon type="close" />
+              </div>
+            </div> :
             <div 
               className={classnames({
                 [styles.text]: true,
-                [styles.active]: active,  
+                [styles.textActive]: isActive,
               })}
-              title={`${item.name}`}
-              onClick={() => this.change(item.id, activeKey)}
+              title={menuItem.name}
+              onClick={() => this.LinkClick(menuItem)}
             >
-              {item.name}
+              {menuItem.name}
             </div>
-            <div
-              className={styles.close} 
-              onClick={() => this.remove(item.id)}
-            >
-              <Icon type="close" />
-            </div>
-          </div> 
-        </Menu.Item>
-      );
+        }
+      </Menu.Item>
+    );
+  }
+
+  // 根据是否包含菜单，进行递归处理
+  getMenus(array, closeable = true) {
+    const { activeKey } = this.props;
+
+    return array.map((item) => {
+      let isActive = item.id === activeKey;
+      if (item.children) {
+        return (
+          <Menu.SubMenu
+            key={item.id}
+            title={item.name}
+            className={styles.subMenu}
+            className={classnames({
+              [styles.subMenu]: true,
+              [styles.menuActive]: isActive,
+            })}
+          >
+            {this.getMenus(item.children, false)}
+          </Menu.SubMenu>
+        );
+      } else {
+        // 非菜单的内容认为是可关闭的 tab
+        return this.getMenuItem(item, closeable);
+      }
     });
   }
 
   render() {
     const { moreTabArray, activeKey } = this.props;
     const tabNum = moreTabArray.length;
-    const activeState = !!_.find(moreTabArray, item => item.id === activeKey);
-
+    const isActive = !!_.find(moreTabArray, item => item.id === activeKey);
     const menus = (
       <Menu>
         <Menu.Item key="text" disabled>
@@ -86,7 +133,7 @@ export default class TabMenu extends PureComponent {
     return (
       <div className={styles.moreTab}>
         <Dropdown placement='bottomLeft' overlay={menus} trigger={['hover']}>
-          <div className={activeState ? styles.active : null}>
+          <div className={isActive ? styles.tabActive : null}>
             <div>
               {tabNum}
             </div>

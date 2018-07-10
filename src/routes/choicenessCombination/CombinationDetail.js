@@ -308,7 +308,7 @@ export default class CombinationDetail extends PureComponent {
     const url = `/customerPool/list?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
-      url, 
+      url,
       param,
       pathname: '/customerPool/list',
       query,
