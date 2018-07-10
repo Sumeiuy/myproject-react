@@ -2,7 +2,7 @@
  * @Author: xiazhiqiang
  * @Date: 2018-05-21 13:33:05
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-09 18:18:29
+ * @Last Modified time: 2018-07-10 09:38:04
  */
 
 import React, { PureComponent } from 'react';
@@ -95,13 +95,13 @@ export default class PerformanceIndicators extends PureComponent {
     };
     const data = {
       source: 'business',
+      bizFlag: 'biz',
     };
-    const filters = getFilter(data);
     openRctTab({
       routerAction: push,
-      url: `${url}?source=business&filters=${filters}`,
+      url: `${url}?source=business&filters=${getFilter(data)}&bizFlag=biz`,
       pathname: url,
-      query: { ...data, filters },
+      query: data,
       param,
       state: {
         ...query,

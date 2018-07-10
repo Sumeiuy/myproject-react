@@ -102,6 +102,7 @@ export default class BottomFixedBox extends PureComponent {
           selectAll,
           // 客户列表页的筛选条件
           filters,
+          bizFlag,
         },
         pathname,
         search,
@@ -120,6 +121,9 @@ export default class BottomFixedBox extends PureComponent {
       shouldStay,
       editPane,
     };
+    if (bizFlag) {
+      param.bizFlag = bizFlag;
+    }
     if (selectedIds) {
       const selectedIdsArr = selectedIds.split(',');
       param.ids = selectedIdsArr;
