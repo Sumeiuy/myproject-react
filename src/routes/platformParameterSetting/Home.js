@@ -11,10 +11,12 @@ import _ from 'lodash';
 import menu from './menu';
 import Main from '../../components/platformParameterSetting/Main';
 import CustomerFeedback from '../../routes/customerFeedback/Home';
-import LabelManager from '../../components/platformParameterSetting/routers/LabelManager';
-import RecommendedLabel from '../../components/platformParameterSetting/routers/RecommendedLabel';
 import TaskFeedback from '../taskFeedback/Home';
 import InvestmentAdvice from '../investmentAdvice/Home';
+import { LabelManager,
+  CustomerLabel,
+  RecommendedLabel,
+} from '../../components/platformParameterSetting';
 
 export default class PlatformParameterSetting extends PureComponent {
   static propTypes = {
@@ -41,6 +43,7 @@ export default class PlatformParameterSetting extends PureComponent {
           <Route exact path="/platformParameterSetting/taskOperation/investmentAdvice" component={InvestmentAdvice} />
           <Route exact path="/platformParameterSetting/labelManager" component={LabelManager} />
           <Route exact path="/platformParameterSetting/contentOperate" component={RecommendedLabel} />
+          <Route exact path="/platformParameterSetting/customerLabel" component={CustomerLabel} />
           <Route path="*" render={() => (<Redirect to="/empty" />)} />
         </Switch>
       </Main>

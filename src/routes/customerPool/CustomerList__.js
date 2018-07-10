@@ -207,16 +207,18 @@ function getFilterParam(filterObj, hashString) {
     }
   }
   // 持仓产品
-  const primaryKeyPrdts =
-    _.isArray(filterObj.primaryKeyPrdts) ? filterObj.primaryKeyPrdts[0] : filterObj.primaryKeyPrdts;
-
-  if (primaryKeyPrdts) {
-    param.primaryKeyPrdts = _.compact([].concat(primaryKeyPrdts));
+  if (filterObj.primaryKeyPrdts) {
+    param.primaryKeyPrdts = _.compact([].concat(filterObj.primaryKeyPrdts[0]));
   }
 
   // 订购组合
   if (filterObj.primaryKeyJxgrps) {
     param.primaryKeyJxgrps = _.compact([].concat(filterObj.primaryKeyJxgrps[0]));
+  }
+
+  // 持仓行业
+  if (filterObj.holdingIndustry) {
+    param.primaryKeyIndustry = _.compact([].concat(filterObj.holdingIndustry));
   }
 
 
@@ -236,6 +238,11 @@ function getFilterParam(filterObj, hashString) {
   // 介绍人
   if (filterObj.devMngId) {
     param.devMngId = filterObj.devMngId[0] || null;
+  }
+
+  // 潜在业务客户
+  if (filterObj.bizFlag) {
+    param.bizFlag = filterObj.bizFlag || null;
   }
 
   // 处理所有的单选类参数
@@ -320,6 +327,11 @@ const effects = {
   addCallRecord: 'customerPool/addCallRecord',
   queryHoldingSecurityRepetition: 'customerPool/queryHoldingSecurityRepetition',
   getCustRangeByAuthority: 'customerPool/getCustRangeByAuthority',
+  queryIndustryList: 'customerPool/queryIndustryList',
+  queryHoldingIndustryDetail: 'customerPool/queryHoldingIndustryDetail',
+  queryCustSignedLabels: 'customerLabel/queryCustSignedLabels',
+  queryLikeLabelInfo: 'customerLabel/queryLikeLabelInfo',
+  signCustLabels: 'customerLabel/signCustLabels',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -368,6 +380,14 @@ const mapStateToProps = state => ({
   currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
   // 组合产品订购客户重复的持仓证券
   holdingSecurityData: state.customerPool.holdingSecurityData,
+  // 持仓行业过滤器的数据
+  industryList: state.customerPool.industryList,
+  // 持仓行业的详情
+  industryDetail: state.customerPool.industryDetail,
+  // 客户已标记标签
+  custLabel: state.customerLabel.custLabel,
+  // 模糊搜索客户标签
+  custLikeLabel: state.customerLabel.custLikeLabel,
 });
 
 const mapDispatchToProps = {
@@ -422,6 +442,12 @@ const mapDispatchToProps = {
   getCustRangeByAuthority: fetchDataFunction(true, effects.getCustRangeByAuthority),
   // 组合产品订购客户查询持仓证券重合度
   queryHoldingSecurityRepetition: fetchDataFunction(false, effects.queryHoldingSecurityRepetition),
+  queryIndustryList: fetchDataFunction(true, effects.queryIndustryList),
+  queryHoldingIndustryDetail: fetchDataFunction(false, effects.queryHoldingIndustryDetail),
+  // 查询客户已标记标签
+  queryCustSignedLabels: fetchDataFunction(true, effects.queryCustSignedLabels),
+  queryLikeLabelInfo: fetchDataFunction(false, effects.queryLikeLabelInfo),
+  signCustLabels: fetchDataFunction(true, effects.signCustLabels),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -492,6 +518,15 @@ export default class CustomerList extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryIndustryList: PropTypes.func.isRequired,
+    industryList: PropTypes.array.isRequired,
+    queryHoldingIndustryDetail: PropTypes.func.isRequired,
+    industryDetail: PropTypes.object.isRequired,
+    queryCustSignedLabels: PropTypes.func.isRequired,
+    queryLikeLabelInfo: PropTypes.func.isRequired,
+    signCustLabels: PropTypes.func.isRequired,
+    custLabel: PropTypes.object.isRequired,
+    custLikeLabel: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -564,6 +599,7 @@ export default class CustomerList extends PureComponent {
         query,
       },
       getCustRangeByAuthority,
+      queryIndustryList,
     } = this.props;
     // 请求客户列表
     this.getCustomerList(this.props);
@@ -573,6 +609,8 @@ export default class CustomerList extends PureComponent {
     this.getFiltersOfAllSightingTelescope(query);
     // 请求服务营业部筛选器的数据
     getCustRangeByAuthority();
+    // 请求持仓行业数据
+    queryIndustryList();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -628,8 +666,6 @@ export default class CustomerList extends PureComponent {
       curPageNum: query.curPageNum || CUR_PAGE,
       // 必传，页大小
       pageSize: query.pageSize || CUR_PAGESIZE,
-      // 不同的入口进入列表页面, 后端约定该字段默认传‘searchCustPool’
-      enterType: ENTER_TYPE[query.source] || 'searchCustPool',
     };
     const orgId = this.getPostOrgId(query);
     param.orgId = orgId;
@@ -952,6 +988,15 @@ export default class CustomerList extends PureComponent {
       getSearchPersonList,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
+      queryIndustryList,
+      industryList,
+      queryHoldingIndustryDetail,
+      industryDetail,
+      queryCustSignedLabels,
+      queryLikeLabelInfo,
+      signCustLabels,
+      custLabel,
+      custLikeLabel,
     } = this.props;
     const {
       sortDirection,
@@ -1003,6 +1048,8 @@ export default class CustomerList extends PureComponent {
           location={location}
           onFilterChange={this.filterChange}
           searchServerPersonList={searchServerPersonList}
+          queryIndustryList={queryIndustryList}
+          industryList={industryList}
         />
         <CustomerLists
           getSearchPersonList={getSearchPersonList}
@@ -1062,6 +1109,14 @@ export default class CustomerList extends PureComponent {
           currentPytMng={this.getPostPtyMngId()}
           queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
           holdingSecurityData={holdingSecurityData}
+          queryHoldingIndustryDetail={queryHoldingIndustryDetail}
+          industryDetail={industryDetail}
+          queryHoldingIndustryDetailReqState={interfaceState[effects.queryHoldingIndustryDetail]}
+          queryCustSignedLabels={queryCustSignedLabels}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          signCustLabels={signCustLabels}
+          custLabel={custLabel}
+          custLikeLabel={custLikeLabel}
         />
       </div>
     );

@@ -9,7 +9,7 @@ import createHistory from 'history/createHashHistory';
 import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 
 import CommonModal from './components/common/biz/CommonModal';
 import './css/antd.less';
@@ -67,13 +67,12 @@ const onError = (e) => {
 
 // 离开某个页面，弹出确认框，配合页面中的Prompt使用
 const getConfirmation = (msg, callback) => {
-  // Modal.confirm({
-  //   title: '请确认',
-  //   content: msg,
-  //   onOk() { callback(true); },
-  //   onCancel() { callback(false); },
-  // });
-  callback(true);
+  Modal.confirm({
+    title: '请确认',
+    content: msg,
+    onOk() { callback(true); },
+    onCancel() { callback(false); },
+  });
 };
 
 const history = createHistory({
@@ -159,6 +158,8 @@ app.model(require('./models/latestView'));
 app.model(require('./models/keyMonitorAccount'));
 // 客户关联关系
 app.model(require('./models/custRelationships'));
+// 自定义标签类型
+app.model(require('./models/customerLabel'));
 
 // 4. Route
 app.router(routerConfig);

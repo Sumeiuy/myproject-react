@@ -1,9 +1,11 @@
 /**
  * @file components/customerPool/list/MatchArea.js
+ *  客户列表个性化信息
+ * @author xiaZhiQiang
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-28 20:35:38
+ * @Last Modified time: 2018-07-05 15:00:40
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -18,6 +20,7 @@ import { openFspTab, openRctTab } from '../../../../utils/index';
 import { RANDOM } from '../../../../config/filterContant';
 import HoldingProductDetail from '../HoldingProductDetail';
 import HoldingCombinationDetail from '../HoldingCombinationDetail';
+import HoldingIndustryDetail from '../HoldingIndustryDetail';
 import Icon from '../../../common/Icon';
 import matchAreaConfig from './config';
 import styles from './matchArea.less';
@@ -70,6 +73,9 @@ export default class MatchArea extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryHoldingIndustryDetail: PropTypes.func.isRequired,
+    industryDetail: PropTypes.object.isRequired,
+    queryHoldingIndustryDetailReqState: PropTypes.bool.isRequired,
   };
 
   static contextTypes = {
@@ -688,6 +694,59 @@ export default class MatchArea extends PureComponent {
         item.name && _.includes(labelListId, item.id) && !isSightingScope(item.source));
       const normalListNode = this.renderRelatedLabels(normalLabelList);
       return [normalListNode, ...amiListNode];
+    }
+    return null;
+  }
+
+  // 持仓行业
+  @autobind
+  renderHoldingIndustry() {
+    const {
+      listItem,
+      listItem: { isPrivateCustomer, empId, custId, holdingIndustry },
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      queryHoldingIndustryDetail,
+      industryDetail,
+      formatAsset,
+      queryHoldingIndustryDetailReqState,
+    } = this.props;
+    const { empInfo: { empInfo = {} } } = this.context;
+    // 是否显示’持仓详情‘，默认不显示
+    let isShowDetailBtn = false;
+    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
+    if (hasNPCTIQPermission && !isPrivateCustomer) {
+      isShowDetailBtn = true;
+    }
+    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
+    // 主服务经理 可以看名下所有客户的持仓信息
+    if (hasPCTIQPermission || empInfo.rowId === empId) {
+      isShowDetailBtn = true;
+    }
+    if (!_.isEmpty(holdingIndustry)) {
+      const { name, id } = holdingIndustry[0] || {};
+      const props = {
+        listItem,
+        id,
+        queryHoldingIndustryDetail,
+        data: industryDetail,
+        formatAsset,
+        queryHoldingIndustryDetailReqState,
+      };
+      return (
+        <li key={`${custId}${id}`}>
+          <span>
+            <i className="label">持仓行业：</i>
+            <i>
+              <em className="marked">
+                {name}
+              </em>
+              /{id}
+            </i>
+            {isShowDetailBtn && <HoldingIndustryDetail {...props} />}
+          </span>
+        </li>
+      );
     }
     return null;
   }

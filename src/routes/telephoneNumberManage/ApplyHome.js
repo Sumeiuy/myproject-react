@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-27 22:22:22
+ * @Last Modified time: 2018-07-10 13:21:33
  */
 
 import React, { PureComponent } from 'react';
@@ -421,6 +421,7 @@ export default class ApplyHome extends PureComponent {
           leftListClassName="telephoneNumApplyList"
           extraHeight={EXTRAHEIGHT}
           leftWidth={LEFT_PANEL_WIDTH}
+          isSetMarginTop={false}
         />
         {
           isShowCreateModal ?
