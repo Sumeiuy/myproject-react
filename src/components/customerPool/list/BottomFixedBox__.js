@@ -49,12 +49,7 @@ export default class BottomFixedBox extends PureComponent {
 
   componentDidMount() {
     this.setTaskAndGroup();
-    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
-    if (sidebarHideBtn && sidebarShowBtn) {
-      sidebarHideBtn.addEventListener('click', this.updateLeftPos);
-      sidebarShowBtn.addEventListener('click', this.updateLeftPos);
-    }
+    window.onFspSidebarbtn(this.updateLeftPos);
   }
 
   componentDidUpdate() {
@@ -62,12 +57,7 @@ export default class BottomFixedBox extends PureComponent {
   }
 
   componentWillUnmount() {
-    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
-    if (sidebarHideBtn && sidebarShowBtn) {
-      sidebarHideBtn.removeEventListener('click', this.updateLeftPos);
-      sidebarShowBtn.removeEventListener('click', this.updateLeftPos);
-    }
+    window.offFspSidebarbtn(this.updateLeftPos);
   }
 
   @autobind
@@ -153,7 +143,7 @@ export default class BottomFixedBox extends PureComponent {
     };
 
     const { selectCount } = this.props;
-    if (Number(selectCount) > 500) {
+    if (selectCount > 500) {
       this.setState({
         visible: true,
         modalContent: '一次添加的客户数不能超过500个',
