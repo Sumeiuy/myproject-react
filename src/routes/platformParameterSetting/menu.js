@@ -38,6 +38,7 @@ const menu = [
   {
     name: '客户标签',
     path: '/customerLabel',
+    permission: duty.HTSC_BMXTGLY,
   },
 ];
 
