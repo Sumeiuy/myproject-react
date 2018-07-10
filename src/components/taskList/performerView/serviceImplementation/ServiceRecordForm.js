@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-05 19:49:37
+ * @Last Modified time: 2018-07-03 16:44:10
  * 服务记录表单
  */
 
@@ -106,6 +106,7 @@ export default class ServiceRecordForm extends PureComponent {
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
       isCurrentMissionPhoneCall,
+      onFormDataChange,
     } = this.props;
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
@@ -150,6 +151,7 @@ export default class ServiceRecordForm extends PureComponent {
               testWallCollision={testWallCollision}
               testWallCollisionStatus={testWallCollisionStatus}
               isPhoneCall={isCurrentMissionPhoneCall}
+              onFormDataChange={onFormDataChange}
             />
             {footNode}
           </div>
@@ -191,6 +193,7 @@ ServiceRecordForm.propTypes = {
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: PropTypes.bool.isRequired,
   isCurrentMissionPhoneCall: PropTypes.bool,
+  onFormDataChange: PropTypes.func,
 };
 
 ServiceRecordForm.defaultProps = {
@@ -200,4 +203,5 @@ ServiceRecordForm.defaultProps = {
   isEntranceFromPerformerView: false,
   serviceCustId: '',
   isCurrentMissionPhoneCall: false,
+  onFormDataChange: _.noop,
 };

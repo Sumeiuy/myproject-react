@@ -90,3 +90,6 @@ export const sightingLabelSource = [
   SIGHTINGTELESCOPE_ENTRY,
   PRODUCT_POTENTIAL_TARGET_CUST_ENTRY,
 ];
+
+// 新版客户列表跳到新建任务页面的source值
+export const SOURCE_CUSTLIST = 'customerList';

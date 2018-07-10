@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-06 18:58:19
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-03 17:06:59
  */
 
 import React, { PureComponent } from 'react';
@@ -43,6 +43,7 @@ export default class Uploader extends PureComponent {
     isSupportUploadMultiple: PropTypes.bool,
     deleteFileResult: PropTypes.array,
     accept: PropTypes.string,
+    onUploadDataChange: PropTypes.func,
   }
 
   static defaultProps = {
@@ -62,6 +63,7 @@ export default class Uploader extends PureComponent {
     isSupportUploadMultiple: false,
     deleteFileResult: [],
     accept: '',
+    onUploadDataChange: _.noop,
   }
 
   constructor(props) {
@@ -205,6 +207,8 @@ export default class Uploader extends PureComponent {
       fileList: newFileList,
       isLoading: status === 'uploading',
     });
+    // 调用了此方法说明上传附件数据发生了变化
+    this.props.onUploadDataChange();
   }
 
   @autobind

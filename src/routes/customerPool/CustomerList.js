@@ -29,6 +29,7 @@ import {
   ENTERLIST_PERMISSION_TASK_MANAGE,
   ENTERLIST_PERMISSION_INDEX_QUERY,
   ENTERLIST_PERMISSION_SIGHTINGLABEL,
+  BIZ,
 } from './config';
 
 import styles from './customerlist.less';
@@ -38,7 +39,7 @@ const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 20; // 默认页大小
 
-const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
+const DEFAULT_SORT = { sortType: 'totAset', sortDirection: 'desc' }; // 默认排序方式
 
 const effects = {
   allInfo: 'customerPool/getAllInfo',
@@ -367,9 +368,11 @@ export default class CustomerList extends PureComponent {
       curPageNum: query.curPageNum || CUR_PAGE,
       // 必传，页大小
       pageSize: query.pageSize || CUR_PAGESIZE,
-      // 不同的入口进入列表页面
-      enterType: ENTER_TYPE[query.source] || DEFAULT_ENTER_TYPE,
     };
+    // 潜在业务进入客户列表需要传bizFlag='biz'
+    if (query.source === 'buiseness') {
+      param.bizFlag = BIZ;
+    }
     if (query.source === 'search') { // 搜索框
       param.searchTypeReq = 'ALL';
       param.searchText = keyword;
@@ -820,4 +823,3 @@ export default class CustomerList extends PureComponent {
     );
   }
 }
-

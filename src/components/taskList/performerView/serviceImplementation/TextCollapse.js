@@ -70,8 +70,16 @@ export default class TextCollapse extends Component {
   }
 
   render() {
-    const { children, buttonStyle } = this.props;
+    const { children, buttonStyle, buttonId } = this.props;
     const { btnVisible, fold } = this.state;
+    let buttonProps = {
+      className: styles.button,
+      style: buttonStyle,
+      onClick: this.handleClick,
+    };
+    if (buttonId) {
+      buttonProps = { id: buttonId, ...buttonProps };
+    }
     return (
       <div className={styles.container}>
         <div
@@ -83,12 +91,13 @@ export default class TextCollapse extends Component {
         {
           btnVisible &&
           <div className={styles.btnWrapper}>
-            <Icon
-              type={fold ? 'shouqi2' : 'zhankai1'}
-              className={styles.icon}
-              style={buttonStyle}
-              onClick={this.handleClick}
-            />
+            <div {...buttonProps} >
+              {fold ? '收起' : '展开'}
+              <Icon
+                type={fold ? 'shouqi2' : 'zhankai1'}
+                className={styles.icon}
+              />
+            </div>
           </div>
         }
       </div>
@@ -101,9 +110,11 @@ TextCollapse.propTypes = {
   minHeight: PropTypes.string.isRequired,
   maxHeight: PropTypes.string,
   buttonStyle: PropTypes.object,
+  buttonId: PropTypes.string,
 };
 
 TextCollapse.defaultProps = {
   buttonStyle: {},
   maxHeight: 'auto',
+  buttonId: null,
 };
