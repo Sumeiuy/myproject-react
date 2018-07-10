@@ -88,6 +88,10 @@ export const sourceFilter = {
       // 新开有效户日期
       filterName: 'validDt',
       value: ['cycleStartTime', 'cycleEndTime'],
+    }, {
+      // 新开客户
+      filterName: 'dateOpened',
+      value: ['cycleStartTime', 'cycleEndTime'],
     }],
     // 新增高净值
     netValue: [{
