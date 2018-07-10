@@ -89,7 +89,7 @@ export default class CustomerRepeatAnalyze extends PureComponent {
         </div>
         <div className={styles.tipsBox}>
           截止{time.format(data.time || DEFAULT_TIME, timeFormater)}，当前组合订购客户共计
-          <span className={styles.total}>{number.thousandFormat(data.total || 0, true)}</span>人
+          <span className={styles.total}>{number.thousandFormat(data.total || 0)}</span>人
         </div>
         <Table
           columns={newTitleList}

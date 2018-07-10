@@ -45,7 +45,7 @@ const number = {
    * @param {Boolean} isRemoveZero=false 小数部分多余的0是否移除
    * @returns {String|null} 格式化后的字符串
    */
-  thousandFormat(no, decimalNeedFormat = true, thousandSeq = ',', isRemoveZero) {
+  thousandFormat(no = 0, decimalNeedFormat = true, thousandSeq = ',', isRemoveZero) {
     let numberString = String(no);
     if (isRemoveZero) {
       if (/\./.test(numberString)) {
