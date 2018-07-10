@@ -329,6 +329,12 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '新建',
+    },
+  })
   handleCreate() {
     this.props.creatSeibelModal();
   }
