@@ -10,13 +10,12 @@ import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import store from 'store';
 import Filter from '../../components/customerPool/list/Filter__';
 import CustomerLists from '../../components/customerPool/list/CustomerLists__';
 import MatchArea from '../../components/customerPool/list/individualInfo/MatchArea';
 import { permission, emp, url, check } from '../../helper';
 import withRouter from '../../decorators/withRouter';
-import { seperator } from '../../config';
+import { seperator, sessionStore } from '../../config';
 
 import {
   ENTER_TYPE,
@@ -42,7 +41,7 @@ function getFilterArray(labels, hashString) {
   const labelList = [].concat(labels);
 
   const labelFilters = labelList
-    .map(key => store.get(`CUSTOMERPOOL_${key}_${hashString}`));
+    .map(key => sessionStore.get(`CUSTOMERPOOL_${key}_${hashString}`));
 
   if (!_.isEmpty(labelFilters)) {
     _.each(labelFilters,
@@ -281,18 +280,6 @@ function getSortParam(query) {
     sortsReqList,
   };
 }
-
-// 当query中不存在hashString时，即判断为初次进入客户列表
-function clearCustomerPoolLocalStorage(query) {
-  if (!query.hashString) {
-    store.each((value, key) => {
-      if (/^CUSTOMERPOOL_/.test(key)) {
-        store.remove(key);
-      }
-    });
-  }
-}
-
 
 const effects = {
   allInfo: 'customerPool/getAllInfo',
@@ -560,7 +547,6 @@ export default class CustomerList extends PureComponent {
     };
     // 用户默认岗位orgId
     this.orgId = emp.getOrgId();
-    clearCustomerPoolLocalStorage(query);
     this.hashString = query.hashString || RANDOM;
     // 用户工号
     this.empId = emp.getId();
@@ -576,7 +562,7 @@ export default class CustomerList extends PureComponent {
     // HTSC 交易信息查询权限（含私密客户）
     this.hasPCTIQPermission = permission.hasPCTIQPermission();
     this.dataForNextPage = {};
-    store.set(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
+    sessionStore.set(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
   }
 
   getChildContext() {
@@ -632,10 +618,10 @@ export default class CustomerList extends PureComponent {
 
     // TODO：根据location请求相应的所有子标签条件
     if (!_.isEqual(preOtherQuery, otherQuery) &&
-      !store.get(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`)) {
+      !sessionStore.get(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`)) {
       this.getCustomerList(nextProps);
     }
-    store.set(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
+    sessionStore.set(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
   }
 
   @autobind
