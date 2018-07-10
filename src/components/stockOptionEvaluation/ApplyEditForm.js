@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-06 17:48:23
+ * @Last Modified time: 2018-07-10 15:20:56
  */
 
 import React, { PureComponent } from 'react';
@@ -22,6 +22,7 @@ import Approval from '../permission/Approval';
 import ApproveList from '../common/approveList';
 import config from './config';
 import { data } from '../../helper';
+import logable, { logCommon } from '../../decorators/logable';
 
 import styles from './applyEditForm.less';
 
@@ -199,6 +200,7 @@ export default class ApplyEditForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].btnName' } })
   handleSubmit(item) {
     this.setState({
       operate: item.operate,
@@ -403,6 +405,14 @@ export default class ApplyEditForm extends PureComponent {
     };
     this.props.updateBindingFlow(query)
       .then(() => {
+        // 神策上报修改表单
+        logCommon({
+          type: 'Submit',
+          payload: {
+            name: '股票期权申请修改',
+            vlaue: JSON.stringify(query),
+          },
+        });
         this.showNextApprover();
       });
   }
