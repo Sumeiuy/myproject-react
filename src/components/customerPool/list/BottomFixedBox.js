@@ -32,7 +32,7 @@ export default class BottomFixedBox extends PureComponent {
     hasTkMampPermission: PropTypes.bool.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
-    addMultiSignLabel: PropTypes.func.isRequired,
+    handleSignLabelClick: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -321,10 +321,10 @@ export default class BottomFixedBox extends PureComponent {
 
   // 当是主服务经理时，可以拥有创建用户分组和给客户打标签的功能
   renderGroup() {
-    const { addMultiSignLabel } = this.props;
+    const { handleSignLabelClick } = this.props;
     if (this.props.mainServiceManager) {
       return [
-        <button onClick={addMultiSignLabel}>客户标签</button>,
+        <button onClick={handleSignLabelClick}>客户标签</button>,
         <button onClick={this.handleCustomerGroupClick}>用户分组</button>];
     }
     return null;

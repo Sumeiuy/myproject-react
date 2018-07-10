@@ -73,7 +73,7 @@ export default class CreateLabelType extends PureComponent {
     form.validateFields(['labelName'], (error, values) => {
       if (!error) {
         checkDuplicationName(values).then((duplicationName) => {
-          if (duplicationName) {
+          if (!_.isNull(duplicationName)) {
             this.props.form.setFields({
               labelName: {
                 value: values.labelName,

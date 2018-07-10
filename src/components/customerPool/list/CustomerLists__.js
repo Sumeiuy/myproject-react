@@ -449,7 +449,7 @@ export default class CustomerLists extends PureComponent {
 
   // 添加客户标签 -- start
   @autobind
-  getCustSignLabel(custId) {
+  queryCustSignLabel(custId) {
     const { queryCustSignedLabels } = this.props;
     queryCustSignedLabels({ custId }).then(() => {
       this.setState({
@@ -682,7 +682,7 @@ export default class CustomerLists extends PureComponent {
                     queryHoldingIndustryDetail={queryHoldingIndustryDetail}
                     industryDetail={industryDetail}
                     queryHoldingIndustryDetailReqState={queryHoldingIndustryDetailReqState}
-                    getCustSignLabel={this.getCustSignLabel}
+                    queryCustSignLabel={this.queryCustSignLabel}
                   />,
                 )
               }
@@ -713,7 +713,7 @@ export default class CustomerLists extends PureComponent {
               hasTkMampPermission={hasTkMampPermission}
               sendCustsServedByPostnResult={sendCustsServedByPostnResult}
               isSendCustsServedByPostn={isSendCustsServedByPostn}
-              addMultiSignLabel={this.switchMultiCustSignLabel}
+              handleSignLabelClick={this.switchMultiCustSignLabel}
             /> : null
         }
         {
@@ -749,7 +749,7 @@ export default class CustomerLists extends PureComponent {
           queryLikeLabelInfo={queryLikeLabelInfo}
           custLikeLabel={custLikeLabel}
           signCustLabels={signCustLabels}
-          removeSignLabelCustId={this.removeSignLabelCust}
+          handleCancelSignLabelCustId={this.removeSignLabelCust}
         />
         <MultiCustomerLabel
           visible={multiSignLabelVisible}

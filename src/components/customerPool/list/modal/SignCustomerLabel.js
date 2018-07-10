@@ -51,7 +51,7 @@ export default class SignCustomerLabel extends PureComponent {
     custLikeLabel: PropTypes.array.isRequired,
     queryLikeLabelInfo: PropTypes.func.isRequired,
     signCustLabels: PropTypes.func.isRequired,
-    removeSignLabelCustId: PropTypes.func.isRequired,
+    handleCancelSignLabelCustId: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -99,7 +99,7 @@ export default class SignCustomerLabel extends PureComponent {
 
   @autobind
   handleSubmitSignLabel() {
-    const { signCustLabels, custId, removeSignLabelCustId, currentPytMng } = this.props;
+    const { signCustLabels, custId, handleCancelSignLabelCustId, currentPytMng } = this.props;
     const { selectedLabels } = this.state;
     const { ptyMngId } = currentPytMng;
     const labelIds = _.map(selectedLabels, item => item.key);
@@ -107,7 +107,7 @@ export default class SignCustomerLabel extends PureComponent {
       custIds: [custId],
       labelIds,
       ptyMngId,
-    }).then(removeSignLabelCustId);
+    }).then(handleCancelSignLabelCustId);
   }
 
   @autobind
@@ -115,7 +115,7 @@ export default class SignCustomerLabel extends PureComponent {
     this.setState({ value: '' });
   }
   render() {
-    const { custId, removeSignLabelCustId } = this.props;
+    const { custId, handleCancelSignLabelCustId } = this.props;
     const { fetching, data, selectedLabels, value = '' } = this.state;
 
     return (
@@ -124,7 +124,7 @@ export default class SignCustomerLabel extends PureComponent {
         width={650}
         visible={Boolean(custId)}
         wrapClassName={styles.signCustomerLabel}
-        onCancel={removeSignLabelCustId}
+        onCancel={handleCancelSignLabelCustId}
         destroyOnClose
         maskClosable={false}
         onOk={this.handleSubmitSignLabel}

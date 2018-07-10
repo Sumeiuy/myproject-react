@@ -131,7 +131,7 @@ export default class CustomerRow extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
-    getCustSignLabel: PropTypes.func.isRequired,
+    queryCustSignLabel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -301,7 +301,7 @@ export default class CustomerRow extends PureComponent {
       location,
       entertype,
       goGroupOrTask,
-      getCustSignLabel,
+      queryCustSignLabel,
     } = this.props;
     if (this.isMainService) {
       return (<QuickMenu
@@ -312,7 +312,7 @@ export default class CustomerRow extends PureComponent {
         location={location}
         entertype={entertype}
         goGroupOrTask={goGroupOrTask}
-        getCustSignLabel={getCustSignLabel}
+        queryCustSignLabel={queryCustSignLabel}
       />);
     }
     return null;

@@ -18,12 +18,12 @@ const EMPTY_OBJ = {};
 
 export default class SignCustomerLabel extends PureComponent {
   static getDerivedStateFromProps(props, state) {
-    const { preProps } = state;
+    const { preCustLikeLabel } = state;
     const { custLikeLabel } = props;
     let nextState = {
-      preProps: props,
+      preCustLikeLabel: custLikeLabel,
     };
-    if (custLikeLabel !== preProps.custLikeLabel) {
+    if (custLikeLabel !== preCustLikeLabel) {
       nextState = { ...nextState, data: custLikeLabel };
     }
     return nextState;
@@ -43,10 +43,11 @@ export default class SignCustomerLabel extends PureComponent {
   constructor(props) {
     super(props);
     this.selectLabel = EMPTY_OBJ;
+    const { custLikeLabel } = props;
     this.state = {
       data: EMPTY_LIST,
       labelValue: '',
-      preProps: props,
+      preCustLikeLabel: custLikeLabel,
     };
   }
 

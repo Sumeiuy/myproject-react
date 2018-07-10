@@ -134,7 +134,7 @@ export default class CustomerRow extends PureComponent {
     queryHoldingIndustryDetail: PropTypes.func.isRequired,
     industryDetail: PropTypes.object.isRequired,
     queryHoldingIndustryDetailReqState: PropTypes.bool.isRequired,
-    getCustSignLabel: PropTypes.func.isRequired,
+    queryCustSignLabel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -304,7 +304,7 @@ export default class CustomerRow extends PureComponent {
       location,
       entertype,
       goGroupOrTask,
-      getCustSignLabel,
+      queryCustSignLabel,
     } = this.props;
     if (this.isMainService) {
       return (<QuickMenu
@@ -315,7 +315,7 @@ export default class CustomerRow extends PureComponent {
         location={location}
         entertype={entertype}
         goGroupOrTask={goGroupOrTask}
-        getCustSignLabel={getCustSignLabel}
+        queryCustSignLabel={queryCustSignLabel}
       />);
     }
     return null;
