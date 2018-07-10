@@ -322,12 +322,10 @@ export default {
       filterName: '持仓行业',
       filterId: 'holdingIndustry',
       type: 'singleWithSearch',
-      showSearch: true,
       placeholder: '行业名称',
       dataList: ['props', 'industryList'],
       dataMap: ['induCode', 'induName'],
       needItemObj: true,
-      useLabelInValue: true,
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
