@@ -13,7 +13,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import store from 'store';
 
-import { logCommon } from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { padSightLabelDesc } from '../../../config';
@@ -237,6 +237,17 @@ export default class Search extends PureComponent {
     return true;
   }
 
+  // 打开搜索帮助页面
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索说明',
+    },
+  })
+  toSearchHelpPage() {
+    window.open('/fspa/spy/functionIntroduction/html/searchHelp.html');
+  }
+
   renderDatasource() {
     const { dataSource, value, hasSearchResult } = this.state;
     let newData;
@@ -353,7 +364,7 @@ export default class Search extends PureComponent {
                 dropdownClassName={`certain-category-search-dropdown ${this.dropdownClassName}`}
                 size="large"
                 style={{ width: '100%' }}
-                placeholder={'经纪客户号、姓名、电话、身份证号码或你感兴趣的关键字'}
+                placeholder={'客户基本信息、精准营销产品、客户行为特征、持仓产品、服务记录关键字等'}
                 optionLabelProp="text"
                 defaultActiveFirstOption={false}
                 {...autoCompleteOption}
@@ -372,6 +383,7 @@ export default class Search extends PureComponent {
                   )}
                 />
               </AutoComplete>
+              <AntdIcon type="question-circle" onClick={this.toSearchHelpPage} />
             </div>
           </div>
           <div className={styles.historyList}>
