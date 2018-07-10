@@ -28,6 +28,21 @@
       .ant-table-wrapper .column {
         max-width: none;
       }
+      .ant-table-body {
+        table {
+          table-layout: fixed;
+        }
+        .ant-table-thead, .ant-table-tbody {
+          & > tr {
+            & > td:first-child, th:first-child {
+              padding-left: 20px;
+            }
+            .column {
+              width: 100%;
+            }
+          }
+        }
+      }
     }
   }
   :global {
