@@ -158,6 +158,8 @@ app.model(require('./models/latestView'));
 app.model(require('./models/keyMonitorAccount'));
 // 客户关联关系
 app.model(require('./models/custRelationships'));
+// 自定义标签类型
+app.model(require('./models/customerLabel'));
 
 // 4. Route
 app.router(routerConfig);
