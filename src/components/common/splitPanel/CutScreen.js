@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-24 14:25:24
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-07-10 13:31:28
  * @description 分割组件
  * 此组件中
  * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
@@ -37,6 +37,9 @@ export default class CutScreen extends PureComponent {
     // 在头部筛选区域的上方在某些页面上面还有额外的内容，如业务手机申请页面
     // splitPanel计算高度的时候需要减去的额外的高度
     extraHeight: PropTypes.number,
+    // 因为有些业务（业务手机）头部筛选区上方有额外内容用于筛选手机分配页面还是申请页面
+    // 不希望该内容的marginTop为0，默认为false，认为头部筛选区域的marginTop为0
+    isSetMarginTop: PropTypes.bool,
     // 自定义header样式，覆盖公用的header样式
     headerStyle: PropTypes.string,
   }
@@ -46,6 +49,7 @@ export default class CutScreen extends PureComponent {
     rightPanel: null,
     leftWidth: 520,
     extraHeight: 0,
+    isSetMarginTop: true,
     headerStyle: null,
   }
 
@@ -60,11 +64,16 @@ export default class CutScreen extends PureComponent {
   }
 
   componentDidMount() {
+    const { isSetMarginTop } = this.props;
     // 初始化当前系统
     this.UTBContentElem = document.querySelector(config.utb);
-    // 将系统的Margin设置为0;
     // 按照需求要求，完全贴边太丑，要求右侧给一点margin所以修改
-    this.setUTBContentMargin(0, '10px', 0);
+    // isSetMarginTop为true时，说明业务要求有marginTop
+    if (isSetMarginTop) {
+      this.setUTBContentMargin(0, '10px', 0);
+    } else {
+      this.setUTBContentMargin('10px', '10px', 0);
+    }
     // 监听window.onResize事件
     this.registerWindowResize();
     this.initPanel();
