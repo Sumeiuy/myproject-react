@@ -273,6 +273,41 @@ export default class Tab extends PureComponent {
     return os.findBestMatch(pathname, tabConfig, 'path');
   }
 
+  // 遍历 panes 中包括 children 在内的所有 pane 元素
+  traversePanes (panes, callback) {
+    for(let i=0, len=panes.length; i < len; i++) {
+      let pane = panes[i];
+      callback(pane);
+      if (pane.children) {
+        this.traversePanes(pane.children, callback);
+      }
+    }
+  }
+
+  findStatePane(panes, pathname) {
+    let statePane;
+    this.traversePanes(panes, pane => {
+      if(pane.path === pathname) {
+        statePane = pane;
+      }
+    })
+    return statePane;
+  }
+
+  getActiveKey(pane) {
+    let activeKey;
+    if(pane) {
+      if (pane.type && pane.pid !== 'ROOT') {
+        // 对于菜单，高亮顶级菜单
+        activeKey = pane.pid;
+      } else {
+        // 对于 Tab， 高亮 Tab
+        activeKey = pane.id;
+      }
+    }
+    return activeKey;
+  }
+
   // 根据pathname获取一个初步的pane数组
   getPanesWithPathname(pathname, query, shouldRemove = false, editPane = {}) {
     let { panes = [] } = this.state || {};
@@ -281,8 +316,8 @@ export default class Tab extends PureComponent {
       panes = panes.filter(pane => pane.id !== activeKey);
     }
     // 在state中查找完全匹配的pane信息
-    const statePane = _.find(panes, pane => pane.path === pathname);
-    let newActiveKey = statePane && statePane.id;
+    const statePane = this.findStatePane(panes, pathname);
+    let newActiveKey = this.getActiveKey(statePane);
     if (!statePane) {
       // 在本地找pane信息
       const paneConf = this.getConfig(pathname);
