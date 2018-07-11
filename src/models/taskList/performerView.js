@@ -393,6 +393,10 @@ export default {
           type: 'queryTargetCustDetailSuccess',
           payload: resultData,
         });
+        // 请求uuid
+        yield put({
+          type: 'queryCustUuid',
+        });
         // 记录信息中attachmentRecord不为空时，根据attachmentRecord 去查询附件信息
         if (resultData.attachmentRecord) {
           const { resultData: fileList }
