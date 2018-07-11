@@ -318,12 +318,24 @@ export default class BottomFixedBox extends PureComponent {
     });
   }
 
+  @autobind
+  handleCustomerLabelClick() {
+    const { selectCount, handleSignLabelClick } = this.props;
+    if (selectCount > 2000) {
+      this.setState({
+        visible: true,
+        modalContent: '批量打标签的客户数不能超过2000个',
+      });
+    } else {
+      handleSignLabelClick();
+    }
+  }
+
   // 当是主服务经理时，可以拥有创建用户分组和给客户打标签的功能
   renderGroupAndSignLabel() {
-    const { handleSignLabelClick } = this.props;
     if (this.props.mainServiceManager) {
       return [
-        <button onClick={handleSignLabelClick}>客户标签</button>,
+        <button onClick={this.handleCustomerLabelClick}>客户标签</button>,
         <button onClick={this.handleCustomerGroupClick}>用户分组</button>];
     }
     return null;
