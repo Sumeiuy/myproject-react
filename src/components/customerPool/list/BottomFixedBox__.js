@@ -260,6 +260,7 @@ export default class BottomFixedBox extends PureComponent {
     shouldStay,
     editPane,
     filters,
+    bizFlag,
   }) {
     const tmpArr = [];
     _(ids).forEach((item) => {
@@ -277,6 +278,7 @@ export default class BottomFixedBox extends PureComponent {
       condition: condt,
       fr,
       filters,
+      bizFlag,
     };
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });
   }
@@ -295,6 +297,7 @@ export default class BottomFixedBox extends PureComponent {
     shouldStay,
     editPane,
     filters,
+    bizFlag,
   }) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
@@ -307,6 +310,7 @@ export default class BottomFixedBox extends PureComponent {
       name,
       fr,
       filters,
+      bizFlag,
     };
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });
   }

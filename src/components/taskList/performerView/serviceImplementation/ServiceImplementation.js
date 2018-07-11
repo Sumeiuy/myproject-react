@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-05 20:00:11
+ * @Last Modified time: 2018-07-11 13:52:58
  */
 
 import React, { PureComponent } from 'react';
@@ -547,11 +547,13 @@ export default class ServiceImplementation extends PureComponent {
       // 如果是处理中，需要将upload list清除
       callback();
     }
+    // 提交服务记录记录成功后，更新state中的客户列表，并将isFormHalfFilledOut恢复默认值
     this.setState({
       targetCustList: {
         ...targetCustList,
         list: newList,
       },
+      isFormHalfFilledOut: false,
     });
   }
 

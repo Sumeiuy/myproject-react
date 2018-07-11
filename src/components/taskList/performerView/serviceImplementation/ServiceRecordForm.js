@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-03 16:44:10
+ * @Last Modified time: 2018-07-11 14:14:58
  * 服务记录表单
  */
 
@@ -14,6 +14,7 @@ import ServiceRecordContent from '../../../common/serviceRecordContent';
 import Button from '../../../common/Button';
 import styles from './serviceRecordForm.less';
 import logable, { logCommon } from '../../../../decorators/logable';
+import { UPDATE } from '../../../../config/serviceRecord';
 
 export default class ServiceRecordForm extends PureComponent {
 
@@ -34,10 +35,11 @@ export default class ServiceRecordForm extends PureComponent {
       serviceCustId,
       isCurrentMissionPhoneCall,
     } = this.props;
-    const { autoGenerateRecordInfo: { serveContentDesc = '' } } = serviceRecordInfo;
-    // 服务记录添加未成功时，后端返回failure
+    const { autoGenerateRecordInfo: { serveContentDesc = '' }, todo } = serviceRecordInfo;
+    // 服务记录添加未成功时，后端返回failure, todo=update 时，入参多一个id，表示更新服务记录
     if (
       isCurrentMissionPhoneCall &&
+      todo === UPDATE &&
       !_.isEmpty(currentMotServiceRecord.id) &&
       currentMotServiceRecord.id !== 'failure'
     ) {

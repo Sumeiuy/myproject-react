@@ -17,7 +17,7 @@ import { date } from '../../../helper';
 import logable from '../../../decorators/logable';
 import ContactInfoPopover from '../../common/contactInfoPopover/ContactInfoPopover';
 import Phone from '../../common/phone';
-
+import { UPDATE } from '../../../config/serviceRecord';
 import styles from './createContactModal.less';
 
 const EMPTY_OBJECT = {};
@@ -181,13 +181,14 @@ export default class CreateContactModal extends PureComponent {
       this.saveServiceRecordAndPhoneRelation();
       // 回调，关闭电话联系方式弹窗
       onClose();
-      // 显示添加服务记录弹窗
+      // 显示添加服务记录弹窗，todo=update表示更新服务记录
       toggleServiceRecordModal({
         id: custId,
         name: custName,
         flag: true,
         caller: PHONE,
         autoGenerateRecordInfo: payload,
+        todo: UPDATE,
       });
     });
   }
