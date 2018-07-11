@@ -474,9 +474,9 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: 'DropdownSelect',
+    type: 'click',
     payload: {
-      name: '标签-关闭',
+      name: '客户筛选-关闭标签',
       value: '$args[0]',
     },
   })
@@ -545,7 +545,7 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: 'DropdownSelect',
+    type: 'click',
     payload: {
       name: '客户筛选-关闭过滤条件',
       value: '$args[0].name',
