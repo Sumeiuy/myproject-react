@@ -117,6 +117,12 @@ const primaryMenu = [
     pid: 'ROOT',
   },
   {
+    name: '客户服务全纪录',
+    id: 'FSP_MOT_TAB_SERVICELIST',
+    path: '/fsp/taskCenter/serviceManage',
+    pid: 'FSP_MOT_M_TASK',
+  },
+  {
     name: '产品中心',
     id: 'FSP_PRD_REPOSITORY',
     path: '/productCenter',
