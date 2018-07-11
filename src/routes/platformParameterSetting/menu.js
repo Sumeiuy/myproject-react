@@ -9,6 +9,7 @@ const menu = [
   {
     name: '任务管理',
     path: '/taskOperation',
+    permission: duty.HTSC_HQ_MAMPID,
     children: [
       {
         name: '客户反馈选项',
@@ -27,6 +28,7 @@ const menu = [
   {
     name: '用户中心',
     path: '/labelManager',
+    permission: duty.HTSC_HQ_MAMPID,
     children: '个人标签',
   },
   {

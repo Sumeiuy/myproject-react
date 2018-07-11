@@ -44,11 +44,11 @@ export default class CreateLabelType extends PureComponent {
       if (!error) {
         addLabel(values)
           .then((duplicationName) => {
-            if (!_.isNull(duplicationName)) {
+            if (duplicationName) {
               this.props.form.setFields({
                 labelType: {
                   value: values.labelType,
-                  errors: [new Error('添加的标签类型已存在，请重新输入')],
+                  errors: [new Error('添加的标签已存在，请重新输入')],
                 },
               });
             } else {
@@ -73,7 +73,7 @@ export default class CreateLabelType extends PureComponent {
     form.validateFields(['labelName'], (error, values) => {
       if (!error) {
         checkDuplicationName(values).then((duplicationName) => {
-          if (!_.isNull(duplicationName)) {
+          if (duplicationName) {
             this.props.form.setFields({
               labelName: {
                 value: values.labelName,
@@ -140,7 +140,7 @@ export default class CreateLabelType extends PureComponent {
                 max: 500, message: '最多为500个字',
               }],
             })(
-              <TextArea placeholder="请输入标签描述" autosize={{ minRows: 6 }} />,
+              <TextArea placeholder="请输入标签描述" autosize={{ minRows: 6, maxRows: 10 }} />,
             )}
           </FormItem>
           <FormItem
@@ -150,7 +150,7 @@ export default class CreateLabelType extends PureComponent {
             }}
             label="类型"
           >
-            {getFieldDecorator('labelType', {
+            {getFieldDecorator('labelTypeId', {
               rules: [
                 { required: true, message: '请选择标签类型名称' },
               ],

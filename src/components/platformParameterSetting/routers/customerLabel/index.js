@@ -8,9 +8,10 @@ import { Button, Popconfirm, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { SingleFilter } from 'lego-react-filter';
 import PropTypes from 'prop-types';
+import { SingleFilter } from 'lego-react-filter';
 
+import fsp from '../../../../helper/fsp';
 import Icon from '../../../common/Icon';
 import Table from '../../../common/commonTable/index';
 import withRouter from '../../../../decorators/withRouter';
@@ -18,6 +19,9 @@ import CreateLabelType from './CreateLabelType';
 import CreateLabel from './CreateLabel';
 import { dva } from '../../../../helper';
 import styles from './customerLabel.less';
+import tableStyles from '../../../common/commonTable/index.less';
+
+const DEFAULT_LABEL_TYPE = { id: '', typeName: '不限' };
 
 // dva的dispatch方式
 const fetchDataFunction = dva.generateEffect;
@@ -130,6 +134,7 @@ export default class LabelManager extends PureComponent {
       ...option,
     };
     queryLabelInfo(params);
+    fsp.scrollToTop();
     replace({
       pathname,
       query: {
@@ -215,13 +220,14 @@ export default class LabelManager extends PureComponent {
     } = labelInfo;
     const { createTypeVisible, createLabelVisit } = this.state;
 
+    const finalLabelTypes = [DEFAULT_LABEL_TYPE, ...allLabels];
     return (
       <div className={styles.customerLabelWrap}>
         <div className={styles.tip}>自定义客户标签，用于管理岗人员在此创建标签，标签必须保持唯一性，采用先到先得的规则，标签一旦创建对所有人可见。</div>
         <div className={styles.operationWrap}>
           <div>
             <SingleFilter
-              data={allLabels}
+              data={finalLabelTypes}
               value={labelTypeId}
               dataMap={['id', 'typeName']}
               defaultLabel="不限"
@@ -239,10 +245,12 @@ export default class LabelManager extends PureComponent {
             pageData={this.getTablePagination()}
             listData={labelList}
             titleColumn={this.getClumneTitle()}
-            columnWidth={['12%', '15%', '48%', '10%', '5%']}
+            columnWidth={['15%', '15%', '45%', '10%', '5%']}
             needPagination
+            isFixedColumn
             needShowEmptyRow={false}
             onPageChange={this.handlePageChange}
+            tableClass={tableStyles.groupTable}
           />
         </div>
         <CreateLabelType

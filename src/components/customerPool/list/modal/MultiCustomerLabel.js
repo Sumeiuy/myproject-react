@@ -6,12 +6,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Modal, Select } from 'antd';
+import { Modal, Select, Form } from 'antd';
 import _ from 'lodash';
 import { replaceKeyWord } from './SignCustomerLabel';
 import styles from './addCustomerLabel.less';
 
 const Option = Select.Option;
+const FormItem = Form.Item;
 
 const EMPTY_LIST = [];
 const EMPTY_OBJ = {};
@@ -48,6 +49,7 @@ export default class SignCustomerLabel extends PureComponent {
       data: EMPTY_LIST,
       labelValue: '',
       preCustLikeLabel: custLikeLabel,
+      validateState: false,
     };
   }
 
@@ -55,14 +57,20 @@ export default class SignCustomerLabel extends PureComponent {
   handleChange(labelValue) {
     const { selectLabel: { labelName } } = this;
     const { queryLikeLabelInfo } = this.props;
+    let finalLabelValue = labelValue;
+    let validateState = false;
     if (labelName === labelValue) {
       queryLikeLabelInfo({ labelNameLike: '' });
+    } else if (_.isEmpty(this.selectLabel)) {
+      queryLikeLabelInfo({ labelNameLike: labelValue });
     } else {
       this.selectLabel = EMPTY_OBJ;
-      queryLikeLabelInfo({ labelNameLike: labelValue });
+      finalLabelValue = '';
+      validateState = true;
     }
     this.setState({
-      labelValue,
+      labelValue: finalLabelValue,
+      validateState,
     });
   }
 
@@ -70,6 +78,9 @@ export default class SignCustomerLabel extends PureComponent {
   handleSelect(value) {
     const { data } = this.state;
     this.selectLabel = _.find(data, item => item.labelName === value) || {};
+    this.setState({
+      validateState: false,
+    });
   }
 
   @autobind
@@ -85,11 +96,17 @@ export default class SignCustomerLabel extends PureComponent {
         },
       },
     } = this.props;
+    if (_.isEmpty(this.selectLabel)) {
+      this.setState({
+        validateState: true,
+      });
+      return;
+    }
     const { ptyMngId } = currentPytMng;
     const payload = {};
     payload.labelIds = [this.selectLabel.id];
     if (selectAll) {
-      payload.queryCustReq = condition;
+      payload.queryCustsReq = condition;
     }
     if (selectedIds) {
       const custList = decodeURIComponent(selectedIds).split(',');
@@ -109,13 +126,16 @@ export default class SignCustomerLabel extends PureComponent {
   handleCloseModal() {
     const { closeMultiCustSignLabel } = this.props;
     this.selectLabel = EMPTY_OBJ;
-    this.setState({ labelValue: '' });
+    this.setState({
+      labelValue: '',
+      validateState: false,
+    });
     closeMultiCustSignLabel();
   }
 
   render() {
     const { visible } = this.props;
-    const { data, labelValue } = this.state;
+    const { data, labelValue, validateState } = this.state;
 
     return (
       <Modal
@@ -128,24 +148,31 @@ export default class SignCustomerLabel extends PureComponent {
         onOk={this.handleSubmitSignLabel}
         onCancel={this.handleCloseModal}
       >
-        <Select
-          mode="combobox"
-          placeholder="请选择客户标签"
-          filterOption={false}
-          value={labelValue}
-          defaultActiveFirstOption={false}
-          showArrow={false}
-          style={{ width: '100%' }}
-          onChange={this.handleChange}
-          onSelect={this.handleSelect}
-          firstActiveValue={labelValue}
-        >
-          {data.map(labelItem =>
-            <Option key={labelItem.labelName}>
-              {replaceKeyWord(labelItem.labelName, labelValue)}
-            </Option>,
-          )}
-        </Select>
+        <Form>
+          <FormItem
+            validateStatus={validateState ? 'error' : ''}
+            help={validateState ? '请选择自定义标签' : ''}
+          >
+            <Select
+              mode="combobox"
+              placeholder="请选择客户标签"
+              filterOption={false}
+              value={labelValue}
+              defaultActiveFirstOption={false}
+              showArrow={false}
+              style={{ width: '100%' }}
+              onChange={this.handleChange}
+              onSelect={this.handleSelect}
+              firstActiveValue={labelValue}
+            >
+              {data.map(labelItem =>
+                <Option key={labelItem.labelName}>
+                  {replaceKeyWord(labelItem.labelName, labelValue)}
+                </Option>,
+              )}
+            </Select>
+          </FormItem>
+        </Form>
       </Modal>
     );
   }

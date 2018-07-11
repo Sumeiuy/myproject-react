@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 13:38:29
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-22 13:41:35
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-10 15:43:51
  * @description 此处存放针对数字的通用处理方法
  */
 import _ from 'lodash';
@@ -45,7 +45,7 @@ const number = {
    * @param {Boolean} isRemoveZero=false 小数部分多余的0是否移除
    * @returns {String|null} 格式化后的字符串
    */
-  thousandFormat(no, decimalNeedFormat = true, thousandSeq = ',', isRemoveZero) {
+  thousandFormat(no = 0, decimalNeedFormat = true, thousandSeq = ',', isRemoveZero) {
     let numberString = String(no);
     if (isRemoveZero) {
       if (/\./.test(numberString)) {

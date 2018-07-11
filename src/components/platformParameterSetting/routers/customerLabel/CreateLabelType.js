@@ -30,8 +30,8 @@ export default class CreateLabelType extends PureComponent {
       form: { validateFields, getFieldsError },
       queryLabelType,
     } = this.props;
-    const { labelType: labelTypeError } = getFieldsError();
-    if (labelTypeError) {
+    const { typeName: typeNameError } = getFieldsError();
+    if (typeNameError) {
       return;
     }
     validateFields((error, values) => {
@@ -43,8 +43,8 @@ export default class CreateLabelType extends PureComponent {
               queryLabelType();
             } else {
               this.props.form.setFields({
-                labelType: {
-                  value: values.labelType,
+                typeName: {
+                  value: values.typeName,
                   errors: [new Error('添加的标签类型已存在，请重新输入')],
                 },
               });

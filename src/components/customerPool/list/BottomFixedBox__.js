@@ -50,12 +50,7 @@ export default class BottomFixedBox extends PureComponent {
 
   componentDidMount() {
     this.setTaskAndGroup();
-    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
-    if (sidebarHideBtn && sidebarShowBtn) {
-      sidebarHideBtn.addEventListener('click', this.updateLeftPos);
-      sidebarShowBtn.addEventListener('click', this.updateLeftPos);
-    }
+    window.onFspSidebarbtn(this.updateLeftPos);
   }
 
   componentDidUpdate() {
@@ -63,12 +58,7 @@ export default class BottomFixedBox extends PureComponent {
   }
 
   componentWillUnmount() {
-    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
-    if (sidebarHideBtn && sidebarShowBtn) {
-      sidebarHideBtn.removeEventListener('click', this.updateLeftPos);
-      sidebarShowBtn.removeEventListener('click', this.updateLeftPos);
-    }
+    window.offFspSidebarbtn(this.updateLeftPos);
   }
 
   @autobind
@@ -103,6 +93,7 @@ export default class BottomFixedBox extends PureComponent {
           selectAll,
           // 客户列表页的筛选条件
           filters,
+          bizFlag,
         },
         pathname,
         search,
@@ -121,6 +112,9 @@ export default class BottomFixedBox extends PureComponent {
       shouldStay,
       editPane,
     };
+    if (bizFlag) {
+      param.bizFlag = bizFlag;
+    }
     if (selectedIds) {
       const selectedIdsArr = selectedIds.split(',');
       param.ids = selectedIdsArr;
@@ -150,7 +144,7 @@ export default class BottomFixedBox extends PureComponent {
     };
 
     const { selectCount } = this.props;
-    if (Number(selectCount) > 500) {
+    if (selectCount > 500) {
       this.setState({
         visible: true,
         modalContent: '一次添加的客户数不能超过500个',
@@ -324,12 +318,24 @@ export default class BottomFixedBox extends PureComponent {
     });
   }
 
+  @autobind
+  handleCustomerLabelClick() {
+    const { selectCount, handleSignLabelClick } = this.props;
+    if (selectCount > 2000) {
+      this.setState({
+        visible: true,
+        modalContent: '批量打标签的客户数不能超过2000个',
+      });
+    } else {
+      handleSignLabelClick();
+    }
+  }
+
   // 当是主服务经理时，可以拥有创建用户分组和给客户打标签的功能
   renderGroupAndSignLabel() {
-    const { handleSignLabelClick } = this.props;
     if (this.props.mainServiceManager) {
       return [
-        <button onClick={handleSignLabelClick}>客户标签</button>,
+        <button onClick={this.handleCustomerLabelClick}>客户标签</button>,
         <button onClick={this.handleCustomerGroupClick}>用户分组</button>];
     }
     return null;
