@@ -11,6 +11,7 @@ import classnames from 'classnames';
 import { Menu, Dropdown, Icon } from 'antd';
 import styles from './tabMenu.less';
 import MoreTab from './MoreTab';
+import { traverseMenus } from '../utils/tab';
 
 export default class TabMenu extends PureComponent {
   static propTypes = {
@@ -62,7 +63,7 @@ export default class TabMenu extends PureComponent {
 
   @autobind
   handleLinkClick(menuItem) {
-    const { push, path } = this.props;
+    const { push, path, mainArray } = this.props;
     if (menuItem.action === 'loadExternSystemPage') {
       window.open(menuItem.url, '_blank');
     } else if (menuItem.path !== path) {
@@ -70,6 +71,15 @@ export default class TabMenu extends PureComponent {
         pathname: menuItem.path,
         query: menuItem.query,
       });
+
+      if (menuItem.pid !== 'ROOT') {
+        mainArray.forEach(topMenu => {
+          if (topMenu.id === menuItem.pid) {
+            // 在顶级目录上保留点击的子菜单id
+            topMenu.lastMenuId = menuItem.id;
+          }
+        });
+      }
     }
   }
 
@@ -95,13 +105,30 @@ export default class TabMenu extends PureComponent {
     }
     return firstChild;
   }
+
+  @autobind
+  getLastMenu(menu, lastMenuId) {
+    let lastMenu;
+    traverseMenus(menu, menuItem => {
+      if (menuItem.id === lastMenuId) {
+        lastMenu = menuItem;
+      }
+    })
+    return lastMenu;
+  }
   
   @autobind
   handDropClick(menuItem) {
     if (menuItem.path !== '') {
       this.handleLinkClick(menuItem);
     } else {
-      this.handleLinkClick(this.getFirstChild(menuItem));
+      // 是否有上次点击的菜单记录
+      if (menuItem.lastMenuId) {
+        this.handleLinkClick(this.getLastMenu(menuItem.children, menuItem.lastMenuId));
+      } else {
+        // 默认打开第一个子菜单
+        this.handleLinkClick(this.getFirstChild(menuItem));
+      }
     }
   }
 

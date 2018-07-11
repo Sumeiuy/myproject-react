@@ -15,6 +15,8 @@ import tabConfig, { indexPaneKey, defaultMenu } from '../../../src/config/tabMen
 import { enableLocalStorage } from '../../../src/config/constants';
 import withRouter from '../../../src/decorators/withRouter';
 import { os } from '../../../src/helper';
+import { traverseMenus } from '../utils/tab';
+
 // 判断pane是否在paneArray中
 function isPaneInArray(panes, paneArray) {
   return panes.length !== 0 ?
@@ -273,20 +275,9 @@ export default class Tab extends PureComponent {
     return os.findBestMatch(pathname, tabConfig, 'path');
   }
 
-  // 遍历 panes 中包括 children 在内的所有 pane 元素
-  traversePanes (panes, callback) {
-    for(let i=0, len=panes.length; i < len; i++) {
-      let pane = panes[i];
-      callback(pane);
-      if (pane.children) {
-        this.traversePanes(pane.children, callback);
-      }
-    }
-  }
-
   findStatePane(panes, pathname) {
     let statePane;
-    this.traversePanes(panes, pane => {
+    traverseMenus(panes, pane => {
       if(pane.path === pathname) {
         statePane = pane;
       }
