@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-10 15:51:45
+ * @Last Modified time: 2018-07-11 18:25:37
  */
 
 import React, { PureComponent } from 'react';
@@ -303,15 +303,9 @@ export default class CreateApply extends PureComponent {
           divisionName,
           openDivName,
           busPrcDivName,
+          stockCustType,
           reqType,
         } = custInfo;
-        let { stockCustType } = this.state;
-        // 机构客户，股票客户类型固定
-        if (custType === 'org') {
-          stockCustType = 'Org';
-        } else if (custType === 'per') {
-          stockCustType = 'New';
-        }
         this.handleChange({
           custInfo,
           custTransLv,
@@ -320,7 +314,7 @@ export default class CreateApply extends PureComponent {
           openOptMktCatg,
           busPrcDivId,
           stockCustType,
-          reqType: reqType || 'New',
+          reqType,
         });
 
         // 获取下一步按钮和审批人

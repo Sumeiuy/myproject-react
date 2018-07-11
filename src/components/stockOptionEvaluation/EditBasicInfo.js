@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-11 11:10:07
+ * @Last Modified time: 2018-07-11 20:01:45
  */
 
 import React, { PureComponent } from 'react';
@@ -121,6 +121,22 @@ export default class EditBasicInfo extends PureComponent {
           isShowDegreePrompt: false,
           isShowInvPrompt: false,
         };
+      } else {
+        const {
+          stockCustType,
+          reqType,
+          ageFlag,
+          invFlag,
+          custType,
+        } = nextProps.custInfo;
+        const isShowDegreePrompt = custType === 'per' && stockCustType === 'New' && ageFlag === 'N';
+        // 个人客户，申请类型为初次申请，投资经历评估不符合要求
+        const isShowInvPrompt = custType === 'per' && reqType === 'New' && invFlag === 'N';
+        newState = {
+          ...newState,
+          isShowDegreePrompt,
+          isShowInvPrompt,
+        };
       }
     }
     return newState;
@@ -131,6 +147,7 @@ export default class EditBasicInfo extends PureComponent {
     let isShowDegreePrompt = false;
     let isShowInvPrompt = false;
     const {
+      isEdit,
       custInfo: {
         stockCustType,
         reqType,
@@ -141,10 +158,9 @@ export default class EditBasicInfo extends PureComponent {
       },
     } = this.props;
     // 个人客户，客户类型为新开客户,年龄条件不符合要求
-    isShowDegreePrompt = custType === 'per' && stockCustType === 'New' && ageFlag === 'N';
+    isShowDegreePrompt = isEdit && custType === 'per' && stockCustType === 'New' && ageFlag === 'N';
     // 个人客户，申请类型为初次申请，投资经历评估不符合要求
-    isShowInvPrompt = custType === 'per' && reqType === 'New' && invFlag === 'N';
-
+    isShowInvPrompt = isEdit && custType === 'per' && reqType === 'New' && invFlag === 'N';
     this.state = {
       // 基本信息
       custInfo: {},
