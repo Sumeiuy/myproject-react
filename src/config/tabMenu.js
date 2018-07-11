@@ -180,7 +180,7 @@ const primaryMenu = [
     name: '业务申请',
     id: 'FSP_BUSINESS_APPLICATION',
     path: '/application',
-    pid: 'Root',
+    pid: 'ROOT',
   },
   {
     name: '统计查询',
@@ -205,14 +205,6 @@ const primaryMenu = [
     id: 'FSP_PREVIEW',
     path: '/preview',
     pid: 'FSP_STATISTICAL_QUERY',
-  },
-  // 对于二级和三级菜单，合理的逻辑是根据路由的层次判断并展示其属于的主菜单
-  // 在路由未完全修改完毕的时候，可以采用配置临时指定高亮的菜单，用以过渡
-  {
-    name: '服务订阅-temp',
-    id: 'FSP_BUSINESS_APPLICATION',
-    path: '/commission',
-    pid: 'FSP_BUSINESS_APPLICATION',
   },
 ];
 

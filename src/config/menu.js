@@ -241,7 +241,7 @@ const menus = [
         url: '',
         type: 'link',
         action: '',
-        path: '/commission',
+        path: '/application/commission',
       },
       {
         id: 'FSP_CONTRACT_MANAGEMENT',

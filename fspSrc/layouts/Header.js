@@ -72,7 +72,7 @@ export default class Header extends PureComponent {
           <Link to="/fsp/serviceCenter/investContract">投顾签约</Link>
         </Menu.Item>
         <Menu.Item>
-          <Link to="/commission">服务订阅</Link>
+          <Link to="/application/commission">服务订阅</Link>
         </Menu.Item>
         <Menu.Item>
           <a onClick={this.handleShowDialog}>隔离墙</a>
