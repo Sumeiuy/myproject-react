@@ -23,6 +23,8 @@ var cssLoaders = utils.getCSSLoaders({
   sourceMap: config.build.productionSourceMap
 });
 
+var lessConfig = utils.getLessConfig();
+
 var webpackConfig = merge(baseWebpackConfig, {
   mode: 'production',
   module: {
@@ -50,9 +52,7 @@ var webpackConfig = merge(baseWebpackConfig, {
           MiniCssExtractPlugin.loader,
         ].concat(cssLoaders.own).concat({
           loader: 'less-loader',
-          options: {
-            modifyVars: theme
-          }
+          options: lessConfig
         })
       },
       {
@@ -69,9 +69,7 @@ var webpackConfig = merge(baseWebpackConfig, {
           MiniCssExtractPlugin.loader,
         ].concat(cssLoaders.nodeModules).concat({
           loader: 'less-loader',
-          options: {
-            modifyVars: theme
-          }
+          options: lessConfig
         })
       }
     ]
