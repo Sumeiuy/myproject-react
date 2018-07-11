@@ -322,7 +322,7 @@ export default class BottomFixedBox extends PureComponent {
   @autobind
   handleCustomerLabelClick() {
     const { selectCount, handleSignLabelClick } = this.props;
-    if (selectCount > 5) {
+    if (selectCount > 2000) {
       this.setState({
         visible: true,
         modalContent: '批量打标签的客户数不能超过2000个',
