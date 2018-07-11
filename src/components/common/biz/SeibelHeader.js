@@ -32,8 +32,6 @@ const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 36;
 const dateFormat = 'YYYY/MM/DD';
-// 当前时间
-const currentDate = moment();
 // 分公司客户分配
 const PAGE_CUST_ALLOT = 'custAllotPage';
 
@@ -449,7 +447,8 @@ export default class Pageheader extends PureComponent {
   // 只能选择今天之前的时间
   @autobind
   setDisableRange(date) {
-    return date >= currentDate;
+    // date返回的时间是YYYY-MM-DD 12:00:00;需要修改成YYYY-MM-DD 00:00:00，所以减了12小时
+    return moment(date).add('hours', -12) > moment();
   }
 
   // 获取客户列表
