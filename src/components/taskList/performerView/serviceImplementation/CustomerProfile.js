@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-02 16:24:23
+ * @Last Modified time: 2018-07-11 09:33:27
  */
 
 import React from 'react';
@@ -191,6 +191,7 @@ export default class CustomerProfile extends React.PureComponent {
         flag: false,
         caller: PHONE,
         autoGenerateRecordInfo: payload,
+        todo: 'update',
       });
     };
     addServeRecord({

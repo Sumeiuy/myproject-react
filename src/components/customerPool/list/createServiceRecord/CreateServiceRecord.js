@@ -111,6 +111,7 @@ export default class CreateServiceRecord extends PureComponent {
       serviceRecordInfo: {
         id: custId,
         autoGenerateRecordInfo = {},
+        todo,
       },
       dict,
       isPhoneCall,
@@ -125,7 +126,8 @@ export default class CreateServiceRecord extends PureComponent {
         serveWay,
         serveContentDesc: `${serveContentDesc}${data.serveContentDesc}`,
       };
-      if (!_.isEmpty(id) && id !== 'failure') {
+      // todo=update 时表示更新服务记录
+      if (todo === 'update' && !_.isEmpty(id) && id !== 'failure') {
         payload = {
           ...payload,
           id,
