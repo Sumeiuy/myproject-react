@@ -1,5 +1,6 @@
 import engine from 'store/src/store-engine';
-import localStorage from 'store/storages/sessionStorage';
+import sessionStorage from 'store/storages/sessionStorage';
+import cookieStorage from 'store/storages/cookieStorage';
 
 import fspContainer from './fspContainer';
 import constants from './constants';
@@ -26,7 +27,7 @@ import padSightLabelDesc from './constructSightLabelDesc';
 import createTaskEntry from './createTaskEntry';
 import seperator from './filterSeperator';
 
-const sessionStore = engine.createStore(localStorage);
+const sessionStore = engine.createStore([sessionStorage, cookieStorage]);
 
 export default {
   constants,
