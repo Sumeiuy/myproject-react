@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-11 09:33:27
+ * @Last Modified time: 2018-07-11 14:16:22
  */
 
 import React from 'react';
@@ -16,6 +16,7 @@ import { openFspTab } from '../../../../utils';
 import ContactInfoPopover from '../../../common/contactInfoPopover/ContactInfoPopover';
 import Mask from '../../../common/mask';
 import { date } from '../../../../helper';
+import { UPDATE } from '../../../../config/serviceRecord';
 import styles from './customerProfile.less';
 
 import { riskLevelConfig, PER_CODE, ORG_CODE, CALLABLE_LIST, PHONE } from './config';
@@ -191,7 +192,7 @@ export default class CustomerProfile extends React.PureComponent {
         flag: false,
         caller: PHONE,
         autoGenerateRecordInfo: payload,
-        todo: 'update',
+        todo: UPDATE,
       });
     };
     addServeRecord({

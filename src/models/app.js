@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { common as api, seibel as seibelApi, customerPool as custApi } from '../api';
 import { EVENT_PROFILE_ACTION } from '../config/log';
 import { emp, permission } from '../helper';
+import { CREATE } from '../config/serviceRecord';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -54,7 +55,7 @@ export default {
       // 打电话时自动生成的服务记录的信息
       autoGenerateRecordInfo: {},
       // 弹窗是要创建服务记录还是更新服务记录, 默认创建服务记录
-      todo: 'create',
+      todo: CREATE,
     },
   },
   reducers: {
@@ -161,7 +162,7 @@ export default {
       const {
         payload: {
           flag, custId, custName, id, name, caller,
-          autoGenerateRecordInfo, todo = 'create',
+          autoGenerateRecordInfo, todo = CREATE,
         },
       } = action;
       return {

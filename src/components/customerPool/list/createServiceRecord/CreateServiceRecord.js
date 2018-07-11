@@ -14,6 +14,7 @@ import { url } from '../../../../helper/index';
 import logable, { logCommon } from '../../../../decorators/logable';
 import ServiceRecordContent from '../../../common/serviceRecordContent';
 import Loading from '../../../../layouts/Loading';
+import { UPDATE } from '../../../../config/serviceRecord';
 import styles from './createServiceRecord.less';
 
 /**
@@ -127,7 +128,7 @@ export default class CreateServiceRecord extends PureComponent {
         serveContentDesc: `${serveContentDesc}${data.serveContentDesc}`,
       };
       // todo=update 时表示更新服务记录
-      if (todo === 'update' && !_.isEmpty(id) && id !== 'failure') {
+      if (todo === UPDATE && !_.isEmpty(id) && id !== 'failure') {
         payload = {
           ...payload,
           id,

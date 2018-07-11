@@ -17,7 +17,7 @@ import { date } from '../../../helper';
 import logable from '../../../decorators/logable';
 import ContactInfoPopover from '../../common/contactInfoPopover/ContactInfoPopover';
 import Phone from '../../common/phone';
-
+import { UPDATE } from '../../../config/serviceRecord';
 import styles from './createContactModal.less';
 
 const EMPTY_OBJECT = {};
@@ -188,7 +188,7 @@ export default class CreateContactModal extends PureComponent {
         flag: true,
         caller: PHONE,
         autoGenerateRecordInfo: payload,
-        todo: 'update',
+        todo: UPDATE,
       });
     });
   }
