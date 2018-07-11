@@ -85,7 +85,7 @@ export default class SignCustomerLabel extends PureComponent {
       const { key, label } = lastSelectLabel;
       if (_.isPlainObject(label)) {
         finalSelectedLabels = _.pull(finalSelectedLabels, lastSelectLabel);
-        const selectedLabel = _.find(data, item => item.id === Number(key));
+        const selectedLabel = _.find(data, item => item.id === key);
         lastSelectLabel = {
           ...lastSelectLabel,
           label: selectedLabel.labelName,
