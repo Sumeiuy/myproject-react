@@ -78,23 +78,8 @@ export default class SignCustomerLabel extends PureComponent {
 
   @autobind
   handleChange(selectedLabels) {
-    const { data } = this.state;
-    let lastSelectLabel = _.last(selectedLabels);
-    let finalSelectedLabels = selectedLabels;
-    if (lastSelectLabel) {
-      const { key, label } = lastSelectLabel;
-      if (_.isPlainObject(label)) {
-        finalSelectedLabels = _.pull(finalSelectedLabels, lastSelectLabel);
-        const selectedLabel = _.find(data, item => item.id === key);
-        lastSelectLabel = {
-          ...lastSelectLabel,
-          label: selectedLabel.labelName,
-        };
-        finalSelectedLabels = [...finalSelectedLabels, lastSelectLabel];
-      }
-    }
     this.setState({
-      selectedLabels: finalSelectedLabels,
+      selectedLabels,
       data: EMPTY_LIST,
     });
   }
