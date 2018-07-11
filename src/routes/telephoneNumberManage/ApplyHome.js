@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-07-10 13:21:33
+ * @Last Modified time: 2018-07-11 15:15:09
  */
 
 import React, { PureComponent } from 'react';
@@ -25,7 +25,8 @@ import { dva } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 
 // 头部筛选区域上方导航的高度，在SplitPanel计算中需要额外减去
-const EXTRAHEIGHT = 40;
+// isSetMarginTop为false，不需要将框架的marginTop设置为0，此时10pxmarginTop也要额外减掉
+const EXTRAHEIGHT = 50;
 // 业务手机申请列表宽度
 const LEFT_PANEL_WIDTH = 450;
 const { telephoneNumApply, telephoneNumApply: { statusOptions, pageType } } = config;
