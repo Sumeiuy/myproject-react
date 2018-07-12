@@ -356,7 +356,7 @@ export default class BottomFixedBox extends PureComponent {
     } = this.props;
     let str = '';
     if (mainServiceManager) {
-      str = '，或者把用户加入分组管理';
+      str = '、可以为用户设置标签，或者把用户加入分组管理';
     }
     return (
       <p className="left">

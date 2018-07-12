@@ -150,6 +150,7 @@ export default class CustomerLists extends PureComponent {
     queryCustSignedLabels: PropTypes.func.isRequired,
     queryLikeLabelInfo: PropTypes.func.isRequired,
     signCustLabels: PropTypes.func.isRequired,
+    signBatchCustLabels: PropTypes.func.isRequired,
     custLabel: PropTypes.object.isRequired,
     custLikeLabel: PropTypes.array.isRequired,
   }
@@ -187,14 +188,14 @@ export default class CustomerLists extends PureComponent {
           ptyMngId: prePtyMngId,
         },
       },
-     } = this.props;
+    } = this.props;
     const {
       location: {
         query: {
           ptyMngId,
         },
       },
-     } = nextProps;
+    } = nextProps;
     if (prePtyMngId !== ptyMngId) {
       this.checkMainServiceManager(nextProps);
     }
@@ -224,7 +225,7 @@ export default class CustomerLists extends PureComponent {
    * url中没有selectedIds时，选中id=id1， selectedIds=id1.name1
    * url中selectedIds=id1.name1,id2.name2，并且选中id=id1，过滤id1.name1 => selectedIds=id1.name1
    * url中selectedIds=id1.name1，并且选中id=id2时  => selectedIds=id1.name1,id2.name2
-  */
+   */
   @autobind
   handleSingleSelect(id, name) {
     const {
@@ -298,8 +299,8 @@ export default class CustomerLists extends PureComponent {
   }
 
   /**
- * 回调，关闭modal打开state
- */
+   * 回调，关闭modal打开state
+   */
   @autobind
   resetModalState() {
     this.setState({
@@ -313,7 +314,7 @@ export default class CustomerLists extends PureComponent {
     const {
       location: {
         query,
-      pathname,
+        pathname,
       },
       replace,
       handleSelect,
@@ -550,6 +551,7 @@ export default class CustomerLists extends PureComponent {
       custLikeLabel,
       queryLikeLabelInfo,
       signCustLabels,
+      signBatchCustLabels,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -765,7 +767,7 @@ export default class CustomerLists extends PureComponent {
           currentPytMng={currentPytMng}
           queryLikeLabelInfo={queryLikeLabelInfo}
           custLikeLabel={custLikeLabel}
-          signCustLabels={signCustLabels}
+          signBatchCustLabels={signBatchCustLabels}
           condition={condition}
           location={location}
         />
