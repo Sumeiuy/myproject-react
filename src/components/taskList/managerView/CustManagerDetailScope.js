@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-11 11:09:32
+ * @Last Modified time: 2018-07-11 20:58:04
  * 服务经理维度任务统计
  */
 
@@ -545,15 +545,15 @@ export default class CustManagerDetailScope extends PureComponent {
       if (isEmpManagerScope) {
         columnWidth = [...columnWidth, '180px'];
         columnWidthTotal += 180;
-      }
-      if (currentOrgLevel === ORG_LEVEL1) {
-        // 多展示两列数据
-        columnWidth = [...columnWidth, '180px', '180px'];
-        columnWidthTotal += 360;
-      } else if (currentOrgLevel === ORG_LEVEL2) {
-        // 多展示一列数据
-        columnWidth = [...columnWidth, '180px'];
-        columnWidthTotal += 180;
+        if (currentOrgLevel === ORG_LEVEL1) {
+          // 多展示两列数据
+          columnWidth = [...columnWidth, '180px', '180px'];
+          columnWidthTotal += 360;
+        } else if (currentOrgLevel === ORG_LEVEL2) {
+          // 多展示一列数据
+          columnWidth = [...columnWidth, '180px'];
+          columnWidthTotal += 180;
+        }
       }
     } else {
       columnWidthTotal += 630;
@@ -563,15 +563,15 @@ export default class CustManagerDetailScope extends PureComponent {
       if (isEmpManagerScope) {
         columnWidth = [...columnWidth, '120px'];
         columnWidthTotal += 120;
-      }
-      if (currentOrgLevel === ORG_LEVEL1) {
-        // 多展示两列数据
-        columnWidth = [...columnWidth, '120px', '180px'];
-        columnWidthTotal += 300;
-      } else if (currentOrgLevel === ORG_LEVEL2) {
-        // 多展示一列数据
-        columnWidth = [...columnWidth, '180px'];
-        columnWidthTotal += 180;
+        if (currentOrgLevel === ORG_LEVEL1) {
+          // 多展示两列数据
+          columnWidth = [...columnWidth, '120px', '180px'];
+          columnWidthTotal += 300;
+        } else if (currentOrgLevel === ORG_LEVEL2) {
+          // 多展示一列数据
+          columnWidth = [...columnWidth, '180px'];
+          columnWidthTotal += 180;
+        }
       }
     }
 

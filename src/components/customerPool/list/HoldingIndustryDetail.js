@@ -3,7 +3,7 @@
  * @Description: 客户列表-订购精选组合客户持仓证券重合度
  * @Date: 2018-06-05 14:44:05
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-10 17:28:23
+ * @Last Modified time: 2018-07-12 10:21:37
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import { Popover, Table } from 'antd';
 import { fspContainer } from '../../../config';
 import titleList from './config/titleList';
 import { number } from '../../../helper';
-import styles from './holdingCombinationDetail.less';
+import styles from './holdingIndustryDetail.less';
 
 const getPopupContainer = () => document.querySelector(fspContainer.container) || document.body;
 const holdingIndustryTitleList = titleList.holdingIndustry;

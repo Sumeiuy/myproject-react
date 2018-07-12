@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-11 14:14:58
+ * @Last Modified time: 2018-07-11 18:36:57
  * 服务记录表单
  */
 
@@ -38,10 +38,10 @@ export default class ServiceRecordForm extends PureComponent {
     const { autoGenerateRecordInfo: { serveContentDesc = '' }, todo } = serviceRecordInfo;
     // 服务记录添加未成功时，后端返回failure, todo=update 时，入参多一个id，表示更新服务记录
     if (
-      isCurrentMissionPhoneCall &&
-      todo === UPDATE &&
-      !_.isEmpty(currentMotServiceRecord.id) &&
-      currentMotServiceRecord.id !== 'failure'
+      isCurrentMissionPhoneCall
+      && todo === UPDATE
+      && !_.isEmpty(currentMotServiceRecord.id)
+      && currentMotServiceRecord.id !== 'failure'
     ) {
       data = {
         ...data,
