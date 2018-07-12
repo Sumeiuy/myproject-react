@@ -21,7 +21,9 @@ export default function customerPool(api) {
     checkDuplicationName: query => api.post('/groovynoauth/fsp/cust/custlabel/checkDuplicationName', query),
     // 查询客户已标记标签
     queryCustSignedLabels: query => api.post('/groovynoauth/fsp/cust/custlabel/queryCustSignedLabels', query),
-    // 给客户打标签
+    // 给单客户打标签
     signCustLabels: query => api.post('/groovynoauth/fsp/cust/custlabel/signCustLabels', query),
+    // 给多客户打标签
+    signBatchCustLabels: query => api.post('/groovynoauth/fsp/cust/custlabel/signBatchCustLabels', query),
   };
 }

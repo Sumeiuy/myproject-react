@@ -34,7 +34,7 @@ export default class SignCustomerLabel extends PureComponent {
     currentPytMng: PropTypes.object.isRequired,
     custLikeLabel: PropTypes.array.isRequired,
     queryLikeLabelInfo: PropTypes.func.isRequired,
-    signCustLabels: PropTypes.func.isRequired,
+    signBatchCustLabels: PropTypes.func.isRequired,
     closeMultiCustSignLabel: PropTypes.func.isRequired,
     visible: PropTypes.bool.isRequired,
     condition: PropTypes.object.isRequired,
@@ -86,7 +86,7 @@ export default class SignCustomerLabel extends PureComponent {
   @autobind
   handleSubmitSignLabel() {
     const {
-      signCustLabels,
+      signBatchCustLabels,
       currentPytMng,
       condition,
       location: {
@@ -116,7 +116,7 @@ export default class SignCustomerLabel extends PureComponent {
       });
       payload.custIds = custIds;
     }
-    signCustLabels({
+    signBatchCustLabels({
       ...payload,
       ptyMngId,
     }).then(this.handleCloseModal);

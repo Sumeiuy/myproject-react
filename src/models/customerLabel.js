@@ -120,9 +120,14 @@ export default {
         });
       },
       { type: 'takeLatest' }],
-    // 给客户打标签
+    // 给单客户打标签
     * signCustLabels({ payload }, { call }) {
       const { resultData } = yield call(api.signCustLabels, payload);
+      return resultData;
+    },
+    // 给多客户打标签
+    * signBatchCustLabels({ payload }, { call }) {
+      const { resultData } = yield call(api.signBatchCustLabels, payload);
       return resultData;
     },
   },

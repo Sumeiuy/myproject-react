@@ -91,7 +91,7 @@ export default class SignCustomerLabel extends PureComponent {
     const { ptyMngId } = currentPytMng;
     const labelIds = _.map(selectedLabels, item => item.key);
     signCustLabels({
-      custIds: [custId],
+      custId,
       labelIds,
       ptyMngId,
     }).then(handleCancelSignLabelCustId);
