@@ -8,13 +8,10 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import _ from 'lodash';
 import { Menu, Dropdown, Icon } from 'antd';
 import styles from './tabMenu.less';
-
-function isInMoremenu(moreMenu, activeKey) {
-  return !!_.find(moreMenu.children, item => item.id === activeKey);
-}
+import MoreTab from './MoreTab';
+import { traverseMenus } from '../utils/tab';
 
 export default class TabMenu extends PureComponent {
   static propTypes = {
@@ -27,9 +24,8 @@ export default class TabMenu extends PureComponent {
     path: PropTypes.string.isRequired,
   }
 
-  getMenus(array, isMoreMenu) {
-    const { path, activeKey } = this.props;
-
+  getMenus(array) {
+    const { path } = this.props;
     return array.map((item) => {
       if (item.children) {
         return (
@@ -38,11 +34,10 @@ export default class TabMenu extends PureComponent {
             title={item.name}
             className={classnames({
               [styles.activeItem]: item.path ? path.indexOf(item.path) !== -1 : false,
-              [styles.subMenuItem]: isMoreMenu,
-              [styles.subMenuLink]: !isMoreMenu,
+              [styles.subMenuLink]: true,
             })}
           >
-            {this.getMenus(item.children, isMoreMenu)}
+            {this.getMenus(item.children)}
           </Menu.SubMenu>
         );
       }
@@ -54,24 +49,13 @@ export default class TabMenu extends PureComponent {
             [styles.activeItem]: item.path === path,
           })}
         >
-          {
-            isMoreMenu ?
-              <div className={styles.moreMenuItem}>
-                <div className={styles.link} title={`${item.name}`} onClick={() => this.change(item.id, activeKey)}>{item.name}</div>
-                {
-                  <div id={item.path === path ? 'activeTabPane' : null} className={styles.close} onClick={() => this.remove(item.id)}>
-                    <Icon type="close" />
-                  </div>
-                }
-              </div> :
-              <div
-                title={item.name}
-                className={styles.linkItem}
-                onClick={() => this.handleLinkClick(item)}
-              >
-                {item.name}
-              </div>
-          }
+          <div
+            title={item.name}
+            className={styles.linkItem}
+            onClick={() => this.handleLinkClick(item)}
+          >
+            {item.name}
+          </div>
         </Menu.Item>
       );
     });
@@ -79,7 +63,7 @@ export default class TabMenu extends PureComponent {
 
   @autobind
   handleLinkClick(menuItem) {
-    const { push, path } = this.props;
+    const { push, path, mainArray } = this.props;
     if (menuItem.action === 'loadExternSystemPage') {
       window.open(menuItem.url, '_blank');
     } else if (menuItem.path !== path) {
@@ -87,6 +71,15 @@ export default class TabMenu extends PureComponent {
         pathname: menuItem.path,
         query: menuItem.query,
       });
+
+      if (menuItem.pid !== 'ROOT') {
+        mainArray.forEach(topMenu => {
+          if (topMenu.id === menuItem.pid) {
+            // 在顶级目录上保留点击的子菜单id
+            topMenu.lastMenuId = menuItem.id;
+          }
+        });
+      }
     }
   }
 
@@ -105,22 +98,49 @@ export default class TabMenu extends PureComponent {
   }
 
   @autobind
-  handDropClick(menuItem, activeKey) {
+  getFirstChild(menu) {
+    const firstChild = menu.children[0];
+    if (firstChild.path === '' && firstChild.children) {
+      return this.getFirstChild(firstChild);
+    }
+    return firstChild;
+  }
+
+  @autobind
+  getLastMenu(menu, lastMenuId) {
+    let lastMenu;
+    traverseMenus(menu, menuItem => {
+      if (menuItem.id === lastMenuId) {
+        lastMenu = menuItem;
+      }
+    })
+    return lastMenu;
+  }
+  
+  @autobind
+  handDropClick(menuItem) {
     if (menuItem.path !== '') {
-      this.change(menuItem.id, activeKey);
+      this.handleLinkClick(menuItem);
+    } else {
+      // 是否有上次点击的菜单记录
+      if (menuItem.lastMenuId) {
+        this.handleLinkClick(this.getLastMenu(menuItem.children, menuItem.lastMenuId));
+      } else {
+        // 默认打开第一个子菜单
+        this.handleLinkClick(this.getFirstChild(menuItem));
+      }
     }
   }
 
   @autobind
-  renderDropdownMenu(menu, isMoreMenu = false) {
+  renderDropdownMenu(menu) {
     const { activeKey } = this.props;
-    const isActiveLink = isMoreMenu ? isInMoremenu(menu, activeKey) : (menu.id === activeKey);
-    const placement = isMoreMenu ? 'bottomRight' : 'bottomLeft';
+    const isActiveLink = menu.id === activeKey;
     const hasHomePage = menu.path !== '';
     const menus = (
       <Menu>
         {
-          this.getMenus(menu.children, isMoreMenu)
+          this.getMenus(menu.children)
         }
       </Menu>
     );
@@ -129,17 +149,10 @@ export default class TabMenu extends PureComponent {
         key={menu.id}
         className={classnames({
           [styles.menuItem]: true,
-          [styles.widerItem]: true,
           [styles.activeLink]: isActiveLink,
-          [styles.moreButton]: isMoreMenu,
         })}
       >
-        {/*
-          <Dropdown.Button onClick={this.change} overlay={menus} trigger={['click']}>
-              <div classnames={styles.text}>{menu.name}</div>
-          </Dropdown.Button>
-        */}
-        <Dropdown placement={placement} overlay={menus} trigger={['hover']}>
+        <Dropdown placement='bottomLeft' overlay={menus} trigger={['hover']}>
           <div
             tabIndex="0"
             className={styles.text}
@@ -149,7 +162,7 @@ export default class TabMenu extends PureComponent {
                 [styles.link]: true,
                 [styles.hasHomePage]: hasHomePage,
               })}
-              title={`${menu.name}`}
+              title={menu.name}
               onClick={() => this.handDropClick(menu, activeKey)}
             >
               {menu.name}
@@ -192,14 +205,31 @@ export default class TabMenu extends PureComponent {
     );
   }
 
+  @autobind
+  renderMoreTab() {
+    const { onRemove, onChange, activeKey, moreMenuObject, path } = this.props;
+    return (
+      <div className={styles.moreTab}> 
+        <MoreTab 
+          moreTabArray={moreMenuObject.children}
+          onChange={onChange}
+          activeKey={activeKey}
+          onRemove={onRemove}
+          onLinkClick={this.handleLinkClick}
+          path={path}
+        />
+      </div>
+    );
+  }
+
   render() {
     const { mainArray, moreMenuObject } = this.props;
     return (
       <div id="tabMenu" className={styles.tabMenu}>
         {
-          mainArray.map((menu, index) => {
+          mainArray.map((menu) => {
             if (menu.children) {
-              return this.renderDropdownMenu(menu, false, index);
+              return this.renderDropdownMenu(menu);
             } else if (menu.pid === 'ROOT') {
               return this.renderLinkMenu(menu, false);
             }
@@ -207,8 +237,7 @@ export default class TabMenu extends PureComponent {
           })
         }
         {
-          moreMenuObject.children.length === 0 ?
-            null : this.renderDropdownMenu(moreMenuObject, true)
+          moreMenuObject.children.length !== 0 ? this.renderMoreTab() : null
         }
       </div>
     );

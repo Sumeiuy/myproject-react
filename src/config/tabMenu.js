@@ -117,6 +117,12 @@ const primaryMenu = [
     pid: 'ROOT',
   },
   {
+    name: '客户服务全纪录',
+    id: 'FSP_MOT_TAB_SERVICELIST',
+    path: '/fsp/taskCenter/serviceManage',
+    pid: 'FSP_MOT_M_TASK',
+  },
+  {
     name: '产品中心',
     id: 'FSP_PRD_REPOSITORY',
     path: '/productCenter',
@@ -153,6 +159,24 @@ const primaryMenu = [
     pid: 'ROOT',
   },
   {
+    name: '个股详情',
+    id: 'FSP_STOCK_DETAIL',
+    path: '/stock/detail',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
+    name: '组合详情',
+    id: 'FSP_COMBINATION_DETAIL',
+    path: '/choicenessCombination/combinationDetail',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
+    name: '历史报告',
+    id: 'FSP_REPORT_DETAIL',
+    path: '/choicenessCombination/reportDetail',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
     name: '晨报详情',
     id: 'FSP_BROADCAST_DETAIL',
     path: '/broadcastDetail',
@@ -162,7 +186,7 @@ const primaryMenu = [
     name: '业务申请',
     id: 'FSP_BUSINESS_APPLICATION',
     path: '/application',
-    pid: 'Root',
+    pid: 'ROOT',
   },
   {
     name: '统计查询',
@@ -187,26 +211,6 @@ const primaryMenu = [
     id: 'FSP_PREVIEW',
     path: '/preview',
     pid: 'FSP_STATISTICAL_QUERY',
-  },
-  // 对于二级和三级菜单，合理的逻辑是根据路由的层次判断并展示其属于的主菜单
-  // 在路由未完全修改完毕的时候，可以采用配置临时指定高亮的菜单，用以过渡
-  {
-    name: '服务订阅-temp',
-    id: 'FSP_BUSINESS_APPLICATION',
-    path: '/commission',
-    pid: 'FSP_BUSINESS_APPLICATION',
-  },
-  {
-    name: '个股资讯-temp',
-    id: 'FSP_STRATEGY_CENTER',
-    path: '/stock',
-    pid: 'FSP_STRATEGY_CENTER',
-  },
-  {
-    name: '精选组合-temp',
-    id: 'FSP_STRATEGY_CENTER',
-    path: '/choicenessCombination',
-    pid: 'FSP_STRATEGY_CENTER',
   },
 ];
 

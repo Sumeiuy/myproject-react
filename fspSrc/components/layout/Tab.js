@@ -15,6 +15,8 @@ import tabConfig, { indexPaneKey, defaultMenu } from '../../../src/config/tabMen
 import { enableLocalStorage } from '../../../src/config/constants';
 import withRouter from '../../../src/decorators/withRouter';
 import { os } from '../../../src/helper';
+import { traverseMenus } from '../utils/tab';
+
 // 判断pane是否在paneArray中
 function isPaneInArray(panes, paneArray) {
   return panes.length !== 0 ?
@@ -36,7 +38,7 @@ function getFinalPanes(panes, addPanes = [], removePanes = []) {
 // 将pane数组根据视口范围进行划分的工具方法
 function splitPanesArray(panes, menuWidth) {
   // 预设置按钮的大小
-  const moreButtonWidth = 90;
+  const moreButtonWidth = 50;
   const firstButtonWidth = 104;
   const menuButtonWidth = 90;
   // tab菜单除了必有的首页之外，所有其他的tab都是96px，可以由此算出视口宽度内可以放下多少个
@@ -273,6 +275,30 @@ export default class Tab extends PureComponent {
     return os.findBestMatch(pathname, tabConfig, 'path');
   }
 
+  findStatePane(panes, pathname) {
+    let statePane;
+    traverseMenus(panes, pane => {
+      if(pane.path === pathname) {
+        statePane = pane;
+      }
+    })
+    return statePane;
+  }
+
+  getActiveKey(pane) {
+    let activeKey;
+    if(pane) {
+      if (pane.type && pane.pid !== 'ROOT') {
+        // 对于菜单，高亮顶级菜单
+        activeKey = pane.pid;
+      } else {
+        // 对于 Tab， 高亮 Tab
+        activeKey = pane.id;
+      }
+    }
+    return activeKey;
+  }
+
   // 根据pathname获取一个初步的pane数组
   getPanesWithPathname(pathname, query, shouldRemove = false, editPane = {}) {
     let { panes = [] } = this.state || {};
@@ -281,8 +307,8 @@ export default class Tab extends PureComponent {
       panes = panes.filter(pane => pane.id !== activeKey);
     }
     // 在state中查找完全匹配的pane信息
-    const statePane = _.find(panes, pane => pane.path === pathname);
-    let newActiveKey = statePane && statePane.id;
+    const statePane = this.findStatePane(panes, pathname);
+    let newActiveKey = this.getActiveKey(statePane);
     if (!statePane) {
       // 在本地找pane信息
       const paneConf = this.getConfig(pathname);

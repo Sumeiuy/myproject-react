@@ -135,13 +135,13 @@ const menus = [
         url: '',
         type: 'menu',
         action: '',
-        path: '/serviceCenter/asset',
+        path: '',
         children: [
           {
             id: 'FSP_ASSET_ALLOCATION_IMPLEMENTATION',
             name: '实施',
             order: 1,
-            pid: 'FSP_ASSET_ALLOCATION',
+            pid: 'FSP_SERVICE_CENTER',
             url: '/asset/implementation/main',
             type: 'link',
             action: 'loadInTab',
@@ -151,7 +151,7 @@ const menus = [
             id: 'FSP_ASSET_ALLOCATION_BASIS',
             name: '模板',
             order: 2,
-            pid: 'FSP_ASSET_ALLOCATION',
+            pid: 'FSP_SERVICE_CENTER',
             url: '/asset/basis/mainTab',
             type: 'link',
             action: 'loadInTab',
@@ -199,7 +199,7 @@ const menus = [
         url: '',
         type: 'link',
         action: 'loadInTab',
-        path: '/stock',
+        path: '/strategyCenter/stock',
       },
       {
         id: 'FSP_FEATURED_COMBINATION',
@@ -209,7 +209,7 @@ const menus = [
         url: '',
         type: 'link',
         action: 'loadInTab',
-        path: '/choicenessCombination',
+        path: '/strategyCenter/choicenessCombination',
       },
       {
         id: 'FSP_DAILY_PAPER',
@@ -241,7 +241,7 @@ const menus = [
         url: '',
         type: 'link',
         action: '',
-        path: '/commission',
+        path: '/application/commission',
       },
       {
         id: 'FSP_CONTRACT_MANAGEMENT',
