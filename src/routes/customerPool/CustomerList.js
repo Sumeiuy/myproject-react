@@ -23,6 +23,7 @@ import {
   CUST_MANAGER,
   ORG,
   ENTER_TYPE,
+  DEFAULT_ENTER_TYPE,
   ALL_DEPARTMENT_ID,
   MAIN_MAGEGER_ID,
   ENTERLIST_PERMISSION_TASK_MANAGE,
@@ -37,7 +38,7 @@ const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 20; // 默认页大小
 
-const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
+const DEFAULT_SORT = { sortType: 'totAset', sortDirection: 'desc' }; // 默认排序方式
 
 const effects = {
   allInfo: 'customerPool/getAllInfo',
@@ -65,6 +66,7 @@ const effects = {
   queryHoldingProduct: 'customerPool/queryHoldingProduct',
   addCallRecord: 'customerPool/addCallRecord',
   queryHoldingSecurityRepetition: 'customerPool/queryHoldingSecurityRepetition',
+  getCustRangeByAuthority: 'customerPool/getCustRangeByAuthority',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -161,6 +163,8 @@ const mapDispatchToProps = {
   addCallRecord: fetchDataFunction(true, effects.addCallRecord),
   // 组合产品订购客户查询持仓证券重合度
   queryHoldingSecurityRepetition: fetchDataFunction(false, effects.queryHoldingSecurityRepetition),
+  // 获取服务营业部的数据
+  getCustRangeByAuthority: fetchDataFunction(true, effects.getCustRangeByAuthority),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -226,6 +230,7 @@ export default class CustomerList extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    getCustRangeByAuthority: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -289,10 +294,13 @@ export default class CustomerList extends PureComponent {
   componentDidMount() {
     const {
       getFiltersOfSightingTelescope,
+      getCustRangeByAuthority,
       location: {
         query,
       },
     } = this.props;
+    // 请求服务营业部筛选器的数据
+    getCustRangeByAuthority();
     // 请求客户列表
     this.getCustomerList(this.props);
     if (_.includes(ENTERLIST_PERMISSION_SIGHTINGLABEL, query.source)) {
@@ -360,7 +368,7 @@ export default class CustomerList extends PureComponent {
       // 必传，页大小
       pageSize: query.pageSize || CUR_PAGESIZE,
       // 不同的入口进入列表页面
-      enterType: ENTER_TYPE[query.source],
+      enterType: ENTER_TYPE[query.source] || DEFAULT_ENTER_TYPE,
     };
     if (query.source === 'search') { // 搜索框
       param.searchTypeReq = 'ALL';
@@ -757,7 +765,7 @@ export default class CustomerList extends PureComponent {
           dict={dict}
           empInfo={empInfo}
           condition={queryParam}
-          entertype={ENTER_TYPE[source]}
+          entertype={ENTER_TYPE[source] || DEFAULT_ENTER_TYPE}
           location={location}
           replace={replace}
           push={push}
@@ -812,4 +820,3 @@ export default class CustomerList extends PureComponent {
     );
   }
 }
-

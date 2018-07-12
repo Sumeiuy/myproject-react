@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-06-13 15:52:38
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-06-28 14:23:52
  * @description 客户池头部搜索组件
  */
 
@@ -18,7 +18,7 @@ import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { padSightLabelDesc } from '../../../config';
 import Icon from '../../common/Icon';
-import { isSightingScope } from '../helper';
+import { isSightingScope, getFilter } from '../helper';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
@@ -79,6 +79,7 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
   handleOpenTab(data) {
     const { labelDesc, missionDesc, ...options } = data;
     const { push, location: { query } } = this.props;
@@ -93,7 +94,11 @@ export default class Search extends PureComponent {
         labelName: decodeURIComponent(options.labelName),
       });
     }
-    const condition = urlHelper.stringify({ ...options });
+    const newQuery = {
+      ...options,
+      filters: getFilter(data),
+    };
+    const condition = urlHelper.stringify({ ...newQuery });
     const url = `${firstUrl}?${condition}`;
     const param = {
       closable: true,
@@ -107,7 +112,7 @@ export default class Search extends PureComponent {
       url,
       param,
       pathname: firstUrl,
-      query: options,
+      query: newQuery,
       // 方便返回页面时，记住首页的query，在本地环境里
       state: {
         ...query,
@@ -175,7 +180,7 @@ export default class Search extends PureComponent {
     };
     // 查到的时持仓产品，传持仓产品的名称
     if (item.type === 'PRODUCT' && item.name) {
-      query = { ...query, productName: encodeURIComponent(item.name) };
+      query = { ...query, productName: item.name };
     }
 
     // log日志 --- 首页搜索选中
