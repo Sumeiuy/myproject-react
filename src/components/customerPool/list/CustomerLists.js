@@ -748,7 +748,7 @@ export default class CustomerLists extends PureComponent {
         />
         <MultiCustomerLabel
           visible={multiSignLabelVisible}
-          closeMultiCustSignLabel={this.switchMultiCustSignLabel}
+          onClose={this.switchMultiCustSignLabel}
           currentPytMng={currentPtyMngId}
           queryLikeLabelInfo={queryLikeLabelInfo}
           custLikeLabel={custLikeLabel}
