@@ -23,7 +23,7 @@ export default class SignCustomerLabel extends PureComponent {
     custLikeLabel: PropTypes.array.isRequired,
     queryLikeLabelInfo: PropTypes.func.isRequired,
     signBatchCustLabels: PropTypes.func.isRequired,
-    closeMultiCustSignLabel: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
     visible: PropTypes.bool.isRequired,
     condition: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
@@ -79,9 +79,9 @@ export default class SignCustomerLabel extends PureComponent {
 
   @autobind
   handleCloseModal() {
-    const { closeMultiCustSignLabel } = this.props;
+    const { onClose } = this.props;
     this.setState({ labelValue: '' });
-    closeMultiCustSignLabel();
+    onClose();
   }
 
   @autobind
@@ -99,15 +99,14 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
-  handleFilterOption(value, option) {
+  filterOption(value, option) {
     const { custLikeLabel } = this.props;
     const { key } = option;
     const { labelName = '' } = _.find(custLikeLabel, item => item.id === key) || {};
     return labelName.indexOf(value) > -1;
   }
   render() {
-    const { visible, custLikeLabel, form } = this.props;
-    const { getFieldDecorator } = form;
+    const { visible, custLikeLabel, form: { getFieldDecorator } } = this.props;
     const { labelValue } = this.state;
 
     return (
@@ -133,7 +132,7 @@ export default class SignCustomerLabel extends PureComponent {
                 style={{ width: '100%' }}
                 onFocus={this.handleFocus}
                 onSearch={this.handleSearch}
-                filterOption={this.handleFilterOption}
+                filterOption={this.filterOption}
               >
                 {custLikeLabel.map(labelItem =>
                   <Option key={labelItem.id}>
