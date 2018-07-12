@@ -14,7 +14,7 @@ import classNames from 'classnames';
 import { autobind } from 'core-decorators';
 import store from 'store';
 import { isSightingScope } from '../../helper';
-import { url as urlHelper, url } from '../../../../helper';
+import { url as urlHelper, url, number } from '../../../../helper';
 import seperator from '../../../../config/filterSeperator';
 import { openFspTab, openRctTab } from '../../../../utils/index';
 import { RANDOM } from '../../../../config/filterContant';
@@ -309,7 +309,9 @@ export default class MatchArea extends PureComponent {
         <li title={currentVal}>
           <span>
             <i className="label">{name}：</i>
-            {currentVal}{unit}
+            {
+              unit === '元' ? number.thousandFormat(currentVal) : currentVal
+            }{unit}
           </span>
         </li>
       );
