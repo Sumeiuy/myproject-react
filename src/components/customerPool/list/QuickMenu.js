@@ -112,7 +112,7 @@ export default class QuickMenu extends PureComponent {
           <li>
             <div onClick={() => { queryCustSignLabel(custId); }}>
               <Icon type="kehubiaoqian" />
-              <span>客户标签</span>
+              <span>设置标签</span>
             </div>
           </li>
         </ul>

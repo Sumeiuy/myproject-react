@@ -14,22 +14,10 @@ import styles from './addCustomerLabel.less';
 const Option = Select.Option;
 const FormItem = Form.Item;
 
-const EMPTY_LIST = [];
 const EMPTY_OBJ = {};
 
+@Form.create()
 export default class SignCustomerLabel extends PureComponent {
-  static getDerivedStateFromProps(props, state) {
-    const { preCustLikeLabel } = state;
-    const { custLikeLabel } = props;
-    let nextState = {
-      preCustLikeLabel: custLikeLabel,
-    };
-    if (custLikeLabel !== preCustLikeLabel) {
-      nextState = { ...nextState, data: custLikeLabel };
-    }
-    return nextState;
-  }
-
   static propTypes = {
     currentPytMng: PropTypes.object.isRequired,
     custLikeLabel: PropTypes.array.isRequired,
@@ -39,48 +27,15 @@ export default class SignCustomerLabel extends PureComponent {
     visible: PropTypes.bool.isRequired,
     condition: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
+    form: PropTypes.object.isRequired,
   };
 
   constructor(props) {
     super(props);
     this.selectLabel = EMPTY_OBJ;
-    const { custLikeLabel } = props;
     this.state = {
-      data: EMPTY_LIST,
       labelValue: '',
-      preCustLikeLabel: custLikeLabel,
-      validateState: false,
     };
-  }
-
-  @autobind
-  handleChange(labelValue) {
-    const { selectLabel: { labelName } } = this;
-    const { queryLikeLabelInfo } = this.props;
-    let finalLabelValue = labelValue;
-    let validateState = false;
-    if (labelName === labelValue) {
-      queryLikeLabelInfo({ labelNameLike: '' });
-    } else if (_.isEmpty(this.selectLabel)) {
-      queryLikeLabelInfo({ labelNameLike: labelValue });
-    } else {
-      this.selectLabel = EMPTY_OBJ;
-      finalLabelValue = '';
-      validateState = true;
-    }
-    this.setState({
-      labelValue: finalLabelValue,
-      validateState,
-    });
-  }
-
-  @autobind
-  handleSelect(value) {
-    const { data } = this.state;
-    this.selectLabel = _.find(data, item => item.labelName === value) || {};
-    this.setState({
-      validateState: false,
-    });
   }
 
   @autobind
@@ -96,46 +51,64 @@ export default class SignCustomerLabel extends PureComponent {
         },
       },
     } = this.props;
-    if (_.isEmpty(this.selectLabel)) {
-      this.setState({
-        validateState: true,
-      });
-      return;
-    }
-    const { ptyMngId } = currentPytMng;
-    const payload = {};
-    payload.labelIds = [this.selectLabel.id];
-    if (selectAll) {
-      payload.queryCustsReq = condition;
-    }
-    if (selectedIds) {
-      const custList = decodeURIComponent(selectedIds).split(',');
-      const custIds = [];
-      _.forEach(custList, (item) => {
-        custIds.push(item.split('.')[0]);
-      });
-      payload.custIds = custIds;
-    }
-    signBatchCustLabels({
-      ...payload,
-      ptyMngId,
-    }).then(this.handleCloseModal);
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        const { ptyMngId } = currentPytMng;
+        const { labelId } = values;
+        const payload = {
+          labelIds: [labelId],
+        };
+        if (selectAll) {
+          payload.queryCustsReq = condition;
+        }
+        if (selectedIds) {
+          const custList = decodeURIComponent(selectedIds).split(',');
+          const custIds = [];
+          _.forEach(custList, (item) => {
+            custIds.push(item.split('.')[0]);
+          });
+          payload.custIds = custIds;
+        }
+        signBatchCustLabels({
+          ...payload,
+          ptyMngId,
+        }).then(this.handleCloseModal);
+      }
+    });
   }
 
   @autobind
   handleCloseModal() {
     const { closeMultiCustSignLabel } = this.props;
-    this.selectLabel = EMPTY_OBJ;
-    this.setState({
-      labelValue: '',
-      validateState: false,
-    });
+    this.setState({ labelValue: '' });
     closeMultiCustSignLabel();
   }
 
+  @autobind
+  handleFocus() {
+    const { queryLikeLabelInfo } = this.props;
+    // 获得焦点时获取全部数据
+    queryLikeLabelInfo({ labelNameLike: '' });
+  }
+
+  @autobind
+  handleSearch(value) {
+    this.setState({
+      labelValue: value,
+    });
+  }
+
+  @autobind
+  handleFilterOption(value, option) {
+    const { custLikeLabel } = this.props;
+    const { key } = option;
+    const { labelName = '' } = _.find(custLikeLabel, item => item.id === key) || {};
+    return labelName.indexOf(value) > -1;
+  }
   render() {
-    const { visible } = this.props;
-    const { data, labelValue, validateState } = this.state;
+    const { visible, custLikeLabel, form } = this.props;
+    const { getFieldDecorator } = form;
+    const { labelValue } = this.state;
 
     return (
       <Modal
@@ -149,28 +122,26 @@ export default class SignCustomerLabel extends PureComponent {
         onCancel={this.handleCloseModal}
       >
         <Form>
-          <FormItem
-            validateStatus={validateState ? 'error' : ''}
-            help={validateState ? '请选择自定义标签' : ''}
-          >
-            <Select
-              mode="combobox"
-              placeholder="请选择客户标签"
-              filterOption={false}
-              value={labelValue}
-              defaultActiveFirstOption={false}
-              showArrow={false}
-              style={{ width: '100%' }}
-              onChange={this.handleChange}
-              onSelect={this.handleSelect}
-              firstActiveValue={labelValue}
-            >
-              {data.map(labelItem =>
-                <Option key={labelItem.labelName}>
-                  {replaceKeyWord(labelItem.labelName, labelValue)}
-                </Option>,
-              )}
-            </Select>
+          <FormItem>
+            {getFieldDecorator('labelId', {
+              rules: [{ required: true, message: '请选择自定义标签' }],
+            })(
+              <Select
+                showSearch
+                placeholder="请选择您希望设置的标签"
+                optionFilterProp="children"
+                style={{ width: '100%' }}
+                onFocus={this.handleFocus}
+                onSearch={this.handleSearch}
+                filterOption={this.handleFilterOption}
+              >
+                {custLikeLabel.map(labelItem =>
+                  <Option key={labelItem.id}>
+                    {replaceKeyWord(labelItem.labelName, labelValue)}
+                  </Option>,
+                )}
+              </Select>,
+            )}
           </FormItem>
         </Form>
       </Modal>
