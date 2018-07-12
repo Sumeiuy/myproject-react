@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-11 19:45:49
+ * @Last Modified time: 2018-07-12 10:08:26
  */
 
 import React, { PureComponent } from 'react';
@@ -268,9 +268,6 @@ export default class ApplyEditForm extends PureComponent {
         nonAlertblackFlag,
         riskEval,
         riskEvalTime,
-        assessment: {
-          age,
-        },
         ageFlag,
         investPrefer,
       },
@@ -296,7 +293,6 @@ export default class ApplyEditForm extends PureComponent {
       nonAlertblackFlag,
       riskEval,
       riskEvalTime,
-      age,
       ageFlag,
       degreeFlag,
       investPrefer,
@@ -348,9 +344,6 @@ export default class ApplyEditForm extends PureComponent {
         nonAlertblackFlag,
         riskEval,
         riskEvalTime,
-        assessment: {
-          age,
-        },
         ageFlag,
         investPrefer,
       },
@@ -399,7 +392,6 @@ export default class ApplyEditForm extends PureComponent {
       nonAlertblackFlag,
       riskEval,
       riskEvalTime,
-      age,
       ageFlag,
       degreeFlag,
       investPrefer,
