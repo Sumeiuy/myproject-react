@@ -370,11 +370,39 @@ export const getRouterData = (app) => {
         import('../routes/platformParameterSetting/Home' /* webpackChunkName: "platformParameterSetting" */)),
       exact: false,
     },
+    '/platformParameterSetting/taskOperation/customerFeedback': {
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/customerFeedback/Home' /* webpackChunkName: "taskOperationCustomerFeedback" */)),
+    },
+    '/platformParameterSetting/taskOperation/taskFeedback': {
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/taskFeedback/Home' /* webpackChunkName: "taskOperationTaskFeedback" */)),
+    },
+    '/platformParameterSetting/taskOperation/investmentAdvice': {
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/investmentAdvice/Home' /* webpackChunkName: "taskOperationInvestmentAdvice" */)),
+    },
+    '/platformParameterSetting/labelManager': {
+      component: dynamicWrapper(app, [], () =>
+        import('../components/platformParameterSetting/routers/LabelManager' /* webpackChunkName: "LabelManager" */)),
+    },
+    '/platformParameterSetting/contentOperate': {
+      component: dynamicWrapper(app, [], () =>
+        import('../components/platformParameterSetting/routers/RecommendedLabel' /* webpackChunkName: "RecommendedLabel" */)),
+    },
     // 公务手机和电话卡号管理
     '/telephoneNumberManage': {
       component: dynamicWrapper(app, ['telephoneNumberManage'], () =>
         import('../routes/telephoneNumberManage/Home' /* webpackChunkName: "telephoneNumberManage" */)),
       exact: false,
+    },
+    '/telephoneNumberManage/distribute': {
+      component: dynamicWrapper(app, ['telephoneNumberManage'], () =>
+        import('../routes/telephoneNumberManage/DistributeHome' /* webpackChunkName: "telephoneManageDistribute" */)),
+    },
+    '/telephoneNumberManage/apply': {
+      component: dynamicWrapper(app, ['telephoneNumberManage'], () =>
+        import('../routes/telephoneNumberManage/ApplyHome' /* webpackChunkName: "telephoneManageApplyHome" */)),
     },
     // 公务手机和电话卡号管理修改页面
     '/telephoneNumberManageEdit': {
@@ -439,7 +467,8 @@ export const getRouterData = (app) => {
 
 // 采取分布式配置的路由路径
 export const distributeRouters = [
-  // 路径：例如 '/abc'
+  '/platformParameterSetting',
+  '/telephoneNumberManage',
 ];
 
 export default {};
