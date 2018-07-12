@@ -230,7 +230,6 @@ export default function AppItem(props) {
                   })
                 }
               >
-                <span>进度：</span>
                 <span className={styles.done}>{data.doneFlowNum}</span>
                 <span>/</span>
                 <span>{data.flowNum}</span>
