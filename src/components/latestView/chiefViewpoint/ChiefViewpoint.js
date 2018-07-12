@@ -15,7 +15,7 @@ import Icon from '../../common/Icon';
 import styles from './chiefViewpoint.less';
 
 // 内容最大长度
-const MAX_LENGTH = 123;
+const MAX_LENGTH = 118;
 export default class ChiefViewpoint extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
