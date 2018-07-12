@@ -119,16 +119,14 @@ export default class TabMenu extends PureComponent {
   
   @autobind
   handDropClick(menuItem) {
-    if (menuItem.path !== '') {
+    // 是否有上次点击的菜单记录
+    if (menuItem.lastMenuId) {
+      this.handleLinkClick(this.getLastMenu(menuItem.children, menuItem.lastMenuId));
+    } else if (menuItem.path !== '') {
       this.handleLinkClick(menuItem);
     } else {
-      // 是否有上次点击的菜单记录
-      if (menuItem.lastMenuId) {
-        this.handleLinkClick(this.getLastMenu(menuItem.children, menuItem.lastMenuId));
-      } else {
-        // 默认打开第一个子菜单
-        this.handleLinkClick(this.getFirstChild(menuItem));
-      }
+      // 默认打开第一个子菜单
+      this.handleLinkClick(this.getFirstChild(menuItem));
     }
   }
 

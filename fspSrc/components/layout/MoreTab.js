@@ -12,7 +12,7 @@ import { Menu, Dropdown, Icon } from 'antd';
 import styles from './moreTab.less';
 import { autobind } from 'core-decorators';
 
-export default class TabMenu extends PureComponent {
+export default class MoreTab extends PureComponent {
   static propTypes = {
     activeKey: PropTypes.string.isRequired,
     moreTabArray: PropTypes.array.isRequired,
@@ -36,7 +36,7 @@ export default class TabMenu extends PureComponent {
   }
 
   @autobind
-  LinkClick(menuItem) {
+  linkClick(menuItem) {
     const { onLinkClick } = this.props;
     onLinkClick(menuItem);
   }
@@ -78,7 +78,7 @@ export default class TabMenu extends PureComponent {
                 [styles.textActive]: isActive,
               })}
               title={menuItem.name}
-              onClick={() => this.LinkClick(menuItem)}
+              onClick={() => this.linkClick(menuItem)}
             >
               {menuItem.name}
             </div>
@@ -121,7 +121,7 @@ export default class TabMenu extends PureComponent {
     const menus = (
       <Menu>
         <Menu.Item key="text" disabled>
-          <div className={styles.text}>{'更多(' + tabNum + ')'}</div>
+          <div className={styles.text}>{`更多（${tabNum}）`}</div>
         </Menu.Item>
         <Menu.Divider />
         {
