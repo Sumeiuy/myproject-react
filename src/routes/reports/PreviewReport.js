@@ -86,7 +86,7 @@ export default class PreviewReport extends PureComponent {
     if (!publishLoading && prePL) {
       message.success('发布成功');
       const { location: { query: { boardId } } } = this.props;
-      push(`/report?boardId=${boardId}`);
+      push(`/statisticalQuery/report?boardId=${boardId}`);
     }
   }
 

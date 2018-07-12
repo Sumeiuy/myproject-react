@@ -82,7 +82,7 @@ export const getRouterData = (app) => {
         import('../routes/phone/Home' /* webpackChunkName: "phone" */)),
     },
     // 直接进入
-    '/report': {
+    '/statisticalQuery/report': {
       component: ReportHome,
     },
     // 直接进入，
@@ -116,7 +116,7 @@ export const getRouterData = (app) => {
         import('../routes/feedback/MyFeedback' /* webpackChunkName: "myFeedback" */)),
     },
     // 直接进入
-    '/commission': {
+    '/application/commission': {
       component: dynamicWrapper(app, ['commission'], () =>
         import('../routes/commission/Home' /* webpackChunkName: "commission" */)),
     },
@@ -333,7 +333,7 @@ export const getRouterData = (app) => {
 
     // 晨间播报
     // 直接进入，或从 customerPool 页面右侧-晨间播报-更多进入
-    '/broadcastList': {
+    '/strategyCenter/broadcastList': {
       component: dynamicWrapper(app, ['morningBoradcast'], () =>
         import('../routes/morningBroadcast/BroadcastList' /* webpackChunkName: "broadcastList" */)),
     },
@@ -344,7 +344,7 @@ export const getRouterData = (app) => {
     },
     // 个股点评
     // 直接进入
-    '/stock': {
+    '/strategyCenter/stock': {
       component: dynamicWrapper(app, ['stock'], () =>
         import('../routes/stock/Home' /* webpackChunkName: "stock" */)),
     },
@@ -383,7 +383,7 @@ export const getRouterData = (app) => {
       exact: false,
     },
     // 精选组合，直接进入
-    '/choicenessCombination': {
+    '/strategyCenter/choicenessCombination': {
       component: dynamicWrapper(app, ['choicenessCombination'], () =>
         import('../routes/choicenessCombination/Home' /* webpackChunkName: "choicenessCombination" */)),
     },
