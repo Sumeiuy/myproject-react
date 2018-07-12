@@ -37,7 +37,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 184,
+        width: 186,
       },
     },
     {
@@ -48,7 +48,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 184,
+        width: 186,
       },
     },
     {
@@ -59,7 +59,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 195,
+        width: 197,
       },
     },
   ],
@@ -80,7 +80,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 250,
+        width: 252,
       },
     },
     {
@@ -114,7 +114,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 250,
+        width: 252,
       },
     },
 
@@ -163,7 +163,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 195,
+        width: 197,
       },
     },
     {
@@ -174,7 +174,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 274,
+        width: 276,
       },
       dictField: ['kPIDateScopeType', 'singleBusinessTypeList'],
       getFilterLabelValue: getBusinessOpenedFilterLabel,
@@ -187,7 +187,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 195,
+        width: 197,
       },
     },
 
@@ -205,7 +205,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 184,
+        width: 186,
       },
     },
 
@@ -315,7 +315,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 250,
+        width: 252,
       },
     },
     {
@@ -329,7 +329,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 250,
+        width: 252,
       },
     },
 
