@@ -213,7 +213,7 @@ export default {
       title: '调整时间',
       dataIndex: 'time',
       key: 'time',
-      width: '20%',
+      width: '15%',
     },
   ],
 };

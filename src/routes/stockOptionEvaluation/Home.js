@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-02 10:22:53
+ * @Last Modified time: 2018-07-10 15:51:57
  */
 
 import React, { PureComponent } from 'react';
@@ -22,6 +22,7 @@ import Detail from '../../components/stockOptionEvaluation/ApplyDetail';
 import CreateApply from '../../components/stockOptionEvaluation/CreateApply';
 import seibelHelper from '../../helper/page/seibel';
 import permission from '../../helper/permission';
+import logable from '../../decorators/logable';
 
 const { stockOptionApply, stockOptionApply: { statusOptions, pageType } } = config;
 
@@ -277,6 +278,7 @@ export default class StockOptionApplication extends PureComponent {
 
   // 新建申请
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '显示股票期权申请弹框' } })
   openCreateModalBoard() {
     this.setState({ isShowCreateModal: true });
   }
@@ -337,6 +339,7 @@ export default class StockOptionApplication extends PureComponent {
 
   // 关闭新建弹窗
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '关闭股票期权申请弹框' } })
   handleClearModal() {
     this.setState({ isShowCreateModal: false });
   }

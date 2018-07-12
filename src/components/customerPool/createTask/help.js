@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-09 18:32:49
+ * @Last Modified time: 2018-07-11 15:26:43
  */
 
 import _ from 'lodash';
@@ -12,7 +12,7 @@ import { isSightingScope } from '../helper';
 import {
   basicInfoList, commonFilterList, singleWithSearchFilterList,
   serviceCustomerState, dateRangeFilterList, buyAmtFilterList, capitalFilterList,
-} from './config';
+} from '../config';
 
 const FORMAT = 'YYYY年M月D日';
 
@@ -51,25 +51,23 @@ function getFormattedData(data) {
  * @param {*} labelInfos 字典中全量标签字段
  */
 function getLabelInfo(filterObj, labelInfos) {
-  let htmlStr = '';
+  let htmlStrList = [];
   let suggestionList = [];
   // 标签: aimLabelList瞄准镜， normalLabelList普通标签
   const { aimLabelList = [], normalLabelList = [] } = getLabel(filterObj, labelInfos);
   const nameAndIdList = getNameAndIdList(aimLabelList);
   if (!_.isEmpty(nameAndIdList)) {
     suggestionList = getFormattedData(nameAndIdList);
-    _.each(nameAndIdList, (item) => {
-      htmlStr += `瞄准镜标签： $${item} `;
-    });
+    const list = _.map(nameAndIdList, item => `瞄准镜标签： $${item} `);
+    htmlStrList = [...htmlStrList, ...list];
   }
   if (!_.isEmpty(normalLabelList)) {
-    _.each(normalLabelList, (item) => {
-      htmlStr += `标签条件： ${item.name} `;
-    });
+    const list = _.map(normalLabelList, item => `标签条件： ${item.name} `);
+    htmlStrList = [...htmlStrList, ...list];
   }
 
   return {
-    htmlStr,
+    htmlStrList,
     suggestionList,
   };
 }
@@ -299,19 +297,19 @@ function getBizInfo(field) {
 }
 
 // 新版客户表发起任务，在新建任务的任务提示的显示的信息
-function getFilterInfo({ filterObj, dict, industryList }) {
+function getFilterInfo({ filterObj, dict, industryList, query }) {
   const {
     labelInfos, kPIDateScopeType,
     singleBusinessTypeList,
   } = dict;
-  let htmlStr = '<div><div>该客户通过淘客筛选，并满足以下条件：</div>';
+  let htmlStr = '<div><div>该客户通过淘客筛选，满足以下条件：</div>';
   let suggestionList = [];
   // url中filter没有值时，只显示’可开通业务‘
   if (_.isEmpty(filterObj)) {
     htmlStr += '<div>1.可开通业务： $可开通业务 </div>';
   } else {
     const {
-      htmlStr: labelHtmlStr,
+      htmlStrList: labelHtmlStrList,
       suggestionList: labelSuggestionList,
     } = getLabelInfo(filterObj, labelInfos);
     const {
@@ -323,11 +321,12 @@ function getFilterInfo({ filterObj, dict, industryList }) {
     const ageHtmlStr = getAgeFilterInfo(filterObj.age);
     const lastServiceHtmlStr = getLatestServiceInfo(filterObj.lastServDt, serviceCustomerState);
     const minFeeHtmlStr = getMinfeeInfo(filterObj.minFee);
-    const bizInfo = getBizInfo(filterObj.bizFlag);
-    const list = [
-      bizInfo, labelHtmlStr, holdingProductHtmlStr, businessOpenedHtmlStr,
+    const bizInfo = getBizInfo(query.bizFlag);
+    let list = [
+      bizInfo, holdingProductHtmlStr, businessOpenedHtmlStr,
       ageHtmlStr, lastServiceHtmlStr, minFeeHtmlStr,
     ];
+    list = [...list, ...labelHtmlStrList];
     _.each(commonFilterList, (item) => {
       list.push(getCommonFilterInfo(item, filterObj, { ...dict, industryList }));
     });

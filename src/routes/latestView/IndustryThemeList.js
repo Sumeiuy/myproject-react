@@ -114,7 +114,9 @@ export default class IndustryThemeList extends PureComponent {
         return {
           ...item,
           render: text => (
-            <div className={classnames(styles.td, styles.category)}>{formatString(text)}</div>
+            <div className={classnames(styles.td, styles.category)} title={formatString(text)}>
+              {formatString(text)}
+            </div>
           ),
         };
       }
@@ -122,7 +124,9 @@ export default class IndustryThemeList extends PureComponent {
         return {
           ...item,
           render: text => (
-            <div className={classnames(styles.td, styles.stock)}>{formatString(text)}</div>
+            <div className={classnames(styles.td, styles.stock)} title={formatString(text)}>
+              {formatString(text)}
+            </div>
           ),
         };
       }
@@ -131,9 +135,14 @@ export default class IndustryThemeList extends PureComponent {
           ...item,
           render: (text) => {
             const date = time.format(text, config.dateFormatStr);
-            return (<div className={classnames(styles.td, styles.induname)}>
-              {formatString(date)}
-            </div>);
+            return (
+              <div
+                className={classnames(styles.td, styles.induname)}
+                title={formatString(date)}
+              >
+                {formatString(date)}
+              </div>
+            );
           },
         };
       }

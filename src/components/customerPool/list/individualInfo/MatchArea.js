@@ -12,10 +12,9 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { autobind } from 'core-decorators';
-import store from 'store';
 import { isSightingScope } from '../../helper';
 import { url as urlHelper, url, number } from '../../../../helper';
-import seperator from '../../../../config/filterSeperator';
+import { seperator, sessionStore } from '../../../../config';
 import { openFspTab, openRctTab } from '../../../../utils/index';
 import { RANDOM } from '../../../../config/filterContant';
 import HoldingProductDetail from '../HoldingProductDetail';
@@ -50,13 +49,13 @@ const ORG_CODE = 'org';
 
 export default class MatchArea extends PureComponent {
   static setFilterOrder(id, value, hashString) {
-    const filterOrder = store.get(`CUSTOMERPOOL_FILTER_ORDER_${hashString}`) || [];
+    const filterOrder = sessionStore.get(`CUSTOMERPOOL_FILTER_ORDER_${hashString}`) || [];
     const finalId = _.isArray(id) ? id : [id];
     let finalOrder = _.difference(filterOrder, finalId);
     if (value && !_.includes(value, unlimited)) {
       finalOrder = [...finalId, ...finalOrder];
     }
-    store.set(`CUSTOMERPOOL_FILTER_ORDER_${hashString}`, [...new Set(finalOrder)]);
+    sessionStore.set(`CUSTOMERPOOL_FILTER_ORDER_${hashString}`, [...new Set(finalOrder)]);
   }
 
   static propTypes = {
@@ -214,7 +213,7 @@ export default class MatchArea extends PureComponent {
     const { location: { query: { filters, individualInfo } } } = this.props;
     const needInfoFilter = _.keys(matchAreaConfig);
     if (!individualInfo) {
-      store.remove(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`);
+      sessionStore.remove(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`);
       const filtersArray = filters ? filters.split(seperator.filterSeperator) : [];
       const filterList = _.map(filtersArray, item =>
         item.split(seperator.filterInsideSeperator)[0]);
@@ -222,7 +221,7 @@ export default class MatchArea extends PureComponent {
       MatchArea.setFilterOrder(filterOrder, true, this.hashString);
       return filterOrder;
     }
-    return _.filter(store.get(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`), item => _.includes(needInfoFilter, item));
+    return _.filter(sessionStore.get(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`), item => _.includes(needInfoFilter, item));
   }
 
 
@@ -680,7 +679,7 @@ export default class MatchArea extends PureComponent {
 
   @autobind
   renderCustomerLabels() {
-    const labelList = store.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${this.hashString}`);
+    const labelList = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${this.hashString}`);
     const labelListId = _.map(labelList, item => item.key);
     const {
       listItem: { relatedLabels },

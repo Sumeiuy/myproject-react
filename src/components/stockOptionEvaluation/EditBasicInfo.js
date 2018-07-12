@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 21:45:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-09 13:26:54
+ * @Last Modified time: 2018-07-11 20:01:45
  */
 
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import _ from 'lodash';
 import { Form, Radio, Select } from 'antd';
 
 import Icon from '../common/Icon';
+import logable, { logCommon } from '../../decorators/logable';
 import styles from './editBasicInfo.less';
 
 const FormItem = Form.Item;
@@ -20,8 +21,6 @@ const RadioGroup = Radio.Group;
 const EMPTY_INFO = '--';
 const Option = Select.Option;
 const EMPTY_LIST = [];
-// 默认的空对象
-const DEFAULT_EMPTY_OPTION = { value: '', label: '--请选择--' };
 
 @create()
 export default class EditBasicInfo extends PureComponent {
@@ -45,6 +44,8 @@ export default class EditBasicInfo extends PureComponent {
     accptTime: PropTypes.string,
     // 股票客户类型
     stockCustType: PropTypes.string,
+    // 申请类型
+    reqType: PropTypes.string,
     // 开立期权市场类别
     openOptMktCatg: PropTypes.string,
     // 受理营业部Id
@@ -75,6 +76,7 @@ export default class EditBasicInfo extends PureComponent {
     accptTime: '',
     busPrcDivId: '',
     stockCustType: '',
+    reqType: '',
     openOptMktCatg: '',
     custTransLv: '',
     custTransLvName: '',
@@ -119,6 +121,22 @@ export default class EditBasicInfo extends PureComponent {
           isShowDegreePrompt: false,
           isShowInvPrompt: false,
         };
+      } else {
+        const {
+          stockCustType,
+          reqType,
+          ageFlag,
+          invFlag,
+          custType,
+        } = nextProps.custInfo;
+        const isShowDegreePrompt = custType === 'per' && stockCustType === 'New' && ageFlag === 'N';
+        // 个人客户，申请类型为初次申请，投资经历评估不符合要求
+        const isShowInvPrompt = custType === 'per' && reqType === 'New' && invFlag === 'N';
+        newState = {
+          ...newState,
+          isShowDegreePrompt,
+          isShowInvPrompt,
+        };
       }
     }
     return newState;
@@ -143,20 +161,11 @@ export default class EditBasicInfo extends PureComponent {
     isShowDegreePrompt = isEdit && custType === 'per' && stockCustType === 'New' && ageFlag === 'N';
     // 个人客户，申请类型为初次申请，投资经历评估不符合要求
     isShowInvPrompt = isEdit && custType === 'per' && reqType === 'New' && invFlag === 'N';
-
     this.state = {
       // 基本信息
       custInfo: {},
       // select初始状态为禁用
       isSelectDisabled: true,
-      // 股票客户类型
-      stockCustType: '',
-      // 申请类型
-      reqType: '',
-      // 开立期权市场类别
-      openOptMktCatg: '',
-      // 业务受理营业部
-      busPrcDivId: '',
       // 股票客户类型下拉列表
       stockCustTypeList: EMPTY_LIST,
       // 申请类型下拉列表
@@ -197,6 +206,15 @@ export default class EditBasicInfo extends PureComponent {
         jrqhjyFlag: '',
       });
     }
+
+    // 神策日志
+    logCommon({
+      type: 'DropdownSelect',
+      payload: {
+        name: name === 'stockCustType' ? '客户类型' : '申请类型',
+        value,
+      },
+    });
   }
 
   // 检测是否是新开客户，初次申请，然后判断是否显示学历提示选项，和投资经历评估提示选项
@@ -208,11 +226,9 @@ export default class EditBasicInfo extends PureComponent {
         ageFlag,
         custType,
       },
-    } = this.props;
-    const {
       stockCustType,
       reqType,
-    } = this.state;
+    } = this.props;
     // 个人客户，客户类型为新开客户,年龄条件不符合要求
     this.setState({
       isShowDegreePrompt: custType === 'per' && stockCustType === 'New' && ageFlag === 'N',
@@ -223,13 +239,15 @@ export default class EditBasicInfo extends PureComponent {
     });
   }
 
-  @autobind
-  addEmptyOption(list) {
-    return [DEFAULT_EMPTY_OPTION, ...list];
-  }
-
   // 选择开立期权市场类别
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '开立期权市场类别',
+      value: '$args[1]',
+    },
+  })
   updateOpenOptMktCatg(name, value) {
     this.setState({ [name]: value });
     this.props.onChange({ [name]: value });
@@ -237,6 +255,14 @@ export default class EditBasicInfo extends PureComponent {
 
   // 选择业务受理营业部
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '业务受理营业部',
+      value: '$args[1]',
+    },
+  })
+  upd
   updateBusPrcDiv(name, value) {
     const {
       onChange,
@@ -350,6 +376,8 @@ export default class EditBasicInfo extends PureComponent {
       accptTime,
       // 股票客户类型
       stockCustType,
+      // 申请类型
+      reqType,
       // 开立期权市场类别
       openOptMktCatg,
       // 受理营业部Id
@@ -368,7 +396,6 @@ export default class EditBasicInfo extends PureComponent {
     } = this.props;
     const {
       isSelectDisabled,
-      reqType,
       stockCustTypeList,
       optionMarketTypeList,
       reqTypeList,
@@ -377,11 +404,7 @@ export default class EditBasicInfo extends PureComponent {
       isShowDegreePrompt,
       isShowInvPrompt,
     } = this.state;
-    // 个人客户，客户类型可选择，机构客户，客户类型不可选择,并且是默认值
-    const stockCustTypeListData = this.addEmptyOption(stockCustTypeList);
-    const reqTypeListData = this.addEmptyOption(reqTypeList);
-    const optionMarketTypeListData = this.addEmptyOption(optionMarketTypeList);
-    const busDivisionListData = this.addEmptyOption(busDivisionList);
+
     return (
       <div className={styles.editBasicInfo}>
         <Form>
@@ -508,7 +531,7 @@ export default class EditBasicInfo extends PureComponent {
                             disabled={isSelectDisabled}
                             onChange={key => this.updateSelect('stockCustType', key)}
                           >
-                            { this.getSelectOption(stockCustTypeListData) }
+                            { this.getSelectOption(stockCustTypeList) }
                           </Select>,
                         )
                       }
@@ -543,7 +566,7 @@ export default class EditBasicInfo extends PureComponent {
                               disabled={isSelectDisabled}
                               onChange={key => this.updateSelect('reqType', key)}
                             >
-                              { this.getSelectOption(reqTypeListData) }
+                              { this.getSelectOption(reqTypeList) }
                             </Select>,
                           )
                         }
@@ -571,7 +594,7 @@ export default class EditBasicInfo extends PureComponent {
                         disabled={isSelectDisabled}
                         onChange={key => this.updateOpenOptMktCatg('openOptMktCatg', key)}
                       >
-                        { this.getSelectOption(optionMarketTypeListData) }
+                        { this.getSelectOption(optionMarketTypeList) }
                       </Select>,
                     )
                   }
@@ -593,7 +616,7 @@ export default class EditBasicInfo extends PureComponent {
                         disabled={isSelectDisabled}
                         onChange={key => this.updateBusPrcDiv('busPrcDivId', key)}
                       >
-                        { this.getSelectOption(busDivisionListData) }
+                        { this.getSelectOption(busDivisionList) }
                       </Select>,
                     )
                   }

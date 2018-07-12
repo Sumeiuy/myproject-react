@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-09 22:07:56
+ * @Last Modified time: 2018-07-11 18:25:37
  */
 
 import React, { PureComponent } from 'react';
@@ -21,6 +21,7 @@ import ApprovalBtnGroup from '../common/approvalBtns';
 import EditBasicInfo from './EditBasicInfo';
 import config from './config';
 import { data } from '../../helper';
+import logable, { logCommon } from '../../decorators/logable';
 
 import styles from './createApply.less';
 
@@ -226,6 +227,13 @@ export default class CreateApply extends PureComponent {
 
   // 搜索本营业部客户
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '查询客户',
+      value: '$args[0]',
+    },
+  })
   searchCanApplyCustList(value) {
     const {
       empInfo: {
@@ -252,6 +260,13 @@ export default class CreateApply extends PureComponent {
 
   // 选择本营业部客户
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户',
+      value: '$args[0]',
+    },
+  })
   selectCustomer(item) {
     // 选中客户
     this.setState({ customer: item });
@@ -288,12 +303,9 @@ export default class CreateApply extends PureComponent {
           divisionName,
           openDivName,
           busPrcDivName,
+          stockCustType,
+          reqType,
         } = custInfo;
-        let { stockCustType } = this.state;
-        // 机构客户，股票客户类型固定
-        if (custType === 'org') {
-          stockCustType = 'Org';
-        }
         this.handleChange({
           custInfo,
           custTransLv,
@@ -302,6 +314,7 @@ export default class CreateApply extends PureComponent {
           openOptMktCatg,
           busPrcDivId,
           stockCustType,
+          reqType,
         });
 
         // 获取下一步按钮和审批人
@@ -543,6 +556,15 @@ export default class CreateApply extends PureComponent {
     };
     this.props.updateBindingFlow(query)
       .then(() => {
+        // 神策上报新建表单
+        logCommon({
+          type: 'Submit',
+          payload: {
+            name: '股票期权申请新建',
+            vlaue: JSON.stringify(query),
+          },
+        });
+        // 显示下一步审批人
         this.showNextApprover(item);
       });
   }
@@ -624,6 +646,7 @@ export default class CreateApply extends PureComponent {
       createButtonListData,
       accptTime,
       stockCustType,
+      reqType,
       openOptMktCatg,
       busPrcDivId,
       custTransLv,
@@ -714,6 +737,7 @@ export default class CreateApply extends PureComponent {
               custInfo={custInfo}
               accptTime={accptTime}
               stockCustType={stockCustType}
+              reqType={reqType}
               openOptMktCatg={openOptMktCatg}
               busPrcDivId={busPrcDivId}
               custTransLv={custTransLv}

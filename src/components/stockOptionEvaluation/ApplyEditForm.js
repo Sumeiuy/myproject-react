@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-06 17:48:23
+ * @Last Modified time: 2018-07-12 10:08:26
  */
 
 import React, { PureComponent } from 'react';
@@ -22,6 +22,7 @@ import Approval from '../permission/Approval';
 import ApproveList from '../common/approveList';
 import config from './config';
 import { data } from '../../helper';
+import logable, { logCommon } from '../../decorators/logable';
 
 import styles from './applyEditForm.less';
 
@@ -116,6 +117,8 @@ export default class ApplyEditForm extends PureComponent {
       editButtonList: {},
       // 用于重新渲染上传组件的key
       uploadKey: data.uuid(),
+      // 附件是否可以编辑，终止流程后附件不能编辑
+      isAttachmentEdit: true,
     };
   }
 
@@ -199,6 +202,7 @@ export default class ApplyEditForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].btnName' } })
   handleSubmit(item) {
     this.setState({
       operate: item.operate,
@@ -264,9 +268,6 @@ export default class ApplyEditForm extends PureComponent {
         nonAlertblackFlag,
         riskEval,
         riskEvalTime,
-        assessment: {
-          age,
-        },
         ageFlag,
         investPrefer,
       },
@@ -292,7 +293,6 @@ export default class ApplyEditForm extends PureComponent {
       nonAlertblackFlag,
       riskEval,
       riskEvalTime,
-      age,
       ageFlag,
       degreeFlag,
       investPrefer,
@@ -344,9 +344,6 @@ export default class ApplyEditForm extends PureComponent {
         nonAlertblackFlag,
         riskEval,
         riskEvalTime,
-        assessment: {
-          age,
-        },
         ageFlag,
         investPrefer,
       },
@@ -395,7 +392,6 @@ export default class ApplyEditForm extends PureComponent {
       nonAlertblackFlag,
       riskEval,
       riskEvalTime,
-      age,
       ageFlag,
       degreeFlag,
       investPrefer,
@@ -403,6 +399,14 @@ export default class ApplyEditForm extends PureComponent {
     };
     this.props.updateBindingFlow(query)
       .then(() => {
+        // 神策上报修改表单
+        logCommon({
+          type: 'Submit',
+          payload: {
+            name: '股票期权申请修改',
+            vlaue: JSON.stringify(query),
+          },
+        });
         this.showNextApprover();
       });
   }
@@ -447,7 +451,10 @@ export default class ApplyEditForm extends PureComponent {
         message.success('该股票期权申请已被终止');
       }
       getDetailInfo({ flowId }).then(() => {
-        this.setState({ editButtonList: {} });
+        this.setState({
+          editButtonList: {},
+          isAttachmentEdit: false,
+        });
       });
     });
   }
@@ -502,6 +509,7 @@ export default class ApplyEditForm extends PureComponent {
       attachment,
       uploadKey,
       editButtonList,
+      isAttachmentEdit,
     } = this.state;
     if (_.isEmpty(this.props.detailInfo)) {
       return null;
@@ -616,7 +624,7 @@ export default class ApplyEditForm extends PureComponent {
             <div className={styles.module}>
               <InfoTitle head="附件信息" />
               <CommonUpload
-                edit
+                edit={isAttachmentEdit}
                 reformEnable
                 key={uploadKey}
                 attachment={attachment || ''}

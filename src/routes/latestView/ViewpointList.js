@@ -97,18 +97,26 @@ export default class ViewpointList extends PureComponent {
       </div>
     );
     _.find(newTitleList, item => item.key === 'typeName').render = item => (
-      <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
+      <div className={classnames(styles.td, styles.category)} title={formatString(item)}>
+        {formatString(item)}
+      </div>
     );
     _.find(newTitleList, item => item.key === 'stockName').render = item => (
-      <div className={classnames(styles.td, styles.stock)}>{formatString(item)}</div>
+      <div className={classnames(styles.td, styles.stock)} title={formatString(item)}>
+        {formatString(item)}
+      </div>
     );
     _.find(newTitleList, item => item.key === 'industryName').render = item => (
-      <div className={classnames(styles.td, styles.induname)}>{formatString(item)}</div>
+      <div className={classnames(styles.td, styles.induname)} title={formatString(item)}>
+        {formatString(item)}
+      </div>
     );
     _.find(newTitleList, item => item.key === 'time').render = (item) => {
       const date = time.format(item, config.dateFormatStr);
       return (
-        <div className={classnames(styles.td, styles.pubdatelist)}>{formatString(date)}</div>
+        <div className={classnames(styles.td, styles.pubdatelist)} title={formatString(date)}>
+          {formatString(date)}
+        </div>
       );
     };
     _.find(newTitleList, item => item.key === 'author').render = item => (

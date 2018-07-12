@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 13:08:38
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-11 11:09:32
  * 服务经理维度任务统计
  */
 
@@ -449,6 +449,22 @@ export default class CustManagerDetailScope extends PureComponent {
     return EMPTY_LIST;
   }
 
+  // 服务经理维度下
+  @autobind
+  isEmpManagerScope() {
+    const { currentSelectScope } = this.state;
+    return currentSelectScope === EMP_MANAGER_SCOPE;
+  }
+
+  // 服务经理维度，要显示员工状态
+  @autobind
+  renderEmpState() {
+    return this.isEmpManagerScope() ? [{
+      key: 'empStationName',
+      value: '员工状态',
+    }] : [];
+  }
+
   /**
    * 渲染每一列数据
    */
@@ -456,6 +472,7 @@ export default class CustManagerDetailScope extends PureComponent {
   renderColumn() {
     const columnTitle = [
       ...this.renderFirstCoulmn(),
+      ...this.renderEmpState(),
       {
         key: 'flowNum',
         value: '客户总数',
@@ -515,36 +532,46 @@ export default class CustManagerDetailScope extends PureComponent {
   @autobind
   renderColumnWidth() {
     const { isFold, currentOrgLevel } = this.props;
+    // 是否为服务经理维度
+    const isEmpManagerScope = this.isEmpManagerScope();
     let columnWidth = [];
     let columnWidthTotal = 0;
 
     if (isFold) {
-      columnWidthTotal = 870;
+      columnWidthTotal += 870;
       // 列的总宽度870px
       // 处于折叠状态，每一列的宽度需要增加
       columnWidth = ['150px', '180px', '180px', '180px', '180px'];
+      if (isEmpManagerScope) {
+        columnWidth = [...columnWidth, '180px'];
+        columnWidthTotal += 180;
+      }
       if (currentOrgLevel === ORG_LEVEL1) {
         // 多展示两列数据
         columnWidth = [...columnWidth, '180px', '180px'];
-        columnWidthTotal = 1230;
+        columnWidthTotal += 360;
       } else if (currentOrgLevel === ORG_LEVEL2) {
         // 多展示一列数据
         columnWidth = [...columnWidth, '180px'];
-        columnWidthTotal = 1050;
+        columnWidthTotal += 180;
       }
     } else {
-      columnWidthTotal = 630;
+      columnWidthTotal += 630;
       // 处于展开状态,
       // 列的总宽度630px
       columnWidth = ['150px', '120px', '120px', '120px', '120px'];
+      if (isEmpManagerScope) {
+        columnWidth = [...columnWidth, '120px'];
+        columnWidthTotal += 120;
+      }
       if (currentOrgLevel === ORG_LEVEL1) {
         // 多展示两列数据
         columnWidth = [...columnWidth, '120px', '180px'];
-        columnWidthTotal = 930;
+        columnWidthTotal += 300;
       } else if (currentOrgLevel === ORG_LEVEL2) {
         // 多展示一列数据
         columnWidth = [...columnWidth, '180px'];
-        columnWidthTotal = 810;
+        columnWidthTotal += 180;
       }
     }
 

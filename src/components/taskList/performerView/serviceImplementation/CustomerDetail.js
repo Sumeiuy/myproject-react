@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-03 18:20:28
+ * @Last Modified time: 2018-07-10 12:29:28
  */
 
 import React, { PureComponent } from 'react';
@@ -44,7 +44,7 @@ const getFormatedAsset = (value) => {
 const INTRO_FIRSTSTEP = 'introFirstStep';
 
 // 存储在本地用哪个来判断是否在执行者视图中第一次使用'展开收起'
-const FIRSTUSECOLLAPSE_PERFORMERVIEW = 'guide_firstUseCollapse_performerView';
+const FIRSTUSECOLLAPSE_PERFORMERVIEW = 'GUIDE_FIRSTUSECOLLAOSE_PERFORMERVIEW';
 
 export default class CustomerDetail extends PureComponent {
   static propTypes = {

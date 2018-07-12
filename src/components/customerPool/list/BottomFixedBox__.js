@@ -50,12 +50,7 @@ export default class BottomFixedBox extends PureComponent {
 
   componentDidMount() {
     this.setTaskAndGroup();
-    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
-    if (sidebarHideBtn && sidebarShowBtn) {
-      sidebarHideBtn.addEventListener('click', this.updateLeftPos);
-      sidebarShowBtn.addEventListener('click', this.updateLeftPos);
-    }
+    window.onFspSidebarbtn(this.updateLeftPos);
   }
 
   componentDidUpdate() {
@@ -63,12 +58,7 @@ export default class BottomFixedBox extends PureComponent {
   }
 
   componentWillUnmount() {
-    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
-    if (sidebarHideBtn && sidebarShowBtn) {
-      sidebarHideBtn.removeEventListener('click', this.updateLeftPos);
-      sidebarShowBtn.removeEventListener('click', this.updateLeftPos);
-    }
+    window.offFspSidebarbtn(this.updateLeftPos);
   }
 
   @autobind
@@ -103,6 +93,7 @@ export default class BottomFixedBox extends PureComponent {
           selectAll,
           // 客户列表页的筛选条件
           filters,
+          bizFlag,
         },
         pathname,
         search,
@@ -121,6 +112,9 @@ export default class BottomFixedBox extends PureComponent {
       shouldStay,
       editPane,
     };
+    if (bizFlag) {
+      param.bizFlag = bizFlag;
+    }
     if (selectedIds) {
       const selectedIdsArr = selectedIds.split(',');
       param.ids = selectedIdsArr;
@@ -150,7 +144,7 @@ export default class BottomFixedBox extends PureComponent {
     };
 
     const { selectCount } = this.props;
-    if (Number(selectCount) > 500) {
+    if (selectCount > 500) {
       this.setState({
         visible: true,
         modalContent: '一次添加的客户数不能超过500个',
@@ -266,6 +260,7 @@ export default class BottomFixedBox extends PureComponent {
     shouldStay,
     editPane,
     filters,
+    bizFlag,
   }) {
     const tmpArr = [];
     _(ids).forEach((item) => {
@@ -283,6 +278,7 @@ export default class BottomFixedBox extends PureComponent {
       condition: condt,
       fr,
       filters,
+      bizFlag,
     };
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });
   }
@@ -301,6 +297,7 @@ export default class BottomFixedBox extends PureComponent {
     shouldStay,
     editPane,
     filters,
+    bizFlag,
   }) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
@@ -313,6 +310,7 @@ export default class BottomFixedBox extends PureComponent {
       name,
       fr,
       filters,
+      bizFlag,
     };
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });
   }
