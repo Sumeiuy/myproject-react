@@ -745,7 +745,7 @@ export default class Filter extends PureComponent {
               position: 'relactive',
               maxHeight: 324,
               overflowY: 'auto',
-              width: 210,
+              width: 250,
               zIndex: 10,
             }}
             data={moreFilterData}
