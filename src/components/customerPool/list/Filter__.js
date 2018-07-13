@@ -638,6 +638,7 @@ export default class Filter extends PureComponent {
           className={styles.filter}
           key={renderItem.id}
           filterName={renderItem.name}
+          autoFocus={this.labelFilterVisible && renderItem.id === this.labelFilter}
           filterId={renderItem.id}
           onClose={
             () =>
