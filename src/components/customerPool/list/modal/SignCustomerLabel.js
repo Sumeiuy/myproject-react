@@ -95,6 +95,20 @@ export default class SignCustomerLabel extends PureComponent {
     // 获得焦点时获取全部数据
     queryLikeLabelInfo({ labelNameLike: '' });
   }
+
+  @autobind
+  handleSearch(value) {
+    this.setState({ value });
+  }
+
+
+  @autobind
+  filterOption(value, option) {
+    const { custLikeLabel } = this.props;
+    const { key } = option;
+    const { labelName = '' } = _.find(custLikeLabel, item => item.id === key) || {};
+    return labelName.indexOf(value) > -1;
+  }
   render() {
     const { custId, handleCancelSignLabelCustId, custLikeLabel } = this.props;
     const { selectedLabels, value = '' } = this.state;
@@ -119,9 +133,10 @@ export default class SignCustomerLabel extends PureComponent {
           onChange={this.handleChange}
           onBlur={this.handleBlur}
           onFocus={this.handleFocus}
+          onSearch={this.handleSearch}
           style={{ width: '100%' }}
+          filterOption={this.filterOption}
           optionFilterProp="children"
-          getPopupContainer={triggerNode => triggerNode.parentNode}
         >
           {custLikeLabel.map(labelItem =>
             <Option key={labelItem.id}>{replaceKeyWord(labelItem.labelName, value)}</Option>,
