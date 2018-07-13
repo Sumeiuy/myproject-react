@@ -2,10 +2,10 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系申请的配置文件
  * @Date: 2018-06-08 13:32:19
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-21 20:17:15
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-13 15:49:26
  */
-
+import { customer, status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
 
 const config = {
   custRelationships: {
@@ -14,7 +14,7 @@ const config = {
     statusOptions: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -115,6 +115,22 @@ const config = {
   PM_NAME_CODE: '127370',
   // 关联关系子类型-产品管理人Code
   PM_SUBTYPE_CODE: '127371',
+  headerFilters: {
+    basicFilters: [
+      customer,
+      status,
+      drafter,
+      applyTime,
+    ],
+    moreFilters: [
+      department,
+      approver,
+    ],
+    moreFilterData: [
+      { value: '部门', key: 'orgId' },
+      { value: '审批人', key: 'approvalId' },
+    ],
+  },
 };
 
 export default config;

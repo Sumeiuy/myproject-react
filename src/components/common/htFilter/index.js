@@ -9,6 +9,8 @@ import LegoFilter, {
   MultiFilterWithSearch,
 } from 'lego-react-filter/src';
 
+import { TreeFilter } from 'lego-tree-filter/src';
+
 import DateFilter from './dateFilter';
 import TagFilter from './tagFilter';
 import AmountRangeFilter from './amountSelect';
@@ -18,6 +20,12 @@ function getDateFilter(props) {
   const dateProps = _.omit(props, ['type', 'data', 'onInputChange']);
   return (<DateFilter {...dateProps} />);
 }
+
+function getTreeFilter(props) {
+  const treeProps = _.omit(props, ['type', 'data', 'onInputChange']);
+  const { data } = props; // eslint-disable-line
+  return (<TreeFilter treeData={data} {...treeProps} />);
+}
 export default function Filter(props) {
   switch (props.type) {
     case 'date':
@@ -26,6 +34,8 @@ export default function Filter(props) {
       return (<AmountRangeFilter {...props} />);
     case 'lastServiceDate':
       return (<LastServiceDate {...props} />);
+    case 'tree':
+      return getTreeFilter(props);
     default:
       return <LegoFilter {...props} />;
   }

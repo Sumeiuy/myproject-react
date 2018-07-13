@@ -24,7 +24,7 @@ const pageConfig = {
     subType: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -97,7 +97,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -129,7 +129,7 @@ const pageConfig = {
     subType: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -239,7 +239,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -273,7 +273,7 @@ const pageConfig = {
     subType: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -302,7 +302,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -329,7 +329,7 @@ const pageConfig = {
     operationList: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -374,7 +374,7 @@ const pageConfig = {
     subType: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -517,7 +517,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -544,7 +544,7 @@ const pageConfig = {
     operationList: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -769,7 +769,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -890,7 +890,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {

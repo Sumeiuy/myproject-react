@@ -2,8 +2,8 @@
  * @Description: 分公司客户分配
  * @Author: Liujianshu
  * @Date: 2018-05-23 09:59:21
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-08 21:30:25
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-13 17:21:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -41,6 +41,7 @@ const {
   custAllot: { status, pageType },
   subType,
   clearDataArray,
+  headerFilters: { basicFilters, moreFilters, moreFilterData },
 } = config;
 
 // 登陆人的组织 ID
@@ -589,6 +590,9 @@ export default class CustAllot extends PureComponent {
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
         checkUserIsFiliale={this.checkUserIsFiliale}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

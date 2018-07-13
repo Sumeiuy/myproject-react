@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 10:34:12
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-12 13:49:14
  */
 
 import React, { PureComponent } from 'react';
@@ -25,7 +25,11 @@ import seibelHelper from '../../helper/page/seibel';
 
 // 客户关联关系申请左侧列表宽度
 const LEFT_PANEL_WIDTH = 500;
-const { custRelationships, custRelationships: { statusOptions, pageType } } = config;
+const {
+  custRelationships,
+  custRelationships: { statusOptions, pageType },
+  headerFilters: { basicFilters, moreFilters, moreFilterData },
+ } = config;
 const effect = dva.generateEffect;
 const effects = {
   // 左侧列表
@@ -382,12 +386,13 @@ export default class CustRelationshipsHome extends PureComponent {
         location={location}
         page="custRelationships"
         pageType={pageType}
-        needSubType={false}
         stateOptions={statusOptions}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
         isShowCreateBtn={this.handleShowCreateBtn}
-        needApplyTime
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 
