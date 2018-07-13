@@ -10,6 +10,7 @@
 const duty = {
   HTSC_SYZBCX: '1-46IDNZI', // HTSC 首页指标查询匹配值
   HTSC_HQ_MAMPID: '1-FCQM-27', // HTSC 营销活动-总部执行岗
+  HTSC_HQ_XTGL: '1-FCQM-25', // HTSC 系统管理-总部执行岗
   HTSC_XSFU_ZBZXG: '1-FCQM-29', // HTSC 销售服务-总部执行岗
   HTSC_ZHFW_YYBZXG: '1-FCQM-34', // HTSC 综合服务-营业部执行岗
   HTSC_BO_MAMPID: '1-FCQM-35', // HTSC 营销活动-分中心管理岗
