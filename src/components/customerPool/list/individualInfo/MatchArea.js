@@ -5,17 +5,17 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-13 09:59:07
+ * @Last Modified time: 2018-07-13 16:22:32
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { autobind } from 'core-decorators';
-import { isSightingScope } from '../../helper';
+import { isSightingScope, handleOpenFsp360TabAction } from '../../helper';
 import { url as urlHelper, url, number } from '../../../../helper';
 import { seperator, sessionStore } from '../../../../config';
-import { openFspTab, openRctTab } from '../../../../utils/index';
+import { openRctTab } from '../../../../utils/index';
 import { RANDOM } from '../../../../config/filterContant';
 import HoldingProductDetail from '../HoldingProductDetail';
 import HoldingCombinationDetail from '../HoldingCombinationDetail';
@@ -41,11 +41,6 @@ const replaceWord = ({ value, searchText, title = '', type = '' }) => {
   return value.replace(regxp,
     `<em class="marked">${searchText}${titleDom || ''}</em>${holder}`);
 };
-
-// 个人对应的code码
-const PER_CODE = 'per';
-// 一般机构对应的code码
-const ORG_CODE = 'org';
 
 export default class MatchArea extends PureComponent {
   static setFilterOrder(id, value, hashString) {
@@ -222,44 +217,6 @@ export default class MatchArea extends PureComponent {
       return filterOrder;
     }
     return _.filter(sessionStore.get(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`), item => _.includes(needInfoFilter, item));
-  }
-
-
-  /**
-   * 跳转到360服务记录页面
-   * @param {*object} itemData 当前列表item数据
-   * @param {*} keyword 当前输入关键字
-   */
-  @autobind
-  handleOpenFsp360TabAction(itemData, keyword) {
-    const { custNature, custId, rowId, ptyId } = itemData;
-    const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
-    const url360 = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
-    const pathname = '/customerCenter/fspcustomerDetail';
-    openFspTab({
-      routerAction: this.context.push,
-      url360,
-      query: {
-        custId,
-        rowId,
-        ptyId,
-        keyword,
-      },
-      pathname,
-      param: {
-        id: 'FSP_360VIEW_M_TAB',
-        title: '客户360视图-客户信息',
-        forceRefresh: true,
-        activeSubTab: ['服务记录'],
-        // 服务记录搜索
-        serviceRecordKeyword: keyword,
-        // 服务渠道
-        serviceRecordChannel: encodeURIComponent('理财服务平台'),
-      },
-      state: {
-        url,
-      },
-    });
   }
 
   // 点击订购组合名称跳转到详情页面
@@ -567,7 +524,11 @@ export default class MatchArea extends PureComponent {
           </span>
           <span
             className={styles.more}
-            onClick={() => this.handleOpenFsp360TabAction(listItem, searchText)}
+            onClick={() => handleOpenFsp360TabAction({
+              itemData: listItem,
+              keyword: searchText,
+              routerAction: this.context.push,
+            })}
           >详情</span>
         </li>
       );
