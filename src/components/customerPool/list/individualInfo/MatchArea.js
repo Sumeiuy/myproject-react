@@ -5,7 +5,7 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-05 15:00:40
+ * @Last Modified time: 2018-07-13 09:59:07
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -713,11 +713,11 @@ export default class MatchArea extends PureComponent {
     const { empInfo: { empInfo = {} } } = this.context;
     // 是否显示’持仓详情‘，默认不显示
     let isShowDetailBtn = false;
-    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
+    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓行业信息
     if (hasNPCTIQPermission && !isPrivateCustomer) {
       isShowDetailBtn = true;
     }
-    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
+    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓行业信息
     // 主服务经理 可以看名下所有客户的持仓信息
     if (hasPCTIQPermission || empInfo.rowId === empId) {
       isShowDetailBtn = true;
@@ -740,7 +740,6 @@ export default class MatchArea extends PureComponent {
               <em className="marked">
                 {name}
               </em>
-              /{id}
             </i>
             {isShowDetailBtn && <HoldingIndustryDetail {...props} />}
           </span>
