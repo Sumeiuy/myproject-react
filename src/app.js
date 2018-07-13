@@ -20,6 +20,7 @@ import routerConfig from './router';
 import { request as requestConfig, persist as persistConfig } from './config';
 import { dva as dvaHelper, dom } from './helper';
 import { logCommon } from './decorators/logable';
+import { fspGlobal } from './utils';
 
 // 尝试通过给body添加class来达到覆盖antd v3的样式
 dom.addClass(document.body, 'ant-v2-compatible');
@@ -70,8 +71,13 @@ const getConfirmation = (msg, callback) => {
   Modal.confirm({
     title: '请确认',
     content: msg,
-    onOk() { callback(true); },
-    onCancel() { callback(false); },
+    onOk() {
+      callback(true);
+    },
+    onCancel() {
+      fspGlobal.handlePromptCancel();
+      callback(false);
+    },
   });
 };
 
