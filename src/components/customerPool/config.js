@@ -331,3 +331,8 @@ export const capitalFilterList = [
   { labelName: '归集率', filterField: 'gjlRate' },
   { labelName: '外部市值', filterField: 'outMktVal' },
 ];
+
+// 个人对应的code码
+export const PER_CODE = 'per';
+// 一般机构对应的code码
+export const ORG_CODE = 'org';
