@@ -4,6 +4,8 @@
  * @author wangjunjun
  */
 
+import { env } from '../helper';
+
 function exec(method, ...args) {
   try {
     window[method].apply(null, args);
@@ -139,7 +141,7 @@ const fspGlobal = {
   },
   // 处理执行者视图表单发生变化，切换tab，确认框中的 取消 按钮 点击
   handlePromptCancel() {
-    if (window.$) {
+    if (env.isInFsp()) {
       // 当前选中的tad的id
       const activedTabId = $('#UTB li.active a').attr('href');
       // 恢复当前选中的tab的url
