@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-10 15:51:57
+ * @Last Modified time: 2018-07-13 10:52:43
  */
 
 import React, { PureComponent } from 'react';
@@ -449,7 +449,6 @@ export default class StockOptionApplication extends PureComponent {
         { isShowCreateModal ?
           <CreateApply
             location={location}
-            empInfo={empInfo}
             busCustList={busCustList}
             getBusCustList={getBusCustList}
             clearProps={clearProps}
