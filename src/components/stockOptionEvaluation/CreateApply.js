@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-11 18:25:37
+ * @Last Modified time: 2018-07-13 11:33:50
  */
 
 import React, { PureComponent } from 'react';
@@ -20,21 +20,19 @@ import AutoComplete from '../common/similarAutoComplete';
 import ApprovalBtnGroup from '../common/approvalBtns';
 import EditBasicInfo from './EditBasicInfo';
 import config from './config';
-import { data } from '../../helper';
+import { data, emp } from '../../helper';
 import logable, { logCommon } from '../../decorators/logable';
 
 import styles from './createApply.less';
 
 const FormItem = Form.Item;
-const { approvalColumns } = config;
+const { stockOptionApply: { pageType }, approvalColumns } = config;
 const SRTYPE = 'SRStkOpReq';
 const EMPTY_INFO = '--';
 
 export default class CreateApply extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    // 员工信息
-    empInfo: PropTypes.object.isRequired,
     // 清除数据
     clearProps: PropTypes.func.isRequired,
     // 关闭蒙框
@@ -236,12 +234,6 @@ export default class CreateApply extends PureComponent {
   })
   searchCanApplyCustList(value) {
     const {
-      empInfo: {
-        empInfo: {
-          postnId,
-          occDivnNum,
-        },
-      },
       getBusCustList,
     } = this.props;
     const {
@@ -249,11 +241,12 @@ export default class CreateApply extends PureComponent {
       pageSize,
     } = this.state;
     const query = {
-      postnId,
       pageNum,
       pageSize,
-      deptCode: occDivnNum,
+      type: pageType,
       keyword: value,
+      deptCode: emp.getOrgId(),
+      postnId: emp.getPstnId(),
     };
     getBusCustList(query);
   }
