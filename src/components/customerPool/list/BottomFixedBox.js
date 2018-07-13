@@ -336,8 +336,8 @@ export default class BottomFixedBox extends PureComponent {
   renderGroup() {
     if (this.props.mainServiceManager) {
       return [
-        <button onClick={this.handleCustomerLabelClick}>客户标签</button>,
-        <button onClick={this.handleCustomerGroupClick}>用户分组</button>];
+        <button onClick={this.handleCustomerLabelClick}>设置标签</button>,
+        <button onClick={this.handleCustomerGroupClick}>加到分组</button>];
     }
     return null;
   }
@@ -356,7 +356,7 @@ export default class BottomFixedBox extends PureComponent {
     } = this.props;
     let str = '';
     if (mainServiceManager) {
-      str = '，或者把用户加入分组管理';
+      str = '、可以为用户设置标签，或者把用户加入分组管理';
     }
     return (
       <p className="left">

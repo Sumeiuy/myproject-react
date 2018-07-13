@@ -50,7 +50,13 @@ export default class Item extends PureComponent {
           <div>{title}</div>
           <div>{categoryName}</div>
         </div>
-        <h3><span>{gradeName}</span>{timeHelper.format(time, dateFormatStr)}</h3>
+        <h3>
+          {/* 如果没有评级，则不显示该标签 */}
+          {
+            gradeName ? <span>{gradeName}</span> : null
+          }
+          {timeHelper.format(time, dateFormatStr)}
+        </h3>
         <p>{content}</p>
         <div className={styles.link}><a onClick={this.handleDetailClick}>[详情]</a></div>
       </div>

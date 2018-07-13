@@ -13,7 +13,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import { autobind } from 'core-decorators';
 import { isSightingScope } from '../../helper';
-import { url as urlHelper, url } from '../../../../helper';
+import { url as urlHelper, url, number } from '../../../../helper';
 import { seperator, sessionStore } from '../../../../config';
 import { openFspTab, openRctTab } from '../../../../utils/index';
 import { RANDOM } from '../../../../config/filterContant';
@@ -308,7 +308,9 @@ export default class MatchArea extends PureComponent {
         <li title={currentVal}>
           <span>
             <i className="label">{name}：</i>
-            {currentVal}{unit}
+            {
+              unit === '元' ? number.thousandFormat(currentVal) : currentVal
+            }{unit}
           </span>
         </li>
       );
