@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 14:49:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-13 16:33:39
+ * @Last Modified time: 2018-07-13 20:00:45
  * @description 线上销户新建以及驳回后修改通用部分
  */
 
@@ -224,7 +224,10 @@ export default class CancelAccountOLForm extends PureComponent {
     // 如果从选了其他品种-->取消选择其他品种，则不显示详情品种输入框
     let otherState = {};
     if (!hasSelectOtherReason && !noSelectOther) {
-      otherState = { hasSelectOtherReason: true };
+      otherState = {
+        hasSelectOtherReason: true,
+        otherReasonDetail: '',
+      };
     } else if (hasSelectOtherReason && noSelectOther) {
       otherState = {
         hasSelectOtherReason: false,

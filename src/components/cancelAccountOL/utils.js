@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 09:36:44
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-13 18:41:23
+ * @Last Modified time: 2018-07-13 20:40:10
  * @description 线上销户工具函数
  */
 import _ from 'lodash';
@@ -96,7 +96,10 @@ const util = {
   convertSubmitInvestVars(vars, dict, churnInvestOtherDetail) {
     const submitData = _.reduce(dict, (data, item) => {
       const { value } = item;
-      const hasThisValue = _.isEmpty(_.find(vars, o => o.key === value));
+      const hasThisValue = _.isEmpty(_.find(vars, (o) => {
+        const result = _.isString(o) ? o === value : o.key === value;
+        return result;
+      }));
       return {
         ...data,
         [value]: !hasThisValue,
@@ -109,7 +112,10 @@ const util = {
   convertSubmitLostReason(reasons, dict, churnOtheReason) {
     const submitData = _.reduce(dict, (data, item) => {
       const { value } = item;
-      const hasThisValue = _.isEmpty(_.find(reasons, o => o.key === value));
+      const hasThisValue = _.isEmpty(_.find(reasons, (o) => {
+        const result = _.isString(o) ? o === value : o.key === value;
+        return result;
+      }));
       return {
         ...data,
         [value]: !hasThisValue,

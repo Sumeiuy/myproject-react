@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-12 09:02:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-12 12:09:33
+ * @Last Modified time: 2018-07-13 20:32:58
  * @description 线上销户的驳回后修改页面
  */
 
@@ -14,7 +14,7 @@ import _ from 'lodash';
 import { Input } from 'antd';
 
 import TableDialog from '../../components/common/biz/TableDialog';
-// import confirm from '../../components/common/confirm_';
+import confirm from '../../components/common/confirm_';
 import ApprovalBtnGroup from '../../components/common/approvalBtns';
 import ApproveList from '../../components/common/approveList';
 import InfoTitle from '../../components/common/InfoTitle';
@@ -22,9 +22,15 @@ import InfoItem from '../../components/common/infoItem';
 import CancelAccountOLForm from '../../components/cancelAccountOL/CancelAccountOLForm';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
-import { env, dom, dva } from '../../helper';
+import { env, dom, dva, emp } from '../../helper';
 
 import { APPROVAL_COLUMNS } from '../../components/cancelAccountOL/config';
+import {
+  convertSubmitLostReason,
+  convertSubmitInvestVars,
+  getSelectedKeys,
+} from '../../components/cancelAccountOL/utils';
+import { validateData } from '../../helper/page/cancelAccount';
 
 import styles from './rejectHome.less';
 
@@ -52,6 +58,10 @@ const mapDispatchToProps = {
   getDetailForUpdate: effect('cancelAccountOL/getDetailForUpdate', { forceFull: true }),
   // 驳回后修改页面的按钮和审批人信息
   getApprovalInfoForUpdate: effect('cancelAccountOL/getApprovalInfoForUpdate', { forceFull: true }),
+  // 提交
+  submitApply: effect('cancelAccountOL/submitApply', { forceFull: true }),
+  // 走流程
+  doApproval: effect('cancelAccountOL/doApproval', { forceFull: true }),
   // 清除Redux中的数据
   clearReduxData: effect('cancelAccountOL/clearReduxData', { loading: false }),
 };
@@ -78,7 +88,9 @@ export default class RejectHome extends Component {
     clearReduxData: PropTypes.func.isRequired,
     // 提交结果
     submitResult: PropTypes.object.isRequired,
+    submitApply: PropTypes.func.isRequired,
     // 流程结果
+    doApproval: PropTypes.func.isRequired,
     flowResult: PropTypes.object.isRequired,
   }
 
@@ -104,9 +116,13 @@ export default class RejectHome extends Component {
       queryDict();
     }
     // 获取到详情数据
-    this.props.getDetailForUpdate({ flowId });
+    this.props.getDetailForUpdate({ flowId }).then(this.saveDetailToState);
     // 获取流程审批按钮和审批人信息
-    // this.props.getApprovalInfoForUpdate({ flowId });
+    this.props.getApprovalInfoForUpdate({ flowId });
+  }
+
+  componentWillUnmount() {
+    this.props.clearReduxData({ detailInfoForUpdate: {} });
   }
 
   @autobind
@@ -118,78 +134,21 @@ export default class RejectHome extends Component {
     dom.setStyle(this.rejectHomeRef.current, 'height', height);
   }
 
-  // @autobind
-  // doValidateBeforeSubmit() {
-  //   const { cust, relationships, appId } = this.state;
-  //   this.props.validateData({
-  //     appId,
-  //     custId: cust.custId,
-  //     custType: cust.custTypeValue,
-  //     relationshipList: relationships,
-  //   }).then(this.doSomethindAfterValid);
-  // }
-
-  // @autobind
-  // doSomethindAfterValid() {
-  //   const { validateResult: { msg = '接口错误', valid = false } } = this.props;
-  //   if (valid) {
-  //     // 校验通过之后提交数据
-  //     this.doSubmit();
-  //   } else {
-  //     confirm({ content: msg });
-  //   }
-  // }
-
-  // @autobind
-  // doSubmit() {
-  //   const {
-  //     relationships,
-  //     attachment,
-  //     auditors,
-  //     stockRepurchase,
-  //     cust,
-  //     appId,
-  //   } = this.state;
-  //   const { location: { query: { flowId = '' } } } = this.props;
-  //   this.props.submitApply({
-  //     relationshipList: relationships,
-  //     attachment,
-  //     empLogin: auditors,
-  //     businessFlag: stockRepurchase,
-  //     custId: cust.custId,
-  //     custRowId: cust.custRowId,
-  //     custType: cust.custTypeValue,
-  //     IDTypeValue: cust.custIDTypeValue,
-  //     IDNum: cust.custIDNum,
-  //     flowCode: flowId,
-  //     appId,
-  //   }).then(this.doApprovalFlow);
-  // }
-
-  // @autobind
-  // doApprovalFlow() {
-  //   const { submitResult, location: { query: { flowId = '' } } } = this.props;
-  //   if (!_.isEmpty(submitResult)) {
-  //     const { groupName, operate, auditors, cust, idea } = this.state;
-  //     this.props.doApproveFlow({
-  //       itemId: submitResult,
-  //       groupName,
-  //       auditors,
-  //       operate,
-  //       custId: cust.custId,
-  //       wobNum: flowId,
-  //       flowId,
-  //       approverIdea: idea,
-  //     }).then(() => {
-  //       const { flowResult } = this.props;
-  //       if (flowResult === 'success') {
-  //         // 此处流程走成功了之后，需要将按钮注销
-  //         // 把审批人信息删除掉
-  //         this.props.clearReduxData({ approvalForUpdate: {} });
-  //       }
-  //     });
-  //   }
-  // }
+  @autobind
+  saveDetailToState() {
+    const { detailInfoForUpdate: { basicInfo, attachment } } = this.props;
+    this.setState({
+      cust: basicInfo,
+      attachment,
+      lostDirection: basicInfo.lostDirectionCode,
+      stockExchange: basicInfo.stockExchange,
+      investVars: getSelectedKeys(_.get(basicInfo, 'investVars')),
+      otherVarDetail: _.get(basicInfo, 'investVars.churnInvestOtherDetail') || '',
+      lostReason: getSelectedKeys(_.get(basicInfo, 'lostReason')),
+      otherReasonDetail: _.get(basicInfo, 'lostReason.churnOtheReason') || '',
+      comment: _.get(basicInfo, 'commet') || '',
+    });
+  }
 
   @autobind
   handleRejectUpdateChange(obj) {
@@ -203,14 +162,86 @@ export default class RejectHome extends Component {
     });
   }
 
+  // 提交数据，因为后端在此业务中校验接口和保存接口放在一起，
+  // 所以直接使用后端提供的提交接口就行
+  @autobind
+  doSubmitPassValidate() {
+    const { detailInfoForUpdate: { flowCode } } = this.props;
+    const {
+      cust,
+      attachment,
+      comment,
+      lostDirection,
+      investVars,
+      otherVarDetail,
+      stockExchange,
+      lostReason,
+      otherReasonDetail,
+    } = this.state;
+    const { optionsDict: { custInvestVarietyTypeList, custLossReasonTypeList } } = this.props;
+    const vars = convertSubmitInvestVars(investVars, custInvestVarietyTypeList, otherVarDetail);
+    const reasons = convertSubmitLostReason(lostReason, custLossReasonTypeList, otherReasonDetail);
+    this.props.submitApply({
+      custNumber: cust.custId,
+      attachment,
+      custId: cust.custRowId,
+      custType: cust.custType,
+      createdBy: emp.getId(),
+      postnId: emp.getPstnId(),
+      lastUpdBy: emp.getId(),
+      divisionId: emp.getOrgId(),
+      comment,
+      directionCode: lostDirection,
+      churnStockExchange: stockExchange,
+      CustInvestVarietyDTOReq: vars,
+      CustLossCauseDTOReq: reasons,
+      flowCode,
+    }).then(this.doFlowApproval);
+  }
+
+  @autobind
+  doFlowApproval() {
+    const { submitResult: { validate, validateMsg, id } } = this.props;
+    if (!validate) {
+      confirm({ content: validateMsg });
+    } else {
+      this.doApproval(id);
+    }
+  }
+
+  @autobind
+  doApproval(itemId) {
+    const { detailInfoForUpdate: { flowCode } } = this.props;
+    const { operate, auditors, groupName, idea } = this.state;
+    // 新建走流程，flowId 传空字符串
+    this.props.doApproval({
+      flowId: flowCode,
+      wobNum: flowCode,
+      operate,
+      auditors,
+      approverIdea: idea,
+      groupName,
+      itemId,
+    }).then(this.doSomethingAfterApproval);
+  }
+
+  @autobind
+  doSomethingAfterApproval() {
+    const { flowResult: { msg } } = this.props;
+    if (msg === 'success') {
+      // 关闭弹出层，刷新列表
+      this.props.clearReduxData({ approvalForUpdate: {} });
+    }
+  }
+
   @autobind
   handleBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
-    // const { valid, msg } = validateData(this.state);
-    // if (!valid) {
-    //   confirm({ content: msg });
-    //   return;
-    // }
+    const { valid, msg } = validateData(this.state);
+    if (!valid) {
+      confirm({ content: msg });
+      return;
+    }
     // 保存用户点击的按钮的相关信息
     this.setState({
       operate: btn.operate,
@@ -221,7 +252,7 @@ export default class RejectHome extends Component {
       // 如果只有一个审批人情况，则直接提交后端校验接口
       // 校验通过之后则条用新建接口
       if (_.size(btn.flowAuditors) === 1) {
-        this.doValidateBeforeSubmit();
+        this.doSubmitPassValidate();
       } else {
         this.setState({
           nextApprovalModal: true,
@@ -235,7 +266,7 @@ export default class RejectHome extends Component {
     this.setState({
       nextApprovalModal: false,
       auditors: approver.login,
-    }, this.doValidateBeforeSubmit);
+    }, this.doSubmitPassValidate);
   }
 
   @autobind

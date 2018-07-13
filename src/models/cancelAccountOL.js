@@ -3,7 +3,7 @@
 * @Descripter: 线上申请models
 * @Date: 2018-06-08 13:17:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-13 19:29:12
+ * @Last Modified time: 2018-07-13 19:48:31
 */
 
 
@@ -57,7 +57,7 @@ export default {
       const attachmentList = attachResponse.resultData || [];
       return {
         ...state,
-        detailInfo: {
+        detailInfoForUpdate: {
           ...detail,
           attachmentList,
         },
