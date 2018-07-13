@@ -121,6 +121,7 @@ export default class SignCustomerLabel extends PureComponent {
           onFocus={this.handleFocus}
           style={{ width: '100%' }}
           optionFilterProp="children"
+          getPopupContainer={triggerNode => triggerNode.parentNode}
         >
           {custLikeLabel.map(labelItem =>
             <Option key={labelItem.id}>{replaceKeyWord(labelItem.labelName, value)}</Option>,
