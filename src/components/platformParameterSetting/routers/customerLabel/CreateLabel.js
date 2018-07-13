@@ -36,8 +36,9 @@ export default class CreateLabelType extends PureComponent {
       form: { validateFields, getFieldsError },
       queryLabelList,
     } = this.props;
-    const { labelType: labelTypeError } = getFieldsError();
-    if (labelTypeError) {
+    const { labelName: labelNameError } = getFieldsError();
+    if (labelNameError) {
+      validateFields(['labelDesc', 'labelTypeId']);
       return;
     }
     validateFields((error, values) => {

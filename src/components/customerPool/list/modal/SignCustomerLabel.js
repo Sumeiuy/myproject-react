@@ -7,7 +7,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { Modal, Select, Spin } from 'antd';
+import { Modal, Select } from 'antd';
 import styles from './addCustomerLabel.less';
 
 const Option = Select.Option;
@@ -27,19 +27,16 @@ export function replaceKeyWord(text, word = '') {
 
 export default class SignCustomerLabel extends PureComponent {
   static getDerivedStateFromProps(props, state) {
-    const { preProps } = state;
-    const { custId, custLabel, custLikeLabel } = props;
+    const { preCustId } = state;
+    const { custId, custLabel } = props;
     let nextState = {
-      preProps: props,
+      preCustId: custId,
     };
-    if (custId !== preProps.custId) {
+    if (custId !== preCustId) {
       let selectedLabels = custLabel[custId] || EMPTY_LIST;
       selectedLabels = _.map(selectedLabels,
         item => ({ key: item.id, label: item.labelName }));
-      nextState = { ...nextState, selectedLabels, custLikeLabel: EMPTY_LIST };
-    }
-    if (custLikeLabel !== preProps.custLikeLabel) {
-      nextState = { ...nextState, data: custLikeLabel, fetching: false };
+      nextState = { ...nextState, selectedLabels };
     }
     return nextState;
   }
@@ -56,32 +53,22 @@ export default class SignCustomerLabel extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { custId } = props;
     this.state = {
-      data: EMPTY_LIST,
       selectedLabels: EMPTY_LIST,
       value: '',
-      fetching: false,
-      preProps: props,
+      preCustId: custId,
     };
   }
 
   @autobind
   handleSearchCustLabel(value) {
-    const { queryLikeLabelInfo } = this.props;
-    this.setState({
-      data: EMPTY_LIST,
-      fetching: true,
-      value,
-    });
-    queryLikeLabelInfo({ labelNameLike: value });
+    this.setState({ value });
   }
 
   @autobind
   handleChange(selectedLabels) {
-    this.setState({
-      selectedLabels,
-      data: EMPTY_LIST,
-    });
+    this.setState({ selectedLabels });
   }
 
   @autobind
@@ -91,7 +78,7 @@ export default class SignCustomerLabel extends PureComponent {
     const { ptyMngId } = currentPytMng;
     const labelIds = _.map(selectedLabels, item => item.key);
     signCustLabels({
-      custIds: [custId],
+      custId,
       labelIds,
       ptyMngId,
     }).then(handleCancelSignLabelCustId);
@@ -101,9 +88,16 @@ export default class SignCustomerLabel extends PureComponent {
   handleBlur() {
     this.setState({ value: '' });
   }
+
+  @autobind
+  handleFocus() {
+    const { queryLikeLabelInfo } = this.props;
+    // 获得焦点时获取全部数据
+    queryLikeLabelInfo({ labelNameLike: '' });
+  }
   render() {
-    const { custId, handleCancelSignLabelCustId } = this.props;
-    const { fetching, data, selectedLabels, value = '' } = this.state;
+    const { custId, handleCancelSignLabelCustId, custLikeLabel } = this.props;
+    const { selectedLabels, value = '' } = this.state;
 
     return (
       <Modal
@@ -122,16 +116,15 @@ export default class SignCustomerLabel extends PureComponent {
           labelInValue
           value={selectedLabels}
           placeholder="请选择客户标签"
-          notFoundContent={fetching ? <Spin size="small" /> : null}
-          filterOption={false}
-          onSearch={this.handleSearchCustLabel}
           onChange={this.handleChange}
           onBlur={this.handleBlur}
+          onFocus={this.handleFocus}
           style={{ width: '100%' }}
+          optionFilterProp="children"
         >
-          {value ? data.map(lableItem =>
-            <Option key={lableItem.id}>{replaceKeyWord(lableItem.labelName, value)}</Option>,
-          ) : null}
+          {custLikeLabel.map(labelItem =>
+            <Option key={labelItem.id}>{replaceKeyWord(labelItem.labelName, value)}</Option>,
+          )}
         </Select>
       </Modal>
     );

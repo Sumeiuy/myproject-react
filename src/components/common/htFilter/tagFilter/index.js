@@ -83,7 +83,7 @@ export default class TagFilter extends PureComponent {
     filterId: '',
     onClose: () => { },
     dropdownStyle: {
-      width: '296px',
+      width: 298,
     },
   }
 
@@ -124,7 +124,7 @@ export default class TagFilter extends PureComponent {
         dropdownStyle={this.props.dropdownStyle}
         isAlwaysVisible
         tooltipValue={tooltipValue}
-        usetoolTip
+        useTooltip
         isCloseable
         {...restProps}
       />

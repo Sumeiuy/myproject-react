@@ -315,9 +315,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
-    console.warn('pathname', pathname);
-    console.warn('query', query);
-    console.warn('location', location);
+
     replace({
       pathname,
       query: {

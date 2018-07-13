@@ -195,7 +195,7 @@ export default {
       title: '行业/主题',
       dataIndex: 'title',
       key: 'title',
-      width: '35%',
+      width: '20%',
     },
     {
       title: '调整方向',
@@ -207,13 +207,13 @@ export default {
       title: '理由',
       dataIndex: 'reason',
       key: 'reason',
-      width: '35%',
+      width: '50%',
     },
     {
       title: '调整时间',
       dataIndex: 'time',
       key: 'time',
-      width: '20%',
+      width: '15%',
     },
   ],
 };

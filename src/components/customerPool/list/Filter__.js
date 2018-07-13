@@ -728,7 +728,8 @@ export default class Filter extends PureComponent {
                 dropdownStyle={{
                   maxHeight: 324,
                   overflowY: 'auto',
-                  width: 210,
+                  width: 250,
+                  zIndex: 10,
                 }}
                 onChange={this.handleLabelChange}
                 iconMore
