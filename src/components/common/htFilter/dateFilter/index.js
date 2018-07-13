@@ -53,6 +53,7 @@ export default class DateFilter extends React.Component {
     const formatEndDate = endDate && stateDateWrapper(endDate);
     this.props.onChange({
       name: this.props.filterId,
+      filterName: this.props.filterName,
       value: [formatStartDate, formatEndDate],
     });
   }
@@ -89,6 +90,7 @@ export default class DateFilter extends React.Component {
           </span>
           <DateRangePicker
             {...dateProps}
+            className={styles.dateFilterTransform}
             inputIconPosition="after"
             initialStartDate={initialStartDate}
             initialEndDate={initialEndDate}

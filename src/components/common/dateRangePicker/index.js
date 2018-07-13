@@ -56,8 +56,10 @@ export default class CommonDateRangePicker extends PureComponent {
     defaultVisible: PropTypes.bool,
     // 日期组件是否需要position: fixed,默认不需要
     isFixed: PropTypes.bool,
+    className: PropTypes.string,
   }
   static defaultProps = {
+    className: '',
     displayFormat: 'YYYY-MM-DD',
     startDatePlaceholderText: '开始时间',
     endDatePlaceholderText: '结束时间',
@@ -310,12 +312,14 @@ export default class CommonDateRangePicker extends PureComponent {
       'initialStartDate',
       'defaultVisible',
       'isFixed',
+      'className',
     ]);
 
     const { isFixed } = this.props;
     const drpWraperCls = classnames({
       [styles.drpWraper]: true,
       [styles.drpWraperFixed]: isFixed,
+      [this.props.className]: true,
     });
 
     return (

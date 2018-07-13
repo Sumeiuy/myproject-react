@@ -24,6 +24,7 @@ import Overview from '../../components/choicenessCombination/combinationDetail/O
 import Composition from '../../components/choicenessCombination/combinationDetail/Composition';
 import { openRctTab } from '../../utils';
 import { permission, dva, url as urlHelper, emp } from '../../helper';
+import { seperator } from '../../config';
 import config from '../../components/choicenessCombination/config';
 import styles from './combinationDetail.less';
 
@@ -279,17 +280,22 @@ export default class CombinationDetail extends PureComponent {
       closable: true,
       forceRefresh: true,
       isSpecialTab: true,
-      id: 'FSP_CUSTOMER_LIST',
+      id: 'RCT_FSP_CUSTOMER_LIST',
       title: '客户列表',
     };
     // sourceType.security： 证券产品 sourceType.combination：组合类产品
+    // 在location上filter的name与value之间使用该变量分割
+    // filter value对应多个
+    const { filterInsideSeperator, filterValueSeperator } = seperator;
     if (source === sourceType.security) {
       const filterType = _.filter(config.securityType, o => o.value === type);
+      const productId = `${filterType[0].shortName}${code}`;
       if (filterType.length) {
-        query.labelMapping = encodeURIComponent(`${filterType[0].shortName}${code}`);
+        query.labelMapping = encodeURIComponent(productId);
         query.type = 'PRODUCT';
         query.labelName = encodeURIComponent(`${name}(${code})`);
         query.productName = encodeURIComponent(name);
+        query.filters = `primaryKeyPrdts${filterInsideSeperator}${productId}${filterValueSeperator}${name}`;
       } else {
         return;
       }
@@ -297,13 +303,15 @@ export default class CombinationDetail extends PureComponent {
       query.combinationName = encodeURIComponent(name);
       query.labelMapping = code;
       query.combinationCode = combinationCode;
+      query.filters = `primaryKeyJxgrps${filterInsideSeperator}${code}${filterValueSeperator}${name}`;
     }
     const url = `/customerPool/list?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: url,
+      pathname: '/customerPool/list',
+      query,
     });
   }
 
@@ -321,12 +329,13 @@ export default class CombinationDetail extends PureComponent {
     const query = {
       keyword: code,
     };
-    const url = `/stock?${urlHelper.stringify(query)}`;
+    const url = `/strategyCenter/stock?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: url,
+      pathname: '/strategyCenter/stock',
+      query,
     });
   }
 
@@ -350,7 +359,8 @@ export default class CombinationDetail extends PureComponent {
       routerAction: push,
       url,
       param,
-      pathname: url,
+      pathname: '/choicenessCombination/reportDetail',
+      query,
     });
   }
 

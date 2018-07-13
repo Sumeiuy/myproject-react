@@ -142,7 +142,7 @@ export default class BoardEditHome extends PureComponent {
       const { success, msg /* code */} = nextProps.operateData;
       if (success) {
         message.success('发布成功');
-        push(`/report?boardId=${id}`);
+        push(`/statisticalQuery/report?boardId=${id}`);
       } else {
         // if (code === responseCode.DUPLICATE_NAME) {
         message.error(msg);

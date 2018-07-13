@@ -25,11 +25,13 @@ exports.getCSSLoaders = function (options) {
 
   options = options || {}
 
-  let cssOptions = {
+  let baseOptions = {
     minimize: !isDev,
     sourceMap: options.sourceMap,
     importLoaders: 1
   };
+
+  let ownOptions = Object.assign({}, baseOptions);
 
   let cssModulesConfig = {
     modules: true,
@@ -39,8 +41,8 @@ exports.getCSSLoaders = function (options) {
   };
 
   if (!options.disableCSSModules) {
-    cssOptions = Object.assign(
-      cssOptions,
+    ownOptions = Object.assign(
+      ownOptions,
       cssModulesConfig
     );
   }
@@ -65,11 +67,11 @@ exports.getCSSLoaders = function (options) {
 
   own.push({
     loader: 'css-loader',
-    options: cssOptions
+    options: ownOptions
   });
   nodeModules.push({
     loader: 'css-loader',
-    options: cssOptions
+    options: baseOptions
   });
 
   // own.push('resolve-url-loadr');
