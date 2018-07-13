@@ -155,6 +155,8 @@ app.model(require('./models/messageCenter'));
 app.model(require('./models/keyMonitorAccount'));
 // 客户关联关系
 app.model(require('./models/custRelationships'));
+// 线上销户
+app.model(require('./models/cancelAccountOL'));
 
 // 4. Route
 app.router(routerConfig);

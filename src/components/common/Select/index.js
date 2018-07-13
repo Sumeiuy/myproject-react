@@ -27,6 +27,9 @@ export default class CommonSelect extends PureComponent {
     disabled: PropTypes.bool,
     // 渲染Option时，是否根据数据总的show字段来判断该选项的显示与否
     needShowKey: PropTypes.bool,
+    // 选项渲染使用的数据的 Key Map
+    optionValueMapKey: PropTypes.string,
+    optionLabelMapKey: PropTypes.string,
   }
 
   static defaultProps = {
@@ -35,15 +38,19 @@ export default class CommonSelect extends PureComponent {
     width: '',
     disabled: false,
     needShowKey: true,
+    optionValueMapKey: 'value',
+    optionLabelMapKey: 'label',
   }
 
   @autobind
   makeSelectOptions(data) {
     // 如果 needShowKey = true 时，需要通过 数据的 show 属性来判断该下拉选项是否显示
     // 如果 needShowKey = false 时，则直接显示所有数据选项
-    const { needShowKey } = this.props;
+    const { needShowKey, optionValueMapKey, optionLabelMapKey } = this.props;
     const options = _.map(data, (item) => {
-      const { show, value, label } = item;
+      const { show } = item;
+      const value = item[optionValueMapKey];
+      const label = item[optionLabelMapKey];
       if (needShowKey && !show) {
         return null;
       }

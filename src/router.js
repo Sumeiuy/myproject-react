@@ -90,6 +90,10 @@ import KeyMonitorAccount from './routes/keyMonitorAccount/Home';
 import CustRelationships from './routes/custRelationships/Home';
 // 客户关联关系信息申请驳回后修改页面
 import RejectUpdateHome from './routes/custRelationships/RejectUpdateHome';
+// 线上销户首页
+import CancelAccountOLHome from './routes/cancelAccountOL/Home';
+// 线上销户驳回后修改页面
+import CancelAccountOLRejectHome from './routes/cancelAccountOL/RejectHome';
 
 import { env } from './helper';
 
@@ -343,6 +347,10 @@ const routes = [
   },
   // 直接进入
   { path: '/keyMonitorAccount', component: KeyMonitorAccount },
+  // 线上销户，直接进入
+  { path: '/cancelAccountOL', component: CancelAccountOLHome },
+  // 线上销户驳回后修改页面，需要带 flowId 参数
+  { path: '/cancelAccountOLReject', component: CancelAccountOLRejectHome },
 ];
 
 // 递归创建路由

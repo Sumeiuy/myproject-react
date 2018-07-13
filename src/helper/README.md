@@ -6,6 +6,7 @@
   │   └── duty.js     // 华泰职责ID视图
   ├── page/           // 每一个项目页面自己的辅助方法集合，非通用，已页面pathname名称命名
   ├── check.js        // 校验相关的公用方法(非直接与正则表达式相关)
+  ├── convert.js      // 转换一些公用的Code值方法(比如根据状态Code返回对应的type,text)
   ├── data.js         // 通用的数据格式/类型处理的方法
   ├── dom.js          // DOM相关(除事件绑定)的公用方法
   ├── dva.js          // 统一整理的将dva以及redux需要暴露使用的方法

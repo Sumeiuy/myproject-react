@@ -1,0 +1,87 @@
+.rejectUpdateHome {
+  position: relative;
+  background-color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: auto;
+
+  .rejectHeader {
+    height: 41px;
+  }
+  .rejectAppId {
+    padding: 0 30px 20px 0;
+    line-height: 20px;
+    font-size: 15px;
+    color: #000;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 4px;
+  }
+
+  .module {
+    padding: 15px 0;
+    border-bottom: 1px solid #f3f3f4;
+    h2 {
+      font-weight: normal;
+      line-height: 1.5;
+    }
+    .modContent {
+      padding: 5px 0;
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      .propertyList {
+        .item {
+          position: relative;
+          clear: left;
+          width: 100%;
+          box-sizing: border-box;
+          margin-bottom: 4px;
+        }
+        .item2 {
+          float: left;
+          width: 50%;
+          margin-bottom: 4px;
+        }
+      }
+      &:after {
+        content: "";
+        height: 0;
+        line-height: 0;
+        display: block;
+        clear: both;
+        visibility: hidden;
+      }
+
+      .approvalIdeaArea {
+        height: auto;
+        display: flex;
+        align-items: stretch;
+
+        & > .leftLabel {
+          flex: 0 0 auto;
+          padding-top: 6px;
+          font-size: 14px;
+          color: #a1a1a1;
+        }
+
+        & > .rightInput {
+          flex: 1 1 auto;
+        }
+      }
+    }
+    .attachmentTitle {
+      font-size: 14px;
+      color: #151515;
+      line-height: 20px;
+      margin-bottom: 15px;
+      span {
+        color: #f00;
+      }
+    }
+  }
+
+  .approvalBtns {
+    margin: 20px 0;
+  }
+}
