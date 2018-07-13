@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-13 18:30:14
+ * @Last Modified time: 2018-07-13 20:33:23
  */
 
 import React, { PureComponent } from 'react';
@@ -578,6 +578,16 @@ export default class ServiceImplementation extends PureComponent {
     });
   }
 
+  // 跳转前确认处理
+  @autobind
+  handlePrompt(location) {
+    const { location: { pathname, search } } = this.props;
+    if (location.pathname === pathname && location.search === search) {
+      return false;
+    }
+    return MSG_ROUTEFORWARD;
+  }
+
   render() {
     const { dict = {}, empInfo } = this.context;
     const {
@@ -757,7 +767,7 @@ export default class ServiceImplementation extends PureComponent {
         }
         <Prompt
           when={isFormHalfFilledOut}
-          message={MSG_ROUTEFORWARD}
+          message={this.handlePrompt}
         />
       </div>
     );
