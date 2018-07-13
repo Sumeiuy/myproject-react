@@ -76,7 +76,7 @@ const getConfirmation = (msg, callback) => {
     },
     onCancel() {
       fspGlobal.handlePromptCancel();
-      callback(false);
+      callback();
     },
   });
 };
