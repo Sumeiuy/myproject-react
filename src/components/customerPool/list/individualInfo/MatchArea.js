@@ -266,7 +266,9 @@ export default class MatchArea extends PureComponent {
           <span>
             <i className="label">{name}：</i>
             {
-              unit === '元' ? number.thousandFormat(currentVal) : currentVal
+              unit === '元' ?
+                number.thousandFormat(Number(currentVal).toFixed(2), false) :
+                currentVal
             }{unit}
           </span>
         </li>
