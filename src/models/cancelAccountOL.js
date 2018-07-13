@@ -3,7 +3,7 @@
 * @Descripter: 线上申请models
 * @Date: 2018-06-08 13:17:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-12 18:10:12
+ * @Last Modified time: 2018-07-13 19:29:12
 */
 
 
@@ -18,8 +18,6 @@ export default {
     detailInfo: {},
     // 弹出层搜索的可选客户列表
     custList: [],
-    // 弹出层用户选择的客户信息
-    custDetail: {},
     // 弹出层按钮以及审批人数据
     approval: {},
     // 新建提交结果
@@ -30,6 +28,8 @@ export default {
     detailInfoForUpdate: {},
     // 驳回后修改的弹出层按钮以及审批人数据
     approvalForUpdate: {},
+    // 手动推送的结果
+    pushResult: '',
   },
   reducers: {
     queryDictSuccess(state, action) {
@@ -40,17 +40,27 @@ export default {
       };
     },
     getDetailInfoSuccess(state, action) {
-      const { payload: { resultData = {} } } = action;
+      const { payload: { detailResponse = {}, attachResponse = {} } } = action;
+      const detail = detailResponse.resultData || {};
+      const attachmentList = attachResponse.resultData || [];
       return {
         ...state,
-        detailInfo: resultData,
+        detailInfo: {
+          ...detail,
+          attachmentList,
+        },
       };
     },
     getDetailForUpdateSuccess(state, action) {
-      const { payload: { resultData = {} } } = action;
+      const { payload: { detailResponse = {}, attachResponse = {} } } = action;
+      const detail = detailResponse.resultData || {};
+      const attachmentList = attachResponse.resultData || [];
       return {
         ...state,
-        detailInfoForUpdate: resultData,
+        detailInfo: {
+          ...detail,
+          attachmentList,
+        },
       };
     },
     queryCustListSuccess(state, action) {
@@ -58,13 +68,6 @@ export default {
       return {
         ...state,
         custList,
-      };
-    },
-    getCustDetailSuccess(state, action) {
-      const { payload: { resultData = {} } } = action;
-      return {
-        ...state,
-        custDetail: resultData,
       };
     },
     getApprovalInfoSuccess(state, action) {
@@ -79,6 +82,27 @@ export default {
       return {
         ...state,
         approvalForUpdate: resultData,
+      };
+    },
+    pushCancelAcccountSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        pushResult: resultData.msg || '',
+      };
+    },
+    submitApplySuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        submitResult: resultData,
+      };
+    },
+    doApprovalSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        flowResult: resultData,
       };
     },
     clearReduxDataSuccess(state, action) {
@@ -100,18 +124,28 @@ export default {
     },
     // 获取申请单详情
     * getDetail({ payload }, { put, call }) {
-      const response = yield call(api.getAppDetail, payload);
+      const detailResponse = yield call(api.getAppDetail, payload);
+      const { attachment } = detailResponse.resultData;
+      const attachResponse = yield call(api.getAttachmentList, { attachment });
       yield put({
         type: 'getDetailInfoSuccess',
-        payload: response,
+        payload: {
+          detailResponse,
+          attachResponse,
+        },
       });
     },
     // 获取驳回后修改申请单详情
     * getDetailForUpdate({ payload }, { put, call }) {
-      const response = yield call(api.getAppDetail, payload);
+      const detailResponse = yield call(api.getAppDetail, payload);
+      const { attachment } = detailResponse.resultData;
+      const attachResponse = yield call(api.getAttachmentList, { attachment });
       yield put({
         type: 'getDetailForUpdateSuccess',
-        payload: response,
+        payload: {
+          detailResponse,
+          attachResponse,
+        },
       });
     },
     // 根据关键字查询可申请的客户列表
@@ -119,14 +153,6 @@ export default {
       const response = yield call(api.queryCustList, payload);
       yield put({
         type: 'queryCustListSuccess',
-        payload: response,
-      });
-    },
-    // 获取选中的客户的详情信息
-    * getCustDetail({ payload }, { call, put }) {
-      const response = yield call(api.getCustDetail, payload);
-      yield put({
-        type: 'getCustDetailSuccess',
         payload: response,
       });
     },
@@ -143,6 +169,41 @@ export default {
       const response = yield call(api.getButtonList, payload);
       yield put({
         type: 'getApprovalInfoForUpdateSuccess',
+        payload: response,
+      });
+    },
+    // 推送销户
+    * pushCancelAcccount({ payload }, { call, put }) {
+      yield put({
+        type: 'pushCancelAcccountSuccess',
+        payload: {},
+      });
+      const response = yield call(api.pushCancelAccount, payload);
+      yield put({
+        type: 'pushCancelAcccountSuccess',
+        payload: response,
+      });
+    },
+    // 保存数据
+    * submitApply({ payload }, { call, put }) {
+      yield put({
+        type: 'submitApplySuccess',
+        payload: {},
+      });
+      const response = yield call(api.saveApplication, payload);
+      yield put({
+        type: 'submitApplySuccess',
+        payload: response,
+      });
+    },
+    * doApproval({ payload }, { call, put }) {
+      yield put({
+        type: 'doApprovalSuccess',
+        payload: {},
+      });
+      const response = yield call(api.doApprove, payload);
+      yield put({
+        type: 'doApprovalSuccess',
         payload: response,
       });
     },

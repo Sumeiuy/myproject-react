@@ -2,21 +2,19 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 09:36:44
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-12 18:11:22
+ * @Last Modified time: 2018-07-13 18:41:23
  * @description 线上销户工具函数
  */
 import _ from 'lodash';
 
 import {
-  LOSTREASON as lostReasonText,
-  INVESTVARS as investVarsText,
   LOSTDIRECTION as lostDirectionMap,
 } from './config';
 
 const util = {
   // 将后端流失原因数据拼接成字符串
-  combineLostReason(lostReason) {
-    if (_.isEmpty(lostReason)) {
+  combineLostReason(lostReason, reasonList) {
+    if (_.isEmpty(lostReason) || _.isEmpty(reasonList)) {
       return '';
     }
     // 如果lostReason中的key对应的值是'Y'或者true则显示相应的Text
@@ -27,7 +25,8 @@ const util = {
         if (key === 'churnOther') {
           text.push(lostReason.churnOtheReason);
         } else {
-          text.push(lostReasonText[key]);
+          const v = _.find(reasonList, item => item.value === key) || {};
+          text.push(v.label);
         }
       }
     });
@@ -35,8 +34,8 @@ const util = {
   },
 
   // 将后端返回的投资品种数据拼接成字符串
-  combineInvestVars(investVars) {
-    if (_.isEmpty(investVars)) {
+  combineInvestVars(investVars, investVarsList) {
+    if (_.isEmpty(investVars) || _.isEmpty(investVarsList)) {
       return '';
     }
     // 如果investVars中的key对应的值是'Y'或者true则显示相应的Text
@@ -47,7 +46,8 @@ const util = {
         if (key === 'churnInvestmentOther') {
           text.push(investVars.churnInvestOtherDetail);
         } else {
-          text.push(investVarsText[key]);
+          const v = _.find(investVarsList, item => item.value === key) || {};
+          text.push(v.label);
         }
       }
     });
@@ -90,6 +90,32 @@ const util = {
       return false;
     }
     return obj[key] === 'Y' || obj[key] === true;
+  },
+
+  // 将选中的投资品种，按照字典值转换成obj
+  convertSubmitInvestVars(vars, dict, churnInvestOtherDetail) {
+    const submitData = _.reduce(dict, (data, item) => {
+      const { value } = item;
+      const hasThisValue = _.isEmpty(_.find(vars, o => o.key === value));
+      return {
+        ...data,
+        [value]: !hasThisValue,
+      };
+    }, { churnInvestOtherDetail });
+    return submitData;
+  },
+
+  // 将选中的流失原因，按照字典转换成对象
+  convertSubmitLostReason(reasons, dict, churnOtheReason) {
+    const submitData = _.reduce(dict, (data, item) => {
+      const { value } = item;
+      const hasThisValue = _.isEmpty(_.find(reasons, o => o.key === value));
+      return {
+        ...data,
+        [value]: !hasThisValue,
+      };
+    }, { churnOtheReason });
+    return submitData;
   },
 };
 

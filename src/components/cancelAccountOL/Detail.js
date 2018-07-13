@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 13:57:57
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-10 16:33:48
+ * @Last Modified time: 2018-07-13 16:40:16
  * @description 线上销户详情页面
  */
 import React, { PureComponent } from 'react';
@@ -26,6 +26,19 @@ import styles from './detail.less';
 
 export default class Detail extends PureComponent {
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { data: { id } } = nextProps;
+    const { applyId } = prevState;
+    if (applyId !== id) {
+      // 切换了详情单
+      return {
+        disbaledBtn: false,
+        applyId: id,
+      };
+    }
+    return null;
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -35,13 +48,23 @@ export default class Detail extends PureComponent {
   }
 
   @autobind
+  disabledPushBtn() {
+    const { pushResult } = this.props;
+    if (pushResult === 'success') {
+      this.setState({ disbaledBtn: true });
+    }
+  }
+
+  @autobind
   @logable({ type: 'ButtonClick', payload: { name: '销户链接推送' } })
   handlePushBtnClick() {
-    this.props.onPush();
+    const { data: { id } } = this.props;
+    this.props.onPush({ id }).then(this.disabledPushBtn);
   }
 
   render() {
     const {
+      optionsDict,
       data,
       data: {
         id,
@@ -53,16 +76,18 @@ export default class Detail extends PureComponent {
         statusDesc,
       },
     } = this.props;
+    const { disbaledBtn } = this.state;
     const isEmpty = _.isEmpty(data);
 
     const hasPushBtn = buttonStatus !== 'notDisplay';
-    const disbaledBtn = buttonStatus === 'disabled';
+    const disbaledPushBtn = disbaledBtn || buttonStatus === 'disabled';
     const pushButton = !hasPushBtn ? null
       :
       (
         <Button
+          ghost={!disbaledPushBtn}
           type="primary"
-          disabled={disbaledBtn}
+          disabled={disbaledPushBtn}
           onClick={this.handlePushBtnClick}
         >
           {PUSHBTN[buttonStatus]}
@@ -85,10 +110,10 @@ export default class Detail extends PureComponent {
     const stockExchange = _.get(basicInfo, 'stockExchange');
     // 流失原因
     const lostReason = _.get(basicInfo, 'lostReason');
-    const lostReasonText = combineLostReason(lostReason);
+    const lostReasonText = combineLostReason(lostReason, optionsDict.custLossReasonTypeList);
     // 投资品种
     const investVars = _.get(basicInfo, 'investVars');
-    const investVarsText = combineInvestVars(investVars);
+    const investVarsText = combineInvestVars(investVars, optionsDict.custInvestVarietyTypeList);
     // 判断当前的流失去向是否 转户或者投资其他
     // 如果流失去向是转户，则显示证券营业部
     // 如果流失去向是投资其他，则显示投资品种
@@ -168,6 +193,8 @@ export default class Detail extends PureComponent {
 }
 
 Detail.propTypes = {
+  pushResult: PropTypes.string.isRequired,
   data: PropTypes.object.isRequired,
+  optionsDict: PropTypes.object.isRequired,
   onPush: PropTypes.func.isRequired,
 };

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-12 18:08:49
+ * @Last Modified time: 2018-07-13 19:30:04
  * @description 线上销户首页
  */
 
@@ -36,8 +36,6 @@ const mapStateToProps = state => ({
   detailInfo: state.cancelAccountOL.detailInfo,
   // 新建弹出层可选客户列表
   custList: state.cancelAccountOL.custList,
-  // 新建弹出层用户选择的客户详情
-  custDetail: state.cancelAccountOL.custDetail,
   // 新建弹出层的流程按钮以及审批人列表
   approval: state.cancelAccountOL.approval,
   // 新建提交结果
@@ -46,6 +44,8 @@ const mapStateToProps = state => ({
   flowResult: state.cancelAccountOL.flowResult,
   // 下拉列表字典
   optionsDict: state.cancelAccountOL.optionsDict,
+  // 推送结果
+  pushResult: state.cancelAccountOL.pushResult,
 });
 
 const mapDispatchToProps = {
@@ -55,12 +55,16 @@ const mapDispatchToProps = {
   getDetail: effect('cancelAccountOL/getDetail', { forceFull: true }),
   // 根据关键字查询可选客户列表
   queryCustList: effect('cancelAccountOL/queryCustList', { forceFull: true }),
-  // 获取用户选择的客户的详情
-  getCustDetail: effect('cancelAccountOL/getCustDetail', { forceFull: true }),
   // 获取流程按钮以及对应的审批人信息
   getApprovalInfo: effect('cancelAccountOL/getApprovalInfo', { forceFull: true }),
   // 获取新建页面下的下拉字典
   queryDict: effect('cancelAccountOL/queryDict', { forceFull: true }),
+  // 推送销户
+  pushCancelAcccount: effect('cancelAccountOL/pushCancelAcccount', { forceFull: true }),
+  // 提交
+  submitApply: effect('cancelAccountOL/submitApply', { forceFull: true }),
+  // 走流程
+  doApproval: effect('cancelAccountOL/doApproval', { forceFull: true }),
   // 清除Redux中的数据
   clearReduxData: effect('cancelAccountOL/clearReduxData', { loading: false }),
 };
@@ -83,16 +87,18 @@ export default class CancelAccountOLHome extends PureComponent {
     // 新建弹出层可选客户列表
     custList: PropTypes.array.isRequired,
     queryCustList: PropTypes.func.isRequired,
-    // 新建弹出层客户详情
-    custDetail: PropTypes.object.isRequired,
-    getCustDetail: PropTypes.func.isRequired,
     // 获取新建按钮以及对应的审批人信息
     getApprovalInfo: PropTypes.func.isRequired,
     approval: PropTypes.object.isRequired,
     // 提交结果
+    submitApply: PropTypes.func.isRequired,
     submitResult: PropTypes.object.isRequired,
     // 流程结果
+    doApproval: PropTypes.func.isRequired,
     flowResult: PropTypes.object.isRequired,
+    // 推送销户
+    pushCancelAcccount: PropTypes.func.isRequired,
+    pushResult: PropTypes.string.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
   }
@@ -112,6 +118,12 @@ export default class CancelAccountOLHome extends PureComponent {
   }
 
   componentDidMount() {
+    // 初始化页面的时候，获取下页面中需要的字典数据
+    const { queryDict, optionsDict } = this.props;
+    const notGetDict = _.isEmpty(optionsDict);
+    if (notGetDict) {
+      queryDict();
+    }
     this.getAppList();
   }
 
@@ -259,18 +271,12 @@ export default class CancelAccountOLHome extends PureComponent {
   handleCloseCreateModal(name, isNeedRefresh) {
     this.setState({ [name]: false });
     this.props.clearReduxData({
-      custDetail: {},
       custList: [],
       approval: {},
     });
     if (isNeedRefresh) {
       this.getAppList();
     }
-  }
-
-  @autobind
-  handlePushBtnClick() {
-    console.warn('点击推送链接');
   }
 
   // 渲染列表项里面的每一项
@@ -300,10 +306,11 @@ export default class CancelAccountOLHome extends PureComponent {
       list,
       detailInfo,
       custList,
-      custDetail,
       approval,
       submitResult,
       flowResult,
+      optionsDict,
+      pushResult,
     } = this.props;
 
     const {
@@ -348,7 +355,12 @@ export default class CancelAccountOLHome extends PureComponent {
 
     // 右侧详情
     const rightPanel = (
-      <Detail data={detailInfo} onPush={this.handlePushBtnClick} />
+      <Detail
+        pushResult={pushResult}
+        optionsDict={optionsDict}
+        data={detailInfo}
+        onPush={this.props.pushCancelAcccount}
+      />
     );
 
     return (
@@ -367,13 +379,12 @@ export default class CancelAccountOLHome extends PureComponent {
           (
             <CreateApply
               onClose={this.handleCloseCreateModal}
-              queryDict={this.props.queryDict}
-              optionsDict={this.props.optionsDict}
               queryCustList={this.props.queryCustList}
-              getCustDetail={this.props.getCustDetail}
               getApprovalInfo={this.props.getApprovalInfo}
+              onSubmit={this.props.submitApply}
+              doApproval={this.props.doApproval}
+              optionsDict={optionsDict}
               custList={custList}
-              custDetail={custDetail}
               approval={approval}
               submitResult={submitResult}
               flowResult={flowResult}

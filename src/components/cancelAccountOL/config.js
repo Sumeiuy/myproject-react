@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 14:47:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-12 18:11:48
+ * @Last Modified time: 2018-07-13 10:49:26
  * @description 线上销户组件的配置项
  */
 
@@ -12,26 +12,6 @@ const config = {
     display: '销户链接推送',
     disabled: '销户链接已推送',
     notDisplay: '',
-  },
-
-  // 流失原因文本
-  LOSTREASON: {
-    churnCommission: '佣金',
-    churnSite: '场地',
-    churnSystem: '交易系统',
-    churnServiceQuality: '服务质量',
-    churnServiceProduct: '服务产品',
-    churnRemoval: '迁址外地',
-    churnOther: '其他',
-  },
-
-  // 投资品种
-  INVESTVARS: {
-    churnInvestRealty: '房地产',
-    churnInvestInsurance: '保险',
-    churnInvestDeposit: '银行存款',
-    churnInvestEducation: '子女教育',
-    churnInvestOther: '其他品种',
   },
 
   // 流失去向

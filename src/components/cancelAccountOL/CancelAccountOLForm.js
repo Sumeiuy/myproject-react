@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 14:49:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-12 18:13:38
+ * @Last Modified time: 2018-07-13 16:33:39
  * @description 线上销户新建以及驳回后修改通用部分
  */
 
@@ -21,6 +21,7 @@ import CommonUpload from '../common/biz/CommonUpload';
 import InfoCell from './InfoCell';
 
 import {
+  isInvestLostDirection,
   isTransferLostDirection,
   getSelectedKeys,
   isSelectedOtherOption,
@@ -33,6 +34,10 @@ import styles from './cancelAccountOLForm.less';
 const Option = AutoComplete.Option;
 const TextArea = Input.TextArea;
 const DEFAULT_OPTION = { value: '', label: '--请选择--' };
+// 投资品种中的其他品种的 key
+const INVEST_OTHER_VAR_KEY = 'churnInvestmentOther';
+// 流失原因中的其他原因的 key
+const LOST_REASON_OTHER_KEY = 'churnOther';
 
 export default class CancelAccountOLForm extends PureComponent {
   static propTypes = {
@@ -71,13 +76,13 @@ export default class CancelAccountOLForm extends PureComponent {
       // 投资品种
       investVars: isCreate ? [] : getSelectedKeys(_.get(detailInfo, 'basicInfo.investVars')),
       // 是否选择了其他投资品种
-      hasSelecOtherVar: isCreate ? false : isSelectedOtherOption(_.get(detailInfo, 'basicInfo.investVars'), 'churnInvestOther'),
+      hasSelecOtherVar: isCreate ? false : isSelectedOtherOption(_.get(detailInfo, 'basicInfo.investVars'), INVEST_OTHER_VAR_KEY),
       // 其他投资品种详情
       otherVarDetail: isCreate ? '' : _.get(detailInfo, 'basicInfo.investVars.churnInvestOtherDetail'),
       // 流失原因
       lostReason: isCreate ? [] : getSelectedKeys(_.get(detailInfo, 'basicInfo.lostReason')),
       // 是否选择了其他原因
-      hasSelectOtherReason: isCreate ? false : isSelectedOtherOption(_.get(detailInfo, 'basicInfo.lostReason'), 'churnOther'),
+      hasSelectOtherReason: isCreate ? false : isSelectedOtherOption(_.get(detailInfo, 'basicInfo.lostReason'), LOST_REASON_OTHER_KEY),
       // 其他流失原因的详情
       otherReasonDetail: isCreate ? '' : _.get(detailInfo, 'basicInfo.lostReason.churnOtheReason'),
       // 备注
@@ -99,17 +104,35 @@ export default class CancelAccountOLForm extends PureComponent {
   }
 
   @autobind
-  handleClearDataBySwitchCust() {
+  handleSwitchCust(cust) {
     // 重新渲染附件组件，直接修改上传组件的key值得方式
     this.setState({
-      cust: {},
+      cust,
       attachment: '',
       attachList: [],
       uploadKey: data.uuid(),
+      lostDirection: '',
+      stockExchange: '',
+      investVars: [],
+      hasSelecOtherVar: false,
+      otherVarDetail: '',
+      lostReason: [],
+      hasSelectOtherReason: false,
+      otherReasonDetail: '',
+      comment: '',
     });
     this.props.onChange({
-      cust: {},
+      cust,
       attachment: '',
+      lostDirection: '',
+      stockExchange: '',
+      investVars: [],
+      hasSelecOtherVar: false,
+      otherVarDetail: '',
+      lostReason: [],
+      hasSelectOtherReason: false,
+      otherReasonDetail: '',
+      comment: '',
     });
   }
 
@@ -119,52 +142,121 @@ export default class CancelAccountOLForm extends PureComponent {
   }
 
   @autobind
-  handleSelectCust(cust) {
+  handleSelectCust(newCust) {
     // 如果切换客户，则提示会将之前的所有数据清空
     // 如果删除客户，则需要清空数据
-    if (_.isEmpty(cust)) {
-      this.handleClearDataBySwitchCust();
-    } else {
-      this.setState({ cust });
+    const { cust } = this.state;
+    if (_.isEmpty(newCust) || cust.brokerNumber !== newCust.brokerNumber) {
+      this.handleSwitchCust(newCust);
     }
   }
 
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '流失去向', value: '$args[1]' } })
   handleLosDirectionSelect(key, value) {
-    this.setState({ lostDirection: value });
+    let derivedState = {};
+    if (isTransferLostDirection(value)) {
+      // 如果选择的是转户，则需要将证券营业部的文字以及投资品种的选项全部情况
+      derivedState = {
+        investVars: [],
+        hasSelecOtherVar: false,
+        otherVarDetail: '',
+      };
+    } else if (isInvestLostDirection(value)) {
+      // 如果选择的是投资其他, 则需要将证券营业部的文字以及投资品种的选项全部情况
+      derivedState = {
+        stockExchange: '',
+      };
+    } else {
+      derivedState = {
+        stockExchange: '',
+        investVars: [],
+        hasSelecOtherVar: false,
+        otherVarDetail: '',
+      };
+    }
+    this.setState({
+      ...derivedState,
+      lostDirection: value,
+    });
+    this.props.onChange({
+      ...derivedState,
+      lostDirection: value,
+    });
   }
 
   @autobind
   handleStockExchangeChange(e) {
     this.setState({ stockExchange: e.target.value });
+    this.props.onChange({ stockExchange: e.target.value });
   }
 
   @autobind
   handleInvestVarsChange({ value }) {
-    this.setState({ investVars: value });
-    console.warn('handleInvestVarsChange:', value);
+    const { hasSelecOtherVar } = this.state;
+    const noSelectOther = _.isEmpty(_.find(value, o => o.key === INVEST_OTHER_VAR_KEY));
+    // 如果从没选其他品种-->选择其他品种，则显示详情品种输入框
+    // 如果从选了其他品种-->取消选择其他品种，则不显示详情品种输入框
+    let otherState = {};
+    if (!hasSelecOtherVar && !noSelectOther) {
+      otherState = { hasSelecOtherVar: true };
+    } else if (hasSelecOtherVar && noSelectOther) {
+      otherState = {
+        hasSelecOtherVar: false,
+        otherVarDetail: '',
+      };
+    }
+    this.setState({
+      ...otherState,
+      investVars: value,
+    });
+    this.props.onChange({
+      ...otherState,
+      investVars: value,
+    });
   }
 
   @autobind
   handleLostReasonChange({ value }) {
-    this.setState({ lostReason: value });
-    console.warn('handleLostReasonChange:', value);
+    const { hasSelectOtherReason } = this.state;
+    const noSelectOther = _.isEmpty(_.find(value, o => o.key === LOST_REASON_OTHER_KEY));
+    // 如果从没选其他品种-->选择其他品种，则显示详情品种输入框
+    // 如果从选了其他品种-->取消选择其他品种，则不显示详情品种输入框
+    let otherState = {};
+    if (!hasSelectOtherReason && !noSelectOther) {
+      otherState = { hasSelectOtherReason: true };
+    } else if (hasSelectOtherReason && noSelectOther) {
+      otherState = {
+        hasSelectOtherReason: false,
+        otherReasonDetail: '',
+      };
+    }
+    this.setState({
+      ...otherState,
+      lostReason: value,
+    });
+    this.props.onChange({
+      ...otherState,
+      lostReason: value,
+    });
   }
 
   @autobind
   handleOtherVarDetailChange(e) {
     this.setState({ otherVarDetail: e.target.value });
+    this.props.onChange({ otherVarDetail: e.target.value });
   }
 
   @autobind
   handleOtherLostResonDetailChange(e) {
     this.setState({ otherReasonDetail: e.target.value });
+    this.props.onChange({ otherReasonDetail: e.target.value });
   }
 
   @autobind
   handleCommenteChange(e) {
     this.setState({ comment: e.target.value });
+    this.props.onChange({ comment: e.target.value });
   }
 
   @autobind
@@ -307,7 +399,7 @@ export default class CancelAccountOLForm extends PureComponent {
                     />
                   </div>
                   {
-                    hasSelecOtherVar ? null
+                    !hasSelecOtherVar ? null
                     :
                     (
                       <div className={`${styles.infoCellInput} ${styles.ml15} ${styles.autoWidth}`}>
@@ -340,7 +432,7 @@ export default class CancelAccountOLForm extends PureComponent {
                 />
               </div>
               {
-                hasSelectOtherReason ? null
+                !hasSelectOtherReason ? null
                 :
                 (
                   <div className={`${styles.infoCellInput} ${styles.ml15} ${styles.autoWidth}`}>
@@ -359,7 +451,6 @@ export default class CancelAccountOLForm extends PureComponent {
           <Col span={24}>
             <div className={styles.commentArea}>
               <div className={styles.label}>
-                <i className={styles.required}>*</i>
                 <span className={styles.colon}>备注:</span>
               </div>
               <div className={styles.textArea}>

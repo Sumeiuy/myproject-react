@@ -57,6 +57,7 @@ function getIconType(name) {
 export default {
   check,
   data,
+  convert,
   dom,
   dva,
   encode,

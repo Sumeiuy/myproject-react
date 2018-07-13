@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 13:35:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-12 18:12:42
+ * @Last Modified time: 2018-07-13 19:37:00
  * @description 新建线上销户申请弹出框
  */
 import React, { PureComponent } from 'react';
@@ -17,27 +17,29 @@ import TableDialog from '../common/biz/TableDialog';
 import CancelAccountOLForm from './CancelAccountOLForm';
 import logable, { logPV } from '../../decorators/logable';
 
+import { emp } from '../../helper';
+import { validateData } from '../../helper/page/cancelAccount';
+
 import { APPROVAL_COLUMNS } from './config';
+import { convertSubmitLostReason, convertSubmitInvestVars } from './utils';
 
 export default class CreateApply extends PureComponent {
   static propTypes = {
     // 关闭弹出层
     onClose: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+    doApproval: PropTypes.func.isRequired,
     queryCustList: PropTypes.func.isRequired,
-    getCustDetail: PropTypes.func.isRequired,
     getApprovalInfo: PropTypes.func.isRequired,
     // 可选的客户列表
     custList: PropTypes.array.isRequired,
-    // 选中的客户信息
-    custDetail: PropTypes.object.isRequired,
     // 新建流程的按钮以及审批人数组
     approval: PropTypes.object.isRequired,
     // 提交结果
     submitResult: PropTypes.object.isRequired,
     // 流程结果
     flowResult: PropTypes.object.isRequired,
-    // 查询字典
-    queryDict: PropTypes.func.isRequired,
+    // 字典
     optionsDict: PropTypes.object.isRequired,
   }
 
@@ -69,20 +71,77 @@ export default class CreateApply extends PureComponent {
   }
 
   componentDidMount() {
-    const { queryDict, optionsDict } = this.props;
-    const notGetDict = _.isEmpty(optionsDict);
-    if (notGetDict) {
-      queryDict();
-    }
+    // 查询新建流程发起的审批按钮信息
+    this.props.getApprovalInfo({ flowId: '' });
   }
 
   // 提交数据，因为后端在此业务中校验接口和保存接口放在一起，
   // 所以直接使用后端提供的提交接口就行
   @autobind
   doSubmitPassValidate() {
-    // logCommon({
+    const {
+      cust,
+      attachment,
+      comment,
+      lostDirection,
+      investVars,
+      otherVarDetail,
+      stockExchange,
+      lostReason,
+      otherReasonDetail,
+    } = this.state;
+    const { optionsDict: { custInvestVarietyTypeList, custLossReasonTypeList } } = this.props;
+    const vars = convertSubmitInvestVars(investVars, custInvestVarietyTypeList, otherVarDetail);
+    const reasons = convertSubmitLostReason(lostReason, custLossReasonTypeList, otherReasonDetail);
+    this.props.onSubmit({
+      custNumber: cust.brokerNumber,
+      attachment,
+      custId: cust.custRowId,
+      custType: cust.custType,
+      createdBy: emp.getId(),
+      postnId: emp.getPstnId(),
+      lastUpdBy: emp.getId(),
+      divisionId: emp.getOrgId(),
+      comment,
+      directionCode: lostDirection,
+      churnStockExchange: stockExchange,
+      CustInvestVarietyDTOReq: vars,
+      CustLossCauseDTOReq: reasons,
+    }).then(this.doFlowApproval);
+  }
 
-    // });
+  @autobind
+  doFlowApproval() {
+    const { submitResult: { validate, validateMsg, id } } = this.props;
+    if (!validate) {
+      confirm({ content: validateMsg });
+    } else {
+      this.doApproval(id);
+    }
+  }
+
+  @autobind
+  doApproval(itemId) {
+    const { operate, auditors, groupName } = this.state;
+    // 新建走流程，flowId 传空字符串
+    this.props.doApproval({
+      flowId: '',
+      wobNum: '',
+      operate,
+      auditors,
+      approverIdea: '',
+      groupName,
+      itemId,
+    }).then(this.doSomethingAfterApproval);
+  }
+
+  @autobind
+  doSomethingAfterApproval() {
+    const { flowResult: { msg } } = this.props;
+    if (msg === 'success') {
+      // 关闭弹出层，刷新列表
+      this.props.onClose('isShowCreateModal', true);
+    }
   }
 
   @autobind
@@ -99,11 +158,11 @@ export default class CreateApply extends PureComponent {
   @autobind
   handleModalBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
-    // const { valid, msg } = validateData(this.state);
-    // if (!valid) {
-    //   confirm({ content: msg });
-    //   return;
-    // }
+    const { valid, msg } = validateData(this.state);
+    if (!valid) {
+      confirm({ content: msg });
+      return;
+    }
     // 此处需要增加选择审批人的操作
     // 将用户选择的按钮信息保存下来
     // 弹出审批人选择框
@@ -116,7 +175,7 @@ export default class CreateApply extends PureComponent {
       // 如果只有一个审批人情况，则直接提交后端校验接口
       // 校验通过之后则条用新建接口
       if (_.size(btn.flowAuditors) === 1) {
-        this.doSubmit();
+        this.doSubmitPassValidate();
       } else {
         this.openNextApprovalModal();
       }
@@ -144,7 +203,7 @@ export default class CreateApply extends PureComponent {
     this.setState({
       nextApprovalModal: false,
       auditors: approver.login,
-    }, this.doValidateBeforeSubmit);
+    }, this.doSubmitPassValidate);
   }
 
   @autobind
@@ -163,9 +222,7 @@ export default class CreateApply extends PureComponent {
     const {
       approval,
       queryCustList,
-      getCustDetail,
       custList,
-      custDetail,
     } = this.props;
     const {
       nextApprovalModal,
@@ -205,9 +262,7 @@ export default class CreateApply extends PureComponent {
         <CancelAccountOLForm
           action="CREATE"
           queryCustList={queryCustList}
-          getCustDetail={getCustDetail}
           custList={custList}
-          custDetail={custDetail}
           onChange={this.handleDataChange}
           optionsDict={this.props.optionsDict}
         />
