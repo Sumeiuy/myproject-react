@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-11 17:38:43
+ * @Last Modified time: 2018-06-07 15:19:06
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -315,9 +315,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
-    console.warn('pathname', pathname);
-    console.warn('query', query);
-    console.warn('location', location);
+
     replace({
       pathname,
       query: {

@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请models
  * @Date: 2018-06-08 13:17:14
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 09:49:49
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-07-02 14:18:56
  */
 
 
@@ -206,7 +206,11 @@ export default {
         payload: resultData,
       });
     },
-    // 提交申请
+    // “是否办理股票质押回购业务“选“否”时，新建提交后不需走审批流程，直接调这个接口
+    * chgCustRelaiton({ payload }, { call }) {
+      yield call(api.chgCustRelaiton, payload);
+    },
+    // “是否办理股票质押回购业务“选“是”时，提交申请接口，调完之后还需要走审批流程
     * submitApply({ payload }, { call, put }) {
       yield put({
         type: 'submitApplySuccess',

@@ -131,6 +131,7 @@ export default class CustomerRow extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryCustSignLabel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -300,6 +301,7 @@ export default class CustomerRow extends PureComponent {
       location,
       entertype,
       goGroupOrTask,
+      queryCustSignLabel,
     } = this.props;
     if (this.isMainService) {
       return (<QuickMenu
@@ -310,6 +312,7 @@ export default class CustomerRow extends PureComponent {
         location={location}
         entertype={entertype}
         goGroupOrTask={goGroupOrTask}
+        queryCustSignLabel={queryCustSignLabel}
       />);
     }
     return null;
@@ -394,66 +397,68 @@ export default class CustomerRow extends PureComponent {
             </div>
           </div>
           <div className={styles.customerRowRight}>
-            <div className="row-one">
-              {this.renderCustName()}
-              <span>{listItem.custId}</span>
-              <span className="cutOffLine">|</span>
-              {
-                listItem.genderValue && listItem.age
-                  ? <span>{listItem.genderValue}/{listItem.age}岁</span>
-                  : null
-              }
-              {
-                listItem.genderValue && listItem.age
-                  ? <span className="cutOffLine">|</span>
-                  : null
-              }
-              <span>
-                {`${listItem.openDt.slice(0, 4)}-${listItem.openDt.slice(4, 6)}-${listItem.openDt.slice(6, 8)} 开户`}
-              </span>
-              {
-                (rskLev === '' || rskLev === 'null' || _.isEmpty(currentRiskLevel))
-                  ? '' :
-                  <div
-                    className={`riskLevel ${currentRiskLevel.colorCls}`}
-                  >
-                    <div className="itemText">{`风险等级：${currentRiskLevel.title}`}</div>
-                    {currentRiskLevel.name}
-                  </div>
-              }
-              {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
-              {
-                listItem.contactFlag ?
-                  <div className="iconSingned">
-                    签约
-                    <div className="itemText">签约客户</div>
-                  </div> : null
-              }
-            </div>
-            <div className="row-two">
-              <span className="imputation">归集率: <em>{hsRate}</em></span>
-              <span className="cutOffLine">|</span>
-              <span className="commission">佣金率: <em>{miniFee}</em></span>
-              <span className="cutOffLine">|</span>
-              <span>总资产:</span>
-              <span className="asset">{assetValue}</span>
-              <span className="assetunit">{assetUnit}</span>
-              <div className={styles.sixMonthEarnings}>
-                <SixMonthEarnings
-                  listItem={listItem}
-                  monthlyProfits={monthlyProfits}
-                  custIncomeReqState={custIncomeReqState}
-                  getCustIncome={getCustIncome}
-                  formatAsset={formatAsset}
-                />
-              </div>
-              <div className="department">
+            <div className={styles.custBasicInfo}>
+              <div className="row-one">
+                {this.renderCustName()}
+                <span>{listItem.custId}</span>
+                <span className="cutOffLine">|</span>
+                {
+                  listItem.genderValue && listItem.age
+                    ? <span>{listItem.genderValue}/{listItem.age}岁</span>
+                    : null
+                }
+                {
+                  listItem.genderValue && listItem.age
+                    ? <span className="cutOffLine">|</span>
+                    : null
+                }
                 <span>
-                  服务经理：
-                  {
-                    `${listItem.orgName || '无'}-${listItem.empName || '无'}`
-                  }
+                  {`${listItem.openDt.slice(0, 4)}-${listItem.openDt.slice(4, 6)}-${listItem.openDt.slice(6, 8)} 开户`}
                 </span>
+                {
+                  (rskLev === '' || rskLev === 'null' || _.isEmpty(currentRiskLevel))
+                    ? '' :
+                    <div
+                      className={`riskLevel ${currentRiskLevel.colorCls}`}
+                    >
+                      <div className="itemText">{`风险等级：${currentRiskLevel.title}`}</div>
+                      {currentRiskLevel.name}
+                    </div>
+                }
+                {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
+                {
+                  listItem.contactFlag ?
+                    <div className="iconSingned">
+                      签约
+                      <div className="itemText">签约客户</div>
+                    </div> : null
+                }
+              </div>
+              <div className="row-two">
+                <span className="imputation">归集率: <em>{hsRate}</em></span>
+                <span className="cutOffLine">|</span>
+                <span className="commission">佣金率: <em>{miniFee}</em></span>
+                <span className="cutOffLine">|</span>
+                <span>总资产:</span>
+                <span className="asset">{assetValue}</span>
+                <span className="assetunit">{assetUnit}</span>
+                <div className={styles.sixMonthEarnings}>
+                  <SixMonthEarnings
+                    listItem={listItem}
+                    monthlyProfits={monthlyProfits}
+                    custIncomeReqState={custIncomeReqState}
+                    getCustIncome={getCustIncome}
+                    formatAsset={formatAsset}
+                  />
+                </div>
+                <div className="department">
+                  <span>
+                    服务经理：
+                    {
+                      `${listItem.orgName || '无'}-${listItem.empName || '无'}`
+                    }
+                  </span>
+                </div>
               </div>
             </div>
             <div className={listItem.empId === rowId ? styles.marginInfo : ''}>

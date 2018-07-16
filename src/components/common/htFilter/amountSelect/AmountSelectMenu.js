@@ -9,7 +9,7 @@ import styles from './amountSelectMenu.less';
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
-const pattern = /([0-9]|\.)*/;
+const pattern = /^(-)?([0-9]|\.)*/;
 
 export default class AmountSelectMenu extends PureComponent {
   static propTypes = {
@@ -38,6 +38,13 @@ export default class AmountSelectMenu extends PureComponent {
       maxError: '',
       commmonError: '',
     },
+  }
+
+  getNumValue(value) {
+    if (value === '') {
+      return '';
+    }
+    return _.toNumber(value);
   }
 
   handleRidioChange = (e) => {
@@ -102,8 +109,8 @@ export default class AmountSelectMenu extends PureComponent {
         (dateType && isInputHasValue)) {
         this.props.onChange({
           dateType: this.state.dateType,
-          min: this.state.min,
-          max: this.state.max,
+          min: this.getNumValue(this.state.min),
+          max: this.getNumValue(this.state.max),
         }, {
           inVisible: true,
         });
@@ -199,9 +206,9 @@ export default class AmountSelectMenu extends PureComponent {
       return '请输入数字';
     }
 
-    if (num < 0) {
+   /*  if (num < 0) {
       return '请输入一个大于0的数字';
-    }
+    } */
 
     return '';
   }
