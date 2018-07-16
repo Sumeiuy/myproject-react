@@ -14,9 +14,11 @@ import ServiceManagerFilter from './manageFilter/ServiceManagerFilter';
 import CustomerRow from './CustomerRow__';
 import CreateContactModal from './CreateContactModal';
 import Reorder from './reorder/Reorder';
-import BottomFixedBox from './BottomFixedBox';
+import BottomFixedBox from './BottomFixedBox__';
+import SignCustomerLabel from './modal/SignCustomerLabel';
+import MultiCustomerLabel from './modal/MultiCustomerLabel';
 import { openInTab } from '../../../utils';
-import { url as urlHelper, emp } from '../../../helper';
+import { url as urlHelper, emp, number } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
@@ -29,6 +31,11 @@ const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
 // 服务营业中的'所有'选项
 const allSaleDepartment = { id: ALL_DEPARTMENT_ID, name: '不限' };
+
+// 数字千分位格式
+function thousandFormat(num) {
+  return number.thousandFormat(num, true, ',', true);
+}
 
 /*
  * 格式化钱款数据和单位
@@ -51,23 +58,26 @@ const formatAsset = (num) => {
 
   if (absNum >= WANYI) {
     return {
-      value: Number((newNum / WANYI).toFixed(2)),
+      value: thousandFormat((newNum / WANYI).toFixed(2)),
       unit: UNIT_WANYI,
     };
   }
   if (absNum >= YI) {
     return {
-      value: Number((newNum / YI).toFixed(2)),
+      value: thousandFormat((newNum / YI).toFixed(2)),
       unit: UNIT_YI,
     };
   }
   if (absNum >= WAN) {
     return {
-      value: Number((newNum / WAN).toFixed(2)),
+      value: thousandFormat((newNum / WAN).toFixed(2)),
       unit: UNIT_WAN,
     };
   }
-  return { value: Number(newNum.toFixed(2)), unit: UNIT_DEFAULT };
+  return {
+    value: thousandFormat(newNum.toFixed(2)),
+    unit: UNIT_DEFAULT,
+  };
 };
 
 @RestoreScrollTop
@@ -134,6 +144,15 @@ export default class CustomerLists extends PureComponent {
     getSearchPersonList: PropTypes.func.isRequired,
     clearSearchPersonList: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryHoldingIndustryDetail: PropTypes.func.isRequired,
+    industryDetail: PropTypes.object.isRequired,
+    queryHoldingIndustryDetailReqState: PropTypes.bool,
+    queryCustSignedLabels: PropTypes.func.isRequired,
+    queryLikeLabelInfo: PropTypes.func.isRequired,
+    signCustLabels: PropTypes.func.isRequired,
+    signBatchCustLabels: PropTypes.func.isRequired,
+    custLabel: PropTypes.object.isRequired,
+    custLikeLabel: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -147,6 +166,7 @@ export default class CustomerLists extends PureComponent {
     collectCustRange: () => { },
     queryHoldingProductReqState: false,
     dataForNextPage: {},
+    queryHoldingIndustryDetailReqState: false,
   }
 
   constructor(props) {
@@ -155,6 +175,8 @@ export default class CustomerLists extends PureComponent {
       currentCustId: '',
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
+      currentSignLabelCustId: '',
+      multiSignLabelVisible: false,
     };
     this.checkMainServiceManager(props);
   }
@@ -166,14 +188,14 @@ export default class CustomerLists extends PureComponent {
           ptyMngId: prePtyMngId,
         },
       },
-     } = this.props;
+    } = this.props;
     const {
       location: {
         query: {
           ptyMngId,
         },
       },
-     } = nextProps;
+    } = nextProps;
     if (prePtyMngId !== ptyMngId) {
       this.checkMainServiceManager(nextProps);
     }
@@ -184,9 +206,9 @@ export default class CustomerLists extends PureComponent {
    */
   @autobind
   checkMainServiceManager(props) {
-    const { currentPytMng } = props;
+    const { currentPytMng, location: { query } } = props;
     const { ptyMngId } = currentPytMng;
-    this.mainServiceManager = ptyMngId === emp.getId() || !this.hasPermission();
+    this.mainServiceManager = _.has(query, 'ptyMngId') ? ptyMngId === emp.getId() : !this.hasPermission();
   }
 
   // 没有 任务管理权限从首页搜索、热词、联想和潜在业务 或 绩效指标的客户范围为 我的客户 下钻到列表
@@ -203,7 +225,7 @@ export default class CustomerLists extends PureComponent {
    * url中没有selectedIds时，选中id=id1， selectedIds=id1.name1
    * url中selectedIds=id1.name1,id2.name2，并且选中id=id1，过滤id1.name1 => selectedIds=id1.name1
    * url中selectedIds=id1.name1，并且选中id=id2时  => selectedIds=id1.name1,id2.name2
-  */
+   */
   @autobind
   handleSingleSelect(id, name) {
     const {
@@ -277,8 +299,8 @@ export default class CustomerLists extends PureComponent {
   }
 
   /**
- * 回调，关闭modal打开state
- */
+   * 回调，关闭modal打开state
+   */
   @autobind
   resetModalState() {
     this.setState({
@@ -292,7 +314,7 @@ export default class CustomerLists extends PureComponent {
     const {
       location: {
         query,
-      pathname,
+        pathname,
       },
       replace,
       handleSelect,
@@ -434,6 +456,32 @@ export default class CustomerLists extends PureComponent {
     return firstPageResp;
   }
 
+  // 添加客户标签 -- start
+  @autobind
+  queryCustSignLabel(custId) {
+    const { queryCustSignedLabels } = this.props;
+    queryCustSignedLabels({ custId }).then(() => {
+      this.setState({
+        currentSignLabelCustId: custId,
+      });
+    });
+  }
+
+  @autobind
+  removeSignLabelCust() {
+    this.setState({
+      currentSignLabelCustId: '',
+    });
+  }
+
+  @autobind
+  switchMultiCustSignLabel() {
+    const { multiSignLabelVisible } = this.state;
+    this.setState({
+      multiSignLabelVisible: !multiSignLabelVisible,
+    });
+  }
+  // 添加客户标签 -- end
   render() {
     const {
       isShowContactModal,
@@ -441,6 +489,8 @@ export default class CustomerLists extends PureComponent {
       custType,
       modalKey,
       custName,
+      currentSignLabelCustId,
+      multiSignLabelVisible,
     } = this.state;
 
     const {
@@ -494,6 +544,14 @@ export default class CustomerLists extends PureComponent {
       queryHoldingSecurityRepetition,
       holdingSecurityData,
       clearSearchPersonList,
+      queryHoldingIndustryDetail,
+      industryDetail,
+      queryHoldingIndustryDetailReqState,
+      custLabel,
+      custLikeLabel,
+      queryLikeLabelInfo,
+      signCustLabels,
+      signBatchCustLabels,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -540,7 +598,7 @@ export default class CustomerLists extends PureComponent {
     } else if (orgId) {
       // url中orgId=msm 时,服务营业部选中所有
       curOrgId = orgIdIsMsm ? allSaleDepartment.id : orgId;
-    } else if (!this.mainServiceManager) {
+    } else if (this.hasPermission()) {
       curOrgId = emp.getOrgId();
     }
     const paginationOption = {
@@ -631,6 +689,10 @@ export default class CustomerLists extends PureComponent {
                     queryHoldingProductReqState={queryHoldingProductReqState}
                     queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
                     holdingSecurityData={holdingSecurityData}
+                    queryHoldingIndustryDetail={queryHoldingIndustryDetail}
+                    industryDetail={industryDetail}
+                    queryHoldingIndustryDetailReqState={queryHoldingIndustryDetailReqState}
+                    queryCustSignLabel={this.queryCustSignLabel}
                   />,
                 )
               }
@@ -661,6 +723,7 @@ export default class CustomerLists extends PureComponent {
               hasTkMampPermission={hasTkMampPermission}
               sendCustsServedByPostnResult={sendCustsServedByPostnResult}
               isSendCustsServedByPostn={isSendCustsServedByPostn}
+              handleSignLabelClick={this.switchMultiCustSignLabel}
             /> : null
         }
         {
@@ -689,6 +752,25 @@ export default class CustomerLists extends PureComponent {
               currentCommonServiceRecord={currentCommonServiceRecord}
             /> : null
         }
+        <SignCustomerLabel
+          currentPytMng={currentPytMng}
+          custId={currentSignLabelCustId}
+          custLabel={custLabel}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          custLikeLabel={custLikeLabel}
+          signCustLabels={signCustLabels}
+          handleCancelSignLabelCustId={this.removeSignLabelCust}
+        />
+        <MultiCustomerLabel
+          visible={multiSignLabelVisible}
+          onClose={this.switchMultiCustSignLabel}
+          currentPytMng={currentPytMng}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          custLikeLabel={custLikeLabel}
+          signBatchCustLabels={signBatchCustLabels}
+          condition={condition}
+          location={location}
+        />
       </div>
     );
   }

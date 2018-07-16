@@ -9,7 +9,7 @@ import createHistory from 'history/createHashHistory';
 import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 
 import CommonModal from './components/common/biz/CommonModal';
 import './css/antd.less';
@@ -20,6 +20,7 @@ import routerConfig from './router';
 import { request as requestConfig, persist as persistConfig } from './config';
 import { dva as dvaHelper, dom } from './helper';
 import { logCommon } from './decorators/logable';
+import { fspGlobal } from './utils';
 
 // 尝试通过给body添加class来达到覆盖antd v3的样式
 dom.addClass(document.body, 'ant-v2-compatible');
@@ -67,13 +68,17 @@ const onError = (e) => {
 
 // 离开某个页面，弹出确认框，配合页面中的Prompt使用
 const getConfirmation = (msg, callback) => {
-  // Modal.confirm({
-  //   title: '请确认',
-  //   content: msg,
-  //   onOk() { callback(true); },
-  //   onCancel() { callback(false); },
-  // });
-  callback(true);
+  Modal.confirm({
+    title: '请确认',
+    content: msg,
+    onOk() {
+      callback(true);
+    },
+    onCancel() {
+      fspGlobal.handlePromptCancel();
+      callback();
+    },
+  });
 };
 
 const history = createHistory({
@@ -151,10 +156,18 @@ app.model(require('./models/businessDepartmentCustDistribute'));
 app.model(require('./models/custAllot'));
 // 消息通知提醒
 app.model(require('./models/messageCenter'));
+// 股票期权评估申请
+app.model(require('./models/stockOptionEvaluation'));
+// 最新观点
+app.model(require('./models/latestView'));
 // 重点监控账户
 app.model(require('./models/keyMonitorAccount'));
 // 客户关联关系
 app.model(require('./models/custRelationships'));
+// 线上销户
+app.model(require('./models/cancelAccountOL'));
+// 自定义标签类型
+app.model(require('./models/customerLabel'));
 
 // 4. Route
 app.router(routerConfig);

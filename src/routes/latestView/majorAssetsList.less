@@ -1,0 +1,83 @@
+@import "./viewpointList.less";
+@import "../../css/util.less";
+.listContainer {
+  height: 100%;
+  overflow: auto;
+  .inner {
+    position: relative;
+    height: 100%;
+    .filterWrapper {
+      width: 100%;
+      position: absolute;
+      top: 10px;
+      left: 20px;
+    }
+    :global {
+      .ant-pagination {
+        margin-right: 30px;
+      }
+      .ant-table-wrapper {
+        height: calc(~"100% - 70px");
+        margin-top: 22px;
+        overflow-y: auto;
+      }
+      table {
+        table-layout: fixed;
+        width: 100%;
+      }
+      .ant-table-tbody {
+        tr {
+          td {
+            div {
+              cursor: pointer;
+              .one-line-ellipsis;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.selectBox {
+  display: inline-block;
+  margin-right: 30px;
+  font-size: 14px;
+  :global {
+    .ant-select-selection {
+      border: none;
+      color: #4a4a4a;
+    }
+    .ant-select-arrow {
+      transform: scale(.75);
+      border: none;
+      border-top: 10px solid #c2c2c2;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      height: 0;
+      width: 0;
+      overflow: hidden;
+    }
+  }
+}
+.dateBox {
+  display: inline-block;
+  font-size: 14px;
+  :global {
+    .ant-calendar-picker {
+      width: 200px;
+    }
+    .ant-calendar-picker-input {
+      padding: 4px 0;
+      border: none;
+      .ant-calendar-range-picker-input {
+        color: #4a4a4a;
+      }
+    }
+    .ant-calendar-picker-icon:after {
+      content: "\E606";
+    }
+    .ant-calendar-picker-icon, .ant-calendar-picker-clear {
+      right: 0;
+    }
+  }
+}

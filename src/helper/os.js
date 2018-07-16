@@ -7,6 +7,7 @@
  */
 
 import _ from 'lodash';
+import warning from 'warning';
 
 // 是否可以使用浏览器Console打印日志
 const canUseConsoleFlag = true;
@@ -54,7 +55,7 @@ const os = {
    */
   warn(...rest) {
     if (canUseConsoleFlag) {
-      console.warn(rest);
+      warning(false, `${rest}`);
     }
   },
   /**
@@ -63,7 +64,7 @@ const os = {
    */
   error(...rest) {
     if (canUseConsoleFlag) {
-      console.warn(rest);
+      warning(false, `${rest}`);
     }
   },
 

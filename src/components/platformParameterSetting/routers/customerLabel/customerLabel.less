@@ -1,0 +1,87 @@
+.customerLabelWrap {
+  min-height: calc(~"100vh - 184px");
+  background: #fff;
+  color: #4a4a4a;
+  font-size: 14px;
+  padding-top: 15px;
+  .tip {
+    margin-bottom: 15px;
+  }
+  .operationWrap {
+    display: flex;
+    justify-content: space-between;
+  }
+  .operationRight {
+    :global {
+      .ant-btn:first-child {
+        margin-right: 10px;
+      }
+    }
+  }
+  .customerLabelList {
+    margin-top: 15px;
+    .remove {
+      color: #108ee9;
+      cursor: pointer;
+    }
+    :global {
+      .ant-table-wrapper .column {
+        max-width: none;
+      }
+      .ant-table-body {
+        table {
+          table-layout: fixed;
+        }
+        .ant-table-thead, .ant-table-tbody {
+          & > tr {
+            & > td:first-child, th:first-child {
+              padding-left: 20px;
+            }
+            .column {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+  :global {
+    .ant-btn {
+      font-size: 14px;
+      height: 30px;
+    }
+  }
+}
+
+.addLabelType {
+  :global {
+    .ant-modal-header, .ant-modal-footer {
+      background: #f7f7f7;
+    }
+    .ant-modal-title {
+      font-size: 16px;
+    }
+    .ant-modal-body {
+      height: 226px;
+      font-size: 14px;
+      box-sizing: border-box;
+      padding-top: 50px;
+    }
+  }
+}
+
+.addLabel {
+  :global {
+    .ant-modal-header, .ant-modal-footer {
+      background: #f7f7f7;
+    }
+    .ant-modal-title {
+      font-size: 16px;
+    }
+    .ant-modal-body {
+      font-size: 14px;
+      box-sizing: border-box;
+      padding-top: 20px;
+    }
+  }
+}

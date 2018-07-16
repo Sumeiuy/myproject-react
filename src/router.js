@@ -32,8 +32,6 @@ import CustomerList__ from './routes/customerPool/CustomerList__';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
-import ViewpointList from './routes/customerPool/ViewpointList';
-import ViewpointDetail from './routes/customerPool/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
 import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
@@ -84,12 +82,30 @@ import CustAllot from './routes/custAllot/Home';
 import CustAllotNotifies from './routes/custAllot/Notifies';
 // 消息通知提醒
 import MessageCenter from './routes/messageCenter/Home';
+// 股票期权评估申请
+import StockOptionEvaluation from './routes/stockOptionEvaluation/Home';
+// 最新观点
+import LatestView from './routes/latestView/Home';
+// 最新观点-大类资产配置分析
+import MajorAssetsList from './routes/latestView/MajorAssetsList';
+// 最新观点列表
+import ViewpointList from './routes/latestView/ViewpointList';
+// 最新观点详情
+import ViewpointDetail from './routes/latestView/ViewpointDetail';
+// 行业主题调整列表
+import IndustryThemeList from './routes/latestView/IndustryThemeList';
+// 股票期权评估申请修改页面
+import StockOptionEvaluationEdit from './routes/stockOptionEvaluation/ApplyEdit';
 // 重点监控账户
 import KeyMonitorAccount from './routes/keyMonitorAccount/Home';
 // 客户关联关系信息申请
 import CustRelationships from './routes/custRelationships/Home';
 // 客户关联关系信息申请驳回后修改页面
 import RejectUpdateHome from './routes/custRelationships/RejectUpdateHome';
+// 线上销户首页
+import CancelAccountOLHome from './routes/cancelAccountOL/Home';
+// 线上销户驳回后修改页面
+import CancelAccountOLRejectHome from './routes/cancelAccountOL/RejectHome';
 
 import { env } from './helper';
 
@@ -181,10 +197,6 @@ const routes = [
     path: '/customerPool',
     component: CustomerPoolHome,
     children: [
-      // 从 customerPool 页面右下角资讯列表任意标题进入
-      { path: '/viewpointDetail', component: ViewpointDetail },
-      // 从 customerPool 页面右下角资讯列表--更多进入
-      { path: '/viewpointList', component: ViewpointList },
       // 从 customerPool 搜索框下方--任务概览--第三个选项【代办流程】进入
       { path: '/todo', component: ToDo },
       // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
@@ -341,8 +353,31 @@ const routes = [
       { path: '/notifies', component: CustAllotNotifies },
     ],
   },
+  // 最新观点-直接进入
+  {
+    path: '/latestView',
+    component: LatestView,
+    children: [
+      // 首席观点列表页面
+      { path: '/viewpointList', component: ViewpointList },
+      // 首席观点详情页
+      { path: '/viewpointDetail', component: ViewpointDetail },
+      // 大类资产配置分析列表
+      { path: '/majorAssetsList', component: MajorAssetsList },
+      // 行业主题调整信息列表
+      { path: '/industryThemeList', component: IndustryThemeList },
+    ],
+  },
+  // 股票期权评估申请
+  { path: '/stockOptionEvaluation', component: StockOptionEvaluation },
+  // 股票期权评估申请修改
+  { path: '/stockOptionEvaluationEdit', component: StockOptionEvaluationEdit },
   // 直接进入
   { path: '/keyMonitorAccount', component: KeyMonitorAccount },
+  // 线上销户，直接进入
+  { path: '/cancelAccountOL', component: CancelAccountOLHome },
+  // 线上销户驳回后修改页面，需要带 flowId 参数
+  { path: '/cancelAccountOLReject', component: CancelAccountOLRejectHome },
 ];
 
 // 递归创建路由

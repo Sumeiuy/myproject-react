@@ -4,6 +4,8 @@
  * @author wangjunjun
  */
 
+import { env } from '../helper';
+
 function exec(method, ...args) {
   try {
     window[method].apply(null, args);
@@ -114,6 +116,44 @@ const fspGlobal = {
     closeTab(`#exApp_${id}`);
   },
 
+  /**
+   * 打开FSP框架下的EBWindow
+   */
+  openFspEBWindow({
+    id,
+    title,
+    sourceURL,
+    scrollY = true,
+    width = 800,
+    height = 600,
+    ...resetParams
+  }) {
+    $('body').EBWindow({
+      id,
+      width,
+      height,
+      show_cover: true,
+      scrollY,
+      title,
+      sourceURL,
+      ...resetParams,
+    });
+  },
+  // 处理执行者视图表单发生变化，切换tab，确认框中的 取消 按钮 点击
+  handlePromptCancel() {
+    if (env.isInFsp()) {
+      // 当前选中的tad
+      const activedTab = $('#UTB li.active a');
+      // 当前选中的tad的id
+      const activedTabId = $('#UTB li.active a').attr('id');
+      // 恢复当前选中的tab的url
+      $('#UTB').EBSmartTab('revertTabUrl', { tabId: activedTabId });
+      // 修改高亮的tab
+      $('#exApp_FSP_MOT_SELFBUILT_TASK').parent().addClass('active').siblings()
+        .removeClass('active');
+      activedTab.css({ backgroundColor: 'transparent' });
+    }
+  },
 };
 
 export default fspGlobal;

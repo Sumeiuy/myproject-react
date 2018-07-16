@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { common as api, seibel as seibelApi, customerPool as custApi } from '../api';
 import { EVENT_PROFILE_ACTION } from '../config/log';
 import { emp, permission } from '../helper';
+import { CREATE } from '../config/serviceRecord';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -27,6 +28,8 @@ export default {
     drafterList: EMPTY_LIST,
     // 已申请的客户列表
     customerList: EMPTY_LIST,
+    // 新的已申请的客户列表
+    newCustomerList: EMPTY_LIST,
     // 可申请客户列表
     canApplyCustList: EMPTY_LIST,
     // 删除后的附件列表
@@ -51,6 +54,8 @@ export default {
       caller: '',
       // 打电话时自动生成的服务记录的信息
       autoGenerateRecordInfo: {},
+      // 弹窗是要创建服务记录还是更新服务记录, 默认创建服务记录
+      todo: CREATE,
     },
   },
   reducers: {
@@ -76,6 +81,15 @@ export default {
       return {
         ...state,
         customerList: custList,
+      };
+    },
+    // 获取新的已申请客户列表
+    getNewCustomerListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { custList = EMPTY_LIST } = resultData || EMPTY_OBJECT;
+      return {
+        ...state,
+        newCustomerList: custList,
       };
     },
     // 获取可申请客户列表
@@ -145,15 +159,21 @@ export default {
     },
     // 显示与隐藏创建服务记录弹框
     toggleServiceRecordModalSuccess(state, action) {
-      const { payload } = action;
+      const {
+        payload: {
+          flag, custId, custName, id, name, caller,
+          autoGenerateRecordInfo, todo = CREATE,
+        },
+      } = action;
       return {
         ...state,
         serviceRecordInfo: {
-          modalVisible: payload.flag,
-          id: payload.id || payload.custId,
-          name: payload.name || payload.custName,
-          caller: payload.caller,
-          autoGenerateRecordInfo: payload.autoGenerateRecordInfo,
+          modalVisible: flag,
+          id: id || custId,
+          name: name || custName,
+          caller,
+          autoGenerateRecordInfo,
+          todo,
         },
       };
     },
@@ -250,9 +270,9 @@ export default {
           type: 'getMotCustfeedBackDict',
           payload: { pageNum: 1, pageSize: 10000, type: 2 },
         });
+        // 唤起创建服务记录的弹窗时请求Uuid
+        yield put({ type: 'performerView/queryCustUuid' });
       }
-      // 唤起创建服务记录的弹窗时请求Uuid
-      yield put({ type: 'performerView/queryCustUuid' });
       yield put({
         type: 'toggleServiceRecordModalSuccess',
         payload,
@@ -271,6 +291,14 @@ export default {
       const response = yield call(seibelApi.getCustList, payload);
       yield put({
         type: 'getCustomerListSuccess',
+        payload: response,
+      });
+    },
+    // 获取新的已申请的客户列表
+    * getNewCustomerList({ payload }, { call, put }) {
+      const response = yield call(seibelApi.getCustList2, payload);
+      yield put({
+        type: 'getNewCustomerListSuccess',
         payload: response,
       });
     },

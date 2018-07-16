@@ -27,7 +27,9 @@ export default function ServiceRecordContent(props) {
               content={item.actor}
               title={'实施者'}
             />
+            {/* 此处针对涨乐财富通的服务记录做特殊处理 */}
             <ServiceRecordItem
+              feedbackStatus={item.zlcftMsgStatus}
               content={item.custFeedback}
               title={'客户反馈'}
             />
@@ -79,6 +81,7 @@ export default function ServiceRecordContent(props) {
           title={'实施者'}
         />
         <ServiceRecordItem
+          feedbackStatus={item.zlcftMsgStatus}
           content={item.custFeedback}
           title={'客户反馈'}
         />

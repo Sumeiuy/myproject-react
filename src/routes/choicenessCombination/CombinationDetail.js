@@ -20,6 +20,7 @@ import AdjustHistory from '../../components/choicenessCombination/combinationDet
 import CombinationYieldChart from '../../components/choicenessCombination/CombinationYieldChart';
 import HistoryReport from '../../components/choicenessCombination/combinationDetail/HistoryReport';
 import OrderingCustomer from '../../components/choicenessCombination/combinationDetail/OrderingCustomer';
+import CustomerRepeatAnalyze from '../../components/choicenessCombination/combinationDetail/CustomerRepeatAnalyze';
 import Overview from '../../components/choicenessCombination/combinationDetail/Overview';
 import Composition from '../../components/choicenessCombination/combinationDetail/Composition';
 import { openRctTab } from '../../utils';
@@ -46,6 +47,8 @@ const effects = {
   getOrderingCustList: 'combinationDetail/getOrderingCustList',
   // 请求历史报告数据
   getReportHistoryList: 'combinationDetail/getReportHistoryList',
+  // 查询持仓客户重复数据
+  queryHoldRepeatProportion: 'combinationDetail/queryHoldRepeatProportion',
 };
 
 const mapStateToProps = state => ({
@@ -73,6 +76,8 @@ const mapStateToProps = state => ({
   reportHistoryData: state.combinationDetail.reportHistoryData,
   // 组合详情-历史报告弹窗数据
   modalReportHistoryData: state.combinationDetail.modalReportHistoryData,
+  // 组合详情-持仓客户重复数据
+  custRepeatData: state.combinationDetail.custRepeatData,
 });
 const mapDispatchToProps = {
   getOverview: dispatch(effects.getOverview,
@@ -92,6 +97,8 @@ const mapDispatchToProps = {
   getReportHistoryList: dispatch(effects.getReportHistoryList,
     { loading: true, forceFull: true }),
   push: routerRedux.push,
+  queryHoldRepeatProportion: dispatch(effects.queryHoldRepeatProportion,
+    { loading: true, forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -131,6 +138,9 @@ export default class CombinationDetail extends PureComponent {
     reportHistoryData: PropTypes.object.isRequired,
     // 组合详情-历史报告弹窗数据
     modalReportHistoryData: PropTypes.object.isRequired,
+    // 组合详情- 查询持仓客户重复数据
+    queryHoldRepeatProportion: PropTypes.func.isRequired,
+    custRepeatData: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -147,12 +157,16 @@ export default class CombinationDetail extends PureComponent {
       visible: false,
       // HTSC 任务管理岗
       hasTkMampPermission: permission.hasTkMampPermission(),
+      // hasTkMampPermission: true,
       // 组织 ID
       orgId: emp.getOrgId(),
     };
   }
 
   componentDidMount() {
+    const {
+      hasTkMampPermission,
+    } = this.state;
     const {
       getOverview,
       getCompositionPie,
@@ -162,6 +176,7 @@ export default class CombinationDetail extends PureComponent {
       getCombinationLineChart,
       getOrderingCustList,
       getReportHistoryList,
+      queryHoldRepeatProportion,
       location: { query: { id } },
     } = this.props;
     // 调仓方向传 3 视为取最新两条数据
@@ -203,14 +218,22 @@ export default class CombinationDetail extends PureComponent {
       pageNum: 1,
       pageSize: 6,
     });
-    // 订购客户
-    getOrderingCustList({
-      pstnId: emp.getPstnId(),
-      orgId: emp.getOrgId(),
-      combinationCode: id,
-      pageNum: 1,
-      pageSize: 5,
-    });
+    // 如果有任务管理岗职责查询持仓客户重合数据，否则查询订购客户
+    if (hasTkMampPermission) {
+      queryHoldRepeatProportion({
+        orgId: emp.getOrgId(),
+        combinationCode: id,
+      });
+    } else {
+      // 订购客户
+      getOrderingCustList({
+        pstnId: emp.getPstnId(),
+        orgId: emp.getOrgId(),
+        combinationCode: id,
+        pageNum: 1,
+        pageSize: 5,
+      });
+    }
   }
 
   @autobind
@@ -296,7 +319,6 @@ export default class CombinationDetail extends PureComponent {
         query.labelName = encodeURIComponent(`${name}(${code})`);
         query.productName = encodeURIComponent(name);
         query.filters = `primaryKeyPrdts${filterInsideSeperator}${productId}${filterValueSeperator}${name}`;
-
       } else {
         return;
       }
@@ -376,6 +398,7 @@ export default class CombinationDetail extends PureComponent {
       getReportHistoryList,
       reportHistoryData,
       modalReportHistoryData,
+      custRepeatData,
       location,
       location: { query: { id, visible = false, modalType = '', name } },
     } = this.props;
@@ -441,7 +464,12 @@ export default class CombinationDetail extends PureComponent {
           />
           {
             hasTkMampPermission ?
-              null
+              <CustomerRepeatAnalyze
+                combinationCode={id}
+                data={custRepeatData}
+                combinationData={overview}
+                openCustomerListPage={this.openCustomerListPage}
+              />
               :
               <OrderingCustomer
                 combinationCode={id}

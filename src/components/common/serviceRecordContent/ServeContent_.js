@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-07 23:07:05
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-03 17:11:30
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -286,9 +286,11 @@ ServeContent.propTypes = {
   testWallCollision: PropTypes.func.isRequired,
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: PropTypes.bool.isRequired,
+  onFormDataChange: PropTypes.func,
 };
 
 ServeContent.defaultProps = {
   serveContent: {},
   approvalList: [],
+  onFormDataChange: _.noop,
 };

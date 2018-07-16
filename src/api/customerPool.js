@@ -157,5 +157,11 @@ export default function customerPool(api) {
 
     // 首页查询所有可用客户标签列表
     queryHoldingSecurityRepetition: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryCustHoldList', query),
+
+    // 客户列表中查询持仓行业过滤器的数据
+    queryIndustryList: query => api.post('/groovynoauth/fsp/info/infoCenter/queryIndustry', query),
+
+    // 查询持仓行业详情信息
+    queryHoldingIndustryDetail: query => api.post('/groovynoauth/fsp/cust/custbriefinfo/queryCustHoldingProductDetails', query),
   };
 }

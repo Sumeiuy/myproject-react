@@ -7,9 +7,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { isSightingScope } from '../helper';
+import { isSightingScope, handleOpenFsp360TabAction } from '../helper';
 import { url as urlHelper } from '../../../helper';
-import { openFspTab, openRctTab } from '../../../utils';
+import { openRctTab } from '../../../utils';
 // ENTERLIST_PERMISSION_SIGHTINGLABEL-需要展示瞄准镜匹配区域的source集合
 import { ENTERLIST_PERMISSION_SIGHTINGLABEL } from '../../../routes/customerPool/config';
 import HoldingProductDetail from './HoldingProductDetail';
@@ -30,16 +30,6 @@ const replaceWord = ({ value, q, title = '', type = '' }) => {
   return value.replace(regxp,
     `<em class="marked">${q}${titleDom || ''}</em>${holder}`);
 };
-
-// 个人对应的code码
-const PER_CODE = 'per';
-// 一般机构对应的code码
-const ORG_CODE = 'org';
-
-// const getNewHtml = (value, k) => (`<li><span><i class="label">${value}：</i>${k}</span></li>`);
-
-// 匹配标签区域超过两条显示 展开/收起 按钮
-// const FOLD_NUM = 2;
 
 export default class MatchArea extends PureComponent {
 
@@ -84,43 +74,6 @@ export default class MatchArea extends PureComponent {
     this.custUnrightBusinessType = {};
     custUnrightBusinessType.forEach((item) => {
       this.custUnrightBusinessType[item.key] = item.value;
-    });
-  }
-
-  /**
-   * 跳转到360服务记录页面
-   * @param {*object} itemData 当前列表item数据
-   * @param {*} keyword 当前输入关键字
-   */
-  @autobind
-  handleOpenFsp360TabAction(itemData, keyword) {
-    const { custNature, custId, rowId, ptyId } = itemData;
-    const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
-    const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
-    const pathname = '/customerCenter/fspcustomerDetail';
-    openFspTab({
-      routerAction: this.context.push,
-      url,
-      query: {
-        custId,
-        rowId,
-        ptyId,
-        keyword,
-      },
-      pathname,
-      param: {
-        id: 'FSP_360VIEW_M_TAB',
-        title: '客户360视图-客户信息',
-        forceRefresh: true,
-        activeSubTab: ['服务记录'],
-        // 服务记录搜索
-        serviceRecordKeyword: keyword,
-        // 服务渠道
-        serviceRecordChannel: encodeURIComponent('理财服务平台'),
-      },
-      state: {
-        url,
-      },
     });
   }
 
@@ -354,7 +307,11 @@ export default class MatchArea extends PureComponent {
           </span>
           <span
             className={styles.more}
-            onClick={() => this.handleOpenFsp360TabAction(listItem, keyword)}
+            onClick={() => handleOpenFsp360TabAction({
+              itemData: listItem,
+              keyword,
+              routerAction: this.context.push,
+            })}
           >详情</span>
         </li>
       );
