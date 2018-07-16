@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-29 15:22:47
+ * @Last Modified time: 2018-07-07 19:06:05
  */
 
 import React, { PureComponent } from 'react';
@@ -41,6 +41,7 @@ import {
   labelSource,
   TASK_CUST_SCOPE_ENTRY,
   sightingLabelSource,
+  SOURCE_CUSTLIST,
 } from '../../../config/createTaskEntry';
 import styles from './taskFormFlowStep.less';
 import logable, { logCommon } from '../../../decorators/logable';
@@ -76,6 +77,7 @@ export default class TaskFormFlowStep extends PureComponent {
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object,
+    industryList: PropTypes.array,
   };
 
   static defaultProps = {
@@ -87,6 +89,7 @@ export default class TaskFormFlowStep extends PureComponent {
     approvalBtn: {},
     getApprovalBtn: noop,
     taskBasicInfo: {},
+    industryList: [],
   };
 
   constructor(props) {
@@ -264,19 +267,13 @@ export default class TaskFormFlowStep extends PureComponent {
     let custSources = '';
     switch (value) {
       case BUSINESS_ENTRY:
-        custSources = '业务目标客户';
-        break;
       case SEARCH_ENTRY:
-        custSources = '搜索目标客户';
-        break;
       case PRODUCT_POTENTIAL_TARGET_CUST_ENTRY:
       case SECURITIES_PRODUCTS_ENTRY:
       case ORDER_COMBINATION_ENTRY:
       case EXTERNAL_ENTRY:
       case ASSOCIATION_ENTRY:
       case TAG_ENTRY:
-        custSources = '搜索目标客户';
-        break;
       case CUSTINDICATOR_ENTRY:
       case NUMOFCUSTOPENED_ENTRY:
       case ASSETS_TRANSACTIONS:
@@ -286,7 +283,9 @@ export default class TaskFormFlowStep extends PureComponent {
       case SERVICE_TARGET:
       case CUST_ASSETS:
       case AGGREGATION_RATE:
-        custSources = '绩效目标客户';
+      case SIGHTINGTELESCOPE_ENTRY:
+      case SOURCE_CUSTLIST:
+        custSources = '筛查客户';
         break;
       case PROGRESS_ENTRY:
       case PIE_ENTRY:
@@ -295,9 +294,6 @@ export default class TaskFormFlowStep extends PureComponent {
         break;
       case CUST_GROUP_LIST:
         custSources = '客户分组';
-        break;
-      case SIGHTINGTELESCOPE_ENTRY:
-        custSources = '标签圈人';
         break;
       default:
         break;
@@ -825,6 +821,7 @@ export default class TaskFormFlowStep extends PureComponent {
       location: { query: { missionType, source } },
       creator,
       taskBasicInfo,
+      industryList,
     } = this.props;
     // motCustfeedBackDict改成新的字典missionType
     const { executeTypes, missionType: missionTypeDict } = dict;
@@ -849,6 +846,7 @@ export default class TaskFormFlowStep extends PureComponent {
         custCount={Number(count) || custNum}
         missionType={missionType}
         taskBasicInfo={taskBasicInfo}
+        industryList={industryList}
       />,
     }, {
       title: '任务评估',

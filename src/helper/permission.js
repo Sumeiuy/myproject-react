@@ -220,6 +220,11 @@ const permission = {
     return hasPermission;
   },
 
+  // 股票期权申请，当前用户是否拥有新建按钮权限
+  hasPermissionOfStockApplyCreate() {
+    return hasDuty(dutyList, duty.HTSC_GPQQSQG);
+  },
+
   // HTSC 交易信息查询权限（非私密客户）
   hasNPCTIQPermission() {
     return hasDuty(dutyList, duty.HTSC_TIQ_NPC);

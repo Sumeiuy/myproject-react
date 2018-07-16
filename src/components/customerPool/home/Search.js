@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-28 14:23:52
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-02 16:27:56
  * @description 客户池头部搜索组件
  */
 
@@ -79,7 +79,6 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
   handleOpenTab(data) {
     const { labelDesc, missionDesc, ...options } = data;
     const { push, location: { query } } = this.props;
@@ -203,7 +202,6 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '目标客户池首页回车搜索' } })
   handlePressEnter() {
     // 如果当期有选中项，走select逻辑，不做任何处理
     const activeItemElement = document.querySelector(
@@ -237,6 +235,17 @@ export default class Search extends PureComponent {
       q: encodeURIComponent(newValue),
     });
     return true;
+  }
+
+  // 打开搜索帮助页面
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索说明',
+    },
+  })
+  toSearchHelpPage() {
+    window.open('/fspa/spy/functionIntroduction/html/searchHelp.html');
   }
 
   renderDatasource() {
@@ -355,7 +364,7 @@ export default class Search extends PureComponent {
                 dropdownClassName={`certain-category-search-dropdown ${this.dropdownClassName}`}
                 size="large"
                 style={{ width: '100%' }}
-                placeholder={'经纪客户号、姓名、电话、身份证号码或你感兴趣的关键字'}
+                placeholder={'客户基本信息、精准营销产品、客户行为特征、持仓产品、服务记录关键字等'}
                 optionLabelProp="text"
                 defaultActiveFirstOption={false}
                 {...autoCompleteOption}
@@ -374,6 +383,7 @@ export default class Search extends PureComponent {
                   )}
                 />
               </AutoComplete>
+              <AntdIcon type="question-circle" onClick={this.toSearchHelpPage} />
             </div>
           </div>
           <div className={styles.historyList}>

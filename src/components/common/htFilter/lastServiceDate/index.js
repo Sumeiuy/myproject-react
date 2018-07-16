@@ -43,7 +43,7 @@ export default function LastServiceDateFilter(props) {
       menuComponent={LastServiceDateMenu}
       dropdownStyle={{
         maxHeight: 324,
-        width: 254,
+        width: 256,
       }}
       getFilterLabelValue={getDateSelectFilterLabel}
     />

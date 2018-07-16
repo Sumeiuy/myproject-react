@@ -32,6 +32,7 @@ export default class BottomFixedBox extends PureComponent {
     hasTkMampPermission: PropTypes.bool.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     isSendCustsServedByPostn: PropTypes.func.isRequired,
+    handleSignLabelClick: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -318,13 +319,25 @@ export default class BottomFixedBox extends PureComponent {
     });
   }
 
-  // 分组只针对服务经理，也就是说：
-  // 有首页指标查看权限或者服务经理筛选选的是当前登录用户时显示用户分组
+  @autobind
+  handleCustomerLabelClick() {
+    const { selectCount, handleSignLabelClick } = this.props;
+    if (selectCount > 2000) {
+      this.setState({
+        visible: true,
+        modalContent: '批量打标签的客户数不能超过2000个',
+      });
+    } else {
+      handleSignLabelClick();
+    }
+  }
+
+  // 当是主服务经理时，可以拥有创建用户分组和给客户打标签的功能
   renderGroup() {
     if (this.props.mainServiceManager) {
-      return (
-        <button onClick={this.handleCustomerGroupClick}>用户分组</button>
-      );
+      return [
+        <button onClick={this.handleCustomerLabelClick}>设置标签</button>,
+        <button onClick={this.handleCustomerGroupClick}>加到分组</button>];
     }
     return null;
   }
@@ -343,7 +356,7 @@ export default class BottomFixedBox extends PureComponent {
     } = this.props;
     let str = '';
     if (mainServiceManager) {
-      str = '，或者把用户加入分组管理';
+      str = '、可以为用户设置标签，或者把用户加入分组管理';
     }
     return (
       <p className="left">

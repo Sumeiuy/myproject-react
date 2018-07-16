@@ -27,9 +27,15 @@ import operationCenter from './operationCenter';
 import businessDepartmentCustomerDistribute from './businessDepartmentCustomerDistribute';
 import custAllot from './custAllot';
 import messageCenter from './messageCenter';
+import stockOptionEvaluation from './stockOptionEvaluation';
+import latestView from './latestView';
 import keyMonitorAccount from './keyMonitorAccount';
 import custRelationships from './custRelationships';
+<<<<<<< HEAD
 import cancelAccountOL from './cancelAccountOL';
+=======
+import customerLabel from './customerLabel';
+>>>>>>> master
 
 const api = apiCreator();
 
@@ -92,11 +98,17 @@ export default {
   custAllot: custAllot(api),
   // ========== 消息通知提醒
   messageCenter: messageCenter(api),
+  // ========== 股票期权评估申请
+  stockOptionEvaluation: stockOptionEvaluation(api),
+  // ========== 最新观点
+  latestView: latestView(api),
   // ========== 消息通知提醒
   keyMonitorAccount: keyMonitorAccount(api),
   // ========== 客户关联关系
   custRelationships: custRelationships(api),
   // ========== 线上销户
   cancelAccountOL: cancelAccountOL(api),
+  // ========== 客户自定义标签
+  customerLabel: customerLabel(api),
 };
 

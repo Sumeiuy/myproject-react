@@ -6,6 +6,7 @@
  * @description 此处存放用在绩效视图中的相关不能提取出通用的辅助方法
  */
 import moment from 'moment';
+import warning from 'warning';
 import _ from 'lodash';
 import { ZHUNICODE } from '../../config';
 import isNewOrg from '../config/report';
@@ -138,7 +139,7 @@ const report = {
       lastEndMoment = moment(end).subtract(1, tempDuration);
       lastDurationStr = `${lastBeginMoment.format('YYYY/MM/DD')}-${lastEndMoment.format('YYYY/MM/DD')}`;
     } else {
-      console.warn('用户自己选择的时间段');
+      warning(false, '用户自己选择的时间段');
     }
 
     const compareDuration = {
