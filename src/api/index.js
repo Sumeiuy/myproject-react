@@ -31,11 +31,8 @@ import stockOptionEvaluation from './stockOptionEvaluation';
 import latestView from './latestView';
 import keyMonitorAccount from './keyMonitorAccount';
 import custRelationships from './custRelationships';
-<<<<<<< HEAD
 import cancelAccountOL from './cancelAccountOL';
-=======
 import customerLabel from './customerLabel';
->>>>>>> master
 
 const api = apiCreator();
 
