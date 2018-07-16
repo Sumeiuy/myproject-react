@@ -8,6 +8,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import { stateFromHTML } from 'draft-js-import-html';
+import { Mention } from 'antd';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import { isSightingScope } from '../helper';
 import {
@@ -27,11 +29,16 @@ import {
   CUSTINDICATOR_ENTRY,
   NUMOFCUSTOPENED_ENTRY,
   TASK_CUST_SCOPE_ENTRY,
+  SOURCE_CUSTLIST,
 } from '../../../config/createTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 import { PRODUCT_ARGUMENTS } from './config';
 import { getLabelInfo } from '../../../helper/page/customerPool';
+import { url } from '../../../helper';
+import { getFilterInfo } from './help';
+
+const { toString } = Mention;
 
 const NOOP = _.noop;
 
@@ -64,6 +71,7 @@ export default class CreateTaskForm extends PureComponent {
     isShowErrorTaskName: PropTypes.bool.isRequired,
     templetDesc: PropTypes.string,
     isSightLabel: PropTypes.bool,
+    industryList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -78,32 +86,34 @@ export default class CreateTaskForm extends PureComponent {
     taskBasicInfo: {},
     templetDesc: '',
     isSightLabel: false,
+    industryList: [],
+  }
+
+  static contextTypes = {
+    dict: PropTypes.object,
   }
 
   constructor(props) {
     super(props);
+    const { dict: { custIndexPlaceHolders } } = props;
+    const arr = _.map(custIndexPlaceHolders, item => ({
+      name: item.value.slice(1),
+      type: item.value.slice(1),
+    }));
     this.state = {
       firstUserName: '',
       searchReq: null,
       custIdList: null,
-      statusData: [],
+      statusData: arr,
     };
   }
 
   componentWillMount() {
     const {
       location: { query },
-      dict: { custIndexPlaceHolders },
       previousData,
       templetDesc,
     } = this.props;
-    const arr = _.map(custIndexPlaceHolders, item => ({
-      name: item.value.slice(1),
-      type: item.value.slice(1),
-    }));
-    this.setState({
-      statusData: arr,
-    });
 
     if (_.isEmpty(previousData)) {
       this.handleInit(query);
@@ -180,8 +190,10 @@ export default class CreateTaskForm extends PureComponent {
       const param = JSON.parse(decodeURIComponent(query.condition));
       searchReq = {
         sortsReqList: param.sortsReqList,
-        enterType: param.enterType,
       };
+      if (param.enterType) {
+        searchReq.enterType = param.enterType;
+      }
     } else if (query.name) {
       firstUserName = decodeURIComponent(query.name) || '';
       if (firstUserName.length > 10) {
@@ -264,6 +276,11 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionDesc = motDetailModel.infoContent;
         defaultInitialValue = motDetailModel.timelyIntervalValue; // 有效期
         break;
+      case SOURCE_CUSTLIST:
+        defaultMissionType = '请选择';
+        defaultExecutionType = '请选择';
+        defaultMissionDesc = this.getFilterInfo();
+        break;
       default:
         defaultMissionType = '请选择';
         defaultExecutionType = '请选择';
@@ -337,6 +354,21 @@ export default class CreateTaskForm extends PureComponent {
       return missionDesc || '';
     }
     return '';
+  }
+
+  @autobind
+  getFilterInfo() {
+    const { dict } = this.context;
+    const { location: { query }, industryList } = this.props;
+    const filterObj = url.transfromFilterValFromUrl(query.filters);
+    const { htmlStr, suggestionList } = getFilterInfo({ filterObj, dict, industryList, query });
+    this.setState(state => ({
+      statusData: [
+        ...state.statusData,
+        ...suggestionList,
+      ],
+    }));
+    return toString(stateFromHTML(htmlStr));
   }
 
   render() {

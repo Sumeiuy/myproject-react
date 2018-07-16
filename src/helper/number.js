@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 13:38:29
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-22 13:41:35
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-10 15:43:51
  * @description 此处存放针对数字的通用处理方法
  */
 import _ from 'lodash';
@@ -42,12 +42,19 @@ const number = {
    * @param {String|Number} no 需要进行千分位格式化的数字或者数字字符串
    * @param {String} thousandSeq=',' 千分位格式化符号
    * @param {Boolean} decimalNeedFormat=true 小数部分是否进行格式化
+   * @param {Boolean} isRemoveZero=false 小数部分多余的0是否移除
    * @returns {String|null} 格式化后的字符串
    */
-  thousandFormat(no, decimalNeedFormat = true, thousandSeq = ',') {
+  thousandFormat(no = 0, decimalNeedFormat = true, thousandSeq = ',', isRemoveZero) {
+    let numberString = String(no);
+    if (isRemoveZero) {
+      if (/\./.test(numberString)) {
+        numberString = numberString.replace(/0*$/, '').replace(/\.$/, '');
+      }
+    }
     const replacement = `$1${thousandSeq}`;
     // 将数字差分成整数部分和小数部分
-    const nArr = String(no).split('.');
+    const nArr = numberString.split('.');
     const itegerF = nArr[0].replace(reg.thousandInteger, replacement);
     let decimalF = !_.isEmpty(nArr[1]) && nArr[1].replace(reg.thousandDecimal, replacement);
     if (!decimalNeedFormat) {

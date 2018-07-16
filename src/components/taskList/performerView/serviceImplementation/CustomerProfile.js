@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-06 15:09:17
+ * @Last Modified time: 2018-07-11 14:16:22
  */
 
 import React from 'react';
@@ -16,6 +16,7 @@ import { openFspTab } from '../../../../utils';
 import ContactInfoPopover from '../../../common/contactInfoPopover/ContactInfoPopover';
 import Mask from '../../../common/mask';
 import { date } from '../../../../helper';
+import { UPDATE } from '../../../../config/serviceRecord';
 import styles from './customerProfile.less';
 
 import { riskLevelConfig, PER_CODE, ORG_CODE, CALLABLE_LIST, PHONE } from './config';
@@ -30,19 +31,35 @@ import iconNull from '../img/iconNull.png';
 // 客户等级的图片源
 const rankImgSrcConfig = {
   // 钻石
-  805010: iconDiamond,
+  805010: {
+    src: iconDiamond,
+    title: '钻石卡',
+  },
   // 白金
-  805015: iconWhiteGold,
+  805015: {
+    src: iconWhiteGold,
+    title: '白金卡',
+  },
   // 金卡
-  805020: iconGold,
+  805020: {
+    src: iconGold,
+    title: '金卡',
+  },
   // 银卡
-  805025: iconSliver,
+  805025: {
+    src: iconSliver,
+    title: '银卡',
+  },
   // 理财
-  805030: iconMoney,
+  805030: {
+    src: iconMoney,
+    title: '理财卡',
+  },
   // 空
-  805040: iconNull,
-  // 其他
-  805999: '',
+  805040: {
+    src: iconNull,
+    title: '空',
+  },
 };
 
 export default class CustomerProfile extends React.PureComponent {
@@ -175,6 +192,7 @@ export default class CustomerProfile extends React.PureComponent {
         flag: false,
         caller: PHONE,
         autoGenerateRecordInfo: payload,
+        todo: UPDATE,
       });
     };
     addServeRecord({
@@ -260,6 +278,10 @@ export default class CustomerProfile extends React.PureComponent {
       custName, isAllocate, isHighWorth, custId, genderValue, age,
         riskLevelCode, isSign, levelCode, custNature,
     } = targetCustDetail;
+    // 风险等级
+    const riskLevel = riskLevelConfig[riskLevelCode];
+    // 客户等级
+    const rankImg = rankImgSrcConfig[levelCode];
     return (
       <div className={styles.container}>
         <div className={styles.row}>
@@ -274,11 +296,15 @@ export default class CustomerProfile extends React.PureComponent {
               {isAllocate === '0' && '(未分配)'}
             </p>
             <p className={styles.item}>
-              {isHighWorth && <span className={styles.highWorth}>高</span>}
-              {riskLevelConfig[riskLevelCode]
-                && <span className={styles.riskLevel}>{riskLevelConfig[riskLevelCode]}</span>}
-              {isSign && <span className={styles.sign}>签</span>}
-              {rankImgSrcConfig[levelCode] && <img className={styles.rank} src={rankImgSrcConfig[levelCode]} alt="" />}
+              {isHighWorth && <span className={styles.highWorth} title="高净值">高</span>}
+              {
+                riskLevel
+                && <span className={styles.riskLevel} title={riskLevel.title}>
+                  {riskLevel.name}
+                </span>
+              }
+              {isSign && <span className={styles.sign} title="签约客户">签</span>}
+              {rankImg && <img className={styles.rank} title={rankImg.title} src={rankImg.src} alt="" />}
             </p>
           </div>
           <div className={styles.col}>

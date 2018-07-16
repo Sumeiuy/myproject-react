@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-13 14:27:12
+ * @Last Modified time: 2018-06-25 10:17:51
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 import _ from 'lodash';
@@ -95,6 +95,7 @@ const data = {
   toPercent(num, toFixedNum = 0) {
     return `${(Math.round(num * 10000) / 100).toFixed(toFixedNum)}%`;
   },
+
   /**
    * 生成一个唯一的ID值
    * @param {*} len

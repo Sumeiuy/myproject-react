@@ -8,14 +8,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import store from 'store';
 import { NormalTag } from 'lego-react-filter/src';
-
-
 import logable from '../../../decorators/logable';
 import HtFilter, { TagFilter } from '../../common/htFilter';
 import { url, check } from '../../../helper';
-import { seperator } from '../../../config';
+import { seperator, sessionStore } from '../../../config';
 
 import {
   basicFilters,
@@ -39,7 +36,8 @@ function UpdateLocalStorage(currentValue, moreFilterOpenedList, hashString) {
   // 如果是瞄准镜标签下钻过来，清除瞄准镜标签子标签缓存
   if (!currentValue[TAG_SIGN]) {
     const labelList = [].concat(currentValue.primaryKeyLabels).filter(value => value);
-    _.each(labelList, key => store.remove(`${key}_${hashString}`));
+    // 清除瞄准镜标签的子标签条件本地缓存
+    _.each(labelList, key => sessionStore.remove(`CUSTOMERPOOL_${key}_${hashString}`));
     if (!_.isEmpty(labelList)) {
       labelFilters = _.map(labelList, label => ({
         type: MORE_FILTER_TYPE.tag,
@@ -47,21 +45,21 @@ function UpdateLocalStorage(currentValue, moreFilterOpenedList, hashString) {
       }));
     }
     // 清除非固定过滤组件的打开记录缓存
-    store.remove(`MORE_FILTER_STORAGE_${hashString}`);
+    sessionStore.remove(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
 
     const moreFiltersList = _.map(moreFilterOpenedList, filter => ({
       type: MORE_FILTER_TYPE.more,
       key: filter,
     }));
 
-    store.set(`MORE_FILTER_STORAGE_${hashString}`, _.compact([].concat(labelFilters, moreFiltersList)));
+    sessionStore.set(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`, _.compact([].concat(labelFilters, moreFiltersList)));
   }
 }
 
 // 客户标签组件交互时，更新本地缓存
 function updateLocalLabelStorage(labels, key, hashString) {
   let nextMoreFilterListOpened = [];
-  const moreFilterListOpened = store.get(`MORE_FILTER_STORAGE_${hashString}`);
+  const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
   if (key === 'clearAll') {
     nextMoreFilterListOpened =
       _.filter(moreFilterListOpened, obj => obj.type === MORE_FILTER_TYPE.more);
@@ -77,20 +75,20 @@ function updateLocalLabelStorage(labels, key, hashString) {
     }
   }
 
-  store.set(`MORE_FILTER_STORAGE_${hashString}`, _.compact(nextMoreFilterListOpened));
+  sessionStore.set(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`, _.compact(nextMoreFilterListOpened));
 }
 
 // 点击清除时更新本地缓存
 function updateLocalFilterStorage(key, hashString) {
-  const moreFilterListOpened = store.get(`MORE_FILTER_STORAGE_${hashString}`);
+  const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
   const nextMoreFilterListOpened = _.filter(moreFilterListOpened, obj => obj.key !== key);
-  store.set(`MORE_FILTER_STORAGE_${hashString}`, _.compact(nextMoreFilterListOpened));
+  sessionStore.set(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`, _.compact(nextMoreFilterListOpened));
 }
 
 // 更多组件交互时，更新本地缓存
 function updateLocalMoreFilterStorage(item, hashString) {
   let nextMoreFilterListOpened = [];
-  const moreFilterListOpened = store.get(`MORE_FILTER_STORAGE_${hashString}`);
+  const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
 
   if (item.key === 'clearAll') {
     nextMoreFilterListOpened =
@@ -103,7 +101,7 @@ function updateLocalMoreFilterStorage(item, hashString) {
       key: item.id,
     });
   }
-  store.set(`MORE_FILTER_STORAGE_${hashString}`, _.compact(nextMoreFilterListOpened));
+  sessionStore.set(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`, _.compact(nextMoreFilterListOpened));
 }
 
 export default class Filter extends PureComponent {
@@ -124,6 +122,8 @@ export default class Filter extends PureComponent {
     searchServerPersonList: PropTypes.array.isRequired,
     getSearchPersonList: PropTypes.func.isRequired,
     hashString: PropTypes.string.isRequired,
+    queryIndustryList: PropTypes.func.isRequired,
+    industryList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -166,6 +166,9 @@ export default class Filter extends PureComponent {
     }
     if (filter.filterId === 'primaryKeyJxgrps') {
       return this.handleJxGroupProductChange;
+    }
+    if (filter.filterId === 'holdingIndustry') {
+      return this.handleHoldingIndustryChange;
     }
     switch (filter.type) {
       case 'single':
@@ -321,6 +324,21 @@ export default class Filter extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
+      name: '客户筛选-持仓行业',
+      value: '$args[0].value.induName',
+    },
+  })
+  handleHoldingIndustryChange({ id, value }) {
+    this.props.onFilterChange({
+      name: id,
+      value: value.induCode,
+    });
+  }
+
+  @autobind
+  @logable({
+    type: '$args[0].id',
+    payload: {
       name: '客户筛选-最后一次服务',
       date: '$args[0].value.date',
       radioValue: '$args[0].value.radioValue',
@@ -434,8 +452,9 @@ export default class Filter extends PureComponent {
     const { hashString } = this.props;
     updateLocalLabelStorage(obj.value, key, hashString);
     this.labelFilter = key;
-    store.remove(`${key}_${hashString}`);
+    sessionStore.remove(`CUSTOMERPOOL_${key}_${hashString}`);
     const sightingTelescopeList = this.checkPrimaryKeyLabel(obj.value);
+    // 获取瞄准镜标签对应的子标签条件
     this.props.getFiltersOfSightingTelescopeSequence({ sightingTelescopeList });
     const value = _.join(obj.value, seperator.filterValueSeperator);
     this.props.onFilterChange({
@@ -455,9 +474,9 @@ export default class Filter extends PureComponent {
 
   @autobind
   @logable({
-    type: 'DropdownSelect',
+    type: 'click',
     payload: {
-      name: '标签-关闭',
+      name: '客户筛选-关闭标签',
       value: '$args[0]',
     },
   })
@@ -471,7 +490,7 @@ export default class Filter extends PureComponent {
     });
     updateLocalFilterStorage(id, hashString);
 
-    store.remove(`${id}_${hashString}`);
+    sessionStore.remove(`CUSTOMERPOOL_${id}_${hashString}`);
   }
 
   @autobind
@@ -485,8 +504,9 @@ export default class Filter extends PureComponent {
   handleTagfilterChange(value) {
     const { id } = value;
     const { hashString } = this.props;
-    store.remove(`${id}_${hashString}`);
-    store.set(`${id}_${hashString}`, value.value);
+    sessionStore.remove(`CUSTOMERPOOL_${id}_${hashString}`);
+    sessionStore.set(`CUSTOMERPOOL_${id}_${hashString}`, value.value);
+    // 更新url，强制渲染
     this.props.onFilterChange({
       name: TAG_SIGN,
       value: _.random(1, 1000000),
@@ -518,14 +538,14 @@ export default class Filter extends PureComponent {
       }, obj.isDeleteFilterFromLocation);
 
       if (!obj.isDeleteFilterFromLocation) {
-        store.set(`FILTER_SELECT_FROM_MOREFILTER_${hashString}`, true);
+        sessionStore.set(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${hashString}`, true);
       }
     }
   }
 
   @autobind
   @logable({
-    type: 'DropdownSelect',
+    type: 'click',
     payload: {
       name: '客户筛选-关闭过滤条件',
       value: '$args[0].name',
@@ -642,7 +662,7 @@ export default class Filter extends PureComponent {
         filterName={renderItem.name}
         filterId={renderItem.id}
         defaultVisible={this.labelFilterVisible && renderItem.id === this.labelFilter}
-        value={store.get(`${renderItem.id}_${hashString}`) || []}
+        value={sessionStore.get(`CUSTOMERPOOL_${renderItem.id}_${hashString}`) || []}
         data={tagfilters}
         onChange={this.handleTagfilterChange}
         onClose={
@@ -665,7 +685,7 @@ export default class Filter extends PureComponent {
 
     const currentValue = url.transfromFilterValFromUrl(filters);
 
-    const moreFilterListOpened = store.get(`MORE_FILTER_STORAGE_${hashString}`);
+    const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
 
     const selectedKeys = this.getMoreFilterOpenKeys(currentValue);
 
@@ -708,7 +728,8 @@ export default class Filter extends PureComponent {
                 dropdownStyle={{
                   maxHeight: 324,
                   overflowY: 'auto',
-                  width: 210,
+                  width: 250,
+                  zIndex: 10,
                 }}
                 onChange={this.handleLabelChange}
                 iconMore
@@ -725,7 +746,7 @@ export default class Filter extends PureComponent {
               position: 'relactive',
               maxHeight: 324,
               overflowY: 'auto',
-              width: 210,
+              width: 250,
               zIndex: 10,
             }}
             data={moreFilterData}

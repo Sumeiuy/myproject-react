@@ -64,7 +64,7 @@ export default function AmountSelectFilter(props) {
       dropdownStyle={{
         maxHeight: 324,
         overflowY: 'auto',
-        width: 276,
+        width: 278,
       }}
       menuProps={{
         unit: props.unit,

@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请新建页面
  * @Date: 2018-06-08 13:10:33
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-15 09:54:17
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-07-02 15:10:03
  */
 
 import React, { PureComponent } from 'react';
@@ -38,9 +38,11 @@ export default class CreateApply extends PureComponent {
     // 校验数据
     validateData: PropTypes.func.isRequired,
     validateResult: PropTypes.object.isRequired,
-    // 提交申请
+    // “是否办理股票质押回购业务“选“是”时，提交申请接口
     submitResult: PropTypes.string.isRequired,
     submitApply: PropTypes.func.isRequired,
+    // “是否办理股票质押回购业务“选“否”时，新建提交后不需走审批流程，直接调这个接口
+    chgCustRelaiton: PropTypes.func.isRequired,
     // 走流程
     flowResult: PropTypes.string.isRequired,
     doApproveFlow: PropTypes.func.isRequired,
@@ -92,6 +94,7 @@ export default class CreateApply extends PureComponent {
     }
   }
 
+  // 因为需求变更，提交时根据'是否办理股票质押回购业务'选择的不同而不同
   @autobind
   doSubmit() {
     const {
@@ -101,17 +104,31 @@ export default class CreateApply extends PureComponent {
       stockRepurchase,
       cust,
     } = this.state;
-    this.props.submitApply({
+    const submitApplyParameter = {
       relationshipList: relationships,
       attachment,
-      empLogin: auditors,
       businessFlag: stockRepurchase,
       custId: cust.custId,
       custRowId: cust.custRowId,
       custType: cust.custTypeValue,
       IDTypeValue: cust.custIDTypeValue,
       IDNum: cust.custIDNum,
-    }).then(this.doApprovalFlow);
+    };
+    if (stockRepurchase === 'Y') {
+      // “是否办理股票质押回购业务“选“是”时，提交申请接口,然后走流程
+      this.props.submitApply({
+        ...submitApplyParameter,
+        empLogin: auditors,
+      }).then(this.doApprovalFlow);
+    } else {
+      // “是否办理股票质押回购业务“选“否”时，新建提交后不需走审批流程，直接调这个接口
+      this.props.chgCustRelaiton({
+        ...submitApplyParameter,
+        custName: cust.custName,
+      }).then(() => {
+        this.props.onCloseModal('isShowCreateModal', true);
+      });
+    }
   }
 
   @autobind
@@ -161,25 +178,31 @@ export default class CreateApply extends PureComponent {
       confirm({ content: msg });
       return;
     }
-    // 此处需要增加选择审批人的操作
-    // 将用户选择的按钮信息保存下来
-    // 弹出审批人选择框
-    this.setState({
-      operate: btn.operate,
-      groupName: btn.nextGroupName,
-      auditors: !_.isEmpty(btn.flowAuditors) ? btn.flowAuditors[0].login : '',
-      nextApproverList: btn.flowAuditors,
-    }, () => {
-      // 如果只有一个审批人情况，则直接提交后端校验接口
-      // 校验通过之后则条用新建接口
-      if (_.size(btn.flowAuditors) === 1) {
-        this.doValidateBeforeSubmit();
-      } else {
-        this.setState({
-          nextApprovalModal: true,
-        });
-      }
-    });
+    // “是否办理股票质押回购业务“选“是”时，需要选择审批人，提交申请接口,然后走流程
+    // 选“否”时不需要选择审批人
+    if (this.state.stockRepurchase === 'Y') {
+      // 此处需要增加选择审批人的操作
+      // 将用户选择的按钮信息保存下来
+      // 弹出审批人选择框
+      this.setState({
+        operate: btn.operate,
+        groupName: btn.nextGroupName,
+        auditors: !_.isEmpty(btn.flowAuditors) ? btn.flowAuditors[0].login : '',
+        nextApproverList: btn.flowAuditors,
+      }, () => {
+        // 如果只有一个审批人情况，则直接提交后端校验接口
+        // 校验通过之后则条用新建接口
+        if (_.size(btn.flowAuditors) === 1) {
+          this.doValidateBeforeSubmit();
+        } else {
+          this.setState({
+            nextApprovalModal: true,
+          });
+        }
+      });
+    } else {
+      this.doValidateBeforeSubmit();
+    }
   }
 
   @autobind

@@ -1,9 +1,10 @@
 .listContainer {
+  padding: 20px;
   background-color: #f3f3f4;
   .inner {
-    margin: 20px 20px 44px;
-    padding: 7px 30px 60px;
+    padding: 20px;
     background-color: #fff;
+    box-shadow: 2px 1px 5px #bdbcbc;
     .td, a {
       font-family: PingFangSC-Regular;
       font-size: 14px;
@@ -18,7 +19,7 @@
       color: #fff;
     }
     .headLine {
-      width: 300px;
+      width: 214px;
       padding-right: 15px;
       cursor: pointer;
       a {
@@ -38,6 +39,12 @@
     }
     .stock {
       width: 90%;
+      max-width: 500px;
+    }
+    :global {
+      .ant-table-wrapper {
+        min-height: 380px;
+      }
     }
   }
   :global {
@@ -51,6 +58,7 @@
           .ant-table-thead > tr > th {
             font-family: PingFangSC-Medium;
             font-size: 14px;
+            font-weight: bold;
             color: #4a4a4a;
             letter-spacing: 0.2px;
             border-bottom: 1px solid #ccc;

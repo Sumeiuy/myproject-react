@@ -9,6 +9,7 @@ const menu = [
   {
     name: '任务管理',
     path: '/taskOperation',
+    permission: duty.HTSC_HQ_XTGL,
     children: [
       {
         name: '客户反馈选项',
@@ -27,13 +28,19 @@ const menu = [
   {
     name: '用户中心',
     path: '/labelManager',
+    permission: duty.HTSC_HQ_XTGL,
     children: '个人标签',
   },
   {
     name: '内容运营',
     path: '/contentOperate',
-    permission: duty.HTSC_HQ_MAMPID,
+    permission: duty.HTSC_HQ_XTGL,
     children: '推荐标签',
+  },
+  {
+    name: '客户标签',
+    path: '/customerLabel',
+    permission: duty.HTSC_BMXTGLY,
   },
 ];
 
