@@ -13,6 +13,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import IECharts from '../IECharts';
 import styles from './combinationYieldChart.less';
+import logable from '../../decorators/logable';
 import { chartTabList } from '../../components/choicenessCombination/config';
 
 const TabPane = Tabs.TabPane;
@@ -166,6 +167,13 @@ export default class CombinationYieldChart extends Component {
   }
 
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '收益率走势图',
+      value: '$args[0]',
+    },
+  })
   handleTabChange(key) {
     const { tabChange, combinationCode } = this.props;
     tabChange({
