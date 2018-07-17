@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Description: 业务手机申请页面ViewListRow
  * @Date: 2018-01-29 14:25:26
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-19 16:46:12
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-06-06 14:36:40
  */
 
 import React from 'react';

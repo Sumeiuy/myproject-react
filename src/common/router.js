@@ -202,16 +202,6 @@ export const getRouterData = (app) => {
     '/customerPool': {
       component: CustomerPool,
     },
-    // 从 customerPool 页面右下角资讯列表任意标题进入
-    '/customerPool/viewpointDetail': {
-      component: dynamicWrapper(app, ['customerPool'], () =>
-        import('../routes/customerPool/ViewpointDetail' /* webpackChunkName: "customerPool_viewpointDetail" */)),
-    },
-    // 从 customerPool 页面右下角资讯列表--更多进入
-    '/customerPool/viewpointList': {
-      component: dynamicWrapper(app, ['customerPool'], () =>
-        import('../routes/customerPool/ViewpointList' /* webpackChunkName: "customerPool_viewpointList" */)),
-    },
     // 从 customerPool 搜索框下方--任务概览--第三个选项【代办流程】进入
     '/customerPool/todo': {
       component: dynamicWrapper(app, ['customerPool'], () =>
@@ -370,11 +360,43 @@ export const getRouterData = (app) => {
         import('../routes/platformParameterSetting/Home' /* webpackChunkName: "platformParameterSetting" */)),
       exact: false,
     },
+    '/platformParameterSetting/taskOperation/customerFeedback': {
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/customerFeedback/Home' /* webpackChunkName: "taskOperationCustomerFeedback" */)),
+    },
+    '/platformParameterSetting/taskOperation/taskFeedback': {
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/taskFeedback/Home' /* webpackChunkName: "taskOperationTaskFeedback" */)),
+    },
+    '/platformParameterSetting/taskOperation/investmentAdvice': {
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/investmentAdvice/Home' /* webpackChunkName: "taskOperationInvestmentAdvice" */)),
+    },
+    '/platformParameterSetting/labelManager': {
+      component: dynamicWrapper(app, [], () =>
+        import('../components/platformParameterSetting/routers/LabelManager' /* webpackChunkName: "LabelManager" */)),
+    },
+    '/platformParameterSetting/contentOperate': {
+      component: dynamicWrapper(app, [], () =>
+        import('../components/platformParameterSetting/routers/RecommendedLabel' /* webpackChunkName: "RecommendedLabel" */)),
+    },
+    '/platformParameterSetting/customerLabel': {
+      component: dynamicWrapper(app, [], () =>
+        import('../components/platformParameterSetting/routers/customerLabel/index' /* webpackChunkName: "customerLabel" */)),
+    },
     // 公务手机和电话卡号管理
     '/telephoneNumberManage': {
       component: dynamicWrapper(app, ['telephoneNumberManage'], () =>
         import('../routes/telephoneNumberManage/Home' /* webpackChunkName: "telephoneNumberManage" */)),
       exact: false,
+    },
+    '/telephoneNumberManage/distribute': {
+      component: dynamicWrapper(app, ['telephoneNumberManage'], () =>
+        import('../routes/telephoneNumberManage/DistributeHome' /* webpackChunkName: "telephoneManageDistribute" */)),
+    },
+    '/telephoneNumberManage/apply': {
+      component: dynamicWrapper(app, ['telephoneNumberManage'], () =>
+        import('../routes/telephoneNumberManage/ApplyHome' /* webpackChunkName: "telephoneManageApplyHome" */)),
     },
     // 公务手机和电话卡号管理修改页面
     '/telephoneNumberManageEdit': {
@@ -433,13 +455,49 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['keyMonitorAccount'], () => 
         import('../routes/keyMonitorAccount/Home' /* webpackChunkName: "keyMonitorAccount" */)),
     },
+    // 最新观点，直接进入
+    '/latestView': {
+      component: dynamicWrapper(app, ['latestView'], () => 
+        import('../routes/latestView/Home' /* webpackChunkName: "latestView"*/)),
+    },
+    // 首席观点列表页面
+    '/latestView/viewpointList': {
+      component: dynamicWrapper(app, ['latestView'], () => 
+        import('../routes/latestView/ViewpointList' /* webpackChunkName: "latestViewpointList" */)),
+    },
+    // 首席观点详情页
+    '/latestView/viewpointDetail': {
+      component: dynamicWrapper(app, ['latestView'], () => 
+        import('../routes/latestView/ViewpointDetail' /* webpackChunkName: "latestViewpointDetail" */)),
+    },
+    // 大类资产配置分析列表
+    '/latestView/majorAssetsList': {
+      component: dynamicWrapper(app, ['latestView'], () => 
+        import('../routes/latestView/MajorAssetsList' /* webpackChunkName: "majorAssetsList"*/)),
+    },
+    // 行业主题调整信息列表
+    '/latestView/industryThemeList': {
+      component: dynamicWrapper(app, ['latestView'], () => 
+        import('../routes/latestView/IndustryThemeList' /* webpackChunkName: "industryThemeList"*/)),
+    },
+    // 股票期权评估申请 
+    '/stockOptionEvaluation': {
+      component: dynamicWrapper(app, ['stockOptionEvaluation'], () =>
+        import('../routes/stockOptionEvaluation/Home') /* webpackChunkName: "stockOptionEvaluation" */),
+    },
+    // 股票期权评估申请修改
+    '/stockOptionEvaluationEdit': {
+      component: dynamicWrapper(app, ['stockOptionEvaluation'], () =>
+        import('../routes/stockOptionEvaluation/ApplyEdit') /* webpackChunkName: "stockOptionEvaluationEdit" */),
+    },
   };
   return routerConfig;
 };
 
 // 采取分布式配置的路由路径
 export const distributeRouters = [
-  // 路径：例如 '/abc'
+  '/platformParameterSetting',
+  '/telephoneNumberManage',
 ];
 
 export default {};

@@ -17,7 +17,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const titleList = config.titleList.orderCust;
 const { overlayStyle, sourceType } = config;
-export default class HistoryReport extends PureComponent {
+export default class OrderingCustomer extends PureComponent {
   static propTypes = {
     // 当前组合code
     combinationCode: PropTypes.string,
@@ -107,7 +107,6 @@ export default class HistoryReport extends PureComponent {
       current: page.pageNum || 1,
       total: page.totalCount || 0,
       pageSize: page.pageSize || 5,
-      showTotal: total => `共 ${total} 条`,
     };
     const newTitleList = this.getNewTitleList(titleList);
     const openPayload = {

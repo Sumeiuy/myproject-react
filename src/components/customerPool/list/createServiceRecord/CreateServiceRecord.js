@@ -14,6 +14,7 @@ import { url } from '../../../../helper/index';
 import logable, { logCommon } from '../../../../decorators/logable';
 import ServiceRecordContent from '../../../common/serviceRecordContent';
 import Loading from '../../../../layouts/Loading';
+import { UPDATE } from '../../../../config/serviceRecord';
 import styles from './createServiceRecord.less';
 
 /**
@@ -111,6 +112,7 @@ export default class CreateServiceRecord extends PureComponent {
       serviceRecordInfo: {
         id: custId,
         autoGenerateRecordInfo = {},
+        todo,
       },
       dict,
       isPhoneCall,
@@ -125,7 +127,8 @@ export default class CreateServiceRecord extends PureComponent {
         serveWay,
         serveContentDesc: `${serveContentDesc}${data.serveContentDesc}`,
       };
-      if (!_.isEmpty(id) && id !== 'failure') {
+      // todo=update 时表示更新服务记录
+      if (todo === UPDATE && !_.isEmpty(id) && id !== 'failure') {
         payload = {
           ...payload,
           id,
@@ -142,9 +145,9 @@ export default class CreateServiceRecord extends PureComponent {
     logCommon({
       type: 'Submit',
       payload: {
-        name: custId,
+        name: '服务记录',
         type: serveTypeName,
-        value: JSON.stringify(data),
+        value: JSON.stringify({ ...data, custId }),
       },
     });
   }

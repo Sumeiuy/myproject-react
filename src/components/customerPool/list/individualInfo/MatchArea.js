@@ -1,23 +1,25 @@
 /**
  * @file components/customerPool/list/MatchArea.js
+ *  客户列表个性化信息
+ * @author xiaZhiQiang
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-28 20:35:38
+ * @Last Modified time: 2018-07-13 16:22:32
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { autobind } from 'core-decorators';
-import store from 'store';
-import { isSightingScope } from '../../helper';
-import { url as urlHelper, url } from '../../../../helper';
-import seperator from '../../../../config/filterSeperator';
-import { openFspTab, openRctTab } from '../../../../utils/index';
+import { isSightingScope, handleOpenFsp360TabAction } from '../../helper';
+import { url as urlHelper, url, number } from '../../../../helper';
+import { seperator, sessionStore } from '../../../../config';
+import { openRctTab } from '../../../../utils/index';
 import { RANDOM } from '../../../../config/filterContant';
 import HoldingProductDetail from '../HoldingProductDetail';
 import HoldingCombinationDetail from '../HoldingCombinationDetail';
+import HoldingIndustryDetail from '../HoldingIndustryDetail';
 import Icon from '../../../common/Icon';
 import matchAreaConfig from './config';
 import styles from './matchArea.less';
@@ -40,20 +42,15 @@ const replaceWord = ({ value, searchText, title = '', type = '' }) => {
     `<em class="marked">${searchText}${titleDom || ''}</em>${holder}`);
 };
 
-// 个人对应的code码
-const PER_CODE = 'per';
-// 一般机构对应的code码
-const ORG_CODE = 'org';
-
 export default class MatchArea extends PureComponent {
   static setFilterOrder(id, value, hashString) {
-    const filterOrder = store.get(`FILTER_ORDER_${hashString}`) || [];
+    const filterOrder = sessionStore.get(`CUSTOMERPOOL_FILTER_ORDER_${hashString}`) || [];
     const finalId = _.isArray(id) ? id : [id];
     let finalOrder = _.difference(filterOrder, finalId);
     if (value && !_.includes(value, unlimited)) {
       finalOrder = [...finalId, ...finalOrder];
     }
-    store.set(`FILTER_ORDER_${hashString}`, [...new Set(finalOrder)]);
+    sessionStore.set(`CUSTOMERPOOL_FILTER_ORDER_${hashString}`, [...new Set(finalOrder)]);
   }
 
   static propTypes = {
@@ -70,6 +67,9 @@ export default class MatchArea extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryHoldingIndustryDetail: PropTypes.func.isRequired,
+    industryDetail: PropTypes.object.isRequired,
+    queryHoldingIndustryDetailReqState: PropTypes.bool.isRequired,
   };
 
   static contextTypes = {
@@ -104,43 +104,6 @@ export default class MatchArea extends PureComponent {
     };
   }
 
-  /**
-   * 跳转到360服务记录页面
-   * @param {*object} itemData 当前列表item数据
-   * @param {*} keyword 当前输入关键字
-   */
-  @autobind
-  handleOpenFsp360TabAction(itemData, keyword) {
-    const { custNature, custId, rowId, ptyId } = itemData;
-    const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
-    const url360 = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
-    const pathname = '/customerCenter/fspcustomerDetail';
-    openFspTab({
-      routerAction: this.context.push,
-      url360,
-      query: {
-        custId,
-        rowId,
-        ptyId,
-        keyword,
-      },
-      pathname,
-      param: {
-        id: 'FSP_360VIEW_M_TAB',
-        title: '客户360视图-客户信息',
-        forceRefresh: true,
-        activeSubTab: ['服务记录'],
-        // 服务记录搜索
-        serviceRecordKeyword: keyword,
-        // 服务渠道
-        serviceRecordChannel: encodeURIComponent('理财服务平台'),
-      },
-      state: {
-        url,
-      },
-    });
-  }
-
   getFilters() {
     const {
       location: { query: { filters } },
@@ -151,6 +114,143 @@ export default class MatchArea extends PureComponent {
       ...query,
       searchText: window.decodeURIComponent(searchText),
     };
+  }
+
+  // 关键词匹配到的持仓产品
+  getFilteredProducts(list, keyword) {
+    return _.filter(
+      list,
+      item => item && (_.includes(item.code, keyword) || _.includes(item.name, keyword)),
+    );
+  }
+
+  // 产品id匹配到的持仓产品
+  getFilteredProductsById(list, id) {
+    return _.filter(
+      list,
+      item => item && (_.includes(item.id, id)),
+    );
+  }
+
+  /**
+   * 根据持仓产品的字段返回多个持仓产品的html
+   * @param {*} list [{name: '12345', id:'0008'},{name: '29999', id:'0002'}]
+   * @param {*} keyword '2'
+   */
+  getMultipleHoldingProductNode(list, keyword) {
+    if (!_.isEmpty(list)) {
+      const htmlStringList = _.map(
+        list,
+        item => `${replaceWord({ value: item.name, searchText: keyword })}/${replaceWord({ value: item.code, searchText: keyword })}`,
+      );
+      const htmlString = htmlStringList.join(',');
+      return (
+        <li key={htmlString} title={htmlString.replace(/<\/?[^>]*>/g, '')}>
+          <span>
+            <i className="label">持仓产品：</i>
+            <i dangerouslySetInnerHTML={{ __html: htmlString }} />
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 根据持仓产品的字段返回单个持仓产品的html
+  getSingleHoldingProductNode(list, keyword) {
+    const {
+      listItem: { isPrivateCustomer, empId, custId },
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      queryHoldingProduct,
+      holdingProducts,
+      queryHoldingProductReqState,
+      formatAsset,
+    } = this.props;
+    const { empInfo: { empInfo = {} } } = this.context;
+    // 是否显示’持仓详情‘，默认不显示
+    let isShowDetailBtn = false;
+    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
+    if (hasNPCTIQPermission && !isPrivateCustomer) {
+      isShowDetailBtn = true;
+    }
+    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
+    // 主服务经理 可以看名下所有客户的持仓信息
+    if (hasPCTIQPermission || empInfo.rowId === empId) {
+      isShowDetailBtn = true;
+    }
+    if (!_.isEmpty(list)) {
+      const { name, code } = list[0] || {};
+      const htmlString = `${replaceWord({ value: name, searchText: keyword })}/${replaceWord({ value: code, searchText: keyword })}`;
+      const props = {
+        custId,
+        data: list[0] || {},
+        queryHoldingProduct,
+        holdingProducts,
+        queryHoldingProductReqState,
+        formatAsset,
+      };
+      return (
+        <li key={htmlString}>
+          <span>
+            <i className="label">持仓产品：</i>
+            <i dangerouslySetInnerHTML={{ __html: htmlString }} />
+            {isShowDetailBtn && <HoldingProductDetail {...props} />}
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  @autobind
+  getFilterOrder() {
+    const { location: { query: { filters, individualInfo } } } = this.props;
+    const needInfoFilter = _.keys(matchAreaConfig);
+    if (!individualInfo) {
+      sessionStore.remove(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`);
+      const filtersArray = filters ? filters.split(seperator.filterSeperator) : [];
+      const filterList = _.map(filtersArray, item =>
+        item.split(seperator.filterInsideSeperator)[0]);
+      const filterOrder = _.filter(needInfoFilter, item => _.includes(filterList, item));
+      MatchArea.setFilterOrder(filterOrder, true, this.hashString);
+      return filterOrder;
+    }
+    return _.filter(sessionStore.get(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`), item => _.includes(needInfoFilter, item));
+  }
+
+  // 点击订购组合名称跳转到详情页面
+  @autobind
+  handleOrderCombinationClick({ name, code }) {
+    const { push } = this.context;
+    const query = { id: code, name };
+    const pathname = '/choicenessCombination/combinationDetail';
+    const detailURL = `${pathname}?${urlHelper.stringify(query)}`;
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_JX_GROUP_DETAIL',
+      title: '组合详情',
+    };
+    openRctTab({
+      routerAction: push,
+      url: detailURL,
+      query,
+      pathname,
+      param,
+      state: {
+        url: detailURL,
+      },
+    });
+  }
+
+  @autobind
+  showAllIndividual() {
+    const { showAll } = this.state;
+    this.setState({
+      showAll: !showAll,
+    });
   }
 
   // 直接取后端返回值渲染的情况
@@ -165,7 +265,11 @@ export default class MatchArea extends PureComponent {
         <li title={currentVal}>
           <span>
             <i className="label">{name}：</i>
-            {currentVal}{unit}
+            {
+              unit === '元' ?
+                number.thousandFormat(Number(currentVal).toFixed(2), false) :
+                currentVal
+            }{unit}
           </span>
         </li>
       );
@@ -250,32 +354,6 @@ export default class MatchArea extends PureComponent {
       }
     }
     return null;
-  }
-
-  // 点击订购组合名称跳转到详情页面
-  @autobind
-  handleOrderCombinationClick({ name, code }) {
-    const { push } = this.context;
-    const query = { id: code, name };
-    const pathname = '/choicenessCombination/combinationDetail';
-    const detailURL = `${pathname}?${urlHelper.stringify(query)}`;
-    const param = {
-      closable: true,
-      forceRefresh: true,
-      isSpecialTab: true,
-      id: 'FSP_JX_GROUP_DETAIL',
-      title: '组合详情',
-    };
-    openRctTab({
-      routerAction: push,
-      url: detailURL,
-      query,
-      pathname,
-      param,
-      state: {
-        url: detailURL,
-      },
-    });
   }
 
   // 匹配姓名
@@ -448,7 +526,11 @@ export default class MatchArea extends PureComponent {
           </span>
           <span
             className={styles.more}
-            onClick={() => this.handleOpenFsp360TabAction(listItem, searchText)}
+            onClick={() => handleOpenFsp360TabAction({
+              itemData: listItem,
+              keyword: searchText,
+              routerAction: this.context.push,
+            })}
           >详情</span>
         </li>
       );
@@ -558,112 +640,9 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
-  // 关键词匹配到的持仓产品
-  getFilteredProducts(list, keyword) {
-    return _.filter(
-      list,
-      item => item && (_.includes(item.code, keyword) || _.includes(item.name, keyword)),
-    );
-  }
-
-  // 产品id匹配到的持仓产品
-  getFilteredProductsById(list, id) {
-    return _.filter(
-      list,
-      item => item && (_.includes(item.id, id)),
-    );
-  }
-
-  /**
-   * 根据持仓产品的字段返回多个持仓产品的html
-   * @param {*} list [{name: '12345', id:'0008'},{name: '29999', id:'0002'}]
-   * @param {*} keyword '2'
-   */
-  getMultipleHoldingProductNode(list, keyword) {
-    if (!_.isEmpty(list)) {
-      const htmlStringList = _.map(
-        list,
-        item => `${replaceWord({ value: item.name, searchText: keyword })}/${replaceWord({ value: item.code, searchText: keyword })}`,
-      );
-      const htmlString = htmlStringList.join(',');
-      return (
-        <li key={htmlString} title={htmlString.replace(/<\/?[^>]*>/g, '')}>
-          <span>
-            <i className="label">持仓产品：</i>
-            <i dangerouslySetInnerHTML={{ __html: htmlString }} />
-          </span>
-        </li>
-      );
-    }
-    return null;
-  }
-
-  // 根据持仓产品的字段返回单个持仓产品的html
-  getSingleHoldingProductNode(list, keyword) {
-    const {
-      listItem: { isPrivateCustomer, empId, custId },
-      hasNPCTIQPermission,
-      hasPCTIQPermission,
-      queryHoldingProduct,
-      holdingProducts,
-      queryHoldingProductReqState,
-      formatAsset,
-    } = this.props;
-    const { empInfo: { empInfo = {} } } = this.context;
-    // 是否显示’持仓详情‘，默认不显示
-    let isShowDetailBtn = false;
-    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
-    if (hasNPCTIQPermission && !isPrivateCustomer) {
-      isShowDetailBtn = true;
-    }
-    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
-    // 主服务经理 可以看名下所有客户的持仓信息
-    if (hasPCTIQPermission || empInfo.rowId === empId) {
-      isShowDetailBtn = true;
-    }
-    if (!_.isEmpty(list)) {
-      const { name, code } = list[0] || {};
-      const htmlString = `${replaceWord({ value: name, searchText: keyword })}/${replaceWord({ value: code, searchText: keyword })}`;
-      const props = {
-        custId,
-        data: list[0] || {},
-        queryHoldingProduct,
-        holdingProducts,
-        queryHoldingProductReqState,
-        formatAsset,
-      };
-      return (
-        <li key={htmlString}>
-          <span>
-            <i className="label">持仓产品：</i>
-            <i dangerouslySetInnerHTML={{ __html: htmlString }} />
-            {isShowDetailBtn && <HoldingProductDetail {...props} />}
-          </span>
-        </li>
-      );
-    }
-    return null;
-  }
-
-  @autobind
-  getFilterOrder() {
-    const { location: { query: { filters, individualInfo } } } = this.props;
-    const needInfoFilter = _.keys(matchAreaConfig);
-    if (!individualInfo) {
-      store.remove(`FILTER_ORDER_${this.hashString}`);
-      const filtersArray = filters ? filters.split(seperator.filterSeperator) : [];
-      const filterList = _.map(filtersArray, item =>
-        item.split(seperator.filterInsideSeperator)[0]);
-      const filterOrder = _.filter(needInfoFilter, item => _.includes(filterList, item));
-      MatchArea.setFilterOrder(filterOrder, true, this.hashString);
-      return filterOrder;
-    }
-    return _.filter(store.get(`FILTER_ORDER_${this.hashString}`), item => _.includes(needInfoFilter, item));
-  }
-
   @autobind
   renderCustomerLabels() {
-    const labelList = store.get(`MORE_FILTER_STORAGE_${this.hashString}`);
+    const labelList = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${this.hashString}`);
     const labelListId = _.map(labelList, item => item.key);
     const {
       listItem: { relatedLabels },
@@ -679,6 +658,58 @@ export default class MatchArea extends PureComponent {
         item.name && _.includes(labelListId, item.id) && !isSightingScope(item.source));
       const normalListNode = this.renderRelatedLabels(normalLabelList);
       return [normalListNode, ...amiListNode];
+    }
+    return null;
+  }
+
+  // 持仓行业
+  @autobind
+  renderHoldingIndustry() {
+    const {
+      listItem,
+      listItem: { isPrivateCustomer, empId, custId, holdingIndustry },
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      queryHoldingIndustryDetail,
+      industryDetail,
+      formatAsset,
+      queryHoldingIndustryDetailReqState,
+    } = this.props;
+    const { empInfo: { empInfo = {} } } = this.context;
+    // 是否显示’持仓详情‘，默认不显示
+    let isShowDetailBtn = false;
+    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓行业信息
+    if (hasNPCTIQPermission && !isPrivateCustomer) {
+      isShowDetailBtn = true;
+    }
+    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓行业信息
+    // 主服务经理 可以看名下所有客户的持仓信息
+    if (hasPCTIQPermission || empInfo.rowId === empId) {
+      isShowDetailBtn = true;
+    }
+    if (!_.isEmpty(holdingIndustry)) {
+      const { name, id } = holdingIndustry[0] || {};
+      const props = {
+        listItem,
+        id,
+        queryHoldingIndustryDetail,
+        data: industryDetail,
+        formatAsset,
+        queryHoldingIndustryDetailReqState,
+      };
+      return (
+        <li key={`${custId}${id}`}>
+          <span>
+            <i className="label">持仓行业：</i>
+            <i>
+              <em className="marked">
+                {name}
+              </em>
+            </i>
+            {isShowDetailBtn && <HoldingIndustryDetail {...props} />}
+          </span>
+        </li>
+      );
     }
     return null;
   }
@@ -711,14 +742,6 @@ export default class MatchArea extends PureComponent {
       this.renderUserRights(),
       this.renderUnrightType(),
     ];
-  }
-
-  @autobind
-  showAllIndividual() {
-    const { showAll } = this.state;
-    this.setState({
-      showAll: !showAll,
-    });
   }
 
   render() {

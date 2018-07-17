@@ -1,0 +1,56 @@
+@import "../../../css/util.less";
+.itemWrapper {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px;
+  background: #fafcff;
+  .title {
+    div {
+      display: inline-block;
+      &:first-child {
+        width: 60%;
+        font-size: 16px;
+        .one-line-ellipsis;
+      }
+      &:last-child {
+        width: 40%;
+        text-align: right;
+        font-size: 14px;
+        .one-line-ellipsis;
+      }
+    }
+  }
+  h3 {
+    height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    color: #c2c2c2;
+    span {
+      display: block;
+      padding: 0 4px;
+      height: 16px;
+      margin-top: 2px;
+      float: right;
+      background: #ffdace;
+      border-radius: 3px;
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
+      color: #ed7853;
+    }
+  }
+  p {
+    font-size: 14px;
+    color: #4a4a4a;
+    .multi-line-ellipsis(4);
+  }
+  .link {
+    text-align: right;
+    a {
+      font-size: 14px;
+    }
+  }
+}
+.even {
+  background: #fff;
+}

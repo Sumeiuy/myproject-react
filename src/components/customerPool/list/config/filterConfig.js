@@ -37,18 +37,18 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 184,
+        width: 186,
       },
     },
     {
       filterName: '风险等级',
-      filterId: 'riskLvl',
-      type: 'single',
+      filterId: 'riskLevels',
+      type: 'multi',
       dictField: 'custRiskBearing',
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 184,
+        width: 186,
       },
     },
     {
@@ -59,7 +59,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 195,
+        width: 197,
       },
     },
   ],
@@ -80,7 +80,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 250,
+        width: 252,
       },
     },
     {
@@ -114,7 +114,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 250,
+        width: 252,
       },
     },
 
@@ -163,7 +163,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 195,
+        width: 197,
       },
     },
     {
@@ -174,7 +174,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 274,
+        width: 276,
       },
       dictField: ['kPIDateScopeType', 'singleBusinessTypeList'],
       getFilterLabelValue: getBusinessOpenedFilterLabel,
@@ -187,7 +187,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 195,
+        width: 197,
       },
     },
 
@@ -205,7 +205,7 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 184,
+        width: 186,
       },
     },
 
@@ -315,7 +315,21 @@ export default {
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 250,
+        width: 252,
+      },
+    },
+    {
+      filterName: '持仓行业',
+      filterId: 'holdingIndustry',
+      type: 'singleWithSearch',
+      placeholder: '行业名称',
+      dataList: ['props', 'industryList'],
+      dataMap: ['induCode', 'induName'],
+      needItemObj: true,
+      dropdownStyle: {
+        maxHeight: 324,
+        overflowY: 'auto',
+        width: 252,
       },
     },
 
@@ -402,6 +416,7 @@ export default {
     { value: '账户状态', key: 'accountStatus' },
     { value: '佣金率', key: 'minFee' },
     { value: '持仓产品', key: 'primaryKeyPrdts' },
+    { value: '持仓行业', key: 'holdingIndustry' },
     { value: '总资产', key: 'totAset' },
     { value: '介绍人', key: 'devMngId' },
     { value: '年龄范围', key: 'age' },
@@ -468,6 +483,7 @@ export default {
       children: [
         'minFee',
         'primaryKeyPrdts',
+        'holdingIndustry',
         'kfBuyAmt',
         'smBuyAmt',
         'finaBuyAmt',

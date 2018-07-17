@@ -179,6 +179,10 @@ export default {
     pagingCustLabelData: EMPTY_OBJECT,
     // 订购组合产品-持仓证券列表
     holdingSecurityData: EMPTY_OBJECT,
+    // 客户列表持仓行业数据
+    industryList: EMPTY_LIST,
+    // 客户列表中持仓行业的详情
+    industryDetail: EMPTY_OBJECT,
   },
 
   subscriptions: {
@@ -955,6 +959,26 @@ export default {
         payload: newResultData,
       });
     },
+    // 查询客户列表持仓行业过滤器的数据
+    * queryIndustryList({ payload }, { call, put }) {
+      const { code, resultData } = yield call(api.queryIndustryList, payload);
+      if (code === '0') {
+        yield put({
+          type: 'queryIndustryListSuccess',
+          payload: resultData,
+        });
+      }
+    },
+    // 查询持仓行业详情
+    * queryHoldingIndustryDetail({ payload }, { call, put }) {
+      const { code, resultData } = yield call(api.queryHoldingIndustryDetail, payload);
+      if (code === '0') {
+        yield put({
+          type: 'queryHoldingIndustryDetailSuccess',
+          payload: { ...payload, resultData: resultData.detail },
+        });
+      }
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -1654,6 +1678,25 @@ export default {
         holdingSecurityData: {
           ...holdingSecurityData,
           [payload.key]: payload.value,
+        },
+      };
+    },
+    queryIndustryListSuccess(state, action) {
+      const { payload = EMPTY_LIST } = action;
+      return {
+        ...state,
+        industryList: payload,
+      };
+    },
+    queryHoldingIndustryDetailSuccess(state, action) {
+      const { payload: { industryId, custId, resultData } } = action;
+      // 在集合里面添加一个industryNameCode，存的是已经组合在一起的name/code，方便页面中展示
+      const currentList = _.map(resultData, item => ({ ...item, industryNameCode: `${item.name}/${item.code}` }));
+      return {
+        ...state,
+        industryDetail: {
+          ...state.industryDetail,
+          [`${custId}_${industryId}`]: currentList,
         },
       };
     },

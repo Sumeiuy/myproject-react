@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 首页-展示更多标签弹窗
  * @Date: 2018-05-23 11:10:49
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-13 12:13:39
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-02 15:24:12
  */
 
 import React, { PureComponent } from 'react';
@@ -12,7 +12,6 @@ import { autobind } from 'core-decorators';
 import store from 'store';
 import { Modal, Tabs, Popover } from 'antd';
 import _ from 'lodash';
-import logable from '../../../decorators/logable';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { isSightingScope, getFilter } from '../helper';
@@ -115,7 +114,6 @@ export default class LabelModals extends PureComponent {
 
   // 打开持仓查客户
   @autobind
-  @logable({ type: 'Click', payload: { name: '目标客户池首页点击推荐词' } })
   handleOpenTab(data) {
     const { labelDesc, missionDesc, ...options } = data;
     const { push } = this.context;

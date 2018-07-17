@@ -94,7 +94,7 @@ export default class CustomerService extends PureComponent {
         location,
         push,
         source: SOURCE,
-        type: 'lastServDt',
+        type: 'highNetValue',
       };
       linkTo(params);
     }

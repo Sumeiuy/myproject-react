@@ -15,6 +15,8 @@ import CustomerRow from './CustomerRow';
 import CreateContactModal from './CreateContactModal';
 import Reorder from './Reorder';
 import BottomFixedBox from './BottomFixedBox';
+import SignCustomerLabel from './modal/SignCustomerLabel';
+import MultiCustomerLabel from './modal/MultiCustomerLabel';
 import { openInTab } from '../../../utils';
 import { url as urlHelper, emp } from '../../../helper';
 import NoData from '../common/NoData';
@@ -132,6 +134,12 @@ export default class CustomerLists extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryCustSignedLabels: PropTypes.func.isRequired,
+    queryLikeLabelInfo: PropTypes.func.isRequired,
+    signCustLabels: PropTypes.func.isRequired,
+    signBatchCustLabels: PropTypes.func.isRequired,
+    custLabel: PropTypes.object.isRequired,
+    custLikeLabel: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -156,6 +164,8 @@ export default class CustomerLists extends PureComponent {
       currentCustId: '',
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
+      currentSignLabelCustId: '',
+      multiSignLabelVisible: false,
     };
     this.checkMainServiceManager(props);
   }
@@ -167,14 +177,14 @@ export default class CustomerLists extends PureComponent {
           ptyMngId: prePtyMngId,
         },
       },
-     } = this.props;
+    } = this.props;
     const {
       location: {
         query: {
           ptyMngId,
         },
       },
-     } = nextProps;
+    } = nextProps;
     if (prePtyMngId !== ptyMngId) {
       this.checkMainServiceManager(nextProps);
     }
@@ -205,7 +215,7 @@ export default class CustomerLists extends PureComponent {
    * url中没有selectedIds时，选中id=id1， selectedIds=id1.name1
    * url中selectedIds=id1.name1,id2.name2，并且选中id=id1，过滤id1.name1 => selectedIds=id1.name1
    * url中selectedIds=id1.name1，并且选中id=id2时  => selectedIds=id1.name1,id2.name2
-  */
+   */
   @autobind
   handleSingleSelect(id, name) {
     const {
@@ -279,8 +289,8 @@ export default class CustomerLists extends PureComponent {
   }
 
   /**
- * 回调，关闭modal打开state
- */
+   * 回调，关闭modal打开state
+   */
   @autobind
   resetModalState() {
     this.setState({
@@ -424,6 +434,33 @@ export default class CustomerLists extends PureComponent {
     return EMPTY_ARRAY;
   }
 
+
+  @autobind
+  switchMultiCustSignLabel() {
+    const { multiSignLabelVisible } = this.state;
+    this.setState({
+      multiSignLabelVisible: !multiSignLabelVisible,
+    });
+  }
+
+  // 添加单客户标签 -- start
+  @autobind
+  queryCustSignLabel(custId) {
+    const { queryCustSignedLabels } = this.props;
+    queryCustSignedLabels({ custId }).then(() => {
+      this.setState({
+        currentSignLabelCustId: custId,
+      });
+    });
+  }
+
+  @autobind
+  removeSignLabelCust() {
+    this.setState({
+      currentSignLabelCustId: '',
+    });
+  }
+  // 添加单客户标签 -- end
   render() {
     const {
       isShowContactModal,
@@ -431,6 +468,8 @@ export default class CustomerLists extends PureComponent {
       custType,
       modalKey,
       custName,
+      currentSignLabelCustId,
+      multiSignLabelVisible,
     } = this.state;
 
     const {
@@ -482,6 +521,11 @@ export default class CustomerLists extends PureComponent {
       currentCommonServiceRecord,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
+      custLabel,
+      custLikeLabel,
+      queryLikeLabelInfo,
+      signCustLabels,
+      signBatchCustLabels,
     } = this.props;
 
     // 服务记录执行方式字典
@@ -525,16 +569,20 @@ export default class CustomerLists extends PureComponent {
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
     // 默认服务经理
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
+    let currentPtyMngId = { ptyMngId: empInfo.empNum };
     // ‘HTSC 首页指标查询’ 权限, 任务管理权限
     if (hasPermission) {
       if (ptyMngId) {
         serviceManagerDefaultValue = `${decodeURIComponent(ptyMngName)}（${ptyMngId}）`;
+        currentPtyMngId = { ptyMngId };
       } else {
         serviceManagerDefaultValue = '所有人';
+        currentPtyMngId = { ptyMngId: '' };
       }
     }
     if (orgId && orgIdIsMsm) {
       serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
+      currentPtyMngId = { ptyMngId: empInfo.empNum };
     }
     // 当前所处的orgId,默认所有
     let curOrgId = allSaleDepartment.id;
@@ -630,6 +678,7 @@ export default class CustomerLists extends PureComponent {
                     queryHoldingProductReqState={queryHoldingProductReqState}
                     queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
                     holdingSecurityData={holdingSecurityData}
+                    queryCustSignLabel={this.queryCustSignLabel}
                   />,
                 )
               }
@@ -659,6 +708,7 @@ export default class CustomerLists extends PureComponent {
               hasTkMampPermission={hasTkMampPermission}
               sendCustsServedByPostnResult={sendCustsServedByPostnResult}
               isSendCustsServedByPostn={isSendCustsServedByPostn}
+              handleSignLabelClick={this.switchMultiCustSignLabel}
             /> : null
         }
         {
@@ -687,6 +737,25 @@ export default class CustomerLists extends PureComponent {
               currentCommonServiceRecord={currentCommonServiceRecord}
             /> : null
         }
+        <SignCustomerLabel
+          currentPytMng={currentPtyMngId}
+          custId={currentSignLabelCustId}
+          custLabel={custLabel}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          custLikeLabel={custLikeLabel}
+          signCustLabels={signCustLabels}
+          handleCancelSignLabelCustId={this.removeSignLabelCust}
+        />
+        <MultiCustomerLabel
+          visible={multiSignLabelVisible}
+          onClose={this.switchMultiCustSignLabel}
+          currentPytMng={currentPtyMngId}
+          queryLikeLabelInfo={queryLikeLabelInfo}
+          custLikeLabel={custLikeLabel}
+          signBatchCustLabels={signBatchCustLabels}
+          condition={condition}
+          location={location}
+        />
       </div>
     );
   }

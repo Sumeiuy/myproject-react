@@ -60,7 +60,7 @@ const Routers = ({ history, app}) => {
       <App>
         <Switch>
           <Redirect exact from="/" to="/customerPool" />
-          <Redirect exact from="/invest" to="/report" />
+          <Redirect exact from="/invest" to="/statisticalQuery/report" />
           {
             recursiveRouter('/', routerData).map(
               item => (
