@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-13 11:33:50
+ * @Last Modified time: 2018-07-17 15:49:10
  */
 
 import React, { PureComponent } from 'react';
@@ -405,6 +405,15 @@ export default class CreateApply extends PureComponent {
     });
   }
 
+  // 搜索下一步审批人
+  @autobind
+  handleSearchApproval(value) {
+    const { nextApproverList } = this.state;
+    const filterNextApproverList = _.filter(nextApproverList,
+      item => item.login.indexOf(value) > -1 || item.empName.indexOf(value) > -1);
+    this.setState({ nextApproverList: filterNextApproverList });
+  }
+
   // 校验数据
   @autobind
   validateResult(item) {
@@ -678,7 +687,8 @@ export default class CreateApply extends PureComponent {
       title: '选择下一审批人员',
       modalKey: 'stockApplyNextApproverModal',
       rowKey: 'login',
-      searchShow: false,
+      searchShow: true,
+      onSearch: this.handleSearchApproval,
       pagination: {
         pageSize: 10,
       },
