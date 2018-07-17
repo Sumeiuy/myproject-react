@@ -70,6 +70,10 @@ const regexp = {
    * @desc 判断是否只含有字母与数字
    */
   onlyAlphabetAndNumber: /^[A-Za-z0-9]+$/,
+  /**
+   * @desc: 只含有字母、数字和汉字
+   */
+  onlyWordNumAlphabet: /^[A-Za-z0-9\u4e00-\u9fa5]+$/,
 };
 
 export default regexp;

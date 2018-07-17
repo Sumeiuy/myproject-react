@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-05 19:49:37
+ * @Last Modified time: 2018-07-11 18:36:57
  * 服务记录表单
  */
 
@@ -14,6 +14,7 @@ import ServiceRecordContent from '../../../common/serviceRecordContent';
 import Button from '../../../common/Button';
 import styles from './serviceRecordForm.less';
 import logable, { logCommon } from '../../../../decorators/logable';
+import { UPDATE } from '../../../../config/serviceRecord';
 
 export default class ServiceRecordForm extends PureComponent {
 
@@ -34,12 +35,13 @@ export default class ServiceRecordForm extends PureComponent {
       serviceCustId,
       isCurrentMissionPhoneCall,
     } = this.props;
-    const { autoGenerateRecordInfo: { serveContentDesc = '' } } = serviceRecordInfo;
-    // 服务记录添加未成功时，后端返回failure
+    const { autoGenerateRecordInfo: { serveContentDesc = '' }, todo } = serviceRecordInfo;
+    // 服务记录添加未成功时，后端返回failure, todo=update 时，入参多一个id，表示更新服务记录
     if (
-      isCurrentMissionPhoneCall &&
-      !_.isEmpty(currentMotServiceRecord.id) &&
-      currentMotServiceRecord.id !== 'failure'
+      isCurrentMissionPhoneCall
+      && todo === UPDATE
+      && !_.isEmpty(currentMotServiceRecord.id)
+      && currentMotServiceRecord.id !== 'failure'
     ) {
       data = {
         ...data,
@@ -61,9 +63,9 @@ export default class ServiceRecordForm extends PureComponent {
     logCommon({
       type: 'Submit',
       payload: {
-        name: serviceCustId,
+        name: '服务记录',
         type: serveTypeName,
-        value: JSON.stringify(data),
+        value: JSON.stringify({ ...data, serviceCustId }),
       },
     });
   }
@@ -106,6 +108,7 @@ export default class ServiceRecordForm extends PureComponent {
       // 投资建议文本撞墙检测是否有股票代码
       testWallCollisionStatus,
       isCurrentMissionPhoneCall,
+      onFormDataChange,
     } = this.props;
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
@@ -150,6 +153,7 @@ export default class ServiceRecordForm extends PureComponent {
               testWallCollision={testWallCollision}
               testWallCollisionStatus={testWallCollisionStatus}
               isPhoneCall={isCurrentMissionPhoneCall}
+              onFormDataChange={onFormDataChange}
             />
             {footNode}
           </div>
@@ -191,6 +195,7 @@ ServiceRecordForm.propTypes = {
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: PropTypes.bool.isRequired,
   isCurrentMissionPhoneCall: PropTypes.bool,
+  onFormDataChange: PropTypes.func,
 };
 
 ServiceRecordForm.defaultProps = {
@@ -200,4 +205,5 @@ ServiceRecordForm.defaultProps = {
   isEntranceFromPerformerView: false,
   serviceCustId: '',
   isCurrentMissionPhoneCall: false,
+  onFormDataChange: _.noop,
 };

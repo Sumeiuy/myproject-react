@@ -17,6 +17,7 @@ import moment from 'moment/moment';
 import Header from '../../components/customerPool/home/Header';
 import { optionsMap } from '../../config';
 import { emp, time, permission } from '../../helper';
+import { transformDateTypeToDate } from '../../components/customerPool/helper';
 import withRouter from '../../decorators/withRouter';
 import {
   CUST_MANAGER,
@@ -257,10 +258,13 @@ export default class Home extends PureComponent {
       empInfo = {},
     } = this.props;
     const { tgQyFlag = false } = empInfo.empInfo || {};
+    const cycleDate = transformDateTypeToDate(cycleSelect);
     const param = {
       custType, // 客户范围类型
-      dateType: this.getDateType(cycleSelect), // 周期类型
       orgId, // 组织ID
+      dateType: this.getDateType(cycleSelect), // 周期类型
+      dateStart: cycleDate.cycleStartTime,
+      dateEnd: cycleDate.cycleEndTime,
       empId: emp.getId(),
     };
     // 经营指标新增客户数指标

@@ -197,6 +197,30 @@ const config = {
         align: 'left',
       },
     ],
+    // 组合详情-订购客户
+    custRepeat: [
+      {
+        dataIndex: 'proportionName',
+        key: 'proportionName',
+        title: <IconPopover title="持仓重合比例" />,
+        width: '30%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'custNum',
+        key: 'custNum',
+        title: '客户数',
+        width: '20%',
+        align: 'left',
+      },
+      {
+        dataIndex: 'custProportion',
+        key: 'custProportion',
+        title: '客户数/组合订购客户数',
+        width: '50%',
+        align: 'left',
+      },
+    ],
     // 组合详情-历史报告
     historyReport: [
       {

@@ -51,7 +51,6 @@ const cardTarget = {
     // 取出中间值
     const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
     // 用左右移动的距离来进行排序
-    // console.warn('hoverClientY', `${hoverClientX} , ${hoverMiddleX}`);
     // Dragging downwards
     if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
       return;

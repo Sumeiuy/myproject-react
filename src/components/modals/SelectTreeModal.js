@@ -72,10 +72,7 @@ export default class SelectTreeModal extends PureComponent {
   saveIndcator(type, indicators) {
     if (type === 'summury') {
       const btnStatus = indicators.length < 4;
-      // console.warn('save summuryKeys', summuryKeys);
-      // if (_.isEqual(summuryKeys, indicators)) {
-      //   btnStatus = true;
-      // }
+
       this.setState({
         summuryIndicator: indicators,
         btnStatus,

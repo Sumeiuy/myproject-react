@@ -21,6 +21,8 @@ var cssLoaders = utils.getCSSLoaders({
   sourceMap: config.dev.cssSourceMap
 });
 
+var lessConfig = utils.getLessConfig();
+
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -44,9 +46,7 @@ module.exports = merge(baseWebpackConfig, {
         include: config.src,
         use: ['style-loader'].concat(cssLoaders.own).concat({
           loader: 'less-loader',
-          options: {
-            modifyVars: theme
-          }
+          options: lessConfig
         })
       },
       {
@@ -59,9 +59,7 @@ module.exports = merge(baseWebpackConfig, {
         include: config.appNodeModules,
         use: ['style-loader'].concat(cssLoaders.nodeModules).concat({
           loader: 'less-loader',
-          options: {
-            modifyVars: theme
-          }
+          options: lessConfig
         })
       }
     ]

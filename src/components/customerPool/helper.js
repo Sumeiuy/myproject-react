@@ -3,8 +3,9 @@
  */
 import _ from 'lodash';
 import moment from 'moment';
-import { sourceFilter, kPIDateScopeType } from './config';
+import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE } from './config';
 import filterMark from '../../config/filterSeperator';
+import { openFspTab } from '../../utils';
 
 function transformCycle(cycle) {
   const transToTime = period => ({
@@ -22,6 +23,9 @@ const helper = {
    */
   isSightingScope(value) {
     return value === 'jzyx';
+  },
+  transformDateTypeToDate(cycle) {
+    return transformCycle(cycle);
   },
   getFilter(data) {
     const {
@@ -57,6 +61,42 @@ const helper = {
       return `${filterItem}${filterInsideSeperator}`;
     });
     return finalFilterList.join(filterSeperator);
+  },
+  /**
+   * 跳转到360服务记录页面
+   * @param {*object} itemData 当前列表item数据
+   * @param {*} keyword 当前输入关键字
+   * @param {*} routerAction 跳转的方式：  push、replace
+   */
+  handleOpenFsp360TabAction({ itemData, keyword, routerAction }) {
+    const { pOrO, custId, rowId, ptyId } = itemData;
+    const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
+    const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
+    const pathname = '/customerCenter/fspcustomerDetail';
+    openFspTab({
+      routerAction,
+      url,
+      query: {
+        custId,
+        rowId,
+        ptyId,
+        keyword,
+      },
+      pathname,
+      param: {
+        id: 'FSP_360VIEW_M_TAB',
+        title: '客户360视图-客户信息',
+        forceRefresh: true,
+        activeSubTab: ['服务记录'],
+        // 服务记录搜索
+        serviceRecordKeyword: keyword,
+        // 服务渠道
+        serviceRecordChannel: encodeURIComponent('理财服务平台'),
+      },
+      state: {
+        url,
+      },
+    });
   },
 };
 

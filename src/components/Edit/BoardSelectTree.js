@@ -349,8 +349,6 @@ export default class BoardSelectTree extends PureComponent {
     this.rcRegisterScrollEvent();
     if (isSummury) {
       const summuryArr = selfCheckedNodes.map(item => item.key);
-      // 输出总量指标
-      // console.warn('summuryArr', summuryArr);
       this.setState({
         length: summuryArr.length,
       });
@@ -361,8 +359,6 @@ export default class BoardSelectTree extends PureComponent {
         categoryKey: item.key,
         detailIndicatorIds: item.children.map(child => child.key),
       }));
-      // 输出分类指标
-      // console.warn('detailArr', detailArr);
       saveIndcator('detail', detailArr);
     }
   }
@@ -443,8 +439,7 @@ export default class BoardSelectTree extends PureComponent {
         }
         newSelfCheckedNodes.push(nowSelectNode);
       } else {
-      // 否则删除
-        // console.warn('length', length);
+        // 否则删除
         newSelfCheckedNodes = _.remove(newSelfCheckedNodes, n => (n.key !== obj.key));
       }
       this.setState({
