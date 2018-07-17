@@ -7,6 +7,7 @@ import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, PATHNAME_PRDUCTCENT
 import filterMark from '../../config/filterSeperator';
 import { openFspTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
+import { logCommon } from '../../decorators/logable';
 
 function transformCycle(cycle) {
   const transToTime = period => ({
@@ -123,6 +124,14 @@ const helper = {
       query,
       pathname,
       param,
+    });
+    // 神策日志
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: `客户列表${data.name}下钻到产品中心`,
+        value: code,
+      },
     });
   },
 };
