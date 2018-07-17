@@ -35,9 +35,7 @@ exports.getCSSLoaders = function (options) {
 
   let cssModulesConfig = {
     modules: true,
-    localIdentName: isDev
-      ? '[name]__[local]___[hash:base64:5]'
-      : '[local]___[hash:base64:5]'
+    localIdentName: '[name]__[local]___[hash:base64:5]'
   };
 
   if (!options.disableCSSModules) {
