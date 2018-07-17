@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-17 15:49:10
+ * @Last Modified time: 2018-07-18 00:24:48
  */
 
 import React, { PureComponent } from 'react';
@@ -400,6 +400,7 @@ export default class CreateApply extends PureComponent {
       groupName: item.nextGroupName,
       auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
       nextApproverList: item.flowAuditors,
+      defaultNextApproverList: item.flowAuditors,
       currentNodeName: item.currentNodeName,
       nextApproverModal: true,
     });
@@ -408,9 +409,11 @@ export default class CreateApply extends PureComponent {
   // 搜索下一步审批人
   @autobind
   handleSearchApproval(value) {
-    const { nextApproverList } = this.state;
-    const filterNextApproverList = _.filter(nextApproverList,
-      item => item.login.indexOf(value) > -1 || item.empName.indexOf(value) > -1);
+    const { defaultNextApproverList } = this.state;
+    const filterNextApproverList = value
+      ? defaultNextApproverList.filter(
+        item => item.login.indexOf(value) > -1 || item.empName.indexOf(value) > -1)
+      : defaultNextApproverList;
     this.setState({ nextApproverList: filterNextApproverList });
   }
 
@@ -688,6 +691,7 @@ export default class CreateApply extends PureComponent {
       modalKey: 'stockApplyNextApproverModal',
       rowKey: 'login',
       searchShow: true,
+      placeholder: '员工号/员工名称',
       onSearch: this.handleSearchApproval,
       pagination: {
         pageSize: 10,
@@ -723,7 +727,7 @@ export default class CreateApply extends PureComponent {
                       showIdKey="brokerNumber"
                       needConfirmWhenClear
                       clearConfirmTips="切换或者删除客户，将导致所有的数据清空或者重置"
-                      style={{ width: 160 }}
+                      style={{ width: 220 }}
                       onSelect={this.selectCustomer}
                       onSearch={this.searchCanApplyCustList}
                     />
