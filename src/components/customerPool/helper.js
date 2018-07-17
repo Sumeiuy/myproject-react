@@ -3,9 +3,10 @@
  */
 import _ from 'lodash';
 import moment from 'moment';
-import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE } from './config';
+import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, PATHNAME_PRDUCTCENTER } from './config';
 import filterMark from '../../config/filterSeperator';
 import { openFspTab } from '../../utils';
+import { url as urlHelper } from '../../helper';
 
 function transformCycle(cycle) {
   const transToTime = period => ({
@@ -96,6 +97,32 @@ const helper = {
       state: {
         url,
       },
+    });
+  },
+
+  /**
+   * 跳转到产品详情tab页面
+   * @param {*} param0
+   *    data: 持仓产品信息
+   *    routerAction: 路由的变化方式
+   */
+  openProductDetailPage({ data, routerAction }) {
+    // upPrdtTypeId：产品所属类型id, code：产品代码
+    const { upPrdtTypeId, code } = data;
+    const pathname = PATHNAME_PRDUCTCENTER[upPrdtTypeId];
+    const query = { prdtCode: code };
+    const url = `${pathname}?${urlHelper.stringify(query)}`;
+    const param = {
+      id: 'FSP_PUBLIC_FUND_TAB',
+      title: '产品详情',
+      forceRefresh: true,
+    };
+    openFspTab({
+      routerAction,
+      url,
+      query,
+      pathname,
+      param,
     });
   },
 };
