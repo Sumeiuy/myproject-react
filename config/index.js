@@ -51,24 +51,6 @@ module.exports = {
       {
         target: 'http://168.61.8.82:5086', // uat
       },
-      prefix + '/groovynoauth/fsp/biz/closeaccountonline',
-      {
-        // target: 'http://168.61.8.82:5086', // uat
-        // target: 'http://168.61.8.81:5087', // SIT
-        target: 'http://168.61.8.81:5090', // DOClever
-      },
-      prefix + '/groovynoauth/fsp/cust/closeaccountonline',
-      {
-        // target: 'http://168.61.8.82:5086', // uat
-        // target: 'http://168.61.8.81:5087', // SIT
-        target: 'http://168.61.8.81:5090', // DOClever
-      },
-      prefix + '/groovynoauth/fsp/biz/queryApplicationList2',
-      {
-        // target: 'http://168.61.8.82:5086', // uat
-        // target: 'http://168.61.8.81:5087', // SIT
-        target: 'http://168.61.8.81:5090', // DOClever
-      },
       prefix,
       {
         target: 'http://168.61.8.82:5086', // uat
