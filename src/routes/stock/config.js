@@ -10,6 +10,11 @@ const config = {
   // 只开放个股点评，个股研报、个股公告先隐藏
   // typeList: ['StockReview', 'StockReport', 'StockEvent'],
   typeList: ['StockReport', 'StockEvent'],
+  stockTypeMap: {
+    StockReview: '个股点评',
+    StockReport: '个股研报',
+    StockEvent: '个股公告',
+  },
   // 个股点评
   StockReview: {
     key: 'StockReview',
