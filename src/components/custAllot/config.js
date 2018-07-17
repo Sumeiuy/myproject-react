@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 17:03:23
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-12 16:59:27
+ * @Last Modified time: 2018-07-16 14:41:55
  */
 import { status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
 
@@ -15,7 +15,7 @@ const config = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {

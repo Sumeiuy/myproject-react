@@ -29,7 +29,16 @@ import './home.less';
 import logable, { logPV } from '../../decorators/logable';
 
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
-const { comsubs, commission, commission: { pageType, subType, status } } = seibelConfig;
+const {
+  comsubs,
+  commission,
+  commission: {
+    pageType,
+    subType,
+    status,
+    headerFilters: { basicFilters, moreFilters, moreFilterData },
+ },
+} = seibelConfig;
 
 const effects = {
   list: 'app/getSeibleList',
@@ -664,6 +673,9 @@ export default class CommissionHome extends PureComponent {
         stateOptions={status}
         creatSeibelModal={this.handleCreateBtnClick}
         filterCallback={this.handleHeaderFilter}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

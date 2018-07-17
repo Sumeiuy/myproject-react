@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-04-27 22:22:22
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-17 10:08:31
  */
 
 import React, { PureComponent } from 'react';
@@ -28,7 +28,14 @@ import seibelHelper from '../../helper/page/seibel';
 const EXTRAHEIGHT = 40;
 // 业务手机申请列表宽度
 const LEFT_PANEL_WIDTH = 450;
-const { telephoneNumApply, telephoneNumApply: { statusOptions, pageType } } = config;
+const {
+  telephoneNumApply,
+  telephoneNumApply: {
+    statusOptions,
+    pageType,
+    headerFilters: { basicFilters, moreFilters, moreFilterData },
+  },
+} = config;
 const effect = dva.generateEffect;
 const effects = {
   // 左侧列表
@@ -374,12 +381,13 @@ export default class ApplyHome extends PureComponent {
         replace={replace}
         page="telephoneNumApplyPage"
         pageType={pageType}
-        needSubType={false}
         stateOptions={statusOptions}
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
-        isUseOfCustomer={false}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

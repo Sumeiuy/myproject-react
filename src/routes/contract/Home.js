@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-11 17:45:50
+ * @Last Modified time: 2018-07-16 15:20:55
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -38,7 +38,16 @@ const EMPTY_OBJECT = {};
 // 退订的类型
 const unsubscribe = '2';
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
-const { contract, contract: { pageType, subType, operationList, status } } = seibelConfig;
+const {
+  contract,
+  contract: {
+    pageType,
+    subType,
+    operationList,
+    status,
+    headerFilters: { basicFilters, moreFilters, moreFilterData },
+  },
+} = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -938,9 +947,11 @@ export default class Contract extends PureComponent {
         stateOptions={status}
         creatSeibelModal={this.handleCreateBtnClick}
         operateOptions={operationList}
-        needOperate
         empInfo={empInfo}
         filterCallback={this.handleHeaderFilter}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
     // 生成页码器，此页码器配置项与Antd的一致

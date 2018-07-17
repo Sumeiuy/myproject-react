@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 09:59:21
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-13 17:21:39
+ * @Last Modified time: 2018-07-16 14:04:57
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -584,7 +584,6 @@ export default class CustAllot extends PureComponent {
         replace={replace}
         page="custAllotPage"
         pageType={pageType}
-        needSubType={false}
         stateOptions={status}
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}

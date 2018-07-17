@@ -24,6 +24,7 @@ function getDateFilter(props) {
 function getTreeFilter(props) {
   const treeProps = _.omit(props, ['type', 'data', 'onInputChange']);
   const { data } = props; // eslint-disable-line
+  // console.warn('props', props);
   return (<TreeFilter treeData={data} {...treeProps} />);
 }
 export default function Filter(props) {

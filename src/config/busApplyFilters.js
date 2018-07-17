@@ -9,12 +9,15 @@ export default {
       type: 'singleSearch', // 过滤器类型
       dataMap: ['custNumber', 'custName'],
       handleInputChange: 'handleCustSearch',
-      useLabelInValue: true,
       showSearch: true,
       needItemObj: true,
-      useDefaultData: true,
+      placeholder: '工号或名称',
+      dropdownStyle: {
+        maxHeight: 324,
+        overflowY: 'auto',
+        width: 250,
+      },
     },
-    filterOption: ['customer'],
   },
   // 服务经理
   serviceManager: {
@@ -25,24 +28,26 @@ export default {
       type: 'singleSearch', // 过滤器类型
       dataMap: ['ptyMngId', 'ptyMngName'],
       handleInputChange: 'handleManagerSearch',
-      useLabelInValue: true,
       showSearch: true,
       needItemObj: true,
-      useDefaultData: true,
+      placeholder: '工号或名称',
+      dropdownStyle: {
+        maxHeight: 324,
+        overflowY: 'auto',
+        width: 250,
+      },
     },
-    filterOption: ['serviceManager'],
   },
   // 操作类型
   operationType: {
     id: 'operationType',
     props: {
       filterName: '操作类型',  // 过滤器中文名称
-      filterId: 'operationType', // 过滤器英文代号, 首字母小写
+      filterId: 'business2', // 过滤器英文代号, 首字母小写
       type: 'single', // 过滤器类型
       dataMap: ['value', 'label'],
       needItemObj: true,
     },
-    filterOption: ['operationType'],
   },
   // 子类型
   subType: {
@@ -74,16 +79,21 @@ export default {
     props: {
       filterName: '拟稿人',  // 过滤器中文名称
       filterId: 'drafter', // 过滤器英文代号, 首字母小写
+      key: 'drafterId', // 更多中的匹配项，需要和filterOption中的字段保持一致
       type: 'singleSearch', // 过滤器类型
       dataMap: ['ptyMngId', 'ptyMngName'],
-      filterOption: ['drafterId'],
-      placeholder: '工号/名称',
+      placeholder: '工号或名称',
       handleInputChange: 'handleDrafterSearch',
       useLabelInValue: true,
       showSearch: true,
       needItemObj: true,
-      useDefaultData: true,
+      dropdownStyle: {
+        maxHeight: 324,
+        overflowY: 'auto',
+        width: 250,
+      },
     },
+    filterOption: ['drafterId', 'drafterName'], // 更多中的匹配项
   },
   // 部门
   department: {
@@ -108,12 +118,16 @@ export default {
       key: 'approvalId',
       type: 'singleSearch', // 过滤器类型
       dataMap: ['ptyMngId', 'ptyMngName'],
-      placeholder: '工号/名称',
+      placeholder: '工号或名称',
       handleInputChange: 'handleApproverSearch',
       useLabelInValue: true,
       showSearch: true,
       needItemObj: true,
-      useDefaultData: true,
+      dropdownStyle: {
+        maxHeight: 324,
+        overflowY: 'auto',
+        width: 250,
+      },
     },
     filterOption: ['approvalId', 'approvalName'],
   },

@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系申请的配置文件
  * @Date: 2018-06-08 13:32:19
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-13 15:49:26
+ * @Last Modified time: 2018-07-16 13:41:59
  */
 import { customer, status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
 

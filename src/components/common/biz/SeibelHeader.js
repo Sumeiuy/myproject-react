@@ -478,7 +478,7 @@ export default class Pageheader extends PureComponent {
         return _.isEmpty(custList) ? [] : custList;
       case 'serviceManager':
         return ptyMngList;
-      case 'operationType':
+      case 'business2':
         return operateOptions;
       case 'subType':
         return subtypeOptions;
@@ -530,7 +530,7 @@ export default class Pageheader extends PureComponent {
         return customer;
       case 'serviceManager':
         return serviceManager;
-      case 'operationType':
+      case 'business2':
         return business2;
       case 'subType':
         return subType;
@@ -557,7 +557,7 @@ export default class Pageheader extends PureComponent {
         return this.selectCustItem;
       case 'serviceManager':
         return item => this.handleManagerSelect('ptyMngId', item);
-      case 'operationType':
+      case 'business2':
         return this.handleOperateTypeChange;
       case 'subType':
         return this.handleSubtypeChange;
