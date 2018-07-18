@@ -56,11 +56,9 @@ export default class BatchAddEmpList extends PureComponent {
     saveSelectedBatchEmpList(chooseAllBatchEmpList);
     // 手动上传日志
     logCommon({
-      type: 'submit',
+      type: 'Submit',
       payload: {
-        name: '',
-        type: '公务手机卡号申请',
-        subtype: '批量添加服务经理',
+        name: '批量添加服务经理',
         value: JSON.stringify(chooseAllBatchEmpList),
       },
     });

@@ -130,9 +130,7 @@ export default class CreateApply extends PureComponent {
     logCommon({
       type: 'Submit',
       payload: {
-        name: '',
-        type: '公务手机卡号申请',
-        subtype: '新建',
+        name: '公务手机卡号申请',
         value: JSON.stringify(item),
       },
     });
