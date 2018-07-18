@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-13 10:52:43
+ * @Last Modified time: 2018-07-18 13:21:27
  */
 
 import React, { PureComponent } from 'react';
@@ -278,7 +278,7 @@ export default class StockOptionApplication extends PureComponent {
 
   // 新建申请
   @autobind
-  @logPV({ pathname: '/modal/createStockOptionEvaluation', title: '新建显示股票期权申请' })
+  @logPV({ pathname: '/modal/createStockApplyModal', title: '新建股票期权申请弹框' })
   openCreateModalBoard() {
     this.setState({ isShowCreateModal: true });
   }
