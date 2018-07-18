@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-18 16:00:34
+ * @Last Modified time: 2018-07-18 16:31:24
  */
 
 import React, { PureComponent } from 'react';
@@ -437,8 +437,10 @@ export default class ServiceImplementation extends PureComponent {
       currentId,
       queryTargetCust,
     } = this.props;
+    const { state, ...others } = obj;
     return queryTargetCust({
-      ...obj,
+      ...others,
+      state: state.join(','),
       missionId: currentId,
     });
   }

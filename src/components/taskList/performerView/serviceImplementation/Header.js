@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 22:49:02
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-18 12:19:15
+ * @Last Modified time: 2018-07-18 17:32:07
  */
 
 import React from 'react';
@@ -13,7 +13,6 @@ import { SingleFilter, MultiFilter } from 'lego-react-filter/src';
 import Sortbox from './Sortbox';
 import PreciseQuery from './PreciseQuery';
 import { ASSET_DESC } from './config';
-import { getServiceState } from './helper';
 import styles from './header.less';
 
 // 状态为不限
@@ -42,7 +41,6 @@ export default function Header(props) {
     handlePreciseQueryEnterPress,
     parameter,
     targetCustList,
-    currentTask: { statusCode },
   } = props;
   const { state, assetSort, rowId, preciseInputValue } = parameter;
   const { page: { totalCount }, list } = targetCustList;
@@ -63,16 +61,14 @@ export default function Header(props) {
     }
   };
   const stateData = [STATE_UNLIMITED, ...dict.serveStatus];
-  const currentCustomer = _.find(customerList, { rowId }) || {};
-  const currentCustId = currentCustomer ? currentCustomer.custId : '';
-  const currentState = !_.isEmpty(state) ? state : getServiceState(statusCode, dict);
+  const { custId = '' } = _.find(customerList, { rowId }) || {};
   return (
     <div className={styles.header}>
       <MultiFilter
         filterId="state"
         filterName="服务状态"
         className={styles.filter}
-        value={currentState}
+        value={state}
         data={stateData}
         onChange={handleStateChange}
         menuContainer={popupContainer}
@@ -82,7 +78,7 @@ export default function Header(props) {
         filterId="rowId"
         filterName="客户"
         className={styles.filter}
-        value={currentCustId}
+        value={custId}
         data={customerList}
         dataMap={['custId', 'name']}
         onChange={handleCustomerChange}

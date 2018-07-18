@@ -92,9 +92,13 @@ export default {
       };
     },
     clearParameter(state) {
+      const excludeStateParameter = _.omit(defaultParameter, 'state');
       return {
         ...state,
-        parameter: defaultParameter,
+        parameter: {
+          ...state.parameter,
+          ...excludeStateParameter,
+        },
       };
     },
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -354,9 +358,8 @@ export default {
 
     // 执行者视图的详情目标客户列表
     * queryTargetCust({ payload }, { call, put }) {
-      const { isGetFirstItemDetail = true, state, ...others } = payload;
-      const currentState = state.join(',');
-      const { resultData } = yield call(api.queryTargetCust, { ...others, state: currentState });
+      const { isGetFirstItemDetail = true, ...others } = payload;
+      const { resultData } = yield call(api.queryTargetCust, others);
       if (resultData) {
         yield put({
           type: 'queryTargetCustSuccess',
