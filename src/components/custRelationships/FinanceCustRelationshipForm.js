@@ -199,10 +199,7 @@ export default class FinanceCustRelationshipForm extends Component {
   @logable({
     type: 'Click',
     payload: {
-      name: (instance, args) => {
-        const name = args[0].custName;
-        return `删除${name}关联关系`;
-      },
+      name: '删除$args[0].partyName',
     },
   })
   handleDelRelationConifrm(record) {
