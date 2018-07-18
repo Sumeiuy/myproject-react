@@ -21,6 +21,7 @@ import Icon from '../common/Icon';
 // import { openRctTab } from '../../utils';
 import { time as timeHelper } from '../../helper';
 import config from './config';
+import logable from '../../decorators/logable';
 import styles from './combinationModal.less';
 
 const Search = Input.Search;
@@ -112,7 +113,6 @@ export default class CombinationModal extends PureComponent {
   // 根据类型配置不同的表格标题
   @autobind
   getTitleColumns(type) {
-    const { openCustomerListPage } = this.props;
     const titleArray = titleList[type];
     const timeIndex = _.findIndex(titleArray, o => o.key === KEY_TIME);
     const reasonIndex = _.findIndex(titleArray, o => o.key === KEY_REASON);
@@ -141,7 +141,7 @@ export default class CombinationModal extends PureComponent {
         };
         return (<a
           className={styles.customerLink}
-          onClick={() => openCustomerListPage(openPayload)}
+          onClick={() => this.handleOpenCustomerListPage(openPayload)}
         >
           <Icon type="kehuzu" />
         </a>);
@@ -157,8 +157,28 @@ export default class CombinationModal extends PureComponent {
     return titleArray;
   }
 
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '调仓历史',
+      value: '$args[0].name',
+    },
+  })
+  handleOpenCustomerListPage(openPayload) {
+    const { openCustomerListPage } = this.props;
+    openCustomerListPage(openPayload);
+  }
+
   // 历史报告标题点击事件
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '历史报告',
+      value: '$args[0].title',
+    },
+  })
   handleTitleClick(record) {
     const { openReportDetailPage } = this.props;
     const payload = {
@@ -195,6 +215,13 @@ export default class CombinationModal extends PureComponent {
 
   // 下拉框 change
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '$args[2]',
+      value: '$args[1]',
+    },
+  })
   handleSelectChange(key, value) {
     const obj = {
       [key]: value,
@@ -211,6 +238,13 @@ export default class CombinationModal extends PureComponent {
 
   // 树状选择器change
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '组合名称',
+      value: '$args[0]',
+    },
+  })
   handleTreeSelectChange(value) {
     // 禁用树状选择器的取消选中
     if (_.isEmpty(value)) {
@@ -270,6 +304,13 @@ export default class CombinationModal extends PureComponent {
 
   // 根据关键字查询客户
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '证券名称/证券代码/证券简称',
+      value: '$args[0]',
+    },
+  })
   handleSearchList(v = '') {
     this.setState({
       keyword: v,
@@ -335,7 +376,7 @@ export default class CombinationModal extends PureComponent {
                 name="time"
                 data={timeRange}
                 value={time}
-                onChange={this.handleSelectChange}
+                onChange={(key, value) => this.handleSelectChange(key, value, '时间范围')}
               />
             </div>
             <div className={styles.headerItem}>
@@ -359,7 +400,7 @@ export default class CombinationModal extends PureComponent {
                     name="directionCode"
                     data={directionRange}
                     value={directionCode}
-                    onChange={this.handleSelectChange}
+                    onChange={(key, value) => this.handleSelectChange(key, value, '调仓方向')}
                   />
                 </div>
               :
