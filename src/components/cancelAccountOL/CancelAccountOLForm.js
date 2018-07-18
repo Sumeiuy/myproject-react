@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 14:49:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-13 20:00:45
+ * @Last Modified time: 2018-07-18 15:56:21
  * @description 线上销户新建以及驳回后修改通用部分
  */
 
@@ -137,11 +137,16 @@ export default class CancelAccountOLForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '搜索客户', value: '$args[0]' } })
   handleSearchCustList(keyword) {
+    if (_.isEmpty(keyword)) {
+      return;
+    }
     this.props.queryCustList({ keyword });
   }
 
   @autobind
+  @logable({ type: 'DropdownSelect', payload: { name: '选择线上销户申请的客户', value: '$args[0]' } })
   handleSelectCust(newCust) {
     // 如果切换客户，则提示会将之前的所有数据清空
     // 如果删除客户，则需要清空数据
@@ -192,6 +197,7 @@ export default class CancelAccountOLForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'DropdownSelect', payload: { name: '投资品种', value: '$args[0]' } })
   handleInvestVarsChange({ value }) {
     const { hasSelecOtherVar } = this.state;
     const noSelectOther = _.isEmpty(_.find(value, o => o.key === INVEST_OTHER_VAR_KEY));
@@ -217,6 +223,7 @@ export default class CancelAccountOLForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'DropdownSelect', payload: { name: '流失原因', value: '$args[0]' } })
   handleLostReasonChange({ value }) {
     const { hasSelectOtherReason } = this.state;
     const noSelectOther = _.isEmpty(_.find(value, o => o.key === LOST_REASON_OTHER_KEY));
@@ -330,7 +337,7 @@ export default class CancelAccountOLForm extends PureComponent {
               (
                 <InfoCell label="客户" labelWidth={90}>
                   <SimilarAutoComplete
-                    style={{ width: '160px' }}
+                    style={{ width: '180px' }}
                     placeholder="经纪客户号/客户名称"
                     optionList={custList}
                     optionKey="brokerNumber"
@@ -362,7 +369,7 @@ export default class CancelAccountOLForm extends PureComponent {
             <InfoCell label="流失去向" labelWidth={90}>
               <Select
                 needShowKey={false}
-                width="160px"
+                width="180px"
                 name="lostDirection"
                 optionLabelMapKey="value"
                 optionValueMapKey="key"

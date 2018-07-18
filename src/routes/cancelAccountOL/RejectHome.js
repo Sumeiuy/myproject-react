@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-12 09:02:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-13 20:32:58
+ * @Last Modified time: 2018-07-18 16:15:33
  * @description 线上销户的驳回后修改页面
  */
 
@@ -23,6 +23,7 @@ import CancelAccountOLForm from '../../components/cancelAccountOL/CancelAccountO
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { env, dom, dva, emp } from '../../helper';
+import logable, { logCommon } from '../../decorators/logable';
 
 import { APPROVAL_COLUMNS } from '../../components/cancelAccountOL/config';
 import {
@@ -181,7 +182,7 @@ export default class RejectHome extends Component {
     const { optionsDict: { custInvestVarietyTypeList, custLossReasonTypeList } } = this.props;
     const vars = convertSubmitInvestVars(investVars, custInvestVarietyTypeList, otherVarDetail);
     const reasons = convertSubmitLostReason(lostReason, custLossReasonTypeList, otherReasonDetail);
-    this.props.submitApply({
+    const query = {
       custNumber: cust.custId,
       attachment,
       custId: cust.custRowId,
@@ -196,7 +197,17 @@ export default class RejectHome extends Component {
       CustInvestVarietyDTOReq: vars,
       CustLossCauseDTOReq: reasons,
       flowCode,
-    }).then(this.doFlowApproval);
+    };
+    this.props.submitApply(query).then(() => {
+      logCommon({
+        type: 'Submit',
+        payload: {
+          name: '线上销户申请驳回后修改提交',
+          vlaue: JSON.stringify(query),
+        },
+      });
+      this.doFlowApproval();
+    });
   }
 
   @autobind
@@ -262,6 +273,7 @@ export default class RejectHome extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '确认' } })
   handleSelectApproval(approver) {
     this.setState({
       nextApprovalModal: false,
@@ -270,6 +282,7 @@ export default class RejectHome extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '取消' } })
   handleCancelSelectApproval() {
     this.setState({ nextApprovalModal: false });
   }
