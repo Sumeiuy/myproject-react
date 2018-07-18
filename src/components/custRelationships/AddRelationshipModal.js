@@ -386,7 +386,6 @@ export default class AddRelationshipModal extends Component {
         maskClosable={false}
         visible={visible}
         closeModal={this.handleModalClose}
-        onCancel={this.handleAddRelationshipModalClose}
         onOk={this.handleModalConfirm}
       >
         <div className={styles.addRelationContainer}>
