@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-18 13:59:13
+ * @Last Modified time: 2018-07-18 16:01:14
  * @description 任务管理首页
  */
 
@@ -476,7 +476,6 @@ export default class PerformerView extends PureComponent {
       targetCustDetail,
       changeParameter,
       queryTargetCust,
-      queryCustUuid,
       custUuid,
       ceFileDelete,
       getCeFileList,
@@ -542,7 +541,6 @@ export default class PerformerView extends PureComponent {
         targetCustDetail={targetCustDetail}
         changeParameter={changeParameter}
         queryTargetCust={queryTargetCust}
-        queryCustUuid={queryCustUuid}
         custUuid={custUuid}
         getCustDetail={this.getCustDetail}
         serviceTypeCode={typeCode}
@@ -721,14 +719,11 @@ export default class PerformerView extends PureComponent {
   loadDetailContent(obj) {
     const {
       getTaskDetailBasicInfo,
-      queryCustUuid,
       clearCustListForServiceImplementation,
     } = this.props;
     getTaskDetailBasicInfo({ taskId: obj.id });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
-    // 如果所点击的任务需要的是执行者视图，则预先请求custUuid
-    queryCustUuid();
     // 将执行者视图右侧搜索客户的列表数据清空
     clearCustListForServiceImplementation();
   }

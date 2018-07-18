@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-18 14:45:22
+ * @Last Modified time: 2018-07-18 16:00:34
  */
 
 import React, { PureComponent } from 'react';
@@ -83,7 +83,6 @@ export default class ServiceImplementation extends PureComponent {
     isCustIncomeRequested: PropTypes.bool,
     addServeRecord: PropTypes.func.isRequired,
     currentMotServiceRecord: PropTypes.object.isRequired,
-    queryCustUuid: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
     modifyLocalTaskList: PropTypes.func.isRequired,
     getTaskDetailBasicInfo: PropTypes.func.isRequired,
@@ -164,20 +163,11 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   componentDidMount() {
-    const { isFold, getPageSize, currentTask: { statusCode }, changeParameter } = this.props;
-    const { dict } = this.context;
+    const { isFold, getPageSize } = this.props;
     const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
     const newPageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 首次进入，请求服务实施列表
-    const stateList = getServiceState(statusCode, dict);
-    this.queryTargetCustList({
-      state: stateList,
-      pageSize: newPageSize,
-      pageNum: 1,
-    }).then(() => {
-      // 将服务实施的状态记到redux
-      changeParameter({ state: stateList });
-    });
+    this.getTaskFlowData(newPageSize);
     // 给FSP折叠菜单按钮注册点击事件
     window.onFspSidebarbtn(this.handleFspLeftMenuClick);
   }
@@ -187,9 +177,7 @@ export default class ServiceImplementation extends PureComponent {
     const {
       isFold, getPageSize, currentId,
       location: { query },
-      changeParameter, currentTask: { statusCode },
     } = this.props;
-    const { dict } = this.context;
     const pageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
     if (
@@ -209,15 +197,7 @@ export default class ServiceImplementation extends PureComponent {
     }
     // 任务切换时，重新请求服务实施列表，参数为默认值
     if (prevProps.currentId !== currentId) {
-      const stateList = getServiceState(statusCode, dict);
-      this.queryTargetCustList({
-        state: stateList,
-        pageSize,
-        pageNum: 1,
-      }).then(() => {
-        // 将服务实施的状态记到redux
-        changeParameter({ state: stateList });
-      });
+      this.getTaskFlowData(pageSize);
     }
     if (query !== prevProps.location.query) {
       // 先判断再setState，避免不必要的渲染
@@ -513,7 +493,6 @@ export default class ServiceImplementation extends PureComponent {
   }) {
     const {
       addServeRecord,
-      queryCustUuid,
       modifyLocalTaskList,
       currentId,
       getTaskDetailBasicInfo,
@@ -547,9 +526,6 @@ export default class ServiceImplementation extends PureComponent {
               modifyLocalTaskList({ missionId: currentId });
             }
           });
-          // 添加服务记录成功之后，重新获取custUuid
-          queryCustUuid();
-          // this.updateList(postBody);
           if (!noHint) {
             message.success('添加服务记录成功');
           }
@@ -637,6 +613,22 @@ export default class ServiceImplementation extends PureComponent {
       return false;
     }
     return MSG_ROUTEFORWARD;
+  }
+
+  // 根据当前的任务状态去获取对应的服务状态，再去获取服务实施列表数据
+  @autobind
+  getTaskFlowData(pageSize, pageNum = 1) {
+    const { dict } = this.context;
+    const { changeParameter, currentTask: { statusCode } } = this.props;
+    const stateList = getServiceState(statusCode, dict);
+    // 将服务实施的状态记到redux
+    changeParameter({ state: stateList }).then(() => {
+      this.queryTargetCustList({
+        state: stateList,
+        pageSize,
+        pageNum,
+      });
+    });
   }
 
   render() {
