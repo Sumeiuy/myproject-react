@@ -21,17 +21,34 @@
       box-sizing: border-box;
 
       .ant-input-affix-wrapper {
-        width: 240px;
+        width: 200px;
         height: 28px;
         margin-bottom: 20px;
         .ant-input {
           padding: 4px 14px;
           padding-right: 31px;
-          border: 1px solid #348cf0;
+          border: 1px solid #ddd;
           border-radius: 3px;
           font-family: PingFangSC-Regular;
           font-size: 13px;
           letter-spacing: 0.14px;
+          outline: none;
+
+          &:focus {
+            box-shadow: 0 0 0 0 #fff;
+          }
+        }
+
+        .ant-btn-primary {
+          background: #fff;
+          color: #c2c2c2;
+          border-color: #ddd;
+          border-left: #fff;
+         }
+
+         .ant-btn-clicked:after {
+          border: 0 solid #fff;
+          opacity: 0;
         }
       }
       .ant-table {
