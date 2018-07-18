@@ -16,7 +16,7 @@ import Modal from '../common/biz/CommonModal';
 import confirm from '../common/confirm_';
 import ApprovalBtnGroup from '../common/approvalBtns';
 import TableDialog from '../common/biz/TableDialog';
-
+import logable, { logPV, logCommon } from '../../decorators/logable';
 import { APPROVAL_COLUMNS } from './config';
 import { validateData } from '../../helper/page/custRelationship';
 
@@ -114,6 +114,14 @@ export default class CreateApply extends PureComponent {
       IDTypeValue: cust.custIDTypeValue,
       IDNum: cust.custIDNum,
     };
+    // 手动上传日志
+    logCommon({
+      type: 'submit',
+      payload: {
+        name: '客户关联关系信息申请',
+        value: JSON.stringify({ ...submitApplyParameter, auditors }),
+      },
+    });
     if (stockRepurchase === 'Y') {
       // “是否办理股票质押回购业务“选“是”时，提交申请接口,然后走流程
       this.props.submitApply({
@@ -152,6 +160,7 @@ export default class CreateApply extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭新建弹框' } })
   handleModalClose() {
     // 关闭新建申请弹出层的时候，弹出提示是否
     confirm({
@@ -195,9 +204,7 @@ export default class CreateApply extends PureComponent {
         if (_.size(btn.flowAuditors) === 1) {
           this.doValidateBeforeSubmit();
         } else {
-          this.setState({
-            nextApprovalModal: true,
-          });
+          this.handleSelectApprovalModal();
         }
       });
     } else {
@@ -208,6 +215,12 @@ export default class CreateApply extends PureComponent {
   @autobind
   handleCancelSelectApproval() {
     this.setState({ nextApprovalModal: false });
+  }
+
+  @autobind
+  @logPV({ pathname: '/modal/choiceApproval', title: '选择审批人' })
+  handleSelectApprovalModal() {
+    this.setState({ nextApprovalModal: true });
   }
 
   @autobind

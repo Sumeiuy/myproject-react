@@ -505,7 +505,7 @@ export default class CommissionHome extends PureComponent {
 
   // 头部新建按钮点击事件处理程序
   @autobind
-  @logPV({ pathname: '/modal/createProtocol', title: '新建佣金调整' })
+  @logPV({ pathname: '/modal/createCommission', title: '新建佣金调整' })
   handleCreateBtnClick() {
     // TODO 此处需要新增一个判断，如果用户所有申请的权限都没有则提示不能点击新建
     if (this.hasCreatApplyAuthority()) {

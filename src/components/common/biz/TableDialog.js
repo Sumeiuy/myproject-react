@@ -29,7 +29,7 @@ import PropTypes from 'prop-types';
 import { Table, Modal, Input } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 
 import styles from './tableDialog.less';
 
@@ -110,7 +110,6 @@ export default class TableDialog extends Component {
   }
 
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '$props.okText' } })
   handleOk() {
     const { selectedRows } = this.state;
     const selected = selectedRows.length > 0 ? selectedRows[0] : {};
@@ -120,6 +119,14 @@ export default class TableDialog extends Component {
     this.setState({
       ...defaultConfig,
     }, onOk(selected));
+    // 手动上传日志
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '选择下一步审批人',
+        value: JSON.stringify(selected),
+      },
+    });
   }
 
   @autobind

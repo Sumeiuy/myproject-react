@@ -22,7 +22,7 @@ import Detail from '../../components/stockOptionEvaluation/ApplyDetail';
 import CreateApply from '../../components/stockOptionEvaluation/CreateApply';
 import seibelHelper from '../../helper/page/seibel';
 import permission from '../../helper/permission';
-import logable from '../../decorators/logable';
+import logable, { logPV } from '../../decorators/logable';
 
 const { stockOptionApply, stockOptionApply: { statusOptions, pageType } } = config;
 
@@ -278,7 +278,7 @@ export default class StockOptionApplication extends PureComponent {
 
   // 新建申请
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '显示股票期权申请弹框' } })
+  @logPV({ pathname: '/modal/createStockOptionEvaluation', title: '新建显示股票期权申请' })
   openCreateModalBoard() {
     this.setState({ isShowCreateModal: true });
   }
