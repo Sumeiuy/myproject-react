@@ -41,7 +41,7 @@ export default class Sort extends PureComponent {
     if (sortType !== value) {
       const {
         defaultDirection,
-        sortDirections,
+        sortDirections = defaultSortDirections,
       } = _.find(data, item => item.sortType === value);
       onChange({
         sortType: value,
