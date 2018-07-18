@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 13:57:57
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-13 16:40:16
+ * @Last Modified time: 2018-07-18 13:48:02
  * @description 线上销户详情页面
  */
 import React, { PureComponent } from 'react';
@@ -99,6 +99,7 @@ export default class Detail extends PureComponent {
     const custId = _.get(basicInfo, 'custId');
     const empName = _.get(data, 'empName');
     const empId = _.get(data, 'empId');
+    const draftOrg = _.get(data, 'orgName');
     // 客户
     const cust = `${custName}（${custId}）`;
     // 服务营业部
@@ -121,7 +122,7 @@ export default class Detail extends PureComponent {
     // 备注
     const commet = _.get(basicInfo, 'commet');
     // 拟稿人信息
-    const drafter = `${orgName} - ${empName} (${empId})`;
+    const drafter = `${draftOrg} - ${empName} (${empId})`;
 
     return (
       <DetailWrap isEmpty={isEmpty} currentId={`${id}`} extra={pushButton}>

@@ -3,7 +3,7 @@
 * @Descripter: 线上申请models
 * @Date: 2018-06-08 13:17:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-13 19:48:31
+ * @Last Modified time: 2018-07-18 14:55:25
 */
 
 
@@ -64,10 +64,10 @@ export default {
       };
     },
     queryCustListSuccess(state, action) {
-      const { payload: { resultData: { custList = [] } } } = action;
+      const { payload: { resultData = [] } } = action;
       return {
         ...state,
-        custList,
+        custList: resultData,
       };
     },
     getApprovalInfoSuccess(state, action) {
@@ -126,7 +126,7 @@ export default {
     * getDetail({ payload }, { put, call }) {
       const detailResponse = yield call(api.getAppDetail, payload);
       const { attachment } = detailResponse.resultData;
-      const attachResponse = yield call(api.getAttachmentList, { attachment });
+      const attachResponse = yield call(api.getAttachmentList, { attachment: attachment || '' });
       yield put({
         type: 'getDetailInfoSuccess',
         payload: {
@@ -139,7 +139,7 @@ export default {
     * getDetailForUpdate({ payload }, { put, call }) {
       const detailResponse = yield call(api.getAppDetail, payload);
       const { attachment } = detailResponse.resultData;
-      const attachResponse = yield call(api.getAttachmentList, { attachment });
+      const attachResponse = yield call(api.getAttachmentList, { attachment: attachment || '' });
       yield put({
         type: 'getDetailForUpdateSuccess',
         payload: {

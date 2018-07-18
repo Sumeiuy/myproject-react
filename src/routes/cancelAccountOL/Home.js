@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-13 19:30:04
+ * @Last Modified time: 2018-07-18 11:15:29
  * @description 线上销户首页
  */
 
@@ -177,8 +177,8 @@ export default class CancelAccountOLHome extends PureComponent {
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
-    // 默认筛选条件, TODO 暂时写成10，
-    getList({ ...params, type: '10' }).then(this.getRightDetail);
+    // 默认筛选条件,
+    getList({ ...params, type: PAGE_TYPE }).then(this.getRightDetail);
   }
 
   // 头部筛选后调用方法

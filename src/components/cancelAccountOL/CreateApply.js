@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 13:35:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-13 19:37:00
+ * @Last Modified time: 2018-07-18 16:05:25
  * @description 新建线上销户申请弹出框
  */
 import React, { PureComponent } from 'react';
@@ -15,7 +15,7 @@ import confirm from '../common/confirm_';
 import ApprovalBtnGroup from '../common/approvalBtns';
 import TableDialog from '../common/biz/TableDialog';
 import CancelAccountOLForm from './CancelAccountOLForm';
-import logable, { logPV } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 
 import { emp } from '../../helper';
 import { validateData } from '../../helper/page/cancelAccount';
@@ -93,7 +93,7 @@ export default class CreateApply extends PureComponent {
     const { optionsDict: { custInvestVarietyTypeList, custLossReasonTypeList } } = this.props;
     const vars = convertSubmitInvestVars(investVars, custInvestVarietyTypeList, otherVarDetail);
     const reasons = convertSubmitLostReason(lostReason, custLossReasonTypeList, otherReasonDetail);
-    this.props.onSubmit({
+    const query = {
       custNumber: cust.brokerNumber,
       attachment,
       custId: cust.custRowId,
@@ -107,7 +107,17 @@ export default class CreateApply extends PureComponent {
       churnStockExchange: stockExchange,
       CustInvestVarietyDTOReq: vars,
       CustLossCauseDTOReq: reasons,
-    }).then(this.doFlowApproval);
+    };
+    this.props.onSubmit(query).then(() => {
+      logCommon({
+        type: 'Submit',
+        payload: {
+          name: '线上销户申请新建提交',
+          vlaue: JSON.stringify(query),
+        },
+      });
+      this.doFlowApproval();
+    });
   }
 
   @autobind

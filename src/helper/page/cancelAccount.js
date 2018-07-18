@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-13 16:50:40
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-13 17:48:36
+ * @Last Modified time: 2018-07-18 13:33:10
  * @description 线上销户数据校验
  */
 import _ from 'lodash';
@@ -73,7 +73,15 @@ function validateSubmitData(state) {
     };
   }
 
-  // 4. 判断如果流失去向是 投资其他，则判断投资品种有无填写
+  // 4. 判断如果流失去向是 转户，则判断证券营业部名称字符长度
+  if (lostDirection === LOST_DIRECTION_TRANSFER && state.stockExchange.length > 100) {
+    return {
+      msg: '转户证券营业部名称长度不得超过100个字符',
+      valid: false,
+    };
+  }
+
+  // 5. 判断如果流失去向是 投资其他，则判断投资品种有无填写
   if (lostDirection === LOST_DIRECTION_INVEST && !hasSelectInvestVars(state.investVars)) {
     return {
       msg: '请选择投资品种',
@@ -81,7 +89,7 @@ function validateSubmitData(state) {
     };
   }
 
-  // 5. 判断如果流失去向是 投资其他，则投资品种中含有其他品种
+  // 6. 判断如果流失去向是 投资其他，则投资品种中含有其他品种
   // 则必须填写其他品种详细
   if (lostDirection === LOST_DIRECTION_INVEST
     && hasSelectOtherVar(state.investVars)
@@ -93,7 +101,19 @@ function validateSubmitData(state) {
     };
   }
 
-  // 6. 判断流失原因是否选择
+  // 7. 判断如果流失去向是 投资其他，则投资品种中含有其他品种
+  // 则必须填写其他品种详细字符串长度
+  if (lostDirection === LOST_DIRECTION_INVEST
+    && hasSelectOtherVar(state.investVars)
+    && state.otherVarDetail.length > 255
+  ) {
+    return {
+      msg: '选择了其他投资品种，填写的详细投资品种字符长度不得超过255个字符',
+      valid: false,
+    };
+  }
+
+  // 8. 判断流失原因是否选择
   const { lostReason } = state;
   if (!hasSelectLostReason(lostReason)) {
     return {
@@ -101,10 +121,18 @@ function validateSubmitData(state) {
       valid: false,
     };
   }
-  // 7. 如果流失原因中含有其他原因，则需要判断是否填写详细原因
+  // 9. 如果流失原因中含有其他原因，则需要判断是否填写详细原因
   if (hasSelectOtherReason(lostReason) && !hasWriteData(state.otherReasonDetail)) {
     return {
       msg: '选择了其他流失原因，需要填写详细原因',
+      valid: false,
+    };
+  }
+
+  // 10. 流失详细原因字符串长度
+  if (hasSelectOtherReason(lostReason) && state.otherReasonDetail.length > 255) {
+    return {
+      msg: '选择了其他流失原因，填写的详细原因不得超过255个字符',
       valid: false,
     };
   }
