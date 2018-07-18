@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-09 18:51:25
+ * @Last Modified time: 2018-07-18 13:59:13
  * @description 任务管理首页
  */
 
@@ -522,11 +522,11 @@ export default class PerformerView extends PureComponent {
       eventId,
       taskTypeCode,
     } = this.state;
-    const [firstItem = EMPTY_OBJECT] = list.resultData;
-    const { query: { currentId } } = location;
+    const currentId = this.getCurrentId();
+    const currentTask = _.find(list.resultData, item => item.id === currentId) || {};
     return (
       <PerformerViewDetail
-        currentId={currentId || firstItem.id}
+        currentId={currentId}
         parameter={parameter}
         dict={dict}
         empInfo={empInfo}
@@ -585,6 +585,7 @@ export default class PerformerView extends PureComponent {
         queryExecutorDetail={queryExecutorDetail}
         queryTargetCustDetail={queryTargetCustDetail}
         location={location}
+        currentTask={currentTask}
       />
     );
   }
@@ -905,8 +906,8 @@ export default class PerformerView extends PureComponent {
   @autobind
   addSortParam(currentViewType, query) {
     const { sortKey, sortDirection } = this.getSortConfig(currentViewType);
-    if (query[sortKey]) {
-      return { [sortKey]: query[sortKey] };
+    if (!_.isEmpty(query.sortKey) && !_.isEmpty(query.sortDirection)) {
+      return { [query.sortKey]: query.sortDirection };
     }
     return { [sortKey]: sortDirection };
   }
@@ -915,13 +916,14 @@ export default class PerformerView extends PureComponent {
    * 排序，请求数据
    */
   @autobind
-  handleSortChange({ sortKey, sortType }) {
+  handleSortChange({ sortKey, sortDirection }) {
     const { location: { query, pathname }, replace } = this.props;
     replace({
       pathname,
       query: {
         ...query,
-        [sortKey]: sortType,
+        sortKey,
+        sortDirection,
       },
     });
   }

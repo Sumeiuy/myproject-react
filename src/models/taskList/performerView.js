@@ -24,11 +24,9 @@ const SEARCH_CUSTOMER_FOR_PAGE_HEADER = 'pageHeader';
 const SEARCH_CUSTOMER_FOR_RIGHT_DETAIL = 'rightDetail';
 // 资产降序排列
 const ASSET_DESC = 'desc';
-// 服务实施默认的状态码
-const defaultStateCode = '10';
 // 默认的服务实施的参数
 const defaultParameter = {
-  state: defaultStateCode,
+  state: [],
   rowId: '',
   assetSort: ASSET_DESC,
   activeIndex: '1',
@@ -356,8 +354,9 @@ export default {
 
     // 执行者视图的详情目标客户列表
     * queryTargetCust({ payload }, { call, put }) {
-      const { isGetFirstItemDetail = true, ...others } = payload;
-      const { resultData } = yield call(api.queryTargetCust, others);
+      const { isGetFirstItemDetail = true, state, ...others } = payload;
+      const currentState = state.join(',');
+      const { resultData } = yield call(api.queryTargetCust, { ...others, state: currentState });
       if (resultData) {
         yield put({
           type: 'queryTargetCustSuccess',
