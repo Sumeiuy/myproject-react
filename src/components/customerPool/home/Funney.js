@@ -9,7 +9,7 @@ import { Popover } from 'antd';
 
 import IECharts from '../../IECharts';
 import { openFspTab } from '../../../utils';
-
+import { logCommon } from '../../../decorators/logable';
 import antdStyles from '../../../css/antd.less';
 import styles from './funney.less';
 
@@ -32,6 +32,13 @@ function linkToList(item, push) {
   if (item.key !== SERVICE_CUST_NUM) {
     return;
   }
+  // 手动上传日志
+  logCommon({
+    type: 'Click',
+    payload: {
+      name: '客户及资产区域的服务客户数下钻',
+    },
+  });
   openFspTab({
     routerAction: push,
     url: '/customer/manage/showCustManageTabWin',
@@ -122,6 +129,14 @@ function Funney({ dataSource, push }) {
       }
       // 点击'服务客户数'时，跳转到 客户中心 > 客户管理 页面
       if (arg.name === '服务客户数') {
+        // 手动上传日志
+        logCommon({
+          type: 'DrillDown',
+          payload: {
+            name: '客户及资产',
+            element: '服务客户数',
+          },
+        });
         openFspTab({
           routerAction: push,
           url: '/customer/manage/showCustManageTabWin',
