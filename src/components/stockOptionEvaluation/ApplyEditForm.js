@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-18 11:01:07
+ * @Last Modified time: 2018-07-18 13:33:00
  */
 
 import React, { PureComponent } from 'react';
@@ -22,7 +22,7 @@ import Approval from '../permission/Approval';
 import ApproveList from '../common/approveList';
 import config from './config';
 import { data } from '../../helper';
-import logable, { logCommon } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 
 import styles from './applyEditForm.less';
 
@@ -248,6 +248,7 @@ export default class ApplyEditForm extends PureComponent {
 
   // 展示下一步审批人
   @autobind
+  @logPV({ pathname: '/modal/choiceApproval', title: '选择下一步审批人' })
   showNextApprover() {
     this.setState({
       nextApproverModal: true,

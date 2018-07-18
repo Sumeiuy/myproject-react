@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-18 11:02:02
+ * @Last Modified time: 2018-07-18 13:32:19
  */
 
 import React, { PureComponent } from 'react';
@@ -21,7 +21,7 @@ import ApprovalBtnGroup from '../common/approvalBtns';
 import EditBasicInfo from './EditBasicInfo';
 import config from './config';
 import { data, emp } from '../../helper';
-import logable, { logCommon } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 
 import styles from './createApply.less';
 
@@ -394,6 +394,7 @@ export default class CreateApply extends PureComponent {
 
   // 展示下一步审批人
   @autobind
+  @logPV({ pathname: '/modal/choiceApproval', title: '选择下一步审批人' })
   showNextApprover(item) {
     this.setState({
       operate: item.operate,
