@@ -25,7 +25,7 @@ export default class Sort extends PureComponent {
   };
 
   static defaultProps = {
-    onChange: _.loop,
+    onChange: _.noop,
     data: EMPTY_LIST,
   };
 
@@ -73,6 +73,7 @@ export default class Sort extends PureComponent {
   render() {
     const { value: { sortType }, data } = this.props;
     const { name } = this.getCurrentQuota();
+    const selectProps = _.omit(this.props, _.keys(Sort.propTypes));
     return (
       <div className={styles.commonSort}>
         <div
@@ -89,11 +90,12 @@ export default class Sort extends PureComponent {
             style={{ width: 110 }}
             onChange={this.handleSelectChange}
             dropdownMatchSelectWidth={false}
-            getPopupContainer={triggerNode => triggerNode.parentNode}
+            dropdownClassName={styles.selectDropDown}
+            {...selectProps}
           >
             {
               _.map(data, item => (
-                <Option value={item.sortType}>{item.name}</Option>
+                <Option key={item.sortType} value={item.sortType}>{item.name}</Option>
               ))
             }
           </Select>
