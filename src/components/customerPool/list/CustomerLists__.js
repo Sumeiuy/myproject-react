@@ -22,7 +22,13 @@ import { url as urlHelper, emp, number } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
-import { ENTERLIST1, ENTERLIST2, MAIN_MAGEGER_ID, ALL_DEPARTMENT_ID } from '../../../routes/customerPool/config';
+import {
+  ENTERLIST1,
+  ENTERLIST2,
+  MAIN_MAGEGER_ID,
+  ALL_DEPARTMENT_ID,
+  ENTERLIST3,
+} from '../../../routes/customerPool/config';
 import logable from '../../../decorators/logable';
 import styles from './customerLists__.less';
 
@@ -423,6 +429,7 @@ export default class CustomerLists extends PureComponent {
     // 潜在业务客户进入，判断当前用户岗位是否在分公司或经总，在分公司或经总，再判断是否任务管理权限，反之dou
     return (_.includes(ENTERLIST1, source) && hasTkMampPermission) ||
       (_.includes(ENTERLIST2, source) && hasIndexViewPermission) ||
+      (_.includes(ENTERLIST3, source) && (hasTkMampPermission || hasIndexViewPermission)) ||
       (source === 'business' && isNotSaleDepartment && hasTkMampPermission);
   }
 
@@ -442,6 +449,15 @@ export default class CustomerLists extends PureComponent {
     if (_.includes(ENTERLIST1, source)) {
       // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
       return taskManagerResp;
+    }
+    if (_.includes(ENTERLIST3, source)) {
+      if (hasTkMampPermission) {
+        return taskManagerResp;
+      }
+      if (hasIndexViewPermission) {
+        return firstPageResp;
+      }
+      return [allSaleDepartment, ...taskManagerResp];
     }
     if (source === 'business') {
       if (!(isNotSaleDepartment && hasTkMampPermission)) {
