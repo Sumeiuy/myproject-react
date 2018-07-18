@@ -139,6 +139,9 @@ const EXTRALARGE_PAGESIZE = 12;
 // 执行者视图详情中tab的默认项，默认服务实施
 const defaultPerformerViewCurrentTab = 'serviceImplementation';
 
+// 服务实施服务状态过滤器默认的状态码
+const defaultServiceState = ['10', '20'];
+
 export default {
   EXECUTOR,
   INITIATOR,
@@ -173,4 +176,5 @@ export default {
   LARGE_PAGESIZE,
   EXTRALARGE_PAGESIZE,
   defaultPerformerViewCurrentTab,
+  defaultServiceState,
 };

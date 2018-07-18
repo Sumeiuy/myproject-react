@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-13 20:33:23
+ * @Last Modified time: 2018-07-18 16:31:24
  */
 
 import React, { PureComponent } from 'react';
@@ -24,13 +24,13 @@ import { PHONE, MSG_ROUTEFORWARD } from './config';
 import { serveWay as serveWayUtil } from '../config/code';
 import { flow, task } from '../config';
 import { fsp } from '../../../../helper';
+import logable from '../../../../decorators/logable';
 import styles from './serviceImplementation.less';
 import {
   POSTCOMPLETED_CODE,
   defaultPerformerViewCurrentTab,
 } from '../../../../routes/taskList/config';
-// 默认的任务筛选值
-const TASKSTATE_NOTSTARTED = '10';
+import { getServiceState } from './helper';
 
 // 这个是防止页面里有多个class重复，所以做个判断，必须包含当前节点
 // 如果找不到无脑取第一个就行
@@ -83,7 +83,6 @@ export default class ServiceImplementation extends PureComponent {
     isCustIncomeRequested: PropTypes.bool,
     addServeRecord: PropTypes.func.isRequired,
     currentMotServiceRecord: PropTypes.object.isRequired,
-    queryCustUuid: PropTypes.func.isRequired,
     custUuid: PropTypes.string.isRequired,
     modifyLocalTaskList: PropTypes.func.isRequired,
     getTaskDetailBasicInfo: PropTypes.func.isRequired,
@@ -116,6 +115,8 @@ export default class ServiceImplementation extends PureComponent {
     queryTargetCustDetail: PropTypes.func.isRequired,
     getPageSize: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    // 左侧列表中当前选中的任务
+    currentTask: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -165,19 +166,18 @@ export default class ServiceImplementation extends PureComponent {
     const { isFold, getPageSize } = this.props;
     const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
     const newPageSize = getPageSize(isFoldFspLeftMenu, isFold);
-    // 首次进入，请求服务实施列表，参数为默认值
-    this.queryTargetCustList({
-      state: TASKSTATE_NOTSTARTED,
-      pageSize: newPageSize,
-      pageNum: 1,
-    });
+    // 首次进入，请求服务实施列表
+    this.getTaskFlowData(newPageSize);
     // 给FSP折叠菜单按钮注册点击事件
     window.onFspSidebarbtn(this.handleFspLeftMenuClick);
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { isFoldFspLeftMenu } = this.state;
-    const { isFold, getPageSize, currentId, location: { query } } = this.props;
+    const {
+      isFold, getPageSize, currentId,
+      location: { query },
+    } = this.props;
     const pageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
     if (
@@ -197,11 +197,7 @@ export default class ServiceImplementation extends PureComponent {
     }
     // 任务切换时，重新请求服务实施列表，参数为默认值
     if (prevProps.currentId !== currentId) {
-      this.queryTargetCustList({
-        state: TASKSTATE_NOTSTARTED,
-        pageSize,
-        pageNum: 1,
-      });
+      this.getTaskFlowData(pageSize);
     }
     if (query !== prevProps.location.query) {
       // 先判断再setState，避免不必要的渲染
@@ -253,7 +249,14 @@ export default class ServiceImplementation extends PureComponent {
 
   // 状态筛选
   @autobind
-  handleStateChange({ value = '' }) {
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '$args[0].name',
+      value: '$args[0].value',
+    },
+  })
+  handleStateChange({ value = [] }) {
     const { parameter, changeParameter } = this.props;
     const { targetCustList: { page: { pageSize } } } = this.state;
     const { rowId, assetSort } = parameter;
@@ -272,6 +275,13 @@ export default class ServiceImplementation extends PureComponent {
 
   // 客户筛选
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '$args[0].name',
+      value: '$args[0].value.aliasName',
+    },
+  })
   handleCustomerChange({ value = {} }) {
     const { parameter, changeParameter } = this.props;
     const { targetCustList: { page: { pageSize } } } = this.state;
@@ -290,6 +300,13 @@ export default class ServiceImplementation extends PureComponent {
 
   // 资产排序
   @autobind
+  @logable({
+    type: 'click',
+    payload: {
+      name: '服务实施列表总资产排序，是否降序',
+      value: '$args[0].isDesc',
+    },
+  })
   handleAssetSort(obj) {
     const assetSort = obj.isDesc ? 'desc' : 'asc';
     const { parameter, changeParameter } = this.props;
@@ -362,6 +379,13 @@ export default class ServiceImplementation extends PureComponent {
 
   // 点击了列表中的客户
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '$args[0].currentCustomer.custName',
+      type: '任务流水',
+    },
+  })
   handleCustomerClick(obj = {}) {
     const { changeParameter, currentId, queryTargetCustDetail } = this.props;
     changeParameter({
@@ -380,6 +404,13 @@ export default class ServiceImplementation extends PureComponent {
 
   // 客户列表左右按钮翻页
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '服务实施列表翻页',
+      value: '$args[0]',
+    },
+  })
   handlePageChange(pageNum) {
     const { parameter, changeParameter } = this.props;
     const { targetCustList: { page: { pageSize } } } = this.state;
@@ -406,8 +437,10 @@ export default class ServiceImplementation extends PureComponent {
       currentId,
       queryTargetCust,
     } = this.props;
+    const { state, ...others } = obj;
     return queryTargetCust({
-      ...obj,
+      ...others,
+      state: state.join(','),
       missionId: currentId,
     });
   }
@@ -462,7 +495,6 @@ export default class ServiceImplementation extends PureComponent {
   }) {
     const {
       addServeRecord,
-      queryCustUuid,
       modifyLocalTaskList,
       currentId,
       getTaskDetailBasicInfo,
@@ -496,9 +528,6 @@ export default class ServiceImplementation extends PureComponent {
               modifyLocalTaskList({ missionId: currentId });
             }
           });
-          // 添加服务记录成功之后，重新获取custUuid
-          queryCustUuid();
-          // this.updateList(postBody);
           if (!noHint) {
             message.success('添加服务记录成功');
           }
@@ -586,6 +615,22 @@ export default class ServiceImplementation extends PureComponent {
       return false;
     }
     return MSG_ROUTEFORWARD;
+  }
+
+  // 根据当前的任务状态去获取对应的服务状态，再去获取服务实施列表数据
+  @autobind
+  getTaskFlowData(pageSize, pageNum = 1) {
+    const { dict } = this.context;
+    const { changeParameter, currentTask: { statusCode } } = this.props;
+    const stateList = getServiceState(statusCode, dict);
+    // 将服务实施的状态记到redux
+    changeParameter({ state: stateList }).then(() => {
+      this.queryTargetCustList({
+        state: stateList,
+        pageSize,
+        pageNum,
+      });
+    });
   }
 
   render() {

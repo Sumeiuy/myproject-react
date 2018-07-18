@@ -1,8 +1,8 @@
 /**
  * @Author: xuxiaoqin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-24 14:49:29
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-18 13:32:15
  * @description 每一个视图列表的头部区域，不随着列表滚动
  */
 
@@ -77,7 +77,7 @@ export default class FixedTitle extends PureComponent {
     }, () => {
       onSortChange({
         sortKey,
-        sortType: this.state.sortDirection,
+        sortDirection: this.state.sortDirection,
       });
     });
   }
