@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-18 00:24:34
+ * @Last Modified time: 2018-07-18 11:01:07
  */
 
 import React, { PureComponent } from 'react';
@@ -466,18 +466,24 @@ export default class ApplyEditForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
   updateValue(attachment) {
     this.setState({ attachment });
   }
 
   // 搜索下一步审批人
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索下一步审批人',
+      value: '$args[0]',
+    },
+  })
   handleSearchApproval(value) {
     const { defaultNextApproverList } = this.state;
-    const filterNextApproverList = value
-      ? defaultNextApproverList.filter(
-        item => item.login.indexOf(value) > -1 || item.empName.indexOf(value) > -1)
-      : defaultNextApproverList;
+    const filterNextApproverList = _.filter(defaultNextApproverList,
+      item => (item.login.indexOf(value) > -1 || item.empName.indexOf(value) > -1));
     this.setState({ nextApproverList: filterNextApproverList });
   }
 
