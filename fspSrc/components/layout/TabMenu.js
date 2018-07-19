@@ -225,7 +225,7 @@ export default class TabMenu extends PureComponent {
     return (
       <div id="tabMenu" className={styles.tabMenu}>
         {
-          mainArray.map((menu, index) => {
+          mainArray.map((menu) => {
             if (menu.children) {
               return this.renderDropdownMenu(menu);
             } else if (menu.pid === 'ROOT') {
