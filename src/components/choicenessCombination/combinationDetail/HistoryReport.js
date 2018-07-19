@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import { Popover, Table } from 'antd';
 import config from '../config';
 import { time } from '../../../helper';
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './historyReport.less';
 
 const EMPTY_LIST = [];
@@ -52,6 +53,10 @@ export default class HistoryReport extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '/modal/historyReportModal',
+    title: '历史报告弹框',
+  })
   handleMoreClick() {
     const { showModal, combinationCode } = this.props;
     showModal({
@@ -60,14 +65,27 @@ export default class HistoryReport extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '历史报告',
+      value: '$args[0].logName',
+    },
+  })
+  handleOpenReportDetailPage(payload) {
+    const { openReportDetailPage } = this.props;
+    openReportDetailPage(payload);
+  }
+
   // 设置 popover
   @autobind
   renderPopover(value, record) {
-    const { openReportDetailPage } = this.props;
     let reactElement = null;
     const payload = {
       id: record.id,
       code: record.combinationCode,
+      logName: value,
     };
     if (value) {
       reactElement = (<Popover
@@ -77,7 +95,10 @@ export default class HistoryReport extends PureComponent {
         overlayStyle={overlayStyle}
       >
         <div className={styles.ellipsis}>
-          <span className={styles.titleLink} onClick={() => openReportDetailPage(payload)}>
+          <span
+            className={styles.titleLink}
+            onClick={() => this.handleOpenReportDetailPage(payload)}
+          >
             {value}
           </span>
         </div>

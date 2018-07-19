@@ -23,6 +23,7 @@ import {
   MAIN_MAGEGER_ID,
   ENTERLIST1,
   ENTERLIST2,
+  ENTERLIST3,
 } from './config';
 
 import { RANDOM } from '../../config/filterContant';
@@ -715,6 +716,11 @@ export default class CustomerList extends PureComponent {
     if (_.includes(ENTERLIST1, query.source)) {
       return this.hasTkMampPermission ? this.orgId : '';
     }
+    // 从左侧菜单进来，判断是否有任务管理权限或者首页指标查询权限
+    if (_.includes(ENTERLIST3, query.source)) {
+      return this.hasTkMampPermission || this.hasIndexViewPermission
+        ? this.orgId : '';
+    }
     // 从首页潜在业务客户过来
     if (query.source === 'business') {
       // 营业部登录用户只能看名下客户
@@ -774,6 +780,11 @@ export default class CustomerList extends PureComponent {
         || (finalQuery.orgId && finalQuery.orgId === MAIN_MAGEGER_ID)) {
         return currentPtyMng;
       }
+    }
+    // 从左侧菜单过来，判断是否有任务管理权限或者首页指标查询权限
+    if (_.includes(ENTERLIST3, finalQuery.source)) {
+      return this.hasTkMampPermission || this.hasIndexViewPermission ?
+        { ptyMngId: '' } : currentPtyMng;
     }
     return { ptyMngId: '' };
   }

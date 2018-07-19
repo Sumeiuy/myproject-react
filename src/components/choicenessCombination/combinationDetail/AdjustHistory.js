@@ -13,6 +13,7 @@ import _ from 'lodash';
 import { Popover } from 'antd';
 import config from '../config';
 import { time } from '../../../helper';
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './adjustHistory.less';
 
 // securityType 里股票对应的值
@@ -58,7 +59,7 @@ export default class AdjustHistory extends PureComponent {
                 item.securityType === STOCK_CODE ?
                   <a
                     title={`${item.securityName} (${item.securityCode}) `}
-                    onClick={() => this.handleSecurityClick(item.securityType, item.securityCode)}
+                    onClick={() => this.handleSecurityClick(item.securityType, item.securityCode, `${item.securityName}(${item.securityCode})`)}
                   >
                     {`${item.securityName} (${item.securityCode}) `}
                   </a>
@@ -81,6 +82,10 @@ export default class AdjustHistory extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '/modal/adjustHistoryModal',
+    title: '调仓历史弹框',
+  })
   handleMoreClick() {
     const { showModal, combinationCode } = this.props;
     showModal({
@@ -91,6 +96,13 @@ export default class AdjustHistory extends PureComponent {
 
   // 证券名称点击事件
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '组合调仓',
+      value: '$args[2]',
+    },
+  })
   handleSecurityClick(type, code) {
     if (type === STOCK_CODE) {
       const { openStockPage } = this.props;

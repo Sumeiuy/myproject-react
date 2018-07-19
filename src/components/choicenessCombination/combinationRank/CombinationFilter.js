@@ -13,6 +13,7 @@ import { autobind } from 'core-decorators';
 import InfoForm from '../../common/infoForm';
 import Select from '../../common/Select';
 import styles from './combinationFilter.less';
+import logable from '../../../decorators/logable';
 import { yieldRankList, riskDefaultItem } from '../../../components/choicenessCombination/config';
 
 const SHOW_PARENT = TreeSelect.SHOW_PARENT;
@@ -58,6 +59,13 @@ export default class CombinationRank extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '收益率排序',
+      value: '$args[1]',
+    },
+  })
   handleYieldSelect(key, value) {
     const { yieldRankChange } = this.props;
     yieldRankChange({
@@ -66,6 +74,13 @@ export default class CombinationRank extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '风险等级',
+      value: '$args[0]',
+    },
+  })
   handleRiskChange(value) {
     const { riskLevelFilter } = this.props;
     riskLevelFilter({
