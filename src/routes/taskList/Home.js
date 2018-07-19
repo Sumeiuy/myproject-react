@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-18 16:01:14
+ * @Last Modified time: 2018-07-19 11:00:39
  * @description 任务管理首页
  */
 
@@ -39,12 +39,16 @@ import {
   STATE_ALL_CODE,
   CREATE_TIME,
   END_TIME,
+  EXECUTION_MODE,
   CREATE_TIME_KEY,
   END_TIME_KEY,
+  EXECUTION_MODE_KEY,
   // 三个视图左侧任务列表的请求入参，在config里面配置，后续如果需要新增，或者删除某个param，
   // 请在config里面配置QUERY_PARAMS
   QUERY_PARAMS,
   defaultPerformerViewCurrentTab,
+  SORT_DESC,
+  SORT_ASC,
 } from './config';
 
 // 空函数
@@ -63,11 +67,6 @@ const ZL_QUREY_APPROVAL_BTN_ID = '200000';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-
-// 创建者视图的排序默认降序排序
-const SORT_DESC = 'desc';
-// 执行者视图和管理者视图默认升序排序
-const SORT_ASC = 'asc';
 
 @withRouter
 export default class PerformerView extends PureComponent {
@@ -839,19 +838,27 @@ export default class PerformerView extends PureComponent {
   }
 
   /**
-   * 获取sortKey，createTimeSort或者endTimeSort
-   * 获取sortContent，创建时间或者结束时间
+   * 获取sortKey，createTimeSort或者endTimeSort、executionModeSort
+   * 获取sortContent，创建时间或者结束时间、执行方式
    */
   @autobind
   getSortConfig(viewType) {
     let sortKey = CREATE_TIME_KEY;
     let sortContent = CREATE_TIME;
     let sortDirection = SORT_DESC;
-    if (viewType === EXECUTOR || viewType === CONTROLLER) {
+    // 执行者视图
+    if (viewType === EXECUTOR) {
+      sortKey = EXECUTION_MODE_KEY;
+      sortContent = EXECUTION_MODE;
+      sortDirection = SORT_DESC;
+    }
+    // 管理者视图
+    if (viewType === CONTROLLER) {
       sortKey = END_TIME_KEY;
       sortContent = END_TIME;
       sortDirection = SORT_ASC;
     }
+    console.log('getSortConfig: ', sortKey, sortContent, sortDirection);
     return {
       sortKey,
       sortContent,
@@ -1039,15 +1046,23 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   renderFixedTitle() {
-    const { location: { query: { missionViewType } } } = this.props;
+    const {
+      location: {
+        query: {
+          missionViewType,
+          sortDirection: querySortDirection,
+          sortKey: querySortKey,
+        },
+      },
+    } = this.props;
     const viewType = getViewInfo(missionViewType).currentViewType;
     const { sortKey, sortContent, sortDirection } = this.getSortConfig(viewType);
     return (
       <FixedTitle
         sortContent={sortContent}
-        sortDirection={sortDirection}
+        sortDirection={querySortDirection || sortDirection}
         onSortChange={this.handleSortChange}
-        sortKey={sortKey}
+        sortKey={querySortKey || sortKey}
         viewType={viewType}
       />
     );

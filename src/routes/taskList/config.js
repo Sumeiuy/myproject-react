@@ -20,11 +20,34 @@ const STATE_COMPLETED_CODE = '80'; // 已完成编号
 
 const STATE_COMPLETED_NAME = '已完成'; // 已完成显示文字
 
-const CREATE_TIME = '创建时间'; // 创建时间，创建者视图需要这个字段，排序展示
-const CREATE_TIME_KEY = 'createTimeSort'; // 传给后台
-const END_TIME = '结束时间'; // 结束时间，执行者视图和管理者视图需要这个字段，排序展示
-const END_TIME_KEY = 'endTimeSort'; // 传给后台
-
+// 降序排序
+const SORT_DESC = 'desc';
+// 升序排序
+const SORT_ASC = 'asc';
+const CREATE_TIME = '创建时间'; // 创建时间，排序显示的名称
+const CREATE_TIME_KEY = 'createTimeSort'; // URL中、传给后台 的字段名称
+const END_TIME = '结束时间'; // 结束时间，排序显示的名称
+const END_TIME_KEY = 'endTimeSort'; // URL中、传给后台 的字段名称
+const EXECUTION_MODE = '执行方式'; // 执行方式，排序显示的名称
+const EXECUTION_MODE_KEY = 'executionModeSort'; // URL中、传给后台 的字段名称
+// 排序组件的数据
+const SORT_DATA = [
+  {
+    sortType: EXECUTION_MODE_KEY,
+    name: EXECUTION_MODE,
+    defaultDirection: SORT_DESC,
+  },
+  {
+    sortType: CREATE_TIME_KEY,
+    name: CREATE_TIME,
+    defaultDirection: SORT_DESC,
+  },
+  {
+    sortType: END_TIME_KEY,
+    name: END_TIME,
+    defaultDirection: SORT_ASC,
+  },
+];
 
 // 管理者视图
 const STATUS_MANAGER_VIEW = [
@@ -177,4 +200,9 @@ export default {
   EXTRALARGE_PAGESIZE,
   defaultPerformerViewCurrentTab,
   defaultServiceState,
+  SORT_DATA,
+  EXECUTION_MODE_KEY,
+  EXECUTION_MODE,
+  SORT_DESC,
+  SORT_ASC,
 };
