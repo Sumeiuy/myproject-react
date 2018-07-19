@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Select } from 'antd';
+import classnames from 'classnames';
 import ascPng from './img/asc.png';
 import descPng from './img/desc.png';
 import defaultSortDirections from './config';
@@ -22,11 +23,13 @@ export default class Sort extends PureComponent {
     value: PropTypes.object.isRequired,
     onChange: PropTypes.func,
     data: PropTypes.array,
+    wrapClassName: PropTypes.string,
   };
 
   static defaultProps = {
     onChange: _.noop,
     data: EMPTY_LIST,
+    wrapClassName: '',
   };
 
   @autobind
@@ -71,11 +74,11 @@ export default class Sort extends PureComponent {
   }
 
   render() {
-    const { value: { sortType }, data } = this.props;
+    const { value: { sortType }, data, wrapClassName } = this.props;
     const { name } = this.getCurrentQuota();
     const selectProps = _.omit(this.props, _.keys(Sort.propTypes));
     return (
-      <div className={styles.commonSort}>
+      <div className={classnames(styles.commonSort, wrapClassName)}>
         <div
           className={styles.sortResult}
           onClick={this.handleSortChange}
