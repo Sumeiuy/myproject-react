@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-12 09:02:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-19 16:51:36
+ * @Last Modified time: 2018-07-19 18:44:36
  * @description 线上销户的驳回后修改页面
  */
 
@@ -103,6 +103,8 @@ export default class RejectHome extends Component {
       idea: '',
       // 选择审批人弹框
       nextApprovalModal: false,
+      // 禁用页面
+      disablePage: false,
     };
     // 此处为 React 16.3 API
     this.rejectHomeRef = React.createRef();
@@ -140,8 +142,8 @@ export default class RejectHome extends Component {
     const { detailInfoForUpdate: { basicInfo, attachment } } = this.props;
     this.setState({
       cust: basicInfo,
-      attachment,
-      lostDirection: basicInfo.lostDirectionCode,
+      attachment: attachment || '',
+      lostDirection: _.lowerFirst(_.get(basicInfo, 'lostDirectionCode')),
       stockExchange: basicInfo.stockExchange,
       investVars: getSelectedKeys(_.get(basicInfo, 'investVars')),
       otherVarDetail: _.get(basicInfo, 'investVars.churnInvestOtherDetail') || '',
@@ -251,8 +253,9 @@ export default class RejectHome extends Component {
   doSomethingAfterApproval() {
     const { flowResult: { msg } } = this.props;
     if (msg === 'success') {
-      // 关闭弹出层，刷新列表
+      // 隐藏按钮
       this.props.clearReduxData({ approvalForUpdate: {} });
+      this.setState({ disablePage: true });
     }
   }
 
@@ -307,7 +310,7 @@ export default class RejectHome extends Component {
       return null;
     }
 
-    const { idea, nextApprovalModal, nextApproverList } = this.state;
+    const { idea, nextApprovalModal, nextApproverList, disablePage } = this.state;
 
     const nextApprovalProps = {
       visible: nextApprovalModal,
@@ -328,6 +331,7 @@ export default class RejectHome extends Component {
         </div>
         <CancelAccountOLForm
           action="UPDATE"
+          disablePage={disablePage}
           optionsDict={this.props.optionsDict}
           detailInfo={detailInfoForUpdate}
           onChange={this.handleRejectUpdateChange}
