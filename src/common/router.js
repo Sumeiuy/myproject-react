@@ -131,8 +131,13 @@ export const getRouterData = (app) => {
     },
     // 直接进入没有数据，需要一个 custid，不知道是什么
     '/commissionAdjustment': {
-      component: dynamicWrapper(app, [], () =>
+      component: dynamicWrapper(app, ['commission'], () =>
         import('../routes/commissionAdjustment/Home' /* webpackChunkName: "commissionAdjustment" */)),
+    },
+    // 直接进入
+    '/commission': {
+      component: dynamicWrapper(app, ['commission'], () =>
+        import('../routes/commission/Home' /* webpackChunkName: "commission" */)),
     },
     // 可直接进入看页面，所需数据未知
     '/preSaleQuery': {
@@ -148,6 +153,11 @@ export const getRouterData = (app) => {
     '/relation': {
       component: dynamicWrapper(app, ['relation'], () =>
         import('../routes/relation/Home' /* webpackChunkName: "relation" */)),
+    },
+    // 直接进入
+    '/report': {
+      component: dynamicWrapper(app, ['report'], () =>
+        import('../routes/reports/Home' /* webpackChunkName: "report" */)),
     },
     // 直接进入，拼接 url 为 localhost:9088/?empId=002332&grayFlag=true#/tasklist 打开所有下拉选项
     '/taskList': {
@@ -342,6 +352,16 @@ export const getRouterData = (app) => {
     '/stock/detail': {
       component: dynamicWrapper(app, ['stock'], () =>
         import('../routes/stock/Detail' /* webpackChunkName: "stock_detail" */)),
+    },
+    // 直接进入股票期权评估申请
+    '/stockOptionEvaluation': {
+      component: dynamicWrapper(app, ['stockOptionEvaluation'], () =>
+        import('../routes/stockOptionEvaluation/Home' /* webpackChunkName: "stockOptionEvaluation" */)),
+    },
+    // 股票期权评估申请修改
+    '/stockOptionEvaluation/stockOptionEvaluationEdit': {
+      component: dynamicWrapper(app, ['stockOptionEvaluation'], () =>
+        import('../routes/stockOptionEvaluation/ApplyEdit' /* webpackChunkName: "stockOptionEvaluation_stockOptionEvaluationEdit" */)),
     },
     // 直接进入
     // 用户中心
