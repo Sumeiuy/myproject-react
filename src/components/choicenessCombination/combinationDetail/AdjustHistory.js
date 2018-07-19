@@ -13,7 +13,7 @@ import _ from 'lodash';
 import { Popover } from 'antd';
 import config from '../config';
 import { time } from '../../../helper';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './adjustHistory.less';
 
 // securityType 里股票对应的值
@@ -82,11 +82,9 @@ export default class AdjustHistory extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '调仓历史Modal',
-    },
+  @logPV({
+    pathname: '/modal/adjustHistoryModal',
+    title: '调仓历史弹框',
   })
   handleMoreClick() {
     const { showModal, combinationCode } = this.props;
