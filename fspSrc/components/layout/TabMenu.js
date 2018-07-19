@@ -63,7 +63,6 @@ export default class TabMenu extends PureComponent {
 
   @autobind
   handleLinkClick(menuItem) {
-    console.log('#####menuItem#####', menuItem);
     const { push, path, mainArray } = this.props;
     if (menuItem.action === 'loadExternSystemPage') {
       window.open(menuItem.url, '_blank');
