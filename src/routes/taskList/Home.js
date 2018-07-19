@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-19 16:43:33
+ * @Last Modified time: 2018-07-19 17:49:55
  * @description 任务管理首页
  */
 
@@ -41,7 +41,7 @@ import {
   // 请在config里面配置QUERY_PARAMS
   QUERY_PARAMS,
   defaultPerformerViewCurrentTab,
-  SORT_DATA,
+  DEFAULTSORT_VIEW,
 } from './config';
 
 // 空函数
@@ -836,28 +836,7 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getSortConfig(viewType) {
-    const [firstItem, secondItem, thirdItem] = SORT_DATA;
-    // 执行者视图
-    if (viewType === EXECUTOR) {
-      return {
-        sortKey: firstItem.sortType,
-        sortContent: firstItem.name,
-        sortDirection: firstItem.defaultDirection,
-      };
-    }
-    // 管理者视图
-    if (viewType === CONTROLLER) {
-      return {
-        sortKey: thirdItem.sortType,
-        sortContent: thirdItem.name,
-        sortDirection: thirdItem.defaultDirection,
-      };
-    }
-    return {
-      sortKey: secondItem.sortType,
-      sortContent: secondItem.name,
-      sortDirection: secondItem.defaultDirection,
-    };
+    return DEFAULTSORT_VIEW[viewType];
   }
 
   // url中currentId改变后驱动右侧的变化
@@ -901,11 +880,11 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   addSortParam(currentViewType, query) {
-    const { sortKey, sortDirection } = this.getSortConfig(currentViewType);
+    const { sortType, defaultDirection } = this.getSortConfig(currentViewType);
     if (!_.isEmpty(query.sortKey) && !_.isEmpty(query.sortDirection)) {
       return { [query.sortKey]: query.sortDirection };
     }
-    return { [sortKey]: sortDirection };
+    return { [sortType]: defaultDirection };
   }
 
   /**
@@ -1050,13 +1029,13 @@ export default class PerformerView extends PureComponent {
       },
     } = this.props;
     const viewType = getViewInfo(missionViewType).currentViewType;
-    const { sortKey, sortContent, sortDirection } = this.getSortConfig(viewType);
+    const { sortType, name, defaultDirection } = this.getSortConfig(viewType);
     return (
       <FixedTitle
-        sortContent={sortContent}
-        sortDirection={querySortDirection || sortDirection}
+        sortContent={name}
+        sortDirection={querySortDirection || defaultDirection}
         onSortChange={this.handleSortChange}
-        sortKey={querySortKey || sortKey}
+        sortKey={querySortKey || sortType}
         viewType={viewType}
       />
     );

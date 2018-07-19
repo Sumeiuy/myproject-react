@@ -24,30 +24,33 @@ const STATE_COMPLETED_NAME = '已完成'; // 已完成显示文字
 const SORT_DESC = 'desc';
 // 升序排序
 const SORT_ASC = 'asc';
-const CREATE_TIME = '创建时间'; // 创建时间，排序显示的名称
-const CREATE_TIME_KEY = 'createTimeSort'; // URL中、传给后台 的字段名称
-const END_TIME = '结束时间'; // 结束时间，排序显示的名称
-const END_TIME_KEY = 'endTimeSort'; // URL中、传给后台 的字段名称
-const EXECUTION_MODE = '执行方式'; // 执行方式，排序显示的名称
-const EXECUTION_MODE_KEY = 'executionModeSort'; // URL中、传给后台 的字段名称
+// 执行方式
+const EXECUTION_MODE = {
+  sortType: 'executionModeSort',
+  name: '执行方式',
+  defaultDirection: SORT_DESC,
+};
+// 创建时间
+const CREATE_TIME = {
+  sortType: 'createTimeSort',
+  name: '创建时间',
+  defaultDirection: SORT_DESC,
+};
+// 结束时间
+const END_TIME = {
+  sortType: 'endTimeSort',
+  name: '结束时间',
+  defaultDirection: SORT_ASC,
+};
 // 排序组件的数据
-const SORT_DATA = [
-  {
-    sortType: EXECUTION_MODE_KEY,
-    name: EXECUTION_MODE,
-    defaultDirection: SORT_DESC,
-  },
-  {
-    sortType: CREATE_TIME_KEY,
-    name: CREATE_TIME,
-    defaultDirection: SORT_DESC,
-  },
-  {
-    sortType: END_TIME_KEY,
-    name: END_TIME,
-    defaultDirection: SORT_ASC,
-  },
-];
+const SORT_DATA = [EXECUTION_MODE, CREATE_TIME, END_TIME];
+
+// 各个视图默认的排序
+const DEFAULTSORT_VIEW = {
+  [EXECUTOR]: EXECUTION_MODE,
+  [INITIATOR]: CREATE_TIME,
+  [CONTROLLER]: END_TIME,
+};
 
 // 管理者视图
 const STATUS_MANAGER_VIEW = [
@@ -190,8 +193,6 @@ export default {
   STATE_ALL_CODE,
   CREATE_TIME,
   END_TIME,
-  CREATE_TIME_KEY,
-  END_TIME_KEY,
   QUERY_PARAMS,
   moreFilterData,
   SMALL_PAGESIZE,
@@ -201,8 +202,7 @@ export default {
   defaultPerformerViewCurrentTab,
   defaultServiceState,
   SORT_DATA,
-  EXECUTION_MODE_KEY,
-  EXECUTION_MODE,
   SORT_DESC,
   SORT_ASC,
+  DEFAULTSORT_VIEW,
 };
