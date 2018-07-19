@@ -17,6 +17,14 @@ const org = {
   },
 
   /**
+   * 判断 level 是否是营业部
+   * @param {String} level 组织机构级别字符串
+   */
+  isDepartment(level) {
+    return level === config.DEPARTMENT_LEVEL;
+  },
+
+  /**
    * 判断当前登录人部门是否是经总
    * @author Wangjunjun
    * @returns {Boolean}

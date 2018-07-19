@@ -107,6 +107,16 @@ const emp = {
   },
 
   /**
+   * 判断当前登录人部门是否是分公司
+   * @author LiuJianShu
+   * @returns {Boolean}
+   */
+  isDepartment(arr, id) {
+    const orgData = findOrgDataByOrgId(arr, id);
+    return (!_.isEmpty(orgData) && org.isDepartment(orgData.level));
+  },
+
+  /**
    * 判断当前登录人部门是否是经总
    * @author Wangjunjun
    * @returns {Boolean}

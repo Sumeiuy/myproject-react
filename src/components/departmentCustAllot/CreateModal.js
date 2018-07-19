@@ -3,12 +3,12 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-07-19 16:28:39
+ * @Last Modified time: 2018-06-14 15:50:54
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, Modal, Upload, Radio, Popconfirm, AutoComplete as AntdAutoComplete } from 'antd';
+import { message, Modal, Upload, Radio, Popconfirm } from 'antd';
 import _ from 'lodash';
 
 import InfoTitle from '../common/InfoTitle';
@@ -18,7 +18,6 @@ import Button from '../../components/common/Button';
 import Pagination from '../../components/common/Pagination';
 import CommonTable from '../../components/common/biz/CommonTable';
 import Icon from '../../components/common/Icon';
-import AutoComplete from '../../components/common/similarAutoComplete';
 import logable, { logPV } from '../../decorators/logable';
 import { request } from '../../config';
 import { emp } from '../../helper';
@@ -27,7 +26,6 @@ import CustAllotXLS from './custAllot.xls';
 import styles from './createModal.less';
 
 const RadioGroup = Radio.Group;
-const Option = AntdAutoComplete.Option;
 // 表头
 const {
   titleList: { cust: custTitleList, manage: manageTitleList },
@@ -91,7 +89,6 @@ export default class CreateModal extends PureComponent {
     updateList: PropTypes.func.isRequired,
     updateData: PropTypes.object.isRequired,
     clearData: PropTypes.func.isRequired,
-    sendRequest: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -107,14 +104,6 @@ export default class CreateModal extends PureComponent {
       nextApproverList: [],
       // 审批人弹窗
       nextApproverModal: false,
-      // 单个客户
-      client: {},
-      // 单个服务经理
-      manager: {},
-      // 搜索的客户数据
-      searchCustList: [],
-      // 搜索的服务经理数据
-      searchManageList: [],
     };
   }
 
@@ -363,128 +352,6 @@ export default class CreateModal extends PureComponent {
     queryAddedManageList(payload);
   }
 
-  // 添加单客户的搜索事件
-  @autobind
-  handleSearchClient(v) {
-    if (!v) {
-      return;
-    }
-    const { queryCustList } = this.props;
-    queryCustList({
-      orgId: empOrgId,
-      custKeyword: v,
-      pageSize: 10,
-      pageNum: 1,
-    }).then(() => {
-      const { custData: { list = [] } } = this.props;
-      this.setState({
-        searchCustList: list,
-      });
-    });
-  }
-
-
-  // 查询服务经理
-  @autobind
-  handleSearchManager(v) {
-    if (!v) {
-      return;
-    }
-    const { queryManageList } = this.props;
-    queryManageList({
-      smKeyword: v,
-      orgId: empOrgId,
-      pageNum: 1,
-      pageSize: 10,
-    }).then(() => {
-      const { manageData: { list = [] } } = this.props;
-      this.setState({
-        searchManageList: list,
-      });
-    });
-  }
-
-
-  // 选择服务经理
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '选择服务经理',
-      value: '$args[0].newEmpName',
-    },
-  })
-  handleSelectManager(v) {
-    this.setState({
-      manager: v,
-      searchManageList: [],
-    });
-  }
-
-  // 选择客户
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '选择客户',
-      value: '$args[0].custName',
-    },
-  })
-  handleSelectClient(v) {
-    this.setState({
-      client: v,
-      searchCustList: [],
-    });
-  }
-
-  // 发送添加客户、服务经理请求
-  @autobind
-  sendRequest(modalKey) {
-    const { sendRequest, custModalKey, manageModalKey, updateData } = this.props;
-    const { client, manager } = this.state;
-    let customer = [];
-    let manage = [];
-    const isCust = modalKey === custModalKey;
-    // 添加客户
-    switch (modalKey) {
-      case custModalKey:
-        if (_.isEmpty(client)) {
-          message.error('请至少选择一位客户');
-          return;
-        }
-        customer = [{ brokerNumber: client.custId }];
-        break;
-      case manageModalKey:
-        if (_.isEmpty(manager)) {
-          message.error('请至少选择一位服务经理');
-          return;
-        }
-        manage = [manager];
-        break;
-      default:
-        break;
-    }
-    // const customer = [{ brokerNumber: client.custId }];
-    const payload = {
-      customer: isCust ? customer : [],
-      manage: isCust ? [] : manage,
-      type: 'add',
-      attachment: '',
-      id: updateData.appId || '',
-    };
-    // 是否需要确认关闭
-    const isNeedConfirm = false;
-    const pageData = {
-      modalKey,
-      isNeedConfirm,
-    };
-    // 发送添加请求，关闭弹窗
-    sendRequest(payload, pageData);
-    // 清空 AutoComplete 的选项和值
-    this.queryCustComponent.clearValue();
-    this.queryManagerComponent.clearValue();
-  }
-
   // 渲染点击删除按钮后的确认框
   @autobind
   renderPopconfirm(type, record) {
@@ -498,26 +365,6 @@ export default class CreateModal extends PureComponent {
       <Icon type="shanchu" />
     </Popconfirm>);
   }
-
-
-  // 单个服务经理的 option 渲染
-  @autobind
-  renderOption(item) {
-    console.log('item', item);
-    const optionValue = `${item.empName} (${item.empId})`;
-    const inputValue = `${item.empName} ${item.empId} ${item.orgName} ${item.postnType}`;
-    return (
-      <Option
-        key={item.positionId}
-        className={styles.ddsDrapMenuConItem}
-        value={inputValue}
-        title={optionValue}
-      >
-        {inputValue}
-      </Option>
-    );
-  }
-
 
   render() {
     const {
@@ -535,8 +382,6 @@ export default class CreateModal extends PureComponent {
     const {
       importVisible,
       attachment,
-      searchCustList,
-      searchManageList,
     } = this.state;
     const uploadProps = {
       data: {
@@ -606,19 +451,6 @@ export default class CreateModal extends PureComponent {
             <InfoTitle head="客户列表" />
             {/* 操作按钮容器 */}
             <div className={`${styles.operateDiv} clearfix`}>
-              <AutoComplete
-                placeholder="客户号/客户名称"
-                showNameKey="custName"
-                showIdKey="custId"
-                optionList={searchCustList}
-                onSelect={this.handleSelectClient}
-                onSearch={this.handleSearchClient}
-                ref={ref => this.queryCustComponent = ref}
-                dropdownMatchSelectWidth={false}
-              />
-              <Button ghost type="primary" onClick={() => this.sendRequest(custModalKey)}>
-                添加
-              </Button>
               <span className={styles.linkSpan}>
                 <Button type="primary" onClick={() => showModal(custModalKey)}>
                   +批量添加
@@ -645,20 +477,6 @@ export default class CreateModal extends PureComponent {
             <InfoTitle head="服务经理列表" />
             {/* 操作按钮容器 */}
             <div className={`${styles.operateDiv} clearfix`}>
-              <AutoComplete
-                placeholder="姓名工号搜索"
-                showNameKey="positionId"
-                optionKey="positionId"
-                optionList={searchManageList}
-                onSelect={this.handleSelectManager}
-                onSearch={this.handleSearchManager}
-                ref={ref => this.queryManagerComponent = ref}
-                dropdownMatchSelectWidth={false}
-                renderOptionNode={this.renderOption}
-              />
-              <Button ghost type="primary" onClick={() => this.sendRequest(manageModalKey)}>
-                添加
-              </Button>
               <span className={styles.linkSpan}>
                 <Button type="primary" onClick={() => showModal(manageModalKey)}>
                   +批量添加

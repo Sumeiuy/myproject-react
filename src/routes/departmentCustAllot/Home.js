@@ -1,10 +1,11 @@
 /**
- * @Description: 分公司客户分配
+ * @Description: 营业部客户分配
  * @Author: Liujianshu
- * @Date: 2018-05-23 09:59:21
+ * @Date: 2018-07-18 17:30:49
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-07-19 14:47:13
+ * @Last Modified time: 2018-07-18 17:33:48
  */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
@@ -17,17 +18,17 @@ import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
-import CreateModal from '../../components/custAllot/CreateModal';
-import AddCustModal from '../../components/custAllot/AddCustModal';
-import AddManageModal from '../../components/custAllot/AddManageModal';
+import CreateModal from '../../components/departmentCustAllot/CreateModal';
+import AddCustModal from '../../components/departmentCustAllot/AddCustModal';
+import AddManageModal from '../../components/departmentCustAllot/AddManageModal';
 import TableDialog from '../../components/common/biz/TableDialog';
 
 import BottonGroup from '../../components/permission/BottonGroup';
 import CustAllotList from '../../components/common/appList';
 import ApplyItem from '../../components/common/appList/ApplyItem';
-import Detail from '../../components/custAllot/Detail';
+import Detail from '../../components/departmentCustAllot/Detail';
 import commonConfirm from '../../components/common/confirm_';
-import config from '../../components/custAllot/config';
+import config from '../../components/departmentCustAllot/config';
 import { dva, emp, convert, time } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
@@ -60,23 +61,23 @@ const effects = {
   // 获取左侧列表
   getList: 'app/getSeibleList',
   // 获取详情
-  queryDetailInfo: 'custAllot/queryDetailInfo',
+  queryDetailInfo: 'departmentCustAllot/queryDetailInfo',
   // 获取下一步按钮以及审批人
-  queryButtonList: 'custAllot/queryButtonList',
+  queryButtonList: 'departmentCustAllot/queryButtonList',
   // 查询客户列表
-  queryCustList: 'custAllot/queryCustList',
+  queryCustList: 'departmentCustAllot/queryCustList',
   // 查询服务经理列表
-  queryManageList: 'custAllot/queryManageList',
+  queryManageList: 'departmentCustAllot/queryManageList',
   // 批量添加客户或者服务经理、删除、清空
-  updateList: 'custAllot/updateList',
+  updateList: 'departmentCustAllot/updateList',
   // 查询已经添加的客户，弹窗与详情中用到
-  queryAddedCustList: 'custAllot/queryAddedCustList',
+  queryAddedCustList: 'departmentCustAllot/queryAddedCustList',
   // 查询已经添加的客户
-  queryAddedManageList: 'custAllot/queryAddedManageList',
+  queryAddedManageList: 'departmentCustAllot/queryAddedManageList',
   // 提交客户分配
-  saveChange: 'custAllot/saveChange',
+  saveChange: 'departmentCustAllot/saveChange',
   // 清除数据
-  clearData: 'custAllot/clearData',
+  clearData: 'departmentCustAllot/clearData',
 };
 
 const mapStateToProps = state => ({
@@ -89,22 +90,22 @@ const mapStateToProps = state => ({
   // 左侧列表数据
   list: state.app.seibleList,
   // 右侧详情数据
-  detailInfo: state.custAllot.detailInfo,
+  detailInfo: state.departmentCustAllot.detailInfo,
   // 获取按钮列表和下一步审批人
-  buttonData: state.custAllot.buttonData,
+  buttonData: state.departmentCustAllot.buttonData,
   // 客户列表
-  custData: state.custAllot.custData,
+  custData: state.departmentCustAllot.custData,
   // 服务经理列表
-  manageData: state.custAllot.manageData,
+  manageData: state.departmentCustAllot.manageData,
   // 详情页已添加的客户列表
-  detailAddedCustData: state.custAllot.detailAddedCustData,
+  detailAddedCustData: state.departmentCustAllot.detailAddedCustData,
   // 已添加的客户列表
-  addedCustData: state.custAllot.addedCustData,
+  addedCustData: state.departmentCustAllot.addedCustData,
   // 已添加的服务经理列表
-  addedManageData: state.custAllot.addedManageData,
+  addedManageData: state.departmentCustAllot.addedManageData,
   // 上传后更新的批次数据
-  updateData: state.custAllot.updateData,
-  saveChangeData: state.custAllot.saveChangeData,
+  updateData: state.departmentCustAllot.updateData,
+  saveChangeData: state.departmentCustAllot.saveChangeData,
 });
 
 
@@ -135,7 +136,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-export default class CustAllot extends PureComponent {
+export default class DepartmentCustAllot extends PureComponent {
   static propTypes = {
     dict: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
@@ -524,6 +525,7 @@ export default class CustAllot extends PureComponent {
 
   @autobind
   showThirdLineInfo(data) {
+    console.warn('showThirdLineInfo data', data);
     return time.format(data.createTime || '');
   }
 
@@ -541,7 +543,7 @@ export default class CustAllot extends PureComponent {
         index={index}
         active={index === activeRowIndex}
         onClick={this.handleListRowClick}
-        pageName="custAllot"
+        pageName="departmentCustAllot"
         iconType="kehu1"
         subTypeName="分公司客户分配"
         statusTags={statusTags}
@@ -597,7 +599,7 @@ export default class CustAllot extends PureComponent {
       <ConnectedSeibelHeader
         location={location}
         replace={replace}
-        page="custAllotPage"
+        page="departmentCustAllotPage"
         pageType={pageType}
         needSubType={false}
         stateOptions={status}
@@ -667,7 +669,7 @@ export default class CustAllot extends PureComponent {
           topPanel={topPanel}
           leftPanel={leftPanel}
           rightPanel={rightPanel}
-          leftListClassName="custAllotList"
+          leftListClassName="departmentCustAllotList"
         />
         {
           createModal
@@ -700,7 +702,6 @@ export default class CustAllot extends PureComponent {
               updateList={updateList}
               updateData={updateData}
               clearData={clearData}
-              sendRequest={this.updateCustOrEmp}
             />
           :
             null
