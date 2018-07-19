@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-19 16:07:19
+ * @Last Modified time: 2018-07-19 16:43:33
  * @description 任务管理首页
  */
 
@@ -37,18 +37,11 @@ import {
   SYSTEMCODE,
   STATE_EXECUTE_CODE,
   STATE_ALL_CODE,
-  CREATE_TIME,
-  END_TIME,
-  EXECUTION_MODE,
-  CREATE_TIME_KEY,
-  END_TIME_KEY,
-  EXECUTION_MODE_KEY,
   // 三个视图左侧任务列表的请求入参，在config里面配置，后续如果需要新增，或者删除某个param，
   // 请在config里面配置QUERY_PARAMS
   QUERY_PARAMS,
   defaultPerformerViewCurrentTab,
-  SORT_DESC,
-  SORT_ASC,
+  SORT_DATA,
 } from './config';
 
 // 空函数
@@ -843,25 +836,27 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getSortConfig(viewType) {
-    let sortKey = CREATE_TIME_KEY;
-    let sortContent = CREATE_TIME;
-    let sortDirection = SORT_DESC;
+    const [firstItem, secondItem, thirdItem] = SORT_DATA;
     // 执行者视图
     if (viewType === EXECUTOR) {
-      sortKey = EXECUTION_MODE_KEY;
-      sortContent = EXECUTION_MODE;
-      sortDirection = SORT_DESC;
+      return {
+        sortKey: firstItem.sortType,
+        sortContent: firstItem.name,
+        sortDirection: firstItem.defaultDirection,
+      };
     }
     // 管理者视图
     if (viewType === CONTROLLER) {
-      sortKey = END_TIME_KEY;
-      sortContent = END_TIME;
-      sortDirection = SORT_ASC;
+      return {
+        sortKey: thirdItem.sortType,
+        sortContent: thirdItem.name,
+        sortDirection: thirdItem.defaultDirection,
+      };
     }
     return {
-      sortKey,
-      sortContent,
-      sortDirection,
+      sortKey: secondItem.sortType,
+      sortContent: secondItem.name,
+      sortDirection: secondItem.defaultDirection,
     };
   }
 
