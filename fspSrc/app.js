@@ -97,6 +97,7 @@ app.model(require('../src/models/preview'));
 app.model(require('../src/models/history'));
 app.model(require('../src/models/permission'));
 app.model(require('../src/models/customerPool'));
+app.model(require('../src/models/customerLabel'));
 // 合作合约
 app.model(require('../src/models/contract'));
 // 服务订购

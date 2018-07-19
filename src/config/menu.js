@@ -33,7 +33,7 @@ const menus = [
         url: '',
         type: 'link',
         action: '',
-        path: '/customerPool/list?source=menu',
+        path: '/customerPool/list',
       },
       {
         id: 'FSP_CUST_M_MANAGER_GROUP',
@@ -43,7 +43,7 @@ const menus = [
         url: '',
         type: 'link',
         action: '',
-        path: '/customerPool/customerGroupManager?source=menu',
+        path: '/customerPool/customerGroupManager',
       },
     ],
   },
