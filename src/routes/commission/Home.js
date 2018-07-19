@@ -310,6 +310,19 @@ export default class CommissionHome extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const { ...otherQuery } = query;
+    const { ...otherPrevQuery } = prevQuery;
+    if (!_.isEqual(otherQuery, otherPrevQuery)) {
+      const { pageNum, pageSize } = otherQuery;
+      this.queryAppList(otherQuery, pageNum, pageSize);
+    }
+  }
+
   // 获取列表后再获取某个Detail
   @autobind
   getRightDetail() {
@@ -540,8 +553,6 @@ export default class CommissionHome extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 打开审批记录弹出窗
@@ -589,7 +600,6 @@ export default class CommissionHome extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -605,7 +615,6 @@ export default class CommissionHome extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 渲染列表项里面的每一项

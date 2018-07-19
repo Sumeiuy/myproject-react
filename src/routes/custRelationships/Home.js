@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-19 16:48:24
+ * @Last Modified time: 2018-07-19 17:00:13
  */
 
 import React, { PureComponent } from 'react';
@@ -274,8 +274,6 @@ export default class CustRelationshipsHome extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    // this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 打开新建申请的弹出框
@@ -308,7 +306,6 @@ export default class CustRelationshipsHome extends PureComponent {
         currentId: '',
       },
     });
-    // this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -327,7 +324,6 @@ export default class CustRelationshipsHome extends PureComponent {
         currentId: '',
       },
     });
-    // this.queryAppList(query, 1, changedPageSize);
   }
 
   // 点击列表每条的时候对应请求详情

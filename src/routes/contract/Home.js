@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-16 15:20:55
+ * @Last Modified time: 2018-07-19 17:30:19
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -308,6 +308,19 @@ export default class Contract extends PureComponent {
       this.closeModal('approverModal');
       this.closeModal('addFormModal');
       this.closeModal('editFormModal');
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const { ...otherQuery } = query;
+    const { ...otherPrevQuery } = prevQuery;
+    if (!_.isEqual(otherQuery, otherPrevQuery)) {
+      const { pageNum, pageSize } = otherQuery;
+      this.queryAppList(otherQuery, pageNum, pageSize);
     }
   }
 
@@ -828,8 +841,6 @@ export default class Contract extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 点击列表每条的时候对应请求详情
@@ -873,7 +884,6 @@ export default class Contract extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -889,7 +899,6 @@ export default class Contract extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 渲染列表项里面的每一项

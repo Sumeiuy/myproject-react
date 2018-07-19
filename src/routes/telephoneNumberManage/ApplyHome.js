@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-19 14:09:58
+ * @Last Modified time: 2018-07-19 17:50:10
 */
 
 import React, { PureComponent } from 'react';
@@ -180,6 +180,19 @@ export default class ApplyHome extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const { ...otherQuery } = query;
+    const { ...otherPrevQuery } = prevQuery;
+    if (!_.isEqual(otherQuery, otherPrevQuery)) {
+      const { pageNum, pageSize } = otherQuery;
+      this.queryAppList(otherQuery, pageNum, pageSize);
+    }
+  }
+
   // 获取右侧详情
   @autobind
   getRightDetail() {
@@ -252,8 +265,6 @@ export default class ApplyHome extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   @autobind
@@ -283,7 +294,6 @@ export default class ApplyHome extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -299,7 +309,6 @@ export default class ApplyHome extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 点击列表每条的时候对应请求详情

@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 09:59:21
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-19 14:10:46
+ * @Last Modified time: 2018-07-19 17:04:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -209,6 +209,19 @@ export default class CustAllot extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const { ...otherQuery } = query;
+    const { ...otherPrevQuery } = prevQuery;
+    if (!_.isEqual(otherQuery, otherPrevQuery)) {
+      const { pageNum, pageSize } = otherQuery;
+      this.queryAppList(otherQuery, pageNum, pageSize);
+    }
+  }
+
   componentWillUnmount() {
     const { clearData } = this.props;
     clearData(clearDataArray[1]);
@@ -277,8 +290,6 @@ export default class CustAllot extends PureComponent {
         appId: '',
       },
     });
-    // 2.调用queryApplicationList接口，清空掉消息提醒页面带过来的 id， appId
-    this.queryAppList({ ...query, ...obj, id: '', appId: '' }, 1, query.pageSize);
   }
 
   // 判断当前登录用户部门是否是分公司
@@ -350,7 +361,6 @@ export default class CustAllot extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 点击列表每条的时候对应请求详情

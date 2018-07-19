@@ -191,6 +191,19 @@ export default class Permission extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const { ...otherQuery } = query;
+    const { ...otherPrevQuery } = prevQuery;
+    if (!_.isEqual(otherQuery, otherPrevQuery)) {
+      const { pageNum, pageSize } = otherQuery;
+      this.queryAppList(otherQuery, pageNum, pageSize);
+    }
+  }
+
   // 获取列表后再获取某个Detail
   @autobind
   getRightDetail() {
@@ -253,8 +266,6 @@ export default class Permission extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   @autobind
@@ -371,7 +382,6 @@ export default class Permission extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -387,7 +397,6 @@ export default class Permission extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 创建私密客户申请

@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置Home页面
  * @Date: 2018-01-29 13:25:30
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-16 17:21:58
+ * @Last Modified time: 2018-07-19 17:45:11
  */
 
 import React, { PureComponent } from 'react';
@@ -148,6 +148,19 @@ export default class MainPosition extends PureComponent {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const { ...otherQuery } = query;
+    const { ...otherPrevQuery } = prevQuery;
+    if (!_.isEqual(otherQuery, otherPrevQuery)) {
+      const { pageNum, pageSize } = otherQuery;
+      this.queryAppList(otherQuery, pageNum, pageSize);
+    }
+  }
+
   // 获取右侧详情
   @autobind
   getRightDetail() {
@@ -208,8 +221,6 @@ export default class MainPosition extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 判断当前登录用户部门是否是分公司
@@ -265,7 +276,6 @@ export default class MainPosition extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -281,7 +291,6 @@ export default class MainPosition extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 点击列表每条的时候对应请求详情
