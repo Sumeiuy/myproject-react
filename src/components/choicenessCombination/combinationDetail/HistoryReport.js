@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import { Popover, Table } from 'antd';
 import config from '../config';
 import { time } from '../../../helper';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './historyReport.less';
 
 const EMPTY_LIST = [];
@@ -53,11 +53,9 @@ export default class HistoryReport extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '历史报告Modal',
-    },
+  @logPV({
+    pathname: '/modal/historyReportModal',
+    title: '历史报告弹框',
   })
   handleMoreClick() {
     const { showModal, combinationCode } = this.props;

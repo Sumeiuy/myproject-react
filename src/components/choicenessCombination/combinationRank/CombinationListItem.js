@@ -14,7 +14,7 @@ import classnames from 'classnames';
 import Icon from '../../common/Icon';
 import { time } from '../../../helper';
 import CombinationYieldChart from '../CombinationYieldChart';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './combinationListItem.less';
 import {
   yieldRankList,
@@ -171,11 +171,9 @@ export default class CombinationListItem extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '历史报告Modal',
-    },
+  @logPV({
+    pathname: '/modal/historyReportModal',
+    title: '历史报告弹框',
   })
   viewHistoryReport(name) {
     const { showModal } = this.props;

@@ -16,7 +16,7 @@ import Icon from '../common/Icon';
 import { time } from '../../helper';
 import config from './config';
 import styles from './combinationAdjustHistory.less';
-import logable from '../../decorators/logable';
+import logable, { logPV } from '../../decorators/logable';
 
 const titleStyle = {
   fontSize: '16px',
@@ -61,11 +61,9 @@ export default class CombinationAdjustHistory extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'Click',
-    payload: {
-      name: '调仓历史Modal',
-    },
+  @logPV({
+    pathname: '/modal/adjustHistoryModal',
+    title: '调仓历史弹框',
   })
   handleMoreClick(value) {
     const { showModal } = this.props;
