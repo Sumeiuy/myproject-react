@@ -4,8 +4,12 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE } from './config';
+import { dynamicInsetQuota } from '../customerPool/list/sort/config';
 import filterMark from '../../config/filterSeperator';
 import { openFspTab } from '../../utils';
+import { url } from '../../helper';
+
+const DEFAULT_SORT_DIRE = 'desc';
 
 function transformCycle(cycle) {
   const transToTime = period => ({
@@ -62,6 +66,16 @@ const helper = {
     });
     return finalFilterList.join(filterSeperator);
   },
+  getSortParam(filter) {
+    const filters = url.transfromFilterValFromUrl(filter);
+    const finalSortQuota = _.find(dynamicInsetQuota,
+        item => _.has(filters, item.filterType));
+    const { sortType = '' } = finalSortQuota || {};
+    return {
+      sortType,
+      sortDirection: DEFAULT_SORT_DIRE,
+    };
+  },
   /**
    * 跳转到360服务记录页面
    * @param {*object} itemData 当前列表item数据
@@ -71,11 +85,11 @@ const helper = {
   handleOpenFsp360TabAction({ itemData, keyword, routerAction }) {
     const { pOrO, custId, rowId, ptyId } = itemData;
     const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
-    const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
+    const detailUrl = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
     const pathname = '/customerCenter/fspcustomerDetail';
     openFspTab({
       routerAction,
-      url,
+      url: detailUrl,
       query: {
         custId,
         rowId,
@@ -94,7 +108,7 @@ const helper = {
         serviceRecordChannel: encodeURIComponent('理财服务平台'),
       },
       state: {
-        url,
+        url: detailUrl,
       },
     });
   },

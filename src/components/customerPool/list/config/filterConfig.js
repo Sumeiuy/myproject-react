@@ -193,7 +193,7 @@ export default {
 
     // 账户属性
     {
-      filterName: '开户日期',
+      filterName: '激活日期',
       filterId: 'dateOpened',
       type: 'date',
     },
@@ -412,7 +412,7 @@ export default {
     { value: '可开通业务', key: 'unrights' },
     { value: '开通业务', key: 'businessOpened' },
     { value: '客户等级', key: 'customerLevel' },
-    { value: '开户日期', key: 'dateOpened' },
+    { value: '激活日期', key: 'dateOpened' },
     { value: '账户状态', key: 'accountStatus' },
     { value: '佣金率', key: 'minFee' },
     { value: '持仓产品', key: 'primaryKeyPrdts' },

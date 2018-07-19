@@ -13,7 +13,8 @@ import SaleDepartmentFilter from './manageFilter/SaleDepartmentFilter';
 import ServiceManagerFilter from './manageFilter/ServiceManagerFilter';
 import CustomerRow from './CustomerRow__';
 import CreateContactModal from './CreateContactModal';
-import Reorder from './reorder/Reorder';
+// import Reorder from './reorder/Reorder';
+import Sort from './sort';
 import BottomFixedBox from './BottomFixedBox__';
 import SignCustomerLabel from './modal/SignCustomerLabel';
 import MultiCustomerLabel from './modal/MultiCustomerLabel';
@@ -623,10 +624,7 @@ export default class CustomerLists extends PureComponent {
             {_.isEmpty(custList) ? null : <span className="hint">自动选择所有符合条件的客户</span>}
           </div>
           <div className={styles.reorder}>
-            <Reorder
-              value={reorderValue}
-              onChange={onReorderChange}
-            />
+            <Sort onChange={onReorderChange} value={reorderValue} />
           </div>
           <div className={styles.filterWrap}>
             <div className={styles.selectBox}>
