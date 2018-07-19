@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-19 11:00:39
+ * @Last Modified time: 2018-07-19 16:07:19
  * @description 任务管理首页
  */
 
@@ -858,7 +858,6 @@ export default class PerformerView extends PureComponent {
       sortContent = END_TIME;
       sortDirection = SORT_ASC;
     }
-    console.log('getSortConfig: ', sortKey, sortContent, sortDirection);
     return {
       sortKey,
       sortContent,
