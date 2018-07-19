@@ -3,7 +3,11 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
+<<<<<<< HEAD
  * @Last Modified time: 2018-06-07 15:19:06
+=======
+ * @Last Modified time: 2018-07-19 14:07:00
+>>>>>>> headerFilters
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -41,7 +45,13 @@ const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 const heightSpeed = '0501';
 const {
   channelsTypeProtocol,
-  channelsTypeProtocol: { pageType, subType, status, operationList },
+  channelsTypeProtocol: {
+    pageType,
+    subType,
+    status,
+    operationList,
+    headerFilters: { basicFilters, moreFilters, moreFilterData },
+  },
 } = seibelConfig;
 const { subscribeArray, unSubscribeArray, tenHQ, tipsMap, protocolSubs, protocolSubTypes } = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
@@ -315,7 +325,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
-
     replace({
       pathname,
       query: {
@@ -713,8 +722,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
         creatSeibelModal={this.handleCreateBtnClick}
         operateOptions={operationList}
         empInfo={empInfo}
-        needOperate
         filterCallback={this.handleHeaderFilter}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
     const paginationOptions = {

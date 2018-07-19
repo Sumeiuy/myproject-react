@@ -26,7 +26,15 @@ import logable, { logPV, logCommon } from '../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
-const { permission, permission: { pageType, subType, status } } = seibelConfig;
+const {
+  permission,
+  permission: {
+    pageType,
+    subType,
+    status,
+    headerFilters: { basicFilters, moreFilters, moreFilterData },
+  },
+} = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -487,6 +495,9 @@ export default class Permission extends PureComponent {
         stateOptions={status}
         creatSeibelModal={this.creatPermossionModal}
         filterCallback={this.handleHeaderFilter}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

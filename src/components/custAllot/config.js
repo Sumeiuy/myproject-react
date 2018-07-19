@@ -2,9 +2,11 @@
  * @Description: 分公司客户分配配置项
  * @Author: Liujianshu
  * @Date: 2018-05-23 17:03:23
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-14 16:48:26
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-16 14:41:55
  */
+import { status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
+
 const config = {
     // 分公司客户分配
   custAllot: {
@@ -13,7 +15,7 @@ const config = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -235,6 +237,20 @@ const config = {
   tips: {
     validateError: '该申请单数据导入失败，请点击下载报错信息查看报错信息，如有需要，请重新发起流程。',
     otherError: '该申请单流程提交失败，如有需要，请重新发起流程或联系运维人员核查处理。',
+  },
+  headerFilters: {
+    basicFilters: [
+      status,
+      drafter,
+      department,
+      applyTime,
+    ],
+    moreFilters: [
+      approver,
+    ],
+    moreFilterData: [
+      { value: '审批人', key: 'approvalId' },
+    ],
   },
 };
 

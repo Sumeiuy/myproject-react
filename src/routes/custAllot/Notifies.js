@@ -2,8 +2,8 @@
  * @Description: 分公司客户分配消息提醒页面
  * @Author: Liujianshu
  * @Date: 2018-05-25 13:55:42
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-05-25 14:47:47
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-19 14:10:36
  */
 
 import React, { PureComponent } from 'react';

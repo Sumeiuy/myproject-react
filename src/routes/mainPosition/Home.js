@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Description: 服务经理主职位设置Home页面
  * @Date: 2018-01-29 13:25:30
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-28 14:57:20
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-16 17:21:58
  */
 
 import React, { PureComponent } from 'react';
@@ -27,7 +27,14 @@ import config from '../../components/mainPosition/config';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
 
-const { mainPosition, mainPosition: { pageType, status } } = config;
+const {
+  mainPosition,
+  mainPosition: {
+    pageType,
+    status,
+    headerFilters: { basicFilters, moreFilters, moreFilterData },
+  },
+} = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
@@ -350,11 +357,12 @@ export default class MainPosition extends PureComponent {
         replace={replace}
         page="mainPositionPage"
         pageType={pageType}
-        needSubType={false}
         stateOptions={status}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
-        isUseOfCustomer={false}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

@@ -2,8 +2,8 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-13 10:52:43
- */
+ * @Last Modified time: 2018-07-19 14:52:34
+*/
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -24,7 +24,14 @@ import seibelHelper from '../../helper/page/seibel';
 import permission from '../../helper/permission';
 import logable from '../../decorators/logable';
 
-const { stockOptionApply, stockOptionApply: { statusOptions, pageType } } = config;
+const {
+  stockOptionApply,
+  stockOptionApply: {
+    statusOptions,
+    pageType,
+    headerFilters: { basicFilters, moreFilters, moreFilterData },
+  },
+} = config;
 
 const effect = dva.generateEffect;
 const effects = {
@@ -410,6 +417,9 @@ export default class StockOptionApplication extends PureComponent {
         isUseOfCustomer
         needApplyTime
         isUseNewCustList
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

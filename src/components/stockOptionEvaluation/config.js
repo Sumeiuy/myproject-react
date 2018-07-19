@@ -2,8 +2,10 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 15:39:47
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-27 13:09:27
+ * @Last Modified time: 2018-07-19 15:08:14
  */
+import { customer, status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
+
 const config = {
   stockOptionApply: {
     pageName: '股票期权评估申请',
@@ -11,7 +13,7 @@ const config = {
     statusOptions: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -35,6 +37,22 @@ const config = {
         value: '04',
       },
     ],
+    headerFilters: {
+      basicFilters: [
+        customer,
+        status,
+        drafter,
+        applyTime,
+      ],
+      moreFilters: [
+        department,
+        approver,
+      ],
+      moreFilterData: [
+        { value: '部门', key: 'orgId' },
+        { value: '审批人', key: 'approvalId' },
+      ],
+    },
     // 适当性评估表
     assessTable: [
       {
