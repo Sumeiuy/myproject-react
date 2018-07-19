@@ -264,19 +264,14 @@ function getFilterParam(filterObj, hashString) {
 
 function getSortParam(query, filterParams) {
   const { sortType, sortDirection } = query;
-  const sortsReqList = [];
+  let sortsReqList = [];
   const sortFilter = filterParams[sortType] || {};
   const dateType = sortFilter.dateType || '';
   if (sortType || sortDirection) {
-    sortsReqList.push({
-      sortType,
-      sortDirection,
-      dateType,
-    });
+    sortsReqList = [sortType, sortDirection, dateType];
   } else {
-    sortsReqList.push(DEFAULT_SORT);
+    sortsReqList = [DEFAULT_SORT];
   }
-
   return {
     sortsReqList,
   };

@@ -13,7 +13,6 @@ import SaleDepartmentFilter from './manageFilter/SaleDepartmentFilter';
 import ServiceManagerFilter from './manageFilter/ServiceManagerFilter';
 import CustomerRow from './CustomerRow__';
 import CreateContactModal from './CreateContactModal';
-// import Reorder from './reorder/Reorder';
 import Sort from './sort';
 import BottomFixedBox from './BottomFixedBox__';
 import SignCustomerLabel from './modal/SignCustomerLabel';
