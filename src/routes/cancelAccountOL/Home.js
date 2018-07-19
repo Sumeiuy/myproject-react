@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-18 11:15:29
+ * @Last Modified time: 2018-07-19 14:43:05
  * @description 线上销户首页
  */
 
@@ -279,6 +279,14 @@ export default class CancelAccountOLHome extends PureComponent {
     }
   }
 
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '销户链接推送' } })
+  handlePushBtnOfDetailClick({ id, flowId }) {
+    this.props.pushCancelAcccount({ id }).then(() => {
+      this.props.getDetail({ flowId });
+    });
+  }
+
   // 渲染列表项里面的每一项
   @autobind
   renderListRow(record, index) {
@@ -354,12 +362,14 @@ export default class CancelAccountOLHome extends PureComponent {
     );
 
     // 右侧详情
+    const { query: { currentId = '' } } = location;
     const rightPanel = (
       <Detail
         pushResult={pushResult}
         optionsDict={optionsDict}
         data={detailInfo}
-        onPush={this.props.pushCancelAcccount}
+        currentId={currentId}
+        onPush={this.handlePushBtnOfDetailClick}
       />
     );
 

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 14:49:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-18 15:56:21
+ * @Last Modified time: 2018-07-19 17:06:19
  * @description 线上销户新建以及驳回后修改通用部分
  */
 
@@ -66,11 +66,11 @@ export default class CancelAccountOLForm extends PureComponent {
     this.state = {
       // 用于重新渲染上传组件的key
       uploadKey: data.uuid(),
-      attachment: isCreate ? '' : _.get(detailInfo, 'attachment'),
+      attachment: isCreate ? '' : _.get(detailInfo, 'attachment', ''),
       attachList: isCreate ? [] : _.get(detailInfo, 'attachmentList'),
       cust: isCreate ? {} : _.get(detailInfo, 'basicInfo'),
-      // 流失去向
-      lostDirection: isCreate ? '' : _.get(detailInfo, 'basicInfo.lostDirectionCode'),
+      // 流失去向,由于后端返回的值与字典值不一致，所以此处需要转换下
+      lostDirection: isCreate ? '' : _.lowerFirst(_.get(detailInfo, 'basicInfo.lostDirectionCode')),
       // 证券营业部
       stockExchange: isCreate ? '' : _.get(detailInfo, 'basicInfo.stockExchange'),
       // 投资品种
@@ -479,7 +479,7 @@ export default class CancelAccountOLForm extends PureComponent {
           edit
           reformEnable
           key={uploadKey}
-          attachment={attachment}
+          attachment={attachment || ''}
           needDefaultText={false}
           attachmentList={attachList}
           uploadAttachment={this.handleUploadCallBack}

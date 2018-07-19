@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 09:36:44
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-13 20:40:10
+ * @Last Modified time: 2018-07-19 13:53:27
  * @description 线上销户工具函数
  */
 import _ from 'lodash';
@@ -56,12 +56,14 @@ const util = {
 
   // 判断当前流失去向是否转户
   isTransferLostDirection(lostDirection) {
-    return lostDirection === lostDirectionMap.transfer;
+    // 因为后端存在与字典值不一样的地方，所以全部转化成大写来判断
+    return _.toUpper(lostDirection) === _.toUpper(lostDirectionMap.transfer);
   },
 
   // 判断当前流失去向是否投资其他
   isInvestLostDirection(lostDirection) {
-    return lostDirection === lostDirectionMap.invest;
+    // 因为后端存在与字典值不一样的地方，所以全部转化成大写来判断
+    return _.toUpper(lostDirection) === _.toUpper(lostDirectionMap.invest);
   },
 
   // 驳回后修改页面获取选择的投资品种/流失原因的 key 值数组
@@ -93,7 +95,7 @@ const util = {
   },
 
   // 将选中的投资品种，按照字典值转换成obj
-  convertSubmitInvestVars(vars, dict, churnInvestOtherDetail) {
+  convertSubmitInvestVars(vars, dict, churnInvestmentOtherDetail) {
     const submitData = _.reduce(dict, (data, item) => {
       const { value } = item;
       const hasThisValue = _.isEmpty(_.find(vars, (o) => {
@@ -104,7 +106,7 @@ const util = {
         ...data,
         [value]: !hasThisValue,
       };
-    }, { churnInvestOtherDetail });
+    }, { churnInvestmentOtherDetail });
     return submitData;
   },
 
