@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-19 13:09:02
+ * @Last Modified time: 2018-07-19 15:00:26
  * @description 每一个视图列表的头部区域，不随着列表滚动
  */
 
@@ -139,13 +139,14 @@ export default class FixedTitle extends PureComponent {
     );
   }
 
+  // 执行者试图排序单独处理，用公用的排序组件
   @autobind
   renderExecutorSort() {
     const { sortKey, sortDirection } = this.props;
     const value = { sortType: sortKey, sortDirection };
     return (
       <Sort
-        className={styles.sort}
+        wrapClassName={styles.sort}
         data={SORT_DATA}
         value={value}
         onChange={this.handlExecutorSort}
