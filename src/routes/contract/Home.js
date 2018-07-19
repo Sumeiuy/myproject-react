@@ -519,7 +519,7 @@ export default class Contract extends PureComponent {
 
   // 头部新建按钮点击事件处理程序
   @autobind
-  @logPV({ pathname: '/modal/createProtocol', title: '新建合作合约' })
+  @logPV({ pathname: '/modal/createContract', title: '新建合作合约' })
   handleCreateBtnClick() {
     const { getFlowStepInfo, resetUnsubscribeDetail } = this.props;
     getFlowStepInfo({
