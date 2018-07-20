@@ -92,9 +92,17 @@ const fspGlobal = {
   /**
    *  在fsp中新开一个iframe的tab
    */
-  /* openFspIframeTab(obj) {
-    execOpenTab('loadPageInIframeTab', obj.url, obj.param);
-  }, */
+  openFspIframeTab({ url, param }) {
+    execOpenTab(
+      'loadPageInIframeTab',
+      url,
+      {
+        closable: true,
+        forceRefresh: true,
+        ...param,
+      },
+    );
+  },
 
   /**
    *  在fsp中新开一个react的tab
@@ -316,6 +324,14 @@ function openInTab(options) {
   });
 }
 
+// 打开并跳转到Iframe的Tab，原tab保留
+function openFspIframeTab(options) {
+  dispatchTabPane({
+    fspAction: 'openFspIframeTab',
+    ...options,
+  });
+}
+
 export default {
   dispatchTabPane,
   openRctTab,
@@ -328,5 +344,6 @@ export default {
   navTo,
   removeTab,
   saveTabUrl,
+  openFspIframeTab,
 };
 

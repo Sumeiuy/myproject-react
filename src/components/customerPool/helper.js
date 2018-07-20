@@ -3,9 +3,9 @@
  */
 import _ from 'lodash';
 import moment from 'moment';
-import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, PATHNAME_PRDUCTCENTER } from './config';
+import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, CONFIG_PRODUCTCENTER } from './config';
 import filterMark from '../../config/filterSeperator';
-import { openFspTab } from '../../utils';
+import { openFspTab, openFspIframeTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
 import { logCommon } from '../../decorators/logable';
 
@@ -107,19 +107,12 @@ const helper = {
    *    data: 持仓产品信息
    *    routerAction: 路由的变化方式
    */
-  openProductDetailPage({ data, routerAction }) {
+  openProductDetailPage({ upPrdtTypeId, code, name }) {
     // upPrdtTypeId：产品所属类型id, code：产品代码
-    const { upPrdtTypeId, code } = data;
-    const pathname = PATHNAME_PRDUCTCENTER[upPrdtTypeId];
+    const { pathname, ...param } = CONFIG_PRODUCTCENTER[upPrdtTypeId];
     const query = { prdtCode: code };
     const url = `${pathname}?${urlHelper.stringify(query)}`;
-    const param = {
-      id: 'FSP_PUBLIC_FUND_TAB',
-      title: '产品详情',
-      forceRefresh: true,
-    };
-    openFspTab({
-      routerAction,
+    openFspIframeTab({
       url,
       query,
       pathname,
@@ -129,7 +122,7 @@ const helper = {
     logCommon({
       type: 'Click',
       payload: {
-        name: `客户列表${data.name}下钻到产品中心`,
+        name: `客户列表${name}下钻到产品中心`,
         value: code,
       },
     });

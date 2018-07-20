@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-19 17:32:41
+ * @Last Modified time: 2018-07-20 13:28:06
  */
 
 import React, { PureComponent } from 'react';
@@ -432,16 +432,26 @@ export default class ServiceImplementation extends PureComponent {
 
   // 查询服务实施客户的列表
   @autobind
-  queryTargetCustList(obj) {
+  queryTargetCustList(obj = {}) {
     const {
       currentId,
       queryTargetCust,
+      parameter,
     } = this.props;
-    const { state, ...others } = obj;
-    return queryTargetCust({
-      ...others,
-      state: state.join(','),
+    const { targetCustList: { page: { pageSize, pageNum } } } = this.state;
+    const { state, rowId, assetSort } = parameter;
+    const payload = {
       missionId: currentId,
+      pageSize,
+      pageNum,
+      state,
+      rowId,
+      assetSort,
+      ...obj,
+    };
+    return queryTargetCust({
+      ...payload,
+      state: payload.state.join(','),
     });
   }
 
@@ -484,20 +494,57 @@ export default class ServiceImplementation extends PureComponent {
     return false;
   }
 
+  // 判断服务状态是否为完成
+  isServiceStateCompletion(state) {
+    return state === POSTCOMPLETED_CODE;
+  }
+
+  // 添加服务记录服务状态为’完成‘时，更新redux中的左侧列表，重新拉取服务端的任务基本信息
+  @autobind
+  updateAfterFlowStateComplete(flowStatus) {
+    if (this.isServiceStateCompletion(flowStatus)) {
+      const {
+        modifyLocalTaskList,
+        currentId,
+        getTaskDetailBasicInfo,
+      } = this.props;
+      // 重新加载基本信息,不清除服务实施客户列表中当前选中客户状态信息和筛选值、页码
+      getTaskDetailBasicInfo({ taskId: currentId, isClear: false });
+      // 更新redux中的左侧列表
+      modifyLocalTaskList({ missionId: currentId });
+    }
+  }
+
+  // 重新拉取服务端的服务实施客户列表
+  @autobind
+  updateCustList({ flowStatus }) {
+    const { isFormHalfFilledOut } = this.state;
+    const { changeParameter } = this.props;
+    // 重置当前选中的客户索引和索引查询组件input值
+    changeParameter({ preciseInputValue: 1, activeIndex: 1 }).then(() => {
+      this.queryTargetCustList({ pageNum: 1 }).then(() => {
+        // 添加服务记录服务状态为’完成‘时，更新redux中的左侧列表，重新拉取服务端的任务基本信息
+        this.updateAfterFlowStateComplete(flowStatus);
+        // 重新加载服务实施客户列表成功后，重置isFormHalfFilledOut字段
+        if (isFormHalfFilledOut) {
+          this.setState({ isFormHalfFilledOut: false });
+        }
+      });
+    });
+  }
+
   // 添加服务记录
   @autobind
   addServiceRecord({
     postBody,
     callback = _.noop,
     phoneCallback = _.noop,
-    noHint = false,
+    // 是否为打电话静默创建
+    isSilentAdd = false,
     callId = '',
   }) {
     const {
       addServeRecord,
-      modifyLocalTaskList,
-      currentId,
-      getTaskDetailBasicInfo,
       currentMotServiceRecord: { id },
       serviceRecordInfo,
       targetCustDetail,
@@ -515,26 +562,25 @@ export default class ServiceImplementation extends PureComponent {
     addServeRecord(_.omit(payload, ['zlApprovalCode']))
       .then(() => {
         const { currentMotServiceRecord } = this.props;
-        // 服务记录添加未成功时，后端返回failure
+        // 添加服务记录成功， 未成功时，后端返回failure
         if (!_.isEmpty(currentMotServiceRecord.id) && currentMotServiceRecord.id !== 'failure') {
-          // 服务记录添加成功后重新加载当前目标客户的详细信息
-          this.reloadTargetCustInfo(() => {
-            this.updateList(postBody, callback);
-            // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载基本信息
-            if (postBody.flowStatus === POSTCOMPLETED_CODE) {
-              // 重新加载基本信息,不清除服务实施客户列表中当前选中客户状态信息和筛选值、页码
-              getTaskDetailBasicInfo({ taskId: currentId, isClear: false });
-              // 更新新左侧列表
-              modifyLocalTaskList({ missionId: currentId });
-            }
-          });
-          if (!noHint) {
+          // 不是打电话静默生成服务记录
+          if (!isSilentAdd) {
             message.success('添加服务记录成功');
+            // 添加成功后重新拉取服务端的服务实施客户列表
+            this.updateCustList(postBody);
+          } else {
+            // 服务记录添加成功后重新加载当前目标客户的详细信息
+            this.reloadTargetCustInfo(() => {
+              // 添加成功后更新state中的服务实施客户列表
+              this.updateList(postBody, callback);
+              // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载任务基本信息
+              this.updateAfterFlowStateComplete(postBody.flowStatus);
+            });
+            // 保存打电话自动创建的服务记录的信息或更新服务记录后删除打电话保存的服务记录
+            phoneCallback();
+            this.saveServiceRecordAndPhoneRelation(currentMotServiceRecord, callId);
           }
-          // 保存打电话自动创建的服务记录的信息或更新服务记录后删除打电话保存的服务记录
-          phoneCallback();
-
-          this.saveServiceRecordAndPhoneRelation(currentMotServiceRecord, callId);
         }
       });
   }
@@ -550,7 +596,7 @@ export default class ServiceImplementation extends PureComponent {
     });
   }
 
-  // 更新组件state的list信息
+  // 更新组件state的服务实施客户列表信息
   @autobind
   updateList({ missionFlowId, flowStatus, zlApprovalCode, serveWay }, callback = _.noop) {
     const { targetCustList = {}, targetCustList: { list = [] } } = this.state;

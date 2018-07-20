@@ -475,11 +475,10 @@ export default class MatchArea extends PureComponent {
       let contentNode;
       // flag为true，持仓产品名称可点击
       if (flag) {
-        const { push } = this.context;
         contentNode = (<i>
           <em
             className={styles.clickable}
-            onClick={() => { openProductDetailPage({ data, routerAction: push }); }}
+            onClick={() => { openProductDetailPage(data); }}
           >
             {name}
           </em>
