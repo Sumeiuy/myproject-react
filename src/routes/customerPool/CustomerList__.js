@@ -905,12 +905,12 @@ export default class CustomerList extends PureComponent {
     if (isDeleteFilterFromLocation && name === sortType) {
       currentSort = { sortType: '', sortDirection: '' };
     }
-    const needDynamicInsetQuota = _.find(dynamicInsetQuota, item => item.filterType === name);
-    if (needDynamicInsetQuota) {
+    const needDynamicInsertQuota = _.find(dynamicInsetQuota, item => item.filterType === name);
+    if (needDynamicInsertQuota) {
       // 当前所触发过滤器下有值并且需要动态插入排序指标，则设置为该排序指标
       if (valueList.length) {
         currentSort = {
-          sortType: needDynamicInsetQuota.sortType,
+          sortType: needDynamicInsertQuota.sortType,
           sortDirection: DEFAULT_SORT_DIRECTION,
         };
       } else if (name === sortType) {
