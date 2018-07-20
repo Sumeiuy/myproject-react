@@ -18,7 +18,7 @@ import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { padSightLabelDesc } from '../../../config';
 import Icon from '../../common/Icon';
-import { isSightingScope, getFilter } from '../helper';
+import { isSightingScope, getFilter, getSortParam } from '../helper';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
@@ -93,9 +93,12 @@ export default class Search extends PureComponent {
         labelName: decodeURIComponent(options.labelName),
       });
     }
+    const filters = getFilter(data);
+    const sortParams = getSortParam(filters);
     const newQuery = {
       ...options,
-      filters: getFilter(data),
+      ...sortParams,
+      filters,
     };
     const condition = urlHelper.stringify({ ...newQuery });
     const url = `${firstUrl}?${condition}`;

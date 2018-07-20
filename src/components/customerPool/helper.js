@@ -4,10 +4,13 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, CONFIG_PRODUCTCENTER } from './config';
+import { dynamicInsertQuota } from '../customerPool/list/sort/config';
 import filterMark from '../../config/filterSeperator';
 import { openFspTab, openFspIframeTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
 import { logCommon } from '../../decorators/logable';
+
+const DEFAULT_SORT_DIRE = 'desc';
 
 function transformCycle(cycle) {
   const transToTime = period => ({
@@ -63,6 +66,18 @@ const helper = {
       return `${filterItem}${filterInsideSeperator}`;
     });
     return finalFilterList.join(filterSeperator);
+  },
+  getSortParam(filter) {
+    const filters = urlHelper.transfromFilterValFromUrl(filter);
+    const finalSortQuota = _.find(
+      dynamicInsertQuota,
+      item => _.has(filters, item.filterType),
+    );
+    const { sortType = '' } = finalSortQuota || {};
+    return {
+      sortType,
+      sortDirection: DEFAULT_SORT_DIRE,
+    };
   },
   /**
    * 跳转到360服务记录页面
