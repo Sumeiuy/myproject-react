@@ -303,7 +303,6 @@ export default class MatchArea extends PureComponent {
           <span className={styles.serviceRecord}>
             <i className="label">服务记录：</i>
             <i dangerouslySetInnerHTML={{ __html: markedEle }} />
-            <i>...</i>
           </span>
           <span
             className={styles.more}
