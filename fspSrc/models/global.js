@@ -9,8 +9,6 @@ import { common as api } from '../../src/api';
 export default {
   namespace: 'global',
   state: {
-    // 是否阻塞tabpane的关闭，因为需要这个状态在关闭tabPane前执行一些其他操作
-    isBlockRemovePane: false,
     // 根据用户权限可以查看的菜单
     menus: {},
     // 改变职位是否成功，默认失败
@@ -35,12 +33,6 @@ export default {
     },
   },
   reducers: {
-    handleBlockRemovePane(state) {
-      return {
-        ...state,
-        isBlockRemovePane: !state.isBlockRemovePane,
-      };
-    },
     // 根据用户权限可以查看的菜单
     getMenusSuccess(state, action) {
       const { payload: { resultData = {} } } = action;

@@ -106,7 +106,6 @@ export default class Main extends PureComponent {
     location: PropTypes.object.isRequired,
     loading: PropTypes.number.isRequired,
     loadingForceFull: PropTypes.bool,
-    isBlockRemovePane: PropTypes.bool.isRequired,
     push: PropTypes.func.isRequired,
     getCustomerScope: PropTypes.func.isRequired,
     interfaceState: PropTypes.object.isRequired,
@@ -175,7 +174,6 @@ export default class Main extends PureComponent {
       children,
       location,
       loading,
-      isBlockRemovePane,
       loadingForceFull,
       // 方法
       push,
@@ -192,7 +190,6 @@ export default class Main extends PureComponent {
       handleCloseClick,
       custUuid,
       ceFileDelete,
-      motSelfBuiltFeedbackList,
       serviceRecordInfo,
       taskFeedbackList,
     } = this.props;
@@ -222,7 +219,6 @@ export default class Main extends PureComponent {
                 <Tab
                   location={location}
                   push={push}
-                  isBlockRemovePane={isBlockRemovePane}
                 />
                 <FSPUnwrap
                   path={location.pathname}

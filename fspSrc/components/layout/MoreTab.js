@@ -9,8 +9,8 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
 import { Menu, Dropdown, Icon } from 'antd';
-import styles from './moreTab.less';
 import { autobind } from 'core-decorators';
+import styles from './moreTab.less';
 
 export default class MoreTab extends PureComponent {
   static propTypes = {
@@ -19,34 +19,16 @@ export default class MoreTab extends PureComponent {
     onRemove: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     path: PropTypes.string.isRequired,
+    onLinkClick: PropTypes.func.isRequired,
   }
 
-  @autobind
-  remove(key) {
-    const { onRemove } = this.props;
-    onRemove(key);
-  }
-
-  @autobind
-  change(key, activeKey) {
-    const { onChange } = this.props;
-    if (key !== activeKey) {
-      onChange(key);
-    }
-  }
-
-  @autobind
-  linkClick(menuItem) {
-    const { onLinkClick } = this.props;
-    onLinkClick(menuItem);
-  }
 
   getMenuItem(menuItem, closeable) {
     const { activeKey, path } = this.props;
     // 可关闭 tab 通过 activeKey 判断是否高亮
     // 递归菜单通过 path 判断是否高亮
     const isActive = menuItem.id === activeKey || (menuItem.path !== '' && path.indexOf(menuItem.path) !== -1);
-    
+
     return (
       <Menu.Item
         key={menuItem.id}
@@ -72,7 +54,7 @@ export default class MoreTab extends PureComponent {
                 <Icon type="close" />
               </div>
             </div> :
-            <div 
+            <div
               className={classnames({
                 [styles.text]: true,
                 [styles.textActive]: isActive,
@@ -92,13 +74,12 @@ export default class MoreTab extends PureComponent {
     const { activeKey } = this.props;
 
     return array.map((item) => {
-      let isActive = item.id === activeKey;
-      if (item.children) {
+      const isActive = item.id === activeKey;
+      if (item.children && !_.isEmpty(item.children)) {
         return (
           <Menu.SubMenu
             key={item.id}
             title={item.name}
-            className={styles.subMenu}
             className={classnames({
               [styles.subMenu]: true,
               [styles.menuActive]: isActive,
@@ -107,11 +88,30 @@ export default class MoreTab extends PureComponent {
             {this.getMenus(item.children, false)}
           </Menu.SubMenu>
         );
-      } else {
-        // 非菜单的内容认为是可关闭的 tab
-        return this.getMenuItem(item, closeable);
       }
+      // 非菜单的内容认为是可关闭的 tab
+      return this.getMenuItem(item, closeable);
     });
+  }
+
+  @autobind
+  remove(key) {
+    const { onRemove } = this.props;
+    onRemove(key);
+  }
+
+  @autobind
+  change(key, activeKey) {
+    const { onChange } = this.props;
+    if (key !== activeKey) {
+      onChange(key);
+    }
+  }
+
+  @autobind
+  linkClick(menuItem) {
+    const { onLinkClick } = this.props;
+    onLinkClick(menuItem);
   }
 
   render() {
@@ -132,7 +132,7 @@ export default class MoreTab extends PureComponent {
 
     return (
       <div className={styles.moreTab}>
-        <Dropdown placement='bottomLeft' overlay={menus} trigger={['hover']}>
+        <Dropdown placement="bottomLeft" overlay={menus} trigger={['hover']}>
           <div className={isActive ? styles.tabActive : null}>
             <div>
               {tabNum}
