@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-19 17:00:13
+ * @Last Modified time: 2018-07-20 14:01:30
  */
 
 import React, { PureComponent } from 'react';
@@ -421,6 +421,7 @@ export default class CustRelationshipsHome extends PureComponent {
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
         isShowCreateBtn={this.handleShowCreateBtn}
+        isUseNewCustList
         basicFilters={basicFilters}
         moreFilters={moreFilters}
         moreFilterData={moreFilterData}

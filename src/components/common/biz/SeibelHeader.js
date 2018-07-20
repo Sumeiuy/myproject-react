@@ -42,7 +42,6 @@ export default class Pageheader extends PureComponent {
     // 新建
     creatSeibelModal: PropTypes.func.isRequired,
     // 操作类型
-    needOperate: PropTypes.bool,
     operateOptions: PropTypes.array,
     // 页面类型
     pageType: PropTypes.string.isRequired,
@@ -90,7 +89,6 @@ export default class Pageheader extends PureComponent {
 
   static defaultProps = {
     page: '',
-    needOperate: false,
     operateOptions: [],
     empInfo: {},
     subtypeOptions: [],
@@ -688,25 +686,6 @@ export default class Pageheader extends PureComponent {
       // 此处,通用的判断是否需要隐藏新建按钮
       hasCreatePermission = this.props.isShowCreateBtn();
     }
-    // 分公司客户分配不显示客户搜索
-    // const custElement = page !== PAGE_CUST_ALLOT ?
-    //   (<div className={styles.filterFl}>
-    //     <div className={styles.dropDownSelectBox}>
-    //       <SingleFilter
-    //         filterId="curFilterCust"
-    //         filterName="客户"
-    //         value={custNumber}
-    //         data={customerAllList}
-    //         dataMap={['custNumber', 'custName']}
-    //         onChange={this.selectCustItem}
-    //         onInputChange={this.handleCustSearch}
-    //         useLabelInValue
-    //         showSearch
-    //         needItemObj
-    //       />
-    //     </div>
-    //   </div>)
-    // : null;
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
