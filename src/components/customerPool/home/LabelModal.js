@@ -14,7 +14,7 @@ import { Modal, Tabs, Popover } from 'antd';
 import _ from 'lodash';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
-import { isSightingScope, getFilter } from '../helper';
+import { isSightingScope, getFilter, getSortParam } from '../helper';
 import { padSightLabelDesc } from '../../../config';
 import Pagination from '../../common/Pagination';
 import styles from './labelModal.less';
@@ -126,9 +126,12 @@ export default class LabelModals extends PureComponent {
       });
     }
     const firstUrl = '/customerPool/list';
+    const filters = getFilter(options);
+    const sortParam = getSortParam(filters);
     const finalQuery = {
       ...options,
-      filters: getFilter(options),
+      ...sortParam,
+      filters,
     };
     const condition = urlHelper.stringify({ ...finalQuery });
     const url = `${firstUrl}?${condition}`;
