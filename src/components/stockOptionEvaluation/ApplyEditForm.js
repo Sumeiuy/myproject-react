@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-18 13:33:00
+ * @Last Modified time: 2018-07-20 15:15:07
  */
 
 import React, { PureComponent } from 'react';
@@ -548,7 +548,7 @@ export default class ApplyEditForm extends PureComponent {
       modalKey: 'stockApplyNextApproverModal',
       rowKey: 'login',
       searchShow: true,
-      placeholder: '员工号/员工名称',
+      placeholder: '员工工号/员工姓名',
       onSearch: this.handleSearchApproval,
       pagination: {
         pageSize: 10,

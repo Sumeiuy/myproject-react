@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-18 13:32:19
+ * @Last Modified time: 2018-07-20 15:14:50
  */
 
 import React, { PureComponent } from 'react';
@@ -698,7 +698,7 @@ export default class CreateApply extends PureComponent {
       modalKey: 'stockApplyNextApproverModal',
       rowKey: 'login',
       searchShow: true,
-      placeholder: '员工号/员工名称',
+      placeholder: '员工工号/员工姓名',
       onSearch: this.handleSearchApproval,
       pagination: {
         pageSize: 10,
