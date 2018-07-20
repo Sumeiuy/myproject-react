@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-20 13:28:06
+ * @Last Modified time: 2018-07-20 16:40:17
  */
 
 import React, { PureComponent } from 'react';
@@ -257,19 +257,14 @@ export default class ServiceImplementation extends PureComponent {
     },
   })
   handleStateChange({ value = [] }) {
-    const { parameter, changeParameter } = this.props;
-    const { targetCustList: { page: { pageSize } } } = this.state;
-    const { rowId, assetSort } = parameter;
+    const { changeParameter } = this.props;
     changeParameter({ state: value, activeIndex: '1', preciseInputValue: '1' })
-    .then(() => {
-      this.queryTargetCustList({
-        state: value,
-        rowId,
-        assetSort,
-        pageSize,
-        pageNum: 1,
+      .then(() => {
+        this.queryTargetCustList({
+          state: value,
+          pageNum: 1,
+        });
       });
-    });
   }
 
 
@@ -279,20 +274,15 @@ export default class ServiceImplementation extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '$args[0].name',
-      value: '$args[0].value.aliasName',
+      value: '$args[0].value.name',
     },
   })
   handleCustomerChange({ value = {} }) {
-    const { parameter, changeParameter } = this.props;
-    const { targetCustList: { page: { pageSize } } } = this.state;
-    const { state, assetSort } = parameter;
+    const { changeParameter } = this.props;
     changeParameter({ rowId: value.rowId || '', activeIndex: '1', preciseInputValue: '1' })
       .then(() => {
         this.queryTargetCustList({
           rowId: value.rowId || '',
-          state,
-          assetSort,
-          pageSize,
           pageNum: 1,
         });
       });
@@ -309,17 +299,12 @@ export default class ServiceImplementation extends PureComponent {
   })
   handleAssetSort(obj) {
     const assetSort = obj.isDesc ? 'desc' : 'asc';
-    const { parameter, changeParameter } = this.props;
-    const { targetCustList: { page: { pageSize, pageNum } } } = this.state;
-    const { state, rowId } = parameter;
+    const { changeParameter } = this.props;
     changeParameter({ assetSort, activeIndex: '1', preciseInputValue: '1' })
       .then(() => {
         this.queryTargetCustList({
-          rowId,
-          state,
           assetSort,
-          pageSize,
-          pageNum,
+          pageNum: 1,
         });
       });
   }
@@ -344,17 +329,11 @@ export default class ServiceImplementation extends PureComponent {
       const value = e.target.value;
       if (!value) return;
       const toChange = () => {
-        const { parameter, changeParameter } = this.props;
+        const { changeParameter } = this.props;
         const { targetCustList: { page: { pageSize } } } = this.state;
-        // const newValue = value > totalCount ? totalCount : value;
         changeParameter({ activeIndex: value }).then(() => {
-          const { rowId, state, assetSort } = parameter;
           const pageNum = Math.ceil(parseInt(value, 10) / pageSize);
           this.queryTargetCustList({
-            rowId,
-            state,
-            assetSort,
-            pageSize,
             pageNum,
             isGetFirstItemDetail: false,
           }).then(() => {
@@ -412,19 +391,14 @@ export default class ServiceImplementation extends PureComponent {
     },
   })
   handlePageChange(pageNum) {
-    const { parameter, changeParameter } = this.props;
+    const { changeParameter } = this.props;
     const { targetCustList: { page: { pageSize } } } = this.state;
-    const { rowId, assetSort, state } = parameter;
     const activeIndex = ((pageNum - 1) * pageSize) + 1;
     changeParameter({
       activeIndex,
       preciseInputValue: activeIndex,
     }).then(() => {
       this.queryTargetCustList({
-        state,
-        rowId,
-        assetSort,
-        pageSize,
         pageNum,
       });
     });
