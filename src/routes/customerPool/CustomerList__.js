@@ -13,7 +13,7 @@ import _ from 'lodash';
 import Filter from '../../components/customerPool/list/Filter__';
 import CustomerLists from '../../components/customerPool/list/CustomerLists__';
 import MatchArea from '../../components/customerPool/list/individualInfo/MatchArea';
-import { dynamicInsetQuota } from '../../components/customerPool/list/sort/config';
+import { dynamicInsertQuota } from '../../components/customerPool/list/sort/config';
 import { permission, emp, url, check } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { seperator, sessionStore } from '../../config';
@@ -24,6 +24,7 @@ import {
   MAIN_MAGEGER_ID,
   ENTERLIST1,
   ENTERLIST2,
+  ENTERLIST3,
 } from './config';
 
 import { RANDOM } from '../../config/filterContant';
@@ -264,13 +265,11 @@ function getFilterParam(filterObj, hashString) {
 
 function getSortParam(query, filterParams) {
   const { sortType, sortDirection } = query;
-  let sortsReqList = [];
+  let sortsReqList = [DEFAULT_SORT];
   const sortFilter = filterParams[sortType] || {};
   const dateType = sortFilter.dateType || '';
   if (sortType || sortDirection) {
     sortsReqList = [sortType, sortDirection, dateType];
-  } else {
-    sortsReqList = [DEFAULT_SORT];
   }
   return {
     sortsReqList,
@@ -716,6 +715,11 @@ export default class CustomerList extends PureComponent {
     if (_.includes(ENTERLIST1, query.source)) {
       return this.hasTkMampPermission ? this.orgId : '';
     }
+    // 从左侧菜单进来，判断是否有任务管理权限或者首页指标查询权限
+    if (_.includes(ENTERLIST3, query.source)) {
+      return this.hasTkMampPermission || this.hasIndexViewPermission
+        ? this.orgId : '';
+    }
     // 从首页潜在业务客户过来
     if (query.source === 'business') {
       // 营业部登录用户只能看名下客户
@@ -775,6 +779,11 @@ export default class CustomerList extends PureComponent {
         || (finalQuery.orgId && finalQuery.orgId === MAIN_MAGEGER_ID)) {
         return currentPtyMng;
       }
+    }
+    // 从左侧菜单过来，判断是否有任务管理权限或者首页指标查询权限
+    if (_.includes(ENTERLIST3, finalQuery.source)) {
+      return this.hasTkMampPermission || this.hasIndexViewPermission ?
+        { ptyMngId: '' } : currentPtyMng;
     }
     return { ptyMngId: '' };
   }
@@ -880,13 +889,13 @@ export default class CustomerList extends PureComponent {
 
   // 根据过滤器的变化当前排序字段的联动
   @autobind
-  getSortFromFilter(obj, isDeleteFilterFromLocation = false) {
+  getSortFromFilter(filterItem, isDeleteFilterFromLocation = false) {
     const {
       location: { query },
     } = this.props;
     const { sortType = '', sortDirection = '' } = query;
     let currentSort = { sortType, sortDirection };
-    const { clearAllMoreFilters, name, value } = obj;
+    const { clearAllMoreFilters, name, value } = filterItem;
     let valueList = _.split(value, seperator.filterValueSeperator);
     valueList = _.filter(valueList, valueItem => valueItem !== '');
     if (clearAllMoreFilters) {
@@ -896,13 +905,12 @@ export default class CustomerList extends PureComponent {
     if (isDeleteFilterFromLocation && name === sortType) {
       currentSort = { sortType: '', sortDirection: '' };
     }
-    const needDynamicInsetQuota = _.find(dynamicInsetQuota,
-        item => item.filterType === name);
-    if (needDynamicInsetQuota) {
+    const needDynamicInsertQuota = _.find(dynamicInsertQuota, item => item.filterType === name);
+    if (needDynamicInsertQuota) {
       // 当前所触发过滤器下有值并且需要动态插入排序指标，则设置为该排序指标
       if (valueList.length) {
         currentSort = {
-          sortType: needDynamicInsetQuota.sortType,
+          sortType: needDynamicInsertQuota.sortType,
           sortDirection: DEFAULT_SORT_DIRECTION,
         };
       } else if (name === sortType) {

@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 
 import { url } from '../../../../helper';
 import withRouter from '../../../../decorators/withRouter';
-import { sortQuotaConfig, dynamicInsetQuota } from './config';
+import { sortQuotaConfig, dynamicInsertQuota } from './config';
 import CommonSort from '../../../common/sort';
 
 @withRouter
@@ -27,9 +27,11 @@ export default class Sort extends PureComponent {
       location: { query: { filters } },
     } = this.props;
     const filter = url.transfromFilterValFromUrl(filters);
-    const dynamicInsetQuotaList = _.filter(dynamicInsetQuota,
-        quotaItem => filter[quotaItem.filterType]);
-    return _.uniqBy([...sortQuotaConfig, ...dynamicInsetQuotaList], 'sortType');
+    const dynamicInsertQuotaList = _.filter(
+      dynamicInsertQuota,
+      quotaItem => filter[quotaItem.filterType],
+    );
+    return _.uniqBy([...sortQuotaConfig, ...dynamicInsertQuotaList], 'sortType');
   }
 
   @autobind
