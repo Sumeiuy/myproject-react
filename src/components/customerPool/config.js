@@ -339,7 +339,7 @@ export const ORG_CODE = 'org';
 
 // 产品中心不同产品类型对应的路径
 // 产品类型：[PA100000: 私募基金]、[PA050000: 公募基金]、[PA070000: 紫金理财]、[PA090000: 收益凭证]
-const basePath = '/htsc-product-base/htsc-prdt-web/index.html/#/';
+const basePath = '/htsc-product-base/htsc-prdt-web/index.html?_#/';
 export const CONFIG_PRODUCTCENTER = {
   PA100000: {
     pathname: `${basePath}private_fund`,
