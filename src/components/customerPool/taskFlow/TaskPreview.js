@@ -135,7 +135,7 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
-  @logPV({ pathname: '/modal/selectApprover', title: '选择审批人弹框' })
+  @logPV({ pathname: '/modal/choiceApproval', title: '选择审批人' })
   handleClick() {
     const { getApprovalList } = this.props;
     const { currentSelectRowKeys = EMPTY_LIST, currentSelectRecord = EMPTY_OBJECT } = this.state;

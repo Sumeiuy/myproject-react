@@ -16,7 +16,7 @@ import Modal from '../common/biz/CommonModal';
 import FormItem from './FormItem';
 import Select from '../common/Select';
 import confirm from '../common/confirm_';
-
+import logable, { logCommon } from '../../decorators/logable';
 import { check } from '../../helper';
 
 import {
@@ -205,6 +205,7 @@ export default class AddRelationshipModal extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭弹框' } })
   handleModalClose() {
     this.props.onClose();
   }
@@ -215,10 +216,26 @@ export default class AddRelationshipModal extends Component {
     if (this.checkData()) {
       const { action } = this.props;
       this.props.onOK({ ...this.state, action });
+      // 手动上传日志
+      const title = action === 'CREATE' ? '添加客户关联关系' : '修改客户关联关系';
+      logCommon({
+        type: 'submit',
+        payload: {
+          name: title,
+          value: JSON.stringify({ ...this.state, action }),
+        },
+      });
     }
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '关联关系类型',
+      value: '$args[2].label',
+    },
+  })
   handleRelationTypeSelectChange(select, relationTypeValue, option) {
     // 切换关联关系，需要将关联关系名称，关联关系子类型，身份证件类型全部置空
     this.setState({
@@ -241,6 +258,13 @@ export default class AddRelationshipModal extends Component {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '关联关系名称',
+      value: '$args[2].label',
+    },
+  })
   handleRelationNameSelectChange(select, relationNameValue, option) {
     // 切换名称，则需要将子类型，身份证类型相关数据置空
     this.setState({
@@ -259,6 +283,13 @@ export default class AddRelationshipModal extends Component {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '关联关系子类型',
+      value: '$args[2].label',
+    },
+  })
   handleRelationSubTypeSelectChange(select, relationSubTypeValue, option) {
     // 如果是选择关联关系名称和关联关系均是 产品管理人，
     // 则自动添加关系人名称为客户名称
@@ -301,6 +332,13 @@ export default class AddRelationshipModal extends Component {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '关系人证件类型',
+      value: '$args[2].label',
+    },
+  })
   handleRelationIDTypeSelectChange(select, partyIDTypeValue, option) {
     this.setState({
       partyIDTypeValue,
@@ -348,7 +386,6 @@ export default class AddRelationshipModal extends Component {
         maskClosable={false}
         visible={visible}
         closeModal={this.handleModalClose}
-        onCancel={this.handleAddRelationshipModalClose}
         onOk={this.handleModalConfirm}
       >
         <div className={styles.addRelationContainer}>

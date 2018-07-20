@@ -329,7 +329,7 @@ export default class CustAllot extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
-  @logPV({ pathname: '/modal/createProtocol', title: '新建分公司客户人工划转' })
+  @logPV({ pathname: '/modal/createCustAllotProtocol', title: '新建分公司客户人工划转' })
   openCreateModalBoard() {
     this.setState({
       createModal: true,

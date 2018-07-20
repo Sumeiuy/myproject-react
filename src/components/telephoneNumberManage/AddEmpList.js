@@ -17,6 +17,7 @@ import SimilarAutoComplete from '../common/similarAutoComplete';
 import BatchAddEmpList from './BatchAddEmpList';
 import config from './config';
 import styles from './addEmpList.less';
+import logable, { logPV } from '../../decorators/logable';
 
 // 最大可以选择的服务经理的数量200
 const { MAXSELECTNUM } = config;
@@ -59,12 +60,26 @@ export default class AddEmpList extends PureComponent {
 
   // 点击选择服务经理
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择服务经理',
+      value: '$args[0].empName',
+    },
+  })
   handleSelectEmplist(cust) {
     this.setState({ selectedEmp: cust });
   }
 
   // 根据用户输入的关键字查询服务经理
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '关键字搜索',
+      value: '$args[0]',
+    },
+  })
   handleSearchEmpList(keyword) {
     this.props.queryAdvisorList({
       keyword,
@@ -75,6 +90,7 @@ export default class AddEmpList extends PureComponent {
 
   // 添加用户
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '添加' } })
   handleAddBtnClick() {
     const { empList, selectedEmp } = this.state;
     const { onAddEmpList } = this.props;
@@ -106,6 +122,7 @@ export default class AddEmpList extends PureComponent {
 
   // 删除选择的用户
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除$args[0].empName' } })
   handleDeleteEmp(record) {
     const { deleteBindingAdvisor, onAddEmpList } = this.props;
     const { empList } = this.state;
@@ -161,6 +178,7 @@ export default class AddEmpList extends PureComponent {
 
   // 点击批量添加按钮，批量添加弹框出现
   @autobind
+  @logPV({ pathname: '/modal/addEmpList', title: '批量添加弹框' })
   handleBatchAddBtnClick() {
     // 批量展示所有可以做业务手机申请的投顾，由前端分页，且最多业务要求显示200条
     this.props.queryBatchAdvisorList({

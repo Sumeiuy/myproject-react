@@ -100,7 +100,13 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '业务开通区域下钻' } })
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '业务开通',
+      element: '$args[1].value',
+    },
+  })
   handleClick(labelList, arg) {
     const {
       cycle,
