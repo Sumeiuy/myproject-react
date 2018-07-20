@@ -336,3 +336,13 @@ export const capitalFilterList = [
 export const PER_CODE = 'per';
 // 一般机构对应的code码
 export const ORG_CODE = 'org';
+
+// 产品中心不同产品类型对应的路径
+// 产品类型：[PA100000: 私募基金]、[PA050000: 公募基金]、[PA070000: 紫金理财]、[PA090000: 收益凭证]
+const basePath = '/htsc-product-base/htsc-prdt-web/index.html#/';
+export const PATHNAME_PRDUCTCENTER = {
+  PA100000: `${basePath}private_fund`,
+  PA050000: `${basePath}public_fund`,
+  PA070000: `${basePath}securities_fund`,
+  PA090000: `${basePath}receipt_fund`,
+};

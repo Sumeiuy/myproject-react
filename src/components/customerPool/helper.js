@@ -3,11 +3,12 @@
  */
 import _ from 'lodash';
 import moment from 'moment';
-import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE } from './config';
+import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, PATHNAME_PRDUCTCENTER } from './config';
 import { dynamicInsetQuota } from '../customerPool/list/sort/config';
 import filterMark from '../../config/filterSeperator';
 import { openFspTab } from '../../utils';
-import { url } from '../../helper';
+import { url as urlHelper } from '../../helper';
+import { logCommon } from '../../decorators/logable';
 
 const DEFAULT_SORT_DIRE = 'desc';
 
@@ -67,7 +68,7 @@ const helper = {
     return finalFilterList.join(filterSeperator);
   },
   getSortParam(filter) {
-    const filters = url.transfromFilterValFromUrl(filter);
+    const filters = urlHelper.transfromFilterValFromUrl(filter);
     const finalSortQuota = _.find(dynamicInsetQuota,
         item => _.has(filters, item.filterType));
     const { sortType = '' } = finalSortQuota || {};
@@ -85,11 +86,11 @@ const helper = {
   handleOpenFsp360TabAction({ itemData, keyword, routerAction }) {
     const { pOrO, custId, rowId, ptyId } = itemData;
     const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
-    const detailUrl = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
+    const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
     const pathname = '/customerCenter/fspcustomerDetail';
     openFspTab({
       routerAction,
-      url: detailUrl,
+      url,
       query: {
         custId,
         rowId,
@@ -108,7 +109,41 @@ const helper = {
         serviceRecordChannel: encodeURIComponent('理财服务平台'),
       },
       state: {
-        url: detailUrl,
+        url,
+      },
+    });
+  },
+
+  /**
+   * 跳转到产品详情tab页面
+   * @param {*} param0
+   *    data: 持仓产品信息
+   *    routerAction: 路由的变化方式
+   */
+  openProductDetailPage({ data, routerAction }) {
+    // upPrdtTypeId：产品所属类型id, code：产品代码
+    const { upPrdtTypeId, code } = data;
+    const pathname = PATHNAME_PRDUCTCENTER[upPrdtTypeId];
+    const query = { prdtCode: code };
+    const url = `${pathname}?${urlHelper.stringify(query)}`;
+    const param = {
+      id: 'FSP_PUBLIC_FUND_TAB',
+      title: '产品详情',
+      forceRefresh: true,
+    };
+    openFspTab({
+      routerAction,
+      url,
+      query,
+      pathname,
+      param,
+    });
+    // 神策日志
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: `客户列表${data.name}下钻到产品中心`,
+        value: code,
       },
     });
   },
