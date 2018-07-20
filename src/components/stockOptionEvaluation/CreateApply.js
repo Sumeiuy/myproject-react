@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-13 11:33:50
+ * @Last Modified time: 2018-07-20 15:14:50
  */
 
 import React, { PureComponent } from 'react';
@@ -21,7 +21,7 @@ import ApprovalBtnGroup from '../common/approvalBtns';
 import EditBasicInfo from './EditBasicInfo';
 import config from './config';
 import { data, emp } from '../../helper';
-import logable, { logCommon } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 
 import styles from './createApply.less';
 
@@ -394,15 +394,33 @@ export default class CreateApply extends PureComponent {
 
   // 展示下一步审批人
   @autobind
+  @logPV({ pathname: '/modal/choiceApproval', title: '选择下一步审批人' })
   showNextApprover(item) {
     this.setState({
       operate: item.operate,
       groupName: item.nextGroupName,
       auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
       nextApproverList: item.flowAuditors,
+      defaultNextApproverList: item.flowAuditors,
       currentNodeName: item.currentNodeName,
       nextApproverModal: true,
     });
+  }
+
+  // 搜索下一步审批人
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索下一步审批人',
+      value: '$args[0]',
+    },
+  })
+  handleSearchApproval(value) {
+    const { defaultNextApproverList } = this.state;
+    const filterNextApproverList = _.filter(defaultNextApproverList,
+      item => (item.login.indexOf(value) > -1 || item.empName.indexOf(value) > -1));
+    this.setState({ nextApproverList: filterNextApproverList });
   }
 
   // 校验数据
@@ -618,6 +636,7 @@ export default class CreateApply extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
   updateValue(attachment) {
     this.setState({ attachment });
   }
@@ -678,7 +697,9 @@ export default class CreateApply extends PureComponent {
       title: '选择下一审批人员',
       modalKey: 'stockApplyNextApproverModal',
       rowKey: 'login',
-      searchShow: false,
+      searchShow: true,
+      placeholder: '员工工号/员工姓名',
+      onSearch: this.handleSearchApproval,
       pagination: {
         pageSize: 10,
       },
@@ -713,7 +734,7 @@ export default class CreateApply extends PureComponent {
                       showIdKey="brokerNumber"
                       needConfirmWhenClear
                       clearConfirmTips="切换或者删除客户，将导致所有的数据清空或者重置"
-                      style={{ width: 160 }}
+                      style={{ width: 220 }}
                       onSelect={this.selectCustomer}
                       onSearch={this.searchCanApplyCustList}
                     />
