@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 14:49:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-20 13:26:27
+ * @Last Modified time: 2018-07-20 17:52:30
  * @description 线上销户新建以及驳回后修改通用部分
  */
 
@@ -99,7 +99,8 @@ export default class CancelAccountOLForm extends PureComponent {
       // 流失原因
       lostReason: isCreate ? [] : getSelectedKeys(lostReason),
       // 是否选择了其他原因
-      hasSelectOtherReason: isCreate ? false : isSelectedOtherOption(lostReason, LOST_REASON_OTHER_KEY),
+      hasSelectOtherReason: isCreate ?
+        false : isSelectedOtherOption(lostReason, LOST_REASON_OTHER_KEY),
       // 其他流失原因的详情
       otherReasonDetail: isCreate ? '' : _.get(lostReason, 'churnOtheReason'),
       // 备注
@@ -304,6 +305,69 @@ export default class CancelAccountOLForm extends PureComponent {
     );
   }
 
+  @autobind
+  renderLostDirectionCascadeDom(lostDirection, investVarsOptions) {
+    // 判断流失去向选择的是转户还是投资其他,
+    // 如果是转户，则显示证券营业部输入框
+    // 如果是投资其他，则显示投资品种多选框
+    const isTransfer = isTransferLostDirection(lostDirection);
+    const hasSelectLostDirection = lostDirection !== '';
+    const { disablePage } = this.props;
+    const {
+      stockExchange,
+      investVars,
+      otherVarDetail,
+      hasSelecOtherVar,
+    } = this.state;
+
+    if (hasSelectLostDirection && isTransfer) {
+      return (
+        <InfoCell label="证券营业部" labelWidth={100}>
+          <div className={styles.infoCellInput}>
+            <Input
+              disabled={disablePage}
+              value={stockExchange}
+              onChange={this.handleStockExchangeChange}
+            />
+          </div>
+        </InfoCell>
+      );
+    } else if (hasSelectLostDirection && !isTransfer) {
+      return (
+        <InfoCell label="投资品种" labelWidth={100}>
+          <div className={styles.infoCellInput}>
+            <MultiFilter
+              disabled={disablePage}
+              needItemObj
+              useCustomerFilter
+              className={styles.investVarFilter}
+              filterName="投资品种"
+              defaultLabel="--请选择--"
+              data={investVarsOptions}
+              value={investVars}
+              onChange={this.handleInvestVarsChange}
+            />
+          </div>
+          {
+            !hasSelecOtherVar ? null
+            :
+            (
+              <div className={`${styles.infoCellInput} ${styles.ml15} ${styles.autoWidth}`}>
+                <Input
+                  disabled={disablePage}
+                  placeholder="详细投资品种"
+                  value={otherVarDetail}
+                  onChange={this.handleOtherVarDetailChange}
+                />
+              </div>
+            )
+          }
+        </InfoCell>
+      );
+    }
+    return null;
+  }
+
   render() {
     const {
       uploadKey,
@@ -311,10 +375,6 @@ export default class CancelAccountOLForm extends PureComponent {
       attachList,
       cust,
       lostDirection,
-      stockExchange,
-      investVars,
-      otherVarDetail,
-      hasSelecOtherVar,
       lostReason,
       hasSelectOtherReason,
       otherReasonDetail,
@@ -332,10 +392,6 @@ export default class CancelAccountOLForm extends PureComponent {
     });
     // 服务营业部名称
     const orgName = _.isEmpty(cust) ? '--' : `${cust.orgName}`;
-    // 判断流失去向选择的是转户还是投资其他,
-    // 如果是转户，则显示证券营业部输入框
-    // 如果是投资其他，则显示投资品种多选框
-    const isTransfer = isTransferLostDirection(lostDirection);
 
     // 流失去向 Options
     const lostDirectionOptions = this.addDefaultOption(optionsDict.custLossDirectionTypeList);
@@ -399,52 +455,7 @@ export default class CancelAccountOLForm extends PureComponent {
             </InfoCell>
           </Col>
           <Col span={14}>
-            {
-              isTransfer ?
-              (
-                <InfoCell label="证券营业部" labelWidth={100}>
-                  <div className={styles.infoCellInput}>
-                    <Input
-                      disabled={disablePage}
-                      value={stockExchange}
-                      onChange={this.handleStockExchangeChange}
-                    />
-                  </div>
-                </InfoCell>
-              )
-              :
-              (
-                <InfoCell label="投资品种" labelWidth={100}>
-                  <div className={styles.infoCellInput}>
-                    <MultiFilter
-                      disabled={disablePage}
-                      needItemObj
-                      useCustomerFilter
-                      className={styles.investVarFilter}
-                      filterName="投资品种"
-                      defaultLabel="--请选择--"
-                      data={investVarsOptions}
-                      value={investVars}
-                      onChange={this.handleInvestVarsChange}
-                    />
-                  </div>
-                  {
-                    !hasSelecOtherVar ? null
-                    :
-                    (
-                      <div className={`${styles.infoCellInput} ${styles.ml15} ${styles.autoWidth}`}>
-                        <Input
-                          disabled={disablePage}
-                          placeholder="详细投资品种"
-                          value={otherVarDetail}
-                          onChange={this.handleOtherVarDetailChange}
-                        />
-                      </div>
-                    )
-                  }
-                </InfoCell>
-              )
-            }
+            {this.renderLostDirectionCascadeDom(lostDirection, investVarsOptions)}
           </Col>
         </Row>
         <Row gutter={16} type="flex">
