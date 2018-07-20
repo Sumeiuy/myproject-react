@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 14:49:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-18 15:56:21
+ * @Last Modified time: 2018-07-19 17:30:39
  * @description 线上销户新建以及驳回后修改通用部分
  */
 
@@ -43,6 +43,8 @@ export default class CancelAccountOLForm extends PureComponent {
   static propTypes = {
     // 判断此组件用于新建页面还是驳回后修改页面，'CREATE'或者'UPDATE'
     action: PropTypes.oneOf(['CREATE', 'UPDATE']).isRequired,
+    // 在驳回后修改页面，如果提交了之后，则不允许修改
+    disablePage: PropTypes.bool,
     queryCustList: PropTypes.func,
     // 可选的客户列表
     custList: PropTypes.array,
@@ -57,6 +59,7 @@ export default class CancelAccountOLForm extends PureComponent {
     custList: [],
     queryCustList: _.noop,
     detailInfo: {},
+    disablePage: false,
   }
 
   constructor(props) {
@@ -66,11 +69,11 @@ export default class CancelAccountOLForm extends PureComponent {
     this.state = {
       // 用于重新渲染上传组件的key
       uploadKey: data.uuid(),
-      attachment: isCreate ? '' : _.get(detailInfo, 'attachment'),
+      attachment: isCreate ? '' : _.get(detailInfo, 'attachment', ''),
       attachList: isCreate ? [] : _.get(detailInfo, 'attachmentList'),
       cust: isCreate ? {} : _.get(detailInfo, 'basicInfo'),
-      // 流失去向
-      lostDirection: isCreate ? '' : _.get(detailInfo, 'basicInfo.lostDirectionCode'),
+      // 流失去向,由于后端返回的值与字典值不一致，所以此处需要转换下
+      lostDirection: isCreate ? '' : _.lowerFirst(_.get(detailInfo, 'basicInfo.lostDirectionCode')),
       // 证券营业部
       stockExchange: isCreate ? '' : _.get(detailInfo, 'basicInfo.stockExchange'),
       // 投资品种
@@ -303,7 +306,7 @@ export default class CancelAccountOLForm extends PureComponent {
       otherReasonDetail,
       comment,
     } = this.state;
-    const { action, custList, optionsDict } = this.props;
+    const { action, custList, optionsDict, disablePage } = this.props;
     if (_.isEmpty(optionsDict)) {
       return null;
     }
@@ -368,6 +371,7 @@ export default class CancelAccountOLForm extends PureComponent {
           <Col span={10}>
             <InfoCell label="流失去向" labelWidth={90}>
               <Select
+                disabled={disablePage}
                 needShowKey={false}
                 width="180px"
                 name="lostDirection"
@@ -387,6 +391,7 @@ export default class CancelAccountOLForm extends PureComponent {
                 <InfoCell label="证券营业部" labelWidth={100}>
                   <div className={styles.infoCellInput}>
                     <Input
+                      disabled={disablePage}
                       value={stockExchange}
                       onChange={this.handleStockExchangeChange}
                     />
@@ -398,6 +403,7 @@ export default class CancelAccountOLForm extends PureComponent {
                 <InfoCell label="投资品种" labelWidth={100}>
                   <div className={styles.infoCellInput}>
                     <MultiFilter
+                      disabled={disablePage}
                       needItemObj
                       useCustomerFilter
                       className={styles.investVarFilter}
@@ -414,6 +420,7 @@ export default class CancelAccountOLForm extends PureComponent {
                     (
                       <div className={`${styles.infoCellInput} ${styles.ml15} ${styles.autoWidth}`}>
                         <Input
+                          disabled={disablePage}
                           placeholder="详细投资品种"
                           value={otherVarDetail}
                           onChange={this.handleOtherVarDetailChange}
@@ -431,6 +438,7 @@ export default class CancelAccountOLForm extends PureComponent {
             <InfoCell label="流失原因" labelWidth={90}>
               <div className={styles.infoCellInput}>
                 <MultiFilter
+                  disabled={disablePage}
                   needItemObj
                   useCustomerFilter
                   className={styles.investVarFilter}
@@ -447,6 +455,7 @@ export default class CancelAccountOLForm extends PureComponent {
                 (
                   <div className={`${styles.infoCellInput} ${styles.ml15} ${styles.autoWidth}`}>
                     <Input
+                      disabled={disablePage}
                       placeholder="详细原因"
                       value={otherReasonDetail}
                       onChange={this.handleOtherLostResonDetailChange}
@@ -465,6 +474,7 @@ export default class CancelAccountOLForm extends PureComponent {
               </div>
               <div className={styles.textArea}>
                 <TextArea
+                  disabled={disablePage}
                   rows={5}
                   value={comment}
                   onChange={this.handleCommenteChange}
@@ -476,10 +486,10 @@ export default class CancelAccountOLForm extends PureComponent {
         <div className={styles.divider} />
         <InfoTitle head="附件信息" />
         <CommonUpload
-          edit
+          edit={!disablePage}
           reformEnable
           key={uploadKey}
-          attachment={attachment}
+          attachment={attachment || ''}
           needDefaultText={false}
           attachmentList={attachList}
           uploadAttachment={this.handleUploadCallBack}

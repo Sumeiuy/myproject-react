@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-12 09:02:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-18 16:15:33
+ * @Last Modified time: 2018-07-19 18:44:36
  * @description 线上销户的驳回后修改页面
  */
 
@@ -103,6 +103,8 @@ export default class RejectHome extends Component {
       idea: '',
       // 选择审批人弹框
       nextApprovalModal: false,
+      // 禁用页面
+      disablePage: false,
     };
     // 此处为 React 16.3 API
     this.rejectHomeRef = React.createRef();
@@ -140,8 +142,8 @@ export default class RejectHome extends Component {
     const { detailInfoForUpdate: { basicInfo, attachment } } = this.props;
     this.setState({
       cust: basicInfo,
-      attachment,
-      lostDirection: basicInfo.lostDirectionCode,
+      attachment: attachment || '',
+      lostDirection: _.lowerFirst(_.get(basicInfo, 'lostDirectionCode')),
       stockExchange: basicInfo.stockExchange,
       investVars: getSelectedKeys(_.get(basicInfo, 'investVars')),
       otherVarDetail: _.get(basicInfo, 'investVars.churnInvestOtherDetail') || '',
@@ -167,7 +169,7 @@ export default class RejectHome extends Component {
   // 所以直接使用后端提供的提交接口就行
   @autobind
   doSubmitPassValidate() {
-    const { detailInfoForUpdate: { flowCode } } = this.props;
+    const { detailInfoForUpdate: { flowId, applyId } } = this.props;
     const {
       cust,
       attachment,
@@ -178,6 +180,7 @@ export default class RejectHome extends Component {
       stockExchange,
       lostReason,
       otherReasonDetail,
+      operate,
     } = this.state;
     const { optionsDict: { custInvestVarietyTypeList, custLossReasonTypeList } } = this.props;
     const vars = convertSubmitInvestVars(investVars, custInvestVarietyTypeList, otherVarDetail);
@@ -196,18 +199,27 @@ export default class RejectHome extends Component {
       churnStockExchange: stockExchange,
       CustInvestVarietyDTOReq: vars,
       CustLossCauseDTOReq: reasons,
-      flowCode,
+      flowCode: flowId,
+      id: applyId,
     };
-    this.props.submitApply(query).then(() => {
-      logCommon({
-        type: 'Submit',
-        payload: {
-          name: '线上销户申请驳回后修改提交',
-          vlaue: JSON.stringify(query),
-        },
+    // 驳回后修改存在终止的情况
+    // 终止不需要调用保存接口
+    // commit_yybfzr
+    // commit_kfzxzg
+    if (_.includes(['commit_yybfzr', 'commit_kfzxzg'], operate)) {
+      this.props.submitApply(query).then(() => {
+        logCommon({
+          type: 'Submit',
+          payload: {
+            name: '线上销户申请驳回后修改提交',
+            vlaue: JSON.stringify(query),
+          },
+        });
+        this.doFlowApproval();
       });
-      this.doFlowApproval();
-    });
+    } else {
+      this.doApproval(applyId);
+    }
   }
 
   @autobind
@@ -222,17 +234,18 @@ export default class RejectHome extends Component {
 
   @autobind
   doApproval(itemId) {
-    const { detailInfoForUpdate: { flowCode } } = this.props;
+    const { detailInfoForUpdate: { flowId, basicInfo } } = this.props;
     const { operate, auditors, groupName, idea } = this.state;
     // 新建走流程，flowId 传空字符串
     this.props.doApproval({
-      flowId: flowCode,
-      wobNum: flowCode,
+      flowId,
+      wobNum: flowId,
       operate,
       auditors,
       approverIdea: idea,
       groupName,
       itemId,
+      custName: _.get(basicInfo, 'custName', ''),
     }).then(this.doSomethingAfterApproval);
   }
 
@@ -240,8 +253,9 @@ export default class RejectHome extends Component {
   doSomethingAfterApproval() {
     const { flowResult: { msg } } = this.props;
     if (msg === 'success') {
-      // 关闭弹出层，刷新列表
+      // 隐藏按钮
       this.props.clearReduxData({ approvalForUpdate: {} });
+      this.setState({ disablePage: true });
     }
   }
 
@@ -296,7 +310,7 @@ export default class RejectHome extends Component {
       return null;
     }
 
-    const { idea, nextApprovalModal, nextApproverList } = this.state;
+    const { idea, nextApprovalModal, nextApproverList, disablePage } = this.state;
 
     const nextApprovalProps = {
       visible: nextApprovalModal,
@@ -317,6 +331,7 @@ export default class RejectHome extends Component {
         </div>
         <CancelAccountOLForm
           action="UPDATE"
+          disablePage={disablePage}
           optionsDict={this.props.optionsDict}
           detailInfo={detailInfoForUpdate}
           onChange={this.handleRejectUpdateChange}

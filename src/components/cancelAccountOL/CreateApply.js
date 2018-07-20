@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 13:35:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-18 16:05:25
+ * @Last Modified time: 2018-07-19 16:22:52
  * @description 新建线上销户申请弹出框
  */
 import React, { PureComponent } from 'react';
@@ -132,7 +132,7 @@ export default class CreateApply extends PureComponent {
 
   @autobind
   doApproval(itemId) {
-    const { operate, auditors, groupName } = this.state;
+    const { cust, operate, auditors, groupName } = this.state;
     // 新建走流程，flowId 传空字符串
     this.props.doApproval({
       flowId: '',
@@ -142,6 +142,7 @@ export default class CreateApply extends PureComponent {
       approverIdea: '',
       groupName,
       itemId,
+      custName: cust.custName,
     }).then(this.doSomethingAfterApproval);
   }
 

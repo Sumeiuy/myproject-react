@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-05-08 10:17:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-18 15:12:18
+ * @Last Modified time: 2018-07-19 14:09:05
  * @description 营业部非投顾签约客户分配的API
  */
 
@@ -17,7 +17,7 @@ export default function cust(api) {
     // 获取附件列表
     getAttachmentList: query => api.post('/file/ceFileList2', query),
     // 手动推送销户
-    pushCancelAccount: query => api.post('/groovynoauth/fsp/biz/closeaccountonline/pushCancelAccount', query),
+    pushCancelAccount: query => api.post('/groovynoauth/fsp/biz/closeaccountonline/pushCloseAccount', query),
     // 下一步按钮和下一步审批人
     getButtonList: query => api.post('/groovynoauth/fsp/biz/closeaccountonline/queryNextStepInfo', query),
     // 保存接口
