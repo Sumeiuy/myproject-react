@@ -182,17 +182,12 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="附件信息" />
           {
-            !_.isEmpty(attachmentList) ?
-              attachmentList.map(item => (<MultiUploader
-                attachmentList={item.attachmentList}
-                attachment={''}
-                title={item.title}
-                key={`${protocolDetail.id}${item.title}`}
-              />))
-              :
-              <div className={styles.fileList}>
-                <div className={styles.noFile}>暂无附件</div>
-              </div>
+            (attachmentList || EMPTY_ARRAY).map(item => (<MultiUploader
+              attachmentList={item.attachmentList}
+              attachment={''}
+              title={item.title}
+              key={`${protocolDetail.id}${item.title}`}
+            />))
           }
         </div>
         <div className={styles.detailWrapper}>
