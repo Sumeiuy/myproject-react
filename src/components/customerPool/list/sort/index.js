@@ -27,8 +27,10 @@ export default class Sort extends PureComponent {
       location: { query: { filters } },
     } = this.props;
     const filter = url.transfromFilterValFromUrl(filters);
-    const dynamicInsetQuotaList = _.filter(dynamicInsetQuota,
-        quotaItem => filter[quotaItem.filterType]);
+    const dynamicInsetQuotaList = _.filter(
+      dynamicInsetQuota,
+      quotaItem => filter[quotaItem.filterType],
+    );
     return _.uniqBy([...sortQuotaConfig, ...dynamicInsetQuotaList], 'sortType');
   }
 

@@ -265,13 +265,11 @@ function getFilterParam(filterObj, hashString) {
 
 function getSortParam(query, filterParams) {
   const { sortType, sortDirection } = query;
-  let sortsReqList = [];
+  let sortsReqList = [DEFAULT_SORT];
   const sortFilter = filterParams[sortType] || {};
   const dateType = sortFilter.dateType || '';
   if (sortType || sortDirection) {
     sortsReqList = [sortType, sortDirection, dateType];
-  } else {
-    sortsReqList = [DEFAULT_SORT];
   }
   return {
     sortsReqList,
@@ -891,13 +889,13 @@ export default class CustomerList extends PureComponent {
 
   // 根据过滤器的变化当前排序字段的联动
   @autobind
-  getSortFromFilter(obj, isDeleteFilterFromLocation = false) {
+  getSortFromFilter(filterItem, isDeleteFilterFromLocation = false) {
     const {
       location: { query },
     } = this.props;
     const { sortType = '', sortDirection = '' } = query;
     let currentSort = { sortType, sortDirection };
-    const { clearAllMoreFilters, name, value } = obj;
+    const { clearAllMoreFilters, name, value } = filterItem;
     let valueList = _.split(value, seperator.filterValueSeperator);
     valueList = _.filter(valueList, valueItem => valueItem !== '');
     if (clearAllMoreFilters) {
@@ -907,8 +905,7 @@ export default class CustomerList extends PureComponent {
     if (isDeleteFilterFromLocation && name === sortType) {
       currentSort = { sortType: '', sortDirection: '' };
     }
-    const needDynamicInsetQuota = _.find(dynamicInsetQuota,
-        item => item.filterType === name);
+    const needDynamicInsetQuota = _.find(dynamicInsetQuota, item => item.filterType === name);
     if (needDynamicInsetQuota) {
       // 当前所触发过滤器下有值并且需要动态插入排序指标，则设置为该排序指标
       if (valueList.length) {

@@ -69,8 +69,10 @@ const helper = {
   },
   getSortParam(filter) {
     const filters = urlHelper.transfromFilterValFromUrl(filter);
-    const finalSortQuota = _.find(dynamicInsetQuota,
-        item => _.has(filters, item.filterType));
+    const finalSortQuota = _.find(
+      dynamicInsetQuota,
+      item => _.has(filters, item.filterType),
+    );
     const { sortType = '' } = finalSortQuota || {};
     return {
       sortType,
