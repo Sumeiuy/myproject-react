@@ -4,16 +4,8 @@
  * @author zhufeiyang
  */
 
-// 主导航菜单页面以及其跳转页面对应的tab配置项
-// 主导航菜单项不会新打开tab，所以主导航相关的页面全部在这里配置
 // 前端可以完全控制主导航的菜单行为
-const primaryMenu = [
-  {
-    name: '首页',
-    id: 'FSP_NEW_HOMEPAGE',
-    path: '/customerPool',
-    pid: 'ROOT',
-  },
+const newOpenTabConfig = [
   {
     name: '自建任务',
     id: 'FSP_CUSTOMER_LIST_CREATETASK',
@@ -39,12 +31,6 @@ const primaryMenu = [
     pid: 'FSP_MOT_SELFBUILT_TASK',
   },
   {
-    name: '客户列表',
-    id: 'FSP_CUSTOMER_LIST',
-    path: '/customerPool/list',
-    pid: 'FSP_NEW_HOMEPAGE',
-  },
-  {
     name: '待办流程',
     id: 'FSP_TODO',
     path: '/customerPool/todo',
@@ -67,12 +53,6 @@ const primaryMenu = [
     id: 'FSP_MOT_TASKHANDLE',
     path: '/fsp/motTaskHandle',
     pid: 'FSP_CUST_M_360',
-  },
-  {
-    name: '客户中心',
-    id: 'FSP_CUST_M_CENTER',
-    path: '/customerCenter',
-    pid: 'ROOT',
   },
   {
     name: '客户360',
@@ -111,28 +91,10 @@ const primaryMenu = [
     pid: 'FSP_CUST_M_360',
   },
   {
-    name: '任务中心',
-    id: 'FSP_MOT_M_TASK',
-    path: '/taskList',
-    pid: 'ROOT',
-  },
-  {
     name: '客户服务全纪录',
     id: 'FSP_MOT_TAB_SERVICELIST',
     path: '/fsp/taskCenter/serviceManage',
     pid: 'FSP_MOT_M_TASK',
-  },
-  {
-    name: '产品中心',
-    id: 'FSP_PRD_REPOSITORY',
-    path: '/productCenter',
-    pid: 'ROOT',
-  },
-  {
-    name: '服务中心',
-    id: 'FSP_SERVICE_CENTER',
-    path: '/serviceCenter',
-    pid: 'ROOT',
   },
   {
     name: '工单投诉信息',
@@ -151,12 +113,6 @@ const primaryMenu = [
     id: 'FSP_IMPLEMENTATION_WIZARD',
     path: '/fsp/implementation/wizard',
     pid: 'FSP_SERVICE_CENTER',
-  },
-  {
-    name: '策略中心',
-    id: 'FSP_STRATEGY_CENTER',
-    path: '/strategyCenter',
-    pid: 'ROOT',
   },
   {
     name: '个股详情',
@@ -183,18 +139,6 @@ const primaryMenu = [
     pid: 'FSP_STRATEGY_CENTER',
   },
   {
-    name: '业务申请',
-    id: 'FSP_BUSINESS_APPLICATION',
-    path: '/application',
-    pid: 'ROOT',
-  },
-  {
-    name: '统计查询',
-    id: 'FSP_STATISTICAL_QUERY',
-    path: '/statisticalQuery',
-    pid: 'ROOT',
-  },
-  {
     name: '看板管理',
     id: 'FSP_BOARDMANAGE',
     path: '/boardManage',
@@ -214,33 +158,44 @@ const primaryMenu = [
   },
 ];
 
-// 次级导航页面内部跳转新建的tab配置项
-// 由于次级导航菜单涉及到的打开tab太多，而且不会随着项目变化而改变
-// 所以不在这里进行配置，而是直接复用后端的数据，在调用方法时，直接传入数据
-// 前端无法控制次级导航菜单的tab配置，这点需要留意。
-const secondaryMenu = [
-];
-
-const menus = [
-  ...primaryMenu,
-  ...secondaryMenu,
-];
-
-export default menus;
+export default newOpenTabConfig;
 
 // 默认当前激活的主导航菜单项
 export const indexPaneKey = 'FSP_NEW_HOMEPAGE';
 
-// 主导航默认的几个菜单项
+// 主导航里面的嵌套导航菜单
 export const defaultMenu = [
-  'FSP_NEW_HOMEPAGE',
-  'FSP_CUST_M_CENTER',
-  'FSP_MOT_M_TASK',
-  'FSP_PRD_REPOSITORY',
-  'FSP_SERVICE_CENTER',
-  'FSP_STRATEGY_CENTER',
-  'FSP_BUSINESS_APPLICATION',
-  'FSP_STATISTICAL_QUERY',
-  'FSP_OM_MANAGEMENT',
+  {
+    path: 'customerPool',
+    name: '客户中心',
+  },
+  {
+    path: 'taskCenter',
+    name: '任务中心',
+  },
+  {
+    path: 'productCenter',
+    name: '产品中心',
+  },
+  {
+    path: 'serviceCenter',
+    name: '服务中心',
+  },
+  {
+    path: 'strategyCenter',
+    name: '策略中心',
+  },
+  {
+    path: 'businessApplyment',
+    name: '业务申请',
+  },
+  {
+    path: 'statisticalQuery',
+    name: '统计查询',
+  },
+  {
+    path: 'sysOperate',
+    name: '运维管理',
+  },
 ];
 
