@@ -25,7 +25,7 @@ export const sortQuotaConfig = [
 ];
 
 // 下钻特显与动态插入的排序条件
-export const dynamicInsetQuota = [
+export const dynamicInsertQuota = [
   {
     filterType: 'kfBuyAmt',
     sortType: 'kfBuyAmt',

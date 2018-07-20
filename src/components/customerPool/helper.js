@@ -4,7 +4,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, PATHNAME_PRDUCTCENTER } from './config';
-import { dynamicInsetQuota } from '../customerPool/list/sort/config';
+import { dynamicInsertQuota } from '../customerPool/list/sort/config';
 import filterMark from '../../config/filterSeperator';
 import { openFspTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
@@ -70,7 +70,7 @@ const helper = {
   getSortParam(filter) {
     const filters = urlHelper.transfromFilterValFromUrl(filter);
     const finalSortQuota = _.find(
-      dynamicInsetQuota,
+      dynamicInsertQuota,
       item => _.has(filters, item.filterType),
     );
     const { sortType = '' } = finalSortQuota || {};

@@ -13,7 +13,7 @@ import _ from 'lodash';
 import Filter from '../../components/customerPool/list/Filter__';
 import CustomerLists from '../../components/customerPool/list/CustomerLists__';
 import MatchArea from '../../components/customerPool/list/individualInfo/MatchArea';
-import { dynamicInsetQuota } from '../../components/customerPool/list/sort/config';
+import { dynamicInsertQuota } from '../../components/customerPool/list/sort/config';
 import { permission, emp, url, check } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { seperator, sessionStore } from '../../config';
@@ -905,7 +905,7 @@ export default class CustomerList extends PureComponent {
     if (isDeleteFilterFromLocation && name === sortType) {
       currentSort = { sortType: '', sortDirection: '' };
     }
-    const needDynamicInsertQuota = _.find(dynamicInsetQuota, item => item.filterType === name);
+    const needDynamicInsertQuota = _.find(dynamicInsertQuota, item => item.filterType === name);
     if (needDynamicInsertQuota) {
       // 当前所触发过滤器下有值并且需要动态插入排序指标，则设置为该排序指标
       if (valueList.length) {
