@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 14:49:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-19 17:30:39
+ * @Last Modified time: 2018-07-20 13:26:27
  * @description 线上销户新建以及驳回后修改通用部分
  */
 
@@ -64,32 +64,46 @@ export default class CancelAccountOLForm extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { action, detailInfo } = props;
+    const { action, detailInfo = {} } = props;
     const isCreate = action === 'CREATE';
+    const {
+      attachment = '',
+      attachmentList = [],
+      basicInfo = {},
+      commet = '',
+    } = detailInfo;
+
+    const {
+      lostDirectionCode = '',
+      stockExchange = '',
+      investVars = {},
+      lostReason = {},
+    } = basicInfo;
+
     this.state = {
       // 用于重新渲染上传组件的key
       uploadKey: data.uuid(),
-      attachment: isCreate ? '' : _.get(detailInfo, 'attachment', ''),
-      attachList: isCreate ? [] : _.get(detailInfo, 'attachmentList'),
-      cust: isCreate ? {} : _.get(detailInfo, 'basicInfo'),
+      attachment: isCreate ? '' : attachment,
+      attachList: isCreate ? [] : attachmentList,
+      cust: isCreate ? {} : basicInfo,
       // 流失去向,由于后端返回的值与字典值不一致，所以此处需要转换下
-      lostDirection: isCreate ? '' : _.lowerFirst(_.get(detailInfo, 'basicInfo.lostDirectionCode')),
+      lostDirection: isCreate ? '' : _.lowerFirst(lostDirectionCode),
       // 证券营业部
-      stockExchange: isCreate ? '' : _.get(detailInfo, 'basicInfo.stockExchange'),
+      stockExchange: isCreate ? '' : _.get(stockExchange),
       // 投资品种
-      investVars: isCreate ? [] : getSelectedKeys(_.get(detailInfo, 'basicInfo.investVars')),
+      investVars: isCreate ? [] : getSelectedKeys(investVars),
       // 是否选择了其他投资品种
-      hasSelecOtherVar: isCreate ? false : isSelectedOtherOption(_.get(detailInfo, 'basicInfo.investVars'), INVEST_OTHER_VAR_KEY),
+      hasSelecOtherVar: isCreate ? false : isSelectedOtherOption(investVars, INVEST_OTHER_VAR_KEY),
       // 其他投资品种详情
       otherVarDetail: isCreate ? '' : _.get(detailInfo, 'basicInfo.investVars.churnInvestOtherDetail'),
       // 流失原因
-      lostReason: isCreate ? [] : getSelectedKeys(_.get(detailInfo, 'basicInfo.lostReason')),
+      lostReason: isCreate ? [] : getSelectedKeys(lostReason),
       // 是否选择了其他原因
-      hasSelectOtherReason: isCreate ? false : isSelectedOtherOption(_.get(detailInfo, 'basicInfo.lostReason'), LOST_REASON_OTHER_KEY),
+      hasSelectOtherReason: isCreate ? false : isSelectedOtherOption(lostReason, LOST_REASON_OTHER_KEY),
       // 其他流失原因的详情
-      otherReasonDetail: isCreate ? '' : _.get(detailInfo, 'basicInfo.lostReason.churnOtheReason'),
+      otherReasonDetail: isCreate ? '' : _.get(lostReason, 'churnOtheReason'),
       // 备注
-      comment: isCreate ? '' : _.get(detailInfo, 'basicInfo.commet'),
+      comment: isCreate ? '' : commet,
     };
 
     this.wrapRef = React.createRef();

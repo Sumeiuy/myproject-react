@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-12 09:02:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-19 18:44:36
+ * @Last Modified time: 2018-07-20 13:31:21
  * @description 线上销户的驳回后修改页面
  */
 
@@ -140,16 +140,24 @@ export default class RejectHome extends Component {
   @autobind
   saveDetailToState() {
     const { detailInfoForUpdate: { basicInfo, attachment } } = this.props;
+    const {
+      lostDirectionCode = '',
+      stockExchange = '',
+      investVars = {},
+      lostReason = {},
+      commet = '',
+    } = basicInfo;
+
     this.setState({
       cust: basicInfo,
       attachment: attachment || '',
-      lostDirection: _.lowerFirst(_.get(basicInfo, 'lostDirectionCode')),
-      stockExchange: basicInfo.stockExchange,
-      investVars: getSelectedKeys(_.get(basicInfo, 'investVars')),
-      otherVarDetail: _.get(basicInfo, 'investVars.churnInvestOtherDetail') || '',
-      lostReason: getSelectedKeys(_.get(basicInfo, 'lostReason')),
-      otherReasonDetail: _.get(basicInfo, 'lostReason.churnOtheReason') || '',
-      comment: _.get(basicInfo, 'commet') || '',
+      lostDirection: _.lowerFirst(lostDirectionCode),
+      stockExchange,
+      investVars: getSelectedKeys(investVars),
+      otherVarDetail: _.get(investVars, 'churnInvestOtherDetail') || '',
+      lostReason: getSelectedKeys(lostReason),
+      otherReasonDetail: _.get(lostReason, 'churnOtheReason') || '',
+      comment: commet,
     });
   }
 
