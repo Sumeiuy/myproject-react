@@ -13,6 +13,7 @@ import { Table } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import styles from './batchAddEmpList.less';
+import logable, { logCommon } from '../../decorators/logable';
 
 export default class BatchAddEmpList extends PureComponent {
   static propTypes = {
@@ -38,6 +39,7 @@ export default class BatchAddEmpList extends PureComponent {
 
   // 手动点击每行选中或取消
   @autobind
+  @logable({ type: 'ViewItem', payload: { name: '批量添加服务经理' } })
   onSelectChange(selectedRowKeys) {
     this.setState({ selectedRowKeys });
   }
@@ -52,6 +54,14 @@ export default class BatchAddEmpList extends PureComponent {
       item => _.find(advisorList, o => o.empId === item),
     );
     saveSelectedBatchEmpList(chooseAllBatchEmpList);
+    // 手动上传日志
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '批量添加服务经理',
+        value: JSON.stringify(chooseAllBatchEmpList),
+      },
+    });
   }
 
   // 分页显示总条数和选中总条数
@@ -108,14 +118,22 @@ export default class BatchAddEmpList extends PureComponent {
     const selectedRowKeysSize = _.size(selectedRowKeys);
     // 数据总个数
     const advisorListTotalNum = _.size(advisorList);
+    const text = advisorListTotalNum !== selectedRowKeysSize ? '全选' : '取消全选';
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
       hideDefaultSelections: true,
       selections: [{
+        text,
         key: 'all-data',
-        text: advisorListTotalNum !== selectedRowKeysSize ? '全选' : '取消全选',
         onSelect: () => {
+          // 手动上传日志
+          logCommon({
+            type: 'Click',
+            payload: {
+              name: text,
+            },
+          });
           if (advisorListTotalNum !== selectedRowKeysSize) {
             // 选中的个数不等于总数，此时显示的是全选，点击全部选中
             this.setState({

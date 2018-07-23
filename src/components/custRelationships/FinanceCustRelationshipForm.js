@@ -22,7 +22,7 @@ import FormItem from './FormItem';
 import CustInfo from './CustInfo';
 import AssociateRelationTable from './AssociateRelationTable';
 import AddRelationshipModal from './AddRelationshipModal';
-
+import logable, { logPV } from '../../decorators/logable';
 import { STOCK_REPURCHASE_OPTIONS, custRelationships } from './config';
 import { data, emp } from '../../helper';
 
@@ -111,6 +111,7 @@ export default class FinanceCustRelationshipForm extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '搜索客户', value: '$args[0]' } })
   handleSearchCustList(keyword) {
     this.props.queryCustList({
       keyword,
@@ -121,6 +122,13 @@ export default class FinanceCustRelationshipForm extends Component {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择客户',
+      value: '$args[0].custName',
+    },
+  })
   handleSelectCust(cust) {
     // 如果切换客户，则提示会将之前的所有数据清空
     // 如果删除客户，则需要清空数据
@@ -154,12 +162,25 @@ export default class FinanceCustRelationshipForm extends Component {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '是否办理股票质押回购业务',
+      value: (instance, args) => {
+        if (args[1] === 'Y') {
+          return '是';
+        }
+        return '否';
+      },
+    },
+  })
   handleStockRepurchaseSelectChange(name, stockRepurchase) {
     this.setState({ stockRepurchase });
     this.props.onChange({ stockRepurchase });
   }
 
   @autobind
+  @logPV({ pathname: '/modal/addRelation', title: '添加客户关联关系' })
   handlAddAssociateRelationBtnClick() {
     // 如果是驳回后修改页面则不需要对客户进行校验
     const { action } = this.props;
@@ -175,6 +196,12 @@ export default class FinanceCustRelationshipForm extends Component {
   }
 
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '删除$args[0].partyName',
+    },
+  })
   handleDelRelationConifrm(record) {
     confirm({
       content: '确定要删除该条关联关系吗？',
@@ -194,6 +221,7 @@ export default class FinanceCustRelationshipForm extends Component {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/updateRelation', title: '修改客户关联关系' })
   handleUpdateRelation(record) {
     this.setState({
       addAssociateModal: true,
