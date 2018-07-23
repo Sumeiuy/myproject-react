@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-12 09:02:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-20 13:31:21
+ * @Last Modified time: 2018-07-23 16:18:40
  * @description 线上销户的驳回后修改页面
  */
 
@@ -332,6 +332,8 @@ export default class RejectHome extends Component {
       searchShow: false,
     };
 
+    const draftInfo = `${detailInfoForUpdate.orgName} - ${detailInfoForUpdate.empName}(${detailInfoForUpdate.empId})`;
+
     return (
       <div className={styles.rejectUpdateHome} ref={this.rejectHomeRef}>
         <div className={styles.rejectHeader}>
@@ -349,7 +351,7 @@ export default class RejectHome extends Component {
           <div className={styles.modContent}>
             <ul className={styles.propertyList}>
               <li className={styles.item}>
-                <InfoItem label="拟稿人" value={detailInfoForUpdate.empName} width="70px" />
+                <InfoItem label="拟稿人" value={draftInfo} width="70px" />
               </li>
               <li className={styles.item}>
                 <InfoItem label="申请时间" value={detailInfoForUpdate.createTime} width="70px" />

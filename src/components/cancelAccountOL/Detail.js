@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 13:57:57
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-23 10:56:44
+ * @Last Modified time: 2018-07-23 15:10:38
  * @description 线上销户详情页面
  */
 import React from 'react';
@@ -32,7 +32,7 @@ export default function Detail(props) {
       buttonStatus,
       attachmentList = [],
       workflowHistoryBeans = [],
-      currentApproval,
+      currentApproval = {},
       createTime,
       statusDesc,
     },
@@ -168,7 +168,6 @@ export default function Detail(props) {
 Detail.propTypes = {
   pushResult: PropTypes.string.isRequired,
   data: PropTypes.object.isRequired,
-  currentId: PropTypes.string.isRequired,
   optionsDict: PropTypes.object.isRequired,
   onPush: PropTypes.func.isRequired,
 };

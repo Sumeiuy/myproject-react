@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 14:49:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-20 17:52:30
+ * @Last Modified time: 2018-07-23 15:42:36
  * @description 线上销户新建以及驳回后修改通用部分
  */
 
@@ -64,50 +64,50 @@ export default class CancelAccountOLForm extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { action, detailInfo = {} } = props;
-    const isCreate = action === 'CREATE';
-    const {
-      attachment = '',
-      attachmentList = [],
-      basicInfo = {},
-      commet = '',
-    } = detailInfo;
-
-    const {
-      lostDirectionCode = '',
-      stockExchange = '',
-      investVars = {},
-      lostReason = {},
-    } = basicInfo;
-
+    const formData = this.getInitialState(props);
     this.state = {
-      // 用于重新渲染上传组件的key
-      uploadKey: data.uuid(),
-      attachment: isCreate ? '' : attachment,
-      attachList: isCreate ? [] : attachmentList,
-      cust: isCreate ? {} : basicInfo,
-      // 流失去向,由于后端返回的值与字典值不一致，所以此处需要转换下
-      lostDirection: isCreate ? '' : _.lowerFirst(lostDirectionCode),
-      // 证券营业部
-      stockExchange: isCreate ? '' : _.get(stockExchange),
-      // 投资品种
-      investVars: isCreate ? [] : getSelectedKeys(investVars),
-      // 是否选择了其他投资品种
-      hasSelecOtherVar: isCreate ? false : isSelectedOtherOption(investVars, INVEST_OTHER_VAR_KEY),
-      // 其他投资品种详情
-      otherVarDetail: isCreate ? '' : _.get(detailInfo, 'basicInfo.investVars.churnInvestOtherDetail'),
-      // 流失原因
-      lostReason: isCreate ? [] : getSelectedKeys(lostReason),
-      // 是否选择了其他原因
-      hasSelectOtherReason: isCreate ?
-        false : isSelectedOtherOption(lostReason, LOST_REASON_OTHER_KEY),
-      // 其他流失原因的详情
-      otherReasonDetail: isCreate ? '' : _.get(lostReason, 'churnOtheReason'),
-      // 备注
-      comment: isCreate ? '' : commet,
+      // 整个 Form 表单数据
+      formData,
     };
 
     this.wrapRef = React.createRef();
+  }
+
+  @autobind
+  getInitialState(props) {
+    const { action, detailInfo = {} } = props;
+    const isCreate = action === 'CREATE';
+    if (isCreate) {
+      return {};
+    }
+    // 附件相关
+    const attach = _.pick(detailInfo, ['attachment', 'attachmentList']);
+    // 客户基础信息有关
+    const cust = detailInfo.basicInfo;
+    return {
+      uploadKey: data.uuid(),
+      ...attach,
+      // 选中的客户信息
+      cust,
+      // 流失去向
+      lostDirection: _.lowerFirst(_.get(cust, 'lostDirectionCode')),
+      // 流失去向如果是转户，则存在证券营业部的名称
+      stockExchange: _.get(cust, 'stockExchange'),
+      // 流失去向如果是投资其他，则存在投资品种
+      investVars: getSelectedKeys(_.get(cust, 'investVars')),
+      // 是否选择了其他投资品种
+      hasSelecOtherVar: isSelectedOtherOption(_.get(cust, 'investVars'), INVEST_OTHER_VAR_KEY),
+      // 其他投资品种详情
+      otherVarDetail: _.get(detailInfo, 'basicInfo.investVars.churnInvestOtherDetail'),
+      // 流失原因
+      lostReason: getSelectedKeys(_.get(cust, 'lostReason')),
+      // 是否选择了其他原因
+      hasSelectOtherReason: isSelectedOtherOption(_.get(cust, 'lostReason'), LOST_REASON_OTHER_KEY),
+      // 其他流失原因的详情
+      otherReasonDetail: _.get(_.get(cust, 'lostReason'), 'churnOtheReason'),
+      // 备注
+      comment: detailInfo.commet,
+    };
   }
 
   @autobind
@@ -117,27 +117,23 @@ export default class CancelAccountOLForm extends PureComponent {
 
   @autobind
   handleUploadCallBack(attachment) {
-    this.setState({ attachment });
-    this.props.onChange({ attachment });
+    const { formData } = this.state;
+    this.setState({
+      formData: {
+        ...formData,
+        attachment,
+      },
+    });
+    this.props.onChange({
+      attachment,
+    });
   }
 
   @autobind
   handleSwitchCust(cust) {
     // 重新渲染附件组件，直接修改上传组件的key值得方式
     this.setState({
-      cust,
-      attachment: '',
-      attachList: [],
-      uploadKey: data.uuid(),
-      lostDirection: '',
-      stockExchange: '',
-      investVars: [],
-      hasSelecOtherVar: false,
-      otherVarDetail: '',
-      lostReason: [],
-      hasSelectOtherReason: false,
-      otherReasonDetail: '',
-      comment: '',
+      formData: { cust },
     });
     this.props.onChange({
       cust,
@@ -168,8 +164,8 @@ export default class CancelAccountOLForm extends PureComponent {
   handleSelectCust(newCust) {
     // 如果切换客户，则提示会将之前的所有数据清空
     // 如果删除客户，则需要清空数据
-    const { cust } = this.state;
-    if (_.isEmpty(newCust) || cust.brokerNumber !== newCust.brokerNumber) {
+    const { formData } = this.state;
+    if (_.isEmpty(newCust) || _.get(formData, 'cust.brokerNumber') !== newCust.brokerNumber) {
       this.handleSwitchCust(newCust);
     }
   }
@@ -198,9 +194,13 @@ export default class CancelAccountOLForm extends PureComponent {
         otherVarDetail: '',
       };
     }
+    const { formData } = this.state;
     this.setState({
-      ...derivedState,
-      lostDirection: value,
+      formData: {
+        ...formData,
+        ...derivedState,
+        lostDirection: value,
+      },
     });
     this.props.onChange({
       ...derivedState,
@@ -210,14 +210,20 @@ export default class CancelAccountOLForm extends PureComponent {
 
   @autobind
   handleStockExchangeChange(e) {
-    this.setState({ stockExchange: e.target.value });
+    const { formData } = this.state;
+    this.setState({
+      formData: {
+        ...formData,
+        stockExchange: e.target.value,
+      },
+    });
     this.props.onChange({ stockExchange: e.target.value });
   }
 
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '投资品种', value: '$args[0]' } })
   handleInvestVarsChange({ value }) {
-    const { hasSelecOtherVar } = this.state;
+    const { formData: { hasSelecOtherVar = false } } = this.state;
     const noSelectOther = _.isEmpty(_.find(value, o => o.key === INVEST_OTHER_VAR_KEY));
     // 如果从没选其他品种-->选择其他品种，则显示详情品种输入框
     // 如果从选了其他品种-->取消选择其他品种，则不显示详情品种输入框
@@ -230,9 +236,13 @@ export default class CancelAccountOLForm extends PureComponent {
         otherVarDetail: '',
       };
     }
+    const { formData } = this.state;
     this.setState({
-      ...otherState,
-      investVars: value,
+      formData: {
+        ...formData,
+        ...otherState,
+        investVars: value,
+      },
     });
     this.props.onChange({
       ...otherState,
@@ -243,7 +253,7 @@ export default class CancelAccountOLForm extends PureComponent {
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '流失原因', value: '$args[0]' } })
   handleLostReasonChange({ value }) {
-    const { hasSelectOtherReason } = this.state;
+    const { formData: { hasSelectOtherReason = false } } = this.state;
     const noSelectOther = _.isEmpty(_.find(value, o => o.key === LOST_REASON_OTHER_KEY));
     // 如果从没选其他品种-->选择其他品种，则显示详情品种输入框
     // 如果从选了其他品种-->取消选择其他品种，则不显示详情品种输入框
@@ -259,9 +269,13 @@ export default class CancelAccountOLForm extends PureComponent {
         otherReasonDetail: '',
       };
     }
+    const { formData } = this.state;
     this.setState({
-      ...otherState,
-      lostReason: value,
+      formData: {
+        ...formData,
+        ...otherState,
+        lostReason: value,
+      },
     });
     this.props.onChange({
       ...otherState,
@@ -271,20 +285,44 @@ export default class CancelAccountOLForm extends PureComponent {
 
   @autobind
   handleOtherVarDetailChange(e) {
-    this.setState({ otherVarDetail: e.target.value });
-    this.props.onChange({ otherVarDetail: e.target.value });
+    const { formData } = this.state;
+    this.setState({
+      formData: {
+        ...formData,
+        otherVarDetail: e.target.value,
+      },
+    });
+    this.props.onChange({
+      otherVarDetail: e.target.value,
+    });
   }
 
   @autobind
   handleOtherLostResonDetailChange(e) {
-    this.setState({ otherReasonDetail: e.target.value });
-    this.props.onChange({ otherReasonDetail: e.target.value });
+    const { formData } = this.state;
+    this.setState({
+      formData: {
+        ...formData,
+        otherReasonDetail: e.target.value,
+      },
+    });
+    this.props.onChange({
+      otherReasonDetail: e.target.value,
+    });
   }
 
   @autobind
   handleCommenteChange(e) {
-    this.setState({ comment: e.target.value });
-    this.props.onChange({ comment: e.target.value });
+    const { formData } = this.state;
+    this.setState({
+      formData: {
+        ...formData,
+        comment: e.target.value,
+      },
+    });
+    this.props.onChange({
+      comment: e.target.value,
+    });
   }
 
   @autobind
@@ -313,12 +351,7 @@ export default class CancelAccountOLForm extends PureComponent {
     const isTransfer = isTransferLostDirection(lostDirection);
     const hasSelectLostDirection = lostDirection !== '';
     const { disablePage } = this.props;
-    const {
-      stockExchange,
-      investVars,
-      otherVarDetail,
-      hasSelecOtherVar,
-    } = this.state;
+    const { formData } = this.state;
 
     if (hasSelectLostDirection && isTransfer) {
       return (
@@ -326,7 +359,7 @@ export default class CancelAccountOLForm extends PureComponent {
           <div className={styles.infoCellInput}>
             <Input
               disabled={disablePage}
-              value={stockExchange}
+              value={formData.stockExchange || ''}
               onChange={this.handleStockExchangeChange}
             />
           </div>
@@ -344,19 +377,19 @@ export default class CancelAccountOLForm extends PureComponent {
               filterName="投资品种"
               defaultLabel="--请选择--"
               data={investVarsOptions}
-              value={investVars}
+              value={formData.investVars || []}
               onChange={this.handleInvestVarsChange}
             />
           </div>
           {
-            !hasSelecOtherVar ? null
+            !formData.hasSelecOtherVar ? null
             :
             (
               <div className={`${styles.infoCellInput} ${styles.ml15} ${styles.autoWidth}`}>
                 <Input
                   disabled={disablePage}
                   placeholder="详细投资品种"
-                  value={otherVarDetail}
+                  value={formData.otherVarDetail || ''}
                   onChange={this.handleOtherVarDetailChange}
                 />
               </div>
@@ -369,17 +402,7 @@ export default class CancelAccountOLForm extends PureComponent {
   }
 
   render() {
-    const {
-      uploadKey,
-      attachment,
-      attachList,
-      cust,
-      lostDirection,
-      lostReason,
-      hasSelectOtherReason,
-      otherReasonDetail,
-      comment,
-    } = this.state;
+    const { formData } = this.state;
     const { action, custList, optionsDict, disablePage } = this.props;
     if (_.isEmpty(optionsDict)) {
       return null;
@@ -391,7 +414,7 @@ export default class CancelAccountOLForm extends PureComponent {
       [styles.reject]: !isCreate,
     });
     // 服务营业部名称
-    const orgName = _.isEmpty(cust) ? '--' : `${cust.orgName}`;
+    const orgName = _.isEmpty(formData.cust) ? '--' : `${formData.cust.orgName}`;
 
     // 流失去向 Options
     const lostDirectionOptions = this.addDefaultOption(optionsDict.custLossDirectionTypeList);
@@ -426,7 +449,7 @@ export default class CancelAccountOLForm extends PureComponent {
               (
                 <div className={styles.rejectCust}>
                   <span className={styles.rejectCustLabel}>客户：</span>
-                  <span className={styles.rejectCustName}>{`${cust.custName}(${cust.custId})`}</span>
+                  <span className={styles.rejectCustName}>{`${formData.cust.custName}(${formData.cust.custId})`}</span>
                 </div>
               )
             }
@@ -448,14 +471,14 @@ export default class CancelAccountOLForm extends PureComponent {
                 optionLabelMapKey="value"
                 optionValueMapKey="key"
                 data={lostDirectionOptions}
-                value={lostDirection}
+                value={formData.lostDirection || ''}
                 onChange={this.handleLosDirectionSelect}
                 getPopupContainer={this.getWrapRef}
               />
             </InfoCell>
           </Col>
           <Col span={14}>
-            {this.renderLostDirectionCascadeDom(lostDirection, investVarsOptions)}
+            {this.renderLostDirectionCascadeDom(formData.lostDirection || '', investVarsOptions)}
           </Col>
         </Row>
         <Row gutter={16} type="flex">
@@ -470,19 +493,19 @@ export default class CancelAccountOLForm extends PureComponent {
                   filterName="流失原因"
                   defaultLabel="--请选择--"
                   data={lostReasonOptions}
-                  value={lostReason}
+                  value={formData.lostReason || []}
                   onChange={this.handleLostReasonChange}
                 />
               </div>
               {
-                !hasSelectOtherReason ? null
+                !formData.hasSelectOtherReason ? null
                 :
                 (
                   <div className={`${styles.infoCellInput} ${styles.ml15} ${styles.autoWidth}`}>
                     <Input
                       disabled={disablePage}
                       placeholder="详细原因"
-                      value={otherReasonDetail}
+                      value={formData.otherReasonDetail || ''}
                       onChange={this.handleOtherLostResonDetailChange}
                     />
                   </div>
@@ -501,7 +524,7 @@ export default class CancelAccountOLForm extends PureComponent {
                 <TextArea
                   disabled={disablePage}
                   rows={5}
-                  value={comment}
+                  value={formData.comment || ''}
                   onChange={this.handleCommenteChange}
                 />
               </div>
@@ -513,10 +536,10 @@ export default class CancelAccountOLForm extends PureComponent {
         <CommonUpload
           edit={!disablePage}
           reformEnable
-          key={uploadKey}
-          attachment={attachment || ''}
+          key={formData.uploadKey || data.uuid()}
+          attachment={formData.attachment || ''}
           needDefaultText={false}
-          attachmentList={attachList}
+          attachmentList={formData.attachList || []}
           uploadAttachment={this.handleUploadCallBack}
         />
       </div>
