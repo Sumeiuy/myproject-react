@@ -77,14 +77,14 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   push: routerRedux.push,
   getCustomerScope: fectchDataFunction(false, effects.customerScope),
-  toggleServiceRecordModal: query => ({
-    type: 'app/toggleServiceRecordModal',
-    payload: query || false,
-  }),
   addServeRecord: fectchDataFunction(true, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
   switchPosition: fectchDataFunction(false, effects.switchPosition),
+  toggleServiceRecordModal: query => ({
+    type: 'app/toggleServiceRecordModal',
+    payload: query || false,
+  }),
 };
 
 const PHONE = 'phone';

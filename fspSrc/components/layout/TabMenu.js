@@ -39,7 +39,7 @@ export default class TabMenu extends PureComponent {
             key={item.id}
             title={item.name}
             className={classnames({
-              [styles.activeItem]: this.isActiveMenu(path, item.path, level),
+              [styles.activeItem]: this.isActiveMenu(path, item, level),
               [styles.subMenuLink]: true,
             })}
           >
@@ -52,7 +52,7 @@ export default class TabMenu extends PureComponent {
           key={item.id}
           className={classnames({
             [styles.subItem]: true,
-            [styles.activeItem]: item.path === path,
+            [styles.activeItem]: this.isActiveMenu(path, item, level, true),
           })}
         >
           <div
@@ -76,10 +76,17 @@ export default class TabMenu extends PureComponent {
     return firstChild;
   }
 
-  isActiveMenu(path, menuPath, level) {
-    let pathForMatch = path;
-    const pathArray = _.split(pathForMatch, '/');
-    pathForMatch = pathArray[level];
+  isActiveMenu(path, menuItem, level, exact = false) {
+    const menuPath = menuItem.path;
+    if (exact) {
+      if (menuPath === path) {
+        return true;
+      }
+      return false;
+    }
+
+    const pathArray = _.split(path, '/');
+    let pathForMatch = pathArray[level];
     // 如果pathname是以fsp开头的，
     if (pathPrefix.test(path)) {
       pathForMatch = pathArray[level + 1]; // 去掉"/fsp"开头
