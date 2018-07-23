@@ -268,8 +268,8 @@ function getSortParam(query, filterParams) {
   let sortsReqList = [DEFAULT_SORT];
   const sortFilter = filterParams[sortType] || {};
   const dateType = sortFilter.dateType || '';
-  if (sortType || sortDirection) {
-    sortsReqList = [sortType, sortDirection, dateType];
+  if (sortType && sortDirection) {
+    sortsReqList = [{ sortType, sortDirection, dateType }];
   }
   return {
     sortsReqList,
