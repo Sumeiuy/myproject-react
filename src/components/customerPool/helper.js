@@ -54,13 +54,14 @@ const helper = {
     const finalFilterList = _.map(filterList, (filterItem) => {
       if (_.isPlainObject(filterItem)) {
         const { defaultVal = {} } = filterItem;
-        const filterValue = _.map(filterItem.value, (item) => {
+        let filterValue = _.map(filterItem.value, (item) => {
           const currentValue = filterData[item];
           if (currentValue) {
             return currentValue;
           }
           return defaultVal[item];
         });
+        filterValue = _.flattenDeep(filterValue);
         return `${filterItem.filterName}${filterInsideSeperator}${filterValue.join(filterValueSeperator)}`;
       }
       return `${filterItem}${filterInsideSeperator}`;

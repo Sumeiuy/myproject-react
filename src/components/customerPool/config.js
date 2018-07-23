@@ -60,6 +60,15 @@ export const sourceFilter = {
       value: ['labelName'],
     }],
   },
+  // 首页潜在业务客户下钻
+  business: [{
+    // 可开通业务
+    filterName: 'unrights',
+    value: ['selectedList'],
+    defaultVal: {
+      selectedList: ['817580', '817030', '817440', '817200', '817470', '817460', '817010', '817270', '817260'],
+    },
+  }],
   // 来源于开通业务: 开通业务、可开通业务过滤器
   numOfCustOpened: [{
     // businessOpened: 开通业务
