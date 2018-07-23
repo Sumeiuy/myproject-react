@@ -12,7 +12,7 @@ export const sortQuotaConfig = [
   },
   {
     sortType: 'openDt',
-    name: '开户时间',
+    name: '激活日期',
   },
   {
     sortType: 'minFee',
