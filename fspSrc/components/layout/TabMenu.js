@@ -14,6 +14,11 @@ import styles from './tabMenu.less';
 import MoreTab from './MoreTab';
 import { pathPrefix } from './config';
 
+const menuStyle = {
+  border: '1px solid #ddd',
+  borderRadius: '0 0 4px 4px',
+};
+
 export default class TabMenu extends PureComponent {
   static propTypes = {
     activeKey: PropTypes.string.isRequired,
@@ -34,7 +39,7 @@ export default class TabMenu extends PureComponent {
             key={item.id}
             title={item.name}
             className={classnames({
-              [styles.activeItem]: this.isActiveMenu(path, item.path, level),
+              [styles.activeItem]: this.isActiveMenu(path, item, level),
               [styles.subMenuLink]: true,
             })}
           >
@@ -47,7 +52,7 @@ export default class TabMenu extends PureComponent {
           key={item.id}
           className={classnames({
             [styles.subItem]: true,
-            [styles.activeItem]: item.path === path,
+            [styles.activeItem]: this.isActiveMenu(path, item, level, true),
           })}
         >
           <div
@@ -71,10 +76,17 @@ export default class TabMenu extends PureComponent {
     return firstChild;
   }
 
-  isActiveMenu(path, menuPath, level) {
-    let pathForMatch = path;
-    const pathArray = _.split(pathForMatch, '/');
-    pathForMatch = pathArray[level];
+  isActiveMenu(path, menuItem, level, exact = false) {
+    const menuPath = menuItem.path;
+    if (exact) {
+      if (menuPath === path) {
+        return true;
+      }
+      return false;
+    }
+
+    const pathArray = _.split(path, '/');
+    let pathForMatch = pathArray[level];
     // 如果pathname是以fsp开头的，
     if (pathPrefix.test(path)) {
       pathForMatch = pathArray[level + 1]; // 去掉"/fsp"开头
@@ -132,7 +144,7 @@ export default class TabMenu extends PureComponent {
     const isActiveLink = menu.id === activeKey;
     const hasHomePage = menu.path !== '';
     const menus = (
-      <Menu>
+      <Menu style={menuStyle}>
         {
           this.getMenus(menu.children)
         }
@@ -146,7 +158,11 @@ export default class TabMenu extends PureComponent {
           [styles.activeLink]: isActiveLink,
         })}
       >
-        <Dropdown placement="bottomLeft" overlay={menus} trigger={['hover']}>
+        <Dropdown
+          placement="bottomLeft"
+          overlay={menus}
+          trigger={['hover']}
+        >
           <div
             tabIndex="0"
             className={styles.text}
@@ -161,7 +177,7 @@ export default class TabMenu extends PureComponent {
             >
               {menu.name}
             </div>
-            <i className="anticon anticon-change" />
+            <span className={styles.iconDown}><i className="anticon anticon-change" /></span>
           </div>
         </Dropdown>
       </div>
@@ -190,9 +206,13 @@ export default class TabMenu extends PureComponent {
           </div>
           {
             closeable ?
-              <div id={menu.id === activeKey ? 'activeTabPane' : null} className={styles.close} onClick={() => this.remove(menu.id)}>
+              <span
+                id={menu.id === activeKey ? 'activeTabPane' : null}
+                className={styles.close}
+                onClick={() => this.remove(menu.id)}
+              >
                 <Icon type="close" />
-              </div> : null
+              </span> : null
           }
         </div>
       </div>

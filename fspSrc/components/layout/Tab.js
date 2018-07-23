@@ -201,8 +201,8 @@ export default class Tab extends PureComponent {
       // 如果当前的tabKey是最后一个tab,向前跳转
       if (panes[panes.length - 1].id === targetKey) {
         pane = changePanes[changePanes.length - 1];
-        // 如前向跳转无path，回到首页
-        if (!pane.path) {
+        // 如前向跳转到层级菜单，直接回到首页
+        if (!pane.path || pane.pid === 'ROOT') {
           pane = changePanes[0];
         }
       } else { // 如果移除的当前tab不是最后一个,向后跳转
@@ -355,10 +355,9 @@ export default class Tab extends PureComponent {
   getAndFixTopMenu(pathname, query, panes, activeKey) {
     let newActiveKey = activeKey;
     let newPanes;
-    let pathForMatch = pathname;
 
-    const pathArray = _.split(pathForMatch, '/');
-    pathForMatch = pathArray[1];
+    const pathArray = _.split(pathname, '/');
+    let pathForMatch = pathArray[1];
 
     // 如果pathname是以fsp开头的，
     if (pathPrefix.test(pathname)) {
