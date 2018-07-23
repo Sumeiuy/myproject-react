@@ -2,23 +2,19 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 13:57:57
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-19 14:50:40
+ * @Last Modified time: 2018-07-23 10:56:44
  * @description 线上销户详情页面
  */
 import React from 'react';
-// import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'antd';
 import _ from 'lodash';
-// import { autobind } from 'core-decorators';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import DetailWrap from '../common/detailWrap';
 import CommonUpload from '../common/biz/CommonUpload';
 import ApproveList from '../common/approveList';
-// import logable from '../../decorators/logable';
-
 
 import { PUSHBTN } from './config';
 import { combineInvestVars, combineLostReason, isTransferLostDirection } from './utils';
@@ -29,20 +25,21 @@ export default function Detail(props) {
   const {
     optionsDict,
     data,
-    currentId,
     data: {
+      id,
       flowId,
       basicInfo,
       buttonStatus,
       attachmentList = [],
       workflowHistoryBeans = [],
+      currentApproval,
       createTime,
       statusDesc,
     },
   } = props;
 
   function handlePushBtnClick() {
-    props.onPush({ id: currentId, flowId });
+    props.onPush({ id, flowId });
   }
 
   const isEmpty = _.isEmpty(data);
@@ -91,9 +88,17 @@ export default function Detail(props) {
   const commet = _.get(basicInfo, 'commet');
   // 拟稿人信息
   const drafter = `${draftOrg} - ${empName} (${empId})`;
+  // 审批记录当前节点信息
+  const approverName = !_.isEmpty(currentApproval) ? `${currentApproval.empName} (${currentApproval.empNum})` : '--';
+  const nowStep = {
+    // 当前步骤
+    stepName: currentApproval.occupation || '--',
+    // 当前审批人
+    handleName: approverName,
+  };
 
   return (
-    <DetailWrap isEmpty={isEmpty} currentId={`${currentId}`} extra={pushButton}>
+    <DetailWrap isEmpty={isEmpty} currentId={`${id}`} extra={pushButton}>
       <div className={styles.module}>
         <InfoTitle head="基本信息" />
         <div className={styles.modContent}>
@@ -153,7 +158,7 @@ export default function Detail(props) {
         </div>
         <div className={styles.module}>
           <InfoTitle head="审批记录" />
-          <ApproveList data={workflowHistoryBeans} />
+          <ApproveList data={workflowHistoryBeans} nowStep={nowStep} />
         </div>
       </div>
     </DetailWrap>

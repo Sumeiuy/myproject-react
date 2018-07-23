@@ -362,13 +362,11 @@ export default class CancelAccountOLHome extends PureComponent {
     );
 
     // 右侧详情
-    const { query: { currentId = '' } } = location;
     const rightPanel = (
       <Detail
         pushResult={pushResult}
         optionsDict={optionsDict}
         data={detailInfo}
-        currentId={currentId}
         onPush={this.handlePushBtnOfDetailClick}
       />
     );
