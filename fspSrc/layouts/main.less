@@ -1,11 +1,12 @@
 @import "../../src/css/variable.less";
 .layout {
   position: relative;
-  background: #e4e4ea;
+  height: 100vh;
+  overflow: auto;
   .main {
     transition: @transition-ease-out;
     .content {
-       height: e("calc(100vh - 138px)");
+       min-height: e("calc(100vh - 139px)");
        border-top: 1px solid transparent;
        border-bottom: 1px solid transparent;
        width: inherit;
@@ -21,7 +22,7 @@
         padding: 0 12px;
       }
       .content {
-        min-height: e("calc(100vh - 138px)");
+        min-height: e("calc(100vh - 139px)");
       }
     }
   }

@@ -12,6 +12,11 @@ import { Menu, Dropdown, Icon } from 'antd';
 import { autobind } from 'core-decorators';
 import styles from './moreTab.less';
 
+const menuStyle = {
+  border: '1px solid #ddd',
+  borderRadius: '0 0 4px 4px/0 0 4px 4px',
+};
+
 export default class MoreTab extends PureComponent {
   static propTypes = {
     activeKey: PropTypes.string.isRequired,
@@ -119,8 +124,9 @@ export default class MoreTab extends PureComponent {
     const { moreTabArray, activeKey } = this.props;
     const tabNum = moreTabArray.length;
     const isActive = !!_.find(moreTabArray, item => item.id === activeKey);
+
     const menus = (
-      <Menu>
+      <Menu style={menuStyle}>
         <Menu.Item key="text" disabled>
           <div className={styles.text}>{`更多（${tabNum}）`}</div>
         </Menu.Item>
@@ -133,7 +139,11 @@ export default class MoreTab extends PureComponent {
 
     return (
       <div className={styles.moreTab}>
-        <Dropdown placement="bottomLeft" overlay={menus} trigger={['hover']}>
+        <Dropdown
+          placement="bottomLeft"
+          overlay={menus}
+          trigger={['hover']}
+        >
           <div className={isActive ? styles.tabActive : null}>
             <div>
               {tabNum}

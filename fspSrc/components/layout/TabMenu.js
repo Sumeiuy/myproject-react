@@ -14,6 +14,11 @@ import styles from './tabMenu.less';
 import MoreTab from './MoreTab';
 import { pathPrefix } from './config';
 
+const menuStyle = {
+  border: '1px solid #ddd',
+  borderRadius: '0 0 4px 4px/0 0 4px 4px',
+};
+
 export default class TabMenu extends PureComponent {
   static propTypes = {
     activeKey: PropTypes.string.isRequired,
@@ -132,7 +137,7 @@ export default class TabMenu extends PureComponent {
     const isActiveLink = menu.id === activeKey;
     const hasHomePage = menu.path !== '';
     const menus = (
-      <Menu>
+      <Menu style={menuStyle}>
         {
           this.getMenus(menu.children)
         }
@@ -146,7 +151,11 @@ export default class TabMenu extends PureComponent {
           [styles.activeLink]: isActiveLink,
         })}
       >
-        <Dropdown placement="bottomLeft" overlay={menus} trigger={['hover']}>
+        <Dropdown
+          placement="bottomLeft"
+          overlay={menus}
+          trigger={['hover']}
+        >
           <div
             tabIndex="0"
             className={styles.text}
@@ -161,7 +170,7 @@ export default class TabMenu extends PureComponent {
             >
               {menu.name}
             </div>
-            <i className="anticon anticon-change" />
+            <span className={styles.iconDown}><i className="anticon anticon-change" /></span>
           </div>
         </Dropdown>
       </div>
@@ -190,9 +199,13 @@ export default class TabMenu extends PureComponent {
           </div>
           {
             closeable ?
-              <div id={menu.id === activeKey ? 'activeTabPane' : null} className={styles.close} onClick={() => this.remove(menu.id)}>
+              <span
+                id={menu.id === activeKey ? 'activeTabPane' : null}
+                className={styles.close}
+                onClick={() => this.remove(menu.id)}
+              >
                 <Icon type="close" />
-              </div> : null
+              </span> : null
           }
         </div>
       </div>

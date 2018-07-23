@@ -11,8 +11,9 @@ import { connect } from 'dva';
 import { Helmet } from 'react-helmet';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
+import { Modal, Input, LocaleProvider } from 'antd';
+import zhCN from 'antd/lib/locale-provider/zh_CN';
 import withRouter from '../../src/decorators/withRouter';
-import { Modal, Input } from 'antd';
 
 import Header from './Header';
 import Footer from './Footer';
@@ -21,8 +22,6 @@ import FSPUnwrap from '../components/layout/FSPUnwrap';
 import { constants } from '../../src/config';
 import ConnectedCreateServiceRecord from '../../src/components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
 
-import { LocaleProvider } from 'antd';
-import zhCN from 'antd/lib/locale-provider/zh_CN';
 import ContextProvider from '../../src/layouts/ContextProvider';
 import IEWarningModal from '../../src/components/common/IEWarningModal';
 import ErrorBoundary from '../../src/layouts/ErrorBoundary';
