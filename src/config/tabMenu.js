@@ -161,41 +161,47 @@ const newOpenTabConfig = [
 export default newOpenTabConfig;
 
 // 默认当前激活的主导航菜单项
-export const indexPaneKey = 'FSP_NEW_HOMEPAGE';
+const indexPaneKey = 'FSP_NEW_HOMEPAGE';
 
 // 主导航里面的嵌套导航菜单
-export const defaultMenu = [
+const defaultMenu = [
   {
-    path: 'customerPool',
+    path: '/customerPool',
     name: '客户中心',
   },
   {
-    path: 'taskCenter',
+    path: '/taskCenter',
     name: '任务中心',
   },
   {
-    path: 'productCenter',
+    path: '/productCenter',
     name: '产品中心',
   },
   {
-    path: 'serviceCenter',
+    path: '/serviceCenter',
     name: '服务中心',
   },
   {
-    path: 'strategyCenter',
+    path: '/strategyCenter',
     name: '策略中心',
   },
   {
-    path: 'businessApplyment',
+    path: '/businessApplyment',
     name: '业务申请',
   },
   {
-    path: 'statisticalQuery',
+    path: '/statisticalQuery',
     name: '统计查询',
   },
   {
-    path: 'sysOperate',
+    path: '/sysOperate',
     name: '运维管理',
   },
 ];
+
+export {
+  newOpenTabConfig,
+  indexPaneKey,
+  defaultMenu,
+};
 

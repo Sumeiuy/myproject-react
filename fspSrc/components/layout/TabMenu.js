@@ -12,6 +12,7 @@ import { Menu, Dropdown, Icon } from 'antd';
 import _ from 'lodash';
 import styles from './tabMenu.less';
 import MoreTab from './MoreTab';
+import { pathPrefix } from './config';
 
 export default class TabMenu extends PureComponent {
   static propTypes = {
@@ -24,7 +25,7 @@ export default class TabMenu extends PureComponent {
     path: PropTypes.string.isRequired,
   }
 
-  getMenus(array, level = 1) {
+  getMenus(array, level = 2) {
     const { path } = this.props;
     return array.map((item) => {
       if (item.children && !_.isEmpty(item.children)) {
@@ -72,14 +73,13 @@ export default class TabMenu extends PureComponent {
 
   isActiveMenu(path, menuPath, level) {
     let pathForMatch = path;
-    // 如果pathname是以fsp开头的，
-    if (/^\/fsp/.test(pathForMatch)) {
-      pathForMatch = _.slice(pathForMatch, 5); // 去掉"/fsp/"开头
-    }
-
     const pathArray = _.split(pathForMatch, '/');
-
-    if (menuPath.indexOf(pathArray[level]) > -1) {
+    pathForMatch = pathArray[level];
+    // 如果pathname是以fsp开头的，
+    if (pathPrefix.test(path)) {
+      pathForMatch = pathArray[level + 1]; // 去掉"/fsp"开头
+    }
+    if (menuPath.indexOf(pathForMatch) > -1) {
       return true;
     }
 

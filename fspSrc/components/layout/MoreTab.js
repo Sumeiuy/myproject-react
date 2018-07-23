@@ -27,7 +27,8 @@ export default class MoreTab extends PureComponent {
     const { activeKey, path } = this.props;
     // 可关闭 tab 通过 activeKey 判断是否高亮
     // 递归菜单通过 path 判断是否高亮
-    const isActive = menuItem.id === activeKey || (menuItem.path !== '' && path.indexOf(menuItem.path) !== -1);
+    const isActive =
+      menuItem.id === activeKey || (menuItem.path === path);
 
     return (
       <Menu.Item

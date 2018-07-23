@@ -93,14 +93,6 @@ const PHONE = 'phone';
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Main extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      // 隔离墙modal是否可见
-      isolationWallModalVisible: false,
-    };
-  }
-
   static propTypes = {
     children: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
@@ -133,6 +125,14 @@ export default class Main extends PureComponent {
     serviceRecordModalVisibleOfId: '',
     serviceRecordModalVisibleOfName: '',
     loadingForceFull: false,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 隔离墙modal是否可见
+      isolationWallModalVisible: false,
+    };
   }
 
   componentDidMount() {
@@ -193,6 +193,7 @@ export default class Main extends PureComponent {
       serviceRecordInfo,
       taskFeedbackList,
     } = this.props;
+
     const { caller = '' } = serviceRecordInfo;
     // 当前服务记录弹窗是否由电话调起的
     const isPhoneCall = caller === PHONE;
