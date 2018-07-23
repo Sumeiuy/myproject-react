@@ -3,11 +3,14 @@
  */
 import _ from 'lodash';
 import moment from 'moment';
-import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, PATHNAME_PRDUCTCENTER } from './config';
+import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, CONFIG_TAB_PRODUCTCENTER } from './config';
+import { dynamicInsertQuota } from '../customerPool/list/sort/config';
 import filterMark from '../../config/filterSeperator';
-import { openFspTab } from '../../utils';
+import { openFspTab, openFspIframeTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
 import { logCommon } from '../../decorators/logable';
+
+const DEFAULT_SORT_DIRE = 'desc';
 
 function transformCycle(cycle) {
   const transToTime = period => ({
@@ -64,6 +67,18 @@ const helper = {
     });
     return finalFilterList.join(filterSeperator);
   },
+  getSortParam(filter) {
+    const filters = urlHelper.transfromFilterValFromUrl(filter);
+    const finalSortQuota = _.find(
+      dynamicInsertQuota,
+      item => _.has(filters, item.filterType),
+    );
+    const { sortType = '' } = finalSortQuota || {};
+    return {
+      sortType,
+      sortDirection: DEFAULT_SORT_DIRE,
+    };
+  },
   /**
    * 跳转到360服务记录页面
    * @param {*object} itemData 当前列表item数据
@@ -109,16 +124,12 @@ const helper = {
    */
   openProductDetailPage({ data, routerAction }) {
     // upPrdtTypeId：产品所属类型id, code：产品代码
-    const { upPrdtTypeId, code } = data;
-    const pathname = PATHNAME_PRDUCTCENTER[upPrdtTypeId];
-    const query = { prdtCode: code };
+    const { upPrdtTypeId, code, name } = data;
+    const param = CONFIG_TAB_PRODUCTCENTER[upPrdtTypeId];
+    const pathname = '/htsc-product-base/htsc-prdt-web/index.html/?_#/productDetailPage';
+    const query = { prdtId: code };
     const url = `${pathname}?${urlHelper.stringify(query)}`;
-    const param = {
-      id: 'FSP_PUBLIC_FUND_TAB',
-      title: '产品详情',
-      forceRefresh: true,
-    };
-    openFspTab({
+    openFspIframeTab({
       routerAction,
       url,
       query,
@@ -129,7 +140,7 @@ const helper = {
     logCommon({
       type: 'Click',
       payload: {
-        name: `客户列表${data.name}下钻到产品中心`,
+        name: `客户列表${name}下钻到产品中心`,
         value: code,
       },
     });

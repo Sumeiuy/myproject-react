@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-18 16:01:14
+ * @Last Modified time: 2018-07-19 17:49:55
  * @description 任务管理首页
  */
 
@@ -37,14 +37,11 @@ import {
   SYSTEMCODE,
   STATE_EXECUTE_CODE,
   STATE_ALL_CODE,
-  CREATE_TIME,
-  END_TIME,
-  CREATE_TIME_KEY,
-  END_TIME_KEY,
   // 三个视图左侧任务列表的请求入参，在config里面配置，后续如果需要新增，或者删除某个param，
   // 请在config里面配置QUERY_PARAMS
   QUERY_PARAMS,
   defaultPerformerViewCurrentTab,
+  DEFAULTSORT_VIEW,
 } from './config';
 
 // 空函数
@@ -63,11 +60,6 @@ const ZL_QUREY_APPROVAL_BTN_ID = '200000';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-
-// 创建者视图的排序默认降序排序
-const SORT_DESC = 'desc';
-// 执行者视图和管理者视图默认升序排序
-const SORT_ASC = 'asc';
 
 @withRouter
 export default class PerformerView extends PureComponent {
@@ -839,24 +831,12 @@ export default class PerformerView extends PureComponent {
   }
 
   /**
-   * 获取sortKey，createTimeSort或者endTimeSort
-   * 获取sortContent，创建时间或者结束时间
+   * 获取sortKey，createTimeSort或者endTimeSort、executionModeSort
+   * 获取sortContent，创建时间或者结束时间、执行方式
    */
   @autobind
   getSortConfig(viewType) {
-    let sortKey = CREATE_TIME_KEY;
-    let sortContent = CREATE_TIME;
-    let sortDirection = SORT_DESC;
-    if (viewType === EXECUTOR || viewType === CONTROLLER) {
-      sortKey = END_TIME_KEY;
-      sortContent = END_TIME;
-      sortDirection = SORT_ASC;
-    }
-    return {
-      sortKey,
-      sortContent,
-      sortDirection,
-    };
+    return DEFAULTSORT_VIEW[viewType];
   }
 
   // url中currentId改变后驱动右侧的变化
@@ -900,11 +880,11 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   addSortParam(currentViewType, query) {
-    const { sortKey, sortDirection } = this.getSortConfig(currentViewType);
+    const { sortType, defaultDirection } = this.getSortConfig(currentViewType);
     if (!_.isEmpty(query.sortKey) && !_.isEmpty(query.sortDirection)) {
       return { [query.sortKey]: query.sortDirection };
     }
-    return { [sortKey]: sortDirection };
+    return { [sortType]: defaultDirection };
   }
 
   /**
@@ -1039,15 +1019,23 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   renderFixedTitle() {
-    const { location: { query: { missionViewType } } } = this.props;
+    const {
+      location: {
+        query: {
+          missionViewType,
+          sortDirection: querySortDirection,
+          sortKey: querySortKey,
+        },
+      },
+    } = this.props;
     const viewType = getViewInfo(missionViewType).currentViewType;
-    const { sortKey, sortContent, sortDirection } = this.getSortConfig(viewType);
+    const { sortType, name, defaultDirection } = this.getSortConfig(viewType);
     return (
       <FixedTitle
-        sortContent={sortContent}
-        sortDirection={sortDirection}
+        sortContent={name}
+        sortDirection={querySortDirection || defaultDirection}
         onSortChange={this.handleSortChange}
-        sortKey={sortKey}
+        sortKey={querySortKey || sortType}
         viewType={viewType}
       />
     );

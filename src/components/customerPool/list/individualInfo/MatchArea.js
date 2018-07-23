@@ -5,7 +5,7 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-17 13:09:41
+ * @Last Modified time: 2018-07-23 11:36:51
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -540,7 +540,6 @@ export default class MatchArea extends PureComponent {
           <span className={styles.serviceRecord}>
             <i className="label">服务记录：</i>
             <i dangerouslySetInnerHTML={{ __html: markedEle }} />
-            <i>...</i>
           </span>
           <span
             className={styles.more}

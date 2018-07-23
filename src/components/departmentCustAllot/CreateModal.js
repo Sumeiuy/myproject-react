@@ -413,6 +413,8 @@ export default class CreateModal extends PureComponent {
       pageNum: 1,
       pageSize: 10,
       type: allotType,
+      // 个人职位
+      positionType: 1,
     }).then(() => {
       const { manageData: { list = [] } } = this.props;
       this.setState({

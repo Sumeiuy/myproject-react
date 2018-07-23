@@ -111,8 +111,8 @@ const config = {
         title: '服务经理',
       },
       {
-        dataIndex: 'isDepTgFlag',
-        key: 'isDepTgFlag',
+        dataIndex: 'tgFlag',
+        key: 'tgFlag',
         title: '是否入岗投顾',
       },
     ],
