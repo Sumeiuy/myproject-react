@@ -266,7 +266,7 @@ const primaryMenu = [
     type: 'menu',
     action: '',
     path: '',
-    chidren: [
+    children: [
       {
         id: 'FSP_COMMISSION_ADJUSTMENT',
         name: '服务订阅',
@@ -804,7 +804,7 @@ const primaryMenu = [
     type: 'menu',
     action: '',
     path: '',
-    chidren: [
+    children: [
       {
         id: 'FSP_SYSTEM_MANAGE_PARAMETER',
         name: '平台参数设置',

@@ -53,7 +53,7 @@ function recursiveRouter(parentPath, routerData) {
 }
 
 // 路由器
-const Routers = ({ history, app}) => {
+const Routers = ({ history, app }) => {
   const routerData = getRouterData(app);
   return (
     <ConnectedRouter history={history}>
@@ -78,7 +78,7 @@ const Routers = ({ history, app}) => {
         </Switch>
       </App>
     </ConnectedRouter>
-  )
+  );
 };
 
 Routers.propTypes = {

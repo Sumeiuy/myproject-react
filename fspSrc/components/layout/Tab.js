@@ -11,10 +11,11 @@ import _ from 'lodash';
 import { sessionStore } from '../../../src/config';
 import TabMenu from './TabMenu';
 import menuConfig from '../../../src/config/menu';
-import newOpenTabConfig, { indexPaneKey, defaultMenu } from '../../../src/config/tabMenu';
+import { newOpenTabConfig, indexPaneKey, defaultMenu } from '../../../src/config/tabMenu';
 import { enableSessionStorage } from '../../../src/config/constants';
 import withRouter from '../../../src/decorators/withRouter';
 import { traverseMenus } from '../utils/tab';
+import { pathPrefix } from './config';
 
 // 获取最终的pane数组
 function getFinalPanes(panes, addPanes = [], removePanes = []) {
@@ -47,9 +48,9 @@ function splitPanesArray(panes, menuWidth) {
 }
 
 // 获取本地缓存的tab菜单
-function getLocalPanes(pathname) {
+function getLocalPanes(href) {
   if (enableSessionStorage) {
-    return sessionStore.get('pathname') === pathname ?
+    return sessionStore.get('href') === href ?
       sessionStore.get('panes') :
       [];
   }
@@ -64,11 +65,11 @@ function tureAndstore(item, callback) {
 }
 
 // 用来本地缓存tab信息的方法函数
-function storeTabInfo({ activeKey, panes, pathname }) {
+function storeTabInfo({ activeKey, panes, href }) {
   if (enableSessionStorage) {
     tureAndstore(activeKey, sessionStore.set.bind(sessionStore, 'activeKey'));
     tureAndstore(panes, sessionStore.set.bind(sessionStore, 'panes'));
-    tureAndstore(pathname, sessionStore.set.bind(sessionStore, 'pathname'));
+    tureAndstore(href, sessionStore.set.bind(sessionStore, 'href'));
   }
 }
 
@@ -84,7 +85,7 @@ export default class Tab extends PureComponent {
     // 初始化菜单的宽度为视口宽度
     this.menuWidth = document.documentElement.clientWidth;
 
-    const { panes, activeKey } = this.getInitialPanesWithPathname(this.props.location);
+    const { panes, activeKey } = this.getInitialPanesWithPathname(props.location);
 
     this.state = {
       forceRender: false, // 这个标志的作用是用来在window.onResize方法中强制tab执行render方法
@@ -100,7 +101,12 @@ export default class Tab extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { pathname, query, state } } = nextProps;
+    const { location } = nextProps;
+    const {
+      pathname,
+      query,
+      state,
+    } = location;
     const {
       activeKey,
       addPanes = [],
@@ -130,7 +136,7 @@ export default class Tab extends PureComponent {
         storeTabInfo({
           activeKey: finalActiveKey,
           panes,
-          pathname,
+          href: window.location.href,
         });
 
         this.setState({
@@ -143,7 +149,7 @@ export default class Tab extends PureComponent {
         // 保存tab菜单信息
         storeTabInfo({
           panes: shouldStayPanes,
-          pathname,
+          href: window.location.href,
         });
 
         this.setState({
@@ -224,11 +230,10 @@ export default class Tab extends PureComponent {
   }
 
   getInitialPanesWithPathname(location) {
-    const { pathname } = location;
     // 本地缓存只是为了刷新页面时，可以保持打开页面
     // 对于手动输入地址的功能则不能完善支持
     if (enableSessionStorage) {
-      const localPanes = getLocalPanes(pathname);
+      const localPanes = getLocalPanes(window.location.href);
       if (!_.isEmpty(localPanes)) {
         return {
           panes: localPanes,
@@ -275,7 +280,7 @@ export default class Tab extends PureComponent {
   // pathname 匹配一个新打开的pane页面
   getPanesFromTabCongfig(location, fixPanes, editPane) {
     const { pathname, query } = location;
-    const currentPane = _.find(newOpenTabConfig, pane => pane.pathname === pathname);
+    const currentPane = _.find(newOpenTabConfig, pane => pane.path === pathname);
     const newActiveKey = currentPane.id;
     let newPanes = [];
 
@@ -314,11 +319,18 @@ export default class Tab extends PureComponent {
     let isTopMenu = false;
     let newActiveKey = '';
 
+    if (pathname === '/') {
+      return {
+        newPanes: fixPanes,
+        newActiveKey: fixPanes[0].id,
+      };
+    }
+
     // 找到并修正对应的pane
     // 这里唯一不足之处在于traverseMenus不是纯函数，但是纯函数的代价太高
     const newPanes = traverseMenus(fixPanes, (pane, i, array) => {
       // 找到当前path对应的pane进行修正
-      if (pane.pathname === pathname) {
+      if (pane.path === pathname) {
         const currentPane = array[i];
         currentPane.query = query;
         if (currentPane.pid === 'ROOT') {
@@ -343,15 +355,16 @@ export default class Tab extends PureComponent {
   getAndFixTopMenu(pathname, query, panes, activeKey) {
     let newActiveKey = activeKey;
     let newPanes;
-
     let pathForMatch = pathname;
-    // 如果pathname是以fsp开头的，
-    if (/^\/fsp/.test(pathname)) {
-      pathForMatch = _.slice(pathname, 5); // 去掉"/fsp/"开头
-    }
-    const pathArray = _.split(pathForMatch, '/');
 
-    const topMenu = _.find(defaultMenu, menu => menu.path === pathArray[0]);
+    const pathArray = _.split(pathForMatch, '/');
+    pathForMatch = pathArray[1];
+
+    // 如果pathname是以fsp开头的，
+    if (pathPrefix.test(pathname)) {
+      pathForMatch = pathArray[2]; // 去掉"/fsp/"开头
+    }
+    const topMenu = _.find(defaultMenu, menu => menu.path.indexOf(pathForMatch) > -1);
 
     if (topMenu) {
       newPanes = _.map(panes, (pane) => {
@@ -405,7 +418,7 @@ export default class Tab extends PureComponent {
   }
 
   findPaneFromTabConfig({ pathname }) {
-    return _.find(newOpenTabConfig, pane => pane.pathname === pathname);
+    return _.find(newOpenTabConfig, pane => pane.path === pathname);
   }
 
   render() {
