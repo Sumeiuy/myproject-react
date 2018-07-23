@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-07-19 16:28:39
+ * @Last Modified time: 2018-07-20 13:21:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -142,23 +142,19 @@ export default class CreateModal extends PureComponent {
     const { dict: { accountStatusList = [] } } = this.props;
     const titleList = [...custTitleList];
     // 客户
-    const custNameIndex = _.findIndex(titleList, o => o.key === KEY_CUSTNAME);
-    // 状态
-    const statusIndex = _.findIndex(titleList, o => o.key === KEY_STATUS);
-    // 原服务经理
-    const oldEmpNameIndex = _.findIndex(titleList, o => o.key === KEY_OLDEMPNAME);
-    // 是否是投顾
-    const isTouguIndex = _.findIndex(titleList, o => o.key === KEY_ISTOUGU);
-    // 开发经理
-    const dmNameIndex = _.findIndex(titleList, o => o.key === KEY_DMNAME);
-    titleList[custNameIndex].render = (text, record) => (
+    const custNameColumn = _.find(titleList, o => o.key === KEY_CUSTNAME);
+    custNameColumn.render = (text, record) => (
       <div>{text} ({record.custId})</div>
     );
-    titleList[statusIndex].render = (text) => {
+    // 状态
+    const statusColumn = _.find(titleList, o => o.key === KEY_STATUS);
+    statusColumn.render = (text) => {
       const statusItem = _.filter(accountStatusList, o => o.key === text);
       return (<div>{statusItem.length ? statusItem[0].value : ''}</div>);
     };
-    titleList[oldEmpNameIndex].render = (text, record) => (
+    // 原服务经理
+    const oldEmpNameColumn = _.find(titleList, o => o.key === KEY_OLDEMPNAME);
+    oldEmpNameColumn.render = (text, record) => (
       <div>
         {
           text ?
@@ -168,7 +164,9 @@ export default class CreateModal extends PureComponent {
         }
       </div>
     );
-    titleList[isTouguIndex].render = (text, record) => {
+    // 是否是投顾
+    const isTouguColumn = _.find(titleList, o => o.key === KEY_ISTOUGU);
+    isTouguColumn.render = (text, record) => {
       const isTouGu = text ? '是' : '否';
       return (<div>
         {
@@ -179,7 +177,9 @@ export default class CreateModal extends PureComponent {
         }
       </div>);
     };
-    titleList[dmNameIndex].render = (text, record) => (
+    // 开发经理
+    const dmNameColumn = _.find(titleList, o => o.key === KEY_DMNAME);
+    dmNameColumn.render = (text, record) => (
       <div>
         {
           text ?
@@ -189,12 +189,12 @@ export default class CreateModal extends PureComponent {
         }
       </div>
     );
-    titleList[titleList.length] = {
+    titleList.push({
       dataIndex: 'operate',
       key: 'operate',
       title: '操作',
       render: (text, record) => this.renderPopconfirm(CUST, record),
-    };
+    });
     return titleList;
   }
 
@@ -503,7 +503,6 @@ export default class CreateModal extends PureComponent {
   // 单个服务经理的 option 渲染
   @autobind
   renderOption(item) {
-    console.log('item', item);
     const optionValue = `${item.empName} (${item.empId})`;
     const inputValue = `${item.empName} ${item.empId} ${item.orgName} ${item.postnType}`;
     return (

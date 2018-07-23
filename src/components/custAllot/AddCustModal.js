@@ -135,15 +135,15 @@ export default class AddCustModal extends PureComponent {
   getColumnsCustTitle() {
     const statusList = _.get(this.context, 'dict.accountStatusList') || [];
     const newTitleList = [...custTitleList];
-    const statusIndex = _.findIndex(newTitleList, o => o.key === KEY_STATUS);
-    // 是否是投顾
-    const isTouguIndex = _.findIndex(newTitleList, o => o.key === KEY_ISTOUGU);
-    newTitleList[statusIndex].render = (text) => {
+    const statusColumn = _.find(newTitleList, o => o.key === KEY_STATUS);
+    statusColumn.render = (text) => {
       const statusItem = _.filter(statusList, o => o.key === text);
       const statusText = statusItem.length ? statusItem[0].value : '';
       return (<div title={statusText}>{statusText}</div>);
     };
-    newTitleList[isTouguIndex].render = (text, record) => {
+    // 是否是投顾
+    const isTouguColumn = _.find(newTitleList, o => o.key === KEY_ISTOUGU);
+    isTouguColumn.render = (text, record) => {
       const isTouGu = text ? '是' : '否';
       return (<div>
         {

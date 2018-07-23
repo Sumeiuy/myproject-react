@@ -29,7 +29,7 @@ const empOrgId = emp.getOrgId();
 const empPstnId = emp.getPstnId();
 
 // 表格标题
-const { titleList: { notifiCust } } = config;
+const { titleList: { notifiCust }, allotType } = config;
 const PAGE_SIZE = 20;
 const KEY_CUSTNAME = 'custName';
 
@@ -52,7 +52,6 @@ const mapDispatchToProps = {
 @withRouter
 @Barable
 @fspPatch()
-
 export default class DepartmentCustAllotNotifies extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -76,6 +75,7 @@ export default class DepartmentCustAllotNotifies extends PureComponent {
       orgId: empOrgId,
       positionId: empPstnId,
       pageType: 'success',
+      type: allotType,
     };
     queryAddedCustList(payload);
   }
@@ -84,8 +84,8 @@ export default class DepartmentCustAllotNotifies extends PureComponent {
   @autobind
   getColumnsTitle() {
     const newTitleList = [...notifiCust];
-    const custNameIndex = _.findIndex(newTitleList, o => o.key === KEY_CUSTNAME);
-    newTitleList[custNameIndex].render = (text, record) => (
+    const custNameColumn = _.find(newTitleList, o => o.key === KEY_CUSTNAME);
+    custNameColumn.render = (text, record) => (
       <div>{text}({record.custId})</div>
     );
     return newTitleList;
@@ -109,6 +109,7 @@ export default class DepartmentCustAllotNotifies extends PureComponent {
       orgId: empOrgId,
       positionId: empPstnId,
       pageType: 'success',
+      type: allotType,
     };
     queryAddedCustList(payload);
   }

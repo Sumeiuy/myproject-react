@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 14:30:12
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-07-18 17:40:57
+ * @Last Modified time: 2018-07-23 14:25:03
  */
 import { custAllot as api } from '../api';
 
@@ -156,7 +156,7 @@ export default {
     * queryAddedCustList({ payload }, { call, put }) {
       const response = yield call(api.queryAddedCustList, payload);
       let type = 'queryAddedCustListSuccess';
-      if (payload.type) {
+      if (payload.isDetail) {
         type = 'queryDetailAddedCustListSuccess';
       }
       yield put({

@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 17:03:23
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-14 16:48:26
+ * @Last Modified time: 2018-07-23 15:02:39
  */
 const config = {
     // 分公司客户分配
@@ -39,7 +39,8 @@ const config = {
     ],
   },
   // 子类型 type
-  subType: '0703',
+  subType: '0704',
+  allotType: 'department',
   // 清除数据类型
   clearDataArray: ['clearSearchData', 'clearAllData', 'clearAddedCustData'],
   // 分配规则
@@ -86,11 +87,6 @@ const config = {
         title: '状态',
       },
       {
-        dataIndex: 'oldOrgName',
-        key: 'oldOrgName',
-        title: '原服务营业部',
-      },
-      {
         dataIndex: 'oldEmpName',
         key: 'oldEmpName',
         title: '原服务经理',
@@ -105,11 +101,6 @@ const config = {
         key: 'dmName',
         title: '介绍人',
       },
-      {
-        dataIndex: 'totalAsset',
-        key: 'totalAsset',
-        title: '总资产（元）',
-      },
     ],
     // 新建弹窗中显示的服务经理列表标题
     // 新建弹窗--点击添加弹窗中的服务经理列表标题
@@ -120,14 +111,9 @@ const config = {
         title: '服务经理',
       },
       {
-        dataIndex: 'orgName',
-        key: 'orgName',
-        title: '所属营业部',
-      },
-      {
-        dataIndex: 'postnType',
-        key: 'postnType',
-        title: '职位类型',
+        dataIndex: 'isDepTgFlag',
+        key: 'isDepTgFlag',
+        title: '是否入岗投顾',
       },
     ],
     approvalColumns: [
@@ -160,12 +146,6 @@ const config = {
         width: 100,
       },
       {
-        dataIndex: 'oldOrgName',
-        key: 'oldOrgName',
-        title: '原服务营业部',
-        width: 160,
-      },
-      {
         dataIndex: 'oldEmpName',
         key: 'oldEmpName',
         title: '原服务经理',
@@ -178,28 +158,10 @@ const config = {
         width: 160,
       },
       {
-        dataIndex: 'totalAsset',
-        key: 'totalAsset',
-        title: '总资产(元)',
-        width: 120,
-      },
-      {
-        dataIndex: 'newOrgName',
-        key: 'newOrgName',
-        title: '新服务营业部',
-        width: 160,
-      },
-      {
         dataIndex: 'newEmpName',
         key: 'newEmpName',
         title: '新服务经理',
-        width: 160,
-      },
-      {
-        dataIndex: 'positionType',
-        key: 'positionType',
-        title: '职位类型',
-        width: 100,
+        width: 180,
       },
     ],
     // 提醒页面客户列表标题
@@ -208,16 +170,6 @@ const config = {
         dataIndex: 'custName',
         key: 'custName',
         title: '客户',
-      },
-      {
-        dataIndex: 'oldOrgName',
-        key: 'oldOrgName',
-        title: '原服务营业部',
-      },
-      {
-        dataIndex: 'totalAsset',
-        key: 'totalAsset',
-        title: '总资产（元）',
       },
       {
         dataIndex: 'newOrgName',

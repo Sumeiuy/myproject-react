@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-14 10:53:10
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-07-20 14:48:39
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -107,7 +107,7 @@ const emp = {
   },
 
   /**
-   * 判断当前登录人部门是否是分公司
+   * 判断当前登录人部门是否是营业部
    * @author LiuJianShu
    * @returns {Boolean}
    */

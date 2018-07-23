@@ -3,34 +3,29 @@
  * @Author: Liujianshu
  * @Date: 2018-05-24 10:13:17
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-14 15:54:21
+ * @Last Modified time: 2018-07-20 15:01:30
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { SingleFilter, MultiFilter, RangeFilter } from 'lego-react-filter/src';
-import { TreeFilter as HTTreeFilter } from 'lego-tree-filter/src';
 import _ from 'lodash';
 import { message } from 'antd';
 
 import CommonModal from '../common/biz/CommonModal';
-// import Button from '../../components/common/Button';
 import Pagination from '../../components/common/Pagination';
 import CommonTable from '../../components/common/biz/CommonTable';
-import commonConfirm from '../common/confirm_';
 import Icon from '../common/Icon';
-import logable from '../../decorators/logable';
 import { emp } from '../../helper';
 import config from './config';
 import styles from './addCustModal.less';
 
 // 表头
-const { titleList: { cust: custTitleList }, clearDataArray } = config;
+const { titleList: { cust: custTitleList }, clearDataArray, allotType } = config;
 // 登陆人的组织ID
 const empOrgId = emp.getOrgId();
-// const empOrgId = 'ZZ001041093';
+// const empOrgId = 'ZZ001041051';
 const NO_VALUE = '不限';
 const INIT_PAGENUM = 1;
 const INIT_PAGESIZE = 10;
@@ -43,8 +38,8 @@ const KEY_STATUS = 'status';
 // 是否入岗投顾
 const KEY_ISTOUGU = 'touGu';
 // 添加客户报错信息
-const ERROR_MESSAGE_ALL_COUNT = `导入失败，导入的客户数超过一笔申请单最大客户数${LIMIT_ALL_COUNT}条，请发起多笔申请单分次导入！`;
-const ERROR_MESSAGE_COUNT = `一次勾选的客户数超过${LIMIT_COUNT}条，请分多次添加。`;
+const ERROR_MESSAGE_ALL_COUNT = `添加失败，申请单客户列表客户数超过最大数量${LIMIT_ALL_COUNT}条。`;
+const ERROR_MESSAGE_COUNT = `添加失败，一次勾选的客户数超过${LIMIT_COUNT}条，请分多次添加。`;
 export default class AddCustModal extends PureComponent {
   static propTypes = {
     // 已添加的客户数据
@@ -89,8 +84,6 @@ export default class AddCustModal extends PureComponent {
       // 本年净佣金
       annualAsset: [],
       pageNum: INIT_PAGENUM,
-      // 客户关键字
-      custKeyword: '',
       // 服务经理关键字
       smKeyword: '',
       // 介绍人关键字
@@ -100,15 +93,39 @@ export default class AddCustModal extends PureComponent {
     };
   }
 
-
   componentDidMount() {
     // 获取客户
     this.searchCustList();
   }
 
+  // 生成客户头部列表
+  @autobind
+  getColumnsCustTitle() {
+    const statusList = _.get(this.context, 'dict.accountStatusList') || [];
+    const newTitleList = [...custTitleList];
+    // 状态列
+    const statusColumn = _.find(newTitleList, o => o.key === KEY_STATUS);
+    statusColumn.render = (text) => {
+      const statusItem = _.filter(statusList, o => o.key === text);
+      const statusText = statusItem.length ? statusItem[0].value : '';
+      return (<div title={statusText}>{statusText}</div>);
+    };
+    // 是否是投顾
+    const isTouguColumn = _.find(newTitleList, o => o.key === KEY_ISTOUGU);
+    isTouguColumn.render = (text, record) => {
+      const isTouGu = text ? '是' : '否';
+      return (<div>
+        {
+          record.oldEmpName ? isTouGu : null
+        }
+      </div>);
+    };
+    return newTitleList;
+  }
+
   // 选择客户
   @autobind
-  onSelectChange(record, selected) {
+  handleSelectChange(record, selected) {
     const { selectedRows } = this.state;
     // 选中的 row 数组
     let newSelectedRows = [...selectedRows];
@@ -127,40 +144,6 @@ export default class AddCustModal extends PureComponent {
     }
     this.setState({
       selectedRows: newSelectedRows,
-    });
-  }
-
-  // 生成客户头部列表
-  @autobind
-  getColumnsCustTitle() {
-    const statusList = _.get(this.context, 'dict.accountStatusList') || [];
-    const newTitleList = [...custTitleList];
-    const statusIndex = _.findIndex(newTitleList, o => o.key === KEY_STATUS);
-    // 是否是投顾
-    const isTouguIndex = _.findIndex(newTitleList, o => o.key === KEY_ISTOUGU);
-    newTitleList[statusIndex].render = (text) => {
-      const statusItem = _.filter(statusList, o => o.key === text);
-      const statusText = statusItem.length ? statusItem[0].value : '';
-      return (<div title={statusText}>{statusText}</div>);
-    };
-    newTitleList[isTouguIndex].render = (text, record) => {
-      const isTouGu = text ? '是' : '否';
-      return (<div>
-        {
-          record.oldEmpName ? isTouGu : null
-        }
-      </div>);
-    };
-    return newTitleList;
-  }
-
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户划转添加客户弹框' } })
-  closeModal() {
-    // 关闭模态框
-    commonConfirm({
-      shortCut: 'close',
-      onOk: this.clearBoardAllData,
     });
   }
 
@@ -201,6 +184,7 @@ export default class AddCustModal extends PureComponent {
       annualAssetEnd,
       pageSize: INIT_PAGESIZE,
       pageNum,
+      type: allotType,
     };
     queryList(payload);
   }
@@ -215,15 +199,6 @@ export default class AddCustModal extends PureComponent {
   handleMultiFilterChange(obj) {
     this.setState({
       status: obj.value,
-      pageNum: INIT_PAGENUM,
-    }, this.searchCustList);
-  }
-
-  // 变更所属营业部
-  @autobind
-  handleTreeSelectChange(value) {
-    this.setState({
-      orgIdKeyWord: value,
       pageNum: INIT_PAGENUM,
     }, this.searchCustList);
   }
@@ -323,9 +298,10 @@ export default class AddCustModal extends PureComponent {
     const payload = {
       customer: custList,
       manage: [],
-      type: 'add',
+      operateType: 'add',
       attachment: '',
       id: updateData.appId || '',
+      type: allotType,
     };
     // 是否需要确认关闭
     const isNeedConfirm = false;
@@ -342,27 +318,8 @@ export default class AddCustModal extends PureComponent {
       visible,
       closeModal,
       modalKey,
-      custRangeList,
       data: { list = [], page = {} },
     } = this.props;
-
-    const filterCustRange = _.filter(custRangeList, o => o.id === empOrgId);
-    let treeCustRange = [];
-    if (filterCustRange && filterCustRange.length && filterCustRange[0].children.length) {
-      treeCustRange = filterCustRange[0].children.map(item => ({
-        label: item.name,
-        value: item.id,
-        key: item.id,
-      }));
-    }
-    treeCustRange = [
-      {
-        label: NO_VALUE,
-        value: '',
-        key: 0,
-      },
-      ...treeCustRange,
-    ];
 
     const statusList = _.get(this.context, 'dict.accountStatusList') || [];
     const decoratedStatusList = statusList.map(item =>
@@ -371,7 +328,6 @@ export default class AddCustModal extends PureComponent {
     const {
       isExpand,
       status,
-      orgIdKeyWord,
       totalAsset,
       annualDailyAsset,
       lastYearAsset,
@@ -414,7 +370,7 @@ export default class AddCustModal extends PureComponent {
       selectedRowKeys: _.map(selectedRows, 'custId'),
       hideDefaultSelections: true,
       columnWidth: 40,
-      onSelect: this.onSelectChange,
+      onSelect: this.handleSelectChange,
       onSelectAll: this.handleSelectAll,
       onSelectInvert: this.handleSelectAll,
     };
@@ -440,16 +396,6 @@ export default class AddCustModal extends PureComponent {
                 data={decoratedStatusList}
                 value={status}
                 onChange={_.debounce(this.handleMultiFilterChange, 500)}
-              />
-              <HTTreeFilter
-                className={styles.firstLineFilter}
-                value={orgIdKeyWord}
-                treeData={treeCustRange}
-                filterName="原服务营业部"
-                treeDefaultExpandAll
-                onChange={this.handleTreeSelectChange}
-                getPopupContainer={this.findContainer}
-                dropdownClassName={styles.dropdownClassName}
               />
               <SingleFilter
                 className={styles.searchFilter}

@@ -87,8 +87,8 @@ export default class AddManageModal extends PureComponent {
   @autobind
   getColumnsManageTitle() {
     const newTitleList = [...manage];
-    const empNameIndex = _.findIndex(newTitleList, o => o.key === KEY_EMPNAME);
-    newTitleList[empNameIndex].render = (text, record) => (
+    const empNameColumn = _.find(newTitleList, o => o.key === KEY_EMPNAME);
+    empNameColumn.render = (text, record) => (
       <div>{text} ({record.empId})</div>
     );
     return newTitleList;

@@ -72,28 +72,23 @@ export default class Detail extends PureComponent {
     const { dict: { accountStatusList = [] } } = this.props;
     const tempTitleList = [...list];
     // 客户
-    const custIndex = _.findIndex(tempTitleList, o => o.key === KEY_CUSTNAME);
-    // 状态
-    const statusIndex = _.findIndex(tempTitleList, o => o.key === KEY_STATUS);
-    // 原服务经理
-    const empIndex = _.findIndex(tempTitleList, o => o.key === KEY_OLDEMPNAME);
-    // 开发经理
-    const dmIndex = _.findIndex(tempTitleList, o => o.key === KEY_DMNAME);
-    // 新服务经理
-    const newEmpIndex = _.findIndex(tempTitleList, o => o.key === KEY_NEWEMPNAME);
-
-    tempTitleList[custIndex].render = (text, record) => {
+    const custColumn = _.find(tempTitleList, o => o.key === KEY_CUSTNAME);
+    custColumn.render = (text, record) => {
       const custId = record.custId ? ` (${record.custId})` : '';
       return (<div title={`${text}${custId}`}>
         {text}{custId}
       </div>);
     };
-    tempTitleList[statusIndex].render = (text) => {
+    // 状态
+    const statusColumn = _.find(tempTitleList, o => o.key === KEY_STATUS);
+    statusColumn.render = (text) => {
       const statusItem = _.filter(accountStatusList, o => o.key === text);
       const statusText = statusItem.length ? statusItem[0].value : '';
       return (<div title={statusText}>{statusText}</div>);
     };
-    tempTitleList[empIndex].render = (text, record) => {
+    // 原服务经理
+    const empColumn = _.find(tempTitleList, o => o.key === KEY_OLDEMPNAME);
+    empColumn.render = (text, record) => {
       const touGuElement = record.touGu ? <span className={styles.tougu}>投顾</span> : '';
       return (
         <div>
@@ -110,11 +105,15 @@ export default class Detail extends PureComponent {
         </div>
       );
     };
-    tempTitleList[dmIndex].render = (text, record) => {
+    // 开发经理
+    const dmColumn = _.find(tempTitleList, o => o.key === KEY_DMNAME);
+    dmColumn.render = (text, record) => {
       const dmNameAndId = text ? `${text} (${record.dmId})` : '';
       return (<div title={dmNameAndId}>{dmNameAndId}</div>);
     };
-    tempTitleList[newEmpIndex].render = (text, record) => (
+    // 新服务经理
+    const newEmpColumn = _.find(tempTitleList, o => o.key === KEY_NEWEMPNAME);
+    newEmpColumn.render = (text, record) => (
       <div title={`${text} (${record.newEmpId})`}>{text} ({record.newEmpId})</div>
     );
     return tempTitleList;
@@ -130,7 +129,7 @@ export default class Detail extends PureComponent {
       orgId: empOrgId,
       pageNum,
       pageSize: 7,
-      type: DETAIL_PAGE,
+      isDetail: DETAIL_PAGE,
     };
     queryAddedCustList(payload).then(() => {
       const { addedCustData: { list, page } } = this.props;

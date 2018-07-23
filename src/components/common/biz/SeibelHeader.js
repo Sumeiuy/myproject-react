@@ -32,8 +32,8 @@ const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 36;
 const dateFormat = 'YYYY/MM/DD';
-// 分公司客户分配
-const PAGE_CUST_ALLOT = 'custAllotPage';
+// 不需要显示客户查询的页面
+const PAGE_NO_CUST = ['custAllotPage', 'departmentCustAllotPage'];
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -156,9 +156,22 @@ export default class Pageheader extends PureComponent {
     }
   }
 
+  // 获取客户列表
   @autobind
-  pageCommonHeaderRef(input) {
-    this.pageCommonHeader = input;
+  getCustList() {
+    const {
+      customerList,
+      newCustomerList,
+      isUseNewCustList,
+    } = this.props;
+    return isUseNewCustList ? newCustomerList : customerList;
+  }
+
+  // 只能选择今天之前的时间
+  @autobind
+  setDisableRange(date) {
+    // date返回的时间是YYYY-MM-DD 12:00:00;需要修改成YYYY-MM-DD 00:00:00，所以减了12小时
+    return moment(date).add('hours', -12) > moment();
   }
 
   @autobind
@@ -444,22 +457,9 @@ export default class Pageheader extends PureComponent {
     }
   }
 
-  // 只能选择今天之前的时间
   @autobind
-  setDisableRange(date) {
-    // date返回的时间是YYYY-MM-DD 12:00:00;需要修改成YYYY-MM-DD 00:00:00，所以减了12小时
-    return moment(date).add('hours', -12) > moment();
-  }
-
-  // 获取客户列表
-  @autobind
-  getCustList() {
-    const {
-      customerList,
-      newCustomerList,
-      isUseNewCustList,
-    } = this.props;
-    return isUseNewCustList ? newCustomerList : customerList;
+  pageCommonHeaderRef(input) {
+    this.pageCommonHeader = input;
   }
 
   render() {
@@ -559,8 +559,15 @@ export default class Pageheader extends PureComponent {
       // 此处,通用的判断是否需要隐藏新建按钮
       hasCreatePermission = this.props.isShowCreateBtn();
     }
+    // 如果是营业部客户分配页面
+    if (page === PAGE_NO_CUST[1]) {
+      hasCreatePermission = permission.hasKFYYBZXGPermission(empInfo) && checkUserIsFiliale();
+      hasCreatePermission = this.props.isShowCreateBtn();
+    }
     // 分公司客户分配不显示客户搜索
-    const custElement = page !== PAGE_CUST_ALLOT ?
+    const custElement = _.includes(PAGE_NO_CUST, page) ?
+      null
+    :
       (<div className={styles.filterFl}>
         <div className={styles.dropDownSelectBox}>
           <DropDownSelect
@@ -574,9 +581,7 @@ export default class Pageheader extends PureComponent {
             name={`${page}-custName`}
           />
         </div>
-      </div>)
-    :
-      null;
+      </div>);
 
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>

@@ -3,9 +3,8 @@
  * @Author: Liujianshu
  * @Date: 2018-07-18 17:30:49
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-07-18 17:33:48
+ * @Last Modified time: 2018-07-23 14:25:31
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
@@ -20,9 +19,7 @@ import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import CreateModal from '../../components/departmentCustAllot/CreateModal';
 import AddCustModal from '../../components/departmentCustAllot/AddCustModal';
-import AddManageModal from '../../components/departmentCustAllot/AddManageModal';
 import TableDialog from '../../components/common/biz/TableDialog';
-
 import BottonGroup from '../../components/permission/BottonGroup';
 import CustAllotList from '../../components/common/appList';
 import ApplyItem from '../../components/common/appList/ApplyItem';
@@ -41,11 +38,13 @@ const {
   // custAllot,
   custAllot: { status, pageType },
   subType,
+  allotType,
   clearDataArray,
 } = config;
 
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
+// const empOrgId = 'ZZ001041051';
 // 登陆人的职位 ID
 const empPstnId = emp.getPstnId();
 // 新建弹窗的 key 值
@@ -56,6 +55,8 @@ const manageModalKey = 'manageModal';
 const custModalKey = 'custModal';
 // 审批人弹窗
 const approverModalKey = 'approverModal';
+// 取消按钮的值
+const BTN_CANCLE_VALUE = 'cancel';
 
 const effects = {
   // 获取左侧列表
@@ -108,7 +109,6 @@ const mapStateToProps = state => ({
   saveChangeData: state.departmentCustAllot.saveChangeData,
 });
 
-
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   // 获取左侧列表
@@ -132,7 +132,6 @@ const mapDispatchToProps = {
   // 清除搜索数据
   clearData: dispatch(effects.clearData, { loading: false }),
 };
-
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
@@ -177,9 +176,6 @@ export default class DepartmentCustAllot extends PureComponent {
     clearData: PropTypes.func.isRequired,
   }
 
-  static defaultProps = {
-  }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -188,7 +184,6 @@ export default class DepartmentCustAllot extends PureComponent {
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
       createModal: false,
       custModal: false,
-      manageModal: false,
       approverModal: false,
       // 审批人
       flowAuditors: [],
@@ -248,7 +243,13 @@ export default class DepartmentCustAllot extends PureComponent {
       this.setState({
         activeRowIndex: itemIndex,
       });
-      queryDetailInfo({ flowId: item.flowId, orgId: empOrgId, pageNum: 1, pageSize: 7 });
+      queryDetailInfo({
+        flowId: item.flowId,
+        type: allotType,
+        orgId: empOrgId,
+        pageNum: 1,
+        pageSize: 7,
+      });
     }
   }
 
@@ -283,15 +284,15 @@ export default class DepartmentCustAllot extends PureComponent {
 
   // 判断当前登录用户部门是否是分公司
   @autobind
-  checkUserIsFiliale() {
+  checkUserIsDepartment() {
     const { custRangeList } = this.props;
-    let isFiliale = true;
+    let isDepartment = true;
     if (!_.isEmpty(custRangeList)) {
-      if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
-        isFiliale = false;
+      if (!emp.isDepartment(custRangeList, emp.getOrgId())) {
+        isDepartment = false;
       }
     }
-    return isFiliale;
+    return isDepartment;
   }
 
   // 打开弹窗
@@ -358,7 +359,7 @@ export default class DepartmentCustAllot extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '分公司客户分配左侧列表项',
+      name: '营业部客户分配左侧列表项',
       type: '$props.location.query.type',
       subType: '$props.location.query.subType',
     },
@@ -379,7 +380,13 @@ export default class DepartmentCustAllot extends PureComponent {
       },
     });
     this.setState({ activeRowIndex: index });
-    queryDetailInfo({ flowId, orgId: empOrgId, pageSize: 7, pageNum: 1 });
+    queryDetailInfo({
+      flowId,
+      orgId: empOrgId,
+      type: allotType,
+      pageSize: 7,
+      pageNum: 1,
+    });
   }
 
 
@@ -395,6 +402,7 @@ export default class DepartmentCustAllot extends PureComponent {
         orgId: empOrgId,
         pageNum: 1,
         pageSize: 5,
+        type: allotType,
       };
       // 从客户弹窗过来请求已添加的客户，否则请求已添加的服务经理
       const isCust = pageData.modalKey === 'custModal';
@@ -406,7 +414,8 @@ export default class DepartmentCustAllot extends PureComponent {
           const { addedManageData: { page } } = this.props;
           // 只有一位服务经理时，隐藏分配规则
           if (page.totalRecordNum <= 1) {
-            this.handleRuleTypePropsChange('0');
+            // 按照平均客户数分配
+            this.handleRuleTypePropsChange(ruleTypeArray[0].value);
           }
         }
       });
@@ -416,6 +425,14 @@ export default class DepartmentCustAllot extends PureComponent {
   // 提交，点击后选择审批人
   @autobind
   handleSubmit(btnItem) {
+    if (btnItem.operate === BTN_CANCLE_VALUE) {
+      this.closeModal({
+        modalKey: createModalKey,
+        isNeedConfirm: true,
+        clearDataType: clearDataArray[1],
+      });
+      return;
+    }
     const { addedCustData, addedManageData } = this.props;
     if (_.isEmpty(addedCustData)) {
       message.error('请添加客户');
@@ -494,6 +511,7 @@ export default class DepartmentCustAllot extends PureComponent {
     const payload = {
       id: updateData.appId,
       ruleType,
+      type: allotType,
       TGConfirm: false,
       positionId: empPstnId,
       orgId: empOrgId,
@@ -525,7 +543,6 @@ export default class DepartmentCustAllot extends PureComponent {
 
   @autobind
   showThirdLineInfo(data) {
-    console.warn('showThirdLineInfo data', data);
     return time.format(data.createTime || '');
   }
 
@@ -545,14 +562,13 @@ export default class DepartmentCustAllot extends PureComponent {
         onClick={this.handleListRowClick}
         pageName="departmentCustAllot"
         iconType="kehu1"
-        subTypeName="分公司客户分配"
+        subTypeName="营业部客户分配"
         statusTags={statusTags}
         showSecondLineInfo={this.showSecondLineInfo}
         showThirdLineInfo={this.showThirdLineInfo}
       />
     );
   }
-
 
   render() {
     const {
@@ -586,10 +602,10 @@ export default class DepartmentCustAllot extends PureComponent {
       updateData,
       clearData,
     } = this.props;
+
     const {
       createModal,
       custModal,
-      manageModal,
       approverModal,
       flowAuditors,
       ruleType,
@@ -606,7 +622,7 @@ export default class DepartmentCustAllot extends PureComponent {
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
-        checkUserIsFiliale={this.checkUserIsFiliale}
+        checkUserIsFiliale={this.checkUserIsDepartment}
         needApplyTime
       />
     );
@@ -641,9 +657,18 @@ export default class DepartmentCustAllot extends PureComponent {
       />
     );
 
+    const newButtonData = { ...buttonData };
+    if (buttonData.flowButtons && buttonData.flowButtons.length) {
+      newButtonData.flowButtons[1] = {
+        ...newButtonData.flowButtons[0],
+        btnName: '取消',
+        operate: 'cancel',
+        flowBtnId: -1,
+      };
+    }
     // 新建弹窗按钮
     const selfBtnGroup = (<BottonGroup
-      list={buttonData}
+      list={newButtonData}
       onEmitEvent={this.handleSubmit}
     />);
 
@@ -702,6 +727,7 @@ export default class DepartmentCustAllot extends PureComponent {
               updateList={updateList}
               updateData={updateData}
               clearData={clearData}
+              sendRequest={this.updateCustOrEmp}
             />
           :
             null
@@ -718,23 +744,6 @@ export default class DepartmentCustAllot extends PureComponent {
               queryList={queryCustList}
               closeModal={this.closeModal}
               sendRequest={this.updateCustOrEmp}
-              updateData={updateData}
-            />
-          :
-            null
-        }
-        {
-          manageModal
-          ?
-            <AddManageModal
-              modalKey={manageModalKey}
-              visible={manageModal}
-              custRangeList={custRangeList}
-              data={manageData}
-              queryList={queryManageList}
-              closeModal={this.closeModal}
-              sendRequest={this.updateCustOrEmp}
-              handleRuleTypePropsChange={this.handleRuleTypePropsChange}
               updateData={updateData}
             />
           :

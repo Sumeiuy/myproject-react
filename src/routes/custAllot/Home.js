@@ -55,6 +55,8 @@ const manageModalKey = 'manageModal';
 const custModalKey = 'custModal';
 // 审批人弹窗
 const approverModalKey = 'approverModal';
+// 取消按钮的值
+const BTN_CANCLE_VALUE = 'cancel';
 
 const effects = {
   // 获取左侧列表
@@ -415,6 +417,14 @@ export default class CustAllot extends PureComponent {
   // 提交，点击后选择审批人
   @autobind
   handleSubmit(btnItem) {
+    if (btnItem.operate === BTN_CANCLE_VALUE) {
+      this.closeModal({
+        modalKey: createModalKey,
+        isNeedConfirm: true,
+        clearDataType: clearDataArray[1],
+      });
+      return;
+    }
     const { addedCustData, addedManageData } = this.props;
     if (_.isEmpty(addedCustData)) {
       message.error('请添加客户');
@@ -639,9 +649,19 @@ export default class CustAllot extends PureComponent {
       />
     );
 
+
+    const newButtonData = { ...buttonData };
+    if (buttonData.flowButtons && buttonData.flowButtons.length) {
+      newButtonData.flowButtons[1] = {
+        ...newButtonData.flowButtons[0],
+        btnName: '取消',
+        operate: 'cancel',
+        flowBtnId: -1,
+      };
+    }
     // 新建弹窗按钮
     const selfBtnGroup = (<BottonGroup
-      list={buttonData}
+      list={newButtonData}
       onEmitEvent={this.handleSubmit}
     />);
 
