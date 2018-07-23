@@ -178,7 +178,8 @@ var webpackConfig = merge(baseWebpackConfig, {
     new ScriptExtHtmlWebpackPlugin({
       async: 'app',
       defaultAttribute: 'sync',
-    })
+    }),
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /zh-cn/),
   ]
 })
 
