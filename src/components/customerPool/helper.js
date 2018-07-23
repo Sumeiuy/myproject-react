@@ -122,12 +122,14 @@ const helper = {
    *    data: 持仓产品信息
    *    routerAction: 路由的变化方式
    */
-  openProductDetailPage({ upPrdtTypeId, code, name }) {
+  openProductDetailPage({ data, routerAction }) {
     // upPrdtTypeId：产品所属类型id, code：产品代码
+    const { upPrdtTypeId, code, name } = data;
     const { pathname, ...param } = CONFIG_PRODUCTCENTER[upPrdtTypeId];
     const query = { prdtCode: code };
     const url = `${pathname}?${urlHelper.stringify(query)}`;
     openFspIframeTab({
+      routerAction,
       url,
       query,
       pathname,

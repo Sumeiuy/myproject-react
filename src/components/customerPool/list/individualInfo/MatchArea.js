@@ -5,7 +5,7 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-20 11:10:22
+ * @Last Modified time: 2018-07-23 11:36:51
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -195,10 +195,11 @@ export default class MatchArea extends PureComponent {
       let contentNode;
       // flag为true，持仓产品名称可点击
       if (flag) {
+        const { push } = this.context;
         contentNode = (<i>
           <em
             className={styles.clickable}
-            onClick={() => { openProductDetailPage(data); }}
+            onClick={() => { openProductDetailPage({ data, routerAction: push }); }}
           >
             {name}
           </em>
