@@ -14,7 +14,7 @@ import styles from './moreTab.less';
 
 const menuStyle = {
   border: '1px solid #ddd',
-  borderRadius: '0 0 4px 4px/0 0 4px 4px',
+  borderRadius: '0 0 4px 4px',
 };
 
 export default class MoreTab extends PureComponent {
