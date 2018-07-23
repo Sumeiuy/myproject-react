@@ -337,27 +337,22 @@ export const PER_CODE = 'per';
 // 一般机构对应的code码
 export const ORG_CODE = 'org';
 
-// 产品中心不同产品类型对应的路径
+// 产品中心不同产品类型对应的tab标题和tab的id
 // 产品类型：[PA100000: 私募基金]、[PA050000: 公募基金]、[PA070000: 紫金理财]、[PA090000: 收益凭证]
-const basePath = '/htsc-product-base/htsc-prdt-web/index.html?_#/';
-export const CONFIG_PRODUCTCENTER = {
+export const CONFIG_TAB_PRODUCTCENTER = {
   PA100000: {
-    pathname: `${basePath}private_fund`,
     title: '私募产品',
     id: 'FSP_PRIVATE_PRD_TAB',
   },
   PA050000: {
-    pathname: `${basePath}public_fund`,
     title: '公募产品',
     id: 'FSP_PUBLIC_FUND_TAB',
   },
   PA070000: {
-    pathname: `${basePath}securities_fund`,
     title: '紫金产品',
     id: 'FSP_PRD_PURPLE_GOLD_PROD',
   },
   PA090000: {
-    pathname: `${basePath}receipt_fund`,
     title: '收益凭证',
     id: 'FSP_PRD_REVENCE_VOUCHER',
   },

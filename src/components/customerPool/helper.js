@@ -3,7 +3,7 @@
  */
 import _ from 'lodash';
 import moment from 'moment';
-import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, CONFIG_PRODUCTCENTER } from './config';
+import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, CONFIG_TAB_PRODUCTCENTER } from './config';
 import { dynamicInsertQuota } from '../customerPool/list/sort/config';
 import filterMark from '../../config/filterSeperator';
 import { openFspTab, openFspIframeTab } from '../../utils';
@@ -125,8 +125,9 @@ const helper = {
   openProductDetailPage({ data, routerAction }) {
     // upPrdtTypeId：产品所属类型id, code：产品代码
     const { upPrdtTypeId, code, name } = data;
-    const { pathname, ...param } = CONFIG_PRODUCTCENTER[upPrdtTypeId];
-    const query = { prdtCode: code };
+    const param = CONFIG_TAB_PRODUCTCENTER[upPrdtTypeId];
+    const pathname = '/htsc-product-base/htsc-prdt-web/index.html/?_#/productDetailPage';
+    const query = { prdtId: code };
     const url = `${pathname}?${urlHelper.stringify(query)}`;
     openFspIframeTab({
       routerAction,

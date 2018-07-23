@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-20 16:40:17
+ * @Last Modified time: 2018-07-23 17:20:40
  */
 
 import React, { PureComponent } from 'react';
@@ -257,14 +257,16 @@ export default class ServiceImplementation extends PureComponent {
     },
   })
   handleStateChange({ value = [] }) {
-    const { changeParameter } = this.props;
-    changeParameter({ state: value, activeIndex: '1', preciseInputValue: '1' })
-      .then(() => {
-        this.queryTargetCustList({
-          state: value,
-          pageNum: 1,
-        });
+    this.props.changeParameter({
+      state: value,
+      activeIndex: '1',
+      preciseInputValue: '1',
+    }).then(() => {
+      this.queryTargetCustList({
+        state: value,
+        pageNum: 1,
       });
+    });
   }
 
 
@@ -278,14 +280,16 @@ export default class ServiceImplementation extends PureComponent {
     },
   })
   handleCustomerChange({ value = {} }) {
-    const { changeParameter } = this.props;
-    changeParameter({ rowId: value.rowId || '', activeIndex: '1', preciseInputValue: '1' })
-      .then(() => {
-        this.queryTargetCustList({
-          rowId: value.rowId || '',
-          pageNum: 1,
-        });
+    this.props.changeParameter({
+      rowId: value.rowId || '',
+      activeIndex: '1',
+      preciseInputValue: '1',
+    }).then(() => {
+      this.queryTargetCustList({
+        rowId: value.rowId || '',
+        pageNum: 1,
       });
+    });
   }
 
   // 资产排序
@@ -299,14 +303,16 @@ export default class ServiceImplementation extends PureComponent {
   })
   handleAssetSort(obj) {
     const assetSort = obj.isDesc ? 'desc' : 'asc';
-    const { changeParameter } = this.props;
-    changeParameter({ assetSort, activeIndex: '1', preciseInputValue: '1' })
-      .then(() => {
-        this.queryTargetCustList({
-          assetSort,
-          pageNum: 1,
-        });
+    this.props.changeParameter({
+      assetSort,
+      activeIndex: '1',
+      preciseInputValue: '1',
+    }).then(() => {
+      this.queryTargetCustList({
+        assetSort,
+        pageNum: 1,
       });
+    });
   }
 
   // 精准搜索框输入值变化
@@ -314,11 +320,10 @@ export default class ServiceImplementation extends PureComponent {
   handlePreciseQueryChange(e) {
     const value = e.target.value;
     const reg = /^([0-9]*)?$/;
-    const { changeParameter } = this.props;
     const { targetCustList: { page: { totalCount } } } = this.state;
     // 限制输入框中只能输1到客户总数之间的正整数
     if (value === '' || (!isNaN(value) && reg.test(value) && value > 0 && value <= totalCount)) {
-      changeParameter({ preciseInputValue: value });
+      this.props.changeParameter({ preciseInputValue: value });
     }
   }
 
@@ -329,9 +334,8 @@ export default class ServiceImplementation extends PureComponent {
       const value = e.target.value;
       if (!value) return;
       const toChange = () => {
-        const { changeParameter } = this.props;
         const { targetCustList: { page: { pageSize } } } = this.state;
-        changeParameter({ activeIndex: value }).then(() => {
+        this.props.changeParameter({ activeIndex: value }).then(() => {
           const pageNum = Math.ceil(parseInt(value, 10) / pageSize);
           this.queryTargetCustList({
             pageNum,
@@ -391,10 +395,9 @@ export default class ServiceImplementation extends PureComponent {
     },
   })
   handlePageChange(pageNum) {
-    const { changeParameter } = this.props;
     const { targetCustList: { page: { pageSize } } } = this.state;
     const activeIndex = ((pageNum - 1) * pageSize) + 1;
-    changeParameter({
+    this.props.changeParameter({
       activeIndex,
       preciseInputValue: activeIndex,
     }).then(() => {
@@ -493,9 +496,11 @@ export default class ServiceImplementation extends PureComponent {
   @autobind
   updateCustList({ flowStatus }) {
     const { isFormHalfFilledOut } = this.state;
-    const { changeParameter } = this.props;
     // 重置当前选中的客户索引和索引查询组件input值
-    changeParameter({ preciseInputValue: 1, activeIndex: 1 }).then(() => {
+    this.props.changeParameter({
+      preciseInputValue: 1,
+      activeIndex: 1,
+    }).then(() => {
       this.queryTargetCustList({ pageNum: 1 }).then(() => {
         // 添加服务记录服务状态为’完成‘时，更新redux中的左侧列表，重新拉取服务端的任务基本信息
         this.updateAfterFlowStateComplete(flowStatus);
