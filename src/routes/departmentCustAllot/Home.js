@@ -658,7 +658,7 @@ export default class DepartmentCustAllot extends PureComponent {
     );
 
     const newButtonData = { ...buttonData };
-    if (buttonData.flowButtons && buttonData.flowButtons.length) {
+    if (!_.isEmpty(newButtonData.flowButtons)) {
       const operateArray = _.map(newButtonData.flowButtons, 'operate');
       if (!_.includes(operateArray, BTN_CANCLE_VALUE)) {
         newButtonData.flowButtons.push({
