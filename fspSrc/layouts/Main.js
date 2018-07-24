@@ -11,8 +11,9 @@ import { connect } from 'dva';
 import { Helmet } from 'react-helmet';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
+import { Modal, Input, LocaleProvider } from 'antd';
+import zhCN from 'antd/lib/locale-provider/zh_CN';
 import withRouter from '../../src/decorators/withRouter';
-import { Modal, Input } from 'antd';
 
 import Header from './Header';
 import Footer from './Footer';
@@ -21,8 +22,6 @@ import FSPUnwrap from '../components/layout/FSPUnwrap';
 import { constants } from '../../src/config';
 import ConnectedCreateServiceRecord from '../../src/components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
 
-import { LocaleProvider } from 'antd';
-import zhCN from 'antd/lib/locale-provider/zh_CN';
 import ContextProvider from '../../src/layouts/ContextProvider';
 import IEWarningModal from '../../src/components/common/IEWarningModal';
 import ErrorBoundary from '../../src/layouts/ErrorBoundary';
@@ -78,14 +77,14 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   push: routerRedux.push,
   getCustomerScope: fectchDataFunction(false, effects.customerScope),
-  toggleServiceRecordModal: query => ({
-    type: 'app/toggleServiceRecordModal',
-    payload: query || false,
-  }),
   addServeRecord: fectchDataFunction(true, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
   switchPosition: fectchDataFunction(false, effects.switchPosition),
+  toggleServiceRecordModal: query => ({
+    type: 'app/toggleServiceRecordModal',
+    payload: query || false,
+  }),
 };
 
 const PHONE = 'phone';
@@ -93,20 +92,11 @@ const PHONE = 'phone';
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Main extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      // 隔离墙modal是否可见
-      isolationWallModalVisible: false,
-    };
-  }
-
   static propTypes = {
     children: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     loading: PropTypes.number.isRequired,
     loadingForceFull: PropTypes.bool,
-    isBlockRemovePane: PropTypes.bool.isRequired,
     push: PropTypes.func.isRequired,
     getCustomerScope: PropTypes.func.isRequired,
     interfaceState: PropTypes.object.isRequired,
@@ -134,6 +124,14 @@ export default class Main extends PureComponent {
     serviceRecordModalVisibleOfId: '',
     serviceRecordModalVisibleOfName: '',
     loadingForceFull: false,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 隔离墙modal是否可见
+      isolationWallModalVisible: false,
+    };
   }
 
   componentDidMount() {
@@ -175,7 +173,6 @@ export default class Main extends PureComponent {
       children,
       location,
       loading,
-      isBlockRemovePane,
       loadingForceFull,
       // 方法
       push,
@@ -192,10 +189,10 @@ export default class Main extends PureComponent {
       handleCloseClick,
       custUuid,
       ceFileDelete,
-      motSelfBuiltFeedbackList,
       serviceRecordInfo,
       taskFeedbackList,
     } = this.props;
+
     const { caller = '' } = serviceRecordInfo;
     // 当前服务记录弹窗是否由电话调起的
     const isPhoneCall = caller === PHONE;
@@ -222,7 +219,6 @@ export default class Main extends PureComponent {
                 <Tab
                   location={location}
                   push={push}
-                  isBlockRemovePane={isBlockRemovePane}
                 />
                 <FSPUnwrap
                   path={location.pathname}

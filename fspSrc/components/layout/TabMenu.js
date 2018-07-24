@@ -9,9 +9,15 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { Menu, Dropdown, Icon } from 'antd';
+import _ from 'lodash';
 import styles from './tabMenu.less';
 import MoreTab from './MoreTab';
-import { traverseMenus } from '../utils/tab';
+import { pathPrefix } from './config';
+
+const menuStyle = {
+  border: '1px solid #ddd',
+  borderRadius: '0 0 4px 4px',
+};
 
 export default class TabMenu extends PureComponent {
   static propTypes = {
@@ -24,20 +30,20 @@ export default class TabMenu extends PureComponent {
     path: PropTypes.string.isRequired,
   }
 
-  getMenus(array) {
+  getMenus(array, level = 2) {
     const { path } = this.props;
     return array.map((item) => {
-      if (item.children) {
+      if (item.children && !_.isEmpty(item.children)) {
         return (
           <Menu.SubMenu
             key={item.id}
             title={item.name}
             className={classnames({
-              [styles.activeItem]: item.path ? path.indexOf(item.path) !== -1 : false,
+              [styles.activeItem]: this.isActiveMenu(path, item, level),
               [styles.subMenuLink]: true,
             })}
           >
-            {this.getMenus(item.children)}
+            {this.getMenus(item.children, level + 1)}
           </Menu.SubMenu>
         );
       }
@@ -46,7 +52,7 @@ export default class TabMenu extends PureComponent {
           key={item.id}
           className={classnames({
             [styles.subItem]: true,
-            [styles.activeItem]: item.path === path,
+            [styles.activeItem]: this.isActiveMenu(path, item, level, true),
           })}
         >
           <div
@@ -62,8 +68,39 @@ export default class TabMenu extends PureComponent {
   }
 
   @autobind
+  getFirstChild(menu) {
+    const firstChild = menu.children[0];
+    if (firstChild.path === '' && firstChild.children) {
+      return this.getFirstChild(firstChild);
+    }
+    return firstChild;
+  }
+
+  isActiveMenu(path, menuItem, level, exact = false) {
+    const menuPath = menuItem.path;
+    if (exact) {
+      if (menuPath === path) {
+        return true;
+      }
+      return false;
+    }
+
+    const pathArray = _.split(path, '/');
+    let pathForMatch = pathArray[level];
+    // 如果pathname是以fsp开头的，
+    if (pathPrefix.test(path)) {
+      pathForMatch = pathArray[level + 1]; // 去掉"/fsp"开头
+    }
+    if (menuPath.indexOf(pathForMatch) > -1) {
+      return true;
+    }
+
+    return false;
+  }
+
+  @autobind
   handleLinkClick(menuItem) {
-    const { push, path, mainArray } = this.props;
+    const { push, path } = this.props;
     if (menuItem.action === 'loadExternSystemPage') {
       window.open(menuItem.url, '_blank');
     } else if (menuItem.path !== path) {
@@ -71,15 +108,6 @@ export default class TabMenu extends PureComponent {
         pathname: menuItem.path,
         query: menuItem.query,
       });
-
-      if (menuItem.pid !== 'ROOT') {
-        mainArray.forEach(topMenu => {
-          if (topMenu.id === menuItem.pid) {
-            // 在顶级目录上保留点击的子菜单id
-            topMenu.lastMenuId = menuItem.id;
-          }
-        });
-      }
     }
   }
 
@@ -98,35 +126,15 @@ export default class TabMenu extends PureComponent {
   }
 
   @autobind
-  getFirstChild(menu) {
-    const firstChild = menu.children[0];
-    if (firstChild.path === '' && firstChild.children) {
-      return this.getFirstChild(firstChild);
-    }
-    return firstChild;
-  }
-
-  @autobind
-  getLastMenu(menu, lastMenuId) {
-    let lastMenu;
-    traverseMenus(menu, menuItem => {
-      if (menuItem.id === lastMenuId) {
-        lastMenu = menuItem;
+  handDropClick(menuItem, activeKey) {
+    if (menuItem.id !== activeKey) {
+      // 是否有上次点击的菜单记录
+      if (menuItem.path !== '') {
+        this.handleLinkClick(menuItem);
+      } else {
+        // 默认打开第一个子菜单
+        this.handleLinkClick(this.getFirstChild(menuItem));
       }
-    })
-    return lastMenu;
-  }
-  
-  @autobind
-  handDropClick(menuItem) {
-    // 是否有上次点击的菜单记录
-    if (menuItem.lastMenuId) {
-      this.handleLinkClick(this.getLastMenu(menuItem.children, menuItem.lastMenuId));
-    } else if (menuItem.path !== '') {
-      this.handleLinkClick(menuItem);
-    } else {
-      // 默认打开第一个子菜单
-      this.handleLinkClick(this.getFirstChild(menuItem));
     }
   }
 
@@ -136,7 +144,7 @@ export default class TabMenu extends PureComponent {
     const isActiveLink = menu.id === activeKey;
     const hasHomePage = menu.path !== '';
     const menus = (
-      <Menu>
+      <Menu style={menuStyle}>
         {
           this.getMenus(menu.children)
         }
@@ -150,7 +158,11 @@ export default class TabMenu extends PureComponent {
           [styles.activeLink]: isActiveLink,
         })}
       >
-        <Dropdown placement='bottomLeft' overlay={menus} trigger={['hover']}>
+        <Dropdown
+          placement="bottomLeft"
+          overlay={menus}
+          trigger={['hover']}
+        >
           <div
             tabIndex="0"
             className={styles.text}
@@ -165,7 +177,7 @@ export default class TabMenu extends PureComponent {
             >
               {menu.name}
             </div>
-            <i className="anticon anticon-change" />
+            <span className={styles.iconDown}><i className="anticon anticon-change" /></span>
           </div>
         </Dropdown>
       </div>
@@ -194,9 +206,13 @@ export default class TabMenu extends PureComponent {
           </div>
           {
             closeable ?
-              <div id={menu.id === activeKey ? 'activeTabPane' : null} className={styles.close} onClick={() => this.remove(menu.id)}>
+              <span
+                id={menu.id === activeKey ? 'activeTabPane' : null}
+                className={styles.close}
+                onClick={() => this.remove(menu.id)}
+              >
                 <Icon type="close" />
-              </div> : null
+              </span> : null
           }
         </div>
       </div>
@@ -207,8 +223,8 @@ export default class TabMenu extends PureComponent {
   renderMoreTab() {
     const { onRemove, onChange, activeKey, moreMenuObject, path } = this.props;
     return (
-      <div className={styles.moreTab}> 
-        <MoreTab 
+      <div className={styles.moreTab}>
+        <MoreTab
           moreTabArray={moreMenuObject.children}
           onChange={onChange}
           activeKey={activeKey}

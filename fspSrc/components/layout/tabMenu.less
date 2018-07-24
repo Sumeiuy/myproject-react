@@ -4,6 +4,7 @@
   border-bottom: 2px solid #108ee9;
   background: #fff;
   flex-direction: row;
+  z-index: 1;
 
   .menuItem {
     flex: 0 0 auto;
@@ -12,14 +13,15 @@
     text-align: center;
     font-size: 14px;
     cursor: pointer;
+    padding: 0 8px;
+
     .text {
       display: flex;
       align-items: center;
       justify-content: center;
-      /* font-family: PingFangSC-Regular !important; */
       .close {
-        display: inline-block;
-        font-size: 12px;
+        height: 39px;
+        line-height: 39px;
       }
       .link {
         height: 39px;
@@ -36,13 +38,17 @@
           color: #108ee9;
         }
       }
+      .iconDown {
+        height: 39px;
+        line-height: 39px;
+      }
       i {
         font-size: 12px;
         display: inline-block;
-        margin-left: 7px;
+        margin-left: 4px;
         padding: 5px 0;
         transition: transform .3s linear;
-        transform-origin: center 45%;
+        transform-origin: center 49%;
         &:hover {
           font-weight: bolder;
         }
@@ -57,7 +63,7 @@
         outline: none;
         :global i.anticon.anticon-change {
           transform: rotateZ(180deg);
-          transform-origin: center 45%;
+          transform-origin: center 49%;
           font-weight: bolder;
         }
       }
@@ -154,6 +160,7 @@
   }
   &.activeItem {
     background: #ecf6fd;
+    border-radius: 0;
     .moreMenuItem {
       .link {
         display: inline-block;

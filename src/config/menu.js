@@ -4,7 +4,7 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-const menus = [
+const primaryMenu = [
   {
     id: 'FSP_NEW_HOMEPAGE',
     name: '首页',
@@ -52,7 +52,7 @@ const menus = [
     name: '任务中心',
     order: 3,
     pid: 'ROOT',
-    url: '',
+    url: '/',
     type: 'menu',
     action: '',
     path: '',
@@ -179,7 +179,7 @@ const menus = [
         url: '',
         type: 'menu',
         action: '',
-        path: '',
+        path: '/asset',
         children: [
           {
             id: 'FSP_ASSET_ALLOCATION_IMPLEMENTATION',
@@ -259,7 +259,7 @@ const menus = [
         id: 'FSP_DAILY_PAPER',
         name: '每日晨报',
         order: 4,
-        pid: 'FSP_STRATEGY_CENTER',
+        pid: 'FSP_PRD_REPOSITORY',
         url: '',
         type: 'link',
         action: 'loadInTab',
@@ -325,7 +325,7 @@ const menus = [
         url: '',
         type: 'menu',
         action: '',
-        path: '',
+        path: '/bizapply',
         children: [
           {
             id: 'FSP_BIZAPPLY_EXCESSCACHE',
@@ -385,9 +385,9 @@ const menus = [
         order: 6,
         pid: 'FSP_BUSINESS_APPLYMENT',
         url: '',
-        type: 'link',
+        type: 'menu',
         action: '',
-        path: '',
+        path: '/credit',
         children: [
           {
             id: 'FSP_BUSINESS_TC_APPLYMANAGE',
@@ -487,9 +487,9 @@ const menus = [
         order: 7,
         pid: 'FSP_BUSINESS_APPLYMENT',
         url: '',
-        type: 'link',
+        type: 'menu',
         action: '',
-        path: '',
+        path: '/option',
         children: [
           {
             id: 'FSP_BUSINESS_APPLYMENT_OPTIONSTOCKINVEST',
@@ -519,9 +519,9 @@ const menus = [
         order: 8,
         pid: 'FSP_BUSINESS_APPLYMENT',
         url: '',
-        type: 'link',
+        type: 'menu',
         action: '',
-        path: '',
+        path: '/appropriate',
         children: [
           {
             id: 'FSP_BUSINESS_APPLYMENT_VFSH',
@@ -551,9 +551,9 @@ const menus = [
         order: 9,
         pid: 'FSP_BUSINESS_APPLYMENT',
         url: '',
-        type: 'link',
+        type: 'menu',
         action: '',
-        path: '',
+        path: '/channel',
         children: [
           {
             id: 'FSP_BUSINESS_APPLYMENT_PB',
@@ -823,7 +823,7 @@ const menus = [
         url: '',
         type: 'menu',
         action: '',
-        path: '/platformParameterSetting',
+        path: '/sysOperate/platformParameterSetting',
       },
       {
         id: 'FSP_ORGAN_PERSONAL_MANAGE',
@@ -833,7 +833,7 @@ const menus = [
         url: '',
         type: 'menu',
         action: '',
-        path: '',
+        path: '/crossDepartment',
         children: [
           {
             id: 'FSP_CROSS_DEPARTMENT',
@@ -891,4 +891,4 @@ const menus = [
   },
 ];
 
-export default menus;
+export default primaryMenu;
