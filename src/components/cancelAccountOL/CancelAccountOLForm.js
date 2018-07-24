@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 14:49:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-23 15:42:36
+ * @Last Modified time: 2018-07-24 11:19:12
  * @description 线上销户新建以及驳回后修改通用部分
  */
 
@@ -106,7 +106,7 @@ export default class CancelAccountOLForm extends PureComponent {
       // 其他流失原因的详情
       otherReasonDetail: _.get(_.get(cust, 'lostReason'), 'churnOtheReason'),
       // 备注
-      comment: detailInfo.commet,
+      comment: cust.commet,
     };
   }
 
@@ -137,6 +137,7 @@ export default class CancelAccountOLForm extends PureComponent {
     });
     this.props.onChange({
       cust,
+      attachmentList: [],
       attachment: '',
       lostDirection: '',
       stockExchange: '',
@@ -536,10 +537,10 @@ export default class CancelAccountOLForm extends PureComponent {
         <CommonUpload
           edit={!disablePage}
           reformEnable
-          key={formData.uploadKey || data.uuid()}
+          key={formData.uploadKey}
           attachment={formData.attachment || ''}
           needDefaultText={false}
-          attachmentList={formData.attachList || []}
+          attachmentList={formData.attachmentList || []}
           uploadAttachment={this.handleUploadCallBack}
         />
       </div>
