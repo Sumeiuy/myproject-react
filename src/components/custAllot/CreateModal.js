@@ -467,7 +467,7 @@ export default class CreateModal extends PureComponent {
     const payload = {
       customer: isCust ? customer : [],
       manage: isCust ? [] : manage,
-      type: 'add',
+      operateType: operateType[0],  // add
       attachment: '',
       id: updateData.appId || '',
     };
