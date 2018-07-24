@@ -326,6 +326,7 @@ export function linkTo({
   location,
   modalType = 'rightType',
   type,
+  ...otherParams
 }) {
   if (_.isEmpty(location)) {
     return;
@@ -364,6 +365,7 @@ export function linkTo({
   params = {
     ...params,
     ...sortParam,
+    ...otherParams,
     filters,
   };
   const url = `${pathname}?${urlHelper.stringify(params)}`;

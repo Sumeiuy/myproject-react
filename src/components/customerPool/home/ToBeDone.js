@@ -101,7 +101,10 @@ export default class PerformanceIndicators extends PureComponent {
       routerAction: push,
       url: `${url}?source=business&filters=${getFilter(data)}&bizFlag=biz`,
       pathname: url,
-      query: data,
+      query: {
+        ...data,
+        filters: getFilter(data),
+      },
       param,
       state: {
         ...query,
