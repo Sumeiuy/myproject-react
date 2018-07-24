@@ -7,7 +7,7 @@ import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, CONFIG_TAB_PRODUCTC
 import { dynamicInsertQuota } from '../customerPool/list/sort/config';
 import filterMark from '../../config/filterSeperator';
 import { openFspTab, openFspIframeTab } from '../../utils';
-import { url as urlHelper } from '../../helper';
+import { url as urlHelper, dva } from '../../helper';
 import { logCommon } from '../../decorators/logable';
 
 const DEFAULT_SORT_DIRE = 'desc';
@@ -29,9 +29,11 @@ const helper = {
   isSightingScope(value) {
     return value === 'jzyx';
   },
+
   transformDateTypeToDate(cycle) {
     return transformCycle(cycle);
   },
+
   getFilter(data) {
     const {
       source,
@@ -44,6 +46,14 @@ const helper = {
     }
     // 当存在周期时，需要统一转换成该周期的开始时间，结束时间
     let filterData = data;
+    let { app: { dict: { custUnrightBusinessType } } } = dva.getStore().getState();
+    custUnrightBusinessType = _.map(custUnrightBusinessType, item => item.key);
+    custUnrightBusinessType = _.compact(custUnrightBusinessType);
+    // 添加可开通业务字典数据
+    filterData = {
+      ...filterData,
+      custUnrightBusinessType,
+    };
     if (filterData.cycleSelect) {
       filterData = {
         ...filterData,
@@ -54,19 +64,21 @@ const helper = {
     const finalFilterList = _.map(filterList, (filterItem) => {
       if (_.isPlainObject(filterItem)) {
         const { defaultVal = {} } = filterItem;
-        const filterValue = _.map(filterItem.value, (item) => {
+        let filterValue = _.map(filterItem.value, (item) => {
           const currentValue = filterData[item];
           if (currentValue) {
             return currentValue;
           }
           return defaultVal[item];
         });
+        filterValue = _.flattenDeep(filterValue);
         return `${filterItem.filterName}${filterInsideSeperator}${filterValue.join(filterValueSeperator)}`;
       }
       return `${filterItem}${filterInsideSeperator}`;
     });
     return finalFilterList.join(filterSeperator);
   },
+
   getSortParam(filter) {
     const filters = urlHelper.transfromFilterValFromUrl(filter);
     const finalSortQuota = _.find(
@@ -79,6 +91,7 @@ const helper = {
       sortDirection: DEFAULT_SORT_DIRE,
     };
   },
+
   /**
    * 跳转到360服务记录页面
    * @param {*object} itemData 当前列表item数据

@@ -60,6 +60,12 @@ export const sourceFilter = {
       value: ['labelName'],
     }],
   },
+  // 首页潜在业务客户下钻
+  business: [{
+    // 可开通业务
+    filterName: 'unrights',
+    value: ['custUnrightBusinessType'],
+  }],
   // 来源于开通业务: 开通业务、可开通业务过滤器
   numOfCustOpened: [{
     // businessOpened: 开通业务
@@ -253,10 +259,6 @@ export const homeModelType = {
     key: 'newOpen',
     desc: '新开客户数',
     id: 'newCustNum',
-  }, {
-    key: 'lastServDt',
-    desc: '服务客户数',
-    id: 'custNum',
   }, {
     key: 'tgSignDate',
     desc: '签约客户数',
