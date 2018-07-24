@@ -29,9 +29,11 @@ const helper = {
   isSightingScope(value) {
     return value === 'jzyx';
   },
+
   transformDateTypeToDate(cycle) {
     return transformCycle(cycle);
   },
+
   getFilter(data) {
     const {
       source,
@@ -76,6 +78,7 @@ const helper = {
     });
     return finalFilterList.join(filterSeperator);
   },
+
   getSortParam(filter) {
     const filters = urlHelper.transfromFilterValFromUrl(filter);
     const finalSortQuota = _.find(
@@ -88,6 +91,7 @@ const helper = {
       sortDirection: DEFAULT_SORT_DIRE,
     };
   },
+
   /**
    * 跳转到360服务记录页面
    * @param {*object} itemData 当前列表item数据
