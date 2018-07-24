@@ -126,7 +126,7 @@ export default class CreateModal extends PureComponent {
     // 获取下一步骤按钮列表
     this.props.queryButtonList({
       flowId: '',
-      operate: 1,
+      operate: 2,
       type: allotType,
     });
   }
