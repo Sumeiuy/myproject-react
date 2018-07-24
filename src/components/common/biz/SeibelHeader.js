@@ -556,7 +556,7 @@ export default class Pageheader extends PureComponent {
     // 如果是营业部客户分配页面
     if (page === PAGE_NO_CUST[1]) {
       hasCreatePermission = permission.hasKFYYBZXGPermission(empInfo) && checkUserIsFiliale();
-      hasCreatePermission = this.props.isShowCreateBtn();
+      // hasCreatePermission = this.props.isShowCreateBtn();
     }
     // 分公司客户分配不显示客户搜索
     const custElement = _.includes(PAGE_NO_CUST, page) ?
