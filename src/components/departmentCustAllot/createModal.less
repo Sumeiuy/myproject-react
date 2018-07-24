@@ -1,0 +1,84 @@
+.createModal {
+  :global {
+    .ant-modal-title {
+      line-height: 20px;
+    }
+    .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+      padding: 9px 12px;
+    }
+    .ant-table-thead > tr > th {
+      background: #fff;
+      border-bottom: 2px solid #e8e8e8;
+    }
+    .ant-table-tbody > tr {
+      background: #fff;
+      &:nth-child(odd) {
+        background: #f9f9f9;
+      }
+    }
+  }
+  .modalContent {
+    padding: 10px 20px;
+    .contentItem {
+      margin-top: 12px;
+      &:first-child {
+        margin-top: 0;
+      }
+      .title {
+        font-size: 16px;
+        color: #4a4a4a;
+        text-indent: 14px;
+        position: relative;
+        &:before {
+          position: absolute;
+          display: block;
+          content: "";
+          width: 5px;
+          height: 16px;
+          background: #4897f1;
+          top: 5px;
+          left: 0;
+        }
+      }
+      .operateDiv {
+        & > div:first-child {
+          margin-right: 20px;
+        }
+        .linkSpan {
+          float: right;
+          vertical-align: bottom;
+          button {
+            background: #108ee9;
+          }
+          & > a, & > span {
+            display: inline-block;
+            width: 110px;
+            line-height: 28px;
+            background: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+            text-align: center;
+            border-radius: 4px;
+            a {
+              color: #333;
+            }
+          }
+          & > span:first-child {
+            width: auto;
+            border: 0;
+            margin-right: 20px;
+          }
+        }
+        .downloadLink {
+          margin-right: 20px;
+        }
+      }
+      .tableDiv {
+        margin-top: 14px;
+      }
+    }
+  }
+  .mr10 {
+    margin-right: 10px;
+  }
+}

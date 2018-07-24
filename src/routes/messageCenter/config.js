@@ -11,6 +11,8 @@ const config = {
   fail: '失败',
   // 分公司客户分配
   custAllot: 'HTSC New Batch Branch Assignment Inbox Type',
+  // 营业部客户分配
+  departmentCustAllot: 'HTSC Batch Division Assignment Inbox Type',
   // 主职位设置
   mainPosition: 'HTSC Primary Position Change Inbox Type',
   // 360 客户？请补充

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-12 10:08:26
+ * @Last Modified time: 2018-07-20 15:15:07
  */
 
 import React, { PureComponent } from 'react';
@@ -22,14 +22,14 @@ import Approval from '../permission/Approval';
 import ApproveList from '../common/approveList';
 import config from './config';
 import { data } from '../../helper';
-import logable, { logCommon } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 
 import styles from './applyEditForm.less';
 
 const { approvalColumns } = config;
 const EMPTY_INFO = '--';
 const SRTYPE = 'SRStkOpReq';
-const COMMITOPERATE = 'commit2'; // 提交的operate值
+const STOPOPERATE = 'falseOver'; // 终止的operate值
 
 export default class ApplyEditForm extends PureComponent {
   static propTypes = {
@@ -209,6 +209,7 @@ export default class ApplyEditForm extends PureComponent {
       groupName: item.nextGroupName,
       auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
       nextApproverList: item.flowAuditors,
+      defaultNextApproverList: item.flowAuditors,
       currentNodeName: item.currentNodeName,
       approverNum: item.approverNum,
     }, () => {
@@ -247,6 +248,7 @@ export default class ApplyEditForm extends PureComponent {
 
   // 展示下一步审批人
   @autobind
+  @logPV({ pathname: '/modal/choiceApproval', title: '选择下一步审批人' })
   showNextApprover() {
     this.setState({
       nextApproverModal: true,
@@ -445,10 +447,10 @@ export default class ApplyEditForm extends PureComponent {
       currentNodeName,
       approverIdea: suggestion,
     }).then(() => {
-      if (operate === COMMITOPERATE) {
-        message.success('股票期权申请修改成功');
-      } else {
+      if (operate === STOPOPERATE) {
         message.success('该股票期权申请已被终止');
+      } else {
+        message.success('股票期权申请修改成功');
       }
       getDetailInfo({ flowId }).then(() => {
         this.setState({
@@ -465,8 +467,25 @@ export default class ApplyEditForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
   updateValue(attachment) {
     this.setState({ attachment });
+  }
+
+  // 搜索下一步审批人
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索下一步审批人',
+      value: '$args[0]',
+    },
+  })
+  handleSearchApproval(value) {
+    const { defaultNextApproverList } = this.state;
+    const filterNextApproverList = _.filter(defaultNextApproverList,
+      item => (item.login.indexOf(value) > -1 || item.empName.indexOf(value) > -1));
+    this.setState({ nextApproverList: filterNextApproverList });
   }
 
   render() {
@@ -528,7 +547,9 @@ export default class ApplyEditForm extends PureComponent {
       title: '选择下一审批人员',
       modalKey: 'stockApplyNextApproverModal',
       rowKey: 'login',
-      searchShow: false,
+      searchShow: true,
+      placeholder: '员工工号/员工姓名',
+      onSearch: this.handleSearchApproval,
       pagination: {
         pageSize: 10,
       },

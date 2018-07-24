@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 09:59:21
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-08 21:30:25
+ * @Last Modified time: 2018-07-19 14:47:13
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -24,11 +24,11 @@ import TableDialog from '../../components/common/biz/TableDialog';
 
 import BottonGroup from '../../components/permission/BottonGroup';
 import CustAllotList from '../../components/common/appList';
-import ViewListRow from '../../components/custAllot/ViewListRow';
+import ApplyItem from '../../components/common/appList/ApplyItem';
 import Detail from '../../components/custAllot/Detail';
 import commonConfirm from '../../components/common/confirm_';
 import config from '../../components/custAllot/config';
-import { dva, emp } from '../../helper';
+import { dva, emp, convert, time } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
 
@@ -37,7 +37,7 @@ const dispatch = dva.generateEffect;
 const {
   titleList: { approvalColumns },
   ruleTypeArray,
-  custAllot,
+  // custAllot,
   custAllot: { status, pageType },
   subType,
   clearDataArray,
@@ -55,6 +55,8 @@ const manageModalKey = 'manageModal';
 const custModalKey = 'custModal';
 // 审批人弹窗
 const approverModalKey = 'approverModal';
+// 取消按钮的值
+const BTN_CANCLE_VALUE = 'cancel';
 
 const effects = {
   // 获取左侧列表
@@ -329,7 +331,7 @@ export default class CustAllot extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
-  @logPV({ pathname: '/modal/createProtocol', title: '新建分公司客户人工划转' })
+  @logPV({ pathname: '/modal/createCustAllotProtocol', title: '新建分公司客户人工划转' })
   openCreateModalBoard() {
     this.setState({
       createModal: true,
@@ -415,6 +417,14 @@ export default class CustAllot extends PureComponent {
   // 提交，点击后选择审批人
   @autobind
   handleSubmit(btnItem) {
+    if (btnItem.operate === BTN_CANCLE_VALUE) {
+      this.closeModal({
+        modalKey: createModalKey,
+        isNeedConfirm: true,
+        clearDataType: clearDataArray[1],
+      });
+      return;
+    }
     const { addedCustData, addedManageData } = this.props;
     if (_.isEmpty(addedCustData)) {
       message.error('请添加客户');
@@ -517,20 +527,36 @@ export default class CustAllot extends PureComponent {
     });
   }
 
+  @autobind
+  showSecondLineInfo() {
+    return '';
+  }
+
+  @autobind
+  showThirdLineInfo(data) {
+    return time.format(data.createTime || '');
+  }
+
   // 渲染列表项里面的每一项
   @autobind
   renderListRow(record, index) {
     const { activeRowIndex } = this.state;
+
+    const { status: statusData } = record;
+    const statusTags = [convert.getStatusByCode(statusData)];
     return (
-      <ViewListRow
+      <ApplyItem
         key={record.id}
         data={record}
+        index={index}
         active={index === activeRowIndex}
         onClick={this.handleListRowClick}
-        index={index}
         pageName="custAllot"
-        type="kehu1"
-        pageData={custAllot}
+        iconType="kehu1"
+        subTypeName="分公司客户分配"
+        statusTags={statusTags}
+        showSecondLineInfo={this.showSecondLineInfo}
+        showThirdLineInfo={this.showThirdLineInfo}
       />
     );
   }
@@ -589,6 +615,7 @@ export default class CustAllot extends PureComponent {
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
         checkUserIsFiliale={this.checkUserIsFiliale}
+        needApplyTime
       />
     );
 
@@ -622,9 +649,19 @@ export default class CustAllot extends PureComponent {
       />
     );
 
+
+    const newButtonData = { ...buttonData };
+    if (buttonData.flowButtons && buttonData.flowButtons.length) {
+      newButtonData.flowButtons[1] = {
+        ...newButtonData.flowButtons[0],
+        btnName: '取消',
+        operate: 'cancel',
+        flowBtnId: -1,
+      };
+    }
     // 新建弹窗按钮
     const selfBtnGroup = (<BottonGroup
-      list={buttonData}
+      list={newButtonData}
       onEmitEvent={this.handleSubmit}
     />);
 
@@ -683,6 +720,7 @@ export default class CustAllot extends PureComponent {
               updateList={updateList}
               updateData={updateData}
               clearData={clearData}
+              sendRequest={this.updateCustOrEmp}
             />
           :
             null

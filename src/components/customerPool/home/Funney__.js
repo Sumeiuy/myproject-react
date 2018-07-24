@@ -11,7 +11,7 @@ import { Popover } from 'antd';
 import { linkTo } from './homeIndicators_';
 import { homeModelType } from '../config';
 import IECharts from '../../IECharts';
-
+import { logCommon } from '../../../decorators/logable';
 import antdStyles from '../../../css/antd.less';
 import styles from './funney.less';
 // 客户与资产模块的source
@@ -104,7 +104,7 @@ function Funney({ dataSource, push, cycle, location }, { empInfo }) {
       if (arg.componentType !== 'series') {
         return;
       }
-      const { data: { key = '' } } = arg;
+      const { data: { key = '', name = '' } } = arg;
       const modalTypeList = homeModelType[SOURCE_CUST_ASSETS];
       const { key: modalType } = _.find(modalTypeList, item => item.id === key) || {};
       let params = {
@@ -124,6 +124,14 @@ function Funney({ dataSource, push, cycle, location }, { empInfo }) {
         };
       }
       linkTo(params);
+      // 手动上传日志
+      logCommon({
+        type: 'DrillDown',
+        payload: {
+          name: '客户及资产',
+          element: name,
+        },
+      });
     });
   };
 
