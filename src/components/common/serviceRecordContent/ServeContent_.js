@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-03 17:11:30
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-07-24 10:40:32
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -41,8 +41,32 @@ export default class ServeContent extends PureComponent {
       serveContentType: isReject ? serveContent.type : '',
       // 服务内容
       serveContentDesc: isReject ? serveContent.desc : '',
+      // 判断当前是驳回后修改的情景还是新建的情景
+      isReject,
       // 判断是否用户已经修改了内容,在只读|驳回下才会已经存在内容,
       hasEditContent: isReject,
+      // 用户选择的服务内容是通过固定话术的方式显示的情况下，会存在 templateID
+      templateID: '',
+    };
+  }
+
+  @autobind
+  getData() {
+    const {
+      serveContentDesc,
+      serveContentTitle,
+      serveContentType,
+      approverId,
+      contentMode,
+      templateID,
+    } = this.state;
+    return {
+      title: serveContentTitle,
+      content: serveContentDesc,
+      taskType: serveContentType,
+      approval: approverId,
+      mode: contentMode,
+      templateId: templateID,
     };
   }
 
@@ -83,24 +107,6 @@ export default class ServeContent extends PureComponent {
     return true;
   }
 
-  @autobind
-  getData() {
-    const {
-      serveContentDesc,
-      serveContentTitle,
-      serveContentType,
-      approverId,
-      contentMode,
-    } = this.state;
-    return {
-      title: serveContentTitle,
-      content: serveContentDesc,
-      taskType: serveContentType,
-      approval: approverId,
-      mode: contentMode,
-    };
-  }
-
   /** 点击添加内容按钮 | 编辑修改按钮 */
   @autobind
   handleBtnClick() {
@@ -116,7 +122,7 @@ export default class ServeContent extends PureComponent {
 
   // 添加服务内容按确认按钮
   @autobind
-  handleServeModalOK({ title, type = '', desc, mode }) {
+  handleServeModalOK({ title, type = '', desc, mode, templateID = '' }) {
     this.setState({
       serveContentModal: false,
       serveContentDesc: desc,
@@ -124,6 +130,7 @@ export default class ServeContent extends PureComponent {
       serveContentType: type,
       hasEditContent: !_.isEmpty(desc),
       contentMode: mode,
+      templateID,
     });
   }
 
@@ -190,6 +197,9 @@ export default class ServeContent extends PureComponent {
       serveContentDesc,
       serveContentType,
       hasEditContent,
+      isReject,
+      templateID,
+      contentMode,
     } = this.state;
 
     const {
@@ -264,9 +274,16 @@ export default class ServeContent extends PureComponent {
             <ChoiceInvestAdviceModal
               visible={serveContentModal}
               modalKey="serveContentModal"
+              eventId={this.props.eventId}
+              serviceTypeCode={this.props.serviceTypeCode}
+              custId={this.props.custId}
+              taskType={this.props.taskType}
+              templateID={templateID}
               onClose={this.handleCloseServeContentModal}
               onOK={this.handleServeModalOK}
               isUpdate={hasEditContent}
+              isReject={isReject}
+              fromMode={contentMode}
               serveContent={serveContent}
               testWallCollision={testWallCollision}
               testWallCollisionStatus={testWallCollisionStatus}
@@ -287,6 +304,10 @@ ServeContent.propTypes = {
   // 投资建议文本撞墙检测是否有股票代码
   testWallCollisionStatus: PropTypes.bool.isRequired,
   onFormDataChange: PropTypes.func,
+  eventId: PropTypes.string.isRequired,
+  serviceTypeCode: PropTypes.string.isRequired,
+  custId: PropTypes.string.isRequired,
+  taskType: PropTypes.string.isRequired,
 };
 
 ServeContent.defaultProps = {

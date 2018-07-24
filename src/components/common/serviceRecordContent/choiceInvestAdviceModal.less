@@ -6,8 +6,8 @@
 }
 .modalHeader {
   flex: 0 0 auto;
-  display: none;
-  height: 58px;
+  display: block;
+  height: 22px;
   &:after {
     content: " ";
     display: table;
@@ -17,8 +17,8 @@
 
 .modeName {
   font-size: 16px;
-  color: #333;
   font-weight: bold;
+  color: #333;
   line-height: 22px;
   float: left;
   width: 140px;
@@ -28,11 +28,11 @@
 .modeSwitch {
   font-size: 16px;
   color: #4897f1;
-  font-weight: bold;
   line-height: 22px;
   float: right;
   width: 140px;
   text-align: right;
+  cursor: pointer;
 }
 
 .freeModeContainer {
@@ -40,6 +40,7 @@
   flex-direction: column;
   flex: 1 1 auto;
   margin-bottom: 10px;
+  margin-top: 16px;
 }
 
 .editLine {

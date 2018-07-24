@@ -4537,11 +4537,11 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
-lego-react-filter@^1.0.29:
-  version "1.0.38"
-  resolved "http://168.61.8.90:4873/lego-react-filter/-/lego-react-filter-1.0.38.tgz#35e7f989094ddf6eb3dbcc65a9a2c203673181db"
+lego-react-filter@^1.0.39:
+  version "1.0.39"
+  resolved "http://168.61.8.90:4873/lego-react-filter/-/lego-react-filter-1.0.39.tgz#088b0eca6fbc3dd1b3ee5cd31bfbcedf0af1f44c"
 
-lego-soft-phone@^1.0.2:
+lego-soft-phone@^1.0.5:
   version "1.0.5"
   resolved "http://168.61.8.90:4873/lego-soft-phone/-/lego-soft-phone-1.0.5.tgz#1cd3a7a149c305bfd05cf986cf8752d4cf2904f7"
   dependencies:
@@ -4555,9 +4555,9 @@ lego-soft-phone@^1.0.2:
     react-dom "^16.3.2"
     sip.js "^0.7.8"
 
-lego-tree-filter@^1.0.4:
-  version "1.0.4"
-  resolved "http://168.61.8.90:4873/lego-tree-filter/-/lego-tree-filter-1.0.4.tgz#81b18d461df1dc35e8308e5c122e32ca961b814e"
+lego-tree-filter@^1.0.5:
+  version "1.0.7"
+  resolved "http://168.61.8.90:4873/lego-tree-filter/-/lego-tree-filter-1.0.7.tgz#3860c977bdda17ed1c0b160bbc4836aa685ba88a"
 
 less-loader@^4.0.3:
   version "4.1.0"
@@ -6674,6 +6674,21 @@ rc-rate@~2.4.0:
     classnames "^2.2.5"
     prop-types "^15.5.8"
     rc-util "^4.3.0"
+
+rc-select@^7.7.8:
+  version "7.7.8"
+  resolved "http://168.61.8.90:4873/rc-select/-/rc-select-7.7.8.tgz#333c7e4df349986a566b360d62101e4176d772c7"
+  dependencies:
+    babel-runtime "^6.23.0"
+    classnames "2.x"
+    component-classes "1.x"
+    dom-scroll-into-view "1.x"
+    prop-types "^15.5.8"
+    rc-animate "2.x"
+    rc-menu "^6.1.0"
+    rc-trigger "^2.2.0"
+    rc-util "^4.0.4"
+    warning "^3.0.0"
 
 rc-select@~7.7.0:
   version "7.7.7"

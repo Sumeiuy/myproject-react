@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-11 16:57:56
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-07-24 10:40:09
  */
 
 import React, { PureComponent } from 'react';
@@ -983,6 +983,10 @@ export default class ServiceRecordContent extends PureComponent {
             ? (
               <ServeContent
                 ref={this.setServeContentRef}
+                eventId={this.props.formData.eventId}
+                serviceTypeCode={this.props.formData.serviceTypeCode}
+                custId={this.props.formData.custId}
+                taskType={this.props.formData.taskTypeCode}
                 approvalList={this.props.zhangleApprovalList}
                 isReject={isReject}
                 serveContent={zlRejectRecord}
