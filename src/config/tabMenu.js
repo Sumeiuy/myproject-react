@@ -15,6 +15,18 @@ const primaryMenu = [
     pid: 'ROOT',
   },
   {
+    name: '资讯列表',
+    id: 'FSP_VIEWPOINT_LIST',
+    path: '/latestView/viewpointList',
+    pid: 'FSP_CUST_M_CENTER',
+  },
+  {
+    name: '资讯详情',
+    id: 'FSP_VIEWPOINT_DETAIL',
+    path: '/latestView/viewpointDetail',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
     name: '客户中心',
     id: 'FSP_CUST_M_CENTER',
     path: '',
@@ -150,7 +162,7 @@ const primaryMenu = [
     name: '精选组合',
     id: 'FSP_CHOICENESS_COMBINATION',
     path: '/strategyCenter/choicenessCombination',
-    pid: 'FSP_STRATEGY_CENTER', 
+    pid: 'FSP_STRATEGY_CENTER',
   },
   {
     name: '每日晨报',

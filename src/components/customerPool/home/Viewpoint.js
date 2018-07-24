@@ -25,7 +25,7 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
-  openNewTab(url, query, editPane) {
+  openNewTab(url, query = {}) {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const { push } = this.props;
     openRctTab({
@@ -34,7 +34,6 @@ export default class Viewpoint extends PureComponent {
       param,
       pathname: url,
       query,
-      editPane,
     });
   }
 
@@ -42,24 +41,14 @@ export default class Viewpoint extends PureComponent {
   @logable({ type: 'Click', payload: { name: '更多 >' } })
   handleMoreClick() {
     // 跳转到资讯列表界面
-    this.openNewTab('/latestView/viewpointList', null,
-      {
-        name: '资讯列表',
-        path: '/latestView/viewpointList',
-      });
+    this.openNewTab('/latestView/viewpointList');
   }
 
   @autobind
   @logable({ type: 'Click', payload: { name: '详情' } })
   handleDetailClick(id) {
     // 跳转到资讯详情界面
-    this.openNewTab('/latestView/viewpointDetail', {
-      id,
-    },
-      {
-        name: '资讯详情',
-        path: '/latestView/viewpointDetail',
-      });
+    this.openNewTab('/latestView/viewpointDetail', { id });
   }
 
   @autobind

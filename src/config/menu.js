@@ -259,7 +259,7 @@ const menus = [
         id: 'FSP_DAILY_PAPER',
         name: '每日晨报',
         order: 4,
-        pid: 'FSP_PRD_REPOSITORY',
+        pid: 'FSP_STRATEGY_CENTER',
         url: '',
         type: 'link',
         action: 'loadInTab',
