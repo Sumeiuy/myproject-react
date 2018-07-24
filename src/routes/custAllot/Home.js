@@ -652,12 +652,12 @@ export default class CustAllot extends PureComponent {
 
     const newButtonData = { ...buttonData };
     if (buttonData.flowButtons && buttonData.flowButtons.length) {
-      newButtonData.flowButtons[1] = {
+      newButtonData.flowButtons.push({
         ...newButtonData.flowButtons[0],
         btnName: '取消',
         operate: 'cancel',
         flowBtnId: -1,
-      };
+      });
     }
     // 新建弹窗按钮
     const selfBtnGroup = (<BottonGroup
