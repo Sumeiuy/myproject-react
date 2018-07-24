@@ -33,6 +33,7 @@ const {
   titleList: { cust: custTitleList, manage: manageTitleList },
   ruleTypeArray,
   clearDataArray,
+  operateType,
 } = config;
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
@@ -47,8 +48,6 @@ const KEY_OLDEMPNAME = 'oldEmpName';
 const KEY_ISTOUGU = 'touGu';
 // 开发经理
 const KEY_DMNAME = 'dmName';
-// 更新客户或者服务经理时的方法类型
-const operateType = ['add', 'delete', 'clear'];
 // 用以区分点击的是客户或者是服务经理
 const CUST = 'cust';
 const MANAGE = 'manage';
@@ -219,7 +218,7 @@ export default class CreateModal extends PureComponent {
     updateList({
       ...payload,
       attachment,
-      type: operateType[0],  // add
+      operateType: operateType[0],  // add
     }).then(() => {
       const { updateData: { appId }, queryAddedCustList } = this.props;
       this.setState({
@@ -254,7 +253,7 @@ export default class CreateModal extends PureComponent {
             id: updateData.appId || '',
             custtomer: [],
             manage: [],
-            type: operateType[2], // clear
+            operateType: operateType[2], // clear
             attachment,
           };
           // 如果上传过，则先调用清空接口，调用成功后，调用添加接口
@@ -306,7 +305,7 @@ export default class CreateModal extends PureComponent {
     const payload = {
       customer: [],
       manage: [],
-      type: operateType[1],  // delete
+      operateType: operateType[1],  // delete
       id: updateData.appId,
     };
     if (isCust) {

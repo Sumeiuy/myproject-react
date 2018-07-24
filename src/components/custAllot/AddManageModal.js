@@ -23,7 +23,7 @@ import config from './config';
 import styles from './addManageModal.less';
 
 // 表头
-const { titleList: { manage }, positionTypeArray, clearDataArray } = config;
+const { titleList: { manage }, positionTypeArray, clearDataArray, operateType } = config;
 // 登陆人的组织ID
 const empOrgId = emp.getOrgId();
 // 服务经理
@@ -153,7 +153,7 @@ export default class AddManageModal extends PureComponent {
     const payload = {
       customer: [],
       manage: selectedRows,
-      type: 'add',
+      operateType: operateType[0],  // add
       attachment: '',
       id: updateData.appId || '',
     };

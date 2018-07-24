@@ -114,7 +114,7 @@ export default class Detail extends PureComponent {
     // 新服务经理
     const newEmpColumn = _.find(tempTitleList, o => o.key === KEY_NEWEMPNAME);
     newEmpColumn.render = (text, record) => {
-      const touGuElement = !record.isNewEmpTouGu ? <span className={styles.tougu}>投顾</span> : '';
+      const touGuElement = record.newEmpTouGu ? <span className={styles.tougu}>投顾</span> : '';
       return (
         <div>
           <div className={styles.oldEmp} title={`${text} (${record.newEmpId})`}>

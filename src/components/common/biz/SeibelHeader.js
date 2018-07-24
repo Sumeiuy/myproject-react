@@ -170,8 +170,8 @@ export default class Pageheader extends PureComponent {
   // 只能选择今天之前的时间
   @autobind
   setDisableRange(date) {
-    // date返回的时间是YYYY-MM-DD 12:00:00;需要修改成YYYY-MM-DD 00:00:00，所以减了12小时
-    return moment(date).add('hours', -12) > moment();
+    const dateformatStr = date.format('YYYY-MM-DD');
+    return moment(dateformatStr) > moment();
   }
 
   @autobind
@@ -556,7 +556,7 @@ export default class Pageheader extends PureComponent {
     // 如果是营业部客户分配页面
     if (page === PAGE_NO_CUST[1]) {
       hasCreatePermission = permission.hasKFYYBZXGPermission(empInfo) && checkUserIsFiliale();
-      hasCreatePermission = this.props.isShowCreateBtn();
+      // hasCreatePermission = this.props.isShowCreateBtn();
     }
     // 分公司客户分配不显示客户搜索
     const custElement = _.includes(PAGE_NO_CUST, page) ?

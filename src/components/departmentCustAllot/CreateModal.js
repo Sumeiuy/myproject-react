@@ -468,14 +468,14 @@ export default class CreateModal extends PureComponent {
     switch (modalKey) {
       case custModalKey:
         if (_.isEmpty(client)) {
-          message.error('请至少选择一位客户');
+          message.error('请选择客户');
           return;
         }
         customer = [{ brokerNumber: client.custId }];
         break;
       case manageModalKey:
         if (_.isEmpty(manager)) {
-          message.error('请至少选择一位服务经理');
+          message.error('请选择服务经理');
           return;
         }
         manage = [manager];
@@ -505,6 +505,11 @@ export default class CreateModal extends PureComponent {
       // 清空 AutoComplete 的选项和值
       this.queryCustComponent.clearValue();
       this.queryManagerComponent.clearValue();
+      // 根据类型清空不同的值
+      const stateKey = isCust ? 'client' : 'manager';
+      this.setState({
+        [stateKey]: {},
+      });
     });
   }
 
