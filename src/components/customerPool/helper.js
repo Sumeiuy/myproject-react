@@ -34,6 +34,11 @@ const helper = {
     return transformCycle(cycle);
   },
 
+  /**
+   * 首页下钻到客户列表需要的过滤器参数
+   * @param data
+   * @returns {string}
+   */
   getFilter(data) {
     const {
       source,
@@ -44,26 +49,30 @@ const helper = {
     if (filterList === undefined) {
       return '';
     }
-    // 当存在周期时，需要统一转换成该周期的开始时间，结束时间
     let filterData = data;
+    // 添加可开通业务字典数据
     let { app: { dict: { custUnrightBusinessType } } } = dva.getStore().getState();
     custUnrightBusinessType = _.map(custUnrightBusinessType, item => item.key);
     custUnrightBusinessType = _.compact(custUnrightBusinessType);
-    // 添加可开通业务字典数据
     filterData = {
       ...filterData,
       custUnrightBusinessType,
     };
+    // 当存在周期时，需要统一转换成该周期的开始时间，结束时间
     if (filterData.cycleSelect) {
       filterData = {
         ...filterData,
         ...transformCycle(filterData.cycleSelect),
       };
     }
+    // 根据配置（业务需求）获取需要打开的过滤器列表
     filterList = _.isArray(filterList) ? filterList : filterList[type];
+    // 按照首页下钻与客户列表约定的param 格式进行值得格式化
     const finalFilterList = _.map(filterList, (filterItem) => {
       if (_.isPlainObject(filterItem)) {
         const { defaultVal = {} } = filterItem;
+        // 根据配置中每个过滤器的value（入参的key），在入参中取值（因为每个过滤器的值无特定规律，直接根据入参和配置确定）
+        // 如果下钻时该过滤器的值固定，则直接在defaultVal中配置
         let filterValue = _.map(filterItem.value, (item) => {
           const currentValue = filterData[item];
           if (currentValue) {
@@ -72,13 +81,21 @@ const helper = {
           return defaultVal[item];
         });
         filterValue = _.flattenDeep(filterValue);
+        // 下钻param格式化(与客户列表约定)
         return `${filterItem.filterName}${filterInsideSeperator}${filterValue.join(filterValueSeperator)}`;
       }
+      // 下钻params格式化（与客户列表约定）
       return `${filterItem}${filterInsideSeperator}`;
     });
+    // 下钻param格式化（与客户列表约定）
     return finalFilterList.join(filterSeperator);
   },
 
+  /**
+   * 首页下钻到客户列表需要添加的排序params
+   * @param filter
+   * @returns {{sortType: string, sortDirection: string}}
+   */
   getSortParam(filter) {
     const filters = urlHelper.transfromFilterValFromUrl(filter);
     const finalSortQuota = _.find(
@@ -88,7 +105,7 @@ const helper = {
     const { sortType = '' } = finalSortQuota || {};
     return {
       sortType,
-      sortDirection: DEFAULT_SORT_DIRE,
+      sortDirection: sortType ? DEFAULT_SORT_DIRE : '',
     };
   },
 
