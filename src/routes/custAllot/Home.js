@@ -651,13 +651,16 @@ export default class CustAllot extends PureComponent {
 
 
     const newButtonData = { ...buttonData };
-    if (buttonData.flowButtons && buttonData.flowButtons.length) {
-      newButtonData.flowButtons.push({
-        ...newButtonData.flowButtons[0],
-        btnName: '取消',
-        operate: 'cancel',
-        flowBtnId: -1,
-      });
+    if (!_.isEmpty(newButtonData.flowButtons)) {
+      const operateArray = _.map(newButtonData.flowButtons, 'operate');
+      if (!_.includes(operateArray, BTN_CANCLE_VALUE)) {
+        newButtonData.flowButtons.push({
+          ...newButtonData.flowButtons[0],
+          btnName: '取消',
+          operate: 'cancel',
+          flowBtnId: -1,
+        });
+      }
     }
     // 新建弹窗按钮
     const selfBtnGroup = (<BottonGroup
