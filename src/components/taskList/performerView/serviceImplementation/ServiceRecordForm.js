@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-24 18:41:25
+ * @Last Modified time: 2018-07-24 18:49:12
  * 服务记录表单
  */
 
@@ -55,9 +55,6 @@ export default class ServiceRecordForm extends PureComponent {
     // 弹出确认框然后才能进行添加服务记录
     const isZLFinsServiceWay = serveWayUtil.isZhangle(data.serveWay);
     const isByTemplate = !_.isEmpty(_.toString(_.get(data, 'zhangleServiceContentData.templateId')));
-    console.warn('data: ', data);
-    console.warn('isZLFinsServiceWay: ', isZLFinsServiceWay);
-    console.warn('isByTemplate: ', isByTemplate);
     if (isZLFinsServiceWay && isByTemplate) {
       confirm({
         content: '设置的投资建议将发送给客户，确认提交吗？',
