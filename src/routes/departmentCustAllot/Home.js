@@ -1,9 +1,9 @@
 /**
- * @Description: 分公司客户分配
+ * @Description: 营业部客户分配
  * @Author: Liujianshu
- * @Date: 2018-05-23 09:59:21
+ * @Date: 2018-07-18 17:30:49
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-07-19 14:47:13
+ * @Last Modified time: 2018-07-23 14:25:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -17,17 +17,15 @@ import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
-import CreateModal from '../../components/custAllot/CreateModal';
-import AddCustModal from '../../components/custAllot/AddCustModal';
-import AddManageModal from '../../components/custAllot/AddManageModal';
+import CreateModal from '../../components/departmentCustAllot/CreateModal';
+import AddCustModal from '../../components/departmentCustAllot/AddCustModal';
 import TableDialog from '../../components/common/biz/TableDialog';
-
 import BottonGroup from '../../components/permission/BottonGroup';
 import CustAllotList from '../../components/common/appList';
 import ApplyItem from '../../components/common/appList/ApplyItem';
-import Detail from '../../components/custAllot/Detail';
+import Detail from '../../components/departmentCustAllot/Detail';
 import commonConfirm from '../../components/common/confirm_';
-import config from '../../components/custAllot/config';
+import config from '../../components/departmentCustAllot/config';
 import { dva, emp, convert, time } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
@@ -40,11 +38,13 @@ const {
   // custAllot,
   custAllot: { status, pageType },
   subType,
+  allotType,
   clearDataArray,
 } = config;
 
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
+// const empOrgId = 'ZZ001041051';
 // 登陆人的职位 ID
 const empPstnId = emp.getPstnId();
 // 新建弹窗的 key 值
@@ -62,23 +62,23 @@ const effects = {
   // 获取左侧列表
   getList: 'app/getSeibleList',
   // 获取详情
-  queryDetailInfo: 'custAllot/queryDetailInfo',
+  queryDetailInfo: 'departmentCustAllot/queryDetailInfo',
   // 获取下一步按钮以及审批人
-  queryButtonList: 'custAllot/queryButtonList',
+  queryButtonList: 'departmentCustAllot/queryButtonList',
   // 查询客户列表
-  queryCustList: 'custAllot/queryCustList',
+  queryCustList: 'departmentCustAllot/queryCustList',
   // 查询服务经理列表
-  queryManageList: 'custAllot/queryManageList',
+  queryManageList: 'departmentCustAllot/queryManageList',
   // 批量添加客户或者服务经理、删除、清空
-  updateList: 'custAllot/updateList',
+  updateList: 'departmentCustAllot/updateList',
   // 查询已经添加的客户，弹窗与详情中用到
-  queryAddedCustList: 'custAllot/queryAddedCustList',
+  queryAddedCustList: 'departmentCustAllot/queryAddedCustList',
   // 查询已经添加的客户
-  queryAddedManageList: 'custAllot/queryAddedManageList',
+  queryAddedManageList: 'departmentCustAllot/queryAddedManageList',
   // 提交客户分配
-  saveChange: 'custAllot/saveChange',
+  saveChange: 'departmentCustAllot/saveChange',
   // 清除数据
-  clearData: 'custAllot/clearData',
+  clearData: 'departmentCustAllot/clearData',
 };
 
 const mapStateToProps = state => ({
@@ -91,24 +91,23 @@ const mapStateToProps = state => ({
   // 左侧列表数据
   list: state.app.seibleList,
   // 右侧详情数据
-  detailInfo: state.custAllot.detailInfo,
+  detailInfo: state.departmentCustAllot.detailInfo,
   // 获取按钮列表和下一步审批人
-  buttonData: state.custAllot.buttonData,
+  buttonData: state.departmentCustAllot.buttonData,
   // 客户列表
-  custData: state.custAllot.custData,
+  custData: state.departmentCustAllot.custData,
   // 服务经理列表
-  manageData: state.custAllot.manageData,
+  manageData: state.departmentCustAllot.manageData,
   // 详情页已添加的客户列表
-  detailAddedCustData: state.custAllot.detailAddedCustData,
+  detailAddedCustData: state.departmentCustAllot.detailAddedCustData,
   // 已添加的客户列表
-  addedCustData: state.custAllot.addedCustData,
+  addedCustData: state.departmentCustAllot.addedCustData,
   // 已添加的服务经理列表
-  addedManageData: state.custAllot.addedManageData,
+  addedManageData: state.departmentCustAllot.addedManageData,
   // 上传后更新的批次数据
-  updateData: state.custAllot.updateData,
-  saveChangeData: state.custAllot.saveChangeData,
+  updateData: state.departmentCustAllot.updateData,
+  saveChangeData: state.departmentCustAllot.saveChangeData,
 });
-
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
@@ -133,11 +132,10 @@ const mapDispatchToProps = {
   // 清除搜索数据
   clearData: dispatch(effects.clearData, { loading: false }),
 };
-
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-export default class CustAllot extends PureComponent {
+export default class DepartmentCustAllot extends PureComponent {
   static propTypes = {
     dict: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
@@ -178,9 +176,6 @@ export default class CustAllot extends PureComponent {
     clearData: PropTypes.func.isRequired,
   }
 
-  static defaultProps = {
-  }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -189,7 +184,6 @@ export default class CustAllot extends PureComponent {
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
       createModal: false,
       custModal: false,
-      manageModal: false,
       approverModal: false,
       // 审批人
       flowAuditors: [],
@@ -249,7 +243,13 @@ export default class CustAllot extends PureComponent {
       this.setState({
         activeRowIndex: itemIndex,
       });
-      queryDetailInfo({ flowId: item.flowId, orgId: empOrgId, pageNum: 1, pageSize: 7 });
+      queryDetailInfo({
+        flowId: item.flowId,
+        type: allotType,
+        orgId: empOrgId,
+        pageNum: 1,
+        pageSize: 7,
+      });
     }
   }
 
@@ -284,15 +284,15 @@ export default class CustAllot extends PureComponent {
 
   // 判断当前登录用户部门是否是分公司
   @autobind
-  checkUserIsFiliale() {
+  checkUserIsDepartment() {
     const { custRangeList } = this.props;
-    let isFiliale = true;
+    let isDepartment = true;
     if (!_.isEmpty(custRangeList)) {
-      if (!emp.isFiliale(custRangeList, emp.getOrgId())) {
-        isFiliale = false;
+      if (!emp.isDepartment(custRangeList, emp.getOrgId())) {
+        isDepartment = false;
       }
     }
-    return isFiliale;
+    return isDepartment;
   }
 
   // 打开弹窗
@@ -331,7 +331,7 @@ export default class CustAllot extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
-  @logPV({ pathname: '/modal/createCustAllotProtocol', title: '新建分公司客户人工划转' })
+  @logPV({ pathname: '/modal/createProtocol', title: '新建分公司客户人工划转' })
   openCreateModalBoard() {
     this.setState({
       createModal: true,
@@ -359,7 +359,7 @@ export default class CustAllot extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '分公司客户分配左侧列表项',
+      name: '营业部客户分配左侧列表项',
       type: '$props.location.query.type',
       subType: '$props.location.query.subType',
     },
@@ -380,7 +380,13 @@ export default class CustAllot extends PureComponent {
       },
     });
     this.setState({ activeRowIndex: index });
-    queryDetailInfo({ flowId, orgId: empOrgId, pageSize: 7, pageNum: 1 });
+    queryDetailInfo({
+      flowId,
+      orgId: empOrgId,
+      type: allotType,
+      pageSize: 7,
+      pageNum: 1,
+    });
   }
 
 
@@ -396,6 +402,7 @@ export default class CustAllot extends PureComponent {
         orgId: empOrgId,
         pageNum: 1,
         pageSize: 5,
+        type: allotType,
       };
       // 从客户弹窗过来请求已添加的客户，否则请求已添加的服务经理
       const isCust = pageData.modalKey === 'custModal';
@@ -407,7 +414,8 @@ export default class CustAllot extends PureComponent {
           const { addedManageData: { page } } = this.props;
           // 只有一位服务经理时，隐藏分配规则
           if (page.totalRecordNum <= 1) {
-            this.handleRuleTypePropsChange('0');
+            // 按照平均客户数分配
+            this.handleRuleTypePropsChange(ruleTypeArray[0].value);
           }
         }
       });
@@ -503,6 +511,7 @@ export default class CustAllot extends PureComponent {
     const payload = {
       id: updateData.appId,
       ruleType,
+      type: allotType,
       TGConfirm: false,
       positionId: empPstnId,
       orgId: empOrgId,
@@ -551,16 +560,15 @@ export default class CustAllot extends PureComponent {
         index={index}
         active={index === activeRowIndex}
         onClick={this.handleListRowClick}
-        pageName="custAllot"
+        pageName="departmentCustAllot"
         iconType="kehu1"
-        subTypeName="分公司客户分配"
+        subTypeName="营业部客户分配"
         statusTags={statusTags}
         showSecondLineInfo={this.showSecondLineInfo}
         showThirdLineInfo={this.showThirdLineInfo}
       />
     );
   }
-
 
   render() {
     const {
@@ -594,10 +602,10 @@ export default class CustAllot extends PureComponent {
       updateData,
       clearData,
     } = this.props;
+
     const {
       createModal,
       custModal,
-      manageModal,
       approverModal,
       flowAuditors,
       ruleType,
@@ -607,14 +615,14 @@ export default class CustAllot extends PureComponent {
       <ConnectedSeibelHeader
         location={location}
         replace={replace}
-        page="custAllotPage"
+        page="departmentCustAllotPage"
         pageType={pageType}
         needSubType={false}
         stateOptions={status}
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
-        checkUserIsFiliale={this.checkUserIsFiliale}
+        checkUserIsFiliale={this.checkUserIsDepartment}
         needApplyTime
       />
     );
@@ -648,7 +656,6 @@ export default class CustAllot extends PureComponent {
         addedCustData={detailAddedCustData}
       />
     );
-
 
     const newButtonData = { ...buttonData };
     if (buttonData.flowButtons && buttonData.flowButtons.length) {
@@ -687,7 +694,7 @@ export default class CustAllot extends PureComponent {
           topPanel={topPanel}
           leftPanel={leftPanel}
           rightPanel={rightPanel}
-          leftListClassName="custAllotList"
+          leftListClassName="departmentCustAllotList"
         />
         {
           createModal
@@ -737,23 +744,6 @@ export default class CustAllot extends PureComponent {
               queryList={queryCustList}
               closeModal={this.closeModal}
               sendRequest={this.updateCustOrEmp}
-              updateData={updateData}
-            />
-          :
-            null
-        }
-        {
-          manageModal
-          ?
-            <AddManageModal
-              modalKey={manageModalKey}
-              visible={manageModal}
-              custRangeList={custRangeList}
-              data={manageData}
-              queryList={queryManageList}
-              closeModal={this.closeModal}
-              sendRequest={this.updateCustOrEmp}
-              handleRuleTypePropsChange={this.handleRuleTypePropsChange}
               updateData={updateData}
             />
           :

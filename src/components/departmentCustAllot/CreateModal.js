@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-07-20 13:21:39
+ * @Last Modified time: 2018-07-23 14:59:44
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -32,10 +32,12 @@ const Option = AntdAutoComplete.Option;
 const {
   titleList: { cust: custTitleList, manage: manageTitleList },
   ruleTypeArray,
+  allotType,
   clearDataArray,
 } = config;
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
+// const empOrgId = 'ZZ001041051';
 // 登陆人的职位 ID
 const empPstnId = emp.getPstnId();
 // 客户
@@ -47,6 +49,8 @@ const KEY_OLDEMPNAME = 'oldEmpName';
 const KEY_ISTOUGU = 'touGu';
 // 开发经理
 const KEY_DMNAME = 'dmName';
+// 服务经理-是否是投顾
+const KEY_TGFLAG = 'tgFlag';
 // 更新客户或者服务经理时的方法类型
 const operateType = ['add', 'delete', 'clear'];
 // 用以区分点击的是客户或者是服务经理
@@ -123,18 +127,9 @@ export default class CreateModal extends PureComponent {
     this.props.queryButtonList({
       flowId: '',
       operate: 1,
+      type: allotType,
     });
   }
-
-  // 导入数据
-  @autobind
-  @logPV({ pathname: '/modal/importData', title: '导入数据' })
-  onImportHandle() {
-    this.setState({
-      importVisible: true,
-    });
-  }
-
 
   // 生成客户表格标题列表
   @autobind
@@ -157,10 +152,7 @@ export default class CreateModal extends PureComponent {
     oldEmpNameColumn.render = (text, record) => (
       <div>
         {
-          text ?
-            `${text} (${record.oldEmpId})`
-          :
-            null
+          text ? `${text} (${record.oldEmpId})` : null
         }
       </div>
     );
@@ -177,7 +169,7 @@ export default class CreateModal extends PureComponent {
         }
       </div>);
     };
-    // 开发经理
+    // 介绍人
     const dmNameColumn = _.find(titleList, o => o.key === KEY_DMNAME);
     dmNameColumn.render = (text, record) => (
       <div>
@@ -189,6 +181,7 @@ export default class CreateModal extends PureComponent {
         }
       </div>
     );
+    // 添加操作列
     titleList.push({
       dataIndex: 'operate',
       key: 'operate',
@@ -202,13 +195,27 @@ export default class CreateModal extends PureComponent {
   @autobind
   getColumnsManageTitle() {
     const titleList = [...manageTitleList];
-    titleList[titleList.length] = {
+    // 是否是投顾
+    const isTouguColumn = _.find(titleList, o => o.key === KEY_TGFLAG);
+    isTouguColumn.render = text => ((
+      <div>{text ? '是' : '否'}</div>
+    ));
+    titleList.push({
       dataIndex: 'operate',
       key: 'operate',
       title: '操作',
       render: (text, record) => this.renderPopconfirm(MANAGE, record),
-    };
+    });
     return titleList;
+  }
+
+  // 导入数据
+  @autobind
+  @logPV({ pathname: '/modal/importData', title: '导入数据' })
+  handleImportData() {
+    this.setState({
+      importVisible: true,
+    });
   }
 
   // 处理更新数据后请求最新数据
@@ -219,7 +226,8 @@ export default class CreateModal extends PureComponent {
     updateList({
       ...payload,
       attachment,
-      type: operateType[0],  // add
+      operateType: operateType[0],  // add
+      type: allotType,
     }).then(() => {
       const { updateData: { appId }, queryAddedCustList } = this.props;
       this.setState({
@@ -232,10 +240,12 @@ export default class CreateModal extends PureComponent {
         orgId: empOrgId,
         pageNum: 1,
         pageSize: 5,
+        type: allotType,
       };
       queryAddedCustList(queryAddedCustListPayload);
     });
   }
+
   // 上传事件
   @autobind
   @logable({ type: 'Click', payload: { name: '导入' } })
@@ -282,7 +292,7 @@ export default class CreateModal extends PureComponent {
 
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '否' } })
-  importHandleCancel() {
+  handleCancelImport() {
     this.setState({
       importVisible: false,
     });
@@ -300,14 +310,15 @@ export default class CreateModal extends PureComponent {
 
   // 客户删除事件
   @autobind
-  deleteTableData(type, record) {
+  handleDeleteTableData(type, record) {
     const { updateList, updateData, queryAddedCustList, queryAddedManageList } = this.props;
     const isCust = type === CUST;
     const payload = {
       customer: [],
       manage: [],
-      type: operateType[1],  // delete
+      operateType: operateType[1],  // delete
       id: updateData.appId,
+      type: allotType,
     };
     if (isCust) {
       payload.customer = [{ brokerNumber: record.custId }];
@@ -321,6 +332,7 @@ export default class CreateModal extends PureComponent {
         orgId: empOrgId,
         pageNum: 1,
         pageSize: 5,
+        type: allotType,
       };
       const queryFunction = isCust ? queryAddedCustList : queryAddedManageList;
       queryFunction(queryAddedCustListPayload).then(() => {
@@ -328,7 +340,8 @@ export default class CreateModal extends PureComponent {
           const { handleRuleTypePropsChange, addedManageData: { page } } = this.props;
           // 只有一位服务经理时，隐藏分配规则
           if (page.totalRecordNum <= 1) {
-            handleRuleTypePropsChange('0');
+            // 按照平均客户数分配
+            handleRuleTypePropsChange(ruleTypeArray[0].value);
           }
         }
       });
@@ -345,6 +358,7 @@ export default class CreateModal extends PureComponent {
       orgId: empOrgId,
       pageNum,
       pageSize: 5,
+      type: allotType,
     };
     queryAddedCustList(payload);
   }
@@ -359,6 +373,7 @@ export default class CreateModal extends PureComponent {
       orgId: empOrgId,
       pageNum,
       pageSize: 5,
+      type: allotType,
     };
     queryAddedManageList(payload);
   }
@@ -375,6 +390,7 @@ export default class CreateModal extends PureComponent {
       custKeyword: v,
       pageSize: 10,
       pageNum: 1,
+      type: allotType,
     }).then(() => {
       const { custData: { list = [] } } = this.props;
       this.setState({
@@ -396,6 +412,9 @@ export default class CreateModal extends PureComponent {
       orgId: empOrgId,
       pageNum: 1,
       pageSize: 10,
+      type: allotType,
+      // 个人职位
+      positionType: 1,
     }).then(() => {
       const { manageData: { list = [] } } = this.props;
       this.setState({
@@ -439,8 +458,8 @@ export default class CreateModal extends PureComponent {
 
   // 发送添加客户、服务经理请求
   @autobind
-  sendRequest(modalKey) {
-    const { sendRequest, custModalKey, manageModalKey, updateData } = this.props;
+  handleAddBtnClick(modalKey) {
+    const { clearData, sendRequest, custModalKey, manageModalKey, updateData } = this.props;
     const { client, manager } = this.state;
     let customer = [];
     let manage = [];
@@ -468,9 +487,10 @@ export default class CreateModal extends PureComponent {
     const payload = {
       customer: isCust ? customer : [],
       manage: isCust ? [] : manage,
-      type: 'add',
+      operateType: 'add',
       attachment: '',
       id: updateData.appId || '',
+      type: allotType,
     };
     // 是否需要确认关闭
     const isNeedConfirm = false;
@@ -480,9 +500,12 @@ export default class CreateModal extends PureComponent {
     };
     // 发送添加请求，关闭弹窗
     sendRequest(payload, pageData);
-    // 清空 AutoComplete 的选项和值
-    this.queryCustComponent.clearValue();
-    this.queryManagerComponent.clearValue();
+    // clearSearchData
+    clearData(clearDataArray[0]).then(() => {
+      // 清空 AutoComplete 的选项和值
+      this.queryCustComponent.clearValue();
+      this.queryManagerComponent.clearValue();
+    });
   }
 
   // 渲染点击删除按钮后的确认框
@@ -490,7 +513,7 @@ export default class CreateModal extends PureComponent {
   renderPopconfirm(type, record) {
     return (<Popconfirm
       placement="top"
-      onConfirm={() => this.deleteTableData(type, record)}
+      onConfirm={() => this.handleDeleteTableData(type, record)}
       okText="是"
       cancelText="否"
       title={'是否删除此条数据？'}
@@ -504,7 +527,7 @@ export default class CreateModal extends PureComponent {
   @autobind
   renderOption(item) {
     const optionValue = `${item.empName} (${item.empId})`;
-    const inputValue = `${item.empName} ${item.empId} ${item.orgName} ${item.postnType}`;
+    const inputValue = `${item.empName} ${item.empId}`;
     return (
       <Option
         key={item.positionId}
@@ -531,6 +554,7 @@ export default class CreateModal extends PureComponent {
       addedManageData: { list: manageList = [], page: managePage = {} },
       ruleType,
     } = this.props;
+
     const {
       importVisible,
       attachment,
@@ -568,7 +592,7 @@ export default class CreateModal extends PureComponent {
     const isUploaded = !_.isEmpty(attachment);
     // 上传过，或者未上传但有数据
     const uploadElement = (isUploaded || (!isUploaded && custList.length > 0)) ?
-      (<span><a onClick={this.onImportHandle}>批量导入数据</a></span>)
+      (<span><a onClick={this.handleImportData}>批量导入数据</a></span>)
     :
       (<Upload {...uploadProps}>
         <a>批量导入数据</a>
@@ -588,10 +612,9 @@ export default class CreateModal extends PureComponent {
     // 客户分配规则显示与否
     // 服务经理当前页且所有数据都为一条时，不显示
     const showRuleType = manageList.length === 1 && managePage.totalRecordNum === 1;
-
     return (
       <CommonModal
-        title="新建分公司客户分配"
+        title="新建营业部客户分配"
         visible={visible}
         closeModal={() => closeModal(closePayload)}
         size="large"
@@ -615,7 +638,7 @@ export default class CreateModal extends PureComponent {
                 ref={ref => this.queryCustComponent = ref}
                 dropdownMatchSelectWidth={false}
               />
-              <Button ghost type="primary" onClick={() => this.sendRequest(custModalKey)}>
+              <Button ghost type="primary" onClick={() => this.handleAddBtnClick(custModalKey)}>
                 添加
               </Button>
               <span className={styles.linkSpan}>
@@ -655,14 +678,9 @@ export default class CreateModal extends PureComponent {
                 dropdownMatchSelectWidth={false}
                 renderOptionNode={this.renderOption}
               />
-              <Button ghost type="primary" onClick={() => this.sendRequest(manageModalKey)}>
+              <Button ghost type="primary" onClick={() => this.handleAddBtnClick(manageModalKey)}>
                 添加
               </Button>
-              <span className={styles.linkSpan}>
-                <Button type="primary" onClick={() => showModal(manageModalKey)}>
-                  +批量添加
-                </Button>
-              </span>
             </div>
             <div className={styles.tableDiv}>
               <CommonTable
@@ -694,9 +712,9 @@ export default class CreateModal extends PureComponent {
           <Modal
             visible={importVisible}
             title="提示"
-            onCancel={this.importHandleCancel}
+            onCancel={this.handleCancelImport}
             footer={[
-              <Button style={{ marginRight: '10px' }} key="back" onClick={this.importHandleCancel}>
+              <Button className={styles.mr10} key="back" onClick={this.handleCancelImport}>
                 取消
               </Button>,
               <Upload {...uploadProps} {...this.props} key="uploadAgain">

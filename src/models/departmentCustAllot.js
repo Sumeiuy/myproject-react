@@ -3,14 +3,14 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 14:30:12
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-11 19:50:37
+ * @Last Modified time: 2018-07-23 14:25:03
  */
 import { custAllot as api } from '../api';
 
 const EMPTY_OBJECT = {};
 
 export default {
-  namespace: 'custAllot',
+  namespace: 'departmentCustAllot',
   state: {
     detailInfo: EMPTY_OBJECT, // 详情
     buttonData: EMPTY_OBJECT, // 获取按钮列表和下一步审批人

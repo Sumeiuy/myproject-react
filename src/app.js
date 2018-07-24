@@ -154,6 +154,8 @@ app.model(require('./models/operationCenter'));
 app.model(require('./models/businessDepartmentCustDistribute'));
 // 分公司客户分配
 app.model(require('./models/custAllot'));
+// 营业部客户分配
+app.model(require('./models/departmentCustAllot'));
 // 消息通知提醒
 app.model(require('./models/messageCenter'));
 // 股票期权评估申请

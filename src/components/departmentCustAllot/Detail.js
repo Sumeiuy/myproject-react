@@ -28,7 +28,7 @@ const empOrgId = emp.getPstnId();
 // 登陆人的职位 ID
 const empPstnId = emp.getPstnId();
 // 表头
-const { titleList, ruleTypeArray } = config;
+const { titleList, ruleTypeArray, allotType } = config;
 // 客户姓名
 const KEY_CUSTNAME = 'custName';
 const KEY_STATUS = 'status';
@@ -113,9 +113,17 @@ export default class Detail extends PureComponent {
     };
     // 新服务经理
     const newEmpColumn = _.find(tempTitleList, o => o.key === KEY_NEWEMPNAME);
-    newEmpColumn.render = (text, record) => (
-      <div title={`${text} (${record.newEmpId})`}>{text} ({record.newEmpId})</div>
-    );
+    newEmpColumn.render = (text, record) => {
+      const touGuElement = !record.isNewEmpTouGu ? <span className={styles.tougu}>投顾</span> : '';
+      return (
+        <div>
+          <div className={styles.oldEmp} title={`${text} (${record.newEmpId})`}>
+            {text} ({record.newEmpId})
+            {touGuElement}
+          </div>
+        </div>
+      );
+    };
     return tempTitleList;
   }
 
@@ -130,6 +138,7 @@ export default class Detail extends PureComponent {
       pageNum,
       pageSize: 7,
       isDetail: DETAIL_PAGE,
+      type: allotType,
     };
     queryAddedCustList(payload).then(() => {
       const { addedCustData: { list, page } } = this.props;
