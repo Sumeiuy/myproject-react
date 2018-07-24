@@ -439,7 +439,7 @@ export default class CreateModal extends PureComponent {
   // 发送添加客户、服务经理请求
   @autobind
   sendRequest(modalKey) {
-    const { sendRequest, custModalKey, manageModalKey, updateData } = this.props;
+    const { clearData, sendRequest, custModalKey, manageModalKey, updateData } = this.props;
     const { client, manager } = this.state;
     let customer = [];
     let manage = [];
@@ -479,9 +479,16 @@ export default class CreateModal extends PureComponent {
     };
     // 发送添加请求，关闭弹窗
     sendRequest(payload, pageData);
-    // 清空 AutoComplete 的选项和值
-    this.queryCustComponent.clearValue();
-    this.queryManagerComponent.clearValue();
+    // clearSearchData
+    clearData(clearDataArray[0]).then(() => {
+      // 清空 AutoComplete 的选项和值
+      this.queryCustComponent.clearValue();
+      this.queryManagerComponent.clearValue();
+      // 根据类型清空不同的值
+      this.setState({
+        [isCust ? 'client' : 'manager']: {},
+      });
+    });
   }
 
   // 渲染点击删除按钮后的确认框
