@@ -64,10 +64,7 @@ export const sourceFilter = {
   business: [{
     // 可开通业务
     filterName: 'unrights',
-    value: ['selectedList'],
-    defaultVal: {
-      selectedList: ['817580', '817030', '817440', '817200', '817470', '817460', '817010', '817270', '817260'],
-    },
+    value: ['custUnrightBusinessType'],
   }],
   // 来源于开通业务: 开通业务、可开通业务过滤器
   numOfCustOpened: [{
@@ -262,10 +259,6 @@ export const homeModelType = {
     key: 'newOpen',
     desc: '新开客户数',
     id: 'newCustNum',
-  }, {
-    key: 'lastServDt',
-    desc: '服务客户数',
-    id: 'custNum',
   }, {
     key: 'tgSignDate',
     desc: '签约客户数',

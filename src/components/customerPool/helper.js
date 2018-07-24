@@ -7,7 +7,7 @@ import { sourceFilter, kPIDateScopeType, PER_CODE, ORG_CODE, PATHNAME_PRDUCTCENT
 import { dynamicInsertQuota } from '../customerPool/list/sort/config';
 import filterMark from '../../config/filterSeperator';
 import { openFspTab } from '../../utils';
-import { url as urlHelper } from '../../helper';
+import { url as urlHelper, dva } from '../../helper';
 import { logCommon } from '../../decorators/logable';
 
 const DEFAULT_SORT_DIRE = 'desc';
@@ -44,6 +44,14 @@ const helper = {
     }
     // 当存在周期时，需要统一转换成该周期的开始时间，结束时间
     let filterData = data;
+    let { app: { dict: { custUnrightBusinessType } } } = dva.getStore().getState();
+    custUnrightBusinessType = _.map(custUnrightBusinessType, item => item.key);
+    custUnrightBusinessType = _.compact(custUnrightBusinessType);
+    // 添加可开通业务字典数据
+    filterData = {
+      ...filterData,
+      custUnrightBusinessType,
+    };
     if (filterData.cycleSelect) {
       filterData = {
         ...filterData,
