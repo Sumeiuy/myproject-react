@@ -39,6 +39,7 @@ const effects = {
   // 删除文件
   ceFileDelete: 'performerView/ceFileDelete',
   switchPosition: 'global/changePost',
+  getMenus: 'global/getMenus',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -80,6 +81,7 @@ const mapDispatchToProps = {
   addServeRecord: fectchDataFunction(true, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
+  getMenus: fectchDataFunction(true, effects.getMenus),
   switchPosition: fectchDataFunction(false, effects.switchPosition),
   toggleServiceRecordModal: query => ({
     type: 'app/toggleServiceRecordModal',
@@ -117,6 +119,7 @@ export default class Main extends PureComponent {
     changePost: PropTypes.bool.isRequired,
     taskFeedbackList: PropTypes.array.isRequired,
     switchPosition: PropTypes.func.isRequired,
+    getMenus: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -135,8 +138,9 @@ export default class Main extends PureComponent {
   }
 
   componentDidMount() {
-    const { getCustomerScope } = this.props;
+    const { getCustomerScope, getMenus } = this.props;
     getCustomerScope(); // 加载客户池客户范围
+    getMenus();
   }
 
   @autobind
