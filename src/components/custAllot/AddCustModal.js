@@ -27,7 +27,7 @@ import config from './config';
 import styles from './addCustModal.less';
 
 // 表头
-const { titleList: { cust: custTitleList }, clearDataArray } = config;
+const { titleList: { cust: custTitleList }, clearDataArray, operateType } = config;
 // 登陆人的组织ID
 const empOrgId = emp.getOrgId();
 // const empOrgId = 'ZZ001041093';
@@ -323,7 +323,7 @@ export default class AddCustModal extends PureComponent {
     const payload = {
       customer: custList,
       manage: [],
-      type: 'add',
+      operateType: operateType[0], // add
       attachment: '',
       id: updateData.appId || '',
     };
