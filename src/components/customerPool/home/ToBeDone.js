@@ -13,6 +13,7 @@ import _ from 'lodash';
 import { getFilter } from '../helper';
 import styles from './toBeDone.less';
 import { openRctTab } from '../../../utils';
+import { url as urlHelper } from '../../../helper';
 import logable from '../../../decorators/logable';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -93,18 +94,19 @@ export default class PerformanceIndicators extends PureComponent {
       id: 'RCT_FSP_CUSTOMER_LIST',
       title: '客户列表',
     };
-    const data = {
+    let data = {
       source: 'business',
       bizFlag: 'biz',
     };
+    data = {
+      ...data,
+      filters: getFilter(data),
+    };
     openRctTab({
       routerAction: push,
-      url: `${url}?source=business&filters=${getFilter(data)}&bizFlag=biz`,
+      url: `${url}?${urlHelper.stringify(data)}`,
       pathname: url,
-      query: {
-        ...data,
-        filters: getFilter(data),
-      },
+      query: data,
       param,
       state: {
         ...query,
