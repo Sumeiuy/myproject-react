@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 14:36:08
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-24 13:53:12
+ * @Last Modified time: 2018-07-25 18:32:10
  * @description 投资建议弹出层
  */
 import React, { PureComponent } from 'react';
@@ -51,12 +51,13 @@ const TASK_TYPE = {
 export default class ChoiceInvestAdviceModal extends PureComponent {
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const { templateID: nextID } = nextProps;
+    const { templateID: nextID, serveContent = {} } = nextProps;
     const { prevPropID } = prevState;
     if (nextID !== prevPropID) {
       return {
         templateID: nextID,
         prevPropID: nextID,
+        title: serveContent.title || '',
       };
     }
     return null;
@@ -223,7 +224,9 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
   }
 
   @autobind
-  handleSwitchModeChange() {
+  handleSwitchModeConfirm() {
+    // 从固定话术->自由编辑，清空用户选择的模板
+    // 从自由编辑->固定话术，清空用户填写的信息
     const { mode } = this.state;
     if (mode === 'free') {
       this.setState({
@@ -236,6 +239,15 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
         serveContent: {},
       });
     }
+  }
+
+  @autobind
+  handleSwitchModeChange() {
+    // 当切换涨乐财富通的服务内容的方式的时候，需要提示下用户，修改的东西将会清空
+    confirm({
+      content: '您添加的服务内容未保存，如切换窗口信息将丢失，确认要切换吗？',
+      onOk: this.handleSwitchModeConfirm,
+    });
   }
 
   @autobind
