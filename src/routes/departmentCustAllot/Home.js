@@ -415,7 +415,7 @@ export default class DepartmentCustAllot extends PureComponent {
           // 只有一位服务经理时，隐藏分配规则
           if (page.totalRecordNum <= 1) {
             // 按照平均客户数分配
-            this.handleRuleTypePropsChange(ruleTypeArray[0].value);
+            this.handleRuleTypePropsChange();
           }
         }
       });
@@ -525,7 +525,7 @@ export default class DepartmentCustAllot extends PureComponent {
   }
 
   @autobind
-  handleRuleTypePropsChange(value) {
+  handleRuleTypePropsChange(value = '') {
     this.setState({
       ruleType: value,
     });
@@ -551,7 +551,7 @@ export default class DepartmentCustAllot extends PureComponent {
       commonConfirm({
         shortCut: 'hasTouGu',
         onOk: () => {
-          saveChange(payload).then(this.handleSuccessCallback);
+          saveChange(payload).then(this.handleSuccessCallback());
         },
       });
     });
@@ -722,63 +722,55 @@ export default class DepartmentCustAllot extends PureComponent {
         />
         {
           createModal
-          ?
-            <CreateModal
-              dict={dict}
-              modalKey={createModalKey}
-              custModalKey={custModalKey}
-              manageModalKey={manageModalKey}
-              visible={createModal}
-              location={location}
-              empInfo={empInfo}
-              custRangeList={custRangeList}
-              ruleType={ruleType}
-              handleRuleTypePropsChange={this.handleRuleTypePropsChange}
-              custData={custData}
-              queryCustList={queryCustList}
-              addedCustData={addedCustData}
-              queryAddedCustList={queryAddedCustList}
-              manageData={manageData}
-              queryManageList={queryManageList}
-              addedManageData={addedManageData}
-              queryAddedManageList={queryAddedManageList}
-              selfBtnGroup={selfBtnGroup}
-              queryButtonList={queryButtonList}
-              queryAppList={this.queryAppList}
-              showModal={this.showModal}
-              closeModal={this.closeModal}
-              saveChange={saveChange}
-              updateList={updateList}
-              updateData={updateData}
-              clearData={clearData}
-              sendRequest={this.updateCustOrEmp}
-            />
-          :
-            null
+          ? <CreateModal
+            dict={dict}
+            modalKey={createModalKey}
+            custModalKey={custModalKey}
+            manageModalKey={manageModalKey}
+            visible={createModal}
+            location={location}
+            empInfo={empInfo}
+            custRangeList={custRangeList}
+            ruleType={ruleType}
+            handleRuleTypePropsChange={this.handleRuleTypePropsChange}
+            custData={custData}
+            queryCustList={queryCustList}
+            addedCustData={addedCustData}
+            queryAddedCustList={queryAddedCustList}
+            manageData={manageData}
+            queryManageList={queryManageList}
+            addedManageData={addedManageData}
+            queryAddedManageList={queryAddedManageList}
+            selfBtnGroup={selfBtnGroup}
+            queryButtonList={queryButtonList}
+            queryAppList={this.queryAppList}
+            showModal={this.showModal}
+            closeModal={this.closeModal}
+            saveChange={saveChange}
+            updateList={updateList}
+            updateData={updateData}
+            clearData={clearData}
+            sendRequest={this.updateCustOrEmp}
+          />
+          : null
         }
         {
           custModal
-          ?
-            <AddCustModal
-              modalKey={custModalKey}
-              visible={custModal}
-              custRangeList={custRangeList}
-              data={custData}
-              addedCustData={addedCustData}
-              queryList={queryCustList}
-              closeModal={this.closeModal}
-              sendRequest={this.updateCustOrEmp}
-              updateData={updateData}
-            />
-          :
-            null
+          ? <AddCustModal
+            modalKey={custModalKey}
+            visible={custModal}
+            custRangeList={custRangeList}
+            data={custData}
+            addedCustData={addedCustData}
+            queryList={queryCustList}
+            closeModal={this.closeModal}
+            sendRequest={this.updateCustOrEmp}
+            updateData={updateData}
+          />
+          : null
         }
         {
-          approverModal
-          ?
-            <TableDialog {...approvalProps} />
-          :
-            null
+          approverModal ? <TableDialog {...approvalProps} /> : null
         }
       </div>
     );

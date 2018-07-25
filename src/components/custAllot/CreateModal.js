@@ -341,7 +341,7 @@ export default class CreateModal extends PureComponent {
           const { handleRuleTypePropsChange, addedManageData: { page } } = this.props;
           // 只有一位服务经理时，隐藏分配规则
           if (page.totalRecordNum <= 1) {
-            handleRuleTypePropsChange('');
+            handleRuleTypePropsChange();
           }
         }
       });

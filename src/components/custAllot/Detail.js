@@ -94,13 +94,11 @@ export default class Detail extends PureComponent {
         <div>
           {
             text
-            ?
-              <div className={styles.oldEmp} title={`${text} (${record.oldEmpId})`}>
-                {text} ({record.oldEmpId})
-                {touGuElement}
-              </div>
-            :
-              null
+            ? <div className={styles.oldEmp} title={`${text} (${record.oldEmpId})`}>
+              {text} ({record.oldEmpId})
+              {touGuElement}
+            </div>
+            : null
           }
         </div>
       );
@@ -203,28 +201,24 @@ export default class Detail extends PureComponent {
           <div className={styles.error}>
             {
               errorDesc
-              ?
-                <p>
-                  <Icon type="tishi" />
-                  {config.tips[errorDesc]}
-                </p>
-              :
-                null
+              ? <p>
+                <Icon type="tishi" />
+                {config.tips[errorDesc]}
+              </p>
+              : null
             }
             {
               errorDesc === config.errorArray[0]
-              ?
-                <p>
-                  <a
-                    onClick={this.handleDownloadClick}
-                    href={`${request.prefix}/excel/custTransfer/exportAssigumentExcel?appId=${appId || dataId}&empId=${emp.getId()}&orgId=${empOrgId}`}
-                    download
-                  >
-                    下载报错信息
-                  </a>
-                </p>
-              :
-                null
+              ? <p>
+                <a
+                  onClick={this.handleDownloadClick}
+                  href={`${request.prefix}/excel/custTransfer/exportAssigumentExcel?appId=${appId || dataId}&empId=${emp.getId()}&orgId=${empOrgId}`}
+                  download
+                >
+                  下载报错信息
+                </a>
+              </p>
+              : null
             }
           </div>
           <InfoTitle head="客户列表" />
@@ -241,13 +235,11 @@ export default class Detail extends PureComponent {
         </div>
         {
           ruleType
-          ?
-            <div className={styles.module}>
-              <InfoTitle head="客户分配规则" />
-              <InfoItem label="规则" value={ruleType ? ruleTypeArray[ruleType].label : ''} />
-            </div>
-          :
-            null
+          ? <div className={styles.module}>
+            <InfoTitle head="客户分配规则" />
+            <InfoItem label="规则" value={ruleType ? ruleTypeArray[ruleType].label : ''} />
+          </div>
+          : null
         }
         <div className={styles.module}>
           <InfoTitle head="拟稿信息" />
