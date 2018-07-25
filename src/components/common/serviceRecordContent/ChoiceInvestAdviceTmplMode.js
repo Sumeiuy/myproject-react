@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-16 16:16:13
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-23 10:28:25
+ * @Last Modified time: 2018-07-25 11:09:25
  * @description 服务内容选择投资建议模板组件
  */
 import React, { Component } from 'react';
@@ -132,7 +132,7 @@ export default class ChoiceInvestAdviceTmplMode extends Component {
                 <div className={styles.search}>
                   <Search
                     onKeyDown={this.preventKeyDownPropagation}
-                    placeholder="搜索内容"
+                    placeholder="搜索标题/内容"
                     onSearch={this.handleTemplateSearch}
                     style={{ width: 200 }}
                     enterButton
