@@ -13,8 +13,10 @@ import { fspContainer } from '../../../../config/index';
 import { url } from '../../../../helper/index';
 import logable, { logCommon } from '../../../../decorators/logable';
 import ServiceRecordContent from '../../../common/serviceRecordContent';
+import confirm from '../../../common/confirm_';
 import Loading from '../../../../layouts/Loading';
 import { UPDATE } from '../../../../config/serviceRecord';
+import { serveWay as serveWayUtil } from '../../../taskList/performerView/config/code';
 import styles from './createServiceRecord.less';
 
 /**
@@ -136,6 +138,22 @@ export default class CreateServiceRecord extends PureComponent {
       }
     }
     addServeRecord(payload);
+    // 此处需要针对涨乐财富通是通过固定话术的情况下提交服务记录时候，
+    // 弹出确认框然后才能进行添加服务记录
+    const isZLFinsServiceWay = serveWayUtil.isZhangle(data.serveWay);
+    const isByTemplate = !_.isEmpty(_.toString(_.get(data, 'zhangleServiceContentData.templateId')));
+    if (isZLFinsServiceWay && isByTemplate) {
+      confirm({
+        content: '设置的投资建议将发送给客户，确认提交吗？',
+        onOk: () => {
+          addServeRecord(payload);
+        },
+      });
+    } else {
+      // 添加服务记录
+      addServeRecord(payload);
+    }
+
     resetServiceRecordInfo();
     // log日志 --- 添加服务记录
     // 服务类型
@@ -233,6 +251,7 @@ export default class CreateServiceRecord extends PureComponent {
 
     // 从客户列表进入创建服务记录的均是自建任务
     const serviceReocrd = {
+      custId: id,
       taskTypeCode: TASK_TYPE_CODES.SELF_TASK,
       motCustfeedBackDict: transformCustFeecbackData(taskFeedbackList),
     };

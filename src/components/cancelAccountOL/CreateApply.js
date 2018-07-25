@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 13:35:26
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-19 16:22:52
+ * @Last Modified time: 2018-07-25 09:40:53
  * @description 新建线上销户申请弹出框
  */
 import React, { PureComponent } from 'react';
@@ -78,7 +78,7 @@ export default class CreateApply extends PureComponent {
   // 提交数据，因为后端在此业务中校验接口和保存接口放在一起，
   // 所以直接使用后端提供的提交接口就行
   @autobind
-  doSubmitPassValidate() {
+  doValidateAndSaveApply() {
     const {
       cust,
       attachment,
@@ -116,23 +116,26 @@ export default class CreateApply extends PureComponent {
           vlaue: JSON.stringify(query),
         },
       });
-      this.doFlowApproval();
+      // 线上销户保存申请单并且校验通过之后，打开选择审批人选择框
+      this.selectNextApproval();
     });
   }
 
   @autobind
-  doFlowApproval() {
+  selectNextApproval() {
     const { submitResult: { validate, validateMsg, id } } = this.props;
     if (!validate) {
       confirm({ content: validateMsg });
     } else {
-      this.doApproval(id);
+      this.setState({
+        itemId: id,
+      }, this.openNextApprovalModal);
     }
   }
 
   @autobind
-  doApproval(itemId) {
-    const { cust, operate, auditors, groupName } = this.state;
+  doApproval() {
+    const { cust, operate, auditors, groupName, itemId } = this.state;
     // 新建走流程，flowId 传空字符串
     this.props.doApproval({
       flowId: '',
@@ -174,23 +177,16 @@ export default class CreateApply extends PureComponent {
       confirm({ content: msg });
       return;
     }
+    // 此处处理逻辑需要修改为先校验申请单信息，因为线上销户申请的校验合并在保存申请单接口中
+    // 然后通过之后再选择审批人，提交流程
     // 此处需要增加选择审批人的操作
     // 将用户选择的按钮信息保存下来
-    // 弹出审批人选择框
     this.setState({
       operate: btn.operate,
       groupName: btn.nextGroupName,
       auditors: !_.isEmpty(btn.flowAuditors) ? btn.flowAuditors[0].login : '',
       nextApproverList: btn.flowAuditors,
-    }, () => {
-      // 如果只有一个审批人情况，则直接提交后端校验接口
-      // 校验通过之后则条用新建接口
-      if (_.size(btn.flowAuditors) === 1) {
-        this.doSubmitPassValidate();
-      } else {
-        this.openNextApprovalModal();
-      }
-    });
+    }, this.doValidateAndSaveApply);
   }
 
   @autobind
@@ -201,7 +197,6 @@ export default class CreateApply extends PureComponent {
 
   @autobind
   handleModalClose() {
-    // 关闭新建申请弹出层的时候，弹出提示是否
     confirm({
       shortCut: 'close',
       onOk: this.handleCloseModalConfirm,
@@ -214,7 +209,7 @@ export default class CreateApply extends PureComponent {
     this.setState({
       nextApprovalModal: false,
       auditors: approver.login,
-    }, this.doSubmitPassValidate);
+    }, this.doApproval);
   }
 
   @autobind

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-12 09:02:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-23 16:18:40
+ * @Last Modified time: 2018-07-25 09:54:45
  * @description 线上销户的驳回后修改页面
  */
 
@@ -23,7 +23,7 @@ import CancelAccountOLForm from '../../components/cancelAccountOL/CancelAccountO
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { env, dom, dva, emp } from '../../helper';
-import logable, { logCommon } from '../../decorators/logable';
+import logable, { logCommon, logPV } from '../../decorators/logable';
 
 import { APPROVAL_COLUMNS } from '../../components/cancelAccountOL/config';
 import {
@@ -176,7 +176,7 @@ export default class RejectHome extends Component {
   // 提交数据，因为后端在此业务中校验接口和保存接口放在一起，
   // 所以直接使用后端提供的提交接口就行
   @autobind
-  doSubmitPassValidate() {
+  doValidateAndSaveApply() {
     const { detailInfoForUpdate: { flowId, applyId } } = this.props;
     const {
       cust,
@@ -223,7 +223,7 @@ export default class RejectHome extends Component {
             vlaue: JSON.stringify(query),
           },
         });
-        this.doFlowApproval();
+        this.selectNextApproval();
       });
     } else {
       this.doApproval(applyId);
@@ -231,19 +231,21 @@ export default class RejectHome extends Component {
   }
 
   @autobind
-  doFlowApproval() {
+  selectNextApproval() {
     const { submitResult: { validate, validateMsg, id } } = this.props;
     if (!validate) {
       confirm({ content: validateMsg });
     } else {
-      this.doApproval(id);
+      this.setState({
+        itemId: id,
+      }, this.openNextApprovalModal);
     }
   }
 
   @autobind
-  doApproval(itemId) {
+  doApproval() {
     const { detailInfoForUpdate: { flowId, basicInfo } } = this.props;
-    const { operate, auditors, groupName, idea } = this.state;
+    const { operate, auditors, groupName, idea, itemId } = this.state;
     // 新建走流程，flowId 传空字符串
     this.props.doApproval({
       flowId,
@@ -268,6 +270,17 @@ export default class RejectHome extends Component {
   }
 
   @autobind
+  @logPV({
+    pathname: '/modal/createCancelAccountOL/nextApproval',
+    title: '新建线上销户申请-选择下一步审批人',
+  })
+  openNextApprovalModal() {
+    this.setState({
+      nextApprovalModal: true,
+    });
+  }
+
+  @autobind
   handleBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
     const { valid, msg } = validateData(this.state);
@@ -281,17 +294,7 @@ export default class RejectHome extends Component {
       groupName: btn.nextGroupName,
       auditors: !_.isEmpty(btn.flowAuditors) ? btn.flowAuditors[0].login : '',
       nextApproverList: btn.flowAuditors,
-    }, () => {
-      // 如果只有一个审批人情况，则直接提交后端校验接口
-      // 校验通过之后则条用新建接口
-      if (_.size(btn.flowAuditors) === 1) {
-        this.doSubmitPassValidate();
-      } else {
-        this.setState({
-          nextApprovalModal: true,
-        });
-      }
-    });
+    }, this.doValidateAndSaveApply);
   }
 
   @autobind
@@ -300,7 +303,7 @@ export default class RejectHome extends Component {
     this.setState({
       nextApprovalModal: false,
       auditors: approver.login,
-    }, this.doSubmitPassValidate);
+    }, this.doApproval);
   }
 
   @autobind

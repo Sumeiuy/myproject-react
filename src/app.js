@@ -47,6 +47,7 @@ const onError = (e) => {
       // 错误类型是1，用dialog
       CommonModal.showErrorDialog(errorMessage);
     } else if (messageType === '2') {
+      message.error(errorMessage);
       // 业务错误
       logCommon({
         type: 'bizError',
