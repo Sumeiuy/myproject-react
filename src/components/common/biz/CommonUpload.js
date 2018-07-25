@@ -288,7 +288,7 @@ export default class CommonUpload extends PureComponent {
               const fileName = item.name;
               const popoverHtml = (
                 <div key={item.attachId} className={styles.filePop}>
-                  <h3>
+                  <h3 className='clearfix'>
                     <Icon type="fujian1" />
                     <span className={styles.popFileName}>{fileName}</span>
                     <span className={styles.btnBox}>
