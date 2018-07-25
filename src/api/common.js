@@ -10,7 +10,7 @@ export default function common(api) {
     // 员工职责与职位
     getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
     // 获取用户有权限查看的菜单
-    getMenus: query => api.post('/groovynoauth/fsp/emp/menu/queryMenus4Emp', query),
+    getMenus: query => api.postFspData('/newMenu', query),
     // 用户切换岗位
     changePost: query => api.post('/groovynoauth/fsp/emp/info/changePost', query),
     // 添加服务记录中 服务类型
