@@ -47,10 +47,10 @@ export default {
     },
     // 根据用户权限可以查看的菜单
     changePostSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload } = action;
       return {
         ...state,
-        changePost: !!resultData,
+        payload,
       };
     },
   },
