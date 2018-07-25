@@ -413,7 +413,7 @@ export default class CustomerRow extends PureComponent {
                     : null
                 }
                 <span>
-                  {`${listItem.openDt.slice(0, 4)}-${listItem.openDt.slice(4, 6)}-${listItem.openDt.slice(6, 8)} 开户`}
+                  {`${listItem.openDt.slice(0, 4)}-${listItem.openDt.slice(4, 6)}-${listItem.openDt.slice(6, 8)} 激活`}
                 </span>
                 {
                   (rskLev === '' || rskLev === 'null' || _.isEmpty(currentRiskLevel))

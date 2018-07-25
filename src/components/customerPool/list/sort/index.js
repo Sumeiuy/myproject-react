@@ -29,7 +29,14 @@ export default class Sort extends PureComponent {
     const filter = url.transfromFilterValFromUrl(filters);
     const dynamicInsertQuotaList = _.filter(
       dynamicInsertQuota,
-      quotaItem => filter[quotaItem.filterType],
+      (quotaItem) => {
+        const filterValue = filter[quotaItem.filterType];
+        if (_.isArray(filterValue)) {
+          const finalFilterValue = _.filter(filterValue, item => item !== '');
+          return !_.isEmpty(finalFilterValue);
+        }
+        return filterValue;
+      },
     );
     return _.uniqBy([...sortQuotaConfig, ...dynamicInsertQuotaList], 'sortType');
   }

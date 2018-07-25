@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-11 15:26:43
+ * @Last Modified time: 2018-07-25 15:26:34
  */
 
 import _ from 'lodash';
@@ -288,26 +288,16 @@ function getCapitalRangInfo({ filterField, labelName }, filterObj) {
   return '';
 }
 
-// 潜在业务客户
-function getBizInfo(field) {
-  if (!_.isEmpty(field)) {
-    return '可开通业务： $可开通业务 ';
-  }
-  return '';
-}
-
 // 新版客户表发起任务，在新建任务的任务提示的显示的信息
-function getFilterInfo({ filterObj, dict, industryList, query }) {
+function getFilterInfo({ filterObj, dict, industryList }) {
   const {
     labelInfos, kPIDateScopeType,
     singleBusinessTypeList,
   } = dict;
-  let htmlStr = '<div><div>该客户通过淘客筛选，满足以下条件：</div>';
+  let htmlStr = '';
   let suggestionList = [];
   // url中filter没有值时，只显示’可开通业务‘
-  if (_.isEmpty(filterObj)) {
-    htmlStr += '<div>1.可开通业务： $可开通业务 </div>';
-  } else {
+  if (!_.isEmpty(filterObj)) {
     const {
       htmlStrList: labelHtmlStrList,
       suggestionList: labelSuggestionList,
@@ -321,9 +311,8 @@ function getFilterInfo({ filterObj, dict, industryList, query }) {
     const ageHtmlStr = getAgeFilterInfo(filterObj.age);
     const lastServiceHtmlStr = getLatestServiceInfo(filterObj.lastServDt, serviceCustomerState);
     const minFeeHtmlStr = getMinfeeInfo(filterObj.minFee);
-    const bizInfo = getBizInfo(query.bizFlag);
     let list = [
-      bizInfo, holdingProductHtmlStr, businessOpenedHtmlStr,
+      holdingProductHtmlStr, businessOpenedHtmlStr,
       ageHtmlStr, lastServiceHtmlStr, minFeeHtmlStr,
     ];
     list = [...list, ...labelHtmlStrList];
@@ -346,11 +335,15 @@ function getFilterInfo({ filterObj, dict, industryList, query }) {
       list.push(getCapitalRangInfo(item, filterObj));
     });
     suggestionList = [...labelSuggestionList, ...holdingProductSuggestionList];
-    _.each(_.compact(list), (item, index) => {
-      htmlStr += `<div>${index + 1}.${item}</div>`;
-    });
+    const tempList = _.compact(list);
+    if (!_.isEmpty(tempList)) {
+      htmlStr += '<div><div>该客户通过淘客筛选，满足以下条件：</div>';
+      _.each(tempList, (item, index) => {
+        htmlStr += `<div>${index + 1}.${item}</div>`;
+      });
+      htmlStr += '</div>';
+    }
   }
-  htmlStr += '</div>';
   return {
     htmlStr,
     suggestionList,
