@@ -9,6 +9,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Menu, Dropdown } from 'antd';
+import { Link } from 'dva/router';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -54,7 +55,7 @@ export default class EmpRp extends PureComponent {
   @autobind
   handleRspChange({ key }) {
     const { empCurPost } = this.props;
-    if (key === empCurPost) return;
+    if (key === empCurPost || key === 'userCenter') return;
     this.changeRsp(key);
   }
 
@@ -68,6 +69,10 @@ export default class EmpRp extends PureComponent {
             <span className={styles.empRspItem} title={item.postnName}>{item.postnName}</span>
           </Menu.Item>))
         }
+        <Menu.Divider />
+        <Menu.Item key="userCenter">
+          <Link to="/userCenter" className={styles.empRspItem}>用户中心</Link>
+        </Menu.Item>
       </Menu>
     );
   }

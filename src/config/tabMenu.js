@@ -156,6 +156,12 @@ const newOpenTabConfig = [
     path: '/preview',
     pid: 'FSP_STATISTICAL_QUERY',
   },
+  {
+    name: '用户中心',
+    id: 'FSP_USERCENTER',
+    path: '/userCenter',
+    pid: 'SP_USERCENTER',
+  },
 ];
 
 export default newOpenTabConfig;
