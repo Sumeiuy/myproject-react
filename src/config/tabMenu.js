@@ -559,6 +559,18 @@ const newOpenTabConfig = [
     pid: 'FSP_SYS_OPERATE',
   },
   {
+    name: '公务手机管理',
+    id: 'FSP_ADVISOR_MOBILE_BINDING',
+    path: '/telephoneNumberManage/distribute',
+    pid: 'FSP_SYS_OPERATE',
+  },
+  {
+    name: '公务手机管理',
+    id: 'FSP_ADVISOR_MOBILE_BINDING',
+    path: '/telephoneNumberManage/apply',
+    pid: 'FSP_SYS_OPERATE',
+  },
+  {
     name: '投诉工单管理',
     id: 'FSP_CUST_COMPLAINT_MANGER',
     path: '/fsp/sysOperate/custcomplaint',

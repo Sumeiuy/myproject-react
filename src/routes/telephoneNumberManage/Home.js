@@ -18,6 +18,15 @@ export default class TelephoneNumberManage extends PureComponent {
     match: PropTypes.object.isRequired,
     routerData: PropTypes.object.isRequired,
   };
+
+  static contextTypes= {
+    replace: PropTypes.func.isRequired,
+  }
+
+  componentDidMount() {
+    this.context.replace({ pathname: '/telephoneNumberManage/distribute' });
+  }
+
   render() {
     const { match: { path }, routerData } = this.props;
     return (
