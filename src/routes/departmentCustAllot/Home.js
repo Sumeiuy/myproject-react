@@ -456,9 +456,37 @@ export default class DepartmentCustAllot extends PureComponent {
       message.error('所选客户数量必须大于或者等于所选服务经理数量');
       return;
     }
-    this.setState({
-      flowAuditors: btnItem.flowAuditors,
-      approverModal: true,
+    const { saveChange, updateData } = this.props;
+    const { ruleType } = this.state;
+    const payload = {
+      id: updateData.appId,
+      ruleType,
+      type: allotType,
+      TGConfirm: false,
+      positionId: empPstnId,
+      orgId: empOrgId,
+      auditors: '',
+      groupName: '',
+      approverIdea: '',
+    };
+    saveChange(payload).then(() => {
+      const { saveChangeData } = this.props;
+      // 提交没有问题
+      if (saveChangeData.errorCode === '0') {
+        this.handleSuccessCallback();
+      } else {
+        commonConfirm({
+          shortCut: 'hasTouGu',
+          onOk: () => {
+            // payload.TGConfirm = true;
+            // saveChange(payload).then(this.handleSuccessCallback);
+            this.setState({
+              flowAuditors: btnItem.flowAuditors,
+              approverModal: true,
+            });
+          },
+        });
+      }
     });
   }
 
@@ -512,7 +540,7 @@ export default class DepartmentCustAllot extends PureComponent {
       id: updateData.appId,
       ruleType,
       type: allotType,
-      TGConfirm: false,
+      TGConfirm: true,
       positionId: empPstnId,
       orgId: empOrgId,
       auditors: auth.login,
@@ -520,19 +548,12 @@ export default class DepartmentCustAllot extends PureComponent {
       approverIdea: '',
     };
     saveChange(payload).then(() => {
-      const { saveChangeData } = this.props;
-      // 提交没有问题
-      if (saveChangeData.errorCode === '0') {
-        this.handleSuccessCallback();
-      } else {
-        commonConfirm({
-          shortCut: 'hasTouGu',
-          onOk: () => {
-            payload.TGConfirm = true;
-            saveChange(payload).then(this.handleSuccessCallback);
-          },
-        });
-      }
+      commonConfirm({
+        shortCut: 'hasTouGu',
+        onOk: () => {
+          saveChange(payload).then(this.handleSuccessCallback);
+        },
+      });
     });
   }
 
