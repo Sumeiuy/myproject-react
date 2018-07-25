@@ -149,11 +149,12 @@ export default class CreateServiceRecord extends PureComponent {
         },
       });
     } else {
-      // 添加服务记录
       this.doAddServeRecordAndLog(payload);
     }
   }
 
+  // 新增方法，用来针对在涨乐财富通服务方式下的服务记录，有别于其他的方法下的提交服务记录
+  // 因此提取公共的方法使用
   @autobind
   doAddServeRecordAndLog(query) {
     const {
