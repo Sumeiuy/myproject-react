@@ -105,7 +105,6 @@ export default class Stock extends PureComponent {
     },
   })
   rowClickHandle(record) {
-    console.log('record', record);
     const { id, code, eventType, stockName } = record;
     const { push } = this.props;
     const { type, pageSize, pageNum, keyword } = this.state;

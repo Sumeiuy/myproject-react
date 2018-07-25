@@ -290,13 +290,8 @@ export default class Pageheader extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '创建时间',
-      value: (instance, args) => {
-        const dateArr = _.map(
-          args[0],
-          item => moment(item).format(dateFormat),
-        );
-        return _.join(dateArr, '~');
-      },
+      min: '$args[0].value[0]',
+      max: '$args[0].value[1]',
     },
   })
   handleCreateDateChange(date) {
@@ -312,13 +307,8 @@ export default class Pageheader extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '结束时间',
-      value: (instance, args) => {
-        const dateArr = _.map(
-          args[0],
-          item => moment(item).format(dateFormat),
-        );
-        return _.join(dateArr, '~');
-      },
+      min: '$args[0].value[0]',
+      max: '$args[0].value[1]',
     },
   })
   handleEndDateChange(date) {
