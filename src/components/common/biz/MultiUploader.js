@@ -253,7 +253,7 @@ export default class MultiUpload extends PureComponent {
               const fileName = item.name;
               const popoverHtml = (
                 <div className={styles.filePop}>
-                  <h3>
+                  <h3 className='clearfix'>
                     <Icon type="fujian1" />
                     <span className={styles.popFileName}>{fileName}</span>
                     <span className={styles.btnBox}>
