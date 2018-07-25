@@ -10,11 +10,11 @@ const newOpenTabConfig = [
     name: '资讯列表',
     id: 'FSP_VIEWPOINT_LIST',
     path: '/latestView/viewpointList',
-    pid: 'FSP_CUST_M_CENTER',
+    pid: 'FSP_NEW_HOMEPAGE',
   },
   {
     name: '资讯详情',
-    id: 'FSP_VIEWPOINT_DETAIL',
+    id: 'FSP_VIEWPOINT_LIST',
     path: '/latestView/viewpointDetail',
     pid: 'FSP_NEW_HOMEPAGE',
   },
@@ -33,7 +33,7 @@ const newOpenTabConfig = [
   {
     name: '分组管理',
     id: 'FSP_CUST_M_MANAGER_GROUP',
-    path: '/customerPool/customerGroupManager',
+    path: '/customerPool/customerGroupManage',
     pid: 'FSP_CUST_M_CENTER',
   },
   {
@@ -297,7 +297,7 @@ const newOpenTabConfig = [
   {
     name: '股票期权评估申请',
     id: 'FSP_BUSINESS_APPLYMENT_OPTIONSTOCKINVEST',
-    path: '/fsp/businessApplyment/option/stockinvest',
+    path: '/stockOptionEvaluation',
     pid: 'FSP_BUSINESS_APPLYMENT_OPTION',
   },
   {
@@ -347,6 +347,12 @@ const newOpenTabConfig = [
     id: 'FSP_MANAGER_VIEW',
     path: '/statisticalQuery/report',
     pid: 'FSP_STATISTICAL_QUERY',
+  },
+  {
+    name: '看板',
+    id: 'FSP_BOARD_VIEW',
+    path: '/history',
+    pid: 'FSP_MANAGER_VIEW',
   },
   {
     name: '高净值绩效服务经理查询',
@@ -484,6 +490,42 @@ const newOpenTabConfig = [
     name: '平台参数设置',
     id: 'FSP_SYSTEM_MANAGE_PARAMETER',
     path: '/platformParameterSetting',
+    pid: 'FSP_SYS_OPERATE',
+  },
+  {
+    name: '平台参数设置',
+    id: 'FSP_SYSTEM_MANAGE_PARAMETER',
+    path: '/platformParameterSetting/customerLabel',
+    pid: 'FSP_SYS_OPERATE',
+  },
+  {
+    name: '平台参数设置',
+    id: 'FSP_SYSTEM_MANAGE_PARAMETER',
+    path: '/platformParameterSetting/contentOperate',
+    pid: 'FSP_SYS_OPERATE',
+  },
+  {
+    name: '平台参数设置',
+    id: 'FSP_SYSTEM_MANAGE_PARAMETER',
+    path: '/platformParameterSetting/labelManager',
+    pid: 'FSP_SYS_OPERATE',
+  },
+  {
+    name: '平台参数设置',
+    id: 'FSP_SYSTEM_MANAGE_PARAMETER',
+    path: '/platformParameterSetting/taskOperation/customerFeedback',
+    pid: 'FSP_SYS_OPERATE',
+  },
+  {
+    name: '平台参数设置',
+    id: 'FSP_SYSTEM_MANAGE_PARAMETER',
+    path: '/platformParameterSetting/taskOperation/taskFeedback',
+    pid: 'FSP_SYS_OPERATE',
+  },
+  {
+    name: '平台参数设置',
+    id: 'FSP_SYSTEM_MANAGE_PARAMETER',
+    path: '/platformParameterSetting/taskOperation/investmentAdvice',
     pid: 'FSP_SYS_OPERATE',
   },
   {

@@ -79,7 +79,8 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
     if (fsp) {
       fsp.scrollTop = easeInOutCubic(time, scrollTopValue, targetScrollTop, 450);
     } else if(rct) {
-      rct.scrollTop = easeInOutCubic(time, scrollTopValue, targetScrollTop, 450);
+      const top = easeInOutCubic(time, scrollTopValue, targetScrollTop, 450);
+      rct.scrollTop = top;
     } else {
       window.scrollTo(window.pageXOffset, easeInOutCubic(time, scrollTopValue, targetScrollTop, 450));
     }

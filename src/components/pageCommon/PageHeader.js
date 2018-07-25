@@ -196,15 +196,7 @@ export default class PageHeader extends PureComponent {
     const isHistory = pathname === '/history';
     return (
       <div>
-        <div
-          style={{
-            position: 'fixed',
-            zIndex: 30,
-            width,
-            top,
-            left,
-          }}
-        >
+        <div>
           <div className="reportHeader">
             <Row type="flex" justify="start" align="middle">
               <div className="reportName">
@@ -292,7 +284,6 @@ export default class PageHeader extends PureComponent {
             }
           </div>
         </div>
-        <div style={{ height: '40px' }} />
       </div>
     );
   }
