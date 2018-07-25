@@ -106,17 +106,17 @@ export default class CreateServiceRecord extends PureComponent {
   @autobind
   handleSubmit() {
     const data = this.serviceRecordContentRef.getData();
-    if (_.isEmpty(data)) return;
+    if (_.isEmpty(data)) {
+      return;
+    }
+
     const {
-      addServeRecord,
-      resetServiceRecordInfo,
       currentCommonServiceRecord: { id },
       serviceRecordInfo: {
         id: custId,
         autoGenerateRecordInfo = {},
         todo,
       },
-      dict,
       isPhoneCall,
     } = this.props;
     const { serveContentDesc = '', serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
@@ -137,7 +137,6 @@ export default class CreateServiceRecord extends PureComponent {
         };
       }
     }
-    addServeRecord(payload);
     // 此处需要针对涨乐财富通是通过固定话术的情况下提交服务记录时候，
     // 弹出确认框然后才能进行添加服务记录
     const isZLFinsServiceWay = serveWayUtil.isZhangle(data.serveWay);
@@ -146,18 +145,27 @@ export default class CreateServiceRecord extends PureComponent {
       confirm({
         content: '设置的投资建议将发送给客户，确认提交吗？',
         onOk: () => {
-          addServeRecord(payload);
+          this.doAddServeRecordAndLog(payload);
         },
       });
     } else {
       // 添加服务记录
-      addServeRecord(payload);
+      this.doAddServeRecordAndLog(payload);
     }
+  }
 
+  @autobind
+  doAddServeRecordAndLog(query) {
+    const {
+      addServeRecord,
+      resetServiceRecordInfo,
+      dict,
+      serviceRecordInfo: { id },
+    } = this.props;
+    addServeRecord(query);
     resetServiceRecordInfo();
-    // log日志 --- 添加服务记录
-    // 服务类型
-    const { serveType } = data;
+
+    const { serveType } = query;
     const { missionType } = dict;
     const serveTypeName = _.find(missionType, { key: serveType }).value;
     logCommon({
@@ -165,12 +173,11 @@ export default class CreateServiceRecord extends PureComponent {
       payload: {
         name: '服务记录',
         type: serveTypeName,
-        value: JSON.stringify({ ...data, custId }),
+        value: JSON.stringify({ ...query, custId: id }),
       },
     });
   }
 
-  // 关闭弹窗
   @autobind
   @logable({ type: 'Click', payload: { name: '取消' } })
   handleCancel() {
