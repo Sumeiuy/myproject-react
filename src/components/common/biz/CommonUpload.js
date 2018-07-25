@@ -288,7 +288,7 @@ export default class CommonUpload extends PureComponent {
               const fileName = item.name;
               const popoverHtml = (
                 <div key={item.attachId} className={styles.filePop}>
-                  <h3 className='clearfix'>
+                  <h3 className="clearfix">
                     <Icon type="fujian1" />
                     <span className={styles.popFileName}>{fileName}</span>
                     <span className={styles.btnBox}>
@@ -324,7 +324,7 @@ export default class CommonUpload extends PureComponent {
                     上传人：{item.creator}
                   </h3>
                   <h3 className={styles.uploadTime}>
-                    上传于：{moment(item.lastModified).format('YYYY-MM-DD')}
+                    上传于：{moment(item.createTime).format('YYYY-MM-DD')}
                   </h3>
                 </div>
               );
