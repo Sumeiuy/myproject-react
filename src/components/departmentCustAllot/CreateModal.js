@@ -49,6 +49,8 @@ const KEY_OLDEMPNAME = 'oldEmpName';
 const KEY_ISTOUGU = 'touGu';
 // 开发经理
 const KEY_DMNAME = 'dmName';
+// 服务经理名称
+const KEY_EMPNAME = 'empName';
 // 服务经理-是否是投顾
 const KEY_TGFLAG = 'tgFlag';
 // 更新客户或者服务经理时的方法类型
@@ -126,7 +128,7 @@ export default class CreateModal extends PureComponent {
     // 获取下一步骤按钮列表
     this.props.queryButtonList({
       flowId: '',
-      operate: 1,
+      operate: 2,
       type: allotType,
     });
   }
@@ -195,6 +197,15 @@ export default class CreateModal extends PureComponent {
   @autobind
   getColumnsManageTitle() {
     const titleList = [...manageTitleList];
+    // 服务经理
+    const empNameColumn = _.find(titleList, o => o.key === KEY_EMPNAME);
+    empNameColumn.render = (text, record) => (
+      <div>
+        {
+          text ? `${text} (${record.empId})` : null
+        }
+      </div>
+    );
     // 是否是投顾
     const isTouguColumn = _.find(titleList, o => o.key === KEY_TGFLAG);
     isTouguColumn.render = text => ((
@@ -264,8 +275,9 @@ export default class CreateModal extends PureComponent {
             id: updateData.appId || '',
             custtomer: [],
             manage: [],
-            type: operateType[2], // clear
+            operateType: operateType[2], // clear
             attachment,
+            type: allotType,
           };
           // 如果上传过，则先调用清空接口，调用成功后，调用添加接口
           // 添加接口调用成功后，调用查询接口
@@ -468,14 +480,14 @@ export default class CreateModal extends PureComponent {
     switch (modalKey) {
       case custModalKey:
         if (_.isEmpty(client)) {
-          message.error('请至少选择一位客户');
+          message.error('请选择客户');
           return;
         }
         customer = [{ brokerNumber: client.custId }];
         break;
       case manageModalKey:
         if (_.isEmpty(manager)) {
-          message.error('请至少选择一位服务经理');
+          message.error('请选择服务经理');
           return;
         }
         manage = [manager];
@@ -505,6 +517,10 @@ export default class CreateModal extends PureComponent {
       // 清空 AutoComplete 的选项和值
       this.queryCustComponent.clearValue();
       this.queryManagerComponent.clearValue();
+      // 根据类型清空不同的值
+      this.setState({
+        [isCust ? 'client' : 'manager']: {},
+      });
     });
   }
 

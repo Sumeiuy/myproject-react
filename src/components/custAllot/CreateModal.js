@@ -33,6 +33,7 @@ const {
   titleList: { cust: custTitleList, manage: manageTitleList },
   ruleTypeArray,
   clearDataArray,
+  operateType,
 } = config;
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
@@ -47,8 +48,6 @@ const KEY_OLDEMPNAME = 'oldEmpName';
 const KEY_ISTOUGU = 'touGu';
 // 开发经理
 const KEY_DMNAME = 'dmName';
-// 更新客户或者服务经理时的方法类型
-const operateType = ['add', 'delete', 'clear'];
 // 用以区分点击的是客户或者是服务经理
 const CUST = 'cust';
 const MANAGE = 'manage';
@@ -219,7 +218,7 @@ export default class CreateModal extends PureComponent {
     updateList({
       ...payload,
       attachment,
-      type: operateType[0],  // add
+      operateType: operateType[0],  // add
     }).then(() => {
       const { updateData: { appId }, queryAddedCustList } = this.props;
       this.setState({
@@ -254,7 +253,7 @@ export default class CreateModal extends PureComponent {
             id: updateData.appId || '',
             custtomer: [],
             manage: [],
-            type: operateType[2], // clear
+            operateType: operateType[2], // clear
             attachment,
           };
           // 如果上传过，则先调用清空接口，调用成功后，调用添加接口
@@ -306,7 +305,7 @@ export default class CreateModal extends PureComponent {
     const payload = {
       customer: [],
       manage: [],
-      type: operateType[1],  // delete
+      operateType: operateType[1],  // delete
       id: updateData.appId,
     };
     if (isCust) {
@@ -440,7 +439,7 @@ export default class CreateModal extends PureComponent {
   // 发送添加客户、服务经理请求
   @autobind
   sendRequest(modalKey) {
-    const { sendRequest, custModalKey, manageModalKey, updateData } = this.props;
+    const { clearData, sendRequest, custModalKey, manageModalKey, updateData } = this.props;
     const { client, manager } = this.state;
     let customer = [];
     let manage = [];
@@ -468,7 +467,7 @@ export default class CreateModal extends PureComponent {
     const payload = {
       customer: isCust ? customer : [],
       manage: isCust ? [] : manage,
-      type: 'add',
+      operateType: operateType[0],  // add
       attachment: '',
       id: updateData.appId || '',
     };
@@ -480,9 +479,16 @@ export default class CreateModal extends PureComponent {
     };
     // 发送添加请求，关闭弹窗
     sendRequest(payload, pageData);
-    // 清空 AutoComplete 的选项和值
-    this.queryCustComponent.clearValue();
-    this.queryManagerComponent.clearValue();
+    // clearSearchData
+    clearData(clearDataArray[0]).then(() => {
+      // 清空 AutoComplete 的选项和值
+      this.queryCustComponent.clearValue();
+      this.queryManagerComponent.clearValue();
+      // 根据类型清空不同的值
+      this.setState({
+        [isCust ? 'client' : 'manager']: {},
+      });
+    });
   }
 
   // 渲染点击删除按钮后的确认框

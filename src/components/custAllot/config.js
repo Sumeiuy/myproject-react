@@ -42,6 +42,7 @@ const config = {
   subType: '0703',
   // 清除数据类型
   clearDataArray: ['clearSearchData', 'clearAllData', 'clearAddedCustData'],
+  operateType: ['add', 'delete', 'clear'],
   // 分配规则
   // allotRule
   ruleTypeArray: [
