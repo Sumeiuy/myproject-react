@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-25 15:04:48
+ * @Last Modified time: 2018-07-25 15:26:34
  */
 
 import _ from 'lodash';
@@ -288,16 +288,8 @@ function getCapitalRangInfo({ filterField, labelName }, filterObj) {
   return '';
 }
 
-// 潜在业务客户
-function getBizInfo(field) {
-  if (!_.isEmpty(field)) {
-    return '可开通业务： $可开通业务 ';
-  }
-  return '';
-}
-
 // 新版客户表发起任务，在新建任务的任务提示的显示的信息
-function getFilterInfo({ filterObj, dict, industryList, query }) {
+function getFilterInfo({ filterObj, dict, industryList }) {
   const {
     labelInfos, kPIDateScopeType,
     singleBusinessTypeList,
@@ -319,9 +311,8 @@ function getFilterInfo({ filterObj, dict, industryList, query }) {
     const ageHtmlStr = getAgeFilterInfo(filterObj.age);
     const lastServiceHtmlStr = getLatestServiceInfo(filterObj.lastServDt, serviceCustomerState);
     const minFeeHtmlStr = getMinfeeInfo(filterObj.minFee);
-    const bizInfo = getBizInfo(query.bizFlag);
     let list = [
-      bizInfo, holdingProductHtmlStr, businessOpenedHtmlStr,
+      holdingProductHtmlStr, businessOpenedHtmlStr,
       ageHtmlStr, lastServiceHtmlStr, minFeeHtmlStr,
     ];
     list = [...list, ...labelHtmlStrList];
