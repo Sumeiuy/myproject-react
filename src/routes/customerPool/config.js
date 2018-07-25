@@ -44,7 +44,7 @@ const DEFAULT_ENTER_TYPE = 'searchCustPool';
 
 // 任务管理岗权限作用的首页入口列表
 const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'external',
-  'orderCombination', 'securitiesProducts'];
+  'orderCombination', 'securitiesProducts', 'productPotentialTargetCust'];
 // 首页指标查询权限作用的首页入口列表
 const ENTERLIST2 = ['custIndicator', 'numOfCustOpened', 'assetsTransactions', 'productSale',
   'income', 'manageService', 'serviceTarget', 'custAssets', 'aggregationRate'];
