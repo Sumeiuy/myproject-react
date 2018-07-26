@@ -10,7 +10,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { sessionStore } from '../../../src/config';
 import TabMenu from './TabMenu';
-import menuConfig from '../../../src/config/menu';
 import { newOpenTabConfig, indexPaneKey, defaultMenu } from '../../../src/config/tabMenu';
 import { enableSessionStorage } from '../../../src/config/constants';
 import withRouter from '../../../src/decorators/withRouter';
@@ -33,7 +32,7 @@ function getFinalPanes(panes, addPanes = [], removePanes = []) {
 function splitPanesArray(panes, menuWidth) {
   // 预设置按钮的大小
   const moreButtonWidth = 50;
-  const firstButtonWidth = 104;
+  const firstButtonWidth = 90;
   const menuButtonWidth = 90;
   // tab菜单除了必有的首页之外，所有其他的tab都是96px，可以由此算出视口宽度内可以放下多少个
   const tabCount = Math.floor((menuWidth - moreButtonWidth - firstButtonWidth) / menuButtonWidth);
@@ -78,6 +77,7 @@ export default class Tab extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
+    primaryMenu: PropTypes.array.isRequired,
   }
 
   constructor(props) {
@@ -242,7 +242,9 @@ export default class Tab extends PureComponent {
       }
     }
 
-    const { newPanes, newActiveKey } = this.getPanes(location, menuConfig);
+    const fixPanes = this.preTreatment(this.props.primaryMenu);
+
+    const { newPanes, newActiveKey } = this.getPanes(location, fixPanes);
 
     return {
       panes: newPanes,
@@ -414,6 +416,23 @@ export default class Tab extends PureComponent {
     });
 
     return finalPanes;
+  }
+
+  // 预处理menu数据，将path字段格式化一下
+  preTreatment(primaryMenu) {
+    const fixMenu = _.filter(primaryMenu, menu => menu.path || !_.isEmpty(menu.children));
+    return traverseMenus(fixMenu, (pane, i, array) => {
+      // 找到当前path对应的pane进行修正
+      if (pane.name === '客户管理') {
+        const currentPane = array[i];
+        currentPane.path = currentPane.path.split('?')[0];
+        currentPane.query = {
+          source: 'leftMenu',
+        };
+        return true;
+      }
+      return false;
+    });
   }
 
   findPaneFromTabConfig({ pathname }) {

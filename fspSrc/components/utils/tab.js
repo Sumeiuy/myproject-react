@@ -5,17 +5,7 @@
  */
 
 import _ from 'lodash';
-
-// 遍历 menus 中包括 children 在内的所有 menu 元素
-/* function traverseMenus(menus, callback) {
-  for(let i=0, len=menus.length; i < len; i++) {
-    let menu = menus[i];
-    callback(menu);
-    if (menu.children) {
-      traverseMenus(menu.children, callback);
-    }
-  }
-} */
+import { emp } from '../../../src/helper';
 
 function traverseMenus(menus, callback) {
   const newMenus = [
@@ -25,14 +15,24 @@ function traverseMenus(menus, callback) {
     if (callback(menu, i, array)) {
       return false;
     }
-    return menus.children && !_.isEmpty(menus.children) ?
-      traverseMenus(menus.children, callback) : true;
+    return menu.children && !_.isEmpty(menu.children) ?
+      traverseMenus(menu.children, callback) : true;
   });
 
   return newMenus;
 }
 
+// 修正外部跳转连接
+function fixExternUrl(url) {
+  const empId = emp.getId();
+  const orgId = emp.getOrgId();
+  return url
+    .replace('=#[userCode]', `=${empId}`)
+    .replace('=#[orgCode]', `=${orgId}`);
+}
+
 
 export default {
   traverseMenus,
+  fixExternUrl,
 };

@@ -17,7 +17,7 @@ import LabelInfo from '../common/LabelInfo';
 import CustManagerDetailScope from './CustManagerDetailScope';
 import TabsExtra from '../../customerPool/home/TabsExtra';
 import ServiceResultLayout from '../common/ServiceResultLayout';
-import { env, permission, emp } from '../../../helper';
+import { permission, emp } from '../../../helper';
 import { ORG_LEVEL1, ORG_LEVEL2 } from '../../../config/orgTreeLevel';
 import {
   EMP_MANAGER_SCOPE_ITEM,
@@ -99,17 +99,11 @@ export default class MissionImplementation extends PureComponent {
   componentDidMount() {
     const {
       custRange,
-      empInfo: { empInfo = {}, empPostnList = {} },
+      empInfo: { empPostnList = {} },
     } = this.props;
-    // 获取登录用户empId和occDivnNum
-    const { occDivnNum = '' } = empInfo;
 
     // 登录用户orgId，默认在fsp中中取出来的当前用户岗位对应orgId，本地时取用户信息中的occDivnNum
-    if (env.isInFsp()) {
-      this.orgId = window.forReactPosition.orgId;
-    } else {
-      this.orgId = occDivnNum;
-    }
+    this.orgId = emp.getOrgId();
 
     this.originOrgId = this.orgId;
 

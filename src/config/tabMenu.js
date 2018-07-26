@@ -174,9 +174,13 @@ const newOpenTabConfig = [
     path: '/preview',
     pid: 'FSP_STATISTICAL_QUERY',
   },
+  {
+    name: '用户中心',
+    id: 'FSP_USERCENTER',
+    path: '/userCenter',
+    pid: 'SP_USERCENTER',
+  },
 ];
-
-export default newOpenTabConfig;
 
 // 默认当前激活的主导航菜单项
 const indexPaneKey = 'FSP_NEW_HOMEPAGE';
@@ -217,7 +221,7 @@ const defaultMenu = [
   },
 ];
 
-export {
+export default {
   newOpenTabConfig,
   indexPaneKey,
   defaultMenu,

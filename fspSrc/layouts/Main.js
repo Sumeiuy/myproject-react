@@ -6,6 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import _ from 'lodash';
+import qs from 'query-string';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { Helmet } from 'react-helmet';
@@ -29,6 +30,7 @@ import PhoneWrapper from '../../src/layouts/PhoneWrapper';
 import styles from './main.less';
 import '../css/fspFix.less';
 import '../../src/css/skin.less';
+import emp from '../../src/helper/emp';
 
 const effects = {
   dictionary: 'app/getDictionary',
@@ -51,7 +53,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   ...state.global,
   ...state.app,
-  navs: state.global.menus,
+  menus: state.global.menus,
   loading: state.activity.global,
   loadingForceFull: state.activity.forceFull,
   custRange: state.customerPool.custRange,
@@ -105,7 +107,7 @@ export default class Main extends PureComponent {
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     currentCommonServiceRecord: PropTypes.object.isRequired,
-    navs: PropTypes.object.isRequired,
+    menus: PropTypes.object.isRequired,
     serviceRecordModalVisible: PropTypes.bool,
     serviceRecordModalVisibleOfId: PropTypes.string,
     serviceRecordModalVisibleOfName: PropTypes.string,
@@ -144,18 +146,23 @@ export default class Main extends PureComponent {
   }
 
   @autobind
-  switchRspAfter() {
-    const { changePost } = this.props;
-    if (changePost) {
-      console.warn('TO DO Refresh window');
-    } else {
-      console.warn('DO NOT Refresh window');
-    }
+  setWinLocationSearch(postnId) {
+    let newSearchStr = '';
+    const nativeSearch = qs.parse(window.location.search);
+    nativeSearch.postnId = postnId;
+    newSearchStr = qs.stringify(nativeSearch);
+    window.location.search = `?${newSearchStr}`;
+  }
+
+  @autobind
+  switchRspAfter(rsp) {
+    // TO 确认接口，检查是否成功
+    this.setWinLocationSearch(rsp.pstnId);
   }
 
   @autobind
   handleHeaderSwitchRsp(rsp) {
-    this.props.switchPosition(rsp).then(this.switchRspAfter);
+    this.props.switchPosition(rsp).then(() => this.switchRspAfter(rsp));
   }
 
   @autobind
@@ -172,6 +179,11 @@ export default class Main extends PureComponent {
     });
   }
 
+  @autobind
+  isMenuExists(menus) {
+    return menus && !_.isEmpty(menus) && !_.isEmpty(menus.primaryMenu);
+  }
+
   render() {
     const {
       children,
@@ -182,8 +194,8 @@ export default class Main extends PureComponent {
       push,
       interfaceState,
       dict,
-      empInfo: { empInfo = {}, empPostnList = [], loginInfo = {} },
-      navs: { secondaryMenu = [] },
+      empInfo: { empInfo = {}, empPostnList = [] },
+      menus,
       currentCommonServiceRecord,
       addServeRecord,
       serviceRecordModalVisibleOfId,
@@ -198,8 +210,11 @@ export default class Main extends PureComponent {
     } = this.props;
 
     const { caller = '' } = serviceRecordInfo;
+
     // 当前服务记录弹窗是否由电话调起的
     const isPhoneCall = caller === PHONE;
+    // 获取当前职位
+    const empCurrentPosition = emp.getPstnId();
     return (
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
@@ -208,69 +223,70 @@ export default class Main extends PureComponent {
             <Helmet>
               <link rel="icon" href={constants.logoSrc} type="image/x-icon" />
             </Helmet>
-            <div
-              className={styles.layout}
-            >
-              <Header
-                navs={secondaryMenu}
-                loginInfo={loginInfo}
-                empInfo={empInfo}
-                empRspList={empPostnList}
-                onSwitchRsp={this.handleHeaderSwitchRsp}
-                onIsolationWallModalShow={this.handleIsolationWallModalShow}
-              />
-              <div className={styles.main}>
-                <Tab
-                  location={location}
-                  push={push}
-                />
-                <FSPUnwrap
-                  path={location.pathname}
-                  loading={loading}
-                  loadingForceFull={loadingForceFull}
-                >
-                  <div id="react-content" className={styles.content}>
-                    {
-                      (!_.isEmpty(interfaceState) &&
-                        !interfaceState[effects.dictionary] &&
-                        !interfaceState[effects.customerScope] &&
-                        !interfaceState[effects.empInfo] &&
-                        React.isValidElement(children)) ?
-                          children :
-                          <div />
-                    }
+            {
+              this.isMenuExists(menus) ?
+                <div className={styles.layout}>
+                  <Header
+                    empInfo={empInfo}
+                    empRspList={empPostnList}
+                    empCurrentPosition={empCurrentPosition}
+                    onSwitchRsp={this.handleHeaderSwitchRsp}
+                    onIsolationWallModalShow={this.handleIsolationWallModalShow}
+                  />
+                  <div className={styles.main}>
+                    <Tab
+                      location={location}
+                      push={push}
+                      primaryMenu={menus.primaryMenu}
+                    />
+                    <FSPUnwrap
+                      path={location.pathname}
+                      loading={loading}
+                      loadingForceFull={loadingForceFull}
+                    >
+                      <div id="react-content" className={styles.content}>
+                        {
+                          (!_.isEmpty(interfaceState) &&
+                            !interfaceState[effects.dictionary] &&
+                            !interfaceState[effects.customerScope] &&
+                            !interfaceState[effects.empInfo] &&
+                            React.isValidElement(children)) ?
+                            children :
+                            <div />
+                        }
+                      </div>
+                      <Footer />
+                    </FSPUnwrap>
+                    <ConnectedCreateServiceRecord
+                      handleCloseClick={handleCloseClick}
+                      loading={interfaceState[effects.addServeRecord]}
+                      key={serviceRecordModalVisibleOfId}
+                      id={serviceRecordModalVisibleOfId}
+                      name={serviceRecordModalVisibleOfName}
+                      dict={dict}
+                      empInfo={empInfo}
+                      isShow={serviceRecordModalVisible}
+                      addServeRecord={addServeRecord}
+                      currentCommonServiceRecord={currentCommonServiceRecord}
+                      onToggleServiceRecordModal={toggleServiceRecordModal}
+                      custUuid={custUuid}
+                      ceFileDelete={ceFileDelete}
+                      taskFeedbackList={taskFeedbackList}
+                      serviceRecordInfo={serviceRecordInfo}
+                      isPhoneCall={isPhoneCall}
+                    />
+                    <Modal
+                      title="隔离墙"
+                      visible={this.state.isolationWallModalVisible}
+                      onCancel={this.handleIsolationWallModalHide}
+                    >
+                      <span>股票代码：</span>
+                      <Input />
+                    </Modal>
+                    <PhoneWrapper />
                   </div>
-                  <Footer />
-                </FSPUnwrap>
-                <ConnectedCreateServiceRecord
-                  handleCloseClick={handleCloseClick}
-                  loading={interfaceState[effects.addServeRecord]}
-                  key={serviceRecordModalVisibleOfId}
-                  id={serviceRecordModalVisibleOfId}
-                  name={serviceRecordModalVisibleOfName}
-                  dict={dict}
-                  empInfo={empInfo}
-                  isShow={serviceRecordModalVisible}
-                  addServeRecord={addServeRecord}
-                  currentCommonServiceRecord={currentCommonServiceRecord}
-                  onToggleServiceRecordModal={toggleServiceRecordModal}
-                  custUuid={custUuid}
-                  ceFileDelete={ceFileDelete}
-                  taskFeedbackList={taskFeedbackList}
-                  serviceRecordInfo={serviceRecordInfo}
-                  isPhoneCall={isPhoneCall}
-                />
-                <Modal
-                  title="隔离墙"
-                  visible={this.state.isolationWallModalVisible}
-                  onCancel={this.handleIsolationWallModalHide}
-                >
-                  <span>股票代码：</span>
-                  <Input />
-                </Modal>
-                <PhoneWrapper />
-              </div>
-            </div>
+                </div> : <div>Loading...</div>
+            }
           </ErrorBoundary>
         </ContextProvider>
       </LocaleProvider>

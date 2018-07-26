@@ -14,6 +14,7 @@ const primaryMenu = [
     type: 'link',
     action: '',
     path: '/customerPool',
+    children: [],
   },
   {
     id: 'FSP_CUST_M_CENTER',
@@ -34,6 +35,7 @@ const primaryMenu = [
         type: 'link',
         action: '',
         path: '/customerPool/list', // 带上 ?source=leftMenu，会找不到相应路由，而展示首页
+        children: [],
       },
     ],
   },
@@ -56,6 +58,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/taskCenter/taskList',
+        children: [],
       },
       {
         id: 'FSP_MOT_M_SERVICELIST',
@@ -66,6 +69,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/fsp/taskCenter/serviceManage',
+        children: [],
       },
     ],
   },
@@ -88,6 +92,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInIframe',
         path: '/fsp/productCenter/publicFund',
+        children: [],
       },
       {
         id: 'FSP_PRD_INCOME',
@@ -98,6 +103,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInIframe',
         path: '/fsp/productCenter/receipt',
+        children: [],
       },
       {
         id: 'FSP_PRD_PURPLE_GOLD',
@@ -108,6 +114,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInIframe',
         path: '/fsp/productCenter/finance',
+        children: [],
       },
       {
         id: 'FSP_PRIVATE_PRD',
@@ -118,6 +125,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInIframe',
         path: '/fsp/productCenter/privateFund',
+        children: [],
       },
       {
         id: 'FSP_PRD_FINANCE',
@@ -128,6 +136,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInIframe',
         path: '/fsp/productCenter/financeProducts',
+        children: [],
       },
       {
         id: 'FSP_PRD_CALENDAR',
@@ -138,6 +147,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInIframe',
         path: '/fsp/productCenter/salesCalendar',
+        children: [],
       },
       {
         id: 'FSP_PRD_POOL',
@@ -148,6 +158,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInIframe',
         path: '/fsp/productCenter/productPool',
+        children: [],
       },
     ],
   },
@@ -180,6 +191,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/fsp/serviceCenter/asset/implementation',
+            children: [],
           },
           {
             id: 'FSP_ASSET_ALLOCATION_BASIS',
@@ -190,6 +202,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/fsp/serviceCenter/asset/basis',
+            children: [],
           },
         ],
       },
@@ -202,6 +215,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/fsp/serviceCenter/investContract',
+        children: [],
       },
     ],
   },
@@ -224,6 +238,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInIframe',
         path: '/fsp/strategyCenter/informationCenter',
+        children: [],
       },
       {
         id: 'FSP_STOCK_INFORMATION',
@@ -234,6 +249,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/strategyCenter/stock',
+        children: [],
       },
       {
         id: 'FSP_CHOICENESS_COMBINATION',
@@ -244,6 +260,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/strategyCenter/choicenessCombination',
+        children: [],
       },
       {
         id: 'FSP_DAILY_PAPER',
@@ -254,6 +271,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/strategyCenter/broadcastList',
+        children: [],
       },
     ],
   },
@@ -276,6 +294,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/businessApplyment/commission',
+        children: [],
       },
       {
         id: 'FSP_CONTRACT_MANAGEMENT',
@@ -286,6 +305,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/businessApplyment/contract',
+        children: [],
       },
       {
         id: 'FSP_PROTOCOL_MANAGEMENT',
@@ -296,6 +316,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/businessApplyment/channelsTypeProtocol',
+        children: [],
       },
       {
         id: 'FSP_INVEST_CONTRACT',
@@ -306,6 +327,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/businessApplyment/permission',
+        children: [],
       },
       {
         id: 'FSP_BUSINESS_APPLYMENT_FINANCE',
@@ -326,6 +348,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/fsp/businessApplyment/bizapply/excesscache',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_APPLYMENT_AP',
@@ -336,6 +359,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/fsp/businessApplyment/bizapply/applyment',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_APPLYMENT_B',
@@ -346,6 +370,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/fsp/businessApplyment/bizapply/appointBook',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_BANKACCOUNT_APPLY',
@@ -356,6 +381,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_BANKACCOUNT_QUERY',
@@ -366,6 +392,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
         ],
       },
@@ -388,6 +415,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_CREDIT_APPLYMANAGE',
@@ -398,6 +426,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_RATEADJUST_INTERESCT',
@@ -408,6 +437,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_ESTIMATE_INTERESCT',
@@ -418,6 +448,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_DUE_PROJECT',
@@ -428,6 +459,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_REALL_PROJECT',
@@ -438,6 +470,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_TRAKING_MANAGE',
@@ -448,6 +481,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_TRAKING_PROMP',
@@ -458,6 +492,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_TRAN_APP',
@@ -468,6 +503,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
         ],
       },
@@ -490,6 +526,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/fsp/businessApplyment/option/stockinvest',
+            children: [],
           },
           {
             id: 'FSP_BUSINESS_APPLYMENT_OF',
@@ -500,6 +537,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/fsp/businessApplyment/option/optionfund',
+            children: [],
           },
         ],
       },
@@ -522,6 +560,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/fsp/businessApplyment/appropriate/vfsh',
+            children: [],
           },
           {
             id: 'FSP_PP_M_PRIPROD',
@@ -532,6 +571,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/fsp/businessApplyment/appropriate/priProd',
+            children: [],
           },
         ],
       },
@@ -554,6 +594,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/fsp/businessApplyment/channel/pbbiz',
+            children: [],
           },
         ],
       },
@@ -578,6 +619,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/statisticalQuery/report',
+        children: [],
       },
       {
         id: 'FSP_HIGH_SERVICE_KPI_MGR_QUERY',
@@ -598,6 +640,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_HIGH_SERVICE_KPI_MGR_REVENUE',
@@ -608,6 +651,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_HIGH_SERVICE_KPI_MGR_ASSETS',
@@ -618,6 +662,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_HIGH_SERVICE_KPI_MGR_EFFECTIVENESS',
@@ -628,6 +673,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_HIGH_SERVICE_KPI_MGR_APPLICATION',
@@ -638,6 +684,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
         ],
       },
@@ -660,6 +707,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_HIGH_SERVICE_KPI_DEPT_APPLICATION',
@@ -670,6 +718,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_HIGH_SERVICE_KPI_DEPT_ASSETS',
@@ -680,6 +729,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_HIGH_SERVICE_KPI_DEPT_EFFECTIVENESS',
@@ -690,6 +740,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_HIGH_SERVICE_KPI_DEPT_INFO',
@@ -700,6 +751,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
           {
             id: 'FSP_HIGH_SERVICE_KPI_DEPT_REVENUE',
@@ -710,6 +762,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadExternSystemPage',
             path: '',
+            children: [],
           },
         ],
       },
@@ -722,6 +775,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadExternSystemPage',
         path: '',
+        children: [],
       },
       {
         id: 'FSP_PRODUCT_SALE_APPROPRIATE_DEPT',
@@ -732,6 +786,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadExternSystemPage',
         path: '',
+        children: [],
       },
       {
         id: 'FSP_MOT_M_SVRTASK_STATISTICS',
@@ -742,6 +797,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadExternSystemPage',
         path: '',
+        children: [],
       },
       {
         id: 'FSP_IB_REPORT',
@@ -752,6 +808,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadExternSystemPage',
         path: '',
+        children: [],
       },
       {
         id: 'FSP_TGINVEST_STATISTICS',
@@ -762,6 +819,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadExternSystemPage',
         path: '',
+        children: [],
       },
       {
         id: 'FSP_TGINVEST_CONTRACT',
@@ -772,6 +830,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadExternSystemPage',
         path: '',
+        children: [],
       },
       {
         id: 'FSP_MOT_M_SERVICE_STATISTICS',
@@ -782,6 +841,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/fsp/statisticalQuery/MOTStatistics',
+        children: [],
       },
       {
         id: 'FSP_LOYALTY_ORDER',
@@ -792,6 +852,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/statisticalQuery/exchange',
+        children: [],
       },
     ],
   },
@@ -814,6 +875,7 @@ const primaryMenu = [
         type: 'link',
         action: '',
         path: '/sysOperate/platformParameterSetting',
+        children: [],
       },
       {
         id: 'FSP_ORGAN_PERSONAL_MANAGE',
@@ -834,6 +896,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/sysOperate/crossDepartment/filialeCustTransfer',
+            children: [],
           },
           {
             id: 'FSP_REPORT_RELATION',
@@ -844,6 +907,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/sysOperate/crossDepartment/relation',
+            children: [],
           },
           {
             id: 'FSP_MAIN_POSTN_MANAGE',
@@ -854,6 +918,7 @@ const primaryMenu = [
             type: 'link',
             action: 'loadInTab',
             path: '/sysOperate/crossDepartment/mainPosition',
+            children: [],
           },
         ],
       },
@@ -866,6 +931,7 @@ const primaryMenu = [
         type: 'link',
         action: '',
         path: '/sysOperate/telephoneNumberManage',
+        children: [],
       },
       {
         id: 'FSP_CUST_COMPLAINT_MANGER',
@@ -876,6 +942,7 @@ const primaryMenu = [
         type: 'link',
         action: 'loadInTab',
         path: '/fsp/sysOperate/custcomplaint',
+        children: [],
       },
     ],
   },
