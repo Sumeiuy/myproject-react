@@ -123,11 +123,18 @@ export default function createApi() {
      * @param {Number} timeout 超时时间，单位ms
      * @return {Promise}
      */
-    postFspData(url, query = {}, options) {
+    postFspData(url, query = {}, options = {}) {
+      let fullUrl;
       const finalUrl = fillPrefix(url);
+      if (options.isFullUrl) {
+        fullUrl = finalUrl;
+      } else {
+        fullUrl = `${finalUrl}?empId=${emp.getId()}`;
+      }
+
       const { ignoreCatch = false, ...resetQuery } = query;
       return request(
-        `${finalUrl}?empId=${emp.getId()}`,
+        fullUrl,
         {
           method: 'POST',
           headers: {

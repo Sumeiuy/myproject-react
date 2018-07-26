@@ -12,7 +12,7 @@ import { connect } from 'dva';
 import { Helmet } from 'react-helmet';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
-import { Modal, Input, LocaleProvider } from 'antd';
+import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import withRouter from '../../src/decorators/withRouter';
 
@@ -131,14 +131,6 @@ export default class Main extends PureComponent {
     loadingForceFull: false,
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      // 隔离墙modal是否可见
-      isolationWallModalVisible: false,
-    };
-  }
-
   componentDidMount() {
     const { getCustomerScope, getMenus } = this.props;
     getCustomerScope(); // 加载客户池客户范围
@@ -163,20 +155,6 @@ export default class Main extends PureComponent {
   @autobind
   handleHeaderSwitchRsp(rsp) {
     this.props.switchPosition(rsp).then(() => this.switchRspAfter(rsp));
-  }
-
-  @autobind
-  handleIsolationWallModalShow() {
-    this.setState({
-      isolationWallModalVisible: true,
-    });
-  }
-
-  @autobind
-  handleIsolationWallModalHide() {
-    this.setState({
-      isolationWallModalVisible: false,
-    });
   }
 
   @autobind
@@ -227,6 +205,9 @@ export default class Main extends PureComponent {
               this.isMenuExists(menus) ?
                 <div className={styles.layout}>
                   <Header
+                    push={push}
+                    location={location}
+                    secondaryMenu={menus.secondaryMenu}
                     empInfo={empInfo}
                     empRspList={empPostnList}
                     empCurrentPosition={empCurrentPosition}
@@ -275,14 +256,6 @@ export default class Main extends PureComponent {
                       serviceRecordInfo={serviceRecordInfo}
                       isPhoneCall={isPhoneCall}
                     />
-                    <Modal
-                      title="隔离墙"
-                      visible={this.state.isolationWallModalVisible}
-                      onCancel={this.handleIsolationWallModalHide}
-                    >
-                      <span>股票代码：</span>
-                      <Input />
-                    </Modal>
                     <PhoneWrapper />
                   </div>
                 </div> : <div>Loading...</div>

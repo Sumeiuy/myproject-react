@@ -19,9 +19,16 @@ import { request as config, excludeCode, constants } from '../config';
  * @return {object}          The parsed JSON from the request
  */
 function parseJSON(response, options) {
-  const { ignoreCatch = false } = options;
+  const {
+    ignoreCatch = false,
+    isFullUrl,
+  } = options;
   return response.json().then(
     (res) => {
+      if (isFullUrl) {
+        const { data } = res;
+        return data;
+      }
       // messageType代表错误类型，默认是0，如果后端不传，默认也是0，前端用message提示
       // 如果是1，则用自定义的dialog弹出错误信息
       const { code, msg, succeed, messageType = 0 } = res;
