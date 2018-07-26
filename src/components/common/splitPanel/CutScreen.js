@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-07-10 14:03:15
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-07-23 15:12:34
  * @description 分割组件
  * 此组件中
  * 当左侧列表组件折叠起来后，右侧详情的isFold属性将会变成true,
@@ -255,11 +255,6 @@ export default class CutScreen extends PureComponent {
     this.listWrap = input;
   }
 
-  @autobind
-  rightDetailWrapRef(input) {
-    this.rightDetailWrap = input;
-  }
-
   render() {
     const {
       topPanel,
@@ -322,7 +317,6 @@ export default class CutScreen extends PureComponent {
                   <rightPanel.type
                     {...rightPanel.props}
                     isFold={isFold}
-                    ref={this.rightDetailWrapRef}
                   />
                 )
             }
