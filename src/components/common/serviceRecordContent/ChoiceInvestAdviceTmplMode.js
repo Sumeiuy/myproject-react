@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-16 16:16:13
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-25 11:09:25
+ * @Last Modified time: 2018-07-26 13:39:29
  * @description 服务内容选择投资建议模板组件
  */
 import React, { Component } from 'react';
@@ -127,7 +127,7 @@ export default class ChoiceInvestAdviceTmplMode extends Component {
           isEmptyTmp ? (<EmptyData />)
           :
           (
-            <div>
+            <div className={styles.tmplArea}>
               <div className={styles.containerHeader}>
                 <div className={styles.search}>
                   <Search

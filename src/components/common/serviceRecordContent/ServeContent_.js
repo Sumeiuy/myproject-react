@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-24 10:40:32
+ * @Last Modified time: 2018-07-26 13:27:47
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -17,6 +17,12 @@ import ChoiceApproverBoard from '../../commissionAdjustment/ChoiceApproverBoard'
 import ChoiceInvestAdviceModal from './ChoiceInvestAdviceModal_';
 
 import styles from './index.less';
+
+// 自建以及MOT任务的类型
+const TASK_TYPE = {
+  MOT: 1,
+  SELF: 2,
+};
 
 export default class ServeContent extends PureComponent {
 
@@ -52,6 +58,7 @@ export default class ServeContent extends PureComponent {
 
   @autobind
   getData() {
+    const { eventId, serviceTypeCode } = this.props;
     const {
       serveContentDesc,
       serveContentTitle,
@@ -67,7 +74,17 @@ export default class ServeContent extends PureComponent {
       approval: approverId,
       mode: contentMode,
       templateId: templateID,
+      // 添加服务记录中需要针对涨乐财富通的服务方式新增一个eventId,
+      // 而自建任务和MOT的任务的对应的值使用了不同的变量，
+      eventId: this.isMOTTask() ? eventId : serviceTypeCode,
     };
+  }
+
+  @autobind
+  isMOTTask() {
+    const { taskType } = this.props;
+    const type = parseInt(taskType, 10) + 1;
+    return type === TASK_TYPE.MOT;
   }
 
   // 校验必要的数据是否填写选择

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-14 16:29:04
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 09:56:28
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-07-26 13:24:28
  * @description 服务记录页面用到的页面工具或者配置
  */
 import _ from 'lodash';
@@ -100,6 +100,12 @@ const serveStatusRadioGroupMap = [
 
 // 打电话时的服务记录
 const PHONE = 'phone';
+
+// 任务类型
+const TASK_TYPE = {
+  MOT: 1,
+  SELF: 2,
+};
 
 export default {
   serveWaySelectMap,
