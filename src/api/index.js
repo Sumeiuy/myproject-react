@@ -31,6 +31,7 @@ import stockOptionEvaluation from './stockOptionEvaluation';
 import latestView from './latestView';
 import keyMonitorAccount from './keyMonitorAccount';
 import custRelationships from './custRelationships';
+import cancelAccountOL from './cancelAccountOL';
 import customerLabel from './customerLabel';
 
 const api = apiCreator();
@@ -102,6 +103,8 @@ export default {
   keyMonitorAccount: keyMonitorAccount(api),
   // ========== 客户关联关系
   custRelationships: custRelationships(api),
+  // ========== 线上销户
+  cancelAccountOL: cancelAccountOL(api),
   // ========== 客户自定义标签
   customerLabel: customerLabel(api),
 };
