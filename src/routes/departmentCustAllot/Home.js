@@ -415,7 +415,7 @@ export default class DepartmentCustAllot extends PureComponent {
           // 只有一位服务经理时，隐藏分配规则
           if (page.totalRecordNum <= 1) {
             // 按照平均客户数分配
-            this.handleRuleTypePropsChange(ruleTypeArray[0].value);
+            this.handleRuleTypePropsChange();
           }
         }
       });
@@ -456,9 +456,37 @@ export default class DepartmentCustAllot extends PureComponent {
       message.error('所选客户数量必须大于或者等于所选服务经理数量');
       return;
     }
-    this.setState({
-      flowAuditors: btnItem.flowAuditors,
-      approverModal: true,
+    const { saveChange, updateData } = this.props;
+    const { ruleType } = this.state;
+    const payload = {
+      id: updateData.appId,
+      ruleType,
+      type: allotType,
+      TGConfirm: false,
+      positionId: empPstnId,
+      orgId: empOrgId,
+      auditors: '',
+      groupName: '',
+      approverIdea: '',
+    };
+    saveChange(payload).then(() => {
+      const { saveChangeData } = this.props;
+      // 提交没有问题
+      if (saveChangeData.errorCode === '0') {
+        this.handleSuccessCallback();
+      } else {
+        commonConfirm({
+          shortCut: 'hasTouGu',
+          onOk: () => {
+            // payload.TGConfirm = true;
+            // saveChange(payload).then(this.handleSuccessCallback);
+            this.setState({
+              flowAuditors: btnItem.flowAuditors,
+              approverModal: true,
+            });
+          },
+        });
+      }
     });
   }
 
@@ -497,7 +525,7 @@ export default class DepartmentCustAllot extends PureComponent {
   }
 
   @autobind
-  handleRuleTypePropsChange(value) {
+  handleRuleTypePropsChange(value = '') {
     this.setState({
       ruleType: value,
     });
@@ -512,7 +540,7 @@ export default class DepartmentCustAllot extends PureComponent {
       id: updateData.appId,
       ruleType,
       type: allotType,
-      TGConfirm: false,
+      TGConfirm: true,
       positionId: empPstnId,
       orgId: empOrgId,
       auditors: auth.login,
@@ -520,19 +548,12 @@ export default class DepartmentCustAllot extends PureComponent {
       approverIdea: '',
     };
     saveChange(payload).then(() => {
-      const { saveChangeData } = this.props;
-      // 提交没有问题
-      if (saveChangeData.errorCode === '0') {
-        this.handleSuccessCallback();
-      } else {
-        commonConfirm({
-          shortCut: 'hasTouGu',
-          onOk: () => {
-            payload.TGConfirm = true;
-            saveChange(payload).then(this.handleSuccessCallback);
-          },
-        });
-      }
+      commonConfirm({
+        shortCut: 'hasTouGu',
+        onOk: () => {
+          saveChange(payload).then(this.handleSuccessCallback());
+        },
+      });
     });
   }
 
@@ -701,63 +722,55 @@ export default class DepartmentCustAllot extends PureComponent {
         />
         {
           createModal
-          ?
-            <CreateModal
-              dict={dict}
-              modalKey={createModalKey}
-              custModalKey={custModalKey}
-              manageModalKey={manageModalKey}
-              visible={createModal}
-              location={location}
-              empInfo={empInfo}
-              custRangeList={custRangeList}
-              ruleType={ruleType}
-              handleRuleTypePropsChange={this.handleRuleTypePropsChange}
-              custData={custData}
-              queryCustList={queryCustList}
-              addedCustData={addedCustData}
-              queryAddedCustList={queryAddedCustList}
-              manageData={manageData}
-              queryManageList={queryManageList}
-              addedManageData={addedManageData}
-              queryAddedManageList={queryAddedManageList}
-              selfBtnGroup={selfBtnGroup}
-              queryButtonList={queryButtonList}
-              queryAppList={this.queryAppList}
-              showModal={this.showModal}
-              closeModal={this.closeModal}
-              saveChange={saveChange}
-              updateList={updateList}
-              updateData={updateData}
-              clearData={clearData}
-              sendRequest={this.updateCustOrEmp}
-            />
-          :
-            null
+          ? <CreateModal
+            dict={dict}
+            modalKey={createModalKey}
+            custModalKey={custModalKey}
+            manageModalKey={manageModalKey}
+            visible={createModal}
+            location={location}
+            empInfo={empInfo}
+            custRangeList={custRangeList}
+            ruleType={ruleType}
+            handleRuleTypePropsChange={this.handleRuleTypePropsChange}
+            custData={custData}
+            queryCustList={queryCustList}
+            addedCustData={addedCustData}
+            queryAddedCustList={queryAddedCustList}
+            manageData={manageData}
+            queryManageList={queryManageList}
+            addedManageData={addedManageData}
+            queryAddedManageList={queryAddedManageList}
+            selfBtnGroup={selfBtnGroup}
+            queryButtonList={queryButtonList}
+            queryAppList={this.queryAppList}
+            showModal={this.showModal}
+            closeModal={this.closeModal}
+            saveChange={saveChange}
+            updateList={updateList}
+            updateData={updateData}
+            clearData={clearData}
+            sendRequest={this.updateCustOrEmp}
+          />
+          : null
         }
         {
           custModal
-          ?
-            <AddCustModal
-              modalKey={custModalKey}
-              visible={custModal}
-              custRangeList={custRangeList}
-              data={custData}
-              addedCustData={addedCustData}
-              queryList={queryCustList}
-              closeModal={this.closeModal}
-              sendRequest={this.updateCustOrEmp}
-              updateData={updateData}
-            />
-          :
-            null
+          ? <AddCustModal
+            modalKey={custModalKey}
+            visible={custModal}
+            custRangeList={custRangeList}
+            data={custData}
+            addedCustData={addedCustData}
+            queryList={queryCustList}
+            closeModal={this.closeModal}
+            sendRequest={this.updateCustOrEmp}
+            updateData={updateData}
+          />
+          : null
         }
         {
-          approverModal
-          ?
-            <TableDialog {...approvalProps} />
-          :
-            null
+          approverModal ? <TableDialog {...approvalProps} /> : null
         }
       </div>
     );
