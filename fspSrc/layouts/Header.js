@@ -8,9 +8,10 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Dropdown } from 'antd';
+import { Menu, Dropdown, Input, Modal, Button } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import className from 'classnames';
 
 import Logo from './widget/Logo';
 import EmpRsp from './widget/EmpRp';
@@ -18,6 +19,7 @@ import styles from './header.less';
 import QRCode from './img/qrcode.png';
 import { fixExternUrl } from '../components/utils/tab';
 import withRouter from '../../src/decorators/withRouter';
+import api from '../../src/api';
 
 @withRouter
 export default class Header extends PureComponent {
@@ -29,22 +31,21 @@ export default class Header extends PureComponent {
     empCurrentPosition: PropTypes.string.isRequired,
     onSearch: PropTypes.func,
     onSwitchRsp: PropTypes.func,
-    onIsolationWallModalShow: PropTypes.func,
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
   }
   static defaultProps = {
     secondaryMenu: [],
     empInfo: {},
-    onSearch: () => { },
-    onSwitchRsp: () => { },
-    onIsolationWallModalShow: () => { },
+    onSearch: _.noop,
+    onSwitchRsp: _.noop,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      visible: false,
+      // 隔离墙modal是否可见
+      isolationWallModalVisible: false,
     };
   }
 
@@ -122,13 +123,61 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  handleInputChange(value) {
+    this.setState({
+      stockCode: value,
+    });
+  }
+
+  @autobind
   handleSwitchRsp(rsp) {
     this.props.onSwitchRsp(rsp);
   }
 
   @autobind
   handleShowDialog() {
-    this.props.onIsolationWallModalShow();
+    this.handleIsolationWallModalShow();
+  }
+
+  @autobind
+  handleIsolationWallModalShow() {
+    this.setState({
+      isolationWallModalVisible: true,
+    });
+  }
+
+  @autobind
+  handleIsolationWallModalHide() {
+    this.setState({
+      isolationWallModalVisible: false,
+      dataValidResult: '',
+    });
+  }
+
+  @autobind
+  handleSubmitExistCp() {
+    if (!this.state.stockCode) {
+      this.setState({
+        dataValidResult: 'empty',
+      });
+      return;
+    }
+    api
+      .postFspData(`/isExistCp?stockCode=${this.state.stockCode}`,
+        {},
+        { isFullUrl: true },
+      )
+      .then((data) => {
+        if (data === 'true') {
+          this.setState({
+            dataValidResult: 'true',
+          });
+        } else {
+          this.setState({
+            dataValidResult: 'false',
+          });
+        }
+      });
   }
 
   @autobind
@@ -177,8 +226,61 @@ export default class Header extends PureComponent {
       empCurrentPosition,
     } = this.props;
 
+    const rightClasses = className({
+      [styles.validMessage]: true,
+      [styles.show]: this.state.dataValidResult === 'true',
+    });
+
+    const rightIconClasses = className(['iconfont', 'icon-duihao', styles.rightIcon]);
+
+    const errorClasses = className({
+      [styles.validMessage]: true,
+      [styles.show]: this.state.dataValidResult === 'false',
+    });
+
+    const errorEmptyClasses = className({
+      [styles.validMessage]: true,
+      [styles.show]: this.state.dataValidResult === 'empty',
+    });
+
+    const errorIconClasses = className(['iconfont', 'icon-tixing', styles.errorIcon]);
+
     return (
       <div className={styles.fspHeader}>
+        <Modal
+          title="隔离墙"
+          width={650}
+          className={styles.modal}
+          destroyOnClose
+          visible={this.state.isolationWallModalVisible}
+          onOk={this.handleSubmitExistCp}
+          onCancel={this.handleIsolationWallModalHide}
+          footer={[
+            <Button key="back" onClick={this.handleIsolationWallModalHide}>取消</Button>,
+            <Button
+              key="submit"
+              type="primary"
+              onClick={this.handleSubmitExistCp}
+            >
+              验证
+            </Button>,
+          ]}
+        >
+          <div className={styles.selectedInfo}>股票代码：</div>
+          <Input onChange={e => this.handleInputChange(e.target.value)} />
+          <div className={rightClasses}>
+            <i className={rightIconClasses} />
+            <span>此产品验证通过</span>
+          </div>
+          <div className={errorClasses}>
+            <i className={errorIconClasses} />
+            <span>此产品验证不通过</span>
+          </div>
+          <div className={errorEmptyClasses}>
+            <i className={errorIconClasses} />
+            <span>产品代码不能为空</span>
+          </div>
+        </Modal>
         <div onClick={this.fakeLogin}><Logo /></div>
         <div className={styles.headerContent}>
           {/* <div className={styles.search}>
