@@ -687,7 +687,7 @@ export default class ResultTrack extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '',
+      name: '状态',
       value: '$args[0]',
     },
   })
