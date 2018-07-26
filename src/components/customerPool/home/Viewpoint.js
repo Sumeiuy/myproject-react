@@ -26,12 +26,11 @@ export default class Viewpoint extends PureComponent {
 
   @autobind
   openNewTab(url, query = {}) {
-    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const { push } = this.props;
+    // linkTo
     openRctTab({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(query)}`,
-      param,
       pathname: url,
       query,
     });
