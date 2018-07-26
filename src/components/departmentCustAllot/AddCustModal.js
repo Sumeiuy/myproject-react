@@ -22,24 +22,23 @@ import config from './config';
 import styles from './addCustModal.less';
 
 // 表头
-const { titleList: { cust: custTitleList }, clearDataArray, allotType } = config;
+const {
+  titleList: { cust: custTitleList },
+  clearDataArray,
+  allotType,
+  limit: { count: LIMIT_COUNT, allCount: LIMIT_ALL_COUNT },
+  errorMessage: { count: ERROR_MESSAGE_COUNT, allCount: ERROR_MESSAGE_ALL_COUNT },
+} = config;
 // 登陆人的组织ID
 const empOrgId = emp.getOrgId();
 // const empOrgId = 'ZZ001041051';
 const NO_VALUE = '不限';
 const INIT_PAGENUM = 1;
 const INIT_PAGESIZE = 10;
-// 所有条数限制为 2000
-const LIMIT_ALL_COUNT = 2000;
-// 勾选条数限制为 500
-const LIMIT_COUNT = 500;
 // 状态
 const KEY_STATUS = 'status';
 // 是否入岗投顾
 const KEY_ISTOUGU = 'touGu';
-// 添加客户报错信息
-const ERROR_MESSAGE_ALL_COUNT = `添加失败，申请单客户列表客户数超过最大数量${LIMIT_ALL_COUNT}条。`;
-const ERROR_MESSAGE_COUNT = `添加失败，一次勾选的客户数超过${LIMIT_COUNT}条，请分多次添加。`;
 export default class AddCustModal extends PureComponent {
   static propTypes = {
     // 已添加的客户数据

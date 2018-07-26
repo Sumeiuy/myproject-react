@@ -10,6 +10,7 @@ import React, { PureComponent } from 'react';
 import { TreeSelect } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import InfoForm from '../../common/infoForm';
 import Select from '../../common/Select';
 import styles from './combinationFilter.less';
@@ -82,6 +83,9 @@ export default class CombinationRank extends PureComponent {
     },
   })
   handleRiskChange(value) {
+    if (_.isEmpty(value)) {
+      return;
+    }
     const { riskLevelFilter } = this.props;
     riskLevelFilter({
       value,

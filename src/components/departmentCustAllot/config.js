@@ -6,6 +6,16 @@
  * @Last Modified time: 2018-07-23 15:02:39
  */
 const config = {
+  limit: {
+    // 勾选条数限制为 500
+    count: 500,
+    // 所有条数限制为 2000
+    allCount: 2000,
+  },
+  errorMessage: {
+    count: '添加失败，一次勾选的客户数超过500条，请分多次添加。',
+    allCount: '添加失败，申请单客户列表客户数超过最大数量2000条。',
+  },
     // 分公司客户分配
   custAllot: {
     pageName: '分公司客户分配',
@@ -41,6 +51,8 @@ const config = {
   // 子类型 type
   subType: '0704',
   allotType: 'department',
+  // 更新客户或者服务经理时的方法类型
+  operateType: ['add', 'delete', 'clear'],
   // 清除数据类型
   clearDataArray: ['clearSearchData', 'clearAllData', 'clearAddedCustData'],
   // 分配规则

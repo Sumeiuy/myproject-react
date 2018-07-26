@@ -32,6 +32,8 @@ import {
 import logable from '../../../decorators/logable';
 import styles from './customerLists__.less';
 
+// 服务营业部筛选项去重的key
+const UNIQBY_KEY = 'id';
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
@@ -457,17 +459,17 @@ export default class CustomerLists extends PureComponent {
       if (hasIndexViewPermission) {
         return firstPageResp;
       }
-      return [allSaleDepartment, ...taskManagerResp];
+      return _.uniqBy([allSaleDepartment, ...taskManagerResp], UNIQBY_KEY);
     }
     if (source === 'business') {
       if (!(isNotSaleDepartment && hasTkMampPermission)) {
-        return _.uniqBy([allSaleDepartment, ...taskManagerResp], 'id');
+        return _.uniqBy([allSaleDepartment, ...taskManagerResp], UNIQBY_KEY);
       }
       return taskManagerResp;
     }
     // 有首页指标查询权限 且 首页绩效指标客户范围选中的是 我的客户
     if (!hasIndexViewPermission || this.orgIdIsMsm()) {
-      return _.uniqBy([allSaleDepartment, ...firstPageResp], 'id');
+      return _.uniqBy([allSaleDepartment, ...firstPageResp], UNIQBY_KEY);
     }
     return firstPageResp;
   }
