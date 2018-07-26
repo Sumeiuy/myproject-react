@@ -34,7 +34,7 @@ const primaryMenu = [
         url: '',
         type: 'link',
         action: '',
-        path: '/customerPool/list', // 带上 ?source=leftMenu，会找不到相应路由，而展示首页
+        path: '/customerPool/list?source=leftMenu',
         children: [],
       },
     ],
