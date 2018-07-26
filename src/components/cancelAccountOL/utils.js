@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 09:36:44
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-19 13:53:27
+ * @Last Modified time: 2018-07-26 18:51:05
  * @description 线上销户工具函数
  */
 import _ from 'lodash';
@@ -10,6 +10,16 @@ import _ from 'lodash';
 import {
   LOSTDIRECTION as lostDirectionMap,
 } from './config';
+
+// 流失原因中国其他原因的key
+const LOST_REASON_OTHER_KEY = 'churnOther';
+// 流失原因中的其他原因详情的key
+const LOST_REASON_OTEHER_DETAIL_KEY = 'churnOtheReason';
+
+// 投资品种中其他品种的key
+const INVEST_OTHER_KEY = 'churnInvestmentOther';
+// 投资品种其他品种详情的key
+const INVEST_OTHER_DETAIL_KEY = 'churnInvestOtherDetail';
 
 const util = {
   // 将后端流失原因数据拼接成字符串
@@ -21,8 +31,8 @@ const util = {
     const text = [];
     _.each(lostReason, (value, key) => {
       // 如果是其他需要显示其他的详情
-      if (key !== 'churnOtheReason' && (value === 'Y' || value === true)) {
-        if (key === 'churnOther') {
+      if (key !== LOST_REASON_OTEHER_DETAIL_KEY && (value === 'Y' || value === true)) {
+        if (key === LOST_REASON_OTHER_KEY) {
           text.push(lostReason.churnOtheReason);
         } else {
           const v = _.find(reasonList, item => item.value === key) || {};
@@ -42,8 +52,8 @@ const util = {
     const text = [];
     _.each(investVars, (value, key) => {
       // 如果是其他需要显示其他的详情
-      if (key !== 'churnInvestOtherDetail' && (value === 'Y' || value === true)) {
-        if (key === 'churnInvestmentOther') {
+      if (key !== INVEST_OTHER_DETAIL_KEY && (value === 'Y' || value === true)) {
+        if (key === INVEST_OTHER_KEY) {
           text.push(investVars.churnInvestOtherDetail);
         } else {
           const v = _.find(investVarsList, item => item.value === key) || {};
@@ -75,8 +85,8 @@ const util = {
     const keys = [];
     _.each(obj, (value, key) => {
       if (
-        key !== 'churnInvestOtherDetail'
-        && key !== 'churnOtheReason'
+        key !== INVEST_OTHER_DETAIL_KEY
+        && key !== LOST_REASON_OTEHER_DETAIL_KEY
         && (value === 'Y' || value === true)
       ) {
         keys.push(key);

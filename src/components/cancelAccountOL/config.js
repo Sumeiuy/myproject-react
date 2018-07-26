@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 14:47:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-13 10:49:26
+ * @Last Modified time: 2018-07-26 18:45:34
  * @description 线上销户组件的配置项
  */
 

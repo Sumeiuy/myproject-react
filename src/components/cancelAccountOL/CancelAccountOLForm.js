@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 14:49:58
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-24 11:19:12
+ * @Last Modified time: 2018-07-26 19:07:18
  * @description 线上销户新建以及驳回后修改通用部分
  */
 
@@ -75,8 +75,8 @@ export default class CancelAccountOLForm extends PureComponent {
 
   @autobind
   getInitialState(props) {
-    const { action, detailInfo = {} } = props;
-    const isCreate = action === 'CREATE';
+    const { detailInfo = {} } = props;
+    const isCreate = this.isCreateApply();
     if (isCreate) {
       return {};
     }
@@ -113,6 +113,13 @@ export default class CancelAccountOLForm extends PureComponent {
   @autobind
   getWrapRef() {
     return this.wrapRef.current;
+  }
+
+  @autobind
+  isCreateApply() {
+    const { action } = this.props;
+    // action 判断当前是新建申请 'CREATE' 还是 驳回后修改申请'UPDATE'
+    return action === 'CREATE';
   }
 
   @autobind
@@ -404,12 +411,12 @@ export default class CancelAccountOLForm extends PureComponent {
 
   render() {
     const { formData } = this.state;
-    const { action, custList, optionsDict, disablePage } = this.props;
+    const { custList, optionsDict, disablePage } = this.props;
     if (_.isEmpty(optionsDict)) {
       return null;
     }
     // 判断当前组件是否在驳回后修改页面里面
-    const isCreate = action === 'CREATE';
+    const isCreate = this.isCreateApply();
     const wrapCls = cx({
       [styles.cancelAccountContainer]: true,
       [styles.reject]: !isCreate,
