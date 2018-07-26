@@ -48,6 +48,8 @@ const KEY_STATUS = 'status';
 const KEY_OLDEMPNAME = 'oldEmpName';
 // 是否入岗投顾
 const KEY_ISTOUGU = 'touGu';
+// 服务经理名称
+const KEY_EMPNAME = 'empName';
 // 开发经理
 const KEY_DMNAME = 'dmName';
 // 用以区分点击的是客户或者是服务经理
@@ -205,12 +207,21 @@ export default class CreateModal extends PureComponent {
   @autobind
   getColumnsManageTitle() {
     const titleList = [...manageTitleList];
-    titleList[titleList.length] = {
+    // 服务经理
+    const empNameColumn = _.find(titleList, o => o.key === KEY_EMPNAME);
+    empNameColumn.render = (text, record) => (
+      <div>
+        {
+          text ? `${text} (${record.empId})` : null
+        }
+      </div>
+    );
+    titleList.push({
       dataIndex: 'operate',
       key: 'operate',
       title: '操作',
       render: (text, record) => this.renderPopconfirm(MANAGE, record),
-    };
+    });
     return titleList;
   }
 
@@ -341,7 +352,7 @@ export default class CreateModal extends PureComponent {
           const { handleRuleTypePropsChange, addedManageData: { page } } = this.props;
           // 只有一位服务经理时，隐藏分配规则
           if (page.totalRecordNum <= 1) {
-            handleRuleTypePropsChange();
+            handleRuleTypePropsChange(ruleTypeArray[0].value);
           }
         }
       });
