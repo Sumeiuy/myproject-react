@@ -124,7 +124,7 @@ export default class Header extends PureComponent {
                   name={nav.name}
                   action={nav.action}
                   url={nav.url}
-                  path={nav.paht}
+                  path={nav.path}
                   subMenu={nav.children}
                 />))
               ) :

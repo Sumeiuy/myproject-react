@@ -126,7 +126,7 @@ export default function createApi() {
     postFspData(url, query = {}, options) {
       const finalUrl = fillPrefix(url);
       const { ignoreCatch = false, ...resetQuery } = query;
-      return fspRequest(
+      return request(
         `${finalUrl}?empId=${emp.getId()}`,
         {
           method: 'POST',

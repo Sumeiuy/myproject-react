@@ -4,7 +4,7 @@
   border-bottom: 2px solid #108ee9;
   background: #fff;
   flex-direction: row;
-  z-index: 1;
+  z-index: 400;
 
   .menuItem {
     flex: 0 0 auto;
@@ -28,7 +28,7 @@
         line-height: 39px;
         color: #4a4a4a;
         display: inline-block;
-        width: 56px;
+        width: 100%;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -137,58 +137,16 @@
   }
 }
 
-.subItem {
-  background: none;
-  .moreMenuItem {
-    width: 66px;
-    .link {
-      display: inline-block;
-      color: #4a4a4a;
-      width: 56px;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      vertical-align: middle;
-    }
-    .close {
-      display: inline-block;
-      vertical-align: middle;
-      &:hover {
-        font-weight: bolder;
-      }
-    }
-  }
-  &.activeItem {
-    background: #ecf6fd;
-    border-radius: 0;
-    .moreMenuItem {
-      .link {
-        display: inline-block;
-        color: #2e669a;
-        width: 56px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        vertical-align: middle;
-      }
-      .close {
-        font-size: 12px;
-        color: #2e669a;
-        display: inline-block;
-        vertical-align: middle;
-        font-weight: bolder;
-      }
-    }
-  }
+.dropDownContainer {
+  position: relative;
+  z-index: 1;
 }
 
-.subMenuItem {
-  width: 86px;
-  :global {
-    .ant-dropdown-menu-submenu-title:after {
-      margin-top: 1px;
-    }
-  }
+.dropDownMenu {
+  border: 1px solid #ddd;
+  border-radius: 0 0 4px 4px;
+  min-width: 100px;
+  max-width: 170px;
 }
 
 .subMenuLink {
@@ -197,6 +155,10 @@
         margin-top: 1px;
     }
   }
+}
+
+.subItem {
+  min-width: 86px;
 }
 
 .activeItem {
@@ -210,7 +172,7 @@
 }
 
 .linkItem {
-  width: 86px;
+  width: 100%;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;

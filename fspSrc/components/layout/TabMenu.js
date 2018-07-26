@@ -13,10 +13,13 @@ import _ from 'lodash';
 import styles from './tabMenu.less';
 import MoreTab from './MoreTab';
 import { pathPrefix } from './config';
+import { fixExternUrl } from '../utils/tab';
 
 const menuStyle = {
   border: '1px solid #ddd',
   borderRadius: '0 0 4px 4px',
+  minWidth: '100px',
+  maxWidth: '170px',
 };
 
 export default class TabMenu extends PureComponent {
@@ -70,10 +73,15 @@ export default class TabMenu extends PureComponent {
   @autobind
   getFirstChild(menu) {
     const firstChild = menu.children[0];
-    if (firstChild.path === '' && firstChild.children) {
+    if (firstChild.children && !_.isEmpty(firstChild.children)) {
       return this.getFirstChild(firstChild);
     }
     return firstChild;
+  }
+
+  @autobind
+  getPopupContainer() {
+    return this.elem;
   }
 
   isActiveMenu(path, menuItem, level, exact = false) {
@@ -91,7 +99,7 @@ export default class TabMenu extends PureComponent {
     if (pathPrefix.test(path)) {
       pathForMatch = pathArray[level + 1]; // 去掉"/fsp"开头
     }
-    if (menuPath.indexOf(pathForMatch) > -1) {
+    if (menuPath && menuPath.indexOf(pathForMatch) > -1) {
       return true;
     }
 
@@ -102,7 +110,8 @@ export default class TabMenu extends PureComponent {
   handleLinkClick(menuItem) {
     const { push, path } = this.props;
     if (menuItem.action === 'loadExternSystemPage') {
-      window.open(menuItem.url, '_blank');
+      const externUrl = fixExternUrl(menuItem.url);
+      window.open(externUrl, '_blank');
     } else if (menuItem.path !== path) {
       push({
         pathname: menuItem.path,
@@ -129,7 +138,7 @@ export default class TabMenu extends PureComponent {
   handDropClick(menuItem, activeKey) {
     if (menuItem.id !== activeKey) {
       // 是否有上次点击的菜单记录
-      if (menuItem.path !== '') {
+      if (menuItem.path) {
         this.handleLinkClick(menuItem);
       } else {
         // 默认打开第一个子菜单
@@ -142,7 +151,7 @@ export default class TabMenu extends PureComponent {
   renderDropdownMenu(menu) {
     const { activeKey } = this.props;
     const isActiveLink = menu.id === activeKey;
-    const hasHomePage = menu.path !== '';
+    const hasHomePage = !!menu.path;
     const menus = (
       <Menu style={menuStyle}>
         {
@@ -162,6 +171,7 @@ export default class TabMenu extends PureComponent {
           placement="bottomLeft"
           overlay={menus}
           trigger={['hover']}
+          getPopupContainer={this.getPopupContainer}
         >
           <div
             tabIndex="0"
@@ -240,9 +250,10 @@ export default class TabMenu extends PureComponent {
     const { mainArray, moreMenuObject } = this.props;
     return (
       <div id="tabMenu" className={styles.tabMenu}>
+        <div className={styles.dropDownContainer} ref={ref => this.elem = ref} />
         {
           mainArray.map((menu) => {
-            if (menu.children) {
+            if (menu.children && !_.isEmpty(menu.children)) {
               return this.renderDropdownMenu(menu);
             } else if (menu.pid === 'ROOT') {
               return this.renderLinkMenu(menu, false);
