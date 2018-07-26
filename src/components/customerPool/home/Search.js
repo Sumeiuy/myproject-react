@@ -20,6 +20,7 @@ import { padSightLabelDesc } from '../../../config';
 import Icon from '../../common/Icon';
 import { isSightingScope, getFilter } from '../helper';
 import styles from './search.less';
+import classes from './headerSearch.less';
 
 const Option = AutoComplete.Option;
 const EMPTY_LIST = [];
@@ -42,9 +43,11 @@ export default class Search extends PureComponent {
     isPreview: PropTypes.bool,
     // 打开展示所有标签弹窗
     showMoreLabelModal: PropTypes.func,
+    isOnlySearchable: PropTypes.bool,
   }
 
   static defaultProps = {
+    isOnlySearchable: false,
     hotWdsList: EMPTY_LIST,
     queryHotPossibleWds: _.noop,
     saveSearchVal: _.noop,
@@ -343,6 +346,7 @@ export default class Search extends PureComponent {
       searchHistoryVal,
       isPreview,
       showMoreLabelModal,
+      isOnlySearchable,
     } = this.props;
     const autoCompleteOption = isPreview ? {} :
     {
@@ -353,10 +357,12 @@ export default class Search extends PureComponent {
       defaultValue: searchHistoryVal,
     };
 
+    const trueStyles = isOnlySearchable ? classes : styles;
+
     return (
-      <div className={styles.searchBox}>
-        <div className={styles.inner}>
-          <div className={styles.inputBox}>
+      <div className={trueStyles.searchBox}>
+        <div className={trueStyles.inner}>
+          <div className={trueStyles.inputBox}>
             <div className="global-search-wrapper">
               <AutoComplete
                 ref={ref => this.autoComplete = ref}
@@ -383,23 +389,29 @@ export default class Search extends PureComponent {
                   )}
                 />
               </AutoComplete>
-              <AntdIcon type="question-circle" onClick={this.toSearchHelpPage} />
+              {
+                isOnlySearchable ? null : <AntdIcon type="question-circle" onClick={this.toSearchHelpPage} />
+              }
             </div>
           </div>
-          <div className={styles.historyList}>
-            <span className={styles.s_title}>
-              <Icon type="dengpao" />猜你感兴趣：
-            </span>
-            <div className={'clearfix'}>
-              <a
-                className={styles.moreLabelBtn}
-                onClick={() => showMoreLabelModal(true)}
-              >
-                更多 &gt;
-              </a>
-              {this.renderRecommend(hotWdsList)}
-            </div>
-          </div>
+          {
+            isOnlySearchable ?
+              null :
+              <div className={trueStyles.historyList}>
+                <span className={trueStyles.s_title}>
+                  <Icon type="dengpao" />猜你感兴趣：
+                </span>
+                <div className={'clearfix'}>
+                  <a
+                    className={trueStyles.moreLabelBtn}
+                    onClick={() => showMoreLabelModal(true)}
+                  >
+                    更多 &gt;
+                  </a>
+                  {this.renderRecommend(hotWdsList)}
+                </div>
+              </div>
+          }
         </div>
       </div>
     );
