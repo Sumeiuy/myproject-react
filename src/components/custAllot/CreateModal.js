@@ -34,6 +34,8 @@ const {
   ruleTypeArray,
   clearDataArray,
   operateType,
+  limit: { allCount: LIMIT_ALL_COUNT },
+  errorMessage: { allCount: ERROR_MESSAGE_ALL_COUNT },
 } = config;
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
@@ -46,6 +48,8 @@ const KEY_STATUS = 'status';
 const KEY_OLDEMPNAME = 'oldEmpName';
 // 是否入岗投顾
 const KEY_ISTOUGU = 'touGu';
+// 服务经理名称
+const KEY_EMPNAME = 'empName';
 // 开发经理
 const KEY_DMNAME = 'dmName';
 // 用以区分点击的是客户或者是服务经理
@@ -96,6 +100,8 @@ export default class CreateModal extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      // 已有条数
+      alreadyCount: 0,
       // 是否是初始划转方式
       isDefaultType: true,
       // 上传后的返回值
@@ -201,12 +207,21 @@ export default class CreateModal extends PureComponent {
   @autobind
   getColumnsManageTitle() {
     const titleList = [...manageTitleList];
-    titleList[titleList.length] = {
+    // 服务经理
+    const empNameColumn = _.find(titleList, o => o.key === KEY_EMPNAME);
+    empNameColumn.render = (text, record) => (
+      <div>
+        {
+          text ? `${text} (${record.empId})` : null
+        }
+      </div>
+    );
+    titleList.push({
       dataIndex: 'operate',
       key: 'operate',
       title: '操作',
       render: (text, record) => this.renderPopconfirm(MANAGE, record),
-    };
+    });
     return titleList;
   }
 
@@ -235,6 +250,7 @@ export default class CreateModal extends PureComponent {
       queryAddedCustList(queryAddedCustListPayload);
     });
   }
+
   // 上传事件
   @autobind
   @logable({ type: 'Click', payload: { name: '导入' } })
@@ -276,6 +292,15 @@ export default class CreateModal extends PureComponent {
           message.error(uploadFile.response.msg);
         }
       }
+    });
+  }
+
+  // 更新已添加的客户条数
+  @autobind
+  updateTotalNum() {
+    const { addedCustData: { page } } = this.props;
+    this.setState({
+      alreadyCount: page.totalRecordNum || 0,
     });
   }
 
@@ -327,7 +352,7 @@ export default class CreateModal extends PureComponent {
           const { handleRuleTypePropsChange, addedManageData: { page } } = this.props;
           // 只有一位服务经理时，隐藏分配规则
           if (page.totalRecordNum <= 1) {
-            handleRuleTypePropsChange('0');
+            handleRuleTypePropsChange(ruleTypeArray[0].value);
           }
         }
       });
@@ -440,7 +465,7 @@ export default class CreateModal extends PureComponent {
   @autobind
   sendRequest(modalKey) {
     const { clearData, sendRequest, custModalKey, manageModalKey, updateData } = this.props;
-    const { client, manager } = this.state;
+    const { client, manager, alreadyCount } = this.state;
     let customer = [];
     let manage = [];
     const isCust = modalKey === custModalKey;
@@ -463,7 +488,11 @@ export default class CreateModal extends PureComponent {
       default:
         break;
     }
-    // const customer = [{ brokerNumber: client.custId }];
+    // 如果添加的是客户，并且已添加的数量 + 1 大于限制的条数
+    if (isCust && (Number(alreadyCount) + 1 > LIMIT_ALL_COUNT)) {
+      message.error(ERROR_MESSAGE_ALL_COUNT);
+      return;
+    }
     const payload = {
       customer: isCust ? customer : [],
       manage: isCust ? [] : manage,

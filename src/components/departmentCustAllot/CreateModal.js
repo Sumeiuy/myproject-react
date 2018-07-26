@@ -34,6 +34,9 @@ const {
   ruleTypeArray,
   allotType,
   clearDataArray,
+  operateType,
+  limit: { allCount: LIMIT_ALL_COUNT },
+  errorMessage: { allCount: ERROR_MESSAGE_ALL_COUNT },
 } = config;
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
@@ -53,8 +56,6 @@ const KEY_DMNAME = 'dmName';
 const KEY_EMPNAME = 'empName';
 // 服务经理-是否是投顾
 const KEY_TGFLAG = 'tgFlag';
-// 更新客户或者服务经理时的方法类型
-const operateType = ['add', 'delete', 'clear'];
 // 用以区分点击的是客户或者是服务经理
 const CUST = 'cust';
 const MANAGE = 'manage';
@@ -103,6 +104,8 @@ export default class CreateModal extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      // 已有条数
+      alreadyCount: 0,
       // 是否是初始划转方式
       isDefaultType: true,
       // 上传后的返回值
@@ -253,7 +256,17 @@ export default class CreateModal extends PureComponent {
         pageSize: 5,
         type: allotType,
       };
-      queryAddedCustList(queryAddedCustListPayload);
+      // 更新总条数
+      queryAddedCustList(queryAddedCustListPayload).then(this.updateTotalNum());
+    });
+  }
+
+  // 更新已添加的客户条数
+  @autobind
+  updateTotalNum() {
+    const { addedCustData: { page } } = this.props;
+    this.setState({
+      alreadyCount: page.totalRecordNum || 0,
     });
   }
 
@@ -355,6 +368,9 @@ export default class CreateModal extends PureComponent {
             // 按照平均客户数分配
             handleRuleTypePropsChange(ruleTypeArray[0].value);
           }
+        } else {
+          // 更新总条数
+          this.updateTotalNum();
         }
       });
     });
@@ -472,7 +488,7 @@ export default class CreateModal extends PureComponent {
   @autobind
   handleAddBtnClick(modalKey) {
     const { clearData, sendRequest, custModalKey, manageModalKey, updateData } = this.props;
-    const { client, manager } = this.state;
+    const { client, manager, alreadyCount } = this.state;
     let customer = [];
     let manage = [];
     const isCust = modalKey === custModalKey;
@@ -495,11 +511,15 @@ export default class CreateModal extends PureComponent {
       default:
         break;
     }
-    // const customer = [{ brokerNumber: client.custId }];
+    // 如果添加的是客户，并且已添加的数量 + 1 大于限制的条数
+    if (isCust && (Number(alreadyCount) + 1 > LIMIT_ALL_COUNT)) {
+      message.error(ERROR_MESSAGE_ALL_COUNT);
+      return;
+    }
     const payload = {
       customer: isCust ? customer : [],
       manage: isCust ? [] : manage,
-      operateType: 'add',
+      operateType: operateType[0],  // add
       attachment: '',
       id: updateData.appId || '',
       type: allotType,

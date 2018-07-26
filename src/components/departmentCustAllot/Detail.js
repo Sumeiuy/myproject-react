@@ -248,10 +248,16 @@ export default class Detail extends PureComponent {
             {...paginationOption}
           />
         </div>
-        <div className={styles.module}>
-          <InfoTitle head="客户分配规则" />
-          <InfoItem label="规则" value={ruleType ? ruleTypeArray[ruleType].label : ''} />
-        </div>
+        {
+          ruleType
+          ?
+            <div className={styles.module}>
+              <InfoTitle head="客户分配规则" />
+              <InfoItem label="规则" value={ruleType ? ruleTypeArray[ruleType].label : ''} />
+            </div>
+          :
+            null
+        }
         <div className={styles.module}>
           <InfoTitle head="拟稿信息" />
           <InfoItem label="拟稿人" value={drafter} />

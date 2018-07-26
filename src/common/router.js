@@ -116,7 +116,7 @@ export const getRouterData = (app) => {
         import('../routes/feedback/MyFeedback' /* webpackChunkName: "myFeedback" */)),
     },
     // 直接进入
-    '/application/commission': {
+    '/businessApplyment/commission': {
       component: dynamicWrapper(app, ['commission'], () =>
         import('../routes/commission/Home' /* webpackChunkName: "commission" */)),
     },
