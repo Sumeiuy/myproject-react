@@ -457,7 +457,7 @@ const primaryMenu = [
             url: '/cbs/login?defaultTargetUrl=/cbspages/marExpReminder/marFeedbackManage.jsf&iv-user=#[userCode]',
             type: 'link',
             action: 'loadExternSystemPage',
-            path: '/fsp/businessApplyment/credit/trakingPromp',
+            path: '',
           },
           {
             id: 'FSP_BUSINESS_TRAN_APP',
@@ -486,7 +486,7 @@ const primaryMenu = [
             name: '股票期权评估申请',
             order: 1,
             pid: 'FSP_BUSINESS_APPLYMENT_OPTION',
-            url: '/bizapply/stockinvest/listConten',
+            url: '/bizapply/stockinvest/listContent',
             type: 'link',
             action: 'loadInTab',
             path: '/fsp/businessApplyment/option/stockinvest',

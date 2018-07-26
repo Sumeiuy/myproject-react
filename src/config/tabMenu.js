@@ -52,13 +52,13 @@ const newOpenTabConfig = [
     name: '待办流程',
     id: 'FSP_TODO',
     path: '/customerPool/todo',
-    pid: 'ROOT',
+    pid: 'FSP_NEW_HOMEPAGE',
   },
   {
     name: '消息提醒',
     id: 'FSP_MESSAGE',
     path: '/fsp/messageCenter',
-    pid: 'ROOT',
+    pid: 'FSP_NEW_HOMEPAGE',
   },
   {
     name: 'MOT任务',
@@ -76,7 +76,7 @@ const newOpenTabConfig = [
     name: '客户360',
     id: 'FSP_CUST_M_360',
     path: '/fsp/customerCenter/customer360',
-    pid: 'ROOT',
+    pid: 'FSP_CUST_M_CENTER_MANAGE',
   },
   {
     name: '投顾签约向导',

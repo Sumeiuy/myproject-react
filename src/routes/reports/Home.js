@@ -182,7 +182,6 @@ export default class ReportHome extends PureComponent {
     const {
       location: { query: { boardId: preBoardId } },
     } = this.props;
-
     // 还是chart部分的数据
     if (!_.isEqual(preBoardId, boardId)) {
       // 修改state

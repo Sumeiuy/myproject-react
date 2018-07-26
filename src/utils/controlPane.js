@@ -159,6 +159,7 @@ function dispatchTabPane(options) {
       } = options;
 
       if (pathname) {
+        console.log('######pathname#######', pathname);
         routerAction({
           pathname,
           query,
