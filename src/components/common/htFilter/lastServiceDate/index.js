@@ -44,6 +44,7 @@ export default function LastServiceDateFilter(props) {
       dropdownStyle={{
         maxHeight: 324,
         width: 256,
+        position: 'static',
       }}
       getFilterLabelValue={getDateSelectFilterLabel}
     />
