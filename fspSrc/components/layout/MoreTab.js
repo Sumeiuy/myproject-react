@@ -101,6 +101,11 @@ export default class MoreTab extends PureComponent {
   }
 
   @autobind
+  getPopupContainer() {
+    return this.elem;
+  }
+
+  @autobind
   remove(key) {
     const { onRemove } = this.props;
     onRemove(key);
@@ -139,10 +144,12 @@ export default class MoreTab extends PureComponent {
 
     return (
       <div className={styles.moreTab}>
+        <div className={styles.dropDownContainer} ref={ref => this.elem = ref} />
         <Dropdown
           placement="bottomLeft"
           overlay={menus}
           trigger={['hover']}
+          getPopupContainer={this.getPopupContainer}
         >
           <div className={isActive ? styles.tabActive : null}>
             <div>
