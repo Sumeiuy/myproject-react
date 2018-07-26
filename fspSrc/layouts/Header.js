@@ -10,18 +10,19 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Menu, Dropdown } from 'antd';
 import _ from 'lodash';
-import { Link } from 'dva/router';
 import { autobind } from 'core-decorators';
 
 import Logo from './widget/Logo';
 import EmpRsp from './widget/EmpRp';
-import NavItem from './widget/NavItem';
 import styles from './header.less';
 import QRCode from './img/qrcode.png';
+import { fixExternUrl } from '../components/utils/tab';
+import withRouter from '../../src/decorators/withRouter';
 
+@withRouter
 export default class Header extends PureComponent {
   static propTypes = {
-    navs: PropTypes.array.isRequired,
+    secondaryMenu: PropTypes.array,
     empInfo: PropTypes.object.isRequired,
     // 用户岗位列表
     empRspList: PropTypes.array.isRequired,
@@ -29,9 +30,11 @@ export default class Header extends PureComponent {
     onSearch: PropTypes.func,
     onSwitchRsp: PropTypes.func,
     onIsolationWallModalShow: PropTypes.func,
+    push: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
   static defaultProps = {
-    navs: [],
+    secondaryMenu: [],
     empInfo: {},
     onSearch: () => { },
     onSwitchRsp: () => { },
@@ -45,6 +48,56 @@ export default class Header extends PureComponent {
     };
   }
 
+  getDropdownMenu(menu) {
+    if (menu.name === '移动版') {
+      return (
+        <img src={QRCode} alt="移动端二维码" />
+      );
+    }
+    return (
+      <Menu>
+        {
+          this.getMenus(menu.children)
+        }
+      </Menu>
+    );
+  }
+
+  getMenus(array, level = 2) {
+    return array.map((item) => {
+      if (item.children && !_.isEmpty(item.children)) {
+        return (
+          <Menu.SubMenu
+            key={item.id}
+            title={item.name}
+          >
+            {this.getMenus(item.children, level + 1)}
+          </Menu.SubMenu>
+        );
+      }
+      return (
+        <Menu.Item
+          key={item.id}
+        >
+          <div
+            title={item.name}
+            onClick={() => this.handleLinkClick(item)}
+          >
+            {item.name}
+          </div>
+        </Menu.Item>
+      );
+    });
+  }
+
+  preTreatment(secondaryMenu) {
+    return _.filter(secondaryMenu,
+      menu =>
+        menu.name === '移动版'
+        || (!_.isEmpty(menu.children))
+        || (!!menu.path));
+  }
+
   @autobind
   fakeLogin() {
     if (process.env.NODE_ENV === 'development') {
@@ -52,6 +105,21 @@ export default class Header extends PureComponent {
     }
   }
 
+  @autobind
+  handleLinkClick(menuItem) {
+    const { push, location } = this.props;
+    if (menuItem.action === 'loadExternSystemPage') {
+      const externUrl = fixExternUrl(menuItem.url);
+      window.open(externUrl, '_blank');
+    } else if (menuItem.action === 'loadInModal') {
+      this.handleShowDialog();
+    } else if (menuItem.path !== location.pathname) {
+      push({
+        pathname: menuItem.path,
+        query: menuItem.query,
+      });
+    }
+  }
 
   @autobind
   handleSwitchRsp(rsp) {
@@ -63,47 +131,52 @@ export default class Header extends PureComponent {
     this.props.onIsolationWallModalShow();
   }
 
+  @autobind
+  renderSecondaryMenu(secondaryMenu) {
+    const fixSecondaryMenu = this.preTreatment(secondaryMenu);
+    return (
+      _.map(fixSecondaryMenu, (menu, index) => {
+        if (!_.isEmpty(menu.children) || menu.name === '移动版') {
+          return (
+            <Dropdown
+              key={menu.id}
+              overlay={this.getDropdownMenu(menu)}
+            >
+              <div>
+                <span className={styles.navItem}>
+                  <span>{menu.name}</span>
+                </span>
+                {
+                  (index !== fixSecondaryMenu.length - 1) ?
+                    <span className={styles.splitLine} /> : null
+                }
+              </div>
+            </Dropdown>
+          );
+        }
+
+        return (
+          <div onClick={() => this.handleLinkClick(menu)}>
+            <span className={styles.navItem}>
+              <span>{menu.name}</span>
+            </span>
+            {
+              (index !== fixSecondaryMenu.length - 1) ?
+                <span className={styles.splitLine} /> : null
+            }
+          </div>
+        );
+      }));
+  }
+
   render() {
-    const { empRspList, empInfo, navs, empCurrentPosition } = this.props;
-    const commonTools = (
-      <Menu>
-        <Menu.Item>
-          <Link to="/fsp/serviceCenter/investContract">投顾签约</Link>
-        </Menu.Item>
-        <Menu.Item>
-          <Link to="/application/commission">服务订阅</Link>
-        </Menu.Item>
-        <Menu.Item>
-          <a onClick={this.handleShowDialog}>隔离墙</a>
-        </Menu.Item>
-        <Menu.Item>
-          产品适当性售前查询
-        </Menu.Item>
-      </Menu>
-    );
-    const mobileVersion = (
-      <img src={QRCode} alt="移动端二维码" />
-    );
-    const knowledgeBase = (
-      <Menu>
-        <Menu.Item>
-          基础业务知识
-        </Menu.Item>
-      </Menu>
-    );
-    const helpMenu = (
-      <Menu>
-        <Menu.Item>
-          反馈管理
-        </Menu.Item>
-        <Menu.Item>
-          专项业务知识
-        </Menu.Item>
-        <Menu.Item>
-          更新日志
-        </Menu.Item>
-      </Menu>
-    );
+    const {
+      empRspList,
+      empInfo,
+      secondaryMenu,
+      empCurrentPosition,
+    } = this.props;
+
     return (
       <div className={styles.fspHeader}>
         <div onClick={this.fakeLogin}><Logo /></div>
@@ -116,55 +189,9 @@ export default class Header extends PureComponent {
               />
             </div> */}
           {
-            !_.isEmpty(navs) ?
-              (
-                navs.map(nav => (<NavItem
-                  id={nav.id}
-                  name={nav.name}
-                  action={nav.action}
-                  url={nav.url}
-                  path={nav.path}
-                  subMenu={nav.children}
-                />))
-              ) :
-              null
+            !_.isEmpty(secondaryMenu) ?
+              this.renderSecondaryMenu(secondaryMenu) : null
           }
-
-          <Dropdown overlay={commonTools}>
-            <div>
-              <span className={styles.navItem}>
-                <span>常用工具</span>
-              </span>
-              <span className={styles.splitLine} />
-            </div>
-          </Dropdown>
-
-          <Dropdown overlay={mobileVersion}>
-            <div>
-              <span className={styles.navItem}>
-                <span>移动版</span>
-              </span>
-              <span className={styles.splitLine} />
-            </div>
-          </Dropdown>
-
-          <Dropdown overlay={knowledgeBase}>
-            <div>
-              <span className={styles.navItem}>
-                <span>知识库</span>
-              </span>
-              <span className={styles.splitLine} />
-            </div>
-          </Dropdown>
-
-          <Dropdown overlay={helpMenu}>
-            <div>
-              <span className={styles.navItem}>
-                <span>帮助</span>
-              </span>
-            </div>
-          </Dropdown>
-
           {
             (!_.isEmpty(empRspList)) ?
               (<EmpRsp

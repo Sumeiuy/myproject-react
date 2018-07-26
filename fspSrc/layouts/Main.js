@@ -227,6 +227,9 @@ export default class Main extends PureComponent {
               this.isMenuExists(menus) ?
                 <div className={styles.layout}>
                   <Header
+                    push={push}
+                    location={location}
+                    secondaryMenu={menus.secondaryMenu}
                     empInfo={empInfo}
                     empRspList={empPostnList}
                     empCurrentPosition={empCurrentPosition}
