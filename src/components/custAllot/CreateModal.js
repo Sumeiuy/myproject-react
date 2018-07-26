@@ -731,7 +731,7 @@ export default class CreateModal extends PureComponent {
             title="提示"
             onCancel={this.importHandleCancel}
             footer={[
-              <Button style={{ marginRight: '10px' }} key="back" onClick={this.importHandleCancel}>
+              <Button className={styles.mr10} key="back" onClick={this.importHandleCancel}>
                 取消
               </Button>,
               <Upload {...uploadProps} {...this.props} key="uploadAgain">
