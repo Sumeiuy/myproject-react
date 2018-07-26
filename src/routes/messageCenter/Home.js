@@ -264,7 +264,7 @@ export default class MessageCenter extends PureComponent {
       const { push } = this.context;
       push(`/filialeCustTransfer/notifies?notifiId=${rowId}&appId=${appId}&currentId=${itemId}&type=${type}`);
     } else {
-      const url = `/filialeCustTransfer?id=${itemId}&appId=${appId}`;
+      const url = `/sysOperate/crossDepartment/filialeCustTransfer?id=${itemId}&appId=${appId}`;
       const param = {
         id: 'FSP_CROSS_DEPARTMENT',
         title: '分公司客户人工划转',
@@ -272,7 +272,7 @@ export default class MessageCenter extends PureComponent {
         isSpecialTab: true,
         closable: true,
       };
-      const pathName = '/filialeCustTransfer';
+      const pathName = '/sysOperate/crossDepartment/filialeCustTransfer';
       openRctTab({
         routerAction: this.context.push,
         url,

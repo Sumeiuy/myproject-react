@@ -13,7 +13,7 @@ export default function common(api) {
     getMenus: query => api.postFspData('/newMenu', query),
     // 用户切换岗位
     // changePost: query => api.post('/groovynoauth/fsp/emp/info/changePost', query),
-    changePost: query => api.postFspData('/chgPstn', query),
+    changePost: query => api.postFspData('/chgPstn', query, { ignoreCatch: true }),
     // 添加服务记录中 服务类型
     getServiceType: query => api.post('/groovynoauth/fsp/campaign/mot/queryMissionList2', query),
     // 查询瞄准镜筛选条件

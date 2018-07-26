@@ -140,9 +140,9 @@ export default class CreateTaskSuccess extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      url: '/taskList',
+      url: '/taskCenter/taskList',
       param,
-      pathname: '/taskList',
+      pathname: '/taskCenter/taskList',
       query: {},
     });
   }

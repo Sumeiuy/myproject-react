@@ -425,7 +425,7 @@ export default {
         const subTypeListParam = {
           typeCode: 'subType',
         };
-        if (pathname === '/channelsTypeProtocol') {
+        if (pathname === '/businessApplyment/channelsTypeProtocol') {
           // 进入页面查询子类型列表
           dispatch({ type: 'queryTypeVaules', payload: subTypeListParam });
         }
