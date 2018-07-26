@@ -208,7 +208,7 @@ export default class Main extends PureComponent {
     // 当前服务记录弹窗是否由电话调起的
     const isPhoneCall = caller === PHONE;
     // 获取当前职位
-    const empCurPost = emp.getPstnId();
+    const empCurrentPosition = emp.getPstnId();
     return (
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
@@ -224,7 +224,7 @@ export default class Main extends PureComponent {
                 navs={secondaryMenu}
                 empInfo={empInfo}
                 empRspList={empPostnList}
-                empCurPost={empCurPost}
+                empCurrentPosition={empCurrentPosition}
                 onSwitchRsp={this.handleHeaderSwitchRsp}
                 onIsolationWallModalShow={this.handleIsolationWallModalShow}
               />

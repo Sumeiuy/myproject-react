@@ -20,7 +20,7 @@ export default class EmpRp extends PureComponent {
 
   static propTypes = {
     empRspList: PropTypes.array.isRequired,
-    empCurPost: PropTypes.string.isRequired,
+    empCurrentPosition: PropTypes.string.isRequired,
     empInfo: PropTypes.object.isRequired,
     onSwitchRsp: PropTypes.func,
   }
@@ -54,8 +54,8 @@ export default class EmpRp extends PureComponent {
   // 选择某个岗位
   @autobind
   handleRspChange({ key }) {
-    const { empCurPost } = this.props;
-    if (key === empCurPost || key === 'userCenter') return;
+    const { empCurrentPosition } = this.props;
+    if (key === empCurrentPosition || key === 'userCenter') return;
     this.changeRsp(key);
   }
 
@@ -78,9 +78,9 @@ export default class EmpRp extends PureComponent {
   }
 
   render() {
-    const { empRspList, empInfo, empCurPost } = this.props;
+    const { empRspList, empInfo, empCurrentPosition } = this.props;
     let emp = {};
-    const post = this.findEmpResp(empRspList, empCurPost);
+    const post = this.findEmpResp(empRspList, empCurrentPosition);
     emp = {
       name: empInfo.empName,
       postName: post.postnName,

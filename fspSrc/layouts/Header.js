@@ -25,7 +25,7 @@ export default class Header extends PureComponent {
     empInfo: PropTypes.object.isRequired,
     // 用户岗位列表
     empRspList: PropTypes.array.isRequired,
-    empCurPost: PropTypes.string.isRequired,
+    empCurrentPosition: PropTypes.string.isRequired,
     onSearch: PropTypes.func,
     onSwitchRsp: PropTypes.func,
     onIsolationWallModalShow: PropTypes.func,
@@ -64,7 +64,7 @@ export default class Header extends PureComponent {
   }
 
   render() {
-    const { empRspList, empInfo, navs, empCurPost } = this.props;
+    const { empRspList, empInfo, navs, empCurrentPosition } = this.props;
     const commonTools = (
       <Menu>
         <Menu.Item>
@@ -169,7 +169,7 @@ export default class Header extends PureComponent {
             (!_.isEmpty(empRspList)) ?
               (<EmpRsp
                 empRspList={empRspList}
-                empCurPost={empCurPost}
+                empCurrentPosition={empCurrentPosition}
                 empInfo={empInfo}
                 onSwitchRsp={this.handleSwitchRsp}
               />) :
