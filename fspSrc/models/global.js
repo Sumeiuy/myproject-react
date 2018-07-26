@@ -36,12 +36,12 @@ export default {
     // 根据用户权限可以查看的菜单
     getMenusSuccess(state, action) {
       const { payload: { resultData = {} } } = action;
-      const { secondaryMenu = [], majorMenu = [] } = resultData;
+      const { primaryMenu = [], secondaryMenu = [] } = resultData;
       return {
         ...state,
         menus: {
+          primaryMenu,
           secondaryMenu,
-          majorMenu,
         },
       };
     },
