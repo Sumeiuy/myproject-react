@@ -22,9 +22,9 @@ import {
   ENTER_TYPE,
   ALL_DEPARTMENT_ID,
   MAIN_MAGEGER_ID,
-  ENTERLIST1,
-  ENTERLIST2,
-  ENTERLIST3,
+  ENTERLIST_PERMISSION_TASK_MANAGE,
+  ENTERLIST_PERMISSION_INDEX_QUERY,
+  ENTERLIST_LEFTMENU,
 } from './config';
 
 import { RANDOM } from '../../config/filterContant';
@@ -712,11 +712,11 @@ export default class CustomerList extends PureComponent {
       return query.departmentOrgId !== ALL_DEPARTMENT_ID ? query.departmentOrgId : '';
     }
     // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
-    if (_.includes(ENTERLIST1, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, query.source)) {
       return this.hasTkMampPermission ? this.orgId : '';
     }
     // 从左侧菜单进来，判断是否有任务管理权限或者首页指标查询权限
-    if (_.includes(ENTERLIST3, query.source)) {
+    if (_.includes(ENTERLIST_LEFTMENU, query.source)) {
       return this.hasTkMampPermission || this.hasIndexViewPermission
         ? this.orgId : '';
     }
@@ -729,7 +729,7 @@ export default class CustomerList extends PureComponent {
       }
     }
     // 首页新增客户和业务开通进来的
-    if (_.includes(ENTERLIST2, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, query.source)) {
       if (query.orgId) {
         return query.orgId !== MAIN_MAGEGER_ID ? query.orgId : '';
       }
@@ -762,7 +762,7 @@ export default class CustomerList extends PureComponent {
       return { ptyMngId, ptyMngName };
     }
     // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
-    if (_.includes(ENTERLIST1, finalQuery.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, finalQuery.source)) {
       return this.hasTkMampPermission ?
         { ptyMngId: '' } : currentPtyMng;
     }
@@ -774,14 +774,14 @@ export default class CustomerList extends PureComponent {
       }
     }
     // 首页新增客户和业务开通进来的
-    if (_.includes(ENTERLIST2, finalQuery.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, finalQuery.source)) {
       if (!this.hasIndexViewPermission
         || (finalQuery.orgId && finalQuery.orgId === MAIN_MAGEGER_ID)) {
         return currentPtyMng;
       }
     }
     // 从左侧菜单过来，判断是否有任务管理权限或者首页指标查询权限
-    if (_.includes(ENTERLIST3, finalQuery.source)) {
+    if (_.includes(ENTERLIST_LEFTMENU, finalQuery.source)) {
       return this.hasTkMampPermission || this.hasIndexViewPermission ?
         { ptyMngId: '' } : currentPtyMng;
     }
