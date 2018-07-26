@@ -3,28 +3,37 @@
 	height: 32px;
 	margin-bottom: 30px;
 }
-.spBtn {
-	float: left;
-	margin-left: 20px;
+.spBtn, .cancelBtn {
+	float: right;
+	margin-right: 20px;
 	width: 95px;
 	height: 32px;
-	border: 1px solid #348cf0;
 	border-radius: 4px;
 	text-align: center;
 	line-height: 30px;
-	color: #348cf0;
 	font-size: 14px;
 	cursor: pointer;
 	user-select: none;
-	&:hover {
-		background: #338aed;
-		border: 1px solid #338aed;
-		color: #fff;
-	}
+	background: #338aed;
+	border: 1px solid #338aed;
+	color: #fff;
+  touch-action: manipulation;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 	&:active {
 		background: #2d7bd4;
 		border: 1px solid #2d7bd4;
 		color: #fff;
+	}
+}
+.cancelBtn {
+	white-space: nowrap;
+	color: rgba(0, 0, 0, 0.65);
+	background-color: #fff;
+	border-color: #d9d9d9;
+	&:hover {
+		color: #40a9ff;
+    background-color: #fff;
+    border-color: #40a9ff;
 	}
 }
 .spClearBtn {

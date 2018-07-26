@@ -696,7 +696,13 @@ export default class ServiceRecordContent extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'DropdownSelect', payload: { name: '客户反馈级联', value: '$args[0]' } })
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户反馈级联',
+      value: '$args[0].first',
+      secondValue: '$args[0].first',
+    } })
   handleCascadeSelectChange({ first, second }) {
     this.setState({
       custFeedback: first,
