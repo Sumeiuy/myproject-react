@@ -7,6 +7,18 @@
 // 前端可以完全控制主导航的菜单行为
 const newOpenTabConfig = [
   {
+    name: '资讯列表',
+    id: 'FSP_VIEWPOINT_LIST',
+    path: '/latestView/viewpointList',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '资讯详情',
+    id: 'FSP_VIEWPOINT_LIST',
+    path: '/latestView/viewpointDetail',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
     name: '自建任务',
     id: 'FSP_CUSTOMER_LIST_CREATETASK',
     path: '/customerPool/createTask',

@@ -10,6 +10,7 @@ import React, { PureComponent } from 'react';
 import { Route, Switch } from 'dva/router';
 import PropTypes from 'prop-types';
 import menu from './menu';
+import { linkTo } from '../../utils';
 import Main from '../../components/platformParameterSetting/Main';
 import { getRoutes } from '../../utils/router';
 
@@ -18,6 +19,20 @@ export default class TelephoneNumberManage extends PureComponent {
     match: PropTypes.object.isRequired,
     routerData: PropTypes.object.isRequired,
   };
+
+  static contextTypes= {
+    push: PropTypes.func.isRequired,
+  }
+
+  componentDidMount() {
+    const url = '/sysOperate/telephoneNumberManage/distribute';
+    linkTo({
+      url,
+      routerAction: this.context.push,
+      pathname: url,
+    });
+  }
+
   render() {
     const { match: { path }, routerData } = this.props;
     return (
