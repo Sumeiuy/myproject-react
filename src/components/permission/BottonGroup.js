@@ -17,7 +17,7 @@ export default function BottnGroup(props) {
     };
     return (
       <span
-        className={style.spBtn}
+        className={item.operate === 'cancel' ? style.cancelBtn : style.spBtn}
         onClick={clickBotton}
         key={item.flowBtnId}
       >{item.btnName}</span>
