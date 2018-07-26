@@ -151,10 +151,14 @@ export default class MoreTab extends PureComponent {
           trigger={['hover']}
           getPopupContainer={this.getPopupContainer}
         >
-          <div className={isActive ? styles.tabActive : null}>
-            <div>
-              {tabNum}
-            </div>
+          <div
+            className={classnames({
+              [styles.tabActive]: isActive,
+              [styles.moreIcon]: true,
+            })}
+          >
+            <i className="iconfont icon-gengduo1" />
+            <div className={styles.tabNum}>{tabNum}</div>
           </div>
         </Dropdown>
       </div>

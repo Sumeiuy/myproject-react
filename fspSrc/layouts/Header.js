@@ -8,7 +8,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, Dropdown, Icon } from 'antd';
+import { Menu, Dropdown } from 'antd';
 import _ from 'lodash';
 import { Link } from 'dva/router';
 import { autobind } from 'core-decorators';
@@ -22,17 +22,16 @@ import QRCode from './img/qrcode.png';
 export default class Header extends PureComponent {
   static propTypes = {
     navs: PropTypes.array.isRequired,
-    loginInfo: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     // 用户岗位列表
     empRspList: PropTypes.array.isRequired,
+    empCurrentPosition: PropTypes.string.isRequired,
     onSearch: PropTypes.func,
     onSwitchRsp: PropTypes.func,
     onIsolationWallModalShow: PropTypes.func,
   }
   static defaultProps = {
     navs: [],
-    loginInfo: {},
     empInfo: {},
     onSearch: () => { },
     onSwitchRsp: () => { },
@@ -65,7 +64,7 @@ export default class Header extends PureComponent {
   }
 
   render() {
-    const { loginInfo, empRspList, empInfo, navs } = this.props;
+    const { empRspList, empInfo, navs, empCurrentPosition } = this.props;
     const commonTools = (
       <Menu>
         <Menu.Item>
@@ -167,10 +166,10 @@ export default class Header extends PureComponent {
           </Dropdown>
 
           {
-            (!_.isEmpty(empRspList) && !_.isEmpty(loginInfo)) ?
+            (!_.isEmpty(empRspList)) ?
               (<EmpRsp
                 empRspList={empRspList}
-                empCurRsp={loginInfo}
+                empCurrentPosition={empCurrentPosition}
                 empInfo={empInfo}
                 onSwitchRsp={this.handleSwitchRsp}
               />) :

@@ -43,18 +43,19 @@ const emp = {
    * 初始化页面后将用户信息保存到相关的变量中去
    * @param {Object} empInfo 用户信息
    */
-  setEmpInfo(loginInfo) {
+  curPostion: null,
+
+  setEmpInfo(empPostnList) {
     // TODO 此处需要做下容错处理
     // 因为此处是针对新的外部React框架所使用的
     // 因为在独立开发环境下也需要进行初始设置
     if (env.isInFsp()) return;
-    const { empId, postId, orgId, occDivnNum, postnId, empNum } = loginInfo;
-    window.curUserCode = empId || empNum;
-    window.curOrgCode = orgId || occDivnNum;
-    window.forReactPosition = {
-      pstnId: postId || postnId,
-      orgId: orgId || occDivnNum,
-    };
+    const nativeQuery = qs.parse(window.location.search);
+    if (nativeQuery.postnId) {
+      this.curPostion = _.find(empPostnList, item => item.postnId === nativeQuery.postnId);
+    } else {
+      this.curPostion = _.find(empPostnList, item => item.isMainPostn);
+    }
   },
   /**
    * 获取登录的ID 002332
@@ -78,6 +79,8 @@ const emp = {
     let orgId = 'ZZ001041'; // ZZ001041051南京长江路证券营业部，ZZ001041093南京分公司,ZZ001041经纪及财富管理部
     if (!_.isEmpty(window.forReactPosition)) {
       orgId = window.forReactPosition.orgId;
+    } else if (this.curPostion){
+      orgId = this.curPostion.orgId;
     }
     return orgId;
   },
@@ -92,6 +95,8 @@ const emp = {
     let pstnId = '1-3NQ97YG';
     if (!_.isEmpty(window.forReactPosition)) {
       pstnId = window.forReactPosition.pstnId;
+    } else if (this.curPostion){
+      pstnId = this.curPostion.postnId;
     }
     return pstnId;
   },
