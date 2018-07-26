@@ -19,12 +19,6 @@ const newOpenTabConfig = [
     pid: 'FSP_NEW_HOMEPAGE',
   },
   {
-    name: '看板',
-    id: 'FSP_BOARD_VIEW',
-    path: '/history',
-    pid: 'FSP_MANAGER_VIEW',
-  },
-  {
     name: '自建任务',
     id: 'FSP_CUSTOMER_LIST_CREATETASK',
     path: '/customerPool/createTask',
