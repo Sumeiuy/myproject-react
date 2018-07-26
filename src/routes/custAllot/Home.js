@@ -407,7 +407,7 @@ export default class CustAllot extends PureComponent {
           const { addedManageData: { page } } = this.props;
           // 只有一位服务经理时，隐藏分配规则
           if (page.totalRecordNum <= 1) {
-            this.handleRuleTypePropsChange();
+            this.handleRuleTypePropsChange(ruleTypeArray[0].value);
           }
         }
       });
@@ -498,11 +498,12 @@ export default class CustAllot extends PureComponent {
   // 选完审批人后的提交
   @autobind
   handleApproverModalOK(auth) {
-    const { saveChange, updateData } = this.props;
+    const { saveChange, updateData, addedManageData } = this.props;
+    const { page: { totalRecordNum: manageTotal } } = addedManageData;
     const { flowAuditors, ruleType } = this.state;
     const payload = {
       id: updateData.appId,
-      ruleType,
+      ruleType: manageTotal === 1 ? '' : ruleType,
       TGConfirm: false,
       positionId: empPstnId,
       orgId: empOrgId,
