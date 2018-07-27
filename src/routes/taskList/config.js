@@ -36,6 +36,12 @@ const CREATE_TIME = {
   name: '创建时间',
   defaultDirection: SORT_DESC,
 };
+// 执行者视图中开始时间排序，传给后端的参数和创建时间相同
+const START_TIME = {
+  sortType: 'createTimeSort',
+  name: '开始时间',
+  defaultDirection: SORT_DESC,
+};
 // 结束时间
 const END_TIME = {
   sortType: 'endTimeSort',
@@ -43,7 +49,7 @@ const END_TIME = {
   defaultDirection: SORT_ASC,
 };
 // 排序组件的数据
-const SORT_DATA = [EXECUTION_MODE, CREATE_TIME, END_TIME];
+const SORT_DATA = [EXECUTION_MODE, START_TIME, END_TIME];
 
 // 各个视图默认的排序
 const DEFAULTSORT_VIEW = {
