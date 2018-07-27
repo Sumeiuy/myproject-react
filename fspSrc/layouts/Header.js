@@ -208,6 +208,7 @@ export default class Header extends PureComponent {
     this.setState({
       isolationWallModalVisible: false,
       dataValidResult: '',
+      stockCode: '',
     });
   }
 
@@ -327,7 +328,10 @@ export default class Header extends PureComponent {
           ]}
         >
           <div className={styles.selectedInfo}>股票代码：</div>
-          <Input onChange={e => this.handleInputChange(e.target.value)} />
+          <Input
+            onChange={e => this.handleInputChange(e.target.value)}
+            onPressEnter={this.handleSubmitExistCp}
+          />
           <div className={rightClasses}>
             <i className={rightIconClasses} />
             <span>此产品验证通过</span>

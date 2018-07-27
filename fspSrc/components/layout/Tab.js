@@ -382,18 +382,21 @@ export default class Tab extends PureComponent {
         return pane;
       });
     } else { // 容错处理，新开一个其他的pane，进行高亮
-      newPanes = [
-        ...panes,
-        {
-          id: 'FSP_ERROR_OTHER',
-          name: '其他',
-          pid: 'OTHER',
-          type: 'link',
-          order: Infinity,
-          path: pathname,
-          query,
-        },
-      ];
+      // 如果已经有其他这个pane存在，不再新建其他pane
+      if (!_.find(panes, pane => pane.id === 'FSP_ERROR_OTHER')) {
+        newPanes = [
+          ...panes,
+          {
+            id: 'FSP_ERROR_OTHER',
+            name: '其他',
+            pid: 'OTHER',
+            type: 'link',
+            order: Infinity,
+            path: pathname,
+            query,
+          },
+        ];
+      }
       newActiveKey = 'FSP_ERROR_OTHER';
     }
 
