@@ -4800,9 +4800,9 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
-lego-react-filter@^1.0.39:
-  version "1.0.39"
-  resolved "http://168.61.8.90:4873/lego-react-filter/-/lego-react-filter-1.0.39.tgz#088b0eca6fbc3dd1b3ee5cd31bfbcedf0af1f44c"
+lego-react-filter@^1.0.40:
+  version "1.0.40"
+  resolved "http://168.61.48.13:4873/lego-react-filter/-/lego-react-filter-1.0.40.tgz#625b30530fe7910a898f707090b41986cca04617"
 
 lego-soft-phone@^1.0.5:
   version "1.0.5"
@@ -4818,9 +4818,9 @@ lego-soft-phone@^1.0.5:
     react-dom "^16.3.2"
     sip.js "^0.7.8"
 
-lego-tree-filter@^1.0.5:
-  version "1.0.8"
-  resolved "http://168.61.8.90:4873/lego-tree-filter/-/lego-tree-filter-1.0.8.tgz#72ad38d07008135aec4ae3416f4c9e5361820197"
+lego-tree-filter@^1.0.9:
+  version "1.0.9"
+  resolved "http://168.61.48.13:4873/lego-tree-filter/-/lego-tree-filter-1.0.9.tgz#b587385fe1f7f01f5b3877778658d286b0996022"
 
 less-loader@^4.0.5:
   version "4.1.0"

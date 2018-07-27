@@ -53,12 +53,15 @@ const dynamicWrapper = (app, models, component) => {
   return dynamic({
     app,
     models: () =>
+      // eslint-disable-next-line
       models.filter(model => modelNotExisted(app, model)).map(m => import(`../models/${m}.js`)),
     // add routerData prop
     component: () => {
       if (!routerDataCache) {
+        // eslint-disable-next-line
         routerDataCache = getRouterData(app);
       }
+      // eslint-disable-next-line
       return component().then(raw => {
         const Component = raw.default || raw;
         return props =>
@@ -499,6 +502,16 @@ export const getRouterData = (app) => {
     '/stockOptionEvaluationEdit': {
       component: dynamicWrapper(app, ['stockOptionEvaluation'], () =>
         import('../routes/stockOptionEvaluation/ApplyEdit') /* webpackChunkName: "stockOptionEvaluationEdit" */),
+    },
+    // 线上销户
+    '/cancelAccountOL': {
+      component: dynamicWrapper(app, ['cancelAccountOL'], () =>
+        import('../routes/cancelAccountOL/Home') /* webpackChunkName: "cancelAccountOL" */),
+    },
+    // 线上销户
+    '/cancelAccountOLReject': {
+      component: dynamicWrapper(app, ['cancelAccountOL'], () =>
+        import('../routes/cancelAccountOL/RejectHome') /* webpackChunkName: "cancelAccountOLReject" */),
     },
   };
   return routerConfig;

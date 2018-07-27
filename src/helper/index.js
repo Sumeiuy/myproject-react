@@ -57,6 +57,7 @@ function getIconType(name) {
 export default {
   check,
   data,
+  convert,
   dom,
   dva,
   encode,
@@ -74,5 +75,4 @@ export default {
   url,
   getIconType,
   date,
-  convert,
 };
