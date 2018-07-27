@@ -410,7 +410,7 @@ export default class CreateModal extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '选择服务经理',
-      value: '$args[0].newEmpName',
+      value: '$args[0].empName',
     },
   })
   handleSelectManager(v) {
