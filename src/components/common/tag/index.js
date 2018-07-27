@@ -13,10 +13,14 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+import StatusTag from './StatusTag';
+
 // import tagConfig from './config';
 import styles from './index.less';
 
 export default class Tag extends PureComponent {
+  static statusTag = StatusTag;
+
   static propTypes = {
     type: PropTypes.string,
     color: PropTypes.string,

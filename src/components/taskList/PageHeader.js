@@ -122,7 +122,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '创建者',
-      value: '$args[1].ptyMngName',
+      value: '$args[0].value.ptyMngId',
     },
   })
   selectItem(item) {
@@ -139,7 +139,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '客户',
-      value: '$args[0].name',
+      value: '$args[0].value.custId',
     },
   })
   selectCustomerItem(item) {
@@ -155,7 +155,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '类型',
-      value: '$args[1]',
+      value: '$args[0].value.label',
     },
   })
   handleSelctType(option) {
@@ -211,7 +211,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '状态',
-      value: '$args[1]',
+      value: '$args[0].value.label',
     },
   })
   handleSelctStatus(option) {
@@ -225,7 +225,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '方式',
-      value: '$args[1]',
+      value: '$args[0].value.label',
     },
   })
   handleSelctMode(option) {
@@ -290,13 +290,8 @@ export default class Pageheader extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '创建时间',
-      value: (instance, args) => {
-        const dateArr = _.map(
-          args[0],
-          item => moment(item).format(dateFormat),
-        );
-        return _.join(dateArr, '~');
-      },
+      min: '$args[0].value[0]',
+      max: '$args[0].value[1]',
     },
   })
   handleCreateDateChange(date) {
@@ -312,13 +307,8 @@ export default class Pageheader extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '结束时间',
-      value: (instance, args) => {
-        const dateArr = _.map(
-          args[0],
-          item => moment(item).format(dateFormat),
-        );
-        return _.join(dateArr, '~');
-      },
+      min: '$args[0].value[0]',
+      max: '$args[0].value[1]',
     },
   })
   handleEndDateChange(date) {
@@ -330,6 +320,14 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '结束时间',
+      min: '$args[0].value[0]',
+      max: '$args[0].value[1]',
+    },
+  })
   handleTriggerTimeChange(date) {
     const { value } = date;
     this.props.filterCallback({

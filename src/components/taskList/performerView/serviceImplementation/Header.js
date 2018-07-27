@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 22:49:02
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-18 17:32:07
+ * @Last Modified time: 2018-07-25 15:30:58
  */
 
 import React from 'react';
@@ -47,7 +47,7 @@ export default function Header(props) {
   // 客户筛选组件的自定义显示
   const getFilterLabelValue = (item) => {
     const { filterName, value } = item;
-    const displayValue = !_.isEmpty(value.custId) ? `${value.custId}(${value.name})` : value.name;
+    const displayValue = !_.isEmpty(value.custId) ? `${value.name}(${value.custId})` : value.name;
     return (
       <div className={styles.customerFilterContent}>
         <span className={styles.customerFilterName}>{filterName}:</span>

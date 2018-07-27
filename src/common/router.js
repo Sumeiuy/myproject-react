@@ -53,12 +53,15 @@ const dynamicWrapper = (app, models, component) => {
   return dynamic({
     app,
     models: () =>
+      // eslint-disable-next-line
       models.filter(model => modelNotExisted(app, model)).map(m => import(`../models/${m}.js`)),
     // add routerData prop
     component: () => {
       if (!routerDataCache) {
+        // eslint-disable-next-line
         routerDataCache = getRouterData(app);
       }
+      // eslint-disable-next-line
       return component().then(raw => {
         const Component = raw.default || raw;
         return props =>
@@ -116,7 +119,7 @@ export const getRouterData = (app) => {
         import('../routes/feedback/MyFeedback' /* webpackChunkName: "myFeedback" */)),
     },
     // 直接进入
-    '/application/commission': {
+    '/businessApplyment/commission': {
       component: dynamicWrapper(app, ['commission'], () =>
         import('../routes/commission/Home' /* webpackChunkName: "commission" */)),
     },
@@ -239,7 +242,7 @@ export const getRouterData = (app) => {
     },
     // 从管理者视图服务经理维度发起任务
     '/customerPool/createTaskFromCustScope': {
-      component: CreateTask 
+      component: CreateTask
     },
     // 客户列表发起任务
     '/customerPool/createTask': {
@@ -450,37 +453,47 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['custAllot'], () =>
         import('../routes/custAllot/Notifies' /* webpackChunkName: "custAllot_notifies" */)),
     },
+    // 直接进入
+    '/departmentCustAllot': {
+      component: dynamicWrapper(app, ['departmentCustAllot'], () =>
+        import('../routes/departmentCustAllot/Home' /* webpackChunkName: "departmentCustAllot" */)),
+    },
+    // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type
+    '/departmentCustAllot/notifies': {
+      component: dynamicWrapper(app, ['departmentCustAllot'], () =>
+        import('../routes/departmentCustAllot/Notifies' /* webpackChunkName: "departmentCustAllot_notifies" */)),
+    },
     // 直接进入，重点监控账户
     '/keyMonitorAccount': {
-      component: dynamicWrapper(app, ['keyMonitorAccount'], () => 
+      component: dynamicWrapper(app, ['keyMonitorAccount'], () =>
         import('../routes/keyMonitorAccount/Home' /* webpackChunkName: "keyMonitorAccount" */)),
     },
     // 最新观点，直接进入
     '/latestView': {
-      component: dynamicWrapper(app, ['latestView'], () => 
+      component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/Home' /* webpackChunkName: "latestView"*/)),
     },
     // 首席观点列表页面
     '/latestView/viewpointList': {
-      component: dynamicWrapper(app, ['latestView'], () => 
+      component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/ViewpointList' /* webpackChunkName: "latestViewpointList" */)),
     },
     // 首席观点详情页
     '/latestView/viewpointDetail': {
-      component: dynamicWrapper(app, ['latestView'], () => 
+      component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/ViewpointDetail' /* webpackChunkName: "latestViewpointDetail" */)),
     },
     // 大类资产配置分析列表
     '/latestView/majorAssetsList': {
-      component: dynamicWrapper(app, ['latestView'], () => 
+      component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/MajorAssetsList' /* webpackChunkName: "majorAssetsList"*/)),
     },
     // 行业主题调整信息列表
     '/latestView/industryThemeList': {
-      component: dynamicWrapper(app, ['latestView'], () => 
+      component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/IndustryThemeList' /* webpackChunkName: "industryThemeList"*/)),
     },
-    // 股票期权评估申请 
+    // 股票期权评估申请
     '/stockOptionEvaluation': {
       component: dynamicWrapper(app, ['stockOptionEvaluation'], () =>
         import('../routes/stockOptionEvaluation/Home') /* webpackChunkName: "stockOptionEvaluation" */),
@@ -489,6 +502,16 @@ export const getRouterData = (app) => {
     '/stockOptionEvaluationEdit': {
       component: dynamicWrapper(app, ['stockOptionEvaluation'], () =>
         import('../routes/stockOptionEvaluation/ApplyEdit') /* webpackChunkName: "stockOptionEvaluationEdit" */),
+    },
+    // 线上销户
+    '/cancelAccountOL': {
+      component: dynamicWrapper(app, ['cancelAccountOL'], () =>
+        import('../routes/cancelAccountOL/Home') /* webpackChunkName: "cancelAccountOL" */),
+    },
+    // 线上销户
+    '/cancelAccountOLReject': {
+      component: dynamicWrapper(app, ['cancelAccountOL'], () =>
+        import('../routes/cancelAccountOL/RejectHome') /* webpackChunkName: "cancelAccountOLReject" */),
     },
   };
   return routerConfig;

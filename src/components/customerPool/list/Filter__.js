@@ -429,7 +429,8 @@ export default class Filter extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '$args[0].filterName',
-      value: '$args[0].value',
+      min: '$args[0].value[0]',
+      max: '$args[0].value[1]',
     },
   })
   handleDateFilterChange(obj) {

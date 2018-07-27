@@ -75,7 +75,7 @@ export default class Order extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '开户时间' } })
+  @logable({ type: 'Click', payload: { name: '激活日期' } })
   handleOpenTiemClick(st) {
     this.toggleOrder(st);
   }
@@ -109,7 +109,7 @@ export default class Order extends PureComponent {
           className={this.getItemCls(OPENDT)}
           onClick={() => this.handleOpenTiemClick(OPENDT)}
         >
-          开户时间
+          激活日期
           <div className={styles.btn}>
             <Icon
               type="xiangshang"

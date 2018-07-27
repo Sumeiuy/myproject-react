@@ -82,6 +82,10 @@ export default {
     custFeedBack: EMPTY_LIST,
     // 客户明细
     custDetail: EMPTY_OBJ,
+    // 获取任务相关的投资建议模板列表
+    templateList: [],
+    // 翻译选中的投资建议模板结果
+    templateResult: {},
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -302,6 +306,20 @@ export default {
       return {
         ...state,
         custDetail,
+      };
+    },
+    getTemplateListSuccess(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        templateList: payload.list || [],
+      };
+    },
+    translateTemplateSuccess(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        templateResult: payload,
       };
     },
   },
@@ -549,6 +567,32 @@ export default {
       const { resultData } = yield call(api.queryExecutorDetail, payload);
       yield put({
         type: 'queryExecutorDetailSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 根据任务类型获取相应的模板列表
+    * getTemplateList({ payload }, { call, put }) {
+      yield put({
+        type: 'getTemplateListSuccess',
+        payload: [],
+      });
+      const { resultData } = yield call(api.getTemplateList, payload);
+      yield put({
+        type: 'getTemplateListSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 翻译模板
+    * translateTemplate({ payload }, { call, put }) {
+      yield put({
+        type: 'translateTemplateSuccess',
+        payload: {},
+      });
+      const { resultData } = yield call(api.translateTemplate, payload);
+      yield put({
+        type: 'translateTemplateSuccess',
         payload: resultData,
       });
     },
