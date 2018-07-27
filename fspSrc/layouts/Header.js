@@ -8,6 +8,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'dva';
 import { Menu, Dropdown, Input, Modal, Button } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
@@ -20,7 +21,31 @@ import QRCode from './img/qrcode.png';
 import { fixExternUrl } from '../components/utils/tab';
 import withRouter from '../../src/decorators/withRouter';
 import api from '../../src/api';
+import { Search } from '../../src/components/customerPool/home';
+import { emp, permission } from '../../src/helper';
 
+const effects = {
+  getHotPossibleWds: 'customerPool/getHotPossibleWds',
+  saveSearchVal: 'customerPool/saveSearchVal',
+};
+
+const fetchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+
+const mapStateToProps = state => ({
+  hotPossibleWdsList: state.customerPool.hotPossibleWdsList, // 联想的推荐热词列表
+  searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
+});
+
+const mapDispatchToProps = {
+  getHotPossibleWds: fetchDataFunction(false, effects.getHotPossibleWds),
+  saveSearchVal: fetchDataFunction(false, effects.saveSearchVal),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class Header extends PureComponent {
   static propTypes = {
@@ -33,20 +58,30 @@ export default class Header extends PureComponent {
     onSwitchRsp: PropTypes.func,
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    getHotPossibleWds: PropTypes.func.isRequired,
+    saveSearchVal: PropTypes.func.isRequired,
+    hotPossibleWdsList: PropTypes.array,
+    searchHistoryVal: PropTypes.string,
   }
   static defaultProps = {
     secondaryMenu: [],
     empInfo: {},
     onSearch: _.noop,
     onSwitchRsp: _.noop,
+    hotPossibleWdsList: [],
+    searchHistoryVal: '',
   }
 
   constructor(props) {
     super(props);
+    // 登录用户orgId
+    this.orgId = emp.getOrgId();
     this.state = {
       // 隔离墙modal是否可见
       isolationWallModalVisible: false,
     };
+    // HTSC 任务管理岗
+    this.hasTkMampPermission = permission.hasTkMampPermission();
   }
 
   getDropdownMenu(menu) {
@@ -106,6 +141,26 @@ export default class Header extends PureComponent {
     }
   }
 
+  // 获取联想数据
+  @autobind
+  queryHotPossibleWds(state) {
+    const { getHotPossibleWds } = this.props;
+    const setData = {
+      orgId: this.hasTkMampPermission ? this.orgId : '', // 组织ID
+      empNo: emp.getId(), // 用户ID
+    };
+    getHotPossibleWds({
+      ...setData,
+      ...state,
+    });
+  }
+
+  @autobind
+  handleSaveSearchVal(obj) {
+    const { saveSearchVal } = this.props;
+    saveSearchVal(obj);
+  }
+
   @autobind
   handleLinkClick(menuItem) {
     const { push, location } = this.props;
@@ -113,7 +168,7 @@ export default class Header extends PureComponent {
       const externUrl = fixExternUrl(menuItem.url);
       window.open(externUrl, '_blank');
     } else if (menuItem.action === 'loadInModal') {
-      this.handleShowDialog();
+      this.handleShowDialog(menuItem);
     } else if (menuItem.path !== location.pathname) {
       push({
         pathname: menuItem.path,
@@ -135,8 +190,10 @@ export default class Header extends PureComponent {
   }
 
   @autobind
-  handleShowDialog() {
-    this.handleIsolationWallModalShow();
+  handleShowDialog(menuItem) {
+    if (menuItem.name === '隔离墙') {
+      this.handleIsolationWallModalShow();
+    }
   }
 
   @autobind
@@ -224,6 +281,9 @@ export default class Header extends PureComponent {
       empInfo,
       secondaryMenu,
       empCurrentPosition,
+      push,
+      hotPossibleWdsList,
+      searchHistoryVal,
     } = this.props;
 
     const rightClasses = className({
@@ -282,14 +342,19 @@ export default class Header extends PureComponent {
           </div>
         </Modal>
         <div onClick={this.fakeLogin}><Logo /></div>
+        <div className={styles.search}>
+          <Search
+            orgId={this.orgId}
+            queryHotPossibleWds={this.queryHotPossibleWds}
+            queryHotWdsData={hotPossibleWdsList}
+            push={push}
+            searchHistoryVal={searchHistoryVal}
+            saveSearchVal={this.handleSaveSearchVal}
+            location={location}
+            isOnlySearchable
+          />
+        </div>
         <div className={styles.headerContent}>
-          {/* <div className={styles.search}>
-              <Search
-                placeholder="搜索"
-                onSearch={this.handleOnSearch}
-                style={{ width: 155 }}
-              />
-            </div> */}
           {
             !_.isEmpty(secondaryMenu) ?
               this.renderSecondaryMenu(secondaryMenu) : null
