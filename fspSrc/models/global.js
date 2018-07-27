@@ -11,8 +11,6 @@ export default {
   state: {
     // 根据用户权限可以查看的菜单
     menus: {},
-    // 改变职位是否成功，默认失败
-    changePost: false,
   },
   effects: {
     // 获取用户有权限查看的菜单
@@ -20,14 +18,6 @@ export default {
       const response = yield call(api.getMenus, payload);
       yield put({
         type: 'getMenusSuccess',
-        payload: response,
-      });
-    },
-    // 用户切换岗位
-    * changePost({ payload }, { call, put }) {
-      const response = yield call(api.changePost, payload);
-      yield put({
-        type: 'changePostSuccess',
         payload: response,
       });
     },
@@ -43,14 +33,6 @@ export default {
           primaryMenu,
           secondaryMenu,
         },
-      };
-    },
-    // 根据用户权限可以查看的菜单
-    changePostSuccess(state, action) {
-      const { payload } = action;
-      return {
-        ...state,
-        payload,
       };
     },
   },
