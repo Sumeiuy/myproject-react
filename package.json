@@ -46,7 +46,7 @@
     "intro.js": "^2.9.3",
     "lego-react-filter": "^1.0.43",
     "lego-soft-phone": "^1.0.5",
-    "lego-tree-filter": "^1.0.9",
+    "lego-tree-filter": "^1.0.10",
     "localforage": "^1.4.3",
     "lodash": "^4.17.4",
     "md5": "^2.2.1",
