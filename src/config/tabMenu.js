@@ -174,6 +174,12 @@ const newOpenTabConfig = [
     path: '/userCenter',
     pid: 'SP_USERCENTER',
   },
+  {
+    name: '反馈管理',
+    id: 'FSP_FEEDBACK_MANAGEMENT',
+    path: '/feedback',
+    pid: 'FSP_FEEDBACK_MANAGEMENT',
+  },
 ];
 
 // 默认当前激活的主导航菜单项

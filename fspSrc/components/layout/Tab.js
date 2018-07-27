@@ -15,6 +15,7 @@ import { enableSessionStorage } from '../../../src/config/constants';
 import withRouter from '../../../src/decorators/withRouter';
 import { traverseMenus } from '../utils/tab';
 import { pathPrefix } from './config';
+// import localeMenu from '../../../src/config/menu';
 
 // 获取最终的pane数组
 function getFinalPanes(panes, addPanes = [], removePanes = []) {
@@ -243,6 +244,7 @@ export default class Tab extends PureComponent {
     }
 
     const fixPanes = this.preTreatment(this.props.primaryMenu);
+    // const fixPanes = this.preTreatment(localeMenu);
 
     const { newPanes, newActiveKey } = this.getPanes(location, fixPanes);
 

@@ -133,7 +133,7 @@ export default {
           pathname,
           search: newSearch,
         } = location;
-        if (pathname === '/platformParameterSetting/taskOperation/customerFeedback') {
+        if (pathname === '/sysOperate/platformParameterSetting/taskOperation/customerFeedback') {
           const {
             search: oldSearch,
           } = dvaHelper.getLastLocation() || EMPTY_OBJECT;
