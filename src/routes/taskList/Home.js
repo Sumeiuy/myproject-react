@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-09 18:51:25
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-30 15:18:37
  * @description 任务管理首页
  */
 
@@ -23,7 +23,7 @@ import pageConfig from '../../components/taskList/pageConfig';
 import { getCurrentScopeByOrgId } from '../../components/taskList/managerView/helper';
 import { openRctTab, openFspTab } from '../../utils';
 import { emp, permission } from '../../helper';
-import logable from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
 
@@ -969,14 +969,6 @@ export default class PerformerView extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
-  @logable({
-    type: 'ViewItem',
-    payload: {
-      name: '执行者视图左侧列表',
-      type: '$props.location.query.type',
-      subType: '$props.location.query.subType',
-    },
-  })
   handleListRowClick(record) {
     // typeCode为任务类型，通过这个类型，查到字典中missionType的descText
     const { id, missionViewType: st, statusCode, mssnId } = record;
@@ -993,6 +985,31 @@ export default class PerformerView extends PureComponent {
       query: {
         ...query,
         currentId: ci,
+      },
+    });
+
+    // 点击列表每条申报上报
+    let name = '';
+    switch (st) {
+      case INITIATOR:
+        name = '我创建的任务';
+        break;
+      case EXECUTOR:
+        name = '我执行的任务';
+        break;
+      case CONTROLLER:
+        name = '我管理的任务';
+        break;
+      default:
+        break;
+    }
+    logCommon({
+      type: 'ViewItem',
+      payload: {
+        name,
+        type: '任务',
+        value: ci,
+        title: record.missionName,
       },
     });
   }
