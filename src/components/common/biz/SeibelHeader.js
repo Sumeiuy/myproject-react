@@ -77,8 +77,11 @@ export default class Pageheader extends PureComponent {
     isShowCreateBtn: PropTypes.func,
     // 是否调用新的客户列表接口，若为true，则使用新的获取客户列表接口，为false，则使用原来的获取客户列表接口，默认为false
     isUseNewCustList: PropTypes.bool,
+    // 初始状态需要展示的过滤条件
     basicFilters: PropTypes.array.isRequired,
+    // 更多中的过滤条件
     moreFilters: PropTypes.array,
+    // 更多中的匹配数据
     moreFilterData: PropTypes.array,
   }
 
