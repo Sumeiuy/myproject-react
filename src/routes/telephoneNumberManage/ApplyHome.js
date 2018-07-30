@@ -2,9 +2,9 @@
  * @Author: hongguangqing
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-07-11 15:26:09
- */
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-19 17:50:10
+*/
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -29,7 +29,14 @@ import seibelHelper from '../../helper/page/seibel';
 const EXTRAHEIGHT = 50;
 // 业务手机申请列表宽度
 const LEFT_PANEL_WIDTH = 450;
-const { telephoneNumApply, telephoneNumApply: { statusOptions, pageType } } = config;
+const {
+  telephoneNumApply,
+  telephoneNumApply: {
+    statusOptions,
+    pageType,
+    headerFilters: { basicFilters, moreFilters, moreFilterData },
+  },
+} = config;
 const effect = dva.generateEffect;
 const effects = {
   // 左侧列表
@@ -173,6 +180,19 @@ export default class ApplyHome extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const { ...otherQuery } = query;
+    const { ...otherPrevQuery } = prevQuery;
+    if (!_.isEqual(otherQuery, otherPrevQuery)) {
+      const { pageNum, pageSize } = otherQuery;
+      this.queryAppList(otherQuery, pageNum, pageSize);
+    }
+  }
+
   // 获取右侧详情
   @autobind
   getRightDetail() {
@@ -245,8 +265,6 @@ export default class ApplyHome extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   @autobind
@@ -276,7 +294,6 @@ export default class ApplyHome extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -292,7 +309,6 @@ export default class ApplyHome extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 点击列表每条的时候对应请求详情
@@ -375,12 +391,13 @@ export default class ApplyHome extends PureComponent {
         replace={replace}
         page="telephoneNumApplyPage"
         pageType={pageType}
-        needSubType={false}
         stateOptions={statusOptions}
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
-        isUseOfCustomer={false}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

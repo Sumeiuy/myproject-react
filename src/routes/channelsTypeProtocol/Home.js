@@ -3,7 +3,11 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
+<<<<<<< HEAD
  * @Last Modified time: 2018-06-07 15:19:06
+=======
+ * @Last Modified time: 2018-07-19 17:39:47
+>>>>>>> headerFilters
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -41,7 +45,13 @@ const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 const heightSpeed = '0501';
 const {
   channelsTypeProtocol,
-  channelsTypeProtocol: { pageType, subType, status, operationList },
+  channelsTypeProtocol: {
+    pageType,
+    subType,
+    status,
+    operationList,
+    headerFilters: { basicFilters, moreFilters, moreFilterData },
+  },
 } = seibelConfig;
 const { subscribeArray, unSubscribeArray, tenHQ, tipsMap, protocolSubs, protocolSubTypes } = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
@@ -226,6 +236,19 @@ export default class ChannelsTypeProtocol extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const { ...otherQuery } = query;
+    const { ...otherPrevQuery } = prevQuery;
+    if (!_.isEqual(otherQuery, otherPrevQuery)) {
+      const { pageNum, pageSize } = otherQuery;
+      this.queryAppList(otherQuery, pageNum, pageSize);
+    }
+  }
+
   // 获取列表后再获取某个Detail
   @autobind
   getRightDetail() {
@@ -315,7 +338,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
     // 1.将值写入Url
     const { replace, location } = this.props;
     const { query, pathname } = location;
-
     replace({
       pathname,
       query: {
@@ -324,8 +346,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 切换页码
@@ -341,7 +361,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -357,7 +376,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   /**
@@ -713,8 +731,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
         creatSeibelModal={this.handleCreateBtnClick}
         operateOptions={operationList}
         empInfo={empInfo}
-        needOperate
         filterCallback={this.handleHeaderFilter}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
     const paginationOptions = {

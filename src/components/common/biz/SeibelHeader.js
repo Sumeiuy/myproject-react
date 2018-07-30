@@ -9,16 +9,12 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
-import Select from '../Select';
-import CustRange from '../../pageCommon/SeibelCustRange';
-import DropDownSelect from '../dropdownSelect';
+import HtFilter, { MoreFilter } from '../htFilter';
 import Button from '../Button';
-import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
 import contractHelper from '../../../helper/page/contract';
-import { dom, permission } from '../../../helper';
-import DateRangePicker from '../dateRangePicker';
-import { fspContainer, seibelConfig } from '../../../config';
+import { permission } from '../../../helper';
+import { seibelConfig } from '../../../config';
 import config from '../../telephoneNumberManage/config';
 import logable from '../../../decorators/logable';
 
@@ -30,10 +26,9 @@ const {
 const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
 
 // 头部筛选filterBox的高度
-const FILTERBOX_HEIGHT = 36;
 const dateFormat = 'YYYY/MM/DD';
-// 分公司客户分配
-const PAGE_CUST_ALLOT = 'custAllotPage';
+// 当前时间
+const DEFAULT_VALUE = '';
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -47,9 +42,6 @@ export default class Pageheader extends PureComponent {
     // 新建
     creatSeibelModal: PropTypes.func.isRequired,
     // 操作类型
-    needOperate: PropTypes.bool,
-    // 是否需要子类型
-    needSubType: PropTypes.bool,
     operateOptions: PropTypes.array,
     // 页面类型
     pageType: PropTypes.string.isRequired,
@@ -79,41 +71,40 @@ export default class Pageheader extends PureComponent {
     getNewCustomerList: PropTypes.func.isRequired,
     // 筛选后调用的Function
     filterCallback: PropTypes.func,
-    // 该项目是针对客户还是针对服务经理的，为false代表针对服务经理的，默认为true针对客户的
-    isUseOfCustomer: PropTypes.bool,
     // 判断登录人当前切换的职位所在部门为分公司层级
     checkUserIsFiliale: PropTypes.func,
     // 提供由用户来判断是否需要显示新建按钮
     isShowCreateBtn: PropTypes.func,
-    // 是否需要申请时间
-    needApplyTime: PropTypes.bool,
     // 是否调用新的客户列表接口，若为true，则使用新的获取客户列表接口，为false，则使用原来的获取客户列表接口，默认为false
     isUseNewCustList: PropTypes.bool,
+    basicFilters: PropTypes.array.isRequired,
+    moreFilters: PropTypes.array,
+    moreFilterData: PropTypes.array,
   }
 
   static contextTypes = {
     empInfo: PropTypes.object,
+    replace: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     page: '',
-    needOperate: false,
-    needSubType: true,
-    needApplyTime: false,
     operateOptions: [],
     empInfo: {},
     subtypeOptions: [],
     filterCallback: _.noop,
-    isUseOfCustomer: true,
     checkUserIsFiliale: _.noop,
     isShowCreateBtn: () => true,
     isUseNewCustList: false,
+    moreFilters: [],
+    moreFilterData: [],
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      showMore: true,
+      // 需要显示的出来的更多里的过滤条件
+      moreFilterList: [],
     };
   }
 
@@ -121,44 +112,6 @@ export default class Pageheader extends PureComponent {
     this.props.getCustRange({
       type: this.props.pageType,
     });
-  }
-
-  componentDidUpdate() {
-    this.onWindowResize();
-    window.addEventListener('resize', this.onWindowResize, false);
-    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
-    if (sidebarHideBtn && sidebarShowBtn) {
-      sidebarHideBtn.addEventListener('click', this.onWindowResize, false);
-      sidebarShowBtn.addEventListener('click', this.onWindowResize, false);
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onWindowResize, false);
-    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
-    if (sidebarHideBtn && sidebarShowBtn) {
-      sidebarHideBtn.removeEventListener('click', this.onWindowResize, false);
-      sidebarShowBtn.removeEventListener('click', this.onWindowResize, false);
-    }
-  }
-
-  @autobind
-  onWindowResize() {
-    const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
-    if (filterBoxHeight <= FILTERBOX_HEIGHT) {
-      dom.removeClass(this.filterMore, 'filterMoreIcon');
-      dom.addClass(this.filterMore, 'filterNoneIcon');
-    } else {
-      dom.removeClass(this.filterMore, 'filterNoneIcon');
-      dom.addClass(this.filterMore, 'filterMoreIcon');
-    }
-  }
-
-  @autobind
-  pageCommonHeaderRef(input) {
-    this.pageCommonHeader = input;
   }
 
   @autobind
@@ -176,44 +129,21 @@ export default class Pageheader extends PureComponent {
     this.filterMore = input;
   }
 
-  @autobind
-  handleMoreChange() {
-    this.setState({
-      showMore: !this.state.showMore,
-    });
-    if (this.state.showMore) {
-      dom.addClass(this.pageCommonHeader, 'HeaderOverflow');
-    } else {
-      dom.removeClass(this.pageCommonHeader, 'HeaderOverflow');
-    }
-    this.onWindowResize();
-  }
-
-  @autobind
-  @logable({ type: 'Click', payload: { name: '更多' } })
-  handleMore() {
-    this.handleMoreChange();
-  }
-
-  @autobind
-  @logable({ type: 'Click', payload: { name: '收起' } })
-  handleShrik() {
-    this.handleMoreChange();
-  }
-
   // 选中客户下拉对象中对应的某个对象
   @autobind
   @logable({
     type: 'DropdownSelect',
     payload: {
       name: '客户',
-      value: '$args[0].custName',
+      value: '$args[0].value.custName',
     },
   })
   selectCustItem(item) {
+    const { value: { custNumber, custName } } = item;
     const { filterCallback } = this.props;
     filterCallback({
-      custNumber: item.custNumber,
+      custNumber,
+      custName,
     });
   }
 
@@ -221,9 +151,31 @@ export default class Pageheader extends PureComponent {
   @autobind
   selectItem(name, item) {
     const { filterCallback } = this.props;
-    filterCallback({
-      [name]: item.ptyMngId,
-    });
+    const { ptyMngId, ptyMngName } = item;
+    let params = {};
+    switch (name) {
+      case 'ptyMngId':
+        params = {
+          ptyMngId,
+          ptyMngName,
+        };
+        break;
+      case 'drafterId':
+        params = {
+          drafterId: ptyMngId,
+          drafterName: ptyMngName,
+        };
+        break;
+      case 'approvalId':
+        params = {
+          approvalId: ptyMngId,
+          approvalName: ptyMngName,
+        };
+        break;
+      default:
+        break;
+    }
+    filterCallback(params);
   }
 
   @autobind
@@ -231,11 +183,12 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '服务经理',
-      value: '$args[1].ptyMngName',
+      value: '$args[0].value.ptyMngName',
     },
   })
   handleManagerSelect(name, item) {
-    this.selectItem(name, item);
+    const { value } = item;
+    this.selectItem(name, value);
   }
 
   @autobind
@@ -243,11 +196,12 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '拟稿人',
-      value: '$args[1].ptyMngName',
+      value: '$args[0].value.ptyMngName',
     },
   })
   handleDrafterSelect(name, item) {
-    this.selectItem(name, item);
+    const { value } = item;
+    this.selectItem(name, value);
   }
 
   @autobind
@@ -255,11 +209,12 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '审批人',
-      value: '$args[1].ptyMngName',
+      value: '$args[0].value.ptyMngName',
     },
   })
   handleApproverSelect(name, item) {
-    this.selectItem(name, item);
+    const { value } = item;
+    this.selectItem(name, value);
   }
 
   // 选中部门下拉对象中对应的某个对象
@@ -268,13 +223,13 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '部门',
-      value: '$args[0].orgId',
+      value: '$args[0]',
     },
   })
-  selectCustRange(obj) {
+  selectCustRange(value) {
     const { filterCallback } = this.props;
     filterCallback({
-      orgId: obj.orgId,
+      orgId: value,
     });
   }
 
@@ -295,11 +250,12 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '操作类型',
-      value: '$args[1]',
+      value: '$args[0].value.value',
     },
   })
-  handleOperateTypeChange(key, v) {
-    this.handleSelectChange(key, v);
+  handleOperateTypeChange(option) {
+    const { id, value: { value } } = option;
+    this.handleSelectChange(id, value);
   }
 
   @autobind
@@ -307,11 +263,12 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '子类型',
-      value: '$args[1]',
+      value: '$args[0].value.value',
     },
   })
-  handleSubtypeChange(key, v) {
-    this.handleSelectChange(key, v);
+  handleSubtypeChange(option) {
+    const { id, value: { value } } = option;
+    this.handleSelectChange(id, value);
   }
 
   @autobind
@@ -319,11 +276,12 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '状态',
-      value: '$args[1]',
+      value: '$args[0].value.value',
     },
   })
-  handleStatusChange(key, v) {
-    this.handleSelectChange(key, v);
+  handleStatusChange(option) {
+    const { id, value: { value } } = option;
+    this.handleSelectChange(id, value);
   }
 
   @autobind
@@ -433,22 +391,17 @@ export default class Pageheader extends PureComponent {
     },
   })
   handleCreateDateChange(date) {
-    const { startDate, endDate } = date;
-    if (startDate !== null && endDate !== null) {
-      const createTime = startDate.format(dateFormat);
-      const createTimeTo = endDate.format(dateFormat);
+    const { value } = date;
+    const startDate = value[0];
+    const endDate = value[1];
+    if (startDate && endDate) {
+      const createTime = moment(startDate).format(dateFormat);
+      const createTimeTo = moment(endDate).format(dateFormat);
       this.props.filterCallback({
         createTime,
         createTimeTo,
       });
     }
-  }
-
-  // 只能选择今天之前的时间
-  @autobind
-  setDisableRange(date) {
-    // date返回的时间是YYYY-MM-DD 12:00:00;需要修改成YYYY-MM-DD 00:00:00，所以减了12小时
-    return moment(date).add('hours', -12) > moment();
   }
 
   // 获取客户列表
@@ -462,28 +415,91 @@ export default class Pageheader extends PureComponent {
     return isUseNewCustList ? newCustomerList : customerList;
   }
 
-  render() {
+  // 只能选择今天之前的时间
+  @autobind
+  setDisableRange(date) {
+    // date返回的时间是YYYY-MM-DD 12:00:00;需要修改成YYYY-MM-DD 00:00:00，所以减了12小时
+    return moment(date).add('hours', -12) > moment();
+  }
+
+  // 获取部门
+  @autobind
+  transformCustRangeData(list) {
+    return list.map((item) => {
+      const obj = {
+        label: item.name,
+        value: item.id,
+        key: item.id,
+      };
+      if (item.children && item.children.length) {
+        obj.children = this.transformCustRangeData(item.children);
+      }
+      return obj;
+    });
+  }
+
+  @autobind
+  getFilterData(filter) {
+    const { filterId } = filter.props;
     const {
       subtypeOptions,
       stateOptions,
       drafterList,
       approvePersonList,
       custRange,
-      page,
-      pageType,
       operateOptions,
-      needOperate,
-      needSubType,
-      needApplyTime,
-      isUseOfCustomer,
       ptyMngList,
-      checkUserIsFiliale,
+    } = this.props;
+    const custList = this.getCustList();
+    // 部门增加不限
+    let treeCustRange = [];
+    if (custRange.length) {
+      treeCustRange = this.transformCustRangeData(custRange);
+    }
+    treeCustRange = [
+      {
+        label: '不限',
+        value: '',
+        key: 0,
+      },
+      ...treeCustRange,
+    ];
+    switch (filterId) {
+      case 'customer':
+        return _.isEmpty(custList) ? [] : custList;
+      case 'serviceManager':
+        return ptyMngList;
+      case 'business2':
+        return operateOptions;
+      case 'subType':
+        return subtypeOptions;
+      case 'status':
+        return stateOptions;
+      case 'drafter':
+        return drafterList;
+      case 'department':
+        return treeCustRange;
+      case 'approver':
+        return approvePersonList;
+      default:
+        return [];
+    }
+  }
+
+  @autobind
+  getFilterValue(filter) {
+    const { filterId } = filter.props;
+    const {
       location: {
         query: {
           custNumber,
+          custName,
           drafterId,
+          drafterName,
           approvalId,
+          approvalName,
           ptyMngId,
+          ptyMngName,
           orgId,
           subType,
           status,
@@ -493,54 +509,165 @@ export default class Pageheader extends PureComponent {
         },
       },
     } = this.props;
-    const { empInfo } = this.context;
-    const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
-    // 根据是否传入isUseNewCustList这个字段，获取不同的客户列表
-    const custList = this.getCustList();
-    // 客户增加全部
-    const customerAllList = !_.isEmpty(custList) ?
-      [{ custName: '全部', custNumber: '' }, ...custList] : custList;
-    // 客户回填
-    const curCustInfo = _.find(custList, o => o.custNumber === custNumber);
-    let curCust = '全部';
-    if (curCustInfo && curCustInfo.custNumber) {
-      curCust = `${curCustInfo.custName}(${curCustInfo.custNumber})`;
-    }
-
-    // 增加已申请服务经理的全部
-    const ptyMngAllList = !_.isEmpty(ptyMngList) ?
-      [ptyMngAll, ...ptyMngList] : ptyMngList;
-    // 已申请服务经理的回填
-    const curPtyMngInfo = _.find(ptyMngList, o => o.ptyMngId === ptyMngId);
-    let curPtyMng = '全部';
-    if (curPtyMngInfo && curPtyMngInfo.ptyMngId) {
-      curPtyMng = `${curPtyMngInfo.ptyMngName}(${curPtyMngInfo.ptyMngId})`;
-    }
-
-    // 拟稿人增加全部
-    const drafterAllList = !_.isEmpty(drafterList) ?
-      [ptyMngAll, ...drafterList] : drafterList;
-    // 拟稿人回填
-    const curDrafterInfo = _.find(drafterList, o => o.ptyMngId === drafterId);
-    let curDrafter = '全部';
-    if (curDrafterInfo && curDrafterInfo.ptyMngId) {
-      curDrafter = `${curDrafterInfo.ptyMngName}(${curDrafterInfo.ptyMngId})`;
-    }
-
-    // 审批人增加全部
-    const approvePersonAllList = !_.isEmpty(approvePersonList) ?
-      [ptyMngAll, ...approvePersonList] : approvePersonList;
-    // 审批人回填
-    const curApprovePersonInfo = _.find(approvePersonList, o => o.ptyMngId === approvalId);
-    let curApprovePerson = '全部';
-    if (curApprovePersonInfo && curApprovePersonInfo.ptyMngId) {
-      curApprovePerson = `${curApprovePersonInfo.ptyMngName}(${curApprovePersonInfo.ptyMngId})`;
-    }
-
     // 时间组件的回填
     const startTime = createTime ? moment(createTime, dateFormat) : null;
     const endTime = createTimeTo ? moment(createTimeTo, dateFormat) : null;
+    const customer = custNumber ? [custNumber, custName] : ['', ''];
+    const serviceManager = ptyMngId ? [ptyMngId, ptyMngName] : ['', ''];
+    const drafter = drafterId ? [drafterId, drafterName] : ['', ''];
+    const approval = approvalId ? [approvalId, approvalName] : ['', ''];
+    switch (filterId) {
+      case 'customer':
+        return customer;
+      case 'serviceManager':
+        return serviceManager;
+      case 'business2':
+        return business2;
+      case 'subType':
+        return subType;
+      case 'status':
+        return status;
+      case 'drafter':
+        return drafter;
+      case 'department':
+        return orgId || DEFAULT_VALUE;
+      case 'approver':
+        return approval;
+      case 'applyTime':
+        return [startTime, endTime];
+      default:
+        return '';
+    }
+  }
 
+  @autobind
+  getFilterOnChange(filter) {
+    const { filterId } = filter.props;
+    switch (filterId) {
+      case 'customer':
+        return this.selectCustItem;
+      case 'serviceManager':
+        return item => this.handleManagerSelect('ptyMngId', item);
+      case 'business2':
+        return this.handleOperateTypeChange;
+      case 'subType':
+        return this.handleSubtypeChange;
+      case 'status':
+        return this.handleStatusChange;
+      case 'drafter':
+        return item => this.handleDrafterSelect('drafterId', item);
+      case 'department':
+        return this.selectCustRange;
+      case 'approver':
+        return item => this.handleApproverSelect('approvalId', item);
+      case 'applyTime':
+        return this.handleCreateDateChange;
+      default:
+        return () => {};
+    }
+  }
+
+  // 更多里面选中的过滤条件
+  @autobind
+  selectMoreFilter() {
+    const {
+      location: {
+        query,
+      },
+      moreFilters,
+    } = this.props;
+    return _.map(moreFilters, (itemFilter) => {
+      const hasFilterItem = _.every(itemFilter.filterOption, item => _.hasIn(query, item));
+      if (hasFilterItem) {
+        return itemFilter.props.key;
+      }
+      return null;
+    });
+  }
+
+  @autobind
+  moreFilterChange(obj) {
+    const {
+      location: {
+        pathname,
+        query,
+      },
+      moreFilters,
+    } = this.props;
+    const { moreFilterList } = this.state;
+    const { replace } = this.context;
+    const { isDeleteFilterFromLocation, id } = obj;
+    const currentFilterItem = _.filter(moreFilters, item => item.props.key === id)[0];
+    const filterOption = currentFilterItem && currentFilterItem.filterOption;
+    let finalQuery = query;
+    if (isDeleteFilterFromLocation && currentFilterItem) {
+      finalQuery = _.omit(query, filterOption);
+    } else {
+      // ['a','b'] => {a:'', b: ''}
+      const filterMap = _.reduce(filterOption,
+        (filterQuery, itemQuery) => ({ ...filterQuery, [itemQuery]: '' }), {});
+      finalQuery = _.merge(query, filterMap);
+      const list = moreFilterList;
+      if (_.indexOf(list, id) > -1) {
+        _.pull(list, id);
+      } else {
+        list.push(id);
+      }
+      this.setState({ moreFilterList: list });
+    }
+    replace({
+      pathname,
+      query: finalQuery,
+    });
+  }
+
+  @autobind
+  getFilterOnClose(filter) {
+    const { key } = filter.props;
+    const { moreFilterList } = this.state;
+    this.moreFilterChange({ id: key, isDeleteFilterFromLocation: true });
+    this.setState({ moreFilterList: _.pull(moreFilterList, key) });
+  }
+
+  // 根据类型，渲染更多的过滤组件
+  @autobind
+  getMoreFilterElement(filter) {
+    const { filterId } = filter.props;
+    return filterId ?
+      <HtFilter
+        className={styles.filterFl}
+        data={this.getFilterData(filter)}
+        value={this.getFilterValue(filter)}
+        onChange={this.getFilterOnChange(filter)}
+        onInputChange={this[filter.props.handleInputChange]}
+        onClose={() => this.getFilterOnClose(filter)}
+        isCloseable
+        {...filter.props}
+      /> : null;
+  }
+
+  @autobind
+  getMoreFilters(key) {
+    const { moreFilters } = this.props;
+    const filterItem = _.find(moreFilters, item => (item.props.key === key));
+    return filterItem ? this.getMoreFilterElement(filterItem) : null;
+  }
+
+  @autobind
+  pageCommonHeaderRef(input) {
+    this.pageCommonHeader = input;
+  }
+
+  render() {
+    const {
+      pageType,
+      checkUserIsFiliale,
+      basicFilters,
+      moreFilterData,
+    } = this.props;
+    let { moreFilterList } = this.state;
+    const { empInfo } = this.context;
+    moreFilterList = this.selectMoreFilter();
     // 新建按钮权限
     let hasCreatePermission = true;
     // 如果是合作合约页面
@@ -559,164 +686,46 @@ export default class Pageheader extends PureComponent {
       // 此处,通用的判断是否需要隐藏新建按钮
       hasCreatePermission = this.props.isShowCreateBtn();
     }
-    // 分公司客户分配不显示客户搜索
-    const custElement = page !== PAGE_CUST_ALLOT ?
-      (<div className={styles.filterFl}>
-        <div className={styles.dropDownSelectBox}>
-          <DropDownSelect
-            value={curCust}
-            placeholder="经纪客户号/客户名称"
-            searchList={customerAllList}
-            showObjKey="custName"
-            objId="custNumber"
-            emitSelectItem={this.selectCustItem}
-            emitToSearch={this.handleCustSearch}
-            name={`${page}-custName`}
-          />
-        </div>
-      </div>)
-    :
-      null;
-
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
-          {
-            isUseOfCustomer ?
-              custElement
-            :
-              <div className={styles.filterFl}>
-                <div className={styles.dropDownSelectBox}>
-                  <DropDownSelect
-                    value={curPtyMng}
-                    placeholder="服务经理工号/名称"
-                    searchList={ptyMngAllList}
-                    showObjKey="ptyMngName"
-                    objId="ptyMngId"
-                    emitSelectItem={item => this.handleManagerSelect('ptyMngId', item)}
-                    emitToSearch={this.handleManagerSearch}
-                    name={`${page}-ptyMngName`}
+          <div className={styles.filter}>
+            {
+              _.map(basicFilters, filter => (
+                  !_.isEmpty(filter.props) ?
+                  (
+                    <HtFilter
+                      key={filter.props.filterId}
+                      className={styles.filterFl}
+                      data={this.getFilterData(filter)}
+                      value={this.getFilterValue(filter)}
+                      onChange={this.getFilterOnChange(filter)}
+                      onInputChange={this[filter.props.handleInputChange]}
+                      {...filter.props}
+                    />
+                  ) : null
+                ),
+              )
+            }
+            {
+              _.map(
+                moreFilterList,
+                  key => this.getMoreFilters(key))
+            }
+
+          </div>
+          <div className={styles.moreFilterBtn}>
+            {
+              moreFilterData.length ?
+                <div className={styles.filterFl}>
+                  <MoreFilter
+                    value={this.selectMoreFilter()}
+                    data={moreFilterData}
+                    onChange={this.moreFilterChange}
                   />
-                </div>
-              </div>
-          }
-          {
-            needOperate ?
-              <div className={styles.filterFl}>
-                操作类型:
-                <Select
-                  name="business2"
-                  value={business2}
-                  data={operateOptions}
-                  onChange={this.handleOperateTypeChange}
-                />
-              </div>
-            : null
-          }
-          {
-            needSubType ?
-              <div className={styles.filterFl}>
-                子类型:
-                <Select
-                  name="subType"
-                  value={subType}
-                  data={subtypeOptions}
-                  onChange={this.handleSubtypeChange}
-                />
-              </div>
-            : null
-          }
-          <div className={styles.filterFl}>
-            状态:
-            <Select
-              name="status"
-              value={status}
-              data={stateOptions}
-              onChange={this.handleStatusChange}
-            />
+                </div> : null
+              }
           </div>
-
-          <div className={styles.filterFl}>
-            拟稿人:
-            <div className={styles.dropDownSelectBox}>
-              <DropDownSelect
-                value={curDrafter}
-                placeholder="工号/名称"
-                searchList={drafterAllList}
-                showObjKey="ptyMngName"
-                objId="ptyMngId"
-                emitSelectItem={item => this.handleDrafterSelect('drafterId', item)}
-                emitToSearch={this.handleDrafterSearch}
-                name={`${page}-ptyMngName`}
-              />
-            </div>
-          </div>
-
-          <div className={styles.filterFl}>
-            部门:
-            <CustRange
-              style={{ width: '20%' }}
-              custRange={custRange}
-              location={location}
-              updateQueryState={this.selectCustRange}
-              orgId={orgId}
-            />
-          </div>
-
-          <div className={styles.filterFl}>
-            审批人:
-            <div className={styles.dropDownSelectBox}>
-              <DropDownSelect
-                value={curApprovePerson}
-                placeholder="工号/名称"
-                searchList={approvePersonAllList}
-                showObjKey="ptyMngName"
-                objId="ptyMngId"
-                emitSelectItem={item => this.handleApproverSelect('approvalId', item)}
-                emitToSearch={this.handleApproverSearch}
-                name={`${page}-ptyMngName`}
-              />
-            </div>
-          </div>
-
-          {
-            needApplyTime ?
-            (
-              <div className={styles.filterFl}>
-                申请时间:
-                <div className={styles.dateRangePickerBox}>
-                  <DateRangePicker
-                    onChange={this.handleCreateDateChange}
-                    disabledRange={this.setDisableRange}
-                    initialEndDate={endTime}
-                    initialStartDate={startTime}
-                    isFixed
-                  />
-                </div>
-              </div>
-            )
-            : null
-          }
-          {
-            this.state.showMore ?
-              <div
-                className={styles.filterMore}
-                onClick={this.handleMore}
-                ref={this.filterMoreRef}
-              >
-                <span>更多</span>
-                <Icon type="xiangxia" />
-              </div>
-              :
-              <div
-                className={styles.filterMore}
-                onClick={this.handleShrik}
-                ref={this.filterMoreRef}
-              >
-                <span>收起</span>
-                <Icon type="xiangshang" />
-              </div>
-          }
         </div>
         {
           hasCreatePermission ?

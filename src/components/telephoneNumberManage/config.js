@@ -3,6 +3,7 @@
  * @Author: hongguangqing
  * @Date: 2018-04-18 10:26:38
  */
+import { serviceManager, status, drafter, department, approver } from '../../config/busApplyFilters';
 
 const config = {
   // 最大可以选择的服务经理的数量
@@ -29,7 +30,7 @@ const config = {
     statusOptions: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -53,6 +54,20 @@ const config = {
         value: '04',
       },
     ],
+    headerFilters: {
+      basicFilters: [
+        serviceManager,
+        status,
+        drafter,
+        department,
+      ],
+      moreFilters: [
+        approver,
+      ],
+      moreFilterData: [
+        { value: '审批人', key: 'approvalId' },
+      ],
+    },
   },
   approvalColumns: [
     {

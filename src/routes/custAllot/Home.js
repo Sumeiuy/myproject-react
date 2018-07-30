@@ -2,8 +2,8 @@
  * @Description: 分公司客户分配
  * @Author: Liujianshu
  * @Date: 2018-05-23 09:59:21
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-08 21:30:25
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-19 17:04:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -41,6 +41,7 @@ const {
   custAllot: { status, pageType },
   subType,
   clearDataArray,
+  headerFilters: { basicFilters, moreFilters, moreFilterData },
 } = config;
 
 // 登陆人的组织 ID
@@ -208,6 +209,19 @@ export default class CustAllot extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const { ...otherQuery } = query;
+    const { ...otherPrevQuery } = prevQuery;
+    if (!_.isEqual(otherQuery, otherPrevQuery)) {
+      const { pageNum, pageSize } = otherQuery;
+      this.queryAppList(otherQuery, pageNum, pageSize);
+    }
+  }
+
   componentWillUnmount() {
     const { clearData } = this.props;
     clearData(clearDataArray[1]);
@@ -276,8 +290,6 @@ export default class CustAllot extends PureComponent {
         appId: '',
       },
     });
-    // 2.调用queryApplicationList接口，清空掉消息提醒页面带过来的 id， appId
-    this.queryAppList({ ...query, ...obj, id: '', appId: '' }, 1, query.pageSize);
   }
 
   // 判断当前登录用户部门是否是分公司
@@ -349,7 +361,6 @@ export default class CustAllot extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 点击列表每条的时候对应请求详情
@@ -583,12 +594,14 @@ export default class CustAllot extends PureComponent {
         replace={replace}
         page="custAllotPage"
         pageType={pageType}
-        needSubType={false}
         stateOptions={status}
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
         checkUserIsFiliale={this.checkUserIsFiliale}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 
