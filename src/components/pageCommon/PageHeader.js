@@ -14,7 +14,7 @@ import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
 import { fspContainer, optionsMap, constants } from '../../config';
 import DurationSelect from './DurationSelect';
-import { dom, env } from '../../helper';
+import { dom } from '../../helper';
 import logable from '../../decorators/logable';
 // 选择项字典
 import styles from './PageHeader.less';
@@ -66,17 +66,15 @@ export default class PageHeader extends PureComponent {
     let contentWidth;
     let scrollX;
     let leftWidth;
-    const top = env.isInReact() ? '99px' : 0;
     const { custRange } = props;
     if (fsp) {
       contentWidth = dom.getCssStyle(contentWrapper, 'width');
       scrollX = window.scrollX;
       leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     }
-
     this.state = {
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
-      top: fsp ? '55px' : top,
+      top: fsp ? '55px' : 0,
       left: fsp ? `${leftWidth - scrollX}px` : 0,
       summaryTypeValue: custRange[0].level !== jingZongLevel ? hbgxSummaryType : jxstSummaryType,
     };
@@ -196,30 +194,38 @@ export default class PageHeader extends PureComponent {
     const isHistory = pathname === '/history';
     return (
       <div>
-        <div>
+        <div
+          style={{
+            position: 'fixed',
+            zIndex: 30,
+            width,
+            top,
+            left,
+          }}
+        >
           <div className="reportHeader">
             <Row type="flex" justify="start" align="middle">
               <div className="reportName">
                 {/* 需要针对预览页面做调整 */}
                 {
                   preView
-                  ?
-                  (
-                    <div className="preView">
-                      {reportName}
-                    </div>
-                  )
-                  :
-                  (
-                    <BoardSelect
-                      location={location}
-                      push={push}
-                      replace={replace}
-                      visibleBoards={visibleBoards}
-                      newVisibleBoards={newVisibleBoards}
-                      collectData={collectBoardSelect}
-                    />
-                  )
+                    ?
+                    (
+                      <div className="preView">
+                        {reportName}
+                      </div>
+                    )
+                    :
+                    (
+                      <BoardSelect
+                        location={location}
+                        push={push}
+                        replace={replace}
+                        visibleBoards={visibleBoards}
+                        newVisibleBoards={newVisibleBoards}
+                        collectData={collectBoardSelect}
+                      />
+                    )
                 }
               </div>
               <div className={styles.reportHeaderRight}>
@@ -259,15 +265,15 @@ export default class PageHeader extends PureComponent {
                                 key={summaryTypeIndex}
                                 value={item.value}
                               >
-                                  按{item.name}
+                                按{item.name}
                               </Option>
                             );
                           })
                         }
                       </Select>
                     </div>
-                  :
-                  null
+                    :
+                    null
                 }
               </div>
             </Row>
@@ -280,10 +286,11 @@ export default class PageHeader extends PureComponent {
                   closable
                   showIcon
                 /> :
-              null
+                null
             }
           </div>
         </div>
+        <div style={{ height: '40px' }} />
       </div>
     );
   }
