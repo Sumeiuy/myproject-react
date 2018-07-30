@@ -31,6 +31,7 @@ import styles from './main.less';
 import '../css/fspFix.less';
 import '../../src/css/skin.less';
 import emp from '../../src/helper/emp';
+import api from '../../src/api';
 
 const effects = {
   dictionary: 'app/getDictionary',
@@ -40,7 +41,6 @@ const effects = {
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
   // 删除文件
   ceFileDelete: 'performerView/ceFileDelete',
-  switchPosition: 'global/changePost',
   getMenus: 'global/getMenus',
 };
 
@@ -84,7 +84,6 @@ const mapDispatchToProps = {
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
   getMenus: fectchDataFunction(true, effects.getMenus),
-  switchPosition: fectchDataFunction(false, effects.switchPosition),
   toggleServiceRecordModal: query => ({
     type: 'app/toggleServiceRecordModal',
     payload: query || false,
@@ -118,9 +117,7 @@ export default class Main extends PureComponent {
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     serviceRecordInfo: PropTypes.object.isRequired,
-    changePost: PropTypes.bool.isRequired,
     taskFeedbackList: PropTypes.array.isRequired,
-    switchPosition: PropTypes.func.isRequired,
     getMenus: PropTypes.func.isRequired,
   }
 
@@ -147,14 +144,17 @@ export default class Main extends PureComponent {
   }
 
   @autobind
-  switchRspAfter(rsp) {
-    // TO 确认接口，检查是否成功
-    this.setWinLocationSearch(rsp.pstnId);
-  }
-
-  @autobind
   handleHeaderSwitchRsp(rsp) {
-    this.props.switchPosition(rsp).then(() => this.switchRspAfter(rsp));
+    let fullUrl = '/chgPstn?';
+    fullUrl += _.keys(rsp)
+      .map(key => `${key}=${encodeURIComponent(rsp[key])}`)
+      .join('&');
+    api
+      .postFspData(fullUrl,
+        {},
+        { isFullUrl: true, ignoreCatch: true },
+      )
+      .then(() => this.setWinLocationSearch(rsp.pstnId));
   }
 
   @autobind
