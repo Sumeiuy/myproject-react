@@ -7,25 +7,47 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Route, Switch, Redirect } from 'dva/router';
+import { Route, Switch } from 'dva/router';
 import PropTypes from 'prop-types';
 import menu from './menu';
+import { linkTo } from '../../utils';
 import Main from '../../components/platformParameterSetting/Main';
-import DistributeHome from './DistributeHome';
-import ApplyHome from './ApplyHome';
+import { getRoutes } from '../../utils/router';
 
 export default class TelephoneNumberManage extends PureComponent {
   static propTypes = {
     match: PropTypes.object.isRequired,
+    routerData: PropTypes.object.isRequired,
   };
+
+  static contextTypes= {
+    push: PropTypes.func.isRequired,
+  }
+
+  componentDidMount() {
+    const url = '/sysOperate/telephoneNumberManage/distribute';
+    linkTo({
+      url,
+      routerAction: this.context.push,
+      pathname: url,
+    });
+  }
+
   render() {
-    const { match: { path } } = this.props;
+    const { match: { path }, routerData } = this.props;
     return (
       <Main menu={menu} matchPath={path}>
         <Switch>
-          <Route exact path="/telephoneNumberManage/distribute" component={DistributeHome} />
-          <Route exact path="/telephoneNumberManage/apply" component={ApplyHome} />
-          <Route path="*" render={() => (<Redirect to="/empty" />)} />
+          {
+            getRoutes(path, routerData).map(item => (
+              <Route
+                key={item.key}
+                path={item.path}
+                component={item.component}
+                exact={item.exact}
+              />
+            ))
+          }
         </Switch>
       </Main>
     );

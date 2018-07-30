@@ -39,7 +39,7 @@ const fspRoutes = [
   },
   // 投顾签约
   {
-    path: '/fsp/investContract',
+    path: '/fsp/serviceCenter/investContract',
     action: 'loadInTab',
     containerId: 'FSP_TGINVEST_LIST_TAB',
     url: '/tgcontract/list/listContent',

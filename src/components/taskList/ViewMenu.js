@@ -30,12 +30,15 @@ export default class ViewMenu extends PureComponent {
     location: PropTypes.object.isRequired,
     // 自建任务按钮事件
     onLaunchTask: PropTypes.func,
+    // 打开客户服务全纪录
+    onOpenRecord: PropTypes.func,
   };
 
   static defaultProps = {
     chooseMissionViewOptions: EMPTY_LIST,
     onViewChange: NOOP,
     onLaunchTask: NOOP,
+    onOpenRecord: NOOP,
   };
 
   /**
@@ -57,6 +60,12 @@ export default class ViewMenu extends PureComponent {
     this.props.onLaunchTask();
   }
 
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '点击客户服务全纪录' } })
+  handleOpenRecord() {
+    this.props.onOpenRecord();
+  }
+
   render() {
     const {
       chooseMissionViewOptions,
@@ -76,7 +85,7 @@ export default class ViewMenu extends PureComponent {
         <div className={styles.menuSection}>
           {
             _.map(chooseMissionViewOptions, item =>
-              <div
+              (<div
                 className={
                   classnames({
                     [styles.item]: true,
@@ -88,7 +97,7 @@ export default class ViewMenu extends PureComponent {
                 onClick={() => this.handleClick(item.value)}
               >
                 {item.label}
-              </div>,
+              </div>),
             )
           }
         </div>
@@ -100,6 +109,15 @@ export default class ViewMenu extends PureComponent {
             onClick={this.handleCreateTask}
           >
             新建
+          </Button>
+          <span className={styles.splitLine} />
+          <Button
+            type="default"
+            size="small"
+            className={styles.customBth}
+            onClick={this.handleOpenRecord}
+          >
+            客户服务全纪录
           </Button>
         </div>
       </div>

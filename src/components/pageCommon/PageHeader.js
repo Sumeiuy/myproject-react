@@ -209,23 +209,23 @@ export default class PageHeader extends PureComponent {
                 {/* 需要针对预览页面做调整 */}
                 {
                   preView
-                  ?
-                  (
-                    <div className="preView">
-                      {reportName}
-                    </div>
-                  )
-                  :
-                  (
-                    <BoardSelect
-                      location={location}
-                      push={push}
-                      replace={replace}
-                      visibleBoards={visibleBoards}
-                      newVisibleBoards={newVisibleBoards}
-                      collectData={collectBoardSelect}
-                    />
-                  )
+                    ?
+                    (
+                      <div className="preView">
+                        {reportName}
+                      </div>
+                    )
+                    :
+                    (
+                      <BoardSelect
+                        location={location}
+                        push={push}
+                        replace={replace}
+                        visibleBoards={visibleBoards}
+                        newVisibleBoards={newVisibleBoards}
+                        collectData={collectBoardSelect}
+                      />
+                    )
                 }
               </div>
               <div className={styles.reportHeaderRight}>
@@ -265,15 +265,15 @@ export default class PageHeader extends PureComponent {
                                 key={summaryTypeIndex}
                                 value={item.value}
                               >
-                                  按{item.name}
+                                按{item.name}
                               </Option>
                             );
                           })
                         }
                       </Select>
                     </div>
-                  :
-                  null
+                    :
+                    null
                 }
               </div>
             </Row>
@@ -286,7 +286,7 @@ export default class PageHeader extends PureComponent {
                   closable
                   showIcon
                 /> :
-              null
+                null
             }
           </div>
         </div>

@@ -4,21 +4,19 @@
  * @author zhufeiyang
  */
 
-// 主导航菜单页面以及其跳转页面对应的tab配置项
-// 主导航菜单项不会新打开tab，所以主导航相关的页面全部在这里配置
 // 前端可以完全控制主导航的菜单行为
-const primaryMenu = [
+const newOpenTabConfig = [
   {
-    name: '首页',
-    id: 'FSP_NEW_HOMEPAGE',
-    path: '/customerPool',
-    pid: 'ROOT',
+    name: '资讯列表',
+    id: 'FSP_VIEWPOINT_LIST',
+    path: '/latestView/viewpointList',
+    pid: 'FSP_NEW_HOMEPAGE',
   },
   {
-    name: '自建任务',
-    id: 'FSP_CUSTOMER_LIST_CREATETASK',
-    path: '/customerPool/createTask',
-    pid: 'FSP_CUSTOMER_LIST',
+    name: '资讯详情',
+    id: 'FSP_VIEWPOINT_LIST',
+    path: '/latestView/viewpointDetail',
+    pid: 'FSP_NEW_HOMEPAGE',
   },
   {
     name: '自建任务',
@@ -39,21 +37,9 @@ const primaryMenu = [
     pid: 'FSP_MOT_SELFBUILT_TASK',
   },
   {
-    name: '客户列表',
-    id: 'FSP_CUSTOMER_LIST',
-    path: '/customerPool/list',
-    pid: 'FSP_NEW_HOMEPAGE',
-  },
-  {
     name: '待办流程',
     id: 'FSP_TODO',
     path: '/customerPool/todo',
-    pid: 'FSP_NEW_HOMEPAGE',
-  },
-  {
-    name: '资讯列表',
-    id: 'FSP_VIEWPOINT',
-    path: '/customerPool/viewpoint',
     pid: 'FSP_NEW_HOMEPAGE',
   },
   {
@@ -73,12 +59,6 @@ const primaryMenu = [
     id: 'FSP_MOT_TASKHANDLE',
     path: '/fsp/motTaskHandle',
     pid: 'FSP_CUST_M_360',
-  },
-  {
-    name: '客户中心',
-    id: 'FSP_CUST_M_CENTER',
-    path: '/customerCenter',
-    pid: 'ROOT',
   },
   {
     name: '客户360',
@@ -117,22 +97,10 @@ const primaryMenu = [
     pid: 'FSP_CUST_M_360',
   },
   {
-    name: '任务中心',
-    id: 'FSP_MOT_M_TASK',
-    path: '/taskCenter',
-    pid: 'ROOT',
-  },
-  {
-    name: '产品中心',
-    id: 'FSP_PRD_REPOSITORY',
-    path: '/productCenter',
-    pid: 'ROOT',
-  },
-  {
-    name: '服务中心',
-    id: 'FSP_SERVICE_CENTER',
-    path: '/serviceCenter',
-    pid: 'ROOT',
+    name: '客户服务全纪录',
+    id: 'FSP_MOT_TAB_SERVICELIST',
+    path: '/fsp/taskCenter/serviceManage',
+    pid: 'FSP_MOT_M_TASK',
   },
   {
     name: '工单投诉信息',
@@ -153,37 +121,265 @@ const primaryMenu = [
     pid: 'FSP_SERVICE_CENTER',
   },
   {
-    name: '策略中心',
-    id: 'FSP_STRATEGY_CENTER',
-    path: '/strategyCenter',
-    pid: 'ROOT',
+    name: '个股详情',
+    id: 'FSP_STOCK_DETAIL',
+    path: '/stock/detail',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
+    name: '组合详情',
+    id: 'FSP_COMBINATION_DETAIL',
+    path: '/choicenessCombination/combinationDetail',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
+    name: '历史报告',
+    id: 'FSP_REPORT_DETAIL',
+    path: '/choicenessCombination/reportDetail',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
+    name: '晨报详情',
+    id: 'FSP_BROADCAST_DETAIL',
+    path: '/broadcastDetail',
+    pid: 'FSP_STRATEGY_CENTER',
+  },
+  {
+    name: '看板管理',
+    id: 'FSP_BOARDMANAGE',
+    path: '/boardManage',
+    pid: 'FSP_STATISTICAL_QUERY',
+  },
+  {
+    name: '看板编辑',
+    id: 'FSP_BOARDEDIT',
+    path: '/boardEdit',
+    pid: 'FSP_STATISTICAL_QUERY',
+  },
+  {
+    name: '看板预览',
+    id: 'FSP_PREVIEW',
+    path: '/preview',
+    pid: 'FSP_STATISTICAL_QUERY',
+  },
+  {
+    name: '用户中心',
+    id: 'FSP_USERCENTER',
+    path: '/userCenter',
+    pid: 'SP_USERCENTER',
+  },
+  {
+    name: '用户信息审批',
+    id: 'FSP_USERINFO_APPROVAL',
+    path: '/userCenter/userInfoApproval',
+    pid: 'FSP_USERINFO_APPROVAL',
+  },
+  {
+    name: '反馈管理',
+    id: 'FSP_FEEDBACK_MANAGEMENT',
+    path: '/feedback',
+    pid: 'FSP_FEEDBACK_MANAGEMENT',
+  },
+  {
+    name: '我的反馈',
+    id: 'FSP_MYFEEDBACK',
+    path: '/myFeedback',
+    pid: 'FSP_MYFEEDBACK',
+  },
+  {
+    name: '佣金调整',
+    id: 'FSP_COMMISSION_ADJUSTMENT',
+    path: '/commissionAdjustment',
+    pid: 'FSP_COMMISSION_ADJUSTMENT',
+  },
+  {
+    name: '客户分组',
+    id: 'FSP_CUSTOMERGROUP',
+    path: '/customerPool/customerGroup',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '我的客户分组',
+    id: 'FSP_CUSTOMERGROUP_MANAGE',
+    path: '/customerPool/customerGroupManage',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '创建任务',
+    id: 'FSP_CREATETASK_FROMCUSTGROUP',
+    path: '/customerPool/createTaskFromCustGroup',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '创建任务',
+    id: 'FSP_CREATETASK_FROMPROGRESS',
+    path: '/customerPool/createTaskFromProgress',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '创建任务',
+    id: 'FSP_CREATETASK_FROMPIE',
+    path: '/customerPool/createTaskFromPie',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '创建任务',
+    id: 'FSP_CREATETASK_FROMREJECTION1',
+    path: '/customerPool/createTaskFromTaskRejection1',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '创建任务',
+    id: 'FSP_CREATETASK_FROMREJECTION2',
+    path: '/customerPool/createTaskFromTaskRejection2',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '创建任务',
+    id: 'FSP_CREATETASK_FROMCUSTSCOPE',
+    path: '/customerPool/createTaskFromCustScope',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '创建任务',
+    id: 'FSP_CREATETASK',
+    path: '/customerPool/createTask',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '服务纪录',
+    id: 'FSP_SERVICELOG',
+    path: '/customerPool/serviceLog',
+    pid: 'FSP_NEW_HOMEPAGE',
+  },
+  {
+    name: '客户降级',
+    id: 'FSP_DEMOTE',
+    path: '/demote',
+    pid: 'FSP_DEMOTE',
+  },
+  {
+    name: '用户信息审核',
+    id: 'FSP_USERINFO_REMIND',
+    path: '/userInfoRemind',
+    pid: 'FSP_USERINFO_REMIND',
+  },
+  {
+    name: '消息中心',
+    id: 'FSP_MESSAGE_CENTER',
+    path: '/messageCenter',
+    pid: 'FSP_MESSAGE_CENTER',
+  },
+  {
+    name: '客户反馈',
+    id: 'FSP_CUSTOMER_FEEDBACK',
+    path: '/customerFeedback',
+    pid: 'FSP_CUSTOMER_FEEDBACK',
+  },
+  {
+    name: '任务反馈',
+    id: 'FSP_TASK_FEEDBACK',
+    path: '/taskFeedback',
+    pid: 'FSP_TASK_FEEDBACK',
+  },
+  {
+    name: '非投顾签约客户分布',
+    id: 'FSP_BUSINESSDEPARTMENT_CUSTDISTRIBUTE',
+    path: '/businessDepartmentCustDistribute',
+    pid: 'FSP_BUSINESSDEPARTMENT_CUSTDISTRIBUTE',
+  },
+  {
+    name: '投顾竞赛',
+    id: 'FSP_INVESTMENT_CONSULTANTRACE',
+    path: '/investmentConsultantRace',
+    pid: 'FSP_INVESTMENT_CONSULTANTRACE',
+  },
+  {
+    name: '客户关联关系',
+    id: 'FSP_CUSTRELATIONSHIPS',
+    path: '/custRelationships',
+    pid: 'FSP_CUSTRELATIONSHIPS',
+  },
+  {
+    name: '客户分配',
+    id: 'FSP_CUSTALLOT',
+    path: '/custAllot',
+    pid: 'FSP_CUSTALLOT',
+  },
+  {
+    name: '重点监控账户',
+    id: 'FSP_KEYMONITOR_ACCOUNT',
+    path: '/keyMonitorAccount',
+    pid: 'FSP_KEYMONITOR_ACCOUNT',
+  },
+  {
+    name: '最新观点',
+    id: 'FSP_LATEST_VIEW',
+    path: '/latestView',
+    pid: 'FSP_LATEST_VIEW',
+  },
+  {
+    name: '大类资产配置分析列表',
+    id: 'FSP_MAJOR_ASSETSLIST',
+    path: '/latestView/majorAssetsList',
+    pid: 'FSP_MAJOR_ASSETSLIST',
+  },
+  {
+    name: '行业主题调整信息列表',
+    id: 'FSP_INDUSTRY_THEMELIST',
+    path: '/latestView/industryThemeList',
+    pid: 'FSP_INDUSTRY_THEMELIST',
+  },
+  {
+    name: '股票期权评估申请',
+    id: 'FSP_STOCKOPTION_EVALUATION',
+    path: '/stockOptionEvaluation',
+    pid: 'FSP_STOCKOPTION_EVALUATION',
   },
 ];
 
-// 次级导航页面内部跳转新建的tab配置项
-// 由于次级导航菜单涉及到的打开tab太多，而且不会随着项目变化而改变
-// 所以不在这里进行配置，而是直接复用后端的数据，在调用方法时，直接传入数据
-// 前端无法控制次级导航菜单的tab配置，这点需要留意。
-const secondaryMenu = [
-];
-
-const menus = [
-  ...primaryMenu,
-  ...secondaryMenu,
-];
-
-export default menus;
-
 // 默认当前激活的主导航菜单项
-export const indexPaneKey = 'FSP_NEW_HOMEPAGE';
+const indexPaneKey = 'FSP_NEW_HOMEPAGE';
 
-// 主导航默认的几个菜单项
-export const defaultMenu = [
-  'FSP_NEW_HOMEPAGE',
-  'FSP_SERVICE_CENTER',
-  'FSP_STRATEGY_CENTER',
-  'FSP_MOT_M_TASK',
-  'FSP_CUST_M_CENTER',
-  'FSP_PRD_REPOSITORY',
+// 主导航里面的嵌套导航菜单
+const defaultMenu = [
+  {
+    path: '/customerPool',
+    name: '客户中心',
+  },
+  {
+    path: '/taskCenter',
+    name: '任务中心',
+  },
+  {
+    path: '/productCenter',
+    name: '产品中心',
+  },
+  {
+    path: '/serviceCenter',
+    name: '服务中心',
+  },
+  {
+    path: '/strategyCenter',
+    name: '策略中心',
+  },
+  {
+    path: '/businessApplyment',
+    name: '业务申请',
+  },
+  {
+    path: '/statisticalQuery',
+    name: '统计查询',
+  },
+  {
+    path: '/sysOperate',
+    name: '运维管理',
+  },
 ];
+
+export default {
+  newOpenTabConfig,
+  indexPaneKey,
+  defaultMenu,
+};
 

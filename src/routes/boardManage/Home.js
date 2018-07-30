@@ -148,7 +148,7 @@ export default class BoardManageHome extends PureComponent {
     if (!publishLoading && prePL) {
       message.success('发布成功');
       const { id } = operateData;
-      push(`/report?boardId=${id}`);
+      push(`/statisticalQuery/report?boardId=${id}`);
     }
   }
   componentWillUnmount() {
