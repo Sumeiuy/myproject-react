@@ -1,8 +1,8 @@
 /**
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-13 22:07:59
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-30 15:16:36
  */
 
 import React, { PureComponent } from 'react';
@@ -158,10 +158,11 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'ViewItem',
     payload: {
-      name: '客户列表名称',
-      value: '$props.listItem.name',
+      name: '客户列表',
+      type: '客户',
+      value: '$props.listItem.brokId',
     },
   })
   handleNameClick() {
@@ -170,10 +171,11 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'ViewItem',
     payload: {
-      name: '客户列表头像',
-      value: '$props.listItem.name',
+      name: '客户列表',
+      type: '客户',
+      value: '$props.listItem.brokId',
     },
   })
   handleAvatarClick() {
