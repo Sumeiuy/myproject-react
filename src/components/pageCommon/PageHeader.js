@@ -14,7 +14,7 @@ import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
 import { fspContainer, optionsMap, constants } from '../../config';
 import DurationSelect from './DurationSelect';
-import { dom } from '../../helper';
+import { dom, env } from '../../helper';
 import logable from '../../decorators/logable';
 // 选择项字典
 import styles from './PageHeader.less';
@@ -67,12 +67,14 @@ export default class PageHeader extends PureComponent {
     let scrollX;
     let leftWidth;
     const { custRange } = props;
+    const position = env.isInReact() ? 'relative' : 'fixed';
     if (fsp) {
       contentWidth = dom.getCssStyle(contentWrapper, 'width');
       scrollX = window.scrollX;
       leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     }
     this.state = {
+      position,
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
       top: fsp ? '55px' : 0,
       left: fsp ? `${leftWidth - scrollX}px` : 0,
@@ -183,7 +185,7 @@ export default class PageHeader extends PureComponent {
       initialData,
       location: { pathname },
     } = this.props;
-    const { top, left, width, summaryTypeValue } = this.state;
+    const { top, left, width, summaryTypeValue, position } = this.state;
     const maxDataDt = initialData.maxDataDt;
     const maxDataDtTip = moment(maxDataDt).format('YYYY/MM/DD');
     // 汇总方式的切换是否显示
@@ -192,11 +194,12 @@ export default class PageHeader extends PureComponent {
     const momentDataDt = moment(moment().subtract(1, 'days')).format(formatTxt);
     // 判断是否在 history 路由里
     const isHistory = pathname === '/history';
+    const isInReact = env.isInReact();
     return (
       <div>
         <div
           style={{
-            position: 'fixed',
+            position,
             zIndex: 30,
             width,
             top,
@@ -290,7 +293,9 @@ export default class PageHeader extends PureComponent {
             }
           </div>
         </div>
-        <div style={{ height: '40px' }} />
+        {
+          isInReact ? null : <div style={{ height: '40px' }} />
+        }
       </div>
     );
   }

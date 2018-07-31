@@ -13,7 +13,7 @@ import { connect } from 'dva';
 import { Col, Row, message } from 'antd';
 import _ from 'lodash';
 
-import { dom, emp } from '../../helper';
+import { dom, emp, env } from '../../helper';
 import BoardSelect from '../../components/pageCommon/BoardSelect';
 import BoardItem from '../../components/pageCommon/BoardItem';
 import { CreateBoardModal, DeleteBoardModal, PublishConfirmModal } from '../../components/modals';
@@ -105,12 +105,14 @@ export default class BoardManageHome extends PureComponent {
     let contentWidth;
     let scrollX;
     let leftWidth;
+    const position = env.isInReact() ? 'relative' : 'fixed';
     if (fsp) {
       contentWidth = dom.getCssStyle(contentWrapper, 'width');
       scrollX = window.scrollX;
       leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     }
     this.state = {
+      position,
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
       top: fsp ? '55px' : 0,
       left: fsp ? `${leftWidth - scrollX}px` : 0,
@@ -322,13 +324,14 @@ export default class BoardManageHome extends PureComponent {
       confirm: this.publishBoardCofirm,
     };
 
-    const { top, left, width } = this.state;
+    const { top, left, width, position } = this.state;
+    const isInReact = env.isInReact();
     return (
       <div className="page-invest content-inner">
         <div>
           <div
             style={{
-              position: 'fixed',
+              position,
               zIndex: 30,
               width,
               top,
@@ -350,7 +353,9 @@ export default class BoardManageHome extends PureComponent {
               </Row>
             </div>
           </div>
-          <div style={{ height: '40px' }} />
+          {
+            isInReact ? null : <div style={{ height: '40px' }} />
+          }
         </div>
         <div className={styles.boardList}>
           <Row gutter={19}>
