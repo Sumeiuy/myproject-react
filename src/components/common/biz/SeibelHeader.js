@@ -421,8 +421,8 @@ export default class Pageheader extends PureComponent {
   // 只能选择今天之前的时间
   @autobind
   setDisableRange(date) {
-    // date返回的时间是YYYY-MM-DD 12:00:00;需要修改成YYYY-MM-DD 00:00:00，所以减了12小时
-    return moment(date).add('hours', -12) > moment();
+    const dateFormatStr = date.format('YYYY-MM-DD');
+    return moment(dateFormatStr) > moment();
   }
 
   // 获取部门

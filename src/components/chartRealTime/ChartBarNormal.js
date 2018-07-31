@@ -262,6 +262,7 @@ export default class ChartBarNormal extends PureComponent {
     const levelAndScope = Number(scope);
     // 得到y轴在数据结构中的key名
     const levelName = `level${levelAndScope}Name`;
+    const levelId = `level${levelAndScope}Id`;
     // 分公司名称数组
     const levelCompanyArr = this.getChartData(orgModel, 'level2Name', 'yAxis');
     // 财富中心
@@ -270,6 +271,8 @@ export default class ChartBarNormal extends PureComponent {
     const levelStoreArr = this.getChartData(orgModel, 'level4Name', 'yAxis');
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName, 'yAxis');
+    // 工号数组
+    const levelIdArr = this.getChartData(orgModel, levelId, 'yAxis');
     // 取出所有的value,并将value转化成数字
     let seriesData = this.getChartData(orgModel, 'value', 'xAxis');
     seriesData = seriesData.map(item => Number(item));
@@ -378,6 +381,7 @@ export default class ChartBarNormal extends PureComponent {
         const seriesName = item.seriesName;
         let value = item.data.value;
         const dataIndex = item.dataIndex;
+        const id = levelIdArr[dataIndex];
         if (axisValue === '--') {
           value = '--';
         }
@@ -422,7 +426,7 @@ export default class ChartBarNormal extends PureComponent {
           <table class="echartTooltipTable">
             ${tooltipHead}
             <tr>
-              <td>${axisValue}</td>
+              <td>${axisValue}(${id})</td>
             </tr>
             <tr>
               <td class="itemValue">${seriesName}: <span>${value}</span> (${unit})</td>
