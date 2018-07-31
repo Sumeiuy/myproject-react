@@ -70,6 +70,7 @@ function initFspMethod({ store, history }) {
       ...filterParam,
     };
     openRctTab({
+      routerAction: push,
       url,
       param,
     });
