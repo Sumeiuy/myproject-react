@@ -18,6 +18,11 @@ const permission = {
     dutyList = list;
   },
 
+  // HTSC 新功能体验岗
+  hasNewFeatureInvestPermission() {
+    return hasDuty(dutyList, duty.HTSC_NEW_FEATURE);
+  },
+
   // HTSC 首页指标查询
   hasIndexViewPermission() {
     return hasDuty(dutyList, duty.HTSC_SYZBCX);
