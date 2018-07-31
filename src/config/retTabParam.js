@@ -14,8 +14,8 @@ const retTabParam = [
     param: {
       id: 'RCT_FSP_CUSTOMER_LIST',
       title: '客户列表',
-    }
-  }
+    },
+  },
 ];
 
 export default retTabParam;
