@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系申请的配置文件
  * @Date: 2018-06-08 13:32:19
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-19 14:47:05
+ * @Last Modified time: 2018-07-31 17:37:28
  */
 import { customer, status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
 
@@ -38,22 +38,20 @@ const config = {
         value: '04',
       },
     ],
-    headerFilters: {
-      basicFilters: [
-        customer,
-        status,
-        drafter,
-        applyTime,
-      ],
-      moreFilters: [
-        department,
-        approver,
-      ],
-      moreFilterData: [
-        { value: '部门', key: 'orgId' },
-        { value: '审批人', key: 'approvalId' },
-      ],
-    },
+    basicFilters: [
+      customer,
+      status,
+      drafter,
+      applyTime,
+    ],
+    moreFilters: [
+      department,
+      approver,
+    ],
+    moreFilterData: [
+      { value: '部门', key: 'orgId' },
+      { value: '审批人', key: 'approvalId' },
+    ],
   },
   CUST_RELATIONSHIP_COLUMNS: [
     {

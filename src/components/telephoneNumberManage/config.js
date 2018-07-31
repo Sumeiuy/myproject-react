@@ -54,20 +54,18 @@ const config = {
         value: '04',
       },
     ],
-    headerFilters: {
-      basicFilters: [
-        serviceManager,
-        status,
-        drafter,
-        department,
-      ],
-      moreFilters: [
-        approver,
-      ],
-      moreFilterData: [
-        { value: '审批人', key: 'approvalId' },
-      ],
-    },
+    basicFilters: [
+      serviceManager,
+      status,
+      drafter,
+      department,
+    ],
+    moreFilters: [
+      approver,
+    ],
+    moreFilterData: [
+      { value: '审批人', key: 'approvalId' },
+    ],
   },
   approvalColumns: [
     {

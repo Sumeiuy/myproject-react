@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-23 09:59:21
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-19 17:04:29
+ * @Last Modified time: 2018-07-31 17:45:32
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -41,7 +41,9 @@ const {
   custAllot: { status, pageType },
   subType,
   clearDataArray,
-  headerFilters: { basicFilters, moreFilters, moreFilterData },
+  basicFilters,
+  moreFilters,
+  moreFilterData,
 } = config;
 
 // 登陆人的组织 ID

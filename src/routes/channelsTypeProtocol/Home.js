@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-31 15:07:03
+ * @Last Modified time: 2018-07-31 17:42:51
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -46,7 +46,9 @@ const {
     subType,
     status,
     operationList,
-    headerFilters: { basicFilters, moreFilters, moreFilterData },
+    basicFilters,
+    moreFilters,
+    moreFilterData,
   },
 } = seibelConfig;
 const { subscribeArray, unSubscribeArray, tenHQ, tipsMap, protocolSubs, protocolSubTypes } = config;

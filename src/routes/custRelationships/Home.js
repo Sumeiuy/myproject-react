@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-20 14:01:30
+ * @Last Modified time: 2018-07-31 17:46:30
  */
 
 import React, { PureComponent } from 'react';
@@ -30,7 +30,9 @@ const {
   custRelationships: {
     statusOptions,
     pageType,
-    headerFilters: { basicFilters, moreFilters, moreFilterData },
+    basicFilters,
+    moreFilters,
+    moreFilterData,
   },
  } = config;
 const effect = dva.generateEffect;

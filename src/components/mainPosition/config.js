@@ -2,7 +2,7 @@
  * @Author: hongguangqing
  * @Date: 2018-03-01 14:25:34
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-16 17:23:37
+ * @Last Modified time: 2018-07-31 17:38:32
  */
 /*
  * @Description: 服务经理主职位设置的配置文件
@@ -85,20 +85,18 @@ const config = {
         align: 'center',
       },
     ],
-    headerFilters: {
-      basicFilters: [
-        serviceManager,
-        status,
-        drafter,
-        department,
-      ],
-      moreFilters: [
-        approver,
-      ],
-      moreFilterData: [
-        { value: '审批人', key: 'approvalId' },
-      ],
-    },
+    basicFilters: [
+      serviceManager,
+      status,
+      drafter,
+      department,
+    ],
+    moreFilters: [
+      approver,
+    ],
+    moreFilterData: [
+      { value: '审批人', key: 'approvalId' },
+    ],
   },
 };
 

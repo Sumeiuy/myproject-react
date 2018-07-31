@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 15:39:47
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-19 15:08:14
+ * @Last Modified time: 2018-07-31 17:40:47
  */
 import { customer, status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
 
@@ -37,22 +37,20 @@ const config = {
         value: '04',
       },
     ],
-    headerFilters: {
-      basicFilters: [
-        customer,
-        status,
-        drafter,
-        applyTime,
-      ],
-      moreFilters: [
-        department,
-        approver,
-      ],
-      moreFilterData: [
-        { value: '部门', key: 'orgId' },
-        { value: '审批人', key: 'approvalId' },
-      ],
-    },
+    basicFilters: [
+      customer,
+      status,
+      drafter,
+      applyTime,
+    ],
+    moreFilters: [
+      department,
+      approver,
+    ],
+    moreFilterData: [
+      { value: '部门', key: 'orgId' },
+      { value: '审批人', key: 'approvalId' },
+    ],
     // 适当性评估表
     assessTable: [
       {

@@ -122,22 +122,20 @@ const pageConfig = {
         value: '04',
       },
     ],
-    headerFilters: {
-      basicFilters: [
-        customer,
-        subType,
-        status,
-        drafter,
-      ],
-      moreFilters: [
-        department,
-        approver,
-      ],
-      moreFilterData: [
-        { value: '部门', key: 'orgId' },
-        { value: '审批人', key: 'approvalId' },
-      ],
-    },
+    basicFilters: [
+      customer,
+      subType,
+      status,
+      drafter,
+    ],
+    moreFilters: [
+      department,
+      approver,
+    ],
+    moreFilterData: [
+      { value: '部门', key: 'orgId' },
+      { value: '审批人', key: 'approvalId' },
+    ],
   },
   // 佣金调整
   commission: {
@@ -280,22 +278,20 @@ const pageConfig = {
         value: '04',
       },
     ],
-    headerFilters: {
-      basicFilters: [
-        customer,
-        subType,
-        status,
-        drafter,
-      ],
-      moreFilters: [
-        department,
-        approver,
-      ],
-      moreFilterData: [
-        { value: '部门', key: 'orgId' },
-        { value: '审批人', key: 'approvalId' },
-      ],
-    },
+    basicFilters: [
+      customer,
+      subType,
+      status,
+      drafter,
+    ],
+    moreFilters: [
+      department,
+      approver,
+    ],
+    moreFilterData: [
+      { value: '部门', key: 'orgId' },
+      { value: '审批人', key: 'approvalId' },
+    ],
   },
   // 合作合约
   contract: {
@@ -399,24 +395,22 @@ const pageConfig = {
         title: '合作部门',
       },
     ],
-    headerFilters: {
-      basicFilters: [
-        customer,
-        operationType,
-        subType,
-        status,
-      ],
-      moreFilters: [
-        drafter,
-        department,
-        approver,
-      ],
-      moreFilterData: [
-        { value: '拟稿人', key: 'drafterId' },
-        { value: '部门', key: 'orgId' },
-        { value: '审批人', key: 'approvalId' },
-      ],
-    },
+    basicFilters: [
+      customer,
+      operationType,
+      subType,
+      status,
+    ],
+    moreFilters: [
+      drafter,
+      department,
+      approver,
+    ],
+    moreFilterData: [
+      { value: '拟稿人', key: 'drafterId' },
+      { value: '部门', key: 'orgId' },
+      { value: '审批人', key: 'approvalId' },
+    ],
   },
   // 通道类型协议
   channelsTypeProtocol: {
@@ -642,24 +636,22 @@ const pageConfig = {
         value: '5',
       },
     ],
-    headerFilters: {
-      basicFilters: [
-        customer,
-        operationType,
-        subType,
-        status,
-      ],
-      moreFilters: [
-        drafter,
-        department,
-        approver,
-      ],
-      moreFilterData: [
-        { value: '拟稿人', key: 'drafterId' },
-        { value: '部门', key: 'orgId' },
-        { value: '审批人', key: 'approvalId' },
-      ],
-    },
+    basicFilters: [
+      customer,
+      operationType,
+      subType,
+      status,
+    ],
+    moreFilters: [
+      drafter,
+      department,
+      approver,
+    ],
+    moreFilterData: [
+      { value: '拟稿人', key: 'drafterId' },
+      { value: '部门', key: 'orgId' },
+      { value: '审批人', key: 'approvalId' },
+    ],
     // 协议产品表格表头数组
     protocolProductTitleList: [
       {
@@ -914,20 +906,18 @@ const pageConfig = {
         key: 'occupation',
       },
     ],
-    headerFilters: {
-      basicFilters: [
-        serviceManager,
-        status,
-        drafter,
-        department,
-      ],
-      moreFilters: [
-        approver,
-      ],
-      moreFilterData: [
-        { value: '审批人', key: 'approvalId' },
-      ],
-    },
+    basicFilters: [
+      serviceManager,
+      status,
+      drafter,
+      department,
+    ],
+    moreFilters: [
+      approver,
+    ],
+    moreFilterData: [
+      { value: '审批人', key: 'approvalId' },
+    ],
   },
   // 自建任务列表
   tasklist: {

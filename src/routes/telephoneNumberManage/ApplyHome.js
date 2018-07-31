@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-19 17:50:10
+ * @Last Modified time: 2018-07-31 17:50:32
 */
 
 import React, { PureComponent } from 'react';
@@ -34,7 +34,9 @@ const {
   telephoneNumApply: {
     statusOptions,
     pageType,
-    headerFilters: { basicFilters, moreFilters, moreFilterData },
+    basicFilters,
+    moreFilters,
+    moreFilterData,
   },
 } = config;
 const effect = dva.generateEffect;

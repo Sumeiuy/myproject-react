@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-19 17:19:47
+ * @Last Modified time: 2018-07-31 17:50:05
 */
 
 import React, { PureComponent } from 'react';
@@ -29,7 +29,9 @@ const {
   stockOptionApply: {
     statusOptions,
     pageType,
-    headerFilters: { basicFilters, moreFilters, moreFilterData },
+    basicFilters,
+    moreFilters,
+    moreFilterData,
   },
 } = config;
 

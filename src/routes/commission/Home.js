@@ -36,7 +36,9 @@ const {
     pageType,
     subType,
     status,
-    headerFilters: { basicFilters, moreFilters, moreFilterData },
+    basicFilters,
+    moreFilters,
+    moreFilterData,
  },
 } = seibelConfig;
 

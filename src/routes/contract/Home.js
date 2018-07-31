@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-19 17:30:19
+ * @Last Modified time: 2018-07-31 17:45:08
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -45,7 +45,9 @@ const {
     subType,
     operationList,
     status,
-    headerFilters: { basicFilters, moreFilters, moreFilterData },
+    basicFilters,
+    moreFilters,
+    moreFilterData,
   },
 } = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
