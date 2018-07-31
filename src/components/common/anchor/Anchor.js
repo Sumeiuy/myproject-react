@@ -13,7 +13,6 @@ import getRequestAnimationFrame from 'antd/lib/_util/getRequestAnimationFrame';
 import { fspContainer } from '../../../config';
 import './index.less';
 import logable from '../../../decorators/logable';
-import { env } from '../../../helper';
 
 const fsp = document.querySelector(fspContainer.container);
 
@@ -52,13 +51,9 @@ function easeInOutCubic(t, b, c, d) {
 
 const reqAnimFrame = getRequestAnimationFrame();
 export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callback = () => { }) {
-  const rct = env.getReactContainer();
-
   let scrollTopValue;
   if (fsp) {
     scrollTopValue = fsp.scrollTop;
-  } else if (rct) {
-    scrollTopValue = rct.scrollTop;
   } else {
     scrollTopValue = getScroll(target(), true);
   }
@@ -78,8 +73,6 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
 
     if (fsp) {
       fsp.scrollTop = easeInOutCubic(time, scrollTopValue, targetScrollTop, 450);
-    } else if(rct) {
-      rct.scrollTop = easeInOutCubic(time, scrollTopValue, targetScrollTop, 450);
     } else {
       window.scrollTo(window.pageXOffset, easeInOutCubic(time, scrollTopValue, targetScrollTop, 450));
     }
@@ -160,12 +153,9 @@ export default class Anchor extends PureComponent {
   componentDidMount() {
     const getTarget = this.props.target || getDefaultTarget;
     // 搬了antd/Anchor判断是否在fsp中，控制scroll
-    const rct = env.getReactContainer();
 
     if (fsp) {
       $(fsp).on('scroll', this.handleScroll);
-    } else if(rct) {
-      $(rct).on('scroll', this.handleScroll);
     } else {
       this.scrollEvent = addEventListener((this.props.target || getDefaultTarget)(), 'scroll', this.handleScroll);
     }
@@ -173,11 +163,8 @@ export default class Anchor extends PureComponent {
   }
 
   componentWillUnmount() {
-    const rct = env.getReactContainer();
     if (fsp) {
       $(fsp).off('scroll', this.onScroll);
-    } else if(rct) {
-      $(rct).off('scroll', this.onScroll);
     } else {
       this.scrollEvent.remove();
     }

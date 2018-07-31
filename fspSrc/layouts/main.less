@@ -1,7 +1,6 @@
 @import "../../src/css/variable.less";
 .layout {
   position: relative;
-  height: 100vh;
   overflow: auto;
   .main {
     transition: @transition-ease-out;
@@ -25,5 +24,11 @@
         min-height: e("calc(100vh - 139px)");
       }
     }
+  }
+}
+
+:global {
+  .react-body {
+    overflow: scroll;
   }
 }
