@@ -274,12 +274,18 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 服务指标（经营指标）
   renderManagerServiceIndicators(param) {
+    const { cycle, location, push } = this.props;
     const headLine = { icon: 'kehufuwu', title: param.headLine };
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <CustomerService data={param.data} />
+            <CustomerService
+              data={param.data}
+              cycle={cycle}
+              location={location}
+              push={push}
+            />
           </IfEmpty>
         </RectFrame>
       </Col>
