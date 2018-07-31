@@ -1,8 +1,13 @@
 @import "../../src/css/variable.less";
+
+:global {
+  .react-body {
+    overflow: auto;
+  }
+}
+
 .layout {
   position: relative;
-  height: 100vh;
-  overflow: auto;
   .main {
     transition: @transition-ease-out;
     .content {

@@ -8,6 +8,7 @@
 import bowser from 'bowser';
 import qs from 'query-string';
 import { constants, fspContainer } from '../config';
+import permission from './permission';
 
 // 归一化浏览器名称
 function formatBowserName(name) {
@@ -125,7 +126,10 @@ const env = {
    */
   isGrayFlag() {
     const nativeQuery = qs.parse(window.location.search);
-    const grayFlag = window.grayFlag === true || nativeQuery.grayFlag === 'true';
+    const grayFlag =
+      window.grayFlag === true
+      || nativeQuery.grayFlag === 'true'
+      || permission.hasNewFeatureInvestPermission();
     return grayFlag;
   },
 };
