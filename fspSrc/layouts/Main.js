@@ -203,7 +203,7 @@ export default class Main extends PureComponent {
             </Helmet>
             {
               this.isMenuExists(menus) ?
-                <div className={styles.layout}>
+                <div id="react-layout" className={styles.layout}>
                   <Header
                     push={push}
                     location={location}
