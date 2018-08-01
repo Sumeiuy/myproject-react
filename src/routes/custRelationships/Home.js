@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-03 13:12:12
+ * @Last Modified time: 2018-07-31 17:46:30
  */
 
 import React, { PureComponent } from 'react';
@@ -25,7 +25,16 @@ import seibelHelper from '../../helper/page/seibel';
 
 // 客户关联关系申请左侧列表宽度
 const LEFT_PANEL_WIDTH = 500;
-const { custRelationships, custRelationships: { statusOptions, pageType } } = config;
+const {
+  custRelationships,
+  custRelationships: {
+    statusOptions,
+    pageType,
+    basicFilters,
+    moreFilters,
+    moreFilterData,
+  },
+ } = config;
 const effect = dva.generateEffect;
 const effects = {
   // 左侧列表
@@ -177,6 +186,19 @@ export default class CustRelationshipsHome extends PureComponent {
     this.getAppList();
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const { ...otherQuery } = query;
+    const { ...otherPrevQuery } = prevQuery;
+    if (!_.isEqual(otherQuery, otherPrevQuery)) {
+      const { pageNum, pageSize } = otherQuery;
+      this.queryAppList(otherQuery, pageNum, pageSize);
+    }
+  }
+
   @autobind
   getAppList() {
     const { location: { query, query: { pageNum, pageSize } } } = this.props;
@@ -254,8 +276,6 @@ export default class CustRelationshipsHome extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 打开新建申请的弹出框
@@ -284,9 +304,10 @@ export default class CustRelationshipsHome extends PureComponent {
         ...query,
         pageNum: nextPage,
         pageSize: currentPageSize,
+        // 翻页将当前申请id从url上清空
+        currentId: '',
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -301,9 +322,10 @@ export default class CustRelationshipsHome extends PureComponent {
         ...query,
         pageNum: 1,
         pageSize: changedPageSize,
+        // 翻页将当前申请id从url上清空
+        currentId: '',
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 点击列表每条的时候对应请求详情
@@ -397,13 +419,14 @@ export default class CustRelationshipsHome extends PureComponent {
         location={location}
         page="custRelationships"
         pageType={pageType}
-        needSubType={false}
         stateOptions={statusOptions}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
         isShowCreateBtn={this.handleShowCreateBtn}
-        needApplyTime
         isUseNewCustList
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

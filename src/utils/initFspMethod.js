@@ -5,8 +5,9 @@
 import _ from 'lodash';
 import env from '../helper/env';
 import os from '../helper/os';
-import { parse } from '../helper/url';
-import { fspRoutes } from '../config';
+import { parse, parseUrl } from '../helper/url';
+import { fspRoutes, retTabParam } from '../config';
+import { openRctTab } from './index';
 
 function findRoute(url) {
   return os.findBestMatch(url, fspRoutes, 'url');
@@ -55,6 +56,23 @@ function initFspMethod({ store, history }) {
     window.dispatch({
       type: 'customerPool/updateTodoList',
       flowId,
+    });
+  };
+
+  // 在fsp中新开一个iframe的tab
+  window.openRctTabFromIframe = function (url) {
+    const { pathname } = parseUrl(url);
+    const { param: filterParam } = _.filter(retTabParam, item => (item.key === pathname));
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      ...filterParam,
+    };
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
     });
   };
 
