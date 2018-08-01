@@ -62,7 +62,7 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
   } else {
     scrollTopValue = getScroll(target(), true);
   }
-  
+
   const targetElement = document.getElementById(href.substring(1));
   if (!targetElement) {
     return;
@@ -83,7 +83,7 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
     } else {
       window.scrollTo(window.pageXOffset, easeInOutCubic(time, scrollTopValue, targetScrollTop, 450));
     }
-    
+
     if (time < 450) {
       reqAnimFrame(frameFunc);
     } else {
@@ -120,16 +120,7 @@ export default class Anchor extends PureComponent {
     antAnchor: PropTypes.object,
   };
 
-  // noinspection JSAnnotator
-    refs: {
-      ink: PropTypes.any;
-  };
-
-  // private links: String[];
-  // private scrollEvent: any;
-  // private animating: boolean;
-
-  constructor(props: AnchorProps) {
+  constructor(props) {
     super(props);
     this.state = {
       activeLink: 'null',
