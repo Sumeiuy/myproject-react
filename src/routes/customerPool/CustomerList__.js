@@ -216,8 +216,8 @@ function getFilterParam(filterObj, hashString) {
   }
 
   // 持仓行业
-  if (filterObj.holdingIndustry) {
-    param.primaryKeyIndustry = _.compact([].concat(filterObj.holdingIndustry));
+  if (filterObj.primaryKeyIndustry) {
+    param.primaryKeyIndustry = _.compact([].concat(filterObj.primaryKeyIndustry));
   }
 
 
@@ -679,7 +679,7 @@ export default class CustomerList extends PureComponent {
     }
 
     if (query.source === 'association') {
-      if (query.type === 'PRODUCT') {
+      if (query.type === 'PRODUCT' || query.type === 'INDUSTRY') {
         param.searchTypeReq = null;
         param.searchText = null;
       }

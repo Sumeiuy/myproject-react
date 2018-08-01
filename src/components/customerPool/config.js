@@ -59,6 +59,11 @@ export const sourceFilter = {
       filterName: 'name',
       value: ['labelName'],
     }],
+    INDUSTRY: [{
+      // industry: 持仓行业
+      filterName: 'primaryKeyIndustry',
+      value: ['labelMapping'],
+    }],
   },
   // 来源于开通业务: 开通业务、可开通业务过滤器
   numOfCustOpened: [{
@@ -282,7 +287,7 @@ export const commonFilterList = [
   { labelName: '客户等级', filterField: 'customerLevel', dictField: 'custLevelList' },
   { labelName: '未完备信息', filterField: 'completedRate', dictField: 'completenessRateList' },
   { labelName: '账户状态', filterField: 'accountStatus', dictField: 'accountStatusList' },
-  { labelName: '持仓行业', filterField: 'holdingIndustry', dictField: 'industryList' },
+  { labelName: '持仓行业', filterField: 'primaryKeyIndustry', dictField: 'industryList' },
 ];
 
 // 带搜索的筛选组件集合

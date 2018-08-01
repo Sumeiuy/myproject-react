@@ -63,6 +63,7 @@ export default function createApi() {
     post(url, query = {}, options) {
       const finalUrl = padPrefix(url);
       const { ignoreCatch = false, ...resetQuery } = query;
+      console.log('emp: ', emp, urlHelper);
       return request(
         `${finalUrl}?empId=${emp.getId()}`,
         {

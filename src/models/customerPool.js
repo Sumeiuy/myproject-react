@@ -1086,7 +1086,15 @@ export default {
       // 返回的数据的primaryKey不能重复
       return {
         ...state,
-        hotPossibleWdsList: _.uniqBy(possibleWdsList, 'primaryKey'),
+        hotPossibleWdsList: _.uniqBy(possibleWdsList, 'primaryKey').concat([
+          {
+            description: 'ddd',
+            name: '房地产',
+            primaryKey: '430000',
+            type: 'INDUSTRY',
+            value: '房地产',
+          }
+        ]),
       };
     },
     getCustomerListSuccess(state, action) {

@@ -422,7 +422,7 @@ const matchRule = {
       render: 'renderNoCompleted',
     }],
   },
-  holdingIndustry: {
+  primaryKeyIndustry: {
     inset: true,
     key: [{
       name: '持仓行业',
