@@ -134,6 +134,9 @@ export default class CustomerLists extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryHoldingIndustryDetail: PropTypes.func.isRequired,
+    industryDetail: PropTypes.object.isRequired,
+    queryHoldingIndustryDetailReqState: PropTypes.bool,
     queryCustSignedLabels: PropTypes.func.isRequired,
     queryLikeLabelInfo: PropTypes.func.isRequired,
     signCustLabels: PropTypes.func.isRequired,
@@ -152,6 +155,7 @@ export default class CustomerLists extends PureComponent {
     orgId: null,
     collectCustRange: () => { },
     queryHoldingProductReqState: false,
+    queryHoldingIndustryDetailReqState: false,
   }
 
   static contextTypes = {
@@ -521,6 +525,9 @@ export default class CustomerLists extends PureComponent {
       currentCommonServiceRecord,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
+      queryHoldingIndustryDetail,
+      industryDetail,
+      queryHoldingIndustryDetailReqState,
       custLabel,
       custLikeLabel,
       queryLikeLabelInfo,
@@ -678,6 +685,9 @@ export default class CustomerLists extends PureComponent {
                     queryHoldingProductReqState={queryHoldingProductReqState}
                     queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
                     holdingSecurityData={holdingSecurityData}
+                    queryHoldingIndustryDetail={queryHoldingIndustryDetail}
+                    industryDetail={industryDetail}
+                    queryHoldingIndustryDetailReqState={queryHoldingIndustryDetailReqState}
                     queryCustSignLabel={this.queryCustSignLabel}
                   />,
                 )
