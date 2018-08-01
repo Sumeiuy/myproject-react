@@ -1,8 +1,8 @@
 /*
  * @Author: WangJunJun
  * @Date: 2018-08-01 18:30:42
- * @Last Modified by:   WangJunJun
- * @Last Modified time: 2018-08-01 18:30:42
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-01 20:50:20
  */
 
 import check from './check';
@@ -81,5 +81,4 @@ export {
   getIconType,
   date,
 };
-
 export default {};
