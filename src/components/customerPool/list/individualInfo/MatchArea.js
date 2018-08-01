@@ -75,6 +75,7 @@ export default class MatchArea extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
     empInfo: PropTypes.object,
+    dict: PropTypes.object,
   };
 
   constructor(props) {
@@ -253,18 +254,31 @@ export default class MatchArea extends PureComponent {
     });
   }
 
+  // 如果含有周期项，则个性化信息label前添加周期描述
+  convertCycle(id) {
+    const { dict: { kPIDateScopeType } } = this.context;
+    const filter = this.getFilters();
+    const currentFilter = filter[id];
+    const cycleCode = currentFilter[0];
+    const { value } = _.find(kPIDateScopeType, cycleItem => cycleItem.key === cycleCode);
+    return value;
+  }
+
   // 直接取后端返回值渲染的情况
   renderDefaultVal(item) {
     const {
       listItem,
     } = this.props;
-    const { name, id, unit = '' } = item;
+    const { name, id, unit = '', hasCycle } = item;
     const currentVal = listItem[id];
     if (!_.isNull(currentVal)) {
       return (
         <li title={currentVal}>
           <span>
-            <i className="label">{name}：</i>
+            <i className="label">
+              {hasCycle ? this.convertCycle(id) : ''}
+              {name}：
+            </i>
             {
               unit === '元' ?
                 number.thousandFormat(Number(currentVal).toFixed(2), false) :
