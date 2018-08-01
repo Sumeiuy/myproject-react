@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-01 20:39:51
+ * @Last Modified time: 2018-08-01 23:20:20
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -94,7 +94,7 @@ export default class Stock extends PureComponent {
   }
 
   @autobind
-  rowClickHandle(record) {
+  handleRowClick(record) {
     const { id, title, code, eventType, stockName } = record;
     const { push } = this.props;
     const { type, pageSize, pageNum, keyword } = this.state;
@@ -303,7 +303,7 @@ export default class Stock extends PureComponent {
                 dataSource={list}
                 pagination={false}
                 onRow={record => ({
-                  onClick: () => this.rowClickHandle(record),       // 点击行
+                  onClick: () => this.handleRowClick(record),       // 点击行
                 })}
                 rowKey="id"
               />
