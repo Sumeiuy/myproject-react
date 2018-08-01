@@ -53,7 +53,7 @@ function getIconType(name) {
   return iconType;
 }
 
-export default {
+export {
   check,
   data,
   dom,
@@ -74,3 +74,4 @@ export default {
   getIconType,
   date,
 };
+export default {};

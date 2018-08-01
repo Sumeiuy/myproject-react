@@ -269,10 +269,10 @@ export default class ChartBarNormal extends PureComponent {
     const levelWealthArr = this.getChartData(orgModel, 'level3Name', 'yAxis');
     // 营业部
     const levelStoreArr = this.getChartData(orgModel, 'level4Name', 'yAxis');
-    // 此处为y轴刻度值
-    const yAxisLabels = this.getChartData(orgModel, levelName, 'yAxis');
     // 工号数组
     const levelIdArr = this.getChartData(orgModel, levelId, 'yAxis');
+    // 此处为y轴刻度值
+    const yAxisLabels = this.getChartData(orgModel, levelName, 'yAxis');
     // 取出所有的value,并将value转化成数字
     let seriesData = this.getChartData(orgModel, 'value', 'xAxis');
     seriesData = seriesData.map(item => Number(item));
@@ -381,9 +381,10 @@ export default class ChartBarNormal extends PureComponent {
         const seriesName = item.seriesName;
         let value = item.data.value;
         const dataIndex = item.dataIndex;
-        const id = levelIdArr[dataIndex];
+        let id = levelIdArr[dataIndex];
         if (axisValue === '--') {
           value = '--';
+          id = '--';
         }
 
         let tooltipHead = '';
