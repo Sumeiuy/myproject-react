@@ -308,7 +308,7 @@ export default class CustomerLists extends PureComponent {
     const {
       location: {
         query,
-      pathname,
+        pathname,
       },
       replace,
       handleSelect,
