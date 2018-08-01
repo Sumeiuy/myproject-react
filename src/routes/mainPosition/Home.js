@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置Home页面
  * @Date: 2018-01-29 13:25:30
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-19 17:45:11
+ * @Last Modified time: 2018-08-01 09:53:37
  */
 
 import React, { PureComponent } from 'react';
@@ -153,11 +153,9 @@ export default class MainPosition extends PureComponent {
     const {
       location: { query },
     } = this.props;
-    const { ...otherQuery } = query;
-    const { ...otherPrevQuery } = prevQuery;
-    if (!_.isEqual(otherQuery, otherPrevQuery)) {
-      const { pageNum, pageSize } = otherQuery;
-      this.queryAppList(otherQuery, pageNum, pageSize);
+    if (!_.isEqual(query, prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
     }
   }
 
