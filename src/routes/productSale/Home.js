@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-08-01 16:03:07
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-01 20:46:20
+ * @Last Modified time: 2018-08-01 21:09:35
  */
 
 import React, { PureComponent } from 'react';
@@ -21,7 +21,7 @@ export default class productSale extends PureComponent {
   };
   render() {
     const { location: { pathname } } = this.props;
-    const iframePath = _.filter(iframe, item => (item.path === pathname));
+    const { iframePath } = _.filter(iframe, item => (item.path === pathname))[0];
     return (
       <iframe src={iframePath} className={styles.productSale} frameBorder="no" />
     );
