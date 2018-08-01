@@ -4,21 +4,13 @@ import dynamic from 'dva/dynamic';
 import CustomerPool from '../routes/customerPool/Home';
 import TaskList from '../routes/taskList/connectedHome';
 import TaskFlow from '../routes/customerPool/TaskFlow';
-import CustomerList from '../routes/customerPool/CustomerList';
-import CustomerList__ from '../routes/customerPool/CustomerList__';
+import CustomerListWrapper from '../routes/customerPool/CustomerListWrapper';
 import ReportHome from '../routes/reports/Home';
 import CreateTask from '../routes/customerPool/CreateTask';
 import CustomerGroupManage from '../routes/customerPool/CustomerGroupManage';
 import { env } from '../helper';
 
 let routerDataCache;
-
-function getCustomerListComponent() {
-  if (env.isGrayFlag()) {
-    return CustomerList__;
-  }
-  return CustomerList;
-}
 
 const modelNotExisted = (app, model) => (
   // eslint-disable-next-line
@@ -209,7 +201,7 @@ export const getRouterData = (app) => {
     },
     // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
     '/customerPool/list': {
-      component: getCustomerListComponent(),
+      component: CustomerListWrapper,
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {

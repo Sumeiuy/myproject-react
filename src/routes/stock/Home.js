@@ -2,8 +2,8 @@
  * @Description: 个股页面
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-16 20:29:31
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-31 18:43:57
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -98,7 +98,10 @@ export default class Stock extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '个股资讯',
-      type: '$props.location.query.type',
+      value: '$args[0].id',
+      title: '$args[0].title',
+      code: '$args[0].code',
+      type: '$args[1]',
     },
   })
   rowClickHandle(record) {
