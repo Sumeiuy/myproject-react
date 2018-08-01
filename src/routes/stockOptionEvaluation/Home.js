@@ -2,8 +2,8 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-13 10:52:43
- */
+ * @Last Modified time: 2018-07-31 17:50:05
+*/
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -24,7 +24,16 @@ import seibelHelper from '../../helper/page/seibel';
 import permission from '../../helper/permission';
 import logable from '../../decorators/logable';
 
-const { stockOptionApply, stockOptionApply: { statusOptions, pageType } } = config;
+const {
+  stockOptionApply,
+  stockOptionApply: {
+    statusOptions,
+    pageType,
+    basicFilters,
+    moreFilters,
+    moreFilterData,
+  },
+} = config;
 
 const effect = dva.generateEffect;
 const effects = {
@@ -193,6 +202,19 @@ export default class StockOptionApplication extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const { ...otherQuery } = query;
+    const { ...otherPrevQuery } = prevQuery;
+    if (!_.isEqual(otherQuery, otherPrevQuery)) {
+      const { pageNum, pageSize } = otherQuery;
+      this.queryAppList(otherQuery, pageNum, pageSize);
+    }
+  }
+
   // 获取右侧列表
   @autobind
   getRightDetail() {
@@ -299,8 +321,6 @@ export default class StockOptionApplication extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 切换页码
@@ -317,7 +337,6 @@ export default class StockOptionApplication extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -334,7 +353,6 @@ export default class StockOptionApplication extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 关闭新建弹窗
@@ -410,6 +428,9 @@ export default class StockOptionApplication extends PureComponent {
         isUseOfCustomer
         needApplyTime
         isUseNewCustList
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

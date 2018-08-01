@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Description: 服务经理主职位设置Home页面
  * @Date: 2018-01-29 13:25:30
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-02-28 14:57:20
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-31 17:46:59
  */
 
 import React, { PureComponent } from 'react';
@@ -27,7 +27,16 @@ import config from '../../components/mainPosition/config';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
 
-const { mainPosition, mainPosition: { pageType, status } } = config;
+const {
+  mainPosition,
+  mainPosition: {
+    pageType,
+    status,
+    basicFilters,
+    moreFilters,
+    moreFilterData,
+  },
+} = config;
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,
   payload: query || {},
@@ -141,6 +150,19 @@ export default class MainPosition extends PureComponent {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const { ...otherQuery } = query;
+    const { ...otherPrevQuery } = prevQuery;
+    if (!_.isEqual(otherQuery, otherPrevQuery)) {
+      const { pageNum, pageSize } = otherQuery;
+      this.queryAppList(otherQuery, pageNum, pageSize);
+    }
+  }
+
   // 获取右侧详情
   @autobind
   getRightDetail() {
@@ -201,8 +223,6 @@ export default class MainPosition extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 判断当前登录用户部门是否是分公司
@@ -258,7 +278,6 @@ export default class MainPosition extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -274,7 +293,6 @@ export default class MainPosition extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 点击列表每条的时候对应请求详情
@@ -350,11 +368,12 @@ export default class MainPosition extends PureComponent {
         replace={replace}
         page="mainPositionPage"
         pageType={pageType}
-        needSubType={false}
         stateOptions={status}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
-        isUseOfCustomer={false}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

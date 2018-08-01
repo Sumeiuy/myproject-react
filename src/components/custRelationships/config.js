@@ -2,10 +2,10 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系申请的配置文件
  * @Date: 2018-06-08 13:32:19
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-21 20:17:15
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-31 17:37:28
  */
-
+import { customer, status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
 
 const config = {
   custRelationships: {
@@ -14,7 +14,7 @@ const config = {
     statusOptions: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -37,6 +37,20 @@ const config = {
         label: '驳回',
         value: '04',
       },
+    ],
+    basicFilters: [
+      customer,
+      status,
+      drafter,
+      applyTime,
+    ],
+    moreFilters: [
+      department,
+      approver,
+    ],
+    moreFilterData: [
+      { value: '部门', key: 'orgId' },
+      { value: '审批人', key: 'approvalId' },
     ],
   },
   CUST_RELATIONSHIP_COLUMNS: [
