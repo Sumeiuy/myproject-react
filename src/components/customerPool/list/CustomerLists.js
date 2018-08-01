@@ -690,6 +690,7 @@ export default class CustomerLists extends PureComponent {
         >
           <Pagination
             {...paginationOption}
+            showTotal={total => `共${total}位匹配客户`}
           />
         </div>
         {
