@@ -4,15 +4,15 @@
  * @author xiaZhiQiang
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-13 16:22:32
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-01 16:56:06
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { autobind } from 'core-decorators';
-import { isSightingScope, handleOpenFsp360TabAction } from '../../helper';
+import { isSightingScope, handleOpenFsp360TabAction, getDetailBtnVisible } from '../../helper';
 import { url as urlHelper, url, number } from '../../../../helper';
 import { seperator, sessionStore } from '../../../../config';
 import { openRctTab } from '../../../../utils/index';
@@ -77,18 +77,21 @@ export default class MatchArea extends PureComponent {
     empInfo: PropTypes.object,
   };
 
-  constructor(props) {
+  constructor(props, context) {
     super(props);
     const {
       dict: {
         custBusinessType = [],
-        custUnrightBusinessType = [],
+      custUnrightBusinessType = [],
       },
       location: {
         query,
       },
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      listItem,
     } = props;
-
+    const { empInfo: { empInfo = {} } } = context;
     this.businessConfig = new Map();
     this.hashString = query.hashString || RANDOM;
     custBusinessType.forEach((item) => {
@@ -102,6 +105,13 @@ export default class MatchArea extends PureComponent {
     this.state = {
       showAll: false,
     };
+    // 是否显示持仓产品、持仓行业、订购组合查看详情的按钮
+    this.isShowDetailBtn = getDetailBtnVisible({
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      empInfo,
+      customerData: listItem,
+    });
   }
 
   getFilters() {
@@ -159,26 +169,12 @@ export default class MatchArea extends PureComponent {
   // 根据持仓产品的字段返回单个持仓产品的html
   getSingleHoldingProductNode(list, keyword) {
     const {
-      listItem: { isPrivateCustomer, empId, custId },
-      hasNPCTIQPermission,
-      hasPCTIQPermission,
+      listItem: { custId },
       queryHoldingProduct,
       holdingProducts,
       queryHoldingProductReqState,
       formatAsset,
     } = this.props;
-    const { empInfo: { empInfo = {} } } = this.context;
-    // 是否显示’持仓详情‘，默认不显示
-    let isShowDetailBtn = false;
-    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
-    if (hasNPCTIQPermission && !isPrivateCustomer) {
-      isShowDetailBtn = true;
-    }
-    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
-    // 主服务经理 可以看名下所有客户的持仓信息
-    if (hasPCTIQPermission || empInfo.rowId === empId) {
-      isShowDetailBtn = true;
-    }
     if (!_.isEmpty(list)) {
       const { name, code } = list[0] || {};
       const htmlString = `${replaceWord({ value: name, searchText: keyword })}/${replaceWord({ value: code, searchText: keyword })}`;
@@ -195,7 +191,7 @@ export default class MatchArea extends PureComponent {
           <span>
             <i className="label">持仓产品：</i>
             <i dangerouslySetInnerHTML={{ __html: htmlString }} />
-            {isShowDetailBtn && <HoldingProductDetail {...props} />}
+            {this.isShowDetailBtn && <HoldingProductDetail {...props} />}
           </span>
         </li>
       );
@@ -302,27 +298,13 @@ export default class MatchArea extends PureComponent {
   @autobind
   renderOrderCombination() {
     const {
-      listItem: { jxgrpProducts, isPrivateCustomer, empId, custId },
-      hasNPCTIQPermission,
-      hasPCTIQPermission,
+      listItem: { jxgrpProducts, custId },
       queryHoldingSecurityRepetition,
       holdingSecurityData,
       formatAsset,
     } = this.props;
     const { primaryKeyJxgrps } = this.getFilters();
     if (!_.isEmpty(jxgrpProducts)) {
-      const { empInfo: { empInfo = {} } } = this.context;
-      // 是否显示’持仓详情‘，默认不显示
-      let isShowDetailBtn = false;
-      // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
-      if (hasNPCTIQPermission && !isPrivateCustomer) {
-        isShowDetailBtn = true;
-      }
-      // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
-      // 主服务经理 可以看名下所有客户的持仓信息
-      if (hasPCTIQPermission || empInfo.rowId === empId) {
-        isShowDetailBtn = true;
-      }
       const id = decodeURIComponent(primaryKeyJxgrps[0]);
       const currentItem = _.find(jxgrpProducts, item => item.id === id);
       if (!_.isEmpty(currentItem)) {
@@ -347,7 +329,7 @@ export default class MatchArea extends PureComponent {
                 </em>
                 /{combinationId}
               </i>
-              {isShowDetailBtn && <HoldingCombinationDetail {...props} />}
+              {this.isShowDetailBtn && <HoldingCombinationDetail {...props} />}
             </span>
           </li>
         );
@@ -667,26 +649,12 @@ export default class MatchArea extends PureComponent {
   renderHoldingIndustry() {
     const {
       listItem,
-      listItem: { isPrivateCustomer, empId, custId, holdingIndustry },
-      hasNPCTIQPermission,
-      hasPCTIQPermission,
+      listItem: { custId, holdingIndustry },
       queryHoldingIndustryDetail,
       industryDetail,
       formatAsset,
       queryHoldingIndustryDetailReqState,
     } = this.props;
-    const { empInfo: { empInfo = {} } } = this.context;
-    // 是否显示’持仓详情‘，默认不显示
-    let isShowDetailBtn = false;
-    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓行业信息
-    if (hasNPCTIQPermission && !isPrivateCustomer) {
-      isShowDetailBtn = true;
-    }
-    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓行业信息
-    // 主服务经理 可以看名下所有客户的持仓信息
-    if (hasPCTIQPermission || empInfo.rowId === empId) {
-      isShowDetailBtn = true;
-    }
     if (!_.isEmpty(holdingIndustry)) {
       const { name, id } = holdingIndustry[0] || {};
       const props = {
@@ -706,7 +674,7 @@ export default class MatchArea extends PureComponent {
                 {name}
               </em>
             </i>
-            {isShowDetailBtn && <HoldingIndustryDetail {...props} />}
+            {this.isShowDetailBtn && <HoldingIndustryDetail {...props} />}
           </span>
         </li>
       );

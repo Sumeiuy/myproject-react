@@ -231,7 +231,7 @@ export const getRouterData = (app) => {
     },
     // 从管理者视图服务经理维度发起任务
     '/customerPool/createTaskFromCustScope': {
-      component: CreateTask 
+      component: CreateTask
     },
     // 客户列表发起任务
     '/customerPool/createTask': {
@@ -376,6 +376,14 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, [], () =>
         import('../components/platformParameterSetting/routers/customerLabel/index' /* webpackChunkName: "customerLabel" */)),
     },
+    '/sysOperate/platformParameterSetting/productSale/keyFirstPublicOffering': {
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/productSale/Home' /* webpackChunkName: "productSaleKeyFirstPublicOffering" */)),
+    },
+    '/sysOperate/platformParameterSetting/productSale/filialeAnnualTarget': {
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/productSale/Home' /* webpackChunkName: "productSaleFilialeAnnualTarget" */)),
+    },
     // 公务手机和电话卡号管理
     '/sysOperate/telephoneNumberManage': {
       component: dynamicWrapper(app, ['telephoneNumberManage'], () =>
@@ -444,35 +452,35 @@ export const getRouterData = (app) => {
     },
     // 直接进入，重点监控账户
     '/keyMonitorAccount': {
-      component: dynamicWrapper(app, ['keyMonitorAccount'], () => 
+      component: dynamicWrapper(app, ['keyMonitorAccount'], () =>
         import('../routes/keyMonitorAccount/Home' /* webpackChunkName: "keyMonitorAccount" */)),
     },
     // 最新观点，直接进入
     '/latestView': {
-      component: dynamicWrapper(app, ['latestView'], () => 
+      component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/Home' /* webpackChunkName: "latestView"*/)),
     },
     // 首席观点列表页面
     '/latestView/viewpointList': {
-      component: dynamicWrapper(app, ['latestView'], () => 
+      component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/ViewpointList' /* webpackChunkName: "latestViewpointList" */)),
     },
     // 首席观点详情页
     '/latestView/viewpointDetail': {
-      component: dynamicWrapper(app, ['latestView'], () => 
+      component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/ViewpointDetail' /* webpackChunkName: "latestViewpointDetail" */)),
     },
     // 大类资产配置分析列表
     '/latestView/majorAssetsList': {
-      component: dynamicWrapper(app, ['latestView'], () => 
+      component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/MajorAssetsList' /* webpackChunkName: "majorAssetsList"*/)),
     },
     // 行业主题调整信息列表
     '/latestView/industryThemeList': {
-      component: dynamicWrapper(app, ['latestView'], () => 
+      component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/IndustryThemeList' /* webpackChunkName: "industryThemeList"*/)),
     },
-    // 股票期权评估申请 
+    // 股票期权评估申请
     '/stockOptionEvaluation': {
       component: dynamicWrapper(app, ['stockOptionEvaluation'], () =>
         import('../routes/stockOptionEvaluation/Home') /* webpackChunkName: "stockOptionEvaluation" */),
