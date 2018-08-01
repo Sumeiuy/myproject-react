@@ -22,8 +22,8 @@ import ImgTGJX from './img/bg_tgjx.png';
 import withRouter from '../../decorators/withRouter';
 import { fspContainer } from '../../config';
 import { logPV } from '../../decorators/logable';
-import styles from './Home.less';
-
+import stylesFsp from './Home.less';
+import stylesReact from './Home_React.less';
 
 const fsp = document.querySelector(fspContainer.container);
 const showBtn = document.querySelector(fspContainer.showBtn);
@@ -105,14 +105,12 @@ export default class BoardManageHome extends PureComponent {
     let contentWidth;
     let scrollX;
     let leftWidth;
-    const position = env.isInReact() ? 'relative' : 'fixed';
     if (fsp) {
       contentWidth = dom.getCssStyle(contentWrapper, 'width');
       scrollX = window.scrollX;
       leftWidth = parseInt(dom.getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     }
     this.state = {
-      position,
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
       top: fsp ? '55px' : 0,
       left: fsp ? `${leftWidth - scrollX}px` : 0,
@@ -324,15 +322,15 @@ export default class BoardManageHome extends PureComponent {
       confirm: this.publishBoardCofirm,
     };
 
-    const { top, left, width, position } = this.state;
+    const { top, left, width } = this.state;
     const isInReact = env.isInReact();
+    const styles = isInReact ? stylesReact : stylesFsp;
     return (
       <div className="page-invest content-inner">
         <div>
           <div
+            className={styles.boardLayout}
             style={{
-              position,
-              zIndex: 30,
               width,
               top,
               left,

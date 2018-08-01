@@ -184,7 +184,7 @@ export default class Tab extends PureComponent {
   onChange(activeKey) {
     const { push } = this.props;
     const { panes } = this.state;
-    const pane = panes.find(item => item.id === activeKey);
+    const pane = _.find(panes, item => item.id === activeKey);
     // 调用push时同时传递pathname，query
     push({
       pathname: pane.path,
@@ -212,7 +212,7 @@ export default class Tab extends PureComponent {
         pane = changePanes[index];
       }
     } else { // 如果移除的tabKey不是当前的tab, 仅移除对应tab，不做跳转
-      pane = changePanes.find(item => item.id === activeKey);
+      pane = _.find(changePanes, item => item.id === activeKey);
     }
     // 将tab信息保存到本地
     storeTabInfo({
