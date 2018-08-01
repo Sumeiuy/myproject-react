@@ -7,7 +7,7 @@ import env from '../helper/env';
 import os from '../helper/os';
 import { parse, parseUrl } from '../helper/url';
 import { fspRoutes, retTabParam } from '../config';
-import { openRctTab } from './index';
+import { openRctTab } from './controlPane';
 
 function findRoute(url) {
   return os.findBestMatch(url, fspRoutes, 'url');
