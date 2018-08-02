@@ -650,8 +650,12 @@ export default class CustomerLists extends PureComponent {
             </div>
           </div>
           <div className={styles.simplePagination}>
-            <span>共{curTotal}条</span>
-            <Pagination key={paginationOption.current} simple {...paginationOption} />
+            <span>共{curTotal}位匹配客户</span>
+            <Pagination
+              key={paginationOption.current}
+              simple
+              {...paginationOption}
+            />
           </div>
         </div>
         {
@@ -705,6 +709,7 @@ export default class CustomerLists extends PureComponent {
           <Pagination
             key={paginationOption.current}
             {...paginationOption}
+            showTotal={total => `共${total}位匹配客户`}
           />
         </div>
         {
