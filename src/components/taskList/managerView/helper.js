@@ -1,3 +1,12 @@
+/*
+ * @Author: WangJunJun
+ * @Date: 2018-08-02 21:09:41
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-02 21:11:54
+ */
+
+
+import _ from 'lodash';
 import { emp } from '../../../helper';
 import { ORG_LEVEL1, ORG_LEVEL2, ORG_LEVEL3 } from '../../../config/orgTreeLevel';
 import {
@@ -14,10 +23,16 @@ export default {};
 /**
 * 根据orgId,判断当前机构level和当前维度可选项
 */
-export function judgeCurrentOrgLevel({ custRange, orgId = emp.getOrgId() }) {
+export function judgeCurrentOrgLevel({ custRange, orgId = emp.getOrgId(), ptyMngId = '' }) {
   // 来自营业部
   let level = ORG_LEVEL3;
   let currentScopeList = [EMP_MANAGER_SCOPE_ITEM];
+  if (!_.isEmpty(ptyMngId)) {
+    return {
+      currentScopeList,
+      level,
+    };
+  }
   // 判断是否是经纪总部
   if (emp.isManagementHeadquarters(orgId)) {
     level = ORG_LEVEL1;
