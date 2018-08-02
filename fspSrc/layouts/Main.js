@@ -197,13 +197,13 @@ export default class Main extends PureComponent {
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
           <IEWarningModal />
+          <Helmet>
+            <link rel="icon" href={constants.logoSrc} type="image/x-icon" />
+          </Helmet>
           <ErrorBoundary location={location}>
-            <Helmet>
-              <link rel="icon" href={constants.logoSrc} type="image/x-icon" />
-            </Helmet>
             {
               this.isMenuExists(menus) ?
-                <div className={styles.layout}>
+                <div id="react-layout" className={styles.layout}>
                   <Header
                     push={push}
                     location={location}
