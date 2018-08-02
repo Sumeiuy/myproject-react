@@ -60,7 +60,6 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 
 
 const mapStateToProps = state => ({
-  globalLoading: state.activity.global,
   historyCore: state.history.historyCore, // 核心指标
   crrData: state.history.currentRankingRecord, // 雷达图数据
   custRange: state.history.custRange, // 页面右上角组织机构树
@@ -119,7 +118,6 @@ export default class HistoryHome extends PureComponent {
     custRange: PropTypes.array.isRequired,
     visibleBoards: PropTypes.array.isRequired,
     newVisibleBoards: PropTypes.array.isRequired,
-    globalLoading: PropTypes.bool,
     queryContrastAnalyze: PropTypes.func.isRequired,
     contributionAnalysis: PropTypes.object.isRequired,
     reviewAnalysis: PropTypes.object.isRequired,
@@ -155,7 +153,6 @@ export default class HistoryHome extends PureComponent {
     createLoading: false,
     deleteLoading: false,
     updateLoading: false,
-    globalLoading: false,
     operateData: {},
     message: '',
   }

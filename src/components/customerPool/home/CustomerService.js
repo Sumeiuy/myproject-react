@@ -15,7 +15,7 @@ import { linkTo } from './homeIndicators_';
 
 import antdStyles from '../../../css/antd.less';
 import styles from './customerService.less';
-import { env } from '../../../helper';
+import { permission } from '../../../helper';
 
 const SOURCE = 'manageService';
 
@@ -87,7 +87,7 @@ export default class CustomerService extends PureComponent {
 
   @autobind
   handleToList() {
-    if (env.isGrayFlag()) {
+    if (permission.isGrayFlag()) {
       const { cycle, location, push } = this.props;
       const params = {
         cycle,

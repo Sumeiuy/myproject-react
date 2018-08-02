@@ -30,7 +30,7 @@ import retTabParam from './retTabParam';
 
 const sessionStore = engine.createStore([sessionStorage, cookieStorage]);
 
-export default {
+export {
   constants,
   fspContainer,
   sessionStore,

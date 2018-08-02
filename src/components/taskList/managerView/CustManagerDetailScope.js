@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 16:46:28
+ * @Last Modified time: 2018-08-02 18:03:34
  * 服务经理维度任务统计
  */
 
@@ -357,10 +357,11 @@ export default class CustManagerDetailScope extends PureComponent {
     const { currentSelectScope } = this.state;
     const { location: { query: { ptyMngId } } } = this.props;
     // 按服务经理筛选时，数据按服务经理维度查询
-    let currentScope = EMP_MANAGER_SCOPE;
-    if (_.isEmpty(ptyMngId) || !_.isEmpty(currentSelectScope)) {
-      currentScope = currentSelectScope;
+    let currentScope = currentSelectScope;
+    if (!_.isEmpty(ptyMngId) || _.isEmpty(currentSelectScope)) {
+      currentScope = EMP_MANAGER_SCOPE;
     }
+    // const currentScope = !_.isEmpty(ptyMngId) ? EMP_MANAGER_SCOPE : (currentSelectScope || EMP_MANAGER_SCOPE);
     return (
       <div className={styles.titleSection}>
         <div className={`${styles.tableTitle} tableTitle`}>明细进度</div>
