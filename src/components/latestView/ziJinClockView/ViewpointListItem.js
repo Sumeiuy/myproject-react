@@ -91,12 +91,12 @@ export default class ViewpointListItem extends PureComponent {
     const query = {
       keyword: code,
     };
-    const url = `/stock?${urlHelper.stringify(query)}`;
+    const url = `/strategyCenter/stock?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: url,
+      pathname: '/strategyCenter/stock',
     });
   }
 
