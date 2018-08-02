@@ -37,45 +37,6 @@ export default class QuickMenu extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '添加到分组' } })
-  addToGroup({ custId, name }) {
-    const {
-      condition,
-      location: {
-        pathname,
-        search,
-        query: {
-          source,
-        },
-      },
-      entertype,
-      goGroupOrTask,
-    } = this.props;
-    const fr = encodeURIComponent(`${pathname}${search}`);
-    const condt = encodeURIComponent(JSON.stringify(condition));
-    const obj = {
-      ids: custId,
-      count: 1,
-      entertype,
-      source,
-      name,
-      condition: condt,
-      fr,
-    };
-    const url = '/customerPool/customerGroup';
-    goGroupOrTask({
-      id: 'RCT_FSP_CUSTOMER_LIST',
-      title: '新建分组',
-      url,
-      obj,
-      shouldStay: true,
-      editPane: {
-        name: '新建分组',
-      },
-    });
-  }
-
-  @autobind
   @logable({
     type: 'Click',
     payload: {
@@ -100,10 +61,6 @@ export default class QuickMenu extends PureComponent {
           <li onClick={() => this.handleTelephoneClick(listItem)}>
             <Icon type="lianxikehu" />
             <span>联系客户</span>
-          </li>
-          <li onClick={() => this.addToGroup(listItem)}>
-            <Icon type="tianjiadaofenzu" />
-            <span>加到分组</span>
           </li>
           <li onClick={() => this.handleAddServiceRecordClick(listItem)}>
             <Icon type="fuwujilu" />
