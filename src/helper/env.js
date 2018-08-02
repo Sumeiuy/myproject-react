@@ -85,7 +85,7 @@ const env = {
    * 获取react content容器
    */
   getReactContainer() {
-    return document.querySelector('#react-content');
+    return document.querySelector('#react-layout');
   },
   /**
    * 判断当前浏览器是否IE

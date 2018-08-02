@@ -7,7 +7,7 @@ import env from '../helper/env';
 import os from '../helper/os';
 import { parse, parseUrl } from '../helper/url';
 import { fspRoutes, retTabParam } from '../config';
-import { openRctTab } from './index';
+import { openRctTab } from './controlPane';
 
 function findRoute(url) {
   return os.findBestMatch(url, fspRoutes, 'url');
@@ -62,7 +62,7 @@ function initFspMethod({ store, history }) {
   // 在fsp中新开一个iframe的tab
   window.openRctTabFromIframe = function (url) {
     const { pathname } = parseUrl(url);
-    const { param: filterParam } = _.filter(retTabParam, item => (item.key === pathname));
+    const { param: filterParam } = _.filter(retTabParam, item => (item.key === pathname))[0];
     const param = {
       closable: true,
       forceRefresh: true,

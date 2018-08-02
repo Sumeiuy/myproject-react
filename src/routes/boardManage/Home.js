@@ -13,7 +13,7 @@ import { connect } from 'dva';
 import { Col, Row, message } from 'antd';
 import _ from 'lodash';
 
-import { dom, emp } from '../../helper';
+import { dom, emp, env } from '../../helper';
 import BoardSelect from '../../components/pageCommon/BoardSelect';
 import BoardItem from '../../components/pageCommon/BoardItem';
 import { CreateBoardModal, DeleteBoardModal, PublishConfirmModal } from '../../components/modals';
@@ -22,8 +22,8 @@ import ImgTGJX from './img/bg_tgjx.png';
 import withRouter from '../../decorators/withRouter';
 import { fspContainer } from '../../config';
 import { logPV } from '../../decorators/logable';
-import styles from './Home.less';
-
+import stylesFsp from './Home.less';
+import stylesReact from './Home_React.less';
 
 const fsp = document.querySelector(fspContainer.container);
 const showBtn = document.querySelector(fspContainer.showBtn);
@@ -323,13 +323,14 @@ export default class BoardManageHome extends PureComponent {
     };
 
     const { top, left, width } = this.state;
+    const isInReact = env.isInReact();
+    const styles = isInReact ? stylesReact : stylesFsp;
     return (
       <div className="page-invest content-inner">
         <div>
           <div
+            className={styles.boardLayout}
             style={{
-              position: 'fixed',
-              zIndex: 30,
               width,
               top,
               left,
@@ -350,7 +351,9 @@ export default class BoardManageHome extends PureComponent {
               </Row>
             </div>
           </div>
-          <div style={{ height: '40px' }} />
+          {
+            isInReact ? null : <div style={{ height: '40px' }} />
+          }
         </div>
         <div className={styles.boardList}>
           <Row gutter={19}>
