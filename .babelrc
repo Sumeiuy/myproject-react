@@ -16,6 +16,7 @@
         "style": true
       }
     ],
+    "add-module-exports",
     "transform-decorators-legacy"
   ],
   "env": {
@@ -31,5 +32,5 @@
       ]
     }
   },
-  "comments": true
+  "comments": false
 }
