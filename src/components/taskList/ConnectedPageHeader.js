@@ -16,6 +16,8 @@ const mapStateToProps = state => ({
   drafterList: state.app.drafterList,
   // 执行者视图头部查询到的客户列表
   customerList: state.performerView.customerList,
+  // 查询的服务经理列表
+  serverManagerList: state.performerView.serverManagerList,
 });
 
 const mapDispatchToProps = {
@@ -23,6 +25,10 @@ const mapDispatchToProps = {
   getDrafterList: fetchDataFunction(false, 'app/getDrafterList'),
   // 执行者视图头部查询客户
   queryCustomer: fetchDataFunction(false, 'performerView/queryCustomer'),
+  // 清除服务经理列表数据
+  clearServiceManagerList: fetchDataFunction(false, 'performerView/clearServiceManagerList'),
+  // 服务经理列表数据
+  getSearchPersonList: fetchDataFunction(false, 'performerView/getSearchPersonList'),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PageHeader);

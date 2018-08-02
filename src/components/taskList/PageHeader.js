@@ -13,6 +13,7 @@ import moment from 'moment';
 import { Input } from 'antd';
 import { SingleFilter } from 'lego-react-filter/src';
 import { MoreFilter, DateFilter } from '../common/htFilter';
+import ServiceManagerFilter from '../common/serviceManagerFilter';
 import { getViewInfo } from '../../routes/taskList/helper';
 import logable from '../../decorators/logable';
 import {
@@ -38,6 +39,7 @@ const typeAll = { label: '不限', value: '', show: true }; // 不限
 const creatorFilterId = 'creatorId'; // 创建者filterId
 const custFilterId = 'custId'; // 客户filterId
 const triggerFilterId = 'triggerTime'; // 触发时间filterId
+const endTimeFilterId = 'endTime'; // 结束时间filterId
 const NOOP = _.noop;
 
 export default class Pageheader extends PureComponent {
@@ -61,6 +63,12 @@ export default class Pageheader extends PureComponent {
     queryCustomer: PropTypes.func,
     // 执行者视图头部查询到的客户列表
     customerList: PropTypes.array,
+    // 按名称或工号搜服务经理
+    getSearchPersonList: PropTypes.func.isRequired,
+    // 服务经理列表数据
+    serverManagerList: PropTypes.array.isRequired,
+    // 清除服务经理列表数据
+    clearServiceManagerList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -433,8 +441,6 @@ export default class Pageheader extends PureComponent {
       location: {
         query: {
           missionViewType,
-          endTimeStart = '',
-          endTimeEnd = '',
           createTimeEnd = '',
           createTimeStart = '',
         },
@@ -459,24 +465,8 @@ export default class Pageheader extends PureComponent {
           disabledCurrentEnd={false}
         />
       </div>);
-    } else {
-      node = (<div
-        className={classNames(
-          [styles.filterFl],
-          [styles.dateWidget])
-        }
-      >
-        <DateFilter
-          hasCustomerOffset
-          filterName="结束时间"
-          filterId="endTime"
-          value={[endTimeStart, endTimeEnd]}
-          onChange={this.handleEndDateChange}
-          isInsideOffSet={this.isInsideOffSet}
-          key={`${missionViewType}结束时间`}
-          disabledCurrentEnd={false}
-        />
-      </div>);
+    } else if (missionViewType === EXECUTOR) {
+      node = this.renderEndTimer();
     }
     return node;
   }
@@ -517,6 +507,43 @@ export default class Pageheader extends PureComponent {
       );
     }
     return null;
+  }
+
+  // 结束时间过滤器
+  renderEndTimer(options = {}) {
+    const {
+      location: {
+        query: {
+          endTimeStart = '',
+          endTimeEnd = '',
+        },
+        filterControl,
+      },
+    } = this.props;
+    const props = {
+      key: `${filterControl}结束时间`,
+      hasCustomerOffset: true,
+      filterName: '结束时间',
+      filterId: endTimeFilterId,
+      value: [endTimeStart, endTimeEnd],
+      onChange: this.handleEndDateChange,
+      isInsideOffSet: this.isInsideOffSet,
+      disabledCurrentEnd: false,
+    };
+    if (options.isCloseable) {
+      props.isCloseable = true;
+      props.onClose = () => { this.closeFilter(endTimeFilterId); };
+    }
+    return (
+      <div
+        className={classNames(
+          [styles.filterFl],
+          [styles.dateWidget],
+        )}
+      >
+        <DateFilter {...props} />
+      </div>
+    );
   }
   /**
    * 渲染'执行方式'筛选组件
@@ -607,10 +634,71 @@ export default class Pageheader extends PureComponent {
       return null;
     });
   }
+
   @autobind
   closeFilter(filterId) {
     this.moreFilterChange({ id: filterId, isDeleteFilterFromLocation: true });
   }
+
+  // 按服务经理过滤筛选
+  @autobind
+  renderServiceManager() {
+    const {
+      filterControl,
+      serverManagerList,
+      clearServiceManagerList,
+      location: { query: { ptyMngId = '', ptyMngName = '' } },
+    } = this.props;
+    const currentPtyMng = { ptyMngId, ptyMngName };
+    // 管理者视图显示服务经理过滤筛选
+    if (filterControl === CONTROLLER) {
+      return (
+        <div className={styles.filterFl}>
+          <ServiceManagerFilter
+            list={serverManagerList}
+            clearServiceManagerList={clearServiceManagerList}
+            currentPtyMng={currentPtyMng}
+            dropdownSelectedItem={this.dropdownSelectedItem}
+            dropdownToSearchInfo={this.dropdownToSearchInfo}
+          />
+        </div>
+      );
+    }
+    return null;
+  }
+
+  // 服务经理组件下拉列表数据
+  @autobind
+  dropdownToSearchInfo(value) {
+    const { getSearchPersonList } = this.props;
+    // 下拉菜单搜索查询关键字
+    getSearchPersonList({
+      keyword: value,
+      pageSize: 10,
+      pageNum: 1,
+    });
+  }
+
+  // 选服务经理
+  @autobind
+  dropdownSelectedItem({ ptyMngName = '', ptyMngId = '' }) {
+    const {
+      location: {
+        query,
+        pathname,
+      },
+    } = this.props;
+    this.context.replace({
+      pathname,
+      query: {
+        ...query,
+        ptyMngId,
+        ptyMngName,
+        pageNum: 1,
+      },
+    });
+  }
+
   render() {
     const {
       drafterList,
@@ -684,6 +772,7 @@ export default class Pageheader extends PureComponent {
           </div>
           {this.renderExecuteType()}
           {this.renderTime()}
+          {this.renderServiceManager()}
           {
             currentMoreFilterData.length ?
               <div className={classNames(styles.filterFl, styles.moreFilterBtn)}>
@@ -738,6 +827,11 @@ export default class Pageheader extends PureComponent {
                 />
               </div>
             </div> : null
+          }
+          {
+            missionViewTypeValue === CONTROLLER
+            && _.includes(selectFilterKeys, endTimeFilterId)
+            && this.renderEndTimer({ isCloseable: true })
           }
           {this.renderTriggerTimer()}
         </div>

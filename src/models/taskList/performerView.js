@@ -84,6 +84,8 @@ export default {
     custFeedBack: EMPTY_LIST,
     // 客户明细
     custDetail: EMPTY_OBJ,
+    // 查询的服务经理列表
+    serverManagerList: EMPTY_LIST,
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -300,6 +302,20 @@ export default {
       return {
         ...state,
         custDetail,
+      };
+    },
+    getSearchServerPersonListSuccess(state, action) {
+      return {
+        ...state,
+        serverManagerList: action.payload,
+      };
+    },
+    // 清除服务经理列表数据
+    clearServiceManagerList(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        searchServerPersonList: payload,
       };
     },
   },
@@ -550,6 +566,18 @@ export default {
         payload: resultData,
       });
     },
+    // 服务经理列表数据
+    getSearchPersonList: [
+      function* getSearchPersonList({ payload }, { call, put }) {
+        const { resultData = EMPTY_OBJ } = yield call(custApi.getSearchServerPersonelList, payload);
+        if (resultData) {
+          const { servicePeopleList = EMPTY_LIST } = resultData;
+          yield put({
+            type: 'getSearchServerPersonListSuccess',
+            payload: servicePeopleList,
+          });
+        }
+      }, { type: 'takeLatest' }],
   },
   subscriptions: {
   },

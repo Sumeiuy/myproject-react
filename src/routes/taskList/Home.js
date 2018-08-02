@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-30 15:18:37
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-02 11:15:00
  * @description 任务管理首页
  */
 
@@ -289,12 +289,14 @@ export default class PerformerView extends PureComponent {
   getFlowStatus({ orgId }) {
     const {
       countFlowStatus,
+      location: { query: { ptyMngId } },
     } = this.props;
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 管理者视图任务实施进度
     countFlowStatus({
       missionId: this.getCurrentId(),
       orgId: newOrgId || emp.getOrgId(),
+      ptyMngId,
     });
   }
 
@@ -305,12 +307,14 @@ export default class PerformerView extends PureComponent {
   getFlowFeedback({ orgId }) {
     const {
       countFlowFeedBack,
+      location: { query: { ptyMngId } },
     } = this.props;
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 管理者视图获取客户反馈饼图
     countFlowFeedBack({
       missionId: this.getCurrentId(),
       orgId: newOrgId || emp.getOrgId(),
+      ptyMngId,
     });
   }
 
@@ -328,6 +332,7 @@ export default class PerformerView extends PureComponent {
     const {
       getCustManagerScope,
       custRange,
+      location: { query: { ptyMngId } },
     } = this.props;
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 获取服务经理维度任务数据
@@ -338,6 +343,8 @@ export default class PerformerView extends PureComponent {
       pageSize,
       // 当前任务维度，取入参或者跟着组织机构走
       enterType: enterType || getCurrentScopeByOrgId({ custRange, orgId }),
+      // 管理者视图根据服务经理过滤器判断是否传ptyMngId
+      ptyMngId,
     });
   }
 
@@ -760,6 +767,7 @@ export default class PerformerView extends PureComponent {
       countExamineeByType,
       getCustManagerScope,
       custRange,
+      location: { query: { ptyMngId } },
     } = this.props;
     // 如果来源是创建者视图，那么取mssnId作为missionId
     // 取id作为eventId
@@ -772,6 +780,8 @@ export default class PerformerView extends PureComponent {
       orgId,
       // 管理者视图需要eventId来查询详细信息
       eventId,
+      // 管理者视图根据服务经理过滤器判断是否传ptyMngId
+      ptyMngId,
     }).then(
       () => {
         const { mngrMissionDetailInfo, queryMOTServeAndFeedBackExcel } = this.props;
@@ -792,17 +802,17 @@ export default class PerformerView extends PureComponent {
         queryMOTServeAndFeedBackExcel(paylaod);
       },
     );
-
+    // 管理者视图根据服务经理过滤器判断是否传ptyMngId
+    const payload = { missionId, orgId, ptyMngId };
     // 管理者视图获取客户反馈
-    countFlowFeedBack({ missionId, orgId });
+    countFlowFeedBack(payload);
     // 管理者视图任务实施进度
-    countFlowStatus({ missionId, orgId });
+    countFlowStatus(payload);
     // 管理者视图服务经理维度任务详细数据
     getCustManagerScope({
+      ...payload,
       pageNum: GET_CUST_SCOPE_PAGE_NUM,
       pageSize: GET_CUST_SCOPE_PAGE_SIZE,
-      missionId,
-      orgId: emp.getOrgId(),
       // 当前任务维度，跟着组织机构走
       enterType: getCurrentScopeByOrgId({ custRange }),
     });
