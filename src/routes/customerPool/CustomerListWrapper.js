@@ -2,8 +2,8 @@
  * @Description: 面包屑包裹组件
  * @Author: 朱飞阳
  * @Date: 2018/7/31 18:18
- * @Last Modified by: 朱飞阳
- * @Last Modified time: 2018-07-31 10:56:40
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-01 18:27:08
  */
 
 import React from 'react';

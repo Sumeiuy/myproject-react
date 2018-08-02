@@ -165,12 +165,15 @@ export default class ChartBarStack extends PureComponent {
     // 查询当前需要的Y轴字段名称
     const levelAndScope = Number(scope);
     const levelName = `level${levelAndScope}Name`;
+    const levelId = `level${levelAndScope}Id`;
     // 分公司名称数组
     const levelCompanyArr = filterOrgModelData(orgModel, 'level2Name');
     // 财富中心名称数组
     const levelWealthArr = filterOrgModelData(orgModel, 'level3Name');
     // 营业部名称数组
     const levelStoreArr = filterOrgModelData(orgModel, 'level4Name');
+    // 工号数组
+    const levelIdArr = filterOrgModelData(orgModel, levelId);
     // 此处为y轴刻度值
     const yAxisLabels = filterOrgModelData(orgModel, levelName);
     // 补足Y轴刻度值不够的情况
@@ -220,6 +223,7 @@ export default class ChartBarStack extends PureComponent {
         levelCompanyArr,
         levelWealthArr,
         levelStoreArr,
+        levelIdArr,
         yAxisLabels,
         stackLegend,
         stackSeries, // Echarts图表绘制需要的数据
@@ -238,6 +242,7 @@ export default class ChartBarStack extends PureComponent {
         levelCompanyArr,
         levelWealthArr,
         levelStoreArr,
+        levelIdArr,
         yAxisLabels,
         stackLegend,
         stackSeries, // Echarts图表绘制需要的数据
@@ -403,6 +408,7 @@ export default class ChartBarStack extends PureComponent {
       levelCompanyArr,
       levelWealthArr,
       levelStoreArr,
+      levelIdArr,
       yAxisLabels,
       stackLegend,
       stackSeries,
@@ -433,9 +439,11 @@ export default class ChartBarStack extends PureComponent {
               const seriesName = item.seriesName;
               const dataIndex = item.dataIndex;
               let value = item.value;
+              let id = levelIdArr[dataIndex];
               if (axisValue === '--') {
                 // 无数据的情况
                 value = '--';
+                id = '--';
               }
               if (axisValue !== '--') {
                 total.push(value);
@@ -471,7 +479,7 @@ export default class ChartBarStack extends PureComponent {
                 seriesTips.push(`
                   ${toolTipNewHeader}
                   <tr>
-                    <td colspan="4">${axisValue}</td>
+                    <td colspan="4">${axisValue}(${id})</td>
                   </tr>
                 `);
               }

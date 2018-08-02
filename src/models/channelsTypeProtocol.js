@@ -2,8 +2,8 @@
  * @Description: 通道类型协议 model
  * @Author: XuWenKang
  * @Date: 2017-10-30 15:13:30
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-03-09 08:53:19
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-01 18:54:47
  */
 import _ from 'lodash';
 import { message } from 'antd';
