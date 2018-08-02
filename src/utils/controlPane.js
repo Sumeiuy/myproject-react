@@ -5,7 +5,7 @@
  */
 import warning from 'warning';
 import _ from 'lodash';
-import { env } from '../helper/env';
+import env from '../helper/env';
 
 function exec(method, ...args) {
   try {
