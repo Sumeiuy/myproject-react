@@ -2,8 +2,8 @@
  * @Description: 个股页面
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-01 23:20:20
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-02 15:30:16
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -136,7 +136,7 @@ export default class Stock extends PureComponent {
 
   // tab 切换事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换Tab' } })
+  @logable({ type: 'Click', payload: { name: '切换Tab', value: '$args[0]' } })
   tabChangeHandle(key) {
     const { keyword } = this.state;
     this.setState({

@@ -13,6 +13,7 @@ import _ from 'lodash';
 import Filter from '../../components/customerPool/list/Filter__';
 import CustomerLists from '../../components/customerPool/list/CustomerLists__';
 import MatchArea from '../../components/customerPool/list/individualInfo/MatchArea';
+import { dynamicInsertQuota } from '../../components/customerPool/list/sort/config';
 import { permission, emp, url, check } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { seperator, sessionStore } from '../../config';
@@ -21,8 +22,9 @@ import {
   ENTER_TYPE,
   ALL_DEPARTMENT_ID,
   MAIN_MAGEGER_ID,
-  ENTERLIST1,
-  ENTERLIST2,
+  ENTERLIST_PERMISSION_TASK_MANAGE,
+  ENTERLIST_PERMISSION_INDEX_QUERY,
+  ENTERLIST_LEFTMENU,
 } from './config';
 
 import { RANDOM } from '../../config/filterContant';
@@ -34,7 +36,8 @@ const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 20; // 默认页大小
 
-const DEFAULT_SORT = { sortType: 'totAset', sortDirection: 'desc' }; // 默认排序方式
+const DEFAULT_SORT_DIRECTION = 'desc';
+const DEFAULT_SORT = { sortType: 'totAset', sortDirection: DEFAULT_SORT_DIRECTION }; // 默认排序方式
 
 function getFilterArray(labels, hashString) {
   const filtersArray = [];
@@ -260,17 +263,14 @@ function getFilterParam(filterObj, hashString) {
   };
 }
 
-function getSortParam(query) {
-  const sortsReqList = [];
-  if (query.sortType || query.sortDirection) {
-    sortsReqList.push({
-      sortType: query.sortType,
-      sortDirection: query.sortDirection,
-    });
-  } else {
-    sortsReqList.push(DEFAULT_SORT);
+function getSortParam(query, filterParams) {
+  const { sortType, sortDirection } = query;
+  let sortsReqList = [DEFAULT_SORT];
+  const sortFilter = filterParams[sortType] || {};
+  const dateType = sortFilter.dateType || '';
+  if (sortType && sortDirection) {
+    sortsReqList = [{ sortType, sortDirection, dateType }];
   }
-
   return {
     sortsReqList,
   };
@@ -691,7 +691,7 @@ export default class CustomerList extends PureComponent {
     }
 
     const filterParam = getFilterParam(filterObj, this.hashString);
-    const sortParam = getSortParam(query);
+    const sortParam = getSortParam(query, filterParam);
 
     const finalParam = {
       ...param,
@@ -712,8 +712,13 @@ export default class CustomerList extends PureComponent {
       return query.departmentOrgId !== ALL_DEPARTMENT_ID ? query.departmentOrgId : '';
     }
     // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
-    if (_.includes(ENTERLIST1, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, query.source)) {
       return this.hasTkMampPermission ? this.orgId : '';
+    }
+    // 从左侧菜单进来，判断是否有任务管理权限或者首页指标查询权限
+    if (_.includes(ENTERLIST_LEFTMENU, query.source)) {
+      return this.hasTkMampPermission || this.hasIndexViewPermission
+        ? this.orgId : '';
     }
     // 从首页潜在业务客户过来
     if (query.source === 'business') {
@@ -724,7 +729,7 @@ export default class CustomerList extends PureComponent {
       }
     }
     // 首页新增客户和业务开通进来的
-    if (_.includes(ENTERLIST2, query.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, query.source)) {
       if (query.orgId) {
         return query.orgId !== MAIN_MAGEGER_ID ? query.orgId : '';
       }
@@ -757,7 +762,7 @@ export default class CustomerList extends PureComponent {
       return { ptyMngId, ptyMngName };
     }
     // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
-    if (_.includes(ENTERLIST1, finalQuery.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, finalQuery.source)) {
       return this.hasTkMampPermission ?
         { ptyMngId: '' } : currentPtyMng;
     }
@@ -769,11 +774,16 @@ export default class CustomerList extends PureComponent {
       }
     }
     // 首页新增客户和业务开通进来的
-    if (_.includes(ENTERLIST2, finalQuery.source)) {
+    if (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, finalQuery.source)) {
       if (!this.hasIndexViewPermission
         || (finalQuery.orgId && finalQuery.orgId === MAIN_MAGEGER_ID)) {
         return currentPtyMng;
       }
+    }
+    // 从左侧菜单过来，判断是否有任务管理权限或者首页指标查询权限
+    if (_.includes(ENTERLIST_LEFTMENU, finalQuery.source)) {
+      return this.hasTkMampPermission || this.hasIndexViewPermission ?
+        { ptyMngId: '' } : currentPtyMng;
     }
     return { ptyMngId: '' };
   }
@@ -857,13 +867,16 @@ export default class CustomerList extends PureComponent {
         }
       }
     }
+    // 个性化信息与过滤器的联动
     MatchArea.setFilterOrder(obj.name, obj.value, this.hashString);
+    // 列表排序与过滤器联动
+    const nextSort = this.getSortFromFilter(obj, isDeleteFilterFromLocation);
     const stringifyFilters = newFilterArray.filter(item => item !== '').join(filterSeperator);
-
     replace({
       pathname,
       query: {
         ...query,
+        ...nextSort,
         individualInfo: true,
         filters: stringifyFilters,
         curPageNum: 1,
@@ -872,6 +885,39 @@ export default class CustomerList extends PureComponent {
         hashString: this.hashString, // 唯一的本地缓存hash
       },
     });
+  }
+
+  // 根据过滤器的变化当前排序字段的联动
+  @autobind
+  getSortFromFilter(filterItem, isDeleteFilterFromLocation = false) {
+    const {
+      location: { query },
+    } = this.props;
+    const { sortType = '', sortDirection = '' } = query;
+    let currentSort = { sortType, sortDirection };
+    const { clearAllMoreFilters, name, value } = filterItem;
+    let valueList = _.split(value, seperator.filterValueSeperator);
+    valueList = _.filter(valueList, valueItem => valueItem !== '');
+    if (clearAllMoreFilters) {
+      return currentSort;
+    }
+    // 当删除当前排序指标对应的过滤器时，排序指标置空使用默认值
+    if (isDeleteFilterFromLocation && name === sortType) {
+      currentSort = { sortType: '', sortDirection: '' };
+    }
+    const needDynamicInsertQuota = _.find(dynamicInsertQuota, item => item.filterType === name);
+    if (needDynamicInsertQuota) {
+      // 当前所触发过滤器下有值并且需要动态插入排序指标，则设置为该排序指标
+      if (valueList.length) {
+        currentSort = {
+          sortType: needDynamicInsertQuota.sortType,
+          sortDirection: DEFAULT_SORT_DIRECTION,
+        };
+      } else if (name === sortType) {
+        currentSort = { sortType: '', sortDirection: '' };
+      }
+    }
+    return currentSort;
   }
 
   // 排序条件变化

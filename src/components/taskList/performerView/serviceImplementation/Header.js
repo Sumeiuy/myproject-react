@@ -3,13 +3,13 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 22:49:02
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-15 10:38:35
+ * @Last Modified time: 2018-07-25 15:30:58
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { SingleFilter } from 'lego-react-filter/src';
+import { SingleFilter, MultiFilter } from 'lego-react-filter/src';
 import Sortbox from './Sortbox';
 import PreciseQuery from './PreciseQuery';
 import { ASSET_DESC } from './config';
@@ -17,8 +17,17 @@ import styles from './header.less';
 
 // 状态为不限
 const STATE_UNLIMITED = { key: '', value: '不限' };
+
 // 筛选列表的浮层父节点id
 const popupContainer = '#performerViewDetail';
+
+// 服务状态下拉列表样式
+const dropdownStyle = {
+  maxHeight: '324px',
+  overflowY: 'auto',
+  zIndex: 1,
+  minWidth: '177px',
+};
 
 export default function Header(props) {
   const {
@@ -38,7 +47,7 @@ export default function Header(props) {
   // 客户筛选组件的自定义显示
   const getFilterLabelValue = (item) => {
     const { filterName, value } = item;
-    const displayValue = !_.isEmpty(value.custId) ? `${value.custId}(${value.name})` : value.name;
+    const displayValue = !_.isEmpty(value.custId) ? `${value.name}(${value.custId})` : value.name;
     return (
       <div className={styles.customerFilterContent}>
         <span className={styles.customerFilterName}>{filterName}:</span>
@@ -52,11 +61,10 @@ export default function Header(props) {
     }
   };
   const stateData = [STATE_UNLIMITED, ...dict.serveStatus];
-  const currentCustomer = _.find(customerList, { rowId }) || {};
-  const currentCustId = currentCustomer ? currentCustomer.custId : '';
+  const { custId = '' } = _.find(customerList, { rowId }) || {};
   return (
     <div className={styles.header}>
-      <SingleFilter
+      <MultiFilter
         filterId="state"
         filterName="服务状态"
         className={styles.filter}
@@ -64,12 +72,13 @@ export default function Header(props) {
         data={stateData}
         onChange={handleStateChange}
         menuContainer={popupContainer}
+        dropdownStyle={dropdownStyle}
       />
       <SingleFilter
         filterId="rowId"
         filterName="客户"
         className={styles.filter}
-        value={currentCustId}
+        value={custId}
         data={customerList}
         dataMap={['custId', 'name']}
         onChange={handleCustomerChange}
@@ -109,6 +118,7 @@ Header.propTypes = {
   handlePreciseQueryEnterPress: PropTypes.func,
   parameter: PropTypes.object.isRequired,
   targetCustList: PropTypes.object.isRequired,
+  currentTask: PropTypes.object.isRequired,
 };
 
 Header.defaultProps = {

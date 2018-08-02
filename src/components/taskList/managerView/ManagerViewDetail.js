@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-13 12:05:25
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-02 12:14:35
  * 管理者视图详情
  */
 
@@ -564,6 +564,7 @@ export default class ManagerViewDetail extends PureComponent {
       custRange,
       empInfo,
       location,
+      location: { query: { ptyMngId } },
       replace,
       countFlowStatus,
       countFlowFeedBack,
@@ -808,16 +809,19 @@ export default class ManagerViewDetail extends PureComponent {
               currentFeedback={this.getCustFeedbackList()}
             />
           </div>
-          <div className={styles.missionFeedbackSection}>
-            <MissionFeedback
-              missionFeedbackData={missionFeedbackData}
-              isFold={isFold}
-              missionFeedbackCount={missionFeedbackCount}
-              serveManagerCount={serveManagerCount}
-              templateId={templateId}
-              ref={ref => (this.missionFeedbackElem = ref)}
-            />
-          </div>
+          {
+            // 按服务经理过滤器筛选时，不显示任务反馈
+            _.isEmpty(ptyMngId) && <div className={styles.missionFeedbackSection}>
+              <MissionFeedback
+                missionFeedbackData={missionFeedbackData}
+                isFold={isFold}
+                missionFeedbackCount={missionFeedbackCount}
+                serveManagerCount={serveManagerCount}
+                templateId={templateId}
+                ref={ref => (this.missionFeedbackElem = ref)}
+              />
+            </div>
+          }
         </div>
       </div>
     );

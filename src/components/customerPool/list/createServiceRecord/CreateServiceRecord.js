@@ -13,8 +13,10 @@ import { fspContainer } from '../../../../config/index';
 import { url } from '../../../../helper/index';
 import logable, { logCommon } from '../../../../decorators/logable';
 import ServiceRecordContent from '../../../common/serviceRecordContent';
+import confirm from '../../../common/confirm_';
 import Loading from '../../../../layouts/Loading';
 import { UPDATE } from '../../../../config/serviceRecord';
+import { serveWay as serveWayUtil } from '../../../taskList/performerView/config/code';
 import styles from './createServiceRecord.less';
 
 /**
@@ -104,17 +106,17 @@ export default class CreateServiceRecord extends PureComponent {
   @autobind
   handleSubmit() {
     const data = this.serviceRecordContentRef.getData();
-    if (_.isEmpty(data)) return;
+    if (_.isEmpty(data)) {
+      return;
+    }
+
     const {
-      addServeRecord,
-      resetServiceRecordInfo,
       currentCommonServiceRecord: { id },
       serviceRecordInfo: {
         id: custId,
         autoGenerateRecordInfo = {},
         todo,
       },
-      dict,
       isPhoneCall,
     } = this.props;
     const { serveContentDesc = '', serveTime = '', serveWay = '' } = autoGenerateRecordInfo;
@@ -135,11 +137,36 @@ export default class CreateServiceRecord extends PureComponent {
         };
       }
     }
-    addServeRecord(payload);
+    // 此处需要针对涨乐财富通是通过固定话术的情况下提交服务记录时候，
+    // 弹出确认框然后才能进行添加服务记录
+    const isZLFinsServiceWay = serveWayUtil.isZhangle(data.serveWay);
+    const isByTemplate = !_.isEmpty(_.toString(_.get(data, 'zhangleServiceContentData.templateId')));
+    if (isZLFinsServiceWay && isByTemplate) {
+      confirm({
+        content: '设置的投资建议将发送给客户，确认提交吗？',
+        onOk: () => {
+          this.doAddServeRecordAndLog(payload);
+        },
+      });
+    } else {
+      this.doAddServeRecordAndLog(payload);
+    }
+  }
+
+  // 新增方法，用来针对在涨乐财富通服务方式下的服务记录，有别于其他的方法下的提交服务记录
+  // 因此提取公共的方法使用
+  @autobind
+  doAddServeRecordAndLog(query) {
+    const {
+      addServeRecord,
+      resetServiceRecordInfo,
+      dict,
+      serviceRecordInfo: { id },
+    } = this.props;
+    addServeRecord(query);
     resetServiceRecordInfo();
-    // log日志 --- 添加服务记录
-    // 服务类型
-    const { serveType } = data;
+
+    const { serveType } = query;
     const { missionType } = dict;
     const serveTypeName = _.find(missionType, { key: serveType }).value;
     logCommon({
@@ -147,12 +174,11 @@ export default class CreateServiceRecord extends PureComponent {
       payload: {
         name: '服务记录',
         type: serveTypeName,
-        value: JSON.stringify({ ...data, custId }),
+        value: JSON.stringify({ ...query, custId: id }),
       },
     });
   }
 
-  // 关闭弹窗
   @autobind
   @logable({ type: 'Click', payload: { name: '取消' } })
   handleCancel() {
@@ -233,6 +259,7 @@ export default class CreateServiceRecord extends PureComponent {
 
     // 从客户列表进入创建服务记录的均是自建任务
     const serviceReocrd = {
+      custId: id,
       taskTypeCode: TASK_TYPE_CODES.SELF_TASK,
       motCustfeedBackDict: transformCustFeecbackData(taskFeedbackList),
     };

@@ -16,6 +16,7 @@ import Icon from '../common/Icon';
 import { time } from '../../helper';
 import config from './config';
 import styles from './combinationAdjustHistory.less';
+import logable, { logPV } from '../../decorators/logable';
 
 const titleStyle = {
   fontSize: '16px',
@@ -42,6 +43,13 @@ export default class CombinationAdjustHistory extends PureComponent {
 
   // 证券名称点击事件
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '组合调仓',
+      value: '$args[2]',
+    },
+  })
   handleSecurityClick(type, code) {
     if (type === STOCK_CODE) {
       const { openStockPage } = this.props;
@@ -53,6 +61,10 @@ export default class CombinationAdjustHistory extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '/modal/adjustHistoryModal',
+    title: '调仓历史弹框',
+  })
   handleMoreClick(value) {
     const { showModal } = this.props;
     const payload = {
@@ -75,9 +87,29 @@ export default class CombinationAdjustHistory extends PureComponent {
 
   // 组合名称点击事件
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '组合调仓',
+      value: '$args[0].name',
+    },
+  })
   handleNameClick(obj) {
     const { openDetailPage } = this.props;
     openDetailPage(obj);
+  }
+
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '组合调仓',
+      value: '$args[0].name',
+    },
+  })
+  handleOpenCustomerListPage(openPayload) {
+    const { openCustomerListPage } = this.props;
+    openCustomerListPage(openPayload);
   }
 
   // 设置 popover
@@ -102,9 +134,8 @@ export default class CombinationAdjustHistory extends PureComponent {
     return reactElement;
   }
 
-
   render() {
-    const { data, openCustomerListPage } = this.props;
+    const { data } = this.props;
     const { list } = data;
     return (
       <div className={styles.combinationAdjustHistoryBox}>
@@ -152,7 +183,9 @@ export default class CombinationAdjustHistory extends PureComponent {
                             <a
                               className={styles.securityName}
                               title={securityName}
-                              onClick={() => this.handleSecurityClick(securityType, securityCode)}
+                              onClick={() =>
+                                this.handleSecurityClick(securityType, securityCode, `${securityName}(${securityCode})`)
+                              }
                             >
                               {securityName} ({securityCode})
                             </a>
@@ -168,7 +201,7 @@ export default class CombinationAdjustHistory extends PureComponent {
                             <span>{time.format(child.time, config.formatStr)}</span>
                             <a
                               className={styles.customerLink}
-                              onClick={() => openCustomerListPage(openPayload)}
+                              onClick={() => this.handleOpenCustomerListPage(openPayload)}
                             >
                               <Icon type="kehuzu" />
                             </a>

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-11 20:58:04
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-02 18:03:34
  * 服务经理维度任务统计
  */
 
@@ -74,6 +74,7 @@ export default class CustManagerDetailScope extends PureComponent {
     onPreviewCustDetail: PropTypes.func,
     // 客户反馈一二级
     currentFeedback: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -354,7 +355,13 @@ export default class CustManagerDetailScope extends PureComponent {
   @autobind
   renderTableTitle() {
     const { currentSelectScope } = this.state;
-
+    const { location: { query: { ptyMngId } } } = this.props;
+    // 按服务经理筛选时，数据按服务经理维度查询
+    let currentScope = currentSelectScope;
+    if (!_.isEmpty(ptyMngId) || _.isEmpty(currentSelectScope)) {
+      currentScope = EMP_MANAGER_SCOPE;
+    }
+    // const currentScope = !_.isEmpty(ptyMngId) ? EMP_MANAGER_SCOPE : (currentSelectScope || EMP_MANAGER_SCOPE);
     return (
       <div className={styles.titleSection}>
         <div className={`${styles.tableTitle} tableTitle`}>明细进度</div>
@@ -368,7 +375,7 @@ export default class CustManagerDetailScope extends PureComponent {
             overlay={
               <Menu
                 onClick={this.handleSelectMenuItem}
-                selectedKeys={[currentSelectScope || EMP_MANAGER_SCOPE]}
+                selectedKeys={[currentScope]}
               >
                 {this.renderFilterOption()}
               </Menu>
@@ -380,7 +387,7 @@ export default class CustManagerDetailScope extends PureComponent {
               <span className={styles.title}>查看维度：</span>
               <span className={styles.currentSelectScope}>
                 {_.filter(ALL_EMP_SCOPE_ITEM, item =>
-                  item.key === (currentSelectScope || EMP_MANAGER_SCOPE))[0].value}
+                  item.key === currentScope)[0].value}
               </span>
               <span
                 className="ant-select-arrow"
