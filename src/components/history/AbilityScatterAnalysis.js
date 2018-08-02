@@ -403,7 +403,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
     },
   })
   handleScatterHover(params) {
-    console.warn('params', params);
     const { isShowTooltip,
       finalData: {
         xAxisName,
