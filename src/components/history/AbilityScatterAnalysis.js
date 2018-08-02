@@ -78,6 +78,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       level3Name: '',
       level4Name: '',
       level5Name: '',
+      level5Id: '',
       finalOptions: options,
       selectValue: !_.isEmpty(options) && options[0].value,
       averageInfo: '',
@@ -402,6 +403,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     },
   })
   handleScatterHover(params) {
+    console.warn('params', params);
     const { isShowTooltip,
       finalData: {
         xAxisName,
@@ -417,7 +419,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const { data: [
         xAxisData,
         yAxisData,
-        { level2Name, level3Name, level4Name, level5Name },
+        { level2Name, level3Name, level4Name, level5Name, level5Id },
       ] } = params;
     if (isShowTooltip) {
       // 设置state，切换tooltip的显示信息
@@ -426,6 +428,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
         level3Name,
         level4Name,
         level5Name,
+        level5Id,
       });
       this.constructTooltipInfo({
         currentSelectX: xAxisData,
@@ -536,6 +539,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       level3Name,
       level4Name,
       level5Name,
+      level5Id,
       tooltipInfo,
       finalData,
       selectValue,
@@ -693,7 +697,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
                             {_.isEmpty(level2Name) ? '' : `${level2Name}`}
                             {_.isEmpty(level3Name) ? '' : `-${level3Name}`}
                             {_.isEmpty(level4Name) ? '' : `-${level4Name}`}
-                            {_.isEmpty(level5Name) ? '' : `-${level5Name}`}:
+                            {_.isEmpty(level5Name) ? '' : `-${level5Name}`}
+                            {_.isEmpty(level5Id) ? '' : `(${level5Id})`}:
                           </span>
                         </div>
                         <div className={styles.detailDesc}>
