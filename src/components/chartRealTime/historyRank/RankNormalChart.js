@@ -84,6 +84,7 @@ export default class RankNormalChart extends PureComponent {
     const { scope, chartData: { indiModel: { name }, orgModel = [] } } = props;
     let { chartData: { indiModel: { unit } } } = props;
     const levelName = `level${scope}Name`;
+    const levelId = `level${scope}Id`;
     // 分公司名称数组
     const company = filterData(orgModel, 'level2Name', 'yAxis');
     // 财富中心名称数组
@@ -92,6 +93,8 @@ export default class RankNormalChart extends PureComponent {
     const stores = filterData(orgModel, 'level4Name', 'yAxis');
     // 此处为y轴刻度值
     const yAxisLabels = filterData(orgModel, levelName, 'yAxis');
+    // 工号数组
+    const levelIdArr = filterData(orgModel, levelId, 'yAxis');
     // TODO 获取排名信息数据
     const rank = filterRankData(orgModel);
     // 取出所有的value,并将value转化成数字
@@ -125,6 +128,7 @@ export default class RankNormalChart extends PureComponent {
       company,
       wealth,
       stores,
+      levelIdArr,
       yAxisLabels,
       grid: newGrid,
       seriesData,
@@ -269,7 +273,7 @@ export default class RankNormalChart extends PureComponent {
   }
 
   @autobind
-  makeTooltip(base, scope, company, wealth, store, unit) {
+  makeTooltip(base, scope, company, levelIdArr, wealth, store, unit) {
     return {
       ...base,
       formatter(params) {
@@ -278,8 +282,10 @@ export default class RankNormalChart extends PureComponent {
         const seriesName = item.seriesName;
         let value = item.value;
         const dataIndex = item.dataIndex;
+        let id = levelIdArr[dataIndex];
         if (axisValue === '--') {
           value = '--';
+          id = '--';
         }
         let tooltipHead = '';
         const hasFundCenter = wealth[dataIndex] !== '--';
@@ -321,7 +327,7 @@ export default class RankNormalChart extends PureComponent {
           <table class="echartTooltipTable">
             ${tooltipHead}
             <tr>
-              <td>${axisValue}</td>
+              <td>${axisValue}(${id})</td>
             </tr>
             <tr>
               <td class="itemValue">${seriesName}: <span>${value}</span> (${unit})</td>
@@ -344,6 +350,7 @@ export default class RankNormalChart extends PureComponent {
       stores,
       wealth,
       company,
+      levelIdArr,
       rank,
       realLength,
     } = this.state;
@@ -358,7 +365,7 @@ export default class RankNormalChart extends PureComponent {
     // TODO 当最小值和最大值是相同单位的时候，需要做特殊处理
     const options = {
       color: [barColor],
-      tooltip: this.makeTooltip(chartTooltip, scope, company, wealth, stores, unit),
+      tooltip: this.makeTooltip(chartTooltip, scope, company, levelIdArr, wealth, stores, unit),
       grid: [
         ...chartGrid,
       ],
