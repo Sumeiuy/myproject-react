@@ -256,7 +256,7 @@ export default class MainPosition extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
-  @logPV({ pathname: '/modal/createProtocol', title: '新建服务经理主职位设置' })
+  @logPV({ pathname: '/modal/createMainPosition', title: '新建服务经理主职位设置' })
   openCreateModalBoard() {
     this.setState({
       isShowCreateModal: true,

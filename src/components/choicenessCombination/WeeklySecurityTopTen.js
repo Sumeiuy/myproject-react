@@ -16,6 +16,7 @@ import Icon from '../common/Icon';
 import { time } from '../../helper';
 import config from './config';
 import styles from './weeklySecurityTopTen.less';
+import logable from '../../decorators/logable';
 
 const titleStyle = {
   fontSize: '16px',
@@ -42,7 +43,6 @@ export default class WeeklySecurityTopTen extends PureComponent {
   // 设置表格表头
   @autobind
   getTitleColumns(array) {
-    const { openCustomerListPage } = this.props;
     const newTitleList = [...array];
     // 证券名称与证券代码组合列，点击跳转到个股资讯页面
     newTitleList[0].render = (text, record) => {
@@ -55,7 +55,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
       return (<div className={styles.securityName}>
         <a
           title={`${name} ${code}`}
-          onClick={() => this.handleSecurityClick(securityType, code)}
+          onClick={() => this.handleSecurityClick(securityType, code, `${name}(${code})`)}
         >
           {name}（{code}）
         </a>
@@ -99,13 +99,33 @@ export default class WeeklySecurityTopTen extends PureComponent {
         type: record.securityType,
         source: sourceType.security,
       };
-      return <a className={styles.customerLink} onClick={() => openCustomerListPage(openPayload)}><Icon type="kehuzu" /></a>;
+      return <a className={styles.customerLink} onClick={() => this.handleOpenCustomerListPage(openPayload)}><Icon type="kehuzu" /></a>;
     };
     return newTitleList;
   }
 
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '近一周表现前十的证券',
+      value: '$args[0].name',
+    },
+  })
+  handleOpenCustomerListPage(openPayload) {
+    const { openCustomerListPage } = this.props;
+    openCustomerListPage(openPayload);
+  }
+
   // 组合名称点击事件
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '近一周表现前十的证券',
+      value: '$args[0].name',
+    },
+  })
   handleNameClick(obj) {
     const { openDetailPage } = this.props;
     openDetailPage(obj);
@@ -113,6 +133,13 @@ export default class WeeklySecurityTopTen extends PureComponent {
 
   // 证券名称点击事件
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '近一周表现前十的证券',
+      value: '$args[2]',
+    },
+  })
   handleSecurityClick(type, code) {
     if (type === STOCK_CODE) {
       const { openStockPage } = this.props;

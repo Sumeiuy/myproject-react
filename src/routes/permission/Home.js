@@ -276,7 +276,7 @@ export default class Permission extends PureComponent {
 
   // 头部新建页面
   @autobind
-  @logPV({ pathname: '/modal/createProtocol', title: '新建权限申请' })
+  @logPV({ pathname: '/modal/createPermission', title: '新建权限申请' })
   creatPermossionModal() {
     // 打开模态框 发送获取服务人员列表请求
     this.setState({ isShowCreateModal: true });

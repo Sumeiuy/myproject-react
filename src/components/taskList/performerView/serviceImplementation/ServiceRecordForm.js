@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-11 18:36:57
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-07-24 18:49:12
  * 服务记录表单
  */
 
@@ -12,9 +12,11 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import ServiceRecordContent from '../../../common/serviceRecordContent';
 import Button from '../../../common/Button';
+import confirm from '../../../common/confirm_';
 import styles from './serviceRecordForm.less';
 import logable, { logCommon } from '../../../../decorators/logable';
 import { UPDATE } from '../../../../config/serviceRecord';
+import { serveWay as serveWayUtil } from '../config/code';
 
 export default class ServiceRecordForm extends PureComponent {
 
@@ -49,11 +51,27 @@ export default class ServiceRecordForm extends PureComponent {
         serveContentDesc: `${serveContentDesc}${data.serveContentDesc}`,
       };
     }
-    // 添加服务记录
-    addServeRecord({
-      postBody: data,
-      phoneCallback: this.handleCancel,
-    });
+    // 此处需要针对涨乐财富通是通过固定话术的情况下提交服务记录时候，
+    // 弹出确认框然后才能进行添加服务记录
+    const isZLFinsServiceWay = serveWayUtil.isZhangle(data.serveWay);
+    const isByTemplate = !_.isEmpty(_.toString(_.get(data, 'zhangleServiceContentData.templateId')));
+    if (isZLFinsServiceWay && isByTemplate) {
+      confirm({
+        content: '设置的投资建议将发送给客户，确认提交吗？',
+        onOk: () => {
+          addServeRecord({
+            postBody: data,
+            phoneCallback: this.handleCancel,
+          });
+        },
+      });
+    } else {
+      // 添加服务记录
+      addServeRecord({
+        postBody: data,
+        phoneCallback: this.handleCancel,
+      });
+    }
 
     // log日志 --- 添加服务记录
     // 服务类型

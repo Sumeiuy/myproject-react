@@ -3,7 +3,7 @@
  * 按服务经理筛选
  * @author wangjunjun
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 09:56:57
+ * @Last Modified time: 2018-08-02 16:07:33
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -18,8 +18,8 @@ export default class ServiceManagerFilter extends PureComponent {
   static propTypes = {
     list: PropTypes.array.isRequired,
     currentPtyMng: PropTypes.object.isRequired,
-    dropdownSelectedItem: PropTypes.func.isRequired,
-    dropdownToSearchInfo: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    onInputChange: PropTypes.func.isRequired,
     clearServiceManagerList: PropTypes.func.isRequired,
     disable: PropTypes.bool,
   }
@@ -38,7 +38,7 @@ export default class ServiceManagerFilter extends PureComponent {
   })
   handleSelect(item) {
     const { value } = item;
-    this.props.dropdownSelectedItem(value);
+    this.props.onChange(value);
   }
 
   @autobind
@@ -50,9 +50,9 @@ export default class ServiceManagerFilter extends PureComponent {
     },
   })
   handleSearch(value) {
-    const { dropdownToSearchInfo, clearServiceManagerList } = this.props;
+    const { onInputChange, clearServiceManagerList } = this.props;
     if (value) {
-      dropdownToSearchInfo(value);
+      onInputChange(value);
     } else {
       clearServiceManagerList();
     }

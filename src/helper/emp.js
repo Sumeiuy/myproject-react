@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-01 18:36:26
+ * @Last Modified time: 2018-08-02 15:36:49
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -109,6 +109,16 @@ const emp = {
   isFiliale(arr, id) {
     const orgData = findOrgDataByOrgId(arr, id);
     return (!_.isEmpty(orgData) && org.isFiliale(orgData.level));
+  },
+
+  /**
+   * 判断当前登录人部门是否是营业部
+   * @author LiuJianShu
+   * @returns {Boolean}
+   */
+  isDepartment(arr, id) {
+    const orgData = findOrgDataByOrgId(arr, id);
+    return (!_.isEmpty(orgData) && org.isDepartment(orgData.level));
   },
 
   /**

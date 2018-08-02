@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 12:28:29
+ * @Last Modified time: 2018-08-02 16:27:11
  * 任务实施简报
  */
 
@@ -434,7 +434,7 @@ export default class MissionImplementation extends PureComponent {
       location,
     } = this.props;
     const { level, currentScopeList } = this.state;
-    const currentMissionReport = currentId ? missionReport[currentId] || {} : {};
+    const currentMissionReport = currentId ? (missionReport[currentId] || {}) : {};
     const {
       isCreatingMotReport,
     } = currentMissionReport;
