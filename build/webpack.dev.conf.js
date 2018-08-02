@@ -7,6 +7,7 @@ var HappyPack = require('happypack')
 var baseWebpackConfig = require('./webpack.base.conf')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
+var CircularDependencyPlugin = require('circular-dependency-plugin')
 var theme = require('../src/theme')
 
 if (config.dev.enableHMR) {
@@ -101,6 +102,18 @@ module.exports = merge(baseWebpackConfig, {
       threads: 4,
       loaders: ['babel-loader']
     }),
-    new FriendlyErrorsPlugin()
+    new FriendlyErrorsPlugin(),
+    new CircularDependencyPlugin({
+      exclude: /node_modules/,
+      onStart({ compilation }) {
+        console.log('start detecting webpack modules cycles');
+      },
+      onDetected({ module: webpackModuleRecord, paths, compilation }) {
+        compilation.errors.push(new Error(paths.join(' -> ')))
+      },
+      onEnd({ compilation }) {
+        console.log('end detecting webpack modules cycles');
+      },
+    })
   ]
 })
