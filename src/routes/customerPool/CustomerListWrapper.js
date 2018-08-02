@@ -9,10 +9,10 @@
 import React from 'react';
 import CustomerList from './CustomerList';
 import NewCustomerList from './CustomerList__';
-import { env } from '../../helper';
+import { permission } from '../../helper';
 
 export default function CustomerListWrapper(props) {
-  return env.isGrayFlag() ?
+  return permission.isGrayFlag() ?
     <NewCustomerList {...props} /> :
     <CustomerList {...props} />;
 }

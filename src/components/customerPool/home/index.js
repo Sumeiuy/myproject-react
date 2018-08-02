@@ -5,9 +5,9 @@
  */
 import PerformanceIndicatorsNew from './PerformanceIndicators__';
 import PerformanceIndicatorsOld from './PerformanceIndicators';
-import { env } from '../../../helper';
+import { permission } from '../../../helper';
 
-export const PerformanceIndicators = env.isGrayFlag() ?
+export const PerformanceIndicators = permission.isGrayFlag() ?
   PerformanceIndicatorsNew : PerformanceIndicatorsOld;
 export { default as MorningBroadcast } from './MorningBroadcast';
 export { default as ToBeDone } from './ToBeDone';
