@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-06 13:39:41
+ * @Last Modified time: 2018-07-30 14:11:15
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -18,7 +18,7 @@ import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { dva, emp, permission } from '../../helper';
 import { openFspTab } from '../../utils';
-import { LIST_TABLE_COLUMNS, DEFAULT_OPTION } from './config';
+import { LIST_TABLE_COLUMNS, DEFAULT_OPTION, IS_OUR_CUST_OPTIONS } from './config';
 
 import styles from './home.less';
 
@@ -41,7 +41,7 @@ const mapDispatchToProps = {
 };
 
 // 筛选条件的key的集合
-const FILTER_INPUT_KEYS = ['exchangeType', 'punishType', 'idNo', 'custNumber'];
+const FILTER_INPUT_KEYS = ['exchangeType', 'punishType', 'isOurCust', 'custKeyword'];
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -69,10 +69,10 @@ export default class KeyMonitorAccountHome extends Component {
       exchangeType: '',
       // 监管措施类型
       punishType: '',
-      // 证件号码
-      idNo: '',
-      // 经纪客户号
-      custNumber: '',
+      // 是否我司客户
+      isOurCust: '',
+      // 客户
+      custKeyword: '',
       pageNum: 1,
       pageSize: 10,
       // 展示核查信息列表的Modal
@@ -97,18 +97,18 @@ export default class KeyMonitorAccountHome extends Component {
       exchangeType = '',
       // 监管措施类型
       punishType = '',
-      // 证件号码
-      idNo = '',
-      // 经纪客户号
-      custNumber = '',
+      // 是否我司客户
+      isOurCust = '',
+      // 客户
+      custKeyword = '',
       pageNum = 1,
       pageSize = 10,
     } } = location;
     return {
       exchangeType,
       punishType,
-      idNo,
-      custNumber,
+      isOurCust,
+      custKeyword,
       pageNum: parseInt(pageNum, 10),
       pageSize: parseInt(pageSize, 10),
     };
@@ -266,13 +266,15 @@ export default class KeyMonitorAccountHome extends Component {
   }
 
   @autobind
-  handleIDNoInputChange(e) {
-    this.setState({ idNo: e.target.value });
+  handleIsOurCustSelectChange(select, value) {
+    this.setState({
+      isOurCust: value,
+    });
   }
 
   @autobind
-  handleCustNumberInputChange(e) {
-    this.setState({ custNumber: e.target.value });
+  handleCustChange(e) {
+    this.setState({ custKeyword: e.target.value });
   }
 
   @autobind
@@ -281,8 +283,8 @@ export default class KeyMonitorAccountHome extends Component {
     this.queryAccountList({
       exchangeType: '',
       punishType: '',
-      idNo: '',
-      custNumber: '',
+      isOurCust: '',
+      custKeyword: '',
       pageNum: 1,
       pageSize: 10,
     });
@@ -319,8 +321,8 @@ export default class KeyMonitorAccountHome extends Component {
     const {
       exchangeType,
       punishType,
-      idNo,
-      custNumber,
+      isOurCust,
+      custKeyword,
       checkInfoModal,
       moniKey,
       stockAccount,
@@ -367,22 +369,23 @@ export default class KeyMonitorAccountHome extends Component {
             </div>
           </div>
           <div className={styles.filterItem}>
-            <div className={styles.item}>
-              <span className={styles.label}>证件号码：</span>
-              <Input
-                className={styles.inputItem}
-                value={idNo}
-                onChange={this.handleIDNoInputChange}
-              />
-            </div>
+            <span className={styles.label}>是否我司客户：</span>
+            <Select
+              needShowKey={false}
+              data={IS_OUR_CUST_OPTIONS}
+              style={{ width: 90 }}
+              name="isOurCust"
+              value={isOurCust}
+              onChange={this.handleIsOurCustSelectChange}
+            />
           </div>
           <div className={styles.filterItem}>
             <div className={styles.item}>
-              <span className={styles.label}>经纪客户号：</span>
+              <span className={styles.label}>客户：</span>
               <Input
                 className={styles.inputItem}
-                value={custNumber}
-                onChange={this.handleCustNumberInputChange}
+                value={custKeyword}
+                onChange={this.handleCustChange}
               />
             </div>
           </div>
@@ -395,7 +398,7 @@ export default class KeyMonitorAccountHome extends Component {
           <Table
             rowKey="moniKey"
             pagination={false}
-            scroll={{ x: 3050 }}
+            scroll={{ x: 2750 }}
             dataSource={accountList}
             columns={columns}
           />
