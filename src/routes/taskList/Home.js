@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-30 15:18:37
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-08-02 17:46:37
  * @description 任务管理首页
  */
 
@@ -27,8 +27,6 @@ import logable, { logCommon } from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
 
-import styles from './home.less';
-
 import {
   EXECUTOR,
   INITIATOR,
@@ -47,8 +45,8 @@ import {
   defaultPerformerViewCurrentTab,
 } from './config';
 
-// 空函数
-const NOOP = _.noop;
+import styles from './home.less';
+
 // 执行者视图的左侧列表宽度
 const LEFT_PANEL_WIDTH = 400;
 // 视图配置项
@@ -215,7 +213,7 @@ export default class PerformerView extends PureComponent {
 
   // 执行者视图获取目标客户列表项的对应浮层详情
   @autobind
-  getCustDetail({ missionId = '', custId = '', missionFlowId = '', callback = NOOP }) {
+  getCustDetail({ missionId = '', custId = '', missionFlowId = '', callback = _.noop }) {
     const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;
     const { list = EMPTY_LIST } = targetCustList;
     if (_.isEmpty(list)) {
@@ -614,12 +612,6 @@ export default class PerformerView extends PureComponent {
     return detailComponent;
   }
 
-  // 帕努单任务是否在执行中，用于管理者视图
-  @autobind
-  judgeTaskInApproval(status) {
-    return _.includes(STATUS_MANAGER_VIEW, status);
-  }
-
   // 导出客户
   @autobind
   handleExportExecl(orgId) {
@@ -713,6 +705,33 @@ export default class PerformerView extends PureComponent {
     finalPostData.status = status || STATE_EXECUTE_CODE;
     finalPostData = { ...finalPostData, missionViewType: currentViewType };
     return finalPostData;
+  }
+
+  /**
+   * 获取sortKey，createTimeSort或者endTimeSort
+   * 获取sortContent，创建时间或者结束时间
+   */
+  @autobind
+  getSortConfig(viewType) {
+    let sortKey = CREATE_TIME_KEY;
+    let sortContent = CREATE_TIME;
+    let sortDirection = SORT_DESC;
+    if (viewType === EXECUTOR || viewType === CONTROLLER) {
+      sortKey = END_TIME_KEY;
+      sortContent = END_TIME;
+      sortDirection = SORT_ASC;
+    }
+    return {
+      sortKey,
+      sortContent,
+      sortDirection,
+    };
+  }
+
+  // 帕努单任务是否在执行中，用于管理者视图
+  @autobind
+  judgeTaskInApproval(status) {
+    return _.includes(STATUS_MANAGER_VIEW, status);
   }
 
   // 加载右侧panel中的详情内容
@@ -840,27 +859,6 @@ export default class PerformerView extends PureComponent {
         },
       });
     }
-  }
-
-  /**
-   * 获取sortKey，createTimeSort或者endTimeSort
-   * 获取sortContent，创建时间或者结束时间
-   */
-  @autobind
-  getSortConfig(viewType) {
-    let sortKey = CREATE_TIME_KEY;
-    let sortContent = CREATE_TIME;
-    let sortDirection = SORT_DESC;
-    if (viewType === EXECUTOR || viewType === CONTROLLER) {
-      sortKey = END_TIME_KEY;
-      sortContent = END_TIME;
-      sortDirection = SORT_ASC;
-    }
-    return {
-      sortKey,
-      sortContent,
-      sortDirection,
-    };
   }
 
   // url中currentId改变后驱动右侧的变化

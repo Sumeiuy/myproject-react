@@ -139,7 +139,7 @@ const EXTRALARGE_PAGESIZE = 12;
 // 执行者视图详情中tab的默认项，默认服务实施
 const defaultPerformerViewCurrentTab = 'serviceImplementation';
 
-export default {
+export {
   EXECUTOR,
   INITIATOR,
   CONTROLLER,
