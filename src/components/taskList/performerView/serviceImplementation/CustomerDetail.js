@@ -2,8 +2,8 @@
  * @Description: 客户详情
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-10 12:29:28
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-08-03 15:19:34
  */
 
 import React, { PureComponent } from 'react';
@@ -84,6 +84,7 @@ export default class CustomerDetail extends PureComponent {
   @autobind
   getInFoPerfectRate() {
     const { targetCustDetail = {} } = this.props;
+    // 下面的calssName可以提出来使用，使得代码整洁干净
     return (
       <div className={`${styles.nameTips}`}>
         <h6><span>手机号码：</span>
