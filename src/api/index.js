@@ -32,6 +32,7 @@ import latestView from './latestView';
 import keyMonitorAccount from './keyMonitorAccount';
 import custRelationships from './custRelationships';
 import customerLabel from './customerLabel';
+import labelManagement from './labelManagement';
 
 const api = apiCreator();
 
@@ -104,5 +105,7 @@ export default {
   custRelationships: custRelationships(api),
   // ========== 客户自定义标签
   customerLabel: customerLabel(api),
+  // ========== 管理标签页面
+  labelManagement: labelManagement(api),
 };
 

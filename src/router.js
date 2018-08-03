@@ -102,6 +102,8 @@ import KeyMonitorAccount from './routes/keyMonitorAccount/Home';
 import CustRelationships from './routes/custRelationships/Home';
 // 客户关联关系信息申请驳回后修改页面
 import RejectUpdateHome from './routes/custRelationships/RejectUpdateHome';
+// 管理标签页面
+import LabelManagement from './routes/labelManagement/Home';
 
 import { env } from './helper';
 
@@ -370,6 +372,8 @@ const routes = [
   { path: '/stockOptionEvaluationEdit', component: StockOptionEvaluationEdit },
   // 直接进入
   { path: '/keyMonitorAccount', component: KeyMonitorAccount },
+  // 管理标签页面
+  { path: '/labelManagement', component: LabelManagement },
 ];
 
 // 递归创建路由
