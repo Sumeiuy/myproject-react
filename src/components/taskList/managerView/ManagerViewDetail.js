@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 12:14:35
+ * @Last Modified time: 2018-08-02 21:42:12
  * 管理者视图详情
  */
 
@@ -252,14 +252,17 @@ export default class ManagerViewDetail extends PureComponent {
       currentId,
       queryDistinctCustomerCount,
       queryDistinctCustListDetailOfMission,
+      location: { query: { ptyMngId = '' } },
     } = this.props;
 
     // 基本入参
+    // 按服务经理筛选时传ptyMngId的值
     let postBody = {
       pageNum,
       pageSize,
       orgId: this.getCurrentOrgId(),
       missionId: currentId,
+      ptyMngId,
     };
 
     // 进度条下钻的入参
@@ -414,6 +417,7 @@ export default class ManagerViewDetail extends PureComponent {
       missionType,
       missionTypeDict,
       distinctCustomerCount,
+      location: { query: { ptyMngId } },
     } = this.props;
     const {
       missionProgressStatus,
@@ -484,6 +488,7 @@ export default class ManagerViewDetail extends PureComponent {
     }
 
     const urlParam = {
+      ptyMngId,
       orgId: this.getCurrentOrgId(),
       missionId: currentId,
       count: distinctCustomerCount,

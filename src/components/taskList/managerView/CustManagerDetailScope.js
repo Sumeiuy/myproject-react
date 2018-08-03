@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 18:03:34
+ * @Last Modified time: 2018-08-02 21:16:52
  * 服务经理维度任务统计
  */
 
@@ -91,12 +91,12 @@ export default class CustManagerDetailScope extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { custRange, orgId } = props;
+    const { custRange, orgId, location: { query: { ptyMngId } } } = props;
     this.state = {
       // 当前选择的维度
       // 页面从无到有的过程中，orgId不一定是初始化的orgId，需要将外部传入的orgId传入进行
       // 比对，得出当前维度
-      currentSelectScope: getCurrentScopeByOrgId({ custRange, orgId }),
+      currentSelectScope: getCurrentScopeByOrgId({ custRange, orgId, ptyMngId }),
       dataSource: EMPTY_LIST,
     };
   }
@@ -112,6 +112,7 @@ export default class CustManagerDetailScope extends PureComponent {
       currentId: nextMssnId,
       custRange,
       detailData: { list: nextList = EMPTY_LIST },
+      location: { query: { ptyMngId } },
     } = nextProps;
     // 当组织机构树发生变化
     // 设置默认维度
@@ -125,7 +126,7 @@ export default class CustManagerDetailScope extends PureComponent {
     // 任务id切换了，orgId肯定恢复原始了，不需要将外部的orgId传入getCurrentScopeByOrgId
     if (currentId !== nextMssnId) {
       this.setState({
-        currentSelectScope: getCurrentScopeByOrgId({ custRange }),
+        currentSelectScope: getCurrentScopeByOrgId({ custRange, ptyMngId }),
       });
     }
     // 用来处理列改变的时候，primaryKey会为空的情况，所以将数据源用内部状态控制
@@ -355,13 +356,8 @@ export default class CustManagerDetailScope extends PureComponent {
   @autobind
   renderTableTitle() {
     const { currentSelectScope } = this.state;
-    const { location: { query: { ptyMngId } } } = this.props;
     // 按服务经理筛选时，数据按服务经理维度查询
-    let currentScope = currentSelectScope;
-    if (!_.isEmpty(ptyMngId) || _.isEmpty(currentSelectScope)) {
-      currentScope = EMP_MANAGER_SCOPE;
-    }
-    // const currentScope = !_.isEmpty(ptyMngId) ? EMP_MANAGER_SCOPE : (currentSelectScope || EMP_MANAGER_SCOPE);
+    const currentScope = currentSelectScope || EMP_MANAGER_SCOPE;
     return (
       <div className={styles.titleSection}>
         <div className={`${styles.tableTitle} tableTitle`}>明细进度</div>

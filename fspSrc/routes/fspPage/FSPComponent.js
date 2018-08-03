@@ -23,6 +23,7 @@ export default class FSPComponent extends PureComponent {
     this.state = {
       loading: true,
     };
+    this.timeoutId = setTimeout(() => this.setState({ loading: false }), 10000);
   }
 
   componentWillReceiveProps(nextProps) {
