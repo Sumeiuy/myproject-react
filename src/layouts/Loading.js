@@ -6,6 +6,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Spin } from 'antd';
+import _ from 'lodash';
+
 import { dom } from '../helper';
 
 import styles from './Loading.less';
@@ -14,7 +16,10 @@ import styles from './Loading.less';
 const contentWrapper = document.getElementById('workspace-content');
 
 function Loading({ loading, forceFull }) {
-  if (loading <= 0) {
+  // 此处针对如果单独调用loading组件的时候，传递 bool 值来控制显示/隐藏
+  if (_.isNumber(loading) && loading <= 0) {
+    return null;
+  } else if (_.isBoolean(loading) && !loading) {
     return null;
   }
   let top = contentWrapper ? '55px' : '0';
@@ -37,7 +42,10 @@ function Loading({ loading, forceFull }) {
 }
 
 Loading.propTypes = {
-  loading: PropTypes.number.isRequired,
+  loading: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.number,
+  ]).isRequired,
   forceFull: PropTypes.bool,
 };
 Loading.defaultProps = {

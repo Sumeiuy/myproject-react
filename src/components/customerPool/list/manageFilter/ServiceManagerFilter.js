@@ -29,7 +29,7 @@ export default class ServiceManagerFilter extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '服务经理',
-      value: '$args[0].ptyMngName',
+      value: '$args[0].value.ptyMngName',
     },
   })
   handleSelect(item) {
@@ -69,6 +69,7 @@ export default class ServiceManagerFilter extends PureComponent {
           value={finalPytMng}
           defaultLabel="不限"
           filterName="服务经理"
+          placeholder="员工号或姓名"
           data={searchServerPersonList}
           dataMap={['ptyMngId', 'ptyMngName']}
           showSearch

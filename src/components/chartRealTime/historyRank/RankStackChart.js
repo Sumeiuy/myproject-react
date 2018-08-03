@@ -96,6 +96,7 @@ export default class RankStackChart extends PureComponent {
     const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = props;
     let { chartData: { indiModel: { unit } } } = props;
     const levelName = `level${scope}Name`;
+    const levelId = `level${scope}Id`;
     // 分公司名称数组
     const company = filterData(orgModel, 'level2Name', 'yAxis');
     // 财富中心名称数组
@@ -104,6 +105,8 @@ export default class RankStackChart extends PureComponent {
     const stores = filterData(orgModel, 'level4Name', 'yAxis');
     // 此处为y轴刻度值
     const yAxisLabels = filterData(orgModel, levelName, 'yAxis');
+    // 工号数组
+    const levelIdArr = filterData(orgModel, levelId, 'yAxis');
     // 获取排名信息数据
     const rank = filterRankData(orgModel);
     // 获取合计值，即orgModel的value值，用于右侧显示使用
@@ -138,6 +141,7 @@ export default class RankStackChart extends PureComponent {
       company,
       wealth,
       stores,
+      levelIdArr,
       yAxisLabels,
       grid: newGrid,
       stackSeries,
@@ -277,7 +281,7 @@ export default class RankStackChart extends PureComponent {
   }
 
   @autobind
-  makeTooltip(base, scope, company, wealth, store, unit, legends) {
+  makeTooltip(base, scope, company, levelIdArr, wealth, store, unit, legends) {
     return {
       ...base,
       formatter(params) {
@@ -297,9 +301,11 @@ export default class RankStackChart extends PureComponent {
             const seriesName = item.seriesName;
             const dataIndex = item.dataIndex;
             let value = item.value;
+            let id = levelIdArr[dataIndex];
             if (axisValue === '--') {
               // 无数据的情况
               value = '--';
+              id = '--';
             }
             if (axisValue !== '--') {
               total.push(value);
@@ -334,7 +340,7 @@ export default class RankStackChart extends PureComponent {
               seriesTips.push(`
                 ${toolTipNewHeader}
                 <tr>
-                  <td colspan="4">${axisValue}</td>
+                  <td colspan="4">${axisValue}(${id})</td>
                 </tr>
               `);
             }

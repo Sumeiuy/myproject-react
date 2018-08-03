@@ -69,6 +69,7 @@ export default class ReportDetail extends PureComponent {
   handleDownload() {}
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '历史报告详情', value: '返回上一页' } })
   handleGoBck() {
     closeRctTab({ id: 'FSP_JX_GROUP_REPORT_DETAIL' });
   }

@@ -24,11 +24,9 @@ const SEARCH_CUSTOMER_FOR_PAGE_HEADER = 'pageHeader';
 const SEARCH_CUSTOMER_FOR_RIGHT_DETAIL = 'rightDetail';
 // 资产降序排列
 const ASSET_DESC = 'desc';
-// 服务实施默认的状态码
-const defaultStateCode = '10';
 // 默认的服务实施的参数
 const defaultParameter = {
-  state: defaultStateCode,
+  state: [],
   rowId: '',
   assetSort: ASSET_DESC,
   activeIndex: '1',
@@ -84,6 +82,12 @@ export default {
     custFeedBack: EMPTY_LIST,
     // 客户明细
     custDetail: EMPTY_OBJ,
+    // 查询的服务经理列表
+    serverManagerList: EMPTY_LIST,
+    // 获取任务相关的投资建议模板列表
+    templateList: [],
+    // 翻译选中的投资建议模板结果
+    templateResult: {},
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -94,9 +98,13 @@ export default {
       };
     },
     clearParameter(state) {
+      const excludeStateParameter = _.omit(defaultParameter, 'state');
       return {
         ...state,
-        parameter: defaultParameter,
+        parameter: {
+          ...state.parameter,
+          ...excludeStateParameter,
+        },
       };
     },
     getTaskDetailBasicInfoSuccess(state, action) {
@@ -300,6 +308,34 @@ export default {
       return {
         ...state,
         custDetail,
+      };
+    },
+    getSearchServerPersonListSuccess(state, action) {
+      return {
+        ...state,
+        serverManagerList: action.payload,
+      };
+    },
+    // 清除服务经理列表数据
+    clearServiceManagerList(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        searchServerPersonList: payload,
+      };
+    },
+    getTemplateListSuccess(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        templateList: payload.list || [],
+      };
+    },
+    translateTemplateSuccess(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        templateResult: payload,
       };
     },
   },
@@ -547,6 +583,43 @@ export default {
       const { resultData } = yield call(api.queryExecutorDetail, payload);
       yield put({
         type: 'queryExecutorDetailSuccess',
+        payload: resultData,
+      });
+    },
+    // 服务经理列表数据
+    getSearchPersonList: [
+      function* getSearchPersonList({ payload }, { call, put }) {
+        const { resultData = EMPTY_OBJ } = yield call(custApi.getSearchServerPersonelList, payload);
+        if (resultData) {
+          const { servicePeopleList = EMPTY_LIST } = resultData;
+          yield put({
+            type: 'getSearchServerPersonListSuccess',
+            payload: servicePeopleList,
+          });
+        }
+      }, { type: 'takeLatest' }],
+    // 根据任务类型获取相应的模板列表
+    * getTemplateList({ payload }, { call, put }) {
+      yield put({
+        type: 'getTemplateListSuccess',
+        payload: [],
+      });
+      const { resultData } = yield call(api.getTemplateList, payload);
+      yield put({
+        type: 'getTemplateListSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 翻译模板
+    * translateTemplate({ payload }, { call, put }) {
+      yield put({
+        type: 'translateTemplateSuccess',
+        payload: {},
+      });
+      const { resultData } = yield call(api.translateTemplate, payload);
+      yield put({
+        type: 'translateTemplateSuccess',
         payload: resultData,
       });
     },

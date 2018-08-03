@@ -14,6 +14,7 @@ import moment from 'moment';
 import { number, time } from '../../../helper/';
 import config from '../config';
 import styles from './customerRepeatAnalyze.less';
+import logable from '../../../decorators/logable';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -64,13 +65,25 @@ export default class CustomerRepeatAnalyze extends PureComponent {
     ));
   }
 
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '客户持仓重合比例分析',
+      value: '$args[0].name',
+    },
+  })
+  handleOpenCustomerListPage(openPayload) {
+    const { openCustomerListPage } = this.props;
+    openCustomerListPage(openPayload);
+  }
+
   render() {
     const {
       data,
       data: {
         list = EMPTY_LIST,
       },
-      openCustomerListPage,
       combinationData,
       combinationCode,
     } = this.props;
@@ -85,7 +98,7 @@ export default class CustomerRepeatAnalyze extends PureComponent {
       <div className={styles.orderingCustomerBox}>
         <div className={`${styles.headBox} clearfix`}>
           <h3>客户持仓重合比例分析</h3>
-          <a onClick={() => openCustomerListPage(openPayload)}>进入客户列表</a>
+          <a onClick={() => this.handleOpenCustomerListPage(openPayload)}>进入客户列表</a>
         </div>
         <div className={styles.tipsBox}>
           截止{time.format(data.time || DEFAULT_TIME, timeFormater)}，当前组合订购客户共计

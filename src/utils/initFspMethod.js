@@ -62,7 +62,7 @@ function initFspMethod({ store, history }) {
   // 在fsp中新开一个iframe的tab
   window.openRctTabFromIframe = function (url) {
     const { pathname } = parseUrl(url);
-    const { param: filterParam } = _.filter(retTabParam, item => (item.key === pathname));
+    const { param: filterParam } = _.filter(retTabParam, item => (item.key === pathname))[0];
     const param = {
       closable: true,
       forceRefresh: true,

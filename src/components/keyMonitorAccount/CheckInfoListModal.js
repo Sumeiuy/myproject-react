@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-07-02 15:49:26
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-06 13:44:02
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-02 17:52:39
  * @description 重点监控账户的核查信息列表Modal
  */
 
@@ -68,7 +68,7 @@ export default class CheckInfoListModal extends PureComponent {
   @autobind
   insertStockAccountToData(list) {
     const { stockAccount } = this.props;
-    return list.map(i => ({ ...i, stockAccount }));
+    return _.map(list, i => ({ ...i, stockAccount }));
   }
 
   @autobind
