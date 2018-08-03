@@ -65,6 +65,12 @@ export const sourceFilter = {
       value: ['labelMapping'],
     }],
   },
+  // 首页潜在业务客户下钻
+  business: [{
+    // 可开通业务
+    filterName: 'unrights',
+    value: ['custUnrightBusinessType'],
+  }],
   // 来源于开通业务: 开通业务、可开通业务过滤器
   numOfCustOpened: [{
     // businessOpened: 开通业务
@@ -259,10 +265,6 @@ export const homeModelType = {
     desc: '新开客户数',
     id: 'newCustNum',
   }, {
-    key: 'lastServDt',
-    desc: '服务客户数',
-    id: 'custNum',
-  }, {
     key: 'tgSignDate',
     desc: '签约客户数',
     id: 'currSignCustNum',
@@ -341,3 +343,24 @@ export const capitalFilterList = [
 export const PER_CODE = 'per';
 // 一般机构对应的code码
 export const ORG_CODE = 'org';
+
+// 产品中心不同产品类型对应的tab标题和tab的id
+// 产品类型：[PA100000: 私募基金]、[PA050000: 公募基金]、[PA070000: 紫金理财]、[PA090000: 收益凭证]
+export const CONFIG_TAB_PRODUCTCENTER = {
+  PA100000: {
+    title: '私募产品',
+    id: 'FSP_PRIVATE_PRD_TAB',
+  },
+  PA050000: {
+    title: '公募产品',
+    id: 'FSP_PUBLIC_FUND_TAB',
+  },
+  PA070000: {
+    title: '紫金产品',
+    id: 'FSP_PRD_PURPLE_GOLD_PROD',
+  },
+  PA090000: {
+    title: '收益凭证',
+    id: 'FSP_PRD_REVENCE_VOUCHER',
+  },
+};

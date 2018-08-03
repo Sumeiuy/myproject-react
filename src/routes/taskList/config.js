@@ -20,11 +20,43 @@ const STATE_COMPLETED_CODE = '80'; // 已完成编号
 
 const STATE_COMPLETED_NAME = '已完成'; // 已完成显示文字
 
-const CREATE_TIME = '创建时间'; // 创建时间，创建者视图需要这个字段，排序展示
-const CREATE_TIME_KEY = 'createTimeSort'; // 传给后台
-const END_TIME = '结束时间'; // 结束时间，执行者视图和管理者视图需要这个字段，排序展示
-const END_TIME_KEY = 'endTimeSort'; // 传给后台
+// 降序排序
+const SORT_DESC = 'desc';
+// 升序排序
+const SORT_ASC = 'asc';
+// 执行方式
+const EXECUTION_MODE = {
+  sortType: 'executionModeSort',
+  name: '执行方式',
+  defaultDirection: SORT_DESC,
+};
+// 创建时间
+const CREATE_TIME = {
+  sortType: 'createTimeSort',
+  name: '创建时间',
+  defaultDirection: SORT_DESC,
+};
+// 执行者视图中开始时间排序，传给后端的参数和创建时间相同
+const START_TIME = {
+  sortType: 'createTimeSort',
+  name: '开始时间',
+  defaultDirection: SORT_DESC,
+};
+// 结束时间
+const END_TIME = {
+  sortType: 'endTimeSort',
+  name: '结束时间',
+  defaultDirection: SORT_ASC,
+};
+// 排序组件的数据
+const SORT_DATA = [EXECUTION_MODE, START_TIME, END_TIME];
 
+// 各个视图默认的排序
+const DEFAULTSORT_VIEW = {
+  [EXECUTOR]: EXECUTION_MODE,
+  [INITIATOR]: CREATE_TIME,
+  [CONTROLLER]: END_TIME,
+};
 
 // 管理者视图
 const STATUS_MANAGER_VIEW = [
@@ -102,6 +134,8 @@ const QUERY_PARAMS = [
   'pageSize',
   // 当前分页
   'pageNum',
+  // 服务经理id
+  'ptyMngId',
 ];
 
 // 更多按钮的菜单数据，配置顺序需要与上面的一致
@@ -124,6 +158,12 @@ const moreFilterData = [
     filterOption: ['triggerTimeStart', 'triggerTimeEnd'],
     type: ['controller', 'executor'],
   },
+  {
+    value: '结束时间',
+    key: 'endTime',
+    filterOption: ['endTimeStart', 'endTimeEnd'],
+    type: ['controller'],
+  },
 ];
 
 // 当左侧列表或fsp中左侧菜单被折叠或者展开时，当前的服务实施列表的pageSize
@@ -138,6 +178,9 @@ const EXTRALARGE_PAGESIZE = 12;
 
 // 执行者视图详情中tab的默认项，默认服务实施
 const defaultPerformerViewCurrentTab = 'serviceImplementation';
+
+// 服务实施服务状态过滤器默认的状态码
+const defaultServiceState = ['10', '20'];
 
 export {
   EXECUTOR,
@@ -164,8 +207,6 @@ export {
   STATE_ALL_CODE,
   CREATE_TIME,
   END_TIME,
-  CREATE_TIME_KEY,
-  END_TIME_KEY,
   QUERY_PARAMS,
   moreFilterData,
   SMALL_PAGESIZE,
@@ -173,4 +214,9 @@ export {
   LARGE_PAGESIZE,
   EXTRALARGE_PAGESIZE,
   defaultPerformerViewCurrentTab,
+  defaultServiceState,
+  SORT_DATA,
+  SORT_DESC,
+  SORT_ASC,
+  DEFAULTSORT_VIEW,
 };

@@ -13,6 +13,7 @@ import {
   navTo,
   linkTo,
   saveTabUrl,
+  openFspIframeTab,
 } from './controlPane';
 
 import initFspMethod from './initFspMethod';
@@ -35,4 +36,5 @@ export {
   navTo,
   linkTo,
   saveTabUrl,
+  openFspIframeTab,
 };

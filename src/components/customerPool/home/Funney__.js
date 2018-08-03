@@ -11,7 +11,7 @@ import { Popover } from 'antd';
 import { linkTo } from './homeIndicators_';
 import { homeModelType } from '../config';
 import IECharts from '../../IECharts';
-
+import { logCommon } from '../../../decorators/logable';
 import antdStyles from '../../../css/antd.less';
 import styles from './funney.less';
 // 客户与资产模块的source
@@ -65,7 +65,7 @@ function renderIntro(data) {
   );
 }
 
-function Funney({ dataSource, push, cycle, location }) {
+function Funney({ dataSource, push, cycle, location }, { empInfo }) {
   const { data, color } = dataSource;
   const funnelOption = {
     series: [
@@ -104,17 +104,34 @@ function Funney({ dataSource, push, cycle, location }) {
       if (arg.componentType !== 'series') {
         return;
       }
-      const { data: { key = '' } } = arg;
+      const { data: { key = '', name = '' } } = arg;
       const modalTypeList = homeModelType[SOURCE_CUST_ASSETS];
       const { key: modalType } = _.find(modalTypeList, item => item.id === key) || {};
-      const params = {
+      let params = {
         source: SOURCE_CUST_ASSETS,
         type: modalType,
         push,
         cycle,
         location,
       };
+      // 如果是服务经理模块，则下钻客户列表后服务经理默认为当前登录客户
+      const { empNum, empName } = empInfo.empInfo;
+      if (!modalType) {
+        params = {
+          ...params,
+          ptyMngId: empNum,
+          ptyMngName: empName,
+        };
+      }
       linkTo(params);
+      // 手动上传日志
+      logCommon({
+        type: 'DrillDown',
+        payload: {
+          name: '客户及资产',
+          element: name,
+        },
+      });
     });
   };
 
@@ -150,4 +167,7 @@ Funney.propTypes = {
   cycle: PropTypes.array.isRequired,
 };
 
+Funney.contextTypes = {
+  empInfo: PropTypes.object,
+};
 export default Funney;

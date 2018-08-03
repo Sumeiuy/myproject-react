@@ -46,13 +46,8 @@ export default class PageHeader extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '反馈时间',
-      value: (instance, args) => {
-        const dateArr = _.map(
-          args[0],
-          item => moment(item).format('YYYY-MM-DD'),
-        );
-        return _.join(dateArr, '~');
-      },
+      min: (instance, args) => moment(args[0][0]).format('YYYY-MM-DD'),
+      max: (instance, args) => moment(args[0][1]).format('YYYY-MM-DD'),
     },
   })
   handleDateChange(dateStrings) {

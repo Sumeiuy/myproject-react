@@ -6,7 +6,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import style from './bottonGroup.less';
-
+// 取消按钮的 operate
+const KEY_CANCEL = 'cancel';
 export default function BottnGroup(props) {
   const list = props.list.flowButtons ? props.list.flowButtons : [];
   const resultMap = list.map((item) => {
@@ -17,7 +18,7 @@ export default function BottnGroup(props) {
     };
     return (
       <span
-        className={style.spBtn}
+        className={item.operate === KEY_CANCEL ? style.cancelBtn : style.spBtn}
         onClick={clickBotton}
         key={item.flowBtnId}
       >{item.btnName}</span>

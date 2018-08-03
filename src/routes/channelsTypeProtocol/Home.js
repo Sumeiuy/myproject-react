@@ -437,7 +437,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
 
   // 头部新建按钮点击事件处理程序
   @autobind
-  @logPV({ pathname: '/modal/createProtocol', title: '新建通道协议' })
+  @logPV({ pathname: '/modal/createChannelsTypeProtocol', title: '新建通道协议' })
   handleCreateBtnClick() {
     this.showModal('editFormModal');
   }

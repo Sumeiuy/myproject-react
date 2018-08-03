@@ -23,6 +23,7 @@ import CreateApply from '../../components/telephoneNumberManage/CreateApply';
 import config from '../../components/telephoneNumberManage/config';
 import { dva } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
+import logable, { logPV } from '../../decorators/logable';
 
 // 头部筛选区域上方导航的高度40px，在SplitPanel计算中需要额外减去
 // isSetMarginTop为false，不需要将框架的marginTop设置为0，此时10pxmarginTop也要额外减掉
@@ -275,6 +276,7 @@ export default class ApplyHome extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
+  @logPV({ pathname: '/modal/telephoneNumberManagerApply', title: '新建公务手机卡号申请' })
   openCreateModalBoard() {
     this.setState({
       isShowCreateModal: true,
@@ -313,6 +315,7 @@ export default class ApplyHome extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
+  @logable({ type: 'ViewItem', payload: { name: '公务手机卡号申请列表' } })
   handleListRowClick(record, index) {
     const { id, flowId } = record;
     const {

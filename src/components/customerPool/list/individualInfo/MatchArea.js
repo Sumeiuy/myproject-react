@@ -5,14 +5,14 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-01 16:56:06
+ * @Last Modified time: 2018-08-02 15:20:36
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { autobind } from 'core-decorators';
-import { isSightingScope, handleOpenFsp360TabAction, getDetailBtnVisible } from '../../helper';
+import { isSightingScope, handleOpenFsp360TabAction, openProductDetailPage, getDetailBtnVisible } from '../../helper';
 import { url as urlHelper, url, number } from '../../../../helper';
 import { seperator, sessionStore } from '../../../../config';
 import { openRctTab } from '../../../../utils/index';
@@ -177,21 +177,39 @@ export default class MatchArea extends PureComponent {
       formatAsset,
     } = this.props;
     if (!_.isEmpty(list)) {
-      const { name, code } = list[0] || {};
-      const htmlString = `${replaceWord({ value: name, searchText: keyword })}/${replaceWord({ value: code, searchText: keyword })}`;
+      const data = list[0] || {};
+      const { name, code, flag } = data;
+      const codeHtmlString = replaceWord({ value: code, searchText: keyword });
+      const htmlString = `${replaceWord({ value: name, searchText: keyword })}/${codeHtmlString}`;
       const props = {
         custId,
-        data: list[0] || {},
+        data,
         queryHoldingProduct,
         holdingProducts,
         queryHoldingProductReqState,
         formatAsset,
       };
+      let contentNode;
+      // flag为true，持仓产品名称可点击
+      if (flag) {
+        const { push } = this.context;
+        contentNode = (<i>
+          <em
+            className={styles.clickable}
+            onClick={() => { openProductDetailPage({ data, routerAction: push }); }}
+          >
+            {name}
+          </em>
+          /<em className="marked" dangerouslySetInnerHTML={{ __html: codeHtmlString }} />
+        </i>);
+      } else {
+        contentNode = <i dangerouslySetInnerHTML={{ __html: htmlString }} />;
+      }
       return (
         <li key={htmlString}>
           <span>
             <i className="label">持仓产品：</i>
-            <i dangerouslySetInnerHTML={{ __html: htmlString }} />
+            {contentNode}
             {this.isShowDetailBtn && <HoldingProductDetail {...props} />}
           </span>
         </li>
@@ -518,7 +536,6 @@ export default class MatchArea extends PureComponent {
           <span className={styles.serviceRecord}>
             <i className="label">服务记录：</i>
             <i dangerouslySetInnerHTML={{ __html: markedEle }} />
-            <i>...</i>
           </span>
           <span
             className={styles.more}

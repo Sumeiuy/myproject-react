@@ -23,6 +23,7 @@ import regxp from './regexp';
 import time from './time';
 import url from './url';
 import date from './date';
+import convert from './convert';
 
 function getIconType(name) {
   const fullName = name.split('.');
@@ -63,6 +64,7 @@ function getIconType(name) {
 export {
   check,
   data,
+  convert,
   dom,
   dva,
   encode,

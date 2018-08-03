@@ -6,7 +6,7 @@
 import _ from 'lodash';
 import { openRctTab } from '../../../utils';
 import { url as urlHelper, number as numberHelper, permission } from '../../../helper';
-import { getFilter } from '../helper';
+import { getFilter, getSortParam } from '../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import {
   toFomatterCust,
@@ -326,6 +326,7 @@ export function linkTo({
   location,
   modalType = 'rightType',
   type,
+  ...otherParams
 }) {
   if (_.isEmpty(location)) {
     return;
@@ -359,7 +360,14 @@ export function linkTo({
       params.orgId = orgId;
     }
   }
-  params.filters = getFilter(params);
+  const filters = getFilter(params);
+  const sortParam = getSortParam(filters);
+  params = {
+    ...params,
+    ...sortParam,
+    ...otherParams,
+    filters,
+  };
   const url = `${pathname}?${urlHelper.stringify(params)}`;
   const param = {
     closable: true,

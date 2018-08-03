@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 // import _ from 'lodash';
 import { Tabs } from 'antd';
+import logable from '../../../decorators/logable';
 import styles from './combinationTab.less';
 
 const TabPane = Tabs.TabPane;
@@ -43,9 +44,21 @@ export default class CombinationTab extends PureComponent {
     ));
   }
 
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '组合排名TAB切换',
+      value: '$args[0]',
+    },
+  })
+  handleTabChange(key) {
+    const { tabChange } = this.props;
+    tabChange(key);
+  }
+
   render() {
     const {
-      tabChange,
       // tabList,
       rankTabActiveKey,
     } = this.props;
@@ -53,7 +66,7 @@ export default class CombinationTab extends PureComponent {
     // const defaultActiveKey = (tabList[0] || EMPTY_OBJECT).key;
     return (
       <div className={styles.combinationTabBox}>
-        <Tabs activeKey={rankTabActiveKey} onChange={tabChange}>
+        <Tabs activeKey={rankTabActiveKey} onChange={this.handleTabChange}>
           {this.getTabPaneList()}
         </Tabs>
       </div>
