@@ -96,7 +96,6 @@ export default class ViewpointListItem extends PureComponent {
       routerAction: push,
       url,
       param,
-      pathname: '/strategyCenter/stock',
     });
   }
 
