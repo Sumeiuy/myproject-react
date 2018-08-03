@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-25 20:49:28
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-03 13:13:56
  */
 
 import React, { PureComponent } from 'react';
@@ -229,7 +229,6 @@ export default class ChartTable extends PureComponent {
           dataIndex: child.key,
           width: this.getColumnWidth(child.name, child.unit),
           key: `key${child.key}${stamp}`,
-          align: 'center',
         };
         const hasThreeEle = child.children;
         if (hasThreeEle) {
@@ -254,7 +253,6 @@ export default class ChartTable extends PureComponent {
           dataIndex: child.key,
           width: this.getColumnWidth(child.name, child.unit),
           key: `key${child.key}${stamp}`,
-          align: 'center',
         };
         return threeEleArr.push(threeEleObj);
       });
@@ -328,7 +326,7 @@ export default class ChartTable extends PureComponent {
             {_.isEmpty(record.orgModel.level3Name) ? '' : `-${record.orgModel.level3Name}`}
             -{record.orgModel.level4Name}
           </p>
-          <p>{record.orgModel.level5Name}</p>
+          <p>{record.orgModel.level5Name}{_.isEmpty(record.orgModel.level5Id) ? '' : `(${record.orgModel.level5Id})`}</p>
         </div>);
       } else {
         toolTipTittle = '';
@@ -359,16 +357,16 @@ export default class ChartTable extends PureComponent {
         const itemValue = Number(item.value);
         switch (encodeURIComponent(item.unit)) {
           case encodeURIComponent('%'):
-            value = Number.parseFloat((itemValue * 100).toFixed(2));
+            value = helperData.toThousands(itemValue * 100);
             break;
           case encodeURIComponent('‰'):
-            value = Number.parseFloat((itemValue * 1000).toFixed(2));
+            value = helperData.toThousands(itemValue * 1000);
             break;
           case encodeURIComponent('元'):
-            value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
+            value = helperData.toThousands(itemValue / 10000);
             break;
           case encodeURIComponent('元/年'):
-            value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
+            value = helperData.toThousands(itemValue / 10000);
             break;
           default:
             value = Number.parseFloat(itemValue.toFixed(2));
@@ -412,8 +410,9 @@ export default class ChartTable extends PureComponent {
       data.map((item, index) => {
         const testArr = this.unitChange(item.indicatorDataList);
         const { id, level: itemLevel, name, orgModel = {} } = item;
+        const city = _.isEmpty(id) ? name : `${name}(${id})`;
         return temp.push(Object.assign(
-          { key: index, city: name, level: itemLevel, id, orgModel }, ...testArr,
+          { key: index, city, level: itemLevel, id, orgModel }, ...testArr,
         ));
       });
       tempArr = columns.map((item) => {
@@ -422,7 +421,6 @@ export default class ChartTable extends PureComponent {
           dataIndex: item.key,
           title: this.getTitleHtml(item),
           width: this.getColumnWidth(tempName),
-          align: 'center',
           render: text => (
             <div className={styles.tdWrapperDiv}>
               {text}
@@ -452,7 +450,6 @@ export default class ChartTable extends PureComponent {
         key: 'city',
         width: 170,
         fixed: 'left',
-        align: 'center',
         render: (text, record) => (
           this.toolTipHandle(record)
         ),
