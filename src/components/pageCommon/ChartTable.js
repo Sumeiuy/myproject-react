@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-03 18:04:11
+ * @Last Modified time: 2018-08-03 19:59:12
  */
 
 import React, { PureComponent } from 'react';
@@ -370,7 +370,7 @@ export default class ChartTable extends PureComponent {
             value = thousandFormat(toFixed(itemValue / 10000), true, ',', false);
             break;
           default:
-            value = Number.parseFloat(itemValue.toFixed(2));
+            value = thousandFormat(toFixed(itemValue), true, ',', true);
             break;
         }
       } else {
@@ -403,19 +403,19 @@ export default class ChartTable extends PureComponent {
     const { chartTableInfo, scope, boardType, summaryType } = nextProps;
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
-    const temp = [];
+    let temp = [];
     let newArr = [];
     let tempArr = [];
     let allWidth;
     if (data && data.length) {
-      data.map((item, index) => {
-        const testArr = this.unitChange(item.indicatorDataList);
-        const { id, level: itemLevel, name, orgModel = {} } = item;
+      temp = _.reduce(data, (res, value, index) => {
+        const testArr = this.unitChange(value.indicatorDataList);
+        const { id, level: itemLevel, name, orgModel = {} } = value;
         const city = _.isEmpty(id) ? name : `${name}(${id})`;
-        return temp.push(Object.assign(
-          { key: index, city, level: itemLevel, id, orgModel }, ...testArr,
-        ));
-      });
+        const listItemData =
+          _.assign({ key: index, city, level: itemLevel, id, orgModel }, ...testArr);
+        return res.concat(listItemData);
+      }, []);
       tempArr = columns.map((item) => {
         const tempName = `${item.name}`;
         const column = {
