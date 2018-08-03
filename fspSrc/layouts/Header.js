@@ -180,7 +180,7 @@ export default class Header extends PureComponent {
   @autobind
   handleInputChange(value) {
     this.setState({
-      stockCode: value,
+      stockCode: _.trim(value),
     });
   }
 
@@ -329,6 +329,7 @@ export default class Header extends PureComponent {
         >
           <div className={styles.selectedInfo}>股票代码：</div>
           <Input
+            value={this.state.stockCode}
             onChange={e => this.handleInputChange(e.target.value)}
             onPressEnter={this.handleSubmitExistCp}
           />

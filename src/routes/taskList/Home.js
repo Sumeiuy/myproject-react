@@ -1024,11 +1024,13 @@ export default class PerformerView extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '跳转到客户服务全纪录' } })
   handleOpenRecord() {
-    const url = '/fsp/taskCenter/serviceManage';
+    const pathname = '/fsp/taskCenter/serviceManage';
+    const url = '/mot/service/showList';
     const { push } = this.props;
     openFspTab({
       routerAction: push,
       url,
+      pathname,
       param: {
         id: 'FSP_MOT_TAB_SERVICELIST',
         title: '客户服务全纪录',

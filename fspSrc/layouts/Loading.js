@@ -10,7 +10,7 @@ import { Spin } from 'antd';
 import styles from './loading_.less';
 
 function Loading({ loading, forceFull }) {
-  if (loading <= 0) {
+  if (loading <= 0 || !loading) {
     return null;
   }
   let top = '98px';
@@ -22,18 +22,19 @@ function Loading({ loading, forceFull }) {
     top = '0';
     left = '0';
   }
+
   return (
     <div
       className={styles.popmask}
       style={{ top, left }}
     >
-      <Spin tip="Loading" spinning={!!loading} />
+      <Spin tip="Loading" spinning={loading > 0 || loading} />
     </div>
   );
 }
 
 Loading.propTypes = {
-  loading: PropTypes.number.isRequired,
+  loading: PropTypes.oneOfType(PropTypes.number, PropTypes.bool).isRequired,
   forceFull: PropTypes.bool,
 };
 

@@ -204,7 +204,7 @@ export default class KeyMonitorAccountHome extends Component {
     openFspTab({
       routerAction: push,
       url,
-      pathname: '/customerCenter/customerDetail',
+      pathname: '/fsp/customerCenter/customer360',
       param,
       state: {
         url,
