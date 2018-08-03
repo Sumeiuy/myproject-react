@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-12 15:08:35
+ * @Last Modified time: 2018-08-03 13:38:47
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -258,7 +258,7 @@ export default class MessageCenter extends PureComponent {
         param,
       });
     } else {
-      push(`/custAllot/notifies?notifiId=${rowId}&appId=${appId}&currentId=${itemId}`);
+      push(`/departmentCustAllot/notifies?notifiId=${rowId}&appId=${appId}&currentId=${itemId}`);
     }
   }
 
