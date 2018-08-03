@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 09:08:24
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-20 15:15:07
+ * @Last Modified time: 2018-08-03 22:05:35
  */
 
 import React, { PureComponent } from 'react';
@@ -61,6 +61,7 @@ export default class ApplyEditForm extends PureComponent {
     // 新建修改的更新接口
     updateBindingFlowAppId: PropTypes.string.isRequired,
     updateBindingFlow: PropTypes.func.isRequired,
+    clearReduxData: PropTypes.func.isRequired,
   }
   static defaultProps = {
     attachmentList: [],
@@ -453,6 +454,7 @@ export default class ApplyEditForm extends PureComponent {
         message.success('股票期权申请修改成功');
       }
       getDetailInfo({ flowId }).then(() => {
+        this.props.clearReduxData({ editButtonListData: {} });
         this.setState({
           editButtonList: {},
           isAttachmentEdit: false,
