@@ -2,8 +2,8 @@
  * @Description: 为新版客户列表发起任务在新建任务提示框中默认的展示信息提供的方法
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-25 17:00:15
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-03 12:12:34
  */
 
 import _ from 'lodash';
@@ -105,7 +105,7 @@ function getCommonFilterInfo({ filterField, dictField, labelName }, filterObj, d
   const tempFilterField = filterObj[filterField];
   let tempDictField = dict[dictField];
   // 持仓行业需要给字典字段上加一个key字段
-  if (filterField === 'holdingIndustry') {
+  if (filterField === 'primaryKeyIndustry') {
     tempDictField = _.map(tempDictField, item => ({
       ...item,
       key: item.induCode,

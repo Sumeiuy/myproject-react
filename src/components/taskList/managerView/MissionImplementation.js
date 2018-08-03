@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 16:27:11
+ * @Last Modified time: 2018-08-03 09:20:31
  * 任务实施简报
  */
 
@@ -80,8 +80,8 @@ export default class MissionImplementation extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { custRange } = props;
-    const { level, currentScopeList } = judgeCurrentOrgLevel({ custRange });
+    const { custRange, location: { query: { ptyMngId } } } = props;
+    const { level, currentScopeList } = judgeCurrentOrgLevel({ custRange, ptyMngId });
 
     this.state = {
       expandAll: false,
@@ -121,12 +121,17 @@ export default class MissionImplementation extends PureComponent {
       currentId: nextCurrentId = '',
       custRange,
       empInfo: { empPostnList = EMPTY_OBJECT },
+      location: { query: { ptyMngId } },
     } = nextProps;
 
     if (currentId !== nextCurrentId) {
       // 当任务切换的时候,清除组织机构树选择项
       this.orgId = this.originOrgId;
-      const { level, currentScopeList } = judgeCurrentOrgLevel({ custRange, orgId: this.orgId });
+      const { level, currentScopeList } = judgeCurrentOrgLevel({
+        custRange,
+        orgId: this.orgId,
+        ptyMngId,
+      });
       this.setState({
         // 恢复当前orgId
         currentOrgId: this.orgId,

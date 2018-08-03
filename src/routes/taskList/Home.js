@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 15:07:15
+ * @Last Modified time: 2018-08-02 22:14:17
  * @description 任务管理首页
  */
 
@@ -316,6 +316,7 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getCustManagerScope({
+    missionId = this.getCurrentId(),
     orgId,
     pageNum = GET_CUST_SCOPE_PAGE_NUM,
     pageSize = GET_CUST_SCOPE_PAGE_SIZE,
@@ -329,12 +330,12 @@ export default class PerformerView extends PureComponent {
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 获取服务经理维度任务数据
     getCustManagerScope({
-      missionId: this.getCurrentId(),
+      missionId,
       orgId: newOrgId || emp.getOrgId(),
       pageNum,
       pageSize,
       // 当前任务维度，取入参或者跟着组织机构走
-      enterType: enterType || getCurrentScopeByOrgId({ custRange, orgId }),
+      enterType: enterType || getCurrentScopeByOrgId({ custRange, orgId, ptyMngId }),
       // 管理者视图根据服务经理过滤器判断是否传ptyMngId
       ptyMngId,
     });
@@ -753,7 +754,6 @@ export default class PerformerView extends PureComponent {
       countFlowStatus,
       countAnswersByType,
       countExamineeByType,
-      getCustManagerScope,
       custRange,
       location: { query: { ptyMngId } },
     } = this.props;
@@ -792,17 +792,17 @@ export default class PerformerView extends PureComponent {
     );
     // 管理者视图根据服务经理过滤器判断是否传ptyMngId
     const payload = { missionId, orgId, ptyMngId };
+    // 按服务经理筛选enterType传EMP_MANAGER_SCOPE的值
+    const enterType = getCurrentScopeByOrgId({ custRange, ptyMngId });
     // 管理者视图获取客户反馈
     countFlowFeedBack(payload);
     // 管理者视图任务实施进度
     countFlowStatus(payload);
     // 管理者视图服务经理维度任务详细数据
-    getCustManagerScope({
+    this.getCustManagerScope({
       ...payload,
-      pageNum: GET_CUST_SCOPE_PAGE_NUM,
-      pageSize: GET_CUST_SCOPE_PAGE_SIZE,
       // 当前任务维度，跟着组织机构走
-      enterType: getCurrentScopeByOrgId({ custRange }),
+      enterType,
     });
   }
 
