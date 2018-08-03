@@ -238,7 +238,7 @@ export default class MultiUpload extends PureComponent {
     const uploadElement = edit ?
       (<Upload {...uploadProps} {...this.props}>
         <Button className={styles.commonUploadBtn}>
-          <Icon type="shangchuan" />上传附件
+          <Icon type="fujian1" />上传附件
         </Button>
       </Upload>)
       :
@@ -252,17 +252,11 @@ export default class MultiUpload extends PureComponent {
             fileList.map((item, index) => {
               const fileName = item.name;
               const popoverHtml = (
-                <div>
-                  <h3>
+                <div className={styles.filePop}>
+                  <h3 className="clearfix">
                     <Icon type="fujian1" />
-                    {fileName}
-                  </h3>
-                  <h3>
-                    <span className="fileListItemSize">大小：{`${item.size} KB`}</span>
-                    上传人：{item.creator}
-                  </h3>
-                  <h3>
-                    <span>
+                    <span className={styles.popFileName}>{fileName}</span>
+                    <span className={styles.btnBox}>
                       {
                         edit && showDelete && emp.getId() === item.creator ?
                           <em>
@@ -275,6 +269,7 @@ export default class MultiUpload extends PureComponent {
                             >
                               <Icon type="shanchu" />
                             </Popconfirm>
+                            <i className={styles.cutline} />
                           </em>
                           :
                           null
@@ -284,11 +279,17 @@ export default class MultiUpload extends PureComponent {
                           href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${item.name}`}
                           onClick={this.handleDownloadClick}
                         >
-                          <Icon type="xiazai1" />
+                          <Icon type="xiazai2" />
                         </a>
                       </em>
                     </span>
-                    上传于：{moment(item.lastModified).format('YYYY-MM-DD')}
+                  </h3>
+                  <h3 className={styles.uploadText}>
+                    <span className="fileListItemSize">大小：{`${item.size} KB`}</span>
+                    上传人：{item.creator}
+                  </h3>
+                  <h3 className={styles.uploadTime}>
+                    上传于：{moment(item.createTime).format('YYYY-MM-DD')}
                   </h3>
                 </div>
               );
@@ -306,7 +307,7 @@ export default class MultiUpload extends PureComponent {
                   >
                     <p className={styles.fileItemText} title={fileName}>
                       <Icon type="fujian" />
-                      {fileName}
+                      <span className={styles.fileName}>{fileName}</span>
                     </p>
                   </Popover>
                   <Popover
@@ -330,7 +331,7 @@ export default class MultiUpload extends PureComponent {
               );
             })
           }
-          <div className={styles.fileItem}>
+          <div className={styles.fileUploadItem}>
             { uploadElement }
           </div>
         </div>
@@ -338,14 +339,12 @@ export default class MultiUpload extends PureComponent {
     } else {
       fileListElement = (<div className={`${styles.fileList} fileList`}>
         <div
-          className={styles.fileItem}
+          className={styles.noFile}
         >
-          <p className={styles.unUploadText}>
-            <Icon type="fujian" />
-            暂未上传
-          </p>
+          <Icon type="fujian" />
+          <span className={styles.fileName}>暂未上传</span>
         </div>
-        <div className={styles.fileItem}>
+        <div className={styles.fileUploadItem}>
           { uploadElement }
         </div>
       </div>);

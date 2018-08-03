@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-06-12 15:12:22
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-07-04 13:20:35
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-07-23 16:18:19
  * @description 融资类业务驳回后修改页面
  */
 import React, { Component } from 'react';
@@ -293,6 +293,8 @@ export default class RejectUpdateHome extends Component {
       searchShow: false,
     };
 
+    const draftInfo = `${detailForUpdate.orgName} - ${detailForUpdate.empName}(${detailForUpdate.empId})`;
+
     return (
       <div className={styles.rejectUpdateHome} ref={this.rejectHomeRef}>
         <div className={styles.rejectHeader}>
@@ -309,7 +311,7 @@ export default class RejectUpdateHome extends Component {
           <div className={styles.modContent}>
             <ul className={styles.propertyList}>
               <li className={styles.item}>
-                <InfoItem label="拟稿人" value={detailForUpdate.empName} width="70px" />
+                <InfoItem label="拟稿人" value={draftInfo} width="70px" />
               </li>
               <li className={styles.item}>
                 <InfoItem label="申请时间" value={detailForUpdate.createTime} width="70px" />

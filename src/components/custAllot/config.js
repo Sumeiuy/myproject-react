@@ -8,6 +8,16 @@
 import { status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
 
 const config = {
+  limit: {
+    // 勾选条数限制为 500
+    count: 500,
+    // 所有条数限制为 2000
+    allCount: 2000,
+  },
+  errorMessage: {
+    count: '一次勾选的客户数超过500条，请分多次添加。',
+    allCount: '导入失败，导入的客户数超过一笔申请单最大客户数2000条，请发起多笔申请单分次导入！',
+  },
     // 分公司客户分配
   custAllot: {
     pageName: '分公司客户分配',
@@ -44,6 +54,7 @@ const config = {
   subType: '0703',
   // 清除数据类型
   clearDataArray: ['clearSearchData', 'clearAllData', 'clearAddedCustData'],
+  operateType: ['add', 'delete', 'clear'],
   // 分配规则
   // allotRule
   ruleTypeArray: [

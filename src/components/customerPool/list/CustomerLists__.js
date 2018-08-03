@@ -13,7 +13,7 @@ import SaleDepartmentFilter from './manageFilter/SaleDepartmentFilter';
 import ServiceManagerFilter from './manageFilter/ServiceManagerFilter';
 import CustomerRow from './CustomerRow__';
 import CreateContactModal from './CreateContactModal';
-import Reorder from './reorder/Reorder';
+import Sort from './sort';
 import BottomFixedBox from './BottomFixedBox__';
 import SignCustomerLabel from './modal/SignCustomerLabel';
 import MultiCustomerLabel from './modal/MultiCustomerLabel';
@@ -22,10 +22,18 @@ import { url as urlHelper, emp, number } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
-import { ENTERLIST1, ENTERLIST2, MAIN_MAGEGER_ID, ALL_DEPARTMENT_ID } from '../../../routes/customerPool/config';
+import {
+  ENTERLIST_PERMISSION_TASK_MANAGE,
+  ENTERLIST_PERMISSION_INDEX_QUERY,
+  MAIN_MAGEGER_ID,
+  ALL_DEPARTMENT_ID,
+  ENTERLIST_LEFTMENU,
+} from '../../../routes/customerPool/config';
 import logable from '../../../decorators/logable';
 import styles from './customerLists__.less';
 
+// 服务营业部筛选项去重的key
+const UNIQBY_KEY = 'id';
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
@@ -421,8 +429,9 @@ export default class CustomerLists extends PureComponent {
       isNotSaleDepartment,
     } = this.props;
     // 潜在业务客户进入，判断当前用户岗位是否在分公司或经总，在分公司或经总，再判断是否任务管理权限，反之dou
-    return (_.includes(ENTERLIST1, source) && hasTkMampPermission) ||
-      (_.includes(ENTERLIST2, source) && hasIndexViewPermission) ||
+    return (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, source) && hasTkMampPermission) ||
+      (_.includes(ENTERLIST_PERMISSION_INDEX_QUERY, source) && hasIndexViewPermission) ||
+      (_.includes(ENTERLIST_LEFTMENU, source) && (hasTkMampPermission || hasIndexViewPermission)) ||
       (source === 'business' && isNotSaleDepartment && hasTkMampPermission);
   }
 
@@ -439,19 +448,28 @@ export default class CustomerLists extends PureComponent {
       hasIndexViewPermission,
     } = this.props;
     const { taskManagerResp = EMPTY_ARRAY, firstPageResp = EMPTY_ARRAY } = custRange;
-    if (_.includes(ENTERLIST1, source)) {
+    if (_.includes(ENTERLIST_PERMISSION_TASK_MANAGE, source)) {
       // 从首页的搜索、热词、联想词、瞄准镜和外部平台过来，判断是否有任务管理权限
       return taskManagerResp;
     }
+    if (_.includes(ENTERLIST_LEFTMENU, source)) {
+      if (hasTkMampPermission) {
+        return taskManagerResp;
+      }
+      if (hasIndexViewPermission) {
+        return firstPageResp;
+      }
+      return _.uniqBy([allSaleDepartment, ...taskManagerResp], UNIQBY_KEY);
+    }
     if (source === 'business') {
       if (!(isNotSaleDepartment && hasTkMampPermission)) {
-        return _.uniqBy([allSaleDepartment, ...taskManagerResp], 'id');
+        return _.uniqBy([allSaleDepartment, ...taskManagerResp], UNIQBY_KEY);
       }
       return taskManagerResp;
     }
     // 有首页指标查询权限 且 首页绩效指标客户范围选中的是 我的客户
     if (!hasIndexViewPermission || this.orgIdIsMsm()) {
-      return _.uniqBy([allSaleDepartment, ...firstPageResp], 'id');
+      return _.uniqBy([allSaleDepartment, ...firstPageResp], UNIQBY_KEY);
     }
     return firstPageResp;
   }
@@ -623,10 +641,7 @@ export default class CustomerLists extends PureComponent {
             {_.isEmpty(custList) ? null : <span className="hint">自动选择所有符合条件的客户</span>}
           </div>
           <div className={styles.reorder}>
-            <Reorder
-              value={reorderValue}
-              onChange={onReorderChange}
-            />
+            <Sort onChange={onReorderChange} value={reorderValue} />
           </div>
           <div className={styles.filterWrap}>
             <div className={styles.selectBox}>
@@ -650,8 +665,12 @@ export default class CustomerLists extends PureComponent {
             </div>
           </div>
           <div className={styles.simplePagination}>
-            <span>共{curTotal}条</span>
-            <Pagination key={paginationOption.current} simple {...paginationOption} />
+            <span>共{curTotal}位匹配客户</span>
+            <Pagination
+              key={paginationOption.current}
+              simple
+              {...paginationOption}
+            />
           </div>
         </div>
         {
@@ -705,6 +724,7 @@ export default class CustomerLists extends PureComponent {
           <Pagination
             key={paginationOption.current}
             {...paginationOption}
+            showTotal={total => `共${total}位匹配客户`}
           />
         </div>
         {

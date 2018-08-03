@@ -64,5 +64,9 @@ export default function performerView(api) {
     previewCustDetailByScope: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustListDetailOfMission', query),
     // 获取服务经理维度去重后的客户数量
     queryDistinctCustListDetailOfMission: query => api.post('/groovynoauth/fsp/campaign/mot/queryDistinctCustListDetailOfMission', query),
+    // 根据任务类型获取任务绑定的投资建议模板列表
+    getTemplateList: query => api.post('/groovynoauth/fsp/campaign/investAdvice/queryTemplateListByType', query),
+    // 翻译投资建议模板
+    translateTemplate: query => api.post('/groovynoauth/fsp/campaign/investAdvice/replaceCustIndexPlaceHoders', query),
   };
 }

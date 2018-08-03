@@ -14,6 +14,7 @@ import classnames from 'classnames';
 import Icon from '../../common/Icon';
 import { time } from '../../../helper';
 import CombinationYieldChart from '../CombinationYieldChart';
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './combinationListItem.less';
 import {
   yieldRankList,
@@ -66,7 +67,7 @@ export default class CombinationListItem extends PureComponent {
 
   @autobind
   getHistoryList() {
-    const { data, openStockPage } = this.props;
+    const { data } = this.props;
     if (_.isEmpty(data.securityList)) {
       return null;
     }
@@ -82,7 +83,7 @@ export default class CombinationListItem extends PureComponent {
               this.isStock(item.securityType) ?
                 <a
                   title={item.securityName}
-                  onClick={() => openStockPage({ code: item.securityName })}
+                  onClick={() => this.handleOpenStockPage({ code: item.securityName })}
                 >
                   {item.securityName}
                 </a>
@@ -94,7 +95,7 @@ export default class CombinationListItem extends PureComponent {
             {
               this.isStock(item.securityType) ?
                 <a
-                  onClick={() => openStockPage({ code: item.securityCode })}
+                  onClick={() => this.handleOpenStockPage({ code: item.securityCode })}
                 >
                   {item.securityCode}
                 </a>
@@ -152,11 +153,28 @@ export default class CombinationListItem extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '组合排名',
+      value: '$args[0].code',
+    },
+  })
+  handleOpenStockPage(payload) {
+    const { openStockPage } = this.props;
+    openStockPage(payload);
+  }
+
+  @autobind
   isStock(securityType) {
     return securityType === securityTypeList[0].value;
   }
 
   @autobind
+  @logPV({
+    pathname: '/modal/historyReportModal',
+    title: '历史报告弹框',
+  })
   viewHistoryReport(name) {
     const { showModal } = this.props;
     const payload = {
@@ -168,9 +186,29 @@ export default class CombinationListItem extends PureComponent {
 
   // 组合名称点击事件
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '组合排名',
+      value: '$args[0].name',
+    },
+  })
   handleNameClick(obj) {
     const { openDetailPage } = this.props;
     openDetailPage(obj);
+  }
+
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '组合排名',
+      value: '$args[0].name',
+    },
+  })
+  handleOpenCustomerListPage(openPayload) {
+    const { openCustomerListPage } = this.props;
+    openCustomerListPage(openPayload);
   }
 
   render() {
@@ -181,7 +219,6 @@ export default class CombinationListItem extends PureComponent {
       getCombinationLineChart,
       combinationLineChartData,
       rankTabActiveKey,
-      openCustomerListPage,
     } = this.props;
     const chartData = combinationLineChartData[data.combinationCode] || EMPTY_OBJECT;
     const yieldName = this.getYieldName();
@@ -227,7 +264,7 @@ export default class CombinationListItem extends PureComponent {
               |
               <a onClick={() => this.viewHistoryReport(data.combinationCode)}> 历史报告 </a>
               |
-              <a onClick={() => openCustomerListPage(openPayload)}> 订购客户</a>
+              <a onClick={() => this.handleOpenCustomerListPage(openPayload)}> 订购客户</a>
             </span>
           </div>
           <div className={styles.tableBox}>

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-14 16:29:04
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 09:56:28
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-07-26 14:55:34
  * @description 服务记录页面用到的页面工具或者配置
  */
 import _ from 'lodash';

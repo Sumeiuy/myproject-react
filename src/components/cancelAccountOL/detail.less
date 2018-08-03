@@ -1,0 +1,33 @@
+.module {
+  padding-top: 15px;
+  border-bottom: 1px solid #f3f3f4;
+
+  .modContent {
+    padding: 5px 0;
+    width: 100%;
+
+    .propertyList {
+      .item {
+        position: relative;
+        clear: left;
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 4px;
+        float: left;
+      }
+      .item2 {
+        float: left;
+        width: 50%;
+      }
+    }
+
+    &:after {
+      content: "";
+      height: 0;
+      line-height: 0;
+      display: block;
+      clear: both;
+      visibility: hidden;
+    }
+  }
+}

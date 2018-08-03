@@ -237,7 +237,8 @@ export default class DurationSelect extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '用户自己选的时间段事件',
-      value: '$args[1]',
+      min: '$args[1][0]',
+      max: '$args[1][1]',
     },
   })
   rangePickerChange(dates, dateStrings) {
