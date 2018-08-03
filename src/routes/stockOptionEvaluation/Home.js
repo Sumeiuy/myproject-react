@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 15:08:06
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-03 15:44:18
 */
 
 import React, { PureComponent } from 'react';
@@ -417,14 +417,11 @@ export default class StockOptionApplication extends PureComponent {
         location={location}
         page="stockOptionApplyPage"
         pageType={pageType}
-        needSubType={false}
         stateOptions={statusOptions}
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
         isShowCreateBtn={this.handleShowCreateBtn}
-        isUseOfCustomer
-        needApplyTime
         isUseNewCustList
         basicFilters={basicFilters}
         moreFilters={moreFilters}
