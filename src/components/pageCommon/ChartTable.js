@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-03 13:13:56
+ * @Last Modified time: 2018-08-03 18:04:11
  */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import ScrollBar from './ScrollBar';
 
-import { data as helperData } from '../../helper';
+import { data as helperData, number as helperNumber } from '../../helper';
 import Pagination from '../common/Pagination';
 import { fspContainer, optionsMap, constants } from '../../config';
 import styles from './ChartTable.less';
@@ -24,6 +24,7 @@ const revert = { asc: 'desc', desc: 'asc' };
 const fsp = document.querySelector(fspContainer.container);
 // 汇报关系的汇总方式
 const hbgxSummaryType = constants.hbgxSummaryType;
+const { thousandFormat, toFixed } = helperNumber;
 
 export default class ChartTable extends PureComponent {
   static propTypes = {
@@ -357,16 +358,16 @@ export default class ChartTable extends PureComponent {
         const itemValue = Number(item.value);
         switch (encodeURIComponent(item.unit)) {
           case encodeURIComponent('%'):
-            value = helperData.toThousands(itemValue * 100);
+            value = thousandFormat(toFixed(itemValue * 100), true, ',', false);
             break;
           case encodeURIComponent('‰'):
-            value = helperData.toThousands(itemValue * 1000);
+            value = thousandFormat(toFixed(itemValue * 1000), true, ',', false);
             break;
           case encodeURIComponent('元'):
-            value = helperData.toThousands(itemValue / 10000);
+            value = thousandFormat(toFixed(itemValue / 10000), true, ',', false);
             break;
           case encodeURIComponent('元/年'):
-            value = helperData.toThousands(itemValue / 10000);
+            value = thousandFormat(toFixed(itemValue / 10000), true, ',', false);
             break;
           default:
             value = Number.parseFloat(itemValue.toFixed(2));

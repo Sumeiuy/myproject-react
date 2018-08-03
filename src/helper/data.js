@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-02 22:30:07
+ * @Last Modified time: 2018-08-03 18:06:24
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 import _ from 'lodash';
@@ -129,18 +129,6 @@ const data = {
 
     return uuid.join('');
     /* eslint-enable */
-  },
-
-  /**
-   * 数字千分位加','并保留两位小数
-   * @param num 需要转化的数字
-   * @returns {string} 返回的结果
-   */
-  toThousands(num) {
-    const fixedNum = Number(num.toString() || 0).toFixed(2);
-    const numArr = fixedNum.toString().split('.');
-    const preNum = numArr[0].toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
-    return `${preNum}.${numArr[1]}`;
   },
 };
 
