@@ -171,6 +171,8 @@ app.model(require('./models/custRelationships'));
 app.model(require('./models/cancelAccountOL'));
 // 自定义标签类型
 app.model(require('./models/customerLabel'));
+// 账户限制管理
+app.model(require('./models/accountLimit'));
 
 // 4. Route
 app.router(routerConfig);

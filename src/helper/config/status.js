@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-07-09 13:46:23
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-26 16:03:24
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-07-31 16:40:43
  * @description 状态值Code对应的数据
  */
 
@@ -35,7 +35,7 @@ const status = [
   {
     code: '05',
     text: '失败',
-    type: 'reject',
+    type: 'fail',
   },
 ];
 

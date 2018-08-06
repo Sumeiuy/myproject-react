@@ -1,7 +1,7 @@
 /**
  * @Description: 公用的接口
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-08 16:42:04
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-08-02 11:06:15
  */
 export default function common(api) {
   return {
@@ -19,5 +19,7 @@ export default function common(api) {
     getFiltersOfSightingTelescope: query => api.post('/groovynoauth/fsp/cust/custlist/queryFilters', query),
     // 增加通话记录接口，关联服务记录
     addCallRecord: query => api.post('/groovynoauth/fsp/emp/mobilebinding/addCallRecord', query),
+    // 获取附件列表
+    getAttachmentList: query => api.post('/file/ceFileList', query),
   };
 }

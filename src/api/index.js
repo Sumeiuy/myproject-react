@@ -33,6 +33,7 @@ import keyMonitorAccount from './keyMonitorAccount';
 import custRelationships from './custRelationships';
 import cancelAccountOL from './cancelAccountOL';
 import customerLabel from './customerLabel';
+import accountLimit from './accountLimit';
 
 const api = apiCreator();
 
@@ -107,5 +108,7 @@ export default {
   cancelAccountOL: cancelAccountOL(api),
   // ========== 客户自定义标签
   customerLabel: customerLabel(api),
+  // ========== 账户限制管理
+  accountLimit: accountLimit(api),
 };
 
