@@ -21,7 +21,7 @@ import ViewMenu from '../../components/taskList/ViewMenu';
 import FixedTitle from '../../components/taskList/FixedTitle';
 import pageConfig from '../../components/taskList/pageConfig';
 import { getCurrentScopeByOrgId } from '../../components/taskList/managerView/helper';
-import { openRctTab, openFspTab } from '../../utils';
+import { openRctTab } from '../../utils';
 import { emp, permission } from '../../helper';
 import logable, { logCommon } from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
@@ -1020,23 +1020,6 @@ export default class PerformerView extends PureComponent {
     });
   }
 
-  // 头部客户服务全纪录按钮，跳转到新Tab
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '跳转到客户服务全纪录' } })
-  handleOpenRecord() {
-    const url = '/fsp/taskCenter/serviceManage';
-    const { push } = this.props;
-    openFspTab({
-      routerAction: push,
-      url,
-      param: {
-        id: 'FSP_MOT_TAB_SERVICELIST',
-        title: '客户服务全纪录',
-        closable: true,
-        isSpecialTab: true,
-      },
-    });
-  }
 
   // 渲染列表项里面的每一项
   @autobind
@@ -1103,7 +1086,6 @@ export default class PerformerView extends PureComponent {
           onViewChange={this.handleHeaderFilter}
           location={location}
           onLaunchTask={this.handleCreateBtnClick}
-          onOpenRecord={this.handleOpenRecord}
         />
         <ConnectedPageHeader
           location={location}

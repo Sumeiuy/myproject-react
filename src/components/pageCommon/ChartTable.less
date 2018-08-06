@@ -44,6 +44,19 @@
   :global {
     .ant-table-thead tr th {
       background: #e9f3fc;
+      text-align: center;
+    }
+    .ant-table-bordered .ant-table-thead > tr > th,
+    .ant-table-bordered .ant-table-tbody > tr > td {
+      border-right: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+    }
+    .ant-table-bordered .ant-table-tbody > tr > td {
+      text-align: right;
+      padding: 10px 8px;
+    }
+    .ant-table-bordered .ant-table-tbody > tr > td:first-child {
+      text-align: left;
     }
     .ant-table-thead tr:first-child th:first-child {
       border-left: 4px solid #4dbaf1;
@@ -109,7 +122,4 @@ tr td:first-child .tdWrapperDiv {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.tdWrapperDiv {
-  padding: 10px 8px;
 }

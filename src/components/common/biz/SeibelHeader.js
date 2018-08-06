@@ -396,6 +396,17 @@ export default class Pageheader extends PureComponent {
     }
   }
 
+  // 获取客户列表
+  @autobind
+  getCustList() {
+    const {
+      customerList,
+      newCustomerList,
+      isUseNewCustList,
+    } = this.props;
+    return isUseNewCustList ? newCustomerList : customerList;
+  }
+
   // 只能选择今天之前的时间
   @autobind
   setDisableRange(date) {

@@ -788,7 +788,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
         const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
         openFspTab({
           routerAction: push,
-          pathname: '/customerCenter/customerDetail',
+          pathname: '/fsp/customerCenter/customer360',
           url,
           param,
         });
