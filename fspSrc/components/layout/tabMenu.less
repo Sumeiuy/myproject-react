@@ -33,6 +33,9 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+        &:hover {
+          color: #108ee9;
+        }
       }
       .hasHomePage {
         &:hover {
@@ -141,6 +144,25 @@
 .dropDownContainer {
   position: relative;
   z-index: 1;
+  :global {
+    .ant-dropdown-menu-item:hover, .ant-dropdown-menu-submenu-title:hover {
+      background: #ecf6fd;
+    }
+
+    .ant-dropdown-menu-item:first-child,
+    .ant-dropdown-menu-submenu-title:first-child,
+    .ant-dropdown-menu-item:first-child > a,
+    .ant-dropdown-menu-submenu-title:first-child > a {
+      border-radius: 0;
+    }
+
+    .ant-dropdown-menu-item:only-child,
+    .ant-dropdown-menu-submenu-title:only-child,
+    .ant-dropdown-menu-item:only-child > a,
+    .ant-dropdown-menu-submenu-title:only-child > a {
+      border-radius: 0 0 4px 4px;
+    }
+  }
 }
 
 .dropDownMenu {
@@ -153,7 +175,17 @@
 .subMenuLink {
     :global {
     .ant-dropdown-menu-submenu-title:after {
-        margin-top: 1px;
+      margin-top: 1px;
+    }
+    .ant-dropdown-menu {
+      border: 1px solid #ddd;
+      border-radius: 0 0 4px 4px;
+    }
+    .ant-dropdown-menu-item:only-child,
+    .ant-dropdown-menu-submenu-title:only-child,
+    .ant-dropdown-menu-item:only-child > a,
+    .ant-dropdown-menu-submenu-title:only-child > a {
+      border-radius: 0 0 4px 4px;
     }
   }
 }
