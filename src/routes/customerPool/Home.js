@@ -30,7 +30,8 @@ import {
   MorningBroadcast,
   ToBeDone,
   Viewpoint,
-  PerformanceIndicators,
+  PerformanceIndicatorsNew,
+  PerformanceIndicatorsOld,
   TabsExtra,
   Search,
   LabelModal,
@@ -519,6 +520,10 @@ export default class Home extends PureComponent {
       show: showMoreLabelModal,
       toggleModal: this.handleToggleMoreLabelModal,
     };
+
+    const PerformanceIndicators =
+      permission.isGrayFlag() ? PerformanceIndicatorsNew : PerformanceIndicatorsOld;
+
     return (
       <div className={styles.customerPoolWrap}>
         <Header push={push} />
