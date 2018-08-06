@@ -19,6 +19,7 @@ import AddEmpList from './AddEmpList';
 import commonConfirm from '../common/confirm_';
 import config from './config';
 import styles from './createApply.less';
+import { logCommon } from '../../decorators/logable';
 
 // 最大可以选择的服务经理的数量200
 const { MAXSELECTNUM, approvalColumns } = config;
@@ -124,6 +125,14 @@ export default class CreateApply extends PureComponent {
       auditors: !_.isEmpty(item.flowAuditors) ? item.flowAuditors[0].login : '',
       nextApproverList: item.flowAuditors,
       nextApproverModal: true,
+    });
+    // log日志 --- 公务手机卡号申请
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '公务手机卡号申请',
+        value: JSON.stringify(item),
+      },
     });
   }
 

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-11 16:57:56
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-07-25 10:33:22
  */
 
 import React, { PureComponent } from 'react';
@@ -696,7 +696,13 @@ export default class ServiceRecordContent extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'DropdownSelect', payload: { name: '客户反馈级联', value: '$args[0]' } })
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '客户反馈级联',
+      value: '$args[0].first',
+      secondValue: '$args[0].first',
+    } })
   handleCascadeSelectChange({ first, second }) {
     this.setState({
       custFeedback: first,
@@ -826,7 +832,7 @@ export default class ServiceRecordContent extends PureComponent {
       beforeUpload,
       custUuid,
       deleteFileResult,
-      formData: { motCustfeedBackDict },
+      formData: { motCustfeedBackDict, serviceTypeCode },
       custFeedbackList,
       flowStatusCode,
       serviceRecordInfo,
@@ -895,6 +901,9 @@ export default class ServiceRecordContent extends PureComponent {
     };
 
     const { autoGenerateRecordInfo = {} } = serviceRecordInfo;
+
+    // 当该页面是从360或者客户列表页面进入,则服务类型是使用下拉框切换获得的
+    const serviceTypeCodeTmplNeed = isEntranceFromPerformerView ? serviceTypeCode : serviceType;
 
     return (
       <div
@@ -983,6 +992,10 @@ export default class ServiceRecordContent extends PureComponent {
             ? (
               <ServeContent
                 ref={this.setServeContentRef}
+                eventId={this.props.formData.eventId}
+                serviceTypeCode={serviceTypeCodeTmplNeed}
+                custId={this.props.formData.custId}
+                taskType={this.props.formData.taskTypeCode}
                 approvalList={this.props.zhangleApprovalList}
                 isReject={isReject}
                 serveContent={zlRejectRecord}

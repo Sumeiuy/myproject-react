@@ -156,7 +156,7 @@ export default {
     * queryAddedCustList({ payload }, { call, put }) {
       const response = yield call(api.queryAddedCustList, payload);
       let type = 'queryAddedCustListSuccess';
-      if (payload.type) {
+      if (payload.isDetail) {
         type = 'queryDetailAddedCustListSuccess';
       }
       yield put({

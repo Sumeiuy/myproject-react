@@ -21,11 +21,14 @@ var cssLoaders = utils.getCSSLoaders({
   sourceMap: config.dev.cssSourceMap
 });
 
+var lessConfig = utils.getLessConfig();
+
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 
 module.exports = merge(baseWebpackConfig, {
+  mode: 'development',
   module: {
     rules: [
       {
@@ -43,9 +46,7 @@ module.exports = merge(baseWebpackConfig, {
         include: config.src,
         use: ['style-loader'].concat(cssLoaders.own).concat({
           loader: 'less-loader',
-          options: {
-            modifyVars: theme
-          }
+          options: lessConfig
         })
       },
       {
@@ -58,9 +59,7 @@ module.exports = merge(baseWebpackConfig, {
         include: config.appNodeModules,
         use: ['style-loader'].concat(cssLoaders.nodeModules).concat({
           loader: 'less-loader',
-          options: {
-            modifyVars: theme
-          }
+          options: lessConfig
         })
       }
     ]
@@ -68,9 +67,6 @@ module.exports = merge(baseWebpackConfig, {
   // cheap-module-eval-source-map is faster for development
   devtool: '#cheap-module-eval-source-map',
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': config.dev.env
-    }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),

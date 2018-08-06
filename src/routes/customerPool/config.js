@@ -42,12 +42,8 @@ const ENTER_TYPE = {
 // 与后端约定默认的enterType
 const DEFAULT_ENTER_TYPE = 'searchCustPool';
 
-// 任务管理岗权限作用的首页入口列表
-const ENTERLIST1 = ['search', 'tag', 'sightingTelescope', 'association', 'external',
-  'orderCombination', 'securitiesProducts'];
-// 首页指标查询权限作用的首页入口列表
-const ENTERLIST2 = ['custIndicator', 'numOfCustOpened', 'assetsTransactions', 'productSale',
-  'income', 'manageService', 'serviceTarget', 'custAssets', 'aggregationRate'];
+// 首页指标查询权限作用 或者 任务管理岗权限作用的入口列表
+const ENTERLIST_LEFTMENU = ['leftMenu'];
 
 // 全量的source集合
 const FULL_ENTERLIST = ['search', 'tag', 'sightingTelescope', 'business', 'association', 'external',
@@ -77,8 +73,7 @@ export default {
   MAIN_MAGEGER_ID,
   DEFAULT_ENTER_TYPE,
   ENTER_TYPE,
-  ENTERLIST1,
-  ENTERLIST2,
+  ENTERLIST_LEFTMENU,
   ALL_DEPARTMENT_ID,
   FULL_ENTERLIST,
   ENTERLIST_PERMISSION_TASK_MANAGE,

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-15 10:34:44
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-06-26 09:22:22
+ * @Last Modified time: 2018-08-03 22:03:19
  */
 
 import React, { PureComponent } from 'react';
@@ -36,6 +36,8 @@ const effects = {
   doApprove: 'stockOptionEvaluation/doApprove',
   // 新建修改的更新接口
   updateBindingFlow: 'stockOptionEvaluation/updateBindingFlow',
+  // 清空数据
+  clearReduxData: 'stockOptionEvaluation/clearReduxData',
 };
 
 const mapStateToProps = state => ({
@@ -84,6 +86,8 @@ const mapDispatchToProps = {
   doApprove: effect(effects.doApprove, { forceFull: true }),
   // 新建修改的更新接口
   updateBindingFlow: effect(effects.updateBindingFlow, { forceFull: true }),
+  // 清空数据
+  clearReduxData: effect(effects.clearReduxData, { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -124,6 +128,7 @@ export default class ApplyEdit extends PureComponent {
     // 新建修改的更新接口
     updateBindingFlowAppId: PropTypes.string.isRequired,
     updateBindingFlow: PropTypes.func.isRequired,
+    clearReduxData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -168,6 +173,7 @@ export default class ApplyEdit extends PureComponent {
       updateBindingFlowAppId,
       updateBindingFlow,
       getDetailInfo,
+      clearReduxData,
     } = this.props;
     if (_.isEmpty(detailInfo)) {
       return null;
@@ -191,6 +197,7 @@ export default class ApplyEdit extends PureComponent {
         updateBindingFlowAppId={updateBindingFlowAppId}
         updateBindingFlow={updateBindingFlow}
         getDetailInfo={getDetailInfo}
+        clearReduxData={clearReduxData}
       />
     );
   }
