@@ -36,7 +36,6 @@ export default class ViewMenu extends PureComponent {
     chooseMissionViewOptions: EMPTY_LIST,
     onViewChange: NOOP,
     onLaunchTask: NOOP,
-    onOpenRecord: NOOP,
   };
 
   /**
