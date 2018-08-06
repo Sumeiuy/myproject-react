@@ -749,6 +749,8 @@ export default class CustomerList extends PureComponent {
       cycleSelect,
       bname,
       combinationName = '',
+      type,
+      labelName,
     } = location.query;
     // 排序的默认值 ： 总资产降序
     let reorderValue = DEFAULT_SORT;
@@ -779,6 +781,8 @@ export default class CustomerList extends PureComponent {
                 num={page.total}
                 bname={bname}
                 combinationName={combinationName}
+                subType={type}
+                labelName={labelName}
               />
             }
           </Col>

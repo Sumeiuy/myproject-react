@@ -13,11 +13,28 @@ export default class CustomerTotal extends PureComponent {
     num: PropTypes.number.isRequired,
     bname: PropTypes.string,
     combinationName: PropTypes.string,
+    subType: PropTypes.string,
+    labelName: PropTypes.string,
   }
 
   static defaultProps = {
     bname: '',
     combinationName: '',
+    subType: '',
+    labelName: '',
+  }
+
+  // 显示从联想词过来的数量信息
+  getTotalInfoFromAssociation() {
+    const { num, labelName, subType } = this.props;
+    let node = <p className="total-num">满足搜索条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
+    // 持仓行业
+    if (subType === 'INDUSTRY') {
+      // 从‘有色金属(240000)’中截取‘有色金属’
+      const [industryName] = decodeURIComponent(labelName).split('(');
+      node = <p className="total-num">满足持有{industryName}行业的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
+    }
+    return node;
   }
 
   render() {
@@ -30,8 +47,10 @@ export default class CustomerTotal extends PureComponent {
         break;
       case 'securitiesProducts':
       case 'external':
-      case 'association':
         ele = <p className="total-num">满足搜索条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
+        break;
+      case 'association':
+        ele = this.getTotalInfoFromAssociation();
         break;
       case 'tag':
         ele = <p className="total-num">满足标签条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
