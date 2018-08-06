@@ -140,8 +140,8 @@ export default class KeyMonitorAccountHome extends Component {
   resetFilter() {
     this.setState({
       punishType: '',
-      idNo: '',
-      custNumber: '',
+      isOurCust: '',
+      custKeyword: '',
       pageNum: 1,
       exchangeType: '',
     });
