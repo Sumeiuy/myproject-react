@@ -162,7 +162,7 @@ if (persistConfig.active) {
   persistStore(store, persistConfig);
 }
 
-dvaHelper.initApp(app, history);
+dvaHelper.initApp(app, history, true);
 
 // 7. 初始化权限配置
 // permission.init(store);

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-30 14:11:15
+ * @Last Modified time: 2018-08-06 17:13:40
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -140,8 +140,8 @@ export default class KeyMonitorAccountHome extends Component {
   resetFilter() {
     this.setState({
       punishType: '',
-      idNo: '',
-      custNumber: '',
+      isOurCust: '',
+      custKeyword: '',
       pageNum: 1,
       exchangeType: '',
     });
@@ -383,6 +383,7 @@ export default class KeyMonitorAccountHome extends Component {
             <div className={styles.item}>
               <span className={styles.label}>客户：</span>
               <Input
+                placeholder="经纪客户号/客户名称"
                 className={styles.inputItem}
                 value={custKeyword}
                 onChange={this.handleCustChange}
