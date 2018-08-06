@@ -9,27 +9,27 @@ import PropTypes from 'prop-types';
 
 export default class CustomerTotal extends PureComponent {
   static propTypes = {
-    type: PropTypes.string.isRequired,
+    source: PropTypes.string.isRequired,
     num: PropTypes.number.isRequired,
     bname: PropTypes.string,
     combinationName: PropTypes.string,
-    subType: PropTypes.string,
+    type: PropTypes.string,
     labelName: PropTypes.string,
   }
 
   static defaultProps = {
     bname: '',
     combinationName: '',
-    subType: '',
+    type: '',
     labelName: '',
   }
 
   // 显示从联想词过来的数量信息
   getTotalInfoFromAssociation() {
-    const { num, labelName, subType } = this.props;
+    const { num, labelName, type } = this.props;
     let node = <p className="total-num">满足搜索条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
     // 持仓行业
-    if (subType === 'INDUSTRY') {
+    if (type === 'INDUSTRY') {
       // 从‘有色金属(240000)’中截取‘有色金属’
       const [industryName] = decodeURIComponent(labelName).split('(');
       node = <p className="total-num">满足持有{industryName}行业的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
@@ -39,9 +39,9 @@ export default class CustomerTotal extends PureComponent {
 
   render() {
     // combinationName 是精选组合的订购组合跳转过来时带的组合名称
-    const { type, num, bname, combinationName } = this.props;
+    const { source, num, bname, combinationName } = this.props;
     let ele;
-    switch (type) {
+    switch (source) {
       case 'search':
         ele = <p className="total-num">满足搜索条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
         break;

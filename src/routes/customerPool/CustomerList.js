@@ -777,11 +777,11 @@ export default class CustomerList extends PureComponent {
           <Col span={12}>
             {
               <CustomerTotal
-                type={source}
+                source={source}
                 num={page.total}
                 bname={bname}
                 combinationName={combinationName}
-                subType={type}
+                type={type}
                 labelName={labelName}
               />
             }
