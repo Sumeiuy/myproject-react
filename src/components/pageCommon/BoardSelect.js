@@ -276,7 +276,7 @@ export default class BoardSelect extends PureComponent {
         collectData({
           text: boardname,
         });
-        push(`/report?boardId=${key}`);
+        push(`/statisticalQuery/report?boardId=${key}`);
         break;
       case visibleBoardType.history.key:
         boardname = _.find(visibleBoards, { id: Number(key) }).name;

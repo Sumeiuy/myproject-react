@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 17:15:59
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-02 09:52:16
+ * @Last Modified time: 2018-08-03 22:08:48
  */
 
 import { stockOptionEvaluation as api } from '../api';
@@ -154,6 +154,14 @@ export default {
         updateBindingFlowAppId: resultData,
       };
     },
+    // 清空数据成功
+    clearReduxDataSuccess(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        ...payload,
+      };
+    },
   },
   effects: {
     // 股票期权申请页面-右侧详情
@@ -256,6 +264,14 @@ export default {
       yield put({
         type: 'updateBindingFlowSuccess',
         payload: response,
+      });
+    },
+
+    // 清空数据
+    * clearReduxData({ payload }, { put }) {
+      yield put({
+        type: 'clearReduxDataSuccess',
+        payload,
       });
     },
   },

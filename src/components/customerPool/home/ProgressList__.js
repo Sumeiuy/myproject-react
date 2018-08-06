@@ -86,7 +86,13 @@ export default class ProgressList extends PureComponent {
   /*
   */
   @autobind
-  @logable({ type: 'Click', payload: { name: '新增客户区域下钻' } })
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '新增客户',
+      element: '$args[1].cust',
+    },
+  })
   handleClick(index, item) {
     const { push } = this.context;
     const { cycle, location, type } = this.props;

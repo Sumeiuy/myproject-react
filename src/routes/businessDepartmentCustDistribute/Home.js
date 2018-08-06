@@ -21,7 +21,7 @@ import CommissionList from '../../components/common/appList';
 import ApplyItem from '../../components/businessDepartmentCustDistribute/ApplyItem';
 import NotTGCustDistributeApplyDetail from '../../components/businessDepartmentCustDistribute/NotTGCustDistributeApplyDetail';
 import CreateDistributeApplyBoard from '../../components/businessDepartmentCustDistribute/CreateDistributeApplyBoard';
-
+import { logPV } from '../../decorators/logable';
 import { permission } from '../../helper';
 import config from './config';
 import utils from './utils';
@@ -107,6 +107,7 @@ export default class Home extends PureComponent {
 
   // 点击右上角新建按钮，打开新建营业部非投顾掐约客户分配申请的弹出层
   @autobind
+  @logPV({ pathname: '/modal/businessDepartmentCustDistributeApply', title: '新建营业部非投顾掐约客户分配申请' })
   handleCreateApplyBtnClick() {
     this.setState({
       createApplyModalShow: true,

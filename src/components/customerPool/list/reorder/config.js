@@ -17,7 +17,7 @@ const reorder = [
   },
   {
     sortType: 'openDt',
-    name: '开户时间',
+    name: '激活日期',
     sortDirections: [ASC, DESC],
     defaultDirections: DESC,
   },
