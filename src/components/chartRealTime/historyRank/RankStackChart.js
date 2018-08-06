@@ -96,7 +96,6 @@ export default class RankStackChart extends PureComponent {
     const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = props;
     let { chartData: { indiModel: { unit } } } = props;
     const levelName = `level${scope}Name`;
-    const levelId = `level${scope}Id`;
     // 分公司名称数组
     const company = filterData(orgModel, 'level2Name', 'yAxis');
     // 财富中心名称数组
@@ -106,7 +105,7 @@ export default class RankStackChart extends PureComponent {
     // 此处为y轴刻度值
     const yAxisLabels = filterData(orgModel, levelName, 'yAxis');
     // 工号数组
-    const levelIdArr = filterData(orgModel, levelId, 'yAxis');
+    const levelIdArr = filterData(orgModel, 'level5Id', 'yAxis');
     // 获取排名信息数据
     const rank = filterRankData(orgModel);
     // 获取合计值，即orgModel的value值，用于右侧显示使用
@@ -313,6 +312,7 @@ export default class RankStackChart extends PureComponent {
             if (!hasPushedAxis) {
               hasPushedAxis = true;
               let title = '';
+              let tooltipEmpInfo = `${axisValue}`;
               const hasFundCenter = wealth[dataIndex] !== '--';
               // 针对不同的机构级别需要显示不同的分类
               if ((scope === 3 && axisValue !== '--') || (scope === 4 && axisValue !== '--' && !hasFundCenter)) {
@@ -325,9 +325,11 @@ export default class RankStackChart extends PureComponent {
               } else if (scope === 5 && axisValue !== '--' && hasFundCenter) {
                 // 5为投顾或服务经理,需要显示南京公司名称-财富中心-营业部(南京分公司有财富中心)
                 title = `${company[dataIndex]} - ${wealth[dataIndex]} - ${store[dataIndex]}`;
+                tooltipEmpInfo = `${axisValue}(${id})`;
               } else if (scope === 5 && axisValue !== '--' && !hasFundCenter) {
                  // 5为投顾或服务经理,需要显示xx公司名称-营业部(非南京分公司没有有财富中心)
                 title = `${company[dataIndex]} - ${store[dataIndex]}`;
+                tooltipEmpInfo = `${axisValue}(${id})`;
               }
               let toolTipNewHeader = `
                 <tr>
@@ -340,7 +342,7 @@ export default class RankStackChart extends PureComponent {
               seriesTips.push(`
                 ${toolTipNewHeader}
                 <tr>
-                  <td colspan="4">${axisValue}(${id})</td>
+                  <td colspan="4">${tooltipEmpInfo}</td>
                 </tr>
               `);
             }
