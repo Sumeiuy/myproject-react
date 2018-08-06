@@ -2,8 +2,8 @@
  * @Description: 客户的基本信息
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-19 18:07:09
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-08-09 11:12:49
  */
 
 import React from 'react';
@@ -11,6 +11,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
+import cx from 'classnames';
+
 import Icon from '../../../common/Icon';
 import { openFspTab } from '../../../../utils';
 import ContactInfoPopover from '../../../common/contactInfoPopover/ContactInfoPopover';
@@ -20,6 +22,7 @@ import { UPDATE } from '../../../../config/serviceRecord';
 import styles from './customerProfile.less';
 
 import { riskLevelConfig, PER_CODE, ORG_CODE, CALLABLE_LIST, PHONE } from './config';
+import { MOT_RETURN_VISIT_TASK_EVENT_ID } from '../../../../config/taskList/performView';
 
 import iconDiamond from '../img/iconDiamond.png';
 import iconWhiteGold from '../img/iconWhiteGold.png';
@@ -71,6 +74,7 @@ export default class CustomerProfile extends React.PureComponent {
     currentId: PropTypes.string.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     taskTypeCode: PropTypes.string,
+    eventId: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -88,6 +92,13 @@ export default class CustomerProfile extends React.PureComponent {
     this.endTime = '';
     this.startTime = '';
     this.state = { showMask: false };
+  }
+
+  // 判断当前的任务是否是 MOT 回访类型任务
+  // TODO 目前开发状态下暂时默认为true
+  @autobind
+  isMOTReturnVistTask(eventId) {
+    return MOT_RETURN_VISIT_TASK_EVENT_ID === eventId;
   }
 
   @autobind
@@ -273,7 +284,7 @@ export default class CustomerProfile extends React.PureComponent {
 
   render() {
     const { showMask } = this.state;
-    const { targetCustDetail = {} } = this.props;
+    const { targetCustDetail = {}, eventId } = this.props;
     const {
       custName, isAllocate, isHighWorth, custId, genderValue, age,
         riskLevelCode, isSign, levelCode, custNature,
@@ -282,17 +293,36 @@ export default class CustomerProfile extends React.PureComponent {
     const riskLevel = riskLevelConfig[riskLevelCode];
     // 客户等级
     const rankImg = rankImgSrcConfig[levelCode];
+
+    // 当选择的任务类型为 MOT 任务回访的时候，客户的名字显示为黑色，并且不可点击
+    const isMotReturnVisit = this.isMOTReturnVistTask(eventId);
+    const custNameClickCls = cx({
+      [styles.name]: true,
+      [styles.clickable]: true,
+    });
+    const custNameUnClickCls = cx({
+      [styles.name]: true,
+      [styles.unclickable]: isMotReturnVisit,
+    });
+
     return (
       <div className={styles.container}>
         <div className={styles.row}>
           <div className={styles.col}>
             <p className={styles.item}>
-              <span
-                className={`${styles.clickable} ${styles.name}`}
-                onClick={this.handleCustNameClick}
-              >
-                {custName}
-              </span>
+              {
+                isMotReturnVisit ?
+                (<span className={custNameUnClickCls}>{custName}</span>)
+                :
+                (
+                  <span
+                    className={custNameClickCls}
+                    onClick={this.handleCustNameClick}
+                  >
+                    {custName}
+                  </span>
+                )
+              }
               {isAllocate === '0' && '(未分配)'}
             </p>
             <p className={styles.item}>

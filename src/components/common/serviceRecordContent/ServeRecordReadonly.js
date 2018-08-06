@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-04 10:07:03
+ * @Last Modified time: 2018-08-08 14:40:51
  * @description 只读服务记录
  */
 
@@ -18,6 +18,9 @@ import styles from './index.less';
 
 export default function ServiceRecordReadOnly(props) {
   const {
+    isMOTReturnVisitTask,
+    motReturnResult,
+    motReturnFailReason,
     isZL,
     attachmentList,
     serviceWay,
@@ -110,29 +113,55 @@ export default function ServiceRecordReadOnly(props) {
             </div>
           )
         }
-        <div className={styles.divider} />
-        <div className={cx([styles.feedbackType, styles.readOnly])}>
-          {
-            (isZL && flowIsApproval)
-            ? (<div className={cx([styles.title, styles.flowIsApproval])}>客户可选反馈:</div>)
-            : (<div className={styles.title}>客户反馈:</div>)
-          }
-          {
-            isZL
-            ? (
-              <div className={styles.readOnlyText}>
-                <span className={styles.feedbackTypeL1}>{custFeedbackText}</span>
-              </div>
-            )
-            : (
-              <div className={styles.readOnlyText}>
-                <span className={styles.feedbackTypeL1}>{normalWayCustFeedbackText}</span>
-              </div>
-            )
-          }
-        </div>
         {
-          (isZL && flowIsApproval) || (isZL && ZLFeedbackStatus !== 'FEEDBACK')
+          !isMOTReturnVisitTask ? null
+          : (
+            <div className={styles.serveRecord}>
+              <div className={styles.title}>回访结果:</div>
+              <div className={styles.readOnlyText}>{motReturnResult === 'Success' ? '成功' : '失败'}</div>
+            </div>
+          )
+        }
+        {
+          (isMOTReturnVisitTask && motReturnResult === 'Lost')
+          ?
+          (
+            <div className={styles.serveRecord}>
+              <div className={styles.title}>失败原因:</div>
+              <div className={styles.readOnlyText}>{motReturnFailReason}</div>
+            </div>
+          )
+          : null
+        }
+        <div className={styles.divider} />
+        {
+          isMOTReturnVisitTask ? null
+          :
+          (
+            <div className={cx([styles.feedbackType, styles.readOnly])}>
+              {
+                (isZL && flowIsApproval)
+                ? (<div className={cx([styles.title, styles.flowIsApproval])}>客户可选反馈:</div>)
+                : (<div className={styles.title}>客户反馈:</div>)
+              }
+              {
+                isZL
+                ? (
+                  <div className={styles.readOnlyText}>
+                    <span className={styles.feedbackTypeL1}>{custFeedbackText}</span>
+                  </div>
+                )
+                : (
+                  <div className={styles.readOnlyText}>
+                    <span className={styles.feedbackTypeL1}>{normalWayCustFeedbackText}</span>
+                  </div>
+                )
+              }
+            </div>
+          )
+        }
+        {
+          isMOTReturnVisitTask || (isZL && flowIsApproval) || (isZL && ZLFeedbackStatus !== 'FEEDBACK')
           ? null
           : (
             <div className={styles.feedbackTime}>
@@ -167,6 +196,9 @@ ServiceRecordReadOnly.propTypes = {
   ZLCustFeedback: PropTypes.string,
   ZLCustFeedbackList: PropTypes.array,
   ZLFeedbackStatus: PropTypes.string,
+  isMOTReturnVisitTask: PropTypes.bool,
+  motReturnResult: PropTypes.string,
+  motReturnFailReason: PropTypes.string,
 };
 ServiceRecordReadOnly.defaultProps = {
   attachmentList: [],
@@ -185,4 +217,7 @@ ServiceRecordReadOnly.defaultProps = {
   ZLCustFeedback: '',
   ZLCustFeedbackList: [],
   ZLFeedbackStatus: 'NULL',
+  isMOTReturnVisitTask: false,
+  motReturnResult: '',
+  motReturnFailReason: '',
 };

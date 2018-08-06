@@ -2,11 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import ServiceRecordItem from './ServiceRecordItem';
+import { MOT_RETURN_VISIT_TASK_EVENT_ID } from '../../../config/taskList/performView';
+
 import styles from './createCollapse.less';
 
 export default function ServiceRecordContent(props) {
   const { item, executeTypes, filesList } = props;
-  const { subtypeCd = '' } = item;
+  const { subtypeCd = '', eventId = '', workResult = '' } = item;
   const isShowChild = _.isEmpty(item.uuid); // 默认有文件名这个字段
   const attacthment = !isShowChild ?
     (<ServiceRecordItem
@@ -16,6 +18,11 @@ export default function ServiceRecordContent(props) {
       isShowChild={!isShowChild}
     />) :
     null;
+
+  // 判断是否是MOT 回访类型任务
+  const isMOTReturnVisitTask = eventId === MOT_RETURN_VISIT_TASK_EVENT_ID;
+  // 判断回访结果是否成功
+  const isSuccessForMotReturnVisit = workResult === 'Success';
 
   // 包含MOT服务记录则为MOT任务服务记录
   if (!_.isEmpty(subtypeCd)) {
@@ -28,20 +35,44 @@ export default function ServiceRecordContent(props) {
               title={'实施者'}
             />
             {/* 此处针对涨乐财富通的服务记录做特殊处理 */}
-            <ServiceRecordItem
-              feedbackStatus={item.zlcftMsgStatus}
-              content={item.custFeedback}
-              title={'客户反馈'}
-            />
-            <ServiceRecordItem
-              content={item.feedbackTime}
-              title={'反馈时间'}
-            />
-            {/* 展示不展示服务状态，且排版重新整理 */}
-            {/* <ServiceRecordItem
-              content={item.serveStatus}
-              title={'服务状态'}
-            /> */}
+            {/* 此处需要针对如果是 MOT 回访类型任务的话 展示回访结果和失败原因 */}
+            {
+              isMOTReturnVisitTask ? null
+              : (
+                <ServiceRecordItem
+                  feedbackStatus={item.zlcftMsgStatus}
+                  content={item.custFeedback}
+                  title={'客户反馈'}
+                />
+              )
+            }
+            {
+              isMOTReturnVisitTask ? null
+              : (
+                <ServiceRecordItem
+                  content={item.feedbackTime}
+                  title={'反馈时间'}
+                />
+              )
+            }
+            {
+              !isMOTReturnVisitTask ? null
+              : (
+                <ServiceRecordItem
+                  content={isSuccessForMotReturnVisit ? '成功' : '失败'}
+                  title={'回访结果'}
+                />
+              )
+            }
+            {
+              (isMOTReturnVisitTask && isSuccessForMotReturnVisit) ? null
+              : (
+                <ServiceRecordItem
+                  content={item.custFeedback}
+                  title={'失败原因'}
+                />
+              )
+            }
             <ServiceRecordItem
               content={item.handlerTimeLimit}
               title={'处理期限'}

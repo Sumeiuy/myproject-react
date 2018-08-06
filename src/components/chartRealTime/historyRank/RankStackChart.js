@@ -346,8 +346,6 @@ export default class RankStackChart extends PureComponent {
             }
             // 此处需要将取消掉的Legend的tooltip隐藏掉
             const legend = index - 6;
-            // const legendStateKey = `legend${legend}`;
-            // if (true || !legendState[legendStateKey]) {
             seriesTips.push(`
               <tr>
                 <td>

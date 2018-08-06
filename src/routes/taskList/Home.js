@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-03 16:16:41
+ * @Last Modified time: 2018-08-08 16:41:38
  * @description 任务管理首页
  */
 
@@ -581,6 +581,7 @@ export default class PerformerView extends PureComponent {
         queryTargetCustDetail={queryTargetCustDetail}
         location={location}
         currentTask={currentTask}
+        refreshTaskList={this.queryAppList}
       />
     );
   }

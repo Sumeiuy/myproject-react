@@ -68,5 +68,9 @@ export default function performerView(api) {
     getTemplateList: query => api.post('/groovynoauth/fsp/campaign/investAdvice/queryTemplateListByType', query),
     // 翻译投资建议模板
     translateTemplate: query => api.post('/groovynoauth/fsp/campaign/investAdvice/replaceCustIndexPlaceHoders', query),
+    // 查询可以分配任务的人员列表
+    queryAllotEmpList: query => api.post('/groovynoauth/fsp/campaign/mot/queryDistributableEmpList', query),
+    // 选择了人员后将任务分配给该人员
+    dispatchTaskToEmp: query => api.post('/groovynoauth/fsp/campaign/mot/dispatchEmp', query),
   };
 }

@@ -88,6 +88,10 @@ export default {
     templateList: [],
     // 翻译选中的投资建议模板结果
     templateResult: {},
+    // MOT回访任务可分配人员的列表
+    allotEmpList: [],
+    // 回访任务分配结果
+    allotEmpResult: '',
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -336,6 +340,20 @@ export default {
       return {
         ...state,
         templateResult: payload,
+      };
+    },
+    queryAllotEmpListSuccess(state, action) {
+      const { payload: { employList = [] } } = action;
+      return {
+        ...state,
+        allotEmpList: employList,
+      };
+    },
+    dispatchTaskToEmpSucess(state, action) {
+      const { payload = '' } = action;
+      return {
+        ...state,
+        allotEmpResult: payload,
       };
     },
   },
@@ -620,6 +638,32 @@ export default {
       const { resultData } = yield call(api.translateTemplate, payload);
       yield put({
         type: 'translateTemplateSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 获取当前针对MOT回访类型任务可分配的的人员列表
+    * queryAllotEmpList({ payload }, { call, put }) {
+      yield put({
+        type: 'queryAllotEmpListSuccess',
+        payload: {},
+      });
+      const { resultData } = yield call(api.queryAllotEmpList, payload);
+      yield put({
+        type: 'queryAllotEmpListSuccess',
+        payload: resultData,
+      });
+    },
+
+    // 将MOT 回访任务分配给相关人员
+    * dispatchTaskToEmp({ payload }, { call, put }) {
+      yield put({
+        type: 'dispatchTaskToEmpSucess',
+        payload: '',
+      });
+      const { resultData } = yield call(api.dispatchTaskToEmp, payload);
+      yield put({
+        type: 'dispatchTaskToEmpSucess',
         payload: resultData,
       });
     },

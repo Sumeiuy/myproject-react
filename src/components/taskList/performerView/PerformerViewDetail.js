@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-03 16:18:21
+ * @Last Modified time: 2018-08-08 16:42:45
  */
 
 import React, { PureComponent } from 'react';
@@ -90,6 +90,8 @@ export default class PerformerViewDetail extends PureComponent {
     queryExecutorFeedBack: PropTypes.func.isRequired,
     queryExecutorFlowStatus: PropTypes.func.isRequired,
     queryExecutorDetail: PropTypes.func.isRequired,
+    // 刷新左侧任务列表
+    refreshTaskList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
