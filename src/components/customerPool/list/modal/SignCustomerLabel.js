@@ -7,10 +7,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { Modal, Select } from 'antd';
+import { Modal, Tag } from 'antd';
+import { MultiFilterWithSearch } from '../../../../../node_modules/lego-react-filter';
+import Icon from '../../../common/Icon';
 import styles from './addCustomerLabel.less';
-
-const Option = Select.Option;
+import logable from '../../../../decorators/logable';
 
 const EMPTY_LIST = [];
 
@@ -22,7 +23,7 @@ export function replaceKeyWord(text, word = '') {
   const keyWordText = _.replace(text, keyWordRegex, match => (
     `<span class=${styles.keyWord}>${match}</span>`
   ));
-  return <div dangerouslySetInnerHTML={{ __html: keyWordText }} />;
+  return <span dangerouslySetInnerHTML={{ __html: keyWordText }} />;
 }
 
 export default class SignCustomerLabel extends PureComponent {
@@ -33,9 +34,7 @@ export default class SignCustomerLabel extends PureComponent {
       preCustId: custId,
     };
     if (custId !== preCustId) {
-      let selectedLabels = custLabel[custId] || EMPTY_LIST;
-      selectedLabels = _.map(selectedLabels,
-        item => ({ key: item.id, label: item.labelName }));
+      const selectedLabels = custLabel[custId] || EMPTY_LIST;
       nextState = { ...nextState, selectedLabels };
     }
     return nextState;
@@ -46,10 +45,15 @@ export default class SignCustomerLabel extends PureComponent {
     custLabel: PropTypes.object.isRequired,
     currentPytMng: PropTypes.object.isRequired,
     custLikeLabel: PropTypes.array.isRequired,
+    editorState: PropTypes.bool,
     queryLikeLabelInfo: PropTypes.func.isRequired,
     signCustLabels: PropTypes.func.isRequired,
     handleCancelSignLabelCustId: PropTypes.func.isRequired,
   };
+
+  static defaultProps = {
+    editorState: true,
+  }
 
   constructor(props) {
     super(props);
@@ -62,13 +66,42 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
-  handleSearchCustLabel(value) {
-    this.setState({ value });
+  getOptionItemValue({ value }) {
+    const { value: searchValue } = this.state;
+    return (
+      <span className={styles.labelItemWrap}>
+        {replaceKeyWord(value.labelName, searchValue)}
+        ({value.labelTypeName})
+      </span>);
   }
 
   @autobind
-  handleChange(selectedLabels) {
-    this.setState({ selectedLabels });
+  handleSearch(value) {
+    this.queryLabelInfo(value, () => {
+      this.setState({ value });
+    });
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '多客户打标签',
+      value: '$args[0].value',
+    },
+  })
+  handleSelect({ value }) {
+    const { custLikeLabel } = this.props;
+    const { selectedLabels } = this.state;
+    const finalDate = [...custLikeLabel, ...selectedLabels];
+    const finalSelectedId = _.compact(value);
+    const finalSelectedLabels = _.map(
+      finalSelectedId,
+      itemId => _.find(finalDate, { id: itemId }),
+    );
+    this.setState({
+      selectedLabels: finalSelectedLabels,
+    });
   }
 
   @autobind
@@ -76,7 +109,7 @@ export default class SignCustomerLabel extends PureComponent {
     const { signCustLabels, custId, handleCancelSignLabelCustId, currentPytMng } = this.props;
     const { selectedLabels } = this.state;
     const { ptyMngId } = currentPytMng;
-    const labelIds = _.map(selectedLabels, item => item.key);
+    const labelIds = _.map(selectedLabels, item => item.id);
     signCustLabels({
       custId,
       labelIds,
@@ -85,34 +118,31 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
-  handleBlur() {
-    this.setState({ value: '' });
-  }
-
-  @autobind
-  handleFocus() {
+  queryLabelInfo(labelName = '', callback = _.noop) {
     const { queryLikeLabelInfo } = this.props;
     // 获得焦点时获取全部数据
-    queryLikeLabelInfo({ labelNameLike: '' });
+    queryLikeLabelInfo({
+      labelNameLike: labelName,
+      currentPage: 1,
+      pageSize: 10,
+    }).then(callback);
   }
 
   @autobind
-  handleSearch(value) {
-    this.setState({ value });
+  deleteUserLabel(id) {
+    const { selectedLabels } = this.state;
+    const fianlSelectedLabels = _.filter(
+      selectedLabels,
+      labelItem => labelItem.id !== id,
+    );
+    this.setState({
+      selectedLabels: fianlSelectedLabels,
+    });
   }
 
-
-  @autobind
-  filterOption(value, option) {
-    const { custLikeLabel } = this.props;
-    const { key } = option;
-    const { labelName = '' } = _.find(custLikeLabel, item => item.id === key) || {};
-    return labelName.indexOf(value) > -1;
-  }
   render() {
-    const { custId, handleCancelSignLabelCustId, custLikeLabel } = this.props;
-    const { selectedLabels, value = '' } = this.state;
-
+    const { custId, handleCancelSignLabelCustId, custLikeLabel, editorState } = this.props;
+    const { selectedLabels } = this.state;
     return (
       <Modal
         title="添加客户标签"
@@ -124,24 +154,53 @@ export default class SignCustomerLabel extends PureComponent {
         maskClosable={false}
         onOk={this.handleSubmitSignLabel}
       >
-        <div className={styles.selectedInfo}>已选标签（{ selectedLabels.length }）</div>
-        <Select
-          mode="multiple"
-          labelInValue
-          value={selectedLabels}
-          placeholder="请选择客户标签"
-          onChange={this.handleChange}
-          onBlur={this.handleBlur}
-          onFocus={this.handleFocus}
-          onSearch={this.handleSearch}
-          style={{ width: '100%' }}
-          filterOption={this.filterOption}
-          optionFilterProp="children"
-        >
-          {custLikeLabel.map(labelItem =>
-            <Option key={labelItem.id}>{replaceKeyWord(labelItem.labelName, value)}</Option>,
-          )}
-        </Select>
+        <div className={styles.selectedInfo}>请为已选择客户选择一个标签：</div>
+        <div className={styles.singleLabel}>
+          {editorState ?
+            selectedLabels
+              .map(labelItem =>
+                <Tag
+                  closable
+                  onClose={() => {
+                    this.deleteUserLabel(labelItem.id);
+                  }}
+                  color="gold"
+                  key={labelItem.id}
+                >
+                  {labelItem.labelName}
+                </Tag>,
+              ) :
+            selectedLabels
+              .map(labelItem =>
+                <Tag color="gold" key={labelItem.id}>
+                  {labelItem.labelName}
+                </Tag>,
+              )
+          }
+          {
+            editorState ?
+              <span
+                className={styles.addLabel}
+              >
+                <span className={styles.addLabelBtn}>请选择标签<Icon type="more-down-copy" /></span>
+                <MultiFilterWithSearch
+                  data={custLikeLabel}
+                  value={_.isEmpty(selectedLabels) ? '' : selectedLabels}
+                  className={styles.signSelect}
+                  dataMap={['id', 'labelName']}
+                  filterName="客户标签"
+                  useCustomerFilter
+                  useDefaultLabel
+                  isAlwaysVisible
+                  getOptionItemValue={this.getOptionItemValue}
+                  onChange={this.handleSelect}
+                  onInputChange={this.handleSearch}
+                  // searchFooter={this.getSearchFooter()}
+                />
+              </span> :
+              null
+          }
+        </div>
       </Modal>
     );
   }
