@@ -30,8 +30,6 @@ export default class ViewMenu extends PureComponent {
     location: PropTypes.object.isRequired,
     // 自建任务按钮事件
     onLaunchTask: PropTypes.func,
-    // 打开客户服务全纪录
-    onOpenRecord: PropTypes.func,
   };
 
   static defaultProps = {
@@ -58,12 +56,6 @@ export default class ViewMenu extends PureComponent {
   @logable({ type: 'ButtonClick', payload: { name: '打开自建任务' } })
   handleCreateTask() {
     this.props.onLaunchTask();
-  }
-
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '点击客户服务全纪录' } })
-  handleOpenRecord() {
-    this.props.onOpenRecord();
   }
 
   render() {
@@ -109,15 +101,6 @@ export default class ViewMenu extends PureComponent {
             onClick={this.handleCreateTask}
           >
             新建
-          </Button>
-          <span className={styles.splitLine} />
-          <Button
-            type="default"
-            size="small"
-            className={styles.customBth}
-            onClick={this.handleOpenRecord}
-          >
-            客户服务全纪录
           </Button>
         </div>
       </div>
