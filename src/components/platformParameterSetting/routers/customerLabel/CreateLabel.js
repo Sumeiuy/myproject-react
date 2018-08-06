@@ -118,7 +118,7 @@ export default class CreateLabelType extends PureComponent {
               rules: [{
                 required: true, message: '请输入标签名称',
               }, {
-                max: 10, message: '最多为10个字',
+                max: 8, message: '最多为8个字',
               }, {
                 min: 4, message: '最少为4个字',
               }, {
