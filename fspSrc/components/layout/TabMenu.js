@@ -151,7 +151,7 @@ export default class TabMenu extends PureComponent {
   renderDropdownMenu(menu) {
     const { activeKey } = this.props;
     const isActiveLink = menu.id === activeKey;
-    const hasHomePage = !!menu.path;
+    // const hasHomePage = !!menu.path;
     const menus = (
       <Menu style={menuStyle}>
         {
@@ -180,7 +180,7 @@ export default class TabMenu extends PureComponent {
             <div
               className={classnames({
                 [styles.link]: true,
-                [styles.hasHomePage]: hasHomePage,
+                // [styles.hasHomePage]: hasHomePage,
               })}
               title={menu.name}
               onClick={() => this.handDropClick(menu, activeKey)}
