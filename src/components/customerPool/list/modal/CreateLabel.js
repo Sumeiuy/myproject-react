@@ -4,58 +4,68 @@
  * @Date: 2018/7/4
  */
 import React, { PureComponent } from 'react';
-import { Modal, Form, Input, Select } from 'antd';
+import { Modal, Form, Input } from 'antd';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
-import styles from './customerLabel.less';
+import styles from './createLabel.less';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 const { TextArea } = Input;
+
 // 标签名称可输入字符的正则
 const LABEL_NAME_REG = /^[#&\-_@%A-Za-z0-9\u4e00-\u9fa5]+$/;
 
 @Form.create()
 export default class CreateLabelType extends PureComponent {
+  static getDerivedStateFromProps(props, state) {
+    const { visible } = props;
+    if (visible !== state.preVisible) {
+      return {
+        visible,
+        preVisible: visible,
+      };
+    }
+    return null;
+  }
+
+  constructor(props) {
+    super(props);
+    const { visible } = this.props;
+    this.state = {
+      visible,
+      preVisible: visible,
+    };
+  }
+
   static propTypes = {
     form: PropTypes.object.isRequired,
-    allLabels: PropTypes.array.isRequired,
+    labelName: PropTypes.string.isRequired,
     closeModal: PropTypes.func.isRequired,
-    checkDuplicationName: PropTypes.func.isRequired,
     visible: PropTypes.bool.isRequired,
     addLabel: PropTypes.func.isRequired,
-    queryLabelList: PropTypes.func.isRequired,
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!prevState.visible && this.state.visible) {
+      const { form } = this.props;
+      form.validateFields(['labelName']);
+    }
+  }
 
   @autobind
   handleCreateLabelSubmit() {
     const { addLabel,
-      closeModal,
-      form: { validateFields, getFieldsError },
-      queryLabelList,
+      form: { validateFields },
+      labelName,
     } = this.props;
-    const { labelName: labelNameError } = getFieldsError();
-    if (labelNameError) {
-      validateFields(['labelDesc', 'labelTypeId']);
-      return;
-    }
     validateFields((error, values) => {
       if (!error) {
-        addLabel({ ...values, labelFlag: 2 })
-          .then((duplicationName) => {
-            if (duplicationName) {
-              this.props.form.setFields({
-                labelType: {
-                  value: values.labelType,
-                  errors: [new Error('添加的标签已存在，请重新输入')],
-                },
-              });
-            } else {
-              closeModal();
-              queryLabelList({ currentPage: 1 });
-            }
+        addLabel({ ...values, labelName, labelFlag: '1' })
+          .then(() => {
+            this.setState({
+              visible: false,
+            });
           });
       } else {
         console.log('error', error, values);
@@ -63,31 +73,16 @@ export default class CreateLabelType extends PureComponent {
     });
   }
 
-  // 实时校验标签名是否重复
   @autobind
-  handleCheckLabelName() {
-    const { checkDuplicationName, form } = this.props;
-    const { labelName: labelNameError } = form.getFieldsError();
-    if (labelNameError) {
-      return;
-    }
-    form.validateFields(['labelName'], (error, values) => {
-      if (!error) {
-        checkDuplicationName({ ...values, labelFlag: 2 }).then((duplicationName) => {
-          if (duplicationName) {
-            this.props.form.setFields({
-              labelName: {
-                value: values.labelName,
-                errors: [new Error('该标签已存在，请重新输入')],
-              },
-            });
-          }
-        });
-      }
+  handleCloseModal() {
+    this.setState({
+      visible: false,
     });
   }
+
   render() {
-    const { closeModal, visible, allLabels } = this.props;
+    const { labelName, closeModal } = this.props;
+    const { visible } = this.state;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -100,13 +95,14 @@ export default class CreateLabelType extends PureComponent {
 
     return (
       <Modal
-        title="新建标签"
+        title={`新建“${labelName}”标签`}
         wrapClassName={styles.addLabel}
         width={540}
         visible={visible}
         maskClosable={false}
-        onCancel={closeModal}
+        onCancel={this.handleCloseModal}
         onOk={this.handleCreateLabelSubmit}
+        afterClose={closeModal}
         destroyOnClose
       >
         <Form>
@@ -124,8 +120,9 @@ export default class CreateLabelType extends PureComponent {
               }, {
                 pattern: LABEL_NAME_REG, message: '可输入字符仅为汉字、数字、字母及合法字符(#&-_@%)',
               }],
+              initialValue: labelName,
             })(
-              <Input onBlur={this.handleCheckLabelName} />,
+              <Input disabled onBlur={this.handleCheckLabelName} />,
             )}
           </FormItem>
           <FormItem
@@ -142,27 +139,6 @@ export default class CreateLabelType extends PureComponent {
               }],
             })(
               <TextArea placeholder="请输入标签描述" autosize={{ minRows: 6, maxRows: 10 }} />,
-            )}
-          </FormItem>
-          <FormItem
-            {...formItemLayout}
-            wrapperCol={{
-              sm: { span: 8 },
-            }}
-            label="类型"
-          >
-            {getFieldDecorator('labelTypeId', {
-              rules: [
-                { required: true, message: '请选择标签类型名称' },
-              ],
-            })(
-              <Select placeholder="标签类型">
-                {
-                  _.map(allLabels, item => (
-                    <Option key={item.id} value={item.id}>{item.typeName}</Option>
-                  ))
-                }
-              </Select>,
             )}
           </FormItem>
         </Form>
