@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Modal, Tag } from 'antd';
+
+import CreateLabel from './CreateLabel';
 import { MultiFilterWithSearch } from '../../../../../node_modules/lego-react-filter';
 import Icon from '../../../common/Icon';
 import styles from './addCustomerLabel.less';
@@ -35,24 +37,29 @@ export default class SignCustomerLabel extends PureComponent {
     };
     if (custId !== preCustId) {
       const selectedLabels = custLabel[custId] || EMPTY_LIST;
-      nextState = { ...nextState, selectedLabels };
+      nextState = {
+        ...nextState,
+        selectedLabels,
+        custId,
+      };
     }
     return nextState;
   }
 
   static propTypes = {
     custId: PropTypes.string.isRequired,
+    mainPosition: PropTypes.bool,
     custLabel: PropTypes.object.isRequired,
     currentPytMng: PropTypes.object.isRequired,
     custLikeLabel: PropTypes.array.isRequired,
-    editorState: PropTypes.bool,
     queryLikeLabelInfo: PropTypes.func.isRequired,
     signCustLabels: PropTypes.func.isRequired,
     handleCancelSignLabelCustId: PropTypes.func.isRequired,
+    addLabel: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
-    editorState: true,
+    mainPosition: true,
   }
 
   constructor(props) {
@@ -61,7 +68,9 @@ export default class SignCustomerLabel extends PureComponent {
     this.state = {
       selectedLabels: EMPTY_LIST,
       value: '',
+      custId,
       preCustId: custId,
+      createLabelVisible: false,
     };
   }
 
@@ -106,8 +115,8 @@ export default class SignCustomerLabel extends PureComponent {
 
   @autobind
   handleSubmitSignLabel() {
-    const { signCustLabels, custId, handleCancelSignLabelCustId, currentPytMng } = this.props;
-    const { selectedLabels } = this.state;
+    const { signCustLabels, handleCancelSignLabelCustId, currentPytMng } = this.props;
+    const { selectedLabels, custId } = this.state;
     const { ptyMngId } = currentPytMng;
     const labelIds = _.map(selectedLabels, item => item.id);
     signCustLabels({
@@ -140,68 +149,125 @@ export default class SignCustomerLabel extends PureComponent {
     });
   }
 
+  @autobind
+  getSearchFooter() {
+    const { custLikeLabel } = this.props;
+    const { value } = this.state;
+    const currentLabel = _.find(
+      custLikeLabel,
+      labelItem =>
+        labelItem.labelName === value,
+    );
+    if (currentLabel) {
+      return null;
+    }
+    return (<div
+      className={styles.newLabel}
+      onClick={this.handleCloseAddLabelModal}
+    >
+      {`+ 新建"${value}"标签`}
+    </div>);
+  }
+
+  @autobind
+  handleCloseAddLabelModal() {
+    this.setState({
+      custId: '',
+    });
+  }
+
+  @autobind
+  handleOpenNewLabelModal() {
+    const { custId } = this.props;
+    if (custId) {
+      this.setState({
+        createLabelVisible: true,
+      });
+    }
+  }
+
+  @autobind
+  handleCloseNewLabelModal() {
+    const { custId } = this.props;
+    this.queryLabelInfo('', () => {
+      this.setState({
+        createLabelVisible: false,
+        custId,
+      });
+    });
+  }
+
   render() {
-    const { custId, handleCancelSignLabelCustId, custLikeLabel, editorState } = this.props;
-    const { selectedLabels } = this.state;
+    const { handleCancelSignLabelCustId, custLikeLabel, mainPosition, addLabel } = this.props;
+    const { selectedLabels, custId, createLabelVisible, value } = this.state;
     return (
-      <Modal
-        title="添加客户标签"
-        width={650}
-        visible={Boolean(custId)}
-        wrapClassName={styles.signCustomerLabel}
-        onCancel={handleCancelSignLabelCustId}
-        destroyOnClose
-        maskClosable={false}
-        onOk={this.handleSubmitSignLabel}
-      >
-        <div className={styles.selectedInfo}>请为已选择客户选择一个标签：</div>
-        <div className={styles.singleLabel}>
-          {editorState ?
-            selectedLabels
-              .map(labelItem =>
-                <Tag
-                  closable
-                  onClose={() => {
-                    this.deleteUserLabel(labelItem.id);
-                  }}
-                  color="gold"
-                  key={labelItem.id}
+      <span>
+        <Modal
+          title="添加客户标签"
+          width={650}
+          visible={Boolean(custId)}
+          wrapClassName={styles.signCustomerLabel}
+          onCancel={handleCancelSignLabelCustId}
+          destroyOnClose
+          maskClosable={false}
+          onOk={this.handleSubmitSignLabel}
+          afterClose={this.handleOpenNewLabelModal}
+        >
+          <div className={styles.selectedInfo}>请为已选择客户选择一个标签：</div>
+          <div className={styles.singleLabel}>
+            {mainPosition ?
+              selectedLabels
+                .map(labelItem =>
+                  <Tag
+                    closable
+                    onClose={() => {
+                      this.deleteUserLabel(labelItem.id);
+                    }}
+                    color="gold"
+                    key={labelItem.id}
+                  >
+                    {labelItem.labelName}
+                  </Tag>,
+                ) :
+              selectedLabels
+                .map(labelItem =>
+                  <Tag color="gold" key={labelItem.id}>
+                    {labelItem.labelName}
+                  </Tag>,
+                )
+            }
+            {
+              mainPosition ?
+                <span
+                  className={styles.addLabel}
                 >
-                  {labelItem.labelName}
-                </Tag>,
-              ) :
-            selectedLabels
-              .map(labelItem =>
-                <Tag color="gold" key={labelItem.id}>
-                  {labelItem.labelName}
-                </Tag>,
-              )
-          }
-          {
-            editorState ?
-              <span
-                className={styles.addLabel}
-              >
-                <span className={styles.addLabelBtn}>请选择标签<Icon type="more-down-copy" /></span>
-                <MultiFilterWithSearch
-                  data={custLikeLabel}
-                  value={_.isEmpty(selectedLabels) ? '' : selectedLabels}
-                  className={styles.signSelect}
-                  dataMap={['id', 'labelName']}
-                  filterName="客户标签"
-                  useCustomerFilter
-                  useDefaultLabel
-                  isAlwaysVisible
-                  getOptionItemValue={this.getOptionItemValue}
-                  onChange={this.handleSelect}
-                  onInputChange={this.handleSearch}
-                  // searchFooter={this.getSearchFooter()}
-                />
-              </span> :
-              null
-          }
-        </div>
-      </Modal>
+                  <span className={styles.addLabelBtn}>请选择标签<Icon type="more-down-copy" /></span>
+                  <MultiFilterWithSearch
+                    data={custLikeLabel}
+                    value={_.isEmpty(selectedLabels) ? '' : selectedLabels}
+                    className={styles.signSelect}
+                    dataMap={['id', 'labelName']}
+                    filterName="客户标签"
+                    useCustomerFilter
+                    useDefaultLabel
+                    isAlwaysVisible
+                    getOptionItemValue={this.getOptionItemValue}
+                    onChange={this.handleSelect}
+                    onInputChange={this.handleSearch}
+                    searchFooter={this.getSearchFooter()}
+                  />
+                </span> :
+                null
+            }
+          </div>
+        </Modal>
+        <CreateLabel
+          visible={createLabelVisible}
+          labelName={value}
+          addLabel={addLabel}
+          closeModal={this.handleCloseNewLabelModal}
+        />
+      </span>
     );
   }
 }

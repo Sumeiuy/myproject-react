@@ -13,6 +13,9 @@ import styles from './createLabel.less';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
+// 标签名称可输入字符的正则
+const LABEL_NAME_REG = /^[#&\-_@%A-Za-z0-9\u4e00-\u9fa5]+$/;
+
 @Form.create()
 export default class CreateLabelType extends PureComponent {
   static getDerivedStateFromProps(props, state) {
@@ -43,6 +46,13 @@ export default class CreateLabelType extends PureComponent {
     addLabel: PropTypes.func.isRequired,
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    if (!prevState.visible && this.state.visible) {
+      const { form } = this.props;
+      form.validateFields(['labelName']);
+    }
+  }
+
   @autobind
   handleCreateLabelSubmit() {
     const { addLabel,
@@ -51,7 +61,7 @@ export default class CreateLabelType extends PureComponent {
     } = this.props;
     validateFields((error, values) => {
       if (!error) {
-        addLabel({ ...values, labelName })
+        addLabel({ ...values, labelName, labelFlag: '1' })
           .then(() => {
             this.setState({
               visible: false,
@@ -106,7 +116,20 @@ export default class CreateLabelType extends PureComponent {
             {...formItemLayout}
             label="名称"
           >
-            {labelName}
+            {getFieldDecorator('labelName', {
+              rules: [{
+                required: true, message: '请输入标签名称',
+              }, {
+                max: 8, message: '最多为8个字',
+              }, {
+                min: 4, message: '最少为4个字',
+              }, {
+                pattern: LABEL_NAME_REG, message: '可输入字符仅为汉字、数字、字母及合法字符(#&-_@%)',
+              }],
+              initialValue: labelName,
+            })(
+              <Input disabled onBlur={this.handleCheckLabelName} />,
+            )}
           </FormItem>
           <FormItem
             {...formItemLayout}

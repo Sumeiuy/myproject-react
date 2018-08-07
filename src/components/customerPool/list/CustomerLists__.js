@@ -762,6 +762,7 @@ export default class CustomerLists extends PureComponent {
           custLikeLabel={custLikeLabel}
           signCustLabels={signCustLabels}
           handleCancelSignLabelCustId={this.removeSignLabelCust}
+          addLabel={addLabel}
         />
         <MultiCustomerLabel
           visible={multiSignLabelVisible}
