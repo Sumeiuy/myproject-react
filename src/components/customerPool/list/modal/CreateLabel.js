@@ -80,14 +80,8 @@ export default class CreateLabelType extends PureComponent {
     });
   }
 
-  @autobind
-  handleAfterClose() {
-    const { closeModal } = this.props;
-    closeModal();
-  }
-
   render() {
-    const { labelName } = this.props;
+    const { labelName, closeModal } = this.props;
     const { visible } = this.state;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
@@ -108,7 +102,7 @@ export default class CreateLabelType extends PureComponent {
         maskClosable={false}
         onCancel={this.handleCloseModal}
         onOk={this.handleCreateLabelSubmit}
-        afterClose={this.handleAfterClose}
+        afterClose={closeModal}
         destroyOnClose
       >
         <Form>

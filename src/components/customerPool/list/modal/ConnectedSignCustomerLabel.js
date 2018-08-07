@@ -11,13 +11,8 @@ import { connect } from 'dva/index';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
+import { dva } from '../../../../helper';
 import SignCustomerLabel from './SignCustomerLabel';
-
-const fetchDataFunction = (globalLoading, type) => query => ({
-  type,
-  payload: query || {},
-  loading: globalLoading,
-});
 
 const mapStateToProps = state => ({
   signLabelCust: state.customerLabel.signLabelCust,
@@ -26,11 +21,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  queryLikeLabelInfo: fetchDataFunction(false, 'customerLabel/queryLikeLabelInfo'),
-  signCustLabels: fetchDataFunction(true, 'customerLabel/signCustLabels'),
-  addLabel: fetchDataFunction(true, 'customerLabel/addLabel'),
-  clearSignLabelCust: fetchDataFunction(true, 'customerLabel/clearSignLabelCust'),
-  queryCustSignedLabels: fetchDataFunction(true, 'customerLabel/queryCustSignedLabels'),
+  queryLikeLabelInfo: dva.generateEffect('customerLabel/queryLikeLabelInfo', { loading: false }),
+  signCustLabels: dva.generateEffect('customerLabel/signCustLabels', { loading: true }),
+  addLabel: dva.generateEffect('customerLabel/addLabel', { loading: true }),
+  clearSignLabelCust: dva.generateEffect('customerLabel/clearSignLabelCust', { loading: true }),
+  queryCustSignedLabels: dva.generateEffect('customerLabel/queryCustSignedLabels', { loading: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
