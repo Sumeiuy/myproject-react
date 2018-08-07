@@ -23,7 +23,7 @@ import styles from './home.less';
 import logable from '../../decorators/logable';
 
 const TabPane = Tabs.TabPane;
-const { typeList } = config;
+const { typeList, stockTypeMap } = config;
 const EMPTY_PARAM = '暂无';
 const pathname = '/stock/detail';
 
@@ -98,7 +98,10 @@ export default class Stock extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '个股资讯',
-      type: '$props.location.query.type',
+      value: '$args[0].id',
+      title: '$args[0].title',
+      code: '$args[0].code',
+      type: '$args[1]',
     },
   })
   rowClickHandle(record) {
@@ -131,7 +134,7 @@ export default class Stock extends PureComponent {
 
   // tab 切换事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换Tab' } })
+  @logable({ type: 'Click', payload: { name: '切换Tab', value: '$args[0]' } })
   tabChangeHandle(key) {
     const { keyword } = this.state;
     this.setState({
@@ -298,7 +301,8 @@ export default class Stock extends PureComponent {
                 dataSource={list}
                 pagination={false}
                 onRow={record => ({
-                  onClick: () => this.rowClickHandle(record),       // 点击行
+                  onClick: () =>
+                    this.rowClickHandle(record, stockTypeMap[this.state.type]),       // 点击行
                 })}
                 rowKey="id"
               />

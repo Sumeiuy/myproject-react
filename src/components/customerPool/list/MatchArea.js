@@ -7,7 +7,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { isSightingScope, handleOpenFsp360TabAction } from '../helper';
+import { isSightingScope, handleOpenFsp360TabAction, openProductDetailPage } from '../helper';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 // ENTERLIST_PERMISSION_SIGHTINGLABEL-需要展示瞄准镜匹配区域的source集合
@@ -303,7 +303,6 @@ export default class MatchArea extends PureComponent {
           <span className={styles.serviceRecord}>
             <i className="label">服务记录：</i>
             <i dangerouslySetInnerHTML={{ __html: markedEle }} />
-            <i>...</i>
           </span>
           <span
             className={styles.more}
@@ -461,21 +460,39 @@ export default class MatchArea extends PureComponent {
       isShowDetailBtn = true;
     }
     if (!_.isEmpty(list)) {
-      const { name, code } = list[0] || {};
-      const htmlString = `${replaceWord({ value: name, q: keyword })}/${replaceWord({ value: code, q: keyword })}`;
+      const data = list[0] || {};
+      const { name, code, flag } = data;
+      const codeHtmlString = replaceWord({ value: code, q: keyword });
+      const htmlString = `${replaceWord({ value: name, q: keyword })}/${codeHtmlString}`;
       const props = {
         custId,
-        data: list[0] || {},
+        data,
         queryHoldingProduct,
         holdingProducts,
         queryHoldingProductReqState,
         formatAsset,
       };
+      let contentNode;
+      // flag为true，持仓产品名称可点击
+      if (flag) {
+        const { push } = this.context;
+        contentNode = (<i>
+          <em
+            className={styles.clickable}
+            onClick={() => { openProductDetailPage({ data, routerAction: push }); }}
+          >
+            {name}
+          </em>
+          /<em className="marked" dangerouslySetInnerHTML={{ __html: codeHtmlString }} />
+        </i>);
+      } else {
+        contentNode = <i dangerouslySetInnerHTML={{ __html: htmlString }} />;
+      }
       return (
         <li>
           <span>
             <i className="label">持仓产品：</i>
-            <i dangerouslySetInnerHTML={{ __html: htmlString }} />
+            {contentNode}
             {isShowDetailBtn && <HoldingProductDetail {...props} />}
           </span>
         </li>
