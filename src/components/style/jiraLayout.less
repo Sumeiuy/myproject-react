@@ -1,10 +1,13 @@
 .pageCommonHeader {
   font-size: 14px;
-  height: 34px;
+  height: auto;
+  min-height: 34px;
+  display: flex;
+  justify-content: space-between;
   padding: 2px 0 0 2px;
   .filterBox {
-    width: 90%;
-    display: inline-block;
+    flex: 1;
+    display: flex;
     position: relative;
     &:after {
       content: "";
@@ -12,14 +15,15 @@
       clear: both;
     }
     .filter {
-      float: left;
+      flex: 1;
       .filterFl {
         display: inline-block;
+        vertical-align: middle;
+        height: 30px;
       }
     }
 
     .moreFilterBtn {
-      float: right;
       :global {
         li:after {
           border: none;
@@ -69,8 +73,7 @@
   }
   :global {
     .commonBtn {
-      float: right;
-      margin-right: 6px;
+      margin: 0 6px 0 15px;
     }
     //select边框
     .ant-select {
