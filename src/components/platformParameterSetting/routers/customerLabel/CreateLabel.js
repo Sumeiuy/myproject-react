@@ -43,7 +43,7 @@ export default class CreateLabelType extends PureComponent {
     }
     validateFields((error, values) => {
       if (!error) {
-        addLabel(values)
+        addLabel({ ...values, labelFlag: 2 })
           .then((duplicationName) => {
             if (duplicationName) {
               this.props.form.setFields({
@@ -73,7 +73,7 @@ export default class CreateLabelType extends PureComponent {
     }
     form.validateFields(['labelName'], (error, values) => {
       if (!error) {
-        checkDuplicationName(values).then((duplicationName) => {
+        checkDuplicationName({ ...values, labelFlag: 2 }).then((duplicationName) => {
           if (duplicationName) {
             this.props.form.setFields({
               labelName: {
