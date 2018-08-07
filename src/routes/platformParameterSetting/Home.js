@@ -32,6 +32,11 @@ export default class PlatformParameterSetting extends PureComponent {
     this.toPlatformHome();
   }
 
+  componentDidUpdate() {
+    // 根据路由权限过滤后平台参数设置菜单下首页面的跳转
+    this.toPlatformHome();
+  }
+
   @autobind
   hasPermissionMenu() {
     const { empInfo: { empRespList = [] } } = this.context;
