@@ -241,6 +241,19 @@ function openRctTab(options) {
 
 // 打开并跳转到新的fspTab，原tab保留
 function openFspTab(options) {
+  const { param } = options;
+  const originTabs = window.$('#UTB').data('tabs') || [];
+
+  const newTabs = _.map(originTabs, (tab) => {
+    if (tab.id === param.id) {
+      return {
+        ...tab,
+        ...param,
+      };
+    }
+    return tab;
+  });
+  window.$('#UTB').data('tabs', newTabs);
   dispatchTabPane({
     fspAction: 'openFspTab',
     ...options,

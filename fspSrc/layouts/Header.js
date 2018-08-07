@@ -173,6 +173,9 @@ export default class Header extends PureComponent {
       push({
         pathname: menuItem.path,
         query: menuItem.query,
+        state: {
+          url: menuItem && menuItem.url,
+        },
       });
     }
   }

@@ -87,7 +87,7 @@ export default class TabMenu extends PureComponent {
   isActiveMenu(path, menuItem, level, exact = false) {
     const menuPath = menuItem.path;
     if (exact) {
-      if (menuPath === path) {
+      if (menuPath === path || path.indexOf(menuPath) > -1) {
         return true;
       }
       return false;
@@ -116,6 +116,9 @@ export default class TabMenu extends PureComponent {
       push({
         pathname: menuItem.path,
         query: menuItem.query,
+        state: {
+          url: menuItem && menuItem.url,
+        },
       });
     }
   }
