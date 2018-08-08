@@ -2,8 +2,8 @@
  * @Description: 账户限制管理 model
  * @Author: Liujianshu
  * @Date: 2018-07-31 14:49:09
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-08-02 17:05:37
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-08 09:42:37
  */
 import { accountLimit as api, common as commonApi } from '../api';
 
