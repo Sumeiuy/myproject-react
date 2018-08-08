@@ -89,7 +89,6 @@ export default {
         payload: response,
       });
     },
-
     * getSearchServerPersonList({ payload }, { call, put }) {
       const response = yield call(api.getSearchServerPersonelList, payload);
       yield put({
