@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-06 17:39:19
+ * @Last Modified time: 2018-08-08 15:20:12
  */
 
 import React, { PureComponent } from 'react';
@@ -224,7 +224,7 @@ export default class ChartTable extends PureComponent {
     const childrenArr = [];
     if (item.children) {
       item.children.map((child) => {
-        const stamp = new Date().getTime();
+        const stamp = helperData.uuid(16);
         const childObj = {
           title: this.getTitleHtml(child),
           dataIndex: child.key,
@@ -248,7 +248,7 @@ export default class ChartTable extends PureComponent {
     const threeEleArr = [];
     if (item.children) {
       item.children.map((child) => {
-        const stamp = new Date().getTime();
+        const stamp = helperData.uuid(16);
         const threeEleObj = {
           title: this.getTitleHtml(child),
           dataIndex: child.key,
