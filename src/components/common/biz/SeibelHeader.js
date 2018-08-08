@@ -29,6 +29,8 @@ const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
 const dateFormat = 'YYYY/MM/DD';
 // 当前时间
 const DEFAULT_VALUE = '';
+// 不需要显示客户查询的页面
+const PAGE_NO_CUST = ['custAllotPage', 'departmentCustAllotPage'];
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -652,6 +654,7 @@ export default class Pageheader extends PureComponent {
 
   render() {
     const {
+      page,
       pageType,
       checkUserIsFiliale,
       basicFilters,
@@ -677,6 +680,11 @@ export default class Pageheader extends PureComponent {
     } else {
       // 此处,通用的判断是否需要隐藏新建按钮
       hasCreatePermission = this.props.isShowCreateBtn();
+    }
+    // 如果是营业部客户分配页面
+    if (page === PAGE_NO_CUST[1]) {
+      hasCreatePermission = permission.hasKFYYBZXGPermission(empInfo) && checkUserIsFiliale();
+      // hasCreatePermission = this.props.isShowCreateBtn();
     }
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
@@ -709,13 +717,13 @@ export default class Pageheader extends PureComponent {
           <div className={styles.moreFilterBtn}>
             {
               moreFilterData.length ?
-                <div className={styles.filterFl}>
-                  <MoreFilter
-                    value={this.selectMoreFilter()}
-                    data={moreFilterData}
-                    onChange={this.moreFilterChange}
-                  />
-                </div> : null
+                <MoreFilter
+                  value={this.selectMoreFilter()}
+                  className={styles.filterFl}
+                  data={moreFilterData}
+                  onChange={this.moreFilterChange}
+                />
+                : null
               }
           </div>
         </div>
