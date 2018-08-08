@@ -35,6 +35,29 @@
           }
         }
       }
+      :global {
+        .ant-select-selection__choice {
+          background: #fef7f0;
+          border: 1px solid #fcd2a6;
+          font-size: 12px;
+          color: #d67c1e;
+          .ant-select-selection__choice__content {
+            & > div > span {
+              color: #d67c1e;
+            }
+          }
+          .ant-select-selection__choice__remove {
+            color: #d67c1e;
+          }
+        }
+      }
+      .infoFormSelect {
+        :global {
+          .ant-select {
+            height: auto;
+          }
+        }
+      }
       .title {
         font-size: 16px;
         color: #4a4a4a;
@@ -96,4 +119,7 @@
   .mr10 {
     margin-right: 10px;
   }
+}
+.keyWord {
+  color: #ff784e;
 }

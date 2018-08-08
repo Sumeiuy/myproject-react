@@ -20,11 +20,6 @@ const config = {
   operateTypeArray: [
     {
       show: true,
-      label: '不限',
-      value: '',
-    },
-    {
-      show: true,
       label: '限制设置',
       value: '1301',
     },

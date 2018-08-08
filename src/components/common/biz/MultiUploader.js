@@ -63,6 +63,10 @@ export default class MultiUpload extends PureComponent {
     showDelete: PropTypes.bool,
     // 上传文件大小限制，默认20Mb
     maxSize: PropTypes.number,
+    // 是否有上传数量限制
+    isLimit: PropTypes.bool,
+    // 上传限制数量个数
+    limitCount: PropTypes.number,
   }
 
   static defaultProps = {
@@ -78,6 +82,8 @@ export default class MultiUpload extends PureComponent {
     deleteAttachmentLoading: false,
     showDelete: true,
     maxSize: 20,
+    isLimit: false,
+    limitCount: 999,
   }
 
   constructor(props) {
@@ -92,6 +98,7 @@ export default class MultiUpload extends PureComponent {
       fileList: attachmentList, // 文件列表
       oldFileList: attachmentList, // 旧的文件列表
       attachment, // 上传后的唯一 ID
+      isShowUploadBtn: true,  // 是否显示上传按钮
     };
   }
 
@@ -112,7 +119,7 @@ export default class MultiUpload extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
   onChange(info) {
-    const { type, uploadCallback } = this.props;
+    const { type, uploadCallback, isLimit, limitCount } = this.props;
     const uploadFile = info.file;
     this.setState({
       percent: info.file.percent,
@@ -124,12 +131,17 @@ export default class MultiUpload extends PureComponent {
       if (uploadFile.response.code === '0') {
         // 上传成功的返回值 0
         const data = uploadFile.response.resultData;
+        let isShowUploadBtn = true;
+        if (isLimit && data.attaches.length <= limitCount) {
+          isShowUploadBtn = false;
+        }
         this.setState({
           status: 'success',
           statusText: '上传完成',
           fileList: data.attaches,
           oldFileList: data.attaches,
           attachment: data.attachment,
+          isShowUploadBtn,
         }, () => {
           uploadCallback(type, data.attachment);
         });
@@ -164,10 +176,16 @@ export default class MultiUpload extends PureComponent {
       attachment,
     };
     deleteAttachment(deleteObj).then(() => {
+      const { isLimit, limitCount } = this.props;
       const newFileList = _.cloneDeep(fileList);
+      let isShowUploadBtn = true;
       _.remove(newFileList, o => o.attachId === attachId);
+      if (isLimit && newFileList.length <= limitCount) {
+        isShowUploadBtn = false;
+      }
       this.setState({
         fileList: newFileList, // 文件列表
+        isShowUploadBtn,
       }, () => {
         deleteCallback(type);
       });
@@ -190,6 +208,7 @@ export default class MultiUpload extends PureComponent {
       fileList: [], // 文件列表
       oldFileList: [], // 旧的文件列表
       attachment: '', // 上传后的唯一 ID
+      isShowUploadBtn: true,  // 显示上传按钮
     });
   }
 
@@ -217,6 +236,7 @@ export default class MultiUpload extends PureComponent {
       percent,
       status,
       statusText,
+      isShowUploadBtn,
     } = this.state;
     const { edit, title, required, showDelete } = this.props;
     const uploadProps = {
@@ -235,7 +255,7 @@ export default class MultiUpload extends PureComponent {
       beforeUpload: this.beforeUpload,
     };
 
-    const uploadElement = edit ?
+    const uploadElement = (edit && isShowUploadBtn) ?
       (<Upload {...uploadProps} {...this.props}>
         <Button className={styles.commonUploadBtn}>
           <Icon type="fujian1" />上传附件

@@ -8,7 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, DatePicker, Input, Select as AntdSelect, Spin, Radio, Modal, Upload, Popconfirm } from 'antd';
+import { message, DatePicker, Input, Select as AntdSelect, Radio, Modal, Upload, Popconfirm } from 'antd';
 import _ from 'lodash';
 
 import Select from '../common/Select';
@@ -49,15 +49,13 @@ const KEY_CUSTNAME = 'custName';
 
 export default class CreateModal extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
-    dict: PropTypes.object.isRequired,
-    custRangeList: PropTypes.array.isRequired,
     queryAppList: PropTypes.func.isRequired,
     // 获取按钮数据和下一步审批人
     selfBtnGroup: PropTypes.object.isRequired,
     queryButtonList: PropTypes.func.isRequired,
     // 获取客户数据
-    custData: PropTypes.array.isRequired,
+    searchCustData: PropTypes.array.isRequired,
+    addedCustData: PropTypes.array.isRequired,
     queryCustList: PropTypes.func.isRequired,
     // 限制类型
     limitList: PropTypes.array.isRequired,
@@ -77,9 +75,8 @@ export default class CreateModal extends PureComponent {
 
   constructor(props) {
     super(props);
+    const operateType = operateTypeArray[0].value;
     this.state = {
-      // 已有条数
-      alreadyCount: 0,
       // 是否是初始划转方式
       isDefaultType: true,
       // 上传后的返回值
@@ -92,17 +89,27 @@ export default class CreateModal extends PureComponent {
       nextApproverModal: false,
       // 单个客户
       client: {},
-      // 单个服务经理
-      manager: {},
       // 搜索的客户数据
       searchCustList: [],
-      // 搜索的服务经理数据
-      searchManageList: [],
       isBankConfirm: '',
-
+      // 限制信息
       limitList: [],
       limitValue: [],
       fetching: false,
+      // 操作类型
+      operateType,
+      // 操作类型是否是 限制设置
+      isLimit: operateType === operateTypeArray[0].value,
+      // 公司简称
+      companyName: '',
+      // 证券代码
+      stockCode: '',
+      // 已添加的客户列表
+      addedCustData: props.addedCustData || [],
+      // 当前页数
+      pageNum: 1,
+
+      selectValue: '',
     };
   }
 
@@ -111,53 +118,6 @@ export default class CreateModal extends PureComponent {
     this.props.queryButtonList({
       flowId: '',
       operate: 2,
-    });
-  }
-
-  // 是否银行确认更改事件
-  @autobind
-  handleRaiodChange(e) {
-    this.setState({
-      isBankConfirm: e.target.value,
-    });
-  }
-
-  // 设置限制事件切换事件
-  @autobind
-  handleDatePickerChange(date, dateString) {
-    console.warn('date', date);
-    console.warn('dateString', dateString);
-  }
-
-  // 搜索限制类型
-  @autobind
-  handleSelectSearch(value) {
-    const { queryLimtList } = this.props;
-    const { limitList } = this.state;
-    if (!_.isEmpty(limitList)) {
-      return;
-    }
-    this.setState({
-      fetching: true,
-    }, () => {
-      queryLimtList({ value }).then(() => {
-        const { limitList: propsLimitList } = this.props;
-        this.setState({
-          limitList: propsLimitList,
-          fetching: false,
-        });
-      });
-    });
-  }
-
-  // 选择限制类型
-  @autobind
-  handleSelectChange(value, options) {
-    console.warn('options', options);
-    console.warn('value', value);
-    this.setState({
-      limitValue: value,
-      fetching: false,
     });
   }
 
@@ -175,9 +135,90 @@ export default class CreateModal extends PureComponent {
       dataIndex: 'operate',
       key: 'operate',
       title: '操作',
-      render: (text, record) => this.renderPopconfirm('cust', record),
+      render: (text, record) => this.renderPopconfirm(record),
     });
     return titleList;
+  }
+
+  // 是否银行确认更改事件
+  @autobind
+  handleBankConfirmChange(e) {
+    this.setState({
+      isBankConfirm: e.target.value,
+    });
+  }
+
+  // 操作类型改变事件
+  // TODO: 清空数据
+  @autobind
+  handleOperateTypeChange(key, value) {
+    // 等于 限制解除 的时候
+    let isLimit = true;
+    if (value !== operateTypeArray[0].value) {
+      isLimit = false;
+    }
+    this.setState({
+      [key]: value,
+      isLimit,
+    });
+  }
+
+  // 公司简称改变
+  @autobind
+  handleCompanyNameChange(e) {
+    this.setState({
+      companyName: e.target.value,
+    });
+  }
+
+  // 证券代码变化
+  @autobind
+  handleStockCodeChange(e) {
+    this.setState({
+      stockCode: e.target.value,
+    });
+  }
+
+  // 设置限制事件切换事件
+  @autobind
+  handleDatePickerChange(date, dateString) {
+    console.warn('date', date);
+    console.warn('dateString', dateString);
+  }
+
+  // 限制类型焦点进入
+  @autobind
+  handleSelectFocus() {
+    const { queryLimtList } = this.props;
+    const { limitList } = this.state;
+    if (!_.isEmpty(limitList)) {
+      return;
+    }
+    queryLimtList().then(() => {
+      const { limitList: propsLimitList } = this.props;
+      this.setState({
+        limitList: propsLimitList,
+        fetching: false,
+      });
+    });
+  }
+
+  // 搜索焦点类型
+  @autobind
+  handleSelectSearch(value) {
+    this.setState({
+      selectValue: value,
+    });
+  }
+
+  // 选择限制类型
+  @autobind
+  handleSelectChange(value, options) {
+    console.warn('options', options);
+    console.warn('value', value);
+    this.setState({
+      limitValue: value,
+    });
   }
 
   // 导入数据
@@ -243,9 +284,9 @@ export default class CreateModal extends PureComponent {
       pageSize: 10,
       pageNum: 1,
     }).then(() => {
-      const { custData: { list = [] } } = this.props;
+      const { searchCustData } = this.props;
       this.setState({
-        searchCustList: list,
+        searchCustData,
       });
     });
   }
@@ -266,12 +307,74 @@ export default class CreateModal extends PureComponent {
     });
   }
 
+  // 添加客户
+  @autobind
+  @logable({ type: 'Click', payload: { name: '添加客户' } })
+  handleAddBtnClick() {
+    const { addedCustData, client } = this.state;
+    this.setState({
+      addedCustData: [...addedCustData, client],
+    });
+  }
+
+  // 删除客户
+  @autobind
+  @logable({ type: 'Click', payload: { name: '删除客户' } })
+  handleDeleteTableData(record) {
+    const { addedCustData } = this.state;
+    const newAddedCustData = _.filter(addedCustData, o => o.custId !== record.custId);
+    this.setState({
+      addedCustData: newAddedCustData,
+    });
+  }
+
+  // 客户列表翻页事件
+  @autobind
+  @logable({ type: 'Click', payload: { name: '客户列表翻页' } })
+  handleCustPageChange(pageNum) {
+    this.setState({
+      pageNum,
+    });
+  }
+
+
+  // select 联动筛选
+  @autobind
+  filterOption(value, option) {
+    const { limitList } = this.props;
+    const { key } = option;
+    const { name = '' } = _.find(limitList, item => item.code === key) || {};
+    return name.indexOf(value) > -1;
+  }
+
+  // select 多选失去焦点
+  @autobind
+  handleSelectBlur() {
+    this.setState({ selectValue: '' });
+  }
+
+  // 替换关键字颜色
+  @autobind
+  replaceKeyWord(text, word = '') {
+    console.warn('text', text);
+    console.warn('word', word);
+    if (!word) {
+      return text;
+    }
+    const keyWordRegex = new RegExp(_.escapeRegExp(word), 'g');
+    const keyWordText = _.replace(text, keyWordRegex, match => (
+      `<span class=${styles.keyWord}>${match}</span>`
+    ));
+    console.warn('keyWordText', keyWordText);
+    return <div dangerouslySetInnerHTML={{ __html: keyWordText }} />;
+  }
+
   // 渲染点击删除按钮后的确认框
   @autobind
-  renderPopconfirm(type, record) {
+  renderPopconfirm(record) {
     return (<Popconfirm
       placement="top"
-      onConfirm={() => this.handleDeleteTableData(type, record)}
+      onConfirm={() => this.handleDeleteTableData(record)}
       okText="是"
       cancelText="否"
       title={'是否删除此条数据？'}
@@ -285,18 +388,24 @@ export default class CreateModal extends PureComponent {
       selfBtnGroup,
       visible,
       modalKey,
-      custData: custList,
       closeModal,
     } = this.props;
 
     const {
       importVisible,
       attachment,
-      searchCustList,
+      searchCustData,
       isBankConfirm,
-      fetching,
       limitList,
       limitValue,
+
+      operateType,
+      companyName,
+      stockCode,
+      isLimit,
+      addedCustData,
+      pageNum,
+      selectValue,
     } = this.state;
     const uploadProps = {
       data: {
@@ -312,16 +421,18 @@ export default class CreateModal extends PureComponent {
     };
 
     const custListPaginationOption = {
-      current: 1,
-      total: 0,
+      current: pageNum,
+      total: addedCustData.length,
       pageSize: 5,
       onChange: this.handleCustPageChange,
     };
 
+    const showCustList = _.chunk(addedCustData, 5);
+
     // 是否上传过
     const isUploaded = !_.isEmpty(attachment);
     // 上传过，或者未上传但有数据
-    const uploadElement = (isUploaded || (!isUploaded && custList.length > 0)) ?
+    const uploadElement = (isUploaded || (!isUploaded && addedCustData.length > 0)) ?
       (<span><a onClick={this.handleImportData}>批量导入数据</a></span>)
     :
       (<Upload {...uploadProps}>
@@ -353,23 +464,35 @@ export default class CreateModal extends PureComponent {
               <Select
                 name="operateType"
                 data={operateTypeArray}
-                value={''}
-                onChange={this.handleSubTypeSelect}
+                value={operateType}
+                onChange={this.handleOperateTypeChange}
                 getPopupContainer={getPopupContainerFunction}
               />
             </InfoForm>
             <InfoForm label="公司简称" className={styles.inlineInfoForm} required>
-              <Input />
+              <Input
+                value={companyName}
+                placeholder="请输入公司简称"
+                onChange={this.handleCompanyNameChange}
+              />
             </InfoForm>
             <InfoForm label="证券代码" className={styles.inlineInfoForm} required>
-              <Input />
+              <Input
+                value={stockCode}
+                placeholder="请输入证券代码"
+                onChange={this.handleStockCodeChange}
+              />
             </InfoForm>
-            <InfoForm label="是否银行确认" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
-              <RadioGroup onChange={this.handleRaiodChange} value={isBankConfirm}>
-                <Radio value={0}>是</Radio>
-                <Radio value={1}>否</Radio>
-              </RadioGroup>
-            </InfoForm>
+            {
+              isLimit
+              ? null
+              : <InfoForm label="是否银行确认" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
+                <RadioGroup onChange={this.handleBankConfirmChange} value={isBankConfirm}>
+                  <Radio value={0}>是</Radio>
+                  <Radio value={1}>否</Radio>
+                </RadioGroup>
+              </InfoForm>
+            }
           </div>
           <div className={styles.contentItem}>
             <InfoTitle head="客户列表" />
@@ -379,13 +502,13 @@ export default class CreateModal extends PureComponent {
                 placeholder="客户号/客户名称"
                 showNameKey="custName"
                 showIdKey="custId"
-                optionList={searchCustList}
+                optionList={searchCustData}
                 onSelect={this.handleSelectClient}
                 onSearch={this.handleSearchClient}
                 ref={ref => this.queryCustComponent = ref}
                 dropdownMatchSelectWidth={false}
               />
-              <Button ghost type="primary" onClick={() => this.handleAddBtnClick('')}>
+              <Button ghost type="primary" onClick={this.handleAddBtnClick}>
                 添加
               </Button>
               <span className={styles.linkSpan}>
@@ -401,7 +524,7 @@ export default class CreateModal extends PureComponent {
             <div className={styles.tableDiv}>
               <CommonTable
                 align="left"
-                data={custList}
+                data={showCustList[pageNum - 1]}
                 titleList={custTitle}
               />
               <Pagination {...custListPaginationOption} />
@@ -409,23 +532,33 @@ export default class CreateModal extends PureComponent {
           </div>
           <div className={styles.contentItem}>
             <InfoTitle head="限制信息" />
-            <InfoForm label="接触限制类型" required>
+            <InfoForm label="接触限制类型" className={styles.infoFormSelect} required>
               <AntdSelect
                 mode="multiple"
+                labelInValue
                 value={limitValue}
-                placeholder="Select users"
-                notFoundContent={fetching ? <Spin size="small" /> : null}
-                filterOption={false}
-                onSearch={_.debounce(this.handleSelectSearch, 800)}
+                placeholder="请选择限制类型"
                 onChange={this.handleSelectChange}
-                style={{ width: '530px' }}
+                onBlur={this.handleSelectBlur}
+                onFocus={this.handleSelectFocus}
+                onSearch={this.handleSelectSearch}
+                style={{ width: '560px' }}
+                filterOption={this.filterOption}
+                optionFilterProp="children"
+                getPopupContainer={getPopupContainerFunction}
               >
-                {limitList.map(item => <Option key={item.code}>{item.name}</Option>)}
+                {limitList.map(item =>
+                  <Option key={item.code}>{this.replaceKeyWord(item.name, selectValue)}</Option>,
+                )}
               </AntdSelect>
             </InfoForm>
-            <InfoForm label="账户限制设置日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
-              <DatePicker onChange={this.handleDatePickerChange} />
-            </InfoForm>
+            {
+              isLimit
+              ? <InfoForm label="账户限制设置日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
+                <DatePicker onChange={this.handleDatePickerChange} />
+              </InfoForm>
+              : null
+            }
             <InfoForm label="账户限制解除日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
               <DatePicker onChange={this.handleDatePickerChange} />
             </InfoForm>
