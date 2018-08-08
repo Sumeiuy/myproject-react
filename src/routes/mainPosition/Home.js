@@ -3,7 +3,7 @@
  * @Description: 服务经理主职位设置Home页面
  * @Date: 2018-01-29 13:25:30
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-31 17:46:59
+ * @Last Modified time: 2018-08-01 17:59:09
  */
 
 import React, { PureComponent } from 'react';
@@ -155,11 +155,9 @@ export default class MainPosition extends PureComponent {
     const {
       location: { query },
     } = this.props;
-    const { ...otherQuery } = query;
-    const { ...otherPrevQuery } = prevQuery;
-    if (!_.isEqual(otherQuery, otherPrevQuery)) {
-      const { pageNum, pageSize } = otherQuery;
-      this.queryAppList(otherQuery, pageNum, pageSize);
+    if (!_.isEqual(query, prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
     }
   }
 
@@ -258,7 +256,7 @@ export default class MainPosition extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
-  @logPV({ pathname: '/modal/createProtocol', title: '新建服务经理主职位设置' })
+  @logPV({ pathname: '/modal/createMainPosition', title: '新建服务经理主职位设置' })
   openCreateModalBoard() {
     this.setState({
       isShowCreateModal: true,

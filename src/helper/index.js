@@ -1,3 +1,10 @@
+/*
+ * @Author: WangJunJun
+ * @Date: 2018-08-01 18:30:42
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-01 20:50:20
+ */
+
 import check from './check';
 import data from './data';
 import dom from './dom';
@@ -16,6 +23,7 @@ import regxp from './regexp';
 import time from './time';
 import url from './url';
 import date from './date';
+import convert from './convert';
 
 function getIconType(name) {
   const fullName = name.split('.');
@@ -53,9 +61,10 @@ function getIconType(name) {
   return iconType;
 }
 
-export default {
+export {
   check,
   data,
+  convert,
   dom,
   dva,
   encode,
@@ -74,3 +83,4 @@ export default {
   getIconType,
   date,
 };
+export default {};

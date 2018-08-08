@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-31 17:50:05
+ * @Last Modified time: 2018-08-03 15:44:18
 */
 
 import React, { PureComponent } from 'react';
@@ -22,7 +22,7 @@ import Detail from '../../components/stockOptionEvaluation/ApplyDetail';
 import CreateApply from '../../components/stockOptionEvaluation/CreateApply';
 import seibelHelper from '../../helper/page/seibel';
 import permission from '../../helper/permission';
-import logable from '../../decorators/logable';
+import logable, { logPV } from '../../decorators/logable';
 
 const {
   stockOptionApply,
@@ -207,11 +207,9 @@ export default class StockOptionApplication extends PureComponent {
     const {
       location: { query },
     } = this.props;
-    const { ...otherQuery } = query;
-    const { ...otherPrevQuery } = prevQuery;
-    if (!_.isEqual(otherQuery, otherPrevQuery)) {
-      const { pageNum, pageSize } = otherQuery;
-      this.queryAppList(otherQuery, pageNum, pageSize);
+    if (!_.isEqual(query, prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
     }
   }
 
@@ -300,7 +298,7 @@ export default class StockOptionApplication extends PureComponent {
 
   // 新建申请
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '显示股票期权申请弹框' } })
+  @logPV({ pathname: '/modal/createStockApplyModal', title: '新建股票期权申请弹框' })
   openCreateModalBoard() {
     this.setState({ isShowCreateModal: true });
   }
@@ -419,14 +417,11 @@ export default class StockOptionApplication extends PureComponent {
         location={location}
         page="stockOptionApplyPage"
         pageType={pageType}
-        needSubType={false}
         stateOptions={statusOptions}
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
         isShowCreateBtn={this.handleShowCreateBtn}
-        isUseOfCustomer
-        needApplyTime
         isUseNewCustList
         basicFilters={basicFilters}
         moreFilters={moreFilters}

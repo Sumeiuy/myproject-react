@@ -70,9 +70,9 @@ export default class CommonDatePicker extends PureComponent {
           allowClear={allowClear}
           format={dateFormat}
           placeholder={placeholder}
-          onChange={this.handleChange}
           {...resetProps}
           {...addValueToPickProps}
+          onChange={this.handleChange}
         />
       </div>
     );

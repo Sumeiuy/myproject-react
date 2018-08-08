@@ -1,8 +1,8 @@
 /**
  * @Author: xuxiaoqin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-24 14:49:29
+ * @Last Modified by: WangJunjun
+ * @Last Modified time: 2018-07-19 15:00:26
  * @description 每一个视图列表的头部区域，不随着列表滚动
  */
 
@@ -10,8 +10,10 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import Sort from '../common/sort';
 import DescImg from './img/desc.png';
 import AscImg from './img/asc.png';
+import { EXECUTOR, SORT_DATA } from '../../routes/taskList/config';
 
 import styles from './fixedTitle.less';
 
@@ -77,8 +79,16 @@ export default class FixedTitle extends PureComponent {
     }, () => {
       onSortChange({
         sortKey,
-        sortType: this.state.sortDirection,
+        sortDirection: this.state.sortDirection,
       });
+    });
+  }
+
+  @autobind
+  handlExecutorSort({ sortType, sortDirection }) {
+    this.props.onSortChange({
+      sortKey: sortType,
+      sortDirection,
     });
   }
 
@@ -106,31 +116,51 @@ export default class FixedTitle extends PureComponent {
     return sortImage;
   }
 
-  render() {
+  @autobind
+  renderSortContent() {
     // 默认降序排序
     const { sortContent } = this.props;
+    const { sortDirection, viewType } = this.state;
+    // 执行者视图
+    if (viewType === EXECUTOR) {
+      return this.renderExecutorSort();
+    }
+    return (
+      <div className={styles.right} onClick={this.handleSort}>
+        <span>{sortContent}</span>
+        <img
+          src={
+            this.renderSortImage(sortDirection)
+          }
+          alt={this.renderSortDirection(sortDirection)}
+          className={styles.img}
+        />
+      </div>
+    );
+  }
 
-    const { sortDirection } = this.state;
+  // 执行者试图排序单独处理，用公用的排序组件
+  @autobind
+  renderExecutorSort() {
+    const { sortKey, sortDirection } = this.props;
+    const value = { sortType: sortKey, sortDirection };
+    return (
+      <Sort
+        wrapClassName={styles.sort}
+        data={SORT_DATA}
+        value={value}
+        onChange={this.handlExecutorSort}
+      />
+    );
+  }
 
+  render() {
     return (
       <div className={styles.content}>
         <div className={styles.left}>
           服务内容
         </div>
-        <div className={styles.right} onClick={this.handleSort}>
-          <span>{sortContent}</span>
-          {/* <Icon
-            className={styles.icon}
-            type={this.renderSortDirection(sortDirection)}
-          /> */}
-          <img
-            src={
-              this.renderSortImage(sortDirection)
-            }
-            alt={this.renderSortDirection(sortDirection)}
-            className={styles.img}
-          />
-        </div>
+        {this.renderSortContent()}
       </div>
     );
   }

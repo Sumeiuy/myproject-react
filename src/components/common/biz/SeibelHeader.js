@@ -288,12 +288,6 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'ButtonClick',
-    payload: {
-      name: '新建',
-    },
-  })
   handleCreate() {
     this.props.creatSeibelModal();
   }
@@ -384,13 +378,8 @@ export default class Pageheader extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '申请时间',
-      value: (instance, args) => {
-        const dateArr = _.map(
-          args[0],
-          item => moment(item).format(dateFormat),
-        );
-        return _.join(dateArr, '~');
-      },
+      min: (instance, args) => moment(args[0].startDate).format(dateFormat),
+      max: (instance, args) => moment(args[0].endDate).format(dateFormat),
     },
   })
   handleCreateDateChange(date) {

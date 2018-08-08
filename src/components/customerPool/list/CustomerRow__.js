@@ -215,7 +215,7 @@ export default class CustomerRow extends PureComponent {
     openFspTab({
       routerAction: push,
       url,
-      pathname: '/customerCenter/customerDetail',
+      pathname: '/fsp/customerCenter/customer360',
       param,
       state: {
         url,
@@ -420,7 +420,7 @@ export default class CustomerRow extends PureComponent {
                     : null
                 }
                 <span>
-                  {`${listItem.openDt.slice(0, 4)}-${listItem.openDt.slice(4, 6)}-${listItem.openDt.slice(6, 8)} 开户`}
+                  {`${listItem.openDt.slice(0, 4)}-${listItem.openDt.slice(4, 6)}-${listItem.openDt.slice(6, 8)} 激活`}
                 </span>
                 {
                   (rskLev === '' || rskLev === 'null')

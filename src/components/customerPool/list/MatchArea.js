@@ -7,13 +7,14 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { isSightingScope, handleOpenFsp360TabAction } from '../helper';
+import { isSightingScope, handleOpenFsp360TabAction, openProductDetailPage, getDetailBtnVisible } from '../helper';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 // ENTERLIST_PERMISSION_SIGHTINGLABEL-需要展示瞄准镜匹配区域的source集合
 import { ENTERLIST_PERMISSION_SIGHTINGLABEL } from '../../../routes/customerPool/config';
 import HoldingProductDetail from './HoldingProductDetail';
 import HoldingCombinationDetail from './HoldingCombinationDetail';
+import HoldingIndustryDetail from './HoldingIndustryDetail';
 import styles from './matchArea.less';
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
@@ -47,6 +48,9 @@ export default class MatchArea extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryHoldingIndustryDetail: PropTypes.func.isRequired,
+    industryDetail: PropTypes.object.isRequired,
+    queryHoldingIndustryDetailReqState: PropTypes.bool.isRequired,
   }
 
   static contextTypes = {
@@ -54,15 +58,18 @@ export default class MatchArea extends PureComponent {
     empInfo: PropTypes.object,
   };
 
-  constructor(props) {
+  constructor(props, context) {
     super(props);
     const {
       dict: {
         custBusinessType = [],
         custUnrightBusinessType = [],
       },
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      listItem,
     } = props;
-
+    const { empInfo: { empInfo = {} } } = context;
     this.state = {
       showAll: false,
     };
@@ -74,6 +81,13 @@ export default class MatchArea extends PureComponent {
     this.custUnrightBusinessType = {};
     custUnrightBusinessType.forEach((item) => {
       this.custUnrightBusinessType[item.key] = item.value;
+    });
+    // 是否显示持仓产品、持仓行业、订购组合查看详情的按钮
+    this.isShowDetailBtn = getDetailBtnVisible({
+      hasNPCTIQPermission,
+      hasPCTIQPermission,
+      empInfo,
+      customerData: listItem,
     });
   }
 
@@ -303,7 +317,6 @@ export default class MatchArea extends PureComponent {
           <span className={styles.serviceRecord}>
             <i className="label">服务记录：</i>
             <i dangerouslySetInnerHTML={{ __html: markedEle }} />
-            <i>...</i>
           </span>
           <span
             className={styles.more}
@@ -440,43 +453,47 @@ export default class MatchArea extends PureComponent {
   // 根据持仓产品的字段返回单个持仓产品的html
   getSingleHoldingProductNode(list, keyword) {
     const {
-      listItem: { isPrivateCustomer, empId, custId },
-      hasNPCTIQPermission,
-      hasPCTIQPermission,
+      listItem: { custId },
       queryHoldingProduct,
       holdingProducts,
       queryHoldingProductReqState,
       formatAsset,
     } = this.props;
-    const { empInfo: { empInfo = {} } } = this.context;
-    // 是否显示’持仓详情‘，默认不显示
-    let isShowDetailBtn = false;
-    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
-    if (hasNPCTIQPermission && !isPrivateCustomer) {
-      isShowDetailBtn = true;
-    }
-    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
-    // 主服务经理 可以看名下所有客户的持仓信息
-    if (hasPCTIQPermission || empInfo.rowId === empId) {
-      isShowDetailBtn = true;
-    }
     if (!_.isEmpty(list)) {
-      const { name, code } = list[0] || {};
-      const htmlString = `${replaceWord({ value: name, q: keyword })}/${replaceWord({ value: code, q: keyword })}`;
+      const data = list[0] || {};
+      const { name, code, flag } = data;
+      const codeHtmlString = replaceWord({ value: code, q: keyword });
+      const htmlString = `${replaceWord({ value: name, q: keyword })}/${codeHtmlString}`;
       const props = {
         custId,
-        data: list[0] || {},
+        data,
         queryHoldingProduct,
         holdingProducts,
         queryHoldingProductReqState,
         formatAsset,
       };
+      let contentNode;
+      // flag为true，持仓产品名称可点击
+      if (flag) {
+        const { push } = this.context;
+        contentNode = (<i>
+          <em
+            className={styles.clickable}
+            onClick={() => { openProductDetailPage({ data, routerAction: push }); }}
+          >
+            {name}
+          </em>
+          /<em className="marked" dangerouslySetInnerHTML={{ __html: codeHtmlString }} />
+        </i>);
+      } else {
+        contentNode = <i dangerouslySetInnerHTML={{ __html: htmlString }} />;
+      }
       return (
         <li>
           <span>
             <i className="label">持仓产品：</i>
-            <i dangerouslySetInnerHTML={{ __html: htmlString }} />
-            {isShowDetailBtn && <HoldingProductDetail {...props} />}
+            {contentNode}
+            {this.isShowDetailBtn && <HoldingProductDetail {...props} />}
           </span>
         </li>
       );
@@ -488,27 +505,13 @@ export default class MatchArea extends PureComponent {
   @autobind
   renderOrderCombination() {
     const {
-      listItem: { jxgrpProducts, isPrivateCustomer, empId, custId },
+      listItem: { jxgrpProducts, custId },
       location: { query: { source, labelMapping } },
-      hasNPCTIQPermission,
-      hasPCTIQPermission,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
       formatAsset,
     } = this.props;
     if (source === 'orderCombination' && !_.isEmpty(jxgrpProducts)) {
-      const { empInfo: { empInfo = {} } } = this.context;
-      // 是否显示’持仓详情‘，默认不显示
-      let isShowDetailBtn = false;
-      // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓信息
-      if (hasNPCTIQPermission && !isPrivateCustomer) {
-        isShowDetailBtn = true;
-      }
-      // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓信息
-      // 主服务经理 可以看名下所有客户的持仓信息
-      if (hasPCTIQPermission || empInfo.rowId === empId) {
-        isShowDetailBtn = true;
-      }
       const id = decodeURIComponent(labelMapping);
       const currentItem = _.find(jxgrpProducts, item => item.id === id);
       if (!_.isEmpty(currentItem)) {
@@ -533,7 +536,7 @@ export default class MatchArea extends PureComponent {
                 </em>
                 /{combinationId}
               </i>
-              {isShowDetailBtn && <HoldingCombinationDetail {...props} />}
+              {this.isShowDetailBtn && <HoldingCombinationDetail {...props} />}
             </span>
           </li>
         );
@@ -568,6 +571,47 @@ export default class MatchArea extends PureComponent {
     });
   }
 
+  // 持仓行业:首页联想词
+  renderHoldingIndustry() {
+    const {
+      listItem,
+      listItem: { custId, holdingIndustry },
+      location: { query: { type } },
+      queryHoldingIndustryDetail,
+      industryDetail,
+      formatAsset,
+      queryHoldingIndustryDetailReqState,
+    } = this.props;
+    if (!_.isEmpty(holdingIndustry)) {
+      // 首页的持仓行业，后端已根据id精确搜索返回结果
+      if (type === 'INDUSTRY') {
+        const { name, id } = holdingIndustry[0] || {};
+        const props = {
+          listItem,
+          id,
+          queryHoldingIndustryDetail,
+          data: industryDetail,
+          formatAsset,
+          queryHoldingIndustryDetailReqState,
+        };
+        return (
+          <li key={`${custId}${id}`}>
+            <span>
+              <i className="label">持仓行业：</i>
+              <i>
+                <em className="marked">
+                  {name}
+                </em>
+              </i>
+              {this.isShowDetailBtn && <HoldingIndustryDetail {...props} />}
+            </span>
+          </li>
+        );
+      }
+    }
+    return null;
+  }
+
   render() {
     return (
       <div className={styles.relatedInfo}>
@@ -584,6 +628,7 @@ export default class MatchArea extends PureComponent {
           {this.renderSightingTelescope()}
           {this.renderHoldingProduct()}
           {this.renderOrderCombination()}
+          {this.renderHoldingIndustry()}
         </ul>
       </div>
     );

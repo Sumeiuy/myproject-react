@@ -18,8 +18,6 @@ const fsp = {
     const fspBody = document.querySelector(fspContainer.container);
     if (fspBody) {
       fspBody.scrollTop = 0;
-    } else if (env.isInReact()) {
-      env.getReactContainer().scrollTop = 0;
     } else {
       window.scrollTo(0, 0);
     }

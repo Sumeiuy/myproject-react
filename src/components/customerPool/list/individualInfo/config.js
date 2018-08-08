@@ -221,7 +221,7 @@ const matchRule = {
     inset: false,
     key: [
       {
-        name: '开户日期',
+        name: '激活日期',
         id: 'accountOpenDate',
         render: 'renderDefaultVal',
       },
@@ -232,7 +232,7 @@ const matchRule = {
     inset: false,
     key: [
       {
-        name: '开户日期',
+        name: '激活日期',
         id: 'accountOpenDate',
         render: 'renderDefaultVal',
       },
@@ -439,7 +439,7 @@ const matchRule = {
       render: 'renderNoCompleted',
     }],
   },
-  holdingIndustry: {
+  primaryKeyIndustry: {
     inset: true,
     key: [{
       name: '持仓行业',

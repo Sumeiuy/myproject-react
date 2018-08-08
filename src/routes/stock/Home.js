@@ -2,8 +2,8 @@
  * @Description: 个股页面
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-31 18:43:57
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-02 15:30:16
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -20,7 +20,7 @@ import Button from '../../components/common/Button';
 import Pagination from '../../components/common/Pagination';
 import config from './config';
 import styles from './home.less';
-import logable from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 
 const TabPane = Tabs.TabPane;
 const { typeList } = config;
@@ -94,18 +94,8 @@ export default class Stock extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'ViewItem',
-    payload: {
-      name: '个股资讯',
-      value: '$args[0].id',
-      title: '$args[0].title',
-      code: '$args[0].code',
-      type: '$args[1]',
-    },
-  })
-  rowClickHandle(record) {
-    const { id, code, eventType, stockName } = record;
+  handleRowClick(record) {
+    const { id, title, code, eventType, stockName } = record;
     const { push } = this.props;
     const { type, pageSize, pageNum, keyword } = this.state;
     const urlQuery = {
@@ -126,6 +116,18 @@ export default class Stock extends PureComponent {
       // 股票名称
       name: stockName,
     };
+    // 神策日志上报
+    const logType = type === typeList[0] ? '个股研报' : '个股公告';
+    logCommon({
+      type: 'ViewItem',
+      payload: {
+        name: '个股资讯',
+        value: id,
+        title,
+        code,
+        type: logType,
+      },
+    });
     push({
       pathname,
       query: urlQuery,
@@ -134,7 +136,7 @@ export default class Stock extends PureComponent {
 
   // tab 切换事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '切换Tab' } })
+  @logable({ type: 'Click', payload: { name: '切换Tab', value: '$args[0]' } })
   tabChangeHandle(key) {
     const { keyword } = this.state;
     this.setState({
@@ -301,7 +303,7 @@ export default class Stock extends PureComponent {
                 dataSource={list}
                 pagination={false}
                 onRow={record => ({
-                  onClick: () => this.rowClickHandle(record),       // 点击行
+                  onClick: () => this.handleRowClick(record),       // 点击行
                 })}
                 rowKey="id"
               />

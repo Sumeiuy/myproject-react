@@ -29,7 +29,7 @@ export default class ServiceManagerFilter extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '服务经理',
-      value: '$args[0].ptyMngName',
+      value: '$args[0].value.ptyMngName',
     },
   })
   handleSelect(item) {

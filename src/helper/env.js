@@ -6,9 +6,7 @@
  * @description 此文件用于存放与操作系统，生产/开发环境，浏览器，使用框架相关的公用方法
  */
 import bowser from 'bowser';
-import qs from 'query-string';
 import { constants, fspContainer } from '../config';
-import permission from './permission';
 
 // 归一化浏览器名称
 function formatBowserName(name) {
@@ -85,7 +83,7 @@ const env = {
    * 获取react content容器
    */
   getReactContainer() {
-    return document.querySelector('#react-content');
+    return document.querySelector('#react-layout');
   },
   /**
    * 判断当前浏览器是否IE
@@ -118,19 +116,6 @@ const env = {
    */
   isFirefox() {
     return bowser.name === 'Firefox';
-  },
-  /**
-   * 封装一下灰度发布的标记，fsp会提供一个grayFlag在window上，
-   * 本地开发的时候可以在url上通过?grayFlag=true的方式手动测试，
-   * 检测当前版本是不是需要支持灰度发布，以便控制代码里面的逻辑显示、隐藏、特殊处理等
-   */
-  isGrayFlag() {
-    const nativeQuery = qs.parse(window.location.search);
-    const grayFlag =
-      window.grayFlag === true
-      || nativeQuery.grayFlag === 'true'
-      || permission.hasNewFeatureInvestPermission();
-    return grayFlag;
   },
 };
 

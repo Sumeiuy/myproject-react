@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-30 15:18:37
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-02 22:14:17
  * @description 任务管理首页
  */
 
@@ -21,7 +21,7 @@ import ViewMenu from '../../components/taskList/ViewMenu';
 import FixedTitle from '../../components/taskList/FixedTitle';
 import pageConfig from '../../components/taskList/pageConfig';
 import { getCurrentScopeByOrgId } from '../../components/taskList/managerView/helper';
-import { openRctTab, openFspTab } from '../../utils';
+import { openRctTab } from '../../utils';
 import { emp, permission } from '../../helper';
 import logable, { logCommon } from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
@@ -37,14 +37,11 @@ import {
   SYSTEMCODE,
   STATE_EXECUTE_CODE,
   STATE_ALL_CODE,
-  CREATE_TIME,
-  END_TIME,
-  CREATE_TIME_KEY,
-  END_TIME_KEY,
   // 三个视图左侧任务列表的请求入参，在config里面配置，后续如果需要新增，或者删除某个param，
   // 请在config里面配置QUERY_PARAMS
   QUERY_PARAMS,
   defaultPerformerViewCurrentTab,
+  DEFAULTSORT_VIEW,
 } from './config';
 
 // 空函数
@@ -63,11 +60,6 @@ const ZL_QUREY_APPROVAL_BTN_ID = '200000';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-
-// 创建者视图的排序默认降序排序
-const SORT_DESC = 'desc';
-// 执行者视图和管理者视图默认升序排序
-const SORT_ASC = 'asc';
 
 @withRouter
 export default class PerformerView extends PureComponent {
@@ -289,12 +281,14 @@ export default class PerformerView extends PureComponent {
   getFlowStatus({ orgId }) {
     const {
       countFlowStatus,
+      location: { query: { ptyMngId } },
     } = this.props;
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 管理者视图任务实施进度
     countFlowStatus({
       missionId: this.getCurrentId(),
       orgId: newOrgId || emp.getOrgId(),
+      ptyMngId,
     });
   }
 
@@ -305,12 +299,14 @@ export default class PerformerView extends PureComponent {
   getFlowFeedback({ orgId }) {
     const {
       countFlowFeedBack,
+      location: { query: { ptyMngId } },
     } = this.props;
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 管理者视图获取客户反馈饼图
     countFlowFeedBack({
       missionId: this.getCurrentId(),
       orgId: newOrgId || emp.getOrgId(),
+      ptyMngId,
     });
   }
 
@@ -320,6 +316,7 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getCustManagerScope({
+    missionId = this.getCurrentId(),
     orgId,
     pageNum = GET_CUST_SCOPE_PAGE_NUM,
     pageSize = GET_CUST_SCOPE_PAGE_SIZE,
@@ -328,16 +325,19 @@ export default class PerformerView extends PureComponent {
     const {
       getCustManagerScope,
       custRange,
+      location: { query: { ptyMngId } },
     } = this.props;
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 获取服务经理维度任务数据
     getCustManagerScope({
-      missionId: this.getCurrentId(),
+      missionId,
       orgId: newOrgId || emp.getOrgId(),
       pageNum,
       pageSize,
       // 当前任务维度，取入参或者跟着组织机构走
-      enterType: enterType || getCurrentScopeByOrgId({ custRange, orgId }),
+      enterType: enterType || getCurrentScopeByOrgId({ custRange, orgId, ptyMngId }),
+      // 管理者视图根据服务经理过滤器判断是否传ptyMngId
+      ptyMngId,
     });
   }
 
@@ -476,7 +476,6 @@ export default class PerformerView extends PureComponent {
       targetCustDetail,
       changeParameter,
       queryTargetCust,
-      queryCustUuid,
       custUuid,
       ceFileDelete,
       getCeFileList,
@@ -522,11 +521,11 @@ export default class PerformerView extends PureComponent {
       eventId,
       taskTypeCode,
     } = this.state;
-    const [firstItem = EMPTY_OBJECT] = list.resultData;
-    const { query: { currentId } } = location;
+    const currentId = this.getCurrentId();
+    const currentTask = _.find(list.resultData, item => item.id === currentId) || {};
     return (
       <PerformerViewDetail
-        currentId={currentId || firstItem.id}
+        currentId={currentId}
         parameter={parameter}
         dict={dict}
         empInfo={empInfo}
@@ -542,7 +541,6 @@ export default class PerformerView extends PureComponent {
         targetCustDetail={targetCustDetail}
         changeParameter={changeParameter}
         queryTargetCust={queryTargetCust}
-        queryCustUuid={queryCustUuid}
         custUuid={custUuid}
         getCustDetail={this.getCustDetail}
         serviceTypeCode={typeCode}
@@ -585,6 +583,7 @@ export default class PerformerView extends PureComponent {
         queryExecutorDetail={queryExecutorDetail}
         queryTargetCustDetail={queryTargetCustDetail}
         location={location}
+        currentTask={currentTask}
       />
     );
   }
@@ -720,14 +719,11 @@ export default class PerformerView extends PureComponent {
   loadDetailContent(obj) {
     const {
       getTaskDetailBasicInfo,
-      queryCustUuid,
       clearCustListForServiceImplementation,
     } = this.props;
     getTaskDetailBasicInfo({ taskId: obj.id });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
-    // 如果所点击的任务需要的是执行者视图，则预先请求custUuid
-    queryCustUuid();
     // 将执行者视图右侧搜索客户的列表数据清空
     clearCustListForServiceImplementation();
   }
@@ -758,8 +754,8 @@ export default class PerformerView extends PureComponent {
       countFlowStatus,
       countAnswersByType,
       countExamineeByType,
-      getCustManagerScope,
       custRange,
+      location: { query: { ptyMngId } },
     } = this.props;
     // 如果来源是创建者视图，那么取mssnId作为missionId
     // 取id作为eventId
@@ -772,6 +768,8 @@ export default class PerformerView extends PureComponent {
       orgId,
       // 管理者视图需要eventId来查询详细信息
       eventId,
+      // 管理者视图根据服务经理过滤器判断是否传ptyMngId
+      ptyMngId,
     }).then(
       () => {
         const { mngrMissionDetailInfo, queryMOTServeAndFeedBackExcel } = this.props;
@@ -792,19 +790,19 @@ export default class PerformerView extends PureComponent {
         queryMOTServeAndFeedBackExcel(paylaod);
       },
     );
-
+    // 管理者视图根据服务经理过滤器判断是否传ptyMngId
+    const payload = { missionId, orgId, ptyMngId };
+    // 按服务经理筛选enterType传EMP_MANAGER_SCOPE的值
+    const enterType = getCurrentScopeByOrgId({ custRange, ptyMngId });
     // 管理者视图获取客户反馈
-    countFlowFeedBack({ missionId, orgId });
+    countFlowFeedBack(payload);
     // 管理者视图任务实施进度
-    countFlowStatus({ missionId, orgId });
+    countFlowStatus(payload);
     // 管理者视图服务经理维度任务详细数据
-    getCustManagerScope({
-      pageNum: GET_CUST_SCOPE_PAGE_NUM,
-      pageSize: GET_CUST_SCOPE_PAGE_SIZE,
-      missionId,
-      orgId: emp.getOrgId(),
+    this.getCustManagerScope({
+      ...payload,
       // 当前任务维度，跟着组织机构走
-      enterType: getCurrentScopeByOrgId({ custRange }),
+      enterType,
     });
   }
 
@@ -843,24 +841,12 @@ export default class PerformerView extends PureComponent {
   }
 
   /**
-   * 获取sortKey，createTimeSort或者endTimeSort
-   * 获取sortContent，创建时间或者结束时间
+   * 获取sortKey，createTimeSort或者endTimeSort、executionModeSort
+   * 获取sortContent，创建时间或者结束时间、执行方式
    */
   @autobind
   getSortConfig(viewType) {
-    let sortKey = CREATE_TIME_KEY;
-    let sortContent = CREATE_TIME;
-    let sortDirection = SORT_DESC;
-    if (viewType === EXECUTOR || viewType === CONTROLLER) {
-      sortKey = END_TIME_KEY;
-      sortContent = END_TIME;
-      sortDirection = SORT_ASC;
-    }
-    return {
-      sortKey,
-      sortContent,
-      sortDirection,
-    };
+    return DEFAULTSORT_VIEW[viewType];
   }
 
   // url中currentId改变后驱动右侧的变化
@@ -904,24 +890,25 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   addSortParam(currentViewType, query) {
-    const { sortKey, sortDirection } = this.getSortConfig(currentViewType);
-    if (query[sortKey]) {
-      return { [sortKey]: query[sortKey] };
+    const { sortType, defaultDirection } = this.getSortConfig(currentViewType);
+    if (!_.isEmpty(query.sortKey) && !_.isEmpty(query.sortDirection)) {
+      return { [query.sortKey]: query.sortDirection };
     }
-    return { [sortKey]: sortDirection };
+    return { [sortType]: defaultDirection };
   }
 
   /**
    * 排序，请求数据
    */
   @autobind
-  handleSortChange({ sortKey, sortType }) {
+  handleSortChange({ sortKey, sortDirection }) {
     const { location: { query, pathname }, replace } = this.props;
     replace({
       pathname,
       query: {
         ...query,
-        [sortKey]: sortType,
+        sortKey,
+        sortDirection,
       },
     });
   }
@@ -1033,23 +1020,6 @@ export default class PerformerView extends PureComponent {
     });
   }
 
-  // 头部客户服务全纪录按钮，跳转到新Tab
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '跳转到客户服务全纪录' } })
-  handleOpenRecord() {
-    const url = '/fsp/taskCenter/serviceManage';
-    const { push } = this.props;
-    openFspTab({
-      routerAction: push,
-      url,
-      param: {
-        id: 'FSP_MOT_TAB_SERVICELIST',
-        title: '客户服务全纪录',
-        closable: true,
-        isSpecialTab: true,
-      },
-    });
-  }
 
   // 渲染列表项里面的每一项
   @autobind
@@ -1077,15 +1047,23 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   renderFixedTitle() {
-    const { location: { query: { missionViewType } } } = this.props;
+    const {
+      location: {
+        query: {
+          missionViewType,
+          sortDirection: querySortDirection,
+          sortKey: querySortKey,
+        },
+      },
+    } = this.props;
     const viewType = getViewInfo(missionViewType).currentViewType;
-    const { sortKey, sortContent, sortDirection } = this.getSortConfig(viewType);
+    const { sortType, name, defaultDirection } = this.getSortConfig(viewType);
     return (
       <FixedTitle
-        sortContent={sortContent}
-        sortDirection={sortDirection}
+        sortContent={name}
+        sortDirection={querySortDirection || defaultDirection}
         onSortChange={this.handleSortChange}
-        sortKey={sortKey}
+        sortKey={querySortKey || sortType}
         viewType={viewType}
       />
     );
@@ -1108,7 +1086,6 @@ export default class PerformerView extends PureComponent {
           onViewChange={this.handleHeaderFilter}
           location={location}
           onLaunchTask={this.handleCreateBtnClick}
-          onOpenRecord={this.handleOpenRecord}
         />
         <ConnectedPageHeader
           location={location}

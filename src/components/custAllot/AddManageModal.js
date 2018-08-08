@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-24 10:13:17
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-14 15:39:08
+ * @Last Modified time: 2018-07-19 16:38:46
  */
 
 import React, { PureComponent } from 'react';
@@ -23,12 +23,11 @@ import config from './config';
 import styles from './addManageModal.less';
 
 // 表头
-const { titleList: { manage }, positionTypeArray, clearDataArray } = config;
+const { titleList: { manage }, positionTypeArray, clearDataArray, operateType } = config;
 // 登陆人的组织ID
 const empOrgId = emp.getOrgId();
 // 服务经理
 const KEY_EMPNAME = 'empName';
-const NO_VALUE = '不限';
 const INIT_PAGENUM = 1;
 export default class AddManageModal extends PureComponent {
   static propTypes = {
@@ -49,7 +48,6 @@ export default class AddManageModal extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      smKeyword: '',
       positionType: positionTypeArray[0].key,
       orgId: '',
       selectedRowKeys: [],
@@ -89,20 +87,11 @@ export default class AddManageModal extends PureComponent {
   @autobind
   getColumnsManageTitle() {
     const newTitleList = [...manage];
-    const empNameIndex = _.findIndex(newTitleList, o => o.key === KEY_EMPNAME);
-    newTitleList[empNameIndex].render = (text, record) => (
+    const empNameColumn = _.find(newTitleList, o => o.key === KEY_EMPNAME);
+    empNameColumn.render = (text, record) => (
       <div>{text} ({record.empId})</div>
     );
     return newTitleList;
-  }
-
-  // 输入服务经理事件
-  @autobind
-  handleEmpChange(value) {
-    this.setState({
-      smKeyword: value,
-      pageNum: INIT_PAGENUM,
-    }, this.searchManageList);
   }
 
   // 切换职位类型
@@ -141,9 +130,8 @@ export default class AddManageModal extends PureComponent {
   @autobind
   searchManageList() {
     const { queryList } = this.props;
-    const { smKeyword, orgId, positionType, pageNum } = this.state;
+    const { orgId, positionType, pageNum } = this.state;
     const payload = {
-      smKeyword,
       orgId: empOrgId,
       orgIdKeyWord: orgId,
       positionType,
@@ -165,7 +153,7 @@ export default class AddManageModal extends PureComponent {
     const payload = {
       customer: [],
       manage: selectedRows,
-      type: 'add',
+      operateType: operateType[0],  // add
       attachment: '',
       id: updateData.appId || '',
     };
@@ -188,7 +176,7 @@ export default class AddManageModal extends PureComponent {
       closeModal,
       modalKey,
     } = this.props;
-    const { smKeyword, positionType, orgId, selectedRowKeys } = this.state;
+    const { positionType, orgId, selectedRowKeys } = this.state;
     // 客户列表分页
     const paginationOption = {
       current: page.curPageNum || 1,
@@ -245,16 +233,6 @@ export default class AddManageModal extends PureComponent {
         <div className={styles.modalContent}>
           <div className={styles.contentItem}>
             <div className={styles.operateDiv} ref={filterWrap => this.filterWrap = filterWrap}>
-              <SingleFilter
-                className={styles.firstFilter}
-                filterName="服务经理"
-                showSearch
-                placeholder="请输入服务经理工号、姓名"
-                data={[]}
-                defaultSelectLabel={smKeyword || NO_VALUE}
-                value={smKeyword}
-                onInputChange={_.debounce(this.handleEmpChange, 500)}
-              />
               <HTTreeFilter
                 value={_.isEmpty(orgId) ? '' : orgId}
                 treeData={treeCustRange}

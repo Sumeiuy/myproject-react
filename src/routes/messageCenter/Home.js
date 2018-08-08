@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-12 15:08:35
+ * @Last Modified time: 2018-08-03 13:38:47
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -102,6 +102,9 @@ export default class MessageCenter extends PureComponent {
     } else if (typeName === config.custAllot) {
       // 分公司客户分配
       this.handleCustAllotMessage(data);
+    } else if (typeName === config.departmentCustAllot) {
+      // 营业部客户分配
+      this.handleDepartmentCustAllotMessage(data);
     } else if (typeName === config.myFeedback) {
       this.handleMessageByMyFeedback();
     } else {
@@ -225,6 +228,37 @@ export default class MessageCenter extends PureComponent {
       });
     } else {
       push(`/custAllot/notifies?notifiId=${rowId}&appId=${appId}&currentId=${itemId}`);
+    }
+  }
+
+  // 营业部客户分配
+  @autobind
+  handleDepartmentCustAllotMessage(data) {
+    const { push } = this.context;
+    const { objectVal, rowId, title } = data;
+    this.removeNotice = true;
+    const valArray = objectVal.split(',');
+    const appId = valArray[0] || '';
+    const itemId = valArray[1] || '';
+    // 失败或者终止都进入失败页面
+    if (_.includes(title, config.fail) || _.includes(title, config.abort)) {
+      const url = `/departmentCustAllot?id=${itemId}&appId=${appId}`;
+      const param = {
+        id: 'FSP_DEPARTMENT_CUST_ASSIGN',
+        title: '营业部客户分配',
+        forceRefresh: true,
+        isSpecialTab: true,
+        closable: true,
+      };
+      const pathName = '/departmentCustAllot';
+      openRctTab({
+        routerAction: push,
+        url,
+        pathName,
+        param,
+      });
+    } else {
+      push(`/departmentCustAllot/notifies?notifiId=${rowId}&appId=${appId}&currentId=${itemId}`);
     }
   }
 

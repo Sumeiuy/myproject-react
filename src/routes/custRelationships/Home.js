@@ -3,7 +3,7 @@
  * @Descripter: 客户关联关系信息申请
  * @Date: 2018-06-08 13:10:33
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-31 17:46:30
+ * @Last Modified time: 2018-08-01 17:58:50
  */
 
 import React, { PureComponent } from 'react';
@@ -22,6 +22,7 @@ import CreateApply from '../../components/custRelationships/CreateApply';
 import config from '../../components/custRelationships/config';
 import { permission, dva } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
+import logable, { logPV } from '../../decorators/logable';
 
 // 客户关联关系申请左侧列表宽度
 const LEFT_PANEL_WIDTH = 500;
@@ -191,11 +192,9 @@ export default class CustRelationshipsHome extends PureComponent {
     const {
       location: { query },
     } = this.props;
-    const { ...otherQuery } = query;
-    const { ...otherPrevQuery } = prevQuery;
-    if (!_.isEqual(otherQuery, otherPrevQuery)) {
-      const { pageNum, pageSize } = otherQuery;
-      this.queryAppList(otherQuery, pageNum, pageSize);
+    if (!_.isEqual(query, prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
     }
   }
 
@@ -280,6 +279,7 @@ export default class CustRelationshipsHome extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
+  @logPV({ pathname: '/modal/custRelationships', title: '新建客户关联关系信息申请' })
   openCreateModalBoard() {
     this.setState({
       isShowCreateModal: true,
@@ -294,6 +294,7 @@ export default class CustRelationshipsHome extends PureComponent {
 
   // 切换页码
   @autobind
+  @logable({ type: 'Click', payload: { name: '客户关联关系页码', number: '$args[0]' } })
   handlePageNumberChange(nextPage, currentPageSize) {
     const { location } = this.props;
     const { replace } = this.context;
@@ -312,6 +313,7 @@ export default class CustRelationshipsHome extends PureComponent {
 
   // 切换每一页显示条数
   @autobind
+  @logable({ type: 'Click', payload: { name: '客户关联关系页码', number: '$args[1]' } })
   handlePageSizeChange(currentPageNum, changedPageSize) {
     const { location } = this.props;
     const { replace } = this.context;
@@ -330,6 +332,7 @@ export default class CustRelationshipsHome extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
+  @logable({ type: 'ViewItem', payload: { name: '客户关联关系' } })
   handleListRowClick(record, index) {
     const { id, flowId } = record;
     const { location: { pathname, query, query: { currentId } } } = this.props;

@@ -91,7 +91,13 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '业务开通区域下钻' } })
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '业务开通',
+      element: '$args[1].value',
+    },
+  })
   handleClick(labelList, arg) {
     const {
       push,
@@ -274,12 +280,18 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 服务指标（经营指标）
   renderManagerServiceIndicators(param) {
+    const { push, cycle, location } = this.props;
     const headLine = { icon: 'kehufuwu', title: param.headLine };
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
-            <CustomerService data={param.data} />
+            <CustomerService
+              cycle={cycle}
+              location={location}
+              push={push}
+              data={param.data}
+            />
           </IfEmpty>
         </RectFrame>
       </Col>

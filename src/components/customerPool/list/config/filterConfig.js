@@ -193,7 +193,7 @@ export default {
 
     // 账户属性
     {
-      filterName: '开户日期',
+      filterName: '激活日期',
       filterId: 'dateOpened',
       type: 'date',
     },
@@ -320,7 +320,7 @@ export default {
     },
     {
       filterName: '持仓行业',
-      filterId: 'holdingIndustry',
+      filterId: 'primaryKeyIndustry',
       type: 'singleWithSearch',
       placeholder: '行业名称',
       dataList: ['props', 'industryList'],
@@ -412,11 +412,11 @@ export default {
     { value: '可开通业务', key: 'unrights' },
     { value: '开通业务', key: 'businessOpened' },
     { value: '客户等级', key: 'customerLevel' },
-    { value: '开户日期', key: 'dateOpened' },
+    { value: '激活日期', key: 'dateOpened' },
     { value: '账户状态', key: 'accountStatus' },
     { value: '佣金率', key: 'minFee' },
     { value: '持仓产品', key: 'primaryKeyPrdts' },
-    { value: '持仓行业', key: 'holdingIndustry' },
+    { value: '持仓行业', key: 'primaryKeyIndustry' },
     { value: '总资产', key: 'totAset' },
     { value: '介绍人', key: 'devMngId' },
     { value: '年龄范围', key: 'age' },
@@ -483,7 +483,7 @@ export default {
       children: [
         'minFee',
         'primaryKeyPrdts',
-        'holdingIndustry',
+        'primaryKeyIndustry',
         'kfBuyAmt',
         'smBuyAmt',
         'finaBuyAmt',

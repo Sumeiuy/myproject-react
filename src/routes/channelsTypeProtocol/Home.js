@@ -239,11 +239,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
     const {
       location: { query },
     } = this.props;
-    const { ...otherQuery } = query;
-    const { ...otherPrevQuery } = prevQuery;
-    if (!_.isEqual(otherQuery, otherPrevQuery)) {
-      const { pageNum, pageSize } = otherQuery;
-      this.queryAppList(otherQuery, pageNum, pageSize);
+    if (!_.isEqual(query, prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
     }
   }
 
@@ -439,7 +437,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
 
   // 头部新建按钮点击事件处理程序
   @autobind
-  @logPV({ pathname: '/modal/createProtocol', title: '新建通道协议' })
+  @logPV({ pathname: '/modal/createChannelsTypeProtocol', title: '新建通道协议' })
   handleCreateBtnClick() {
     this.showModal('editFormModal');
   }

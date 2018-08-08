@@ -7,13 +7,13 @@ import env from '../helper/env';
 import os from '../helper/os';
 import { parse, parseUrl } from '../helper/url';
 import { fspRoutes, retTabParam } from '../config';
-import { openRctTab } from './index';
+import { openRctTab } from './controlPane';
 
 function findRoute(url) {
   return os.findBestMatch(url, fspRoutes, 'url');
 }
 
-function initFspMethod({ store, history }) {
+function initFspMethod({ store, history, isInReact }) {
   const { push } = history;
   window.dispatch = (action) => {
     store.dispatch(action);
@@ -62,7 +62,7 @@ function initFspMethod({ store, history }) {
   // 在fsp中新开一个iframe的tab
   window.openRctTabFromIframe = function (url) {
     const { pathname } = parseUrl(url);
-    const { param: filterParam } = _.filter(retTabParam, item => (item.key === pathname));
+    const { param: filterParam } = _.filter(retTabParam, item => (item.key === pathname))[0];
     const param = {
       closable: true,
       forceRefresh: true,
@@ -111,7 +111,7 @@ function initFspMethod({ store, history }) {
   });
 
   // 如果当前环境是react框架，就执行下面的重写操作
-  if (env.isInReact()) {
+  if (isInReact) {
     // 重写call之前，先将原来的call保存，暴露给juery插件
     const call = window.eb.component.SmartTab.call;
     $.fn.EBSmartTab = function tabCall(param1, param2) {
@@ -160,6 +160,7 @@ function initFspMethod({ store, history }) {
         run() { },
       },
     };
+    window.tabW = _.noop;
   }
 }
 

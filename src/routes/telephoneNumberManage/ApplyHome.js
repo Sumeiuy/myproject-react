@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-31 17:50:32
+ * @Last Modified time: 2018-08-01 17:59:52
 */
 
 import React, { PureComponent } from 'react';
@@ -23,6 +23,7 @@ import CreateApply from '../../components/telephoneNumberManage/CreateApply';
 import config from '../../components/telephoneNumberManage/config';
 import { dva } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
+import logable, { logPV } from '../../decorators/logable';
 
 // 头部筛选区域上方导航的高度40px，在SplitPanel计算中需要额外减去
 // isSetMarginTop为false，不需要将框架的marginTop设置为0，此时10pxmarginTop也要额外减掉
@@ -187,11 +188,9 @@ export default class ApplyHome extends PureComponent {
     const {
       location: { query },
     } = this.props;
-    const { ...otherQuery } = query;
-    const { ...otherPrevQuery } = prevQuery;
-    if (!_.isEqual(otherQuery, otherPrevQuery)) {
-      const { pageNum, pageSize } = otherQuery;
-      this.queryAppList(otherQuery, pageNum, pageSize);
+    if (!_.isEqual(query, prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
     }
   }
 
@@ -277,6 +276,7 @@ export default class ApplyHome extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
+  @logPV({ pathname: '/modal/telephoneNumberManagerApply', title: '新建公务手机卡号申请' })
   openCreateModalBoard() {
     this.setState({
       isShowCreateModal: true,
@@ -315,6 +315,7 @@ export default class ApplyHome extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
+  @logable({ type: 'ViewItem', payload: { name: '公务手机卡号申请列表' } })
   handleListRowClick(record, index) {
     const { id, flowId } = record;
     const {

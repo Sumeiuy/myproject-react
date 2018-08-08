@@ -29,7 +29,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Progress, Popconfirm, Upload, message, Popover, Row, Col } from 'antd';
+import { Progress, Popconfirm, Upload, message, Popover } from 'antd';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
 import _ from 'lodash';
@@ -283,97 +283,94 @@ export default class CommonUpload extends PureComponent {
     if (fileList && fileList.length) {
       fileListElement = (
         <div className={styles.fileList}>
-          <Row>
-            {
-              fileList.map((item, index) => {
-                const fileName = item.name;
-                const popoverHtml = (
-                  <div key={item.attachId}>
-                    <h3>
-                      <Icon type="fujian1" />
-                      {fileName}
-                    </h3>
-                    <h3>
-                      <span className="fileListItemSize">大小：{`${item.size} KB`}</span>
-                      上传人：{item.creator}
-                    </h3>
-                    <h3>
-                      <span>
-                        {
-                          edit ?
-                            <em>
-                              <Popconfirm
-                                placement="top"
-                                onConfirm={() => this.onRemove(item.attachId)}
-                                okText="是"
-                                cancelText="否"
-                                title={'是否删除该附件？'}
-                              >
-                                <Icon type="shanchu" />
-                              </Popconfirm>
-                            </em>
-                          :
-                            null
-                        }
-                        <em>
-                          <a
-                            href={`${request.prefix}/file/${downloadName}?attachId=${item.attachId}&empId=${empId}&filename=${window.encodeURIComponent(item.name)}`}
-                            onClick={this.handleDownloadClick}
-                          >
-                            <Icon type="xiazai1" />
-                          </a>
-                        </em>
-                      </span>
-                      上传于：{moment(item.lastModified).format('YYYY-MM-DD')}
-                    </h3>
-                  </div>
-                );
-                return (
-                  <Col
-                    span={8}
-                    key={item.attachId}
+          {
+            fileList.map((item, index) => {
+              const fileName = item.name;
+              const popoverHtml = (
+                <div key={item.attachId} className={styles.filePop}>
+                  <h3 className="clearfix">
+                    <Icon type="fujian1" />
+                    <span className={styles.popFileName}>{fileName}</span>
+                    <span className={styles.btnBox}>
+                      {
+                        edit ?
+                          <em>
+                            <Popconfirm
+                              placement="top"
+                              onConfirm={() => this.onRemove(item.attachId)}
+                              okText="是"
+                              cancelText="否"
+                              title={'是否删除该附件？'}
+                            >
+                              <Icon type="shanchu" />
+                              <i className={styles.cutline} />
+                            </Popconfirm>
+                          </em>
+                        :
+                          null
+                      }
+                      <em>
+                        <a
+                          href={`${request.prefix}/file/${downloadName}?attachId=${item.attachId}&empId=${empId}&filename=${window.encodeURIComponent(item.name)}`}
+                          onClick={this.handleDownloadClick}
+                        >
+                          <Icon type="xiazai2" />
+                        </a>
+                      </em>
+                    </span>
+                  </h3>
+                  <h3 className={styles.uploadText}>
+                    <span className="fileListItemSize">大小：{`${item.size} KB`}</span>
+                    上传人：{item.creator}
+                  </h3>
+                  <h3 className={styles.uploadTime}>
+                    上传于：{moment(item.createTime).format('YYYY-MM-DD')}
+                  </h3>
+                </div>
+              );
+              return (
+                <div className={styles.fileItem}>
+                  <Popover
+                    placement="right"
+                    content={popoverHtml}
+                    trigger="hover"
+                    mouseLeaveDelay={0.3}
+                    getPopupContainer={this.findFileListNode}
                   >
-                    <div className={styles.fileItem}>
-                      <Popover
-                        placement="right"
-                        content={popoverHtml}
-                        trigger="hover"
-                        mouseLeaveDelay={0.3}
-                        getPopupContainer={this.findFileListNode}
-                      >
-                        <p className={styles.fileItemText} title={fileName}>
-                          <Icon type="fujian" />
-                          {fileName}
-                        </p>
-                      </Popover>
-                      <Popover
-                        placement="bottom"
-                        content={statusText}
-                        trigger="hover"
-                      >
-                        {
-                          (index === fileList.length - 1 && Number(percent) !== 0) ?
-                            <Progress
-                              percent={Number.parseInt(percent, 10)}
-                              strokeWidth={4}
-                              status={status}
-                            />
-                          :
-                            null
-                        }
-                      </Popover>
-                    </div>
-                  </Col>
-                );
-              })
-            }
-          </Row>
+                    <p className={styles.fileItemText} title={fileName}>
+                      <Icon type="fujian" />
+                      <span className={styles.fileName}>{fileName}</span>
+                    </p>
+                  </Popover>
+                  <Popover
+                    placement="bottom"
+                    content={statusText}
+                    trigger="hover"
+                  >
+                    {
+                      (index === fileList.length - 1 && Number(percent) !== 0) ?
+                        <Progress
+                          percent={Number.parseInt(percent, 10)}
+                          strokeWidth={4}
+                          status={status}
+                        />
+                      :
+                        null
+                    }
+                  </Popover>
+                </div>
+              );
+            })
+          }
         </div>
       );
     } else if (needDefaultText) {
       fileListElement = (
         <div className={styles.fileList}>
-          <div className={styles.noFile}>暂无附件</div>
+          <div className={styles.noFile}>
+            <Icon type="fujian" />
+            <span>暂未上传</span>
+          </div>
         </div>
       );
     } else {
@@ -390,11 +387,13 @@ export default class CommonUpload extends PureComponent {
         { fileListElement }
         {
           edit ?
-            <Upload {...uploadProps} {...this.props}>
-              <Button className={styles.commonUploadBtn}>
-                上传附件
-              </Button>
-            </Upload>
+            <div className={styles.fileUploadItem}>
+              <Upload {...uploadProps} {...this.props}>
+                <Button className={styles.commonUploadBtn}>
+                  <Icon type="fujian1" />上传附件
+                </Button>
+              </Upload>
+            </div>
           :
             null
         }

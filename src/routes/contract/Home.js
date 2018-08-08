@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-31 17:45:08
+ * @Last Modified time: 2018-08-01 17:58:09
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -318,11 +318,9 @@ export default class Contract extends PureComponent {
     const {
       location: { query },
     } = this.props;
-    const { ...otherQuery } = query;
-    const { ...otherPrevQuery } = prevQuery;
-    if (!_.isEqual(otherQuery, otherPrevQuery)) {
-      const { pageNum, pageSize } = otherQuery;
-      this.queryAppList(otherQuery, pageNum, pageSize);
+    if (!_.isEqual(query, prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
     }
   }
 
@@ -543,7 +541,7 @@ export default class Contract extends PureComponent {
 
   // 头部新建按钮点击事件处理程序
   @autobind
-  @logPV({ pathname: '/modal/createProtocol', title: '新建合作合约' })
+  @logPV({ pathname: '/modal/createContract', title: '新建合作合约' })
   handleCreateBtnClick() {
     const { getFlowStepInfo, resetUnsubscribeDetail } = this.props;
     getFlowStepInfo({
