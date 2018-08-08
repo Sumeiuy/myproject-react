@@ -276,7 +276,7 @@ const matchRule = {
     inset: true,
     key: [
       {
-        name: '净转入总额',
+        name: '净转入资产',
         id: 'purFinAset',
         render: 'renderDefaultVal',
         unit: '元',
@@ -384,7 +384,7 @@ const matchRule = {
     inset: true,
     key: [
       {
-        name: '净佣金收入',
+        name: '净佣金额',
         id: 'purRake',
         render: 'renderDefaultVal',
         unit: '元',
@@ -396,7 +396,7 @@ const matchRule = {
     inset: true,
     key: [
       {
-        name: '产品手续费净收入',
+        name: '产品净手续费',
         id: 'saleFare',
         render: 'renderDefaultVal',
         unit: '元',
@@ -408,7 +408,7 @@ const matchRule = {
     inset: true,
     key: [
       {
-        name: '利息净收入',
+        name: '净利息额',
         id: 'netIncome',
         render: 'renderDefaultVal',
         unit: '元',
