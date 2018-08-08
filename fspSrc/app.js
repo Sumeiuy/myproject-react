@@ -10,7 +10,7 @@ import createHistory from 'history/createHashHistory';
 import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 
 import CommonModal from '../src/components/common/biz/CommonModal';
 import '../src/css/antd.less';
@@ -19,9 +19,9 @@ import createSensorsLogger from '../src/middlewares/sensorsLogger';
 import createActivityIndicator from '../src/middlewares/createActivityIndicator';
 import routerConfig from './router';
 import { request as requestConfig, persist as persistConfig } from '../src/config';
-// import { initFspMethod } from '../src/utils';
-// import permission from '../src/permissions';
 import { dva as dvaHelper, dom } from '../src/helper';
+import { logCommon } from '../src/decorators/logable';
+import { fspGlobal } from '../src/utils';
 
 // 尝试通过给body添加class来达到覆盖antd v3的样式
 dom.addClass(document.body, 'ant-v2-compatible');
@@ -47,6 +47,16 @@ const onError = (e) => {
     } else if (messageType === '1') {
       // 错误类型是1，用dialog
       CommonModal.showErrorDialog(errorMessage);
+    } else if (messageType === '2') {
+      message.error(errorMessage);
+      // 业务错误
+      logCommon({
+        type: 'bizError',
+        payload: {
+          name: '业务错误',
+          value: errorMessage,
+        },
+      });
     }
   } else if (e.name === 'SyntaxError'
     && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
@@ -60,18 +70,23 @@ const onError = (e) => {
 
 // 离开某个页面，弹出确认框，配合页面中的Prompt使用
 const getConfirmation = (msg, callback) => {
-  // Modal.confirm({
-  //   title: '请确认',
-  //   content: msg,
-  //   onOk() { callback(true); },
-  //   onCancel() { callback(false); },
-  // });
-  callback(true);
+  Modal.confirm({
+    title: '请确认',
+    content: msg,
+    onOk() {
+      callback(true);
+    },
+    onCancel() {
+      fspGlobal.handlePromptCancel();
+      callback();
+    },
+  });
 };
 
 const history = createHistory({
   getUserConfirmation: getConfirmation,
 });
+
 // 1. Initialize
 const app = dva({
   history,
@@ -164,9 +179,3 @@ if (persistConfig.active) {
 
 dvaHelper.initApp(app, history, true);
 
-// 7. 初始化权限配置
-// permission.init(store);
-
-// 8. 初始化fsp方法
-// 所有需要暴露给fsp的数据方法都通过这个方法
-// initFspMethod({ store, push: history.push });

@@ -52,7 +52,7 @@ function initFspMethod({ store, history, isInReact }) {
   };
 
   // 更新流程任务列表
-  window.updateFlow = function (flowId) {
+  window.updateFlow = (flowId) => {
     window.dispatch({
       type: 'customerPool/updateTodoList',
       flowId,
@@ -60,7 +60,7 @@ function initFspMethod({ store, history, isInReact }) {
   };
 
   // 在fsp中新开一个iframe的tab
-  window.openRctTabFromIframe = function (url) {
+  window.openRctTabFromIframe = (url) => {
     const { pathname } = parseUrl(url);
     const { param: filterParam } = _.filter(retTabParam, item => (item.key === pathname))[0];
     const param = {

@@ -36,7 +36,7 @@ const fspRoutes = [
     path: '/fsp/statisticalQuery/MOTStatisticsDetail',
     action: 'loadInTab',
     containerId: 'FSP_MOT_TAB_SERVICE_STATISTICS',
-    url: /\/mot\/statistics\/detail\/showMotThingViewDetail/,
+    url: /\/mot\/statistics\/detail\/(showMotThingViewDetail)|(showMotExeStatusDetail)/,
   },
   {
     path: '/fsp/motTaskHandle',
@@ -88,7 +88,7 @@ const fspRoutes = [
   {
     path: '/fsp/customerCenter/customer360',
     action: 'loadInTab',
-    containerId: 'FSP_360VIEW_M_TAB',
+    containerId: 'FSP_CUST_TAB_CENTER_MANAGE',
     url: '/customerCenter/360/',
   },
   // 合约详情
