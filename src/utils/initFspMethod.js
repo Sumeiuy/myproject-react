@@ -144,6 +144,30 @@ function initFspMethod({ store, history, isInReact }) {
           push(url);
         },
       },
+      loadPageInTabOther: {
+        run(url, { reactShouldRemove }) {
+          const { path } = findRoute(url);
+          push({
+            pathname: path,
+            state: {
+              url,
+              shouldRemove: reactShouldRemove,
+            },
+          });
+        },
+      },
+      loadPageInTabII: {
+        run(url, { reactShouldRemove }) {
+          const { path } = findRoute(url);
+          push({
+            pathname: path,
+            state: {
+              url,
+              shouldRemove: reactShouldRemove,
+            },
+          });
+        },
+      },
       loadGrayPage: {
         run(url, actionParam) {
           let finalUrl = url;
@@ -161,6 +185,7 @@ function initFspMethod({ store, history, isInReact }) {
       },
     };
     window.tabW = _.noop;
+    window.tabwei = _.noop;
   }
 }
 

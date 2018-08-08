@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-03 19:59:12
+ * @Last Modified time: 2018-08-06 17:39:19
  */
 
 import React, { PureComponent } from 'react';
@@ -327,7 +327,7 @@ export default class ChartTable extends PureComponent {
             {_.isEmpty(record.orgModel.level3Name) ? '' : `-${record.orgModel.level3Name}`}
             -{record.orgModel.level4Name}
           </p>
-          <p>{record.orgModel.level5Name}{_.isEmpty(record.orgModel.level5Id) ? '' : `(${record.orgModel.level5Id})`}</p>
+          <p>{record.orgModel.level5Name}{_.isEmpty(record.id) ? '' : `(${record.id})`}</p>
         </div>);
       } else {
         toolTipTittle = '';
@@ -411,7 +411,10 @@ export default class ChartTable extends PureComponent {
       temp = _.reduce(data, (res, value, index) => {
         const testArr = this.unitChange(value.indicatorDataList);
         const { id, level: itemLevel, name, orgModel = {} } = value;
-        const city = _.isEmpty(id) ? name : `${name}(${id})`;
+        let city = name;
+        if (itemLevel === '5') {
+          city = _.isEmpty(id) ? name : `${name}(${id})`;
+        }
         const listItemData =
           _.assign({ key: index, city, level: itemLevel, id, orgModel }, ...testArr);
         return res.concat(listItemData);

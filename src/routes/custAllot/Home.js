@@ -2,8 +2,8 @@
  * @Description: 分公司客户分配
  * @Author: Liujianshu
  * @Date: 2018-05-23 09:59:21
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 15:30:20
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-07 16:59:46
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -218,7 +218,10 @@ export default class CustAllot extends PureComponent {
     const {
       location: { query },
     } = this.props;
-    if (!_.isEqual(query, prevQuery)) {
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
       const { pageNum, pageSize } = query;
       this.queryAppList(query, pageNum, pageSize);
     }

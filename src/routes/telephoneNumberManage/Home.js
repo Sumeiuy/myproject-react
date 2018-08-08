@@ -11,13 +11,16 @@ import { Route, Switch } from 'dva/router';
 import PropTypes from 'prop-types';
 import menu from './menu';
 import { linkTo } from '../../utils';
+import withRouter from '../../decorators/withRouter';
 import Main from '../../components/platformParameterSetting/Main';
 import { getRoutes } from '../../utils/router';
 
+@withRouter
 export default class TelephoneNumberManage extends PureComponent {
   static propTypes = {
     match: PropTypes.object.isRequired,
     routerData: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
   };
 
   static contextTypes= {
@@ -25,7 +28,21 @@ export default class TelephoneNumberManage extends PureComponent {
   }
 
   componentDidMount() {
+    this.toPlatformHome();
+  }
+
+  componentDidUpdate() {
+    this.toPlatformHome();
+  }
+
+  toPlatformHome() {
+    const { match: { path }, location: { pathname } } = this.props;
+    if (path !== pathname) {
+      return;
+    }
+
     const url = '/sysOperate/telephoneNumberManage/distribute';
+
     linkTo({
       url,
       routerAction: this.context.push,

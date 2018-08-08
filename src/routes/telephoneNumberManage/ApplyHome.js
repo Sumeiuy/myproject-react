@@ -3,7 +3,7 @@
  * @Descripter: 公务手机卡号申请页面
  * @Date: 2018-04-17 16:49:00
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-01 17:59:52
+ * @Last Modified time: 2018-08-07 17:49:41
 */
 
 import React, { PureComponent } from 'react';
@@ -188,7 +188,10 @@ export default class ApplyHome extends PureComponent {
     const {
       location: { query },
     } = this.props;
-    if (!_.isEqual(query, prevQuery)) {
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
       const { pageNum, pageSize } = query;
       this.queryAppList(query, pageNum, pageSize);
     }

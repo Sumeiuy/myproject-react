@@ -165,7 +165,6 @@ export default class ChartBarStack extends PureComponent {
     // 查询当前需要的Y轴字段名称
     const levelAndScope = Number(scope);
     const levelName = `level${levelAndScope}Name`;
-    const levelId = `level${levelAndScope}Id`;
     // 分公司名称数组
     const levelCompanyArr = filterOrgModelData(orgModel, 'level2Name');
     // 财富中心名称数组
@@ -173,7 +172,7 @@ export default class ChartBarStack extends PureComponent {
     // 营业部名称数组
     const levelStoreArr = filterOrgModelData(orgModel, 'level4Name');
     // 工号数组
-    const levelIdArr = filterOrgModelData(orgModel, levelId);
+    const levelIdArr = filterOrgModelData(orgModel, 'level5Id');
     // 此处为y轴刻度值
     const yAxisLabels = filterOrgModelData(orgModel, levelName);
     // 补足Y轴刻度值不够的情况
@@ -452,6 +451,7 @@ export default class ChartBarStack extends PureComponent {
                 hasPushedAxis = true;
                 const hasFundCenter = levelWealthArr[dataIndex] !== '--';
                 let title = '';
+                let tooltipEmpInfo = `${axisValue}`;
                 // 针对不同的机构级别需要显示不同的分类
                 if ((levelAndScope === 4 && axisValue !== '--' && !hasFundCenter) ||
                   (levelAndScope === 3 && axisValue !== '--')) {
@@ -464,9 +464,11 @@ export default class ChartBarStack extends PureComponent {
                 } else if (levelAndScope === 5 && axisValue !== '--' && hasFundCenter) {
                   // 5为投顾或服务经理,需要显示南京公司名称-财富中心-营业部(南京分公司有财富中心)
                   title = `${levelCompanyArr[dataIndex]} - ${levelWealthArr[dataIndex]} - ${levelStoreArr[dataIndex]}`;
+                  tooltipEmpInfo = `${axisValue}(${id})`;
                 } else if (levelAndScope === 5 && axisValue !== '--' && !hasFundCenter) {
                    // 5为投顾或服务经理,需要显示xx公司名称-营业部(非南京分公司没有有财富中心)
                   title = `${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}`;
+                  tooltipEmpInfo = `${axisValue}(${id})`;
                 }
                 let toolTipNewHeader = `
                   <tr>
@@ -479,7 +481,7 @@ export default class ChartBarStack extends PureComponent {
                 seriesTips.push(`
                   ${toolTipNewHeader}
                   <tr>
-                    <td colspan="4">${axisValue}(${id})</td>
+                    <td colspan="4">${tooltipEmpInfo}</td>
                   </tr>
                 `);
               }

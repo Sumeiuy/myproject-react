@@ -15,7 +15,7 @@ const fspRoutes = [
   {
     path: '/customerPool',
     action: '',
-    url: '/homepage', // url属性可以为string类型，或者为RegExp类型，从而方便匹配
+    url: '/fspRouteError', // url属性可以为string类型，或者为RegExp类型，从而方便匹配
   },
   // MOT任务相关
   {
@@ -23,6 +23,20 @@ const fspRoutes = [
     action: 'loadInTab',
     containerId: 'FSP_MOT_TAB_TASK_MANAGE',
     url: '/mot/manage/showMotTaskSubTabWin?taskType=MOT',
+  },
+  // MOT服务统计
+  {
+    path: '/fsp/statisticalQuery/MOTStatistics',
+    action: 'loadInTab',
+    containerId: 'FSP_MOT_TAB_SERVICE_STATISTICS',
+    url: '/mot/statistics/showList',
+  },
+  // MOT服务统计明细
+  {
+    path: '/fsp/statisticalQuery/MOTStatisticsDetail',
+    action: 'loadInTab',
+    containerId: 'FSP_MOT_TAB_SERVICE_STATISTICS',
+    url: /\/mot\/statistics\/detail\/showMotThingViewDetail/,
   },
   {
     path: '/fsp/motTaskHandle',
@@ -51,6 +65,12 @@ const fspRoutes = [
     containerId: 'utb-stockcontract-wizard',
     url: '/client/investcontract/wizard/',
   },
+  // 新建签约向导
+  {
+    path: '/fsp/customerCenter/contractSelectOperate',
+    action: 'loadInTab',
+    url: '/tgcontract/list/selectOperate',
+  },
   // 佣金调整向导
   {
     path: '/fsp/serviceOrderingWizard',
@@ -77,6 +97,12 @@ const fspRoutes = [
     action: 'loadInTab',
     url: /\/customerCenter\/360\/.+(?=orderDetail)/,
   },
+  // 投顾签约计划变更向导
+  {
+    path: '/fsp/customerCenter/360OperateType',
+    action: 'loadInTab',
+    url: /\/customerCenter\/360\/.+(?=operateType)/,
+  },
   // 合约历史记录
   {
     path: '/fsp/customerCenter/360orderHisDetail',
@@ -88,28 +114,6 @@ const fspRoutes = [
     path: '/fsp/customerCenter/toCommission',
     action: 'loadInTab',
     url: /\/customerCenter\/360\/.+(?=toCommission)/,
-  },
-  // 消息中心
-  {
-    path: '/fsp/messageCenter',
-    action: 'loadInTab',
-    url: '/messageCenter',
-  },
-  // 产品中心
-  {
-    path: '/fsp/productCenter/productPool',
-    action: 'loadInTab',
-    url: '/product/pool/selectProduct',
-  },
-  {
-    path: '/fsp/productCenter/salesCalendar',
-    action: 'loadInIframe',
-    url: '/htsc-product-base/product_sales_calendar.do?clientType=crm',
-  },
-  {
-    path: '/fsp/productCenter/financeProducts',
-    action: 'loadInIframe',
-    url: '/htsc-product-base/product_search_currency.do?clientType=crm&special_enter=1',
   },
   // 投诉工单管理
   {
@@ -154,6 +158,146 @@ const fspRoutes = [
     path: '/fsp/strategyCenter/informationCenter',
     action: 'loadInIframe',
     url: '/jeip/psso/htscsso.jsp?biz_sys_key=zxzx',
+  },
+  // 超额快取
+  {
+    path: '/fsp/businessApplyment/bizapply/excesscache',
+    action: 'loadInTab',
+    containerId: 'FSP_BIZAPPLY_EXCESSCACHE',
+    url: '/bizapply/excesscache/list',
+  },
+  // 超额快取信息
+  {
+    path: '/fsp/bizapply/excesscacheView',
+    action: 'loadInTab',
+    containerId: '',
+    url: '/bizapply/excesscache/view',
+  },
+  // 超额快取信息编辑（与超额快取信息共用一个页面）
+  {
+    path: '/fsp/bizapply/excesscacheView',
+    action: 'loadInTab',
+    containerId: '',
+    url: '/bizapply/excesscache/edit',
+  },
+  // 预约取款申请业务
+  {
+    path: '/fsp/businessApplyment/bizapply/applyment',
+    action: 'loadInTab',
+    containerId: '',
+    url: '/bizapply/appoint/appointDrawTab',
+  },
+  // 预约取款申请
+  {
+    path: '/fsp/bizapply/queryAppointDraw',
+    action: 'loadInTab',
+    containerId: '',
+    url: '/bizapply/appoint/queryAppointDraw',
+  },
+  // 股票期权评估申请
+  {
+    path: '/fsp/businessApplyment/option/stockinvest',
+    action: 'loadInTab',
+    containerId: 'FSP_BUSINESS_APPLYMENT_OPTIONSTOCKINVEST',
+    url: '/bizapply/stockinvest/listContent',
+  },
+  // 新增股票期权评估申请
+  {
+    path: '/fsp/stockinvest/toAddPageInfo',
+    action: 'loadInTab',
+    containerId: '',
+    url: '/bizapply/stockinvest/toAddPageInfo',
+  },
+  // 查看股票期权评估申请
+  {
+    path: '/fsp/stockinvest/viewCustComplaintInfo',
+    action: 'loadInTab',
+    containerId: '',
+    url: '/bizapply/stockinvest/viewCustComplaintInfo',
+  },
+  // 期权佣金申请业务
+  {
+    path: '/fsp/businessApplyment/option/optionfund',
+    action: 'loadInTab',
+    containerId: 'FSP_BUSINESS_APPLYMENT_OF_LIST',
+    url: '/bizapply/optionfund/mainPage',
+  },
+  // 期权佣金申请明细
+  {
+    path: '/fsp/optionfund/showApplyInfoTab',
+    action: 'loadInTab',
+    containerId: '',
+    url: '/bizapply/optionfund/showApplyInfoTab',
+  },
+  // 双录文件申请
+  {
+    path: '/fsp/businessApplyment/appropriate/vfsh',
+    action: 'loadInTab',
+    containerId: 'FSP_BUSINESS_APPLYMENT_VFSH',
+    url: '/appropriate/vfsh/listContent',
+  },
+  // 查看双录文件审核
+  {
+    path: '/fsp/vfsh/showMainInfoTab',
+    action: 'loadInTab',
+    containerId: '',
+    url: '/appropriate/vfsh/showMainInfoTab',
+  },
+  // 双录视频向导
+  {
+    path: '/fsp/dbvfsh/wizard',
+    action: 'loadInTab',
+    containerId: '',
+    url: '/client/dbvfsh/wizard/main',
+  },
+  // 私募产品资格申请
+  {
+    path: '/fsp/businessApplyment/appropriate/priProd',
+    action: 'loadInTab',
+    containerId: '',
+    url: '/priProd/initmain',
+  },
+   // 私募产品信息
+  {
+    path: '/fsp/priProd/showPriProdTask',
+    action: 'loadInTab',
+    containerId: '',
+    url: /\/priProd\/showPriProdTask\?.*detail$/,
+  },
+   // 私募产品信息编辑
+  {
+    path: '/fsp/priProd/showPriProdTaskManage',
+    action: 'loadInTab',
+    containerId: '',
+    url: '/priProd/showPriProdTask',
+  },
+  // 私募产品信息编辑
+  {
+    path: '/fsp/priProd/showPriProdTaskManage',
+    action: 'loadInTab',
+    containerId: '',
+    url: '/priProd/showAddPriProd',
+  },
+  // PB系统业务
+  {
+    path: '/fsp/businessApplyment/channel/pbbiz',
+    action: 'loadInTab',
+    containerId: 'FSP_BUSINESS_APPLYMENT_PB_LIST',
+    url: '/bizapply/pbbiz/list',
+  },
+  // PB业务申请详情
+  {
+    path: '/fsp/pbbiz/detail',
+    action: 'loadInTab',
+    containerId: '',
+    url: /\/bizapply\/pbbiz\/detail\?oper=view/,
+  },
+  // PB业务申请编辑
+  {
+    path: '/fsp/pbbiz/edit',
+    action: 'loadInTab',
+    containerId: '',
+    url: /\/bizapply\/pbbiz\/detail\?oper=all/,
   },
 ];
 
