@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-31 17:42:51
+ * @Last Modified time: 2018-08-07 17:37:05
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -239,7 +239,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
     const {
       location: { query },
     } = this.props;
-    if (!_.isEqual(query, prevQuery)) {
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
       const { pageNum, pageSize } = query;
       this.queryAppList(query, pageNum, pageSize);
     }
