@@ -8,16 +8,16 @@
 export default function accountLimit(api) {
   return {
     // 获取详情信息
-    queryDetailInfo: query => api.post('/groovynoauth/fsp/accountLimit/queryDetail', query),
+    queryDetailInfo: query => api.post('/groovynoauth/fsp/biz/accountRestriction/queryCustAccountRestrictionDetail', query),
     // 下一步按钮和下一步审批人
-    queryButtonList: query => api.post('/groovynoauth/fsp/accountLimit/queryNextStepInfo', query),
+    queryButtonList: query => api.post('/groovynoauth/fsp/biz/accountRestriction/queryNextStepInfo', query),
     // 根据关键字查询客户列表
-    queryCustList: query => api.post('/groovynoauth/fsp/accountLimit/queryCustList', query),
+    queryCustList: query => api.post('/groovynoauth/fsp/biz/accountRestriction/queryCustomerList', query),
     // 根据关键字查询限制类型列表
-    queryLimtList: query => api.post('/groovynoauth/fsp/accountLimit/queryLimtList', query),
+    queryLimtList: query => api.post('/groovynoauth/fsp/biz/accountRestriction/queryAccountRestrictionType', query),
     // 提交客户分配
-    saveChange: query => api.post('/groovynoauth/fsp/accountLimit/saveChange', query),
+    saveChange: query => api.post('/groovynoauth/fsp/biz/accountRestriction/saveAccountRestriction', query),
     // 走流程接口
-    doApprove: query => api.post('/groovynoauth/fsp/accountLimit/doApprove', query),
+    doApprove: query => api.post('/groovynoauth/fsp/biz/accountRestriction/doApprove', query),
   };
 }

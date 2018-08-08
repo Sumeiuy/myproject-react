@@ -173,6 +173,7 @@ app.model(require('./models/cancelAccountOL'));
 app.model(require('./models/customerLabel'));
 // 账户限制管理
 app.model(require('./models/accountLimit'));
+app.model(require('./models/accountLimitEdit'));
 
 // 4. Route
 app.router(routerConfig);
