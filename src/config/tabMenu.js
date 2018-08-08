@@ -10,13 +10,13 @@ const newOpenTabConfig = [
     name: '资讯列表',
     id: 'FSP_VIEWPOINT_LIST',
     path: '/latestView/viewpointList',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '资讯详情',
     id: 'FSP_VIEWPOINT_LIST',
     path: '/latestView/viewpointDetail',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '自建任务',
@@ -40,19 +40,25 @@ const newOpenTabConfig = [
     name: '待办流程',
     id: 'FSP_TODO',
     path: '/customerPool/todo',
-    pid: 'FSP_NEW_HOMEPAGE',
-  },
-  {
-    name: '消息提醒',
-    id: 'FSP_MESSAGE',
-    path: '/fsp/messageCenter',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: 'MOT任务',
     id: 'FSP_MOT_TASK',
     path: '/fsp/motTask',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
+  },
+  {
+    name: 'MOT服务统计明细',
+    id: 'FSP_MOT_STATISTICS_DETAIL',
+    path: '/fsp/statisticalQuery/MOTStatisticsDetail',
+    pid: 'FSP_MOT_M_SERVICE_STATISTICS_PRIMARY',
+  },
+  {
+    name: 'MOT任务处理',
+    id: 'FSP_MOT_TASKHANDLE',
+    path: '/fsp/motTaskHandle',
+    pid: 'FSP_CUST_M_360',
   },
   {
     name: 'MOT任务处理',
@@ -70,6 +76,18 @@ const newOpenTabConfig = [
     name: '投顾签约向导',
     id: 'FSP_CUST_M_CONTRACTWIZARD',
     path: '/fsp/contractWizard',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
+    name: '新增签约向导',
+    id: 'FSP_CUST_M_CONTRACT_SELECTOPETATE',
+    path: '/fsp/customerCenter/contractSelectOperate',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
+    name: '投顾签约计划变更向导',
+    id: 'FSP_CUST_M_360OPERATETYPE',
+    path: '/fsp/customerCenter/360OperateType',
     pid: 'FSP_CUST_M_360',
   },
   {
@@ -196,61 +214,61 @@ const newOpenTabConfig = [
     name: '客户分组',
     id: 'FSP_CUSTOMERGROUP',
     path: '/customerPool/customerGroup',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '我的客户分组',
     id: 'FSP_CUSTOMERGROUP_MANAGE',
     path: '/customerPool/customerGroupManage',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '创建任务',
     id: 'FSP_CREATETASK_FROMCUSTGROUP',
     path: '/customerPool/createTaskFromCustGroup',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '创建任务',
     id: 'FSP_CREATETASK_FROMPROGRESS',
     path: '/customerPool/createTaskFromProgress',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '创建任务',
     id: 'FSP_CREATETASK_FROMPIE',
     path: '/customerPool/createTaskFromPie',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '创建任务',
     id: 'FSP_CREATETASK_FROMREJECTION1',
     path: '/customerPool/createTaskFromTaskRejection1',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '创建任务',
     id: 'FSP_CREATETASK_FROMREJECTION2',
     path: '/customerPool/createTaskFromTaskRejection2',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '创建任务',
     id: 'FSP_CREATETASK_FROMCUSTSCOPE',
     path: '/customerPool/createTaskFromCustScope',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '创建任务',
     id: 'FSP_CREATETASK',
     path: '/customerPool/createTask',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '服务纪录',
     id: 'FSP_SERVICELOG',
     path: '/customerPool/serviceLog',
-    pid: 'FSP_NEW_HOMEPAGE',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '客户降级',
@@ -336,10 +354,76 @@ const newOpenTabConfig = [
     path: '/stockOptionEvaluation',
     pid: 'FSP_STOCKOPTION_EVALUATION',
   },
+  {
+    name: '超额快取信息',
+    id: 'FSP_BIZAPPLY_EXCESSCACHE_VIEW',
+    path: '/fsp/bizapply/excesscacheView',
+    pid: '',
+  },
+  {
+    name: '预约取款申请',
+    id: 'FSP_BIZAPPLY_QUERYAPPOINTDRAW',
+    path: '/fsp/bizapply/queryAppointDraw',
+    pid: '',
+  },
+  {
+    name: '新增股票期权评估申请',
+    id: 'FSP_BIZAPPLY_TOADDPAGEINFO',
+    path: '/fsp/stockinvest/toAddPageInfo',
+    pid: '',
+  },
+  {
+    name: '查看股票期权评估申请',
+    id: 'FSP_BIZAPPLY_VIEWCUSTCOMPLAINTINFO',
+    path: '/fsp/stockinvest/viewCustComplaintInfo',
+    pid: '',
+  },
+  {
+    name: '期权佣金申请明细',
+    id: 'FSP_OPTIONFOUND_SHOWAPPLYINFOTAB',
+    path: '/fsp/optionfund/showApplyInfoTab',
+    pid: '',
+  },
+  {
+    name: '查看双录文件审核',
+    id: 'FSP_VFSH_SHOWMAININFOTAB',
+    path: '/fsp/vfsh/showMainInfoTab',
+    pid: '',
+  },
+  {
+    name: '双录视频向导',
+    id: 'FSP_DBVFSH_WIZARD',
+    path: '/fsp/dbvfsh/wizard',
+    pid: '',
+  },
+  {
+    name: '私募产品信息',
+    id: 'FSP_PRIPROD_SHOWPRIPRODTASK',
+    path: '/fsp/priProd/showPriProdTask',
+    pid: '',
+  },
+  {
+    name: '私募产品信息编辑',
+    id: 'FSP_PRIPROD_SHOWPRIPRODTASK_MANAGE',
+    path: '/fsp/priProd/showPriProdTaskManage',
+    pid: '',
+  },
+  {
+    name: 'PB业务申请详情',
+    id: 'FSP_PBBIZ_DETAIL',
+    path: '/fsp/pbbiz/detail',
+    pid: '',
+  },
+  {
+    name: 'PB业务申请编辑',
+    id: 'FSP_PBBIZ_EDIT',
+    path: '/fsp/pbbiz/edit',
+    pid: '',
+  },
 ];
 
 // 默认当前激活的主导航菜单项
-const indexPaneKey = 'FSP_NEW_HOMEPAGE';
+const indexPaneKey = 'FSP_NEW_HOMEPAGE_PRIMARY';
 
 // 主导航里面的嵌套导航菜单
 const defaultMenu = [

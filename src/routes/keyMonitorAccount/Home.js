@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-06 17:13:40
+ * @Last Modified time: 2018-08-07 18:03:01
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -369,15 +369,17 @@ export default class KeyMonitorAccountHome extends Component {
             </div>
           </div>
           <div className={styles.filterItem}>
-            <span className={styles.label}>是否我司客户：</span>
-            <Select
-              needShowKey={false}
-              data={IS_OUR_CUST_OPTIONS}
-              style={{ width: 90 }}
-              name="isOurCust"
-              value={isOurCust}
-              onChange={this.handleIsOurCustSelectChange}
-            />
+            <div className={styles.item}>
+              <span className={styles.label}>是否我司客户：</span>
+              <Select
+                needShowKey={false}
+                data={IS_OUR_CUST_OPTIONS}
+                style={{ width: 90 }}
+                name="isOurCust"
+                value={isOurCust}
+                onChange={this.handleIsOurCustSelectChange}
+              />
+            </div>
           </div>
           <div className={styles.filterItem}>
             <div className={styles.item}>
