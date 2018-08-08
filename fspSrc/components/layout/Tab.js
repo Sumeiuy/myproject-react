@@ -90,6 +90,8 @@ export default class Tab extends PureComponent {
 
     const { panes, activeKey } = this.getInitialPanesWithPathname(props.location);
 
+    this.currentMenuId = 'FSP_NEW_HOMEPAGE_PRIMARY';
+
     this.state = {
       forceRender: false, // 这个标志的作用是用来在window.onResize方法中强制tab执行render方法
       panes,
@@ -297,6 +299,8 @@ export default class Tab extends PureComponent {
       currentPane.name = editPane.name;
     }
 
+    this.currentMenuId = newActiveKey;
+
     // 在fixPanes里面确定是否有相应的pane，如果有，替换，如果没有，加上
     if (_.find(fixPanes, pane => pane.id === newActiveKey)) {
       newPanes = _.map(fixPanes, (pane) => {
@@ -343,7 +347,14 @@ export default class Tab extends PureComponent {
         if (currentPane.pid === 'ROOT') {
           isTopMenu = true;
           newActiveKey = currentPane.id;
+          if (currentPane.name === '首页') {
+            this.currentMenuId = currentPane.id;
+            return true;
+          }
+          return false;
         }
+        // 保存当前path匹配到的确定菜单到currentMenu
+        this.currentMenuId = currentPane.id;
         return true;
       }
       return false;
@@ -412,6 +423,19 @@ export default class Tab extends PureComponent {
   // 如果设置了shouldStay标志，表示为页面内部跳转，使用这个修正pane
   getStayPanes(pathname, query, activeKey) {
     const { panes } = this.state;
+    traverseMenus(panes, (pane, i, array) => {
+      // 找到当前path对应的pane进行修正
+      if (pane.id === activeKey || pane.id === this.currentMenuId) {
+        const currentPane = array[i];
+        currentPane.path = pathname;
+        currentPane.query = query;
+        if (currentPane.pid === 'ROOT') {
+          return false;
+        }
+        return true;
+      }
+      return false;
+    });
     const finalPanes = _.map(panes, (pane) => {
       const needEditPane = pane;
       // 如果提供了editPanes，使用这里的pane修正
@@ -458,6 +482,7 @@ export default class Tab extends PureComponent {
         moreMenuObject={finalpanesObj.moreMenuObject}
         onChange={this.onChange}
         activeKey={activeKey}
+        currentMenuId={this.currentMenuId}
         onRemove={this.onRemove}
         push={push}
         path={location.pathname}

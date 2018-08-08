@@ -184,8 +184,10 @@ function initFspMethod({ store, history, isInReact }) {
         run() { },
       },
     };
+
     window.tabW = _.noop;
     window.tabwei = _.noop;
+    window.canCallPhone = false;
   }
 }
 
