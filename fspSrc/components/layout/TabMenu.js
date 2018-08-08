@@ -31,6 +31,7 @@ export default class TabMenu extends PureComponent {
     onChange: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     path: PropTypes.string.isRequired,
+    currentMenuId: PropTypes.string.isRequired,
   }
 
   getMenus(array, level = 2) {
@@ -84,10 +85,14 @@ export default class TabMenu extends PureComponent {
     return this.elem;
   }
 
+  @autobind
   isActiveMenu(path, menuItem, level, exact = false) {
     const menuPath = menuItem.path;
     if (exact) {
-      if (menuPath === path || path.indexOf(menuPath) > -1) {
+      if (
+        menuPath === path
+        || path.indexOf(menuPath) > -1
+        || menuItem.id === this.props.currentMenuId) {
         return true;
       }
       return false;
@@ -138,14 +143,16 @@ export default class TabMenu extends PureComponent {
   }
 
   @autobind
-  handDropClick(menuItem, activeKey) {
-    if (menuItem.id !== activeKey) {
-      // 是否有上次点击的菜单记录
-      if (menuItem.path) {
-        this.handleLinkClick(menuItem);
-      } else {
-        // 默认打开第一个子菜单
-        this.handleLinkClick(this.getFirstChild(menuItem));
+  handDropClick(menuItem, activeKey, canClick = false) {
+    if (canClick) {
+      if (menuItem.id !== activeKey) {
+        // 是否有上次点击的菜单记录
+        if (menuItem.path) {
+          this.handleLinkClick(menuItem);
+        } else {
+          // 默认打开第一个子菜单
+          this.handleLinkClick(this.getFirstChild(menuItem));
+        }
       }
     }
   }
