@@ -69,6 +69,7 @@ const fspRoutes = [
   {
     path: '/fsp/customerCenter/contractSelectOperate',
     action: 'loadInTab',
+    containerId: 'FSP_CONTRACTLIST_OPERATE_TAB',
     url: '/tgcontract/list/selectOperate',
   },
   // 佣金调整向导

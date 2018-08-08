@@ -115,12 +115,6 @@ const newOpenTabConfig = [
     pid: 'FSP_CUST_M_360',
   },
   {
-    name: '客户服务全纪录',
-    id: 'FSP_MOT_TAB_SERVICELIST',
-    path: '/fsp/taskCenter/serviceManage',
-    pid: 'FSP_MOT_M_TASK',
-  },
-  {
     name: '工单投诉信息',
     id: 'FSP_COMPLAINT_INFO',
     path: '/fsp/serviceCenter/complaintInfo',
