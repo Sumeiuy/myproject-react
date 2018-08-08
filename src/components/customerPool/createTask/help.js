@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-03 12:12:34
+ * @Last Modified time: 2018-08-08 10:28:16
  */
 
 import _ from 'lodash';
@@ -36,9 +36,9 @@ function getLabel(filterObj, labelInfos) {
   return { aimLabelList, normalLabelList };
 }
 
-// 生成一个格式为 名称#id# 的集合
+// 生成一个格式为 瞄准镜标签#id# 的集合
 function getNameAndIdList(list) {
-  return _.map(list, item => `${item.name}#${item.id}#`);
+  return _.map(list, item => `瞄准镜标签#${item.id}#`);
 }
 
 // 按照现有代码需要的格式生成suggestion数据
