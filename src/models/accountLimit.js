@@ -15,7 +15,8 @@ export default {
   state: {
     detailInfo: EMPTY_OBJECT, // 详情
     buttonData: EMPTY_OBJECT, // 获取按钮列表和下一步审批人
-    custData: EMPTY_ARRAY, // 客户列表列表
+    searchCustData: EMPTY_ARRAY, // 客户列表列表
+    addedCustData: EMPTY_ARRAY,  // 已添加的客户列表
     limitList: EMPTY_ARRAY,
     saveChangeData: EMPTY_OBJECT,  // 保存后的数据
     notifiesData: EMPTY_OBJECT,  // 消息提醒页面数据
@@ -34,7 +35,15 @@ export default {
       const { payload: { resultData = EMPTY_ARRAY } } = action;
       return {
         ...state,
-        custData: resultData,
+        searchCustData: resultData,
+      };
+    },
+    // 查询已添加的客户
+    queryAddedCustListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_ARRAY } } = action;
+      return {
+        ...state,
+        addedCustData: resultData,
       };
     },
     // 查询限制类型
@@ -100,8 +109,12 @@ export default {
     // 查询客户列表
     * queryCustList({ payload }, { call, put }) {
       const response = yield call(api.queryCustList, payload);
+      let type = 'queryCustListSuccess';
+      if (payload.attachment) {
+        type = 'queryAddedCustListSuccess';
+      }
       yield put({
-        type: 'queryCustListSuccess',
+        type,
         payload: response,
       });
     },

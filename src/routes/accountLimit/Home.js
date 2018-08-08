@@ -82,8 +82,10 @@ const mapStateToProps = state => ({
   detailInfo: state.accountLimit.detailInfo,
   // 获取按钮列表和下一步审批人
   buttonData: state.accountLimit.buttonData,
-  // 客户列表
-  custData: state.accountLimit.custData,
+  // 查询客户列表
+  searchCustData: state.accountLimit.searchCustData,
+  // 已添加客户列表
+  addedCustData: state.accountLimit.addedCustData,
   // 限制类型列表
   limitList: state.accountLimit.limitList,
   // 上传后更新的批次数据
@@ -130,7 +132,8 @@ export default class AccountLimitHome extends PureComponent {
     buttonData: PropTypes.object.isRequired,
     queryButtonList: PropTypes.func.isRequired,
     // 客户列表
-    custData: PropTypes.object.isRequired,
+    searchCustData: PropTypes.array.isRequired,
+    addedCustData: PropTypes.array.isRequired,
     queryCustList: PropTypes.func.isRequired,
     // 查询限制类型列表
     limitList: PropTypes.array.isRequired,
@@ -148,7 +151,7 @@ export default class AccountLimitHome extends PureComponent {
       // 高亮项的下标索引
       activeRowIndex: 0,
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
-      createModal: false,
+      createModal: true,
       approverModal: false,
       // 审批人
       flowAuditors: [],
@@ -481,7 +484,8 @@ export default class AccountLimitHome extends PureComponent {
       buttonData,
       queryButtonList,
       // 客户列表与接口
-      custData,
+      searchCustData,
+      addedCustData,
       queryCustList,
       // 限制类型
       limitList,
@@ -595,7 +599,8 @@ export default class AccountLimitHome extends PureComponent {
             location={location}
             empInfo={empInfo}
             custRangeList={custRangeList}
-            custData={custData}
+            searchCustData={searchCustData}
+            addedCustData={addedCustData}
             queryCustList={queryCustList}
             limitList={limitList}
             queryLimtList={queryLimtList}
