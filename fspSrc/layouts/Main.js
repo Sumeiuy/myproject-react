@@ -62,12 +62,6 @@ const mapStateToProps = state => ({
   interfaceState: state.loading.effects,
   // 发送保存服务记录请求成功的服务id
   currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
-  // 显示隐藏添加服务记录弹窗
-  serviceRecordModalVisible: state.app.serviceRecordModalVisible,
-  // 服务弹窗对应的客户的经纪客户号
-  serviceRecordModalVisibleOfId: state.app.serviceRecordModalVisibleOfId,
-  // 服务弹窗对应的客户的经纪客户名
-  serviceRecordModalVisibleOfName: state.app.serviceRecordModalVisibleOfName,
   // 客户uuid
   custUuid: state.performerView.custUuid,
   // 自建任务平台的服务类型、任务反馈字典
@@ -107,9 +101,6 @@ export default class Main extends PureComponent {
     empInfo: PropTypes.object.isRequired,
     currentCommonServiceRecord: PropTypes.object.isRequired,
     menus: PropTypes.object.isRequired,
-    serviceRecordModalVisible: PropTypes.bool,
-    serviceRecordModalVisibleOfId: PropTypes.string,
-    serviceRecordModalVisibleOfName: PropTypes.string,
     addServeRecord: PropTypes.func.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     handleCloseClick: PropTypes.func.isRequired,
@@ -117,14 +108,10 @@ export default class Main extends PureComponent {
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     serviceRecordInfo: PropTypes.object.isRequired,
-    taskFeedbackList: PropTypes.array.isRequired,
     getMenus: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    serviceRecordModalVisible: false,
-    serviceRecordModalVisibleOfId: '',
-    serviceRecordModalVisibleOfName: '',
     loadingForceFull: false,
   }
 
@@ -176,15 +163,12 @@ export default class Main extends PureComponent {
       menus,
       currentCommonServiceRecord,
       addServeRecord,
-      serviceRecordModalVisibleOfId,
-      serviceRecordModalVisibleOfName,
-      serviceRecordModalVisible,
       toggleServiceRecordModal,
       handleCloseClick,
       custUuid,
       ceFileDelete,
       serviceRecordInfo,
-      taskFeedbackList,
+      motSelfBuiltFeedbackList,
     } = this.props;
 
     const { caller = '' } = serviceRecordInfo;
@@ -241,18 +225,15 @@ export default class Main extends PureComponent {
                     <ConnectedCreateServiceRecord
                       handleCloseClick={handleCloseClick}
                       loading={interfaceState[effects.addServeRecord]}
-                      key={serviceRecordModalVisibleOfId}
-                      id={serviceRecordModalVisibleOfId}
-                      name={serviceRecordModalVisibleOfName}
+                      key={serviceRecordInfo.id}
                       dict={dict}
                       empInfo={empInfo}
-                      isShow={serviceRecordModalVisible}
                       addServeRecord={addServeRecord}
                       currentCommonServiceRecord={currentCommonServiceRecord}
                       onToggleServiceRecordModal={toggleServiceRecordModal}
                       custUuid={custUuid}
                       ceFileDelete={ceFileDelete}
-                      taskFeedbackList={taskFeedbackList}
+                      taskFeedbackList={motSelfBuiltFeedbackList}
                       serviceRecordInfo={serviceRecordInfo}
                       isPhoneCall={isPhoneCall}
                     />
