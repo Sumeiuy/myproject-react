@@ -89,16 +89,14 @@ export default {
         payload: response,
       });
     },
-    getSearchServerPersonList: [
-      function* getSearchServerPersonList({ payload }, { call, put }) {
-        const response = yield call(api.getSearchServerPersonelList, payload);
-        yield put({
-          type: 'getSearchServerPersonListSuccess',
-          payload: response,
-        });
-      },
-      { type: 'takeLatest' },
-    ],
+
+    * getSearchServerPersonList({ payload }, { call, put }) {
+      const response = yield call(api.getSearchServerPersonelList, payload);
+      yield put({
+        type: 'getSearchServerPersonListSuccess',
+        payload: response,
+      });
+    },
     * getSubTypeList({ payload }, { call, put }) {
       const response = yield call(api.getSubTypeList, payload);
       yield put({
