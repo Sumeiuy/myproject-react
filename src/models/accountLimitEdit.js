@@ -20,6 +20,16 @@ export default {
     editFormData: EMPTY_OBJECT, // 用于编辑时修改的详情数据,为了避免直接修改详情数据，浅拷贝于详情数据
   },
   reducers: {
+    // 详情数据修改
+    editFormChange(state, action) {
+      const { payload: { type = '', value = '' } } = action;
+      const newEditFormData = { ...state.editFormData };
+      newEditFormData[type] = value;
+      return {
+        ...state,
+        editFormData: newEditFormData,
+      };
+    },
     // 详情
     queryDetailInfoSuccess(state, action) {
       const { payload } = action;

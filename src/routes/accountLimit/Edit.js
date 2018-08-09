@@ -49,6 +49,8 @@ const effects = {
   queryLimtList: 'accountLimitEdit/queryLimtList',
   // 提交客户分配
   saveChange: 'accountLimitEdit/saveChange',
+  // 数据修改
+  editFormChange: 'accountLimitEdit/editFormChange',
 };
 
 const mapStateToProps = state => ({
@@ -57,7 +59,7 @@ const mapStateToProps = state => ({
   // 右侧详情数据
   detailInfo: state.accountLimitEdit.detailInfo,
   // 用于编辑的详情数据
-  editFormData: state.accountLimitEdit.detailInfo,
+  editFormData: state.accountLimitEdit.editFormData,
   // 获取按钮列表和下一步审批人
   buttonData: state.accountLimitEdit.buttonData,
   // 限制类型列表
@@ -75,6 +77,8 @@ const mapDispatchToProps = {
   queryLimtList: dispatch(effects.queryLimtList, { loading: true, forceFull: true }),
   // 提交客户分配
   saveChange: dispatch(effects.saveChange, { loading: true, forceFull: true }),
+  // 数据修改
+  editFormChange: dispatch(effects.editFormChange, { loading: false, forceFull: true }),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -89,7 +93,8 @@ export default class AccountLimitEdit extends PureComponent {
     detailInfo: PropTypes.object.isRequired,
     queryDetailInfo: PropTypes.func.isRequired,
     // 用于编辑的详情数据
-    editFormData: PropTypes.func.isRequired,
+    editFormData: PropTypes.object.isRequired,
+    editFormChange: PropTypes.func.isRequired,
     // 按钮以及下一步审批人列表
     buttonData: PropTypes.object.isRequired,
     queryButtonList: PropTypes.func.isRequired,
@@ -107,6 +112,8 @@ export default class AccountLimitEdit extends PureComponent {
       approverModal: false,
       // 审批人
       flowAuditors: [],
+      // 审批意见
+      remark: '',
     };
   }
 
@@ -118,8 +125,15 @@ export default class AccountLimitEdit extends PureComponent {
         },
       },
       queryDetailInfo,
+      queryButtonList,
     } = this.props;
-    queryDetailInfo({ flowId });
+    queryDetailInfo({ flowId }).then(() => {
+      const { detailInfo } = this.props;
+      queryButtonList({
+        flowId: detailInfo.flowId,
+        operateType: detailInfo.operateType,
+      });
+    });
   }
 
   // 打开弹窗
@@ -127,6 +141,14 @@ export default class AccountLimitEdit extends PureComponent {
   showModal(modalKey) {
     this.setState({
       [modalKey]: true,
+    });
+  }
+
+  // 修改审批意见
+  @autobind
+  handleChangeRemark(e) {
+    this.setState({
+      remark: e.target.value,
     });
   }
 
@@ -228,11 +250,12 @@ export default class AccountLimitEdit extends PureComponent {
       // 提交走流程
       saveChange,
       editFormData,
+      editFormChange,
     } = this.props;
-
     const {
       approverModal,
       flowAuditors,
+      remark,
     } = this.state;
 
     const newButtonData = { ...buttonData };
@@ -277,6 +300,9 @@ export default class AccountLimitEdit extends PureComponent {
       saveChange,
       detailInfo,
       editFormData,
+      onEditFormChange: editFormChange,
+      remark,
+      onChangeRemark: this.handleChangeRemark,
     };
 
     return (

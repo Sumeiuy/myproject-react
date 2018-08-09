@@ -9,7 +9,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, DatePicker, Input, Select as AntdSelect, Spin, Popconfirm } from 'antd';
+import { message, DatePicker, Input, Select as AntdSelect, Popconfirm } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -31,10 +31,10 @@ const TextArea = Input.TextArea;
 const Option = AntdSelect.Option;
 
 // 用于找到select类组件渲染option时父级容器的方法,以解决在弹窗里页面滚动，option随页面滚动的问题
-// const getPopupContainerFunction = () => document.querySelector(`.${styles.modalContent}`);
+const getPopupContainerFunction = () => document.querySelector(`.${styles.formContent}`);
 // const EMPTY_PARAM = '暂无';
 // const EMPTY_OBJECT = {};
-// const EMPTY_ARRAY = [];
+const EMPTY_ARRAY = [];
 // 表头
 const {
   tableTitle: { custList: custTitleList },
@@ -53,6 +53,7 @@ export default class EditForm extends PureComponent {
     detailInfo: PropTypes.object.isRequired,
     // 用于编辑的数据
     editFormData: PropTypes.object.isRequired,
+    onEditFormChange: PropTypes.func.isRequired,
     // 获取按钮数据和下一步审批人
     // selfBtnGroup: PropTypes.object.isRequired,
     queryButtonList: PropTypes.func.isRequired,
@@ -61,6 +62,9 @@ export default class EditForm extends PureComponent {
     queryLimtList: PropTypes.func.isRequired,
     // 提交保存
     saveChange: PropTypes.func.isRequired,
+    // 修改审批意见
+    onChangeRemark: PropTypes.func.isRequired,
+    remark: PropTypes.string.isRequired,
     // 关闭弹窗
     // closeModal: PropTypes.func.isRequired,
     // 弹窗状态
@@ -71,40 +75,29 @@ export default class EditForm extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      // 已有条数
-      alreadyCount: 0,
-      // 是否是初始划转方式
-      isDefaultType: true,
+      // 限制信息
+      limitList: [],
+      fetching: false,
+      selectValue: '',
       // 上传后的返回值
       attachment: '',
-      // 导入的弹窗
-      importVisible: false,
       // 下一步审批人列表
       nextApproverList: [],
       // 审批人弹窗
       nextApproverModal: false,
-      // 单个客户
-      client: {},
-      // 单个服务经理
-      manager: {},
       // 搜索的客户数据
       searchCustList: [],
       // 搜索的服务经理数据
       searchManageList: [],
-      isBankConfirm: '',
-
-      limitList: [],
-      limitValue: [],
-      fetching: false,
     };
   }
 
   componentDidMount() {
     // 获取下一步骤按钮列表
-    this.props.queryButtonList({
-      flowId: '',
-      operate: 2,
-    });
+    // this.props.queryButtonList({
+    //   flowId: '',
+    //   operateType: ,
+    // });
   }
 
   // 生成客户表格标题列表
@@ -128,51 +121,69 @@ export default class EditForm extends PureComponent {
 
   @autobind
   handleEditFormChange(value, type) {
+    const { onEditFormChange } = this.props;
+    onEditFormChange({ value, type });
     console.log(value, type);
   }
 
-  @autobind
-  handleInputChange(e, type) {
-    this.handleEditFormChange(e.target.value, type);
-  }
-
-  // 设置限制事件切换事件
-  @autobind
-  handleDatePickerChange(date, dateString) {
-    console.warn('date', date);
-    console.warn('dateString', dateString);
-  }
-
-  // 搜索限制类型
+  // 搜索焦点类型
   @autobind
   handleSelectSearch(value) {
-    const { queryLimtList } = this.props;
-    const { limitList } = this.state;
-    if (!_.isEmpty(limitList)) {
-      return;
-    }
     this.setState({
-      fetching: true,
-    }, () => {
-      queryLimtList({ value }).then(() => {
-        const { limitList: propsLimitList } = this.props;
-        this.setState({
-          limitList: propsLimitList,
-          fetching: false,
-        });
-      });
+      selectValue: value,
     });
   }
 
   // 选择限制类型
   @autobind
-  handleSelectChange(value, options) {
-    console.warn('options', options);
-    console.warn('value', value);
-    this.setState({
-      limitValue: value,
-      fetching: false,
+  handleSelectChange(value) {
+    console.log('value', value);
+    this.handleEditFormChange(value, 'limitType');
+  }
+
+  // select 多选失去焦点
+  @autobind
+  handleSelectBlur() {
+    this.setState({ selectValue: '' });
+  }
+
+  // 限制类型焦点进入
+  @autobind
+  handleSelectFocus() {
+    const { queryLimtList } = this.props;
+    const { limitList } = this.state;
+    if (!_.isEmpty(limitList)) {
+      return;
+    }
+    queryLimtList().then(() => {
+      const { limitList: propsLimitList } = this.props;
+      this.setState({
+        limitList: propsLimitList,
+        fetching: false,
+      });
     });
+  }
+
+  // select 联动筛选
+  @autobind
+  filterOption(value, option) {
+    const { limitList } = this.props;
+    const { key } = option;
+    const { label = '' } = _.find(limitList, item => item.key === key) || {};
+    return label.indexOf(value) > -1;
+  }
+
+  // 替换关键字颜色
+  @autobind
+  replaceKeyWord(text, word = '') {
+    if (!word) {
+      return text;
+    }
+    const keyWordRegex = new RegExp(_.escapeRegExp(word), 'g');
+    const keyWordText = _.replace(text, keyWordRegex, match => (
+      `<span class=${styles.keyWord}>${match}</span>`
+    ));
+    return <div dangerouslySetInnerHTML={{ __html: keyWordText }} />;
   }
 
   // 上传事件
@@ -205,12 +216,21 @@ export default class EditForm extends PureComponent {
     });
   }
 
+  // 删除客户
+  @autobind
+  @logable({ type: 'Click', payload: { name: '删除客户' } })
+  handleDeleteTableData(record) {
+    const { editFormData: { custList = EMPTY_ARRAY } } = this.props;
+    const newCustData = _.filter(custList, o => o.custId !== record.custId);
+    this.handleEditFormChange(newCustData, 'custList');
+  }
+
   // 渲染点击删除按钮后的确认框
   @autobind
   renderPopconfirm(type, record) {
     return (<Popconfirm
       placement="top"
-      onConfirm={() => this.handleDeleteTableData(type, record)}
+      onConfirm={() => this.handleDeleteTableData(record)}
       okText="是"
       cancelText="否"
       title={'是否删除此条数据？'}
@@ -219,24 +239,42 @@ export default class EditForm extends PureComponent {
     </Popconfirm>);
   }
 
+  // 设置限制日期不可选范围
+  @autobind
+  setDisabledDate(current) {
+    return current < moment();
+  }
+
+  // 解除限制日期不可选范围
+  @autobind
+  relieveDisabledDate(current) {
+    const { editFormData } = this.props;
+    // 如果操作类型是设置限制的时候，解除日期不能小于设置日期
+    if (editFormData.operateType === config.setCode) {
+      return current < moment(editFormData.limitStartTime, config.timeFormatStr);
+    }
+    // 如果操作类型是解除限制的时候，解除日期不能小于今天
+    return current < moment();
+  }
+
   render() {
     const {
       detailInfo,
       editFormData,
+      onChangeRemark,
+      remark,
     } = this.props;
-
     const {
       // importVisible,
       // attachment,
       // searchCustList,
-      // isBankConfirm,
-      fetching,
+      // fetching,
       limitList,
-      limitValue,
+      selectValue,
     } = this.state;
     const editPageAttachmentList = [attachmentMap[0]];
     // 如果操作类型是解除限制，并且 是否和银行确认字段为 true时才显示银行确认解除材料
-    if (detailInfo.operateType === config.relieveCode && detailInfo.isBankConfirm) {
+    if (detailInfo.operateType === config.relieveCode && detailInfo.bankConfirm) {
       editPageAttachmentList.push(attachmentMap[1]);
     }
 
@@ -263,7 +301,7 @@ export default class EditForm extends PureComponent {
     return (
       <div className={styles.formContent}>
         <div className={styles.contentItem}>
-          <h2 className={styles.numberTitle}>编号{detailInfo.appId}</h2>
+          <h2 className={styles.numberTitle}>编号{detailInfo.id}</h2>
         </div>
         <div className={`${styles.cutline} ${styles.mt20}`} />
         <div className={styles.contentItem}>
@@ -288,7 +326,7 @@ export default class EditForm extends PureComponent {
             // 操作类型是限制解除时才显示
             detailInfo.operateType === config.relieveCode ?
               (<InfoForm label="是否银行确认" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
-                {detailInfo.isBankConfirm ? '是' : '否'}
+                {detailInfo.bankConfirm ? '是' : '否'}
               </InfoForm>)
               :
               null
@@ -299,6 +337,7 @@ export default class EditForm extends PureComponent {
           <InfoTitle head="客户列表" />
           <div className={styles.tableDiv}>
             <CommonTable
+              rowKey="custRowId"
               align="left"
               data={editFormData.custList}
               titleList={custTitle}
@@ -309,25 +348,32 @@ export default class EditForm extends PureComponent {
         <div className={`${styles.cutline} ${styles.mt48}`} />
         <div className={styles.contentItem}>
           <InfoTitle head="限制信息" />
-          <InfoForm label="解除限制类型" required>
+          <InfoForm label="解除限制类型" className={styles.infoFormSelect} required>
             <AntdSelect
               mode="multiple"
-              value={limitValue}
-              placeholder="Select users"
-              notFoundContent={fetching ? <Spin size="small" /> : null}
-              filterOption={false}
-              onSearch={_.debounce(this.handleSelectSearch, 800)}
+              labelInValue
+              value={editFormData.limitType || EMPTY_ARRAY}
+              placeholder="请选择限制类型"
               onChange={this.handleSelectChange}
-              style={{ width: '530px' }}
+              onBlur={this.handleSelectBlur}
+              onFocus={this.handleSelectFocus}
+              onSearch={this.handleSelectSearch}
+              style={{ width: '560px' }}
+              filterOption={this.filterOption}
+              optionFilterProp="children"
+              getPopupContainer={getPopupContainerFunction}
             >
-              {limitList.map(item => <Option key={item.code}>{item.name}</Option>)}
+              {limitList.map(item =>
+                <Option key={item.key}>{this.replaceKeyWord(item.label, selectValue)}</Option>,
+              )}
             </AntdSelect>
           </InfoForm>
           {
             detailInfo.operateType === config.setCode ?
               (<InfoForm label="账户限制设置日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
                 <DatePicker
-                  value={moment(detailInfo.limitStartTime || '', config.timeFormatStr)}
+                  disabledDate={this.setDisabledDate}
+                  value={moment(editFormData.limitStartTime || '', config.timeFormatStr)}
                   onChange={(date, dateStr) => this.handleEditFormChange(dateStr, 'limitStartTime')}
                 />
               </InfoForm>)
@@ -336,7 +382,8 @@ export default class EditForm extends PureComponent {
           }
           <InfoForm label="账户限制解除日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
             <DatePicker
-              value={moment(detailInfo.limitEndTime || '', config.timeFormatStr)}
+              disabledDate={this.relieveDisabledDate}
+              value={moment(editFormData.limitEndTime || '', config.timeFormatStr)}
               onChange={(date, dateStr) => this.handleEditFormChange(dateStr, 'limitEndTime')}
             />
           </InfoForm>
@@ -382,7 +429,10 @@ export default class EditForm extends PureComponent {
         <div className={styles.contentItem}>
           <InfoTitle head="审批" />
           <InfoForm label="审批意见" style={{ width: '68px', verticalAlign: 'top' }} className={styles.inlineInfoForm}>
-            <TextArea />
+            <TextArea
+              value={remark}
+              onChange={onChangeRemark}
+            />
           </InfoForm>
         </div>
         <div className={`${styles.cutline} ${styles.mt14}`} />

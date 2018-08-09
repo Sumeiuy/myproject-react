@@ -151,7 +151,7 @@ export default class AccountLimitHome extends PureComponent {
       // 高亮项的下标索引
       activeRowIndex: 0,
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
-      createModal: true,
+      createModal: false,
       approverModal: false,
       // 审批人
       flowAuditors: [],
