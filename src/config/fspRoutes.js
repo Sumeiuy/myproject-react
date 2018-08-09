@@ -33,7 +33,7 @@ const fspRoutes = [
   },
   // MOT服务统计明细
   {
-    path: '/fsp/statisticalQuery/MOTStatisticsDetail',
+    path: '/fsp/MOTStatisticsDetail',
     action: 'loadInTab',
     containerId: 'FSP_MOT_TAB_SERVICE_STATISTICS',
     url: /\/mot\/statistics\/detail\/(showMotThingViewDetail)|(showMotExeStatusDetail)/,
@@ -103,6 +103,12 @@ const fspRoutes = [
     path: '/fsp/customerCenter/360OperateType',
     action: 'loadInTab',
     url: /\/customerCenter\/360\/.+(?=operateType)/,
+  },
+  // 投顾签约计划变更向导
+  {
+    path: '/fsp/customerCenter/360Wizard',
+    action: 'loadInTab',
+    url: /client\/tgcontractupd\/wizard\/main/,
   },
   // 合约历史记录
   {
@@ -185,7 +191,7 @@ const fspRoutes = [
   {
     path: '/fsp/businessApplyment/bizapply/applyment',
     action: 'loadInTab',
-    containerId: '',
+    containerId: 'FSP_BUSINESS_APPLYMENT_AP_LIST',
     url: '/bizapply/appoint/appointDrawTab',
   },
   // 预约取款申请
@@ -255,7 +261,7 @@ const fspRoutes = [
   {
     path: '/fsp/businessApplyment/appropriate/priProd',
     action: 'loadInTab',
-    containerId: '',
+    containerId: 'FSP_PP_M_PRIPROD',
     url: '/priProd/initmain',
   },
    // 私募产品信息
