@@ -156,6 +156,25 @@ function initFspMethod({ store, history, isInReact }) {
           });
         },
       },
+      loadPageInWindow: {
+        run(url, actionParam) {
+          const contextPath = window.contextPath || '/fsp';
+          const options = $.extend(
+            {},
+            {
+              height: 500,
+              width: 800,
+              id: 'system-model-window',
+              scrollY: true,
+              show_cover: true,
+              title: '窗口标题',
+            },
+            actionParam,
+            { sourceURL: contextPath + url });
+
+          window.$('body').EBWindow(options);
+        },
+      },
       loadPageInTabII: {
         run(url, { reactShouldRemove }) {
           const { path } = findRoute(url);
