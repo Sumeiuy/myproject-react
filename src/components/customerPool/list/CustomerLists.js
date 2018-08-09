@@ -18,7 +18,7 @@ import BottomFixedBox from './BottomFixedBox';
 import SignCustomerLabel from './modal/SignCustomerLabel';
 import MultiCustomerLabel from './modal/MultiCustomerLabel';
 import { openInTab } from '../../../utils';
-import { url as urlHelper, emp } from '../../../helper';
+import { url as urlHelper, emp, number } from '../../../helper';
 import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
@@ -700,7 +700,7 @@ export default class CustomerLists extends PureComponent {
         >
           <Pagination
             {...paginationOption}
-            showTotal={total => `共${total}位匹配客户`}
+            showTotal={total => `共${number.thousandFormat(total, false)}位匹配客户`}
           />
         </div>
         {
