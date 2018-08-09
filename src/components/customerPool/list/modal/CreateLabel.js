@@ -36,6 +36,8 @@ export default class CreateLabelType extends PureComponent {
       visible,
       preVisible: visible,
     };
+    // 新建标签id
+    this.newLabelId = '';
   }
 
   static propTypes = {
@@ -62,10 +64,11 @@ export default class CreateLabelType extends PureComponent {
     validateFields((error, values) => {
       if (!error) {
         addLabel({ ...values, labelName, labelFlag: '1' })
-          .then(() => {
+          .then((labelId) => {
             this.setState({
               visible: false,
             });
+            this.newLabelId = labelId;
           });
       } else {
         console.log('error', error, values);
@@ -80,8 +83,16 @@ export default class CreateLabelType extends PureComponent {
     });
   }
 
+  @autobind
+  handleAfterClose() {
+    const { closeModal } = this.props;
+    closeModal(this.newLabelId);
+    // 新建标签结束,重置新建标签id
+    this.newLabelId = '';
+  }
+
   render() {
-    const { labelName, closeModal } = this.props;
+    const { labelName } = this.props;
     const { visible } = this.state;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
@@ -102,7 +113,7 @@ export default class CreateLabelType extends PureComponent {
         maskClosable={false}
         onCancel={this.handleCloseModal}
         onOk={this.handleCreateLabelSubmit}
-        afterClose={closeModal}
+        afterClose={this.handleAfterClose}
         destroyOnClose
       >
         <Form>

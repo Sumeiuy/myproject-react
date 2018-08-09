@@ -83,7 +83,7 @@ export default class ConnectedSignCustomerLabel extends PureComponent {
       addLabel,
     } = this.props;
     const { custId } = this.state;
-    const { currentPytMng, mainPosition } = signLabelCust;
+    const { currentPytMng = {}, mainPosition } = signLabelCust;
     return (
       <SignCustomerLabel
         currentPytMng={currentPytMng}
