@@ -187,9 +187,13 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
-  handleCloseNewLabelModal() {
+  handleCloseNewLabelModal(labelId) {
     const { custId } = this.props;
+    const { selectedLabels } = this.state;
     this.queryLabelInfo('', () => {
+      const labelIds = _.map(selectedLabels, labelItem => labelItem.id);
+      const value = [...labelIds, labelId];
+      this.handleSelect({ value });
       this.setState({
         createLabelVisible: false,
         custId,
@@ -203,7 +207,7 @@ export default class SignCustomerLabel extends PureComponent {
     return (
       <span>
         <Modal
-          title="添加客户标签"
+          title={`${mainPosition ? '添加' : ''}客户标签`}
           width={650}
           visible={Boolean(custId)}
           wrapClassName={styles.signCustomerLabel}
@@ -213,7 +217,18 @@ export default class SignCustomerLabel extends PureComponent {
           onOk={this.handleSubmitSignLabel}
           afterClose={this.handleOpenNewLabelModal}
         >
-          <div className={styles.selectedInfo}>请为已选择客户选择一个标签：</div>
+          <div className={styles.selectedInfo}>
+            {
+              mainPosition
+                ? '请为客户选择一个标签：'
+                : null
+            }
+            {
+              !mainPosition && !selectedLabels.length
+                ? '服务经理还没有给这个客户设置标签'
+                : null
+            }
+          </div>
           <div className={styles.singleLabel}>
             {mainPosition ?
               selectedLabels
