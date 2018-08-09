@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 16:16:47
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 20:06:00
+ * @Last Modified time: 2018-08-09 20:26:29
  */
 
 import React, { PureComponent } from 'react';
@@ -36,6 +36,7 @@ export default class GroupToLabel extends PureComponent {
 
   static contextTypes = {
     replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -146,7 +147,7 @@ export default class GroupToLabel extends PureComponent {
             },
           } = this.props;
           message.success('分组转标签成功');
-          // 当分组转标签进行多次提交的时候，url的参数在replace时没有改变不请求
+          // 当分组转标签进行多次提交的时候，url的参数在push时没有改变不请求
           // 需要单独发一个请求
           if (curPageNum === '1' && curPageSize === '10' && keyWord === '') {
             getLabelList({
@@ -154,13 +155,8 @@ export default class GroupToLabel extends PureComponent {
               curPageSize: 10,
             });
           } else {
-            this.context.replace({
+            this.context.push({
               pathname,
-              query: {
-                curPageNum: 1,
-                curPageSize: 10,
-                keyWord: '',
-              },
             });
           }
           // 关闭模态框
