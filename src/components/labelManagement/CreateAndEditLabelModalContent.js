@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 20:09:39
+ * @Last Modified time: 2018-08-09 20:15:28
  */
 
 import React, { PureComponent } from 'react';
@@ -823,7 +823,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
           title="提示"
           onCancel={this.importHandleCancel}
           footer={[
-            <Button style={{ marginRight: '10px' }} key="back" onClick={this.importHandleCancel}>
+            <Button style={{ marginRight: '10px' }} onClick={this.importHandleCancel}>
               否
             </Button>,
             <Upload {...uploadProps} {...this.props}>
