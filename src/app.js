@@ -171,6 +171,8 @@ app.model(require('./models/custRelationships'));
 app.model(require('./models/cancelAccountOL'));
 // 自定义标签类型
 app.model(require('./models/customerLabel'));
+// 管理标签页面
+app.model(require('./models/labelManagement'));
 
 // 4. Route
 app.router(routerConfig);

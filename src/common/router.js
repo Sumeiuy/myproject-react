@@ -242,7 +242,7 @@ export const getRouterData = (app) => {
     },
     // 从管理者视图服务经理维度发起任务
     '/customerPool/createTaskFromCustScope': {
-      component: CreateTask
+      component: CreateTask,
     },
     // 客户列表发起任务
     '/customerPool/createTask': {
@@ -471,7 +471,7 @@ export const getRouterData = (app) => {
     // 最新观点，直接进入
     '/latestView': {
       component: dynamicWrapper(app, ['latestView'], () =>
-        import('../routes/latestView/Home' /* webpackChunkName: "latestView"*/)),
+        import('../routes/latestView/Home' /* webpackChunkName: "latestView" */)),
     },
     // 首席观点列表页面
     '/latestView/viewpointList': {
@@ -486,12 +486,12 @@ export const getRouterData = (app) => {
     // 大类资产配置分析列表
     '/latestView/majorAssetsList': {
       component: dynamicWrapper(app, ['latestView'], () =>
-        import('../routes/latestView/MajorAssetsList' /* webpackChunkName: "majorAssetsList"*/)),
+        import('../routes/latestView/MajorAssetsList' /* webpackChunkName: "majorAssetsList" */)),
     },
     // 行业主题调整信息列表
     '/latestView/industryThemeList': {
       component: dynamicWrapper(app, ['latestView'], () =>
-        import('../routes/latestView/IndustryThemeList' /* webpackChunkName: "industryThemeList"*/)),
+        import('../routes/latestView/IndustryThemeList' /* webpackChunkName: "industryThemeList" */)),
     },
     // 股票期权评估申请
     '/stockOptionEvaluation': {
@@ -512,6 +512,11 @@ export const getRouterData = (app) => {
     '/cancelAccountOLReject': {
       component: dynamicWrapper(app, ['cancelAccountOL'], () =>
         import('../routes/cancelAccountOL/RejectHome') /* webpackChunkName: "cancelAccountOLReject" */),
+    },
+    // 管理标签
+    '/labelManagement': {
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/labelManagement/Home') /* webpackChunkName: "labelManagement" */),
     },
   };
   return routerConfig;
