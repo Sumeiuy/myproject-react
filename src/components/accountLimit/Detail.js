@@ -30,7 +30,7 @@ const empOrgId = emp.getPstnId();
 // 表头
 const {
   tableTitle: { custList: custTitleList },  // 客户表格列表
-  // operateTypeArray,  // 操作类型枚举
+  operateTypeArray,  // 操作类型枚举
   attachmentMap,  // 附件类型枚举
 } = config;
 // 客户姓名
@@ -76,8 +76,8 @@ export default class Detail extends PureComponent {
   // 获取附件列表的标题
   @autobind
   getAttachmentTitle(type) {
-    const filterTitle = _.filter(attachmentMap, o => o.type === type);
-    return filterTitle[0].title || '';
+    const filterTitle = _.filter(attachmentMap, o => o.type === type) || [];
+    return _.get(filterTitle[0], 'title', type);
   }
 
   // 空方法，用于日志上报
@@ -87,10 +87,10 @@ export default class Detail extends PureComponent {
   render() {
     const {
       data: {
-        // operateType,
+        operateType,
         companyName,
         stockCode,
-        isBankConfirm,
+        bankConfirm,
         limitType,
         limitStartTime,
         limitEndTime,
@@ -139,7 +139,7 @@ export default class Detail extends PureComponent {
 
     const newTitleList = this.getColumnsCustTitleList(custTitleList);
 
-    // const filterOperate = _.filter(operateTypeArray, o => o.value === operateType);
+    const filterOperate = _.filter(operateTypeArray, o => o.value === operateType);
     return (
       <div className={styles.detailBox}>
         <h2 className={styles.title}>编号{id}</h2>
@@ -172,10 +172,15 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.module}>
           <InfoTitle head="基本信息" />
-          {/* <InfoItem label="操作类型" width="120px" value={filterOperate[0].label} /> */}
+          <InfoItem label="操作类型" width="120px" value={filterOperate[0].label} />
           <InfoItem label="公司简称" className={styles.inlineInfoItem} width="120px" value={companyName} />
           <InfoItem label="证券代码" className={styles.inlineInfoItem} width="120px" value={stockCode} />
-          <InfoItem label="是否银行确认" className={styles.inlineInfoItem} width="120px" value={isBankConfirm ? '是' : '否'} />
+          {/* 操作类型为限制解除时显示银行确认 */}
+          {
+            operateType === operateTypeArray[1].value
+            ? <InfoItem label="是否银行确认" className={styles.inlineInfoItem} width="120px" value={bankConfirm ? '是' : '否'} />
+            : null
+          }
         </div>
         <div className={styles.module}>
           <InfoTitle head="客户列表" />
@@ -191,7 +196,7 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.module}>
           <InfoTitle head="限制信息" />
-          <InfoItem label="限制类型" value={(_.map(limitType, 'name').join('、'))} />
+          <InfoItem label="限制类型" value={(_.map(limitType, 'label').join('、'))} />
           <InfoItem label="账户限制设置日期" className={styles.inlineInfoItem} value={time.format(limitStartTime)} />
           <InfoItem label="账户限制解除日期" className={styles.inlineInfoItem} value={time.format(limitEndTime)} />
         </div>
@@ -208,7 +213,7 @@ export default class Detail extends PureComponent {
               attachList.map(item => (<MultiUploader
                 attachmentList={item.attachmentList}
                 attachment={''}
-                title={item.title}
+                title={this.getAttachmentTitle(item.title)}
                 key={`${appId}-${item.attachment}`}
               />))
               :
