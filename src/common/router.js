@@ -516,7 +516,7 @@ export const getRouterData = (app) => {
     // 管理标签
     '/labelManagement': {
       component: dynamicWrapper(app, [], () =>
-        import('../routes/labelManagement/Home')),
+        import('../routes/labelManagement/Home') /* webpackChunkName: "labelManagement" */),
     },
   };
   return routerConfig;

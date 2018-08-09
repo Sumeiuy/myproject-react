@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 17:45:58
+ * @Last Modified time: 2018-08-09 20:10:09
  */
 
 import React, { PureComponent } from 'react';
@@ -293,7 +293,6 @@ export default class CustomerGroupManage extends PureComponent {
     },
   })
   lanuchTask(record) {
-    console.log('launch task');
     const { id, labelName, custCount } = record;
     if (custCount <= 0) {
       message.error('该标签下没有客户，不能发起任务');
@@ -383,7 +382,7 @@ export default class CustomerGroupManage extends PureComponent {
         // 存在custIdList,在取消的时候提示
         confirm({
           content: '客户已添加成功，如需取消添加的客户请在列表中删除',
-          onOk: () => { this.toggleCreateAndEditLabelModalVisible(); },
+          onOk: () => { this.toggleCreateAndEditLabelModalVisible(false); },
           onCancel: _.noop,
         });
       } else {
@@ -394,7 +393,7 @@ export default class CustomerGroupManage extends PureComponent {
     } else if (!_.isEmpty(custIds)) {
       confirm({
         content: '在新增模式下，添加客户需要提交才能生效，确认取消？',
-        onOk: () => { this.toggleCreateAndEditLabelModalVisible(); },
+        onOk: () => { this.toggleCreateAndEditLabelModalVisible(false); },
         onCancel: _.noop,
       });
     } else {

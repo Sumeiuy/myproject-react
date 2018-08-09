@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-08 17:14:37
+ * @Last Modified time: 2018-08-09 20:05:30
  */
 
 import React, { PureComponent } from 'react';
@@ -41,7 +41,7 @@ export default class FirstContent extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '分组转标签选择分组',
-      value: 'arg[0][groupName]',
+      value: '$arg[0][groupName]',
     },
   })
   handleSingleRowSelectionChange(record) {

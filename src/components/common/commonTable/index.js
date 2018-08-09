@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-03 17:42:14
+ * @Last Modified time: 2018-08-09 19:36:41
  */
 
 import React, { PureComponent } from 'react';
@@ -268,7 +268,7 @@ export default class CommonTable extends PureComponent {
       fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
       render: (text, record) => {
         let node = (
-          <span title={item.renderTitle ? item.renderTitle(record) : record[item.key]} className={'column'}>
+          <span title={item.renderTitle ? item.renderTitle(record) : record[item.key]} className="column">
             {this.renderColumnValue(record, item)}
           </span>
         );

@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 16:16:47
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 10:02:44
+ * @Last Modified time: 2018-08-09 20:06:00
  */
 
 import React, { PureComponent } from 'react';
@@ -164,7 +164,7 @@ export default class GroupToLabel extends PureComponent {
             });
           }
           // 关闭模态框
-          toggleGroupToLabelModalVisible();
+          toggleGroupToLabelModalVisible(false);
         }
       });
     });
@@ -233,7 +233,7 @@ export default class GroupToLabel extends PureComponent {
       <div className={styles.operationBtnSection}>
         <Button
           className={styles.btn}
-          onClick={() => toggleGroupToLabelModalVisible()}
+          onClick={() => toggleGroupToLabelModalVisible(false)}
         >
           取消
         </Button>
@@ -287,7 +287,7 @@ export default class GroupToLabel extends PureComponent {
         title="分组转标签"
         closable
         maskClosable={false}
-        onCancel={() => toggleGroupToLabelModalVisible()}
+        onCancel={() => toggleGroupToLabelModalVisible(false)}
         footer={this.renderModalFooter()}
       >
         {this.switchStep()}

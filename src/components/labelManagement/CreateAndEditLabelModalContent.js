@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 15:41:58
+ * @Last Modified time: 2018-08-09 20:09:39
  */
 
 import React, { PureComponent } from 'react';
@@ -101,15 +101,14 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
+    const { customerList: prevList = EMPTY_OBJECT } = prevProps;
+    const { custInfoVOList: prevData = EMPTY_LIST } = prevList;
     const { customerList = EMPTY_OBJECT } = this.props;
-    const { custInfoVOList: prevData = EMPTY_LIST } = customerList;
-    const { customerList: nextList = EMPTY_OBJECT } = nextProps;
-    const { custInfoVOList: nextData = EMPTY_LIST, totalRecordNum } = nextList;
-
-    if (prevData !== nextData) {
-      this.setState({
-        dataSource: nextData,
+    const { custInfoVOList = EMPTY_LIST, totalRecordNum } = customerList;
+    if (prevData !== custInfoVOList) {
+      this.setState({  // eslint-disable-line
+        dataSource: custInfoVOList,
         // 总条目与当前新增cust条目相加
         totalRecordNum,
       });
@@ -177,7 +176,6 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
   */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    console.log(nextPage, currentPageSize);
     this.setState({
       curPageNum: nextPage,
       curPageSize: currentPageSize,
@@ -192,7 +190,6 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
    */
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    console.log(currentPageNum, changedPageSize);
     this.setState({
       curPageNum: currentPageNum,
       curPageSize: changedPageSize,
@@ -313,12 +310,11 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
       value: '$args[0].value',
     },
   })
-  handleSearchClick({ value, selectedItem }) {
+  handleSearchClick({ value }) {
     const { getHotPossibleWds } = this.props;
     getHotPossibleWds({
       keyword: value,
     });
-    console.log('search click', value, JSON.stringify(selectedItem));
   }
 
   @autobind
@@ -458,7 +454,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
 
   // 上传事件
   @autobind
-  onChange(info) {
+  handleChange(info) {
     this.setState({
       importVisible: false,
       includeCustList: [],
@@ -668,7 +664,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
       headers: {
         accept: '*/*',
       },
-      onChange: this.onChange,
+      onChange: this.handleChange,
       showUploadList: false,
     };
 
@@ -701,9 +697,9 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
               })(
                 <Input
                   className={styles.labelNameInput}
-                  id={'nameInput'}
+                  id="nameInput"
                   placeholder={canEditDetail ? '请输入标签名称' : ''}
-                  size={'default'}
+                  size="default"
                   ref={ref => (this.nameInput = ref)}
                   disabled={!canEditDetail}
                   onBlur={this.handleCheckLabelName}
@@ -730,9 +726,9 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
               })(
                 <Input.TextArea
                   className={styles.labelDescInput}
-                  id={'descriptionInput'}
+                  id="descriptionInput"
                   placeholder={canEditDetail ? '请输入标签描述' : ''}
-                  size={'default'}
+                  size="default"
                   autosize={false}
                   disabled={!canEditDetail}
                   ref={ref => (this.descriptionInput = ref)}
@@ -769,7 +765,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
                   // 搜索按钮功能
                   onSearchClick={this.handleSearchClick}
                   // placeholder
-                  placeholder={'客户号/姓名'}
+                  placeholder="客户号/姓名"
                   // 搜索框style
                   searchStyle={searchStyle}
                   // 是否需要搜索图标
