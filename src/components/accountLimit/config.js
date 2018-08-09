@@ -123,17 +123,11 @@ const config = {
     {
       type: 'yhqrjccl',
       title: '银行确认解除材料',
-      show: false,
+      show: true,
       isLimit: true,
       limitCount: 1,
       length: 0,
       required: true,
-    },
-    {
-      type: 'yhtzyj',
-      title: '银行通知邮件',
-      show: false,
-      length: 0,
     },
   ],
   errorArray: ['validateError', 'otherError'],

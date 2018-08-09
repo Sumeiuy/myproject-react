@@ -345,6 +345,14 @@ export default class AccountLimitHome extends PureComponent {
     const { activeRowIndex } = this.state;
     const { status: statusData, subType } = record;
     const statusTags = [convert.getStatusByCode(statusData)];
+    const filterOperate = _.filter(operateTypeArray, o => o.value === subType) || [];
+    const operateTypeName = filterOperate[0].label || '';
+    // 限制解除时为字体加上其他颜色
+    const otherStyle = subType === operateTypeArray[1].value
+    ? {
+      color: '#dc8f4c',
+    }
+    : null;
     return (
       <ApplyItem
         key={record.id}
@@ -354,7 +362,8 @@ export default class AccountLimitHome extends PureComponent {
         onClick={this.handleListRowClick}
         pageName={pageName}
         iconType="kehu1"
-        typeName={subType}
+        typeName={operateTypeName}
+        typeNameStyle={otherStyle}
         subTypeName={pageName}
         statusTags={statusTags}
         showSecondLineInfo={this.showSecondLineInfo}
