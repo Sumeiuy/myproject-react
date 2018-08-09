@@ -1,0 +1,31 @@
+.modalContent {
+  padding: 20px;
+  .tableTitle {
+    margin-bottom: 8px;
+  }
+  .groupListTable {
+    padding: 0 !important;
+    table > thead > tr > th, tbody > tr > td {
+      padding: 7px 0 !important;
+      text-align: center !important;
+    }
+    tbody > tr > td > span:last-child {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin: 0 auto;
+    }
+    table > thead > tr > th {
+      text-align: center !important;
+    }
+    :global {
+      .ant-table-header {
+        background-color: #fff;
+        table {
+          border-bottom: 0;
+        }
+      }
+    }
+  }
+}

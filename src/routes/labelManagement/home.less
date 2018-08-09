@@ -110,21 +110,16 @@
   box-shadow: 5px 5px 5px #c6c7c8;
   :global {
     & .ant-modal {
-      width: 700px !important;
-    }
-    & .ant-modal-title {
-      color: #696969;
-      font-size: 14px;
-      font-weight: 600;
+      width: 650px !important;
     }
     & .ant-modal-header {
-      border-bottom: 0;
       padding: 0 20px 0 25px;
-      height: 40px;
-      // overflow: hidden;
-      vertical-align: middle;
+      height: 50px;
       & > .ant-modal-title {
-        line-height: 40px;
+        line-height: 50px;
+        color: #696969;
+        font-size: 14px;
+        font-weight: 600;
       }
     }
     & .ant-modal-footer {
@@ -135,14 +130,6 @@
         width: 70px;
         height: 30px;
       }
-    }
-    & .ant-modal-header::after {
-      display: block;
-      content: '';
-      height: 1px;
-      width: 100%;
-      margin: 0 auto;
-      border-bottom: 1px solid #efefef;
     }
     & .ant-modal-body {
       padding: 0;
@@ -186,13 +173,9 @@
   justify-content: flex-end;
   align-items: center;
   width: 100%;
-  .cancel {
-    width: 68px;
-    height: 28px;
+  .cancel, .submit {
+    width: 80px;
+    height: 30px;
     margin-right: 15px;
-  }
-  .submit {
-    width: 68px;
-    height: 28px;
   }
 }

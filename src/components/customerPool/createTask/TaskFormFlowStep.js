@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-03 19:51:40
+ * @Last Modified time: 2018-08-08 09:55:47
  */
 
 import React, { PureComponent } from 'react';
@@ -192,7 +192,7 @@ export default class TaskFormFlowStep extends PureComponent {
   constructParam() {
     const {
       parseQuery,
-      location: { query: { groupId, enterType, source, labelId: tagId } },
+      location: { query: { groupId, enterType, source, signedLabelId } },
     } = this.props;
 
     const {
@@ -229,7 +229,7 @@ export default class TaskFormFlowStep extends PureComponent {
     } else if (source === SOURCE_LABELMANAGEMENT) {
       // 从管理标签过来的
       req = {
-        labelId: tagId,
+        signedLabelId,
       };
     } else {
       req = { searchReq: custCondition, custIdList };
