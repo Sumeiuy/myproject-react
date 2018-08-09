@@ -513,6 +513,11 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['cancelAccountOL'], () =>
         import('../routes/cancelAccountOL/RejectHome') /* webpackChunkName: "cancelAccountOLReject" */),
     },
+    // 管理标签
+    '/labelManagement': {
+      component: dynamicWrapper(app, [], () =>
+        import('../routes/labelManagement/Home')),
+    },
   };
   return routerConfig;
 };
