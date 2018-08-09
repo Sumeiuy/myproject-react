@@ -14,6 +14,7 @@ import Loading from './Loading';
 import withRouter from '../decorators/withRouter';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
+import ConnectedSignCustomerLabel from '../components/customerPool/list/modal/ConnectedSignCustomerLabel';
 import ContextProvider from './ContextProvider';
 import IEWarningModal from '../components/common/IEWarningModal';
 import PhoneWrapper from './PhoneWrapper';
@@ -150,6 +151,7 @@ export default class Main extends Component {
                               serviceRecordInfo={serviceRecordInfo}
                               isPhoneCall={isPhoneCall}
                             />
+                            <ConnectedSignCustomerLabel />
                           </div>
                         : null
                     }

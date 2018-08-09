@@ -25,5 +25,7 @@ export default function customerPool(api) {
     signCustLabels: query => api.post('/groovynoauth/fsp/cust/custlabel/signCustLabels', query),
     // 给多客户打标签
     signBatchCustLabels: query => api.post('/groovynoauth/fsp/cust/custlabel/signBatchCustLabels', query),
+    // 模糊查询客户标签
+    queryLikeLabelInfo: query => api.post('/groovynoauth/fsp/cust/custlabel/queryLabelList', query),
   };
 }

@@ -1,0 +1,152 @@
+.cancelAccountContainer {
+  width: 100%;
+  padding: 10px 30px;
+
+  &.reject {
+    padding: 10px 0;
+  }
+
+  .divider {
+    background-color: #ddd;
+    height: 1px;
+    width: 100%;
+    margin: 14px 0;
+  }
+
+  .rejectCust {
+    height: 32px;
+
+    & > .rejectCustLabel {
+      display: inline-block;
+      width: 90px;
+      font-size: 14px;
+      color: #a1a1a1;
+      line-height: 32px;
+      text-align: right;
+    }
+
+    & > .rejectCustName {
+      font-size: 14px;
+      color: #333;
+      line-height: 32px;
+    }
+  }
+  .orgName {
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .infoCellInput {
+    flex: 0 0 auto;
+    display: inline-block;
+    height: 30px;
+    width: 180px;
+    vertical-align: middle;
+
+    &.ml15 {
+      margin-left: 15px;
+    }
+
+    &.autoWidth {
+      flex: 1 1 auto;
+    }
+
+    :global {
+      .ant-input {
+        height: 30px;
+        line-height: 30px;
+      }
+      .lego-filter-menuContainer .lego-filter-menu {
+        width: 180px;
+      }
+    }
+
+    & > .investVarFilter {
+      width: 180px;
+      height: 30px;
+
+      :global {
+        .lego-filter-filterWrapper {
+          width: 100%;
+          & button:first-child {
+            border-color: #e1e1e1;
+          }
+          & > .ant-btn {
+            vertical-align: middle;
+            width: 100%;
+
+            .lego-filter-contentShowOnButton {
+              width: 100%;
+
+              .lego-filter-customerFilterValue {
+                display: inline-block;
+                margin-left: 0;
+                width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                text-align: left;
+                font-size: 12px;
+                color: rgba(0, 0, 0, .65);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .commentArea {
+    display: flex;
+    align-items: stretch;
+    height: 110px;
+
+    .label {
+      font-size: 14px;
+      color: #9b9b9b;
+      text-align: right;
+      line-height: 30px;
+      width: 90px;
+      flex: 0 0 auto;
+      .required {
+        margin-right: 4px;
+        color: red;
+        font-style: normal;
+        line-height: 30px;
+      }
+      .colon {
+        padding: 0 4px;
+      }
+    }
+
+    .textArea {
+      flex: 1 1 auto;
+      :global {
+        .ant-input {
+          width: 100%;
+          height: 100%;
+          font-size: 14px;
+          line-height: 30px;
+        }
+      }
+    }
+  }
+
+  :global {
+    .ant-row-flex {
+      margin-bottom: 15px;
+    }
+    .ant-select-selection--single {
+      height: 30px;
+    }
+  }
+}
+
+.custAutoCompleteOptionValue {
+  font-size: 14px;
+  color: #4a4a4a;
+  line-height: 18px;
+}

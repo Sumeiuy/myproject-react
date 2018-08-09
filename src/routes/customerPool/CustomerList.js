@@ -71,6 +71,7 @@ const effects = {
   queryLikeLabelInfo: 'customerLabel/queryLikeLabelInfo',
   signCustLabels: 'customerLabel/signCustLabels',
   signBatchCustLabels: 'customerLabel/signBatchCustLabels',
+  addLabel: 'customerLabel/addLabel',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -178,6 +179,7 @@ const mapDispatchToProps = {
   queryLikeLabelInfo: fetchDataFunction(false, effects.queryLikeLabelInfo),
   signCustLabels: fetchDataFunction(true, effects.signCustLabels),
   signBatchCustLabels: fetchDataFunction(true, effects.signBatchCustLabels),
+  addLabel: fetchDataFunction(true, effects.addLabel),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -250,6 +252,7 @@ export default class CustomerList extends PureComponent {
     signBatchCustLabels: PropTypes.func.isRequired,
     custLabel: PropTypes.object.isRequired,
     custLikeLabel: PropTypes.array.isRequired,
+    addLabel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -724,6 +727,7 @@ export default class CustomerList extends PureComponent {
       signBatchCustLabels,
       custLabel,
       custLikeLabel,
+      addLabel,
     } = this.props;
     const {
       sortDirection,
@@ -848,6 +852,7 @@ export default class CustomerList extends PureComponent {
           signBatchCustLabels={signBatchCustLabels}
           custLabel={custLabel}
           custLikeLabel={custLikeLabel}
+          addLabel={addLabel}
         />
       </div>
     );

@@ -47,6 +47,7 @@ const onError = (e) => {
       // 错误类型是1，用dialog
       CommonModal.showErrorDialog(errorMessage);
     } else if (messageType === '2') {
+      message.error(errorMessage);
       // 业务错误
       logCommon({
         type: 'bizError',
@@ -154,6 +155,8 @@ app.model(require('./models/operationCenter'));
 app.model(require('./models/businessDepartmentCustDistribute'));
 // 分公司客户分配
 app.model(require('./models/custAllot'));
+// 营业部客户分配
+app.model(require('./models/departmentCustAllot'));
 // 消息通知提醒
 app.model(require('./models/messageCenter'));
 // 股票期权评估申请
@@ -164,6 +167,8 @@ app.model(require('./models/latestView'));
 app.model(require('./models/keyMonitorAccount'));
 // 客户关联关系
 app.model(require('./models/custRelationships'));
+// 线上销户
+app.model(require('./models/cancelAccountOL'));
 // 自定义标签类型
 app.model(require('./models/customerLabel'));
 // 管理标签页面

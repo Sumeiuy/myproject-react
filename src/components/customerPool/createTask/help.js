@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
  * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-11 15:26:43
+ * @Last Modified time: 2018-07-25 17:00:15
  */
 
 import _ from 'lodash';
@@ -18,21 +18,22 @@ const FORMAT = 'YYYY年M月D日';
 
 // 根据url中primaryKeyLabels参数和全量的标签信息，生成当前url的primaryKeyLabels中id集合所对应的标签信息
 function getLabel(filterObj, labelInfos) {
+  let aimLabelList = [];
+  let normalLabelList = [];
   if (filterObj.primaryKeyLabels) {
     const labelList = _.compact([].concat(filterObj.primaryKeyLabels));
     // 瞄准镜标签
-    const aimLabelList = _.filter(
+    aimLabelList = _.filter(
       labelInfos,
       item => _.includes(labelList, item.id) && isSightingScope(item.source),
     );
     // 普通标签
-    const normalLabelList = _.filter(
+    normalLabelList = _.filter(
       labelInfos,
       item => _.includes(labelList, item.id) && !isSightingScope(item.source),
     );
-    return { aimLabelList, normalLabelList };
   }
-  return {};
+  return { aimLabelList, normalLabelList };
 }
 
 // 生成一个格式为 名称#id# 的集合
@@ -51,24 +52,24 @@ function getFormattedData(data) {
  * @param {*} labelInfos 字典中全量标签字段
  */
 function getLabelInfo(filterObj, labelInfos) {
-  let htmlStrList = [];
-  let suggestionList = [];
+  let labelHtmlStrList = [];
+  let labelSuggestionList = [];
   // 标签: aimLabelList瞄准镜， normalLabelList普通标签
   const { aimLabelList = [], normalLabelList = [] } = getLabel(filterObj, labelInfos);
   const nameAndIdList = getNameAndIdList(aimLabelList);
   if (!_.isEmpty(nameAndIdList)) {
-    suggestionList = getFormattedData(nameAndIdList);
+    labelSuggestionList = getFormattedData(nameAndIdList);
     const list = _.map(nameAndIdList, item => `瞄准镜标签： $${item} `);
-    htmlStrList = [...htmlStrList, ...list];
+    labelHtmlStrList = [...labelHtmlStrList, ...list];
   }
   if (!_.isEmpty(normalLabelList)) {
     const list = _.map(normalLabelList, item => `标签条件： ${item.name} `);
-    htmlStrList = [...htmlStrList, ...list];
+    labelHtmlStrList = [...labelHtmlStrList, ...list];
   }
 
   return {
-    htmlStrList,
-    suggestionList,
+    labelHtmlStrList,
+    labelSuggestionList,
   };
 }
 
@@ -77,17 +78,17 @@ function getLabelInfo(filterObj, labelInfos) {
  * @param {*} filterObj url中解析出来的filter字段
  */
 function getHoldingProductInfo(filterObj) {
-  let htmlStr = '';
-  let suggestionList = [];
+  let holdingProductHtmlStr = '';
+  let holdingProductSuggestionList = [];
   const holdingProduct = filterObj.primaryKeyPrdts;
   if (!_.isEmpty(holdingProduct)) {
     const list = [`持仓数量#${holdingProduct[0]}#`, `持仓市值#${holdingProduct[0]}#`];
-    suggestionList = getFormattedData(list);
-    htmlStr += `持仓产品 ${holdingProduct[1]}, 数量为 $${list[0]} ，市值为 $${list[1]} `;
+    holdingProductSuggestionList = getFormattedData(list);
+    holdingProductHtmlStr += `持仓产品 ${holdingProduct[1]}, 数量为 $${list[0]} ，市值为 $${list[1]} `;
   }
   return {
-    htmlStr,
-    suggestionList,
+    holdingProductHtmlStr,
+    holdingProductSuggestionList,
   };
 }
 
@@ -288,42 +289,31 @@ function getCapitalRangInfo({ filterField, labelName }, filterObj) {
   return '';
 }
 
-// 潜在业务客户
-function getBizInfo(field) {
-  if (!_.isEmpty(field)) {
-    return '可开通业务： $可开通业务 ';
-  }
-  return '';
-}
-
 // 新版客户表发起任务，在新建任务的任务提示的显示的信息
-function getFilterInfo({ filterObj, dict, industryList, query }) {
+function getFilterInfo({ filterObj, dict, industryList }) {
   const {
     labelInfos, kPIDateScopeType,
     singleBusinessTypeList,
   } = dict;
-  let htmlStr = '<div><div>该客户通过淘客筛选，满足以下条件：</div>';
+  let htmlStr = '';
   let suggestionList = [];
   // url中filter没有值时，只显示’可开通业务‘
-  if (_.isEmpty(filterObj)) {
-    htmlStr += '<div>1.可开通业务： $可开通业务 </div>';
-  } else {
+  if (!_.isEmpty(filterObj)) {
     const {
-      htmlStrList: labelHtmlStrList,
-      suggestionList: labelSuggestionList,
+      labelHtmlStrList,
+      labelSuggestionList,
     } = getLabelInfo(filterObj, labelInfos);
     const {
-      htmlStr: holdingProductHtmlStr,
-      suggestionList: holdingProductSuggestionList,
+      holdingProductHtmlStr,
+      holdingProductSuggestionList,
     } = getHoldingProductInfo(filterObj);
     const businessOpenedHtmlStr =
       getBusinessOpenedInfo(filterObj, kPIDateScopeType, singleBusinessTypeList);
     const ageHtmlStr = getAgeFilterInfo(filterObj.age);
     const lastServiceHtmlStr = getLatestServiceInfo(filterObj.lastServDt, serviceCustomerState);
     const minFeeHtmlStr = getMinfeeInfo(filterObj.minFee);
-    const bizInfo = getBizInfo(query.bizFlag);
     let list = [
-      bizInfo, holdingProductHtmlStr, businessOpenedHtmlStr,
+      holdingProductHtmlStr, businessOpenedHtmlStr,
       ageHtmlStr, lastServiceHtmlStr, minFeeHtmlStr,
     ];
     list = [...list, ...labelHtmlStrList];
@@ -346,11 +336,15 @@ function getFilterInfo({ filterObj, dict, industryList, query }) {
       list.push(getCapitalRangInfo(item, filterObj));
     });
     suggestionList = [...labelSuggestionList, ...holdingProductSuggestionList];
-    _.each(_.compact(list), (item, index) => {
-      htmlStr += `<div>${index + 1}.${item}</div>`;
-    });
+    const tempList = _.compact(list);
+    if (!_.isEmpty(tempList)) {
+      htmlStr += '<div><div>该客户通过淘客筛选，满足以下条件：</div>';
+      _.each(tempList, (item, index) => {
+        htmlStr += `<div>${index + 1}.${item}</div>`;
+      });
+      htmlStr += '</div>';
+    }
   }
-  htmlStr += '</div>';
   return {
     htmlStr,
     suggestionList,

@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-24 10:13:17
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-14 15:54:21
+ * @Last Modified time: 2018-07-19 14:51:58
  */
 
 import React, { PureComponent } from 'react';
@@ -27,24 +27,23 @@ import config from './config';
 import styles from './addCustModal.less';
 
 // 表头
-const { titleList: { cust: custTitleList }, clearDataArray } = config;
+const {
+  titleList: { cust: custTitleList },
+  clearDataArray,
+  operateType,
+  limit: { count: LIMIT_COUNT, allCount: LIMIT_ALL_COUNT },
+  errorMessage: { count: ERROR_MESSAGE_COUNT, allCount: ERROR_MESSAGE_ALL_COUNT },
+} = config;
 // 登陆人的组织ID
 const empOrgId = emp.getOrgId();
 // const empOrgId = 'ZZ001041093';
 const NO_VALUE = '不限';
 const INIT_PAGENUM = 1;
 const INIT_PAGESIZE = 10;
-// 所有条数限制为 2000
-const LIMIT_ALL_COUNT = 2000;
-// 勾选条数限制为 500
-const LIMIT_COUNT = 500;
 // 状态
 const KEY_STATUS = 'status';
 // 是否入岗投顾
 const KEY_ISTOUGU = 'touGu';
-// 添加客户报错信息
-const ERROR_MESSAGE_ALL_COUNT = `申请单客户列表客户数超过最大数量${LIMIT_ALL_COUNT}条。`;
-const ERROR_MESSAGE_COUNT = `一次勾选的客户数超过${LIMIT_COUNT}条，请分多次添加。`;
 export default class AddCustModal extends PureComponent {
   static propTypes = {
     // 已添加的客户数据
@@ -135,15 +134,15 @@ export default class AddCustModal extends PureComponent {
   getColumnsCustTitle() {
     const statusList = _.get(this.context, 'dict.accountStatusList') || [];
     const newTitleList = [...custTitleList];
-    const statusIndex = _.findIndex(newTitleList, o => o.key === KEY_STATUS);
-    // 是否是投顾
-    const isTouguIndex = _.findIndex(newTitleList, o => o.key === KEY_ISTOUGU);
-    newTitleList[statusIndex].render = (text) => {
+    const statusColumn = _.find(newTitleList, o => o.key === KEY_STATUS);
+    statusColumn.render = (text) => {
       const statusItem = _.filter(statusList, o => o.key === text);
       const statusText = statusItem.length ? statusItem[0].value : '';
       return (<div title={statusText}>{statusText}</div>);
     };
-    newTitleList[isTouguIndex].render = (text, record) => {
+    // 是否是投顾
+    const isTouguColumn = _.find(newTitleList, o => o.key === KEY_ISTOUGU);
+    isTouguColumn.render = (text, record) => {
       const isTouGu = text ? '是' : '否';
       return (<div>
         {
@@ -169,7 +168,6 @@ export default class AddCustModal extends PureComponent {
   searchCustList() {
     const { queryList } = this.props;
     const {
-      custKeyword,
       status,
       orgIdKeyWord,
       smKeyword,
@@ -188,7 +186,6 @@ export default class AddCustModal extends PureComponent {
     const newStatus = (status.length && _.isEmpty(status[0])) ? [] : [...status];
     const payload = {
       orgId: empOrgId,
-      custKeyword,
       status: newStatus,
       orgIdKeyWord,
       smKeyword,
@@ -210,15 +207,6 @@ export default class AddCustModal extends PureComponent {
   @autobind
   findContainer() {
     return this.filterWrap;
-  }
-
-  // 更改客户
-  @autobind
-  handleCustChange(value) {
-    this.setState({
-      custKeyword: value,
-      pageNum: INIT_PAGENUM,
-    }, this.searchCustList);
   }
 
   // 状态选中
@@ -334,7 +322,7 @@ export default class AddCustModal extends PureComponent {
     const payload = {
       customer: custList,
       manage: [],
-      type: 'add',
+      operateType: operateType[0], // add
       attachment: '',
       id: updateData.appId || '',
     };
@@ -387,7 +375,6 @@ export default class AddCustModal extends PureComponent {
       annualDailyAsset,
       lastYearAsset,
       annualAsset,
-      custKeyword,
       smKeyword,
       dmKeyword,
       selectedRows,
@@ -446,16 +433,6 @@ export default class AddCustModal extends PureComponent {
         <div className={styles.modalContent}>
           <div className={styles.contentItem}>
             <div className={styles.operateDiv} ref={filterWrap => this.filterWrap = filterWrap}>
-              <SingleFilter
-                className={styles.searchFilter}
-                filterName="客户"
-                showSearch
-                placeholder="请输入经纪客户号、姓名"
-                data={[]}
-                defaultSelectLabel={custKeyword || NO_VALUE}
-                value={custKeyword}
-                onInputChange={_.debounce(this.handleCustChange, 500)}
-              />
               <MultiFilter
                 className={styles.firstLineFilter}
                 filterName="状态"

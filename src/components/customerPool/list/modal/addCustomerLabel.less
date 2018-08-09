@@ -4,6 +4,72 @@
   .selectedInfo {
     margin-bottom: 10px;
   }
+  .singleLabel {
+    .addLabel {
+      cursor: pointer;
+      color: #ccc;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      position: relative;
+      z-index: 1000;
+      .addLabelBtn {
+        display: inline-block;
+        padding: 0 7px;
+        font-size: 12px;
+      }
+      :global {
+        .lego-filter-filterContainer {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
+        .lego-filter-filterWrapper {
+          height: 20px;
+          & > button:first-child {
+            width: 90px;
+            height: 20px;
+            min-width: auto;
+            overflow: hidden;
+            opacity: 0;
+          }
+        }
+      }
+    }
+    :global {
+      .ant-tag {
+        margin-bottom: 10px;
+      }
+    }
+  }
+  .signSelect {
+    width: 200px;
+    .labelItemWrap {
+      white-space: nowrap;
+    }
+    .newLabel {
+      padding-left: 14px;
+      height: 38px;
+      line-height: 38px;
+      color: #108ee9;
+      cursor: pointer;
+    }
+    :global {
+      .ant-btn {
+        min-width: 200px;
+        text-align: left;
+        border: 1px solid #ccc;
+      }
+      .lego-filter-menu {
+        min-width: 230px;
+      }
+    }
+  }
+  .errorMsg {
+    color: red;
+  }
   :global {
     .ant-modal-header, .ant-modal-footer {
       background: #f7f7f7;
@@ -29,6 +95,22 @@
       }
       .ant-select-selection__choice__remove {
         color: #d67c1e;
+      }
+    }
+    .ant-tag {
+      .anticon-cross {
+        color: #d67c1e;
+      }
+    }
+    .ant-tag-gold {
+      background: #fef7f0;
+      border: 1px solid #fcd2a6;
+      color: #d67c1e;
+      &:hover {
+        color: #faad14;
+        .anticon-cross {
+          color: #faad14;
+        }
       }
     }
   }

@@ -5,25 +5,20 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Route, Switch, Redirect } from 'dva/router';
+import { Route, Switch } from 'dva/router';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import menu from './menu';
 import withRouter from '../../decorators/withRouter';
 import Main from '../../components/platformParameterSetting/Main';
-import CustomerFeedback from '../../routes/customerFeedback/Home';
-import TaskFeedback from '../taskFeedback/Home';
-import InvestmentAdvice from '../investmentAdvice/Home';
-import { LabelManager,
-  CustomerLabel,
-  RecommendedLabel,
-} from '../../components/platformParameterSetting';
+import { getRoutes } from '../../utils/router';
 
 @withRouter
 export default class PlatformParameterSetting extends PureComponent {
   static propTypes = {
     match: PropTypes.object.isRequired,
+    routerData: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
   };
   static contextTypes= {
@@ -69,19 +64,22 @@ export default class PlatformParameterSetting extends PureComponent {
   }
 
   render() {
-    const { match: { path } } = this.props;
+    const { match: { path }, routerData } = this.props;
     const finalMenu = this.hasPermissionMenu();
 
     return (
       <Main menu={finalMenu} matchPath={path}>
         <Switch>
-          <Route exact path="/platformParameterSetting/taskOperation/customerFeedback" component={CustomerFeedback} />
-          <Route exact path="/platformParameterSetting/taskOperation/taskFeedback" component={TaskFeedback} />
-          <Route exact path="/platformParameterSetting/taskOperation/investmentAdvice" component={InvestmentAdvice} />
-          <Route exact path="/platformParameterSetting/labelManager" component={LabelManager} />
-          <Route exact path="/platformParameterSetting/contentOperate" component={RecommendedLabel} />
-          <Route exact path="/platformParameterSetting/customerLabel" component={CustomerLabel} />
-          <Route path="*" render={() => (<Redirect to="/empty" />)} />
+          {
+            getRoutes(path, routerData).map(item => (
+              <Route
+                key={item.key}
+                path={item.path}
+                component={item.component}
+                exact={item.exact}
+              />
+            ))
+          }
         </Switch>
       </Main>
     );

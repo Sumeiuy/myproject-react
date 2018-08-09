@@ -2,8 +2,8 @@
  * @Description: 审批记录列表组件
  * @Author: LiuJianShu
  * @Date: 2017-09-25 18:42:50
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 15:24:28
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-07-23 10:48:35
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';

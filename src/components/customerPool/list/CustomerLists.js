@@ -140,6 +140,7 @@ export default class CustomerLists extends PureComponent {
     signBatchCustLabels: PropTypes.func.isRequired,
     custLabel: PropTypes.object.isRequired,
     custLikeLabel: PropTypes.array.isRequired,
+    addLabel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -526,6 +527,7 @@ export default class CustomerLists extends PureComponent {
       queryLikeLabelInfo,
       signCustLabels,
       signBatchCustLabels,
+      addLabel,
     } = this.props;
 
     // 服务记录执行方式字典
@@ -745,6 +747,7 @@ export default class CustomerLists extends PureComponent {
           custLikeLabel={custLikeLabel}
           signCustLabels={signCustLabels}
           handleCancelSignLabelCustId={this.removeSignLabelCust}
+          addLabel={addLabel}
         />
         <MultiCustomerLabel
           visible={multiSignLabelVisible}
@@ -755,6 +758,7 @@ export default class CustomerLists extends PureComponent {
           signBatchCustLabels={signBatchCustLabels}
           condition={condition}
           location={location}
+          addLabel={addLabel}
         />
       </div>
     );
