@@ -192,7 +192,7 @@ export default class SignCustomerLabel extends PureComponent {
     const { selectedLabels } = this.state;
     this.queryLabelInfo('', () => {
       const labelIds = _.map(selectedLabels, labelItem => labelItem.id);
-      const value = [...labelIds, `${labelId}`];
+      const value = [...labelIds, labelId];
       this.handleSelect({ value });
       this.setState({
         createLabelVisible: false,
@@ -219,14 +219,14 @@ export default class SignCustomerLabel extends PureComponent {
         >
           <div className={styles.selectedInfo}>
             {
-              mainPosition ?
-                '请为客户选择一个标签：' :
-                null
+              mainPosition
+                ? '请为客户选择一个标签：'
+                : null
             }
             {
-              !mainPosition && !selectedLabels.length ?
-                '服务经理还没有给这个客户设置标签' :
-                null
+              !mainPosition && !selectedLabels.length
+                ? '服务经理还没有给这个客户设置标签'
+                : null
             }
           </div>
           <div className={styles.singleLabel}>

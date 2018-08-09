@@ -207,7 +207,7 @@ export default class SignCustomerLabel extends PureComponent {
   handleCloseNewLabelModal(labelId) {
     this.queryLabelInfo('', () => {
       const { custLikeLabel } = this.props;
-      const newLabel = _.find(custLikeLabel, { id: `${labelId}` });
+      const newLabel = _.find(custLikeLabel, { id: labelId });
       this.handleSelect({ value: newLabel });
       this.setState({
         createLabelVisible: false,
