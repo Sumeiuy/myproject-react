@@ -258,8 +258,10 @@ export default class CreateModal extends PureComponent {
   // 设置解除限制禁用时间
   @autobind
   disabledEndDate(current) {
-    const { limitStartTime } = this.state;
-    return current < moment(limitStartTime).endOf('day');
+    const { limitStartTime, isLimit } = this.state;
+    return isLimit
+    ? current < moment(limitStartTime).endOf('day')
+    : current < moment().endOf('day');
   }
 
   // 限制类型焦点进入
@@ -522,7 +524,7 @@ export default class CreateModal extends PureComponent {
 
     Modal.success({
       title: '提示',
-      content: '提交成功，后台正在进行数据处理！若数据校验失败，可在首页通知提醒中查看失败原因。',
+      content: '提交成功。',
       onOk: () => {
         // 关闭审批人弹窗
         closeModal({
@@ -931,7 +933,6 @@ export default class CreateModal extends PureComponent {
                       deleteCallback={this.handleDeleteCallback}
                       ref={(ref) => { this[`uploader${item.type}`] = ref; }}
                       showDelete
-                      isLimit={item.isLimit}
                       limitCount={item.limitCount}
                     />
                   </div>

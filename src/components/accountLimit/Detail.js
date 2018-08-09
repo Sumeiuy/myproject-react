@@ -41,23 +41,6 @@ export default class Detail extends PureComponent {
     data: PropTypes.object.isRequired,
   }
 
-  constructor(props) {
-    super(props);
-    const { custList } = props.data;
-    this.state = {
-      custList,
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { data } = nextProps;
-    if (data !== this.props.data) {
-      this.setState({
-        custList: data.custList,
-      });
-    }
-  }
-
   // 生成表格标题
   @autobind
   getColumnsCustTitleList(list) {
@@ -105,6 +88,7 @@ export default class Detail extends PureComponent {
         workflowHistoryBeans,
         errorDesc,
         id,
+        custList,
       },
     } = this.props;
     const {
@@ -114,7 +98,6 @@ export default class Detail extends PureComponent {
         },
       },
     } = this.props;
-    const { custList } = this.state;
     if (_.isEmpty(this.props.data)) {
       return null;
     }
