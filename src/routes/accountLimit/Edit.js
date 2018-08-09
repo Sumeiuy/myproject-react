@@ -8,7 +8,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Modal } from 'antd';
+import moment from 'moment';
+import { Modal, message } from 'antd';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
@@ -38,7 +39,7 @@ const empPstnId = emp.getPstnId();
 // 审批人弹窗
 const approverModalKey = 'approverModal';
 // 取消按钮的值
-const BTN_CANCLE_VALUE = 'cancel';
+// const BTN_CANCLE_VALUE = 'cancel';
 
 const effects = {
   // 获取详情
@@ -172,35 +173,85 @@ export default class AccountLimitEdit extends PureComponent {
     }
   }
 
+  @autobind
+  chekDataIsLegal() {
+    const { editFormData } = this.props;
+    if (_.isEmpty(editFormData.companyName)) {
+      message.error('公司简介不能为空!');
+      return false;
+    }
+    if (_.isEmpty(editFormData.stockCode)) {
+      message.error('证券代码不能为空!');
+      return false;
+    }
+    if (_.isEmpty(editFormData.custList)) {
+      message.error('客户列表不能为空!');
+      return false;
+    }
+    if (_.isEmpty(editFormData.limitType)) {
+      message.error('限制类型不能为空!');
+      return false;
+    }
+    // 如果操作类型是设置限制
+    if (editFormData.operateType === config.setCode) {
+      if (_.isEmpty(editFormData.limitStartTime)) {
+        message.error('设置日期不能为空!');
+        return false;
+      }
+      if (moment(editFormData.limitStartTime, config.timeFormatStr) < moment().subtract(1, 'days')) {
+        message.error('设置日期不得小于当前日期!');
+        return false;
+      }
+      if (moment(editFormData.limitEndTime, config.timeFormatStr)
+        <= moment(editFormData.limitStartTime, config.timeFormatStr)) {
+        message.error('账户限制解除日期必须大于账户限制设置日期!');
+        return false;
+      }
+    }
+    // 如果操作类型是解除限制
+    if (editFormData.operateType === config.relieveCode) {
+      if (moment(editFormData.limitEndTime, config.timeFormatStr) < moment().subtract(1, 'days')) {
+        message.error('账户限制解除日期不得小于当前日期!');
+        return false;
+      }
+    }
+    return true;
+  }
+
   // 提交，点击后选择审批人
   @autobind
   handleSubmit(btnItem) {
-    const { saveChange } = this.props;
-    const payload = {
-      TGConfirm: false,
-      positionId: empPstnId,
-      orgId: empOrgId,
-      auditors: '',
-      groupName: '',
-      approverIdea: '',
-    };
-    saveChange(payload).then(() => {
-      const { saveChangeData } = this.props;
-      // 提交没有问题
-      if (saveChangeData.errorCode === '0') {
-        this.handleSuccessCallback();
-      } else {
-        commonConfirm({
-          shortCut: 'hasTouGu',
-          onOk: () => {
-            this.setState({
-              flowAuditors: btnItem.flowAuditors,
-              approverModal: true,
-            });
-          },
-        });
-      }
-    });
+    console.log('btn', btnItem);
+    if (!this.chekDataIsLegal()) {
+      return false;
+    }
+    return false;
+    // const { saveChange } = this.props;
+    // const payload = {
+    //   TGConfirm: false,
+    //   positionId: empPstnId,
+    //   orgId: empOrgId,
+    //   auditors: '',
+    //   groupName: '',
+    //   approverIdea: '',
+    // };
+    // saveChange(payload).then(() => {
+    //   const { saveChangeData } = this.props;
+    //   // 提交没有问题
+    //   if (saveChangeData.errorCode === '0') {
+    //     this.handleSuccessCallback();
+    //   } else {
+    //     commonConfirm({
+    //       shortCut: 'hasTouGu',
+    //       onOk: () => {
+    //         this.setState({
+    //           flowAuditors: btnItem.flowAuditors,
+    //           approverModal: true,
+    //         });
+    //       },
+    //     });
+    //   }
+    // });
   }
 
   // 提交成功之后的回调处理
@@ -243,7 +294,6 @@ export default class AccountLimitEdit extends PureComponent {
       detailInfo,
       // 下一步按钮审批人数据以及接口
       buttonData,
-      queryButtonList,
       // 限制类型
       limitList,
       queryLimtList,
@@ -258,21 +308,9 @@ export default class AccountLimitEdit extends PureComponent {
       remark,
     } = this.state;
 
-    const newButtonData = { ...buttonData };
-    if (!_.isEmpty(newButtonData.flowButtons)) {
-      const operateArray = _.map(newButtonData.flowButtons, 'operate');
-      if (!_.includes(operateArray, BTN_CANCLE_VALUE)) {
-        newButtonData.flowButtons.push({
-          ...newButtonData.flowButtons[0],
-          btnName: '取消',
-          operate: 'cancel',
-          flowBtnId: -1,
-        });
-      }
-    }
-    // 新建弹窗按钮
+    // 提交相关按钮
     const selfBtnGroup = (<BottonGroup
-      list={newButtonData}
+      list={buttonData}
       onEmitEvent={this.handleSubmit}
     />);
 
@@ -294,7 +332,6 @@ export default class AccountLimitEdit extends PureComponent {
     // 驳回后修改props
     const editFormProps = {
       location,
-      queryButtonList,
       queryLimtList,
       limitList,
       saveChange,
@@ -303,6 +340,7 @@ export default class AccountLimitEdit extends PureComponent {
       onEditFormChange: editFormChange,
       remark,
       onChangeRemark: this.handleChangeRemark,
+      buttonData,
     };
 
     return (

@@ -6,6 +6,7 @@
  * @Last Modified time: 2018-08-08 09:42:37
  */
 import { accountLimit as api, common as commonApi } from '../api';
+import { time } from '../helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
@@ -36,7 +37,11 @@ export default {
       return {
         ...state,
         detailInfo: payload,
-        editFormData: { ...payload },
+        editFormData: {
+          ...payload,
+          limitStartTime: time.format(payload.limitStartTime),
+          limitEndTime: time.format(payload.limitEndTime),
+        },
       };
     },
     // 查询限制类型

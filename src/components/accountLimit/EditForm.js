@@ -35,6 +35,8 @@ const getPopupContainerFunction = () => document.querySelector(`.${styles.formCo
 // const EMPTY_PARAM = '暂无';
 // const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+const SET_LIMITTYPE_LABEL_NAME = '限制类型'; // 限制类型时显示的label名称
+const RELIEVE_LIMITTYPE_LABEL_NAME = '解除限制类型'; // 解除限制类型时显示的label名称
 // 表头
 const {
   tableTitle: { custList: custTitleList },
@@ -56,7 +58,6 @@ export default class EditForm extends PureComponent {
     onEditFormChange: PropTypes.func.isRequired,
     // 获取按钮数据和下一步审批人
     // selfBtnGroup: PropTypes.object.isRequired,
-    queryButtonList: PropTypes.func.isRequired,
     // 限制类型
     limitList: PropTypes.array.isRequired,
     queryLimtList: PropTypes.func.isRequired,
@@ -67,9 +68,6 @@ export default class EditForm extends PureComponent {
     remark: PropTypes.string.isRequired,
     // 关闭弹窗
     // closeModal: PropTypes.func.isRequired,
-    // 弹窗状态
-    // visible: PropTypes.bool.isRequired,
-    // clearData: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -92,14 +90,6 @@ export default class EditForm extends PureComponent {
     };
   }
 
-  componentDidMount() {
-    // 获取下一步骤按钮列表
-    // this.props.queryButtonList({
-    //   flowId: '',
-    //   operateType: ,
-    // });
-  }
-
   // 生成客户表格标题列表
   @autobind
   getColumnsCustTitle() {
@@ -120,10 +110,35 @@ export default class EditForm extends PureComponent {
   }
 
   @autobind
-  handleEditFormChange(value, type) {
-    const { onEditFormChange } = this.props;
-    onEditFormChange({ value, type });
-    console.log(value, type);
+  getLimitTypeLabel() {
+    if (this.isSetLimitType()) {
+      return SET_LIMITTYPE_LABEL_NAME;
+    }
+    return RELIEVE_LIMITTYPE_LABEL_NAME;
+  }
+
+  // 设置限制日期不可选范围
+  @autobind
+  setDisabledDate(current) {
+    return current < moment().subtract(1, 'days');
+  }
+
+  // 解除限制日期不可选范围
+  @autobind
+  relieveDisabledDate(current) {
+    const { editFormData } = this.props;
+    // 如果操作类型是设置限制的时候，解除日期不能小于设置日期
+    if (this.isSetLimitType()) {
+      return current <= moment(editFormData.limitStartTime, config.timeFormatStr);
+    }
+    // 如果操作类型是解除限制的时候，解除日期不能小于今天
+    return current < moment().subtract(1, 'days');
+  }
+
+  // 证券代码修改，只能输入整数
+  @autobind
+  handleStockCodeChange(value, type) {
+    this.handleEditFormChange(value.replace(/\D/g, ''), type);
   }
 
   // 搜索焦点类型
@@ -137,7 +152,6 @@ export default class EditForm extends PureComponent {
   // 选择限制类型
   @autobind
   handleSelectChange(value) {
-    console.log('value', value);
     this.handleEditFormChange(value, 'limitType');
   }
 
@@ -216,6 +230,27 @@ export default class EditForm extends PureComponent {
     });
   }
 
+  // 判断是否是限制设置类型
+  @autobind
+  isSetLimitType() {
+    const { detailInfo } = this.props;
+    return detailInfo.operateType === config.setCode;
+  }
+
+  // 判断是否是解除限制设置类型
+  @autobind
+  isRelieveLimitType() {
+    const { detailInfo } = this.props;
+    return detailInfo.operateType === config.relieveCode;
+  }
+
+  // 判断是否需要银行确认解除材料
+  @autobind
+  isNeedBankConfirmFile() {
+    const { detailInfo } = this.props;
+    return this.isRelieveLimitType() && detailInfo.bankConfirm;
+  }
+
   // 删除客户
   @autobind
   @logable({ type: 'Click', payload: { name: '删除客户' } })
@@ -223,6 +258,13 @@ export default class EditForm extends PureComponent {
     const { editFormData: { custList = EMPTY_ARRAY } } = this.props;
     const newCustData = _.filter(custList, o => o.custId !== record.custId);
     this.handleEditFormChange(newCustData, 'custList');
+  }
+
+  // form表单数据修改
+  @autobind
+  handleEditFormChange(value, type) {
+    const { onEditFormChange } = this.props;
+    onEditFormChange({ value, type });
   }
 
   // 渲染点击删除按钮后的确认框
@@ -239,24 +281,6 @@ export default class EditForm extends PureComponent {
     </Popconfirm>);
   }
 
-  // 设置限制日期不可选范围
-  @autobind
-  setDisabledDate(current) {
-    return current < moment();
-  }
-
-  // 解除限制日期不可选范围
-  @autobind
-  relieveDisabledDate(current) {
-    const { editFormData } = this.props;
-    // 如果操作类型是设置限制的时候，解除日期不能小于设置日期
-    if (editFormData.operateType === config.setCode) {
-      return current < moment(editFormData.limitStartTime, config.timeFormatStr);
-    }
-    // 如果操作类型是解除限制的时候，解除日期不能小于今天
-    return current < moment();
-  }
-
   render() {
     const {
       detailInfo,
@@ -265,16 +289,12 @@ export default class EditForm extends PureComponent {
       remark,
     } = this.props;
     const {
-      // importVisible,
-      // attachment,
-      // searchCustList,
-      // fetching,
       limitList,
       selectValue,
     } = this.state;
     const editPageAttachmentList = [attachmentMap[0]];
     // 如果操作类型是解除限制，并且 是否和银行确认字段为 true时才显示银行确认解除材料
-    if (detailInfo.operateType === config.relieveCode && detailInfo.bankConfirm) {
+    if (this.isNeedBankConfirmFile()) {
       editPageAttachmentList.push(attachmentMap[1]);
     }
 
@@ -319,12 +339,12 @@ export default class EditForm extends PureComponent {
           <InfoForm label="证券代码" className={styles.inlineInfoForm} required>
             <Input
               value={editFormData.stockCode}
-              onChange={e => this.handleEditFormChange(e.target.value, 'stockCode')}
+              onChange={e => this.handleStockCodeChange(e.target.value, 'stockCode')}
             />
           </InfoForm>
           {
             // 操作类型是限制解除时才显示
-            detailInfo.operateType === config.relieveCode ?
+            this.isRelieveLimitType() ?
               (<InfoForm label="是否银行确认" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
                 {detailInfo.bankConfirm ? '是' : '否'}
               </InfoForm>)
@@ -337,7 +357,7 @@ export default class EditForm extends PureComponent {
           <InfoTitle head="客户列表" />
           <div className={styles.tableDiv}>
             <CommonTable
-              rowKey="custRowId"
+              rowKey="custId"
               align="left"
               data={editFormData.custList}
               titleList={custTitle}
@@ -348,7 +368,7 @@ export default class EditForm extends PureComponent {
         <div className={`${styles.cutline} ${styles.mt48}`} />
         <div className={styles.contentItem}>
           <InfoTitle head="限制信息" />
-          <InfoForm label="解除限制类型" className={styles.infoFormSelect} required>
+          <InfoForm label={this.getLimitTypeLabel()} className={styles.infoFormSelect} required>
             <AntdSelect
               mode="multiple"
               labelInValue
@@ -369,7 +389,7 @@ export default class EditForm extends PureComponent {
             </AntdSelect>
           </InfoForm>
           {
-            detailInfo.operateType === config.setCode ?
+            this.isSetLimitType() ?
               (<InfoForm label="账户限制设置日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
                 <DatePicker
                   disabledDate={this.setDisabledDate}

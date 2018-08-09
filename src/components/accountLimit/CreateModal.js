@@ -9,6 +9,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { message, DatePicker, Input, Select as AntdSelect, Radio, Modal, Upload, Popconfirm } from 'antd';
+import moment from 'moment';
 import _ from 'lodash';
 
 import Select from '../common/Select';
@@ -20,6 +21,8 @@ import Pagination from '../../components/common/Pagination';
 import CommonTable from '../../components/common/biz/CommonTable';
 import MultiUploader from '../common/biz/MultiUploader';
 import Icon from '../../components/common/Icon';
+import TableDialog from '../../components/common/biz/TableDialog';
+import BottonGroup from '../../components/permission/BottonGroup';
 import AutoComplete from '../../components/common/similarAutoComplete';
 import logable, { logPV } from '../../decorators/logable';
 import { request } from '../../config';
@@ -35,23 +38,28 @@ const Option = AntdSelect.Option;
 const getPopupContainerFunction = () => document.querySelector(`.${styles.modalContent}`);
 // 表头
 const {
-  tableTitle: { custList: custTitleList },
+  tableTitle: { custList: custTitleList, approvalList },
   operateTypeArray,
   attachmentMap,
+  bankConfirmArray,
 } = config;
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
 // const empOrgId = 'ZZ001041051';
-// 登陆人的职位 ID
-// const empPstnId = emp.getPstnId();
 // 客户
 const KEY_CUSTNAME = 'custName';
 
+// 审批人弹窗
+const approverModalKey = 'approverModal';
+// 取消按钮的值
+const BTN_CANCLE_VALUE = 'cancel';
+
 export default class CreateModal extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     queryAppList: PropTypes.func.isRequired,
     // 获取按钮数据和下一步审批人
-    selfBtnGroup: PropTypes.object.isRequired,
+    buttonData: PropTypes.object.isRequired,
     queryButtonList: PropTypes.func.isRequired,
     // 获取客户数据
     searchCustData: PropTypes.array.isRequired,
@@ -77,24 +85,23 @@ export default class CreateModal extends PureComponent {
     super(props);
     const operateType = operateTypeArray[0].value;
     this.state = {
-      // 是否是初始划转方式
-      isDefaultType: true,
       // 上传后的返回值
       attachment: '',
       // 导入的弹窗
       importVisible: false,
-      // 下一步审批人列表
-      nextApproverList: [],
       // 审批人弹窗
-      nextApproverModal: false,
+      [approverModalKey]: false,
+      // 审批人
+      flowAuditors: [],
       // 单个客户
       client: {},
       // 搜索的客户数据
       searchCustList: [],
+      // 是否银行确认
       isBankConfirm: '',
       // 限制信息
       limitList: [],
-      limitValue: [],
+      limitType: [],
       fetching: false,
       // 操作类型
       operateType,
@@ -108,18 +115,74 @@ export default class CreateModal extends PureComponent {
       addedCustData: props.addedCustData || [],
       // 当前页数
       pageNum: 1,
-
+      // 限制类型搜索输入框搜索值
       selectValue: '',
+      // 限制设置日期
+      limitStartTime: '',
+      // 限制解除日期
+      limitEndTime: '',
+      // 解除日期的禁用状态
+      endDateDisabled: operateType === operateTypeArray[0].value,
+      // 附件列表
+      attachmentList: attachmentMap,
     };
   }
 
   componentDidMount() {
-    // 获取下一步骤按钮列表
-    this.props.queryButtonList({
-      flowId: '',
-      operate: 2,
-    });
+    this.queryNextStepButton();
   }
+
+
+  // 提交成功之后的回调处理
+  // @autobind
+  // handleSuccessCallback() {
+  //   const {
+  //     location: {
+  //       query,
+  //       query: {
+  //         pageNum,
+  //         pageSize,
+  //       },
+  //     },
+  //     closeModal,
+  //     modalKey,
+  //     queryAppList,
+  //   } = this.props;
+
+  //   Modal.success({
+  //     title: '提示',
+  //     content: '提交成功，后台正在进行数据处理！若数据校验失败，可在首页通知提醒中查看失败原因。',
+  //     onOk: () => {
+  //       // 关闭审批人弹窗
+  //       closeModal({
+  //         modalKey: approverModalKey,
+  //         isNeedConfirm: false,
+  //       });
+  //       // 关闭新建弹窗
+  //       closeModal({
+  //         modalKey,
+  //         isNeedConfirm: false,
+  //       });
+  //       queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
+  //     },
+  //   });
+  // }
+
+  // // 选完审批人后的提交
+  // @autobind
+  // handleApproverModalOK(auth) {
+  //   const { saveChange } = this.props;
+  //   const { flowAuditors } = this.state;
+  //   const payload = {
+  //     TGConfirm: true,
+  //     positionId: empPstnId,
+  //     orgId: empOrgId,
+  //     auditors: auth.login,
+  //     groupName: flowAuditors.nextGroupName,
+  //     approverIdea: '',
+  //   };
+  //   saveChange(payload).then(this.handleSuccessCallback());
+  // }
 
   // 生成客户表格标题列表
   @autobind
@@ -140,26 +203,65 @@ export default class CreateModal extends PureComponent {
     return titleList;
   }
 
+  // 获取下一步按钮和审批人
+  @autobind
+  queryNextStepButton() {
+    // 获取下一步骤按钮列表
+    const { isLimit, operateType, isBankConfirm } = this.state;
+    const { queryButtonList } = this.props;
+    const payload = {
+      flowId: '',
+      operateType,
+    };
+    // 如果是解除限制
+    if (!isLimit) {
+      if (isBankConfirm === bankConfirmArray[0].value) {
+        payload.extraParam = true;
+      } else {
+        payload.extraParam = false;
+      }
+    }
+    queryButtonList(payload);
+  }
+
   // 是否银行确认更改事件
   @autobind
   handleBankConfirmChange(e) {
+    const value = e.target.value;
+    const { attachmentList } = this.state;
+    // 如果是银行确认
+    const newAttachementList = [...attachmentList];
+    if (value === bankConfirmArray[0].value) {
+      // 隐藏银行确认解除材料
+      newAttachementList[1].show = true;
+    }
     this.setState({
       isBankConfirm: e.target.value,
-    });
+      attachmentList: newAttachementList,
+    }, this.queryNextStepButton);
   }
 
   // 操作类型改变事件
-  // TODO: 清空数据
   @autobind
   handleOperateTypeChange(key, value) {
     // 等于 限制解除 的时候
-    let isLimit = true;
-    if (value !== operateTypeArray[0].value) {
-      isLimit = false;
+    let isLimit = false;
+    if (value === operateTypeArray[0].value) {
+      isLimit = true;
+      this.queryNextStepButton();
     }
     this.setState({
       [key]: value,
       isLimit,
+      endDateDisabled: isLimit,
+      // 是否银行确认默认值：是
+      isBankConfirm: bankConfirmArray[0].value,
+      addedCustData: [],
+      attachment: '',
+      limitType: [],
+      limitStartTime: '',
+      limitEndTime: '',
+      attachmentList: attachmentMap,
     });
   }
 
@@ -179,11 +281,34 @@ export default class CreateModal extends PureComponent {
     });
   }
 
-  // 设置限制事件切换事件
+  // 设置限制时间切换事件
   @autobind
-  handleDatePickerChange(date, dateString) {
-    console.warn('date', date);
-    console.warn('dateString', dateString);
+  handleStartDatePickerChange(date, dateString) {
+    this.setState({
+      limitStartTime: dateString,
+      endDateDisabled: false,
+    });
+  }
+
+  // 解除限制时间切换事件
+  @autobind
+  handleEndDatePickerChange(date, dateString) {
+    this.setState({
+      limitEndTime: dateString,
+    });
+  }
+
+  // 设置限制开始禁用时间
+  @autobind
+  disabledStartDate(current) {
+    return current < moment().startOf('day');
+  }
+
+  // 设置解除限制禁用时间
+  @autobind
+  disabledEndDate(current) {
+    const { limitStartTime } = this.state;
+    return current < moment(limitStartTime).endOf('day');
   }
 
   // 限制类型焦点进入
@@ -213,11 +338,11 @@ export default class CreateModal extends PureComponent {
 
   // 选择限制类型
   @autobind
-  handleSelectChange(value, options) {
-    console.warn('options', options);
+  handleSelectChange(value) {
     console.warn('value', value);
     this.setState({
-      limitValue: value,
+      limitType: value,
+      selectValue: '',
     });
   }
 
@@ -234,7 +359,6 @@ export default class CreateModal extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '导入' } })
   handleFileChange(info) {
-    const { attachment } = this.state;
     this.setState({
       importVisible: false,
     }, () => {
@@ -242,16 +366,16 @@ export default class CreateModal extends PureComponent {
       if (uploadFile.response && uploadFile.response.code) {
         if (uploadFile.response.code === '0') {
           // 上传成功
-          const attachmentData = uploadFile.response.resultData;
-          const payload = {
-            custtomer: [],
-            manage: [],
+          const attachment = uploadFile.response.resultData;
+          this.setState({
             attachment,
-          };
-          // 如果上传过，则先调用清空接口，调用成功后，调用添加接口
-          // 添加接口调用成功后，调用查询接口
-          // 是否上传过
-          this.handleUpdateDataAndQueryList(payload, attachmentData);
+          }, () => {
+            const payload = {
+              orgId: empOrgId,
+              attachment,
+            };
+            this.querySearchOrAddedCustList(payload);
+          });
         } else {
           // 上传失败
           message.error(uploadFile.response.msg);
@@ -277,17 +401,32 @@ export default class CreateModal extends PureComponent {
     if (!v) {
       return;
     }
-    const { queryCustList } = this.props;
-    queryCustList({
+    const payload = {
       orgId: empOrgId,
-      custKeyword: v,
+      keyword: v,
       pageSize: 10,
       pageNum: 1,
-    }).then(() => {
-      const { searchCustData } = this.props;
-      this.setState({
-        searchCustData,
-      });
+    };
+    this.querySearchOrAddedCustList(payload);
+  }
+
+  // 搜索客户
+  @autobind
+  querySearchOrAddedCustList(payload) {
+    const { queryCustList } = this.props;
+    const { operateType } = this.state;
+    queryCustList({ ...payload, operateType }).then(() => {
+      const { searchCustData, addedCustData } = this.props;
+      if (payload.keyword) {
+        this.setState({
+          searchCustData,
+        });
+      }
+      if (payload.attachment) {
+        this.setState({
+          addedCustData,
+        });
+      }
     });
   }
 
@@ -312,8 +451,17 @@ export default class CreateModal extends PureComponent {
   @logable({ type: 'Click', payload: { name: '添加客户' } })
   handleAddBtnClick() {
     const { addedCustData, client } = this.state;
+    if (_.isEmpty(client)) {
+      message.error('请选择客户');
+      return;
+    }
+    if (_.filter(addedCustData, o => o.custId === client.custId).length) {
+      message.error('不允许添加重复客户');
+      return;
+    }
     this.setState({
       addedCustData: [...addedCustData, client],
+      client: {},
     });
   }
 
@@ -337,7 +485,6 @@ export default class CreateModal extends PureComponent {
     });
   }
 
-
   // select 联动筛选
   @autobind
   filterOption(value, option) {
@@ -356,8 +503,6 @@ export default class CreateModal extends PureComponent {
   // 替换关键字颜色
   @autobind
   replaceKeyWord(text, word = '') {
-    console.warn('text', text);
-    console.warn('word', word);
     if (!word) {
       return text;
     }
@@ -367,6 +512,148 @@ export default class CreateModal extends PureComponent {
     ));
     console.warn('keyWordText', keyWordText);
     return <div dangerouslySetInnerHTML={{ __html: keyWordText }} />;
+  }
+
+  // 文件上传成功
+  @autobind
+  handleUploadCallback(attachmentType, attachment) {
+    const { attachmentList } = this.state;
+    const newAttachementList = attachmentList.map((item) => {
+      if (item.type === attachmentType) {
+        return {
+          ...item,
+          attachment,
+          length: item.length + 1,
+        };
+      }
+      return item;
+    });
+    this.setState({
+      attachmentList: newAttachementList,
+    });
+  }
+
+  // 文件删除成功
+  @autobind
+  handleDeleteCallback(attachmentType) {
+    const { attachmentList } = this.state;
+    const newAttachmentList = attachmentList.map((item) => {
+      const { type, length } = item;
+      if (type === attachmentType && length > 0) {
+        return {
+          ...item,
+          length: length - 1,
+        };
+      }
+      return item;
+    });
+    this.setState({
+      attachmentList: newAttachmentList,
+    });
+  }
+
+  // 提交请求
+  @autobind
+  sendRequest() {
+    const { saveChange } = this.props;
+    const {
+      isLimit,
+      operateType,
+      companyName,
+      stockCode,
+      isBankConfirm,
+      addedCustData,
+      limitType,
+      limitStartTime,
+      limitEndTime,
+      attachmentList,
+    } = this.state;
+    const custList = addedCustData.map(item => ({
+      custId: item.custId,
+      label: item.label,
+    }));
+
+    if (_.isEmpty(companyName)) {
+      message.error('请填写公司简称');
+      return;
+    }
+    if (_.isEmpty(stockCode)) {
+      message.error('请填写证券代码');
+      return;
+    }
+    if (_.isEmpty(addedCustData)) {
+      message.error('请添加客户');
+      return;
+    }
+    if (_.isEmpty(limitType)) {
+      message.error('请选择限制类型');
+      return;
+    }
+    if (isLimit) {
+      if (_.isEmpty(limitStartTime)) {
+        message.error('请选择账户限制设置日期');
+        return;
+      }
+    }
+    if (_.isEmpty(limitEndTime)) {
+      message.error('请选择账户限制解除日期');
+      return;
+    }
+
+    const newAttachementList = [];
+    for (let i = 0; i < attachmentList.length; i++) {
+      const item = attachmentList[i];
+      if (item.show && item.length <= 0 && item.required) {
+        message.error(`${item.title}附件为必传项`);
+        return;
+      }
+      newAttachementList.push({
+        title: item.type,
+        attachment: item.attachment,
+      });
+    }
+
+    if (!isLimit && isBankConfirm === bankConfirmArray[0].value) {
+      const payload = {
+        orgId: empOrgId,
+        operateType,
+        companyName,
+        stockCode,
+        custList,
+        limitType,
+        limitEndTime,
+        attachment: newAttachementList,
+        auditors: '',
+        groupName: '',
+        approverIdea: '',
+      };
+      // 如果是限制类型
+      if (isLimit) {
+        payload.limitStartTime = limitStartTime;
+      } else {
+        payload.isBankConfirm = isBankConfirm === bankConfirmArray[0].value;
+      }
+      saveChange(payload);
+    } else {
+      this.setState({
+        [approverModalKey]: true,
+      });
+    }
+  }
+
+
+  // 提交，点击后选择审批人
+  @autobind
+  handleSubmit(btnItem) {
+    const { modalKey } = this.props;
+    if (btnItem.operate === BTN_CANCLE_VALUE) {
+      this.closeModal({
+        modalKey,
+        isNeedConfirm: true,
+      });
+      return;
+    }
+    this.sendRequest();
   }
 
   // 渲染点击删除按钮后的确认框
@@ -385,20 +672,18 @@ export default class CreateModal extends PureComponent {
 
   render() {
     const {
-      selfBtnGroup,
+      buttonData,
       visible,
       modalKey,
       closeModal,
     } = this.props;
-
     const {
       importVisible,
       attachment,
       searchCustData,
       isBankConfirm,
       limitList,
-      limitValue,
-
+      limitType,
       operateType,
       companyName,
       stockCode,
@@ -406,7 +691,32 @@ export default class CreateModal extends PureComponent {
       addedCustData,
       pageNum,
       selectValue,
+      endDateDisabled,
+      attachmentList,
+      approverModal,
+      flowAuditors,
     } = this.state;
+
+
+    const newButtonData = { ...buttonData };
+    if (!_.isEmpty(newButtonData.flowButtons)) {
+      const operateArray = _.map(newButtonData.flowButtons, 'operate');
+      if (!_.includes(operateArray, BTN_CANCLE_VALUE)) {
+        newButtonData.flowButtons.push({
+          ...newButtonData.flowButtons[0],
+          btnName: '取消',
+          operate: 'cancel',
+          flowBtnId: -1,
+        });
+      }
+    }
+
+    // 新建弹窗按钮
+    const selfBtnGroup = (<BottonGroup
+      list={newButtonData}
+      onEmitEvent={this.handleSubmit}
+    />);
+
     const uploadProps = {
       data: {
         empId: emp.getId(),
@@ -446,6 +756,21 @@ export default class CreateModal extends PureComponent {
       modalKey,
       isNeedConfirm: true,
     };
+
+    // 审批人弹窗
+    const approvalProps = {
+      visible: approverModal,
+      onOk: this.handleApproverModalOK,
+      onCancel: () => { this.setState({ [approverModalKey]: false }); },
+      dataSource: flowAuditors,
+      columns: approvalList,
+      title: '选择下一审批人员',
+      placeholder: '员工号/员工姓名',
+      modalKey: approverModalKey,
+      rowKey: 'login',
+      searchShow: false,
+    };
+
     return (
       <CommonModal
         title="账户限制管理"
@@ -488,8 +813,11 @@ export default class CreateModal extends PureComponent {
               ? null
               : <InfoForm label="是否银行确认" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
                 <RadioGroup onChange={this.handleBankConfirmChange} value={isBankConfirm}>
-                  <Radio value={0}>是</Radio>
-                  <Radio value={1}>否</Radio>
+                  {
+                    bankConfirmArray.map(item => (
+                      <Radio value={item.value} key={item.value}>{item.label}</Radio>
+                    ))
+                  }
                 </RadioGroup>
               </InfoForm>
             }
@@ -532,11 +860,11 @@ export default class CreateModal extends PureComponent {
           </div>
           <div className={styles.contentItem}>
             <InfoTitle head="限制信息" />
-            <InfoForm label="接触限制类型" className={styles.infoFormSelect} required>
+            <InfoForm label="解除限制类型" className={styles.infoFormSelect} required>
               <AntdSelect
                 mode="multiple"
                 labelInValue
-                value={limitValue}
+                value={limitType}
                 placeholder="请选择限制类型"
                 onChange={this.handleSelectChange}
                 onBlur={this.handleSelectBlur}
@@ -548,25 +876,33 @@ export default class CreateModal extends PureComponent {
                 getPopupContainer={getPopupContainerFunction}
               >
                 {limitList.map(item =>
-                  <Option key={item.code}>{this.replaceKeyWord(item.name, selectValue)}</Option>,
+                  <Option key={item.key}>{this.replaceKeyWord(item.label, selectValue)}</Option>,
                 )}
               </AntdSelect>
             </InfoForm>
             {
               isLimit
               ? <InfoForm label="账户限制设置日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
-                <DatePicker onChange={this.handleDatePickerChange} />
+                <DatePicker
+                  disabledDate={this.disabledStartDate}
+                  onChange={this.handleStartDatePickerChange}
+                />
               </InfoForm>
               : null
             }
             <InfoForm label="账户限制解除日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
-              <DatePicker onChange={this.handleDatePickerChange} />
+              <DatePicker
+                disabled={endDateDisabled}
+                disabledDate={this.disabledEndDate}
+                onChange={this.handleEndDatePickerChange}
+                onOpenChange={this.handleOpenEndDate}
+              />
             </InfoForm>
           </div>
           <div className={styles.contentItem}>
             <InfoTitle head="附件信息" />
             {
-              attachmentMap.map((item) => {
+              attachmentList.map((item) => {
                 const uploaderElement = item.show ? (
                   <div className={styles.mt10}>
                     <MultiUploader
@@ -581,6 +917,8 @@ export default class CreateModal extends PureComponent {
                       deleteCallback={this.handleDeleteCallback}
                       ref={(ref) => { this[`uploader${item.type}`] = ref; }}
                       showDelete
+                      isLimit={item.isLimit}
+                      limitCount={item.limitCount}
                     />
                   </div>
                 ) : null;
@@ -610,6 +948,9 @@ export default class CreateModal extends PureComponent {
             <p>导入后将清空客户列表已有数据，请确认！</p>
           </Modal>
         </div>
+        {
+          approverModal ? <TableDialog {...approvalProps} /> : null
+        }
       </CommonModal>
     );
   }

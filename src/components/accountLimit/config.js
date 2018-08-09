@@ -36,6 +36,16 @@ const config = {
       value: relieveCode,
     },
   ],
+  bankConfirmArray: [
+    {
+      label: '是',
+      value: 'true',
+    },
+    {
+      label: '否',
+      value: 'false',
+    },
+  ],
   // 状态数组
   statusArray: [
     {
@@ -105,18 +115,24 @@ const config = {
       type: 'khsqcl',
       title: '客户申请材料',
       show: true,
+      isLimit: true,
+      limitCount: 1,
       length: 0,
+      required: true,
     },
     {
       type: 'yhqrjccl',
       title: '银行确认解除材料',
-      show: true,
+      show: false,
+      isLimit: true,
+      limitCount: 1,
       length: 0,
+      required: true,
     },
     {
       type: 'yhtzyj',
       title: '银行通知邮件',
-      show: true,
+      show: false,
       length: 0,
     },
   ],
