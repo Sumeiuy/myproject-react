@@ -104,13 +104,15 @@ export default class MultiUpload extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { attachment: preAT } = this.props;
-    const { attachment: nextAT, attachmentList } = nextProps;
+    const { attachment: nextAT, attachmentList, isLimit, limitCount } = nextProps;
     const { attachment } = this.state;
     if (preAT !== nextAT && nextAT !== attachment) {
       this.setState({
         fileList: attachmentList, // 文件列表
         oldFileList: attachmentList, // 旧的文件列表
         attachment: nextAT, // 上传后的唯一 ID
+        // 如果限制并且新数组的 length 小于限制的个数
+        isShowUploadBtn: isLimit && limitCount > attachmentList.length,
       });
     }
   }
@@ -180,7 +182,7 @@ export default class MultiUpload extends PureComponent {
       const newFileList = _.cloneDeep(fileList);
       let isShowUploadBtn = true;
       _.remove(newFileList, o => o.attachId === attachId);
-      if (isLimit && newFileList.length <= limitCount) {
+      if (isLimit && newFileList.length >= limitCount) {
         isShowUploadBtn = false;
       }
       this.setState({
@@ -272,7 +274,7 @@ export default class MultiUpload extends PureComponent {
             fileList.map((item, index) => {
               const fileName = item.name;
               const popoverHtml = (
-                <div className={styles.filePop}>
+                <div className={styles.filePop} key={item.attachId}>
                   <h3 className="clearfix">
                     <Icon type="fujian1" />
                     <span className={styles.popFileName}>{fileName}</span>

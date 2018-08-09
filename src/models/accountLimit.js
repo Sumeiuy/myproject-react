@@ -85,7 +85,7 @@ export default {
       const { resultData = EMPTY_OBJECT } = response;
       const newResultData = { ...resultData };
       const attachmentList = newResultData.attachmentList || [];
-
+      newResultData.attachList = [];
       const attachmentArray = [];
       for (let i = 0; i < attachmentList.length; i++) {
         const item = attachmentList[i];
@@ -100,7 +100,7 @@ export default {
         };
         attachmentArray.push(responsePayload);
       }
-      newResultData.attachmentList = attachmentArray;
+      newResultData.attachList = attachmentArray;
       yield put({
         type: 'queryDetailInfoSuccess',
         payload: newResultData,

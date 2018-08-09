@@ -8,7 +8,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Modal } from 'antd';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
@@ -18,8 +17,6 @@ import withRouter from '../../decorators/withRouter';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import CreateModal from '../../components/accountLimit/CreateModal';
-import TableDialog from '../../components/common/biz/TableDialog';
-import BottonGroup from '../../components/permission/BottonGroup';
 import CustAllotList from '../../components/common/appList';
 import ApplyItem from '../../components/common/appList/ApplyItem';
 import Detail from '../../components/accountLimit/Detail';
@@ -37,20 +34,13 @@ const {
   pageValue,
   pageType,
   operateTypeArray,
-  tableTitle: { approvalList },
 } = config;
 
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
 // const empOrgId = 'ZZ001041051';
-// 登陆人的职位 ID
-const empPstnId = emp.getPstnId();
 // 新建弹窗的 key 值
 const createModalKey = 'createModal';
-// 审批人弹窗
-const approverModalKey = 'approverModal';
-// 取消按钮的值
-const BTN_CANCLE_VALUE = 'cancel';
 
 const effects = {
   // 获取左侧列表
@@ -65,8 +55,6 @@ const effects = {
   queryLimtList: 'accountLimit/queryLimtList',
   // 提交客户分配
   saveChange: 'accountLimit/saveChange',
-  // 清除数据
-  clearData: 'accountLimit/clearData',
 };
 
 const mapStateToProps = state => ({
@@ -141,8 +129,6 @@ export default class AccountLimitHome extends PureComponent {
     // 提交数据
     saveChange: PropTypes.func.isRequired,
     saveChangeData: PropTypes.object.isRequired,
-    // 清除搜索数据
-    clearData: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -151,10 +137,7 @@ export default class AccountLimitHome extends PureComponent {
       // 高亮项的下标索引
       activeRowIndex: 0,
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
-      createModal: true,
-      approverModal: false,
-      // 审批人
-      flowAuditors: [],
+      createModal: false,
     };
   }
 
@@ -170,11 +153,6 @@ export default class AccountLimitHome extends PureComponent {
     } = this.props;
     this.queryAppList(query, pageNum, pageSize);
   }
-
-  // componentWillUnmount() {
-  //   const { clearData } = this.props;
-  //   clearData(clearDataArray[1]);
-  // }
 
   // 获取右侧详情
   @autobind
@@ -274,7 +252,7 @@ export default class AccountLimitHome extends PureComponent {
 
   // 关闭弹窗
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户划转弹框' } })
+  @logable({ type: 'ButtonClick', payload: { name: '关闭账户限制管理弹框' } })
   closeModal(obj) {
     const { modalKey, isNeedConfirm = true } = obj;
     // 关闭模态框
@@ -294,14 +272,14 @@ export default class AccountLimitHome extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
-  @logPV({ pathname: '/modal/createProtocol', title: '新建分公司客户人工划转' })
+  @logPV({ pathname: '/modal/createProtocol', title: '新建账户限制管理弹窗' })
   openCreateModalBoard() {
     this.setState({
       createModal: true,
     });
   }
 
-  // 切换页码
+  // 左侧列表分页
   @autobind
   handlePageNumberChange(nextPage, currentPageSize) {
     const { replace, location } = this.props;
@@ -349,92 +327,6 @@ export default class AccountLimitHome extends PureComponent {
       pageSize: 7,
       pageNum: 1,
     });
-  }
-
-  // 提交，点击后选择审批人
-  @autobind
-  handleSubmit(btnItem) {
-    if (btnItem.operate === BTN_CANCLE_VALUE) {
-      this.closeModal({
-        modalKey: createModalKey,
-        isNeedConfirm: true,
-      });
-      return;
-    }
-    const { saveChange } = this.props;
-    const payload = {
-      TGConfirm: false,
-      positionId: empPstnId,
-      orgId: empOrgId,
-      auditors: '',
-      groupName: '',
-      approverIdea: '',
-    };
-    saveChange(payload).then(() => {
-      const { saveChangeData } = this.props;
-      // 提交没有问题
-      if (saveChangeData.errorCode === '0') {
-        this.handleSuccessCallback();
-      } else {
-        commonConfirm({
-          shortCut: 'hasTouGu',
-          onOk: () => {
-            this.setState({
-              flowAuditors: btnItem.flowAuditors,
-              approverModal: true,
-            });
-          },
-        });
-      }
-    });
-  }
-
-  // 提交成功之后的回调处理
-  @autobind
-  handleSuccessCallback() {
-    const {
-      location: {
-        query,
-        query: {
-          pageNum,
-          pageSize,
-        },
-      },
-    } = this.props;
-
-    Modal.success({
-      title: '提示',
-      content: '提交成功，后台正在进行数据处理！若数据校验失败，可在首页通知提醒中查看失败原因。',
-      onOk: () => {
-        // 关闭审批人弹窗
-        this.closeModal({
-          modalKey: approverModalKey,
-          isNeedConfirm: false,
-        });
-        // 关闭新建弹窗
-        this.closeModal({
-          modalKey: createModalKey,
-          isNeedConfirm: false,
-        });
-        this.queryAppList({ ...query, id: '', appId: '' }, pageNum, pageSize);
-      },
-    });
-  }
-
-  // 选完审批人后的提交
-  @autobind
-  handleApproverModalOK(auth) {
-    const { saveChange } = this.props;
-    const { flowAuditors } = this.state;
-    const payload = {
-      TGConfirm: true,
-      positionId: empPstnId,
-      orgId: empOrgId,
-      auditors: auth.login,
-      groupName: flowAuditors.nextGroupName,
-      approverIdea: '',
-    };
-    saveChange(payload).then(this.handleSuccessCallback());
   }
 
   @autobind
@@ -492,13 +384,10 @@ export default class AccountLimitHome extends PureComponent {
       queryLimtList,
       // 提交走流程
       saveChange,
-      clearData,
     } = this.props;
 
     const {
       createModal,
-      approverModal,
-      flowAuditors,
     } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
     const topPanel = (
@@ -548,39 +437,6 @@ export default class AccountLimitHome extends PureComponent {
       />
     );
 
-    const newButtonData = { ...buttonData };
-    if (!_.isEmpty(newButtonData.flowButtons)) {
-      const operateArray = _.map(newButtonData.flowButtons, 'operate');
-      if (!_.includes(operateArray, BTN_CANCLE_VALUE)) {
-        newButtonData.flowButtons.push({
-          ...newButtonData.flowButtons[0],
-          btnName: '取消',
-          operate: 'cancel',
-          flowBtnId: -1,
-        });
-      }
-    }
-    // 新建弹窗按钮
-    const selfBtnGroup = (<BottonGroup
-      list={newButtonData}
-      onEmitEvent={this.handleSubmit}
-    />);
-
-
-    // 审批人弹窗
-    const approvalProps = {
-      visible: approverModal,
-      onOk: this.handleApproverModalOK,
-      onCancel: () => { this.setState({ approverModal: false }); },
-      dataSource: flowAuditors,
-      columns: approvalList,
-      title: '选择下一审批人员',
-      placeholder: '员工号/员工姓名',
-      modalKey: 'approverModal',
-      rowKey: 'login',
-      searchShow: false,
-    };
-
     return (
       <div>
         <SplitPanel
@@ -604,18 +460,14 @@ export default class AccountLimitHome extends PureComponent {
             queryCustList={queryCustList}
             limitList={limitList}
             queryLimtList={queryLimtList}
-            selfBtnGroup={selfBtnGroup}
+            buttonData={buttonData}
             queryButtonList={queryButtonList}
             queryAppList={this.queryAppList}
             showModal={this.showModal}
             closeModal={this.closeModal}
             saveChange={saveChange}
-            clearData={clearData}
           />
           : null
-        }
-        {
-          approverModal ? <TableDialog {...approvalProps} /> : null
         }
       </div>
     );

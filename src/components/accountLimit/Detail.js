@@ -30,7 +30,7 @@ const empOrgId = emp.getPstnId();
 // 表头
 const {
   tableTitle: { custList: custTitleList },  // 客户表格列表
-  operateTypeArray,  // 操作类型枚举
+  // operateTypeArray,  // 操作类型枚举
   attachmentMap,  // 附件类型枚举
 } = config;
 // 客户姓名
@@ -77,7 +77,7 @@ export default class Detail extends PureComponent {
   @autobind
   getAttachmentTitle(type) {
     const filterTitle = _.filter(attachmentMap, o => o.type === type);
-    return filterTitle[0].title;
+    return filterTitle[0].title || '';
   }
 
   // 空方法，用于日志上报
@@ -87,14 +87,14 @@ export default class Detail extends PureComponent {
   render() {
     const {
       data: {
-        operateType,
+        // operateType,
         companyName,
         stockCode,
         isBankConfirm,
         limitType,
         limitStartTime,
         limitEndTime,
-        attachmentList,
+        attachList,
         empId,
         empName,
         orgName,
@@ -104,7 +104,7 @@ export default class Detail extends PureComponent {
         currentNodeName,
         workflowHistoryBeans,
         errorDesc,
-        appId: dataId,
+        id,
       },
     } = this.props;
     const {
@@ -114,7 +114,6 @@ export default class Detail extends PureComponent {
         },
       },
     } = this.props;
-
     const { custList } = this.state;
     if (_.isEmpty(this.props.data)) {
       return null;
@@ -140,10 +139,10 @@ export default class Detail extends PureComponent {
 
     const newTitleList = this.getColumnsCustTitleList(custTitleList);
 
-    const filterOperate = _.filter(operateTypeArray, o => o.value === operateType);
+    // const filterOperate = _.filter(operateTypeArray, o => o.value === operateType);
     return (
       <div className={styles.detailBox}>
-        <h2 className={styles.title}>编号{dataId}</h2>
+        <h2 className={styles.title}>编号{id}</h2>
         <div className={styles.error}>
           {
             errorDesc
@@ -161,7 +160,7 @@ export default class Detail extends PureComponent {
               <p>
                 <a
                   onClick={this.handleDownloadClick}
-                  href={`${request.prefix}/excel/custTransfer/exportAssigumentExcel?appId=${appId || dataId}&empId=${emp.getId()}&orgId=${empOrgId}&type=department`}
+                  href={`${request.prefix}/excel/custTransfer/exportAssigumentExcel?appId=${appId || id}&empId=${emp.getId()}&orgId=${empOrgId}&type=department`}
                   download
                 >
                   下载报错信息
@@ -173,7 +172,7 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.module}>
           <InfoTitle head="基本信息" />
-          <InfoItem label="操作类型" width="120px" value={filterOperate[0].label} />
+          {/* <InfoItem label="操作类型" width="120px" value={filterOperate[0].label} /> */}
           <InfoItem label="公司简称" className={styles.inlineInfoItem} width="120px" value={companyName} />
           <InfoItem label="证券代码" className={styles.inlineInfoItem} width="120px" value={stockCode} />
           <InfoItem label="是否银行确认" className={styles.inlineInfoItem} width="120px" value={isBankConfirm ? '是' : '否'} />
@@ -205,11 +204,11 @@ export default class Detail extends PureComponent {
         <div className={styles.module}>
           <InfoTitle head="附件信息" />
           {
-            !_.isEmpty(attachmentList) ?
-              attachmentList.map(item => (<MultiUploader
+            !_.isEmpty(attachList) ?
+              attachList.map(item => (<MultiUploader
                 attachmentList={item.attachmentList}
                 attachment={''}
-                title={this.getAttachmentTitle(item.title)}
+                title={item.title}
                 key={`${appId}-${item.attachment}`}
               />))
               :
