@@ -51,7 +51,7 @@ const newOpenTabConfig = [
   {
     name: 'MOT服务统计明细',
     id: 'FSP_MOT_STATISTICS_DETAIL',
-    path: '/fsp/statisticalQuery/MOTStatisticsDetail',
+    path: '/fsp/MOTStatisticsDetail',
     pid: 'FSP_MOT_M_SERVICE_STATISTICS_PRIMARY',
   },
   {
@@ -88,6 +88,12 @@ const newOpenTabConfig = [
     name: '投顾签约计划变更向导',
     id: 'FSP_CUST_M_360OPERATETYPE',
     path: '/fsp/customerCenter/360OperateType',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
+    name: '投顾签约计划变更向导',
+    id: 'FSP_CUST_M_360_WIZARD',
+    path: '/fsp/customerCenter/360Wizard',
     pid: 'FSP_CUST_M_360',
   },
   {
