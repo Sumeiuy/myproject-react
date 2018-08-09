@@ -41,7 +41,6 @@ export default class SignCustomerLabel extends PureComponent {
     visible: PropTypes.bool.isRequired,
     condition: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
-    form: PropTypes.object.isRequired,
     addLabel: PropTypes.func.isRequired,
   };
 
@@ -61,13 +60,6 @@ export default class SignCustomerLabel extends PureComponent {
       // 控制创建标签modal的变化
       createLabelVisible: false,
     };
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (!prevState.visible && this.state.visible) {
-      // 重新打开模态框，重新加载数据
-      this.queryLabelInfo();
-    }
   }
 
   @autobind
@@ -117,6 +109,7 @@ export default class SignCustomerLabel extends PureComponent {
     this.setState({
       labelValue: '',
       selectValue: '',
+      errorMsg: '',
     });
     onClose();
   }
@@ -124,7 +117,6 @@ export default class SignCustomerLabel extends PureComponent {
   @autobind
   queryLabelInfo(labelName = '', callback = _.noop) {
     const { queryLikeLabelInfo } = this.props;
-    // 获得焦点时获取全部数据
     queryLikeLabelInfo({
       labelNameLike: labelName,
       currentPage: 1,
@@ -212,10 +204,15 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
-  handleCloseNewLabelModal() {
-    this.setState({
-      createLabelVisible: false,
-      visible: true,
+  handleCloseNewLabelModal(labelId) {
+    this.queryLabelInfo('', () => {
+      const { custLikeLabel } = this.props;
+      const newLabel = _.find(custLikeLabel, { id: labelId });
+      this.handleSelect({ value: newLabel });
+      this.setState({
+        createLabelVisible: false,
+        visible: true,
+      });
     });
   }
   render() {
