@@ -52,3 +52,33 @@ export const ALL_EMP_SCOPE_ITEM = [
   EMP_MANAGER_SCOPE_ITEM,
   EMP_DEPARTMENT_ITEM,
 ];
+
+export const missionImplementation = {
+  // 已服务
+  IS_SERVED: 'IS_SERVED',
+  // 已完成
+  IS_DONE: 'IS_DONE',
+  // 结果达标
+  IS_UP_TO_STANDARD: 'IS_UP_TO_STANDARD',
+  // 进度完成
+  COMPLETED_PROGRESS_FLAG: 'Y',
+  // log日志配置项
+  logInfo: {
+    entryFromProgressDetail: {
+      name: '总体进度',
+    },
+    entryFromPie: {
+      name: '已服务客户反馈',
+    },
+    entryFromCustTotal: {
+      name: '明细进度',
+    },
+    logElementFromCustTotal: '客户总数',
+    logElementFromServedCustomer: '已服务客户',
+    logElementFromUnservedCustomer: '未服务客户',
+    logElementFromCompletedCustomer: '已完成客户',
+    logElementFromUncompletedCustomer: '未完成客户',
+    logElementFromUpToStandardCustomer: '结果达标客户',
+    logElementFromNotUpToStandardCustomer: '结果未达标客户',
+  },
+};

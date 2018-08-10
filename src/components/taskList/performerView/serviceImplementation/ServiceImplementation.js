@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 17:22:24
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-08 16:28:51
  */
 
 import React, { PureComponent } from 'react';
@@ -365,7 +365,8 @@ export default class ServiceImplementation extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '$args[0].currentCustomer.custName',
+      name: '客户列表',
+      value: '$args[0].currentCustomer.custName',
       type: '任务流水',
     },
   })
