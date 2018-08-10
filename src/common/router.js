@@ -530,6 +530,7 @@ export const getRouterData = (app) => {
     '/accountLimit/notifies': {
       component: dynamicWrapper(app, ['accountLimit'], () =>
         import('../routes/accountLimit/Notifies' /* webpackChunkName: "accountLimit_notifies" */)),
+    },
     // 管理标签
     '/labelManagement': {
       component: dynamicWrapper(app, [], () =>

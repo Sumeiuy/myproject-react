@@ -112,7 +112,7 @@ export default class CreateModal extends PureComponent {
       // 证券代码
       stockCode: '',
       // 已添加的客户列表
-      addedCustData: props.addedCustData || [],
+      addedCustData: [],
       // 当前页数
       pageNum: 1,
       // 限制类型搜索输入框搜索值
@@ -433,10 +433,11 @@ export default class CreateModal extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '删除客户' } })
   handleDeleteTableData(record) {
-    const { addedCustData } = this.state;
+    const { addedCustData, attachment } = this.state;
     const newAddedCustData = _.filter(addedCustData, o => o.custId !== record.custId);
     this.setState({
       addedCustData: newAddedCustData,
+      attachment: _.isEmpty(newAddedCustData) ? '' : attachment,
     });
   }
 
