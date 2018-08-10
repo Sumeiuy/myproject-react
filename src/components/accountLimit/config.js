@@ -120,6 +120,14 @@ const config = {
       length: 0,
       required: true,
     },
+    {
+      type: 'yhtzyj',
+      title: '银行通知邮件',
+      show: false,
+      limitCount: 1,
+      length: 0,
+      required: true,
+    },
   ],
   errorArray: ['validateError', 'otherError'],
   tips: {

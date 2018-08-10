@@ -78,6 +78,8 @@ export default class CreateModal extends PureComponent {
     closeModal: PropTypes.func.isRequired,
     // 弹窗状态
     visible: PropTypes.bool.isRequired,
+    // 清除数据
+    clearData: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -369,12 +371,7 @@ export default class CreateModal extends PureComponent {
     const { queryCustList } = this.props;
     const { operateType } = this.state;
     queryCustList({ ...payload, operateType }).then(() => {
-      const { searchCustData, addedCustData } = this.props;
-      if (payload.keyword) {
-        this.setState({
-          searchCustData,
-        });
-      }
+      const { addedCustData } = this.props;
       if (payload.attachment) {
         this.setState({
           addedCustData,
@@ -415,8 +412,14 @@ export default class CreateModal extends PureComponent {
     this.setState({
       addedCustData: [...addedCustData, client],
       client: {},
-    }, // 清空 AutoComplete 的选项和值
-      this.queryCustComponent.clearValue());
+    }, () => {
+      const { clearData } = this.props;
+      // 清空 AutoComplete 的选项和值
+      this.queryCustComponent.clearValue();
+      clearData({
+        searchCustData: [],
+      });
+    });
   }
 
   // 删除客户
@@ -692,11 +695,11 @@ export default class CreateModal extends PureComponent {
       visible,
       modalKey,
       closeModal,
+      searchCustData,
     } = this.props;
     const {
       importVisible,
       attachment,
-      searchCustData,
       isBankConfirm,
       limitList,
       limitType,

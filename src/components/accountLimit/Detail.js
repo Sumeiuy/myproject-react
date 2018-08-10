@@ -35,10 +35,19 @@ const {
 } = config;
 // 客户姓名
 const KEY_CUSTNAME = 'custName';
+const PAGE_SIZE = 7;
 export default class Detail extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 当前页数
+      pageNum: 1,
+    };
   }
 
   // 生成表格标题
@@ -63,11 +72,21 @@ export default class Detail extends PureComponent {
     return _.get(filterTitle[0], 'title', type);
   }
 
+  // 客户列表翻页事件
+  @autobind
+  @logable({ type: 'Click', payload: { name: '客户列表翻页' } })
+  handleCustPageChange(pageNum) {
+    this.setState({
+      pageNum,
+    });
+  }
+
   // 空方法，用于日志上报
   @logable({ type: 'Click', payload: { name: '下载报错信息' } })
   handleDownloadClick() {}
 
   render() {
+    const { pageNum } = this.state;
     const {
       data: {
         operateType,
@@ -104,12 +123,14 @@ export default class Detail extends PureComponent {
     // 拟稿人信息
     const drafter = `${orgName} - ${empName} (${empId})`;
     // 分页
-    const paginationOption = {
-      current: 0,
-      total: 0,
-      pageSize: 10,
-      onChange: this.handlePageNumberChange,
+    const custListPaginationOption = {
+      current: pageNum,
+      total: custList.length,
+      pageSize: PAGE_SIZE,
+      onChange: this.handleCustPageChange,
     };
+
+    const showCustList = _.chunk(custList, PAGE_SIZE);
 
     const approverName = !_.isEmpty(currentApproval) ? `${currentApproval.empName} (${currentApproval.empNum})` : '暂无';
     const nowStep = {
@@ -169,12 +190,12 @@ export default class Detail extends PureComponent {
           <InfoTitle head="客户列表" />
           <CommonTable
             titleList={newTitleList}
-            data={custList}
+            data={showCustList[pageNum - 1]}
             align="left"
             rowKey="custId"
           />
           <Pagination
-            {...paginationOption}
+            {...custListPaginationOption}
           />
         </div>
         <div className={styles.module}>
