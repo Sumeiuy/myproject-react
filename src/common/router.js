@@ -522,5 +522,3 @@ export const distributeRouters = [
   '/sysOperate/platformParameterSetting',
   '/sysOperate/telephoneNumberManage',
 ];
-
-export default {};

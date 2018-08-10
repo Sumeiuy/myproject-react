@@ -85,3 +85,8 @@ const encode = {
 };
 
 export default encode;
+
+export const {
+  utf8Encode,
+  base64
+} = encode;

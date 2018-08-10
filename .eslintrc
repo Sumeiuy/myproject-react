@@ -21,7 +21,16 @@
     "react/sort-comp": [1],
     "react/prefer-stateless-function": [0],
     "react/no-danger": [1],
-    "jsx-a11y/no-static-element-interactions": [0]
+    "jsx-a11y/no-static-element-interactions": [0],
+    "import/no-anonymous-default-export": ["error", {
+      "allowArrowFunction": true,
+      "allowAnonymousClass": true,
+      "allowAnonymousFunction": true,
+      "allowLiteral": true,
+      "allowObject": false,
+      "allowArray": true
+    }],
+    "import/prefer-default-export": [0]
   },
   "env": {
     "browser": true

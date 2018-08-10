@@ -13,7 +13,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import { number } from '../../../helper';
-import config from '../config';
+import { weekMonthYear } from '../config';
 import styles from './overview.less';
 
 const EMPTY_TEXT = '无';
@@ -52,7 +52,7 @@ export default class Overview extends PureComponent {
       },
       titleName,
     } = this.props;
-    const showWeekMonthYear = [...config.weekMonthYear];
+    const showWeekMonthYear = [...weekMonthYear];
     if (!_.isEmpty(data) && !_.isNumber(weekEarnings)) {
       showWeekMonthYear.shift();
     }

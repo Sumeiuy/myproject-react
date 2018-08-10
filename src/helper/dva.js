@@ -94,3 +94,12 @@ const dva = {
 };
 
 export default dva;
+
+export const {
+  initApp,
+  dispatch,
+  getStore,
+  getHistory,
+  getLastLocation,
+  generateEffect,
+} = dva;

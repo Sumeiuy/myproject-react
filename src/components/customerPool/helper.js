@@ -202,3 +202,13 @@ const helper = {
 };
 
 export default helper;
+
+export const {
+  isSightingScope,
+  transformDateTypeToDate,
+  getFilter,
+  getSortParam,
+  handleOpenFsp360TabAction,
+  getDetailBtnVisible,
+  openProductDetailPage,
+} = helper;

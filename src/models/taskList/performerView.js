@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @Description: 执行者视图 model
  * @file models/taskList/performerView.js

@@ -6,6 +6,9 @@ const PRODUCT_ARGUMENTS = [
   '申购开始日期',
 ];
 
-export default {
+const exported = {
   PRODUCT_ARGUMENTS,
 };
+
+export default exported;
+export { PRODUCT_ARGUMENTS };

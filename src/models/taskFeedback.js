@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @file models/taskFeedback.js
  *  任务反馈 store

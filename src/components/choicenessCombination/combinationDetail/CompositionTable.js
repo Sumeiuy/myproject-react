@@ -12,10 +12,9 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import { time, number } from '../../../helper';
-import config from '../config';
+import { detailTitleList, formatStr, overlayStyle } from '../config';
 import styles from './compositionTable.less';
 
-const { detailTitleList, formatStr, overlayStyle } = config;
 // 字符串常量，用于 table columns 对应列的 key 匹配来 render
 // 理由字符串
 const KEY_REASON = 'reason';

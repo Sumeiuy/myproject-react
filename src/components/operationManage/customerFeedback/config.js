@@ -43,3 +43,14 @@ const config = {
 };
 
 export default config;
+export {
+  motTask as MOT_TASK,
+  selfTask as SELF_TASK,
+  serviceManagerRole as SERVICE_MANAGER_ROLE,
+  zhangleRole as ZHANGLE_ROLE,
+};
+
+export const {
+  ROLE_TYPES,
+  TABLIST,
+} = config;

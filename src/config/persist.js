@@ -31,3 +31,9 @@ const config = {
 };
 
 export default config;
+
+export const {
+  active,
+  storeConfig,
+  whitelist,
+} = config;

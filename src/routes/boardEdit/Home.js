@@ -15,7 +15,7 @@ import { fspContainer /* , responseCode */} from '../../config';
 import SimpleEditor from '../../components/Edit/SimpleEditor';
 import SelfSelect from '../../components/Edit/SelfSelect';
 import BoardSelectTree from '../../components/Edit/BoardSelectTree';
-import selectHandlers from '../../components/Edit/selectHelper';
+import { getAllCheckboxNode, afterSelected } from '../../components/Edit/selectHelper';
 import { BackConfirmModal, PublishConfirmModal } from '../../components/modals';
 import withRouter from '../../decorators/withRouter';
 import styles from './Home.less';
@@ -184,8 +184,8 @@ export default class BoardEditHome extends PureComponent {
   @autobind
   getVRLabel(user, all) {
     // 默认必须选中本级机构
-    const allCheckedNode = selectHandlers.getAllCheckboxNode(all[0].level);
-    const getFinalLabel = selectHandlers.afterSelected(all, allCheckedNode);
+    const allCheckedNode = getAllCheckboxNode(all[0].level);
+    const getFinalLabel = afterSelected(all, allCheckedNode);
     return getFinalLabel(user);
   }
 

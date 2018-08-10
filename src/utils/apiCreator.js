@@ -3,11 +3,11 @@
 * @author maoquan(maoquan@htsc.com)
 */
 
-import { request, logRequest, fspRequest } from './request';
-
-import config from '../config/request';
-import constants from '../config/constants';
+import requestUtils from './request';
+import { apiPrefix, fspPrefix, inHTSCDomain } from '../config/constants';
 import { emp, url as urlHelper, encode } from '../helper';
+
+const { request, logRequest, fspRequest } = requestUtils;
 
 /**
  * api生成器
@@ -15,7 +15,6 @@ import { emp, url as urlHelper, encode } from '../helper';
  * @return {Fucntion}
  */
 export default function createApi() {
-  const { apiPrefix, fspPrefix } = config;
   // 如果没有前缀，自动补上
   const padPrefix = (url) => {
     if (url.indexOf(apiPrefix) === -1) {
@@ -88,7 +87,7 @@ export default function createApi() {
       let data = JSON.stringify(query);
       // 只在华泰域名下才编码
       // 测试环境为了直观测试，不编码数据
-      if (constants.inHTSCDomain) {
+      if (inHTSCDomain) {
         data = encode.base64(data);
         data = encodeURIComponent(data);
       }

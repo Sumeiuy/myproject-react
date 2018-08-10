@@ -100,3 +100,8 @@ ContactGroup.defaultProps = {
 };
 
 export default ContactGroup;
+
+export const {
+  propTypes,
+  defaultProps,
+} = ContactGroup;

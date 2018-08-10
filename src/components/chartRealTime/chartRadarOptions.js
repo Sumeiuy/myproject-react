@@ -97,3 +97,13 @@ const radarConfig = {
 };
 
 export default radarConfig;
+
+export const {
+  legend,
+  radarCommon,
+  seriesCommon,
+  currentRadar,
+  contrastRadar,
+  currentLabel,
+  contrastLabel,
+} = radarConfig;

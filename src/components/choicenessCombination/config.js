@@ -557,4 +557,20 @@ const config = {
   },
 };
 
-export default config;
+export const {
+  formatStr,
+  formatDateStr,
+  timeRange,
+  directionRange,
+  titleList,
+  typeList,
+  securityType,
+  sourceType,
+  chartTabList,
+  yieldRankList,
+  riskDefaultItem,
+  detailTitleType,
+  detailTitleList,
+  weekMonthYear,
+  overlayStyle,
+} = config;

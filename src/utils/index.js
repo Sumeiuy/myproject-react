@@ -19,7 +19,28 @@ import {
 import initFspMethod from './initFspMethod';
 import fspGlobal from './fspGlobal';
 
-export default {
+const exported = {
+  apiCreator,
+  request,
+  sagaEffects,
+  initFspMethod,
+  fspGlobal,
+  dispatchTabPane,
+  openRctTab,
+  openFspTab,
+  closeRctTab,
+  closeFspTab,
+  removeTab,
+  openInTab,
+  navToTab,
+  navTo,
+  linkTo,
+  saveTabUrl,
+  openFspIframeTab,
+};
+
+export default exported;
+export {
   apiCreator,
   request,
   sagaEffects,

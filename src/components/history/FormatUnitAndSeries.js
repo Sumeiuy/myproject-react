@@ -1,7 +1,6 @@
 // 对用户数进行特殊处理
-import FixNumber from '../chartRealTime/FixNumber';
+import { toFixedDecimal } from '../chartRealTime/FixNumber';
 
-export default {};
 
 export const toFixedCust = (series) => {
   let newUnit = '户';
@@ -14,10 +13,10 @@ export const toFixedCust = (series) => {
 
   if (max >= 10000) {
     newUnit = '万户';
-    newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
+    newSeries = series.map(item => toFixedDecimal(item / 10000));
   } else {
     newUnit = '户';
-    newSeries = series.map(item => FixNumber.toFixedDecimal(item));
+    newSeries = series.map(item => toFixedDecimal(item));
   }
 
   return {
@@ -159,11 +158,11 @@ export const getMaxAndMinPercentOrPermillage = (series) => {
 
 // 针对百分比数据进行处理
 export const toFixedPercent = (series, isCommissionRate) =>
-  series.map(o => FixNumber.toFixedDecimal(o * 100, isCommissionRate));
+  series.map(o => toFixedDecimal(o * 100, isCommissionRate));
 
 // 针对千分比数据进行处理
 export const toFixedPermillage = (series, isCommissionRate) =>
-  series.map(o => FixNumber.toFixedDecimal(o * 1000, isCommissionRate));
+  series.map(o => toFixedDecimal(o * 1000, isCommissionRate));
 
 // 对人数进行特殊处理
 export const toFixedRen = (series) => {
@@ -176,10 +175,10 @@ export const toFixedRen = (series) => {
   // 3.超过亿元的，以‘亿元’为单位
   if (max >= 10000) {
     newUnit = '万人';
-    newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
+    newSeries = series.map(item => toFixedDecimal(item / 10000));
   } else {
     newUnit = '人';
-    newSeries = series.map(item => FixNumber.toFixedDecimal(item));
+    newSeries = series.map(item => toFixedDecimal(item));
   }
 
   return {

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @file models/feedback.js
  * @author yangquanjian

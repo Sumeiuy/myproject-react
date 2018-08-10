@@ -12,12 +12,12 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Popover, Table } from 'antd';
 import { fspContainer } from '../../../config';
-import titleList from './config/titleList';
+import { holdingIndustry } from './config/titleList';
 import { number } from '../../../helper';
 import styles from './holdingIndustryDetail.less';
 
 const getPopupContainer = () => document.querySelector(fspContainer.container) || document.body;
-const holdingIndustryTitleList = titleList.holdingIndustry;
+const holdingIndustryTitleList = holdingIndustry;
 const EMPTY_ARRAY = [];
 export default class HoldingIndustryDetail extends PureComponent {
 

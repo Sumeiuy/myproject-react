@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @Descripter: 自定义客户标签
  * @Author: K0170179

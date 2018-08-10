@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @file models/taskList/tasklist.js
  *  目标客户池  自建任务

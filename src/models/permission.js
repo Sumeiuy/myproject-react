@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @file models/premissinon.js
  * @author honggaungqing

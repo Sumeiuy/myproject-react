@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @Descripter: 平台参数设置/运营中心
  * @Author: K0170179

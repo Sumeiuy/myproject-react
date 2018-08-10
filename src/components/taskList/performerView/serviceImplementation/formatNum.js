@@ -38,6 +38,9 @@ const formatAsset = (num) => {
   return { value: Number(newNum.toFixed(2)), unit: UNIT_DEFAULT };
 };
 
-export default {
+const exported = {
   formatAsset,
 };
+
+export default exported;
+export { formatAsset };

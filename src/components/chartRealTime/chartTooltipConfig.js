@@ -25,4 +25,9 @@ const stackTooltip = {
   },
 };
 
-export default { stackTooltip };
+const exported = {
+  stackTooltip,
+};
+
+export default exported;
+export { stackTooltip };

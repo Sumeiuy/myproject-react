@@ -1,4 +1,3 @@
-export default {};
 
 // 服务经理维度
 export const EMP_MANAGER_SCOPE = 'empManager';
