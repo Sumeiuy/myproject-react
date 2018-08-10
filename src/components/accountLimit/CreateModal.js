@@ -99,7 +99,7 @@ export default class CreateModal extends PureComponent {
       // 搜索的客户数据
       searchCustList: [],
       // 是否银行确认
-      isBankConfirm: '',
+      bankConfirm: '',
       // 限制信息
       limitList: [],
       limitType: [],
@@ -158,7 +158,7 @@ export default class CreateModal extends PureComponent {
   @autobind
   queryNextStepButton() {
     // 获取下一步骤按钮列表
-    const { isLimit, operateType, isBankConfirm } = this.state;
+    const { isLimit, operateType, bankConfirm } = this.state;
     const { queryButtonList } = this.props;
     const payload = {
       flowId: '',
@@ -166,7 +166,7 @@ export default class CreateModal extends PureComponent {
     };
     // 如果是解除限制
     if (!isLimit) {
-      if (isBankConfirm === bankConfirmArray[0].value) {
+      if (bankConfirm === bankConfirmArray[0].value) {
         payload.extraParam = 'true';
       } else {
         payload.extraParam = 'false';
@@ -188,7 +188,7 @@ export default class CreateModal extends PureComponent {
       newAttachementList = [attachmentMap[0]];
     }
     this.setState({
-      isBankConfirm: e.target.value,
+      bankConfirm: e.target.value,
       attachmentList: newAttachementList,
     }, this.queryNextStepButton);
   }
@@ -207,7 +207,7 @@ export default class CreateModal extends PureComponent {
       isLimit,
       companyName: '',
       stockCode: '',
-      isBankConfirm: '',
+      bankConfirm: '',
       addedCustData: [],
       attachment: '',
       limitType: [],
@@ -563,7 +563,7 @@ export default class CreateModal extends PureComponent {
       operateType,
       companyName,
       stockCode,
-      isBankConfirm,
+      bankConfirm,
       addedCustData,
       limitType,
       limitStartTime,
@@ -630,7 +630,7 @@ export default class CreateModal extends PureComponent {
     };
 
     // 限制解除类型并且银行确认为 否
-    if (!isLimit && isBankConfirm === bankConfirmArray[1].value) {
+    if (!isLimit && bankConfirm === bankConfirmArray[1].value) {
       const flowAuditors = {
         auditors: emp.getId(),
         groupName: btnItem.flowAuditors.nextGroupName,
@@ -662,13 +662,13 @@ export default class CreateModal extends PureComponent {
   @autobind
   sendRequest(payload) {
     const { saveChange } = this.props;
-    const { isLimit, limitStartTime, isBankConfirm } = this.state;
+    const { isLimit, limitStartTime, bankConfirm } = this.state;
     const newPayload = { ...payload };
     // 如果是限制类型
     if (isLimit) {
       newPayload.limitStartTime = limitStartTime;
     } else {
-      newPayload.isBankConfirm = isBankConfirm === bankConfirmArray[0].value;
+      newPayload.bankConfirm = bankConfirm === bankConfirmArray[0].value;
     }
     saveChange(newPayload).then(() => {
       this.handleSuccessCallback();
@@ -700,7 +700,7 @@ export default class CreateModal extends PureComponent {
     const {
       importVisible,
       attachment,
-      isBankConfirm,
+      bankConfirm,
       limitList,
       limitType,
       operateType,
@@ -831,7 +831,7 @@ export default class CreateModal extends PureComponent {
               isLimit
               ? null
               : <InfoForm label="是否银行确认" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
-                <RadioGroup onChange={this.handleBankConfirmChange} value={isBankConfirm}>
+                <RadioGroup onChange={this.handleBankConfirmChange} value={bankConfirm}>
                   {
                     bankConfirmArray.map(item => (
                       <Radio value={item.value} key={item.value}>{item.label}</Radio>

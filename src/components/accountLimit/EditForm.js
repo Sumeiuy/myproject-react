@@ -41,7 +41,6 @@ const RELIEVE_LIMITTYPE_LABEL_NAME = '解除限制类型'; // 解除限制类型
 const {
   tableTitle: { custList: custTitleList },
   operateTypeArray,
-  attachmentMap,
 } = config;
 // 登陆人的组织 ID
 // const empOrgId = emp.getOrgId();
@@ -240,8 +239,13 @@ export default class EditForm extends PureComponent {
   // 文件上传成功
   @autobind
   handleUploadCallback(attachmentType, attachment) {
-    const { editFormData: { attachList = EMPTY_ARRAY } } = this.props;
-    const newAttachmentList = attachList.map((item) => {
+    const {
+      editFormData: {
+        attachList = EMPTY_ARRAY,
+        attachmentList = EMPTY_ARRAY,
+      },
+    } = this.props;
+    const newAttachList = attachList.map((item) => {
       if (item.type === attachmentType) {
         return {
           ...item,
@@ -251,7 +255,25 @@ export default class EditForm extends PureComponent {
       }
       return item;
     });
-    this.handleEditFormChange(newAttachmentList, 'attachList');
+    // 这里是做个防止意外的处理，在驳回后修改时如果没有附件id的时候，将新的附件id传给后端
+    const newAttachmentList = [...attachmentList];
+    let flag = false;
+    // 如果本来的attachmentList里面已经有现有的附件id就跳过，如果没有的话就将新的附件id push进去
+    newAttachmentList.forEach((item) => {
+      if (item.title === attachmentType) {
+        flag = true;
+      }
+    });
+    if (!flag) {
+      newAttachmentList.push({
+        title: attachmentType,
+        attachment,
+      });
+    }
+    // editFormData.attachList用来做校验和渲染上传相关组件
+    this.handleEditFormChange(newAttachList, 'attachList');
+    // editFormData.attachmentList用来传给后端
+    this.handleEditFormChange(newAttachmentList, 'attachmentList');
   }
 
   // 文件删除成功
@@ -283,28 +305,6 @@ export default class EditForm extends PureComponent {
     >
       <Icon type="shanchu" />
     </Popconfirm>);
-  }
-
-  @autobind
-  getFileList() {
-    const { editFormData: { attachList = EMPTY_ARRAY } } = this.props;
-    const editPageAttachmentList = [attachmentMap[0]];
-    // 如果操作类型是解除限制，并且 是否和银行确认字段为 true时才显示银行确认解除材料
-    if (this.isNeedBankConfirmFile()) {
-      editPageAttachmentList.push(attachmentMap[1]);
-    }
-    return editPageAttachmentList.map((parentItem) => {
-      let newItem = {};
-      attachList.forEach((childItem) => {
-        if (parentItem.type === childItem.title) {
-          newItem = {
-            ...childItem,
-            ...parentItem,
-          };
-        }
-      });
-      return newItem;
-    });
   }
 
   render() {
@@ -455,7 +455,6 @@ export default class EditForm extends PureComponent {
                     deleteCallback={this.handleDeleteCallback}
                     ref={(ref) => { this[`uploader${item.type}`] = ref; }}
                     showDelete
-                    isLimit={item.isLimit}
                     limitCount={item.limitCount}
                   />
                 </div>

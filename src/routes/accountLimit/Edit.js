@@ -31,11 +31,6 @@ const {
   tableTitle: { approvalList },
 } = config;
 
-// 登陆人的组织 ID
-// const empOrgId = emp.getOrgId();
-// const empOrgId = 'ZZ001041051';
-// 登陆人的职位 ID
-// const empPstnId = emp.getPstnId();
 // 审批人弹窗
 const approverModalKey = 'approverModal';
 const EMPTY_OBJECT = {};
@@ -181,6 +176,7 @@ export default class AccountLimitEdit extends PureComponent {
   @autobind
   chekDataIsLegal() {
     const { editFormData } = this.props;
+    const { attachList } = editFormData;
     if (_.isEmpty(editFormData.companyName)) {
       message.error('公司简介不能为空!');
       return false;
@@ -220,16 +216,15 @@ export default class AccountLimitEdit extends PureComponent {
         return false;
       }
     }
-    return true;
-  }
 
-  // 提交请求
-  @autobind
-  sendRequest(payload) {
-    const { saveChange } = this.props;
-    saveChange(payload).then(() => {
-      this.handleSuccessCallback();
-    });
+    // 附件校验
+    for (let i = 0; i < attachList.length; i++) {
+      if (attachList[i].length <= 0 && attachList[i].required) {
+        message.error(`请上传${attachList[i].title}`);
+        return false;
+      }
+    }
+    return true;
   }
 
   // 提交，点击后选择审批人
@@ -245,7 +240,7 @@ export default class AccountLimitEdit extends PureComponent {
         groupName: btnItem.nextGroupName,
         approverIdea: '',
       };
-      saveChange({ editFormData, ...flowAuditors }).then(() => {
+      saveChange({ ...editFormData, ...flowAuditors }).then(() => {
         this.handleSuccessCallback();
       });
     } else {
