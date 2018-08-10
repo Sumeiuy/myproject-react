@@ -55,6 +55,8 @@ const effects = {
   queryLimtList: 'accountLimit/queryLimtList',
   // 提交客户分配
   saveChange: 'accountLimit/saveChange',
+  // 清除数据
+  clearData: 'accountLimit/clearData',
 };
 
 const mapStateToProps = state => ({
@@ -76,9 +78,6 @@ const mapStateToProps = state => ({
   addedCustData: state.accountLimit.addedCustData,
   // 限制类型列表
   limitList: state.accountLimit.limitList,
-  // 上传后更新的批次数据
-  updateData: state.accountLimit.updateData,
-  saveChangeData: state.accountLimit.saveChangeData,
 });
 
 const mapDispatchToProps = {
@@ -128,7 +127,8 @@ export default class AccountLimitHome extends PureComponent {
     queryLimtList: PropTypes.func.isRequired,
     // 提交数据
     saveChange: PropTypes.func.isRequired,
-    saveChangeData: PropTypes.object.isRequired,
+    // 清除数据
+    clearData: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -393,6 +393,7 @@ export default class AccountLimitHome extends PureComponent {
       queryLimtList,
       // 提交走流程
       saveChange,
+      clearData,
     } = this.props;
 
     const {
@@ -475,6 +476,7 @@ export default class AccountLimitHome extends PureComponent {
             showModal={this.showModal}
             closeModal={this.closeModal}
             saveChange={saveChange}
+            clearData={clearData}
           />
           : null
         }

@@ -78,6 +78,8 @@ export default class CreateModal extends PureComponent {
     closeModal: PropTypes.func.isRequired,
     // 弹窗状态
     visible: PropTypes.bool.isRequired,
+    // 清除数据
+    clearData: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -258,8 +260,10 @@ export default class CreateModal extends PureComponent {
   // 设置解除限制禁用时间
   @autobind
   disabledEndDate(current) {
-    const { limitStartTime } = this.state;
-    return current < moment(limitStartTime).endOf('day');
+    const { limitStartTime, isLimit } = this.state;
+    return isLimit
+    ? current < moment(limitStartTime).endOf('day')
+    : current < moment().endOf('day');
   }
 
   // 限制类型焦点进入
@@ -367,12 +371,7 @@ export default class CreateModal extends PureComponent {
     const { queryCustList } = this.props;
     const { operateType } = this.state;
     queryCustList({ ...payload, operateType }).then(() => {
-      const { searchCustData, addedCustData } = this.props;
-      if (payload.keyword) {
-        this.setState({
-          searchCustData,
-        });
-      }
+      const { addedCustData } = this.props;
       if (payload.attachment) {
         this.setState({
           addedCustData,
@@ -413,8 +412,14 @@ export default class CreateModal extends PureComponent {
     this.setState({
       addedCustData: [...addedCustData, client],
       client: {},
-    }, // 清空 AutoComplete 的选项和值
-      this.queryCustComponent.clearValue());
+    }, () => {
+      const { clearData } = this.props;
+      // 清空 AutoComplete 的选项和值
+      this.queryCustComponent.clearValue();
+      clearData({
+        searchCustData: [],
+      });
+    });
   }
 
   // 删除客户
@@ -522,7 +527,7 @@ export default class CreateModal extends PureComponent {
 
     Modal.success({
       title: '提示',
-      content: '提交成功，后台正在进行数据处理！若数据校验失败，可在首页通知提醒中查看失败原因。',
+      content: '提交成功。',
       onOk: () => {
         // 关闭审批人弹窗
         closeModal({
@@ -690,11 +695,11 @@ export default class CreateModal extends PureComponent {
       visible,
       modalKey,
       closeModal,
+      searchCustData,
     } = this.props;
     const {
       importVisible,
       attachment,
-      searchCustData,
       isBankConfirm,
       limitList,
       limitType,
@@ -931,7 +936,6 @@ export default class CreateModal extends PureComponent {
                       deleteCallback={this.handleDeleteCallback}
                       ref={(ref) => { this[`uploader${item.type}`] = ref; }}
                       showDelete
-                      isLimit={item.isLimit}
                       limitCount={item.limitCount}
                     />
                   </div>

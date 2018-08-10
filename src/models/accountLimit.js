@@ -18,7 +18,6 @@ export default {
     searchCustData: EMPTY_ARRAY, // 客户列表列表
     addedCustData: EMPTY_ARRAY,  // 已添加的客户列表
     limitList: EMPTY_ARRAY,
-    saveChangeData: EMPTY_OBJECT,  // 保存后的数据
     notifiesData: EMPTY_OBJECT,  // 消息提醒页面数据
   },
   reducers: {
@@ -62,19 +61,20 @@ export default {
         buttonData: resultData,
       };
     },
-    saveChangeSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      return {
-        ...state,
-        saveChangeData: resultData,
-      };
-    },
     // 消息提醒页面数据
     queryNotifiesListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
         notifiesData: resultData,
+      };
+    },
+    // 清除数据成功
+    clearDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        ...payload,
       };
     },
   },
@@ -135,12 +135,8 @@ export default {
       });
     },
     // 提交
-    * saveChange({ payload }, { call, put }) {
-      const response = yield call(api.saveChange, payload);
-      yield put({
-        type: 'saveChangeSuccess',
-        payload: response,
-      });
+    * saveChange({ payload }, { call }) {
+      yield call(api.saveChange, payload);
     },
     // 提交保存
     * doApprove({ payload }, { call }) {
@@ -152,6 +148,13 @@ export default {
       yield put({
         type: 'queryNotifiesListSuccess',
         payload: response,
+      });
+    },
+    // 清除数据
+    * clearData({ payload }, { put }) {
+      yield put({
+        type: 'clearDataSuccess',
+        payload,
       });
     },
   },
