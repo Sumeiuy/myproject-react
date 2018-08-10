@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 20:10:09
+ * @Last Modified time: 2018-08-10 10:00:27
  */
 
 import React, { PureComponent } from 'react';
@@ -109,7 +109,6 @@ export default class CustomerGroupManage extends PureComponent {
     customerHotPossibleWordsList: PropTypes.array.isRequired,
     getHotPossibleWds: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
-    deleteCustomerFromGroupResult: PropTypes.object.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
     // 批量导入客户信息
     queryBatchCustList: PropTypes.func.isRequired,
