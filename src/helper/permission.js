@@ -260,6 +260,16 @@ const permission = {
     return hasDuty(dutyList, duty.HTSC_KF_YYBZXG);
   },
 
+  // HTSC 综合服务-营业部执行岗
+  hasZHFWYYBZXGPermission() {
+    return hasDuty(dutyList, duty.HTSC_ZHFW_YYBZXG);
+  },
+
+  // HTSC 限制性账户审批岗
+  hasXZXZHSPGPermission() {
+    return hasDuty(dutyList, duty.HTSC_XZXZHSPG);
+  },
+
   // HTSC 客户资料管理岗（无隐私）
   hasCDMPermission() {
     return hasDuty(dutyList, duty.HTSC_CDM);

@@ -1,0 +1,91 @@
+@import "../../css/util.less";
+.detailBox {
+  background-color: #fff;
+  padding: 20px;
+  height: 100%;
+  box-shadow: 5px 5px 5px #ededee;
+  overflow: auto;
+  .error {
+    font-size: 14px;
+    color: red;
+    margin-top: 10px;
+    i {
+      margin-right: 4px;
+    }
+  }
+  h2 {
+    color: #33393c;
+    font-size: 14px;
+  }
+  .title {
+    border-bottom: 1px solid #c2c2c2;
+    padding: 0 0 15px;
+  }
+  .module {
+    padding: 15px 0;
+    border-bottom: 1px solid #f3f3f4;
+    .inlineInfoItem {
+      display: inline-block;
+      width: auto;
+      margin-right: 20px;
+    }
+    h2 {
+      font-weight: normal;
+      line-height: 1.5;
+    }
+    .modContent {
+      padding: 5px 0;
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      .propertyList {
+        .item {
+          position: relative;
+          clear: left;
+          width: 100%;
+          box-sizing: border-box;
+          margin-bottom: 20px;
+        }
+      }
+      &:after {
+        content: " ";
+        display: table;
+        clear: both;
+      }
+    }
+  }
+  :global {
+    table {
+      table-layout: fixed;
+      width: 100%;
+    }
+    .ant-table-tbody > tr > td {
+      .one-line-ellipsis;
+      & > div {
+        position: relative;
+        .one-line-ellipsis;
+      }
+    }
+    .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+      padding: 8px 16px;
+    }
+  }
+  .oldEmp {
+    width: 110px;
+    .one-line-ellipsis;
+  }
+  .tougu {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    background: #60c1ea;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 2px;
+    margin-left: 6px;
+    text-align: center;
+    width: 35px;
+    height: 22px;
+  }
+}
