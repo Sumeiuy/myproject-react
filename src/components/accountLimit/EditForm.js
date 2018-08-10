@@ -222,7 +222,7 @@ export default class EditForm extends PureComponent {
 
   // 删除客户
   @autobind
-  @logable({ type: 'Click', payload: { name: '删除客户' } })
+  @logable({ type: 'ButtonClick', payload: { name: '删除客户' } })
   handleDeleteTableData(record) {
     const { editFormData: { custList = EMPTY_ARRAY } } = this.props;
     const newCustData = _.filter(custList, o => o.custId !== record.custId);
@@ -291,6 +291,20 @@ export default class EditForm extends PureComponent {
       return item;
     });
     this.handleEditFormChange(newAttachmentList, 'attachList');
+  }
+
+  // 设置限制时间切换事件
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '选择限制时间' } })
+  handleStartDateChange(date, dateStr) {
+    this.handleEditFormChange(dateStr, 'limitStartTime');
+  }
+
+  // 解除限制时间切换事件
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '选择限制解除时间' } })
+  handleEndDateChange(date, dateStr) {
+    this.handleEditFormChange(dateStr, 'limitEndTime');
   }
 
   // 渲染点击删除按钮后的确认框
@@ -415,7 +429,7 @@ export default class EditForm extends PureComponent {
                 <DatePicker
                   disabledDate={this.setDisabledDate}
                   value={moment(editFormData.limitStartTime || '', config.timeFormatStr)}
-                  onChange={(date, dateStr) => this.handleEditFormChange(dateStr, 'limitStartTime')}
+                  onChange={this.handleStartDateChange}
                 />
               </InfoForm>)
             :
@@ -425,7 +439,7 @@ export default class EditForm extends PureComponent {
             <DatePicker
               disabledDate={this.relieveDisabledDate}
               value={moment(editFormData.limitEndTime || '', config.timeFormatStr)}
-              onChange={(date, dateStr) => this.handleEditFormChange(dateStr, 'limitEndTime')}
+              onChange={this.handleEndDateChange}
             />
           </InfoForm>
         </div>

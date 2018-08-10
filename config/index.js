@@ -3,7 +3,7 @@ var path = require('path');
 var devEnv = require('./dev.env');
 // 后端服务器地址前缀，在`config.dev.mock`为`false`的情况下，
 // 以此前缀开头的请求全部转发至指定服务器`targetUrl`
-var prefix = devEnv.REMOVE_PREFIX === false ? '/mcrm/api' : '/fspa/mcrm/api';
+var prefix = devEnv.REMOVE_PREFIX === true ? '/mcrm/api' : '/fspa/mcrm/api';
 
 function generateProxy(proxyList) {
   var result = {};

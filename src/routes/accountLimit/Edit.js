@@ -137,14 +137,6 @@ export default class AccountLimitEdit extends PureComponent {
     });
   }
 
-  // 打开弹窗
-  @autobind
-  showModal(modalKey) {
-    this.setState({
-      [modalKey]: true,
-    });
-  }
-
   // 修改审批意见
   @autobind
   handleChangeRemark(e) {
@@ -155,7 +147,7 @@ export default class AccountLimitEdit extends PureComponent {
 
   // 关闭弹窗
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户划转弹框' } })
+  @logable({ type: 'ButtonClick', payload: { name: '关闭账户限制管理弹框' } })
   closeModal(obj) {
     const { modalKey, isNeedConfirm = true } = obj;
     // 关闭模态框

@@ -22,7 +22,7 @@ import ApplyItem from '../../components/common/appList/ApplyItem';
 import Detail from '../../components/accountLimit/Detail';
 import commonConfirm from '../../components/common/confirm_';
 import config from '../../components/accountLimit/config';
-import { dva, emp, convert, time } from '../../helper';
+import { permission, env, dva, emp, convert, time } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
 
@@ -202,16 +202,14 @@ export default class AccountLimitHome extends PureComponent {
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
-    // 获取左侧列表时的 subType
-    // TODO: subType 赋值
-    const subType = '';  // ''
-    getList({ ...params, type: pageType, subType }).then(this.getRightDetail);
+    getList({ ...params, type: pageType }).then(this.getRightDetail);
   }
 
   // 头部筛选后调用方法
   @autobind
   handleHeaderFilter(obj) {
     // 1.将值写入Url
+    const { business2 = '', ...restObj } = obj;
     const { replace, location } = this.props;
     const { query, pathname } = location;
     // 清空掉消息提醒页面带过来的 id
@@ -226,28 +224,21 @@ export default class AccountLimitHome extends PureComponent {
       },
     });
     // 2.调用queryApplicationList接口，清空掉消息提醒页面带过来的 id， appId
-    this.queryAppList({ ...query, ...obj, id: '', appId: '' }, 1, query.pageSize);
+    this.queryAppList({ ...query, ...restObj, id: '', appId: '', business2: '', subType: business2 }, 1, query.pageSize);
   }
 
-  // 判断当前登录用户部门是否是分公司
+  // 判断当前登录权限
   @autobind
-  checkUserIsDepartment() {
+  showCreateBtn() {
     const { custRangeList } = this.props;
-    let isDepartment = true;
+    let show = true;
     if (!_.isEmpty(custRangeList)) {
-      if (!emp.isDepartment(custRangeList, emp.getOrgId())) {
-        isDepartment = false;
-      }
+      // HTSC 综合服务-营业部执行岗、HTSC 限制性账户审批岗
+      show = permission.hasZHFWYYBZXGPermission() && permission.hasXZXZHSPGPermission();
     }
-    return isDepartment;
-  }
-
-  // 打开弹窗
-  @autobind
-  showModal(modalKey) {
-    this.setState({
-      [modalKey]: true,
-    });
+    // 本地显示新建按钮， FSP 环境下不显示
+    show = !env.isInFsp();
+    return show;
   }
 
   // 关闭弹窗
@@ -272,7 +263,7 @@ export default class AccountLimitHome extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
-  @logPV({ pathname: '/modal/createProtocol', title: '新建账户限制管理弹窗' })
+  @logPV({ pathname: '/modal/createAccountLimitModal', title: '新建账户限制管理' })
   openCreateModalBoard() {
     this.setState({
       createModal: true,
@@ -281,6 +272,7 @@ export default class AccountLimitHome extends PureComponent {
 
   // 左侧列表分页
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '左侧列表分页' } })
   handlePageNumberChange(nextPage, currentPageSize) {
     const { replace, location } = this.props;
     const { query, pathname } = location;
@@ -300,7 +292,7 @@ export default class AccountLimitHome extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '营业部客户分配左侧列表项',
+      name: '账户限制管理左侧列表项',
       type: '$props.location.query.type',
       subType: '$props.location.query.subType',
     },
@@ -400,6 +392,18 @@ export default class AccountLimitHome extends PureComponent {
       createModal,
     } = this.state;
     const isEmpty = _.isEmpty(list.resultData);
+
+        // 操作类型增加全部
+    const operateAllOptions = [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      ...operateTypeArray,
+    ];
+
+
     const topPanel = (
       <ConnectedSeibelHeader
         location={location}
@@ -411,11 +415,11 @@ export default class AccountLimitHome extends PureComponent {
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
-        checkUserIsFiliale={this.checkUserIsDepartment}
-        needApplyTime
+        operateOptions={operateAllOptions}
         needCust={false}
+        isShowCreateBtn={this.showCreateBtn}
+        needApplyTime
         needOperate
-        operateOptions={operateTypeArray}
       />
     );
 
@@ -473,7 +477,6 @@ export default class AccountLimitHome extends PureComponent {
             buttonData={buttonData}
             queryButtonList={queryButtonList}
             queryAppList={this.queryAppList}
-            showModal={this.showModal}
             closeModal={this.closeModal}
             saveChange={saveChange}
             clearData={clearData}
