@@ -30,6 +30,7 @@ import {
   NUMOFCUSTOPENED_ENTRY,
   TASK_CUST_SCOPE_ENTRY,
   SOURCE_CUSTLIST,
+  SOURCE_LABELMANAGEMENT,
 } from '../../../config/createTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
@@ -281,6 +282,11 @@ export default class CreateTaskForm extends PureComponent {
         defaultExecutionType = '请选择';
         defaultMissionDesc = this.getFilterInfo();
         break;
+      case SOURCE_LABELMANAGEMENT:
+        defaultMissionType = '请选择';
+        defaultExecutionType = '请选择';
+        defaultMissionDesc = this.getLabelManagementMissionDesc();
+        break;
       default:
         defaultMissionType = '请选择';
         defaultExecutionType = '请选择';
@@ -368,6 +374,17 @@ export default class CreateTaskForm extends PureComponent {
         ...suggestionList,
       ],
     }));
+    return toString(stateFromHTML(htmlStr));
+  }
+
+  // 管理标签页进入，任务提示显示自定义标签的名称
+  @autobind
+  getLabelManagementMissionDesc() {
+    const { location: { query: { labelName } } } = this.props;
+    const htmlStr = `<div>
+      <div>该客户通过淘客筛选，满足以下条件：</div>
+      <div>自定义标签：${labelName}</div>
+    </div>`;
     return toString(stateFromHTML(htmlStr));
   }
 

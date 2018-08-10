@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-03 13:24:16
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-09 19:36:41
  */
 
 import React, { PureComponent } from 'react';
@@ -109,6 +109,11 @@ export default class CommonTable extends PureComponent {
     emptyListDataNeedEmptyRow: PropTypes.bool,
     // 表格头部
     title: PropTypes.func,
+    // 表格可点击的列号集合，eg: [1,2,3] 表示表格的前3列可点击
+    clickableColumnIndexList: PropTypes.array,
+    // 表格可点击的列号集合一一对应的点击事件方法集合
+    // eg: [get,set,update] 表示可点击的列号集合一一对应的点击事件方法
+    clickableColumnCallbackList: PropTypes.array,
   };
 
   static defaultProps = {
@@ -141,6 +146,8 @@ export default class CommonTable extends PureComponent {
     paginationClass: '',
     emptyListDataNeedEmptyRow: false,
     title: null,
+    clickableColumnIndexList: [],
+    clickableColumnCallbackList: [],
   };
 
   constructor(props) {
@@ -245,6 +252,8 @@ export default class CommonTable extends PureComponent {
       columnWidth,
       operationColumnClass,
       emptyListDataNeedEmptyRow,
+      clickableColumnIndexList,
+      clickableColumnCallbackList,
     } = this.props;
     const len = titleColumn.length - 1;
 
@@ -258,9 +267,14 @@ export default class CommonTable extends PureComponent {
       title: item.value,
       fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
       render: (text, record) => {
+        let node = (
+          <span title={item.renderTitle ? item.renderTitle(record) : record[item.key]} className="column">
+            {this.renderColumnValue(record, item)}
+          </span>
+        );
         if (index === 0 && isFirstColumnLink) {
           // 第一列可以Link，有handler
-          return (
+          node = (
             <div
               className={
                 classnames({
@@ -280,7 +294,7 @@ export default class CommonTable extends PureComponent {
           );
         }
         if (index === len && !_.isEmpty(actionSource)) {
-          return (<div
+          node = (<div
             className={
               classnames({
                 [styles.operation]: true,
@@ -301,12 +315,36 @@ export default class CommonTable extends PureComponent {
             }
           </div>);
         }
+        // 根据传入的可点击的列号数组和回调方法数组来进行区别的渲染
+        if (
+          !_.isEmpty(clickableColumnIndexList)
+          && !_.isEmpty(clickableColumnCallbackList)
+        ) {
+          _.each(clickableColumnIndexList, (value, key) => {
+            if (index === value - 1) {
+              node = (
+                <div
+                  className={
+                    classnames({
+                      [styles.operation]: true,
+                      [operationColumnClass]: true,
+                      operation: true,
+                    })}
+                >
+                  <span
+                    title={item.renderTitle ? item.renderTitle(record) : record[item.key]}
+                    className={styles.link}
+                    onClick={() => clickableColumnCallbackList[key](record, item.value)}
+                  >
+                    {this.renderColumnValue(record, item)}
+                  </span>
+                </div>
+              );
+            }
+          });
+        }
 
-        return (
-          <span title={item.renderTitle ? item.renderTitle(record) : record[item.key]} className={'column'}>
-            {this.renderColumnValue(record, item)}
-          </span>
-        );
+        return node;
       },
     }));
   }
