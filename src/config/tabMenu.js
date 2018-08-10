@@ -51,7 +51,7 @@ const newOpenTabConfig = [
   {
     name: 'MOT服务统计明细',
     id: 'FSP_MOT_STATISTICS_DETAIL',
-    path: '/fsp/statisticalQuery/MOTStatisticsDetail',
+    path: '/fsp/MOTStatisticsDetail',
     pid: 'FSP_MOT_M_SERVICE_STATISTICS_PRIMARY',
   },
   {
@@ -91,6 +91,12 @@ const newOpenTabConfig = [
     pid: 'FSP_CUST_M_360',
   },
   {
+    name: '投顾签约计划变更向导',
+    id: 'FSP_CUST_M_360_WIZARD',
+    path: '/fsp/customerCenter/360Wizard',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
     name: '佣金调整向导',
     id: 'FSP_CUST_M_SERVICEORDERINGWIZARD',
     path: '/fsp/serviceOrderingWizard',
@@ -113,12 +119,6 @@ const newOpenTabConfig = [
     id: 'FSP_CUST_M_TOCOMMISSION',
     path: '/fsp/customerCenter/toCommission',
     pid: 'FSP_CUST_M_360',
-  },
-  {
-    name: '客户服务全纪录',
-    id: 'FSP_MOT_TAB_SERVICELIST',
-    path: '/fsp/taskCenter/serviceManage',
-    pid: 'FSP_MOT_M_TASK',
   },
   {
     name: '工单投诉信息',

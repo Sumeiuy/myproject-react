@@ -130,6 +130,10 @@ export default class Main extends PureComponent {
     window.location.search = `?${newSearchStr}`;
   }
 
+  setCanCallPhoneState(empInfo = {}) {
+    window.canCallPhone = empInfo.canCall;
+  }
+
   @autobind
   handleHeaderSwitchRsp(rsp) {
     let fullUrl = '/chgPstn?';
@@ -177,6 +181,9 @@ export default class Main extends PureComponent {
     const isPhoneCall = caller === PHONE;
     // 获取当前职位
     const empCurrentPosition = emp.getPstnId();
+
+    this.setCanCallPhoneState(this.props.empInfo);
+
     return (
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
