@@ -5,7 +5,14 @@
  * @Last Modified by: Liujianshu
  * @Last Modified time: 2018-08-03 14:07:38
  */
+// 限制设置的code
+const setCode = '1301';
+// 限制解除的code
+const relieveCode = '1302';
 const config = {
+  timeFormatStr: 'YYYY-MM-DD',
+  setCode,
+  relieveCode,
   // 限制的条数
   limitCount: 200,
   // 限制提醒信息
@@ -21,12 +28,12 @@ const config = {
     {
       show: true,
       label: '限制设置',
-      value: '1301',
+      value: setCode,
     },
     {
       show: true,
       label: '限制解除',
-      value: '1302',
+      value: relieveCode,
     },
   ],
   bankConfirmArray: [
