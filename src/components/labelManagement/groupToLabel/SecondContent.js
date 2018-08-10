@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 17:13:20
+ * @Last Modified time: 2018-08-10 10:48:46
  */
 
 import React, { PureComponent } from 'react';
@@ -45,7 +45,8 @@ export default class SecondContent extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      inputLabelName: '',
+      // 标签名称是否存在的提示语
+      labelNameTip: '',
       currentLabel: {},
       // 是否置灰标签描述输入框
       isDisabledLabelDescInput: false,
@@ -136,6 +137,29 @@ export default class SecondContent extends PureComponent {
   handleChange(value) {
     this.setState({
       currentLabel: this.props.findLabel(value),
+      labelNameTip: '',
+    });
+  }
+
+  // 标签名称输入框失焦
+  @autobind
+  handleBlur() {
+    const { findLabel, form } = this.props;
+    let tip;
+    form.validateFields(['labelName'], (error, values) => {
+      // 验证未通过或标签输入框为空
+      if (error || !values.labelName) {
+        tip = '';
+      } else {
+        // currentLabel有id时，标签输入的标签为已有标签
+        const currentLabel = findLabel(values.labelName);
+        tip = _.has(currentLabel, 'id')
+          ? <p className={styles.labelNameTip}>此标签为系统已有标签，选择后将为分组中客户设置上此标签</p>
+          : <p className={styles.labelNameTip}>此标签在系统中不存在，将为您新建此标签，请在下方输入此标签的详细说明</p>;
+      }
+    });
+    this.setState({
+      labelNameTip: tip,
     });
   }
 
@@ -153,7 +177,7 @@ export default class SecondContent extends PureComponent {
     } = this.props;
     const listData = this.generateListData();
     const autoCompleteDataSource = this.renderOptions() || [];
-    const { isDisabledLabelDescInput } = this.state;
+    const { isDisabledLabelDescInput, labelNameTip } = this.state;
     return (
       <div className={styles.modalContent}>
         <div className={styles.row}>
@@ -181,6 +205,7 @@ export default class SecondContent extends PureComponent {
                   dataSource={autoCompleteDataSource}
                   onSearch={this.handleAssociateData}
                   onChange={this.handleChange}
+                  onBlur={this.handleBlur}
                   placeholder="请选择"
                   optionLabelProp="value"
                   defaultActiveFirstOption={false}
@@ -189,6 +214,7 @@ export default class SecondContent extends PureComponent {
             </FormItem>
           </div>
         </div>
+        {labelNameTip}
         <div className={styles.row}>
           <span className={styles.label}><b>*</b>标签描述:</span>
           <div className={styles.content}>
