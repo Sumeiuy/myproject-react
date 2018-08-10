@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-10 10:48:46
+ * @Last Modified time: 2018-08-10 11:10:09
  */
 
 import React, { PureComponent } from 'react';
@@ -112,16 +112,23 @@ export default class SecondContent extends PureComponent {
   // 通过关键词联想标签数据
   @autobind
   handleAssociateData(value) {
+    const {
+      queryPossibleLabels, onClickLabelOption,
+      findLabel, form, clearPossibleLabels,
+    } = this.props;
     if (_.isEmpty(value)) {
-      this.props.clearPossibleLabels();
+      clearPossibleLabels();
+      form.setFieldsValue({ labelDesc: '' });
+      this.setState({
+        isDisabledLabelDescInput: false,
+      });
       return;
     }
-    this.props.queryPossibleLabels({
+    queryPossibleLabels({
       currentPage: 1,
       pageSize: 10,
       labelNameLike: value,
     }).then(() => {
-      const { onClickLabelOption, findLabel, form } = this.props;
       // 输入框值变化需要清空上次点击标签自动补全组件option对应的标签数据
       onClickLabelOption({});
       // 清空描述
@@ -206,7 +213,7 @@ export default class SecondContent extends PureComponent {
                   onSearch={this.handleAssociateData}
                   onChange={this.handleChange}
                   onBlur={this.handleBlur}
-                  placeholder="请选择"
+                  placeholder="标签名称"
                   optionLabelProp="value"
                   defaultActiveFirstOption={false}
                 />)
