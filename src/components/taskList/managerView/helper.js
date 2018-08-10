@@ -1,8 +1,8 @@
 /*
  * @Author: WangJunJun
  * @Date: 2018-08-02 21:09:41
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 21:11:54
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-09 20:38:21
  */
 
 
@@ -16,6 +16,7 @@ import {
   EMP_COMPANY_SCOPE,
   EMP_DEPARTMENT_SCOPE,
   EMP_MANAGER_SCOPE,
+  missionImplementation,
 } from '../../../config/managerViewCustManagerScope';
 
 export default {};
@@ -78,4 +79,114 @@ export function getCurrentScopeByOrgId(param) {
   const { level } = judgeCurrentOrgLevel(param);
 
   return getCurrentScopeByOrgLevel(level);
+}
+
+/**
+* 获取任务实施神策log日志Name属性
+*/
+function getLogName(params) {
+  const { logInfo } = missionImplementation;
+  const {
+    isEntryFromCustTotal,
+    isEntryFromProgressDetail,
+    isEntryFromResultStatisfy,
+    isEntryFromPie,
+    enterType,
+  } = params;
+  const {
+    entryFromProgressDetail,
+    entryFromPie,
+    entryFromCustTotal,
+  } = logInfo;
+  let name = '';
+  // 进度条
+  if (isEntryFromProgressDetail || isEntryFromResultStatisfy) {
+    name = entryFromProgressDetail.name;
+  }
+  // 饼状图
+  if (isEntryFromPie) {
+    name = entryFromPie.name;
+  }
+  // 表格
+  if (isEntryFromCustTotal || enterType) {
+    name = entryFromCustTotal.name;
+  }
+  return name;
+}
+
+/**
+* 获取任务实施神策log日志element属性
+*/
+function getLogElement(params) {
+  const {
+    IS_SERVED,
+    IS_DONE,
+    IS_UP_TO_STANDARD,
+    COMPLETED_PROGRESS_FLAG,
+    logInfo,
+  } = missionImplementation;
+  const {
+    isEntryFromCustTotal,
+    isEntryFromProgressDetail,
+    isEntryFromResultStatisfy,
+    isEntryFromPie,
+    missionProgressStatus,
+    progressFlag,
+    feedbackIdL1,
+    currentFeedback,
+  } = params;
+  const {
+    logElementFromCustTotal,
+    logElementFromServedCustomer,
+    logElementFromUnservedCustomer,
+    logElementFromCompletedCustomer,
+    logElementFromUncompletedCustomer,
+    logElementFromUpToStandardCustomer,
+    logElementFromNotUpToStandardCustomer,
+  } = logInfo;
+  let element = '';
+  // 进度条
+  if (isEntryFromProgressDetail || isEntryFromResultStatisfy) {
+    // 判断progressFlag的完成状态
+    const isCompletedProgressFlag = progressFlag === COMPLETED_PROGRESS_FLAG;
+    switch (missionProgressStatus) {
+      case IS_SERVED:
+        element = isCompletedProgressFlag ? logElementFromServedCustomer
+          : logElementFromUnservedCustomer;
+        break;
+      case IS_DONE:
+        element = isCompletedProgressFlag ? logElementFromCompletedCustomer
+          : logElementFromUncompletedCustomer;
+        break;
+      case IS_UP_TO_STANDARD:
+        element = isCompletedProgressFlag ? logElementFromUpToStandardCustomer
+          : logElementFromNotUpToStandardCustomer;
+        break;
+      default:
+        break;
+    }
+  }
+  // 饼状图
+  if (isEntryFromPie) {
+    const { feedbackName } = _.filter(currentFeedback,
+      item => item.feedbackIdL1 === feedbackIdL1)[0];
+    element = feedbackName;
+  }
+  // 表格中的客户总数
+  if (isEntryFromCustTotal) {
+    element = logElementFromCustTotal;
+  }
+  return element;
+}
+
+/**
+* 处理任务实施神策log日志
+*/
+export function printMissionImplementationLog(params) {
+  const name = getLogName(params);
+  const element = getLogElement(params);
+  return {
+    name,
+    element,
+  };
 }
