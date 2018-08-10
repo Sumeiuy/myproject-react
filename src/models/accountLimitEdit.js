@@ -6,8 +6,10 @@
  * @Last Modified time: 2018-08-08 09:42:37
  */
 import { accountLimit as api, common as commonApi } from '../api';
+import config from '../components/accountLimit/config';
 import { time } from '../helper';
 
+const { attachmentMap } = config;
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 
@@ -75,7 +77,7 @@ export default {
       const { resultData = EMPTY_OBJECT } = response;
       const newResultData = { ...resultData };
       const attachmentList = newResultData.attachmentList || [];
-
+      newResultData.attachList = [];
       const attachmentArray = [];
       for (let i = 0; i < attachmentList.length; i++) {
         const item = attachmentList[i];
@@ -90,7 +92,26 @@ export default {
         };
         attachmentArray.push(responsePayload);
       }
-      newResultData.attachmentList = attachmentArray;
+      const editPageAttachmentList = [attachmentMap[0]];
+      if (newResultData.operateType === config.relieveCode && newResultData.bankConfirm) {
+        editPageAttachmentList.push(attachmentMap[1]);
+      }
+      console.log('editPageAttachmentList', editPageAttachmentList, attachmentArray);
+      newResultData.attachList = editPageAttachmentList.map((parentItem) => {
+        let newItem = {};
+        attachmentArray.forEach((childItem) => {
+          if (parentItem.type === childItem.title) {
+            newItem = {
+              ...childItem,
+              ...parentItem,
+              length: (childItem.attachmentList || EMPTY_ARRAY).length,
+            };
+          }
+        });
+        return newItem;
+      });
+
+      // newResultData.attachList = attachmentArray;
       yield put({
         type: 'queryDetailInfoSuccess',
         payload: newResultData,

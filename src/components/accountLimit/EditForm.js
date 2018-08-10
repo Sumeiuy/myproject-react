@@ -9,7 +9,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message, DatePicker, Input, Select as AntdSelect, Popconfirm } from 'antd';
+import { DatePicker, Input, Select as AntdSelect, Popconfirm } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -200,36 +200,6 @@ export default class EditForm extends PureComponent {
     return <div dangerouslySetInnerHTML={{ __html: keyWordText }} />;
   }
 
-  // 上传事件
-  @autobind
-  @logable({ type: 'Click', payload: { name: '导入' } })
-  handleFileChange(info) {
-    const { attachment } = this.state;
-    this.setState({
-      importVisible: false,
-    }, () => {
-      const uploadFile = info.file;
-      if (uploadFile.response && uploadFile.response.code) {
-        if (uploadFile.response.code === '0') {
-          // 上传成功
-          const attachmentData = uploadFile.response.resultData;
-          const payload = {
-            custtomer: [],
-            manage: [],
-            attachment,
-          };
-          // 如果上传过，则先调用清空接口，调用成功后，调用添加接口
-          // 添加接口调用成功后，调用查询接口
-          // 是否上传过
-          this.handleUpdateDataAndQueryList(payload, attachmentData);
-        } else {
-          // 上传失败
-          message.error(uploadFile.response.msg);
-        }
-      }
-    });
-  }
-
   // 判断是否是限制设置类型
   @autobind
   isSetLimitType() {
@@ -267,6 +237,40 @@ export default class EditForm extends PureComponent {
     onEditFormChange({ value, type });
   }
 
+  // 文件上传成功
+  @autobind
+  handleUploadCallback(attachmentType, attachment) {
+    const { editFormData: { attachList = EMPTY_ARRAY } } = this.props;
+    const newAttachmentList = attachList.map((item) => {
+      if (item.type === attachmentType) {
+        return {
+          ...item,
+          attachment,
+          length: item.length + 1,
+        };
+      }
+      return item;
+    });
+    this.handleEditFormChange(newAttachmentList, 'attachList');
+  }
+
+  // 文件删除成功
+  @autobind
+  handleDeleteCallback(attachmentType) {
+    const { editFormData: { attachList = EMPTY_ARRAY } } = this.props;
+    const newAttachmentList = attachList.map((item) => {
+      const { type, length } = item;
+      if (type === attachmentType && length > 0) {
+        return {
+          ...item,
+          length: length - 1,
+        };
+      }
+      return item;
+    });
+    this.handleEditFormChange(newAttachmentList, 'attachList');
+  }
+
   // 渲染点击删除按钮后的确认框
   @autobind
   renderPopconfirm(type, record) {
@@ -281,6 +285,28 @@ export default class EditForm extends PureComponent {
     </Popconfirm>);
   }
 
+  @autobind
+  getFileList() {
+    const { editFormData: { attachList = EMPTY_ARRAY } } = this.props;
+    const editPageAttachmentList = [attachmentMap[0]];
+    // 如果操作类型是解除限制，并且 是否和银行确认字段为 true时才显示银行确认解除材料
+    if (this.isNeedBankConfirmFile()) {
+      editPageAttachmentList.push(attachmentMap[1]);
+    }
+    return editPageAttachmentList.map((parentItem) => {
+      let newItem = {};
+      attachList.forEach((childItem) => {
+        if (parentItem.type === childItem.title) {
+          newItem = {
+            ...childItem,
+            ...parentItem,
+          };
+        }
+      });
+      return newItem;
+    });
+  }
+
   render() {
     const {
       detailInfo,
@@ -292,11 +318,6 @@ export default class EditForm extends PureComponent {
       limitList,
       selectValue,
     } = this.state;
-    const editPageAttachmentList = [attachmentMap[0]];
-    // 如果操作类型是解除限制，并且 是否和银行确认字段为 true时才显示银行确认解除材料
-    if (this.isNeedBankConfirmFile()) {
-      editPageAttachmentList.push(attachmentMap[1]);
-    }
 
     // 客户标题列表
     const custTitle = this.getColumnsCustTitle();
@@ -419,7 +440,7 @@ export default class EditForm extends PureComponent {
         <div className={styles.contentItem}>
           <InfoTitle head="附件信息" />
           {
-            editPageAttachmentList.map((item) => {
+            (editFormData.attachList || EMPTY_ARRAY).map((item) => {
               const uploaderElement = item.show ? (
                 <div className={styles.mt10}>
                   <MultiUploader
@@ -434,6 +455,8 @@ export default class EditForm extends PureComponent {
                     deleteCallback={this.handleDeleteCallback}
                     ref={(ref) => { this[`uploader${item.type}`] = ref; }}
                     showDelete
+                    isLimit={item.isLimit}
+                    limitCount={item.limitCount}
                   />
                 </div>
               ) : null;

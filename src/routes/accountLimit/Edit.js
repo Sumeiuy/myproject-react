@@ -32,14 +32,14 @@ const {
 } = config;
 
 // 登陆人的组织 ID
-const empOrgId = emp.getOrgId();
+// const empOrgId = emp.getOrgId();
 // const empOrgId = 'ZZ001041051';
 // 登陆人的职位 ID
-const empPstnId = emp.getPstnId();
+// const empPstnId = emp.getPstnId();
 // 审批人弹窗
 const approverModalKey = 'approverModal';
-// 取消按钮的值
-// const BTN_CANCLE_VALUE = 'cancel';
+const EMPTY_OBJECT = {};
+const EMPTY_ARRAY = [];
 
 const effects = {
   // 获取详情
@@ -52,6 +52,8 @@ const effects = {
   saveChange: 'accountLimitEdit/saveChange',
   // 数据修改
   editFormChange: 'accountLimitEdit/editFormChange',
+  // 提交流程
+  doApprove: 'accountLimitEdit/doApprove',
 };
 
 const mapStateToProps = state => ({
@@ -65,7 +67,6 @@ const mapStateToProps = state => ({
   buttonData: state.accountLimitEdit.buttonData,
   // 限制类型列表
   limitList: state.accountLimitEdit.limitList,
-  saveChangeData: state.accountLimitEdit.saveChangeData,
 });
 
 const mapDispatchToProps = {
@@ -80,6 +81,8 @@ const mapDispatchToProps = {
   saveChange: dispatch(effects.saveChange, { loading: true, forceFull: true }),
   // 数据修改
   editFormChange: dispatch(effects.editFormChange, { loading: false, forceFull: true }),
+  // 提交流程
+  doApprove: dispatch(effects.doApprove, { loading: true, forceFull: true }),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -104,7 +107,8 @@ export default class AccountLimitEdit extends PureComponent {
     queryLimtList: PropTypes.func.isRequired,
     // 提交数据
     saveChange: PropTypes.func.isRequired,
-    saveChangeData: PropTypes.object.isRequired,
+    // 提交流程
+    doApprove: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -112,9 +116,10 @@ export default class AccountLimitEdit extends PureComponent {
     this.state = {
       approverModal: false,
       // 审批人
-      flowAuditors: [],
+      flowAuditors: EMPTY_ARRAY,
       // 审批意见
       remark: '',
+      currentButtonItem: EMPTY_OBJECT,
     };
   }
 
@@ -218,40 +223,38 @@ export default class AccountLimitEdit extends PureComponent {
     return true;
   }
 
+  // 提交请求
+  @autobind
+  sendRequest(payload) {
+    const { saveChange } = this.props;
+    saveChange(payload).then(() => {
+      this.handleSuccessCallback();
+    });
+  }
+
   // 提交，点击后选择审批人
   @autobind
   handleSubmit(btnItem) {
-    console.log('btn', btnItem);
     if (!this.chekDataIsLegal()) {
-      return false;
+      return;
     }
-    return false;
-    // const { saveChange } = this.props;
-    // const payload = {
-    //   TGConfirm: false,
-    //   positionId: empPstnId,
-    //   orgId: empOrgId,
-    //   auditors: '',
-    //   groupName: '',
-    //   approverIdea: '',
-    // };
-    // saveChange(payload).then(() => {
-    //   const { saveChangeData } = this.props;
-    //   // 提交没有问题
-    //   if (saveChangeData.errorCode === '0') {
-    //     this.handleSuccessCallback();
-    //   } else {
-    //     commonConfirm({
-    //       shortCut: 'hasTouGu',
-    //       onOk: () => {
-    //         this.setState({
-    //           flowAuditors: btnItem.flowAuditors,
-    //           approverModal: true,
-    //         });
-    //       },
-    //     });
-    //   }
-    // });
+    const { editFormData, saveChange } = this.props;
+    if (editFormData.operateType === config.relieveCode && !editFormData.bankConfirm) {
+      const flowAuditors = {
+        auditors: emp.getId(),
+        groupName: btnItem.nextGroupName,
+        approverIdea: '',
+      };
+      saveChange({ editFormData, ...flowAuditors }).then(() => {
+        this.handleSuccessCallback();
+      });
+    } else {
+      this.setState({
+        [approverModalKey]: true,
+        flowAuditors: btnItem.flowAuditors,
+        currentButtonItem: btnItem,
+      });
+    }
   }
 
   // 提交成功之后的回调处理
@@ -273,17 +276,21 @@ export default class AccountLimitEdit extends PureComponent {
   // 选完审批人后的提交
   @autobind
   handleApproverModalOK(auth) {
-    const { saveChange } = this.props;
-    const { flowAuditors } = this.state;
-    const payload = {
-      TGConfirm: true,
-      positionId: empPstnId,
-      orgId: empOrgId,
-      auditors: auth.login,
-      groupName: flowAuditors.nextGroupName,
-      approverIdea: '',
-    };
-    saveChange(payload).then(this.handleSuccessCallback());
+    const { editFormData, doApprove, saveChange } = this.props;
+    const { remark, currentButtonItem } = this.state;
+    saveChange({ ...editFormData }).then(() => {
+      doApprove({
+        empId: emp.getId(),
+        flowId: editFormData.flowId,
+        approverIdea: remark,
+        groupName: currentButtonItem.nextGroupName,
+        operate: currentButtonItem.operate,
+        auditors: auth.login,
+        itemId: editFormData.id,
+      }).then(() => {
+        this.handleSuccessCallback();
+      });
+    });
   }
 
   render() {
