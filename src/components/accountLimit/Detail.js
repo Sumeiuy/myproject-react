@@ -16,17 +16,11 @@ import CommonTable from '../common/biz/CommonTable';
 import MultiUploader from '../common/biz/MultiUploader';
 import ApproveList from '../common/approveList';
 import Pagination from '../common/Pagination';
-import Icon from '../common/Icon';
-import { request } from '../../config';
-import { emp, time } from '../../helper';
+import { time } from '../../helper';
 import config from './config';
 import styles from './detail.less';
 import logable from '../../decorators/logable';
 
-
-const empOrgId = emp.getPstnId();
-// 登陆人的职位 ID
-// const empPstnId = emp.getPstnId();
 // 表头
 const {
   tableTitle: { custList: custTitleList },  // 客户表格列表
@@ -35,6 +29,7 @@ const {
 } = config;
 // 客户姓名
 const KEY_CUSTNAME = 'custName';
+const KEY_LIMIT = 'limit';
 const PAGE_SIZE = 7;
 export default class Detail extends PureComponent {
   static propTypes = {
@@ -62,6 +57,8 @@ export default class Detail extends PureComponent {
         {text}{custId}
       </div>);
     };
+    const limitColumn = _.find(tempTitleList, o => o.key === KEY_LIMIT);
+    limitColumn.render = text => (<div title={text}>{text}</div>);
     return tempTitleList;
   }
 
@@ -105,7 +102,6 @@ export default class Detail extends PureComponent {
         currentApproval = {},
         currentNodeName,
         workflowHistoryBeans,
-        errorDesc,
         id,
         custList,
       },
@@ -147,33 +143,6 @@ export default class Detail extends PureComponent {
     return (
       <div className={styles.detailBox}>
         <h2 className={styles.title}>编号{id}</h2>
-        <div className={styles.error}>
-          {
-            errorDesc
-            ?
-              <p>
-                <Icon type="tishi" />
-                {config.tips[errorDesc]}
-              </p>
-            :
-              null
-          }
-          {
-            errorDesc === config.errorArray[0]
-            ?
-              <p>
-                <a
-                  onClick={this.handleDownloadClick}
-                  href={`${request.prefix}/excel/custTransfer/exportAssigumentExcel?appId=${appId || id}&empId=${emp.getId()}&orgId=${empOrgId}&type=department`}
-                  download
-                >
-                  下载报错信息
-                </a>
-              </p>
-            :
-              null
-          }
-        </div>
         <div className={styles.module}>
           <InfoTitle head="基本信息" />
           <InfoItem label="操作类型" width="120px" value={filterOperate[0].label} />
