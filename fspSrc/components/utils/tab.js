@@ -9,7 +9,7 @@ import { emp } from '../../../src/helper';
 import { newOpenTabConfig, defaultMenu } from '../../../src/config/tabMenu';
 import { enableSessionStorage } from '../../../src/config/constants';
 import { sessionStore } from '../../../src/config';
-import { pathPrefix } from '../layout/config';
+import commonConfig from '../layout/config';
 
 function traverseMenus(menus, callback) {
   const newMenus = [
@@ -191,7 +191,7 @@ function findTopMenu(location) {
   let pathForMatch = pathArray[1];
 
   // 如果pathname是以fsp开头的，
-  if (pathPrefix.test(pathname)) {
+  if (commonConfig.pathPrefix.test(pathname)) {
     pathForMatch = pathArray[2]; // 去掉"/fsp/"开头
   }
 
@@ -345,8 +345,7 @@ function getPanesWithPathname(location, shouldRemove, editPane = {}, prevState) 
   };
 }
 
-
-export default {
+export {
   traverseMenus,
   fixExternUrl,
   getFinalPanes,
