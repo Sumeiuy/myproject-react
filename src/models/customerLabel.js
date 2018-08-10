@@ -15,6 +15,7 @@ export default {
     labelInfo: EMPTY_OBJECT,
     custLabel: EMPTY_OBJECT,
     custLikeLabel: EMPTY_LIST,
+    signLabelCust: EMPTY_OBJECT,
   },
   reducers: {
     queryLabelTypeSuccess(state, action) {
@@ -43,6 +44,18 @@ export default {
           ...state.custLabel,
           [custId]: resultData,
         },
+      };
+    },
+    addSignLabelCust(state, action) {
+      return {
+        ...state,
+        signLabelCust: action.payload,
+      };
+    },
+    clearSignLabelCust(state) {
+      return {
+        ...state,
+        signLabelCust: EMPTY_OBJECT,
       };
     },
   },
@@ -75,7 +88,8 @@ export default {
     // 新增自定义标签
     * addLabel({ payload }, { call }) {
       const { resultData } = yield call(api.addLabel, payload);
-      return !resultData;
+      // 接口返回新增标签id,应该与列表统一为String,但是返回的是Number类型，这边作修复
+      return `${resultData}`;
     },
     // 删除自定义标签
     * deleteLabel({ payload }, { call }) {
@@ -106,7 +120,7 @@ export default {
     // 模糊查询客户标签
     queryLikeLabelInfo: [
       function* queryLikeLabelInfo({ payload }, { call, put }) {
-        const { resultData } = yield call(api.queryLabelInfo, payload);
+        const { resultData } = yield call(api.queryLikeLabelInfo, payload);
         if (resultData) {
           yield put({
             type: 'queryLikeLabelInfoSuccess',

@@ -34,6 +34,7 @@ import custRelationships from './custRelationships';
 import cancelAccountOL from './cancelAccountOL';
 import customerLabel from './customerLabel';
 import accountLimit from './accountLimit';
+import labelManagement from './labelManagement';
 
 const api = apiCreator();
 
@@ -110,5 +111,7 @@ export default {
   customerLabel: customerLabel(api),
   // ========== 账户限制管理
   accountLimit: accountLimit(api),
+  // ========== 管理标签页面
+  labelManagement: labelManagement(api),
 };
 

@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-07 19:06:05
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-09 19:37:50
  */
 
 import React, { PureComponent } from 'react';
@@ -42,6 +42,7 @@ import {
   TASK_CUST_SCOPE_ENTRY,
   sightingLabelSource,
   SOURCE_CUSTLIST,
+  SOURCE_LABELMANAGEMENT,
 } from '../../../config/createTaskEntry';
 import styles from './taskFormFlowStep.less';
 import logable, { logCommon } from '../../../decorators/logable';
@@ -191,7 +192,7 @@ export default class TaskFormFlowStep extends PureComponent {
   constructParam() {
     const {
       parseQuery,
-      location: { query: { groupId, enterType, source } },
+      location: { query: { groupId, enterType, source, signedLabelId } },
     } = this.props;
 
     const {
@@ -225,6 +226,9 @@ export default class TaskFormFlowStep extends PureComponent {
         // 带入queryLabelReq参数
         queryLabelReq: { labelId },
       };
+    } else if (source === SOURCE_LABELMANAGEMENT) {
+      // 从管理标签过来的
+      req = { signedLabelId };
     } else {
       req = { searchReq: custCondition, custIdList };
     }
@@ -294,6 +298,9 @@ export default class TaskFormFlowStep extends PureComponent {
         break;
       case CUST_GROUP_LIST:
         custSources = '客户分组';
+        break;
+      case SOURCE_LABELMANAGEMENT:
+        custSources = '标签管理';
         break;
       default:
         break;

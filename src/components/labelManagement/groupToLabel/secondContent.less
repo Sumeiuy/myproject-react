@@ -1,0 +1,74 @@
+.modalContent {
+  padding: 20px 20px 30px;
+  .row {
+    display: flex;
+    align-items: top;
+    margin-bottom: 14px;
+    .label {
+      padding-right: 8px;
+      width: 96px;
+      height: 30px;
+      line-height: 30px;
+      font-size: 14px;
+      color: #666;
+      text-align: right;
+      b {
+        font-weight: normal;
+        color: #f00;
+      }
+    }
+    .content {
+      flex: 1;
+      line-height: 30px;
+      font-size: 14px;
+      color: #333;
+      :global {
+        .ant-form-item {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+  .tableTitle {
+    padding: 14px 0;
+    font-size: 14px;
+    color: #666;
+    text-align: left;
+  }
+  .groupCustListTable {
+    padding: 0 !important;
+    table > thead > tr > th, tbody > tr > td {
+      padding: 7px 0 !important;
+      text-align: center !important;
+    }
+    tbody > tr > td > span:last-child {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin: 0 auto;
+    }
+    table > thead > tr > th {
+      text-align: center !important;
+    }
+    :global {
+      .ant-table-header {
+        background-color: #fff;
+        table {
+          border-bottom: 0;
+        }
+      }
+    }
+  }
+}
+.signRed {
+  font-style: normal;
+  color: #fdb02b;
+}
+.labelNameTip {
+  position: relative;
+  top: -14px;
+  padding-left: 96px;
+  font-size: 12px;
+  color: #ea001c;
+}
