@@ -306,6 +306,13 @@ const fspRoutes = [
     containerId: '',
     url: /\/bizapply\/pbbiz\/detail\?oper=all/,
   },
+  // PB业务申请编辑
+  {
+    path: '/fsp/businessApplyment/bizapply/appointBook',
+    action: 'loadInTab',
+    containerId: 'FSP_BUSINESS_APPLYMENT_B',
+    url: '/bizapply/appointBook/init',
+  },
 ];
 
 export default fspRoutes;

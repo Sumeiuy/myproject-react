@@ -19,22 +19,19 @@ export default class FSPComponent extends PureComponent {
     super(props);
     const { location: { pathname, state } } = props;
     this.getRouteConfig(pathname, state);
-    this.getFspData();
+    this.getFspData({ isinitial: true });
     this.state = {
       loading: true,
     };
     this.timeoutId = setTimeout(() => this.setState({ loading: false }), 10000);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { location: { pathname, state } } = nextProps;
+  componentDidUpdate(prevProps) {
+    const { location: { pathname, state } } = prevProps;
     const { location } = this.props;
     if (location.pathname !== pathname || location.state !== state) {
       this.getRouteConfig(pathname, state);
-      this.getFspData();
-      this.setState({
-        loading: true,
-      });
+      this.getFspData({ isinitial: false });
       this.timeoutId = setTimeout(() => this.setState({ loading: false }), 10000);
     }
   }
@@ -66,9 +63,14 @@ export default class FSPComponent extends PureComponent {
   }
 
   @autobind
-  getFspData() {
+  getFspData({ isinitial }) {
     // 如果请求的是html文档
     if (this.action === 'loadInTab') {
+      if (!isinitial) {
+        this.setState({
+          loading: true,
+        });
+      }
       // 请求html数据并进行插入
       api
         .getFspData(this.url)
