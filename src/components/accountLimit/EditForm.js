@@ -15,14 +15,12 @@ import moment from 'moment';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoForm from '../common/infoForm';
-// import Button from '../../components/common/Button';
 import InfoItem from '../common/infoItem';
 import ApproveList from '../common/approveList';
 import CommonTable from '../../components/common/biz/CommonTable';
 import MultiUploader from '../common/biz/MultiUploader';
 import Icon from '../../components/common/Icon';
 import logable from '../../decorators/logable';
-// import { request } from '../../config';
 import { time } from '../../helper';
 import config from './config';
 import styles from './editForm.less';
@@ -32,8 +30,6 @@ const Option = AntdSelect.Option;
 
 // 用于找到select类组件渲染option时父级容器的方法,以解决在弹窗里页面滚动，option随页面滚动的问题
 const getPopupContainerFunction = () => document.querySelector(`.${styles.formContent}`);
-// const EMPTY_PARAM = '暂无';
-// const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 const SET_LIMITTYPE_LABEL_NAME = '限制类型'; // 限制类型时显示的label名称
 const RELIEVE_LIMITTYPE_LABEL_NAME = '解除限制类型'; // 解除限制类型时显示的label名称
@@ -42,9 +38,7 @@ const {
   tableTitle: { custList: custTitleList },
   operateTypeArray,
 } = config;
-// 登陆人的组织 ID
-// const empOrgId = emp.getOrgId();
-const DEFAULTPAGESIZE = 5;
+const DEFAULT_PAGE_SIZE = 5;
 // 客户
 const KEY_CUSTNAME = 'custName';
 export default class EditForm extends PureComponent {
@@ -55,8 +49,6 @@ export default class EditForm extends PureComponent {
     // 用于编辑的数据
     editFormData: PropTypes.object.isRequired,
     onEditFormChange: PropTypes.func.isRequired,
-    // 获取按钮数据和下一步审批人
-    // selfBtnGroup: PropTypes.object.isRequired,
     // 限制类型
     limitList: PropTypes.array.isRequired,
     queryLimtList: PropTypes.func.isRequired,
@@ -65,8 +57,6 @@ export default class EditForm extends PureComponent {
     // 修改审批意见
     onChangeRemark: PropTypes.func.isRequired,
     remark: PropTypes.string.isRequired,
-    // 关闭弹窗
-    // closeModal: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -74,18 +64,7 @@ export default class EditForm extends PureComponent {
     this.state = {
       // 限制信息
       limitList: [],
-      fetching: false,
       selectValue: '',
-      // 上传后的返回值
-      attachment: '',
-      // 下一步审批人列表
-      nextApproverList: [],
-      // 审批人弹窗
-      nextApproverModal: false,
-      // 搜索的客户数据
-      searchCustList: [],
-      // 搜索的服务经理数据
-      searchManageList: [],
     };
   }
 
@@ -119,19 +98,19 @@ export default class EditForm extends PureComponent {
   // 设置限制日期不可选范围
   @autobind
   setDisabledDate(current) {
-    return current < moment().subtract(1, 'days');
+    return current < moment().startOf('day');
   }
 
   // 解除限制日期不可选范围
   @autobind
   relieveDisabledDate(current) {
     const { editFormData } = this.props;
-    // 如果操作类型是设置限制的时候，解除日期不能小于设置日期
-    if (this.isSetLimitType()) {
-      return current <= moment(editFormData.limitStartTime, config.timeFormatStr);
-    }
-    // 如果操作类型是解除限制的时候，解除日期不能小于今天
-    return current < moment().subtract(1, 'days');
+    return this.isSetLimitType() ?
+      // 如果操作类型是设置限制的时候，解除日期不能小于设置日期
+      current <= moment(editFormData.limitStartTime, config.timeFormatStr)
+      :
+      // 如果操作类型是解除限制的时候，解除日期不能小于今天
+      current < moment().endOf('day');
   }
 
   // 证券代码修改，只能输入整数
@@ -172,7 +151,6 @@ export default class EditForm extends PureComponent {
       const { limitList: propsLimitList } = this.props;
       this.setState({
         limitList: propsLimitList,
-        fetching: false,
       });
     });
   }
@@ -337,7 +315,7 @@ export default class EditForm extends PureComponent {
     const custTitle = this.getColumnsCustTitle();
 
     const paginationProps = {
-      defaultPageSize: DEFAULTPAGESIZE,
+      defaultPageSize: DEFAULT_PAGE_SIZE,
       hideOnSinglePage: true,
       showTotal: total => `共 ${total} 条`,
     };
