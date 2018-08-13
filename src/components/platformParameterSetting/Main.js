@@ -25,11 +25,11 @@ export default class Main extends PureComponent {
       menu,
       matchPath,
     } = this.props;
-    const hasPadding = env.isInReact();
+    const isReact = env.isInReact();
     return (
       <div
         className={classnames({
-          [styles.reactPadding]: hasPadding,
+          [styles.reactPadding]: isReact,
         })}
       >
         <Header menu={menu} matchPath={matchPath} />
