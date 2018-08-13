@@ -104,6 +104,8 @@ export default class RankStackChart extends PureComponent {
     const stores = filterData(orgModel, 'level4Name', 'yAxis');
     // 此处为y轴刻度值
     const yAxisLabels = filterData(orgModel, levelName, 'yAxis');
+    // 工号数组
+    const levelIdArr = filterData(orgModel, 'level5Id', 'yAxis');
     // 获取排名信息数据
     const rank = filterRankData(orgModel);
     // 获取合计值，即orgModel的value值，用于右侧显示使用
@@ -138,6 +140,7 @@ export default class RankStackChart extends PureComponent {
       company,
       wealth,
       stores,
+      levelIdArr,
       yAxisLabels,
       grid: newGrid,
       stackSeries,
@@ -277,7 +280,7 @@ export default class RankStackChart extends PureComponent {
   }
 
   @autobind
-  makeTooltip(base, scope, company, wealth, store, unit, legends) {
+  makeTooltip(base, scope, company, levelIdArr, wealth, store, unit, legends) {
     return {
       ...base,
       formatter(params) {
@@ -297,9 +300,11 @@ export default class RankStackChart extends PureComponent {
             const seriesName = item.seriesName;
             const dataIndex = item.dataIndex;
             let value = item.value;
+            let id = levelIdArr[dataIndex];
             if (axisValue === '--') {
               // 无数据的情况
               value = '--';
+              id = '--';
             }
             if (axisValue !== '--') {
               total.push(value);
@@ -307,6 +312,7 @@ export default class RankStackChart extends PureComponent {
             if (!hasPushedAxis) {
               hasPushedAxis = true;
               let title = '';
+              let tooltipEmpInfo = `${axisValue}`;
               const hasFundCenter = wealth[dataIndex] !== '--';
               // 针对不同的机构级别需要显示不同的分类
               if ((scope === 3 && axisValue !== '--') || (scope === 4 && axisValue !== '--' && !hasFundCenter)) {
@@ -319,9 +325,11 @@ export default class RankStackChart extends PureComponent {
               } else if (scope === 5 && axisValue !== '--' && hasFundCenter) {
                 // 5为投顾或服务经理,需要显示南京公司名称-财富中心-营业部(南京分公司有财富中心)
                 title = `${company[dataIndex]} - ${wealth[dataIndex]} - ${store[dataIndex]}`;
+                tooltipEmpInfo = `${axisValue}(${id})`;
               } else if (scope === 5 && axisValue !== '--' && !hasFundCenter) {
                  // 5为投顾或服务经理,需要显示xx公司名称-营业部(非南京分公司没有有财富中心)
                 title = `${company[dataIndex]} - ${store[dataIndex]}`;
+                tooltipEmpInfo = `${axisValue}(${id})`;
               }
               let toolTipNewHeader = `
                 <tr>
@@ -334,7 +342,7 @@ export default class RankStackChart extends PureComponent {
               seriesTips.push(`
                 ${toolTipNewHeader}
                 <tr>
-                  <td colspan="4">${axisValue}</td>
+                  <td colspan="4">${tooltipEmpInfo}</td>
                 </tr>
               `);
             }

@@ -26,7 +26,17 @@ import logable, { logPV, logCommon } from '../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
-const { permission, permission: { pageType, subType, status } } = seibelConfig;
+const {
+  permission,
+  permission: {
+    pageType,
+    subType,
+    status,
+    basicFilters,
+    moreFilters,
+    moreFilterData,
+  },
+} = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -183,6 +193,20 @@ export default class Permission extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
+    }
+  }
+
   // 获取列表后再获取某个Detail
   @autobind
   getRightDetail() {
@@ -245,8 +269,6 @@ export default class Permission extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   @autobind
@@ -363,7 +385,6 @@ export default class Permission extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -379,7 +400,6 @@ export default class Permission extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 创建私密客户申请
@@ -487,6 +507,9 @@ export default class Permission extends PureComponent {
         stateOptions={status}
         creatSeibelModal={this.creatPermossionModal}
         filterCallback={this.handleHeaderFilter}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

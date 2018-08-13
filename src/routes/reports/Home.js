@@ -57,7 +57,6 @@ const mapStateToProps = state => ({
   custRange: state.report.custRange,
   visibleBoards: state.report.visibleBoards,
   newVisibleBoards: state.report.newVisibleBoards,
-  globalLoading: state.activity.global,
   // 探测有数据的最大时间点接口
   initialData: state.report.initialData,
 });
@@ -104,7 +103,6 @@ export default class ReportHome extends PureComponent {
     custRange: PropTypes.array,
     visibleBoards: PropTypes.array,
     newVisibleBoards: PropTypes.array,
-    globalLoading: PropTypes.bool,
     preView: PropTypes.bool,
     reportName: PropTypes.string,
     boardId: PropTypes.number,
@@ -182,7 +180,6 @@ export default class ReportHome extends PureComponent {
     const {
       location: { query: { boardId: preBoardId } },
     } = this.props;
-
     // 还是chart部分的数据
     if (!_.isEqual(preBoardId, boardId)) {
       // 修改state

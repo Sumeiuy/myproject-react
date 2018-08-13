@@ -145,6 +145,30 @@ const helper = {
       },
     });
   },
+  /**
+   * 持仓行业的详情按钮是否可见
+   * @param {*} param0
+   *   hasNPCTIQPermission  是否有HTSC 交易信息查询权限（非私密客户）
+   *   hasPCTIQPermission  是否有HTSC 交易信息查询权限（含私密客户）
+   *   empInfo  登录用户的信息
+   *   customerData  当前客户的信息
+   */
+  getDetailBtnVisible({ hasNPCTIQPermission, hasPCTIQPermission, empInfo, customerData }) {
+    const { isPrivateCustomer, empId } = customerData;
+    // 默认不展示查看详情的按钮
+    let isShowDetailBtn = false;
+    // 有“HTSC 交易信息查询权限（含私密客户）”可以看所有客户的持仓行业信息
+    // 主服务经理 可以看名下所有客户的持仓信息
+    // 有“HTSC 交易信息查询权限（非私密客户）”可以看非私密客户的持仓行业信息
+    if (
+      hasPCTIQPermission
+      || empInfo.rowId === empId
+      || (hasNPCTIQPermission && !isPrivateCustomer)
+    ) {
+      isShowDetailBtn = true;
+    }
+    return isShowDetailBtn;
+  },
 
   /**
    * 跳转到产品详情tab页面

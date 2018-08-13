@@ -30,7 +30,8 @@ import {
   MorningBroadcast,
   ToBeDone,
   Viewpoint,
-  PerformanceIndicators,
+  PerformanceIndicatorsNew,
+  PerformanceIndicatorsOld,
   TabsExtra,
   Search,
   LabelModal,
@@ -81,13 +82,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  getCustCount: fetchDataFunction(true, effects.getCustCount),
-  getManagerIndicators: fetchDataFunction(true, effects.getManagerIndicators),
-  getPerformanceIndicators: fetchDataFunction(true, effects.getPerformanceIndicators),
-  getInformation: fetchDataFunction(true, effects.getInformation),
-  getToBeDone: fetchDataFunction(true, effects.toBeTone),
+  getCustCount: fetchDataFunction(false, effects.getCustCount),
+  getManagerIndicators: fetchDataFunction(false, effects.getManagerIndicators),
+  getPerformanceIndicators: fetchDataFunction(false, effects.getPerformanceIndicators),
+  getInformation: fetchDataFunction(false, effects.getInformation),
+  getToBeDone: fetchDataFunction(false, effects.toBeTone),
   getHotPossibleWds: fetchDataFunction(false, effects.getHotPossibleWds),
-  getHotWds: fetchDataFunction(true, effects.getHotWds),
+  getHotWds: fetchDataFunction(false, effects.getHotWds),
   saveSearchVal: fetchDataFunction(false, effects.saveSearchVal),
   push: routerRedux.push,
   replace: routerRedux.replace,
@@ -95,7 +96,7 @@ const mapDispatchToProps = {
   homaPageNews: fetchDataFunction(false, effects.homaPageNews),
   queryAudioFile: fetchDataFunction(false, effects.queryAudioFile),
   custLabelListPaging: fetchDataFunction(false, effects.custLabelListPaging),
-  queryCustLabelList: fetchDataFunction(true, effects.queryCustLabelList),
+  queryCustLabelList: fetchDataFunction(false, effects.queryCustLabelList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -519,6 +520,10 @@ export default class Home extends PureComponent {
       show: showMoreLabelModal,
       toggleModal: this.handleToggleMoreLabelModal,
     };
+
+    const PerformanceIndicators =
+      permission.isGrayFlag() ? PerformanceIndicatorsNew : PerformanceIndicatorsOld;
+
     return (
       <div className={styles.customerPoolWrap}>
         <Header push={push} />

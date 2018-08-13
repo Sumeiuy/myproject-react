@@ -1,7 +1,8 @@
 /**
- * @file customerPool/CustomerList.js
- *  客户列表
- * @author wangjunjun
+ * @Author: sunweibin
+ * @Date: 2018-08-13 09:38:50
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-08-13 09:43:32
  */
 
 import React, { PureComponent } from 'react';
@@ -72,6 +73,7 @@ const effects = {
   signCustLabels: 'customerLabel/signCustLabels',
   signBatchCustLabels: 'customerLabel/signBatchCustLabels',
   addLabel: 'customerLabel/addLabel',
+  queryHoldingIndustryDetail: 'customerPool/queryHoldingIndustryDetail',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -127,6 +129,8 @@ const mapStateToProps = state => ({
   custLabel: state.customerLabel.custLabel,
   // 模糊搜索客户标签
   custLikeLabel: state.customerLabel.custLikeLabel,
+  // 持仓行业的详情
+  industryDetail: state.customerPool.industryDetail,
 });
 
 const mapDispatchToProps = {
@@ -180,6 +184,7 @@ const mapDispatchToProps = {
   signCustLabels: fetchDataFunction(true, effects.signCustLabels),
   signBatchCustLabels: fetchDataFunction(true, effects.signBatchCustLabels),
   addLabel: fetchDataFunction(true, effects.addLabel),
+  queryHoldingIndustryDetail: fetchDataFunction(false, effects.queryHoldingIndustryDetail),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -253,6 +258,8 @@ export default class CustomerList extends PureComponent {
     custLabel: PropTypes.object.isRequired,
     custLikeLabel: PropTypes.array.isRequired,
     addLabel: PropTypes.func.isRequired,
+    queryHoldingIndustryDetail: PropTypes.func.isRequired,
+    industryDetail: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -406,9 +413,14 @@ export default class CustomerList extends PureComponent {
       }
     } else if (query.source === 'association' || query.source === 'securitiesProducts') { // 联想词
       // 非瞄准镜的标签labelMapping传local值时，去请求客户列表searchTypeReq传 Any
-      param.searchTypeReq = query.type;
-      param.searchText = labelName;
-      param.primaryKey = [labelMapping];
+      if (query.type === 'INDUSTRY') {
+        // 持仓行业按照新版客户列表的传参形式，其他按照以前的格式传参
+        param.primaryKeyIndustry = [labelMapping];
+      } else {
+        param.searchTypeReq = query.type;
+        param.searchText = labelName;
+        param.primaryKey = [labelMapping];
+      }
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) { // 经营指标或者投顾绩效
       // 业绩中的时间周期
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
@@ -728,6 +740,8 @@ export default class CustomerList extends PureComponent {
       custLabel,
       custLikeLabel,
       addLabel,
+      queryHoldingIndustryDetail,
+      industryDetail,
     } = this.props;
     const {
       sortDirection,
@@ -740,6 +754,8 @@ export default class CustomerList extends PureComponent {
       cycleSelect,
       bname,
       combinationName = '',
+      type,
+      labelName,
     } = location.query;
     // 排序的默认值 ： 总资产降序
     let reorderValue = DEFAULT_SORT;
@@ -766,10 +782,12 @@ export default class CustomerList extends PureComponent {
           <Col span={12}>
             {
               <CustomerTotal
-                type={source}
+                source={source}
                 num={page.total}
                 bname={bname}
                 combinationName={combinationName}
+                type={type}
+                labelName={labelName}
               />
             }
           </Col>
@@ -853,6 +871,9 @@ export default class CustomerList extends PureComponent {
           custLabel={custLabel}
           custLikeLabel={custLikeLabel}
           addLabel={addLabel}
+          queryHoldingIndustryDetail={queryHoldingIndustryDetail}
+          industryDetail={industryDetail}
+          queryHoldingIndustryDetailReqState={interfaceState[effects.queryHoldingIndustryDetail]}
         />
       </div>
     );

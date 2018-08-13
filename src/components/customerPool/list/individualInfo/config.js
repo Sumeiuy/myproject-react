@@ -11,6 +11,14 @@ const accountState = {
   render: 'renderDefaultVal',
 };
 
+/**
+ * @desc: 描述个性化信息map的每一项key的含义
+ * * name: 个性化信息的label
+ * * id: 个性化信息对应的数据（response）的key
+ * * render: 该项个性化信息定制的render方法
+ * * unit: 是否需要添加单位
+ * * hasCycle: 该项个性化信息是否有周期
+ */
 const matchRule = {
   primaryKeyLabels: {
     inset: true,
@@ -268,7 +276,7 @@ const matchRule = {
     inset: true,
     key: [
       {
-        name: '净转入总额',
+        name: '净转入资产',
         id: 'purFinAset',
         render: 'renderDefaultVal',
         unit: '元',
@@ -283,6 +291,7 @@ const matchRule = {
         id: 'gjAmt',
         render: 'renderDefaultVal',
         unit: '元',
+        hasCycle: true,
       },
     ],
   },
@@ -294,6 +303,7 @@ const matchRule = {
         id: 'gjPurRake',
         render: 'renderDefaultVal',
         unit: '元',
+        hasCycle: true,
       },
     ],
   },
@@ -305,6 +315,7 @@ const matchRule = {
         id: 'kfBuyAmt',
         render: 'renderDefaultVal',
         unit: '元',
+        hasCycle: true,
       },
     ],
   },
@@ -316,6 +327,7 @@ const matchRule = {
         id: 'smBuyAmt',
         render: 'renderDefaultVal',
         unit: '元',
+        hasCycle: true,
       },
     ],
   },
@@ -327,6 +339,7 @@ const matchRule = {
         id: 'finaBuyAmt',
         render: 'renderDefaultVal',
         unit: '元',
+        hasCycle: true,
       },
     ],
   },
@@ -338,6 +351,7 @@ const matchRule = {
         id: 'otcBuyAmt',
         render: 'renderDefaultVal',
         unit: '元',
+        hasCycle: true,
       },
     ],
   },
@@ -370,10 +384,11 @@ const matchRule = {
     inset: true,
     key: [
       {
-        name: '净佣金收入',
+        name: '净佣金额',
         id: 'purRake',
         render: 'renderDefaultVal',
         unit: '元',
+        hasCycle: true,
       },
     ],
   },
@@ -381,10 +396,11 @@ const matchRule = {
     inset: true,
     key: [
       {
-        name: '产品手续费净收入',
+        name: '产品净手续费',
         id: 'saleFare',
         render: 'renderDefaultVal',
         unit: '元',
+        hasCycle: true,
       },
     ],
   },
@@ -392,10 +408,11 @@ const matchRule = {
     inset: true,
     key: [
       {
-        name: '利息净收入',
+        name: '净利息额',
         id: 'netIncome',
         render: 'renderDefaultVal',
         unit: '元',
+        hasCycle: true,
       },
     ],
   },
@@ -422,7 +439,7 @@ const matchRule = {
       render: 'renderNoCompleted',
     }],
   },
-  holdingIndustry: {
+  primaryKeyIndustry: {
     inset: true,
     key: [{
       name: '持仓行业',

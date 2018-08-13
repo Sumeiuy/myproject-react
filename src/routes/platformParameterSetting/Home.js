@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import menu from './menu';
+import { linkTo } from '../../utils';
 import withRouter from '../../decorators/withRouter';
 import Main from '../../components/platformParameterSetting/Main';
 import { getRoutes } from '../../utils/router';
@@ -23,10 +24,15 @@ export default class PlatformParameterSetting extends PureComponent {
   };
   static contextTypes= {
     empInfo: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   componentDidMount() {
+    // 根据路由权限过滤后平台参数设置菜单下首页面的跳转
+    this.toPlatformHome();
+  }
+
+  componentDidUpdate() {
     // 根据路由权限过滤后平台参数设置菜单下首页面的跳转
     this.toPlatformHome();
   }
@@ -45,7 +51,6 @@ export default class PlatformParameterSetting extends PureComponent {
 
   toPlatformHome() {
     const { match: { path }, location: { pathname, query } } = this.props;
-    const { replace } = this.context;
     let homePath = path;
     if (path !== pathname) {
       return;
@@ -60,7 +65,15 @@ export default class PlatformParameterSetting extends PureComponent {
       }
     };
     getHomePath(finalMenu);
-    replace({ pathname: homePath, query });
+    if (pathname === homePath) {
+      return;
+    }
+    linkTo({
+      url: homePath,
+      pathname: homePath,
+      routerAction: this.context.push,
+      query,
+    });
   }
 
   render() {

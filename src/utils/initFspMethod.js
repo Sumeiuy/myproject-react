@@ -5,14 +5,15 @@
 import _ from 'lodash';
 import env from '../helper/env';
 import os from '../helper/os';
-import { parse } from '../helper/url';
-import { fspRoutes } from '../config';
+import { parse, parseUrl } from '../helper/url';
+import { fspRoutes, retTabParam } from '../config';
+import { openRctTab } from './controlPane';
 
 function findRoute(url) {
   return os.findBestMatch(url, fspRoutes, 'url');
 }
 
-function initFspMethod({ store, history }) {
+function initFspMethod({ store, history, isInReact }) {
   const { push } = history;
   window.dispatch = (action) => {
     store.dispatch(action);
@@ -51,10 +52,27 @@ function initFspMethod({ store, history }) {
   };
 
   // 更新流程任务列表
-  window.updateFlow = function (flowId) {
+  window.updateFlow = (flowId) => {
     window.dispatch({
       type: 'customerPool/updateTodoList',
       flowId,
+    });
+  };
+
+  // 在fsp中新开一个iframe的tab
+  window.openRctTabFromIframe = (url) => {
+    const { pathname } = parseUrl(url);
+    const { param: filterParam } = _.filter(retTabParam, item => (item.key === pathname))[0];
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      ...filterParam,
+    };
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
     });
   };
 
@@ -93,7 +111,7 @@ function initFspMethod({ store, history }) {
   });
 
   // 如果当前环境是react框架，就执行下面的重写操作
-  if (env.isInReact()) {
+  if (isInReact) {
     // 重写call之前，先将原来的call保存，暴露给juery插件
     const call = window.eb.component.SmartTab.call;
     $.fn.EBSmartTab = function tabCall(param1, param2) {
@@ -126,6 +144,49 @@ function initFspMethod({ store, history }) {
           push(url);
         },
       },
+      loadPageInTabOther: {
+        run(url, { reactShouldRemove }) {
+          const { path } = findRoute(url);
+          push({
+            pathname: path,
+            state: {
+              url,
+              shouldRemove: reactShouldRemove,
+            },
+          });
+        },
+      },
+      loadPageInWindow: {
+        run(url, actionParam) {
+          const contextPath = window.contextPath || '/fsp';
+          const options = $.extend(
+            {},
+            {
+              height: 500,
+              width: 800,
+              id: 'system-model-window',
+              scrollY: true,
+              show_cover: true,
+              title: '窗口标题',
+            },
+            actionParam,
+            { sourceURL: contextPath + url });
+
+          window.$('body').EBWindow(options);
+        },
+      },
+      loadPageInTabII: {
+        run(url, { reactShouldRemove }) {
+          const { path } = findRoute(url);
+          push({
+            pathname: path,
+            state: {
+              url,
+              shouldRemove: reactShouldRemove,
+            },
+          });
+        },
+      },
       loadGrayPage: {
         run(url, actionParam) {
           let finalUrl = url;
@@ -142,6 +203,11 @@ function initFspMethod({ store, history }) {
         run() { },
       },
     };
+
+    window.tabW = _.noop;
+    window.tabwei = _.noop;
+    window.canCallPhone = false;
+    window.isInReact = true;
   }
 }
 

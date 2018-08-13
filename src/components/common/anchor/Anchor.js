@@ -51,13 +51,14 @@ function easeInOutCubic(t, b, c, d) {
 
 const reqAnimFrame = getRequestAnimationFrame();
 export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callback = () => { }) {
+
   let scrollTopValue;
   if (fsp) {
     scrollTopValue = fsp.scrollTop;
   } else {
     scrollTopValue = getScroll(target(), true);
   }
-  
+
   const targetElement = document.getElementById(href.substring(1));
   if (!targetElement) {
     return;
@@ -70,13 +71,13 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
     const timestamp = Date.now();
     const time = timestamp - startTime;
     // 搬了antd/Anchor判断是否在fsp中，因为fsp是自己做的滚动条
-    
+
     if (fsp) {
       fsp.scrollTop = easeInOutCubic(time, scrollTopValue, targetScrollTop, 450);
     } else {
       window.scrollTo(window.pageXOffset, easeInOutCubic(time, scrollTopValue, targetScrollTop, 450));
     }
-    
+
     if (time < 450) {
       reqAnimFrame(frameFunc);
     } else {
@@ -113,16 +114,7 @@ export default class Anchor extends PureComponent {
     antAnchor: PropTypes.object,
   };
 
-  // noinspection JSAnnotator
-    refs: {
-      ink: PropTypes.any;
-  };
-
-  // private links: String[];
-  // private scrollEvent: any;
-  // private animating: boolean;
-
-  constructor(props: AnchorProps) {
+  constructor(props) {
     super(props);
     this.state = {
       activeLink: 'null',
@@ -153,6 +145,7 @@ export default class Anchor extends PureComponent {
   componentDidMount() {
     const getTarget = this.props.target || getDefaultTarget;
     // 搬了antd/Anchor判断是否在fsp中，控制scroll
+
     if (fsp) {
       $(fsp).on('scroll', this.handleScroll);
     } else {

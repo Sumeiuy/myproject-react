@@ -92,6 +92,8 @@ export default class RankNormalChart extends PureComponent {
     const stores = filterData(orgModel, 'level4Name', 'yAxis');
     // 此处为y轴刻度值
     const yAxisLabels = filterData(orgModel, levelName, 'yAxis');
+    // 工号数组
+    const levelIdArr = filterData(orgModel, 'level5Id', 'yAxis');
     // TODO 获取排名信息数据
     const rank = filterRankData(orgModel);
     // 取出所有的value,并将value转化成数字
@@ -125,6 +127,7 @@ export default class RankNormalChart extends PureComponent {
       company,
       wealth,
       stores,
+      levelIdArr,
       yAxisLabels,
       grid: newGrid,
       seriesData,
@@ -269,7 +272,7 @@ export default class RankNormalChart extends PureComponent {
   }
 
   @autobind
-  makeTooltip(base, scope, company, wealth, store, unit) {
+  makeTooltip(base, scope, company, levelIdArr, wealth, store, unit) {
     return {
       ...base,
       formatter(params) {
@@ -278,10 +281,13 @@ export default class RankNormalChart extends PureComponent {
         const seriesName = item.seriesName;
         let value = item.value;
         const dataIndex = item.dataIndex;
+        let id = levelIdArr[dataIndex];
         if (axisValue === '--') {
           value = '--';
+          id = '--';
         }
         let tooltipHead = '';
+        let tooltipEmpInfo = `${axisValue}`;
         const hasFundCenter = wealth[dataIndex] !== '--';
         if (scope === '5' && axisValue !== '--' && hasFundCenter) {
           // 5为投顾或服务经理,需要显示南京公司名称-财富中心-营业部(南京分公司有财富中心)
@@ -290,6 +296,7 @@ export default class RankNormalChart extends PureComponent {
               <td>${company[dataIndex]} - ${wealth[dataIndex]} - ${store[dataIndex]}</td>
             </tr>
           `;
+          tooltipEmpInfo = `${axisValue}(${id})`;
         } else if (scope === '5' && axisValue !== '--' && !hasFundCenter) {
           // 5为投顾或服务经理,需要显示xx公司名称-营业部(非南京分公司没有有财富中心)
           tooltipHead = `
@@ -297,6 +304,7 @@ export default class RankNormalChart extends PureComponent {
               <td>${company[dataIndex]} - ${store[dataIndex]}</td>
             </tr>
           `;
+          tooltipEmpInfo = `${axisValue}(${id})`;
         } else if (scope === '4' && axisValue !== '--' && hasFundCenter) {
           // 4为营业部,需要显示南京公司名称-财富中心(南京分公司有财富中心)
           tooltipHead = `
@@ -321,7 +329,7 @@ export default class RankNormalChart extends PureComponent {
           <table class="echartTooltipTable">
             ${tooltipHead}
             <tr>
-              <td>${axisValue}</td>
+              <td>${tooltipEmpInfo}</td>
             </tr>
             <tr>
               <td class="itemValue">${seriesName}: <span>${value}</span> (${unit})</td>
@@ -344,6 +352,7 @@ export default class RankNormalChart extends PureComponent {
       stores,
       wealth,
       company,
+      levelIdArr,
       rank,
       realLength,
     } = this.state;
@@ -358,7 +367,7 @@ export default class RankNormalChart extends PureComponent {
     // TODO 当最小值和最大值是相同单位的时候，需要做特殊处理
     const options = {
       color: [barColor],
-      tooltip: this.makeTooltip(chartTooltip, scope, company, wealth, stores, unit),
+      tooltip: this.makeTooltip(chartTooltip, scope, company, levelIdArr, wealth, stores, unit),
       grid: [
         ...chartGrid,
       ],

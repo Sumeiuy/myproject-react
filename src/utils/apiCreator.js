@@ -117,5 +117,35 @@ export default function createApi() {
         },
       );
     },
+    /**
+     * @param {string} url API url
+     * @param {Object} query 请求参数
+     * @param {Number} timeout 超时时间，单位ms
+     * @return {Promise}
+     */
+    postFspData(url, query = {}, options = {}) {
+      let fullUrl;
+      const finalUrl = fillPrefix(url);
+      if (options.isFullUrl) {
+        fullUrl = finalUrl;
+      } else {
+        fullUrl = `${finalUrl}?empId=${emp.getId()}`;
+      }
+
+      const { ignoreCatch = false, ...resetQuery } = query;
+      return request(
+        fullUrl,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            empId: emp.getId(),
+          },
+          ignoreCatch,
+          body: JSON.stringify({ ...resetQuery, empId: emp.getId() }),
+          ...options,
+        },
+      );
+    },
   };
 }

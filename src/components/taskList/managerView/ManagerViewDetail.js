@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-13 12:05:25
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-09 21:28:44
  * 管理者视图详情
  */
 
@@ -21,9 +21,10 @@ import { openRctTab } from '../../../utils';
 import { request } from '../../../config';
 import { PIE_ENTRY, PROGRESS_ENTRY, TASK_CUST_SCOPE_ENTRY } from '../../../config/createTaskEntry';
 import { emp, url as urlHelper } from '../../../helper';
+import { printMissionImplementationLog } from './helper';
 import styles from './managerViewDetail.less';
 import InfoArea from './InfoArea';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -215,11 +216,42 @@ export default class ManagerViewDetail extends PureComponent {
     this.hideCustDetailModal();
   }
 
+  // 点击客户总数
+  @autobind
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '目标客户',
+      element: '客户数',
+    },
+  })
+  handleCustTotal(params = {}) {
+    this.previewCustDetail(params);
+  }
+
+  // 点击客户详情
+  @autobind
+  handleCustDetail(params = {}) {
+    this.previewCustDetail(params);
+  }
+
+  // 点击任务实施简报中的图表
+  @autobind
+  handleMissionImplementation(params = {}) {
+    this.previewCustDetail(params);
+    // 神策日志上报
+    const payload = printMissionImplementationLog(params);
+    logCommon({
+      type: 'DrillDown',
+      payload,
+    });
+  }
+
   /**
    * 预览客户明细
    */
   @autobind
-  handlePreview(params = {}) {
+  previewCustDetail(params = {}) {
     const {
       // 一二级客户反馈
       currentFeedback,
@@ -252,14 +284,17 @@ export default class ManagerViewDetail extends PureComponent {
       currentId,
       queryDistinctCustomerCount,
       queryDistinctCustListDetailOfMission,
+      location: { query: { ptyMngId = '' } },
     } = this.props;
 
     // 基本入参
+    // 按服务经理筛选时传ptyMngId的值
     let postBody = {
       pageNum,
       pageSize,
       orgId: this.getCurrentOrgId(),
       missionId: currentId,
+      ptyMngId,
     };
 
     // 进度条下钻的入参
@@ -414,6 +449,7 @@ export default class ManagerViewDetail extends PureComponent {
       missionType,
       missionTypeDict,
       distinctCustomerCount,
+      location: { query: { ptyMngId } },
     } = this.props;
     const {
       missionProgressStatus,
@@ -484,6 +520,7 @@ export default class ManagerViewDetail extends PureComponent {
     }
 
     const urlParam = {
+      ptyMngId,
       orgId: this.getCurrentOrgId(),
       missionId: currentId,
       count: distinctCustomerCount,
@@ -539,7 +576,7 @@ export default class ManagerViewDetail extends PureComponent {
     return (
       <div
         className={styles.custValue}
-        onClick={() => this.handlePreview({
+        onClick={() => this.handleCustTotal({
           isEntryFromCustTotal: true,
           canLaunchTask: false,
           currentFeedback: this.getCustFeedbackList(),
@@ -564,6 +601,7 @@ export default class ManagerViewDetail extends PureComponent {
       custRange,
       empInfo,
       location,
+      location: { query: { ptyMngId } },
       replace,
       countFlowStatus,
       countFlowFeedBack,
@@ -737,7 +775,7 @@ export default class ManagerViewDetail extends PureComponent {
                   modalContent={
                     <CustDetail
                       ref={ref => (this.custDetailRef = ref)}
-                      getCustDetailData={this.handlePreview}
+                      getCustDetailData={this.handleCustDetail}
                       data={custDetailResult}
                       onClose={this.handleCloseModal}
                       hideCustDetailModal={this.hideCustDetailModal}
@@ -786,7 +824,7 @@ export default class ManagerViewDetail extends PureComponent {
             <MissionImplementation
               isFold={isFold}
               custFeedback={custFeedback}
-              onPreviewCustDetail={this.handlePreview}
+              onPreviewCustDetail={this.handleMissionImplementation}
               missionImplementationProgress={missionImplementationDetail}
               custRange={custRange}
               empInfo={empInfo}
@@ -808,16 +846,19 @@ export default class ManagerViewDetail extends PureComponent {
               currentFeedback={this.getCustFeedbackList()}
             />
           </div>
-          <div className={styles.missionFeedbackSection}>
-            <MissionFeedback
-              missionFeedbackData={missionFeedbackData}
-              isFold={isFold}
-              missionFeedbackCount={missionFeedbackCount}
-              serveManagerCount={serveManagerCount}
-              templateId={templateId}
-              ref={ref => (this.missionFeedbackElem = ref)}
-            />
-          </div>
+          {
+            // 按服务经理过滤器筛选时，不显示任务反馈
+            _.isEmpty(ptyMngId) && <div className={styles.missionFeedbackSection}>
+              <MissionFeedback
+                missionFeedbackData={missionFeedbackData}
+                isFold={isFold}
+                missionFeedbackCount={missionFeedbackCount}
+                serveManagerCount={serveManagerCount}
+                templateId={templateId}
+                ref={ref => (this.missionFeedbackElem = ref)}
+              />
+            </div>
+          }
         </div>
       </div>
     );
