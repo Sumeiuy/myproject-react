@@ -513,6 +513,24 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['cancelAccountOL'], () =>
         import('../routes/cancelAccountOL/RejectHome') /* webpackChunkName: "cancelAccountOLReject" */),
     },
+    // 直接进入
+    '/accountLimit': {
+      component: dynamicWrapper(app, ['accountLimit'], () =>
+        import('../routes/accountLimit/Home' /* webpackChunkName: "accountLimit" */)),
+    },
+    // 从 accountLimit 页面左侧列表中选择一条数据，找到请求回来的 flowId,
+    // 拼接路由 /accountLimit/edit?flowId=xxxxxxxx&empId=xxxx,
+    // empId 需要设置为 edit 获取到的详情里的审批人
+    // 由此进入为有数据页面
+    '/accountLimit/edit': {
+      component: dynamicWrapper(app, ['accountLimitEdit'], () =>
+        import('../routes/accountLimit/Edit' /* webpackChunkName: "accountLimit_edit" */)),
+    },
+    // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type
+    '/accountLimit/notifies': {
+      component: dynamicWrapper(app, ['accountLimit'], () =>
+        import('../routes/accountLimit/Notifies' /* webpackChunkName: "accountLimit_notifies" */)),
+    },
     // 管理标签
     '/labelManagement': {
       component: dynamicWrapper(app, [], () =>

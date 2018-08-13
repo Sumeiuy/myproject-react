@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
+
 import Select from '../Select';
 import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
@@ -48,6 +49,8 @@ export default class Pageheader extends PureComponent {
     creatSeibelModal: PropTypes.func.isRequired,
     // 操作类型
     needOperate: PropTypes.bool,
+    // 是否需要客户查询
+    needCust: PropTypes.bool,
     // 是否需要子类型
     needSubType: PropTypes.bool,
     operateOptions: PropTypes.array,
@@ -98,6 +101,7 @@ export default class Pageheader extends PureComponent {
   static defaultProps = {
     page: '',
     needOperate: false,
+    needCust: true,
     needSubType: true,
     needApplyTime: false,
     operateOptions: [],
@@ -461,6 +465,7 @@ export default class Pageheader extends PureComponent {
       page,
       pageType,
       operateOptions,
+      needCust,
       needOperate,
       needSubType,
       needApplyTime,
@@ -554,9 +559,7 @@ export default class Pageheader extends PureComponent {
       // hasCreatePermission = this.props.isShowCreateBtn();
     }
     // 分公司客户分配不显示客户搜索
-    const custElement = _.includes(PAGE_NO_CUST, page) ?
-      null
-    :
+    const custElement = needCust ?
       (<div className={styles.filterFl}>
         <div className={styles.dropDownSelectBox}>
           <DropDownSelect
@@ -570,7 +573,9 @@ export default class Pageheader extends PureComponent {
             name={`${page}-custName`}
           />
         </div>
-      </div>);
+      </div>)
+    :
+      null;
 
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>

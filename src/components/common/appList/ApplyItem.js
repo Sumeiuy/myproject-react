@@ -26,6 +26,7 @@ export default function ApplyItem(props) {
     index,
     iconType,
     typeName,
+    typeNameStyle,
     statusTags,
     subTypeName,
     active,
@@ -71,7 +72,7 @@ export default function ApplyItem(props) {
         <div className={styles.titleArea}>
           <Icon type={iconType} className={appIconCls} />
           <span className={serialCls}>编号{data.id || '暂无'}</span>
-          <span className={typeCls}>{typeName}</span>
+          <span className={typeCls} style={typeNameStyle}>{typeName}</span>
         </div>
         <div className={styles.tagArea}>
           {
@@ -102,6 +103,8 @@ ApplyItem.propTypes = {
   iconType: PropTypes.string.isRequired,
   // 类型，展示在申请单项第一行编号后面的类型文字
   typeName: PropTypes.string,
+  // 类型样式，展示在申请单项第一行编号后面的类型文字样式
+  typeNameStyle: PropTypes.object,
   // 子类型，展示在申请单项第二行的类型文本
   subTypeName: PropTypes.string.isRequired,
   // 申请单项的右侧展示状态标签 Props 的数组
@@ -119,6 +122,7 @@ ApplyItem.propTypes = {
 
 ApplyItem.defaultProps = {
   typeName: '',
+  typeNameStyle: {},
   active: false,
   showSecondLineInfo: _.noop,
   showThirdLineInfo: _.noop,
