@@ -2,8 +2,8 @@
  * @Description: 客户详情
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-10 12:29:28
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-13 15:11:09
  */
 
 import React, { PureComponent } from 'react';
@@ -261,20 +261,20 @@ export default class CustomerDetail extends PureComponent {
                 </div>
               </div>
               <div className={styles.item}>
-                <div className={styles.itemLabel}>股基佣金率:</div>
-                <div className={styles.itemContent}>{miniFee}</div>
+                <div className={styles.itemLabel}>可用余额:</div>
+                <div className={styles.itemContent}>{getFormatedAsset(availablBalance)}</div>
               </div>
               <div className={styles.item}>
                 <div className={styles.itemLabel}>持仓市值:</div>
                 <div className={styles.itemContent}>{getFormatedAsset(openAssets)}</div>
               </div>
               <div className={styles.item}>
-                <div className={styles.itemLabel}>沪深归集率:</div>
-                <div className={styles.itemContent}>{hsRate}</div>
+                <div className={styles.itemLabel}>股基佣金率:</div>
+                <div className={styles.itemContent}>{miniFee}</div>
               </div>
               <div className={styles.item}>
-                <div className={styles.itemLabel}>可用余额:</div>
-                <div className={styles.itemContent}>{getFormatedAsset(availablBalance)}</div>
+                <div className={styles.itemLabel}>沪深归集率:</div>
+                <div className={styles.itemContent}>{hsRate}</div>
               </div>
               <div className={styles.item}>
                 <div className={styles.itemLabel}>信息完备率:</div>
