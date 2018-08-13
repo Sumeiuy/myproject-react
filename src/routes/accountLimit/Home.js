@@ -34,6 +34,7 @@ const {
   pageValue,
   pageType,
   operateTypeArray,
+  relieveCode,  // 限制解除的 value
 } = config;
 
 // 登陆人的组织 ID
@@ -166,12 +167,12 @@ export default class AccountLimitHome extends PureComponent {
     if (!_.isEmpty(list.resultData)) {
       // 表示左侧列表获取完毕
       // 因此此时获取Detail
-      const { pageNum, pageSize } = list.page;
-      let item = list.resultData[0];
-      let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      const { page: { pageNum = 1, pageSize = 10 }, resultData } = list;
+      let item = resultData[0];
+      let itemIndex = _.findIndex(resultData, o => o.id.toString() === currentId);
       if (!_.isEmpty(currentId) && itemIndex > -1) {
         // 此时url中存在currentId
-        item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+        item = resultData[itemIndex];
       } else {
         // 不存在currentId
         replace({
@@ -304,7 +305,9 @@ export default class AccountLimitHome extends PureComponent {
       location: { pathname, query, query: { currentId } },
       queryDetailInfo,
     } = this.props;
-    if (currentId === String(id)) return;
+    if (currentId === String(id)) {
+      return;
+    }
     replace({
       pathname,
       query: {
@@ -337,10 +340,10 @@ export default class AccountLimitHome extends PureComponent {
     const { activeRowIndex } = this.state;
     const { status: statusData, subType } = record;
     const statusTags = [convert.getStatusByCode(statusData)];
-    const filterOperate = _.filter(operateTypeArray, o => o.value === subType) || [];
+    const filterOperate = _.filter(operateTypeArray, o => o.value === subType);
     const operateTypeName = filterOperate[0].label || '';
     // 限制解除时为字体加上其他颜色
-    const otherStyle = subType === operateTypeArray[1].value
+    const otherStyle = subType === relieveCode
     ? {
       color: '#dc8f4c',
     }

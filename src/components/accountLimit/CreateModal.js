@@ -40,6 +40,7 @@ const getPopupContainerFunction = () => document.querySelector(`.${styles.modalC
 const {
   tableTitle: { custList: custTitleList, approvalList },
   operateTypeArray,
+  setCode,  // 限制设置 value
   attachmentMap,
   bankConfirmArray,
 } = config;
@@ -83,7 +84,10 @@ export default class CreateModal extends PureComponent {
 
   constructor(props) {
     super(props);
-    const operateType = operateTypeArray[0].value;
+    // 操作类型
+    const operateType = setCode;
+    // 是否是限制设置
+    const isLimit = operateType === setCode;
     this.state = {
       // 上传后的返回值
       attachment: '',
@@ -106,7 +110,7 @@ export default class CreateModal extends PureComponent {
       // 操作类型
       operateType,
       // 操作类型是否是 限制设置
-      isLimit: operateType === operateTypeArray[0].value,
+      isLimit,
       // 公司简称
       companyName: '',
       // 证券代码
@@ -122,7 +126,7 @@ export default class CreateModal extends PureComponent {
       // 限制解除日期
       limitEndTime: '',
       // 解除日期的禁用状态
-      endDateDisabled: operateType === operateTypeArray[0].value,
+      endDateDisabled: isLimit,
       // 附件列表
       attachmentList: [attachmentMap[0]],
       // 提交的数据
@@ -197,7 +201,7 @@ export default class CreateModal extends PureComponent {
   handleOperateTypeChange(key, value) {
     // 等于 限制解除 的时候
     let isLimit = false;
-    if (value === operateTypeArray[0].value) {
+    if (value === setCode) {
       isLimit = true;
       this.queryNextStepButton();
     }
@@ -511,6 +515,7 @@ export default class CreateModal extends PureComponent {
     this.setState({
       limitStartTime: dateString,
       endDateDisabled: false,
+      limitEndTime: '',
     });
   }
 
@@ -764,6 +769,7 @@ export default class CreateModal extends PureComponent {
       addedCustData,
       pageNum,
       selectValue,
+      limitStartTime,
       endDateDisabled,
       attachmentList,
       approverModal,
@@ -927,6 +933,7 @@ export default class CreateModal extends PureComponent {
                 align="left"
                 data={showCustList[pageNum - 1]}
                 titleList={custTitle}
+                rowKey="custId"
               />
               <Pagination {...custListPaginationOption} />
             </div>
@@ -965,6 +972,7 @@ export default class CreateModal extends PureComponent {
             }
             <InfoForm label="账户限制解除日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
               <DatePicker
+                key={limitStartTime}
                 showToday={false}
                 disabled={endDateDisabled}
                 disabledDate={this.disabledEndDate}
