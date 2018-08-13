@@ -31,8 +31,7 @@ function fixExternUrl(url) {
     .replace('=#[orgCode]', `=${orgId}`);
 }
 
-
-export default {
+export {
   traverseMenus,
   fixExternUrl,
 };

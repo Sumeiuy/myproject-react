@@ -1,3 +1,5 @@
-export default {
-  pathPrefix: /^\/fsp/,
+const pathPrefix = /^\/fsp/;
+
+export {
+  pathPrefix,
 };
