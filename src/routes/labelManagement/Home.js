@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-10 10:00:27
+ * @Last Modified time: 2018-08-10 18:56:10
  */
 
 import React, { PureComponent } from 'react';
@@ -653,6 +653,7 @@ export default class CustomerGroupManage extends PureComponent {
               onSearch={this.handleSearchLabel}
               placeholder="标签名"
               searchStyle={searchStyle}
+              isNeedBtn
             />
           </div>
           <div className={styles.rightSection}>
