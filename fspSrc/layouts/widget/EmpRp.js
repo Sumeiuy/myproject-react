@@ -9,6 +9,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Menu, Dropdown } from 'antd';
+import { Link } from 'dva/router';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -19,7 +20,7 @@ export default class EmpRp extends PureComponent {
 
   static propTypes = {
     empRspList: PropTypes.array.isRequired,
-    empCurRsp: PropTypes.object.isRequired,
+    empCurrentPosition: PropTypes.string.isRequired,
     empInfo: PropTypes.object.isRequired,
     onSwitchRsp: PropTypes.func,
   }
@@ -30,8 +31,8 @@ export default class EmpRp extends PureComponent {
 
   // 找到当前用户的岗位对象
   @autobind
-  findEmpResp(list, postnId) {
-    return _.find(list, rsp => rsp.postnId === postnId);
+  findEmpResp(list, key) {
+    return _.find(list, rsp => rsp.postnId === key);
   }
 
   // 切换岗位后展示新的岗位名称
@@ -41,10 +42,11 @@ export default class EmpRp extends PureComponent {
     const empRsp = this.findEmpResp(empRspList, key);
     // 取出需要传递给后端的参数
     const param = {
-      postId: empRsp.postnId,
-      postName: empRsp.postnName,
+      pstnId: empRsp.postnId,
       orgId: empRsp.orgId,
-      name: empRsp.loginName,
+      orgName: empRsp.orgName,
+      pstnName: empRsp.postnName,
+      orgRowId: empRsp.orgRowId,
     };
     onSwitchRsp(param);
   }
@@ -52,12 +54,8 @@ export default class EmpRp extends PureComponent {
   // 选择某个岗位
   @autobind
   handleRspChange({ key }) {
-    const { empCurRsp, empInfo } = this.props;
-    if (_.isEmpty(empCurRsp)) {
-      // TODO 此处针对接口开发还未完成做的容错处理
-      if (key === empInfo.postnId) return;
-    }
-    if (key === empCurRsp.postId) return;
+    const { empCurrentPosition } = this.props;
+    if (key === empCurrentPosition || key === 'userCenter') return;
     this.changeRsp(key);
   }
 
@@ -71,20 +69,22 @@ export default class EmpRp extends PureComponent {
             <span className={styles.empRspItem} title={item.postnName}>{item.postnName}</span>
           </Menu.Item>))
         }
+        <Menu.Divider />
+        <Menu.Item key="userCenter">
+          <Link to="/userCenter" className={styles.empRspItem}>用户中心</Link>
+        </Menu.Item>
       </Menu>
     );
   }
 
   render() {
-    const { empRspList, empCurRsp, empInfo } = this.props;
-    let emp = empCurRsp;
-    if (_.isEmpty(empCurRsp)) {
-      const post = this.findEmpResp(empRspList, empInfo.postnId);
-      emp = {
-        name: empInfo.empName,
-        postName: post.postnName,
-      };
-    }
+    const { empRspList, empInfo, empCurrentPosition } = this.props;
+    let emp = {};
+    const post = this.findEmpResp(empRspList, empCurrentPosition);
+    emp = {
+      name: empInfo.empName,
+      postName: post.postnName,
+    };
     const empRspMenu = this.createMenu(empRspList);
     return (
       <Dropdown overlay={empRspMenu}>

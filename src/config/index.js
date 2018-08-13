@@ -26,10 +26,11 @@ import orgTreeLevel from './orgTreeLevel';
 import padSightLabelDesc from './constructSightLabelDesc';
 import createTaskEntry from './createTaskEntry';
 import seperator from './filterSeperator';
+import retTabParam from './retTabParam';
 
 const sessionStore = engine.createStore([sessionStorage, cookieStorage]);
 
-export default {
+export {
   constants,
   fspContainer,
   sessionStore,
@@ -56,4 +57,5 @@ export default {
   padSightLabelDesc,
   createTaskEntry,
   seperator,
+  retTabParam,
 };

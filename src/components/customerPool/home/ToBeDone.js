@@ -120,7 +120,7 @@ export default class PerformanceIndicators extends PureComponent {
   handleMotClick() {
     // 点击事件
     const { location: { query }, push } = this.props;
-    const url = '/taskList';
+    const url = '/taskCenter/taskList';
     const param = {
       closable: true,
       forceRefresh: true,

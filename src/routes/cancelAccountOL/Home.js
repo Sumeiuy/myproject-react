@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-07-09 09:58:54
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-19 14:43:05
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-07 16:59:58
  * @description 线上销户首页
  */
 
@@ -25,7 +25,7 @@ import { dva, convert } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
 
-import { PAGE_TYPE, STATUS_OPTIONS } from './config';
+import { PAGE_TYPE, STATUS_OPTIONS, basicFilters, moreFilters, moreFilterData } from './config';
 
 const effect = dva.generateEffect;
 
@@ -127,6 +127,20 @@ export default class CancelAccountOLHome extends PureComponent {
     this.getAppList();
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
+    }
+  }
+
   @autobind
   getAppList() {
     const { location: { query, query: { pageNum, pageSize } } } = this.props;
@@ -197,8 +211,6 @@ export default class CancelAccountOLHome extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 打开新建申请的弹出框
@@ -224,7 +236,6 @@ export default class CancelAccountOLHome extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -241,7 +252,6 @@ export default class CancelAccountOLHome extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 点击列表每条的时候对应请求详情
@@ -332,12 +342,13 @@ export default class CancelAccountOLHome extends PureComponent {
         location={location}
         page="cancelAccountOL"
         pageType={PAGE_TYPE}
-        needSubType={false}
         stateOptions={STATUS_OPTIONS}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
-        needApplyTime
         isUseNewCustList
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-24 14:18:01
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-08 16:28:51
  */
 
 import React, { PureComponent } from 'react';
@@ -365,7 +365,8 @@ export default class ServiceImplementation extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '$args[0].currentCustomer.custName',
+      name: '客户列表',
+      value: '$args[0].currentCustomer.custName',
       type: '任务流水',
     },
   })
@@ -645,9 +646,8 @@ export default class ServiceImplementation extends PureComponent {
   // 根据当前的任务状态去获取对应的服务状态，再去获取服务实施列表数据
   @autobind
   getTaskFlowData(pageSize, pageNum = 1) {
-    const { dict } = this.context;
     const { changeParameter, currentTask: { statusCode } } = this.props;
-    const stateList = getServiceState(statusCode, dict);
+    const stateList = getServiceState(statusCode);
     // 将服务实施的状态记到redux
     changeParameter({ state: stateList }).then(() => {
       this.queryTargetCustList({

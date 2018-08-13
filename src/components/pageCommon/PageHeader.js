@@ -14,10 +14,11 @@ import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
 import { fspContainer, optionsMap, constants } from '../../config';
 import DurationSelect from './DurationSelect';
-import { dom } from '../../helper';
+import { dom, env } from '../../helper';
 import logable from '../../decorators/logable';
 // 选择项字典
-import styles from './PageHeader.less';
+import stylesFsp from './PageHeader.less';
+import stylesReact from './PageHeader_React.less';
 
 const Option = Select.Option;
 const fsp = document.querySelector(fspContainer.container);
@@ -192,12 +193,14 @@ export default class PageHeader extends PureComponent {
     const momentDataDt = moment(moment().subtract(1, 'days')).format(formatTxt);
     // 判断是否在 history 路由里
     const isHistory = pathname === '/history';
+    const isInReact = env.isInReact();
+    const styles = isInReact ? stylesReact : stylesFsp;
+
     return (
       <div>
         <div
+          className={styles.contentLayout}
           style={{
-            position: 'fixed',
-            zIndex: 30,
             width,
             top,
             left,
@@ -209,23 +212,23 @@ export default class PageHeader extends PureComponent {
                 {/* 需要针对预览页面做调整 */}
                 {
                   preView
-                  ?
-                  (
-                    <div className="preView">
-                      {reportName}
-                    </div>
-                  )
-                  :
-                  (
-                    <BoardSelect
-                      location={location}
-                      push={push}
-                      replace={replace}
-                      visibleBoards={visibleBoards}
-                      newVisibleBoards={newVisibleBoards}
-                      collectData={collectBoardSelect}
-                    />
-                  )
+                    ?
+                    (
+                      <div className="preView">
+                        {reportName}
+                      </div>
+                    )
+                    :
+                    (
+                      <BoardSelect
+                        location={location}
+                        push={push}
+                        replace={replace}
+                        visibleBoards={visibleBoards}
+                        newVisibleBoards={newVisibleBoards}
+                        collectData={collectBoardSelect}
+                      />
+                    )
                 }
               </div>
               <div className={styles.reportHeaderRight}>
@@ -265,15 +268,15 @@ export default class PageHeader extends PureComponent {
                                 key={summaryTypeIndex}
                                 value={item.value}
                               >
-                                  按{item.name}
+                                按{item.name}
                               </Option>
                             );
                           })
                         }
                       </Select>
                     </div>
-                  :
-                  null
+                    :
+                    null
                 }
               </div>
             </Row>
@@ -286,11 +289,13 @@ export default class PageHeader extends PureComponent {
                   closable
                   showIcon
                 /> :
-              null
+                null
             }
           </div>
         </div>
-        <div style={{ height: '40px' }} />
+        {
+          isInReact ? null : <div style={{ height: '40px' }} />
+        }
       </div>
     );
   }

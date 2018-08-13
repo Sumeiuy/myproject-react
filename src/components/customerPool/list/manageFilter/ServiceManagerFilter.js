@@ -69,6 +69,7 @@ export default class ServiceManagerFilter extends PureComponent {
           value={finalPytMng}
           defaultLabel="不限"
           filterName="服务经理"
+          placeholder="员工号或姓名"
           data={searchServerPersonList}
           dataMap={['ptyMngId', 'ptyMngName']}
           showSearch

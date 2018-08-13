@@ -42,6 +42,21 @@ const menu = [
     path: '/customerLabel',
     permission: duty.HTSC_BMXTGLY,
   },
+  {
+    name: '产品销售',
+    path: '/productSale',
+    permission: duty.HTSC_HQ_XTGL,
+    children: [
+      {
+        name: '重点首发公募',
+        path: '/keyFirstPublicOffering',
+      },
+      {
+        name: '分公司年度目标',
+        path: '/filialeAnnualTarget',
+      },
+    ],
+  },
 ];
 
 export default menu;

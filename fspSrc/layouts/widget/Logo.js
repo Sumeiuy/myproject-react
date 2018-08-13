@@ -13,7 +13,7 @@ const Logo = () => (
   <div className={styles.headerLogo}>
     <span className={styles.logo} />
     <span className={styles.name}>
-      华泰证券理财服务平台
+      理财服务平台
     </span>
   </div>
 );

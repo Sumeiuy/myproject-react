@@ -9,6 +9,7 @@
 */
 // TableTransfer 组件传入columns 需要引入;
 import React from 'react';
+import { customer, serviceManager, operationType, subType, status, drafter, department, approver } from './busApplyFilters';
 
 const TableTransferColumn = item => (
   <div title={item}>
@@ -24,7 +25,7 @@ const pageConfig = {
     subType: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -97,7 +98,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -121,6 +122,20 @@ const pageConfig = {
         value: '04',
       },
     ],
+    basicFilters: [
+      customer,
+      subType,
+      status,
+      drafter,
+    ],
+    moreFilters: [
+      department,
+      approver,
+    ],
+    moreFilterData: [
+      { value: '部门', key: 'orgId' },
+      { value: '审批人', key: 'approvalId' },
+    ],
   },
   // 佣金调整
   commission: {
@@ -129,7 +144,7 @@ const pageConfig = {
     subType: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -239,7 +254,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -263,6 +278,20 @@ const pageConfig = {
         value: '04',
       },
     ],
+    basicFilters: [
+      customer,
+      subType,
+      status,
+      drafter,
+    ],
+    moreFilters: [
+      department,
+      approver,
+    ],
+    moreFilterData: [
+      { value: '部门', key: 'orgId' },
+      { value: '审批人', key: 'approvalId' },
+    ],
   },
   // 合作合约
   contract: {
@@ -273,7 +302,7 @@ const pageConfig = {
     subType: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -302,7 +331,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -329,7 +358,7 @@ const pageConfig = {
     operationList: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -366,6 +395,22 @@ const pageConfig = {
         title: '合作部门',
       },
     ],
+    basicFilters: [
+      customer,
+      operationType,
+      subType,
+      status,
+    ],
+    moreFilters: [
+      drafter,
+      department,
+      approver,
+    ],
+    moreFilterData: [
+      { value: '拟稿人', key: 'drafterId' },
+      { value: '部门', key: 'orgId' },
+      { value: '审批人', key: 'approvalId' },
+    ],
   },
   // 通道类型协议
   channelsTypeProtocol: {
@@ -374,7 +419,7 @@ const pageConfig = {
     subType: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -517,7 +562,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -544,7 +589,7 @@ const pageConfig = {
     operationList: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -590,6 +635,22 @@ const pageConfig = {
         label: '套利软件',
         value: '5',
       },
+    ],
+    basicFilters: [
+      customer,
+      operationType,
+      subType,
+      status,
+    ],
+    moreFilters: [
+      drafter,
+      department,
+      approver,
+    ],
+    moreFilterData: [
+      { value: '拟稿人', key: 'drafterId' },
+      { value: '部门', key: 'orgId' },
+      { value: '审批人', key: 'approvalId' },
     ],
     // 协议产品表格表头数组
     protocolProductTitleList: [
@@ -769,7 +830,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -845,6 +906,18 @@ const pageConfig = {
         key: 'occupation',
       },
     ],
+    basicFilters: [
+      serviceManager,
+      status,
+      drafter,
+      department,
+    ],
+    moreFilters: [
+      approver,
+    ],
+    moreFilterData: [
+      { value: '审批人', key: 'approvalId' },
+    ],
   },
   // 自建任务列表
   tasklist: {
@@ -890,7 +963,7 @@ const pageConfig = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {

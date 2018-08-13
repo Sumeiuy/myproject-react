@@ -172,7 +172,7 @@ export default class CustRange extends PureComponent {
     const { value } = this.state;
     const formatCustRange = transformCustRangeData(custRange);
     const widthDown = isDown ? 160 : dropdownWidth;
-    const placeholder = isDown ? '机构范围' : '客户范围';
+    const placeholder = isDown ? '机构范围' : '分公司/营业部名称';
     return (
       <TreeSelect
         notFoundContent="没有结果"
