@@ -116,6 +116,8 @@ export default class Tab extends PureComponent {
       activeKey: activeKey || indexPaneKey,
       currentMenuId,
     };
+
+    window.handleTabpaneClose = this.onRemove;
   }
 
   componentDidMount() {

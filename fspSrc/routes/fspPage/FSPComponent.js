@@ -30,7 +30,7 @@ export default class FSPComponent extends PureComponent {
     const { location: { pathname, state } } = prevProps;
     const { location } = this.props;
     if (location.pathname !== pathname || location.state !== state) {
-      this.getRouteConfig(pathname, state);
+      this.getRouteConfig(location.pathname, location.state);
       this.getFspData({ isinitial: false });
       this.timeoutId = setTimeout(() => this.setState({ loading: false }), 10000);
     }
