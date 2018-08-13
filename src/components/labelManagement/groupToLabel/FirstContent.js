@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 20:05:30
+ * @Last Modified time: 2018-08-13 14:13:20
  */
 
 import React, { PureComponent } from 'react';
@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import logable from '../../../decorators/logable';
 import Table from '../../common/commonTable';
 import { custGroupColumns } from '../config';
 import tableStyles from '../../common/commonTable/index.less';
@@ -37,13 +36,6 @@ export default class FirstContent extends PureComponent {
 
   // 点击分组名称前的单选按钮
   @autobind
-  @logable({
-    type: 'ViewItem',
-    payload: {
-      name: '分组转标签选择分组',
-      value: '$arg[0][groupName]',
-    },
-  })
   handleSingleRowSelectionChange(record) {
     this.props.handleSelectGroup(record);
   }

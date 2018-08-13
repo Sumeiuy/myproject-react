@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-10 11:10:09
+ * @Last Modified time: 2018-08-13 14:23:41
  */
 
 import React, { PureComponent } from 'react';
@@ -62,31 +62,6 @@ export default class SecondContent extends PureComponent {
       },
     } = this.props;
     return _.map(groupCustDTOList, item => ({ ...item, id: item.brokerNumber }));
-  }
-
-  // 生成联想词数据项
-  @autobind
-  renderOptions() {
-    const {
-      possibleLabelListInfo: {
-        labelList,
-      },
-    } = this.props;
-    const { currentLabel: { labelName = '' } } = this.state;
-    return _.map(labelList, (item) => {
-      const htmlStr = (item.labelName || '').replace(
-        labelName,
-        `<em class=${styles.signRed}>${labelName}</em>`,
-      );
-      return (
-        <Option key={item.id} value={item.labelName}>
-          <p onClick={() => { this.handleLabelOptionClick(item); }}>
-            <span dangerouslySetInnerHTML={{ __html: htmlStr }} />
-            <span>{`(${item.labelTypeName})`}</span>
-          </p>
-        </Option>
-      );
-    });
   }
 
   handleLabelOptionClick(item) {
@@ -167,6 +142,31 @@ export default class SecondContent extends PureComponent {
     });
     this.setState({
       labelNameTip: tip,
+    });
+  }
+
+  // 生成联想词数据项
+  @autobind
+  renderOptions() {
+    const {
+      possibleLabelListInfo: {
+        labelList,
+      },
+    } = this.props;
+    const { currentLabel: { labelName = '' } } = this.state;
+    return _.map(labelList, (item) => {
+      const htmlStr = (item.labelName || '').replace(
+        labelName,
+        `<em class=${styles.signRed}>${labelName}</em>`,
+      );
+      return (
+        <Option key={item.id} value={item.labelName}>
+          <p onClick={() => { this.handleLabelOptionClick(item); }}>
+            <span dangerouslySetInnerHTML={{ __html: htmlStr }} />
+            <span>{`(${item.labelTypeName})`}</span>
+          </p>
+        </Option>
+      );
     });
   }
 
