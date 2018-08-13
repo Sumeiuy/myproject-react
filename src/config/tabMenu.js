@@ -313,22 +313,10 @@ const newOpenTabConfig = [
     pid: 'FSP_INVESTMENT_CONSULTANTRACE',
   },
   {
-    name: '客户关联关系',
-    id: 'FSP_CUSTRELATIONSHIPS',
-    path: '/custRelationships',
-    pid: 'FSP_CUSTRELATIONSHIPS',
-  },
-  {
     name: '客户分配',
     id: 'FSP_CUSTALLOT',
     path: '/custAllot',
     pid: 'FSP_CUSTALLOT',
-  },
-  {
-    name: '重点监控账户',
-    id: 'FSP_KEYMONITOR_ACCOUNT',
-    path: '/keyMonitorAccount',
-    pid: 'FSP_KEYMONITOR_ACCOUNT',
   },
   {
     name: '最新观点',
