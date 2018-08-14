@@ -205,7 +205,6 @@ export default class CreateModal extends PureComponent {
       isLimit = true;
       this.queryNextStepButton();
     }
-    console.warn('attachmentMap[0]', attachmentMap[0]);
     this.setState({
       [key]: value,
       isLimit,
@@ -234,7 +233,6 @@ export default class CreateModal extends PureComponent {
   @autobind
   handleStockCodeChange(e) {
     const value = e.target.value.replace(/\D/g, '');
-    console.warn('value', value);
     this.setState({
       stockCode: value,
     });
@@ -556,7 +554,6 @@ export default class CreateModal extends PureComponent {
     const keyWordText = _.replace(text, keyWordRegex, match => (
       `<span class=${styles.keyWord}>${match}</span>`
     ));
-    console.warn('keyWordText', keyWordText);
     return <div dangerouslySetInnerHTML={{ __html: keyWordText }} />;
   }
 
