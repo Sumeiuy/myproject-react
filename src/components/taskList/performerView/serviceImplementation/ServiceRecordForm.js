@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-09 14:03:20
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-14 14:44:24
  * 服务记录表单
  */
 
@@ -55,8 +55,8 @@ export default class ServiceRecordForm extends PureComponent {
   componentDidUpdate(prevProps) {
     // 判断当前的是否需要查询可分配人员列表接口
     const { formData: { custUuid: prevUUid } } = prevProps;
-    const { formData: { eventId, isDispatchEmp, custUuid, custId } } = this.props;
-    const needQueryAllotEmpList = this.isMOTReturnVistTask(eventId) && isDispatchEmp;
+    const { formData: { eventId, isDispatchingAvailable, custUuid, custId } } = this.props;
+    const needQueryAllotEmpList = this.isMOTReturnVistTask(eventId) && isDispatchingAvailable;
     if (needQueryAllotEmpList && prevUUid !== custUuid) {
       this.props.queryAllotEmpList({
         custNumber: custId,
@@ -223,7 +223,8 @@ export default class ServiceRecordForm extends PureComponent {
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
 
-    const showAllocateBtn = this.isMOTReturnVistTask(formData.eventId) && formData.isDispatchEmp;
+    const showAllocateBtn = this.isMOTReturnVistTask(formData.eventId)
+      && formData.isDispatchingAvailable;
 
     let footNode;
     if (!isReadOnly) {

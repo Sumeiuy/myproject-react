@@ -69,8 +69,10 @@ export default function performerView(api) {
     // 翻译投资建议模板
     translateTemplate: query => api.post('/groovynoauth/fsp/campaign/investAdvice/replaceCustIndexPlaceHoders', query),
     // 查询可以分配任务的人员列表
-    queryAllotEmpList: query => api.post('/groovynoauth/fsp/campaign/mot/queryDistributableEmpList', query),
+    queryAllotEmpList: query => api.post('/groovynoauth/fsp/campaign/mot/queryDispatchableEmpList', query),
     // 选择了人员后将任务分配给该人员
-    dispatchTaskToEmp: query => api.post('/groovynoauth/fsp/campaign/mot/dispatchEmp', query),
+    dispatchTaskToEmp: query => api.post('/groovynoauth/fsp/campaign/mot/dispatchToEmpDirectly', query),
+    // 针对 MOT 回访类型任务添加服务记录接口
+    addMotReturnVisitServiceRecord: query => api.post('/groovynoauth/fsp/cust/service/addMotTGVisitServeRecord', query),
   };
 }

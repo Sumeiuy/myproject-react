@@ -465,7 +465,16 @@ export default {
     // 添加服务记录
     * addMotServeRecord({ payload }, { call, put }) {
       yield put({ type: 'resetMotServiceRecord' });
-      const { code, resultData } = yield call(api.addMotServeRecord, payload);
+      // 因为针对 MOT 回访类型任务需要调用与普通任务不一样的接口，所以在传递的请求参数中，
+      // 添加 isMotReturnVisitTask 来控制
+      const { isMotReturnVisitTask, ...resetPayload } = payload;
+      let response = {};
+      if (isMotReturnVisitTask) {
+        response = yield call(api.addMotReturnVisitServiceRecord, resetPayload);
+      } else {
+        response = yield call(api.addMotServeRecord, resetPayload);
+      }
+      const { code, resultData } = response;
       if (code === '0') {
         yield put({
           type: 'addMotServeRecordSuccess',

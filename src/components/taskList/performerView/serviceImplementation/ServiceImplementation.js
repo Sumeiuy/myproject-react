@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-10 10:24:39
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-14 14:44:02
  */
 
 import React, { PureComponent } from 'react';
@@ -689,7 +689,7 @@ export default class ServiceImplementation extends PureComponent {
       serviceRecord, customerFeedback, feedbackDate, custId,
       serviceContent, // 涨乐财富通的服务内容
       zlcftMsgStatus, // 新增的涨乐财富通服务方式的反馈状态
-      isDispatchEmp, // 是否可以分配给他人，如果可以则服务记录中需要显示分配按钮
+      isDispatchingAvailable, // 是否可以分配给他人，如果可以则服务记录中需要显示分配按钮
       workResult, // MOT 回访类型任务的回访结果，为'成功'|'失败'
       failReason, // MOT 回访类型任务的额结果如果是失败，则该字段为回访失败原因
     } = targetCustDetail;
@@ -743,7 +743,7 @@ export default class ServiceImplementation extends PureComponent {
       // 涨乐财富通服务方式反馈状态
       zlcftMsgStatus,
       // 判断是否需要分配按钮，因为MOT回访类型的任务，可以分配给他人处理
-      isDispatchEmp,
+      isDispatchingAvailable,
       workResult,
       failReason,
     };

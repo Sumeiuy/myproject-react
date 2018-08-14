@@ -2,8 +2,8 @@
  * @Description: 客户详情
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-03 15:19:34
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-14 14:51:20
  */
 
 import React, { PureComponent } from 'react';
@@ -211,6 +211,7 @@ export default class CustomerDetail extends PureComponent {
       isCustIncomeRequested, currentId, leftFoldState,
     } = this.props;
     const {
+      serviceEmpId, serviceEmpName,
       assets, openAssets, availablBalance, openedBusiness, openBusiness,
       empName, recentServiceTime, missionType, missionTitle, missionFlowId, custId,
     } = targetCustDetail;
@@ -233,6 +234,7 @@ export default class CustomerDetail extends PureComponent {
     // 信息完备率
     const infoCompletionRate = targetCustDetail.infoCompletionRate ?
       `${Number(targetCustDetail.infoCompletionRate) * 100}%` : '--';
+
     return (
       <div className={styles.customerDetail}>
         <div className={styles.container}>
@@ -300,6 +302,10 @@ export default class CustomerDetail extends PureComponent {
                   {this.handleEmpty(empName)}
                   {!_.isEmpty(empName) && <TipsInfo title={this.getEmpInfo()} />}
                 </div>
+              </div>
+              <div className={styles.item}>
+                <div className={styles.itemLabel}>服务经理:</div>
+                <div className={styles.itemContent}>{`${serviceEmpName}（${serviceEmpId}）`}</div>
               </div>
             </div>
             <div className={styles.row}>

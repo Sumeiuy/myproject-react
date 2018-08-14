@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-13 17:56:08
+ * @Last Modified time: 2018-08-14 15:02:32
  */
 
 import React, { PureComponent } from 'react';
@@ -533,14 +533,16 @@ export default class ServiceRecordContent extends PureComponent {
       visitResult,
       // MOT 回访类型任务结果失败的原因
       failReason,
+      // eventId
+      eventId,
     } = this.state;
 
     const {
-      formData: { custId = '', missionFlowId = '', missionId = '', eventId, serviceTypeCode },
+      formData: { custId = '', missionFlowId = '', missionId = '' },
       custUuid,
     } = this.props;
     const taskType = `${+taskTypeCode + 1}`;
-    const isMot = this.isMOTPlatform(taskType);
+    const isMotReturnVisitTask = this.isMOTReturnVistTask(eventId);
     // 按照DOClever定义的入参
     const data = {
       custId,
@@ -559,7 +561,8 @@ export default class ServiceRecordContent extends PureComponent {
       uuid: (!_.isEmpty(custUuid) && !_.isEmpty(currentFile)) ? custUuid : '',
       visitResult,
       visitFailureDesc: failReason,
-      eventId: isMot ? eventId : serviceTypeCode,
+      // 判断当前的Task任务是否是 MOT 回访类任务
+      isMotReturnVisitTask,
     };
 
     if (isSelectZhangleFins) {
