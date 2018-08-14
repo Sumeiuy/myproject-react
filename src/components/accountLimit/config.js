@@ -30,9 +30,15 @@ const config = {
     operationType,
     status,
     drafter,
+    applyTime,
+  ],
+  moreFilters: [
     department,
     approver,
-    applyTime,
+  ],
+  moreFilterData: [
+    { value: '部门', key: 'orgId' },
+    { value: '审批人', key: 'approvalId' },
   ],
   // 子类型数组
   operateTypeArray: [
