@@ -5,6 +5,9 @@
  * @Last Modified by: Liujianshu
  * @Last Modified time: 2018-08-03 14:07:38
  */
+import busApplyFilters from '../../config/busApplyFilters';
+
+const { operationType, status, drafter, department, approver, applyTime } = busApplyFilters;
 // 限制设置的code
 const setCode = '1301';
 // 限制解除的code
@@ -23,6 +26,20 @@ const config = {
   pageValue: 'accountLimitPage',
   // 页面类型
   pageType: '13', // 查询列表接口中的type值
+  basicFilters: [
+    operationType,
+    status,
+    drafter,
+    applyTime,
+  ],
+  moreFilters: [
+    department,
+    approver,
+  ],
+  moreFilterData: [
+    { value: '部门', key: 'orgId' },
+    { value: '审批人', key: 'approvalId' },
+  ],
   // 子类型数组
   operateTypeArray: [
     {

@@ -35,6 +35,9 @@ const {
   pageType,
   operateTypeArray,
   relieveCode,  // 限制解除的 value
+  basicFilters,
+  moreFilters,
+  moreFilterData,
 } = config;
 
 // 登陆人的组织 ID
@@ -370,7 +373,6 @@ export default class AccountLimitHome extends PureComponent {
   render() {
     const {
       dict,
-      replace,
       location,
       empInfo,
       custRangeList,
@@ -410,19 +412,16 @@ export default class AccountLimitHome extends PureComponent {
     const topPanel = (
       <ConnectedSeibelHeader
         location={location}
-        replace={replace}
         page={pageValue}
         pageType={pageType}
-        needSubType={false}
         stateOptions={statusArray}
-        empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
         operateOptions={operateAllOptions}
-        needCust={false}
         isShowCreateBtn={this.showCreateBtn}
-        needApplyTime
-        needOperate
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 
