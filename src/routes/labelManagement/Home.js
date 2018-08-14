@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-14 10:25:16
+ * @Last Modified time: 2018-08-14 16:11:58
  */
 
 import React, { PureComponent } from 'react';
@@ -284,7 +284,6 @@ export default class CustomerGroupManage extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '客户标签列表',
-      type: '发起任务',
     },
   })
   lanuchTask(record) {
@@ -336,7 +335,6 @@ export default class CustomerGroupManage extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '客户标签列表',
-      type: '删除客户分组',
     },
   })
   handleDeleteBtnClick(record) {
