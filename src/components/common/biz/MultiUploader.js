@@ -86,14 +86,14 @@ export default class MultiUpload extends PureComponent {
   static getDerivedStateFromProps(nextProps, prevState) {
     const { attachment: nextAT, attachmentList, limitCount } = nextProps;
     const { attachment: preAT } = prevState;
-    if (nextAT !== preAT) {
-      this.setState({
+    if (nextAT !== preAT && _.isEmpty(preAT)) {
+      return {
         fileList: attachmentList, // 文件列表
         oldFileList: attachmentList, // 旧的文件列表
         attachment: nextAT, // 上传后的唯一 ID
         // 如果限制并且新数组的 length 小于限制的个数
         isShowUploadBtn: limitCount > attachmentList.length,
-      });
+      };
     }
     // 默认不改动 state
     return null;
