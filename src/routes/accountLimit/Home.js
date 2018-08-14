@@ -36,6 +36,8 @@ const {
   operateTypeArray,
   relieveCode,  // 限制解除的 value
   basicFilters,
+  moreFilters,
+  moreFilterData,
 } = config;
 
 // 登陆人的组织 ID
@@ -418,6 +420,8 @@ export default class AccountLimitHome extends PureComponent {
         operateOptions={operateAllOptions}
         isShowCreateBtn={this.showCreateBtn}
         basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 
