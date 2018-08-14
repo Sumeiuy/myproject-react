@@ -232,7 +232,7 @@ export default class AccountLimitHome extends PureComponent {
   }
 
 
-  // 判断当前登录用户部门是否是分公司
+  // 判断当前登录用户部门是否是营业部
   @autobind
   checkUserIsDepartment() {
     const { custRangeList } = this.props;
