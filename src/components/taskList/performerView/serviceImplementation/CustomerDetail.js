@@ -2,8 +2,13 @@
  * @Description: 客户详情
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
+<<<<<<< HEAD
  * @Last Modified by: WangJunJun
  * @Last Modified time: 2018-08-13 15:11:09
+=======
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-09 10:42:44
+>>>>>>> ca10161dbd57fa513c19b7fe89c78a00e314d5e6
  */
 
 import React, { PureComponent } from 'react';
@@ -18,6 +23,7 @@ import TipsInfo from './TipsInfo';
 import { formatAsset } from './formatNum';
 import { COMPLETION, NOTCOMPLETION, PER_CODE, ORG_CODE } from './config';
 import { openFspTab } from '../../../../utils';
+import logable from '../../../../decorators/logable';
 import SixMonthEarnings from '../../../customerPool/list/SixMonthEarnings';
 import TextCollapse from './TextCollapse';
 import styles from './customerDetail.less';
@@ -170,6 +176,12 @@ export default class CustomerDetail extends PureComponent {
 
   // 打开360视图
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '查看更多服务记录',
+    },
+  })
   openFsp360TabAction({ param, targetCustDetail }) {
     const { custNature, custId, rowId, ptyId } = targetCustDetail;
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;

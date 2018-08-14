@@ -2,8 +2,8 @@
  * @Description: 为新版客户列表发起任务在新建任务提示框中默认的展示信息提供的方法
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-25 17:00:15
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-08 10:28:16
  */
 
 import _ from 'lodash';
@@ -36,9 +36,9 @@ function getLabel(filterObj, labelInfos) {
   return { aimLabelList, normalLabelList };
 }
 
-// 生成一个格式为 名称#id# 的集合
+// 生成一个格式为 瞄准镜标签#id# 的集合
 function getNameAndIdList(list) {
-  return _.map(list, item => `${item.name}#${item.id}#`);
+  return _.map(list, item => `瞄准镜标签#${item.id}#`);
 }
 
 // 按照现有代码需要的格式生成suggestion数据
@@ -105,7 +105,7 @@ function getCommonFilterInfo({ filterField, dictField, labelName }, filterObj, d
   const tempFilterField = filterObj[filterField];
   let tempDictField = dict[dictField];
   // 持仓行业需要给字典字段上加一个key字段
-  if (filterField === 'holdingIndustry') {
+  if (filterField === 'primaryKeyIndustry') {
     tempDictField = _.map(tempDictField, item => ({
       ...item,
       key: item.induCode,

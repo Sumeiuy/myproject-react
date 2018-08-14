@@ -19,5 +19,5 @@ export default {
   filialeLevel: '2', // 分公司的level值
   hbgxSummaryType: 'hbgx', // 汇总方式（汇报关系）
   jxstSummaryType: 'jxst', // 汇总方式（绩效视图）
-  enableLocalStorage: true, // 是否打开本地缓存
+  enableSessionStorage: false, // 是否打开本地缓存
 };

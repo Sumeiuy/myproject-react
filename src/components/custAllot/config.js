@@ -2,9 +2,11 @@
  * @Description: 分公司客户分配配置项
  * @Author: Liujianshu
  * @Date: 2018-05-23 17:03:23
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-14 16:48:26
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-31 17:37:11
  */
+import { status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
+
 const config = {
   limit: {
     // 勾选条数限制为 500
@@ -23,7 +25,7 @@ const config = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -247,6 +249,18 @@ const config = {
     validateError: '该申请单数据导入失败，请点击下载报错信息查看报错信息，如有需要，请重新发起流程。',
     otherError: '该申请单流程提交失败，如有需要，请重新发起流程或联系运维人员核查处理。',
   },
+  basicFilters: [
+    status,
+    drafter,
+    department,
+    applyTime,
+  ],
+  moreFilters: [
+    approver,
+  ],
+  moreFilterData: [
+    { value: '审批人', key: 'approvalId' },
+  ],
 };
 
 export default config;

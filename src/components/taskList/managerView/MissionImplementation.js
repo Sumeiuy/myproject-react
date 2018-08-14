@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-07 16:30:51
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-03 09:20:31
  * 任务实施简报
  */
 
@@ -17,7 +17,7 @@ import LabelInfo from '../common/LabelInfo';
 import CustManagerDetailScope from './CustManagerDetailScope';
 import TabsExtra from '../../customerPool/home/TabsExtra';
 import ServiceResultLayout from '../common/ServiceResultLayout';
-import { env, permission, emp } from '../../../helper';
+import { permission, emp } from '../../../helper';
 import { ORG_LEVEL1, ORG_LEVEL2 } from '../../../config/orgTreeLevel';
 import {
   EMP_MANAGER_SCOPE_ITEM,
@@ -80,8 +80,8 @@ export default class MissionImplementation extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { custRange } = props;
-    const { level, currentScopeList } = judgeCurrentOrgLevel({ custRange });
+    const { custRange, location: { query: { ptyMngId } } } = props;
+    const { level, currentScopeList } = judgeCurrentOrgLevel({ custRange, ptyMngId });
 
     this.state = {
       expandAll: false,
@@ -99,17 +99,11 @@ export default class MissionImplementation extends PureComponent {
   componentDidMount() {
     const {
       custRange,
-      empInfo: { empInfo = {}, empPostnList = {} },
+      empInfo: { empPostnList = {} },
     } = this.props;
-    // 获取登录用户empId和occDivnNum
-    const { occDivnNum = '' } = empInfo;
 
     // 登录用户orgId，默认在fsp中中取出来的当前用户岗位对应orgId，本地时取用户信息中的occDivnNum
-    if (env.isInFsp()) {
-      this.orgId = window.forReactPosition.orgId;
-    } else {
-      this.orgId = occDivnNum;
-    }
+    this.orgId = emp.getOrgId();
 
     this.originOrgId = this.orgId;
 
@@ -127,12 +121,17 @@ export default class MissionImplementation extends PureComponent {
       currentId: nextCurrentId = '',
       custRange,
       empInfo: { empPostnList = EMPTY_OBJECT },
+      location: { query: { ptyMngId } },
     } = nextProps;
 
     if (currentId !== nextCurrentId) {
       // 当任务切换的时候,清除组织机构树选择项
       this.orgId = this.originOrgId;
-      const { level, currentScopeList } = judgeCurrentOrgLevel({ custRange, orgId: this.orgId });
+      const { level, currentScopeList } = judgeCurrentOrgLevel({
+        custRange,
+        orgId: this.orgId,
+        ptyMngId,
+      });
       this.setState({
         // 恢复当前orgId
         currentOrgId: this.orgId,
@@ -340,7 +339,15 @@ export default class MissionImplementation extends PureComponent {
 
   @autobind
   renderTabsExtra() {
-    const { replace, location } = this.props;
+    const {
+      replace,
+      location,
+      location: { query: { ptyMngId } },
+    } = this.props;
+    // 按服务经理过滤器筛选，不显示客户范围组件
+    if (!_.isEmpty(ptyMngId)) {
+      return null;
+    }
     const {
       expandAll,
       isDown,
@@ -373,7 +380,11 @@ export default class MissionImplementation extends PureComponent {
       exportExcel: this.handleExportExcel,
       updateQueryState: this.updateQueryState,
     };
-    return (<TabsExtra {...extraProps} />);
+    return (
+      <div className={styles.orgTreeSection}>
+        <TabsExtra {...extraProps} />
+      </div>
+    );
   }
 
   @autobind
@@ -425,9 +436,10 @@ export default class MissionImplementation extends PureComponent {
       custRange,
       onPreviewCustDetail,
       currentFeedback,
+      location,
     } = this.props;
     const { level, currentScopeList } = this.state;
-    const currentMissionReport = currentId ? missionReport[currentId] || {} : {};
+    const currentMissionReport = currentId ? (missionReport[currentId] || {}) : {};
     const {
       isCreatingMotReport,
     } = currentMissionReport;
@@ -462,9 +474,7 @@ export default class MissionImplementation extends PureComponent {
             </div>
           </div>
         </div>
-        <div className={styles.orgTreeSection}>
-          {this.renderTabsExtra()}
-        </div>
+        {this.renderTabsExtra()}
         {
           notMissionCust ?
             <div className={styles.emptyContent}>
@@ -481,6 +491,7 @@ export default class MissionImplementation extends PureComponent {
           !notMissionCust ?
             <div className={styles.custManagerDetailSection}>
               <CustManagerDetailScope
+                location={location}
                 detailData={custManagerScopeData}
                 currentOrgLevel={level}
                 isFold={isFold}

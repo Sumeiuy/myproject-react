@@ -134,6 +134,8 @@ const QUERY_PARAMS = [
   'pageSize',
   // 当前分页
   'pageNum',
+  // 服务经理id
+  'ptyMngId',
 ];
 
 // 更多按钮的菜单数据，配置顺序需要与上面的一致
@@ -155,6 +157,12 @@ const moreFilterData = [
     key: 'triggerTime',
     filterOption: ['triggerTimeStart', 'triggerTimeEnd'],
     type: ['controller', 'executor'],
+  },
+  {
+    value: '结束时间',
+    key: 'endTime',
+    filterOption: ['endTimeStart', 'endTimeEnd'],
+    type: ['controller'],
   },
 ];
 

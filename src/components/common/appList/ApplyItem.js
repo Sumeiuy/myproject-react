@@ -19,6 +19,7 @@ import { data as dataHelper } from '../../../helper';
 import styles from './applyItem.less';
 
 const StatusTag = Tag.statusTag;
+const EMPTY_OBJECT = {};
 
 export default function ApplyItem(props) {
   const {
@@ -122,7 +123,7 @@ ApplyItem.propTypes = {
 
 ApplyItem.defaultProps = {
   typeName: '',
-  typeNameStyle: {},
+  typeNameStyle: EMPTY_OBJECT,
   active: false,
   showSecondLineInfo: _.noop,
   showThirdLineInfo: _.noop,
