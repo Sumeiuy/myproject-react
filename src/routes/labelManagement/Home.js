@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-13 13:55:05
+ * @Last Modified time: 2018-08-14 10:25:16
  */
 
 import React, { PureComponent } from 'react';
@@ -481,8 +481,6 @@ export default class CustomerGroupManage extends PureComponent {
               },
             });
           });
-        } else {
-          message.error('请输入分组名称');
         }
       });
     }

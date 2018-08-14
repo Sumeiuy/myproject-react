@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 16:16:47
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-13 14:18:26
+ * @Last Modified time: 2018-08-14 16:09:37
  */
 
 import React, { PureComponent } from 'react';
@@ -93,7 +93,7 @@ export default class GroupToLabel extends PureComponent {
     }
     // 当发现有多个名称相同的标签时，认为输入的标签为我的标签类型
     if (list.length > 1) {
-      return _.find(list, item => item.type === '0') || {};
+      return _.find(list, item => item.labelTypeId === '0') || {};
     }
     return { labelName };
   }

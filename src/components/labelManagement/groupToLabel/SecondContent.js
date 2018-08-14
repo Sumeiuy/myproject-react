@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-13 14:23:41
+ * @Last Modified time: 2018-08-14 16:09:24
  */
 
 import React, { PureComponent } from 'react';
@@ -51,6 +51,11 @@ export default class SecondContent extends PureComponent {
       // 是否置灰标签描述输入框
       isDisabledLabelDescInput: false,
     };
+  }
+
+  componentWillUnmount() {
+    // 清除联想词
+    this.props.clearPossibleLabels();
   }
 
   // 将列表数据项加一个id字段
@@ -145,6 +150,14 @@ export default class SecondContent extends PureComponent {
     });
   }
 
+  @autobind
+  handleSelect(value, option) {
+    const { form } = this.props;
+    setTimeout(() => {
+      form.setFieldsValue({ labelName: option.props.labelName });
+    }, 1);
+  }
+
   // 生成联想词数据项
   @autobind
   renderOptions() {
@@ -160,7 +173,7 @@ export default class SecondContent extends PureComponent {
         `<em class=${styles.signRed}>${labelName}</em>`,
       );
       return (
-        <Option key={item.id} value={item.labelName}>
+        <Option key={item.id} {...item}>
           <p onClick={() => { this.handleLabelOptionClick(item); }}>
             <span dangerouslySetInnerHTML={{ __html: htmlStr }} />
             <span>{`(${item.labelTypeName})`}</span>
@@ -183,7 +196,6 @@ export default class SecondContent extends PureComponent {
       },
     } = this.props;
     const listData = this.generateListData();
-    const autoCompleteDataSource = this.renderOptions() || [];
     const { isDisabledLabelDescInput, labelNameTip } = this.state;
     return (
       <div className={styles.modalContent}>
@@ -209,14 +221,16 @@ export default class SecondContent extends PureComponent {
                   validateTrigger: 'onBlur',
                 })(<AutoComplete
                   style={autoCompleteStyle}
-                  dataSource={autoCompleteDataSource}
                   onSearch={this.handleAssociateData}
                   onChange={this.handleChange}
                   onBlur={this.handleBlur}
+                  onSelect={this.handleSelect}
                   placeholder="标签名称"
                   optionLabelProp="value"
                   defaultActiveFirstOption={false}
-                />)
+                >
+                  {this.renderOptions()}
+                </AutoComplete>)
               }
             </FormItem>
           </div>
