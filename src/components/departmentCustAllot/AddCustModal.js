@@ -74,13 +74,13 @@ export default class AddCustModal extends PureComponent {
       status: [],
       // 营业部
       orgIdKeyWord: '',
-      // 净资产
+      // 总资产
       totalAsset: [],
-      // 年日均净资产
+      // 年日均总资产
       annualDailyAsset: [],
-      // 上年净佣金
+      // 上年股基净佣金
       lastYearAsset: [],
-      // 本年净佣金
+      // 本年股基净佣金
       annualAsset: [],
       pageNum: INIT_PAGENUM,
       // 服务经理关键字
@@ -156,13 +156,13 @@ export default class AddCustModal extends PureComponent {
       smKeyword,
       dmKeyword,
       pageNum,
-      // 净资产区间
+      // 总资产区间
       totalAsset: [totalAssetStart = '', totalAssetEnd = ''],
-      // 年日均净资产区间
+      // 年日均总资产区间
       annualDailyAsset: [annualDailyAssetStart = '', annualDailyAssetEnd = ''],
-      // 本年净佣金区间
+      // 本年股基净佣金区间
       annualAsset: [annualAssetStart = '', annualAssetEnd = ''],
-      // 上年净佣金区间
+      // 上年股基净佣金区间
       lastYearAsset: [lastYearAssetStart = '', lastYearAssetEnd = ''],
     } = this.state;
     // 如果状态数组有数据，且第一个数据为空，则置为空数组
@@ -219,7 +219,7 @@ export default class AddCustModal extends PureComponent {
     }, this.searchCustList);
   }
 
-  // 净资产区间
+  // 总资产区间
   @autobind
   handleRangeFilterChange(obj) {
     this.setState({
@@ -437,7 +437,7 @@ export default class AddCustModal extends PureComponent {
                   <div className={styles.rangeDiv}>
                     <RangeFilter
                       filterId="totalAsset"
-                      filterName="净资产"
+                      filterName="总资产"
                       defaultLabel={NO_VALUE}
                       value={totalAsset}
                       unit="元"
@@ -445,7 +445,7 @@ export default class AddCustModal extends PureComponent {
                     />
                     <RangeFilter
                       filterId="annualDailyAsset"
-                      filterName="年日均净资产"
+                      filterName="年日均总资产"
                       defaultLabel={NO_VALUE}
                       value={annualDailyAsset}
                       unit="元"
@@ -453,7 +453,7 @@ export default class AddCustModal extends PureComponent {
                     />
                     <RangeFilter
                       filterId="lastYearAsset"
-                      filterName="上年净佣金"
+                      filterName="上年股基净佣金"
                       defaultLabel={NO_VALUE}
                       value={lastYearAsset}
                       unit="元"
@@ -461,7 +461,7 @@ export default class AddCustModal extends PureComponent {
                     />
                     <RangeFilter
                       filterId="annualAsset"
-                      filterName="本年净佣金"
+                      filterName="本年股基净佣金"
                       defaultLabel={NO_VALUE}
                       value={annualAsset}
                       unit="元"
