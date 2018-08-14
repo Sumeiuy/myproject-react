@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-14 16:55:06
+ * @Last Modified time: 2018-08-14 17:02:53
  */
 
 import React, { PureComponent } from 'react';
@@ -176,7 +176,9 @@ export default class SecondContent extends PureComponent {
       return (
         <Option key={item.id} {...item}>
           <p onClick={() => { this.handleLabelOptionClick(item); }}>
-            <span dangerouslySetInnerHTML={{ __html: htmlStr }} />
+            <span
+              dangerouslySetInnerHTML={{ __html: htmlStr }} // eslint-disable-line
+            />
             <span>{`(${item.labelTypeName})`}</span>
           </p>
         </Option>
