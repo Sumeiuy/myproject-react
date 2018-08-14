@@ -2,8 +2,8 @@
  * @Description: 页签切换显示
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:53:21
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-25 15:30:47
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-08-13 17:14:42
  */
 
 import React from 'react';
@@ -39,6 +39,7 @@ const TabsArea = (props) => {
     saveAnswersByType,
     basicInfo,
     basicInfo: { missionStatusCode },
+    queryExecutorDetailLoading,
   } = props;
   return (
     <div className={styles.tabsContainer} >
@@ -58,6 +59,7 @@ const TabsArea = (props) => {
             queryExecutorFeedBack={queryExecutorFeedBack}
             queryExecutorFlowStatus={queryExecutorFlowStatus}
             queryExecutorDetail={queryExecutorDetail}
+            queryExecutorDetailLoading={queryExecutorDetailLoading}
           />
         </TabPane>
         {hasSurvey ?
@@ -95,6 +97,7 @@ TabsArea.propTypes = {
   queryExecutorFeedBack: PropTypes.func.isRequired,
   queryExecutorFlowStatus: PropTypes.func.isRequired,
   queryExecutorDetail: PropTypes.func.isRequired,
+  queryExecutorDetailLoading: PropTypes.bool.isRequired,
   currentId: PropTypes.string.isRequired,
   answersList: PropTypes.object,
   getTempQuesAndAnswer: PropTypes.func.isRequired,

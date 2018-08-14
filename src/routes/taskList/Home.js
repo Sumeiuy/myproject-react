@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-25 09:33:53
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-08-13 17:13:10
  * @description 任务管理首页
  */
 
@@ -504,6 +504,7 @@ export default class PerformerView extends PureComponent {
       queryExecutorFlowStatus,
       queryExecutorFeedBack,
       queryExecutorDetail,
+      queryExecutorDetailLoading,
       queryTargetCustDetail,
     } = this.props;
     const {
@@ -573,6 +574,7 @@ export default class PerformerView extends PureComponent {
         queryExecutorFlowStatus={queryExecutorFlowStatus}
         queryExecutorFeedBack={queryExecutorFeedBack}
         queryExecutorDetail={queryExecutorDetail}
+        queryExecutorDetailLoading={queryExecutorDetailLoading}
         queryTargetCustDetail={queryTargetCustDetail}
         location={location}
         currentTask={currentTask}
