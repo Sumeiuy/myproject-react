@@ -250,12 +250,11 @@ export default class AccountLimitHome extends PureComponent {
   showCreateBtn() {
     const { custRangeList } = this.props;
     let show = true;
-    if (!_.isEmpty(custRangeList)) {
+    // custRangeList 不为空并且在 fsp 环境下时
+    if (!_.isEmpty(custRangeList) && env.isInFsp()) {
       // HTSC 综合服务-营业部执行岗、当前切换的职位对应的部门为营业部层级
       show = permission.hasZHFWYYBZXGPermission() && this.checkUserIsDepartment();
     }
-    // 本地显示新建按钮， FSP 环境下不显示
-    show = !env.isInFsp();
     return show;
   }
 
