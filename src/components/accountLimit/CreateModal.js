@@ -205,6 +205,7 @@ export default class CreateModal extends PureComponent {
       isLimit = true;
       this.queryNextStepButton();
     }
+    console.warn('attachmentMap[0]', attachmentMap[0]);
     this.setState({
       [key]: value,
       isLimit,
@@ -232,8 +233,10 @@ export default class CreateModal extends PureComponent {
   // 证券代码变化
   @autobind
   handleStockCodeChange(e) {
+    const value = e.target.value.replace(/\D/g, '');
+    console.warn('value', value);
     this.setState({
-      stockCode: e.target.value,
+      stockCode: value,
     });
   }
 
@@ -634,6 +637,10 @@ export default class CreateModal extends PureComponent {
     }
     if (_.isEmpty(stockCode)) {
       message.error('请填写证券代码');
+      return;
+    }
+    if (!isLimit && _.isEmpty(bankConfirm)) {
+      message.error('请选择是否银行确认');
       return;
     }
     if (_.isEmpty(addedCustData)) {
