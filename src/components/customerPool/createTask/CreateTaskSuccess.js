@@ -69,7 +69,7 @@ export default class CreateTaskSuccess extends PureComponent {
     // 就手动切换tab，需要将任务管理tab绑定的url替换成taskList
     if (source === RETURN_TASK_FROM_TASKLIST) {
       saveTabUrl({
-        url: '/taskList',
+        url: '/taskCenter/taskList',
         tabId: 'FSP_MOT_SELFBUILT_TASK',
       });
     } else {
@@ -140,9 +140,9 @@ export default class CreateTaskSuccess extends PureComponent {
     };
     openRctTab({
       routerAction: push,
-      url: '/taskList',
+      url: '/taskCenter/taskList',
       param,
-      pathname: '/taskList',
+      pathname: '/taskCenter/taskList',
       query: {},
     });
   }

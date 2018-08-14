@@ -2,8 +2,8 @@
  * @Description: 分公司客户分配
  * @Author: Liujianshu
  * @Date: 2018-05-23 09:59:21
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-07-19 14:47:13
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-07 16:59:46
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -41,6 +41,9 @@ const {
   custAllot: { status, pageType },
   subType,
   clearDataArray,
+  basicFilters,
+  moreFilters,
+  moreFilterData,
 } = config;
 
 // 登陆人的组织 ID
@@ -210,6 +213,20 @@ export default class CustAllot extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
+    }
+  }
+
   componentWillUnmount() {
     const { clearData } = this.props;
     clearData(clearDataArray[1]);
@@ -278,8 +295,6 @@ export default class CustAllot extends PureComponent {
         appId: '',
       },
     });
-    // 2.调用queryApplicationList接口，清空掉消息提醒页面带过来的 id， appId
-    this.queryAppList({ ...query, ...obj, id: '', appId: '' }, 1, query.pageSize);
   }
 
   // 判断当前登录用户部门是否是分公司
@@ -351,7 +366,6 @@ export default class CustAllot extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 点击列表每条的时候对应请求详情
@@ -610,13 +624,14 @@ export default class CustAllot extends PureComponent {
         replace={replace}
         page="custAllotPage"
         pageType={pageType}
-        needSubType={false}
         stateOptions={status}
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
         checkUserIsFiliale={this.checkUserIsFiliale}
-        needApplyTime
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

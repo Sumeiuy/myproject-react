@@ -2,8 +2,8 @@
  * @Description: 客户的基本信息
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-19 18:07:09
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-09 10:36:51
  */
 
 import React from 'react';
@@ -17,6 +17,7 @@ import ContactInfoPopover from '../../../common/contactInfoPopover/ContactInfoPo
 import Mask from '../../../common/mask';
 import { date } from '../../../../helper';
 import { UPDATE } from '../../../../config/serviceRecord';
+import logable from '../../../../decorators/logable';
 import styles from './customerProfile.less';
 
 import { riskLevelConfig, PER_CODE, ORG_CODE, CALLABLE_LIST, PHONE } from './config';
@@ -91,6 +92,12 @@ export default class CustomerProfile extends React.PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '点击客户打开客户360视图',
+    },
+  })
   openFsp360TabAction(param) {
     const { targetCustDetail = {} } = this.props;
     const { custNature, custId, rowId, ptyId } = targetCustDetail;

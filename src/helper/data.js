@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-25 10:17:51
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-03 18:06:24
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 import _ from 'lodash';

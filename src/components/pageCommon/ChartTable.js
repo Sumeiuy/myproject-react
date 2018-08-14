@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-25 20:49:28
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-08 15:20:12
  */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import ScrollBar from './ScrollBar';
 
-import { data as helperData } from '../../helper';
+import { data as helperData, number as helperNumber } from '../../helper';
 import Pagination from '../common/Pagination';
 import { fspContainer, optionsMap, constants } from '../../config';
 import styles from './ChartTable.less';
@@ -24,6 +24,7 @@ const revert = { asc: 'desc', desc: 'asc' };
 const fsp = document.querySelector(fspContainer.container);
 // 汇报关系的汇总方式
 const hbgxSummaryType = constants.hbgxSummaryType;
+const { thousandFormat, toFixed } = helperNumber;
 
 export default class ChartTable extends PureComponent {
   static propTypes = {
@@ -223,13 +224,12 @@ export default class ChartTable extends PureComponent {
     const childrenArr = [];
     if (item.children) {
       item.children.map((child) => {
-        const stamp = new Date().getTime();
+        const stamp = helperData.uuid(16);
         const childObj = {
           title: this.getTitleHtml(child),
           dataIndex: child.key,
           width: this.getColumnWidth(child.name, child.unit),
           key: `key${child.key}${stamp}`,
-          align: 'center',
         };
         const hasThreeEle = child.children;
         if (hasThreeEle) {
@@ -248,13 +248,12 @@ export default class ChartTable extends PureComponent {
     const threeEleArr = [];
     if (item.children) {
       item.children.map((child) => {
-        const stamp = new Date().getTime();
+        const stamp = helperData.uuid(16);
         const threeEleObj = {
           title: this.getTitleHtml(child),
           dataIndex: child.key,
           width: this.getColumnWidth(child.name, child.unit),
           key: `key${child.key}${stamp}`,
-          align: 'center',
         };
         return threeEleArr.push(threeEleObj);
       });
@@ -328,7 +327,7 @@ export default class ChartTable extends PureComponent {
             {_.isEmpty(record.orgModel.level3Name) ? '' : `-${record.orgModel.level3Name}`}
             -{record.orgModel.level4Name}
           </p>
-          <p>{record.orgModel.level5Name}</p>
+          <p>{record.orgModel.level5Name}{_.isEmpty(record.id) ? '' : `(${record.id})`}</p>
         </div>);
       } else {
         toolTipTittle = '';
@@ -359,19 +358,19 @@ export default class ChartTable extends PureComponent {
         const itemValue = Number(item.value);
         switch (encodeURIComponent(item.unit)) {
           case encodeURIComponent('%'):
-            value = Number.parseFloat((itemValue * 100).toFixed(2));
+            value = thousandFormat(toFixed(itemValue * 100), true, ',', false);
             break;
           case encodeURIComponent('‰'):
-            value = Number.parseFloat((itemValue * 1000).toFixed(2));
+            value = thousandFormat(toFixed(itemValue * 1000), true, ',', false);
             break;
           case encodeURIComponent('元'):
-            value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
+            value = thousandFormat(toFixed(itemValue / 10000), true, ',', false);
             break;
           case encodeURIComponent('元/年'):
-            value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
+            value = thousandFormat(toFixed(itemValue / 10000), true, ',', false);
             break;
           default:
-            value = Number.parseFloat(itemValue.toFixed(2));
+            value = thousandFormat(toFixed(itemValue), true, ',', true);
             break;
         }
       } else {
@@ -404,25 +403,28 @@ export default class ChartTable extends PureComponent {
     const { chartTableInfo, scope, boardType, summaryType } = nextProps;
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
-    const temp = [];
+    let temp = [];
     let newArr = [];
     let tempArr = [];
     let allWidth;
     if (data && data.length) {
-      data.map((item, index) => {
-        const testArr = this.unitChange(item.indicatorDataList);
-        const { id, level: itemLevel, name, orgModel = {} } = item;
-        return temp.push(Object.assign(
-          { key: index, city: name, level: itemLevel, id, orgModel }, ...testArr,
-        ));
-      });
+      temp = _.reduce(data, (res, value, index) => {
+        const testArr = this.unitChange(value.indicatorDataList);
+        const { id, level: itemLevel, name, orgModel = {} } = value;
+        let city = name;
+        if (itemLevel === '5') {
+          city = _.isEmpty(id) ? name : `${name}(${id})`;
+        }
+        const listItemData =
+          _.assign({ key: index, city, level: itemLevel, id, orgModel }, ...testArr);
+        return res.concat(listItemData);
+      }, []);
       tempArr = columns.map((item) => {
         const tempName = `${item.name}`;
         const column = {
           dataIndex: item.key,
           title: this.getTitleHtml(item),
           width: this.getColumnWidth(tempName),
-          align: 'center',
           render: text => (
             <div className={styles.tdWrapperDiv}>
               {text}
@@ -452,7 +454,6 @@ export default class ChartTable extends PureComponent {
         key: 'city',
         width: 170,
         fixed: 'left',
-        align: 'center',
         render: (text, record) => (
           this.toolTipHandle(record)
         ),

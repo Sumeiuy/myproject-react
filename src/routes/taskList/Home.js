@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-13 17:13:10
+ * @Last Modified time: 2018-08-14 10:24:21
  * @description 任务管理首页
  */
 
@@ -23,7 +23,7 @@ import pageConfig from '../../components/taskList/pageConfig';
 import { getCurrentScopeByOrgId } from '../../components/taskList/managerView/helper';
 import { openRctTab } from '../../utils';
 import { emp, permission } from '../../helper';
-import logable from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
 
@@ -281,12 +281,14 @@ export default class PerformerView extends PureComponent {
   getFlowStatus({ orgId }) {
     const {
       countFlowStatus,
+      location: { query: { ptyMngId } },
     } = this.props;
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 管理者视图任务实施进度
     countFlowStatus({
       missionId: this.getCurrentId(),
       orgId: newOrgId || emp.getOrgId(),
+      ptyMngId,
     });
   }
 
@@ -297,12 +299,14 @@ export default class PerformerView extends PureComponent {
   getFlowFeedback({ orgId }) {
     const {
       countFlowFeedBack,
+      location: { query: { ptyMngId } },
     } = this.props;
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 管理者视图获取客户反馈饼图
     countFlowFeedBack({
       missionId: this.getCurrentId(),
       orgId: newOrgId || emp.getOrgId(),
+      ptyMngId,
     });
   }
 
@@ -312,6 +316,7 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getCustManagerScope({
+    missionId = this.getCurrentId(),
     orgId,
     pageNum = GET_CUST_SCOPE_PAGE_NUM,
     pageSize = GET_CUST_SCOPE_PAGE_SIZE,
@@ -320,16 +325,19 @@ export default class PerformerView extends PureComponent {
     const {
       getCustManagerScope,
       custRange,
+      location: { query: { ptyMngId } },
     } = this.props;
     const newOrgId = orgId === 'msm' ? '' : orgId;
     // 获取服务经理维度任务数据
     getCustManagerScope({
-      missionId: this.getCurrentId(),
+      missionId,
       orgId: newOrgId || emp.getOrgId(),
       pageNum,
       pageSize,
       // 当前任务维度，取入参或者跟着组织机构走
-      enterType: enterType || getCurrentScopeByOrgId({ custRange, orgId }),
+      enterType: enterType || getCurrentScopeByOrgId({ custRange, orgId, ptyMngId }),
+      // 管理者视图根据服务经理过滤器判断是否传ptyMngId
+      ptyMngId,
     });
   }
 
@@ -748,8 +756,8 @@ export default class PerformerView extends PureComponent {
       countFlowStatus,
       countAnswersByType,
       countExamineeByType,
-      getCustManagerScope,
       custRange,
+      location: { query: { ptyMngId } },
     } = this.props;
     // 如果来源是创建者视图，那么取mssnId作为missionId
     // 取id作为eventId
@@ -762,6 +770,8 @@ export default class PerformerView extends PureComponent {
       orgId,
       // 管理者视图需要eventId来查询详细信息
       eventId,
+      // 管理者视图根据服务经理过滤器判断是否传ptyMngId
+      ptyMngId,
     }).then(
       () => {
         const { mngrMissionDetailInfo, queryMOTServeAndFeedBackExcel } = this.props;
@@ -782,19 +792,19 @@ export default class PerformerView extends PureComponent {
         queryMOTServeAndFeedBackExcel(paylaod);
       },
     );
-
+    // 管理者视图根据服务经理过滤器判断是否传ptyMngId
+    const payload = { missionId, orgId, ptyMngId };
+    // 按服务经理筛选enterType传EMP_MANAGER_SCOPE的值
+    const enterType = getCurrentScopeByOrgId({ custRange, ptyMngId });
     // 管理者视图获取客户反馈
-    countFlowFeedBack({ missionId, orgId });
+    countFlowFeedBack(payload);
     // 管理者视图任务实施进度
-    countFlowStatus({ missionId, orgId });
+    countFlowStatus(payload);
     // 管理者视图服务经理维度任务详细数据
-    getCustManagerScope({
-      pageNum: GET_CUST_SCOPE_PAGE_NUM,
-      pageSize: GET_CUST_SCOPE_PAGE_SIZE,
-      missionId,
-      orgId: emp.getOrgId(),
+    this.getCustManagerScope({
+      ...payload,
       // 当前任务维度，跟着组织机构走
-      enterType: getCurrentScopeByOrgId({ custRange }),
+      enterType,
     });
   }
 
@@ -948,14 +958,6 @@ export default class PerformerView extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
-  @logable({
-    type: 'ViewItem',
-    payload: {
-      name: '执行者视图左侧列表',
-      type: '$props.location.query.type',
-      subType: '$props.location.query.subType',
-    },
-  })
   handleListRowClick(record) {
     // typeCode为任务类型，通过这个类型，查到字典中missionType的descText
     const { id, missionViewType: st, statusCode, mssnId } = record;
@@ -972,6 +974,31 @@ export default class PerformerView extends PureComponent {
       query: {
         ...query,
         currentId: ci,
+      },
+    });
+
+    // 点击列表每条申报上报
+    let name = '';
+    switch (st) {
+      case INITIATOR:
+        name = '我创建的任务';
+        break;
+      case EXECUTOR:
+        name = '我执行的任务';
+        break;
+      case CONTROLLER:
+        name = '我管理的任务';
+        break;
+      default:
+        break;
+    }
+    logCommon({
+      type: 'ViewItem',
+      payload: {
+        name,
+        type: '任务',
+        value: ci,
+        title: record.missionName,
       },
     });
   }
@@ -994,6 +1021,7 @@ export default class PerformerView extends PureComponent {
       },
     });
   }
+
 
   // 渲染列表项里面的每一项
   @autobind

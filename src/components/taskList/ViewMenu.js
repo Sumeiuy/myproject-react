@@ -76,7 +76,7 @@ export default class ViewMenu extends PureComponent {
         <div className={styles.menuSection}>
           {
             _.map(chooseMissionViewOptions, item =>
-              <div
+              (<div
                 className={
                   classnames({
                     [styles.item]: true,
@@ -88,7 +88,7 @@ export default class ViewMenu extends PureComponent {
                 onClick={() => this.handleClick(item.value)}
               >
                 {item.label}
-              </div>,
+              </div>),
             )
           }
         </div>

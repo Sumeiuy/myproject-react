@@ -1,5 +1,5 @@
 @import "../../src/css/variable.less";
-.header {
+.fspHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -52,5 +52,48 @@
     .ant-menu-inline .ant-menu-selected {
       border-right: 0;
     }
+  }
+}
+
+.modal {
+  font-size: 14px;
+  color: #333;
+  .selectedInfo {
+    margin-bottom: 10px;
+  }
+  :global {
+    .ant-modal-header, .ant-modal-footer {
+      background: #f7f7f7;
+    }
+    .ant-modal-title {
+      font-size: 16px;
+    }
+    .ant-modal-body {
+      font-size: 14px;
+      box-sizing: border-box;
+      padding-top: 10px;
+    }
+  }
+}
+
+.rightIcon {
+  font-size: 20px;
+  vertical-align: middle;
+  color: #108ee9;
+}
+
+.errorIcon {
+  font-size: 20px;
+  vertical-align: middle;
+  color: #ff4561;
+}
+
+.validMessage {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+  display: none;
+  &.show {
+    display: block;
   }
 }

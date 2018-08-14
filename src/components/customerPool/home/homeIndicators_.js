@@ -5,7 +5,7 @@
  */
 import _ from 'lodash';
 import { openRctTab } from '../../../utils';
-import { url as urlHelper, number as numberHelper, env } from '../../../helper';
+import { url as urlHelper, number as numberHelper, permission } from '../../../helper';
 import { getFilter, getSortParam } from '../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import {
@@ -339,7 +339,7 @@ export function linkTo({
     cycleSelect: cycleSelect || (cycle[0] || {}).key,
   };
   // 客户列表参数灰度处理
-  if (env.isGrayFlag()) {
+  if (permission.isGrayFlag()) {
     params = {
       ...params,
       type,

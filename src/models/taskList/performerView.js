@@ -82,6 +82,8 @@ export default {
     custFeedBack: EMPTY_LIST,
     // 客户明细
     custDetail: EMPTY_OBJ,
+    // 查询的服务经理列表
+    serverManagerList: EMPTY_LIST,
     // 获取任务相关的投资建议模板列表
     templateList: [],
     // 翻译选中的投资建议模板结果
@@ -306,6 +308,20 @@ export default {
       return {
         ...state,
         custDetail,
+      };
+    },
+    getSearchServerPersonListSuccess(state, action) {
+      return {
+        ...state,
+        serverManagerList: action.payload,
+      };
+    },
+    // 清除服务经理列表数据
+    clearServiceManagerList(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        searchServerPersonList: payload,
       };
     },
     getTemplateListSuccess(state, action) {
@@ -587,7 +603,18 @@ export default {
         payload: newResultData,
       });
     },
-
+    // 服务经理列表数据
+    getSearchPersonList: [
+      function* getSearchPersonList({ payload }, { call, put }) {
+        const { resultData = EMPTY_OBJ } = yield call(custApi.getSearchServerPersonelList, payload);
+        if (resultData) {
+          const { servicePeopleList = EMPTY_LIST } = resultData;
+          yield put({
+            type: 'getSearchServerPersonListSuccess',
+            payload: servicePeopleList,
+          });
+        }
+      }, { type: 'takeLatest' }],
     // 根据任务类型获取相应的模板列表
     * getTemplateList({ payload }, { call, put }) {
       yield put({

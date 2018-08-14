@@ -25,6 +25,7 @@ import logable from '../../decorators/logable';
 const {
   tableTitle: { custList: custTitleList },  // 客户表格列表
   operateTypeArray,  // 操作类型枚举
+  relieveCode,  // 限制解除的 value
   attachmentMap,  // 附件类型枚举
 } = config;
 // 客户姓名
@@ -150,7 +151,7 @@ export default class Detail extends PureComponent {
           <InfoItem label="证券代码" className={styles.inlineInfoItem} width="120px" value={stockCode} />
           {/* 操作类型为限制解除时显示银行确认 */}
           {
-            operateType === operateTypeArray[1].value
+            operateType === relieveCode
             ? <InfoItem label="是否银行确认" className={styles.inlineInfoItem} width="120px" value={bankConfirm ? '是' : '否'} />
             : null
           }

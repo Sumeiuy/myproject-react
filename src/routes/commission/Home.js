@@ -29,7 +29,18 @@ import './home.less';
 import logable, { logPV } from '../../decorators/logable';
 
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
-const { comsubs, commission, commission: { pageType, subType, status } } = seibelConfig;
+const {
+  comsubs,
+  commission,
+  commission: {
+    pageType,
+    subType,
+    status,
+    basicFilters,
+    moreFilters,
+    moreFilterData,
+ },
+} = seibelConfig;
 
 const effects = {
   list: 'app/getSeibleList',
@@ -301,6 +312,20 @@ export default class CommissionHome extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
+    }
+  }
+
   // 获取列表后再获取某个Detail
   @autobind
   getRightDetail() {
@@ -531,8 +556,6 @@ export default class CommissionHome extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 打开审批记录弹出窗
@@ -580,7 +603,6 @@ export default class CommissionHome extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -596,7 +618,6 @@ export default class CommissionHome extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 渲染列表项里面的每一项
@@ -664,6 +685,9 @@ export default class CommissionHome extends PureComponent {
         stateOptions={status}
         creatSeibelModal={this.handleCreateBtnClick}
         filterCallback={this.handleHeaderFilter}
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

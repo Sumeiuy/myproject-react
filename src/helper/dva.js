@@ -16,11 +16,11 @@ const dva = {
    * 初始化dva引用
    * @param {Object} app_ dva生成的实例
    */
-  initApp(app_, history) {
+  initApp(app_, history, isInReact) {
     app = app_;
     const store = dva.getStore();
     // 将store暴露给FSP
-    initFspMethod({ store, history });
+    initFspMethod({ store, history, isInReact });
     permission.init(store);
   },
 

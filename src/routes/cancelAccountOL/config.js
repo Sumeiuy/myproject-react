@@ -1,11 +1,13 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-07-09 10:16:28
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-10 15:50:43
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-03 15:40:58
  * @description 线上销户需要用到的配置项
  */
+import busApplyFilters from '../../config/busApplyFilters';
 
+const { customer, status, drafter, department, approver, applyTime } = busApplyFilters;
 const config = {
   // 页面类型 Code
   PAGE_TYPE: '12',
@@ -13,7 +15,7 @@ const config = {
   STATUS_OPTIONS: [
     {
       show: true,
-      label: '全部',
+      label: '不限',
       value: '',
     },
     {
@@ -36,6 +38,20 @@ const config = {
       label: '驳回',
       value: '04',
     },
+  ],
+  basicFilters: [
+    customer,
+    status,
+    drafter,
+    applyTime,
+  ],
+  moreFilters: [
+    department,
+    approver,
+  ],
+  moreFilterData: [
+    { value: '部门', key: 'orgId' },
+    { value: '审批人', key: 'approvalId' },
   ],
 };
 

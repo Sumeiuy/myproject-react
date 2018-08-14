@@ -167,7 +167,7 @@ export default class Filter extends PureComponent {
     if (filter.filterId === 'primaryKeyJxgrps') {
       return this.handleJxGroupProductChange;
     }
-    if (filter.filterId === 'holdingIndustry') {
+    if (filter.filterId === 'primaryKeyIndustry') {
       return this.handleHoldingIndustryChange;
     }
     switch (filter.type) {
@@ -712,7 +712,7 @@ export default class Filter extends PureComponent {
           {
             _.map(
               moreFilterListOpened,
-                obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
+              obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
           }
         </div>
         <div className={styles.moreFilterController}>
