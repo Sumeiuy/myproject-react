@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:07:12
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-14 10:23:35
+ * @Last Modified time: 2018-08-14 18:17:39
  * @description 针对taskList > Home 组件的props类型校验模块
  */
 import PropTypes from 'prop-types';
@@ -92,7 +92,7 @@ export default {
   serviceProgress: PropTypes.object.isRequired,
   custFeedBack: PropTypes.array.isRequired,
   custDetail: PropTypes.object.isRequired,
-  queryExecutorDetailLoading: PropTypes.bool.isRequired,
+  isShowExecutorDetailLoading: PropTypes.bool.isRequired,
   // custDetailResultByScope: PropTypes.object.isRequired,
   previewCustDetailByScope: PropTypes.func.isRequired,
 };

@@ -512,7 +512,7 @@ export default class PerformerView extends PureComponent {
       queryExecutorFlowStatus,
       queryExecutorFeedBack,
       queryExecutorDetail,
-      queryExecutorDetailLoading,
+      isShowExecutorDetailLoading,
       queryTargetCustDetail,
     } = this.props;
     const {
@@ -582,7 +582,7 @@ export default class PerformerView extends PureComponent {
         queryExecutorFlowStatus={queryExecutorFlowStatus}
         queryExecutorFeedBack={queryExecutorFeedBack}
         queryExecutorDetail={queryExecutorDetail}
-        queryExecutorDetailLoading={queryExecutorDetailLoading}
+        isShowExecutorDetailLoading={isShowExecutorDetailLoading}
         queryTargetCustDetail={queryTargetCustDetail}
         location={location}
         currentTask={currentTask}

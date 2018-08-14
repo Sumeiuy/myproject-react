@@ -5,7 +5,7 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-14 17:56:50
+ * @Last Modified time: 2018-08-14 18:19:11
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -488,7 +488,7 @@ export default class MatchArea extends PureComponent {
           let replaceWordLables = `${replaceWord({ value: item.name, searchText })}-${searchText}`;
           // 防止热点标签展示重复，这里从query上取source
           if (!isSightingScope(item.source)) {
-            replaceWordLables = `${replaceWord({ value: item.name, searchText })}`;
+            replaceWordLables = replaceWord({ value: item.name, searchText });
           }
           // 在标签后面增加",",最后一个不加
           if (index !== arr.length - 1) {

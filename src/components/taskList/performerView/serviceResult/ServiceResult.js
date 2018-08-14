@@ -44,7 +44,7 @@ export default class ServiceResult extends PureComponent {
     queryExecutorFeedBack: PropTypes.func.isRequired,
     queryExecutorFlowStatus: PropTypes.func.isRequired,
     queryExecutorDetail: PropTypes.func.isRequired,
-    queryExecutorDetailLoading: PropTypes.bool.isRequired,
+    isShowExecutorDetailLoading: PropTypes.bool.isRequired,
     currentId: PropTypes.string.isRequired,
   }
 
@@ -240,7 +240,7 @@ export default class ServiceResult extends PureComponent {
   }
 
   render() {
-    const { serviceProgress, custFeedBack, queryExecutorDetailLoading } = this.props;
+    const { serviceProgress, custFeedBack, isShowExecutorDetailLoading } = this.props;
     const { list = [], page = {} } = this.getCustDetail();
     const {
       columnWidth,
@@ -273,17 +273,18 @@ export default class ServiceResult extends PureComponent {
           isNeedRowSelection
           onRowSelectionChange={this.handleSelectChange}
           currentSelectRowKeys={selectedRowKeys}
-          selectionType={'checkbox'}
+          selectionType="checkbox"
         />
         {
           pageNum < page.totalPage || page.totalPage === 0
           ? <div className={styles.shuaxinWrap}>
             {
-              queryExecutorDetailLoading
+              isShowExecutorDetailLoading
               ? <Spin indicator={customIcon} />
               : <Icon type="reload" />
             }
-            <a onClick={this.handlePageChange}>加载更多</a></div>
+            <a onClick={this.handlePageChange}>加载更多</a>
+          </div>
           : null
         }
       </div>

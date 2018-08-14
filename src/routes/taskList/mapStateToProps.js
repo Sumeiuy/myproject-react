@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 10:14:05
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-14 10:23:26
+ * @Last Modified time: 2018-08-14 18:17:45
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapStateToProps移至此处成立独立模块
  */
 
@@ -77,7 +77,7 @@ const mapStateToProps = () => state => ({
   custFeedBack: state.performerView.custFeedBack,
   // 服务结果明细
   custDetail: state.performerView.custDetail,
-  queryExecutorDetailLoading: state.loading.effects['performerView/queryExecutorDetail'],
+  isShowExecutorDetailLoading: state.loading.effects['performerView/queryExecutorDetail'],
   // // 服务经理维度客户明细
   // custDetailResultByScope: state.managerView.custDetailResultByScope,
 });

@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-13 17:13:53
+ * @Last Modified time: 2018-08-14 18:17:49
  */
 
 
@@ -88,7 +88,7 @@ export default class PerformerViewDetail extends PureComponent {
     serviceProgress: PropTypes.object.isRequired,
     custFeedBack: PropTypes.array.isRequired,
     custDetail: PropTypes.object.isRequired,
-    queryExecutorDetailLoading: PropTypes.bool.isRequired,
+    isShowExecutorDetailLoading: PropTypes.bool.isRequired,
     queryExecutorFeedBack: PropTypes.func.isRequired,
     queryExecutorFlowStatus: PropTypes.func.isRequired,
     queryExecutorDetail: PropTypes.func.isRequired,
