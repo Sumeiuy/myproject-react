@@ -12,7 +12,7 @@ import { Menu, Dropdown, Icon } from 'antd';
 import _ from 'lodash';
 import styles from './tabMenu.less';
 import MoreTab from './MoreTab';
-import { pathPrefix } from './config';
+import commonConfig from './config';
 import { fixExternUrl } from '../utils/tab';
 
 const menuStyle = {
@@ -101,7 +101,7 @@ export default class TabMenu extends PureComponent {
     const pathArray = _.split(path, '/');
     let pathForMatch = pathArray[level];
     // 如果pathname是以fsp开头的，
-    if (pathPrefix.test(path)) {
+    if (commonConfig.pathPrefix.test(path)) {
       pathForMatch = pathArray[level + 1]; // 去掉"/fsp"开头
     }
     if (menuPath && menuPath.indexOf(pathForMatch) > -1) {

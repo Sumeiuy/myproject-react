@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-10 10:00:27
+ * @Last Modified time: 2018-08-14 16:11:58
  */
 
 import React, { PureComponent } from 'react';
@@ -249,12 +249,7 @@ export default class CustomerGroupManage extends PureComponent {
 
   // 编辑标签
   @autobind
-  @logable({
-    type: 'ViewItem',
-    payload: {
-      name: MODALTITLE_EDITLABEL,
-    },
-  })
+  @logPV({ pathname: '/modal/createAndEditLabelModalContent', title: '编辑标签' })
   editLabel(record) {
     const { id } = record;
     const { queryLabelCust } = this.props;
@@ -288,7 +283,7 @@ export default class CustomerGroupManage extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '发起任务',
+      name: '客户标签列表',
     },
   })
   lanuchTask(record) {
@@ -339,7 +334,7 @@ export default class CustomerGroupManage extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '删除客户分组',
+      name: '客户标签列表',
     },
   })
   handleDeleteBtnClick(record) {
@@ -355,7 +350,6 @@ export default class CustomerGroupManage extends PureComponent {
    * @param {*} record 当前记录
    */
   @autobind
-  @logPV({ pathname: '/modal/createAndEditLabelModalContent', title: '编辑或者新建标签' })
   showLabelDetailModal(record = {}, modalTitle = MODALTITLE_CREATELABEL) {
     const { labelName = '', labelDesc = '', id = '', labelTypeId } = record;
     this.setState({
@@ -369,6 +363,13 @@ export default class CustomerGroupManage extends PureComponent {
       modalTitle,
       id,
     });
+  }
+
+  // 显示新建标签模态框
+  @autobind
+  @logPV({ pathname: '/modal/createAndEditLabelModalContent', title: '新建标签' })
+  showCreateLabelModal(record) {
+    this.showLabelDetailModal(record);
   }
 
   @autobind
@@ -478,8 +479,6 @@ export default class CustomerGroupManage extends PureComponent {
               },
             });
           });
-        } else {
-          message.error('请输入分组名称');
         }
       });
     }
@@ -541,22 +540,12 @@ export default class CustomerGroupManage extends PureComponent {
     this.detailRef = ref;
   }
 
-  renderActionSource() {
-    return [{
-      type: '删除',
-      handler: this.handleDeleteBtnClick,
-    },
-    {
-      type: '发起任务',
-      handler: this.lanuchTask,
-    }];
-  }
-
   // 点击了标签名称
   @autobind
   handleEditLabel(record) {
     this.editLabel(record);
   }
+
 
   // 显示隐藏分组转标签模态框
   @autobind
@@ -566,12 +555,30 @@ export default class CustomerGroupManage extends PureComponent {
     });
   }
 
+  // 显示分组转标签的模态框
+  @autobind
+  @logPV({ pathname: '/modal/groupToLabel', title: '分组转标签' })
+  showGroupToLabelModal() {
+    this.toggleGroupToLabelModalVisible(true);
+  }
+
   // 显示隐藏新建编辑标签模态框
   @autobind
   toggleCreateAndEditLabelModalVisible(bool) {
     this.setState({
       visible: bool,
     });
+  }
+
+  renderActionSource() {
+    return [{
+      type: '删除',
+      handler: this.handleDeleteBtnClick,
+    },
+    {
+      type: '发起任务',
+      handler: this.lanuchTask,
+    }];
   }
 
   render() {
@@ -653,13 +660,14 @@ export default class CustomerGroupManage extends PureComponent {
               onSearch={this.handleSearchLabel}
               placeholder="标签名"
               searchStyle={searchStyle}
+              isNeedBtn
             />
           </div>
           <div className={styles.rightSection}>
             <Button
               type="primary"
               className={styles.transformBtn}
-              onClick={() => { this.toggleGroupToLabelModalVisible(true); }}
+              onClick={this.showGroupToLabelModal}
             >
               分组转标签
             </Button>
