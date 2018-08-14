@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 16:16:47
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 20:26:29
+ * @Last Modified time: 2018-08-14 16:09:37
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import _ from 'lodash';
 
 import FirstContent from './FirstContent';
 import SecondContent from './SecondContent';
+import logable, { logCommon } from '../../../decorators/logable';
 
 import styles from './index.less';
 
@@ -92,12 +93,13 @@ export default class GroupToLabel extends PureComponent {
     }
     // 当发现有多个名称相同的标签时，认为输入的标签为我的标签类型
     if (list.length > 1) {
-      return _.find(list, item => item.type === '0') || {};
+      return _.find(list, item => item.labelTypeId === '0') || {};
     }
     return { labelName };
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '下一步' } })
   handleNextStep() {
     this.setState(state => ({
       step: state.step + 1,
@@ -105,6 +107,7 @@ export default class GroupToLabel extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '上一步' } })
   handlePrevStep() {
     this.setState(state => ({
       step: state.step - 1,
@@ -113,6 +116,13 @@ export default class GroupToLabel extends PureComponent {
 
   // 当前选中的分组数据信息
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '分组转标签选择分组',
+      value: '$args[0][groupName]',
+    },
+  })
   handleSelectGroup(record) {
     this.setState({
       currentSelectGroup: record,
@@ -129,12 +139,13 @@ export default class GroupToLabel extends PureComponent {
       const { currentSelectGroup: { groupId = '' } } = this.state;
       const { group2Label, getLabelList, toggleGroupToLabelModalVisible } = this.props;
       const { labelName, id } = this.findLabel(values.labelName);
-      group2Label({
+      const payload = {
         groupId,
         labelId: id,
         labelName,
         labelDesc: values.labelDesc,
-      }).then(({ resultData }) => {
+      };
+      group2Label(payload).then(({ resultData }) => {
         if (resultData === 'success') {
           const {
             location: {
@@ -162,6 +173,13 @@ export default class GroupToLabel extends PureComponent {
           // 关闭模态框
           toggleGroupToLabelModalVisible(false);
         }
+      });
+      logCommon({
+        type: 'Submit',
+        payload: {
+          type: '分组转标签',
+          value: JSON.stringify(payload),
+        },
       });
     });
   }

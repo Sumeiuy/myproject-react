@@ -1,3 +1,5 @@
-export default {
+const config = {
   pathPrefix: /^\/fsp/,
 };
+
+export default config;

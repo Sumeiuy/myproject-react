@@ -6,16 +6,20 @@
 
 import React, { PureComponent } from 'react';
 import classnames from 'classnames';
+import { Spin, Icon } from 'antd';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import styles from './serviceResult.less';
 import antdStyles from '../../../../css/antd.less';
 import ServiceResultLayout from '../../common/ServiceResultLayout';
+// import Icon from '../../../common/Icon';
 import Table from '../../../common/commonTable';
 import missionProgressMap from './config';
 
 const DEFAULT_DETIAL_TITLE = '客户明细';
+// 获取客户详情接口默认的pagesize
+const PAGE_SIZE = 5;
 
 export default class ServiceResult extends PureComponent {
 
@@ -40,6 +44,7 @@ export default class ServiceResult extends PureComponent {
     queryExecutorFeedBack: PropTypes.func.isRequired,
     queryExecutorFlowStatus: PropTypes.func.isRequired,
     queryExecutorDetail: PropTypes.func.isRequired,
+    isShowExecutorDetailLoading: PropTypes.bool.isRequired,
     currentId: PropTypes.string.isRequired,
   }
 
@@ -53,6 +58,10 @@ export default class ServiceResult extends PureComponent {
       detailTitle: DEFAULT_DETIAL_TITLE,
       currentParam: {},
       prevProps: props,
+      // table选中的项
+      selectedRowKeys: [],
+      // table的pageNum
+      pageNum: 1,
     };
   }
 
@@ -115,7 +124,7 @@ export default class ServiceResult extends PureComponent {
       progressFlag: '',
       feedbackIdL1: '',
       pageNum: 1,
-      pageSize: 5,
+      pageSize: PAGE_SIZE,
       ...option,
     };
     this.setState({
@@ -193,17 +202,11 @@ export default class ServiceResult extends PureComponent {
   getCustDetail() {
     const { custDetail } = this.props;
     const { list = [], page = {} } = custDetail;
-    const {
-      pageNum: curPageNum = 0,
-      pageSize: curPageSize = 5,
-      totalCount: totalRecordNum = 0,
-    } = page;
-    const finalPage = { curPageNum, curPageSize, totalRecordNum };
     const finalList = _.map(list, item => ({
       ...item,
       cust: `${item.cust}(${item.brokerNum})`,
     }));
-    return { list: finalList, finalPage };
+    return { list: finalList, page };
   }
 
   @autobind
@@ -214,27 +217,38 @@ export default class ServiceResult extends PureComponent {
   }
 
   /**
-   * 切换分页
+   * 加载更多
    * @param {*number} pageNum 当前分页
-   * @param {*number} pageSize 当前页码
    */
   @autobind
-  handlePageChange(pageNum, pageSize) {
+  handlePageChange() {
     const { currentParam } = this.state;
-    this.getExecutorDetail({
-      ...currentParam,
-      pageNum,
-      pageSize,
+    this.setState({
+      pageNum: this.state.pageNum + 1,
+    }, () => {
+      this.getExecutorDetail({
+        ...currentParam,
+        pageNum: this.state.pageNum,
+        pageSize: PAGE_SIZE,
+      });
     });
   }
 
+  @autobind
+  handleSelectChange(selectedRowKeys) {
+    this.setState({ selectedRowKeys });
+  }
+
   render() {
-    const { isFold, serviceProgress, custFeedBack } = this.props;
-    const { list, finalPage } = this.getCustDetail();
+    const { serviceProgress, custFeedBack, isShowExecutorDetailLoading } = this.props;
+    const { list = [], page = {} } = this.getCustDetail();
     const {
       columnWidth,
       columnWidthTotal,
     } = this.renderColumnWidth();
+    const { selectedRowKeys, pageNum } = this.state;
+    // 自定义旋转图标
+    const customIcon = <Icon type="reload" spin />;
     return (
       <div className={styles.serviceResultWrap}>
         <ServiceResultLayout
@@ -245,30 +259,34 @@ export default class ServiceResult extends PureComponent {
         <Table
           listData={list}
           titleColumn={this.getTableColumns()}
-          paginationInTable
-          onPageChange={this.handlePageChange}
           title={this.renderCustDetailHeader}
           tableClass={
             classnames({
               [styles.custManagerScopeTable]: true,
-              // 展开的样式
-              [styles.notFoldedScope]: !isFold,
-              // 折叠的样式
-              [styles.foldedScope]: isFold,
               [antdStyles.tableHasBetweenSpace]: true,
             })
           }
-          pageData={finalPage}
           columnWidth={columnWidth}
-          // 分页器样式
-          paginationClass="selfPagination"
-          isFixedColumn
-          // 横向滚动，固定服务经理列
-          fixedColumn={[0]}
           // 列的总宽度加上固定列的宽度
           scrollX={columnWidthTotal}
           emptyListDataNeedEmptyRow
+          isNeedRowSelection
+          onRowSelectionChange={this.handleSelectChange}
+          currentSelectRowKeys={selectedRowKeys}
+          selectionType="checkbox"
         />
+        {
+          pageNum < page.totalPage || page.totalPage === 0
+          ? <div className={styles.shuaxinWrap}>
+            {
+              isShowExecutorDetailLoading
+              ? <Spin indicator={customIcon} />
+              : <Icon type="reload" />
+            }
+            <a onClick={this.handlePageChange}>加载更多</a>
+          </div>
+          : null
+        }
       </div>
     );
   }
