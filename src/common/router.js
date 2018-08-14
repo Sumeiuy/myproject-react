@@ -1,13 +1,7 @@
 import { createElement } from 'react';
 import dynamic from 'dva/dynamic';
 
-import CustomerPool from '../routes/customerPool/Home';
-import TaskList from '../routes/taskList/connectedHome';
-import TaskFlow from '../routes/customerPool/TaskFlow';
-import CustomerListWrapper from '../routes/customerPool/CustomerListWrapper';
-import ReportHome from '../routes/reports/Home';
-import CreateTask from '../routes/customerPool/CreateTask';
-import CustomerGroupManage from '../routes/customerPool/CustomerGroupManage';
+// import CustomerPool from '../routes/customerPool/Home';
 import { env } from '../helper';
 
 let routerDataCache;
@@ -78,21 +72,22 @@ export const getRouterData = (app) => {
     },
     // 直接进入
     '/statisticalQuery/report': {
-      component: ReportHome,
+      component: dynamicWrapper(app, ['report'], () =>
+        import('../routes/reports/Home' /* webpackChunkName: "report" */)),
     },
     // 直接进入，
     '/boardManage': {
-      component: dynamicWrapper(app, [], () =>
+      component: dynamicWrapper(app, ['manage'], () =>
         import('../routes/boardManage/Home' /* webpackChunkName: "boardManage" */)),
     },
     // 从 boardManage 页面点击看板进入
     '/boardEdit': {
-      component: dynamicWrapper(app, [], () =>
+      component: dynamicWrapper(app, ['edit'], () =>
         import('../routes/boardEdit/Home' /* webpackChunkName: "boardEdit" */)),
     },
     // 在 boardEdit 页面右下角点击预览进入
     '/preview': {
-      component: dynamicWrapper(app, ['report'], () =>
+      component: dynamicWrapper(app, ['preview', 'edit'], () =>
         import('../routes/reports/PreviewReport' /* webpackChunkName: "preview" */)),
     },
     // 再 report 页面左上角下拉列表-自定义看板-选择一个点击进入
@@ -126,7 +121,7 @@ export const getRouterData = (app) => {
     },
     // 直接进入没有数据，需要一个 custid，不知道是什么
     '/commissionAdjustment': {
-      component: dynamicWrapper(app, [], () =>
+      component: dynamicWrapper(app, ['commission'], () =>
         import('../routes/commissionAdjustment/Home' /* webpackChunkName: "commissionAdjustment" */)),
     },
     // 可直接进入看页面，所需数据未知
@@ -146,7 +141,15 @@ export const getRouterData = (app) => {
     },
     // 直接进入，拼接 url 为 localhost:9088/?empId=002332&grayFlag=true#/tasklist 打开所有下拉选项
     '/taskCenter/taskList': {
-      component: TaskList,
+      component: dynamicWrapper(app,
+        [
+          'taskList/performerView',
+          'customerPool',
+          'taskList/tasklist',
+          'taskList/managerView',
+          'investmentAdvice'
+        ], () => 
+        import('../routes/taskList/connectedHome' /* webpackChunkName: "taskList" */)),
     },
     // 直接进入
     '/statisticalQuery/exchange': {
@@ -189,22 +192,25 @@ export const getRouterData = (app) => {
     // empId 需要设置为 edit 获取到的详情里的审批人
     // 由此进入为有数据页面
     '/channelsTypeProtocol/edit': {
-      component: dynamicWrapper(app, ['channelsTypeProtocol'], () =>
+      component: dynamicWrapper(app, ['channelsTypeProtocol', 'channelsEdit'], () =>
         import('../routes/channelsTypeProtocol/Edit' /* webpackChunkName: "channelsTypeProtocol_edit" */)),
     },
 
     // 直接进入
     '/customerPool': {
-      component: CustomerPool,
+      //component: CustomerPool,
+      component: dynamicWrapper(app, ['customerPool', 'morningBoradcast'], () => 
+        import('../routes/customerPool/Home' /* webpackChunkName: "customerPool" */)),
     },
     // 从 customerPool 搜索框下方--任务概览--第三个选项【代办流程】进入
     '/customerPool/todo': {
-      component: dynamicWrapper(app, ['customerPool'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
         import('../routes/customerPool/ToDo' /* webpackChunkName: "customerPool_todo" */)),
     },
     // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
     '/customerPool/list': {
-      component: CustomerListWrapper,
+      components: dynamicWrapper(app, ['customerPool', 'customerLabel'], () => 
+        import('../routes/customerPool/CustomerListWrapper' /* webpackChunkName: "customerPool_list" */ )),
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
@@ -214,35 +220,43 @@ export const getRouterData = (app) => {
     // 分组管理发起任务
     // customerPool/createTaskFromCustGroup 直接进入，所需数据未知
     '/customerPool/createTaskFromCustGroup': {
-      component: CreateTask,
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+        import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 管理者视图进度条发起任务
     '/customerPool/createTaskFromProgress': {
-      component: CreateTask,
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+        import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 管理者视图饼图发起任务
     '/customerPool/createTaskFromPie': {
-      component: CreateTask,
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+        import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 从代办流程进去，任务驳回修改
     '/customerPool/createTaskFromTaskRejection1': {
-      component: CreateTask,
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+        import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 从任务管理，创建者视图驳回中的任务，进行任务驳回修改
     '/customerPool/createTaskFromTaskRejection2': {
-      component: CreateTask,
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+        import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 从管理者视图服务经理维度发起任务
     '/customerPool/createTaskFromCustScope': {
-      component: CreateTask
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+        import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 客户列表发起任务
     '/customerPool/createTask': {
-      component: CreateTask,
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+        import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 客户分组管理
     '/customerPool/customerGroupManage': {
-      component: CustomerGroupManage,
+      component: dynamicWrapper(app, [], () => 
+        import('../routes/customerPool/CustomerGroupManage' /* webpackChunkName: "customerGroupManage" */)),
     },
     '/customerPool/serviceLog': {
       component: dynamicWrapper(app, ['customerPool'], () =>
@@ -250,7 +264,8 @@ export const getRouterData = (app) => {
     },
     // 从 /taskList 页面，点击右上角新建进入
     '/customerPool/taskFlow': {
-      component: TaskFlow,
+      component: dynamicWrapper(app, ['customerPool'], () => 
+        import('../routes/customerPool/TaskFlow' /* webpackChunkName: "customerPool_taskFlow" */)),
     },
 
     // 从 FSP 消息提醒进入，亦可直接进入，需要数据需后台配置
@@ -271,7 +286,7 @@ export const getRouterData = (app) => {
     },
     // 直接进入
     '/sysOperate/crossDepartment/filialeCustTransfer': {
-      component: dynamicWrapper(app, ['filialeCustTransfer'], () =>
+      component: dynamicWrapper(app, ['filialeCustTransfer', 'customerPool'], () =>
         import('../routes/filialeCustTransfer/Home' /* webpackChunkName: "filialeCustTransfer" */)),
     },
     // 从 filialeCustTransfer 页面左侧列表中选择一条数据，找到请求回来的 flowId,
@@ -299,7 +314,7 @@ export const getRouterData = (app) => {
     },
     // 直接进入
     '/sysOperate/crossDepartment/mainPosition': {
-      component: dynamicWrapper(app, ['mainPosition'], () =>
+      component: dynamicWrapper(app, ['mainPosition', 'customerPool'], () =>
         import('../routes/mainPosition/Home' /* webpackChunkName: "mainPosition" */)),
     },
     // 从 mainPosition 页面左侧列表中选择一条数据，找到请求回来的 flowId,
@@ -356,27 +371,27 @@ export const getRouterData = (app) => {
       exact: false,
     },
     '/sysOperate/platformParameterSetting/taskOperation/customerFeedback': {
-      component: dynamicWrapper(app, [], () =>
+      component: dynamicWrapper(app, ['customerFeedback'], () =>
         import('../routes/customerFeedback/Home' /* webpackChunkName: "taskOperationCustomerFeedback" */)),
     },
     '/sysOperate/platformParameterSetting/taskOperation/taskFeedback': {
-      component: dynamicWrapper(app, [], () =>
+      component: dynamicWrapper(app, ['taskFeedback'], () =>
         import('../routes/taskFeedback/Home' /* webpackChunkName: "taskOperationTaskFeedback" */)),
     },
     '/sysOperate/platformParameterSetting/taskOperation/investmentAdvice': {
-      component: dynamicWrapper(app, [], () =>
+      component: dynamicWrapper(app, ['investmentAdvice'], () =>
         import('../routes/investmentAdvice/Home' /* webpackChunkName: "taskOperationInvestmentAdvice" */)),
     },
     '/sysOperate/platformParameterSetting/labelManager': {
-      component: dynamicWrapper(app, [], () =>
+      component: dynamicWrapper(app, ['userCenter'], () =>
         import('../components/platformParameterSetting/routers/LabelManager' /* webpackChunkName: "LabelManager" */)),
     },
     '/sysOperate/platformParameterSetting/contentOperate': {
-      component: dynamicWrapper(app, [], () =>
+      component: dynamicWrapper(app, ['operationCenter'], () =>
         import('../components/platformParameterSetting/routers/RecommendedLabel' /* webpackChunkName: "RecommendedLabel" */)),
     },
     '/sysOperate/platformParameterSetting/customerLabel': {
-      component: dynamicWrapper(app, [], () =>
+      component: dynamicWrapper(app, ['customerLabel'], () =>
         import('../components/platformParameterSetting/routers/customerLabel/index' /* webpackChunkName: "customerLabel" */)),
     },
     '/sysOperate/platformParameterSetting/productSale/keyFirstPublicOffering': {
@@ -414,7 +429,7 @@ export const getRouterData = (app) => {
     },
     // 组合详情 /choicenessCombination/combinationDetail?id=xxx  id为组合id
     '/choicenessCombination/combinationDetail': {
-      component: dynamicWrapper(app, ['choicenessCombination'], () =>
+      component: dynamicWrapper(app, ['combinationDetail'], () =>
         import('../routes/choicenessCombination/CombinationDetail' /* webpackChunkName: "choicenessCombination_combinationDetail" */)),
     },
     // 历史报告详情 /choicenessCombination/reportDetail?id=xxx&combinationCode=xxx
@@ -445,7 +460,7 @@ export const getRouterData = (app) => {
     },
     // 直接进入
     '/custAllot': {
-      component: dynamicWrapper(app, ['custAllot'], () =>
+      component: dynamicWrapper(app, ['custAllot', 'customerPool'], () =>
         import('../routes/custAllot/Home' /* webpackChunkName: "custAllot" */)),
     },
     // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type
@@ -455,7 +470,7 @@ export const getRouterData = (app) => {
     },
     // 直接进入
     '/departmentCustAllot': {
-      component: dynamicWrapper(app, ['departmentCustAllot'], () =>
+      component: dynamicWrapper(app, ['departmentCustAllot', 'customerPool'], () =>
         import('../routes/departmentCustAllot/Home' /* webpackChunkName: "departmentCustAllot" */)),
     },
     // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type

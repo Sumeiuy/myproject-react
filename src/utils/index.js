@@ -1,6 +1,6 @@
 import apiCreator from './apiCreator';
 import request from './request';
-import sagaEffects from './sagaEffects';
+import * as sagaEffects from './sagaEffects';
 import {
   dispatchTabPane,
   openRctTab,

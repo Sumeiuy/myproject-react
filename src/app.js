@@ -100,77 +100,11 @@ app.use(createActivityIndicator());
 
 // 3. Model
 app.model(require('./models/app').default);
-app.model(require('./models/feedback').default);
-app.model(require('./models/report').default);
-app.model(require('./models/manage').default);
-app.model(require('./models/edit').default);
-app.model(require('./models/preview').default);
-app.model(require('./models/history').default);
-app.model(require('./models/permission').default);
 app.model(require('./models/customerPool').default);
-// 合作合约
-app.model(require('./models/contract').default);
-// 服务订购
-app.model(require('./models/commission').default);
-app.model(require('./models/commissionChange').default);
-// 通道类型协议
-app.model(require('./models/channelsTypeProtocol').default);
-app.model(require('./models/channelsEdit').default);
-app.model(require('./models/taskList/tasklist').default);
 app.model(require('./models/taskList/performerView').default);
-app.model(require('./models/taskList/managerView').default);
-// 零售非零售客户划转
-app.model(require('./models/demote').default);
-// 分公司客户划转
-app.model(require('./models/filialeCustTransfer').default);
-// 汇报关系树
-app.model(require('./models/relation').default);
-// 客户反馈
-app.model(require('./models/customerFeedback').default);
-// 任务反馈
-app.model(require('./models/taskFeedback').default);
-// 主职位 model
-app.model(require('./models/mainPosition').default);
-// 晨报
-app.model(require('./models/morningBoradcast').default);
-// 售前适当性查询
-app.model(require('./models/preSaleQuery').default);
-// 个股资讯
-app.model(require('./models/stock').default);
-// 积分兑换历史查询
-app.model(require('./models/pointsExchange').default);
-// 用户中心
-app.model(require('./models/userCenter').default);
-// 电话申请和分配
 app.model(require('./models/telephoneNumberManage').default);
-// 精选组合
-app.model(require('./models/choicenessCombination').default);
-// 组合详情
-app.model(require('./models/combinationDetail').default);
-// 投资建议模版
 app.model(require('./models/investmentAdvice').default);
-// 用户标签
-app.model(require('./models/operationCenter').default);
-// 营业部非投顾签约客户分配
-app.model(require('./models/businessDepartmentCustDistribute').default);
-// 分公司客户分配
-app.model(require('./models/custAllot').default);
-// 营业部客户分配
-app.model(require('./models/departmentCustAllot').default);
-// 消息通知提醒
-app.model(require('./models/messageCenter').default);
-// 股票期权评估申请
-app.model(require('./models/stockOptionEvaluation').default);
-// 最新观点
-app.model(require('./models/latestView').default);
-// 重点监控账户
-app.model(require('./models/keyMonitorAccount').default);
-// 客户关联关系
-app.model(require('./models/custRelationships').default);
-// 线上销户
-app.model(require('./models/cancelAccountOL').default);
-// 自定义标签类型
-app.model(require('./models/customerLabel').default);
+// app.model(require('./models/morningBoradcast').default);
 
 // 4. Route
 app.router(routerConfig);

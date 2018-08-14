@@ -122,3 +122,11 @@ const exported = {
 
 export default exported;
 export { stackTootip };
+export const {
+  stackBarColors,
+  barColor,
+  yAxis,
+  xAxis,
+  chartGrid,
+  chartTooltip,
+} = chartOptions;

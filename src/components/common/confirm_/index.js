@@ -43,3 +43,5 @@ export default function (params) {
     onCancel,
   });
 }
+
+export { confirm };
