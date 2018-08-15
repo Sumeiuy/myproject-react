@@ -15,6 +15,7 @@ import { dom, event } from '../../helper';
 import { canCustomBoard } from '../../permissions';
 import styles from './BoardSelect.less';
 import logable from '../../decorators/logable';
+import { linkTo } from '../../utils';
 
 const defaultBoardId = constants.boardId;
 const sliceLength = BoardBasic.regular.length;
@@ -25,7 +26,6 @@ export default class BoardSelect extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    replace: PropTypes.func.isRequired,
     collectData: PropTypes.func.isRequired,
     visibleBoards: PropTypes.array.isRequired,
     newVisibleBoards: PropTypes.array.isRequired,
@@ -264,30 +264,40 @@ export default class BoardSelect extends PureComponent {
       boardType = target.getAttribute('data-board-type');
     }
     let boardname;
+    let pathname;
+    let query;
     switch (type) {
       case visibleBoardType.manage.key:
         collectData({
           text: '看板管理',
         });
-        push('/boardManage');
+        pathname = '/boardManage';
         break;
       case visibleBoardType.ordinary.key:
         boardname = _.find(visibleBoards, { id: Number(key) }).name;
         collectData({
           text: boardname,
         });
-        push(`/statisticalQuery/report?boardId=${key}`);
+        pathname = '/statisticalQuery/report';
+        query = { boardId: key };
         break;
       case visibleBoardType.history.key:
         boardname = _.find(visibleBoards, { id: Number(key) }).name;
         collectData({
           text: boardname,
         });
-        push(`/history?boardId=${key}&boardType=${boardType}`);
+        pathname = '/history';
+        query = { boardId: key, boardType };
         break;
       default:
         break;
     }
+    linkTo({
+      query,
+      pathname,
+      url: pathname,
+      routerAction: push,
+    });
     this.setState({
       showMenu: false,
       showSubMenu: false,

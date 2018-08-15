@@ -2,8 +2,8 @@
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-18 13:21:27
- */
+ * @Last Modified time: 2018-08-07 17:18:26
+*/
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -24,7 +24,16 @@ import seibelHelper from '../../helper/page/seibel';
 import permission from '../../helper/permission';
 import logable, { logPV } from '../../decorators/logable';
 
-const { stockOptionApply, stockOptionApply: { statusOptions, pageType } } = config;
+const {
+  stockOptionApply,
+  stockOptionApply: {
+    statusOptions,
+    pageType,
+    basicFilters,
+    moreFilters,
+    moreFilterData,
+  },
+} = config;
 
 const effect = dva.generateEffect;
 const effects = {
@@ -193,6 +202,20 @@ export default class StockOptionApplication extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
+    }
+  }
+
   // 获取右侧列表
   @autobind
   getRightDetail() {
@@ -299,8 +322,6 @@ export default class StockOptionApplication extends PureComponent {
         ...obj,
       },
     });
-    // 2.调用queryApplicationList接口
-    this.queryAppList({ ...query, ...obj }, 1, query.pageSize);
   }
 
   // 切换页码
@@ -317,7 +338,6 @@ export default class StockOptionApplication extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 切换每一页显示条数
@@ -334,7 +354,6 @@ export default class StockOptionApplication extends PureComponent {
         pageSize: changedPageSize,
       },
     });
-    this.queryAppList(query, 1, changedPageSize);
   }
 
   // 关闭新建弹窗
@@ -401,15 +420,15 @@ export default class StockOptionApplication extends PureComponent {
         location={location}
         page="stockOptionApplyPage"
         pageType={pageType}
-        needSubType={false}
         stateOptions={statusOptions}
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
         isShowCreateBtn={this.handleShowCreateBtn}
-        isUseOfCustomer
-        needApplyTime
         isUseNewCustList
+        basicFilters={basicFilters}
+        moreFilters={moreFilters}
+        moreFilterData={moreFilterData}
       />
     );
 

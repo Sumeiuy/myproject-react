@@ -268,6 +268,8 @@ export default class ChartBarNormal extends PureComponent {
     const levelWealthArr = this.getChartData(orgModel, 'level3Name', 'yAxis');
     // 营业部
     const levelStoreArr = this.getChartData(orgModel, 'level4Name', 'yAxis');
+    // 工号数组
+    const levelIdArr = this.getChartData(orgModel, 'level5Id', 'yAxis');
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName, 'yAxis');
     // 取出所有的value,并将value转化成数字
@@ -378,12 +380,15 @@ export default class ChartBarNormal extends PureComponent {
         const seriesName = item.seriesName;
         let value = item.data.value;
         const dataIndex = item.dataIndex;
+        let id = levelIdArr[dataIndex];
         if (axisValue === '--') {
           value = '--';
+          id = '--';
         }
 
         let tooltipHead = '';
         const hasFundCenter = levelWealthArr[dataIndex] !== '--';
+        let tooltipEmpInfo = `${axisValue}`;
         if (levelAndScope === 5 && axisValue !== '--' && hasFundCenter) {
           // 5为投顾或服务经理,需要显示南京公司名称-财富中心-营业部(南京分公司有财富中心)
           tooltipHead = `
@@ -391,6 +396,7 @@ export default class ChartBarNormal extends PureComponent {
               <td>${levelCompanyArr[dataIndex]} - ${levelWealthArr[dataIndex]} - ${levelStoreArr[dataIndex]}</td>
             </tr>
           `;
+          tooltipEmpInfo = `${axisValue}(${id})`;
         } else if (levelAndScope === 5 && axisValue !== '--' && !hasFundCenter) {
           // 5为投顾或服务经理,需要显示xx公司名称-营业部(非南京分公司没有有财富中心)
           tooltipHead = `
@@ -398,6 +404,7 @@ export default class ChartBarNormal extends PureComponent {
               <td>${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}</td>
             </tr>
           `;
+          tooltipEmpInfo = `${axisValue}(${id})`;
         } else if (levelAndScope === 4 && axisValue !== '--' && hasFundCenter) {
           // 4为营业部,需要显示南京公司名称-财富中心(南京分公司有财富中心)
           tooltipHead = `
@@ -422,7 +429,7 @@ export default class ChartBarNormal extends PureComponent {
           <table class="echartTooltipTable">
             ${tooltipHead}
             <tr>
-              <td>${axisValue}</td>
+              <td>${tooltipEmpInfo}</td>
             </tr>
             <tr>
               <td class="itemValue">${seriesName}: <span>${value}</span> (${unit})</td>

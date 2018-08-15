@@ -2,8 +2,8 @@
  * @Description: 客户详情
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-10 12:29:28
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-14 16:25:43
  */
 
 import React, { PureComponent } from 'react';
@@ -18,6 +18,7 @@ import TipsInfo from './TipsInfo';
 import { formatAsset } from './formatNum';
 import { COMPLETION, NOTCOMPLETION, PER_CODE, ORG_CODE } from './config';
 import { openFspTab } from '../../../../utils';
+import logable from '../../../../decorators/logable';
 import SixMonthEarnings from '../../../customerPool/list/SixMonthEarnings';
 import TextCollapse from './TextCollapse';
 import styles from './customerDetail.less';
@@ -170,6 +171,12 @@ export default class CustomerDetail extends PureComponent {
 
   // 打开360视图
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '查看更多服务记录',
+    },
+  })
   openFsp360TabAction({ param, targetCustDetail }) {
     const { custNature, custId, rowId, ptyId } = targetCustDetail;
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
@@ -261,20 +268,20 @@ export default class CustomerDetail extends PureComponent {
                 </div>
               </div>
               <div className={styles.item}>
-                <div className={styles.itemLabel}>股基佣金率:</div>
-                <div className={styles.itemContent}>{miniFee}</div>
+                <div className={styles.itemLabel}>可用余额:</div>
+                <div className={styles.itemContent}>{getFormatedAsset(availablBalance)}</div>
               </div>
               <div className={styles.item}>
                 <div className={styles.itemLabel}>持仓市值:</div>
                 <div className={styles.itemContent}>{getFormatedAsset(openAssets)}</div>
               </div>
               <div className={styles.item}>
-                <div className={styles.itemLabel}>沪深归集率:</div>
-                <div className={styles.itemContent}>{hsRate}</div>
+                <div className={styles.itemLabel}>股基佣金率:</div>
+                <div className={styles.itemContent}>{miniFee}</div>
               </div>
               <div className={styles.item}>
-                <div className={styles.itemLabel}>可用余额:</div>
-                <div className={styles.itemContent}>{getFormatedAsset(availablBalance)}</div>
+                <div className={styles.itemLabel}>沪深归集率:</div>
+                <div className={styles.itemContent}>{hsRate}</div>
               </div>
               <div className={styles.item}>
                 <div className={styles.itemLabel}>信息完备率:</div>

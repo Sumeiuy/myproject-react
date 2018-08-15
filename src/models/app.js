@@ -249,7 +249,7 @@ export default {
       const data = response.resultData;
       if (data) {
         // 设置保存用户信息,TODO 此处针对接口还未开发完成做的容错处理
-        emp.setEmpInfo(data.loginInfo || data.empInfo);
+        emp.setEmpInfo(data.empPostnList);
         // 初始化权方法
         permission.init(data.empRespList);
         yield put({
@@ -287,21 +287,27 @@ export default {
       });
     },
     // 获取已申请的客户列表
-    * getCustomerList({ payload }, { call, put }) {
-      const response = yield call(seibelApi.getCustList, payload);
-      yield put({
-        type: 'getCustomerListSuccess',
-        payload: response,
-      });
-    },
+    getCustomerList: [
+      function* getCustomerList({ payload }, { call, put }) {
+        const response = yield call(seibelApi.getCustList, payload);
+        yield put({
+          type: 'getCustomerListSuccess',
+          payload: response,
+        });
+      },
+      { type: 'takeLatest' },
+    ],
     // 获取新的已申请的客户列表
-    * getNewCustomerList({ payload }, { call, put }) {
-      const response = yield call(seibelApi.getCustList2, payload);
-      yield put({
-        type: 'getNewCustomerListSuccess',
-        payload: response,
-      });
-    },
+    getNewCustomerList: [
+      function* getNewCustomerList({ payload }, { call, put }) {
+        const response = yield call(seibelApi.getCustList2, payload);
+        yield put({
+          type: 'getNewCustomerListSuccess',
+          payload: response,
+        });
+      },
+      { type: 'takeLatest' },
+    ],
     * getCanApplyCustList({ payload }, { call, put }) {
       const response = yield call(seibelApi.getCanApplyCustList, payload);
       yield put({
@@ -310,14 +316,17 @@ export default {
       });
     },
     // 获取拟稿人
-    * getDrafterList({ payload }, { call, put }) {
-      // const response = yield call(seibelApi.getDrafterList, payload);
-      const response = yield call(seibelApi.getSearchServerPersonelList, payload);
-      yield put({
-        type: 'getDrafterListSuccess',
-        payload: response,
-      });
-    },
+    getDrafterList: [
+      function* getDrafterList({ payload }, { call, put }) {
+        // const response = yield call(seibelApi.getDrafterList, payload);
+        const response = yield call(seibelApi.getSearchServerPersonelList, payload);
+        yield put({
+          type: 'getDrafterListSuccess',
+          payload: response,
+        });
+      },
+      { type: 'takeLatest' },
+    ],
     // 获取公用列表
     * getSeibleList({ payload }, { call, put }) {
       const listResponse = yield call(seibelApi.getSeibleList, payload);
@@ -358,22 +367,29 @@ export default {
         payload: response,
       });
     },
+
     // 审批人列表（服务经理接口）
-    * getApprovePersonList({ payload }, { call, put }) {
-      const response = yield call(seibelApi.getSearchServerPersonelList, payload);
-      yield put({
-        type: 'getApprovePersonListSuccess',
-        payload: response,
-      });
-    },
+    getApprovePersonList: [
+      function* getApprovePersonList({ payload }, { call, put }) {
+        const response = yield call(seibelApi.getSearchServerPersonelList, payload);
+        yield put({
+          type: 'getApprovePersonListSuccess',
+          payload: response,
+        });
+      },
+      { type: 'takeLatest' },
+    ],
     // 针对服务经理项目获取已申请服务经理列表（服务经理接口）
-    * getPtyMngList({ payload }, { call, put }) {
-      const response = yield call(seibelApi.getSearchServerPersonelList, payload);
-      yield put({
-        type: 'getPtyMngListSuccess',
-        payload: response,
-      });
-    },
+    getPtyMngList: [
+      function* getPtyMngList({ payload }, { call, put }) {
+        const response = yield call(seibelApi.getSearchServerPersonelList, payload);
+        yield put({
+          type: 'getPtyMngListSuccess',
+          payload: response,
+        });
+      },
+      { type: 'takeLatest' },
+    ],
     // mot自建任务的服务类型和反馈类型
     * getMotCustfeedBackDict({ payload }, { call, put, select }) {
       const motSelfBuiltFeedbackList = yield select(state => state.app.motSelfBuiltFeedbackList);

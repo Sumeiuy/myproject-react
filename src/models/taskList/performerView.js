@@ -82,6 +82,8 @@ export default {
     custFeedBack: EMPTY_LIST,
     // 客户明细
     custDetail: EMPTY_OBJ,
+    // 查询的服务经理列表
+    serverManagerList: EMPTY_LIST,
     // 获取任务相关的投资建议模板列表
     templateList: [],
     // 翻译选中的投资建议模板结果
@@ -306,6 +308,20 @@ export default {
       return {
         ...state,
         custDetail,
+      };
+    },
+    getSearchServerPersonListSuccess(state, action) {
+      return {
+        ...state,
+        serverManagerList: action.payload,
+      };
+    },
+    // 清除服务经理列表数据
+    clearServiceManagerList(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        searchServerPersonList: payload,
       };
     },
     getTemplateListSuccess(state, action) {
@@ -563,14 +579,42 @@ export default {
       });
     },
     // 获取客户明细
-    * queryExecutorDetail({ payload }, { call, put }) {
+    * queryExecutorDetail({ payload }, { call, put, select }) {
+      // redux中保存的之前的数据
+      const oldCustDetail = yield select(state => state.performerView.custDetail);
+      const { list: oldList } = oldCustDetail;
+      // 调取接口获取新的数据
       const { resultData } = yield call(api.queryExecutorDetail, payload);
+      const { list, page } = resultData;
+      // 对null数据做对应的处理以便使用...
+      const custDetailOldList = oldList || [];
+      const newList = list || [];
+      // 若page.pageNum为1则此时只需要把接口请求的数据放到redux的state中
+      // 若page.pageNum不为1则此时需要将接口请求的数据与原来redux中的数据进行拼接
+      let newResultData = resultData;
+      if (page.pageNum !== 1) {
+        newResultData = {
+          list: [...custDetailOldList, ...newList],
+          page,
+        };
+      }
       yield put({
         type: 'queryExecutorDetailSuccess',
-        payload: resultData,
+        payload: newResultData,
       });
     },
-
+    // 服务经理列表数据
+    getSearchPersonList: [
+      function* getSearchPersonList({ payload }, { call, put }) {
+        const { resultData = EMPTY_OBJ } = yield call(custApi.getSearchServerPersonelList, payload);
+        if (resultData) {
+          const { servicePeopleList = EMPTY_LIST } = resultData;
+          yield put({
+            type: 'getSearchServerPersonListSuccess',
+            payload: servicePeopleList,
+          });
+        }
+      }, { type: 'takeLatest' }],
     // 根据任务类型获取相应的模板列表
     * getTemplateList({ payload }, { call, put }) {
       yield put({

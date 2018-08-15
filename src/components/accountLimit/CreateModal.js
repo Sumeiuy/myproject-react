@@ -26,7 +26,7 @@ import BottonGroup from '../../components/permission/BottonGroup';
 import AutoComplete from '../../components/common/similarAutoComplete';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 import { request } from '../../config';
-import { emp } from '../../helper';
+import { emp, data } from '../../helper';
 import config from './config';
 import CustAllotXLS from './accountLimit.xls';
 import styles from './createModal.less';
@@ -39,7 +39,10 @@ const getPopupContainerFunction = () => document.querySelector(`.${styles.modalC
 // 表头
 const {
   tableTitle: { custList: custTitleList, approvalList },
+  limitCount,  // 添加客户的限制条数
+  stringLimitLength,  // 字符串长度限制
   operateTypeArray,
+  setCode,  // 限制设置 value
   attachmentMap,
   bankConfirmArray,
 } = config;
@@ -48,6 +51,9 @@ const empOrgId = emp.getOrgId();
 // const empOrgId = 'ZZ001041051';
 // 客户
 const KEY_CUSTNAME = 'custName';
+// 服务经理
+const KEY_EMPNAME = 'empName';
+// 限制类型
 const KEY_LIMIT = 'limit';
 
 // 审批人弹窗
@@ -83,7 +89,10 @@ export default class CreateModal extends PureComponent {
 
   constructor(props) {
     super(props);
-    const operateType = operateTypeArray[0].value;
+    // 操作类型
+    const operateType = setCode;
+    // 是否是限制设置
+    const isLimit = operateType === setCode;
     this.state = {
       // 上传后的返回值
       attachment: '',
@@ -106,7 +115,7 @@ export default class CreateModal extends PureComponent {
       // 操作类型
       operateType,
       // 操作类型是否是 限制设置
-      isLimit: operateType === operateTypeArray[0].value,
+      isLimit,
       // 公司简称
       companyName: '',
       // 证券代码
@@ -122,7 +131,7 @@ export default class CreateModal extends PureComponent {
       // 限制解除日期
       limitEndTime: '',
       // 解除日期的禁用状态
-      endDateDisabled: operateType === operateTypeArray[0].value,
+      endDateDisabled: isLimit,
       // 附件列表
       attachmentList: [attachmentMap[0]],
       // 提交的数据
@@ -141,8 +150,14 @@ export default class CreateModal extends PureComponent {
     // 客户
     const custNameColumn = _.find(titleList, o => o.key === KEY_CUSTNAME);
     custNameColumn.render = (text, record) => (
-      <div>{text} ({record.custId})</div>
+      <div title={`${text} (${record.custId})`}>{text} ({record.custId})</div>
     );
+    // 服务经理
+    const empNameColumn = _.find(titleList, o => o.key === KEY_EMPNAME);
+    empNameColumn.render = (text, record) => (
+      <div title={`${text} (${record.empId})`}>{text} ({record.empId})</div>
+    );
+    // 限制类型
     const limitColumn = _.find(titleList, o => o.key === KEY_LIMIT);
     limitColumn.render = text => (<div title={text}>{text}</div>);
     // 添加操作列
@@ -151,6 +166,7 @@ export default class CreateModal extends PureComponent {
       key: 'operate',
       title: '操作',
       render: (text, record) => this.renderPopconfirm(record),
+      width: 80,
     });
     return titleList;
   }
@@ -197,7 +213,7 @@ export default class CreateModal extends PureComponent {
   handleOperateTypeChange(key, value) {
     // 等于 限制解除 的时候
     let isLimit = false;
-    if (value === operateTypeArray[0].value) {
+    if (value === setCode) {
       isLimit = true;
       this.queryNextStepButton();
     }
@@ -228,8 +244,9 @@ export default class CreateModal extends PureComponent {
   // 证券代码变化
   @autobind
   handleStockCodeChange(e) {
+    const value = e.target.value.replace(/\D/g, '');
     this.setState({
-      stockCode: e.target.value,
+      stockCode: value,
     });
   }
 
@@ -325,6 +342,10 @@ export default class CreateModal extends PureComponent {
     }
     if (_.filter(addedCustData, o => o.custId === client.custId).length) {
       message.error('不允许添加重复客户');
+      return;
+    }
+    if (addedCustData.length >= limitCount) {
+      message.error(`客户数不可超过${limitCount}条`);
       return;
     }
     this.setState({
@@ -511,6 +532,7 @@ export default class CreateModal extends PureComponent {
     this.setState({
       limitStartTime: dateString,
       endDateDisabled: false,
+      limitEndTime: '',
     });
   }
 
@@ -548,7 +570,6 @@ export default class CreateModal extends PureComponent {
     const keyWordText = _.replace(text, keyWordRegex, match => (
       `<span class=${styles.keyWord}>${match}</span>`
     ));
-    console.warn('keyWordText', keyWordText);
     return <div dangerouslySetInnerHTML={{ __html: keyWordText }} />;
   }
 
@@ -624,36 +645,48 @@ export default class CreateModal extends PureComponent {
       label: item.label,
     }));
     if (_.isEmpty(companyName)) {
-      message.error('请填写公司简称');
+      message.error('公司简称不能为空!');
+      return;
+    }
+    if (data.getStrLen(companyName) > stringLimitLength) {
+      message.error(`公司简称长度不能超过${stringLimitLength}!`);
       return;
     }
     if (_.isEmpty(stockCode)) {
-      message.error('请填写证券代码');
+      message.error('证券代码不能为空!');
+      return;
+    }
+    if (data.getStrLen(stockCode) > stringLimitLength) {
+      message.error(`证券代码长度不能超过${stringLimitLength}!`);
+      return;
+    }
+    if (!isLimit && _.isEmpty(bankConfirm)) {
+      message.error('请选择是否银行确认');
       return;
     }
     if (_.isEmpty(addedCustData)) {
-      message.error('请添加客户');
+      message.error('客户列表不能为空!');
       return;
     }
     if (_.isEmpty(limitType)) {
-      message.error('请选择限制类型');
+      message.error('限制类型不能为空!');
       return;
     }
     if (isLimit) {
       if (_.isEmpty(limitStartTime)) {
-        message.error('请选择账户限制设置日期');
+        message.error('账户限制设置日期不能为空!');
         return;
       }
     }
     if (_.isEmpty(limitEndTime)) {
-      message.error('请选择账户限制解除日期');
+      message.error('账户限制解除日期不能为空!');
       return;
     }
     const newAttachementList = [];
     for (let i = 0; i < attachmentList.length; i++) {
       const item = attachmentList[i];
       if (item.show && item.length <= 0 && item.required) {
-        message.error(`${item.title}附件为必传项`);
+        message.error(`请上传${item.title}!`);
         return;
       }
       if (item.show) {
@@ -764,6 +797,7 @@ export default class CreateModal extends PureComponent {
       addedCustData,
       pageNum,
       selectValue,
+      limitStartTime,
       endDateDisabled,
       attachmentList,
       approverModal,
@@ -927,6 +961,7 @@ export default class CreateModal extends PureComponent {
                 align="left"
                 data={showCustList[pageNum - 1]}
                 titleList={custTitle}
+                rowKey="custId"
               />
               <Pagination {...custListPaginationOption} />
             </div>
@@ -965,6 +1000,7 @@ export default class CreateModal extends PureComponent {
             }
             <InfoForm label="账户限制解除日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
               <DatePicker
+                key={limitStartTime}
                 showToday={false}
                 disabled={endDateDisabled}
                 disabledDate={this.disabledEndDate}

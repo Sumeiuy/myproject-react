@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import qs from 'query-string';
 import { commission, keyMonitorAccount } from './config/auth';
 import duty from './config/duty';
 import channelType from './page/channelType';
@@ -16,6 +17,11 @@ const permission = {
   // 初始化
   init(list) {
     dutyList = list;
+  },
+
+  // HTSC 新功能体验岗
+  hasNewFeatureInvestPermission() {
+    return hasDuty(dutyList, duty.HTSC_NEW_FEATURE);
   },
 
   // HTSC 首页指标查询
@@ -318,6 +324,20 @@ const permission = {
   // HTSC 融资类业务客户关联关系管理岗
   hasGLGXGLGPermission() {
     return hasDuty(dutyList, duty.HTSC_GLGXGLG);
+  },
+
+  /**
+   * 封装一下灰度发布的标记，fsp会提供一个grayFlag在window上，
+   * 本地开发的时候可以在url上通过?grayFlag=true的方式手动测试，
+   * 检测当前版本是不是需要支持灰度发布，以便控制代码里面的逻辑显示、隐藏、特殊处理等
+   */
+  isGrayFlag() {
+    const nativeQuery = qs.parse(window.location.search);
+    const grayFlag =
+      window.grayFlag === true
+      || nativeQuery.grayFlag === 'true'
+      || this.hasNewFeatureInvestPermission();
+    return grayFlag;
   },
 };
 

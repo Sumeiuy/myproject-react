@@ -1,8 +1,8 @@
 /**
  * @Author: hongguangqing
  * @Date: 2018-03-01 14:25:34
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-04-17 15:00:04
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-07-31 17:38:32
  */
 /*
  * @Description: 服务经理主职位设置的配置文件
@@ -11,6 +11,7 @@
  */
 
 import React from 'react';
+import { serviceManager, status, drafter, department, approver } from '../../config/busApplyFilters';
 
 const config = {
   // 服务经理主职位设置
@@ -20,7 +21,7 @@ const config = {
     status: [
       {
         show: true,
-        label: '全部',
+        label: '不限',
         value: '',
       },
       {
@@ -83,6 +84,18 @@ const config = {
         key: 'occupation',
         align: 'center',
       },
+    ],
+    basicFilters: [
+      serviceManager,
+      status,
+      drafter,
+      department,
+    ],
+    moreFilters: [
+      approver,
+    ],
+    moreFilterData: [
+      { value: '审批人', key: 'approvalId' },
     ],
   },
 };

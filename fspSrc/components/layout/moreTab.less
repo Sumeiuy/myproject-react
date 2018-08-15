@@ -1,0 +1,83 @@
+@width: 120px;
+@active-color: #108ee9;
+
+.text {
+  color: #4a4a4a;
+  font-size: 14px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.activeStyle {
+  color: @active-color;
+  background-color: #ecf6fd;
+}
+
+.moreTab {
+  line-height: 39px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  .moreIcon {
+    i {
+      display: inline-block;
+    }
+    .tabNum {
+      display: inline-block;
+      position: relative;
+      font-size: 12px;
+      top: -10px;
+    }
+  }
+  .tabActive {
+    color: @active-color;
+  }
+}
+
+.subMenu {
+  :global {
+    .ant-dropdown-menu-submenu-title {
+      .text;
+      width: @width;
+    }
+  }
+
+  &.menuActive {
+    :global {
+      .ant-dropdown-menu-submenu-title {
+        .activeStyle;
+      }
+    }
+  }
+}
+
+.menuItem {
+  width: @width;
+  .menuTab {
+    width: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+    .close {
+      &:hover {
+        font-weight: bolder;
+      }
+    }
+  }
+
+  .textActive {
+    color: @active-color;
+  }
+
+  &.itemActive {
+    .activeStyle;
+  }
+}
+
+.dropDownContainer {
+  position: relative;
+  z-index: 1;
+}
+

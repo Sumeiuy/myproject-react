@@ -25,10 +25,14 @@ import logable from '../../decorators/logable';
 const {
   tableTitle: { custList: custTitleList },  // 客户表格列表
   operateTypeArray,  // 操作类型枚举
+  relieveCode,  // 限制解除的 value
   attachmentMap,  // 附件类型枚举
 } = config;
 // 客户姓名
 const KEY_CUSTNAME = 'custName';
+// 服务经理
+const KEY_EMPNAME = 'empName';
+// 限制类型
 const KEY_LIMIT = 'limit';
 const PAGE_SIZE = 7;
 export default class Detail extends PureComponent {
@@ -51,12 +55,15 @@ export default class Detail extends PureComponent {
     const tempTitleList = [...list];
     // 客户
     const custColumn = _.find(tempTitleList, o => o.key === KEY_CUSTNAME);
-    custColumn.render = (text, record) => {
-      const custId = record.custId ? ` (${record.custId})` : '';
-      return (<div title={`${text}${custId}`}>
-        {text}{custId}
-      </div>);
-    };
+    custColumn.render = (text, record) => (
+      <div title={`${text} (${record.custId})`}>{text} ({record.custId})</div>
+    );
+    // 服务经理
+    const empNameColumn = _.find(tempTitleList, o => o.key === KEY_EMPNAME);
+    empNameColumn.render = (text, record) => (
+      <div title={`${text} (${record.empId})`}>{text} ({record.empId})</div>
+    );
+    // 限制类型
     const limitColumn = _.find(tempTitleList, o => o.key === KEY_LIMIT);
     limitColumn.render = text => (<div title={text}>{text}</div>);
     return tempTitleList;
@@ -150,7 +157,7 @@ export default class Detail extends PureComponent {
           <InfoItem label="证券代码" className={styles.inlineInfoItem} width="120px" value={stockCode} />
           {/* 操作类型为限制解除时显示银行确认 */}
           {
-            operateType === operateTypeArray[1].value
+            operateType === relieveCode
             ? <InfoItem label="是否银行确认" className={styles.inlineInfoItem} width="120px" value={bankConfirm ? '是' : '否'} />
             : null
           }

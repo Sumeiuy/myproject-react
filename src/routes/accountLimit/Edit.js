@@ -21,7 +21,7 @@ import BottonGroup from '../../components/permission/BottonGroup';
 import commonConfirm from '../../components/common/confirm_';
 import EditForm from '../../components/accountLimit/EditForm';
 import config from '../../components/accountLimit/config';
-import { dva, emp } from '../../helper';
+import { dva, emp, data } from '../../helper';
 import logable from '../../decorators/logable';
 import styles from './edit.less';
 
@@ -29,6 +29,7 @@ const dispatch = dva.generateEffect;
 
 const {
   tableTitle: { approvalList },
+  stringLimitLength,
 } = config;
 
 // 审批人弹窗
@@ -170,11 +171,19 @@ export default class AccountLimitEdit extends PureComponent {
     const { editFormData } = this.props;
     const { attachList } = editFormData;
     if (_.isEmpty(editFormData.companyName)) {
-      message.error('公司简介不能为空!');
+      message.error('公司简称不能为空!');
+      return false;
+    }
+    if (data.getStrLen(editFormData.companyName) > stringLimitLength) {
+      message.error(`公司简称长度不能超过${stringLimitLength}`);
       return false;
     }
     if (_.isEmpty(editFormData.stockCode)) {
       message.error('证券代码不能为空!');
+      return false;
+    }
+    if (data.getStrLen(editFormData.stockCode) > stringLimitLength) {
+      message.error(`证券代码长度不能超过${stringLimitLength}`);
       return false;
     }
     if (_.isEmpty(editFormData.custList)) {

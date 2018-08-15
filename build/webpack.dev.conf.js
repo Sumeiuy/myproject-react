@@ -7,6 +7,7 @@ var HappyPack = require('happypack')
 var baseWebpackConfig = require('./webpack.base.conf')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
+var CircularDependencyPlugin = require('circular-dependency-plugin')
 var theme = require('../src/theme')
 
 if (config.dev.enableHMR) {
@@ -66,6 +67,7 @@ module.exports = merge(baseWebpackConfig, {
   },
   // cheap-module-eval-source-map is faster for development
   devtool: '#cheap-module-eval-source-map',
+  stats: 'minimal',
   plugins: [
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.HotModuleReplacementPlugin(),
@@ -101,6 +103,18 @@ module.exports = merge(baseWebpackConfig, {
       threads: 4,
       loaders: ['babel-loader']
     }),
-    new FriendlyErrorsPlugin()
+    new FriendlyErrorsPlugin(),
+    new CircularDependencyPlugin({
+      exclude: /node_modules/,
+      onStart({ compilation }) {
+        console.log('start detecting webpack modules cycles');
+      },
+      onDetected({ module: webpackModuleRecord, paths, compilation }) {
+        compilation.errors.push(new Error(paths.join(' -> ')))
+      },
+      onEnd({ compilation }) {
+        console.log('end detecting webpack modules cycles');
+      },
+    })
   ]
 })

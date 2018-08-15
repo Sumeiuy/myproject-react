@@ -1,8 +1,8 @@
 /**
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-13 22:07:59
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-01 19:04:18
  */
 
 import React, { PureComponent } from 'react';
@@ -131,6 +131,9 @@ export default class CustomerRow extends PureComponent {
     // 组合产品订购客户查询持仓证券重合度
     queryHoldingSecurityRepetition: PropTypes.func.isRequired,
     holdingSecurityData: PropTypes.object.isRequired,
+    queryHoldingIndustryDetail: PropTypes.func.isRequired,
+    industryDetail: PropTypes.object.isRequired,
+    queryHoldingIndustryDetailReqState: PropTypes.bool.isRequired,
     queryCustSignLabel: PropTypes.func.isRequired,
   }
 
@@ -158,10 +161,11 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'ViewItem',
     payload: {
-      name: '客户列表名称',
-      value: '$props.listItem.name',
+      name: '客户列表',
+      type: '客户',
+      value: '$props.listItem.brokId',
     },
   })
   handleNameClick() {
@@ -170,10 +174,11 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   @logable({
-    type: 'Click',
+    type: 'ViewItem',
     payload: {
-      name: '客户列表头像',
-      value: '$props.listItem.name',
+      name: '客户列表',
+      type: '客户',
+      value: '$props.listItem.brokId',
     },
   })
   handleAvatarClick() {
@@ -210,7 +215,7 @@ export default class CustomerRow extends PureComponent {
     openFspTab({
       routerAction: push,
       url,
-      pathname: '/customerCenter/customerDetail',
+      pathname: '/fsp/customerCenter/customer360',
       param,
       state: {
         url,
@@ -348,6 +353,9 @@ export default class CustomerRow extends PureComponent {
       queryHoldingProductReqState,
       queryHoldingSecurityRepetition,
       holdingSecurityData,
+      queryHoldingIndustryDetail,
+      industryDetail,
+      queryHoldingIndustryDetailReqState,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -475,6 +483,9 @@ export default class CustomerRow extends PureComponent {
                 formatAsset={formatAsset}
                 queryHoldingSecurityRepetition={queryHoldingSecurityRepetition}
                 holdingSecurityData={holdingSecurityData}
+                queryHoldingIndustryDetail={queryHoldingIndustryDetail}
+                industryDetail={industryDetail}
+                queryHoldingIndustryDetailReqState={queryHoldingIndustryDetailReqState}
               />
             </div>
           </div>

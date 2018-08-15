@@ -1,33 +1,41 @@
 .pageCommonHeader {
   font-size: 14px;
-  height: 34px;
-  overflow: hidden;
-  padding: 2px 0 0 2px;
+  height: auto;
+  min-height: 30px;
+  display: flex;
+  justify-content: space-between;
   .filterBox {
-    width: 90%;
-    display: inline-block;
+    flex: 1;
+    display: flex;
     position: relative;
     &:after {
       content: "";
       display: table;
       clear: both;
     }
-
-    .filterFl {
-      float: left;
-      height: 36px;
-      color: #a1a1a1;
-      .taskNameSearch {
-        margin-right: 30px;
-      }
+    .filter {
+      flex: 1;
     }
-    .filterMore {
-      display: none;
-      float: right;
-      height: 32px;
-      position: absolute;
-      right: 0;
-      top: 3px;
+    .filterFl {
+      display: inline-block;
+      vertical-align: middle;
+      height: 30px;
+      margin-right: 10px;
+    }
+    .moreFilterBtn {
+      :global {
+        li:after {
+          border: none;
+        }
+        .ant-btn {
+          .ht-svg-xiangxia {
+            background: url(../../../static/svg/more.svg) round;
+            width: 12px;
+            height: 12px;
+            top: 7px;
+          }
+        }
+      }
     }
     .dateWidget {
       :global {
@@ -62,16 +70,9 @@
       }
     }
   }
-  .dropDownSelectBox {
-    display: inline-block;
-    min-width: 70px;
-    margin-right: 20px;
-    vertical-align: middle;
-  }
   :global {
     .commonBtn {
-      float: right;
-      margin-right: 6px;
+      margin: 0 6px 0 5px;
     }
     //select边框
     .ant-select {
@@ -119,12 +120,5 @@
       -ms-transform: rotate(0deg);
       transform: rotate(0deg);
     }
-  }
-}
-
-:global {
-  .HeaderOverflow {
-    height: auto !important;
-    overflow: auto;
   }
 }

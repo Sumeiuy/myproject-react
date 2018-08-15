@@ -1,0 +1,80 @@
+:global {
+  .certain-category-search-dropdown {
+    .ant-select-dropdown-menu li em {
+      color: #fdb02b;
+      font-style: normal;
+    }
+    .ant-select-dropdown-menu li .desc {
+      padding-left: 10px;
+      color: #c2c2c2;
+    }
+    .ant-select-dropdown-menu li .ant-select-dropdown-menu-item-group-title span {
+      padding: 0;
+    }
+  }
+}
+.searchBox {
+  .inner {
+    // padding-top: 20px;
+    .inputBox {
+      width: 716px;
+      :global {
+        .ant-select-auto-complete.ant-select .ant-select-selection__placeholder {
+          margin-left: 20px;
+        }
+        .ant-input {
+          overflow: visible;
+          line-height: 18px;
+        }
+        .ant-select {
+          font-size: 14px;
+        }
+        .ant-btn {
+          border: none;
+          background-color: transparent;
+        }
+        .ant-btn:hover {
+          background-color: #10aeff;
+        }
+        .ant-input-suffix {
+          right: 0;
+          background-color: #108ee9;
+          padding-left: 2px;
+          border-radius: 0 4px 4px 0;
+          transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+        .ant-input-suffix:hover {
+          background-color: #10aeff;
+        }
+      }
+    }
+  }
+  :global {
+    .global-search-wrapper {
+      position: relative;
+      padding-right: 50px;
+    }
+    .anticon-question-circle {
+      position: absolute;
+      top: 7px;
+      right: -30px;
+      color: rgb(255, 225, 95);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .global-search {
+      width: 100%;
+    }
+    .ant-select-auto-complete.ant-select .ant-select-selection--single {
+       margin-right: -46px;
+       height: 32px;
+       line-height: 32px;
+    }
+
+    .ant-select-auto-complete .ant-input-affix-wrapper .ant-input:not(:last-child) {
+      padding-right: 62px;
+      padding-left: 20px;
+      border: none;
+    }
+  }
+}

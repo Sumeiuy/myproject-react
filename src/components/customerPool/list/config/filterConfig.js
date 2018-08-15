@@ -320,7 +320,7 @@ export default {
     },
     {
       filterName: '持仓行业',
-      filterId: 'holdingIndustry',
+      filterId: 'primaryKeyIndustry',
       type: 'singleWithSearch',
       placeholder: '行业名称',
       dataList: ['props', 'industryList'],
@@ -416,7 +416,7 @@ export default {
     { value: '账户状态', key: 'accountStatus' },
     { value: '佣金率', key: 'minFee' },
     { value: '持仓产品', key: 'primaryKeyPrdts' },
-    { value: '持仓行业', key: 'holdingIndustry' },
+    { value: '持仓行业', key: 'primaryKeyIndustry' },
     { value: '总资产', key: 'totAset' },
     { value: '介绍人', key: 'devMngId' },
     { value: '年龄范围', key: 'age' },
@@ -483,7 +483,7 @@ export default {
       children: [
         'minFee',
         'primaryKeyPrdts',
-        'holdingIndustry',
+        'primaryKeyIndustry',
         'kfBuyAmt',
         'smBuyAmt',
         'finaBuyAmt',

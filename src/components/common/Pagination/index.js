@@ -237,8 +237,8 @@ export default class PaginationComponent extends Component {
       >
         <Pagination
           key={paginationKey}
-          {...this.props}
           showTotal={renderTotal}
+          {...this.props}
           pageSizeOptions={renderPageSizeOptions(pageSize)}
           onChange={this.handlePageChange}
           onShowSizeChange={this.handlePageSizeChange}
