@@ -150,12 +150,12 @@ export default class CreateModal extends PureComponent {
     // 客户
     const custNameColumn = _.find(titleList, o => o.key === KEY_CUSTNAME);
     custNameColumn.render = (text, record) => (
-      <div>{text} ({record.custId})</div>
+      <div title={`${text} (${record.custId})`}>{text} ({record.custId})</div>
     );
     // 服务经理
     const empNameColumn = _.find(titleList, o => o.key === KEY_EMPNAME);
     empNameColumn.render = (text, record) => (
-      <div>{text} ({record.empId})</div>
+      <div title={`${text} (${record.empId})`}>{text} ({record.empId})</div>
     );
     // 限制类型
     const limitColumn = _.find(titleList, o => o.key === KEY_LIMIT);
@@ -166,6 +166,7 @@ export default class CreateModal extends PureComponent {
       key: 'operate',
       title: '操作',
       render: (text, record) => this.renderPopconfirm(record),
+      width: 80,
     });
     return titleList;
   }
