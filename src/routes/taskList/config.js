@@ -182,7 +182,7 @@ const defaultPerformerViewCurrentTab = 'serviceImplementation';
 // 服务实施服务状态过滤器默认的状态码
 const defaultServiceState = ['10', '20'];
 
-export default {
+export {
   EXECUTOR,
   INITIATOR,
   CONTROLLER,
