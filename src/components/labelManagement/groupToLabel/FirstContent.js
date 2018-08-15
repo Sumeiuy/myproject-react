@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 20:05:30
+ * @Last Modified time: 2018-08-14 10:24:29
  */
 
 import React, { PureComponent } from 'react';
@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import logable from '../../../decorators/logable';
 import Table from '../../common/commonTable';
 import { custGroupColumns } from '../config';
 import tableStyles from '../../common/commonTable/index.less';
@@ -24,7 +23,7 @@ export default class FirstContent extends PureComponent {
     currentSelectRow: PropTypes.object.isRequired,
   }
 
-  // 将列表数据项加一个id字段
+  // 将列表数据项加一个id字段，并过滤掉客户数为0的分组，(后端复用的接口，不支持过滤客户数不为0的分组)
   @autobind
   generateListData() {
     const {
@@ -32,18 +31,13 @@ export default class FirstContent extends PureComponent {
         custGroupDTOList,
       },
     } = this.props;
-    return _.map(custGroupDTOList, item => ({ ...item, id: item.groupId }));
+    // 过滤出客户数不为0 的分组
+    const tempList = _.filter(custGroupDTOList, item => item.relatCust !== 0);
+    return _.map(tempList, item => ({ ...item, id: item.groupId }));
   }
 
   // 点击分组名称前的单选按钮
   @autobind
-  @logable({
-    type: 'ViewItem',
-    payload: {
-      name: '分组转标签选择分组',
-      value: '$arg[0][groupName]',
-    },
-  })
   handleSingleRowSelectionChange(record) {
     this.props.handleSelectGroup(record);
   }

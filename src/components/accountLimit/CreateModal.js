@@ -232,8 +232,9 @@ export default class CreateModal extends PureComponent {
   // 证券代码变化
   @autobind
   handleStockCodeChange(e) {
+    const value = e.target.value.replace(/\D/g, '');
     this.setState({
-      stockCode: e.target.value,
+      stockCode: value,
     });
   }
 
@@ -553,7 +554,6 @@ export default class CreateModal extends PureComponent {
     const keyWordText = _.replace(text, keyWordRegex, match => (
       `<span class=${styles.keyWord}>${match}</span>`
     ));
-    console.warn('keyWordText', keyWordText);
     return <div dangerouslySetInnerHTML={{ __html: keyWordText }} />;
   }
 
@@ -634,6 +634,10 @@ export default class CreateModal extends PureComponent {
     }
     if (_.isEmpty(stockCode)) {
       message.error('请填写证券代码');
+      return;
+    }
+    if (!isLimit && _.isEmpty(bankConfirm)) {
+      message.error('请选择是否银行确认');
       return;
     }
     if (_.isEmpty(addedCustData)) {
