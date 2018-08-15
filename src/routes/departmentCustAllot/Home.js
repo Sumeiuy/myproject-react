@@ -27,6 +27,7 @@ import Detail from '../../components/departmentCustAllot/Detail';
 import commonConfirm from '../../components/common/confirm_';
 import config from '../../components/departmentCustAllot/config';
 import { dva, emp, convert, time } from '../../helper';
+// import { dva, emp, permission, convert, time } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
 
@@ -297,7 +298,7 @@ export default class DepartmentCustAllot extends PureComponent {
     });
   }
 
-  // 判断当前登录用户部门是否是分公司
+  // 判断当前登录用户部门是否是营业部
   @autobind
   checkUserIsDepartment() {
     const { custRangeList } = this.props;
@@ -308,6 +309,13 @@ export default class DepartmentCustAllot extends PureComponent {
       }
     }
     return isDepartment;
+  }
+
+  // 是否显示创建按钮
+  @autobind
+  showCreateBtn() {
+    // return permission.hasKFYYBZXGPermission() && this.checkUserIsDepartment();
+    return true;
   }
 
   // 打开弹窗
@@ -648,7 +656,7 @@ export default class DepartmentCustAllot extends PureComponent {
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
-        checkUserIsFiliale={this.checkUserIsDepartment}
+        isShowCreateBtn={this.showCreateBtn}
         basicFilters={basicFilters}
         moreFilters={moreFilters}
         moreFilterData={moreFilterData}

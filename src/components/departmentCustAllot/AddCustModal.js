@@ -6,6 +6,7 @@
  * @Last Modified time: 2018-07-20 15:01:30
  */
 import React, { PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
@@ -95,6 +96,30 @@ export default class AddCustModal extends PureComponent {
   componentDidMount() {
     // 获取客户
     this.searchCustList();
+  }
+
+  componentDidUpdate() {
+    this.checkBoxDOM = ReactDOM.findDOMNode(document.querySelectorAll('.ant-table-selection')[0]);  // eslint-disable-line
+    if (this.checkBoxDOM) {
+      console.warn('this.checkBoxDOM', this.checkBoxDOM);
+      this.checkBoxDOM.addEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
+      this.checkBoxDOM.addEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
+    }
+  }
+
+  componentWillUnmount() {
+    this.checkBoxDOM.removeEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
+    this.checkBoxDOM.removeEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
+  }
+
+  @autobind
+  handleCheckBoxMouseEnter() {
+    console.warn('鼠标进入');
+  }
+
+  @autobind
+  handleCheckBoxMouseLeave() {
+    console.warn('鼠标移除');
   }
 
   // 生成客户头部列表
@@ -367,6 +392,9 @@ export default class AddCustModal extends PureComponent {
     };
     const rowSelection = {
       selectedRowKeys: _.map(selectedRows, 'custId'),
+      selections: {
+        text: '123456',
+      },
       hideDefaultSelections: true,
       columnWidth: 40,
       onSelect: this.handleSelectChange,
@@ -374,7 +402,6 @@ export default class AddCustModal extends PureComponent {
       onSelectInvert: this.handleSelectAll,
     };
     const newTitleList = this.getColumnsCustTitle();
-
     return (
       <CommonModal
         title="添加客户"

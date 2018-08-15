@@ -29,6 +29,7 @@ import Detail from '../../components/custAllot/Detail';
 import commonConfirm from '../../components/common/confirm_';
 import config from '../../components/custAllot/config';
 import { dva, emp, convert, time } from '../../helper';
+// import { dva, emp, permission, convert, time } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
 
@@ -308,6 +309,13 @@ export default class CustAllot extends PureComponent {
       }
     }
     return isFiliale;
+  }
+
+  // 是否显示创建按钮
+  @autobind
+  showCreateBtn() {
+    // return permission.hasKHFPGPermission() && this.checkUserIsFiliale();
+    return true;
   }
 
   // 打开弹窗
@@ -628,7 +636,7 @@ export default class CustAllot extends PureComponent {
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
-        checkUserIsFiliale={this.checkUserIsFiliale}
+        isShowCreateBtn={this.showCreateBtn}
         basicFilters={basicFilters}
         moreFilters={moreFilters}
         moreFilterData={moreFilterData}
