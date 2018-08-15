@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-10 11:10:09
+ * @Last Modified time: 2018-08-14 16:09:24
  */
 
 import React, { PureComponent } from 'react';
@@ -53,6 +53,11 @@ export default class SecondContent extends PureComponent {
     };
   }
 
+  componentWillUnmount() {
+    // 清除联想词
+    this.props.clearPossibleLabels();
+  }
+
   // 将列表数据项加一个id字段
   @autobind
   generateListData() {
@@ -62,31 +67,6 @@ export default class SecondContent extends PureComponent {
       },
     } = this.props;
     return _.map(groupCustDTOList, item => ({ ...item, id: item.brokerNumber }));
-  }
-
-  // 生成联想词数据项
-  @autobind
-  renderOptions() {
-    const {
-      possibleLabelListInfo: {
-        labelList,
-      },
-    } = this.props;
-    const { currentLabel: { labelName = '' } } = this.state;
-    return _.map(labelList, (item) => {
-      const htmlStr = (item.labelName || '').replace(
-        labelName,
-        `<em class=${styles.signRed}>${labelName}</em>`,
-      );
-      return (
-        <Option key={item.id} value={item.labelName}>
-          <p onClick={() => { this.handleLabelOptionClick(item); }}>
-            <span dangerouslySetInnerHTML={{ __html: htmlStr }} />
-            <span>{`(${item.labelTypeName})`}</span>
-          </p>
-        </Option>
-      );
-    });
   }
 
   handleLabelOptionClick(item) {
@@ -170,6 +150,39 @@ export default class SecondContent extends PureComponent {
     });
   }
 
+  @autobind
+  handleSelect(value, option) {
+    const { form } = this.props;
+    setTimeout(() => {
+      form.setFieldsValue({ labelName: option.props.labelName });
+    }, 1);
+  }
+
+  // 生成联想词数据项
+  @autobind
+  renderOptions() {
+    const {
+      possibleLabelListInfo: {
+        labelList,
+      },
+    } = this.props;
+    const { currentLabel: { labelName = '' } } = this.state;
+    return _.map(labelList, (item) => {
+      const htmlStr = (item.labelName || '').replace(
+        labelName,
+        `<em class=${styles.signRed}>${labelName}</em>`,
+      );
+      return (
+        <Option key={item.id} {...item}>
+          <p onClick={() => { this.handleLabelOptionClick(item); }}>
+            <span dangerouslySetInnerHTML={{ __html: htmlStr }} />
+            <span>{`(${item.labelTypeName})`}</span>
+          </p>
+        </Option>
+      );
+    });
+  }
+
   render() {
     const {
       currentSelectGroup: {
@@ -183,7 +196,6 @@ export default class SecondContent extends PureComponent {
       },
     } = this.props;
     const listData = this.generateListData();
-    const autoCompleteDataSource = this.renderOptions() || [];
     const { isDisabledLabelDescInput, labelNameTip } = this.state;
     return (
       <div className={styles.modalContent}>
@@ -209,14 +221,16 @@ export default class SecondContent extends PureComponent {
                   validateTrigger: 'onBlur',
                 })(<AutoComplete
                   style={autoCompleteStyle}
-                  dataSource={autoCompleteDataSource}
                   onSearch={this.handleAssociateData}
                   onChange={this.handleChange}
                   onBlur={this.handleBlur}
+                  onSelect={this.handleSelect}
                   placeholder="标签名称"
                   optionLabelProp="value"
                   defaultActiveFirstOption={false}
-                />)
+                >
+                  {this.renderOptions()}
+                </AutoComplete>)
               }
             </FormItem>
           </div>

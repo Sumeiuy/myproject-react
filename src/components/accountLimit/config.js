@@ -16,6 +16,7 @@ const config = {
   timeFormatStr: 'YYYY-MM-DD',
   setCode,
   relieveCode,
+  stringLimitLength: 100,
   // 限制的条数
   limitCount: 200,
   // 限制提醒信息
@@ -120,7 +121,7 @@ const config = {
         dataIndex: 'empName',
         key: 'empName',
       }, {
-        title: '所属营业部',
+        title: '所属部门',
         dataIndex: 'occupation',
         key: 'occupation',
       },

@@ -158,6 +158,18 @@ export default class AccountLimitHome extends PureComponent {
     this.queryAppList(query, pageNum, pageSize);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const { location: { query } } = this.props;
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
+    }
+  }
+
   // 获取右侧详情
   @autobind
   getRightDetail() {
@@ -231,17 +243,30 @@ export default class AccountLimitHome extends PureComponent {
     this.queryAppList({ ...query, ...restObj, id: '', appId: '', business2: '', subType: business2 }, 1, query.pageSize);
   }
 
+
+  // 判断当前登录用户部门是否是营业部
+  @autobind
+  checkUserIsDepartment() {
+    const { custRangeList } = this.props;
+    let isDepartment = true;
+    if (!_.isEmpty(custRangeList)) {
+      if (!emp.isDepartment(custRangeList, emp.getOrgId())) {
+        isDepartment = false;
+      }
+    }
+    return isDepartment;
+  }
+
   // 判断当前登录权限
   @autobind
   showCreateBtn() {
     const { custRangeList } = this.props;
     let show = true;
-    if (!_.isEmpty(custRangeList)) {
-      // HTSC 综合服务-营业部执行岗、HTSC 限制性账户审批岗
-      show = permission.hasZHFWYYBZXGPermission() && permission.hasXZXZHSPGPermission();
+    // custRangeList 不为空并且在 fsp 环境下时
+    if (!_.isEmpty(custRangeList) && env.isInFsp()) {
+      // HTSC 综合服务-营业部执行岗、当前切换的职位对应的部门为营业部层级
+      show = permission.hasZHFWYYBZXGPermission() && this.checkUserIsDepartment();
     }
-    // 本地显示新建按钮， FSP 环境下不显示
-    show = !env.isInFsp();
     return show;
   }
 

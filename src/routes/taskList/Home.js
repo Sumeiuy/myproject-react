@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-15 17:22:44
+ * @Last Modified time: 2018-08-15 17:25:48
  * @description 任务管理首页
  */
 
@@ -512,6 +512,7 @@ export default class PerformerView extends PureComponent {
       queryExecutorFlowStatus,
       queryExecutorFeedBack,
       queryExecutorDetail,
+      isShowExecutorDetailLoading,
       queryTargetCustDetail,
       // 客户名下其他任务
       getOtherTaskList,
@@ -585,6 +586,7 @@ export default class PerformerView extends PureComponent {
         queryExecutorFlowStatus={queryExecutorFlowStatus}
         queryExecutorFeedBack={queryExecutorFeedBack}
         queryExecutorDetail={queryExecutorDetail}
+        isShowExecutorDetailLoading={isShowExecutorDetailLoading}
         queryTargetCustDetail={queryTargetCustDetail}
         location={location}
         currentTask={currentTask}
