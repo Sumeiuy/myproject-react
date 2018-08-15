@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 22:14:17
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-15 17:22:44
  * @description 任务管理首页
  */
 
@@ -513,6 +513,10 @@ export default class PerformerView extends PureComponent {
       queryExecutorFeedBack,
       queryExecutorDetail,
       queryTargetCustDetail,
+      // 客户名下其他任务
+      getOtherTaskList,
+      otherTaskList,
+      fetchOtherTaskListStatus,
     } = this.props;
     const {
       typeCode,
@@ -584,6 +588,9 @@ export default class PerformerView extends PureComponent {
         queryTargetCustDetail={queryTargetCustDetail}
         location={location}
         currentTask={currentTask}
+        getOtherTaskList={getOtherTaskList}
+        otherTaskList={otherTaskList}
+        fetchOtherTaskListStatus={fetchOtherTaskListStatus}
       />
     );
   }
@@ -613,10 +620,13 @@ export default class PerformerView extends PureComponent {
     return detailComponent;
   }
 
-  // 帕努单任务是否在执行中，用于管理者视图
+  /**
+   * 获取sortKey，createTimeSort或者endTimeSort、executionModeSort
+   * 获取sortContent，创建时间或者结束时间、执行方式
+   */
   @autobind
-  judgeTaskInApproval(status) {
-    return _.includes(STATUS_MANAGER_VIEW, status);
+  getSortConfig(viewType) {
+    return DEFAULTSORT_VIEW[viewType];
   }
 
   // 导出客户
@@ -712,6 +722,12 @@ export default class PerformerView extends PureComponent {
     finalPostData.status = status || STATE_EXECUTE_CODE;
     finalPostData = { ...finalPostData, missionViewType: currentViewType };
     return finalPostData;
+  }
+
+  // 帕努单任务是否在执行中，用于管理者视图
+  @autobind
+  judgeTaskInApproval(status) {
+    return _.includes(STATUS_MANAGER_VIEW, status);
   }
 
   // 加载右侧panel中的详情内容
@@ -838,15 +854,6 @@ export default class PerformerView extends PureComponent {
         },
       });
     }
-  }
-
-  /**
-   * 获取sortKey，createTimeSort或者endTimeSort、executionModeSort
-   * 获取sortContent，创建时间或者结束时间、执行方式
-   */
-  @autobind
-  getSortConfig(viewType) {
-    return DEFAULTSORT_VIEW[viewType];
   }
 
   // url中currentId改变后驱动右侧的变化

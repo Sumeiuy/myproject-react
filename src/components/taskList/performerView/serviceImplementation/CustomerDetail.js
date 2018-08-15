@@ -11,12 +11,15 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
-import introJs from 'intro.js';
 import 'intro.js/introjs.css';
-import store from 'store';
 import TipsInfo from './TipsInfo';
 import { formatAsset } from './formatNum';
-import { COMPLETION, NOTCOMPLETION, PER_CODE, ORG_CODE } from './config';
+import {
+  COMPLETION,
+  NOTCOMPLETION,
+  PER_CODE,
+  ORG_CODE,
+} from './config';
 import { openFspTab } from '../../../../utils';
 import logable from '../../../../decorators/logable';
 import SixMonthEarnings from '../../../customerPool/list/SixMonthEarnings';
@@ -41,12 +44,6 @@ const getFormatedAsset = (value) => {
   return `${newValue}${unit}`;
 };
 
-// 引导第一步关联的真实DOM的
-const INTRO_FIRSTSTEP = 'introFirstStep';
-
-// 存储在本地用哪个来判断是否在执行者视图中第一次使用'展开收起'
-const FIRSTUSECOLLAPSE_PERFORMERVIEW = 'GUIDE_FIRSTUSECOLLAOSE_PERFORMERVIEW';
-
 export default class CustomerDetail extends PureComponent {
   static propTypes = {
     targetCustDetail: PropTypes.object.isRequired,
@@ -55,6 +52,8 @@ export default class CustomerDetail extends PureComponent {
     isCustIncomeRequested: PropTypes.bool,
     currentId: PropTypes.string,
     leftFoldState: PropTypes.string,
+    // 展开收起button的id
+    foldButtonId: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -65,20 +64,6 @@ export default class CustomerDetail extends PureComponent {
 
   static contextTypes = {
     push: PropTypes.func,
-  }
-
-  componentDidMount() {
-    // 第一次在执行者试图使用'展开收起'功能,则启用引导功能
-    if (!this.isFirstUseCollapse()) {
-      // 解决展开折叠功能对引导功能的定位的影响
-      setTimeout(this.intialGuide, 0);
-      store.set(FIRSTUSECOLLAPSE_PERFORMERVIEW, 'NO');
-    }
-  }
-
-  // 判断是否在执行者视图中使用'展开收起'功能
-  isFirstUseCollapse() {
-    return store.get(FIRSTUSECOLLAPSE_PERFORMERVIEW);
   }
 
   // 信息完备率
@@ -193,28 +178,15 @@ export default class CustomerDetail extends PureComponent {
     });
   }
 
-  // 引导功能初始化
-  intialGuide() {
-    introJs().setOptions({
-      showBullets: false,
-      showProgress: false,
-      overlayOpacity: 0,
-      exitOnOverlayClick: false,
-      showStepNumbers: false,
-      tooltipClass: styles.introTooltip,
-      highlightClass: styles.highlightClass,
-      doneLabel: '×',
-    }).addStep({
-      element: document.querySelector(`#${INTRO_FIRSTSTEP}`),
-      intro: '点击展开可以查看介绍人、客户业务办理情况等信息。',
-      position: 'top',
-    }).start();
-  }
-
   render() {
     const {
-      targetCustDetail = {}, getCustIncome, monthlyProfits,
-      isCustIncomeRequested, currentId, leftFoldState,
+      targetCustDetail = {},
+      getCustIncome,
+      monthlyProfits,
+      isCustIncomeRequested,
+      currentId,
+      leftFoldState,
+      foldButtonId,
     } = this.props;
     const {
       assets, openAssets, availablBalance, openedBusiness, openBusiness,
@@ -246,7 +218,7 @@ export default class CustomerDetail extends PureComponent {
             key={`${custId}${currentId}${missionFlowId}${leftFoldState}`}
             minHeight="58px"
             buttonStyle={buttonStyle}
-            buttonId={INTRO_FIRSTSTEP}
+            buttonId={foldButtonId}
           >
             <div className={styles.flexBox}>
               <div className={styles.item}>

@@ -88,6 +88,10 @@ export default {
     templateList: [],
     // 翻译选中的投资建议模板结果
     templateResult: {},
+    // 客户名下其他代办任务
+    otherTaskList: EMPTY_LIST,
+    // 客户名下其他代办任务是否请求成功
+    fetchOtherTaskListStatus: false,
   },
   reducers: {
     changeParameterSuccess(state, action) {
@@ -338,6 +342,14 @@ export default {
         templateResult: payload,
       };
     },
+    getOtherTaskListSuccess(state, action) {
+      const { payload = EMPTY_LIST } = action;
+      return {
+        ...state,
+        otherTaskList: payload,
+        fetchOtherTaskListStatus: true,
+      };
+    },
   },
   effects: {
     // 执行者视图、管理者视图、创建者视图公共列表
@@ -425,6 +437,16 @@ export default {
       });
       const { resultData } = yield call(api.queryTargetCustDetail, payload);
       if (resultData) {
+        // 每次重新请求客户详情的时候都重新查询该客户名下其他代办任务
+        const condition = {
+          custId: resultData.custId,
+          eventId: resultData.eventId,
+          mssnId: resultData.missionFlowId,
+        };
+        yield put({
+          type: 'getOtherTaskList',
+          payload: condition,
+        });
         yield put({
           type: 'queryTargetCustDetailSuccess',
           payload: resultData,
@@ -620,6 +642,30 @@ export default {
       const { resultData } = yield call(api.translateTemplate, payload);
       yield put({
         type: 'translateTemplateSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取客户名下其他代办任务
+    * getOtherTaskList({ payload }, { call, put }) {
+      const { resultData } = yield call(api.getOtherTaskList, payload);
+      yield put({
+        type: 'getOtherTaskListSuccess',
+        // payload: [
+        //   {
+        //     flowId: '111',
+        //     eventName: '资产300万以上客户推广天天发1111',
+        //     hint: '任任务提示任务提示任务提示任务提示111',
+        //     processTime: '2018-08-03',
+        //     contents: '任务描任务描述任务描述任务描述1111',
+        //   },
+        //   {
+        //     flowId: '2222',
+        //     eventName: '资产30万以上客户推广天天发2222',
+        //     hint: '任务提示任务提示任务提示任务提示任务提示222',
+        //     processTime: '2018-08-03',
+        //     contents: '任务描述任务描述任务描述任务描述任务描述222',
+        //   },
+        // ],
         payload: resultData,
       });
     },

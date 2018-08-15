@@ -2,8 +2,8 @@
  * @Description: 页签切换显示
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:53:21
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-25 15:30:47
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-15 16:29:57
  */
 
 import React from 'react';
@@ -101,6 +101,10 @@ TabsArea.propTypes = {
   isSubmitSurveySucceed: PropTypes.bool,
   saveAnswersByType: PropTypes.func.isRequired,
   basicInfo: PropTypes.object.isRequired,
+  // 客户名下其他代办任务
+  getOtherTaskList: PropTypes.func.isRequired,
+  otherTaskList: PropTypes.array.isRequired,
+  fetchOtherTaskListStatus: PropTypes.bool.isRequired,
 };
 
 TabsArea.defaultProps = {

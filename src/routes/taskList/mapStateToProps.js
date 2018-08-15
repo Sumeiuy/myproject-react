@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:14:05
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 10:13:58
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-15 16:27:41
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapStateToProps移至此处成立独立模块
  */
 const mapStateToProps = () => state => ({
@@ -78,6 +78,9 @@ const mapStateToProps = () => state => ({
   custDetail: state.performerView.custDetail,
   // // 服务经理维度客户明细
   // custDetailResultByScope: state.managerView.custDetailResultByScope,
+  // 客户名下其他代办任务
+  otherTaskList: state.performerView.otherTaskList,
+  fetchOtherTaskListStatus: state.performerView.fetchOtherTaskListStatus,
 });
 
 export default mapStateToProps;

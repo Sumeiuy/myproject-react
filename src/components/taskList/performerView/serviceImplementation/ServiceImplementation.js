@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-08 16:28:51
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-15 17:09:36
  */
 
 import React, { PureComponent } from 'react';
@@ -12,15 +12,24 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Affix, message, Modal } from 'antd';
+import store from 'store';
 import contains from 'rc-util/lib/Dom/contains';
+import introJs from 'intro.js';
 import Header from './Header';
 import ListSwiper from './ListSwiper';
 import CustomerProfile from './CustomerProfile';
 import CustomerDetail from './CustomerDetail';
+import CustOtherTaskList from './CustOtherTaskList';
 import SimpleDisplayBlock from './SimpleDisplayBlock';
 import ServiceRecordForm from './ServiceRecordForm';
 import EmptyData from './EmptyData';
-import { PHONE, MSG_ROUTEFORWARD } from './config';
+import {
+  PHONE,
+  MSG_ROUTEFORWARD,
+  INTRO_FIRST_SEEP_IDNAME,
+  INTRO_SECOND_SEEP_IDNAME,
+  INTRO_SECOND_SEEP_IDNAME2,
+} from './config';
 import { serveWay as serveWayUtil } from '../config/code';
 import { flow, task } from '../config';
 import { fsp } from '../../../../helper';
@@ -31,6 +40,9 @@ import {
   defaultPerformerViewCurrentTab,
 } from '../../../../routes/taskList/config';
 import { getServiceState } from './helper';
+
+// 存储在本地用哪个来判断是否在执行者视图中第一次使用'展开收起'
+const FIRSTUSECOLLAPSE_PERFORMERVIEW = 'GUIDE_FIRSTUSECOLLAOSE_PERFORMERVIEW';
 
 // 这个是防止页面里有多个class重复，所以做个判断，必须包含当前节点
 // 如果找不到无脑取第一个就行
@@ -117,6 +129,10 @@ export default class ServiceImplementation extends PureComponent {
     location: PropTypes.object.isRequired,
     // 左侧列表中当前选中的任务
     currentTask: PropTypes.object.isRequired,
+    // 客户名下其他代办任务
+    getOtherTaskList: PropTypes.func.isRequired,
+    otherTaskList: PropTypes.array.isRequired,
+    fetchOtherTaskListStatus: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -129,6 +145,9 @@ export default class ServiceImplementation extends PureComponent {
     addCallRecord: _.noop,
     toggleServiceRecordModal: _.noop,
     isCustIncomeRequested: false,
+    // 客户名下其他代办任务
+    getOtherTaskList: PropTypes.func.isRequired,
+    otherTaskList: PropTypes.array.isRequired,
   }
 
   static contextTypes = {
@@ -177,6 +196,7 @@ export default class ServiceImplementation extends PureComponent {
     const {
       isFold, getPageSize, currentId,
       location: { query },
+      fetchOtherTaskListStatus,
     } = this.props;
     const pageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
@@ -205,11 +225,84 @@ export default class ServiceImplementation extends PureComponent {
         this.setState({ isFormHalfFilledOut: false }); // eslint-disable-line
       }
     }
+    // 第一次渲染完判断是否是第一次进入执行者视图，是的话显示引导 放在didupdate里是为了解决在didmount下并没有渲染完成导致定位不准的问题
+    if (!this.isFirstUseCollapse() && fetchOtherTaskListStatus) {
+      setTimeout(this.intialGuide, 0);
+      store.set(FIRSTUSECOLLAPSE_PERFORMERVIEW, 'NO');
+    }
   }
 
   componentWillUnmount() {
     // 移除FSP折叠菜单按钮注册的点击事件
     window.offFspSidebarbtn(this.handleFspLeftMenuClick);
+  }
+
+  // 根据当前的任务状态去获取对应的服务状态，再去获取服务实施列表数据
+  @autobind
+  getTaskFlowData(pageSize, pageNum = 1) {
+    const { changeParameter, currentTask: { statusCode } } = this.props;
+    const stateList = getServiceState(statusCode);
+    // 将服务实施的状态记到redux
+    changeParameter({ state: stateList }).then(() => {
+      this.queryTargetCustList({
+        state: stateList,
+        pageSize,
+        pageNum,
+      });
+    });
+  }
+
+  // 获取新手引导步骤列表
+  @autobind
+  getIntroStepList() {
+    const { otherTaskList } = this.props;
+    const newStepList = [
+      {
+        element: document.querySelector(`#${INTRO_FIRST_SEEP_IDNAME}`),
+        intro: '点击展开可以查看介绍人、客户业务办理情况等信息。',
+        position: 'top',
+      },
+    ];
+    // 如果客户名下其他任务为空时新手引导指向到其他任务栏目标题
+    if (_.isEmpty(otherTaskList)) {
+      newStepList.push({
+        element: document.querySelector(`#${INTRO_SECOND_SEEP_IDNAME2}`),
+        intro: '此处展示客户名下的其他待办任务',
+        position: 'top',
+      });
+    } else {
+      // 如果客户名下有其他任务时新手引导指向到其他任务栏目下展开收起按钮
+      newStepList.push({
+        element: document.querySelector(`#${INTRO_SECOND_SEEP_IDNAME}`),
+        intro: '点击查看该客户的所有待办任务。',
+        position: 'top',
+      });
+    }
+    return newStepList;
+  }
+
+  // 判断是否在执行者视图中使用'展开收起'功能
+  isFirstUseCollapse() {
+    return store.get(FIRSTUSECOLLAPSE_PERFORMERVIEW);
+  }
+
+  // 引导功能初始化
+  @autobind
+  intialGuide() {
+    introJs().setOptions({
+      showBullets: true,
+      showProgress: false,
+      overlayOpacity: 0.4,
+      exitOnOverlayClick: false,
+      showStepNumbers: false,
+      tooltipClass: styles.introTooltip,
+      highlightClass: styles.highlightClass,
+      doneLabel: '×',
+      prevLabel: '上一个',
+      nextLabel: '下一个',
+      skipLabel: 'x',
+      steps: this.getIntroStepList(),
+    }).start();
   }
 
   // FSP折叠菜单按钮被点击
@@ -643,21 +736,6 @@ export default class ServiceImplementation extends PureComponent {
     return MSG_ROUTEFORWARD;
   }
 
-  // 根据当前的任务状态去获取对应的服务状态，再去获取服务实施列表数据
-  @autobind
-  getTaskFlowData(pageSize, pageNum = 1) {
-    const { changeParameter, currentTask: { statusCode } } = this.props;
-    const stateList = getServiceState(statusCode);
-    // 将服务实施的状态记到redux
-    changeParameter({ state: stateList }).then(() => {
-      this.queryTargetCustList({
-        state: stateList,
-        pageSize,
-        pageNum,
-      });
-    });
-  }
-
   render() {
     const { dict = {}, empInfo } = this.context;
     const {
@@ -668,6 +746,7 @@ export default class ServiceImplementation extends PureComponent {
       taskFeedbackList, attachmentList, eventId, taskTypeCode,
       queryCustFeedbackList4ZLFins, custFeedbackList, queryApprovalList, zhangleApprovalList,
       testWallCollision, testWallCollisionStatus, toggleServiceRecordModal, performerViewCurrentTab,
+      otherTaskList,
     } = this.props;
     const {
       targetCustList,
@@ -790,6 +869,12 @@ export default class ServiceImplementation extends PureComponent {
                   isCustIncomeRequested={isCustIncomeRequested}
                   getCustIncome={getCustIncome}
                   leftFoldState={leftFoldState}
+                  foldButtonId={INTRO_FIRST_SEEP_IDNAME}
+                />
+                <CustOtherTaskList
+                  title={`客户名下其他任务（${otherTaskList.length}）`}
+                  otherTaskList={otherTaskList}
+                  foldButtonId={INTRO_SECOND_SEEP_IDNAME}
                 />
                 <SimpleDisplayBlock
                   title="服务策略"

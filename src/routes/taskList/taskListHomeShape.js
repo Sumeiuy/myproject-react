@@ -94,4 +94,7 @@ export default {
   custDetail: PropTypes.object.isRequired,
   // custDetailResultByScope: PropTypes.object.isRequired,
   previewCustDetailByScope: PropTypes.func.isRequired,
+  // 客户名下其他代办任务
+  getOtherTaskList: PropTypes.func.isRequired,
+  otherTaskList: PropTypes.array.isRequired,
 };

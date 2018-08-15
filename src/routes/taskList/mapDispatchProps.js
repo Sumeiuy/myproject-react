@@ -96,4 +96,6 @@ export default ({ routerRedux, effect }) => ({
   // 服务经理维度客户明细去重
   queryDistinctCustListDetailOfMission: effect(effects.queryDistinctCustListDetailOfMission,
     { loading: false }),
+  // 客户名下其他代办任务
+  getOtherTaskList: effect(effects.getOtherTaskList),
 });

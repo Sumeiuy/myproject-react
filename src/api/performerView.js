@@ -68,5 +68,7 @@ export default function performerView(api) {
     getTemplateList: query => api.post('/groovynoauth/fsp/campaign/investAdvice/queryTemplateListByType', query),
     // 翻译投资建议模板
     translateTemplate: query => api.post('/groovynoauth/fsp/campaign/investAdvice/replaceCustIndexPlaceHoders', query),
+    // 获取客户名下其他代办任务
+    getOtherTaskList: query => api.post('/groovynoauth/fsp/dictionary', query),
   };
 }

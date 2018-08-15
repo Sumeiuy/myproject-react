@@ -78,6 +78,8 @@ const effects = {
   previewCustDetailByScope: 'managerView/previewCustDetailByScope',
   // 服务经理维度客户明细去重
   queryDistinctCustListDetailOfMission: 'managerView/queryDistinctCustListDetailOfMission',
+  // 客户名下其他代办任务
+  getOtherTaskList: 'performerView/getOtherTaskList',
 };
 
 export default effects;

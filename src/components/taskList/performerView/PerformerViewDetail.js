@@ -2,8 +2,8 @@
  * @Description: 执行者视图右侧详情
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-25 15:30:53
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-15 16:28:14
  */
 
 
@@ -91,6 +91,10 @@ export default class PerformerViewDetail extends PureComponent {
     queryExecutorFeedBack: PropTypes.func.isRequired,
     queryExecutorFlowStatus: PropTypes.func.isRequired,
     queryExecutorDetail: PropTypes.func.isRequired,
+    // 客户名下其他代办任务
+    getOtherTaskList: PropTypes.func.isRequired,
+    otherTaskList: PropTypes.array.isRequired,
+    fetchOtherTaskListStatus: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
