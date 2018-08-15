@@ -43,6 +43,8 @@ const DEFAULT_PAGE_SIZE = 5;
 const KEY_CUSTNAME = 'custName';
 // 服务经理
 const KEY_EMPNAME = 'empName';
+// 限制类型
+const KEY_LIMIT = 'limit';
 export default class EditForm extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -77,13 +79,16 @@ export default class EditForm extends PureComponent {
     // 客户
     const custNameColumn = _.find(titleList, o => o.key === KEY_CUSTNAME);
     custNameColumn.render = (text, record) => (
-      <div>{text} ({record.custId})</div>
+      <div title={`${text} (${record.custId})`}>{text} ({record.custId})</div>
     );
     // 服务经理
     const empNameColumn = _.find(titleList, o => o.key === KEY_EMPNAME);
     empNameColumn.render = (text, record) => (
-      <div>{text} ({record.empId})</div>
+      <div title={`${text} (${record.empId})`}>{text} ({record.empId})</div>
     );
+    // 限制类型
+    const limitColumn = _.find(titleList, o => o.key === KEY_LIMIT);
+    limitColumn.render = text => (<div title={text}>{text}</div>);
     // 添加操作列
     titleList.push({
       dataIndex: 'operate',
