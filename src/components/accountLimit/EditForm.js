@@ -41,6 +41,8 @@ const {
 const DEFAULT_PAGE_SIZE = 5;
 // 客户
 const KEY_CUSTNAME = 'custName';
+// 服务经理
+const KEY_EMPNAME = 'empName';
 export default class EditForm extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -76,6 +78,11 @@ export default class EditForm extends PureComponent {
     const custNameColumn = _.find(titleList, o => o.key === KEY_CUSTNAME);
     custNameColumn.render = (text, record) => (
       <div>{text} ({record.custId})</div>
+    );
+    // 服务经理
+    const empNameColumn = _.find(titleList, o => o.key === KEY_EMPNAME);
+    empNameColumn.render = (text, record) => (
+      <div>{text} ({record.empId})</div>
     );
     // 添加操作列
     titleList.push({
