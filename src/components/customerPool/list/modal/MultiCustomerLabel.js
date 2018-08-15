@@ -205,15 +205,22 @@ export default class SignCustomerLabel extends PureComponent {
 
   @autobind
   handleCloseNewLabelModal(labelId) {
-    this.queryLabelInfo('', () => {
-      const { custLikeLabel } = this.props;
-      const newLabel = _.find(custLikeLabel, { id: labelId });
-      this.handleSelect({ value: newLabel });
+    if (labelId === '') {
       this.setState({
         createLabelVisible: false,
         visible: true,
       });
-    });
+    } else {
+      this.queryLabelInfo('', () => {
+        const { custLikeLabel } = this.props;
+        const newLabel = _.find(custLikeLabel, { id: labelId });
+        this.handleSelect({ value: newLabel });
+        this.setState({
+          createLabelVisible: false,
+          visible: true,
+        });
+      });
+    }
   }
   render() {
     const { custLikeLabel, addLabel } = this.props;
@@ -244,6 +251,7 @@ export default class SignCustomerLabel extends PureComponent {
             className={styles.signSelect}
             dataMap={['id', 'labelName']}
             filterName="客户标签"
+            defaultLabel="请选择标签"
             useCustomerFilter
             needItemObj
             getOptionItemValue={this.getOptionItemValue}

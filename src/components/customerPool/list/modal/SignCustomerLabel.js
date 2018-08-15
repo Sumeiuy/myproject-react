@@ -8,9 +8,9 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Modal, Tag } from 'antd';
+import { MultiFilterWithSearch } from 'lego-react-filter';
 
 import CreateLabel from './CreateLabel';
-import { MultiFilterWithSearch } from '../../../../../node_modules/lego-react-filter';
 import Icon from '../../../common/Icon';
 import styles from './addCustomerLabel.less';
 import logable from '../../../../decorators/logable';
