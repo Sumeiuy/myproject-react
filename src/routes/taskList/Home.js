@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-08 16:41:38
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-15 11:05:46
  * @description 任务管理首页
  */
 
@@ -205,7 +205,7 @@ export default class PerformerView extends PureComponent {
 
   // 执行者视图获取目标客户列表项的对应浮层详情
   @autobind
-  getCustDetail({ missionId = '', custId = '', missionFlowId = '', callback = _.noop }) {
+  getCustDetail({ eventId, missionId = '', custId = '', missionFlowId = '', callback = _.noop }) {
     const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;
     const { list = EMPTY_LIST } = targetCustList;
     if (_.isEmpty(list)) {
@@ -216,6 +216,7 @@ export default class PerformerView extends PureComponent {
       missionId,
       custId: custId || firstItem.custId,
       missionFlowId: missionFlowId || firstItem.missionFlowId,
+      eventId: eventId || firstItem.eventId,
     }).then(callback);
   }
 

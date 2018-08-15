@@ -2,8 +2,8 @@
  * @Description: 执行者视图右侧详情
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-08 16:42:45
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-15 11:08:01
  */
 
 import React, { PureComponent } from 'react';
@@ -166,11 +166,13 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       currentId,
       getCustDetail,
+      eventId,
     } = this.props;
     getCustDetail({
       missionId: currentId,
       custId,
       missionFlowId,
+      eventId,
       callback,
     });
   }

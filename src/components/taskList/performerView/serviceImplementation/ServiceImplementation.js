@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-14 14:44:02
+ * @Last Modified time: 2018-08-15 13:28:39
  */
 
 import React, { PureComponent } from 'react';
@@ -423,10 +423,12 @@ export default class ServiceImplementation extends PureComponent {
       currentId,
       queryTargetCust,
       parameter,
+      eventId,
     } = this.props;
     const { targetCustList: { page: { pageSize, pageNum } } } = this.state;
     const { state, rowId, assetSort } = parameter;
     const payload = {
+      eventId,
       missionId: currentId,
       pageSize,
       pageNum,
@@ -574,13 +576,14 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   reloadTargetCustInfo(callback) {
-    const { currentId, getCustDetail, targetCustDetail } = this.props;
+    const { currentId, getCustDetail, targetCustDetail, eventId } = this.props;
     const { custId, missionFlowId } = targetCustDetail;
     getCustDetail({
       missionId: currentId,
       custId,
       missionFlowId,
       callback,
+      eventId,
     });
   }
 
@@ -676,7 +679,7 @@ export default class ServiceImplementation extends PureComponent {
       taskFeedbackList, attachmentList, eventId, taskTypeCode,
       queryCustFeedbackList4ZLFins, custFeedbackList, queryApprovalList, zhangleApprovalList,
       testWallCollision, testWallCollisionStatus, toggleServiceRecordModal, performerViewCurrentTab,
-      refreshTaskList,
+      refreshTaskList, location,
     } = this.props;
     const {
       targetCustList,
@@ -689,7 +692,7 @@ export default class ServiceImplementation extends PureComponent {
       serviceRecord, customerFeedback, feedbackDate, custId,
       serviceContent, // 涨乐财富通的服务内容
       zlcftMsgStatus, // 新增的涨乐财富通服务方式的反馈状态
-      isDispatchingAvailable, // 是否可以分配给他人，如果可以则服务记录中需要显示分配按钮
+      dispatchingAvailable, // 是否可以分配给他人，如果可以则服务记录中需要显示分配按钮
       workResult, // MOT 回访类型任务的回访结果，为'成功'|'失败'
       failReason, // MOT 回访类型任务的额结果如果是失败，则该字段为回访失败原因
     } = targetCustDetail;
@@ -743,7 +746,7 @@ export default class ServiceImplementation extends PureComponent {
       // 涨乐财富通服务方式反馈状态
       zlcftMsgStatus,
       // 判断是否需要分配按钮，因为MOT回访类型的任务，可以分配给他人处理
-      isDispatchingAvailable,
+      dispatchingAvailable,
       workResult,
       failReason,
     };

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-08-07 18:23:46
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-09 14:02:04
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-15 13:38:20
  * @desc 通用的选择审批人弹框
  */
 
@@ -15,7 +15,11 @@ import _ from 'lodash';
 import CommonTable from '../biz/CommonTable';
 import CommonModal from '../biz/CommonModal';
 import logable from '../../../decorators/logable';
-import { APPROVER_TABLE_COLUMNS } from './config';
+import {
+  APPROVER_TABLE_COLUMNS,
+  SERACH_INPUT_STYLE,
+  APPROVER_TABLE_SCROLL,
+} from './config';
 
 import styles from './index.less';
 
@@ -23,6 +27,7 @@ const Search = Input.Search;
 
 export default class CommonApprovalModal extends PureComponent {
   static propTypes = {
+    rowKey: PropTypes.string.isRequired,
     modalKey: PropTypes.string.isRequired,
     title: PropTypes.string,
     visible: PropTypes.bool.isRequired,
@@ -104,7 +109,7 @@ export default class CommonApprovalModal extends PureComponent {
   }
 
   render() {
-    const { visible, pagination, searchable, title, modalKey } = this.props;
+    const { visible, pagination, searchable, title, modalKey, rowKey } = this.props;
     const { listAfterFilter } = this.state;
     // 表格中需要的操作
     const operation = {
@@ -138,7 +143,7 @@ export default class CommonApprovalModal extends PureComponent {
                   enterButton
                   size="large"
                   placeholder="员工号/员工姓名"
-                  style={{ width: '240px' }}
+                  style={SERACH_INPUT_STYLE}
                   onSearch={this.handleApprovalSearch}
                 />
               </div>
@@ -146,11 +151,12 @@ export default class CommonApprovalModal extends PureComponent {
           }
           <div className={styles.approverListBox}>
             <CommonTable
+              rowKey={rowKey}
               pagination={pagination}
               data={listAfterFilter}
               titleList={APPROVER_TABLE_COLUMNS}
               operation={operation}
-              scroll={{ y: 294 }}
+              scroll={APPROVER_TABLE_SCROLL}
               size="middle"
               align="left"
             />

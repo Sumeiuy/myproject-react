@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-14 14:44:24
+ * @Last Modified time: 2018-08-15 13:35:50
  * 服务记录表单
  */
 
@@ -55,8 +55,8 @@ export default class ServiceRecordForm extends PureComponent {
   componentDidUpdate(prevProps) {
     // 判断当前的是否需要查询可分配人员列表接口
     const { formData: { custUuid: prevUUid } } = prevProps;
-    const { formData: { eventId, isDispatchingAvailable, custUuid, custId } } = this.props;
-    const needQueryAllotEmpList = this.isMOTReturnVistTask(eventId) && isDispatchingAvailable;
+    const { formData: { eventId, dispatchingAvailable, custUuid, custId } } = this.props;
+    const needQueryAllotEmpList = this.isMOTReturnVistTask(eventId) && dispatchingAvailable;
     if (needQueryAllotEmpList && prevUUid !== custUuid) {
       this.props.queryAllotEmpList({
         custNumber: custId,
@@ -167,7 +167,6 @@ export default class ServiceRecordForm extends PureComponent {
     title: '执行者视图下MOT回访任务分配弹框',
   })
   handleAllotBtnClick() {
-    console.warn('点击分配按钮');
     this.setState({ allotEmpModal: true });
   }
 
@@ -224,7 +223,7 @@ export default class ServiceRecordForm extends PureComponent {
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
 
     const showAllocateBtn = this.isMOTReturnVistTask(formData.eventId)
-      && formData.isDispatchingAvailable;
+      && formData.dispatchingAvailable;
 
     let footNode;
     if (!isReadOnly) {
@@ -279,6 +278,7 @@ export default class ServiceRecordForm extends PureComponent {
           !allotEmpModal ? null
           : (
             <AllotEmpModal
+              rowKey="empNo"
               modalKey="executorAllotEmpModal"
               title="选择处理人"
               visible={allotEmpModal}

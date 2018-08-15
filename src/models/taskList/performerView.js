@@ -410,7 +410,7 @@ export default {
 
     // 执行者视图的详情目标客户列表
     * queryTargetCust({ payload }, { call, put }) {
-      const { isGetFirstItemDetail = true, ...others } = payload;
+      const { isGetFirstItemDetail = true, eventId, ...others } = payload;
       const { resultData } = yield call(api.queryTargetCust, others);
       if (resultData) {
         yield put({
@@ -427,6 +427,7 @@ export default {
               missionId: payload.missionId,
               custId: firstItem.custId,
               missionFlowId: firstItem.missionFlowId,
+              eventId,
             },
           });
         }

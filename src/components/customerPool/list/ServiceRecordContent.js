@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import ServiceRecordItem from './ServiceRecordItem';
-import { MOT_RETURN_VISIT_TASK_EVENT_ID } from '../../../config/taskList/performView';
+import { MOT_RETURN_VISIT_TASK_EVENT_ID, MOT_RETURN_VISIT_WORK_RESULT_SUCCESS } from '../../../config/taskList/performView';
 
 import styles from './createCollapse.less';
 
@@ -22,7 +22,7 @@ export default function ServiceRecordContent(props) {
   // 判断是否是MOT 回访类型任务
   const isMOTReturnVisitTask = eventId === MOT_RETURN_VISIT_TASK_EVENT_ID;
   // 判断回访结果是否成功
-  const isSuccessForMotReturnVisit = workResult === 'Success';
+  const isSuccessForMotReturnVisit = workResult === MOT_RETURN_VISIT_WORK_RESULT_SUCCESS;
 
   // 包含MOT服务记录则为MOT任务服务记录
   if (!_.isEmpty(subtypeCd)) {
@@ -59,7 +59,7 @@ export default function ServiceRecordContent(props) {
               !isMOTReturnVisitTask ? null
               : (
                 <ServiceRecordItem
-                  content={isSuccessForMotReturnVisit ? '成功' : '失败'}
+                  content={workResult}
                   title={'回访结果'}
                 />
               )

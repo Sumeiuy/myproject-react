@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-08 14:40:51
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-15 17:28:05
  * @description 只读服务记录
  */
 
@@ -13,6 +13,7 @@ import cx from 'classnames';
 
 import ServeRecordAttachment from './ServeRecordAttachment';
 import { flow } from '../../taskList/performerView/config';
+import { MOT_RETURN_VISIT_WORK_RESULT_LOST } from '../../../config/taskList/performView';
 
 import styles from './index.less';
 
@@ -118,12 +119,12 @@ export default function ServiceRecordReadOnly(props) {
           : (
             <div className={styles.serveRecord}>
               <div className={styles.title}>回访结果:</div>
-              <div className={styles.readOnlyText}>{motReturnResult === 'Success' ? '成功' : '失败'}</div>
+              <div className={styles.readOnlyText}>{motReturnResult}</div>
             </div>
           )
         }
         {
-          (isMOTReturnVisitTask && motReturnResult === 'Lost')
+          (isMOTReturnVisitTask && motReturnResult === MOT_RETURN_VISIT_WORK_RESULT_LOST)
           ?
           (
             <div className={styles.serveRecord}>
