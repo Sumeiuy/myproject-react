@@ -95,6 +95,7 @@ export default class EditForm extends PureComponent {
       key: 'operate',
       title: '操作',
       render: (text, record) => this.renderPopconfirm('cust', record),
+      width: 80,
     });
     return titleList;
   }
