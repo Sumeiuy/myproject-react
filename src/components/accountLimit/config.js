@@ -99,11 +99,13 @@ const config = {
         dataIndex: 'custName',
         key: 'custName',
         title: '客户',
+        width: 200,
       },
       {
         dataIndex: 'empName',
         key: 'empName',
         title: '服务经理',
+        width: 160,
       },
       {
         dataIndex: 'limit',
