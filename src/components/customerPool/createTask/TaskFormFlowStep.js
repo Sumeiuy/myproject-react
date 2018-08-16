@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 19:37:50
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-08-16 17:11:13
  */
 
 import React, { PureComponent } from 'react';
@@ -43,6 +43,7 @@ import {
   sightingLabelSource,
   SOURCE_CUSTLIST,
   SOURCE_LABELMANAGEMENT,
+  SOURCE_SERVICE_RESULT_CUST,
 } from '../../../config/createTaskEntry';
 import styles from './taskFormFlowStep.less';
 import logable, { logCommon } from '../../../decorators/logable';
@@ -200,6 +201,7 @@ export default class TaskFormFlowStep extends PureComponent {
       custCondition,
       custCondition: { entrance, labelId },
     } = parseQuery();
+    console.warn('custIdList', custIdList);
     // 去除entrance字段
     const omitedCondition = _.omit(custCondition, 'entrance');
 
@@ -207,6 +209,9 @@ export default class TaskFormFlowStep extends PureComponent {
     if (entrance === PROGRESS_ENTRY) {
       // 管理者视图进度条发起任务
       req = { queryMissionCustsReq: omitedCondition };
+    } else if (source === SOURCE_SERVICE_RESULT_CUST) {
+      // 新增从执行者视图服务结果发起任务
+      req = { queryMissionCustsReq: omitedCondition, custIdList };
     } else if (entrance === PIE_ENTRY) {
       // 管理者视图饼图发起任务
       req = { queryMOTFeedBackCustsReq: omitedCondition };
@@ -301,6 +306,9 @@ export default class TaskFormFlowStep extends PureComponent {
         break;
       case SOURCE_LABELMANAGEMENT:
         custSources = '标签管理';
+        break;
+      case SOURCE_SERVICE_RESULT_CUST:
+        custSources = '已有任务下钻客户';
         break;
       default:
         break;

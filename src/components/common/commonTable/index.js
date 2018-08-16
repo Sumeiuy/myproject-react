@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 19:36:41
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-08-15 17:29:40
  */
 
 import React, { PureComponent } from 'react';
@@ -114,6 +114,7 @@ export default class CommonTable extends PureComponent {
     // 表格可点击的列号集合一一对应的点击事件方法集合
     // eg: [get,set,update] 表示可点击的列号集合一一对应的点击事件方法
     clickableColumnCallbackList: PropTypes.array,
+    rowKey: PropTypes.string,
   };
 
   static defaultProps = {
@@ -148,6 +149,7 @@ export default class CommonTable extends PureComponent {
     title: null,
     clickableColumnIndexList: [],
     clickableColumnCallbackList: [],
+    rowKey: 'key',
   };
 
   constructor(props) {
@@ -437,6 +439,7 @@ export default class CommonTable extends PureComponent {
       paginationClass,
       title: tableTitle,
       paginationInTable,
+      rowKey,
     } = this.props;
     const { curSelectedRow } = this.state;
     const paganationOption = {
@@ -492,6 +495,7 @@ export default class CommonTable extends PureComponent {
           paginationClass={`${styles.pagination} ${paginationClass}`}
           {...titleProp}
           {...footerProp}
+          rowKey={rowKey}
         />
       </div>
     );
