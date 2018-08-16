@@ -1,6 +1,6 @@
 /**
  * @description 通用提示函数
- * @author sunweibin
+ * @author zhangjun
  */
 import { Modal } from 'antd';
 
@@ -20,7 +20,6 @@ export default function (params) {
   Modal[type]({
     title,
     content,
-    okType: type,
     okText: '确认',
     onOk,
   });
