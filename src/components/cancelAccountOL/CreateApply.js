@@ -2,17 +2,17 @@
  * @Author: sunweibin
  * @Date: 2018-07-10 13:35:26
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-15 22:33:36
+ * @Last Modified time: 2018-08-16 14:50:16
  * @description 新建线上销户申请弹出框
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Modal } from 'antd';
 
 import CommonModal from '../common/biz/CommonModal';
 import confirm from '../common/confirm_';
+import prompt from '../common/prompt_';
 import ApprovalBtnGroup from '../common/approvalBtns';
 import TableDialog from '../common/biz/TableDialog';
 import CancelAccountOLForm from './CancelAccountOLForm';
@@ -167,9 +167,9 @@ export default class CreateApply extends PureComponent {
   openNextApprovalModal() {
     const { defaultNextApproverList } = this.state;
     if (_.isEmpty(defaultNextApproverList)) {
-      Modal.error({
+      prompt({
         title: '系统未配置下一步审批人，请联系管理员处理！',
-        okText: '确定',
+        type: 'error',
       });
     } else {
       this.setState({
