@@ -122,6 +122,7 @@ export default class AccountLimitEdit extends PureComponent {
       // 审批意见
       remark: '',
       currentButtonItem: EMPTY_OBJECT,
+      buttonData: EMPTY_OBJECT,
     };
   }
 
@@ -140,7 +141,18 @@ export default class AccountLimitEdit extends PureComponent {
       queryButtonList({
         flowId: detailInfo.flowId,
         operateType: detailInfo.operateType,
+      }).then(() => {
+        const { buttonData } = this.props;
+        this.setButtonState(buttonData);
       });
+    });
+  }
+
+  // 设置按钮数据
+  @autobind
+  setButtonState(btnData) {
+    this.setState({
+      buttonData: btnData,
     });
   }
 
@@ -276,12 +288,15 @@ export default class AccountLimitEdit extends PureComponent {
   handleSuccessCallback() {
     Modal.success({
       title: '提示',
-      content: '提交成功，后台正在进行数据处理！若数据校验失败，可在首页通知提醒中查看失败原因。',
+      content: '提交成功。',
       onOk: () => {
         // 关闭审批人弹窗
         this.closeModal({
           modalKey: approverModalKey,
           isNeedConfirm: false,
+        });
+        this.setState({
+          buttonData: EMPTY_OBJECT,
         });
       },
     });
@@ -313,8 +328,6 @@ export default class AccountLimitEdit extends PureComponent {
       location,
       // empInfo,
       detailInfo,
-      // 下一步按钮审批人数据以及接口
-      buttonData,
       // 限制类型
       limitList,
       queryLimtList,
@@ -327,6 +340,8 @@ export default class AccountLimitEdit extends PureComponent {
       approverModal,
       flowAuditors,
       remark,
+      // 下一步按钮审批人数据以及接口
+      buttonData,
     } = this.state;
 
     // 提交相关按钮

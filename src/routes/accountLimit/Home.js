@@ -73,7 +73,7 @@ const mapStateToProps = state => ({
   // 组织机构树
   custRangeList: state.customerPool.custRange,
   // 左侧列表数据
-  list: state.app.seibleList,
+  list: state.app.newSeibleList,
   // 右侧详情数据
   detailInfo: state.accountLimit.detailInfo,
   // 获取按钮列表和下一步审批人

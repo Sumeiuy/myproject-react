@@ -9,7 +9,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { DatePicker, Input, Select as AntdSelect, Popconfirm } from 'antd';
+import { DatePicker, Input, Select as AntdSelect, Popconfirm, message } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -215,6 +215,10 @@ export default class EditForm extends PureComponent {
   handleDeleteTableData(record) {
     const { editFormData: { custList = EMPTY_ARRAY } } = this.props;
     const newCustData = _.filter(custList, o => o.custId !== record.custId);
+    if (_.isEmpty(newCustData)) {
+      message.error('请至少保留一个客户!');
+      return;
+    }
     this.handleEditFormChange(newCustData, 'custList');
   }
 
