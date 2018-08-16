@@ -48,7 +48,7 @@ const createModalKey = 'createModal';
 
 const effects = {
   // 获取左侧列表
-  getList: 'app/getSeibleList',
+  getList: 'app/getNewSeibleList',
   // 获取详情
   queryDetailInfo: 'accountLimit/queryDetailInfo',
   // 获取下一步按钮以及审批人
@@ -454,6 +454,7 @@ export default class AccountLimitHome extends PureComponent {
         basicFilters={basicFilters}
         moreFilters={moreFilters}
         moreFilterData={moreFilterData}
+        isUseNewCustList
       />
     );
 
