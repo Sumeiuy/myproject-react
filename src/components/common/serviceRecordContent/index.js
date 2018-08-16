@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-14 15:02:32
+ * @Last Modified time: 2018-08-16 10:06:04
  */
 
 import React, { PureComponent } from 'react';
@@ -541,7 +541,7 @@ export default class ServiceRecordContent extends PureComponent {
       formData: { custId = '', missionFlowId = '', missionId = '' },
       custUuid,
     } = this.props;
-    const taskType = `${+taskTypeCode + 1}`;
+    const taskType = `${parseInt(taskTypeCode, 10) + 1}`;
     const isMotReturnVisitTask = this.isMOTReturnVistTask(eventId);
     // 按照DOClever定义的入参
     const data = {
@@ -615,7 +615,7 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   getZLCustFeedbackList() {
     const { eventId, taskTypeCode, serviceType } = this.state;
-    const type = `${+taskTypeCode + 1}`;
+    const type = `${parseInt(taskTypeCode, 10) + 1}`;
     // TODO 如果是mot任务 eventId参数需要使用 eventId
     // 如果是自建任务 需要使用serviceTypeCode
     // type 值为2的时候，该任务是自建任务
@@ -810,7 +810,7 @@ export default class ServiceRecordContent extends PureComponent {
   handleDisabledZLFinsOption() {
     const { empInfo } = this.props;
     const { eventId, taskTypeCode } = this.state;
-    const type = `${+taskTypeCode + 1}`;
+    const type = `${parseInt(taskTypeCode, 10) + 1}`;
     if (!empInfo.tgQyFlag) {
       // 只有投顾入岗才能看到 涨乐财富通
       return true;

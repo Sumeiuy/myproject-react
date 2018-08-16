@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-07 18:29:24
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-15 13:37:55
+ * @Last Modified time: 2018-08-16 10:06:35
  * @description 通用审批人弹框配置项
  */
 
@@ -22,7 +22,7 @@ export const APPROVER_TABLE_COLUMNS = [
   {
     dataIndex: 'belowDept',
     key: 'belowDept',
-    title: '所属营业部',
+    title: '所属部门',
   },
 ];
 

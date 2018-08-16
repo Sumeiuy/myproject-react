@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-07 18:23:46
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-15 13:38:20
+ * @Last Modified time: 2018-08-16 10:11:08
  * @desc 通用的选择审批人弹框
  */
 
@@ -60,8 +60,15 @@ export default class CommonApprovalModal extends PureComponent {
   }
 
   @autobind
-  handleModalClose() {
+  closeApprovalModal() {
+    this.setState({ approverRadio: '' });
     this.props.onClose(this.props.modalKey);
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '关闭' } })
+  handleModalClose() {
+    this.closeApprovalModal();
   }
 
   @autobind
@@ -72,9 +79,9 @@ export default class CommonApprovalModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '取消' } })
   handleModalCancel() {
-    this.setState({ approverRadio: '' });
-    this.handleModalClose();
+    this.closeApprovalModal();
   }
 
   // 点击Radio

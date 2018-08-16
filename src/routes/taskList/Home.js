@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-15 18:46:07
+ * @Last Modified time: 2018-08-16 10:05:37
  * @description 任务管理首页
  */
 
@@ -734,7 +734,7 @@ export default class PerformerView extends PureComponent {
   @autobind
   queryDataForZhanleServiceWay() {
     const { eventId, taskTypeCode, typeCode } = this.state;
-    const type = `${+taskTypeCode + 1}`;
+    const type = `${parseInt(taskTypeCode, 10) + 1}`;
     // TODO 如果是mot任务 eventId参数需要使用 eventId
     // 如果是自建任务 需要使用serviceType
     // type 值为2的时候，该任务是自建任务

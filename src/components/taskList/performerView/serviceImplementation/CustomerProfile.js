@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-15 18:47:01
+ * @Last Modified time: 2018-08-16 10:06:02
  */
 
 import React from 'react';
@@ -179,7 +179,7 @@ export default class CustomerProfile extends React.PureComponent {
       // 服务方式
       serveWay: 'HTSC Phone',
       // 任务类型，1：MOT  2：自建
-      taskType: `${+taskTypeCode + 1}`,
+      taskType: `${parseInt(taskTypeCode, 10) + 1}`,
       // 服务状态
       flowStatus: '30',
       // 同serveType
