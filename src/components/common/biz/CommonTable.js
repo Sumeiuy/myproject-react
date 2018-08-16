@@ -5,7 +5,7 @@
  * @Last Modified by: sunweibin
  * @Last Modified time: 2017-12-25 16:28:38
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-09 18:19:35
+ * @Last Modified time: 2018-08-09 10:34:28
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -86,15 +86,20 @@ export default class CommonTable extends PureComponent {
             newTitleList = [...newTitleList, operation.column];
             break;
           case 'radio':
-            operation.column.render = (text, record, index) => (
-              <span>
-                <Radio
-                  key={`radio-${record.key}`}
-                  checked={index === operation.column.radio}
-                  onClick={() => operation.operate(record, index)}
-                />
-              </span>
-            );
+            operation.column.render = (text, record, index) => {
+              const key = operation.operateKey || 'key';
+              const checkedRadio = operation.column.radio;
+              const isFunc = _.isFunction(checkedRadio);
+              return (
+                <span>
+                  <Radio
+                    key={`radio-${record[key]}`}
+                    checked={isFunc ? checkedRadio(record, index) : index === checkedRadio}
+                    onClick={() => operation.operate(record, index)}
+                  />
+                </span>
+              );
+            };
             if (operation.column.align === 'right') {
               newTitleList = [...newTitleList, operation.column];
             } else {

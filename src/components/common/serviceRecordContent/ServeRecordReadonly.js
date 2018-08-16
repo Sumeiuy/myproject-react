@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-14 18:32:04
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-04 10:07:03
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-15 17:28:05
  * @description 只读服务记录
  */
 
@@ -13,11 +13,15 @@ import cx from 'classnames';
 
 import ServeRecordAttachment from './ServeRecordAttachment';
 import { flow } from '../../taskList/performerView/config';
+import { MOT_RETURN_VISIT_WORK_RESULT_LOST } from '../../../config/taskList/performView';
 
 import styles from './index.less';
 
 export default function ServiceRecordReadOnly(props) {
   const {
+    isMOTReturnVisitTask,
+    motReturnResult,
+    motReturnFailReason,
     isZL,
     attachmentList,
     serviceWay,
@@ -110,29 +114,55 @@ export default function ServiceRecordReadOnly(props) {
             </div>
           )
         }
-        <div className={styles.divider} />
-        <div className={cx([styles.feedbackType, styles.readOnly])}>
-          {
-            (isZL && flowIsApproval)
-            ? (<div className={cx([styles.title, styles.flowIsApproval])}>客户可选反馈:</div>)
-            : (<div className={styles.title}>客户反馈:</div>)
-          }
-          {
-            isZL
-            ? (
-              <div className={styles.readOnlyText}>
-                <span className={styles.feedbackTypeL1}>{custFeedbackText}</span>
-              </div>
-            )
-            : (
-              <div className={styles.readOnlyText}>
-                <span className={styles.feedbackTypeL1}>{normalWayCustFeedbackText}</span>
-              </div>
-            )
-          }
-        </div>
         {
-          (isZL && flowIsApproval) || (isZL && ZLFeedbackStatus !== 'FEEDBACK')
+          !isMOTReturnVisitTask ? null
+          : (
+            <div className={styles.serveRecord}>
+              <div className={styles.title}>回访结果:</div>
+              <div className={styles.readOnlyText}>{motReturnResult}</div>
+            </div>
+          )
+        }
+        {
+          (isMOTReturnVisitTask && motReturnResult === MOT_RETURN_VISIT_WORK_RESULT_LOST)
+          ?
+          (
+            <div className={styles.serveRecord}>
+              <div className={styles.title}>失败原因:</div>
+              <div className={styles.readOnlyText}>{motReturnFailReason}</div>
+            </div>
+          )
+          : null
+        }
+        <div className={styles.divider} />
+        {
+          isMOTReturnVisitTask ? null
+          :
+          (
+            <div className={cx([styles.feedbackType, styles.readOnly])}>
+              {
+                (isZL && flowIsApproval)
+                ? (<div className={cx([styles.title, styles.flowIsApproval])}>客户可选反馈:</div>)
+                : (<div className={styles.title}>客户反馈:</div>)
+              }
+              {
+                isZL
+                ? (
+                  <div className={styles.readOnlyText}>
+                    <span className={styles.feedbackTypeL1}>{custFeedbackText}</span>
+                  </div>
+                )
+                : (
+                  <div className={styles.readOnlyText}>
+                    <span className={styles.feedbackTypeL1}>{normalWayCustFeedbackText}</span>
+                  </div>
+                )
+              }
+            </div>
+          )
+        }
+        {
+          isMOTReturnVisitTask || (isZL && flowIsApproval) || (isZL && ZLFeedbackStatus !== 'FEEDBACK')
           ? null
           : (
             <div className={styles.feedbackTime}>
@@ -167,6 +197,9 @@ ServiceRecordReadOnly.propTypes = {
   ZLCustFeedback: PropTypes.string,
   ZLCustFeedbackList: PropTypes.array,
   ZLFeedbackStatus: PropTypes.string,
+  isMOTReturnVisitTask: PropTypes.bool,
+  motReturnResult: PropTypes.string,
+  motReturnFailReason: PropTypes.string,
 };
 ServiceRecordReadOnly.defaultProps = {
   attachmentList: [],
@@ -185,4 +218,7 @@ ServiceRecordReadOnly.defaultProps = {
   ZLCustFeedback: '',
   ZLCustFeedbackList: [],
   ZLFeedbackStatus: 'NULL',
+  isMOTReturnVisitTask: false,
+  motReturnResult: '',
+  motReturnFailReason: '',
 };

@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-08 16:28:51
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-15 18:46:32
  */
 
 import React, { PureComponent } from 'react';
@@ -117,6 +117,8 @@ export default class ServiceImplementation extends PureComponent {
     location: PropTypes.object.isRequired,
     // 左侧列表中当前选中的任务
     currentTask: PropTypes.object.isRequired,
+    // 刷新左侧任务列表
+    refreshTaskList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -341,7 +343,7 @@ export default class ServiceImplementation extends PureComponent {
             pageNum,
             isGetFirstItemDetail: false,
           }).then(() => {
-            const { queryTargetCustDetail, currentId } = this.props;
+            const { queryTargetCustDetail, currentId, eventId } = this.props;
             const { targetCustList: { list = [], page: { totalCount } } } = this.state;
             // 当value大于总数totalCount的时候，取totalCount
             const newValue = value > totalCount ? totalCount : value;
@@ -352,6 +354,7 @@ export default class ServiceImplementation extends PureComponent {
               custId,
               missionId: currentId,
               missionFlowId,
+              eventId,
             });
           });
         });
@@ -371,7 +374,12 @@ export default class ServiceImplementation extends PureComponent {
     },
   })
   handleCustomerClick(obj = {}) {
-    const { changeParameter, currentId, queryTargetCustDetail } = this.props;
+    const {
+      changeParameter,
+      currentId,
+      queryTargetCustDetail,
+      eventId,
+     } = this.props;
     changeParameter({
       activeIndex: obj.activeIndex,
       currentCustomer: obj.currentCustomer,
@@ -382,6 +390,7 @@ export default class ServiceImplementation extends PureComponent {
         custId,
         missionId: currentId,
         missionFlowId,
+        eventId,
       });
     });
   }
@@ -415,10 +424,12 @@ export default class ServiceImplementation extends PureComponent {
       currentId,
       queryTargetCust,
       parameter,
+      eventId,
     } = this.props;
     const { targetCustList: { page: { pageSize, pageNum } } } = this.state;
     const { state, rowId, assetSort } = parameter;
     const payload = {
+      eventId,
       missionId: currentId,
       pageSize,
       pageNum,
@@ -566,13 +577,14 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   reloadTargetCustInfo(callback) {
-    const { currentId, getCustDetail, targetCustDetail } = this.props;
+    const { currentId, getCustDetail, targetCustDetail, eventId } = this.props;
     const { custId, missionFlowId } = targetCustDetail;
     getCustDetail({
       missionId: currentId,
       custId,
       missionFlowId,
       callback,
+      eventId,
     });
   }
 
@@ -668,6 +680,7 @@ export default class ServiceImplementation extends PureComponent {
       taskFeedbackList, attachmentList, eventId, taskTypeCode,
       queryCustFeedbackList4ZLFins, custFeedbackList, queryApprovalList, zhangleApprovalList,
       testWallCollision, testWallCollisionStatus, toggleServiceRecordModal, performerViewCurrentTab,
+      refreshTaskList, location,
     } = this.props;
     const {
       targetCustList,
@@ -680,6 +693,9 @@ export default class ServiceImplementation extends PureComponent {
       serviceRecord, customerFeedback, feedbackDate, custId,
       serviceContent, // 涨乐财富通的服务内容
       zlcftMsgStatus, // 新增的涨乐财富通服务方式的反馈状态
+      dispatchingAvailable, // 是否可以分配给他人，如果可以则服务记录中需要显示分配按钮
+      workResult, // MOT 回访类型任务的回访结果，为'成功'|'失败'
+      failReason, // MOT 回访类型任务的额结果如果是失败，则该字段为回访失败原因
     } = targetCustDetail;
     // 判断当前任务状态是结果跟踪或者完成状态，则为只读
     // 判断任务流水客户状态，处理中 和 未开始， 则为可编辑
@@ -730,6 +746,10 @@ export default class ServiceImplementation extends PureComponent {
       serviceTypeCode,
       // 涨乐财富通服务方式反馈状态
       zlcftMsgStatus,
+      // 判断是否需要分配按钮，因为MOT回访类型的任务，可以分配给他人处理
+      dispatchingAvailable,
+      workResult,
+      failReason,
     };
     // fsp左侧菜单和左侧列表折叠状态变化，强制更新affix、文字折叠区域
     const leftFoldState = `${isFoldFspLeftMenu}${isFold}`;
@@ -746,6 +766,7 @@ export default class ServiceImplementation extends PureComponent {
           />
         </div>
         <CustomerProfile
+          eventId={eventId}
           currentId={currentId}
           taskTypeCode={taskTypeCode}
           addServeRecord={this.addServiceRecord}
@@ -806,6 +827,7 @@ export default class ServiceImplementation extends PureComponent {
                   leftFoldState={leftFoldState}
                 />
                 <ServiceRecordForm
+                  location={location}
                   dict={dict}
                   empInfo={empInfo}
                   addServeRecord={this.addServiceRecord}
@@ -831,6 +853,7 @@ export default class ServiceImplementation extends PureComponent {
                   serviceCustId={custId}
                   isCurrentMissionPhoneCall={isCurrentMissionPhoneCall}
                   onFormDataChange={this.formDataChange}
+                  refreshTaskList={refreshTaskList}
                 />
               </div>
             </div>
