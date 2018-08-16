@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'dva';
-import { LocaleProvider } from 'antd';
+import { LocaleProvider, Button } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import ErrorBoundary from './ErrorBoundary';
 import Loading from './Loading';
@@ -20,6 +20,7 @@ import IEWarningModal from '../components/common/IEWarningModal';
 import PhoneWrapper from './PhoneWrapper';
 import styles from './main.less';
 import '../css/skin.less';
+import { emp } from '../helper';
 
 const effects = {
   dictionary: 'app/getDictionary',
@@ -98,6 +99,18 @@ export default class Main extends Component {
     this.props.getCustomerScope(); // 加载客户池客户范围
   }
 
+  renderLoginFooter() {
+    if (process.env.NODE_ENV === 'development') {
+      const empId = emp.getId();
+      const loginCallback = () => {
+        window.open(`fsp/login?iv-user=${empId}`, '_blank');
+      };
+      return (<div><Button onClick={loginCallback}>登录</Button></div>);
+    }
+
+    return null;
+  }
+
   render() {
     const {
       children,
@@ -116,6 +129,7 @@ export default class Main extends Component {
       serviceRecordInfo,
       location,
     } = this.props;
+
     const { caller = '' } = serviceRecordInfo;
     // 当前服务记录弹窗是否由电话调起的
     const isPhoneCall = caller === PHONE;
@@ -157,6 +171,7 @@ export default class Main extends Component {
                     }
                   </div>
                 </div>
+                {this.renderLoginFooter()}
                 <PhoneWrapper />
               </div>
             </div>

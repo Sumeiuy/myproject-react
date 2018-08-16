@@ -8,9 +8,9 @@ export default function common(api) {
     // 获取部门
     getCustRange: query => api.post('/groovynoauth/fsp/queryOrgInfo', query),
     // 员工职责与职位
-    getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
+    getEmpInfo: query => api.postFspData('/findEmpResInfo', query, { noEmpId: true }),
     // 获取用户有权限查看的菜单
-    getMenus: query => api.postFspData('/newMenu', query),
+    getMenus: query => api.postFspData('/newMenu', query, { noEmpId: true }),
     // 用户切换岗位
     // changePost: query => api.post('/groovynoauth/fsp/emp/info/changePost', query),
     changePost: query => api.postFspData('/chgPstn', query, { ignoreCatch: true }),

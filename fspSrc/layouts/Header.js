@@ -136,8 +136,9 @@ export default class Header extends PureComponent {
 
   @autobind
   fakeLogin() {
+    const empId = emp.getId();
     if (process.env.NODE_ENV === 'development') {
-      window.open('fsp/login?iv-user=002332#/statisticalQuery/report', '_blank');
+      window.open(`fsp/login?iv-user=${empId}`, '_blank');
     }
   }
 

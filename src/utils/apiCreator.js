@@ -60,11 +60,14 @@ export default function createApi() {
      * @param {Number} timeout 超时时间，单位ms
      * @return {Promise}
      */
-    post(url, query = {}, options) {
-      const finalUrl = padPrefix(url);
+    post(url, query = {}, options = {}) {
+      let finalUrl = padPrefix(url);
       const { ignoreCatch = false, ...resetQuery } = query;
+      if (!options.noEmpId) {
+        finalUrl = `${finalUrl}?empId=${emp.getId()}`;
+      }
       return request(
-        `${finalUrl}?empId=${emp.getId()}`,
+        finalUrl,
         {
           method: 'POST',
           headers: {
@@ -126,7 +129,7 @@ export default function createApi() {
     postFspData(url, query = {}, options = {}) {
       let fullUrl;
       const finalUrl = fillPrefix(url);
-      if (options.isFullUrl) {
+      if (options.isFullUrl || options.noEmpId) {
         fullUrl = finalUrl;
       } else {
         fullUrl = `${finalUrl}?empId=${emp.getId()}`;
