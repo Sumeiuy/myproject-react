@@ -196,7 +196,6 @@ export default class CreateTaskFormFlow extends PureComponent {
   @autobind
   parseQuery() {
     const { location: { query: { ids = '', condition = {} } } } = this.props;
-    console.warn('ids', ids);
     let custCondition = {};
     let custIdList = null;
     if (!_.isEmpty(condition)) {
