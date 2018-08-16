@@ -10,7 +10,7 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import { SingleFilter, MultiFilter, RangeFilter } from 'lego-react-filter/src';
+import { SingleFilter, MultiFilter, RangeFilter, Popover } from 'lego-react-filter/src';
 import _ from 'lodash';
 import { message } from 'antd';
 
@@ -100,16 +100,20 @@ export default class AddCustModal extends PureComponent {
 
   componentDidUpdate() {
     this.checkBoxDOM = ReactDOM.findDOMNode(document.querySelectorAll('.ant-table-selection')[0]);  // eslint-disable-line
+
     if (this.checkBoxDOM) {
+      this.checkBoxDOM = (<Popover content={'1234567'} title="Title">
+        {this.checkBoxDOM}
+      </Popover>);
       console.warn('this.checkBoxDOM', this.checkBoxDOM);
-      this.checkBoxDOM.addEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
-      this.checkBoxDOM.addEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
+      // this.checkBoxDOM.addEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
+      // this.checkBoxDOM.addEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
     }
   }
 
   componentWillUnmount() {
-    this.checkBoxDOM.removeEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
-    this.checkBoxDOM.removeEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
+    // this.checkBoxDOM.removeEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
+    // this.checkBoxDOM.removeEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
   }
 
   @autobind
