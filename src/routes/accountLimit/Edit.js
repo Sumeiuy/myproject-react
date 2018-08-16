@@ -70,19 +70,19 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   // 获取详情
-  queryDetailInfo: dispatch(effects.queryDetailInfo, { loading: true, forceFull: true }),
+  queryDetailInfo: dispatch(effects.queryDetailInfo, { forceFull: true }),
   // 获取按钮列表和下一步审批人
-  queryButtonList: dispatch(effects.queryButtonList, { loading: true, forceFull: true }),
+  queryButtonList: dispatch(effects.queryButtonList, { forceFull: true }),
   // 查询限制类型列表
-  queryLimtList: dispatch(effects.queryLimtList, { loading: true, forceFull: true }),
+  queryLimtList: dispatch(effects.queryLimtList, { forceFull: true }),
   // 校验数据
-  validateForm: dispatch(effects.validateForm, { loading: true, forceFull: true }),
+  validateForm: dispatch(effects.validateForm, { forceFull: true }),
   // 提交客户分配
-  saveChange: dispatch(effects.saveChange, { loading: true, forceFull: true }),
+  saveChange: dispatch(effects.saveChange, { forceFull: true }),
   // 数据修改
   editFormChange: dispatch(effects.editFormChange, { loading: false, forceFull: true }),
   // 提交流程
-  doApprove: dispatch(effects.doApprove, { loading: true, forceFull: true }),
+  doApprove: dispatch(effects.doApprove, { forceFull: true }),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
