@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-16 17:11:13
+ * @Last Modified time: 2018-08-16 18:02:10
  */
 
 import React, { PureComponent } from 'react';
@@ -201,7 +201,6 @@ export default class TaskFormFlowStep extends PureComponent {
       custCondition,
       custCondition: { entrance, labelId },
     } = parseQuery();
-    console.warn('custIdList', custIdList);
     // 去除entrance字段
     const omitedCondition = _.omit(custCondition, 'entrance');
 
