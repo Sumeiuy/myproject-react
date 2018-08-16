@@ -286,8 +286,6 @@ export default class EditForm extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '选择限制时间' } })
   handleStartDateChange(date, dateStr) {
-    console.warn('date', date);
-    console.warn('dateStr', dateStr);
     this.handleEditFormChange(dateStr, 'limitStartTime');
   }
 
@@ -295,8 +293,6 @@ export default class EditForm extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '选择限制解除时间' } })
   handleEndDateChange(date, dateStr) {
-    console.warn('date', date);
-    console.warn('dateStr', dateStr);
     this.handleEditFormChange(dateStr, 'limitEndTime');
   }
 
@@ -329,7 +325,6 @@ export default class EditForm extends PureComponent {
     if (_.isEmpty(editFormData)) {
       return null;
     }
-    console.warn('editFormData', editFormData);
     // 客户标题列表
     const custTitle = this.getColumnsCustTitle();
 
