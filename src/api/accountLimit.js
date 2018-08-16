@@ -15,6 +15,8 @@ export default function accountLimit(api) {
     queryCustList: query => api.post('/groovynoauth/fsp/biz/accountrestriction/queryCustomerList', query),
     // 根据关键字查询限制类型列表
     queryLimtList: query => api.post('/groovynoauth/fsp/biz/accountrestriction/queryAccountRestrictionType', query),
+    // 校验接口
+    validateForm: query => api.post('/groovynoauth/fsp/biz/accountrestriction/validateAccountRestrict', query),
     // 提交客户分配
     saveChange: query => api.post('/groovynoauth/fsp/biz/accountrestriction/saveAccountRestriction', query),
     // 走流程接口

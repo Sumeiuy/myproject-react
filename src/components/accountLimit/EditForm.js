@@ -56,8 +56,6 @@ export default class EditForm extends PureComponent {
     // 限制类型
     limitList: PropTypes.array.isRequired,
     queryLimtList: PropTypes.func.isRequired,
-    // 提交保存
-    saveChange: PropTypes.func.isRequired,
     // 修改审批意见
     onChangeRemark: PropTypes.func.isRequired,
     remark: PropTypes.string.isRequired,
@@ -288,6 +286,8 @@ export default class EditForm extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '选择限制时间' } })
   handleStartDateChange(date, dateStr) {
+    console.warn('date', date);
+    console.warn('dateStr', dateStr);
     this.handleEditFormChange(dateStr, 'limitStartTime');
   }
 
@@ -295,6 +295,8 @@ export default class EditForm extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '选择限制解除时间' } })
   handleEndDateChange(date, dateStr) {
+    console.warn('date', date);
+    console.warn('dateStr', dateStr);
     this.handleEditFormChange(dateStr, 'limitEndTime');
   }
 
@@ -324,6 +326,10 @@ export default class EditForm extends PureComponent {
       selectValue,
     } = this.state;
 
+    if (_.isEmpty(editFormData)) {
+      return null;
+    }
+    console.warn('editFormData', editFormData);
     // 客户标题列表
     const custTitle = this.getColumnsCustTitle();
 
@@ -419,7 +425,7 @@ export default class EditForm extends PureComponent {
               (<InfoForm label="账户限制设置日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
                 <DatePicker
                   disabledDate={this.setDisabledDate}
-                  value={moment(editFormData.limitStartTime || '', config.timeFormatStr)}
+                  defaultValue={moment(editFormData.limitStartTime || '', config.timeFormatStr)}
                   onChange={this.handleStartDateChange}
                 />
               </InfoForm>)
@@ -429,7 +435,7 @@ export default class EditForm extends PureComponent {
           <InfoForm label="账户限制解除日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
             <DatePicker
               disabledDate={this.relieveDisabledDate}
-              value={moment(editFormData.limitEndTime || '', config.timeFormatStr)}
+              defaultValue={moment(editFormData.limitEndTime || '', config.timeFormatStr)}
               onChange={this.handleEndDateChange}
             />
           </InfoForm>

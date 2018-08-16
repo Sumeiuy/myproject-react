@@ -57,6 +57,8 @@ const effects = {
   queryCustList: 'accountLimit/queryCustList',
   // 查询限制类型
   queryLimtList: 'accountLimit/queryLimtList',
+  // 校验数据
+  validateForm: 'accountLimit/validateForm',
   // 提交客户分配
   saveChange: 'accountLimit/saveChange',
   // 清除数据
@@ -96,6 +98,8 @@ const mapDispatchToProps = {
   queryCustList: dispatch(effects.queryCustList, { loading: true, forceFull: true }),
   // 查询限制类型列表
   queryLimtList: dispatch(effects.queryLimtList, { loading: true, forceFull: true }),
+  // 校验数据
+  validateForm: dispatch(effects.validateForm, { loading: true, forceFull: true }),
   // 提交客户分配
   saveChange: dispatch(effects.saveChange, { loading: true, forceFull: true }),
   // 清除搜索数据
@@ -129,6 +133,8 @@ export default class AccountLimitHome extends PureComponent {
     // 查询限制类型列表
     limitList: PropTypes.array.isRequired,
     queryLimtList: PropTypes.func.isRequired,
+    // 校验数据
+    validateForm: PropTypes.func.isRequired,
     // 提交数据
     saveChange: PropTypes.func.isRequired,
     // 清除数据
@@ -413,6 +419,7 @@ export default class AccountLimitHome extends PureComponent {
       // 限制类型
       limitList,
       queryLimtList,
+      validateForm,
       // 提交走流程
       saveChange,
       clearData,
@@ -505,6 +512,7 @@ export default class AccountLimitHome extends PureComponent {
             queryButtonList={queryButtonList}
             queryAppList={this.queryAppList}
             closeModal={this.closeModal}
+            validateForm={validateForm}
             saveChange={saveChange}
             clearData={clearData}
           />

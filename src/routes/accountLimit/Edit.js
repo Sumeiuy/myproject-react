@@ -44,6 +44,8 @@ const effects = {
   queryButtonList: 'accountLimitEdit/queryButtonList',
   // 查询限制类型
   queryLimtList: 'accountLimitEdit/queryLimtList',
+  // 校验数据
+  validateForm: 'accountLimit/validateForm',
   // 提交客户分配
   saveChange: 'accountLimitEdit/saveChange',
   // 数据修改
@@ -73,6 +75,8 @@ const mapDispatchToProps = {
   queryButtonList: dispatch(effects.queryButtonList, { loading: true, forceFull: true }),
   // 查询限制类型列表
   queryLimtList: dispatch(effects.queryLimtList, { loading: true, forceFull: true }),
+  // 校验数据
+  validateForm: dispatch(effects.validateForm, { loading: true, forceFull: true }),
   // 提交客户分配
   saveChange: dispatch(effects.saveChange, { loading: true, forceFull: true }),
   // 数据修改
@@ -101,6 +105,8 @@ export default class AccountLimitEdit extends PureComponent {
     // 查询限制类型列表
     limitList: PropTypes.array.isRequired,
     queryLimtList: PropTypes.func.isRequired,
+    // 校验数据
+    validateForm: PropTypes.func.isRequired,
     // 提交数据
     saveChange: PropTypes.func.isRequired,
     // 提交流程
@@ -200,6 +206,10 @@ export default class AccountLimitEdit extends PureComponent {
         message.error('设置日期不能为空!');
         return false;
       }
+      if (_.isEmpty(editFormData.limitEndTime)) {
+        message.error('解除日期不能为空!');
+        return false;
+      }
       if (moment(editFormData.limitStartTime, config.timeFormatStr) < moment().subtract(1, 'days')) {
         message.error('设置日期不得小于当前日期!');
         return false;
@@ -212,6 +222,10 @@ export default class AccountLimitEdit extends PureComponent {
     }
     // 如果操作类型是解除限制
     if (editFormData.operateType === config.relieveCode) {
+      if (_.isEmpty(editFormData.limitEndTime)) {
+        message.error('解除日期不能为空!');
+        return false;
+      }
       if (moment(editFormData.limitEndTime, config.timeFormatStr) < moment().subtract(1, 'days')) {
         message.error('账户限制解除日期不得小于当前日期!');
         return false;
@@ -234,21 +248,25 @@ export default class AccountLimitEdit extends PureComponent {
     if (!this.chekDataIsLegal()) {
       return;
     }
-    const { editFormData, saveChange } = this.props;
+    const { editFormData, saveChange, validateForm } = this.props;
     if (editFormData.operateType === config.relieveCode && !editFormData.bankConfirm) {
       const flowAuditors = {
         auditors: emp.getId(),
         groupName: btnItem.nextGroupName,
         approverIdea: '',
       };
-      saveChange({ ...editFormData, ...flowAuditors }).then(() => {
-        this.handleSuccessCallback();
+      validateForm({ ...editFormData, ...flowAuditors }).then(() => {
+        saveChange({ ...editFormData, ...flowAuditors }).then(() => {
+          this.handleSuccessCallback();
+        });
       });
     } else {
-      this.setState({
-        [approverModalKey]: true,
-        flowAuditors: btnItem.flowAuditors,
-        currentButtonItem: btnItem,
+      validateForm({ ...editFormData }).then(() => {
+        this.setState({
+          [approverModalKey]: true,
+          flowAuditors: btnItem.flowAuditors,
+          currentButtonItem: btnItem,
+        });
       });
     }
   }
