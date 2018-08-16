@@ -19,7 +19,7 @@ import {
 import initFspMethod from './initFspMethod';
 import fspGlobal from './fspGlobal';
 
-export default {
+export {
   apiCreator,
   request,
   sagaEffects,

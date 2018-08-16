@@ -37,6 +37,6 @@ const getViewInfo = (missionViewType = '') => {
   };
 };
 
-export default {
+export {
   getViewInfo,
 };
