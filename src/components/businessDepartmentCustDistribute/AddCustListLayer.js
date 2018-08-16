@@ -1,10 +1,11 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-05-11 13:45:12
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-17 15:33:16
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-08-16 17:57:42
  * @description 用户选择添加客户列表
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';

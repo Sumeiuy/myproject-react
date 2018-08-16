@@ -5,22 +5,22 @@
  */
 
 import React, { PureComponent } from 'react';
-import classnames from 'classnames';
-import { Spin, Icon } from 'antd';
+import { Spin, Icon, message, Table } from 'antd';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import styles from './serviceResult.less';
-import antdStyles from '../../../../css/antd.less';
 import ServiceResultLayout from '../../common/ServiceResultLayout';
-// import Icon from '../../../common/Icon';
-import Table from '../../../common/commonTable';
-import missionProgressMap from './config';
+import Button from '../../../common/Button';
+import { MISSION_PROGRESS_MAP, TABLE_COLUMN, OPEN_IN_TAB_PARAM } from './config';
+import { SOURCE_SERVICE_RESULT_CUST } from '../../../../config/createTaskEntry';
+import { url as urlHelper, emp } from '../../../../helper';
+import { openInTab } from '../../../../utils';
+import logable from '../../../../decorators/logable';
 
 const DEFAULT_DETIAL_TITLE = '客户明细';
 // 获取客户详情接口默认的pagesize
 const PAGE_SIZE = 5;
-
 export default class ServiceResult extends PureComponent {
 
   static getDerivedStateFromProps(props, state) {
@@ -46,10 +46,17 @@ export default class ServiceResult extends PureComponent {
     queryExecutorDetail: PropTypes.func.isRequired,
     isShowExecutorDetailLoading: PropTypes.bool.isRequired,
     currentId: PropTypes.string.isRequired,
+    // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
     isFold: false,
+  }
+
+  static contextTypes = {
+    push: PropTypes.func,
   }
 
   constructor(props) {
@@ -62,6 +69,8 @@ export default class ServiceResult extends PureComponent {
       selectedRowKeys: [],
       // table的pageNum
       pageNum: 1,
+      // 是否全选
+      isSelectAll: false,
     };
   }
 
@@ -78,19 +87,22 @@ export default class ServiceResult extends PureComponent {
 
   @autobind
   handleMissionClick(item) {
-    const { missionProgressStatus = '',
+    const {
+      missionProgressStatus = '',
       progressFlag = '',
       feedbackIdL1 = '',
-      currentFeedback } = item;
+      currentFeedback,
+    } = item;
     if (missionProgressStatus) {
-      const currentMapItem = _.filter(missionProgressMap, mapItem =>
+      const currentMapItem = _.filter(MISSION_PROGRESS_MAP, mapItem =>
         mapItem.value === item.missionProgressStatus && mapItem.type === item.progressFlag,
       )[0];
       this.setCustDetailTitle(currentMapItem.name);
     }
     if (feedbackIdL1) {
       const currentFeedbackItem = _.filter(currentFeedback, feedbackItem =>
-        feedbackIdL1 === feedbackItem.feedbackIdL1)[0];
+        feedbackIdL1 === feedbackItem.feedbackIdL1,
+      )[0];
       this.setCustDetailTitle(currentFeedbackItem.feedbackName);
     }
     this.getExecutorDetail({
@@ -100,6 +112,7 @@ export default class ServiceResult extends PureComponent {
     });
   }
 
+  // 服务结果页面的接口（总体进度，已服务客户反馈，客户明细）
   @autobind
   updateServiceResult() {
     const {
@@ -115,6 +128,7 @@ export default class ServiceResult extends PureComponent {
     this.getExecutorDetail();
   }
 
+  // 获取客户明细接口
   @autobind
   getExecutorDetail(option) {
     const { queryExecutorDetail, currentId } = this.props;
@@ -130,74 +144,117 @@ export default class ServiceResult extends PureComponent {
     this.setState({
       currentParam: params,
     });
-    queryExecutorDetail(params);
+    queryExecutorDetail(params).then(() => {
+      const { isSelectAll } = this.state;
+      const { custDetail: { list = [] } } = this.props;
+      // 如果是全选,新加载出来的数据,默认应该也被选中
+      if (isSelectAll) {
+        const newSelectedRowKeys = _.map(list, 'brokerNum');
+        this.setState({ selectedRowKeys: newSelectedRowKeys });
+      }
+    });
   }
 
-  /**
-   * 渲染每一列的宽度
-   */
-  @autobind
-  renderColumnWidth() {
-    const { isFold } = this.props;
-    let columnWidth = [];
-    let columnWidthTotal = 0;
-
-    if (isFold) {
-      columnWidthTotal = 790;
-      // 列的总宽度870px
-      // 处于折叠状态，每一列的宽度需要增加
-      columnWidth = ['130px', '100px', '180px', '180px', '100px', '100px'];
-    } else {
-      columnWidthTotal = 720;
-      // 处于展开状态,
-      // 列的总宽度630px
-      columnWidth = ['130px', '100px', '140px', '140px', '100px', '110px'];
-    }
-
-    return {
-      columnWidth,
-      columnWidthTotal,
-    };
-  }
-
+  // 客户明细表格的头部渲染(会根据点击了总体进度，已服务客户反馈不同而不同)
   @autobind
   renderCustDetailHeader() {
     const { detailTitle } = this.state;
     return (
       <div className={styles.custDetailHeader}>
-        {detailTitle}
+        <div className={styles.custDetailTitle}>{detailTitle}</div>
+        <Button onClick={this.handleCreateTaskClick}>发起任务</Button>
       </div>
     );
   }
 
-  getTableColumns() {
-    return [{
-      value: '客户名称',
-      dataIndex: 'cust',
-      key: 'cust',
-    }, {
-      value: '总资产',
-      dataIndex: 'assets',
-      key: 'assets',
-    }, {
-      value: '一级反馈',
-      dataIndex: 'firstFeedback',
-      key: 'firstFeedback',
-    }, {
-      value: '二级反馈',
-      dataIndex: 'secondFeedback',
-      key: 'secondFeedback',
-    }, {
-      value: '结果达标值',
-      dataIndex: 'standardValue',
-      key: 'standardValue',
-    }, {
-      value: '结果达标日期',
-      dataIndex: 'standardDate',
-      key: 'standardDate',
-    }];
+  // 验证通过后跳转到创建任务
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '发起任务' } })
+  handleCreateTaskClick() {
+    const { isSendCustsServedByPostn } = this.props;
+    const { isSelectAll, currentParam, selectedRowKeys } = this.state;
+    // 获取empId
+    const empId = emp.getId();
+    // isSendCustsServedByPost接口的参数
+    const payload = {};
+    const queryMissionCustsReq = {
+      ...currentParam,
+      ptyMngId: empId,
+    };
+    // 如果没有选择客户,则提示先选择客户在发起任务
+    if (_.isEmpty(selectedRowKeys)) {
+      message.warn('请先选择需要发起任务的客户');
+      return;
+    }
+    // 如果是全选,参数payload中需要增加queryMissionCustsReq对象,为调取客户详情接口数据的参数
+    // 如不是全选,则传一个由brokerNum组成的custIdList数组
+    if (isSelectAll) {
+      payload.queryMissionCustsReq = encodeURIComponent(JSON.stringify(queryMissionCustsReq));
+    } else {
+      // payload.queryMissionCustsReq = queryMissionCustsReq;
+      payload.custIdList = selectedRowKeys;
+    }
+    // 发请求判断是否超过1000条数据和是否包含非本人名下客户
+    isSendCustsServedByPostn({ ...payload }).then(() => {
+      const { sendCustsServedByPostnResult = {} } = this.props;
+      const {
+        custNumsIsExceedUpperLimit = false,
+        sendCustsServedByPostn = false,
+      } = sendCustsServedByPostnResult;
+      // 选择超过1000条数据 或者 没有超过1000条但包含非本人名下客户
+      if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
+        message.warn('您不能对非本人名下客户发起任务');
+        return;
+      }
+      this.toCreateTaskPage(payload);
+    });
   }
 
+  // 跳转到创建任务页面
+  @autobind
+  toCreateTaskPage(payload) {
+    const { isSelectAll } = this.state;
+    const { page = {} } = this.props.custDetail;
+    const { push } = this.context;
+    // config中定义的一些url，id，title等常量
+    const { URL, ID, TITLE } = OPEN_IN_TAB_PARAM;
+    const { queryMissionCustsReq = {}, custIdList = [] } = payload;
+    const param = { source: SOURCE_SERVICE_RESULT_CUST };
+    if (isSelectAll) {
+      param.condition = queryMissionCustsReq;
+      param.count = page.totalCount;
+    } else {
+      param.ids = custIdList;
+      param.count = _.size(custIdList);
+    }
+    const newurl = `${URL}?${urlHelper.stringify(param)}`;
+    // FSP打开一个新的tab的参数
+    const openInTabParam = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: ID,
+      title: TITLE,
+    };
+    openInTab({
+      routerAction: push,
+      url: newurl,
+      param: openInTabParam,
+      pathname: URL,
+      query: param,
+    });
+  }
+
+  // 全选回调
+  @autobind
+  handleSelectAllChange() {
+    console.warn('isSelectAll', this.state.isSelectAll);
+    this.setState({
+      isSelectAll: !this.state.isSelectAll,
+    });
+  }
+
+  // 重新处理客户明细表格数据
   @autobind
   getCustDetail() {
     const { custDetail } = this.props;
@@ -205,10 +262,16 @@ export default class ServiceResult extends PureComponent {
     const finalList = _.map(list, item => ({
       ...item,
       cust: `${item.cust}(${item.brokerNum})`,
+      assets: item.assets || '--',
+      firstFeedback: item.firstFeedback || '--',
+      secondFeedback: item.secondFeedback || '--',
+      standardValue: item.standardValue || '--',
+      standardDate: item.standardDate || '--',
     }));
     return { list: finalList, page };
   }
 
+  // 设置表格头部渲染文字
   @autobind
   setCustDetailTitle(title) {
     this.setState({
@@ -216,10 +279,7 @@ export default class ServiceResult extends PureComponent {
     });
   }
 
-  /**
-   * 加载更多
-   * @param {*number} pageNum 当前分页
-   */
+  // 加载而更多
   @autobind
   handlePageChange() {
     const { currentParam } = this.state;
@@ -242,13 +302,22 @@ export default class ServiceResult extends PureComponent {
   render() {
     const { serviceProgress, custFeedBack, isShowExecutorDetailLoading } = this.props;
     const { list = [], page = {} } = this.getCustDetail();
-    const {
-      columnWidth,
-      columnWidthTotal,
-    } = this.renderColumnWidth();
     const { selectedRowKeys, pageNum } = this.state;
     // 自定义旋转图标
     const customIcon = <Icon type="reload" spin />;
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.handleSelectChange,
+      hideDefaultSelections: true,
+      onSelectAll: this.handleSelectAllChange,
+      // TODO使用该方法会禁用到全选的CheckBox,正在寻找解决方案
+      // getCheckboxProps(record) {
+      //   // 此属性用来设置 checkbox 的 disabled 属性
+      //   return {
+      //     disabled: _.includes(selectedRowKeys, record.brokerNum),
+      //   };
+      // },
+    };
     return (
       <div className={styles.serviceResultWrap}>
         <ServiceResultLayout
@@ -256,37 +325,29 @@ export default class ServiceResult extends PureComponent {
           onPreviewCustDetail={this.handleMissionClick}
           custFeedback={custFeedBack}
         />
-        <Table
-          listData={list}
-          titleColumn={this.getTableColumns()}
-          title={this.renderCustDetailHeader}
-          tableClass={
-            classnames({
-              [styles.custManagerScopeTable]: true,
-              [antdStyles.tableHasBetweenSpace]: true,
-            })
+        <div className={styles.custDetailWrap}>
+          <Table
+            dataSource={list}
+            columns={TABLE_COLUMN}
+            rowKey="brokerNum"
+            title={this.renderCustDetailHeader}
+            scroll={{ x: 720 }}
+            pagination={false}
+            rowSelection={rowSelection}
+          />
+          {
+            pageNum < page.totalPage || page.totalPage === 0
+            ? <div className={styles.shuaxinWrap}>
+              {
+                isShowExecutorDetailLoading
+                ? <Spin indicator={customIcon} />
+                : <Icon type="reload" />
+              }
+              <a onClick={this.handlePageChange}>加载更多</a>
+            </div>
+            : null
           }
-          columnWidth={columnWidth}
-          // 列的总宽度加上固定列的宽度
-          scrollX={columnWidthTotal}
-          emptyListDataNeedEmptyRow
-          isNeedRowSelection
-          onRowSelectionChange={this.handleSelectChange}
-          currentSelectRowKeys={selectedRowKeys}
-          selectionType="checkbox"
-        />
-        {
-          pageNum < page.totalPage || page.totalPage === 0
-          ? <div className={styles.shuaxinWrap}>
-            {
-              isShowExecutorDetailLoading
-              ? <Spin indicator={customIcon} />
-              : <Icon type="reload" />
-            }
-            <a onClick={this.handlePageChange}>加载更多</a>
-          </div>
-          : null
-        }
+        </div>
       </div>
     );
   }

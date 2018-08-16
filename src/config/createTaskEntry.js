@@ -64,6 +64,9 @@ export const TASK_CUST_SCOPE_ENTRY = 'taskCustScopeEntry';
 // 管理标签页面的入口
 export const SOURCE_LABELMANAGEMENT = 'labelManagement';
 
+// 执行者视图服务结果客户明细页面的source值
+export const SOURCE_SERVICE_RESULT_CUST = 'serviceResultCust';
+
 // 发起任务的入口集合
 // 不包含客户列表入口，也不包含驳回修改入口
 export const createTaskEntrySource = [
@@ -76,6 +79,7 @@ export const createTaskEntrySource = [
   EXTERNAL_ENTRY,
   TASK_CUST_SCOPE_ENTRY,
   SOURCE_LABELMANAGEMENT,
+  SOURCE_SERVICE_RESULT_CUST,
 ];
 
 // 驳回修改任务入口集合，包含从待办任务发起驳回修改和从任务管理列表发起驳回修改

@@ -2,8 +2,8 @@
  * @Description: 执行者视图右侧详情
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-15 18:48:13
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-08-16 17:49:35
  */
 
 import React, { PureComponent } from 'react';
@@ -91,6 +91,9 @@ export default class PerformerViewDetail extends PureComponent {
     queryExecutorFeedBack: PropTypes.func.isRequired,
     queryExecutorFlowStatus: PropTypes.func.isRequired,
     queryExecutorDetail: PropTypes.func.isRequired,
+    // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
     // 刷新左侧任务列表
     refreshTaskList: PropTypes.func.isRequired,
   }
@@ -182,6 +185,8 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       basicInfo = {},
       customerList,
+      isSendCustsServedByPostn,
+      sendCustsServedByPostnResult,
     } = this.props;
 
     const {
@@ -211,6 +216,8 @@ export default class PerformerViewDetail extends PureComponent {
           customerList={customerList}
           reloadTargetCustInfo={this.reloadTargetCustInfo}
           getPageSize={getPageSize}
+          isSendCustsServedByPostn={isSendCustsServedByPostn}
+          sendCustsServedByPostnResult={sendCustsServedByPostnResult}
         />
       </div>
     );
