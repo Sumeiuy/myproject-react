@@ -75,6 +75,8 @@ export default class CreateModal extends PureComponent {
     // 限制类型
     limitList: PropTypes.array.isRequired,
     queryLimtList: PropTypes.func.isRequired,
+    // 校验数据
+    validateForm: PropTypes.func.isRequired,
     // 提交保存
     saveChange: PropTypes.func.isRequired,
     // 弹窗的key
@@ -588,16 +590,15 @@ export default class CreateModal extends PureComponent {
       modalKey,
       queryAppList,
     } = this.props;
-
+    // 关闭审批人弹窗
+    closeModal({
+      modalKey: approverModalKey,
+      isNeedConfirm: false,
+    });
     Modal.success({
       title: '提示',
       content: '提交成功。',
       onOk: () => {
-        // 关闭审批人弹窗
-        closeModal({
-          modalKey: approverModalKey,
-          isNeedConfirm: false,
-        });
         // 关闭新建弹窗
         closeModal({
           modalKey,
@@ -614,12 +615,11 @@ export default class CreateModal extends PureComponent {
     type: 'Submit',
     payload: {
       name: '选择限制解除时间',
-      type: '13',
-      subType: '13',
+      type: '账户限制管理',
+      subType: '账户限制管理',
     } })
   handleSubmit(btnItem) {
-    const { modalKey } = this.props;
-
+    const { modalKey, validateForm } = this.props;
     // 取消按钮
     if (btnItem.operate === BTN_CANCLE_VALUE) {
       this.closeModal({
@@ -716,12 +716,16 @@ export default class CreateModal extends PureComponent {
         groupName: btnItem.flowAuditors.nextGroupName,
         approverIdea: '',
       };
-      this.sendRequest({ ...payload, ...flowAuditors });
+      validateForm(payload).then(() => {
+        this.sendRequest({ ...payload, ...flowAuditors });
+      });
     } else {
-      this.setState({
-        [approverModalKey]: true,
-        flowAuditors: btnItem.flowAuditors,
-        submitData: payload,
+      validateForm(payload).then(() => {
+        this.setState({
+          [approverModalKey]: true,
+          flowAuditors: btnItem.flowAuditors,
+          submitData: payload,
+        });
       });
     }
   }

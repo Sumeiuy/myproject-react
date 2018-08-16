@@ -370,7 +370,7 @@ export default class MultiUpload extends PureComponent {
           _.isEmpty(title) ?
             null
             :
-            <h3 className={styles.title}>{title}{required ? '(必填)' : null}</h3>
+            <h3 className={styles.title}>{title}{required ? '(必传)' : null}</h3>
         }
         { fileListElement }
       </div>
