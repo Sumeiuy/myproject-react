@@ -83,22 +83,6 @@ export default class MultiUpload extends PureComponent {
     limitCount: 9999,
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { attachment: nextAT, attachmentList, limitCount } = nextProps;
-    const { attachment: preAT } = prevState;
-    if (nextAT !== preAT) {
-      this.setState({
-        fileList: attachmentList, // 文件列表
-        oldFileList: attachmentList, // 旧的文件列表
-        attachment: nextAT, // 上传后的唯一 ID
-        // 如果限制并且新数组的 length 小于限制的个数
-        isShowUploadBtn: limitCount > attachmentList.length,
-      });
-    }
-    // 默认不改动 state
-    return null;
-  }
-
   constructor(props) {
     super(props);
     const { attachmentList, attachment, limitCount } = props;
@@ -113,6 +97,21 @@ export default class MultiUpload extends PureComponent {
       attachment, // 上传后的唯一 ID
       isShowUploadBtn: limitCount > attachmentList.length,  // 是否显示上传按钮
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { attachment: preAT } = this.props;
+    const { attachment: nextAT, attachmentList, limitCount } = nextProps;
+    const { attachment } = this.state;
+    if (preAT !== nextAT && nextAT !== attachment) {
+      this.setState({
+        fileList: attachmentList, // 文件列表
+        oldFileList: attachmentList, // 旧的文件列表
+        attachment: nextAT, // 上传后的唯一 ID
+        // 如果限制并且新数组的 length 小于限制的个数
+        isShowUploadBtn: limitCount > attachmentList.length,
+      });
+    }
   }
 
   // 上传事件
@@ -371,7 +370,7 @@ export default class MultiUpload extends PureComponent {
           _.isEmpty(title) ?
             null
             :
-            <h3 className={styles.title}>{title}{required ? '(必填)' : null}</h3>
+            <h3 className={styles.title}>{title}{required ? '(必传)' : null}</h3>
         }
         { fileListElement }
       </div>

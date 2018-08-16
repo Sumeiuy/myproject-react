@@ -3,9 +3,8 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-15 14:02:35
+ * @Last Modified time: 2018-08-16 17:49:35
  */
-
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -95,6 +94,8 @@ export default class PerformerViewDetail extends PureComponent {
     // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    // 刷新左侧任务列表
+    refreshTaskList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -169,11 +170,13 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       currentId,
       getCustDetail,
+      eventId,
     } = this.props;
     getCustDetail({
       missionId: currentId,
       custId,
       missionFlowId,
+      eventId,
       callback,
     });
   }
