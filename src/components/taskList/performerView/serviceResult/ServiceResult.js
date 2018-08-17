@@ -337,7 +337,7 @@ export default class ServiceResult extends PureComponent {
           onPreviewCustDetail={this.handleMissionClick}
           custFeedback={custFeedBack}
         />
-        <div className={styles.custDetailWrap} ref={ref => this.custDetailWrapRef = ref}>
+        <div className={styles.custDetailWrap}>
           <Table
             dataSource={list}
             columns={TABLE_COLUMN}
