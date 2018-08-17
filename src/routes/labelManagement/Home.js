@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-14 16:11:58
+ * @Last Modified time: 2018-08-16 15:12:59
  */
 
 import React, { PureComponent } from 'react';
@@ -689,10 +689,10 @@ export default class CustomerGroupManage extends PureComponent {
             }}
             listData={labelList}
             onPageChange={this.handlePageChange}
-            tableClass={tableStyles.groupTable}
+            tableClass={`${tableStyles.groupTable} ${styles.labelList}`}
             titleColumn={COLUMNS_LABELTABLE}
             actionSource={actionSource}
-            columnWidth={['10%', '18%', '32%', '8%', '12%', '20%']}
+            columnWidth={['10%', '14%', '30%', '8%', '18%', '20%']}
             clickableColumnCallbackList={[this.handleEditLabel]}
             clickableColumnIndexList={[2]}
           />

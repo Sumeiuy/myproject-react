@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-14 10:24:29
+ * @Last Modified time: 2018-08-15 10:22:47
  */
 
 import React, { PureComponent } from 'react';
@@ -78,7 +78,7 @@ export default class FirstContent extends PureComponent {
           isFirstColumnLink
           firstColumnHandler={handleSelectGroup}
           scrollY={411}
-          columnWidth={['26%', '54%', '13%']}
+          columnWidth={['147px', '313px', '78px']}
           isFixedTitle
           emptyListDataNeedEmptyRow
           isNeedRowSelection
