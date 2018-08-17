@@ -82,12 +82,21 @@
 <script type="text/javascript" src="/fsp/static/echarts/build/dist/echarts-all.js"></script>
 <!-- EBLib 基线脚本 -->
 <script type="text/javascript">
+if (location.hostname === 'localhost') {
+  var empId = '002332';
+  var nativeQuery = window.location.search;
+  if(nativeQuery) {
+    var queryList = nativeQuery.slice(1).split('=');
+    if(queryList[0] === 'empId') {
+    empId = queryList[1];
+    }
+  }
+  var ajax = new eb.Ajax({
+    async: false,
+  }).setURL('/fsp/login?iv-user=' + empId).send();
+}
 var contextPath = "/fsp";
-// var curUserCode = "002332";
-// var curOrgCode = "ZZ001041051";
 eb.component.Loading.defaults.speed = 0;
-/*将psotnId和orgId放入全局变量[高优先级]，给React前端切换时调用 */
-// window.forReactPosition={"pstnId":"1-OXZ8","orgId":"ZZ001041051"};
 </script>
 <script type="text/javascript" src="/fsp/static/business/homePage.js"></script>
 <script type="text/javascript" src="/fsp/static/business/home.js"></script>

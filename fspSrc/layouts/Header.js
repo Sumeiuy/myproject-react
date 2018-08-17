@@ -134,13 +134,6 @@ export default class Header extends PureComponent {
         || (!!menu.path));
   }
 
-  @autobind
-  fakeLogin() {
-    if (process.env.NODE_ENV === 'development') {
-      window.open('fsp/login?iv-user=002332#/statisticalQuery/report', '_blank');
-    }
-  }
-
   // 获取联想数据
   @autobind
   queryHotPossibleWds(state) {
@@ -349,7 +342,7 @@ export default class Header extends PureComponent {
             <span>产品代码不能为空</span>
           </div>
         </Modal>
-        <div onClick={this.fakeLogin}><Logo /></div>
+        <div><Logo /></div>
         <div className={styles.search}>
           <Search
             orgId={this.orgId}
