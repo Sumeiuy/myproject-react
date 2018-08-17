@@ -14,7 +14,7 @@ import ServiceResultLayout from '../../common/ServiceResultLayout';
 import Button from '../../../common/Button';
 import { MISSION_PROGRESS_MAP, TABLE_COLUMN, OPEN_IN_TAB_PARAM } from './config';
 import { SOURCE_SERVICE_RESULT_CUST } from '../../../../config/createTaskEntry';
-import { url as urlHelper, emp } from '../../../../helper';
+import { url as urlHelper, emp, permission } from '../../../../helper';
 import { openInTab } from '../../../../utils';
 import logable from '../../../../decorators/logable';
 
@@ -49,6 +49,8 @@ export default class ServiceResult extends PureComponent {
     // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    // 清除创建任务的数据
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -133,10 +135,10 @@ export default class ServiceResult extends PureComponent {
   getExecutorDetail(option) {
     const { queryExecutorDetail, currentId } = this.props;
     const params = {
+      feedbackIdL1: '',
       missionId: currentId,
       missionProgressStatus: '',
       progressFlag: '',
-      feedbackIdL1: '',
       pageNum: 1,
       pageSize: PAGE_SIZE,
       ...option,
@@ -162,6 +164,7 @@ export default class ServiceResult extends PureComponent {
     return (
       <div className={styles.custDetailHeader}>
         <div className={styles.custDetailTitle}>{detailTitle}</div>
+        <input type="checkbox" />
         <Button onClick={this.handleCreateTaskClick}>发起任务</Button>
       </div>
     );
@@ -189,45 +192,55 @@ export default class ServiceResult extends PureComponent {
     // 如果是全选,参数payload中需要增加queryMissionCustsReq对象,为调取客户详情接口数据的参数
     // 如不是全选,则传一个由brokerNum组成的custIdList数组
     if (isSelectAll) {
-      payload.queryMissionCustsReq = encodeURIComponent(JSON.stringify(queryMissionCustsReq));
+      payload.queryMissionCustsReq = queryMissionCustsReq;
     } else {
-      // payload.queryMissionCustsReq = queryMissionCustsReq;
+      payload.queryMissionCustsReq = queryMissionCustsReq;
       payload.custIdList = selectedRowKeys;
     }
-    // 发请求判断是否超过1000条数据和是否包含非本人名下客户
-    isSendCustsServedByPostn({ ...payload }).then(() => {
-      const { sendCustsServedByPostnResult = {} } = this.props;
-      const {
-        custNumsIsExceedUpperLimit = false,
-        sendCustsServedByPostn = false,
-      } = sendCustsServedByPostnResult;
-      // 选择超过1000条数据 或者 没有超过1000条但包含非本人名下客户
-      if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
-        message.warn('您不能对非本人名下客户发起任务');
-        return;
-      }
+    // 是否有HTSC 任务管理岗职责,有的话,直接跳转创建任务页面,没有的话需要判断是否是本人名下的
+    if (permission.hasTkMampPermission()) {
       this.toCreateTaskPage(payload);
-    });
+    } else {
+      // 发请求判断是否超过1000条数据和是否包含非本人名下客户
+      isSendCustsServedByPostn(payload).then(() => {
+        const { sendCustsServedByPostnResult = {} } = this.props;
+        const {
+          custNumsIsExceedUpperLimit = false,
+          sendCustsServedByPostn = false,
+        } = sendCustsServedByPostnResult;
+        // 选择超过1000条数据 或者 没有超过1000条但包含非本人名下客户
+        if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
+          message.warn('您没有“HTSC任务管理”职责，不能对非本人名下客户发起任务');
+          return;
+        }
+        this.toCreateTaskPage(payload);
+      });
+    }
   }
 
   // 跳转到创建任务页面
   @autobind
   toCreateTaskPage(payload) {
     const { isSelectAll } = this.state;
-    const { page = {} } = this.props.custDetail;
+    const { custDetail: { page = {} }, clearCreateTaskData } = this.props;
     const { push } = this.context;
     // config中定义的一些url，id，title等常量
     const { URL, ID, TITLE } = OPEN_IN_TAB_PARAM;
     const { queryMissionCustsReq = {}, custIdList = [] } = payload;
     const param = { source: SOURCE_SERVICE_RESULT_CUST };
+    const stringifyCondition = encodeURIComponent(JSON.stringify(queryMissionCustsReq));
     if (isSelectAll) {
-      param.condition = queryMissionCustsReq;
+      param.condition = stringifyCondition;
       param.count = page.totalCount;
     } else {
       param.ids = custIdList;
+      param.condition = stringifyCondition;
       param.count = _.size(custIdList);
     }
     const newurl = `${URL}?${urlHelper.stringify(param)}`;
+    // 发起新的任务之前，先清除数据
+    // serviceResultCust代表所有从执行者视图服务结果页面发起任务的入口
+    clearCreateTaskData(SOURCE_SERVICE_RESULT_CUST);
     // FSP打开一个新的tab的参数
     const openInTabParam = {
       closable: true,
@@ -248,7 +261,6 @@ export default class ServiceResult extends PureComponent {
   // 全选回调
   @autobind
   handleSelectAllChange() {
-    console.warn('isSelectAll', this.state.isSelectAll);
     this.setState({
       isSelectAll: !this.state.isSelectAll,
     });
@@ -310,7 +322,7 @@ export default class ServiceResult extends PureComponent {
       onChange: this.handleSelectChange,
       hideDefaultSelections: true,
       onSelectAll: this.handleSelectAllChange,
-      // TODO使用该方法会禁用到全选的CheckBox,正在寻找解决方案
+      // // TODO使用该方法会禁用到全选的CheckBox,正在寻找解决方案
       // getCheckboxProps(record) {
       //   // 此属性用来设置 checkbox 的 disabled 属性
       //   return {
@@ -325,7 +337,7 @@ export default class ServiceResult extends PureComponent {
           onPreviewCustDetail={this.handleMissionClick}
           custFeedback={custFeedBack}
         />
-        <div className={styles.custDetailWrap}>
+        <div className={styles.custDetailWrap} ref={ref => this.custDetailWrapRef = ref}>
           <Table
             dataSource={list}
             columns={TABLE_COLUMN}

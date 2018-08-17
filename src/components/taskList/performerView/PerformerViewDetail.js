@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-16 17:49:35
+ * @Last Modified time: 2018-08-17 10:20:00
  */
 
 import React, { PureComponent } from 'react';
@@ -96,6 +96,8 @@ export default class PerformerViewDetail extends PureComponent {
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
     // 刷新左侧任务列表
     refreshTaskList: PropTypes.func.isRequired,
+    // 清除创建任务的数据
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -187,6 +189,7 @@ export default class PerformerViewDetail extends PureComponent {
       customerList,
       isSendCustsServedByPostn,
       sendCustsServedByPostnResult,
+      clearCreateTaskData,
     } = this.props;
 
     const {
@@ -218,6 +221,7 @@ export default class PerformerViewDetail extends PureComponent {
           getPageSize={getPageSize}
           isSendCustsServedByPostn={isSendCustsServedByPostn}
           sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+          clearCreateTaskData={clearCreateTaskData}
         />
       </div>
     );
