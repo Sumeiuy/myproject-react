@@ -62,18 +62,23 @@ export default function createApi() {
      */
     post(url, query = {}, options = {}) {
       let finalUrl = padPrefix(url);
+      let requestHeader = {
+        'Content-Type': 'application/json',
+      };
       const { ignoreCatch = false, ...resetQuery } = query;
       if (!options.noEmpId) {
         finalUrl = `${finalUrl}?empId=${emp.getId()}`;
+        requestHeader = {
+          'Content-Type': 'application/json',
+          empId: emp.getId(),
+        };
       }
+
       return request(
         finalUrl,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            empId: emp.getId(),
-          },
+          headers: requestHeader,
           ignoreCatch,
           body: JSON.stringify({ ...resetQuery, empId: emp.getId() }),
           ...options,
@@ -128,11 +133,18 @@ export default function createApi() {
      */
     postFspData(url, query = {}, options = {}) {
       let fullUrl;
+      let requestHeader = {
+        'Content-Type': 'application/json',
+      };
       const finalUrl = fillPrefix(url);
       if (options.isFullUrl || options.noEmpId) {
         fullUrl = finalUrl;
       } else {
         fullUrl = `${finalUrl}?empId=${emp.getId()}`;
+        requestHeader = {
+          'Content-Type': 'application/json',
+          empId: emp.getId(),
+        };
       }
 
       const { ignoreCatch = false, ...resetQuery } = query;
@@ -140,10 +152,7 @@ export default function createApi() {
         fullUrl,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            empId: emp.getId(),
-          },
+          headers: requestHeader,
           ignoreCatch,
           body: JSON.stringify({ ...resetQuery, empId: emp.getId() }),
           ...options,

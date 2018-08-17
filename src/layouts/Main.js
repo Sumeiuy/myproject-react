@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'dva';
-import { LocaleProvider, Button } from 'antd';
+import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import ErrorBoundary from './ErrorBoundary';
 import Loading from './Loading';
@@ -20,12 +20,10 @@ import IEWarningModal from '../components/common/IEWarningModal';
 import PhoneWrapper from './PhoneWrapper';
 import styles from './main.less';
 import '../css/skin.less';
-import { emp } from '../helper';
 
 const effects = {
   dictionary: 'app/getDictionary',
   customerScope: 'customerPool/getCustomerScope',
-  empInfo: 'app/getEmpInfo',
   addServeRecord: 'customerPool/addCommonServeRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
   // 删除文件
@@ -98,19 +96,6 @@ export default class Main extends Component {
   componentDidMount() {
     this.props.getCustomerScope(); // 加载客户池客户范围
   }
-
-  renderLoginFooter() {
-    if (process.env.NODE_ENV === 'development') {
-      const empId = emp.getId();
-      const loginCallback = () => {
-        window.open(`fsp/login?iv-user=${empId}`, '_blank');
-      };
-      return (<div><Button onClick={loginCallback}>登录</Button></div>);
-    }
-
-    return null;
-  }
-
   render() {
     const {
       children,
@@ -171,7 +156,6 @@ export default class Main extends Component {
                     }
                   </div>
                 </div>
-                {this.renderLoginFooter()}
                 <PhoneWrapper />
               </div>
             </div>
