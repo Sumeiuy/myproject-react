@@ -64,26 +64,25 @@
       overflow-y: hidden;
       // height: e("calc(100vh - 50px)");
       padding-bottom: 0;
-      max-height: 622px;
+      max-height: 630px;
       // 保证弹框垂直居中
       top: 50%;
       // margin-top设置成高度的一半
       // 缺点是要提前知道精准的高度，这个场景可以用，其它场景这种用法可能需要JS控制
       margin-top: -311px;
       min-width: 700px;
-      margin-left: 100px;
-      margin-right: 100px;
-      height: 622px;
+      height: 630px;
     }
     .ant-modal-content {
       height: 100%;
     }
     .ant-modal-body {
-      overflow-y: scroll;
+      overflow-y: hidden;
       // height: e("calc(100vh - 146px)");
       height: 516px;
       max-height: 516px;
-      padding: 10px 30px 0;
+      margin: 10px 28px 0;
+      padding: 0;
     }
     .ant-modal-title {
       font-size: 16px;

@@ -4,33 +4,47 @@
     margin-bottom: 8px;
   }
   .groupListTable {
-    table > thead > tr > th, tbody > tr > td {
+    table {
+      table-layout: fixed;
+      width: 100%;
+    }
+    table > thead > tr > th, table > tbody > tr > td {
       padding: 7px 0 !important;
       :global {
         .ant-radio-wrapper {
           margin-left: 12px;
           margin-right: 15px;
         }
+        .operation {
+          padding-right: 48px;
+          // 解决省略号的颜色问题
+          color: #108ee9;
+          span {
+            padding: 0;
+          }
+        }
+        .column {
+          width: 100%;
+          padding-right: 48px;
+          // 覆盖以前的样式
+          max-width: unset;
+        }
+      }
+      &:last-child {
+        :global {
+          .column {
+            padding-right: 12px;
+          }
+        }
       }
     }
-    tbody > tr > td:nth-child(1), table > thead > tr > th:nth-child(1) {
-      width: 42px;
-      min-width: 42px;
-    }
-    tbody > tr > td:nth-child(2) div {
-      max-width: 147px;
-      padding-right: 48px;
-      color: #108ee9;
-      span {
-        padding: 0;
+    table > tbody > tr, table > thead > tr {
+      :global {
+        .ant-table-selection-column {
+          width: 42px;
+          min-width: 42px;
+        }
       }
-    }
-    tbody > tr > td:nth-child(3) span {
-      max-width: 313px;
-      padding-right: 48px;
-    }
-    tbody > tr > td:nth-child(4) span {
-      max-width: 78px;
     }
   }
 }

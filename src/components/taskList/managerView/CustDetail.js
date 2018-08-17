@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-15 09:46:16
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-17 15:10:05
  * 客户明细数据
  */
 
@@ -11,10 +11,9 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Icon, message } from 'antd';
-import classnames from 'classnames';
 import Table from '../../common/commonTable';
 import { openFspTab } from '../../../utils';
-import { permission } from '../../../helper';
+import { permission, number } from '../../../helper';
 import SingleFilter from '../../customerPool/common/NewSingleFilter';
 import styles from './custDetail.less';
 import tableStyles from '../../common/commonTable/index.less';
@@ -341,9 +340,18 @@ export default class CustDetail extends PureComponent {
       value: '客户名称',
     },
     {
+      key: 'custNumber',
+      value: '经纪客户号',
+    },
+    {
       key: 'levelCode',
       value: '客户等级',
       render: this.renderCustTypeIcon,
+    },
+    {
+      key: 'totAsset',
+      value: '总资产',
+      render: this.renderAsset,
     },
     {
       key: 'orgName',
@@ -352,6 +360,7 @@ export default class CustDetail extends PureComponent {
     {
       key: 'empName',
       value: '服务经理',
+      render: this.renderEmpName,
     },
     {
       key: 'missionStatusValue',
@@ -368,10 +377,10 @@ export default class CustDetail extends PureComponent {
 
     if (isEntryFromPie || isEntryFromCustTotal) {
       // 从饼图点击过来，不展示服务状态字段
-      columns.splice(4, 1);
+      columns.splice(6, 1);
     } else if (isEntryFromResultStatisfy) {
       // 从进度条的结果达标过来的，不展示客户反馈和反馈详情，不展示服务状态
-      columns.splice(4, 3);
+      columns.splice(6, 3);
       columns = _.concat(columns, [{
         key: 'realityValue',
         value: '结果达标值',
@@ -381,7 +390,7 @@ export default class CustDetail extends PureComponent {
       }]);
     } else if (isEntryFromProgressDetail) {
       // 从进度条点击过来，不展示客户反馈和客户反馈详情字段
-      columns.splice(5, 2);
+      columns.splice(7, 2);
     }
 
     return columns;
@@ -436,6 +445,23 @@ export default class CustDetail extends PureComponent {
     return EMPTY_LIST;
   }
 
+  // 总资产格式化渲染 保留两位小数，整数部分千分位显示: 9,999,999.62
+  renderAsset(item) {
+    // 接口返回的类型为数字和null，返回为null时显示 ‘--’
+    if (!_.isNumber(item.totAsset)) {
+      return '--';
+    }
+    const value = item.totAsset.toFixed(2);
+    const asset = number.thousandFormat(value, false, ',', true);
+    return <p className={styles.tableCellParagraph} title={asset}>{asset}</p>;
+  }
+
+  // 服务经理字段渲染：名称(工号)
+  renderEmpName(item) {
+    const value = `${item.empName}(${item.empNum})`;
+    return <p className={styles.tableCellParagraph} title={value}>{value}</p>;
+  }
+
   render() {
     const {
       dataSource,
@@ -458,18 +484,15 @@ export default class CustDetail extends PureComponent {
     const columnSize = _.size(titleColumn);
 
     let columnWidth;
-    if (columnSize === 7) {
+    if (columnSize === 9) {
       // 列全部保留
-      // columnWidth = [150, 100, 250, 100, 100, 150, 150];
-      columnWidth = ['20%', '10%', '20%', '10%', '10%', '15%', '15%'];
-    } else if (columnSize === 6) {
+      columnWidth = [152, 120, 110, 130, 208, 160, 150, 120, 170];
+    } else if (columnSize === 8) {
       // 去除服务状态列
-      // columnWidth = [150, 100, 300, 150, 150, 150];
-      columnWidth = ['20%', '10%', '25%', '15%', '15%', '15%'];
-    } else if (columnSize === 5) {
+      columnWidth = [152, 120, 110, 130, 208, 160, 120, 170];
+    } else if (columnSize === 7) {
       // 去除客户反馈和反馈详情列
-      // columnWidth = [200, 150, 350, 150, 150];
-      columnWidth = ['20%', '15%', '31%', '17%', '17%'];
+      columnWidth = [152, 120, 110, 130, 208, 160, 150];
     }
 
     return (
@@ -524,24 +547,17 @@ export default class CustDetail extends PureComponent {
               listData={dataSource}
               onSizeChange={this.handleShowSizeChange}
               onPageChange={this.handlePageChange}
-              tableClass={
-                classnames({
-                  [styles.custDetailTable]: true,
-                  [tableStyles.groupTable]: true,
-                })
-              }
+              tableClass={`${styles.custDetailTable} ${tableStyles.groupTable}`}
               columnWidth={columnWidth}
               titleColumn={titleColumn}
               isFirstColumnLink
               firstColumnHandler={this.handleCustNameClick}
-              operationColumnClass={
-                classnames({
-                  [styles.custNameLink]: true,
-                })
-              }
+              operationColumnClass={styles.custNameLink}
               // 分页器样式
               paginationClass={'selfPagination'}
               needPagination={totalCount > INITIAL_TOTAL_COUNT}
+              scrollX={1030}
+              isFixedColumn
             /> :
             <div className={styles.emptyContent}>
               <span>

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 19:36:41
+ * @Last Modified time: 2018-08-15 18:20:17
  */
 
 import React, { PureComponent } from 'react';
@@ -211,11 +211,11 @@ export default class CommonTable extends PureComponent {
     if (!_.isEmpty(record.flag)) {
       return '';
     }
-    if ((!_.isInteger(record[item.key]) && _.isEmpty(record[item.key]))) {
-      return '--';
-    }
     if (item.render) {
       return item.render(record, item.key);
+    }
+    if ((!_.isInteger(record[item.key]) && _.isEmpty(record[item.key]))) {
+      return '--';
     }
     return record[item.key];
   }
