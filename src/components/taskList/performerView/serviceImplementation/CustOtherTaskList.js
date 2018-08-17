@@ -3,9 +3,8 @@
  * @Description: 客户名下其他代办任务
  * @Date: 2018-08-15 14:11:02
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-15 17:18:30
+ * @Last Modified time: 2018-08-17 09:36:45
  */
-
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -19,7 +18,7 @@ import {
   titleList,
 } from './config';
 
-
+const EMPTY_OBJECT = {};
 // 展开收起按钮的样式
 const buttonStyle = {
   bottom: '5px',
@@ -83,7 +82,7 @@ export default class CustOtherTaskList extends PureComponent {
             minHeight="0px"
             buttonStyle={buttonStyle}
             buttonId={foldButtonId}
-            key={otherTaskList[0].flowId}
+            key={(otherTaskList[0] || EMPTY_OBJECT).flowId}
           >
             <div className={styles.content}>
               <CommonTable
