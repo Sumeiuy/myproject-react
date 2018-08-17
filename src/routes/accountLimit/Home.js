@@ -48,7 +48,7 @@ const createModalKey = 'createModal';
 
 const effects = {
   // 获取左侧列表
-  getList: 'app/getSeibleList',
+  getList: 'app/getNewSeibleList',
   // 获取详情
   queryDetailInfo: 'accountLimit/queryDetailInfo',
   // 获取下一步按钮以及审批人
@@ -57,6 +57,8 @@ const effects = {
   queryCustList: 'accountLimit/queryCustList',
   // 查询限制类型
   queryLimtList: 'accountLimit/queryLimtList',
+  // 校验数据
+  validateForm: 'accountLimit/validateForm',
   // 提交客户分配
   saveChange: 'accountLimit/saveChange',
   // 清除数据
@@ -71,7 +73,7 @@ const mapStateToProps = state => ({
   // 组织机构树
   custRangeList: state.customerPool.custRange,
   // 左侧列表数据
-  list: state.app.seibleList,
+  list: state.app.newSeibleList,
   // 右侧详情数据
   detailInfo: state.accountLimit.detailInfo,
   // 获取按钮列表和下一步审批人
@@ -87,17 +89,19 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   // 获取左侧列表
-  getList: dispatch(effects.getList, { loading: true, forceFull: true }),
+  getList: dispatch(effects.getList, { forceFull: true }),
   // 获取详情
-  queryDetailInfo: dispatch(effects.queryDetailInfo, { loading: true, forceFull: true }),
+  queryDetailInfo: dispatch(effects.queryDetailInfo, { forceFull: true }),
   // 获取按钮列表和下一步审批人
-  queryButtonList: dispatch(effects.queryButtonList, { loading: true, forceFull: true }),
+  queryButtonList: dispatch(effects.queryButtonList, { forceFull: true }),
   // 查询客户列表
-  queryCustList: dispatch(effects.queryCustList, { loading: true, forceFull: true }),
+  queryCustList: dispatch(effects.queryCustList, { forceFull: true }),
   // 查询限制类型列表
-  queryLimtList: dispatch(effects.queryLimtList, { loading: true, forceFull: true }),
+  queryLimtList: dispatch(effects.queryLimtList, { forceFull: true }),
+  // 校验数据
+  validateForm: dispatch(effects.validateForm, { forceFull: true }),
   // 提交客户分配
-  saveChange: dispatch(effects.saveChange, { loading: true, forceFull: true }),
+  saveChange: dispatch(effects.saveChange, { forceFull: true }),
   // 清除搜索数据
   clearData: dispatch(effects.clearData, { loading: false }),
 };
@@ -129,6 +133,8 @@ export default class AccountLimitHome extends PureComponent {
     // 查询限制类型列表
     limitList: PropTypes.array.isRequired,
     queryLimtList: PropTypes.func.isRequired,
+    // 校验数据
+    validateForm: PropTypes.func.isRequired,
     // 提交数据
     saveChange: PropTypes.func.isRequired,
     // 清除数据
@@ -156,6 +162,18 @@ export default class AccountLimitHome extends PureComponent {
       },
     } = this.props;
     this.queryAppList(query, pageNum, pageSize);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const { location: { query } } = this.props;
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
+    }
   }
 
   // 获取右侧详情
@@ -231,17 +249,30 @@ export default class AccountLimitHome extends PureComponent {
     this.queryAppList({ ...query, ...restObj, id: '', appId: '', business2: '', subType: business2 }, 1, query.pageSize);
   }
 
+
+  // 判断当前登录用户部门是否是营业部
+  @autobind
+  checkUserIsDepartment() {
+    const { custRangeList } = this.props;
+    let isDepartment = true;
+    if (!_.isEmpty(custRangeList)) {
+      if (!emp.isDepartment(custRangeList, emp.getOrgId())) {
+        isDepartment = false;
+      }
+    }
+    return isDepartment;
+  }
+
   // 判断当前登录权限
   @autobind
   showCreateBtn() {
     const { custRangeList } = this.props;
     let show = true;
-    if (!_.isEmpty(custRangeList)) {
-      // HTSC 综合服务-营业部执行岗、HTSC 限制性账户审批岗
-      show = permission.hasZHFWYYBZXGPermission() && permission.hasXZXZHSPGPermission();
+    // custRangeList 不为空并且在 fsp 环境下时
+    if (!_.isEmpty(custRangeList) && env.isInFsp()) {
+      // HTSC 综合服务-营业部执行岗、当前切换的职位对应的部门为营业部层级
+      show = permission.hasZHFWYYBZXGPermission() && this.checkUserIsDepartment();
     }
-    // 本地显示新建按钮， FSP 环境下不显示
-    show = !env.isInFsp();
     return show;
   }
 
@@ -388,6 +419,7 @@ export default class AccountLimitHome extends PureComponent {
       // 限制类型
       limitList,
       queryLimtList,
+      validateForm,
       // 提交走流程
       saveChange,
       clearData,
@@ -422,6 +454,7 @@ export default class AccountLimitHome extends PureComponent {
         basicFilters={basicFilters}
         moreFilters={moreFilters}
         moreFilterData={moreFilterData}
+        isUseNewCustList
       />
     );
 
@@ -480,6 +513,7 @@ export default class AccountLimitHome extends PureComponent {
             queryButtonList={queryButtonList}
             queryAppList={this.queryAppList}
             closeModal={this.closeModal}
+            validateForm={validateForm}
             saveChange={saveChange}
             clearData={clearData}
           />

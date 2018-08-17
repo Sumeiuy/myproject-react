@@ -2,8 +2,8 @@
  * @Description: 页签切换显示
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:53:21
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-25 15:30:47
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-08-15 13:59:53
  */
 
 import React from 'react';
@@ -39,6 +39,9 @@ const TabsArea = (props) => {
     saveAnswersByType,
     basicInfo,
     basicInfo: { missionStatusCode },
+    isShowExecutorDetailLoading,
+    isSendCustsServedByPostn,
+    sendCustsServedByPostnResult,
   } = props;
   return (
     <div className={styles.tabsContainer} >
@@ -58,6 +61,9 @@ const TabsArea = (props) => {
             queryExecutorFeedBack={queryExecutorFeedBack}
             queryExecutorFlowStatus={queryExecutorFlowStatus}
             queryExecutorDetail={queryExecutorDetail}
+            isShowExecutorDetailLoading={isShowExecutorDetailLoading}
+            isSendCustsServedByPostn={isSendCustsServedByPostn}
+            sendCustsServedByPostnResult={sendCustsServedByPostnResult}
           />
         </TabPane>
         {hasSurvey ?
@@ -95,12 +101,16 @@ TabsArea.propTypes = {
   queryExecutorFeedBack: PropTypes.func.isRequired,
   queryExecutorFlowStatus: PropTypes.func.isRequired,
   queryExecutorDetail: PropTypes.func.isRequired,
+  isShowExecutorDetailLoading: PropTypes.bool.isRequired,
   currentId: PropTypes.string.isRequired,
   answersList: PropTypes.object,
   getTempQuesAndAnswer: PropTypes.func.isRequired,
   isSubmitSurveySucceed: PropTypes.bool,
   saveAnswersByType: PropTypes.func.isRequired,
   basicInfo: PropTypes.object.isRequired,
+  // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
+  isSendCustsServedByPostn: PropTypes.func.isRequired,
+  sendCustsServedByPostnResult: PropTypes.object.isRequired,
 };
 
 TabsArea.defaultProps = {

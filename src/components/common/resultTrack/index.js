@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-16 14:25:18
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-13 10:25:02
  * 结果跟踪
  */
 
@@ -658,28 +658,29 @@ export default class ResultTrack extends PureComponent {
   @autobind
   handleInputChange(value) {
     const { currentMin = 0, currentMax = 0 } = this.state;
-    if (_.isUndefined(value)) {
-      return;
-    }
-    if (!_.isEmpty(currentMax) && !_.isEmpty(currentMin)) {
+    let tempValue = value;
+    let isShowInputValueError = false;
+    if (_.isUndefined(value) || value === '') {
+      this.showInputValueError('不能为空');
+      tempValue = '';
+      isShowInputValueError = true;
+    } else if (!_.isNumber(value)) {
+      this.showInputValueError('只能输入数字');
+      isShowInputValueError = true;
+    } else if (!_.isEmpty(currentMax) && !_.isEmpty(currentMin)) {
       if (Number(value) < Number(currentMin)) {
         this.showInputValueError('不能小于指标最小值');
-        return;
+        isShowInputValueError = true;
       }
 
       if (Number(value) > Number(currentMax)) {
         this.showInputValueError('不能大于指标最大值');
-        return;
+        isShowInputValueError = true;
       }
     }
-    if (!_.isNumber(value)) {
-      this.showInputValueError('只能输入数字');
-      return;
-    }
-
     this.setState({
-      inputValue: value || '',
-      isShowInputValueError: false,
+      inputValue: tempValue || '',
+      isShowInputValueError,
     });
   }
 

@@ -4,11 +4,12 @@
  * @author xiaZhiQiang
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 15:20:36
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-08-15 09:20:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { Tooltip } from 'antd';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { autobind } from 'core-decorators';
@@ -462,7 +463,7 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
-  // 匹配标签
+  // 匹配标签(因为需求要求在每个标签上用Tooltip加一个标签描述，所以改写部分代码)
   renderRelatedLabels(matchLabels) {
     const {
       listItem,
@@ -480,21 +481,33 @@ export default class MatchArea extends PureComponent {
         relatedLabels = matchLabels;
       }
       if (!_.isEmpty(relatedLabels)) {
-        const markedEle = relatedLabels.map((item) => {
+        const markedEle = relatedLabels.map((item, index, arr) => {
+          // 处理后端返回null的情况
+          const description = item.description || '暂无标签描述';
+          // 热词改变颜色
+          let replaceWordLables = `${replaceWord({ value: item.name, searchText })}-${searchText}`;
           // 防止热点标签展示重复，这里从query上取source
           if (!isSightingScope(item.source)) {
-            return replaceWord({ value: item.name, searchText });
+            replaceWordLables = replaceWord({ value: item.name, searchText });
           }
-          return `${replaceWord({ value: item.name, searchText })}-${searchText}`;
+          // 在标签后面增加",",最后一个不加
+          if (index !== arr.length - 1) {
+            replaceWordLables = `${replaceWordLables},`;
+          }
+          return (
+            <Tooltip
+              overlayClassName={styles.labelsToolTip}
+              placement="bottomLeft"
+              title={description}
+            >
+              <i dangerouslySetInnerHTML={{ __html: replaceWordLables }} />
+            </Tooltip>
+          );
         });
         return (
           <li key={markedEle}>
-            <span>
-              <i className="label">匹配标签：</i>
-              <i
-                dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
-              />
-            </span>
+            <i className="label">匹配标签：</i>
+            {markedEle}
           </li>
         );
       }

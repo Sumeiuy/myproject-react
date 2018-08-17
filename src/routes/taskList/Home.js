@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 22:14:17
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-08-16 17:48:41
  * @description 任务管理首页
  */
 
@@ -27,8 +27,6 @@ import logable, { logCommon } from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
 
-import styles from './home.less';
-
 import {
   EXECUTOR,
   INITIATOR,
@@ -44,8 +42,8 @@ import {
   DEFAULTSORT_VIEW,
 } from './config';
 
-// 空函数
-const NOOP = _.noop;
+import styles from './home.less';
+
 // 执行者视图的左侧列表宽度
 const LEFT_PANEL_WIDTH = 400;
 // 视图配置项
@@ -207,7 +205,7 @@ export default class PerformerView extends PureComponent {
 
   // 执行者视图获取目标客户列表项的对应浮层详情
   @autobind
-  getCustDetail({ missionId = '', custId = '', missionFlowId = '', callback = NOOP }) {
+  getCustDetail({ eventId, missionId = '', custId = '', missionFlowId = '', callback = _.noop }) {
     const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;
     const { list = EMPTY_LIST } = targetCustList;
     if (_.isEmpty(list)) {
@@ -218,6 +216,7 @@ export default class PerformerView extends PureComponent {
       missionId,
       custId: custId || firstItem.custId,
       missionFlowId: missionFlowId || firstItem.missionFlowId,
+      eventId: eventId || firstItem.eventId,
     }).then(callback);
   }
 
@@ -512,7 +511,10 @@ export default class PerformerView extends PureComponent {
       queryExecutorFlowStatus,
       queryExecutorFeedBack,
       queryExecutorDetail,
+      isShowExecutorDetailLoading,
       queryTargetCustDetail,
+      isSendCustsServedByPostn,
+      sendCustsServedByPostnResult,
     } = this.props;
     const {
       typeCode,
@@ -581,9 +583,13 @@ export default class PerformerView extends PureComponent {
         queryExecutorFlowStatus={queryExecutorFlowStatus}
         queryExecutorFeedBack={queryExecutorFeedBack}
         queryExecutorDetail={queryExecutorDetail}
+        isShowExecutorDetailLoading={isShowExecutorDetailLoading}
         queryTargetCustDetail={queryTargetCustDetail}
         location={location}
         currentTask={currentTask}
+        isSendCustsServedByPostn={isSendCustsServedByPostn}
+        sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+        refreshTaskList={this.queryAppList}
       />
     );
   }
@@ -611,12 +617,6 @@ export default class PerformerView extends PureComponent {
     }
 
     return detailComponent;
-  }
-
-  // 帕努单任务是否在执行中，用于管理者视图
-  @autobind
-  judgeTaskInApproval(status) {
-    return _.includes(STATUS_MANAGER_VIEW, status);
   }
 
   // 导出客户
@@ -714,6 +714,12 @@ export default class PerformerView extends PureComponent {
     return finalPostData;
   }
 
+  // 帕努单任务是否在执行中，用于管理者视图
+  @autobind
+  judgeTaskInApproval(status) {
+    return _.includes(STATUS_MANAGER_VIEW, status);
+  }
+
   // 加载右侧panel中的详情内容
   @autobind
   loadDetailContent(obj) {
@@ -732,7 +738,7 @@ export default class PerformerView extends PureComponent {
   @autobind
   queryDataForZhanleServiceWay() {
     const { eventId, taskTypeCode, typeCode } = this.state;
-    const type = `${+taskTypeCode + 1}`;
+    const type = `${parseInt(taskTypeCode, 10) + 1}`;
     // TODO 如果是mot任务 eventId参数需要使用 eventId
     // 如果是自建任务 需要使用serviceType
     // type 值为2的时候，该任务是自建任务

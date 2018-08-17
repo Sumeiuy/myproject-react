@@ -36,7 +36,6 @@ import api from '../../src/api';
 const effects = {
   dictionary: 'app/getDictionary',
   customerScope: 'customerPool/getCustomerScope',
-  empInfo: 'app/getEmpInfo',
   addServeRecord: 'customerPool/addCommonServeRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
   // 删除文件
@@ -77,7 +76,6 @@ const mapDispatchToProps = {
   addServeRecord: fectchDataFunction(true, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
-  getMenus: fectchDataFunction(true, effects.getMenus),
   toggleServiceRecordModal: query => ({
     type: 'app/toggleServiceRecordModal',
     payload: query || false,
@@ -108,7 +106,6 @@ export default class Main extends PureComponent {
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     serviceRecordInfo: PropTypes.object.isRequired,
-    getMenus: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -116,9 +113,7 @@ export default class Main extends PureComponent {
   }
 
   componentDidMount() {
-    const { getCustomerScope, getMenus } = this.props;
-    getCustomerScope(); // 加载客户池客户范围
-    getMenus();
+    this.props.getCustomerScope(); // 加载客户池客户范围
   }
 
   @autobind

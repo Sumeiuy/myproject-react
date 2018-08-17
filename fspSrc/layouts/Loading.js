@@ -34,7 +34,7 @@ function Loading({ loading, forceFull }) {
 }
 
 Loading.propTypes = {
-  loading: PropTypes.oneOfType(PropTypes.number, PropTypes.bool).isRequired,
+  loading: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]).isRequired,
   forceFull: PropTypes.bool,
 };
 

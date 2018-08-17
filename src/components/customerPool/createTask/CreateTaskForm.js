@@ -31,6 +31,7 @@ import {
   TASK_CUST_SCOPE_ENTRY,
   SOURCE_CUSTLIST,
   SOURCE_LABELMANAGEMENT,
+  SOURCE_SERVICE_RESULT_CUST,
 } from '../../../config/createTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
@@ -286,6 +287,10 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType = '请选择';
         defaultExecutionType = '请选择';
         defaultMissionDesc = this.getLabelManagementMissionDesc();
+        break;
+      case SOURCE_SERVICE_RESULT_CUST:
+        defaultMissionType = missionType || '请选择';
+        defaultExecutionType = '请选择';
         break;
       default:
         defaultMissionType = '请选择';

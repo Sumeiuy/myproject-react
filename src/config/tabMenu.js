@@ -74,7 +74,7 @@ const newOpenTabConfig = [
   },
   {
     name: '投顾签约向导',
-    id: 'FSP_CUST_M_CONTRACTWIZARD',
+    id: 'utb-stockcontract-wizard',
     path: '/fsp/contractWizard',
     pid: 'FSP_CUST_M_360',
   },
@@ -85,20 +85,20 @@ const newOpenTabConfig = [
     pid: 'FSP_CUST_M_360',
   },
   {
-    name: '投顾签约计划变更向导',
+    name: '投顾签约变更向导',
     id: 'FSP_CUST_M_360OPERATETYPE',
     path: '/fsp/customerCenter/360OperateType',
     pid: 'FSP_CUST_M_360',
   },
   {
     name: '投顾签约计划变更向导',
-    id: 'FSP_CUST_M_360_WIZARD',
+    id: 'utb-stockcontractupd-wizard',
     path: '/fsp/customerCenter/360Wizard',
     pid: 'FSP_CUST_M_360',
   },
   {
     name: '佣金调整向导',
-    id: 'FSP_CUST_M_SERVICEORDERINGWIZARD',
+    id: 'utb-serviceOrdering-wizard',
     path: '/fsp/serviceOrderingWizard',
     pid: 'FSP_CUST_M_360',
   },
@@ -123,20 +123,20 @@ const newOpenTabConfig = [
   {
     name: '工单投诉信息',
     id: 'FSP_COMPLAINT_INFO',
-    path: '/fsp/serviceCenter/complaintInfo',
-    pid: 'FSP_SERVICE_CENTER',
+    path: '/fsp/custcomplaint/complaintInfo',
+    pid: '',
+  },
+  {
+    name: '新增投诉工单',
+    id: 'FSP_ST_TAB_CUSTCOMP_ADD',
+    path: '/fsp/custcomplaint/toAddPageInfo',
+    pid: '',
   },
   {
     name: '资产配置明细',
     id: 'FSP_IMPLEMENTATION_INITSEE',
     path: '/fsp/implementation/initsee',
-    pid: 'FSP_SERVICE_CENTER',
-  },
-  {
-    name: '资产配置向导',
-    id: 'FSP_IMPLEMENTATION_WIZARD',
-    path: '/fsp/implementation/wizard',
-    pid: 'FSP_SERVICE_CENTER',
+    pid: 'asset_implementation_tab',
   },
   {
     name: '个股详情',
@@ -313,22 +313,10 @@ const newOpenTabConfig = [
     pid: 'FSP_INVESTMENT_CONSULTANTRACE',
   },
   {
-    name: '客户关联关系',
-    id: 'FSP_CUSTRELATIONSHIPS',
-    path: '/custRelationships',
-    pid: 'FSP_CUSTRELATIONSHIPS',
-  },
-  {
     name: '客户分配',
     id: 'FSP_CUSTALLOT',
     path: '/custAllot',
     pid: 'FSP_CUSTALLOT',
-  },
-  {
-    name: '重点监控账户',
-    id: 'FSP_KEYMONITOR_ACCOUNT',
-    path: '/keyMonitorAccount',
-    pid: 'FSP_KEYMONITOR_ACCOUNT',
   },
   {
     name: '最新观点',
@@ -349,26 +337,20 @@ const newOpenTabConfig = [
     pid: 'FSP_INDUSTRY_THEMELIST',
   },
   {
-    name: '股票期权评估申请',
-    id: 'FSP_STOCKOPTION_EVALUATION',
-    path: '/stockOptionEvaluation',
-    pid: 'FSP_STOCKOPTION_EVALUATION',
-  },
-  {
     name: '超额快取信息',
-    id: 'FSP_BIZAPPLY_EXCESSCACHE_VIEW',
+    id: 'FSP_BIZAPPLY_EXCESSCACHE_EDIT',
     path: '/fsp/bizapply/excesscacheView',
     pid: '',
   },
   {
     name: '预约取款申请',
-    id: 'FSP_BIZAPPLY_QUERYAPPOINTDRAW',
+    id: 'appoint_queryAppointDraw_tab',
     path: '/fsp/bizapply/queryAppointDraw',
     pid: '',
   },
   {
     name: '新增股票期权评估申请',
-    id: 'FSP_BIZAPPLY_TOADDPAGEINFO',
+    id: 'FSP_ST_TAB_APY_STOCKINVEST_ADD',
     path: '/fsp/stockinvest/toAddPageInfo',
     pid: '',
   },
@@ -380,7 +362,7 @@ const newOpenTabConfig = [
   },
   {
     name: '期权佣金申请明细',
-    id: 'FSP_OPTIONFOUND_SHOWAPPLYINFOTAB',
+    id: 'optionfund_applyInfo_tab',
     path: '/fsp/optionfund/showApplyInfoTab',
     pid: '',
   },
@@ -392,7 +374,7 @@ const newOpenTabConfig = [
   },
   {
     name: '双录视频向导',
-    id: 'FSP_DBVFSH_WIZARD',
+    id: 'utb-dbvfsh-wizard',
     path: '/fsp/dbvfsh/wizard',
     pid: '',
   },
@@ -404,7 +386,7 @@ const newOpenTabConfig = [
   },
   {
     name: '私募产品信息编辑',
-    id: 'FSP_PRIPROD_SHOWPRIPRODTASK_MANAGE',
+    id: 'add_btn_priprod',
     path: '/fsp/priProd/showPriProdTaskManage',
     pid: '',
   },
@@ -416,8 +398,14 @@ const newOpenTabConfig = [
   },
   {
     name: 'PB业务申请编辑',
-    id: 'FSP_PBBIZ_EDIT',
+    id: 'FSP_PB_BIZ_MANAGE_EDIT',
     path: '/fsp/pbbiz/edit',
+    pid: '',
+  },
+  {
+    name: '产品适当性售前查询',
+    id: 'FSP_PRE_SALEQUERY',
+    path: '/preSaleQuery',
     pid: '',
   },
 ];
