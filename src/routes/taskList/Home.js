@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-16 10:05:37
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-08-16 17:48:41
  * @description 任务管理首页
  */
 
@@ -513,6 +513,8 @@ export default class PerformerView extends PureComponent {
       queryExecutorDetail,
       isShowExecutorDetailLoading,
       queryTargetCustDetail,
+      isSendCustsServedByPostn,
+      sendCustsServedByPostnResult,
     } = this.props;
     const {
       typeCode,
@@ -585,6 +587,8 @@ export default class PerformerView extends PureComponent {
         queryTargetCustDetail={queryTargetCustDetail}
         location={location}
         currentTask={currentTask}
+        isSendCustsServedByPostn={isSendCustsServedByPostn}
+        sendCustsServedByPostnResult={sendCustsServedByPostnResult}
         refreshTaskList={this.queryAppList}
       />
     );

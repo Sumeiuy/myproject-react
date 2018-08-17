@@ -19,6 +19,7 @@ export default {
     addedCustData: EMPTY_ARRAY,  // 已添加的客户列表
     limitList: EMPTY_ARRAY,
     notifiesData: EMPTY_OBJECT,  // 消息提醒页面数据
+    validateData: EMPTY_OBJECT,  // 校验数据接口返回值
   },
   reducers: {
     // 详情
@@ -67,6 +68,14 @@ export default {
       return {
         ...state,
         notifiesData: resultData,
+      };
+    },
+    // 消息提醒页面数据
+    validateFormSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        validateData: resultData,
       };
     },
     // 清除数据成功
@@ -131,6 +140,14 @@ export default {
       const response = yield call(api.queryButtonList, payload);
       yield put({
         type: 'queryButtonListSuccess',
+        payload: response,
+      });
+    },
+    // 校验数据
+    * validateForm({ payload }, { call, put }) {
+      const response = yield call(api.validateForm, payload);
+      yield put({
+        type: 'validateFormSuccess',
         payload: response,
       });
     },

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 10:21:18
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-14 10:23:54
+ * @Last Modified time: 2018-08-15 13:52:16
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapDispatchToProps移至此处成立独立模块
  */
 import effects from './effects';
@@ -96,4 +96,6 @@ export default ({ routerRedux, effect }) => ({
   // 服务经理维度客户明细去重
   queryDistinctCustListDetailOfMission: effect(effects.queryDistinctCustListDetailOfMission,
     { loading: false }),
+  // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
+  isSendCustsServedByPostn: effect(effects.isSendCustsServedByPostn),
 });
