@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-17 15:10:05
+ * @Last Modified time: 2018-08-17 17:11:25
  * 客户明细数据
  */
 
@@ -377,10 +377,11 @@ export default class CustDetail extends PureComponent {
 
     if (isEntryFromPie || isEntryFromCustTotal) {
       // 从饼图点击过来，不展示服务状态字段
-      columns.splice(6, 1);
+      columns = _.filter(columns, item => item.key !== 'missionStatusValue');
     } else if (isEntryFromResultStatisfy) {
-      // 从进度条的结果达标过来的，不展示客户反馈和反馈详情，不展示服务状态
-      columns.splice(6, 3);
+      // 从进度条的结果达标过来的，不展示客户反馈和反馈详情，不展示服务状态，增加 结果达标值 结果达标日期 字段显示
+      const tempList = ['missionStatusValue', 'custFeedBack1', 'custFeedBack2'];
+      columns = _.filter(columns, item => !_.includes(tempList, item.key));
       columns = _.concat(columns, [{
         key: 'realityValue',
         value: '结果达标值',
@@ -390,7 +391,8 @@ export default class CustDetail extends PureComponent {
       }]);
     } else if (isEntryFromProgressDetail) {
       // 从进度条点击过来，不展示客户反馈和客户反馈详情字段
-      columns.splice(7, 2);
+      const tempList = ['custFeedBack1', 'custFeedBack2'];
+      columns = _.filter(columns, item => !_.includes(tempList, item.key));
     }
 
     return columns;
@@ -476,22 +478,20 @@ export default class CustDetail extends PureComponent {
       isEntryFromPie,
       isEntryFromCustTotal,
       isShowFeedbackFilter,
+      isEntryFromResultStatisfy,
+      isEntryFromProgressDetail,
     } = this.props;
     const { totalCount, pageNum } = page;
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
 
-    const columnSize = _.size(titleColumn);
-
-    let columnWidth;
-    if (columnSize === 9) {
-      // 列全部保留
-      columnWidth = [152, 120, 110, 130, 208, 160, 150, 120, 170];
-    } else if (columnSize === 8) {
-      // 去除服务状态列
+    // 默认全部显示
+    let columnWidth = [152, 120, 110, 130, 208, 160, 150, 120, 170];
+    if (isEntryFromPie || isEntryFromCustTotal || isEntryFromResultStatisfy) {
+      // 从饼图、客户总数、结果跟踪点击过来，展示8个字段
       columnWidth = [152, 120, 110, 130, 208, 160, 120, 170];
-    } else if (columnSize === 7) {
-      // 去除客户反馈和反馈详情列
+    } else if (isEntryFromProgressDetail) {
+      // 从进度条点击过来，显示7个字段
       columnWidth = [152, 120, 110, 130, 208, 160, 150];
     }
 
