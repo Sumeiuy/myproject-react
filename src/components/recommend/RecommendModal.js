@@ -19,7 +19,7 @@ export default class recommendModal extends PureComponent {
     super(props);
     this.state = {
       modalVisible: true,
-    }
+    };
   }
 
   @autobind
