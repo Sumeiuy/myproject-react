@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-17 17:11:25
+ * @Last Modified time: 2018-08-17 17:36:28
  * 客户明细数据
  */
 
@@ -554,7 +554,7 @@ export default class CustDetail extends PureComponent {
               firstColumnHandler={this.handleCustNameClick}
               operationColumnClass={styles.custNameLink}
               // 分页器样式
-              paginationClass={'selfPagination'}
+              paginationClass="selfPagination"
               needPagination={totalCount > INITIAL_TOTAL_COUNT}
               scrollX={1030}
               isFixedColumn
