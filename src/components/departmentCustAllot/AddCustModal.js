@@ -10,7 +10,7 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import { SingleFilter, MultiFilter, RangeFilter, Popover } from 'lego-react-filter/src';
+import { SingleFilter, MultiFilter, RangeFilter } from 'lego-react-filter/src';
 import _ from 'lodash';
 import { message } from 'antd';
 
@@ -90,6 +90,7 @@ export default class AddCustModal extends PureComponent {
       dmKeyword: '',
       // 选中的客户
       selectedRows: [],
+      popoverDisplay: 'none',
     };
   }
 
@@ -102,28 +103,14 @@ export default class AddCustModal extends PureComponent {
     this.checkBoxDOM = ReactDOM.findDOMNode(document.querySelectorAll('.ant-table-selection')[0]);  // eslint-disable-line
 
     if (this.checkBoxDOM) {
-      this.checkBoxDOM = (<Popover content={'1234567'} title="Title">
-        {this.checkBoxDOM}
-      </Popover>);
-      console.warn('this.checkBoxDOM', this.checkBoxDOM);
-      // this.checkBoxDOM.addEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
-      // this.checkBoxDOM.addEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
+      this.checkBoxDOM.addEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
+      this.checkBoxDOM.addEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
     }
   }
 
   componentWillUnmount() {
-    // this.checkBoxDOM.removeEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
-    // this.checkBoxDOM.removeEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
-  }
-
-  @autobind
-  handleCheckBoxMouseEnter() {
-    console.warn('鼠标进入');
-  }
-
-  @autobind
-  handleCheckBoxMouseLeave() {
-    console.warn('鼠标移除');
+    this.checkBoxDOM.removeEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
+    this.checkBoxDOM.removeEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
   }
 
   // 生成客户头部列表
@@ -149,6 +136,20 @@ export default class AddCustModal extends PureComponent {
       </div>);
     };
     return newTitleList;
+  }
+
+  @autobind
+  handleCheckBoxMouseEnter() {
+    this.setState({
+      popoverDisplay: 'block',
+    });
+  }
+
+  @autobind
+  handleCheckBoxMouseLeave() {
+    this.setState({
+      popoverDisplay: 'none',
+    });
   }
 
   // 选择客户
@@ -363,6 +364,7 @@ export default class AddCustModal extends PureComponent {
       smKeyword,
       dmKeyword,
       selectedRows,
+      popoverDisplay,
     } = this.state;
 
     // 总条数
@@ -386,6 +388,7 @@ export default class AddCustModal extends PureComponent {
       pageSize,
       onChange: this.handlePageChange,
       isHideLastButton: true,
+      selectedNumber: selectedRows.length,
     };
 
     // 关闭弹窗
@@ -396,9 +399,6 @@ export default class AddCustModal extends PureComponent {
     };
     const rowSelection = {
       selectedRowKeys: _.map(selectedRows, 'custId'),
-      selections: {
-        text: '123456',
-      },
       hideDefaultSelections: true,
       columnWidth: 40,
       onSelect: this.handleSelectChange,
@@ -504,6 +504,10 @@ export default class AddCustModal extends PureComponent {
               }
             </div>
             <div className={styles.tableDiv}>
+              <div className={styles.divPopover} style={{ display: popoverDisplay }}>
+                <div className={styles.arrow} />
+                勾选仅为当前页，请翻页再次勾选
+              </div>
               <CommonTable
                 data={list}
                 titleList={newTitleList}

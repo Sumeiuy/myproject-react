@@ -99,6 +99,8 @@ export default class PaginationComponent extends Component {
     wrapClassName: PropTypes.string,
     // 给pagination组件的key,继承antd的pagination
     paginationKey: PropTypes.string,
+    // 已选中的条数
+    selectedNumber: PropTypes.number,
   };
   static defaultProps = {
     current: 1,
@@ -112,6 +114,7 @@ export default class PaginationComponent extends Component {
     useClearStyle: false,
     wrapClassName: '',
     paginationKey: '',
+    selectedNumber: 0,
   };
 
   constructor(props) {
@@ -149,7 +152,10 @@ export default class PaginationComponent extends Component {
   // 之所以这里声明这个，是因为部分页面对该组件的使用不恰当，导致组件过多渲染，
   // 分页切换时，出现卡顿，样式不同步问题，使用该函数修正此类问题
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextState.current !== this.state.current || nextProps.total !== this.props.total) {
+    if (nextState.current !== this.state.current
+    || nextProps.total !== this.props.total
+    || nextProps.selectedNumber !== this.props.selectedNumber
+    ) {
       return true;
     }
     return false;
@@ -210,6 +216,7 @@ export default class PaginationComponent extends Component {
       useClearStyle,
       wrapClassName,
       paginationKey,
+      selectedNumber,
     } = this.props;
     const { current } = this.state;
 
@@ -235,6 +242,11 @@ export default class PaginationComponent extends Component {
           shouldHiddenPage(current, totalPageNumber, isShortPageList, PAGE_EIGHT),
         })}
       >
+        {
+          selectedNumber
+          ? <h3 className={styles.selectedTitle}>已选中<span> {selectedNumber} </span> 条</h3>
+          : null
+        }
         <Pagination
           key={paginationKey}
           showTotal={renderTotal}

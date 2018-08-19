@@ -27,6 +27,8 @@ import styles from './matchArea.less';
 
 const unlimited = '不限'; // filter 可能暴露出的值
 const AIM_LABEL_ID = 'sightingTelescope'; // 瞄准镜标签标识
+// 需要个性化信息的排序方式
+const needSelfInfoArray = ['cashAmt', 'avlAmt', 'avlAmtCrdt', 'totMktval'];
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
@@ -221,18 +223,25 @@ export default class MatchArea extends PureComponent {
 
   @autobind
   getFilterOrder() {
-    const { location: { query: { filters, individualInfo } } } = this.props;
+    const { location: { query: { filters, sortType, individualInfo } } } = this.props;
     const needInfoFilter = _.keys(matchAreaConfig);
     if (!individualInfo) {
       sessionStore.remove(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`);
-      const filtersArray = filters ? filters.split(seperator.filterSeperator) : [];
-      const filterList = _.map(filtersArray, item =>
+      let filtersArray = filters ? filters.split(seperator.filterSeperator) : [];
+      if (_.includes(needSelfInfoArray, sortType)) {
+        filtersArray = [sortType, ...filtersArray];
+      }
+      const filterList = _.map(_.uniq(filtersArray), item =>
         item.split(seperator.filterInsideSeperator)[0]);
       const filterOrder = _.filter(needInfoFilter, item => _.includes(filterList, item));
       MatchArea.setFilterOrder(filterOrder, true, this.hashString);
       return filterOrder;
     }
-    return _.filter(sessionStore.get(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`), item => _.includes(needInfoFilter, item));
+    let filterSessionArray = _.filter(sessionStore.get(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`), item => _.includes(needInfoFilter, item));
+    if (_.includes(needSelfInfoArray, sortType)) {
+      filterSessionArray = [sortType, ...filterSessionArray];
+    }
+    return _.uniq(filterSessionArray);
   }
 
   // 点击订购组合名称跳转到详情页面
@@ -494,11 +503,13 @@ export default class MatchArea extends PureComponent {
           if (index !== arr.length - 1) {
             replaceWordLables = `${replaceWordLables},`;
           }
+          const tempKey = `${description}${index}`;
           return (
             <Tooltip
               overlayClassName={styles.labelsToolTip}
               placement="bottom"
               title={description}
+              key={tempKey}
             >
               <i dangerouslySetInnerHTML={{ __html: replaceWordLables }} />
             </Tooltip>
