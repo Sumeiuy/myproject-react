@@ -11,10 +11,10 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { message } from 'antd';
 import _ from 'lodash';
-
 import { SingleFilter } from 'lego-react-filter/src';
 import { TreeFilter as HTTreeFilter } from 'lego-tree-filter/src';
 
+import logable, { logCommon } from '../../decorators/logable';
 import CommonModal from '../common/biz/CommonModal';
 import Pagination from '../../components/common/Pagination';
 import CommonTable from '../../components/common/biz/CommonTable';
@@ -64,6 +64,13 @@ export default class AddManageModal extends PureComponent {
 
   // 选择服务经理
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '选择服务经理',
+      value: '$args[0].positionId',
+    },
+  })
   onSelectChange(record, selected) {
     const { selectedRowKeys, selectedRows } = this.state;
     // 选中的 key 值数组
@@ -94,8 +101,31 @@ export default class AddManageModal extends PureComponent {
     return newTitleList;
   }
 
+  // 变更所属营业部
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择所属营业部',
+      value: '$args[0]',
+    },
+  })
+  handleTreeSelectChange(value) {
+    this.setState({
+      orgId: value,
+      pageNum: INIT_PAGENUM,
+    }, this.searchManageList);
+  }
+
   // 切换职位类型
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择职位类型',
+      value: '$args[0].value',
+    },
+  })
   handleFilterChange(obj) {
     const { value } = obj;
     this.setState({
@@ -104,17 +134,9 @@ export default class AddManageModal extends PureComponent {
     }, this.searchManageList);
   }
 
-  // 变更所属营业部
-  @autobind
-  handleTreeSelectChange(value) {
-    this.setState({
-      orgId: value,
-      pageNum: INIT_PAGENUM,
-    }, this.searchManageList);
-  }
-
   // 翻页
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '点击分页' } })
   handlePageChange(pageNum) {
     this.setState({
       pageNum,
@@ -166,6 +188,17 @@ export default class AddManageModal extends PureComponent {
     };
     // 发送添加请求，关闭弹窗
     sendRequest(payload, pageData);
+    const title = '添加服务经理请求';
+    logCommon({
+      type: 'Submit',
+      payload: {
+        title,
+        value: JSON.stringify({ ...payload }),
+        name: title,
+        type: '分公司客户分配',
+        subType: '分公司客户分配',
+      },
+    });
   }
 
   render() {

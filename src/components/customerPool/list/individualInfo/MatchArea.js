@@ -297,7 +297,7 @@ export default class MatchArea extends PureComponent {
     const currentVal = listItem[id];
     if (!_.isNull(currentVal)) {
       return (
-        <li title={currentVal}>
+        <li kye={`${currentVal}${id}${listItem.custId}`} title={currentVal}>
           <span>
             <i className="label">
               {hasCycle ? this.convertCycle(id) : ''}
@@ -321,12 +321,12 @@ export default class MatchArea extends PureComponent {
     const {
       listItem,
     } = this.props;
-    const { name, id, descMap } = currentItem;
+    const { name, id, descMap, custId } = currentItem;
     let noCompleteIdList = _.omitBy(descMap, (value, key) => listItem[key] === 'Y');
     noCompleteIdList = _.values(noCompleteIdList);
     if (noCompleteIdList.length) {
       return (
-        <li key={id}>
+        <li key={`${id}${custId}`}>
           <span>
             <i className="label">{name}：</i>
             {_.join(noCompleteIdList, ',')}
@@ -385,12 +385,13 @@ export default class MatchArea extends PureComponent {
     const {
       listItem,
     } = this.props;
+    const { name, custId } = listItem;
     const { searchText = '' } = this.getFilters();
-    if (listItem.name
-      && listItem.name.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: listItem.name, searchText });
+    if (name
+      && name.indexOf(searchText) > -1) {
+      const markedEle = replaceWord({ value: name, searchText });
       return (
-        <li key={listItem.name}>
+        <li key={`${name}${custId}`}>
           <span>
             <i className="label">姓名：</i>
             <i

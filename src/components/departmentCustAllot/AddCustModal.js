@@ -14,6 +14,7 @@ import { SingleFilter, MultiFilter, RangeFilter } from 'lego-react-filter/src';
 import _ from 'lodash';
 import { message } from 'antd';
 
+import logable, { logCommon } from '../../decorators/logable';
 import CommonModal from '../common/biz/CommonModal';
 import Pagination from '../../components/common/Pagination';
 import CommonTable from '../../components/common/biz/CommonTable';
@@ -109,8 +110,10 @@ export default class AddCustModal extends PureComponent {
   }
 
   componentWillUnmount() {
-    this.checkBoxDOM.removeEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
-    this.checkBoxDOM.removeEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
+    if (this.checkBoxDOM) {
+      this.checkBoxDOM.removeEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
+      this.checkBoxDOM.removeEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
+    }
   }
 
   // 生成客户头部列表
@@ -138,6 +141,7 @@ export default class AddCustModal extends PureComponent {
     return newTitleList;
   }
 
+  // 头部 checkbox 鼠标移入
   @autobind
   handleCheckBoxMouseEnter() {
     this.setState({
@@ -145,6 +149,7 @@ export default class AddCustModal extends PureComponent {
     });
   }
 
+  // 头部 checkbox 鼠标移出
   @autobind
   handleCheckBoxMouseLeave() {
     this.setState({
@@ -154,6 +159,13 @@ export default class AddCustModal extends PureComponent {
 
   // 选择客户
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '选择客户',
+      value: '$args[0].custName',
+    },
+  })
   handleSelectChange(record, selected) {
     const { selectedRows } = this.state;
     // 选中的 row 数组
@@ -225,6 +237,13 @@ export default class AddCustModal extends PureComponent {
 
   // 状态选中
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择状态',
+      value: '$args[0].value',
+    },
+  })
   handleMultiFilterChange(obj) {
     this.setState({
       status: obj.value,
@@ -234,6 +253,7 @@ export default class AddCustModal extends PureComponent {
 
   // 更改服务经理
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '搜索服务经理' } })
   handleSMChange(value) {
     this.setState({
       smKeyword: value,
@@ -243,6 +263,7 @@ export default class AddCustModal extends PureComponent {
 
   // 更改介绍人
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '搜索服务经理' } })
   handleDMChange(value) {
     this.setState({
       dmKeyword: value,
@@ -251,6 +272,13 @@ export default class AddCustModal extends PureComponent {
 
   // 总资产区间
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '切换$args[0].id',
+      value: '$args[0].value',
+    },
+  })
   handleRangeFilterChange(obj) {
     this.setState({
       [obj.id]: obj.value,
@@ -260,6 +288,7 @@ export default class AddCustModal extends PureComponent {
 
   // 切换展开状态
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '展开更多' } })
   handleToggleExpand() {
     const { isExpand } = this.state;
     this.setState({
@@ -269,6 +298,7 @@ export default class AddCustModal extends PureComponent {
 
   // 翻页
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '点击分页' } })
   handlePageChange(pageNum) {
     this.setState({
       pageNum,
@@ -278,6 +308,7 @@ export default class AddCustModal extends PureComponent {
 
   // 全选事件
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '点击全选客户' } })
   handleSelectAll(selected, selectedAllRows, changeRows) {
     const { selectedRows } = this.state;
     const changeRowKeys = _.map(changeRows, 'custId');
@@ -340,6 +371,17 @@ export default class AddCustModal extends PureComponent {
     };
     // 发送添加请求，关闭弹窗
     sendRequest(payload, pageData);
+    const title = '添加客户请求';
+    logCommon({
+      type: 'Submit',
+      payload: {
+        title,
+        value: JSON.stringify({ ...payload }),
+        name: title,
+        type: '营业部客户分配',
+        subType: '营业部客户分配',
+      },
+    });
   }
 
   render() {
