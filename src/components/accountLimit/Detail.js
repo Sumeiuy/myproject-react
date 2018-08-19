@@ -55,17 +55,19 @@ export default class Detail extends PureComponent {
     const tempTitleList = [...list];
     // 客户
     const custColumn = _.find(tempTitleList, o => o.key === KEY_CUSTNAME);
-    custColumn.render = (text, record) => (
-      <div title={`${text} (${record.custId})`}>{text} ({record.custId})</div>
-    );
+    custColumn.render = (text, record) => {
+      const value = record.custId ? `${text || ''} (${record.custId})` : '';
+      return <div title={value}>{value}</div>;
+    };
     // 服务经理
     const empNameColumn = _.find(tempTitleList, o => o.key === KEY_EMPNAME);
-    empNameColumn.render = (text, record) => (
-      <div title={`${text} (${record.empId})`}>{text} ({record.empId})</div>
-    );
+    empNameColumn.render = (text, record) => {
+      const value = record.empId ? `${text || ''} (${record.empId})` : '';
+      return <div title={value}>{value}</div>;
+    };
     // 限制类型
     const limitColumn = _.find(tempTitleList, o => o.key === KEY_LIMIT);
-    limitColumn.render = text => (<div title={text}>{text}</div>);
+    limitColumn.render = text => (<div title={text || ''}>{text || ''}</div>);
     return tempTitleList;
   }
 
@@ -142,11 +144,12 @@ export default class Detail extends PureComponent {
       // 当前审批人
       handleName: approverName,
     };
-
-
+    // 新的客户列表渲染标题
     const newTitleList = this.getColumnsCustTitleList(custTitleList);
-
+    // 匹配的操作类型
     const filterOperate = _.filter(operateTypeArray, o => o.value === operateType);
+    // 操作类型是否是限制解除
+    const isRelieve = operateType === relieveCode;
     return (
       <div className={styles.detailBox}>
         <h2 className={styles.title}>编号{id}</h2>
@@ -157,7 +160,7 @@ export default class Detail extends PureComponent {
           <InfoItem label="证券代码" className={styles.inlineInfoItem} width="120px" value={stockCode} />
           {/* 操作类型为限制解除时显示银行确认 */}
           {
-            operateType === relieveCode
+            isRelieve
             ? <InfoItem label="是否银行确认" className={styles.inlineInfoItem} width="120px" value={bankConfirm ? '是' : '否'} />
             : null
           }
@@ -177,7 +180,11 @@ export default class Detail extends PureComponent {
         <div className={styles.module}>
           <InfoTitle head="限制信息" />
           <InfoItem label="限制类型" value={(_.map(limitType, 'label').join('、'))} />
-          <InfoItem label="账户限制设置日期" className={styles.inlineInfoItem} value={time.format(limitStartTime)} />
+          {
+            isRelieve
+            ? null
+            : <InfoItem label="账户限制设置日期" className={styles.inlineInfoItem} value={time.format(limitStartTime)} />
+          }
           <InfoItem label="账户限制解除日期" className={styles.inlineInfoItem} value={time.format(limitEndTime)} />
         </div>
         <div className={styles.module}>
