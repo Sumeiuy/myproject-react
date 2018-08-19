@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-14 16:09:24
+ * @Last Modified time: 2018-08-14 17:02:53
  */
 
 import React, { PureComponent } from 'react';
@@ -153,6 +153,7 @@ export default class SecondContent extends PureComponent {
   @autobind
   handleSelect(value, option) {
     const { form } = this.props;
+    // 因为在antd的AutoComplete组件onSelect方法内设置值，仍会被其内部的代码覆盖，所以在这里加一个定时器来设置
     setTimeout(() => {
       form.setFieldsValue({ labelName: option.props.labelName });
     }, 1);
@@ -175,7 +176,9 @@ export default class SecondContent extends PureComponent {
       return (
         <Option key={item.id} {...item}>
           <p onClick={() => { this.handleLabelOptionClick(item); }}>
-            <span dangerouslySetInnerHTML={{ __html: htmlStr }} />
+            <span
+              dangerouslySetInnerHTML={{ __html: htmlStr }} // eslint-disable-line
+            />
             <span>{`(${item.labelTypeName})`}</span>
           </p>
         </Option>
