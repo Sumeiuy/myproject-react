@@ -52,6 +52,7 @@
     padding-bottom: 10px;
     font-size: 14px;
     border-bottom: 3px solid #e8e8e8;
+    position: relative;
     &:after {
       content: " ";
       display: block;
@@ -64,6 +65,12 @@
       display: inline-block;
       line-height: 32px;
       margin-left: 10px;
+    }
+    .checkbox {
+      position: absolute;
+      top: 56px;
+      left: 16px;
+      z-index: 9;
     }
     :global {
       .commonBtn {
@@ -84,6 +91,20 @@
         margin-right: 5px;
         font-size: 16px;
       }
+    }
+  }
+}
+
+.checkboxTooltip {
+  :global {
+    .ant-tooltip-inner {
+      padding: 10px 5px;
+      background-color: #fff;
+      font-size: 14px;
+      color: #4a4a4a;
+    }
+    .ant-tooltip-arrow {
+      border-top-color: #fff;
     }
   }
 }

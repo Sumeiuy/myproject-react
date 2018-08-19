@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Spin, Icon, message, Table } from 'antd';
+import { Spin, Icon, message, Table, Checkbox, Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -160,11 +160,20 @@ export default class ServiceResult extends PureComponent {
   // 客户明细表格的头部渲染(会根据点击了总体进度，已服务客户反馈不同而不同)
   @autobind
   renderCustDetailHeader() {
-    const { detailTitle } = this.state;
+    const { detailTitle, isSelectAll } = this.state;
     return (
       <div className={styles.custDetailHeader}>
         <div className={styles.custDetailTitle}>{detailTitle}</div>
-        <input type="checkbox" />
+        <Tooltip
+          overlayClassName={styles.checkboxTooltip}
+          title="勾选全部客户"
+        >
+          <Checkbox
+            className={styles.checkbox}
+            onChange={this.handleSelectAllChange}
+            checked={isSelectAll}
+          />
+        </Tooltip>
         <Button onClick={this.handleCreateTaskClick}>发起任务</Button>
       </div>
     );
@@ -228,6 +237,8 @@ export default class ServiceResult extends PureComponent {
     const { URL, ID, TITLE } = OPEN_IN_TAB_PARAM;
     const { queryMissionCustsReq = {}, custIdList = [] } = payload;
     const param = { source: SOURCE_SERVICE_RESULT_CUST };
+    // 由于创建任务之前别人写的代码存在问题，xxxreq不能为空，所以非全选的时候我也传了xxxreq
+    // 我认为非全选的时候不用这个参数
     const stringifyCondition = encodeURIComponent(JSON.stringify(queryMissionCustsReq));
     if (isSelectAll) {
       param.condition = stringifyCondition;
@@ -258,11 +269,17 @@ export default class ServiceResult extends PureComponent {
     });
   }
 
-  // 全选回调
+  // 全选change
   @autobind
-  handleSelectAllChange() {
+  handleSelectAllChange(e) {
+    const { custDetail: { list = [] } } = this.props;
+    const newSelectedRowKeys = _.map(list, 'brokerNum');
+    const isChecked = e.target.checked;
+    // 若全选选中，此时的selectedRowKeys应为加载出来的list的brokerNum组成的数组
+    // 以便用来控制单个的CheckBox为选中状态，若取消全选，selectedRowKeys为[]
     this.setState({
-      isSelectAll: !this.state.isSelectAll,
+      isSelectAll: isChecked,
+      selectedRowKeys: isChecked ? newSelectedRowKeys : [],
     });
   }
 
@@ -306,30 +323,63 @@ export default class ServiceResult extends PureComponent {
     });
   }
 
+  // 单个checkbox的change
   @autobind
-  handleSelectChange(selectedRowKeys) {
-    this.setState({ selectedRowKeys });
+  toggleItemChecked(e, record) {
+    const { selectedRowKeys } = this.state;
+    const checked = e.target.checked;
+    // 若被选中，则向selectedRowKeys数组中增加该条的brokerNum
+    if (checked) {
+      this.setState({
+        selectedRowKeys: [...selectedRowKeys, record.brokerNum],
+      }, this.handleAllItemChecked);
+    } else {
+      // 若是取消选中，则从selectedRowKeys数组中过滤去除该条的brokerNum
+      this.setState({
+        selectedRowKeys: _.filter(selectedRowKeys, item => item !== record.brokerNum),
+      });
+    }
+  }
+
+  // 当单个勾选CheckBox决定全选是否被选中的方法
+  // 当选中的个数等于list的totalCount(总条数)时，此时全选应该选中
+  @autobind
+  handleAllItemChecked() {
+    const { custDetail: { page = {} } } = this.props;
+    const { selectedRowKeys } = this.state;
+    if (_.size(selectedRowKeys) === page.totalCount) {
+      this.setState({
+        isSelectAll: true,
+      });
+    }
   }
 
   render() {
     const { serviceProgress, custFeedBack, isShowExecutorDetailLoading } = this.props;
     const { list = [], page = {} } = this.getCustDetail();
-    const { selectedRowKeys, pageNum } = this.state;
+    const { selectedRowKeys, pageNum, isSelectAll } = this.state;
     // 自定义旋转图标
     const customIcon = <Icon type="reload" spin />;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.handleSelectChange,
-      hideDefaultSelections: true,
-      onSelectAll: this.handleSelectAllChange,
-      // // TODO使用该方法会禁用到全选的CheckBox,正在寻找解决方案
-      // getCheckboxProps(record) {
-      //   // 此属性用来设置 checkbox 的 disabled 属性
-      //   return {
-      //     disabled: _.includes(selectedRowKeys, record.brokerNum),
-      //   };
-      // },
-    };
+    // 不改变常量，clone出来一个newColumns，再往clone出来的newColumns数组前面加一个CheckBox
+    const newColumns = _.cloneDeep(TABLE_COLUMN);
+    // 因为antd的table自带的Checkbox不能这个需求，所以自己去render一列CheckBox
+    newColumns.unshift({
+      dataIndex: 'checkbox',
+      key: 'checkbox',
+      title: '',
+      fixed: 'left',
+      width: 40,
+      render: (text, record) => {
+        const checked = _.includes(selectedRowKeys, record.brokerNum);
+        return (
+          <Checkbox
+            onChange={e => this.toggleItemChecked(e, record)}
+            disabled={isSelectAll}
+            checked={checked}
+          />
+        );
+      },
+    });
     return (
       <div className={styles.serviceResultWrap}>
         <ServiceResultLayout
@@ -340,12 +390,11 @@ export default class ServiceResult extends PureComponent {
         <div className={styles.custDetailWrap}>
           <Table
             dataSource={list}
-            columns={TABLE_COLUMN}
+            columns={newColumns}
             rowKey="brokerNum"
             title={this.renderCustDetailHeader}
             scroll={{ x: 720 }}
             pagination={false}
-            rowSelection={rowSelection}
           />
           {
             pageNum < page.totalPage || page.totalPage === 0
