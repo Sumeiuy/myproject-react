@@ -36,7 +36,7 @@ export default class recommendModal extends PureComponent {
     const firstEnterHomePage = store.get(FIRST_ENTER_HOMEPAGE);
     if (!firstEnterHomePage) {
       this.setState({ modalVisible: true });
-    };
+    }
     return firstEnterHomePage;
   }
 
