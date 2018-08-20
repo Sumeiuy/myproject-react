@@ -16,3 +16,6 @@ export const RECOMMEND_LIST = [{
 }];
 // 点击了解更多跳转到的页面URL
 export const FUNCTION_INTRODUCTION_PAGE = '/fspa/spy/functionIntroduction/html/functionIntroductionV3.1.180802.html';
+
+// 存储在本地判断是否是首次进入,首次进入为空，非首次进入为NO
+export const FIRST_ENTER_HOMEPAGE = 'FIRST_ENTER_HOMEPAGE';
