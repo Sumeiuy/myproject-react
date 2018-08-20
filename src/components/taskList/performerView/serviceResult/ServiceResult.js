@@ -200,6 +200,7 @@ export default class ServiceResult extends PureComponent {
     }
     // 如果是全选,参数payload中需要增加queryMissionCustsReq对象,为调取客户详情接口数据的参数
     // 如不是全选,则传一个由brokerNum组成的custIdList数组
+    // FIXME：由于创建任务之前别人写的代码存在问题，xxxreq必传不能为空，所以非全选的时候我也传了xxxreq
     if (isSelectAll) {
       payload.queryMissionCustsReq = queryMissionCustsReq;
     } else {
@@ -237,8 +238,8 @@ export default class ServiceResult extends PureComponent {
     const { URL, ID, TITLE } = OPEN_IN_TAB_PARAM;
     const { queryMissionCustsReq = {}, custIdList = [] } = payload;
     const param = { source: SOURCE_SERVICE_RESULT_CUST };
-    // 由于创建任务之前别人写的代码存在问题，xxxreq不能为空，所以非全选的时候我也传了xxxreq
-    // 我认为非全选的时候不用这个参数
+    // FIXME：由于创建任务之前别人写的代码存在问题，xxxreq必传不能为空，所以非全选的时候我也传了xxxreq
+    // 我认为非全选的时候使用ids，condition不是必须
     const stringifyCondition = encodeURIComponent(JSON.stringify(queryMissionCustsReq));
     if (isSelectAll) {
       param.condition = stringifyCondition;
