@@ -12,7 +12,7 @@ import _ from 'lodash';
 import styles from './serviceResult.less';
 import ServiceResultLayout from '../../common/ServiceResultLayout';
 import Button from '../../../common/Button';
-import { MISSION_PROGRESS_MAP, TABLE_COLUMN, OPEN_IN_TAB_PARAM } from './config';
+import { MISSION_PROGRESS_MAP, OPEN_IN_TAB_PARAM } from './config';
 import { SOURCE_SERVICE_RESULT_CUST } from '../../../../config/createTaskEntry';
 import { url as urlHelper, emp, permission } from '../../../../helper';
 import { openInTab } from '../../../../utils';
@@ -284,23 +284,6 @@ export default class ServiceResult extends PureComponent {
     });
   }
 
-  // 重新处理客户明细表格数据
-  @autobind
-  getCustDetail() {
-    const { custDetail } = this.props;
-    const { list = [], page = {} } = custDetail;
-    const finalList = _.map(list, item => ({
-      ...item,
-      cust: `${item.cust}(${item.brokerNum})`,
-      assets: item.assets || '--',
-      firstFeedback: item.firstFeedback || '--',
-      secondFeedback: item.secondFeedback || '--',
-      standardValue: item.standardValue || '--',
-      standardDate: item.standardDate || '--',
-    }));
-    return { list: finalList, page };
-  }
-
   // 设置表格头部渲染文字
   @autobind
   setCustDetailTitle(title) {
@@ -355,32 +338,89 @@ export default class ServiceResult extends PureComponent {
     }
   }
 
+  // 获取每列Columns render的通用方法,增加title
+  @autobind
+  getColumnsTitleRender(text) {
+    return <div title={`${text}`}> {text || '--'} </div>;
+  }
+
+  // 渲染客户明细表格的columns
+  @autobind()
+  getColumnsCustTitleList() {
+    const { selectedRowKeys, isSelectAll } = this.state;
+    return [
+      {
+        dataIndex: 'checkbox',
+        key: 'checkbox',
+        title: '',
+        fixed: 'left',
+        width: 40,
+        render: (text, record) => {
+          const checked = _.includes(selectedRowKeys, record.brokerNum);
+          return (
+            <Checkbox
+              onChange={e => this.toggleItemChecked(e, record)}
+              disabled={isSelectAll}
+              checked={checked}
+            />
+          );
+        },
+      },
+      {
+        title: '客户名称',
+        dataIndex: 'cust',
+        key: 'cust',
+        width: 130,
+        fixed: 'left',
+        render: (text, record) => <div title={`${record.cust}(${record.brokerNum})`}>
+          {record.cust || '--'}({record.brokerNum || '--'})
+        </div>,
+      },
+      {
+        title: '总资产',
+        dataIndex: 'assets',
+        key: 'assets',
+        width: 100,
+        render: text => this.getColumnsTitleRender(text),
+      },
+      {
+        title: '一级反馈',
+        dataIndex: 'firstFeedback',
+        key: 'firstFeedback',
+        width: 140,
+        render: text => this.getColumnsTitleRender(text),
+      },
+      {
+        title: '二级反馈',
+        dataIndex: 'secondFeedback',
+        key: 'secondFeedback',
+        width: 140,
+        render: text => this.getColumnsTitleRender(text),
+      },
+      {
+        title: '结果达标值',
+        dataIndex: 'standardValue',
+        key: 'standardValue',
+        width: 100,
+        render: text => this.getColumnsTitleRender(text),
+      },
+      {
+        title: '结果达标日期',
+        dataIndex: 'standardDate',
+        key: 'standardDate',
+        width: 110,
+        render: text => this.getColumnsTitleRender(text),
+      },
+    ];
+  }
+
   render() {
-    const { serviceProgress, custFeedBack, isShowExecutorDetailLoading } = this.props;
-    const { list = [], page = {} } = this.getCustDetail();
-    const { selectedRowKeys, pageNum, isSelectAll } = this.state;
+    const { serviceProgress, custFeedBack, isShowExecutorDetailLoading, custDetail } = this.props;
+    const { pageNum } = this.state;
+    const { list = [], page = {} } = custDetail;
     // 自定义旋转图标
     const customIcon = <Icon type="reload" spin />;
-    // 不改变常量，clone出来一个newColumns，再往clone出来的newColumns数组前面加一个CheckBox
-    const newColumns = _.cloneDeep(TABLE_COLUMN);
-    // 因为antd的table自带的Checkbox不能这个需求，所以自己去render一列CheckBox
-    newColumns.unshift({
-      dataIndex: 'checkbox',
-      key: 'checkbox',
-      title: '',
-      fixed: 'left',
-      width: 40,
-      render: (text, record) => {
-        const checked = _.includes(selectedRowKeys, record.brokerNum);
-        return (
-          <Checkbox
-            onChange={e => this.toggleItemChecked(e, record)}
-            disabled={isSelectAll}
-            checked={checked}
-          />
-        );
-      },
-    });
+    const newColumns = this.getColumnsCustTitleList();
     return (
       <div className={styles.serviceResultWrap}>
         <ServiceResultLayout
