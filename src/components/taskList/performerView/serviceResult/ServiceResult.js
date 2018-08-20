@@ -128,6 +128,12 @@ export default class ServiceResult extends PureComponent {
     queryExecutorFeedBack(param);
     queryExecutorFlowStatus(param);
     this.getExecutorDetail();
+    // 将state清空
+    this.setState({
+      selectedRowKeys: [],
+      pageNum: 1,
+      isSelectAll: false,
+    });
   }
 
   // 获取客户明细接口
