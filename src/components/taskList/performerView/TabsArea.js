@@ -4,6 +4,8 @@
  * @Date: 2018-05-22 14:53:21
  * @Last Modified by: XuWenKang
  * @Last Modified time: 2018-08-20 20:04:46
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-20 13:24:40
  */
 
 import React from 'react';
@@ -42,6 +44,7 @@ const TabsArea = (props) => {
     isShowExecutorDetailLoading,
     isSendCustsServedByPostn,
     sendCustsServedByPostnResult,
+    clearCreateTaskData,
   } = props;
   return (
     <div className={styles.tabsContainer} >
@@ -64,6 +67,7 @@ const TabsArea = (props) => {
             isShowExecutorDetailLoading={isShowExecutorDetailLoading}
             isSendCustsServedByPostn={isSendCustsServedByPostn}
             sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+            clearCreateTaskData={clearCreateTaskData}
           />
         </TabPane>
         {hasSurvey ?
@@ -119,6 +123,8 @@ TabsArea.propTypes = {
   onBatchServiceRecordFormChange: PropTypes.func.isRequired,
   // 批量添加服务记录
   saveBatchAddServiceRecord: PropTypes.func.isRequired,
+  // 清除创建任务的数据
+  clearCreateTaskData: PropTypes.func.isRequired,
 };
 
 TabsArea.defaultProps = {

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 13:17:44
+ * @Last Modified time: 2018-08-20 13:25:19
  * @description 任务管理首页
  */
 
@@ -521,6 +521,7 @@ export default class PerformerView extends PureComponent {
       sendCustsServedByPostnResult,
       changeBatchServiceRecordForm,
       saveBatchAddServiceRecord,
+      clearCreateTaskData,
     } = this.props;
     const {
       typeCode,
@@ -601,6 +602,7 @@ export default class PerformerView extends PureComponent {
         refreshTaskList={this.queryAppList}
         onBatchServiceRecordFormChange={changeBatchServiceRecordForm}
         saveBatchAddServiceRecord={saveBatchAddServiceRecord}
+        clearCreateTaskData={clearCreateTaskData}
       />
     );
   }

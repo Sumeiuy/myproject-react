@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 20:05:32
+ * @Last Modified time: 2018-08-20 13:24:25
  */
 
 import React, { PureComponent } from 'react';
@@ -104,6 +104,8 @@ export default class PerformerViewDetail extends PureComponent {
     onBatchServiceRecordFormChange: PropTypes.func.isRequired,
     // 批量添加服务记录
     saveBatchAddServiceRecord: PropTypes.func.isRequired,
+    // 清除创建任务的数据
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -197,6 +199,7 @@ export default class PerformerViewDetail extends PureComponent {
       sendCustsServedByPostnResult,
       onBatchServiceRecordFormChange,
       saveBatchAddServiceRecord,
+      clearCreateTaskData,
     } = this.props;
 
     const {
@@ -230,6 +233,7 @@ export default class PerformerViewDetail extends PureComponent {
           sendCustsServedByPostnResult={sendCustsServedByPostnResult}
           onBatchServiceRecordFormChange={onBatchServiceRecordFormChange}
           saveBatchAddServiceRecord={saveBatchAddServiceRecord}
+          clearCreateTaskData={clearCreateTaskData}
         />
       </div>
     );

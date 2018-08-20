@@ -151,14 +151,16 @@ export default class CreateModal extends PureComponent {
     const titleList = [...custTitleList];
     // 客户
     const custNameColumn = _.find(titleList, o => o.key === KEY_CUSTNAME);
-    custNameColumn.render = (text, record) => (
-      <div title={`${text} (${record.custId})`}>{text} ({record.custId})</div>
-    );
+    custNameColumn.render = (text, record) => {
+      const value = record.custId ? `${text || ''} (${record.custId})` : '';
+      return <div title={value}>{value}</div>;
+    };
     // 服务经理
     const empNameColumn = _.find(titleList, o => o.key === KEY_EMPNAME);
-    empNameColumn.render = (text, record) => (
-      <div title={`${text} (${record.empId})`}>{text} ({record.empId})</div>
-    );
+    empNameColumn.render = (text, record) => {
+      const value = record.empId ? `${text || ''} (${record.empId})` : '';
+      return <div title={value}>{value}</div>;
+    };
     // 限制类型
     const limitColumn = _.find(titleList, o => o.key === KEY_LIMIT);
     limitColumn.render = text => (<div title={text}>{text}</div>);
@@ -559,7 +561,7 @@ export default class CreateModal extends PureComponent {
     const { limitStartTime, isLimit } = this.state;
     return isLimit
     ? current < moment(limitStartTime).endOf('day')
-    : current < moment().endOf('day');
+    : current < moment().startOf('day');
   }
 
   // 替换关键字颜色
@@ -619,10 +621,10 @@ export default class CreateModal extends PureComponent {
       subType: '账户限制管理',
     } })
   handleSubmit(btnItem) {
-    const { modalKey, validateForm } = this.props;
+    const { modalKey, validateForm, closeModal } = this.props;
     // 取消按钮
     if (btnItem.operate === BTN_CANCLE_VALUE) {
-      this.closeModal({
+      closeModal({
         modalKey,
         isNeedConfirm: true,
       });

@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-09 21:28:44
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-17 09:42:41
  * 管理者视图详情
  */
 
@@ -735,7 +735,7 @@ export default class ManagerViewDetail extends PureComponent {
                   wrapperClass={`${styles.custDetailContainer} custDetailContainer`}
                   closable
                   visible={isShowCustDetailModal}
-                  title={'客户明细'}
+                  title="客户明细"
                   onCancelHandler={this.handleCloseModal}
                   footer={
                     <div className={styles.operationBtnSection}>
@@ -811,11 +811,7 @@ export default class ManagerViewDetail extends PureComponent {
                       recordId={recordId}
                     />
                   }
-                  modalStyle={{
-                    maxWidth: 1165,
-                    minWidth: 700,
-                  }}
-                  modalWidth={'auto'}
+                  modalWidth={1090}
                 />
                 : null
             }

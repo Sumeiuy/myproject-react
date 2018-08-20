@@ -76,14 +76,16 @@ export default class EditForm extends PureComponent {
     const titleList = [...custTitleList];
     // 客户
     const custNameColumn = _.find(titleList, o => o.key === KEY_CUSTNAME);
-    custNameColumn.render = (text, record) => (
-      <div title={`${text} (${record.custId})`}>{text} ({record.custId})</div>
-    );
+    custNameColumn.render = (text, record) => {
+      const value = record.custId ? `${text || ''} (${record.custId})` : '';
+      return <div title={value}>{value}</div>;
+    };
     // 服务经理
     const empNameColumn = _.find(titleList, o => o.key === KEY_EMPNAME);
-    empNameColumn.render = (text, record) => (
-      <div title={`${text} (${record.empId})`}>{text} ({record.empId})</div>
-    );
+    empNameColumn.render = (text, record) => {
+      const value = record.empId ? `${text || ''} (${record.empId})` : '';
+      return <div title={value}>{value}</div>;
+    };
     // 限制类型
     const limitColumn = _.find(titleList, o => o.key === KEY_LIMIT);
     limitColumn.render = text => (<div title={text}>{text}</div>);
