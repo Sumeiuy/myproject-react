@@ -1,8 +1,8 @@
 /**
  * @Author: xuxiaoqin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-19 15:00:26
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-20 09:30:08
  * @description 每一个视图列表的头部区域，不随着列表滚动
  */
 
@@ -14,6 +14,7 @@ import Sort from '../common/sort';
 import DescImg from './img/desc.png';
 import AscImg from './img/asc.png';
 import { EXECUTOR, SORT_DATA } from '../../routes/taskList/config';
+import { logCommon } from '../../decorators/logable';
 
 import styles from './fixedTitle.less';
 
@@ -72,14 +73,21 @@ export default class FixedTitle extends PureComponent {
    */
   @autobind
   handleSort() {
-    const { onSortChange, sortKey } = this.props;
-    const { sortDirection } = this.state;
-    this.setState({
-      sortDirection: sortDirection === SORT_ASC ? SORT_DESC : SORT_ASC,
-    }, () => {
+    const { onSortChange, sortKey, sortContent } = this.props;
+    this.setState(state => ({
+      sortDirection: state.sortDirection === SORT_ASC ? SORT_DESC : SORT_ASC,
+    }), () => {
+      const { sortDirection } = this.state;
       onSortChange({
         sortKey,
-        sortDirection: this.state.sortDirection,
+        sortDirection,
+      });
+      logCommon({
+        type: 'Click',
+        payload: {
+          name: sortContent,
+          value: sortDirection === SORT_ASC ? '升序' : '降序',
+        },
       });
     });
   }
@@ -89,6 +97,14 @@ export default class FixedTitle extends PureComponent {
     this.props.onSortChange({
       sortKey: sortType,
       sortDirection,
+    });
+    const { name = '' } = _.find(SORT_DATA, { sortType }) || {};
+    logCommon({
+      type: 'Click',
+      payload: {
+        name,
+        value: sortDirection === SORT_ASC ? '升序' : '降序',
+      },
     });
   }
 
