@@ -123,7 +123,7 @@ export default class ProgressList extends PureComponent {
   transformName(name) {
     switch (name) {
       case '新增有效户':
-        return '新增有效下钻客户';
+        return '新增有效客户';
       case '新增非零售客户':
         return '新增非零售下钻客户';
       case '新增高端产品户':

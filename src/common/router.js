@@ -240,6 +240,10 @@ export const getRouterData = (app) => {
     '/customerPool/createTask': {
       component: CreateTask,
     },
+    // 执行者视图服务结果客户明细的地方发起任务
+    '/customerPool/createTaskFromServiceResultCust': {
+      component: CreateTask,
+    },
     // 客户分组管理
     '/customerPool/customerGroupManage': {
       component: CustomerGroupManage,

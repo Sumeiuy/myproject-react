@@ -3,7 +3,7 @@
  * 按服务经理筛选
  * @author wangjunjun
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 16:07:33
+ * @Last Modified time: 2018-08-17 14:29:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -71,6 +71,7 @@ export default class ServiceManagerFilter extends PureComponent {
         <SingleFilter
           className={styles.serverManageWrap}
           value={finalPytMng}
+          placeholder="员工号或姓名"
           defaultLabel="不限"
           filterName="服务经理"
           data={list}
