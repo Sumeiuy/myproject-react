@@ -3,7 +3,7 @@
  * @Description: 批量添加服务记录项
  * @Date: 2018-08-17 11:31:18
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 13:20:19
+ * @Last Modified time: 2018-08-20 13:32:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -12,7 +12,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import moment from 'moment';
-// import { data as dataHelper } from '../../../../helper';
 import logable from '../../../../decorators/logable';
 import CommonUpload from '../../../common/biz/CommonUpload';
 import Icon from '../../../common/Icon';
@@ -48,10 +47,6 @@ export default class BatchAddServiceRecordItem extends PureComponent {
   static defaultProps = {
     data: {},
   }
-
-  // constructor(props) {
-  //   super(props);
-  // }
 
   // 根据当前选择的一级反馈code从客户数据的客户反馈列表中找出对应的一级反馈项
   @autobind
