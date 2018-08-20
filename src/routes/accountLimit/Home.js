@@ -165,11 +165,11 @@ export default class AccountLimitHome extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    console.warn('进入didUpdate', prevProps);
     const { location: { query: prevQuery } } = prevProps;
     const { location: { query } } = this.props;
     const otherQuery = _.omit(query, ['currentId', 'business2']);
     const otherPrevQuery = _.omit(prevQuery, ['currentId', 'business2']);
+    // 头部筛选事件中已对此字段发起请求，所以此处不需要发请求
     if (query.business2 !== prevQuery.business2) {
       return;
     }
