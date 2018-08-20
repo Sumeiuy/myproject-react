@@ -112,6 +112,13 @@ const fspRoutes = [
     containerId: 'utb-stockcontractupd-wizard',
     url: /client\/tgcontractupd\/wizard\/main/,
   },
+  // 投顾签约转签向导
+  {
+    path: '/fsp/customerCenter/tgcontracttransfer',
+    action: 'loadInTab',
+    containerId: 'utb-stockcontracttransfer-wizard',
+    url: '/client/tgcontracttransfer/wizard/main',
+  },
   // 合约历史记录
   {
     path: '/fsp/customerCenter/360orderHisDetail',
