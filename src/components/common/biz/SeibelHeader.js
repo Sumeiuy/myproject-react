@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-13 09:41:43
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-20 16:03:59
+ * @Last Modified time: 2018-08-20 16:22:35
  */
 
 import React, { PureComponent } from 'react';
@@ -123,6 +123,11 @@ export default class Pageheader extends PureComponent {
   @autobind
   getCalendarContainer() {
     return this.pageCommonHeader;
+  }
+
+  @autobind
+  filterBoxRef(input) {
+    this.filterBox = input;
   }
 
   @autobind
@@ -641,11 +646,6 @@ export default class Pageheader extends PureComponent {
     const { moreFilters } = this.props;
     const filterItem = _.find(moreFilters, item => (item.props.key === key));
     return filterItem ? this.getMoreFilterElement(filterItem) : null;
-  }
-
-  @autobind
-  filterBoxRef(input) {
-    this.filterBox = input;
   }
 
   @autobind
