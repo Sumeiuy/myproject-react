@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 10:14:05
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-17 09:56:53
+ * @Last Modified time: 2018-08-20 13:19:13
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapStateToProps移至此处成立独立模块
  */
 

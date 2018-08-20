@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 10:21:18
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-19 20:07:24
+ * @Last Modified time: 2018-08-20 13:19:06
  * @description 为了Home页面的代码整洁，将dva的connect需要用到的mapDispatchToProps移至此处成立独立模块
  */
 import effects from './effects';

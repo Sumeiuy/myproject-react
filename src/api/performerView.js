@@ -1,6 +1,10 @@
 /**
-* 执行者视图模块的接口
-*/
+ * @Author: XuWenKang
+ * @Description: 执行者视图模块的接口
+ * @Date: 2018-08-20 13:15:28
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2018-08-20 13:15:28
+ */
 
 export default function performerView(api) {
   return {

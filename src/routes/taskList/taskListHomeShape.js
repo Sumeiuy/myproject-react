@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:07:12
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-19 20:06:55
+ * @Last Modified time: 2018-08-20 13:19:21
  * @description 针对taskList > Home 组件的props类型校验模块
  */
 import PropTypes from 'prop-types';

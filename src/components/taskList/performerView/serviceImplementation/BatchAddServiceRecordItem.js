@@ -3,7 +3,7 @@
  * @Description: 批量添加服务记录项
  * @Date: 2018-08-17 11:31:18
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 11:02:41
+ * @Last Modified time: 2018-08-20 13:20:19
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,7 +13,7 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import moment from 'moment';
 // import { data as dataHelper } from '../../../../helper';
-import logable, { logPV, logCommon } from '../../../../decorators/logable';
+import logable from '../../../../decorators/logable';
 import CommonUpload from '../../../common/biz/CommonUpload';
 import Icon from '../../../common/Icon';
 
