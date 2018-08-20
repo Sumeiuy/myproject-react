@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-08-13 09:41:43
- * @Last Modified by:   sunweibin
- * @Last Modified time: 2018-08-13 09:41:43
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-20 14:17:35
  */
 
 import React, { PureComponent } from 'react';
@@ -381,8 +381,8 @@ export default class Pageheader extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '申请时间',
-      min: (instance, args) => moment(args[0].startDate).format(dateFormat),
-      max: (instance, args) => moment(args[0].endDate).format(dateFormat),
+      min: (instance, args) => moment(args[0].value[0]).format(dateFormat),
+      max: (instance, args) => moment(args[0].value[1]).format(dateFormat),
     },
   })
   handleCreateDateChange(date) {
