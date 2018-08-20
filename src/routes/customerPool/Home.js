@@ -1,8 +1,8 @@
 /**
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-05-23 16:08:19
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-20 13:46:09
  */
 
 import React, { PureComponent } from 'react';
@@ -36,6 +36,7 @@ import {
   Search,
   LabelModal,
 } from '../../components/customerPool/home';
+import RecommendModal from '../../components/recommend/RecommendModal';
 
 const TabPane = Tabs.TabPane;
 const EMPTY_LIST = [];
@@ -526,6 +527,7 @@ export default class Home extends PureComponent {
 
     return (
       <div className={styles.customerPoolWrap}>
+        <RecommendModal />
         <Header push={push} />
         <div className={styles.poolContainer}>
           <div className={styles.content}>
