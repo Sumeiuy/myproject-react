@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-20 09:30:08
+ * @Last Modified time: 2018-08-20 09:51:33
  * @description 每一个视图列表的头部区域，不随着列表滚动
  */
 
@@ -85,8 +85,7 @@ export default class FixedTitle extends PureComponent {
       logCommon({
         type: 'Click',
         payload: {
-          name: sortContent,
-          value: sortDirection === SORT_ASC ? '升序' : '降序',
+          name: `${sortContent}${sortDirection === SORT_ASC ? '升序' : '降序'}`,
         },
       });
     });
@@ -102,8 +101,7 @@ export default class FixedTitle extends PureComponent {
     logCommon({
       type: 'Click',
       payload: {
-        name,
-        value: sortDirection === SORT_ASC ? '升序' : '降序',
+        name: `${name}${sortDirection === SORT_ASC ? '升序' : '降序'}`,
       },
     });
   }
