@@ -3,7 +3,7 @@
  * @description 首页推荐弹窗
  * @Date: 2018-08-14 20:58:45
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-20 16:13:03
+ * @Last Modified time: 2018-08-20 16:15:59
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -25,9 +25,7 @@ export default class recommendModal extends PureComponent {
 
   componentDidMount() {
     // 第一次渲染完判断是否是第一次进入首页,第一次进入显示弹窗推荐
-    if (!this.isFirstEnterHomePage()) {
-      store.set(FIRST_ENTER_HOMEPAGE, 'NO');
-    }
+    this.isFirstEnterHomePage();
   }
 
   // 判断是否是第一次进入首页
@@ -36,8 +34,8 @@ export default class recommendModal extends PureComponent {
     const firstEnterHomePage = store.get(FIRST_ENTER_HOMEPAGE);
     if (!firstEnterHomePage) {
       this.setState({ modalVisible: true });
+      store.set(FIRST_ENTER_HOMEPAGE, 'NO');
     }
-    return firstEnterHomePage;
   }
 
   @autobind
