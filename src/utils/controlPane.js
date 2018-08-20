@@ -161,6 +161,7 @@ function dispatchTabPane(options) {
     } else if (shouldStay) { // fsp框架tab内部跳转
       const {
         routerAction,
+        url,
         pathname, // pathname
         query, // query对象
         state,
@@ -174,6 +175,8 @@ function dispatchTabPane(options) {
             ...state,
           },
         });
+      } else if (url) {
+        routerAction(url);
       }
     }
   } else { // 如果是react则执行react操作
@@ -265,27 +268,27 @@ function linkTo(options) {
   const { name } = options;
   const editPane = { name };
   dispatchTabPane({
-    shouldStay: true,
-    editPane,
     ...options,
+    editPane,
+    shouldStay: true,
   });
 }
 
 // 关闭当前的RctTab, 跳转到前一个tab
 function closeRctTab(options) {
   dispatchTabPane({
+    ...options,
     fspAction: 'closeRctTabById',
     routerAction: 'remove',
-    ...options,
   });
 }
 
 // 关闭当前的FspTab，跳转到前一个tab
 function closeFspTab(options) {
   dispatchTabPane({
+    ...options,
     fspAction: 'closeFspTabByHref',
     routerAction: 'remove',
-    ...options,
   });
 }
 
@@ -298,9 +301,9 @@ function navToTab(options) {
     id,
   });
   dispatchTabPane({
+    ...options,
     fspAction: 'openRctTab',
     shoudlRemove: true,
-    ...options,
   });
 }
 
@@ -311,9 +314,9 @@ function navTo(options) {
   const { pathname } = options;
   warning(pathname !== undefined, '请使用pathname参数，调用这个方法');
   dispatchTabPane({
+    ...options,
     fspAction: 'openRctTab',
     shoudlRemove: true,
-    ...options,
   });
 }
 

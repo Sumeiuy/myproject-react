@@ -23,6 +23,7 @@ import {
   storeTabInfo,
   splitPanesArray,
   getLocalPanes,
+  getNewRouterHistory,
  } from '../utils/tab';
 
 @withRouter
@@ -50,6 +51,8 @@ export default class Tab extends PureComponent {
       editPane,
     } = state || {};
 
+    const { routerHistory } = prevState;
+
     // 路由是否发生变化
     const isUrlChange =
       (pathname !== prevState.location.pathname) || (!_.isEqual(query, prevState.location.query));
@@ -66,6 +69,8 @@ export default class Tab extends PureComponent {
 
         const finalActiveKey = (activeKey || paneObj.activeKey);
         const currentMenuId = paneObj.currentMenuId;
+        const newRouterHistory =
+          getNewRouterHistory({ finalActiveKey, currentMenuId, pathname, routerHistory });
 
         // 保存tab菜单信息
         storeTabInfo({
@@ -73,6 +78,7 @@ export default class Tab extends PureComponent {
           currentMenuId,
           panes,
           href: window.location.href,
+          routerHistory: newRouterHistory,
         });
 
         return {
@@ -80,22 +86,29 @@ export default class Tab extends PureComponent {
           activeKey: finalActiveKey,
           currentMenuId,
           location,
+          routerHistory: newRouterHistory,
         };
       }
 
       const { panes, currentMenuId } = getStayPanes(pathname, query, prevState);
+      const finalActiveKey = prevState.activeKey;
+
+      const newRouterHistory =
+        getNewRouterHistory({ finalActiveKey, currentMenuId, pathname, routerHistory });
 
       // 保存tab菜单信息
       storeTabInfo({
         panes,
         href: window.location.href,
         currentMenuId,
+        routerHistory: newRouterHistory,
       });
 
       return {
         panes,
         currentMenuId,
         location,
+        routerHistory: newRouterHistory,
       };
     }
 
@@ -107,7 +120,11 @@ export default class Tab extends PureComponent {
     // 初始化菜单的宽度为视口宽度
     this.menuWidth = document.documentElement.clientWidth;
 
-    const { panes, activeKey, currentMenuId } = this.getInitialPanesWithPathname(props.location);
+    const {
+      panes,
+      activeKey,
+      currentMenuId,
+    } = this.getInitialPanesWithPathname(props.location);
 
     this.state = {
       location: props.location,
@@ -115,9 +132,20 @@ export default class Tab extends PureComponent {
       panes,
       activeKey: activeKey || indexPaneKey,
       currentMenuId,
+      routerHistory: [
+        {
+          activeKey: activeKey || indexPaneKey,
+          currentMenuId,
+          pathname: '/customerPool',
+        },
+      ],
     };
 
-    window.eb.utils.closeTab = this.onRemove;
+    // 抛出关闭tab的方法给jsp页面使用
+    window.eb.utils.closeTab = (key) => {
+      window.shouldNotBlock = true;
+      this.onRemove(key, true);
+    };
   }
 
   componentDidMount() {
@@ -155,43 +183,58 @@ export default class Tab extends PureComponent {
   }
 
   @autobind
-  onRemove(targetKey) {
+  onRemove(targetKey, shouldBackToPrevPage) {
     const { push, location: { pathname } } = this.props;
     const { activeKey, panes } = this.state;
     const index = _.findIndex(panes, pane => pane.id === targetKey);
-    const changePanes = panes.filter(pane => pane.id !== targetKey);
+    // const removePane = panes.filter(item => item.id === targetKey);
     let pane;
-    // 如果移除的是当前的tabKey
-    if (activeKey === targetKey) {
+    if (shouldBackToPrevPage) { // 如果设置了shouldBackToPrevPage，直接返回父页面
+      // pane = _.find(panes, item => item.id === removePane.pid);
+      pane = panes[0];
+      // 现在暂时先返回首页
+      if (pane.path !== pathname) {
+        push({
+          pathname: pane.path,
+          query: pane.query,
+          state: {
+            shouldRemove: true,
+          },
+        });
+      }
+    } else if (activeKey === targetKey) { // 如果移除的是当前的tabKey
       // 如果当前的tabKey是最后一个tab,向前跳转
       if (panes[panes.length - 1].id === targetKey) {
-        pane = changePanes[changePanes.length - 1];
+        pane = panes[panes.length - 2];
         // 如前向跳转到层级菜单，直接回到首页
         if (!pane.path || pane.pid === 'ROOT') {
-          pane = changePanes[0];
+          pane = panes[0];
         }
       } else { // 如果移除的当前tab不是最后一个,向后跳转
-        pane = changePanes[index];
+        pane = panes[index + 1];
       }
+      push({
+        pathname: pane.path,
+        query: pane.query,
+        state: {
+          shouldRemove: true,
+        },
+      });
     } else { // 如果移除的tabKey不是当前的tab, 仅移除对应tab，不做跳转
-      pane = _.find(changePanes, item => item.id === activeKey);
+      const changePanes = _.filter(panes, item => item.id !== targetKey);
+      pane = _.find(panes, item => item.id === activeKey);
+      this.setState(
+        { panes: changePanes },
+        () => {
+          if (pane.path !== pathname) {
+            push({
+              pathname: pane.path,
+              query: pane.query,
+            });
+          }
+        },
+      );
     }
-    // 将tab信息保存到本地
-    storeTabInfo({
-      panes: changePanes,
-    });
-
-    this.setState(
-      { panes: changePanes },
-      () => {
-        if (pane.path !== pathname) {
-          push({
-            pathname: pane.path,
-            query: pane.query,
-          });
-        }
-      },
-    );
   }
 
   getInitialPanesWithPathname(location) {
