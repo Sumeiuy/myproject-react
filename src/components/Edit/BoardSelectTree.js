@@ -15,6 +15,7 @@ import { fspContainer, optionsMap } from '../../config';
 import MoveContainer from './MoveContainer';
 import styles from './BoardSelectTree.less';
 import logable from '../../decorators/logable';
+import commonStyles from '../../routes/reports/common.less' // eslint-disable-line
 
 const boardTypeMap = optionsMap.boardTypeMap;
 const boardKeyName = optionsMap.boardKeyName;

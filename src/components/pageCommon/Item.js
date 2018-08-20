@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import styles from './Item.less';
 import { fspContainer } from '../../config';
 import report from '../../helper/page/report';
+import commonStyles from '../../routes/reports/common.less' // eslint-disable-line
 
 const reactApp = fspContainer.reactApp;
 
