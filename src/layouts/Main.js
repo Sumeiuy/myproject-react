@@ -17,7 +17,6 @@ import ConnectedCreateServiceRecord from '../components/customerPool/list/create
 import ConnectedSignCustomerLabel from '../components/customerPool/list/modal/ConnectedSignCustomerLabel';
 import ContextProvider from './ContextProvider';
 import IEWarningModal from '../components/common/IEWarningModal';
-import RecommendModal from '../components/recommend/RecommendModal';
 import PhoneWrapper from './PhoneWrapper';
 import styles from './main.less';
 import '../css/skin.less';
@@ -123,7 +122,6 @@ export default class Main extends Component {
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
           <IEWarningModal />
-          <RecommendModal />
           <ErrorBoundary location={location}>
             <div className={styles.layout}>
               <div className={styles.main}>

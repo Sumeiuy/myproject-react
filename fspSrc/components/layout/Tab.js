@@ -117,7 +117,7 @@ export default class Tab extends PureComponent {
       currentMenuId,
     };
 
-    window.handleTabpaneClose = this.onRemove;
+    window.eb.utils.closeTab = this.onRemove;
   }
 
   componentDidMount() {
