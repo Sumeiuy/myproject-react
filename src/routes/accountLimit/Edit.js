@@ -3,7 +3,7 @@
  * @Author: Xuwenkang
  * @Date: 2018-08-07 14:46:25
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-08 09:42:31
+ * @Last Modified time: 2018-08-20 13:19:59
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -261,7 +261,11 @@ export default class AccountLimitEdit extends PureComponent {
       return;
     }
     const { editFormData, saveChange, validateForm } = this.props;
-    if (editFormData.operateType === config.relieveCode && !editFormData.bankConfirm) {
+    // 操作类型是解除限制并且待银行确认选否 || 所点击按钮的approverNum为none时，不需要选审批人直接保存
+    if (
+        (editFormData.operateType === config.relieveCode && !editFormData.bankConfirm)
+        || btnItem.approverNum === 'none'
+      ) {
       const flowAuditors = {
         auditors: emp.getId(),
         groupName: btnItem.nextGroupName,

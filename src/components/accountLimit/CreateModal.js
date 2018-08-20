@@ -2,8 +2,8 @@
  * @Description: 账户限制管理-新建弹窗
  * @Author: Liujianshu
  * @Date: 2018-07-31 16:15:52
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-08-03 15:36:23
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-20 11:05:30
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';

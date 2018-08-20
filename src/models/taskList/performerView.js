@@ -1,7 +1,9 @@
 /**
+ * @Author: hongguangqing
  * @Description: 执行者视图 model
- * @file models/taskList/performerView.js
- * @author hongguangqing
+ * @Date: 2018-08-20 13:15:45
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2018-08-20 13:15:45
  */
 import _ from 'lodash';
 import moment from 'moment';
@@ -10,6 +12,7 @@ import {
   STATE_COMPLETED_NAME,
   STATE_COMPLETED_CODE,
   defaultPerformerViewCurrentTab,
+  dateFormat,
 } from '../../routes/taskList/config';
 
 const EMPTY_OBJ = {};
@@ -88,6 +91,10 @@ export default {
     templateList: [],
     // 翻译选中的投资建议模板结果
     templateResult: {},
+    // 客户名下其他代办任务
+    otherTaskList: EMPTY_LIST,
+    // 客户名下其他代办任务是否请求成功
+    fetchOtherTaskListStatus: false,
     // MOT回访任务可分配人员的列表
     allotEmpList: [],
     // 回访任务分配结果
@@ -342,6 +349,14 @@ export default {
         templateResult: payload,
       };
     },
+    getOtherTaskListSuccess(state, action) {
+      const { payload = EMPTY_LIST } = action;
+      return {
+        ...state,
+        otherTaskList: payload,
+        fetchOtherTaskListStatus: true,
+      };
+    },
     queryAllotEmpListSuccess(state, action) {
       const { payload: { employList = [] } } = action;
       return {
@@ -354,6 +369,18 @@ export default {
       return {
         ...state,
         allotEmpResult: payload,
+      };
+    },
+    // 批量添加服务记录表单数据修改时同步到redux里的数据
+    changeBatchServiceRecordForm(state, action) {
+      const { payload = EMPTY_OBJ } = action;
+      const { index, key, value } = payload;
+      const { otherTaskList } = state;
+      const newOtherTaskList = _.cloneDeep(otherTaskList);
+      newOtherTaskList[index][key] = value;
+      return {
+        ...state,
+        otherTaskList: newOtherTaskList,
       };
     },
   },
@@ -444,6 +471,16 @@ export default {
       });
       const { resultData } = yield call(api.queryTargetCustDetail, payload);
       if (resultData) {
+        // 每次重新请求客户详情的时候都重新查询该客户名下其他代办任务
+        const condition = {
+          custId: resultData.custId,
+          eventId: resultData.eventId,
+          mssnId: resultData.missionFlowId,
+        };
+        yield put({
+          type: 'getOtherTaskList',
+          payload: condition,
+        });
         yield put({
           type: 'queryTargetCustDetailSuccess',
           payload: resultData,
@@ -668,6 +705,27 @@ export default {
         payload: resultData,
       });
     },
+    // 获取客户名下其他代办任务
+    * getOtherTaskList({ payload }, { call, put }) {
+      const { resultData } = yield call(api.getOtherTaskList, payload);
+      const newResultData = resultData.map(item => ({
+        ...item,
+        // 当前任务是否选中
+        isisChecked: false,
+        // 所选一级反馈code
+        serveCustFeedBack: '',
+        // 所选一级反馈code
+        serveCustFeedBack2: '',
+        // 反馈时间
+        feedBackTime: moment().format(dateFormat),
+        // 上传附件的uuid
+        uuid: '',
+      }));
+      yield put({
+        type: 'getOtherTaskListSuccess',
+        payload: newResultData,
+      });
+    },
 
     // 获取当前针对MOT回访类型任务可分配的的人员列表
     * queryAllotEmpList({ payload }, { call, put }) {
@@ -693,6 +751,10 @@ export default {
         type: 'dispatchTaskToEmpSucess',
         payload: resultData,
       });
+    },
+    // 批量添加服务记录
+    * saveBatchAddServiceRecord({ payload }, { call }) {
+      yield call(api.saveBatchAddServiceRecord, payload);
     },
   },
   subscriptions: {
