@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Spin, Icon, message, Table } from 'antd';
+import { Spin, Icon, message, Table, Checkbox, Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -14,7 +14,7 @@ import ServiceResultLayout from '../../common/ServiceResultLayout';
 import Button from '../../../common/Button';
 import { MISSION_PROGRESS_MAP, TABLE_COLUMN, OPEN_IN_TAB_PARAM } from './config';
 import { SOURCE_SERVICE_RESULT_CUST } from '../../../../config/createTaskEntry';
-import { url as urlHelper, emp } from '../../../../helper';
+import { url as urlHelper, emp, permission } from '../../../../helper';
 import { openInTab } from '../../../../utils';
 import logable from '../../../../decorators/logable';
 
@@ -49,6 +49,8 @@ export default class ServiceResult extends PureComponent {
     // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    // 清除创建任务的数据
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -133,10 +135,10 @@ export default class ServiceResult extends PureComponent {
   getExecutorDetail(option) {
     const { queryExecutorDetail, currentId } = this.props;
     const params = {
+      feedbackIdL1: '',
       missionId: currentId,
       missionProgressStatus: '',
       progressFlag: '',
-      feedbackIdL1: '',
       pageNum: 1,
       pageSize: PAGE_SIZE,
       ...option,
@@ -158,10 +160,20 @@ export default class ServiceResult extends PureComponent {
   // 客户明细表格的头部渲染(会根据点击了总体进度，已服务客户反馈不同而不同)
   @autobind
   renderCustDetailHeader() {
-    const { detailTitle } = this.state;
+    const { detailTitle, isSelectAll } = this.state;
     return (
       <div className={styles.custDetailHeader}>
         <div className={styles.custDetailTitle}>{detailTitle}</div>
+        <Tooltip
+          overlayClassName={styles.checkboxTooltip}
+          title="勾选全部客户"
+        >
+          <Checkbox
+            className={styles.checkbox}
+            onChange={this.handleSelectAllChange}
+            checked={isSelectAll}
+          />
+        </Tooltip>
         <Button onClick={this.handleCreateTaskClick}>发起任务</Button>
       </div>
     );
@@ -189,45 +201,57 @@ export default class ServiceResult extends PureComponent {
     // 如果是全选,参数payload中需要增加queryMissionCustsReq对象,为调取客户详情接口数据的参数
     // 如不是全选,则传一个由brokerNum组成的custIdList数组
     if (isSelectAll) {
-      payload.queryMissionCustsReq = encodeURIComponent(JSON.stringify(queryMissionCustsReq));
+      payload.queryMissionCustsReq = queryMissionCustsReq;
     } else {
-      // payload.queryMissionCustsReq = queryMissionCustsReq;
+      payload.queryMissionCustsReq = queryMissionCustsReq;
       payload.custIdList = selectedRowKeys;
     }
-    // 发请求判断是否超过1000条数据和是否包含非本人名下客户
-    isSendCustsServedByPostn({ ...payload }).then(() => {
-      const { sendCustsServedByPostnResult = {} } = this.props;
-      const {
-        custNumsIsExceedUpperLimit = false,
-        sendCustsServedByPostn = false,
-      } = sendCustsServedByPostnResult;
-      // 选择超过1000条数据 或者 没有超过1000条但包含非本人名下客户
-      if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
-        message.warn('您不能对非本人名下客户发起任务');
-        return;
-      }
+    // 是否有HTSC 任务管理岗职责,有的话,直接跳转创建任务页面,没有的话需要判断是否是本人名下的
+    if (permission.hasTkMampPermission()) {
       this.toCreateTaskPage(payload);
-    });
+    } else {
+      // 发请求判断是否超过1000条数据和是否包含非本人名下客户
+      isSendCustsServedByPostn(payload).then(() => {
+        const { sendCustsServedByPostnResult = {} } = this.props;
+        const {
+          custNumsIsExceedUpperLimit = false,
+          sendCustsServedByPostn = false,
+        } = sendCustsServedByPostnResult;
+        // 选择超过1000条数据 或者 没有超过1000条但包含非本人名下客户
+        if (custNumsIsExceedUpperLimit || !sendCustsServedByPostn) {
+          message.warn('您没有“HTSC任务管理”职责，不能对非本人名下客户发起任务');
+          return;
+        }
+        this.toCreateTaskPage(payload);
+      });
+    }
   }
 
   // 跳转到创建任务页面
   @autobind
   toCreateTaskPage(payload) {
     const { isSelectAll } = this.state;
-    const { page = {} } = this.props.custDetail;
+    const { custDetail: { page = {} }, clearCreateTaskData } = this.props;
     const { push } = this.context;
     // config中定义的一些url，id，title等常量
     const { URL, ID, TITLE } = OPEN_IN_TAB_PARAM;
     const { queryMissionCustsReq = {}, custIdList = [] } = payload;
     const param = { source: SOURCE_SERVICE_RESULT_CUST };
+    // 由于创建任务之前别人写的代码存在问题，xxxreq不能为空，所以非全选的时候我也传了xxxreq
+    // 我认为非全选的时候不用这个参数
+    const stringifyCondition = encodeURIComponent(JSON.stringify(queryMissionCustsReq));
     if (isSelectAll) {
-      param.condition = queryMissionCustsReq;
+      param.condition = stringifyCondition;
       param.count = page.totalCount;
     } else {
       param.ids = custIdList;
+      param.condition = stringifyCondition;
       param.count = _.size(custIdList);
     }
     const newurl = `${URL}?${urlHelper.stringify(param)}`;
+    // 发起新的任务之前，先清除数据
+    // serviceResultCust代表所有从执行者视图服务结果页面发起任务的入口
+    clearCreateTaskData(SOURCE_SERVICE_RESULT_CUST);
     // FSP打开一个新的tab的参数
     const openInTabParam = {
       closable: true,
@@ -245,12 +269,17 @@ export default class ServiceResult extends PureComponent {
     });
   }
 
-  // 全选回调
+  // 全选change
   @autobind
-  handleSelectAllChange() {
-    console.warn('isSelectAll', this.state.isSelectAll);
+  handleSelectAllChange(e) {
+    const { custDetail: { list = [] } } = this.props;
+    const newSelectedRowKeys = _.map(list, 'brokerNum');
+    const isChecked = e.target.checked;
+    // 若全选选中，此时的selectedRowKeys应为加载出来的list的brokerNum组成的数组
+    // 以便用来控制单个的CheckBox为选中状态，若取消全选，selectedRowKeys为[]
     this.setState({
-      isSelectAll: !this.state.isSelectAll,
+      isSelectAll: isChecked,
+      selectedRowKeys: isChecked ? newSelectedRowKeys : [],
     });
   }
 
@@ -294,30 +323,63 @@ export default class ServiceResult extends PureComponent {
     });
   }
 
+  // 单个checkbox的change
   @autobind
-  handleSelectChange(selectedRowKeys) {
-    this.setState({ selectedRowKeys });
+  toggleItemChecked(e, record) {
+    const { selectedRowKeys } = this.state;
+    const checked = e.target.checked;
+    // 若被选中，则向selectedRowKeys数组中增加该条的brokerNum
+    if (checked) {
+      this.setState({
+        selectedRowKeys: [...selectedRowKeys, record.brokerNum],
+      }, this.handleAllItemChecked);
+    } else {
+      // 若是取消选中，则从selectedRowKeys数组中过滤去除该条的brokerNum
+      this.setState({
+        selectedRowKeys: _.filter(selectedRowKeys, item => item !== record.brokerNum),
+      });
+    }
+  }
+
+  // 当单个勾选CheckBox决定全选是否被选中的方法
+  // 当选中的个数等于list的totalCount(总条数)时，此时全选应该选中
+  @autobind
+  handleAllItemChecked() {
+    const { custDetail: { page = {} } } = this.props;
+    const { selectedRowKeys } = this.state;
+    if (_.size(selectedRowKeys) === page.totalCount) {
+      this.setState({
+        isSelectAll: true,
+      });
+    }
   }
 
   render() {
     const { serviceProgress, custFeedBack, isShowExecutorDetailLoading } = this.props;
     const { list = [], page = {} } = this.getCustDetail();
-    const { selectedRowKeys, pageNum } = this.state;
+    const { selectedRowKeys, pageNum, isSelectAll } = this.state;
     // 自定义旋转图标
     const customIcon = <Icon type="reload" spin />;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.handleSelectChange,
-      hideDefaultSelections: true,
-      onSelectAll: this.handleSelectAllChange,
-      // TODO使用该方法会禁用到全选的CheckBox,正在寻找解决方案
-      // getCheckboxProps(record) {
-      //   // 此属性用来设置 checkbox 的 disabled 属性
-      //   return {
-      //     disabled: _.includes(selectedRowKeys, record.brokerNum),
-      //   };
-      // },
-    };
+    // 不改变常量，clone出来一个newColumns，再往clone出来的newColumns数组前面加一个CheckBox
+    const newColumns = _.cloneDeep(TABLE_COLUMN);
+    // 因为antd的table自带的Checkbox不能这个需求，所以自己去render一列CheckBox
+    newColumns.unshift({
+      dataIndex: 'checkbox',
+      key: 'checkbox',
+      title: '',
+      fixed: 'left',
+      width: 40,
+      render: (text, record) => {
+        const checked = _.includes(selectedRowKeys, record.brokerNum);
+        return (
+          <Checkbox
+            onChange={e => this.toggleItemChecked(e, record)}
+            disabled={isSelectAll}
+            checked={checked}
+          />
+        );
+      },
+    });
     return (
       <div className={styles.serviceResultWrap}>
         <ServiceResultLayout
@@ -328,12 +390,11 @@ export default class ServiceResult extends PureComponent {
         <div className={styles.custDetailWrap}>
           <Table
             dataSource={list}
-            columns={TABLE_COLUMN}
+            columns={newColumns}
             rowKey="brokerNum"
             title={this.renderCustDetailHeader}
             scroll={{ x: 720 }}
             pagination={false}
-            rowSelection={rowSelection}
           />
           {
             pageNum < page.totalPage || page.totalPage === 0
