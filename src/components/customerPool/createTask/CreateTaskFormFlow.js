@@ -198,7 +198,6 @@ export default class CreateTaskFormFlow extends PureComponent {
     const { location: { query: { ids = '', condition = {} } } } = this.props;
     let custCondition = {};
     let custIdList = null;
-    // FIXME：非全选的时候，ids不能为空，全选的时候condition不能为空，而不应该统一判断condition不能为空
     if (!_.isEmpty(condition)) {
       if (!_.isEmpty(ids)) {
         custIdList = decodeURIComponent(ids).split(',');
