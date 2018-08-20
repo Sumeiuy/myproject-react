@@ -204,7 +204,6 @@ function initFspMethod({ store, history, isInReact }) {
       },
     };
 
-    window.eb.utils.closeTab = window.handleTabpaneClose;
     window.tabW = _.noop;
     window.tabwei = _.noop;
     window.canCallPhone = false;
