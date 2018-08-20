@@ -3,7 +3,7 @@
  * @Author: Xuwenkang
  * @Date: 2018-08-07 14:46:25
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 13:19:59
+ * @Last Modified time: 2018-08-20 16:09:23
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -36,7 +36,8 @@ const {
 const approverModalKey = 'approverModal';
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-
+// 终止按钮的节点名称
+const END_NODE_NAME = 'falseOver';
 const effects = {
   // 获取详情
   queryDetailInfo: 'accountLimitEdit/queryDetailInfo',
@@ -185,9 +186,14 @@ export default class AccountLimitEdit extends PureComponent {
   }
 
   @autobind
-  chekDataIsLegal() {
+  chekDataIsLegal(operate = '') {
+    // 如果点击的按钮是终止，就不做必填校验
+    if (operate === END_NODE_NAME) {
+      return true;
+    }
     const { editFormData } = this.props;
     const { attachList } = editFormData;
+
     if (_.isEmpty(editFormData.companyName)) {
       message.error('公司简称不能为空!');
       return false;
@@ -257,7 +263,7 @@ export default class AccountLimitEdit extends PureComponent {
   // 提交，点击后选择审批人
   @autobind
   handleSubmit(btnItem) {
-    if (!this.chekDataIsLegal()) {
+    if (!this.chekDataIsLegal(btnItem.operate)) {
       return;
     }
     const { editFormData, saveChange, validateForm } = this.props;
