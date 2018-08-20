@@ -280,6 +280,7 @@ const matchRule = {
         id: 'purFinAset',
         render: 'renderDefaultVal',
         unit: '元',
+        hasCycle: true,
       },
     ],
   },
