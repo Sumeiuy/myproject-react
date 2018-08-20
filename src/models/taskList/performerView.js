@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Description: 执行者视图 model
  * @Date: 2018-08-20 13:15:45
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2018-08-20 13:15:45
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-20 15:33:57
  */
 import _ from 'lodash';
 import moment from 'moment';
