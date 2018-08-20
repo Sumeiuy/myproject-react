@@ -3,7 +3,7 @@
  * @Description: 批量添加服务记录项
  * @Date: 2018-08-17 11:31:18
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 13:32:41
+ * @Last Modified time: 2018-08-20 13:38:47
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -234,7 +234,7 @@ export default class BatchAddServiceRecordItem extends PureComponent {
             checked={data[IS_CHECKED_KEY]}
             onChange={e => this.handleChangeCheckbox(e.target.checked, data.flowId)}
           />
-          <span className={styles.titleText}>待办任务1：嘉实沪港回报精准营销</span>
+          <span className={styles.titleText}>{data.eventName}</span>
         </div>
         <FormItem
           label={feedbackLabel}
