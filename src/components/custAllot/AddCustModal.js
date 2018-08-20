@@ -7,6 +7,7 @@
  */
 
 import React, { PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
@@ -21,7 +22,7 @@ import Pagination from '../../components/common/Pagination';
 import CommonTable from '../../components/common/biz/CommonTable';
 import commonConfirm from '../common/confirm_';
 import Icon from '../common/Icon';
-import logable from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 import { emp } from '../../helper';
 import config from './config';
 import styles from './addCustModal.less';
@@ -79,13 +80,13 @@ export default class AddCustModal extends PureComponent {
       status: [],
       // 营业部
       orgIdKeyWord: '',
-      // 净资产
+      // 总资产
       totalAsset: [],
-      // 年日均净资产
+      // 年日均总资产
       annualDailyAsset: [],
-      // 上年净佣金
+      // 上年股基净佣金
       lastYearAsset: [],
-      // 本年净佣金
+      // 本年股基净佣金
       annualAsset: [],
       pageNum: INIT_PAGENUM,
       // 客户关键字
@@ -96,37 +97,30 @@ export default class AddCustModal extends PureComponent {
       dmKeyword: '',
       // 选中的客户
       selectedRows: [],
+      // 全选按钮提示层 display
+      popoverDisplay: 'none',
     };
   }
-
 
   componentDidMount() {
     // 获取客户
     this.searchCustList();
   }
 
-  // 选择客户
-  @autobind
-  onSelectChange(record, selected) {
-    const { selectedRows } = this.state;
-    // 选中的 row 数组
-    let newSelectedRows = [...selectedRows];
-    if (selected) {
-      newSelectedRows.push(record);
-      if (this.checkCountIsBigThanLimit(newSelectedRows.length)) {
-        message.error(ERROR_MESSAGE_ALL_COUNT);
-        return;
-      }
-      if (newSelectedRows.length > LIMIT_COUNT) {
-        message.error(ERROR_MESSAGE_COUNT);
-        return;
-      }
-    } else {
-      newSelectedRows = _.filter(newSelectedRows, o => o.custId !== record.custId);
+  componentDidUpdate() {
+    this.checkBoxDOM = ReactDOM.findDOMNode(document.querySelectorAll('.ant-table-selection')[0]);  // eslint-disable-line
+
+    if (this.checkBoxDOM) {
+      this.checkBoxDOM.addEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
+      this.checkBoxDOM.addEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
     }
-    this.setState({
-      selectedRows: newSelectedRows,
-    });
+  }
+
+  componentWillUnmount() {
+    if (this.checkBoxDOM) {
+      this.checkBoxDOM.removeEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
+      this.checkBoxDOM.removeEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
+    }
   }
 
   // 生成客户头部列表
@@ -153,8 +147,55 @@ export default class AddCustModal extends PureComponent {
     return newTitleList;
   }
 
+  // 选择客户
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户划转添加客户弹框' } })
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '选择客户',
+      value: '$args[0].custName',
+    },
+  })
+  handleSelectChange(record, selected) {
+    const { selectedRows } = this.state;
+    // 选中的 row 数组
+    let newSelectedRows = [...selectedRows];
+    if (selected) {
+      newSelectedRows.push(record);
+      if (this.checkCountIsBigThanLimit(newSelectedRows.length)) {
+        message.error(ERROR_MESSAGE_ALL_COUNT);
+        return;
+      }
+      if (newSelectedRows.length > LIMIT_COUNT) {
+        message.error(ERROR_MESSAGE_COUNT);
+        return;
+      }
+    } else {
+      newSelectedRows = _.filter(newSelectedRows, o => o.custId !== record.custId);
+    }
+    this.setState({
+      selectedRows: newSelectedRows,
+    });
+  }
+
+  // 头部 checkbox 鼠标移入
+  @autobind
+  handleCheckBoxMouseEnter() {
+    this.setState({
+      popoverDisplay: 'block',
+    });
+  }
+
+  // 头部 checkbox 鼠标移出
+  @autobind
+  handleCheckBoxMouseLeave() {
+    this.setState({
+      popoverDisplay: 'none',
+    });
+  }
+
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户分配添加客户弹框' } })
   closeModal() {
     // 关闭模态框
     commonConfirm({
@@ -173,13 +214,13 @@ export default class AddCustModal extends PureComponent {
       smKeyword,
       dmKeyword,
       pageNum,
-      // 净资产区间
+      // 总资产区间
       totalAsset: [totalAssetStart = '', totalAssetEnd = ''],
-      // 年日均净资产区间
+      // 年日均总资产区间
       annualDailyAsset: [annualDailyAssetStart = '', annualDailyAssetEnd = ''],
-      // 本年净佣金区间
+      // 本年股基净佣金区间
       annualAsset: [annualAssetStart = '', annualAssetEnd = ''],
-      // 上年净佣金区间
+      // 上年股基净佣金区间
       lastYearAsset: [lastYearAssetStart = '', lastYearAssetEnd = ''],
     } = this.state;
     // 如果状态数组有数据，且第一个数据为空，则置为空数组
@@ -211,6 +252,13 @@ export default class AddCustModal extends PureComponent {
 
   // 状态选中
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择状态',
+      value: '$args[0].value',
+    },
+  })
   handleMultiFilterChange(obj) {
     this.setState({
       status: obj.value,
@@ -220,6 +268,13 @@ export default class AddCustModal extends PureComponent {
 
   // 变更所属营业部
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择所属营业部',
+      value: '$args[0]',
+    },
+  })
   handleTreeSelectChange(value) {
     this.setState({
       orgIdKeyWord: value,
@@ -229,6 +284,7 @@ export default class AddCustModal extends PureComponent {
 
   // 更改服务经理
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '搜索服务经理' } })
   handleSMChange(value) {
     this.setState({
       smKeyword: value,
@@ -238,14 +294,22 @@ export default class AddCustModal extends PureComponent {
 
   // 更改介绍人
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '搜索介绍人' } })
   handleDMChange(value) {
     this.setState({
       dmKeyword: value,
     }, this.searchCustList);
   }
 
-  // 净资产区间
+  // 总资产区间
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '切换$args[0].id',
+      value: '$args[0].value',
+    },
+  })
   handleRangeFilterChange(obj) {
     this.setState({
       [obj.id]: obj.value,
@@ -255,6 +319,7 @@ export default class AddCustModal extends PureComponent {
 
   // 切换展开状态
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '展开更多' } })
   handleToggleExpand() {
     const { isExpand } = this.state;
     this.setState({
@@ -264,15 +329,16 @@ export default class AddCustModal extends PureComponent {
 
   // 翻页
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '点击分页' } })
   handlePageChange(pageNum) {
     this.setState({
       pageNum,
     }, this.searchCustList);
   }
 
-
   // 全选事件
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '点击全选客户' } })
   handleSelectAll(selected, selectedAllRows, changeRows) {
     const { selectedRows } = this.state;
     const changeRowKeys = _.map(changeRows, 'custId');
@@ -306,7 +372,6 @@ export default class AddCustModal extends PureComponent {
     return flag;
   }
 
-
   // 发送添加客户请求
   @autobind
   sendRequest() {
@@ -334,6 +399,17 @@ export default class AddCustModal extends PureComponent {
     };
     // 发送添加请求，关闭弹窗
     sendRequest(payload, pageData);
+    const title = '添加客户请求';
+    logCommon({
+      type: 'Submit',
+      payload: {
+        title,
+        value: JSON.stringify({ ...payload }),
+        name: title,
+        type: '分公司客户分配',
+        subType: '分公司客户分配',
+      },
+    });
   }
 
   render() {
@@ -378,6 +454,7 @@ export default class AddCustModal extends PureComponent {
       smKeyword,
       dmKeyword,
       selectedRows,
+      popoverDisplay,
     } = this.state;
 
     // 总条数
@@ -401,6 +478,7 @@ export default class AddCustModal extends PureComponent {
       pageSize,
       onChange: this.handlePageChange,
       isHideLastButton: true,
+      selectedNumber: selectedRows.length,
     };
 
     // 关闭弹窗
@@ -413,7 +491,7 @@ export default class AddCustModal extends PureComponent {
       selectedRowKeys: _.map(selectedRows, 'custId'),
       hideDefaultSelections: true,
       columnWidth: 40,
-      onSelect: this.onSelectChange,
+      onSelect: this.handleSelectChange,
       onSelectAll: this.handleSelectAll,
       onSelectInvert: this.handleSelectAll,
     };
@@ -491,7 +569,7 @@ export default class AddCustModal extends PureComponent {
                   <div className={styles.rangeDiv}>
                     <RangeFilter
                       filterId="totalAsset"
-                      filterName="净资产"
+                      filterName="总资产"
                       defaultLabel={NO_VALUE}
                       value={totalAsset}
                       unit="元"
@@ -499,7 +577,7 @@ export default class AddCustModal extends PureComponent {
                     />
                     <RangeFilter
                       filterId="annualDailyAsset"
-                      filterName="年日均净资产"
+                      filterName="年日均总资产"
                       defaultLabel={NO_VALUE}
                       value={annualDailyAsset}
                       unit="元"
@@ -507,7 +585,7 @@ export default class AddCustModal extends PureComponent {
                     />
                     <RangeFilter
                       filterId="lastYearAsset"
-                      filterName="上年净佣金"
+                      filterName="上年股基净佣金"
                       defaultLabel={NO_VALUE}
                       value={lastYearAsset}
                       unit="元"
@@ -515,7 +593,7 @@ export default class AddCustModal extends PureComponent {
                     />
                     <RangeFilter
                       filterId="annualAsset"
-                      filterName="本年净佣金"
+                      filterName="本年股基净佣金"
                       defaultLabel={NO_VALUE}
                       value={annualAsset}
                       unit="元"
@@ -527,6 +605,10 @@ export default class AddCustModal extends PureComponent {
               }
             </div>
             <div className={styles.tableDiv}>
+              <div className={styles.divPopover} style={{ display: popoverDisplay }}>
+                <div className={styles.arrow} />
+                勾选仅为当前页，请翻页再次勾选
+              </div>
               <CommonTable
                 data={list}
                 titleList={newTitleList}

@@ -29,8 +29,9 @@ import Detail from '../../components/custAllot/Detail';
 import commonConfirm from '../../components/common/confirm_';
 import config from '../../components/custAllot/config';
 import { dva, emp, convert, time } from '../../helper';
+// import { dva, emp, permission, convert, time } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
-import logable, { logPV } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 
 const dispatch = dva.generateEffect;
 
@@ -310,8 +311,16 @@ export default class CustAllot extends PureComponent {
     return isFiliale;
   }
 
+  // 是否显示创建按钮
+  @autobind
+  showCreateBtn() {
+    // return permission.hasKHFPGPermission() && this.checkUserIsFiliale();
+    return true;
+  }
+
   // 打开弹窗
   @autobind
+  @logPV({ pathname: '/modal/addCustAllot', title: '新建分公司客户分配批量添加弹窗' })
   showModal(modalKey) {
     this.setState({
       [modalKey]: true,
@@ -320,7 +329,7 @@ export default class CustAllot extends PureComponent {
 
   // 关闭弹窗
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户划转弹框' } })
+  @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户分配弹框' } })
   closeModal(obj) {
     const { clearData } = this.props;
     const { modalKey, isNeedConfirm = true, clearDataType = '' } = obj;
@@ -346,7 +355,7 @@ export default class CustAllot extends PureComponent {
 
   // 打开新建申请的弹出框
   @autobind
-  @logPV({ pathname: '/modal/createCustAllotProtocol', title: '新建分公司客户人工划转' })
+  @logPV({ pathname: '/modal/createCustAllotProtocol', title: '新建分公司客户分配' })
   openCreateModalBoard() {
     this.setState({
       createModal: true,
@@ -355,6 +364,7 @@ export default class CustAllot extends PureComponent {
 
   // 切换页码
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '左侧列表分页' } })
   handlePageNumberChange(nextPage, currentPageSize) {
     const { replace, location } = this.props;
     const { query, pathname } = location;
@@ -437,6 +447,12 @@ export default class CustAllot extends PureComponent {
         isNeedConfirm: true,
         clearDataType: clearDataArray[1],
       });
+      logCommon({
+        type: 'ButtonClick',
+        payload: {
+          name: '关闭分公司客户分配弹框',
+        },
+      });
       return;
     }
     const { addedCustData, addedManageData } = this.props;
@@ -462,9 +478,45 @@ export default class CustAllot extends PureComponent {
       message.error('所选客户数量必须大于或者等于所选服务经理数量');
       return;
     }
-    this.setState({
-      flowAuditors: btnItem.flowAuditors,
-      approverModal: true,
+    const { saveChange, updateData } = this.props;
+    const { ruleType } = this.state;
+    const payload = {
+      id: updateData.appId,
+      ruleType: manageTotal === 1 ? '' : ruleType,
+      TGConfirm: false,
+      positionId: empPstnId,
+      orgId: empOrgId,
+      auditors: '',
+      groupName: '',
+      approverIdea: '',
+    };
+    saveChange(payload).then(() => {
+      const { saveChangeData } = this.props;
+      // 提交没有问题
+      if (saveChangeData.errorCode === '0') {
+        this.setState({
+          flowAuditors: btnItem.flowAuditors,
+          approverModal: true,
+        });
+      } else {
+        commonConfirm({
+          shortCut: 'hasTouGu',
+          onOk: () => {
+            this.setState({
+              flowAuditors: btnItem.flowAuditors,
+              approverModal: true,
+            });
+          },
+        });
+      }
+    });
+    logCommon({
+      type: 'Submit',
+      payload: {
+        title: '分公司客户分配提交',
+        value: JSON.stringify({ ...payload }),
+        name: '分公司客户分配提交',
+      },
     });
   }
 
@@ -518,27 +570,21 @@ export default class CustAllot extends PureComponent {
     const payload = {
       id: updateData.appId,
       ruleType: manageTotal === 1 ? '' : ruleType,
-      TGConfirm: false,
+      TGConfirm: true,
       positionId: empPstnId,
       orgId: empOrgId,
       auditors: auth.login,
       groupName: flowAuditors.nextGroupName,
       approverIdea: '',
     };
-    saveChange(payload).then(() => {
-      const { saveChangeData } = this.props;
-      // 提交没有问题
-      if (saveChangeData.errorCode === '0') {
-        this.handleSuccessCallback();
-      } else {
-        commonConfirm({
-          shortCut: 'hasTouGu',
-          onOk: () => {
-            payload.TGConfirm = true;
-            saveChange(payload).then(this.handleSuccessCallback());
-          },
-        });
-      }
+    saveChange(payload).then(this.handleSuccessCallback());
+    logCommon({
+      type: 'Submit',
+      payload: {
+        title: '选择审批人后分公司客户分配提交',
+        value: JSON.stringify({ ...payload }),
+        name: '选择审批人后分公司客户分配提交',
+      },
     });
   }
 
@@ -556,7 +602,6 @@ export default class CustAllot extends PureComponent {
   @autobind
   renderListRow(record, index) {
     const { activeRowIndex } = this.state;
-
     const { status: statusData } = record;
     const statusTags = [convert.getStatusByCode(statusData)];
     return (
@@ -575,7 +620,6 @@ export default class CustAllot extends PureComponent {
       />
     );
   }
-
 
   render() {
     const {
@@ -628,7 +672,7 @@ export default class CustAllot extends PureComponent {
         empInfo={empInfo}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
-        checkUserIsFiliale={this.checkUserIsFiliale}
+        isShowCreateBtn={this.showCreateBtn}
         basicFilters={basicFilters}
         moreFilters={moreFilters}
         moreFilterData={moreFilterData}
