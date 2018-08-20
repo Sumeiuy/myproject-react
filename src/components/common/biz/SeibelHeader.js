@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-13 09:41:43
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-20 14:17:35
+ * @Last Modified time: 2018-08-20 16:03:59
  */
 
 import React, { PureComponent } from 'react';
@@ -126,11 +126,6 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
-  filterBoxRef(input) {
-    this.filterBox = input;
-  }
-
-  @autobind
   filterMoreRef(input) {
     this.filterMore = input;
   }
@@ -189,7 +184,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '服务经理',
-      value: '$args[0].value.ptyMngName',
+      value: '$args[1].value.ptyMngName',
     },
   })
   handleManagerSelect(name, item) {
@@ -202,7 +197,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '拟稿人',
-      value: '$args[0].value.ptyMngName',
+      value: '$args[1].value.ptyMngName',
     },
   })
   handleDrafterSelect(name, item) {
@@ -215,7 +210,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '审批人',
-      value: '$args[0].value.ptyMngName',
+      value: '$args[1].value.ptyMngName',
     },
   })
   handleApproverSelect(name, item) {
@@ -646,6 +641,11 @@ export default class Pageheader extends PureComponent {
     const { moreFilters } = this.props;
     const filterItem = _.find(moreFilters, item => (item.props.key === key));
     return filterItem ? this.getMoreFilterElement(filterItem) : null;
+  }
+
+  @autobind
+  filterBoxRef(input) {
+    this.filterBox = input;
   }
 
   @autobind
