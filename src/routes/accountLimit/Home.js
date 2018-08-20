@@ -165,10 +165,14 @@ export default class AccountLimitHome extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
+    console.warn('进入didUpdate', prevProps);
     const { location: { query: prevQuery } } = prevProps;
     const { location: { query } } = this.props;
-    const otherQuery = _.omit(query, ['currentId']);
-    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    const otherQuery = _.omit(query, ['currentId', 'business2']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId', 'business2']);
+    if (query.business2 !== prevQuery.business2) {
+      return;
+    }
     // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
     if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
       const { pageNum, pageSize } = query;
