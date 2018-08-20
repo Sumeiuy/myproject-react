@@ -2,8 +2,8 @@
  * @Description: 客户详情
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-14 16:25:43
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-15 19:01:55
  */
 
 import React, { PureComponent } from 'react';
@@ -70,6 +70,7 @@ export default class CustomerDetail extends PureComponent {
   @autobind
   getInFoPerfectRate() {
     const { targetCustDetail = {} } = this.props;
+    // 下面的calssName可以提出来使用，使得代码整洁干净
     return (
       <div className={`${styles.nameTips}`}>
         <h6><span>手机号码：</span>
@@ -189,6 +190,7 @@ export default class CustomerDetail extends PureComponent {
       foldButtonId,
     } = this.props;
     const {
+      serviceEmpId, serviceEmpName,
       assets, openAssets, availablBalance, openedBusiness, openBusiness,
       empName, recentServiceTime, missionType, missionTitle, missionFlowId, custId,
     } = targetCustDetail;
@@ -211,6 +213,7 @@ export default class CustomerDetail extends PureComponent {
     // 信息完备率
     const infoCompletionRate = targetCustDetail.infoCompletionRate ?
       `${Number(targetCustDetail.infoCompletionRate) * 100}%` : '--';
+
     return (
       <div className={styles.customerDetail}>
         <div className={styles.container}>
@@ -278,6 +281,10 @@ export default class CustomerDetail extends PureComponent {
                   {this.handleEmpty(empName)}
                   {!_.isEmpty(empName) && <TipsInfo title={this.getEmpInfo()} />}
                 </div>
+              </div>
+              <div className={styles.item}>
+                <div className={styles.itemLabel}>服务经理:</div>
+                <div className={styles.itemContent}>{`${serviceEmpName}（${serviceEmpId}）`}</div>
               </div>
             </div>
             <div className={styles.row}>

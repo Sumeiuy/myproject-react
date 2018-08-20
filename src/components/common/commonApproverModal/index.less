@@ -1,0 +1,41 @@
+.approverBox {
+  position: relative;
+  padding: 0 16px;
+  height: 100%;
+  border: 1px solid transparent;
+}
+.serarhApprover {
+  margin: 15px 0;
+  width: 300px;
+
+  :global {
+    .ant-input-affix-wrapper .ant-input-suffix {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+      right: 10px;
+      background-color: transparent;
+      border-radius: 0 4px 4px 0;
+      text-align: center;
+      font-size: 14px;
+    }
+    .ant-input-search-icon,
+    .ant-input-search-icon:hover {
+      color: #333;
+    }
+    .ant-input-search > .ant-input-suffix > .ant-input-search-button {
+      background-color: transparent;
+      color: #333;
+      border: none;
+    }
+  }
+}
+.approverListBox {
+  position: absolute;
+  top: 63px;
+  bottom: 1px;
+  left: 16px;
+  right: 16px;
+  overflow: hidden;
+}

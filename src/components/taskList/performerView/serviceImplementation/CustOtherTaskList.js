@@ -3,7 +3,7 @@
  * @Description: 客户名下其他代办任务
  * @Date: 2018-08-15 14:11:02
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-17 09:36:45
+ * @Last Modified time: 2018-08-20 10:27:23
  */
 
 import React, { PureComponent } from 'react';
@@ -43,8 +43,8 @@ export default class CustOtherTaskList extends PureComponent {
   }
 
   @autobind
-  getSlicedText(text = '') {
-    return text.length > MAX_LENGTH ? `${text.slice(0, 45)}...` : text;
+  getSlicedText(text) {
+    return (text || '').length > MAX_LENGTH ? `${(text || '').slice(0, MAX_LENGTH)}...` : (text || '');
   }
 
   // 生成表格标题

@@ -1,4 +1,18 @@
+@import "../../css/util.less";
 .formContent {
+  :global {
+    table {
+      table-layout: fixed;
+      width: 100%;
+    }
+    .ant-table-tbody > tr > td {
+      .one-line-ellipsis;
+      & > div {
+        position: relative;
+        .one-line-ellipsis;
+      }
+    }
+  }
   padding: 10px 20px;
   .contentItem {
     margin-top: 12px;

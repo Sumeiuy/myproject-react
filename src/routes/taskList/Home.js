@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-15 17:25:48
+ * @Last Modified time: 2018-08-19 20:06:07
  * @description 任务管理首页
  */
 
@@ -27,8 +27,6 @@ import logable, { logCommon } from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
 
-import styles from './home.less';
-
 import {
   EXECUTOR,
   INITIATOR,
@@ -44,8 +42,8 @@ import {
   DEFAULTSORT_VIEW,
 } from './config';
 
-// 空函数
-const NOOP = _.noop;
+import styles from './home.less';
+
 // 执行者视图的左侧列表宽度
 const LEFT_PANEL_WIDTH = 400;
 // 视图配置项
@@ -207,7 +205,7 @@ export default class PerformerView extends PureComponent {
 
   // 执行者视图获取目标客户列表项的对应浮层详情
   @autobind
-  getCustDetail({ missionId = '', custId = '', missionFlowId = '', callback = NOOP }) {
+  getCustDetail({ eventId, missionId = '', custId = '', missionFlowId = '', callback = _.noop }) {
     const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;
     const { list = EMPTY_LIST } = targetCustList;
     if (_.isEmpty(list)) {
@@ -218,6 +216,7 @@ export default class PerformerView extends PureComponent {
       missionId,
       custId: custId || firstItem.custId,
       missionFlowId: missionFlowId || firstItem.missionFlowId,
+      eventId: eventId || firstItem.eventId,
     }).then(callback);
   }
 
@@ -518,6 +517,10 @@ export default class PerformerView extends PureComponent {
       getOtherTaskList,
       otherTaskList,
       fetchOtherTaskListStatus,
+      isSendCustsServedByPostn,
+      sendCustsServedByPostnResult,
+      changeBatchServiceRecordForm,
+      saveBatchAddServiceRecord,
     } = this.props;
     const {
       typeCode,
@@ -593,6 +596,11 @@ export default class PerformerView extends PureComponent {
         getOtherTaskList={getOtherTaskList}
         otherTaskList={otherTaskList}
         fetchOtherTaskListStatus={fetchOtherTaskListStatus}
+        isSendCustsServedByPostn={isSendCustsServedByPostn}
+        sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+        refreshTaskList={this.queryAppList}
+        onBatchServiceRecordFormChange={changeBatchServiceRecordForm}
+        saveBatchAddServiceRecord={saveBatchAddServiceRecord}
       />
     );
   }
@@ -750,7 +758,7 @@ export default class PerformerView extends PureComponent {
   @autobind
   queryDataForZhanleServiceWay() {
     const { eventId, taskTypeCode, typeCode } = this.state;
-    const type = `${+taskTypeCode + 1}`;
+    const type = `${parseInt(taskTypeCode, 10) + 1}`;
     // TODO 如果是mot任务 eventId参数需要使用 eventId
     // 如果是自建任务 需要使用serviceType
     // type 值为2的时候，该任务是自建任务

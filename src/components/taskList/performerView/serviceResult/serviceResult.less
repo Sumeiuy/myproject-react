@@ -1,6 +1,30 @@
 .serviceResultWrap {
   margin: 20px 20px 0;
   min-height: 300px;
+  .custDetailWrap {
+    border: 1px solid #c2c2c2;
+    padding: 10px;
+    margin: 0 16px 20px 0;
+    :global {
+      .ant-table-thead > tr > th {
+        background-color: #fff;
+        border-bottom: 2px solid #e8e8e8;
+      }
+      .ant-table-thead > tr > th,
+      .ant-table-tbody > tr > td {
+        padding: 12px 16px;
+        font-size: 13px;
+        word-break: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 200px;
+      }
+      .ant-table-title {
+        padding: 0;
+      }
+    }
+  }
   .custManagerScopeTable {
     margin-bottom: 20px;
     :global {
@@ -20,12 +44,33 @@
     }
   }
   .custDetailHeader {
-    margin-left: 10px;
+    padding-bottom: 10px;
     font-size: 14px;
-    padding: 10px;
+    border-bottom: 3px solid #e8e8e8;
+    &:after {
+      content: " ";
+      display: block;
+      height: 0;
+      line-height: 0;
+      visibility: hidden;
+      clear: both;
+    }
+    .custDetailTitle {
+      display: inline-block;
+      line-height: 32px;
+      margin-left: 10px;
+    }
+    :global {
+      .commonBtn {
+        float: right;
+        .ant-btn {
+          padding: 0 18px;
+        }
+      }
+    }
   }
   .shuaxinWrap {
-    margin-bottom: 20px;
+    margin-top: 20px;
     font-size: 14px;
     text-align: right;
     :global {

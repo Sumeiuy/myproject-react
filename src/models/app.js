@@ -249,7 +249,7 @@ export default {
       const data = response.resultData;
       if (data) {
         // 设置保存用户信息,TODO 此处针对接口还未开发完成做的容错处理
-        emp.setEmpInfo(data.empPostnList);
+        emp.setEmpInfo(data.empPostnList, data.empInfo);
         // 初始化权方法
         permission.init(data.empRespList);
         yield put({
