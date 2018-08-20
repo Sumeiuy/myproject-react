@@ -577,7 +577,7 @@ export default class CreateModal extends PureComponent {
       type: 'Submit',
       payload: {
         title,
-        value: JSON.stringify({ ...payload }),
+        value: JSON.stringify(payload),
         name: title,
         type: '营业部客户分配',
         subType: '营业部客户分配',
