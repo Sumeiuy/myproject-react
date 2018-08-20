@@ -329,7 +329,7 @@ export default class CustAllot extends PureComponent {
 
   // 关闭弹窗
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户划转弹框' } })
+  @logable({ type: 'ButtonClick', payload: { name: '关闭分公司客户分配弹框' } })
   closeModal(obj) {
     const { clearData } = this.props;
     const { modalKey, isNeedConfirm = true, clearDataType = '' } = obj;
@@ -446,6 +446,12 @@ export default class CustAllot extends PureComponent {
         modalKey: createModalKey,
         isNeedConfirm: true,
         clearDataType: clearDataArray[1],
+      });
+      logCommon({
+        type: 'ButtonClick',
+        payload: {
+          name: '关闭分公司客户分配弹框',
+        },
       });
       return;
     }

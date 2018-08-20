@@ -65,7 +65,7 @@ const matchRule = {
       unit: '元',
     }],
   },
-  totMktVal: {
+  totMktval: {
     inset: true,
     key: [{
       name: '总市值(含信用)',

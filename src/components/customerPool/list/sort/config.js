@@ -39,7 +39,7 @@ export const sortQuotaConfig = [
     name: '信用可用资金',
   },
   {
-    sortType: 'totMktVal',
+    sortType: 'totMktval',
     name: '总市值(含信用)',
   },
 ];

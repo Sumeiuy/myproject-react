@@ -29,7 +29,7 @@ import config from '../../components/departmentCustAllot/config';
 import { dva, emp, convert, time } from '../../helper';
 // import { dva, emp, permission, convert, time } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
-import logable, { logPV } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 
 const dispatch = dva.generateEffect;
 
@@ -452,6 +452,12 @@ export default class DepartmentCustAllot extends PureComponent {
         modalKey: createModalKey,
         isNeedConfirm: true,
         clearDataType: clearDataArray[1],
+      });
+      logCommon({
+        type: 'ButtonClick',
+        payload: {
+          name: '关闭营业部客户分配弹框',
+        },
       });
       return;
     }
