@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-15 18:54:12
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-20 10:59:08
  * 服务经理维度任务统计
  */
 
@@ -73,7 +73,7 @@ export default class CustManagerDetailScope extends PureComponent {
     // 客户总数、已服务客户、已完成客户、结果达标客户下钻
     onPreviewCustDetail: PropTypes.func,
     // 客户反馈一二级
-    currentFeedback: PropTypes.object.isRequired,
+    currentFeedback: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
   }
 

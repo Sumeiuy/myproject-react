@@ -266,6 +266,12 @@ const newOpenTabConfig = [
   },
   {
     name: '创建任务',
+    id: 'FSP_CREATETASK_FROMLABELMANAGEMENT',
+    path: '/customerPool/createTaskFromLabelManagement',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
+  },
+  {
+    name: '创建任务',
     id: 'FSP_CREATETASK',
     path: '/customerPool/createTask',
     pid: 'FSP_NEW_HOMEPAGE_PRIMARY',

@@ -244,6 +244,10 @@ export const getRouterData = (app) => {
     '/customerPool/createTaskFromServiceResultCust': {
       component: CreateTask,
     },
+    // 标签管理页面发起任务
+    '/customerPool/createTaskFromLabelManagement': {
+      component: CreateTask,
+    },
     // 客户分组管理
     '/customerPool/customerGroupManage': {
       component: CustomerGroupManage,
