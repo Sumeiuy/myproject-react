@@ -12,7 +12,7 @@ import styles from './fspComponent.less';
 
 import { os } from '../../../src/helper';
 
-import { BLOCK_JSP_FORM_ROUTER } from './config';
+import { BLOCK_JSP_TEST_ELEM, checkJSPValue } from './config';
 
 function findRoute(pathname) {
   return os.findBestMatch(pathname, fspRoutes, 'path');
@@ -39,7 +39,7 @@ export default class FSPComponent extends PureComponent {
   componentDidMount() {
     const { router } = this.context;
     this.historyListen = router.history.listen(({ pathname }) => {
-      if (_.find(BLOCK_JSP_FORM_ROUTER, path => path === pathname)) {
+      if (_.find(BLOCK_JSP_TEST_ELEM, item => item.pathname === pathname)) {
         this.setState({
           isBlocking: true,
         });
@@ -120,7 +120,13 @@ export default class FSPComponent extends PureComponent {
   @autobind
   handlePrompt(location) {
     const { location: { pathname } } = this.props;
-    if (window.shouldNotBlock) {
+    const testSuit = _.find(BLOCK_JSP_TEST_ELEM, item => item.pathname === pathname);
+    if (testSuit) {
+      if (checkJSPValue(testSuit.test)) {
+        return true;
+      }
+      return '当前表单内容不会保存, 请确认是否离开当前页面';
+    } else if (window.shouldNotBlock) {
       window.shouldNotBlock = false;
       return true;
     }
