@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import { Tooltip, Button } from 'antd';
 import _ from 'lodash';
 import { dva, emp } from '../../helper';
-import { openFspTab, openRctTab } from '../../utils';
+import { openFspTab, openRctTab, linkTo } from '../../utils';
 import Pagination from '../../components/common/Pagination';
 import Loading from '../../layouts/Loading';
 import { windowOpen } from '../../utils/fspGlobal';
@@ -124,12 +124,15 @@ export default class MessageCenter extends PureComponent {
       title: '协议详细信息',
       forceRefresh: true,
     };
-    const pathName = '/customerCenter/360/per/orderDetail';
+    const pathname = '/fsp/customerCenter/360OrderDetail';
     openFspTab({
       routerAction: this.context.push,
       url,
-      pathName,
       param,
+      pathname,
+      state: {
+        url,
+      },
     });
   }
 
@@ -176,12 +179,15 @@ export default class MessageCenter extends PureComponent {
             title: '投顾协议转签向导',
             forceRefresh: true,
           };
-          const pathName = '/client/tgcontracttransfer/wizard/main';
+          const pathname = '/fsp/customerCenter/tgcontracttransfer';
           openFspTab({
             routerAction: this.context.push,
             url,
-            pathName,
             param,
+            pathname,
+            state: {
+              url,
+            },
           });
         }
       } else {
@@ -196,8 +202,13 @@ export default class MessageCenter extends PureComponent {
   @autobind
   handleMessageByBranch(rowId) {
     this.removeNotice = false;
-    const { push } = this.context;
-    push(`/demote?notifiId=${rowId}`);
+    linkTo({
+      routerAction: this.context.push,
+      pathname: '/demote',
+      query: {
+        notifiId: rowId,
+      },
+    });
   }
 
   // 新分公司客户分配
@@ -211,7 +222,7 @@ export default class MessageCenter extends PureComponent {
     const itemId = valArray[1] || '';
     // 失败或者终止都进入失败页面
     if (_.includes(title, config.fail) || _.includes(title, config.abort)) {
-      const url = `/custAllot?id=${itemId}&appId=${appId}`;
+      const url = `/businessApplyment/customerPartition/custAllot?id=${itemId}&appId=${appId}`;
       const param = {
         id: 'FSP_CROSS_DEPARTMENT_NEW',
         title: '分公司客户分配',
@@ -219,7 +230,7 @@ export default class MessageCenter extends PureComponent {
         isSpecialTab: true,
         closable: true,
       };
-      const pathName = '/custAllot';
+      const pathName = '/businessApplyment/customerPartition/custAllot';
       openRctTab({
         routerAction: push,
         url,
@@ -227,7 +238,15 @@ export default class MessageCenter extends PureComponent {
         param,
       });
     } else {
-      push(`/custAllot/notifies?notifiId=${rowId}&appId=${appId}&currentId=${itemId}`);
+      linkTo({
+        routerAction: this.context.push,
+        pathname: '/custAllot/notifies',
+        query: {
+          notifiId: rowId,
+          appId,
+          currentId: itemId,
+        },
+      });
     }
   }
 
@@ -242,7 +261,7 @@ export default class MessageCenter extends PureComponent {
     const itemId = valArray[1] || '';
     // 失败或者终止都进入失败页面
     if (_.includes(title, config.fail) || _.includes(title, config.abort)) {
-      const url = `/departmentCustAllot?id=${itemId}&appId=${appId}`;
+      const url = `/businessApplyment/customerPartition/departmentCustAllot?id=${itemId}&appId=${appId}`;
       const param = {
         id: 'FSP_DEPARTMENT_CUST_ASSIGN',
         title: '营业部客户分配',
@@ -250,7 +269,7 @@ export default class MessageCenter extends PureComponent {
         isSpecialTab: true,
         closable: true,
       };
-      const pathName = '/departmentCustAllot';
+      const pathName = '/businessApplyment/customerPartition/departmentCustAllot';
       openRctTab({
         routerAction: push,
         url,
@@ -258,7 +277,15 @@ export default class MessageCenter extends PureComponent {
         param,
       });
     } else {
-      push(`/departmentCustAllot/notifies?notifiId=${rowId}&appId=${appId}&currentId=${itemId}`);
+      linkTo({
+        routerAction: this.context.push,
+        pathname: '/departmentCustAllot/notifies',
+        query: {
+          notifiId: rowId,
+          appId,
+          currentId: itemId,
+        },
+      });
     }
   }
 
@@ -266,8 +293,14 @@ export default class MessageCenter extends PureComponent {
   @autobind
   handleMessageByPrimary(rowId, objectVal) {
     this.removeNotice = true;
-    const { push } = this.context;
-    push(`/mainPosition/notifies?notifiId=${rowId}&appId=${objectVal}`);
+    linkTo({
+      routerAction: this.context.push,
+      pathname: '/mainPosition/notifies',
+      query: {
+        notifiId: rowId,
+        appId: objectVal,
+      },
+    });
   }
 
   // 处理typeName是HTSC Investment Advice Inbox Type的消息通知
@@ -295,8 +328,16 @@ export default class MessageCenter extends PureComponent {
       this.removeNotice = true;
     }
     if (type === 'succ') {
-      const { push } = this.context;
-      push(`/filialeCustTransfer/notifies?notifiId=${rowId}&appId=${appId}&currentId=${itemId}&type=${type}`);
+      linkTo({
+        routerAction: this.context.push,
+        pathname: '/filialeCustTransfer/notifies',
+        query: {
+          notifiId: rowId,
+          appId,
+          currentId: itemId,
+          type,
+        },
+      });
     } else {
       const url = `/sysOperate/crossDepartment/filialeCustTransfer?id=${itemId}&appId=${appId}`;
       const param = {

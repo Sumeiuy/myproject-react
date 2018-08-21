@@ -721,6 +721,14 @@ export default class CreateModal extends PureComponent {
       validateForm(payload).then(() => {
         this.sendRequest({ ...payload, ...flowAuditors });
       });
+      logCommon({
+        type: 'Submit',
+        payload: {
+          title: '限制账户管理提交',
+          value: JSON.stringify({ ...payload, ...flowAuditors }),
+          name: '限制账户管理提交',
+        },
+      });
     } else {
       validateForm(payload).then(() => {
         this.setState({
@@ -737,9 +745,9 @@ export default class CreateModal extends PureComponent {
   @logable({
     type: 'Submit',
     payload: {
-      name: '选择限制解除时间',
-      type: '13',
-      subType: '13',
+      name: '选择限制解除事件',
+      type: '账户限制管理',
+      subType: '账户限制管理',
     } })
   handleApproverModalOK(auth) {
     const { flowAuditors, submitData } = this.state;

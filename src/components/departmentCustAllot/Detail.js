@@ -129,6 +129,7 @@ export default class Detail extends PureComponent {
 
   // 翻页
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '客户列表分页' } })
   handlePageNumberChange(pageNum) {
     const { queryAddedCustList, data: { appId } } = this.props;
     const payload = {

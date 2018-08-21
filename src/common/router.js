@@ -452,7 +452,7 @@ export const getRouterData = (app) => {
         import('../routes/custRelationships/RejectUpdateHome' /* webpackChunkName: "custRelationshipsReject" */)),
     },
     // 直接进入
-    '/custAllot': {
+    '/businessApplyment/customerPartition/custAllot': {
       component: dynamicWrapper(app, ['custAllot'], () =>
         import('../routes/custAllot/Home' /* webpackChunkName: "custAllot" */)),
     },
@@ -462,7 +462,7 @@ export const getRouterData = (app) => {
         import('../routes/custAllot/Notifies' /* webpackChunkName: "custAllot_notifies" */)),
     },
     // 直接进入
-    '/departmentCustAllot': {
+    '/businessApplyment/customerPartition/departmentCustAllot': {
       component: dynamicWrapper(app, ['departmentCustAllot'], () =>
         import('../routes/departmentCustAllot/Home' /* webpackChunkName: "departmentCustAllot" */)),
     },
@@ -539,7 +539,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['accountLimit'], () =>
         import('../routes/accountLimit/Notifies' /* webpackChunkName: "accountLimit_notifies" */)),
     },
-    // 管理标签
+    // 标签管理
     '/labelManagement': {
       component: dynamicWrapper(app, [], () =>
         import('../routes/labelManagement/Home') /* webpackChunkName: "labelManagement" */),

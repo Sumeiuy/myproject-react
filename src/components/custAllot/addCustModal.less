@@ -80,6 +80,46 @@
         }
       }
       .tableDiv {
+        position: relative;
+        .divPopover {
+          background-color: #fff;
+          background-clip: padding-box;
+          border-radius: 4px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+          font-size: 12px;
+          font-variant: tabular-nums;
+          line-height: 1.5;
+          color: rgba(0, 0, 0, 0.65);
+          box-sizing: border-box;
+          margin: 0;
+          padding: 4px 12px;
+          list-style: none;
+          position: absolute;
+          top: -25px;
+          left: 0;
+          z-index: 1030;
+          cursor: auto;
+          -webkit-user-select: text;
+          -moz-user-select: text;
+          -ms-user-select: text;
+          user-select: text;
+          white-space: normal;
+          font-weight: normal;
+          text-align: left;
+          animation: 0.2s;
+          .arrow {
+            background: #fff;
+            width: 8.48528137px;
+            height: 8.48528137px;
+            position: absolute;
+            left: 20px;
+            bottom: -3px;
+            border-color: transparent;
+            border-style: solid;
+            box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.35);
+            transform: translateX(-50%) rotate(45deg);
+          }
+        }
         .moreThanLimitCount {
           :global {
             .ant-pagination-next .ant-pagination-item-link:after {

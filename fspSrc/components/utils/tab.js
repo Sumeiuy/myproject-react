@@ -83,11 +83,13 @@ function tureAndstore(item, callback) {
   }
 }
 // 用来本地缓存tab信息的方法函数
-function storeTabInfo({ activeKey, panes, href }) {
+function storeTabInfo({ activeKey, panes, href, currentMenuId, routerHistory }) {
   if (enableSessionStorage) {
     tureAndstore(activeKey, sessionStore.set.bind(sessionStore, 'activeKey'));
     tureAndstore(panes, sessionStore.set.bind(sessionStore, 'panes'));
     tureAndstore(href, sessionStore.set.bind(sessionStore, 'href'));
+    tureAndstore(currentMenuId, sessionStore.set.bind(sessionStore, 'currentMenuId'));
+    tureAndstore(routerHistory, sessionStore.set.bind(sessionStore, 'routerHistory'));
   }
 }
 
@@ -104,7 +106,7 @@ function getPanesFromTabCongfig(location, fixPanes, editPane) {
 
   // 修正页面的query,以及pane名称
   currentPane.query = query;
-  if (editPane.name) {
+  if (editPane && editPane.name) {
     currentPane.name = editPane.name;
   }
 
@@ -114,14 +116,18 @@ function getPanesFromTabCongfig(location, fixPanes, editPane) {
   if (_.find(fixPanes, pane => pane.id === newActiveKey)) {
     newPanes = _.map(fixPanes, (pane) => {
       if (pane.id === newActiveKey) {
-        return currentPane;
+        return {
+          ...currentPane,
+        };
       }
       return pane;
     });
   } else {
     newPanes = [
       ...fixPanes,
-      currentPane,
+      {
+        ...currentPane,
+      },
     ];
   }
 
@@ -198,7 +204,7 @@ function findTopMenu(location) {
   return _.find(defaultMenu, menu => menu.path.indexOf(pathForMatch) > -1);
 }
 
-function getPanesFromMenu(location, fixPanes, currentMenuId) {
+function getPanesFromMenu(location, fixPanes, currentMenuId, routerHistory) {
   const { pathname, query } = location;
   let isTopMenu = false;
   let isFoundCurrentPane = false;
@@ -231,6 +237,11 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
         }
         return false;
       }
+      // 新打开的页面被命中
+      if (!pane.type) {
+        isTopMenu = true;
+        newActiveKey = currentPane.id;
+      }
       isFoundCurrentPane = true;
       // 保存当前path匹配到的确定菜单到currentMenu
       newCurrentMenuId = currentPane.id;
@@ -244,9 +255,41 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
 
   if (!isTopMenu || !isFoundCurrentPane) {
     const topMenu = findTopMenu(location);
-    if (!isFoundCurrentPane && !!topMenu) { // 二级菜单需要修正
-      currentPaneMemory.path = pathname;
-      currentPaneMemory.query = query;
+    if (!isFoundCurrentPane) { // 二级菜单需要修正
+      if (topMenu) {
+        currentPaneMemory.path = pathname;
+        currentPaneMemory.query = query;
+      } else { // 如果什么都找不到，在历史记录里面找一下，尝试修正
+        const historyPane = _.find(routerHistory, router => router.pathname === pathname);
+        if (historyPane) {
+          if (historyPane.activeKey === newCurrentMenuId) {
+            currentPaneMemory.path = pathname;
+            currentPaneMemory.query = query;
+            newActiveKey = historyPane.activeKey;
+            isTopMenu = true;
+          } else {
+            // 修正历史记录对应的菜单
+            const panes = traverseMenus(fixPanes, (pane, i, array) => {
+              // 找到当前path对应的pane进行修正
+              if (pane.id === historyPane.activeKey || pane.id === historyPane.currentMenuId) {
+                const currentPane = array[i];
+                currentPane.path = pathname;
+                currentPane.query = query;
+                if (currentPane.pid === 'ROOT') {
+                  return false;
+                }
+                return true;
+              }
+              return false;
+            });
+            return {
+              newPanes: panes,
+              newActiveKey: historyPane.activeKey,
+              newCurrentMenuId: historyPane.currentMenuId,
+            };
+          }
+        }
+      }
     }
     if (!isTopMenu) {
       return getAndFixTopMenu(
@@ -267,15 +310,15 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
 }
 
 
-function getPanes(location, fixPanes, editPane, currentMenuId) {
+function getPanes(location, fixPanes, editPane, currentMenuId, routerHistory) {
   // 首先在tabConfig里面查找，该path是否能精确匹配某个新开的页面
   // 返回经过修正的panes数组
   if (findPaneFromTabConfig(location)) {
     return getPanesFromTabCongfig(location, fixPanes, editPane);
   }
-  // 如果没有精确匹配到某个新开的页面，则说明一定属于主导航菜单的嵌套页面
+  // 如果没有精确匹配到某个新开的页面，则说明一定属于主导航菜单的某个页面
   // 在主导航菜单中找到path对应的menu配置，进行修正，并记录下menu的嵌套路径
-  return getPanesFromMenu(location, fixPanes, currentMenuId);
+  return getPanesFromMenu(location, fixPanes, currentMenuId, routerHistory);
 }
 
 // 预处理menu数据，将path字段格式化一下
@@ -298,7 +341,8 @@ function preTreatment(primaryMenu) {
 // 如果设置了shouldStay标志，表示为页面内部跳转，使用这个修正pane
 function getStayPanes(pathname, query, prevState) {
   const { panes, activeKey, currentMenuId } = prevState;
-  traverseMenus(panes, (pane, i, array) => {
+  const newPanes = [...panes];
+  traverseMenus(newPanes, (pane, i, array) => {
     // 找到当前path对应的pane进行修正
     if (pane.id === activeKey || pane.id === currentMenuId) {
       const currentPane = array[i];
@@ -329,20 +373,57 @@ function getStayPanes(pathname, query, prevState) {
 }
 
 function getPanesWithPathname(location, shouldRemove, editPane = {}, prevState) {
-  const { panes = [], activeKey = '', currentMenuId } = prevState || {};
+  const { panes = [], activeKey = '', currentMenuId, routerHistory } = prevState || {};
 
   // 如果设置了shouldRemove, 则从当前的panes数组中移除对应的pane
   // 这种情况主要是用来处理跳转到新的tab页面，并关闭当前tab页面的情况
-  const fixPanes = shouldRemove ? _.filter(panes, pane => pane.id !== activeKey) : panes;
+  const fixPanes = shouldRemove ? _.filter(panes, pane => pane.id !== activeKey) : [...panes];
 
   const { newPanes, newActiveKey, newCurrentMenuId } =
-    getPanes(location, fixPanes, editPane, currentMenuId);
+    getPanes(location, fixPanes, editPane, currentMenuId, routerHistory);
 
   return {
     panes: newPanes,
     activeKey: newActiveKey,
     currentMenuId: newCurrentMenuId,
   };
+}
+
+function getNewRouterHistory({ finalActiveKey, currentMenuId, pathname, routerHistory = [] }) {
+  let newRouterHistory = [];
+  if (_.find(routerHistory, router => router.pathname === pathname)) {
+    newRouterHistory = _.filter(routerHistory, router => router.pathname !== pathname);
+    newRouterHistory = [
+      {
+        activeKey: finalActiveKey,
+        currentMenuId,
+        pathname,
+      },
+      ...newRouterHistory,
+    ];
+  }
+  if (routerHistory.length > 10) {
+    newRouterHistory = routerHistory.splice(0, routerHistory.length - 1);
+    newRouterHistory = [
+      {
+        activeKey: finalActiveKey,
+        currentMenuId,
+        pathname,
+      },
+      ...newRouterHistory,
+    ];
+  } else {
+    newRouterHistory = [
+      {
+        activeKey: finalActiveKey,
+        currentMenuId,
+        pathname,
+      },
+      ...routerHistory,
+    ];
+  }
+
+  return newRouterHistory;
 }
 
 export {
@@ -356,4 +437,5 @@ export {
   splitPanesArray,
   getLocalPanes,
   getPanes,
+  getNewRouterHistory,
 };
