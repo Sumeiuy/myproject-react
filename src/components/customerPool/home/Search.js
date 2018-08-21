@@ -189,7 +189,7 @@ export default class Search extends PureComponent {
     if (_.includes(DEFINED_LABEL, item.source)) {
       query = {
         ...query,
-        type: item.source,
+        source: item.source,
       };
     }
 

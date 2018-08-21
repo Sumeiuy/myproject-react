@@ -64,17 +64,17 @@ export const sourceFilter = {
       filterName: 'primaryKeyIndustry',
       value: ['labelMapping'],
     }],
-    manegeFsp: [{
-      // 自定义标签（管理标签）
-      filterName: 'customLabels',
-      value: ['labelMapping'],
-    }],
-    personalFsp: [{
-      // 自定义标签（我的标签）
-      filterName: 'customLabels',
-      value: ['labelMapping'],
-    }],
   },
+  manegeFsp: [{
+    // 首页搜索框下钻，自定义标签（管理标签）
+    filterName: 'customLabels',
+    value: ['labelMapping'],
+  }],
+  personalFsp: [{
+    // 首页搜索框下钻，自定义标签（我的标签）
+    filterName: 'customLabels',
+    value: ['labelMapping'],
+  }],
   // 首页潜在业务客户下钻
   business: [{
     // 可开通业务
