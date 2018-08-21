@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 13:17:21
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-21 17:48:06
  */
 
 import React, { PureComponent } from 'react';
@@ -632,6 +632,19 @@ export default class ServiceImplementation extends PureComponent {
     });
   }
 
+  // 该方法用于将 MOT 回访任务分配之后刷新客户列表
+  @autobind
+  refreshCustList() {
+    this.props.changeParameter({
+      preciseInputValue: 1,
+      activeIndex: 1,
+    }).then(() => {
+      this.queryTargetCustList({ pageNum: 1 }).then(() => {
+        this.setState({ isFormHalfFilledOut: false });
+      });
+    });
+  }
+
   // 单个服务记录添加完成后需要执行的操作
   @autobind
   singleAddServiceRecordNextStep() {
@@ -1033,6 +1046,7 @@ export default class ServiceImplementation extends PureComponent {
                   isCurrentMissionPhoneCall={isCurrentMissionPhoneCall}
                   onFormDataChange={this.formDataChange}
                   refreshTaskList={refreshTaskList}
+                  refreshCustList={this.refreshCustList}
                 />
               </div>
               <BatchAddServiceRecordModal

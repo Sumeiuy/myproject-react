@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-17 14:08:33
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-21 17:48:24
  * 服务记录表单
  */
 
@@ -70,7 +70,6 @@ export default class ServiceRecordForm extends PureComponent {
   }
 
   // 判断当前的任务是否是 MOT 回访类型任务
-  // TODO 目前开发状态下暂时默认为true
   @autobind
   isMOTReturnVistTask(eventId) {
     return MOT_RETURN_VISIT_TASK_EVENT_ID === eventId;
@@ -81,6 +80,7 @@ export default class ServiceRecordForm extends PureComponent {
     // 分配任务后，该任务就不属于当前登录人了，所以还得刷新任务列表
     const { location: { query } } = this.props;
     this.props.refreshTaskList(query);
+    this.props.refreshCustList();
   }
 
   @autobind
@@ -333,6 +333,7 @@ ServiceRecordForm.propTypes = {
   dispatchTaskToEmp: PropTypes.func.isRequired,
   queryAllotEmpList: PropTypes.func.isRequired,
   refreshTaskList: PropTypes.func.isRequired,
+  refreshCustList: PropTypes.func.isRequired,
   allotEmpList: PropTypes.array.isRequired,
   allotEmpResult: PropTypes.string.isRequired,
 };
