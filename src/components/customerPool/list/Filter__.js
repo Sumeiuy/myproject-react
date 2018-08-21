@@ -109,6 +109,7 @@ export default class Filter extends PureComponent {
     if (state.definedLabelsInfo !== nextProps.definedLabelsInfo) {
       return {
         definedLabelDate: nextProps.definedLabelsInfo,
+        definedLabelsInfo: nextProps.definedLabelsInfo,
       };
     }
     return null;
@@ -649,7 +650,7 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
-  currentDefinedLabelPage() {
+  handleCurrentDefinedLabelPage() {
     const { definedLabel: { fetching = false } } = this.state;
     if (!fetching) {
       this.setState((prevState) => {
@@ -817,7 +818,7 @@ export default class Filter extends PureComponent {
               }}
               onChange={this.handleDefinedLabelChange}
               onInputChange={this.handleDefinedLabelInputChange}
-              onScrollBottom={this.currentDefinedLabelPage}
+              onScrollBottom={this.handleCurrentDefinedLabelPage}
             />
           }
           {
