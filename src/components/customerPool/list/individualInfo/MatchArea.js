@@ -4,11 +4,12 @@
  * @author xiaZhiQiang
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 15:20:36
+ * @Last Modified by: hongguangqing
+ * @Last Modified time: 2018-08-15 09:20:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { Tooltip } from 'antd';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { autobind } from 'core-decorators';
@@ -26,6 +27,8 @@ import styles from './matchArea.less';
 
 const unlimited = '不限'; // filter 可能暴露出的值
 const AIM_LABEL_ID = 'sightingTelescope'; // 瞄准镜标签标识
+// 需要个性化信息的排序方式
+const needSelfInfoArray = ['cashAmt', 'avlAmt', 'avlAmtCrdt', 'totMktval'];
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
@@ -220,18 +223,25 @@ export default class MatchArea extends PureComponent {
 
   @autobind
   getFilterOrder() {
-    const { location: { query: { filters, individualInfo } } } = this.props;
+    const { location: { query: { filters, sortType, individualInfo } } } = this.props;
     const needInfoFilter = _.keys(matchAreaConfig);
     if (!individualInfo) {
       sessionStore.remove(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`);
-      const filtersArray = filters ? filters.split(seperator.filterSeperator) : [];
-      const filterList = _.map(filtersArray, item =>
+      let filtersArray = filters ? filters.split(seperator.filterSeperator) : [];
+      if (_.includes(needSelfInfoArray, sortType)) {
+        filtersArray = [sortType, ...filtersArray];
+      }
+      const filterList = _.map(_.uniq(filtersArray), item =>
         item.split(seperator.filterInsideSeperator)[0]);
       const filterOrder = _.filter(needInfoFilter, item => _.includes(filterList, item));
       MatchArea.setFilterOrder(filterOrder, true, this.hashString);
       return filterOrder;
     }
-    return _.filter(sessionStore.get(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`), item => _.includes(needInfoFilter, item));
+    let filterSessionArray = _.filter(sessionStore.get(`CUSTOMERPOOL_FILTER_ORDER_${this.hashString}`), item => _.includes(needInfoFilter, item));
+    if (_.includes(needSelfInfoArray, sortType)) {
+      filterSessionArray = [sortType, ...filterSessionArray];
+    }
+    return _.uniq(filterSessionArray);
   }
 
   // 点击订购组合名称跳转到详情页面
@@ -287,7 +297,7 @@ export default class MatchArea extends PureComponent {
     const currentVal = listItem[id];
     if (!_.isNull(currentVal)) {
       return (
-        <li title={currentVal}>
+        <li kye={`${currentVal}${id}${listItem.custId}`} title={currentVal}>
           <span>
             <i className="label">
               {hasCycle ? this.convertCycle(id) : ''}
@@ -311,12 +321,12 @@ export default class MatchArea extends PureComponent {
     const {
       listItem,
     } = this.props;
-    const { name, id, descMap } = currentItem;
+    const { name, id, descMap, custId } = currentItem;
     let noCompleteIdList = _.omitBy(descMap, (value, key) => listItem[key] === 'Y');
     noCompleteIdList = _.values(noCompleteIdList);
     if (noCompleteIdList.length) {
       return (
-        <li key={id}>
+        <li key={`${id}${custId}`}>
           <span>
             <i className="label">{name}：</i>
             {_.join(noCompleteIdList, ',')}
@@ -375,12 +385,13 @@ export default class MatchArea extends PureComponent {
     const {
       listItem,
     } = this.props;
+    const { name, custId } = listItem;
     const { searchText = '' } = this.getFilters();
-    if (listItem.name
-      && listItem.name.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: listItem.name, searchText });
+    if (name
+      && name.indexOf(searchText) > -1) {
+      const markedEle = replaceWord({ value: name, searchText });
       return (
-        <li key={listItem.name}>
+        <li key={`${name}${custId}`}>
           <span>
             <i className="label">姓名：</i>
             <i
@@ -462,7 +473,7 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
-  // 匹配标签
+  // 匹配标签(因为需求要求在每个标签上用Tooltip加一个标签描述，所以改写部分代码)
   renderRelatedLabels(matchLabels) {
     const {
       listItem,
@@ -480,21 +491,35 @@ export default class MatchArea extends PureComponent {
         relatedLabels = matchLabels;
       }
       if (!_.isEmpty(relatedLabels)) {
-        const markedEle = relatedLabels.map((item) => {
+        const markedEle = relatedLabels.map((item, index, arr) => {
+          // 处理后端返回null的情况
+          const description = item.description || '暂无标签描述';
+          // 热词改变颜色
+          let replaceWordLables = `${replaceWord({ value: item.name, searchText })}-${searchText}`;
           // 防止热点标签展示重复，这里从query上取source
           if (!isSightingScope(item.source)) {
-            return replaceWord({ value: item.name, searchText });
+            replaceWordLables = replaceWord({ value: item.name, searchText });
           }
-          return `${replaceWord({ value: item.name, searchText })}-${searchText}`;
+          // 在标签后面增加",",最后一个不加
+          if (index !== arr.length - 1) {
+            replaceWordLables = `${replaceWordLables},`;
+          }
+          const tempKey = `${description}${index}`;
+          return (
+            <Tooltip
+              overlayClassName={styles.labelsToolTip}
+              placement="bottomLeft"
+              title={description}
+              key={tempKey}
+            >
+              <i dangerouslySetInnerHTML={{ __html: replaceWordLables }} />
+            </Tooltip>
+          );
         });
         return (
           <li key={markedEle}>
-            <span>
-              <i className="label">匹配标签：</i>
-              <i
-                dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
-              />
-            </span>
+            <i className="label">匹配标签：</i>
+            {markedEle}
           </li>
         );
       }

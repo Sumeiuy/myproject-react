@@ -2,8 +2,8 @@
  * @Description: 账户限制管理-新建弹窗
  * @Author: Liujianshu
  * @Date: 2018-07-31 16:15:52
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-08-03 15:36:23
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-20 11:05:30
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -26,7 +26,7 @@ import BottonGroup from '../../components/permission/BottonGroup';
 import AutoComplete from '../../components/common/similarAutoComplete';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 import { request } from '../../config';
-import { emp } from '../../helper';
+import { emp, data } from '../../helper';
 import config from './config';
 import CustAllotXLS from './accountLimit.xls';
 import styles from './createModal.less';
@@ -39,6 +39,8 @@ const getPopupContainerFunction = () => document.querySelector(`.${styles.modalC
 // 表头
 const {
   tableTitle: { custList: custTitleList, approvalList },
+  limitCount,  // 添加客户的限制条数
+  stringLimitLength,  // 字符串长度限制
   operateTypeArray,
   setCode,  // 限制设置 value
   attachmentMap,
@@ -49,6 +51,9 @@ const empOrgId = emp.getOrgId();
 // const empOrgId = 'ZZ001041051';
 // 客户
 const KEY_CUSTNAME = 'custName';
+// 服务经理
+const KEY_EMPNAME = 'empName';
+// 限制类型
 const KEY_LIMIT = 'limit';
 
 // 审批人弹窗
@@ -70,6 +75,8 @@ export default class CreateModal extends PureComponent {
     // 限制类型
     limitList: PropTypes.array.isRequired,
     queryLimtList: PropTypes.func.isRequired,
+    // 校验数据
+    validateForm: PropTypes.func.isRequired,
     // 提交保存
     saveChange: PropTypes.func.isRequired,
     // 弹窗的key
@@ -144,9 +151,17 @@ export default class CreateModal extends PureComponent {
     const titleList = [...custTitleList];
     // 客户
     const custNameColumn = _.find(titleList, o => o.key === KEY_CUSTNAME);
-    custNameColumn.render = (text, record) => (
-      <div>{text} ({record.custId})</div>
-    );
+    custNameColumn.render = (text, record) => {
+      const value = record.custId ? `${text || ''} (${record.custId})` : '';
+      return <div title={value}>{value}</div>;
+    };
+    // 服务经理
+    const empNameColumn = _.find(titleList, o => o.key === KEY_EMPNAME);
+    empNameColumn.render = (text, record) => {
+      const value = record.empId ? `${text || ''} (${record.empId})` : '';
+      return <div title={value}>{value}</div>;
+    };
+    // 限制类型
     const limitColumn = _.find(titleList, o => o.key === KEY_LIMIT);
     limitColumn.render = text => (<div title={text}>{text}</div>);
     // 添加操作列
@@ -155,6 +170,7 @@ export default class CreateModal extends PureComponent {
       key: 'operate',
       title: '操作',
       render: (text, record) => this.renderPopconfirm(record),
+      width: 80,
     });
     return titleList;
   }
@@ -232,8 +248,9 @@ export default class CreateModal extends PureComponent {
   // 证券代码变化
   @autobind
   handleStockCodeChange(e) {
+    const value = e.target.value.replace(/\D/g, '');
     this.setState({
-      stockCode: e.target.value,
+      stockCode: value,
     });
   }
 
@@ -329,6 +346,10 @@ export default class CreateModal extends PureComponent {
     }
     if (_.filter(addedCustData, o => o.custId === client.custId).length) {
       message.error('不允许添加重复客户');
+      return;
+    }
+    if (addedCustData.length >= limitCount) {
+      message.error(`客户数不可超过${limitCount}条`);
       return;
     }
     this.setState({
@@ -540,7 +561,7 @@ export default class CreateModal extends PureComponent {
     const { limitStartTime, isLimit } = this.state;
     return isLimit
     ? current < moment(limitStartTime).endOf('day')
-    : current < moment().endOf('day');
+    : current < moment().startOf('day');
   }
 
   // 替换关键字颜色
@@ -553,7 +574,6 @@ export default class CreateModal extends PureComponent {
     const keyWordText = _.replace(text, keyWordRegex, match => (
       `<span class=${styles.keyWord}>${match}</span>`
     ));
-    console.warn('keyWordText', keyWordText);
     return <div dangerouslySetInnerHTML={{ __html: keyWordText }} />;
   }
 
@@ -572,16 +592,15 @@ export default class CreateModal extends PureComponent {
       modalKey,
       queryAppList,
     } = this.props;
-
+    // 关闭审批人弹窗
+    closeModal({
+      modalKey: approverModalKey,
+      isNeedConfirm: false,
+    });
     Modal.success({
       title: '提示',
       content: '提交成功。',
       onOk: () => {
-        // 关闭审批人弹窗
-        closeModal({
-          modalKey: approverModalKey,
-          isNeedConfirm: false,
-        });
         // 关闭新建弹窗
         closeModal({
           modalKey,
@@ -598,15 +617,14 @@ export default class CreateModal extends PureComponent {
     type: 'Submit',
     payload: {
       name: '选择限制解除时间',
-      type: '13',
-      subType: '13',
+      type: '账户限制管理',
+      subType: '账户限制管理',
     } })
   handleSubmit(btnItem) {
-    const { modalKey } = this.props;
-
+    const { modalKey, validateForm, closeModal } = this.props;
     // 取消按钮
     if (btnItem.operate === BTN_CANCLE_VALUE) {
-      this.closeModal({
+      closeModal({
         modalKey,
         isNeedConfirm: true,
       });
@@ -629,36 +647,48 @@ export default class CreateModal extends PureComponent {
       label: item.label,
     }));
     if (_.isEmpty(companyName)) {
-      message.error('请填写公司简称');
+      message.error('公司简称不能为空!');
+      return;
+    }
+    if (data.getStrLen(companyName) > stringLimitLength) {
+      message.error(`公司简称长度不能超过${stringLimitLength}!`);
       return;
     }
     if (_.isEmpty(stockCode)) {
-      message.error('请填写证券代码');
+      message.error('证券代码不能为空!');
+      return;
+    }
+    if (data.getStrLen(stockCode) > stringLimitLength) {
+      message.error(`证券代码长度不能超过${stringLimitLength}!`);
+      return;
+    }
+    if (!isLimit && _.isEmpty(bankConfirm)) {
+      message.error('请选择是否银行确认');
       return;
     }
     if (_.isEmpty(addedCustData)) {
-      message.error('请添加客户');
+      message.error('客户列表不能为空!');
       return;
     }
     if (_.isEmpty(limitType)) {
-      message.error('请选择限制类型');
+      message.error('限制类型不能为空!');
       return;
     }
     if (isLimit) {
       if (_.isEmpty(limitStartTime)) {
-        message.error('请选择账户限制设置日期');
+        message.error('账户限制设置日期不能为空!');
         return;
       }
     }
     if (_.isEmpty(limitEndTime)) {
-      message.error('请选择账户限制解除日期');
+      message.error('账户限制解除日期不能为空!');
       return;
     }
     const newAttachementList = [];
     for (let i = 0; i < attachmentList.length; i++) {
       const item = attachmentList[i];
       if (item.show && item.length <= 0 && item.required) {
-        message.error(`${item.title}附件为必传项`);
+        message.error(`请上传${item.title}!`);
         return;
       }
       if (item.show) {
@@ -688,12 +718,24 @@ export default class CreateModal extends PureComponent {
         groupName: btnItem.flowAuditors.nextGroupName,
         approverIdea: '',
       };
-      this.sendRequest({ ...payload, ...flowAuditors });
+      validateForm(payload).then(() => {
+        this.sendRequest({ ...payload, ...flowAuditors });
+      });
+      logCommon({
+        type: 'Submit',
+        payload: {
+          title: '限制账户管理提交',
+          value: JSON.stringify({ ...payload, ...flowAuditors }),
+          name: '限制账户管理提交',
+        },
+      });
     } else {
-      this.setState({
-        [approverModalKey]: true,
-        flowAuditors: btnItem.flowAuditors,
-        submitData: payload,
+      validateForm(payload).then(() => {
+        this.setState({
+          [approverModalKey]: true,
+          flowAuditors: btnItem.flowAuditors,
+          submitData: payload,
+        });
       });
     }
   }
@@ -703,9 +745,9 @@ export default class CreateModal extends PureComponent {
   @logable({
     type: 'Submit',
     payload: {
-      name: '选择限制解除时间',
-      type: '13',
-      subType: '13',
+      name: '选择限制解除事件',
+      type: '账户限制管理',
+      subType: '账户限制管理',
     } })
   handleApproverModalOK(auth) {
     const { flowAuditors, submitData } = this.state;

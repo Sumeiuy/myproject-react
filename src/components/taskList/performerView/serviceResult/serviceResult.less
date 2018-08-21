@@ -1,302 +1,121 @@
 .serviceResultWrap {
   margin: 20px 20px 0;
   min-height: 300px;
-  .custManagerScopeTable {
-    padding: 0;
-    table {
-      border: none;
-    }
-    table > tbody > tr > td:nth-child(2) {
-      pointer-events: none;
-    }
-    table > thead > tr > th, tbody > tr > td {
-      padding: 8px 0;
-      text-align: left !important;
-      font-size: 14px;
-      line-height: 18px;
-      background: #fff;
-      height: 36px;
-    }
-    tbody > tr:not(:last-child) > td {
-      border-bottom: 1px solid #e9e9e9;
-      background: #fff;
-      color: #666;
-    }
-    tbody > tr > td:after {
-      display: block;
-      content: '';
-      width: 100%;
-      border-bottom: 1px solid #e9e9e9;
-    }
+  .custDetailWrap {
+    border: 1px solid #c2c2c2;
+    padding: 10px;
+    margin: 0 16px 20px 0;
     :global {
-      .ant-table-fixed-left .ant-table-fixed {
-        tbody > tr > td:after {
-          margin-left: 20px;
-        }
-      }
-    }
-    table > thead > tr > th {
-      background-color: #fff;
-      border-bottom: 2px solid #e9e9e9;
-    }
-    table > thead > tr > th:first-child {
-      text-align: left;
-    }
-    table > tbody > tr > td:first-child {
-      :global {
-        .column {
-          margin-left: 20px;
-        }
-      }
-    }
-    .titleSection {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      width: 100%;
-      .tableTitle {
-        width: 50%;
-      }
-      .scopeSelect {
-        width: 50%;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        margin-right: 15px;
-        .title, .currentSelectScope {
-          font-size: 14px;
-          max-width: 70px;
-        }
-        .title {
-          color: #999;
-        }
-        .currentSelectScope {
-          margin-right: 15px;
-          color: #333;
-        }
-        & > div:first-child {
-          display: flex;
-          justify-content: flex-end;
-          align-items: center;
-          :global {
-            .ant-select {
-              max-width: 120px !important;
-            }
-          }
-        }
-        :global {
-          .ant-dropdown-trigger {
-            cursor: pointer;
-          }
-          .ant-dropdown {
-            background: rgb(255, 255, 255);
-            border: 1px solid rgb(217, 217, 217);
-            box-shadow: rgba(0, 0, 0, 0.2) 0 1px 4px 0;
-            border-radius: 3px;
-            width: 168px;
-          }
-          .ant-select-arrow {
-            transform: scale(0.7);
-            display: inline-block;
-            font-style: normal;
-            vertical-align: baseline;
-            text-align: center;
-            text-transform: none;
-            text-rendering: optimizeLegibility;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            position: absolute;
-            top: 50%;
-            right: 15px;
-            line-height: 1;
-            margin-top: -6px;
-            transform-origin: 50% 50%;
-            color: rgba(0, 0, 0, 0.25);
-            font-size: 12px;
-            user-select: none;
-          }
-          .ant-select-arrow::before {
-            display: block;
-            font-family: "anticon" !important;
-            content: "";
-            height: 0;
-            position: absolute;
-            right: -5px;
-            top: 4px;
-            width: 0;
-            border: none;
-            border-top: 8px solid #c2c2c2;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-          }
-          .ant-dropdown-menu-item {
-            height: 42px;
-            line-height: 42px;
-            padding-bottom: 0;
-            padding-top: 0;
-            font-size: 14px;
-            color: #313131;
-          }
-        }
-      }
-    }
-    :global {
-      .commonPage {
-        margin-right: 30px;
-      }
-      .ant-table-fixed-left.ant-table-body-inner {
-        margin-right: 0;
-        padding-right: 0;
-      }
-      .ant-table {
-        box-shadow: 0 2px 2px 0 #efefef;
-      }
-      .ant-table-header {
+      .ant-table-thead > tr > th {
         background-color: #fff;
-        table {
-          border-bottom: 0;
+        border-bottom: 2px solid #e8e8e8;
+      }
+      .ant-table-thead > tr > th {
+        padding: 12px 16px;
+        font-size: 13px;
+        word-break: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 200px;
+      }
+      .ant-table-tbody > tr > td {
+        padding: 12px 16px;
+        & > div {
+          font-size: 13px;
+          word-break: break-word;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 200px;
         }
       }
+      .ant-table-title {
+        padding: 0;
+      }
+      .ant-table-scroll {
+        .ant-table-tbody > tr > td:nth-child(2) {
+          text-indent: 99999px;
+        }
+      }
+    }
+  }
+  .custManagerScopeTable {
+    margin-bottom: 20px;
+    :global {
       .ant-table-title {
         border: 1px solid #e9e9e9;
         width: 100%;
         border-bottom: 0;
         padding: 0;
       }
-      .ant-table-content {
-        border: 1px solid #e9e9e9;
-        border-top: none;
-      }
-      .ant-table-scroll {
-        border-right: none;
-      }
-      .ant-table-footer {
-        line-height: 36px;
-        display: flex;
-        width: 100%;
-        justify-content: flex-end;
-        align-items: center;
-        padding: 0 0 10px;
-        background: #fff;
-        border-top: none;
-        &:before {
-          display: none;
-        }
-      }
-      .selfPagination {
-        margin-right: 0;
-        margin-bottom: 0;
-        padding-bottom: 0;
-        .commonPage {
-          padding-bottom: 0;
-          margin-top: 0;
-          ul {
-            margin-top: 10px;
-            margin-bottom: 10px;
-          }
-        }
-      }
-    @headerBorderWidth: 3px;
       // 去除表头的上下不顶头的border
-      .ant-table-scroll {
-        table > thead > tr > th:after,
-        table > thead > tr > th:before {
-          border-bottom-width: @headerBorderWidth;
-          border-top-width: @headerBorderWidth;
-        }
-        table > thead > tr > th:last-child:before {
-          width: auto;
-        }
-      }
-      // 利用background-clip属性将背景色置为容器内的背景
-      .ant-table-fixed-left {
-        .ant-table-fixed {
-          & > thead > tr > th:after, & > thead > tr > th:last-child:before {
-            border-bottom-width: @headerBorderWidth;
-            border-top-width: @headerBorderWidth;
-            margin-left: 0;
-          }
-        }
-        table > thead > tr > th:first-child {
-          padding-left: 20px;
-        }
-      }
-    }
-    .tableTitle {
-      font-size: 14px;
-      color: #4a4a4a;
-      margin-left: 20px;
-    }
-  }
-  .selfPagination {
-    margin-right: 0;
-    margin-bottom: 0;
-    padding-bottom: 0;
-    .commonPage {
-      padding-bottom: 0;
-      margin-top: 0;
-      ul {
-        margin-top: 10px;
-        margin-bottom: 10px;
-      }
-    }
-  }
-  .notFoldedScope {
-    // 第一列由于是固定列，设置一下最大宽度，不然屏幕分辨率比较大的时候，内容文本宽度其实不长，但是为了自适应
-    // 列的宽度会很宽，导致后面的列距离第一个固定的列有很大的距离
-    // 主要是因为用了左右滚动加上左边是一个fixed的table
-    :global {
-      .ant-table-scroll {
-        colgroup {
-          col:first-child {
-            max-width: 150px;
-          }
-        }
-        table {
-          tbody > tr > td:nth-child(1) {
-            :global {
-              .column {
-                max-width: 120px;
-              }
-            }
-          }
-          tbody > tr > td:last-child {
-            :global {
-              .column {
-                max-width: 170px;
-              }
-            }
-          }
-          tbody > tr > td:not(:first-child):not(:last-child) {
-            :global {
-              .column {
-                max-width: 110px;
-              }
-            }
-          }
-        }
-      }
-      .ant-table-fixed-left {
-        table {
-          tbody > tr > td:nth-child(1) {
-            :global {
-              .column {
-                max-width: 120px;
-              }
-            }
-          }
+      .ant-table {
+        table > thead > tr > th {
+          border-bottom-width: 3px;
+          border-top-width: 3px;
         }
       }
     }
   }
   .custDetailHeader {
-    margin-left: 10px;
+    padding-bottom: 10px;
     font-size: 14px;
-    padding: 10px;
+    border-bottom: 3px solid #e8e8e8;
+    position: relative;
+    &:after {
+      content: " ";
+      display: block;
+      height: 0;
+      line-height: 0;
+      visibility: hidden;
+      clear: both;
+    }
+    .custDetailTitle {
+      display: inline-block;
+      line-height: 32px;
+      margin-left: 10px;
+    }
+    .checkbox {
+      position: absolute;
+      top: 56px;
+      left: 1px;
+      z-index: 9;
+      padding-left: 15px;
+    }
+    :global {
+      .commonBtn {
+        float: right;
+        .ant-btn {
+          padding: 0 18px;
+        }
+      }
+    }
   }
+  .shuaxinWrap {
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: right;
+    :global {
+      .anticon-reload {
+        color: #1890ff;
+        margin-right: 5px;
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+.checkboxTooltip {
   :global {
-    .serviceResultContent {
-      margin: 0;
+    .ant-tooltip-inner {
+      padding: 10px 5px;
+      background-color: #fff;
+      font-size: 14px;
+      color: #4a4a4a;
+    }
+    .ant-tooltip-arrow {
+      border-top-color: #fff;
     }
   }
 }

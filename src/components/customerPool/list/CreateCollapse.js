@@ -102,6 +102,7 @@ export default class CreateCollapse extends PureComponent {
     return newDate;
   }
 
+  @autobind
   renderHeaderLeft(item) {
     if (_.isEmpty(item)) {
       return null;
@@ -130,6 +131,7 @@ export default class CreateCollapse extends PureComponent {
     );
   }
 
+  @autobind
   renderHeaderRight(item) {
     if (_.isEmpty(item)) {
       return null;
@@ -147,6 +149,7 @@ export default class CreateCollapse extends PureComponent {
     );
   }
 
+  @autobind
   renderPanel(serveTime) {
     const { data, executeTypes, filesList } = this.props;
     const { currentActiveIndex } = this.state;
@@ -157,12 +160,10 @@ export default class CreateCollapse extends PureComponent {
     return (
       <div className={styles.panelContainer}>
         <Collapse
-          /* 只打开一个panel */
           accordion
           className={styles.serviceCollapse}
           defaultActiveKey={['0']}
           onChange={this.handleCollapseChange}
-          ref={ref => this.collapse = ref}
         >
           {
             _.map(data, (item, index) =>
@@ -243,7 +244,7 @@ export default class CreateCollapse extends PureComponent {
     const {
       data = EMPTY_LIST,
       loading,
-     } = this.props;
+    } = this.props;
 
     if (_.isEmpty(data) && !loading) {
       return (

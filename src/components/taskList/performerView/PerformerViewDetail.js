@@ -2,10 +2,9 @@
  * @Description: 执行者视图右侧详情
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-25 15:30:53
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-20 13:24:25
  */
-
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -88,9 +87,25 @@ export default class PerformerViewDetail extends PureComponent {
     serviceProgress: PropTypes.object.isRequired,
     custFeedBack: PropTypes.array.isRequired,
     custDetail: PropTypes.object.isRequired,
+    isShowExecutorDetailLoading: PropTypes.bool.isRequired,
     queryExecutorFeedBack: PropTypes.func.isRequired,
     queryExecutorFlowStatus: PropTypes.func.isRequired,
     queryExecutorDetail: PropTypes.func.isRequired,
+    // 客户名下其他代办任务
+    getOtherTaskList: PropTypes.func.isRequired,
+    otherTaskList: PropTypes.array.isRequired,
+    fetchOtherTaskListStatus: PropTypes.bool.isRequired,
+    // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
+    isSendCustsServedByPostn: PropTypes.func.isRequired,
+    sendCustsServedByPostnResult: PropTypes.object.isRequired,
+    // 刷新左侧任务列表
+    refreshTaskList: PropTypes.func.isRequired,
+    // 批量添加服务记录数据发生变化时的回调函数
+    onBatchServiceRecordFormChange: PropTypes.func.isRequired,
+    // 批量添加服务记录
+    saveBatchAddServiceRecord: PropTypes.func.isRequired,
+    // 清除创建任务的数据
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -165,11 +180,13 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       currentId,
       getCustDetail,
+      eventId,
     } = this.props;
     getCustDetail({
       missionId: currentId,
       custId,
       missionFlowId,
+      eventId,
       callback,
     });
   }
@@ -178,6 +195,11 @@ export default class PerformerViewDetail extends PureComponent {
     const {
       basicInfo = {},
       customerList,
+      isSendCustsServedByPostn,
+      sendCustsServedByPostnResult,
+      onBatchServiceRecordFormChange,
+      saveBatchAddServiceRecord,
+      clearCreateTaskData,
     } = this.props;
 
     const {
@@ -207,6 +229,11 @@ export default class PerformerViewDetail extends PureComponent {
           customerList={customerList}
           reloadTargetCustInfo={this.reloadTargetCustInfo}
           getPageSize={getPageSize}
+          isSendCustsServedByPostn={isSendCustsServedByPostn}
+          sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+          onBatchServiceRecordFormChange={onBatchServiceRecordFormChange}
+          saveBatchAddServiceRecord={saveBatchAddServiceRecord}
+          clearCreateTaskData={clearCreateTaskData}
         />
       </div>
     );

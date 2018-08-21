@@ -76,6 +76,7 @@ const fspRoutes = [
   {
     path: '/fsp/serviceOrderingWizard',
     action: 'loadInTab',
+    containerId: 'utb-serviceOrdering-wizard',
     url: '/client/serviceOrdering/wizard/',
   },
   // 客户管理
@@ -98,7 +99,7 @@ const fspRoutes = [
     action: 'loadInTab',
     url: /\/customerCenter\/360\/.+(?=orderDetail)/,
   },
-  // 投顾签约计划变更向导
+  // 投顾签约变更向导
   {
     path: '/fsp/customerCenter/360OperateType',
     action: 'loadInTab',
@@ -108,7 +109,15 @@ const fspRoutes = [
   {
     path: '/fsp/customerCenter/360Wizard',
     action: 'loadInTab',
+    containerId: 'utb-stockcontractupd-wizard',
     url: /client\/tgcontractupd\/wizard\/main/,
+  },
+  // 投顾签约转签向导
+  {
+    path: '/fsp/customerCenter/tgcontracttransfer',
+    action: 'loadInTab',
+    containerId: 'utb-stockcontracttransfer-wizard',
+    url: '/client/tgcontracttransfer/wizard/main',
   },
   // 合约历史记录
   {
@@ -124,28 +133,37 @@ const fspRoutes = [
   },
   // 投诉工单管理
   {
-    path: '/fsp/serviceCenter/custcomplaint',
+    path: '/fsp/sysOperate/custcomplaint',
     action: 'loadInTab',
     containerId: 'FSP_CUST_COMPLAINT_MANGER',
     url: '/custcomplaint/manage/listContent',
+  },
+  // 工单投诉信息
+  {
+    path: '/fsp/custcomplaint/complaintInfo',
+    action: 'loadInTab',
+    url: '/custcomplaint/manage/viewCustComplaintInfo',
+  },
+  // 新增投诉工单
+  {
+    path: '/fsp/custcomplaint/toAddPageInfo',
+    action: 'loadInTab',
+    containerId: 'FSP_ST_TAB_CUSTCOMP_ADD',
+    url: '/custcomplaint/manage/toAddPageInfo',
   },
   // 资产配置明细
   {
     path: '/fsp/implementation/initsee',
     action: 'loadInTab',
+    containerId: 'asset_implementation_tab',
     url: '/asset/implementation/initsee',
   },
-  // 资产配置向导
+  // 资产配置明细
   {
-    path: '/fsp/implementation/wizard',
+    path: '/fsp/implementation/initsee',
     action: 'loadInTab',
+    containerId: 'asset_implementation_tab',
     url: '/asset/implementation/wizard/main',
-  },
-  // 工单投诉信息
-  {
-    path: '/fsp/serviceCenter/complaintInfo',
-    action: 'loadInTab',
-    url: '/custcomplaint/manage/viewCustComplaintInfo',
   },
   // 资产配置实施
   {
@@ -177,14 +195,14 @@ const fspRoutes = [
   {
     path: '/fsp/bizapply/excesscacheView',
     action: 'loadInTab',
-    containerId: '',
+    containerId: 'FSP_BIZAPPLY_EXCESSCACHE_EDIT',
     url: '/bizapply/excesscache/view',
   },
   // 超额快取信息编辑（与超额快取信息共用一个页面）
   {
     path: '/fsp/bizapply/excesscacheView',
     action: 'loadInTab',
-    containerId: '',
+    containerId: 'FSP_BIZAPPLY_EXCESSCACHE_EDIT',
     url: '/bizapply/excesscache/edit',
   },
   // 预约取款申请业务
@@ -198,7 +216,7 @@ const fspRoutes = [
   {
     path: '/fsp/bizapply/queryAppointDraw',
     action: 'loadInTab',
-    containerId: '',
+    containerId: 'appoint_queryAppointDraw_tab',
     url: '/bizapply/appoint/queryAppointDraw',
   },
   // 股票期权评估申请
@@ -212,7 +230,7 @@ const fspRoutes = [
   {
     path: '/fsp/stockinvest/toAddPageInfo',
     action: 'loadInTab',
-    containerId: '',
+    containerId: 'FSP_ST_TAB_APY_STOCKINVEST_ADD',
     url: '/bizapply/stockinvest/toAddPageInfo',
   },
   // 查看股票期权评估申请
@@ -233,7 +251,7 @@ const fspRoutes = [
   {
     path: '/fsp/optionfund/showApplyInfoTab',
     action: 'loadInTab',
-    containerId: '',
+    containerId: 'optionfund_applyInfo_tab',
     url: '/bizapply/optionfund/showApplyInfoTab',
   },
   // 双录文件申请
@@ -254,7 +272,7 @@ const fspRoutes = [
   {
     path: '/fsp/dbvfsh/wizard',
     action: 'loadInTab',
-    containerId: '',
+    containerId: 'utb-dbvfsh-wizard',
     url: '/client/dbvfsh/wizard/main',
   },
   // 私募产品资格申请
@@ -275,14 +293,14 @@ const fspRoutes = [
   {
     path: '/fsp/priProd/showPriProdTaskManage',
     action: 'loadInTab',
-    containerId: '',
+    containerId: 'add_btn_priprod',
     url: '/priProd/showPriProdTask',
   },
   // 私募产品信息编辑
   {
     path: '/fsp/priProd/showPriProdTaskManage',
     action: 'loadInTab',
-    containerId: '',
+    containerId: 'add_btn_priprod',
     url: '/priProd/showAddPriProd',
   },
   // PB系统业务
@@ -303,8 +321,15 @@ const fspRoutes = [
   {
     path: '/fsp/pbbiz/edit',
     action: 'loadInTab',
-    containerId: '',
+    containerId: 'FSP_PB_BIZ_MANAGE_EDIT',
     url: /\/bizapply\/pbbiz\/detail\?oper=all/,
+  },
+  // 客户预约取现查询
+  {
+    path: '/fsp/businessApplyment/bizapply/appointBook',
+    action: 'loadInTab',
+    containerId: 'FSP_BUSINESS_APPLYMENT_B',
+    url: '/bizapply/appointBook/init',
   },
 ];
 

@@ -44,8 +44,9 @@ const emp = {
    * @param {Object} empInfo 用户信息
    */
   curPostion: null,
+  curEmpId: null,
 
-  setEmpInfo(empPostnList) {
+  setEmpInfo(empPostnList, empInfo) {
     // TODO 此处需要做下容错处理
     // 因为此处是针对新的外部React框架所使用的
     // 因为在独立开发环境下也需要进行初始设置
@@ -56,6 +57,7 @@ const emp = {
     } else {
       this.curPostion = _.find(empPostnList, item => item.isMainPostn);
     }
+    this.curEmpId = empInfo.empNum;
   },
   /**
    * 获取登录的ID 002332
@@ -66,7 +68,9 @@ const emp = {
     // 临时 ID
     const tempId = '002332'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = qs.parse(window.location.search);
-    const empId = window.curUserCode || nativeQuery.empId || tempId;
+    const empId =
+      window.curUserCode ||
+      nativeQuery.empId || this.curEmpId || tempId;
     return empId;
   },
   /**

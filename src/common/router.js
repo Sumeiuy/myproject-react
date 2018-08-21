@@ -240,6 +240,10 @@ export const getRouterData = (app) => {
     '/customerPool/createTask': {
       component: CreateTask,
     },
+    // 执行者视图服务结果客户明细的地方发起任务
+    '/customerPool/createTaskFromServiceResultCust': {
+      component: CreateTask,
+    },
     // 客户分组管理
     '/customerPool/customerGroupManage': {
       component: CustomerGroupManage,
@@ -434,7 +438,7 @@ export const getRouterData = (app) => {
         import('../routes/investmentConsultantRace/Home' /* webpackChunkName: "investmentConsultantRace" */)),
     },
     // 客户关联关系信息申请，直接进入
-    '/custRelationships': {
+    '/businessApplyment/appropriate/custRelationships': {
       component: dynamicWrapper(app, ['custRelationships'], () =>
         import('../routes/custRelationships/Home' /* webpackChunkName: "custRelationships" */)),
     },
@@ -464,7 +468,7 @@ export const getRouterData = (app) => {
         import('../routes/departmentCustAllot/Notifies' /* webpackChunkName: "departmentCustAllot_notifies" */)),
     },
     // 直接进入，重点监控账户
-    '/keyMonitorAccount': {
+    '/customerPool/keyMonitorAccount': {
       component: dynamicWrapper(app, ['keyMonitorAccount'], () =>
         import('../routes/keyMonitorAccount/Home' /* webpackChunkName: "keyMonitorAccount" */)),
     },

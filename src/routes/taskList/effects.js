@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 10:10:16
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 10:14:23
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-20 13:18:58
  * @description 任务管理页面需要用到的dva的effects,封装此处为了方便Home页面代码的整洁
  */
 
@@ -78,6 +78,14 @@ const effects = {
   previewCustDetailByScope: 'managerView/previewCustDetailByScope',
   // 服务经理维度客户明细去重
   queryDistinctCustListDetailOfMission: 'managerView/queryDistinctCustListDetailOfMission',
+  // 客户名下其他代办任务
+  getOtherTaskList: 'performerView/getOtherTaskList',
+  // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
+  isSendCustsServedByPostn: 'customerPool/isSendCustsServedByPostn',
+  // 批量添加服务记录数据发生变化时的回调函数
+  changeBatchServiceRecordForm: 'performerView/changeBatchServiceRecordForm',
+  // 批量添加服务记录
+  saveBatchAddServiceRecord: 'performerView/saveBatchAddServiceRecord',
 };
 
 export default effects;

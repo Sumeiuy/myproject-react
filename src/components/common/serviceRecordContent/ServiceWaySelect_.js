@@ -15,6 +15,8 @@ import _ from 'lodash';
 import styles from './index.less';
 
 const { Option } = Select;
+// 涨乐财富通的服务方式的 key 值
+const ZLFINS_SERVICE_WAY_KEY = 'ZLFins';
 
 export default class ServiceWaySelect extends PureComponent {
   static propTypes = {
@@ -25,10 +27,12 @@ export default class ServiceWaySelect extends PureComponent {
     empInfo: PropTypes.object.isRequired,
     serviceRecordInfo: PropTypes.object.isRequired,
     isPhoneCall: PropTypes.bool,
+    disabledZLFinsOption: PropTypes.func,
   }
 
   static defaultProps = {
     isPhoneCall: false,
+    disabledZLFinsOption: () => false,
   }
 
   constructor(props) {
@@ -57,10 +61,8 @@ export default class ServiceWaySelect extends PureComponent {
    */
   @autobind
   renderServiceSelectOptions(list = []) {
-    const { empInfo } = this.props;
-    return list.map((obj) => {
-      if (!empInfo.tgQyFlag && obj.key === 'ZLFins') {
-        // 只有投顾入岗才能看到 涨乐财富通
+    return _.map(list, (obj) => {
+      if (obj.key === ZLFINS_SERVICE_WAY_KEY && this.props.disabledZLFinsOption()) {
         return null;
       }
       return (<Option key={obj.key} value={obj.key}>{obj.value}</Option>);
@@ -69,10 +71,13 @@ export default class ServiceWaySelect extends PureComponent {
 
   render() {
     const { value } = this.state;
-    const { width, options, isPhoneCall,
-      serviceRecordInfo: { autoGenerateRecordInfo } } = this.props;
-    // const selectValue = !_.isEmpty(value) ? value : options[0].key;
-    // const containerCls = cx([styles.serveWayContainer, styles.serveWay]);
+    const {
+      width,
+      options,
+      isPhoneCall,
+      serviceRecordInfo: { autoGenerateRecordInfo },
+    } = this.props;
+
     return (
       <div className={styles.serveWay}>
         <div className={styles.title}>服务方式:</div>

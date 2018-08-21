@@ -53,7 +53,6 @@ const serveWaySelectMap = [
   },
 ];
 
-
 // 通过服务方式的name或者code
 function getServeWayByCodeOrName(value) {
   return _.find(serveWaySelectMap, way => (way.value === value || way.key === value))

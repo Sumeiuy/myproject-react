@@ -13,7 +13,7 @@ export default function customerPool(api) {
     // 获取客户池投顾绩效
     getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryPerformanceKPIs', query),
     // 获取组织机构树完整版
-    getCustRangeAll: query => api.post('/groovynoauth/fsp/emp/org/queryEmpOrgTree', query),
+    getCustRangeAll: query => api.post('/groovynoauth/fsp/emp/org/queryEmpOrgTree', query, { noEmpId: true }),
 
     // 按权限获取组织机构树
     getCustRangeByAuthority: query => api.post('/groovynoauth/fsp/emp/org/queryEmpPostnsOrgTree2', query),
@@ -25,7 +25,7 @@ export default function customerPool(api) {
     // getManageIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryEmpKPIs', query),
 
     // 统计周期
-    getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query),
+    getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query, { noEmpId: true }),
 
     // (首页总数)
     getQueryNumbers: query => api.post('/groovynoauth/fsp/emp/todealwith/queryNumbers', query),

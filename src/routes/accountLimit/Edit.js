@@ -3,7 +3,7 @@
  * @Author: Xuwenkang
  * @Date: 2018-08-07 14:46:25
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-08 09:42:31
+ * @Last Modified time: 2018-08-20 16:09:23
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -21,7 +21,7 @@ import BottonGroup from '../../components/permission/BottonGroup';
 import commonConfirm from '../../components/common/confirm_';
 import EditForm from '../../components/accountLimit/EditForm';
 import config from '../../components/accountLimit/config';
-import { dva, emp } from '../../helper';
+import { dva, emp, data } from '../../helper';
 import logable from '../../decorators/logable';
 import styles from './edit.less';
 
@@ -29,13 +29,15 @@ const dispatch = dva.generateEffect;
 
 const {
   tableTitle: { approvalList },
+  stringLimitLength,
 } = config;
 
 // 审批人弹窗
 const approverModalKey = 'approverModal';
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-
+// 终止按钮的节点名称
+const END_NODE_NAME = 'falseOver';
 const effects = {
   // 获取详情
   queryDetailInfo: 'accountLimitEdit/queryDetailInfo',
@@ -43,6 +45,8 @@ const effects = {
   queryButtonList: 'accountLimitEdit/queryButtonList',
   // 查询限制类型
   queryLimtList: 'accountLimitEdit/queryLimtList',
+  // 校验数据
+  validateForm: 'accountLimit/validateForm',
   // 提交客户分配
   saveChange: 'accountLimitEdit/saveChange',
   // 数据修改
@@ -67,17 +71,19 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   // 获取详情
-  queryDetailInfo: dispatch(effects.queryDetailInfo, { loading: true, forceFull: true }),
+  queryDetailInfo: dispatch(effects.queryDetailInfo, { forceFull: true }),
   // 获取按钮列表和下一步审批人
-  queryButtonList: dispatch(effects.queryButtonList, { loading: true, forceFull: true }),
+  queryButtonList: dispatch(effects.queryButtonList, { forceFull: true }),
   // 查询限制类型列表
-  queryLimtList: dispatch(effects.queryLimtList, { loading: true, forceFull: true }),
+  queryLimtList: dispatch(effects.queryLimtList, { forceFull: true }),
+  // 校验数据
+  validateForm: dispatch(effects.validateForm, { forceFull: true }),
   // 提交客户分配
-  saveChange: dispatch(effects.saveChange, { loading: true, forceFull: true }),
+  saveChange: dispatch(effects.saveChange, { forceFull: true }),
   // 数据修改
   editFormChange: dispatch(effects.editFormChange, { loading: false, forceFull: true }),
   // 提交流程
-  doApprove: dispatch(effects.doApprove, { loading: true, forceFull: true }),
+  doApprove: dispatch(effects.doApprove, { forceFull: true }),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -100,6 +106,8 @@ export default class AccountLimitEdit extends PureComponent {
     // 查询限制类型列表
     limitList: PropTypes.array.isRequired,
     queryLimtList: PropTypes.func.isRequired,
+    // 校验数据
+    validateForm: PropTypes.func.isRequired,
     // 提交数据
     saveChange: PropTypes.func.isRequired,
     // 提交流程
@@ -115,6 +123,7 @@ export default class AccountLimitEdit extends PureComponent {
       // 审批意见
       remark: '',
       currentButtonItem: EMPTY_OBJECT,
+      buttonData: EMPTY_OBJECT,
     };
   }
 
@@ -133,7 +142,18 @@ export default class AccountLimitEdit extends PureComponent {
       queryButtonList({
         flowId: detailInfo.flowId,
         operateType: detailInfo.operateType,
+      }).then(() => {
+        const { buttonData } = this.props;
+        this.setButtonState(buttonData);
       });
+    });
+  }
+
+  // 设置按钮数据
+  @autobind
+  setButtonState(btnData) {
+    this.setState({
+      buttonData: btnData,
     });
   }
 
@@ -166,15 +186,28 @@ export default class AccountLimitEdit extends PureComponent {
   }
 
   @autobind
-  chekDataIsLegal() {
+  chekDataIsLegal(operate = '') {
+    // 如果点击的按钮是终止，就不做必填校验
+    if (operate === END_NODE_NAME) {
+      return true;
+    }
     const { editFormData } = this.props;
     const { attachList } = editFormData;
+
     if (_.isEmpty(editFormData.companyName)) {
-      message.error('公司简介不能为空!');
+      message.error('公司简称不能为空!');
+      return false;
+    }
+    if (data.getStrLen(editFormData.companyName) > stringLimitLength) {
+      message.error(`公司简称长度不能超过${stringLimitLength}`);
       return false;
     }
     if (_.isEmpty(editFormData.stockCode)) {
       message.error('证券代码不能为空!');
+      return false;
+    }
+    if (data.getStrLen(editFormData.stockCode) > stringLimitLength) {
+      message.error(`证券代码长度不能超过${stringLimitLength}`);
       return false;
     }
     if (_.isEmpty(editFormData.custList)) {
@@ -191,6 +224,10 @@ export default class AccountLimitEdit extends PureComponent {
         message.error('设置日期不能为空!');
         return false;
       }
+      if (_.isEmpty(editFormData.limitEndTime)) {
+        message.error('解除日期不能为空!');
+        return false;
+      }
       if (moment(editFormData.limitStartTime, config.timeFormatStr) < moment().subtract(1, 'days')) {
         message.error('设置日期不得小于当前日期!');
         return false;
@@ -203,6 +240,10 @@ export default class AccountLimitEdit extends PureComponent {
     }
     // 如果操作类型是解除限制
     if (editFormData.operateType === config.relieveCode) {
+      if (_.isEmpty(editFormData.limitEndTime)) {
+        message.error('解除日期不能为空!');
+        return false;
+      }
       if (moment(editFormData.limitEndTime, config.timeFormatStr) < moment().subtract(1, 'days')) {
         message.error('账户限制解除日期不得小于当前日期!');
         return false;
@@ -222,24 +263,32 @@ export default class AccountLimitEdit extends PureComponent {
   // 提交，点击后选择审批人
   @autobind
   handleSubmit(btnItem) {
-    if (!this.chekDataIsLegal()) {
+    if (!this.chekDataIsLegal(btnItem.operate)) {
       return;
     }
-    const { editFormData, saveChange } = this.props;
-    if (editFormData.operateType === config.relieveCode && !editFormData.bankConfirm) {
+    const { editFormData, saveChange, validateForm } = this.props;
+    // 操作类型是解除限制并且待银行确认选否 || 所点击按钮的approverNum为none时，不需要选审批人直接保存
+    if (
+        (editFormData.operateType === config.relieveCode && !editFormData.bankConfirm)
+        || btnItem.approverNum === 'none'
+      ) {
       const flowAuditors = {
         auditors: emp.getId(),
         groupName: btnItem.nextGroupName,
         approverIdea: '',
       };
-      saveChange({ ...editFormData, ...flowAuditors }).then(() => {
-        this.handleSuccessCallback();
+      validateForm({ ...editFormData, ...flowAuditors }).then(() => {
+        saveChange({ ...editFormData, ...flowAuditors }).then(() => {
+          this.handleSuccessCallback();
+        });
       });
     } else {
-      this.setState({
-        [approverModalKey]: true,
-        flowAuditors: btnItem.flowAuditors,
-        currentButtonItem: btnItem,
+      validateForm({ ...editFormData }).then(() => {
+        this.setState({
+          [approverModalKey]: true,
+          flowAuditors: btnItem.flowAuditors,
+          currentButtonItem: btnItem,
+        });
       });
     }
   }
@@ -249,12 +298,15 @@ export default class AccountLimitEdit extends PureComponent {
   handleSuccessCallback() {
     Modal.success({
       title: '提示',
-      content: '提交成功，后台正在进行数据处理！若数据校验失败，可在首页通知提醒中查看失败原因。',
+      content: '提交成功。',
       onOk: () => {
         // 关闭审批人弹窗
         this.closeModal({
           modalKey: approverModalKey,
           isNeedConfirm: false,
+        });
+        this.setState({
+          buttonData: EMPTY_OBJECT,
         });
       },
     });
@@ -286,8 +338,6 @@ export default class AccountLimitEdit extends PureComponent {
       location,
       // empInfo,
       detailInfo,
-      // 下一步按钮审批人数据以及接口
-      buttonData,
       // 限制类型
       limitList,
       queryLimtList,
@@ -300,6 +350,8 @@ export default class AccountLimitEdit extends PureComponent {
       approverModal,
       flowAuditors,
       remark,
+      // 下一步按钮审批人数据以及接口
+      buttonData,
     } = this.state;
 
     // 提交相关按钮

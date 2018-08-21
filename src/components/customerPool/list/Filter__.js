@@ -628,7 +628,7 @@ export default class Filter extends PureComponent {
           const filter = _.find(filters, item => item.key === key);
           if (!filter) {
             return false;
-          } else if (_.isEmpty(filter.list)) {
+          } else if (_.isEmpty(filter.list) || (filter.list && _.isEmpty(filter.list.filterList))) {
             normalTag.push(key);
             return false;
           }

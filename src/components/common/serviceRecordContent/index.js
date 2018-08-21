@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-25 10:33:22
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-17 16:53:54
  */
 
 import React, { PureComponent } from 'react';
@@ -19,6 +19,7 @@ import ZLFeedback from './ZhanglecaifutongFeedback_';
 import ServiceWaySelect from './ServiceWaySelect_';
 import ServeRecordReadOnly from './ServeRecordReadonly';
 import CascadeFeedbackSelect from './CascadeFeedbackSelect';
+import MotReturnVisitContent from './MOTReturnVisitTaskContent';
 
 import { request } from '../../../config';
 import { emp } from '../../../helper';
@@ -32,6 +33,7 @@ import {
   defaultFeedback,
   defaultFeedbackOption,
 } from './utils';
+import { MOT_RETURN_VISIT_TASK_EVENT_ID } from '../../../config/taskList/performView';
 
 import styles from './index.less';
 
@@ -45,8 +47,6 @@ const DATE_FORMAT_END = 'YYYY-MM-DD';
 const DATE_FORMAT_FULL_END = 'YYYY-MM-DD HH:mm';
 // 界面上显示的日期格式
 const DATE_FORMAT_SHOW = 'YYYY年MM月DD日';
-// 界面显示的完整时间格式
-// const DATE_FORMAT_FULL = `${DATE_FORMAT_SHOW} HH:mm`;
 // 日期组件使用的通用配置
 const dateCommonProps = {
   allowClear: false,
@@ -58,9 +58,10 @@ const dateCommonProps = {
 const ZL_QUREY_APPROVAL_BTN_ID = '200000';
 // 涨乐财富通服务方式下，服务状态 完成的Code
 const SERVICE_STATUS_COMPLETE_CODE = '30';
-
+// MOT 平台的Code值
+const MOT_PLATFORM_CODE = '1';
 // 服务记录内容最大长度
-const serviceContentMaxLength = 1000;
+const RECORD_MAX_LENGTH = 1000;
 
 export default class ServiceRecordContent extends PureComponent {
   constructor(props) {
@@ -117,6 +118,12 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   setFeedbackTimeRef(input) {
     this.feedbackTimeRef = input;
+  }
+
+  // 涨乐财富通服务方式先的服务内容Ref
+  @autobind
+  setServeContentRef(ref) {
+    this.serveContentRef = ref;
   }
 
   // 根据服务类型获取相关的客户反馈信息
@@ -278,6 +285,12 @@ export default class ServiceRecordContent extends PureComponent {
       ZLServiceApproval: '',
       // 涨乐财富通服务方式下的投资建议模式 free|tmpl 是自由话术还是固定话术
       ZLInvestAdiceMode: 'free',
+      // MOT 回访类型任务回访结果
+      visitResult: '',
+      // MOT 回访类型任务结果失败的原因
+      failReason: '',
+      visitResultValidate: false,
+      failReasonValidate: false,
     };
   }
 
@@ -371,12 +384,6 @@ export default class ServiceRecordContent extends PureComponent {
     };
   }
 
-  // 涨乐财富通服务方式先的服务内容Ref
-  @autobind
-  setServeContentRef(ref) {
-    this.serveContentRef = ref;
-  }
-
   /**
    * 改变当前表单错误的状态
    * @param {*object} state 当前状态
@@ -392,30 +399,43 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   checkNotZLFins() {
     const { isPhoneCall } = this.props;
-    const { serviceRecord } = this.state;
+    const { serviceRecord, eventId, failReason, visitResult } = this.state;
     // 校验服务状态
-    const isShowServeStatusError = this.checkServiceStatus();
+    const validateStatus = this.checkServiceStatus();
     // 校验服务记录
-    const isShowServiceContentError = !serviceRecord
-      || serviceRecord.length > serviceContentMaxLength;
+    const validateRecord = !serviceRecord || serviceRecord.length > RECORD_MAX_LENGTH;
     // 校验客户反馈
-    const isShowErrorCustFeedback = this.checkCustFeedbackError();
+    const validateFeedback = this.checkCustFeedbackError();
+    // 在MOT回访任务类型下针对回访结果和失败原因进行校验
+    const isMotReturn = this.isMOTReturnVistTask(eventId);
+    const visitResultValidate = _.isEmpty(visitResult);
+    // 如果回访结果为失败，需要针对失败原因是否填写
+    let failReasonValidate = false;
+    if (visitResult === 'Lost') {
+      failReasonValidate = _.isEmpty(failReason);
+    }
+
     // 默认是校验结果正确
     let hasError = false;
 
     // 打完电话后不需要校验 服务状态 是否已经选择,校验服务记录内容和客户反馈一二级
     if (isPhoneCall) {
-      hasError = isShowErrorCustFeedback || isShowServiceContentError;
+      hasError = validateFeedback || validateRecord;
+    } else if (isMotReturn) {
+      // MOT 回访任务需要针对回访结果和失败原因进行校验
+      hasError = validateRecord || validateStatus || visitResultValidate || failReasonValidate;
     } else {
-      hasError = isShowErrorCustFeedback || isShowServiceContentError || isShowServeStatusError;
+      hasError = validateFeedback || validateRecord || validateStatus;
     }
 
     return {
       hasError,
       errorState: {
-        isShowServeStatusError,
-        isShowErrorCustFeedback,
-        isShowServiceContentError,
+        isShowServeStatusError: validateStatus,
+        isShowErrorCustFeedback: validateFeedback,
+        isShowServiceContentError: validateRecord,
+        visitResultValidate,
+        failReasonValidate,
       },
     };
   }
@@ -509,12 +529,20 @@ export default class ServiceRecordContent extends PureComponent {
       isSelectZhangleFins,
       // MOT任务，自建任务
       taskTypeCode,
+      // MOT 回访类型任务回访结果
+      visitResult,
+      // MOT 回访类型任务结果失败的原因
+      failReason,
+      // eventId
+      eventId,
     } = this.state;
 
     const {
       formData: { custId = '', missionFlowId = '', missionId = '' },
       custUuid,
     } = this.props;
+    const taskType = `${parseInt(taskTypeCode, 10) + 1}`;
+    const isMotReturnVisitTask = this.isMOTReturnVistTask(eventId);
     // 按照DOClever定义的入参
     const data = {
       custId,
@@ -529,8 +557,12 @@ export default class ServiceRecordContent extends PureComponent {
       flowStatus: serviceStatus,
       missionFlowId,
       missionId,
-      taskType: `${+taskTypeCode + 1}`,
+      taskType,
       uuid: (!_.isEmpty(custUuid) && !_.isEmpty(currentFile)) ? custUuid : '',
+      visitResult,
+      visitFailureDesc: failReason,
+      // 判断当前的Task任务是否是 MOT 回访类任务
+      isMotReturnVisitTask,
     };
 
     if (isSelectZhangleFins) {
@@ -542,6 +574,7 @@ export default class ServiceRecordContent extends PureComponent {
       data.zlApprovalCode = flow.getFlowCodeByName('审核中');
       data.zhangleServiceContentData = _.omit(zlData, ['mode']);
     }
+
     return data;
   }
 
@@ -582,12 +615,24 @@ export default class ServiceRecordContent extends PureComponent {
   @autobind
   getZLCustFeedbackList() {
     const { eventId, taskTypeCode, serviceType } = this.state;
-    const type = `${+taskTypeCode + 1}`;
+    const type = `${parseInt(taskTypeCode, 10) + 1}`;
     // TODO 如果是mot任务 eventId参数需要使用 eventId
     // 如果是自建任务 需要使用serviceTypeCode
     // type 值为2的时候，该任务是自建任务
     const eventIdParam = type === '2' ? serviceType : eventId;
     this.props.queryCustFeedbackList4ZLFins({ eventId: eventIdParam, type });
+  }
+
+  // 判断当前的任务是否是 MOT 回访类型任务
+  @autobind
+  isMOTReturnVistTask(eventId) {
+    return MOT_RETURN_VISIT_TASK_EVENT_ID === eventId;
+  }
+
+  // 判断是否是 MOT 类型任务
+  @autobind
+  isMOTPlatform(type) {
+    return MOT_PLATFORM_CODE === type;
   }
 
   // 如果服务方式是涨乐财富通，则需要优先查一把客户反馈列表，以及审批人列表
@@ -744,7 +789,7 @@ export default class ServiceRecordContent extends PureComponent {
     const value = e.target.value;
     this.setState({
       serviceRecord: value,
-      isShowServiceContentError: _.isEmpty(value) || value.length > serviceContentMaxLength,
+      isShowServiceContentError: _.isEmpty(value) || value.length > RECORD_MAX_LENGTH,
     });
     // 调用了此方法说明表单的数据发生了变化
     this.props.onFormDataChange();
@@ -757,6 +802,43 @@ export default class ServiceRecordContent extends PureComponent {
     const { onDeleteFile } = this.props;
     onDeleteFile({ ...params }).then(() => {
       this.isDeletingFile = false;
+    });
+  }
+
+  // 判断是否要将涨乐财富通的服务方式隐藏
+  @autobind
+  handleDisabledZLFinsOption() {
+    const { empInfo } = this.props;
+    const { eventId, taskTypeCode } = this.state;
+    const type = `${parseInt(taskTypeCode, 10) + 1}`;
+    if (!empInfo.tgQyFlag) {
+      // 只有投顾入岗才能看到 涨乐财富通
+      return true;
+    }
+    if (this.isMOTPlatform(type) && this.isMOTReturnVistTask(eventId)) {
+      // 新增一个如果是MOT待办回访类任务，不展示涨乐财富通选项
+      return true;
+    }
+    return false;
+  }
+
+  @autobind
+  handleVisitResultChange(e) {
+    // 修改MOT回访任务的回访结果
+    this.setState({
+      visitResult: e.target.value,
+      visitResultValidate: false,
+      failReason: '',
+      failReasonValidate: false,
+    });
+  }
+
+  @autobind
+  handleFailReasonChange(e) {
+    // 填写失败原因
+    this.setState({
+      failReason: e.target.value,
+      failReasonValidate: false,
     });
   }
 
@@ -786,8 +868,12 @@ export default class ServiceRecordContent extends PureComponent {
       custFeedbackTime,
       ZLCustFeedback,
       zlcftMsgStatus,
+      eventId,
     } = this.state;
-    const { formData: { attachmentList }, custFeedbackList } = this.props;
+    const {
+      formData: { attachmentList, failReason = '', workResult = '' },
+      custFeedbackList,
+    } = this.props;
     const zlServiceRecord = {
       title: ZLServiceContentTitle,
       type: ZLServiceContentType,
@@ -802,8 +888,14 @@ export default class ServiceRecordContent extends PureComponent {
     const serviceTimeText = isMomentAboutServiceTime ? serviceTime.format(DATE_FORMAT_SHOW) : '';
     const feedbackTimeText = isMomentAboutFeedbackTime ? custFeedbackTime.format(DATE_FORMAT_SHOW) : '';
 
+    // MOT 回访类任务下的回访结果
+    const isMOTReturnVisitTask = this.isMOTReturnVistTask(eventId);
+
     return (
       <ServeRecordReadOnly
+        isMOTReturnVisitTask={isMOTReturnVisitTask}
+        motReturnResult={workResult}
+        motReturnFailReason={failReason}
         isZL={serveWayUtil.isZhangle(serviceWayCode)}
         attachmentList={attachmentList}
         serviceWay={serviceWayText}
@@ -845,6 +937,7 @@ export default class ServiceRecordContent extends PureComponent {
     } = this.props;
     const {
       isReject,
+      eventId,
       serviceWayCode,
       serviceStatus,
       serviceType,
@@ -866,6 +959,10 @@ export default class ServiceRecordContent extends PureComponent {
       ZLServiceContentType,
       ZLServiceContentDesc,
       statusDisabled,
+      failReason,
+      visitResult,
+      failReasonValidate,
+      visitResultValidate,
     } = this.state;
     if (_.isEmpty(dict) || _.isEmpty(empInfo)) return null;
 
@@ -901,17 +998,19 @@ export default class ServiceRecordContent extends PureComponent {
     };
 
     const { autoGenerateRecordInfo = {} } = serviceRecordInfo;
-
     // 当该页面是从360或者客户列表页面进入,则服务类型是使用下拉框切换获得的
     const serviceTypeCodeTmplNeed = isEntranceFromPerformerView ? serviceTypeCode : serviceType;
+    // 页面包装 class
+    const wrapCls = cx({
+      [styles.serviceRecordContent]: true,
+      [styles.performerServiceRecord]: isEntranceFromPerformerView,
+    });
+
+    // 是否 MOT 回访类任务
+    const isMotReturnVisitTask = this.isMOTReturnVistTask(eventId);
 
     return (
-      <div
-        className={cx(
-          styles.serviceRecordContent,
-          { [styles.performerServiceRecord]: isEntranceFromPerformerView },
-        )}
-      >
+      <div className={wrapCls}>
         <div className={styles.gridWrapper}>
           <ServiceWaySelect
             value={serviceWayCode}
@@ -921,6 +1020,7 @@ export default class ServiceRecordContent extends PureComponent {
             empInfo={empInfo}
             serviceRecordInfo={serviceRecordInfo}
             isPhoneCall={isPhoneCall}
+            disabledZLFinsOption={this.handleDisabledZLFinsOption}
           />
           {/* 执行者试图下显示 服务状态；非执行者视图下显示服务类型 */}
           {
@@ -1020,7 +1120,7 @@ export default class ServiceRecordContent extends PureComponent {
 
         {/* 涨乐财富通下显示 客户反馈可选项 */}
         {
-          !this.state.isSelectZhangleFins
+          (!this.state.isSelectZhangleFins && !isMotReturnVisitTask)
             ? (
               <div className={styles.custFeedbackSection}>
                 <div className={styles.left}>
@@ -1047,17 +1147,37 @@ export default class ServiceRecordContent extends PureComponent {
                 </div>
               </div>
             )
-            : (
-              <ZLFeedback
-                flowStatusCode={flowStatusCode}
-                feedbackList={custFeedbackList}
-                feedbackTime={ZLCustFeedbackTime.format(DATE_FORMAT_SHOW)}
-                feedback={ZLCustFeedback}
-                onFormDataChange={onFormDataChange}
-              />
-            )
+            :
+            null
         }
-
+        {
+          !this.state.isSelectZhangleFins && isMotReturnVisitTask
+          ? (
+            <MotReturnVisitContent
+              onVisitResultChange={this.handleVisitResultChange}
+              onFailReasonChange={this.handleFailReasonChange}
+              failReasonValue={failReason}
+              visitResultValue={visitResult}
+              visitResultValidate={visitResultValidate}
+              failReasonValidate={failReasonValidate}
+            />
+          )
+          :
+          null
+        }
+        {
+          this.state.isSelectZhangleFins ?
+          (
+            <ZLFeedback
+              flowStatusCode={flowStatusCode}
+              feedbackList={custFeedbackList}
+              feedbackTime={ZLCustFeedbackTime.format(DATE_FORMAT_SHOW)}
+              feedback={ZLCustFeedback}
+              onFormDataChange={onFormDataChange}
+            />
+          )
+          : null
+        }
         {/* 涨乐财富通下显示 不限上传 */}
         {
           this.state.isSelectZhangleFins ? null

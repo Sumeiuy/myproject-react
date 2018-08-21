@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-24 18:49:12
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-17 14:08:33
  * 服务记录表单
  */
 
@@ -10,19 +10,77 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import { connect } from 'dva';
+
 import ServiceRecordContent from '../../../common/serviceRecordContent';
+import AllotEmpModal from '../../../common/commonApproverModal';
 import Button from '../../../common/Button';
 import confirm from '../../../common/confirm_';
-import styles from './serviceRecordForm.less';
-import logable, { logCommon } from '../../../../decorators/logable';
+import logable, { logCommon, logPV } from '../../../../decorators/logable';
+import { dva } from '../../../../helper';
 import { UPDATE } from '../../../../config/serviceRecord';
 import { serveWay as serveWayUtil } from '../config/code';
+import { MOT_RETURN_VISIT_TASK_EVENT_ID } from '../../../../config/taskList/performView';
 
+import styles from './serviceRecordForm.less';
+
+// 使用helper里面封装的生成effects的方法
+const effect = dva.generateEffect;
+
+const mapStateToProps = state => ({
+   // MOT回访任务可分配人员的列表
+  allotEmpList: state.performerView.allotEmpList,
+   // 回访任务分配结果
+  allotEmpResult: state.performerView.allotEmpResult,
+});
+
+const mapDispatchToProps = {
+  // 获取MOT 回访任务人员列表
+  queryAllotEmpList: effect('performerView/queryAllotEmpList', { forceFull: true }),
+  // 将任务分配给选中的人员
+  dispatchTaskToEmp: effect('performerView/dispatchTaskToEmp', { forceFull: true }),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class ServiceRecordForm extends PureComponent {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 点击分配按钮选择分配的人员
+      allotEmpModal: false,
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    // 判断当前的是否需要查询可分配人员列表接口
+    const { formData: { custUuid: prevUUid } } = prevProps;
+    const { formData: { eventId, dispatchingAvailable, custUuid, custId } } = this.props;
+    const needQueryAllotEmpList = this.isMOTReturnVistTask(eventId) && dispatchingAvailable;
+    if (needQueryAllotEmpList && prevUUid !== custUuid) {
+      this.props.queryAllotEmpList({
+        custNumber: custId,
+      });
+    }
+  }
 
   @autobind
   setServiceRecordContentRef(input) {
     this.serviceRecordContentRef = input;
+  }
+
+  // 判断当前的任务是否是 MOT 回访类型任务
+  // TODO 目前开发状态下暂时默认为true
+  @autobind
+  isMOTReturnVistTask(eventId) {
+    return MOT_RETURN_VISIT_TASK_EVENT_ID === eventId;
+  }
+
+  @autobind
+  doAfterAllotTask() {
+    // 分配任务后，该任务就不属于当前登录人了，所以还得刷新任务列表
+    const { location: { query } } = this.props;
+    this.props.refreshTaskList(query);
   }
 
   @autobind
@@ -103,6 +161,35 @@ export default class ServiceRecordForm extends PureComponent {
     }
   }
 
+  @autobind
+  @logPV({
+    pathname: '/modal/taskCenterTaskList/executor/allotEmpModal',
+    title: '执行者视图下MOT回访任务分配弹框',
+  })
+  handleAllotBtnClick() {
+    this.setState({ allotEmpModal: true });
+  }
+
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  handleAllotEmpModalClose() {
+    this.setState({ allotEmpModal: false });
+  }
+
+  @autobind
+  handleAllotEmpModalOk(emp) {
+    if (_.isEmpty(emp)) {
+      confirm({ content: '请选择分配人员！' });
+    } else {
+      const { formData: { missionFlowId } } = this.props;
+      this.setState({ allotEmpModal: false });
+      this.props.dispatchTaskToEmp({
+        toEmpId: emp.empNo,
+        flowId: missionFlowId,
+      }).then(this.doAfterAllotTask);
+    }
+  }
+
   render() {
     const {
       dict,
@@ -127,9 +214,16 @@ export default class ServiceRecordForm extends PureComponent {
       testWallCollisionStatus,
       isCurrentMissionPhoneCall,
       onFormDataChange,
+      // MOT 回访任务可分配的人员列表
+      allotEmpList,
     } = this.props;
 
+    const { allotEmpModal } = this.state;
+
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
+
+    const showAllocateBtn = this.isMOTReturnVistTask(formData.eventId)
+      && formData.dispatchingAvailable;
 
     let footNode;
     if (!isReadOnly) {
@@ -138,6 +232,12 @@ export default class ServiceRecordForm extends PureComponent {
           {
             !isCurrentMissionPhoneCall
             && <Button className={styles.cancelBtn} onClick={this.handleCancel} >取消</Button>
+          }
+          {
+            !showAllocateBtn ? null
+            : (
+              <Button className={styles.cancelBtn} onClick={this.handleAllotBtnClick} >分配</Button>
+            )
           }
           <Button className={styles.submitBtn} onClick={_.debounce(this.handleSubmit, 300)} type="primary" >提交</Button>
         </div>
@@ -154,9 +254,7 @@ export default class ServiceRecordForm extends PureComponent {
               isReject={isReject}
               dict={dict}
               empInfo={empInfo}
-              // 是否是执行者视图页面
               isEntranceFromPerformerView={isEntranceFromPerformerView}
-              // 表单数据
               formData={formData}
               isFold={isFold}
               custUuid={custUuid}
@@ -176,6 +274,23 @@ export default class ServiceRecordForm extends PureComponent {
             {footNode}
           </div>
         </div>
+        {
+          !allotEmpModal ? null
+          : (
+            <AllotEmpModal
+              rowKey="empNo"
+              modalKey="executorAllotEmpModal"
+              title="选择处理人"
+              visible={allotEmpModal}
+              approverList={allotEmpList}
+              onClose={this.handleAllotEmpModalClose}
+              onOk={this.handleAllotEmpModalOk}
+              pagination={{
+                pageSize: 5,
+              }}
+            />
+          )
+        }
       </div>
     );
   }
@@ -183,6 +298,7 @@ export default class ServiceRecordForm extends PureComponent {
 
 ServiceRecordForm.propTypes = {
   addServeRecord: PropTypes.func.isRequired,
+  location: PropTypes.object.isRequired,
   dict: PropTypes.object,
   empInfo: PropTypes.object,
   // 是否是执行者视图页面
@@ -214,6 +330,11 @@ ServiceRecordForm.propTypes = {
   testWallCollisionStatus: PropTypes.bool.isRequired,
   isCurrentMissionPhoneCall: PropTypes.bool,
   onFormDataChange: PropTypes.func,
+  dispatchTaskToEmp: PropTypes.func.isRequired,
+  queryAllotEmpList: PropTypes.func.isRequired,
+  refreshTaskList: PropTypes.func.isRequired,
+  allotEmpList: PropTypes.array.isRequired,
+  allotEmpResult: PropTypes.string.isRequired,
 };
 
 ServiceRecordForm.defaultProps = {
