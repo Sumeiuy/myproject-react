@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 13:17:21
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-21 15:51:47
  */
 
 import React, { PureComponent } from 'react';
@@ -65,11 +65,11 @@ let ADD_SERVER_RECORD_FUN_PARAM = {};
 const BATCH_ADD_SERVER_RECORD_MODAL_KEY = 'batchAddServerRecord';
 /**
  * 将数组对象中的id和name转成对应的key和value
- * @param {*} arr 原数组
+ * @param {*} list 原数组
  * eg: [{ id: 1, name: '11', childList: [] }] 转成 [{ key: 1, value: '11', children: [] }]
  */
-function transformCustFeecbackData(arr = []) {
-  return arr.map((item = {}) => {
+function transformCustFeecbackData(list = []) {
+  return list.map((item = {}) => {
     const obj = {
       key: String(item.id),
       value: item.name || item.parentClassName,
@@ -892,7 +892,7 @@ export default class ServiceImplementation extends PureComponent {
     // 涨乐财富通中才有审批和驳回状态
     const isReject = this.isRejct({ serviceStatusCode: missionStatusCode, serviceWayCode });
     // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
-    const motCustfeedBackDict = transformCustFeecbackData(taskFeedbackList) || [];
+    const motCustfeedBackDict = transformCustFeecbackData(taskFeedbackList);
     // 服务记录的formData
     const serviceReocrd = {
       serviceTips,
