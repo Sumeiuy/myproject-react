@@ -28,8 +28,7 @@ import ApplyItem from '../../components/common/appList/ApplyItem';
 import Detail from '../../components/custAllot/Detail';
 import commonConfirm from '../../components/common/confirm_';
 import config from '../../components/custAllot/config';
-import { dva, emp, convert, time } from '../../helper';
-// import { dva, emp, permission, convert, time } from '../../helper';
+import { dva, emp, permission, convert, time } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 
@@ -314,8 +313,7 @@ export default class CustAllot extends PureComponent {
   // 是否显示创建按钮
   @autobind
   showCreateBtn() {
-    // return permission.hasKHFPGPermission() && this.checkUserIsFiliale();
-    return true;
+    return permission.hasKHFPGPermission() && this.checkUserIsFiliale();
   }
 
   // 打开弹窗

@@ -67,6 +67,8 @@ export default class AddCustModal extends PureComponent {
   constructor(props) {
     super(props);
     const { addedCustData: { page = {} } } = this.props;
+    // 是否添加了鼠标处理事件
+    this.isAddedMouseHandle = false;
     this.state = {
       // 已有条数
       alreadyCount: page.totalRecordNum || 0,
@@ -103,9 +105,10 @@ export default class AddCustModal extends PureComponent {
   componentDidUpdate() {
     this.checkBoxDOM = ReactDOM.findDOMNode(document.querySelectorAll('.ant-table-selection')[0]);  // eslint-disable-line
 
-    if (this.checkBoxDOM) {
+    if (this.checkBoxDOM && !this.isAddedMouseHandle) {
       this.checkBoxDOM.addEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
       this.checkBoxDOM.addEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
+      this.isAddedMouseHandle = true;
     }
   }
 
@@ -113,6 +116,7 @@ export default class AddCustModal extends PureComponent {
     if (this.checkBoxDOM) {
       this.checkBoxDOM.removeEventListener('mouseenter', this.handleCheckBoxMouseEnter, false);
       this.checkBoxDOM.removeEventListener('mouseleave', this.handleCheckBoxMouseLeave, false);
+      this.isAddedMouseHandle = false;
     }
   }
 
@@ -376,7 +380,7 @@ export default class AddCustModal extends PureComponent {
       type: 'Submit',
       payload: {
         title,
-        value: JSON.stringify({ ...payload }),
+        value: JSON.stringify(payload),
         name: title,
         type: '营业部客户分配',
         subType: '营业部客户分配',

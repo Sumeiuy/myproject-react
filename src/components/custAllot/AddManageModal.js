@@ -193,7 +193,7 @@ export default class AddManageModal extends PureComponent {
       type: 'Submit',
       payload: {
         title,
-        value: JSON.stringify({ ...payload }),
+        value: JSON.stringify(payload),
         name: title,
         type: '分公司客户分配',
         subType: '分公司客户分配',
