@@ -14,7 +14,7 @@ import ServiceResultLayout from '../../common/ServiceResultLayout';
 import Button from '../../../common/Button';
 import { MISSION_PROGRESS_MAP, OPEN_IN_TAB_PARAM } from './config';
 import { SOURCE_SERVICE_RESULT_CUST } from '../../../../config/createTaskEntry';
-import { url as urlHelper, emp, permission } from '../../../../helper';
+import { url as urlHelper, emp, permission, number } from '../../../../helper';
 import { openInTab } from '../../../../utils';
 import logable from '../../../../decorators/logable';
 
@@ -387,7 +387,13 @@ export default class ServiceResult extends PureComponent {
         dataIndex: 'assets',
         key: 'assets',
         width: 100,
-        render: text => this.getColumnsTitleRender(text),
+        render: (text) => {
+          // 小数点后保留两位，例如123456.00
+          const fixedAssets = number.toFixed(_.toNumber(text), 2);
+          // 以千分位的格式展示，例如123,456.00
+          const thousandFormatAssets = number.thousandFormat(fixedAssets, false, ',', false);
+          return this.getColumnsTitleRender(thousandFormatAssets);
+        },
       },
       {
         title: '一级反馈',

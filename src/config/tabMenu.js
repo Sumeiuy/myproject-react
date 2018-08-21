@@ -319,12 +319,6 @@ const newOpenTabConfig = [
     pid: 'FSP_INVESTMENT_CONSULTANTRACE',
   },
   {
-    name: '客户分配',
-    id: 'FSP_CUSTALLOT',
-    path: '/custAllot',
-    pid: 'FSP_CUSTALLOT',
-  },
-  {
     name: '最新观点',
     id: 'FSP_LATEST_VIEW',
     path: '/latestView',

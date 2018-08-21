@@ -222,7 +222,7 @@ export default class MessageCenter extends PureComponent {
     const itemId = valArray[1] || '';
     // 失败或者终止都进入失败页面
     if (_.includes(title, config.fail) || _.includes(title, config.abort)) {
-      const url = `/custAllot?id=${itemId}&appId=${appId}`;
+      const url = `/businessApplyment/customerPartition/custAllot?id=${itemId}&appId=${appId}`;
       const param = {
         id: 'FSP_CROSS_DEPARTMENT_NEW',
         title: '分公司客户分配',
@@ -230,7 +230,7 @@ export default class MessageCenter extends PureComponent {
         isSpecialTab: true,
         closable: true,
       };
-      const pathName = '/custAllot';
+      const pathName = '/businessApplyment/customerPartition/custAllot';
       openRctTab({
         routerAction: push,
         url,
@@ -261,7 +261,7 @@ export default class MessageCenter extends PureComponent {
     const itemId = valArray[1] || '';
     // 失败或者终止都进入失败页面
     if (_.includes(title, config.fail) || _.includes(title, config.abort)) {
-      const url = `/departmentCustAllot?id=${itemId}&appId=${appId}`;
+      const url = `/businessApplyment/customerPartition/departmentCustAllot?id=${itemId}&appId=${appId}`;
       const param = {
         id: 'FSP_DEPARTMENT_CUST_ASSIGN',
         title: '营业部客户分配',
@@ -269,7 +269,7 @@ export default class MessageCenter extends PureComponent {
         isSpecialTab: true,
         closable: true,
       };
-      const pathName = '/departmentCustAllot';
+      const pathName = '/businessApplyment/customerPartition/departmentCustAllot';
       openRctTab({
         routerAction: push,
         url,
