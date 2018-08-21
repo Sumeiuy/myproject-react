@@ -2,13 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
-<<<<<<< HEAD
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-20 16:30:26
-=======
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 13:17:21
->>>>>>> 5a9cd4e263dc43eee49acdfde44fa15ee7232c7f
+ * @Last Modified time: 2018-08-21 15:51:47
  */
 
 import React, { PureComponent } from 'react';
@@ -74,9 +69,6 @@ const BATCH_ADD_SERVER_RECORD_MODAL_KEY = 'batchAddServerRecord';
  * eg: [{ id: 1, name: '11', childList: [] }] 转成 [{ key: 1, value: '11', children: [] }]
  */
 function transformCustFeecbackData(list = []) {
-  if (_.isEmpty(list)) {
-    return [];
-  }
   return list.map((item = {}) => {
     const obj = {
       key: String(item.id),
