@@ -91,6 +91,12 @@ const newOpenTabConfig = [
     pid: 'FSP_CUST_M_360',
   },
   {
+    name: '投顾签约转签向导',
+    id: 'FSP_CUST_M_TGCONTRACT_TRANSFER',
+    path: '/fsp/customerCenter/tgcontracttransfer',
+    pid: 'FSP_MESSAGE_CENTER',
+  },
+  {
     name: '投顾签约计划变更向导',
     id: 'utb-stockcontractupd-wizard',
     path: '/fsp/customerCenter/360Wizard',
@@ -124,13 +130,13 @@ const newOpenTabConfig = [
     name: '工单投诉信息',
     id: 'FSP_COMPLAINT_INFO',
     path: '/fsp/custcomplaint/complaintInfo',
-    pid: '',
+    pid: 'FSP_SYS_OPERATE_PRIMARY',
   },
   {
     name: '新增投诉工单',
     id: 'FSP_ST_TAB_CUSTCOMP_ADD',
     path: '/fsp/custcomplaint/toAddPageInfo',
-    pid: '',
+    pid: 'FSP_SYS_OPERATE_PRIMARY',
   },
   {
     name: '资产配置明细',

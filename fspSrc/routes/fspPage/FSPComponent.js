@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import store from 'store';
+import { Prompt } from 'dva/router';
+import _ from 'lodash';
 import { fspRoutes } from '../../../src/config';
 import api from '../../../src/api';
 import Loading from '../../layouts/Loading';
@@ -10,11 +12,18 @@ import styles from './fspComponent.less';
 
 import { os } from '../../../src/helper';
 
+import { BLOCK_JSP_FORM_ROUTER } from './config';
+
 function findRoute(pathname) {
   return os.findBestMatch(pathname, fspRoutes, 'path');
 }
 
 export default class FSPComponent extends PureComponent {
+
+  static contextTypes = {
+    router: PropTypes.object.isRequired,
+  }
+
   constructor(props) {
     super(props);
     const { location: { pathname, state } } = props;
@@ -22,8 +31,20 @@ export default class FSPComponent extends PureComponent {
     this.getFspData({ isinitial: true });
     this.state = {
       loading: true,
+      isBlocking: false,
     };
     this.timeoutId = setTimeout(() => this.setState({ loading: false }), 10000);
+  }
+
+  componentDidMount() {
+    const { router } = this.context;
+    this.historyListen = router.history.listen(({ pathname }) => {
+      if (_.find(BLOCK_JSP_FORM_ROUTER, path => path === pathname)) {
+        this.setState({
+          isBlocking: true,
+        });
+      }
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -37,6 +58,9 @@ export default class FSPComponent extends PureComponent {
   }
 
   componentWillUnmount() {
+    if (this.historyListen) {
+      this.historyListen();
+    }
     return this.timeoutId && clearTimeout(this.timeoutId);
   }
 
@@ -92,6 +116,20 @@ export default class FSPComponent extends PureComponent {
     }
   }
 
+  // 跳转前确认处理
+  @autobind
+  handlePrompt(location) {
+    const { location: { pathname } } = this.props;
+    if (window.shouldNotBlock) {
+      window.shouldNotBlock = false;
+      return true;
+    }
+    if (location.pathname === pathname) {
+      return false;
+    }
+    return '当前表单内容不会保存, 请确认是否离开当前页面';
+  }
+
   render() {
     return (
       <div className={styles.fspContainer}>
@@ -103,6 +141,10 @@ export default class FSPComponent extends PureComponent {
               你的浏览器不支持iframe,请升级或者更换浏览器
             </iframe>
         }
+        <Prompt
+          when={this.state.isBlocking}
+          message={this.handlePrompt}
+        />
       </div>
     );
   }
