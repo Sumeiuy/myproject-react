@@ -983,18 +983,16 @@ export default {
     },
     // 查询自定义标签
     * queryDefinedLabelsInfo({ payload }, { call, put }) {
-      const { code, resultData } = yield call(api.queryDefinedLabelsInfo, payload);
+      const { resultData } = yield call(api.queryDefinedLabelsInfo, payload);
       const finalResultData = _.reduce(
         resultData,
         (flattened, labelList) => flattened.concat(labelList.children),
         [],
       );
-      if (code === '0') {
-        yield put({
-          type: 'queryDefinedLabelsInfoSuccess',
-          payload: finalResultData,
-        });
-      }
+      yield put({
+        type: 'queryDefinedLabelsInfoSuccess',
+        payload: finalResultData,
+      });
     },
   },
   reducers: {

@@ -14,7 +14,7 @@ import Filter from '../../components/customerPool/list/Filter__';
 import CustomerLists from '../../components/customerPool/list/CustomerLists__';
 import MatchArea from '../../components/customerPool/list/individualInfo/MatchArea';
 import { dynamicInsertQuota } from '../../components/customerPool/list/sort/config';
-import { permission, emp, url, check } from '../../helper';
+import { permission, emp, url, check, dva } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { seperator, sessionStore } from '../../config';
 
@@ -320,12 +320,6 @@ const effects = {
   queryDefinedLabelsInfo: 'customerPool/queryDefinedLabelsInfo',
 };
 
-const fetchDataFunction = (globalLoading, type) => query => ({
-  type,
-  payload: query || {},
-  loading: globalLoading,
-});
-
 const mapStateToProps = state => ({
   // 客户池用户范围
   custRange: state.customerPool.custRange,
@@ -379,24 +373,25 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  getAllInfo: fetchDataFunction(true, effects.allInfo),
-  getCustomerData: fetchDataFunction(true, effects.getCustomerList),
-  getCustIncome: fetchDataFunction(false, effects.getCustIncome),
-  getCustomerScope: fetchDataFunction(true, effects.getCustomerScope),
-  getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
-  getCustContact: fetchDataFunction(true, effects.getCustContact),
-  handleFilter: fetchDataFunction(false, effects.handleFilter),
-  handleSelect: fetchDataFunction(false, effects.handleSelect),
-  handleOrder: fetchDataFunction(false, effects.handleOrder),
-  handleCheck: fetchDataFunction(false, effects.handleCheck),
-  handleSearch: fetchDataFunction(false, effects.handleSearch),
-  handleCloseClick: fetchDataFunction(false, effects.handleCloseClick),
-  handleAddServiceRecord: fetchDataFunction(false, effects.handleAddServiceRecord),
-  handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
-  getCeFileList: fetchDataFunction(false, effects.getCeFileList),
+  getAllInfo: dva.generateEffect(effects.allInfo),
+  getCustomerData: dva.generateEffect(effects.getCustomerList),
+  getCustIncome: dva.generateEffect(effects.getCustIncome, { loading: false }),
+  getCustomerScope: dva.generateEffect(effects.getCustomerScope),
+  getServiceRecord: dva.generateEffect(effects.getServiceRecord),
+  getCustContact: dva.generateEffect(effects.getCustContact),
+  handleFilter: dva.generateEffect(effects.handleFilter, { loading: false }),
+  handleSelect: dva.generateEffect(effects.handleSelect, { loading: false }),
+  handleOrder: dva.generateEffect(effects.handleOrder, { loading: false }),
+  handleCheck: dva.generateEffect(effects.handleCheck, { loading: false }),
+  handleSearch: dva.generateEffect(effects.handleSearch, { loading: false }),
+  handleCloseClick: dva.generateEffect(effects.handleCloseClick, { loading: false }),
+  handleAddServiceRecord: dva.generateEffect(effects.handleAddServiceRecord, { loading: false }),
+  handleCollapseClick: dva.generateEffect(effects.handleCollapseClick, { loading: false }),
+  getCeFileList: dva.generateEffect(effects.getCeFileList, { loading: false }),
   // 搜索服务服务经理
-  getSearchServerPersonList: fetchDataFunction(false, effects.getSearchServerPersonList),
-  getSearchPersonList: fetchDataFunction(false, effects.getSearchPersonList),
+  getSearchServerPersonList:
+    dva.generateEffect(effects.getSearchServerPersonList, { loading: false }),
+  getSearchPersonList: dva.generateEffect(effects.getSearchPersonList, { loading: false }),
   push: routerRedux.push,
   replace: routerRedux.replace,
   toggleServiceRecordModal: query => ({
@@ -408,37 +403,39 @@ const mapDispatchToProps = {
     type: 'customerPool/clearCreateTaskData',
     payload: query || {},
   }),
-  queryProduct: fetchDataFunction(false, effects.queryProduct),
-  queryJxGroupProduct: fetchDataFunction(false, effects.queryJxGroupProduct),
-  getTagList: fetchDataFunction(false, effects.getTagList),
-  clearProductData: fetchDataFunction(false, effects.clearProductData),
-  clearSearchPersonList: fetchDataFunction(false, effects.clearSearchPersonList),
-  clearJxGroupProductData: fetchDataFunction(false, effects.clearJxGroupProductData),
+  queryProduct: dva.generateEffect(effects.queryProduct, { loading: false }),
+  queryJxGroupProduct: dva.generateEffect(effects.queryJxGroupProduct, { loading: false }),
+  getTagList: dva.generateEffect(effects.getTagList, { loading: false }),
+  clearProductData: dva.generateEffect(effects.clearProductData, { loading: false }),
+  clearSearchPersonList: dva.generateEffect(effects.clearSearchPersonList, { loading: false }),
+  clearJxGroupProductData: dva.generateEffect(effects.clearJxGroupProductData, { loading: false }),
   // 获取uuid
-  queryCustUuid: fetchDataFunction(true, effects.queryCustUuid),
+  queryCustUuid: dva.generateEffect(effects.queryCustUuid),
   getFiltersOfSightingTelescopeSequence:
-    fetchDataFunction(true, effects.getFiltersOfSightingTelescopeSequence),
+    dva.generateEffect(effects.getFiltersOfSightingTelescopeSequence),
   // 查询是否包含非本人名下客户和超出1000条数据限制
-  isSendCustsServedByPostn: fetchDataFunction(true, effects.isSendCustsServedByPostn),
+  isSendCustsServedByPostn: dva.generateEffect(effects.isSendCustsServedByPostn),
   // 添加服务记录
-  addServeRecord: fetchDataFunction(true, effects.addServeRecord),
+  addServeRecord: dva.generateEffect(effects.addServeRecord),
   // 根据持仓产品的id查询对应的详情
-  queryHoldingProduct: fetchDataFunction(false, effects.queryHoldingProduct),
+  queryHoldingProduct: dva.generateEffect(effects.queryHoldingProduct, { loading: false }),
   // 添加通话记录关联服务记录
-  addCallRecord: fetchDataFunction(true, effects.addCallRecord),
+  addCallRecord: dva.generateEffect(effects.addCallRecord),
   // 获取服务营业部的数据
-  getCustRangeByAuthority: fetchDataFunction(true, effects.getCustRangeByAuthority),
+  getCustRangeByAuthority: dva.generateEffect(effects.getCustRangeByAuthority),
   // 组合产品订购客户查询持仓证券重合度
-  queryHoldingSecurityRepetition: fetchDataFunction(false, effects.queryHoldingSecurityRepetition),
-  queryIndustryList: fetchDataFunction(true, effects.queryIndustryList),
-  queryHoldingIndustryDetail: fetchDataFunction(false, effects.queryHoldingIndustryDetail),
+  queryHoldingSecurityRepetition:
+    dva.generateEffect(effects.queryHoldingSecurityRepetition, { loading: false }),
+  queryIndustryList: dva.generateEffect(effects.queryIndustryList),
+  queryHoldingIndustryDetail:
+    dva.generateEffect(effects.queryHoldingIndustryDetail, { loading: false }),
   // 查询客户已标记标签
-  queryCustSignedLabels: fetchDataFunction(true, effects.queryCustSignedLabels),
-  queryLikeLabelInfo: fetchDataFunction(false, effects.queryLikeLabelInfo),
-  signCustLabels: fetchDataFunction(true, effects.signCustLabels),
-  signBatchCustLabels: fetchDataFunction(true, effects.signBatchCustLabels),
-  addLabel: fetchDataFunction(true, effects.addLabel),
-  queryDefinedLabelsInfo: fetchDataFunction(true, effects.queryDefinedLabelsInfo),
+  queryCustSignedLabels: dva.generateEffect(effects.queryCustSignedLabels),
+  queryLikeLabelInfo: dva.generateEffect(effects.queryLikeLabelInfo, { loading: false }),
+  signCustLabels: dva.generateEffect(effects.signCustLabels),
+  signBatchCustLabels: dva.generateEffect(effects.signBatchCustLabels),
+  addLabel: dva.generateEffect(effects.addLabel),
+  queryDefinedLabelsInfo: dva.generateEffect(effects.queryDefinedLabelsInfo),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
