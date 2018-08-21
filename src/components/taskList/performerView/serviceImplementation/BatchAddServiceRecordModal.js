@@ -3,7 +3,7 @@
  * @Description: 批量添加服务记录弹窗
  * @Date: 2018-08-17 11:31:18
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 13:20:11
+ * @Last Modified time: 2018-08-21 09:52:18
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -81,6 +81,7 @@ export default class BatchAddServiceRecordModal extends PureComponent {
         serveCustFeedBack2: item.serveCustFeedBack2,
         feedBackTime: item.feedBackTime,
         uuid: item.uuid,
+        eventType: item.eventType,
       }));
       saveBatchAddServiceRecord(condition);
     }
