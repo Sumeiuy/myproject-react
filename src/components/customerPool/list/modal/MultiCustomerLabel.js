@@ -161,9 +161,9 @@ export default class SignCustomerLabel extends PureComponent {
     const { labelValue } = this.state;
     return (
       <div className={styles.labelItemWrap}>
-        {replaceKeyWord(value.labelName, labelValue)}
-        ({value.labelTypeName})
-    </div>);
+        <div>{replaceKeyWord(value.labelName, labelValue)}</div>
+        <div className={styles.labelType}>{value.labelTypeName}</div>
+      </div>);
   }
 
   @autobind

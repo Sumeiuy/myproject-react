@@ -78,9 +78,9 @@ export default class SignCustomerLabel extends PureComponent {
   getOptionItemValue({ value }) {
     const { value: searchValue } = this.state;
     return (
-      <span className={styles.labelItemWrap}>
-        {replaceKeyWord(value.labelName, searchValue)}
-        ({value.labelTypeName})
+      <span className={styles.signItemWrap}>
+        <span>{replaceKeyWord(value.labelName, searchValue)}</span>
+        <span className={styles.labelType}>{value.labelTypeName}</span>
       </span>);
   }
 

@@ -177,6 +177,7 @@ function addMultiParams(filterObj) {
     'accountStatus', // 账户状态
     'completedRate', // 信息完备率
     'riskLevels', // 风险等级
+    'customLabels', //自定义客户标签
   ];
 
   _.each(multiParams, (key) => {
@@ -316,6 +317,7 @@ const effects = {
   signCustLabels: 'customerLabel/signCustLabels',
   signBatchCustLabels: 'customerLabel/signBatchCustLabels',
   addLabel: 'customerLabel/addLabel',
+  queryDefinedLabelsInfo: 'customerPool/queryDefinedLabelsInfo',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -372,6 +374,8 @@ const mapStateToProps = state => ({
   custLabel: state.customerLabel.custLabel,
   // 模糊搜索客户标签
   custLikeLabel: state.customerLabel.custLikeLabel,
+  // 查询所有自定义标签
+  definedLabelsInfo: state.customerPool.definedLabelsInfo,
 });
 
 const mapDispatchToProps = {
@@ -434,6 +438,7 @@ const mapDispatchToProps = {
   signCustLabels: fetchDataFunction(true, effects.signCustLabels),
   signBatchCustLabels: fetchDataFunction(true, effects.signBatchCustLabels),
   addLabel: fetchDataFunction(true, effects.addLabel),
+  queryDefinedLabelsInfo: fetchDataFunction(true, effects.queryDefinedLabelsInfo),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -515,6 +520,8 @@ export default class CustomerList extends PureComponent {
     custLabel: PropTypes.object.isRequired,
     custLikeLabel: PropTypes.array.isRequired,
     addLabel: PropTypes.func.isRequired,
+    queryDefinedLabelsInfo: PropTypes.func.isRequired,
+    definedLabelsInfo: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -587,6 +594,7 @@ export default class CustomerList extends PureComponent {
       },
       getCustRangeByAuthority,
       queryIndustryList,
+      queryDefinedLabelsInfo,
     } = this.props;
     // 请求客户列表
     this.getCustomerList(this.props);
@@ -598,6 +606,8 @@ export default class CustomerList extends PureComponent {
     getCustRangeByAuthority();
     // 请求持仓行业数据
     queryIndustryList();
+    // 初始化自定义标签
+    queryDefinedLabelsInfo();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -1037,6 +1047,7 @@ export default class CustomerList extends PureComponent {
       custLabel,
       custLikeLabel,
       addLabel,
+      definedLabelsInfo,
     } = this.props;
     const {
       sortDirection,
@@ -1090,6 +1101,7 @@ export default class CustomerList extends PureComponent {
           searchServerPersonList={searchServerPersonList}
           queryIndustryList={queryIndustryList}
           industryList={industryList}
+          definedLabelsInfo={definedLabelsInfo}
         />
         <CustomerLists
           getSearchPersonList={getSearchPersonList}

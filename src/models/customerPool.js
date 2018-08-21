@@ -183,6 +183,8 @@ export default {
     industryList: EMPTY_LIST,
     // 客户列表中持仓行业的详情
     industryDetail: EMPTY_OBJECT,
+    // 客户列表自定义标签
+    definedLabelsInfo: EMPTY_LIST,
   },
 
   subscriptions: {
@@ -979,6 +981,21 @@ export default {
         });
       }
     },
+    // 查询自定义标签
+    * queryDefinedLabelsInfo({ payload }, { call, put }) {
+      const { code, resultData } = yield call(api.queryDefinedLabelsInfo, payload);
+      const finalResultData = _.reduce(
+        resultData,
+        (flattened, labelList) => flattened.concat(labelList.children),
+        [],
+      );
+      if (code === '0') {
+        yield put({
+          type: 'queryDefinedLabelsInfoSuccess',
+          payload: finalResultData,
+        });
+      }
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -1698,6 +1715,13 @@ export default {
           ...state.industryDetail,
           [`${custId}_${industryId}`]: currentList,
         },
+      };
+    },
+    queryDefinedLabelsInfoSuccess(state, action) {
+      const { payload = EMPTY_LIST } = action;
+      return {
+        ...state,
+        definedLabelsInfo: payload,
       };
     },
   },
