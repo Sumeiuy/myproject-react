@@ -7,7 +7,14 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Select, Checkbox, DatePicker } from 'antd';
+import {
+  Form,
+  Select,
+  Checkbox,
+  DatePicker,
+  Radio,
+  Input,
+} from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
@@ -19,6 +26,8 @@ import Icon from '../../../common/Icon';
 import styles from './batchAddServiceRecordItem.less';
 
 const Option = Select.Option;
+const RadioGroup = Radio.Group;
+const TextArea = Input.TextArea;
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 const FormItem = Form.Item;
@@ -33,6 +42,14 @@ const SECOND_FEEDBACK_KEY = 'serveCustFeedBack2';
 const FEEDBACK_TIME_KEY = 'feedBackTime';
 // 任务详情里附件的key值
 const FEEDBACK_ATTACHMENT_KEY = 'uuid';
+// 任务详情里回访结果的key值
+const VISIT_RESULT_KEY = 'visitResult';
+// 任务详情里回访结果成功的value值
+const VISIT_RESULT_SUCCESS_VALUE = 'Success';
+// 任务详情里回访结果失败的value值
+const VISIT_RESULT_FAILED_VALUE = 'Lost';
+// 任务详情里失败原因的key值
+const VISIT_FAILURE_DESC_KEY = 'visitFailureDesc';
 
 
 export default class BatchAddServiceRecordItem extends PureComponent {
@@ -55,6 +72,7 @@ export default class BatchAddServiceRecordItem extends PureComponent {
     return _.filter(feedbackList, item => item.id === code)[0] || EMPTY_OBJECT;
   }
 
+  // 下拉框错误信息显示
   @autobind
   getSelectValdateInfo() {
     const { data } = this.props;
@@ -83,6 +101,7 @@ export default class BatchAddServiceRecordItem extends PureComponent {
     };
   }
 
+  // 时间选择错误信息显示
   @autobind
   getTimeValdateInfo() {
     const { data } = this.props;
@@ -90,6 +109,38 @@ export default class BatchAddServiceRecordItem extends PureComponent {
       return {
         validateStatus: 'error',
         help: '请选择反馈时间',
+      };
+    }
+    return {
+      validateStatus: '',
+      help: '',
+    };
+  }
+
+  // 回访结果错误信息显示
+  @autobind
+  getRadioValdateInfo() {
+    const { data } = this.props;
+    if (data[IS_CHECKED_KEY] && _.isEmpty(data[VISIT_RESULT_KEY])) {
+      return {
+        validateStatus: 'error',
+        help: '请选择回访结果',
+      };
+    }
+    return {
+      validateStatus: '',
+      help: '',
+    };
+  }
+
+  // 失败原因错误信息显示
+  @autobind
+  getReasonValdateInfo() {
+    const { data } = this.props;
+    if (data[IS_CHECKED_KEY] && _.isEmpty(data[VISIT_FAILURE_DESC_KEY])) {
+      return {
+        validateStatus: 'error',
+        help: '请输入失败原因',
       };
     }
     return {
@@ -135,6 +186,16 @@ export default class BatchAddServiceRecordItem extends PureComponent {
   }
 
   @autobind
+  getFormItemLabel(text, isRequired = true) {
+    return (
+      <span className={styles.labelText}>
+        <i>{isRequired ? '*' : ' '} </i>
+        {text}
+      </span>
+    );
+  }
+
+  @autobind
   handleFormChange(key, value) {
     const { index, onFormChange } = this.props;
     onFormChange({
@@ -147,7 +208,7 @@ export default class BatchAddServiceRecordItem extends PureComponent {
   // 选择代办任务
   @autobind
   @logable({
-    type: 'DropdownSelect',
+    type: 'Click',
     payload: {
       name: '选择代办任务',
       value: '$args[1]',
@@ -196,6 +257,25 @@ export default class BatchAddServiceRecordItem extends PureComponent {
     this.handleFormChange(FEEDBACK_TIME_KEY, dateStr);
   }
 
+  // 修改失败原因
+  @autobind
+  handleChangeVisitResult(e) {
+    this.handleFormChange(VISIT_FAILURE_DESC_KEY, e.target.value);
+  }
+
+  // 修改回访结果
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '回访结果',
+      value: '$args[0]',
+    },
+  })
+  handleChangeRadio(value) {
+    this.handleFormChange(VISIT_RESULT_KEY, value);
+  }
+
   @autobind
   handleUploadSuccess(attachment) {
     this.handleFormChange(FEEDBACK_ATTACHMENT_KEY, attachment);
@@ -208,18 +288,8 @@ export default class BatchAddServiceRecordItem extends PureComponent {
 
     const selectValdateInfo = this.getSelectValdateInfo();
     const timeValdateInfo = this.getTimeValdateInfo();
-    const feedbackLabel = (
-      <span className={styles.labelText}>
-        <i>* </i>
-        客户反馈
-      </span>
-    );
-    const timeLabel = (
-      <span className={styles.labelText}>
-        <i>* </i>
-        反馈时间
-      </span>
-    );
+    const radioValdateInfo = this.getRadioValdateInfo();
+    const reasonValdateInfo = this.getReasonValdateInfo();
     const uploadHideClass = classnames({
       [styles.hide]: !data[IS_CHECKED_KEY],
     });
@@ -236,44 +306,84 @@ export default class BatchAddServiceRecordItem extends PureComponent {
           />
           <span className={styles.titleText}>{data.eventName}</span>
         </div>
-        <FormItem
-          label={feedbackLabel}
-          validateStatus={selectValdateInfo.validateStatus}
-          help={selectValdateInfo.help}
-        >
-          <Select
-            disabled={!data[IS_CHECKED_KEY]}
-            onChange={this.handleFirstFeedbackChange}
-            value={data[FIRST_FEEDBACK_KEY]}
-          >
-            <Option value="">请选择</Option>
-            {this.getFirstFeedbackOptionList()}
-          </Select>
-          <div className={this.getSecondClassName()}>
-            <Select
-              disabled={!data[IS_CHECKED_KEY]}
-              onChange={this.handleSecondFeedbackChange}
-              value={data[SECOND_FEEDBACK_KEY]}
-            >
-              <Option value="">请选择</Option>
-              {this.getSecondFeedbackOptionList()}
-            </Select>
-          </div>
-        </FormItem>
-        <FormItem
-          label={timeLabel}
-          validateStatus={timeValdateInfo.validateStatus}
-          help={timeValdateInfo.help}
-        >
-          <DatePicker
-            className={styles.feedbackDatePicker}
-            disabledDate={this.getDisabledDate}
-            disabled={!data[IS_CHECKED_KEY]}
-            value={moment(data[FEEDBACK_TIME_KEY])}
-            onChange={this.hanldeDateChange}
-            allowClear={false}
-          />
-        </FormItem>
+        {/* 非mot回访任务，显示客户反馈下拉框和反馈时间，mot回访任务显示回访结果 */}
+        {
+          data.isMotVisit ?
+            <div className={styles.motVisitBox}>
+              <FormItem
+                label={this.getFormItemLabel('回访结果')}
+                validateStatus={radioValdateInfo.validateStatus}
+                help={radioValdateInfo.help}
+              >
+                <RadioGroup
+                  disabled={!data[IS_CHECKED_KEY]}
+                  value={data[VISIT_RESULT_KEY]}
+                  onChange={e => this.handleChangeRadio(e.target.value)}
+                >
+                  <Radio value={VISIT_RESULT_SUCCESS_VALUE}>成功</Radio>
+                  <Radio value={VISIT_RESULT_FAILED_VALUE}>失败</Radio>
+                </RadioGroup>
+              </FormItem>
+              {/* 回访结果选择失败时才展示失败原因输入框 */}
+              {
+                data[VISIT_RESULT_KEY] === VISIT_RESULT_FAILED_VALUE ?
+                  <FormItem
+                    label={this.getFormItemLabel('失败原因')}
+                    validateStatus={reasonValdateInfo.validateStatus}
+                    help={reasonValdateInfo.help}
+                  >
+                    <TextArea
+                      disabled={!data[IS_CHECKED_KEY]}
+                      value={data[VISIT_FAILURE_DESC_KEY]}
+                      onChange={this.handleChangeVisitResult}
+                    />
+                  </FormItem>
+                :
+                  null
+              }
+            </div>
+          :
+            <div>
+              <FormItem
+                label={this.getFormItemLabel('客户反馈')}
+                validateStatus={selectValdateInfo.validateStatus}
+                help={selectValdateInfo.help}
+              >
+                <Select
+                  disabled={!data[IS_CHECKED_KEY]}
+                  onChange={this.handleFirstFeedbackChange}
+                  value={data[FIRST_FEEDBACK_KEY]}
+                >
+                  <Option value="">请选择</Option>
+                  {this.getFirstFeedbackOptionList()}
+                </Select>
+                <div className={this.getSecondClassName()}>
+                  <Select
+                    disabled={!data[IS_CHECKED_KEY]}
+                    onChange={this.handleSecondFeedbackChange}
+                    value={data[SECOND_FEEDBACK_KEY]}
+                  >
+                    <Option value="">请选择</Option>
+                    {this.getSecondFeedbackOptionList()}
+                  </Select>
+                </div>
+              </FormItem>
+              <FormItem
+                label={this.getFormItemLabel('反馈时间')}
+                validateStatus={timeValdateInfo.validateStatus}
+                help={timeValdateInfo.help}
+              >
+                <DatePicker
+                  className={styles.feedbackDatePicker}
+                  disabledDate={this.getDisabledDate}
+                  disabled={!data[IS_CHECKED_KEY]}
+                  value={moment(data[FEEDBACK_TIME_KEY])}
+                  onChange={this.hanldeDateChange}
+                  allowClear={false}
+                />
+              </FormItem>
+            </div>
+        }
         <div className={`${styles.formItem} clearfix`}>
           <div className={styles.label}>
             附件：

@@ -769,6 +769,7 @@ export default class ServiceImplementation extends PureComponent {
     });
     saveBatchAddServiceRecord({
       ...singlePayload,
+      workResult: '',
       otherTask: list,
     }).then(this.closeBatchAddServiceModal);
   }
