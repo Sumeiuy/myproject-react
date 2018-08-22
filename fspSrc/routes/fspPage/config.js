@@ -6,19 +6,28 @@ const BLOCK_JSP_TEST_ELEM = [
     test: [
       {
         id: '#isEdit',
-        value: 'Y',
+        value: 'N',
       },
       {
         id: '#isPerEdit',
-        value: 'Y',
+        value: 'N',
       },
       {
         id: '#isPersonalEdit',
-        value: 'Y',
+        value: 'N',
       },
       {
         id: '#isPersonalEdit',
-        value: 'Y',
+        value: 'N',
+      },
+    ],
+  },
+  {
+    pathname: '/fsp/customerCenter/contractSelectOperate',
+    test: [
+      {
+        id: '#tgcontractlist_custcomp_econNum',
+        value: '',
       },
     ],
   },
@@ -27,7 +36,7 @@ const BLOCK_JSP_TEST_ELEM = [
 function checkJSPValue(testElems = []) {
   return _.every(testElems, (elem) => {
     if ($(elem.id)) {
-      return $(elem.id).val() !== elem.value;
+      return $(elem.id).val() === elem.value;
     }
     return true;
   });

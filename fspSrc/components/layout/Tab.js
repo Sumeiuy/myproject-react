@@ -187,54 +187,26 @@ export default class Tab extends PureComponent {
     const { push, location: { pathname } } = this.props;
     const { activeKey, panes } = this.state;
     const index = _.findIndex(panes, pane => pane.id === targetKey);
-    // const removePane = panes.filter(item => item.id === targetKey);
-    let pane;
-    if (shouldBackToPrevPage) { // 如果设置了shouldBackToPrevPage，直接返回父页面
-      // pane = _.find(panes, item => item.id === removePane.pid);
-      pane = panes[0];
-      // 现在暂时先返回首页
-      if (pane.path !== pathname) {
-        push({
-          pathname: pane.path,
-          query: pane.query,
-          state: {
-            shouldRemove: true,
-          },
-        });
-      }
-    } else if (activeKey === targetKey) { // 如果移除的是当前的tabKey
-      // 如果当前的tabKey是最后一个tab,向前跳转
-      if (panes[panes.length - 1].id === targetKey) {
-        pane = panes[panes.length - 2];
-        // 如前向跳转到层级菜单，直接回到首页
-        if (!pane.path || pane.pid === 'ROOT') {
-          pane = panes[0];
-        }
-      } else { // 如果移除的当前tab不是最后一个,向后跳转
-        pane = panes[index + 1];
-      }
-      push({
-        pathname: pane.path,
-        query: pane.query,
-        state: {
-          shouldRemove: true,
-        },
-      });
-    } else { // 如果移除的tabKey不是当前的tab, 仅移除对应tab，不做跳转
-      const changePanes = _.filter(panes, item => item.id !== targetKey);
-      pane = _.find(panes, item => item.id === activeKey);
-      this.setState(
-        { panes: changePanes },
-        () => {
-          if (pane.path !== pathname) {
-            push({
-              pathname: pane.path,
-              query: pane.query,
-            });
-          }
-        },
-      );
+    if (activeKey === targetKey) { // 如果移除的是当前的tabKey
+      return shouldBackToPrevPage ?
+        this.navToOtherTabForFsp(panes, pathname, push)
+        : this.navToOtherTab(panes, targetKey, index, push);
     }
+    const changePanes = _.filter(panes, item => item.id !== targetKey);
+    const pane = _.find(panes, item => item.id === activeKey);
+    this.setState(
+      { panes: changePanes },
+      () => {
+        if (pane.path !== pathname) {
+          push({
+            pathname: pane.path,
+            query: pane.query,
+          });
+        }
+      },
+    );
+
+    return null;
   }
 
   getInitialPanesWithPathname(location) {
@@ -262,6 +234,43 @@ export default class Tab extends PureComponent {
       activeKey: newActiveKey,
       currentMenuId: newCurrentMenuId,
     };
+  }
+
+  navToOtherTab(panes, targetKey, index, push) {
+    let pane;
+    // 如果当前的tabKey是最后一个tab,向前跳转
+    if (panes[panes.length - 1].id === targetKey) {
+      pane = panes[panes.length - 2];
+      // 如前向跳转到层级菜单，直接回到首页
+      if (!pane.path || pane.pid === 'ROOT') {
+        pane = panes[0];
+      }
+    } else { // 如果移除的当前tab不是最后一个,向后跳转
+      pane = panes[index + 1];
+    }
+    push({
+      pathname: pane.path,
+      query: pane.query,
+      state: {
+        shouldRemove: true,
+      },
+    });
+  }
+
+  navToOtherTabForFsp(panes, pathname, push) {
+    // 如果设置了shouldBackToPrevPage
+    // pane = _.find(panes, item => item.id === removePane.pid);
+    // 现在暂时先返回首页
+    const pane = panes[0];
+    if (pane.path !== pathname) {
+      push({
+        pathname: pane.path,
+        query: pane.query,
+        state: {
+          shouldRemove: true,
+        },
+      });
+    }
   }
 
   render() {
