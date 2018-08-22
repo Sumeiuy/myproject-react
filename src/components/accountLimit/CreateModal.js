@@ -198,8 +198,6 @@ export default class CreateModal extends PureComponent {
     if (!isLimit) {
       if (bankConfirm === bankConfirmArray[0].value) {
         payload.extraParam = 'true';
-      } else {
-        payload.extraParam = 'false';
       }
     }
     queryButtonList(payload);
