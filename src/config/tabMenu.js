@@ -80,7 +80,7 @@ const newOpenTabConfig = [
   },
   {
     name: '新增签约向导',
-    id: 'FSP_CUST_M_CONTRACT_SELECTOPETATE',
+    id: 'FSP_CONTRACTLIST_OPERATE_TAB',
     path: '/fsp/customerCenter/contractSelectOperate',
     pid: 'FSP_CUST_M_360',
   },
