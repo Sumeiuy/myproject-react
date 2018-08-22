@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { confirm } from '../common/confirm_';
+import confirm from '../common/confirm_';
 import TableDialog from '../common/biz/TableDialog';
 import CommonModal from '../common/biz/CommonModal';
 import BussinessDepartCustBoard from './BussinessDepartmentCustBoard';

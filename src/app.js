@@ -104,6 +104,7 @@ app.model(require('./models/customerPool').default);
 app.model(require('./models/taskList/performerView').default);
 app.model(require('./models/telephoneNumberManage').default);
 app.model(require('./models/investmentAdvice').default);
+app.model(require('./models/customerLabel').default);
 // app.model(require('./models/morningBoradcast').default);
 
 // 4. Route

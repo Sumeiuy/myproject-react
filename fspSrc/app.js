@@ -108,6 +108,7 @@ app.model(require('../src/models/customerPool').default);
 app.model(require('../src/models/taskList/performerView').default);
 app.model(require('../src/models/telephoneNumberManage').default);
 app.model(require('../src/models/investmentAdvice').default);
+app.model(require('../src/models/customerLabel').default);
 
 // 4. Router
 app.router(routerConfig);

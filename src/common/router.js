@@ -255,7 +255,8 @@ export const getRouterData = (app) => {
     },
     // 执行者视图服务结果客户明细的地方发起任务
     '/customerPool/createTaskFromServiceResultCust': {
-      component: CreateTask,
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+        import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 客户分组管理
     '/customerPool/customerGroupManage': {
