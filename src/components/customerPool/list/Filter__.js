@@ -164,7 +164,6 @@ export default class Filter extends PureComponent {
     };
   }
 
-
   @autobind
   getOptionItemValue({ value }) {
     return (
@@ -172,7 +171,7 @@ export default class Filter extends PureComponent {
         className={styles.definedLabelItemWrap}
       >
         {value.labelName}
-        <span className={styles.labelType}>{ value.labelTypeName }</span>
+        <span className={styles.labelType}>{ value.labelFlagValue }</span>
       </span>);
   }
 
