@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-20 10:22:13
+ * @Last Modified time: 2018-08-22 17:28:32
  * 结果跟踪
  */
 
@@ -851,11 +851,11 @@ export default class ResultTrack extends PureComponent {
                         <Select
                           disabled={!checked}
                           className={classnames({
-                            [styles.level2Select]: true,
                             [styles.hideSelectArrow]: _.size(level2Indicator) <= 1,
                           })}
                           value={currentSelectedLevel2Indicator}
                           onChange={this.handleIndicator2Change}
+                          dropdownMatchSelectWidth={false}
                         >
                           {_.map(level2Indicator, item =>
                             <Option key={item.value} title={item.value} value={item.value}>
