@@ -198,7 +198,7 @@ export default class ToDoList extends PureComponent {
         routerAction: push,
         url: `/customerPool/createTaskFromTaskRejection1?source=${RETURN_TASK_FROM_TODOLIST}&flowId=${flowId}`,
         param,
-        pathname: '/customerPool/createTask',
+        pathname: '/customerPool/createTaskFromTaskRejection1',
         query,
       });
     }

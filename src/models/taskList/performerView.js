@@ -3,10 +3,11 @@
  * @Description: 执行者视图 model
  * @Date: 2018-08-20 13:15:45
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 15:33:57
+ * @Last Modified time: 2018-08-21 15:12:12
  */
 import _ from 'lodash';
 import moment from 'moment';
+import warning from 'warning';
 import { performerView as api, customerPool as custApi } from '../../api';
 import {
   STATE_COMPLETED_NAME,
@@ -170,9 +171,11 @@ export default {
     },
     getServiceTypeSuccess(state, action) {
       const { payload = {} } = action;
+      // payload后端有可能给null导致页面空白
+      warning(payload !== null, '任务反馈数据不能为null');
       return {
         ...state,
-        taskFeedbackList: [payload],
+        taskFeedbackList: payload ? [payload] : [],
       };
     },
     addMotServeRecordSuccess(state, action) {
@@ -477,6 +480,11 @@ export default {
           eventId: resultData.eventId,
           mssnId: resultData.missionFlowId,
         };
+        // 每一次查询其他代办任务可能会接口失败，此时会保留上一次的数据，所以要清空上一次查询其他代办任务列表的数据
+        yield put({
+          type: 'getOtherTaskListSuccess',
+          payload: EMPTY_LIST,
+        });
         yield put({
           type: 'getOtherTaskList',
           payload: condition,

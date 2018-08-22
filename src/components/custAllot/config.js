@@ -153,7 +153,7 @@ const config = {
         dataIndex: 'empName',
         key: 'empName',
       }, {
-        title: '所属营业部',
+        title: '所属部门',
         dataIndex: 'occupation',
         key: 'occupation',
       },

@@ -123,7 +123,7 @@ export default class EditForm extends PureComponent {
       current <= moment(editFormData.limitStartTime, config.timeFormatStr)
       :
       // 如果操作类型是解除限制的时候，解除日期不能小于今天
-      current < moment().endOf('day');
+      current < moment().startOf('day');
   }
 
   // 证券代码修改，只能输入整数

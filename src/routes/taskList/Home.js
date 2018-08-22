@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 13:25:19
+ * @Last Modified time: 2018-08-21 14:20:24
  * @description 任务管理首页
  */
 
@@ -1091,12 +1091,14 @@ export default class PerformerView extends PureComponent {
   render() {
     const { location, replace, list, dict, queryCustUuid } = this.props;
 
-    const { currentView } = this.state;
+    // const { currentView } = this.state;
 
-    const { query: { pageNum = 1, pageSize = 20 } } = location;
+    const { query: { pageNum = 1, pageSize = 20, missionViewType } } = location;
     const { resultData = EMPTY_LIST, page = EMPTY_OBJECT } = list;
 
     const isEmpty = _.isEmpty(resultData);
+
+    const { currentViewType: currentView } = getViewInfo(missionViewType);
 
     const topPanel = (
       <div>
