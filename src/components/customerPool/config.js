@@ -65,7 +65,7 @@ export const sourceFilter = {
       value: ['labelMapping'],
     }],
   },
-  manegeFsp: [{
+  manageFsp: [{
     // 首页搜索框下钻，自定义标签（管理标签）
     filterName: 'customLabels',
     value: ['labelMapping'],
