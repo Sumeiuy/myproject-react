@@ -196,8 +196,14 @@ export default class CreateModal extends PureComponent {
     };
     // 如果是解除限制
     if (!isLimit) {
+      // 如果还未选择银行确认，不发送请求
+      if (_.isEmpty(bankConfirm)) {
+        return;
+      }
       if (bankConfirm === bankConfirmArray[0].value) {
         payload.extraParam = 'true';
+      } else {
+        payload.extraParam = 'false';
       }
     }
     queryButtonList(payload);
@@ -213,12 +219,8 @@ export default class CreateModal extends PureComponent {
     },
   })
   handleOperateTypeChange(key, value) {
-    // 等于 限制解除 的时候
-    let isLimit = false;
-    if (value === setCode) {
-      isLimit = true;
-      this.queryNextStepButton();
-    }
+    // 是否等于 限制设置
+    const isLimit = value === setCode;
     this.setState({
       [key]: value,
       isLimit,
@@ -232,7 +234,7 @@ export default class CreateModal extends PureComponent {
       limitEndTime: '',
       endDateDisabled: isLimit,
       attachmentList: [attachmentMap[0]],
-    });
+    }, this.queryNextStepButton);
   }
 
   // 公司简称改变
