@@ -4,7 +4,7 @@ import dynamic from 'dva/dynamic';
 import CustomerPool from '../routes/customerPool/Home';
 import TaskList from '../routes/taskList/connectedHome';
 import TaskFlow from '../routes/customerPool/TaskFlow';
-import CustomerListWrapper from '../routes/customerPool/CustomerListWrapper';
+import CustomerList from '../routes/customerPool/CustomerList__';
 import ReportHome from '../routes/reports/Home';
 import CreateTask from '../routes/customerPool/CreateTask';
 import CustomerGroupManage from '../routes/customerPool/CustomerGroupManage';
@@ -204,7 +204,7 @@ export const getRouterData = (app) => {
     },
     // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
     '/customerPool/list': {
-      component: CustomerListWrapper,
+      component: CustomerList,
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
