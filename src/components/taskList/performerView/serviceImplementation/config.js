@@ -59,3 +59,36 @@ export const NOTCOMPLETION = '不完备';
 export const PHONE = 'phone';
 
 export const MSG_ROUTEFORWARD = '您输入的表单中信息还未保存，如切换窗口信息将丢失，确定要切换吗？';
+
+// 执行者视图首次引导提示第一步的dom的id名称
+export const INTRO_FIRST_SEEP_IDNAME = 'introFirstStep';
+
+// 执行者视图首次引导提示第二步的dom的id名称(客户名下有其他任务)
+export const INTRO_SECOND_SEEP_IDNAME = 'introSecondStep';
+
+// 执行者视图首次引导提示第二步的dom的id名称(客户名下无其他任务)
+export const INTRO_SECOND_SEEP_IDNAME2 = 'introSecondStepByHasOtherTask';
+
+// 表格titlelist
+export const titleList = {
+  custOtherTaskList: [
+    {
+      dataIndex: 'eventName',
+      key: 'eventName',
+      title: '任务名称',
+      width: '28%',
+    },
+    {
+      dataIndex: 'contents',
+      key: 'contents',
+      title: '服务策略',
+      width: '36%',
+    },
+    {
+      dataIndex: 'hint',
+      key: 'hint',
+      title: '任务提示',
+      width: '36%',
+    },
+  ],
+};

@@ -1,7 +1,7 @@
 /**
  * @Date: 2017-11-10 15:13:41
  * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-16 18:02:10
+ * @Last Modified time: 2018-08-20 14:10:38
  */
 
 import React, { PureComponent } from 'react';
@@ -298,6 +298,7 @@ export default class TaskFormFlowStep extends PureComponent {
       case PROGRESS_ENTRY:
       case PIE_ENTRY:
       case TASK_CUST_SCOPE_ENTRY:
+      case SOURCE_SERVICE_RESULT_CUST:
         custSources = '已有任务下钻客户';
         break;
       case CUST_GROUP_LIST:
@@ -305,9 +306,6 @@ export default class TaskFormFlowStep extends PureComponent {
         break;
       case SOURCE_LABELMANAGEMENT:
         custSources = '标签管理';
-        break;
-      case SOURCE_SERVICE_RESULT_CUST:
-        custSources = '已有任务下钻客户';
         break;
       default:
         break;

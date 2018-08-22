@@ -19,7 +19,7 @@ import Pagination from '../../components/common/Pagination';
 import CommonTable from '../../components/common/biz/CommonTable';
 import Icon from '../../components/common/Icon';
 import AutoComplete from '../../components/common/similarAutoComplete';
-import logable, { logPV } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 import { request } from '../../config';
 import { emp } from '../../helper';
 import config from './config';
@@ -133,13 +133,12 @@ export default class CreateModal extends PureComponent {
 
   // 导入数据
   @autobind
-  @logPV({ pathname: '/modal/importData', title: '导入数据' })
+  @logPV({ pathname: '/modal/custAllotImportData', title: '分公司客户分配导入数据' })
   onImportHandle() {
     this.setState({
       importVisible: true,
     });
   }
-
 
   // 生成客户表格标题列表
   @autobind
@@ -253,7 +252,7 @@ export default class CreateModal extends PureComponent {
 
   // 上传事件
   @autobind
-  @logable({ type: 'Click', payload: { name: '导入' } })
+  @logable({ type: 'Click', payload: { name: '分公司客户分配客户导入' } })
   handleFileChange(info) {
     const { attachment } = this.state;
     this.setState({
@@ -317,6 +316,13 @@ export default class CreateModal extends PureComponent {
 
   // 分配规则切换事件
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '分配规则切换事件',
+      value: '$args[0].target.value',
+    },
+  })
   handleRuleTypeChange(e) {
     const { handleRuleTypePropsChange } = this.props;
     handleRuleTypePropsChange(e.target.value);
@@ -324,6 +330,13 @@ export default class CreateModal extends PureComponent {
 
   // 客户删除事件
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '删除客户',
+      value: '$args[1].custName',
+    },
+  })
   deleteTableData(type, record) {
     const { updateList, updateData, queryAddedCustList, queryAddedManageList } = this.props;
     const isCust = type === CUST;
@@ -361,6 +374,7 @@ export default class CreateModal extends PureComponent {
 
   // 客户分页事件
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '客户列表分页' } })
   handleCustPageChange(pageNum) {
     const { queryAddedCustList, updateData } = this.props;
     const payload = {
@@ -375,6 +389,7 @@ export default class CreateModal extends PureComponent {
 
   // 服务经理分页事件
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '服务经理列表分页' } })
   handleManagePageChange(pageNum) {
     const { queryAddedManageList, updateData } = this.props;
     const payload = {
@@ -389,6 +404,13 @@ export default class CreateModal extends PureComponent {
 
   // 添加单客户的搜索事件
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '搜索客户',
+      value: '$args[0]',
+    },
+  })
   handleSearchClient(v) {
     if (!v) {
       return;
@@ -410,6 +432,13 @@ export default class CreateModal extends PureComponent {
 
   // 查询服务经理
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '搜索服务经理',
+      value: '$args[0]',
+    },
+  })
   handleSearchManager(v) {
     if (!v) {
       return;
@@ -427,7 +456,6 @@ export default class CreateModal extends PureComponent {
       });
     });
   }
-
 
   // 选择服务经理
   @autobind
@@ -518,6 +546,17 @@ export default class CreateModal extends PureComponent {
         [isCust ? 'client' : 'manager']: {},
       });
     });
+    const title = isCust ? '添加客户提交' : '添加服务经理提交';
+    logCommon({
+      type: 'Submit',
+      payload: {
+        title,
+        value: JSON.stringify(payload),
+        type: '分公司客户分配',
+        subType: '分公司客户分配',
+        name: title,
+      },
+    });
   }
 
   // 渲染点击删除按钮后的确认框
@@ -533,7 +572,6 @@ export default class CreateModal extends PureComponent {
       <Icon type="shanchu" />
     </Popconfirm>);
   }
-
 
   // 单个服务经理的 option 渲染
   @autobind
@@ -551,7 +589,6 @@ export default class CreateModal extends PureComponent {
       </Option>
     );
   }
-
 
   render() {
     const {

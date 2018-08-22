@@ -3,7 +3,7 @@
  * @Author: Xuwenkang
  * @Date: 2018-08-07 14:46:25
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-08 09:42:31
+ * @Last Modified time: 2018-08-21 15:34:13
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -36,7 +36,8 @@ const {
 const approverModalKey = 'approverModal';
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-
+// 终止按钮的节点名称
+const END_NODE_NAME = 'falseOver';
 const effects = {
   // 获取详情
   queryDetailInfo: 'accountLimitEdit/queryDetailInfo',
@@ -185,9 +186,14 @@ export default class AccountLimitEdit extends PureComponent {
   }
 
   @autobind
-  chekDataIsLegal() {
+  chekDataIsLegal(operate = '') {
+    // 如果点击的按钮是终止，就不做必填校验
+    if (operate === END_NODE_NAME) {
+      return true;
+    }
     const { editFormData } = this.props;
     const { attachList } = editFormData;
+
     if (_.isEmpty(editFormData.companyName)) {
       message.error('公司简称不能为空!');
       return false;
@@ -257,11 +263,27 @@ export default class AccountLimitEdit extends PureComponent {
   // 提交，点击后选择审批人
   @autobind
   handleSubmit(btnItem) {
-    if (!this.chekDataIsLegal()) {
+    if (!this.chekDataIsLegal(btnItem.operate)) {
       return;
     }
-    const { editFormData, saveChange, validateForm } = this.props;
-    if (editFormData.operateType === config.relieveCode && !editFormData.bankConfirm) {
+    const { remark } = this.state;
+    const { editFormData, saveChange, validateForm, doApprove } = this.props;
+    const { flowAuditors: auth } = btnItem;
+    if (btnItem.operate === END_NODE_NAME) {
+      // 如果点击的按钮是终止按钮，直接调流程接口，不需要保存，也不需要调保存接口
+      doApprove({
+        empId: emp.getId(),
+        flowId: editFormData.flowId,
+        approverIdea: remark,
+        groupName: btnItem.nextGroupName,
+        operate: btnItem.operate,
+        auditors: auth[0].login,
+        itemId: editFormData.id,
+      }).then(() => {
+        this.handleSuccessCallback();
+      });
+    } else if (btnItem.approverNum === 'none') {
+      // 所点击按钮的approverNum为none时，不需要选审批人直接保存
       const flowAuditors = {
         auditors: emp.getId(),
         groupName: btnItem.nextGroupName,
@@ -269,7 +291,17 @@ export default class AccountLimitEdit extends PureComponent {
       };
       validateForm({ ...editFormData, ...flowAuditors }).then(() => {
         saveChange({ ...editFormData, ...flowAuditors }).then(() => {
-          this.handleSuccessCallback();
+          doApprove({
+            empId: emp.getId(),
+            flowId: editFormData.flowId,
+            approverIdea: remark,
+            groupName: btnItem.nextGroupName,
+            operate: btnItem.operate,
+            auditors: auth[0].login,
+            itemId: editFormData.id,
+          }).then(() => {
+            this.handleSuccessCallback();
+          });
         });
       });
     } else {

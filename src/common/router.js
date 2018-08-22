@@ -258,6 +258,10 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
+    // 标签管理页面发起任务
+    '/customerPool/createTaskFromLabelManagement': {
+      component: CreateTask,
+    },
     // 客户分组管理
     '/customerPool/customerGroupManage': {
       component: dynamicWrapper(app, [], () => 
@@ -464,8 +468,8 @@ export const getRouterData = (app) => {
         import('../routes/custRelationships/RejectUpdateHome' /* webpackChunkName: "custRelationshipsReject" */)),
     },
     // 直接进入
-    '/custAllot': {
-      component: dynamicWrapper(app, ['custAllot', 'customerPool'], () =>
+    '/businessApplyment/customerPartition/custAllot': {
+      component: dynamicWrapper(app, ['custAllot'], () =>
         import('../routes/custAllot/Home' /* webpackChunkName: "custAllot" */)),
     },
     // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type
@@ -474,8 +478,8 @@ export const getRouterData = (app) => {
         import('../routes/custAllot/Notifies' /* webpackChunkName: "custAllot_notifies" */)),
     },
     // 直接进入
-    '/departmentCustAllot': {
-      component: dynamicWrapper(app, ['departmentCustAllot', 'customerPool'], () =>
+    '/businessApplyment/customerPartition/departmentCustAllot': {
+      component: dynamicWrapper(app, ['departmentCustAllot'], () =>
         import('../routes/departmentCustAllot/Home' /* webpackChunkName: "departmentCustAllot" */)),
     },
     // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type
@@ -551,7 +555,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['accountLimit'], () =>
         import('../routes/accountLimit/Notifies' /* webpackChunkName: "accountLimit_notifies" */)),
     },
-    // 管理标签
+    // 标签管理
     '/labelManagement': {
       component: dynamicWrapper(app, [], () =>
         import('../routes/labelManagement/Home') /* webpackChunkName: "labelManagement" */),

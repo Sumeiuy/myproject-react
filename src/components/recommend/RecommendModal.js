@@ -3,23 +3,39 @@
  * @description 首页推荐弹窗
  * @Date: 2018-08-14 20:58:45
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-17 15:38:32
+ * @Last Modified time: 2018-08-20 16:15:59
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import store from 'store';
 
 import logable from '../../decorators/logable';
 import CommonModal from '../common/biz/CommonModal';
 import RecommendList from './RecommendList';
-import { FUNCTION_INTRODUCTION_PAGE } from './config';
+import { FUNCTION_INTRODUCTION_PAGE, FIRST_ENTER_HOMEPAGE } from './config';
 import styles from './recommendModal.less';
 
 export default class recommendModal extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      modalVisible: true,
+      modalVisible: false,
     };
+  }
+
+  componentDidMount() {
+    // 第一次渲染完判断是否是第一次进入首页,第一次进入显示弹窗推荐
+    this.isFirstEnterHomePage();
+  }
+
+  // 判断是否是第一次进入首页
+  @autobind
+  isFirstEnterHomePage() {
+    const firstEnterHomePage = store.get(FIRST_ENTER_HOMEPAGE);
+    if (!firstEnterHomePage) {
+      this.setState({ modalVisible: true });
+      store.set(FIRST_ENTER_HOMEPAGE, 'NO');
+    }
   }
 
   @autobind

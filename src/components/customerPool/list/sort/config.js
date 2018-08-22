@@ -22,6 +22,26 @@ export const sortQuotaConfig = [
     sortType: 'outMktval',
     name: '外部市值',
   },
+  {
+    sortType: 'cashAmt',
+    name: '资金余额(含信用)',
+  },
+  {
+    sortType: 'gjlRate',
+    name: '归集率',
+  },
+  {
+    sortType: 'avlAmt',
+    name: '普通可用资金',
+  },
+  {
+    sortType: 'avlAmtCrdt',
+    name: '信用可用资金',
+  },
+  {
+    sortType: 'totMktval',
+    name: '总市值(含信用)',
+  },
 ];
 
 // 下钻特显与动态插入的排序条件

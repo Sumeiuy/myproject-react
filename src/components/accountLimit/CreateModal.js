@@ -2,8 +2,8 @@
  * @Description: 账户限制管理-新建弹窗
  * @Author: Liujianshu
  * @Date: 2018-07-31 16:15:52
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-08-03 15:36:23
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-20 11:05:30
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -721,6 +721,14 @@ export default class CreateModal extends PureComponent {
       validateForm(payload).then(() => {
         this.sendRequest({ ...payload, ...flowAuditors });
       });
+      logCommon({
+        type: 'Submit',
+        payload: {
+          title: '限制账户管理提交',
+          value: JSON.stringify({ ...payload, ...flowAuditors }),
+          name: '限制账户管理提交',
+        },
+      });
     } else {
       validateForm(payload).then(() => {
         this.setState({
@@ -737,9 +745,9 @@ export default class CreateModal extends PureComponent {
   @logable({
     type: 'Submit',
     payload: {
-      name: '选择限制解除时间',
-      type: '13',
-      subType: '13',
+      name: '选择限制解除事件',
+      type: '账户限制管理',
+      subType: '账户限制管理',
     } })
   handleApproverModalOK(auth) {
     const { flowAuditors, submitData } = this.state;
