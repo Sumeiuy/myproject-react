@@ -22,7 +22,7 @@ import CommissionLine from './CommissionLine';
 import AutoComplete from '../common/AutoComplete';
 import ProductsDropBox from './ProductsDropBox';
 import OtherCommissionSelectList from './OtherCommissionSelectList';
-import createCommon from './commissionCreateCommon/common';
+import { getApprovalBtnID, permil } from './commissionCreateCommon/common';
 import logable, { logPV } from '../../decorators/logable';
 
 import styles from './createNewApprovalBoard.less';
@@ -128,7 +128,7 @@ export default class BatchCreatBoard extends PureComponent {
   componentDidMount() {
     // 进入页面查一把子类型的审批人列表
     const { empInfo: { empNum, occDivnNum } } = this.props;
-    const btnId = createCommon.getApprovalBtnID(commadj.batch);
+    const btnId = getApprovalBtnID(commadj.batch);
     this.props.queryApprovalList({
       loginUser: empNum,
       btnId,
@@ -322,7 +322,7 @@ export default class BatchCreatBoard extends PureComponent {
       <div className={styles.contentBox}>
         <div className={styles.approvalBlock}>
           <InfoTitle head="佣金产品选择" />
-          <CommissionLine label="目标股基佣金率" labelWidth="135px" needInputBox={false} extra={createCommon.permil}>
+          <CommissionLine label="目标股基佣金率" labelWidth="135px" needInputBox={false} extra={permil}>
             <AutoComplete
               dataSource={gjList}
               onChangeValue={this.changeTargetGJCommission}

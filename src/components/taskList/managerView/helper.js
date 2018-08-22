@@ -19,8 +19,6 @@ import {
   missionImplementation,
 } from '../../../config/managerViewCustManagerScope';
 
-export default {};
-
 /**
 * 根据orgId,判断当前机构level和当前维度可选项
 */

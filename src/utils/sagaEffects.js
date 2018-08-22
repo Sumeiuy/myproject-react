@@ -4,8 +4,6 @@
  */
 import { message } from 'antd';
 
-export default {};
-
 /**
  * 延迟指定时间后resolve,主要用在yield语句中
  *

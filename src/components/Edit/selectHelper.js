@@ -57,4 +57,7 @@ const selectHandlers = {
   },
 };
 
-export default selectHandlers;
+export const {
+  getAllCheckboxNode,
+  afterSelected,
+} = selectHandlers;

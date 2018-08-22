@@ -1,4 +1,3 @@
-export default {};
 
 // 客户反馈饼图色值集合
 export const custFeedbackColorCollection = [

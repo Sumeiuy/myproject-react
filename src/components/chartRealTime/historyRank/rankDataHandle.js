@@ -263,3 +263,15 @@ const dataHandle = {
 };
 
 export default dataHandle;
+
+export const {
+  filterData,
+  filterRankData,
+  dealNormalData,
+  designGrid,
+  filterStackSeriesData,
+  dealStackSeriesData,
+  designStackGrid,
+  getStackSummury,
+  optimizeGrid,
+} = dataHandle;

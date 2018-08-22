@@ -20,7 +20,12 @@ import {
   getMaxAndMinMoney,
   getMaxAndMinPercentOrPermillage,
 } from './FormatUnitAndSeries';
-import FixNumber from '../chartRealTime/FixNumber';
+import {
+  toFixedNewMoney,
+  toFixedMoney,
+  toFixedGE,
+  toFixedCI,
+} from '../chartRealTime/FixNumber';
 import IECharts from '../IECharts';
 import { ZHUNICODE } from '../../config';
 import { checkTooltipStatus } from '../../decorators/checkTooltipStatus';
@@ -165,17 +170,17 @@ export default class HistoryComparePolyChart extends PureComponent {
   getYAxisUnit(array, yAxisUnit, isCommissionRate) {
     if (!_.isEmpty(array)) {
       if (yAxisUnit.indexOf(YUANNIAN) !== -1) {
-        return FixNumber.toFixedNewMoney(array);
+        return toFixedNewMoney(array);
       } else if (yAxisUnit.indexOf(YUAN) !== -1) {
-        return FixNumber.toFixedMoney(array);
+        return toFixedMoney(array);
       } else if (yAxisUnit.indexOf(HU) !== -1) {
         return toFixedCust(array);
       } else if (yAxisUnit.indexOf(REN) !== -1) {
         return toFixedRen(array);
       } else if (yAxisUnit.indexOf(GE) !== -1) {
-        return FixNumber.toFixedGE(array);
+        return toFixedGE(array);
       } else if (yAxisUnit.indexOf(CI) !== -1) {
-        return FixNumber.toFixedCI(array);
+        return toFixedCI(array);
       } else if (yAxisUnit.indexOf(PERCENT) !== -1) {
         return {
           newSeries: toFixedPercent(array, isCommissionRate),

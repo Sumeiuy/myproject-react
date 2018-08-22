@@ -108,3 +108,15 @@ const event = {
 };
 
 export default event;
+
+export const {
+  addWheelEvent,
+  removeWheelEvent,
+  addWindowResize,
+  removeWindowResize,
+  addClickEvent,
+  removeClickEvent,
+  trigger,
+  triggerClick,
+  triggerMouseDown,
+} = event;

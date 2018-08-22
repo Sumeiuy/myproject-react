@@ -220,3 +220,12 @@ const detailConfig = {
 };
 
 export default detailConfig;
+
+export const {
+  custTableColumns,
+  singleProColumns,
+  advisoryProColumns,
+  createCustTableData,
+  createProTableData,
+  createSubProTableData,
+} = detailConfig;

@@ -10,13 +10,16 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 // import _ from 'lodash';
 import { Popover, Table } from 'antd';
-import config from '../config';
+import {
+  titleList as titleListConfig,
+  overlayStyle,
+  sourceType,
+} from '../config';
 import styles from './orderingCustomer.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const titleList = config.titleList.orderCust;
-const { overlayStyle, sourceType } = config;
+const titleList = titleListConfig.orderCust;
 export default class OrderingCustomer extends PureComponent {
   static propTypes = {
     // 当前组合code

@@ -39,7 +39,10 @@ function generateDate(momentTime) {
   return `${year}年${month}月${day}日`;
 }
 
-export default {
+const exported = {
   calculateDuration,
   generateDate,
 };
+
+export default exported;
+export { calculateDuration, generateDate };

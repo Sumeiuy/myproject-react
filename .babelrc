@@ -4,7 +4,8 @@
       "@babel/preset-env", {
       "targets": {
         "browsers": ["ie >= 10", "chrome >= 45"]
-      }
+      },
+      "modules": false
     }],
     "@babel/preset-react",
     "@babel/preset-flow"
@@ -16,12 +17,11 @@
         "style": true
       }
     ],
-    "babel-plugin-add-module-exports",
     ["@babel/plugin-proposal-decorators", { "legacy": true }],
     ["@babel/plugin-proposal-class-properties", { "loose": true }],
     "@babel/plugin-proposal-object-rest-spread",
     "@babel/plugin-syntax-dynamic-import",
-    ["@babel/plugin-transform-runtime", { "corejs": 2 }],
+    ["@babel/plugin-transform-runtime", { "corejs": 2 }]
   ],
   "env": {
     "production": {},

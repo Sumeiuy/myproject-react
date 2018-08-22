@@ -37,4 +37,9 @@ const VisibleRangeAll = [
   },
 ];
 
-export default { VisibleRangeAll };
+const exported = {
+  VisibleRangeAll,
+};
+
+export default exported;
+export { VisibleRangeAll };

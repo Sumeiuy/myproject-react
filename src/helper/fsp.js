@@ -35,3 +35,8 @@ const fsp = {
 };
 
 export default fsp;
+
+export const {
+  scrollToTop,
+  isFSPLeftMenuFold,
+} = fsp;

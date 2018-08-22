@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @file models/customerPool.js
  *  目标客户池模型管理

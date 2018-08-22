@@ -5,9 +5,8 @@
  * @Last Modified by: zhangjun
  * @Last Modified time: 2018-08-03 16:23:19
  */
-import busApplyFilters from '../../config/busApplyFilters';
+import { status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
 
-const { status, drafter, department, approver, applyTime } = busApplyFilters;
 const config = {
   limit: {
     // 勾选条数限制为 500

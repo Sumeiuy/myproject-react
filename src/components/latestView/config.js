@@ -6,7 +6,7 @@
  * @Last Modified time: 2018-06-25 11:03:12
  */
 
-export default {
+const exported = {
   chiefViewpointType: [
     {
       show: true,
@@ -24,6 +24,7 @@ export default {
       value: '2',
     },
   ],
+
   viewpointTitleList: [
     {
       title: '标题',
@@ -62,7 +63,9 @@ export default {
       width: '13%',
     },
   ],
+
   dateFormatStr: 'YYYY-MM-DD',
+
   majorAssets: {
     tabArray: [
       {
@@ -169,6 +172,7 @@ export default {
       },
     ],
   },
+
   directType: [
     {
       show: true,
@@ -186,10 +190,13 @@ export default {
       value: '2',
     },
   ],
+
   // 首席观点筛选类型
   viewpointFilterType: '1',
+
   // 行业主题调整筛选类型
   industryThemeFilterType: '2',
+
   industryTitleList: [
     {
       title: '行业/主题',
@@ -217,3 +224,5 @@ export default {
     },
   ],
 };
+
+export default exported;

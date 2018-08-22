@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /*
  * @Description: 汇报关系树 model
  * @Author: zhangjunli

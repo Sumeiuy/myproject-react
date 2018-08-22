@@ -12,14 +12,13 @@ import _ from 'lodash';
 import { Table } from 'antd';
 import moment from 'moment';
 import { number, time } from '../../../helper/';
-import config from '../config';
+import { sourceType, titleList as titleListConfig } from '../config';
 import styles from './customerRepeatAnalyze.less';
 import logable from '../../../decorators/logable';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const titleList = config.titleList.custRepeat;
-const { sourceType } = config;
+const titleList = titleListConfig.custRepeat;
 const timeFormater = 'YYYY年MM月DD日';
 // 当前日期减一天为默认日期
 const DEFAULT_TIME = moment().subtract(1, 'days').format('YYYY-MM-DD');
