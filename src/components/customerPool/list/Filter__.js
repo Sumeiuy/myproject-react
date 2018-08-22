@@ -789,9 +789,9 @@ export default class Filter extends PureComponent {
       this.splitLabelList(currentValue.primaryKeyLabels, filtersOfAllSightingTelescope);
 
     // 自定义标签
-    const currentSelectDefinedLabel = customLabels
+    const currentSelectDefinedLabel = _.isArray(customLabels)
       ? _.filter(definedLabelDate, labelItem => _.includes(customLabels, labelItem.id))
-      : '';
+      : _.filter(definedLabelDate, labelItem => customLabels === labelItem.id);
     const currentDefinedLabel = currentPage
       ? _.slice(definedLabelDate, 0, currentPage * 10)
       : definedLabelDate;
