@@ -3,7 +3,7 @@
  * @Description: 账户限制管理-驳回后修改表单
  * @Date: 2018-08-08 09:21:07
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-08 09:42:26
+ * @Last Modified time: 2018-08-18 21:14:21
  */
 
 import React, { PureComponent } from 'react';
@@ -123,7 +123,7 @@ export default class EditForm extends PureComponent {
       current <= moment(editFormData.limitStartTime, config.timeFormatStr)
       :
       // 如果操作类型是解除限制的时候，解除日期不能小于今天
-      current < moment().endOf('day');
+      current < moment().startOf('day');
   }
 
   // 证券代码修改，只能输入整数

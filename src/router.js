@@ -70,6 +70,8 @@ const Routers = ({ history, app }) => {
               ),
             )
           }
+          <Redirect exact from="/custAllot" to="/businessApplyment/customerPartition/custAllot" />
+          <Redirect exact from="/departmentCustAllot" to="/businessApplyment/customerPartition/departmentCustAllot" />
           <Route path="*" render={() => (<Redirect to="/empty" />)} />
         </Switch>
       </Main>

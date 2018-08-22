@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-17 10:18:41
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-21 14:20:24
  * @description 任务管理首页
  */
 
@@ -513,8 +513,14 @@ export default class PerformerView extends PureComponent {
       queryExecutorDetail,
       isShowExecutorDetailLoading,
       queryTargetCustDetail,
+      // 客户名下其他任务
+      getOtherTaskList,
+      otherTaskList,
+      fetchOtherTaskListStatus,
       isSendCustsServedByPostn,
       sendCustsServedByPostnResult,
+      changeBatchServiceRecordForm,
+      saveBatchAddServiceRecord,
       clearCreateTaskData,
     } = this.props;
     const {
@@ -588,9 +594,14 @@ export default class PerformerView extends PureComponent {
         queryTargetCustDetail={queryTargetCustDetail}
         location={location}
         currentTask={currentTask}
+        getOtherTaskList={getOtherTaskList}
+        otherTaskList={otherTaskList}
+        fetchOtherTaskListStatus={fetchOtherTaskListStatus}
         isSendCustsServedByPostn={isSendCustsServedByPostn}
         sendCustsServedByPostnResult={sendCustsServedByPostnResult}
         refreshTaskList={this.queryAppList}
+        onBatchServiceRecordFormChange={changeBatchServiceRecordForm}
+        saveBatchAddServiceRecord={saveBatchAddServiceRecord}
         clearCreateTaskData={clearCreateTaskData}
       />
     );
@@ -619,6 +630,15 @@ export default class PerformerView extends PureComponent {
     }
 
     return detailComponent;
+  }
+
+  /**
+   * 获取sortKey，createTimeSort或者endTimeSort、executionModeSort
+   * 获取sortContent，创建时间或者结束时间、执行方式
+   */
+  @autobind
+  getSortConfig(viewType) {
+    return DEFAULTSORT_VIEW[viewType];
   }
 
   // 导出客户
@@ -848,15 +868,6 @@ export default class PerformerView extends PureComponent {
     }
   }
 
-  /**
-   * 获取sortKey，createTimeSort或者endTimeSort、executionModeSort
-   * 获取sortContent，创建时间或者结束时间、执行方式
-   */
-  @autobind
-  getSortConfig(viewType) {
-    return DEFAULTSORT_VIEW[viewType];
-  }
-
   // url中currentId改变后驱动右侧的变化
   @autobind
   handleCurrentIdChangeDetail() {
@@ -1080,12 +1091,14 @@ export default class PerformerView extends PureComponent {
   render() {
     const { location, replace, list, dict, queryCustUuid } = this.props;
 
-    const { currentView } = this.state;
+    // const { currentView } = this.state;
 
-    const { query: { pageNum = 1, pageSize = 20 } } = location;
+    const { query: { pageNum = 1, pageSize = 20, missionViewType } } = location;
     const { resultData = EMPTY_LIST, page = EMPTY_OBJECT } = list;
 
     const isEmpty = _.isEmpty(resultData);
+
+    const { currentViewType: currentView } = getViewInfo(missionViewType);
 
     const topPanel = (
       <div>

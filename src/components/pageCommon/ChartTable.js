@@ -154,7 +154,7 @@ export default class ChartTable extends PureComponent {
       off: orderIndicatorId === item.key && (orderType === 'desc'),
     });
     const orderDown = classnames({
-      'ant-table-column-sorter-up': true,
+      'ant-table-column-sorter-down': true,
       on: orderIndicatorId === item.key && (orderType !== 'asc'),
       off: orderIndicatorId === item.key && (orderType === 'asc'),
     });
