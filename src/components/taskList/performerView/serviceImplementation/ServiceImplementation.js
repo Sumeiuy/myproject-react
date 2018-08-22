@@ -194,7 +194,7 @@ export default class ServiceImplementation extends PureComponent {
       // 当前用户是否操作了表单
       isFormHalfFilledOut: false,
       // 是否显示批量添加服务记录弹窗
-      isShowBatchAddServiceRecord: true,
+      isShowBatchAddServiceRecord: false,
     };
   }
 
