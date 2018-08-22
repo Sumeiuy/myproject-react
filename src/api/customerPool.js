@@ -163,5 +163,8 @@ export default function customerPool(api) {
 
     // 查询持仓行业详情信息
     queryHoldingIndustryDetail: query => api.post('/groovynoauth/fsp/cust/custbriefinfo/queryCustHoldingProductDetails', query),
+
+    // 查询自定义标签
+    queryDefinedLabelsInfo: query => api.post('/groovynoauth/fsp/cust/custlabel/queryDefinedLabelsInfo', query),
   };
 }

@@ -39,10 +39,10 @@ const getPopupContainerFunction = () => document.querySelector(`.${styles.modalC
 // 表头
 const {
   tableTitle: { custList: custTitleList, approvalList },
-  limitCount,  // 添加客户的限制条数
-  stringLimitLength,  // 字符串长度限制
+  LIMIT_COUNT,  // 添加客户的限制条数
+  STRING_LIMIT_LENGTH,  // 字符串长度限制
   operateTypeArray,
-  setCode,  // 限制设置 value
+  SET_CODE,  // 限制设置 value
   attachmentMap,
   bankConfirmArray,
 } = config;
@@ -92,9 +92,9 @@ export default class CreateModal extends PureComponent {
   constructor(props) {
     super(props);
     // 操作类型
-    const operateType = setCode;
+    const operateType = SET_CODE;
     // 是否是限制设置
-    const isLimit = operateType === setCode;
+    const isLimit = operateType === SET_CODE;
     this.state = {
       // 上传后的返回值
       attachment: '',
@@ -196,6 +196,10 @@ export default class CreateModal extends PureComponent {
     };
     // 如果是解除限制
     if (!isLimit) {
+      // 如果还未选择银行确认，不发送请求
+      if (_.isEmpty(bankConfirm)) {
+        return;
+      }
       if (bankConfirm === bankConfirmArray[0].value) {
         payload.extraParam = 'true';
       } else {
@@ -215,12 +219,8 @@ export default class CreateModal extends PureComponent {
     },
   })
   handleOperateTypeChange(key, value) {
-    // 等于 限制解除 的时候
-    let isLimit = false;
-    if (value === setCode) {
-      isLimit = true;
-      this.queryNextStepButton();
-    }
+    // 是否等于 限制设置
+    const isLimit = value === SET_CODE;
     this.setState({
       [key]: value,
       isLimit,
@@ -234,7 +234,7 @@ export default class CreateModal extends PureComponent {
       limitEndTime: '',
       endDateDisabled: isLimit,
       attachmentList: [attachmentMap[0]],
-    });
+    }, this.queryNextStepButton);
   }
 
   // 公司简称改变
@@ -348,8 +348,8 @@ export default class CreateModal extends PureComponent {
       message.error('不允许添加重复客户');
       return;
     }
-    if (addedCustData.length >= limitCount) {
-      message.error(`客户数不可超过${limitCount}条`);
+    if (addedCustData.length >= LIMIT_COUNT) {
+      message.error(`客户数不可超过${LIMIT_COUNT}条`);
       return;
     }
     this.setState({
@@ -650,16 +650,16 @@ export default class CreateModal extends PureComponent {
       message.error('公司简称不能为空!');
       return;
     }
-    if (data.getStrLen(companyName) > stringLimitLength) {
-      message.error(`公司简称长度不能超过${stringLimitLength}!`);
+    if (data.getStrLen(companyName) > STRING_LIMIT_LENGTH) {
+      message.error(`公司简称长度不能超过${STRING_LIMIT_LENGTH}!`);
       return;
     }
     if (_.isEmpty(stockCode)) {
       message.error('证券代码不能为空!');
       return;
     }
-    if (data.getStrLen(stockCode) > stringLimitLength) {
-      message.error(`证券代码长度不能超过${stringLimitLength}!`);
+    if (data.getStrLen(stockCode) > STRING_LIMIT_LENGTH) {
+      message.error(`证券代码长度不能超过${STRING_LIMIT_LENGTH}!`);
       return;
     }
     if (!isLimit && _.isEmpty(bankConfirm)) {

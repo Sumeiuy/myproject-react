@@ -3,7 +3,7 @@
  * @Description: 执行者视图 model
  * @Date: 2018-08-20 13:15:45
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-21 15:12:12
+ * @Last Modified time: 2018-08-21 16:57:13
  */
 import _ from 'lodash';
 import moment from 'moment';
@@ -353,11 +353,15 @@ export default {
       };
     },
     getOtherTaskListSuccess(state, action) {
-      const { payload = EMPTY_LIST } = action;
+      const { payload = EMPTY_OBJ } = action;
+      const {
+        list = EMPTY_LIST,
+        fetchOtherTaskListStatus,
+      } = payload;
       return {
         ...state,
-        otherTaskList: payload,
-        fetchOtherTaskListStatus: true,
+        otherTaskList: list,
+        fetchOtherTaskListStatus,
       };
     },
     queryAllotEmpListSuccess(state, action) {
@@ -480,10 +484,14 @@ export default {
           eventId: resultData.eventId,
           mssnId: resultData.missionFlowId,
         };
+        const otherTaskListPayload = {
+          list: EMPTY_LIST,
+          fetchOtherTaskListStatus: false,
+        };
         // 每一次查询其他代办任务可能会接口失败，此时会保留上一次的数据，所以要清空上一次查询其他代办任务列表的数据
         yield put({
           type: 'getOtherTaskListSuccess',
-          payload: EMPTY_LIST,
+          payload: otherTaskListPayload,
         });
         yield put({
           type: 'getOtherTaskList',
@@ -728,10 +736,18 @@ export default {
         feedBackTime: moment().format(dateFormat),
         // 上传附件的uuid
         uuid: '',
+        // 回访结果
+        visitResult: '',
+        // 失败原因
+        visitFailureDesc: '',
       }));
+      const otherTaskListPayload = {
+        list: newResultData,
+        fetchOtherTaskListStatus: true,
+      };
       yield put({
         type: 'getOtherTaskListSuccess',
-        payload: newResultData,
+        payload: otherTaskListPayload,
       });
     },
 
