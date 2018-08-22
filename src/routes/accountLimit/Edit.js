@@ -29,7 +29,10 @@ const dispatch = dva.generateEffect;
 
 const {
   tableTitle: { approvalList },
-  stringLimitLength,
+  STRING_LIMIT_LENGTH,
+  SET_CODE,
+  RELIEVE_CODE,
+  TIME_FORMAT_STRING,
 } = config;
 
 // 审批人弹窗
@@ -198,16 +201,16 @@ export default class AccountLimitEdit extends PureComponent {
       message.error('公司简称不能为空!');
       return false;
     }
-    if (data.getStrLen(editFormData.companyName) > stringLimitLength) {
-      message.error(`公司简称长度不能超过${stringLimitLength}`);
+    if (data.getStrLen(editFormData.companyName) > STRING_LIMIT_LENGTH) {
+      message.error(`公司简称长度不能超过${STRING_LIMIT_LENGTH}`);
       return false;
     }
     if (_.isEmpty(editFormData.stockCode)) {
       message.error('证券代码不能为空!');
       return false;
     }
-    if (data.getStrLen(editFormData.stockCode) > stringLimitLength) {
-      message.error(`证券代码长度不能超过${stringLimitLength}`);
+    if (data.getStrLen(editFormData.stockCode) > STRING_LIMIT_LENGTH) {
+      message.error(`证券代码长度不能超过${STRING_LIMIT_LENGTH}`);
       return false;
     }
     if (_.isEmpty(editFormData.custList)) {
@@ -219,7 +222,7 @@ export default class AccountLimitEdit extends PureComponent {
       return false;
     }
     // 如果操作类型是设置限制
-    if (editFormData.operateType === config.setCode) {
+    if (editFormData.operateType === SET_CODE) {
       if (_.isEmpty(editFormData.limitStartTime)) {
         message.error('设置日期不能为空!');
         return false;
@@ -228,23 +231,23 @@ export default class AccountLimitEdit extends PureComponent {
         message.error('解除日期不能为空!');
         return false;
       }
-      if (moment(editFormData.limitStartTime, config.timeFormatStr) < moment().subtract(1, 'days')) {
+      if (moment(editFormData.limitStartTime, TIME_FORMAT_STRING) < moment().subtract(1, 'days')) {
         message.error('设置日期不得小于当前日期!');
         return false;
       }
-      if (moment(editFormData.limitEndTime, config.timeFormatStr)
-        <= moment(editFormData.limitStartTime, config.timeFormatStr)) {
+      if (moment(editFormData.limitEndTime, TIME_FORMAT_STRING)
+        <= moment(editFormData.limitStartTime, TIME_FORMAT_STRING)) {
         message.error('账户限制解除日期必须大于账户限制设置日期!');
         return false;
       }
     }
     // 如果操作类型是解除限制
-    if (editFormData.operateType === config.relieveCode) {
+    if (editFormData.operateType === RELIEVE_CODE) {
       if (_.isEmpty(editFormData.limitEndTime)) {
         message.error('解除日期不能为空!');
         return false;
       }
-      if (moment(editFormData.limitEndTime, config.timeFormatStr) < moment().subtract(1, 'days')) {
+      if (moment(editFormData.limitEndTime, TIME_FORMAT_STRING) < moment().subtract(1, 'days')) {
         message.error('账户限制解除日期不得小于当前日期!');
         return false;
       }
@@ -269,7 +272,7 @@ export default class AccountLimitEdit extends PureComponent {
     const { editFormData, saveChange, validateForm } = this.props;
     // 操作类型是解除限制并且待银行确认选否 || 所点击按钮的approverNum为none时，不需要选审批人直接保存
     if (
-        (editFormData.operateType === config.relieveCode && !editFormData.bankConfirm)
+        (editFormData.operateType === RELIEVE_CODE && !editFormData.bankConfirm)
         || btnItem.approverNum === 'none'
       ) {
       const flowAuditors = {
