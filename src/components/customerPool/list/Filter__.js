@@ -677,12 +677,19 @@ export default class Filter extends PureComponent {
       this.props.definedLabelsInfo,
       labelItem => _.includes(labelItem.labelName, value),
     );
+    let definedLabel = {
+      currentPage: 1,
+      fetching: false,
+    };
+    if (value) {
+      definedLabel = {
+        ...definedLabel,
+        currentPage: 0,
+      };
+    }
     this.setState({
       definedLabelDate,
-      definedLabel: {
-        currentPage: 1,
-        fetching: false,
-      },
+      definedLabel,
     });
   }
 
@@ -785,7 +792,9 @@ export default class Filter extends PureComponent {
     const currentSelectDefinedLabel = customLabels
       ? _.filter(definedLabelDate, labelItem => _.includes(customLabels, labelItem.id))
       : '';
-    const currentDefinedLabel = _.slice(definedLabelDate, 0, currentPage * 10);
+    const currentDefinedLabel = currentPage
+      ? _.slice(definedLabelDate, 0, currentPage * 10)
+      : definedLabelDate;
 
     return (
       <div className={styles.filterContainer}>
