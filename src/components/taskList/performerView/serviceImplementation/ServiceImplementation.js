@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-21 15:51:47
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-21 17:20:19
  */
 
 import React, { PureComponent } from 'react';
@@ -194,7 +194,7 @@ export default class ServiceImplementation extends PureComponent {
       // 当前用户是否操作了表单
       isFormHalfFilledOut: false,
       // 是否显示批量添加服务记录弹窗
-      isShowBatchAddServiceRecord: false,
+      isShowBatchAddServiceRecord: true,
     };
   }
 
@@ -756,6 +756,7 @@ export default class ServiceImplementation extends PureComponent {
     });
     saveBatchAddServiceRecord({
       ...singlePayload,
+      workResult: '',
       otherTask: list,
     }).then(this.closeBatchAddServiceModal);
   }

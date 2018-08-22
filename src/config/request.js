@@ -8,8 +8,8 @@ import { apiPrefix, fspPrefix } from './constants';
 export default {
   timeout: 15000,
   // 这里的接口处理是为了调试的方便，一般情况下该标志都是false
-  apiPrefix: process.env.REMOVE_PREFIX === true ? '/mcrm/api' : apiPrefix,
+  apiPrefix: '/mcrm/api',
   fspPrefix,
-  prefix: process.env.REMOVE_PREFIX === true ? '/mcrm/api' : '/fspa/mcrm/api',
+  prefix: '/mcrm/api',
   ERROR_SEPARATOR: '$%^#%^#$^%#%$#',
 };

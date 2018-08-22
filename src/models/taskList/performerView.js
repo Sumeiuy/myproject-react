@@ -736,6 +736,10 @@ export default {
         feedBackTime: moment().format(dateFormat),
         // 上传附件的uuid
         uuid: '',
+        // 回访结果
+        visitResult: '',
+        // 失败原因
+        visitFailureDesc: '',
       }));
       const otherTaskListPayload = {
         list: newResultData,
