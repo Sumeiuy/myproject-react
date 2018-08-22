@@ -318,7 +318,7 @@ export default class BatchAddServiceRecordItem extends PureComponent {
                 <RadioGroup
                   disabled={!data[IS_CHECKED_KEY]}
                   value={data[VISIT_RESULT_KEY]}
-                  onChange={(e) => this.handleChangeRadio(e.target.value)}
+                  onChange={e => this.handleChangeRadio(e.target.value)}
                 >
                   <Radio value={VISIT_RESULT_SUCCESS_VALUE}>成功</Radio>
                   <Radio value={VISIT_RESULT_FAILED_VALUE}>失败</Radio>
