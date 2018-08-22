@@ -22,6 +22,7 @@ import Tab from '../components/layout/Tab';
 import FSPUnwrap from '../components/layout/FSPUnwrap';
 import { constants } from '../../src/config';
 import ConnectedCreateServiceRecord from '../../src/components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
+import ConnectedSignCustomerLabel from '../../src/components/customerPool/list/modal/ConnectedSignCustomerLabel';
 
 import ContextProvider from '../../src/layouts/ContextProvider';
 import IEWarningModal from '../../src/components/common/IEWarningModal';
@@ -239,6 +240,7 @@ export default class Main extends PureComponent {
                       serviceRecordInfo={serviceRecordInfo}
                       isPhoneCall={isPhoneCall}
                     />
+                    <ConnectedSignCustomerLabel />
                     <PhoneWrapper />
                   </div>
                 </div> : <div>Loading...</div>
