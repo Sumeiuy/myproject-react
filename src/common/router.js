@@ -4,7 +4,7 @@ import dynamic from 'dva/dynamic';
 import CustomerPool from '../routes/customerPool/Home';
 import TaskList from '../routes/taskList/connectedHome';
 import TaskFlow from '../routes/customerPool/TaskFlow';
-import CustomerListWrapper from '../routes/customerPool/CustomerListWrapper';
+import CustomerList from '../routes/customerPool/CustomerList__';
 import ReportHome from '../routes/reports/Home';
 import CreateTask from '../routes/customerPool/CreateTask';
 import CustomerGroupManage from '../routes/customerPool/CustomerGroupManage';
@@ -204,7 +204,7 @@ export const getRouterData = (app) => {
     },
     // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
     '/customerPool/list': {
-      component: CustomerListWrapper,
+      component: CustomerList,
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
@@ -242,6 +242,10 @@ export const getRouterData = (app) => {
     },
     // 执行者视图服务结果客户明细的地方发起任务
     '/customerPool/createTaskFromServiceResultCust': {
+      component: CreateTask,
+    },
+    // 标签管理页面发起任务
+    '/customerPool/createTaskFromLabelManagement': {
       component: CreateTask,
     },
     // 客户分组管理
@@ -448,7 +452,7 @@ export const getRouterData = (app) => {
         import('../routes/custRelationships/RejectUpdateHome' /* webpackChunkName: "custRelationshipsReject" */)),
     },
     // 直接进入
-    '/custAllot': {
+    '/businessApplyment/customerPartition/custAllot': {
       component: dynamicWrapper(app, ['custAllot'], () =>
         import('../routes/custAllot/Home' /* webpackChunkName: "custAllot" */)),
     },
@@ -458,7 +462,7 @@ export const getRouterData = (app) => {
         import('../routes/custAllot/Notifies' /* webpackChunkName: "custAllot_notifies" */)),
     },
     // 直接进入
-    '/departmentCustAllot': {
+    '/businessApplyment/customerPartition/departmentCustAllot': {
       component: dynamicWrapper(app, ['departmentCustAllot'], () =>
         import('../routes/departmentCustAllot/Home' /* webpackChunkName: "departmentCustAllot" */)),
     },
@@ -535,7 +539,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['accountLimit'], () =>
         import('../routes/accountLimit/Notifies' /* webpackChunkName: "accountLimit_notifies" */)),
     },
-    // 管理标签
+    // 标签管理
     '/labelManagement': {
       component: dynamicWrapper(app, [], () =>
         import('../routes/labelManagement/Home') /* webpackChunkName: "labelManagement" */),

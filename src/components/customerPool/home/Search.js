@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-02 16:27:56
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-21 16:43:35
  * @description 客户池头部搜索组件
  */
 
@@ -28,6 +28,8 @@ const NONE_INFO = '按回车键发起搜索';
 // 标签的类型值
 const LABEL = 'LABEL';
 let guid = 0;
+// 自定义标签类型值
+const DEFINED_LABEL = ['manegeFsp', 'personalFsp'];
 
 export default class Search extends PureComponent {
 
@@ -183,6 +185,14 @@ export default class Search extends PureComponent {
       q: encodeURIComponent(item.value),
       type: item.type,
     };
+    // 自定义标签的选择
+    if (_.includes(DEFINED_LABEL, item.source)) {
+      query = {
+        ...query,
+        source: item.source,
+      };
+    }
+
     // 查到的时持仓产品，传持仓产品的名称
     if (item.type === 'PRODUCT' && item.name) {
       query = { ...query, productName: item.name };

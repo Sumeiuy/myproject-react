@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 14:00:18
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-13 10:25:02
+ * @Last Modified time: 2018-08-20 10:22:13
  * 结果跟踪
  */
 
@@ -838,7 +838,9 @@ export default class ResultTrack extends PureComponent {
                       size="default"
                     >
                       {_.map(level1Indicator, item =>
-                        <Option key={item.value} value={item.value}>{item.value}</Option>)}
+                        <Option key={item.value} title={item.value} value={item.value}>
+                          {item.value}
+                        </Option>)}
                     </Select>
                   </FormItem>
                 </div>
@@ -856,7 +858,9 @@ export default class ResultTrack extends PureComponent {
                           onChange={this.handleIndicator2Change}
                         >
                           {_.map(level2Indicator, item =>
-                            <Option key={item.value} value={item.value}>{item.value}</Option>)}
+                            <Option key={item.value} title={item.value} value={item.value}>
+                              {item.value}
+                            </Option>)}
                         </Select>
                       </div>
                       {/**
@@ -913,7 +917,11 @@ export default class ResultTrack extends PureComponent {
                                   >
                                     {
                                       _.map(operationType, item =>
-                                        <Option key={item.value} value={item.value}>
+                                        <Option
+                                          key={item.value}
+                                          value={item.value}
+                                          title={item.value}
+                                        >
                                           {item.value}
                                         </Option>)
                                     }

@@ -3,7 +3,7 @@
  * @Author: Xuwenkang
  * @Date: 2018-08-07 14:46:25
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 16:09:23
+ * @Last Modified time: 2018-08-21 15:34:13
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -269,12 +269,24 @@ export default class AccountLimitEdit extends PureComponent {
     if (!this.chekDataIsLegal(btnItem.operate)) {
       return;
     }
-    const { editFormData, saveChange, validateForm } = this.props;
-    // 操作类型是解除限制并且待银行确认选否 || 所点击按钮的approverNum为none时，不需要选审批人直接保存
-    if (
-        (editFormData.operateType === RELIEVE_CODE && !editFormData.bankConfirm)
-        || btnItem.approverNum === 'none'
-      ) {
+    const { remark } = this.state;
+    const { editFormData, saveChange, validateForm, doApprove } = this.props;
+    const { flowAuditors: auth } = btnItem;
+    if (btnItem.operate === END_NODE_NAME) {
+      // 如果点击的按钮是终止按钮，直接调流程接口，不需要保存，也不需要调保存接口
+      doApprove({
+        empId: emp.getId(),
+        flowId: editFormData.flowId,
+        approverIdea: remark,
+        groupName: btnItem.nextGroupName,
+        operate: btnItem.operate,
+        auditors: auth[0].login,
+        itemId: editFormData.id,
+      }).then(() => {
+        this.handleSuccessCallback();
+      });
+    } else if (btnItem.approverNum === 'none') {
+      // 所点击按钮的approverNum为none时，不需要选审批人直接保存
       const flowAuditors = {
         auditors: emp.getId(),
         groupName: btnItem.nextGroupName,
@@ -282,7 +294,17 @@ export default class AccountLimitEdit extends PureComponent {
       };
       validateForm({ ...editFormData, ...flowAuditors }).then(() => {
         saveChange({ ...editFormData, ...flowAuditors }).then(() => {
-          this.handleSuccessCallback();
+          doApprove({
+            empId: emp.getId(),
+            flowId: editFormData.flowId,
+            approverIdea: remark,
+            groupName: btnItem.nextGroupName,
+            operate: btnItem.operate,
+            auditors: auth[0].login,
+            itemId: editFormData.id,
+          }).then(() => {
+            this.handleSuccessCallback();
+          });
         });
       });
     } else {
