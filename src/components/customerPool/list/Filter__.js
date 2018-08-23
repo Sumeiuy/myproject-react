@@ -770,6 +770,7 @@ export default class Filter extends PureComponent {
       location,
       filtersOfAllSightingTelescope,
       hashString,
+      definedLabelsInfo,
     } = this.props;
     const {
       filters = '',
@@ -789,8 +790,8 @@ export default class Filter extends PureComponent {
 
     // 自定义标签
     const currentSelectDefinedLabel = _.isArray(customLabels)
-      ? _.filter(definedLabelDate, labelItem => _.includes(customLabels, labelItem.id))
-      : _.filter(definedLabelDate, labelItem => customLabels === labelItem.id);
+      ? _.filter(definedLabelsInfo, labelItem => _.includes(customLabels, labelItem.id))
+      : _.filter(definedLabelsInfo, labelItem => customLabels === labelItem.id);
     const currentDefinedLabel = currentPage
       ? _.slice(definedLabelDate, 0, currentPage * 10)
       : definedLabelDate;
