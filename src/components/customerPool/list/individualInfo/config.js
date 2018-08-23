@@ -449,6 +449,14 @@ const matchRule = {
       render: 'renderHoldingIndustry',
     }],
   },
+  customLabels: {
+    inset: true,
+    key: [{
+      name: '客户标签',
+      id: 'relatedLabels',
+      render: 'renderDefinedLabels',
+    }],
+  },
 };
 
 export default matchRule;

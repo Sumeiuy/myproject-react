@@ -13,7 +13,7 @@ import { Tooltip } from 'antd';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { autobind } from 'core-decorators';
-import { isSightingScope, handleOpenFsp360TabAction, openProductDetailPage, getDetailBtnVisible } from '../../helper';
+import { isSightingScope, isLocalScope, handleOpenFsp360TabAction, openProductDetailPage, getDetailBtnVisible } from '../../helper';
 import { url as urlHelper, url, number } from '../../../../helper';
 import { seperator, sessionStore } from '../../../../config';
 import { openRctTab } from '../../../../utils/index';
@@ -26,6 +26,7 @@ import matchAreaConfig from './config';
 import styles from './matchArea.less';
 
 const unlimited = '不限'; // filter 可能暴露出的值
+const FSP_LABEL_SOURCE = 'fsp'; // 自定义标签source标识
 const AIM_LABEL_ID = 'sightingTelescope'; // 瞄准镜标签标识
 // 需要个性化信息的排序方式
 const needSelfInfoArray = ['cashAmt', 'avlAmt', 'avlAmtCrdt', 'totMktval'];
@@ -473,6 +474,40 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  // 匹配自定义标签
+  renderDefinedLabels(item) {
+    const { listItem: { relatedLabels } } = this.props;
+    // 获取自定义标签
+    const fspLabel = _.filter(relatedLabels, labelItem => labelItem.source === FSP_LABEL_SOURCE);
+    const markedEle = _.map(fspLabel, (labelItem, index) => {
+      const { name, description } = labelItem;
+      const labelInfo = index === fspLabel.length - 1 ? name : `${name},`;
+      return (
+        <Tooltip
+          overlayClassName={styles.labelsToolTip}
+          placement="bottomLeft"
+          title={description}
+          key={description}
+        >
+          <i>{ labelInfo }</i>
+        </Tooltip>
+      );
+    });
+    if (fspLabel.length) {
+      return (
+        <li>
+          <span>
+            <i className="label">
+              {item.name}：
+            </i>
+            {markedEle}
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
   // 匹配标签(因为需求要求在每个标签上用Tooltip加一个标签描述，所以改写部分代码)
   renderRelatedLabels(matchLabels) {
     const {
@@ -485,7 +520,7 @@ export default class MatchArea extends PureComponent {
     if (!_.isEmpty(listItem.relatedLabels)) {
       let relatedLabels = _.filter(
         listItem.relatedLabels,
-        item => item && _.includes(item.name, searchText),
+        item => item.source !== FSP_LABEL_SOURCE && _.includes(item.name, searchText),
       );
       if (_.isArray(matchLabels)) {
         relatedLabels = matchLabels;
@@ -693,7 +728,7 @@ export default class MatchArea extends PureComponent {
       const amiListNode = _.map(aimLabelList, item => this.renderSightingTelescope(item));
       // 普通标签对应的个性化信息
       const normalLabelList = _.filter(relatedLabels, item =>
-        item.name && _.includes(labelListId, item.id) && !isSightingScope(item.source));
+        item.name && _.includes(labelListId, item.id) && isLocalScope(item.source));
       const normalListNode = this.renderRelatedLabels(normalLabelList);
       return [normalListNode, ...amiListNode];
     }

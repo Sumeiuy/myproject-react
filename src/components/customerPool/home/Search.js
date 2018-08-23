@@ -29,7 +29,7 @@ const NONE_INFO = '按回车键发起搜索';
 const LABEL = 'LABEL';
 let guid = 0;
 // 自定义标签类型值
-const DEFINED_LABEL = ['manegeFsp', 'personalFsp'];
+const DEFINED_LABEL = ['manageFsp', 'personalFsp'];
 
 export default class Search extends PureComponent {
 
