@@ -54,8 +54,8 @@ function getFinalPanes(panes, addPanes = [], removePanes = []) {
 function splitPanesArray(panes, menuWidth) {
   // 预设置按钮的大小
   const moreButtonWidth = 50;
-  const firstButtonWidth = 104;
-  const menuButtonWidth = 90;
+  const firstButtonWidth = 106;
+  const menuButtonWidth = 104;
   // tab菜单除了必有的首页之外，所有其他的tab都是96px，可以由此算出视口宽度内可以放下多少个
   const tabCount = Math.floor((menuWidth - moreButtonWidth - firstButtonWidth) / menuButtonWidth);
   return {

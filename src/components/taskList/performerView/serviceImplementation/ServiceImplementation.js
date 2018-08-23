@@ -311,11 +311,13 @@ export default class ServiceImplementation extends PureComponent {
       showStepNumbers: false,
       tooltipClass: styles.introTooltip,
       highlightClass: styles.highlightClass,
-      doneLabel: '×',
+      doneLabel: 'x',
       prevLabel: '上一个',
       nextLabel: '下一个',
       skipLabel: 'x',
       steps: this.getIntroStepList(),
+      scrollToElement: true,
+      disableInteraction: true,
     }).start();
   }
 

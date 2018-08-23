@@ -52,16 +52,23 @@ export default class BatchAddServiceRecordModal extends PureComponent {
 
   }
 
-  // 根据当前选择的一级反馈code从客户数据的客户反馈列表中找出对应的一级反馈项
-  @autobind
-  getFirstFeedbackItem(list, code) {
-    return _.filter(list, item => item.id === code)[0] || EMPTY_OBJECT;
-  }
-
   @autobind
   getSelectedTaskList() {
     const { data = EMPTY_ARRAY } = this.props;
     return _.filter(data, item => item[IS_CHECKED_KEY]);
+  }
+
+  // 判断是否需要选择二级反馈
+  @autobind
+  checkIsNeedSecondFeedback(list, code) {
+    const firstItem = _.filter(list, item => item.id === code)[0] || EMPTY_OBJECT;
+    const { childList = EMPTY_ARRAY } = firstItem;
+    // 如果该一级反馈的二级反馈只有一个选项，并且该二级反馈的name字段和一级反馈name相同，就不需要显示选择二级反馈的选框
+    if (childList.length === 1 &&
+      childList[0].name === firstItem.name) {
+      return false;
+    }
+    return true;
   }
 
   @autobind
@@ -86,10 +93,9 @@ export default class BatchAddServiceRecordModal extends PureComponent {
       if (!data[FIRST_FEEDBACK_KEY] || _.isEmpty(data[FEEDBACK_TIME_KEY])) {
         return false;
       }
-      const firstFeedbackData =
-        this.getFirstFeedbackItem(data.feedbackList, data[FIRST_FEEDBACK_KEY]);
-      // 选择了一级反馈，并且该一级反馈下面有二级反馈列表时，没有选择二级反馈，校验不通过
-      if (!_.isEmpty(firstFeedbackData.childList) && !data[SECOND_FEEDBACK_KEY]) {
+      // 选择了一级反馈，并且需要选择二级反馈时，没有选择二级反馈，校验不通过
+      if (this.checkIsNeedSecondFeedback(data.feedbackList, data[FIRST_FEEDBACK_KEY]) &&
+        !data[SECOND_FEEDBACK_KEY]) {
         return false;
       }
     }

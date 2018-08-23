@@ -628,6 +628,9 @@ export default class CustomerList extends PureComponent {
     if (!_.isEqual(preOtherQuery, otherQuery) &&
       !sessionStore.get(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`)) {
       this.getCustomerList(nextProps);
+      if(query.forceRefresh === 'Y') {
+        this.getFiltersOfAllSightingTelescope(query);
+      }
     }
     sessionStore.set(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
   }
@@ -893,6 +896,7 @@ export default class CustomerList extends PureComponent {
         selectAll: false,
         selectedIds: '',
         hashString: this.hashString, // 唯一的本地缓存hash
+        forceRefresh: 'N', // 关闭强制刷新，从新版导航顶部下钻进客户列表，会强制刷新客户列表页面
       },
     });
   }

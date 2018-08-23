@@ -17,6 +17,7 @@ import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
 import PageAnchor from '../../components/pageCommon/PageAnchor';
+import RecommendModal from '../../components/recommend/RecommendModal';
 import withRouter from '../../decorators/withRouter';
 import { constants } from '../../config';
 import styles from './Home.less';
@@ -449,6 +450,7 @@ export default class ReportHome extends PureComponent {
     const summaryType = queryType || defaultSummaryType;
     return (
       <div className="page-invest content-inner">
+        <RecommendModal />
         <PageHeader
           location={location}
           replace={replace}
