@@ -295,7 +295,10 @@ function getCapitalRangInfo({ filterField, labelName }, filterObj) {
  * @param {*} definedLabelsInfo 自定义标签全量的数据
  */
 function getCustomLabel(customLabels, definedLabelsInfo) {
-  const selectedLabelList = _.filter(definedLabelsInfo, item => _.includes(customLabels, item.id));
+  const selectedLabelList = _.filter(
+    definedLabelsInfo,
+    item => _.includes([].concat(customLabels), item.id),
+  );
   const selectedNameList = _.map(selectedLabelList, labelItem => labelItem.labelName);
   return `自定义标签: ${selectedNameList.join(',')}`;
 }
