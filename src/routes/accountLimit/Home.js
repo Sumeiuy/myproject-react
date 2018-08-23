@@ -30,9 +30,9 @@ const dispatch = dva.generateEffect;
 
 const {
   statusArray,
-  pageName,
-  pageValue,
-  pageType,
+  PAGE_NAME,
+  PAGE_VALUE,
+  PAGE_TYPE,
   operateTypeArray,
   relieveCode,  // 限制解除的 value
   basicFilters,
@@ -228,7 +228,7 @@ export default class AccountLimitHome extends PureComponent {
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
-    getList({ ...params, type: pageType }).then(this.getRightDetail);
+    getList({ ...params, type: PAGE_TYPE }).then(this.getRightDetail);
   }
 
   // 头部筛选后调用方法
@@ -393,11 +393,11 @@ export default class AccountLimitHome extends PureComponent {
         index={index}
         active={index === activeRowIndex}
         onClick={this.handleListRowClick}
-        pageName={pageName}
+        pageName={PAGE_NAME}
         iconType="kehu1"
         typeName={operateTypeName}
         typeNameStyle={otherStyle}
-        subTypeName={pageName}
+        subTypeName={PAGE_NAME}
         statusTags={statusTags}
         showSecondLineInfo={this.showSecondLineInfo}
         showThirdLineInfo={this.showThirdLineInfo}
@@ -448,8 +448,8 @@ export default class AccountLimitHome extends PureComponent {
     const topPanel = (
       <ConnectedSeibelHeader
         location={location}
-        page={pageValue}
-        pageType={pageType}
+        page={PAGE_VALUE}
+        pageType={PAGE_TYPE}
         stateOptions={statusArray}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}

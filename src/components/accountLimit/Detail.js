@@ -25,7 +25,7 @@ import logable from '../../decorators/logable';
 const {
   tableTitle: { custList: custTitleList },  // 客户表格列表
   operateTypeArray,  // 操作类型枚举
-  relieveCode,  // 限制解除的 value
+  RELIEVE_CODE,  // 限制解除的 value
   attachmentMap,  // 附件类型枚举
 } = config;
 // 客户姓名
@@ -149,7 +149,7 @@ export default class Detail extends PureComponent {
     // 匹配的操作类型
     const filterOperate = _.filter(operateTypeArray, o => o.value === operateType);
     // 操作类型是否是限制解除
-    const isRelieve = operateType === relieveCode;
+    const isRelieve = operateType === RELIEVE_CODE;
     return (
       <div className={styles.detailBox}>
         <h2 className={styles.title}>编号{id}</h2>

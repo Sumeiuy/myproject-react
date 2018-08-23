@@ -9,24 +9,22 @@ import busApplyFilters from '../../config/busApplyFilters';
 
 const { operationType, status, drafter, department, approver, applyTime } = busApplyFilters;
 // 限制设置的code
-const setCode = '1301';
+const SET_CODE = '1301';
 // 限制解除的code
-const relieveCode = '1302';
+const RELIEVE_CODE = '1302';
 const config = {
-  timeFormatStr: 'YYYY-MM-DD',
-  setCode,
-  relieveCode,
-  stringLimitLength: 100,
+  TIME_FORMAT_STRING: 'YYYY-MM-DD',
+  SET_CODE,
+  RELIEVE_CODE,
+  STRING_LIMIT_LENGTH: 100,
   // 限制的条数
-  limitCount: 200,
-  // 限制提醒信息
-  limitMessage: '一个申请单客户列表客户数不可超过200条',
+  LIMIT_COUNT: 200,
   // 页面名称-中文
-  pageName: '账户限制管理',
+  PAGE_NAME: '账户限制管理',
   // 页面名称-英文
-  pageValue: 'accountLimitPage',
+  PAGE_VALUE: 'accountLimitPage',
   // 页面类型
-  pageType: '13', // 查询列表接口中的type值
+  PAGE_TYPE: '13', // 查询列表接口中的type值
   basicFilters: [
     operationType,
     status,
@@ -46,12 +44,12 @@ const config = {
     {
       show: true,
       label: '限制设置',
-      value: setCode,
+      value: SET_CODE,
     },
     {
       show: true,
       label: '限制解除',
-      value: relieveCode,
+      value: RELIEVE_CODE,
     },
   ],
   bankConfirmArray: [
