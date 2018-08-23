@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-08 16:28:51
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-22 17:56:48
  */
 
 import React, { PureComponent } from 'react';
@@ -12,25 +12,38 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Affix, message, Modal } from 'antd';
+import store from 'store';
 import contains from 'rc-util/lib/Dom/contains';
+import introJs from 'intro.js';
 import Header from './Header';
 import ListSwiper from './ListSwiper';
 import CustomerProfile from './CustomerProfile';
 import CustomerDetail from './CustomerDetail';
+import CustOtherTaskList from './CustOtherTaskList';
 import SimpleDisplayBlock from './SimpleDisplayBlock';
 import ServiceRecordForm from './ServiceRecordForm';
+import BatchAddServiceRecordModal from './BatchAddServiceRecordModal';
 import EmptyData from './EmptyData';
-import { PHONE, MSG_ROUTEFORWARD } from './config';
+import {
+  PHONE,
+  MSG_ROUTEFORWARD,
+  INTRO_FIRST_SEEP_IDNAME,
+  INTRO_SECOND_SEEP_IDNAME,
+  INTRO_SECOND_SEEP_IDNAME2,
+} from './config';
 import { serveWay as serveWayUtil } from '../config/code';
 import { flow, task } from '../config';
 import { fsp } from '../../../../helper';
-import logable from '../../../../decorators/logable';
+import logable, { logCommon, logPV } from '../../../../decorators/logable';
 import styles from './serviceImplementation.less';
 import {
   POSTCOMPLETED_CODE,
   defaultPerformerViewCurrentTab,
 } from '../../../../routes/taskList/config';
 import { getServiceState } from './helper';
+
+// 存储在本地用哪个来判断是否在执行者视图中第一次使用'展开收起'
+const FIRSTUSECOLLAPSE_PERFORMERVIEW = 'GUIDE_FIRSTUSECOLLAOSE_PERFORMERVIEW';
 
 // 这个是防止页面里有多个class重复，所以做个判断，必须包含当前节点
 // 如果找不到无脑取第一个就行
@@ -42,13 +55,21 @@ const getStickyTarget = (currentNode) => {
   )) || containers[0];
 };
 
+const EMPTY_ARRAY = [];
+const EMPTY_LENGTH = 0;
+
+// 保存提交单个服务记录方法接收到的值，用于在批量添加服务记录之后调原来添加单个服务记录方法后续操作时使用
+let ADD_SERVER_RECORD_FUN_PARAM = {};
+
+// 批量添加服务记录弹窗的key
+const BATCH_ADD_SERVER_RECORD_MODAL_KEY = 'batchAddServerRecord';
 /**
  * 将数组对象中的id和name转成对应的key和value
- * @param {*} arr 原数组
+ * @param {*} list 原数组
  * eg: [{ id: 1, name: '11', childList: [] }] 转成 [{ key: 1, value: '11', children: [] }]
  */
-function transformCustFeecbackData(arr = []) {
-  return arr.map((item = {}) => {
+function transformCustFeecbackData(list = []) {
+  return list.map((item = {}) => {
     const obj = {
       key: String(item.id),
       value: item.name || item.parentClassName,
@@ -117,6 +138,16 @@ export default class ServiceImplementation extends PureComponent {
     location: PropTypes.object.isRequired,
     // 左侧列表中当前选中的任务
     currentTask: PropTypes.object.isRequired,
+    // 客户名下其他代办任务
+    getOtherTaskList: PropTypes.func.isRequired,
+    otherTaskList: PropTypes.array.isRequired,
+    fetchOtherTaskListStatus: PropTypes.bool.isRequired,
+    // 刷新左侧任务列表
+    refreshTaskList: PropTypes.func.isRequired,
+    // 批量添加服务记录数据发生变化时的回调函数
+    onBatchServiceRecordFormChange: PropTypes.func.isRequired,
+    // 批量添加服务记录
+    saveBatchAddServiceRecord: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -129,6 +160,9 @@ export default class ServiceImplementation extends PureComponent {
     addCallRecord: _.noop,
     toggleServiceRecordModal: _.noop,
     isCustIncomeRequested: false,
+    // 客户名下其他代办任务
+    getOtherTaskList: PropTypes.func.isRequired,
+    otherTaskList: PropTypes.array.isRequired,
   }
 
   static contextTypes = {
@@ -159,15 +193,12 @@ export default class ServiceImplementation extends PureComponent {
       propsTargetCustList: targetCustList,
       // 当前用户是否操作了表单
       isFormHalfFilledOut: false,
+      // 是否显示批量添加服务记录弹窗
+      isShowBatchAddServiceRecord: false,
     };
   }
 
   componentDidMount() {
-    const { isFold, getPageSize } = this.props;
-    const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
-    const newPageSize = getPageSize(isFoldFspLeftMenu, isFold);
-    // 首次进入，请求服务实施列表
-    this.getTaskFlowData(newPageSize);
     // 给FSP折叠菜单按钮注册点击事件
     window.onFspSidebarbtn(this.handleFspLeftMenuClick);
   }
@@ -177,6 +208,7 @@ export default class ServiceImplementation extends PureComponent {
     const {
       isFold, getPageSize, currentId,
       location: { query },
+      fetchOtherTaskListStatus,
     } = this.props;
     const pageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
@@ -196,7 +228,9 @@ export default class ServiceImplementation extends PureComponent {
       });
     }
     // 任务切换时，重新请求服务实施列表，参数为默认值
-    if (prevProps.currentId !== currentId) {
+    if (prevProps.currentId !== currentId
+      || query.missionViewType !== prevProps.location.query.missionViewType
+    ) {
       this.getTaskFlowData(pageSize);
     }
     if (query !== prevProps.location.query) {
@@ -205,11 +239,84 @@ export default class ServiceImplementation extends PureComponent {
         this.setState({ isFormHalfFilledOut: false }); // eslint-disable-line
       }
     }
+    // 第一次渲染完判断是否是第一次进入执行者视图，是的话显示引导 放在didupdate里是为了解决在didmount下并没有渲染完成导致定位不准的问题
+    if (!this.isFirstUseCollapse() && fetchOtherTaskListStatus) {
+      setTimeout(this.intialGuide, 500);
+      store.set(FIRSTUSECOLLAPSE_PERFORMERVIEW, 'NO');
+    }
   }
 
   componentWillUnmount() {
     // 移除FSP折叠菜单按钮注册的点击事件
     window.offFspSidebarbtn(this.handleFspLeftMenuClick);
+  }
+
+  // 根据当前的任务状态去获取对应的服务状态，再去获取服务实施列表数据
+  @autobind
+  getTaskFlowData(pageSize, pageNum = 1) {
+    const { changeParameter, currentTask: { statusCode } } = this.props;
+    const stateList = getServiceState(statusCode);
+    // 将服务实施的状态记到redux
+    changeParameter({ state: stateList }).then(() => {
+      this.queryTargetCustList({
+        state: stateList,
+        pageSize,
+        pageNum,
+      });
+    });
+  }
+
+  // 获取新手引导步骤列表
+  @autobind
+  getIntroStepList() {
+    const { otherTaskList } = this.props;
+    const newStepList = [
+      {
+        element: document.querySelector(`#${INTRO_FIRST_SEEP_IDNAME}`),
+        intro: '点击展开可以查看介绍人、客户业务办理情况等信息。',
+        position: 'top',
+      },
+    ];
+    // 如果客户名下其他任务为空时新手引导指向到其他任务栏目标题
+    if (_.isEmpty(otherTaskList)) {
+      newStepList.push({
+        element: document.querySelector(`#${INTRO_SECOND_SEEP_IDNAME2}`),
+        intro: '此处展示客户名下的其他待办任务',
+        position: 'top',
+      });
+    } else {
+      // 如果客户名下有其他任务时新手引导指向到其他任务栏目下展开收起按钮
+      newStepList.push({
+        element: document.querySelector(`#${INTRO_SECOND_SEEP_IDNAME}`),
+        intro: '点击查看该客户的所有待办任务。',
+        position: 'top',
+      });
+    }
+    return newStepList;
+  }
+
+  // 判断是否在执行者视图中使用'展开收起'功能
+  isFirstUseCollapse() {
+    return store.get(FIRSTUSECOLLAPSE_PERFORMERVIEW);
+  }
+
+  // 引导功能初始化
+  @autobind
+  intialGuide() {
+    introJs().setOptions({
+      showBullets: true,
+      showProgress: false,
+      overlayOpacity: 0.4,
+      exitOnOverlayClick: false,
+      showStepNumbers: false,
+      tooltipClass: styles.introTooltip,
+      highlightClass: styles.highlightClass,
+      doneLabel: '×',
+      prevLabel: '上一个',
+      nextLabel: '下一个',
+      skipLabel: 'x',
+      steps: this.getIntroStepList(),
+    }).start();
   }
 
   // FSP折叠菜单按钮被点击
@@ -341,7 +448,7 @@ export default class ServiceImplementation extends PureComponent {
             pageNum,
             isGetFirstItemDetail: false,
           }).then(() => {
-            const { queryTargetCustDetail, currentId } = this.props;
+            const { queryTargetCustDetail, currentId, eventId } = this.props;
             const { targetCustList: { list = [], page: { totalCount } } } = this.state;
             // 当value大于总数totalCount的时候，取totalCount
             const newValue = value > totalCount ? totalCount : value;
@@ -352,6 +459,7 @@ export default class ServiceImplementation extends PureComponent {
               custId,
               missionId: currentId,
               missionFlowId,
+              eventId,
             });
           });
         });
@@ -371,7 +479,12 @@ export default class ServiceImplementation extends PureComponent {
     },
   })
   handleCustomerClick(obj = {}) {
-    const { changeParameter, currentId, queryTargetCustDetail } = this.props;
+    const {
+      changeParameter,
+      currentId,
+      queryTargetCustDetail,
+      eventId,
+     } = this.props;
     changeParameter({
       activeIndex: obj.activeIndex,
       currentCustomer: obj.currentCustomer,
@@ -382,6 +495,7 @@ export default class ServiceImplementation extends PureComponent {
         custId,
         missionId: currentId,
         missionFlowId,
+        eventId,
       });
     });
   }
@@ -415,10 +529,12 @@ export default class ServiceImplementation extends PureComponent {
       currentId,
       queryTargetCust,
       parameter,
+      eventId,
     } = this.props;
     const { targetCustList: { page: { pageSize, pageNum } } } = this.state;
     const { state, rowId, assetSort } = parameter;
     const payload = {
+      eventId,
       missionId: currentId,
       pageSize,
       pageNum,
@@ -513,6 +629,53 @@ export default class ServiceImplementation extends PureComponent {
     });
   }
 
+  // 该方法用于将 MOT 回访任务分配之后刷新客户列表
+  @autobind
+  refreshCustList() {
+    this.props.changeParameter({
+      preciseInputValue: 1,
+      activeIndex: 1,
+    }).then(() => {
+      this.queryTargetCustList({ pageNum: 1 }).then(() => {
+        this.setState({ isFormHalfFilledOut: false });
+      });
+    });
+  }
+
+  // 单个服务记录添加完成后需要执行的操作
+  @autobind
+  singleAddServiceRecordNextStep() {
+    // 从单个添加服务记录时保存的参数里取出需要的值
+    const {
+      postBody,
+      callback,
+      phoneCallback,
+      isSilentAdd,
+      callId,
+    } = ADD_SERVER_RECORD_FUN_PARAM;
+    const { currentMotServiceRecord } = this.props;
+    // 添加服务记录成功， 未成功时，后端返回failure
+    if (!_.isEmpty(currentMotServiceRecord.id) && currentMotServiceRecord.id !== 'failure') {
+      // 不是打电话静默生成服务记录
+      if (!isSilentAdd) {
+        message.success('添加服务记录成功');
+        // 添加成功后重新拉取服务端的服务实施客户列表
+        this.updateCustList(postBody);
+      } else {
+        // 服务记录添加成功后重新加载当前目标客户的详细信息
+        this.reloadTargetCustInfo(() => {
+          // 添加成功后更新state中的服务实施客户列表
+          this.updateList(postBody, callback);
+          // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载任务基本信息
+          this.updateAfterFlowStateComplete(postBody.flowStatus);
+        });
+        // 保存打电话自动创建的服务记录的信息或更新服务记录后删除打电话保存的服务记录
+        phoneCallback();
+        this.saveServiceRecordAndPhoneRelation(currentMotServiceRecord, callId);
+      }
+    }
+  }
+
   // 添加服务记录
   @autobind
   addServiceRecord({
@@ -528,6 +691,7 @@ export default class ServiceImplementation extends PureComponent {
       currentMotServiceRecord: { id },
       serviceRecordInfo,
       targetCustDetail,
+      otherTaskList,
     } = this.props;
     const currentMissionFlowId = targetCustDetail.missionFlowId;
     const { caller = '', id: missionFlowId, autoGenerateRecordInfo } = serviceRecordInfo;
@@ -536,45 +700,97 @@ export default class ServiceImplementation extends PureComponent {
     // 服务状态为完成，code=30
     const payload = (caller === PHONE && currentMissionFlowId === missionFlowId) ?
       { ...postBody, id, flowStatus, serveTime, serveWay } : postBody;
+    // 将方法接收到的参数以及添加单个服务记录的payload先保存起来，批量添加服务记录完成之后需要用到
+    ADD_SERVER_RECORD_FUN_PARAM = {
+      postBody,
+      callback,
+      phoneCallback,
+      isSilentAdd,
+      callId,
+      singlePayload: payload,
+    };
+
     // 此处需要针对涨乐财富通服务方式特殊处理
     // 涨乐财富通服务方式下，在postBody下会多一个zlApprovalCode非参数字段
     // 执行提交服务记录的接口
     addServeRecord(_.omit(payload, ['zlApprovalCode']))
       .then(() => {
-        const { currentMotServiceRecord } = this.props;
-        // 添加服务记录成功， 未成功时，后端返回failure
-        if (!_.isEmpty(currentMotServiceRecord.id) && currentMotServiceRecord.id !== 'failure') {
-          // 不是打电话静默生成服务记录
-          if (!isSilentAdd) {
-            message.success('添加服务记录成功');
-            // 添加成功后重新拉取服务端的服务实施客户列表
-            this.updateCustList(postBody);
-          } else {
-            // 服务记录添加成功后重新加载当前目标客户的详细信息
-            this.reloadTargetCustInfo(() => {
-              // 添加成功后更新state中的服务实施客户列表
-              this.updateList(postBody, callback);
-              // 添加服务记录服务状态为’完成‘时，更新新左侧列表，重新加载任务基本信息
-              this.updateAfterFlowStateComplete(postBody.flowStatus);
-            });
-            // 保存打电话自动创建的服务记录的信息或更新服务记录后删除打电话保存的服务记录
-            phoneCallback();
-            this.saveServiceRecordAndPhoneRelation(currentMotServiceRecord, callId);
-          }
+        // 判断服务方式如果是涨乐财富通，或者当前客户名下没有其他代办任务，就不显示批量添加服务记录的弹窗
+        if (serveWayUtil.isZhangle(serveWay) || _.isEmpty(otherTaskList)) {
+          this.singleAddServiceRecordNextStep();
+        } else {
+          this.showBatchAddServiceModal();
         }
       });
   }
 
+  // 打开批量添加服务记录弹窗
+  @autobind
+  @logPV({ pathname: '/modal/batchAddServiceRecordModal', title: '批量添加服务记录' })
+  showBatchAddServiceModal() {
+    this.setState({
+      isShowBatchAddServiceRecord: true,
+    });
+  }
+
+  // 关闭批量添加服务记录弹窗
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '关闭批量添加服务记录弹框' } })
+  closeBatchAddServiceModal() {
+    this.setState({
+      isShowBatchAddServiceRecord: false,
+    });
+    // 关闭批量添加服务记录弹窗之后要执行之前添加单个服务记录操作的后续步骤
+    this.singleAddServiceRecordNextStep();
+  }
+
+  // 批量添加服务记录
+  @autobind
+  handleBatchAddServiceRecord(list) {
+    const {
+      singlePayload,
+    } = ADD_SERVER_RECORD_FUN_PARAM;
+    const {
+      saveBatchAddServiceRecord,
+    } = this.props;
+    // 发送神侧
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '批量添加服务记录',
+        value: JSON.stringify({
+          ...singlePayload,
+          otherTask: list,
+        }),
+      },
+    });
+    saveBatchAddServiceRecord({
+      ...singlePayload,
+      workResult: '',
+      otherTask: list,
+    }).then(this.closeBatchAddServiceModal);
+  }
+
   reloadTargetCustInfo(callback) {
-    const { currentId, getCustDetail, targetCustDetail } = this.props;
+    const { currentId, getCustDetail, targetCustDetail, eventId } = this.props;
     const { custId, missionFlowId } = targetCustDetail;
     getCustDetail({
       missionId: currentId,
       custId,
       missionFlowId,
       callback,
+      eventId,
     });
   }
+
+  // 添加服务记录表单数据发生变化
+  @autobind
+  formDataChange() {
+    this.setState({
+      isFormHalfFilledOut: true,
+    });
+  }
+
 
   // 更新组件state的服务实施客户列表信息
   @autobind
@@ -625,14 +841,6 @@ export default class ServiceImplementation extends PureComponent {
     }
   }
 
-  // 添加服务记录表单数据发生变化
-  @autobind
-  formDataChange() {
-    this.setState({
-      isFormHalfFilledOut: true,
-    });
-  }
-
   // 跳转前确认处理
   @autobind
   handlePrompt(location) {
@@ -643,20 +851,6 @@ export default class ServiceImplementation extends PureComponent {
     return MSG_ROUTEFORWARD;
   }
 
-  // 根据当前的任务状态去获取对应的服务状态，再去获取服务实施列表数据
-  @autobind
-  getTaskFlowData(pageSize, pageNum = 1) {
-    const { changeParameter, currentTask: { statusCode } } = this.props;
-    const stateList = getServiceState(statusCode);
-    // 将服务实施的状态记到redux
-    changeParameter({ state: stateList }).then(() => {
-      this.queryTargetCustList({
-        state: stateList,
-        pageSize,
-        pageNum,
-      });
-    });
-  }
 
   render() {
     const { dict = {}, empInfo } = this.context;
@@ -668,11 +862,14 @@ export default class ServiceImplementation extends PureComponent {
       taskFeedbackList, attachmentList, eventId, taskTypeCode,
       queryCustFeedbackList4ZLFins, custFeedbackList, queryApprovalList, zhangleApprovalList,
       testWallCollision, testWallCollisionStatus, toggleServiceRecordModal, performerViewCurrentTab,
+      otherTaskList,
+      refreshTaskList, location, onBatchServiceRecordFormChange,
     } = this.props;
     const {
       targetCustList,
       targetCustList: { list: currentTargetList },
       isFoldFspLeftMenu, isFormHalfFilledOut,
+      isShowBatchAddServiceRecord,
     } = this.state;
     const {
       missionStatusCode, missionStatusValue, missionFlowId,
@@ -680,6 +877,9 @@ export default class ServiceImplementation extends PureComponent {
       serviceRecord, customerFeedback, feedbackDate, custId,
       serviceContent, // 涨乐财富通的服务内容
       zlcftMsgStatus, // 新增的涨乐财富通服务方式的反馈状态
+      dispatchingAvailable, // 是否可以分配给他人，如果可以则服务记录中需要显示分配按钮
+      workResult, // MOT 回访类型任务的回访结果，为'成功'|'失败'
+      failReason, // MOT 回访类型任务的额结果如果是失败，则该字段为回访失败原因
     } = targetCustDetail;
     // 判断当前任务状态是结果跟踪或者完成状态，则为只读
     // 判断任务流水客户状态，处理中 和 未开始， 则为可编辑
@@ -703,7 +903,7 @@ export default class ServiceImplementation extends PureComponent {
     // 涨乐财富通中才有审批和驳回状态
     const isReject = this.isRejct({ serviceStatusCode: missionStatusCode, serviceWayCode });
     // 按照添加服务记录需要的服务类型和任务反馈联动的数据结构来构造数据
-    const motCustfeedBackDict = transformCustFeecbackData(taskFeedbackList) || [];
+    const motCustfeedBackDict = transformCustFeecbackData(taskFeedbackList);
     // 服务记录的formData
     const serviceReocrd = {
       serviceTips,
@@ -730,6 +930,10 @@ export default class ServiceImplementation extends PureComponent {
       serviceTypeCode,
       // 涨乐财富通服务方式反馈状态
       zlcftMsgStatus,
+      // 判断是否需要分配按钮，因为MOT回访类型的任务，可以分配给他人处理
+      dispatchingAvailable,
+      workResult,
+      failReason,
     };
     // fsp左侧菜单和左侧列表折叠状态变化，强制更新affix、文字折叠区域
     const leftFoldState = `${isFoldFspLeftMenu}${isFold}`;
@@ -746,6 +950,7 @@ export default class ServiceImplementation extends PureComponent {
           />
         </div>
         <CustomerProfile
+          eventId={eventId}
           currentId={currentId}
           taskTypeCode={taskTypeCode}
           addServeRecord={this.addServiceRecord}
@@ -790,6 +995,12 @@ export default class ServiceImplementation extends PureComponent {
                   isCustIncomeRequested={isCustIncomeRequested}
                   getCustIncome={getCustIncome}
                   leftFoldState={leftFoldState}
+                  foldButtonId={INTRO_FIRST_SEEP_IDNAME}
+                />
+                <CustOtherTaskList
+                  title={`客户名下其他任务（${(otherTaskList || EMPTY_ARRAY).length || EMPTY_LENGTH}）`}
+                  otherTaskList={otherTaskList}
+                  foldButtonId={INTRO_SECOND_SEEP_IDNAME}
                 />
                 <SimpleDisplayBlock
                   title="服务策略"
@@ -806,6 +1017,7 @@ export default class ServiceImplementation extends PureComponent {
                   leftFoldState={leftFoldState}
                 />
                 <ServiceRecordForm
+                  location={location}
                   dict={dict}
                   empInfo={empInfo}
                   addServeRecord={this.addServiceRecord}
@@ -831,8 +1043,18 @@ export default class ServiceImplementation extends PureComponent {
                   serviceCustId={custId}
                   isCurrentMissionPhoneCall={isCurrentMissionPhoneCall}
                   onFormDataChange={this.formDataChange}
+                  refreshTaskList={refreshTaskList}
+                  refreshCustList={this.refreshCustList}
                 />
               </div>
+              <BatchAddServiceRecordModal
+                visible={isShowBatchAddServiceRecord}
+                closeModal={this.closeBatchAddServiceModal}
+                modalKey={BATCH_ADD_SERVER_RECORD_MODAL_KEY}
+                data={otherTaskList}
+                onFormChange={onBatchServiceRecordFormChange}
+                saveBatchAddServiceRecord={this.handleBatchAddServiceRecord}
+              />
             </div>
         }
         <Prompt

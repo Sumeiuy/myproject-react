@@ -3,13 +3,13 @@
  * @Description: 账户限制管理-驳回后修改表单
  * @Date: 2018-08-08 09:21:07
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-08 09:42:26
+ * @Last Modified time: 2018-08-18 21:14:21
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { DatePicker, Input, Select as AntdSelect, Popconfirm } from 'antd';
+import { DatePicker, Input, Select as AntdSelect, Popconfirm, message } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -37,10 +37,17 @@ const RELIEVE_LIMITTYPE_LABEL_NAME = '解除限制类型'; // 解除限制类型
 const {
   tableTitle: { custList: custTitleList },
   operateTypeArray,
+  SET_CODE,
+  RELIEVE_CODE,
+  TIME_FORMAT_STRING,
 } = config;
 const DEFAULT_PAGE_SIZE = 5;
 // 客户
 const KEY_CUSTNAME = 'custName';
+// 服务经理
+const KEY_EMPNAME = 'empName';
+// 限制类型
+const KEY_LIMIT = 'limit';
 export default class EditForm extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -52,8 +59,6 @@ export default class EditForm extends PureComponent {
     // 限制类型
     limitList: PropTypes.array.isRequired,
     queryLimtList: PropTypes.func.isRequired,
-    // 提交保存
-    saveChange: PropTypes.func.isRequired,
     // 修改审批意见
     onChangeRemark: PropTypes.func.isRequired,
     remark: PropTypes.string.isRequired,
@@ -74,15 +79,26 @@ export default class EditForm extends PureComponent {
     const titleList = [...custTitleList];
     // 客户
     const custNameColumn = _.find(titleList, o => o.key === KEY_CUSTNAME);
-    custNameColumn.render = (text, record) => (
-      <div>{text} ({record.custId})</div>
-    );
+    custNameColumn.render = (text, record) => {
+      const value = record.custId ? `${text || ''} (${record.custId})` : '';
+      return <div title={value}>{value}</div>;
+    };
+    // 服务经理
+    const empNameColumn = _.find(titleList, o => o.key === KEY_EMPNAME);
+    empNameColumn.render = (text, record) => {
+      const value = record.empId ? `${text || ''} (${record.empId})` : '';
+      return <div title={value}>{value}</div>;
+    };
+    // 限制类型
+    const limitColumn = _.find(titleList, o => o.key === KEY_LIMIT);
+    limitColumn.render = text => (<div title={text}>{text}</div>);
     // 添加操作列
     titleList.push({
       dataIndex: 'operate',
       key: 'operate',
       title: '操作',
       render: (text, record) => this.renderPopconfirm('cust', record),
+      width: 80,
     });
     return titleList;
   }
@@ -107,10 +123,10 @@ export default class EditForm extends PureComponent {
     const { editFormData } = this.props;
     return this.isSetLimitType() ?
       // 如果操作类型是设置限制的时候，解除日期不能小于设置日期
-      current <= moment(editFormData.limitStartTime, config.timeFormatStr)
+      current <= moment(editFormData.limitStartTime, TIME_FORMAT_STRING)
       :
       // 如果操作类型是解除限制的时候，解除日期不能小于今天
-      current < moment().endOf('day');
+      current < moment().startOf('day');
   }
 
   // 证券代码修改，只能输入整数
@@ -181,14 +197,14 @@ export default class EditForm extends PureComponent {
   @autobind
   isSetLimitType() {
     const { detailInfo } = this.props;
-    return detailInfo.operateType === config.setCode;
+    return detailInfo.operateType === SET_CODE;
   }
 
   // 判断是否是解除限制设置类型
   @autobind
   isRelieveLimitType() {
     const { detailInfo } = this.props;
-    return detailInfo.operateType === config.relieveCode;
+    return detailInfo.operateType === RELIEVE_CODE;
   }
 
   // 判断是否需要银行确认解除材料
@@ -204,6 +220,10 @@ export default class EditForm extends PureComponent {
   handleDeleteTableData(record) {
     const { editFormData: { custList = EMPTY_ARRAY } } = this.props;
     const newCustData = _.filter(custList, o => o.custId !== record.custId);
+    if (_.isEmpty(newCustData)) {
+      message.error('请至少保留一个客户!');
+      return;
+    }
     this.handleEditFormChange(newCustData, 'custList');
   }
 
@@ -311,6 +331,9 @@ export default class EditForm extends PureComponent {
       selectValue,
     } = this.state;
 
+    if (_.isEmpty(editFormData)) {
+      return null;
+    }
     // 客户标题列表
     const custTitle = this.getColumnsCustTitle();
 
@@ -406,7 +429,7 @@ export default class EditForm extends PureComponent {
               (<InfoForm label="账户限制设置日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
                 <DatePicker
                   disabledDate={this.setDisabledDate}
-                  value={moment(editFormData.limitStartTime || '', config.timeFormatStr)}
+                  defaultValue={moment(editFormData.limitStartTime || '', TIME_FORMAT_STRING)}
                   onChange={this.handleStartDateChange}
                 />
               </InfoForm>)
@@ -416,7 +439,7 @@ export default class EditForm extends PureComponent {
           <InfoForm label="账户限制解除日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
             <DatePicker
               disabledDate={this.relieveDisabledDate}
-              value={moment(editFormData.limitEndTime || '', config.timeFormatStr)}
+              defaultValue={moment(editFormData.limitEndTime || '', TIME_FORMAT_STRING)}
               onChange={this.handleEndDateChange}
             />
           </InfoForm>

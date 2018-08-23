@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { NormalTag } from 'lego-react-filter/src';
+import { NormalTag, MultiFilterWithSearch } from 'lego-react-filter/src';
 import logable from '../../../decorators/logable';
 import HtFilter, { TagFilter } from '../../common/htFilter';
 import { url, check } from '../../../helper';
@@ -29,7 +29,7 @@ const MORE_FILTER_TYPE = {
   more: 1,
   tag: 2,
 };
-
+const EMPTY_OBJ = {};
 // 初始化组件时，更新本地缓存
 function UpdateLocalStorage(currentValue, moreFilterOpenedList, hashString) {
   let labelFilters = [];
@@ -105,6 +105,16 @@ function updateLocalMoreFilterStorage(item, hashString) {
 }
 
 export default class Filter extends PureComponent {
+  static getDerivedStateFromProps(nextProps, state) {
+    if (state.definedLabelsInfo !== nextProps.definedLabelsInfo) {
+      return {
+        definedLabelDate: nextProps.definedLabelsInfo,
+        definedLabelsInfo: nextProps.definedLabelsInfo,
+      };
+    }
+    return null;
+  }
+
   static propTypes = {
     location: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
@@ -124,6 +134,7 @@ export default class Filter extends PureComponent {
     hashString: PropTypes.string.isRequired,
     queryIndustryList: PropTypes.func.isRequired,
     industryList: PropTypes.array.isRequired,
+    definedLabelsInfo: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -147,6 +158,21 @@ export default class Filter extends PureComponent {
     const moreFilterOpenedList = this.getMoreFilterOpenKeys(currentValue);
     UpdateLocalStorage(currentValue, moreFilterOpenedList, hashString);
     this.labelFilterVisible = false;
+    this.state = {
+      definedLabel: EMPTY_OBJ,
+      definedLabelsInfo: props.definedLabelsInfo,
+    };
+  }
+
+  @autobind
+  getOptionItemValue({ value }) {
+    return (
+      <span
+        className={styles.definedLabelItemWrap}
+      >
+        {value.labelName}
+        <span className={styles.labelType}>{ value.labelFlagValue }</span>
+      </span>);
   }
 
   // 获取更多按钮里面需要打开的过滤器id
@@ -465,6 +491,22 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '$args[0].name',
+      value: '$args[0].value',
+    },
+  })
+  handleDefinedLabelChange(labelItem) {
+    const value = _.join(labelItem.value, seperator.filterValueSeperator);
+    this.props.onFilterChange({
+      name: labelItem.id,
+      value,
+    });
+  }
+
+  @autobind
   checkPrimaryKeyLabel(primaryKeyLabels) {
     const labelList = []
       .concat(primaryKeyLabels)
@@ -573,6 +615,11 @@ export default class Filter extends PureComponent {
   @autobind
   splitLabelList(label, filters) {
     const { tagList } = this.props;
+    const finalTagList = _.reduce(
+      tagList,
+      (flattened, other) => flattened.concat(other.children),
+      [],
+    );
     const labelList = [].concat(label).filter(value => value);
     const normalTag = _.filter(labelList, key => !check.isSightingTelescope(key));
     const tagFilters = _.filter(
@@ -581,7 +628,7 @@ export default class Filter extends PureComponent {
           const filter = _.find(filters, item => item.key === key);
           if (!filter) {
             return false;
-          } else if (_.isEmpty(filter.list)) {
+          } else if (_.isEmpty(filter.list) || (filter.list && _.isEmpty(filter.list.filterList))) {
             normalTag.push(key);
             return false;
           }
@@ -591,14 +638,58 @@ export default class Filter extends PureComponent {
       });
 
     const normalTagList =
-      _.compact(_.map(normalTag, tag => _.find(tagList, item => item.id === tag)));
+      _.compact(_.map(normalTag, tag => _.find(finalTagList, item => item.id === tag)));
     const tagFilterList =
-      _.compact(_.map(tagFilters, tag => _.find(tagList, item => item.id === tag)));
+      _.compact(_.map(tagFilters, tag => _.find(finalTagList, item => item.id === tag)));
 
     return {
       normalTagList,
       tagFilterList,
     };
+  }
+
+  @autobind
+  handleCurrentDefinedLabelPage() {
+    const { definedLabel: { fetching = false } } = this.state;
+    if (!fetching) {
+      this.setState((prevState) => {
+        const { definedLabel: { currentPage = 1 } } = prevState;
+        const definedLabel = {
+          currentPage: currentPage + 1,
+          fetching: true,
+        };
+        return { definedLabel };
+      }, () => {
+        this.setState({
+          definedLabel: {
+            ...this.state.definedLabel,
+            fetching: false,
+          },
+        });
+      });
+    }
+  }
+
+  @autobind
+  handleDefinedLabelInputChange(value) {
+    const definedLabelDate = _.filter(
+      this.props.definedLabelsInfo,
+      labelItem => _.includes(labelItem.labelName, value),
+    );
+    let definedLabel = {
+      currentPage: 1,
+      fetching: false,
+    };
+    if (value) {
+      definedLabel = {
+        ...definedLabel,
+        currentPage: 0,
+      };
+    }
+    this.setState({
+      definedLabelDate,
+      definedLabel,
+    });
   }
 
   @autobind
@@ -679,13 +770,17 @@ export default class Filter extends PureComponent {
       location,
       filtersOfAllSightingTelescope,
       hashString,
+      definedLabelsInfo,
     } = this.props;
     const {
       filters = '',
       forceRefresh,
     } = location.query;
+    const { definedLabel: { currentPage = 1 }, definedLabelDate = [] } = this.state;
 
     const currentValue = url.transfromFilterValFromUrl(filters);
+    const { customLabels = [] } = currentValue;
+
     const selectedKeys = this.getMoreFilterOpenKeys(currentValue);
     if (forceRefresh === 'Y') {
       UpdateLocalStorage(currentValue, selectedKeys, hashString);
@@ -696,6 +791,14 @@ export default class Filter extends PureComponent {
     // 按照是否有子标签分类渲染
     const splitLabelList =
       this.splitLabelList(currentValue.primaryKeyLabels, filtersOfAllSightingTelescope);
+
+    // 自定义标签
+    const currentSelectDefinedLabel = _.isArray(customLabels)
+      ? _.filter(definedLabelsInfo, labelItem => _.includes(customLabels, labelItem.id))
+      : _.filter(definedLabelsInfo, labelItem => customLabels === labelItem.id);
+    const currentDefinedLabel = currentPage
+      ? _.slice(definedLabelDate, 0, currentPage * 10)
+      : definedLabelDate;
 
     return (
       <div className={styles.filterContainer}>
@@ -713,6 +816,25 @@ export default class Filter extends PureComponent {
             ))
           }
           {
+            <MultiFilterWithSearch
+              data={currentDefinedLabel}
+              value={currentSelectDefinedLabel}
+              dataMap={['id', 'labelName']}
+              filterId="customLabels"
+              filterName="自定义标签"
+              isAlwaysVisible
+              getOptionItemValue={this.getOptionItemValue}
+              dropdownStyle={{
+                overflowY: 'auto',
+                width: 250,
+                zIndex: 10,
+              }}
+              onChange={this.handleDefinedLabelChange}
+              onInputChange={this.handleDefinedLabelInputChange}
+              onScrollBottom={this.handleCurrentDefinedLabelPage}
+            />
+          }
+          {
             _.map(
               moreFilterListOpened,
               obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
@@ -722,9 +844,9 @@ export default class Filter extends PureComponent {
           {
             !_.isEmpty(this.props.tagList) ?
               <HtFilter
-                type="multiSearch"
+                type="multiWithCaterogy"
                 className={styles.filter}
-                filterName="标签条件"
+                filterName="大数据标签"
                 filterId="primaryKeyLabels"
                 value={currentValue.primaryKeyLabels}
                 data={this.props.tagList}

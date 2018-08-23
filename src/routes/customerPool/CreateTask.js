@@ -20,6 +20,7 @@ import {
   RETURN_TASK_FROM_TODOLIST,
   returnTaskEntrySource,
   TASK_CUST_SCOPE_ENTRY,
+  SOURCE_SERVICE_RESULT_CUST,
 } from '../../config/createTaskEntry';
 import withRouter from '../../decorators/withRouter';
 import styles from './createTask.less';
@@ -241,6 +242,9 @@ export default class CreateTask extends PureComponent {
     } else if (source === TASK_CUST_SCOPE_ENTRY) {
       // 从管理者视图服务经理维度发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUST_SCOPE' });
+    } else if (source === SOURCE_SERVICE_RESULT_CUST) {
+      // 从执行者视图服务结果客户明细发起的任务
+      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_SERVICE_RESULT_CUST' });
     } else {
       // 从客户列表发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });

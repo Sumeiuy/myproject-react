@@ -2,8 +2,10 @@
  * @Description: 页签切换显示
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:53:21
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-14 18:17:47
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-20 20:04:46
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-20 13:24:40
  */
 
 import React from 'react';
@@ -40,6 +42,9 @@ const TabsArea = (props) => {
     basicInfo,
     basicInfo: { missionStatusCode },
     isShowExecutorDetailLoading,
+    isSendCustsServedByPostn,
+    sendCustsServedByPostnResult,
+    clearCreateTaskData,
   } = props;
   return (
     <div className={styles.tabsContainer} >
@@ -60,6 +65,9 @@ const TabsArea = (props) => {
             queryExecutorFlowStatus={queryExecutorFlowStatus}
             queryExecutorDetail={queryExecutorDetail}
             isShowExecutorDetailLoading={isShowExecutorDetailLoading}
+            isSendCustsServedByPostn={isSendCustsServedByPostn}
+            sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+            clearCreateTaskData={clearCreateTaskData}
           />
         </TabPane>
         {hasSurvey ?
@@ -104,6 +112,19 @@ TabsArea.propTypes = {
   isSubmitSurveySucceed: PropTypes.bool,
   saveAnswersByType: PropTypes.func.isRequired,
   basicInfo: PropTypes.object.isRequired,
+  // 客户名下其他代办任务
+  getOtherTaskList: PropTypes.func.isRequired,
+  otherTaskList: PropTypes.array.isRequired,
+  fetchOtherTaskListStatus: PropTypes.bool.isRequired,
+  // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
+  isSendCustsServedByPostn: PropTypes.func.isRequired,
+  sendCustsServedByPostnResult: PropTypes.object.isRequired,
+  // 批量添加服务记录数据发生变化时的回调函数
+  onBatchServiceRecordFormChange: PropTypes.func.isRequired,
+  // 批量添加服务记录
+  saveBatchAddServiceRecord: PropTypes.func.isRequired,
+  // 清除创建任务的数据
+  clearCreateTaskData: PropTypes.func.isRequired,
 };
 
 TabsArea.defaultProps = {

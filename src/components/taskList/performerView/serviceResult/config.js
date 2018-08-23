@@ -4,7 +4,7 @@
  * @Date: 2018/5/22
  */
 
-const missionProgressMap = [
+export const MISSION_PROGRESS_MAP = [
   {
     value: 'IS_SERVED',
     type: 'Y',
@@ -37,5 +37,8 @@ const missionProgressMap = [
   },
 ];
 
-export default missionProgressMap;
-
+export const OPEN_IN_TAB_PARAM = {
+  URL: '/customerPool/createTaskFromServiceResultCust',
+  TITLE: '自建任务',
+  ID: 'RCT_FSP_CREATE_TASK_FROM_SERVICE_RESULT_CUST',
+};

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:07:12
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-14 18:17:39
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-20 13:19:21
  * @description 针对taskList > Home 组件的props类型校验模块
  */
 import PropTypes from 'prop-types';
@@ -95,4 +95,14 @@ export default {
   isShowExecutorDetailLoading: PropTypes.bool.isRequired,
   // custDetailResultByScope: PropTypes.object.isRequired,
   previewCustDetailByScope: PropTypes.func.isRequired,
+  // 客户名下其他代办任务
+  getOtherTaskList: PropTypes.func.isRequired,
+  otherTaskList: PropTypes.array.isRequired,
+  // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
+  isSendCustsServedByPostn: PropTypes.func.isRequired,
+  sendCustsServedByPostnResult: PropTypes.object.isRequired,
+  // 批量添加服务记录数据发生变化时的回调函数
+  changeBatchServiceRecordForm: PropTypes.func.isRequired,
+  // 批量添加服务记录
+  saveBatchAddServiceRecord: PropTypes.func.isRequired,
 };

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-08-13 09:41:43
- * @Last Modified by:   sunweibin
- * @Last Modified time: 2018-08-13 09:41:43
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-20 16:22:35
  */
 
 import React, { PureComponent } from 'react';
@@ -22,7 +22,6 @@ import logable from '../../../decorators/logable';
 const {
   contract: { pageType: contractPageType },
   channelsTypeProtocol: { pageType: channelsPageType },
-  filialeCustTransfer: { pageType: filialeCustTransfer },
 } = seibelConfig;
 const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
 
@@ -30,8 +29,6 @@ const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
 const dateFormat = 'YYYY/MM/DD';
 // 当前时间
 const DEFAULT_VALUE = '';
-// 不需要显示客户查询的页面
-const PAGE_NO_CUST = ['custAllotPage', 'departmentCustAllotPage'];
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -74,8 +71,6 @@ export default class Pageheader extends PureComponent {
     getNewCustomerList: PropTypes.func.isRequired,
     // 筛选后调用的Function
     filterCallback: PropTypes.func,
-    // 判断登录人当前切换的职位所在部门为分公司层级
-    checkUserIsFiliale: PropTypes.func,
     // 提供由用户来判断是否需要显示新建按钮
     isShowCreateBtn: PropTypes.func,
     // 是否调用新的客户列表接口，若为true，则使用新的获取客户列表接口，为false，则使用原来的获取客户列表接口，默认为false
@@ -99,7 +94,6 @@ export default class Pageheader extends PureComponent {
     empInfo: {},
     subtypeOptions: [],
     filterCallback: _.noop,
-    checkUserIsFiliale: _.noop,
     isShowCreateBtn: () => true,
     isUseNewCustList: false,
     moreFilters: [],
@@ -189,7 +183,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '服务经理',
-      value: '$args[0].value.ptyMngName',
+      value: '$args[1].value.ptyMngName',
     },
   })
   handleManagerSelect(name, item) {
@@ -202,7 +196,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '拟稿人',
-      value: '$args[0].value.ptyMngName',
+      value: '$args[1].value.ptyMngName',
     },
   })
   handleDrafterSelect(name, item) {
@@ -215,7 +209,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '审批人',
-      value: '$args[0].value.ptyMngName',
+      value: '$args[1].value.ptyMngName',
     },
   })
   handleApproverSelect(name, item) {
@@ -381,8 +375,8 @@ export default class Pageheader extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '申请时间',
-      min: (instance, args) => moment(args[0].startDate).format(dateFormat),
-      max: (instance, args) => moment(args[0].endDate).format(dateFormat),
+      min: (instance, args) => moment(args[0].value[0]).format(dateFormat),
+      max: (instance, args) => moment(args[0].value[1]).format(dateFormat),
     },
   })
   handleCreateDateChange(date) {
@@ -655,9 +649,7 @@ export default class Pageheader extends PureComponent {
 
   render() {
     const {
-      page,
       pageType,
-      checkUserIsFiliale,
       basicFilters,
       moreFilterData,
     } = this.props;
@@ -672,20 +664,11 @@ export default class Pageheader extends PureComponent {
     } else if (pageType === channelsPageType) {
       // 如果是通道类协议页面
       hasCreatePermission = permission.hasPermissionOfProtocolCreate(empInfo);
-    } else if (pageType === filialeCustTransfer) {
-      // 如果分公司客户人工划转,是分公司并且是HTSC 客户分配岗
-      hasCreatePermission = permission.hasFilialeCustTransferCreate(empInfo)
-        && checkUserIsFiliale();
     } else if (pageType === phoneApplyPageType) {
       hasCreatePermission = permission.hasPermissionOfPhoneApplyCreate(empInfo);
     } else {
       // 此处,通用的判断是否需要隐藏新建按钮
       hasCreatePermission = this.props.isShowCreateBtn();
-    }
-    // 如果是营业部客户分配页面
-    if (page === PAGE_NO_CUST[1]) {
-      hasCreatePermission = permission.hasKFYYBZXGPermission(empInfo) && checkUserIsFiliale();
-      // hasCreatePermission = this.props.isShowCreateBtn();
     }
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>

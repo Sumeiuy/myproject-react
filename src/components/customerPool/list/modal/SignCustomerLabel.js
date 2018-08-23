@@ -8,9 +8,9 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Modal, Tag } from 'antd';
+import { MultiFilterWithSearch } from 'lego-react-filter';
 
 import CreateLabel from './CreateLabel';
-import { MultiFilterWithSearch } from '../../../../../node_modules/lego-react-filter';
 import Icon from '../../../common/Icon';
 import styles from './addCustomerLabel.less';
 import logable from '../../../../decorators/logable';
@@ -78,9 +78,9 @@ export default class SignCustomerLabel extends PureComponent {
   getOptionItemValue({ value }) {
     const { value: searchValue } = this.state;
     return (
-      <span className={styles.labelItemWrap}>
-        {replaceKeyWord(value.labelName, searchValue)}
-        ({value.labelTypeName})
+      <span className={styles.signItemWrap}>
+        <span>{replaceKeyWord(value.labelName, searchValue)}</span>
+        <span className={styles.labelType}>{value.labelTypeName}</span>
       </span>);
   }
 
