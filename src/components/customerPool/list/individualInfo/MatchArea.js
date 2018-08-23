@@ -477,8 +477,14 @@ export default class MatchArea extends PureComponent {
   // 匹配自定义标签
   renderDefinedLabels(item) {
     const { listItem: { relatedLabels } } = this.props;
+    const { customLabels = [] } = this.getFilters();
+    const finalCustomLabels = _.isArray(customLabels) ? customLabels : [customLabels];
     // 获取自定义标签
-    const fspLabel = _.filter(relatedLabels, labelItem => labelItem.source === FSP_LABEL_SOURCE);
+    const fspLabel = _.filter(
+      relatedLabels,
+      labelItem =>
+        labelItem.source === FSP_LABEL_SOURCE && _.includes(finalCustomLabels, labelItem.id),
+    );
     const markedEle = _.map(fspLabel, (labelItem, index) => {
       const { name, description } = labelItem;
       const labelInfo = index === fspLabel.length - 1 ? name : `${name},`;
@@ -520,7 +526,7 @@ export default class MatchArea extends PureComponent {
     if (!_.isEmpty(listItem.relatedLabels)) {
       let relatedLabels = _.filter(
         listItem.relatedLabels,
-        item => item.source !== FSP_LABEL_SOURCE && _.includes(item.name, searchText),
+        item => item && _.includes(item.name, searchText),
       );
       if (_.isArray(matchLabels)) {
         relatedLabels = matchLabels;

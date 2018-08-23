@@ -452,7 +452,7 @@ const matchRule = {
   customLabels: {
     inset: true,
     key: [{
-      name: '客户标签',
+      name: '自定义标签',
       id: 'relatedLabels',
       render: 'renderDefinedLabels',
     }],
