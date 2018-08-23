@@ -108,7 +108,7 @@ export default class Filter extends PureComponent {
   static getDerivedStateFromProps(nextProps, state) {
     if (state.preDefinedLabelList !== nextProps.definedLabelsInfo) {
       return {
-        definedLabelFilterDate: nextProps.definedLabelsInfo,
+        definedLabelFilterData: nextProps.definedLabelsInfo,
         preDefinedLabelList: nextProps.definedLabelsInfo,
       };
     }
@@ -672,7 +672,7 @@ export default class Filter extends PureComponent {
 
   @autobind
   handleDefinedLabelInputChange(value) {
-    const definedLabelFilterDate = _.filter(
+    const definedLabelFilterData = _.filter(
       this.props.definedLabelsInfo,
       labelItem => _.includes(labelItem.labelName, value),
     );
@@ -687,7 +687,7 @@ export default class Filter extends PureComponent {
       };
     }
     this.setState({
-      definedLabelFilterDate,
+      definedLabelFilterData,
       definedLabel,
     });
   }
@@ -775,7 +775,7 @@ export default class Filter extends PureComponent {
     const {
       filters = '',
     } = location.query;
-    const { definedLabel: { currentPage = 1 }, definedLabelFilterDate = [] } = this.state;
+    const { definedLabel: { currentPage = 1 }, definedLabelFilterData = [] } = this.state;
 
     const currentValue = url.transfromFilterValFromUrl(filters);
     const { customLabels = [] } = currentValue;
@@ -793,8 +793,8 @@ export default class Filter extends PureComponent {
       ? _.filter(definedLabelsInfo, labelItem => _.includes(customLabels, labelItem.id))
       : _.filter(definedLabelsInfo, labelItem => customLabels === labelItem.id);
     const currentDefinedLabel = currentPage
-      ? _.slice(definedLabelFilterDate, 0, currentPage * 10)
-      : definedLabelFilterDate;
+      ? _.slice(definedLabelFilterData, 0, currentPage * 10)
+      : definedLabelFilterData;
 
     return (
       <div className={styles.filterContainer}>
