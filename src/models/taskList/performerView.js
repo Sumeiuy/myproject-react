@@ -3,7 +3,7 @@
  * @Description: 执行者视图 model
  * @Date: 2018-08-20 13:15:45
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-21 16:57:13
+ * @Last Modified time: 2018-08-21 16:52:13
  */
 import _ from 'lodash';
 import moment from 'moment';

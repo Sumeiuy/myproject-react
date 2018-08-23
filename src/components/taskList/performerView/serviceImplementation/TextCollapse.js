@@ -78,7 +78,7 @@ export default class TextCollapse extends Component {
       onClick: this.handleClick,
     };
     if (buttonId) {
-      buttonProps = { id: buttonId, key: buttonId, ...buttonProps };
+      buttonProps = { id: buttonId, ...buttonProps };
     }
     return (
       <div className={styles.container}>
