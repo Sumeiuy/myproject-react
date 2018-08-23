@@ -102,6 +102,7 @@ export default class Search extends PureComponent {
       ...options,
       ...sortParams,
       filters,
+      forceRefresh: 'Y',
     };
     const condition = urlHelper.stringify({ ...newQuery });
     const url = `${firstUrl}?${condition}`;
