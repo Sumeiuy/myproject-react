@@ -97,7 +97,7 @@ export default ({ routerRedux, effect }) => ({
   queryDistinctCustListDetailOfMission: effect(effects.queryDistinctCustListDetailOfMission,
     { loading: false }),
   // 客户名下其他代办任务
-  getOtherTaskList: effect(effects.getOtherTaskList, { loading: true }),
+  getOtherTaskList: effect(effects.getOtherTaskList),
   // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
   isSendCustsServedByPostn: effect(effects.isSendCustsServedByPostn),
   // 批量添加服务记录数据发生变化时的回调函数
