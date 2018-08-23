@@ -32,7 +32,7 @@ const KEY_SERVICE_STRATEGY = 'contents';
 // 任务提示的key
 const KEY_TASK_HINT = 'hint';
 // 两行显示最大字数
-const MAX_LENGTH = 42;
+const MAX_LENGTH = 36;
 
 export default class CustOtherTaskList extends PureComponent {
   static propTypes = {
