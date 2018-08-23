@@ -45,7 +45,8 @@ export default class CreateLabelType extends PureComponent {
       if (!error) {
         addLabel({ ...values, labelFlag: 2 })
           .then((duplicationName) => {
-            if (duplicationName) {
+            // 当校验标签重名时后端返回null
+            if (_.isNull(duplicationName)) {
               this.props.form.setFields({
                 labelType: {
                   value: values.labelType,

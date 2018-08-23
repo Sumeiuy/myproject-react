@@ -220,7 +220,7 @@ export default class SignCustomerLabel extends PureComponent {
           <div className={styles.selectedInfo}>
             {
               mainPosition
-                ? '请为客户选择一个标签：'
+                ? '请为客户选择或添加一个标签：'
                 : null
             }
             {
