@@ -9,7 +9,7 @@ import { accountLimit as api, common as commonApi } from '../api';
 import config from '../components/accountLimit/config';
 import { time } from '../helper';
 
-const { attachmentMap } = config;
+const { attachmentMap, RELIEVE_CODE } = config;
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 
@@ -93,10 +93,9 @@ export default {
         attachmentArray.push(responsePayload);
       }
       const editPageAttachmentList = [attachmentMap[0]];
-      if (newResultData.operateType === config.relieveCode && newResultData.bankConfirm) {
+      if (newResultData.operateType === RELIEVE_CODE && newResultData.bankConfirm) {
         editPageAttachmentList.push(attachmentMap[1]);
       }
-      console.log('editPageAttachmentList', editPageAttachmentList, attachmentArray);
       newResultData.attachList = editPageAttachmentList.map((parentItem) => {
         let newItem = {};
         attachmentArray.forEach((childItem) => {
