@@ -893,6 +893,7 @@ export default class CustomerList extends PureComponent {
         selectAll: false,
         selectedIds: '',
         hashString: this.hashString, // 唯一的本地缓存hash
+        forceRefresh: 'N', // 关闭强制刷新，从新版导航顶部下钻进客户列表，会强制刷新客户列表页面
       },
     });
   }
