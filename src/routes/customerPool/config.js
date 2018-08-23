@@ -52,7 +52,7 @@ const FULL_ENTERLIST = ['search', 'tag', 'sightingTelescope', 'business', 'assoc
 // 任务管理岗权限作用的首页入口列表
 // 新增一个产品潜在目标客户，用的HTSC 任务管理岗职责
 const ENTERLIST_PERMISSION_TASK_MANAGE = ['search', 'tag', 'sightingTelescope', 'association', 'external',
-  'orderCombination', 'securitiesProducts', 'productPotentialTargetCust'];
+  'orderCombination', 'securitiesProducts', 'productPotentialTargetCust', 'manageFsp', 'personalFsp'];
 
 // 首页指标查询权限作用的首页入口列表
 const ENTERLIST_PERMISSION_INDEX_QUERY = ['custIndicator', 'numOfCustOpened', 'assetsTransactions', 'productSale',
