@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-22 17:56:48
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-23 17:29:47
  */
 
 import React, { PureComponent } from 'react';
@@ -196,9 +196,16 @@ export default class ServiceImplementation extends PureComponent {
       // 是否显示批量添加服务记录弹窗
       isShowBatchAddServiceRecord: false,
     };
+    // 标志位，是否是第一次去请求服务实施下的客户列表数据，默认为true
+    this.isFirstGetTaskFlowData = true;
   }
 
   componentDidMount() {
+    const { isFold, getPageSize } = this.props;
+    const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
+    const newPageSize = getPageSize(isFoldFspLeftMenu, isFold);
+    // 首次进入，请求服务实施列表
+    this.getTaskFlowData(newPageSize);
     // 给FSP折叠菜单按钮注册点击事件
     window.onFspSidebarbtn(this.handleFspLeftMenuClick);
   }
@@ -213,8 +220,10 @@ export default class ServiceImplementation extends PureComponent {
     const pageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
     if (
-      prevProps.isFold !== isFold
-      || prevState.isFoldFspLeftMenu !== isFoldFspLeftMenu
+      (
+        prevProps.isFold !== isFold
+        || prevState.isFoldFspLeftMenu !== isFoldFspLeftMenu
+      ) && !this.isFirstGetTaskFlowData
     ) {
       const { parameter } = this.props;
       const { rowId, assetSort, state, activeIndex } = parameter;
@@ -225,6 +234,8 @@ export default class ServiceImplementation extends PureComponent {
         assetSort,
         pageSize,
         pageNum,
+      }).then(() => {
+        this.isFirstGetTaskFlowData = false;
       });
     }
     // 任务切换时，重新请求服务实施列表，参数为默认值
