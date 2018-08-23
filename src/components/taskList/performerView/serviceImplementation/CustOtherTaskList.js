@@ -10,6 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classnames from 'classnames';
 import CommonTable from '../../../common/biz/CommonTable';
 import TextCollapse from './TextCollapse';
 import styles from './custOtherTaskList.less';
@@ -74,6 +75,10 @@ export default class CustOtherTaskList extends PureComponent {
       foldButtonId,
       title,
     } = this.props;
+    const tableClassNames = classnames({
+      [styles.content]: true,
+      [styles.hide]: _.isEmpty(otherTaskList),
+    });
     return (
       <div className={styles.container}>
         <div className={styles.inner}>
@@ -84,7 +89,7 @@ export default class CustOtherTaskList extends PureComponent {
             buttonId={foldButtonId}
             key={(otherTaskList[0] || EMPTY_OBJECT).flowId}
           >
-            <div className={styles.content}>
+            <div className={tableClassNames}>
               <CommonTable
                 titleList={this.getColumnsCustTitleList()}
                 data={otherTaskList}

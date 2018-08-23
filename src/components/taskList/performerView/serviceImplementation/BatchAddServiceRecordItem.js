@@ -85,8 +85,8 @@ export default class BatchAddServiceRecordItem extends PureComponent {
         };
       }
       if (
-          // 判断所选得一级反馈里是否有二级反馈的选项，如果有的话所选二级反馈不能为空
-          !_.isEmpty(this.getFirstFeedbackItem(data[FIRST_FEEDBACK_KEY]).childList) &&
+          // 判断是否需要显示二级反馈选框，如果需要的话所选二级反馈不能为空
+          this.checkIsNeedSecondFeedback(data[FIRST_FEEDBACK_KEY]) &&
           !data[SECOND_FEEDBACK_KEY]
         ) {
         return {
@@ -152,11 +152,11 @@ export default class BatchAddServiceRecordItem extends PureComponent {
   // 根据当前选择的一级反馈是否有二级反馈列表来判断是否显示二级反馈的选框
   @autobind
   getSecondClassName() {
-    const { data: { serveCustFeedBack } } = this.props;
-    const firstFeedbackItem = this.getFirstFeedbackItem(serveCustFeedBack);
+    const { data } = this.props;
     return classnames({
-      // 当前已经选择的一级反馈为空，或者该一级反馈下没有二级反馈列表(由于选择的code可能为数字，所以不能用_.isEmpty判断)
-      [styles.hide]: !serveCustFeedBack || _.isEmpty(firstFeedbackItem.childList),
+      // 当前已经选择的一级反馈为空，或者该一级反馈不需要显示二级反馈(由于选择的code可能为数字，所以不能用_.isEmpty判断)
+      [styles.hide]: !data[FIRST_FEEDBACK_KEY] ||
+        !this.checkIsNeedSecondFeedback(data[FIRST_FEEDBACK_KEY]),
       [styles.secondSelectBox]: true,
     });
   }
@@ -193,6 +193,19 @@ export default class BatchAddServiceRecordItem extends PureComponent {
         {text}
       </span>
     );
+  }
+
+  // 判断是否需要选择二级反馈
+  @autobind
+  checkIsNeedSecondFeedback(firstCode) {
+    const firstItem = this.getFirstFeedbackItem(firstCode);
+    const { childList = EMPTY_ARRAY } = firstItem;
+    // 如果该一级反馈的二级反馈只有一个选项，并且该二级反馈的name字段和一级反馈name相同，就不需要显示选择二级反馈的选框
+    if (childList.length === 1 &&
+      childList[0].name === firstItem.name) {
+      return false;
+    }
+    return true;
   }
 
   @autobind
@@ -391,6 +404,7 @@ export default class BatchAddServiceRecordItem extends PureComponent {
           <div className={styles.upload}>
             <div className={uploadHideClass}>
               <CommonUpload
+                attachmentList={EMPTY_ARRAY}
                 edit
                 uploadAttachment={this.handleUploadSuccess}
                 attachment={''}
