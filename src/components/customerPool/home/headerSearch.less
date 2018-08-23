@@ -17,10 +17,33 @@
   .inner {
     // padding-top: 20px;
     .inputBox {
-      width: 716px;
+      width: 540px;
       :global {
+        .ant-select.ant-select-opened,
+        .ant-select.ant-select-focused,
+        .ant-select.ant-select-opened.ant-select-focused, {
+          .ant-btn {
+            background-color: #10aeff;
+          }
+        }
+        .ant-select-selection.ant-select-selection--single {
+          background: rgba(255, 255, 255, 0.30);
+        }
+        .ant-select-auto-complete.ant-select .ant-input {
+          color: #fff;
+          &:focus {
+            background: #fff;
+            color: #333;
+          }
+        }
+        .ant-select-auto-complete.ant-select .ant-input:focus,
+        .ant-select-auto-complete.ant-select .ant-input:hover {
+          box-shadow: none;
+        }
         .ant-select-auto-complete.ant-select .ant-select-selection__placeholder {
           margin-left: 20px;
+          color: #fff;
+          font-size: 12px;
         }
         .ant-input {
           overflow: visible;
@@ -38,10 +61,13 @@
         }
         .ant-input-suffix {
           right: 0;
-          background-color: #108ee9;
+          background: transparent;
           padding-left: 2px;
           border-radius: 0 4px 4px 0;
           transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+          .ant-btn.search-btn.ant-btn-primary {
+            border-radius: 0 4px 4px 0;
+          }
         }
         .ant-input-suffix:hover {
           background-color: #10aeff;
