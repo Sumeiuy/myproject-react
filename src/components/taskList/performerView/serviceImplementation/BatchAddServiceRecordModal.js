@@ -65,7 +65,7 @@ export default class BatchAddServiceRecordModal extends PureComponent {
     const { childList = EMPTY_ARRAY } = firstItem;
     // 如果该一级反馈的二级反馈只有一个选项，并且该二级反馈的name字段和一级反馈name相同，就不需要显示选择二级反馈的选框
     if (childList.length === 1 &&
-      (childList[0] || EMPTY_OBJECT).name === firstItem.name) {
+      childList[0].name === firstItem.name) {
       return false;
     }
     return true;
