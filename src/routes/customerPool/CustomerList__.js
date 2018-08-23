@@ -628,6 +628,9 @@ export default class CustomerList extends PureComponent {
     if (!_.isEqual(preOtherQuery, otherQuery) &&
       !sessionStore.get(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`)) {
       this.getCustomerList(nextProps);
+      if(query.forceRefresh === 'Y') {
+        this.getFiltersOfAllSightingTelescope(query);
+      }
     }
     sessionStore.set(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
   }

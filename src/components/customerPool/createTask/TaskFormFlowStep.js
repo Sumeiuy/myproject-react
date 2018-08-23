@@ -80,6 +80,7 @@ export default class TaskFormFlowStep extends PureComponent {
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object,
     industryList: PropTypes.array,
+    definedLabelsInfo: PropTypes.array,
   };
 
   static defaultProps = {
@@ -92,6 +93,7 @@ export default class TaskFormFlowStep extends PureComponent {
     getApprovalBtn: noop,
     taskBasicInfo: {},
     industryList: [],
+    definedLabelsInfo: PropTypes.array,
   };
 
   constructor(props) {
@@ -834,6 +836,7 @@ export default class TaskFormFlowStep extends PureComponent {
       creator,
       taskBasicInfo,
       industryList,
+      definedLabelsInfo,
     } = this.props;
     // motCustfeedBackDict改成新的字典missionType
     const { executeTypes, missionType: missionTypeDict } = dict;
@@ -859,6 +862,7 @@ export default class TaskFormFlowStep extends PureComponent {
         missionType={missionType}
         taskBasicInfo={taskBasicInfo}
         industryList={industryList}
+        definedLabelsInfo={definedLabelsInfo}
       />,
     }, {
       title: '任务评估',
