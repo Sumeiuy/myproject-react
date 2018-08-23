@@ -242,6 +242,14 @@ export default class BatchAddServiceRecordItem extends PureComponent {
   })
   handleFirstFeedbackChange(value) {
     this.handleFormChange(FIRST_FEEDBACK_KEY, value);
+    // 如果该当前一级反馈不需要手动选择二级反馈时，自动把该一级反馈下的第一个二级反馈的id回填
+    if (!this.checkIsNeedSecondFeedback(value)) {
+      const firstItem = this.getFirstFeedbackItem(value);
+      const { childList } = firstItem;
+      this.handleFormChange(SECOND_FEEDBACK_KEY, childList[0].id);
+    } else {
+      this.handleFormChange(SECOND_FEEDBACK_KEY, '');
+    }
   }
 
   // 选择一级反馈
