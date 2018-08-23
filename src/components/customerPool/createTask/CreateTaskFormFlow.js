@@ -54,6 +54,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     isSendCustsServedByPostn: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object,
     industryList: PropTypes.array,
+    definedLabelsInfo: PropTypes.array,
   }
 
   static defaultProps = {
@@ -69,6 +70,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     getApprovalBtn: noop,
     taskBasicInfo: {},
     industryList: [],
+    definedLabelsInfo: [],
   }
 
   constructor(props) {
@@ -257,6 +259,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       isSendCustsServedByPostn,
       taskBasicInfo,
       industryList,
+      definedLabelsInfo,
     } = this.props;
     return (
       <div className={styles.taskInner}>
@@ -287,6 +290,7 @@ export default class CreateTaskFormFlow extends PureComponent {
           isSendCustsServedByPostn={isSendCustsServedByPostn}
           taskBasicInfo={taskBasicInfo}
           industryList={industryList}
+          definedLabelsInfo={definedLabelsInfo}
         />
       </div>
     );

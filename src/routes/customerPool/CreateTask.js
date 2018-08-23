@@ -63,6 +63,8 @@ const mapStateToProps = state => ({
   taskBasicInfo: state.tasklist.taskBasicInfo,
   // 持仓行业过滤器的数据
   industryList: state.customerPool.industryList,
+  // 自定义标签的信息
+  definedLabelsInfo: state.customerPool.definedLabelsInfo,
 });
 
 const mapDispatchToProps = {
@@ -117,6 +119,7 @@ export default class CreateTask extends PureComponent {
     getTaskBasicInfo: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object,
     industryList: PropTypes.array,
+    definedLabelsInfo: PropTypes.array,
   };
 
   static defaultProps = {
@@ -132,6 +135,7 @@ export default class CreateTask extends PureComponent {
     getApprovalBtn: () => { },
     taskBasicInfo: {},
     industryList: [],
+    definedLabelsInfo: [],
   };
 
   constructor(props) {
@@ -279,6 +283,7 @@ export default class CreateTask extends PureComponent {
       isSendCustsServedByPostn,
       taskBasicInfo,
       industryList,
+      definedLabelsInfo,
     } = this.props;
 
     const { isSuccess, isApprovalListLoadingEnd, isShowApprovalModal } = this.state;
@@ -311,6 +316,7 @@ export default class CreateTask extends PureComponent {
             isSendCustsServedByPostn={isSendCustsServedByPostn}
             taskBasicInfo={taskBasicInfo}
             industryList={industryList}
+            definedLabelsInfo={definedLabelsInfo}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}
