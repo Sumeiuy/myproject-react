@@ -74,6 +74,7 @@ export default class CreateTaskForm extends PureComponent {
     templetDesc: PropTypes.string,
     isSightLabel: PropTypes.bool,
     industryList: PropTypes.array,
+    definedLabelsInfo: PropTypes.array,
   }
 
   static defaultProps = {
@@ -89,6 +90,7 @@ export default class CreateTaskForm extends PureComponent {
     templetDesc: '',
     isSightLabel: false,
     industryList: [],
+    definedLabelsInfo: [],
   }
 
   static contextTypes = {
@@ -370,9 +372,15 @@ export default class CreateTaskForm extends PureComponent {
   @autobind
   getFilterInfo() {
     const { dict } = this.context;
-    const { location: { query }, industryList } = this.props;
+    const { location: { query }, industryList, definedLabelsInfo } = this.props;
     const filterObj = url.transfromFilterValFromUrl(query.filters);
-    const { htmlStr, suggestionList } = getFilterInfo({ filterObj, dict, industryList, query });
+    const { htmlStr, suggestionList } = getFilterInfo({
+      filterObj,
+      dict,
+      industryList,
+      query,
+      definedLabelsInfo,
+    });
     this.setState(state => ({
       statusData: [
         ...state.statusData,

@@ -106,10 +106,10 @@ function updateLocalMoreFilterStorage(item, hashString) {
 
 export default class Filter extends PureComponent {
   static getDerivedStateFromProps(nextProps, state) {
-    if (state.definedLabelsInfo !== nextProps.definedLabelsInfo) {
+    if (state.prevDefinedLabelsInfo !== nextProps.definedLabelsInfo) {
       return {
-        definedLabelDate: nextProps.definedLabelsInfo,
-        definedLabelsInfo: nextProps.definedLabelsInfo,
+        definedLabelFilterData: nextProps.definedLabelsInfo,
+        prevDefinedLabelsInfo: nextProps.definedLabelsInfo,
       };
     }
     return null;
@@ -160,7 +160,7 @@ export default class Filter extends PureComponent {
     this.labelFilterVisible = false;
     this.state = {
       definedLabel: EMPTY_OBJ,
-      definedLabelsInfo: props.definedLabelsInfo,
+      prevDefinedLabelsInfo: props.definedLabelsInfo,
     };
   }
 
@@ -672,7 +672,7 @@ export default class Filter extends PureComponent {
 
   @autobind
   handleDefinedLabelInputChange(value) {
-    const definedLabelDate = _.filter(
+    const definedLabelFilterData = _.filter(
       this.props.definedLabelsInfo,
       labelItem => _.includes(labelItem.labelName, value),
     );
@@ -687,7 +687,7 @@ export default class Filter extends PureComponent {
       };
     }
     this.setState({
-      definedLabelDate,
+      definedLabelFilterData,
       definedLabel,
     });
   }
@@ -774,15 +774,19 @@ export default class Filter extends PureComponent {
     } = this.props;
     const {
       filters = '',
+      forceRefresh,
     } = location.query;
-    const { definedLabel: { currentPage = 1 }, definedLabelDate = [] } = this.state;
+    const { definedLabel: { currentPage = 1 }, definedLabelFilterData = [] } = this.state;
 
     const currentValue = url.transfromFilterValFromUrl(filters);
     const { customLabels = [] } = currentValue;
 
-    const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
-
     const selectedKeys = this.getMoreFilterOpenKeys(currentValue);
+    if (forceRefresh === 'Y') {
+      UpdateLocalStorage(currentValue, selectedKeys, hashString);
+      this.labelFilterVisible = false;
+    }
+    const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
 
     // 按照是否有子标签分类渲染
     const splitLabelList =
@@ -793,8 +797,8 @@ export default class Filter extends PureComponent {
       ? _.filter(definedLabelsInfo, labelItem => _.includes(customLabels, labelItem.id))
       : _.filter(definedLabelsInfo, labelItem => customLabels === labelItem.id);
     const currentDefinedLabel = currentPage
-      ? _.slice(definedLabelDate, 0, currentPage * 10)
-      : definedLabelDate;
+      ? _.slice(definedLabelFilterData, 0, currentPage * 10)
+      : definedLabelFilterData;
 
     return (
       <div className={styles.filterContainer}>
