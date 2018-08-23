@@ -26,7 +26,7 @@ const BLOCK_JSP_TEST_ELEM = [
       },
     ],
   },
-  {
+ /*  {
     pathname: '/fsp/customerCenter/contractSelectOperate',
     test: [
       {
@@ -35,7 +35,7 @@ const BLOCK_JSP_TEST_ELEM = [
         isCondition: true, // 条件满足时候，返回true
       },
     ],
-  },
+  }, */
 ];
 
 function checkJSPValue(testElems = []) {

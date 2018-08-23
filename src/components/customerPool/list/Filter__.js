@@ -774,15 +774,19 @@ export default class Filter extends PureComponent {
     } = this.props;
     const {
       filters = '',
+      forceRefresh,
     } = location.query;
     const { definedLabel: { currentPage = 1 }, definedLabelDate = [] } = this.state;
 
     const currentValue = url.transfromFilterValFromUrl(filters);
     const { customLabels = [] } = currentValue;
 
-    const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
-
     const selectedKeys = this.getMoreFilterOpenKeys(currentValue);
+    if (forceRefresh === 'Y') {
+      UpdateLocalStorage(currentValue, selectedKeys, hashString);
+      this.labelFilterVisible = false;
+    }
+    const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
 
     // 按照是否有子标签分类渲染
     const splitLabelList =
