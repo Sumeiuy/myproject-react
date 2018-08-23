@@ -6,19 +6,23 @@ const BLOCK_JSP_TEST_ELEM = [
     test: [
       {
         id: '#isEdit',
-        value: 'N',
+        value: 'Y',
+        isCondition: false, // 条件不满足的时候，返回true
       },
       {
         id: '#isPerEdit',
-        value: 'N',
+        value: 'Y',
+        isCondition: false,
       },
       {
         id: '#isPersonalEdit',
-        value: 'N',
+        value: 'Y',
+        isCondition: false,
       },
       {
         id: '#isPersonalEdit',
-        value: 'N',
+        value: 'Y',
+        isCondition: false,
       },
     ],
   },
@@ -28,6 +32,7 @@ const BLOCK_JSP_TEST_ELEM = [
       {
         id: '#tgcontractlist_custcomp_econNum',
         value: '',
+        isCondition: true, // 条件满足时候，返回true
       },
     ],
   },
@@ -36,7 +41,7 @@ const BLOCK_JSP_TEST_ELEM = [
 function checkJSPValue(testElems = []) {
   return _.every(testElems, (elem) => {
     if ($(elem.id)) {
-      return $(elem.id).val() === elem.value;
+      return elem.isCondition ? $(elem.id).val() === elem.value : $(elem.id).val() !== elem.value;
     }
     return true;
   });
