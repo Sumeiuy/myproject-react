@@ -482,7 +482,7 @@ export default {
         const condition = {
           custId: resultData.custId,
           eventId: resultData.eventId,
-          mssnId: resultData.missionFlowId,
+          flowId: resultData.missionFlowId,
         };
         const otherTaskListPayload = {
           list: EMPTY_LIST,

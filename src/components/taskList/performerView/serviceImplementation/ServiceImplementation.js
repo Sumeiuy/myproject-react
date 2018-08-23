@@ -199,11 +199,6 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   componentDidMount() {
-    const { isFold, getPageSize } = this.props;
-    const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
-    const newPageSize = getPageSize(isFoldFspLeftMenu, isFold);
-    // 首次进入，请求服务实施列表
-    this.getTaskFlowData(newPageSize);
     // 给FSP折叠菜单按钮注册点击事件
     window.onFspSidebarbtn(this.handleFspLeftMenuClick);
   }
@@ -233,7 +228,9 @@ export default class ServiceImplementation extends PureComponent {
       });
     }
     // 任务切换时，重新请求服务实施列表，参数为默认值
-    if (prevProps.currentId !== currentId) {
+    if (prevProps.currentId !== currentId
+      || query.missionViewType !== prevProps.location.query.missionViewType
+    ) {
       this.getTaskFlowData(pageSize);
     }
     if (query !== prevProps.location.query) {
@@ -244,7 +241,7 @@ export default class ServiceImplementation extends PureComponent {
     }
     // 第一次渲染完判断是否是第一次进入执行者视图，是的话显示引导 放在didupdate里是为了解决在didmount下并没有渲染完成导致定位不准的问题
     if (!this.isFirstUseCollapse() && fetchOtherTaskListStatus) {
-      setTimeout(this.intialGuide, 0);
+      setTimeout(this.intialGuide, 500);
       store.set(FIRSTUSECOLLAPSE_PERFORMERVIEW, 'NO');
     }
   }

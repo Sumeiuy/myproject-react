@@ -159,6 +159,7 @@ export default class BatchAddServiceRecordModal extends PureComponent {
         modalKey={modalKey}
         wrapClassName={styles.addCustModal}
         selfBtnGroup={selfBtnGroup}
+        maskClosable={false}
       >
         <div className={styles.modalBox}>
           <h3 className={styles.title}>
