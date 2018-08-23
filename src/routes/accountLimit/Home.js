@@ -34,7 +34,7 @@ const {
   PAGE_VALUE,
   PAGE_TYPE,
   operateTypeArray,
-  relieveCode,  // 限制解除的 value
+  RELIEVE_CODE,  // 限制解除的 value
   basicFilters,
   moreFilters,
   moreFilterData,
@@ -381,7 +381,7 @@ export default class AccountLimitHome extends PureComponent {
     const filterOperate = _.filter(operateTypeArray, o => o.value === subType);
     const operateTypeName = filterOperate[0].label || '';
     // 限制解除时为字体加上其他颜色
-    const otherStyle = subType === relieveCode
+    const otherStyle = subType === RELIEVE_CODE
     ? {
       color: '#dc8f4c',
     }
