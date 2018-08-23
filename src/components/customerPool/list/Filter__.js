@@ -106,10 +106,10 @@ function updateLocalMoreFilterStorage(item, hashString) {
 
 export default class Filter extends PureComponent {
   static getDerivedStateFromProps(nextProps, state) {
-    if (state.preDefinedLabelList !== nextProps.definedLabelsInfo) {
+    if (state.prevDefinedLabelsInfo !== nextProps.definedLabelsInfo) {
       return {
         definedLabelFilterData: nextProps.definedLabelsInfo,
-        preDefinedLabelList: nextProps.definedLabelsInfo,
+        prevDefinedLabelsInfo: nextProps.definedLabelsInfo,
       };
     }
     return null;
@@ -160,7 +160,7 @@ export default class Filter extends PureComponent {
     this.labelFilterVisible = false;
     this.state = {
       definedLabel: EMPTY_OBJ,
-      preDefinedLabelList: props.definedLabelsInfo,
+      prevDefinedLabelsInfo: props.definedLabelsInfo,
     };
   }
 
