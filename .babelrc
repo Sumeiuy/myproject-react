@@ -7,8 +7,8 @@
       },
       "modules": false
     }],
-    "@babel/preset-react",
-    "@babel/preset-flow"
+    "@babel/preset-flow",
+    "@babel/preset-react"
   ],
   "plugins": [
     [
@@ -17,11 +17,11 @@
         "style": true
       }
     ],
+    ["@babel/plugin-transform-runtime", { "corejs": 2 }],
     ["@babel/plugin-proposal-decorators", { "legacy": true }],
     ["@babel/plugin-proposal-class-properties", { "loose": true }],
-    "@babel/plugin-proposal-object-rest-spread",
-    "@babel/plugin-syntax-dynamic-import",
-    ["@babel/plugin-transform-runtime", { "corejs": 2 }]
+    ["@babel/plugin-proposal-object-rest-spread"],
+    ["@babel/plugin-syntax-dynamic-import"]
   ],
   "env": {
     "production": {},
@@ -31,7 +31,8 @@
           "dva-hmr", {
             "container": ".react-app",
             "quiet": false
-          }
+          },
+          "@babel/plugin-transform-react-jsx-source"
         ]
       ]
     }

@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 import dynamic from 'dva/dynamic';
 
-// import CustomerPool from '../routes/customerPool/Home';
+import CustomerPool from '../routes/customerPool/Home';
 import { env } from '../helper';
 
 let routerDataCache;
@@ -198,9 +198,9 @@ export const getRouterData = (app) => {
 
     // 直接进入
     '/customerPool': {
-      //component: CustomerPool,
-      component: dynamicWrapper(app, ['customerPool', 'morningBoradcast'], () => 
-        import('../routes/customerPool/Home' /* webpackChunkName: "customerPool" */)),
+      component: CustomerPool,
+      // component: dynamicWrapper(app, ['customerPool', 'morningBoradcast'], () => 
+      //   import('../routes/customerPool/Home' /* webpackChunkName: "customerPool" */)),
     },
     // 从 customerPool 搜索框下方--任务概览--第三个选项【代办流程】进入
     '/customerPool/todo': {
@@ -260,7 +260,8 @@ export const getRouterData = (app) => {
     },
     // 标签管理页面发起任务
     '/customerPool/createTaskFromLabelManagement': {
-      component: CreateTask,
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+        import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 客户分组管理
     '/customerPool/customerGroupManage': {
