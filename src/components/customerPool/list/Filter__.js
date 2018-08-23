@@ -106,10 +106,10 @@ function updateLocalMoreFilterStorage(item, hashString) {
 
 export default class Filter extends PureComponent {
   static getDerivedStateFromProps(nextProps, state) {
-    if (state.definedLabelsInfo !== nextProps.definedLabelsInfo) {
+    if (state.preDefinedLabelList !== nextProps.definedLabelsInfo) {
       return {
-        definedLabelDate: nextProps.definedLabelsInfo,
-        definedLabelsInfo: nextProps.definedLabelsInfo,
+        definedLabelFilterDate: nextProps.definedLabelsInfo,
+        preDefinedLabelList: nextProps.definedLabelsInfo,
       };
     }
     return null;
@@ -160,7 +160,7 @@ export default class Filter extends PureComponent {
     this.labelFilterVisible = false;
     this.state = {
       definedLabel: EMPTY_OBJ,
-      definedLabelsInfo: props.definedLabelsInfo,
+      preDefinedLabelList: props.definedLabelsInfo,
     };
   }
 
@@ -672,7 +672,7 @@ export default class Filter extends PureComponent {
 
   @autobind
   handleDefinedLabelInputChange(value) {
-    const definedLabelDate = _.filter(
+    const definedLabelFilterDate = _.filter(
       this.props.definedLabelsInfo,
       labelItem => _.includes(labelItem.labelName, value),
     );
@@ -687,7 +687,7 @@ export default class Filter extends PureComponent {
       };
     }
     this.setState({
-      definedLabelDate,
+      definedLabelFilterDate,
       definedLabel,
     });
   }
@@ -775,7 +775,7 @@ export default class Filter extends PureComponent {
     const {
       filters = '',
     } = location.query;
-    const { definedLabel: { currentPage = 1 }, definedLabelDate = [] } = this.state;
+    const { definedLabel: { currentPage = 1 }, definedLabelFilterDate = [] } = this.state;
 
     const currentValue = url.transfromFilterValFromUrl(filters);
     const { customLabels = [] } = currentValue;
@@ -793,8 +793,8 @@ export default class Filter extends PureComponent {
       ? _.filter(definedLabelsInfo, labelItem => _.includes(customLabels, labelItem.id))
       : _.filter(definedLabelsInfo, labelItem => customLabels === labelItem.id);
     const currentDefinedLabel = currentPage
-      ? _.slice(definedLabelDate, 0, currentPage * 10)
-      : definedLabelDate;
+      ? _.slice(definedLabelFilterDate, 0, currentPage * 10)
+      : definedLabelFilterDate;
 
     return (
       <div className={styles.filterContainer}>
