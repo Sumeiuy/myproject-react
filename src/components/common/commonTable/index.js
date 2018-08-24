@@ -1,3 +1,4 @@
+// 不要再使用该table，请使用common/table代替
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00

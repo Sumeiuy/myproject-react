@@ -17,7 +17,6 @@ import { openFspTab } from '../../../utils';
 import { permission } from '../../../helper';
 import SingleFilter from '../../customerPool/common/NewSingleFilter';
 import styles from './custDetail.less';
-import tableStyles from '../../common/commonTable/index.less';
 import iconMoney from '../performerView/img/iconMoney.png';
 import iconDiamond from '../performerView/img/iconDiamond.png';
 import iconGold from '../performerView/img/iconGold.png';
@@ -524,12 +523,7 @@ export default class CustDetail extends PureComponent {
               listData={dataSource}
               onSizeChange={this.handleShowSizeChange}
               onPageChange={this.handlePageChange}
-              tableClass={
-                classnames({
-                  [styles.custDetailTable]: true,
-                  [tableStyles.groupTable]: true,
-                })
-              }
+              tableClass={styles.custDetailTable}
               columnWidth={columnWidth}
               titleColumn={titleColumn}
               isFirstColumnLink
