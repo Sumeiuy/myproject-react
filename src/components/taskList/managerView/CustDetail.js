@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-17 17:36:28
+ * @Last Modified time: 2018-08-22 16:55:52
  * 客户明细数据
  */
 
@@ -454,7 +454,7 @@ export default class CustDetail extends PureComponent {
       return '--';
     }
     const value = item.totAsset.toFixed(2);
-    const asset = number.thousandFormat(value, false, ',', true);
+    const asset = number.thousandFormat(value, false, ',', false);
     return <p className={styles.tableCellParagraph} title={asset}>{asset}</p>;
   }
 

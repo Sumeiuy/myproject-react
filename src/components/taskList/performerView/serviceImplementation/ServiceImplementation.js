@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-21 17:56:48
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-23 17:29:47
  */
 
 import React, { PureComponent } from 'react';
@@ -196,6 +196,8 @@ export default class ServiceImplementation extends PureComponent {
       // 是否显示批量添加服务记录弹窗
       isShowBatchAddServiceRecord: false,
     };
+    // 标志位，是否是第一次去请求服务实施下的客户列表数据，默认为true
+    this.isFirstGetTaskFlowData = true;
   }
 
   componentDidMount() {
@@ -218,8 +220,10 @@ export default class ServiceImplementation extends PureComponent {
     const pageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
     if (
-      prevProps.isFold !== isFold
-      || prevState.isFoldFspLeftMenu !== isFoldFspLeftMenu
+      (
+        prevProps.isFold !== isFold
+        || prevState.isFoldFspLeftMenu !== isFoldFspLeftMenu
+      ) && !this.isFirstGetTaskFlowData
     ) {
       const { parameter } = this.props;
       const { rowId, assetSort, state, activeIndex } = parameter;
@@ -230,10 +234,14 @@ export default class ServiceImplementation extends PureComponent {
         assetSort,
         pageSize,
         pageNum,
+      }).then(() => {
+        this.isFirstGetTaskFlowData = false;
       });
     }
     // 任务切换时，重新请求服务实施列表，参数为默认值
-    if (prevProps.currentId !== currentId) {
+    if (prevProps.currentId !== currentId
+      || query.missionViewType !== prevProps.location.query.missionViewType
+    ) {
       this.getTaskFlowData(pageSize);
     }
     if (query !== prevProps.location.query) {
@@ -244,7 +252,7 @@ export default class ServiceImplementation extends PureComponent {
     }
     // 第一次渲染完判断是否是第一次进入执行者视图，是的话显示引导 放在didupdate里是为了解决在didmount下并没有渲染完成导致定位不准的问题
     if (!this.isFirstUseCollapse() && fetchOtherTaskListStatus) {
-      setTimeout(this.intialGuide, 0);
+      setTimeout(this.intialGuide, 500);
       store.set(FIRSTUSECOLLAPSE_PERFORMERVIEW, 'NO');
     }
   }
@@ -314,11 +322,13 @@ export default class ServiceImplementation extends PureComponent {
       showStepNumbers: false,
       tooltipClass: styles.introTooltip,
       highlightClass: styles.highlightClass,
-      doneLabel: '×',
+      doneLabel: 'x',
       prevLabel: '上一个',
       nextLabel: '下一个',
       skipLabel: 'x',
       steps: this.getIntroStepList(),
+      scrollToElement: true,
+      disableInteraction: true,
     }).start();
   }
 
@@ -769,6 +779,7 @@ export default class ServiceImplementation extends PureComponent {
     });
     saveBatchAddServiceRecord({
       ...singlePayload,
+      workResult: '',
       otherTask: list,
     }).then(this.closeBatchAddServiceModal);
   }

@@ -1,9 +1,8 @@
 .tabMenu {
   position: relative;
   display: flex;
-  border-bottom: 2px solid #108ee9;
+  border-bottom: 2px solid #dfecff;
   background: #fff;
-  padding-left: 14px;
   flex-direction: row;
   z-index: 400;
 
@@ -15,6 +14,11 @@
     font-size: 14px;
     cursor: pointer;
     padding: 0 8px;
+    margin: 0 7px;
+
+    &:nth-child(2) {
+       margin: 0 0 0 16px;
+    }
 
     .text {
       display: flex;
@@ -27,19 +31,19 @@
       .link {
         height: 39px;
         line-height: 39px;
-        color: #4a4a4a;
+        color: #333;
         display: inline-block;
         width: 100%;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
         &:hover {
-          color: #108ee9;
+          color: #1f63c5;
         }
       }
       .hasHomePage {
         &:hover {
-          color: #108ee9;
+          color: #1f63c5;
         }
       }
       .iconDown {
@@ -73,10 +77,10 @@
       }
     }
     &.activeLink {
-      background: #108ee9;
+      background: #dfecff;
       .text {
         .link, i {
-          color: #fff !important;
+          color: #1f63c5 !important;
         }
       }
     }

@@ -244,7 +244,7 @@ export default class SignCustomerLabel extends PureComponent {
           onCancel={this.handleCloseModal}
           afterClose={this.handleOpenNewLabelModal}
         >
-          <div className={styles.selectedInfo}>请为已选择客户选择一个标签：</div>
+          <div className={styles.selectedInfo}>请为已选择客户选择或添加一个标签：</div>
           <SingleFilterWithSearch
             data={custLikeLabel}
             value={[selectValue]}

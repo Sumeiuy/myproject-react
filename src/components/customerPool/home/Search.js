@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-09 15:38:19
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-02 16:27:56
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-21 16:43:35
  * @description 客户池头部搜索组件
  */
 
@@ -29,7 +29,7 @@ const NONE_INFO = '按回车键发起搜索';
 const LABEL = 'LABEL';
 let guid = 0;
 // 自定义标签类型值
-const DEFINED_LABEL = ['manegeFsp', 'personalFsp'];
+const DEFINED_LABEL = ['manageFsp', 'personalFsp'];
 
 export default class Search extends PureComponent {
 
@@ -104,6 +104,7 @@ export default class Search extends PureComponent {
       ...options,
       ...sortParams,
       filters,
+      forceRefresh: 'Y',
     };
     const condition = urlHelper.stringify({ ...newQuery });
     const url = `${firstUrl}?${condition}`;

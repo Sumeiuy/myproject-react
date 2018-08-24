@@ -30,6 +30,13 @@ const helper = {
     return value === 'jzyx';
   },
 
+  /**
+  * 判断是否是普通标签
+  * */
+  isLocalScope(value) {
+    return value === 'local';
+  },
+
   transformDateTypeToDate(cycle) {
     return transformCycle(cycle);
   },

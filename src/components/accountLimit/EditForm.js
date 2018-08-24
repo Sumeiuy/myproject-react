@@ -37,6 +37,9 @@ const RELIEVE_LIMITTYPE_LABEL_NAME = '解除限制类型'; // 解除限制类型
 const {
   tableTitle: { custList: custTitleList },
   operateTypeArray,
+  SET_CODE,
+  RELIEVE_CODE,
+  TIME_FORMAT_STRING,
 } = config;
 const DEFAULT_PAGE_SIZE = 5;
 // 客户
@@ -120,7 +123,7 @@ export default class EditForm extends PureComponent {
     const { editFormData } = this.props;
     return this.isSetLimitType() ?
       // 如果操作类型是设置限制的时候，解除日期不能小于设置日期
-      current <= moment(editFormData.limitStartTime, config.timeFormatStr)
+      current <= moment(editFormData.limitStartTime, TIME_FORMAT_STRING)
       :
       // 如果操作类型是解除限制的时候，解除日期不能小于今天
       current < moment().startOf('day');
@@ -194,14 +197,14 @@ export default class EditForm extends PureComponent {
   @autobind
   isSetLimitType() {
     const { detailInfo } = this.props;
-    return detailInfo.operateType === config.setCode;
+    return detailInfo.operateType === SET_CODE;
   }
 
   // 判断是否是解除限制设置类型
   @autobind
   isRelieveLimitType() {
     const { detailInfo } = this.props;
-    return detailInfo.operateType === config.relieveCode;
+    return detailInfo.operateType === RELIEVE_CODE;
   }
 
   // 判断是否需要银行确认解除材料
@@ -426,7 +429,7 @@ export default class EditForm extends PureComponent {
               (<InfoForm label="账户限制设置日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
                 <DatePicker
                   disabledDate={this.setDisabledDate}
-                  defaultValue={moment(editFormData.limitStartTime || '', config.timeFormatStr)}
+                  defaultValue={moment(editFormData.limitStartTime || '', TIME_FORMAT_STRING)}
                   onChange={this.handleStartDateChange}
                 />
               </InfoForm>)
@@ -436,7 +439,7 @@ export default class EditForm extends PureComponent {
           <InfoForm label="账户限制解除日期" style={{ width: '160px' }} className={styles.inlineInfoForm} required>
             <DatePicker
               disabledDate={this.relieveDisabledDate}
-              defaultValue={moment(editFormData.limitEndTime || '', config.timeFormatStr)}
+              defaultValue={moment(editFormData.limitEndTime || '', TIME_FORMAT_STRING)}
               onChange={this.handleEndDateChange}
             />
           </InfoForm>

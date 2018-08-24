@@ -3,7 +3,7 @@
  * @Description: 批量添加服务记录弹窗
  * @Date: 2018-08-17 11:31:18
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-21 09:52:18
+ * @Last Modified time: 2018-08-22 09:52:18
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -16,6 +16,7 @@ import BatchAddServiceRecordItem from './BatchAddServiceRecordItem';
 import styles from './batchAddServiceRecordModal.less';
 
 const EMPTY_ARRAY = [];
+const EMPTY_OBJECT = {};
 // 任务详情里是否选中的key值
 const IS_CHECKED_KEY = 'isChecked';
 // 任务详情里一级反馈的key值
@@ -24,6 +25,12 @@ const FIRST_FEEDBACK_KEY = 'serveCustFeedBack';
 const SECOND_FEEDBACK_KEY = 'serveCustFeedBack2';
 // 任务详情里反馈时间的key值
 const FEEDBACK_TIME_KEY = 'feedBackTime';
+// 任务详情里回访结果的key值
+const VISIT_RESULT_KEY = 'visitResult';
+// 任务详情里回访结果失败的value值
+const VISIT_RESULT_FAILED_VALUE = 'Lost';
+// 任务详情里失败原因的key值
+const VISIT_FAILURE_DESC_KEY = 'visitFailureDesc';
 
 export default class BatchAddServiceRecordModal extends PureComponent {
   static propTypes = {
@@ -51,6 +58,50 @@ export default class BatchAddServiceRecordModal extends PureComponent {
     return _.filter(data, item => item[IS_CHECKED_KEY]);
   }
 
+  // 判断是否需要选择二级反馈
+  @autobind
+  checkIsNeedSecondFeedback(list, code) {
+    const firstItem = _.filter(list, item => item.id === code)[0] || EMPTY_OBJECT;
+    const { childList = EMPTY_ARRAY } = firstItem;
+    // 如果该一级反馈的二级反馈只有一个选项，并且该二级反馈的name字段和一级反馈name相同，就不需要显示选择二级反馈的选框
+    if (childList.length === 1 &&
+      childList[0].name === firstItem.name) {
+      return false;
+    }
+    return true;
+  }
+
+  @autobind
+  checkBatchAddRecordDataIsLegal(data) {
+    // 如果是Mot回访任务
+    if (data.isMotVisit) {
+      // 回访结果为空校验不通过
+      if (_.isEmpty(data[VISIT_RESULT_KEY])) {
+        return false;
+      }
+      // 回访结果为失败，且 失败原因为空时，校验不通过
+      if (
+        data[VISIT_RESULT_KEY] === VISIT_RESULT_FAILED_VALUE &&
+        _.isEmpty(data[VISIT_FAILURE_DESC_KEY])
+      ) {
+        return false;
+      }
+    }
+    // 如果不是Mot回访任务
+    if (!data.isMotVisit) {
+      // 一级反馈选项为空，或者反馈时间为空，校验不通过
+      if (!data[FIRST_FEEDBACK_KEY] || _.isEmpty(data[FEEDBACK_TIME_KEY])) {
+        return false;
+      }
+      // 选择了一级反馈，并且需要选择二级反馈时，没有选择二级反馈，校验不通过
+      if (this.checkIsNeedSecondFeedback(data.feedbackList, data[FIRST_FEEDBACK_KEY]) &&
+        !data[SECOND_FEEDBACK_KEY]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @autobind
   handleSubmit() {
     const {
@@ -66,13 +117,7 @@ export default class BatchAddServiceRecordModal extends PureComponent {
     }
     // 如果选择了其他代办任务，对选择的代办任务进行必填校验,此处只做数据上的校验，错误信息的显示是在BatchAddServiceRecordItem组件里处理
     list.forEach((item) => {
-      if (
-          !item[FIRST_FEEDBACK_KEY] ||
-          !item[SECOND_FEEDBACK_KEY] ||
-          _.isEmpty(item[FEEDBACK_TIME_KEY])
-        ) {
-        flag = false;
-      }
+      flag = this.checkBatchAddRecordDataIsLegal(item);
     });
     if (flag) {
       const condition = list.map(item => ({
@@ -82,6 +127,8 @@ export default class BatchAddServiceRecordModal extends PureComponent {
         feedBackTime: item.feedBackTime,
         uuid: item.uuid,
         eventType: item.eventType,
+        visitResult: item.visitResult,
+        visitFailureDesc: item.visitFailureDesc,
       }));
       saveBatchAddServiceRecord(condition);
     }
@@ -118,6 +165,7 @@ export default class BatchAddServiceRecordModal extends PureComponent {
         modalKey={modalKey}
         wrapClassName={styles.addCustModal}
         selfBtnGroup={selfBtnGroup}
+        maskClosable={false}
       >
         <div className={styles.modalBox}>
           <h3 className={styles.title}>

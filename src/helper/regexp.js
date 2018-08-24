@@ -74,6 +74,10 @@ const regexp = {
    * @desc: 只含有字母、数字和汉字
    */
   onlyWordNumAlphabet: /^[A-Za-z0-9\u4e00-\u9fa5]+$/,
+  /**
+   * @desc: 匹配所有的html标签
+   */
+  htmlTags: /<[^>]*>/g,
 };
 
 export default regexp;

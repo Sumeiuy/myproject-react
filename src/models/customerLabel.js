@@ -4,6 +4,8 @@
  * @Author: K0170179
  * @Date: 2018/7/4
  */
+import _ from 'lodash';
+
 import { customerLabel as api } from '../api';
 
 const EMPTY_OBJECT = {};
@@ -90,6 +92,9 @@ export default {
     * addLabel({ payload }, { call }) {
       const { resultData } = yield call(api.addLabel, payload);
       // 接口返回新增标签id,应该与列表统一为String,但是返回的是Number类型，这边作修复
+      if (_.isNull(resultData)) {
+        return resultData;
+      }
       return `${resultData}`;
     },
     // 删除自定义标签

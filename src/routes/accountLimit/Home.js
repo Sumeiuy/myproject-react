@@ -30,11 +30,11 @@ const dispatch = dva.generateEffect;
 
 const {
   statusArray,
-  pageName,
-  pageValue,
-  pageType,
+  PAGE_NAME,
+  PAGE_VALUE,
+  PAGE_TYPE,
   operateTypeArray,
-  relieveCode,  // 限制解除的 value
+  RELIEVE_CODE,  // 限制解除的 value
   basicFilters,
   moreFilters,
   moreFilterData,
@@ -45,6 +45,8 @@ const empOrgId = emp.getOrgId();
 // const empOrgId = 'ZZ001041051';
 // 新建弹窗的 key 值
 const createModalKey = 'createModal';
+// 类型的样式名字
+const LIST_TYPE_CLASSNAME = 'purple';
 
 const effects = {
   // 获取左侧列表
@@ -167,12 +169,8 @@ export default class AccountLimitHome extends PureComponent {
   componentDidUpdate(prevProps) {
     const { location: { query: prevQuery } } = prevProps;
     const { location: { query } } = this.props;
-    const otherQuery = _.omit(query, ['currentId', 'business2']);
-    const otherPrevQuery = _.omit(prevQuery, ['currentId', 'business2']);
-    // 头部筛选事件中已对此字段发起请求，所以此处不需要发请求
-    if (query.business2 !== prevQuery.business2) {
-      return;
-    }
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
     // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
     if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
       const { pageNum, pageSize } = query;
@@ -228,14 +226,13 @@ export default class AccountLimitHome extends PureComponent {
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
-    getList({ ...params, type: pageType }).then(this.getRightDetail);
+    getList({ ...params, type: PAGE_TYPE, business2: '', subType: params.business2 || '' }).then(this.getRightDetail);
   }
 
   // 头部筛选后调用方法
   @autobind
   handleHeaderFilter(obj) {
     // 1.将值写入Url
-    const { business2 = '', ...restObj } = obj;
     const { replace, location } = this.props;
     const { query, pathname } = location;
     // 清空掉消息提醒页面带过来的 id
@@ -249,10 +246,7 @@ export default class AccountLimitHome extends PureComponent {
         appId: '',
       },
     });
-    // 2.调用queryApplicationList接口，清空掉消息提醒页面带过来的 id， appId
-    this.queryAppList({ ...query, ...restObj, id: '', appId: '', business2: '', subType: business2 }, 1, query.pageSize);
   }
-
 
   // 判断当前登录用户部门是否是营业部
   @autobind
@@ -323,7 +317,6 @@ export default class AccountLimitHome extends PureComponent {
         pageSize: currentPageSize,
       },
     });
-    this.queryAppList(query, nextPage, currentPageSize);
   }
 
   // 点击列表每条的时候对应请求详情
@@ -381,11 +374,7 @@ export default class AccountLimitHome extends PureComponent {
     const filterOperate = _.filter(operateTypeArray, o => o.value === subType);
     const operateTypeName = filterOperate[0].label || '';
     // 限制解除时为字体加上其他颜色
-    const otherStyle = subType === relieveCode
-    ? {
-      color: '#dc8f4c',
-    }
-    : null;
+    const typeClass = subType === RELIEVE_CODE ? LIST_TYPE_CLASSNAME : null;
     return (
       <ApplyItem
         key={record.id}
@@ -393,11 +382,11 @@ export default class AccountLimitHome extends PureComponent {
         index={index}
         active={index === activeRowIndex}
         onClick={this.handleListRowClick}
-        pageName={pageName}
+        pageName={PAGE_NAME}
         iconType="kehu1"
         typeName={operateTypeName}
-        typeNameStyle={otherStyle}
-        subTypeName={pageName}
+        typeNameClass={typeClass}
+        subTypeName={PAGE_NAME}
         statusTags={statusTags}
         showSecondLineInfo={this.showSecondLineInfo}
         showThirdLineInfo={this.showThirdLineInfo}
@@ -448,8 +437,8 @@ export default class AccountLimitHome extends PureComponent {
     const topPanel = (
       <ConnectedSeibelHeader
         location={location}
-        page={pageValue}
-        pageType={pageType}
+        page={PAGE_VALUE}
+        pageType={PAGE_TYPE}
         stateOptions={statusArray}
         creatSeibelModal={this.openCreateModalBoard}
         filterCallback={this.handleHeaderFilter}
