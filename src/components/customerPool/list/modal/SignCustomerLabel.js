@@ -95,7 +95,7 @@ export default class SignCustomerLabel extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '多客户打标签',
+      name: '单客户打标签',
       value: '$args[0].value',
     },
   })
