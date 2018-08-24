@@ -114,6 +114,13 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '提交',
+      value: '单客户打标签',
+    },
+  })
   handleSubmitSignLabel() {
     const { signCustLabels, handleCancelSignLabelCustId, currentPytMng } = this.props;
     const { selectedLabels, custId } = this.state;

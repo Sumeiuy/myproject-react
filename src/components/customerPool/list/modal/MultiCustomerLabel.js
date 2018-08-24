@@ -63,6 +63,13 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '提交',
+      value: '多客户打标签',
+    },
+  })
   handleSubmitSignLabel() {
     const {
       signBatchCustLabels,
