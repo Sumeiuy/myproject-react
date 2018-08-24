@@ -13,7 +13,7 @@ import Pagination from '../Pagination';
 
 export default class ExtendedTable extends Table {
 
-  renderPagination() {
+  renderPagination(paginationPosition) {
     // 强制不需要分页
     if (!this.hasPagination()) {
       return null;
@@ -26,11 +26,12 @@ export default class ExtendedTable extends Table {
       size = 'small';
     }
 
+    const position = pagination.position || 'bottom';
     const total = pagination.total || this.getLocalData().length;
 
-    return (total > 0) ? (
+    return (total > 0 && (position === paginationPosition || position === 'both')) ? (
       <Pagination
-        paginationKey={'pagination'}
+        key={`pagination-${paginationPosition}`}
         {...pagination}
         className={classNames(pagination.className, `${this.props.prefixCls}-pagination`)}
         onChange={this.handlePageChange}
