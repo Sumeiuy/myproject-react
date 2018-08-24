@@ -11,7 +11,6 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 import Table from './Table';
-import Pagination from '../Pagination';
 import styles from './index.less';
 import logable from '../../../decorators/logable';
 
@@ -99,8 +98,6 @@ export default class CommonTable extends PureComponent {
     operationColumnClass: PropTypes.string,
     // 是否展示表头
     showHeader: PropTypes.bool,
-    // 分页器是否在表格内部
-    paginationInTable: PropTypes.bool,
     // 是否需要展示空白数据行
     needShowEmptyRow: PropTypes.bool,
     // 分页器class
@@ -109,6 +106,7 @@ export default class CommonTable extends PureComponent {
     emptyListDataNeedEmptyRow: PropTypes.bool,
     // 表格头部
     title: PropTypes.func,
+    position: PropTypes.string,
   };
 
   static defaultProps = {
@@ -136,11 +134,11 @@ export default class CommonTable extends PureComponent {
     tableStyle: null,
     operationColumnClass: '',
     showHeader: true,
-    paginationInTable: false,
     needShowEmptyRow: true,
     paginationClass: '',
     emptyListDataNeedEmptyRow: false,
     title: null,
+    position: 'bottom',
   };
 
   constructor(props) {
@@ -319,7 +317,6 @@ export default class CommonTable extends PureComponent {
       needShowEmptyRow,
       emptyListDataNeedEmptyRow,
       pageData: { curPageSize },
-      paginationInTable,
     } = this.props;
     if (_.isEmpty(dataSource) && !emptyListDataNeedEmptyRow) {
       return [];
@@ -338,7 +335,6 @@ export default class CommonTable extends PureComponent {
         newDataSource,
         Number(curPageSize),
         emptyListDataNeedEmptyRow,
-        paginationInTable,
       );
     }
 
@@ -365,16 +361,6 @@ export default class CommonTable extends PureComponent {
     };
   }
 
-  @autobind
-  renderFooter(paganationOption) {
-    return (
-      <Pagination
-        paginationKey={'pagination'}
-        {...paganationOption}
-      />
-    );
-  }
-
   render() {
     const {
       listData = EMPTY_LIST,
@@ -398,7 +384,7 @@ export default class CommonTable extends PureComponent {
       showHeader,
       paginationClass,
       title: tableTitle,
-      paginationInTable,
+      position,
     } = this.props;
     const { curSelectedRow } = this.state;
     const paganationOption = {
@@ -408,6 +394,7 @@ export default class CommonTable extends PureComponent {
       isHideLastButton,
       isShortPageList,
       showSizeChanger,
+      position,
       onChange: (page, pageSize) => {
         // 翻页的时候，将高亮取消
         this.setState({
@@ -424,10 +411,6 @@ export default class CommonTable extends PureComponent {
     const scrollXArea = isFixedColumn ? { x: scrollX } : {};
     const tableStyleProp = !_.isEmpty(tableStyle) ? { style: tableStyle } : {};
     const titleProp = tableTitle ? { title: tableTitle } : {};
-    const footerProp = paginationInTable ? {
-      footer: () =>
-        this.renderFooter(paganationOption),
-    } : {};
 
     return (
       <div className={styles.groupTable}>
@@ -449,11 +432,10 @@ export default class CommonTable extends PureComponent {
             })}
           showHeader={showHeader}
           {...tableStyleProp}
-          pagination={(needPagination && totalRecordNum > 0 && !paginationInTable) ?
+          pagination={(needPagination && totalRecordNum > 0) ?
             paganationOption : false}
           paginationClass={`${styles.pagination} ${paginationClass}`}
           {...titleProp}
-          {...footerProp}
         />
       </div>
     );
