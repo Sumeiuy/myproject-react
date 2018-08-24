@@ -14,7 +14,7 @@ const CUSTOMER_LIST_LABEL = {
 const NEW_VERSION_TAOKE = {
   imgPath: onlineImg,
   title: '新版“淘客”上线',
-  describe: '支持更加丰富的自定义标签筛选客户，客户列表支持切换排序指标',
+  describe: '增加了更丰富灵活客户筛选功能，可以更精确地筛选出目标客户',
 };
 
 // 批量处理客户名下所有任务配置项
