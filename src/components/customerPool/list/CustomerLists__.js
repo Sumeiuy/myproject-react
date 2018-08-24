@@ -162,6 +162,8 @@ export default class CustomerLists extends PureComponent {
     custLabel: PropTypes.object.isRequired,
     custLikeLabel: PropTypes.array.isRequired,
     addLabel: PropTypes.func.isRequired,
+    // 显示引导页的 ID
+    showIntroId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -176,6 +178,7 @@ export default class CustomerLists extends PureComponent {
     queryHoldingProductReqState: false,
     dataForNextPage: {},
     queryHoldingIndustryDetailReqState: false,
+    showIntroId: '',
   }
 
   constructor(props) {
@@ -572,6 +575,7 @@ export default class CustomerLists extends PureComponent {
       signCustLabels,
       signBatchCustLabels,
       addLabel,
+      showIntroId,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -643,7 +647,7 @@ export default class CustomerLists extends PureComponent {
             {_.isEmpty(custList) ? null : <span className="hint">自动选择所有符合条件的客户</span>}
           </div>
           <div className={styles.reorder}>
-            <Sort onChange={onReorderChange} value={reorderValue} />
+            <Sort showIntroId={showIntroId} onChange={onReorderChange} value={reorderValue} />
           </div>
           <div className={styles.filterWrap}>
             <div className={styles.selectBox}>
