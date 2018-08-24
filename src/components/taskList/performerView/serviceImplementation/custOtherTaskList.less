@@ -14,14 +14,39 @@
     .content {
       font-size: 14px;
       color: #4a4a4a;
+      :global {
+        .ant-table {
+          border: none;
+          .ant-table-thead {
+            font-size:14px;
+            color:#666;
+            tr {
+              th {
+                padding: 8px 25px 8px 0;
+                background-color: #fff;
+                border-color: #cdcdcd;
+              }
+            }
+          }
+          .ant-table-tbody {
+            font-size: 14px;
+            color: #333;
+            tr {
+              td {
+                padding: 8px 25px 8px 0;
+                border-color: #eaeaea;
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
 .endTime {
   display: block;
-  margin-left: -1em;
-  transform: scale(0.9);
-  color: #b3b3b3;
+  font-size:12px;
+  color:#999;
 }
 .textOverflow {
   max-width: 200px;

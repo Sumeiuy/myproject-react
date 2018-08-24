@@ -3,7 +3,7 @@
  * @Description: 执行者视图 model
  * @Date: 2018-08-20 13:15:45
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-21 16:52:13
+ * @Last Modified time: 2018-08-21 16:57:13
  */
 import _ from 'lodash';
 import moment from 'moment';
@@ -15,6 +15,7 @@ import {
   defaultPerformerViewCurrentTab,
   dateFormat,
 } from '../../routes/taskList/config';
+import { regxp } from '../../helper';
 
 const EMPTY_OBJ = {};
 const EMPTY_LIST = [];
@@ -726,8 +727,12 @@ export default {
       const { resultData } = yield call(api.getOtherTaskList, payload);
       const newResultData = resultData.map(item => ({
         ...item,
+        // 去除任务提示字段中的html标签和换行符
+        hint: (item.hint || '').replace(regxp.htmlTags, '').replace(regxp.returnLine, ''),
+        // 去除任务提示字段中的html标签和换行符
+        contents: (item.contents || '').replace(regxp.htmlTags, '').replace(regxp.returnLine, ''),
         // 当前任务是否选中
-        isisChecked: false,
+        isChecked: false,
         // 所选一级反馈code
         serveCustFeedBack: '',
         // 所选一级反馈code
