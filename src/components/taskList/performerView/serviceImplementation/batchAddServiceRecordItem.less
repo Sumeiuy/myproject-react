@@ -10,10 +10,13 @@
     .titleText {
       vertical-align: middle;
       color: #333;
+      font-size: 15px;
     }
   }
   .labelText {
     color: #999;
+    font-size: 14px;
+    font-weight: normal;
     i {
       font-style: normal;
       color: #ff0101;
@@ -40,22 +43,25 @@
   .formItem {
     .label {
       float: left;
-      width: 67px;
+      width: 77px;
       text-align: right;
       line-height: 30px;
       height: 30px;
       color: #999;
+      font-size: 14px;
     }
     .upload {
       float: left;
-      position: relative;
-      top: -2px;
       max-width: 390px;
+      .uploadComponent {
+        position: relative;
+        top: -2px;
+      }
     }
   }
   :global {
     .ant-form-item-label {
-      width: 71px;
+      width: 80px;
       vertical-align: top;
     }
     .ant-form-item-control-wrapper {

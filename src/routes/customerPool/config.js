@@ -52,7 +52,7 @@ const FULL_ENTERLIST = ['search', 'tag', 'sightingTelescope', 'business', 'assoc
 // 任务管理岗权限作用的首页入口列表
 // 新增一个产品潜在目标客户，用的HTSC 任务管理岗职责
 const ENTERLIST_PERMISSION_TASK_MANAGE = ['search', 'tag', 'sightingTelescope', 'association', 'external',
-  'orderCombination', 'securitiesProducts', 'productPotentialTargetCust'];
+  'orderCombination', 'securitiesProducts', 'productPotentialTargetCust', 'manageFsp', 'personalFsp'];
 
 // 首页指标查询权限作用的首页入口列表
 const ENTERLIST_PERMISSION_INDEX_QUERY = ['custIndicator', 'numOfCustOpened', 'assetsTransactions', 'productSale',
@@ -64,6 +64,12 @@ const ENTERLIST_PERMISSION_SIGHTINGLABEL = ['sightingTelescope', 'productPotenti
 
 // 是否需要展示可开通业务source集合
 const ENTERLIST_PERMISSION_OPENED_BUSINESS = ['numOfCustOpened', 'business', 'sightingTelescope'];
+
+// 引导页的 ID
+const CUSTOMER_LIST_INTRO_FIRST_STEP_ID = 'customer_list_intro_first_step_id';
+const CUSTOMER_LIST_INTRO_SECOND_STEP_ID = 'customer_list_intro_second_step_id';
+const CUSTOMER_LIST_INTRO_THIRD_STEP_ID = 'customer_list_intro_third_step_id';
+const CUSTOMER_LIST_INTRO_FOURTH_STEP_ID = 'customer_list_intro_fourth_step_id';
 
 export default {
   NOPERMIT,
@@ -80,4 +86,8 @@ export default {
   ENTERLIST_PERMISSION_INDEX_QUERY,
   ENTERLIST_PERMISSION_SIGHTINGLABEL,
   ENTERLIST_PERMISSION_OPENED_BUSINESS,
+  CUSTOMER_LIST_INTRO_FIRST_STEP_ID,
+  CUSTOMER_LIST_INTRO_SECOND_STEP_ID,
+  CUSTOMER_LIST_INTRO_THIRD_STEP_ID,
+  CUSTOMER_LIST_INTRO_FOURTH_STEP_ID,
 };

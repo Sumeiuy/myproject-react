@@ -433,7 +433,7 @@ export const getRouterData = (app) => {
     },
     // 营业部非投顾签约客户分配页面
     '/businessDepartmentCustDistribute': {
-      component: dynamicWrapper(app, ['businessDepartmentCustDistribute'], () =>
+      component: dynamicWrapper(app, ['custDistribute'], () =>
         import('../routes/businessDepartmentCustDistribute/ConnectedHome' /* webpackChunkName: "businessDepartmentCustDistribute" */)),
     },
     // 投顾业务能力竞赛

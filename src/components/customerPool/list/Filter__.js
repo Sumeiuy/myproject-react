@@ -13,13 +13,18 @@ import logable from '../../../decorators/logable';
 import HtFilter, { TagFilter } from '../../common/htFilter';
 import { url, check } from '../../../helper';
 import { seperator, sessionStore } from '../../../config';
-
 import {
   basicFilters,
   moreFilterData,
   moreFilterCategories,
   moreFilters,
 } from './config/filterConfig';
+
+import {
+  CUSTOMER_LIST_INTRO_SECOND_STEP_ID,
+  CUSTOMER_LIST_INTRO_THIRD_STEP_ID,
+  CUSTOMER_LIST_INTRO_FOURTH_STEP_ID,
+} from '../../../routes/customerPool/config';
 
 import styles from './filter__.less';
 
@@ -815,25 +820,27 @@ export default class Filter extends PureComponent {
               />
             ))
           }
-          {
-            <MultiFilterWithSearch
-              data={currentDefinedLabel}
-              value={currentSelectDefinedLabel}
-              dataMap={['id', 'labelName']}
-              filterId="customLabels"
-              filterName="自定义标签"
-              isAlwaysVisible
-              getOptionItemValue={this.getOptionItemValue}
-              dropdownStyle={{
-                overflowY: 'auto',
-                width: 250,
-                zIndex: 10,
-              }}
-              onChange={this.handleDefinedLabelChange}
-              onInputChange={this.handleDefinedLabelInputChange}
-              onScrollBottom={this.handleCurrentDefinedLabelPage}
-            />
-          }
+          <div id={CUSTOMER_LIST_INTRO_SECOND_STEP_ID}>
+            {
+              <MultiFilterWithSearch
+                data={currentDefinedLabel}
+                value={currentSelectDefinedLabel}
+                dataMap={['id', 'labelName']}
+                filterId="customLabels"
+                filterName="自定义标签"
+                isAlwaysVisible
+                getOptionItemValue={this.getOptionItemValue}
+                dropdownStyle={{
+                  overflowY: 'auto',
+                  width: 250,
+                  zIndex: 10,
+                }}
+                onChange={this.handleDefinedLabelChange}
+                onInputChange={this.handleDefinedLabelInputChange}
+                onScrollBottom={this.handleCurrentDefinedLabelPage}
+              />
+            }
+          </div>
           {
             _.map(
               moreFilterListOpened,
@@ -843,42 +850,46 @@ export default class Filter extends PureComponent {
         <div className={styles.moreFilterController}>
           {
             !_.isEmpty(this.props.tagList) ?
-              <HtFilter
-                type="multiWithCaterogy"
-                className={styles.filter}
-                filterName="大数据标签"
-                filterId="primaryKeyLabels"
-                value={currentValue.primaryKeyLabels}
-                data={this.props.tagList}
-                dataMap={['id', 'name']}
-                dropdownStyle={{
-                  maxHeight: 324,
-                  overflowY: 'auto',
-                  width: 250,
-                  zIndex: 10,
-                }}
-                onChange={this.handleLabelChange}
-                iconMore
-                disableTitle
-                isMoreButton
-              /> : null
+              <div id={CUSTOMER_LIST_INTRO_THIRD_STEP_ID}>
+                <HtFilter
+                  type="multiWithCaterogy"
+                  className={styles.filter}
+                  filterName="大数据标签"
+                  filterId="primaryKeyLabels"
+                  value={currentValue.primaryKeyLabels}
+                  data={this.props.tagList}
+                  dataMap={['id', 'name']}
+                  dropdownStyle={{
+                    maxHeight: 324,
+                    overflowY: 'auto',
+                    width: 250,
+                    zIndex: 10,
+                  }}
+                  onChange={this.handleLabelChange}
+                  iconMore
+                  disableTitle
+                  isMoreButton
+                />
+              </div> : null
           }
-          <HtFilter
-            type="moreSearch"
-            filterName="更多条件"
-            className={styles.filter}
-            value={selectedKeys}
-            dropdownStyle={{
-              position: 'relactive',
-              maxHeight: 324,
-              overflowY: 'auto',
-              width: 250,
-              zIndex: 10,
-            }}
-            data={moreFilterData}
-            dataCategories={moreFilterCategories}
-            onChange={this.handleMoreFilterChange}
-          />
+          <div id={CUSTOMER_LIST_INTRO_FOURTH_STEP_ID}>
+            <HtFilter
+              type="moreSearch"
+              filterName="更多条件"
+              className={styles.filter}
+              value={selectedKeys}
+              dropdownStyle={{
+                position: 'relactive',
+                maxHeight: 324,
+                overflowY: 'auto',
+                width: 250,
+                zIndex: 10,
+              }}
+              data={moreFilterData}
+              dataCategories={moreFilterCategories}
+              onChange={this.handleMoreFilterChange}
+            />
+          </div>
         </div>
         {this.clearSelectFilterMemory()}
       </div>

@@ -63,6 +63,13 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '提交',
+      value: '多客户打标签',
+    },
+  })
   handleSubmitSignLabel() {
     const {
       signBatchCustLabels,
@@ -244,14 +251,14 @@ export default class SignCustomerLabel extends PureComponent {
           onCancel={this.handleCloseModal}
           afterClose={this.handleOpenNewLabelModal}
         >
-          <div className={styles.selectedInfo}>请为已选择客户选择一个标签：</div>
+          <div className={styles.selectedInfo}>请为已选择客户选择或添加一个标签：</div>
           <SingleFilterWithSearch
             data={custLikeLabel}
             value={[selectValue]}
             className={styles.signSelect}
             dataMap={['id', 'labelName']}
             filterName="客户标签"
-            defaultLabel="请选择标签"
+            defaultLabel="点此选择或添加标签"
             useCustomerFilter
             needItemObj
             getOptionItemValue={this.getOptionItemValue}

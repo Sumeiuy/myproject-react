@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-12-19 11:01:47
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-11 09:08:22
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-08-24 14:02:32
  * @description 用于神策日志统一记录的装饰器函数，用于需要记录日志的方法上
  */
 import _ from 'lodash';
@@ -30,7 +30,12 @@ function replaceValue(data, context, args) {
         if (_.startsWith(variableName, 'args')) {
           object = { args };
         }
-        return _.get(object, variableName, expression);
+        let valueFinal = _.get(object, variableName, expression);
+        // 如果这个解析出来的 valueFinal 是对象，则需要对其进行字符串化
+        if (_.isObject(valueFinal)) {
+          valueFinal = JSON.stringify(valueFinal);
+        }
+        return valueFinal;
       });
     },
   );

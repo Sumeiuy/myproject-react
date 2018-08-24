@@ -10,6 +10,9 @@ import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import store from 'store';
+import introJs from 'intro.js';
+
 import Filter from '../../components/customerPool/list/Filter__';
 import CustomerLists from '../../components/customerPool/list/CustomerLists__';
 import MatchArea from '../../components/customerPool/list/individualInfo/MatchArea';
@@ -25,6 +28,10 @@ import {
   ENTERLIST_PERMISSION_TASK_MANAGE,
   ENTERLIST_PERMISSION_INDEX_QUERY,
   ENTERLIST_LEFTMENU,
+  CUSTOMER_LIST_INTRO_FIRST_STEP_ID,
+  CUSTOMER_LIST_INTRO_SECOND_STEP_ID,
+  CUSTOMER_LIST_INTRO_THIRD_STEP_ID,
+  CUSTOMER_LIST_INTRO_FOURTH_STEP_ID,
 } from './config';
 
 import { RANDOM } from '../../config/filterContant';
@@ -38,6 +45,9 @@ const CUR_PAGESIZE = 20; // 默认页大小
 
 const DEFAULT_SORT_DIRECTION = 'desc';
 const DEFAULT_SORT = { sortType: 'totAset', sortDirection: DEFAULT_SORT_DIRECTION }; // 默认排序方式
+
+// 存储在本地用来判断是否第一次进入新版客户列表页面
+const IS_FIRST_TIME_LOAD_CUSTOMER_LIST = 'IS_FIRST_TIME_LOAD_CUSTOMER_LIST';
 
 function getFilterArray(labels, hashString) {
   const filtersArray = [];
@@ -628,11 +638,18 @@ export default class CustomerList extends PureComponent {
     if (!_.isEqual(preOtherQuery, otherQuery) &&
       !sessionStore.get(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`)) {
       this.getCustomerList(nextProps);
-      if(query.forceRefresh === 'Y') {
+      if (query.forceRefresh === 'Y') {
         this.getFiltersOfAllSightingTelescope(query);
       }
     }
     sessionStore.set(`CUSTOMERPOOL_FILTER_SELECT_FROM_MOREFILTER_${this.hashString}`, false);
+  }
+
+  componentDidUpdate() {
+    if (!this.isFirstTimeLoadCustomerList()) {
+      setTimeout(this.intialGuide, 500);
+      store.set(IS_FIRST_TIME_LOAD_CUSTOMER_LIST, true);
+    }
   }
 
   @autobind
@@ -801,6 +818,71 @@ export default class CustomerList extends PureComponent {
     return { ptyMngId: '' };
   }
 
+  // 获取新手引导步骤列表
+  @autobind
+  getIntroStepList() {
+    const { tagList } = this.props;
+    const newStepList = [
+      {
+        element: document.querySelector(`#${CUSTOMER_LIST_INTRO_FIRST_STEP_ID}`),
+        intro: '点击这里切换排序方式',
+        position: 'bottom',
+      },
+      {
+        element: document.querySelector(`#${CUSTOMER_LIST_INTRO_SECOND_STEP_ID}`),
+        intro: '全新的自定义标签筛选客户',
+        position: 'bottom',
+      },
+    ];
+    if (!_.isEmpty(tagList)) {
+      newStepList.push({
+        element: document.querySelector(`#${CUSTOMER_LIST_INTRO_THIRD_STEP_ID}`),
+        intro: '大数据标签智能筛选客户',
+        position: 'bottom',
+      });
+    }
+    newStepList.push({
+      element: document.querySelector(`#${CUSTOMER_LIST_INTRO_FOURTH_STEP_ID}`),
+      intro: '更多的筛选条件在这里',
+      position: 'bottom',
+    });
+    return newStepList;
+  }
+
+
+  // 根据过滤器的变化当前排序字段的联动
+  @autobind
+  getSortFromFilter(filterItem, isDeleteFilterFromLocation = false) {
+    const {
+      location: { query },
+    } = this.props;
+    const { sortType = '', sortDirection = '' } = query;
+    let currentSort = { sortType, sortDirection };
+    const { clearAllMoreFilters, name, value } = filterItem;
+    let valueList = _.split(value, seperator.filterValueSeperator);
+    valueList = _.filter(valueList, valueItem => valueItem !== '');
+    if (clearAllMoreFilters) {
+      return currentSort;
+    }
+    // 当删除当前排序指标对应的过滤器时，排序指标置空使用默认值
+    if (isDeleteFilterFromLocation && name === sortType) {
+      currentSort = { sortType: '', sortDirection: '' };
+    }
+    const needDynamicInsertQuota = _.find(dynamicInsertQuota, item => item.filterType === name);
+    if (needDynamicInsertQuota) {
+      // 当前所触发过滤器下有值并且需要动态插入排序指标，则设置为该排序指标
+      if (valueList.length) {
+        currentSort = {
+          sortType: needDynamicInsertQuota.sortType,
+          sortDirection: DEFAULT_SORT_DIRECTION,
+        };
+      } else if (name === sortType) {
+        currentSort = { sortType: '', sortDirection: '' };
+      }
+    }
+    return currentSort;
+  }
+
   @autobind
   checkPrimaryKeyLabel(primaryKeyLabels) {
     const labelList = []
@@ -901,39 +983,6 @@ export default class CustomerList extends PureComponent {
     });
   }
 
-  // 根据过滤器的变化当前排序字段的联动
-  @autobind
-  getSortFromFilter(filterItem, isDeleteFilterFromLocation = false) {
-    const {
-      location: { query },
-    } = this.props;
-    const { sortType = '', sortDirection = '' } = query;
-    let currentSort = { sortType, sortDirection };
-    const { clearAllMoreFilters, name, value } = filterItem;
-    let valueList = _.split(value, seperator.filterValueSeperator);
-    valueList = _.filter(valueList, valueItem => valueItem !== '');
-    if (clearAllMoreFilters) {
-      return currentSort;
-    }
-    // 当删除当前排序指标对应的过滤器时，排序指标置空使用默认值
-    if (isDeleteFilterFromLocation && name === sortType) {
-      currentSort = { sortType: '', sortDirection: '' };
-    }
-    const needDynamicInsertQuota = _.find(dynamicInsertQuota, item => item.filterType === name);
-    if (needDynamicInsertQuota) {
-      // 当前所触发过滤器下有值并且需要动态插入排序指标，则设置为该排序指标
-      if (valueList.length) {
-        currentSort = {
-          sortType: needDynamicInsertQuota.sortType,
-          sortDirection: DEFAULT_SORT_DIRECTION,
-        };
-      } else if (name === sortType) {
-        currentSort = { sortType: '', sortDirection: '' };
-      }
-    }
-    return currentSort;
-  }
-
   // 排序条件变化
   @autobind
   orderChange(obj) {
@@ -983,6 +1032,32 @@ export default class CustomerList extends PureComponent {
         curPageNum: 1,
       },
     });
+  }
+
+  // 判断是否第一次进入新版客户列表页面
+  isFirstTimeLoadCustomerList() {
+    return store.get(IS_FIRST_TIME_LOAD_CUSTOMER_LIST);
+  }
+
+  // 引导功能初始化
+  @autobind
+  intialGuide() {
+    introJs().setOptions({
+      showBullets: true,
+      showProgress: false,
+      overlayOpacity: 0.4,
+      exitOnOverlayClick: false,
+      showStepNumbers: false,
+      tooltipClass: styles.introTooltip,
+      highlightClass: styles.highlightClass,
+      doneLabel: 'x',
+      prevLabel: '上一个',
+      nextLabel: '下一个',
+      skipLabel: 'x',
+      steps: this.getIntroStepList(),
+      scrollToElement: true,
+      disableInteraction: true,
+    }).start();
   }
 
   render() {
@@ -1172,6 +1247,7 @@ export default class CustomerList extends PureComponent {
           custLabel={custLabel}
           custLikeLabel={custLikeLabel}
           addLabel={addLabel}
+          showIntroId={CUSTOMER_LIST_INTRO_FIRST_STEP_ID}
         />
       </div>
     );
