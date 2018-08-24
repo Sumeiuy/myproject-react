@@ -258,7 +258,7 @@ export default class SignCustomerLabel extends PureComponent {
             className={styles.signSelect}
             dataMap={['id', 'labelName']}
             filterName="客户标签"
-            defaultLabel="请选择标签"
+            defaultLabel="点此选择或添加标签"
             useCustomerFilter
             needItemObj
             getOptionItemValue={this.getOptionItemValue}

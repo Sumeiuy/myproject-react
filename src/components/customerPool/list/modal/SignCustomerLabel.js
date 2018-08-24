@@ -263,7 +263,7 @@ export default class SignCustomerLabel extends PureComponent {
                 <span
                   className={styles.addLabel}
                 >
-                  <span className={styles.addLabelBtn}>请选择标签<Icon type="more-down-copy" /></span>
+                  <span className={styles.addLabelBtn}>点此选择或添加标签<Icon type="more-down-copy" /></span>
                   <MultiFilterWithSearch
                     data={custLikeLabel}
                     value={_.isEmpty(selectedLabels) ? '' : selectedLabels}
