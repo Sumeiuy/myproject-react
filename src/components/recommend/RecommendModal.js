@@ -3,7 +3,7 @@
  * @description 首页推荐弹窗
  * @Date: 2018-08-14 20:58:45
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-20 16:15:59
+ * @Last Modified time: 2018-08-24 13:33:29
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -64,6 +64,7 @@ export default class recommendModal extends PureComponent {
         wrapClassName={styles.recommendModal}
         needBtn={false}
         visible={modalVisible}
+        maskClosable={false}
       >
         <RecommendList />
         <div className={styles.learnMoreButton} onClick={this.toFunctionIntroductionPage}>
