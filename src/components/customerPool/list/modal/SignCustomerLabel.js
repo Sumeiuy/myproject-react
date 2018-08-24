@@ -95,7 +95,7 @@ export default class SignCustomerLabel extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '多客户打标签',
+      name: '单客户打标签',
       value: '$args[0].value',
     },
   })
@@ -114,6 +114,13 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '提交',
+      value: '单客户打标签',
+    },
+  })
   handleSubmitSignLabel() {
     const { signCustLabels, handleCancelSignLabelCustId, currentPytMng } = this.props;
     const { selectedLabels, custId } = this.state;
@@ -256,7 +263,7 @@ export default class SignCustomerLabel extends PureComponent {
                 <span
                   className={styles.addLabel}
                 >
-                  <span className={styles.addLabelBtn}>请选择标签<Icon type="more-down-copy" /></span>
+                  <span className={styles.addLabelBtn}>点此选择或添加标签<Icon type="more-down-copy" /></span>
                   <MultiFilterWithSearch
                     data={custLikeLabel}
                     value={_.isEmpty(selectedLabels) ? '' : selectedLabels}
