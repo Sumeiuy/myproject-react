@@ -110,7 +110,6 @@ app.model(require('../src/models/telephoneNumberManage').default);
 app.model(require('../src/models/investmentAdvice').default);
 app.model(require('../src/models/customerLabel').default);
 app.model(require('../src/models/morningBoradcast').default);
-app.model(require('../src/models/labelManagement').default);
 
 // 4. Router
 app.router(routerConfig);
