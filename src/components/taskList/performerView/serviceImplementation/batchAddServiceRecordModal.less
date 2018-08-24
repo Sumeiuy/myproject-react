@@ -1,9 +1,10 @@
 .modalBox {
   padding: 0 15px;
   .title {
-    margin-bottom: 16px;
     font-weight: bold;
     line-height: 45px;
+    font-size: 15px;
+    color: #000;
     span {
       color: #fd6d08;
     }
@@ -16,6 +17,19 @@
     em {
       font-style: normal;
       color: red;
+    }
+  }
+}
+.addServiceRecordModal {
+  :global {
+    .ant-modal-header {
+      padding: 16px 15px;
+      background-color: #fff;
+      height: 50px;
+      .ant-modal-title {
+        font-size: 18px;
+        color: #4a4a4a;
+      }
     }
   }
 }

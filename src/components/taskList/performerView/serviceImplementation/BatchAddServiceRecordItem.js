@@ -313,6 +313,7 @@ export default class BatchAddServiceRecordItem extends PureComponent {
     const reasonValdateInfo = this.getReasonValdateInfo();
     const uploadHideClass = classnames({
       [styles.hide]: !data[IS_CHECKED_KEY],
+      [styles.uploadComponent]: true,
     });
     const hackUploadHideClass = classnames({
       [styles.hide]: data[IS_CHECKED_KEY],
