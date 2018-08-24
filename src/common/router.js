@@ -558,7 +558,7 @@ export const getRouterData = (app) => {
     },
     // 标签管理
     '/labelManagement': {
-      component: dynamicWrapper(app, [], () =>
+      component: dynamicWrapper(app, ['labelManagement'], () =>
         import('../routes/labelManagement/Home') /* webpackChunkName: "labelManagement" */),
     },
   };

@@ -218,4 +218,5 @@ export const {
   handleOpenFsp360TabAction,
   getDetailBtnVisible,
   openProductDetailPage,
+  isLocalScope,
 } = helper;
