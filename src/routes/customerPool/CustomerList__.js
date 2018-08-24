@@ -826,25 +826,25 @@ export default class CustomerList extends PureComponent {
       {
         element: document.querySelector(`#${CUSTOMER_LIST_INTRO_FIRST_STEP_ID}`),
         intro: '点击这里切换排序方式',
-        position: 'top',
+        position: 'bottom',
       },
       {
         element: document.querySelector(`#${CUSTOMER_LIST_INTRO_SECOND_STEP_ID}`),
         intro: '全新的自定义标签筛选客户',
-        position: 'top',
+        position: 'bottom',
       },
     ];
     if (!_.isEmpty(tagList)) {
       newStepList.push({
         element: document.querySelector(`#${CUSTOMER_LIST_INTRO_THIRD_STEP_ID}`),
         intro: '大数据标签智能筛选客户',
-        position: 'top',
+        position: 'bottom',
       });
     }
     newStepList.push({
       element: document.querySelector(`#${CUSTOMER_LIST_INTRO_FOURTH_STEP_ID}`),
       intro: '更多的筛选条件在这里',
-      position: 'top',
+      position: 'bottom',
     });
     return newStepList;
   }
