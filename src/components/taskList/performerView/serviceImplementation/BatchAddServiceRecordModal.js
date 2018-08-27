@@ -158,31 +158,34 @@ export default class BatchAddServiceRecordModal extends PureComponent {
     );
 
     return (
-      <CommonModal
-        title="同步其他待办任务"
-        visible={visible}
-        closeModal={closeModal}
-        modalKey={modalKey}
-        wrapClassName={styles.addCustModal}
-        selfBtnGroup={selfBtnGroup}
-        maskClosable={false}
-      >
-        <div className={styles.modalBox}>
-          <h3 className={styles.title}>
-            该客户名下还有 <span>{data.length}</span> 个待办任务，请选择需要同步服务记录的任务并填写客户反馈
-          </h3>
-          {
-            data.map((item, index) => (
-              <BatchAddServiceRecordItem
-                data={item}
-                key={item.flowId}
-                index={index}
-                onFormChange={onFormChange}
-              />
-            ))
-          }
-        </div>
-      </CommonModal>
+        visible ?
+          <CommonModal
+            title="同步其他待办任务"
+            visible={visible}
+            closeModal={closeModal}
+            modalKey={modalKey}
+            wrapClassName={styles.addServiceRecordModal}
+            selfBtnGroup={selfBtnGroup}
+            maskClosable={false}
+          >
+            <div className={styles.modalBox}>
+              <h3 className={styles.title}>
+                该客户名下还有 <span>{data.length}</span> 个待办任务，请选择需要同步服务记录的任务并填写客户反馈
+              </h3>
+              {
+                data.map((item, index) => (
+                  <BatchAddServiceRecordItem
+                    data={item}
+                    key={item.flowId}
+                    index={index}
+                    onFormChange={onFormChange}
+                  />
+                ))
+              }
+            </div>
+          </CommonModal>
+      :
+      null
     );
   }
 }

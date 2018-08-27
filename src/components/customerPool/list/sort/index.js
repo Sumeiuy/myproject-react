@@ -20,7 +20,12 @@ export default class Sort extends PureComponent {
     value: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    showIntroId: PropTypes.string,
   };
+
+  static defaultProps = {
+    showIntroId: '',
+  }
 
   getSortQuota() {
     const {
@@ -48,12 +53,13 @@ export default class Sort extends PureComponent {
   }
 
   render() {
-    const { value } = this.props;
+    const { value, showIntroId } = this.props;
     return (
       <CommonSort
         value={value}
         onChange={this.handleChange}
         data={this.getSortQuota()}
+        showIntroId={showIntroId}
       />
     );
   }

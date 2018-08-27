@@ -7,20 +7,20 @@ import feedbackImg from './img/feedback.png';
 const CUSTOMER_LIST_LABEL = {
   imgPath: labelImg,
   title: '客户列表支持自定义标签管理客户',
-  describe: '客户列表选取特定的客户设置自定义标签，以便对客户进行自定义分类管理',
+  describe: '支持对特定客户设置自定义标签，以便对客户进行分类管理',
 };
 
 // 新版淘客配置项
 const NEW_VERSION_TAOKE = {
   imgPath: onlineImg,
   title: '新版“淘客”上线',
-  describe: '支持更加丰富的自定义标签筛选客户，客户列表支持切换排序指标',
+  describe: '增加了更丰富灵活客户筛选功能，可以更精确地筛选出目标客户',
 };
 
 // 批量处理客户名下所有任务配置项
 const BATCH_PROCESS_TASK = {
   imgPath: taskImg,
-  title: '批量处理客户名下所有任务',
+  title: '同步处理客户所有待办任务',
   describe: '任务执行视图可以查看客户名下的所有待办任务，添加服务记录支持同步到客户名下的所有任务',
 };
 

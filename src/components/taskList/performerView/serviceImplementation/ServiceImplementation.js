@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-23 17:29:47
+ * @Last Modified time: 2018-08-24 15:24:18
  */
 
 import React, { PureComponent } from 'react';
@@ -196,7 +196,7 @@ export default class ServiceImplementation extends PureComponent {
       // 是否显示批量添加服务记录弹窗
       isShowBatchAddServiceRecord: false,
     };
-    // 标志位，是否是第一次去请求服务实施下的客户列表数据，默认为true
+    // 标志位，是否第一次请求服务实施客户列表接口，默认为true
     this.isFirstGetTaskFlowData = true;
   }
 
@@ -220,10 +220,8 @@ export default class ServiceImplementation extends PureComponent {
     const pageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 左侧列表或者左侧菜单发生折叠状态时，需要重新请求服务实施列表的数据
     if (
-      (
-        prevProps.isFold !== isFold
-        || prevState.isFoldFspLeftMenu !== isFoldFspLeftMenu
-      ) && !this.isFirstGetTaskFlowData
+      prevProps.isFold !== isFold
+      || prevState.isFoldFspLeftMenu !== isFoldFspLeftMenu
     ) {
       const { parameter } = this.props;
       const { rowId, assetSort, state, activeIndex } = parameter;
@@ -234,16 +232,18 @@ export default class ServiceImplementation extends PureComponent {
         assetSort,
         pageSize,
         pageNum,
-      }).then(() => {
-        this.isFirstGetTaskFlowData = false;
       });
     }
     // 任务切换时，重新请求服务实施列表，参数为默认值
-    if (prevProps.currentId !== currentId
-      || query.missionViewType !== prevProps.location.query.missionViewType
+    if (
+      (
+        prevProps.currentId !== currentId
+        || query.missionViewType !== prevProps.location.query.missionViewType
+      ) && !this.isFirstGetTaskFlowData
     ) {
       this.getTaskFlowData(pageSize);
     }
+    this.isFirstGetTaskFlowData = false;
     if (query !== prevProps.location.query) {
       // 先判断再setState，避免不必要的渲染
       if (this.state.isFormHalfFilledOut) {
@@ -268,13 +268,13 @@ export default class ServiceImplementation extends PureComponent {
     const { changeParameter, currentTask: { statusCode } } = this.props;
     const stateList = getServiceState(statusCode);
     // 将服务实施的状态记到redux
-    changeParameter({ state: stateList }).then(() => {
+    changeParameter({ state: stateList }).then(() => (
       this.queryTargetCustList({
         state: stateList,
         pageSize,
         pageNum,
-      });
-    });
+      })
+    ));
   }
 
   // 获取新手引导步骤列表
