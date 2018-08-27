@@ -92,3 +92,9 @@ const time = {
 };
 
 export default time;
+
+export const {
+  format,
+  weekDay,
+  getDurationString,
+} = time;

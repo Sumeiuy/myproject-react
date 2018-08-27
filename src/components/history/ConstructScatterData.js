@@ -3,7 +3,13 @@
  * ConstructScatterData.js
  */
 import _ from 'lodash';
-import FixNumber from '../chartRealTime/FixNumber';
+import {
+  toFixedMoney,
+  toFixedNewMoney,
+  toFixedCI,
+  toFixedGE,
+  toFixedCust as fixNumberToFixedCust,
+} from '../chartRealTime/FixNumber';
 import {
   toFixedCust,
   toFixedPercent,
@@ -16,8 +22,6 @@ import {
   getMaxAndMinPercentOrPermillage,
 } from './FormatUnitAndSeries';
 import { ZHUNICODE } from '../../config';
-
-export default {};
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -117,13 +121,13 @@ export const constructScatterData = (options = {}) => {
     // 获取y轴的单位和格式化后的数据源
     getYAxisUnit(array, unit) {
       if (unit === YUAN) {
-        return FixNumber.toFixedMoney(array);
+        return toFixedMoney(array);
       } else if (unit === YUANNIAN) {
-        return FixNumber.toFixedNewMoney(array);
+        return toFixedNewMoney(array);
       } else if (unit === CI) {
-        return FixNumber.toFixedCI(array);
+        return toFixedCI(array);
       } else if (unit === GE) {
-        return FixNumber.toFixedGE(array);
+        return toFixedGE(array);
       } else if (unit === HU) {
         return toFixedCust(array);
       } else if (unit === REN) {
@@ -147,7 +151,7 @@ export const constructScatterData = (options = {}) => {
     // 获取x轴的单位和格式化后的数据源
     getXAxisUnit(array, currentXUnit) {
       if (currentXUnit.indexOf(HU) !== -1) {
-        return FixNumber.toFixedCust(array);
+        return fixNumberToFixedCust(array);
       } else if (currentXUnit.indexOf(REN) !== -1) {
         return toFixedRen(array);
       }

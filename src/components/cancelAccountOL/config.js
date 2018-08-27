@@ -41,3 +41,9 @@ const config = {
 };
 
 export default config;
+
+export const {
+  PUSHBTN,
+  LOSTDIRECTION,
+  APPROVAL_COLUMNS,
+} = config;

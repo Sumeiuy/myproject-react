@@ -95,3 +95,11 @@ const os = {
 };
 
 export default os;
+
+export const {
+  copyToClipBoard,
+  log,
+  warn,
+  error,
+  findBestMatch,
+} = os;

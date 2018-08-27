@@ -59,3 +59,9 @@ const utils = {
 };
 
 export default utils;
+
+export const {
+  createDetailCustTableData,
+  fixCurrentApprovalData,
+  createAddLayerCustTableDate,
+} = utils;

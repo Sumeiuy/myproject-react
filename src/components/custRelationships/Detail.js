@@ -15,10 +15,9 @@ import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import ApprovalRecord from '../permission/ApprovalRecord';
 import CommonUpload from '../common/biz/CommonUpload';
-import config from './config';
+import { CUST_RELATIONSHIP_COLUMNS } from './config';
 import styles from './detail.less';
 
-const { CUST_RELATIONSHIP_COLUMNS } = config;
 export default class Detail extends PureComponent {
   static propTypes = {
     // 数据

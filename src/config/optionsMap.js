@@ -274,3 +274,19 @@ const optionsMap = {
 };
 
 export default optionsMap;
+
+export const {
+  headBar,
+  time,
+  customerPoolTimeSelect,
+  historyTime,
+  compare,
+  visibleBoardType,
+  sortByType,
+  sortByOrder,
+  showType,
+  boardTypeMap,
+  boardKeyName,
+  summaryTypeSelect,
+  charRadarOrgClass,
+} = optionsMap;

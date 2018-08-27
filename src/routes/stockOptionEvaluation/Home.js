@@ -16,7 +16,7 @@ import withRouter from '../../decorators/withRouter';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import StockOptionApplyList from '../../components/common/appList';
-import config from '../../components/stockOptionEvaluation/config';
+import { stockOptionApply } from '../../components/stockOptionEvaluation/config';
 import ViewListRow from '../../components/stockOptionEvaluation/ViewListRow';
 import Detail from '../../components/stockOptionEvaluation/ApplyDetail';
 import CreateApply from '../../components/stockOptionEvaluation/CreateApply';
@@ -25,15 +25,12 @@ import permission from '../../helper/permission';
 import logable, { logPV } from '../../decorators/logable';
 
 const {
-  stockOptionApply,
-  stockOptionApply: {
-    statusOptions,
-    pageType,
-    basicFilters,
-    moreFilters,
-    moreFilterData,
-  },
-} = config;
+  statusOptions,
+  pageType,
+  basicFilters,
+  moreFilters,
+  moreFilterData,
+} = stockOptionApply;
 
 const effect = dva.generateEffect;
 const effects = {

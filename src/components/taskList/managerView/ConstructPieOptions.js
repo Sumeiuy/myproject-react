@@ -1,6 +1,5 @@
 // import _ from 'lodash';
 
-export default {};
 
 export const constructPieOptions = (options) => {
   const { renderTooltip, level1Data, level2Data } = options;

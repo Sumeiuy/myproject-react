@@ -70,3 +70,8 @@ const customerPool = {
 };
 
 export default customerPool;
+
+export const {
+  getCustomerListFilters,
+  getLabelInfo,
+} = customerPool;

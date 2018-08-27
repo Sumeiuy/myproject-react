@@ -17,7 +17,7 @@ module.exports = {
       'zrender',
       'react-split-pane',
       'redux-saga',
-      'babel-polyfill',
+      '@babel/polyfill',
       'antd',
       'echarts',
       'moment',

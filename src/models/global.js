@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @fileOverview models/global.js
  * @author sunweibin

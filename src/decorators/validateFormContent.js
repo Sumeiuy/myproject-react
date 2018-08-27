@@ -9,8 +9,6 @@
 import _ from 'lodash';
 import { regxp } from '../helper';
 
-export default {};
-
 export const validateFormContent = (target, name, descriptor) => {
   const origin = descriptor.value;
 

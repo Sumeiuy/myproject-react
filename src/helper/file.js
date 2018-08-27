@@ -33,3 +33,7 @@ const file = {
 };
 
 export default file;
+
+export const {
+  isExcel,
+} = file;

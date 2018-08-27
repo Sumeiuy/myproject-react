@@ -115,4 +115,18 @@ const stackTootip = {
   ...chartOptions.chartTooltip,
 };
 
-export default { ...chartOptions, stackTootip };
+const exported = {
+  ...chartOptions,
+  stackTootip,
+};
+
+export default exported;
+export { stackTootip };
+export const {
+  stackBarColors,
+  barColor,
+  yAxis,
+  xAxis,
+  chartGrid,
+  chartTooltip,
+} = chartOptions;

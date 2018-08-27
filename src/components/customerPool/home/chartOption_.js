@@ -13,7 +13,7 @@ const getColourfulItem = ({
   colourfulTotal,
 }) => {
   if (_.isEmpty(colourfulData)) {
-    return {};
+    return [];
   }
   const maxIndex = colourfulData.length - 1;
   return colourfulData.map(

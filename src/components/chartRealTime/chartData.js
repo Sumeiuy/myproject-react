@@ -418,3 +418,18 @@ const chartData = {
 };
 
 export default chartData;
+
+export const {
+  filterOrgModelData,
+  getNormalSeries,
+  getStackSeries,
+  dealStackSeriesMoney,
+  dealStackSeriesNewMoney,
+  dealStackSeiesHu,
+  dealStackData,
+  fixedPercentMaxMin,
+  fixedPermillageMaxMin,
+  fixedMoneyMaxMin,
+  fixedPeopleMaxMin,
+  fixedStackLegendData,
+} = chartData;

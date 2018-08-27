@@ -102,9 +102,10 @@ function taskIsCompleted(code) {
   return taskStatus[7].id === Number(code);
 }
 
-export default {
+const exported = {
   // 流程状态，即每一个客户的任务状态
   flowStatusList: flowStatus,
+
   // 流程状态工具
   flow: {
     isUnStart: flowIsUnStart,
@@ -116,8 +117,10 @@ export default {
     getFlowStatus,
     getFlowCodeByName,
   },
+
   // 任务状态
   taskStatusList: taskStatus,
+
   // 任务状态工具
   task: {
     isApproval: taskIsApproval,
@@ -130,3 +133,11 @@ export default {
     isCompleted: taskIsCompleted,
   },
 };
+
+export default exported;
+export { flowStatus as flowStatusList, taskStatus as taskStatusList };
+
+export const {
+  flow,
+  task,
+} = exported;

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请models

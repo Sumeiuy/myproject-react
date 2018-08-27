@@ -11,7 +11,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { SingleFilter } from 'lego-react-filter';
 
-import fsp from '../../../../helper/fsp';
+import { scrollToTop } from '../../../../helper/fsp';
 import Icon from '../../../common/Icon';
 import Table from '../../../common/commonTable/index';
 import withRouter from '../../../../decorators/withRouter';
@@ -134,7 +134,7 @@ export default class LabelManager extends PureComponent {
       ...option,
     };
     queryLabelInfo(params);
-    fsp.scrollToTop();
+    scrollToTop();
     replace({
       pathname,
       query: {

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import _ from 'lodash';
 import { labelManagement as api } from '../api';
 import { toastM } from '../utils/sagaEffects';

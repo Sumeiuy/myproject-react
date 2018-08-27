@@ -28,3 +28,7 @@ const utils = {
 };
 
 export default utils;
+
+export const {
+  getRegionText,
+} = utils;

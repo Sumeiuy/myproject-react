@@ -1,117 +1,191 @@
 import apiCreator from '../utils/apiCreator';
-import common from './common';
-import report from './report';
-import feedback from './feedback';
-import permission from './permission';
-import commission from './commission';
-import customerPool from './customerPool';
-import contract from './contract';
-import channelsTypeProtocol from './channelsTypeProtocol';
-import seibelCommon from './seibelCommon';
-import performerView from './performerView';
-import demote from './demote';
-import filialeCustTransfer from './filialeCustTransfer';
-import relation from './relation';
-import customerFeedback from './customerFeedback';
-import taskFeedback from './taskFeedback';
-import mainPosition from './mainPosition';
-import morningBoradcast from './morningBoradcast';
-import preSaleQuery from './preSaleQuery';
-import stock from './stock';
-import pointsExchange from './pointsExchange';
-import userCenter from './userCenter';
-import telephoneNumberManage from './telephoneNumberManage';
-import choicenessCombination from './choicenessCombination';
-import investmentAdvice from './investmentAdvice';
-import operationCenter from './operationCenter';
-import businessDepartmentCustomerDistribute from './businessDepartmentCustomerDistribute';
-import custAllot from './custAllot';
-import messageCenter from './messageCenter';
-import stockOptionEvaluation from './stockOptionEvaluation';
-import latestView from './latestView';
-import keyMonitorAccount from './keyMonitorAccount';
-import custRelationships from './custRelationships';
-import cancelAccountOL from './cancelAccountOL';
-import customerLabel from './customerLabel';
-import accountLimit from './accountLimit';
-import labelManagement from './labelManagement';
+import commonAPI from './common';
+import reportAPI from './report';
+import feedbackAPI from './feedback';
+import permissionAPI from './permission';
+import commissionAPI from './commission';
+import customerPoolAPI from './customerPool';
+import contractAPI from './contract';
+import channelsTypeProtocolAPI from './channelsTypeProtocol';
+import seibelCommonAPI from './seibelCommon';
+import performerViewAPI from './performerView';
+import demoteAPI from './demote';
+import filialeCustTransferAPI from './filialeCustTransfer';
+import relationAPI from './relation';
+import customerFeedbackAPI from './customerFeedback';
+import taskFeedbackAPI from './taskFeedback';
+import mainPositionAPI from './mainPosition';
+import morningBoradcastAPI from './morningBoradcast';
+import preSaleQueryAPI from './preSaleQuery';
+import stockAPI from './stock';
+import pointsExchangeAPI from './pointsExchange';
+import userCenterAPI from './userCenter';
+import telephoneNumberManageAPI from './telephoneNumberManage';
+import choicenessCombinationAPI from './choicenessCombination';
+import investmentAdviceAPI from './investmentAdvice';
+import operationCenterAPI from './operationCenter';
+import businessDepartmentCustomerDistributeAPI from './businessDepartmentCustomerDistribute';
+import custAllotAPI from './custAllot';
+import messageCenterAPI from './messageCenter';
+import stockOptionEvaluationAPI from './stockOptionEvaluation';
+import latestViewAPI from './latestView';
+import keyMonitorAccountAPI from './keyMonitorAccount';
+import custRelationshipsAPI from './custRelationships';
+import cancelAccountOLAPI from './cancelAccountOL';
+import customerLabelAPI from './customerLabel';
+import accountLimitAPI from './accountLimit';
+import labelManagementAPI from './labelManagement';
 
 const api = apiCreator();
 
-export default {
+const exported = {
   // 暴露api上的几个底层方法: get / post
   ...api,
+
   // ========== 公用接口
-  common: common(api),
+  common: commonAPI(api),
+
   // ========== 客户资源池
-  customerPool: customerPool(api),
+  customerPool: customerPoolAPI(api),
+
   // ========== 执行者视图
-  performerView: performerView(api),
+  performerView: performerViewAPI(api),
+
   // ========== 绩效视图
-  report: report(api),
+  report: reportAPI(api),
+
   // ========== 反馈管理
-  feedback: feedback(api),
+  feedback: feedbackAPI(api),
+
   // ========== seibel 通用接口
-  seibel: seibelCommon(api),
+  seibel: seibelCommonAPI(api),
+
   // ========== 权限申请私有接口
-  permission: permission(api),
+  permission: permissionAPI(api),
+
   // ========== 合作合约相关接口
-  contract: contract(api),
+  contract: contractAPI(api),
+
   // ========== 通道类型协议相关接口
-  channelsTypeProtocol: channelsTypeProtocol(api),
+  channelsTypeProtocol: channelsTypeProtocolAPI(api),
+
   // ========== 佣金调整的数据接口end
-  commission: commission(api),
+  commission: commissionAPI(api),
+
   // ========== 汇报关系树页面
-  relation: relation(api),
+  relation: relationAPI(api),
+
   // ========== 设置主职位接口
-  mainPosition: mainPosition(api),
+  mainPosition: mainPositionAPI(api),
+
   // ========== 降级客户接口
-  demote: demote(api),
+  demote: demoteAPI(api),
+
   // ========== 分公司客户划转接口api
-  filialeCustTransfer: filialeCustTransfer(api),
+  filialeCustTransfer: filialeCustTransferAPI(api),
+
   // ========== 客户反馈
-  customerFeedback: customerFeedback(api),
+  customerFeedback: customerFeedbackAPI(api),
+
   // ========== 任务反馈
-  taskFeedback: taskFeedback(api),
+  taskFeedback: taskFeedbackAPI(api),
+
   // ========== 晨报
-  morningBoradcast: morningBoradcast(api),
+  morningBoradcast: morningBoradcastAPI(api),
+
   // ========== 售前适当性查询
-  preSaleQuery: preSaleQuery(api),
+  preSaleQuery: preSaleQueryAPI(api),
+
   // ========== 个股资讯
-  stock: stock(api),
+  stock: stockAPI(api),
+
   // ========== 积分兑换历史查询
-  pointsExchange: pointsExchange(api),
+  pointsExchange: pointsExchangeAPI(api),
+
   // ========== 用户中心
-  userCenter: userCenter(api),
+  userCenter: userCenterAPI(api),
+
   // ========== 公务手机和电话卡号管理
-  telephoneNumberManage: telephoneNumberManage(api),
+  telephoneNumberManage: telephoneNumberManageAPI(api),
+
   // ========== 精选组合
-  choicenessCombination: choicenessCombination(api),
+  choicenessCombination: choicenessCombinationAPI(api),
+
   // ========== 投资建议模板
-  investmentAdvice: investmentAdvice(api),
+  investmentAdvice: investmentAdviceAPI(api),
+
   // ========== 平台参数-运营中心
-  operationCenter: operationCenter(api),
+  operationCenter: operationCenterAPI(api),
+
   // ========== 客户分配-营业部非投顾签约客户的分配
-  businessDepartmentCustDistribute: businessDepartmentCustomerDistribute(api),
+  businessDepartmentCustDistribute: businessDepartmentCustomerDistributeAPI(api),
+
   // ========== 客户分配分公司客户分配
-  custAllot: custAllot(api),
+  custAllot: custAllotAPI(api),
+
   // ========== 消息通知提醒
-  messageCenter: messageCenter(api),
+  messageCenter: messageCenterAPI(api),
+
   // ========== 股票期权评估申请
-  stockOptionEvaluation: stockOptionEvaluation(api),
+  stockOptionEvaluation: stockOptionEvaluationAPI(api),
+
   // ========== 最新观点
-  latestView: latestView(api),
+  latestView: latestViewAPI(api),
+
   // ========== 消息通知提醒
-  keyMonitorAccount: keyMonitorAccount(api),
+  keyMonitorAccount: keyMonitorAccountAPI(api),
+
   // ========== 客户关联关系
-  custRelationships: custRelationships(api),
+  custRelationships: custRelationshipsAPI(api),
+
   // ========== 线上销户
-  cancelAccountOL: cancelAccountOL(api),
+  cancelAccountOL: cancelAccountOLAPI(api),
+
   // ========== 客户自定义标签
-  customerLabel: customerLabel(api),
+  customerLabel: customerLabelAPI(api),
   // ========== 账户限制管理
-  accountLimit: accountLimit(api),
+  accountLimit: accountLimitAPI(api),
   // ========== 管理标签页面
-  labelManagement: labelManagement(api),
+  labelManagement: labelManagementAPI(api),
 };
 
+export default exported;
+
+export const {
+  common,
+  customerPool,
+  performerView,
+  report,
+  feedback,
+  seibel,
+  permission,
+  contract,
+  channelsTypeProtocol,
+  commission,
+  relation,
+  mainPosition,
+  demote,
+  filialeCustTransfer,
+  customerFeedback,
+  taskFeedback,
+  morningBoradcast,
+  preSaleQuery,
+  stock,
+  pointsExchange,
+  userCenter,
+  telephoneNumberManage,
+  choicenessCombination,
+  investmentAdvice,
+  operationCenter,
+  businessDepartmentCustDistribute,
+  custAllot,
+  messageCenter,
+  stockOptionEvaluation,
+  latestView,
+  keyMonitorAccount,
+  custRelationships,
+  cancelAccountOL,
+  customerLabel,
+  accountLimit,
+  labelManagement,
+} = exported;

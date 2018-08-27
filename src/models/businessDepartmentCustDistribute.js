@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @Author: sunweibin
  * @Date: 2018-05-08 13:27:31

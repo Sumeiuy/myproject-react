@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
 * @Author: sunweibin
 * @Descripter: 线上申请models

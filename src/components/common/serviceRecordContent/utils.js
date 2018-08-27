@@ -100,7 +100,19 @@ const serveStatusRadioGroupMap = [
 // 打电话时的服务记录
 const PHONE = 'phone';
 
-export default {
+const exported = {
+  serveWaySelectMap,
+  errorFeedback,
+  getServeWayCode,
+  getServeWayByCodeOrName,
+  serveStatusRadioGroupMap,
+  PHONE,
+  defaultFeedback,
+  defaultFeedbackOption,
+};
+
+export default exported;
+export {
   serveWaySelectMap,
   errorFeedback,
   getServeWayCode,

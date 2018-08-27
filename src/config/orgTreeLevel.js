@@ -1,7 +1,6 @@
 /**
  * 组织机构层级，1代表经总，2代表分公司，3代表营业部
  */
-export default {};
 
 export const ORG_LEVEL1 = '1';
 

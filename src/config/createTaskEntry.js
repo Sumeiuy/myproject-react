@@ -1,4 +1,3 @@
-export default {};
 
 // returnTaskFromToDoList是待办，审批驳回之后，编辑自建任务信息界面
 export const RETURN_TASK_FROM_TODOLIST = 'returnTaskFromToDoList';

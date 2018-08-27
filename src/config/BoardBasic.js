@@ -38,3 +38,8 @@ const BoardBasic = {
 };
 
 export default BoardBasic;
+
+export const {
+  regular,
+  types,
+} = BoardBasic;

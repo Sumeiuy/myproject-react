@@ -22,9 +22,9 @@ import permissionOptions from './permissionOptions';
 import seibelConfig from './pageConfig';
 import contract from './contract';
 import fspRoutes from './fspRoutes';
-import orgTreeLevel from './orgTreeLevel';
+import * as orgTreeLevel from './orgTreeLevel';
 import padSightLabelDesc from './constructSightLabelDesc';
-import createTaskEntry from './createTaskEntry';
+import * as createTaskEntry from './createTaskEntry';
 import seperator from './filterSeperator';
 import retTabParam from './retTabParam';
 

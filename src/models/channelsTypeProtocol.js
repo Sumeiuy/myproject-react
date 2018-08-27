@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /*
  * @Description: 通道类型协议 model
  * @Author: XuWenKang

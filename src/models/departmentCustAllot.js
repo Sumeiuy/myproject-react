@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @Description: 分公司客户分配 model
  * @Author: Liujianshu
