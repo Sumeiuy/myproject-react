@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /*
  * @Author: LiuJianShu
  * @Date: 2017-11-10 09:27:03

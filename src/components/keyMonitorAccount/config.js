@@ -61,3 +61,7 @@ const config = {
 };
 
 export default config;
+
+export const {
+  CHECKINFO_LIST_COLUMNS,
+} = config;

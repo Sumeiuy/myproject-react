@@ -1,4 +1,4 @@
-export default {
+const customerPoolBusiness = {
   817270: '个股期权',
   817260: '新三板',
   817030: '融资融券',
@@ -12,3 +12,5 @@ export default {
   817010: '创业板',
   817050: '天天发',
 };
+
+export default customerPoolBusiness;

@@ -81,3 +81,21 @@ const regexp = {
 };
 
 export default regexp;
+
+export const {
+ chinese,
+ cellPhone,
+ tellPhone,
+ email,
+ thousandInteger,
+ thousandDecimal,
+ positiveInteger,
+ matchPathList,
+ returnLine,
+ url,
+ uscc,
+ idNo18Digit,
+ idNo15Digit,
+ onlyAlphabetAndNumber,
+ onlyWordNumAlphabet,
+} = regexp;

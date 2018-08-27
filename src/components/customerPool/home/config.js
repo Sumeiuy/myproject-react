@@ -6,7 +6,7 @@
  * @Last Modified time: 2018-05-23 13:48:09
  */
 
-export default {
+const exported = {
   labelModal: {
     tabList: [
       {
@@ -20,3 +20,5 @@ export default {
     ],
   },
 };
+
+export default exported;

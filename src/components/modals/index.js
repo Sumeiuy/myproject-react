@@ -6,7 +6,18 @@ import CreateHistoryBoardModal from './CreateHistoryBoardModal';
 import DeleteHistoryBoardModal from './DeleteHistoryBoardModal';
 import SelectTreeModal from './SelectTreeModal';
 
-export default {
+const exported = {
+  BackConfirmModal,
+  CreateBoardModal,
+  DeleteBoardModal,
+  PublishConfirmModal,
+  CreateHistoryBoardModal,
+  DeleteHistoryBoardModal,
+  SelectTreeModal,
+};
+
+export default exported;
+export {
   BackConfirmModal,
   CreateBoardModal,
   DeleteBoardModal,

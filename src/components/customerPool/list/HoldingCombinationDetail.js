@@ -11,11 +11,11 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Popover, Table } from 'antd';
 import { fspContainer } from '../../../config';
-import titleList from './config/titleList';
+import { holdingCombinationSecurity } from './config/titleList';
 import styles from './holdingCombinationDetail.less';
 
 const getPopupContainer = () => document.querySelector(fspContainer.container) || document.body;
-const holdingSecurityTitleList = titleList.holdingCombinationSecurity;
+const holdingSecurityTitleList = holdingCombinationSecurity;
 const EMPTY_ARRAY = [];
 export default class HoldingCombinationDetail extends PureComponent {
 

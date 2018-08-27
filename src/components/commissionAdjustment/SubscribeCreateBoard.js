@@ -23,7 +23,7 @@ import {
   pagination,
   subScribeProColumns,
 } from './commissionTransferHelper/transferPropsHelper';
-import createCommon from './commissionCreateCommon/common';
+import { getApprovalBtnID, changeSubmitSubProList } from './commissionCreateCommon/common';
 import logable, { logPV } from '../../decorators/logable';
 
 import styles from './createNewApprovalBoard.less';
@@ -105,7 +105,7 @@ export default class SubscribeCreateBoard extends PureComponent {
   componentDidMount() {
     // 进入页面查一把子类型的审批人列表
     const { empInfo: { empNum } } = this.props;
-    const btnId = createCommon.getApprovalBtnID(commadj.subscribe);
+    const btnId = getApprovalBtnID(commadj.subscribe);
     this.props.getAprovalUserList({
       loginUser: empNum,
       btnId,
@@ -121,7 +121,7 @@ export default class SubscribeCreateBoard extends PureComponent {
       attachment,
       canShowAppover,
     } = this.state;
-    const newSubProList = createCommon.changeSubmitSubProList(
+    const newSubProList = changeSubmitSubProList(
       subProList,
       subscribelProductMatchInfo,
     );

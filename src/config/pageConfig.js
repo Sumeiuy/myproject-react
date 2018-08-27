@@ -1008,3 +1008,14 @@ const pageConfig = {
 };
 
 export default pageConfig;
+
+export const {
+  permission,
+  commission,
+  contract,
+  channelsTypeProtocol,
+  comsubs,
+  filialeCustTransfer,
+  tasklist,
+  customerFeedback,
+} = pageConfig;

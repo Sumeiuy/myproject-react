@@ -138,3 +138,14 @@ const util = {
 };
 
 export default util;
+
+export const {
+  combineLostReason,
+  combineInvestVars,
+  isTransferLostDirection,
+  isInvestLostDirection,
+  getSelectedKeys,
+  isSelectedOtherOption,
+  convertSubmitInvestVars,
+  convertSubmitLostReason,
+} = util;

@@ -2,7 +2,6 @@
  * by xuxiaoqin
  * ConstructScatterOptions.js
  */
-export default {};
 
 export const constructScatterOptions = (option = {}) => {
   const {

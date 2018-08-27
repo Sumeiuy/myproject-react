@@ -455,9 +455,12 @@ const defaultMenu = [
   },
 ];
 
-export default {
+const exported = {
   newOpenTabConfig,
   indexPaneKey,
   defaultMenu,
 };
+
+export default exported;
+export { newOpenTabConfig, indexPaneKey, defaultMenu };
 

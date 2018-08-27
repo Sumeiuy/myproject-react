@@ -14,17 +14,22 @@ import classnames from 'classnames';
 import InfoTitle from '../common/InfoTitle';
 import Icon from '../common/Icon';
 import { time } from '../../helper';
-import config from './config';
+import {
+  sourceType,
+  overlayStyle,
+  securityType as securityTypeConfig,
+  titleList as titleListConfig,
+  formatStr,
+} from './config';
 import styles from './weeklySecurityTopTen.less';
 import logable from '../../decorators/logable';
 
 const titleStyle = {
   fontSize: '16px',
 };
-const { sourceType, overlayStyle } = config;
 // securityType 里股票对应的值
-const STOCK_CODE = config.securityType[0].value;
-const titleList = config.titleList.ten;
+const STOCK_CODE = securityTypeConfig[0].value;
+const titleList = titleListConfig.ten;
 
 export default class WeeklySecurityTopTen extends PureComponent {
   static propTypes = {
@@ -63,7 +68,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
       </div>);
     };
     // 证券调入时间
-    newTitleList[1].render = text => (<div>{time.format(text, config.formatStr)}</div>);
+    newTitleList[1].render = text => (<div>{time.format(text, formatStr)}</div>);
     // 涨跌幅
     newTitleList[2].render = (text) => {
       const change = this.handlePercentChange(text.toFixed(2));

@@ -173,3 +173,12 @@ const feedbackOptions = {
 };
 
 export default feedbackOptions;
+
+export const {
+  feedbackChannel,
+  typeOptions,
+  questionTagOptions,
+  stateOptions,
+  operatorOptions,
+  allOperatorOptions,
+} = feedbackOptions;

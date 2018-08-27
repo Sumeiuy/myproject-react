@@ -111,3 +111,8 @@ const config = {
 };
 
 export default config;
+
+export const {
+  stockOptionApply,
+  approvalColumns,
+} = config;

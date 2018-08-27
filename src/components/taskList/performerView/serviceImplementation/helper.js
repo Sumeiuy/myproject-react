@@ -17,4 +17,3 @@ export function getServiceState(code) {
   return state;
 }
 
-export default {};

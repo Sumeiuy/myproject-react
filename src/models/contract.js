@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /*
  * @Description: 合作合约 model
  * @Author: LiuJianShu

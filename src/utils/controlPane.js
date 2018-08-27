@@ -348,7 +348,23 @@ function openFspIframeTab(options) {
   });
 }
 
-export default {
+const exported = {
+  dispatchTabPane,
+  openRctTab,
+  openFspTab,
+  openInTab,
+  closeRctTab,
+  closeFspTab,
+  navToTab,
+  linkTo,
+  navTo,
+  removeTab,
+  saveTabUrl,
+  openFspIframeTab,
+};
+
+export default exported;
+export {
   dispatchTabPane,
   openRctTab,
   openFspTab,

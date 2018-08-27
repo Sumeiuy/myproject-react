@@ -6,13 +6,11 @@
  * @description 查询审批人参数配置
  */
 
-const approval = {
-  approvalBtnId: {
-    batch: '119000',
-    single: '130000',
-    sub: '140000',
-    unSub: '150000',
-  },
+const approvalBtnId = {
+  batch: '119000',
+  single: '130000',
+  sub: '140000',
+  unSub: '150000',
 };
 
-export default approval;
+export default approvalBtnId;

@@ -13,6 +13,9 @@ const questionType = [
   },
 ];
 
-export default {
+const exported = {
   questionType,
 };
+
+export default exported;
+export { questionType };

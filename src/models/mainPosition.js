@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /*
  * @Description: 设置主职位的 model 层
  * @Author: LiuJianShu

@@ -46,7 +46,10 @@ function isInvolveSoftware(businessType) {
     || isSoftwareContinued(businessType);
 }
 
-export default {
+const exported = {
   isInvolvePermission,
   isInvolveSoftware,
 };
+
+export default exported;
+export { isInvolvePermission, isInvolveSoftware };

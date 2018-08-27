@@ -28,7 +28,7 @@ import {
   pagination,
   singleColumns,
 } from './commissionTransferHelper/transferPropsHelper';
-import createCommon from './commissionCreateCommon/common';
+import { getApprovalBtnID, permil } from './commissionCreateCommon/common';
 import styles from './createNewApprovalBoard.less';
 import logable, { logPV } from '../../decorators/logable';
 
@@ -143,7 +143,7 @@ export default class SingleCreateBoard extends PureComponent {
   componentDidMount() {
     // 进入页面查一把子类型的审批人列表
     const { empInfo: { empNum } } = this.props;
-    const btnId = createCommon.getApprovalBtnID(commadj.single);
+    const btnId = getApprovalBtnID(commadj.single);
     this.props.queryApprovalList({
       loginUser: empNum,
       btnId,
@@ -434,7 +434,7 @@ export default class SingleCreateBoard extends PureComponent {
               <InfoItem label="当前股基佣金率" value={newCurrentCom} width="110px" valueColor="#9b9b9b" />
             </li>
             <li className={styles.rightTargetCom}>
-              <CommissionLine label="目标股基佣金率" labelWidth="110px" needInputBox={false} extra={createCommon.permil}>
+              <CommissionLine label="目标股基佣金率" labelWidth="110px" needInputBox={false} extra={permil}>
                 <AutoComplete
                   initValue={newCommission}
                   dataSource={gjList}

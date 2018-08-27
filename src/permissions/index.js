@@ -32,11 +32,13 @@ const checkPermission = (checkList) => {
   return !_.isEmpty(passed);
 };
 
-export default {
+const exported = {
   init(appStore) {
     store = appStore;
   },
 };
+
+export default exported;
 
 // 首页指标权限，定制看板菜单
 // Usage: const XXButton = HomeIndicatorWritable(Button)

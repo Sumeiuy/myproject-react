@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @Description: 个股相关 model
  * @Author: Liujianshu

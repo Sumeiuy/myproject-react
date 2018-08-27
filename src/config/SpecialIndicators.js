@@ -1,5 +1,3 @@
-export default {};
-
 // 特殊指标key，用来处理不展示散点图
 export const EXCEPT_CUST_JYYJ_MAP = [
   {

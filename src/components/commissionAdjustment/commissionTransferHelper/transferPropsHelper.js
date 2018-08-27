@@ -48,3 +48,9 @@ const transferPropsHelper = {
 };
 
 export default transferPropsHelper;
+
+export const {
+  pagination,
+  singleColumns,
+  subScribeProColumns,
+} = transferPropsHelper;

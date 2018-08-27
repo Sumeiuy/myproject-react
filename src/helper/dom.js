@@ -117,3 +117,15 @@ const dom = {
 };
 
 export default dom;
+
+export const {
+  getViewPortHeight,
+  getCssStyle,
+  getRect,
+  hasClass,
+  addClass,
+  removeClass,
+  setAttribute,
+  getAttribute,
+  setStyle,
+} = dom;

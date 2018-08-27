@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /*
  * @Author: XuWenKang
  * @Description: 分公司客户划转modal

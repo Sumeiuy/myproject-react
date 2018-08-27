@@ -1,6 +1,6 @@
 import apiCreator from './apiCreator';
 import request from './request';
-import sagaEffects from './sagaEffects';
+import * as sagaEffects from './sagaEffects';
 import {
   dispatchTabPane,
   openRctTab,
@@ -19,6 +19,27 @@ import {
 import initFspMethod from './initFspMethod';
 import fspGlobal from './fspGlobal';
 
+const exported = {
+  apiCreator,
+  request,
+  sagaEffects,
+  initFspMethod,
+  fspGlobal,
+  dispatchTabPane,
+  openRctTab,
+  openFspTab,
+  closeRctTab,
+  closeFspTab,
+  removeTab,
+  openInTab,
+  navToTab,
+  navTo,
+  linkTo,
+  saveTabUrl,
+  openFspIframeTab,
+};
+
+export default exported;
 export {
   apiCreator,
   request,

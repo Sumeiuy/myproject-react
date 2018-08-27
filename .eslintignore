@@ -8,3 +8,4 @@ dist
 build/**
 config/**
 src/components/common/htFilter/treeFilter/**
+src/common/router.js

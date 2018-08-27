@@ -29,3 +29,8 @@ const tool = {
 };
 
 export default tool;
+
+export const {
+  constructPageSizeOptions,
+  showTotal,
+} = tool;

@@ -46,3 +46,10 @@ const iconTypeMap = {
 };
 
 export default iconTypeMap;
+
+export const {
+  getIcon,
+  getCoreIcon,
+  getCoreIconColor,
+  getCoreIconSize,
+} = iconTypeMap;

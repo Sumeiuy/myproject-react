@@ -8,8 +8,8 @@ function resolve (dir) {
 
 module.exports = {
   entry: {
-    newIndex: ['babel-polyfill', './fspSrc/app.js'],
-    index: ['babel-polyfill', './src/app.js'],
+    newIndex: ['@babel/polyfill', './fspSrc/app.js'],
+    index: ['@babel/polyfill', './src/app.js'],
   },
   output: {
     path: config.build.assetsRoot,

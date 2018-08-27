@@ -368,4 +368,9 @@ function getFilterInfo({ filterObj, dict, industryList, definedLabelsInfo }) {
   };
 }
 
-export default { getFilterInfo };
+const exported = {
+  getFilterInfo,
+};
+
+export default exported;
+export { getFilterInfo };

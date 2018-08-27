@@ -4,13 +4,13 @@
    */
 import _ from 'lodash';
 import env from '../helper/env';
-import os from '../helper/os';
+import { findBestMatch } from '../helper/os';
 import { parse, parseUrl } from '../helper/url';
 import { fspRoutes, retTabParam } from '../config';
 import { openRctTab } from './controlPane';
 
 function findRoute(url) {
-  return os.findBestMatch(url, fspRoutes, 'url');
+  return findBestMatch(url, fspRoutes, 'url');
 }
 
 function initFspMethod({ store, history, isInReact }) {

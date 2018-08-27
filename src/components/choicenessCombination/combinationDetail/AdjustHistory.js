@@ -11,14 +11,19 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 import { Popover } from 'antd';
-import config from '../config';
+import {
+  securityType,
+  typeList,
+  directionRange,
+  overlayStyle,
+  formatStr,
+} from '../config';
 import { time } from '../../../helper';
 import logable, { logPV } from '../../../decorators/logable';
 import styles from './adjustHistory.less';
 
 // securityType 里股票对应的值
-const STOCK_CODE = config.securityType[0].value;
-const { typeList, directionRange, overlayStyle } = config;
+const STOCK_CODE = securityType[0].value;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 export default class AdjustHistory extends PureComponent {
@@ -69,7 +74,7 @@ export default class AdjustHistory extends PureComponent {
                   </span>
               }
             </span>
-            <span className={styles.time}>{time.format(item.time, config.formatStr)}</span>
+            <span className={styles.time}>{time.format(item.time, formatStr)}</span>
             <span className={styles.const}>{item.price}</span>
             <span className={styles.change}>{item.change || '持仓变化：暂无'}</span>
           </div>

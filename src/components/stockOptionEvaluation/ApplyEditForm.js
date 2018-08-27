@@ -20,13 +20,12 @@ import AssessTable from './AssessTable';
 import CommonUpload from '../common/biz/CommonUpload';
 import Approval from '../permission/Approval';
 import ApproveList from '../common/approveList';
-import config from './config';
+import { approvalColumns } from './config';
 import { data } from '../../helper';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 
 import styles from './applyEditForm.less';
 
-const { approvalColumns } = config;
 const EMPTY_INFO = '--';
 const SRTYPE = 'SRStkOpReq';
 const STOPOPERATE = 'falseOver'; // 终止的operate值
