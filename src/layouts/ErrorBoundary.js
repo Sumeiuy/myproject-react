@@ -63,7 +63,7 @@ export default class ErrorBoundary extends Component {
     if (error) {
       return (
         <div className={styles.container}>
-          <ErrorPage errorId={errorId} location={location} />
+          <ErrorPage errorId={errorId} location={this.props.location} />
         </div>
       );
     }
