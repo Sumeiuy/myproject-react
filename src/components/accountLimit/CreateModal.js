@@ -169,10 +169,18 @@ export default class CreateModal extends PureComponent {
       dataIndex: 'operate',
       key: 'operate',
       title: '操作',
-      render: (text, record) => this.renderPopconfirm(record),
+      render: (text, record) => (<div className={styles.operateColumn}>
+        <Icon type="beizhu" onClick={() => this.editCustomerInfo(record)} />
+        {this.renderPopconfirm(record)}
+      </div>),
       width: 80,
     });
     return titleList;
+  }
+
+  @autobind
+  editCustomerInfo(record) {
+    console.warn('点击了编辑', record);
   }
 
   // 设置限制类型 state
