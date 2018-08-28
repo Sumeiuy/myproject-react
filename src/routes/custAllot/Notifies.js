@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-05-25 13:55:42
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-19 14:10:36
+ * @Last Modified time: 2018-08-27 16:25:27
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import _ from 'lodash';
 
 import Pagination from '../../components/common/Pagination';
 import CommonTable from '../../components/common/biz/CommonTable';
+import HeadBreadcrumb from '../../components/messageCenter/HeadBreadcrumb';
 import Barable from '../../decorators/selfBar';
 import fspPatch from '../../decorators/fspPatch';
 import withRouter from '../../decorators/withRouter';
@@ -125,6 +126,7 @@ export default class CustAllotNotifies extends PureComponent {
     };
     return (
       <div className={styles.notifiesWrapper}>
+        <HeadBreadcrumb />
         <div className={styles.success}>
           <h2>通知提醒</h2>
           <h3 className={styles.title}>有以下客户划入您名下！</h3>
