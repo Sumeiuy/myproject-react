@@ -133,3 +133,13 @@ const data = {
 };
 
 export default data;
+
+export const {
+  getStrLen,
+  walk,
+  pickOrgInfo,
+  convertCustRange2Array,
+  convertNumToLetter,
+  toPercent,
+  uuid,
+} = data;

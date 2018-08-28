@@ -19,7 +19,7 @@ import ViewListRow from '../../components/custRelationships/ViewListRow';
 import CustRelationshipsList from '../../components/common/appList';
 import Detail from '../../components/custRelationships/Detail';
 import CreateApply from '../../components/custRelationships/CreateApply';
-import config from '../../components/custRelationships/config';
+import { custRelationships } from '../../components/custRelationships/config';
 import { permission, dva } from '../../helper';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
@@ -27,15 +27,12 @@ import logable, { logPV } from '../../decorators/logable';
 // 客户关联关系申请左侧列表宽度
 const LEFT_PANEL_WIDTH = 500;
 const {
-  custRelationships,
-  custRelationships: {
-    statusOptions,
-    pageType,
-    basicFilters,
-    moreFilters,
-    moreFilterData,
-  },
- } = config;
+  statusOptions,
+  pageType,
+  basicFilters,
+  moreFilters,
+  moreFilterData,
+} = custRelationships;
 const effect = dva.generateEffect;
 const effects = {
   // 左侧列表

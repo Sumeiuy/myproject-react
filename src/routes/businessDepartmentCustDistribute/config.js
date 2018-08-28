@@ -6,9 +6,10 @@
  * @description 营业部非投顾签约客户分配的配置项
  */
 
-export default {
+const exported = {
   pageName: '营业部客户分配',
   pageType: '08',
+
   status: [
     {
       show: true,
@@ -42,3 +43,5 @@ export default {
     },
   ],
 };
+
+export default exported;

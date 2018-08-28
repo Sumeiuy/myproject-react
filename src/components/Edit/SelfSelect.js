@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 
 import { dom, event } from '../../helper';
-import selectHandlers from './selectHelper';
+import { getAllCheckboxNode, afterSelected } from './selectHelper';
 import styles from './SelfSelect.less';
 import logable from '../../decorators/logable';
 
@@ -36,13 +36,13 @@ export default class SelfSelect extends PureComponent {
     // value为一个对象,{ label, currency }
     const newProps = this.props;
     const value = newProps.value || {};
-    const allCheckedNode = selectHandlers.getAllCheckboxNode(props.level);
+    const allCheckedNode = getAllCheckboxNode(props.level);
     this.state = {
       visibleRangeNames: value.label, // 显示的Label文本
       expand: false,
       groupCheckedList: value.currency, // 所有分公司/营业部，选中的checkbox的列表
       checkAll: false, // 全选按钮的状态
-      getFinalLabel: selectHandlers.afterSelected(props.options, allCheckedNode),
+      getFinalLabel: afterSelected(props.options, allCheckedNode),
       allCheckedNode,
     };
   }

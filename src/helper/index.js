@@ -83,4 +83,3 @@ export {
   getIconType,
   date,
 };
-export default {};

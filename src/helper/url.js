@@ -7,7 +7,7 @@
  */
 import qs from 'query-string';
 import _ from 'lodash';
-import regexp from './regexp';
+import { matchPathList } from './regexp';
 
 const url = {
   /**
@@ -58,7 +58,7 @@ const url = {
    * @return ['/b', '/c']
    */
   backRoutePathList(pathname, matchPath = '') {
-    return pathname.substring(matchPath.length).match(regexp.matchPathList) || [];
+    return pathname.substring(matchPath.length).match(matchPathList) || [];
   },
 
   // 从url query上解析出filter对象
@@ -86,3 +86,12 @@ const url = {
 };
 
 export default url;
+
+export const {
+  parse,
+  stringify,
+  parseUrl,
+  matchRoute,
+  backRoutePathList,
+  transfromFilterValFromUrl,
+} = url;

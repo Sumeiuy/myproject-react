@@ -5,9 +5,8 @@
  * @Last Modified time: 2018-08-03 15:40:58
  * @description 线上销户需要用到的配置项
  */
-import busApplyFilters from '../../config/busApplyFilters';
+import { customer, status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
 
-const { customer, status, drafter, department, approver, applyTime } = busApplyFilters;
 const config = {
   // 页面类型 Code
   PAGE_TYPE: '12',
@@ -56,3 +55,11 @@ const config = {
 };
 
 export default config;
+
+export const {
+  PAGE_TYPE,
+  STATUS_OPTIONS,
+  basicFilters,
+  moreFilters,
+  moreFilterData,
+} = config;

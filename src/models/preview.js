@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  *  @description 看板预览
  *  @author sunweibin

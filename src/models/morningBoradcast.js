@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * Created By K0170179 on 2018/1/17
  * 每日晨报

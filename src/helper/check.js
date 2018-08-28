@@ -5,7 +5,16 @@
  * @Last Modified time: 2018-06-15 11:02:18
  * @description 此处存放与校验相关的公用方法(非直接与正则表达式相关)
  */
-import reg from './regexp';
+import {
+  chinese,
+  cellPhone,
+  tellPhone,
+  email,
+  uscc,
+  idNo18Digit,
+  idNo15Digit,
+  onlyAlphabetAndNumber,
+} from './regexp';
 
 const check = {
   /**
@@ -15,7 +24,7 @@ const check = {
    * @returns {Boolean}
    */
   isChinese(char) {
-    return reg.chinese.test(char);
+    return chinese.test(char);
   },
 
   // 判断是否为瞄准镜标签
@@ -40,7 +49,7 @@ const check = {
    * @param {String} v 要验证的字符串
    */
   isCellPhone(v) {
-    return reg.cellPhone.test(v);
+    return cellPhone.test(v);
   },
   /**
    * 判断一个字符串是否座机
@@ -48,7 +57,7 @@ const check = {
    * @param {String} v 要验证的字符串
    */
   isTelPhone(v) {
-    return reg.tellPhone.test(v);
+    return tellPhone.test(v);
   },
   /**
    * 判断一个字符串是否电子邮箱
@@ -56,7 +65,7 @@ const check = {
    * @param {String} v 要验证的字符串
    */
   isEmail(v) {
-    return reg.email.test(v);
+    return email.test(v);
   },
 
   /**
@@ -66,7 +75,7 @@ const check = {
    * @return {Boolean}
    */
   isUnifiedSocialCreditCode(v) {
-    return reg.uscc.test(v);
+    return uscc.test(v);
   },
 
   /**
@@ -76,7 +85,7 @@ const check = {
    * @return {Boolean}
    */
   is18gitiIDCardCode(v) {
-    return reg.idNo18Digit.test(v);
+    return idNo18Digit.test(v);
   },
 
   /**
@@ -86,7 +95,7 @@ const check = {
    * @return {Boolean}
    */
   is15gitiIDCardCode(v) {
-    return reg.idNo15Digit.test(v);
+    return idNo15Digit.test(v);
   },
   /**
    * 判断一个字符串是否只含有字母和数字
@@ -95,8 +104,21 @@ const check = {
    * @return {Boolean}
    */
   isOnlyAlphabetAndNumber(v) {
-    return reg.onlyAlphabetAndNumber.test(v);
+    return onlyAlphabetAndNumber.test(v);
   },
 };
 
 export default check;
+
+export const {
+  isChinese,
+  isSightingTelescope,
+  isNull,
+  isCellPhone,
+  isTelPhone,
+  isEmail,
+  isUnifiedSocialCreditCode,
+  is18gitiIDCardCode,
+  is15gitiIDCardCode,
+  isOnlyAlphabetAndNumber,
+} = check;

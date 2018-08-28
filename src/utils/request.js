@@ -115,8 +115,10 @@ const logRequest = (url, options) => (
     .then(checkStatus)
 );
 
-export default {
+const exported = {
   request,
   fspRequest,
   logRequest,
 };
+
+export default exported;

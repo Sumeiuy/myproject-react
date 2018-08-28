@@ -8,8 +8,6 @@
 
 import { message } from 'antd';
 
-export default {};
-
 export const checkSpecialCharacter = (target, name, descriptor) => {
   const origin = descriptor.value;
 

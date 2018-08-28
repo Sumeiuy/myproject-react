@@ -21,3 +21,7 @@ const convert = {
 };
 
 export default convert;
+
+export const {
+ getStatusByCode,
+} = convert;

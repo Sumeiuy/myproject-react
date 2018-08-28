@@ -46,13 +46,29 @@ const selfTask = {
   name: '自建任务',
 };
 
-export default {
+const exported = {
   TAB_LIST,
   TabKeys,
   MENTION_PREFIX,
   MentionTextStyles,
+
   // 任务绑定投资建议模板下的Tabs
   TASK_LIST: [motTask, selfTask],
+
   MOT_TASK: motTask,
   SELF_TASK: selfTask,
 };
+
+export default exported;
+export {
+  TAB_LIST,
+  TabKeys,
+  MENTION_PREFIX,
+  MentionTextStyles,
+  motTask as MOT_TASK,
+  selfTask as SELF_TASK,
+};
+
+export const {
+  TASK_LIST,
+} = exported;

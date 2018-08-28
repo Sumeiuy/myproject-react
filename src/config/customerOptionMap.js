@@ -22,3 +22,7 @@ const customerOptionMap = {
 };
 
 export default customerOptionMap;
+
+export const {
+  time,
+} = customerOptionMap;

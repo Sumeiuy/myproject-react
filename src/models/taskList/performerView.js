@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @Author: hongguangqing
  * @Description: 执行者视图 model

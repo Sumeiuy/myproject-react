@@ -20,18 +20,24 @@ import Button from '../common/Button';
 import Icon from '../common/Icon';
 // import { openRctTab } from '../../utils';
 import { time as timeHelper } from '../../helper';
-import config from './config';
+import {
+  timeRange,
+  directionRange,
+  titleList,
+  formatStr,
+  sourceType,
+  typeList,
+} from './config';
 import logable from '../../decorators/logable';
 import styles from './combinationModal.less';
 
 const Search = Input.Search;
-const { timeRange, directionRange, titleList, formatStr, sourceType } = config;
 // 3个月的key
 const THREE_MOUNTH_KEY = '3';
 // 调入的key
 const DIRECT_IN = '1';
 // 持仓历史
-const HISTORY_TYPE = config.typeList[0];
+const HISTORY_TYPE = typeList[0];
 // 字符串常量，用于 table columns 对应列的 key 匹配来 render
 // 时间字符串
 const KEY_TIME = 'time';

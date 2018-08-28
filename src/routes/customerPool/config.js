@@ -71,7 +71,7 @@ const CUSTOMER_LIST_INTRO_SECOND_STEP_ID = 'customer_list_intro_second_step_id';
 const CUSTOMER_LIST_INTRO_THIRD_STEP_ID = 'customer_list_intro_third_step_id';
 const CUSTOMER_LIST_INTRO_FOURTH_STEP_ID = 'customer_list_intro_fourth_step_id';
 
-export default {
+export {
   NOPERMIT,
   PERMITS1,
   CUST_MANAGER,
