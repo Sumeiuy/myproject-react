@@ -16,6 +16,8 @@ const mapStateToProps = state => ({
   drafterList: state.app.drafterList,
   // 部门
   custRange: state.app.custRange,
+  // 新的部门
+  newCustRange: state.app.newCustRange,
   // 已申请客户
   customerList: state.app.customerList,
   // 新的已申请客户
@@ -35,6 +37,8 @@ const mapDispatchToProps = {
   getPtyMngList: effect('app/getPtyMngList', { loading: false }),
   // 获取部门
   getCustRange: effect('app/getCustRange', { loading: false }),
+  // 新的获取部门
+  getNewCustRange: effect('app/getNewCustRange', { loading: false }),
   // 获取已申请客户列表
   getCustomerList: effect('app/getCustomerList', { loading: false }),
   // 获取新的已申请客户列表
