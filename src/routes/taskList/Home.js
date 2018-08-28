@@ -2,13 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-24 13:50:19
+ * @Last Modified time: 2018-08-28 13:59:43
  * @description 任务管理首页
  */
 
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import store from 'store';
 import withRouter from '../../decorators/withRouter';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
@@ -641,6 +642,16 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getSortConfig(viewType) {
+    const storeKey = `${emp.getId()}-${viewType}-sort`;
+    const storedSort = store.get(storeKey);
+    // 本地存储了就从本次存储拿，否则拿默认的值
+    if (storedSort) {
+      return {
+        sortType: storedSort.sortKey,
+        name: storedSort.sortContent,
+        defaultDirection: storedSort.sortDirection,
+      };
+    }
     return DEFAULTSORT_VIEW[viewType];
   }
 
@@ -1082,6 +1093,7 @@ export default class PerformerView extends PureComponent {
     const { sortType, name, defaultDirection } = this.getSortConfig(viewType);
     return (
       <FixedTitle
+        key={viewType}
         sortContent={name}
         sortDirection={querySortDirection || defaultDirection}
         onSortChange={this.handleSortChange}
