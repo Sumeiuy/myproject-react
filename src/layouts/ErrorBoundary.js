@@ -21,6 +21,7 @@ export default class ErrorBoundary extends Component {
     if (prevState.location.pathname !== nextProps.location.pathname) {
       return {
         error: false,
+        location: nextProps.location,
       };
     }
 
