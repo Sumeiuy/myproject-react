@@ -2,8 +2,8 @@
  * @Description: 客户的基本信息
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-16 10:06:02
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-28 17:19:34
  */
 
 import React from 'react';
@@ -24,6 +24,8 @@ import styles from './customerProfile.less';
 
 import { riskLevelConfig, PER_CODE, ORG_CODE, CALLABLE_LIST, PHONE } from './config';
 import { MOT_RETURN_VISIT_TASK_EVENT_ID } from '../../../../config/taskList/performView';
+
+import { headMainContact, headMainLinkman } from '../../../common/contactInfoPopover/config';
 
 import iconDiamond from '../img/iconDiamond.png';
 import iconWhiteGold from '../img/iconWhiteGold.png';
@@ -65,6 +67,8 @@ const rankImgSrcConfig = {
     title: '空',
   },
 };
+
+const EMPTY_LIST = [];
 
 export default class CustomerProfile extends React.PureComponent {
 
@@ -241,6 +245,39 @@ export default class CustomerProfile extends React.PureComponent {
   }
 
   /**
+   * 渲染联系方式框显示的内容 如果有主联系方式显示主联系方式，没有就任意显示一条号码，没有号码就显示 “无联系电话”
+  */
+  @autobind
+  renderLinkNumber(custType, perData = {}, orgData = []) {
+    let num = '';
+    if (custType === PER_CODE) {
+      const list = [];
+      // 调用从联系方式组件中提出来的公共方法对联系人列表排序，此处得到的列表主联系方式是在第一条
+      const sortedList = headMainContact(perData);
+      sortedList.forEach((item) => {
+        list.push(...(item.value || EMPTY_LIST));
+      });
+      const numList = list.map(item => item.contactValue);
+      num = numList[0] ? numList[0] : '无联系电话';
+    } else if (custType === ORG_CODE) {
+      const list = [];
+      // 调用从联系方式组件中提出来的公共方法对联系人列表排序，此处得到的列表主联系方式是在第一条
+      const sortedList = headMainLinkman(orgData);
+      sortedList.forEach((item) => {
+        list.push(
+          ...(item.cellPhones || EMPTY_LIST),
+          ...(item.homeTels || EMPTY_LIST),
+          ...(item.workTels || EMPTY_LIST),
+          ...(item.otherTels || EMPTY_LIST),
+        );
+      });
+      const numList = list.map(item => item.contactValue);
+      num = numList[0] ? numList[0] : '无联系电话';
+    }
+    return num;
+  }
+
+  /**
    * 联系方式渲染
    */
   @autobind
@@ -269,6 +306,7 @@ export default class CustomerProfile extends React.PureComponent {
     }
     const perContactInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'homeTels', 'workTels', 'otherTels']);
     const userData = { missionFlowId, custId, missionId: currentId, custName };
+    const num = this.renderLinkNumber(custNature, perContactInfo, orgCustomerContactInfoList);
     return (
       <ContactInfoPopover
         custType={custNature || ''}
@@ -283,7 +321,9 @@ export default class CustomerProfile extends React.PureComponent {
         placement="topRight"
       >
         <span className={styles.contact}>
-          <Icon type="dianhua" className={styles.icon} />联系方式
+          <Icon type="dianhua" className={styles.icon} />
+          {num}
+          <Icon type="jiantou" className={styles.iconJiantou} />
         </span>
       </ContactInfoPopover>
     );
@@ -333,15 +373,15 @@ export default class CustomerProfile extends React.PureComponent {
               {isAllocate === '0' && '(未分配)'}
             </p>
             <p className={styles.item}>
-              {isHighWorth && <span className={styles.highWorth} title="高净值">高</span>}
+              {isHighWorth && <span className={styles.highWorth} title="客户类型：高净值">高</span>}
               {
                 riskLevel
-                && <span className={styles.riskLevel} title={riskLevel.title}>
+                && <span className={styles.riskLevel} title={`风险等级：${riskLevel.title}`}>
                   {riskLevel.name}
                 </span>
               }
               {isSign && <span className={styles.sign} title="签约客户">签</span>}
-              {rankImg && <img className={styles.rank} title={rankImg.title} src={rankImg.src} alt="" />}
+              {rankImg && <img className={styles.rank} title={`客户等级：${rankImg.title}`} src={rankImg.src} alt="" />}
             </p>
           </div>
           <div className={styles.col}>
