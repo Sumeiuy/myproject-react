@@ -209,8 +209,8 @@ export const getRouterData = (app) => {
     },
     // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
     '/customerPool/list': {
-      components: dynamicWrapper(app, ['customerPool', 'customerLabel'], () => 
-        import('../routes/customerPool/CustomerListWrapper' /* webpackChunkName: "customerPool_list" */ )),
+      component: dynamicWrapper(app, ['customerPool', 'customerLabel'], () => 
+        import('../routes/customerPool/CustomerList__' /* webpackChunkName: "customerPool_list" */ )),
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
