@@ -17,16 +17,21 @@ export default class ErrorBoundary extends Component {
     location: PropTypes.object.isRequired,
   };
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (prevState.location.pathname !== nextProps.location.pathname) {
+      return {
+        error: false,
+      };
+    }
+
+    return null;
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       error: false,
-    };
-  }
-
-  static getDerivedStateFromProps() {
-    return {
-      error: false,
+      location: props.location,
     };
   }
 
