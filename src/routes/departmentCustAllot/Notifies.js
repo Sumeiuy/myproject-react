@@ -2,8 +2,8 @@
  * @Description: 分公司客户分配消息提醒页面
  * @Author: Liujianshu
  * @Date: 2018-05-25 13:55:42
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-07-18 17:34:18
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-27 16:26:23
  */
 
 import React, { PureComponent } from 'react';
@@ -19,6 +19,7 @@ import fspPatch from '../../decorators/fspPatch';
 import withRouter from '../../decorators/withRouter';
 import { dva, emp } from '../../helper';
 import config from '../../components/departmentCustAllot/config';
+import HeadBreadcrumb from '../../components/messageCenter/HeadBreadcrumb';
 import styles from './notifies.less';
 
 const dispatch = dva.generateEffect;
@@ -126,6 +127,7 @@ export default class DepartmentCustAllotNotifies extends PureComponent {
     };
     return (
       <div className={styles.notifiesWrapper}>
+        <HeadBreadcrumb />
         <div className={styles.success}>
           <h2>通知提醒</h2>
           <h3 className={styles.title}>有以下客户划入您名下！</h3>
