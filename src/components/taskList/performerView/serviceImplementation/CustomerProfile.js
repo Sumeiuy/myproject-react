@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-28 17:19:34
+ * @Last Modified time: 2018-08-28 17:29:36
  */
 
 import React from 'react';
@@ -254,15 +254,19 @@ export default class CustomerProfile extends React.PureComponent {
       const list = [];
       // 调用从联系方式组件中提出来的公共方法对联系人列表排序，此处得到的列表主联系方式是在第一条
       const sortedList = headMainContact(perData);
+      // 将所有的cellPhones，homeTels，workTels，otherTels都放到一个数组里
       sortedList.forEach((item) => {
         list.push(...(item.value || EMPTY_LIST));
       });
+      // 将所有的cellPhones，homeTels，workTels，otherTels的value（即电话号码）都提到一个数组里
       const numList = list.map(item => item.contactValue);
+      // 处理完的数组里如果有主联系方式，会是第一个，根据需求如果没有主联系方式就任意选其他的号码展示，所以这里只需判断所有号码的数组第一项是否有值就行，如果没有值说明该客户没有联系方式
       num = numList[0] ? numList[0] : '无联系电话';
     } else if (custType === ORG_CODE) {
       const list = [];
       // 调用从联系方式组件中提出来的公共方法对联系人列表排序，此处得到的列表主联系方式是在第一条
       const sortedList = headMainLinkman(orgData);
+      // 将所有的cellPhones，homeTels，workTels，otherTels都放到一个数组里
       sortedList.forEach((item) => {
         list.push(
           ...(item.cellPhones || EMPTY_LIST),
@@ -271,7 +275,9 @@ export default class CustomerProfile extends React.PureComponent {
           ...(item.otherTels || EMPTY_LIST),
         );
       });
+      // 将所有的cellPhones，homeTels，workTels，otherTels的value（即电话号码）都提到一个数组里
       const numList = list.map(item => item.contactValue);
+      // 处理完的数组里如果有主联系方式，会是第一个，根据需求如果没有主联系方式就任意选其他的号码展示，所以这里只需判断所有号码的数组第一项是否有值就行，如果没有值说明该客户没有联系方式
       num = numList[0] ? numList[0] : '无联系电话';
     }
     return num;
