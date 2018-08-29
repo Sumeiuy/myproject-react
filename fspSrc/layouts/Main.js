@@ -14,6 +14,7 @@ import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
+import classNames from 'classnames';
 import withRouter from '../../src/decorators/withRouter';
 
 import Header from './Header';
@@ -113,8 +114,19 @@ export default class Main extends PureComponent {
     loadingForceFull: false,
   }
 
+  state = {
+    backToTopVisible: false,
+  }
+
   componentDidMount() {
+    this.wheelEventArray.forEach(eventType =>
+      document.documentElement.addEventListener(eventType, _.debounce(this.handleMousewheel, 100)));
     this.props.getCustomerScope(); // 加载客户池客户范围
+  }
+
+  componentWillUnmount() {
+    this.wheelEventArray.forEach(eventType =>
+      document.documentElement.removeEventListener(eventType, this.handleMousewheel));
   }
 
   @autobind
@@ -130,6 +142,8 @@ export default class Main extends PureComponent {
     window.canCallPhone = empInfo.canCall;
   }
 
+  wheelEventArray = ['wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll']
+
   @autobind
   handleHeaderSwitchRsp(rsp) {
     let fullUrl = '/chgPstn?';
@@ -142,6 +156,27 @@ export default class Main extends PureComponent {
         { isFullUrl: true, ignoreCatch: true },
       )
       .then(() => this.setWinLocationSearch(rsp.pstnId));
+  }
+
+  @autobind
+  handleMousewheel() {
+    if (document.documentElement.scrollTop > 120) {
+      this.setState({
+        backToTopVisible: true,
+      });
+    } else {
+      this.setState({
+        backToTopVisible: false,
+      });
+    }
+  }
+
+  @autobind
+  handleBackToTopClick() {
+    document.documentElement.scrollTop = 0;
+    this.setState({
+      backToTopVisible: false,
+    });
   }
 
   @autobind
@@ -180,6 +215,11 @@ export default class Main extends PureComponent {
 
     this.setCanCallPhoneState(this.props.empInfo);
 
+    const backToTopCls = classNames({
+      [styles.backToTop]: true,
+      [styles.show]: this.state.backToTopVisible,
+    });
+
     return (
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
@@ -191,6 +231,7 @@ export default class Main extends PureComponent {
             {
               this.isMenuExists(menus) ?
                 <div id="react-layout" className={styles.layout}>
+                  <div className={backToTopCls} onClick={this.handleBackToTopClick} />
                   <Header
                     push={push}
                     location={location}

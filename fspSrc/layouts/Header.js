@@ -82,6 +82,8 @@ export default class Header extends PureComponent {
     };
     // HTSC 任务管理岗
     this.hasTkMampPermission = permission.hasTkMampPermission();
+
+    this.isBlockfeedBack = false;
   }
 
   getDropdownMenu(menu) {
@@ -235,6 +237,13 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  handleFeedbackClick() {
+    if (!$('#feedback-module')[0]) {
+      window.handleFeedbackBtnClick();
+    }
+  }
+
+  @autobind
   renderSecondaryMenu(secondaryMenu) {
     const fixSecondaryMenu = this.preTreatment(secondaryMenu);
     return (
@@ -356,6 +365,13 @@ export default class Header extends PureComponent {
           />
         </div>
         <div className={styles.headerContent}>
+          <div onClick={() => this.handleFeedbackClick()}>
+            <span className={styles.navItem}>
+              <i className={styles.feedbackIcon} />
+              <span>我要提问</span>
+            </span>
+            <span className={styles.splitLine} />
+          </div>
           {
             !_.isEmpty(secondaryMenu) ?
               this.renderSecondaryMenu(secondaryMenu) : null
