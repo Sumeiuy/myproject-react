@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-08-13 09:41:43
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-20 16:22:35
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-08-29 15:41:08
  */
 
 import React, { PureComponent } from 'react';
@@ -44,7 +44,7 @@ export default class Pageheader extends PureComponent {
     // 操作类型
     operateOptions: PropTypes.array,
     // 页面类型
-    pageType: PropTypes.string.isRequired,
+    pageType: PropTypes.string,
     // 部门列表
     custRange: PropTypes.array.isRequired,
     // 获取部门列表
@@ -73,8 +73,12 @@ export default class Pageheader extends PureComponent {
     filterCallback: PropTypes.func,
     // 提供由用户来判断是否需要显示新建按钮
     isShowCreateBtn: PropTypes.func,
+    // 新建申请按钮的文字
+    applyBtnText: PropTypes.string,
     // 是否调用新的客户列表接口，若为true，则使用新的获取客户列表接口，为false，则使用原来的获取客户列表接口，默认为false
     isUseNewCustList: PropTypes.bool,
+    // 是否在初始化的时候调用查询部门组织机构的接口
+    isCallCustRangeApi: PropTypes.bool,
     // 初始状态需要展示的过滤条件
     basicFilters: PropTypes.array.isRequired,
     // 更多中的过滤条件
@@ -98,6 +102,9 @@ export default class Pageheader extends PureComponent {
     isUseNewCustList: false,
     moreFilters: [],
     moreFilterData: [],
+    isCallCustRangeApi: true,
+    applyBtnText: '新建',
+    pageType: '',
   }
 
   constructor(props) {
@@ -108,10 +115,14 @@ export default class Pageheader extends PureComponent {
     };
   }
 
-  componentWillMount() {
-    this.props.getCustRange({
-      type: this.props.pageType,
-    });
+  componentDidMount() {
+    const { isCallCustRangeApi } = this.props;
+    // 因为有些申请页面的筛选不需要查询部门组织机构，所以增加此处判断
+    if (isCallCustRangeApi) {
+      this.props.getCustRange({
+        type: this.props.pageType,
+      });
+    }
   }
 
   @autobind
@@ -649,6 +660,7 @@ export default class Pageheader extends PureComponent {
 
   render() {
     const {
+      applyBtnText,
       pageType,
       basicFilters,
       moreFilterData,
@@ -717,9 +729,9 @@ export default class Pageheader extends PureComponent {
               type="primary"
               icon="plus"
               size="small"
-              onClick={() => { this.handleCreate(); }}
+              onClick={this.handleCreate}
             >
-              新建
+              {applyBtnText}
             </Button>
             :
             null
