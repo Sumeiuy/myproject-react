@@ -363,7 +363,7 @@ export default class Header extends PureComponent {
           />
         </div>
         <div className={styles.headerContent}>
-          <div onClick={() => this.handleFeedbackClick()}>
+          <div onClick={this.handleFeedbackClick}>
             <span className={styles.navItem}>
               <i className={styles.feedbackIcon} />
               <span>我要提问</span>
