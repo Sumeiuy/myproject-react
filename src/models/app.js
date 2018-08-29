@@ -24,6 +24,8 @@ export default {
     newSeibleList: EMPTY_OBJECT,
     // 部门组织机构树
     custRange: EMPTY_LIST,
+    // 新的部门组织机构树
+    newCustRange: EMPTY_LIST,
     // 拟稿人
     drafterList: EMPTY_LIST,
     // 已申请的客户列表
@@ -155,6 +157,23 @@ export default {
       return {
         ...state,
         custRange,
+      };
+    },
+    // 获取新的组织机构树
+    getNewCustRangeSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      let newCustRange;
+      if (resultData.level === '1') {
+        newCustRange = [
+          { id: resultData.id, name: resultData.name, level: resultData.level },
+          ...resultData.children,
+        ];
+      } else {
+        newCustRange = resultData;
+      }
+      return {
+        ...state,
+        newCustRange,
       };
     },
     // 显示与隐藏创建服务记录弹框
@@ -348,6 +367,14 @@ export default {
       const response = yield call(seibelApi.getCustRange, payload);
       yield put({
         type: 'getCustRangeSuccess',
+        payload: response,
+      });
+    },
+    // 新的获取组织机构树
+    * getNewCustRange({ payload }, { call, put }) {
+      const response = yield call(seibelApi.getCustRange2, payload);
+      yield put({
+        type: 'getNewCustRangeSuccess',
         payload: response,
       });
     },

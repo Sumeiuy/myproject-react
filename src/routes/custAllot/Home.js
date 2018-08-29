@@ -63,7 +63,7 @@ const BTN_CANCLE_VALUE = 'cancel';
 
 const effects = {
   // 获取左侧列表
-  getList: 'app/getSeibleList',
+  getList: 'app/getNewSeibleList',
   // 获取详情
   queryDetailInfo: 'custAllot/queryDetailInfo',
   // 获取下一步按钮以及审批人
@@ -92,7 +92,7 @@ const mapStateToProps = state => ({
   // 组织机构树
   custRangeList: state.customerPool.custRange,
   // 左侧列表数据
-  list: state.app.seibleList,
+  list: state.app.newSeibleList,
   // 右侧详情数据
   detailInfo: state.custAllot.detailInfo,
   // 获取按钮列表和下一步审批人
@@ -674,6 +674,7 @@ export default class CustAllot extends PureComponent {
         basicFilters={basicFilters}
         moreFilters={moreFilters}
         moreFilterData={moreFilterData}
+        isUseNewCustRange
       />
     );
 
