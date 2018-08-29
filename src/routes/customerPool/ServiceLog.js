@@ -6,12 +6,13 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Button, message, Input } from 'antd';
+import { Row, Col, Button, message, Input, TreeSelect } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
+// import DaterangePick222 from 'lego-react-date/src';
 import { autobind } from 'core-decorators';
 import logable from '../../decorators/logable';
 import Select from '../../components/common/Select';
@@ -28,6 +29,7 @@ const PAGE_NUM = 1;
 
 const DEFAULT_SERVE_TYPE = '所有类型';
 const DEFAULT_SERVE_SOURCE = '';
+const EMPTY_LIST = [];
 
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
@@ -130,6 +132,11 @@ export default class ServiceLog extends PureComponent {
     }
   }
 
+  // @autobind
+  // handleDateChange2(date1, date2, date3) {
+  //   console.log('1111112', date1, date2, date3);
+  // }
+
 
   @autobind
   handleDateChange(date) {
@@ -219,7 +226,7 @@ export default class ServiceLog extends PureComponent {
       value: '$args[0]',
     },
   })
-  serveAllSourceChange(key, value) {
+  serveAllSourceChange(value) {
     const { location: { query, pathname }, replace } = this.props;
     replace({
       pathname,
@@ -249,6 +256,28 @@ export default class ServiceLog extends PureComponent {
       value: item.key,
       show: true,
     }));
+  }
+
+  // 生成treeSelect数据
+  @autobind
+  constructCreatTreeOptions(data) {
+    // 后端返回的值key,value是反的，需要处理
+    if (!_.isEmpty(data)) {
+      return data.map((item) => {
+        const children = (item.children || EMPTY_LIST).map(child => ({
+          key: child.key,
+          title: child.value,
+          value: child.key,
+        }));
+        return {
+          key: item.key,
+          title: item.value,
+          value: item.key,
+          children,
+        };
+      });
+    }
+    return EMPTY_LIST;
   }
 
   @autobind
@@ -307,7 +336,6 @@ export default class ServiceLog extends PureComponent {
     moment(serveDateTo, dateFormat) : moment(today, dateFormat);
     const startDate = serveDateFrom ?
     moment(serveDateFrom, dateFormat) : moment(beforeSixDate, dateFormat);
-
     return (
       <div className={styles.serviceInner}>
         <div
@@ -327,12 +355,14 @@ export default class ServiceLog extends PureComponent {
             </div>
             <div className={styles.serviceSource}>
               {!_.isEmpty(serveAllSource) ?
-                <Select
+                <TreeSelect
                   value={serveSource}
                   onChange={this.serveAllSourceChange}
                   name="渠道"
-                  data={this.constructCreatOptions(serveAllSource)}
-                /> :
+                  treeData={this.constructCreatTreeOptions(serveAllSource)}
+                  treeDefaultExpandAll
+                />
+                :
                 this.constructNullCreatOptions()
               }
             </div>
@@ -357,6 +387,11 @@ export default class ServiceLog extends PureComponent {
                 key="服务时间"
                 isInsideOffSet={this.isInsideOffSet}
               />
+              {/* <DaterangePick222
+                filterName="服务时间"
+                filterValue={[startDate, endDate]}
+                onChange={this.handleDateChange2}
+              /> */}
             </div>
           </div>
           <Row>
