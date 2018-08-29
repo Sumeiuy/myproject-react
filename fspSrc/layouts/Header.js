@@ -82,8 +82,6 @@ export default class Header extends PureComponent {
     };
     // HTSC 任务管理岗
     this.hasTkMampPermission = permission.hasTkMampPermission();
-
-    this.isBlockfeedBack = false;
   }
 
   getDropdownMenu(menu) {
