@@ -114,6 +114,11 @@ export default class Main extends PureComponent {
     loadingForceFull: false,
   }
 
+  constructor(props) {
+    super(props);
+    this.handleMousewheel = _.throttle(this.handleBackToTopVisible, 1000);
+  }
+
   state = {
     backToTopVisible: false,
   }
@@ -159,12 +164,7 @@ export default class Main extends PureComponent {
   }
 
   @autobind
-  handleMousewheel() {
-    return _.debounce(this.changeBackToTopVisible, 100);
-  }
-
-  @autobind
-  changeBackToTopVisible() {
+  handleBackToTopVisible() {
     if (document.documentElement.scrollTop > 120) {
       this.setState({
         backToTopVisible: true,
