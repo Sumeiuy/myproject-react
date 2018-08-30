@@ -12,7 +12,7 @@ import { routerRedux } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
-// import DaterangePick222 from 'lego-react-date/src';
+import DaterangePick222 from 'lego-react-date/src';
 import { autobind } from 'core-decorators';
 import logable from '../../decorators/logable';
 import Select from '../../components/common/Select';
@@ -132,10 +132,10 @@ export default class ServiceLog extends PureComponent {
     }
   }
 
-  // @autobind
-  // handleDateChange2(date1, date2, date3) {
-  //   console.log('1111112', date1, date2, date3);
-  // }
+  @autobind
+  handleDateChange2(date1, date2, date3) {
+    console.log('1111112', date1, date2, date3);
+  }
 
 
   @autobind
@@ -387,11 +387,12 @@ export default class ServiceLog extends PureComponent {
                 key="服务时间"
                 isInsideOffSet={this.isInsideOffSet}
               />
-              {/* <DaterangePick222
+              <DaterangePick222
                 filterName="服务时间"
                 filterValue={[startDate, endDate]}
                 onChange={this.handleDateChange2}
-              /> */}
+                disabledRange={180}
+              />
             </div>
           </div>
           <Row>
