@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-20 11:05:10
+ * @Last Modified time: 2018-08-30 17:08:43
  */
 
 import React, { PureComponent } from 'react';
@@ -258,7 +258,7 @@ export default class CustomerGroupManage extends PureComponent {
     queryLabelCust({
       labelId: id,
       pageNum: 1,
-      pageSize: 5,
+      pageSize: 10,
     });
   }
 
@@ -485,7 +485,6 @@ export default class CustomerGroupManage extends PureComponent {
   }
 
   @autobind
-  @checkSpecialCharacter
   submitFormContent(name, description, id, custIds) {
     const { operateLabel, location: { query: { curPageNum, curPageSize, keyWord } } } = this.props;
     const postBody = {
