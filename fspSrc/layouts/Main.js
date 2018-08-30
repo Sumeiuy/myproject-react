@@ -120,7 +120,7 @@ export default class Main extends PureComponent {
 
   componentDidMount() {
     this.wheelEventArray.forEach(eventType =>
-      document.documentElement.addEventListener(eventType, _.debounce(this.handleMousewheel, 100)));
+      document.documentElement.addEventListener(eventType, this.handleMousewheel));
     this.props.getCustomerScope(); // 加载客户池客户范围
   }
 
@@ -160,6 +160,11 @@ export default class Main extends PureComponent {
 
   @autobind
   handleMousewheel() {
+    return _.debounce(this.changeBackToTopVisible, 100);
+  }
+
+  @autobind
+  changeBackToTopVisible() {
     if (document.documentElement.scrollTop > 120) {
       this.setState({
         backToTopVisible: true,
