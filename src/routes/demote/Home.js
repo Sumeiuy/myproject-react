@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-12-06 14:45:44
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-27 16:09:10
+ * @Last Modified time: 2018-08-28 21:24:30
  */
 
 import React, { PureComponent } from 'react';
@@ -171,6 +171,7 @@ export default class Demote extends PureComponent {
     if (noData || clicked) {
       return (
         <div className={styles.demoteWrapper}>
+          <HeadBreadcrumb />
           <h2>您的划转操作正在进行中或者您暂时没有可以划转为零售的客户。</h2>
         </div>
       );
