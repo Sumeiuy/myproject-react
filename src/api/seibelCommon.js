@@ -17,6 +17,8 @@ export default function seibelCommon(api) {
     getDrafterList: query => api.post('/groovynoauth/fsp/biz/queryDrafterList', query),
     // 获取部门
     getCustRange: query => api.post('/groovynoauth/fsp/biz/queryOrgInfo', query),
+    // 新的获取部门
+    getCustRange2: query => api.post('/groovynoauth/fsp/biz/queryOrgInfo2', query),
     // 通过用户输入的关键字，获取可申请的客户列表
     getCanApplyCustList: query => api.post('/groovynoauth/fsp/biz/custList', query),
     // 删除附件
