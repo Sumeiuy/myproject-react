@@ -23,7 +23,6 @@ export default function Detail(props) {
     data,
     data: {
       applyId,
-      flowId,
       applyBasicInfo,
       buttonStatus,
       workflowHistoryBeans = [],
@@ -34,7 +33,7 @@ export default function Detail(props) {
   } = props;
 
   function handlePushBtnClick() {
-    props.onRevert({ applyId, flowId });
+    props.onRevert({ applyId });
   }
 
   const isEmpty = _.isEmpty(data);
