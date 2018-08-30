@@ -448,6 +448,7 @@ export default class AccountLimitHome extends PureComponent {
         moreFilters={moreFilters}
         moreFilterData={moreFilterData}
         isUseNewCustList
+        isUseNewCustRange
       />
     );
 

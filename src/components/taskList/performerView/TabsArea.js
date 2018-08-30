@@ -4,8 +4,6 @@
  * @Date: 2018-05-22 14:53:21
  * @Last Modified by: XuWenKang
  * @Last Modified time: 2018-08-20 20:04:46
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 13:24:40
  */
 
 import React from 'react';
