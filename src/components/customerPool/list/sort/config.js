@@ -23,10 +23,6 @@ export const sortQuotaConfig = [
     name: '外部市值',
   },
   {
-    sortType: 'cashAmt',
-    name: '资金余额(含信用)',
-  },
-  {
     sortType: 'gjlRate',
     name: '归集率',
   },
@@ -37,6 +33,10 @@ export const sortQuotaConfig = [
   {
     sortType: 'avlAmtCrdt',
     name: '信用可用资金',
+  },
+  {
+    sortType: 'cashAmt',
+    name: '资金余额(含信用)',
   },
   {
     sortType: 'totMktval',

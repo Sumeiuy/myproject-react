@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2018-02-02 15:37:14
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-27 16:40:41
+ * @Last Modified time: 2018-08-29 15:51:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -75,7 +75,7 @@ export default class FilialeCustTransferNotifies extends PureComponent {
     return (
       <div className={styles.notifiesInfoWrapper}>
         <HeadBreadcrumb />
-        <h2>通知提醒</h2>
+        <div className={styles.notifiesTitle}>通知提醒</div>
         <p>您的主职位已被更新为{notifiesInfo.position} {notifiesInfo.department},</p>
         <p> 新开户的客户服务关系将归属该职位！</p>
       </div>
