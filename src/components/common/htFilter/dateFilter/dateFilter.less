@@ -24,6 +24,7 @@
     font-family: @font-family;
     padding-left: 5px;
     transform: translateY(-2px);
+    vertical-align: middle;
   }
 
   :global {
@@ -44,8 +45,26 @@
 
 .dateFilterContainer {
   display: inline-block;
-  padding: 5px;
   vertical-align: bottom;
+  font-size: 0;
+  padding: 0;
+  line-height: 30px;
+  :global {
+    .lego-date-rangePicker-container {
+      display: inline-block;
+      line-height: normal;
+      vertical-align: middle;
+      transform: translateY(-2px);
+      .ant-calendar-picker {
+        .ant-calendar-picker-input.ant-input {
+          height: 27px;
+          outline: none;
+          border: none !important;
+          box-shadow: none;
+        }
+      }
+    }
+  }
 }
 
 .dateFilterTransform {

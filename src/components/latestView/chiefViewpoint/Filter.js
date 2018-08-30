@@ -3,22 +3,22 @@
  * @Description: 首席观点列表页-筛选组件
  * @Date: 2018-06-19 13:58:32
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-21 16:31:01
+ * @Last Modified time: 2018-08-30 15:59:43
  */
 
 import React, { PureComponent } from 'react';
-import { Input, Select, DatePicker } from 'antd';
+import { Input, Select } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
-// import DateRangePicker from '../../common/dateRangePicker';
+import DateRangePick from 'lego-react-date/src';
+import logable from '../../../decorators/logable';
 import config from '../config';
 import styles from './filter.less';
 
 const Search = Input.Search;
 const Option = Select.Option;
-const RangePicker = DatePicker.RangePicker;
 const typeList = config.chiefViewpointType;
 const directTypeList = config.directType;
 const dateFormatStr = config.dateFormatStr;
@@ -63,12 +63,25 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
-  handleDateChange(moments, dateStrs) {
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '报告日期',
+      min: '$args[0]',
+      max: '$args[1]',
+    },
+  })
+  handleDateChange(startDate, endDate) {
     const { onFilter } = this.props;
     onFilter({
-      startDate: dateStrs[0],
-      endDate: dateStrs[1],
+      startDate,
+      endDate,
     });
+  }
+
+  @autobind
+  disabledEndDate(startDate, endDate) {
+    return endDate > moment();
   }
 
   render() {
@@ -124,11 +137,11 @@ export default class Filter extends PureComponent {
             :
             '调整时间'
           }：</span>
-          <RangePicker
-            defaultValue={defaultDate}
-            format={dateFormatStr}
-            onChange={this.handleDateChange}
-            disabledDate={current => current > moment()}
+          <DateRangePick
+            filterName=""
+            filterValue={defaultDate}
+            onChange={date => this.handleDateChange(date.value[0], date.value[1])}
+            disabledEnd={this.disabledEndDate}
           />
         </div>
       </div>

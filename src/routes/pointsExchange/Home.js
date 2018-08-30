@@ -11,7 +11,7 @@ import { Form, Input, Button, Table } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
-import DateRangePicker from '../../components/common/dateRangePicker';
+import DateRangePick from 'lego-react-date/src';
 import Pagination from '../../components/common/Pagination';
 import withRouter from '../../decorators/withRouter';
 import styles from './home.less';
@@ -23,8 +23,8 @@ const defaultParam = {
   pageNum: 1,
   productCode: '',
   brokerNumber: '',
-  startTime: '',
-  endTime: '',
+  startTime: null,
+  endTime: null,
 };
 
 function formatString(str) {
@@ -134,10 +134,7 @@ export default class Home extends Component {
 
   // DateRangePicker 组件，不支持value属性，故不能用 Form 组件的 getFieldDecorator，需要单独处理选中和清除事件
   @autobind
-  handleCreateDateChange(date) {
-    const { startDate, endDate } = date;
-    const startTime = _.isEmpty(startDate) ? '' : startDate.format(dateFormat);
-    const endTime = _.isEmpty(endDate) ? '' : endDate.format(dateFormat);
+  handleCreateDateChange(startTime, endTime) {
     this.setState({
       startTime,
       endTime,
@@ -183,15 +180,15 @@ export default class Home extends Component {
     });
   }
 
-  @autobind
-  drpWraperRef(input) {
-    this.datePickRef = input;
-  }
+  // @autobind
+  // drpWraperRef(input) {
+  //   this.datePickRef = input;
+  // }
 
   @autobind
   handleReset() {
     this.props.form.resetFields();
-    this.datePickRef.clearAllDate();
+    // this.datePickRef.clearAllDate();
     this.setState({ ...defaultParam });
     // 发送请求，重置表格数据
     this.props.getExchangeList(defaultParam);
@@ -201,7 +198,11 @@ export default class Home extends Component {
     const { exchangeList, page = {} } = this.props.exchangeData || {};
     const { totalRecordNum = 1 } = page;
     const { getFieldDecorator } = this.props.form;
-    const { pageNum = 1 } = this.state;
+    const {
+      pageNum = 1,
+      // startTime,
+      // endTime,
+    } = this.state;
     const paganationOption = {
       current: pageNum,
       pageSize: 10,
@@ -228,10 +229,12 @@ export default class Home extends Component {
               </div>
               <div className={styles.filter}>
                 <FormItem label="兑换时间">
-                  <DateRangePicker
-                    ref={this.drpWraperRef}
-                    disabledRange={this.setDisableRange}
-                    onChange={this.handleCreateDateChange}
+                  <DateRangePick
+                    filterName=""
+                    onChange={date => this.handleCreateDateChange(date.value[0], date.value[1])}
+                    disabledStart={startDate => this.setDisableRange(startDate)}
+                    disabledEnd={(startDate, endDate) => this.setDisableRange(endDate)}
+                    stateDateWrapper={date => date.format(dateFormat)}
                   />
                 </FormItem>
               </div>
