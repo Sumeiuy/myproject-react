@@ -703,7 +703,6 @@ export default class CustomerLists extends PureComponent {
                     formatAsset={formatAsset}
                     queryCustUuid={queryCustUuid}
                     condition={condition}
-                    entertype={entertype}
                     goGroupOrTask={this.goGroupOrTask}
                     push={push}
                     custServedByPostnResult={custServedByPostnResult}
