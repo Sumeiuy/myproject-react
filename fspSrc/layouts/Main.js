@@ -114,13 +114,18 @@ export default class Main extends PureComponent {
     loadingForceFull: false,
   }
 
+  constructor(props) {
+    super(props);
+    this.handleMousewheel = _.throttle(this.handleBackToTopVisible, 1000);
+  }
+
   state = {
     backToTopVisible: false,
   }
 
   componentDidMount() {
     this.wheelEventArray.forEach(eventType =>
-      document.documentElement.addEventListener(eventType, _.debounce(this.handleMousewheel, 100)));
+      document.documentElement.addEventListener(eventType, this.handleMousewheel));
     this.props.getCustomerScope(); // 加载客户池客户范围
   }
 
@@ -159,7 +164,7 @@ export default class Main extends PureComponent {
   }
 
   @autobind
-  handleMousewheel() {
+  handleBackToTopVisible() {
     if (document.documentElement.scrollTop > 120) {
       this.setState({
         backToTopVisible: true,

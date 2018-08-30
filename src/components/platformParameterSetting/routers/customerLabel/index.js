@@ -19,7 +19,6 @@ import CreateLabelType from './CreateLabelType';
 import CreateLabel from './CreateLabel';
 import { dva } from '../../../../helper';
 import styles from './customerLabel.less';
-import tableStyles from '../../../common/commonTable/index.less';
 
 const DEFAULT_LABEL_TYPE = { id: '', typeName: '不限' };
 
@@ -250,7 +249,6 @@ export default class LabelManager extends PureComponent {
             isFixedColumn
             needShowEmptyRow={false}
             onPageChange={this.handlePageChange}
-            tableClass={tableStyles.groupTable}
           />
         </div>
         <CreateLabelType
