@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-13 09:41:43
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-20 16:22:35
+ * @Last Modified time: 2018-08-30 16:40:20
  */
 
 import React, { PureComponent } from 'react';
@@ -493,8 +493,13 @@ export default class Pageheader extends PureComponent {
   })
   selectCustRange(value) {
     const { filterCallback } = this.props;
+    // 当value值为空时，选择后会返回undefined,然后URL中出现部门筛选项消失异常
+    let custValue = value;
+    if (typeof custValue === 'undefined') {
+      custValue = '';
+    }
     filterCallback({
-      orgId: value,
+      orgId: custValue,
     });
   }
 
