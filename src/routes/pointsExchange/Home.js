@@ -14,6 +14,7 @@ import moment from 'moment';
 import DateRangePick from 'lego-react-date/src';
 import Pagination from '../../components/common/Pagination';
 import withRouter from '../../decorators/withRouter';
+import logable from '../../decorators/logable';
 import styles from './home.less';
 
 const FormItem = Form.Item;
@@ -23,8 +24,8 @@ const defaultParam = {
   pageNum: 1,
   productCode: '',
   brokerNumber: '',
-  startTime: null,
-  endTime: null,
+  startTime: '',
+  endTime: '',
 };
 
 function formatString(str) {
@@ -134,6 +135,14 @@ export default class Home extends Component {
 
   // DateRangePicker 组件，不支持value属性，故不能用 Form 组件的 getFieldDecorator，需要单独处理选中和清除事件
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '兑换时间',
+      min: '$args[0]',
+      max: '$args[1]',
+    },
+  })
   handleCreateDateChange(startTime, endTime) {
     this.setState({
       startTime,
@@ -200,8 +209,8 @@ export default class Home extends Component {
     const { getFieldDecorator } = this.props.form;
     const {
       pageNum = 1,
-      // startTime,
-      // endTime,
+      startTime,
+      endTime,
     } = this.state;
     const paganationOption = {
       current: pageNum,
@@ -209,6 +218,8 @@ export default class Home extends Component {
       total: _.toNumber(totalRecordNum) || 1,
       onChange: this.handlePageChange,
     };
+    const startDateObj = _.isEmpty(startTime) ? null : startTime;
+    const endDateObj = _.isEmpty(endTime) ? null : endTime;
     return (
       <div className={styles.exchangeContainer}>
         <div className={styles.exchangeContent}>
@@ -230,6 +241,7 @@ export default class Home extends Component {
               <div className={styles.filter}>
                 <FormItem label="兑换时间">
                   <DateRangePick
+                    filterValue={[startDateObj, endDateObj]}
                     filterName=""
                     onChange={date => this.handleCreateDateChange(date.value[0], date.value[1])}
                     disabledStart={startDate => this.setDisableRange(startDate)}

@@ -8,7 +8,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
-import { Cascader, Select, DatePicker, message } from 'antd';
+import { Cascader, Select, message } from 'antd';
+import DateRangePick from 'lego-react-date/src';
 import moment from 'moment';
 import _ from 'lodash';
 import { env } from '../../helper';
@@ -17,8 +18,7 @@ import './feedbackHeader.less';
 import logable from '../../decorators/logable';
 
 const Option = Select.Option;
-const { RangePicker } = DatePicker;
-
+const dateFormat = 'YYYY/MM/DD';
 export default class PageHeader extends PureComponent {
 
   static propTypes = {
@@ -46,24 +46,20 @@ export default class PageHeader extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '反馈时间',
-      min: (instance, args) => moment(args[0][0]).format('YYYY-MM-DD'),
-      max: (instance, args) => moment(args[0][1]).format('YYYY-MM-DD'),
+      min: '$args[0]',
+      max: '$args[1]',
     },
   })
-  handleDateChange(dateStrings) {
+  handleDateChange(startDateStr, endDateStr) {
     const { replace, location: { pathname, query } } = this.props;
-    const feedbackCreateTimeFrom = dateStrings[0];
-    const feedbackCreateTimeTo = dateStrings[1];
-    const startDate = feedbackCreateTimeFrom && moment(feedbackCreateTimeFrom).format('YYYY-MM-DD');
-    const endDate = feedbackCreateTimeTo && moment(feedbackCreateTimeTo).format('YYYY-MM-DD');
-    if (endDate && startDate) {
-      if (endDate > startDate) {
+    if (endDateStr && startDateStr) {
+      if (endDateStr > startDateStr) {
         replace({
           pathname,
           query: {
             ...query,
-            feedbackCreateTimeFrom,
-            feedbackCreateTimeTo,
+            feedbackCreateTimeFrom: startDateStr,
+            feedbackCreateTimeTo: endDateStr,
             isResetPageNum: 'Y',
           },
         });
@@ -259,11 +255,12 @@ export default class PageHeader extends PureComponent {
         >
           {getSelectOption(stateOptions)}
         </Select>
-        反馈时间:<RangePicker
-          style={{ width: '14%' }}
-          defaultValue={[startTime, endTime]}
-          onChange={this.handleDateChange}
-          placeholder={['开始时间', '结束时间']}
+        反馈时间:
+        <DateRangePick
+          filterValue={[startTime, endTime]}
+          filterName=""
+          onChange={date => this.handleDateChange(date.value[0], date.value[1])}
+          stateDateWrapper={date => date.format(dateFormat)}
         />
         经办人: <Select
           style={{ width: '6%' }}

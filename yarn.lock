@@ -1010,9 +1010,9 @@ ansi-styles@^3.2.0, ansi-styles@^3.2.1:
   dependencies:
     color-convert "^1.9.0"
 
-antd@3.8.2:
-  version "3.8.2"
-  resolved "http://168.61.48.13:4873/antd/-/antd-3.8.2.tgz#cb2af23243522e75fc09707a52799c01f6230704"
+antd@3.8.3:
+  version "3.8.3"
+  resolved "http://168.61.48.13:4873/antd/-/antd-3.8.3.tgz#2415980a1de271a6c3526039efd87a21f4e1c9c8"
   dependencies:
     array-tree-filter "^2.0.0"
     babel-runtime "6.x"
@@ -4511,8 +4511,8 @@ lcid@^1.0.0:
     invert-kv "^1.0.0"
 
 lego-react-date@^1.0.2:
-  version "1.0.4"
-  resolved "http://168.61.48.13:4873/lego-react-date/-/lego-react-date-1.0.4.tgz#23fff4002d04758aed557ea326bb4e88116268a4"
+  version "1.0.6"
+  resolved "http://168.61.48.13:4873/lego-react-date/-/lego-react-date-1.0.6.tgz#ff59e16a7911a25c397a21287355d9aa1f9ad62e"
   dependencies:
     moment "^2.22.2"
 
