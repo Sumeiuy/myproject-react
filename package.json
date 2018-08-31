@@ -154,8 +154,5 @@
     "run": [
       "lint-staged"
     ]
-  },
-  "sideEffects": [
-    "*.css"
-  ]
+  }
 }
