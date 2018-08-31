@@ -143,7 +143,6 @@ export default class ServiceLog extends PureComponent {
     },
   })
   handleDateChange(startDate, endDate) {
-    console.log('1111112', startDate, endDate);
     const { location: { query, pathname }, replace } = this.props;
     if (startDate !== null && endDate !== null) {
       replace({
