@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-31 14:32:42
+ * @Last Modified time: 2018-08-31 17:12:24
  */
 
 import React, { PureComponent } from 'react';
@@ -486,7 +486,7 @@ export default class CustomerGroupManage extends PureComponent {
 
   @autobind
   submitFormContent(name, description, id, custIds) {
-    const { operateLabel, location: { query: { curPageNum, curPageSize, keyWord } } } = this.props;
+    const { operateLabel, queryLabelCust } = this.props;
     const postBody = {
       request: {
         labelName: name,
@@ -494,23 +494,62 @@ export default class CustomerGroupManage extends PureComponent {
         custIds: _.isEmpty(custIds) ? null : custIds,
         excludeCustIdList: null,
       },
-      keyWord,
-      pageNum: curPageNum,
-      pageSize: curPageSize,
     };
     if (id) {
-      // 编辑分组
+      // 编辑标签
       operateLabel(_.merge(postBody, {
         request: {
           labelIds: [id],
         },
-      }));
+      })).then((res) => {
+        if (res.resultData === 'success') {
+          message.success('更新标签成功');
+          this.handleComparedGetLabelList();
+          queryLabelCust({
+            pageNum: INITIAL_CURPAGE,
+            pageSize: INITIAL_PAGESIZE,
+            labelId: id,
+          });
+        }
+      });
     } else {
-      // 新增分组
-      operateLabel(postBody);
+      // 新增标签
+      operateLabel(postBody).then((res) => {
+        if (res.resultData === 'success') {
+          message.success('更新标签成功');
+          this.handleComparedGetLabelList();
+        }
+      });
     }
     // 关闭弹窗
     this.handleSubmitCloseModal();
+  }
+
+  // 在新建、编辑或者分组转标签成功时
+  // 进行多次提交的时候，url的参数在push时没有改变不请求
+  // 需要单独发一个请求
+  @autobind
+  handleComparedGetLabelList() {
+    const {
+      location: {
+        pathname,
+        query: {
+          curPageNum = INITIAL_CURPAGE,
+          keyWord = '',
+          curPageSize = INITIAL_PAGESIZE,
+        },
+      },
+    } = this.props;
+    if (curPageNum === INITIAL_CURPAGE && curPageSize === INITIAL_PAGESIZE && keyWord === '') {
+      this.getLabelList({
+        curPageNum: INITIAL_CURPAGE,
+        curPageSize: INITIAL_PAGESIZE,
+      });
+    } else {
+      this.context.push({
+        pathname,
+      });
+    }
   }
 
   /**
@@ -744,7 +783,7 @@ export default class CustomerGroupManage extends PureComponent {
           possibleLabelListInfo={possibleLabelListInfo}
           clearPossibleLabels={clearPossibleLabels}
           group2Label={group2Label}
-          getLabelList={this.getLabelList}
+          onComparedGetLabelList={this.handleComparedGetLabelList}
         />}
       </div>
     );

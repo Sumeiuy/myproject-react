@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 16:16:47
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-14 16:09:37
+ * @Last Modified time: 2018-08-31 16:14:48
  */
 
 import React, { PureComponent } from 'react';
@@ -32,7 +32,7 @@ export default class GroupToLabel extends PureComponent {
     possibleLabelListInfo: PropTypes.object.isRequired,
     clearPossibleLabels: PropTypes.func.isRequired,
     group2Label: PropTypes.func.isRequired,
-    getLabelList: PropTypes.func.isRequired,
+    onComparedGetLabelList: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -137,7 +137,7 @@ export default class GroupToLabel extends PureComponent {
         return;
       }
       const { currentSelectGroup: { groupId = '' } } = this.state;
-      const { group2Label, getLabelList, toggleGroupToLabelModalVisible } = this.props;
+      const { group2Label, onComparedGetLabelList, toggleGroupToLabelModalVisible } = this.props;
       const { labelName, id } = this.findLabel(values.labelName);
       const payload = {
         groupId,
@@ -147,29 +147,8 @@ export default class GroupToLabel extends PureComponent {
       };
       group2Label(payload).then(({ resultData }) => {
         if (resultData === 'success') {
-          const {
-            location: {
-              pathname,
-              query: {
-                curPageNum = '1',
-                keyWord = '',
-                curPageSize = '10',
-              },
-            },
-          } = this.props;
           message.success('分组转标签成功');
-          // 当分组转标签进行多次提交的时候，url的参数在push时没有改变不请求
-          // 需要单独发一个请求
-          if (curPageNum === '1' && curPageSize === '10' && keyWord === '') {
-            getLabelList({
-              curPageNum: 1,
-              curPageSize: 10,
-            });
-          } else {
-            this.context.push({
-              pathname,
-            });
-          }
+          onComparedGetLabelList();
           // 关闭模态框
           toggleGroupToLabelModalVisible(false);
         }
