@@ -41,16 +41,17 @@ export default class DateFilter extends React.Component {
 
   constructor(props) {
     super(props);
-    this.onDatesChange = this.onDatesChange.bind(this);
+    this.handleDateChange = this.handleDateChange.bind(this);
     this.state = {
       hidden: false,
     };
   }
 
-  onDatesChange(formatStartDate, formatEndDate) {
-    this.props.onChange({
-      name: this.props.filterId,
-      filterName: this.props.filterName,
+  handleDateChange(formatStartDate, formatEndDate) {
+    const { onChange, filterId, filterName } = this.props;
+    onChange({
+      name: filterId,
+      filterName,
       value: [formatStartDate, formatEndDate],
     });
   }
@@ -89,7 +90,7 @@ export default class DateFilter extends React.Component {
             {...dateProps}
             filterName=""
             filterValue={[initialStartDate, initialEndDate]}
-            onChange={date => this.onDatesChange(date.value[0], date.value[1])}
+            onChange={date => this.handleDateChange(date.value[0], date.value[1])}
             disabledStart={disabledCurrentEnd ?
               startDate => !isInclusivelyBeforeDay(startDate, moment())
               : _.noop}

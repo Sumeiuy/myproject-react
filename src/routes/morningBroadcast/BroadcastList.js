@@ -328,6 +328,14 @@ export default class BroadcastList extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '创建时间',
+      min: '$args[0]',
+      max: '$args[1]',
+    },
+  })
   handleDateChange(startDate, endDate) {
     const { onHandleGetList } = this;
     const { setFieldsValue } = this.props.form;
