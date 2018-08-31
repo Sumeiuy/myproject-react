@@ -43,7 +43,7 @@ export default class ServeRcordAttachment extends PureComponent {
                     href={
                       _.isEmpty(item.attachId) && _.isEmpty(item.name)
                         ? NO_HREF :
-                        `${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
+                        `${request.prefix}/file/ceFileDownload2?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
                   >
                     {item.name}
                   </a>

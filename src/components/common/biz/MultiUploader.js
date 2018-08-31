@@ -236,7 +236,7 @@ export default class MultiUpload extends PureComponent {
         file,
         attachment,
       },
-      action: `${request.prefix}/file/ceFileUpload`,
+      action: `${request.prefix}/file/ceFileUpload2`,
       headers: {
         accept: '*/*',
       },
@@ -288,7 +288,7 @@ export default class MultiUpload extends PureComponent {
                       }
                       <em>
                         <a
-                          href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${item.name}`}
+                          href={`${request.prefix}/file/ceFileDownload2?attachId=${item.attachId}&empId=${empId}&filename=${item.name}`}
                           onClick={this.handleDownloadClick}
                         >
                           <Icon type="xiazai2" />

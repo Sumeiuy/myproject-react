@@ -21,7 +21,7 @@ export default function common(api) {
     // 增加通话记录接口，关联服务记录
     addCallRecord: query => api.post('/groovynoauth/fsp/emp/mobilebinding/addCallRecord', query),
     // 获取附件列表
-    getAttachmentList: query => api.post('/file/ceFileList', query),
+    getAttachmentList: query => api.post('/file/ceFileList2', query),
     // 获取服务经理列表
     getEmpList: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryEmpList', query),
   };

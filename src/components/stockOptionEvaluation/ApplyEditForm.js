@@ -647,7 +647,6 @@ export default class ApplyEditForm extends PureComponent {
               <InfoTitle head="附件信息" />
               <CommonUpload
                 edit={isAttachmentEdit}
-                reformEnable
                 key={uploadKey}
                 attachment={attachment || ''}
                 needDefaultText={false}
