@@ -162,6 +162,7 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="合约条款" />
           <CommonTable
+            rowKey="divIntegrationId"
             data={terms || []}
             titleList={titleList}
           />

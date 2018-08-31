@@ -14,25 +14,23 @@ import { connect } from 'dva';
 
 import Button from '../Button';
 import { request } from '../../../config';
-import { emp } from '../../../helper';
+import { emp, dva } from '../../../helper';
 import styles from './multiUploader.less';
 import Icon from '../Icon';
 import logable from '../../../decorators/logable';
 
-const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
-  type,
-  payload: query || {},
-  loading: globalLoading,
-  forceFull,
-});
+const dispatch = dva.generateEffect;
 
-const mapStateToProps = state => ({
-  deleteAttachmentLoading: state.loading.effects['channelsTypeProtocol/deleteAttachment'],
-});
+const effects = {
+  // 删除附件
+  deleteAttachment: 'app/deleteAttachment',
+};
+
+const mapStateToProps = () => ({});
 
 const mapDispatchToProps = {
   // 删除附件
-  deleteAttachment: fetchDataFunction(true, 'channelsTypeProtocol/deleteAttachment', true),
+  deleteAttachment: dispatch(effects.deleteAttachment, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
@@ -40,8 +38,6 @@ export default class MultiUpload extends PureComponent {
   static propTypes = {
     // 删除附件方法
     deleteAttachment: PropTypes.func.isRequired,
-    // 删除事件的状态
-    deleteAttachmentLoading: PropTypes.bool,
     // key 值
     key: PropTypes.string,
     // 编辑状态
@@ -77,7 +73,6 @@ export default class MultiUpload extends PureComponent {
     attachmentList: [],
     uploadCallback: () => {},
     deleteCallback: () => {},
-    deleteAttachmentLoading: false,
     showDelete: true,
     maxSize: 20,
     limitCount: 9999,

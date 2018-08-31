@@ -268,6 +268,7 @@ export default class CommonUpload extends PureComponent {
                         edit ?
                           <em>
                             <Popconfirm
+                              key={item.attachId}
                               placement="top"
                               onConfirm={() => this.onRemove(item.attachId)}
                               okText="是"
@@ -303,18 +304,20 @@ export default class CommonUpload extends PureComponent {
               return (
                 <div className={styles.fileItem}>
                   <Popover
+                    key={`${item.attachId}Top`}
                     placement="right"
                     content={popoverHtml}
                     trigger="hover"
                     mouseLeaveDelay={0.3}
                     getPopupContainer={this.findFileListNode}
                   >
-                    <p className={styles.fileItemText} title={fileName}>
+                    <p key={item.attachId} className={styles.fileItemText} title={fileName}>
                       <Icon type="fujian" />
                       <span className={styles.fileName}>{fileName}</span>
                     </p>
                   </Popover>
                   <Popover
+                    key={`${item.attachId}Bottom`}
                     placement="bottom"
                     content={statusText}
                     trigger="hover"
@@ -322,6 +325,7 @@ export default class CommonUpload extends PureComponent {
                     {
                       (index === fileList.length - 1 && Number(percent) !== 0) ?
                         <Progress
+                          key={item.attachId}
                           percent={Number.parseInt(percent, 10)}
                           strokeWidth={4}
                           status={status}
