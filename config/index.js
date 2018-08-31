@@ -111,6 +111,7 @@ module.exports = {
   appStatic: path.resolve(__dirname, '../static'),
   htComponents: [
     path.resolve(__dirname, '../node_modules/lego-react-filter/src'),
-    path.resolve(__dirname, '../node_modules/lego-tree-filter/src')
+    path.resolve(__dirname, '../node_modules/lego-tree-filter/src'),
+    path.resolve(__dirname, '../node_modules/lego-react-date/src'),
   ]
 };
