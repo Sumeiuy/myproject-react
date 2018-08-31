@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 09:28:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-30 20:00:17
+ * @Last Modified time: 2018-08-31 16:41:56
  * @description 临时委托他人处理任务Home页面
  */
 
@@ -21,12 +21,9 @@ import CreateDeputeModal from '../../components/tempDepute/CreateDeputeModal';
 
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
-import { dva } from '../../helper';
+import { dva, emp } from '../../helper';
 import logable, { logPV } from '../../decorators/logable';
-import {
-  SEIBEL_HEADER_BASIC_FILTERS,
-  getStatusTagProps,
-} from './config';
+import { SEIBEL_HEADER_BASIC_FILTERS, getStatusTagProps } from './config';
 import { composeQuery } from './utils';
 
 const effect = dva.generateEffect;
@@ -42,10 +39,14 @@ const mapStateToProps = state => ({
   flowResult: state.tempDepute.flowResult,
   // 可以受托人的部门以及受托人员列表
   deputeEmpList: state.tempDepute.deputeEmpList,
+  // 受托部门列表
+  deputeOrgList: state.tempDepute.deputeOrgList,
   // 是否能够提交委托申请结果
   checkResult: state.tempDepute.checkResult,
   // 撤销委托申请结果
   revertResult: state.tempDepute.revertResult,
+  // 新建弹出层的流程按钮以及审批人列表
+  approval: state.tempDepute.approval,
 });
 
 const mapDispatchToProps = {
@@ -63,6 +64,10 @@ const mapDispatchToProps = {
   saveApply: effect('tempDepute/saveApply', { forceFull: true }),
   // 走流程
   doApprove: effect('tempDepute/doApprove', { forceFull: true }),
+  // 获取受托部门列表
+  queryCanDeputeOrg: effect('tempDepute/queryCanDeputeOrg', { forceFull: true }),
+  // 获取下一步审批人信息
+  getApprovalInfo: effect('tempDepute/getApprovalInfo', { forceFull: true }),
   // 清除Redux中的数据
   clearReduxData: effect('tempDepute/clearReduxData', { loading: false }),
 };
@@ -101,6 +106,14 @@ export default class Home extends Component {
     saveApply: PropTypes.func.isRequired,
     // 走流程
     doApprove: PropTypes.func.isRequired,
+    // 获取下一步审批人信息
+    getApprovalInfo: PropTypes.func.isRequired,
+    // 审批人信息
+    approval: PropTypes.object.isRequired,
+    // 查询受托部门列表
+    queryCanDeputeOrg: PropTypes.func.isRequired,
+    // 受托部门列表
+    deputeOrgList: PropTypes.array.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
   }
@@ -179,7 +192,7 @@ export default class Home extends Component {
   // 获取左侧列表
   @autobind
   queryAppList(query) {
-    const composedQuery = composeQuery(query);
+    const composedQuery = composeQuery({ ...query, orgId: emp.getOrgId() });
     this.props.queryApplyList(composedQuery).then(this.getRightDetail);
   }
 
@@ -242,6 +255,25 @@ export default class Home extends Component {
   @autobind
   handleHeaderFilter(param) {
     console.warn('头部筛选条件参数', param);
+    // 1.将值写入Url
+    const { location } = this.props;
+    const { replace } = this.context;
+    const { query, pathname } = location;
+    // 清空掉消息提醒页面带过来的 id
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        ...param,
+      },
+    });
+  }
+
+  @autobind
+  handleSaveAplly(param) {
+    // 此处为调用新建申请的接口
+    console.warn('新建接口参数：', param);
   }
 
   // 因为临时任务委托第二行不需要展示处理申请标题不要展示多余的信息所以返回空字符串
@@ -280,7 +312,17 @@ export default class Home extends Component {
   }
 
   render() {
-    const { applyList, applyDetail, location } = this.props;
+    const {
+      applyList,
+      applyDetail,
+      location,
+      queryCanDeputeEmp,
+      queryCanDeputeOrg,
+      deputeEmpList,
+      deputeOrgList,
+      approval,
+      getApprovalInfo,
+    } = this.props;
     const { dict: { deputeStatusDictList = [] } } = this.context;
 
     const { launchDeputeModalVisible } = this.state;
@@ -344,7 +386,14 @@ export default class Home extends Component {
           :
           (
             <CreateDeputeModal
+              deputeEmpList={deputeEmpList}
+              deputeOrgList={deputeOrgList}
               onClose={this.handleLaunchDeputeModalClose}
+              queryCanDeputeOrg={queryCanDeputeOrg}
+              queryCanDeputeEmp={queryCanDeputeEmp}
+              getApprovalInfo={getApprovalInfo}
+              onSubmit={this.handleSaveAplly}
+              approval={approval}
             />
           )
         }

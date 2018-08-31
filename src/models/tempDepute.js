@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 10:19:47
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-30 14:02:11
+ * @Last Modified time: 2018-08-31 16:29:17
  * @description 临时委托他人处理任务Model
  */
 
@@ -28,6 +28,10 @@ export default {
     flowResult: {},
     // 驳回后修改的弹出层按钮以及审批人数据
     approvalForUpdate: {},
+    // 受托部门列表
+    deputeOrgList: [],
+    // 审批人列表
+    approval: {},
   },
   reducers: {
     queryApplyListSuccess(state, action) {
@@ -48,7 +52,7 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        deputeEmpList: resultData,
+        deputeEmpList: resultData.servicePeopleList || [],
       };
     },
     checkApplyAbilitySuccess(state, action) {
@@ -58,11 +62,18 @@ export default {
         checkResult: resultData,
       };
     },
-    getApprovalInfoForUpdateSuccess(state, action) {
+    getApprovalInfoSuccess(state, action) {
       const { payload: { resultData = {} } } = action;
       return {
         ...state,
-        approvalForUpdate: resultData,
+        approval: resultData,
+      };
+    },
+    queryCanDeputeOrgSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        deputeOrgList: resultData.list || [],
       };
     },
     saveApplySuccess(state, action) {
@@ -123,11 +134,20 @@ export default {
       });
     },
 
-    // 获取驳回后修改页面的流程按钮和审批人
-    * getApprovalInfoForUpdate({ payload = {} }, { call, put }) {
+    // 获取新建页面的流程按钮和审批人
+    * getApprovalInfo({ payload = {} }, { call, put }) {
       const response = yield call(api.queryNextStepInfo, payload);
       yield put({
-        type: 'getApprovalInfoForUpdateSuccess',
+        type: 'getApprovalInfoSuccess',
+        payload: response,
+      });
+    },
+
+    // 获取可选受托人部门的列表
+    * queryCanDeputeOrg({ payload }, { call, put }) {
+      const response = yield call(api.queryCanDeputeOrg, payload);
+      yield put({
+        type: 'queryCanDeputeOrgSuccess',
         payload: response,
       });
     },

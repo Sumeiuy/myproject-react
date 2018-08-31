@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-31 12:23:45
+ * @Last Modified time: 2018-08-31 17:17:06
  * @description 临时任务委托表单
  */
 
@@ -20,6 +20,7 @@ import InfoCell from './InfoCell';
 import SimilarAutoComplete from '../common/similarAutoComplete';
 import Select from '../common/Select';
 import logable from '../../decorators/logable';
+import { emp } from '../../helper';
 
 import styles from './deputeForm.less';
 
@@ -37,16 +38,19 @@ export default class deputeForm extends PureComponent {
     detailInfo: PropTypes.object,
     onChange: PropTypes.func.isRequired,
     // 受托服务部门列表
-    ptyMngOrgList: PropTypes.array.isRequired,
-    // 根据服务经理的部门列表
-    queryPtyMngOrgList: PropTypes.func.isRequired,
+    deputeOrgList: PropTypes.array.isRequired,
     // 根据部门ID查询受托服务经理
     quryPtyMngList: PropTypes.func.isRequired,
+    // 受托服务经理里诶博爱
+    deputeEmpList: PropTypes.array.isRequired,
+    // 输入格式的校验结果
+    checkResult: PropTypes.object,
   }
 
   static defaultProps = {
     detailInfo: {},
     disablePage: false,
+    checkResult: {},
   }
 
   constructor(props) {
@@ -59,21 +63,16 @@ export default class deputeForm extends PureComponent {
     this.wrapRef = React.createRef();
   }
 
-  componentDidMount() {
-    // 初始化进入首先查询一把受托服务经理部门列表
-    const { ptyMngOrgList, queryPtyMngOrgList } = this.props;
-    if (_.isEmpty(ptyMngOrgList)) {
-      queryPtyMngOrgList();
-    }
-  }
-
   @autobind
   getInitialState(props) {
     console.warn('根据props初始化state:', props);
     // const { detailInfo = {} } = props;
     const isCreate = this.isCreateApply();
     if (isCreate) {
-      return {};
+      return {
+        // 默认选择用户的当前登录机构
+        assigneeOrgId: emp.getOrgId(),
+      };
     }
     return {
     };
@@ -140,7 +139,8 @@ export default class deputeForm extends PureComponent {
     if (_.isEmpty(keyword)) {
       return;
     }
-    this.props.quryPtyMngList({ keyword });
+    const { formData: { assigneeOrgId } } = this.state;
+    this.props.quryPtyMngList({ keyword, org: assigneeOrgId });
   }
 
   @autobind
@@ -152,8 +152,19 @@ export default class deputeForm extends PureComponent {
       max: (instance, args) => moment(args[0].value[1]).format(LOG_DEATE_FORMAT),
     },
   })
-  handleDeputePeriodChange(period) {
-    console.warn('受托期间：', period);
+  handleDeputePeriodChange({ value }) {
+    const { formData } = this.state;
+    this.setState({
+      formData: {
+        ...formData,
+        deputeTimeStart: value[0] || '',
+        deputeTimeEnd: value[1] || '',
+      },
+    });
+    this.props.onChange({
+      deputeTimeStart: value[0] || '',
+      deputeTimeEnd: value[1] || '',
+    });
   }
 
   @autobind
@@ -169,7 +180,7 @@ export default class deputeForm extends PureComponent {
   }
 
   render() {
-    const { disablePage } = this.props;
+    const { disablePage, deputeOrgList, deputeEmpList } = this.props;
     const { formData } = this.state;
     // 判断当前组件是否在驳回后修改页面里面
     const isCreate = this.isCreateApply();
@@ -205,17 +216,18 @@ export default class deputeForm extends PureComponent {
               needShowKey={false}
               width="228px"
               name="accepterOrg"
-              optionLabelMapKey="value"
-              optionValueMapKey="key"
-              data={[]}
+              optionLabelMapKey="orgName"
+              optionValueMapKey="orgId"
+              data={deputeOrgList}
               value={formData.assigneeOrgId || ''}
               onChange={this.handleAssigneeOrgSelect}
               getPopupContainer={this.getWrapRef}
             />
             <SimilarAutoComplete
+              defaultValue={formData.assigneeId}
               style={{ width: '228px' }}
               placeholder="服务经理工号/服务经理经理"
-              optionList={[]}
+              optionList={deputeEmpList}
               optionKey="ptyMngId"
               onSelect={this.handlePtyMngIdSelect}
               onSearch={this.handlePtyMngListSearch}
@@ -224,9 +236,12 @@ export default class deputeForm extends PureComponent {
           </InfoCell>
         </div>
         <div className={styles.modContent}>
-          <DateRangePicker
-            onChange={this.handleDeputePeriodChange}
-          />
+          <InfoCell label="委托期限" labelWidth={112}>
+            <DateRangePicker
+              filterValue={[formData.deputeTimeStart, formData.deputeTimeEnd]}
+              onChange={this.handleDeputePeriodChange}
+            />
+          </InfoCell>
         </div>
       </div>
     );

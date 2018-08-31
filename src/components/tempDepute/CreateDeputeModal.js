@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 19:39:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-31 13:12:16
+ * @Last Modified time: 2018-08-31 17:52:11
  * @description 临时委托任务发起任务的弹出层
  */
 
@@ -22,8 +22,22 @@ import styles from './createDeputeModal.less';
 
 export default class CreateDeputeModal extends PureComponent {
   static propTypes = {
+    // 审批人信息
+    approval: PropTypes.object.isRequired,
+    // 受托服务经理列表
+    deputeEmpList: PropTypes.array.isRequired,
+    // 受托服务经理部门列表
+    deputeOrgList: PropTypes.array.isRequired,
     // 关闭弹出层
     onClose: PropTypes.func.isRequired,
+    // 查询受托服务经理部门
+    queryCanDeputeOrg: PropTypes.func.isRequired,
+    // 查询受托服务经理
+    queryCanDeputeEmp: PropTypes.func.isRequired,
+    // 查询审批意见
+    getApprovalInfo: PropTypes.func.isRequired,
+    // 提交
+    onSubmit: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -33,6 +47,15 @@ export default class CreateDeputeModal extends PureComponent {
   }
 
   componentDidMount() {
+    // 初次进入需要先查一把受托服务经理部门的列表
+    const { deputeOrgList, queryCanDeputeOrg, getApprovalInfo } = this.props;
+    const hasNotGetOrgList = _.isEmpty(deputeOrgList);
+    if (hasNotGetOrgList) {
+      // 因为委托申请新建整个期间只需要查一次部门
+      queryCanDeputeOrg();
+    }
+    // 初始化查询下一步审批人列表信息，新建的时候没有flowId所以传空字符串
+    getApprovalInfo({ flow: '' });
   }
 
 
@@ -51,8 +74,16 @@ export default class CreateDeputeModal extends PureComponent {
   }
 
   @autobind
-  handleModalBtnGroupClick() {
-    console.warn('点击按钮');
+  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
+  handleModalBtnGroupClick(btn) {
+    console.warn('点击按钮： ', btn);
+    // 点击此处，需要先进行可以提交的规则校验
+    // const { valid, msg } = validateData(this.state);
+    // if (!valid) {
+    //   confirm({ content: msg });
+    // } else {
+
+    // }
   }
 
   @autobind
@@ -62,9 +93,16 @@ export default class CreateDeputeModal extends PureComponent {
 
 
   render() {
+    const {
+      approval,
+      deputeOrgList,
+      deputeEmpList,
+      queryCanDeputeEmp,
+    } = this.props;
+
     const selfBtnGroup = (
       <ApprovalBtnGroup
-        approval={{}}
+        approval={approval}
         onClick={this.handleModalBtnGroupClick}
       />
     );
@@ -88,9 +126,10 @@ export default class CreateDeputeModal extends PureComponent {
           <DeputeForm
             action="CREATE"
             onChange={this.handleDeputeFormChange}
-            ptyMngOrgList={[]}
-            queryPtyMngOrgList={_.noop}
-            quryPtyMngList={_.noop}
+            deputeOrgList={deputeOrgList}
+            deputeEmpList={deputeEmpList}
+            quryPtyMngList={queryCanDeputeEmp}
+            checkResult={{}}
           />
         </div>
       </CommonModal>
