@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 16:26:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-29 16:50:37
+ * @Last Modified time: 2018-08-30 20:02:43
  * @description 临时委托任务右侧详情组件
  */
 
@@ -22,25 +22,25 @@ export default function Detail(props) {
   const {
     data,
     data: {
-      applyId,
+      itemId,
       applyBasicInfo,
-      buttonStatus,
+      recallFalg,
       workflowHistoryBeans = [],
       currentApproval = {},
-      createTime,
-      statusDesc,
+      applyTime,
+      statusName,
     },
   } = props;
 
   function handlePushBtnClick() {
-    props.onRevert({ applyId });
+    props.onRevert({ itemId });
   }
 
   const isEmpty = _.isEmpty(data);
 
   // 此处用来判断撤销委托按钮的显示与否
-  const hasRevertBtn = buttonStatus !== 'notDisplay';
-  const disbaledRevertBtn = buttonStatus === 'disabled';
+  const hasRevertBtn = recallFalg !== 'notDisplay';
+  const disbaledRevertBtn = recallFalg === 'disabled';
   const revertBtn = !hasRevertBtn ? null
     :
     (
@@ -58,17 +58,17 @@ export default function Detail(props) {
   // 委托原因
   const deputeReason = _.get(applyBasicInfo, 'deputeReason');
   // 受托人
-  const acceptEmpId = _.get(applyBasicInfo, 'acceptEmpId');
-  const acceptEmpName = _.get(applyBasicInfo, 'acceptEmpName');
-  const acceptOrgName = _.get(applyBasicInfo, 'acceptOrgName');
+  const acceptEmpId = _.get(applyBasicInfo, 'assigneeId');
+  const acceptEmpName = _.get(applyBasicInfo, 'assigneeName');
+  const acceptOrgName = _.get(applyBasicInfo, 'assigneeOrgName');
   const acceptEmp = `${acceptOrgName} - ${acceptEmpName} (${acceptEmpId})`;
   // 委托期限
-  const deputeStartTime = _.get(applyBasicInfo, 'deputeStartTime');
-  const deputeEndTime = _.get(applyBasicInfo, 'deputeEndTime');
-  const deputePeriod = `${deputeStartTime} ~ ${deputeEndTime}`;
+  const deputeStartTime = _.get(applyBasicInfo, 'assigneeTimeStart');
+  const deputeEndTime = _.get(applyBasicInfo, 'assigneeTimeEnd');
+  const deputePeriod = `${deputeStartTime}  ~  ${deputeEndTime}`;
   // 拟稿人信息
-  const empName = _.get(data, 'empName');
-  const empId = _.get(data, 'empId');
+  const empName = _.get(data, 'drafterName');
+  const empId = _.get(data, 'drafterId');
   const draftOrg = _.get(data, 'orgName');
   const drafter = `${draftOrg} - ${empName} (${empId})`;
   // 审批记录当前节点信息
@@ -81,19 +81,19 @@ export default function Detail(props) {
   };
 
   return (
-    <DetailWrap isEmpty={isEmpty} currentId={`${applyId}`} extra={revertBtn}>
+    <DetailWrap isEmpty={isEmpty} currentId={`${itemId}`} extra={revertBtn}>
       <div className={styles.module}>
         <InfoTitle head="委托信息" />
         <div className={styles.modContent}>
           <ul className={styles.dpertyList}>
             <li className={styles.item}>
-              <InfoItem label="委托原因" value={deputeReason} width="70px" />
+              <InfoItem label="委托原因" value={deputeReason} width="130px" />
             </li>
             <li className={styles.item}>
-              <InfoItem label="受托人" value={acceptEmp} width="70px" />
+              <InfoItem label="受托人" value={acceptEmp} width="130px" />
             </li>
             <li className={styles.item}>
-              <InfoItem label="委托期限" value={deputePeriod} width="70px" />
+              <InfoItem label="委托期限" value={deputePeriod} width="130px" />
             </li>
           </ul>
         </div>
@@ -103,13 +103,13 @@ export default function Detail(props) {
         <div className={styles.modContent}>
           <ul className={styles.dpertyList}>
             <li className={styles.item}>
-              <InfoItem label="拟稿人" value={drafter} width="70px" />
+              <InfoItem label="拟稿人" value={drafter} width="130px" />
             </li>
             <li className={styles.item}>
-              <InfoItem label="申请时间" value={createTime} width="70px" />
+              <InfoItem label="申请时间" value={applyTime} width="130px" />
             </li>
             <li className={styles.item}>
-              <InfoItem label="状态" value={statusDesc} width="70px" />
+              <InfoItem label="状态" value={statusName} width="130px" />
             </li>
           </ul>
         </div>

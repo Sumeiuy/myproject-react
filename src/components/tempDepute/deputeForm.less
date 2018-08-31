@@ -1,0 +1,61 @@
+.deputeFormContainer {
+  width: 100%;
+  padding: 10px 30px;
+
+  &.reject {
+    padding: 10px 0;
+  }
+
+  .deputeReasonArea {
+    display: flex;
+    align-items: stretch;
+    height: 110px;
+
+    .label {
+      padding-right: 5px;
+      font-size: 14px;
+      color: #9b9b9b;
+      text-align: right;
+      line-height: 30px;
+      width: 112px;
+      flex: 0 0 auto;
+      .required {
+        margin-right: 4px;
+        color: red;
+        font-style: normal;
+        line-height: 30px;
+      }
+      .colon {
+        padding: 0 4px;
+      }
+    }
+
+    .textArea {
+      flex: 1 1 auto;
+      :global {
+        .ant-input {
+          width: 100%;
+          height: 100%;
+          font-size: 14px;
+          line-height: 30px;
+        }
+      }
+    }
+  }
+  .ptyMngOrgSelect {
+    :global {
+      .ant-select-selection--single {
+        height: 32px;
+      }
+    }
+  }
+  .ptyMngAutoCompleteOptionValue {
+    font-size: 14px;
+    color: #4a4a4a;
+    line-height: 18px;
+  }
+
+  .modContent {
+    margin-bottom: 10px;
+  }
+}

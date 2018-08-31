@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 09:28:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-29 20:48:39
+ * @Last Modified time: 2018-08-30 20:00:17
  * @description 临时委托他人处理任务Home页面
  */
 
@@ -17,6 +17,7 @@ import SeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import ApplyList from '../../components/common/appList';
 import ApplyItem from '../../components/common/appList/ApplyItem';
 import Detail from '../../components/tempDepute/Detail';
+import CreateDeputeModal from '../../components/tempDepute/CreateDeputeModal';
 
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
@@ -26,12 +27,11 @@ import {
   SEIBEL_HEADER_BASIC_FILTERS,
   getStatusTagProps,
 } from './config';
+import { composeQuery } from './utils';
 
 const effect = dva.generateEffect;
 
 const mapStateToProps = state => ({
-  // 页面字典
-  tempDeputeDict: state.tempDepute.tempDeputeDict,
   // 左侧列表数据
   applyList: state.tempDepute.applyList,
   // 右侧详情
@@ -49,8 +49,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  // 获取页面字典
-  queryDict: effect('tempDepute/queryDict', { forceFull: true }),
   // 获取左侧列表
   queryApplyList: effect('tempDepute/queryApplyList', { forceFull: true }),
   // 获取右侧详情
@@ -75,8 +73,6 @@ const mapDispatchToProps = {
 export default class Home extends Component {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    // 页面字典
-    tempDeputeDict: PropTypes.object.isRequired,
     // 左侧列表数据
     applyList: PropTypes.object.isRequired,
     // 右侧详情
@@ -107,8 +103,6 @@ export default class Home extends Component {
     doApprove: PropTypes.func.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
-    // 获取页面字典
-    queryDict: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -126,29 +120,67 @@ export default class Home extends Component {
     };
   }
   componentDidMount() {
-    // 初始化页面的时候，获取下页面中需要的字典数据
-    const { queryDict, tempDeputeDict } = this.props;
-    const notGetDict = _.isEmpty(tempDeputeDict);
-    if (notGetDict) {
-      queryDict();
-    }
-    // 查询申请列表
-    this.getApplyList();
+    const { location: { query } } = this.props;
+    // 初始化查询申请列表
+    this.queryAppList(query);
   }
 
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const { location: { query: nextQuery } } = this.props;
+    const nextQueryWithoutId = _.omit(nextQuery, ['currentId']);
+    const prevQueryWithoutId = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(nextQueryWithoutId, prevQueryWithoutId) && !_.isEmpty(prevQuery)) {
+      this.queryAppList(nextQuery);
+    }
+  }
+
+  // 查询右侧详情接口
   @autobind
-  getApplyList() {
-    const { location: { query, query: { pageNum, pageSize } } } = this.props;
-    this.queryAppList(query, pageNum, pageSize);
+  getRightDetail() {
+    const { applyList: { list, page } } = this.props;
+    if (!_.isEmpty(list)) {
+      // 1.根据 url 中的 currentId 获取到用户选择的是哪个列表项，
+      // 如果没有或者没有匹配到，则默认选中第一条
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const { location: { pathname, query } } = this.props;
+      const { currentId } = query;
+      const { pageNum, pageSize } = page;
+      let item = _.head(list);
+      let itemIndex = _.findIndex(list, o => o.id.toString() === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.find(list, o => String(o.id) === currentId);
+      } else {
+        // 不存在currentId
+        this.context.replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
+          },
+        });
+        itemIndex = 0;
+      }
+      this.setState({
+        activeRowIndex: itemIndex,
+      });
+      // 此处详情查询使用申请单编号，不使用flowId
+      this.props.queryApplyDetail({
+        itemId: item.itemId,
+      });
+    }
   }
 
   // 获取左侧列表
   @autobind
-  queryAppList(query, pageNum = 1, pageSize = 10) {
-    console.warn('queryAppList: ', pageSize);
-    // const { queryApplyList } = this.props;
-    // 默认筛选条件,
-    // queryApplyList({ ...params }).then(this.getRightDetail);
+  queryAppList(query) {
+    const composedQuery = composeQuery(query);
+    this.props.queryApplyList(composedQuery).then(this.getRightDetail);
   }
 
   // 切换页码
@@ -170,9 +202,9 @@ export default class Home extends Component {
 
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '撤销委托' } })
-  handleRevertBtnOfDetailClick({ applyId }) {
-    this.props.revertApply({ itemId: applyId }).then(() => {
-      this.props.queryApplyDetail({ itemId: applyId });
+  handleRevertBtnOfDetailClick(query) {
+    this.props.revertApply(query).then(() => {
+      this.props.queryApplyDetail(query);
     });
   }
 
@@ -183,14 +215,45 @@ export default class Home extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭发起委托新建弹框' } })
+  handleLaunchDeputeModalClose() {
+    this.setState({ launchDeputeModalVisible: false });
+  }
+
+  @autobind
   @logable({ type: 'ViewItem', payload: { name: '临时委托任务' } })
-  handleListRowClick(record) {
-    console.warn('临时委托任务: ', record);
+  handleListRowClick(record, index) {
+    const { id } = record;
+    const { location: { pathname, query, query: { currentId } } } = this.props;
+    if (currentId === String(id)) {
+      return;
+    }
+    this.context.replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
+    });
+    this.setState({ activeRowIndex: index });
+    this.props.queryApplyDetail({ itemId: id });
   }
 
   @autobind
   handleHeaderFilter(param) {
     console.warn('头部筛选条件参数', param);
+  }
+
+  // 因为临时任务委托第二行不需要展示处理申请标题不要展示多余的信息所以返回空字符串
+  @autobind
+  renderApplyItemSecondLine() {
+    return '';
+  }
+
+  // 因为临时任务委托第三行需要展示日期
+  @autobind
+  renderApplyItemThirdLine(data) {
+    return data.applyTime || '--';
   }
 
   // 渲染列表项里面的每一项
@@ -201,7 +264,7 @@ export default class Home extends Component {
     const statusTags = [getStatusTagProps(statusCode)];
     return (
       <ApplyItem
-        key={record.applyId}
+        key={record.id}
         data={record}
         index={index}
         active={index === activeRowIndex}
@@ -210,14 +273,17 @@ export default class Home extends Component {
         iconType="kehu1"
         subTypeName="临时任务委托"
         statusTags={statusTags}
+        showSecondLineInfo={this.renderApplyItemSecondLine}
+        showThirdLineInfo={this.renderApplyItemThirdLine}
       />
     );
   }
 
   render() {
-    const { applyList, applyDetail } = this.props;
+    const { applyList, applyDetail, location } = this.props;
+    const { dict: { deputeStatusDictList = [] } } = this.context;
 
-    // const { launchDeputeModalVisible } = this.state;
+    const { launchDeputeModalVisible } = this.state;
 
     const isEmpty = _.isEmpty(applyList);
 
@@ -228,7 +294,7 @@ export default class Home extends Component {
         isCallCustRangeApi={false}
         location={location}
         page="tempDeputeApply"
-        stateOptions={[]}
+        stateOptions={deputeStatusDictList}
         creatSeibelModal={this.handleLaunchDepute}
         filterCallback={this.handleHeaderFilter}
         basicFilters={SEIBEL_HEADER_BASIC_FILTERS}
@@ -273,6 +339,15 @@ export default class Home extends Component {
           leftListClassName="tempDeputeList"
           leftWidth={420}
         />
+        {
+          !launchDeputeModalVisible ? null
+          :
+          (
+            <CreateDeputeModal
+              onClose={this.handleLaunchDeputeModalClose}
+            />
+          )
+        }
       </div>
     );
   }

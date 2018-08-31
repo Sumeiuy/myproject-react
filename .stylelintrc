@@ -18,6 +18,7 @@
     "unit-no-unknown": null,
     "value-list-max-empty-lines": null,
     "selector-pseudo-class-no-unknown": null,
-    "property-no-unknown": null
+    "property-no-unknown": null,
+    "declaration-block-trailing-semicolon": null
   }
 }

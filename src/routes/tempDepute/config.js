@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 15:42:30
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-29 20:46:22
+ * @Last Modified time: 2018-08-30 15:36:00
  * @description 临时委托任务的配置项
  */
 import _ from 'lodash';
@@ -20,34 +20,34 @@ const STATUS_TAGS = [
     text: '不限',
   },
   {
-    code: '01',
+    code: '10',
     text: '审批中',
     type: 'processing',
   },
   {
-    code: '02',
+    code: '20',
     text: '审批通过',
     type: 'complete',
   },
   {
-    code: '03',
-    text: '结束',
-    type: 'stop',
-  },
-  {
-    code: '04',
-    text: '流程终止',
-    type: 'stop',
-  },
-  {
-    code: '05',
+    code: '30',
     text: '审批驳回',
     type: 'reject',
   },
   {
-    code: '06',
+    code: '40',
     text: '委托中',
     type: 'processing',
+  },
+  {
+    code: '50',
+    text: '结束',
+    type: 'stop',
+  },
+  {
+    code: '60',
+    text: '流程终止',
+    type: 'stop',
   },
 ];
 

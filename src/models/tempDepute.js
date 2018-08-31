@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 10:19:47
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-29 17:01:31
+ * @Last Modified time: 2018-08-30 14:02:11
  * @description 临时委托他人处理任务Model
  */
 
@@ -12,8 +12,6 @@ import { tempDepute as api } from '../api';
 export default {
   namespace: 'tempDepute',
   state: {
-    // 页面字典
-    tempDeputeDict: {},
     // 委托申请列表
     applyList: {},
     // 可以受托人的部门以及受托人员列表
@@ -32,13 +30,6 @@ export default {
     approvalForUpdate: {},
   },
   reducers: {
-    queryDictSuccess(state, action) {
-      const { payload: { resultData = {} } } = action;
-      return {
-        ...state,
-        tempDeputeDict: resultData,
-      };
-    },
     queryApplyListSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
@@ -105,14 +96,6 @@ export default {
     },
   },
   effects: {
-    // 获取状态字典
-    * queryDict({ payload = {} }, { put, call }) {
-      const response = yield call(api.queryDict, payload);
-      yield put({
-        type: 'queryDictSuccess',
-        payload: response,
-      });
-    },
     // 查询申请单列表
     * queryApplyList({ payload }, { put, call }) {
       const response = yield call(api.queryApplyList, payload);
