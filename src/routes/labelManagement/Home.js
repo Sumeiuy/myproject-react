@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-31 12:18:48
+ * @Last Modified time: 2018-08-31 14:32:42
  */
 
 import React, { PureComponent } from 'react';
@@ -696,6 +696,7 @@ export default class CustomerGroupManage extends PureComponent {
             columnWidth={['10%', '14%', '30%', '8%', '18%', '20%']}
             clickableColumnCallbackList={[this.handleEditLabel]}
             clickableColumnIndexList={[2]}
+            clickableColumnClass={styles.clickableColumn}
           />
         </div>
         {

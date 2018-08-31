@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-31 12:40:22
+ * @Last Modified time: 2018-08-31 13:49:45
  */
 
 import React, { PureComponent } from 'react';
@@ -88,6 +88,7 @@ export default class FirstContent extends PureComponent {
           isNeedRowSelection
           onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
           currentSelectRowKeys={[currentSelectRow.id]}
+          operationColumnClass={styles.operationColumn}
         />
       </div>
     );
