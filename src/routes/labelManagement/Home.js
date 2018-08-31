@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-31 16:21:33
+ * @Last Modified time: 2018-08-31 17:12:24
  */
 
 import React, { PureComponent } from 'react';
@@ -534,13 +534,13 @@ export default class CustomerGroupManage extends PureComponent {
       location: {
         pathname,
         query: {
-          curPageNum = '1',
+          curPageNum = INITIAL_CURPAGE,
           keyWord = '',
-          curPageSize = '10',
+          curPageSize = INITIAL_PAGESIZE,
         },
       },
     } = this.props;
-    if (curPageNum === '1' && curPageSize === '10' && keyWord === '') {
+    if (curPageNum === INITIAL_CURPAGE && curPageSize === INITIAL_PAGESIZE && keyWord === '') {
       this.getLabelList({
         curPageNum: INITIAL_CURPAGE,
         curPageSize: INITIAL_PAGESIZE,
