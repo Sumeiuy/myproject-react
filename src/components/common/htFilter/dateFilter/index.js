@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import classNames from 'classnames';
 import _ from 'lodash';
-import DateRangePicker from '../../dateRangePicker';
+import DateRangePick from 'lego-react-date/src';
 import isInclusivelyBeforeDay from '../../dateRangePicker/utils/isInclusivelyBeforeDay';
 
 import styles from './dateFilter.less';
@@ -41,19 +41,17 @@ export default class DateFilter extends React.Component {
 
   constructor(props) {
     super(props);
-    this.onDatesChange = this.onDatesChange.bind(this);
+    this.handleDateChange = this.handleDateChange.bind(this);
     this.state = {
       hidden: false,
     };
   }
 
-  onDatesChange({ startDate, endDate }) {
-    const { stateDateWrapper } = this.props;
-    const formatStartDate = startDate && stateDateWrapper(startDate);
-    const formatEndDate = endDate && stateDateWrapper(endDate);
-    this.props.onChange({
-      name: this.props.filterId,
-      filterName: this.props.filterName,
+  handleDateChange(formatStartDate, formatEndDate) {
+    const { onChange, filterId, filterName } = this.props;
+    onChange({
+      name: filterId,
+      filterName,
       value: [formatStartDate, formatEndDate],
     });
   }
@@ -88,19 +86,18 @@ export default class DateFilter extends React.Component {
           <span className={styles.dateLabel}>
             {`${this.props.filterName}:`}
           </span>
-          <DateRangePicker
+          <DateRangePick
             {...dateProps}
-            className={styles.dateFilterTransform}
-            inputIconPosition="after"
-            initialStartDate={initialStartDate}
-            initialEndDate={initialEndDate}
-            disabledRange={disabledCurrentEnd ?
-              day => !isInclusivelyBeforeDay(day, moment())
+            filterName=""
+            filterValue={[initialStartDate, initialEndDate]}
+            onChange={date => this.handleDateChange(date.value[0], date.value[1])}
+            disabledStart={disabledCurrentEnd ?
+              startDate => !isInclusivelyBeforeDay(startDate, moment())
               : _.noop}
-            onChange={this.onDatesChange}
+            disabledEnd={disabledCurrentEnd ?
+              (startDate, endDate) => !isInclusivelyBeforeDay(endDate, moment())
+              : _.noop}
             defaultVisible={this.props.defaultVisible}
-            noBorder
-            readOnly
           />
         </div>
         <div

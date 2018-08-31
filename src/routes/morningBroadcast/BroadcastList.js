@@ -6,7 +6,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import { DatePicker, Input, Button, Table, Icon, Popconfirm, Affix, message, Form } from 'antd';
+import { Input, Button, Table, Icon, Popconfirm, Affix, message, Form } from 'antd';
+import DateRangePick from 'lego-react-date/src';
 import moment from 'moment';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
@@ -20,7 +21,6 @@ import AddMorningBoradcast from '../../components/morningBroadcast/AddMorningBor
 import logable, { logPV } from '../../decorators/logable';
 
 const Search = Input.Search;
-const { RangePicker } = DatePicker;
 // 新建晨报时标记晨报id为-1
 // const createNewsId = -1;
 
@@ -38,6 +38,10 @@ const { RangePicker } = DatePicker;
 //   };
 // }
 
+
+// 六个月的天数
+const SIX_MONTH_DAYS = 180;
+const dateFormatStr = 'YYYY-MM-DD';
 const effects = {
   getBoradcastList: 'morningBoradcast/getBoradcastList',
   saveBoradcast: 'morningBoradcast/saveBoradcast',
@@ -105,8 +109,8 @@ export default class BroadcastList extends PureComponent {
    * PAGE_LEN 默认页容量
    */
   static initNewsListQuery(beforeM = 1) {
-    const TO_DATE = moment().format('YYYY-MM-DD');
-    const FROM_DATE = moment().subtract(beforeM, 'months').format('YYYY-MM-DD');
+    const TO_DATE = moment().format(dateFormatStr);
+    const FROM_DATE = moment().subtract(beforeM, 'months').format(dateFormatStr);
     const PAGE_NUM = 1;
     const PAGE_LEN = 20;
     return { TO_DATE, FROM_DATE, PAGE_NUM, PAGE_LEN };
@@ -324,19 +328,25 @@ export default class BroadcastList extends PureComponent {
   }
 
   @autobind
-  onChange(dates, dateStrings) {
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '创建时间',
+      min: '$args[0]',
+      max: '$args[1]',
+    },
+  })
+  handleDateChange(startDate, endDate) {
     const { onHandleGetList } = this;
-    const maxDate = moment(dateStrings[0]).add(6, 'month');
-
-    if (maxDate.valueOf() < dates[1].valueOf()) {
-      message.error('查询时间段不能超过6个月');
-      return;
-    }
+    const { setFieldsValue } = this.props.form;
+    setFieldsValue({
+      createdTime: [startDate, endDate],
+    });
     onHandleGetList({
       ...this.formQuery(),
       pageNum: 1,
-      createdFrom: dateStrings[0],
-      createdTo: dateStrings[1],
+      createdFrom: startDate,
+      createdTo: endDate,
     });
   }
   // 日期选择组件-->end
@@ -393,8 +403,8 @@ export default class BroadcastList extends PureComponent {
     return {
       createdBy: values.createdBy,
       title: values.title,
-      createdFrom: values.createdTime[0].format('YYYY-MM-DD'),
-      createdTo: values.createdTime[1].format('YYYY-MM-DD'),
+      createdFrom: values.createdTime[0],
+      createdTo: values.createdTime[1],
     };
   }
 
@@ -419,7 +429,6 @@ export default class BroadcastList extends PureComponent {
       creator,
     } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const initQuery = BroadcastList.initNewsListQuery();
     const { FROM_DATE, TO_DATE, TITLE, CREATE_BY } = newsListQuery;
     const { visible, newsId } = this.state;
     const newBoradcastList = _.map(boradcastList, item => ({ ...item, key: `${item.newsId}` }));
@@ -447,21 +456,24 @@ export default class BroadcastList extends PureComponent {
                 )}
               </div>
               <div className={styles.timeRange}>
-                <span>创建时间：</span>
-                {getFieldDecorator('createdTime', {
-                  initialValue: [moment(FROM_DATE || initQuery.FROM_DATE),
-                    moment(TO_DATE || initQuery.TO_DATE)],
-                })(
-                  <RangePicker
-                    disabledDate={this.disabledDate}
-                    allowClear={false}
-                    showToday={false}
-                    format="YYYY-MM-DD"
-                    placeholder={['Start', 'End']}
-                    onChange={this.onChange}
-                    className={styles.timeWrap}
-                  />,
+                {/* 此处原来用antd-RangePicker组件,包在antd的Form里， */}
+                {/* 现在替换成DateRangePick组件，由于新组件不支持antdForm， */}
+                {/* 在不影响原代码逻辑下， DateRangePick触发onChange的时候手动执行this.props.form.setFieldsValue */}
+                {/* 把DateRangePick传出的值更新到formData里去， */}
+                {/* 但是由于formData里的“createdTime”值必须要初始化才能对它使用setFieldsValue */}
+                {/* 所以此处用一个Input type='hidden' 用来初始化formData的‘createdTime’值 */}
+                {getFieldDecorator('createdTime')(
+                  <Input type="hidden" />,
                 )}
+                <span>创建时间：</span>
+                <DateRangePick
+                  filterValue={[FROM_DATE, TO_DATE]}
+                  filterName=""
+                  onChange={date => this.handleDateChange(date.value[0], date.value[1])}
+                  disabledStart={startDate => this.disabledDate(startDate)}
+                  disabledEnd={(startDate, endDate) => this.disabledDate(endDate)}
+                  disabledRange={SIX_MONTH_DAYS}
+                />
               </div>
             </div>
             <div>

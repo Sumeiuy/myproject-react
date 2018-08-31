@@ -71,6 +71,15 @@ const CUSTOMER_LIST_INTRO_SECOND_STEP_ID = 'customer_list_intro_second_step_id';
 const CUSTOMER_LIST_INTRO_THIRD_STEP_ID = 'customer_list_intro_third_step_id';
 const CUSTOMER_LIST_INTRO_FOURTH_STEP_ID = 'customer_list_intro_fourth_step_id';
 
+
+/**
+ * 由于antd升级到3.8之后treeselect组件value为空字符串时无法回填数据，
+ * 所以需要用一个常量字符串来做默认值，此处为服务记录中 渠道treeSelect 组件中“所有渠道”对应选项的字符串值，
+ * 后端字典接口返回的"所有渠道"value值为空字符串，前端转为用 ‘ALL_SERVE_SOURCE’来做组件值的回填，
+ * 实际会在model-setup里监听url变化时做一次转换，即 treeselect组件中传出 ‘ALL_SERVE_SOURCE’ 但是请求接口的时候会转成 ""
+ */
+const ALL_SERVE_SOURCE = 'ALL_SERVE_SOURCE';
+
 export {
   NOPERMIT,
   PERMITS1,
@@ -90,4 +99,5 @@ export {
   CUSTOMER_LIST_INTRO_SECOND_STEP_ID,
   CUSTOMER_LIST_INTRO_THIRD_STEP_ID,
   CUSTOMER_LIST_INTRO_FOURTH_STEP_ID,
+  ALL_SERVE_SOURCE,
 };
