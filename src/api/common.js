@@ -22,5 +22,7 @@ export default function common(api) {
     addCallRecord: query => api.post('/groovynoauth/fsp/emp/mobilebinding/addCallRecord', query),
     // 获取附件列表
     getAttachmentList: query => api.post('/file/ceFileList', query),
+    // 获取服务经理列表
+    getEmpList: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryEmpList', query),
   };
 }

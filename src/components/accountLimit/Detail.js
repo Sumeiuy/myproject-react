@@ -23,7 +23,7 @@ import logable from '../../decorators/logable';
 
 // 表头
 const {
-  tableTitle: { custList: custTitleList },  // 客户表格列表
+  tableTitle: { custList: custTitleList, moreList },  // 客户表格列表
   operateTypeArray,  // 操作类型枚举
   RELIEVE_CODE,  // 限制解除的 value
   attachmentMap,  // 附件类型枚举
@@ -52,6 +52,7 @@ export default class Detail extends PureComponent {
   // 生成表格标题
   @autobind
   getColumnsCustTitleList(list) {
+    const { data: { operateType } } = this.props;
     const tempTitleList = [...list];
     // 客户
     const custColumn = _.find(tempTitleList, o => o.key === KEY_CUSTNAME);
@@ -68,6 +69,10 @@ export default class Detail extends PureComponent {
     // 限制类型
     const limitColumn = _.find(tempTitleList, o => o.key === KEY_LIMIT);
     limitColumn.render = text => (<div title={text || ''}>{text || ''}</div>);
+    // 如果是限制设置，则增加两列数据
+    if (operateType !== RELIEVE_CODE) {
+      tempTitleList.push(...moreList);
+    }
     return tempTitleList;
   }
 

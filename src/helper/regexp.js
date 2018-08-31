@@ -37,6 +37,10 @@ const regexp = {
    */
   positiveInteger: /^\+?[1-9][0-9]*$/,
   /**
+   * 非零正数，包含小数
+   */
+  positiveNumber: /^(?!(0[0-9]{0,}$))[0-9]{1,}[.]{0,}[0-9]{0,}$/,
+  /**
    * desc: 将pathname分割成集合
    * pathname: '/a/b/c'
    * ['/a', '/b', '/c']
@@ -90,6 +94,7 @@ export const {
  thousandInteger,
  thousandDecimal,
  positiveInteger,
+ positiveNumber,
  matchPathList,
  returnLine,
  url,
