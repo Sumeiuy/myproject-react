@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-15 10:22:47
+ * @Last Modified time: 2018-08-31 11:19:02
  */
 
 import React, { PureComponent } from 'react';
@@ -32,8 +32,13 @@ export default class FirstContent extends PureComponent {
       },
     } = this.props;
     // 过滤出客户数不为0 的分组
-    const tempList = _.filter(custGroupDTOList, item => item.relatCust !== 0);
-    return _.map(tempList, item => ({ ...item, id: item.groupId }));
+    // const tempList = _.filter(custGroupDTOList, item => item.relatCust !== 0);
+    return _.map(custGroupDTOList, item => ({
+      ...item,
+      id: item.groupId,
+      disabledSelection: !item.relatCust,
+      isDisabledFirstColumnLink: !item.relatCust,
+    }));
   }
 
   // 点击分组名称前的单选按钮
