@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-31 11:19:02
+ * @Last Modified time: 2018-08-31 12:40:22
  */
 
 import React, { PureComponent } from 'react';
@@ -31,8 +31,7 @@ export default class FirstContent extends PureComponent {
         custGroupDTOList,
       },
     } = this.props;
-    // 过滤出客户数不为0 的分组
-    // const tempList = _.filter(custGroupDTOList, item => item.relatCust !== 0);
+    // 客户数为0 的分组不能转标签，此处加两个字段用来控制选择框和分组名称是否禁用
     return _.map(custGroupDTOList, item => ({
       ...item,
       id: item.groupId,
