@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-31 17:17:06
+ * @Last Modified time: 2018-09-02 00:14:58
  * @description 临时任务委托表单
  */
 
@@ -21,6 +21,14 @@ import SimilarAutoComplete from '../common/similarAutoComplete';
 import Select from '../common/Select';
 import logable from '../../decorators/logable';
 import { emp } from '../../helper';
+import {
+  checkAcceptor,
+  checkDeputeReasonLengthOver1000,
+  checkDeputeReason,
+  DEPUTE_REASON_CHECK_WARINGS,
+  ASSOGNEE_CHECK_WARNINGS,
+  PERIOD_CHECK_WARNINGS,
+} from './utilsCheck';
 
 import styles from './deputeForm.less';
 
@@ -41,7 +49,7 @@ export default class deputeForm extends PureComponent {
     deputeOrgList: PropTypes.array.isRequired,
     // 根据部门ID查询受托服务经理
     quryPtyMngList: PropTypes.func.isRequired,
-    // 受托服务经理里诶博爱
+    // 受托服务经理里列表
     deputeEmpList: PropTypes.array.isRequired,
     // 输入格式的校验结果
     checkResult: PropTypes.object,
@@ -53,12 +61,25 @@ export default class deputeForm extends PureComponent {
     checkResult: {},
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { checkResult: nextResult } = nextProps;
+    const { prevCheckResult } = prevState;
+    if (!_.isEqual(nextResult, prevCheckResult)) {
+      return {
+        checkResult: nextResult,
+        prevCheckResult: nextResult,
+      };
+    }
+    return null;
+  }
+
   constructor(props) {
     super(props);
     const formData = this.getInitialState(props);
     this.state = {
       // 整个 Form 表单数据
       formData,
+      checkResult: props.checkResult,
     };
     this.wrapRef = React.createRef();
   }
@@ -89,48 +110,79 @@ export default class deputeForm extends PureComponent {
     return this.props.action === 'CREATE';
   }
 
+  // 将表单数据推送给父组件
+  @autobind
+  handleFormDataPush() {
+    const { formData } = this.state;
+    this.props.onChange(formData);
+  }
+
   @autobind
   handleDeputeReasonChange(e) {
+    const { value } = e.target;
+    // 需求要求超过1000长度后，不让再输入
+    if (checkDeputeReasonLengthOver1000(value)) {
+      return;
+    }
+    this.handleDeputeReasonBlur();
     const { formData } = this.state;
     this.setState({
       formData: {
         ...formData,
-        deputeReason: e.target.value,
+        deputeReason: value,
       },
+    }, this.handleFormDataPush);
+  }
+
+  @autobind
+  handleDeputeReasonBlur() {
+    const { formData: { deputeReason }, checkResult } = this.state;
+    const deputeReasonCheck = checkDeputeReason(deputeReason);
+    this.setState({
+      checkResult: { ...checkResult, deputeReasonCheck },
     });
-    this.props.onChange({
-      deputeReason: e.target.value,
+  }
+
+  @autobind
+  handlePtyMngIdSelectBlur() {
+    const { formData: { assigneeId }, checkResult } = this.state;
+    const assigneeCheck = checkAcceptor(assigneeId);
+    this.setState({
+      checkResult: { ...checkResult, assigneeCheck },
     });
   }
 
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '受托人部门', value: '$args[1]' } })
   handleAssigneeOrgSelect(key, value) {
+    // 切换部门需要将选中的服务经理删除
     const { formData } = this.state;
     this.setState({
       formData: {
         ...formData,
         assigneeOrgId: value,
+        assigneeId: '',
       },
-    });
-    this.props.onChange({
-      assigneeOrgId: value,
-    });
+    }, this.handleFormDataPush);
   }
 
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '选择受托人', value: '$args[1]' } })
-  handlePtyMngIdSelect(key, value) {
+  handlePtyMngIdSelect(assignee) {
+    let assigneeId = '';
+     // 如果传递空对象过来代表删除选中的
+    if (!_.isEmpty(assignee)) {
+      // 代表删除选中的
+      assigneeId = assignee.ptyMngId;
+    }
+    this.handlePtyMngIdSelectBlur();
     const { formData } = this.state;
     this.setState({
       formData: {
         ...formData,
-        assigneeId: value,
+        assigneeId,
       },
-    });
-    this.props.onChange({
-      assigneeId: value,
-    });
+    }, this.handleFormDataPush);
   }
 
   @autobind
@@ -160,11 +212,7 @@ export default class deputeForm extends PureComponent {
         deputeTimeStart: value[0] || '',
         deputeTimeEnd: value[1] || '',
       },
-    });
-    this.props.onChange({
-      deputeTimeStart: value[0] || '',
-      deputeTimeEnd: value[1] || '',
-    });
+    }, this.handleFormDataPush);
   }
 
   @autobind
@@ -179,9 +227,27 @@ export default class deputeForm extends PureComponent {
     );
   }
 
+  @autobind
+  renderCheckResultTip(valid, msg) {
+    return valid
+      ? null
+      : (<div className={styles.checkFail}>{msg}</div>);
+  }
+
   render() {
-    const { disablePage, deputeOrgList, deputeEmpList } = this.props;
-    const { formData } = this.state;
+    const {
+      disablePage,
+      deputeOrgList,
+      deputeEmpList,
+    } = this.props;
+    const {
+      formData,
+      checkResult: {
+        deputeReasonCheck,
+        assigneeCheck,
+        periodCheck,
+      },
+    } = this.state;
     // 判断当前组件是否在驳回后修改页面里面
     const isCreate = this.isCreateApply();
     const wrapCls = cx({
@@ -204,10 +270,12 @@ export default class deputeForm extends PureComponent {
                 rows={5}
                 value={formData.deputeReason || ''}
                 onChange={this.handleDeputeReasonChange}
+                onBlur={this.handleDeputeReasonBlur}
               />
             </div>
           </div>
         </div>
+        {this.renderCheckResultTip(deputeReasonCheck, DEPUTE_REASON_CHECK_WARINGS)}
         <div className={styles.modContent}>
           <InfoCell label="受托人" labelWidth={112}>
             <Select
@@ -226,15 +294,17 @@ export default class deputeForm extends PureComponent {
             <SimilarAutoComplete
               defaultValue={formData.assigneeId}
               style={{ width: '228px' }}
-              placeholder="服务经理工号/服务经理经理"
+              placeholder="服务经理工号/姓名"
               optionList={deputeEmpList}
               optionKey="ptyMngId"
               onSelect={this.handlePtyMngIdSelect}
               onSearch={this.handlePtyMngListSearch}
               renderOptionNode={this.renderPtyMngAutoCompleteOption}
+              onBlur={this.handlePtyMngIdSelectBlur}
             />
           </InfoCell>
         </div>
+        {this.renderCheckResultTip(assigneeCheck, ASSOGNEE_CHECK_WARNINGS)}
         <div className={styles.modContent}>
           <InfoCell label="委托期限" labelWidth={112}>
             <DateRangePicker
@@ -243,6 +313,7 @@ export default class deputeForm extends PureComponent {
             />
           </InfoCell>
         </div>
+        {this.renderCheckResultTip(periodCheck, PERIOD_CHECK_WARNINGS)}
       </div>
     );
   }

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 09:28:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-31 16:41:56
+ * @Last Modified time: 2018-09-02 00:09:22
  * @description 临时委托他人处理任务Home页面
  */
 
@@ -135,7 +135,7 @@ export default class Home extends Component {
   componentDidMount() {
     const { location: { query } } = this.props;
     // 初始化查询申请列表
-    this.queryAppList(query);
+    this.queryApplyList(query);
   }
 
   componentDidUpdate(prevProps) {
@@ -145,7 +145,7 @@ export default class Home extends Component {
     const prevQueryWithoutId = _.omit(prevQuery, ['currentId']);
     // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
     if (!_.isEqual(nextQueryWithoutId, prevQueryWithoutId) && !_.isEmpty(prevQuery)) {
-      this.queryAppList(nextQuery);
+      this.queryApplyList(nextQuery);
     }
   }
 
@@ -189,11 +189,27 @@ export default class Home extends Component {
     }
   }
 
+  @autobind
+  doRefreshListAfterApprove() {
+    const { location: { query } } = this.props;
+    // 初始化查询申请列表
+    this.queryApplyList(query);
+    this.handleLaunchDeputeModalClose();
+  }
+
   // 获取左侧列表
   @autobind
-  queryAppList(query) {
+  queryApplyList(query) {
     const composedQuery = composeQuery({ ...query, orgId: emp.getOrgId() });
     this.props.queryApplyList(composedQuery).then(this.getRightDetail);
+  }
+
+  @autobind
+  doApproveAfterSubmit() {
+    const { submitResult } = this.props;
+    if (!_.isEmpty(submitResult)) {
+      this.props.doApprove({ itemId: submitResult.id }).then(this.doRefreshListAfterApprove);
+    }
   }
 
   // 切换页码
@@ -254,7 +270,6 @@ export default class Home extends Component {
 
   @autobind
   handleHeaderFilter(param) {
-    console.warn('头部筛选条件参数', param);
     // 1.将值写入Url
     const { location } = this.props;
     const { replace } = this.context;
@@ -274,6 +289,7 @@ export default class Home extends Component {
   handleSaveAplly(param) {
     // 此处为调用新建申请的接口
     console.warn('新建接口参数：', param);
+    this.props.saveApply(param).then(this.doApproveAfterSubmit);
   }
 
   // 因为临时任务委托第二行不需要展示处理申请标题不要展示多余的信息所以返回空字符串
@@ -322,6 +338,8 @@ export default class Home extends Component {
       deputeOrgList,
       approval,
       getApprovalInfo,
+      checkApplyAbility,
+      checkResult,
     } = this.props;
     const { dict: { deputeStatusDictList = [] } } = this.context;
 
@@ -394,6 +412,8 @@ export default class Home extends Component {
               getApprovalInfo={getApprovalInfo}
               onSubmit={this.handleSaveAplly}
               approval={approval}
+              checkApplyAbility={checkApplyAbility}
+              checkResult={checkResult}
             />
           )
         }
