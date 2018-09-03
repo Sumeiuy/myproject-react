@@ -153,6 +153,8 @@ export default class CreateModal extends PureComponent {
       attachmentList: [attachmentMap[0]],
       // 提交的数据
       submitData: {},
+      // 提交是否清楚金额
+      amountConfirm: false,
     };
   }
 
@@ -196,7 +198,7 @@ export default class CreateModal extends PureComponent {
       const managerIdColumn = _.find(titleList, o => o.key === KEY_MANAGERID) || {};
       managerIdColumn.render = (text, record) => {
         const { edit = false, custId, dockingList = [], managerId, managerName } = record;
-        const showName = managerId ? `${managerName} ${(managerId) || ''}` : '';
+        const showName = managerId ? `${managerName} (${managerId || ''})` : '';
         return edit
           ? <span><AutoComplete
             key={custId}
@@ -961,6 +963,7 @@ export default class CreateModal extends PureComponent {
                 [approverModalKey]: true,
                 flowAuditors: btnItem.flowAuditors,
                 submitData: payload,
+                amountConfirm: true,
               });
             },
           });
@@ -992,8 +995,8 @@ export default class CreateModal extends PureComponent {
   @autobind
   sendRequest(payload) {
     const { saveChange } = this.props;
-    const { isLimit, limitStartTime, bankConfirm } = this.state;
-    const newPayload = { ...payload };
+    const { isLimit, limitStartTime, bankConfirm, amountConfirm } = this.state;
+    const newPayload = { ...payload, amountConfirm };
     // 如果是限制类型
     if (isLimit) {
       newPayload.limitStartTime = limitStartTime;

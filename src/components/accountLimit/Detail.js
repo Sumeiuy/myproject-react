@@ -36,6 +36,8 @@ const KEY_EMPNAME = 'empName';
 const KEY_LIMIT = 'limit';
 // 业务对接人
 const KEY_MANAGERID = 'managerId';
+// 禁止转出金额
+const KEY_LIMIT_AMOUNT = 'limitAmount';
 // 每页条数
 const PAGE_SIZE = 7;
 export default class Detail extends PureComponent {
@@ -80,9 +82,12 @@ export default class Detail extends PureComponent {
       const managerIdColumn = _.find(tempTitleList, o => o.key === KEY_MANAGERID) || {};
       managerIdColumn.render = (text, record) => {
         const { managerId, managerName } = record;
-        const showName = managerId ? `${managerName} ${(managerId) || ''}` : '';
+        const showName = managerId ? `${managerName} (${managerId || ''})` : '';
         return <div title={showName}>{showName}</div>;
       };
+
+      const limitAmountColumn = _.find(tempTitleList, o => o.key === KEY_LIMIT_AMOUNT) || {};
+      limitAmountColumn.render = text => <div>{text}</div>;
     }
     return tempTitleList;
   }
