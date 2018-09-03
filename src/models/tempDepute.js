@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 10:19:47
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-31 16:29:17
+ * @Last Modified time: 2018-09-03 16:16:14
  * @description 临时委托他人处理任务Model
  */
 
@@ -70,10 +70,10 @@ export default {
       };
     },
     queryCanDeputeOrgSuccess(state, action) {
-      const { payload: { resultData = {} } } = action;
+      const { payload: { resultData = [] } } = action;
       return {
         ...state,
-        deputeOrgList: resultData.list || [],
+        deputeOrgList: resultData || [],
       };
     },
     saveApplySuccess(state, action) {

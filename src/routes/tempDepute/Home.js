@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 09:28:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-03 14:55:20
+ * @Last Modified time: 2018-09-03 17:06:48
  * @description 临时委托他人处理任务Home页面
  */
 
@@ -204,14 +204,6 @@ export default class Home extends Component {
     this.props.queryApplyList(composedQuery).then(this.getRightDetail);
   }
 
-  @autobind
-  doApproveAfterSubmit() {
-    const { submitResult } = this.props;
-    if (!_.isEmpty(submitResult)) {
-      this.props.doApprove({ itemId: submitResult.id }).then(this.doRefreshListAfterApprove);
-    }
-  }
-
   // 切换页码
   @autobind
   @logable({ type: 'Click', payload: { name: '临时委托任务列表切换页码' } })
@@ -285,12 +277,6 @@ export default class Home extends Component {
     });
   }
 
-  @autobind
-  handleSaveAplly(param) {
-    // 此处为调用新建申请的接口
-    this.props.saveApply(param).then(this.doApproveAfterSubmit);
-  }
-
   // 因为临时任务委托第二行不需要展示处理申请标题不要展示多余的信息所以返回空字符串
   @autobind
   renderApplyItemSecondLine() {
@@ -336,15 +322,17 @@ export default class Home extends Component {
       deputeEmpList,
       deputeOrgList,
       approval,
+      saveApply,
+      submitResult,
       getApprovalInfo,
       checkApplyAbility,
       checkResult,
+      doApprove,
+      flowResult,
     } = this.props;
     const { dict: { deputeStatusDictList = [] } } = this.context;
 
     const { launchDeputeModalVisible } = this.state;
-
-    const isEmpty = _.isEmpty(applyList);
 
     // 头部筛选
     const topPanel = (
@@ -365,11 +353,14 @@ export default class Home extends Component {
     const { list = [], page = {} } = applyList;
     const paginationOptions = {
       current: parseInt(pageNum, 10),
-      total: page.totalCount || 0,
+      total: _.isEmpty(page) ? 0 : (page.totalCount || 0),
       pageSize: parseInt(pageSize, 10),
       onChange: this.handlePageNumberChange,
       onShowSizeChange: _.noop,
     };
+
+    // 判断当前数据是否为空
+    const isEmpty = _.isEmpty(list);
 
     // 左侧列表
     const leftPanel = (
@@ -409,10 +400,14 @@ export default class Home extends Component {
               queryCanDeputeOrg={queryCanDeputeOrg}
               queryCanDeputeEmp={queryCanDeputeEmp}
               getApprovalInfo={getApprovalInfo}
-              onSubmit={this.handleSaveAplly}
+              onSubmit={saveApply}
               approval={approval}
+              doFlow={doApprove}
+              flowResult={flowResult}
+              submitResult={submitResult}
               checkApplyAbility={checkApplyAbility}
               checkResult={checkResult}
+              doRefreshListAfterApprove={this.doRefreshListAfterApprove}
             />
           )
         }

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 19:39:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-02 00:00:42
+ * @Last Modified time: 2018-09-03 17:17:25
  * @description 临时委托任务发起任务的弹出层
  */
 
@@ -39,10 +39,18 @@ export default class CreateDeputeModal extends PureComponent {
     getApprovalInfo: PropTypes.func.isRequired,
     // 提交
     onSubmit: PropTypes.func.isRequired,
+    // 提交结果
+    submitResult: PropTypes.object.isRequired,
     // 校验接口
     checkApplyAbility: PropTypes.func.isRequired,
     // 校验结果
     checkResult: PropTypes.object.isRequired,
+    // 走流程
+    doFlow: PropTypes.func.isRequired,
+    // 流程结果
+    flowResult: PropTypes.object.isRequired,
+    // 流程完成后刷新列表
+    doRefreshListAfterApprove: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -65,6 +73,16 @@ export default class CreateDeputeModal extends PureComponent {
     getApprovalInfo({ flow: '' });
   }
 
+  // 校验可否申请接口
+  @autobind
+  doCheckAbility() {
+    const { assigneeOrgId, assigneeId } = this.state;
+    this.props.checkApplyAbility({
+      assigneeId,
+      assigneeOrgId,
+    }).then(this.doSubmitAfterValidate);
+  }
+
   @autobind
   doSubmitAfterValidate() {
     const { checkResult } = this.props;
@@ -73,7 +91,24 @@ export default class CreateDeputeModal extends PureComponent {
     } else {
       // 提交之后走流程
       const params = _.omit(this.state, 'checkResult');
-      this.props.onSubmit(params);
+      this.props.onSubmit(params).then(this.doApproveAfterSubmit);
+    }
+  }
+
+
+  @autobind
+  doApproveAfterSubmit() {
+    const { submitResult, doFlow, doRefreshListAfterApprove } = this.props;
+    if (!_.isEmpty(submitResult)) {
+      const { operate, groupName, auditors, flowClass, currentNodeName } = this.state;
+      doFlow({
+        itemId: submitResult.itemId,
+        operate,
+        groupName,
+        auditors,
+        flowClass,
+        currentNodeName,
+      }).then(doRefreshListAfterApprove);
     }
   }
 
@@ -94,29 +129,21 @@ export default class CreateDeputeModal extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleModalBtnGroupClick(btn) {
-    console.warn('点击按钮： ', btn);
     // 1. 校验输入内容的格式
     const { checkResult, valid } = validateAll(this.state);
     if (!valid) {
       this.setState({ checkResult });
     } else {
-      // 2. 调用可否申请的校验接口
-      const { assigneeOrgId, assigneeId } = this.state;
-      this.props.checkApplyAbility({
-        assigneeId,
-        assigneeOrgId,
-      }).then(this.doSubmitAfterValidate);
+      // 2. 调用可否申请的校验接口,申请委托他人的新建审批人是受托人
+      const { assigneeId } = this.state;
+      this.setState({
+        operate: btn.operate,
+        groupName: btn.nextGroupName,
+        auditors: assigneeId,
+        flowClass: btn.flowClass,
+        currentNodeName: btn.currentNodeName,
+      }, this.doCheckAbility);
     }
-
-    // 3. 提交申请
-    // 4. 走流程
-    // 点击此处，需要先进行可以提交的规则校验
-    // const { valid, msg } = validateData(this.state);
-    // if (!valid) {
-    //   confirm({ content: msg });
-    // } else {
-
-    // }
   }
 
   @autobind
@@ -140,7 +167,6 @@ export default class CreateDeputeModal extends PureComponent {
         onClick={this.handleModalBtnGroupClick}
       />
     );
-    console.warn('checkResult:>>', checkResult);
 
     return (
       <CommonModal

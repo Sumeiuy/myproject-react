@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-02 00:14:58
+ * @Last Modified time: 2018-09-03 17:33:11
  * @description 临时任务委托表单
  */
 
@@ -82,6 +82,7 @@ export default class deputeForm extends PureComponent {
       checkResult: props.checkResult,
     };
     this.wrapRef = React.createRef();
+    this.similarAutoCompleteRef = React.createRef();
   }
 
   @autobind
@@ -124,7 +125,10 @@ export default class deputeForm extends PureComponent {
     if (checkDeputeReasonLengthOver1000(value)) {
       return;
     }
-    this.handleDeputeReasonBlur();
+    const { checkResult: { deputeReasonCheck } } = this.state;
+    if (!deputeReasonCheck) {
+      this.handleDeputeReasonBlur();
+    }
     const { formData } = this.state;
     this.setState({
       formData: {
@@ -164,6 +168,8 @@ export default class deputeForm extends PureComponent {
         assigneeId: '',
       },
     }, this.handleFormDataPush);
+    // 清除服务经理
+    this.similarAutoCompleteRef.current.clearValue();
   }
 
   @autobind
@@ -175,7 +181,10 @@ export default class deputeForm extends PureComponent {
       // 代表删除选中的
       assigneeId = assignee.ptyMngId;
     }
-    this.handlePtyMngIdSelectBlur();
+    const { checkResult: { assigneeCheck } } = this.state;
+    if (!assigneeCheck) {
+      this.handlePtyMngIdSelectBlur();
+    }
     const { formData } = this.state;
     this.setState({
       formData: {
@@ -292,7 +301,8 @@ export default class deputeForm extends PureComponent {
               getPopupContainer={this.getWrapRef}
             />
             <SimilarAutoComplete
-              defaultValue={formData.assigneeId}
+              ref={this.similarAutoCompleteRef}
+              value={formData.assigneeId}
               style={{ width: '228px' }}
               placeholder="服务经理工号/姓名"
               optionList={deputeEmpList}
