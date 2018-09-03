@@ -33,8 +33,11 @@ const {
   SET_CODE,
   RELIEVE_CODE,
   TIME_FORMAT_STRING,
+  EDIT_MESSAGE,
 } = config;
 
+// 限制类型--禁止账户留存指定金额流通资产转出 -5
+const KEY_LIMIT_TRANSFER_NUMBER = '5';
 // 审批人弹窗
 const approverModalKey = 'approverModal';
 const EMPTY_OBJECT = {};
@@ -42,6 +45,8 @@ const EMPTY_ARRAY = [];
 // 终止按钮的节点名称
 const END_NODE_NAME = 'falseOver';
 const effects = {
+  // 获取服务经理数据
+  queryEmpData: 'accountLimitEdit/queryEmpData',
   // 获取详情
   queryDetailInfo: 'accountLimitEdit/queryDetailInfo',
   // 获取下一步按钮以及审批人
@@ -49,7 +54,7 @@ const effects = {
   // 查询限制类型
   queryLimtList: 'accountLimitEdit/queryLimtList',
   // 校验数据
-  validateForm: 'accountLimit/validateForm',
+  validateForm: 'accountLimitEdit/validateForm',
   // 提交客户分配
   saveChange: 'accountLimitEdit/saveChange',
   // 数据修改
@@ -59,6 +64,8 @@ const effects = {
 };
 
 const mapStateToProps = state => ({
+  // 服务经理数据
+  empData: state.accountLimitEdit.empData,
   // 员工基本信息
   empInfo: state.app.empInfo,
   // 右侧详情数据
@@ -69,10 +76,14 @@ const mapStateToProps = state => ({
   buttonData: state.accountLimitEdit.buttonData,
   // 限制类型列表
   limitList: state.accountLimitEdit.limitList,
+  // 校验接口返回数据
+  validateData: state.accountLimitEdit.validateData,
 });
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
+  // 获取服务经理列表
+  queryEmpData: dispatch(effects.queryEmpData, { forceFull: true }),
   // 获取详情
   queryDetailInfo: dispatch(effects.queryDetailInfo, { forceFull: true }),
   // 获取按钮列表和下一步审批人
@@ -95,6 +106,9 @@ export default class AccountLimitEdit extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    // 服务经理数据
+    empData: PropTypes.object.isRequired,
+    queryEmpData: PropTypes.func.isRequired,
     // 员工信息
     empInfo: PropTypes.object.isRequired,
     // 详情
@@ -111,6 +125,7 @@ export default class AccountLimitEdit extends PureComponent {
     queryLimtList: PropTypes.func.isRequired,
     // 校验数据
     validateForm: PropTypes.func.isRequired,
+    validateData: PropTypes.object.isRequired,
     // 提交数据
     saveChange: PropTypes.func.isRequired,
     // 提交流程
@@ -221,8 +236,32 @@ export default class AccountLimitEdit extends PureComponent {
       message.error('限制类型不能为空!');
       return false;
     }
+    // 如果有处于编辑状态的数据
+    const filterResult = _.filter(editFormData.custList, o => o.edit);
+    if (!_.isEmpty(filterResult)) {
+      Modal.error({
+        title: EDIT_MESSAGE,
+      });
+      return false;
+    }
     // 如果操作类型是设置限制
     if (editFormData.operateType === SET_CODE) {
+      // 业务对接人不能为空
+      const filterDocking = _.filter(editFormData.custList, o => _.isEmpty(o.dockingId));
+      if (!_.isEmpty(filterDocking)) {
+        message.error('业务对接人不能为空!');
+        return false;
+      }
+      // 找出限制金额转出的限制类型
+      const filterLimitType = _.filter(editFormData.limitType,
+        o => o.key === KEY_LIMIT_TRANSFER_NUMBER);
+      if (!_.isEmpty(filterLimitType)) {
+        const filterLimitNumber = _.filter(editFormData.custList, o => _.isEmpty(o.limitNumber));
+        if (!_.isEmpty(filterLimitNumber)) {
+          message.error('请填写禁止转出金额');
+          return false;
+        }
+      }
       if (_.isEmpty(editFormData.limitStartTime)) {
         message.error('设置日期不能为空!');
         return false;
@@ -263,6 +302,12 @@ export default class AccountLimitEdit extends PureComponent {
     return true;
   }
 
+  @autobind
+  sendRequest(formData, callback = _.noop) {
+    const { saveChange } = this.props;
+    saveChange(formData).then(callback);
+  }
+
   // 提交，点击后选择审批人
   @autobind
   handleSubmit(btnItem) {
@@ -270,7 +315,7 @@ export default class AccountLimitEdit extends PureComponent {
       return;
     }
     const { remark } = this.state;
-    const { editFormData, saveChange, validateForm, doApprove } = this.props;
+    const { editFormData, validateForm, doApprove } = this.props;
     const { flowAuditors: auth } = btnItem;
     if (btnItem.operate === END_NODE_NAME) {
       // 如果点击的按钮是终止按钮，直接调流程接口，不需要保存，也不需要调保存接口
@@ -293,27 +338,63 @@ export default class AccountLimitEdit extends PureComponent {
         approverIdea: '',
       };
       validateForm({ ...editFormData, ...flowAuditors }).then(() => {
-        saveChange({ ...editFormData, ...flowAuditors }).then(() => {
-          doApprove({
-            empId: emp.getId(),
-            flowId: editFormData.flowId,
-            approverIdea: remark,
-            groupName: btnItem.nextGroupName,
-            operate: btnItem.operate,
-            auditors: auth[0].login,
-            itemId: editFormData.id,
-          }).then(() => {
-            this.handleSuccessCallback();
+        const { validateData } = this.props;
+        if (validateData.errorCode === '0') {
+          this.sendRequest({ ...editFormData, ...flowAuditors }, () => {
+            doApprove({
+              empId: emp.getId(),
+              flowId: editFormData.flowId,
+              approverIdea: remark,
+              groupName: btnItem.nextGroupName,
+              operate: btnItem.operate,
+              auditors: auth[0].login,
+              itemId: editFormData.id,
+            }).then(() => {
+              this.handleSuccessCallback();
+            });
           });
-        });
+        } else {
+          commonConfirm({
+            shortCut: 'amountConfirm',
+            onOk: () => {
+              this.sendRequest({ ...editFormData, ...flowAuditors }, () => {
+                doApprove({
+                  empId: emp.getId(),
+                  flowId: editFormData.flowId,
+                  approverIdea: remark,
+                  groupName: btnItem.nextGroupName,
+                  operate: btnItem.operate,
+                  auditors: auth[0].login,
+                  itemId: editFormData.id,
+                }).then(() => {
+                  this.handleSuccessCallback();
+                });
+              });
+            },
+          });
+        }
       });
     } else {
       validateForm({ ...editFormData }).then(() => {
-        this.setState({
-          [approverModalKey]: true,
-          flowAuditors: btnItem.flowAuditors,
-          currentButtonItem: btnItem,
-        });
+        const { validateData } = this.props;
+        if (validateData.errorCode === '0') {
+          this.setState({
+            [approverModalKey]: true,
+            flowAuditors: btnItem.flowAuditors,
+            currentButtonItem: btnItem,
+          });
+        } else {
+          commonConfirm({
+            shortCut: 'amountConfirm',
+            onOk: () => {
+              this.setState({
+                [approverModalKey]: true,
+                flowAuditors: btnItem.flowAuditors,
+                currentButtonItem: btnItem,
+              });
+            },
+          });
+        }
       });
     }
   }
@@ -340,9 +421,9 @@ export default class AccountLimitEdit extends PureComponent {
   // 选完审批人后的提交
   @autobind
   handleApproverModalOK(auth) {
-    const { editFormData, doApprove, saveChange } = this.props;
+    const { editFormData, doApprove } = this.props;
     const { remark, currentButtonItem } = this.state;
-    saveChange({ ...editFormData }).then(() => {
+    this.sendRequest({ ...editFormData }, () => {
       doApprove({
         empId: emp.getId(),
         flowId: editFormData.flowId,
@@ -370,6 +451,8 @@ export default class AccountLimitEdit extends PureComponent {
       saveChange,
       editFormData,
       editFormChange,
+      empData,
+      queryEmpData,
     } = this.props;
     const {
       approverModal,
@@ -412,6 +495,8 @@ export default class AccountLimitEdit extends PureComponent {
       remark,
       onChangeRemark: this.handleChangeRemark,
       buttonData,
+      empData,
+      queryEmpData,
     };
 
     return (

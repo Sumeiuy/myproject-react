@@ -9,19 +9,21 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { DatePicker, Input, Select as AntdSelect, Popconfirm, message } from 'antd';
+import { DatePicker, Input, Select as AntdSelect, Popconfirm, message, Modal } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
+import Pagination from '../common/Pagination';
 import InfoTitle from '../common/InfoTitle';
 import InfoForm from '../common/infoForm';
 import InfoItem from '../common/infoItem';
 import ApproveList from '../common/approveList';
 import CommonTable from '../../components/common/biz/CommonTable';
 import MultiUploader from '../common/biz/MultiUploader';
+import AutoComplete from '../common/similarAutoComplete';
 import Icon from '../../components/common/Icon';
 import logable from '../../decorators/logable';
-import { time } from '../../helper';
+import { time, regxp } from '../../helper';
 import config from './config';
 import styles from './editForm.less';
 
@@ -35,12 +37,17 @@ const SET_LIMITTYPE_LABEL_NAME = '限制类型'; // 限制类型时显示的labe
 const RELIEVE_LIMITTYPE_LABEL_NAME = '解除限制类型'; // 解除限制类型时显示的label名称
 // 表头
 const {
-  tableTitle: { custList: custTitleList },
+  tableTitle: { custList: custTitleList, moreList },
   operateTypeArray,
   SET_CODE,
   RELIEVE_CODE,
   TIME_FORMAT_STRING,
+  EDIT_MESSAGE,
 } = config;
+const autoCompleteStyle = {
+  width: '180px',
+  height: '30px',
+};
 const DEFAULT_PAGE_SIZE = 5;
 // 客户
 const KEY_CUSTNAME = 'custName';
@@ -48,9 +55,18 @@ const KEY_CUSTNAME = 'custName';
 const KEY_EMPNAME = 'empName';
 // 限制类型
 const KEY_LIMIT = 'limit';
+// 业务对接人
+const KEY_DOCKINGID = 'dockingId';
+// 禁止转出金额
+const KEY_LIMIT_NUMBER = 'limitNumber';
+// 限制类型--禁止账户留存指定金额流通资产转出 -5
+const KEY_LIMIT_TRANSFER_NUMBER = '5';
 export default class EditForm extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
+    // 服务经理数据
+    empData: PropTypes.object.isRequired,
+    queryEmpData: PropTypes.func.isRequired,
     // 详情数据
     detailInfo: PropTypes.object.isRequired,
     // 用于编辑的数据
@@ -70,6 +86,7 @@ export default class EditForm extends PureComponent {
       // 限制信息
       limitList: [],
       selectValue: '',
+      pageNum: 1,
     };
   }
 
@@ -92,13 +109,65 @@ export default class EditForm extends PureComponent {
     // 限制类型
     const limitColumn = _.find(titleList, o => o.key === KEY_LIMIT);
     limitColumn.render = text => (<div title={text}>{text}</div>);
+    // 如果是限制设置，则增加两列数据
+    if (this.isSetLimitType()) {
+      titleList.push(...moreList);
+      // 对接人
+      const dockingColumn = _.find(titleList, o => o.key === KEY_DOCKINGID) || {};
+      dockingColumn.render = (text, record) => {
+        const { edit = false, custId, dockingList = [], dockingId, dockingName } = record;
+        const showName = dockingId ? `${dockingName} (${dockingId || ''})` : '';
+        return edit
+          ? <span><AutoComplete
+            key={custId}
+            placeholder="客户号/客户名称"
+            showNameKey="ptyMngName"
+            showIdKey="ptyMngId"
+            optionList={dockingList}
+            defaultValue={showName}
+            onSelect={v => this.handleSelectEmp(v, record)}
+            onSearch={v => this.handleSearchEmp(v, record)}
+            dropdownMatchSelectWidth={false}
+            style={autoCompleteStyle}
+          /></span>
+          : <div title={showName}>{showName}</div>;
+      };
+      // 禁止转出金额
+      const limitNumberColumn = _.find(titleList, o => o.key === KEY_LIMIT_NUMBER) || {};
+      limitNumberColumn.render = (text, record) => {
+        const { edit = false, newLimitNumber = '' } = record;
+        return (<div>{
+        edit
+        ? <Input
+          value={newLimitNumber}
+          placeholder="请输入禁止转出金额"
+          style={{ maxWidth: '180px' }}
+          onChange={e => this.handleLimitNumberChange(e, record)}
+        />
+        : newLimitNumber}</div>);
+      };
+    }
     // 添加操作列
     titleList.push({
       dataIndex: 'operate',
       key: 'operate',
       title: '操作',
-      render: (text, record) => this.renderPopconfirm('cust', record),
-      width: 80,
+      render: (text, record) => {
+        const { edit } = record;
+        const editElement = this.isSetLimitType()
+        ? <Icon type="beizhu" onClick={() => this.editCustomerInfo(record)} />
+        : null;
+        return edit
+        ? <div className={styles.operateColumn}>
+          <a onClick={() => this.cancelOperateClick(record)}>取消</a>
+          <a onClick={() => this.submitOperateClick(record)}>确定</a>
+        </div>
+        : <div className={styles.operateColumn}>
+          {editElement}
+          {this.renderPopconfirm(record)}
+        </div>;
+      },
+      width: 100,
     });
     return titleList;
   }
@@ -115,6 +184,141 @@ export default class EditForm extends PureComponent {
   @autobind
   setDisabledDate(current) {
     return current < moment().startOf('day');
+  }
+
+  // 更新编辑行的数据
+  @autobind
+  updateRecordData(record, newData) {
+    const { editFormData: { custList = EMPTY_ARRAY } } = this.props;
+    const newAddedCustData = [...custList];
+    const findIndex = _.findIndex(newAddedCustData, o => o.custId === record.custId);
+    if (findIndex > -1) {
+      newAddedCustData[findIndex] = {
+        ...newAddedCustData[findIndex],
+        ...newData,
+      };
+    }
+    this.handleEditFormChange(newAddedCustData, 'custList');
+  }
+
+  // 限制转出金额输入
+  @autobind
+  handleLimitNumberChange(e, record) {
+    const value = e.target.value;
+    const newData = {
+      newLimitNumber: value,
+    };
+    this.updateRecordData(record, newData);
+  }
+
+  // 操作列编辑按钮事件
+  @autobind
+  editCustomerInfo(record) {
+    const newData = {
+      edit: true,
+    };
+    this.updateRecordData(record, newData);
+  }
+
+  // 选择服务经理
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择客户',
+      value: '$args[0].custName',
+    },
+  })
+  handleSelectEmp(v, record) {
+    const newData = {
+      newDockingId: v.ptyMngId,
+      newDockingName: v.ptyMngName,
+    };
+    this.updateRecordData(record, newData);
+  }
+
+  // 业务对接人的搜索事件
+  @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '搜索服务经理列表',
+    },
+  })
+  handleSearchEmp(v, record) {
+    if (!v) {
+      return;
+    }
+    const payload = {
+      keyword: v,
+    };
+    this.props.queryEmpData(payload).then(() => {
+      const { empData } = this.props;
+      const { list = [] } = empData;
+      const newData = {
+        dockingList: list,
+      };
+      this.updateRecordData(record, newData);
+    });
+  }
+
+  // 操作列取消点击事件
+  @autobind
+  cancelOperateClick(record) {
+    const newData = {
+      edit: false,
+      newLimitNumber: record.limitNumber,
+      dockingList: [],
+      newDockingId: record.dockingId,
+      newDockingName: record.dockingName,
+    };
+    this.updateRecordData(record, newData);
+  }
+
+  // 操作列确定点击事件
+  @autobind
+  submitOperateClick(record) {
+    const { editFormData: { limitType } } = this.props;
+    const { newLimitNumber, newDockingId, newDockingName } = record;
+    const newData = {
+      edit: false,
+      limitNumber: newLimitNumber,
+      dockingList: [],
+      dockingId: newDockingId,
+      dockingName: newDockingName,
+    };
+    // 禁止转出金额输入数据并且数据错误时
+    if (!_.isEmpty(newLimitNumber) && !regxp.positiveNumber.test(newLimitNumber)) {
+      message.error('请填写有效禁止转出金额');
+      return;
+    }
+    // 限制设置，并且限制类型中有 key 为 5 的类型时
+    const filterLimitType = _.filter(limitType, o => o.key === KEY_LIMIT_TRANSFER_NUMBER);
+    if (!_.isEmpty(filterLimitType)) {
+      if (_.isEmpty(newLimitNumber)) {
+        message.error('请填写禁止转出金额');
+        return;
+      }
+    }
+    this.updateRecordData(record, newData);
+  }
+
+  // 客户列表翻页事件
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '客户列表翻页' } })
+  handleCustPageChange(pageNum) {
+    const { editFormData: { custList = EMPTY_ARRAY } } = this.props;
+    const filterResult = _.filter(custList, o => o.edit);
+    if (!_.isEmpty(filterResult)) {
+      Modal.error({
+        title: EDIT_MESSAGE,
+      });
+      return 'cancel';
+    }
+    this.setState({
+      pageNum,
+    });
+    return 'submit';
   }
 
   // 解除限制日期不可选范围
@@ -329,6 +533,7 @@ export default class EditForm extends PureComponent {
     const {
       limitList,
       selectValue,
+      pageNum,
     } = this.state;
 
     if (_.isEmpty(editFormData)) {
@@ -337,10 +542,14 @@ export default class EditForm extends PureComponent {
     // 客户标题列表
     const custTitle = this.getColumnsCustTitle();
 
+    const showCustList = _.chunk(editFormData.custList, 5);
     const paginationProps = {
-      defaultPageSize: DEFAULT_PAGE_SIZE,
+      current: pageNum,
+      pageSize: DEFAULT_PAGE_SIZE,
+      total: editFormData.custList.length,
       hideOnSinglePage: true,
       showTotal: total => `共 ${total} 条`,
+      onChange: this.handleCustPageChange,
     };
 
     const approverName = !_.isEmpty(detailInfo.currentApproval) ?
@@ -395,10 +604,10 @@ export default class EditForm extends PureComponent {
             <CommonTable
               rowKey="custId"
               align="left"
-              data={editFormData.custList}
+              data={showCustList[pageNum - 1]}
               titleList={custTitle}
-              pagination={paginationProps}
             />
+            <Pagination {...paginationProps} />
           </div>
         </div>
         <div className={`${styles.cutline} ${styles.mt48}`} />

@@ -834,6 +834,9 @@ export default class CreateModal extends PureComponent {
     const custList = addedCustData.map(item => ({
       custId: item.custId,
       label: item.label,
+      limitAmount: item.limitNumber,
+      managerId: item.dockingId,
+      managerName: item.dockingName,
     }));
     if (_.isEmpty(companyName)) {
       message.error('公司简称不能为空!');
