@@ -16,6 +16,7 @@ import logable from '../../../decorators/logable';
 const PAGE_SENVEN = 7;
 const PAGE_EIGHT = 8;
 const PAGE_NINE = 9;
+const CANCEL = 'cancel';
 
 function renderTotal(total) {
   /*  return total !== 0 ? `第${range[0]}-${range[1]}条，共${total}条` : `共${total}条`; */
@@ -171,6 +172,10 @@ export default class PaginationComponent extends Component {
   })
   handlePageChange(page, pageSize) {
     const { total, onChange, isHideLastButton } = this.props;
+    const changeResult = onChange(page, pageSize);
+    if (changeResult === CANCEL) {
+      return;
+    }
     if (isHideLastButton) {
       this.setState({
         current: page,
@@ -181,7 +186,6 @@ export default class PaginationComponent extends Component {
         current: page,
       });
     }
-    onChange(page, pageSize);
   }
 
 

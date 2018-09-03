@@ -13,6 +13,8 @@ const EMPTY_ARRAY = [];
 export default {
   namespace: 'accountLimit',
   state: {
+    // 服务经理数据
+    empData: EMPTY_OBJECT,
     detailInfo: EMPTY_OBJECT, // 详情
     buttonData: EMPTY_OBJECT, // 获取按钮列表和下一步审批人
     searchCustData: EMPTY_ARRAY, // 客户列表列表
@@ -22,6 +24,17 @@ export default {
     validateData: EMPTY_OBJECT,  // 校验数据接口返回值
   },
   reducers: {
+    // 获取服务经理列表
+    queryEmpDataSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        empData: {
+          list: resultData.servicePeopleList || EMPTY_ARRAY,
+          page: resultData.page || EMPTY_OBJECT,
+        },
+      };
+    },
     // 详情
     queryDetailInfoSuccess(state, action) {
       const { payload } = action;
@@ -88,6 +101,14 @@ export default {
     },
   },
   effects: {
+    // 获取服务经理列表
+    * queryEmpData({ payload }, { call, put }) {
+      const response = yield call(commonApi.getEmpList, payload);
+      yield put({
+        type: 'queryEmpDataSuccess',
+        payload: response,
+      });
+    },
     // 右侧详情
     * queryDetailInfo({ payload }, { call, put }) {
       const response = yield call(api.queryDetailInfo, payload);
