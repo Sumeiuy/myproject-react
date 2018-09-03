@@ -12,7 +12,7 @@ const exported = {
   boardType: 'TYPE_TGJX',
   historyBoardId: 3,
   historyBoardType: 'TYPE_LSDB_TGJX',
-  apiPrefix: '/mcrm/api',
+  apiPrefix: '/fspa/mcrm/api',
   fspPrefix: '/fsp',
   inHTSCDomain: location.hostname.indexOf('htsc.com.cn') > -1,
 
