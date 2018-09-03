@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @Description: 账户限制管理 model
  * @Author: Liujianshu
