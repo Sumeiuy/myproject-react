@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-08-13 09:41:43
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-20 16:22:35
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-31 17:26:07
  */
 
 import React, { PureComponent } from 'react';
@@ -491,7 +491,7 @@ export default class Pageheader extends PureComponent {
       value: '$args[0]',
     },
   })
-  selectCustRange(value) {
+  selectCustRange(value = '') {
     const { filterCallback } = this.props;
     filterCallback({
       orgId: value,

@@ -27,6 +27,10 @@ export const sortQuotaConfig = [
     name: '归集率',
   },
   {
+    sortType: 'lastServDt',
+    name: '最近服务日期',
+  },
+  {
     sortType: 'avlAmt',
     name: '普通可用资金',
   },

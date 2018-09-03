@@ -379,7 +379,6 @@ export default class FinanceCustRelationshipForm extends Component {
         <InfoTitle head="附件信息" />
         <CommonUpload
           edit
-          reformEnable
           key={uploadKey}
           attachment={attachment || ''}
           needDefaultText={false}

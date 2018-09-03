@@ -62,22 +62,13 @@
 .dateBox {
   display: inline-block;
   font-size: 14px;
+  .title {
+    vertical-align: middle;
+  }
   :global {
-    .ant-calendar-picker {
-      width: 200px;
-    }
-    .ant-calendar-picker-input {
-      padding: 4px 0;
-      border: none;
-      .ant-calendar-range-picker-input {
-        color: #4a4a4a;
-      }
-    }
-    .ant-calendar-picker-icon:after {
-      content: "\E606";
-    }
-    .ant-calendar-picker-icon, .ant-calendar-picker-clear {
-      right: 0;
+    .lego-date-rangePicker-container {
+      display: inline-block;
+      vertical-align: middle;
     }
   }
 }

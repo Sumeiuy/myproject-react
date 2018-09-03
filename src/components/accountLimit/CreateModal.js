@@ -16,17 +16,18 @@ import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import InfoForm from '../common/infoForm';
 import CommonModal from '../common/biz/CommonModal';
-import Button from '../../components/common/Button';
-import Pagination from '../../components/common/Pagination';
-import CommonTable from '../../components/common/biz/CommonTable';
+import Button from '../common/Button';
+import Pagination from '../common/Pagination';
+import CommonTable from '../common/biz/CommonTable';
 import MultiUploader from '../common/biz/MultiUploader';
-import Icon from '../../components/common/Icon';
-import TableDialog from '../../components/common/biz/TableDialog';
-import BottonGroup from '../../components/permission/BottonGroup';
-import AutoComplete from '../../components/common/similarAutoComplete';
+import Icon from '../common/Icon';
+import commonConfirm from '../common/confirm_';
+import TableDialog from '../common/biz/TableDialog';
+import BottonGroup from '../permission/BottonGroup';
+import AutoComplete from '../common/similarAutoComplete';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 import { request } from '../../config';
-import { emp, data } from '../../helper';
+import { emp, data, regxp } from '../../helper';
 import config from './config';
 import CustAllotXLS from './accountLimit.xls';
 import styles from './createModal.less';
@@ -38,14 +39,19 @@ const Option = AntdSelect.Option;
 const getPopupContainerFunction = () => document.querySelector(`.${styles.modalContent}`);
 // 表头
 const {
-  tableTitle: { custList: custTitleList, approvalList },
+  tableTitle: { custList: custTitleList, approvalList, moreList },
   LIMIT_COUNT,  // 添加客户的限制条数
   STRING_LIMIT_LENGTH,  // 字符串长度限制
   operateTypeArray,
   SET_CODE,  // 限制设置 value
   attachmentMap,
   bankConfirmArray,
+  EDIT_MESSAGE,
 } = config;
+const autoCompleteStyle = {
+  width: '180px',
+  height: '30px',
+};
 // 登陆人的组织 ID
 const empOrgId = emp.getOrgId();
 // const empOrgId = 'ZZ001041051';
@@ -55,16 +61,24 @@ const KEY_CUSTNAME = 'custName';
 const KEY_EMPNAME = 'empName';
 // 限制类型
 const KEY_LIMIT = 'limit';
-
+// 业务对接人
+const KEY_DOCKINGID = 'dockingId';
+// 禁止转出金额
+const KEY_LIMIT_NUMBER = 'limitNumber';
 // 审批人弹窗
 const approverModalKey = 'approverModal';
 // 取消按钮的值
 const BTN_CANCLE_VALUE = 'cancel';
+// 限制类型--禁止账户留存指定金额流通资产转出 -5
+const KEY_LIMIT_TRANSFER_NUMBER = '5';
 
 export default class CreateModal extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     queryAppList: PropTypes.func.isRequired,
+    // 服务经理数据
+    empData: PropTypes.object.isRequired,
+    queryEmpData: PropTypes.func.isRequired,
     // 获取按钮数据和下一步审批人
     buttonData: PropTypes.object.isRequired,
     queryButtonList: PropTypes.func.isRequired,
@@ -77,6 +91,7 @@ export default class CreateModal extends PureComponent {
     queryLimtList: PropTypes.func.isRequired,
     // 校验数据
     validateForm: PropTypes.func.isRequired,
+    validateData: PropTypes.object.isRequired,
     // 提交保存
     saveChange: PropTypes.func.isRequired,
     // 弹窗的key
@@ -145,9 +160,19 @@ export default class CreateModal extends PureComponent {
     this.queryNextStepButton();
   }
 
+  // 设置限制类型 state
+  @autobind
+  setLimitTypeState(value) {
+    this.setState({
+      limitType: value,
+      selectValue: '',
+    });
+  }
+
   // 生成客户表格标题列表
   @autobind
   getColumnsCustTitle() {
+    const { isLimit } = this.state;
     const titleList = [...custTitleList];
     // 客户
     const custNameColumn = _.find(titleList, o => o.key === KEY_CUSTNAME);
@@ -164,24 +189,186 @@ export default class CreateModal extends PureComponent {
     // 限制类型
     const limitColumn = _.find(titleList, o => o.key === KEY_LIMIT);
     limitColumn.render = text => (<div title={text}>{text}</div>);
+    // 如果是限制设置，则增加两列数据
+    if (isLimit) {
+      titleList.push(...moreList);
+      // 对接人
+      const dockingColumn = _.find(titleList, o => o.key === KEY_DOCKINGID) || {};
+      dockingColumn.render = (text, record) => {
+        const { edit = false, custId, dockingList = [], dockingId, dockingName } = record;
+        const showName = dockingId ? `${dockingName} (${dockingId || ''})` : '';
+        return edit
+          ? <span><AutoComplete
+            key={custId}
+            placeholder="客户号/客户名称"
+            showNameKey="ptyMngName"
+            showIdKey="ptyMngId"
+            optionList={dockingList}
+            defaultValue={showName}
+            onSelect={v => this.handleSelectEmp(v, record)}
+            onSearch={v => this.handleSearchEmp(v, record)}
+            dropdownMatchSelectWidth={false}
+            style={autoCompleteStyle}
+          /></span>
+          : <div title={showName}>{showName}</div>;
+      };
+      // 禁止转出金额
+      const limitNumberColumn = _.find(titleList, o => o.key === KEY_LIMIT_NUMBER) || {};
+      limitNumberColumn.render = (text, record) => {
+        const { edit = false, newLimitNumber = '' } = record;
+        return (<div>{
+        edit
+        ? <Input
+          value={newLimitNumber}
+          placeholder="请输入禁止转出金额"
+          style={{ maxWidth: '180px' }}
+          onChange={e => this.handleLimitNumberChange(e, record)}
+        />
+        : newLimitNumber}</div>);
+      };
+    }
     // 添加操作列
     titleList.push({
       dataIndex: 'operate',
       key: 'operate',
       title: '操作',
-      render: (text, record) => this.renderPopconfirm(record),
-      width: 80,
+      render: (text, record) => {
+        const { edit } = record;
+        const editElement = isLimit
+        ? <Icon type="beizhu" onClick={() => this.editCustomerInfo(record)} />
+        : null;
+        return edit
+        ? <div className={styles.operateColumn}>
+          <a onClick={() => this.cancelOperateClick(record)}>取消</a>
+          <a onClick={() => this.submitOperateClick(record)}>确定</a>
+        </div>
+        : <div className={styles.operateColumn}>
+          {editElement}
+          {this.renderPopconfirm(record)}
+        </div>;
+      },
+      width: 100,
     });
     return titleList;
   }
 
-  // 设置限制类型 state
+  // 更新编辑行的数据
   @autobind
-  setLimitTypeState(value) {
+  updateRecordData(record, newData) {
+    const { addedCustData } = this.state;
+    const newAddedCustData = [...addedCustData];
+    const findIndex = _.findIndex(newAddedCustData, o => o.custId === record.custId);
+    if (findIndex > -1) {
+      newAddedCustData[findIndex] = {
+        ...newAddedCustData[findIndex],
+        ...newData,
+      };
+    }
     this.setState({
-      limitType: value,
-      selectValue: '',
+      addedCustData: newAddedCustData,
     });
+  }
+
+  // 业务对接人的搜索事件
+  @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: {
+      name: '搜索服务经理列表',
+    },
+  })
+  handleSearchEmp(v, record) {
+    if (!v) {
+      return;
+    }
+    const payload = {
+      keyword: v,
+    };
+    this.props.queryEmpData(payload).then(() => {
+      const { empData } = this.props;
+      const { list = [] } = empData;
+      const newData = {
+        dockingList: list,
+      };
+      this.updateRecordData(record, newData);
+    });
+  }
+
+  // 选择服务经理
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择客户',
+      value: '$args[0].custName',
+    },
+  })
+  handleSelectEmp(v, record) {
+    const newData = {
+      newDockingId: v.ptyMngId,
+      newDockingName: v.ptyMngName,
+    };
+    this.updateRecordData(record, newData);
+  }
+
+  // 操作列编辑按钮事件
+  @autobind
+  editCustomerInfo(record) {
+    const newData = {
+      edit: true,
+    };
+    this.updateRecordData(record, newData);
+  }
+
+  // 操作列取消点击事件
+  @autobind
+  cancelOperateClick(record) {
+    const newData = {
+      edit: false,
+      newLimitNumber: record.limitNumber,
+      dockingList: [],
+      newDockingId: record.dockingId,
+      newDockingName: record.dockingName,
+    };
+    this.updateRecordData(record, newData);
+  }
+
+  // 操作列确定点击事件
+  @autobind
+  submitOperateClick(record) {
+    const { limitType } = this.state;
+    const { newLimitNumber, newDockingId, newDockingName } = record;
+    const newData = {
+      edit: false,
+      limitNumber: newLimitNumber,
+      dockingList: [],
+      dockingId: newDockingId,
+      dockingName: newDockingName,
+    };
+    // 禁止转出金额输入数据并且数据错误时
+    if (!_.isEmpty(newLimitNumber) && !regxp.positiveNumber.test(newLimitNumber)) {
+      message.error('请填写有效禁止转出金额');
+      return;
+    }
+    // 限制设置，并且限制类型中有 key 为 5 的类型时
+    const filterLimitType = _.filter(limitType, o => o.key === KEY_LIMIT_TRANSFER_NUMBER);
+    if (!_.isEmpty(filterLimitType)) {
+      if (_.isEmpty(newLimitNumber)) {
+        message.error('请填写禁止转出金额');
+        return;
+      }
+    }
+    this.updateRecordData(record, newData);
+  }
+
+  // 限制转出金额输入
+  @autobind
+  handleLimitNumberChange(e, record) {
+    const value = e.target.value;
+    const newData = {
+      newLimitNumber: value,
+    };
+    this.updateRecordData(record, newData);
   }
 
   // 获取下一步按钮和审批人
@@ -470,9 +657,18 @@ export default class CreateModal extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '客户列表翻页' } })
   handleCustPageChange(pageNum) {
+    const { addedCustData } = this.state;
+    const filterResult = _.filter(addedCustData, o => o.edit);
+    if (!_.isEmpty(filterResult)) {
+      Modal.error({
+        title: EDIT_MESSAGE,
+      });
+      return 'cancel';
+    }
     this.setState({
       pageNum,
     });
+    return 'submit';
   }
 
   // 限制类型焦点进入
@@ -613,13 +809,6 @@ export default class CreateModal extends PureComponent {
 
   // 提交，点击后选择审批人
   @autobind
-  @logable({
-    type: 'Submit',
-    payload: {
-      name: '选择限制解除时间',
-      type: '账户限制管理',
-      subType: '账户限制管理',
-    } })
   handleSubmit(btnItem) {
     const { modalKey, validateForm, closeModal } = this.props;
     // 取消按钮
@@ -670,9 +859,32 @@ export default class CreateModal extends PureComponent {
       message.error('客户列表不能为空!');
       return;
     }
+    // 如果有处于编辑状态的数据
+    const filterResult = _.filter(addedCustData, o => o.edit);
+    if (!_.isEmpty(filterResult)) {
+      Modal.error({
+        title: EDIT_MESSAGE,
+      });
+      return;
+    }
+    // 业务对接人不能为空
+    const filterDocking = _.filter(addedCustData, o => _.isEmpty(o.dockingId));
+    if (isLimit && !_.isEmpty(filterDocking)) {
+      message.error('业务对接人不能为空!');
+      return;
+    }
     if (_.isEmpty(limitType)) {
       message.error('限制类型不能为空!');
       return;
+    }
+    // 找出限制金额转出的限制类型
+    const filterLimitType = _.filter(limitType, o => o.key === KEY_LIMIT_TRANSFER_NUMBER);
+    if (!_.isEmpty(filterLimitType)) {
+      const filterLimitNumber = _.filter(addedCustData, o => _.isEmpty(o.limitNumber));
+      if (!_.isEmpty(filterLimitNumber)) {
+        message.error('请填写禁止转出金额');
+        return;
+      }
     }
     if (isLimit) {
       if (_.isEmpty(limitStartTime)) {
@@ -731,11 +943,25 @@ export default class CreateModal extends PureComponent {
       });
     } else {
       validateForm(payload).then(() => {
-        this.setState({
-          [approverModalKey]: true,
-          flowAuditors: btnItem.flowAuditors,
-          submitData: payload,
-        });
+        const { validateData } = this.props;
+        if (validateData.errorCode === '0') {
+          this.setState({
+            [approverModalKey]: true,
+            flowAuditors: btnItem.flowAuditors,
+            submitData: payload,
+          });
+        } else {
+          commonConfirm({
+            shortCut: 'amountConfirm',
+            onOk: () => {
+              this.setState({
+                [approverModalKey]: true,
+                flowAuditors: btnItem.flowAuditors,
+                submitData: payload,
+              });
+            },
+          });
+        }
       });
     }
   }

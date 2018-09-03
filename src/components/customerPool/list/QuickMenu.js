@@ -20,7 +20,6 @@ export default class QuickMenu extends PureComponent {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     condition: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
-    entertype: PropTypes.string.isRequired,
     goGroupOrTask: PropTypes.func.isRequired,
     queryCustSignLabel: PropTypes.func.isRequired,
   }

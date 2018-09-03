@@ -132,6 +132,19 @@ const config = {
         key: 'occupation',
       },
     ],
+    moreList: [
+      {
+        dataIndex: 'dockingId',
+        key: 'dockingId',
+        title: '业务对接人',
+        width: 200,
+      },
+      {
+        dataIndex: 'limitNumber',
+        key: 'limitNumber',
+        title: '禁止转出金额(元)',
+      },
+    ],
   },
   // 附件类型
   attachmentMap: [
@@ -161,6 +174,7 @@ const config = {
     },
   ],
   errorArray: ['validateError', 'otherError'],
+  EDIT_MESSAGE: '当前页有正处于编辑的数据，请取消或确认后再进行操作。',
   tips: {
     validateError: '该申请单数据导入失败，请点击下载报错信息查看报错信息，如有需要，请重新发起流程。',
     otherError: '该申请单流程提交失败，如有需要，请重新发起流程或联系运维人员核查处理。',

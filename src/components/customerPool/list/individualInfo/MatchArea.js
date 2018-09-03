@@ -29,7 +29,8 @@ const unlimited = '不限'; // filter 可能暴露出的值
 const FSP_LABEL_SOURCE = 'fsp'; // 自定义标签source标识
 const AIM_LABEL_ID = 'sightingTelescope'; // 瞄准镜标签标识
 // 需要个性化信息的排序方式
-const needSelfInfoArray = ['cashAmt', 'avlAmt', 'avlAmtCrdt', 'totMktval'];
+// ['资金余额（含信用）', '普通可用资金', '信用可用资金', '总市值(含信用)', '最近服务日期']
+const needSelfInfoArray = ['cashAmt', 'avlAmt', 'avlAmtCrdt', 'totMktval', 'lastServDt'];
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 

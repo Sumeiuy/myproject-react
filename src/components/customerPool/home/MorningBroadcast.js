@@ -72,7 +72,7 @@ export default class MorningBroadcast extends PureComponent {
 
   @autobind
   getAudioSrc(source) {
-    return `${request.prefix}/file/ceFileDownload?attachId=${source.attachId}&empId=${emp.getId()}&filename=${window.encodeURIComponent(source.name)}`;
+    return `${request.prefix}/file/ceFileDownload2?attachId=${source.attachId}&empId=${emp.getId()}&filename=${window.encodeURIComponent(source.name)}`;
   }
 
   // 跳转至晨报详情

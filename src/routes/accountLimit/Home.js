@@ -53,6 +53,8 @@ const effects = {
   getList: 'app/getNewSeibleList',
   // 获取详情
   queryDetailInfo: 'accountLimit/queryDetailInfo',
+  // 获取服务经理数据
+  queryEmpData: 'accountLimit/queryEmpData',
   // 获取下一步按钮以及审批人
   queryButtonList: 'accountLimit/queryButtonList',
   // 查询客户列表
@@ -72,6 +74,8 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   // 员工基本信息
   empInfo: state.app.empInfo,
+  // 服务经理数据
+  empData: state.accountLimit.empData,
   // 组织机构树
   custRangeList: state.customerPool.custRange,
   // 左侧列表数据
@@ -86,6 +90,8 @@ const mapStateToProps = state => ({
   addedCustData: state.accountLimit.addedCustData,
   // 限制类型列表
   limitList: state.accountLimit.limitList,
+  // 校验接口返回数据
+  validateData: state.accountLimit.validateData,
 });
 
 const mapDispatchToProps = {
@@ -94,6 +100,8 @@ const mapDispatchToProps = {
   getList: dispatch(effects.getList, { forceFull: true }),
   // 获取详情
   queryDetailInfo: dispatch(effects.queryDetailInfo, { forceFull: true }),
+  // 获取服务经理列表
+  queryEmpData: dispatch(effects.queryEmpData, { forceFull: true }),
   // 获取按钮列表和下一步审批人
   queryButtonList: dispatch(effects.queryButtonList, { forceFull: true }),
   // 查询客户列表
@@ -117,6 +125,9 @@ export default class AccountLimitHome extends PureComponent {
     replace: PropTypes.func.isRequired,
     // 员工信息
     empInfo: PropTypes.object.isRequired,
+    // 服务经理数据
+    empData: PropTypes.object.isRequired,
+    queryEmpData: PropTypes.func.isRequired,
     // 组织机构树
     custRangeList: PropTypes.array.isRequired,
     // 列表
@@ -137,6 +148,7 @@ export default class AccountLimitHome extends PureComponent {
     queryLimtList: PropTypes.func.isRequired,
     // 校验数据
     validateForm: PropTypes.func.isRequired,
+    validateData: PropTypes.object.isRequired,
     // 提交数据
     saveChange: PropTypes.func.isRequired,
     // 清除数据
@@ -399,6 +411,8 @@ export default class AccountLimitHome extends PureComponent {
       dict,
       location,
       empInfo,
+      empData,
+      queryEmpData,
       custRangeList,
       list,
       detailInfo,
@@ -413,6 +427,7 @@ export default class AccountLimitHome extends PureComponent {
       limitList,
       queryLimtList,
       validateForm,
+      validateData,
       // 提交走流程
       saveChange,
       clearData,
@@ -497,6 +512,8 @@ export default class AccountLimitHome extends PureComponent {
             visible={createModal}
             location={location}
             empInfo={empInfo}
+            empData={empData}
+            queryEmpData={queryEmpData}
             custRangeList={custRangeList}
             searchCustData={searchCustData}
             addedCustData={addedCustData}
@@ -508,6 +525,7 @@ export default class AccountLimitHome extends PureComponent {
             queryAppList={this.queryAppList}
             closeModal={this.closeModal}
             validateForm={validateForm}
+            validateData={validateData}
             saveChange={saveChange}
             clearData={clearData}
           />

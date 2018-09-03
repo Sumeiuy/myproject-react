@@ -37,7 +37,6 @@ export default {
     canApplyCustList: EMPTY_LIST,
     // 删除后的附件列表
     deleteAttachmentList: EMPTY_LIST,
-    reformDeleteAttachmentList: EMPTY_LIST,
     // 审批人列表（服务经理接口）
     approvePersonList: EMPTY_LIST,
     // 已申请服务经理列表（服务经理接口）
@@ -214,15 +213,6 @@ export default {
         deleteAttachmentList: attaches,
       };
     },
-    // api-getway 改造 删除附件
-    reformDeleteAttachmentSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { attaches = EMPTY_LIST } = resultData || EMPTY_OBJECT;
-      return {
-        ...state,
-        reformDeleteAttachmentList: attaches || [],
-      };
-    },
     // 审批人列表（服务经理接口）
     getApprovePersonListSuccess(state, action) {
       const { payload: { resultData = EMPTY_LIST } } = action;
@@ -384,14 +374,6 @@ export default {
       const response = yield call(seibelApi.deleteAttachment, payload);
       yield put({
         type: 'deleteAttachmentSuccess',
-        payload: response,
-      });
-    },
-    // 删除附件
-    * reformDeleteAttachment({ payload }, { call, put }) {
-      const response = yield call(seibelApi.reformDeleteAttachment, payload);
-      yield put({
-        type: 'reformDeleteAttachmentSuccess',
         payload: response,
       });
     },
