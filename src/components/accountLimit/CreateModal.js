@@ -62,9 +62,9 @@ const KEY_EMPNAME = 'empName';
 // 限制类型
 const KEY_LIMIT = 'limit';
 // 业务对接人
-const KEY_DOCKINGID = 'dockingId';
+const KEY_MANAGERID = 'managerId';
 // 禁止转出金额
-const KEY_LIMIT_NUMBER = 'limitNumber';
+const KEY_LIMIT_AMOUNT = 'limitAmount';
 // 审批人弹窗
 const approverModalKey = 'approverModal';
 // 取消按钮的值
@@ -153,6 +153,8 @@ export default class CreateModal extends PureComponent {
       attachmentList: [attachmentMap[0]],
       // 提交的数据
       submitData: {},
+      // 提交是否清楚金额
+      amountConfirm: false,
     };
   }
 
@@ -193,10 +195,10 @@ export default class CreateModal extends PureComponent {
     if (isLimit) {
       titleList.push(...moreList);
       // 对接人
-      const dockingColumn = _.find(titleList, o => o.key === KEY_DOCKINGID) || {};
-      dockingColumn.render = (text, record) => {
-        const { edit = false, custId, dockingList = [], dockingId, dockingName } = record;
-        const showName = dockingId ? `${dockingName} (${dockingId || ''})` : '';
+      const managerIdColumn = _.find(titleList, o => o.key === KEY_MANAGERID) || {};
+      managerIdColumn.render = (text, record) => {
+        const { edit = false, custId, dockingList = [], managerId, managerName } = record;
+        const showName = managerId ? `${managerName} (${managerId || ''})` : '';
         return edit
           ? <span><AutoComplete
             key={custId}
@@ -213,18 +215,18 @@ export default class CreateModal extends PureComponent {
           : <div title={showName}>{showName}</div>;
       };
       // 禁止转出金额
-      const limitNumberColumn = _.find(titleList, o => o.key === KEY_LIMIT_NUMBER) || {};
-      limitNumberColumn.render = (text, record) => {
-        const { edit = false, newLimitNumber = '' } = record;
+      const limitAmountColumn = _.find(titleList, o => o.key === KEY_LIMIT_AMOUNT) || {};
+      limitAmountColumn.render = (text, record) => {
+        const { edit = false, newLimitAmount = '' } = record;
         return (<div>{
         edit
         ? <Input
-          value={newLimitNumber}
+          value={newLimitAmount}
           placeholder="请输入禁止转出金额"
           style={{ maxWidth: '180px' }}
-          onChange={e => this.handleLimitNumberChange(e, record)}
+          onChange={e => this.handleLimitAmountChange(e, record)}
         />
-        : newLimitNumber}</div>);
+        : newLimitAmount}</div>);
       };
     }
     // 添加操作列
@@ -305,8 +307,8 @@ export default class CreateModal extends PureComponent {
   })
   handleSelectEmp(v, record) {
     const newData = {
-      newDockingId: v.ptyMngId,
-      newDockingName: v.ptyMngName,
+      newManagerId: v.ptyMngId,
+      newManagerName: v.ptyMngName,
     };
     this.updateRecordData(record, newData);
   }
@@ -325,10 +327,10 @@ export default class CreateModal extends PureComponent {
   cancelOperateClick(record) {
     const newData = {
       edit: false,
-      newLimitNumber: record.limitNumber,
+      newLimitAmount: record.limitAmount,
       dockingList: [],
-      newDockingId: record.dockingId,
-      newDockingName: record.dockingName,
+      newManagerId: record.managerId,
+      newManagerName: record.managerName,
     };
     this.updateRecordData(record, newData);
   }
@@ -337,23 +339,23 @@ export default class CreateModal extends PureComponent {
   @autobind
   submitOperateClick(record) {
     const { limitType } = this.state;
-    const { newLimitNumber, newDockingId, newDockingName } = record;
+    const { newLimitAmount, newManagerId, newManagerName } = record;
     const newData = {
       edit: false,
-      limitNumber: newLimitNumber,
+      limitAmount: newLimitAmount,
       dockingList: [],
-      dockingId: newDockingId,
-      dockingName: newDockingName,
+      managerId: newManagerId,
+      managerName: newManagerName,
     };
     // 禁止转出金额输入数据并且数据错误时
-    if (!_.isEmpty(newLimitNumber) && !regxp.positiveNumber.test(newLimitNumber)) {
+    if (!_.isEmpty(newLimitAmount) && !regxp.positiveNumber.test(newLimitAmount)) {
       message.error('请填写有效禁止转出金额');
       return;
     }
     // 限制设置，并且限制类型中有 key 为 5 的类型时
     const filterLimitType = _.filter(limitType, o => o.key === KEY_LIMIT_TRANSFER_NUMBER);
     if (!_.isEmpty(filterLimitType)) {
-      if (_.isEmpty(newLimitNumber)) {
+      if (_.isEmpty(newLimitAmount)) {
         message.error('请填写禁止转出金额');
         return;
       }
@@ -363,10 +365,10 @@ export default class CreateModal extends PureComponent {
 
   // 限制转出金额输入
   @autobind
-  handleLimitNumberChange(e, record) {
+  handleLimitAmountChange(e, record) {
     const value = e.target.value;
     const newData = {
-      newLimitNumber: value,
+      newLimitAmount: value,
     };
     this.updateRecordData(record, newData);
   }
@@ -834,6 +836,9 @@ export default class CreateModal extends PureComponent {
     const custList = addedCustData.map(item => ({
       custId: item.custId,
       label: item.label,
+      limitAmount: item.limitAmount,
+      managerId: item.managerId,
+      managerName: item.managerName,
     }));
     if (_.isEmpty(companyName)) {
       message.error('公司简称不能为空!');
@@ -868,8 +873,8 @@ export default class CreateModal extends PureComponent {
       return;
     }
     // 业务对接人不能为空
-    const filterDocking = _.filter(addedCustData, o => _.isEmpty(o.dockingId));
-    if (isLimit && !_.isEmpty(filterDocking)) {
+    const filterManager = _.filter(addedCustData, o => _.isEmpty(o.managerId));
+    if (isLimit && !_.isEmpty(filterManager)) {
       message.error('业务对接人不能为空!');
       return;
     }
@@ -880,8 +885,8 @@ export default class CreateModal extends PureComponent {
     // 找出限制金额转出的限制类型
     const filterLimitType = _.filter(limitType, o => o.key === KEY_LIMIT_TRANSFER_NUMBER);
     if (!_.isEmpty(filterLimitType)) {
-      const filterLimitNumber = _.filter(addedCustData, o => _.isEmpty(o.limitNumber));
-      if (!_.isEmpty(filterLimitNumber)) {
+      const filterLimitAmount = _.filter(addedCustData, o => _.isEmpty(o.limitAmount));
+      if (!_.isEmpty(filterLimitAmount)) {
         message.error('请填写禁止转出金额');
         return;
       }
@@ -944,7 +949,7 @@ export default class CreateModal extends PureComponent {
     } else {
       validateForm(payload).then(() => {
         const { validateData } = this.props;
-        if (validateData.errorCode === '0') {
+        if (validateData.messageType === '0') {
           this.setState({
             [approverModalKey]: true,
             flowAuditors: btnItem.flowAuditors,
@@ -958,6 +963,7 @@ export default class CreateModal extends PureComponent {
                 [approverModalKey]: true,
                 flowAuditors: btnItem.flowAuditors,
                 submitData: payload,
+                amountConfirm: true,
               });
             },
           });
@@ -989,8 +995,8 @@ export default class CreateModal extends PureComponent {
   @autobind
   sendRequest(payload) {
     const { saveChange } = this.props;
-    const { isLimit, limitStartTime, bankConfirm } = this.state;
-    const newPayload = { ...payload };
+    const { isLimit, limitStartTime, bankConfirm, amountConfirm } = this.state;
+    const newPayload = { ...payload, amountConfirm };
     // 如果是限制类型
     if (isLimit) {
       newPayload.limitStartTime = limitStartTime;

@@ -34,6 +34,11 @@ const KEY_CUSTNAME = 'custName';
 const KEY_EMPNAME = 'empName';
 // 限制类型
 const KEY_LIMIT = 'limit';
+// 业务对接人
+const KEY_MANAGERID = 'managerId';
+// 禁止转出金额
+const KEY_LIMIT_AMOUNT = 'limitAmount';
+// 每页条数
 const PAGE_SIZE = 7;
 export default class Detail extends PureComponent {
   static propTypes = {
@@ -72,6 +77,17 @@ export default class Detail extends PureComponent {
     // 如果是限制设置，则增加两列数据
     if (operateType !== RELIEVE_CODE) {
       tempTitleList.push(...moreList);
+
+      // 对接人
+      const managerIdColumn = _.find(tempTitleList, o => o.key === KEY_MANAGERID) || {};
+      managerIdColumn.render = (text, record) => {
+        const { managerId, managerName } = record;
+        const showName = managerId ? `${managerName} (${managerId || ''})` : '';
+        return <div title={showName}>{showName}</div>;
+      };
+
+      const limitAmountColumn = _.find(tempTitleList, o => o.key === KEY_LIMIT_AMOUNT) || {};
+      limitAmountColumn.render = text => <div>{text}</div>;
     }
     return tempTitleList;
   }

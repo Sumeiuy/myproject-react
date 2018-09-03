@@ -134,14 +134,14 @@ const config = {
     ],
     moreList: [
       {
-        dataIndex: 'dockingId',
-        key: 'dockingId',
+        dataIndex: 'managerId',
+        key: 'managerId',
         title: '业务对接人',
         width: 200,
       },
       {
-        dataIndex: 'limitNumber',
-        key: 'limitNumber',
+        dataIndex: 'limitAmount',
+        key: 'limitAmount',
         title: '禁止转出金额(元)',
       },
     ],

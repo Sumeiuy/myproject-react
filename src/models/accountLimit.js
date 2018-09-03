@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @Description: 账户限制管理 model
  * @Author: Liujianshu
@@ -85,10 +86,10 @@ export default {
     },
     // 消息提醒页面数据
     validateFormSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { payload = EMPTY_OBJECT } = action;
       return {
         ...state,
-        validateData: resultData,
+        validateData: payload,
       };
     },
     // 清除数据成功
