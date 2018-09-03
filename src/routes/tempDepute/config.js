@@ -2,13 +2,12 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 15:42:30
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-30 15:36:00
+ * @Last Modified time: 2018-09-03 15:49:12
  * @description 临时委托任务的配置项
  */
 import _ from 'lodash';
 
 import { status, drafter, approver, applyTime } from '../../config/busApplyFilters';
-
 // 临时委托任务头部筛选基本条件
 export const SEIBEL_HEADER_BASIC_FILTERS = [status, drafter, approver, applyTime];
 
@@ -26,13 +25,13 @@ const STATUS_TAGS = [
   },
   {
     code: '20',
-    text: '审批通过',
-    type: 'complete',
+    text: '审批驳回',
+    type: 'reject',
   },
   {
     code: '30',
-    text: '审批驳回',
-    type: 'reject',
+    text: '审批通过',
+    type: 'complete',
   },
   {
     code: '40',

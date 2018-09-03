@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 09:28:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-02 00:09:22
+ * @Last Modified time: 2018-09-03 14:55:20
  * @description 临时委托他人处理任务Home页面
  */
 
@@ -184,7 +184,7 @@ export default class Home extends Component {
       });
       // 此处详情查询使用申请单编号，不使用flowId
       this.props.queryApplyDetail({
-        itemId: item.itemId,
+        itemId: item.id,
       });
     }
   }
@@ -288,7 +288,6 @@ export default class Home extends Component {
   @autobind
   handleSaveAplly(param) {
     // 此处为调用新建申请的接口
-    console.warn('新建接口参数：', param);
     this.props.saveApply(param).then(this.doApproveAfterSubmit);
   }
 

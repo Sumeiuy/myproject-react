@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 16:26:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-30 20:02:43
+ * @Last Modified time: 2018-09-03 14:55:09
  * @description 临时委托任务右侧详情组件
  */
 
