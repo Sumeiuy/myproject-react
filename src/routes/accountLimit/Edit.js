@@ -247,7 +247,7 @@ export default class AccountLimitEdit extends PureComponent {
     // 如果操作类型是设置限制
     if (editFormData.operateType === SET_CODE) {
       // 业务对接人不能为空
-      const filterDocking = _.filter(editFormData.custList, o => _.isEmpty(o.dockingId));
+      const filterDocking = _.filter(editFormData.custList, o => _.isEmpty(o.managerId));
       if (!_.isEmpty(filterDocking)) {
         message.error('业务对接人不能为空!');
         return false;
@@ -256,8 +256,8 @@ export default class AccountLimitEdit extends PureComponent {
       const filterLimitType = _.filter(editFormData.limitType,
         o => o.key === KEY_LIMIT_TRANSFER_NUMBER);
       if (!_.isEmpty(filterLimitType)) {
-        const filterLimitNumber = _.filter(editFormData.custList, o => _.isEmpty(o.limitNumber));
-        if (!_.isEmpty(filterLimitNumber)) {
+        const filterlimitAmount = _.filter(editFormData.custList, o => !o.limitAmount);
+        if (!_.isEmpty(filterlimitAmount)) {
           message.error('请填写禁止转出金额');
           return false;
         }
@@ -339,8 +339,8 @@ export default class AccountLimitEdit extends PureComponent {
       };
       validateForm({ ...editFormData, ...flowAuditors }).then(() => {
         const { validateData } = this.props;
-        if (validateData.errorCode === '0') {
-          this.sendRequest({ ...editFormData, ...flowAuditors }, () => {
+        if (validateData.messageType === '0') {
+          this.sendRequest({ ...editFormData, ...flowAuditors, amountConfirm: false }, () => {
             doApprove({
               empId: emp.getId(),
               flowId: editFormData.flowId,
@@ -357,7 +357,7 @@ export default class AccountLimitEdit extends PureComponent {
           commonConfirm({
             shortCut: 'amountConfirm',
             onOk: () => {
-              this.sendRequest({ ...editFormData, ...flowAuditors }, () => {
+              this.sendRequest({ ...editFormData, ...flowAuditors, amountConfirm: true }, () => {
                 doApprove({
                   empId: emp.getId(),
                   flowId: editFormData.flowId,
@@ -377,7 +377,7 @@ export default class AccountLimitEdit extends PureComponent {
     } else {
       validateForm({ ...editFormData }).then(() => {
         const { validateData } = this.props;
-        if (validateData.errorCode === '0') {
+        if (validateData.messageType === '0') {
           this.setState({
             [approverModalKey]: true,
             flowAuditors: btnItem.flowAuditors,
@@ -423,7 +423,7 @@ export default class AccountLimitEdit extends PureComponent {
   handleApproverModalOK(auth) {
     const { editFormData, doApprove } = this.props;
     const { remark, currentButtonItem } = this.state;
-    this.sendRequest({ ...editFormData }, () => {
+    this.sendRequest({ ...editFormData, amountConfirm: true }, () => {
       doApprove({
         empId: emp.getId(),
         flowId: editFormData.flowId,

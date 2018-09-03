@@ -29,10 +29,10 @@ export default {
   reducers: {
     // 数据校验
     validateFormSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { payload = EMPTY_OBJECT } = action;
       return {
         ...state,
-        validateData: resultData,
+        validateData: payload,
       };
     },
     // 获取服务经理列表
@@ -148,6 +148,13 @@ export default {
         });
         return newItem;
       });
+      const newCustList = [...newResultData.custList];
+      newResultData.custList = newCustList.map(item => ({
+        ...item,
+        newManagerId: item.managerId,
+        newManagerName: item.managerName,
+        newLimitAmount: item.limitAmount,
+      }));
 
       // newResultData.attachList = attachmentArray;
       yield put({
