@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-31 13:12:29
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-03 15:11:32
+ * @Last Modified time: 2018-09-03 21:03:05
  *
  * @params
  *  name: 表单form中的唯一标识，外层通过form获取到该字段的值
@@ -44,20 +44,21 @@ export default class EditableText extends PureComponent {
     disable: false,
   }
 
-  state = {
-    editing: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      editing: false,
+    };
   }
 
   componentDidMount() {
     if (!this.props.disable) {
-      document.addEventListener('click', this.handleClickOutside, true);
+      document.addEventListener('click', this.handleClickOutside, false);
     }
   }
 
   componentWillUnmount() {
-    if (!this.props.disable) {
-      document.removeEventListener('click', this.handleClickOutside, true);
-    }
+    document.removeEventListener('click', this.handleClickOutside, false);
   }
 
   // 点击了 √ 按钮保存修改
@@ -79,7 +80,11 @@ export default class EditableText extends PureComponent {
   @autobind
   handleClickOutside(e) {
     const { editing } = this.state;
-    if (editing && e.target !== this.inputWrapper && !this.inputWrapper.contains(e.target)) {
+    if (
+      editing
+      && e.target !== this.inputWrapper
+      && !this.inputWrapper.contains(e.target)
+    ) {
       this.saveData();
     }
   }
@@ -148,8 +153,16 @@ export default class EditableText extends PureComponent {
           }
         </FormItem>
         <div className={styles.operation}>
-          <Icon type="cha" className={cx(styles.button, styles.cha)} onClick={this.handleCancel} />
-          <Icon type="gou" className={cx(styles.button, styles.gou)} onClick={this.handleOk} />
+          <Icon
+            type="cha"
+            className={cx(styles.button, styles.cha)}
+            onClick={this.handleCancel}
+          />
+          <Icon
+            type="gou"
+            className={cx(styles.button, styles.gou)}
+            onClick={this.handleOk}
+          />
         </div>
       </div>
     );
@@ -158,15 +171,16 @@ export default class EditableText extends PureComponent {
   // 原始数据
   renderOriginalNode() {
     const { normalBoxClass, disable } = this.props;
+    const cls = cx(
+      [styles.editableCellValueWrap],
+      {
+        [styles.editable]: !disable,
+        [normalBoxClass]: !!normalBoxClass,
+      },
+    );
     return (
       <div
-        className={cx(
-          [styles.editableCellValueWrap],
-          {
-            [styles.editable]: !disable,
-            [normalBoxClass]: !!normalBoxClass,
-          },
-        )}
+        className={cls}
         onClick={this.toggleEdit}
       >
         {this.props.children}

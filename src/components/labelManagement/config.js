@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 21:15:03
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-03 15:24:58
+ * @Last Modified time: 2018-09-03 18:23:25
  */
 
 //  添加客户的方式
@@ -80,20 +80,27 @@ export const LABEL_NAME_REG = /^[#&\-_@%A-Za-z0-9\u4e00-\u9fa5]+$/;
 
 // 标签描述的校验规则
 export const VALIDATE_LABLENAME = [{
-  required: true, message: '请输入标签名称',
+  required: true,
+  message: '请输入标签名称',
 }, {
-  max: 8, message: '最多为8个字',
+  max: 8,
+  message: '最多为8个字',
 }, {
-  min: 4, message: '最少为4个字',
+  min: 4,
+  message: '最少为4个字',
 }, {
-  pattern: LABEL_NAME_REG, message: '可输入字符仅为汉字、数字、字母及合法字符(#&-_@%)',
+  pattern: LABEL_NAME_REG,
+  message: '可输入字符仅为汉字、数字、字母及合法字符(#&-_@%)',
 }];
 
 // 标签名称的校验规则
 export const VALIDATE_LABLEDESC = [{
-  required: true, message: '请输入标签描述',
+  required: true,
+  message: '请输入标签描述',
 }, {
-  min: 10, message: '最少为10个字',
+  min: 10,
+  message: '最少为10个字',
 }, {
-  max: 500, message: '最多为500个字',
+  max: 500,
+  message: '最多为500个字',
 }];
