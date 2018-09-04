@@ -167,6 +167,8 @@ export default class Detail extends PureComponent {
     };
     // 新的客户列表渲染标题
     const newTitleList = this.getColumnsCustTitleList(custTitleList);
+    // 表格需要滚动的宽度
+    const scrollWidth = _.sum(_.map(newTitleList, 'width'));
     // 匹配的操作类型
     const filterOperate = _.filter(operateTypeArray, o => o.value === operateType);
     // 操作类型是否是限制解除
@@ -193,6 +195,7 @@ export default class Detail extends PureComponent {
             data={showCustList[pageNum - 1]}
             align="left"
             rowKey="custId"
+            scroll={{ x: scrollWidth }}
           />
           <Pagination
             {...custListPaginationOption}

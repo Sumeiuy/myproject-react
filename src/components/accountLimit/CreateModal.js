@@ -1103,6 +1103,8 @@ export default class CreateModal extends PureComponent {
       </Upload>);
     // 客户标题列表
     const custTitle = this.getColumnsCustTitle();
+    // 表格需要滚动的宽度
+    const scrollWidth = _.sum(_.map(custTitle, 'width'));
 
     // 关闭弹窗
     const closePayload = {
@@ -1208,6 +1210,7 @@ export default class CreateModal extends PureComponent {
                 data={showCustList[pageNum - 1]}
                 titleList={custTitle}
                 rowKey="custId"
+                scroll={{ x: scrollWidth }}
               />
               <Pagination {...custListPaginationOption} />
             </div>
