@@ -138,7 +138,7 @@ const config = {
         dataIndex: 'managerId',
         key: 'managerId',
         title: '业务对接人',
-        width: 160,
+        width: 200,
       },
       {
         dataIndex: 'limitAmount',
