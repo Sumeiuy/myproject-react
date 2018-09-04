@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-03 16:38:50
+ * @Last Modified time: 2018-09-04 15:28:46
  */
 
 import React, { PureComponent } from 'react';
@@ -58,6 +58,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     // 删除标签下的客户
     deleteLabelCust: PropTypes.func.isRequired,
     isCreateLabel: PropTypes.bool,
+    onComparedGetLabelList: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -364,11 +365,12 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
       });
     } else {
       // id不为空，直接调用add接口
-      onUpdateLabel({
+      const data = {
         custIds: newCustIdList,
         name,
         description,
-      });
+      };
+      onUpdateLabel({ data });
     }
 
     // 将数据添加进includeCustIdList
@@ -431,16 +433,18 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
         // 总记录数减1
         totalRecordNum: totalRecordNum - 1,
       }, () => {
+        const { getGroupCustomerList, onComparedGetLabelList } = this.props;
         if (_.isEmpty(newDataSource) && id) {
           // 判断数据是否不存在了，
           // 并且不是新增
           // 不存在请求数据
-          this.props.getGroupCustomerList({
+          getGroupCustomerList({
             labelId: id,
             pageNum: 1,
             pageSize: 10,
           });
         }
+        onComparedGetLabelList();
       });
     });
   }
@@ -500,7 +504,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
                 const custIdListSize = _.size(custIdList);
                 const newCustIdList = _.concat(custIds, custIdList);
 
-                // 如果groupId不为空，则添加直接调用接口，添加
+                // 如果id不为空，则添加直接调用接口，添加
                 if (_.isEmpty(id)) {
                   // 数据添加进表格
                   // 新添加的数据放在表格的前面
@@ -522,12 +526,13 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
                     curPageNum: curPage,
                   });
                 } else {
-                  // groupId不为空，编辑页面直接调用add接口
-                  onUpdateLabel({
+                  // id不为空，编辑页面直接调用add接口
+                  const param = {
                     custIds: newCustIdList,
                     name,
                     description,
-                  });
+                  };
+                  onUpdateLabel({ data: param });
                   // 编辑页面调完add接口客户已经分组成功
                   // 此时将attachmentId置为空，为再次点击上传按钮上传做准备
                   this.setState({
@@ -610,13 +615,18 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
   @autobind
   handleSaveLabelName({ name }) {
     const { description, custIds } = this.state;
-    this.props.onUpdateLabel({
+    const data = {
       custIds,
       name,
       description,
-    }, () => {
-      // 保存成功后修改，同步state中的数据
-      this.setState({ name });
+    };
+    this.props.onUpdateLabel({
+      data,
+      isNeedQueryLabelCust: false,
+      callback: () => {
+        // 保存成功后修改，同步state中的数据
+        this.setState({ name });
+      },
     });
   }
 
@@ -624,13 +634,18 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
   @autobind
   handleSaveLabelDescription({ description }) {
     const { name, custIds } = this.state;
-    this.props.onUpdateLabel({
+    const data = {
       custIds,
       name,
       description,
-    }, () => {
-      // 保存成功后修改，同步state中的数据
-      this.setState({ description });
+    };
+    this.props.onUpdateLabel({
+      data,
+      isNeedQueryLabelCust: false,
+      callback: () => {
+        // 保存成功后修改，同步state中的数据
+        this.setState({ description });
+      },
     });
   }
 
