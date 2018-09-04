@@ -412,6 +412,7 @@ export default class CreateModal extends PureComponent {
     const isLimit = value === SET_CODE;
     this.setState({
       [key]: value,
+      client: {},
       isLimit,
       companyName: '',
       stockCode: '',
@@ -423,7 +424,15 @@ export default class CreateModal extends PureComponent {
       limitEndTime: '',
       endDateDisabled: isLimit,
       attachmentList: [attachmentMap[0]],
-    }, this.queryNextStepButton);
+    }, () => {
+      this.queryNextStepButton();
+      const { clearData } = this.props;
+      // 清空 AutoComplete 的选项和值
+      this.queryCustComponent.clearValue();
+      clearData({
+        searchCustData: [],
+      });
+    });
   }
 
   // 公司简称改变
