@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-04 09:17:19
+ * @Last Modified time: 2018-09-04 10:46:43
  * @description 临时任务委托表单
  */
 
@@ -12,7 +12,7 @@ import cx from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
-import { Input } from 'antd';
+import { Input, Select as AntdSelect } from 'antd';
 import DateRangePicker from 'lego-react-date/src';
 
 import InfoTitle from '../common/InfoTitle';
@@ -32,6 +32,7 @@ import {
 
 import styles from './deputeForm.less';
 
+const Option = AntdSelect.Option;
 const TextArea = Input.TextArea;
 // 日志上传的时间字符串格式
 const LOG_DEATE_FORMAT = 'YYYY-MM-DD';
