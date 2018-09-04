@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-04 15:28:46
+ * @Last Modified time: 2018-09-04 17:41:24
  */
 
 import React, { PureComponent } from 'react';
@@ -623,10 +623,9 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     this.props.onUpdateLabel({
       data,
       isNeedQueryLabelCust: false,
-      callback: () => {
-        // 保存成功后修改，同步state中的数据
-        this.setState({ name });
-      },
+    }).then(() => {
+      // 保存成功后修改，同步state中的数据
+      this.setState({ name });
     });
   }
 
@@ -642,10 +641,9 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     this.props.onUpdateLabel({
       data,
       isNeedQueryLabelCust: false,
-      callback: () => {
-        // 保存成功后修改，同步state中的数据
-        this.setState({ description });
-      },
+    }).then(() => {
+      // 保存成功后修改，同步state中的数据
+      this.setState({ description });
     });
   }
 

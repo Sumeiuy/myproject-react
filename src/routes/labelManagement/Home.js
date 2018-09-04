@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-04 17:07:55
+ * @Last Modified time: 2018-09-04 17:40:18
  */
 
 import React, { PureComponent } from 'react';
@@ -520,11 +520,27 @@ export default class CustomerGroupManage extends PureComponent {
    *   callback：更新标签成功后回调
    */
   @autobind
-  handleUpdateLabel({ data, isNeedQueryLabelCust = true, callback = _.noop }) {
+  handleUpdateLabel({ data, isNeedQueryLabelCust = true }) {
     const { custIds, name, description } = data;
     const { id } = this.state;
     const { operateLabel, queryLabelCust } = this.props;
-    operateLabel({
+    // log日志
+    const formValues = {
+      name,
+      description,
+      id,
+      custIds,
+    };
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name,
+        type: '编辑',
+        number: custIds.length,
+        value: JSON.stringify(formValues),
+      },
+    });
+    return operateLabel({
       request: {
         labelIds: [id],
         labelName: name,
@@ -543,24 +559,7 @@ export default class CustomerGroupManage extends PureComponent {
             labelId: id,
           });
         }
-        callback();
       }
-      // log日志
-      const formValues = {
-        name,
-        description,
-        id,
-        custIds,
-      };
-      logCommon({
-        type: 'Submit',
-        payload: {
-          name,
-          type: '编辑',
-          number: custIds.length,
-          value: JSON.stringify(formValues),
-        },
-      });
     });
   }
 
