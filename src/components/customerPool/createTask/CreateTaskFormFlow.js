@@ -41,7 +41,6 @@ export default class CreateTaskFormFlow extends PureComponent {
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     onCloseTab: PropTypes.func.isRequired,
-    enterType: PropTypes.string,
     // 新增
     templateId: PropTypes.number.isRequired,
     generateTemplateId: PropTypes.func.isRequired,
@@ -63,7 +62,6 @@ export default class CreateTaskFormFlow extends PureComponent {
     createTask: noop,
     updateTask: noop,
     orgId: null,
-    enterType: null,
     submitApporvalResult: {},
     submitApproval: noop,
     approvalBtn: {},
