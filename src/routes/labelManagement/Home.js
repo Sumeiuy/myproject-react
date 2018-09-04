@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-03 16:30:16
+ * @Last Modified time: 2018-09-04 17:40:18
  */
 
 import React, { PureComponent } from 'react';
@@ -23,7 +23,7 @@ import { openRctTab } from '../../utils';
 import { url as urlHelper, dva } from '../../helper';
 import confirm from '../../components/common/confirm_';
 import withRouter from '../../decorators/withRouter';
-// import Icon from '../../components/common/Icon';
+import Icon from '../../components/common/Icon';
 import styles from './home.less';
 import tableStyles from '../../components/common/commonTable/index.less';
 import logable, { logPV, logCommon } from '../../decorators/logable';
@@ -375,39 +375,19 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCloseModal() {
-    const { id, custIds } = this.detailRef.getData();
-    if (id) {
-      // 编辑模式下
-      if (!_.isEmpty(custIds)) {
-        // 存在custIdList,在取消的时候提示
-        confirm({
-          content: '客户已添加成功，如需取消添加的客户请在列表中删除',
-          onOk: () => { this.toggleCreateAndEditLabelModalVisible(false); },
-          onCancel: _.noop,
-        });
-      } else {
-        this.setState({
-          visible: false,
-        });
-      }
-    } else if (!_.isEmpty(custIds)) {
+    const { custIds } = this.detailRef.getData();
+    if (!_.isEmpty(custIds)) {
+      const content = !this.state.isCreateLabel
+        ? '客户已添加成功，如需取消添加的客户请在列表中删除'
+        : '在新增模式下，添加客户需要提交才能生效，确认取消？';
       confirm({
-        content: '在新增模式下，添加客户需要提交才能生效，确认取消？',
+        content,
         onOk: () => { this.toggleCreateAndEditLabelModalVisible(false); },
         onCancel: _.noop,
       });
     } else {
-      this.setState({
-        visible: false,
-      });
+      this.toggleCreateAndEditLabelModalVisible(false);
     }
-  }
-
-  @autobind
-  handleSubmitCloseModal() {
-    this.setState({
-      visible: false,
-    });
   }
 
   /**
@@ -440,7 +420,7 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   handleSubmit(e) {
     if (this.detailRef) {
-      const { id, custIds } = this.detailRef.getData();
+      const { custIds } = this.detailRef.getData();
       e.persist();
       const form = this.detailRef.getForm();
       form.validateFields((err, values) => {
@@ -451,7 +431,7 @@ export default class CustomerGroupManage extends PureComponent {
             labelFlag: '1',
           }).then((duplicationName) => {
             // 新建模式下校验重名
-            if (!id && duplicationName) {
+            if (duplicationName) {
               form.setFields({
                 name: {
                   value: values.name,
@@ -461,19 +441,17 @@ export default class CustomerGroupManage extends PureComponent {
               return;
             }
             const { name = '', description } = values;
-            this.submitFormContent(name, description, id, custIds);
+            this.submitFormContent(name, description, custIds);
             // log日志
-            const type = id ? '编辑' : '新建';
             const formValues = {
               ...values,
-              id,
               custIds,
             };
             logCommon({
               type: 'Submit',
               payload: {
                 name: values.name,
-                type,
+                type: '新建',
                 number: custIds.length,
                 value: JSON.stringify(formValues),
               },
@@ -485,8 +463,8 @@ export default class CustomerGroupManage extends PureComponent {
   }
 
   @autobind
-  submitFormContent(name, description, id, custIds) {
-    const { operateLabel, queryLabelCust } = this.props;
+  submitFormContent(name, description, custIds) {
+    const { operateLabel } = this.props;
     const postBody = {
       request: {
         labelName: name,
@@ -495,34 +473,15 @@ export default class CustomerGroupManage extends PureComponent {
         excludeCustIdList: null,
       },
     };
-    if (id) {
-      // 编辑标签
-      operateLabel(_.merge(postBody, {
-        request: {
-          labelIds: [id],
-        },
-      })).then((res) => {
-        if (res.resultData === 'success') {
-          message.success('更新标签成功');
-          this.handleComparedGetLabelList();
-          queryLabelCust({
-            pageNum: INITIAL_CURPAGE,
-            pageSize: INITIAL_PAGESIZE,
-            labelId: id,
-          });
-        }
-      });
-    } else {
-      // 新增标签
-      operateLabel(postBody).then((res) => {
-        if (res.resultData === 'success') {
-          message.success('更新标签成功');
-          this.handleComparedGetLabelList();
-        }
-      });
-    }
+    // 新增标签
+    operateLabel(postBody).then((res) => {
+      if (res.resultData === 'success') {
+        message.success('新建标签成功');
+        this.handleComparedGetLabelList();
+      }
+    });
     // 关闭弹窗
-    this.handleSubmitCloseModal();
+    this.toggleCreateAndEditLabelModalVisible(false);
   }
 
   // 在新建、编辑或者分组转标签成功时
@@ -533,10 +492,10 @@ export default class CustomerGroupManage extends PureComponent {
     const {
       location: {
         pathname,
-      query: {
+        query: {
           curPageNum = INITIAL_CURPAGE,
-        keyWord = '',
-        curPageSize = INITIAL_PAGESIZE,
+          keyWord = '',
+          curPageSize = INITIAL_PAGESIZE,
         },
       },
     } = this.props;
@@ -555,13 +514,33 @@ export default class CustomerGroupManage extends PureComponent {
   /**
    * 更新标签的信息，包括标签的名称、描述、客户
    * 调用接口
-   * @param {*object} param0 添加标签对象
+   * @param {*object} param0
+   *   data: 标签信息
+   *   isNeedQueryLabelCust：是否需要去重新查询标签下的客户
+   *   callback：更新标签成功后回调
    */
   @autobind
-  handleUpdateLabel({ custIds, name, description }, callback = _.noop) {
+  handleUpdateLabel({ data, isNeedQueryLabelCust = true }) {
+    const { custIds, name, description } = data;
     const { id } = this.state;
     const { operateLabel, queryLabelCust } = this.props;
-    operateLabel({
+    // log日志
+    const formValues = {
+      name,
+      description,
+      id,
+      custIds,
+    };
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name,
+        type: '编辑',
+        number: custIds.length,
+        value: JSON.stringify(formValues),
+      },
+    });
+    return operateLabel({
       request: {
         labelIds: [id],
         labelName: name,
@@ -573,29 +552,14 @@ export default class CustomerGroupManage extends PureComponent {
       if (res.resultData === 'success') {
         message.success('更新标签成功');
         this.handleComparedGetLabelList();
-        queryLabelCust({
-          pageNum: INITIAL_CURPAGE,
-          pageSize: INITIAL_PAGESIZE,
-          labelId: id,
-        });
-        callback();
+        if (isNeedQueryLabelCust) {
+          queryLabelCust({
+            pageNum: INITIAL_CURPAGE,
+            pageSize: INITIAL_PAGESIZE,
+            labelId: id,
+          });
+        }
       }
-      // log日志
-      const formValues = {
-        name,
-        description,
-        id,
-        custIds,
-      };
-      logCommon({
-        type: 'Submit',
-        payload: {
-          name,
-          type: '编辑',
-          number: custIds.length,
-          value: JSON.stringify(formValues),
-        },
-      });
     });
   }
 
@@ -631,12 +595,17 @@ export default class CustomerGroupManage extends PureComponent {
 
   renderActionSource() {
     return [{
-      type: '删除',
+      type: <Icon type="shanchu" className={styles.deleteIcon} />,
       handler: this.handleDeleteBtnClick,
     },
     {
-      type: '发起任务',
-      handler: this.lanuchTask,
+      type: (
+        <span className={styles.launchTask} onClick={this.lanuchTask}>
+          <Icon type="faqirenwu" className={styles.launchTaskIcon} />
+          发起任务
+        </span>
+      ),
+      handler: _.noop,
     }];
   }
 
@@ -800,6 +769,7 @@ export default class CustomerGroupManage extends PureComponent {
                 batchCustList={batchCustList}
                 checkDuplicationName={checkDuplicationName}
                 isCreateLabel={isCreateLabel}
+                onComparedGetLabelList={this.handleComparedGetLabelList}
               />
             }
           />
