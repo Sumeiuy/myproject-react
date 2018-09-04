@@ -2,6 +2,22 @@
  * 目标客户池模块的接口
  */
 
+
+// 此处针对修改字典里面委托他人任务处理的字段从key-value修改为value-label对应关系
+import _ from 'lodash';
+
+function fixDictoryKeys(dict) {
+  const { resultData, resultData: { deputeStatusDictList: deputeList } } = dict;
+  // 因为初始的委托他人任务状态字典列表中的字段名为 key, value
+  return {
+    ...dict,
+    resultData: {
+      ...resultData,
+      deputeStatusDictList: _.map(deputeList, item => ({ value: item.key, label: item.value })),
+    },
+  };
+}
+
 export default function customerPool(api) {
   return {
     // 经营指标新增客户指标区域接口
@@ -25,7 +41,7 @@ export default function customerPool(api) {
     // getManageIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryEmpKPIs', query),
 
     // 统计周期
-    getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query, { noEmpId: true }),
+    getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query, { noEmpId: true }).then(fixDictoryKeys),
 
     // (首页总数)
     getQueryNumbers: query => api.post('/groovynoauth/fsp/emp/todealwith/queryNumbers', query),
