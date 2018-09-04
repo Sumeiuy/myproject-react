@@ -2,13 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-24 13:50:19
+ * @Last Modified time: 2018-09-03 17:11:30
  * @description 任务管理首页
  */
 
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import store from 'store';
 import withRouter from '../../decorators/withRouter';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
@@ -34,7 +35,6 @@ import {
   STATUS_MANAGER_VIEW,
   SYSTEMCODE,
   STATE_EXECUTE_CODE,
-  STATE_ALL_CODE,
   // 三个视图左侧任务列表的请求入参，在config里面配置，后续如果需要新增，或者删除某个param，
   // 请在config里面配置QUERY_PARAMS
   QUERY_PARAMS,
@@ -641,6 +641,16 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getSortConfig(viewType) {
+    const storeKey = `${emp.getId()}-${viewType}-sort`;
+    const storedSort = store.get(storeKey);
+    // 本地存储了就从本次存储拿，否则拿默认的值
+    if (storedSort) {
+      return {
+        sortType: storedSort.sortKey,
+        name: storedSort.sortContent,
+        defaultDirection: storedSort.sortDirection,
+      };
+    }
     return DEFAULTSORT_VIEW[viewType];
   }
 
@@ -716,23 +726,6 @@ export default class PerformerView extends PureComponent {
       ...finalPostData,
       ...this.addSortParam(currentViewType, query),
     };
-    // 执行者视图中，状态默认选中‘执行中’, status传50
-    // url中status为‘all’时传空字符串或者不传，其余传对应的code码
-    if (this.isExecutorView(currentViewType)) {
-      if (status) {
-        finalPostData.status = status === STATE_ALL_CODE ? '' : status;
-      } else {
-        finalPostData.status = STATE_EXECUTE_CODE;
-      }
-    } else if (_.includes([INITIATOR, CONTROLLER], currentViewType)) {
-      // 创建者视图和管理者视图中，状态默认选中‘所有状态’， status传空字符串或者不传
-      // url中status为‘all’时传空字符串或者不传，其余传对应的code码
-      if (!status || status === STATE_ALL_CODE) {
-        finalPostData.status = '';
-      } else {
-        finalPostData.status = status;
-      }
-    }
     // 状态默认选中‘执行中’, status传50，其余传对应的code码
     finalPostData.status = status || STATE_EXECUTE_CODE;
     finalPostData = { ...finalPostData, missionViewType: currentViewType };
@@ -1082,6 +1075,7 @@ export default class PerformerView extends PureComponent {
     const { sortType, name, defaultDirection } = this.getSortConfig(viewType);
     return (
       <FixedTitle
+        key={viewType}
         sortContent={name}
         sortDirection={querySortDirection || defaultDirection}
         onSortChange={this.handleSortChange}

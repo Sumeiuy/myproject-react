@@ -153,6 +153,8 @@ export default class CreateModal extends PureComponent {
       attachmentList: [attachmentMap[0]],
       // 提交的数据
       submitData: {},
+      // 提交是否清楚金额
+      amountConfirm: false,
     };
   }
 
@@ -196,7 +198,7 @@ export default class CreateModal extends PureComponent {
       const managerIdColumn = _.find(titleList, o => o.key === KEY_MANAGERID) || {};
       managerIdColumn.render = (text, record) => {
         const { edit = false, custId, dockingList = [], managerId, managerName } = record;
-        const showName = managerId ? `${managerName} ${(managerId) || ''}` : '';
+        const showName = managerId ? `${managerName} (${managerId || ''})` : '';
         return edit
           ? <span><AutoComplete
             key={custId}
@@ -410,6 +412,7 @@ export default class CreateModal extends PureComponent {
     const isLimit = value === SET_CODE;
     this.setState({
       [key]: value,
+      client: {},
       isLimit,
       companyName: '',
       stockCode: '',
@@ -421,7 +424,15 @@ export default class CreateModal extends PureComponent {
       limitEndTime: '',
       endDateDisabled: isLimit,
       attachmentList: [attachmentMap[0]],
-    }, this.queryNextStepButton);
+    }, () => {
+      this.queryNextStepButton();
+      const { clearData } = this.props;
+      // 清空 AutoComplete 的选项和值
+      this.queryCustComponent.clearValue();
+      clearData({
+        searchCustData: [],
+      });
+    });
   }
 
   // 公司简称改变
@@ -872,28 +883,28 @@ export default class CreateModal extends PureComponent {
     }
     // 业务对接人不能为空
     const filterManager = _.filter(addedCustData, o => _.isEmpty(o.managerId));
-    if (isLimit && !_.isEmpty(filterManager)) {
-      message.error('业务对接人不能为空!');
-      return;
-    }
-    if (_.isEmpty(limitType)) {
-      message.error('限制类型不能为空!');
-      return;
-    }
     // 找出限制金额转出的限制类型
     const filterLimitType = _.filter(limitType, o => o.key === KEY_LIMIT_TRANSFER_NUMBER);
-    if (!_.isEmpty(filterLimitType)) {
-      const filterLimitAmount = _.filter(addedCustData, o => _.isEmpty(o.limitAmount));
-      if (!_.isEmpty(filterLimitAmount)) {
-        message.error('请填写禁止转出金额');
+    if (isLimit) {
+      if (!_.isEmpty(filterManager)) {
+        message.error('业务对接人不能为空!');
         return;
       }
-    }
-    if (isLimit) {
+      if (!_.isEmpty(filterLimitType)) {
+        const filterLimitAmount = _.filter(addedCustData, o => _.isEmpty(o.limitAmount));
+        if (!_.isEmpty(filterLimitAmount)) {
+          message.error('请填写禁止转出金额');
+          return;
+        }
+      }
       if (_.isEmpty(limitStartTime)) {
         message.error('账户限制设置日期不能为空!');
         return;
       }
+    }
+    if (_.isEmpty(limitType)) {
+      message.error('限制类型不能为空!');
+      return;
     }
     if (_.isEmpty(limitEndTime)) {
       message.error('账户限制解除日期不能为空!');
@@ -961,6 +972,7 @@ export default class CreateModal extends PureComponent {
                 [approverModalKey]: true,
                 flowAuditors: btnItem.flowAuditors,
                 submitData: payload,
+                amountConfirm: true,
               });
             },
           });
@@ -992,8 +1004,8 @@ export default class CreateModal extends PureComponent {
   @autobind
   sendRequest(payload) {
     const { saveChange } = this.props;
-    const { isLimit, limitStartTime, bankConfirm } = this.state;
-    const newPayload = { ...payload };
+    const { isLimit, limitStartTime, bankConfirm, amountConfirm } = this.state;
+    const newPayload = { ...payload, amountConfirm };
     // 如果是限制类型
     if (isLimit) {
       newPayload.limitStartTime = limitStartTime;
@@ -1100,6 +1112,8 @@ export default class CreateModal extends PureComponent {
       </Upload>);
     // 客户标题列表
     const custTitle = this.getColumnsCustTitle();
+    // 表格需要滚动的宽度
+    const scrollWidth = _.sum(_.map(custTitle, 'width'));
 
     // 关闭弹窗
     const closePayload = {
@@ -1205,6 +1219,7 @@ export default class CreateModal extends PureComponent {
                 data={showCustList[pageNum - 1]}
                 titleList={custTitle}
                 rowKey="custId"
+                scroll={{ x: scrollWidth }}
               />
               <Pagination {...custListPaginationOption} />
             </div>
