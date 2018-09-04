@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-03 17:33:11
+ * @Last Modified time: 2018-09-04 09:17:19
  * @description 临时任务委托表单
  */
 
@@ -23,11 +23,11 @@ import logable from '../../decorators/logable';
 import { emp } from '../../helper';
 import {
   checkAcceptor,
-  checkDeputeReasonLengthOver1000,
+  checkLength,
   checkDeputeReason,
-  DEPUTE_REASON_CHECK_WARINGS,
-  ASSOGNEE_CHECK_WARNINGS,
-  PERIOD_CHECK_WARNINGS,
+  DEPUTE_REASON_CHECK_MESSAGE,
+  ASSIGNEE_CHECK_MESSAGE,
+  PERIOD_CHECK_MESSAGE,
 } from './utilsCheck';
 
 import styles from './deputeForm.less';
@@ -36,7 +36,7 @@ const TextArea = Input.TextArea;
 // 日志上传的时间字符串格式
 const LOG_DEATE_FORMAT = 'YYYY-MM-DD';
 
-export default class deputeForm extends PureComponent {
+export default class DeputeForm extends PureComponent {
   static propTypes = {
     // 判断此组件用于新建页面还是驳回后修改页面，'CREATE'或者'UPDATE'
     action: PropTypes.oneOf(['CREATE', 'UPDATE']).isRequired,
@@ -86,8 +86,7 @@ export default class deputeForm extends PureComponent {
   }
 
   @autobind
-  getInitialState(props) {
-    console.warn('根据props初始化state:', props);
+  getInitialState() {
     // const { detailInfo = {} } = props;
     const isCreate = this.isCreateApply();
     if (isCreate) {
@@ -122,11 +121,11 @@ export default class deputeForm extends PureComponent {
   handleDeputeReasonChange(e) {
     const { value } = e.target;
     // 需求要求超过1000长度后，不让再输入
-    if (checkDeputeReasonLengthOver1000(value)) {
+    if (checkLength(value, 1000)) {
       return;
     }
-    const { checkResult: { deputeReasonCheck } } = this.state;
-    if (!deputeReasonCheck) {
+    const { checkResult: { isCheckedDeputeReason } } = this.state;
+    if (!isCheckedDeputeReason) {
       this.handleDeputeReasonBlur();
     }
     const { formData } = this.state;
@@ -138,28 +137,30 @@ export default class deputeForm extends PureComponent {
     }, this.handleFormDataPush);
   }
 
+  // 需求和测试要求当委托原因文本输入域失去焦点的时候，就要进行格式规则校验
   @autobind
   handleDeputeReasonBlur() {
     const { formData: { deputeReason }, checkResult } = this.state;
-    const deputeReasonCheck = checkDeputeReason(deputeReason);
+    const isCheckedDeputeReason = checkDeputeReason(deputeReason);
     this.setState({
-      checkResult: { ...checkResult, deputeReasonCheck },
+      checkResult: { ...checkResult, isCheckedDeputeReason },
     });
   }
 
+  // 需求和测试要求当受托人失去焦点的时候，就需要进行输入值的校验
   @autobind
   handlePtyMngIdSelectBlur() {
     const { formData: { assigneeId }, checkResult } = this.state;
-    const assigneeCheck = checkAcceptor(assigneeId);
+    const isCheckedAssignee = checkAcceptor(assigneeId);
     this.setState({
-      checkResult: { ...checkResult, assigneeCheck },
+      checkResult: { ...checkResult, isCheckedAssignee },
     });
   }
 
+  // 选择受托人部门，当部门切换的时候需要将选中的受托服务经理清空
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '受托人部门', value: '$args[1]' } })
   handleAssigneeOrgSelect(key, value) {
-    // 切换部门需要将选中的服务经理删除
     const { formData } = this.state;
     this.setState({
       formData: {
@@ -172,6 +173,7 @@ export default class deputeForm extends PureComponent {
     this.similarAutoCompleteRef.current.clearValue();
   }
 
+  // 选择受托服务经理
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '选择受托人', value: '$args[1]' } })
   handlePtyMngIdSelect(assignee) {
@@ -181,8 +183,8 @@ export default class deputeForm extends PureComponent {
       // 代表删除选中的
       assigneeId = assignee.ptyMngId;
     }
-    const { checkResult: { assigneeCheck } } = this.state;
-    if (!assigneeCheck) {
+    const { checkResult: { isCheckedAssignee } } = this.state;
+    if (!isCheckedAssignee) {
       this.handlePtyMngIdSelectBlur();
     }
     const { formData } = this.state;
@@ -252,9 +254,9 @@ export default class deputeForm extends PureComponent {
     const {
       formData,
       checkResult: {
-        deputeReasonCheck,
-        assigneeCheck,
-        periodCheck,
+        isCheckedDeputeReason,
+        isCheckedAssignee,
+        isCheckedPeriod,
       },
     } = this.state;
     // 判断当前组件是否在驳回后修改页面里面
@@ -284,7 +286,7 @@ export default class deputeForm extends PureComponent {
             </div>
           </div>
         </div>
-        {this.renderCheckResultTip(deputeReasonCheck, DEPUTE_REASON_CHECK_WARINGS)}
+        {this.renderCheckResultTip(isCheckedDeputeReason, DEPUTE_REASON_CHECK_MESSAGE)}
         <div className={styles.modContent}>
           <InfoCell label="受托人" labelWidth={112}>
             <Select
@@ -314,7 +316,7 @@ export default class deputeForm extends PureComponent {
             />
           </InfoCell>
         </div>
-        {this.renderCheckResultTip(assigneeCheck, ASSOGNEE_CHECK_WARNINGS)}
+        {this.renderCheckResultTip(isCheckedAssignee, ASSIGNEE_CHECK_MESSAGE)}
         <div className={styles.modContent}>
           <InfoCell label="委托期限" labelWidth={112}>
             <DateRangePicker
@@ -323,7 +325,7 @@ export default class deputeForm extends PureComponent {
             />
           </InfoCell>
         </div>
-        {this.renderCheckResultTip(periodCheck, PERIOD_CHECK_WARNINGS)}
+        {this.renderCheckResultTip(isCheckedPeriod, PERIOD_CHECK_MESSAGE)}
       </div>
     );
   }
