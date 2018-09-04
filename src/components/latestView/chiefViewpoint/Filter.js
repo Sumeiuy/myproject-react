@@ -79,11 +79,6 @@ export default class Filter extends PureComponent {
     });
   }
 
-  @autobind
-  disabledEndDate(startDate, endDate) {
-    return endDate > moment();
-  }
-
   render() {
     const {
       type,
@@ -141,7 +136,8 @@ export default class Filter extends PureComponent {
             filterName=""
             filterValue={defaultDate}
             onChange={date => this.handleDateChange(date.value[0], date.value[1])}
-            disabledEnd={this.disabledEndDate}
+            disabledStart={start => start > moment()}
+            disabledEnd={(start, end) => end > moment()}
           />
         </div>
       </div>
