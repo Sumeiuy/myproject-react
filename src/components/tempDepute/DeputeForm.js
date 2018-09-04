@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-04 10:46:43
+ * @Last Modified time: 2018-09-04 13:46:47
  * @description 临时任务委托表单
  */
 
@@ -197,6 +197,7 @@ export default class DeputeForm extends PureComponent {
     }, this.handleFormDataPush);
   }
 
+  // 搜索受托服务经理
   @autobind
   @logable({ type: 'Click', payload: { name: '搜索客户', value: '$args[0]' } })
   handlePtyMngListSearch(keyword) {
@@ -207,11 +208,12 @@ export default class DeputeForm extends PureComponent {
     this.props.quryPtyMngList({ keyword, org: assigneeOrgId });
   }
 
+  // 选择委托期限
   @autobind
   @logable({
     type: 'CalendarSelect',
     payload: {
-      name: '受托期间',
+      name: '委托期限',
       min: (instance, args) => moment(args[0].value[0]).format(LOG_DEATE_FORMAT),
       max: (instance, args) => moment(args[0].value[1]).format(LOG_DEATE_FORMAT),
     },
@@ -227,9 +229,9 @@ export default class DeputeForm extends PureComponent {
     }, this.handleFormDataPush);
   }
 
+  // 渲染客户下拉列表的选项DOM
   @autobind
   renderPtyMngAutoCompleteOption(ptyMng) {
-    // 渲染客户下拉列表的选项DOM
     const { ptyMngId, ptyMngName } = ptyMng;
     const text = `${ptyMngName}（${ptyMngId}）`;
     return (
@@ -239,6 +241,7 @@ export default class DeputeForm extends PureComponent {
     );
   }
 
+  // 渲染委托原因、受托人、委托期限的校验结果元素
   @autobind
   renderCheckResultTip(valid, msg) {
     return valid
