@@ -288,7 +288,7 @@ export default class EditForm extends PureComponent {
       managerName: newManagerName,
     };
     // 禁止转出金额输入数据并且数据错误时
-    if (newLimitAmount && !regxp.positiveNumber.test(newLimitAmount)) {
+    if (newLimitAmount && !regxp.positiveInteger.test(newLimitAmount)) {
       message.error('请填写有效禁止转出金额');
       return;
     }
