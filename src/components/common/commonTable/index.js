@@ -3,7 +3,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-17 15:20:40
+ * @Last Modified time: 2018-09-04 18:34:35
  */
 
 import React, { PureComponent } from 'react';
@@ -304,7 +304,7 @@ export default class CommonTable extends PureComponent {
               _.map(actionSource, itemData => (
                 <span
                   className={styles.link}
-                  key={itemData.type}
+                  key={itemData.key || item.type}
                   onClick={() => itemData.handler(record)}
                 >
                   {itemData.type}
