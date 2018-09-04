@@ -103,7 +103,7 @@ const config = {
         dataIndex: 'custName',
         key: 'custName',
         title: '客户',
-        width: 200,
+        width: 160,
       },
       {
         dataIndex: 'empName',
@@ -115,6 +115,7 @@ const config = {
         dataIndex: 'limit',
         key: 'limit',
         title: '当前账户限制',
+        width: 300,
       },
     ],
     approvalList: [
@@ -137,12 +138,13 @@ const config = {
         dataIndex: 'managerId',
         key: 'managerId',
         title: '业务对接人',
-        width: 200,
+        width: 160,
       },
       {
         dataIndex: 'limitAmount',
         key: 'limitAmount',
         title: '禁止转出金额(元)',
+        width: 160,
       },
     ],
   },
