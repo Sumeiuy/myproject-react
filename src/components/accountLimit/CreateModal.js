@@ -412,6 +412,7 @@ export default class CreateModal extends PureComponent {
     const isLimit = value === SET_CODE;
     this.setState({
       [key]: value,
+      client: {},
       isLimit,
       companyName: '',
       stockCode: '',
@@ -423,7 +424,15 @@ export default class CreateModal extends PureComponent {
       limitEndTime: '',
       endDateDisabled: isLimit,
       attachmentList: [attachmentMap[0]],
-    }, this.queryNextStepButton);
+    }, () => {
+      this.queryNextStepButton();
+      const { clearData } = this.props;
+      // 清空 AutoComplete 的选项和值
+      this.queryCustComponent.clearValue();
+      clearData({
+        searchCustData: [],
+      });
+    });
   }
 
   // 公司简称改变
@@ -874,28 +883,28 @@ export default class CreateModal extends PureComponent {
     }
     // 业务对接人不能为空
     const filterManager = _.filter(addedCustData, o => _.isEmpty(o.managerId));
-    if (isLimit && !_.isEmpty(filterManager)) {
-      message.error('业务对接人不能为空!');
-      return;
-    }
-    if (_.isEmpty(limitType)) {
-      message.error('限制类型不能为空!');
-      return;
-    }
     // 找出限制金额转出的限制类型
     const filterLimitType = _.filter(limitType, o => o.key === KEY_LIMIT_TRANSFER_NUMBER);
-    if (!_.isEmpty(filterLimitType)) {
-      const filterLimitAmount = _.filter(addedCustData, o => _.isEmpty(o.limitAmount));
-      if (!_.isEmpty(filterLimitAmount)) {
-        message.error('请填写禁止转出金额');
+    if (isLimit) {
+      if (!_.isEmpty(filterManager)) {
+        message.error('业务对接人不能为空!');
         return;
       }
-    }
-    if (isLimit) {
+      if (!_.isEmpty(filterLimitType)) {
+        const filterLimitAmount = _.filter(addedCustData, o => _.isEmpty(o.limitAmount));
+        if (!_.isEmpty(filterLimitAmount)) {
+          message.error('请填写禁止转出金额');
+          return;
+        }
+      }
       if (_.isEmpty(limitStartTime)) {
         message.error('账户限制设置日期不能为空!');
         return;
       }
+    }
+    if (_.isEmpty(limitType)) {
+      message.error('限制类型不能为空!');
+      return;
     }
     if (_.isEmpty(limitEndTime)) {
       message.error('账户限制解除日期不能为空!');
