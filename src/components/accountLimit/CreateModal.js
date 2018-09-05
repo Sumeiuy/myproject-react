@@ -49,7 +49,7 @@ const {
   EDIT_MESSAGE,
 } = config;
 const autoCompleteStyle = {
-  width: '180px',
+  width: '176px',
   height: '30px',
 };
 // 登陆人的组织 ID
@@ -223,7 +223,7 @@ export default class CreateModal extends PureComponent {
         ? <Input
           value={newLimitAmount}
           placeholder="请输入禁止转出金额"
-          style={{ maxWidth: '180px' }}
+          style={{ maxWidth: '160px' }}
           onChange={e => this.handleLimitAmountChange(e, record)}
         />
         : newLimitAmount}</div>);
@@ -249,7 +249,7 @@ export default class CreateModal extends PureComponent {
           {this.renderPopconfirm(record)}
         </div>;
       },
-      width: 100,
+      width: 90,
     });
     return titleList;
   }
@@ -348,7 +348,7 @@ export default class CreateModal extends PureComponent {
       managerName: newManagerName,
     };
     // 禁止转出金额输入数据并且数据错误时
-    if (!_.isEmpty(newLimitAmount) && !regxp.positiveNumber.test(newLimitAmount)) {
+    if (!_.isEmpty(newLimitAmount) && !regxp.positiveInteger.test(newLimitAmount)) {
       message.error('请填写有效禁止转出金额');
       return;
     }
