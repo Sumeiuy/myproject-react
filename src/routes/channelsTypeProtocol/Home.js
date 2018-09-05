@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-07 17:37:05
+ * @Last Modified time: 2018-09-05 10:00:33
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -254,7 +254,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
     const {
       getProtocolDetail,
       seibleList: list,
-      location: { query: { currentId } },
+      replace,
+      location: { pathname, query, query: { currentId } },
     } = this.props;
     if (!_.isEmpty(list.resultData)) {
       // 表示左侧列表获取完毕
@@ -262,6 +263,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       // console.log('subType--->', subType);
       let item = list.resultData[0];
       let itemIndex = _.findIndex(list.resultData, o => o.id.toString() === currentId);
+      const { pageNum, pageSize } = list.page;
       const { subType: st } = item;
       if (!_.isEmpty(currentId) && itemIndex > -1) {
         // 此时url中存在currentId
@@ -284,6 +286,15 @@ export default class ChannelsTypeProtocol extends PureComponent {
           data: {
             id: item.id,
             subType: st,
+          },
+        });
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
           },
         });
       }
