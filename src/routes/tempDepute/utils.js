@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 14:59:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-03 16:21:05
+ * @Last Modified time: 2018-09-05 14:27:46
  * @description 临时委托任务的辅助函数
  */
 import _ from 'lodash';
@@ -26,13 +26,13 @@ const LIST_API_DEFAULT_QUERY = {
 };
 
 function convertApplyTimeFormat(timeStr) {
-  return _.replace(timeStr, '/', '-') || null;
+  return _.replace(timeStr, /\//g, '-') || null;
 }
 
 // 根据传入的请求参数与默认参数进行合并生成最终的列表接口请求参数
 export const composeQuery = (query) => {
   const { pageNum, pageSize, createTime, createTimeTo } = query;
-  const resetQuery = _.omit(query, ['drafterName', 'approvalName']);
+  const resetQuery = _.omit(query, ['drafterName', 'approvalName', 'createTime', 'createTimeTo']);
   // 因为从 location 上取回来的页码器是String，作为借口参数需要转化为 Number
   return {
     ...LIST_API_DEFAULT_QUERY,
