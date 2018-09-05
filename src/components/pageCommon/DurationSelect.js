@@ -92,9 +92,7 @@ export default class DurationSelect extends PureComponent {
       const maxDataDt = initialData.maxDataDt;
       const value = 'month';
       const duration = time.getDurationString(value, maxDataDt);
-      this.setState({
-        ...duration,
-      });
+      this.setState(duration);
     }
   }
   // 期间变化
