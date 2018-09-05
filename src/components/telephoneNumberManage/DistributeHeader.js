@@ -74,6 +74,7 @@ export default class DistributeHeader extends PureComponent {
       empList,
       custRange,
       replace,
+      location,
       location: { query: { orgId, isBinding } },
     } = this.props;
     const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };

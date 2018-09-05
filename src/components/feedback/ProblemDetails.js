@@ -17,6 +17,7 @@ import './problemDetails.less';
 import logable from '../../decorators/logable';
 
 const FormItem = Form.Item;
+const Option = Select.Option;
 const EMPTY_OBJECT = {};
 const feedbackChannel = feedbackOptions.feedbackChannel;
 let OPTIONKEY = 0;
@@ -368,4 +369,3 @@ export default class ProblemDetail extends PureComponent {
     );
   }
 }
-
