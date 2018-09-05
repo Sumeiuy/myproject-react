@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-05 15:25:46
+ * @Last Modified time: 2018-09-05 17:17:36
  * @description 临时任务委托表单
  */
 
@@ -115,12 +115,6 @@ export default class DeputeForm extends PureComponent {
   @autobind
   disabledStart(start) {
     return start < moment();
-  }
-
-  // 申请时间的结束时间必须是开始时间往后的日期
-  @autobind
-  disabledEnd(start, end) {
-    return end <= start;
   }
 
   // 将表单数据推送给父组件
