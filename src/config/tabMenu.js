@@ -313,12 +313,6 @@ const newOpenTabConfig = [
     pid: 'FSP_TASK_FEEDBACK',
   },
   {
-    name: '非投顾签约客户分布',
-    id: 'FSP_BUSINESSDEPARTMENT_CUSTDISTRIBUTE',
-    path: '/businessDepartmentCustDistribute',
-    pid: 'FSP_BUSINESSDEPARTMENT_CUSTDISTRIBUTE',
-  },
-  {
     name: '投顾竞赛',
     id: 'FSP_INVESTMENT_CONSULTANTRACE',
     path: '/investmentConsultantRace',

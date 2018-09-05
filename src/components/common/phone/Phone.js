@@ -106,9 +106,6 @@ export default class Phone extends PureComponent {
     this.popWin = null;
   }
 
-  // 是否已绑定message事件
-  boundMessageEvent = false;
-
   componentDidMount() {
     if (this.props.headless === true && window.$) {
       window.$('body').on(
@@ -134,6 +131,16 @@ export default class Phone extends PureComponent {
       );
     }
   }
+
+  componentWillUnmount() {
+    if (this.boundMessageEvent) {
+      this.boundMessageEvent = false;
+      window.removeEventListener('message', this.receiveMessage);
+    }
+  }
+
+  // 是否已绑定message事件
+  boundMessageEvent = false;
 
   canCall() {
     const { empInfo, disable } = this.props;
@@ -248,12 +255,5 @@ export default class Phone extends PureComponent {
         {number}
       </div>
     );
-  }
-
-  componentWillUnmount() {
-    if (this.boundMessageEvent) {
-      this.boundMessageEvent = false;
-      window.removeEventListener('message', this.receiveMessage);
-    }
   }
 }

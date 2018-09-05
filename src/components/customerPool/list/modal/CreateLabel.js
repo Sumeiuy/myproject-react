@@ -29,6 +29,14 @@ export default class CreateLabelType extends PureComponent {
     return null;
   }
 
+  static propTypes = {
+    form: PropTypes.object.isRequired,
+    labelName: PropTypes.string.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    visible: PropTypes.bool.isRequired,
+    addLabel: PropTypes.func.isRequired,
+  };
+
   constructor(props) {
     super(props);
     const { visible } = this.props;
@@ -39,14 +47,6 @@ export default class CreateLabelType extends PureComponent {
     // 新建标签id
     this.newLabelId = '';
   }
-
-  static propTypes = {
-    form: PropTypes.object.isRequired,
-    labelName: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
-    visible: PropTypes.bool.isRequired,
-    addLabel: PropTypes.func.isRequired,
-  };
 
   componentDidUpdate(prevProps, prevState) {
     if (!prevState.visible && this.state.visible) {

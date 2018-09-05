@@ -48,8 +48,8 @@ const env = {
     return {
       $app_version: constants.version,
       $os: env.getOS(),
-      $screen_width: screen.width,
-      $screen_height: screen.height,
+      $screen_width: window.screen.width,
+      $screen_height: window.screen.height,
       $browser: formatBowserName(bowser.name),
       $browser_version: `${bowser.name} ${bowser.version}`,
     };

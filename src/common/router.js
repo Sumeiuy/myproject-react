@@ -148,7 +148,7 @@ export const getRouterData = (app) => {
           'taskList/tasklist',
           'taskList/managerView',
           'investmentAdvice'
-        ], () => 
+        ], () =>
         import('../routes/taskList/connectedHome' /* webpackChunkName: "taskList" */)),
     },
     // 直接进入
@@ -199,7 +199,7 @@ export const getRouterData = (app) => {
     // 直接进入
     '/customerPool': {
       component: CustomerPool,
-      // component: dynamicWrapper(app, ['customerPool', 'morningBoradcast'], () => 
+      // component: dynamicWrapper(app, ['customerPool', 'morningBoradcast'], () =>
       //   import('../routes/customerPool/Home' /* webpackChunkName: "customerPool" */)),
     },
     // 从 customerPool 搜索框下方--任务概览--第三个选项【代办流程】进入
@@ -209,7 +209,7 @@ export const getRouterData = (app) => {
     },
     // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
     '/customerPool/list': {
-      component: dynamicWrapper(app, ['customerPool', 'customerLabel'], () => 
+      component: dynamicWrapper(app, ['customerPool', 'customerLabel'], () =>
         import('../routes/customerPool/CustomerList__' /* webpackChunkName: "customerPool_list" */ )),
     },
     // customerPool/customerGroup 直接进入，所需数据未知
@@ -265,7 +265,7 @@ export const getRouterData = (app) => {
     },
     // 客户分组管理
     '/customerPool/customerGroupManage': {
-      component: dynamicWrapper(app, [], () => 
+      component: dynamicWrapper(app, [], () =>
         import('../routes/customerPool/CustomerGroupManage' /* webpackChunkName: "customerGroupManage" */)),
     },
     '/customerPool/serviceLog': {
@@ -274,7 +274,7 @@ export const getRouterData = (app) => {
     },
     // 从 /taskList 页面，点击右上角新建进入
     '/customerPool/taskFlow': {
-      component: dynamicWrapper(app, ['customerPool'], () => 
+      component: dynamicWrapper(app, ['customerPool'], () =>
         import('../routes/customerPool/TaskFlow' /* webpackChunkName: "customerPool_taskFlow" */)),
     },
 
@@ -447,11 +447,6 @@ export const getRouterData = (app) => {
     '/choicenessCombination/reportDetail': {
       component: dynamicWrapper(app, ['choicenessCombination'], () =>
         import('../routes/choicenessCombination/ReportDetail' /* webpackChunkName: "choicenessCombination_reportDetail" */)),
-    },
-    // 营业部非投顾签约客户分配页面
-    '/businessDepartmentCustDistribute': {
-      component: dynamicWrapper(app, ['custDistribute'], () =>
-        import('../routes/businessDepartmentCustDistribute/ConnectedHome' /* webpackChunkName: "businessDepartmentCustDistribute" */)),
     },
     // 投顾业务能力竞赛
     '/investmentConsultantRace': {
