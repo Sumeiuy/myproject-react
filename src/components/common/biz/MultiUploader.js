@@ -113,8 +113,13 @@ export default class MultiUpload extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
   onChange(info) {
-    const { type, uploadCallback, limitCount } = this.props;
+    const { type, uploadCallback, limitCount, maxSize } = this.props;
     const uploadFile = info.file;
+    const { size } = uploadFile;
+    if (size > (maxSize * 1024 * 1024)) {
+      message.error(`文件大小不能超过 ${maxSize} Mb`);
+      return;
+    }
     this.setState({
       percent: info.file.percent,
       fileList: info.fileList,
@@ -238,7 +243,6 @@ export default class MultiUpload extends PureComponent {
       onChange: this.onChange,
       showUploadList: false,
       fileList,
-      beforeUpload: this.beforeUpload,
     };
 
     const uploadElement = (edit && isShowUploadBtn) ?
