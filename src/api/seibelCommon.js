@@ -22,9 +22,7 @@ export default function seibelCommon(api) {
     // 通过用户输入的关键字，获取可申请的客户列表
     getCanApplyCustList: query => api.post('/groovynoauth/fsp/biz/custList', query),
     // 删除附件
-    deleteAttachment: query => api.post('/file/ceFileDelete', query),
-    // api-getway 改造 删除附件
-    reformDeleteAttachment: query => api.post('/file/ceFileDelete2', query),
+    deleteAttachment: query => api.post('/file/ceFileDelete2', query),
     // 查询某客户的服务人员待选择列表
     getSearchServerPersonelList: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryEmpList', query),
     // 查询批量佣金调整详情页面中查看单个用户的审批记录

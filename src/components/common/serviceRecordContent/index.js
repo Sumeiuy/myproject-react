@@ -1197,7 +1197,7 @@ export default class ServiceRecordContent extends PureComponent {
                   }}
                   beforeUpload={beforeUpload}
                   custUuid={custUuid}
-                  uploadTarget={`${request.prefix}/file/ceFileUpload`}
+                  uploadTarget={`${request.prefix}/file/ceFileUpload2`}
                   isSupportUploadMultiple
                   onDeleteFile={this.handleDeleteFile}
                   deleteFileResult={deleteFileResult}

@@ -25,7 +25,7 @@ export default function commission(api) {
     // 查询咨询订阅/退订详情接口
     queryConsultDetail: query => api.post('/groovynoauth/fsp/biz/mailsubscription/querySubscriptionOrderInfo', query),
     // 获取附件信息
-    getAttachment: query => api.post('/file/ceFileList', query),
+    getAttachment: query => api.post('/file/ceFileList2', query),
     // 根据用户输入的数值查询目标股基佣金率的码值
     queryGJCommissionRate: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingelCommionJustRate', query),
     // 查询客户可以订阅的资讯产品

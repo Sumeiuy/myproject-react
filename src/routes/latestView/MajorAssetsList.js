@@ -2,18 +2,20 @@
  * @Description: 大类资产配置分析更多列表
  * @Author: Liujianshu
  * @Date: 2018-06-22 13:24:46
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-25 15:55:23
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-30 15:22:24
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { autobind } from 'core-decorators';
-import { Table, Select, DatePicker } from 'antd';
+import { Table, Select } from 'antd';
+import DateRangePick from 'lego-react-date/src';
 import _ from 'lodash';
 import moment from 'moment';
 
+import logable from '../../decorators/logable';
 import { dva, time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
@@ -24,7 +26,6 @@ import styles from './majorAssetsList.less';
 
 const dispatch = dva.generateEffect;
 const Option = Select.Option;
-const RangePicker = DatePicker.RangePicker;
 
 const { dateFormatStr, majorAssets: { titleArray, typeArray, categoryArray } } = config;
 const EMPTY_OBJECT = {};
@@ -140,10 +141,18 @@ export default class MajorAssetsList extends PureComponent {
   }
 
   @autobind
-  handleDateChange(moments, dateStrings) {
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '报告日期',
+      min: '$args[0]',
+      max: '$args[1]',
+    },
+  })
+  handleDateChange(startDate, endDate) {
     this.setState({
-      startDate: dateStrings[0],
-      endDate: dateStrings[1],
+      startDate,
+      endDate,
     }, this.sendRequest);
   }
 
@@ -242,10 +251,10 @@ export default class MajorAssetsList extends PureComponent {
             </div>
             <div className={styles.dateBox}>
               <span className={styles.title}>报告日期：</span>
-              <RangePicker
-                defaultValue={defaultDate}
-                format={dateFormatStr}
-                onChange={this.handleDateChange}
+              <DateRangePick
+                filterName=""
+                filterValue={defaultDate}
+                onChange={date => this.handleDateChange(date.value[0], date.value[1])}
               />
             </div>
           </div>

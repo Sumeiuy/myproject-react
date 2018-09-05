@@ -55,7 +55,6 @@ export default class UploadFile extends PureComponent {
       uploadAttachment: this.uploadAttachment,
       attachment: this.props.attachment,
       needDefaultText: this.props.needDefaultText,
-      reformEnable: true,
       beforeUpload: this.handleBeforeUpload,
       maxFileSize,
     };

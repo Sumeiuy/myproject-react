@@ -103,7 +103,7 @@ const config = {
         dataIndex: 'custName',
         key: 'custName',
         title: '客户',
-        width: 200,
+        width: 160,
       },
       {
         dataIndex: 'empName',
@@ -115,6 +115,7 @@ const config = {
         dataIndex: 'limit',
         key: 'limit',
         title: '当前账户限制',
+        width: 270,
       },
     ],
     approvalList: [
@@ -130,6 +131,20 @@ const config = {
         title: '所属部门',
         dataIndex: 'occupation',
         key: 'occupation',
+      },
+    ],
+    moreList: [
+      {
+        dataIndex: 'managerId',
+        key: 'managerId',
+        title: '业务对接人',
+        width: 190,
+      },
+      {
+        dataIndex: 'limitAmount',
+        key: 'limitAmount',
+        title: '禁止转出金额(元)',
+        width: 160,
       },
     ],
   },
@@ -161,6 +176,7 @@ const config = {
     },
   ],
   errorArray: ['validateError', 'otherError'],
+  EDIT_MESSAGE: '当前页有正处于编辑的数据，请取消或确认后再进行操作。',
   tips: {
     validateError: '该申请单数据导入失败，请点击下载报错信息查看报错信息，如有需要，请重新发起流程。',
     otherError: '该申请单流程提交失败，如有需要，请重新发起流程或联系运维人员核查处理。',

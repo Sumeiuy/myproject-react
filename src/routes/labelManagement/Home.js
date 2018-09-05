@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-20 11:05:10
+ * @Last Modified time: 2018-09-04 17:40:18
  */
 
 import React, { PureComponent } from 'react';
@@ -23,7 +23,7 @@ import { openRctTab } from '../../utils';
 import { url as urlHelper, dva } from '../../helper';
 import confirm from '../../components/common/confirm_';
 import withRouter from '../../decorators/withRouter';
-// import Icon from '../../components/common/Icon';
+import Icon from '../../components/common/Icon';
 import styles from './home.less';
 import tableStyles from '../../components/common/commonTable/index.less';
 import logable, { logPV, logCommon } from '../../decorators/logable';
@@ -62,7 +62,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   // 获取热词列表
-  getHotPossibleWds: dispatch(effects.getHotPossibleWds, { loading: true, forceFull: true }),
+  getHotPossibleWds: dispatch(effects.getHotPossibleWds, { loading: false }),
   // 获取上传excel文件解析后的客户
   queryBatchCustList: dispatch(effects.queryBatchCustList, { loading: true, forceFull: true }),
   // 清除数据
@@ -166,11 +166,12 @@ export default class CustomerGroupManage extends PureComponent {
       name: '',
       // 分组描述
       description: '',
-      modalTitle: MODALTITLE_CREATELABEL,
       id: '',
       record: {},
       // 分组转标签模态框
       isShowGroupToLabelModal: false,
+      // 默认弹出的新建标签的模态框
+      isCreateLabel: true,
     };
   }
 
@@ -250,15 +251,15 @@ export default class CustomerGroupManage extends PureComponent {
   // 编辑标签
   @autobind
   @logPV({ pathname: '/modal/createAndEditLabelModalContent', title: '编辑标签' })
-  editLabel(record) {
+  handleEditLabel(record) {
     const { id } = record;
     const { queryLabelCust } = this.props;
-    this.showLabelDetailModal(record, MODALTITLE_EDITLABEL);
+    this.showLabelDetailModal(record, false);
     // 获取标签下的客户列表
     queryLabelCust({
       labelId: id,
       pageNum: 1,
-      pageSize: 5,
+      pageSize: 10,
     });
   }
 
@@ -350,7 +351,7 @@ export default class CustomerGroupManage extends PureComponent {
    * @param {*} record 当前记录
    */
   @autobind
-  showLabelDetailModal(record = {}, modalTitle = MODALTITLE_CREATELABEL) {
+  showLabelDetailModal(record = {}, isCreateLabel = true) {
     const { labelName = '', labelDesc = '', id = '', labelTypeId } = record;
     this.setState({
       visible: true,
@@ -359,55 +360,34 @@ export default class CustomerGroupManage extends PureComponent {
       canEditDetail: labelTypeId && labelTypeId === '0',
       name: labelName,
       description: labelDesc,
-      // 默认是新建标签
-      modalTitle,
       id,
+      isCreateLabel,
     });
   }
 
   // 显示新建标签模态框
   @autobind
   @logPV({ pathname: '/modal/createAndEditLabelModalContent', title: '新建标签' })
-  showCreateLabelModal(record) {
-    this.showLabelDetailModal(record);
+  showCreateLabelModal() {
+    this.showLabelDetailModal();
   }
 
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCloseModal() {
-    const { id, custIds } = this.detailRef.getData();
-    if (id) {
-      // 编辑模式下
-      if (!_.isEmpty(custIds)) {
-        // 存在custIdList,在取消的时候提示
-        confirm({
-          content: '客户已添加成功，如需取消添加的客户请在列表中删除',
-          onOk: () => { this.toggleCreateAndEditLabelModalVisible(false); },
-          onCancel: _.noop,
-        });
-      } else {
-        this.setState({
-          visible: false,
-        });
-      }
-    } else if (!_.isEmpty(custIds)) {
+    const { custIds } = this.detailRef.getData();
+    if (!_.isEmpty(custIds)) {
+      const content = !this.state.isCreateLabel
+        ? '客户已添加成功，如需取消添加的客户请在列表中删除'
+        : '在新增模式下，添加客户需要提交才能生效，确认取消？';
       confirm({
-        content: '在新增模式下，添加客户需要提交才能生效，确认取消？',
+        content,
         onOk: () => { this.toggleCreateAndEditLabelModalVisible(false); },
         onCancel: _.noop,
       });
     } else {
-      this.setState({
-        visible: false,
-      });
+      this.toggleCreateAndEditLabelModalVisible(false);
     }
-  }
-
-  @autobind
-  handleSubmitCloseModal() {
-    this.setState({
-      visible: false,
-    });
   }
 
   /**
@@ -440,7 +420,7 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   handleSubmit(e) {
     if (this.detailRef) {
-      const { id, custIds } = this.detailRef.getData();
+      const { custIds } = this.detailRef.getData();
       e.persist();
       const form = this.detailRef.getForm();
       form.validateFields((err, values) => {
@@ -451,7 +431,7 @@ export default class CustomerGroupManage extends PureComponent {
             labelFlag: '1',
           }).then((duplicationName) => {
             // 新建模式下校验重名
-            if (!id && duplicationName) {
+            if (duplicationName) {
               form.setFields({
                 name: {
                   value: values.name,
@@ -461,19 +441,17 @@ export default class CustomerGroupManage extends PureComponent {
               return;
             }
             const { name = '', description } = values;
-            this.submitFormContent(name, description, id, custIds);
-            // log日志 --- 新建客户分组
-            const type = id ? '编辑' : '新建';
+            this.submitFormContent(name, description, custIds);
+            // log日志
             const formValues = {
               ...values,
-              id,
               custIds,
             };
             logCommon({
               type: 'Submit',
               payload: {
                 name: values.name,
-                type,
+                type: '新建',
                 number: custIds.length,
                 value: JSON.stringify(formValues),
               },
@@ -485,9 +463,8 @@ export default class CustomerGroupManage extends PureComponent {
   }
 
   @autobind
-  @checkSpecialCharacter
-  submitFormContent(name, description, id, custIds) {
-    const { operateLabel, location: { query: { curPageNum, curPageSize, keyWord } } } = this.props;
+  submitFormContent(name, description, custIds) {
+    const { operateLabel } = this.props;
     const postBody = {
       request: {
         labelName: name,
@@ -495,35 +472,75 @@ export default class CustomerGroupManage extends PureComponent {
         custIds: _.isEmpty(custIds) ? null : custIds,
         excludeCustIdList: null,
       },
-      keyWord,
-      pageNum: curPageNum,
-      pageSize: curPageSize,
     };
-    if (id) {
-      // 编辑分组
-      operateLabel(_.merge(postBody, {
-        request: {
-          labelIds: [id],
-        },
-      }));
-    } else {
-      // 新增分组
-      operateLabel(postBody);
-    }
+    // 新增标签
+    operateLabel(postBody).then((res) => {
+      if (res.resultData === 'success') {
+        message.success('新建标签成功');
+        this.handleComparedGetLabelList();
+      }
+    });
     // 关闭弹窗
-    this.handleSubmitCloseModal();
+    this.toggleCreateAndEditLabelModalVisible(false);
+  }
+
+  // 在新建、编辑或者分组转标签成功时
+  // 进行多次提交的时候，url的参数在push时没有改变不请求
+  // 需要单独发一个请求
+  @autobind
+  handleComparedGetLabelList() {
+    const {
+      location: {
+        pathname,
+        query: {
+          curPageNum = INITIAL_CURPAGE,
+          keyWord = '',
+          curPageSize = INITIAL_PAGESIZE,
+        },
+      },
+    } = this.props;
+    if (curPageNum === INITIAL_CURPAGE && curPageSize === INITIAL_PAGESIZE && keyWord === '') {
+      this.getLabelList({
+        curPageNum: INITIAL_CURPAGE,
+        curPageSize: INITIAL_PAGESIZE,
+      });
+    } else {
+      this.context.push({
+        pathname,
+      });
+    }
   }
 
   /**
-   * 添加客户到已经存在的标签中
+   * 更新标签的信息，包括标签的名称、描述、客户
    * 调用接口
-   * @param {*object} param0 添加标签对象
+   * @param {*object} param0
+   *   data: 标签信息
+   *   isNeedQueryLabelCust：是否需要去重新查询标签下的客户
+   *   callback：更新标签成功后回调
    */
   @autobind
-  addCustomerToExistedLabel({ custIds, name, description }) {
+  handleUpdateLabel({ data, isNeedQueryLabelCust = true }) {
+    const { custIds, name, description } = data;
     const { id } = this.state;
-    const { operateLabel, location: { query: { keyWord } } } = this.props;
-    operateLabel({
+    const { operateLabel, queryLabelCust } = this.props;
+    // log日志
+    const formValues = {
+      name,
+      description,
+      id,
+      custIds,
+    };
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name,
+        type: '编辑',
+        number: custIds.length,
+        value: JSON.stringify(formValues),
+      },
+    });
+    return operateLabel({
       request: {
         labelIds: [id],
         labelName: name,
@@ -531,21 +548,27 @@ export default class CustomerGroupManage extends PureComponent {
         custIds: _.isEmpty(custIds) ? null : custIds,
         excludeCustIdList: null,
       },
-      keyWord,
+    }).then((res) => {
+      if (res.resultData === 'success') {
+        message.success('更新标签成功');
+        this.handleComparedGetLabelList();
+        if (isNeedQueryLabelCust) {
+          queryLabelCust({
+            pageNum: INITIAL_CURPAGE,
+            pageSize: INITIAL_PAGESIZE,
+            labelId: id,
+          });
+        }
+      }
     });
   }
 
   @autobind
   customerGroupDetailRef(ref) {
-    this.detailRef = ref;
+    if (ref) {
+      this.detailRef = ref;
+    }
   }
-
-  // 点击了标签名称
-  @autobind
-  handleEditLabel(record) {
-    this.editLabel(record);
-  }
-
 
   // 显示隐藏分组转标签模态框
   @autobind
@@ -572,13 +595,54 @@ export default class CustomerGroupManage extends PureComponent {
 
   renderActionSource() {
     return [{
-      type: '删除',
+      type: <Icon type="shanchu" className={styles.deleteIcon} />,
       handler: this.handleDeleteBtnClick,
     },
     {
-      type: '发起任务',
-      handler: this.lanuchTask,
+      type: (
+        <span className={styles.launchTask} onClick={this.lanuchTask}>
+          <Icon type="faqirenwu" className={styles.launchTaskIcon} />
+          发起任务
+        </span>
+      ),
+      handler: _.noop,
     }];
+  }
+
+  // 新建标签显示[取消]、[提交]按钮，编辑标签显示[确定]按钮
+  @autobind
+  renderModalFooter() {
+    if (this.state.isCreateLabel) {
+      return (
+        <div className={styles.operationBtnSection}>
+          <Button
+            className={styles.cancel}
+            onClick={this.handleCloseModal}
+          >
+            取消
+          </Button>
+          <Button
+            htmlType="submit"
+            className={styles.submit}
+            type="primary"
+            onClick={_.debounce(this.handleSubmit, 250)}
+          >
+            提交
+          </Button>
+        </div>
+      );
+    }
+    return (
+      <div className={styles.operationBtnSection}>
+        <Button
+          className={styles.submit}
+          type="primary"
+          onClick={this.handleCloseModal}
+        >
+          确定
+        </Button>
+      </div>
+    );
   }
 
   render() {
@@ -611,9 +675,9 @@ export default class CustomerGroupManage extends PureComponent {
       canEditDetail,
       name,
       description,
-      modalTitle,
       id,
       isShowGroupToLabelModal,
+      isCreateLabel,
     } = this.state;
 
     const {
@@ -630,25 +694,7 @@ export default class CustomerGroupManage extends PureComponent {
     // 构造operation
     const actionSource = this.renderActionSource();
 
-    const modalFooter = (
-      <div className={styles.operationBtnSection}>
-        <Button
-          className={styles.cancel}
-          onClick={this.handleCloseModal}
-        >
-          取消
-        </Button>
-        <Button
-          htmlType="submit"
-          className={styles.submit}
-          type="primary"
-          // 加入节流函数
-          onClick={_.debounce(this.handleSubmit, 250)}
-        >
-          提交
-        </Button>
-      </div>
-    );
+    const modalTitle = isCreateLabel ? MODALTITLE_CREATELABEL : MODALTITLE_EDITLABEL;
 
     return (
       <div className={styles.groupPanelContainer}>
@@ -674,7 +720,7 @@ export default class CustomerGroupManage extends PureComponent {
             <Button
               type="primary"
               className={styles.addBtn}
-              onClick={this.showLabelDetailModal}
+              onClick={this.showCreateLabelModal}
             >
               + 新建
             </Button>
@@ -704,11 +750,8 @@ export default class CustomerGroupManage extends PureComponent {
             key={modalKey}
             visible={visible}
             title={modalTitle}
-            okText={'提交'}
-            cancelText={'取消'}
-            okType={'primary'}
-            onCancelHandler={this.handleCloseModal}
-            footer={modalFooter}
+            footer={this.renderModalFooter()}
+            closable
             modalContent={
               <CreateAndEditLabelModalContent
                 wrappedComponentRef={this.customerGroupDetailRef}
@@ -721,10 +764,12 @@ export default class CustomerGroupManage extends PureComponent {
                 getGroupCustomerList={queryLabelCust}
                 detailData={{ name, description, id }}
                 location={location}
-                onAddCustomerToLabel={this.addCustomerToExistedLabel}
+                onUpdateLabel={this.handleUpdateLabel}
                 queryBatchCustList={queryBatchCustList}
                 batchCustList={batchCustList}
                 checkDuplicationName={checkDuplicationName}
+                isCreateLabel={isCreateLabel}
+                onComparedGetLabelList={this.handleComparedGetLabelList}
               />
             }
           />
@@ -741,7 +786,7 @@ export default class CustomerGroupManage extends PureComponent {
           possibleLabelListInfo={possibleLabelListInfo}
           clearPossibleLabels={clearPossibleLabels}
           group2Label={group2Label}
-          getLabelList={this.getLabelList}
+          onComparedGetLabelList={this.handleComparedGetLabelList}
         />}
       </div>
     );

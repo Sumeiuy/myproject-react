@@ -2,8 +2,8 @@
  * @Description: 紫金时钟观点列表打开的详情弹窗
  * @Author: Liujianshu
  * @Date: 2018-06-29 14:29:10
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-07-02 14:49:54
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-30 14:43:03
  */
 
 import React, { PureComponent } from 'react';

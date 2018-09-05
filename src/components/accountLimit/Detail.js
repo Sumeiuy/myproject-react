@@ -23,7 +23,7 @@ import logable from '../../decorators/logable';
 
 // 表头
 const {
-  tableTitle: { custList: custTitleList },  // 客户表格列表
+  tableTitle: { custList: custTitleList, moreList },  // 客户表格列表
   operateTypeArray,  // 操作类型枚举
   RELIEVE_CODE,  // 限制解除的 value
   attachmentMap,  // 附件类型枚举
@@ -34,6 +34,11 @@ const KEY_CUSTNAME = 'custName';
 const KEY_EMPNAME = 'empName';
 // 限制类型
 const KEY_LIMIT = 'limit';
+// 业务对接人
+const KEY_MANAGERID = 'managerId';
+// 禁止转出金额
+const KEY_LIMIT_AMOUNT = 'limitAmount';
+// 每页条数
 const PAGE_SIZE = 7;
 export default class Detail extends PureComponent {
   static propTypes = {
@@ -52,6 +57,7 @@ export default class Detail extends PureComponent {
   // 生成表格标题
   @autobind
   getColumnsCustTitleList(list) {
+    const { data: { operateType } } = this.props;
     const tempTitleList = [...list];
     // 客户
     const custColumn = _.find(tempTitleList, o => o.key === KEY_CUSTNAME);
@@ -68,6 +74,21 @@ export default class Detail extends PureComponent {
     // 限制类型
     const limitColumn = _.find(tempTitleList, o => o.key === KEY_LIMIT);
     limitColumn.render = text => (<div title={text || ''}>{text || ''}</div>);
+    // 如果是限制设置，则增加两列数据
+    if (operateType !== RELIEVE_CODE) {
+      tempTitleList.push(...moreList);
+
+      // 对接人
+      const managerIdColumn = _.find(tempTitleList, o => o.key === KEY_MANAGERID) || {};
+      managerIdColumn.render = (text, record) => {
+        const { managerId, managerName } = record;
+        const showName = managerId ? `${managerName} (${managerId || ''})` : '';
+        return <div title={showName}>{showName}</div>;
+      };
+
+      const limitAmountColumn = _.find(tempTitleList, o => o.key === KEY_LIMIT_AMOUNT) || {};
+      limitAmountColumn.render = text => <div>{text}</div>;
+    }
     return tempTitleList;
   }
 
@@ -146,6 +167,8 @@ export default class Detail extends PureComponent {
     };
     // 新的客户列表渲染标题
     const newTitleList = this.getColumnsCustTitleList(custTitleList);
+    // 表格需要滚动的宽度
+    const scrollWidth = _.sum(_.map(newTitleList, 'width'));
     // 匹配的操作类型
     const filterOperate = _.filter(operateTypeArray, o => o.value === operateType);
     // 操作类型是否是限制解除
@@ -172,6 +195,7 @@ export default class Detail extends PureComponent {
             data={showCustList[pageNum - 1]}
             align="left"
             rowKey="custId"
+            scroll={{ x: scrollWidth }}
           />
           <Pagination
             {...custListPaginationOption}
