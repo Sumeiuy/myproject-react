@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-04 13:46:47
+ * @Last Modified time: 2018-09-05 15:25:46
  * @description 临时任务委托表单
  */
 
@@ -109,6 +109,18 @@ export default class DeputeForm extends PureComponent {
   isCreateApply() {
     // action 判断当前是新建申请 'CREATE' 还是 驳回后修改申请'UPDATE'
     return this.props.action === 'CREATE';
+  }
+
+  // 申请的时间开始时间不能早于当前时间
+  @autobind
+  disabledStart(start) {
+    return start < moment();
+  }
+
+  // 申请时间的结束时间必须是开始时间往后的日期
+  @autobind
+  disabledEnd(start, end) {
+    return end <= start;
   }
 
   // 将表单数据推送给父组件
@@ -326,6 +338,7 @@ export default class DeputeForm extends PureComponent {
             <DateRangePicker
               filterValue={[formData.deputeTimeStart, formData.deputeTimeEnd]}
               onChange={this.handleDeputePeriodChange}
+              disabledStart={this.disabledStart}
             />
           </InfoCell>
         </div>
