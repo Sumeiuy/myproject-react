@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-13 09:41:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-29 15:41:08
+ * @Last Modified time: 2018-09-06 15:05:50
  */
 
 import React, { PureComponent } from 'react';
@@ -395,11 +395,9 @@ export default class Pageheader extends PureComponent {
     const startDate = value[0];
     const endDate = value[1];
     if (startDate && endDate) {
-      const createTime = moment(startDate).format(dateFormat);
-      const createTimeTo = moment(endDate).format(dateFormat);
       this.props.filterCallback({
-        createTime,
-        createTimeTo,
+        createTime: value[0],
+        createTimeTo: value[1],
       });
     }
   }

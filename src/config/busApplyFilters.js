@@ -2,8 +2,8 @@
  * @Author: zhangjun
  * @Description: 业务申请头部筛选组件公共筛选项
  * @Date: 2018-07-31 14:39:37
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-31 14:41:27
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-06 15:02:33
  */
 
 const exported = {
@@ -153,6 +153,7 @@ const exported = {
       filterName: '申请时间',  // 过滤器中文名称
       filterId: 'applyTime', // 过滤器英文代号, 首字母小写
       type: 'date', // 过滤器类型
+      stateDateWrapper: date => date.format('YYYY/MM/DD'),
     },
     filterOption: ['createTime', 'createTimeTo'],
   },

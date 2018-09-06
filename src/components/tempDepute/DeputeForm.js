@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-05 17:23:40
+ * @Last Modified time: 2018-09-06 13:42:56
  * @description 临时任务委托表单
  */
 
@@ -87,8 +87,8 @@ export default class DeputeForm extends PureComponent {
   }
 
   @autobind
-  getInitialState() {
-    // const { detailInfo = {} } = props;
+  getInitialState(props) {
+    const { detailInfo = {} } = props;
     const isCreate = this.isCreateApply();
     if (isCreate) {
       return {
@@ -96,7 +96,19 @@ export default class DeputeForm extends PureComponent {
         assigneeOrgId: emp.getOrgId(),
       };
     }
+    const {
+      deputeReason,
+      assigneeId,
+      assigneeOrgId,
+      assigneeTimeStart,
+      assigneeTimeEnd,
+    } = detailInfo;
     return {
+      deputeReason,
+      deputeTimeStart: assigneeTimeStart,
+      deputeTimeEnd: assigneeTimeEnd,
+      assigneeId,
+      assigneeOrgId,
     };
   }
 
@@ -226,6 +238,7 @@ export default class DeputeForm extends PureComponent {
     },
   })
   handleDeputePeriodChange({ value }) {
+    console.warn('period', value);
     const { formData } = this.state;
     this.setState({
       formData: {
