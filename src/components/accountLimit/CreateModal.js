@@ -218,17 +218,15 @@ export default class CreateModal extends PureComponent {
       const limitAmountColumn = _.find(titleList, o => o.key === KEY_LIMIT_AMOUNT) || {};
       limitAmountColumn.render = (text, record) => {
         const { edit = false, newLimitAmount = '', limitAmount = '' } = record;
-        // 取 新的限制金额 或者 旧的限制金额
-        const showLimitAmount = newLimitAmount || limitAmount;
         return (<div>{
         edit
         ? <Input
-          value={showLimitAmount}
+          value={newLimitAmount}
           placeholder="请输入禁止转出金额"
           style={{ maxWidth: '160px' }}
           onChange={e => this.handleLimitAmountChange(e, record)}
         />
-        : showLimitAmount}</div>);
+        : limitAmount}</div>);
       };
     }
     // 添加操作列
@@ -320,6 +318,9 @@ export default class CreateModal extends PureComponent {
   editCustomerInfo(record) {
     const newData = {
       edit: true,
+      newLimitAmount: record.limitAmount,
+      newManagerId: record.managerId,
+      newManagerName: record.managerName,
     };
     this.updateRecordData(record, newData);
   }
