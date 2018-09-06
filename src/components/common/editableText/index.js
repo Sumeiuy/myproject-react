@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-31 13:12:29
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-03 21:03:05
+ * @Last Modified time: 2018-09-06 11:59:25
  *
  * @params
  *  name: 表单form中的唯一标识，外层通过form获取到该字段的值
@@ -63,15 +63,13 @@ export default class EditableText extends PureComponent {
 
   // 点击了 √ 按钮保存修改
   @autobind
-  handleOk(e) {
-    e.stopPropagation();
+  handleOk() {
     this.saveData();
   }
 
   // 点击了 X 按钮取消修改
   @autobind
-  handleCancel(e) {
-    e.stopPropagation();
+  handleCancel() {
     this.toggleEdit();
     this.input.blur();
   }
@@ -87,6 +85,14 @@ export default class EditableText extends PureComponent {
     ) {
       this.saveData();
     }
+  }
+
+  // 点击了铅笔图标
+  @autobind
+  handleClickPen(e) {
+    // 阻止冒泡
+    e.nativeEvent.stopImmediatePropagation();
+    this.toggleEdit();
   }
 
   // 切换正常模式和编辑模式
@@ -184,7 +190,11 @@ export default class EditableText extends PureComponent {
         onClick={this.toggleEdit}
       >
         {this.props.children}
-        <Icon type="shenqing" className={styles.pen} />
+        <Icon
+          type="shenqing"
+          className={styles.pen}
+          onClick={this.handleClickPen}
+        />
       </div>
     );
   }
