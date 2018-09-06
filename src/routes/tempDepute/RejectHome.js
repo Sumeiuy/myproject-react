@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-09-06 09:06:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-06 13:56:59
+ * @Last Modified time: 2018-09-06 17:14:37
  * @description 临时委托他人处理任务驳回后修改
  */
 import React, { Component } from 'react';
@@ -20,6 +20,7 @@ import InfoItem from '../../components/common/infoItem';
 import DeputeForm from '../../components/tempDepute/DeputeForm';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
+import { logCommon } from '../../decorators/logable';
 import { env, dom, dva } from '../../helper';
 import { DEFAULT_CHECK_REAULT, validateAll } from '../../components/tempDepute/utilsCheck';
 
@@ -58,7 +59,7 @@ const mapDispatchToProps = {
   // 查询可受托部门列表
   queryCanDeputeOrg: effect('tempDepute/queryCanDeputeOrg', { forceFull: true }),
   // 查询可受托人员列表
-  queryCanDeputeEmp: effect('tempDepute/queryCanDeputeEmp', { forceFull: true }),
+  queryCanDeputeEmp: effect('tempDepute/queryCanDeputeEmp', { loading: false, forceFull: true }),
   // 检查是否可以发起委托
   checkApplyAbility: effect('tempDepute/checkApplyAbility', { forceFull: true }),
   // 清除Redux中的数据
@@ -180,11 +181,25 @@ export default class RejectHome extends Component {
   // 提交之前先进行是否可以委托的申请
   @autobind
   doCheckApplyAbility() {
-    const { assigneeId, assigneeOrgId } = this.state;
-    this.props.checkApplyAbility({
-      assigneeOrgId,
-      assigneeId,
-    }).then(this.doSubmitApplyAfterValidate);
+    const { assigneeId, assigneeOrgId, operate } = this.state;
+    if (operate === 'commit') {
+      // 在驳回后修改，如果点击的是提交，则需要走校验、提交、流程
+      // 如果是终止，则直接走流程
+      this.props.checkApplyAbility({
+        assigneeOrgId,
+        assigneeId,
+      }).then(this.doSubmitApplyAfterValidate);
+      // 记录校验日志
+      logCommon({
+        type: 'Submit',
+        payload: {
+          name: '临时委托任务校验',
+          vlaue: JSON.stringify({ assigneeId, assigneeOrgId }),
+        },
+      });
+    } else {
+      this.doApproval();
+    }
   }
 
   // 校验成功后再进行提交委托申请
@@ -196,16 +211,25 @@ export default class RejectHome extends Component {
     } else {
       // 提交之后走流程
       const { detailUpdate: { flowId } } = this.props;
-      const params = _.omit(this.state, ['checkResult', 'disablePage', 'idea']);
+      const params = _.omit(this.state, ['checkResult', 'disablePage', 'idea', 'assigneeName']);
       this.props.submitApply({ ...params, flowId }).then(this.doApproval);
+       // 记录校验日志
+      logCommon({
+        type: 'Submit',
+        payload: {
+          name: '临时委托任务驳回后修改提交',
+          vlaue: JSON.stringify({ ...params, flowId }),
+        },
+      });
     }
   }
 
+  // 提交后，走流程
   @autobind
   doApproval() {
     const { detailUpdate: { flowId, itemId } } = this.props;
     const { operate, auditors, groupName, idea, flowClass, currentNodeName } = this.state;
-    this.props.doApproval({
+    const query = {
       flowId,
       itemId,
       wobNum: flowId,
@@ -215,7 +239,16 @@ export default class RejectHome extends Component {
       groupName,
       flowClass,
       currentNodeName,
-    }).then(this.doSomethingAfterApproval);
+    };
+    this.props.doApproval(query).then(this.doSomethingAfterApproval);
+    // 日志记录
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '临时委托任务驳回后修改提交流程',
+        vlaue: JSON.stringify(query),
+      },
+    });
   }
 
   @autobind

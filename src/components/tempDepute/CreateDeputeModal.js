@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 19:39:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-03 17:17:25
+ * @Last Modified time: 2018-09-06 17:05:40
  * @description 临时委托任务发起任务的弹出层
  */
 
@@ -16,7 +16,7 @@ import CommonModal from '../common/biz/CommonModal';
 import confirm from '../common/confirm_';
 import ApprovalBtnGroup from '../common/approvalBtns';
 import DeputeForm from './DeputeForm';
-import logable from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 import { validateAll, DEFAULT_CHECK_REAULT } from './utilsCheck';
 
 import styles from './createDeputeModal.less';
@@ -81,6 +81,14 @@ export default class CreateDeputeModal extends PureComponent {
       assigneeId,
       assigneeOrgId,
     }).then(this.doSubmitAfterValidate);
+    // 记录校验日志
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '临时委托任务校验',
+        vlaue: JSON.stringify({ assigneeId, assigneeOrgId }),
+      },
+    });
   }
 
   @autobind
@@ -90,7 +98,7 @@ export default class CreateDeputeModal extends PureComponent {
       confirm({ content: checkResult.msg });
     } else {
       // 提交之后走流程
-      const params = _.omit(this.state, 'checkResult');
+      const params = _.omit(this.state, ['checkResult', 'assigneeName']);
       this.props.onSubmit(params).then(this.doApproveAfterSubmit);
     }
   }

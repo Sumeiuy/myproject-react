@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-06 13:42:56
+ * @Last Modified time: 2018-09-06 17:54:11
  * @description 临时任务委托表单
  */
 
@@ -12,19 +12,17 @@ import cx from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
-import { Input, Select as AntdSelect } from 'antd';
+import { Input } from 'antd';
 import DateRangePicker from 'lego-react-date/src';
+import { SingleFilter } from 'lego-react-filter/src';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoCell from './InfoCell';
-import SimilarAutoComplete from '../common/similarAutoComplete';
 import Select from '../common/Select';
 import logable from '../../decorators/logable';
 import { emp } from '../../helper';
 import {
-  checkAcceptor,
   checkLength,
-  checkDeputeReason,
   DEPUTE_REASON_CHECK_MESSAGE,
   ASSIGNEE_CHECK_MESSAGE,
   PERIOD_CHECK_MESSAGE,
@@ -32,7 +30,6 @@ import {
 
 import styles from './deputeForm.less';
 
-const Option = AntdSelect.Option;
 const TextArea = Input.TextArea;
 // 日志上传的时间字符串格式
 const LOG_DEATE_FORMAT = 'YYYY-MM-DD';
@@ -94,11 +91,14 @@ export default class DeputeForm extends PureComponent {
       return {
         // 默认选择用户的当前登录机构
         assigneeOrgId: emp.getOrgId(),
+        assigneeId: '',
+        assigneeName: '',
       };
     }
     const {
       deputeReason,
       assigneeId,
+      assigneeName,
       assigneeOrgId,
       assigneeTimeStart,
       assigneeTimeEnd,
@@ -108,6 +108,7 @@ export default class DeputeForm extends PureComponent {
       deputeTimeStart: assigneeTimeStart,
       deputeTimeEnd: assigneeTimeEnd,
       assigneeId,
+      assigneeName,
       assigneeOrgId,
     };
   }
@@ -127,7 +128,14 @@ export default class DeputeForm extends PureComponent {
   @autobind
   disabledStart(start) {
     // 因为有时分秒的问题
-    return start < moment().startOf('day');
+    return start < moment().add(1, 'days').startOf('day');
+  }
+
+  // 申请的时间结束时间必须在选择了开始时间的后面1天开始
+  @autobind
+  disabledEnd(start, end) {
+    // 因为有时分秒的问题
+    return start.startOf('day') >= end.startOf('day');
   }
 
   // 将表单数据推送给父组件
@@ -144,37 +152,25 @@ export default class DeputeForm extends PureComponent {
     if (checkLength(value, 1000)) {
       return;
     }
-    const { checkResult: { isCheckedDeputeReason } } = this.state;
+    const {
+      formData,
+      checkResult,
+      checkResult: { isCheckedDeputeReason },
+    } = this.state;
     if (!isCheckedDeputeReason) {
-      this.handleDeputeReasonBlur();
+      this.setState({
+        checkResult: {
+          ...checkResult,
+          isCheckedDeputeReason: true,
+        },
+      });
     }
-    const { formData } = this.state;
     this.setState({
       formData: {
         ...formData,
         deputeReason: value,
       },
     }, this.handleFormDataPush);
-  }
-
-  // 需求和测试要求当委托原因文本输入域失去焦点的时候，就要进行格式规则校验
-  @autobind
-  handleDeputeReasonBlur() {
-    const { formData: { deputeReason }, checkResult } = this.state;
-    const isCheckedDeputeReason = checkDeputeReason(deputeReason);
-    this.setState({
-      checkResult: { ...checkResult, isCheckedDeputeReason },
-    });
-  }
-
-  // 需求和测试要求当受托人失去焦点的时候，就需要进行输入值的校验
-  @autobind
-  handlePtyMngIdSelectBlur() {
-    const { formData: { assigneeId }, checkResult } = this.state;
-    const isCheckedAssignee = checkAcceptor(assigneeId);
-    this.setState({
-      checkResult: { ...checkResult, isCheckedAssignee },
-    });
   }
 
   // 选择受托人部门，当部门切换的时候需要将选中的受托服务经理清空
@@ -187,6 +183,7 @@ export default class DeputeForm extends PureComponent {
         ...formData,
         assigneeOrgId: value,
         assigneeId: '',
+        assigneeName: '',
       },
     }, this.handleFormDataPush);
     // 清除服务经理
@@ -196,22 +193,33 @@ export default class DeputeForm extends PureComponent {
   // 选择受托服务经理
   @autobind
   @logable({ type: 'DropdownSelect', payload: { name: '选择受托人', value: '$args[1]' } })
-  handlePtyMngIdSelect(assignee) {
+  handlePtyMngIdSelect({ value }) {
     let assigneeId = '';
+    let assigneeName = '';
      // 如果传递空对象过来代表删除选中的
-    if (!_.isEmpty(assignee)) {
+    if (!_.isEmpty(value)) {
       // 代表删除选中的
-      assigneeId = assignee.ptyMngId;
+      assigneeId = value.ptyMngId;
+      assigneeName = value.ptyMngName;
     }
-    const { checkResult: { isCheckedAssignee } } = this.state;
+    const {
+      formData,
+      checkResult,
+      checkResult: { isCheckedAssignee },
+    } = this.state;
     if (!isCheckedAssignee) {
-      this.handlePtyMngIdSelectBlur();
+      this.setState({
+        checkResult: {
+          ...checkResult,
+          isCheckedAssignee: true,
+        },
+      });
     }
-    const { formData } = this.state;
     this.setState({
       formData: {
         ...formData,
         assigneeId,
+        assigneeName,
       },
     }, this.handleFormDataPush);
   }
@@ -238,8 +246,19 @@ export default class DeputeForm extends PureComponent {
     },
   })
   handleDeputePeriodChange({ value }) {
-    console.warn('period', value);
-    const { formData } = this.state;
+    const {
+      formData,
+      checkResult,
+      checkResult: { isCheckedPeriod },
+    } = this.state;
+    if (!isCheckedPeriod) {
+      this.setState({
+        checkResult: {
+          ...checkResult,
+          isCheckedPeriod: true,
+        },
+      });
+    }
     this.setState({
       formData: {
         ...formData,
@@ -247,18 +266,6 @@ export default class DeputeForm extends PureComponent {
         deputeTimeEnd: value[1] || '',
       },
     }, this.handleFormDataPush);
-  }
-
-  // 渲染客户下拉列表的选项DOM
-  @autobind
-  renderPtyMngAutoCompleteOption(ptyMng) {
-    const { ptyMngId, ptyMngName } = ptyMng;
-    const text = `${ptyMngName}（${ptyMngId}）`;
-    return (
-      <Option key={ptyMngId} value={text} >
-        <span className={styles.ptyMngAutoCompleteOptionValue} title={text}>{text}</span>
-      </Option>
-    );
   }
 
   // 渲染委托原因、受托人、委托期限的校验结果元素
@@ -305,7 +312,6 @@ export default class DeputeForm extends PureComponent {
                 rows={5}
                 value={formData.deputeReason || ''}
                 onChange={this.handleDeputeReasonChange}
-                onBlur={this.handleDeputeReasonBlur}
               />
             </div>
           </div>
@@ -326,17 +332,26 @@ export default class DeputeForm extends PureComponent {
               onChange={this.handleAssigneeOrgSelect}
               getPopupContainer={this.getWrapRef}
             />
-            <SimilarAutoComplete
-              ref={this.similarAutoCompleteRef}
-              value={formData.assigneeId}
+            <SingleFilter
+              defaultLabel="请选择受托人"
+              className={styles.assignee}
+              useCustomerFilter
+              value={[formData.assigneeId, formData.assigneeName]}
               style={{ width: '228px' }}
               placeholder="服务经理工号/姓名"
-              optionList={deputeEmpList}
-              optionKey="ptyMngId"
-              onSelect={this.handlePtyMngIdSelect}
-              onSearch={this.handlePtyMngListSearch}
-              renderOptionNode={this.renderPtyMngAutoCompleteOption}
-              onBlur={this.handlePtyMngIdSelectBlur}
+              data={deputeEmpList}
+              dataMap={['ptyMngId', 'ptyMngName']}
+              onChange={this.handlePtyMngIdSelect}
+              onInputChange={this.handlePtyMngListSearch}
+              useLabelInValue
+              showSearch
+              needItemObj
+              menuContainer={this.getWrapRef()}
+              dropdownStyle={{
+                maxHeight: 324,
+                overflowY: 'auto',
+                width: 250,
+              }}
             />
           </InfoCell>
         </div>
@@ -347,6 +362,7 @@ export default class DeputeForm extends PureComponent {
               filterValue={[formData.deputeTimeStart, formData.deputeTimeEnd]}
               onChange={this.handleDeputePeriodChange}
               disabledStart={this.disabledStart}
+              disabledEnd={this.disabledEnd}
             />
           </InfoCell>
         </div>

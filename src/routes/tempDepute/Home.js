@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 09:28:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-03 17:06:48
+ * @Last Modified time: 2018-09-06 16:39:34
  * @description 临时委托他人处理任务Home页面
  */
 
@@ -55,7 +55,7 @@ const mapDispatchToProps = {
   // 获取右侧详情
   queryApplyDetail: effect('tempDepute/queryApplyDetail', { forceFull: true }),
   // 查询可以受托的组织机构和服务经理
-  queryCanDeputeEmp: effect('tempDepute/queryCanDeputeEmp', { forceFull: true }),
+  queryCanDeputeEmp: effect('tempDepute/queryCanDeputeEmp', { loading: false, forceFull: true }),
   // 校验是否可以申请任务委托
   checkApplyAbility: effect('tempDepute/checkApplyAbility', { forceFull: true }),
   // 撤销委托申请
