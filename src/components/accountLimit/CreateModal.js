@@ -218,15 +218,18 @@ export default class CreateModal extends PureComponent {
       const limitAmountColumn = _.find(titleList, o => o.key === KEY_LIMIT_AMOUNT) || {};
       limitAmountColumn.render = (text, record) => {
         const { edit = false, newLimitAmount = '', limitAmount = '' } = record;
-        return (<div>{
-        edit
-        ? <Input
-          value={newLimitAmount}
-          placeholder="请输入禁止转出金额"
-          style={{ maxWidth: '160px' }}
-          onChange={e => this.handleLimitAmountChange(e, record)}
-        />
-        : limitAmount}</div>);
+        if (edit) {
+          return <div>
+            <Input
+              value={newLimitAmount}
+              placeholder="请输入禁止转出金额"
+              style={{ maxWidth: '160px' }}
+              onChange={e => this.handleLimitAmountChange(e, record)}
+            />
+          </div>
+        } else {
+          return <div>{limitAmount}</div>
+        }
       };
     }
     // 添加操作列
