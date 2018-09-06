@@ -88,6 +88,7 @@ export default class CommonUpload extends PureComponent {
     needDefaultText: true,
     deleteAttachmentLoading: false,
     title: '',
+    // 最大上传文件限制，单位 MB
     maxFileSize: 20,
   }
 

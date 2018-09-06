@@ -74,7 +74,9 @@ export default class MultiUpload extends PureComponent {
     uploadCallback: () => {},
     deleteCallback: () => {},
     showDelete: true,
+    // 最大上传文件限制，单位 MB
     maxSize: 20,
+    // 最多上传文件数量，单位个
     limitCount: 9999,
   }
 
