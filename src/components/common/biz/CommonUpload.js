@@ -88,7 +88,7 @@ export default class CommonUpload extends PureComponent {
     needDefaultText: true,
     deleteAttachmentLoading: false,
     title: '',
-    maxFileSize: null,
+    maxFileSize: 20,
   }
 
   constructor(props) {
@@ -139,10 +139,14 @@ export default class CommonUpload extends PureComponent {
   onChange(info) {
     const { uploadAttachment, maxFileSize } = this.props;
     const uploadFile = info.file;
-
-    // 文件上传不能大于maxFileSize
     const fileSize = uploadFile.size;
-    if (maxFileSize && fileSize >= maxFileSize) {
+    if (fileSize === 0) {
+      message.error(`文件大小不能为 0`);
+      return;
+    }
+    // 文件上传不能大于maxFileSize
+    if (fileSize >= (maxFileSize * 1024 * 1024)) {
+      message.error(`文件大小不能超过 ${maxFileSize} MB`);
       return;
     }
 

@@ -115,7 +115,7 @@ const config = {
         dataIndex: 'limit',
         key: 'limit',
         title: '当前账户限制',
-        width: 270,
+        width: 200,
       },
     ],
     approvalList: [
@@ -138,7 +138,7 @@ const config = {
         dataIndex: 'managerId',
         key: 'managerId',
         title: '业务对接人',
-        width: 190,
+        width: 200,
       },
       {
         dataIndex: 'limitAmount',
