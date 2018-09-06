@@ -49,7 +49,7 @@ const {
   EDIT_MESSAGE,
 } = config;
 const autoCompleteStyle = {
-  width: '176px',
+  width: '180px',
   height: '30px',
 };
 // 登陆人的组织 ID
@@ -249,7 +249,7 @@ export default class CreateModal extends PureComponent {
           {this.renderPopconfirm(record)}
         </div>;
       },
-      width: 90,
+      width: 100,
     });
     return titleList;
   }
@@ -349,7 +349,7 @@ export default class CreateModal extends PureComponent {
     };
     // 禁止转出金额输入数据并且数据错误时
     if (!_.isEmpty(newLimitAmount) && !regxp.positiveInteger.test(newLimitAmount)) {
-      message.error('请填写有效禁止转出金额');
+      message.error('请填写正整数的禁止转出金额');
       return;
     }
     // 限制设置，并且限制类型中有 key 为 5 的类型时

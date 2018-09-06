@@ -74,7 +74,9 @@ export default class MultiUpload extends PureComponent {
     uploadCallback: () => {},
     deleteCallback: () => {},
     showDelete: true,
+    // 最大上传文件限制，单位 MB
     maxSize: 20,
+    // 最多上传文件数量，单位个
     limitCount: 9999,
   }
 
@@ -116,6 +118,10 @@ export default class MultiUpload extends PureComponent {
     const { type, uploadCallback, limitCount, maxSize } = this.props;
     const uploadFile = info.file;
     const { size } = uploadFile;
+    if (size === 0) {
+      message.error(`文件大小不能为 0`);
+      return;
+    }
     if (size > (maxSize * 1024 * 1024)) {
       message.error(`文件大小不能超过 ${maxSize} Mb`);
       return;

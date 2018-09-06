@@ -4502,7 +4502,7 @@ lego-soft-phone@^1.0.5:
     react-dom "^16.3.2"
     sip.js "^0.7.8"
 
-lego-tree-filter@^1.0.11:
+lego-tree-filter@^1.0.12:
   version "1.0.12"
   resolved "http://168.61.48.13:4873/lego-tree-filter/-/lego-tree-filter-1.0.12.tgz#33e3ed3ff02a774fde71f4bb4824a397cd0e9aca"
 
