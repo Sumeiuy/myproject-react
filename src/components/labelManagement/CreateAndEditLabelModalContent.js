@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-06 10:55:24
+ * @Last Modified time: 2018-09-06 18:09:46
  */
 
 import React, { PureComponent } from 'react';
@@ -661,6 +661,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
       return (
         <EditableText
           name="name"
+          label="标签名称"
           wrapperClass={styles.editableTextWrapper}
           normalBoxClass={styles.normalBox}
           disable={!canEditDetail}
@@ -704,6 +705,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
       return (
         <EditableText
           name="description"
+          label="标签描述"
           wrapperClass={styles.editableTextWrapper}
           normalBoxClass={styles.normalBox}
           disable={!canEditDetail}
