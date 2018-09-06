@@ -217,7 +217,7 @@ export default class CreateModal extends PureComponent {
       // 禁止转出金额
       const limitAmountColumn = _.find(titleList, o => o.key === KEY_LIMIT_AMOUNT) || {};
       limitAmountColumn.render = (text, record) => {
-        const { edit = false, newLimitAmount = '', limitAmount } = record;
+        const { edit = false, newLimitAmount = '', limitAmount = '' } = record;
         // 取 新的限制金额 或者 旧的限制金额
         const showLimitAmount = newLimitAmount || limitAmount;
         return (<div>{
