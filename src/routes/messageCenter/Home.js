@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-28 09:07:09
+ * @Last Modified time: 2018-09-06 13:07:59
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -191,7 +191,7 @@ export default class MessageCenter extends PureComponent {
         loadCntractResponse = JSON.parse(loadCntractResponse);
         if (loadCntractResponse) {
           const { custId: busiId, custType } = loadCntractResponse.data;
-          const routeType = `${custType}:tgcontracttransfer:${objectVal}:::Y:`;
+          const routeType = `${custType}:tgcontracttransfer:${objectVal}::notice:Y:`;
           const busiIdParam = busiId ? `?busiId=${busiId}` : '';
           const routeTypeParam = routeType ? `&routeType=${routeType}` : '';
           const url = `/client/tgcontracttransfer/wizard/main${busiIdParam}${routeTypeParam}`;
