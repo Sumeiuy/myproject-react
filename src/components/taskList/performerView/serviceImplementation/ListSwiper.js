@@ -4,7 +4,6 @@ import _ from 'lodash';
 import cx from 'classnames';
 import { autobind } from 'core-decorators';
 import Swiper from 'react-id-swiper';
-// import 'react-id-swiper/src/styles/css/swiper.css';
 import Icon from '../../../common/Icon';
 import styles from './listSwiper.less';
 import {
