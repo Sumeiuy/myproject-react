@@ -227,9 +227,8 @@ export default class CreateModal extends PureComponent {
               onChange={e => this.handleLimitAmountChange(e, record)}
             />
           </div>
-        } else {
-          return <div>{limitAmount}</div>
         }
+        return <div>{limitAmount}</div>
       };
     }
     // 添加操作列
