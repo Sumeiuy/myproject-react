@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-04 17:41:24
+ * @Last Modified time: 2018-09-06 10:55:24
  */
 
 import React, { PureComponent } from 'react';
@@ -268,7 +268,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     if (!_.isEmpty(custIds) && _.isEmpty(id)) {
       Modal.confirm({
         title: '确认切换客户添加方式吗?',
-        content: '在新增模式下，新添加的客户需要提交才能生效，如果切换添加客户方式将会覆盖之前的数据，是否切换?',
+        content: '切换模式会清除您刚添加的客户，确定要继续吗？',
         onOk: () => {
           // 新建页面切换客户添加方式，需要将之前已经存在的数据置空
           this.setState({
@@ -581,6 +581,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
 
   renderActionSource() {
     return [{
+      key: 'delete',
       type: <Icon type="shanchu" />,
       handler: this.handleDeleteBtnClick,
     }];
