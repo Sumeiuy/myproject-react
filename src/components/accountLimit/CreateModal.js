@@ -217,16 +217,18 @@ export default class CreateModal extends PureComponent {
       // 禁止转出金额
       const limitAmountColumn = _.find(titleList, o => o.key === KEY_LIMIT_AMOUNT) || {};
       limitAmountColumn.render = (text, record) => {
-        const { edit = false, newLimitAmount = '' } = record;
-        return (<div>{
-        edit
-        ? <Input
-          value={newLimitAmount}
-          placeholder="请输入禁止转出金额"
-          style={{ maxWidth: '160px' }}
-          onChange={e => this.handleLimitAmountChange(e, record)}
-        />
-        : newLimitAmount}</div>);
+        const { edit = false, newLimitAmount = '', limitAmount = '' } = record;
+        if (edit) {
+          return (<div>
+            <Input
+              value={newLimitAmount}
+              placeholder="请输入禁止转出金额"
+              style={{ maxWidth: '160px' }}
+              onChange={e => this.handleLimitAmountChange(e, record)}
+            />
+          </div>);
+        }
+        return (<div>{limitAmount}</div>);
       };
     }
     // 添加操作列
@@ -318,6 +320,9 @@ export default class CreateModal extends PureComponent {
   editCustomerInfo(record) {
     const newData = {
       edit: true,
+      newLimitAmount: record.limitAmount,
+      newManagerId: record.managerId,
+      newManagerName: record.managerName,
     };
     this.updateRecordData(record, newData);
   }
