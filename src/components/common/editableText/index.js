@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-31 13:12:29
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-06 18:35:57
+ * @Last Modified time: 2018-09-07 10:21:53
  *
  * @params
  *  name: 表单form中的唯一标识，外层通过form获取到该字段的值
@@ -107,7 +107,7 @@ export default class EditableText extends PureComponent {
   @autobind
   handleEdit() {
     logCommon({
-      type: 'ButtonClick',
+      type: 'Click',
       payload: {
         name: `编辑${this.props.label}`,
       },
