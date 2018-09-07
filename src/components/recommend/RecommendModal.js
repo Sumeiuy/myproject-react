@@ -3,7 +3,7 @@
  * @description 首页推荐弹窗
  * @Date: 2018-08-14 20:58:45
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-24 13:33:29
+ * @Last Modified time: 2018-09-07 13:25:58
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -58,7 +58,7 @@ export default class recommendModal extends PureComponent {
     const { modalVisible } = this.state;
     return (
       <CommonModal
-        title="理财服务平台更新日志（9/1）"
+        title="理财服务平台V3.3功能发布"
         modalKey="recommendModal"
         closeModal={this.closeModal}
         wrapClassName={styles.recommendModal}
