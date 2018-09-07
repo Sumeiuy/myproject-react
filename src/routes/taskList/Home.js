@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-21 14:20:24
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-24 13:50:19
  * @description 任务管理首页
  */
 
@@ -530,6 +530,9 @@ export default class PerformerView extends PureComponent {
       eventId,
       taskTypeCode,
     } = this.state;
+    if (list.resultData[0].missionViewType !== EXECUTOR) {
+      return null;
+    }
     const currentId = this.getCurrentId();
     const currentTask = _.find(list.resultData, item => item.id === currentId) || {};
     return (

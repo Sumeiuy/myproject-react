@@ -40,16 +40,19 @@ let modalKeyCount = 0;
 // 服务营业中的'所有'选项
 const allSaleDepartment = { id: ALL_DEPARTMENT_ID, name: '不限' };
 
-// 数字千分位格式
-function thousandFormat(num) {
-  return number.thousandFormat(num, true, ',', true);
+// isThousandFormat: 数字千分位格式
+function formatNumber(num, isThousandFormat = true) {
+  return isThousandFormat
+    ? number.thousandFormat(num, true, ',', true)
+    : num;
 }
 
 /*
  * 格式化钱款数据和单位
  * 入参： 190000000 转化成 { value: '1.90', unit: '亿元' }
+ * isThousandFormat 是否需要千分位格式化
  */
-const formatAsset = (num) => {
+const formatAsset = (num, isThousandFormat = true) => {
   // 数字常量
   const WAN = 1e4;
   const YI = 1e8;
@@ -66,24 +69,24 @@ const formatAsset = (num) => {
 
   if (absNum >= WANYI) {
     return {
-      value: thousandFormat((newNum / WANYI).toFixed(2)),
+      value: formatNumber((newNum / WANYI).toFixed(2), isThousandFormat),
       unit: UNIT_WANYI,
     };
   }
   if (absNum >= YI) {
     return {
-      value: thousandFormat((newNum / YI).toFixed(2)),
+      value: formatNumber((newNum / YI).toFixed(2), isThousandFormat),
       unit: UNIT_YI,
     };
   }
   if (absNum >= WAN) {
     return {
-      value: thousandFormat((newNum / WAN).toFixed(2)),
+      value: formatNumber((newNum / WAN).toFixed(2), isThousandFormat),
       unit: UNIT_WAN,
     };
   }
   return {
-    value: thousandFormat(newNum.toFixed(2)),
+    value: formatNumber(newNum.toFixed(2), isThousandFormat),
     unit: UNIT_DEFAULT,
   };
 };
@@ -162,6 +165,8 @@ export default class CustomerLists extends PureComponent {
     custLabel: PropTypes.object.isRequired,
     custLikeLabel: PropTypes.array.isRequired,
     addLabel: PropTypes.func.isRequired,
+    // 显示引导页的 ID
+    showIntroId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -176,6 +181,7 @@ export default class CustomerLists extends PureComponent {
     queryHoldingProductReqState: false,
     dataForNextPage: {},
     queryHoldingIndustryDetailReqState: false,
+    showIntroId: '',
   }
 
   constructor(props) {
@@ -572,6 +578,7 @@ export default class CustomerLists extends PureComponent {
       signCustLabels,
       signBatchCustLabels,
       addLabel,
+      showIntroId,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -643,7 +650,7 @@ export default class CustomerLists extends PureComponent {
             {_.isEmpty(custList) ? null : <span className="hint">自动选择所有符合条件的客户</span>}
           </div>
           <div className={styles.reorder}>
-            <Sort onChange={onReorderChange} value={reorderValue} />
+            <Sort showIntroId={showIntroId} onChange={onReorderChange} value={reorderValue} />
           </div>
           <div className={styles.filterWrap}>
             <div className={styles.selectBox}>

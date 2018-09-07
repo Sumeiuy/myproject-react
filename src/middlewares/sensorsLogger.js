@@ -145,6 +145,7 @@ function getLogData(action) {
       ...env,
       ...extraData,
       eventType: eventType.event,
+      project: 'fsp',
     },
   };
 }

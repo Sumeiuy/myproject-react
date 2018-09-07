@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-20 11:05:10
+ * @Last Modified time: 2018-09-03 15:51:25
  */
 
 import React, { PureComponent } from 'react';
@@ -166,11 +166,12 @@ export default class CustomerGroupManage extends PureComponent {
       name: '',
       // 分组描述
       description: '',
-      modalTitle: MODALTITLE_CREATELABEL,
       id: '',
       record: {},
       // 分组转标签模态框
       isShowGroupToLabelModal: false,
+      // 默认弹出的新建标签的模态框
+      isCreateLabel: true,
     };
   }
 
@@ -253,12 +254,12 @@ export default class CustomerGroupManage extends PureComponent {
   editLabel(record) {
     const { id } = record;
     const { queryLabelCust } = this.props;
-    this.showLabelDetailModal(record, MODALTITLE_EDITLABEL);
+    this.showLabelDetailModal(record, false);
     // 获取标签下的客户列表
     queryLabelCust({
       labelId: id,
       pageNum: 1,
-      pageSize: 5,
+      pageSize: 10,
     });
   }
 
@@ -350,7 +351,7 @@ export default class CustomerGroupManage extends PureComponent {
    * @param {*} record 当前记录
    */
   @autobind
-  showLabelDetailModal(record = {}, modalTitle = MODALTITLE_CREATELABEL) {
+  showLabelDetailModal(record = {}, isCreateLabel = true) {
     const { labelName = '', labelDesc = '', id = '', labelTypeId } = record;
     this.setState({
       visible: true,
@@ -359,17 +360,16 @@ export default class CustomerGroupManage extends PureComponent {
       canEditDetail: labelTypeId && labelTypeId === '0',
       name: labelName,
       description: labelDesc,
-      // 默认是新建标签
-      modalTitle,
       id,
+      isCreateLabel,
     });
   }
 
   // 显示新建标签模态框
   @autobind
   @logPV({ pathname: '/modal/createAndEditLabelModalContent', title: '新建标签' })
-  showCreateLabelModal(record) {
-    this.showLabelDetailModal(record);
+  showCreateLabelModal() {
+    this.showLabelDetailModal();
   }
 
   @autobind
@@ -485,9 +485,8 @@ export default class CustomerGroupManage extends PureComponent {
   }
 
   @autobind
-  @checkSpecialCharacter
   submitFormContent(name, description, id, custIds) {
-    const { operateLabel, location: { query: { curPageNum, curPageSize, keyWord } } } = this.props;
+    const { operateLabel, queryLabelCust } = this.props;
     const postBody = {
       request: {
         labelName: name,
@@ -495,23 +494,62 @@ export default class CustomerGroupManage extends PureComponent {
         custIds: _.isEmpty(custIds) ? null : custIds,
         excludeCustIdList: null,
       },
-      keyWord,
-      pageNum: curPageNum,
-      pageSize: curPageSize,
     };
     if (id) {
-      // 编辑分组
+      // 编辑标签
       operateLabel(_.merge(postBody, {
         request: {
           labelIds: [id],
         },
-      }));
+      })).then((res) => {
+        if (res.resultData === 'success') {
+          message.success('更新标签成功');
+          this.handleComparedGetLabelList();
+          queryLabelCust({
+            pageNum: INITIAL_CURPAGE,
+            pageSize: INITIAL_PAGESIZE,
+            labelId: id,
+          });
+        }
+      });
     } else {
-      // 新增分组
-      operateLabel(postBody);
+      // 新增标签
+      operateLabel(postBody).then((res) => {
+        if (res.resultData === 'success') {
+          message.success('更新标签成功');
+          this.handleComparedGetLabelList();
+        }
+      });
     }
     // 关闭弹窗
     this.handleSubmitCloseModal();
+  }
+
+  // 在新建、编辑或者分组转标签成功时
+  // 进行多次提交的时候，url的参数在push时没有改变不请求
+  // 需要单独发一个请求
+  @autobind
+  handleComparedGetLabelList() {
+    const {
+      location: {
+        pathname,
+        query: {
+          curPageNum = INITIAL_CURPAGE,
+          keyWord = '',
+          curPageSize = INITIAL_PAGESIZE,
+        },
+      },
+    } = this.props;
+    if (curPageNum === INITIAL_CURPAGE && curPageSize === INITIAL_PAGESIZE && keyWord === '') {
+      this.getLabelList({
+        curPageNum: INITIAL_CURPAGE,
+        curPageSize: INITIAL_PAGESIZE,
+      });
+    } else {
+      this.context.push({
+        pathname,
+      });
+    }
   }
 
   /**
@@ -522,7 +560,7 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   addCustomerToExistedLabel({ custIds, name, description }) {
     const { id } = this.state;
-    const { operateLabel, location: { query: { keyWord } } } = this.props;
+    const { operateLabel, queryLabelCust } = this.props;
     operateLabel({
       request: {
         labelIds: [id],
@@ -531,7 +569,16 @@ export default class CustomerGroupManage extends PureComponent {
         custIds: _.isEmpty(custIds) ? null : custIds,
         excludeCustIdList: null,
       },
-      keyWord,
+    }).then((res) => {
+      if (res.resultData === 'success') {
+        message.success('更新标签成功');
+        this.handleComparedGetLabelList();
+        queryLabelCust({
+          pageNum: INITIAL_CURPAGE,
+          pageSize: INITIAL_PAGESIZE,
+          labelId: id,
+        });
+      }
     });
   }
 
@@ -611,9 +658,9 @@ export default class CustomerGroupManage extends PureComponent {
       canEditDetail,
       name,
       description,
-      modalTitle,
       id,
       isShowGroupToLabelModal,
+      isCreateLabel,
     } = this.state;
 
     const {
@@ -649,6 +696,8 @@ export default class CustomerGroupManage extends PureComponent {
         </Button>
       </div>
     );
+
+    const modalTitle = isCreateLabel ? MODALTITLE_CREATELABEL : MODALTITLE_EDITLABEL;
 
     return (
       <div className={styles.groupPanelContainer}>
@@ -695,6 +744,7 @@ export default class CustomerGroupManage extends PureComponent {
             columnWidth={['10%', '14%', '30%', '8%', '18%', '20%']}
             clickableColumnCallbackList={[this.handleEditLabel]}
             clickableColumnIndexList={[2]}
+            clickableColumnClass={styles.clickableColumn}
           />
         </div>
         {
@@ -725,6 +775,7 @@ export default class CustomerGroupManage extends PureComponent {
                 queryBatchCustList={queryBatchCustList}
                 batchCustList={batchCustList}
                 checkDuplicationName={checkDuplicationName}
+                isCreateLabel={isCreateLabel}
               />
             }
           />
@@ -741,7 +792,7 @@ export default class CustomerGroupManage extends PureComponent {
           possibleLabelListInfo={possibleLabelListInfo}
           clearPossibleLabels={clearPossibleLabels}
           group2Label={group2Label}
-          getLabelList={this.getLabelList}
+          onComparedGetLabelList={this.handleComparedGetLabelList}
         />}
       </div>
     );

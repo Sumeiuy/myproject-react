@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 20:15:28
+ * @Last Modified time: 2018-08-31 12:25:37
  */
 
 import React, { PureComponent } from 'react';
@@ -58,12 +58,14 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     checkDuplicationName: PropTypes.func.isRequired,
     // 删除标签下的客户
     deleteLabelCust: PropTypes.func.isRequired,
+    isCreateLabel: PropTypes.bool,
   };
 
   static defaultProps = {
     detailData: EMPTY_OBJECT,
     canEditDetail: true,
     custRiskBearing: [],
+    isCreateLabel: true,
   };
 
   constructor(props) {
@@ -593,7 +595,8 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
   handleCheckLabelName() {
     const { checkDuplicationName, form } = this.props;
     const { labelName: labelNameError } = form.getFieldsError();
-    if (labelNameError) {
+    // 校验规则不通过或编辑标签不校验重名
+    if (labelNameError || !this.props.isCreateLabel) {
       return;
     }
     form.validateFields(['name'], (error, values) => {

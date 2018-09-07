@@ -65,6 +65,12 @@ const ENTERLIST_PERMISSION_SIGHTINGLABEL = ['sightingTelescope', 'productPotenti
 // 是否需要展示可开通业务source集合
 const ENTERLIST_PERMISSION_OPENED_BUSINESS = ['numOfCustOpened', 'business', 'sightingTelescope'];
 
+// 引导页的 ID
+const CUSTOMER_LIST_INTRO_FIRST_STEP_ID = 'customer_list_intro_first_step_id';
+const CUSTOMER_LIST_INTRO_SECOND_STEP_ID = 'customer_list_intro_second_step_id';
+const CUSTOMER_LIST_INTRO_THIRD_STEP_ID = 'customer_list_intro_third_step_id';
+const CUSTOMER_LIST_INTRO_FOURTH_STEP_ID = 'customer_list_intro_fourth_step_id';
+
 export default {
   NOPERMIT,
   PERMITS1,
@@ -80,4 +86,8 @@ export default {
   ENTERLIST_PERMISSION_INDEX_QUERY,
   ENTERLIST_PERMISSION_SIGHTINGLABEL,
   ENTERLIST_PERMISSION_OPENED_BUSINESS,
+  CUSTOMER_LIST_INTRO_FIRST_STEP_ID,
+  CUSTOMER_LIST_INTRO_SECOND_STEP_ID,
+  CUSTOMER_LIST_INTRO_THIRD_STEP_ID,
+  CUSTOMER_LIST_INTRO_FOURTH_STEP_ID,
 };
