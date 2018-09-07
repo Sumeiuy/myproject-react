@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 10:53:22
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-20 13:32:34
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-09-07 10:10:44
  */
 
 import React, { PureComponent } from 'react';
@@ -73,12 +73,7 @@ export default class CustomerGroupUpdateModal extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '$props.cancelText' } })
   handleCancel() {
-    const { visible } = this.state;
-    const { onCancelHandler } = this.props;
-    this.setState({
-      visible: !visible,
-    });
-    onCancelHandler();
+    this.props.onCancelHandler();
   }
 
   @autobind

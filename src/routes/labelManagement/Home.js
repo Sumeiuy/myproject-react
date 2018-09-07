@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-05 09:19:53
+ * @Last Modified time: 2018-09-07 10:00:47
  */
 
 import React, { PureComponent } from 'react';
@@ -295,7 +295,7 @@ export default class CustomerGroupManage extends PureComponent {
     }
     // 验证标签内的客户是否名下客户
     this.props.isSendCustsServedByEmp({ signedLabelId: id }).then(({ resultData }) => {
-      if (!resultData.sendCustsServedByPostn) {
+      if (!resultData || !resultData.sendCustsServedByPostn) {
         message.warn('标签客户包含非自己名下的客户，不能发起任务');
         return;
       }
@@ -602,12 +602,12 @@ export default class CustomerGroupManage extends PureComponent {
     {
       key: 'launchTask',
       type: (
-        <span className={styles.launchTask} onClick={this.lanuchTask}>
+        <span>
           <Icon type="faqirenwu" className={styles.launchTaskIcon} />
           发起任务
         </span>
       ),
-      handler: _.noop,
+      handler: this.lanuchTask,
     }];
   }
 
@@ -743,6 +743,7 @@ export default class CustomerGroupManage extends PureComponent {
             columnWidth={['10%', '14%', '30%', '8%', '18%', '20%']}
             clickableColumnCallbackList={[this.handleEditLabel]}
             clickableColumnIndexList={[2]}
+            actionClass={styles.actionSource}
           />
         </div>
         {
@@ -754,6 +755,7 @@ export default class CustomerGroupManage extends PureComponent {
             title={modalTitle}
             footer={this.renderModalFooter()}
             closable
+            onCancelHandler={this.handleCloseModal}
             modalContent={
               <CreateAndEditLabelModalContent
                 wrappedComponentRef={this.customerGroupDetailRef}
