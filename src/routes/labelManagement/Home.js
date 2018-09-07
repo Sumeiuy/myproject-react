@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-03 15:51:25
+ * @Last Modified time: 2018-09-07 20:07:27
  */
 
 import React, { PureComponent } from 'react';
@@ -516,7 +516,7 @@ export default class CustomerGroupManage extends PureComponent {
       // 新增标签
       operateLabel(postBody).then((res) => {
         if (res.resultData === 'success') {
-          message.success('更新标签成功');
+          message.success('新建标签成功');
           this.handleComparedGetLabelList();
         }
       });
