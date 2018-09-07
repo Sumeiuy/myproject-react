@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-09-06 09:06:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-06 17:14:37
+ * @Last Modified time: 2018-09-07 10:17:31
  * @description 临时委托他人处理任务驳回后修改
  */
 import React, { Component } from 'react';
@@ -117,11 +117,15 @@ export default class RejectHome extends Component {
   componentDidMount() {
     this.setHomeHeight();
     // 初始化的时候，根据 flowId查询详情数据
-    const { location: { query: { flowId = '' } } } = this.props;
+    const {
+      getDetailForUpdate,
+      getApprovalInfoForUpdate,
+      location: { query: { flowId = '' } },
+    } = this.props;
     // 获取到详情数据
-    this.props.getDetailForUpdate({ flowId }).then(this.saveDetailToState);
+    getDetailForUpdate({ flowId }).then(this.saveDetailToState);
     // 获取流程审批按钮和审批人信息
-    this.props.getApprovalInfoForUpdate({ flowId });
+    getApprovalInfoForUpdate({ flowId });
   }
 
   componentWillUnmount() {
@@ -141,7 +145,11 @@ export default class RejectHome extends Component {
   // 将详情信息初始化的数据保存至 state 里面，一遍后续接口的调用
   @autobind
   saveDetailToState() {
-    const { detailUpdate: { applyBasicInfo = {} } } = this.props;
+    const {
+      queryCanDeputeEmp,
+      queryCanDeputeOrg,
+      detailUpdate: { applyBasicInfo = {} },
+    } = this.props;
     const {
       deputeReason,
       assigneeId,
@@ -160,8 +168,8 @@ export default class RejectHome extends Component {
     // 驳回后修改，需要将委托信息的数据回填
     // 但是此时受托人部门列表和受托服务经理列表没有数据，所以导致组件中显示不出来
     // 所以在初始化的时候需要基于详情的数据查询一把部门和员工列表数据
-    this.props.queryCanDeputeEmp({ keyword: assigneeId, org: assigneeOrgId });
-    this.props.queryCanDeputeOrg();
+    queryCanDeputeEmp({ keyword: assigneeId, org: assigneeOrgId });
+    queryCanDeputeOrg();
   }
 
   // 修改表单数据之后，在父组件接收变化之后的值
@@ -205,14 +213,17 @@ export default class RejectHome extends Component {
   // 校验成功后再进行提交委托申请
   @autobind
   doSubmitApplyAfterValidate() {
-    const { checkResult } = this.props;
+    const {
+      checkResult,
+      submitApply,
+    } = this.props;
     if (!checkResult.validate) {
       confirm({ content: checkResult.msg });
     } else {
       // 提交之后走流程
       const { detailUpdate: { flowId } } = this.props;
       const params = _.omit(this.state, ['checkResult', 'disablePage', 'idea', 'assigneeName']);
-      this.props.submitApply({ ...params, flowId }).then(this.doApproval);
+      submitApply({ ...params, flowId }).then(this.doApproval);
        // 记录校验日志
       logCommon({
         type: 'Submit',
@@ -227,7 +238,10 @@ export default class RejectHome extends Component {
   // 提交后，走流程
   @autobind
   doApproval() {
-    const { detailUpdate: { flowId, itemId } } = this.props;
+    const {
+      doApproval,
+      detailUpdate: { flowId, itemId },
+    } = this.props;
     const { operate, auditors, groupName, idea, flowClass, currentNodeName } = this.state;
     const query = {
       flowId,
@@ -240,7 +254,7 @@ export default class RejectHome extends Component {
       flowClass,
       currentNodeName,
     };
-    this.props.doApproval(query).then(this.doSomethingAfterApproval);
+    doApproval(query).then(this.doSomethingAfterApproval);
     // 日志记录
     logCommon({
       type: 'Submit',
@@ -253,10 +267,13 @@ export default class RejectHome extends Component {
 
   @autobind
   doSomethingAfterApproval() {
-    const { flowResult: { msg } } = this.props;
+    const {
+      clearReduxData,
+      flowResult: { msg },
+    } = this.props;
     if (msg === 'success') {
       // 隐藏按钮
-      this.props.clearReduxData({ approvalUpdate: {} });
+      clearReduxData({ approvalUpdate: {} });
       this.setState({ disablePage: true });
     }
   }
