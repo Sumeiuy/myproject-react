@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-07 10:00:47
+ * @Last Modified time: 2018-09-07 13:37:34
  */
 
 import React, { PureComponent } from 'react';
@@ -287,7 +287,7 @@ export default class CustomerGroupManage extends PureComponent {
       name: '客户标签列表',
     },
   })
-  lanuchTask(record) {
+  createTask(record) {
     const { id, labelName, custCount } = record;
     if (custCount <= 0) {
       message.error('该标签下没有客户，不能发起任务');
@@ -607,7 +607,7 @@ export default class CustomerGroupManage extends PureComponent {
           发起任务
         </span>
       ),
-      handler: this.lanuchTask,
+      handler: this.createTask,
     }];
   }
 
@@ -755,7 +755,7 @@ export default class CustomerGroupManage extends PureComponent {
             title={modalTitle}
             footer={this.renderModalFooter()}
             closable
-            onCancelHandler={this.handleCloseModal}
+            onCancel={this.handleCloseModal}
             modalContent={
               <CreateAndEditLabelModalContent
                 wrappedComponentRef={this.customerGroupDetailRef}

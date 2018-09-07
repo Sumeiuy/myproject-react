@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 19:35:23
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-04-11 15:05:06
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-09-07 13:36:07
  * 创建者视图右侧详情信息
  */
 
@@ -417,8 +417,8 @@ export default class RightPanel extends PureComponent {
             title={'客户预览'}
             okText={'提交'}
             okType={'primary'}
-            onOkHandler={this.handleCloseModal}
-            onCancelHandler={this.handleCloseModal}
+            onOk={this.handleCloseModal}
+            onCancel={this.handleCloseModal}
             footer={
               <Button
                 type="primary"

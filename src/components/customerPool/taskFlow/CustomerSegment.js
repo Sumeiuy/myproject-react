@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-03-20 18:58:40
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-09-07 13:35:34
  * 客户细分组件
  */
 
@@ -337,8 +337,8 @@ export default class CustomerSegment extends PureComponent {
               title={'客户预览'}
               okText={'提交'}
               okType={'primary'}
-              onOkHandler={this.handleCloseModal}
-              onCancelHandler={this.handleCloseModal}
+              onOk={this.handleCloseModal}
+              onCancel={this.handleCloseModal}
               footer={
                 <Button
                   type="primary"
