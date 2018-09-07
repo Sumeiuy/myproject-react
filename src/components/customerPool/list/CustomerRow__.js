@@ -1,8 +1,8 @@
 /**
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-30 15:16:17
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-09-07 21:12:09
  */
 
 import React, { PureComponent } from 'react';
@@ -332,10 +332,10 @@ export default class CustomerRow extends PureComponent {
     } = this.props;
     if (this.isMainService || this.access360ViewPermission) {
       return name ? (
-        <span className="name clickable" onClick={this.handleNameClick}>{name}</span>
+        <span className="name clickable" title={name} onClick={this.handleNameClick}>{name}</span>
       ) : null;
     }
-    return <span className="name">{name}</span>;
+    return <span className="name" title={name}>{name}</span>;
   }
 
   render() {
