@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-08 20:10:33
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-09-07 13:35:49
  */
 
 import React, { PureComponent } from 'react';
@@ -531,8 +531,8 @@ export default class TaskPreview extends PureComponent {
               title={'选择审批人员'}
               okText={'确定'}
               okType={'primary'}
-              onOkHandler={this.handleCloseModal}
-              onCancelHandler={this.handleCancel}
+              onOk={this.handleCloseModal}
+              onCancel={this.handleCancel}
               footer={
                 <div className={styles.btnSection}>
                   <Button

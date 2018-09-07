@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-10 22:24:45
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-09-07 13:37:05
  */
 
 import React, { PureComponent } from 'react';
@@ -742,7 +742,7 @@ export default class CustomerGroupManage extends PureComponent {
               okText={'提交'}
               cancelText={'取消'}
               okType={'primary'}
-              onCancelHandler={this.handleCloseModal}
+              onCancel={this.handleCloseModal}
               footer={<div className={styles.operationBtnSection}>
                 <Button
                   className={styles.cancel}

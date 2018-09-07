@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-08 10:28:16
+ * @Last Modified time: 2018-09-07 10:26:14
  */
 
 import _ from 'lodash';
@@ -295,6 +295,9 @@ function getCapitalRangInfo({ filterField, labelName }, filterObj) {
  * @param {*} definedLabelsInfo 自定义标签全量的数据
  */
 function getCustomLabel(customLabels, definedLabelsInfo) {
+  if (_.isEmpty(customLabels)) {
+    return '';
+  }
   const selectedLabelList = _.filter(
     definedLabelsInfo,
     item => _.includes([].concat(customLabels), item.id),

@@ -3,7 +3,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-04 18:34:35
+ * @Last Modified time: 2018-09-07 10:19:50
  */
 
 import React, { PureComponent } from 'react';
@@ -113,6 +113,8 @@ export default class CommonTable extends PureComponent {
     // eg: [get,set,update] 表示可点击的列号集合一一对应的点击事件方法
     clickableColumnCallbackList: PropTypes.array,
     position: PropTypes.string,
+    // 操作单元格内的class
+    actionClass: PropTypes.string,
   };
 
   static defaultProps = {
@@ -147,6 +149,7 @@ export default class CommonTable extends PureComponent {
     clickableColumnIndexList: [],
     clickableColumnCallbackList: [],
     position: 'bottom',
+    actionClass: '',
   };
 
   constructor(props) {
@@ -253,6 +256,7 @@ export default class CommonTable extends PureComponent {
       emptyListDataNeedEmptyRow,
       clickableColumnIndexList,
       clickableColumnCallbackList,
+      actionClass,
     } = this.props;
     const len = titleColumn.length - 1;
 
@@ -293,6 +297,10 @@ export default class CommonTable extends PureComponent {
           );
         }
         if (index === len && !_.isEmpty(actionSource)) {
+          const cls = classnames(
+            styles.link,
+            { [actionClass]: !!actionClass },
+          );
           node = (<div
             className={
               classnames({
@@ -303,7 +311,7 @@ export default class CommonTable extends PureComponent {
             {
               _.map(actionSource, itemData => (
                 <span
-                  className={styles.link}
+                  className={cls}
                   key={itemData.key || item.type}
                   onClick={() => itemData.handler(record)}
                 >
