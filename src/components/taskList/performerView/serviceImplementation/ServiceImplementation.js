@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-24 15:24:18
+ * @Last Modified time: 2018-09-10 13:53:11
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ import { Affix, message, Modal } from 'antd';
 import store from 'store';
 import contains from 'rc-util/lib/Dom/contains';
 import introJs from 'intro.js';
+import 'intro.js/introjs.css';
 import Header from './Header';
 import ListSwiper from './ListSwiper';
 import CustomerProfile from './CustomerProfile';
