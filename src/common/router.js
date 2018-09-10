@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 import dynamic from 'dva/dynamic';
 
-import CustomerPool from '../routes/customerPool/Home';
+import CustomerPoolWrapper from '../routes/customerPool/CustomerPoolWrapper';
 import { env } from '../helper';
 
 let routerDataCache;
@@ -198,7 +198,7 @@ export const getRouterData = (app) => {
 
     // 直接进入
     '/customerPool': {
-      component: CustomerPool,
+      component: CustomerPoolWrapper,
       // component: dynamicWrapper(app, ['customerPool', 'morningBoradcast'], () =>
       //   import('../routes/customerPool/Home' /* webpackChunkName: "customerPool" */)),
     },
