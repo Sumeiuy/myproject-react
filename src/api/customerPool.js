@@ -2,6 +2,22 @@
  * 目标客户池模块的接口
  */
 
+
+// 此处针对修改字典里面委托他人任务处理的字段从key-value修改为value-label对应关系
+import _ from 'lodash';
+
+function fixDictoryKeys(dict) {
+  const { resultData, resultData: { deputeStatusDictList: deputeList } } = dict;
+  // 因为初始的委托他人任务状态字典列表中的字段名为 key, value
+  return {
+    ...dict,
+    resultData: {
+      ...resultData,
+      deputeStatusDictList: _.map(deputeList, item => ({ value: item.key, label: item.value })),
+    },
+  };
+}
+
 export default function customerPool(api) {
   return {
     // 经营指标新增客户指标区域接口
@@ -13,7 +29,7 @@ export default function customerPool(api) {
     // 获取客户池投顾绩效
     getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryPerformanceKPIs', query),
     // 获取组织机构树完整版
-    getCustRangeAll: query => api.post('/groovynoauth/fsp/emp/org/queryEmpOrgTree', query),
+    getCustRangeAll: query => api.post('/groovynoauth/fsp/emp/org/queryEmpOrgTree', query, { noEmpId: true }),
 
     // 按权限获取组织机构树
     getCustRangeByAuthority: query => api.post('/groovynoauth/fsp/emp/org/queryEmpPostnsOrgTree2', query),
@@ -25,7 +41,7 @@ export default function customerPool(api) {
     // getManageIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryEmpKPIs', query),
 
     // 统计周期
-    getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query),
+    getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query, { noEmpId: true }).then(fixDictoryKeys),
 
     // (首页总数)
     getQueryNumbers: query => api.post('/groovynoauth/fsp/emp/todealwith/queryNumbers', query),
@@ -121,7 +137,7 @@ export default function customerPool(api) {
     queryBasicInfo: query => api.post('/groovynoauth/fsp/flow/queryBasicInfo', query),
 
     // 文件下载文件列表数据
-    ceFileList: query => api.post('/file/ceFileList', query),
+    ceFileList: query => api.post('/file/ceFileList2', query),
 
     // 生成问卷模板id
     generateTemplateId: query => api.post('/groovynoauth/fsp/assess/common/saveTemplate', query),
@@ -137,12 +153,6 @@ export default function customerPool(api) {
 
     // 查询客户是否是我名下的客户
     isCustServedByPostn: query => api.post('/groovynoauth/fsp/cust/task/isCustServedByPostn', query),
-
-    // 上传文件需要先上传uuid
-    // queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
-
-    // 删除文件
-    // ceFileDelete: query => api.post('/file/ceFileDelete', query),
 
     // 审批流程获取按钮
     queryApprovalBtn: query => api.post('/groovynoauth/fsp/flow/queryApprovalBtn', query),
@@ -163,5 +173,8 @@ export default function customerPool(api) {
 
     // 查询持仓行业详情信息
     queryHoldingIndustryDetail: query => api.post('/groovynoauth/fsp/cust/custbriefinfo/queryCustHoldingProductDetails', query),
+
+    // 查询自定义标签
+    queryDefinedLabelsInfo: query => api.post('/groovynoauth/fsp/cust/custlabel/queryDefinedLabelsInfo', query),
   };
 }

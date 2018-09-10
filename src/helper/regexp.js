@@ -37,6 +37,10 @@ const regexp = {
    */
   positiveInteger: /^\+?[1-9][0-9]*$/,
   /**
+   * 非零正数，包含小数
+   */
+  positiveNumber: /^(?!(0[0-9]{0,}$))[0-9]{1,}[.]{0,}[0-9]{0,}$/,
+  /**
    * desc: 将pathname分割成集合
    * pathname: '/a/b/c'
    * ['/a', '/b', '/c']
@@ -74,6 +78,29 @@ const regexp = {
    * @desc: 只含有字母、数字和汉字
    */
   onlyWordNumAlphabet: /^[A-Za-z0-9\u4e00-\u9fa5]+$/,
+  /**
+   * @desc: 匹配所有的html标签
+   */
+  htmlTags: /<[^>]*>/g,
 };
 
 export default regexp;
+
+export const {
+ chinese,
+ cellPhone,
+ tellPhone,
+ email,
+ thousandInteger,
+ thousandDecimal,
+ positiveInteger,
+ positiveNumber,
+ matchPathList,
+ returnLine,
+ url,
+ uscc,
+ idNo18Digit,
+ idNo15Digit,
+ onlyAlphabetAndNumber,
+ onlyWordNumAlphabet,
+} = regexp;

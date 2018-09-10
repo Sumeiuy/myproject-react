@@ -1,7 +1,8 @@
 /**
- * @file Pageheader.js
- * 权限申请，合约管理，佣金调整头部筛选
- * @author honggaunqging
+ * @Author: sunweibin
+ * @Date: 2018-08-13 09:41:43
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-10 09:59:00
  */
 
 import React, { PureComponent } from 'react';
@@ -21,7 +22,6 @@ import logable from '../../../decorators/logable';
 const {
   contract: { pageType: contractPageType },
   channelsTypeProtocol: { pageType: channelsPageType },
-  filialeCustTransfer: { pageType: filialeCustTransfer },
 } = seibelConfig;
 const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
 
@@ -29,8 +29,6 @@ const { telephoneNumApply: { pageType: phoneApplyPageType } } = config;
 const dateFormat = 'YYYY/MM/DD';
 // 当前时间
 const DEFAULT_VALUE = '';
-// 不需要显示客户查询的页面
-const PAGE_NO_CUST = ['custAllotPage', 'departmentCustAllotPage'];
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -46,11 +44,15 @@ export default class Pageheader extends PureComponent {
     // 操作类型
     operateOptions: PropTypes.array,
     // 页面类型
-    pageType: PropTypes.string.isRequired,
+    pageType: PropTypes.string,
     // 部门列表
     custRange: PropTypes.array.isRequired,
+    // 新的部门列表
+    newCustRange: PropTypes.array.isRequired,
     // 获取部门列表
     getCustRange: PropTypes.func.isRequired,
+    // 新的获取部门列表
+    getNewCustRange: PropTypes.func.isRequired,
     // 拟稿人列表
     drafterList: PropTypes.array.isRequired,
     // 获取拟稿人列表
@@ -73,12 +75,16 @@ export default class Pageheader extends PureComponent {
     getNewCustomerList: PropTypes.func.isRequired,
     // 筛选后调用的Function
     filterCallback: PropTypes.func,
-    // 判断登录人当前切换的职位所在部门为分公司层级
-    checkUserIsFiliale: PropTypes.func,
     // 提供由用户来判断是否需要显示新建按钮
     isShowCreateBtn: PropTypes.func,
+    // 新建申请按钮的文字
+    applyBtnText: PropTypes.string,
     // 是否调用新的客户列表接口，若为true，则使用新的获取客户列表接口，为false，则使用原来的获取客户列表接口，默认为false
     isUseNewCustList: PropTypes.bool,
+    // 是否在初始化的时候调用查询部门组织机构的接口
+    isCallCustRangeApi: PropTypes.bool,
+    // 是否调用新的部门接口，默认为 false
+    isUseNewCustRange: PropTypes.bool,
     // 初始状态需要展示的过滤条件
     basicFilters: PropTypes.array.isRequired,
     // 更多中的过滤条件
@@ -98,11 +104,14 @@ export default class Pageheader extends PureComponent {
     empInfo: {},
     subtypeOptions: [],
     filterCallback: _.noop,
-    checkUserIsFiliale: _.noop,
     isShowCreateBtn: () => true,
     isUseNewCustList: false,
+    isUseNewCustRange: false,
     moreFilters: [],
     moreFilterData: [],
+    isCallCustRangeApi: true,
+    applyBtnText: '新建',
+    pageType: '',
   }
 
   constructor(props) {
@@ -113,15 +122,284 @@ export default class Pageheader extends PureComponent {
     };
   }
 
-  componentWillMount() {
-    this.props.getCustRange({
-      type: this.props.pageType,
-    });
+  componentDidMount() {
+    const {
+      isCallCustRangeApi,
+      isUseNewCustRange,
+      getCustRange,
+      getNewCustRange,
+      pageType,
+    } = this.props;
+    if (!isCallCustRangeApi) {
+      // 有些申请页面头部不需要查询组织机构树
+      return;
+    }
+    const { isUseNewCustRange, getCustRange, getNewCustRange, pageType } = this.props;
+    const payload = { type: pageType };
+    if (isUseNewCustRange) {
+      getNewCustRange(payload);
+    } else {
+      getCustRange(payload);
+    }
   }
 
   @autobind
   getCalendarContainer() {
     return this.pageCommonHeader;
+  }
+
+
+  // 获取客户列表
+  @autobind
+  getCustList() {
+    const {
+      customerList,
+      newCustomerList,
+      isUseNewCustList,
+    } = this.props;
+    return isUseNewCustList ? newCustomerList : customerList;
+  }
+
+  // 只能选择今天之前的时间
+  @autobind
+  setDisableRange(date) {
+    const dateFormatStr = date.format('YYYY-MM-DD');
+    return moment(dateFormatStr) > moment();
+  }
+
+  @autobind
+  getFilterData(filter) {
+    const { filterId } = filter.props;
+    const {
+      subtypeOptions,
+      stateOptions,
+      drafterList,
+      approvePersonList,
+      custRange,
+      newCustRange,
+      isUseNewCustRange,
+      operateOptions,
+      ptyMngList,
+    } = this.props;
+    const custList = this.getCustList();
+    // 部门增加不限
+    let treeCustRange = [];
+    if (isUseNewCustRange) {
+      treeCustRange = newCustRange.length ? this.transformCustRangeData(newCustRange) : [];
+    } else {
+      treeCustRange = custRange.length ? this.transformCustRangeData(custRange) : [];
+    }
+    treeCustRange = [
+      {
+        label: '不限',
+        value: '',
+        key: 0,
+      },
+      ...treeCustRange,
+    ];
+    switch (filterId) {
+      case 'customer':
+        return _.isEmpty(custList) ? [] : custList;
+      case 'serviceManager':
+        return ptyMngList;
+      case 'business2':
+        return operateOptions;
+      case 'subType':
+        return subtypeOptions;
+      case 'status':
+        return stateOptions;
+      case 'drafter':
+        return drafterList;
+      case 'department':
+        return treeCustRange;
+      case 'approver':
+        return approvePersonList;
+      default:
+        return [];
+    }
+  }
+
+  @autobind
+  getFilterValue(filter) {
+    const { filterId } = filter.props;
+    const {
+      location: {
+        query: {
+          custNumber,
+          custName,
+          drafterId,
+          drafterName,
+          approvalId,
+          approvalName,
+          ptyMngId,
+          ptyMngName,
+          orgId,
+          subType,
+          status,
+          business2,
+          createTime,
+          createTimeTo,
+        },
+      },
+    } = this.props;
+    // 时间组件的回填
+    const startTime = createTime ? moment(createTime, dateFormat) : null;
+    const endTime = createTimeTo ? moment(createTimeTo, dateFormat) : null;
+    const customer = custNumber ? [custNumber, custName] : ['', ''];
+    const serviceManager = ptyMngId ? [ptyMngId, ptyMngName] : ['', ''];
+    const drafter = drafterId ? [drafterId, drafterName] : ['', ''];
+    const approval = approvalId ? [approvalId, approvalName] : ['', ''];
+    switch (filterId) {
+      case 'customer':
+        return customer;
+      case 'serviceManager':
+        return serviceManager;
+      case 'business2':
+        return business2;
+      case 'subType':
+        return subType;
+      case 'status':
+        return status;
+      case 'drafter':
+        return drafter;
+      case 'department':
+        return orgId || DEFAULT_VALUE;
+      case 'approver':
+        return approval;
+      case 'applyTime':
+        return [startTime, endTime];
+      default:
+        return '';
+    }
+  }
+
+  @autobind
+  getFilterOnChange(filter) {
+    const { filterId } = filter.props;
+    switch (filterId) {
+      case 'customer':
+        return this.selectCustItem;
+      case 'serviceManager':
+        return item => this.handleManagerSelect('ptyMngId', item);
+      case 'business2':
+        return this.handleOperateTypeChange;
+      case 'subType':
+        return this.handleSubtypeChange;
+      case 'status':
+        return this.handleStatusChange;
+      case 'drafter':
+        return item => this.handleDrafterSelect('drafterId', item);
+      case 'department':
+        return this.selectCustRange;
+      case 'approver':
+        return item => this.handleApproverSelect('approvalId', item);
+      case 'applyTime':
+        return this.handleCreateDateChange;
+      default:
+        return () => {};
+    }
+  }
+
+  @autobind
+  getFilterOnClose(filter) {
+    const { key } = filter.props;
+    const { moreFilterList } = this.state;
+    this.moreFilterChange({ id: key, isDeleteFilterFromLocation: true });
+    this.setState({ moreFilterList: _.pull(moreFilterList, key) });
+  }
+
+  // 根据类型，渲染更多的过滤组件
+  @autobind
+  getMoreFilterElement(filter) {
+    const { filterId } = filter.props;
+    return filterId ?
+      <HtFilter
+        className={styles.filterFl}
+        data={this.getFilterData(filter)}
+        value={this.getFilterValue(filter)}
+        onChange={this.getFilterOnChange(filter)}
+        onInputChange={this[filter.props.handleInputChange]}
+        onClose={() => this.getFilterOnClose(filter)}
+        isCloseable
+        {...filter.props}
+      /> : null;
+  }
+
+  @autobind
+  getMoreFilters(key) {
+    const { moreFilters } = this.props;
+    const filterItem = _.find(moreFilters, item => (item.props.key === key));
+    return filterItem ? this.getMoreFilterElement(filterItem) : null;
+  }
+
+  @autobind
+  moreFilterChange(obj) {
+    const {
+      location: {
+        pathname,
+        query,
+      },
+      moreFilters,
+    } = this.props;
+    const { moreFilterList } = this.state;
+    const { replace } = this.context;
+    const { isDeleteFilterFromLocation, id } = obj;
+    const currentFilterItem = _.filter(moreFilters, item => item.props.key === id)[0];
+    const filterOption = currentFilterItem && currentFilterItem.filterOption;
+    let finalQuery = query;
+    if (isDeleteFilterFromLocation && currentFilterItem) {
+      finalQuery = _.omit(query, filterOption);
+    } else {
+      // ['a','b'] => {a:'', b: ''}
+      const filterMap = _.reduce(filterOption,
+        (filterQuery, itemQuery) => ({ ...filterQuery, [itemQuery]: '' }), {});
+      finalQuery = _.merge(query, filterMap);
+      const list = moreFilterList;
+      if (_.indexOf(list, id) > -1) {
+        _.pull(list, id);
+      } else {
+        list.push(id);
+      }
+      this.setState({ moreFilterList: list });
+    }
+    replace({
+      pathname,
+      query: finalQuery,
+    });
+  }
+
+  // 更多里面选中的过滤条件
+  @autobind
+  selectMoreFilter() {
+    const {
+      location: {
+        query,
+      },
+      moreFilters,
+    } = this.props;
+    return _.map(moreFilters, (itemFilter) => {
+      const hasFilterItem = _.every(itemFilter.filterOption, item => _.hasIn(query, item));
+      if (hasFilterItem) {
+        return itemFilter.props.key;
+      }
+      return null;
+    });
+  }
+
+  // 获取部门
+  @autobind
+  transformCustRangeData(list) {
+    return list.map((item) => {
+      const obj = {
+        label: item.name,
+        value: item.id,
+        key: item.id,
+      };
+      if (item.children && item.children.length) {
+        obj.children = this.transformCustRangeData(item.children);
+      }
+      return obj;
+    });
   }
 
   @autobind
@@ -188,7 +466,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '服务经理',
-      value: '$args[0].value.ptyMngName',
+      value: '$args[1].value.ptyMngName',
     },
   })
   handleManagerSelect(name, item) {
@@ -201,7 +479,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '拟稿人',
-      value: '$args[0].value.ptyMngName',
+      value: '$args[1].value.ptyMngName',
     },
   })
   handleDrafterSelect(name, item) {
@@ -214,7 +492,7 @@ export default class Pageheader extends PureComponent {
     type: 'DropdownSelect',
     payload: {
       name: '审批人',
-      value: '$args[0].value.ptyMngName',
+      value: '$args[1].value.ptyMngName',
     },
   })
   handleApproverSelect(name, item) {
@@ -231,7 +509,7 @@ export default class Pageheader extends PureComponent {
       value: '$args[0]',
     },
   })
-  selectCustRange(value) {
+  selectCustRange(value = '') {
     const { filterCallback } = this.props;
     filterCallback({
       orgId: value,
@@ -380,8 +658,8 @@ export default class Pageheader extends PureComponent {
     type: 'CalendarSelect',
     payload: {
       name: '申请时间',
-      min: (instance, args) => moment(args[0].startDate).format(dateFormat),
-      max: (instance, args) => moment(args[0].endDate).format(dateFormat),
+      min: (instance, args) => moment(args[0].value[0]).format(dateFormat),
+      max: (instance, args) => moment(args[0].value[1]).format(dateFormat),
     },
   })
   handleCreateDateChange(date) {
@@ -389,263 +667,13 @@ export default class Pageheader extends PureComponent {
     const startDate = value[0];
     const endDate = value[1];
     if (startDate && endDate) {
-      const createTime = moment(startDate).format(dateFormat);
-      const createTimeTo = moment(endDate).format(dateFormat);
       this.props.filterCallback({
-        createTime,
-        createTimeTo,
+        createTime: startDate,
+        createTimeTo: endDate,
       });
     }
   }
 
-  // 获取客户列表
-  @autobind
-  getCustList() {
-    const {
-      customerList,
-      newCustomerList,
-      isUseNewCustList,
-    } = this.props;
-    return isUseNewCustList ? newCustomerList : customerList;
-  }
-
-  // 只能选择今天之前的时间
-  @autobind
-  setDisableRange(date) {
-    const dateFormatStr = date.format('YYYY-MM-DD');
-    return moment(dateFormatStr) > moment();
-  }
-
-  // 获取部门
-  @autobind
-  transformCustRangeData(list) {
-    return list.map((item) => {
-      const obj = {
-        label: item.name,
-        value: item.id,
-        key: item.id,
-      };
-      if (item.children && item.children.length) {
-        obj.children = this.transformCustRangeData(item.children);
-      }
-      return obj;
-    });
-  }
-
-  @autobind
-  getFilterData(filter) {
-    const { filterId } = filter.props;
-    const {
-      subtypeOptions,
-      stateOptions,
-      drafterList,
-      approvePersonList,
-      custRange,
-      operateOptions,
-      ptyMngList,
-    } = this.props;
-    const custList = this.getCustList();
-    // 部门增加不限
-    let treeCustRange = [];
-    if (custRange.length) {
-      treeCustRange = this.transformCustRangeData(custRange);
-    }
-    treeCustRange = [
-      {
-        label: '不限',
-        value: '',
-        key: 0,
-      },
-      ...treeCustRange,
-    ];
-    switch (filterId) {
-      case 'customer':
-        return _.isEmpty(custList) ? [] : custList;
-      case 'serviceManager':
-        return ptyMngList;
-      case 'business2':
-        return operateOptions;
-      case 'subType':
-        return subtypeOptions;
-      case 'status':
-        return stateOptions;
-      case 'drafter':
-        return drafterList;
-      case 'department':
-        return treeCustRange;
-      case 'approver':
-        return approvePersonList;
-      default:
-        return [];
-    }
-  }
-
-  @autobind
-  getFilterValue(filter) {
-    const { filterId } = filter.props;
-    const {
-      location: {
-        query: {
-          custNumber,
-          custName,
-          drafterId,
-          drafterName,
-          approvalId,
-          approvalName,
-          ptyMngId,
-          ptyMngName,
-          orgId,
-          subType,
-          status,
-          business2,
-          createTime,
-          createTimeTo,
-        },
-      },
-    } = this.props;
-    // 时间组件的回填
-    const startTime = createTime ? moment(createTime, dateFormat) : null;
-    const endTime = createTimeTo ? moment(createTimeTo, dateFormat) : null;
-    const customer = custNumber ? [custNumber, custName] : ['', ''];
-    const serviceManager = ptyMngId ? [ptyMngId, ptyMngName] : ['', ''];
-    const drafter = drafterId ? [drafterId, drafterName] : ['', ''];
-    const approval = approvalId ? [approvalId, approvalName] : ['', ''];
-    switch (filterId) {
-      case 'customer':
-        return customer;
-      case 'serviceManager':
-        return serviceManager;
-      case 'business2':
-        return business2;
-      case 'subType':
-        return subType;
-      case 'status':
-        return status;
-      case 'drafter':
-        return drafter;
-      case 'department':
-        return orgId || DEFAULT_VALUE;
-      case 'approver':
-        return approval;
-      case 'applyTime':
-        return [startTime, endTime];
-      default:
-        return '';
-    }
-  }
-
-  @autobind
-  getFilterOnChange(filter) {
-    const { filterId } = filter.props;
-    switch (filterId) {
-      case 'customer':
-        return this.selectCustItem;
-      case 'serviceManager':
-        return item => this.handleManagerSelect('ptyMngId', item);
-      case 'business2':
-        return this.handleOperateTypeChange;
-      case 'subType':
-        return this.handleSubtypeChange;
-      case 'status':
-        return this.handleStatusChange;
-      case 'drafter':
-        return item => this.handleDrafterSelect('drafterId', item);
-      case 'department':
-        return this.selectCustRange;
-      case 'approver':
-        return item => this.handleApproverSelect('approvalId', item);
-      case 'applyTime':
-        return this.handleCreateDateChange;
-      default:
-        return () => {};
-    }
-  }
-
-  // 更多里面选中的过滤条件
-  @autobind
-  selectMoreFilter() {
-    const {
-      location: {
-        query,
-      },
-      moreFilters,
-    } = this.props;
-    return _.map(moreFilters, (itemFilter) => {
-      const hasFilterItem = _.every(itemFilter.filterOption, item => _.hasIn(query, item));
-      if (hasFilterItem) {
-        return itemFilter.props.key;
-      }
-      return null;
-    });
-  }
-
-  @autobind
-  moreFilterChange(obj) {
-    const {
-      location: {
-        pathname,
-        query,
-      },
-      moreFilters,
-    } = this.props;
-    const { moreFilterList } = this.state;
-    const { replace } = this.context;
-    const { isDeleteFilterFromLocation, id } = obj;
-    const currentFilterItem = _.filter(moreFilters, item => item.props.key === id)[0];
-    const filterOption = currentFilterItem && currentFilterItem.filterOption;
-    let finalQuery = query;
-    if (isDeleteFilterFromLocation && currentFilterItem) {
-      finalQuery = _.omit(query, filterOption);
-    } else {
-      // ['a','b'] => {a:'', b: ''}
-      const filterMap = _.reduce(filterOption,
-        (filterQuery, itemQuery) => ({ ...filterQuery, [itemQuery]: '' }), {});
-      finalQuery = _.merge(query, filterMap);
-      const list = moreFilterList;
-      if (_.indexOf(list, id) > -1) {
-        _.pull(list, id);
-      } else {
-        list.push(id);
-      }
-      this.setState({ moreFilterList: list });
-    }
-    replace({
-      pathname,
-      query: finalQuery,
-    });
-  }
-
-  @autobind
-  getFilterOnClose(filter) {
-    const { key } = filter.props;
-    const { moreFilterList } = this.state;
-    this.moreFilterChange({ id: key, isDeleteFilterFromLocation: true });
-    this.setState({ moreFilterList: _.pull(moreFilterList, key) });
-  }
-
-  // 根据类型，渲染更多的过滤组件
-  @autobind
-  getMoreFilterElement(filter) {
-    const { filterId } = filter.props;
-    return filterId ?
-      <HtFilter
-        className={styles.filterFl}
-        data={this.getFilterData(filter)}
-        value={this.getFilterValue(filter)}
-        onChange={this.getFilterOnChange(filter)}
-        onInputChange={this[filter.props.handleInputChange]}
-        onClose={() => this.getFilterOnClose(filter)}
-        isCloseable
-        {...filter.props}
-      /> : null;
-  }
-
-  @autobind
-  getMoreFilters(key) {
-    const { moreFilters } = this.props;
-    const filterItem = _.find(moreFilters, item => (item.props.key === key));
-    return filterItem ? this.getMoreFilterElement(filterItem) : null;
-  }
 
   @autobind
   pageCommonHeaderRef(input) {
@@ -654,9 +682,8 @@ export default class Pageheader extends PureComponent {
 
   render() {
     const {
-      page,
+      applyBtnText,
       pageType,
-      checkUserIsFiliale,
       basicFilters,
       moreFilterData,
     } = this.props;
@@ -671,20 +698,11 @@ export default class Pageheader extends PureComponent {
     } else if (pageType === channelsPageType) {
       // 如果是通道类协议页面
       hasCreatePermission = permission.hasPermissionOfProtocolCreate(empInfo);
-    } else if (pageType === filialeCustTransfer) {
-      // 如果分公司客户人工划转,是分公司并且是HTSC 客户分配岗
-      hasCreatePermission = permission.hasFilialeCustTransferCreate(empInfo)
-        && checkUserIsFiliale();
     } else if (pageType === phoneApplyPageType) {
       hasCreatePermission = permission.hasPermissionOfPhoneApplyCreate(empInfo);
     } else {
       // 此处,通用的判断是否需要隐藏新建按钮
       hasCreatePermission = this.props.isShowCreateBtn();
-    }
-    // 如果是营业部客户分配页面
-    if (page === PAGE_NO_CUST[1]) {
-      hasCreatePermission = permission.hasKFYYBZXGPermission(empInfo) && checkUserIsFiliale();
-      // hasCreatePermission = this.props.isShowCreateBtn();
     }
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
@@ -733,9 +751,9 @@ export default class Pageheader extends PureComponent {
               type="primary"
               icon="plus"
               size="small"
-              onClick={() => { this.handleCreate(); }}
+              onClick={this.handleCreate}
             >
-              新建
+              {applyBtnText}
             </Button>
             :
             null

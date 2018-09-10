@@ -143,6 +143,9 @@ function validateSubmitData(state) {
   };
 }
 
-export default {
+const exported = {
   validateData: validateSubmitData,
 };
+
+export default exported;
+export { validateSubmitData as validateData };

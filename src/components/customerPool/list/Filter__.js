@@ -8,18 +8,23 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { NormalTag } from 'lego-react-filter/src';
+import { NormalTag, MultiFilterWithSearch } from 'lego-react-filter/src';
 import logable from '../../../decorators/logable';
 import HtFilter, { TagFilter } from '../../common/htFilter';
 import { url, check } from '../../../helper';
 import { seperator, sessionStore } from '../../../config';
-
 import {
   basicFilters,
   moreFilterData,
   moreFilterCategories,
   moreFilters,
 } from './config/filterConfig';
+
+import {
+  CUSTOMER_LIST_INTRO_SECOND_STEP_ID,
+  CUSTOMER_LIST_INTRO_THIRD_STEP_ID,
+  CUSTOMER_LIST_INTRO_FOURTH_STEP_ID,
+} from '../../../routes/customerPool/config';
 
 import styles from './filter__.less';
 
@@ -29,7 +34,7 @@ const MORE_FILTER_TYPE = {
   more: 1,
   tag: 2,
 };
-
+const EMPTY_OBJ = {};
 // 初始化组件时，更新本地缓存
 function UpdateLocalStorage(currentValue, moreFilterOpenedList, hashString) {
   let labelFilters = [];
@@ -105,6 +110,16 @@ function updateLocalMoreFilterStorage(item, hashString) {
 }
 
 export default class Filter extends PureComponent {
+  static getDerivedStateFromProps(nextProps, state) {
+    if (state.prevDefinedLabelsInfo !== nextProps.definedLabelsInfo) {
+      return {
+        definedLabelFilterData: nextProps.definedLabelsInfo,
+        prevDefinedLabelsInfo: nextProps.definedLabelsInfo,
+      };
+    }
+    return null;
+  }
+
   static propTypes = {
     location: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
@@ -124,6 +139,7 @@ export default class Filter extends PureComponent {
     hashString: PropTypes.string.isRequired,
     queryIndustryList: PropTypes.func.isRequired,
     industryList: PropTypes.array.isRequired,
+    definedLabelsInfo: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -147,6 +163,21 @@ export default class Filter extends PureComponent {
     const moreFilterOpenedList = this.getMoreFilterOpenKeys(currentValue);
     UpdateLocalStorage(currentValue, moreFilterOpenedList, hashString);
     this.labelFilterVisible = false;
+    this.state = {
+      definedLabel: EMPTY_OBJ,
+      prevDefinedLabelsInfo: props.definedLabelsInfo,
+    };
+  }
+
+  @autobind
+  getOptionItemValue({ value }) {
+    return (
+      <span
+        className={styles.definedLabelItemWrap}
+      >
+        {value.labelName}
+        <span className={styles.labelType}>{ value.labelFlagValue }</span>
+      </span>);
   }
 
   // 获取更多按钮里面需要打开的过滤器id
@@ -465,6 +496,22 @@ export default class Filter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '$args[0].name',
+      value: '$args[0].value',
+    },
+  })
+  handleDefinedLabelChange(labelItem) {
+    const value = _.join(labelItem.value, seperator.filterValueSeperator);
+    this.props.onFilterChange({
+      name: labelItem.id,
+      value,
+    });
+  }
+
+  @autobind
   checkPrimaryKeyLabel(primaryKeyLabels) {
     const labelList = []
       .concat(primaryKeyLabels)
@@ -573,6 +620,11 @@ export default class Filter extends PureComponent {
   @autobind
   splitLabelList(label, filters) {
     const { tagList } = this.props;
+    const finalTagList = _.reduce(
+      tagList,
+      (flattened, other) => flattened.concat(other.children),
+      [],
+    );
     const labelList = [].concat(label).filter(value => value);
     const normalTag = _.filter(labelList, key => !check.isSightingTelescope(key));
     const tagFilters = _.filter(
@@ -591,14 +643,58 @@ export default class Filter extends PureComponent {
       });
 
     const normalTagList =
-      _.compact(_.map(normalTag, tag => _.find(tagList, item => item.id === tag)));
+      _.compact(_.map(normalTag, tag => _.find(finalTagList, item => item.id === tag)));
     const tagFilterList =
-      _.compact(_.map(tagFilters, tag => _.find(tagList, item => item.id === tag)));
+      _.compact(_.map(tagFilters, tag => _.find(finalTagList, item => item.id === tag)));
 
     return {
       normalTagList,
       tagFilterList,
     };
+  }
+
+  @autobind
+  handleCurrentDefinedLabelPage() {
+    const { definedLabel: { fetching = false } } = this.state;
+    if (!fetching) {
+      this.setState((prevState) => {
+        const { definedLabel: { currentPage = 1 } } = prevState;
+        const definedLabel = {
+          currentPage: currentPage + 1,
+          fetching: true,
+        };
+        return { definedLabel };
+      }, () => {
+        this.setState({
+          definedLabel: {
+            ...this.state.definedLabel,
+            fetching: false,
+          },
+        });
+      });
+    }
+  }
+
+  @autobind
+  handleDefinedLabelInputChange(value) {
+    const definedLabelFilterData = _.filter(
+      this.props.definedLabelsInfo,
+      labelItem => _.includes(labelItem.labelName, value),
+    );
+    let definedLabel = {
+      currentPage: 1,
+      fetching: false,
+    };
+    if (value) {
+      definedLabel = {
+        ...definedLabel,
+        currentPage: 0,
+      };
+    }
+    this.setState({
+      definedLabelFilterData,
+      definedLabel,
+    });
   }
 
   @autobind
@@ -679,20 +775,35 @@ export default class Filter extends PureComponent {
       location,
       filtersOfAllSightingTelescope,
       hashString,
+      definedLabelsInfo,
     } = this.props;
     const {
       filters = '',
+      forceRefresh,
     } = location.query;
+    const { definedLabel: { currentPage = 1 }, definedLabelFilterData = [] } = this.state;
 
     const currentValue = url.transfromFilterValFromUrl(filters);
-
-    const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
+    const { customLabels = [] } = currentValue;
 
     const selectedKeys = this.getMoreFilterOpenKeys(currentValue);
+    if (forceRefresh === 'Y') {
+      UpdateLocalStorage(currentValue, selectedKeys, hashString);
+      this.labelFilterVisible = false;
+    }
+    const moreFilterListOpened = sessionStore.get(`CUSTOMERPOOL_MORE_FILTER_STORAGE_${hashString}`);
 
     // 按照是否有子标签分类渲染
     const splitLabelList =
       this.splitLabelList(currentValue.primaryKeyLabels, filtersOfAllSightingTelescope);
+
+    // 自定义标签
+    const currentSelectDefinedLabel = _.isArray(customLabels)
+      ? _.filter(definedLabelsInfo, labelItem => _.includes(customLabels, labelItem.id))
+      : _.filter(definedLabelsInfo, labelItem => customLabels === labelItem.id);
+    const currentDefinedLabel = currentPage
+      ? _.slice(definedLabelFilterData, 0, currentPage * 10)
+      : definedLabelFilterData;
 
     return (
       <div className={styles.filterContainer}>
@@ -709,6 +820,27 @@ export default class Filter extends PureComponent {
               />
             ))
           }
+          <div id={CUSTOMER_LIST_INTRO_SECOND_STEP_ID}>
+            {
+              <MultiFilterWithSearch
+                data={currentDefinedLabel}
+                value={currentSelectDefinedLabel}
+                dataMap={['id', 'labelName']}
+                filterId="customLabels"
+                filterName="自定义标签"
+                isAlwaysVisible
+                getOptionItemValue={this.getOptionItemValue}
+                dropdownStyle={{
+                  overflowY: 'auto',
+                  width: 250,
+                  zIndex: 10,
+                }}
+                onChange={this.handleDefinedLabelChange}
+                onInputChange={this.handleDefinedLabelInputChange}
+                onScrollBottom={this.handleCurrentDefinedLabelPage}
+              />
+            }
+          </div>
           {
             _.map(
               moreFilterListOpened,
@@ -718,42 +850,46 @@ export default class Filter extends PureComponent {
         <div className={styles.moreFilterController}>
           {
             !_.isEmpty(this.props.tagList) ?
-              <HtFilter
-                type="multiSearch"
-                className={styles.filter}
-                filterName="标签条件"
-                filterId="primaryKeyLabels"
-                value={currentValue.primaryKeyLabels}
-                data={this.props.tagList}
-                dataMap={['id', 'name']}
-                dropdownStyle={{
-                  maxHeight: 324,
-                  overflowY: 'auto',
-                  width: 250,
-                  zIndex: 10,
-                }}
-                onChange={this.handleLabelChange}
-                iconMore
-                disableTitle
-                isMoreButton
-              /> : null
+              <div id={CUSTOMER_LIST_INTRO_THIRD_STEP_ID}>
+                <HtFilter
+                  type="multiWithCaterogy"
+                  className={styles.filter}
+                  filterName="大数据标签"
+                  filterId="primaryKeyLabels"
+                  value={currentValue.primaryKeyLabels}
+                  data={this.props.tagList}
+                  dataMap={['id', 'name']}
+                  dropdownStyle={{
+                    maxHeight: 324,
+                    overflowY: 'auto',
+                    width: 250,
+                    zIndex: 10,
+                  }}
+                  onChange={this.handleLabelChange}
+                  iconMore
+                  disableTitle
+                  isMoreButton
+                />
+              </div> : null
           }
-          <HtFilter
-            type="moreSearch"
-            filterName="更多条件"
-            className={styles.filter}
-            value={selectedKeys}
-            dropdownStyle={{
-              position: 'relactive',
-              maxHeight: 324,
-              overflowY: 'auto',
-              width: 250,
-              zIndex: 10,
-            }}
-            data={moreFilterData}
-            dataCategories={moreFilterCategories}
-            onChange={this.handleMoreFilterChange}
-          />
+          <div id={CUSTOMER_LIST_INTRO_FOURTH_STEP_ID}>
+            <HtFilter
+              type="moreSearch"
+              filterName="更多条件"
+              className={styles.filter}
+              value={selectedKeys}
+              dropdownStyle={{
+                position: 'relactive',
+                maxHeight: 324,
+                overflowY: 'auto',
+                width: 250,
+                zIndex: 10,
+              }}
+              data={moreFilterData}
+              dataCategories={moreFilterCategories}
+              onChange={this.handleMoreFilterChange}
+            />
+          </div>
         </div>
         {this.clearSelectFilterMemory()}
       </div>

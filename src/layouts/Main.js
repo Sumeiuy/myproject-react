@@ -14,6 +14,7 @@ import Loading from './Loading';
 import withRouter from '../decorators/withRouter';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
+import ConnectedSignCustomerLabel from '../components/customerPool/list/modal/ConnectedSignCustomerLabel';
 import ContextProvider from './ContextProvider';
 import IEWarningModal from '../components/common/IEWarningModal';
 import PhoneWrapper from './PhoneWrapper';
@@ -23,7 +24,6 @@ import '../css/skin.less';
 const effects = {
   dictionary: 'app/getDictionary',
   customerScope: 'customerPool/getCustomerScope',
-  empInfo: 'app/getEmpInfo',
   addServeRecord: 'customerPool/addCommonServeRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
   // 删除文件
@@ -96,7 +96,6 @@ export default class Main extends Component {
   componentDidMount() {
     this.props.getCustomerScope(); // 加载客户池客户范围
   }
-
   render() {
     const {
       children,
@@ -115,6 +114,7 @@ export default class Main extends Component {
       serviceRecordInfo,
       location,
     } = this.props;
+
     const { caller = '' } = serviceRecordInfo;
     // 当前服务记录弹窗是否由电话调起的
     const isPhoneCall = caller === PHONE;
@@ -150,6 +150,7 @@ export default class Main extends Component {
                               serviceRecordInfo={serviceRecordInfo}
                               isPhoneCall={isPhoneCall}
                             />
+                            <ConnectedSignCustomerLabel />
                           </div>
                         : null
                     }

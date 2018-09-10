@@ -12,10 +12,9 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import { time, number } from '../../../helper';
-import config from '../config';
+import { detailTitleList, formatStr, overlayStyle } from '../config';
 import styles from './compositionTable.less';
 
-const { detailTitleList, formatStr, overlayStyle } = config;
 // 字符串常量，用于 table columns 对应列的 key 匹配来 render
 // 理由字符串
 const KEY_REASON = 'reason';
@@ -31,8 +30,8 @@ const KEY_CATEGORY = 'category';
 const KEY_INCREASE = 'increase';
 // 浮动收益率
 const KEY_FLOATRATERETURN = 'floatRateReturn';
-// _.findIndex 方法未找到元素时返回 -1
-const noResult = -1;
+// 空对象
+const EMPTY_OBJECT = {};
 
 export default class CompositionTable extends PureComponent {
   static propTypes = {
@@ -41,33 +40,28 @@ export default class CompositionTable extends PureComponent {
 
   @autobind
   getColumnsTitle(columns) {
-    let newColumns = [...columns];
+    const newColumns = [...columns];
     // 原因列
-    const reasonIndex = _.findIndex(newColumns, o => o.key === KEY_REASON);
+    const reasonColumn = _.find(newColumns, o => o.key === KEY_REASON) || EMPTY_OBJECT;
+    reasonColumn.render = text => this.renderPopover(text);
     // 时间列
-    const timeIndex = _.findIndex(newColumns, o => o.key === KEY_TIME);
+    const timeColumn = _.find(newColumns, o => o.key === KEY_TIME) || EMPTY_OBJECT;
+    timeColumn.render = text => (<div>{time.format(text, formatStr)}</div>);
     // 股票、基金名称列
-    const nameIndex = _.findIndex(newColumns, o => o.key === KEY_NAME);
+    const nameColumn = _.find(newColumns, o => o.key === KEY_NAME) || EMPTY_OBJECT;
+    nameColumn.render = text => this.renderNumberOrText(text);
     // 行业
-    const industryIndex = _.findIndex(newColumns, o => o.key === KEY_INDUSTRY);
+    const industryColumn = _.find(newColumns, o => o.key === KEY_INDUSTRY) || EMPTY_OBJECT;
+    industryColumn.render = text => this.renderNumberOrText(text);
     // 分类
-    const categoryIndex = _.findIndex(newColumns, o => o.key === KEY_CATEGORY);
+    const categoryColumn = _.find(newColumns, o => o.key === KEY_CATEGORY) || EMPTY_OBJECT;
+    categoryColumn.render = text => this.renderNumberOrText(text);
     // 累计涨幅
-    const increaseIndex = _.findIndex(newColumns, o => o.key === KEY_INCREASE);
+    const increaseColumn = _.find(newColumns, o => o.key === KEY_INCREASE) || EMPTY_OBJECT;
+    increaseColumn.render = text => this.renderNumberOrText(text, 'number');
     // 浮动收益率
-    const floatratereturnIndex = _.findIndex(newColumns, o => o.key === KEY_FLOATRATERETURN);
-
-    if (reasonIndex > noResult) {
-      newColumns[reasonIndex].render = text => this.renderPopover(text);
-    }
-    if (timeIndex > noResult) {
-      newColumns[timeIndex].render = text => (<div>{time.format(text, formatStr)}</div>);
-    }
-    newColumns = this.renderNumberOrText(categoryIndex, newColumns);
-    newColumns = this.renderNumberOrText(nameIndex, newColumns);
-    newColumns = this.renderNumberOrText(industryIndex, newColumns);
-    newColumns = this.renderNumberOrText(increaseIndex, newColumns, 'number');
-    newColumns = this.renderNumberOrText(floatratereturnIndex, newColumns, 'number');
+    const floatColumn = _.find(newColumns, o => o.key === KEY_FLOATRATERETURN) || EMPTY_OBJECT;
+    floatColumn.render = text => this.renderNumberOrText(text, 'number');
     return newColumns;
   }
 
@@ -88,7 +82,7 @@ export default class CompositionTable extends PureComponent {
         trigger="hover"
         overlayStyle={overlayStyle}
       >
-        <div className={styles.multiLineEllipsis}>
+        <div className={styles.oneLineEllipsis}>
           {value}
         </div>
       </Popover>);
@@ -100,22 +94,16 @@ export default class CompositionTable extends PureComponent {
 
   // 渲染文字或数字
   @autobind
-  renderNumberOrText(index, array, type = '') {
-    const newArray = [...array];
-    if (index > noResult) {
-      newArray[index].render = text => (
-        <div className={styles.oneLineEllipsis} title={text}>
-          {
-            _.isEmpty(type)
-            ?
-              text
-            :
-              this.compareWithZero(number.toFixed(text))
-          }
-        </div>
-      );
-    }
-    return newArray;
+  renderNumberOrText(text, type = '') {
+    return (<div className={styles.oneLineEllipsis} title={text}>
+      {
+        _.isEmpty(type)
+        ?
+          text
+        :
+          this.compareWithZero(number.toFixed(text))
+      }
+    </div>);
   }
 
   render() {

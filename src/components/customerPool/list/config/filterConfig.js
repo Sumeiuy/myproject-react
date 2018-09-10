@@ -21,7 +21,8 @@ function getBusinessOpenedFilterLabel(obj) {
     </span>
   );
 }
-export default {
+
+const exported = {
   basicFilters: [
     {
       filterName: '客户性质',  // 过滤器中文名称
@@ -63,6 +64,7 @@ export default {
       },
     },
   ],
+
   moreFilters: [
 
     // 基本信息
@@ -408,6 +410,7 @@ export default {
       },
     },
   ],
+
   moreFilterData: [
     { value: '可开通业务', key: 'unrights' },
     { value: '开通业务', key: 'businessOpened' },
@@ -445,6 +448,7 @@ export default {
     { value: '外部市值', key: 'outMktVal' },
     { value: '净转入资产', key: 'purFinAset' },
   ],
+
   moreFilterCategories: [
     {
       type: '基本信息',
@@ -510,3 +514,12 @@ export default {
     },
   ],
 };
+
+export default exported;
+
+export const {
+  basicFilters,
+  moreFilters,
+  moreFilterData,
+  moreFilterCategories,
+} = exported;

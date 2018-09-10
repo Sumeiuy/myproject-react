@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @file models/customerPool.js
  *  目标客户池模型管理
@@ -8,6 +9,7 @@ import queryString from 'query-string';
 import { customerPool as api, common as commonApi } from '../api';
 import { emp, url } from '../helper';
 import { toastM } from '../utils/sagaEffects';
+import { ALL_SERVE_SOURCE } from '../routes/customerPool/config';
 
 // 首页客户可用标签分页的页码和每页条数
 const INITIAL_CUSTLABEL_PAGENO = 1;
@@ -183,6 +185,8 @@ export default {
     industryList: EMPTY_LIST,
     // 客户列表中持仓行业的详情
     industryDetail: EMPTY_OBJECT,
+    // 客户列表自定义标签
+    definedLabelsInfo: EMPTY_LIST,
   },
 
   subscriptions: {
@@ -205,6 +209,7 @@ export default {
               type: 'getServiceLog',
               payload: {
                 ...params,
+                serveSource: params.serveSource === ALL_SERVE_SOURCE ? '' : params.serveSource,
                 keyword: !_.isEmpty(keyword) ? decodeURIComponent(keyword) : '',
               },
               loading: true,
@@ -979,6 +984,19 @@ export default {
         });
       }
     },
+    // 查询自定义标签
+    * queryDefinedLabelsInfo({ payload }, { call, put }) {
+      const { resultData } = yield call(api.queryDefinedLabelsInfo, payload);
+      const finalResultData = _.reduce(
+        resultData,
+        (flattened, labelList) => flattened.concat(labelList.children),
+        [],
+      );
+      yield put({
+        type: 'queryDefinedLabelsInfoSuccess',
+        payload: finalResultData,
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -1698,6 +1716,13 @@ export default {
           ...state.industryDetail,
           [`${custId}_${industryId}`]: currentList,
         },
+      };
+    },
+    queryDefinedLabelsInfoSuccess(state, action) {
+      const { payload = EMPTY_LIST } = action;
+      return {
+        ...state,
+        definedLabelsInfo: payload,
       };
     },
   },

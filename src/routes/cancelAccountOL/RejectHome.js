@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-07-12 09:02:17
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-25 09:54:45
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-15 12:07:18
  * @description 线上销户的驳回后修改页面
  */
 
@@ -294,6 +294,7 @@ export default class RejectHome extends Component {
       groupName: btn.nextGroupName,
       auditors: !_.isEmpty(btn.flowAuditors) ? btn.flowAuditors[0].login : '',
       nextApproverList: btn.flowAuditors,
+      defaultNextApproverList: btn.flowAuditors,
     }, this.doValidateAndSaveApply);
   }
 
@@ -310,6 +311,22 @@ export default class RejectHome extends Component {
   @logable({ type: 'Click', payload: { name: '取消' } })
   handleCancelSelectApproval() {
     this.setState({ nextApprovalModal: false });
+  }
+
+  // 搜索下一步审批人
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索下一步审批人',
+      value: '$args[0]',
+    },
+  })
+  handleSearchApproval(value) {
+    const { defaultNextApproverList } = this.state;
+    const filterNextApproverList = _.filter(defaultNextApproverList,
+      item => (item.login.indexOf(value) > -1 || item.empName.indexOf(value) > -1));
+    this.setState({ nextApproverList: filterNextApproverList });
   }
 
   render() {
@@ -332,7 +349,12 @@ export default class RejectHome extends Component {
       title: '选择下一审批人员',
       modalKey: 'relationRejectApplyNextApproverModal',
       rowKey: 'login',
-      searchShow: false,
+      searchShow: true,
+      placeholder: '员工工号/员工姓名',
+      onSearch: this.handleSearchApproval,
+      pagination: {
+        pageSize: 10,
+      },
     };
 
     const draftInfo = `${detailInfoForUpdate.orgName} - ${detailInfoForUpdate.empName}(${detailInfoForUpdate.empId})`;

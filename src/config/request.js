@@ -3,13 +3,25 @@
  *  request配置文件
  * @author maoquan(maoquan@htsc.com)
  */
-import { apiPrefix, fspPrefix } from './constants';
+import { apiPrefix as apiPrefixConstants, fspPrefix } from './constants';
 
-export default {
+const exported = {
   timeout: 15000,
-  // 这里的接口处理是为了调试的方便，一般情况下该标志都是false
-  apiPrefix: process.env.REMOVE_PREFIX === true ? '/mcrm/api' : apiPrefix,
+
+ // 这里的接口处理是为了调试的方便，一般情况下该标志都是false
+  apiPrefix: process.env.REMOVE_PREFIX === true ? '/mcrm/api' : apiPrefixConstants,
+
   fspPrefix,
   prefix: process.env.REMOVE_PREFIX === true ? '/mcrm/api' : '/fspa/mcrm/api',
   ERROR_SEPARATOR: '$%^#%^#$^%#%$#',
 };
+
+export default exported;
+export { fspPrefix };
+
+export const {
+ timeout,
+ apiPrefix,
+ prefix,
+ ERROR_SEPARATOR,
+} = exported;

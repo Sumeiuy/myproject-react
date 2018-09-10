@@ -17,7 +17,7 @@ export default function telephoneNumberManage(api) {
     // 获取申请详情页面的服务经理表格数据
     queryEmpAppBinding: query => api.post('/groovynoauth/fsp/emp/mobilebinding/queryAppBinding', query),
     // 获取附件列表
-    getAttachmentList: query => api.post('/file/ceFileList', query),
+    getAttachmentList: query => api.post('/file/ceFileList2', query),
     // 获取新建页面投顾列表
     queryAdvisorList: query => api.post('/groovynoauth/fsp/emp/mobilebinding/queryAdvisorList', query),
     // 更新接口（新建和修改）

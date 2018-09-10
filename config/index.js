@@ -54,7 +54,7 @@ module.exports = {
       prefix,
       {
         target: 'http://168.61.8.82:5086', // uat
-        // target: '160.9.229.179:8082', // xzx
+        // target: 'http://160.9.231.212:8082', // xzx
         // target: 'http://168.61.8.81:5087', // SIT
         // target: 'http://168.61.8.81:5090', // DOClever
       },
@@ -97,6 +97,7 @@ module.exports = {
   appStatic: path.resolve(__dirname, '../static'),
   htComponents: [
     path.resolve(__dirname, '../node_modules/lego-react-filter/src'),
-    path.resolve(__dirname, '../node_modules/lego-tree-filter/src')
+    path.resolve(__dirname, '../node_modules/lego-tree-filter/src'),
+    path.resolve(__dirname, '../node_modules/lego-react-date/src')
   ]
 };

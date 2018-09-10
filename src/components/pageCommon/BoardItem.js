@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
-import selectHandlers from '../Edit/selectHelper';
+import { getAllCheckboxNode, afterSelected } from '../Edit/selectHelper';
 import styles from './BoardItem.less';
 import ImgTGJX from './img/bg_tgjx.png';
 import ImgJYYJ from './img/bg_jyyj.png';
@@ -34,8 +34,8 @@ export default class BoardItem extends PureComponent {
   setVRnames(user, all) {
     // 首先判断
     const selfOrg = all[0].level;
-    const allNode = selectHandlers.getAllCheckboxNode(selfOrg);
-    const getVRnames = selectHandlers.afterSelected(all, allNode);
+    const allNode = getAllCheckboxNode(selfOrg);
+    const getVRnames = afterSelected(all, allNode);
     return getVRnames(user, true);
   }
   // 发布按钮点击事件

@@ -2,8 +2,8 @@
  * @Description: 客户的基本信息
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-09 10:36:51
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-29 10:49:21
  */
 
 import React from 'react';
@@ -11,6 +11,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
+import cx from 'classnames';
+
 import Icon from '../../../common/Icon';
 import { openFspTab } from '../../../../utils';
 import ContactInfoPopover from '../../../common/contactInfoPopover/ContactInfoPopover';
@@ -21,6 +23,9 @@ import logable from '../../../../decorators/logable';
 import styles from './customerProfile.less';
 
 import { riskLevelConfig, PER_CODE, ORG_CODE, CALLABLE_LIST, PHONE } from './config';
+import { MOT_RETURN_VISIT_TASK_EVENT_ID } from '../../../../config/taskList/performView';
+
+import { headMainContact, headMainLinkman } from '../../../common/contactInfoPopover/config';
 
 import iconDiamond from '../img/iconDiamond.png';
 import iconWhiteGold from '../img/iconWhiteGold.png';
@@ -63,6 +68,8 @@ const rankImgSrcConfig = {
   },
 };
 
+const EMPTY_LIST = [];
+
 export default class CustomerProfile extends React.PureComponent {
 
   static propTypes = {
@@ -72,6 +79,7 @@ export default class CustomerProfile extends React.PureComponent {
     currentId: PropTypes.string.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     taskTypeCode: PropTypes.string,
+    eventId: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -89,6 +97,13 @@ export default class CustomerProfile extends React.PureComponent {
     this.endTime = '';
     this.startTime = '';
     this.state = { showMask: false };
+  }
+
+  // 判断当前的任务是否是 MOT 回访类型任务
+  // TODO 目前开发状态下暂时默认为true
+  @autobind
+  isMOTReturnVistTask(eventId) {
+    return MOT_RETURN_VISIT_TASK_EVENT_ID === eventId;
   }
 
   @autobind
@@ -168,7 +183,7 @@ export default class CustomerProfile extends React.PureComponent {
       // 服务方式
       serveWay: 'HTSC Phone',
       // 任务类型，1：MOT  2：自建
-      taskType: `${+taskTypeCode + 1}`,
+      taskType: `${parseInt(taskTypeCode, 10) + 1}`,
       // 服务状态
       flowStatus: '30',
       // 同serveType
@@ -230,6 +245,45 @@ export default class CustomerProfile extends React.PureComponent {
   }
 
   /**
+   * 渲染联系方式框显示的内容 如果有主联系方式显示主联系方式，没有就任意显示一条号码，没有号码就显示 “无联系电话”
+  */
+  @autobind
+  renderLinkNumber(custType, perData = {}, orgData = []) {
+    let num = '';
+    if (custType === PER_CODE) {
+      const list = [];
+      // 调用从联系方式组件中提出来的公共方法对联系人列表排序，此处得到的列表主联系方式是在第一条
+      const sortedList = headMainContact(perData);
+      // 将所有的cellPhones，homeTels，workTels，otherTels都放到一个数组里
+      sortedList.forEach((item) => {
+        list.push(...(item.value || EMPTY_LIST));
+      });
+      // 将所有的cellPhones，homeTels，workTels，otherTels的value（即电话号码）都提到一个数组里
+      const numList = list.map(item => item.contactValue);
+      // 处理完的数组里如果有主联系方式，会是第一个，根据需求如果没有主联系方式就任意选其他的号码展示，所以这里只需判断所有号码的数组第一项是否有值就行，如果没有值说明该客户没有联系方式
+      num = numList[0] ? numList[0] : '无联系电话';
+    } else if (custType === ORG_CODE) {
+      const list = [];
+      // 调用从联系方式组件中提出来的公共方法对联系人列表排序，此处得到的列表主联系方式是在第一条
+      const sortedList = headMainLinkman(orgData);
+      // 将所有的cellPhones，homeTels，workTels，otherTels都放到一个数组里
+      sortedList.forEach((item) => {
+        list.push(
+          ...(item.cellPhones || EMPTY_LIST),
+          ...(item.homeTels || EMPTY_LIST),
+          ...(item.workTels || EMPTY_LIST),
+          ...(item.otherTels || EMPTY_LIST),
+        );
+      });
+      // 将所有的cellPhones，homeTels，workTels，otherTels的value（即电话号码）都提到一个数组里
+      const numList = list.map(item => item.contactValue);
+      // 处理完的数组里如果有主联系方式，会是第一个，根据需求如果没有主联系方式就任意选其他的号码展示，所以这里只需判断所有号码的数组第一项是否有值就行，如果没有值说明该客户没有联系方式
+      num = numList[0] ? numList[0] : '无联系电话';
+    }
+    return num;
+  }
+
+  /**
    * 联系方式渲染
    */
   @autobind
@@ -258,6 +312,7 @@ export default class CustomerProfile extends React.PureComponent {
     }
     const perContactInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'homeTels', 'workTels', 'otherTels']);
     const userData = { missionFlowId, custId, missionId: currentId, custName };
+    const num = this.renderLinkNumber(custNature, perContactInfo, orgCustomerContactInfoList);
     return (
       <ContactInfoPopover
         custType={custNature || ''}
@@ -272,7 +327,9 @@ export default class CustomerProfile extends React.PureComponent {
         placement="topRight"
       >
         <span className={styles.contact}>
-          <Icon type="dianhua" className={styles.icon} />联系方式
+          <Icon type="dianhua" className={styles.icon} />
+          {num}
+          <Icon type="jiantou" className={styles.iconJiantou} />
         </span>
       </ContactInfoPopover>
     );
@@ -280,7 +337,7 @@ export default class CustomerProfile extends React.PureComponent {
 
   render() {
     const { showMask } = this.state;
-    const { targetCustDetail = {} } = this.props;
+    const { targetCustDetail = {}, eventId } = this.props;
     const {
       custName, isAllocate, isHighWorth, custId, genderValue, age,
         riskLevelCode, isSign, levelCode, custNature,
@@ -289,29 +346,48 @@ export default class CustomerProfile extends React.PureComponent {
     const riskLevel = riskLevelConfig[riskLevelCode];
     // 客户等级
     const rankImg = rankImgSrcConfig[levelCode];
+
+    // 当选择的任务类型为 MOT 任务回访的时候，客户的名字显示为黑色，并且不可点击
+    const isMotReturnVisit = this.isMOTReturnVistTask(eventId);
+    const custNameClickCls = cx({
+      [styles.name]: true,
+      [styles.clickable]: true,
+    });
+    const custNameUnClickCls = cx({
+      [styles.name]: true,
+      [styles.unclickable]: isMotReturnVisit,
+    });
+
     return (
       <div className={styles.container}>
         <div className={styles.row}>
           <div className={styles.col}>
             <p className={styles.item}>
-              <span
-                className={`${styles.clickable} ${styles.name}`}
-                onClick={this.handleCustNameClick}
-              >
-                {custName}
-              </span>
+              {
+                isMotReturnVisit ?
+                (<span className={custNameUnClickCls}>{custName}</span>)
+                :
+                (
+                  <span
+                    className={custNameClickCls}
+                    onClick={this.handleCustNameClick}
+                  >
+                    {custName}
+                  </span>
+                )
+              }
               {isAllocate === '0' && '(未分配)'}
             </p>
             <p className={styles.item}>
-              {isHighWorth && <span className={styles.highWorth} title="高净值">高</span>}
+              {isHighWorth && <span className={styles.highWorth} title="客户类型：高净值">高</span>}
               {
                 riskLevel
-                && <span className={styles.riskLevel} title={riskLevel.title}>
+                && <span className={styles.riskLevel} title={`风险等级：${riskLevel.title}`}>
                   {riskLevel.name}
                 </span>
               }
               {isSign && <span className={styles.sign} title="签约客户">签</span>}
-              {rankImg && <img className={styles.rank} title={rankImg.title} src={rankImg.src} alt="" />}
+              {rankImg && <img className={styles.rank} title={`客户等级：${rankImg.title}`} src={rankImg.src} alt="" />}
             </p>
           </div>
           <div className={styles.col}>

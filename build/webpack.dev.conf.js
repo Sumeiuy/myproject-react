@@ -92,7 +92,7 @@ module.exports = merge(baseWebpackConfig, {
       filename: 'newIndex.html',
       template: 'newIndex.html',
       chunks: ['newIndex'],
-      inject: true
+      inject: false
     }),
     new webpack.DllReferencePlugin({
       context: __dirname,
@@ -101,7 +101,22 @@ module.exports = merge(baseWebpackConfig, {
     new HappyPack({
       id: 'jsx',
       threads: 4,
-      loaders: ['babel-loader']
+      loaders: [{
+        loader: 'babel-loader',
+        options: {
+          presets: ["@babel/preset-react"],
+          plugins: [
+            [
+              "import", {
+                "libraryName": "antd",
+                "style": true
+              }
+            ],
+            ["@babel/plugin-proposal-class-properties", { "loose": true }],
+            ["@babel/plugin-proposal-object-rest-spread"],
+          ]
+        }
+      }],
     }),
     new FriendlyErrorsPlugin(),
     new CircularDependencyPlugin({

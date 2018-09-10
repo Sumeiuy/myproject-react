@@ -6,7 +6,7 @@
  * @description 此处存放针对数字的通用处理方法
  */
 import _ from 'lodash';
-import reg from './regexp';
+import { thousandInteger, thousandDecimal } from './regexp';
 // 百
 const hundred = 100;
 // 千
@@ -55,8 +55,8 @@ const number = {
     const replacement = `$1${thousandSeq}`;
     // 将数字差分成整数部分和小数部分
     const nArr = numberString.split('.');
-    const itegerF = nArr[0].replace(reg.thousandInteger, replacement);
-    let decimalF = !_.isEmpty(nArr[1]) && nArr[1].replace(reg.thousandDecimal, replacement);
+    const itegerF = nArr[0].replace(thousandInteger, replacement);
+    let decimalF = !_.isEmpty(nArr[1]) && nArr[1].replace(thousandDecimal, replacement);
     if (!decimalNeedFormat) {
       decimalF = !_.isEmpty(nArr[1]) && nArr[1];
     }
@@ -89,3 +89,9 @@ const number = {
 };
 
 export default number;
+export { hundred, thousand, wan, million, yi, billion, trillion, percent, permillage };
+
+export const {
+  thousandFormat,
+  toFixed,
+} = number;

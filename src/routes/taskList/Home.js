@@ -2,13 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 22:14:17
+ * @Last Modified time: 2018-09-03 17:11:30
  * @description 任务管理首页
  */
 
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import store from 'store';
 import withRouter from '../../decorators/withRouter';
 import ConnectedPageHeader from '../../components/taskList/ConnectedPageHeader';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
@@ -27,8 +28,6 @@ import logable, { logCommon } from '../../decorators/logable';
 import taskListHomeShape from './taskListHomeShape';
 import { getViewInfo } from './helper';
 
-import styles from './home.less';
-
 import {
   EXECUTOR,
   INITIATOR,
@@ -36,7 +35,6 @@ import {
   STATUS_MANAGER_VIEW,
   SYSTEMCODE,
   STATE_EXECUTE_CODE,
-  STATE_ALL_CODE,
   // 三个视图左侧任务列表的请求入参，在config里面配置，后续如果需要新增，或者删除某个param，
   // 请在config里面配置QUERY_PARAMS
   QUERY_PARAMS,
@@ -44,8 +42,8 @@ import {
   DEFAULTSORT_VIEW,
 } from './config';
 
-// 空函数
-const NOOP = _.noop;
+import styles from './home.less';
+
 // 执行者视图的左侧列表宽度
 const LEFT_PANEL_WIDTH = 400;
 // 视图配置项
@@ -207,7 +205,7 @@ export default class PerformerView extends PureComponent {
 
   // 执行者视图获取目标客户列表项的对应浮层详情
   @autobind
-  getCustDetail({ missionId = '', custId = '', missionFlowId = '', callback = NOOP }) {
+  getCustDetail({ eventId, missionId = '', custId = '', missionFlowId = '', callback = _.noop }) {
     const { queryTargetCustDetail, targetCustList = EMPTY_OBJECT } = this.props;
     const { list = EMPTY_LIST } = targetCustList;
     if (_.isEmpty(list)) {
@@ -218,6 +216,7 @@ export default class PerformerView extends PureComponent {
       missionId,
       custId: custId || firstItem.custId,
       missionFlowId: missionFlowId || firstItem.missionFlowId,
+      eventId: eventId || firstItem.eventId,
     }).then(callback);
   }
 
@@ -512,7 +511,17 @@ export default class PerformerView extends PureComponent {
       queryExecutorFlowStatus,
       queryExecutorFeedBack,
       queryExecutorDetail,
+      isShowExecutorDetailLoading,
       queryTargetCustDetail,
+      // 客户名下其他任务
+      getOtherTaskList,
+      otherTaskList,
+      fetchOtherTaskListStatus,
+      isSendCustsServedByPostn,
+      sendCustsServedByPostnResult,
+      changeBatchServiceRecordForm,
+      saveBatchAddServiceRecord,
+      clearCreateTaskData,
     } = this.props;
     const {
       typeCode,
@@ -521,6 +530,9 @@ export default class PerformerView extends PureComponent {
       eventId,
       taskTypeCode,
     } = this.state;
+    if (list.resultData[0].missionViewType !== EXECUTOR) {
+      return null;
+    }
     const currentId = this.getCurrentId();
     const currentTask = _.find(list.resultData, item => item.id === currentId) || {};
     return (
@@ -581,9 +593,19 @@ export default class PerformerView extends PureComponent {
         queryExecutorFlowStatus={queryExecutorFlowStatus}
         queryExecutorFeedBack={queryExecutorFeedBack}
         queryExecutorDetail={queryExecutorDetail}
+        isShowExecutorDetailLoading={isShowExecutorDetailLoading}
         queryTargetCustDetail={queryTargetCustDetail}
         location={location}
         currentTask={currentTask}
+        getOtherTaskList={getOtherTaskList}
+        otherTaskList={otherTaskList}
+        fetchOtherTaskListStatus={fetchOtherTaskListStatus}
+        isSendCustsServedByPostn={isSendCustsServedByPostn}
+        sendCustsServedByPostnResult={sendCustsServedByPostnResult}
+        refreshTaskList={this.queryAppList}
+        onBatchServiceRecordFormChange={changeBatchServiceRecordForm}
+        saveBatchAddServiceRecord={saveBatchAddServiceRecord}
+        clearCreateTaskData={clearCreateTaskData}
       />
     );
   }
@@ -613,10 +635,23 @@ export default class PerformerView extends PureComponent {
     return detailComponent;
   }
 
-  // 帕努单任务是否在执行中，用于管理者视图
+  /**
+   * 获取sortKey，createTimeSort或者endTimeSort、executionModeSort
+   * 获取sortContent，创建时间或者结束时间、执行方式
+   */
   @autobind
-  judgeTaskInApproval(status) {
-    return _.includes(STATUS_MANAGER_VIEW, status);
+  getSortConfig(viewType) {
+    const storeKey = `${emp.getId()}-${viewType}-sort`;
+    const storedSort = store.get(storeKey);
+    // 本地存储了就从本次存储拿，否则拿默认的值
+    if (storedSort) {
+      return {
+        sortType: storedSort.sortKey,
+        name: storedSort.sortContent,
+        defaultDirection: storedSort.sortDirection,
+      };
+    }
+    return DEFAULTSORT_VIEW[viewType];
   }
 
   // 导出客户
@@ -691,27 +726,16 @@ export default class PerformerView extends PureComponent {
       ...finalPostData,
       ...this.addSortParam(currentViewType, query),
     };
-    // 执行者视图中，状态默认选中‘执行中’, status传50
-    // url中status为‘all’时传空字符串或者不传，其余传对应的code码
-    if (this.isExecutorView(currentViewType)) {
-      if (status) {
-        finalPostData.status = status === STATE_ALL_CODE ? '' : status;
-      } else {
-        finalPostData.status = STATE_EXECUTE_CODE;
-      }
-    } else if (_.includes([INITIATOR, CONTROLLER], currentViewType)) {
-      // 创建者视图和管理者视图中，状态默认选中‘所有状态’， status传空字符串或者不传
-      // url中status为‘all’时传空字符串或者不传，其余传对应的code码
-      if (!status || status === STATE_ALL_CODE) {
-        finalPostData.status = '';
-      } else {
-        finalPostData.status = status;
-      }
-    }
     // 状态默认选中‘执行中’, status传50，其余传对应的code码
     finalPostData.status = status || STATE_EXECUTE_CODE;
     finalPostData = { ...finalPostData, missionViewType: currentViewType };
     return finalPostData;
+  }
+
+  // 帕努单任务是否在执行中，用于管理者视图
+  @autobind
+  judgeTaskInApproval(status) {
+    return _.includes(STATUS_MANAGER_VIEW, status);
   }
 
   // 加载右侧panel中的详情内容
@@ -732,7 +756,7 @@ export default class PerformerView extends PureComponent {
   @autobind
   queryDataForZhanleServiceWay() {
     const { eventId, taskTypeCode, typeCode } = this.state;
-    const type = `${+taskTypeCode + 1}`;
+    const type = `${parseInt(taskTypeCode, 10) + 1}`;
     // TODO 如果是mot任务 eventId参数需要使用 eventId
     // 如果是自建任务 需要使用serviceType
     // type 值为2的时候，该任务是自建任务
@@ -838,15 +862,6 @@ export default class PerformerView extends PureComponent {
         },
       });
     }
-  }
-
-  /**
-   * 获取sortKey，createTimeSort或者endTimeSort、executionModeSort
-   * 获取sortContent，创建时间或者结束时间、执行方式
-   */
-  @autobind
-  getSortConfig(viewType) {
-    return DEFAULTSORT_VIEW[viewType];
   }
 
   // url中currentId改变后驱动右侧的变化
@@ -1060,6 +1075,7 @@ export default class PerformerView extends PureComponent {
     const { sortType, name, defaultDirection } = this.getSortConfig(viewType);
     return (
       <FixedTitle
+        key={viewType}
         sortContent={name}
         sortDirection={querySortDirection || defaultDirection}
         onSortChange={this.handleSortChange}
@@ -1072,12 +1088,14 @@ export default class PerformerView extends PureComponent {
   render() {
     const { location, replace, list, dict, queryCustUuid } = this.props;
 
-    const { currentView } = this.state;
+    // const { currentView } = this.state;
 
-    const { query: { pageNum = 1, pageSize = 20 } } = location;
+    const { query: { pageNum = 1, pageSize = 20, missionViewType } } = location;
     const { resultData = EMPTY_LIST, page = EMPTY_OBJECT } = list;
 
     const isEmpty = _.isEmpty(resultData);
+
+    const { currentViewType: currentView } = getViewInfo(missionViewType);
 
     const topPanel = (
       <div>

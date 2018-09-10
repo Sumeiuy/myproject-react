@@ -101,67 +101,15 @@ app.use(createLoading({ effects: true }));
 app.use(createActivityIndicator());
 
 // 3. Model
-app.model(require('./models/global'));
+app.model(require('./models/global').default);
 // 3. Model
-app.model(require('../src/models/app'));
-app.model(require('../src/models/feedback'));
-app.model(require('../src/models/report'));
-app.model(require('../src/models/manage'));
-app.model(require('../src/models/edit'));
-app.model(require('../src/models/preview'));
-app.model(require('../src/models/history'));
-app.model(require('../src/models/permission'));
-app.model(require('../src/models/customerPool'));
-app.model(require('../src/models/customerLabel'));
-// 合作合约
-app.model(require('../src/models/contract'));
-// 服务订购
-app.model(require('../src/models/commission'));
-app.model(require('../src/models/commissionChange'));
-// 通道类型协议
-app.model(require('../src/models/channelsTypeProtocol'));
-app.model(require('../src/models/channelsEdit'));
-app.model(require('../src/models/taskList/tasklist'));
-app.model(require('../src/models/taskList/performerView'));
-app.model(require('../src/models/taskList/managerView'));
-// 零售非零售客户划转
-app.model(require('../src/models/demote'));
-// 分公司客户划转
-app.model(require('../src/models/filialeCustTransfer'));
-// 汇报关系树
-app.model(require('../src/models/relation'));
-// 客户反馈
-app.model(require('../src/models/customerFeedback'));
-// 任务反馈
-app.model(require('../src/models/taskFeedback'));
-// 主职位 model
-app.model(require('../src/models/mainPosition'));
-// 晨报
-app.model(require('../src/models/morningBoradcast'));
-// 售前适当性查询
-app.model(require('../src/models/preSaleQuery'));
-// 个股资讯
-app.model(require('../src/models/stock'));
-// 积分兑换历史查询
-app.model(require('../src/models/pointsExchange'));
-// 用户中心
-app.model(require('../src/models/userCenter'));
-// 电话申请和分配
-app.model(require('../src/models/telephoneNumberManage'));
-// 精选组合
-app.model(require('../src/models/choicenessCombination'));
-// 组合详情
-app.model(require('../src/models/combinationDetail'));
-// 投资建议模版
-app.model(require('../src/models/investmentAdvice'));
-// 用户标签
-app.model(require('../src/models/operationCenter'));
-// 营业部非投顾签约客户分配
-app.model(require('../src/models/businessDepartmentCustDistribute'));
-// 分公司客户分配
-app.model(require('../src/models/custAllot'));
-// 消息通知提醒
-app.model(require('../src/models/messageCenter'));
+app.model(require('../src/models/app').default);
+app.model(require('../src/models/customerPool').default);
+app.model(require('../src/models/taskList/performerView').default);
+app.model(require('../src/models/telephoneNumberManage').default);
+app.model(require('../src/models/investmentAdvice').default);
+app.model(require('../src/models/customerLabel').default);
+app.model(require('../src/models/morningBoradcast').default);
 
 // 4. Router
 app.router(routerConfig);

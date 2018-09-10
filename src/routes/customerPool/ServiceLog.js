@@ -6,28 +6,31 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Button, message, Input } from 'antd';
+import { Row, Col, Button, message, Input, TreeSelect } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
+import DateRangePick from 'lego-react-date/src';
 import { autobind } from 'core-decorators';
 import logable from '../../decorators/logable';
 import Select from '../../components/common/Select';
-import DateRangePicker from '../../components/common/dateRangePicker';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import withRouter from '../../decorators/withRouter';
 import styles from './serviceLog.less';
+import { ALL_SERVE_SOURCE } from './config';
 
 const Search = Input.Search;
 const dateFormat = 'YYYY-MM-DD';
 const today = moment().format(dateFormat);
-const beforeSixDate = moment().subtract(6, 'months');
+// 六个月的天数
+const SIX_MONTH_DAYS = 180;
+const beforeSixDate = moment().subtract(SIX_MONTH_DAYS - 1, 'days');
 const PAGE_NUM = 1;
 
 const DEFAULT_SERVE_TYPE = '所有类型';
-const DEFAULT_SERVE_SOURCE = '';
+const EMPTY_LIST = [];
 
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
@@ -90,7 +93,7 @@ export default class ServiceLog extends PureComponent {
       logData: [],
       pageNum: 1,
       serveType: DEFAULT_SERVE_TYPE,
-      serveSource: decodeURIComponent(channel) || DEFAULT_SERVE_SOURCE,
+      serveSource: decodeURIComponent(channel) || ALL_SERVE_SOURCE,
     };
   }
 
@@ -130,26 +133,31 @@ export default class ServiceLog extends PureComponent {
     }
   }
 
-
   @autobind
-  handleDateChange(date) {
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '服务时间',
+      min: '$args[0]',
+      max: '$args[1]',
+    },
+  })
+  handleDateChange(startDate, endDate) {
     const { location: { query, pathname }, replace } = this.props;
-    const { startDate, endDate } = date;
     if (startDate !== null && endDate !== null) {
-      const endTimeStart = startDate.format(dateFormat);
-      const endTimeEnd = endDate.format(dateFormat);
       replace({
         pathname,
         query: {
           ...query,
-          serveDateFrom: endTimeStart,
-          serveDateTo: endTimeEnd,
+          serveDateFrom: startDate,
+          serveDateTo: endDate,
           serveDateToPaged: null,
           pageNum: PAGE_NUM,
         },
       });
     }
   }
+
 
   // 判断当用户选择了第一次日期之后，可选的时间范围
   // 刻意自由选择一个日期，保证间隔不大于6个月
@@ -219,7 +227,10 @@ export default class ServiceLog extends PureComponent {
       value: '$args[0]',
     },
   })
-  serveAllSourceChange(key, value) {
+  serveAllSourceChange(value = '') {
+    if (_.isEmpty(value)) {
+      return;
+    }
     const { location: { query, pathname }, replace } = this.props;
     replace({
       pathname,
@@ -249,6 +260,28 @@ export default class ServiceLog extends PureComponent {
       value: item.key,
       show: true,
     }));
+  }
+
+  // 生成treeSelect数据
+  @autobind
+  constructCreatTreeOptions(data) {
+    // 后端返回的值key,value是反的，需要处理
+    if (!_.isEmpty(data)) {
+      return data.map((item) => {
+        const children = (item.children || EMPTY_LIST).map(child => ({
+          key: child.key,
+          title: child.value,
+          value: child.key,
+        }));
+        return {
+          key: item.key,
+          title: item.value,
+          value: item.key || ALL_SERVE_SOURCE,
+          children,
+        };
+      });
+    }
+    return EMPTY_LIST;
   }
 
   @autobind
@@ -307,7 +340,6 @@ export default class ServiceLog extends PureComponent {
     moment(serveDateTo, dateFormat) : moment(today, dateFormat);
     const startDate = serveDateFrom ?
     moment(serveDateFrom, dateFormat) : moment(beforeSixDate, dateFormat);
-
     return (
       <div className={styles.serviceInner}>
         <div
@@ -327,12 +359,13 @@ export default class ServiceLog extends PureComponent {
             </div>
             <div className={styles.serviceSource}>
               {!_.isEmpty(serveAllSource) ?
-                <Select
+                <TreeSelect
                   value={serveSource}
                   onChange={this.serveAllSourceChange}
-                  name="渠道"
-                  data={this.constructCreatOptions(serveAllSource)}
-                /> :
+                  treeData={this.constructCreatTreeOptions(serveAllSource)}
+                  treeDefaultExpandAll
+                />
+                :
                 this.constructNullCreatOptions()
               }
             </div>
@@ -349,13 +382,11 @@ export default class ServiceLog extends PureComponent {
             </div>
             <div className={styles.serviceTime}>
               <div className={styles.title}>服务时间：</div>
-              <DateRangePicker
-                hasCustomerOffset
-                initialEndDate={endDate}
-                initialStartDate={startDate}
-                onChange={this.handleDateChange}
-                key="服务时间"
-                isInsideOffSet={this.isInsideOffSet}
+              <DateRangePick
+                filterName=""
+                filterValue={[startDate, endDate]}
+                onChange={date => this.handleDateChange(date.value[0], date.value[1])}
+                disabledRange={SIX_MONTH_DAYS}
               />
             </div>
           </div>

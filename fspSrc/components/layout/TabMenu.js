@@ -87,6 +87,10 @@ export default class TabMenu extends PureComponent {
 
   @autobind
   isActiveMenu(path, menuItem, level, exact = false) {
+    const { activeKey, currentMenuId } = this.props;
+    if (activeKey === currentMenuId) { // 一定不是下拉菜单导航，不需要找高亮
+      return false;
+    }
     const menuPath = menuItem.path;
     if (exact) {
       if (

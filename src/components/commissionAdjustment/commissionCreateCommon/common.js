@@ -8,7 +8,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import approvalConfig from '../choiceApprovalUserConfig';
+import approvalBtnId from '../choiceApprovalUserConfig';
 import { seibelConfig } from '../../../config';
 
 const { comsubs: commadj } = seibelConfig;
@@ -29,7 +29,6 @@ const permil = (
 
 // 获取子类型的审批人BtnId
 function getApprovalBtnID(key) {
-  const { approvalBtnId } = approvalConfig;
   let btnId = '';
   switch (key) {
     case commadj.single:
@@ -126,9 +125,4 @@ function changeSubmitUnSubProList(list) {
   return newSubmitUnSubscriProList;
 }
 
-export default {
-  permil,
-  getApprovalBtnID,
-  changeSubmitSubProList,
-  changeSubmitUnSubProList,
-};
+export { permil, getApprovalBtnID, changeSubmitSubProList, changeSubmitUnSubProList };

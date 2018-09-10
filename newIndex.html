@@ -69,6 +69,28 @@
 <script type="text/javascript" src="/fsp/static/theme//fsp/js/main.js"></script>
 <!-- /fsp 定制样式 -->
 <link rel="stylesheet" href="/fsp/static/theme//fsp/css/main-pc.css" />
+<style>
+  .feedback-btn {
+    display: none !important;
+  }
+  .hidden-feedback-btn {
+    display: none !important;
+  }
+  .feedback-wizard-close {
+    display: none !important;
+  }
+  #feedback-overview {
+    top: 50px !important;
+    bottom: auto !important;
+  }
+  #feedback-submit-error, #feedback-submit-success {
+    position: fixed;
+    z-index: 10;
+    top: -15px !important;
+    right: 420px !important;
+    bottom: auto !important;
+  }
+</style>
 <!-- 全局业务公共脚本 -->
 <script type="text/javascript" src="/fsp/static/business/attach.js"></script>
 <script type="text/javascript" src="/fsp/static/business/flow.js"></script>
@@ -83,18 +105,31 @@
 <!-- EBLib 基线脚本 -->
 <script type="text/javascript">
 var contextPath = "/fsp";
-// var curUserCode = "002332";
-// var curOrgCode = "ZZ001041051";
 eb.component.Loading.defaults.speed = 0;
-/*将psotnId和orgId放入全局变量[高优先级]，给React前端切换时调用 */
-// window.forReactPosition={"pstnId":"1-OXZ8","orgId":"ZZ001041051"};
 </script>
 <script type="text/javascript" src="/fsp/static/business/homePage.js"></script>
 <script type="text/javascript" src="/fsp/static/business/home.js"></script>
-
 <title>华泰证券 - 理财工作平台</title>
 </head>
 <body class="react-body">
+<iframe id="login-iframe" style="height:0px; width: 0px; position: absolute;"></iframe>
+<script>
+  if (location.hostname === 'localhost') {
+    var empId = '002332';
+    var nativeQuery = window.location.search;
+    if (nativeQuery) {
+      var queryList = nativeQuery.slice(1).split('=');
+      if (queryList[0] === 'empId') {
+        empId = queryList[1];
+      }
+    }
+    var iframe = document.getElementById('login-iframe');
+    iframe.src = '/fsp/login?iv-user=' + empId;
+    iframe.onload = function load() {
+      $(document.body).append($('<script type="text/javascript" src="/newIndex.js" />'));
+    }
+  }
+</script>
 <ul id="UTB" style="display: none"></ul>
 <!-- 工作区域 -->
 <div id="exApp" class="react-app">Loading...</div>
@@ -117,8 +152,14 @@ window.open(location.protocol +"//"+ location.host + dispatchUri+"&workFlowName=
 }
 // tab切换的时候关闭反馈对话框
 function closeFeedback() {
-  if ($.feedback && $.feedback.close) {
-    $.feedback.close();
+  if ($.feedback && $.feedback.closeModal) {
+    $.feedback.closeModal();
+  }
+}
+
+function handleFeedbackBtnClick() {
+  if ($.feedback && $.feedback.handleFeedbackBtnClick) {
+    $.feedback.handleFeedbackBtnClick();
   }
 }
 

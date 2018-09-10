@@ -10,14 +10,18 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 // import _ from 'lodash';
 import { Popover, Table } from 'antd';
-import config from '../config';
+import {
+  titleList as titleListConfig,
+  typeList,
+  formatDateStr,
+  overlayStyle,
+} from '../config';
 import { time } from '../../../helper';
 import logable, { logPV } from '../../../decorators/logable';
 import styles from './historyReport.less';
 
 const EMPTY_LIST = [];
-const titleList = config.titleList.historyReport;
-const { typeList, formatDateStr, overlayStyle } = config;
+const titleList = titleListConfig.historyReport;
 export default class HistoryReport extends PureComponent {
   static propTypes = {
     // 当前组合code

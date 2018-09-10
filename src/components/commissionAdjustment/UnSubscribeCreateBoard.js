@@ -22,7 +22,7 @@ import {
   pagination,
   subScribeProColumns,
 } from './commissionTransferHelper/transferPropsHelper';
-import createCommon from './commissionCreateCommon/common';
+import { getApprovalBtnID, changeSubmitUnSubProList } from './commissionCreateCommon/common';
 import logable, { logPV } from '../../decorators/logable';
 
 import styles from './createNewApprovalBoard.less';
@@ -106,7 +106,7 @@ export default class UnSubscribeCreateBoard extends PureComponent {
         custRowId: id,
       });
     }
-    const btnId = createCommon.getApprovalBtnID(commadj.unsubscribe);
+    const btnId = getApprovalBtnID(commadj.unsubscribe);
     this.props.getAprovalUserList({
       loginUser: empNum,
       btnId,
@@ -122,7 +122,7 @@ export default class UnSubscribeCreateBoard extends PureComponent {
       attachment,
       canShowAppover,
     } = this.state;
-    const newUnSubProList = createCommon.changeSubmitUnSubProList(unSubProList);
+    const newUnSubProList = changeSubmitUnSubProList(unSubProList);
     return {
       newUnSubProList,
       approverId,

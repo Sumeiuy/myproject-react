@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /*
  * @Description: 积分兑换历史查询 model
  * @Author: zhangjunli

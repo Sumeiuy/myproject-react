@@ -5,9 +5,8 @@
  * @Last Modified by: zhangjun
  * @Last Modified time: 2018-08-03 16:23:19
  */
-import busApplyFilters from '../../config/busApplyFilters';
+import { status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
 
-const { status, drafter, department, approver, applyTime } = busApplyFilters;
 const config = {
   limit: {
     // 勾选条数限制为 500
@@ -116,6 +115,11 @@ const config = {
         key: 'dmName',
         title: '介绍人',
       },
+      {
+        dataIndex: 'totalAsset',
+        key: 'totalAsset',
+        title: '总资产(元)',
+      },
     ],
     // 新建弹窗中显示的服务经理列表标题
     // 新建弹窗--点击添加弹窗中的服务经理列表标题
@@ -141,7 +145,7 @@ const config = {
         dataIndex: 'empName',
         key: 'empName',
       }, {
-        title: '所属营业部',
+        title: '所属部门',
         dataIndex: 'occupation',
         key: 'occupation',
       },
@@ -177,6 +181,12 @@ const config = {
         key: 'newEmpName',
         title: '新服务经理',
         width: 180,
+      },
+      {
+        dataIndex: 'totalAsset',
+        key: 'totalAsset',
+        title: '总资产(元)',
+        width: 120,
       },
     ],
     // 提醒页面客户列表标题

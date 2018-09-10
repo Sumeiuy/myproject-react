@@ -1,8 +1,9 @@
+// 不要再使用该table，请使用common/table代替
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-05-03 13:24:16
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-10 09:58:13
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +12,6 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 import Table from './Table';
-import Pagination from '../Pagination';
 import styles from './index.less';
 import logable from '../../../decorators/logable';
 
@@ -99,8 +99,6 @@ export default class CommonTable extends PureComponent {
     operationColumnClass: PropTypes.string,
     // 是否展示表头
     showHeader: PropTypes.bool,
-    // 分页器是否在表格内部
-    paginationInTable: PropTypes.bool,
     // 是否需要展示空白数据行
     needShowEmptyRow: PropTypes.bool,
     // 分页器class
@@ -109,6 +107,16 @@ export default class CommonTable extends PureComponent {
     emptyListDataNeedEmptyRow: PropTypes.bool,
     // 表格头部
     title: PropTypes.func,
+    // 表格可点击的列号集合，eg: [1,2,3] 表示表格的前3列可点击
+    clickableColumnIndexList: PropTypes.array,
+    // 表格可点击的列号集合一一对应的点击事件方法集合
+    // eg: [get,set,update] 表示可点击的列号集合一一对应的点击事件方法
+    clickableColumnCallbackList: PropTypes.array,
+    // 表格可点击的列的class
+    clickableColumnClass: PropTypes.string,
+    position: PropTypes.string,
+    // 操作单元格内的class
+    actionClass: PropTypes.string,
   };
 
   static defaultProps = {
@@ -136,11 +144,15 @@ export default class CommonTable extends PureComponent {
     tableStyle: null,
     operationColumnClass: '',
     showHeader: true,
-    paginationInTable: false,
     needShowEmptyRow: true,
     paginationClass: '',
     emptyListDataNeedEmptyRow: false,
     title: null,
+    clickableColumnIndexList: [],
+    clickableColumnCallbackList: [],
+    clickableColumnClass: '',
+    position: 'bottom',
+    actionClass: '',
   };
 
   constructor(props) {
@@ -204,11 +216,11 @@ export default class CommonTable extends PureComponent {
     if (!_.isEmpty(record.flag)) {
       return '';
     }
-    if ((!_.isInteger(record[item.key]) && _.isEmpty(record[item.key]))) {
-      return '--';
-    }
     if (item.render) {
       return item.render(record, item.key);
+    }
+    if ((!_.isInteger(record[item.key]) && _.isEmpty(record[item.key]))) {
+      return '--';
     }
     return record[item.key];
   }
@@ -245,6 +257,10 @@ export default class CommonTable extends PureComponent {
       columnWidth,
       operationColumnClass,
       emptyListDataNeedEmptyRow,
+      clickableColumnIndexList,
+      clickableColumnCallbackList,
+      clickableColumnClass,
+      actionClass,
     } = this.props;
     const len = titleColumn.length - 1;
 
@@ -258,21 +274,33 @@ export default class CommonTable extends PureComponent {
       title: item.value,
       fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
       render: (text, record) => {
+        let node = (
+          <span title={item.renderTitle ? item.renderTitle(record) : record[item.key]} className="column">
+            {this.renderColumnValue(record, item)}
+          </span>
+        );
         if (index === 0 && isFirstColumnLink) {
           // 第一列可以Link，有handler
-          return (
+          node = (
             <div
               className={
                 classnames({
                   [styles.operation]: true,
                   [operationColumnClass]: true,
-                  operation: true,
+                  [styles.notoperable]: record.isDisabledFirstColumnLink,
                 })}
             >
               <span
                 title={item.renderTitle ? item.renderTitle(record) : record[item.key]}
-                className={styles.link}
-                onClick={() => firstColumnHandler(record, item.value)}
+                className={classnames({
+                  [styles.link]: !record.isDisabledFirstColumnLink,
+                  [styles.nonClickable]: record.isDisabledFirstColumnLink,
+                })}
+                onClick={() => {
+                  if (!record.isDisabledFirstColumnLink) {
+                    firstColumnHandler(record, item.value);
+                  }
+                }}
               >
                 {this.renderColumnValue(record, item)}
               </span>
@@ -280,7 +308,11 @@ export default class CommonTable extends PureComponent {
           );
         }
         if (index === len && !_.isEmpty(actionSource)) {
-          return (<div
+          const cls = classnames(
+            styles.link,
+            { [actionClass]: !!actionClass },
+          );
+          node = (<div
             className={
               classnames({
                 [styles.operation]: true,
@@ -290,8 +322,8 @@ export default class CommonTable extends PureComponent {
             {
               _.map(actionSource, itemData => (
                 <span
-                  className={styles.link}
-                  key={itemData.type}
+                  className={cls}
+                  key={itemData.key || item.type}
                   onClick={() => itemData.handler(record)}
                 >
                   {itemData.type}
@@ -301,12 +333,35 @@ export default class CommonTable extends PureComponent {
             }
           </div>);
         }
+        // 根据传入的可点击的列号数组和回调方法数组来进行区别的渲染
+        if (
+          !_.isEmpty(clickableColumnIndexList)
+          && !_.isEmpty(clickableColumnCallbackList)
+        ) {
+          _.each(clickableColumnIndexList, (value, key) => {
+            if (index === value - 1) {
+              node = (
+                <div
+                  className={
+                    classnames({
+                      [styles.operation]: true,
+                      [clickableColumnClass]: true,
+                    })}
+                >
+                  <span
+                    title={item.renderTitle ? item.renderTitle(record) : record[item.key]}
+                    className={styles.link}
+                    onClick={() => clickableColumnCallbackList[key](record, item.value)}
+                  >
+                    {this.renderColumnValue(record, item)}
+                  </span>
+                </div>
+              );
+            }
+          });
+        }
 
-        return (
-          <span title={item.renderTitle ? item.renderTitle(record) : record[item.key]} className={'column'}>
-            {this.renderColumnValue(record, item)}
-          </span>
-        );
+        return node;
       },
     }));
   }
@@ -319,7 +374,6 @@ export default class CommonTable extends PureComponent {
       needShowEmptyRow,
       emptyListDataNeedEmptyRow,
       pageData: { curPageSize },
-      paginationInTable,
     } = this.props;
     if (_.isEmpty(dataSource) && !emptyListDataNeedEmptyRow) {
       return [];
@@ -338,7 +392,6 @@ export default class CommonTable extends PureComponent {
         newDataSource,
         Number(curPageSize),
         emptyListDataNeedEmptyRow,
-        paginationInTable,
       );
     }
 
@@ -362,17 +415,10 @@ export default class CommonTable extends PureComponent {
       hideDefaultSelections: true,
       onSelect: onSingleRowSelectionChange,
       onSelectAll: onSelectAllChange,
+      getCheckboxProps: record => ({
+        disabled: record.disabledSelection,
+      }),
     };
-  }
-
-  @autobind
-  renderFooter(paganationOption) {
-    return (
-      <Pagination
-        paginationKey={'pagination'}
-        {...paganationOption}
-      />
-    );
   }
 
   render() {
@@ -398,7 +444,7 @@ export default class CommonTable extends PureComponent {
       showHeader,
       paginationClass,
       title: tableTitle,
-      paginationInTable,
+      position,
     } = this.props;
     const { curSelectedRow } = this.state;
     const paganationOption = {
@@ -408,6 +454,7 @@ export default class CommonTable extends PureComponent {
       isHideLastButton,
       isShortPageList,
       showSizeChanger,
+      position,
       onChange: (page, pageSize) => {
         // 翻页的时候，将高亮取消
         this.setState({
@@ -424,10 +471,6 @@ export default class CommonTable extends PureComponent {
     const scrollXArea = isFixedColumn ? { x: scrollX } : {};
     const tableStyleProp = !_.isEmpty(tableStyle) ? { style: tableStyle } : {};
     const titleProp = tableTitle ? { title: tableTitle } : {};
-    const footerProp = paginationInTable ? {
-      footer: () =>
-        this.renderFooter(paganationOption),
-    } : {};
 
     return (
       <div className={styles.groupTable}>
@@ -449,11 +492,10 @@ export default class CommonTable extends PureComponent {
             })}
           showHeader={showHeader}
           {...tableStyleProp}
-          pagination={(needPagination && totalRecordNum > 0 && !paginationInTable) ?
+          pagination={(needPagination && totalRecordNum > 0) ?
             paganationOption : false}
           paginationClass={`${styles.pagination} ${paginationClass}`}
           {...titleProp}
-          {...footerProp}
         />
       </div>
     );

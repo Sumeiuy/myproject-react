@@ -34,3 +34,7 @@ const historyDeal = {
 };
 
 export default historyDeal;
+
+export const {
+  getContrastData,
+} = historyDeal;

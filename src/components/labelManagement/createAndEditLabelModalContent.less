@@ -1,0 +1,234 @@
+@import '../../css/variable.less';
+
+.groupDetail {
+  width: 610px;
+  ::-webkit-input-placeholder {
+    font-size: 14px;
+  }
+  :-ms-input-placeholder {
+    font-size: 14px;
+  }
+  & > .nameSection {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    & > .name {
+      width: 12%;
+      font-size: 14px;
+      padding-top: 5px;
+    }
+    & > .name::before {
+      display: inline-block;
+      margin-right: 4px;
+      content: "*";
+      line-height: 1;
+      font-size: 12px;
+      color: #f04134;
+    }
+    & > .nameContent {
+      width: 88%;
+      .labelNameInput {
+        font-size: 14px;
+        color: #333;
+      }
+      :global {
+        .ant-form-item {
+          margin-bottom: 14px;
+        }
+      }
+      .editableTextWrapper {
+        margin-bottom: 14px;
+      }
+      .normalBox {
+        width: 100%;
+        color: #333;
+      }
+    }
+  }
+  & > .descriptionSection {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    & > .description {
+      width: 12%;
+      padding-top: 5px;
+      font-size: 14px;
+    }
+    & > .description::before {
+      display: inline-block;
+      margin-right: 4px;
+      content: "*";
+      line-height: 1;
+      font-size: 12px;
+      color: #f04134;
+    }
+    & > .descriptionContent {
+      width: 88%;
+      .labelDescInput {
+        font-size: 14px;
+        color: #333;
+      }
+      textarea {
+        resize: none !important;
+        height: 82px !important;
+        min-height: 82px !important;
+        max-height: 82px !important;
+        overflow-y: scroll;
+        .noScrollBarIEStyle;
+      }
+      :global {
+        .ant-form-item {
+          margin-bottom: 14px;
+        }
+      }
+      .editableTextWrapper {
+        margin-bottom: 14px;
+      }
+      .normalBox {
+        width: 100%;
+        color: #333;
+      }
+    }
+  }
+  & .groupCustomerSearch {
+    display: block;
+    :global {
+      .ant-input {
+        border-right: 0;
+      }
+      .ant-btn-primary {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-left: -1px;
+      }
+    }
+  }
+  & > .addWaySection {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    & > .addWay {
+      width: 12%;
+      font-size: 14px;
+      padding-top: 5px;
+    }
+    & > .addWay::before {
+      display: inline-block;
+      margin-right: 4px;
+      content: "*";
+      line-height: 1;
+      font-size: 12px;
+      color: #f04134;
+    }
+    & > .addWayContent {
+      width: 88%;
+      margin-bottom: 14px;
+      :global {
+        .ant-select-selection-selected-value {
+          font-size: 14px;
+          color: #333;
+        }
+      }
+    }
+  }
+  & > .addWaySubSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-top: 1px solid #eaeaea;
+    & > .singleCust {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      height: 30px;
+      overflow: hidden;
+    }
+    & > .multiCust {
+      display: flex;
+      justify-content: flex-start;
+      .importCust {
+        display: inline-block;
+        width: 80px;
+        height: 30px;
+        line-height: 30px;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        font-size: 14px;
+        color: #333;
+        margin-right: 10px;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        a {
+          font-size: 14px;
+          color: #333;
+        }
+      }
+    }
+    .uploadLoading {
+      display: inline-block;
+      margin-right: 10px;
+    }
+    .downloadLink {
+      display: inline-block;
+      width: 80px;
+      height: 30px;
+      line-height: 30px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      font-size: 14px;
+      color: #333;
+      text-decoration: none;
+      text-align: center;
+    }
+    .toggleBtn {
+      color: #108ee9;
+      font-size: 14px;
+    }
+  }
+  & > .multiErrmsg {
+    margin-bottom: 10px;
+    text-align: center;
+    :global {
+      .ant-alert {
+        font-size: 12px;
+        color: #e33c39;
+      }
+    }
+  }
+  & > .customerListTable {
+    display: block;
+    height: 230px;
+    .custListTable {
+      padding: 0;
+      table > thead > tr > th, tbody > tr > td {
+        padding: 8px 0;
+        text-align: left;
+        &:last-child {
+          text-align: center;
+        }
+      }
+      :global {
+        .ant-table-header {
+          background-color: #eff0f5;
+          table {
+            border-bottom: 0;
+            table-layout: fixed;
+          }
+        }
+        .column {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          margin: 0 auto;
+        }
+        .column, table > thead > tr > th > span:last-child {
+          padding: 0 19px;
+        }
+      }
+    }
+  }
+}

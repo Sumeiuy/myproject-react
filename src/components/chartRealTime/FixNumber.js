@@ -361,3 +361,23 @@ const FixNumber = {
 };
 
 export default FixNumber;
+
+export const {
+  toFixedDecimal,
+  toFixedMoney,
+  transformItemUnit,
+  toFixedNewMoney,
+  toFixedCust,
+  toFomatterCust,
+  toFixedCI,
+  toFixedGE,
+  getMaxAndMinPercent,
+  getMaxAndMinPermillage,
+  getMaxAndMinMoney,
+  getMaxAndMinCust,
+  getMaxAndMinCi,
+  getMaxAndMinGE,
+  getDenominator,
+  getPercentage,
+  getBarAdaptiveMax,
+} = FixNumber;

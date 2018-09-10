@@ -1,5 +1,5 @@
 .basicInfoD {
-  width: 167px;
+  width: 265px;
   font-size: 12px;
   position: absolute;
   top: 87px;
@@ -26,10 +26,10 @@
           color: #108ee9;
         }
       }
-      &:nth-child(2n + 1) {
+      &:not(:last-child) {
         border-right: 1px solid #ddd;
       }
-      &:nth-child(2n) {
+      &:last-child {
         padding-right: 0;
       }
     }

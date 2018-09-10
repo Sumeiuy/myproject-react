@@ -17,3 +17,101 @@
     }
   }
 }
+
+.introTooltip {
+  background: #fff;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .3);
+  border-radius: 3px;
+  padding: 20px;
+  min-width: 268px;
+  box-sizing: border-box;
+  direction: ltr;
+  :global {
+    .introjs-tooltiptext {
+      color: #000;
+      font-size: 14px;
+      line-height: 1.5;
+      text-align: left;
+    }
+    .introjs-tooltipbuttons {
+      margin: 0 auto;
+      width: 124px;
+      .introjs-donebutton {
+        margin: 0;
+        padding: 3px 8px;
+        background: transparent;
+        border: 0;
+        color: #fff;
+        font-size: 16px;
+        font-weight: normal;
+        font-family: inherit;
+        text-decoration: none;
+        text-shadow: unset;
+        &:hover {
+          border: 0;
+          box-shadow: unset;
+          text-shadow: unset;
+        }
+      }
+      .introjs-prevbutton, .introjs-nextbutton {
+        margin: 0;
+        background: none;
+        background-color: #fff;
+        color: #666;
+        text-decoration: none;
+        &:hover {
+          border-color: #108ee9;
+          color: #108ee9;
+        }
+        &.introjs-disabled {
+          color: #cccbcb;
+          border-color: #e4e4e4;
+          &:hover {
+            background-color: #fff;
+            color: #cccbcb;
+            border-color: #e4e4e4;
+          }
+        }
+      }
+      .introjs-skipbutton {
+        position: absolute;
+        right: 8px;
+        top: 4px;
+        margin: 0;
+        padding: 0;
+        background: none;
+        border: none;
+        font-size: 18px;
+        font-weight: normal;
+        font-family: inherit;
+        color: #333;
+        outline: none;
+      }
+      .introjs-prevbutton {
+        border: 1px solid #d4d4d4;
+      }
+      .introjs-nextbutton {
+        margin-left: 8px;
+      }
+    }
+    .introjs-bullets {
+      font-size: 0;
+      ul {
+        margin: 12px auto;
+        li a {
+          width: 4px;
+          height: 4px;
+          &.active {
+            background: #108ee9;
+          }
+        }
+      }
+    }
+  }
+}
+
+.highlightClass {
+  border: 0;
+  box-shadow: unset;
+  background: transparent;
+}

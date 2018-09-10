@@ -1,0 +1,54 @@
+.motReturnVisitContent {
+  .visitReturnBlock {
+    width: 100%;
+    line-height: 28px;
+    display: flex;
+    justify-content: flex-start;
+    margin: 10px 0;
+
+    .title {
+      flex: 0 0 auto;
+      font-size: 14px;
+      text-align: right;
+      color: #a1a1a1;
+      width: 100px;
+      padding-right: 10px;
+
+      &:before {
+        display: inline-block;
+        margin-right: 4px;
+        content: "*";
+        line-height: 1;
+        font-size: 12px;
+        color: #f04134;
+      }
+    }
+
+    .content {
+      flex: 1 1 auto;
+      position: relative;
+      border-radius: 3px;
+
+      :global {
+        .ant-radio-wrapper {
+          vertical-align: middle;
+          margin-top: -4px;
+        }
+        .ant-input {
+          width: 100%;
+          font-size: 14px;
+          min-height: 28px;
+          color: #4a4a4a;
+        }
+        .ant-radio-wrapper, .ant-select-selection-selected-value {
+          font-size: 14px;
+          color: #4a4a4a;
+          vertical-align: middle;
+        }
+        .ant-form-item {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}

@@ -24,12 +24,16 @@ export default class Sort extends PureComponent {
     onChange: PropTypes.func,
     data: PropTypes.array,
     wrapClassName: PropTypes.string,
+    showIntroId: PropTypes.string,
+    name: PropTypes.string,
   };
 
   static defaultProps = {
     onChange: _.noop,
     data: EMPTY_LIST,
     wrapClassName: '',
+    showIntroId: '',
+    name: '排序指标',
   };
 
   @autobind
@@ -74,7 +78,7 @@ export default class Sort extends PureComponent {
   }
 
   render() {
-    const { value: { sortType }, data, wrapClassName } = this.props;
+    const { name: displayName, value: { sortType }, data, wrapClassName, showIntroId } = this.props;
     const { name } = this.getCurrentQuota();
     const selectProps = _.omit(this.props, _.keys(Sort.propTypes));
     return (
@@ -87,7 +91,7 @@ export default class Sort extends PureComponent {
           { this.renderUpAndDown() }
         </div>
         <div className={styles.switch}>
-          <span>切换指标</span>
+          <span id={showIntroId}>{displayName}</span>
           <Select
             value={sortType}
             style={{ width: 110 }}

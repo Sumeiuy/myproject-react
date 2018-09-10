@@ -579,14 +579,20 @@ export default class EditForm extends PureComponent {
     });
   }
 
+  // CommonUpload组件实例
+  @autobind
+  uploadRef(node, type) {
+    if (!node) return;
+    this[type] = node.getWrappedInstance();
+  }
+
   // 清除附件信息
   @autobind
   resetUpload() {
     const { attachmentTypeList } = this.state;
     const newAttachmentList = attachmentTypeList.map((item) => {
       if (item.length) {
-        const type = `uploader${item.type}`;
-        this[type].getWrappedInstance().resetUpload();
+        this[`uploader${item.type}`].resetUpload();
         return {
           ...item,
           length: 0,
@@ -877,7 +883,7 @@ export default class EditForm extends PureComponent {
                     attachmentList={isEdit ? item.attachmentList : []}
                     uploadCallback={this.handleUploadCallback}
                     deleteCallback={this.handleDeleteCallback}
-                    ref={(ref) => { this[`uploader${item.type}`] = ref; }}
+                    ref={node => this.uploadRef(node, `uploader${item.type}`)}
                     showDelete
                   />
                 </div>

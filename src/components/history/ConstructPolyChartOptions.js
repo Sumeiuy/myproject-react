@@ -2,7 +2,6 @@
  * by xuxiaoqin
  * ConstructPolyChartOptions.js
  */
-export default {};
 
 export const constructPolyChartOptions = (option = {}) => {
   const {

@@ -1,0 +1,95 @@
+.deputeFormContainer {
+  width: 100%;
+
+  &.reject {
+    padding: 10px 0;
+  }
+
+  .deputeReasonArea {
+    display: flex;
+    align-items: stretch;
+    height: 110px;
+
+    .label {
+      padding-right: 5px;
+      font-size: 14px;
+      color: #9b9b9b;
+      text-align: right;
+      line-height: 30px;
+      width: 112px;
+      flex: 0 0 auto;
+      .required {
+        margin-right: 4px;
+        color: red;
+        font-style: normal;
+        line-height: 30px;
+      }
+      .colon {
+        padding: 0 4px;
+      }
+    }
+
+    .textArea {
+      flex: 1 1 auto;
+      :global {
+        .ant-input {
+          width: 100%;
+          height: 100%;
+          font-size: 14px;
+          line-height: 30px;
+        }
+      }
+    }
+  }
+  .ptyMngOrgSelect {
+    margin-right: 10px;
+
+    :global {
+      .ant-select-selection--single,
+      .ant-select-selection__rendered {
+        height: 32px;
+        line-height: 30px;
+      }
+    }
+  }
+  .ptyMngAutoCompleteOptionValue {
+    font-size: 14px;
+    color: #4a4a4a;
+    line-height: 18px;
+  }
+
+  .modContent {
+    margin-bottom: 15px;
+  }
+
+  .checkFail {
+    color: #f5222d;
+    font-size: 14px;
+    line-height: 30px;
+    padding-left: 115px;
+    margin-top: -10px;
+  }
+
+  .assignee {
+    :global {
+      .lego-filter-filterWrapper {
+        & > button:first-child {
+          width: 228px;
+          height: 32px;
+          border: 1px solid #d9d9d9;
+          border-radius: 4px;
+          font-size: 12px;
+          color: rgba(0, 0, 0, .65);
+
+          .lego-filter-customerFilterValue {
+            line-height: 32px;
+          }
+        }
+      }
+      .lego-filter-menuContainer {
+        position: relative;
+        z-index: 100;
+      }
+    }
+  }
+}

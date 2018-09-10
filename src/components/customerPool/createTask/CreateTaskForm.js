@@ -30,6 +30,8 @@ import {
   NUMOFCUSTOPENED_ENTRY,
   TASK_CUST_SCOPE_ENTRY,
   SOURCE_CUSTLIST,
+  SOURCE_LABELMANAGEMENT,
+  SOURCE_SERVICE_RESULT_CUST,
 } from '../../../config/createTaskEntry';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
@@ -72,6 +74,7 @@ export default class CreateTaskForm extends PureComponent {
     templetDesc: PropTypes.string,
     isSightLabel: PropTypes.bool,
     industryList: PropTypes.array,
+    definedLabelsInfo: PropTypes.array,
   }
 
   static defaultProps = {
@@ -87,6 +90,7 @@ export default class CreateTaskForm extends PureComponent {
     templetDesc: '',
     isSightLabel: false,
     industryList: [],
+    definedLabelsInfo: [],
   }
 
   static contextTypes = {
@@ -281,6 +285,15 @@ export default class CreateTaskForm extends PureComponent {
         defaultExecutionType = '请选择';
         defaultMissionDesc = this.getFilterInfo();
         break;
+      case SOURCE_LABELMANAGEMENT:
+        defaultMissionType = '请选择';
+        defaultExecutionType = '请选择';
+        defaultMissionDesc = this.getLabelManagementMissionDesc();
+        break;
+      case SOURCE_SERVICE_RESULT_CUST:
+        defaultMissionType = missionType || '请选择';
+        defaultExecutionType = '请选择';
+        break;
       default:
         defaultMissionType = '请选择';
         defaultExecutionType = '请选择';
@@ -359,15 +372,32 @@ export default class CreateTaskForm extends PureComponent {
   @autobind
   getFilterInfo() {
     const { dict } = this.context;
-    const { location: { query }, industryList } = this.props;
+    const { location: { query }, industryList, definedLabelsInfo } = this.props;
     const filterObj = url.transfromFilterValFromUrl(query.filters);
-    const { htmlStr, suggestionList } = getFilterInfo({ filterObj, dict, industryList, query });
+    const { htmlStr, suggestionList } = getFilterInfo({
+      filterObj,
+      dict,
+      industryList,
+      query,
+      definedLabelsInfo,
+    });
     this.setState(state => ({
       statusData: [
         ...state.statusData,
         ...suggestionList,
       ],
     }));
+    return toString(stateFromHTML(htmlStr));
+  }
+
+  // 管理标签页进入，任务提示显示自定义标签的名称
+  @autobind
+  getLabelManagementMissionDesc() {
+    const { location: { query: { labelName } } } = this.props;
+    const htmlStr = `<div>
+      <div>该客户通过淘客筛选，满足以下条件：</div>
+      <div>自定义标签：${labelName}</div>
+    </div>`;
     return toString(stateFromHTML(htmlStr));
   }
 

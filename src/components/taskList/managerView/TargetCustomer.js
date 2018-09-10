@@ -13,7 +13,7 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Row, Col } from 'antd';
 import LabelInfo from '../common/LabelInfo';
-import TipsInfo from '../performerView/TipsInfo';
+import TipsInfo from '../performerView/serviceImplementation/TipsInfo';
 import styles from './targetCustomer.less';
 import logable from '../../../decorators/logable';
 

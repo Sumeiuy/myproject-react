@@ -1,7 +1,8 @@
 /**
- * @file customerPool/CustomerList.js
- *  客户列表
- * @author wangjunjun
+ * @Author: sunweibin
+ * @Date: 2018-08-13 09:38:50
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-08-13 09:43:32
  */
 
 import React, { PureComponent } from 'react';
@@ -71,6 +72,7 @@ const effects = {
   queryLikeLabelInfo: 'customerLabel/queryLikeLabelInfo',
   signCustLabels: 'customerLabel/signCustLabels',
   signBatchCustLabels: 'customerLabel/signBatchCustLabels',
+  addLabel: 'customerLabel/addLabel',
   queryHoldingIndustryDetail: 'customerPool/queryHoldingIndustryDetail',
 };
 
@@ -181,6 +183,7 @@ const mapDispatchToProps = {
   queryLikeLabelInfo: fetchDataFunction(false, effects.queryLikeLabelInfo),
   signCustLabels: fetchDataFunction(true, effects.signCustLabels),
   signBatchCustLabels: fetchDataFunction(true, effects.signBatchCustLabels),
+  addLabel: fetchDataFunction(true, effects.addLabel),
   queryHoldingIndustryDetail: fetchDataFunction(false, effects.queryHoldingIndustryDetail),
 };
 
@@ -254,6 +257,7 @@ export default class CustomerList extends PureComponent {
     signBatchCustLabels: PropTypes.func.isRequired,
     custLabel: PropTypes.object.isRequired,
     custLikeLabel: PropTypes.array.isRequired,
+    addLabel: PropTypes.func.isRequired,
     queryHoldingIndustryDetail: PropTypes.func.isRequired,
     industryDetail: PropTypes.object.isRequired,
   }
@@ -735,6 +739,7 @@ export default class CustomerList extends PureComponent {
       signBatchCustLabels,
       custLabel,
       custLikeLabel,
+      addLabel,
       queryHoldingIndustryDetail,
       industryDetail,
     } = this.props;
@@ -865,6 +870,7 @@ export default class CustomerList extends PureComponent {
           signBatchCustLabels={signBatchCustLabels}
           custLabel={custLabel}
           custLikeLabel={custLikeLabel}
+          addLabel={addLabel}
           queryHoldingIndustryDetail={queryHoldingIndustryDetail}
           industryDetail={industryDetail}
           queryHoldingIndustryDetailReqState={interfaceState[effects.queryHoldingIndustryDetail]}

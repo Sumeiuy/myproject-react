@@ -84,3 +84,12 @@ const generalOptions = {
 };
 
 export default generalOptions;
+
+export const {
+  stackBarColors,
+  barColor,
+  AxisOptions,
+  gridOptions,
+  barShadow,
+  createBarLinear,
+} = generalOptions;

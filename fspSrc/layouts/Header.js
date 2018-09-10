@@ -134,13 +134,6 @@ export default class Header extends PureComponent {
         || (!!menu.path));
   }
 
-  @autobind
-  fakeLogin() {
-    if (process.env.NODE_ENV === 'development') {
-      window.open('fsp/login?iv-user=002332#/statisticalQuery/report', '_blank');
-    }
-  }
-
   // 获取联想数据
   @autobind
   queryHotPossibleWds(state) {
@@ -239,6 +232,13 @@ export default class Header extends PureComponent {
           });
         }
       });
+  }
+
+  @autobind
+  handleFeedbackClick() {
+    if (!$('#feedback-module')[0]) {
+      window.handleFeedbackBtnClick();
+    }
   }
 
   @autobind
@@ -349,7 +349,7 @@ export default class Header extends PureComponent {
             <span>产品代码不能为空</span>
           </div>
         </Modal>
-        <div onClick={this.fakeLogin}><Logo /></div>
+        <div><Logo /></div>
         <div className={styles.search}>
           <Search
             orgId={this.orgId}
@@ -363,6 +363,13 @@ export default class Header extends PureComponent {
           />
         </div>
         <div className={styles.headerContent}>
+          <div onClick={this.handleFeedbackClick}>
+            <span className={styles.navItem}>
+              <i className={styles.feedbackIcon} />
+              <span>我要提问</span>
+            </span>
+            <span className={styles.splitLine} />
+          </div>
           {
             !_.isEmpty(secondaryMenu) ?
               this.renderSecondaryMenu(secondaryMenu) : null

@@ -11,7 +11,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { SingleFilter } from 'lego-react-filter';
 
-import fsp from '../../../../helper/fsp';
+import { scrollToTop } from '../../../../helper/fsp';
 import Icon from '../../../common/Icon';
 import Table from '../../../common/commonTable/index';
 import withRouter from '../../../../decorators/withRouter';
@@ -19,7 +19,6 @@ import CreateLabelType from './CreateLabelType';
 import CreateLabel from './CreateLabel';
 import { dva } from '../../../../helper';
 import styles from './customerLabel.less';
-import tableStyles from '../../../common/commonTable/index.less';
 
 const DEFAULT_LABEL_TYPE = { id: '', typeName: '不限' };
 
@@ -134,7 +133,7 @@ export default class LabelManager extends PureComponent {
       ...option,
     };
     queryLabelInfo(params);
-    fsp.scrollToTop();
+    scrollToTop();
     replace({
       pathname,
       query: {
@@ -250,7 +249,6 @@ export default class LabelManager extends PureComponent {
             isFixedColumn
             needShowEmptyRow={false}
             onPageChange={this.handlePageChange}
-            tableClass={tableStyles.groupTable}
           />
         </div>
         <CreateLabelType

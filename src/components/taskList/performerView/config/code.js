@@ -14,8 +14,14 @@ function isZhangle(code) {
   return code === HTSC_SERVE_WAY_ZHANGLE_CAIFUTONG_CODE;
 }
 
-export default {
+const exported = {
   serveWay: {
     isZhangle,
   },
 };
+
+export default exported;
+
+export const {
+  serveWay,
+} = exported;

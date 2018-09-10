@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table } from 'antd';
 
-import config from './config';
+import { stockOptionApply } from './config';
 import styles from './assessTable.less';
 
 export default class AssessTable extends PureComponent {
@@ -336,7 +336,7 @@ export default class AssessTable extends PureComponent {
       },
     } = this.props.data;
 
-    const { stockOptionApply: { assessTable } } = config;
+    const { assessTable } = stockOptionApply;
     // 诚信评估数据
     const creditOpData = {
       key: '0',

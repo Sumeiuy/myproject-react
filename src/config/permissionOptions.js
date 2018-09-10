@@ -37,3 +37,8 @@ const permissionOptions = {
 };
 
 export default permissionOptions;
+
+export const {
+  subtypeOptions,
+  stateOptions,
+} = permissionOptions;

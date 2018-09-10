@@ -2,8 +2,8 @@
  * @Description: 为新版客户列表发起任务在新建任务提示框中默认的展示信息提供的方法
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-08 10:28:16
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-10 09:52:44
  */
 
 import _ from 'lodash';
@@ -289,8 +289,25 @@ function getCapitalRangInfo({ filterField, labelName }, filterObj) {
   return '';
 }
 
+/**
+ * 获取自定义标签
+ * @param {*} customLabels url中解析出来的filter字段中当前要获取信息的字段
+ * @param {*} definedLabelsInfo 自定义标签全量的数据
+ */
+function getCustomLabel(customLabels, definedLabelsInfo) {
+  if (_.isEmpty(customLabels)) {
+    return '';
+  }
+  const selectedLabelList = _.filter(
+    definedLabelsInfo,
+    item => _.includes([].concat(customLabels), item.id),
+  );
+  const selectedNameList = _.map(selectedLabelList, labelItem => labelItem.labelName);
+  return `自定义标签: ${selectedNameList.join(',')}`;
+}
+
 // 新版客户表发起任务，在新建任务的任务提示的显示的信息
-function getFilterInfo({ filterObj, dict, industryList }) {
+function getFilterInfo({ filterObj, dict, industryList, definedLabelsInfo }) {
   const {
     labelInfos, kPIDateScopeType,
     singleBusinessTypeList,
@@ -312,9 +329,12 @@ function getFilterInfo({ filterObj, dict, industryList }) {
     const ageHtmlStr = getAgeFilterInfo(filterObj.age);
     const lastServiceHtmlStr = getLatestServiceInfo(filterObj.lastServDt, serviceCustomerState);
     const minFeeHtmlStr = getMinfeeInfo(filterObj.minFee);
+    // 自定义标签
+    const customLabel = getCustomLabel(filterObj.customLabels, definedLabelsInfo);
     let list = [
       holdingProductHtmlStr, businessOpenedHtmlStr,
       ageHtmlStr, lastServiceHtmlStr, minFeeHtmlStr,
+      customLabel,
     ];
     list = [...list, ...labelHtmlStrList];
     _.each(commonFilterList, (item) => {
@@ -351,4 +371,9 @@ function getFilterInfo({ filterObj, dict, industryList }) {
   };
 }
 
-export default { getFilterInfo };
+const exported = {
+  getFilterInfo,
+};
+
+export default exported;
+export { getFilterInfo };

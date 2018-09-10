@@ -18,3 +18,7 @@ const contract = {
 };
 
 export default contract;
+
+export const {
+  subType,
+} = contract;

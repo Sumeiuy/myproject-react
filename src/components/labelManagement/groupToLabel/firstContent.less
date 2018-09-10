@@ -1,0 +1,48 @@
+.modalContent {
+  padding: 20px;
+  .tableTitle {
+    margin-bottom: 8px;
+  }
+  .groupListTable {
+    table {
+      table-layout: fixed;
+      width: 100%;
+    }
+    .operationColumn {
+      padding-right: 48px;
+      span {
+        padding: 0;
+      }
+    }
+    table > thead > tr > th, table > tbody > tr > td {
+      padding: 7px 0 !important;
+      :global {
+        .ant-radio-wrapper {
+          margin-left: 12px;
+          margin-right: 15px;
+        }
+        .column {
+          width: 100%;
+          padding-right: 48px;
+          // 覆盖以前的样式
+          max-width: unset;
+        }
+      }
+      &:last-child {
+        :global {
+          .column {
+            padding-right: 12px;
+          }
+        }
+      }
+    }
+    table > tbody > tr, table > thead > tr {
+      :global {
+        .ant-table-selection-column {
+          width: 42px;
+          min-width: 42px;
+        }
+      }
+    }
+  }
+}

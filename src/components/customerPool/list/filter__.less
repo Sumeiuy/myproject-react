@@ -16,6 +16,19 @@
   position: relative;
   display: inline-block;
   padding-right: 214px;
+  .definedLabelItemWrap {
+    display: inline-block;
+    width: calc(100% - 30px);
+    .labelType {
+      float: right;
+      color: #ccc;
+    }
+  }
+  :global {
+    #customer_list_intro_second_step_id {
+      display: inline-block;
+    }
+  }
 }
 
 .moreFilterController {
@@ -23,6 +36,12 @@
   right: 0;
   top: 0;
   padding: 5px 0;
+  :global {
+    #customer_list_intro_third_step_id,
+    #customer_list_intro_fourth_step_id {
+      display: inline-block;
+    }
+  }
 }
 
 .moreFilter {

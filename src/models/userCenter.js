@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @Description: 用户中心模块model
  * @Author: xiaZhiQiang

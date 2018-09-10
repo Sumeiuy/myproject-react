@@ -80,7 +80,7 @@ const newOpenTabConfig = [
   },
   {
     name: '新增签约向导',
-    id: 'FSP_CUST_M_CONTRACT_SELECTOPETATE',
+    id: 'FSP_CONTRACTLIST_OPERATE_TAB',
     path: '/fsp/customerCenter/contractSelectOperate',
     pid: 'FSP_CUST_M_360',
   },
@@ -89,6 +89,12 @@ const newOpenTabConfig = [
     id: 'FSP_CUST_M_360OPERATETYPE',
     path: '/fsp/customerCenter/360OperateType',
     pid: 'FSP_CUST_M_360',
+  },
+  {
+    name: '投顾签约转签向导',
+    id: 'FSP_CUST_M_TGCONTRACT_TRANSFER',
+    path: '/fsp/customerCenter/tgcontracttransfer',
+    pid: 'FSP_MESSAGE_CENTER',
   },
   {
     name: '投顾签约计划变更向导',
@@ -124,13 +130,13 @@ const newOpenTabConfig = [
     name: '工单投诉信息',
     id: 'FSP_COMPLAINT_INFO',
     path: '/fsp/custcomplaint/complaintInfo',
-    pid: '',
+    pid: 'FSP_SYS_OPERATE_PRIMARY',
   },
   {
     name: '新增投诉工单',
     id: 'FSP_ST_TAB_CUSTCOMP_ADD',
     path: '/fsp/custcomplaint/toAddPageInfo',
-    pid: '',
+    pid: 'FSP_SYS_OPERATE_PRIMARY',
   },
   {
     name: '资产配置明细',
@@ -260,6 +266,12 @@ const newOpenTabConfig = [
   },
   {
     name: '创建任务',
+    id: 'FSP_CREATETASK_FROMLABELMANAGEMENT',
+    path: '/customerPool/createTaskFromLabelManagement',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
+  },
+  {
+    name: '创建任务',
     id: 'FSP_CREATETASK',
     path: '/customerPool/createTask',
     pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
@@ -301,22 +313,10 @@ const newOpenTabConfig = [
     pid: 'FSP_TASK_FEEDBACK',
   },
   {
-    name: '非投顾签约客户分布',
-    id: 'FSP_BUSINESSDEPARTMENT_CUSTDISTRIBUTE',
-    path: '/businessDepartmentCustDistribute',
-    pid: 'FSP_BUSINESSDEPARTMENT_CUSTDISTRIBUTE',
-  },
-  {
     name: '投顾竞赛',
     id: 'FSP_INVESTMENT_CONSULTANTRACE',
     path: '/investmentConsultantRace',
     pid: 'FSP_INVESTMENT_CONSULTANTRACE',
-  },
-  {
-    name: '客户分配',
-    id: 'FSP_CUSTALLOT',
-    path: '/custAllot',
-    pid: 'FSP_CUSTALLOT',
   },
   {
     name: '最新观点',
@@ -449,9 +449,12 @@ const defaultMenu = [
   },
 ];
 
-export default {
+const exported = {
   newOpenTabConfig,
   indexPaneKey,
   defaultMenu,
 };
+
+export default exported;
+export { newOpenTabConfig, indexPaneKey, defaultMenu };
 

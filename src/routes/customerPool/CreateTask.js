@@ -20,6 +20,7 @@ import {
   RETURN_TASK_FROM_TODOLIST,
   returnTaskEntrySource,
   TASK_CUST_SCOPE_ENTRY,
+  SOURCE_SERVICE_RESULT_CUST,
 } from '../../config/createTaskEntry';
 import withRouter from '../../decorators/withRouter';
 import styles from './createTask.less';
@@ -62,6 +63,8 @@ const mapStateToProps = state => ({
   taskBasicInfo: state.tasklist.taskBasicInfo,
   // 持仓行业过滤器的数据
   industryList: state.customerPool.industryList,
+  // 自定义标签的信息
+  definedLabelsInfo: state.customerPool.definedLabelsInfo,
 });
 
 const mapDispatchToProps = {
@@ -116,6 +119,7 @@ export default class CreateTask extends PureComponent {
     getTaskBasicInfo: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object,
     industryList: PropTypes.array,
+    definedLabelsInfo: PropTypes.array,
   };
 
   static defaultProps = {
@@ -131,6 +135,7 @@ export default class CreateTask extends PureComponent {
     getApprovalBtn: () => { },
     taskBasicInfo: {},
     industryList: [],
+    definedLabelsInfo: [],
   };
 
   constructor(props) {
@@ -241,6 +246,9 @@ export default class CreateTask extends PureComponent {
     } else if (source === TASK_CUST_SCOPE_ENTRY) {
       // 从管理者视图服务经理维度发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_MANAGERVIEW_CUST_SCOPE' });
+    } else if (source === SOURCE_SERVICE_RESULT_CUST) {
+      // 从执行者视图服务结果客户明细发起的任务
+      closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_SERVICE_RESULT_CUST' });
     } else {
       // 从客户列表发起任务
       closeRctTab({ id: 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST' });
@@ -275,6 +283,7 @@ export default class CreateTask extends PureComponent {
       isSendCustsServedByPostn,
       taskBasicInfo,
       industryList,
+      definedLabelsInfo,
     } = this.props;
 
     const { isSuccess, isApprovalListLoadingEnd, isShowApprovalModal } = this.state;
@@ -307,6 +316,7 @@ export default class CreateTask extends PureComponent {
             isSendCustsServedByPostn={isSendCustsServedByPostn}
             taskBasicInfo={taskBasicInfo}
             industryList={industryList}
+            definedLabelsInfo={definedLabelsInfo}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}

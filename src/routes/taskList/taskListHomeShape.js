@@ -1,13 +1,13 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:07:12
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 10:14:13
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-08-20 13:19:21
  * @description 针对taskList > Home 组件的props类型校验模块
  */
 import PropTypes from 'prop-types';
 
-export default {
+const exported = {
   push: PropTypes.func.isRequired,
   parameter: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
@@ -22,10 +22,13 @@ export default {
   getServiceRecord: PropTypes.func.isRequired,
   serviceRecordData: PropTypes.object.isRequired,
   getCustIncome: PropTypes.func.isRequired,
-  // 接口的loading状态
+
+ // 接口的loading状态
   interfaceState: PropTypes.object.isRequired,
-  // 6个月收益数据
+
+ // 6个月收益数据
   monthlyProfits: PropTypes.object.isRequired,
+
   targetCustDetail: PropTypes.object.isRequired,
   changeParameter: PropTypes.func.isRequired,
   queryTargetCust: PropTypes.func.isRequired,
@@ -42,10 +45,13 @@ export default {
   getCeFileList: PropTypes.func.isRequired,
   filesList: PropTypes.array,
   deleteFileResult: PropTypes.array.isRequired,
-  // 预览客户细分
+
+ // 预览客户细分
   previewCustDetail: PropTypes.func.isRequired,
-  // 预览客户细分结果
+
+ // 预览客户细分结果
   custDetailResult: PropTypes.object.isRequired,
+
   mngrMissionDetailInfo: PropTypes.object.isRequired,
   queryMngrMissionDetailInfo: PropTypes.func.isRequired,
   countFlowFeedBack: PropTypes.func.isRequired,
@@ -92,6 +98,19 @@ export default {
   serviceProgress: PropTypes.object.isRequired,
   custFeedBack: PropTypes.array.isRequired,
   custDetail: PropTypes.object.isRequired,
+  isShowExecutorDetailLoading: PropTypes.bool.isRequired,
   // custDetailResultByScope: PropTypes.object.isRequired,
   previewCustDetailByScope: PropTypes.func.isRequired,
+  // 客户名下其他代办任务
+  getOtherTaskList: PropTypes.func.isRequired,
+  otherTaskList: PropTypes.array.isRequired,
+  // 查询导入的执行者视图，服务结果下的客户是否超过了1000个或者是否是我名下的客户
+  isSendCustsServedByPostn: PropTypes.func.isRequired,
+  sendCustsServedByPostnResult: PropTypes.object.isRequired,
+  // 批量添加服务记录数据发生变化时的回调函数
+  changeBatchServiceRecordForm: PropTypes.func.isRequired,
+  // 批量添加服务记录
+  saveBatchAddServiceRecord: PropTypes.func.isRequired,
 };
+
+export default exported;

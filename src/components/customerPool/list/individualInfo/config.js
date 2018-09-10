@@ -13,6 +13,7 @@ const accountState = {
 
 /**
  * @desc: 描述个性化信息map的每一项key的含义
+ * * inset: 是否动态插入到个性化信息
  * * name: 个性化信息的label
  * * id: 个性化信息对应的数据（response）的key
  * * render: 该项个性化信息定制的render方法
@@ -38,7 +39,7 @@ const matchRule = {
     }],
   },
   cashAmt: {
-    inset: false,
+    inset: true,
     key: [{
       name: '资金余额（含信用）',
       id: 'cashAmt',
@@ -47,7 +48,7 @@ const matchRule = {
     }],
   },
   avlAmt: {
-    inset: false,
+    inset: true,
     key: [{
       name: '普通可用资金',
       id: 'avlAmt',
@@ -56,7 +57,7 @@ const matchRule = {
     }],
   },
   avlAmtCrdt: {
-    inset: false,
+    inset: true,
     key: [{
       name: '信用可用资金',
       id: 'avlAmtCrdt',
@@ -64,7 +65,7 @@ const matchRule = {
       unit: '元',
     }],
   },
-  totMktVal: {
+  totMktval: {
     inset: true,
     key: [{
       name: '总市值(含信用)',
@@ -448,6 +449,55 @@ const matchRule = {
       render: 'renderHoldingIndustry',
     }],
   },
+  customLabels: {
+    inset: true,
+    key: [{
+      name: '自定义标签',
+      id: 'relatedLabels',
+      render: 'renderDefinedLabels',
+    }],
+  },
 };
 
 export default matchRule;
+
+export const {
+  primaryKeyLabels,
+  outMktVal,
+  cashAmt,
+  avlAmt,
+  avlAmtCrdt,
+  totMktVal,
+  primaryKeyJxgrps,
+  name,
+  accountStatus,
+  idNum,
+  serviceRecord,
+  sorPtyId,
+  mobile,
+  primaryKeyPrdts,
+  rights,
+  businessOpened,
+  unrights,
+  searchText,
+  validDt,
+  dateOpened,
+  gjzDt,
+  highPrdtDt,
+  buyProdDt,
+  purFinAset,
+  gjAmt,
+  gjPurRake,
+  kfBuyAmt,
+  smBuyAmt,
+  finaBuyAmt,
+  otcBuyAmt,
+  lastServDt,
+  tgSignDate,
+  purRake,
+  saleFare,
+  netIncome,
+  gjlRate,
+  completedRate,
+  primaryKeyIndustry,
+} = matchRule;

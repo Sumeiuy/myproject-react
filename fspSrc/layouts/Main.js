@@ -14,6 +14,7 @@ import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
+import classNames from 'classnames';
 import withRouter from '../../src/decorators/withRouter';
 
 import Header from './Header';
@@ -22,6 +23,7 @@ import Tab from '../components/layout/Tab';
 import FSPUnwrap from '../components/layout/FSPUnwrap';
 import { constants } from '../../src/config';
 import ConnectedCreateServiceRecord from '../../src/components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
+import ConnectedSignCustomerLabel from '../../src/components/customerPool/list/modal/ConnectedSignCustomerLabel';
 
 import ContextProvider from '../../src/layouts/ContextProvider';
 import IEWarningModal from '../../src/components/common/IEWarningModal';
@@ -36,7 +38,6 @@ import api from '../../src/api';
 const effects = {
   dictionary: 'app/getDictionary',
   customerScope: 'customerPool/getCustomerScope',
-  empInfo: 'app/getEmpInfo',
   addServeRecord: 'customerPool/addCommonServeRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
   // 删除文件
@@ -77,7 +78,6 @@ const mapDispatchToProps = {
   addServeRecord: fectchDataFunction(true, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
-  getMenus: fectchDataFunction(true, effects.getMenus),
   toggleServiceRecordModal: query => ({
     type: 'app/toggleServiceRecordModal',
     payload: query || false,
@@ -108,17 +108,30 @@ export default class Main extends PureComponent {
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     serviceRecordInfo: PropTypes.object.isRequired,
-    getMenus: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     loadingForceFull: false,
   }
 
+  constructor(props) {
+    super(props);
+    this.handleMousewheel = _.throttle(this.handleBackToTopVisible, 1000);
+  }
+
+  state = {
+    backToTopVisible: false,
+  }
+
   componentDidMount() {
-    const { getCustomerScope, getMenus } = this.props;
-    getCustomerScope(); // 加载客户池客户范围
-    getMenus();
+    this.wheelEventArray.forEach(eventType =>
+      document.documentElement.addEventListener(eventType, this.handleMousewheel));
+    this.props.getCustomerScope(); // 加载客户池客户范围
+  }
+
+  componentWillUnmount() {
+    this.wheelEventArray.forEach(eventType =>
+      document.documentElement.removeEventListener(eventType, this.handleMousewheel));
   }
 
   @autobind
@@ -134,6 +147,8 @@ export default class Main extends PureComponent {
     window.canCallPhone = empInfo.canCall;
   }
 
+  wheelEventArray = ['wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll']
+
   @autobind
   handleHeaderSwitchRsp(rsp) {
     let fullUrl = '/chgPstn?';
@@ -146,6 +161,27 @@ export default class Main extends PureComponent {
         { isFullUrl: true, ignoreCatch: true },
       )
       .then(() => this.setWinLocationSearch(rsp.pstnId));
+  }
+
+  @autobind
+  handleBackToTopVisible() {
+    if (document.documentElement.scrollTop > 120) {
+      this.setState({
+        backToTopVisible: true,
+      });
+    } else {
+      this.setState({
+        backToTopVisible: false,
+      });
+    }
+  }
+
+  @autobind
+  handleBackToTopClick() {
+    document.documentElement.scrollTop = 0;
+    this.setState({
+      backToTopVisible: false,
+    });
   }
 
   @autobind
@@ -184,6 +220,11 @@ export default class Main extends PureComponent {
 
     this.setCanCallPhoneState(this.props.empInfo);
 
+    const backToTopCls = classNames({
+      [styles.backToTop]: true,
+      [styles.show]: this.state.backToTopVisible,
+    });
+
     return (
       <LocaleProvider locale={zhCN}>
         <ContextProvider {...this.props} >
@@ -195,6 +236,7 @@ export default class Main extends PureComponent {
             {
               this.isMenuExists(menus) ?
                 <div id="react-layout" className={styles.layout}>
+                  <div className={backToTopCls} onClick={this.handleBackToTopClick} />
                   <Header
                     push={push}
                     location={location}
@@ -244,6 +286,7 @@ export default class Main extends PureComponent {
                       serviceRecordInfo={serviceRecordInfo}
                       isPhoneCall={isPhoneCall}
                     />
+                    <ConnectedSignCustomerLabel />
                     <PhoneWrapper />
                   </div>
                 </div> : <div>Loading...</div>

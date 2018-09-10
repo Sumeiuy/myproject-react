@@ -2,8 +2,8 @@
  * @Description: 批量划转的错误提醒页面
  * @Author: LiuJianShu
  * @Date: 2018-02-02 15:37:14
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-05 09:37:30
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-27 15:32:12
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,6 +13,7 @@ import { connect } from 'dva';
 import _ from 'lodash';
 import Pagination from '../../components/common/Pagination';
 import CommonTable from '../../components/common/biz/CommonTable';
+import HeadBreadcrumb from '../../components/messageCenter/HeadBreadcrumb';
 import { request } from '../../config';
 import { emp } from '../../helper';
 import Barable from '../../decorators/selfBar';
@@ -146,6 +147,7 @@ export default class FilialeCustTransferNotifies extends PureComponent {
     };
     return (
       <div className={styles.notifiesInfoWrapper}>
+        <HeadBreadcrumb />
         {
           isSuccess ?
             <div className={styles.error}>

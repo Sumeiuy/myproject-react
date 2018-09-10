@@ -99,78 +99,13 @@ app.use(createLoading({ effects: true }));
 app.use(createActivityIndicator());
 
 // 3. Model
-app.model(require('./models/app'));
-app.model(require('./models/feedback'));
-app.model(require('./models/report'));
-app.model(require('./models/manage'));
-app.model(require('./models/edit'));
-app.model(require('./models/preview'));
-app.model(require('./models/history'));
-app.model(require('./models/permission'));
-app.model(require('./models/customerPool'));
-// 合作合约
-app.model(require('./models/contract'));
-// 服务订购
-app.model(require('./models/commission'));
-app.model(require('./models/commissionChange'));
-// 通道类型协议
-app.model(require('./models/channelsTypeProtocol'));
-app.model(require('./models/channelsEdit'));
-app.model(require('./models/taskList/tasklist'));
-app.model(require('./models/taskList/performerView'));
-app.model(require('./models/taskList/managerView'));
-// 零售非零售客户划转
-app.model(require('./models/demote'));
-// 分公司客户划转
-app.model(require('./models/filialeCustTransfer'));
-// 汇报关系树
-app.model(require('./models/relation'));
-// 客户反馈
-app.model(require('./models/customerFeedback'));
-// 任务反馈
-app.model(require('./models/taskFeedback'));
-// 主职位 model
-app.model(require('./models/mainPosition'));
-// 晨报
-app.model(require('./models/morningBoradcast'));
-// 售前适当性查询
-app.model(require('./models/preSaleQuery'));
-// 个股资讯
-app.model(require('./models/stock'));
-// 积分兑换历史查询
-app.model(require('./models/pointsExchange'));
-// 用户中心
-app.model(require('./models/userCenter'));
-// 电话申请和分配
-app.model(require('./models/telephoneNumberManage'));
-// 精选组合
-app.model(require('./models/choicenessCombination'));
-// 组合详情
-app.model(require('./models/combinationDetail'));
-// 投资建议模版
-app.model(require('./models/investmentAdvice'));
-// 用户标签
-app.model(require('./models/operationCenter'));
-// 营业部非投顾签约客户分配
-app.model(require('./models/businessDepartmentCustDistribute'));
-// 分公司客户分配
-app.model(require('./models/custAllot'));
-// 营业部客户分配
-app.model(require('./models/departmentCustAllot'));
-// 消息通知提醒
-app.model(require('./models/messageCenter'));
-// 股票期权评估申请
-app.model(require('./models/stockOptionEvaluation'));
-// 最新观点
-app.model(require('./models/latestView'));
-// 重点监控账户
-app.model(require('./models/keyMonitorAccount'));
-// 客户关联关系
-app.model(require('./models/custRelationships'));
-// 线上销户
-app.model(require('./models/cancelAccountOL'));
-// 自定义标签类型
-app.model(require('./models/customerLabel'));
+app.model(require('./models/app').default);
+app.model(require('./models/customerPool').default);
+app.model(require('./models/taskList/performerView').default);
+app.model(require('./models/telephoneNumberManage').default);
+app.model(require('./models/investmentAdvice').default);
+app.model(require('./models/customerLabel').default);
+app.model(require('./models/morningBoradcast').default);
 
 // 4. Route
 app.router(routerConfig);

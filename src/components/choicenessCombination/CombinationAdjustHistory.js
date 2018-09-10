@@ -14,7 +14,14 @@ import { Popover } from 'antd';
 import InfoTitle from '../common/InfoTitle';
 import Icon from '../common/Icon';
 import { time } from '../../helper';
-import config from './config';
+import {
+  directionRange,
+  sourceType,
+  overlayStyle,
+  securityType as configSecurityType,
+  typeList,
+  formatStr,
+} from './config';
 import styles from './combinationAdjustHistory.less';
 import logable, { logPV } from '../../decorators/logable';
 
@@ -22,12 +29,11 @@ const titleStyle = {
   fontSize: '16px',
 };
 
-const { directionRange, sourceType, overlayStyle } = config;
 const directionArray = _.filter(directionRange, o => o.value);
 // securityType 里股票对应的值
-const STOCK_CODE = config.securityType[0].value;
+const STOCK_CODE = configSecurityType[0].value;
 // 持仓历史
-const HISTORY_TYPE = config.typeList[0];
+const HISTORY_TYPE = typeList[0];
 export default class CombinationAdjustHistory extends PureComponent {
   static propTypes = {
     showModal: PropTypes.func.isRequired,
@@ -198,7 +204,7 @@ export default class CombinationAdjustHistory extends PureComponent {
                             </a>
                           </div>
                           <div className={styles.timeBox}>
-                            <span>{time.format(child.time, config.formatStr)}</span>
+                            <span>{time.format(child.time, formatStr)}</span>
                             <a
                               className={styles.customerLink}
                               onClick={() => this.handleOpenCustomerListPage(openPayload)}

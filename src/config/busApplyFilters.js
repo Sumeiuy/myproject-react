@@ -2,11 +2,11 @@
  * @Author: zhangjun
  * @Description: 业务申请头部筛选组件公共筛选项
  * @Date: 2018-07-31 14:39:37
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-31 14:41:27
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-06 15:02:33
  */
 
-export default {
+const exported = {
   // 客户
   customer: {
     id: 'customer',
@@ -26,6 +26,7 @@ export default {
       },
     },
   },
+
   // 服务经理
   serviceManager: {
     id: 'serviceManager',
@@ -45,6 +46,7 @@ export default {
       },
     },
   },
+
   // 操作类型
   operationType: {
     id: 'operationType',
@@ -56,6 +58,7 @@ export default {
       needItemObj: true,
     },
   },
+
   // 子类型
   subType: {
     id: 'subType',
@@ -68,6 +71,7 @@ export default {
     },
     filterOption: ['subType'],
   },
+
   // 状态
   status: {
     id: 'status',
@@ -80,6 +84,7 @@ export default {
       needItemObj: true,
     },
   },
+
   // 拟稿人
   drafter: {
     id: 'drafter',
@@ -102,6 +107,7 @@ export default {
     },
     filterOption: ['drafterId', 'drafterName'], // 更多中的匹配项
   },
+
   // 部门
   department: {
     id: 'department',
@@ -116,6 +122,7 @@ export default {
     },
     filterOption: ['orgId'],
   },
+
   // 审批人
   approver: {
     id: 'approver',
@@ -138,6 +145,7 @@ export default {
     },
     filterOption: ['approvalId', 'approvalName'],
   },
+
   // 申请时间
   applyTime: {
     id: 'applyTime',
@@ -145,7 +153,22 @@ export default {
       filterName: '申请时间',  // 过滤器中文名称
       filterId: 'applyTime', // 过滤器英文代号, 首字母小写
       type: 'date', // 过滤器类型
+      stateDateWrapper: date => date.format('YYYY/MM/DD'),
     },
     filterOption: ['createTime', 'createTimeTo'],
   },
 };
+
+export default exported;
+
+export const {
+  customer,
+  serviceManager,
+  operationType,
+  subType,
+  status,
+  drafter,
+  department,
+  approver,
+  applyTime,
+} = exported;

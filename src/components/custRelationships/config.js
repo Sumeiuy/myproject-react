@@ -131,4 +131,13 @@ const config = {
   PM_SUBTYPE_CODE: '127371',
 };
 
-export default config;
+export const {
+  custRelationships,
+  CUST_RELATIONSHIP_COLUMNS,
+  APPROVAL_COLUMNS,
+  STOCK_REPURCHASE_OPTIONS,
+  IDCARD_TYPE_CODE,
+  UNIFIED_SOCIALCARD_TYPE_CODE,
+  PM_NAME_CODE,
+  PM_SUBTYPE_CODE,
+} = config;

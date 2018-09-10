@@ -1,4 +1,3 @@
-export default {};
 
 export const constructEmptyPie = () => ({
   tooltip: {

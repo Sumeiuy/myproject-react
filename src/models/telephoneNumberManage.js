@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @file models/telephoneNumberManage.js
  *   手机分配和申请模块store

@@ -6,7 +6,7 @@
  * @Last Modified time: 2018-07-12 10:19:50
  */
 
-export default {
+const exported = {
   holdingCombinationSecurity: [
     {
       dataIndex: 'securityNameCode',
@@ -30,6 +30,7 @@ export default {
       align: 'left',
     },
   ],
+
   holdingIndustry: [
     {
       dataIndex: 'industryNameCode',
@@ -51,3 +52,8 @@ export default {
     },
   ],
 };
+
+export const {
+  holdingCombinationSecurity,
+  holdingIndustry,
+} = exported;

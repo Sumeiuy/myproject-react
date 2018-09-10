@@ -1,12 +1,10 @@
 import React, { PureComponent } from 'react';
-import { message } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import InfoTitle from '../common/InfoTitle';
 import CommonUpload from '../common/biz/CommonUpload';
 import style from './uploadFile.less';
 
-const maxFileSize = 20971520; // 上传文件上限是20M
 export default class UploadFile extends PureComponent {
   static propTypes = {
     fileList: PropTypes.array,
@@ -33,19 +31,7 @@ export default class UploadFile extends PureComponent {
 
   @autobind
   uploadAttachment(value) {
-    console.log('attachment', value);
     this.props.onEmitEvent(this.props.type, value);
-  }
-
-  @autobind
-  handleBeforeUpload(file) {
-    const fileSize = file.size;
-    if (fileSize >= maxFileSize) {
-      const formatSize = maxFileSize / 1024 / 1024;
-      message.error(`上传文件的不能大于${formatSize}M`);
-      return false;
-    }
-    return true;
   }
 
   render() {
@@ -55,9 +41,6 @@ export default class UploadFile extends PureComponent {
       uploadAttachment: this.uploadAttachment,
       attachment: this.props.attachment,
       needDefaultText: this.props.needDefaultText,
-      reformEnable: true,
-      beforeUpload: this.handleBeforeUpload,
-      maxFileSize,
     };
 
     return (

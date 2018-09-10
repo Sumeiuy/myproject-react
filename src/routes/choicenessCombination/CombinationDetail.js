@@ -26,7 +26,7 @@ import Composition from '../../components/choicenessCombination/combinationDetai
 import { openRctTab } from '../../utils';
 import { permission, dva, url as urlHelper, emp } from '../../helper';
 import { seperator } from '../../config';
-import config from '../../components/choicenessCombination/config';
+import { chartTabList, sourceType, securityType } from '../../components/choicenessCombination/config';
 import styles from './combinationDetail.less';
 
 const dispatch = dva.generateEffect;
@@ -192,7 +192,7 @@ export default class CombinationDetail extends PureComponent {
       const { overview } = this.props;
       // 如果是资产配置类组合默认查询一年的数据
       const key = _.isNull(overview.weekEarnings) ?
-        config.chartTabList[1].key : config.chartTabList[0].key;
+        chartTabList[1].key : chartTabList[0].key;
       // 趋势图
       getCombinationLineChart({
         combinationCode: id,
@@ -295,7 +295,6 @@ export default class CombinationDetail extends PureComponent {
   openCustomerListPage(obj) {
     const { push } = this.context;
     const { name, code, type, source, combinationCode } = obj;
-    const { sourceType } = config;
     const query = {
       source,
     };
@@ -311,7 +310,7 @@ export default class CombinationDetail extends PureComponent {
     // filter value对应多个
     const { filterInsideSeperator, filterValueSeperator } = seperator;
     if (source === sourceType.security) {
-      const filterType = _.filter(config.securityType, o => o.value === type);
+      const filterType = _.filter(securityType, o => o.value === type);
       const productId = `${filterType[0].shortName}${code}`;
       if (filterType.length) {
         query.labelMapping = encodeURIComponent(productId);

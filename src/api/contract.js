@@ -9,7 +9,7 @@ export default function contract(api) {
     // 获取附件信息
     getAttachList: query => api.post('/groovynoauth/fsp/contract/cooper/queryAttaches', query),
     // 获取附件列表
-    getAttachmentList: query => api.post('/file/ceFileList', query),
+    getAttachmentList: query => api.post('/file/ceFileList2', query),
     // 保存合作合约
     saveContractData: query => api.post('/groovynoauth/fsp/contract/cooper/saveContract', query),
     // 查询合作合约编号

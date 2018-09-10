@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @file models/app.js
  *  全局模型管理
@@ -24,6 +25,8 @@ export default {
     newSeibleList: EMPTY_OBJECT,
     // 部门组织机构树
     custRange: EMPTY_LIST,
+    // 新的部门组织机构树
+    newCustRange: EMPTY_LIST,
     // 拟稿人
     drafterList: EMPTY_LIST,
     // 已申请的客户列表
@@ -34,7 +37,6 @@ export default {
     canApplyCustList: EMPTY_LIST,
     // 删除后的附件列表
     deleteAttachmentList: EMPTY_LIST,
-    reformDeleteAttachmentList: EMPTY_LIST,
     // 审批人列表（服务经理接口）
     approvePersonList: EMPTY_LIST,
     // 已申请服务经理列表（服务经理接口）
@@ -157,6 +159,23 @@ export default {
         custRange,
       };
     },
+    // 获取新的组织机构树
+    getNewCustRangeSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      let newCustRange;
+      if (resultData.level === '1') {
+        newCustRange = [
+          { id: resultData.id, name: resultData.name, level: resultData.level },
+          ...resultData.children,
+        ];
+      } else {
+        newCustRange = resultData;
+      }
+      return {
+        ...state,
+        newCustRange,
+      };
+    },
     // 显示与隐藏创建服务记录弹框
     toggleServiceRecordModalSuccess(state, action) {
       const {
@@ -192,15 +211,6 @@ export default {
       return {
         ...state,
         deleteAttachmentList: attaches,
-      };
-    },
-    // api-getway 改造 删除附件
-    reformDeleteAttachmentSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { attaches = EMPTY_LIST } = resultData || EMPTY_OBJECT;
-      return {
-        ...state,
-        reformDeleteAttachmentList: attaches || [],
       };
     },
     // 审批人列表（服务经理接口）
@@ -249,7 +259,7 @@ export default {
       const data = response.resultData;
       if (data) {
         // 设置保存用户信息,TODO 此处针对接口还未开发完成做的容错处理
-        emp.setEmpInfo(data.empPostnList);
+        emp.setEmpInfo(data.empPostnList, data.empInfo);
         // 初始化权方法
         permission.init(data.empRespList);
         yield put({
@@ -351,19 +361,20 @@ export default {
         payload: response,
       });
     },
+    // 新的获取组织机构树
+    * getNewCustRange({ payload }, { call, put }) {
+      const response = yield call(seibelApi.getCustRange2, payload);
+      yield put({
+        type: 'getNewCustRangeSuccess',
+        payload: response,
+      });
+    },
+
     // 删除附件
     * deleteAttachment({ payload }, { call, put }) {
       const response = yield call(seibelApi.deleteAttachment, payload);
       yield put({
         type: 'deleteAttachmentSuccess',
-        payload: response,
-      });
-    },
-    // 删除附件
-    * reformDeleteAttachment({ payload }, { call, put }) {
-      const response = yield call(seibelApi.reformDeleteAttachment, payload);
-      yield put({
-        type: 'reformDeleteAttachmentSuccess',
         payload: response,
       });
     },

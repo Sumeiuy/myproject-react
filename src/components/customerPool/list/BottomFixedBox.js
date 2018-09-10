@@ -90,7 +90,7 @@ export default class BottomFixedBox extends PureComponent {
     }
   }
 
-  // 点击新建分组或者发起任务按钮
+  // 点击发起任务按钮
   @autobind
   switchToRoute({ url, title, id, shouldStay, editPane }) {
     const {
@@ -137,28 +137,6 @@ export default class BottomFixedBox extends PureComponent {
         editPane,
       );
     }
-  }
-
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '用户分组' } })
-  handleCustomerGroupClick() {
-    const url = '/customerPool/customerGroup';
-    const title = '新建分组';
-    const id = 'RCT_FSP_CUSTOMER_LIST';
-    const shouldStay = true;
-    const editPane = {
-      name: '新建分组',
-    };
-
-    const { selectCount } = this.props;
-    if (Number(selectCount) > 500) {
-      this.setState({
-        visible: true,
-        modalContent: '一次添加的客户数不能超过500个',
-      });
-      return;
-    }
-    this.switchToRoute({ url, title, id, shouldStay, editPane });
   }
 
   // 跳转到创建任务页面
@@ -252,7 +230,7 @@ export default class BottomFixedBox extends PureComponent {
     }
   }
 
-  // 单个点击选中时跳转到新建分组或者发起任务
+  // 单个点击选中时跳转到发起任务
   @autobind
   openByIds(url,
     condition,
@@ -285,7 +263,7 @@ export default class BottomFixedBox extends PureComponent {
     this.props.onClick({ id, title, url, obj, shouldStay, editPane });
   }
 
-  // 全选按钮选中时跳转到新建分组或者发起任务
+  // 全选按钮选中时跳转到发起任务
   @autobind
   openByAllSelect(url,
     condition,
@@ -332,12 +310,11 @@ export default class BottomFixedBox extends PureComponent {
     }
   }
 
-  // 当是主服务经理时，可以拥有创建用户分组和给客户打标签的功能
+  // 当是主服务经理时，可以拥有给客户打标签的功能
   renderGroup() {
     if (this.props.mainServiceManager) {
       return [
-        <button onClick={this.handleCustomerLabelClick}>设置标签</button>,
-        <button onClick={this.handleCustomerGroupClick}>加到分组</button>];
+        <button onClick={this.handleCustomerLabelClick}>设置标签</button>];
     }
     return null;
   }
@@ -356,7 +333,7 @@ export default class BottomFixedBox extends PureComponent {
     } = this.props;
     let str = '';
     if (mainServiceManager) {
-      str = '、可以为用户设置标签，或者把用户加入分组管理';
+      str = '，或者为客户设置标签';
     }
     return (
       <p className="left">

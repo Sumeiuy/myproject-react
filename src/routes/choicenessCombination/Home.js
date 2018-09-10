@@ -18,7 +18,7 @@ import CombinationAdjustHistory from '../../components/choicenessCombination/Com
 import WeeklySecurityTopTen from '../../components/choicenessCombination/WeeklySecurityTopTen';
 import CombinationRank from '../../components/choicenessCombination/combinationRank/CombinationRank';
 import CombinationModal from '../../components/choicenessCombination/CombinationModal';
-import config from '../../components/choicenessCombination/config';
+import { sourceType, securityType } from '../../components/choicenessCombination/config';
 import { seperator } from '../../config';
 import { permission, dva, url as urlHelper, emp } from '../../helper';
 import { openRctTab } from '../../utils';
@@ -232,7 +232,6 @@ export default class ChoicenessCombination extends PureComponent {
   openCustomerListPage(obj) {
     const { push } = this.context;
     const { name, code, type, source, combinationCode } = obj;
-    const { sourceType } = config;
     const query = {
       source,
     };
@@ -249,7 +248,7 @@ export default class ChoicenessCombination extends PureComponent {
     // filter value对应多个
     const { filterInsideSeperator, filterValueSeperator } = seperator;
     if (source === sourceType.security) {
-      const filterType = _.filter(config.securityType, o => o.value === type);
+      const filterType = _.filter(securityType, o => o.value === type);
       const productId = `${filterType[0].shortName}${code}`;
       if (filterType.length) {
         query.labelMapping = encodeURIComponent(productId);

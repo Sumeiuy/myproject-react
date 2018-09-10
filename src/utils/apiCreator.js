@@ -3,11 +3,11 @@
 * @author maoquan(maoquan@htsc.com)
 */
 
-import { request, logRequest, fspRequest } from './request';
-
-import config from '../config/request';
-import constants from '../config/constants';
+import requestUtils from './request';
+import { apiPrefix, fspPrefix, inHTSCDomain } from '../config/constants';
 import { emp, url as urlHelper, encode } from '../helper';
+
+const { request, logRequest, fspRequest } = requestUtils;
 
 /**
  * api生成器
@@ -15,7 +15,6 @@ import { emp, url as urlHelper, encode } from '../helper';
  * @return {Fucntion}
  */
 export default function createApi() {
-  const { apiPrefix, fspPrefix } = config;
   // 如果没有前缀，自动补上
   const padPrefix = (url) => {
     if (url.indexOf(apiPrefix) === -1) {
@@ -60,17 +59,25 @@ export default function createApi() {
      * @param {Number} timeout 超时时间，单位ms
      * @return {Promise}
      */
-    post(url, query = {}, options) {
-      const finalUrl = padPrefix(url);
+    post(url, query = {}, options = {}) {
+      let finalUrl = padPrefix(url);
+      let requestHeader = {
+        'Content-Type': 'application/json',
+      };
       const { ignoreCatch = false, ...resetQuery } = query;
+      if (!options.noEmpId) {
+        finalUrl = `${finalUrl}?empId=${emp.getId()}`;
+        requestHeader = {
+          'Content-Type': 'application/json',
+          empId: emp.getId(),
+        };
+      }
+
       return request(
-        `${finalUrl}?empId=${emp.getId()}`,
+        finalUrl,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            empId: emp.getId(),
-          },
+          headers: requestHeader,
           ignoreCatch,
           body: JSON.stringify({ ...resetQuery, empId: emp.getId() }),
           ...options,
@@ -88,7 +95,7 @@ export default function createApi() {
       let data = JSON.stringify(query);
       // 只在华泰域名下才编码
       // 测试环境为了直观测试，不编码数据
-      if (constants.inHTSCDomain) {
+      if (inHTSCDomain) {
         data = encode.base64(data);
         data = encodeURIComponent(data);
       }
@@ -125,11 +132,18 @@ export default function createApi() {
      */
     postFspData(url, query = {}, options = {}) {
       let fullUrl;
+      let requestHeader = {
+        'Content-Type': 'application/json',
+      };
       const finalUrl = fillPrefix(url);
-      if (options.isFullUrl) {
+      if (options.isFullUrl || options.noEmpId) {
         fullUrl = finalUrl;
       } else {
         fullUrl = `${finalUrl}?empId=${emp.getId()}`;
+        requestHeader = {
+          'Content-Type': 'application/json',
+          empId: emp.getId(),
+        };
       }
 
       const { ignoreCatch = false, ...resetQuery } = query;
@@ -137,10 +151,7 @@ export default function createApi() {
         fullUrl,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            empId: emp.getId(),
-          },
+          headers: requestHeader,
           ignoreCatch,
           body: JSON.stringify({ ...resetQuery, empId: emp.getId() }),
           ...options,

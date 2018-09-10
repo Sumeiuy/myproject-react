@@ -194,6 +194,9 @@ const validate = (state) => {
   return validateSubmitData(state);
 };
 
-export default {
+const exported = {
   validateData: validate,
 };
+
+export default exported;
+export { validate as validateData };

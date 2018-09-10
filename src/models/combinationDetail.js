@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /*
  * @Author: XuWenKang
  * @Description: 精选组合-组合详情modal

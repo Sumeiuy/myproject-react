@@ -43,9 +43,10 @@ export default class CreateLabelType extends PureComponent {
     }
     validateFields((error, values) => {
       if (!error) {
-        addLabel(values)
+        addLabel({ ...values, labelFlag: 2 })
           .then((duplicationName) => {
-            if (duplicationName) {
+            // 当校验标签重名时后端返回null
+            if (_.isNull(duplicationName)) {
               this.props.form.setFields({
                 labelType: {
                   value: values.labelType,
@@ -73,7 +74,7 @@ export default class CreateLabelType extends PureComponent {
     }
     form.validateFields(['labelName'], (error, values) => {
       if (!error) {
-        checkDuplicationName(values).then((duplicationName) => {
+        checkDuplicationName({ ...values, labelFlag: 2 }).then((duplicationName) => {
           if (duplicationName) {
             this.props.form.setFields({
               labelName: {
@@ -118,7 +119,7 @@ export default class CreateLabelType extends PureComponent {
               rules: [{
                 required: true, message: '请输入标签名称',
               }, {
-                max: 10, message: '最多为10个字',
+                max: 8, message: '最多为8个字',
               }, {
                 min: 4, message: '最少为4个字',
               }, {

@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-08-03 13:38:47
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-09-06 13:07:59
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -10,8 +10,10 @@ import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import { Tooltip, Button } from 'antd';
 import _ from 'lodash';
+
+import withRouter from '../../decorators/withRouter';
 import { dva, emp } from '../../helper';
-import { openFspTab, openRctTab } from '../../utils';
+import { openFspTab, openRctTab, linkTo } from '../../utils';
 import Pagination from '../../components/common/Pagination';
 import Loading from '../../layouts/Loading';
 import { windowOpen } from '../../utils/fspGlobal';
@@ -37,16 +39,19 @@ const mapDispatchToProps = {
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class MessageCenter extends PureComponent {
   static propTypes = {
     // 获取消息通知提醒列表
     getRemindMessageList: PropTypes.func.isRequired,
     // 消息通知提醒列表
     remindMessages: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
     push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   }
   constructor(props) {
     super(props);
@@ -58,24 +63,40 @@ export default class MessageCenter extends PureComponent {
   }
 
   componentDidMount() {
-    this.getRemindMessageList({
-      pageNum: 1,
-    });
+    const {
+      location: {
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
+    this.getRemindMessageList(pageNum, pageSize);
   }
 
   // 获取消息通知提醒列表
   @autobind
-  getRemindMessageList({ pageNum }) {
+  getRemindMessageList(pageNum = 1, pageSize = 10) {
     this.props.getRemindMessageList({
       pageNum,
-      pageSize: 10,
+      pageSize,
     });
   }
 
   // 切换当前页
   @autobind
-  handlePageChange(pageNum) {
-    this.getRemindMessageList({ pageNum });
+  handlePageChange(nextPage, currentPageSize) {
+    const { replace } = this.context;
+    const { location: { query, pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
+    });
+    this.getRemindMessageList(nextPage, currentPageSize);
   }
 
   // 点击消息通知
@@ -124,12 +145,15 @@ export default class MessageCenter extends PureComponent {
       title: '协议详细信息',
       forceRefresh: true,
     };
-    const pathName = '/customerCenter/360/per/orderDetail';
+    const pathname = '/fsp/customerCenter/360OrderDetail';
     openFspTab({
       routerAction: this.context.push,
       url,
-      pathName,
       param,
+      pathname,
+      state: {
+        url,
+      },
     });
   }
 
@@ -167,7 +191,7 @@ export default class MessageCenter extends PureComponent {
         loadCntractResponse = JSON.parse(loadCntractResponse);
         if (loadCntractResponse) {
           const { custId: busiId, custType } = loadCntractResponse.data;
-          const routeType = `${custType}:tgcontracttransfer:${objectVal}:::Y:`;
+          const routeType = `${custType}:tgcontracttransfer:${objectVal}::notice:Y:`;
           const busiIdParam = busiId ? `?busiId=${busiId}` : '';
           const routeTypeParam = routeType ? `&routeType=${routeType}` : '';
           const url = `/client/tgcontracttransfer/wizard/main${busiIdParam}${routeTypeParam}`;
@@ -176,12 +200,15 @@ export default class MessageCenter extends PureComponent {
             title: '投顾协议转签向导',
             forceRefresh: true,
           };
-          const pathName = '/client/tgcontracttransfer/wizard/main';
+          const pathname = '/fsp/customerCenter/tgcontracttransfer';
           openFspTab({
             routerAction: this.context.push,
             url,
-            pathName,
             param,
+            pathname,
+            state: {
+              url,
+            },
           });
         }
       } else {
@@ -196,8 +223,13 @@ export default class MessageCenter extends PureComponent {
   @autobind
   handleMessageByBranch(rowId) {
     this.removeNotice = false;
-    const { push } = this.context;
-    push(`/demote?notifiId=${rowId}`);
+    linkTo({
+      routerAction: this.context.push,
+      pathname: '/demote',
+      query: {
+        notifiId: rowId,
+      },
+    });
   }
 
   // 新分公司客户分配
@@ -211,7 +243,7 @@ export default class MessageCenter extends PureComponent {
     const itemId = valArray[1] || '';
     // 失败或者终止都进入失败页面
     if (_.includes(title, config.fail) || _.includes(title, config.abort)) {
-      const url = `/custAllot?id=${itemId}&appId=${appId}`;
+      const url = `/businessApplyment/customerPartition/custAllot?id=${itemId}&appId=${appId}`;
       const param = {
         id: 'FSP_CROSS_DEPARTMENT_NEW',
         title: '分公司客户分配',
@@ -219,7 +251,7 @@ export default class MessageCenter extends PureComponent {
         isSpecialTab: true,
         closable: true,
       };
-      const pathName = '/custAllot';
+      const pathName = '/businessApplyment/customerPartition/custAllot';
       openRctTab({
         routerAction: push,
         url,
@@ -227,7 +259,15 @@ export default class MessageCenter extends PureComponent {
         param,
       });
     } else {
-      push(`/custAllot/notifies?notifiId=${rowId}&appId=${appId}&currentId=${itemId}`);
+      linkTo({
+        routerAction: this.context.push,
+        pathname: '/custAllot/notifies',
+        query: {
+          notifiId: rowId,
+          appId,
+          currentId: itemId,
+        },
+      });
     }
   }
 
@@ -242,7 +282,7 @@ export default class MessageCenter extends PureComponent {
     const itemId = valArray[1] || '';
     // 失败或者终止都进入失败页面
     if (_.includes(title, config.fail) || _.includes(title, config.abort)) {
-      const url = `/departmentCustAllot?id=${itemId}&appId=${appId}`;
+      const url = `/businessApplyment/customerPartition/departmentCustAllot?id=${itemId}&appId=${appId}`;
       const param = {
         id: 'FSP_DEPARTMENT_CUST_ASSIGN',
         title: '营业部客户分配',
@@ -250,7 +290,7 @@ export default class MessageCenter extends PureComponent {
         isSpecialTab: true,
         closable: true,
       };
-      const pathName = '/departmentCustAllot';
+      const pathName = '/businessApplyment/customerPartition/departmentCustAllot';
       openRctTab({
         routerAction: push,
         url,
@@ -258,7 +298,15 @@ export default class MessageCenter extends PureComponent {
         param,
       });
     } else {
-      push(`/departmentCustAllot/notifies?notifiId=${rowId}&appId=${appId}&currentId=${itemId}`);
+      linkTo({
+        routerAction: this.context.push,
+        pathname: '/departmentCustAllot/notifies',
+        query: {
+          notifiId: rowId,
+          appId,
+          currentId: itemId,
+        },
+      });
     }
   }
 
@@ -266,8 +314,14 @@ export default class MessageCenter extends PureComponent {
   @autobind
   handleMessageByPrimary(rowId, objectVal) {
     this.removeNotice = true;
-    const { push } = this.context;
-    push(`/mainPosition/notifies?notifiId=${rowId}&appId=${objectVal}`);
+    linkTo({
+      routerAction: this.context.push,
+      pathname: '/mainPosition/notifies',
+      query: {
+        notifiId: rowId,
+        appId: objectVal,
+      },
+    });
   }
 
   // 处理typeName是HTSC Investment Advice Inbox Type的消息通知
@@ -295,8 +349,16 @@ export default class MessageCenter extends PureComponent {
       this.removeNotice = true;
     }
     if (type === 'succ') {
-      const { push } = this.context;
-      push(`/filialeCustTransfer/notifies?notifiId=${rowId}&appId=${appId}&currentId=${itemId}&type=${type}`);
+      linkTo({
+        routerAction: this.context.push,
+        pathname: '/filialeCustTransfer/notifies',
+        query: {
+          notifiId: rowId,
+          appId,
+          currentId: itemId,
+          type,
+        },
+      });
     } else {
       const url = `/sysOperate/crossDepartment/filialeCustTransfer?id=${itemId}&appId=${appId}`;
       const param = {
@@ -370,10 +432,8 @@ export default class MessageCenter extends PureComponent {
       // 刷新列表
       // $('#showMessageInfo').EBDataTable('queryData');
       const { page } = this.props.remindMessages;
-      const { curPageNum } = page;
-      this.getRemindMessageList({
-        pageNum: curPageNum,
-      });
+      const { curPageNum, pageSize } = page;
+      this.getRemindMessageList(curPageNum, pageSize);
     })
     .catch((e) => {
       console.error(e);

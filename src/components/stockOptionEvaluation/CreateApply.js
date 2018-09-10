@@ -19,14 +19,14 @@ import CommonUpload from '../common/biz/CommonUpload';
 import AutoComplete from '../common/similarAutoComplete';
 import ApprovalBtnGroup from '../common/approvalBtns';
 import EditBasicInfo from './EditBasicInfo';
-import config from './config';
+import { stockOptionApply, approvalColumns } from './config';
 import { data, emp } from '../../helper';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 
 import styles from './createApply.less';
 
 const FormItem = Form.Item;
-const { stockOptionApply: { pageType }, approvalColumns } = config;
+const { pageType } = stockOptionApply;
 const SRTYPE = 'SRStkOpReq';
 const EMPTY_INFO = '--';
 
@@ -772,7 +772,6 @@ export default class CreateApply extends PureComponent {
             <InfoTitle head="附件信息" />
             <CommonUpload
               edit
-              reformEnable
               key={uploadKey}
               attachment={attachment || ''}
               needDefaultText={false}

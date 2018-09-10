@@ -1,0 +1,131 @@
+@import "../../css/util.less";
+.formContent {
+  :global {
+    table {
+      table-layout: fixed;
+      width: 100%;
+    }
+    .ant-table-tbody > tr > td {
+      .one-line-ellipsis;
+      & > div {
+        position: relative;
+        .one-line-ellipsis;
+      }
+    }
+  }
+  padding: 10px 20px;
+  .contentItem {
+    margin-top: 12px;
+    &:first-child {
+      margin-top: 0;
+    }
+    .inlineInfoForm {
+      display: inline-block;
+      div:first-child {
+        width: 120px;
+      }
+      :global {
+        .ant-calendar-picker {
+          width: 220px;
+        }
+      }
+    }
+    .numberTitle {
+      font-size: 15px;
+      color: #000;
+      font-weight: bold;
+    }
+    .title {
+      font-size: 16px;
+      color: #4a4a4a;
+      text-indent: 14px;
+      position: relative;
+      &:before {
+        position: absolute;
+        display: block;
+        content: "";
+        width: 5px;
+        height: 16px;
+        background: #4897f1;
+        top: 5px;
+        left: 0;
+      }
+    }
+    .operateDiv {
+      :global {
+        .ant-input {
+          height: 28px;
+        }
+      }
+      & > div:first-child {
+        margin-right: 20px;
+      }
+      .linkSpan {
+        float: right;
+        vertical-align: bottom;
+        button {
+          background: #108ee9;
+        }
+        & > a, & > span {
+          display: inline-block;
+          box-sizing: border-box;
+          width: 110px;
+          height: 28px;
+          line-height: 26px;
+          background: #fff;
+          color: #333;
+          border: 1px solid #ddd;
+          text-align: center;
+          border-radius: 4px;
+          margin-left: 20px;
+          a {
+            color: #333;
+          }
+        }
+        & > span:first-child {
+          width: auto;
+          border: 0;
+        }
+      }
+    }
+    .tableDiv {
+      margin-top: 14px;
+      .operateColumn {
+        a {
+          margin-right: 10px;
+        }
+        i:first-child {
+          margin-right: 10px;
+          vertical-align: text-top;
+        }
+      }
+    }
+    .infoFormSelect {
+      :global {
+        .ant-select {
+          height: auto;
+        }
+      }
+    }
+    :global {
+      .ant-table-pagination.ant-pagination {
+        float: right;
+      }
+    }
+  }
+}
+.cutline {
+  border-bottom: 1px solid #ddd;
+}
+.mt20 {
+  margin-top: 20px;
+}
+.mt48 {
+  margin-top: 48px;
+}
+.mt14 {
+  margin-top: 14px;
+}
+.keyWord {
+  color: #ff784e;
+}
