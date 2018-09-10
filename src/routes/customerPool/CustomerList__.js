@@ -12,6 +12,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import store from 'store';
 import introJs from 'intro.js';
+// 修复 intro 样式错乱-v2.9.3
+import 'intro.js/introjs.css';
 
 import Filter from '../../components/customerPool/list/Filter__';
 import CustomerLists from '../../components/customerPool/list/CustomerLists__';
