@@ -32,9 +32,6 @@
         }
       }
     }
-    .hidden {
-      display: none;
-    }
     :global {
       .ant-input-suffix {
         line-height: 14px;
@@ -139,5 +136,28 @@
       }
     }
   }
+}
+
+.errorMessage {
+  height: 30px;
+  width: 100%;
+  margin-bottom: 10px;
+  background: #fff1f0;
+  border: 1px solid #ffa39e;
+  border-radius: 2px;
+  color: #ea001c;
+  font-size: 14px;
+  padding-left: 10px;
+  line-height: 30px;
+  :global {
+    .iconfont {
+      display: inline-block;
+      padding-right: 6px;
+    }
+  }
+}
+
+.hidden {
+  display: none;
 }
 

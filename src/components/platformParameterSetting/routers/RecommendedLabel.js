@@ -8,7 +8,6 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { message } from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Divider, Tag, Input, List, Checkbox, Button, Modal } from 'antd';
@@ -161,11 +160,19 @@ export default class RecommendedLabel extends PureComponent {
     if (e.target.checked) {
       // 新版只能添加8个
       if (permission.isGrayFlag() && selectedLabels.length >= 8) {
-        message.warn('最多只能选择8个推荐标签');
+        this.setState({
+          rangeError: true,
+        });
       } else {
+        this.setState({
+          rangeError: false,
+        });
         finalSelectedLabels = _.concat(finalSelectedLabels, item);
       }
     } else {
+      this.setState({
+        rangeError: false,
+      });
       finalSelectedLabels = _.filter(finalSelectedLabels,
           selectedItem => selectedItem.id !== item.id);
     }
@@ -180,7 +187,7 @@ export default class RecommendedLabel extends PureComponent {
     this.setState((preState) => {
       const { selectedLabels: preLabels } = preState;
       const selectedLabels = _.filter(preLabels, preLabelItem => preLabelItem.id !== labelId);
-      return { selectedLabels };
+      return { selectedLabels, rangeError: false };
     });
   }
   // 列表item
@@ -193,11 +200,13 @@ export default class RecommendedLabel extends PureComponent {
       description = '',
     } = item;
     const replaceTag = `<span class="searchWord">${sWord}</span>`;
+
     const regExpSWord = new RegExp(_.escapeRegExp(sWord), 'g');
-    const finalName = name.replace(regExpSWord, replaceTag);
+    const finalName = sWord ? name.replace(regExpSWord, replaceTag) : name;
     // 字数超两百打点显示
     let finalDesc = description.length > 200 ? `${description.slice(0, 200)}...` : description;
-    finalDesc = finalDesc.replace(regExpSWord, replaceTag);
+    finalDesc = sWord ? finalDesc.replace(regExpSWord, replaceTag) : finalDesc;
+    
     const isCludeLabel = _.filter(selectedLabels, selectItem => selectItem.id === item.id).length;
     return (
       <Item.Meta
@@ -299,6 +308,11 @@ export default class RecommendedLabel extends PureComponent {
     const labelPlaceholder = permission.isGrayFlag() ? 
       '请在下方标签列表中选择最多8个推荐标签' : '请在下方标签列表中选择最多5个推荐标签';
 
+    const errorMessageCls = classnames({
+      [styles.errorMessage]: true,
+      [styles.hidden]: !this.state.rangeError && selectedLabels.length <= 8,
+    });
+
     return (<div className={styles.recommendedLabelWrap}>
       <div className={styles.headerTip}>
         {headerHelperTip}
@@ -307,6 +321,7 @@ export default class RecommendedLabel extends PureComponent {
         <Divider type="vertical" className={styles.itemDivider} />
         选择标签
       </div>
+      <div className={errorMessageCls}><span className="iconfont icon-guanbi"></span>最多只能选择8个推荐标签</div>
       <div>
         {
           selectedLabels.length ?
@@ -322,7 +337,7 @@ export default class RecommendedLabel extends PureComponent {
               {item.name}
             </Tag>
           )) :
-            (<span>labelPlaceholder</span>)
+            (<span>{labelPlaceholder}</span>)
         }
       </div>
       <div className={styles.searchWrap}>
