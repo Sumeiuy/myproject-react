@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 14:59:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-05 17:11:56
+ * @Last Modified time: 2018-09-06 15:08:40
  * @description 临时委托任务的辅助函数
  */
 import _ from 'lodash';
@@ -25,10 +25,6 @@ const LIST_API_DEFAULT_QUERY = {
   pageSize: 10,
 };
 
-function convertApplyTimeFormat(timeStr) {
-  return _.replace(timeStr, /\//g, '-') || null;
-}
-
 // 根据传入的请求参数与默认参数进行合并生成最终的列表接口请求参数
 export const composeQuery = (query) => {
   const { pageNum, pageSize, createTime, createTimeTo, approvalId } = query;
@@ -39,8 +35,8 @@ export const composeQuery = (query) => {
     ...resetQuery,
     pageNum: parseInt(pageNum || 1, 10),
     pageSize: parseInt(pageSize || 10, 10),
-    applyTimeStart: convertApplyTimeFormat(createTime),
-    applyTimeEnd: convertApplyTimeFormat(createTimeTo),
+    applyTimeStart: createTime,
+    applyTimeEnd: createTimeTo,
     approverId: approvalId || '',
   };
 };

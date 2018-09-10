@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-31 17:22:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-04 09:18:17
+ * @Last Modified time: 2018-09-06 16:44:50
  * @descprition 临时委托组件中的辅助函数
  */
 import _ from 'lodash';
@@ -72,9 +72,6 @@ function validateData(data) {
 
 export {
   validateData as validateAll,
-  checkDeputeReason,
-  checkAcceptor,
-  checkPeriod,
   checkLength,
   DEPUTE_REASON_CHECK_MESSAGE,
   ASSIGNEE_CHECK_MESSAGE,

@@ -566,6 +566,11 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['tempDepute'], () =>
         import('../routes/tempDepute/Home') /* webpackChunkName: "tempDepute" */),
     },
+    // 临时委托他人处理任务驳回后修改的页面
+    '/tempDeputeReject': {
+      component: dynamicWrapper(app, ['tempDepute'], () =>
+        import('../routes/tempDepute/RejectHome') /* webpackChunkName: "tempDepute_reject" */),
+    },
   };
   return routerConfig;
 };

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 10:19:47
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-03 16:16:14
+ * @Last Modified time: 2018-09-06 09:21:54
  * @description 临时委托他人处理任务Model
  */
 
@@ -26,12 +26,14 @@ export default {
     revertResult: {},
     // 流程、审批接口请求结果
     flowResult: {},
-    // 驳回后修改的弹出层按钮以及审批人数据
-    approvalForUpdate: {},
     // 受托部门列表
     deputeOrgList: [],
+    // 驳回后修改的弹出层按钮以及审批人数据
+    approvalUpdate: {},
     // 审批人列表
     approval: {},
+    // 驳回后修改页面的详情
+    detailUpdate: {},
   },
   reducers: {
     queryApplyListSuccess(state, action) {
@@ -46,6 +48,13 @@ export default {
       return {
         ...state,
         applyDetail: resultData,
+      };
+    },
+    getDetailForUpdateSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        detailUpdate: resultData,
       };
     },
     queryCanDeputeEmpSuccess(state, action) {
@@ -67,6 +76,13 @@ export default {
       return {
         ...state,
         approval: resultData,
+      };
+    },
+    getApprovalInfoForUpdateSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        approvalUpdate: resultData,
       };
     },
     queryCanDeputeOrgSuccess(state, action) {
@@ -125,8 +141,21 @@ export default {
       });
     },
 
+    // 查询驳回后修改申请单详情
+    * getDetailForUpdate({ payload }, { put, call }) {
+      const response = yield call(api.getApplyDetail, payload);
+      yield put({
+        type: 'getDetailForUpdateSuccess',
+        payload: response,
+      });
+    },
+
     // 查询可以受托的组织机构和服务经理
     * queryCanDeputeEmp({ payload }, { put, call }) {
+      yield put({
+        type: 'clearReduxDataSuccess',
+        payload: { deputeEmpList: [] },
+      });
       const response = yield call(api.queryCanDeputeEmp, payload);
       yield put({
         type: 'queryCanDeputeEmpSuccess',
@@ -143,8 +172,21 @@ export default {
       });
     },
 
+    // 获取驳回后修改页面页面的流程按钮和审批人
+    * getApprovalInfoForUpdate({ payload = {} }, { call, put }) {
+      const response = yield call(api.queryNextStepInfo, payload);
+      yield put({
+        type: 'getApprovalInfoForUpdateSuccess',
+        payload: response,
+      });
+    },
+
     // 获取可选受托人部门的列表
     * queryCanDeputeOrg({ payload }, { call, put }) {
+      yield put({
+        type: 'clearReduxDataSuccess',
+        payload: { deputeOrgList: [] },
+      });
       const response = yield call(api.queryCanDeputeOrg, payload);
       yield put({
         type: 'queryCanDeputeOrgSuccess',

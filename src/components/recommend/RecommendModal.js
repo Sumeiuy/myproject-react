@@ -2,14 +2,15 @@
  * @Author: zhangjun
  * @description 首页推荐弹窗
  * @Date: 2018-08-14 20:58:45
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-24 13:33:29
+ * @Last Modified by: maoquan@htsc.com
+ * @Last Modified time: 2018-09-08 13:50:04
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import store from 'store';
 
 import logable from '../../decorators/logable';
+import { permission } from '../../helper';
 import CommonModal from '../common/biz/CommonModal';
 import RecommendList from './RecommendList';
 import { FUNCTION_INTRODUCTION_PAGE, FIRST_ENTER_HOMEPAGE } from './config';
@@ -25,14 +26,14 @@ export default class recommendModal extends PureComponent {
 
   componentDidMount() {
     // 第一次渲染完判断是否是第一次进入首页,第一次进入显示弹窗推荐
-    this.isFirstEnterHomePage();
+    this.setVisible();
   }
 
   // 判断是否是第一次进入首页
   @autobind
-  isFirstEnterHomePage() {
+  setVisible() {
     const firstEnterHomePage = store.get(FIRST_ENTER_HOMEPAGE);
-    if (!firstEnterHomePage) {
+    if (!firstEnterHomePage && permission.isGrayFlag()) {
       this.setState({ modalVisible: true });
       store.set(FIRST_ENTER_HOMEPAGE, 'NO');
     }
@@ -58,7 +59,7 @@ export default class recommendModal extends PureComponent {
     const { modalVisible } = this.state;
     return (
       <CommonModal
-        title="理财服务平台更新日志（9/1）"
+        title="理财服务平台V3.3功能发布"
         modalKey="recommendModal"
         closeModal={this.closeModal}
         wrapClassName={styles.recommendModal}
