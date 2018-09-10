@@ -29,6 +29,24 @@ const matchRule = {
       render: 'renderCustomerLabels',
     }],
   },
+  profit: {
+    inset: true,
+    key: [{
+      name: '收益',
+      id: 'profit',
+      render: 'renderDefaultVal',
+      unit: '元',
+    }],
+  },
+  profitRate: {
+    inset: true,
+    key: [{
+      name: '收益率',
+      id: 'profitRate',
+      render: 'renderDefaultVal',
+      unit: '%',
+    }],
+  },
   outMktVal: {
     inset: true,
     key: [{
