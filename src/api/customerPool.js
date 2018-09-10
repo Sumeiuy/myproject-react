@@ -137,7 +137,7 @@ export default function customerPool(api) {
     queryBasicInfo: query => api.post('/groovynoauth/fsp/flow/queryBasicInfo', query),
 
     // 文件下载文件列表数据
-    ceFileList: query => api.post('/file/ceFileList', query),
+    ceFileList: query => api.post('/file/ceFileList2', query),
 
     // 生成问卷模板id
     generateTemplateId: query => api.post('/groovynoauth/fsp/assess/common/saveTemplate', query),
@@ -153,12 +153,6 @@ export default function customerPool(api) {
 
     // 查询客户是否是我名下的客户
     isCustServedByPostn: query => api.post('/groovynoauth/fsp/cust/task/isCustServedByPostn', query),
-
-    // 上传文件需要先上传uuid
-    // queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
-
-    // 删除文件
-    // ceFileDelete: query => api.post('/file/ceFileDelete', query),
 
     // 审批流程获取按钮
     queryApprovalBtn: query => api.post('/groovynoauth/fsp/flow/queryApprovalBtn', query),

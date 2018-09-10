@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 14:08:41
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-17 09:42:41
+ * @Last Modified time: 2018-09-07 13:37:41
  * 管理者视图详情
  */
 
@@ -736,7 +736,7 @@ export default class ManagerViewDetail extends PureComponent {
                   closable
                   visible={isShowCustDetailModal}
                   title="客户明细"
-                  onCancelHandler={this.handleCloseModal}
+                  onCancel={this.handleCloseModal}
                   footer={
                     <div className={styles.operationBtnSection}>
                       <Button

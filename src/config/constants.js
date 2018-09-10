@@ -14,7 +14,7 @@ const exported = {
   historyBoardType: 'TYPE_LSDB_TGJX',
   apiPrefix: '/fspa/mcrm/api',
   fspPrefix: '/fsp',
-  inHTSCDomain: location.hostname.indexOf('htsc.com.cn') > -1,
+  inHTSCDomain: window.location.hostname.indexOf('htsc.com.cn') > -1,
 
  // 经总的level值
   jingZongLevel: '1',

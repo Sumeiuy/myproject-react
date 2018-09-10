@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-08-03 13:38:47
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-09-06 13:07:59
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -10,6 +10,8 @@ import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import { Tooltip, Button } from 'antd';
 import _ from 'lodash';
+
+import withRouter from '../../decorators/withRouter';
 import { dva, emp } from '../../helper';
 import { openFspTab, openRctTab, linkTo } from '../../utils';
 import Pagination from '../../components/common/Pagination';
@@ -37,16 +39,19 @@ const mapDispatchToProps = {
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class MessageCenter extends PureComponent {
   static propTypes = {
     // 获取消息通知提醒列表
     getRemindMessageList: PropTypes.func.isRequired,
     // 消息通知提醒列表
     remindMessages: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
     push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   }
   constructor(props) {
     super(props);
@@ -58,24 +63,40 @@ export default class MessageCenter extends PureComponent {
   }
 
   componentDidMount() {
-    this.getRemindMessageList({
-      pageNum: 1,
-    });
+    const {
+      location: {
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
+    this.getRemindMessageList(pageNum, pageSize);
   }
 
   // 获取消息通知提醒列表
   @autobind
-  getRemindMessageList({ pageNum }) {
+  getRemindMessageList(pageNum = 1, pageSize = 10) {
     this.props.getRemindMessageList({
       pageNum,
-      pageSize: 10,
+      pageSize,
     });
   }
 
   // 切换当前页
   @autobind
-  handlePageChange(pageNum) {
-    this.getRemindMessageList({ pageNum });
+  handlePageChange(nextPage, currentPageSize) {
+    const { replace } = this.context;
+    const { location: { query, pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
+    });
+    this.getRemindMessageList(nextPage, currentPageSize);
   }
 
   // 点击消息通知
@@ -170,7 +191,7 @@ export default class MessageCenter extends PureComponent {
         loadCntractResponse = JSON.parse(loadCntractResponse);
         if (loadCntractResponse) {
           const { custId: busiId, custType } = loadCntractResponse.data;
-          const routeType = `${custType}:tgcontracttransfer:${objectVal}:::Y:`;
+          const routeType = `${custType}:tgcontracttransfer:${objectVal}::notice:Y:`;
           const busiIdParam = busiId ? `?busiId=${busiId}` : '';
           const routeTypeParam = routeType ? `&routeType=${routeType}` : '';
           const url = `/client/tgcontracttransfer/wizard/main${busiIdParam}${routeTypeParam}`;
@@ -411,10 +432,8 @@ export default class MessageCenter extends PureComponent {
       // 刷新列表
       // $('#showMessageInfo').EBDataTable('queryData');
       const { page } = this.props.remindMessages;
-      const { curPageNum } = page;
-      this.getRemindMessageList({
-        pageNum: curPageNum,
-      });
+      const { curPageNum, pageSize } = page;
+      this.getRemindMessageList(curPageNum, pageSize);
     })
     .catch((e) => {
       console.error(e);

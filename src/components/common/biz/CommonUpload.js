@@ -49,8 +49,6 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-  reformDeleteAttachmentList: state.app.reformDeleteAttachmentList,
-  reformDeleteAttachmentLoading: state.loading.effects['app/reformDeleteAttachment'],
   deleteAttachmentList: state.app.deleteAttachmentList,
   deleteAttachmentLoading: state.loading.effects['app/deleteAttachment'],
 });
@@ -58,15 +56,11 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   // 删除附件
   deleteAttachment: fetchDataFunction(true, 'app/deleteAttachment'),
-  // api getway 删除附件
-  reformDeleteAttachment: fetchDataFunction(true, 'app/reformDeleteAttachment'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
 export default class CommonUpload extends PureComponent {
   static propTypes = {
-    // api getway 改造 删除附件方法
-    reformDeleteAttachment: PropTypes.func,
     // 删除附件方法
     deleteAttachment: PropTypes.func,
     // 上传附件方法
@@ -79,33 +73,23 @@ export default class CommonUpload extends PureComponent {
     needDefaultText: PropTypes.bool,
     deleteAttachmentList: PropTypes.array,
     deleteAttachmentLoading: PropTypes.bool,
-    // api getway 改造 删除附件返回结果
-    reformDeleteAttachmentList: PropTypes.array,
-    reformDeleteAttachmentLoading: PropTypes.bool,
     // 标题
     title: PropTypes.string,
-    // 判断使用附件相关何种接口的，
-    // 对于上传路径来说 false代表使用原来的 ceFileUpload ， true 代表使用新的 ceFileUpload2
-    // 对于下载路径来说 false代表使用原来的 ceFileDownload, true 代表使用新的 ceFileDownload2
-    reformEnable: PropTypes.bool,
     maxFileSize: PropTypes.number,
   }
 
   static defaultProps = {
-    reformDeleteAttachment: _.noop,
     deleteAttachment: _.noop,
     uploadAttachment: _.noop,
     attachment: '',
     deleteAttachmentList: [],
-    reformDeleteAttachmentList: [],
     attachmentList: [],
     edit: false,
     needDefaultText: true,
     deleteAttachmentLoading: false,
-    reformDeleteAttachmentLoading: false,
     title: '',
-    reformEnable: false,
-    maxFileSize: null,
+    // 最大上传文件限制，单位 MB
+    maxFileSize: 20,
   }
 
   constructor(props) {
@@ -126,26 +110,17 @@ export default class CommonUpload extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const {
       deleteAttachmentLoading: preDAL,
-      reformDeleteAttachmentLoading: preReformDAL,
       attachmentList: preAL,
     } = this.props;
     const {
       deleteAttachmentLoading: nextDAL,
-      reformDeleteAttachmentLoading: nextReformDAL,
       attachmentList: nextAL,
-      reformEnable,
     } = nextProps;
 
-    if ((preDAL && !nextDAL) ||
-      (reformEnable && preReformDAL && !nextReformDAL)
-    ) {
-      const {
-        deleteAttachmentList,
-        reformDeleteAttachmentList,
-      } = nextProps;
-
+    if (preDAL && !nextDAL) {
+      const { deleteAttachmentList } = nextProps;
       // 文件列表
-      const fileList = reformEnable ? reformDeleteAttachmentList : deleteAttachmentList;
+      const fileList = deleteAttachmentList;
       this.setState({
         fileList,
         oldFileList: fileList, // 旧的文件列表
@@ -165,10 +140,14 @@ export default class CommonUpload extends PureComponent {
   onChange(info) {
     const { uploadAttachment, maxFileSize } = this.props;
     const uploadFile = info.file;
-
-    // 文件上传不能大于maxFileSize
     const fileSize = uploadFile.size;
-    if (maxFileSize && fileSize >= maxFileSize) {
+    if (fileSize === 0) {
+      message.error(`文件大小不能为 0`);
+      return;
+    }
+    // 文件上传不能大于maxFileSize
+    if (fileSize >= (maxFileSize * 1024 * 1024)) {
+      message.error(`文件大小不能超过 ${maxFileSize} MB`);
       return;
     }
 
@@ -211,15 +190,14 @@ export default class CommonUpload extends PureComponent {
     },
   })
   onRemove(attachId) {
-    const { deleteAttachment, reformDeleteAttachment, reformEnable } = this.props;
+    const { deleteAttachment } = this.props;
     const { empId, attachment } = this.state;
     const deleteObj = {
       empId,
       attachId,
       attachment,
     };
-    const deleteFunc = reformEnable ? reformDeleteAttachment : deleteAttachment;
-    deleteFunc(deleteObj);
+    deleteAttachment(deleteObj);
   }
 
   // 空方法，用于日志上传
@@ -258,11 +236,10 @@ export default class CommonUpload extends PureComponent {
     const {
       edit,
       title,
-      reformEnable,
       needDefaultText,
     } = this.props;
 
-    const actionName = reformEnable ? 'ceFileUpload2' : 'ceFileUpload';
+    const actionName = 'ceFileUpload2';
     const uploadProps = {
       data: {
         empId,
@@ -278,7 +255,7 @@ export default class CommonUpload extends PureComponent {
       fileList,
     };
 
-    const downloadName = reformEnable ? 'ceFileDownload2' : 'ceFileDownload';
+    const downloadName = 'ceFileDownload2';
     let fileListElement;
     if (fileList && fileList.length) {
       fileListElement = (
@@ -296,6 +273,7 @@ export default class CommonUpload extends PureComponent {
                         edit ?
                           <em>
                             <Popconfirm
+                              key={item.attachId}
                               placement="top"
                               onConfirm={() => this.onRemove(item.attachId)}
                               okText="是"
@@ -331,18 +309,20 @@ export default class CommonUpload extends PureComponent {
               return (
                 <div className={styles.fileItem}>
                   <Popover
+                    key={`${item.attachId}Top`}
                     placement="right"
                     content={popoverHtml}
                     trigger="hover"
                     mouseLeaveDelay={0.3}
                     getPopupContainer={this.findFileListNode}
                   >
-                    <p className={styles.fileItemText} title={fileName}>
+                    <p key={item.attachId} className={styles.fileItemText} title={fileName}>
                       <Icon type="fujian" />
                       <span className={styles.fileName}>{fileName}</span>
                     </p>
                   </Popover>
                   <Popover
+                    key={`${item.attachId}Bottom`}
                     placement="bottom"
                     content={statusText}
                     trigger="hover"
@@ -350,6 +330,7 @@ export default class CommonUpload extends PureComponent {
                     {
                       (index === fileList.length - 1 && Number(percent) !== 0) ?
                         <Progress
+                          key={item.attachId}
                           percent={Number.parseInt(percent, 10)}
                           strokeWidth={4}
                           status={status}

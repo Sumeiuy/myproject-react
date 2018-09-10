@@ -17,7 +17,7 @@ export default function channels(api) {
     // 查询客户
     queryCust: query => api.post('/groovynoauth/fsp/protocol/queryCust', query),
     // 获取附件列表
-    getAttachmentList: query => api.post('/file/ceFileList', query),
+    getAttachmentList: query => api.post('/file/ceFileList2', query),
     // 查询审批人列表
     getFlowStepInfo: query => api.post('/groovynoauth/fsp/protocol/queryFlowStepInfo', query),
     // 审批流程

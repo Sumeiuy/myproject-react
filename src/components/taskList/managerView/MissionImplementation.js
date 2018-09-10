@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-12-04 17:12:08
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-03 09:20:31
+ * @Last Modified time: 2018-08-27 17:02:40
  * 任务实施简报
  */
 
@@ -65,7 +65,7 @@ export default class MissionImplementation extends PureComponent {
     custManagerScopeData: PropTypes.object.isRequired,
     getCustManagerScope: PropTypes.func.isRequired,
     // 当前一级二级反馈
-    currentFeedback: PropTypes.object.isRequired,
+    currentFeedback: PropTypes.array.isRequired,
   }
 
   static defaultProps = {

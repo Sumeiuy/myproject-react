@@ -118,7 +118,6 @@ export default class CustomerRow extends PureComponent {
     formatAsset: PropTypes.func.isRequired,
     handleCheck: PropTypes.func.isRequired,
     condition: PropTypes.object.isRequired,
-    entertype: PropTypes.string.isRequired,
     goGroupOrTask: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
@@ -304,7 +303,6 @@ export default class CustomerRow extends PureComponent {
       toggleServiceRecordModal,
       condition,
       location,
-      entertype,
       goGroupOrTask,
       queryCustSignLabel,
     } = this.props;
@@ -315,7 +313,6 @@ export default class CustomerRow extends PureComponent {
         toggleServiceRecordModal={toggleServiceRecordModal}
         condition={condition}
         location={location}
-        entertype={entertype}
         goGroupOrTask={goGroupOrTask}
         queryCustSignLabel={queryCustSignLabel}
       />);

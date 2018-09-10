@@ -2,8 +2,8 @@
  * @Description: 批量划转的错误提醒页面
  * @Author: LiuJianShu
  * @Date: 2018-02-02 15:37:14
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-05 09:37:47
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-29 15:51:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,6 +13,7 @@ import _ from 'lodash';
 import Barable from '../../decorators/selfBar';
 import fspPatch from '../../decorators/fspPatch';
 import withRouter from '../../decorators/withRouter';
+import HeadBreadcrumb from '../../components/messageCenter/HeadBreadcrumb';
 import styles from './notifies.less';
 
 // 通知提醒默认 ID
@@ -73,7 +74,8 @@ export default class FilialeCustTransferNotifies extends PureComponent {
     }
     return (
       <div className={styles.notifiesInfoWrapper}>
-        <h2>通知提醒</h2>
+        <HeadBreadcrumb />
+        <div className={styles.notifiesTitle}>通知提醒</div>
         <p>您的主职位已被更新为{notifiesInfo.position} {notifiesInfo.department},</p>
         <p> 新开户的客户服务关系将归属该职位！</p>
       </div>

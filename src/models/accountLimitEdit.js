@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /**
  * @Description: 账户限制管理 model
  * @Author: Liujianshu
@@ -16,13 +17,35 @@ const EMPTY_ARRAY = [];
 export default {
   namespace: 'accountLimitEdit',
   state: {
+    // 服务经理数据
+    empData: EMPTY_OBJECT,
     detailInfo: EMPTY_OBJECT, // 用于展示的详情
     buttonData: EMPTY_OBJECT, // 获取按钮列表和下一步审批人
     limitList: EMPTY_ARRAY,
     saveChangeData: EMPTY_OBJECT,  // 保存后的数据
     editFormData: EMPTY_OBJECT, // 用于编辑时修改的详情数据,为了避免直接修改详情数据，浅拷贝于详情数据
+    validateData: EMPTY_OBJECT,  // 校验数据接口返回值
   },
   reducers: {
+    // 数据校验
+    validateFormSuccess(state, action) {
+      const { payload = EMPTY_OBJECT } = action;
+      return {
+        ...state,
+        validateData: payload,
+      };
+    },
+    // 获取服务经理列表
+    queryEmpDataSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        empData: {
+          list: resultData.servicePeopleList || EMPTY_ARRAY,
+          page: resultData.page || EMPTY_OBJECT,
+        },
+      };
+    },
     // 详情数据修改
     editFormChange(state, action) {
       const { payload: { type = '', value = '' } } = action;
@@ -71,6 +94,22 @@ export default {
     },
   },
   effects: {
+    // 校验数据
+    * validateForm({ payload }, { call, put }) {
+      const response = yield call(api.validateForm, payload);
+      yield put({
+        type: 'validateFormSuccess',
+        payload: response,
+      });
+    },
+    // 获取服务经理列表
+    * queryEmpData({ payload }, { call, put }) {
+      const response = yield call(commonApi.getEmpList, payload);
+      yield put({
+        type: 'queryEmpDataSuccess',
+        payload: response,
+      });
+    },
     // 右侧详情
     * queryDetailInfo({ payload }, { call, put }) {
       const response = yield call(api.queryDetailInfo, payload);
@@ -109,6 +148,13 @@ export default {
         });
         return newItem;
       });
+      const newCustList = [...newResultData.custList];
+      newResultData.custList = newCustList.map(item => ({
+        ...item,
+        newManagerId: item.managerId,
+        newManagerName: item.managerName,
+        newLimitAmount: item.limitAmount,
+      }));
 
       // newResultData.attachList = attachmentArray;
       yield put({

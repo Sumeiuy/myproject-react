@@ -210,7 +210,7 @@ export const getRouterData = (app) => {
     // 从 customerPool 页面中上部的搜索框输入搜索条件、或搜索框下方--猜你感兴趣进入
     '/customerPool/list': {
       component: dynamicWrapper(app, ['customerPool', 'customerLabel'], () =>
-        import('../routes/customerPool/CustomerListWrapper' /* webpackChunkName: "customerPool_list" */ )),
+        import('../routes/customerPool/CustomerList__' /* webpackChunkName: "customerPool_list" */ )),
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
@@ -447,11 +447,6 @@ export const getRouterData = (app) => {
     '/choicenessCombination/reportDetail': {
       component: dynamicWrapper(app, ['choicenessCombination'], () =>
         import('../routes/choicenessCombination/ReportDetail' /* webpackChunkName: "choicenessCombination_reportDetail" */)),
-    },
-    // 营业部非投顾签约客户分配页面
-    '/businessDepartmentCustDistribute': {
-      component: dynamicWrapper(app, ['custDistribute'], () =>
-        import('../routes/businessDepartmentCustDistribute/ConnectedHome' /* webpackChunkName: "businessDepartmentCustDistribute" */)),
     },
     // 投顾业务能力竞赛
     '/investmentConsultantRace': {

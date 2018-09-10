@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-13 09:41:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-10 09:20:33
+ * @Last Modified time: 2018-09-10 09:59:00
  */
 
 import React, { PureComponent } from 'react';
@@ -130,11 +130,12 @@ export default class Pageheader extends PureComponent {
       getNewCustRange,
       pageType,
     } = this.props;
-    const payload = { type: pageType };
     if (!isCallCustRangeApi) {
       // 有些申请页面头部不需要查询组织机构树
       return;
     }
+    const { isUseNewCustRange, getCustRange, getNewCustRange, pageType } = this.props;
+    const payload = { type: pageType };
     if (isUseNewCustRange) {
       getNewCustRange(payload);
     } else {
@@ -508,7 +509,7 @@ export default class Pageheader extends PureComponent {
       value: '$args[0]',
     },
   })
-  selectCustRange(value) {
+  selectCustRange(value = '') {
     const { filterCallback } = this.props;
     filterCallback({
       orgId: value,

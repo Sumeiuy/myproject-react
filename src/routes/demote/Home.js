@@ -2,8 +2,8 @@
  * @Description: 降级客户处理页面
  * @Author: LiuJianShu
  * @Date: 2017-12-06 14:45:44
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-03-05 09:38:15
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-08-28 21:24:30
  */
 
 import React, { PureComponent } from 'react';
@@ -17,6 +17,7 @@ import { message } from 'antd';
 
 import Button from '../../components/common/Button';
 import CommonTable from '../../components/common/biz/CommonTable';
+import HeadBreadcrumb from '../../components/messageCenter/HeadBreadcrumb';
 import Barable from '../../decorators/selfBar';
 import fspPatch from '../../decorators/fspPatch';
 import { time } from '../../helper';
@@ -170,12 +171,14 @@ export default class Demote extends PureComponent {
     if (noData || clicked) {
       return (
         <div className={styles.demoteWrapper}>
+          <HeadBreadcrumb />
           <h2>您的划转操作正在进行中或者您暂时没有可以划转为零售的客户。</h2>
         </div>
       );
     }
     return (
       <div className={styles.demoteWrapper}>
+        <HeadBreadcrumb />
         <h2 className={styles.title}>
           <span>提醒：</span>
           <span>{date.year()}年度，您名下有以下客户将降级划转为零售客户，请确认！<br />

@@ -2,8 +2,8 @@
  * @Description: 为新版客户列表发起任务在新建任务提示框中默认的展示信息提供的方法
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-07 13:55:20
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-10 09:52:44
  */
 
 import _ from 'lodash';

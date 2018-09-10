@@ -9,6 +9,7 @@ import queryString from 'query-string';
 import { customerPool as api, common as commonApi } from '../api';
 import { emp, url } from '../helper';
 import { toastM } from '../utils/sagaEffects';
+import { ALL_SERVE_SOURCE } from '../routes/customerPool/config';
 
 // 首页客户可用标签分页的页码和每页条数
 const INITIAL_CUSTLABEL_PAGENO = 1;
@@ -208,6 +209,7 @@ export default {
               type: 'getServiceLog',
               payload: {
                 ...params,
+                serveSource: params.serveSource === ALL_SERVE_SOURCE ? '' : params.serveSource,
                 keyword: !_.isEmpty(keyword) ? decodeURIComponent(keyword) : '',
               },
               loading: true,

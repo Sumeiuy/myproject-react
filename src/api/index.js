@@ -24,7 +24,6 @@ import telephoneNumberManageAPI from './telephoneNumberManage';
 import choicenessCombinationAPI from './choicenessCombination';
 import investmentAdviceAPI from './investmentAdvice';
 import operationCenterAPI from './operationCenter';
-import businessDepartmentCustomerDistributeAPI from './businessDepartmentCustomerDistribute';
 import custAllotAPI from './custAllot';
 import messageCenterAPI from './messageCenter';
 import stockOptionEvaluationAPI from './stockOptionEvaluation';
@@ -118,9 +117,6 @@ const exported = {
   // ========== 平台参数-运营中心
   operationCenter: operationCenterAPI(api),
 
-  // ========== 客户分配-营业部非投顾签约客户的分配
-  businessDepartmentCustDistribute: businessDepartmentCustomerDistributeAPI(api),
-
   // ========== 客户分配分公司客户分配
   custAllot: custAllotAPI(api),
 
@@ -180,7 +176,6 @@ export const {
   choicenessCombination,
   investmentAdvice,
   operationCenter,
-  businessDepartmentCustDistribute,
   custAllot,
   messageCenter,
   stockOptionEvaluation,

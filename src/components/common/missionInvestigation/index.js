@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-01-03 16:01:35
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-08 10:08:43
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-09-07 13:35:03
  * 任务调查
  */
 
@@ -589,7 +589,7 @@ export default class MissionInvestigation extends PureComponent {
           closable
           visible={isShowTable}
           title={'问题列表'}
-          onCancelHandler={this.handleCancel}
+          onCancel={this.handleCancel}
           footer={
             <div className={styles.btnSection}>
               <Button

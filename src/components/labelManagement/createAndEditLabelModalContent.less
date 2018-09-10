@@ -1,6 +1,7 @@
 @import '../../css/variable.less';
 
 .groupDetail {
+  width: 610px;
   ::-webkit-input-placeholder {
     font-size: 14px;
   }
@@ -34,6 +35,13 @@
         .ant-form-item {
           margin-bottom: 14px;
         }
+      }
+      .editableTextWrapper {
+        margin-bottom: 14px;
+      }
+      .normalBox {
+        width: 100%;
+        color: #333;
       }
     }
   }
@@ -73,10 +81,27 @@
           margin-bottom: 14px;
         }
       }
+      .editableTextWrapper {
+        margin-bottom: 14px;
+      }
+      .normalBox {
+        width: 100%;
+        color: #333;
+      }
     }
   }
-  & > .groupCustomerSearch {
+  & .groupCustomerSearch {
     display: block;
+    :global {
+      .ant-input {
+        border-right: 0;
+      }
+      .ant-btn-primary {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-left: -1px;
+      }
+    }
   }
   & > .addWaySection {
     display: flex;
@@ -107,17 +132,21 @@
     }
   }
   & > .addWaySubSection {
-    padding-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
     border-top: 1px solid #eaeaea;
     & > .singleCust {
       display: flex;
       justify-content: flex-start;
       align-items: flex-start;
+      height: 30px;
+      overflow: hidden;
     }
     & > .multiCust {
       display: flex;
-      justify-content: flex-end;
-      padding-bottom: 14px;
+      justify-content: flex-start;
       .importCust {
         display: inline-block;
         width: 80px;
@@ -128,7 +157,7 @@
         border-radius: 2px;
         font-size: 14px;
         color: #333;
-        margin-left: 10px;
+        margin-right: 10px;
         text-decoration: none;
         text-align: center;
         cursor: pointer;
@@ -152,9 +181,12 @@
       border-radius: 2px;
       font-size: 14px;
       color: #333;
-      margin-left: 10px;
       text-decoration: none;
       text-align: center;
+    }
+    .toggleBtn {
+      color: #108ee9;
+      font-size: 14px;
     }
   }
   & > .multiErrmsg {
@@ -171,27 +203,30 @@
     display: block;
     height: 230px;
     .custListTable {
-      padding: 0 !important;
+      padding: 0;
       table > thead > tr > th, tbody > tr > td {
-        padding: 7px 0 !important;
-        text-align: center !important;
-      }
-      tbody > tr > td > span:last-child {
-        max-width: 110px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        margin: 0 auto;
-      }
-      table > thead > tr > th {
-        text-align: center !important;
+        padding: 8px 0;
+        text-align: left;
+        &:last-child {
+          text-align: center;
+        }
       }
       :global {
         .ant-table-header {
-          background-color: #fff;
+          background-color: #eff0f5;
           table {
             border-bottom: 0;
+            table-layout: fixed;
           }
+        }
+        .column {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          margin: 0 auto;
+        }
+        .column, table > thead > tr > th > span:last-child {
+          padding: 0 19px;
         }
       }
     }

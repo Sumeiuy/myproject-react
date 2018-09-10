@@ -83,6 +83,10 @@ export default class Pageheader extends PureComponent {
     customerList: [],
   }
 
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+  }
+
   constructor(props) {
     super(props);
     const { dict = {}, filterControl, location: { query: { status, missionName } } } = props;
@@ -95,10 +99,6 @@ export default class Pageheader extends PureComponent {
       // 任务搜索框内容默认取url中的missionName
       missionName,
     };
-  }
-
-  static contextTypes = {
-    replace: PropTypes.func.isRequired,
   }
 
   componentWillReceiveProps(nextProps) {

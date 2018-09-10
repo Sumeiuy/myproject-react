@@ -211,7 +211,7 @@ export default class ChartBarStack extends PureComponent {
     // 初始化所有的数据，并存入state
     // 此为后面需要修改echarts的series做准备
     if (flag) {
-      this.state = {
+      this.setState({
         mouseoverLabelIndex: '',
         wrapperH: 0,
         chartName: name,
@@ -230,7 +230,7 @@ export default class ChartBarStack extends PureComponent {
         totals,
         grid,
         legendState: {},
-      };
+      });
     } else {
       this.setState({
         mouseoverLabelIndex: '',
