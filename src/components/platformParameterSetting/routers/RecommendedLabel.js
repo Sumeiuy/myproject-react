@@ -8,6 +8,8 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { message } from 'antd';
+import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Divider, Tag, Input, List, Checkbox, Button, Modal } from 'antd';
 import { dva, emp, fsp, permission } from '../../../helper';
@@ -157,7 +159,12 @@ export default class RecommendedLabel extends PureComponent {
     const { selectedLabels } = this.state;
     let finalSelectedLabels = selectedLabels;
     if (e.target.checked) {
-      finalSelectedLabels = _.concat(finalSelectedLabels, item);
+      // 新版只能添加8个
+      if (permission.isGrayFlag() && selectedLabels.length >= 8) {
+        message.warn('最多只能选择8个推荐标签');
+      } else {
+        finalSelectedLabels = _.concat(finalSelectedLabels, item);
+      }
     } else {
       finalSelectedLabels = _.filter(finalSelectedLabels,
           selectedItem => selectedItem.id !== item.id);
@@ -245,8 +252,11 @@ export default class RecommendedLabel extends PureComponent {
     const { updataCustLabels, queryHotWds3 } = this.props;
     const { onQueryLabel } = this;
     const { selectedLabels } = this.state;
+    const submitTitle = permission.isGrayFlag() ?
+      '请确认选择的标签，提交后数据将实时生效' :
+      '选择标签后请点击预览查看在首页的展示情况，标签文字超出部分将不在首页显示，如已查看，确定后将保存数据实时生效';
     confirm({
-      title: '选择标签后请点击预览查看在首页的展示情况，标签文字超出部分将不在首页显示，如已查看，确定后将保存数据实时生效',
+      title: submitTitle,
       cancelText: '取消',
       okText: '确认',
       onOk() {
@@ -275,9 +285,23 @@ export default class RecommendedLabel extends PureComponent {
       push,
     } = this.props;
 
+    const previewCls = classnames({
+      [styles.preview]: true,
+      [styles.hidden]: permission.isGrayFlag(),
+    });
+
+    // 顶部提示语
+    const headerHelperTip = permission.isGrayFlag() ?
+      (<span>在此设置的推荐标签将显示在 <b>首页-猜你感兴趣</b> 中，实时生效。</span>) :
+      (<span>在此设置的推荐标签将显示在 <b>首页-猜你感兴趣</b> 中，实时生效，点击下方 <b>预览</b> 可预览展示效果。</span>);
+
+    // 标签占位文字
+    const labelPlaceholder = permission.isGrayFlag() ? 
+      '请在下方标签列表中选择最多8个推荐标签' : '请在下方标签列表中选择最多5个推荐标签';
+
     return (<div className={styles.recommendedLabelWrap}>
       <div className={styles.headerTip}>
-        在此设置的推荐标签将显示在 <b>首页-猜你感兴趣</b> 中，实时生效，点击下方 <b>预览</b> 可预览展示效果。
+        {headerHelperTip}
       </div>
       <div className={styles.title}>
         <Divider type="vertical" className={styles.itemDivider} />
@@ -298,7 +322,7 @@ export default class RecommendedLabel extends PureComponent {
               {item.name}
             </Tag>
           )) :
-            (<span>请在下方标签列表中选择最多5个推荐标签</span>)
+            (<span>labelPlaceholder</span>)
         }
       </div>
       <div className={styles.searchWrap}>
@@ -310,7 +334,7 @@ export default class RecommendedLabel extends PureComponent {
           value={searchValue}
           onChange={this.handleSearchChange}
         />
-        <Button onClick={this.handlePreview} className={styles.preview}>
+        <Button onClick={this.handlePreview} className={previewCls}>
           <Icon type="yulan" />
           预览
         </Button>
