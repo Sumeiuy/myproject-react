@@ -148,6 +148,7 @@ function addRadioRangeParams(filterObj) {
     'purRake', // 净佣金
     'saleFare', // 产品净手续费
     'purFinAset', // 净转入
+    'profit', // 收益
   ];
 
   _.each(radioRangeParams, (key) => {
@@ -159,6 +160,19 @@ function addRadioRangeParams(filterObj) {
       };
     }
   });
+
+  if (filterObj.profitRate) {
+    const dateType = filterObj.profitRate[0];
+    const min = filterObj.profitRate[1];
+    const max = filterObj.profitRate[2];
+
+    param.profitRate = {
+      dateType: dateType || null,
+      minVal: min ? (min / 100).toFixed(5) : null,
+      maxVal: max ? (max / 100).toFixed(5) : null,
+    };
+  }
+
   return param;
 }
 
@@ -920,7 +934,7 @@ export default class CustomerList extends PureComponent {
 
   // 筛选变化
   @autobind
-  filterChange(obj, isDeleteFilterFromLocation = false) {
+  handleFilterChange(obj, isDeleteFilterFromLocation = false) {
     const {
       replace,
       location: { query, pathname },
@@ -1173,7 +1187,7 @@ export default class CustomerList extends PureComponent {
           clearJxGroupProductData={clearJxGroupProductData}
           dict={dict}
           location={location}
-          onFilterChange={this.filterChange}
+          onFilterChange={this.handleFilterChange}
           searchServerPersonList={searchServerPersonList}
           queryIndustryList={queryIndustryList}
           industryList={industryList}
