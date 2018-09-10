@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-10 11:08:08
+ * @Last Modified time: 2018-09-10 13:22:59
  */
 
 import React, { PureComponent } from 'react';
@@ -510,33 +510,6 @@ export default class CustomerGroupManage extends PureComponent {
     }
   }
 
-  // 在新建、编辑或者分组转标签成功时
-  // 进行多次提交的时候，url的参数在push时没有改变不请求
-  // 需要单独发一个请求
-  @autobind
-  handleComparedGetLabelList() {
-    const {
-      location: {
-        pathname,
-        query: {
-          curPageNum = INITIAL_CURPAGE,
-          keyWord = '',
-          curPageSize = INITIAL_PAGESIZE,
-        },
-      },
-    } = this.props;
-    if (curPageNum === INITIAL_CURPAGE && curPageSize === INITIAL_PAGESIZE && keyWord === '') {
-      this.getLabelList({
-        curPageNum: INITIAL_CURPAGE,
-        curPageSize: INITIAL_PAGESIZE,
-      });
-    } else {
-      this.context.push({
-        pathname,
-      });
-    }
-  }
-
   /**
    * 更新标签的信息，包括标签的名称、描述、客户
    * 调用接口
@@ -721,8 +694,6 @@ export default class CustomerGroupManage extends PureComponent {
 
     // 构造operation
     const actionSource = this.renderActionSource();
-
-    const modalTitle = isCreateLabel ? MODALTITLE_CREATELABEL : MODALTITLE_EDITLABEL;
 
     const modalTitle = isCreateLabel ? MODALTITLE_CREATELABEL : MODALTITLE_EDITLABEL;
 
