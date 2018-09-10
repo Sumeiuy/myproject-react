@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 17:09:13
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-25 15:52:00
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-08-31 15:53:09
  */
 
 import React, { PureComponent } from 'react';
@@ -38,6 +38,15 @@ export default class CustomerGroupListSearch extends PureComponent {
     this.state = {
       curSearchValue: props.defaultValue,
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.defaultValue !== this.props.defaultValue) {
+      // eslint-disable-next-line
+      this.setState({
+        curSearchValue: this.props.defaultValue,
+      });
+    }
   }
 
   @autobind

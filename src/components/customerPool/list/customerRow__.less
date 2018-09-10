@@ -105,7 +105,11 @@
       height: 22px;
       line-height: 22px;
       span {
+        display: inline-block;
         font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         &.cutOffLine {
           padding: 0 3px;
         }
@@ -115,6 +119,7 @@
         color: #4a4a4a;
         font-weight: bold;
         font-size: 15px;
+        max-width: 600px;
         &.clickable {
           cursor: pointer;
           color: #63aee5;

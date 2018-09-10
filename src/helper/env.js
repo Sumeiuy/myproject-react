@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:03:01
  * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-05-04 08:36:54
+ * @Last Modified time: 2018-09-03 15:16:40
  * @description 此文件用于存放与操作系统，生产/开发环境，浏览器，使用框架相关的公用方法
  */
 import bowser from 'bowser';
@@ -15,6 +15,11 @@ function formatBowserName(name) {
   };
   const result = aliasMap[name] || name;
   return result.toLowerCase();
+}
+
+// 只取大版本
+function formatBrowserVersion(version) {
+  return version.slice(0, version.indexOf('.'));
 }
 
 const env = {
@@ -45,13 +50,16 @@ const env = {
    * $browser_version  字符串 浏览器版本，例如Chrome 45
    */
   getEnv() {
+    const bowserName = formatBowserName(bowser.name);
+    const bowserVersion = formatBrowserVersion(bowser.version);
     return {
       $app_version: constants.version,
       $os: env.getOS(),
       $screen_width: screen.width,
       $screen_height: screen.height,
-      $browser: formatBowserName(bowser.name),
-      $browser_version: `${bowser.name} ${bowser.version}`,
+      $browser: bowserName,
+      $browser_version: `${bowserName} ${bowserVersion}`,
+      $browser_version_old: `${bowserName} ${bowser.version}`,
     };
   },
 
