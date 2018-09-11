@@ -324,6 +324,7 @@ const permission = {
    * 检测当前版本是不是需要支持灰度发布，以便控制代码里面的逻辑显示、隐藏、特殊处理等
    */
   isGrayFlag() {
+    return true;
     const nativeQuery = qs.parse(window.location.search);
     const grayFlag =
       window.grayFlag === true
