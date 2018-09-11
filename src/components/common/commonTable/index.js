@@ -3,7 +3,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-10 09:58:13
+ * @Last Modified time: 2018-09-11 10:35:09
  */
 
 import React, { PureComponent } from 'react';
@@ -112,8 +112,6 @@ export default class CommonTable extends PureComponent {
     // 表格可点击的列号集合一一对应的点击事件方法集合
     // eg: [get,set,update] 表示可点击的列号集合一一对应的点击事件方法
     clickableColumnCallbackList: PropTypes.array,
-    // 表格可点击的列的class
-    clickableColumnClass: PropTypes.string,
     position: PropTypes.string,
     // 操作单元格内的class
     actionClass: PropTypes.string,
@@ -150,7 +148,6 @@ export default class CommonTable extends PureComponent {
     title: null,
     clickableColumnIndexList: [],
     clickableColumnCallbackList: [],
-    clickableColumnClass: '',
     position: 'bottom',
     actionClass: '',
   };
@@ -259,7 +256,6 @@ export default class CommonTable extends PureComponent {
       emptyListDataNeedEmptyRow,
       clickableColumnIndexList,
       clickableColumnCallbackList,
-      clickableColumnClass,
       actionClass,
     } = this.props;
     const len = titleColumn.length - 1;
@@ -345,7 +341,8 @@ export default class CommonTable extends PureComponent {
                   className={
                     classnames({
                       [styles.operation]: true,
-                      [clickableColumnClass]: true,
+                      [operationColumnClass]: true,
+                      operation: true,
                     })}
                 >
                   <span

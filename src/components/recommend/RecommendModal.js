@@ -10,7 +10,6 @@ import { autobind } from 'core-decorators';
 import store from 'store';
 
 import logable from '../../decorators/logable';
-import { permission } from '../../helper';
 import CommonModal from '../common/biz/CommonModal';
 import RecommendList from './RecommendList';
 import { FUNCTION_INTRODUCTION_PAGE, FIRST_ENTER_HOMEPAGE } from './config';
@@ -33,7 +32,7 @@ export default class recommendModal extends PureComponent {
   @autobind
   setVisible() {
     const firstEnterHomePage = store.get(FIRST_ENTER_HOMEPAGE);
-    if (!firstEnterHomePage && permission.isGrayFlag()) {
+    if (!firstEnterHomePage) {
       this.setState({ modalVisible: true });
       store.set(FIRST_ENTER_HOMEPAGE, 'NO');
     }
