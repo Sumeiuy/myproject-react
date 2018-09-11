@@ -187,10 +187,10 @@ export default class RecommendedLabel extends PureComponent {
     } = item;
     const replaceTag = `<span class="searchWord">${sWord}</span>`;
     const regExpSWord = new RegExp(_.escapeRegExp(sWord), 'g');
-    const finalName = name.replace(regExpSWord, replaceTag);
+    const finalName = sWord ? name.replace(regExpSWord, replaceTag) : name;
     // 字数超两百打点显示
     let finalDesc = description.length > 200 ? `${description.slice(0, 200)}...` : description;
-    finalDesc = finalDesc.replace(regExpSWord, replaceTag);
+    finalDesc = sWord ? finalDesc.replace(regExpSWord, replaceTag) : finalDesc;
     const isCludeLabel = _.filter(selectedLabels, selectItem => selectItem.id === item.id).length;
     return (
       <Item.Meta
