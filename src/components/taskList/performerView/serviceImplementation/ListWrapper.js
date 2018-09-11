@@ -3,14 +3,14 @@
  * @Author: WangJunJun
  * @Date: 2018-09-11 16:14:31
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-11 16:47:41
+ * @Last Modified time: 2018-09-11 18:19:57
  */
 
- // eslint-disable-next-line
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import cx from 'classnames';
+import _ from 'lodash';
 import { dom } from '../../../../helper';
 
 import styles from './listWrapper.less';
@@ -33,24 +33,17 @@ export default class ListWrapper extends PureComponent {
     this.state = {
       wrapperWidth: 0,
     };
+    this.wrapperRef = React.createRef();
   }
 
   componentDidMount() {
-    setTimeout(() => {
-      this.setState({ wrapperWidth: this.getWrapperWidth() });
-    }, 20);
+    this.setState({ wrapperWidth: this.getWrapperWidth() });
   }
 
   // 获取外层容器的宽度
-  getWrapperWidth() {
-    return dom.getRect(this.wrapperRef, 'width');
-  }
-
   @autobind
-  saveRef(ref) {
-    if (ref) {
-      this.wrapperRef = ref;
-    }
+  getWrapperWidth() {
+    return dom.getRect(this.wrapperRef.current, 'width');
   }
 
   render() {
@@ -63,7 +56,7 @@ export default class ListWrapper extends PureComponent {
       },
     );
     return (
-      <div className={cls} ref={this.saveRef}>
+      <div className={cls} ref={this.wrapperRef}>
         {
           React.Children.map(children, child => (
             <div
