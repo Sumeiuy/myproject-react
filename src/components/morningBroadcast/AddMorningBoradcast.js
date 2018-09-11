@@ -401,7 +401,7 @@ export default class AddMorningBoradcast extends PureComponent {
       wrapperCol: { span: 16, offset: 1 },
     };
     const sourceProps = {
-      action: `${request.prefix}/file/ceFileUpload`,
+      action: `${request.prefix}/file/ceFileUpload2`,
       onRemove: this.onRemove,
     };
     const audioProps = {

@@ -14,25 +14,23 @@ import { connect } from 'dva';
 
 import Button from '../Button';
 import { request } from '../../../config';
-import { emp } from '../../../helper';
+import { emp, dva } from '../../../helper';
 import styles from './multiUploader.less';
 import Icon from '../Icon';
 import logable from '../../../decorators/logable';
 
-const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
-  type,
-  payload: query || {},
-  loading: globalLoading,
-  forceFull,
-});
+const dispatch = dva.generateEffect;
 
-const mapStateToProps = state => ({
-  deleteAttachmentLoading: state.loading.effects['channelsTypeProtocol/deleteAttachment'],
-});
+const effects = {
+  // 删除附件
+  deleteAttachment: 'app/deleteAttachment',
+};
+
+const mapStateToProps = () => ({});
 
 const mapDispatchToProps = {
   // 删除附件
-  deleteAttachment: fetchDataFunction(true, 'channelsTypeProtocol/deleteAttachment', true),
+  deleteAttachment: dispatch(effects.deleteAttachment, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
@@ -40,8 +38,6 @@ export default class MultiUpload extends PureComponent {
   static propTypes = {
     // 删除附件方法
     deleteAttachment: PropTypes.func.isRequired,
-    // 删除事件的状态
-    deleteAttachmentLoading: PropTypes.bool,
     // key 值
     key: PropTypes.string,
     // 编辑状态
@@ -77,9 +73,10 @@ export default class MultiUpload extends PureComponent {
     attachmentList: [],
     uploadCallback: () => {},
     deleteCallback: () => {},
-    deleteAttachmentLoading: false,
     showDelete: true,
+    // 最大上传文件限制，单位 MB
     maxSize: 20,
+    // 最多上传文件数量，单位个
     limitCount: 9999,
   }
 
@@ -118,8 +115,17 @@ export default class MultiUpload extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
   onChange(info) {
-    const { type, uploadCallback, limitCount } = this.props;
+    const { type, uploadCallback, limitCount, maxSize } = this.props;
     const uploadFile = info.file;
+    const { size } = uploadFile;
+    if (size === 0) {
+      message.error(`文件大小不能为 0`);
+      return;
+    }
+    if (size > (maxSize * 1024 * 1024)) {
+      message.error(`文件大小不能超过 ${maxSize} Mb`);
+      return;
+    }
     this.setState({
       percent: info.file.percent,
       fileList: info.fileList,
@@ -236,14 +242,13 @@ export default class MultiUpload extends PureComponent {
         file,
         attachment,
       },
-      action: `${request.prefix}/file/ceFileUpload`,
+      action: `${request.prefix}/file/ceFileUpload2`,
       headers: {
         accept: '*/*',
       },
       onChange: this.onChange,
       showUploadList: false,
       fileList,
-      beforeUpload: this.beforeUpload,
     };
 
     const uploadElement = (edit && isShowUploadBtn) ?
@@ -288,7 +293,7 @@ export default class MultiUpload extends PureComponent {
                       }
                       <em>
                         <a
-                          href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${item.name}`}
+                          href={`${request.prefix}/file/ceFileDownload2?attachId=${item.attachId}&empId=${empId}&filename=${item.name}`}
                           onClick={this.handleDownloadClick}
                         >
                           <Icon type="xiazai2" />

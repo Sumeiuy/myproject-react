@@ -1,8 +1,8 @@
 /* 标签管理新建编辑标签模态框
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 20:15:28
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-11 10:25:29
  */
 
 import React, { PureComponent } from 'react';
@@ -14,16 +14,17 @@ import _ from 'lodash';
 import confirm from '../common/confirm_';
 import Table from '../common/commonTable';
 import Search from '../common/Search';
-import Select from '../common/Select';
 import Button from '../common/Button';
+import Icon from '../common/Icon';
+import EditableText from '../common/editableText';
 
 import tableStyles from '../common/commonTable/index.less';
 import styles from './createAndEditLabelModalContent.less';
-import logable from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 import { request } from '../../config';
 import { emp } from '../../helper';
-import { config, LABEL_NAME_REG, labelCustColumns } from './config';
-import customerTemplet from './customerTemplet.xlsx';
+import { labelCustColumns, VALIDATE_LABLEDESC, VALIDATE_LABLENAME } from './config';
+import customerTemplet from './customerTemplet.xls';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -32,8 +33,6 @@ const searchStyle = {
   width: '200px',
 };
 
-// 添加客户方式默认值
-const defaultType = config.customerAddType[0].value;
 const FormItem = Form.Item;
 
 @Form.create()
@@ -49,8 +48,8 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     getGroupCustomerList: PropTypes.func.isRequired,
     // 风险等级字典
     custRiskBearing: PropTypes.array,
-    // 编辑情况下，添加客户到标签下的列表
-    onAddCustomerToLabel: PropTypes.func.isRequired,
+    // 编辑标签信息
+    onUpdateLabel: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     // 批量导入客户信息
     queryBatchCustList: PropTypes.func.isRequired,
@@ -58,12 +57,15 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     checkDuplicationName: PropTypes.func.isRequired,
     // 删除标签下的客户
     deleteLabelCust: PropTypes.func.isRequired,
+    isCreateLabel: PropTypes.bool,
+    onComparedGetLabelList: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     detailData: EMPTY_OBJECT,
     canEditDetail: true,
     custRiskBearing: [],
+    isCreateLabel: true,
   };
 
   constructor(props) {
@@ -84,10 +86,6 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
       custIds: [],
       needDeleteBrokerNumber: '',
       curPageCustList: EMPTY_LIST,
-      // 客户添加方式默认值--单客户添加
-      customerAddType: defaultType,
-      // 是否是初始客户添加方式
-      isDefaultType: true,
       // 上传后的返回附件Id值
       attachmentId: '',
       // 附件上传报错信息
@@ -98,6 +96,8 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
       file: {},
       // 上传文件的loading
       uploadLoading: false,
+      // 默认单个添加客户，否则为导入批量添加客户
+      isSingleAddCustomer: true,
     };
   }
 
@@ -253,18 +253,9 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     });
   }
 
-
-  // 客户添加方式的 select 切换事件
   @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '添加方式',
-      value: '$args[1]',
-    },
-  })
-  handleSelectChange(key, value) {
-    const { custIds, id } = this.state;
+  toggleAddWay() {
+    const { custIds, id, isSingleAddCustomer } = this.state;
     // 新建页面切换客户添加方式，需要将之前已经存在的附件、报错信息置空
     this.setState({
       attachmentId: '',
@@ -272,18 +263,16 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
       importVisible: false,
       file: {},
     });
-    // groupId为空，为新建页面
-    // includeCustIdList不为空，说明已经添加了客户，此时若切换需要弹出提示信息
+    // id为空，为新建页面
+    // custIds不为空，说明已经添加了客户，此时若切换需要弹出提示信息
     if (!_.isEmpty(custIds) && _.isEmpty(id)) {
       Modal.confirm({
         title: '确认切换客户添加方式吗?',
-        content: '在新增模式下，新添加的客户需要提交才能生效，如果切换添加客户方式将会覆盖之前的数据，是否切换?',
+        content: '切换模式会清除您刚添加的客户，确定要继续吗？',
         onOk: () => {
-          const isDefaultType = value === defaultType;
           // 新建页面切换客户添加方式，需要将之前已经存在的数据置空
           this.setState({
-            [key]: value,
-            isDefaultType,
+            isSingleAddCustomer: !isSingleAddCustomer,
             custIds: [],
             curPageCustList: [],
             includeCustList: [],
@@ -294,12 +283,16 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
         cancelText: '取消',
       });
     } else {
-      const isDefaultType = value === defaultType;
       this.setState({
-        [key]: value,
-        isDefaultType,
+        isSingleAddCustomer: !isSingleAddCustomer,
       });
     }
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: isSingleAddCustomer ? '切换模板添加' : '切换单个添加',
+      },
+    });
   }
 
   @autobind
@@ -333,7 +326,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
       name,
       description,
     } = this.state;
-    const { custRiskBearing, onAddCustomerToLabel } = this.props;
+    const { custRiskBearing, onUpdateLabel } = this.props;
     const riskLevelObject = _.find(custRiskBearing, item => item.key === riskLevel) || EMPTY_OBJECT;
 
     // 判断custIds是否存在brokerNumber
@@ -344,7 +337,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     // 入参改变，后端要求传包含custId数组
     const newCustIdList = [...custIds, brokerNumber];
 
-    // 如果groupId不为空，则添加直接调用接口，添加
+    // 如果id不为空，则添加直接调用接口，添加
     if (_.isEmpty(id)) {
       // 数据添加进表格
       // 新添加的数据放在表格的前面
@@ -371,12 +364,13 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
         curPageNum: curPage,
       });
     } else {
-      // groupId不为空，直接调用add接口
-      onAddCustomerToLabel({
+      // id不为空，直接调用add接口
+      const data = {
         custIds: newCustIdList,
         name,
         description,
-      });
+      };
+      onUpdateLabel({ data });
     }
 
     // 将数据添加进includeCustIdList
@@ -418,6 +412,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     this.setState({
       // 当前删除行记录数据
       record,
+      custIds: _.filter(this.state.custIds, item => item !== record.brokerNumber),
     });
     this.deleteCustomerFromLabel(record);
   }
@@ -438,16 +433,18 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
         // 总记录数减1
         totalRecordNum: totalRecordNum - 1,
       }, () => {
+        const { getGroupCustomerList, onComparedGetLabelList } = this.props;
         if (_.isEmpty(newDataSource) && id) {
           // 判断数据是否不存在了，
           // 并且不是新增
           // 不存在请求数据
-          this.props.getGroupCustomerList({
+          getGroupCustomerList({
             labelId: id,
             pageNum: 1,
             pageSize: 10,
           });
         }
+        onComparedGetLabelList();
       });
     });
   }
@@ -489,7 +486,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
                 const {
                   batchCustList,
                   batchCustList: { custList },
-                  onAddCustomerToLabel,
+                  onUpdateLabel,
                 } = this.props;
                 const {
                   custIds,
@@ -507,7 +504,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
                 const custIdListSize = _.size(custIdList);
                 const newCustIdList = _.concat(custIds, custIdList);
 
-                // 如果groupId不为空，则添加直接调用接口，添加
+                // 如果id不为空，则添加直接调用接口，添加
                 if (_.isEmpty(id)) {
                   // 数据添加进表格
                   // 新添加的数据放在表格的前面
@@ -529,12 +526,13 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
                     curPageNum: curPage,
                   });
                 } else {
-                  // groupId不为空，编辑页面直接调用add接口
-                  onAddCustomerToLabel({
+                  // id不为空，编辑页面直接调用add接口
+                  const param = {
                     custIds: newCustIdList,
                     name,
                     description,
-                  });
+                  };
+                  onUpdateLabel({ data: param });
                   // 编辑页面调完add接口客户已经分组成功
                   // 此时将attachmentId置为空，为再次点击上传按钮上传做准备
                   this.setState({
@@ -583,7 +581,8 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
 
   renderActionSource() {
     return [{
-      type: '删除',
+      key: 'delete',
+      type: <Icon type="shanchu" />,
       handler: this.handleDeleteBtnClick,
     }];
   }
@@ -593,7 +592,8 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
   handleCheckLabelName() {
     const { checkDuplicationName, form } = this.props;
     const { labelName: labelNameError } = form.getFieldsError();
-    if (labelNameError) {
+    // 校验规则不通过或编辑标签不校验重名
+    if (labelNameError || !this.props.isCreateLabel) {
       return;
     }
     form.validateFields(['name'], (error, values) => {
@@ -612,6 +612,130 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     });
   }
 
+  // 编辑标签时实时保存标签名称数据
+  @autobind
+  handleSaveLabelName({ name }) {
+    const { description, custIds } = this.state;
+    const data = {
+      custIds,
+      name,
+      description,
+    };
+    this.props.onUpdateLabel({
+      data,
+      isNeedQueryLabelCust: false,
+    }).then(() => {
+      // 保存成功后修改，同步state中的数据
+      this.setState({ name });
+    });
+  }
+
+  // 编辑标签时实时保存标签描述数据
+  @autobind
+  handleSaveLabelDescription({ description }) {
+    const { name, custIds } = this.state;
+    const data = {
+      custIds,
+      name,
+      description,
+    };
+    this.props.onUpdateLabel({
+      data,
+      isNeedQueryLabelCust: false,
+    }).then(() => {
+      // 保存成功后修改，同步state中的数据
+      this.setState({ description });
+    });
+  }
+
+  @autobind
+  renderLabelName() {
+    const {
+      form: { getFieldDecorator },
+      canEditDetail,
+      isCreateLabel,
+    } = this.props;
+    const { name } = this.state;
+    // 编辑标签
+    if (!isCreateLabel) {
+      return (
+        <EditableText
+          name="name"
+          label="标签名称"
+          wrapperClass={styles.editableTextWrapper}
+          normalBoxClass={styles.normalBox}
+          disable={!canEditDetail}
+          onSave={this.handleSaveLabelName}
+          validateRules={VALIDATE_LABLENAME}
+        >
+          {name}
+        </EditableText>
+      );
+    }
+    return (
+      <FormItem>
+        {getFieldDecorator('name', {
+          rules: VALIDATE_LABLENAME,
+          initialValue: name || '',
+        })(
+          <Input
+            className={styles.labelNameInput}
+            id="nameInput"
+            placeholder={canEditDetail ? '请输入标签名称' : ''}
+            size="default"
+            ref={ref => (this.nameInput = ref)}
+            disabled={!canEditDetail}
+            onBlur={this.handleCheckLabelName}
+          />,
+        )}
+      </FormItem>
+    );
+  }
+
+  @autobind
+  renderLabelDescription() {
+    const {
+      form: { getFieldDecorator },
+      canEditDetail,
+      isCreateLabel,
+    } = this.props;
+    const { description } = this.state;
+    // 编辑标签
+    if (!isCreateLabel) {
+      return (
+        <EditableText
+          name="description"
+          label="标签描述"
+          wrapperClass={styles.editableTextWrapper}
+          normalBoxClass={styles.normalBox}
+          disable={!canEditDetail}
+          onSave={this.handleSaveLabelDescription}
+          validateRules={VALIDATE_LABLEDESC}
+        >
+          {description}
+        </EditableText>
+      );
+    }
+    return (
+      <FormItem>
+        {getFieldDecorator('description', {
+          rules: VALIDATE_LABLEDESC,
+          initialValue: description || '',
+        })(
+          <Input.TextArea
+            className={styles.labelDescInput}
+            id="descriptionInput"
+            placeholder={canEditDetail ? '请输入标签描述' : ''}
+            size="default"
+            autosize={false}
+            disabled={!canEditDetail}
+            ref={ref => (this.descriptionInput = ref)}
+          />,
+        )}
+      </FormItem>
+    );
+  }
+
   render() {
     const {
       name = '',
@@ -622,19 +746,16 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
       totalRecordNum,
       curPageCustList,
       id,
-      customerAddType,
-      isDefaultType,
       attachmentId,
       multiErrmsg,
       importVisible,
       file,
       uploadLoading,
+      isSingleAddCustomer,
     } = this.state;
     const {
-      form: { getFieldDecorator },
       customerHotPossibleWordsList = EMPTY_LIST,
       getHotPossibleWds,
-      canEditDetail,
     } = this.props;
     // 构造operation
     const actionSource = this.renderActionSource();
@@ -682,30 +803,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
             标签名称:
           </div>
           <div className={styles.nameContent}>
-            <FormItem>
-              {getFieldDecorator('name', {
-                rules: [{
-                  required: true, message: '请输入标签名称',
-                }, {
-                  max: 8, message: '最多为8个字',
-                }, {
-                  min: 4, message: '最少为4个字',
-                }, {
-                  pattern: LABEL_NAME_REG, message: '可输入字符仅为汉字、数字、字母及合法字符(#&-_@%)',
-                }],
-                initialValue: name || '',
-              })(
-                <Input
-                  className={styles.labelNameInput}
-                  id="nameInput"
-                  placeholder={canEditDetail ? '请输入标签名称' : ''}
-                  size="default"
-                  ref={ref => (this.nameInput = ref)}
-                  disabled={!canEditDetail}
-                  onBlur={this.handleCheckLabelName}
-                />,
-              )}
-            </FormItem>
+            {this.renderLabelName()}
           </div>
         </div>
         <div className={styles.descriptionSection}>
@@ -713,47 +811,12 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
             标签描述:
           </div>
           <div className={styles.descriptionContent}>
-            <FormItem>
-              {getFieldDecorator('description', {
-                rules: [{
-                  required: true, message: '请输入标签描述',
-                }, {
-                  min: 10, message: '最少为10个字',
-                }, {
-                  max: 500, message: '最多为500个字',
-                }],
-                initialValue: description || '',
-              })(
-                <Input.TextArea
-                  className={styles.labelDescInput}
-                  id="descriptionInput"
-                  placeholder={canEditDetail ? '请输入标签描述' : ''}
-                  size="default"
-                  autosize={false}
-                  disabled={!canEditDetail}
-                  ref={ref => (this.descriptionInput = ref)}
-                />,
-              )}
-            </FormItem>
-          </div>
-        </div>
-        <div className={styles.addWaySection}>
-          <div className={styles.addWay}>
-            添加方式:
-          </div>
-          <div className={styles.addWayContent}>
-            <Select
-              width="220px"
-              name="customerAddType"
-              data={config.customerAddType}
-              value={customerAddType}
-              onChange={this.handleSelectChange}
-            />
+            {this.renderLabelDescription()}
           </div>
         </div>
         <div className={styles.addWaySubSection}>
           {
-            isDefaultType ?
+            isSingleAddCustomer ?
               <div className={styles.singleCust}>
                 <Search
                   // 请求联想关键词
@@ -783,6 +846,10 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
                 <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
               </div>
           }
+          <a className={styles.toggleBtn} onClick={this.toggleAddWay}>
+            <Icon type="jiaoyiliang" />
+            {isSingleAddCustomer ? '切换模板添加' : '切换单个添加'}
+          </a>
         </div>
         {
           _.isEmpty(multiErrmsg) ?
@@ -811,9 +878,6 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
             titleColumn={labelCustColumns}
             actionSource={actionSource}
             isFirstColumnLink={false}
-            // 固定标题，内容滚动
-            scrollY={186}
-            isFixedTitle
             // 当listData数据源为空的时候是否需要填充空白行
             emptyListDataNeedEmptyRow
           />

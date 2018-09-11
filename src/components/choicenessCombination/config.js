@@ -386,7 +386,7 @@ const config = {
         dataIndex: 'reason',
         key: 'reason',
         title: '理由',
-        width: 120,
+        width: 380,
       },
     ],
     // 行业股票组合
@@ -437,7 +437,7 @@ const config = {
         dataIndex: 'reason',
         key: 'reason',
         title: '理由',
-        width: 120,
+        width: 380,
       },
     ],
     // 配置类组合
@@ -488,7 +488,7 @@ const config = {
         dataIndex: 'reason',
         key: 'reason',
         title: '理由',
-        width: 120,
+        width: 380,
       },
     ],
     // 配置类组合（资产配置型）

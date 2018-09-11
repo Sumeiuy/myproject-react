@@ -772,7 +772,6 @@ export default class CreateApply extends PureComponent {
             <InfoTitle head="附件信息" />
             <CommonUpload
               edit
-              reformEnable
               key={uploadKey}
               attachment={attachment || ''}
               needDefaultText={false}

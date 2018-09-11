@@ -2,8 +2,8 @@
  * @Description: 客户详情
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-15 19:01:55
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-09-10 13:49:01
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
-import 'intro.js/introjs.css';
 import TipsInfo from './TipsInfo';
 import { formatAsset } from './formatNum';
 import {

@@ -71,7 +71,7 @@ export default class ServiceRecordItem extends PureComponent {
             ref={ref => this.sendEmail = ref}
             onClick={this.handleDownloadClick}
             href={_.isEmpty(item.attachId) && _.isEmpty(item.name) ? NO_EMAIL_HREF :
-              `${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
+              `${request.prefix}/file/ceFileDownload2?attachId=${item.attachId}&empId=${emp.getId()}&filename=${item.name}`}
           >{item.name}</a>
         </span>
       );

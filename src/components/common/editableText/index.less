@@ -1,0 +1,62 @@
+.editableCellValueWrap {
+  display: inline-block;
+  padding: 5px 12px;
+  font-size: 14px;
+  position: relative;
+  .pen {
+    display: none;
+    position: absolute;
+    top: 4px;
+    right: 10px;
+  }
+  &.editable {
+    cursor: pointer;
+    &:hover {
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      padding: 4px 30px 4px 11px;
+      .pen {
+        display: block;
+      }
+    }
+  }
+}
+.ant-form-item {
+  margin: 0;
+}
+.inputWrapper {
+  position: relative;
+  .input {
+    font-size: 14px;
+    color: #333;
+    resize: none;
+  }
+}
+.operation {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1;
+  background: #fff;
+  border-top: 0;
+  border-radius: 0 0 3px 3px;
+  padding: 4px 0;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
+  overflow: hidden;
+  .button {
+    padding: 0 14px;
+    box-sizing: border-box;
+    background: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    vertical-align: baseline;
+    &.cha {
+      border-right: 1px solid #ccc;
+      color: #f43630;
+    }
+    &.gou {
+      color: #0ab807;
+    }
+  }
+}

@@ -13,6 +13,7 @@ import _ from 'lodash';
 
 import CommonModal from '../../../common/biz/CommonModal';
 import BatchAddServiceRecordItem from './BatchAddServiceRecordItem';
+import { logCommon } from '../../../../decorators/logable';
 import styles from './batchAddServiceRecordModal.less';
 
 const EMPTY_ARRAY = [];
@@ -112,7 +113,13 @@ export default class BatchAddServiceRecordModal extends PureComponent {
     let flag = true;
     // 如果没有选择其他代办任务，直接关闭弹窗
     if (_.isEmpty(list)) {
-      closeModal();
+      logCommon({
+        type: 'ButtonClick',
+        payload: {
+          name: '未勾选确认添加服务记录',
+        },
+      });
+      closeModal(false);
       return;
     }
     // 如果选择了其他代办任务，对选择的代办任务进行必填校验,此处只做数据上的校验，错误信息的显示是在BatchAddServiceRecordItem组件里处理

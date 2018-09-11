@@ -8,8 +8,19 @@
   min-height: e("calc(100vh - 186px)");
   .groupTableContainer {
     padding: 15px 20px 15px 15px;
+    .actionSource:first-child {
+      margin-right: 25px;
+    }
   }
   .labelList {
+    .launchTaskIcon {
+      margin-right: 5px;
+      font-size: 14px;
+    }
+    .deleteIcon {
+      font-size: 14px;
+      vertical-align: top;
+    }
     :global {
       .ant-table table {
         table-layout: fixed;
@@ -17,6 +28,9 @@
       }
       .ant-table .ant-table-tbody tr td, .ant-table .ant-table-thead tr th {
         text-align: left;
+        &:last-child {
+          text-align: center;
+        }
       }
       .ant-table .ant-table-thead tr th span {
         display: inline-block;
@@ -24,7 +38,7 @@
         width: 100%;
         min-width: 90px;
       }
-      .column, .operation {
+      .column {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -148,10 +162,7 @@
       }
     }
     & .ant-modal-body {
-      padding: 0;
-      padding-top: 14px;
-      padding-left: 25px;
-      padding-right: 20px;
+      padding: 14px 20px 0;
       overflow-y: scroll;
       height: e("calc(80vh - 130px)");
       .scrollBarIEStyle;

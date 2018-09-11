@@ -71,6 +71,12 @@ export default class RecommendedLabel extends PureComponent {
     };
   }
 
+  componentDidMount() {
+    const { queryHotWds3 } = this.props;
+    // 加载热词数据
+    queryHotWds3();
+  }
+
   componentWillReceiveProps(nextProps) {
     const {
       hotWds,
@@ -85,11 +91,6 @@ export default class RecommendedLabel extends PureComponent {
     }
   }
 
-  componentDidMount() {
-    const { queryHotWds3 } = this.props;
-    // 加载热词数据
-    queryHotWds3();
-  }
   // 搜索标签
   @autobind
   onQueryLabel(sWord = '') {

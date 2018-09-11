@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 21:15:03
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-08 23:27:16
+ * @Last Modified time: 2018-09-10 11:15:51
  */
 
 //  添加客户的方式
@@ -60,7 +60,7 @@ export const labelCustColumns = [{
 },
 {
   key: 'brokerNumber',
-  value: '经济客户号',
+  value: '经纪客户号',
 },
 {
   key: 'levelName',
@@ -77,3 +77,30 @@ export const labelCustColumns = [{
 
 // 标签名称可输入字符的正则
 export const LABEL_NAME_REG = /^[#&\-_@%A-Za-z0-9\u4e00-\u9fa5]+$/;
+
+// 标签描述的校验规则
+export const VALIDATE_LABLENAME = [{
+  required: true,
+  message: '请输入标签名称',
+}, {
+  max: 8,
+  message: '最多为8个字',
+}, {
+  min: 4,
+  message: '最少为4个字',
+}, {
+  pattern: LABEL_NAME_REG,
+  message: '可输入字符仅为汉字、数字、字母及合法字符(#&-_@%)',
+}];
+
+// 标签名称的校验规则
+export const VALIDATE_LABLEDESC = [{
+  required: true,
+  message: '请输入标签描述',
+}, {
+  min: 10,
+  message: '最少为10个字',
+}, {
+  max: 500,
+  message: '最多为500个字',
+}];

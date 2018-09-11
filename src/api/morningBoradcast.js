@@ -17,8 +17,8 @@ export default function morningBoradcast(api) {
     // 获取uuid
     getNewItemUuid: query => api.post('/groovynoauth/fsp/common/queryUuids', query),
     // 文件删除
-    delCeFile: query => api.post('/file/ceFileDelete', query),
+    delCeFile: query => api.post('/file/ceFileDelete2', query),
     // 文件列表
-    ceFileList: query => api.post('/file/ceFileList', query),
+    ceFileList: query => api.post('/file/ceFileList2', query),
   };
 }

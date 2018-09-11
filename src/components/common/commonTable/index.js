@@ -2,8 +2,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-17 15:20:40
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-11 10:28:49
  */
 
 import React, { PureComponent } from 'react';
@@ -113,6 +113,8 @@ export default class CommonTable extends PureComponent {
     // eg: [get,set,update] 表示可点击的列号集合一一对应的点击事件方法
     clickableColumnCallbackList: PropTypes.array,
     position: PropTypes.string,
+    // 操作单元格内的class
+    actionClass: PropTypes.string,
   };
 
   static defaultProps = {
@@ -147,6 +149,7 @@ export default class CommonTable extends PureComponent {
     clickableColumnIndexList: [],
     clickableColumnCallbackList: [],
     position: 'bottom',
+    actionClass: '',
   };
 
   constructor(props) {
@@ -253,6 +256,7 @@ export default class CommonTable extends PureComponent {
       emptyListDataNeedEmptyRow,
       clickableColumnIndexList,
       clickableColumnCallbackList,
+      actionClass,
     } = this.props;
     const len = titleColumn.length - 1;
 
@@ -279,13 +283,20 @@ export default class CommonTable extends PureComponent {
                 classnames({
                   [styles.operation]: true,
                   [operationColumnClass]: true,
-                  operation: true,
+                  [styles.notoperable]: record.isDisabledFirstColumnLink,
                 })}
             >
               <span
                 title={item.renderTitle ? item.renderTitle(record) : record[item.key]}
-                className={styles.link}
-                onClick={() => firstColumnHandler(record, item.value)}
+                className={classnames({
+                  [styles.link]: !record.isDisabledFirstColumnLink,
+                  [styles.nonClickable]: record.isDisabledFirstColumnLink,
+                })}
+                onClick={() => {
+                  if (!record.isDisabledFirstColumnLink) {
+                    firstColumnHandler(record, item.value);
+                  }
+                }}
               >
                 {this.renderColumnValue(record, item)}
               </span>
@@ -293,6 +304,10 @@ export default class CommonTable extends PureComponent {
           );
         }
         if (index === len && !_.isEmpty(actionSource)) {
+          const cls = classnames(
+            styles.link,
+            { [actionClass]: !!actionClass },
+          );
           node = (<div
             className={
               classnames({
@@ -303,8 +318,8 @@ export default class CommonTable extends PureComponent {
             {
               _.map(actionSource, itemData => (
                 <span
-                  className={styles.link}
-                  key={itemData.type}
+                  className={cls}
+                  key={itemData.key || item.type}
                   onClick={() => itemData.handler(record)}
                 >
                   {itemData.type}
@@ -397,6 +412,9 @@ export default class CommonTable extends PureComponent {
       hideDefaultSelections: true,
       onSelect: onSingleRowSelectionChange,
       onSelectAll: onSelectAllChange,
+      getCheckboxProps: record => ({
+        disabled: record.disabledSelection,
+      }),
     };
   }
 

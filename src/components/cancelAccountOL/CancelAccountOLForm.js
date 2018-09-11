@@ -543,7 +543,6 @@ export default class CancelAccountOLForm extends PureComponent {
         <InfoTitle head="附件信息" />
         <CommonUpload
           edit={!disablePage}
-          reformEnable
           key={formData.uploadKey}
           attachment={formData.attachment || ''}
           needDefaultText={false}

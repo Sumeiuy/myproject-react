@@ -1,13 +1,8 @@
 /* eslint-disable import/no-anonymous-default-export */
-import _ from 'lodash';
 import { labelManagement as api } from '../api';
 import { toastM } from '../utils/sagaEffects';
 
 const EMPTY_OBJECT = {};
-// const EMPTY_LIST = [];
-const INITIAL_PAGE_NUM = 1;
-const INITIAL_PAGE_TEN_SIZE = 10;
-
 
 export default {
   namespace: 'labelManagement',
@@ -147,46 +142,10 @@ export default {
       return response;
     },
     // 新建编辑标签信息
-    * operateLabel({ payload }, { call, put }) {
-      const { request, request: { labelIds }, keyWord, pageNum, pageSize } = payload;
-      const { resultData } = yield call(api.operateLabel, request);
-      let message;
-      if (resultData !== 'success') {
-        return;
-      }
-      const hasLabelId = !_.isEmpty(labelIds) && labelIds[0];
-      if (hasLabelId) {
-        // 更新
-        message = '更新标签成功';
-      } else {
-        message = '新建标签成功';
-      }
-      yield put({
-        type: 'toastM',
-        message,
-        duration: 2,
-      });
-      // 成功之后，更新标签列表信息
-      yield put({
-        type: 'queryLabelList',
-        payload: {
-          currentPage: pageNum || INITIAL_PAGE_NUM,
-          pageSize: pageSize || INITIAL_PAGE_TEN_SIZE,
-          keyWord,
-          countFlag: 'Y',
-        },
-      });
-      if (hasLabelId) {
-        // 成功之后，更新标签下客户信息
-        yield put({
-          type: 'queryLabelCust',
-          payload: {
-            pageNum: INITIAL_PAGE_NUM,
-            pageSize: INITIAL_PAGE_TEN_SIZE,
-            labelId: labelIds[0],
-          },
-        });
-      }
+    * operateLabel({ payload }, { call }) {
+      const { request } = payload;
+      const response = yield call(api.operateLabel, request);
+      return response;
     },
     * toastM({ message, duration }) {
       yield toastM(message, duration);

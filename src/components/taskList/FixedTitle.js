@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-20 09:51:33
+ * @Last Modified time: 2018-08-28 14:11:08
  * @description 每一个视图列表的头部区域，不随着列表滚动
  */
 
@@ -10,11 +10,13 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import store from 'store';
 import Sort from '../common/sort';
 import DescImg from './img/desc.png';
 import AscImg from './img/asc.png';
 import { EXECUTOR, SORT_DATA } from '../../routes/taskList/config';
 import { logCommon } from '../../decorators/logable';
+import { emp } from '../../helper';
 
 import styles from './fixedTitle.less';
 
@@ -44,10 +46,11 @@ export default class FixedTitle extends PureComponent {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const { viewType } = prevState;
-    const { sortKey, sortDirection, viewType: nextViewType } = nextProps;
+    const { sortKey, sortDirection, viewType: nextViewType, sortContent } = nextProps;
     // 视图不一样的时候，update组件
     if (viewType !== nextViewType) {
       return {
+        sortContent,
         sortDirection,
         sortKey,
         viewType: nextViewType,
@@ -58,14 +61,34 @@ export default class FixedTitle extends PureComponent {
 
   constructor(props) {
     super(props);
+    const {
+      sortKey: storedSortKey,
+      sortContent: storedSortContent,
+      sortDirection: storedSortDirection,
+    } = this.getStoredSort() || {};
     this.state = {
       // 排序方向
-      sortDirection: props.sortDirection,
+      sortDirection: storedSortDirection || props.sortDirection,
       // 当前sortKey
-      sortKey: props.sortKey,
+      sortKey: storedSortKey || props.sortKey,
       // 当前视图类型
       viewType: props.viewType,
+      // 排序字段的名称
+      sortContent: storedSortContent || props.sortContent,
     };
+  }
+
+  componentWillUnmount() {
+    // 将排序的数据信息存储到本地
+    this.storeSort(this.state);
+  }
+
+  // 获取本地存储的排序
+  @autobind
+  getStoredSort() {
+    const { viewType } = this.props;
+    const storeKey = `${emp.getId()}-${viewType}-sort`;
+    return store.get(storeKey);
   }
 
   /**
@@ -73,15 +96,16 @@ export default class FixedTitle extends PureComponent {
    */
   @autobind
   handleSort() {
-    const { onSortChange, sortKey, sortContent } = this.props;
+    const { sortKey, sortContent } = this.state;
     this.setState(state => ({
       sortDirection: state.sortDirection === SORT_ASC ? SORT_DESC : SORT_ASC,
     }), () => {
       const { sortDirection } = this.state;
-      onSortChange({
+      this.props.onSortChange({
         sortKey,
         sortDirection,
       });
+      // 发神策日志
       logCommon({
         type: 'Click',
         payload: {
@@ -93,17 +117,39 @@ export default class FixedTitle extends PureComponent {
 
   @autobind
   handlExecutorSort({ sortType, sortDirection }) {
-    this.props.onSortChange({
+    const { name = '' } = _.find(SORT_DATA, { sortType }) || {};
+    const tempObject = {
       sortKey: sortType,
       sortDirection,
+      sortContent: name,
+    };
+    this.setState(tempObject, () => {
+      this.props.onSortChange(tempObject);
+      // 发神策日志
+      logCommon({
+        type: 'Click',
+        payload: {
+          name: `${name}${sortDirection === SORT_ASC ? '升序' : '降序'}`,
+        },
+      });
     });
-    const { name = '' } = _.find(SORT_DATA, { sortType }) || {};
-    logCommon({
-      type: 'Click',
-      payload: {
-        name: `${name}${sortDirection === SORT_ASC ? '升序' : '降序'}`,
-      },
-    });
+  }
+
+  // 保存当前的排序数据
+  @autobind
+  storeSort({
+    sortKey,
+    sortDirection,
+    sortContent,
+    viewType,
+  }) {
+    const storeKey = `${emp.getId()}-${viewType}-sort`;
+    const storeContent = {
+      sortKey,
+      sortDirection,
+      sortContent,
+    };
+    store.set(storeKey, storeContent);
   }
 
   /**
@@ -133,8 +179,7 @@ export default class FixedTitle extends PureComponent {
   @autobind
   renderSortContent() {
     // 默认降序排序
-    const { sortContent } = this.props;
-    const { sortDirection, viewType } = this.state;
+    const { sortContent, sortDirection, viewType } = this.state;
     // 执行者视图
     if (viewType === EXECUTOR) {
       return this.renderExecutorSort();
@@ -156,7 +201,7 @@ export default class FixedTitle extends PureComponent {
   // 执行者试图排序单独处理，用公用的排序组件
   @autobind
   renderExecutorSort() {
-    const { sortKey, sortDirection } = this.props;
+    const { sortKey, sortDirection } = this.state;
     const value = { sortType: sortKey, sortDirection };
     return (
       <Sort

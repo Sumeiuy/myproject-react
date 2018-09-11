@@ -21,7 +21,7 @@ export default function performerView(api) {
     // 上传文件需要先上传uuid
     queryCustUuid: query => api.post('/groovynoauth/fsp/campaign/mot/queryCustUuid', query),
     // 删除文件
-    ceFileDelete: query => api.post('/fspa/mcrm/api/file/ceFileDelete', query),
+    ceFileDelete: query => api.post('/fspa/mcrm/api/file/ceFileDelete2', query),
     // 获取任务简报
     getMissionBrief: query => api.post('/groovynoauth/fsp/campaign/mot/getMissionBrief', query),
     // 预览客户明细

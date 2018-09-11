@@ -2,8 +2,8 @@
  * @Description: 为新版客户列表发起任务在新建任务提示框中默认的展示信息提供的方法
  * @Author: WangJunjun
  * @Date: 2018-07-06 15:59:29
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-08 10:28:16
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-11 10:25:46
  */
 
 import _ from 'lodash';
@@ -295,6 +295,9 @@ function getCapitalRangInfo({ filterField, labelName }, filterObj) {
  * @param {*} definedLabelsInfo 自定义标签全量的数据
  */
 function getCustomLabel(customLabels, definedLabelsInfo) {
+  if (_.isEmpty(customLabels)) {
+    return '';
+  }
   const selectedLabelList = _.filter(
     definedLabelsInfo,
     item => _.includes([].concat(customLabels), item.id),

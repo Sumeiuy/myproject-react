@@ -129,6 +129,7 @@ export default class PermissionEdit extends PureComponent {
       searchServerPersonList,
       getBottonList,
       bottonList,
+      location,
     } = this.props;
     if (_.isEmpty(detailMessage)) {
       return null;
