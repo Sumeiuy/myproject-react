@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-06 21:15:03
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-03 18:23:25
+ * @Last Modified time: 2018-09-10 11:15:51
  */
 
 //  添加客户的方式
@@ -60,7 +60,7 @@ export const labelCustColumns = [{
 },
 {
   key: 'brokerNumber',
-  value: '经济客户号',
+  value: '经纪客户号',
 },
 {
   key: 'levelName',

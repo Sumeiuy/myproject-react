@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-24 15:24:18
+ * @Last Modified time: 2018-09-10 13:53:11
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ import { Affix, message, Modal } from 'antd';
 import store from 'store';
 import contains from 'rc-util/lib/Dom/contains';
 import introJs from 'intro.js';
+import 'intro.js/introjs.css';
 import Header from './Header';
 import ListSwiper from './ListSwiper';
 import CustomerProfile from './CustomerProfile';
@@ -739,7 +740,7 @@ export default class ServiceImplementation extends PureComponent {
 
   // 打开批量添加服务记录弹窗
   @autobind
-  @logPV({ pathname: '/modal/batchAddServiceRecordModal', title: '批量添加服务记录' })
+  @logPV({ pathname: '/modal/batchAddServiceRecordModal', title: '批量添加服务记录弹窗' })
   showBatchAddServiceModal() {
     this.setState({
       isShowBatchAddServiceRecord: true,
@@ -748,11 +749,19 @@ export default class ServiceImplementation extends PureComponent {
 
   // 关闭批量添加服务记录弹窗
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '关闭批量添加服务记录弹框' } })
-  closeBatchAddServiceModal() {
+  closeBatchAddServiceModal(isSaveRecord = true) {
     this.setState({
       isShowBatchAddServiceRecord: false,
     });
+    // 因为点击弹窗内确认按钮和叉都会关闭弹窗，但是此处要求点击确认和叉上报的内容不同，所以做个判断
+    if (isSaveRecord) {
+      logCommon({
+        type: 'ButtonClick',
+        payload: {
+          name: '关闭批量添加服务记录弹窗',
+        },
+      });
+    }
     // 关闭批量添加服务记录弹窗之后要执行之前添加单个服务记录操作的后续步骤
     this.singleAddServiceRecordNextStep();
   }
@@ -770,7 +779,7 @@ export default class ServiceImplementation extends PureComponent {
     logCommon({
       type: 'Submit',
       payload: {
-        name: '批量添加服务记录',
+        name: '确认批量添加服务记录',
         value: JSON.stringify({
           ...singlePayload,
           otherTask: list,
@@ -781,7 +790,7 @@ export default class ServiceImplementation extends PureComponent {
       ...singlePayload,
       workResult: '',
       otherTask: list,
-    }).then(this.closeBatchAddServiceModal);
+    }).then(() => this.closeBatchAddServiceModal(false));
   }
 
   reloadTargetCustInfo(callback) {
