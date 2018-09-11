@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:03:01
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-05-04 08:36:54
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-11 10:30:40
  * @description 此文件用于存放与操作系统，生产/开发环境，浏览器，使用框架相关的公用方法
  */
 import bowser from 'bowser';

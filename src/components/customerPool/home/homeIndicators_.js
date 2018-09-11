@@ -5,7 +5,7 @@
  */
 import _ from 'lodash';
 import { openRctTab } from '../../../utils';
-import { url as urlHelper, number as numberHelper, permission } from '../../../helper';
+import { url as urlHelper, number as numberHelper } from '../../../helper';
 import { getFilter, getSortParam } from '../helper';
 import getSeries, { singleColorBar } from './chartOption_';
 import {
@@ -337,21 +337,9 @@ export function linkTo({
     source,
     bname: encodeURIComponent(bname),
     cycleSelect: cycleSelect || (cycle[0] || {}).key,
+    type,
+    [modalType]: value,
   };
-  // 客户列表参数灰度处理
-  if (permission.isGrayFlag()) {
-    params = {
-      ...params,
-      type,
-      [modalType]: value,
-    };
-  } else {
-    const modalTypeOld = type || 'rightType';
-    params = {
-      ...params,
-      [modalTypeOld]: value,
-    };
-  }
   if (orgId) {
     if (orgId === MAIN_MAGEGER_ID) {
       // obj.ptyMng = `${empName}_${empNum}`;

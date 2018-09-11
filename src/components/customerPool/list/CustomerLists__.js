@@ -40,16 +40,19 @@ let modalKeyCount = 0;
 // 服务营业中的'所有'选项
 const allSaleDepartment = { id: ALL_DEPARTMENT_ID, name: '不限' };
 
-// 数字千分位格式
-function thousandFormat(num) {
-  return number.thousandFormat(num, true, ',', true);
+// isThousandFormat: 数字千分位格式
+function formatNumber(num, isThousandFormat = true) {
+  return isThousandFormat
+    ? number.thousandFormat(num, true, ',', true)
+    : num;
 }
 
 /*
  * 格式化钱款数据和单位
  * 入参： 190000000 转化成 { value: '1.90', unit: '亿元' }
+ * isThousandFormat 是否需要千分位格式化
  */
-const formatAsset = (num) => {
+const formatAsset = (num, isThousandFormat = true) => {
   // 数字常量
   const WAN = 1e4;
   const YI = 1e8;
@@ -66,24 +69,24 @@ const formatAsset = (num) => {
 
   if (absNum >= WANYI) {
     return {
-      value: thousandFormat((newNum / WANYI).toFixed(2)),
+      value: formatNumber((newNum / WANYI).toFixed(2), isThousandFormat),
       unit: UNIT_WANYI,
     };
   }
   if (absNum >= YI) {
     return {
-      value: thousandFormat((newNum / YI).toFixed(2)),
+      value: formatNumber((newNum / YI).toFixed(2), isThousandFormat),
       unit: UNIT_YI,
     };
   }
   if (absNum >= WAN) {
     return {
-      value: thousandFormat((newNum / WAN).toFixed(2)),
+      value: formatNumber((newNum / WAN).toFixed(2), isThousandFormat),
       unit: UNIT_WAN,
     };
   }
   return {
-    value: thousandFormat(newNum.toFixed(2)),
+    value: formatNumber(newNum.toFixed(2), isThousandFormat),
     unit: UNIT_DEFAULT,
   };
 };
@@ -633,6 +636,7 @@ export default class CustomerLists extends PureComponent {
       onShowSizeChange: onSizeChange,
       isHideLastButton: true,
     };
+    const paginationTotalTip = `共${number.thousandFormat(curTotal, false)}位匹配客户`;
     return (
       <div className="list-box">
         <div className={styles.listHeader}>
@@ -671,7 +675,7 @@ export default class CustomerLists extends PureComponent {
             </div>
           </div>
           <div className={styles.simplePagination}>
-            <span>共{number.thousandFormat(curTotal, false)}位匹配客户</span>
+            <span title={paginationTotalTip}>{paginationTotalTip}</span>
             <Pagination
               key={paginationOption.current}
               simple

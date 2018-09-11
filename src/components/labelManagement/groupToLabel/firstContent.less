@@ -8,20 +8,18 @@
       table-layout: fixed;
       width: 100%;
     }
+    .operationColumn {
+      padding-right: 48px;
+      span {
+        padding: 0;
+      }
+    }
     table > thead > tr > th, table > tbody > tr > td {
       padding: 7px 0 !important;
       :global {
         .ant-radio-wrapper {
           margin-left: 12px;
           margin-right: 15px;
-        }
-        .operation {
-          padding-right: 48px;
-          // 解决省略号的颜色问题
-          color: #108ee9;
-          span {
-            padding: 0;
-          }
         }
         .column {
           width: 100%;
