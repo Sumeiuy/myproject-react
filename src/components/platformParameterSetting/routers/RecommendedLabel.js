@@ -31,6 +31,8 @@ const effects = {
 const ORG_ID = emp.getOrgId();
 // 任务管理岗权限
 const AUTHORITY = permission.hasTkMampPermission();
+// 最多可以选择的推荐标签数目
+const MAX_SELECT_LABEL_SIZE = 8;
 
 const mapStateToProps = state => ({
   hotWds: state.operationCenter.hotWds,
@@ -88,7 +90,7 @@ export default class RecommendedLabel extends PureComponent {
       this.setState({
         selectedLabels: hotWds,
         searchValue: sWord,
-        rangeError: hotWds.length > 8,
+        rangeError: hotWds.length > MAX_SELECT_LABEL_SIZE,
       });
     }
   }
@@ -166,7 +168,7 @@ export default class RecommendedLabel extends PureComponent {
     }
     this.setState({
       selectedLabels: finalSelectedLabels,
-      rangeError: finalSelectedLabels.length > 8,
+      rangeError: finalSelectedLabels.length > MAX_SELECT_LABEL_SIZE,
     });
   }
   // 删除标签
@@ -176,7 +178,7 @@ export default class RecommendedLabel extends PureComponent {
     this.setState((preState) => {
       const { selectedLabels: preLabels } = preState;
       const selectedLabels = _.filter(preLabels, preLabelItem => preLabelItem.id !== labelId);
-      return { selectedLabels, rangeError: selectedLabels.length > 8 };
+      return { selectedLabels, rangeError: selectedLabels.length > MAX_SELECT_LABEL_SIZE };
     });
   }
   // 列表item
@@ -295,7 +297,7 @@ export default class RecommendedLabel extends PureComponent {
 
     // 标签占位文字
     const labelPlaceholder = permission.isGrayFlag() ? 
-      '请在下方标签列表中选择最多8个推荐标签' : '请在下方标签列表中选择最多5个推荐标签';
+      `请在下方标签列表中选择最多${MAX_SELECT_LABEL_SIZE}个推荐标签` : '请在下方标签列表中选择最多5个推荐标签';
 
     const errorMessageCls = classnames({
       [styles.errorMessage]: true,
@@ -312,7 +314,7 @@ export default class RecommendedLabel extends PureComponent {
       </div>
       {
         permission.isGrayFlag() ?
-          <div className={errorMessageCls}><span className="iconfont icon-guanbi"></span>最多只能选择8个推荐标签</div>
+          <div className={errorMessageCls}><span className="iconfont icon-guanbi"></span>{`最多只能选择${MAX_SELECT_LABEL_SIZE}个推荐标签`}</div>
         : null
       }
       <div>
