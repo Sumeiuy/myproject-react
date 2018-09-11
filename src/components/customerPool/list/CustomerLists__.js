@@ -636,6 +636,7 @@ export default class CustomerLists extends PureComponent {
       onShowSizeChange: onSizeChange,
       isHideLastButton: true,
     };
+    const paginationTotalTip = `共${number.thousandFormat(curTotal, false)}位匹配客户`;
     return (
       <div className="list-box">
         <div className={styles.listHeader}>
@@ -674,7 +675,7 @@ export default class CustomerLists extends PureComponent {
             </div>
           </div>
           <div className={styles.simplePagination}>
-            <span>共{number.thousandFormat(curTotal, false)}位匹配客户</span>
+            <span title={paginationTotalTip}>{paginationTotalTip}</span>
             <Pagination
               key={paginationOption.current}
               simple
