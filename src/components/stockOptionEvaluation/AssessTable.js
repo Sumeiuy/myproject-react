@@ -248,11 +248,11 @@ export default class AssessTable extends PureComponent {
         <span>{aAcctOpenTimeFlagCn}</span>
         ）
         <br />
-        {defaultResult3}（
+        {defaultResult2}（
         <span>{rzrqzqAcctFlagCn}</span>
         ）
         <br />
-        {defaultResult2}（
+        {defaultResult3}（
         <span>{jrqhjyFlagCn}</span>
         ）
         <br />
