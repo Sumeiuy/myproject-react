@@ -249,19 +249,19 @@ function getMinfeeInfo(minFee) {
  * @param {*} filterObj url中解析出来的filter字段
  * @param {*} kPIDateScopeType 字典中时间周期字段
  */
-function getBuyAmtInfo({ filterField, labelName }, filterObj, kPIDateScopeType) {
+function getBuyAmtInfo({ filterField, labelName, unit = '元' }, filterObj, kPIDateScopeType) {
   const currentItem = filterObj[filterField];
   if (!_.isEmpty(currentItem)) {
     const [dateScope = '', start = '', end = ''] = currentItem;
     const { value: time } = _.find(kPIDateScopeType, item => item.key === dateScope);
     if (start && end) {
-      return `${time}${labelName}： ${start}元 - ${end}元`;
+      return `${time}${labelName}： ${start}${unit} - ${end}${unit}`;
     }
     if (start) {
-      return `${time}${labelName}： 大于等于${start}元`;
+      return `${time}${labelName}： 大于等于${start}${unit}`;
     }
     if (end) {
-      return `${time}${labelName}： 小于等于${end}元`;
+      return `${time}${labelName}： 小于等于${end}${unit}`;
     }
   }
   return '';
