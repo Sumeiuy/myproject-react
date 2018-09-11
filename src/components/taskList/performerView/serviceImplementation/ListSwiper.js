@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import cx from 'classnames';
 import { autobind } from 'core-decorators';
-import Swiper from 'react-id-swiper';
+import ListWrapper from './ListWrapper';
 import Icon from '../../../common/Icon';
 import styles from './listSwiper.less';
 import {
@@ -133,13 +133,13 @@ export default class ListSwiper extends PureComponent {
   render() {
     const { targetCustList, containerClass } = this.props;
     const { page: { pageSize, pageNum, totalPage } } = targetCustList;
-    const params = {
-      containerClass: styles.swiperContainer,
-      slidesPerView: pageSize,
-      slidesPerGroup: pageSize,
-      noSwiping: true,
-      rebuildOnUpdate: true,
-    };
+    // const params = {
+    //   containerClass: styles.swiperContainer,
+    //   slidesPerView: pageSize,
+    //   slidesPerGroup: pageSize,
+    //   noSwiping: true,
+    //   rebuildOnUpdate: true,
+    // };
     const containerCls = cx(
       styles.listSwiper,
       { [containerClass]: !!containerClass },
@@ -154,12 +154,13 @@ export default class ListSwiper extends PureComponent {
     );
     return (
       <div className={containerCls}>
-        <Swiper
-          {...params}
+        <ListWrapper
           ref={this.saveSwiperRef}
+          wrapperClassName={styles.swiperContainer}
+          size={pageSize}
         >
           {this.renderListItem()}
-        </Swiper>
+        </ListWrapper>
         <Icon type="zuo" className={prevButtonCls} onClick={this.goPrev} />
         <Icon type="you" className={nextButtonCls} onClick={this.goNext} />
       </div>
