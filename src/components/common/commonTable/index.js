@@ -2,8 +2,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-07 10:19:50
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-11 10:28:49
  */
 
 import React, { PureComponent } from 'react';
@@ -283,13 +283,20 @@ export default class CommonTable extends PureComponent {
                 classnames({
                   [styles.operation]: true,
                   [operationColumnClass]: true,
-                  operation: true,
+                  [styles.notoperable]: record.isDisabledFirstColumnLink,
                 })}
             >
               <span
                 title={item.renderTitle ? item.renderTitle(record) : record[item.key]}
-                className={styles.link}
-                onClick={() => firstColumnHandler(record, item.value)}
+                className={classnames({
+                  [styles.link]: !record.isDisabledFirstColumnLink,
+                  [styles.nonClickable]: record.isDisabledFirstColumnLink,
+                })}
+                onClick={() => {
+                  if (!record.isDisabledFirstColumnLink) {
+                    firstColumnHandler(record, item.value);
+                  }
+                }}
               >
                 {this.renderColumnValue(record, item)}
               </span>
@@ -405,6 +412,9 @@ export default class CommonTable extends PureComponent {
       hideDefaultSelections: true,
       onSelect: onSingleRowSelectionChange,
       onSelectAll: onSelectAllChange,
+      getCheckboxProps: record => ({
+        disabled: record.disabledSelection,
+      }),
     };
   }
 

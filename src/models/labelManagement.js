@@ -4,7 +4,6 @@ import { toastM } from '../utils/sagaEffects';
 
 const EMPTY_OBJECT = {};
 
-
 export default {
   namespace: 'labelManagement',
   state: {

@@ -1,8 +1,8 @@
 /* 标签管理新建编辑标签模态框
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-06 18:09:46
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-11 10:25:29
  */
 
 import React, { PureComponent } from 'react';

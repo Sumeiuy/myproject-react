@@ -241,7 +241,7 @@ export default class ChartLineWidget extends PureComponent {
               if (index === 1 || index === 3) {
                 return '';
               }
-              const obj = formatAsset(value);
+              const obj = formatAsset(value, false);
               return value === 0 ? 0 : `${limitDigit(Number(obj.value))}${obj.unit}`;
             },
             inside: false,

@@ -2,8 +2,8 @@
  * 标签管理页面
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-07 13:37:34
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-11 10:30:01
  */
 
 import React, { PureComponent } from 'react';
