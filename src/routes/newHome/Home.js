@@ -1,13 +1,15 @@
 /**
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-20 13:46:09
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-09-11 15:59:19
  */
 
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import withRouter from '../../decorators/withRouter';
+import KeyAttention from '../../components/newHome/KeyAttention';
+import ViewAndIntro from '../../components/newHome/ViewAndIntro';
 
 import styles from './home.less';
 
@@ -31,10 +33,18 @@ export default class Home extends PureComponent {
   }
 
   render() {
+    const keyAttentionProps = {
+      data: [],
+    };
+    const viewAndIntroProps = {
+      data: {},
+    }
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
-          <div className={styles.mostFocusContentLink}>重点关注</div>
+          <div className={styles.mostFocusContentLink}>
+            <KeyAttention {...keyAttentionProps} />
+          </div>
           <div className={styles.interestContentLink}>猜你感兴趣</div>
           <div className={styles.competitionsLink}>投顾能力竞赛</div>
         </div>
@@ -44,7 +54,9 @@ export default class Home extends PureComponent {
         </div>
         <div className={styles.rightContent}>
           <div className={styles.productDateLink}>产品日历</div>
-          <div className={styles.informationContainer}>策略资讯</div>
+          <div className={styles.informationContainer}>
+            <ViewAndIntro {...viewAndIntroProps} />
+          </div>
           <div className={styles.newsInfoContainer}>每日晨报</div>
         </div>
       </div>
