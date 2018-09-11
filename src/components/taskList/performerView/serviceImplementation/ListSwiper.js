@@ -1,3 +1,11 @@
+/*
+ * @Author: WangJunJun
+ * @Date: 2018-09-11 17:10:02
+ * @Last Modified by: WangJunJun
+ * @Last Modified time: 2018-09-11 17:10:22
+ */
+
+// eslint-disable-next-line
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -133,13 +141,6 @@ export default class ListSwiper extends PureComponent {
   render() {
     const { targetCustList, containerClass } = this.props;
     const { page: { pageSize, pageNum, totalPage } } = targetCustList;
-    // const params = {
-    //   containerClass: styles.swiperContainer,
-    //   slidesPerView: pageSize,
-    //   slidesPerGroup: pageSize,
-    //   noSwiping: true,
-    //   rebuildOnUpdate: true,
-    // };
     const containerCls = cx(
       styles.listSwiper,
       { [containerClass]: !!containerClass },
