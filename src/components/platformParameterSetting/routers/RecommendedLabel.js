@@ -301,7 +301,7 @@ export default class RecommendedLabel extends PureComponent {
 
     const errorMessageCls = classnames({
       [styles.errorMessage]: true,
-      [styles.hidden]: !this.state.rangeError,
+      [styles.hidden]: !rangeError,
     });
 
     return (<div className={styles.recommendedLabelWrap}>
