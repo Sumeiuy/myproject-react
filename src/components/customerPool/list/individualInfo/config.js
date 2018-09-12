@@ -29,20 +29,20 @@ const matchRule = {
       render: 'renderCustomerLabels',
     }],
   },
-  profit: {
+  pftAmt: {
     inset: true,
     key: [{
       name: '收益',
-      id: 'profit',
+      id: 'pftAmt',
       render: 'renderDefaultVal',
       unit: '元',
     }],
   },
-  profitRate: {
+  maxCostRate: {
     inset: true,
     key: [{
       name: '收益率',
-      id: 'profitRate',
+      id: 'maxCostRate',
       render: 'renderDefaultVal',
       unit: '%',
     }],
