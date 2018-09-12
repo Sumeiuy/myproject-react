@@ -2,8 +2,8 @@
  * @Description: 客户的基本信息
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-29 10:49:21
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-12 11:59:32
  */
 
 import React from 'react';
@@ -23,7 +23,7 @@ import logable from '../../../../decorators/logable';
 import styles from './customerProfile.less';
 
 import { riskLevelConfig, PER_CODE, ORG_CODE, CALLABLE_LIST, PHONE } from './config';
-import { MOT_RETURN_VISIT_TASK_EVENT_ID } from '../../../../config/taskList/performView';
+import { isMOTReturnTypeTask } from '../../../../config/taskList/performView';
 
 import { headMainContact, headMainLinkman } from '../../../common/contactInfoPopover/config';
 
@@ -97,13 +97,6 @@ export default class CustomerProfile extends React.PureComponent {
     this.endTime = '';
     this.startTime = '';
     this.state = { showMask: false };
-  }
-
-  // 判断当前的任务是否是 MOT 回访类型任务
-  // TODO 目前开发状态下暂时默认为true
-  @autobind
-  isMOTReturnVistTask(eventId) {
-    return MOT_RETURN_VISIT_TASK_EVENT_ID === eventId;
   }
 
   @autobind
@@ -348,7 +341,7 @@ export default class CustomerProfile extends React.PureComponent {
     const rankImg = rankImgSrcConfig[levelCode];
 
     // 当选择的任务类型为 MOT 任务回访的时候，客户的名字显示为黑色，并且不可点击
-    const isMotReturnVisit = this.isMOTReturnVistTask(eventId);
+    const isMotReturnVisit = isMOTReturnTypeTask(eventId);
     const custNameClickCls = cx({
       [styles.name]: true,
       [styles.clickable]: true,
