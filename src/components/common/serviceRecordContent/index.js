@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-12 11:58:20
+ * @Last Modified time: 2018-09-12 13:18:02
  */
 
 import React, { PureComponent } from 'react';
@@ -407,7 +407,7 @@ export default class ServiceRecordContent extends PureComponent {
     // 校验客户反馈
     const validateFeedback = this.checkCustFeedbackError();
     // 在MOT回访任务类型下针对回访结果和失败原因进行校验
-    const isMotReturn = this.isMOTReturnVistTask(eventId);
+    const isMotReturn = isMOTReturnTypeTask(eventId);
     const visitResultValidate = _.isEmpty(visitResult);
     // 如果回访结果为失败，需要针对失败原因是否填写
     let failReasonValidate = false;
@@ -542,7 +542,7 @@ export default class ServiceRecordContent extends PureComponent {
       custUuid,
     } = this.props;
     const taskType = `${parseInt(taskTypeCode, 10) + 1}`;
-    const isMotReturnVisitTask = this.isMOTReturnVistTask(eventId);
+    const isMotReturnVisitTask = isMOTReturnTypeTask(eventId);
     // 按照DOClever定义的入参
     const data = {
       custId,
@@ -883,7 +883,7 @@ export default class ServiceRecordContent extends PureComponent {
     const feedbackTimeText = isMomentAboutFeedbackTime ? custFeedbackTime.format(DATE_FORMAT_SHOW) : '';
 
     // MOT 回访类任务下的回访结果
-    const isMOTReturnVisitTask = this.isMOTReturnVistTask(eventId);
+    const isMOTReturnVisitTask = isMOTReturnTypeTask(eventId);
 
     return (
       <ServeRecordReadOnly
@@ -1001,7 +1001,7 @@ export default class ServiceRecordContent extends PureComponent {
     });
 
     // 是否 MOT 回访类任务
-    const isMotReturnVisitTask = this.isMOTReturnVistTask(eventId);
+    const isMotReturnVisitTask = isMOTReturnTypeTask(eventId);
 
     return (
       <div className={wrapCls}>
