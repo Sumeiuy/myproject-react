@@ -2,10 +2,9 @@
  * @Author: WangJunJun
  * @Date: 2018-09-11 17:10:02
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-11 17:10:22
+ * @Last Modified time: 2018-09-12 11:42:23
  */
 
-// eslint-disable-next-line
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
