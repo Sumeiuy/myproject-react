@@ -299,7 +299,7 @@ export default class MatchArea extends PureComponent {
     let renderValue = listItem[id];
     if (!_.isNull(renderValue)) {
       if (unit === '%') {
-        renderValue = renderValue * 100;
+        renderValue = Number(renderValue * 100).toFixed(2);
       }
       if (unit === '元') {
         renderValue = number.thousandFormat(Number(renderValue).toFixed(2), false);

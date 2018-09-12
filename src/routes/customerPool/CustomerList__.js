@@ -22,7 +22,6 @@ import withRouter from '../../decorators/withRouter';
 import { seperator, sessionStore } from '../../config';
 
 import {
-  ENTER_TYPE,
   ALL_DEPARTMENT_ID,
   MAIN_MAGEGER_ID,
   ENTERLIST_PERMISSION_TASK_MANAGE,
@@ -1205,7 +1204,6 @@ export default class CustomerList extends PureComponent {
           dict={dict}
           empInfo={empInfo}
           condition={queryParam}
-          entertype={ENTER_TYPE[source]}
           location={location}
           replace={replace}
           push={push}
