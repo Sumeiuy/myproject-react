@@ -411,7 +411,7 @@ const exported = {
     },
     {
       filterName: '收益',
-      filterId: 'profit',
+      filterId: 'pftAmt',
       type: 'amountRangeSelect',
       unit: '元',
       unitStyle: {
@@ -420,7 +420,7 @@ const exported = {
     },
     {
       filterName: '收益率',
-      filterId: 'profitRate',
+      filterId: 'maxCostRate',
       type: 'amountRangeSelect',
       unit: '%',
       unitStyle: {
@@ -465,8 +465,8 @@ const exported = {
     { value: '归集率', key: 'gjlRate' },
     { value: '外部市值', key: 'outMktVal' },
     { value: '净转入资产', key: 'purFinAset' },
-    { value: '收益', key: 'profit' },
-    { value: '收益率', key: 'profitRate' },
+    { value: '收益', key: 'pftAmt' },
+    { value: '收益率', key: 'maxCostRate' },
   ],
 
   moreFilterCategories: [
@@ -530,8 +530,8 @@ const exported = {
         'gjlRate',
         'outMktVal',
         'purFinAset',
-        'profit',
-        'profitRate',
+        'pftAmt',
+        'maxCostRate',
       ],
     },
   ],

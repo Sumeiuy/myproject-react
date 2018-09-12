@@ -148,7 +148,7 @@ function addRadioRangeParams(filterObj) {
     'purRake', // 净佣金
     'saleFare', // 产品净手续费
     'purFinAset', // 净转入
-    'profit', // 收益
+    'pftAmt', // 收益
   ];
 
   _.each(radioRangeParams, (key) => {
@@ -161,12 +161,12 @@ function addRadioRangeParams(filterObj) {
     }
   });
 
-  if (filterObj.profitRate) {
-    const dateType = filterObj.profitRate[0];
-    const min = filterObj.profitRate[1];
-    const max = filterObj.profitRate[2];
+  if (filterObj.maxCostRate) {
+    const dateType = filterObj.maxCostRate[0];
+    const min = filterObj.maxCostRate[1];
+    const max = filterObj.maxCostRate[2];
 
-    param.profitRate = {
+    param.maxCostRate = {
       dateType: dateType || null,
       minVal: min ? (min / 100).toFixed(5) : null,
       maxVal: max ? (max / 100).toFixed(5) : null,
