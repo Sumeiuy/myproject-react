@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-09-06 09:06:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-07 10:17:31
+ * @Last Modified time: 2018-09-11 15:10:04
  * @description 临时委托他人处理任务驳回后修改
  */
 import React, { Component } from 'react';
@@ -191,11 +191,16 @@ export default class RejectHome extends Component {
   doCheckApplyAbility() {
     const { assigneeId, assigneeOrgId, operate } = this.state;
     if (operate === 'commit') {
+      const {
+        location: { query: { flowId = '' } },
+        checkApplyAbility,
+      } = this.props;
       // 在驳回后修改，如果点击的是提交，则需要走校验、提交、流程
       // 如果是终止，则直接走流程
-      this.props.checkApplyAbility({
+      checkApplyAbility({
         assigneeOrgId,
         assigneeId,
+        flowId,
       }).then(this.doSubmitApplyAfterValidate);
       // 记录校验日志
       logCommon({
