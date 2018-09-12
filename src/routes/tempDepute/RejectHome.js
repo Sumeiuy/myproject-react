@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-09-06 09:06:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-11 15:10:04
+ * @Last Modified time: 2018-09-12 11:15:28
  * @description 临时委托他人处理任务驳回后修改
  */
 import React, { Component } from 'react';
@@ -226,9 +226,9 @@ export default class RejectHome extends Component {
       confirm({ content: checkResult.msg });
     } else {
       // 提交之后走流程
-      const { detailUpdate: { flowId } } = this.props;
-      const params = _.omit(this.state, ['checkResult', 'disablePage', 'idea', 'assigneeName']);
-      submitApply({ ...params, flowId }).then(this.doApproval);
+      const { detailUpdate: { flowId, itemId } } = this.props;
+      const params = _.pick(this.state, ['assigneeId', 'assigneeOrgId', 'deputeReason', 'deputeTimeStart', 'deputeTimeEnd']);
+      submitApply({ ...params, flowId, itemId }).then(this.doApproval);
        // 记录校验日志
       logCommon({
         type: 'Submit',
