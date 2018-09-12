@@ -31,6 +31,8 @@ const effects = {
 const ORG_ID = emp.getOrgId();
 // 任务管理岗权限
 const AUTHORITY = permission.hasTkMampPermission();
+// 最多可以选择的推荐标签数目
+const MAX_SELECT_LABEL_SIZE = 8;
 
 const mapStateToProps = state => ({
   hotWds: state.operationCenter.hotWds,
@@ -88,6 +90,7 @@ export default class RecommendedLabel extends PureComponent {
       this.setState({
         selectedLabels: hotWds,
         searchValue: sWord,
+        rangeError: hotWds.length > MAX_SELECT_LABEL_SIZE,
       });
     }
   }
@@ -158,26 +161,14 @@ export default class RecommendedLabel extends PureComponent {
     const { selectedLabels } = this.state;
     let finalSelectedLabels = selectedLabels;
     if (e.target.checked) {
-      // 新版只能添加8个
-      if (permission.isGrayFlag() && selectedLabels.length >= 8) {
-        this.setState({
-          rangeError: true,
-        });
-      } else {
-        this.setState({
-          rangeError: false,
-        });
-        finalSelectedLabels = _.concat(finalSelectedLabels, item);
-      }
+      finalSelectedLabels = _.concat(finalSelectedLabels, item);
     } else {
-      this.setState({
-        rangeError: false,
-      });
       finalSelectedLabels = _.filter(finalSelectedLabels,
           selectedItem => selectedItem.id !== item.id);
     }
     this.setState({
       selectedLabels: finalSelectedLabels,
+      rangeError: finalSelectedLabels.length > MAX_SELECT_LABEL_SIZE,
     });
   }
   // 删除标签
@@ -187,7 +178,7 @@ export default class RecommendedLabel extends PureComponent {
     this.setState((preState) => {
       const { selectedLabels: preLabels } = preState;
       const selectedLabels = _.filter(preLabels, preLabelItem => preLabelItem.id !== labelId);
-      return { selectedLabels, rangeError: false };
+      return { selectedLabels, rangeError: selectedLabels.length > MAX_SELECT_LABEL_SIZE };
     });
   }
   // 列表item
@@ -287,7 +278,7 @@ export default class RecommendedLabel extends PureComponent {
   }
 
   render() {
-    const { selectedLabels, visible, searchValue } = this.state;
+    const { selectedLabels, visible, searchValue, rangeError } = this.state;
     const { currentLabels, pagination } = this.getPaginationAndData();
     const {
       location,
@@ -306,11 +297,11 @@ export default class RecommendedLabel extends PureComponent {
 
     // 标签占位文字
     const labelPlaceholder = permission.isGrayFlag() ? 
-      '请在下方标签列表中选择最多8个推荐标签' : '请在下方标签列表中选择最多5个推荐标签';
+      `请在下方标签列表中选择最多${MAX_SELECT_LABEL_SIZE}个推荐标签` : '请在下方标签列表中选择最多5个推荐标签';
 
     const errorMessageCls = classnames({
       [styles.errorMessage]: true,
-      [styles.hidden]: !this.state.rangeError && selectedLabels.length <= 8,
+      [styles.hidden]: !rangeError,
     });
 
     return (<div className={styles.recommendedLabelWrap}>
@@ -321,7 +312,11 @@ export default class RecommendedLabel extends PureComponent {
         <Divider type="vertical" className={styles.itemDivider} />
         选择标签
       </div>
-      <div className={errorMessageCls}><span className="iconfont icon-guanbi"></span>最多只能选择8个推荐标签</div>
+      {
+        permission.isGrayFlag() ?
+          <div className={errorMessageCls}><span className="iconfont icon-guanbi"></span>{`最多只能选择${MAX_SELECT_LABEL_SIZE}个推荐标签`}</div>
+        : null
+      }
       <div>
         {
           selectedLabels.length ?
@@ -374,7 +369,11 @@ export default class RecommendedLabel extends PureComponent {
       </div>
       <div className={styles.btnWrap}>
         <Button onClick={this.cancelSelectedLabel}>取消</Button>
-        <Button type="primary" onClick={this.handleSubmit}>提交</Button>
+        {
+          permission.isGrayFlag() ?
+            <Button type="primary" disabled={rangeError} onClick={this.handleSubmit}>提交</Button>
+            : <Button type="primary" onClick={this.handleSubmit}>提交</Button>
+        }
       </div>
       <Modal
         visible={visible}
