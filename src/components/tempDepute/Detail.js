@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 16:26:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-03 14:55:09
+ * @Last Modified time: 2018-09-12 15:24:12
  * @description 临时委托任务右侧详情组件
  */
 
@@ -24,7 +24,7 @@ export default function Detail(props) {
     data: {
       itemId,
       applyBasicInfo,
-      recallFalg,
+      recallFlag,
       workflowHistoryBeans = [],
       currentApproval = {},
       applyTime,
@@ -39,13 +39,12 @@ export default function Detail(props) {
   const isEmpty = _.isEmpty(data);
 
   // 此处用来判断撤销委托按钮的显示与否
-  const hasRevertBtn = recallFalg !== 'notDisplay';
-  const disbaledRevertBtn = recallFalg === 'disabled';
+  const hasRevertBtn = recallFlag !== 'notDisplay';
+  const disbaledRevertBtn = recallFlag === 'disabled';
   const revertBtn = !hasRevertBtn ? null
     :
     (
       <Button
-        ghost={!disbaledRevertBtn}
         type="default"
         disabled={disbaledRevertBtn}
         onClick={handlePushBtnClick}
