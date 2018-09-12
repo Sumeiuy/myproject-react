@@ -26,7 +26,6 @@ export default class BottomFixedBox extends PureComponent {
     condition: PropTypes.object.isRequired,
     selectCount: PropTypes.number.isRequired,
     mainServiceManager: PropTypes.bool,
-    entertype: PropTypes.string.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
     onClick: PropTypes.func.isRequired,
     hasTkMampPermission: PropTypes.bool.isRequired,
@@ -86,7 +85,6 @@ export default class BottomFixedBox extends PureComponent {
     const {
       page,
       condition,
-      entertype,
       location: {
         query: {
           selectedIds,
@@ -106,7 +104,6 @@ export default class BottomFixedBox extends PureComponent {
       condition,
       title,
       id,
-      entertype,
       source,
       fr,
       shouldStay,
@@ -232,7 +229,6 @@ export default class BottomFixedBox extends PureComponent {
     count,
     title,
     id,
-    entertype,
     source,
     fr,
     shouldStay,
@@ -250,7 +246,6 @@ export default class BottomFixedBox extends PureComponent {
     const obj = {
       ids: idStr,
       count,
-      entertype,
       source,
       name,
       condition: condt,
@@ -269,7 +264,6 @@ export default class BottomFixedBox extends PureComponent {
     count,
     title,
     id,
-    entertype,
     source,
     fr,
     shouldStay,
@@ -283,7 +277,6 @@ export default class BottomFixedBox extends PureComponent {
     const obj = {
       condition: condt,
       count,
-      entertype,
       source,
       name,
       fr,
