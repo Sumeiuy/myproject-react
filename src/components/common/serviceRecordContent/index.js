@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-17 16:53:54
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-12 11:58:20
  */
 
 import React, { PureComponent } from 'react';
@@ -33,7 +33,7 @@ import {
   defaultFeedback,
   defaultFeedbackOption,
 } from './utils';
-import { MOT_RETURN_VISIT_TASK_EVENT_ID } from '../../../config/taskList/performView';
+import { isMOTReturnTypeTask } from '../../../config/taskList/performView';
 
 import styles from './index.less';
 
@@ -623,12 +623,6 @@ export default class ServiceRecordContent extends PureComponent {
     this.props.queryCustFeedbackList4ZLFins({ eventId: eventIdParam, type });
   }
 
-  // 判断当前的任务是否是 MOT 回访类型任务
-  @autobind
-  isMOTReturnVistTask(eventId) {
-    return MOT_RETURN_VISIT_TASK_EVENT_ID === eventId;
-  }
-
   // 判断是否是 MOT 类型任务
   @autobind
   isMOTPlatform(type) {
@@ -815,7 +809,7 @@ export default class ServiceRecordContent extends PureComponent {
       // 只有投顾入岗才能看到 涨乐财富通
       return true;
     }
-    if (this.isMOTPlatform(type) && this.isMOTReturnVistTask(eventId)) {
+    if (this.isMOTPlatform(type) && isMOTReturnTypeTask(eventId)) {
       // 新增一个如果是MOT待办回访类任务，不展示涨乐财富通选项
       return true;
     }
