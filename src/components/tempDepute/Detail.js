@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 16:26:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-12 15:24:12
+ * @Last Modified time: 2018-09-12 16:52:52
  * @description 临时委托任务右侧详情组件
  */
 
@@ -10,6 +10,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'antd';
 import _ from 'lodash';
+import moment from 'moment';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
@@ -40,9 +41,11 @@ export default function Detail(props) {
 
   // 此处用来判断撤销委托按钮的显示与否
   const hasRevertBtn = recallFlag !== 'notDisplay';
+  // disabled的情况表示已经发起撤销委托，此时需要显示 灰色文本
   const disbaledRevertBtn = recallFlag === 'disabled';
-  const revertBtn = !hasRevertBtn ? null
-    :
+  let revertBtn = null;
+  if (hasRevertBtn) {
+    revertBtn = !disbaledRevertBtn ?
     (
       <Button
         type="default"
@@ -51,8 +54,13 @@ export default function Detail(props) {
       >
         撤消委托
       </Button>
+    )
+    : (
+      <div className={styles.hasLaunchRevert}>
+        {`已发起委托撤销申请，${moment().add(1, 'days').format('MM月DD日')}生效。`}
+      </div>
     );
-
+  }
   // 组装数据
   // 委托原因
   const deputeReason = _.get(applyBasicInfo, 'deputeReason');
