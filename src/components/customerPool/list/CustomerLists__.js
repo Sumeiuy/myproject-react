@@ -106,7 +106,6 @@ export default class CustomerLists extends PureComponent {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
-    entertype: PropTypes.string.isRequired,
     condition: PropTypes.object.isRequired,
     getCustContact: PropTypes.func.isRequired,
     getServiceRecord: PropTypes.func.isRequired,
@@ -549,7 +548,6 @@ export default class CustomerLists extends PureComponent {
       filesList,
       condition,
       push,
-      entertype,
       clearCreateTaskData,
       queryCustUuid,
       custServedByPostnResult,
@@ -746,7 +744,6 @@ export default class CustomerLists extends PureComponent {
               location={location}
               push={push}
               custList={custList}
-              entertype={entertype}
               clearCreateTaskData={clearCreateTaskData}
               onClick={this.goGroupOrTask}
               hasTkMampPermission={hasTkMampPermission}
