@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Modal, Tag } from 'antd';
-import { MultiFilterWithSearch } from 'lego-react-filter';
+import { MultiFilterWithSearch } from 'lego-react-filter/src';
 
 import CreateLabel from './CreateLabel';
 import Icon from '../../../common/Icon';
