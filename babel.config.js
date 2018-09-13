@@ -42,9 +42,12 @@ module.exports = function (api) {
     }
   };
 
+  const comments = true;
+
   return {
     presets,
     plugins,
-    env
+    env,
+    comments
   };
 }
