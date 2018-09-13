@@ -35,7 +35,7 @@ import customerLabelAPI from './customerLabel';
 import accountLimitAPI from './accountLimit';
 import labelManagementAPI from './labelManagement';
 import tempDeputeAPI from './tempDepute';
-import investmentSpaceAPI from './investmentSpace';
+import advisorSpaceAPI from './advisorSpace';
 
 const api = apiCreator();
 
@@ -148,7 +148,7 @@ const exported = {
   // ========== 临死委托他人处理任务
   tempDepute: tempDeputeAPI(api),
   // ========== 投顾空间申请
-  investmentSpace: investmentSpaceAPI(api),
+  advisorSpace: advisorSpaceAPI(api),
 };
 
 export default exported;
@@ -190,5 +190,5 @@ export const {
   accountLimit,
   labelManagement,
   tempDepute,
-  investmentSpace,
+  advisorSpace,
 } = exported;
