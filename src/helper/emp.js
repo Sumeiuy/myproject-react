@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:06:59
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 15:36:49
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-13 14:42:10
  * @description 此处存放与系统登录人相关的公用方法
  */
 import qs from 'query-string';
@@ -45,9 +45,9 @@ const emp = {
    */
   curPostion: null,
   curEmpId: null,
+  mocker: '',
 
-  setEmpInfo(empPostnList, empInfo) {
-    // TODO 此处需要做下容错处理
+  setEmpInfo({ empPostnList, empInfo, mocker = '' }) {
     // 因为此处是针对新的外部React框架所使用的
     // 因为在独立开发环境下也需要进行初始设置
     if (env.isInFsp()) return;
@@ -58,6 +58,7 @@ const emp = {
       this.curPostion = _.find(empPostnList, item => item.isMainPostn);
     }
     this.curEmpId = empInfo.empNum;
+    this.mocker = mocker;
   },
   /**
    * 获取登录的ID 002332
@@ -103,6 +104,13 @@ const emp = {
       pstnId = this.curPostion.postnId;
     }
     return pstnId;
+  },
+  /**
+   * 获取代登录人的ID号
+   */
+  getMocker() {
+    let mocker = this.mocker || window.mocker || '';
+    return { mocker };
   },
 
   /**
