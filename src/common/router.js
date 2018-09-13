@@ -566,6 +566,11 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['tempDepute'], () =>
         import('../routes/tempDepute/RejectHome') /* webpackChunkName: "tempDepute_reject" */),
     },
+    // 投顾空间申请
+    '/advisorSpace': {
+      component: dynamicWrapper(app, ['advisorSpace'], () =>
+        import('../routes/advisorSpace/Home') /* webpackChunkName: "advisorSpace" */),
+    },
   };
   return routerConfig;
 };
