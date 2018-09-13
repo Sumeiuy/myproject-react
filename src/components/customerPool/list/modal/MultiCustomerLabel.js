@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Modal } from 'antd';
 import _ from 'lodash';
-import { SingleFilterWithSearch } from 'lego-react-filter';
+import { SingleFilterWithSearch } from 'lego-react-filter/src';
 
 import CreateLabel from './CreateLabel';
 import logable from '../../../../decorators/logable';

@@ -35,20 +35,9 @@ var webpackConfig = merge(baseWebpackConfig, {
         include:
           [
             resolve('config/index.js'),
-            config.src
-          ].concat(config.htComponents),
+          ].concat(config.src).concat(config.htComponents),
         options: {
-          presets: ["@babel/preset-react"],
-          plugins: [
-            [
-              "import", {
-                "libraryName": "antd",
-                "style": true
-              }
-            ],
-            ["@babel/plugin-proposal-class-properties", { "loose": true }],
-            ["@babel/plugin-proposal-object-rest-spread"],
-          ]
+          configFile: resolve('babel.config.js')
         }
       },
       {

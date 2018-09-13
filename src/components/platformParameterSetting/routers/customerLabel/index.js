@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { SingleFilter } from 'lego-react-filter';
+import { SingleFilter } from 'lego-react-filter/src';
 
 import { scrollToTop } from '../../../../helper/fsp';
 import Icon from '../../../common/Icon';

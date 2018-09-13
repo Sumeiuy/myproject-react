@@ -1,16 +1,17 @@
-{
-  "presets": [
+module.exports = function (api) {
+  api.cache.using(() => process.env.NODE_ENV);
+  const presets = [
     [
       "@babel/preset-env", {
-      "targets": {
-        "browsers": ["ie >= 10", "chrome >= 45"]
-      },
-      "modules": false
-    }],
+        "targets": {
+          "browsers": ["ie >= 10", "chrome >= 45"]
+        },
+        "modules": false
+      }],
     "@babel/preset-flow",
     "@babel/preset-react"
-  ],
-  "plugins": [
+  ];
+  const plugins = [
     [
       "import", {
         "libraryName": "antd",
@@ -24,8 +25,9 @@
     "@babel/plugin-syntax-dynamic-import",
     "@babel/plugin-proposal-nullish-coalescing-operator",
     "@babel/plugin-proposal-optional-chaining"
-  ],
-  "env": {
+  ];
+
+  const env = {
     "production": {},
     "development": {
       "plugins": [
@@ -38,6 +40,14 @@
         ]
       ]
     }
-  },
-  "comments": true
+  };
+
+  const comments = true;
+
+  return {
+    presets,
+    plugins,
+    env,
+    comments
+  };
 }

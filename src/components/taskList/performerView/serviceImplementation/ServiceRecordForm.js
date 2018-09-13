@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-22 16:05:54
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-21 17:48:24
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-12 12:00:22
  * 服务记录表单
  */
 
@@ -20,7 +20,7 @@ import logable, { logCommon, logPV } from '../../../../decorators/logable';
 import { dva } from '../../../../helper';
 import { UPDATE } from '../../../../config/serviceRecord';
 import { serveWay as serveWayUtil } from '../config/code';
-import { MOT_RETURN_VISIT_TASK_EVENT_ID } from '../../../../config/taskList/performView';
+import { isMOTReturnTypeTask } from '../../../../config/taskList/performView';
 
 import styles from './serviceRecordForm.less';
 
@@ -56,7 +56,7 @@ export default class ServiceRecordForm extends PureComponent {
     // 判断当前的是否需要查询可分配人员列表接口
     const { formData: { custUuid: prevUUid } } = prevProps;
     const { formData: { eventId, dispatchingAvailable, custUuid, custId } } = this.props;
-    const needQueryAllotEmpList = this.isMOTReturnVistTask(eventId) && dispatchingAvailable;
+    const needQueryAllotEmpList = isMOTReturnTypeTask(eventId) && dispatchingAvailable;
     if (needQueryAllotEmpList && prevUUid !== custUuid) {
       this.props.queryAllotEmpList({
         custNumber: custId,
@@ -67,12 +67,6 @@ export default class ServiceRecordForm extends PureComponent {
   @autobind
   setServiceRecordContentRef(input) {
     this.serviceRecordContentRef = input;
-  }
-
-  // 判断当前的任务是否是 MOT 回访类型任务
-  @autobind
-  isMOTReturnVistTask(eventId) {
-    return MOT_RETURN_VISIT_TASK_EVENT_ID === eventId;
   }
 
   @autobind
@@ -222,7 +216,7 @@ export default class ServiceRecordForm extends PureComponent {
 
     if (_.isEmpty(dict) || _.isEmpty(formData)) return null;
 
-    const showAllocateBtn = this.isMOTReturnVistTask(formData.eventId)
+    const showAllocateBtn = isMOTReturnTypeTask(formData.eventId)
       && formData.dispatchingAvailable;
 
     let footNode;
