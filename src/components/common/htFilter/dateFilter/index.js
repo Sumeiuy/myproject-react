@@ -39,9 +39,6 @@ export default class DateFilter extends React.Component {
   constructor(props) {
     super(props);
     this.handleDateChange = this.handleDateChange.bind(this);
-    this.state = {
-      hidden: false,
-    };
   }
 
   handleDateChange(formatStartDate, formatEndDate) {
@@ -54,7 +51,6 @@ export default class DateFilter extends React.Component {
   }
 
   handleClickClose = () => {
-    this.setState({ hidden: true });
     this.props.onClose();
   }
 
