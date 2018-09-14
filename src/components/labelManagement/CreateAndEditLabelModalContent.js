@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-09-14 20:08:36
+ * @Last Modified time: 2018-09-14 21:10:46
  */
 
 import React, { PureComponent } from 'react';
@@ -210,9 +210,9 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     const { custId, brokerNumber } = record;
     // 新增下删除客户从includeCustIdList删除
     const newIncludeCustList = _.filter(includeCustList, item => item.custId !== custId);
-    const newIncludeCustIdList = _.filter(custIds, item => item !== custId);
+    const newIncludeCustIdList = _.filter(custIds, item => item !== brokerNumber);
 
-    if (_.includes(custIds, custId)) {
+    if (_.includes(custIds, brokerNumber)) {
       this.setState({
         custIds: newIncludeCustIdList,
         includeCustList: newIncludeCustList,
@@ -412,7 +412,6 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     this.setState({
       // 当前删除行记录数据
       record,
-      custIds: _.filter(this.state.custIds, item => item !== record.brokerNumber),
     });
     this.deleteCustomerFromLabel(record);
   }

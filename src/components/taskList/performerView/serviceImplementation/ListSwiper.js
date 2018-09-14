@@ -2,7 +2,7 @@
  * @Author: WangJunJun
  * @Date: 2018-09-11 17:10:02
  * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-12 11:42:23
+ * @Last Modified time: 2018-09-14 20:15:24
  */
 
 import React, { PureComponent } from 'react';
@@ -44,25 +44,21 @@ export default class ListSwiper extends PureComponent {
 
   @autobind
   goNext() {
-    if (this.swiper) {
-      const { targetCustList, onPageChange } = this.props;
-      const { pageNum, pageSize, totalCount } = targetCustList.page;
-      const currentPageNum = pageNum + 1;
-      if (currentPageNum <= Math.ceil(totalCount / pageSize)) {
-        onPageChange(currentPageNum);
-      }
+    const { targetCustList, onPageChange } = this.props;
+    const { pageNum, pageSize, totalCount } = targetCustList.page;
+    const currentPageNum = pageNum + 1;
+    if (currentPageNum <= Math.ceil(totalCount / pageSize)) {
+      onPageChange(currentPageNum);
     }
   }
 
   @autobind
   goPrev() {
-    if (this.swiper) {
-      const { targetCustList, onPageChange } = this.props;
-      const { pageNum } = targetCustList.page;
-      const currentPageNum = pageNum - 1;
-      if (currentPageNum >= 1) {
-        onPageChange(currentPageNum);
-      }
+    const { targetCustList, onPageChange } = this.props;
+    const { pageNum } = targetCustList.page;
+    const currentPageNum = pageNum - 1;
+    if (currentPageNum >= 1) {
+      onPageChange(currentPageNum);
     }
   }
 
@@ -132,11 +128,6 @@ export default class ListSwiper extends PureComponent {
     );
   }
 
-  @autobind
-  saveSwiperRef(node) {
-    if (node) { this.swiper = node.swiper; }
-  }
-
   render() {
     const { targetCustList, containerClass } = this.props;
     const { page: { pageSize, pageNum, totalPage } } = targetCustList;
@@ -155,7 +146,6 @@ export default class ListSwiper extends PureComponent {
     return (
       <div className={containerCls}>
         <ListWrapper
-          ref={this.saveSwiperRef}
           wrapperClassName={styles.swiperContainer}
           size={pageSize}
         >
