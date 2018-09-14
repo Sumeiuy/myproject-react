@@ -1,14 +1,36 @@
 .tabControllerContainer {
   display: inline-block;
   .custRangeContainer {
+    padding-right: 5px;
     display: inline-block;
     :global {
+      .lego-arrow.ht-svg-xiangxia {
+        bottom: 12px;
+        top: auto;
+      }
       .lego-selection--single .lego-selection__rendered .lego-selection-selected-value {
         max-width: none;
       }
     }
   }
-  .timeSelectContainer {
+  .divider {
     display: inline-block;
+    position: relative;
+    top: 5px;
+    height: 10px;
+    width: 1px;
+    background: #e5e9f2;
+  }
+  .timeSelectContainer {
+    padding-left: 5px;
+    display: inline-block;
+    :global {
+      .lego-filter-menuContainer .lego-filter-menu {
+        width: 100px;
+      }
+      .lego-filter-customerFilterValue {
+        font-size: 12px;
+      }
+    }
   }
 }

@@ -21,6 +21,7 @@ import { transformDateTypeToDate } from '../customerPool/helper';
 import { PerformanceIndicators } from '../customerPool/home';
 import TabController from './TabController';
 import logable from '../../decorators/logable';
+import styles from './chartsTab.less';
 
 const TabPane = Tabs.TabPane;
 
@@ -207,6 +208,7 @@ export default class ChartsTab extends PureComponent {
 
     return (
       <Tabs
+        className={styles.tab}
         tabBarExtraContent={this.renderTabController()}
         defaultActiveKey="manage"
         onTabClick={this.handleTabClick}
@@ -221,6 +223,7 @@ export default class ChartsTab extends PureComponent {
             cycle={cycle}
             category={'manager'}
             authority={this.hasIndexViewPermission}
+            isNewHome
           />
         </TabPane>
         {
@@ -235,6 +238,7 @@ export default class ChartsTab extends PureComponent {
                 custCount={custCount}
                 category={'performance'}
                 authority={this.hasIndexViewPermission}
+                isNewHome
               />
             </TabPane>
           ) : null

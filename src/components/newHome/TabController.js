@@ -179,6 +179,7 @@ export default class TabController extends PureComponent {
         <div className={styles.custRangeContainer}>
           <CustRange {...custRangeProps} />
         </div>
+        <div className={styles.divider} />
         <div className={styles.timeSelectContainer}>
           <SingleFilter {...timeSelectProps} />
         </div>

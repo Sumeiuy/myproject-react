@@ -5,6 +5,23 @@
  * @Last Modified time: 2018-09-14 13:46:09
  */
 
-.chartsContainer {
-  display: block;
+.tab {
+  margin: 0 20px 10px;
+  :global {
+    .ant-tabs-bar {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #e5e9f2;
+    }
+    .ant-tabs-nav .ant-tabs-tab {
+      height: 49px;
+      padding: 16px 0;
+      width: 56px;
+      margin-right: 53px;
+      font-size: 14px;
+      color: #8995a5;
+    }
+    .ant-tabs-tab-active.ant-tabs-tab {
+      color: #333;
+    }
+  }
 }
