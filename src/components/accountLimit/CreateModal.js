@@ -2,8 +2,8 @@
  * @Description: 账户限制管理-新建弹窗
  * @Author: Liujianshu
  * @Date: 2018-07-31 16:15:52
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 11:05:30
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-09-14 19:54:04
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -360,7 +360,7 @@ export default class CreateModal extends PureComponent {
     // 限制设置，并且限制类型中有 key 为 5 的类型时
     const filterLimitType = _.filter(limitType, o => o.key === KEY_LIMIT_TRANSFER_NUMBER);
     if (!_.isEmpty(filterLimitType)) {
-      if (_.isEmpty(newLimitAmount)) {
+      if (!newLimitAmount) {
         message.error('请填写禁止转出金额');
         return;
       }
@@ -572,6 +572,12 @@ export default class CreateModal extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '批量导入数据' } })
   handleFileChange(info) {
+    const uploadFile = info.file;
+    const fileSize = uploadFile.size;
+    if (fileSize === 0) {
+      message.error('文件大小不能为 0');
+      return;
+    }
     this.setState({
       importVisible: false,
     }, () => {
@@ -896,7 +902,7 @@ export default class CreateModal extends PureComponent {
         return;
       }
       if (!_.isEmpty(filterLimitType)) {
-        const filterLimitAmount = _.filter(addedCustData, o => _.isEmpty(o.limitAmount));
+        const filterLimitAmount = _.filter(addedCustData, o => !o.limitAmount);
         if (!_.isEmpty(filterLimitAmount)) {
           message.error('请填写禁止转出金额');
           return;
