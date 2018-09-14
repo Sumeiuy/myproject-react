@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-
+import _ from 'lodash';
 import TreeFilter from 'lego-tree-filter/src';
 import mouseWheel from '../../../common/mouseWheel';
 import { constants } from '../../../../config';
@@ -65,7 +65,7 @@ function findOrgNameByOrgId(orgId) {
 export default class CustRange extends PureComponent {
 
   static propTypes = {
-    collectData: PropTypes.func.isRequired,
+    collectData: PropTypes.func,
     updateQueryState: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
     expandAll: PropTypes.bool,
@@ -77,6 +77,7 @@ export default class CustRange extends PureComponent {
     // 下拉菜单的宽度
     dropdownWidth: PropTypes.number,
     isDown: PropTypes.bool,
+    isHideFilterName: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -87,6 +88,8 @@ export default class CustRange extends PureComponent {
     dropdownWidth: 200,
     selectBoxStyle: {},
     isDown: false,
+    collectData: _.noop,
+    isHideFilterName: false,
   }
 
   constructor(props) {
@@ -168,15 +171,16 @@ export default class CustRange extends PureComponent {
   }
 
   render() {
-    const { custRange, expandAll, dropdownWidth, isDown } = this.props;
+    const { custRange, expandAll, dropdownWidth, isDown, isHideFilterName } = this.props;
     const { value } = this.state;
     const formatCustRange = transformCustRangeData(custRange);
     const widthDown = isDown ? 160 : dropdownWidth;
     const placeholder = isDown ? '机构范围' : '分公司/营业部名称';
+    const filterName = isHideFilterName ? '' : "服务营业部";
     return (
       <TreeFilter
         dropdownClassName={styles.custFilterWrap}
-        filterName="服务营业部"
+        filterName={filterName}
         value={value}
         treeDefaultExpandAll={expandAll}
         treeData={formatCustRange}
