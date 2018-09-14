@@ -24,8 +24,6 @@ export default function (params) {
     onOk = () => {},
     // 确认框取消按钮调用
     onCancel = () => {},
-    // 弹出层垂直居中
-    centered = false,
   } = params;
 
   // 判断content和preDefinedContent传了哪个？优先content
@@ -36,7 +34,6 @@ export default function (params) {
   }
 
   confirm({
-    centered,
     title,
     content: newContent,
     okType: type,

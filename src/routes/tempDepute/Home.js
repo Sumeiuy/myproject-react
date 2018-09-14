@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 09:28:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-12 16:05:25
+ * @Last Modified time: 2018-09-14 13:32:00
  * @description 临时委托他人处理任务Home页面
  */
 
@@ -245,7 +245,6 @@ export default class Home extends Component {
     // 撤销按钮点击行为需要弹框提示
     const today = moment().format('MM月DD日');
     confirm({
-      centered: true,
       content: `将撤消您委托的任务，委托的所有任务会在明天(${today})划转到您本人名下，今日发起撤销委托后在今晚12点前不可以再次发起委托，是否确定要撤消委托？`,
       onOk: () => this.doRevertTempDepute(query),
     });
