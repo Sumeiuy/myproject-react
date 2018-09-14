@@ -274,7 +274,7 @@ export const getRouterData = (app) => {
     },
     // 从 /taskList 页面，点击右上角新建进入
     '/customerPool/taskFlow': {
-      component: dynamicWrapper(app, ['customerPool'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskFeedback'], () =>
         import('../routes/customerPool/TaskFlow' /* webpackChunkName: "customerPool_taskFlow" */)),
     },
 
