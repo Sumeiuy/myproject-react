@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 13:10:29
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-02 00:11:21
+ * @Last Modified time: 2018-09-11 14:43:30
  * @description 临时委托他人处理任务的 API
  */
 
@@ -17,7 +17,7 @@ export default function tempDepute(api) {
     // 提交申请
     saveApply: query => api.post('/groovynoauth/fsp/campaign/tempAssignment/saveDeputeApplication', query),
     // 撤销申请
-    revertApply: query => api.post('/groovynoauth/fsp/campaign/tempAssignment/revertDeputeApply', query),
+    revertApply: query => api.post('/groovynoauth/fsp/campaign/tempAssignment/revertDeputeApplication', query),
     // 流程发起、流程审批
     doApprove: query => api.post('/groovynoauth/fsp/campaign/tempAssignment/doApprove', query),
     // 查询下一步审批人信息

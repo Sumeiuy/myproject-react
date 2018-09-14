@@ -1,9 +1,16 @@
+/*
+ * @Author: WangJunJun
+ * @Date: 2018-09-11 17:10:02
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-12 17:49:11
+ */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import cx from 'classnames';
 import { autobind } from 'core-decorators';
-import Swiper from 'react-id-swiper';
+import ListWrapper from './ListWrapper';
 import Icon from '../../../common/Icon';
 import styles from './listSwiper.less';
 import {
@@ -61,8 +68,9 @@ export default class ListSwiper extends PureComponent {
 
   // 渲染客户头像
   // 区分产品机构、一般机构、个人客户：男、女 ，四种头像
+  // 如果isDepute为true，代表该客户为委托客户，需要展示委字小图标
   @autobind
-  renderAvator({ genderCode = '', custNature = '' }) {
+  renderAvator({ genderCode = '', custNature = '', isDepute = false }) {
     let type = MALE_ICON;
     if (custNature === PER_CODE) {
       if (genderCode === MALE_CODE) {
@@ -82,6 +90,10 @@ export default class ListSwiper extends PureComponent {
         <div className={styles.avatorBox}>
           <Icon type={type} />
         </div>
+        {
+          !isDepute ? null
+          : (<div className={styles.isDepute}>委</div>)
+        }
       </div>
     );
   }
@@ -114,7 +126,7 @@ export default class ListSwiper extends PureComponent {
             })}
           >
             <div className={styles.contentBox}>
-              {this.renderAvator({ genderCode: item.genderCode, custNature: item.custNature })}
+              {this.renderAvator(item)}
               <p className={styles.name} title={item.custName}>{item.custName}</p>
               <p className={styles.status}>-{item.missionStatusValue}-</p>
               <span className={styles.triangle} />
@@ -133,13 +145,6 @@ export default class ListSwiper extends PureComponent {
   render() {
     const { targetCustList, containerClass } = this.props;
     const { page: { pageSize, pageNum, totalPage } } = targetCustList;
-    const params = {
-      containerClass: styles.swiperContainer,
-      slidesPerView: pageSize,
-      slidesPerGroup: pageSize,
-      noSwiping: true,
-      rebuildOnUpdate: true,
-    };
     const containerCls = cx(
       styles.listSwiper,
       { [containerClass]: !!containerClass },
@@ -154,12 +159,13 @@ export default class ListSwiper extends PureComponent {
     );
     return (
       <div className={containerCls}>
-        <Swiper
-          {...params}
+        <ListWrapper
           ref={this.saveSwiperRef}
+          wrapperClassName={styles.swiperContainer}
+          size={pageSize}
         >
           {this.renderListItem()}
-        </Swiper>
+        </ListWrapper>
         <Icon type="zuo" className={prevButtonCls} onClick={this.goPrev} />
         <Icon type="you" className={nextButtonCls} onClick={this.goNext} />
       </div>
