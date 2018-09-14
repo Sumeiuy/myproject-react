@@ -106,6 +106,7 @@ app.model(require('./models/telephoneNumberManage').default);
 app.model(require('./models/investmentAdvice').default);
 app.model(require('./models/customerLabel').default);
 app.model(require('./models/morningBoradcast').default);
+app.model(require('./models/newHome').default);
 
 // 4. Route
 app.router(routerConfig);

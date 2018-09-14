@@ -329,7 +329,8 @@ const permission = {
       window.grayFlag === true
       || nativeQuery.grayFlag === 'true'
       || this.hasNewFeatureInvestPermission();
-    return grayFlag;
+    // return grayFlag;
+    return true;
   },
 };
 

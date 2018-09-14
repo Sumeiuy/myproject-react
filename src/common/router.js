@@ -200,7 +200,7 @@ export const getRouterData = (app) => {
     '/customerPool': {
       component: CustomerPoolWrapper,
       // component: dynamicWrapper(app, ['customerPool', 'morningBoradcast'], () =>
-      //   import('../routes/customerPool/Home' /* webpackChunkName: "customerPool" */)),
+        // import('../routes/customerPool/Home' /* webpackChunkName: "customerPool" */)),
     },
     // 从 customerPool 搜索框下方--任务概览--第三个选项【代办流程】进入
     '/customerPool/todo': {
