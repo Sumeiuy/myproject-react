@@ -1,8 +1,13 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
+<<<<<<< HEAD
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-14 22:24:43
+=======
  * @Last Modified by: Liujianshu
  * @Last Modified time: 2018-09-14 20:00:43
+>>>>>>> aee20cc80a468af8bc2d43f9a909b795c414f2ef
  */
 
 import React, { PureComponent } from 'react';
@@ -220,8 +225,11 @@ export default class Uploader extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '删除文件' } })
   handleFileRemove(file) {
-    const { error } = file;
+    const { fileList } = this.state;
+    const { error, uid } = file;
     this.currentfile = file;
+    // 通过保存用户点击的文件列表的下标索引来获取当前的attach
+    this.currentFileIndex = _.findIndex(fileList, item => item.uid === uid);
     if (!error) {
       this.showConfirm();
     }
@@ -277,7 +285,8 @@ export default class Uploader extends PureComponent {
     });
 
     if (this.currentfile) {
-      const currentAttach = _.find(attaches, item => item.name === this.currentfile.name);
+      // 通过保存用户点击的文件列表的下标索引来获取当前的attach
+      const currentAttach = attaches[this.currentFileIndex];
       if (currentAttach) {
         // 找到符合匹配要删除的文件
         const attachId = currentAttach.attachId;
