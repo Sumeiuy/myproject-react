@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-07-20 13:21:39
+ * @Last Modified time: 2018-09-14 20:01:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -254,6 +254,12 @@ export default class CreateModal extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '分公司客户分配客户导入' } })
   handleFileChange(info) {
+    const uploadFile = info.file;
+    const { size } = uploadFile;
+    if (size === 0) {
+      message.error('文件大小不能为 0');
+      return;
+    }
     const { attachment } = this.state;
     this.setState({
       importVisible: false,

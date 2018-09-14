@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-03 17:06:59
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-09-14 20:00:43
  */
 
 import React, { PureComponent } from 'react';
@@ -145,6 +145,12 @@ export default class Uploader extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '$props.uploadTitle' } })
   handleFileChange(info) {
+    const uploadFile = info.file;
+    const { size } = uploadFile;
+    if (size === 0) {
+      message.error(`文件大小不能为 0`);
+      return;
+    }
     const { onOperateFile, isSupportUploadMultiple } = this.props;
     const { upData, custUuid } = this.state;
     // 当前操作upload项

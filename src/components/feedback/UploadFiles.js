@@ -83,6 +83,11 @@ export default class UploadFiles extends PureComponent {
     //    status: 'done', // 状态有：uploading done error removed
     //    response: '{"status": "success"}', // 服务端响应内容
     // }
+    const fileSize = file.size;
+    if (fileSize === 0) {
+      message.error('文件大小不能为 0');
+      return;
+    }
     const status = file.status;
     const response = file.response || {};
     const { onCreate } = this.props;

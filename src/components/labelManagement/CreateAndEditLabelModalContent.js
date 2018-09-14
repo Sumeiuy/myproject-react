@@ -1,8 +1,8 @@
 /* 标签管理新建编辑标签模态框
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-14 20:43:26
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-09-14 21:10:46
  */
 
 import React, { PureComponent } from 'react';
@@ -451,6 +451,12 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
   // 上传事件
   @autobind
   handleChange(info) {
+    const uploadFile = info.file;
+    const fileSize = uploadFile.size;
+    if (fileSize === 0) {
+      message.error('文件大小不能为 0');
+      return;
+    }
     this.setState({
       importVisible: false,
       includeCustList: [],
@@ -458,7 +464,6 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
       totalRecordNum: 0,
       uploadLoading: true,
     }, () => {
-      const uploadFile = info.file;
       this.setState({
         file: uploadFile,
       });

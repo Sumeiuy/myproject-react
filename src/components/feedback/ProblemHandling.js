@@ -86,6 +86,11 @@ export default class ProblemHandling extends PureComponent {
   @logable({ type: 'ButtonClick', payload: { name: '上传附件' } })
   handleUploadFile(info) {
     const file = info.file;
+    const fileSize = file.size;
+    if (fileSize === 0) {
+      message.error('文件大小不能为 0');
+      return;
+    }
     const status = file.status;
     const response = file.response || {};
     if (status === 'done') {
