@@ -204,11 +204,6 @@ export default class CommonUpload extends PureComponent {
   @logable({ type: 'Click', payload: { name: '下载' } })
   handleDownloadClick() {}
 
-  @autobind
-  findFileListNode() {
-    return document.querySelectorAll('.fileListMain')[0];
-  }
-
   // 清空数据
   @autobind
   resetUpload() {
@@ -263,7 +258,6 @@ export default class CommonUpload extends PureComponent {
           {
             fileList.map((item, index) => {
               const fileName = item.name;
-              item.attachId = item.attachId || item.uid;
               const popoverHtml = (
                 <div className={styles.filePop}>
                   <h3 className="clearfix">
@@ -309,12 +303,10 @@ export default class CommonUpload extends PureComponent {
               return (
                 <div key={item.attachId} className={styles.fileItem}>
                   <Popover
-                    key={`${item.attachId}-right`}
                     placement="right"
                     content={popoverHtml}
                     trigger="hover"
                     mouseLeaveDelay={0.3}
-                    getPopupContainer={this.findFileListNode}
                   >
                     <p className={styles.fileItemText} title={fileName}>
                       <Icon type="fujian" />
@@ -322,7 +314,6 @@ export default class CommonUpload extends PureComponent {
                     </p>
                   </Popover>
                   <Popover
-                    key={`${item.attachId}-bottom`}
                     placement="bottom"
                     content={statusText}
                     trigger="hover"
