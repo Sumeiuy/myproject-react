@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 11:17:38
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-09-16 20:03:14
  */
 /**
  * 常用说明
@@ -307,6 +307,7 @@ export default class CommonUpload extends PureComponent {
                     content={popoverHtml}
                     trigger="hover"
                     mouseLeaveDelay={0.3}
+                    overlayClassName={styles.filePopover}
                   >
                     <p className={styles.fileItemText} title={fileName}>
                       <Icon type="fujian" />
