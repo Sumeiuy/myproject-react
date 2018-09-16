@@ -309,6 +309,7 @@ export default class CommonUpload extends PureComponent {
               return (
                 <div key={item.attachId} className={styles.fileItem}>
                   <Popover
+                    key={`${item.attachId}-right`}
                     placement="right"
                     content={popoverHtml}
                     trigger="hover"
@@ -321,6 +322,7 @@ export default class CommonUpload extends PureComponent {
                     </p>
                   </Popover>
                   <Popover
+                    key={`${item.attachId}-bottom`}
                     placement="bottom"
                     content={statusText}
                     trigger="hover"
