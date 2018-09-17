@@ -33,7 +33,7 @@ export default class Sort extends PureComponent {
     data: EMPTY_LIST,
     wrapClassName: '',
     showIntroId: '',
-    name: '排序指标',
+    name: '其他排序',
   };
 
   @autobind

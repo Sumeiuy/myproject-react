@@ -43,10 +43,13 @@ export default class ChoiceApproverBoard extends PureComponent {
     approverList: PropTypes.array,
     onClose: PropTypes.func.isRequired,
     onOk: PropTypes.func.isRequired,
+    // 点击确认按钮之后是否需要自动关闭弹窗 默认关闭
+    afterConfirmCloseModal: PropTypes.bool,
   }
 
   static defaultProps = {
     approverList: [],
+    afterConfirmCloseModal: true,
   }
 
   constructor(props) {
@@ -77,8 +80,11 @@ export default class ChoiceApproverBoard extends PureComponent {
   @autobind
   onOk() {
     const { approverRadio, listAfterFilter } = this.state;
+    const { afterConfirmCloseModal } = this.props;
     this.props.onOk(listAfterFilter[approverRadio]);
-    this.onCloseModal();
+    if (afterConfirmCloseModal) {
+      this.onCloseModal();
+    }
   }
 
   @autobind

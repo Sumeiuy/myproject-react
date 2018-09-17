@@ -101,9 +101,11 @@
       display: flex;
     }
     .timeRange {
-      .lego-date-rangePicker-container {
-        position: relative;
-        top: -3px;
+      :global {
+        .lego-date-rangePicker-container {
+          position: relative;
+          top: -3px;
+        }
       }
     }
     .timeRange, .author {
