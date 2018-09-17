@@ -35,6 +35,7 @@ import {
 
 import antdStyles from '../../../css/antd.less';
 import styles from './performanceIndicators.less';
+import classes from './performanceIndicators__.less';
 
 const SOURCE_PRODUCT_SALE = 'chanpinxiaoshou';
 // 服务指标（投顾绩效）source
@@ -54,6 +55,7 @@ export default class PerformanceIndicators extends PureComponent {
     category: PropTypes.string,
     indicators: PropTypes.object,
     cycle: PropTypes.array,
+    isNewHome: PropTypes.bool, 
     location: PropTypes.object.isRequired,
     custCount: PropTypes.oneOfType([
       PropTypes.object,
@@ -66,6 +68,7 @@ export default class PerformanceIndicators extends PureComponent {
     indicators: {},
     cycle: [],
     custCount: {},
+    isNewHome: false,
   }
 
   constructor(props) {
@@ -280,7 +283,7 @@ export default class PerformanceIndicators extends PureComponent {
     const headLine = { icon: 'kehufuwu', title: param.headLine };
     return (
       <Col span={8} key={param.key}>
-        <RectFrame dataSource={headLine}>
+        <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <CustomerService
               cycle={cycle}
@@ -303,7 +306,7 @@ export default class PerformanceIndicators extends PureComponent {
     const headLine = { icon: 'kehu', title: param.headLine };
     return (
       <Col span={8} key={param.key}>
-        <RectFrame dataSource={headLine}>
+        <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <Funney
               location={location}
@@ -324,7 +327,7 @@ export default class PerformanceIndicators extends PureComponent {
     const headLine = { icon: 'kehuzhibiao', title: `${param.headLine}（${newUnit}次）` };
     return (
       <Col span={8} key={param.key}>
-        <RectFrame dataSource={headLine}>
+        <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
               onReady={this.handleBusinessOpenReady}
@@ -371,7 +374,11 @@ export default class PerformanceIndicators extends PureComponent {
     }
     return (
       <Col span={8} key={param.key}>
-        <RectFrame dataSource={headLine} desc={description}>
+        <RectFrame
+          dataSource={headLine}
+          desc={description}
+          isNewHome={this.props.isNewHome}
+        >
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
               onEvents={{ click: this.AggregationToList }}
@@ -399,7 +406,7 @@ export default class PerformanceIndicators extends PureComponent {
     const type = param.key === SOURCE_PRODUCT_SALE ? 'productSale' : 'income';
     return (
       <Col span={8} key={param.key}>
-        <RectFrame dataSource={headLine}>
+        <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <ProgressList
               dataSource={finalData}
@@ -461,9 +468,10 @@ export default class PerformanceIndicators extends PureComponent {
     const option = getServiceIndicatorOfPerformance({ performanceData });
     const headLine = { icon: 'kehufuwu', title: param.headLine };
     const { data } = param;
+    const trueStyles = this.props.isNewHome ? classes : styles;
     return (
       <Col span={8} key={param.key}>
-        <RectFrame dataSource={headLine}>
+        <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <div>
               <IECharts
@@ -474,7 +482,7 @@ export default class PerformanceIndicators extends PureComponent {
                   height: '132px',
                 }}
               />
-              <div className={styles.labelWrap}>
+              <div className={trueStyles.labelWrap}>
                 <Popover
                   title={`${data[0].name}`}
                   content={data[0].description}
@@ -484,7 +492,7 @@ export default class PerformanceIndicators extends PureComponent {
                   overlayClassName={antdStyles.popoverClass}
                 >
                   <span
-                    className={styles.chartLabel}
+                    className={trueStyles.chartLabel}
                     onClick={() => { this.toList(0); }}
                   >
                     {data[0].name}
@@ -499,7 +507,7 @@ export default class PerformanceIndicators extends PureComponent {
                   overlayClassName={antdStyles.popoverClass}
                 >
                   <span
-                    className={styles.chartLabel}
+                    className={trueStyles.chartLabel}
                     onClick={() => { this.toList(1); }}
                   >{data[1].name}</span>
                 </Popover>
@@ -513,7 +521,7 @@ export default class PerformanceIndicators extends PureComponent {
                 >
                   <span
                     onClick={() => { this.toList(2); }}
-                    className={styles.chartLabel}
+                    className={trueStyles.chartLabel}
                   >{data[2].name}</span>
                 </Popover>
                 <Popover
@@ -526,7 +534,7 @@ export default class PerformanceIndicators extends PureComponent {
                 >
                   <span
                     onClick={() => { this.toList(3); }}
-                    className={styles.chartLabel}
+                    className={trueStyles.chartLabel}
                   >{data[3].name}</span>
                 </Popover>
               </div>
@@ -549,7 +557,7 @@ export default class PerformanceIndicators extends PureComponent {
     const headLine = { icon: 'kehu', title: `新增客户（${pureAddUnit}）` };
     return (
       <Col span={8} key={param.key}>
-        <RectFrame dataSource={headLine}>
+        <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
           <IfEmpty isEmpty={isEmpty}>
             <ProgressList
               key={'pureAdd'}
@@ -579,7 +587,7 @@ export default class PerformanceIndicators extends PureComponent {
     const headLine = { icon: 'chanpinxiaoshou', title: param.headLine };
     return (
       <Col span={8} key={param.key}>
-        <RectFrame dataSource={headLine}>
+        <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <CheckLayout
               dataSource={finalTradeingVolumeData}
@@ -593,7 +601,7 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   render() {
-    const { indicators, category } = this.props;
+    const { indicators, category, isNewHome } = this.props;
     const { posX, posY, isToolTipVisible, desc, title } = this.state;
     let formatIndicator = this.formatIndicators((indicators || {}), category);
     if (category === 'manager') {
@@ -601,10 +609,15 @@ export default class PerformanceIndicators extends PureComponent {
     }
     const firstRowData = _.slice(formatIndicator, 0, 3);
     const secondRowData = _.slice(formatIndicator, 3);
+
+    const trueStyles = isNewHome ? classes : styles;
+
+    const gutter = isNewHome ? 20: 28;
+
     return (
-      <div className={styles.indexBox}>
-        <div className={`${styles.listItem} ${styles.firstListItem}`}>
-          <Row gutter={28}>
+      <div className={trueStyles.indexBox}>
+        <div className={trueStyles.listItem}>
+          <Row gutter={gutter}>
             {
               _.map(
                 firstRowData,
@@ -613,8 +626,8 @@ export default class PerformanceIndicators extends PureComponent {
             }
           </Row>
         </div>
-        <div className={styles.listItem}>
-          <Row gutter={28}>
+        <div className={trueStyles.listItem}>
+          <Row gutter={gutter}>
             {
               _.map(
                 secondRowData,
