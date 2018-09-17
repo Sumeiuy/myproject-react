@@ -29,24 +29,6 @@ const matchRule = {
       render: 'renderCustomerLabels',
     }],
   },
-  pftAmt: {
-    inset: true,
-    key: [{
-      name: '收益',
-      id: 'pftAmt',
-      render: 'renderDefaultVal',
-      unit: '元',
-    }],
-  },
-  maxCostRate: {
-    inset: true,
-    key: [{
-      name: '收益率',
-      id: 'maxCostRate',
-      render: 'renderDefaultVal',
-      unit: '%',
-    }],
-  },
   outMktVal: {
     inset: true,
     key: [{
@@ -374,6 +356,26 @@ const matchRule = {
         hasCycle: true,
       },
     ],
+  },
+  pftAmt: {
+    inset: true,
+    key: [{
+      name: '收益',
+      id: 'pftAmt',
+      render: 'renderDefaultVal',
+      hasCycle: true,
+      unit: '元',
+    }],
+  },
+  maxCostRate: {
+    inset: true,
+    key: [{
+      name: '收益率',
+      id: 'maxCostRate',
+      render: 'renderDefaultVal',
+      hasCycle: true,
+      unit: '%',
+    }],
   },
   lastServDt: {
     inset: true,

@@ -18,12 +18,14 @@ import Icon from '../../common/Icon';
 
 import antdStyles from '../../../css/antd.less';
 import styles from './rectFrame.less';
+import classes from './reactFrame__.less';
 
 function RectFrame(props) {
-  const { dataSource: { title, icon }, children, desc } = props;
+  const { dataSource: { title, icon }, children, desc, isNewHome } = props;
+  const trueStyles = isNewHome ? classes : styles;
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
+    <div className={trueStyles.container}>
+      <div className={trueStyles.header}>
         {
           _.isEmpty(icon) ? (
             null
@@ -41,13 +43,13 @@ function RectFrame(props) {
                 mouseEnterDelay={0.2}
                 overlayClassName={antdStyles.popoverClass}
               >
-                <div className={styles.title}>{title}</div>
+                <div className={trueStyles.title}>{title}</div>
               </Popover>
             ) :
-              <div className={styles.title}>{title}</div>
+            <div className={trueStyles.title}>{title}</div>
         }
       </div>
-      <div className={styles.content}>{children}</div>
+      <div className={trueStyles.content}>{children}</div>
     </div>
   );
 }

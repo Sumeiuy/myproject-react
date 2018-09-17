@@ -1,12 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import classNames from 'classnames';
 import _ from 'lodash';
 import DateRangePick from 'lego-react-date/src';
 import isInclusivelyBeforeDay from '../../dateRangePicker/utils/isInclusivelyBeforeDay';
-
-import styles from './dateFilter.less';
 
 export default class DateFilter extends React.Component {
   static propTypes = {
@@ -42,9 +39,6 @@ export default class DateFilter extends React.Component {
   constructor(props) {
     super(props);
     this.handleDateChange = this.handleDateChange.bind(this);
-    this.state = {
-      hidden: false,
-    };
   }
 
   handleDateChange(formatStartDate, formatEndDate) {
@@ -57,17 +51,11 @@ export default class DateFilter extends React.Component {
   }
 
   handleClickClose = () => {
-    this.setState({ hidden: true });
     this.props.onClose();
   }
 
   render() {
     const { value, disabledCurrentEnd } = this.props;
-    const filterContainerClasses = classNames({
-      [styles.dateFilter]: true,
-      [styles.dateFilterContainer]: true,
-      [styles.hidden]: this.state.hidden,
-    });
 
     let initialStartDate;
     let initialEndDate;
@@ -79,33 +67,22 @@ export default class DateFilter extends React.Component {
         initialEndDate = moment(value[1]);
       }
     }
-    const dateProps = _.omit(this.props, _.keys(DateFilter.propTypes));
     return (
-      <div className={this.props.className}>
-        <div className={filterContainerClasses}>
-          <span className={styles.dateLabel}>
-            {`${this.props.filterName}:`}
-          </span>
-          <DateRangePick
-            {...dateProps}
-            filterName=""
-            filterValue={[initialStartDate, initialEndDate]}
-            onChange={date => this.handleDateChange(date.value[0], date.value[1])}
-            disabledStart={disabledCurrentEnd ?
-              startDate => !isInclusivelyBeforeDay(startDate, moment())
-              : _.noop}
-            disabledEnd={disabledCurrentEnd ?
-              (startDate, endDate) => !isInclusivelyBeforeDay(endDate, moment())
-              : _.noop}
-            defaultVisible={this.props.defaultVisible}
-          />
-        </div>
-        <div
-          style={this.props.isCloseable ? {} : { display: 'none' }}
-          className={`${styles.closeIcon} ht-iconfont ht-icon-guanbi1`}
-          onClick={this.handleClickClose}
-        />
-      </div>
+      <DateRangePick
+        className={this.props.className}
+        filterName={this.props.filterName}
+        filterValue={[initialStartDate, initialEndDate]}
+        onChange={date => this.handleDateChange(date.value[0], date.value[1])}
+        disabledStart={disabledCurrentEnd ?
+          startDate => !isInclusivelyBeforeDay(startDate, moment())
+          : _.noop}
+        disabledEnd={disabledCurrentEnd ?
+          (startDate, endDate) => !isInclusivelyBeforeDay(endDate, moment())
+          : _.noop}
+        defaultVisible={this.props.defaultVisible}
+        isCloseable={this.props.isCloseable}
+        onClose={this.handleClickClose}
+      />
     );
   }
 }

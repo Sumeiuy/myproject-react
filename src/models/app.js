@@ -258,8 +258,9 @@ export default {
       const response = yield call(api.getEmpInfo);
       const data = response.resultData;
       if (data) {
-        // 设置保存用户信息,TODO 此处针对接口还未开发完成做的容错处理
-        emp.setEmpInfo(data.empPostnList, data.empInfo);
+        // 设置保存用户信息,此处针对接口还未开发完成做的容错处理
+        // 针对该员工信息，后面会使用多个数据，将整个数据对象传递过去，方便扩展
+        emp.setEmpInfo(data);
         // 初始化权方法
         permission.init(data.empRespList);
         yield put({

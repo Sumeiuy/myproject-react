@@ -185,6 +185,11 @@ export default class AddMorningBoradcast extends PureComponent {
     },
   })
   onAudioChange({ fileList, file }) {
+    const fileSize = file.size;
+    if (fileSize === 0) {
+      message.error('文件大小不能为 0');
+      return;
+    }
     if (file.status === 'uploading') {
       this.onAudioUploading(fileList);
     }
@@ -222,6 +227,11 @@ export default class AddMorningBoradcast extends PureComponent {
     },
   })
   onOtherChange({ fileList, file }) {
+    const fileSize = file.size;
+    if (fileSize === 0) {
+      message.error('文件大小不能为 0');
+      return;
+    }
     if (file.status === 'uploading') {
       this.onOtherUploading(fileList);
     }

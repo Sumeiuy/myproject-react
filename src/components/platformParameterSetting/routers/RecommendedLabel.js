@@ -197,7 +197,7 @@ export default class RecommendedLabel extends PureComponent {
     // 字数超两百打点显示
     let finalDesc = description.length > 200 ? `${description.slice(0, 200)}...` : description;
     finalDesc = sWord ? finalDesc.replace(regExpSWord, replaceTag) : finalDesc;
-    
+
     const isCludeLabel = _.filter(selectedLabels, selectItem => selectItem.id === item.id).length;
     return (
       <Item.Meta
@@ -296,7 +296,7 @@ export default class RecommendedLabel extends PureComponent {
       (<span>在此设置的推荐标签将显示在 <b>首页-猜你感兴趣</b> 中，实时生效，点击下方 <b>预览</b> 可预览展示效果。</span>);
 
     // 标签占位文字
-    const labelPlaceholder = permission.isGrayFlag() ? 
+    const labelPlaceholder = permission.isGrayFlag() ?
       `请在下方标签列表中选择最多${MAX_SELECT_LABEL_SIZE}个推荐标签` : '请在下方标签列表中选择最多5个推荐标签';
 
     const errorMessageCls = classnames({

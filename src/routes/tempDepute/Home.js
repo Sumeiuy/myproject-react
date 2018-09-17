@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 09:28:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-06 16:39:34
+ * @Last Modified time: 2018-09-14 13:32:00
  * @description 临时委托他人处理任务Home页面
  */
 
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 import _ from 'lodash';
+import moment from 'moment';
 
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import SeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
@@ -18,11 +19,12 @@ import ApplyList from '../../components/common/appList';
 import ApplyItem from '../../components/common/appList/ApplyItem';
 import Detail from '../../components/tempDepute/Detail';
 import CreateDeputeModal from '../../components/tempDepute/CreateDeputeModal';
+import confirm from '../../components/common/confirm_';
 
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { dva, emp } from '../../helper';
-import logable, { logPV } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 import { SEIBEL_HEADER_BASIC_FILTERS, getStatusTagProps } from './config';
 import { composeQuery } from './utils';
 
@@ -197,6 +199,22 @@ export default class Home extends Component {
     this.handleLaunchDeputeModalClose();
   }
 
+  // 撤销临时委托任务
+  @autobind
+  doRevertTempDepute(query) {
+    this.props.revertApply(query).then(() => {
+      this.props.queryApplyDetail(query);
+    });
+    // 记录撤销临时委托任务日志
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '撤销临时委托任务',
+        vlaue: JSON.stringify(query),
+      },
+    });
+  }
+
   // 获取左侧列表
   @autobind
   queryApplyList(query) {
@@ -224,8 +242,11 @@ export default class Home extends Component {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '撤销委托' } })
   handleRevertBtnOfDetailClick(query) {
-    this.props.revertApply(query).then(() => {
-      this.props.queryApplyDetail(query);
+    // 撤销按钮点击行为需要弹框提示
+    const today = moment().format('MM月DD日');
+    confirm({
+      content: `将撤消您委托的任务，委托的所有任务会在明天(${today})划转到您本人名下，今日发起撤销委托后在今晚12点前不可以再次发起委托，是否确定要撤消委托？`,
+      onOk: () => this.doRevertTempDepute(query),
     });
   }
 
