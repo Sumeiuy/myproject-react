@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-11 10:34:11
+ * @Last Modified time: 2018-09-17 09:58:59
  */
 
 import React, { PureComponent } from 'react';
@@ -211,9 +211,9 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     const { custId, brokerNumber } = record;
     // 新增下删除客户从includeCustIdList删除
     const newIncludeCustList = _.filter(includeCustList, item => item.custId !== custId);
-    const newIncludeCustIdList = _.filter(custIds, item => item !== custId);
+    const newIncludeCustIdList = _.filter(custIds, item => item !== brokerNumber);
 
-    if (_.includes(custIds, custId)) {
+    if (_.includes(custIds, brokerNumber)) {
       this.setState({
         custIds: newIncludeCustIdList,
         includeCustList: newIncludeCustList,
@@ -413,7 +413,6 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     this.setState({
       // 当前删除行记录数据
       record,
-      custIds: _.filter(this.state.custIds, item => item !== record.brokerNumber),
     });
     this.deleteCustomerFromLabel(record);
   }
@@ -453,6 +452,12 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
   // 上传事件
   @autobind
   handleChange(info) {
+    const uploadFile = info.file;
+    const fileSize = uploadFile.size;
+    if (fileSize === 0) {
+      message.error('文件大小不能为 0');
+      return;
+    }
     this.setState({
       importVisible: false,
       includeCustList: [],
@@ -460,7 +465,6 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
       totalRecordNum: 0,
       uploadLoading: true,
     }, () => {
-      const uploadFile = info.file;
       this.setState({
         file: uploadFile,
       });

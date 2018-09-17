@@ -105,6 +105,54 @@
       border-right-color: transparent !important;
       border-left-color: transparent !important;
     }
+  }
+  .fileUploadItem {
+    margin: 6px 0 0 8px;
+  }
+}
+.filePopover {
+  .filePop {
+    .uploadText {
+      font-size: 12px;
+      color: #666;
+    }
+    .uploadTime {
+      font-size: 12px;
+      color: #999;
+    }
+    .popFileName {
+      float: left;
+      width: 170px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+    span.btnBox {
+      float: right;
+      em {
+        color: #4786f7;
+        i {
+          &.cutline {
+            position: relative;
+            top: 5px;
+            display: inline-block;
+            margin-right: 10px;
+            margin-left: 4px;
+            height: 14px;
+            width: 1px;
+            font-size: 12px;
+            color: #4786f7;
+            font-style: normal;
+            background: #ddd;
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+  }
+  :global {
     .ant-popover-inner {
       width: 302px;
       height: 102px;
@@ -148,49 +196,5 @@
         }
       }
     }
-  }
-  .filePop {
-    .uploadText {
-      font-size: 12px;
-      color: #666;
-    }
-    .uploadTime {
-      font-size: 12px;
-      color: #999;
-    }
-    .popFileName {
-      float: left;
-      width: 170px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      vertical-align: middle;
-      font-size: 14px;
-    }
-    span.btnBox {
-      float: right;
-      em {
-        color: #4786f7;
-        i {
-          &.cutline {
-            position: relative;
-            top: 5px;
-            display: inline-block;
-            margin-right: 10px;
-            margin-left: 4px;
-            height: 14px;
-            width: 1px;
-            font-size: 12px;
-            color: #4786f7;
-            font-style: normal;
-            background: #ddd;
-            vertical-align: middle;
-          }
-        }
-      }
-    }
-  }
-  .fileUploadItem {
-    margin: 6px 0 0 8px;
   }
 }
