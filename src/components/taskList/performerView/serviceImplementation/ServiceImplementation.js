@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-14 16:15:31
+ * @Last Modified time: 2018-09-17 15:37:59
  */
 
 import React, { PureComponent } from 'react';
@@ -183,16 +183,6 @@ export default class ServiceImplementation extends PureComponent {
     return null;
   }
 
-  static getSnapshotBeforeUpdate(prevProps, prevState) {
-    const { location: { query: { prevCustId } } } = prevProps;
-    const { location: { query: { nextCustId } } } = this.props;
-    if (prevCustId !== nextCustId) {
-      // 如果location中的客户信息变化了，则告知客户列表组件此时需要变化了
-      return { needCascadeCustList: true };
-    }
-    return { needCascadeCustList: false };
-  }
-
   constructor(props) {
     super(props);
     const { targetCustList } = props;
@@ -275,6 +265,17 @@ export default class ServiceImplementation extends PureComponent {
     window.offFspSidebarbtn(this.handleFspLeftMenuClick);
   }
 
+  @autobind
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    const { location: { query: { custId: prevCustId } } } = prevProps;
+    const { location: { query: { custId: nextCustId } } } = this.props;
+    if (!_.isEmpty(nextCustId) && prevCustId !== nextCustId) {
+      // 如果location中的客户信息变化了，则告知客户列表组件此时需要变化了
+      return { needCascadeCustList: true };
+    }
+    return { needCascadeCustList: false };
+  }
+
   // 根据当前的任务状态去获取对应的服务状态，再去获取服务实施列表数据
   @autobind
   getTaskFlowData(pageSize, pageNum = 1) {
@@ -349,11 +350,11 @@ export default class ServiceImplementation extends PureComponent {
   handleCustListCascade({ needCascadeCustList }) {
     // 如果location变化之后，需要判断是否进行客户列表联动
     if (needCascadeCustList) {
-      const { loaction: { query: { custId } }, searchCustomer } = this.props;
+      const { location: { query: { custId } }, queryCustomer } = this.props;
       // 客户列表联动首先要将服务状态切换成 不限
       // 将客户选择到location中联动的那个客户,因为查询客户列表的接口需要客户rowId,
       // 所以必须先查一把客户信息
-      searchCustomer(custId).then(this.handleCustListCascadeAfterCust);
+      queryCustomer({ keyWord: custId }).then(this.handleCustListCascadeAfterCust);
     }
   }
 

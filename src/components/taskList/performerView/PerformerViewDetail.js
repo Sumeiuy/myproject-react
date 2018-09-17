@@ -2,8 +2,8 @@
  * @Description: 执行者视图右侧详情
  * @Author: WangJunjun
  * @Date: 2018-05-22 12:25:35
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-21 13:24:25
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-17 15:10:18
  */
 
 import React, { PureComponent } from 'react';
@@ -145,20 +145,6 @@ export default class PerformerViewDetail extends PureComponent {
     }];
   }
 
-  @autobind
-  searchCustomer(value) {
-    const { queryCustomer, changeParameter, parameter } = this.props;
-    // pageSize传1000000，使能够查到足够的数据
-    queryCustomer({
-      keyWord: value,
-    });
-    // 保存搜索的关键字，方便在redux里面需要清空的时候，直接调用changeParameter，将关键字清空
-    changeParameter({
-      ...parameter,
-      keyWord: value,
-    });
-  }
-
   render() {
     const {
       basicInfo = {},
@@ -193,7 +179,6 @@ export default class PerformerViewDetail extends PureComponent {
           {...this.props}
           hasSurvey={hasSurvey}
           servicePolicy={servicePolicy}
-          searchCustomer={this.searchCustomer}
           customerList={customerList}
           getPageSize={getPageSize}
           isSendCustsServedByPostn={isSendCustsServedByPostn}

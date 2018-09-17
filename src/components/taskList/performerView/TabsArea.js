@@ -2,8 +2,8 @@
  * @Description: 页签切换显示
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:53:21
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 20:04:46
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-17 13:44:46
  */
 
 import React from 'react';
@@ -44,6 +44,7 @@ const TabsArea = (props) => {
     sendCustsServedByPostnResult,
     clearCreateTaskData,
   } = props;
+
   return (
     <div className={styles.tabsContainer} >
       <Tabs activeKey={performerViewCurrentTab} onChange={handleTabsChange}>

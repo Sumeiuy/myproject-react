@@ -3,8 +3,8 @@
  * @Author: hongguangqing
  * @Description: 执行者视图 model
  * @Date: 2018-08-20 13:15:45
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-21 16:57:13
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-17 14:29:43
  */
 import _ from 'lodash';
 import moment from 'moment';
@@ -593,11 +593,11 @@ export default {
       });
     },
     // 执行者视图头部根据姓名或经纪客户号查询客户
-    * queryCustomer({ payload }, { put }) {
+    * queryCustomer({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryCustomer, payload);
       yield put({
-        type: 'searchCustomer',
-        payload,
-        callType: SEARCH_CUSTOMER_FOR_PAGE_HEADER,
+        type: 'queryCustomerSuccess',
+        payload: resultData,
       });
     },
 
@@ -620,11 +620,11 @@ export default {
     },
 
     // 执行者视图右侧根据姓名或经纪客户号查询客户
-    * queryCustomerForServiceImplementation({ payload }, { put }) {
+    * queryCustomerForServiceImplementation({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryCustomer, payload);
       yield put({
-        type: 'searchCustomer',
-        payload,
-        callType: SEARCH_CUSTOMER_FOR_RIGHT_DETAIL,
+        type: 'queryCustomerForServiceImplementationSuccess',
+        payload: resultData,
       });
     },
 
