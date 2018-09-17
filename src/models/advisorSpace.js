@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-11 14:38:00
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-12 21:00:38
+ * @Last Modified time: 2018-09-15 14:42:40
  * @description models/advisorSpace.js
  */
 
@@ -16,11 +16,13 @@ export default {
     // 右侧详情
     detailInfo: {},
     // 智慧前厅列表
-    smartFrontHallData: {},
+    roomData: {},
+    // 新建时智慧前厅列表
+    createRoomData: {},
     // 新建提交结果
     submitResult: {},
     // 参与人列表
-    participantList: {},
+    participantData: {},
     // 取消预订结果
     cancelReservationResult: {},
     // 已预订时间段列表
@@ -44,11 +46,19 @@ export default {
       };
     },
     // 获取智慧前厅列表成功
-    getSmartFrontHallListSuccess(state, action) {
+    getRoomListSuccess(state, action) {
       const { payload: { resultData = {} }} = action;
       return {
         ...state,
-        smartFrontHallData: resultData,
+        roomData: resultData,
+      };
+    },
+    // 新建时获取智慧前厅列表成功
+    getCreateRoomListSuccess(state, action) {
+      const { payload: { resultData = {} }} = action;
+      return {
+        ...state,
+        createRoomData: resultData,
       };
     },
     // 新建提交成功
@@ -64,7 +74,7 @@ export default {
       const { payload: { resultData = {} }} = action;
       return {
         ...state,
-        participantList: resultData,
+        participantData: resultData,
       };
     },
     // 取消预订成功
@@ -94,12 +104,20 @@ export default {
       });
     },
     // 获取智慧前厅列表
-    * getSmartFrontHallList({ payload = {} }, { put, call }) {
-      const response = yield call(api.getSmartFrontHallList, payload);
-      yield put({
-        type: 'getSmartFrontHallListSuccess',
-        payload: response,
-      });
+    * getRoomList({ payload = {} }, { put, call }) {
+      const response = yield call(api.getRoomList, payload);
+      const { action } = payload;
+      if (action === 'CREATE') {
+        yield put({
+          type: 'getCreateRoomListSuccess',
+          payload: response,
+        });
+      } else {
+        yield put({
+          type: 'getRoomListSuccess',
+          payload: response,
+        });
+      }
     },
     // 新建提交
     * submitApply({ payload = {} }, { put, call }) {

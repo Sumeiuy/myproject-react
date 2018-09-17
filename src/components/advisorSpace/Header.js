@@ -2,8 +2,8 @@
  * @Author: zhangjun
  * @Date: 2018-09-11 20:39:27
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-13 13:40:54
- * @description 投顾空间申请头部筛选开发
+ * @Last Modified time: 2018-09-14 12:05:04
+ * @description 投顾空间申请头部筛选
  */
 
 import React, { PureComponent } from 'react';
@@ -27,8 +27,10 @@ export default class Header extends PureComponent {
     // 筛选后调用的Function
     filterCallback: PropTypes.func,
     // 智慧前厅列表
-    smartFrontHallData: PropTypes.object.isRequired,
-    getSmartFrontHallList: PropTypes.func.isRequired,
+    roomData: PropTypes.object.isRequired,
+    getRoomList: PropTypes.func.isRequired,
+    // 新建申请弹窗
+    creatModal: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -48,7 +50,7 @@ export default class Header extends PureComponent {
       value: '$args[0].value.value',
     },
   })
-  handleSmartFrontHallChange(option) {
+  handleRoomChange(option) {
     const { value: { value } } = option;
     this.props.filterCallback({'roomNo': value});
   }
@@ -65,10 +67,16 @@ export default class Header extends PureComponent {
     this.props.filterCallback({'orderDate': dateString});
   }
 
+  // 新建申请
+  @autobind
+  handleCreate() {
+    this.props.creatModal();
+  }
+
   render() {
     const {
-      smartFrontHallData: {
-        smartFrontHallList,
+      roomData: {
+        roomList,
       },
       empInfo: {
         empInfo: {
@@ -96,12 +104,12 @@ export default class Header extends PureComponent {
             <SingleFilter
               className={styles.filterFl}
               filterName='智慧前厅'
-              filterId= 'smartFrontHall'
+              filterId= 'room'
               dataMap={['value', 'label']}
-              filterOption={['smartFrontHall']}
-              data={smartFrontHallList}
+              filterOption={['room']}
+              data={roomList}
               value={roomNo}
-              onChange={this.handleSmartFrontHallChange}
+              onChange={this.handleRoomChange}
               needItemObj
             />
             <div className={styles.filterFl}>
