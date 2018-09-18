@@ -1,8 +1,8 @@
 /**
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-13 13:00:32
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-09-18 22:32:38
  * @description 投顾空间申请首页
  */
 
@@ -14,9 +14,14 @@ import _ from 'lodash';
 
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import Header from '../../components/advisorSpace/Header';
+import Detail from '../../components/advisorSpace/Detail';
+import ApplyList from '../../components/common/appList';
+import ApplyItem from '../../components/common/appList/ApplyItem';
 import { dva } from '../../helper';
 import withRouter from '../../decorators/withRouter';
+import { getStatusTagProps } from '../../components/advisorSpace/config';
 import seibelHelper from '../../helper/page/seibel';
+import logable from '../../decorators/logable';
 
 const effect = dva.generateEffect;
 
@@ -84,6 +89,8 @@ export default class AdvisorSpace extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      // 高亮项的下标索引
+      activeRowIndex: 0,
       // 是否显示新建弹窗
       isShowCreateModal: false,
     }
@@ -93,6 +100,20 @@ export default class AdvisorSpace extends PureComponent {
     this.getAppList();
     // 获取智慧前厅列表
     this.props.getSmartFrontHallList();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
+    }
   }
 
   @autobind
@@ -107,7 +128,53 @@ export default class AdvisorSpace extends PureComponent {
     const { getApplictionList } = this.props;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件,
-    getApplictionList({ ...params });
+    getApplictionList({ ...params }).then(this.getRightDetail);
+  }
+
+  // 获取右侧详情
+  @autobind
+  getRightDetail() {
+    const {
+      list,
+      page,
+      location: {
+        pathname,
+        query,
+        query:{
+          currentId
+        }
+      },
+    } = this.props;
+    const { replace } = this.context;
+    if (!_.isEmpty(list)) {
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const { pageNum, pageSize } = page;
+      let item = list[0];
+      let itemIndex = _.findIndex(list, o => o.id.toString() === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.filter(list, o => String(o.id) === currentId)[0];
+      } else {
+        // 不存在currentId
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
+          },
+        });
+        itemIndex = 0;
+      }
+      this.setState({
+        activeRowIndex: itemIndex,
+      });
+      this.props.getDetail({
+        id: item.id,
+      })
+    }
   }
 
   // 头部筛选后调用方法
@@ -128,17 +195,123 @@ export default class AdvisorSpace extends PureComponent {
     });
   }
 
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { location } = this.props;
+    const { replace } = this.context;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
+    });
+  }
+
+  // 切换每一页显示条数
+  @autobind
+  handlePageSizeChange(currentPageNum, changedPageSize) {
+    const { location } = this.props;
+    const { replace } = this.context;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        pageSize: changedPageSize,
+      },
+    });
+  }
+
+  // 点击列表每条的时候对应请求详情
+  @autobind
+  @logable({ type: 'ViewItem', payload: { name: '投顾空间申请' } })
+  handleListRowClick(record, index) {
+    const { id } = record;
+    const { location: { pathname, query, query: { currentId } } } = this.props;
+    const { replace } = this.context;
+    if (currentId === String(id)) {
+      return;
+    }
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
+    });
+    this.setState({ activeRowIndex: index });
+    this.getRightDetail();
+  }
+
+  @autobind
+  renderApplyItemSecondLine(data) {
+    return (data.appointTime && data.appointTime.slice(0, 10)) || '无';
+  }
+
+  @autobind
+  renderApplyItemThirdLine(data) {
+    return data.roomName || '--';
+  }
+
+  @autobind
+  handleCancelReservation(query) {
+    this.props.cancelReservation(query).then(this.handleCancelReservationSuccess);
+  }
+
+  @autobind
+  handleCancelReservationSuccess() {
+    const { cancelReservationResult } = this.props;
+    if (cancelReservationResult) {
+      this.getRightDetail();
+    }
+  }
+
+  // 渲染列表项里面的每一项
+  @autobind
+  renderListRow(record, index) {
+    const { activeRowIndex } = this.state;
+    const { statusId } = record;
+    const statusTags = [getStatusTagProps(statusId)];
+    return (
+      <ApplyItem
+        key={record.id}
+        data={record}
+        active={index === activeRowIndex}
+        onClick={this.handleListRowClick}
+        index={index}
+        pageName="advisorSpace"
+        iconType="kehu1"
+        subTypeName="投顾空间申请"
+        statusTags={statusTags}
+        showSecondLineInfo={this.renderApplyItemSecondLine}
+        showThirdLineInfo={this.renderApplyItemThirdLine}
+      />
+    );
+  }
+
   render() {
     const {
       location,
       applictionList,
+      applictionList: {
+        applicationBaseInfoList = [],
+        page = {},
+      },
       smartFrontHallData,
       getSmartFrontHallList,
+      detailInfo,
+      cancelReservation,
     } = this.props;
 
     const { empInfo } = this.context;
 
-    const isEmpty = _.isEmpty(applictionList.resultData);
+    const isEmpty = _.isEmpty(applictionList);
+
     // 头部筛选
     const topPanel = (
       <Header
@@ -150,15 +323,34 @@ export default class AdvisorSpace extends PureComponent {
       />
     );
 
+    // 生成页码器，此页码器配置项与Antd的一致
+    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const paginationOptions = {
+      current: parseInt(pageNum, 10),
+      total: page.totalCount,
+      pageSize: parseInt(pageSize, 10),
+      onChange: this.handlePageNumberChange,
+      onShowSizeChange: this.handlePageSizeChange,
+    };
+
     // 左侧列表,此处目前是占位，由别的前端开发
     const leftPanel = (
-      <div>leftPanel</div>
+      <ApplyList
+        list={applicationBaseInfoList}
+        renderRow={this.renderListRow}
+        pagination={paginationOptions}
+        page={page}
+      />
     );
 
     // 右侧详情，此处目前是占位，由别的前端开发
     const rightPanel = (
-      <div>rightPanel</div>
+      <Detail
+        detailInfo={detailInfo}
+        cancelReservation={this.handleCancelReservation}
+      />
     );
+
 
     return (
       <div>
