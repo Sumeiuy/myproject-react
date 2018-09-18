@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:31:58
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-18 14:17:53
+ * @Last Modified time: 2018-09-18 16:57:42
  * @description 投顾空间新建表单
  */
 
@@ -116,7 +116,7 @@ export default class AdvisorSpaceForm  extends PureComponent {
   // 点击预约日期
   @autobind
   handleOrderDateChange(date, dateString) {
-    const isRoomDisabled = _.isEmpty(date) ? true : false;
+    const isRoomDisabled = _.isEmpty(date);
     const { formData } = this.state;
     this.setState({
       formData: {
@@ -203,7 +203,8 @@ export default class AdvisorSpaceForm  extends PureComponent {
   @logable({ type: 'Click', payload: { name: '选择参与人', value: '$args[0]' } })
   handleSelectParticipant(newParticipant) {
     const { formData } = this.state;
-    if (_.isEmpty(newParticipant) || _.get(formData, 'participant.participantCode') !== newParticipant.participantCode) {
+    if (_.isEmpty(newParticipant)
+      || _.get(formData, 'participant.participantCode') !== newParticipant.participantCode) {
       this.setState({
         formData: {
           ...formData,
