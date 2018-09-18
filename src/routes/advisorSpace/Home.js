@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-17 16:48:24
+ * @Last Modified time: 2018-09-18 11:05:47
  * @description 投顾空间申请首页
  */
 
@@ -53,6 +53,8 @@ const mapDispatchToProps = {
   getParticipantList: effect('advisorSpace/getParticipantList', { forceFull: true }),
   // 取消预订
   cancelReservation: effect('advisorSpace/cancelReservation', { forceFull: true }),
+  // 清除Redux中的数据
+  clearReduxData: effect('advisorSpace/clearReduxData', { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -80,6 +82,8 @@ export default class AdvisorSpace extends PureComponent {
     // 取消预订
     cancelReservationResult: PropTypes.object.isRequired,
     cancelReservation: PropTypes.func.isRequired,
+    // 清除Redux中的数据
+    clearReduxData: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -91,7 +95,7 @@ export default class AdvisorSpace extends PureComponent {
     super(props);
     this.state = {
       // 是否显示新建弹窗
-      isShowCreateModal: true,
+      isShowCreateModal: false,
     }
   }
 
@@ -144,6 +148,10 @@ export default class AdvisorSpace extends PureComponent {
   @autobind
   handleCloseCreateModal() {
     this.setState({isShowCreateModal: false})
+    this.props.clearReduxData({
+      createRoomData: {},
+      participantData: {},
+    });
   }
 
   render() {

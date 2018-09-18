@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-11 20:39:27
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-14 12:05:04
+ * @Last Modified time: 2018-09-18 12:28:20
  * @description 投顾空间申请头部筛选
  */
 
@@ -73,10 +73,15 @@ export default class Header extends PureComponent {
     this.props.creatModal();
   }
 
+  @autobind
+  getRoomList(list) {
+    return _.map(list, item => ({ ...item, label: `${item.siteName}${item.roomName}`, value: item.roomNo }));
+  }
+
   render() {
     const {
       roomData: {
-        roomList,
+        smartFrontHallList: roomList,
       },
       empInfo: {
         empInfo: {
@@ -107,7 +112,7 @@ export default class Header extends PureComponent {
               filterId= 'room'
               dataMap={['value', 'label']}
               filterOption={['room']}
-              data={roomList}
+              data={this.getRoomList(roomList)}
               value={roomNo}
               onChange={this.handleRoomChange}
               needItemObj

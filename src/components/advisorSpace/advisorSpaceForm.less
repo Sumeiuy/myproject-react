@@ -20,6 +20,34 @@
     .scheduleWrapper {
       height: 90px;
       margin-bottom: 44px;
+      .scheduleLabel {
+        float: right;
+        .scheduleItem {
+          margin-left: 20px;
+          display: inline-block;
+          .unSelected {
+            border: 1px solid #999;
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            vertical-align: middle;
+          }
+          .selected {
+            background: #e4eefd;
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            vertical-align: middle;
+          }
+          span {
+            font-size: 14px;
+            color: #333;
+            margin-left: 6px;
+            display: inline-block;
+            vertical-align: middle;
+          }
+        }
+      }
       :global {
         .lego-schedule-timeBar {
           background: #f3f7fd;
@@ -100,6 +128,9 @@
   }
   .participant {
     :global {
+      .ant-form-item {
+        display: inline-block;
+      }
       .ant-input {
         width: 228px;
         height: 30px;

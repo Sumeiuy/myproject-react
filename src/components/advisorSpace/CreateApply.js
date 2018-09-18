@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:08:18
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-17 16:47:47
+ * @Last Modified time: 2018-09-18 10:30:08
  * @description 投顾空间新建申请
  */
 
@@ -38,8 +38,9 @@ export default class CreateApply extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      // 判断当前是新建申请 'CREATE' 还是 确认信息 'CONFIRM'
+      // 判断AdvisorSpaceForm页面是新建申请 'CREATE' 还是 确认信息 'CONFIRM'
       action: 'CREATE',
+      formData: {},
       // 预订日期
       orderDate: '',
       // 智慧前厅代码
@@ -64,6 +65,8 @@ export default class CreateApply extends PureComponent {
       remark: '',
       // 校验结果
       validateResult: true,
+      // 判断当前页面是否是新建申请页面，true：新建申请页面，false：确认页面，默认： true
+      isCreateApply: true,
       // 智慧前厅校验错误状态
       isShowRoomStatusError: false,
       // 时间段校验错误状态
@@ -91,7 +94,13 @@ export default class CreateApply extends PureComponent {
   // 处理表单数据变化
   @autobind
   handleChange(obj) {
-    this.setState(obj);
+    const { formData } = this.state;
+    this.setState({
+      formData: {
+        ...formData,
+        ...obj,
+      }
+    });
   }
 
   @autobind
@@ -110,11 +119,15 @@ export default class CreateApply extends PureComponent {
       if (this.isValidateError) return;
       if(!err) {
         const { theme, remark } = values;
+        const { formData } = this.state;
         this.setState({
-          theme,
-          remark,
-          action: 'CONFIRM',
-        })
+          formData: {
+            ...formData,
+            theme,
+            remark,
+          },
+          isCreateApply: false,
+        });
       }
     })
   }
@@ -122,7 +135,7 @@ export default class CreateApply extends PureComponent {
   // 校验数据
   @autobind
   validateData() {
-    const { roomNo, startTime, endTime, participant } = this.state;
+    const { formData: { roomNo, startTime, endTime, participant } } = this.state;
     if(_.isEmpty(roomNo)) {
       this.setState({isShowRoomStatusError: true});
       this.isValidateError = true;
@@ -141,18 +154,22 @@ export default class CreateApply extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '返回修改' } })
   handleEdit() {
-    console.warn('state', this.state);
-    this.setState({action: 'CREATE'});
+    this.setState({
+      action: 'UPDATE',
+      isCreateApply: true,
+    });
   }
 
   // 点击确定
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleConfirm() {
-    let params = _.pick(this.state, ['orderDate', 'startTime', 'endTime', 'roomNo', 'roomName', 'siteCode', 'siteName', 'theme', 'remark']);
+    let params = _.pick(this.state.formData, ['orderDate', 'startTime', 'endTime', 'roomNo', 'roomName', 'siteCode', 'siteName', 'theme', 'remark']);
     const {
-      outerPersonFlag,
-      participant,
+      formData: {
+        outerPersonFlag,
+        participant,
+      }
     } = this.state;
     // 组织机构，内部客户取接口返回的组织机构代码和名称，外部客户取所属营业部的代码和名称
     if (outerPersonFlag) {
@@ -168,34 +185,30 @@ export default class CreateApply extends PureComponent {
         outerPersonFlag: 'N',
       }
     }
-    this.props.submitApply(params).then((res) => {
-      const { submitResult: { applyId } } = this.props;
-      if (applyId) {
-        this.props.onClose();
-      }
-    })
+    this.props.submitApply(params).then(this.doCloseModalAfterSubmit);
   }
 
   @autobind
-  isCreateApply() {
-    const { action } = this.state;
-    // action 判断当前是新建申请 'CREATE' 还是 确认申请'CONFIRM'
-    return action === 'CREATE';
+  doCloseModalAfterSubmit() {
+    const { submitResult: { applyId } } = this.props;
+      if (applyId) {
+        this.handleCloseModalConfirm();
+      }
   }
 
   @autobind
   getModalTitle() {
-    return this.isCreateApply() ? '新建投顾空间申请' : '确认信息';
+    return this.state.isCreateApply ? '新建投顾空间申请' : '确认信息';
   }
 
   @autobind
   getModalSize() {
-    return this.isCreateApply() ? 'large' : 'normal';
+    return this.state.isCreateApply ? 'large' : 'normal';
   }
 
   @autobind
   getSelfBtnGroup() {
-    return this.isCreateApply() ?
+    return this.state.isCreateApply ?
       (
         <div>
           <Button className={styles.cancelButton} onClick={this.handleModalClose}>取消</Button>
@@ -222,9 +235,11 @@ export default class CreateApply extends PureComponent {
       isShowRoomStatusError,
       isShowPeriodStatusError,
       isShowParticipantStatusError,
+      isCreateApply,
+      action,
+      formData,
     } = this.state;
     const selfBtnGroup = this.getSelfBtnGroup();
-    const isCreateApply = this.isCreateApply();
     return (
       <CommonModal
         visible
@@ -240,6 +255,8 @@ export default class CreateApply extends PureComponent {
         {
           isCreateApply ?
             <AdvisorSpaceForm
+              action={action}
+              formData={formData}
               wrappedComponentRef={this.setAdvisorSpaceFormRef}
               createRoomData={createRoomData}
               getRoomList={getRoomList}
@@ -252,7 +269,7 @@ export default class CreateApply extends PureComponent {
             />
           :
             <ConfirmForm
-              formData={this.state}
+              formData={formData}
             />
         }
       </CommonModal>

@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:31:58
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-17 10:00:43
+ * @Last Modified time: 2018-09-18 10:59:26
  * @description 投顾空间带进度的下拉选择
  */
 
@@ -57,7 +57,7 @@ export default class ProgressSelect  extends PureComponent {
   }
 
   render() {
-    const { data, name, value, onChange, width, disabled, ...resetProps } = this.props;
+    const { data, value, onChange, disabled, ...resetProps } = this.props;
     const options = this.makeSelectOptions(data);
     return (
       <div className={styles.progressSelect}>

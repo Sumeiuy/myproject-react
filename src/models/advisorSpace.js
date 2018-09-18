@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-11 14:38:00
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-15 14:42:40
+ * @Last Modified time: 2018-09-18 11:02:12
  * @description models/advisorSpace.js
  */
 
@@ -84,7 +84,14 @@ export default {
         ...state,
         cancelReservationResult: resultData,
       };
-    }
+    },
+    clearReduxDataSuccess(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        ...payload,
+      };
+    },
   },
   effects: {
     // 获取申请单
@@ -142,7 +149,14 @@ export default {
         type: 'cancelReservationSuccess',
         payload: response,
       });
-    }
+    },
+    // 清空数据
+    * clearReduxData({ payload }, { put }) {
+      yield put({
+        type: 'clearReduxDataSuccess',
+        payload,
+      });
+    },
   },
   subscriptions: {
   },
