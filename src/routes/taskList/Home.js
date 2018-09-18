@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-18 10:33:06
+ * @Last Modified time: 2018-09-18 16:01:01
  * @description 任务管理首页
  */
 
@@ -733,13 +733,10 @@ export default class PerformerView extends PureComponent {
   getDetailOfPerformView(obj) {
     const {
       getTaskDetailBasicInfo,
-      // clearCustListForServiceImplementation,
     } = this.props;
     getTaskDetailBasicInfo({ taskId: obj.id });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
-    // 将执行者视图右侧搜索客户的列表数据清空
-    // clearCustListForServiceImplementation();
   }
 
   // 查询涨乐财富通的数据
