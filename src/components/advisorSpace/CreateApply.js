@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:08:18
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-18 10:30:08
+ * @Last Modified time: 2018-09-18 14:40:02
  * @description 投顾空间新建申请
  */
 
@@ -17,6 +17,7 @@ import AdvisorSpaceForm from './AdvisorSpaceForm';
 import ConfirmForm from './ConfirmForm';
 import confirm from '../common/confirm_';
 import { emp } from '../../helper';
+import { Switch } from 'antd';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 
 import styles from './createApply.less';
@@ -116,7 +117,9 @@ export default class CreateApply extends PureComponent {
     this.isValidateError = false;
     validateFields((err, values) => {
       this.validateData();
-      if (this.isValidateError) return;
+      if (this.isValidateError) {
+        return;
+      }
       if(!err) {
         const { theme, remark } = values;
         const { formData } = this.state;

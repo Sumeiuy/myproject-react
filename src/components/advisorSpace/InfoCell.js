@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2017-09-28 17:14:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-17 21:59:51
+ * @Last Modified time: 2018-09-18 14:38:49
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -13,12 +13,7 @@ export default function InfoCell(props) {
   return (
     <div className={`${styles.infoForm} ${className}`}>
       <div style={style} className={styles.infoFormLabel}>
-        {
-          required ?
-            <i>*</i>
-            :
-            null
-        }
+        { required ? <i>*</i> : null }
         {label}
         <span className={styles.colon}>:</span>
       </div>
