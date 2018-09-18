@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-13 13:00:32
+ * @Last Modified time: 2018-09-18 11:05:47
  * @description 投顾空间申请首页
  */
 
@@ -14,6 +14,8 @@ import _ from 'lodash';
 
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import Header from '../../components/advisorSpace/Header';
+import CreateApply from '../../components/advisorSpace/CreateApply';
+import ConfirmForm from '../../components/advisorSpace/ConfirmForm';
 import { dva } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import seibelHelper from '../../helper/page/seibel';
@@ -27,11 +29,13 @@ const mapStateToProps = state => ({
   // 右侧详情
   detailInfo: state.advisorSpace.detailInfo,
   // 智慧前厅列表
-  smartFrontHallData: state.advisorSpace.smartFrontHallData,
+  roomData: state.advisorSpace.roomData,
+  // 新建时智慧前厅列表
+  createRoomData: state.advisorSpace.createRoomData,
   // 新建提交结果
   submitResult: state.advisorSpace.submitResult,
   // 参与人列表
-  participantList: state.advisorSpace.participantList,
+  participantData: state.advisorSpace.participantData,
   // 取消预订结果
   cancelReservationResult: state.advisorSpace.cancelReservationResult,
 });
@@ -42,13 +46,15 @@ const mapDispatchToProps = {
   // 获取右侧详情
   getDetail: effect('advisorSpace/getDetail', { forceFull: true }),
   // 获取智慧前厅列表
-  getSmartFrontHallList: effect('advisorSpace/getSmartFrontHallList', { forceFull: true }),
+  getRoomList: effect('advisorSpace/getRoomList', { forceFull: true }),
   // 新建提交
   submitApply: effect('advisorSpace/submitApply', { forceFull: true }),
   // 获取参与人列表
   getParticipantList: effect('advisorSpace/getParticipantList', { forceFull: true }),
   // 取消预订
   cancelReservation: effect('advisorSpace/cancelReservation', { forceFull: true }),
+  // 清除Redux中的数据
+  clearReduxData: effect('advisorSpace/clearReduxData', { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -63,17 +69,21 @@ export default class AdvisorSpace extends PureComponent {
     detailInfo: PropTypes.object.isRequired,
     getDetail: PropTypes.func.isRequired,
     // 智慧前厅列表
-    smartFrontHallData: PropTypes.object.isRequired,
-    getSmartFrontHallList: PropTypes.func.isRequired,
+    roomData: PropTypes.object.isRequired,
+    getRoomList: PropTypes.func.isRequired,
+    // 新建时智慧前厅列表
+    createRoomData: PropTypes.object.isRequired,
     // 新建提交
     submitResult: PropTypes.object.isRequired,
     submitApply: PropTypes.func.isRequired,
     // 参与人列表
-    participantList: PropTypes.object.isRequired,
+    participantData: PropTypes.object.isRequired,
     getParticipantList: PropTypes.func.isRequired,
     // 取消预订
     cancelReservationResult: PropTypes.object.isRequired,
     cancelReservation: PropTypes.func.isRequired,
+    // 清除Redux中的数据
+    clearReduxData: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -92,7 +102,7 @@ export default class AdvisorSpace extends PureComponent {
   componentDidMount() {
     this.getAppList();
     // 获取智慧前厅列表
-    this.props.getSmartFrontHallList();
+    this.props.getRoomList();
   }
 
   @autobind
@@ -128,13 +138,36 @@ export default class AdvisorSpace extends PureComponent {
     });
   }
 
+  // 打开新建弹窗
+  @autobind
+  openCreateModalBoard() {
+    this.setState({isShowCreateModal: true})
+  }
+
+  // 关闭新建弹窗
+  @autobind
+  handleCloseCreateModal() {
+    this.setState({isShowCreateModal: false})
+    this.props.clearReduxData({
+      createRoomData: {},
+      participantData: {},
+    });
+  }
+
   render() {
     const {
       location,
       applictionList,
-      smartFrontHallData,
-      getSmartFrontHallList,
+      roomData,
+      getRoomList,
+      createRoomData,
+      participantData,
+      getParticipantList,
+      submitResult,
+      submitApply,
     } = this.props;
+
+    const { isShowCreateModal } = this.state;
 
     const { empInfo } = this.context;
 
@@ -143,10 +176,11 @@ export default class AdvisorSpace extends PureComponent {
     const topPanel = (
       <Header
         location={location}
-        smartFrontHallData={smartFrontHallData}
-        getSmartFrontHallList={getSmartFrontHallList}
+        roomData={roomData}
+        getRoomList={getRoomList}
         empInfo={empInfo}
         filterCallback={this.handleHeaderFilter}
+        creatModal={this.openCreateModalBoard}
       />
     );
 
@@ -170,6 +204,19 @@ export default class AdvisorSpace extends PureComponent {
           leftListClassName="advisorSpacelist"
           leftWidth={420}
         />
+        {
+          isShowCreateModal ?
+            <CreateApply
+              onClose={this.handleCloseCreateModal}
+              createRoomData={createRoomData}
+              getRoomList={getRoomList}
+              participantData={participantData}
+              getParticipantList={getParticipantList}
+              submitResult={submitResult}
+              submitApply={submitApply}
+            />
+            : null
+        }
       </div>
     );
   }
