@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:31:58
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-18 13:14:13
+ * @Last Modified time: 2018-09-18 14:17:53
  * @description 投顾空间新建表单
  */
 
@@ -63,8 +63,7 @@ export default class AdvisorSpaceForm  extends PureComponent {
     const { formData = {} } = props;
     const isCreate = this.isCreateApply();
     if (isCreate) {
-      return {
-      };
+      return {};
     }
 
     return {
@@ -75,21 +74,21 @@ export default class AdvisorSpaceForm  extends PureComponent {
       // 智慧前厅编号
       roomNo: _.get(formData, 'roomNo'),
       // 已预订的时间段
-      selectedRange: _.get(formData, 'selectedRange'),
+      selectedRange: _.get(formData, 'selectedRange') || [],
       // 预订的时间段
-      defaultRange: _.get(formData, 'defaultRange'),
+      defaultRange: _.get(formData, 'defaultRange') || {},
       // 智慧前厅名称
       roomTitle: _.get(formData, 'roomTitle'),
       // 是否是外部客户，false表示不是外部客户，true表示是外部客户，默认是false
       outerPersonFlag: _.get(formData, 'outerPersonFlag'),
       // 参与人
-      participant: _.get(formData, 'participant'),
-      participantCode: _.get(formData, 'participant.participantCode'),
-      participantName: _.get(formData, 'participant.participantName'),
+      participant: _.get(formData, 'participant') || {},
+      participantCode: _.get(formData, 'participant.participantCode') || '',
+      participantName: _.get(formData, 'participant.participantName') || '',
       // 主题
       theme: _.get(formData, 'theme'),
       // 备注
-      remark: _.get(formData, 'remark'),
+      remark: _.get(formData, 'remark') || '',
     };
   }
 
@@ -167,6 +166,7 @@ export default class AdvisorSpaceForm  extends PureComponent {
   @autobind
   handleRoomChange(value, option) {
     const { roomNo, roomName, siteCode, siteName, orderPeriodList } = option;
+    // 已预订时间，每个对象需要增加行标，所以增加index属性
     const selectedRange = _.map(orderPeriodList, item => ({ index: 0, ...item }));
     const roomTitle = `${siteName}${roomName}`;
     const { formData } = this.state;
