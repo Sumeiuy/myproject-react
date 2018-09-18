@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-17 15:37:59
+ * @Last Modified time: 2018-09-18 11:13:02
  */
 
 import React, { PureComponent } from 'react';
@@ -267,20 +267,45 @@ export default class ServiceImplementation extends PureComponent {
 
   @autobind
   getSnapshotBeforeUpdate(prevProps, prevState) {
-    const { location: { query: { custId: prevCustId } } } = prevProps;
-    const { location: { query: { custId: nextCustId } } } = this.props;
-    if (!_.isEmpty(nextCustId) && prevCustId !== nextCustId) {
+    const {
+      location: { query: { custId: prevCustId } },
+      currentId: prevApplyId,
+    } = prevProps;
+    const {
+      location: { query: { custId: nextCustId } },
+      currentId: nextApplyId,
+    } = this.props;
+    // 当location中存在custId时，表示进行了筛选过滤，如果此时切换列表项也应该刷新列表数据
+    const hasCustIdChange = prevCustId !== nextCustId;
+    const hasSwitchApply = prevApplyId !== nextApplyId;
+    let snapshot = { needCascadeCustList: false, needResetDefault: false };
+    if ( !_.isEmpty(nextCustId) && (hasCustIdChange || hasSwitchApply) ) {
       // 如果location中的客户信息变化了，则告知客户列表组件此时需要变化了
-      return { needCascadeCustList: true };
+      snapshot = {
+        ...snapshot,
+        needCascadeCustList: true,
+      };
     }
-    return { needCascadeCustList: false };
+    // 当前之前存在custID,下一次却不存在custId的时候需要将详情的下拉框数据改成默认的
+    if (_.isEmpty(nextCustId) && !_.isEmpty(prevCustId)) {
+      snapshot = {
+        ...snapshot,
+        needResetDefault: true,
+      };
+    }
+    return snapshot;
   }
 
   // 根据当前的任务状态去获取对应的服务状态，再去获取服务实施列表数据
   @autobind
   getTaskFlowData(pageSize, pageNum = 1) {
-    const { changeParameter, currentTask: { statusCode } } = this.props;
-    const stateList = getServiceState(statusCode);
+    const {
+      location: { query: { custId } },
+      changeParameter,
+      currentTask: { statusCode },
+    } = this.props;
+    // 如果url中存在custId，表示用户进行了单个客户的筛选，因此需要将详情页面中的服务状态选项改为不限
+    const stateList = _.isEmpty(custId) ? getServiceState(statusCode) : [];
     // 将服务实施的状态记到redux
     changeParameter({ state: stateList }).then(() => (
       this.queryTargetCustList({
@@ -347,7 +372,7 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   @autobind
-  handleCustListCascade({ needCascadeCustList }) {
+  handleCustListCascade({ needCascadeCustList, needResetDefault }) {
     // 如果location变化之后，需要判断是否进行客户列表联动
     if (needCascadeCustList) {
       const { location: { query: { custId } }, queryCustomer } = this.props;
@@ -355,6 +380,16 @@ export default class ServiceImplementation extends PureComponent {
       // 将客户选择到location中联动的那个客户,因为查询客户列表的接口需要客户rowId,
       // 所以必须先查一把客户信息
       queryCustomer({ keyWord: custId }).then(this.handleCustListCascadeAfterCust);
+    }
+    // 如果location不存在custId的时候，比如去除客户筛选
+    if (needResetDefault) {
+      const { currentTask: { statusCode } } = this.props;
+      this.props.changeParameter({
+        state: getServiceState(statusCode),
+        rowId: '',
+        activeIndex: '1',
+        preciseInputValue: '1',
+      });
     }
   }
 
@@ -650,6 +685,7 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   // 判断服务状态是否为完成
+  @autobind
   isServiceStateCompletion(state) {
     return state === POSTCOMPLETED_CODE;
   }

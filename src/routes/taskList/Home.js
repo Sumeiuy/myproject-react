@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-17 15:51:21
+ * @Last Modified time: 2018-09-18 10:33:06
  * @description 任务管理首页
  */
 
@@ -263,7 +263,7 @@ export default class PerformerView extends PureComponent {
         this.getDetailOfInitiator(record);
         break;
       case EXECUTOR:
-        this.loadDetailContent(record);
+        this.getDetailOfPerformView(record);
         break;
       case CONTROLLER:
         this.loadManagerViewDetailContent(record);
@@ -706,29 +706,19 @@ export default class PerformerView extends PureComponent {
     const { missionViewType, status, creatorId } = query;
     // 从query上筛选出需要的入参
     const params = _.pick(query, QUERY_PARAMS);
+    // 获取当前的视图类型
+    const currentViewType = getViewInfo(missionViewType).currentViewType;
     let finalPostData = {
       pageNum: _.parseInt(newPageNum, 10),
       pageSize: _.parseInt(newPageSize, 10),
-    };
-    finalPostData = {
-      ...params,
-      ...finalPostData,
-      // { orgId: 'ZZ001041' },
       orgId: emp.getOrgId(),
-      // 传过来的名字叫creatorId，传给后台需要改成creator
       creator: creatorId,
-    };
-
-    // 获取当前的视图类型
-    const currentViewType = getViewInfo(missionViewType).currentViewType;
-    // 入参中，添加排序关键字
-    finalPostData = {
-      ...finalPostData,
+      ...params,
+      // 传过来的名字叫creatorId，传给后台需要改成creator
       ...this.addSortParam(currentViewType, query),
+      status: status || STATE_EXECUTE_CODE,
+      missionViewType: currentViewType
     };
-    // 状态默认选中‘执行中’, status传50，其余传对应的code码
-    finalPostData.status = status || STATE_EXECUTE_CODE;
-    finalPostData = { ...finalPostData, missionViewType: currentViewType };
     return finalPostData;
   }
 
@@ -738,18 +728,18 @@ export default class PerformerView extends PureComponent {
     return _.includes(STATUS_MANAGER_VIEW, status);
   }
 
-  // 加载右侧panel中的详情内容
+  // 加载执行者视图右侧panel中的详情内容
   @autobind
-  loadDetailContent(obj) {
+  getDetailOfPerformView(obj) {
     const {
       getTaskDetailBasicInfo,
-      clearCustListForServiceImplementation,
+      // clearCustListForServiceImplementation,
     } = this.props;
     getTaskDetailBasicInfo({ taskId: obj.id });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
     // 将执行者视图右侧搜索客户的列表数据清空
-    clearCustListForServiceImplementation();
+    // clearCustListForServiceImplementation();
   }
 
   // 查询涨乐财富通的数据
