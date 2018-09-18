@@ -94,7 +94,7 @@ export default class BroadcastDetail extends PureComponent {
   render() {
     const { newItemDetail } = this.getItemDetail();
     const { audioFileList = [], otherFileList = [] } = newItemDetail;
-    const audioSource = audioFileList[0];
+    const audioSource = _.isEmpty(audioFileList) ? {} : audioFileList[0];
     return (
       <div className={styles.broadcastDetail_wrap}>
         <div className={styles.broadcastDetail}>
@@ -138,7 +138,7 @@ export default class BroadcastDetail extends PureComponent {
                 }
               </div>
               {
-                otherFileList.length ? (
+                otherFileList && otherFileList.length ? (
                   <span>
                     <div className={styles.downOther}>
                       <Icon className="icon" type="qitawenjian" style={{ color: '#cdcdcd' }} />

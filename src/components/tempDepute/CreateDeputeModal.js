@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 19:39:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-06 17:05:40
+ * @Last Modified time: 2018-09-11 15:08:20
  * @description 临时委托任务发起任务的弹出层
  */
 
@@ -80,6 +80,7 @@ export default class CreateDeputeModal extends PureComponent {
     this.props.checkApplyAbility({
       assigneeId,
       assigneeOrgId,
+      flowId: null, // 新建申请的校验需要传递flowId:null过去给校验接口
     }).then(this.doSubmitAfterValidate);
     // 记录校验日志
     logCommon({

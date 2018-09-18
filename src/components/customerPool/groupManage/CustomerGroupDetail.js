@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-14 13:14:48
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-09-14 20:02:46
  */
 
 import React, { PureComponent } from 'react';
@@ -512,6 +512,12 @@ export default class CustomerGroupDetail extends PureComponent {
   // 上传事件
   @autobind
   onChange(info) {
+    const uploadFile = info.file;
+    const fileSize = uploadFile.size;
+    if (fileSize === 0) {
+      message.error('文件大小不能为 0');
+      return;
+    }
     this.setState({
       importVisible: false,
       includeCustList: [],

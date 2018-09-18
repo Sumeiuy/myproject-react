@@ -4,81 +4,103 @@
   .swiperContainer {
     margin: 0 15px;
     padding: 10px 0 12px;
-  }
-  .listItem {
-    display: inline-flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    .contentBox {
-      position: relative;
-      width: 50px;
-      cursor: pointer;
-      .avatorWrap {
-        width: 100%;
-        height: 32px;
-        .avatorBox {
-          display: inline-block;
+    .listItem {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      .contentBox {
+        position: relative;
+        width: 50px;
+        cursor: pointer;
+        .avatorWrap {
+          width: 100%;
           height: 32px;
-          width: 32px;
-          border-radius: 50%;
+          position: relative;
+          .avatorBox {
+            display: inline-block;
+            height: 32px;
+            width: 32px;
+            border-radius: 50%;
+          }
+          .isDepute {
+            position: absolute;
+            right: 0;
+            top: 0;
+            text-align: center;
+            line-height: 18px;
+            font-size: 12px;
+            width: 18px;
+            height: 18px;
+            border-radius: 100%;
+            background-color: #fff;
+            color: #849cab;
+            border: 1px solid #a0bdce;
+          }
         }
-      }
-      .avatorImage {
-        width: 20px;
-        height: 20px;
-      }
-      .name {
-        height: 22px;
-        line-height: 22px;
-        font-size: 14px;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-      }
-      .status {
-        height: 18px;
-        line-height: 18px;
-        font-size: 12px;
-      }
-      p {
-        margin: 0;
-        white-space: nowrap;
-      }
-      .triangle {
-        position: absolute;
-        bottom: -19px;
-        left: 50%;
-        z-index: 3;
-        margin-left: -7px;
-        display: none;
-        width: 14px;
-        height: 14px;
-        border-top: 1px solid #aaa;
-        border-right: 1px solid #aaa;
-        background: #fff;
-        transform: rotate(-45deg);
-      }
-    }
-    :global {
-      .iconfont {
-        display: inline-block;
-        font-size: 20px;
-        color: #bcccd6;
-      }
-    }
-    &.active {
-      .avatorBox {
-        background-color: #4786f7;
-        box-shadow: 0 0 6px #4786f8;
-      }
-      .triangle {
-        display: inline-block;
+        .avatorImage {
+          width: 20px;
+          height: 20px;
+        }
+        .name {
+          height: 22px;
+          line-height: 22px;
+          font-size: 14px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+        .status {
+          height: 18px;
+          line-height: 18px;
+          font-size: 12px;
+        }
+        p {
+          margin: 0;
+          white-space: nowrap;
+        }
+        .triangle {
+          position: absolute;
+          bottom: -19px;
+          left: 50%;
+          z-index: 3;
+          margin-left: -7px;
+          display: none;
+          width: 14px;
+          height: 14px;
+          border-top: 1px solid #aaa;
+          border-right: 1px solid #aaa;
+          background: #fff;
+          transform: rotate(-45deg);
+        }
       }
       :global {
         .iconfont {
-          color: #fff;
+          display: inline-block;
+          font-size: 20px;
+          color: #bcccd6;
+        }
+      }
+      &.active {
+        .avatorWrap {
+          .isDepute {
+            background-color: #f59c23;
+            color: #fff;
+            border: 1px solid #f59c23;
+          }
+        }
+        .avatorBox {
+          background-color: #4786f7;
+          box-shadow: 0 0 6px #4786f8;
+        }
+        .triangle {
+          display: inline-block;
+        }
+        :global {
+          .iconfont {
+            color: #fff;
+          }
         }
       }
     }

@@ -274,7 +274,7 @@ export const getRouterData = (app) => {
     },
     // 从 /taskList 页面，点击右上角新建进入
     '/customerPool/taskFlow': {
-      component: dynamicWrapper(app, ['customerPool'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskFeedback'], () =>
         import('../routes/customerPool/TaskFlow' /* webpackChunkName: "customerPool_taskFlow" */)),
     },
 
@@ -565,6 +565,11 @@ export const getRouterData = (app) => {
     '/tempDeputeReject': {
       component: dynamicWrapper(app, ['tempDepute'], () =>
         import('../routes/tempDepute/RejectHome') /* webpackChunkName: "tempDepute_reject" */),
+    },
+    // 投顾空间申请
+    '/advisorSpace': {
+      component: dynamicWrapper(app, ['advisorSpace'], () =>
+        import('../routes/advisorSpace/Home') /* webpackChunkName: "advisorSpace" */),
     },
   };
   return routerConfig;

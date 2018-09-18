@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-09-12 17:11:52
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-09-14 14:38:48
+ * @Last Modified time: 2018-09-17 17:14:58
  */
 
 import React from 'react';
@@ -14,7 +14,7 @@ import classnames from 'classnames';
 import styles from './commonCell.less';
 
 export default function CommonCell(props) {
-  const { isNeedTitle, title, icon, data, isNeedExtra, extraText, onExtraClick } = props;
+  const { isNeedTitle, title, icon, data, isNeedExtra, extraText, onExtraClick, onValueClick } = props;
   if (_.isEmpty(data)) {
     return null;
   }
@@ -24,7 +24,7 @@ export default function CommonCell(props) {
     return (
       <li className={styles.item} key={code}>
         <div title={name}>{name}</div>
-        <div title={title || value}>{value}</div>
+        <div onClick={() => onValueClick(item)} title={title || value}>{value}</div>
       </li>
     );
   });
@@ -69,6 +69,8 @@ CommonCell.propTypes = {
   extraText: PropTypes.string,
   // 额外的点击事件
   onExtralick: PropTypes.func,
+  // value 的点击事件
+  onValueClick: PropTypes.func,
 };
 
 CommonCell.defaultProps = {
@@ -79,4 +81,5 @@ CommonCell.defaultProps = {
   isNeedExtra: false,
   extraText: '更多',
   onExtralick: _.noop,
+  onValueClick: _.noop,
 };

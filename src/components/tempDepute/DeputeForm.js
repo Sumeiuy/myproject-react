@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-06 17:54:11
+ * @Last Modified time: 2018-09-12 19:11:06
  * @description 临时任务委托表单
  */
 
@@ -333,6 +333,7 @@ export default class DeputeForm extends PureComponent {
               getPopupContainer={this.getWrapRef}
             />
             <SingleFilter
+              disabled={disablePage}
               defaultLabel="请选择受托人"
               className={styles.assignee}
               useCustomerFilter
@@ -359,6 +360,7 @@ export default class DeputeForm extends PureComponent {
         <div className={styles.modContent}>
           <InfoCell label="委托期限" labelWidth={112}>
             <DateRangePicker
+              disabled={disablePage}
               filterValue={[formData.deputeTimeStart, formData.deputeTimeEnd]}
               onChange={this.handleDeputePeriodChange}
               disabledStart={this.disabledStart}

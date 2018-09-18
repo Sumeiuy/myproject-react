@@ -36,6 +36,7 @@ import accountLimitAPI from './accountLimit';
 import labelManagementAPI from './labelManagement';
 import tempDeputeAPI from './tempDepute';
 import newHomeAPI from './newHome';
+import advisorSpaceAPI from './advisorSpace';
 
 const api = apiCreator();
 
@@ -149,6 +150,8 @@ const exported = {
   tempDepute: tempDeputeAPI(api),
   // ========== 丰富首页内容
   newHome: newHomeAPI(api),
+  // ========== 投顾空间申请
+  advisorSpace: advisorSpaceAPI(api),
 };
 
 export default exported;
@@ -191,4 +194,5 @@ export const {
   labelManagement,
   tempDepute,
   newHome,
+  advisorSpace,
 } = exported;

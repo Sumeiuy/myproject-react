@@ -571,6 +571,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 审批人弹窗点击确定
   @autobind
   handleApproverModalOK(auth) {
+    if (_.isEmpty(auth)) {
+      message.error('请选择审批人');
+      return false;
+    }
     const { saveProtocolData, doApprove } = this.props;
     const { location: { query } } = this.props;
     const { protocolData } = this.state;
@@ -853,6 +857,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
               approverList={flowAuditors}
               onClose={() => this.closeModal('approverModal')}
               onOk={this.handleApproverModalOK}
+              afterConfirmCloseModal={false}
             />
             :
             null

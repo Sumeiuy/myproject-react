@@ -1,0 +1,135 @@
+.Header {
+  font-size: 14px;
+  height: auto;
+  min-height: 30px;
+  display: flex;
+  justify-content: space-between;
+  .filterBox {
+    flex: 1;
+    display: flex;
+    position: relative;
+    &:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+    .filter {
+      flex: 1;
+    }
+    .filterFl {
+      display: inline-block;
+      vertical-align: middle;
+      height: 30px;
+      margin-right: 10px;
+
+      .filterParticipant {
+        :global {
+          .ant-input {
+            color: #333;
+            outline: none;
+
+            &:focus {
+              box-shadow: 0 0 0 0 #fff;
+              border-color: #108ee9;
+            }
+          }
+        }
+      }
+
+      .filterOrderDateWrapper {
+        position: relative;
+        vertical-align: bottom;
+        font-size: 14px;
+        padding: 0 20px 0 0;
+        height: 30px;
+        border-radius: 4px;
+        color: #333;
+        border: 1px solid transparent;
+        transition: border-color .5s ease-in .1s;
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+          color: #333;
+          border-color: #108ee9;
+        }
+
+        .label {
+          display: inline-block;
+          font-size: 14px;
+          color: #333;
+          padding-left: 5px;
+          transform: translateY(-2px);
+          vertical-align: middle;
+        }
+
+        .orderDate {
+          width: 120px;
+        }
+
+        :global {
+          .ant-input {
+            background-color: transparent;
+            color: #333;
+            border: none;
+
+            &:focus {
+              box-shadow: 0 0 0 0 #fff;
+            }
+          }
+        }
+      }
+    }
+  }
+  :global {
+    .commonBtn {
+      margin: 0 6px 0 5px;
+    }
+    //select边框
+    .ant-select {
+      width: auto;
+      min-width: 70px;
+      margin-right: 20px;
+      .ant-select-selection {
+        background-color: transparent;
+        border: 1px solid transparent;
+      }
+      // 字体颜色大小
+      .ant-select-selection__rendered div,
+      .ant-select-selection__rendered span {
+        color: #33393c;
+        font-size: 14px;
+        padding-right: 25px;
+      }
+      &.ant-select-open .ant-select-selection {
+        border: 1px solid #348cf0;
+        box-shadow: 0 0 0 2px rgba(16, 142, 233, 0.2);
+      }
+    }
+
+    // 兼容ie下拉图标旋转样式
+    .ant-select-arrow {
+      transform: scale(0.75);
+    }
+
+    //多选下拉小图标样式
+    .ant-select-arrow:before {
+      content: "";
+      height: 0;
+      position: absolute;
+      right: 2px;
+      top: 5px;
+      width: 0;
+      border: none;
+      border-top: 10px solid #c2c2c2;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+    }
+    //清楚单选select小图标旋转
+    .ant-select-open .ant-select-arrow:before {
+      -webkit-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+  }
+}

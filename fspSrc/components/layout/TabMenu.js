@@ -58,11 +58,11 @@ export default class TabMenu extends PureComponent {
             [styles.subItem]: true,
             [styles.activeItem]: this.isActiveMenu(path, item, level, true),
           })}
+          onClick={() => this.handleLinkClick(item)}
         >
           <div
             title={item.name}
             className={styles.linkItem}
-            onClick={() => this.handleLinkClick(item)}
           >
             {item.name}
           </div>

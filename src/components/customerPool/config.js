@@ -336,8 +336,8 @@ export const buyAmtFilterList = [
   { labelName: '净佣金额', filterField: 'purRake' },
   { labelName: '产品净手续费', filterField: 'saleFare' },
   { labelName: '净转入资产', filterField: 'purFinAset' },
-  { labelName: '收益', filterField: 'profit' },
-  { labelName: '收益率', filterField: 'profitRate', unit: '%' },
+  { labelName: '收益', filterField: 'pftAmt' },
+  { labelName: '收益率', filterField: 'maxCostRate', unit: '%' },
 ];
 
 // 资金范围的组件集合

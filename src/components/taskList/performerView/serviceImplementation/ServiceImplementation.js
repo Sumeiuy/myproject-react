@@ -2,8 +2,8 @@
  * @Description: 服务实施
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-10 13:53:11
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-14 16:15:31
  */
 
 import React, { PureComponent } from 'react';
@@ -183,6 +183,16 @@ export default class ServiceImplementation extends PureComponent {
     return null;
   }
 
+  static getSnapshotBeforeUpdate(prevProps, prevState) {
+    const { location: { query: { prevCustId } } } = prevProps;
+    const { location: { query: { nextCustId } } } = this.props;
+    if (prevCustId !== nextCustId) {
+      // 如果location中的客户信息变化了，则告知客户列表组件此时需要变化了
+      return { needCascadeCustList: true };
+    }
+    return { needCascadeCustList: false };
+  }
+
   constructor(props) {
     super(props);
     const { targetCustList } = props;
@@ -211,7 +221,7 @@ export default class ServiceImplementation extends PureComponent {
     window.onFspSidebarbtn(this.handleFspLeftMenuClick);
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState, snapshot) {
     const { isFoldFspLeftMenu } = this.state;
     const {
       isFold, getPageSize, currentId,
@@ -256,6 +266,8 @@ export default class ServiceImplementation extends PureComponent {
       setTimeout(this.intialGuide, 500);
       store.set(FIRSTUSECOLLAPSE_PERFORMERVIEW, 'NO');
     }
+    // 增加一个判断如果loaction中custId变化的时候，需要做联动
+    this.handleCustListCascade(snapshot);
   }
 
   componentWillUnmount() {
@@ -331,6 +343,40 @@ export default class ServiceImplementation extends PureComponent {
       scrollToElement: true,
       disableInteraction: true,
     }).start();
+  }
+
+  @autobind
+  handleCustListCascade({ needCascadeCustList }) {
+    // 如果location变化之后，需要判断是否进行客户列表联动
+    if (needCascadeCustList) {
+      const { loaction: { query: { custId } }, searchCustomer } = this.props;
+      // 客户列表联动首先要将服务状态切换成 不限
+      // 将客户选择到location中联动的那个客户,因为查询客户列表的接口需要客户rowId,
+      // 所以必须先查一把客户信息
+      searchCustomer(custId).then(this.handleCustListCascadeAfterCust);
+    }
+  }
+
+  @autobind
+  handleCustListCascadeAfterCust() {
+    const { customerList = [], changeParameter } = this.props;
+    // 因为是传递custId进行的精准查询，所以取第一条客户数据
+    const cust = _.first(customerList);
+    if (!_.isEmpty(cust)) {
+      // 此时需要设置 服务状态 和 cust
+      changeParameter({
+        state: [],
+        rowId: cust.rowId,
+        activeIndex: '1',
+        preciseInputValue: '1',
+      }).then(() => {
+        this.queryTargetCustList({
+          state: [],
+          rowId: cust.rowId,
+          pageNum: 1,
+        });
+      });
+    }
   }
 
   // FSP折叠菜单按钮被点击

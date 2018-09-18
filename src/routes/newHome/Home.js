@@ -2,7 +2,7 @@
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-09-14 14:52:26
+ * @Last Modified time: 2018-09-17 17:37:54
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ import moment from 'moment';
 import withRouter from '../../decorators/withRouter';
 import ViewAndCombination from '../../components/newHome/ViewAndCombination';
 import CommonCell from '../../components/newHome/CommonCell';
+import ChartsTab from '../../components/newHome/ChartsTab';
 
 import { dva } from '../../helper';
 import styles from './home.less';
@@ -33,6 +34,9 @@ const effects = {
   queryChiefView: 'newHome/queryChiefView',
   // 组合推荐
   queryIntroCombination: 'newHome/queryIntroCombination',
+  getManagerIndicators: 'customerPool/getManagerIndicators',
+  getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
+  getCustCount: 'customerPool/getCustCount',
 };
 
 const mapStateToProps = state => ({
@@ -46,6 +50,12 @@ const mapStateToProps = state => ({
   chiefView: state.newHome.chiefView,
   // 组合推荐
   introCombination: state.newHome.introCombination,
+  custRange: state.customerPool.custRange, // 客户池用户范围
+  cycle: state.app.dict.kPIDateScopeType,  // 统计周期
+  empInfo: state.app.empInfo, // 职位信息
+  performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
+  managerIndicators: state.customerPool.managerIndicators, // 经营指标
+  custCount: state.customerPool.custCount, // （经营指标）新增客户指标
 });
 
 const mapDispatchToProps = {
@@ -60,7 +70,14 @@ const mapDispatchToProps = {
   queryChiefView: dispatch(effects.queryChiefView, { forceFull: true }),
   // 组合推荐
   queryIntroCombination: dispatch(effects.queryIntroCombination, { forceFull: true }),
+  getCustCount: dispatch(effects.getCustCount, { loading: false }),
+  getManagerIndicators: dispatch(effects.getManagerIndicators, { loading: false }),
+  getPerformanceIndicators: dispatch(effects.getPerformanceIndicators, { loading: false }),
 };
+
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
+
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class Home extends PureComponent {
@@ -72,6 +89,28 @@ export default class Home extends PureComponent {
     productCalendar: PropTypes.array.isRequired,
     chiefView: PropTypes.object.isRequired,
     introCombination: PropTypes.array.isRequired,
+    location: PropTypes.object.isRequired,
+    performanceIndicators: PropTypes.object,
+    managerIndicators: PropTypes.object,
+    getManagerIndicators: PropTypes.func.isRequired,
+    getPerformanceIndicators: PropTypes.func.isRequired,
+    custRange: PropTypes.array,
+    cycle: PropTypes.array,
+    empInfo: PropTypes.object,
+    custCount: PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.array,
+    ]),
+    getCustCount: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+    managerIndicators: EMPTY_OBJECT,
+    custRange: EMPTY_LIST,
+    cycle: EMPTY_LIST,
+    empInfo: EMPTY_OBJECT,
+    performanceIndicators: EMPTY_OBJECT,
+    custCount: EMPTY_LIST,
   }
 
   componentDidMount() {
@@ -98,12 +137,16 @@ export default class Home extends PureComponent {
     queryIntroCombination();
   }
 
-  componentWillReceiveProps(nextProps) {
-  }
-
   @autobind
   handleMoreClick() {
     console.warn('点击了更多');
+  }
+
+  // 产品日历的数值点击事件
+  @autobind
+  handleProductCalendarValueClick(item) {
+    console.warn('dianjile', item);
+    // http://168.61.9.158:15902/htsc-product-base/financial_product_query.do?router=homePage
   }
 
   render() {
@@ -114,7 +157,18 @@ export default class Home extends PureComponent {
       productCalendar,
       chiefView,
       introCombination,
+      location,
+      custRange,
+      performanceIndicators,
+      managerIndicators,
+      cycle,
+      empInfo,
+      custCount,
+      getCustCount,
+      getManagerIndicators,
+      getPerformanceIndicators
     } = this.props;
+
     const keyAttentionProps = {
       title: '重点关注',
       data: keyAttention,
@@ -129,6 +183,7 @@ export default class Home extends PureComponent {
       icon: 'calendar',
       title: '产品日历',
       data: productCalendar,
+      onValueClick: this.handleProductCalendarValueClick,
     }
     const viewAndCombinationProps = {
       push,
@@ -137,6 +192,18 @@ export default class Home extends PureComponent {
         combination: introCombination,
       },
     }
+    const chartsTabProps = {
+      location,
+      custRange,
+      performanceIndicators,
+      managerIndicators,
+      cycle,
+      empInfo,
+      custCount,
+      getCustCount,
+      getManagerIndicators,
+      getPerformanceIndicators
+    };
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
@@ -150,7 +217,9 @@ export default class Home extends PureComponent {
         </div>
         <div className={styles.mainContent}>
           <div className={styles.shotCutLink}>快捷导航</div>
-          <div className={styles.tabPanesContainer}>tab信息</div>
+          <div className={styles.tabPanesContainer}>
+            <ChartsTab {...chartsTabProps} />
+          </div>
         </div>
         <div className={styles.rightContent}>
           <div className={styles.productDateLink}>

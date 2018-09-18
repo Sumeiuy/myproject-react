@@ -296,20 +296,22 @@ export default class MatchArea extends PureComponent {
       listItem,
     } = this.props;
     const { name, id, unit = '', hasCycle } = item;
-    const currentVal = listItem[id];
-    if (!_.isNull(currentVal)) {
+    let renderValue = listItem[id];
+    if (!_.isNull(renderValue)) {
+      if (unit === '%') {
+        renderValue = Number(renderValue * 100).toFixed(2);
+      }
+      if (unit === '元') {
+        renderValue = number.thousandFormat(Number(renderValue).toFixed(2), false);
+      }
       return (
-        <li kye={`${currentVal}${id}${listItem.custId}`} title={currentVal}>
+        <li kye={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
           <span>
             <i className="label">
               {hasCycle ? this.convertCycle(id) : ''}
               {name}：
             </i>
-            {
-              unit === '元' ?
-                number.thousandFormat(Number(currentVal).toFixed(2), false) :
-                currentVal
-            }{unit}
+            {renderValue}{unit}
           </span>
         </li>
       );
