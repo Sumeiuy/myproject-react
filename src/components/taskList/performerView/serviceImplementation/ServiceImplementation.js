@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-18 11:13:02
+ * @Last Modified time: 2018-09-18 15:33:48
  */
 
 import React, { PureComponent } from 'react';
@@ -389,6 +389,7 @@ export default class ServiceImplementation extends PureComponent {
         rowId: '',
         activeIndex: '1',
         preciseInputValue: '1',
+        assetSort: 'desc',
       });
     }
   }
