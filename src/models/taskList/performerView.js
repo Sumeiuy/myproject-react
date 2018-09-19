@@ -3,8 +3,8 @@
  * @Author: hongguangqing
  * @Description: 执行者视图 model
  * @Date: 2018-08-20 13:15:45
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-21 16:57:13
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-18 10:30:43
  */
 import _ from 'lodash';
 import moment from 'moment';
@@ -286,12 +286,12 @@ export default {
     },
     // 清空已经查询出来的客户数据
     // 执行者视图右侧搜索客户
-    clearCustListForServiceImplementation(state) {
-      return {
-        ...state,
-        custListForServiceImplementation: EMPTY_LIST,
-      };
-    },
+    // clearCustListForServiceImplementation(state) {
+    //   return {
+    //     ...state,
+    //     custListForServiceImplementation: EMPTY_LIST,
+    //   };
+    // },
     resetMotServiceRecord(state) {
       return {
         ...state,
@@ -424,7 +424,7 @@ export default {
       // 左侧列表项被点击时，清除执行者视图服务实施客户列表的当前选中客户状态信息和筛选值、页码
       if (isClear) {
         // 清除查询上次目标客户列表的条件
-        yield put({ type: 'clearParameter' });
+        // yield put({ type: 'clearParameter' });
         // 当客户列表选中的客户流水变化时，清除打电话显示服务记录的标志
         yield put({
           type: 'app/resetServiceRecordInfo',
@@ -593,11 +593,11 @@ export default {
       });
     },
     // 执行者视图头部根据姓名或经纪客户号查询客户
-    * queryCustomer({ payload }, { put }) {
+    * queryCustomer({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryCustomer, payload);
       yield put({
-        type: 'searchCustomer',
-        payload,
-        callType: SEARCH_CUSTOMER_FOR_PAGE_HEADER,
+        type: 'queryCustomerSuccess',
+        payload: resultData,
       });
     },
 
@@ -620,11 +620,11 @@ export default {
     },
 
     // 执行者视图右侧根据姓名或经纪客户号查询客户
-    * queryCustomerForServiceImplementation({ payload }, { put }) {
+    * queryCustomerForServiceImplementation({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryCustomer, payload);
       yield put({
-        type: 'searchCustomer',
-        payload,
-        callType: SEARCH_CUSTOMER_FOR_RIGHT_DETAIL,
+        type: 'queryCustomerForServiceImplementationSuccess',
+        payload: resultData,
       });
     },
 

@@ -2,8 +2,8 @@
  * @Description: 服务实施的头部 筛选、排序和准确查找
  * @Author: WangJunjun
  * @Date: 2018-05-22 22:49:02
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-07-25 15:30:58
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-17 15:28:40
  */
 
 import React from 'react';
@@ -35,12 +35,12 @@ export default function Header(props) {
     handleStateChange,
     customerList,
     handleCustomerChange,
-    searchCustomer,
     handleAssetSort,
     handlePreciseQueryChange,
     handlePreciseQueryEnterPress,
     parameter,
     targetCustList,
+    queryCustomer,
   } = props;
   const { state, assetSort, rowId, preciseInputValue } = parameter;
   const { page: { totalCount }, list } = targetCustList;
@@ -57,11 +57,12 @@ export default function Header(props) {
   };
   const handleSearchCustomer = (value) => {
     if (value) {
-      searchCustomer(value);
+      queryCustomer({ keyWord: value });
     }
   };
   const stateData = [STATE_UNLIMITED, ...dict.serveStatus];
   const { custId = '' } = _.find(customerList, { rowId }) || {};
+
   return (
     <div className={styles.header}>
       <MultiFilter
