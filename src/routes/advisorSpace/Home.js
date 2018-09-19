@@ -1,13 +1,8 @@
 /**
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
-<<<<<<< HEAD
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-19 17:32:29
-=======
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 17:46:54
->>>>>>> c73c6e414c7e9b10b426ea584a51df093fa85550
+ * @Last Modified time: 2018-09-19 18:37:06
  * @description 投顾空间申请首页
  */
 
