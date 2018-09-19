@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-19 10:02:27
+ * @Last Modified time: 2018-09-19 10:27:26
  * @description 投顾空间申请首页
  */
 
@@ -177,10 +177,10 @@ export default class AdvisorSpace extends PureComponent {
       // 因此此时获取Detail
       const { pageNum, pageSize } = page;
       let item = applicationBaseInfoList[0];
-      let itemIndex = _.findIndex(applicationBaseInfoList, o => o.id.toString() === currentId);
+      let itemIndex = _.findIndex(applicationBaseInfoList, o => String(o.id) === currentId);
       if (!_.isEmpty(currentId) && itemIndex > -1) {
         // 此时url中存在currentId
-        item = _.filter(applicationBaseInfoList, o => String(o.id) === currentId)[0];
+        item = _.find(applicationBaseInfoList, o => String(o.id) === currentId);
       } else {
         // 不存在currentId
         replace({

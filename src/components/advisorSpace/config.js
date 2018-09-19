@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-09-14 14:04:07
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-18 16:01:37
+ * @Last Modified time: 2018-09-19 10:27:42
  */
 import _ from 'lodash';
 
@@ -41,4 +41,4 @@ const getStatusTagProps = code => _.find(STATUS_TAGS, item => item.code === code
 export {
   advisorSpace,
   getStatusTagProps,
-}
+};
