@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 13:57:57
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-18 18:30:15
+ * @Last Modified time: 2018-09-19 10:03:41
  * @description 线上销户详情页面
  */
 import React from 'react';

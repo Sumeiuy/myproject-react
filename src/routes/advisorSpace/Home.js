@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-19 09:56:16
+ * @Last Modified time: 2018-09-19 10:02:27
  * @description 投顾空间申请首页
  */
 
@@ -109,6 +109,20 @@ export default class AdvisorSpace extends PureComponent {
     this.getAppList();
     // 获取智慧前厅列表
     this.props.getRoomList();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
+    }
   }
 
   componentDidUpdate(prevProps) {

@@ -43,6 +43,10 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: generateProxy([
+      prefix + '/groovynoauth/fsp/biz/advisorSpace',
+      {
+        target: 'http://168.61.8.81:5090', // DOClever
+      },
       '/finereport/ReportServer', // 报表中心
       {
         target: 'http://168.61.8.82:5086', // uat
