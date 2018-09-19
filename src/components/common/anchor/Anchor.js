@@ -9,7 +9,7 @@ import addEventListener from 'rc-util/lib/Dom/addEventListener';
 import { Affix } from 'antd';
 import AnchorLink from './AnchorLink';
 import getScroll from 'antd/lib/_util/getScroll';
-import throttleByAnimationFrame from 'antd/lib/_util/throttleByAnimationFrame';
+import raf from 'raf';
 import { fspContainer } from '../../../config';
 import './index.less';
 import logable from '../../../decorators/logable';
@@ -49,7 +49,7 @@ function easeInOutCubic(t, b, c, d) {
   return cc / 2 * ((t -= 2) * t * t + 2) + b;
 }
 
-const reqAnimFrame = throttleByAnimationFrame();
+// const reqAnimFrame = throttleByAnimationFrame();
 export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callback = () => { }) {
 
   let scrollTopValue;
@@ -79,12 +79,12 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
     }
 
     if (time < 450) {
-      reqAnimFrame(frameFunc);
+      raf(frameFunc);
     } else {
       callback();
     }
   };
-  reqAnimFrame(frameFunc);
+  raf(frameFunc);
   // 搬了antd/Anchor去掉这一行
   // history.pushState(null, '', href);
 }

@@ -62,9 +62,16 @@ export default class ChartBarStack extends PureComponent {
   constructor(props) {
     super(props);
     this.custRange = data.convertCustRange2Array(props.custRange);
-    // 堆数据进行初步的分析
-    // 初始化的时候，可能不存在值
-    this.initialData(props, true);
+    // 对数据进行初步的分析
+    const chartRelativeState = this.getStateFromProps(props);
+    this.state = {
+      chartName: _.get(props, 'chartData.indiModel.name') || '',
+      // 鼠标hover的坐标刻度的下标值
+      mouseoverLabelIndex: '',
+      // 图标区域的高度
+      wrapperH: 0,
+      ...chartRelativeState,
+    };
   }
 
   componentDidMount() {
@@ -78,7 +85,7 @@ export default class ChartBarStack extends PureComponent {
     const { scope: preScope, chartData: preData, custRange: preCustRange } = this.props;
     const { scope, chartData, custRange } = nextProps;
     if (!_.isEqual(scope, preScope) || !_.isEqual(chartData, preData)) {
-      this.initialData(nextProps);
+      this.updateStateFromProps(nextProps);
     }
     // 切换汇报方式custRange发生变化
     if (!_.isEqual(custRange, preCustRange)) {
@@ -92,6 +99,79 @@ export default class ChartBarStack extends PureComponent {
       const dom = this.legendDom;
       resize.uninstall(dom);
     }
+  }
+
+  // 根据 props 获取 state 值
+  @autobind
+  getStateFromProps(props) {
+    const { scope, chartData: { indiModel: { key }, orgModel = [] } } = props;
+    let { chartData: { indiModel: { unit } } } = props;
+    const iconType = getIcon(unit);
+    // 查询当前需要的Y轴字段名称
+    const levelAndScope = Number(scope);
+    const levelName = `level${levelAndScope}Name`;
+    // 分公司名称数组
+    const levelCompanyArr = filterOrgModelData(orgModel, 'level2Name');
+    // 财富中心名称数组
+    const levelWealthArr = filterOrgModelData(orgModel, 'level3Name');
+    // 营业部名称数组
+    const levelStoreArr = filterOrgModelData(orgModel, 'level4Name');
+    // 工号数组
+    const levelIdArr = filterOrgModelData(orgModel, 'level5Id');
+    // 此处为y轴刻度值
+    const yAxisLabels = filterOrgModelData(orgModel, levelName);
+    // 补足Y轴刻度值不够的情况
+    const padLength = 10 - yAxisLabels.length;
+    if (padLength > 0) {
+      for (let i = 0; i < padLength; i++) {
+        yAxisLabels.push('--');
+      }
+    }
+    // 获取合计的值
+    const totals = filterOrgModelData(orgModel, 'value');
+    // 获取原始的stackSeries数据
+    const stack = getStackSeries(orgModel, 'indiModelList', key);
+    const stackLegend = stack.legends;
+    let stackSeries = stack.series;
+    // 此处需要进行对stackSeries中的每一个data根据单位来进行特殊处理
+    if (unit === YUAN) {
+      // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
+      // 此处先前写的newTotals不在使用，需要注销
+      const tempStackSeries = dealStackSeriesMoney(stackSeries, totals);
+      stackSeries = tempStackSeries.newStackSeries;
+      unit = tempStackSeries.newUnit;
+    } else if (unit === YUANNIAN) {
+      // 如果图表中的数据表示的是金额并且单位为元/年，需要对其进行单位识别和重构
+      // 此处先前写的newTotals不在使用，需要注销
+      const tempStackSeries = dealStackSeriesNewMoney(stackSeries, totals);
+      stackSeries = tempStackSeries.newStackSeries;
+      unit = tempStackSeries.newUnit;
+    } else if (unit === HU) {
+      const tempStackSeries = dealStackSeiesHu(stackSeries, totals);
+      stackSeries = tempStackSeries.newStackSeries;
+      unit = tempStackSeries.newUnit;
+    }
+
+    const grid = this.calculateBarChartXaxisTick(stackSeries, unit);
+
+    return {
+      mouseoverLabelIndex: '',
+      iconType,
+      unit,
+      key,
+      levelAndScope,
+      levelCompanyArr,
+      levelWealthArr,
+      levelStoreArr,
+      levelIdArr,
+      yAxisLabels,
+      stackLegend,
+      stackSeries,
+      originalStackSeries: _.cloneDeep(stackSeries), // 保存计算后的原始数据,必须深度拷贝
+      totals,
+      grid,
+      legendState: {},
+    };
   }
 
   @autobind
@@ -158,105 +238,15 @@ export default class ChartBarStack extends PureComponent {
   }
 
   @autobind
-  initialData(props, flag) {
-    const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = props;
-    let { chartData: { indiModel: { unit } } } = props;
-    const iconType = getIcon(unit);
-    // 查询当前需要的Y轴字段名称
-    const levelAndScope = Number(scope);
-    const levelName = `level${levelAndScope}Name`;
-    // 分公司名称数组
-    const levelCompanyArr = filterOrgModelData(orgModel, 'level2Name');
-    // 财富中心名称数组
-    const levelWealthArr = filterOrgModelData(orgModel, 'level3Name');
-    // 营业部名称数组
-    const levelStoreArr = filterOrgModelData(orgModel, 'level4Name');
-    // 工号数组
-    const levelIdArr = filterOrgModelData(orgModel, 'level5Id');
-    // 此处为y轴刻度值
-    const yAxisLabels = filterOrgModelData(orgModel, levelName);
-    // 补足Y轴刻度值不够的情况
-    const padLength = 10 - yAxisLabels.length;
-    if (padLength > 0) {
-      for (let i = 0; i < padLength; i++) {
-        yAxisLabels.push('--');
-      }
-    }
-    // 获取合计的值
-    const totals = filterOrgModelData(orgModel, 'value');
-    // 获取原始的stackSeries数据
-    const stack = getStackSeries(orgModel, 'indiModelList', key);
-    const stackLegend = stack.legends;
-    let stackSeries = stack.series;
-    // 此处需要进行对stackSeries中的每一个data根据单位来进行特殊处理
-    if (unit === YUAN) {
-      // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
-      // 此处先前写的newTotals不在使用，需要注销
-      const tempStackSeries = dealStackSeriesMoney(stackSeries, totals);
-      stackSeries = tempStackSeries.newStackSeries;
-      unit = tempStackSeries.newUnit;
-    } else if (unit === YUANNIAN) {
-      // 如果图表中的数据表示的是金额并且单位为元/年，需要对其进行单位识别和重构
-      // 此处先前写的newTotals不在使用，需要注销
-      const tempStackSeries = dealStackSeriesNewMoney(stackSeries, totals);
-      stackSeries = tempStackSeries.newStackSeries;
-      unit = tempStackSeries.newUnit;
-    } else if (unit === HU) {
-      const tempStackSeries = dealStackSeiesHu(stackSeries, totals);
-      stackSeries = tempStackSeries.newStackSeries;
-      unit = tempStackSeries.newUnit;
-    }
-
-    const grid = this.calculateBarChartXaxisTick(stackSeries, unit);
-    // 初始化所有的数据，并存入state
-    // 此为后面需要修改echarts的series做准备
-    if (flag) {
-      this.setState({
-        mouseoverLabelIndex: '',
-        wrapperH: 0,
-        chartName: name,
-        iconType,
-        unit,
-        key,
-        levelAndScope,
-        levelCompanyArr,
-        levelWealthArr,
-        levelStoreArr,
-        levelIdArr,
-        yAxisLabels,
-        stackLegend,
-        stackSeries, // Echarts图表绘制需要的数据
-        originalStackSeries: _.cloneDeep(stackSeries), // 保存计算后的原始数据,必须深度拷贝
-        totals,
-        grid,
-        legendState: {},
-      });
-    } else {
-      this.setState({
-        mouseoverLabelIndex: '',
-        iconType,
-        unit,
-        key,
-        levelAndScope,
-        levelCompanyArr,
-        levelWealthArr,
-        levelStoreArr,
-        levelIdArr,
-        yAxisLabels,
-        stackLegend,
-        stackSeries, // Echarts图表绘制需要的数据
-        originalStackSeries: _.cloneDeep(stackSeries), // 保存计算后的原始数据,必须深度拷贝
-        totals,
-        grid,
-        legendState: {},
-      });
-      const echart = this.instance;
-      if (echart) {
-        echart.off('mouseover', this.registerMouseover);
-        echart.off('mouseout', this.registerMouseout);
-        echart.on('mouseover', this.registerMouseover);
-        echart.on('mouseout', this.registerMouseout);
-      }
+  updateStateFromProps(props) {
+    const updatedState = this.getStateFromProps(props);
+    this.setState(updatedState);
+    const echart = this.instance;
+    if (echart) {
+      echart.off('mouseover', this.registerMouseover);
+      echart.off('mouseout', this.registerMouseout);
+      echart.on('mouseover', this.registerMouseover);
+      echart.on('mouseout', this.registerMouseout);
     }
   }
 
