@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-17 10:27:33
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-18 09:06:54
+ * @Last Modified time: 2018-09-19 17:46:02
  * @description 投顾空间新建表单确认
  */
 
@@ -12,7 +12,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import InfoCell from './infoCell';
-import styles from './confirmForm.less'
+import styles from './confirmForm.less';
 
 const dateFormat = 'YYYY年MM月DD日';
 const EMPTY_INFO = '--';
@@ -76,8 +76,8 @@ export default function ConfirmForm(props) {
           </div>
         </InfoCell>
       </div>
-    )
+    );
 }
 ConfirmForm.defaultProps = {
   formData: PropTypes.object.isRequired,
-}
+};

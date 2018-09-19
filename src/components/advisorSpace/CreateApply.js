@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:08:18
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 16:06:35
+ * @Last Modified time: 2018-09-19 17:46:16
  * @description 投顾空间新建申请
  */
 
@@ -17,7 +17,7 @@ import AdvisorSpaceForm from './AdvisorSpaceForm';
 import ConfirmForm from './ConfirmForm';
 import confirm from '../common/confirm_';
 import { emp } from '../../helper';
-import logable, { logPV, logCommon } from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 
 import styles from './createApply.less';
 
@@ -51,7 +51,7 @@ export default class CreateApply extends PureComponent {
       isShowPeriodStatusError: false,
       // 参与人校验错误状态
       isShowParticipantStatusError: false,
-    }
+    };
   }
 
   @autobind
@@ -144,7 +144,7 @@ export default class CreateApply extends PureComponent {
           isCreateApply: false,
         });
       }
-    })
+    });
   }
 
   // 校验数据
@@ -193,13 +193,13 @@ export default class CreateApply extends PureComponent {
         ...participant,
         orgCode: emp.getOrgId(),
         outerPersonFlag: 'Y',
-      }
+      };
     } else {
       params = {
         ...params,
         ...participant,
         outerPersonFlag: 'N',
-      }
+      };
     }
     this.props.submitApply(params).then(() => {
       logCommon({
@@ -246,7 +246,7 @@ export default class CreateApply extends PureComponent {
           <Button className={styles.cancelButton} onClick={this.handleEdit}>返回修改</Button>
           <Button type="primary" className={styles.submitButton} onClick={this.handleConfirm}>确定</Button>
         </div>
-      )
+      );
   }
 
   render() {
@@ -298,6 +298,6 @@ export default class CreateApply extends PureComponent {
             />
         }
       </CommonModal>
-    )
+    );
   }
 }
