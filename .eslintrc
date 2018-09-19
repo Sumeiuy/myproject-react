@@ -8,6 +8,12 @@
     "sensors"
   ],
   "rules": {
+    "semi": [2],
+    "no-trailing-spaces": [2],
+    "eol-last": [2],
+    "eqeqeq": [2],
+    "comma-dangle": [2, "only-multiline"],
+    "quotes": [2, "single"],
     "no-plusplus": [0],
     "no-console": [0],
     "no-return-assign": [0],
