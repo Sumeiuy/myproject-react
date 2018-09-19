@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-18 22:32:38
+ * @Last Modified time: 2018-09-19 09:25:52
  * @description 投顾空间申请首页
  */
 
@@ -135,8 +135,11 @@ export default class AdvisorSpace extends PureComponent {
   @autobind
   getRightDetail() {
     const {
-      list,
-      page,
+      applictionList,
+      applictionList:{
+        applicationBaseInfoList,
+        page,
+      },
       location: {
         pathname,
         query,
@@ -146,15 +149,15 @@ export default class AdvisorSpace extends PureComponent {
       },
     } = this.props;
     const { replace } = this.context;
-    if (!_.isEmpty(list)) {
+    if (!_.isEmpty(applicationBaseInfoList)) {
       // 表示左侧列表获取完毕
       // 因此此时获取Detail
       const { pageNum, pageSize } = page;
-      let item = list[0];
-      let itemIndex = _.findIndex(list, o => o.id.toString() === currentId);
+      let item = applicationBaseInfoList[0];
+      let itemIndex = _.findIndex(applicationBaseInfoList, o => o.id.toString() === currentId);
       if (!_.isEmpty(currentId) && itemIndex > -1) {
         // 此时url中存在currentId
-        item = _.filter(list, o => String(o.id) === currentId)[0];
+        item = _.filter(applicationBaseInfoList, o => String(o.id) === currentId)[0];
       } else {
         // 不存在currentId
         replace({
@@ -339,7 +342,6 @@ export default class AdvisorSpace extends PureComponent {
         list={applicationBaseInfoList}
         renderRow={this.renderListRow}
         pagination={paginationOptions}
-        page={page}
       />
     );
 
