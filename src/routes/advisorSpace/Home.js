@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-19 15:54:08
+ * @Last Modified time: 2018-09-19 17:32:29
  * @description 投顾空间申请首页
  */
 
@@ -145,7 +145,6 @@ export default class AdvisorSpace extends PureComponent {
   @autobind
   getRightDetail() {
     const {
-      applictionList,
       applictionList:{
         applicationBaseInfoList,
         page,
@@ -186,7 +185,7 @@ export default class AdvisorSpace extends PureComponent {
       });
       this.props.getDetail({
         id: item.id,
-      })
+      });
     }
   }
 
@@ -258,7 +257,7 @@ export default class AdvisorSpace extends PureComponent {
       },
     });
     this.setState({ activeRowIndex: index });
-    this.getRightDetail();
+    this.props.getDetail({ id });
   }
 
   // 展示第三行信息
@@ -349,7 +348,7 @@ export default class AdvisorSpace extends PureComponent {
 
     const { empInfo } = this.context;
 
-    const isEmpty = _.isEmpty(applictionList);
+    const isEmpty = _.isEmpty(applicationBaseInfoList);
 
     // 头部筛选
     const topPanel = (
