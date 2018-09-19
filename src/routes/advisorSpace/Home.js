@@ -1,8 +1,8 @@
 /**
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
- * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-19 15:54:08
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-09-19 16:23:59
  * @description 投顾空间申请首页
  */
 
@@ -20,9 +20,9 @@ import ApplyItem from '../../components/common/appList/ApplyItem';
 import CreateApply from '../../components/advisorSpace/CreateApply';
 import { dva } from '../../helper';
 import withRouter from '../../decorators/withRouter';
-import { getStatusTagProps, advisorSpace } from '../../components/advisorSpace/config';
+import { advisorSpace, getStatusTagProps } from '../../components/advisorSpace/config';
 import seibelHelper from '../../helper/page/seibel';
-import logable from '../../decorators/logable';
+import logable, { logPV } from '../../decorators/logable';
 
 const effect = dva.generateEffect;
 
@@ -145,7 +145,6 @@ export default class AdvisorSpace extends PureComponent {
   @autobind
   getRightDetail() {
     const {
-      applictionList,
       applictionList:{
         applicationBaseInfoList,
         page,
@@ -313,18 +312,22 @@ export default class AdvisorSpace extends PureComponent {
 
   // 打开新建弹窗
   @autobind
+  @logPV({ pathname: '/modal/createAdvisorSpaceApplyModal', title: '新建投顾空间申请弹框' })
   openCreateModalBoard() {
-    this.setState({isShowCreateModal: true})
+    this.setState({isShowCreateModal: true});
   }
 
   // 关闭新建弹窗
   @autobind
-  handleCloseCreateModal() {
-    this.setState({isShowCreateModal: false})
+  handleCloseCreateModal(name, isNeedRefresh) {
+    this.setState({ [name]: false });
     this.props.clearReduxData({
       createRoomData: {},
       participantData: {},
     });
+    if (isNeedRefresh) {
+      this.getAppList();
+    }
   }
 
   render() {

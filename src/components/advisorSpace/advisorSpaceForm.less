@@ -1,17 +1,21 @@
 .advisorSpaceForm {
   padding: 20px 30px;
-
   .roomWrapper {
     .coloumnHalfWrapper {
       display: flex;
       .coloumn {
         flex: 1;
+        .advisorInfoCell {
+          padding-bottom: 0;
+        }
         .value {
           width: 228px;
           :global {
             .ant-calendar-picker {
               width: 228px;
               height: 30px;
+              font-size: 14px;
+              color: #333;
             }
           }
         }
@@ -63,6 +67,9 @@
           .lego-schedule-contents {
             .lego-schedule-rowContent {
               height: 37px;
+              font-size: 14px;
+              color: #4a4a4a;
+              padding: 0 10px;
               border-left: 1px solid #eee;
               border-bottom: 1px solid #eee;
             }
@@ -88,7 +95,6 @@
       }
     }
   }
-
   .label {
     width: 100px;
     display: inline-block;
@@ -115,6 +121,9 @@
     :global {
       .ant-input {
         height: 30px;
+        border-color: #ccc;
+        font-size: 14px;
+        color: #333;
       }
     }
   }
@@ -123,6 +132,8 @@
       .ant-input {
         width: 610px;
         height: 30px;
+        border-color: #ccc;
+        font-size: 14px;
       }
     }
   }
@@ -134,6 +145,12 @@
       .ant-input {
         width: 228px;
         height: 30px;
+        border-color: #ccc;
+        font-size: 14px;
+        color: #333;
+      }
+      .ant-select-selection__placeholder {
+        font-size: 14px;
       }
     }
     .externalCustomer {
@@ -152,12 +169,14 @@
       .ant-input {
         width: 610px;
         height: 130px;
+        border-color: #ccc;
+        font-size: 14px;
       }
     }
   }
 }
 .participantAutoCompleteOptionValue {
   font-size: 14px;
-  color: #4a4a4a;
+  color: #333;
   line-height: 18px;
 }

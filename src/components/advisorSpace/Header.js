@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-11 20:39:27
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-18 12:28:20
+ * @Last Modified time: 2018-09-19 13:22:44
  * @description 投顾空间申请头部筛选
  */
 
@@ -38,6 +38,13 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '参与人',
+      value: '$args[0]',
+    },
+  })
   handleParticipantSearch(value) {
     this.props.filterCallback({'participant': value});
   }
@@ -57,10 +64,10 @@ export default class Header extends PureComponent {
 
   @autobind
   @logable({
-    type: 'DropdownSelect',
+    type: 'CalendarSelect',
     payload: {
       name: '预约日期',
-      value: '$args[0].value',
+      value: '$args[1]',
     },
   })
   handleDateChange(date, dateString) {
@@ -69,6 +76,7 @@ export default class Header extends PureComponent {
 
   // 新建申请
   @autobind
+  @logable({ type: 'Click', payload: { name: '新建' } })
   handleCreate() {
     this.props.creatModal();
   }
