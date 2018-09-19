@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:08:18
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-18 14:40:02
+ * @Last Modified time: 2018-09-19 10:35:23
  * @description 投顾空间新建申请
  */
 
@@ -17,7 +17,6 @@ import AdvisorSpaceForm from './AdvisorSpaceForm';
 import ConfirmForm from './ConfirmForm';
 import confirm from '../common/confirm_';
 import { emp } from '../../helper';
-import { Switch } from 'antd';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 
 import styles from './createApply.less';
@@ -42,28 +41,6 @@ export default class CreateApply extends PureComponent {
       // 判断AdvisorSpaceForm页面是新建申请 'CREATE' 还是 确认信息 'CONFIRM'
       action: 'CREATE',
       formData: {},
-      // 预订日期
-      orderDate: '',
-      // 智慧前厅代码
-      roomNo: '',
-      // 智慧前厅名称
-      roomName: '',
-      // 智慧前厅区域代码
-      siteCode: '',
-      // 智慧前厅区域名称
-      siteName: '',
-      // 开始时间
-      startTime: '',
-      // 结束时间
-      endTime: '',
-      // 参与人
-      participant: {},
-      // 是否是外部客户，false表示不是外部客户，true表示是外部客户，默认是false
-      outerPersonFlag: false,
-      // 主题
-      theme: '',
-      // 备注
-      remark: '',
       // 校验结果
       validateResult: true,
       // 判断当前页面是否是新建申请页面，true：新建申请页面，false：确认页面，默认： true
@@ -96,17 +73,52 @@ export default class CreateApply extends PureComponent {
   @autobind
   handleChange(obj) {
     const { formData } = this.state;
+    const {
+      participant,
+      roomNo,
+      defaultRange,
+    } = obj;
     this.setState({
       formData: {
         ...formData,
         ...obj,
       }
     });
+    // 智慧前厅不为空，则重置错误状态
+    if (!_.isEmpty(roomNo)) {
+      this.resetRoomErrorProps()
+    }
+    // 预订时间段不为空，则重置错误状态
+    if (!_.isEmpty(defaultRange)) {
+      this.resetPeriodErrorProps()
+    }
+    // 参与人不为空，则重置错误状态
+    if (!_.isEmpty(participant)) {
+      this.resetParticipantErrorProps()
+    }
   }
 
   @autobind
   setAdvisorSpaceFormRef(form) {
     this.advisorSpaceForm = form;
+  }
+
+  // 智慧前厅校验填完值后重置错误状态和错误提示
+  @autobind
+  resetRoomErrorProps() {
+    this.setState({ isShowRoomStatusError: false });
+  }
+
+  // 时间段校验填完值后重置错误状态和错误提示
+  @autobind
+  resetPeriodErrorProps() {
+    this.setState({ isShowPeriodStatusError: false });
+  }
+
+  // 参与人校验填完值后重置错误状态和错误提示
+  @autobind
+  resetParticipantErrorProps() {
+    this.setState({ isShowParticipantStatusError: false });
   }
 
   // 点击提交
@@ -178,6 +190,7 @@ export default class CreateApply extends PureComponent {
     if (outerPersonFlag) {
       params = {
         ...params,
+        ...participant,
         orgCode: emp.getOrgId(),
         outerPersonFlag: 'Y',
       }
@@ -188,7 +201,16 @@ export default class CreateApply extends PureComponent {
         outerPersonFlag: 'N',
       }
     }
-    this.props.submitApply(params).then(this.doCloseModalAfterSubmit);
+    this.props.submitApply(params).then(() => {
+      logCommon({
+        type: 'Submit',
+        payload: {
+          name: '投顾空间申请新建提交',
+          vlaue: JSON.stringify(params),
+        },
+      });
+      this.doCloseModalAfterSubmit();
+    });
   }
 
   @autobind

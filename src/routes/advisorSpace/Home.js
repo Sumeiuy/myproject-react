@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-18 11:05:47
+ * @Last Modified time: 2018-09-19 09:46:17
  * @description 投顾空间申请首页
  */
 
@@ -15,10 +15,10 @@ import _ from 'lodash';
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import Header from '../../components/advisorSpace/Header';
 import CreateApply from '../../components/advisorSpace/CreateApply';
-import ConfirmForm from '../../components/advisorSpace/ConfirmForm';
 import { dva } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import seibelHelper from '../../helper/page/seibel';
+import { logPV } from '../../decorators/logable';
 
 const effect = dva.generateEffect;
 
@@ -140,6 +140,7 @@ export default class AdvisorSpace extends PureComponent {
 
   // 打开新建弹窗
   @autobind
+  @logPV({ pathname: '/modal/createAdvisorSpaceApplyModal', title: '新建投顾空间申请弹框' })
   openCreateModalBoard() {
     this.setState({isShowCreateModal: true})
   }

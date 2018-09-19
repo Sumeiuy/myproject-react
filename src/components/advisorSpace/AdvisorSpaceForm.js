@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:31:58
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-18 16:57:42
+ * @Last Modified time: 2018-09-19 13:06:41
  * @description 投顾空间新建表单
  */
 
@@ -115,6 +115,13 @@ export default class AdvisorSpaceForm  extends PureComponent {
 
   // 点击预约日期
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '预约日期',
+      value: '$args[1]',
+    },
+  })
   handleOrderDateChange(date, dateString) {
     const isRoomDisabled = _.isEmpty(date);
     const { formData } = this.state;
@@ -145,6 +152,14 @@ export default class AdvisorSpaceForm  extends PureComponent {
 
   // 设置预订时间
   @autobind
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '预约时间段',
+      startTime: '$args[0].startTime',
+      endTime: '$args[0].endTime',
+    },
+  })
   handleScheduleSelect(obj) {
     const { contentIndex: index, startTime, endTime } = obj;
     const defaultRange = { index, startTime, endTime };
@@ -162,8 +177,15 @@ export default class AdvisorSpaceForm  extends PureComponent {
     });
   }
 
-  // 设置智慧空间
+  // 设置智慧前厅
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '智慧前厅',
+      value: '$args[0]',
+    },
+  })
   handleRoomChange(value, option) {
     const { roomNo, roomName, siteCode, siteName, orderPeriodList } = option;
     // 已预订时间，每个对象需要增加行标，所以增加index属性
@@ -243,6 +265,7 @@ export default class AdvisorSpaceForm  extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '外部客户', value: '$args[0]' } })
   handleExternalCustChange(checked) {
     const { formData } = this.state;
     this.setState({
@@ -325,6 +348,8 @@ export default class AdvisorSpaceForm  extends PureComponent {
                     )}
                   </FormItem>
               </InfoCell>
+            </div>
+            <div className={styles.coloumnHalfWrapper}>
               <InfoCell label='智慧前厅' required>
                 <FormItem {...roomStatusErrorProps}>
                   <ProgressSelect
@@ -336,36 +361,36 @@ export default class AdvisorSpaceForm  extends PureComponent {
                 </FormItem>
               </InfoCell>
             </div>
-            {
-              !_.isEmpty(roomNo) ?
-                (
-                  <div className={styles.scheduleWrapper}>
-                    <FormItem {...periodStatusErrorProps}>
-                      <HtSchedule
-                        startTime="09:00"
-                        endTime="18:00"
-                        onSelected={this.handleScheduleSelect}
-                        rowContents={[{title: roomTitle}]}
-                        rowContentStyle={{width: '100px', height: '37px', lineHeight: '37px'}}
-                        cellStyle={{height: '37px'}}
-                        selectedRange={selectedRange}
-                        defaultRange={defaultRange}
-                      />
-                      <div className={styles.scheduleLabel}>
-                        <div className={styles.scheduleItem}>
-                          <i className={styles.unSelected}></i>
-                          <span>可选定</span>
-                        </div>
-                        <div className={styles.scheduleItem}>
-                          <i className={styles.selected}></i>
-                          <span>已预订</span>
-                        </div>
-                      </div>
-                    </FormItem>
-                  </div>
-                ) : null
-            }
           </div>
+          {
+            !_.isEmpty(roomNo) ?
+              (
+                <div className={styles.scheduleWrapper}>
+                  <FormItem {...periodStatusErrorProps}>
+                    <HtSchedule
+                      startTime="09:00"
+                      endTime="18:00"
+                      onSelected={this.handleScheduleSelect}
+                      rowContents={[{title: roomTitle}]}
+                      rowContentStyle={{width: '100px', height: '37px', lineHeight: '37px'}}
+                      cellStyle={{height: '37px'}}
+                      selectedRange={selectedRange}
+                      defaultRange={defaultRange}
+                    />
+                    <div className={styles.scheduleLabel}>
+                      <div className={styles.scheduleItem}>
+                        <i className={styles.unSelected}></i>
+                        <span>可选定</span>
+                      </div>
+                      <div className={styles.scheduleItem}>
+                        <i className={styles.selected}></i>
+                        <span>已预订</span>
+                      </div>
+                    </div>
+                  </FormItem>
+                </div>
+              ) : null
+          }
           <InfoTitle head="填写详细信息" />
           <div className={styles.detailInfo}>
             <InfoCell label='主题' required>
