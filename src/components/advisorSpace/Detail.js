@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 13:57:57
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-19 11:11:48
+ * @Last Modified time: 2018-09-19 15:29:40
  * @description 投顾空间申请首页
  */
 import React from 'react';
@@ -14,7 +14,7 @@ import DetailWrap from '../common/detailWrap';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 
-import styles from './detail.less';
+import styles from './detail_.less';
 
 export default function Detail(props) {
   const {
@@ -58,9 +58,11 @@ export default function Detail(props) {
   // 预约时间
   const orderFullTime = `${orderDate} ${startTime}-${endTime}`;
   // 参与人
-  const participant = `${participantName} (${participantId})`;
+  const participant = participantId ? `${participantName} (${participantId})` : participantName;
   // 拟稿人
   const emp = `${empName} (${empId}) ${orgName}`;
+  // 判断状态是否为空
+  const statusValue = statusName ? statusName : '--';
 
   return (
     <DetailWrap isEmpty={isEmpty} currentId={`${id}`} extra={cancelBtn}>
@@ -97,7 +99,7 @@ export default function Detail(props) {
             <InfoItem label="申请时间" value={createTime} width="130px" />
           </li>
           <li className={styles.item}>
-            <InfoItem label="状态" value={statusName} width="130px" />
+            <InfoItem label="状态" value={statusValue} width="130px" />
           </li>
         </ul>
       </div>

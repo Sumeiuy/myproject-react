@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 14:01:11
+ * @Last Modified time: 2018-09-19 16:23:59
  * @description 投顾空间申请首页
  */
 
@@ -138,7 +138,7 @@ export default class AdvisorSpace extends PureComponent {
     const { pageType } = advisorSpace;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件,
-    getApplictionList({...params, type: pageType }).then(this.getRightDetail);
+    getApplictionList({ ...params, type: pageType }).then(this.getRightDetail);
   }
 
   // 获取右侧详情
