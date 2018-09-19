@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-19 11:22:59
+ * @Last Modified time: 2018-09-19 15:54:08
  * @description 投顾空间申请首页
  */
 
@@ -20,7 +20,7 @@ import ApplyItem from '../../components/common/appList/ApplyItem';
 import CreateApply from '../../components/advisorSpace/CreateApply';
 import { dva } from '../../helper';
 import withRouter from '../../decorators/withRouter';
-import { getStatusTagProps } from '../../components/advisorSpace/config';
+import { getStatusTagProps, advisorSpace } from '../../components/advisorSpace/config';
 import seibelHelper from '../../helper/page/seibel';
 import logable from '../../decorators/logable';
 
@@ -125,20 +125,6 @@ export default class AdvisorSpace extends PureComponent {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    const { location: { query: prevQuery } } = prevProps;
-    const {
-      location: { query },
-    } = this.props;
-    const otherQuery = _.omit(query, ['currentId']);
-    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
-    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
-    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
-      const { pageNum, pageSize } = query;
-      this.queryAppList(query, pageNum, pageSize);
-    }
-  }
-
   @autobind
   getAppList() {
     const { location: { query, query: { pageNum, pageSize } } } = this.props;
@@ -149,9 +135,10 @@ export default class AdvisorSpace extends PureComponent {
   @autobind
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getApplictionList } = this.props;
+    const { pageType } = advisorSpace;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件,
-    getApplictionList(params).then(this.getRightDetail);
+    getApplictionList({ ...params, type: pageType }).then(this.getRightDetail);
   }
 
   // 获取右侧详情
