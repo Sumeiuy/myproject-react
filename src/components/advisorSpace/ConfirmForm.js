@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-17 10:27:33
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 17:46:02
+ * @Last Modified time: 2018-09-19 18:30:05
  * @description 投顾空间新建表单确认
  */
 
@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
 
-import InfoCell from './infoCell';
+import InfoCell from './InfoCell';
 import styles from './confirmForm.less';
 
 const dateFormat = 'YYYY年MM月DD日';

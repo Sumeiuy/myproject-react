@@ -14,7 +14,7 @@ import moment from 'moment';
 import { Form, DatePicker, Input, Switch, AutoComplete  } from 'antd';
 
 import HtSchedule from 'lego-schedule/src';
-import InfoCell from './infoCell';
+import InfoCell from './InfoCell';
 import InfoTitle from '../common/InfoTitle';
 import SimilarAutoComplete from '../common/similarAutoComplete';
 import ProgressSelect from './ProgressSelect';
