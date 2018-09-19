@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:31:58
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 17:08:16
+ * @Last Modified time: 2018-09-19 17:45:28
  * @description 投顾空间新建表单
  */
 
@@ -195,7 +195,7 @@ export default class AdvisorSpaceForm  extends PureComponent {
         roomTitle,
         selectedRange,
       }
-    })
+    });
     this.props.onChange({
       roomNo,
       roomName,
@@ -469,6 +469,6 @@ export default class AdvisorSpaceForm  extends PureComponent {
           </div>
         </Form>
       </div>
-    )
+    );
   }
 }

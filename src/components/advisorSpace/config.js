@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-09-14 14:04:07
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 16:22:41
+ * @Last Modified time: 2018-09-19 17:45:39
  */
 import _ from 'lodash';
 
@@ -21,7 +21,7 @@ const advisorSpace = {
         value: '07',
       }
     ],
-}
+};
 // 列表项中tag的样式配置项
 const STATUS_TAGS = [
   {
