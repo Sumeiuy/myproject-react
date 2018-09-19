@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-19 14:43:49
+ * @Last Modified time: 2018-09-19 15:54:08
  * @description 投顾空间申请首页
  */
 
@@ -20,7 +20,7 @@ import ApplyItem from '../../components/common/appList/ApplyItem';
 import CreateApply from '../../components/advisorSpace/CreateApply';
 import { dva } from '../../helper';
 import withRouter from '../../decorators/withRouter';
-import { getStatusTagProps } from '../../components/advisorSpace/config';
+import { getStatusTagProps, advisorSpace } from '../../components/advisorSpace/config';
 import seibelHelper from '../../helper/page/seibel';
 import logable from '../../decorators/logable';
 
@@ -135,10 +135,10 @@ export default class AdvisorSpace extends PureComponent {
   @autobind
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getApplictionList } = this.props;
+    const { pageType } = advisorSpace;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
-    const type = 14;
     // 默认筛选条件,
-    getApplictionList({ ...params, type }).then(this.getRightDetail);
+    getApplictionList({ ...params, type: pageType }).then(this.getRightDetail);
   }
 
   // 获取右侧详情

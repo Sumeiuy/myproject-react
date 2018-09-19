@@ -2,13 +2,13 @@
  * @Author: zuoguangzu
  * @Date: 2018-09-14 14:04:07
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-19 10:27:42
+ * @Last Modified time: 2018-09-19 15:52:20
  */
 import _ from 'lodash';
 
 const advisorSpace = {
     pageName: '投顾空间申请',
-    pageType: '07', // 查询列表接口中的type值
+    pageType: '14', // 查询列表接口中的type值
     statusOptions: [
       {
         show: true,
