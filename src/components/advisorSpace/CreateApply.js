@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:08:18
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 16:06:35
+ * @Last Modified time: 2018-09-19 17:39:34
  * @description 投顾空间新建申请
  */
 
@@ -17,7 +17,7 @@ import AdvisorSpaceForm from './AdvisorSpaceForm';
 import ConfirmForm from './ConfirmForm';
 import confirm from '../common/confirm_';
 import { emp } from '../../helper';
-import logable, { logPV, logCommon } from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 
 import styles from './createApply.less';
 

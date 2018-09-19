@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:31:58
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 15:57:09
+ * @Last Modified time: 2018-09-19 17:08:16
  * @description 投顾空间新建表单
  */
 
@@ -90,10 +90,6 @@ export default class AdvisorSpaceForm  extends PureComponent {
       // 备注
       remark: _.get(formData, 'remark') || '',
     };
-  }
-
-  componentDidMount() {
-    this.queryRoomList({ action: 'CREATE' });
   }
 
   @autobind
