@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 16:23:59
+ * @Last Modified time: 2018-09-19 17:46:54
  * @description 投顾空间申请首页
  */
 
@@ -102,7 +102,7 @@ export default class AdvisorSpace extends PureComponent {
       activeRowIndex: 0,
       // 是否显示新建弹窗
       isShowCreateModal: false,
-    }
+    };
   }
 
   componentDidMount() {
@@ -185,7 +185,7 @@ export default class AdvisorSpace extends PureComponent {
       });
       this.props.getDetail({
         id: item.id,
-      })
+      });
     }
   }
 

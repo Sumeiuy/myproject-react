@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-11 20:39:27
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 13:22:44
+ * @Last Modified time: 2018-09-19 17:46:34
  * @description 投顾空间申请头部筛选
  */
 
@@ -152,6 +152,6 @@ export default class Header extends PureComponent {
             null
         }
       </div>
-    )
+    );
   }
 }
