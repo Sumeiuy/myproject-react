@@ -2,8 +2,8 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 13:57:57
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-19 10:03:41
- * @description 线上销户详情页面
+ * @Last Modified time: 2018-09-19 11:11:48
+ * @description 投顾空间申请首页
  */
 import React from 'react';
 import PropTypes from 'prop-types';
