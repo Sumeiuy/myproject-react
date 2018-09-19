@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:31:58
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 13:06:41
+ * @Last Modified time: 2018-09-19 15:57:09
  * @description 投顾空间新建表单
  */
 
@@ -272,9 +272,14 @@ export default class AdvisorSpaceForm  extends PureComponent {
       formData: {
         ...formData,
         outerPersonFlag: checked,
+        // 切换外部客户按钮，参与人需要置空
+        participant: {},
       }
     });
-    this.props.onChange({ outerPersonFlag: checked });
+    this.props.onChange({
+      outerPersonFlag: checked,
+      participant: {},
+    });
   }
 
   render() {
@@ -333,64 +338,66 @@ export default class AdvisorSpaceForm  extends PureComponent {
           <InfoTitle head="选择智慧前厅和时间" />
           <div className={styles.roomWrapper}>
             <div className={styles.coloumnHalfWrapper}>
-              <InfoCell label='预约日期' required >
-                <FormItem>
-                    {getFieldDecorator('orderDate', {
-                      rules: [{ required: true, message: '请选择预约日期' }],
-                      initialValue: !_.isEmpty(orderDate) ? moment(orderDate) : null,
-                    })(
-                      <DatePicker
-                        onChange={this.handleOrderDateChange}
-                        placeholder="请选择"
-                        disabledDate={this.disabledDate}
-                        dropdownClassName="progressSelectDropdown"
-                      />
-                    )}
-                  </FormItem>
-              </InfoCell>
-            </div>
-            <div className={styles.coloumnHalfWrapper}>
-              <InfoCell label='智慧前厅' required>
-                <FormItem {...roomStatusErrorProps}>
-                  <ProgressSelect
-                    data={roomList}
-                    onChange={this.handleRoomChange}
-                    value={roomNo}
-                    disabled={isRoomDisabled}
-                  />
-                </FormItem>
-              </InfoCell>
-            </div>
-          </div>
-          {
-            !_.isEmpty(roomNo) ?
-              (
-                <div className={styles.scheduleWrapper}>
-                  <FormItem {...periodStatusErrorProps}>
-                    <HtSchedule
-                      startTime="09:00"
-                      endTime="18:00"
-                      onSelected={this.handleScheduleSelect}
-                      rowContents={[{title: roomTitle}]}
-                      rowContentStyle={{width: '100px', height: '37px', lineHeight: '37px'}}
-                      cellStyle={{height: '37px'}}
-                      selectedRange={selectedRange}
-                      defaultRange={defaultRange}
+              <div className={styles.coloumn}>
+                <InfoCell label='预约日期' required className={styles.advisorInfoCell}>
+                  <FormItem>
+                      {getFieldDecorator('orderDate', {
+                        rules: [{ required: true, message: '请选择预约日期' }],
+                        initialValue: !_.isEmpty(orderDate) ? moment(orderDate) : null,
+                      })(
+                        <DatePicker
+                          onChange={this.handleOrderDateChange}
+                          placeholder="请选择"
+                          disabledDate={this.disabledDate}
+                          dropdownClassName="progressSelectDropdown"
+                        />
+                      )}
+                    </FormItem>
+                </InfoCell>
+              </div>
+              <div className={styles.coloumn}>
+                <InfoCell label='智慧前厅' required className={styles.advisorInfoCell}>
+                  <FormItem {...roomStatusErrorProps}>
+                    <ProgressSelect
+                      data={roomList}
+                      onChange={this.handleRoomChange}
+                      value={roomNo}
+                      disabled={isRoomDisabled}
                     />
-                    <div className={styles.scheduleLabel}>
-                      <div className={styles.scheduleItem}>
-                        <i className={styles.unSelected}></i>
-                        <span>可选定</span>
-                      </div>
-                      <div className={styles.scheduleItem}>
-                        <i className={styles.selected}></i>
-                        <span>已预订</span>
-                      </div>
-                    </div>
                   </FormItem>
-                </div>
-              ) : null
-          }
+                </InfoCell>
+              </div>
+            </div>
+            {
+              !_.isEmpty(roomNo) ?
+                (
+                  <div className={styles.scheduleWrapper}>
+                    <FormItem {...periodStatusErrorProps}>
+                      <HtSchedule
+                        startTime="09:00"
+                        endTime="18:00"
+                        onSelected={this.handleScheduleSelect}
+                        rowContents={[{title: roomTitle}]}
+                        rowContentStyle={{width: '140px', height: '37px', lineHeight: '37px'}}
+                        cellStyle={{height: '37px'}}
+                        selectedRange={selectedRange}
+                        defaultRange={defaultRange}
+                      />
+                      <div className={styles.scheduleLabel}>
+                        <div className={styles.scheduleItem}>
+                          <i className={styles.unSelected}></i>
+                          <span>可选定</span>
+                        </div>
+                        <div className={styles.scheduleItem}>
+                          <i className={styles.selected}></i>
+                          <span>已预订</span>
+                        </div>
+                      </div>
+                    </FormItem>
+                  </div>
+                ) : null
+            }
+          </div>
           <InfoTitle head="填写详细信息" />
           <div className={styles.detailInfo}>
             <InfoCell label='主题' required>

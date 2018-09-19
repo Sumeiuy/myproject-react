@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:08:18
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 10:35:23
+ * @Last Modified time: 2018-09-19 16:06:35
  * @description 投顾空间新建申请
  */
 
@@ -57,7 +57,7 @@ export default class CreateApply extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '取消' } })
   handleCloseModalConfirm() {
-    this.props.onClose();
+    this.props.onClose('isShowCreateModal');
   }
 
   // 关闭审批弹窗
@@ -86,15 +86,15 @@ export default class CreateApply extends PureComponent {
     });
     // 智慧前厅不为空，则重置错误状态
     if (!_.isEmpty(roomNo)) {
-      this.resetRoomErrorProps()
+      this.resetRoomErrorProps();
     }
     // 预订时间段不为空，则重置错误状态
     if (!_.isEmpty(defaultRange)) {
-      this.resetPeriodErrorProps()
+      this.resetPeriodErrorProps();
     }
     // 参与人不为空，则重置错误状态
     if (!_.isEmpty(participant)) {
-      this.resetParticipantErrorProps()
+      this.resetParticipantErrorProps();
     }
   }
 
@@ -159,7 +159,7 @@ export default class CreateApply extends PureComponent {
       this.setState({isShowPeriodStatusError: true});
       this.isValidateError = true;
     }
-    if(_.isEmpty(participant) || _.isEmpty(endTime)) {
+    if(_.isEmpty(participant)) {
       this.setState({isShowParticipantStatusError: true});
       this.isValidateError = true;
     }
@@ -217,7 +217,7 @@ export default class CreateApply extends PureComponent {
   doCloseModalAfterSubmit() {
     const { submitResult: { applyId } } = this.props;
       if (applyId) {
-        this.handleCloseModalConfirm();
+        this.props.onClose('isShowCreateModal', true);
       }
   }
 

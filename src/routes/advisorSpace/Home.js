@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 13:35:30
+ * @Last Modified time: 2018-09-19 14:01:11
  * @description 投顾空间申请首页
  */
 
@@ -314,17 +314,20 @@ export default class AdvisorSpace extends PureComponent {
   @autobind
   @logPV({ pathname: '/modal/createAdvisorSpaceApplyModal', title: '新建投顾空间申请弹框' })
   openCreateModalBoard() {
-    this.setState({isShowCreateModal: true})
+    this.setState({isShowCreateModal: true});
   }
 
   // 关闭新建弹窗
   @autobind
-  handleCloseCreateModal() {
-    this.setState({isShowCreateModal: false})
+  handleCloseCreateModal(name, isNeedRefresh) {
+    this.setState({ [name]: false });
     this.props.clearReduxData({
       createRoomData: {},
       participantData: {},
     });
+    if (isNeedRefresh) {
+      this.getAppList();
+    }
   }
 
   render() {
