@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-19 18:37:06
+ * @Last Modified time: 2018-09-20 15:46:37
  * @description 投顾空间申请首页
  */
 
@@ -282,9 +282,7 @@ export default class AdvisorSpace extends PureComponent {
   @autobind
   handleCancelReservationSuccess() {
     const { cancelReservationResult } = this.props;
-    if (cancelReservationResult) {
-      this.getRightDetail();
-    }
+    this.getAppList();
   }
 
   // 渲染列表项里面的每一项
@@ -333,7 +331,6 @@ export default class AdvisorSpace extends PureComponent {
   render() {
     const {
       location,
-      applictionList,
       applictionList: {
         applicationBaseInfoList = [],
         page = {},
@@ -387,10 +384,13 @@ export default class AdvisorSpace extends PureComponent {
 
     // 右侧详情，此处目前是占位，由别的前端开发
     const rightPanel = (
-      <Detail
-        detailInfo={detailInfo}
-        cancelReservation={this.handleCancelReservation}
-      />
+      !_.isEmpty(detailInfo) ?
+        (
+          <Detail
+            detailInfo={detailInfo}
+            cancelReservation={this.handleCancelReservation}
+          />
+        ) : null
     );
 
 

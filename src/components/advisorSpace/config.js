@@ -1,8 +1,8 @@
 /*
  * @Author: zuoguangzu
  * @Date: 2018-09-14 14:04:07
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 17:45:39
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-09-20 10:52:40
  */
 import _ from 'lodash';
 
@@ -32,7 +32,7 @@ const STATUS_TAGS = [
   {
     code: '07',
     text: '已撤销',
-    type: 'reject',
+    type: 'stop',
   },
 ];
 
