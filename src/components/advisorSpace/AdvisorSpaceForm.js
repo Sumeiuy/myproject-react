@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:31:58
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 17:45:28
+ * @Last Modified time: 2018-09-20 13:33:46
  * @description 投顾空间新建表单
  */
 
@@ -18,6 +18,7 @@ import InfoCell from './InfoCell';
 import InfoTitle from '../common/InfoTitle';
 import SimilarAutoComplete from '../common/similarAutoComplete';
 import ProgressSelect from './ProgressSelect';
+import { SCHEDULE_STYLES } from './config';
 import logable from '../../decorators/logable';
 
 import styles from './advisorSpaceForm.less';
@@ -26,6 +27,9 @@ const FormItem = Form.Item;
 const Option = AutoComplete.Option;
 const create = Form.create;
 const { TextArea } = Input;
+
+// 时间段选择样式配置项
+const { rowContentStyle, cellStyle, disabledCellStyle, selectedCellStyle } = SCHEDULE_STYLES;
 
 @create()
 export default class AdvisorSpaceForm  extends PureComponent {
@@ -47,6 +51,7 @@ export default class AdvisorSpaceForm  extends PureComponent {
     isShowPeriodStatusError: PropTypes.bool.isRequired,
     // 参与人错误状态
     isShowParticipantStatusError: PropTypes.bool.isRequired,
+    participantStatusErrorMessage: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -194,6 +199,8 @@ export default class AdvisorSpaceForm  extends PureComponent {
         roomNo: value,
         roomTitle,
         selectedRange,
+        // 切换智慧空间，已选时间段需要置空
+        defaultRange: {},
       }
     });
     this.props.onChange({
@@ -203,6 +210,7 @@ export default class AdvisorSpaceForm  extends PureComponent {
       siteName,
       selectedRange,
       roomTitle,
+      defaultRange: {},
     });
   }
 
@@ -270,11 +278,15 @@ export default class AdvisorSpaceForm  extends PureComponent {
         outerPersonFlag: checked,
         // 切换外部客户按钮，参与人需要置空
         participant: {},
+        participantCode: '',
+        participantName: '',
       }
     });
     this.props.onChange({
       outerPersonFlag: checked,
       participant: {},
+      participantCode: '',
+      participantName: '',
     });
   }
 
@@ -292,6 +304,7 @@ export default class AdvisorSpaceForm  extends PureComponent {
       isShowRoomStatusError,
       isShowPeriodStatusError,
       isShowParticipantStatusError,
+      participantStatusErrorMessage,
     } = this.props;
     const {
       formData: {
@@ -324,7 +337,7 @@ export default class AdvisorSpaceForm  extends PureComponent {
     const participantStatusErrorProps = isShowParticipantStatusError ? {
       hasFeedback: false,
       validateStatus: 'error',
-      help: '请输入参与人',
+      help: participantStatusErrorMessage,
     } : null;
     // 内部参与人
     const innerParticipant = participantCode ? `${participantCode}（${participantName}）` : '';
@@ -374,8 +387,10 @@ export default class AdvisorSpaceForm  extends PureComponent {
                         endTime="18:00"
                         onSelected={this.handleScheduleSelect}
                         rowContents={[{title: roomTitle}]}
-                        rowContentStyle={{width: '140px', height: '37px', lineHeight: '37px'}}
-                        cellStyle={{height: '37px'}}
+                        rowContentStyle={rowContentStyle}
+                        cellStyle={cellStyle}
+                        disabledCellStyle={disabledCellStyle}
+                        selectedCellStyle={selectedCellStyle}
                         selectedRange={selectedRange}
                         defaultRange={defaultRange}
                       />
