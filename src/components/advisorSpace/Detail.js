@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 13:57:57
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-20 13:48:25
+ * @Last Modified time: 2018-09-20 16:48:40
  * @description 投顾空间申请首页
  */
 import React from 'react';
@@ -36,7 +36,7 @@ export default function Detail(props) {
       empId,
       orgName,
       createTime,
-      statusId,
+      statusName,
     },
   } = props;
 
@@ -63,8 +63,7 @@ export default function Detail(props) {
   // 拟稿人
   const emp = `${empName} (${empId}) ${orgName}`;
   // 判断状态是否为空
-  const { statusOptions } = advisorSpace;
-  const { label } = _.find(statusOptions, o => (o.value === statusId));
+  const statusValue = statusName ? statusName : '--';
 
   return (
     <DetailWrap isEmpty={isEmpty} currentId={`${id}`} extra={cancelBtn}>
@@ -101,7 +100,7 @@ export default function Detail(props) {
             <InfoItem label="申请时间" value={createTime} width="130px" />
           </li>
           <li className={styles.item}>
-            <InfoItem label="状态" value={label} width="130px" />
+            <InfoItem label="状态" value={statusValue} width="130px" />
           </li>
         </ul>
       </div>
