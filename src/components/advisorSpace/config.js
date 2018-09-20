@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-09-14 14:04:07
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 17:45:39
+ * @Last Modified time: 2018-09-20 12:01:02
  */
 import _ from 'lodash';
 
@@ -36,9 +36,18 @@ const STATUS_TAGS = [
   },
 ];
 
+// 时间段选择样式
+const SCHEDULE_STYLES = {
+  rowContentStyle: { width: '140px', height: '37px', lineHeight: '37px' },
+  cellStyle: { height: '37px' },
+  disabledCellStyle: { background: '#108ee9', opacity: '0.3' },
+  selectedCellStyle: { background: '#108ee9' },
+};
+
 // 根据申请单的状态Code值获取到申请单状态标签组件的属性，用于展示各色标签
 const getStatusTagProps = code => _.find(STATUS_TAGS, item => item.code === code);
 export {
   advisorSpace,
   getStatusTagProps,
+  SCHEDULE_STYLES,
 };
