@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 13:57:57
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-19 15:29:40
+ * @Last Modified time: 2018-09-20 17:23:47
  * @description 投顾空间申请首页
  */
 import React from 'react';
@@ -13,6 +13,7 @@ import { Button } from 'antd';
 import DetailWrap from '../common/detailWrap';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
+import { advisorSpace } from './config';
 
 import styles from './detail_.less';
 
@@ -62,7 +63,7 @@ export default function Detail(props) {
   // 拟稿人
   const emp = `${empName} (${empId}) ${orgName}`;
   // 判断状态是否为空
-  const statusValue = statusName ? statusName : '--';
+  const statusValue = statusName || '--';
 
   return (
     <DetailWrap isEmpty={isEmpty} currentId={`${id}`} extra={cancelBtn}>
