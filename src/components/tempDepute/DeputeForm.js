@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-06 17:54:11
+ * @Last Modified time: 2018-09-17 16:07:07
  * @description 临时任务委托表单
  */
 
@@ -26,6 +26,7 @@ import {
   DEPUTE_REASON_CHECK_MESSAGE,
   ASSIGNEE_CHECK_MESSAGE,
   PERIOD_CHECK_MESSAGE,
+  ASSIGNEE_CHECK_DIFF_MESSAGE,
 } from './utilsCheck';
 
 import styles from './deputeForm.less';
@@ -288,6 +289,7 @@ export default class DeputeForm extends PureComponent {
         isCheckedDeputeReason,
         isCheckedAssignee,
         isCheckedPeriod,
+        isCheckedAssigneeDiff,
       },
     } = this.state;
     // 判断当前组件是否在驳回后修改页面里面
@@ -333,6 +335,7 @@ export default class DeputeForm extends PureComponent {
               getPopupContainer={this.getWrapRef}
             />
             <SingleFilter
+              disabled={disablePage}
               defaultLabel="请选择受托人"
               className={styles.assignee}
               useCustomerFilter
@@ -356,9 +359,11 @@ export default class DeputeForm extends PureComponent {
           </InfoCell>
         </div>
         {this.renderCheckResultTip(isCheckedAssignee, ASSIGNEE_CHECK_MESSAGE)}
+        {this.renderCheckResultTip(isCheckedAssigneeDiff, ASSIGNEE_CHECK_DIFF_MESSAGE)}
         <div className={styles.modContent}>
           <InfoCell label="委托期限" labelWidth={112}>
             <DateRangePicker
+              disabled={disablePage}
               filterValue={[formData.deputeTimeStart, formData.deputeTimeEnd]}
               onChange={this.handleDeputePeriodChange}
               disabledStart={this.disabledStart}

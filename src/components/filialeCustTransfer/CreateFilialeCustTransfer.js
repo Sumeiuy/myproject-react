@@ -2,8 +2,8 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-04-20 17:01:19
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-09-14 20:06:38
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -113,6 +113,12 @@ export default class CreateFilialeCustTransfer extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '导入' } })
   onChange(info) {
+    const uploadFile = info.file;
+    const fileSize = uploadFile.size;
+    if (fileSize === 0) {
+      message.error('文件大小不能为 0');
+      return;
+    }
     this.setState({
       importVisible: false,
     }, () => {

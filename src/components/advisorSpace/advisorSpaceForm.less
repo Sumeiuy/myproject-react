@@ -1,0 +1,172 @@
+.advisorSpaceForm {
+  padding: 20px 30px;
+  .roomWrapper {
+    .coloumnHalfWrapper {
+      display: flex;
+      .coloumn {
+        flex: 1;
+        .advisorInfoCell {
+          padding-bottom: 0;
+        }
+        .value {
+          width: 228px;
+          :global {
+            .ant-calendar-picker {
+              width: 228px;
+              height: 30px;
+              font-size: 14px;
+              color: #333;
+            }
+          }
+        }
+      }
+    }
+    .scheduleWrapper {
+      height: 90px;
+      margin-bottom: 44px;
+      .scheduleLabel {
+        float: right;
+        .scheduleItem {
+          margin-left: 20px;
+          display: inline-block;
+          .unSelected {
+            border: 1px solid #999;
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            vertical-align: middle;
+          }
+          .selected {
+            background: #e4eefd;
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            vertical-align: middle;
+          }
+          span {
+            font-size: 14px;
+            color: #333;
+            margin-left: 6px;
+            display: inline-block;
+            vertical-align: middle;
+          }
+        }
+      }
+      :global {
+        .lego-schedule-timeBar {
+          background: #f3f7fd;
+          border: 1px solid #eee;
+          height: 36px;
+          line-height: 36px;
+          .period {
+            font-size: 14px;
+            color: #333;
+          }
+        }
+        .lego-schedule-fullRow {
+          .lego-schedule-contents {
+            .lego-schedule-rowContent {
+              height: 37px;
+              font-size: 14px;
+              color: #4a4a4a;
+              padding: 0 10px;
+              border-left: 1px solid #eee;
+              border-bottom: 1px solid #eee;
+              cursor: pointer;
+            }
+          }
+          .lego-schedule-drag {
+            height: 37px;
+            .lego-schedule-column.innerRight {
+              border-right: 1px dashed #eee;
+            }
+          }
+        }
+      }
+    }
+  }
+  .label {
+    width: 100px;
+    display: inline-block;
+    font-size: 14px;
+    color: #666;
+    text-align: right;
+    line-height: 30px;
+    vertical-align: top;
+    .isRequired {
+      color: #ff4058;
+      margin-right: 5px;
+      font-style: normal;
+    }
+    .colon {
+      padding: 0 4px;
+    }
+  }
+  .value {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 14px;
+    color: #333;
+    flex: 1;
+    :global {
+      .ant-input {
+        height: 30px;
+        border-color: #ccc;
+        font-size: 14px;
+        color: #333;
+      }
+    }
+  }
+  .theme {
+    :global {
+      .ant-input {
+        width: 610px;
+        height: 30px;
+        border-color: #ccc;
+        font-size: 14px;
+      }
+    }
+  }
+  .participant {
+    :global {
+      .ant-form-item {
+        display: inline-block;
+      }
+      .ant-input {
+        width: 228px;
+        height: 30px;
+        border-color: #ccc;
+        font-size: 14px;
+        color: #333;
+      }
+      .ant-select-selection__placeholder {
+        font-size: 14px;
+      }
+    }
+    .externalCustomer {
+      display: inline-block;
+      margin-left: 10px;
+      .customerLabel {
+        display: inline-block;
+        font-size: 14px;
+        color: #666;
+        text-align: right;
+      }
+    }
+  }
+  .remark {
+    :global {
+      .ant-input {
+        width: 610px;
+        height: 130px;
+        border-color: #ccc;
+        font-size: 14px;
+      }
+    }
+  }
+}
+.participantAutoCompleteOptionValue {
+  font-size: 14px;
+  color: #333;
+  line-height: 18px;
+}

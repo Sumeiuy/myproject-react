@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-03 17:11:30
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-19 17:31:10
  * @description 任务管理首页
  */
 
@@ -263,7 +263,7 @@ export default class PerformerView extends PureComponent {
         this.getDetailOfInitiator(record);
         break;
       case EXECUTOR:
-        this.loadDetailContent(record);
+        this.getDetailOfPerformView(record);
         break;
       case CONTROLLER:
         this.loadManagerViewDetailContent(record);
@@ -703,32 +703,30 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getQueryParams(query, newPageNum, newPageSize) {
+    // 新的业务需求，只有要求从360客户视图中跳转到执行者视图时，需要做流水数据数据过滤，
+    // 从客户360那边跳转会在url中携带from=’cust360‘字段，因此通过该字段判断是否需要在查询任务申请列表是需不需要添加noDeal='noDeal'的请求参数
+    const { location: { query: { from } } } = this.props;
+    let noDealParameter = {};
+    if (from === 'cust360') {
+      noDealParameter = { noDeal: 'noDeal' };
+    }
     const { missionViewType, status, creatorId } = query;
     // 从query上筛选出需要的入参
     const params = _.pick(query, QUERY_PARAMS);
+    // 获取当前的视图类型
+    const currentViewType = getViewInfo(missionViewType).currentViewType;
     let finalPostData = {
       pageNum: _.parseInt(newPageNum, 10),
       pageSize: _.parseInt(newPageSize, 10),
-    };
-    finalPostData = {
-      ...params,
-      ...finalPostData,
-      // { orgId: 'ZZ001041' },
       orgId: emp.getOrgId(),
-      // 传过来的名字叫creatorId，传给后台需要改成creator
       creator: creatorId,
-    };
-
-    // 获取当前的视图类型
-    const currentViewType = getViewInfo(missionViewType).currentViewType;
-    // 入参中，添加排序关键字
-    finalPostData = {
-      ...finalPostData,
+      ...params,
+      // 传过来的名字叫creatorId，传给后台需要改成creator
       ...this.addSortParam(currentViewType, query),
+      status: status || STATE_EXECUTE_CODE,
+      missionViewType: currentViewType,
+      ...noDealParameter,
     };
-    // 状态默认选中‘执行中’, status传50，其余传对应的code码
-    finalPostData.status = status || STATE_EXECUTE_CODE;
-    finalPostData = { ...finalPostData, missionViewType: currentViewType };
     return finalPostData;
   }
 
@@ -738,18 +736,15 @@ export default class PerformerView extends PureComponent {
     return _.includes(STATUS_MANAGER_VIEW, status);
   }
 
-  // 加载右侧panel中的详情内容
+  // 加载执行者视图右侧panel中的详情内容
   @autobind
-  loadDetailContent(obj) {
+  getDetailOfPerformView(obj) {
     const {
       getTaskDetailBasicInfo,
-      clearCustListForServiceImplementation,
     } = this.props;
     getTaskDetailBasicInfo({ taskId: obj.id });
     // 加载右侧详情的时候，查一把涨乐财富通的数据
     this.queryDataForZhanleServiceWay();
-    // 将执行者视图右侧搜索客户的列表数据清空
-    clearCustListForServiceImplementation();
   }
 
   // 查询涨乐财富通的数据
@@ -849,13 +844,16 @@ export default class PerformerView extends PureComponent {
     // 1.将值写入Url
     const { replace, location, push } = this.props;
     const { query, pathname } = location;
+    // 由于业务需求要求在客户360跳转过来到执行者视图，在用户主动筛选头部条件后，将from字段清除掉
+    const resetQuery = _.omit(query, ['from']);
     if (name === 'switchView') {
-      push({ pathname, query: otherQuery });
+      // 切换视图后，也需要清空url中的from字段
+      push({ pathname, query: _.omit(otherQuery, ['from']) });
     } else {
       replace({
         pathname,
         query: {
-          ...query,
+          ...resetQuery,
           ...otherQuery,
           currentId: '',
           pageNum: 1,

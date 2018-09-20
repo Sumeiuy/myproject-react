@@ -2,16 +2,17 @@
  * @Author: sunweibin
  * @Date: 2018-08-31 17:22:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-06 16:44:50
+ * @Last Modified time: 2018-09-17 16:06:18
  * @descprition 临时委托组件中的辅助函数
  */
 import _ from 'lodash';
 import moment from 'moment';
 
+import { emp } from '../../helper';
+
 const DEPUTE_REASON_CHECK_MESSAGE = '委托原因内容长度范围为 10~1000';
-
 const ASSIGNEE_CHECK_MESSAGE = '受托服务经理不能为空';
-
+const ASSIGNEE_CHECK_DIFF_MESSAGE = '受托服务经理不能是自己';
 const PERIOD_CHECK_MESSAGE = '委托期限不能为空，并且开始时间必须在结束时间之前';
 
 const DEFAULT_CHECK_REAULT = {
@@ -19,6 +20,8 @@ const DEFAULT_CHECK_REAULT = {
   isCheckedDeputeReason: true,
   // 受托人校验结果
   isCheckedAssignee: true,
+  // 受托人校验是否与拟稿人同一人
+  isCheckedAssigneeDiff: true,
   // 委托期间校验结果
   isCheckedPeriod: true,
 };
@@ -61,6 +64,11 @@ function validateData(data) {
     valid = false;
     checkResult.isCheckedAssignee = false;
   }
+  // 3. 校验受托人不能是自己
+  if (data.assigneeId === emp.getId()) {
+    valid = false;
+    checkResult.isCheckedAssigneeDiff = false;
+  }
   // 3. 校验委托期限
   if (!checkPeriod(data.deputeTimeStart, data.deputeTimeEnd)) {
     valid = false;
@@ -76,5 +84,6 @@ export {
   DEPUTE_REASON_CHECK_MESSAGE,
   ASSIGNEE_CHECK_MESSAGE,
   PERIOD_CHECK_MESSAGE,
+  ASSIGNEE_CHECK_DIFF_MESSAGE,
   DEFAULT_CHECK_REAULT,
 };

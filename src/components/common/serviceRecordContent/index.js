@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-23 15:47:33
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-17 16:53:54
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-12 13:18:02
  */
 
 import React, { PureComponent } from 'react';
@@ -33,7 +33,7 @@ import {
   defaultFeedback,
   defaultFeedbackOption,
 } from './utils';
-import { MOT_RETURN_VISIT_TASK_EVENT_ID } from '../../../config/taskList/performView';
+import { isMOTReturnTypeTask } from '../../../config/taskList/performView';
 
 import styles from './index.less';
 
@@ -407,7 +407,7 @@ export default class ServiceRecordContent extends PureComponent {
     // 校验客户反馈
     const validateFeedback = this.checkCustFeedbackError();
     // 在MOT回访任务类型下针对回访结果和失败原因进行校验
-    const isMotReturn = this.isMOTReturnVistTask(eventId);
+    const isMotReturn = isMOTReturnTypeTask(eventId);
     const visitResultValidate = _.isEmpty(visitResult);
     // 如果回访结果为失败，需要针对失败原因是否填写
     let failReasonValidate = false;
@@ -542,7 +542,7 @@ export default class ServiceRecordContent extends PureComponent {
       custUuid,
     } = this.props;
     const taskType = `${parseInt(taskTypeCode, 10) + 1}`;
-    const isMotReturnVisitTask = this.isMOTReturnVistTask(eventId);
+    const isMotReturnVisitTask = isMOTReturnTypeTask(eventId);
     // 按照DOClever定义的入参
     const data = {
       custId,
@@ -621,12 +621,6 @@ export default class ServiceRecordContent extends PureComponent {
     // type 值为2的时候，该任务是自建任务
     const eventIdParam = type === '2' ? serviceType : eventId;
     this.props.queryCustFeedbackList4ZLFins({ eventId: eventIdParam, type });
-  }
-
-  // 判断当前的任务是否是 MOT 回访类型任务
-  @autobind
-  isMOTReturnVistTask(eventId) {
-    return MOT_RETURN_VISIT_TASK_EVENT_ID === eventId;
   }
 
   // 判断是否是 MOT 类型任务
@@ -815,7 +809,7 @@ export default class ServiceRecordContent extends PureComponent {
       // 只有投顾入岗才能看到 涨乐财富通
       return true;
     }
-    if (this.isMOTPlatform(type) && this.isMOTReturnVistTask(eventId)) {
+    if (this.isMOTPlatform(type) && isMOTReturnTypeTask(eventId)) {
       // 新增一个如果是MOT待办回访类任务，不展示涨乐财富通选项
       return true;
     }
@@ -889,7 +883,7 @@ export default class ServiceRecordContent extends PureComponent {
     const feedbackTimeText = isMomentAboutFeedbackTime ? custFeedbackTime.format(DATE_FORMAT_SHOW) : '';
 
     // MOT 回访类任务下的回访结果
-    const isMOTReturnVisitTask = this.isMOTReturnVistTask(eventId);
+    const isMOTReturnVisitTask = isMOTReturnTypeTask(eventId);
 
     return (
       <ServeRecordReadOnly
@@ -1007,7 +1001,7 @@ export default class ServiceRecordContent extends PureComponent {
     });
 
     // 是否 MOT 回访类任务
-    const isMotReturnVisitTask = this.isMOTReturnVistTask(eventId);
+    const isMotReturnVisitTask = isMOTReturnTypeTask(eventId);
 
     return (
       <div className={wrapCls}>

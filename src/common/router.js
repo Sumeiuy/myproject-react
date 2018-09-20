@@ -220,47 +220,47 @@ export const getRouterData = (app) => {
     // 分组管理发起任务
     // customerPool/createTaskFromCustGroup 直接进入，所需数据未知
     '/customerPool/createTaskFromCustGroup': {
-      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 管理者视图进度条发起任务
     '/customerPool/createTaskFromProgress': {
-      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 管理者视图饼图发起任务
     '/customerPool/createTaskFromPie': {
-      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 从代办流程进去，任务驳回修改
     '/customerPool/createTaskFromTaskRejection1': {
-      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 从任务管理，创建者视图驳回中的任务，进行任务驳回修改
     '/customerPool/createTaskFromTaskRejection2': {
-      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 从管理者视图服务经理维度发起任务
     '/customerPool/createTaskFromCustScope': {
-      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 客户列表发起任务
     '/customerPool/createTask': {
-      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 执行者视图服务结果客户明细的地方发起任务
     '/customerPool/createTaskFromServiceResultCust': {
-      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 标签管理页面发起任务
     '/customerPool/createTaskFromLabelManagement': {
-      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskList/tasklist', 'taskFeedback'], () =>
         import('../routes/customerPool/CreateTask' /* webpackChunkName: "customerPool_createTask" */)),
     },
     // 客户分组管理
@@ -274,7 +274,7 @@ export const getRouterData = (app) => {
     },
     // 从 /taskList 页面，点击右上角新建进入
     '/customerPool/taskFlow': {
-      component: dynamicWrapper(app, ['customerPool'], () =>
+      component: dynamicWrapper(app, ['customerPool', 'taskFeedback'], () =>
         import('../routes/customerPool/TaskFlow' /* webpackChunkName: "customerPool_taskFlow" */)),
     },
 
@@ -565,6 +565,11 @@ export const getRouterData = (app) => {
     '/tempDeputeReject': {
       component: dynamicWrapper(app, ['tempDepute'], () =>
         import('../routes/tempDepute/RejectHome') /* webpackChunkName: "tempDepute_reject" */),
+    },
+    // 投顾空间申请
+    '/advisorSpace': {
+      component: dynamicWrapper(app, ['advisorSpace'], () =>
+        import('../routes/advisorSpace/Home') /* webpackChunkName: "advisorSpace" */),
     },
   };
   return routerConfig;

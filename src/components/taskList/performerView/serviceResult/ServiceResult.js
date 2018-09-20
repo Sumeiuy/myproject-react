@@ -9,7 +9,7 @@ import { Spin, Icon, message, Table, Checkbox, Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import styles from './serviceResult.less';
+
 import ServiceResultLayout from '../../common/ServiceResultLayout';
 import Button from '../../../common/Button';
 import { MISSION_PROGRESS_MAP, OPEN_IN_TAB_PARAM } from './config';
@@ -17,6 +17,8 @@ import { SOURCE_SERVICE_RESULT_CUST } from '../../../../config/createTaskEntry';
 import { url as urlHelper, emp, permission, number } from '../../../../helper';
 import { openInTab } from '../../../../utils';
 import logable from '../../../../decorators/logable';
+
+import styles from './serviceResult.less';
 
 const DEFAULT_DETIAL_TITLE = '客户明细';
 // 获取客户详情接口默认的pagesize
@@ -378,9 +380,7 @@ export default class ServiceResult extends PureComponent {
         key: 'cust',
         width: 130,
         fixed: 'left',
-        render: (text, record) => <div title={`${record.cust}(${record.brokerNum})`}>
-          {record.cust || '--'}({record.brokerNum || '--'})
-        </div>,
+        render: this.renderCustNameCell,
       },
       {
         title: '总资产',
@@ -425,6 +425,22 @@ export default class ServiceResult extends PureComponent {
       },
     ];
   }
+
+  // 渲染客户明细表格中如果是委托服务经理的客户则带委字小图标
+  // isDepute如果为true，则表示为委托服务经理的客户
+  @autobind
+  renderCustNameCell(text, record) {
+    const { cust, brokerNum, isDepute = true } = record;
+    return (
+      <div title={`${cust}(${brokerNum})`} className={styles.custNameCell}>
+        <div className={styles.custName}>{`${cust || '--'}(${brokerNum || '--'})`}</div>
+        {
+          isDepute ? (<div className={styles.isDepute}>委</div>) : null
+        }
+      </div>
+    );
+  }
+
 
   render() {
     const { serviceProgress, custFeedBack, isShowExecutorDetailLoading, custDetail } = this.props;

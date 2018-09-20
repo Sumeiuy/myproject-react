@@ -35,7 +35,7 @@ module.exports = merge(baseWebpackConfig, {
       {
         test: /\.jsx?$/,
         loader: 'happypack/loader?id=jsx',
-        include: [config.src].concat(config.htComponents)
+        include: config.src.concat(config.htComponents)
       },
       {
         test: /\.css$/,
@@ -104,17 +104,7 @@ module.exports = merge(baseWebpackConfig, {
       loaders: [{
         loader: 'babel-loader',
         options: {
-          presets: ["@babel/preset-react"],
-          plugins: [
-            [
-              "import", {
-                "libraryName": "antd",
-                "style": true
-              }
-            ],
-            ["@babel/plugin-proposal-class-properties", { "loose": true }],
-            ["@babel/plugin-proposal-object-rest-spread"],
-          ]
+          configFile: resolve('babel.config.js'),
         }
       }],
     }),

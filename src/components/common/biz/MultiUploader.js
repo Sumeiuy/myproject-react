@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-02-07 09:52:43
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-09-14 20:01:49
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -119,7 +119,7 @@ export default class MultiUpload extends PureComponent {
     const uploadFile = info.file;
     const { size } = uploadFile;
     if (size === 0) {
-      message.error(`文件大小不能为 0`);
+      message.error('文件大小不能为 0');
       return;
     }
     if (size > (maxSize * 1024 * 1024)) {

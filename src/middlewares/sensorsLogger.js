@@ -146,6 +146,8 @@ function getLogData(action) {
       ...extraData,
       eventType: eventType.event,
       project: 'fsp',
+      // 添加代登录人信息
+      ...emp.getMocker(),
     },
   };
 }
