@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:08:18
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-19 17:46:16
+ * @Last Modified time: 2018-09-20 10:43:19
  * @description 投顾空间新建申请
  */
 
@@ -51,6 +51,7 @@ export default class CreateApply extends PureComponent {
       isShowPeriodStatusError: false,
       // 参与人校验错误状态
       isShowParticipantStatusError: false,
+      participantStatusErrorMessage: '',
     };
   }
 
@@ -118,7 +119,10 @@ export default class CreateApply extends PureComponent {
   // 参与人校验填完值后重置错误状态和错误提示
   @autobind
   resetParticipantErrorProps() {
-    this.setState({ isShowParticipantStatusError: false });
+    this.setState({
+      isShowParticipantStatusError: false,
+      participantStatusErrorMessage: '',
+    });
   }
 
   // 点击提交
@@ -150,7 +154,7 @@ export default class CreateApply extends PureComponent {
   // 校验数据
   @autobind
   validateData() {
-    const { formData: { roomNo, startTime, endTime, participant } } = this.state;
+    const { formData: { roomNo, startTime, endTime, participant, outerPersonFlag } } = this.state;
     if(_.isEmpty(roomNo)) {
       this.setState({isShowRoomStatusError: true});
       this.isValidateError = true;
@@ -160,7 +164,16 @@ export default class CreateApply extends PureComponent {
       this.isValidateError = true;
     }
     if(_.isEmpty(participant)) {
-      this.setState({isShowParticipantStatusError: true});
+      this.setState({
+        isShowParticipantStatusError: true,
+        participantStatusErrorMessage: '请输入参与人',
+      });
+      this.isValidateError = true;
+    } else if (outerPersonFlag && participant.participantName.trim().length > 20) {
+      this.setState({
+        isShowParticipantStatusError: true,
+        participantStatusErrorMessage: '最多20个字符',
+      });
       this.isValidateError = true;
     }
   }
@@ -260,6 +273,7 @@ export default class CreateApply extends PureComponent {
       isShowRoomStatusError,
       isShowPeriodStatusError,
       isShowParticipantStatusError,
+      participantStatusErrorMessage,
       isCreateApply,
       action,
       formData,
@@ -291,6 +305,7 @@ export default class CreateApply extends PureComponent {
               isShowRoomStatusError={isShowRoomStatusError}
               isShowPeriodStatusError={isShowPeriodStatusError}
               isShowParticipantStatusError={isShowParticipantStatusError}
+              participantStatusErrorMessage={participantStatusErrorMessage}
             />
           :
             <ConfirmForm

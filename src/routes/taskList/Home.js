@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-13 11:57:34
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-18 16:01:01
+ * @Last Modified time: 2018-09-19 17:31:10
  * @description 任务管理首页
  */
 
@@ -703,6 +703,13 @@ export default class PerformerView extends PureComponent {
    */
   @autobind
   getQueryParams(query, newPageNum, newPageSize) {
+    // 新的业务需求，只有要求从360客户视图中跳转到执行者视图时，需要做流水数据数据过滤，
+    // 从客户360那边跳转会在url中携带from=’cust360‘字段，因此通过该字段判断是否需要在查询任务申请列表是需不需要添加noDeal='noDeal'的请求参数
+    const { location: { query: { from } } } = this.props;
+    let noDealParameter = {};
+    if (from === 'cust360') {
+      noDealParameter = { noDeal: 'noDeal' };
+    }
     const { missionViewType, status, creatorId } = query;
     // 从query上筛选出需要的入参
     const params = _.pick(query, QUERY_PARAMS);
@@ -717,7 +724,8 @@ export default class PerformerView extends PureComponent {
       // 传过来的名字叫creatorId，传给后台需要改成creator
       ...this.addSortParam(currentViewType, query),
       status: status || STATE_EXECUTE_CODE,
-      missionViewType: currentViewType
+      missionViewType: currentViewType,
+      ...noDealParameter,
     };
     return finalPostData;
   }
@@ -836,13 +844,16 @@ export default class PerformerView extends PureComponent {
     // 1.将值写入Url
     const { replace, location, push } = this.props;
     const { query, pathname } = location;
+    // 由于业务需求要求在客户360跳转过来到执行者视图，在用户主动筛选头部条件后，将from字段清除掉
+    const resetQuery = _.omit(query, ['from']);
     if (name === 'switchView') {
-      push({ pathname, query: otherQuery });
+      // 切换视图后，也需要清空url中的from字段
+      push({ pathname, query: _.omit(otherQuery, ['from']) });
     } else {
       replace({
         pathname,
         query: {
-          ...query,
+          ...resetQuery,
           ...otherQuery,
           currentId: '',
           pageNum: 1,
