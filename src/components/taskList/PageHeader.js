@@ -603,7 +603,8 @@ export default class Pageheader extends PureComponent {
     const filterOption = currentFilterItem && currentFilterItem.filterOption;
     let finalQuery = query;
     if (isDeleteFilterFromLocation && currentFilterItem) {
-      finalQuery = _.omit(query, filterOption);
+      // 由于业务需求要求在客户360跳转过来到执行者视图，在用户主动筛选头部条件后，将from字段清除掉
+      finalQuery = _.omit(query, [...filterOption, 'from']);
     } else {
       // ['a','b'] => {a:'', b: ''}
       const filterMap = _.reduce(filterOption,
