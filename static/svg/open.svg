@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.1 (51147) - http://www.bohemiancoding.com/sketch -->
+    <title>播放</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="首页" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(-1234.000000, -695.000000)" id="每日晨报">
+            <g transform="translate(1048.000000, 640.000000)">
+                <g id="播放" transform="translate(186.000000, 55.000000)">
+                    <g transform="translate(5.941176, 4.705882)" fill="#108EE9" fill-rule="nonzero" id="Shape">
+                        <path d="M4.76087881,3.04934696 L0.551665488,0.0635010598 C0.3158044,-0.102379271 0.00737066194,0.104971145 0.00737066194,0.41599676 L0.00737066194,6.38768857 C0.00737066194,6.69871418 0.3158044,6.90606459 0.551665488,6.74018427 L4.74273565,3.75433837 C4.99673991,3.60919308 4.99673991,3.19449226 4.76087881,3.04934696 Z"></path>
+                    </g>
+                    <circle id="Oval-2" stroke="#108EE9" cx="8" cy="8" r="7.5"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

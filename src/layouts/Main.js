@@ -128,32 +128,25 @@ export default class Main extends Component {
                 <div className={styles.container} id="container">
                   <div className={styles.content} id="content">
                     <Loading loading={loading} forceFull={loadingForceFull} />
-                    {
-                      (!_.isEmpty(interfaceState) &&
-                        !interfaceState[effects.dictionary] &&
-                        !interfaceState[effects.customerScope] &&
-                        !interfaceState[effects.empInfo]) ?
-                          <div>
-                            {children}
-                            <ConnectedCreateServiceRecord
-                              handleCloseClick={handleCloseClick}
-                              loading={interfaceState[effects.addServeRecord]}
-                              key={serviceRecordInfo.id}
-                              dict={dict}
-                              empInfo={empInfo}
-                              addServeRecord={addServeRecord}
-                              currentCommonServiceRecord={currentCommonServiceRecord}
-                              onToggleServiceRecordModal={toggleServiceRecordModal}
-                              custUuid={custUuid}
-                              ceFileDelete={ceFileDelete}
-                              taskFeedbackList={motSelfBuiltFeedbackList}
-                              serviceRecordInfo={serviceRecordInfo}
-                              isPhoneCall={isPhoneCall}
-                            />
-                            <ConnectedSignCustomerLabel />
-                          </div>
-                        : null
-                    }
+                    <div>
+                      {children}
+                      <ConnectedCreateServiceRecord
+                        handleCloseClick={handleCloseClick}
+                        loading={interfaceState[effects.addServeRecord]}
+                        key={serviceRecordInfo.id}
+                        dict={dict}
+                        empInfo={empInfo}
+                        addServeRecord={addServeRecord}
+                        currentCommonServiceRecord={currentCommonServiceRecord}
+                        onToggleServiceRecordModal={toggleServiceRecordModal}
+                        custUuid={custUuid}
+                        ceFileDelete={ceFileDelete}
+                        taskFeedbackList={motSelfBuiltFeedbackList}
+                        serviceRecordInfo={serviceRecordInfo}
+                        isPhoneCall={isPhoneCall}
+                      />
+                      <ConnectedSignCustomerLabel />
+                    </div>
                   </div>
                 </div>
                 <PhoneWrapper />

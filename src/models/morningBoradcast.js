@@ -232,7 +232,7 @@ export default {
       });
     },
     // 获取首页数据
-    * homaPageNews({ payload }, { call, put }) {
+    * queryhomePageNews({ payload }, { call, put }) {
       const response = yield call(api.searchBoradcastList, payload);
       const listResult = response.resultData.newsList;
       if (listResult) {

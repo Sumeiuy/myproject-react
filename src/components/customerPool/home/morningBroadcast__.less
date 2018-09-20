@@ -1,35 +1,25 @@
 @main-color: #2e669a;
 .morning_broadcast {
-  box-sizing: border-box;
-  margin: 0 0 10px;
-  border-top: 3px solid @main-color;
-  border-bottom: 2px solid #ccc;
+  margin: 20px 20px 0;
   .title {
-    height: 30px;
-    line-height: 30px;
-    border-bottom: 1px dashed #ddd;
     display: flex;
+    margin-bottom: 10px;
     justify-content: space-between;
     font-weight: bold;
-    color: @main-color;
+    color: #333;
     .more {
-      color: #2d86d8;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
+      height: 24px;
+      line-height: 24px;
+      color: #108ee9;
+      font-size: 12px;
       cursor: pointer;
-      font-weight: normal;
-      img {
-        width: 14px;
-        height: 14px;
-      }
+      font-weight: bold;
     }
   }
 
   .listWrap {
-    line-height: 24px;
     overflow: hidden;
-    font-size: 12px;
+    font-size: 14px;
   }
   .item {
     display: flex;
@@ -38,8 +28,8 @@
     height: 24px;
     margin: 4px 0;
     .simpleName {
+      display: none;
       position: relative;
-      margin-right: 7px;
       width: 75px;
       height: 24px;
       color: @main-color;
@@ -49,23 +39,16 @@
       white-space: nowrap;
     }
     .music {
-      width: calc(~"100% - 75px");
-      overflow: hidden;
+      width: e("calc(100% - 18px)");
       height: 20px;
       position: relative;
       background: #fafafa;
-      audio {
-        width: 90%;
-        margin-top: -6px;
-        height: 32px;
-      }
       .close {
         position: absolute;
-        right: 8px;
-        top: 1px;
-        display: none;
-        color: #2d86d8;
-        font-size: 17px;
+        right: -18px;
+        top: 3px;
+        color: #999;
+        font-size: 14px;
         cursor: pointer;
       }
       &:hover {
@@ -75,6 +58,8 @@
       }
     }
     .desc {
+      font-size: 14px;
+      color: #666;
       width: 85%;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -82,13 +67,15 @@
       white-space: nowrap;
       cursor: pointer;
       &:hover {
-        color: #2d86d8;
+        color: #108ee9;
       }
     }
     .listen {
-      color: #2d86d8;
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background: url(../../../../static/svg/open.svg) round;
       cursor: pointer;
     }
   }
 }
-

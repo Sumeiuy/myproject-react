@@ -21,14 +21,29 @@ import styles from './rectFrame.less';
 import classes from './reactFrame__.less';
 
 function RectFrame(props) {
-  const { dataSource: { title, icon }, children, desc, isNewHome } = props;
+  const {
+    dataSource: { title, icon },
+    children,
+    desc,
+    isNewHome,
+    noMargin,
+  } = props;
+
   const trueStyles = isNewHome ? classes : styles;
+
+  let contentCls = styles.content;
+  if (noMargin) {
+    contentCls = ''
+  } else if(isNewHome) {
+    contentCls = classes.content;
+  }
+
   return (
     <div className={trueStyles.container}>
       <div className={trueStyles.header}>
         {
-          _.isEmpty(icon) ? (
-            null
+          (_.isEmpty(icon) || isNewHome) ? (
+            <span style={{ display: 'inline-block', width: 6, height: 26 }} />
           ) : (
             <Icon type={icon} />
           )
@@ -49,18 +64,20 @@ function RectFrame(props) {
             <div className={trueStyles.title}>{title}</div>
         }
       </div>
-      <div className={trueStyles.content}>{children}</div>
+      <div className={contentCls}>{children}</div>
     </div>
   );
 }
 
 RectFrame.defaultProps = {
   desc: null,
+  noMargin: false,
 };
 
 RectFrame.propTypes = {
   dataSource: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired,
+  noMargin: PropTypes.bool,
   desc: PropTypes.string,
 };
 

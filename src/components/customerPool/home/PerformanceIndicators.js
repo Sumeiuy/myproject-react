@@ -47,7 +47,6 @@ const getLabelList = arr => arr.map(v => (v || {}).name);
 export default class PerformanceIndicators extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
-    empInfo: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
   }
 
@@ -170,6 +169,13 @@ export default class PerformanceIndicators extends PureComponent {
         desc: '',
         title: '',
       });
+    });
+  }
+
+  @autobind
+  handleHSRateClick(instance) {
+    instance.on('click', (arg) => {
+      this.aggregationToList();
     });
   }
 
@@ -345,7 +351,7 @@ export default class PerformanceIndicators extends PureComponent {
 
   @autobind
   @logable({ type: 'Click', payload: { name: '沪深归集率下钻' } })
-  AggregationToList() {
+  aggregationToList() {
     const { push } = this.context;
     const {
       cycle,
@@ -381,13 +387,17 @@ export default class PerformanceIndicators extends PureComponent {
         >
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
-              onEvents={{ click: this.AggregationToList }}
+              onReady={this.handleHSRateClick}
               option={data}
               resizable
               style={{
                 height: '180px',
                 cursor: 'auto',
               }}
+            />
+            <div
+              className={styles.clickContent}
+              onClick={this.aggregationToList}
             />
           </IfEmpty>
         </RectFrame>
@@ -398,7 +408,7 @@ export default class PerformanceIndicators extends PureComponent {
   // 产品销售 & 净创收（投顾绩效）
   @autobind
   renderProductSaleAndPureIcomeIndicators(param) {
-    const { push, empInfo } = this.context;
+    const { push } = this.context;
     const { cycle, location } = this.props;
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalData = getProductSale(argument);
@@ -415,7 +425,6 @@ export default class PerformanceIndicators extends PureComponent {
               cycle={cycle}
               push={push}
               location={location}
-              empInfo={empInfo}
             />
           </IfEmpty>
         </RectFrame>
@@ -548,7 +557,7 @@ export default class PerformanceIndicators extends PureComponent {
   // 新增客户
   @autobind
   renderPureAddCustIndicators(param) {
-    const { empInfo, push } = this.context;
+    const { push } = this.context;
     const { cycle, location, custCount } = this.props;
     const isEmpty = _.isEmpty(custCount);
     const { newUnit: pureAddUnit, items: pureAddItems } = getPureAddCust({
@@ -565,7 +574,6 @@ export default class PerformanceIndicators extends PureComponent {
               cycle={cycle}
               push={push}
               location={location}
-              empInfo={empInfo}
               type="custIndicator"
             />
           </IfEmpty>
@@ -612,7 +620,7 @@ export default class PerformanceIndicators extends PureComponent {
 
     const trueStyles = isNewHome ? classes : styles;
 
-    const gutter = isNewHome ? 20: 28;
+    const gutter = isNewHome ? 18: 28;
 
     return (
       <div className={trueStyles.indexBox}>

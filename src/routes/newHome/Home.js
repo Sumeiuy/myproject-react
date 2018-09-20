@@ -8,33 +8,44 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
+import moment from 'moment';
 import withRouter from '../../decorators/withRouter';
 import KeyAttention from '../../components/newHome/KeyAttention';
 import ViewAndIntro from '../../components/newHome/ViewAndIntro';
 import ChartsTab from '../../components/newHome/ChartsTab';
 import { dva } from '../../helper';
 import styles from './home.less';
+import { MorningBroadcast } from '../../components/customerPool/home';
 
 const effect = dva.generateEffect;
 const effects = {
   getManagerIndicators: 'customerPool/getManagerIndicators',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
   getCustCount: 'customerPool/getCustCount',
+  getCustAnalyticsIndicators: 'customerPool/getCustAnalyticsIndicators',
+  queryAudioFile: 'morningBoradcast/queryAudioFile',
+  queryhomePageNews: 'morningBoradcast/queryhomePageNews', // 晨报列表
 };
 
 const mapStateToProps = state => ({
   custRange: state.customerPool.custRange, // 客户池用户范围
   cycle: state.app.dict.kPIDateScopeType,  // 统计周期
   empInfo: state.app.empInfo, // 职位信息
+  custAnalyticsIndicators: state.customerPool.custAnalyticsIndicators,
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
   managerIndicators: state.customerPool.managerIndicators, // 经营指标
   custCount: state.customerPool.custCount, // （经营指标）新增客户指标
+  initBoradcastList: state.morningBoradcast.initBoradcastList, // 晨报列表
+  initBoradcastFile: state.morningBoradcast.initBoradcastFile, // 晨报详情
 });
 
 const mapDispatchToProps = {
   getCustCount: effect(effects.getCustCount, { loading: false }),
   getManagerIndicators: effect(effects.getManagerIndicators, { loading: false }),
   getPerformanceIndicators: effect(effects.getPerformanceIndicators, { loading: false }),
+  getCustAnalyticsIndicators: effect(effects.getCustAnalyticsIndicators, { loading: false }),
+  queryAudioFile: effect(effects.queryAudioFile, { loading: false }),
+  queryhomePageNews: effect(effects.queryhomePageNews, { loading: false }),
 };
 
 const EMPTY_LIST = [];
@@ -48,8 +59,10 @@ export default class Home extends PureComponent {
     location: PropTypes.object.isRequired,
     performanceIndicators: PropTypes.object,
     managerIndicators: PropTypes.object,
+    custAnalyticsIndicators: PropTypes.object,
     getManagerIndicators: PropTypes.func.isRequired,
     getPerformanceIndicators: PropTypes.func.isRequired,
+    getCustAnalyticsIndicators: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     cycle: PropTypes.array,
     empInfo: PropTypes.object,
@@ -58,6 +71,10 @@ export default class Home extends PureComponent {
       PropTypes.array,
     ]),
     getCustCount: PropTypes.func.isRequired,
+    queryAudioFile: PropTypes.func.isRequired,
+    initBoradcastList: PropTypes.array.isRequired,
+    initBoradcastFile: PropTypes.object.isRequired,
+    queryhomePageNews: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -65,8 +82,18 @@ export default class Home extends PureComponent {
     custRange: EMPTY_LIST,
     cycle: EMPTY_LIST,
     empInfo: EMPTY_OBJECT,
+    custAnalyticsIndicators: EMPTY_OBJECT,
     performanceIndicators: EMPTY_OBJECT,
     custCount: EMPTY_LIST,
+  }
+
+  componentDidMount() {
+    this.props.queryhomePageNews({
+      createdFrom: moment().subtract(1, 'months').format('YYYY-MM-DD'),
+      createdTo: moment().format('YYYY-MM-DD'),
+      pageNum: 1,
+      pageSize: 10,
+    });
   }
 
   render() {
@@ -75,12 +102,17 @@ export default class Home extends PureComponent {
       custRange,
       performanceIndicators,
       managerIndicators,
+      custAnalyticsIndicators,
       cycle,
       empInfo,
       custCount,
       getCustCount,
       getManagerIndicators,
-      getPerformanceIndicators
+      getPerformanceIndicators,
+      getCustAnalyticsIndicators,
+      queryAudioFile,
+      initBoradcastList,
+      initBoradcastFile,
     } = this.props;
 
     const keyAttentionProps = {
@@ -94,13 +126,23 @@ export default class Home extends PureComponent {
       custRange,
       performanceIndicators,
       managerIndicators,
+      custAnalyticsIndicators,
       cycle,
       empInfo,
       custCount,
       getCustCount,
       getManagerIndicators,
-      getPerformanceIndicators
+      getPerformanceIndicators,
+      getCustAnalyticsIndicators,
     };
+
+    const broadcastProps = {
+      queryAudioFile,
+      dataList: initBoradcastList,
+      sourceList: initBoradcastFile,
+      isNewHome: true,
+    };
+
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
@@ -121,7 +163,9 @@ export default class Home extends PureComponent {
           <div className={styles.informationContainer}>
             <ViewAndIntro {...viewAndIntroProps} />
           </div>
-          <div className={styles.newsInfoContainer}>每日晨报</div>
+          <div className={styles.newsInfoContainer}>
+            <MorningBroadcast {...broadcastProps} />
+          </div>
         </div>
       </div>
     );

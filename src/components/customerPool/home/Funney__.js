@@ -30,40 +30,6 @@ function getDataConfig(data) {
   }));
 }
 
-function renderIntro(data) {
-  return _.map(
-    data,
-    (item, index) => (
-      <div className={styles.row} key={`row${index}`}>
-        <div>
-          <Popover
-            title={`${item.value}`}
-            content={item.description}
-            placement="bottom"
-            mouseEnterDelay={0.2}
-            overlayStyle={{ maxWidth: '320px' }}
-            overlayClassName={antdStyles.popoverClass}
-          >
-            {item.value}
-          </Popover>
-        </div>
-        <div className={styles.count2}>
-          <Popover
-            title={`${item.property}${item.unit}`}
-            content={item.propertyDesc}
-            placement="bottom"
-            mouseEnterDelay={0.2}
-            overlayStyle={{ maxWidth: '320px' }}
-            overlayClassName={antdStyles.popoverClass}
-          >
-            <span className={styles.properyValue}>{`/ ${item.property}`}</span>
-            <span className={styles.unit}>{item.unit}</span>
-          </Popover>
-        </div>
-      </div>
-    ),
-  );
-}
 
 function Funney({ dataSource, push, cycle, location }, { empInfo }) {
   const { data, color } = dataSource;
@@ -134,6 +100,76 @@ function Funney({ dataSource, push, cycle, location }, { empInfo }) {
       });
     });
   };
+
+  function handleIntroClick(item) {
+    const { key, name } = item;
+    const modalTypeList = homeModelType[SOURCE_CUST_ASSETS];
+    const { key: modalType } = _.find(modalTypeList, item => item.id === key) || {};
+    let params = {
+      source: SOURCE_CUST_ASSETS,
+      type: modalType,
+      push,
+      cycle,
+      location,
+    };
+    // 如果是服务经理模块，则下钻客户列表后服务经理默认为当前登录客户
+    const { empNum, empName } = empInfo.empInfo;
+    if (!modalType) {
+      params = {
+        ...params,
+        ptyMngId: empNum,
+        ptyMngName: empName,
+      };
+    }
+    linkTo(params);
+    // 手动上传日志
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: '客户及资产',
+        element: name,
+      },
+    });
+  }
+
+  function renderIntro(data) {
+    return _.map(
+      data,
+      (item, index) => (
+        <div
+          className={styles.row}
+          key={`row${index}`}
+          onClick={() => handleIntroClick(item)}
+        >
+          <div className={styles.count1}>
+            <Popover
+              title={`${item.value}`}
+              content={item.description}
+              placement="bottom"
+              mouseEnterDelay={0.2}
+              overlayStyle={{ maxWidth: '320px' }}
+              overlayClassName={antdStyles.popoverClass}
+            >
+              {item.value}
+            </Popover>
+          </div>
+          <div className={styles.count2}>
+            <Popover
+              title={`${item.property}${item.unit}`}
+              content={item.propertyDesc}
+              placement="bottom"
+              mouseEnterDelay={0.2}
+              overlayStyle={{ maxWidth: '320px' }}
+              overlayClassName={antdStyles.popoverClass}
+            >
+              <span className={styles.properyValue}>{`/ ${item.property}`}</span>
+              <span className={styles.unit}>{item.unit}</span>
+            </Popover>
+          </div>
+        </div>
+      ),
+    );
+  }
 
   return (
     <div className={styles.container}>

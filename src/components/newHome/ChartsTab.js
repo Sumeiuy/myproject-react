@@ -19,6 +19,7 @@ import {
 import { emp, time, permission } from '../../helper';
 import { transformDateTypeToDate } from '../customerPool/helper';
 import { PerformanceIndicators } from '../customerPool/home';
+import AnalysisCharts from './AnalysisCharts';
 import TabController from './TabController';
 import logable from '../../decorators/logable';
 import styles from './chartsTab.less';
@@ -31,6 +32,7 @@ export default class ChartsTab extends PureComponent {
     custRange: PropTypes.array.isRequired,
     cycle: PropTypes.array.isRequired,
     managerIndicators: PropTypes.object.isRequired,
+    custAnalyticsIndicators: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     performanceIndicators: PropTypes.object.isRequired,
     custCount: PropTypes.oneOfType([
@@ -40,10 +42,10 @@ export default class ChartsTab extends PureComponent {
     getCustCount: PropTypes.func.isRequired,
     getManagerIndicators: PropTypes.func.isRequired,
     getPerformanceIndicators: PropTypes.func.isRequired,
+    getCustAnalyticsIndicators: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
-    push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
   };
 
@@ -151,6 +153,7 @@ export default class ChartsTab extends PureComponent {
   getIndicators({ begin, end, orgId, cycleSelect, custType }) {
     const {
       getPerformanceIndicators,
+      getCustAnalyticsIndicators,
       getManagerIndicators,
       getCustCount,
       empInfo = {},
@@ -169,6 +172,8 @@ export default class ChartsTab extends PureComponent {
     getCustCount({ ...param });
     // 经营指标
     getManagerIndicators({ ...param, end, begin });
+    // 客户分析
+    getCustAnalyticsIndicators({ ...param, end, begin });
     // 查看投顾绩效开关:empinfo返回的权限指标字段（tgQyFlag：bool）
     if (tgQyFlag) {
       getPerformanceIndicators({ ...param, end, begin });
@@ -176,8 +181,22 @@ export default class ChartsTab extends PureComponent {
   }
 
   @autobind
+  getCurrentActiveKey() {
+    const { location: { query: { activeKey } } } = this.props;
+    return activeKey || 'analysis';
+  }
+
+  @autobind
   @logable({ type: 'Click', payload: { name: '切换Tab：经营指标/投顾绩效' } })
-  handleTabClick() {} // 只是用来上报日志
+  handleTabClick(key) {
+    const { location: { query } } = this.props;
+    this.context.replace({
+      query: {
+        ...query,
+        activeKey: key,
+      }
+    });
+  }
 
   renderTabController() {
     const tabControllerProps = {
@@ -199,30 +218,37 @@ export default class ChartsTab extends PureComponent {
       custCount,
       managerIndicators,
       performanceIndicators,
+      custAnalyticsIndicators,
       location,
       cycle
     } = this.props;
 
-    const { push } = this.context;
     const { tgQyFlag } = (empInfo && empInfo.empInfo) || {};
+
+    const activeKey = this.getCurrentActiveKey();
 
     return (
       <Tabs
         className={styles.tab}
         tabBarExtraContent={this.renderTabController()}
-        defaultActiveKey="manage"
+        defaultActiveKey={activeKey}
         onTabClick={this.handleTabClick}
+        animated={false}
       >
+        <TabPane tab="客户分析" key="analysis">
+          <AnalysisCharts
+            indicators={custAnalyticsIndicators}
+            location={location}
+            cycle={cycle}
+          />
+        </TabPane>
         <TabPane tab="经营指标" key="manage">
           <PerformanceIndicators
-            empInfo={empInfo}
-            push={push}
             custCount={custCount}
             indicators={managerIndicators}
             location={location}
             cycle={cycle}
             category={'manager'}
-            authority={this.hasIndexViewPermission}
             isNewHome
           />
         </TabPane>
@@ -230,14 +256,11 @@ export default class ChartsTab extends PureComponent {
           tgQyFlag ? (
             <TabPane tab="投顾绩效" key="performance">
               <PerformanceIndicators
-                empInfo={empInfo}
-                push={push}
                 indicators={performanceIndicators}
                 location={location}
                 cycle={cycle}
                 custCount={custCount}
                 category={'performance'}
-                authority={this.hasIndexViewPermission}
                 isNewHome
               />
             </TabPane>

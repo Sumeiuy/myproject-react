@@ -1,0 +1,101 @@
+.indexBox {
+  background: #fff;
+  .listItem {
+    padding: 0;
+    margin-bottom: 10px;
+  }
+  .chartLegend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: 15px auto 0;
+    .legendItem {
+      cursor: pointer;
+      &:hover {
+        color: #108ee9;
+      }
+      flex: 0 0 auto;
+      font-size: 12px;
+      .legendColor {
+        display: inline-block;
+        height: 6px;
+        width: 6px;
+        vertical-align: middle;
+        margin-right: 6px;
+        border-radius: 50%;
+      }
+      .legendLabel {
+        vertical-align: middle;
+      }
+    }
+  }
+  .holdingchartLegend {
+    margin: 5px auto 0;
+    width: 204px;
+    &:last-child {
+      margin-top: 5px;
+    }
+    .legendItem {
+      display: inline-block;
+      margin-right: 20px;
+      &:last-child {
+        margin-right: 0;
+      }
+      font-size: 12px;
+      .legendColor {
+        display: inline-block;
+        height: 6px;
+        width: 6px;
+        vertical-align: middle;
+        margin-right: 6px;
+        border-radius: 50%;
+      }
+      .legendLabel {
+        vertical-align: middle;
+      }
+    }
+  }
+  .axisLine {
+    height: 1px;
+    margin: 0 6px;
+    background: #d1d1d1;
+  }
+  .axisLabel {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 10%;
+    .label {
+      flex: 0 0 auto;
+      transform: rotate(-90deg);
+      color: #999;
+      width: 14%;
+      text-align: right;
+      margin-top: 3%;
+      .axisStick {
+        display: inline-block;
+        width: 2px;
+        height: 1px;
+        background: #999;
+        vertical-align: super;
+        margin-left: 2px;
+      }
+    }
+  }
+  .pftAmtAxisLabel {
+    margin: 3px 18px 0;
+    .pftAmtLabel {
+      color: #999;
+      display: inline-block;
+      transform: rotate(-90deg);
+      text-align: right;
+      width: 7.69%;
+      &:first-child {
+        position: relative;
+        top: 5px;
+      }
+      .pftAmtContent {
+        display: inline-block;
+      }
+    }
+  }
+}
