@@ -1,8 +1,8 @@
 /**
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-13 13:00:32
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-09-20 17:26:13
  * @description 投顾空间申请首页
  */
 
@@ -14,9 +14,15 @@ import _ from 'lodash';
 
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import Header from '../../components/advisorSpace/Header';
+import Detail from '../../components/advisorSpace/Detail';
+import ApplyList from '../../components/common/appList';
+import ApplyItem from '../../components/common/appList/ApplyItem';
+import CreateApply from '../../components/advisorSpace/CreateApply';
 import { dva } from '../../helper';
 import withRouter from '../../decorators/withRouter';
+import { advisorSpace, getStatusTagProps } from '../../components/advisorSpace/config';
 import seibelHelper from '../../helper/page/seibel';
+import logable, { logPV } from '../../decorators/logable';
 
 const effect = dva.generateEffect;
 
@@ -27,11 +33,13 @@ const mapStateToProps = state => ({
   // 右侧详情
   detailInfo: state.advisorSpace.detailInfo,
   // 智慧前厅列表
-  smartFrontHallData: state.advisorSpace.smartFrontHallData,
+  roomData: state.advisorSpace.roomData,
+  // 新建时智慧前厅列表
+  createRoomData: state.advisorSpace.createRoomData,
   // 新建提交结果
   submitResult: state.advisorSpace.submitResult,
   // 参与人列表
-  participantList: state.advisorSpace.participantList,
+  participantData: state.advisorSpace.participantData,
   // 取消预订结果
   cancelReservationResult: state.advisorSpace.cancelReservationResult,
 });
@@ -42,13 +50,15 @@ const mapDispatchToProps = {
   // 获取右侧详情
   getDetail: effect('advisorSpace/getDetail', { forceFull: true }),
   // 获取智慧前厅列表
-  getSmartFrontHallList: effect('advisorSpace/getSmartFrontHallList', { forceFull: true }),
+  getRoomList: effect('advisorSpace/getRoomList', { forceFull: true }),
   // 新建提交
   submitApply: effect('advisorSpace/submitApply', { forceFull: true }),
   // 获取参与人列表
   getParticipantList: effect('advisorSpace/getParticipantList', { forceFull: true }),
   // 取消预订
   cancelReservation: effect('advisorSpace/cancelReservation', { forceFull: true }),
+  // 清除Redux中的数据
+  clearReduxData: effect('advisorSpace/clearReduxData', { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -63,17 +73,21 @@ export default class AdvisorSpace extends PureComponent {
     detailInfo: PropTypes.object.isRequired,
     getDetail: PropTypes.func.isRequired,
     // 智慧前厅列表
-    smartFrontHallData: PropTypes.object.isRequired,
-    getSmartFrontHallList: PropTypes.func.isRequired,
+    roomData: PropTypes.object.isRequired,
+    getRoomList: PropTypes.func.isRequired,
+    // 新建时智慧前厅列表
+    createRoomData: PropTypes.object.isRequired,
     // 新建提交
     submitResult: PropTypes.object.isRequired,
     submitApply: PropTypes.func.isRequired,
     // 参与人列表
-    participantList: PropTypes.object.isRequired,
+    participantData: PropTypes.object.isRequired,
     getParticipantList: PropTypes.func.isRequired,
     // 取消预订
     cancelReservationResult: PropTypes.object.isRequired,
     cancelReservation: PropTypes.func.isRequired,
+    // 清除Redux中的数据
+    clearReduxData: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -84,15 +98,31 @@ export default class AdvisorSpace extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      // 高亮项的下标索引
+      activeRowIndex: 0,
       // 是否显示新建弹窗
       isShowCreateModal: false,
-    }
+    };
   }
 
   componentDidMount() {
     this.getAppList();
     // 获取智慧前厅列表
-    this.props.getSmartFrontHallList();
+    this.props.getRoomList();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+    } = this.props;
+    const otherQuery = _.omit(query, ['currentId']);
+    const otherPrevQuery = _.omit(prevQuery, ['currentId']);
+    // query和prevQuery，不等时需要重新获取列表，但是首次进入页面获取列表在componentDidMount中调用过，所以不需要重复获取列表
+    if (!_.isEqual(otherQuery, otherPrevQuery) && !_.isEmpty(prevQuery)) {
+      const { pageNum, pageSize } = query;
+      this.queryAppList(query, pageNum, pageSize);
+    }
   }
 
   @autobind
@@ -105,9 +135,58 @@ export default class AdvisorSpace extends PureComponent {
   @autobind
   queryAppList(query, pageNum = 1, pageSize = 10) {
     const { getApplictionList } = this.props;
+    const { pageType } = advisorSpace;
     const params = seibelHelper.constructSeibelPostBody(query, pageNum, pageSize);
     // 默认筛选条件,
-    getApplictionList({ ...params });
+    getApplictionList({ ...params, type: pageType }).then(this.getRightDetail);
+  }
+
+  // 获取右侧详情
+  @autobind
+  getRightDetail() {
+    const {
+      applictionList:{
+        applicationBaseInfoList,
+        page,
+      },
+      location: {
+        pathname,
+        query,
+        query:{
+          currentId
+        }
+      },
+    } = this.props;
+    const { replace } = this.context;
+    if (!_.isEmpty(applicationBaseInfoList)) {
+      // 表示左侧列表获取完毕
+      // 因此此时获取Detail
+      const { pageNum, pageSize } = page;
+      let item = applicationBaseInfoList[0];
+      let itemIndex = _.findIndex(applicationBaseInfoList, o => String(o.id) === currentId);
+      if (!_.isEmpty(currentId) && itemIndex > -1) {
+        // 此时url中存在currentId
+        item = _.find(applicationBaseInfoList, o => String(o.id) === currentId);
+      } else {
+        // 不存在currentId
+        replace({
+          pathname,
+          query: {
+            ...query,
+            currentId: item.id,
+            pageNum,
+            pageSize,
+          },
+        });
+        itemIndex = 0;
+      }
+      this.setState({
+        activeRowIndex: itemIndex,
+      });
+      this.props.getDetail({
+        id: item.id,
+      });
+    }
   }
 
   // 头部筛选后调用方法
@@ -128,36 +207,190 @@ export default class AdvisorSpace extends PureComponent {
     });
   }
 
+  // 切换页码
+  @autobind
+  handlePageNumberChange(nextPage, currentPageSize) {
+    const { location } = this.props;
+    const { replace } = this.context;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
+      },
+    });
+  }
+
+  // 切换每一页显示条数
+  @autobind
+  handlePageSizeChange(currentPageNum, changedPageSize) {
+    const { location } = this.props;
+    const { replace } = this.context;
+    const { query, pathname } = location;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageNum: 1,
+        pageSize: changedPageSize,
+      },
+    });
+  }
+
+  // 点击列表每条的时候对应请求详情
+  @autobind
+  @logable({ type: 'ViewItem', payload: { name: '投顾空间申请' } })
+  handleListRowClick(record, index) {
+    const { id } = record;
+    const { location: { pathname, query, query: { currentId } } } = this.props;
+    const { replace } = this.context;
+    if (currentId === String(id)) {
+      return;
+    }
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: id,
+      },
+    });
+    this.setState({ activeRowIndex: index });
+    this.props.getDetail({ id });
+  }
+
+  // 展示第三行信息
+  @autobind
+  renderApplyItemSecondLine(data) {
+    return (data.appointTime && data.appointTime.slice(0, 10)) || '无';
+  }
+
+  // 展示第二行信息
+  @autobind
+  renderApplyItemThirdLine(data) {
+    return data.roomName || '--';
+  }
+
+  // 点击取消预定
+  @autobind
+  handleCancelReservation(query) {
+    this.props.cancelReservation(query).then(this.handleCancelReservationSuccess);
+  }
+
+  // 取消预定点击显示右侧详情
+  @autobind
+  handleCancelReservationSuccess() {
+
+    const { cancelReservationResult } = this.props;
+    if (cancelReservationResult === 'true') {
+      this.getAppList();
+    }
+  }
+
+  // 渲染列表项里面的每一项
+  @autobind
+  renderListRow(record, index) {
+    const { activeRowIndex } = this.state;
+    const { statusId } = record;
+    const statusTags = [getStatusTagProps(statusId)];
+    return (
+      <ApplyItem
+        key={record.id}
+        data={record}
+        active={index === activeRowIndex}
+        onClick={this.handleListRowClick}
+        index={index}
+        pageName="advisorSpace"
+        iconType="kehu1"
+        subTypeName="投顾空间申请"
+        statusTags={statusTags}
+        showSecondLineInfo={this.renderApplyItemSecondLine}
+        showThirdLineInfo={this.renderApplyItemThirdLine}
+      />
+    );
+  }
+
+  // 打开新建弹窗
+  @autobind
+  @logPV({ pathname: '/modal/createAdvisorSpaceApplyModal', title: '新建投顾空间申请弹框' })
+  openCreateModalBoard() {
+    this.setState({isShowCreateModal: true});
+  }
+
+  // 关闭新建弹窗
+  @autobind
+  handleCloseCreateModal(name, isNeedRefresh) {
+    this.setState({ [name]: false });
+    this.props.clearReduxData({
+      createRoomData: {},
+      participantData: {},
+    });
+    if (isNeedRefresh) {
+      this.getAppList();
+    }
+  }
+
   render() {
     const {
       location,
-      applictionList,
-      smartFrontHallData,
-      getSmartFrontHallList,
+      applictionList: {
+        applicationBaseInfoList = [],
+        page = {},
+      },
+      detailInfo,
+      roomData,
+      getRoomList,
+      createRoomData,
+      participantData,
+      getParticipantList,
+      submitResult,
+      submitApply,
     } = this.props;
+
+    const { isShowCreateModal } = this.state;
 
     const { empInfo } = this.context;
 
-    const isEmpty = _.isEmpty(applictionList.resultData);
+    const isEmpty = _.isEmpty(applicationBaseInfoList);
+
     // 头部筛选
     const topPanel = (
       <Header
         location={location}
-        smartFrontHallData={smartFrontHallData}
-        getSmartFrontHallList={getSmartFrontHallList}
+        roomData={roomData}
+        getRoomList={getRoomList}
         empInfo={empInfo}
         filterCallback={this.handleHeaderFilter}
+        creatModal={this.openCreateModalBoard}
       />
     );
 
+    // 生成页码器，此页码器配置项与Antd的一致
+    const { location: { query: { pageNum = 1, pageSize = 10 } } } = this.props;
+    const paginationOptions = {
+      current: parseInt(pageNum, 10),
+      total: page.totalCount,
+      pageSize: parseInt(pageSize, 10),
+      onChange: this.handlePageNumberChange,
+      onShowSizeChange: this.handlePageSizeChange,
+    };
+
     // 左侧列表,此处目前是占位，由别的前端开发
     const leftPanel = (
-      <div>leftPanel</div>
+      <ApplyList
+        list={applicationBaseInfoList}
+        renderRow={this.renderListRow}
+        pagination={paginationOptions}
+      />
     );
 
     // 右侧详情，此处目前是占位，由别的前端开发
     const rightPanel = (
-      <div>rightPanel</div>
+      <Detail
+        detailInfo={detailInfo}
+        cancelReservation={this.handleCancelReservation}
+      />
     );
 
     return (
@@ -170,6 +403,19 @@ export default class AdvisorSpace extends PureComponent {
           leftListClassName="advisorSpacelist"
           leftWidth={420}
         />
+        {
+          isShowCreateModal ?
+            <CreateApply
+              onClose={this.handleCloseCreateModal}
+              createRoomData={createRoomData}
+              getRoomList={getRoomList}
+              participantData={participantData}
+              getParticipantList={getParticipantList}
+              submitResult={submitResult}
+              submitApply={submitApply}
+            />
+            : null
+        }
       </div>
     );
   }

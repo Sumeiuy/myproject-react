@@ -712,8 +712,8 @@
   resolved "http://168.61.48.13:4873/@types%2fisomorphic-fetch/-/isomorphic-fetch-0.0.34.tgz#3c3483e606c041378438e951464f00e4e60706d6"
 
 "@types/node@*":
-  version "10.10.0"
-  resolved "http://168.61.48.13:4873/@types%2fnode/-/node-10.10.0.tgz#2b08a1a7d1fa317173a776c2130bf240545cc33e"
+  version "10.10.1"
+  resolved "http://168.61.48.13:4873/@types%2fnode/-/node-10.10.1.tgz#d5c96ca246a418404914d180b7fdd625ad18eca6"
 
 "@types/prop-types@*":
   version "15.5.5"
@@ -4648,9 +4648,9 @@ lego-react-filter@^1.1.16:
   version "1.1.16"
   resolved "http://168.61.48.13:4873/lego-react-filter/-/lego-react-filter-1.1.16.tgz#0c1c430dd736cbfbb958f1d5f34fe5e525f61182"
 
-lego-schedule@^1.0.4:
-  version "1.0.5"
-  resolved "http://168.61.48.13:4873/lego-schedule/-/lego-schedule-1.0.5.tgz#1b23be90f23930b2f46224bff80013614d3f49e4"
+lego-schedule@^1.0.6:
+  version "1.0.6"
+  resolved "http://168.61.48.13:4873/lego-schedule/-/lego-schedule-1.0.6.tgz#14d3315fd403aaa27855087009bd1452c9755ac1"
   dependencies:
     antd "^3.0.1"
     classnames "^2.2.6"

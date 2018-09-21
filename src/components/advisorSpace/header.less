@@ -27,11 +27,15 @@
           .ant-input {
             color: #333;
             outline: none;
+            font-size: 14px;
 
             &:focus {
               box-shadow: 0 0 0 0 #fff;
               border-color: #108ee9;
             }
+          }
+          .ant-input-suffix {
+            top: 55%;
           }
         }
       }
@@ -40,7 +44,6 @@
         position: relative;
         vertical-align: bottom;
         font-size: 14px;
-        padding: 0 20px 0 0;
         height: 30px;
         border-radius: 4px;
         color: #333;
@@ -68,9 +71,13 @@
         }
 
         :global {
+          .ant-calendar-picker {
+            width: 160px;
+          }
           .ant-input {
             background-color: transparent;
             color: #333;
+            font-size: 14px;
             border: none;
 
             &:focus {
