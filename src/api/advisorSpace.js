@@ -2,21 +2,20 @@
  * @Author: zhangjun
  * @Date: 2018-09-11 14:05:05
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-21 17:27:11
+ * @Last Modified time: 2018-09-21 17:49:47
  * @Descripter: 投顾空间相关接口
  */
 
- // 此处针对修改字典里面委托他人任务处理的字段从key-value修改为value-label对应关系
 import _ from 'lodash';
 
 function fixDictoryKeys(dict) {
-  const { resultData, resultData: { smartFrontHallList: data } } = dict;
-  // 因为初始的委托他人任务状态字典列表中的字段名为 key, value
+  const { resultData, resultData: { smartFrontHallList } } = dict;
+  // 因为返回值没有label和value,label需要通过siteName和roomName拼接
   return {
     ...dict,
     resultData: {
       ...resultData,
-      smartFrontHallList: _.map(data, item => ({ ...item, label: `${item.siteName}${item.roomName}`, value: item.roomNo })),
+      smartFrontHallList: _.map(smartFrontHallList, item => ({ ...item, label: `${item.siteName}${item.roomName}`, value: item.roomNo })),
     },
   };
 }
