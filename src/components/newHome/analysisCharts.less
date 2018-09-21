@@ -68,21 +68,22 @@
       flex: 0 0 auto;
       transform: rotate(-90deg);
       color: #999;
-      width: 14%;
+      width: 13%;
       text-align: right;
-      margin-top: 3%;
+      margin-top: 1.5%;
       .axisStick {
+        visibility: hidden;
         display: inline-block;
         width: 2px;
         height: 1px;
-        background: #999;
+        background: #fff;
         vertical-align: super;
         margin-left: 2px;
       }
     }
   }
   .pftAmtAxisLabel {
-    margin: 3px 18px 0;
+    margin: 2px 18px 0;
     .pftAmtLabel {
       color: #999;
       display: inline-block;
@@ -91,7 +92,11 @@
       width: 7.69%;
       &:first-child {
         position: relative;
-        top: 5px;
+        top: 7px;
+      }
+      &:last-child {
+        position: relative;
+        top: 3px;
       }
       .pftAmtContent {
         display: inline-block;

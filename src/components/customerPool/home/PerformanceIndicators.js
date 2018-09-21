@@ -382,7 +382,6 @@ export default class PerformanceIndicators extends PureComponent {
       <Col span={8} key={param.key}>
         <RectFrame
           dataSource={headLine}
-          desc={description}
           isNewHome={this.props.isNewHome}
         >
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
@@ -395,10 +394,18 @@ export default class PerformanceIndicators extends PureComponent {
                 cursor: 'auto',
               }}
             />
-            <div
-              className={styles.clickContent}
-              onClick={this.aggregationToList}
-            />
+              <Popover
+                title={param.headLine}
+                content={description}
+                placement="bottom"
+                mouseEnterDelay={0.2}
+                overlayClassName={antdStyles.popoverClass}
+              >
+              <div
+                className={styles.clickContent}
+                onClick={this.aggregationToList}
+              />
+              </Popover>
           </IfEmpty>
         </RectFrame>
       </Col>

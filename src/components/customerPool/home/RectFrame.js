@@ -33,7 +33,7 @@ function RectFrame(props) {
 
   let contentCls = styles.content;
   if (noMargin) {
-    contentCls = ''
+    contentCls = '';
   } else if(isNewHome) {
     contentCls = classes.content;
   }

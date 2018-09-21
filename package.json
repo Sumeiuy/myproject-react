@@ -43,7 +43,7 @@
     "intro.js": "^2.9.3",
     "lego-react-date": "^1.0.8",
     "lego-schedule": "^1.0.6",
-    "lego-react-filter": "^1.1.16",
+    "lego-react-filter": "^1.1.17",
     "lego-soft-phone": "^1.0.5",
     "lego-tree-filter": "^1.0.12",
     "localforage": "^1.4.3",

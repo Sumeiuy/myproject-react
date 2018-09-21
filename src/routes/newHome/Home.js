@@ -120,7 +120,7 @@ export default class Home extends PureComponent {
     };
     const viewAndIntroProps = {
       data: {},
-    }
+    };
     const chartsTabProps = {
       location,
       custRange,

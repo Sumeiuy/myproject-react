@@ -65,7 +65,6 @@ export default class ChartsTab extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-  
     const {
       location: { query: nextQuery },
     } = this.props;

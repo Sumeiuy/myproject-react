@@ -46,12 +46,12 @@ const chartTitles = [
 ];
 
 // 资产分布的数据源
-const totAsetData = [
+let totAsetData = [
   {
     name: '1000万元以上',
-    value: 44,
     filterName: '总资产',
     filterId: 'totAset',
+    value: 0,
     filterValue: {
       minVal: '10000000',
       maxVal: null,
@@ -59,9 +59,9 @@ const totAsetData = [
   },
   {
     name: '500-1000万元',
-    value: 239,
     filterName: '总资产',
     filterId: 'totAset',
+    value: 0,
     filterValue: {
       minVal: '5000000',
       maxVal: '10000000',
@@ -69,9 +69,9 @@ const totAsetData = [
   },
   {
     name: '100-500万元',
-    value: 439,
     filterName: '总资产',
     filterId: 'totAset',
+    value: 0,
     filterValue: {
       minVal: '1000000',
       maxVal: '5000000',
@@ -79,9 +79,9 @@ const totAsetData = [
   },
   {
     name: '30-100万元',
-    value: 439,
     filterName: '总资产',
     filterId: 'totAset',
+    value: 0,
     filterValue: {
       minVal: '300000',
       maxVal: '1000000',
@@ -89,9 +89,9 @@ const totAsetData = [
   },
   {
     name: '0-30万元',
-    value: 1239,
     filterName: '总资产',
     filterId: 'totAset',
+    value: 0,
     filterValue: {
       minVal: '0',
       maxVal: '300000',
@@ -235,7 +235,7 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 客户类型图表
   renderCustClassChart() {
-    const { dataSource, option } = getCustClassChartData();
+    const { dataSource, option } = getCustClassChartData(this.props.indicators);
     return (
       <ChartContiner dataSource={chartTitles[0]}>
         <IECharts
@@ -268,7 +268,7 @@ export default class PerformanceIndicators extends PureComponent {
   }
   // 客户性质图表
   renderCustomTypeChart() {
-    const { dataSource, option } = getCustomTypeChartData();
+    const { dataSource, option } = getCustomTypeChartData(this.props.indicators);
     return (
       <ChartContiner dataSource={chartTitles[1]}>
         <IECharts
@@ -301,6 +301,15 @@ export default class PerformanceIndicators extends PureComponent {
   }
   // 资产分布图表
   renderTotAsetChart() {
+    const { indicators } = this.props;
+    if (indicators.assetDistribution) {
+      let assetData = indicators.assetDistribution.map(item => item.custNum);
+      assetData = _.reverse(assetData);
+      totAsetData = _.map(totAsetData, (item, index) => ({
+        ...item,
+        value: assetData[index] || 0,
+      }));
+    }
     const { mouseoverLabelIndex } = this.state;
     const option = {
       grid: {
@@ -312,7 +321,7 @@ export default class PerformanceIndicators extends PureComponent {
       },
       tooltip: {
         position: 'top',
-        backgroundColor: 'rgb(2, 22, 55, 0.8)',
+        backgroundColor: 'rgba(2, 22, 55, 0.8)',
         padding: 10,
         textStyle: {
           fontSize: 12,
@@ -321,7 +330,7 @@ export default class PerformanceIndicators extends PureComponent {
           const data = {
             value: number.thousandFormat(params.data.value),
             unit: '人',
-          }
+          };
           return `${params.data.name} 客户数：${data.value}${data.unit}`;
         }
       },
@@ -381,7 +390,7 @@ export default class PerformanceIndicators extends PureComponent {
   }
   // 盈亏比图表
   renderMaxCostRateChart() {
-    const { xAxisLabel, option } = getMaxCostRateChartData();
+    const { xAxisLabel, option } = getMaxCostRateChartData(this.props.indicators);
     return (
       <ChartContiner dataSource={chartTitles[3]}>
         <IECharts
@@ -408,7 +417,7 @@ export default class PerformanceIndicators extends PureComponent {
   }
   // 盈亏幅度图表
   renderPftAmtChart() {
-    const { xAxisLabel, option } = getPftAmtChartData();
+    const { xAxisLabel, option } = getPftAmtChartData(this.props.indicators);
     return (
       <ChartContiner dataSource={chartTitles[4]}>
         <IECharts
@@ -434,7 +443,7 @@ export default class PerformanceIndicators extends PureComponent {
   }
   // 持仓分布图表
   renderHoldingChart() {
-    const { dataSource, option } = getHoldingChart();
+    const { dataSource, option } = getHoldingChart(this.props.indicators);
     return (
       <ChartContiner dataSource={chartTitles[5]}>
         <IECharts
