@@ -23,6 +23,7 @@
   .list {
     font-size: 14px;
     color: #666;
+    position: relative;
     li {
       padding: 0 10px;
       height: 32px;
@@ -45,12 +46,17 @@
         background: #e6f3fc;
       }
     }
-    li.noData {
-      text-align: center;
-      cursor: default;
-      &:hover {
-        background: transparent;
-      }
+  }
+  .noData {
+    font-size: 14px;
+    text-align: center;
+    cursor: default;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    &:hover {
+      background: transparent;
     }
   }
 }

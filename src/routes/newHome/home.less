@@ -11,27 +11,24 @@
     display: flex;
     flex-direction: column;
     width: 222px;
-    .mostFocusContentLink {
+    & > div {
+      position: relative;
       flex: 0 0 auto;
-      height: 160px;
       background: #fff;
       margin-bottom: 10px;
       border: 1px solid #e5e9f2;
+    }
+    .mostFocusContentLink {
+      height: 160px;
     }
     .interestContentLink {
-      flex: 0 0 auto;
       height: 320px;
-      background: #fff;
-      margin-bottom: 10px;
-      border: 1px solid #e5e9f2;
     }
     .competitionsLink {
-      flex: 0 0 auto;
       height: 160px;
       line-height: 160px;
       text-align: center;
-      background: #fff;
-      border: 1px solid #e5e9f2;
+      margin-bottom: 0;
       img {
         cursor: pointer;
       }
@@ -62,25 +59,22 @@
     display: flex;
     flex-direction: column;
     width: 222px;
-    .productDateLink {
+    & > div {
+      position: relative;
       flex: 0 0 auto;
-      height: 192px;
       background: #fff;
-      margin-bottom: 10px;
       border: 1px solid #e5e9f2;
+      margin-bottom: 10px;
+    }
+    .productDateLink {
+      height: 192px;
     }
     .informationContainer {
-      flex: 0 0 auto;
       height: 320px;
-      background: #fff;
-      margin-bottom: 10px;
-      border: 1px solid #e5e9f2;
     }
     .newsInfoContainer {
-      flex: 0 0 auto;
       height: 128px;
-      background: #fff;
-      border: 1px solid #e5e9f2;
+      margin-bottom: 0;
     }
   }
 }
