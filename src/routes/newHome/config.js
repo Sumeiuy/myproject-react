@@ -40,4 +40,4 @@ const navArray = [
 export {
   DATE_FORMAT_STRING,
   navArray,
-}
+};
