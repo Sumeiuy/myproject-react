@@ -133,25 +133,25 @@ export default class Main extends Component {
                         !interfaceState[effects.dictionary] &&
                         !interfaceState[effects.customerScope] &&
                         !interfaceState[effects.empInfo]) ?
-                          <div>
-                            {children}
-                            <ConnectedCreateServiceRecord
-                              handleCloseClick={handleCloseClick}
-                              loading={interfaceState[effects.addServeRecord]}
-                              key={serviceRecordInfo.id}
-                              dict={dict}
-                              empInfo={empInfo}
-                              addServeRecord={addServeRecord}
-                              currentCommonServiceRecord={currentCommonServiceRecord}
-                              onToggleServiceRecordModal={toggleServiceRecordModal}
-                              custUuid={custUuid}
-                              ceFileDelete={ceFileDelete}
-                              taskFeedbackList={motSelfBuiltFeedbackList}
-                              serviceRecordInfo={serviceRecordInfo}
-                              isPhoneCall={isPhoneCall}
-                            />
-                            <ConnectedSignCustomerLabel />
-                          </div>
+                        <div>
+                          {children}
+                          <ConnectedCreateServiceRecord
+                            handleCloseClick={handleCloseClick}
+                            loading={interfaceState[effects.addServeRecord]}
+                            key={serviceRecordInfo.id}
+                            dict={dict}
+                            empInfo={empInfo}
+                            addServeRecord={addServeRecord}
+                            currentCommonServiceRecord={currentCommonServiceRecord}
+                            onToggleServiceRecordModal={toggleServiceRecordModal}
+                            custUuid={custUuid}
+                            ceFileDelete={ceFileDelete}
+                            taskFeedbackList={motSelfBuiltFeedbackList}
+                            serviceRecordInfo={serviceRecordInfo}
+                            isPhoneCall={isPhoneCall}
+                          />
+                          <ConnectedSignCustomerLabel />
+                        </div>
                         : null
                     }
                   </div>

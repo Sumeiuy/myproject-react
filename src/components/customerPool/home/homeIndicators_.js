@@ -95,7 +95,7 @@ export function getPureAddCust({ pureAddData }) {
   const param = {
     dataArray: pureAddData,
     categoryArray: ['新增有效户', '新增高净值客户', '新增高端产品户', '新增产品客户'],
-    colorArray: ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'],
+    colorArray: ['#1aa1e0', '#1aa1e0', '#1aa1e0', '#1aa1e0'],
     formatterMethod: toFixedCust,
   };
   return getProgressDataSource(param);
@@ -112,7 +112,7 @@ export function getProductSale({
     descArray,
     dataArray: numberArray,
     categoryArray: nameArray,
-    colorArray: ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'],
+    colorArray: ['#1aa1e0', '#1aa1e0', '#1aa1e0', '#1aa1e0'],
     formatterMethod: getNewFormattedUnitAndItem,
     type: 'productSale',
   };
@@ -161,10 +161,9 @@ export function getClientsNumber({
         },
         axisLine: {
           lineStyle: {
-            color: '#999',
+            color: '#ccc',
           },
-        },
-        triggerEvent: true,
+        }
       },
     ],
     yAxis: [{
@@ -174,8 +173,8 @@ export function getClientsNumber({
     }],
     series: singleColorBar({
       data: newSeries,
-      width: 13,
-      basicColor: '#7d9be0',
+      barWidth: '85%',
+      basicColor: '#4ed0f1',
       colourfulTotal: colourfulTotalNumber,
       colourfulData,
       colourfulIndex,
@@ -267,7 +266,7 @@ export function getCustAndProperty(dataArray) {
   // 降序排列
   const descData = _.orderBy(datas, ['value'], ['desc']);
   // 设置背景色 #7D9BE0
-  const colors = ['#7D9be0', '#60bbea', '#38d8e8'];
+  const colors = ['#7ee1fa', '#abb2ff', '#ffc874'];
   const newDatas = _.map(
     descData,
     (item, index) => ({ ...item, bgColor: colors[index] }),
@@ -297,7 +296,7 @@ export function getHSRate(array) {
       itemStyle: {
         normal: {
           opacity: 0.95,
-          color: '#5eade5',
+          color: '#2ea1f3',
           shadowBlur: 0,
         },
         emphasis: { opacity: 0.8 },
@@ -305,7 +304,7 @@ export function getHSRate(array) {
       label: {
         normal: {
           show: true,
-          color: '#5eade5',
+          color: '#2ea1f3',
           insideColor: '#fff',
           fontSize: 24,
           align: 'center',

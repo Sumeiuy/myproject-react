@@ -154,7 +154,7 @@ export default class CustRange extends PureComponent {
     let initValue = null;
     if (defaultFirst) {
       initValue = {
-        label: custRangeNameDedault,
+        label: custRangeNameDedault || '我的客户',
         value: custRange[0].id,
       };
     } else {
@@ -176,7 +176,8 @@ export default class CustRange extends PureComponent {
     const formatCustRange = transformCustRangeData(custRange);
     const widthDown = isDown ? 160 : dropdownWidth;
     const placeholder = isDown ? '机构范围' : '分公司/营业部名称';
-    const filterName = isHideFilterName ? '' : "服务营业部";
+    const filterName = isHideFilterName ? '' : '服务营业部';
+
     return (
       <TreeFilter
         dropdownClassName={styles.custFilterWrap}

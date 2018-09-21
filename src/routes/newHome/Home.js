@@ -1,5 +1,5 @@
 /**
- * @Author: wangjunjun
+ * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: Liujianshu-K0240007
  * @Last Modified time: 2018-09-21 14:46:57
@@ -8,9 +8,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
+import moment from 'moment';
 import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
-import moment from 'moment';
 import _ from 'lodash';
 import store from 'store';
 
@@ -26,6 +26,7 @@ import { isSightingScope, getFilter, getSortParam } from '../../components/custo
 import { openRctTab } from '../../utils';
 import { padSightLabelDesc } from '../../config';
 import styles from './home.less';
+import { MorningBroadcast } from '../../components/customerPool/home';
 import { DATE_FORMAT_STRING, navArray } from './config';
 import rankPng from './rank.png';
 
@@ -45,6 +46,9 @@ const effects = {
   getManagerIndicators: 'customerPool/getManagerIndicators',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
   getCustCount: 'customerPool/getCustCount',
+  getCustAnalyticsIndicators: 'customerPool/getCustAnalyticsIndicators',
+  queryAudioFile: 'morningBoradcast/queryAudioFile',
+  queryhomePageNews: 'morningBoradcast/queryhomePageNews', // 晨报列表
   queryCustLabelList: 'customerPool/queryCustLabelList',  // 获取首页可用客户标签列表数据
   custLabelListPaging: 'customerPool/custLabelListPaging', // 首页可用客户标签列表弹窗数据分页处理
   queryNumbers: 'newHome/queryNumbers',  // 首页任务概览
@@ -64,9 +68,12 @@ const mapStateToProps = state => ({
   custRange: state.customerPool.custRange, // 客户池用户范围
   cycle: state.app.dict.kPIDateScopeType,  // 统计周期
   empInfo: state.app.empInfo, // 职位信息
+  custAnalyticsIndicators: state.customerPool.custAnalyticsIndicators,
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
   managerIndicators: state.customerPool.managerIndicators, // 经营指标
   custCount: state.customerPool.custCount, // （经营指标）新增客户指标
+  initBoradcastList: state.morningBoradcast.initBoradcastList, // 晨报列表
+  initBoradcastFile: state.morningBoradcast.initBoradcastFile, // 晨报详情
   pagingCustLabelData: state.customerPool.pagingCustLabelData, // 前端处理过的带分页的所有可用客户标签数据
   taskNumbers: state.newHome.taskNumbers,
 });
@@ -86,6 +93,9 @@ const mapDispatchToProps = {
   getCustCount: effect(effects.getCustCount, { loading: false }),
   getManagerIndicators: effect(effects.getManagerIndicators, { loading: false }),
   getPerformanceIndicators: effect(effects.getPerformanceIndicators, { loading: false }),
+  getCustAnalyticsIndicators: effect(effects.getCustAnalyticsIndicators, { loading: false }),
+  queryAudioFile: effect(effects.queryAudioFile, { loading: false }),
+  queryhomePageNews: effect(effects.queryhomePageNews, { loading: false }),
   queryCustLabelList: effect(effects.queryCustLabelList, { loading: false }),
   custLabelListPaging: effect(effects.custLabelListPaging, { loading: false }),
   queryNumbers: effect(effects.queryNumbers, { forceFull: true }),
@@ -112,8 +122,10 @@ export default class Home extends PureComponent {
     location: PropTypes.object.isRequired,
     performanceIndicators: PropTypes.object,
     managerIndicators: PropTypes.object,
+    custAnalyticsIndicators: PropTypes.object,
     getManagerIndicators: PropTypes.func.isRequired,
     getPerformanceIndicators: PropTypes.func.isRequired,
+    getCustAnalyticsIndicators: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     cycle: PropTypes.array,
     empInfo: PropTypes.object,
@@ -122,6 +134,10 @@ export default class Home extends PureComponent {
       PropTypes.array,
     ]),
     getCustCount: PropTypes.func.isRequired,
+    queryAudioFile: PropTypes.func.isRequired,
+    initBoradcastList: PropTypes.array.isRequired,
+    initBoradcastFile: PropTypes.object.isRequired,
+    queryhomePageNews: PropTypes.func.isRequired,
     // 首页可用客户标签
     queryCustLabelList: PropTypes.func.isRequired,
     custLabelListPaging: PropTypes.func.isRequired,
@@ -135,6 +151,7 @@ export default class Home extends PureComponent {
     custRange: EMPTY_LIST,
     cycle: EMPTY_LIST,
     empInfo: EMPTY_OBJECT,
+    custAnalyticsIndicators: EMPTY_OBJECT,
     performanceIndicators: EMPTY_OBJECT,
     custCount: EMPTY_LIST,
   }
@@ -156,6 +173,7 @@ export default class Home extends PureComponent {
       queryChiefView,
       queryIntroCombination,
       queryNumbers,
+      queryhomePageNews,
     } = this.props;
     const date = moment().format(DATE_FORMAT_STRING);
     // 重点关注
@@ -169,6 +187,15 @@ export default class Home extends PureComponent {
       curPageNum: 1,
       pageSize: 18,
     });
+
+    // 每日晨报
+    queryhomePageNews({
+      createdFrom: moment().subtract(1, 'months').format('YYYY-MM-DD'),
+      createdTo: moment().format('YYYY-MM-DD'),
+      pageNum: 1,
+      pageSize: 10,
+    });
+
     // 组合推荐
     queryIntroCombination();
 
@@ -348,21 +375,27 @@ export default class Home extends PureComponent {
       custRange,
       performanceIndicators,
       managerIndicators,
+      custAnalyticsIndicators,
       cycle,
       empInfo,
       custCount,
       getCustCount,
       getManagerIndicators,
       getPerformanceIndicators,
-      // 首页可用客户标签
+      getCustAnalyticsIndicators,
+      queryAudioFile,
+      initBoradcastList,
+      initBoradcastFile,
       queryCustLabelList,
       custLabelListPaging,
       pagingCustLabelData,
       taskNumbers,
     } = this.props;
+
     const {
       showMoreLabelModal,
     } = this.state;
+
     // 快捷导航
     const navProps = {
       location,
@@ -409,18 +442,31 @@ export default class Home extends PureComponent {
       show: showMoreLabelModal,
       toggleModal: this.handleToggleMoreLabelModal,
     };
+
+    // 图表
     const chartsTabProps = {
       location,
       custRange,
       performanceIndicators,
       managerIndicators,
+      custAnalyticsIndicators,
       cycle,
       empInfo,
       custCount,
       getCustCount,
       getManagerIndicators,
       getPerformanceIndicators,
+      getCustAnalyticsIndicators,
     };
+
+    // 晨报
+    const broadcastProps = {
+      queryAudioFile,
+      dataList: initBoradcastList,
+      sourceList: initBoradcastFile,
+      isNewHome: true,
+    };
+
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
@@ -449,7 +495,9 @@ export default class Home extends PureComponent {
           <div className={styles.informationContainer}>
             <ViewAndCombination {...viewAndCombinationProps} />
           </div>
-          <div className={styles.newsInfoContainer}>每日晨报</div>
+          <div className={styles.newsInfoContainer}>
+            <MorningBroadcast {...broadcastProps} />
+          </div>
         </div>
         <LabelModal {...labelModalProps} />
       </div>

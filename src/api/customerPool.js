@@ -26,6 +26,8 @@ export default function customerPool(api) {
     getInformation: query => api.post('/groovynoauth/fsp/info/infoCenter/queryInfo', query),
     // 获取客户池沪深归集率 和 业务开通指标（经营指标）
     getManagerIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryManageKPIs', query),
+    // 客户分析接口
+    getCustAnalyticsIndicators: query => api.post('/groovynoauth/fsp/index/queryCustAnalyticsKPIs', query),
     // 获取客户池投顾绩效
     getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryPerformanceKPIs', query),
     // 获取组织机构树完整版
