@@ -58,6 +58,7 @@ export default {
     information: {},     // 资讯
     performanceIndicators: EMPTY_OBJECT,  // 投顾指标
     managerIndicators: EMPTY_OBJECT,  // 经营指标
+    custAnalyticsIndicators: EMPTY_OBJECT,
     // 存放从服务端获取的全部代办数据
     todolist: [],
     // 存放筛选后数据
@@ -283,6 +284,14 @@ export default {
       const response = yield call(api.getManagerIndicators, payload);
       yield put({
         type: 'getManagerIndicatorsSuccess',
+        payload: response,
+      });
+    },
+
+    * getCustAnalyticsIndicators({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getCustAnalyticsIndicators, payload);
+      yield put({
+        type: 'getCustAnalyticsIndicatorsSuccess',
         payload: response,
       });
     },
@@ -1030,6 +1039,13 @@ export default {
       return {
         ...state,
         managerIndicators: resultData || EMPTY_OBJECT,
+      };
+    },
+    getCustAnalyticsIndicatorsSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        custAnalyticsIndicators: resultData || EMPTY_OBJECT,
       };
     },
     getInformationSuccess(state, action) {

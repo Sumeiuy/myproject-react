@@ -47,7 +47,6 @@ const getLabelList = arr => arr.map(v => (v || {}).name);
 export default class PerformanceIndicators extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
-    empInfo: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
   }
 
@@ -55,7 +54,7 @@ export default class PerformanceIndicators extends PureComponent {
     category: PropTypes.string,
     indicators: PropTypes.object,
     cycle: PropTypes.array,
-    isNewHome: PropTypes.bool, 
+    isNewHome: PropTypes.bool,
     location: PropTypes.object.isRequired,
     custCount: PropTypes.oneOfType([
       PropTypes.object,
@@ -170,6 +169,13 @@ export default class PerformanceIndicators extends PureComponent {
         desc: '',
         title: '',
       });
+    });
+  }
+
+  @autobind
+  handleHSRateClick(instance) {
+    instance.on('click', (arg) => {
+      this.aggregationToList();
     });
   }
 
@@ -345,7 +351,7 @@ export default class PerformanceIndicators extends PureComponent {
 
   @autobind
   @logable({ type: 'Click', payload: { name: '沪深归集率下钻' } })
-  AggregationToList() {
+  aggregationToList() {
     const { push } = this.context;
     const {
       cycle,
@@ -376,12 +382,11 @@ export default class PerformanceIndicators extends PureComponent {
       <Col span={8} key={param.key}>
         <RectFrame
           dataSource={headLine}
-          desc={description}
           isNewHome={this.props.isNewHome}
         >
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
-              onEvents={{ click: this.AggregationToList }}
+              onReady={this.handleHSRateClick}
               option={data}
               resizable
               style={{
@@ -389,6 +394,18 @@ export default class PerformanceIndicators extends PureComponent {
                 cursor: 'auto',
               }}
             />
+              <Popover
+                title={param.headLine}
+                content={description}
+                placement="bottom"
+                mouseEnterDelay={0.2}
+                overlayClassName={antdStyles.popoverClass}
+              >
+              <div
+                className={styles.clickContent}
+                onClick={this.aggregationToList}
+              />
+              </Popover>
           </IfEmpty>
         </RectFrame>
       </Col>
@@ -398,7 +415,7 @@ export default class PerformanceIndicators extends PureComponent {
   // 产品销售 & 净创收（投顾绩效）
   @autobind
   renderProductSaleAndPureIcomeIndicators(param) {
-    const { push, empInfo } = this.context;
+    const { push } = this.context;
     const { cycle, location } = this.props;
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalData = getProductSale(argument);
@@ -415,7 +432,6 @@ export default class PerformanceIndicators extends PureComponent {
               cycle={cycle}
               push={push}
               location={location}
-              empInfo={empInfo}
             />
           </IfEmpty>
         </RectFrame>
@@ -484,8 +500,8 @@ export default class PerformanceIndicators extends PureComponent {
               />
               <div className={trueStyles.labelWrap}>
                 <Popover
-                  title={`${data[0].name}`}
-                  content={data[0].description}
+                  title={data[0] && data[0].name}
+                  content={data[0] && data[0].description}
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
@@ -495,12 +511,12 @@ export default class PerformanceIndicators extends PureComponent {
                     className={trueStyles.chartLabel}
                     onClick={() => { this.toList(0); }}
                   >
-                    {data[0].name}
+                    {data[0] && data[0].name}
                   </span>
                 </Popover>
                 <Popover
-                  title={`${data[1].name}`}
-                  content={data[1].description}
+                  title={data[1] && data[1].name}
+                  content={data[1] && data[1].description}
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
@@ -509,11 +525,13 @@ export default class PerformanceIndicators extends PureComponent {
                   <span
                     className={trueStyles.chartLabel}
                     onClick={() => { this.toList(1); }}
-                  >{data[1].name}</span>
+                  >
+                    {data[1] &&data[1].name}
+                  </span>
                 </Popover>
                 <Popover
-                  title={`${data[2].name}`}
-                  content={data[2].description}
+                  title={data[2] && data[2].name}
+                  content={data[2] && data[2].description}
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
@@ -522,11 +540,13 @@ export default class PerformanceIndicators extends PureComponent {
                   <span
                     onClick={() => { this.toList(2); }}
                     className={trueStyles.chartLabel}
-                  >{data[2].name}</span>
+                  >
+                    {data[2] &&data[2].name}
+                  </span>
                 </Popover>
                 <Popover
-                  title={`${data[3].name}`}
-                  content={data[3].description}
+                  title={data[3] && data[3].name}
+                  content={data[3] && data[3].description}
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
@@ -535,7 +555,9 @@ export default class PerformanceIndicators extends PureComponent {
                   <span
                     onClick={() => { this.toList(3); }}
                     className={trueStyles.chartLabel}
-                  >{data[3].name}</span>
+                  >
+                    {data[3] &&data[3].name}
+                  </span>
                 </Popover>
               </div>
             </div>
@@ -548,7 +570,7 @@ export default class PerformanceIndicators extends PureComponent {
   // 新增客户
   @autobind
   renderPureAddCustIndicators(param) {
-    const { empInfo, push } = this.context;
+    const { push } = this.context;
     const { cycle, location, custCount } = this.props;
     const isEmpty = _.isEmpty(custCount);
     const { newUnit: pureAddUnit, items: pureAddItems } = getPureAddCust({
@@ -565,7 +587,6 @@ export default class PerformanceIndicators extends PureComponent {
               cycle={cycle}
               push={push}
               location={location}
-              empInfo={empInfo}
               type="custIndicator"
             />
           </IfEmpty>
@@ -612,7 +633,7 @@ export default class PerformanceIndicators extends PureComponent {
 
     const trueStyles = isNewHome ? classes : styles;
 
-    const gutter = isNewHome ? 20: 28;
+    const gutter = isNewHome ? 18: 28;
 
     return (
       <div className={trueStyles.indexBox}>
