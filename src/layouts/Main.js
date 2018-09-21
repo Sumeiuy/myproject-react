@@ -150,6 +150,7 @@ export default class Main extends Component {
                             serviceRecordInfo={serviceRecordInfo}
                             isPhoneCall={isPhoneCall}
                           />
+                          <ConnectedSignCustomerLabel />
                         </div>
                         : null
                     }
