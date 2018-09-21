@@ -54,7 +54,7 @@ export default class PerformanceIndicators extends PureComponent {
     category: PropTypes.string,
     indicators: PropTypes.object,
     cycle: PropTypes.array,
-    isNewHome: PropTypes.bool, 
+    isNewHome: PropTypes.bool,
     location: PropTypes.object.isRequired,
     custCount: PropTypes.oneOfType([
       PropTypes.object,
@@ -500,8 +500,8 @@ export default class PerformanceIndicators extends PureComponent {
               />
               <div className={trueStyles.labelWrap}>
                 <Popover
-                  title={`${data[0].name}`}
-                  content={data[0].description}
+                  title={data[0] && data[0].name}
+                  content={data[0] && data[0].description}
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
@@ -511,12 +511,12 @@ export default class PerformanceIndicators extends PureComponent {
                     className={trueStyles.chartLabel}
                     onClick={() => { this.toList(0); }}
                   >
-                    {data[0].name}
+                    {data[0] && data[0].name}
                   </span>
                 </Popover>
                 <Popover
-                  title={`${data[1].name}`}
-                  content={data[1].description}
+                  title={data[1] && data[1].name}
+                  content={data[1] && data[1].description}
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
@@ -525,11 +525,13 @@ export default class PerformanceIndicators extends PureComponent {
                   <span
                     className={trueStyles.chartLabel}
                     onClick={() => { this.toList(1); }}
-                  >{data[1].name}</span>
+                  >
+                    {data[1] &&data[1].name}
+                  </span>
                 </Popover>
                 <Popover
-                  title={`${data[2].name}`}
-                  content={data[2].description}
+                  title={data[2] && data[2].name}
+                  content={data[2] && data[2].description}
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
@@ -538,11 +540,13 @@ export default class PerformanceIndicators extends PureComponent {
                   <span
                     onClick={() => { this.toList(2); }}
                     className={trueStyles.chartLabel}
-                  >{data[2].name}</span>
+                  >
+                    {data[2] &&data[2].name}
+                  </span>
                 </Popover>
                 <Popover
-                  title={`${data[3].name}`}
-                  content={data[3].description}
+                  title={data[3] && data[3].name}
+                  content={data[3] && data[3].description}
                   placement="bottom"
                   mouseEnterDelay={0.2}
                   overlayStyle={{ maxWidth: '320px' }}
@@ -551,7 +555,9 @@ export default class PerformanceIndicators extends PureComponent {
                   <span
                     onClick={() => { this.toList(3); }}
                     className={trueStyles.chartLabel}
-                  >{data[3].name}</span>
+                  >
+                    {data[3] &&data[3].name}
+                  </span>
                 </Popover>
               </div>
             </div>
