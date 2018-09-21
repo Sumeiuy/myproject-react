@@ -1,0 +1,56 @@
+@import "../../css/util.less";
+.commonWrapper {
+  box-sizing: border-box;
+  padding: 10px;
+  .title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #4a4a4a;
+    line-height: 18px;
+    padding: 10px;
+    .one-line-ellipsis;
+    a {
+      float: right;
+      margin-left: 6px;
+      color: #108ee9;
+    }
+    &.calendar {
+      background: url('./calendar.png') no-repeat 6px center;
+      background-size: 16px 14px;
+      text-indent: 18px;
+    }
+  }
+  .list {
+    font-size: 14px;
+    color: #666;
+    li {
+      padding: 0 10px;
+      height: 32px;
+      line-height: 32px;
+      cursor: pointer;
+      div {
+        display: inline-block;
+        .one-line-ellipsis;
+        &:first-child {
+          width: 65%;
+        }
+        &:last-child {
+          float: right;
+          width: 32%;
+          text-align: right;
+          color: #108ee9;
+        }
+      }
+      &:hover {
+        background: #e6f3fc;
+      }
+    }
+    li.noData {
+      text-align: center;
+      cursor: default;
+      &:hover {
+        background: transparent;
+      }
+    }
+  }
+}

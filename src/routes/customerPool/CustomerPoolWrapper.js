@@ -1,9 +1,9 @@
 /*
- * @Description: 面包屑包裹组件
+ * @Description: 新版客户池首页
  * @Author: 朱飞阳
  * @Date: 2018/7/31 18:18
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-01 18:27:08
+ * @Last Modified by: Liujianshu
+ * @Last Modified time: 2018-09-12 15:23:25
  */
 
 import React from 'react';

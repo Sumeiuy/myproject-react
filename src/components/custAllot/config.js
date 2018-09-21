@@ -2,8 +2,8 @@
  * @Description: 分公司客户分配配置项
  * @Author: Liujianshu
  * @Date: 2018-05-23 17:03:23
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-31 17:37:11
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-09-21 09:55:53
  */
 import { status, drafter, department, approver, applyTime } from '../../config/busApplyFilters';
 
@@ -16,7 +16,7 @@ const config = {
   },
   errorMessage: {
     count: '一次勾选的客户数超过500条，请分多次添加。',
-    allCount: '导入失败，导入的客户数超过一笔申请单最大客户数2000条，请发起多笔申请单分次导入！',
+    allCount: '勾选失败，客户数超过一笔申请单最大客户数2000条，请发起多笔申请单分次导入！',
   },
     // 分公司客户分配
   custAllot: {
