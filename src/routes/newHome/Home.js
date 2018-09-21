@@ -2,7 +2,7 @@
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-20 15:43:04
+ * @Last Modified time: 2018-09-21 13:32:37
  */
 
 import React, { PureComponent } from 'react';
@@ -142,7 +142,7 @@ export default class Home extends PureComponent {
     this.state = {
       // 是否显示查看更多标签弹窗
       showMoreLabelModal: false,
-    }
+    };
   }
 
   componentDidMount() {
@@ -189,8 +189,15 @@ export default class Home extends PureComponent {
   // 产品日历的数值点击事件
   @autobind
   handleProductCalendarValueClick(item) {
-    console.warn('dianjile', item);
+    const { push } = this.props;
+    const { code } = item;
     // http://168.61.9.158:15902/htsc-product-base/financial_product_query.do?router=homePage
+    push({
+        pathname: '/fsp/productCenter/homePage',
+        state: {
+          url: `/htsc-product-base/financial_product_query.do?router=homePage&type=${code}`,
+        }
+    });
   }
 
   // 转化产品日历数据
@@ -363,14 +370,14 @@ export default class Home extends PureComponent {
       isNeedExtra: true,
       onValueClick: this.handleLinkToCustomerList,
       onExtraClick: this.handleMoreClick,
-    }
+    };
     // 产品日历
     const productCalendarProps = {
       icon: 'calendar',
       title: '产品日历',
       data: this.transferProductData(),
       onValueClick: this.handleProductCalendarValueClick,
-    }
+    };
     // 组合推荐
     const viewAndCombinationProps = {
       push,
@@ -379,7 +386,7 @@ export default class Home extends PureComponent {
         combination: introCombination,
         onValueClick: this.handleCombinationValueClick,
       },
-    }
+    };
     // 更多感兴趣标签
     const labelModalProps = {
       location,
