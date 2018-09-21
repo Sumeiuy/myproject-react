@@ -3,7 +3,7 @@
  * @Author: Liujianshu-K0240007
  * @Date: 2018-09-20 13:45:27
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 10:15:59
+ * @Last Modified time: 2018-09-21 15:06:23
  */
 
 import React from 'react';
@@ -34,7 +34,7 @@ export default function Nav(props) {
           data: {
             missionViewType: 'executor',
           },
-        }
+        };
         break;
       // 潜在目标客户
       case 'businessNumbers':
@@ -52,7 +52,7 @@ export default function Nav(props) {
             ...query,
             filters,
           },
-        }
+        };
         break;
       default:
         break;
@@ -63,7 +63,7 @@ export default function Nav(props) {
       id,
       title,
       name,
-    }
+    };
     return (
       <dl onClick={() => handleOpenTab(payload)}>
         <dt className={iconClass}></dt>
@@ -71,7 +71,7 @@ export default function Nav(props) {
         <dd className={styles.name}>{name}</dd>
       </dl>
     );
-  })
+  });
 
   // 发送日志
   const sendLog = (data) => {
@@ -83,7 +83,7 @@ export default function Nav(props) {
         name,
       },
     });
-  }
+  };
 
   // 打开弹窗事件
   const handleOpenTab = (payload) => {
@@ -112,7 +112,7 @@ export default function Nav(props) {
       state,
     });
     sendLog({title, name});
-  }
+  };
 
   return (
     <div className={styles.navWrapper}>

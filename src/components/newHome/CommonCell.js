@@ -2,8 +2,8 @@
  * @Description: 丰富首页-公用单元
  * @Author: Liujianshu
  * @Date: 2018-09-12 17:11:52
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-09-20 10:13:09
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-09-21 15:06:02
  */
 
 import React from 'react';
@@ -39,7 +39,7 @@ export default function CommonCell(props) {
       </Popover>;
     }
     return <span title={name}>{name}</span>;
-  }
+  };
   // 渲染列表
   const renderList = _.isEmpty(data)
   ? <li className={styles.noData}>暂无数据</li>

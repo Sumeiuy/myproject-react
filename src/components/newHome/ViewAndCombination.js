@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-09-11 15:47:01
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 10:53:36
+ * @Last Modified time: 2018-09-21 15:05:47
  */
 
 import React from 'react';
@@ -37,7 +37,7 @@ export default function ViewAndCombination(props) {
       query,
       editPane,
     });
-  }
+  };
 
   // @autobind
   // @logable({ type: 'Click', payload: { name: '详情' } })
@@ -51,7 +51,7 @@ export default function ViewAndCombination(props) {
         path: '/latestView/viewpointDetail',
       }
     );
-  }
+  };
 
   if (_.isEmpty(data)) {
     return null;
@@ -87,7 +87,7 @@ export default function ViewAndCombination(props) {
   const formateAbstract = newFormateAbstract.replace('↵', '');
   const linkClass = classnames({
     [styles.link]: true,
-    [styles.displayNone]: !isEmptyText,
+    [styles.displayNone]: isEmptyText,
   });
 
   const handlePercentChange = (value) => {
@@ -96,18 +96,18 @@ export default function ViewAndCombination(props) {
       newValue = `+${newValue}`;
     }
     return newValue;
-  }
+  };
 
   const newData = !_.isEmpty(combination) && combination.map(item => ({
     ...item,
     value: handlePercentChange(Number(item.value).toFixed(2)),
-  }))
+  }));
   // 推荐组合 props
   const combinationProps = {
     isNeedTitle: false,
     data: newData,
     onValueClick,
-  }
+  };
 
   return (
     <div className={styles.viewAndCombination}>
@@ -119,7 +119,7 @@ export default function ViewAndCombination(props) {
               className={styles.text}
               dangerouslySetInnerHTML={{ __html: formateAbstract }}
             />
-            <a className={linkClass} onClick={() => { handleDetailClick(firstNewsId) }}>[详情]</a>
+            <a className={linkClass} onClick={() => handleDetailClick(firstNewsId)}>[详情]</a>
           </div>
         </TabPane>
         <TabPane tab="组合推荐" key="2">

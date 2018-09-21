@@ -2,7 +2,7 @@
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 13:32:37
+ * @Last Modified time: 2018-09-21 14:46:57
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import store from 'store';
 
-import { logCommon } from '../../decorators/logable';
+import { logPV } from '../../decorators/logable';
 import withRouter from '../../decorators/withRouter';
 import Nav from '../../components/newHome/Nav';
 import ViewAndCombination from '../../components/newHome/ViewAndCombination';
@@ -29,7 +29,7 @@ import styles from './home.less';
 import { DATE_FORMAT_STRING, navArray } from './config';
 import rankPng from './rank.png';
 
-const dispatch = dva.generateEffect;
+const effect = dva.generateEffect;
 
 const effects = {
   // 重点关注
@@ -74,27 +74,29 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   push: routerRedux.push,
   // 重点关注
-  queryKeyAttention: dispatch(effects.queryKeyAttention, { forceFull: true }),
+  queryKeyAttention: effect(effects.queryKeyAttention, { forceFull: true }),
   // 猜你感兴趣
-  queryGuessYourInterests: dispatch(effects.queryGuessYourInterests, { forceFull: true }),
+  queryGuessYourInterests: effect(effects.queryGuessYourInterests, { forceFull: true }),
   // 产品日历
-  queryProductCalendar: dispatch(effects.queryProductCalendar, { forceFull: true }),
+  queryProductCalendar: effect(effects.queryProductCalendar, { forceFull: true }),
   // 首席观点
-  queryChiefView: dispatch(effects.queryChiefView, { forceFull: true }),
+  queryChiefView: effect(effects.queryChiefView, { forceFull: true }),
   // 组合推荐
-  queryIntroCombination: dispatch(effects.queryIntroCombination, { forceFull: true }),
-  getCustCount: dispatch(effects.getCustCount, { loading: false }),
-  getManagerIndicators: dispatch(effects.getManagerIndicators, { loading: false }),
-  getPerformanceIndicators: dispatch(effects.getPerformanceIndicators, { loading: false }),
-  queryCustLabelList: dispatch(effects.queryCustLabelList, { loading: false }),
-  custLabelListPaging: dispatch(effects.custLabelListPaging, { loading: false }),
-  queryNumbers: dispatch(effects.queryNumbers, { forceFull: true }),
+  queryIntroCombination: effect(effects.queryIntroCombination, { forceFull: true }),
+  getCustCount: effect(effects.getCustCount, { loading: false }),
+  getManagerIndicators: effect(effects.getManagerIndicators, { loading: false }),
+  getPerformanceIndicators: effect(effects.getPerformanceIndicators, { loading: false }),
+  queryCustLabelList: effect(effects.queryCustLabelList, { loading: false }),
+  custLabelListPaging: effect(effects.custLabelListPaging, { loading: false }),
+  queryNumbers: effect(effects.queryNumbers, { forceFull: true }),
 };
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 // 登陆人的组织 ID
 const orgId = emp.getOrgId();
+// 事件提示的 code
+const TODAY_EVENT_CODE = '4';
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -180,14 +182,33 @@ export default class Home extends PureComponent {
 
   // 猜你感兴趣-更多点击事件
   @autobind
+  @logPV({ pathname: '/modal/showMoreLabelModal', title: '猜你感兴趣标签' })
   handleMoreClick() {
     this.setState({
       showMoreLabelModal: true,
     });
   }
 
+  // 跳转到投顾业务能力竞赛页面
+  @autobind
+  @logPV({ pathname: '/investmentConsultantRace', title: '投顾业务能力竞赛页面' })
+  toInvestmentConsultantCompetenceRacePage() {
+    const { push } = this.props;
+    const url = '/investmentConsultantRace';
+    const param = {
+      id: 'FSP_INVESTMENT_CONSULTANT_RACE',
+      title: '投顾竞赛',
+    };
+    openRctTab({
+      url,
+      param,
+      routerAction: push,
+    });
+  };
+
   // 产品日历的数值点击事件
   @autobind
+  @logPV({ pathname: '/fsp/productCenter/homePage', title: '产品中心页面' })
   handleProductCalendarValueClick(item) {
     const { push } = this.props;
     const { code } = item;
@@ -208,7 +229,7 @@ export default class Home extends PureComponent {
     ? []
     : productCalendar.map(item => {
       const newItem = {...item};
-      if (newItem.code === '4') {
+      if (newItem.code === TODAY_EVENT_CODE) {
         newItem.title = `今日关注事件${item.value}件`;
       } else {
         newItem.title = `今日${item.name}${item.value}只`;
@@ -271,6 +292,7 @@ export default class Home extends PureComponent {
 
   // 组合推荐，打开详情页
   @autobind
+  @logPV({ pathname: '/choicenessCombination/combinationDetail', title: '精选组合详情' })
   handleCombinationValueClick(obj) {
     const { push } = this.props;
     const param = {
@@ -295,19 +317,10 @@ export default class Home extends PureComponent {
     });
   }
 
-  // 跳转客户列表的点击事件
+  // 重点关注、猜你感兴趣 跳转客户列表的点击事件
   @autobind
+  @logPV({ pathname: '/customerPool/list', title: '客户列表' })
   handleLinkToCustomerList(item) {
-    console.warn('item', item);
-    // 神策搜索上报
-    logCommon({
-      type: 'Click',
-      payload: {
-        name: '首页搜索',
-        value: '',
-        type: '猜你感兴趣',
-      },
-    });
     this.handleOpenTab({
       source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
       labelMapping: item.id || '',
@@ -418,7 +431,7 @@ export default class Home extends PureComponent {
             <CommonCell {...guessYourInterestsProps} />
           </div>
           <div className={styles.competitionsLink}>
-            <img src={rankPng} alt=""/>
+            <img src={rankPng} alt="投顾能力竞赛"  onClick={this.toInvestmentConsultantCompetenceRacePage} />
           </div>
         </div>
         <div className={styles.mainContent}>
