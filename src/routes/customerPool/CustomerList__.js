@@ -1089,7 +1089,6 @@ export default class CustomerList extends PureComponent {
       getServiceRecord,
       custContactData,
       serviceRecordData,
-      cycle,
       toggleServiceRecordModal,
       interfaceState,
       searchServerPersonList,
@@ -1144,12 +1143,9 @@ export default class CustomerList extends PureComponent {
       sortDirection,
       sortType,
       orgId,
-      source,
       pageSize,
       curPageNum,
       q,
-      cycleSelect,
-      /*  bname, */
     } = location.query;
     // 排序的默认值 ： 总资产降序
     let reorderValue = DEFAULT_SORT;
@@ -1163,14 +1159,6 @@ export default class CustomerList extends PureComponent {
       custRange: serviceDepartment,
       expandAll,
     };
-    const cycleTimeProps = {
-      updateQueryState: this.updateQueryState,
-    };
-    if (_.includes(['custIndicator', 'numOfCustOpened'], source)) {
-      const selectValue = cycleSelect || (cycle[0] || {}).key;
-      cycleTimeProps.cycle = cycle;
-      cycleTimeProps.selectValue = selectValue;
-    }
     return (
       <div className={styles.customerlist}>
         <Filter
@@ -1227,7 +1215,6 @@ export default class CustomerList extends PureComponent {
           reorderValue={reorderValue}
           onReorderChange={this.orderChange}
           searchServerPersonList={searchServerPersonList}
-          {...cycleTimeProps}
           {...custRangeProps}
           clearCreateTaskData={clearCreateTaskData}
           queryCustUuid={queryCustUuid}

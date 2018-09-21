@@ -8,7 +8,6 @@ import React, { PureComponent } from 'react';
 import { Icon } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import styles from './morningBroadcast.less';
 import Marquee from '../../morningBroadcast/Marquee';
 import Audio from '../../common/audio/Audio';
 import { openRctTab } from '../../../utils';
@@ -18,14 +17,22 @@ import more from './img/more.png';
 import { request } from '../../../config';
 import logable from '../../../decorators/logable';
 
+import styles from './morningBroadcast.less';
+import classes from './morningBroadcast__.less';
+
 @withRouter
 export default class MorningBroadcast extends PureComponent {
   static propTypes = {
     dataList: PropTypes.array.isRequired,
     sourceList: PropTypes.object.isRequired,
-    push: PropTypes.func.isRequired,
     queryAudioFile: PropTypes.func.isRequired,
+    isNewHome: PropTypes.bool,
   };
+
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
+    isNewHome: false,
+  }
 
   constructor(props) {
     super(props);
@@ -58,7 +65,7 @@ export default class MorningBroadcast extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '更多' } })
   openNewTab(url) {
-    const { push } = this.props;
+    const { push } = this.context;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
     const query = { isInit: true };
     openRctTab({
@@ -79,7 +86,7 @@ export default class MorningBroadcast extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '跳转至晨报详情' } })
   handleToDetail(newsId) {
-    const { push } = this.props;
+    const { push } = this.context;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
     const url = '/broadcastDetail';
     const query = { newsId };
@@ -93,18 +100,21 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   render() {
-    const { dataList, sourceList = [] } = this.props;
+    const { dataList, sourceList = [], isNewHome } = this.props;
     const { activeMusic } = this.state;
+    const trueStyles = isNewHome ? classes : styles;
     return (
-      <div className={styles.morning_broadcast}>
-        <div className={styles.title}>
-          <span>晨间播报</span>
-          <span className={styles.more} onClick={() => this.openNewTab('/strategyCenter/broadcastList')} >
+      <div className={trueStyles.morning_broadcast}>
+        <div className={trueStyles.title}>
+          <span>{isNewHome ? '每日晨报' : '晨间播报'}</span>
+          <span className={trueStyles.more} onClick={() => this.openNewTab('/strategyCenter/broadcastList')} >
             <span>更多</span>
-            <img src={more} alt="" />
+            {
+              isNewHome ? null : <img src={more} alt="" />
+            }
           </span>
         </div>
-        <div className={styles.listWrap}>
+        <div className={trueStyles.listWrap}>
           {
             dataList
               .map((item) => {
@@ -118,15 +128,15 @@ export default class MorningBroadcast extends PureComponent {
                   const sourceFile = sourceList[newsId];
                   const audioSrc = sourceFile && this.getAudioSrc(sourceFile);
                   return (
-                    <div key={newsId} className={styles.item}>
+                    <div key={newsId} className={trueStyles.item}>
                       <div
-                        className={styles.simpleName}
+                        className={trueStyles.simpleName}
                       >
                         <Marquee content={`${newsTypValue}：${title}`} speed={40} />
                       </div>
-                      <div className={styles.music}>
+                      <div className={trueStyles.music}>
                         <Audio src={audioSrc} autoPlay />
-                        <Icon onClick={this.onHandleClose} className={styles.close} type="close-circle" />
+                        <Icon onClick={this.onHandleClose} className={trueStyles.close} type="close-circle" />
                       </div>
                     </div>
                   );
@@ -134,19 +144,26 @@ export default class MorningBroadcast extends PureComponent {
                 return (
                   <div
                     key={newsId}
-                    className={styles.item}
+                    className={trueStyles.item}
                   >
                     <span
-                      className={styles.desc}
+                      className={trueStyles.desc}
                       onClick={() => { this.handleToDetail(newsId); }}
                       title={title}
                     >
                       {`${newsTypValue}：${title}`}
                     </span>
-                    <span
-                      onClick={() => { this.onListen(newsId, audioFileId); }}
-                      className={styles.listen}
-                    >收听</span>
+                    {
+                      isNewHome ?
+                        <span
+                          onClick={() => { this.onListen(newsId, audioFileId); }}
+                          className={trueStyles.listen}
+                        /> :
+                        <span
+                          onClick={() => { this.onListen(newsId, audioFileId); }}
+                          className={trueStyles.listen}
+                        >收听</span>
+                    }
                   </div>
                 );
               })

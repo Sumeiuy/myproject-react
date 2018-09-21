@@ -4644,9 +4644,9 @@ lego-react-date@^1.0.8:
   dependencies:
     moment "^2.22.2"
 
-lego-react-filter@^1.1.16:
-  version "1.1.16"
-  resolved "http://168.61.48.13:4873/lego-react-filter/-/lego-react-filter-1.1.16.tgz#0c1c430dd736cbfbb958f1d5f34fe5e525f61182"
+lego-react-filter@^1.1.17:
+  version "1.1.17"
+  resolved "http://168.61.48.13:4873/lego-react-filter/-/lego-react-filter-1.1.17.tgz#f6dd523ade019668607914d88c58e27009fb7e7d"
 
 lego-schedule@^1.0.6:
   version "1.0.6"

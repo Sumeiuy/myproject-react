@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-09-11 14:38:00
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-18 11:02:12
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-09-20 17:06:18
  * @description models/advisorSpace.js
  */
 
@@ -24,7 +24,7 @@ export default {
     // 参与人列表
     participantData: {},
     // 取消预订结果
-    cancelReservationResult: {},
+    cancelReservationResult: '',
     // 已预订时间段列表
     orderPeriodList: [],
   },
@@ -79,7 +79,7 @@ export default {
     },
     // 取消预订成功
     cancelReservationSuccess(state, action) {
-      const { payload: { resultData = {} }} = action;
+      const { payload: { resultData = '' }} = action;
       return {
         ...state,
         cancelReservationResult: resultData,
@@ -160,4 +160,4 @@ export default {
   },
   subscriptions: {
   },
-}
+};

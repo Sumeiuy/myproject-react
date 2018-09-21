@@ -12,7 +12,7 @@ import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import { Tabs } from 'antd';
 import _ from 'lodash';
-import moment from 'moment/moment';
+import moment from 'moment';
 
 import Header from '../../components/customerPool/home/Header';
 import { optionsMap } from '../../config';
@@ -51,7 +51,7 @@ const effects = {
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
   getCustCount: 'customerPool/getCustCount',
   switchTab: 'customerPoolHome/switchTab',
-  homaPageNews: 'morningBoradcast/homaPageNews', // 晨报列表
+  queryhomePageNews: 'morningBoradcast/queryhomePageNews', // 晨报列表
   queryAudioFile: 'morningBoradcast/queryAudioFile',
   custLabelListPaging: 'customerPool/custLabelListPaging', // 首页可用客户标签列表弹窗数据分页处理
   queryCustLabelList: 'customerPool/queryCustLabelList', // 获取首页可用客户标签列表数据
@@ -93,7 +93,7 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
   switchTab: fetchDataFunction(false, effects.switchTab), // 切换，上报日志
-  homaPageNews: fetchDataFunction(false, effects.homaPageNews),
+  queryhomePageNews: fetchDataFunction(false, effects.queryhomePageNews),
   queryAudioFile: fetchDataFunction(false, effects.queryAudioFile),
   custLabelListPaging: fetchDataFunction(false, effects.custLabelListPaging),
   queryCustLabelList: fetchDataFunction(false, effects.queryCustLabelList),
@@ -134,7 +134,7 @@ export default class Home extends PureComponent {
     getCustCount: PropTypes.func.isRequired,
     initBoradcastList: PropTypes.array.isRequired,
     initBoradcastFile: PropTypes.object.isRequired,
-    homaPageNews: PropTypes.func.isRequired,
+    queryhomePageNews: PropTypes.func.isRequired,
     queryAudioFile: PropTypes.func.isRequired,
     // 首页可用客户标签
     queryCustLabelList: PropTypes.func.isRequired,
@@ -182,7 +182,7 @@ export default class Home extends PureComponent {
       getInformation,
       getToBeDone,
       getHotWds,
-      homaPageNews,
+      queryhomePageNews,
     } = this.props;
 
     // 猜你感兴趣模块接口，经需求确认此处与职责无关，删除以前传的orgId,2017\11\7
@@ -206,7 +206,7 @@ export default class Home extends PureComponent {
       empPostnList,
     });
     // 初始化晨报列表数据，用于首页提供晨报展示
-    homaPageNews({
+    queryhomePageNews({
       createdFrom: moment().subtract(1, 'months').format('YYYY-MM-DD'),
       createdTo: moment().format('YYYY-MM-DD'),
       pageNum: 1,
@@ -584,7 +584,6 @@ export default class Home extends PureComponent {
               queryAudioFile={queryAudioFile}
               dataList={initBoradcastList}
               sourceList={initBoradcastFile}
-              push={push}
             />
             <Viewpoint
               information={information}
