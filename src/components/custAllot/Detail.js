@@ -2,8 +2,8 @@
  * @Description: 分公司客户分配详情
  * @Author: Liujianshu
  * @Date: 2018-05-23 15:19:51
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-11 13:17:39
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-09-21 14:41:46
  */
 
 import React, { PureComponent } from 'react';
@@ -212,7 +212,7 @@ export default class Detail extends PureComponent {
               ? <p>
                 <a
                   onClick={this.handleDownloadClick}
-                  href={`${request.prefix}/excel/custTransfer/exportAssigumentExcel?appId=${appId || dataId}&empId=${emp.getId()}&orgId=${empOrgId}`}
+                  href={`${request.prefix}/excel/custTransfer/exportAssigumentExcel?appId=${dataId}&empId=${emp.getId()}&orgId=${empOrgId}`}
                   download
                 >
                   下载报错信息

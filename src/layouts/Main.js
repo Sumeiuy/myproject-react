@@ -23,8 +23,11 @@ import '../css/skin.less';
 
 const effects = {
   dictionary: 'app/getDictionary',
+  getMotCustfeedBackDict: 'app/getMotCustfeedBackDict',
   customerScope: 'customerPool/getCustomerScope',
   addServeRecord: 'customerPool/addCommonServeRecord',
+  // 服务记录和电话记录关联
+  addCallRecord: 'customerPool/addCallRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
   // 删除文件
   ceFileDelete: 'performerView/ceFileDelete',
@@ -62,6 +65,9 @@ const mapDispatchToProps = {
   addServeRecord: fectchDataFunction(true, effects.addServeRecord),
   handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
   ceFileDelete: fectchDataFunction(true, effects.ceFileDelete),
+  getMotCustfeedBackDict: fectchDataFunction(true, effects.getMotCustfeedBackDict),
+  // 服务记录和电话记录关联
+  addCallRecord: fectchDataFunction(true, effects.addCallRecord),
 };
 
 const PHONE = 'phone';
@@ -85,6 +91,7 @@ export default class Main extends Component {
     custUuid: PropTypes.string.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
+    getMotCustfeedBackDict: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     serviceRecordInfo: PropTypes.object.isRequired,
   }
@@ -111,7 +118,9 @@ export default class Main extends Component {
       custUuid,
       ceFileDelete,
       motSelfBuiltFeedbackList,
+      getMotCustfeedBackDict,
       serviceRecordInfo,
+      addCallRecord,
       location,
     } = this.props;
 
@@ -151,12 +160,19 @@ export default class Main extends Component {
                               isPhoneCall={isPhoneCall}
                             />
                             <ConnectedSignCustomerLabel />
+                            <PhoneWrapper
+                              motSelfBuiltFeedbackList={motSelfBuiltFeedbackList}
+                              getMotCustfeedBackDict={getMotCustfeedBackDict}
+                              currentCommonServiceRecord={currentCommonServiceRecord}
+                              addServeRecord={addServeRecord}
+                              addCallRecord={addCallRecord}
+                              toggleServiceRecordModal={toggleServiceRecordModal}
+                            />
                           </div>
                         : null
                     }
                   </div>
                 </div>
-                <PhoneWrapper />
               </div>
             </div>
           </ErrorBoundary>
