@@ -35,6 +35,7 @@ import customerLabelAPI from './customerLabel';
 import accountLimitAPI from './accountLimit';
 import labelManagementAPI from './labelManagement';
 import tempDeputeAPI from './tempDepute';
+import newHomeAPI from './newHome';
 import advisorSpaceAPI from './advisorSpace';
 
 const api = apiCreator();
@@ -145,8 +146,10 @@ const exported = {
   accountLimit: accountLimitAPI(api),
   // ========== 管理标签页面
   labelManagement: labelManagementAPI(api),
-  // ========== 临死委托他人处理任务
+  // ========== 临时委托他人处理任务
   tempDepute: tempDeputeAPI(api),
+  // ========== 丰富首页内容
+  newHome: newHomeAPI(api),
   // ========== 投顾空间申请
   advisorSpace: advisorSpaceAPI(api),
 };
@@ -190,5 +193,6 @@ export const {
   accountLimit,
   labelManagement,
   tempDepute,
+  newHome,
   advisorSpace,
 } = exported;
