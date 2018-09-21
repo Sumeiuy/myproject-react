@@ -206,6 +206,27 @@ const helper = {
       },
     });
   },
+
+  /**
+   * 将数组对象中的id和name转成对应的key和value
+   * @param {*} arr 原数组
+   * eg: [{ id: 1, name: '11', childList: [] }] 转成 [{ key: 1, value: '11', children: [] }]
+   */
+  transformCustFeecbackData(arr = []) {
+    return _.map(arr, (item) => {
+      const obj = {
+        key: String(item.id),
+        value: item.name || item.parentClassName,
+      };
+      if (item.feedbackList && item.feedbackList.length) {
+        obj.children = helper.transformCustFeecbackData(item.feedbackList);
+      }
+      if (item.childList && item.childList.length) {
+        obj.children = helper.transformCustFeecbackData(item.childList);
+      }
+      return obj;
+    });
+  }
 };
 
 export default helper;
@@ -219,4 +240,5 @@ export const {
   getDetailBtnVisible,
   openProductDetailPage,
   isLocalScope,
+  transformCustFeecbackData,
 } = helper;
