@@ -7,7 +7,7 @@
     font-weight: bold;
     color: #4a4a4a;
     line-height: 18px;
-    padding: 5px 10px;
+    padding: 10px;
     .one-line-ellipsis;
     a {
       float: right;
@@ -25,8 +25,8 @@
     color: #666;
     li {
       padding: 0 10px;
-      height: 28px;
-      line-height: 28px;
+      height: 32px;
+      line-height: 32px;
       cursor: pointer;
       div {
         display: inline-block;
@@ -41,11 +41,15 @@
           color: #108ee9;
         }
       }
-      span {
-        float: right;
-      }
       &:hover {
         background: #e6f3fc;
+      }
+    }
+    li.noData {
+      text-align: center;
+      cursor: default;
+      &:hover {
+        background: transparent;
       }
     }
   }

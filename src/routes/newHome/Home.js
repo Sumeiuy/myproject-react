@@ -1,8 +1,8 @@
 /**
  * @Author: wangjunjun
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-09-17 17:37:54
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-09-20 15:43:04
  */
 
 import React, { PureComponent } from 'react';
@@ -11,15 +11,23 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
+import _ from 'lodash';
+import store from 'store';
 
+import { logCommon } from '../../decorators/logable';
 import withRouter from '../../decorators/withRouter';
+import Nav from '../../components/newHome/Nav';
 import ViewAndCombination from '../../components/newHome/ViewAndCombination';
 import CommonCell from '../../components/newHome/CommonCell';
 import ChartsTab from '../../components/newHome/ChartsTab';
-
-import { dva } from '../../helper';
+import { LabelModal } from '../../components/customerPool/home';
+import { dva, url as urlHelper, emp } from '../../helper';
+import { isSightingScope, getFilter, getSortParam } from '../../components/customerPool/helper.js';
+import { openRctTab } from '../../utils';
+import { padSightLabelDesc } from '../../config';
 import styles from './home.less';
-import { DATE_FORMAT_STRING } from './config';
+import { DATE_FORMAT_STRING, navArray } from './config';
+import rankPng from './rank.png';
 
 const dispatch = dva.generateEffect;
 
@@ -37,6 +45,9 @@ const effects = {
   getManagerIndicators: 'customerPool/getManagerIndicators',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
   getCustCount: 'customerPool/getCustCount',
+  queryCustLabelList: 'customerPool/queryCustLabelList',  // 获取首页可用客户标签列表数据
+  custLabelListPaging: 'customerPool/custLabelListPaging', // 首页可用客户标签列表弹窗数据分页处理
+  queryNumbers: 'newHome/queryNumbers',  // 首页任务概览
 };
 
 const mapStateToProps = state => ({
@@ -56,6 +67,8 @@ const mapStateToProps = state => ({
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
   managerIndicators: state.customerPool.managerIndicators, // 经营指标
   custCount: state.customerPool.custCount, // （经营指标）新增客户指标
+  pagingCustLabelData: state.customerPool.pagingCustLabelData, // 前端处理过的带分页的所有可用客户标签数据
+  taskNumbers: state.newHome.taskNumbers,
 });
 
 const mapDispatchToProps = {
@@ -73,10 +86,15 @@ const mapDispatchToProps = {
   getCustCount: dispatch(effects.getCustCount, { loading: false }),
   getManagerIndicators: dispatch(effects.getManagerIndicators, { loading: false }),
   getPerformanceIndicators: dispatch(effects.getPerformanceIndicators, { loading: false }),
+  queryCustLabelList: dispatch(effects.queryCustLabelList, { loading: false }),
+  custLabelListPaging: dispatch(effects.custLabelListPaging, { loading: false }),
+  queryNumbers: dispatch(effects.queryNumbers, { forceFull: true }),
 };
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+// 登陆人的组织 ID
+const orgId = emp.getOrgId();
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -102,6 +120,12 @@ export default class Home extends PureComponent {
       PropTypes.array,
     ]),
     getCustCount: PropTypes.func.isRequired,
+    // 首页可用客户标签
+    queryCustLabelList: PropTypes.func.isRequired,
+    custLabelListPaging: PropTypes.func.isRequired,
+    pagingCustLabelData: PropTypes.object.isRequired,
+    queryNumbers: PropTypes.func.isRequired,
+    taskNumbers: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -113,17 +137,27 @@ export default class Home extends PureComponent {
     custCount: EMPTY_LIST,
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 是否显示查看更多标签弹窗
+      showMoreLabelModal: false,
+    }
+  }
+
   componentDidMount() {
     const {
+      custRange,
       queryKeyAttention,
       queryGuessYourInterests,
       queryProductCalendar,
       queryChiefView,
       queryIntroCombination,
+      queryNumbers,
     } = this.props;
     const date = moment().format(DATE_FORMAT_STRING);
     // 重点关注
-    queryKeyAttention();
+    queryKeyAttention({ orgId });
     // 猜你感兴趣
     queryGuessYourInterests();
     // 产品日历
@@ -135,11 +169,21 @@ export default class Home extends PureComponent {
     });
     // 组合推荐
     queryIntroCombination();
+
+    // 待办事项, 有任务管理岗时，将岗位id传给后端
+    // 判断当前登录用户是否在非营业部
+    const isNotSaleDepartment = emp.isManagementHeadquarters(orgId)
+      || emp.isFiliale(custRange, orgId);
+    // 非营业部登录用户有权限时，传登陆者的orgId
+    queryNumbers({ orgId: isNotSaleDepartment && this.hasTkMampPermission ? orgId : '' });
   }
 
+  // 猜你感兴趣-更多点击事件
   @autobind
   handleMoreClick() {
-    console.warn('点击了更多');
+    this.setState({
+      showMoreLabelModal: true,
+    });
   }
 
   // 产品日历的数值点击事件
@@ -149,12 +193,135 @@ export default class Home extends PureComponent {
     // http://168.61.9.158:15902/htsc-product-base/financial_product_query.do?router=homePage
   }
 
+  // 转化产品日历数据
+  @autobind
+  transferProductData() {
+    const { productCalendar } = this.props;
+    const productData = _.isEmpty(productCalendar)
+    ? []
+    : productCalendar.map(item => {
+      const newItem = {...item};
+      if (newItem.code === '4') {
+        newItem.title = `今日关注事件${item.value}件`;
+      } else {
+        newItem.title = `今日${item.name}${item.value}只`;
+      }
+      return newItem;
+    });
+    return productData;
+  }
+
+  // 打开/关闭 更多标签弹窗
+  @autobind
+  handleToggleMoreLabelModal(status) {
+    this.setState({
+      showMoreLabelModal: status,
+    });
+  }
+
+  // 打开新的 tab 页
+  @autobind
+  handleOpenTab(data) {
+    const { labelDesc, missionDesc, ...options } = data;
+    const { push, location: { query } } = this.props;
+    const firstUrl = '/customerPool/list';
+    // 有标签描述需要将描述存到storage
+    if (labelDesc) {
+      store.set(`${options.labelMapping}-labelDesc`, {
+        ...data,
+        labelName: decodeURIComponent(options.labelName),
+      });
+    }
+    const filters = getFilter(data);
+    const sortParams = getSortParam(filters);
+    const newQuery = {
+      ...options,
+      ...sortParams,
+      filters,
+      forceRefresh: 'Y',
+    };
+    const condition = urlHelper.stringify({ ...newQuery });
+    const url = `${firstUrl}?${condition}`;
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'RCT_FSP_CUSTOMER_LIST',
+      title: '客户列表',
+    };
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+      pathname: firstUrl,
+      query: newQuery,
+      // 方便返回页面时，记住首页的query，在本地环境里
+      state: {
+        ...query,
+      },
+    });
+  }
+
+  // 组合推荐，打开详情页
+  @autobind
+  handleCombinationValueClick(obj) {
+    const { push } = this.props;
+    const param = {
+      closable: true,
+      forceRefresh: false,
+      isSpecialTab: true,
+      id: 'FSP_JX_GROUP_DETAIL',
+      title: '组合详情',
+    };
+    // 传入两个参数，id 、 name
+    const query = {
+      id: obj.code,
+      name: obj.name,
+    };
+    const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
+    openRctTab({
+      routerAction: push,
+      url,
+      param,
+      pathname: '/choicenessCombination/combinationDetail',
+      query,
+    });
+  }
+
+  // 跳转客户列表的点击事件
+  @autobind
+  handleLinkToCustomerList(item) {
+    console.warn('item', item);
+    // 神策搜索上报
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: '首页搜索',
+        value: '',
+        type: '猜你感兴趣',
+      },
+    });
+    this.handleOpenTab({
+      source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
+      labelMapping: item.id || '',
+      labelName: encodeURIComponent(item.name),
+      // 任务提示
+      missionDesc: padSightLabelDesc({
+        sightingScopeBool: isSightingScope(item.source),
+        labelId: item.id,
+        labelName: item.name,
+      }),
+      labelDesc: item.description,
+      q: encodeURIComponent(item.name),
+      type: 'LABEL',
+    });
+  }
+
   render() {
     const {
       push,
       keyAttention,
       guessYourInterests,
-      productCalendar,
       chiefView,
       introCombination,
       location,
@@ -166,32 +333,62 @@ export default class Home extends PureComponent {
       custCount,
       getCustCount,
       getManagerIndicators,
-      getPerformanceIndicators
+      getPerformanceIndicators,
+      // 首页可用客户标签
+      queryCustLabelList,
+      custLabelListPaging,
+      pagingCustLabelData,
+      taskNumbers,
     } = this.props;
-
+    const {
+      showMoreLabelModal,
+    } = this.state;
+    // 快捷导航
+    const navProps = {
+      location,
+      push,
+      data: taskNumbers,
+      list: navArray,
+    };
+    // 重点关注
     const keyAttentionProps = {
       title: '重点关注',
       data: keyAttention,
+      onValueClick: this.handleLinkToCustomerList,
     };
+    // 猜你感兴趣
     const guessYourInterestsProps = {
       title: '猜你感兴趣',
       data: guessYourInterests,
       isNeedExtra: true,
+      onValueClick: this.handleLinkToCustomerList,
       onExtraClick: this.handleMoreClick,
     }
+    // 产品日历
     const productCalendarProps = {
       icon: 'calendar',
       title: '产品日历',
-      data: productCalendar,
+      data: this.transferProductData(),
       onValueClick: this.handleProductCalendarValueClick,
     }
+    // 组合推荐
     const viewAndCombinationProps = {
       push,
       data: {
         view: chiefView,
         combination: introCombination,
+        onValueClick: this.handleCombinationValueClick,
       },
     }
+    // 更多感兴趣标签
+    const labelModalProps = {
+      location,
+      queryCustLabelList,
+      pageChange: custLabelListPaging,
+      data: pagingCustLabelData,
+      show: showMoreLabelModal,
+      toggleModal: this.handleToggleMoreLabelModal,
+    };
     const chartsTabProps = {
       location,
       custRange,
@@ -202,7 +399,7 @@ export default class Home extends PureComponent {
       custCount,
       getCustCount,
       getManagerIndicators,
-      getPerformanceIndicators
+      getPerformanceIndicators,
     };
     return (
       <div className={styles.container}>
@@ -213,10 +410,14 @@ export default class Home extends PureComponent {
           <div className={styles.interestContentLink}>
             <CommonCell {...guessYourInterestsProps} />
           </div>
-          <div className={styles.competitionsLink}>投顾能力竞赛</div>
+          <div className={styles.competitionsLink}>
+            <img src={rankPng} alt=""/>
+          </div>
         </div>
         <div className={styles.mainContent}>
-          <div className={styles.shotCutLink}>快捷导航</div>
+          <div className={styles.shotCutLink}>
+            <Nav {...navProps} />
+          </div>
           <div className={styles.tabPanesContainer}>
             <ChartsTab {...chartsTabProps} />
           </div>
@@ -230,6 +431,7 @@ export default class Home extends PureComponent {
           </div>
           <div className={styles.newsInfoContainer}>每日晨报</div>
         </div>
+        <LabelModal {...labelModalProps} />
       </div>
     );
   }

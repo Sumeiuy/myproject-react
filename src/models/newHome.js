@@ -3,8 +3,8 @@
  * @Description: 丰富首页内容 model
  * @Author: Liujianshu
  * @Date: 2018-09-12 15:36:16
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-09-13 17:17:40
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-09-20 15:32:24
  */
 import { newHome as api } from '../api';
 
@@ -19,6 +19,7 @@ export default {
     productCalendar: EMPTY_ARRAY,
     chiefView: EMPTY_OBJECT,
     introCombination: EMPTY_ARRAY,
+    taskNumbers: EMPTY_OBJECT,
   },
   reducers: {
     // 重点关注
@@ -61,6 +62,14 @@ export default {
         introCombination: resultData,
       };
     },
+    // 首页任务概览数据
+    queryNumbersSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        taskNumbers: resultData,
+      };
+    },
   },
   effects: {
     // 重点关注
@@ -100,6 +109,14 @@ export default {
       const response = yield call(api.queryIntroCombination, payload);
       yield put({
         type: 'queryIntroCombinationSuccess',
+        payload: response,
+      });
+    },
+    // 首页任务概览数据
+    * queryNumbers({ payload }, { call, put }) {
+      const response = yield call(api.queryNumbers, payload);
+      yield put({
+        type: 'queryNumbersSuccess',
         payload: response,
       });
     },

@@ -3,28 +3,56 @@
  * @Author: Liujianshu
  * @Date: 2018-09-12 17:11:52
  * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-09-17 17:14:58
+ * @Last Modified time: 2018-09-20 10:13:09
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { Popover } from 'antd';
 import classnames from 'classnames';
 
+
+import antdStyles from '../../css/antd.less';
 import styles from './commonCell.less';
+import classes from '../customerPool/home/performanceIndicators__.less';
 
 export default function CommonCell(props) {
   const { isNeedTitle, title, icon, data, isNeedExtra, extraText, onExtraClick, onValueClick } = props;
-  if (_.isEmpty(data)) {
-    return null;
+  // 渲染 Popover
+  const renderPopver = item => {
+    const { name, description = '' } = item;
+    if (!_.isEmpty(description)) {
+      return <Popover
+        title={name}
+        content={description}
+        placement="bottom"
+        mouseEnterDelay={0.2}
+        overlayStyle={{ maxWidth: '320px' }}
+        overlayClassName={antdStyles.popoverClass}
+      >
+        <span
+          className={classes.chartLabel}
+        >
+          {name}
+        </span>
+      </Popover>;
+    }
+    return <span title={name}>{name}</span>;
   }
   // 渲染列表
-  const renderList = data.map(item => {
-    const { name, code, value, title } = item;
+  const renderList = _.isEmpty(data)
+  ? <li className={styles.noData}>暂无数据</li>
+  : data.map(item => {
+    const { code, id = '', value, title } = item;
     return (
-      <li className={styles.item} key={code}>
-        <div title={name}>{name}</div>
-        <div onClick={() => onValueClick(item)} title={title || value}>{value}</div>
+      <li className={styles.item} key={code || id}>
+        <div>
+          {renderPopver(item)}
+        </div>
+        <div>
+          <span onClick={() => onValueClick(item)} title={title || value}>{value}</span>
+        </div>
       </li>
     );
   });
@@ -44,6 +72,7 @@ export default function CommonCell(props) {
     {title}
   </h2>
   : null;
+
   return (
     <div className={styles.commonWrapper}>
       {renderTitle}

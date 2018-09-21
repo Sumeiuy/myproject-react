@@ -2,8 +2,8 @@
  * @Description: 首席观点和组合推荐
  * @Author: Liujianshu
  * @Date: 2018-09-11 15:47:01
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-09-14 15:18:44
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-09-21 10:53:36
  */
 
 import React from 'react';
@@ -28,7 +28,7 @@ export default function ViewAndCombination(props) {
 
   const openNewTab = (url, query, editPane) => {
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
-    const { push } = this.props;
+    const { push } = props;
     openRctTab({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(query)}`,
@@ -56,7 +56,7 @@ export default function ViewAndCombination(props) {
   if (_.isEmpty(data)) {
     return null;
   }
-  const { view, combination = [] } = data;
+  const { view, combination = [], onValueClick } = data;
 
   const { infoVOList = [] } = view;
   // 展示第一个新闻
@@ -89,10 +89,24 @@ export default function ViewAndCombination(props) {
     [styles.link]: true,
     [styles.displayNone]: !isEmptyText,
   });
+
+  const handlePercentChange = (value) => {
+    let newValue = value;
+    if (value > 0) {
+      newValue = `+${newValue}`;
+    }
+    return newValue;
+  }
+
+  const newData = !_.isEmpty(combination) && combination.map(item => ({
+    ...item,
+    value: handlePercentChange(Number(item.value).toFixed(2)),
+  }))
   // 推荐组合 props
   const combinationProps = {
     isNeedTitle: false,
-    data: combination,
+    data: newData,
+    onValueClick,
   }
 
   return (
@@ -109,7 +123,7 @@ export default function ViewAndCombination(props) {
           </div>
         </TabPane>
         <TabPane tab="组合推荐" key="2">
-          <h2><span>近30天收益率</span>组合名称</h2>
+          <h2 className={styles.combinationTitle}><span>近30天收益率</span>组合名称</h2>
           <CommonCell {...combinationProps} />
         </TabPane>
       </Tabs>
