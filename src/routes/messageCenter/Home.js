@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-06 13:07:59
+ * @Last Modified time: 2018-09-20 14:40:01
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -105,6 +105,8 @@ export default class MessageCenter extends PureComponent {
     const { objectVal, rowId, typeName, title } = data;
     const allocation = '转签待分配';
     const flag = title.indexOf(allocation);
+    // 设置fsp项目里jsp页面中的全局消息Id
+    window.home_share_var.messageId = rowId;
     this.removeNotice = true;
     if (typeName === config.tgSign && flag < 0) {
       this.handleMessageByFSPNotAllocation(objectVal);
