@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-11 20:39:27
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-21 14:46:18
+ * @Last Modified time: 2018-09-21 17:32:24
  * @description 投顾空间申请头部筛选
  */
 
@@ -83,11 +83,13 @@ export default class Header extends PureComponent {
 
   @autobind
   getRoomList(list) {
-    const roomList = _.map(list, item => ({ ...item, label: `${item.siteName}${item.roomName}`, value: item.roomNo }));
-    return [{
-      label:'不限',
-      value:''
-    }, ...roomList];
+    return [
+      {
+        label: '不限',
+        value: ''
+      },
+      ...list,
+    ];
   }
 
   render() {
