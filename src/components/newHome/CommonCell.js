@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-09-12 17:11:52
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 15:06:02
+ * @Last Modified time: 2018-09-21 17:34:15
  */
 
 import React from 'react';
@@ -41,9 +41,7 @@ export default function CommonCell(props) {
     return <span title={name}>{name}</span>;
   };
   // 渲染列表
-  const renderList = _.isEmpty(data)
-  ? <li className={styles.noData}>暂无数据</li>
-  : data.map(item => {
+  const renderList = !_.isEmpty(data) && data.map(item => {
     const { code, id = '', value, title } = item;
     return (
       <li className={styles.item} key={code || id}>
@@ -76,9 +74,13 @@ export default function CommonCell(props) {
   return (
     <div className={styles.commonWrapper}>
       {renderTitle}
-      <ul className={styles.list}>
-        { renderList }
-      </ul>
+      {
+        _.isEmpty(data)
+        ? <div className={styles.noData}>暂无数据</div>
+        : <ul className={styles.list}>
+          { renderList }
+        </ul>
+      }
     </div>
   );
 }
