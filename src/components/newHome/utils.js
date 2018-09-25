@@ -239,7 +239,7 @@ function getCustomTypeChartData(data) {
         dataSource[1].assetRate = 1;
       }
     }
-    dataSource[2].assetRate = 100 - dataSource[0].custNumRate - dataSource[1].custNumRate;
+    dataSource[2].assetRate = 100 - dataSource[0].assetRate - dataSource[1].assetRate;
   }
   const option = {
     grid: {
