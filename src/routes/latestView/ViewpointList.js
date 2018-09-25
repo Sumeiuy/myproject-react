@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 首席观点列表页面
  * @Date: 2018-06-19 13:27:04
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-25 11:09:09
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-28 16:34:50
  */
 
 import React, { PureComponent } from 'react';
@@ -19,7 +19,7 @@ import withRouter from '../../decorators/withRouter';
 import Pagination from '../../components/common/Pagination';
 import Fiter from '../../components/latestView/chiefViewpoint/Filter';
 import styles from './viewpointList.less';
-// import logable from '../../decorators/logable';
+import logable from '../../decorators/logable';
 import config from '../../components/latestView/config';
 
 const titleList = config.viewpointTitleList;
@@ -132,6 +132,14 @@ export default class ViewpointList extends PureComponent {
 
   // 当前页跳转到详情页
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '咨询详情',
+      type: '$args[0].typeName',
+      subType: '$args[0].title',
+    },
+  })
   toDetailPage(data) {
     const { location: { query } } = this.props;
     const { id } = data;

@@ -15,6 +15,7 @@ import { linkTo } from './homeIndicators_';
 
 import antdStyles from '../../../css/antd.less';
 import styles from './customerService.less';
+import logable from '../../../decorators/logable';
 
 const SOURCE = 'manageService';
 
@@ -84,7 +85,9 @@ export default class CustomerService extends PureComponent {
     ];
   }
 
+  // TODO 日志查看：页面中找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '点击' } })
   handleToList() {
     const { cycle, location, push } = this.props;
     const params = {

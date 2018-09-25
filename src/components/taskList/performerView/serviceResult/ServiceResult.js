@@ -301,7 +301,9 @@ export default class ServiceResult extends PureComponent {
   }
 
   // 加载而更多
+  // TODO 日志查看：打开页面无数据 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '加载更多' } })
   handlePageChange() {
     const { currentParam } = this.state;
     this.setState({

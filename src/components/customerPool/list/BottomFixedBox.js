@@ -298,6 +298,14 @@ export default class BottomFixedBox extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '添加客户标签',
+      type: '设置标签',
+      subtype: '添加客户标签',
+    },
+  })
   handleCustomerLabelClick() {
     const { selectCount, handleSignLabelClick } = this.props;
     if (selectCount > 2000) {

@@ -195,6 +195,7 @@ export default class Home extends Component {
   // }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '重置' } })
   handleReset() {
     this.props.form.resetFields();
     // this.datePickRef.clearAllDate();

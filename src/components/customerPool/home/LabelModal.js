@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 首页-展示更多标签弹窗
  * @Date: 2018-05-23 11:10:49
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-02 15:24:12
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 14:21:10
  */
 
 import React, { PureComponent } from 'react';
@@ -17,6 +17,7 @@ import { openRctTab } from '../../../utils';
 import { isSightingScope, getFilter, getSortParam } from '../helper';
 import { padSightLabelDesc } from '../../../config';
 import Pagination from '../../common/Pagination';
+import logable from '../../../decorators/logable';
 import styles from './labelModal.less';
 import config from './config';
 
@@ -155,7 +156,9 @@ export default class LabelModals extends PureComponent {
     });
   }
 
+  // TODO 日志查看：页面中找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '点击' } })
   openClientListPage(item) {
     const options = {
       source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',

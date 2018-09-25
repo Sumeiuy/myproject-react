@@ -18,6 +18,7 @@ import MyDetail from '../../components/feedback/MyDetail';
 import { emp } from '../../helper';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
+import { logCommon } from '../../decorators/logable';
 import styles from './myFeedback.less';
 
 const width = 540; // modal框的宽度
@@ -196,6 +197,14 @@ export default class MyFeedback extends PureComponent {
   handleRowClick(record) {
     this.changeLocation({
       activeId: record.id,
+    });
+    // log日志 选择左侧行
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: '选择行',
+        value: JSON.stringify(record),
+      },
     });
   }
 

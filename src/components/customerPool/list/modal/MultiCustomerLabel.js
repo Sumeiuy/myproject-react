@@ -194,6 +194,7 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭' } })
   handleCloseAddLabelModal() {
     this.setState({
       visible: false,

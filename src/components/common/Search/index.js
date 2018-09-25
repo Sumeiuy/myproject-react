@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-21 13:39:44
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-12 15:39:05
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-30 17:18:56
  * 通用搜索组件，包含搜索历史记录，搜索热词联想，添加按钮
  */
 
@@ -168,6 +168,13 @@ export default class Search extends PureComponent {
 
   // 选择option中的某一项，触发onSelect
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择客户号/姓名',
+      value: '$args[0]',
+    },
+  })
   onSelect(item) {
     const { possibleWordsData } = this.props;
     const selectedItem = _.find(possibleWordsData, itemData =>
@@ -342,6 +349,7 @@ export default class Search extends PureComponent {
 
   // 清除历史搜索
   @autobind
+  @logable({ type: 'Click', payload: { name: '取消' } })
   handleClearHistory() {
     // 清楚历史搜索记录请求
     const { clearHistorySearchList } = this.props;

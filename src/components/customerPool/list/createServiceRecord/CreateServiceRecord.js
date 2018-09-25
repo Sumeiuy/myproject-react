@@ -104,6 +104,7 @@ export default class CreateServiceRecord extends PureComponent {
 
   // 提交
   @autobind
+  @logable({ type: 'Click', payload: { name: '提交' } })
   handleSubmit() {
     const data = this.serviceRecordContentRef.getData();
     if (_.isEmpty(data)) {

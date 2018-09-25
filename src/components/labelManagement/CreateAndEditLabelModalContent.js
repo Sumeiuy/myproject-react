@@ -2,8 +2,8 @@
  * 标签管理新建编辑标签模态框
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-17 09:58:59
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 17:31:27
  */
 
 import React, { PureComponent } from 'react';
@@ -117,14 +117,18 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
   }
 
   // 导入数据
+  // TODO 日志查看：打开页面无数据 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '客户导入' } })
   onImportHandle() {
     this.setState({
       importVisible: true,
     });
   }
 
+  // TODO 日志查看：打开页面无数据 未验证
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '否' } })
   importHandleCancel() {
     this.setState({
       importVisible: false,

@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 行业主题调整列表页面
  * @Date: 2018-06-19 13:27:04
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-29 13:50:06
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-28 17:42:39
  */
 
 import React, { PureComponent } from 'react';
@@ -20,6 +20,7 @@ import Fiter from '../../components/latestView/chiefViewpoint/Filter';
 import ViewpointDetailModal from '../../components/latestView/ziJinClockView/ViewpointDetailModal';
 import styles from './industryThemeList.less';
 import config from '../../components/latestView/config';
+import { logPV } from '../../decorators/logable';
 
 const titleList = config.industryTitleList;
 const { generateEffect } = dva;
@@ -163,6 +164,7 @@ export default class IndustryThemeList extends PureComponent {
 
   // 打开弹窗
   @autobind
+  @logPV({ pathname: '/modal/industryThemeListData', title: '调整信息' })
   openModal(data) {
     this.setState({
       modalData: data,

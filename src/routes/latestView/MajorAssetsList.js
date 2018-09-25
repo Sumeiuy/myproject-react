@@ -2,8 +2,8 @@
  * @Description: 大类资产配置分析更多列表
  * @Author: Liujianshu
  * @Date: 2018-06-22 13:24:46
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-30 15:22:24
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 16:49:01
  */
 
 import React, { PureComponent } from 'react';
@@ -22,6 +22,7 @@ import fspPatch from '../../decorators/fspPatch';
 import Pagination from '../../components/common/Pagination';
 import Modal from '../../components/latestView/majorAssets/Modal';
 import config from '../../components/latestView/config';
+import logable from '../../decorators/logable';
 import styles from './majorAssetsList.less';
 
 const dispatch = dva.generateEffect;
@@ -172,6 +173,13 @@ export default class MajorAssetsList extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '大类资产配置分析',
+      type: '$args[0].typeName',
+    },
+  })
   handleTitleClick(record) {
     const { queryMajorAssetsDetail } = this.props;
     const { id = '' } = record;
