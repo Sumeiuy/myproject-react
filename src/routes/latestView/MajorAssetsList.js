@@ -2,8 +2,8 @@
  * @Description: 大类资产配置分析更多列表
  * @Author: Liujianshu
  * @Date: 2018-06-22 13:24:46
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 16:49:01
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-09-25 10:07:38
  */
 
 import React, { PureComponent } from 'react';
@@ -15,7 +15,6 @@ import DateRangePick from 'lego-react-date/src';
 import _ from 'lodash';
 import moment from 'moment';
 
-import logable from '../../decorators/logable';
 import { dva, time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';

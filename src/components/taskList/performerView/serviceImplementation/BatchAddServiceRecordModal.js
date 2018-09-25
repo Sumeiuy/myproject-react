@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 批量添加服务记录弹窗
  * @Date: 2018-08-17 11:31:18
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 14:47:20
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-09-25 10:09:11
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -12,10 +12,9 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import CommonModal from '../../../common/biz/CommonModal';
-import logable from '../../../../decorators/logable';
-
 import BatchAddServiceRecordItem from './BatchAddServiceRecordItem';
-import { logCommon } from '../../../../decorators/logable';
+import logable, { logCommon } from '../../../../decorators/logable';
+
 import styles from './batchAddServiceRecordModal.less';
 
 const EMPTY_ARRAY = [];
