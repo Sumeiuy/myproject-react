@@ -286,7 +286,7 @@ export default class MatchArea extends PureComponent {
     const filter = this.getFilters();
     const currentFilter = filter[id];
     const cycleCode = currentFilter[0];
-    const { value } = _.find(kPIDateScopeType, cycleItem => cycleItem.key === cycleCode);
+    const { value } =  _.find(kPIDateScopeType, cycleItem => cycleItem.key === cycleCode) || {};
     return value;
   }
 
