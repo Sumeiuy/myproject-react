@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-18 15:33:48
+ * @Last Modified time: 2018-09-25 16:19:09
  */
 
 import React, { PureComponent } from 'react';
@@ -307,7 +307,12 @@ export default class ServiceImplementation extends PureComponent {
     // 如果url中存在custId，表示用户进行了单个客户的筛选，因此需要将详情页面中的服务状态选项改为不限
     const stateList = _.isEmpty(custId) ? getServiceState(statusCode) : [];
     // 将服务实施的状态记到redux
-    changeParameter({ state: stateList }).then(() => (
+    changeParameter({
+      state: stateList,
+      activeIndex: '1',
+      preciseInputValue: '1',
+      assetSort: 'desc',
+    }).then(() => (
       this.queryTargetCustList({
         state: stateList,
         pageSize,
