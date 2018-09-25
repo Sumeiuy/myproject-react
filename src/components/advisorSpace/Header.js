@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-11 20:39:27
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-25 13:45:08
+ * @Last Modified time: 2018-09-25 14:07:39
  * @description 投顾空间申请头部筛选
  */
 
@@ -81,21 +81,10 @@ export default class Header extends PureComponent {
     this.props.creatModal();
   }
 
-  @autobind
-  getRoomList(list) {
-    return [
-      {
-        label: '不限',
-        value: ''
-      },
-      ...list,
-    ];
-  }
-
   render() {
     const {
       roomData: {
-        smartFrontHallList: roomList = [],
+        smartFrontHallList,
       },
       empInfo: {
         empInfo: {
@@ -108,6 +97,9 @@ export default class Header extends PureComponent {
         },
       },
     } = this.props;
+    // 处理智慧前厅头部筛选项，增加不限筛选项
+    const defaultRoomList = smartFrontHallList || [];
+    const roomList = [ { label: '不限', value: '' }, ...defaultRoomList ];
     return (
       <div className={styles.Header}>
         <div className={styles.filterBox}>
@@ -126,7 +118,7 @@ export default class Header extends PureComponent {
               filterId= 'room'
               dataMap={['value', 'label']}
               filterOption={['room']}
-              data={this.getRoomList(roomList)}
+              data={roomList}
               value={roomNo}
               onChange={this.handleRoomChange}
               needItemObj
