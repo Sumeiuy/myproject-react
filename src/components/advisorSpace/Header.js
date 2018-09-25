@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-11 20:39:27
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-25 14:07:39
+ * @Last Modified time: 2018-09-25 14:10:13
  * @description 投顾空间申请头部筛选
  */
 
@@ -28,7 +28,6 @@ export default class Header extends PureComponent {
     filterCallback: PropTypes.func,
     // 智慧前厅列表
     roomData: PropTypes.object.isRequired,
-    getRoomList: PropTypes.func.isRequired,
     // 新建申请弹窗
     creatModal: PropTypes.func.isRequired,
   }
