@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-20 17:26:13
+ * @Last Modified time: 2018-09-21 16:58:16
  * @description 投顾空间申请首页
  */
 
@@ -84,7 +84,7 @@ export default class AdvisorSpace extends PureComponent {
     participantData: PropTypes.object.isRequired,
     getParticipantList: PropTypes.func.isRequired,
     // 取消预订
-    cancelReservationResult: PropTypes.object.isRequired,
+    cancelReservationResult: PropTypes.string.isRequired,
     cancelReservation: PropTypes.func.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,

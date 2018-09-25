@@ -37,8 +37,12 @@ import api from '../../src/api';
 
 const effects = {
   dictionary: 'app/getDictionary',
+  // 获取客户反馈字典
+  getMotCustfeedBackDict: 'app/getMotCustfeedBackDict',
   customerScope: 'customerPool/getCustomerScope',
   addServeRecord: 'customerPool/addCommonServeRecord',
+  // 服务记录和电话记录关联
+  addCallRecord: 'customerPool/addCallRecord',
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
   // 删除文件
   ceFileDelete: 'performerView/ceFileDelete',
@@ -82,6 +86,9 @@ const mapDispatchToProps = {
     type: 'app/toggleServiceRecordModal',
     payload: query || false,
   }),
+  getMotCustfeedBackDict: fectchDataFunction(true, effects.getMotCustfeedBackDict),
+  // 服务记录和电话记录关联
+  addCallRecord: fectchDataFunction(true, effects.addCallRecord),
 };
 
 const PHONE = 'phone';
@@ -107,6 +114,7 @@ export default class Main extends PureComponent {
     custUuid: PropTypes.string.isRequired,
     ceFileDelete: PropTypes.func.isRequired,
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
+    getMotCustfeedBackDict: PropTypes.func.isRequired,
     serviceRecordInfo: PropTypes.object.isRequired,
   }
 
@@ -209,6 +217,8 @@ export default class Main extends PureComponent {
       ceFileDelete,
       serviceRecordInfo,
       motSelfBuiltFeedbackList,
+      getMotCustfeedBackDict,
+      addCallRecord,
     } = this.props;
 
     const { caller = '' } = serviceRecordInfo;
@@ -287,7 +297,14 @@ export default class Main extends PureComponent {
                       isPhoneCall={isPhoneCall}
                     />
                     <ConnectedSignCustomerLabel />
-                    <PhoneWrapper />
+                    <PhoneWrapper
+                      motSelfBuiltFeedbackList={motSelfBuiltFeedbackList}
+                      getMotCustfeedBackDict={getMotCustfeedBackDict}
+                      currentCommonServiceRecord={currentCommonServiceRecord}
+                      addServeRecord={addServeRecord}
+                      addCallRecord={addCallRecord}
+                      toggleServiceRecordModal={toggleServiceRecordModal}
+                    />
                   </div>
                 </div> : <div>Loading...</div>
             }
