@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 批量添加服务记录弹窗
  * @Date: 2018-08-17 11:31:18
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-22 09:52:18
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 14:47:20
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -12,6 +12,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import CommonModal from '../../../common/biz/CommonModal';
+import logable from '../../../../decorators/logable';
+
 import BatchAddServiceRecordItem from './BatchAddServiceRecordItem';
 import { logCommon } from '../../../../decorators/logable';
 import styles from './batchAddServiceRecordModal.less';
@@ -103,7 +105,9 @@ export default class BatchAddServiceRecordModal extends PureComponent {
     return true;
   }
 
+  // TODO 日志查看：找不到方法 未验证
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleSubmit() {
     const {
       closeModal,

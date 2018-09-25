@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 最新观点-首页首席观点
  * @Date: 2018-06-21 16:50:10
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-25 14:26:49
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-30 11:04:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -12,6 +12,7 @@ import { linkTo, openRctTab } from '../../../utils';
 import { url as urlHelper, time } from '../../../helper';
 import config from '../config';
 import Icon from '../../common/Icon';
+import logable from '../../../decorators/logable';
 import styles from './chiefViewpoint.less';
 
 // 内容最大长度
@@ -30,6 +31,7 @@ export default class ChiefViewpoint extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '更多' } })
   toListPage() {
     const {
       type,
@@ -53,6 +55,7 @@ export default class ChiefViewpoint extends PureComponent {
 
   // 当前页跳转到详情页
   @autobind
+  @logable({ type: 'Click', payload: { name: '详情' } })
   toDetailPage() {
     const { data: { id }, location: { query } } = this.props;
     const { push } = this.context;

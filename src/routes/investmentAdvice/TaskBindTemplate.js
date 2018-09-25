@@ -2,8 +2,8 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-13 17:54:09
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-29 09:44:50
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -15,7 +15,7 @@ import cx from 'classnames';
 import TaskBindTemplateModal from '../../components/operationManage/investmentAdvice/TaskBindTemplateModal';
 import confirm from '../../components/common/confirm_';
 import Pagination from '../../components/common/Pagination';
-import logable from '../../decorators/logable';
+import logable, { logPV } from '../../decorators/logable';
 import {
   TASK_LIST,
   MOT_TASK,
@@ -98,6 +98,7 @@ export default class MissionBind extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/addInvestmentTemplate', title: '新增投资建议模板' })
   handleAddTemplateClick() {
     this.setState({ addTemplateModal: true });
   }
@@ -162,6 +163,7 @@ export default class MissionBind extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/deletingTips', title: '系统提示-解绑' })
   openDelConfirm(template) {
     // 打开是否删除的确认框
     confirm({

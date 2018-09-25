@@ -2,8 +2,8 @@
  * 标签管理页面
  * @Author: WangJunJun
  * @Date: 2018-08-03 10:50:48
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-11 10:33:10
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 16:59:33
  */
 
 import React, { PureComponent } from 'react';
@@ -350,6 +350,7 @@ export default class CustomerGroupManage extends PureComponent {
    * @param {*} record 当前记录
    */
   @autobind
+  @logPV({ pathname: '/modal/createNewLabel', title: '新建标签' })
   showLabelDetailModal(record = {}, isCreateLabel = true) {
     const { labelName = '', labelDesc = '', id = '', labelTypeId } = record;
     this.setState({

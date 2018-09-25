@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-05-14 09:35:22
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-16 17:38:18
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-31 09:33:35
  * @description 获取区间值的组件
  */
 
@@ -13,6 +13,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import { getRegionText } from './utils';
+import logable from '../../../decorators/logable';
 
 import styles from './index.less';
 
@@ -85,6 +86,7 @@ export default class Region extends Component {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleRegionOKClick() {
     const { start, end } = this.state;
     this.setState({
@@ -98,6 +100,7 @@ export default class Region extends Component {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '重置' } })
   handleRegionReset() {
     this.setState({
       start: '',

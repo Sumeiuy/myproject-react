@@ -18,6 +18,7 @@ import withRouter from '../../../../decorators/withRouter';
 import CreateLabelType from './CreateLabelType';
 import CreateLabel from './CreateLabel';
 import { dva } from '../../../../helper';
+import { logPV } from '../../../../decorators/logable';
 import styles from './customerLabel.less';
 
 const DEFAULT_LABEL_TYPE = { id: '', typeName: '不限' };
@@ -160,6 +161,7 @@ export default class LabelManager extends PureComponent {
   }
   // 新建标签类型 ----start
   @autobind
+  @logPV({ pathname: '/modal/createLabelTypeLog', title: '新建标签类型' })
   handleCreateType() {
     this.setState({
       createTypeVisible: true,
@@ -191,6 +193,7 @@ export default class LabelManager extends PureComponent {
   // 删除标签 ----end
   // 新建标签 ----start
   @autobind
+  @logPV({ pathname: '/modal/createLabelLog', title: '新建标签' })
   handleCreateLabel() {
     this.setState({
       createLabelVisit: true,

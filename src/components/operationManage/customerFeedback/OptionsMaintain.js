@@ -2,8 +2,8 @@
  * @Description: 客户反馈选项维护
  * @Author: LiuJianShu
  * @Date: 2017-12-25 13:59:04
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-31 10:41:34
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-27 15:55:13
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -132,6 +132,7 @@ export default class OptionsMaintain extends PureComponent {
 
   // 删除服务经理反馈可选项的二级反馈选项
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除二级反馈选项' } })
   deleteSecondFeedbackOfServiceManager(item, e) {
     const { id, parentId } = item;
     const { feedbackData: { feedbackList = [] } } = this.props;
@@ -147,6 +148,7 @@ export default class OptionsMaintain extends PureComponent {
 
   // 删除一级客户反馈选项
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除一级反馈选项' } })
   deleteFirstFeedbackOfServiceManager(item, e) {
     const { id } = item;
     this.deleteConfirm(id, e);

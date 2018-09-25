@@ -1,14 +1,15 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-05-28 19:14:00
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-14 17:16:46
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 14:46:53
  */
 import React, { Component } from 'react';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import Phone from '../components/common/phone';
 import Mask from '../components/common/mask';
+import logable from '../decorators/logable';
 import fspGlobal from '../utils/fspGlobal';
 import { date } from '../helper';
 
@@ -35,7 +36,9 @@ export default class PhoneWrapper extends Component {
   }
 
   // 点击电话号码打电话
+  // TODO 日志查看：找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '点击' } })
   handleClickPhone() {
     this.startTime = '';
   }
@@ -79,7 +82,9 @@ export default class PhoneWrapper extends Component {
   }
 
   // 显示和隐藏通话蒙版
+  // TODO 日志查看：找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '显示/隐藏' } })
   handleShowMask(data) {
     this.setState({ showMask: data });
   }

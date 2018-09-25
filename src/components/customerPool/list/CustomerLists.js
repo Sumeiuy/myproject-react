@@ -23,7 +23,7 @@ import NoData from '../common/NoData';
 import Pagination from '../../common/Pagination';
 import RestoreScrollTop from '../../../decorators/restoreScrollTop';
 import { ENTERLIST_PERMISSION_TASK_MANAGE, ENTERLIST_PERMISSION_INDEX_QUERY, MAIN_MAGEGER_ID, ALL_DEPARTMENT_ID } from '../../../routes/customerPool/config';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import styles from './customerLists.less';
 
 const EMPTY_ARRAY = [];
@@ -388,6 +388,13 @@ export default class CustomerLists extends PureComponent {
       query: obj,
       shouldStay,
       editPane,
+    });
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: '跳转',
+        value: JSON.stringify(title),
+      },
     });
   }
 

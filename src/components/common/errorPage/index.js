@@ -1,13 +1,14 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-05-21 20:58:37
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-22 15:31:22
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 17:43:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'antd';
 import { autobind } from 'core-decorators';
+import logable from '../../../decorators/logable';
 import errorPic from './img/errorPic.png';
 import styles from './index.less';
 
@@ -21,6 +22,7 @@ export default class errorPage extends PureComponent {
   }
   // 返回上一页
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '返回上一页' } })
   handleBackClick() {
     /* const { push } = this.context;
     push('/customerPool'); */

@@ -12,6 +12,7 @@ import _ from 'lodash';
 
 import { dom } from '../../helper';
 import styles from './SelfSelect.less';
+import logable from '../../decorators/logable';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -158,7 +159,9 @@ export default class SelfSelect extends PureComponent {
     document.removeEventListener('click', this.unExpandSelfSelect);
   }
   // 打开下拉列表
+  // TODO 日志查看：页面中找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '点击' } })
   expandSelect() {
     this.setState({
       expand: true,

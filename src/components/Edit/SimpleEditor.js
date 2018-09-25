@@ -209,6 +209,7 @@ export default class SimpleEditor extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '编辑看板名称' } })
   handleEditWrapperClick(e) {
     const { form, editorName, editable } = this.props;
     if (!editable) {

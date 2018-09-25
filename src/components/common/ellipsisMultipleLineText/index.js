@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-17 16:42:56
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-31 09:46:33
  * 多行文本打点组件
  */
 
@@ -14,6 +14,7 @@ import classnames from 'classnames';
 import Icon from '../Icon';
 
 import { dom as DOMHelper } from '../../../helper';
+import logable from '../../../decorators/logable';
 
 import styles from './index.less';
 
@@ -108,6 +109,7 @@ export default class EllipsisMultipleLineText extends PureComponent {
    * 展开
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: '展开' } })
   handleUnfoldContent() {
     this.setState({
       isFold: false,
@@ -119,6 +121,7 @@ export default class EllipsisMultipleLineText extends PureComponent {
    * 收起
    */
   @autobind
+  @logable({ type: 'Click', payload: { name: '收起' } })
   handleCollapseContent() {
     const { originMaxContentHeight } = this.state;
     this.setState({

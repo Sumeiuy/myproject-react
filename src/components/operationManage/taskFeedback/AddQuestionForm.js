@@ -99,6 +99,7 @@ export default class AddQuestionForm extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除答案' } })
   remove(k) {
     const { form } = this.props;
     // can use data-binding to get

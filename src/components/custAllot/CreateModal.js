@@ -2,8 +2,8 @@
  * @Description: 分公司客户划转 home 页面
  * @Author: XuWenKang
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-09-14 20:01:39
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 14:10:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -496,7 +496,9 @@ export default class CreateModal extends PureComponent {
   }
 
   // 发送添加客户、服务经理请求
+  // TODO 日志查看：打开页面无数据 未验证
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '添加' } })
   sendRequest(modalKey) {
     const { clearData, sendRequest, custModalKey, manageModalKey, updateData } = this.props;
     const { client, manager, alreadyCount } = this.state;
