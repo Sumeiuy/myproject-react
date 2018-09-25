@@ -2,8 +2,8 @@
  * @Description: 大类资产配置分析豆腐块
  * @Author: Liujianshu
  * @Date: 2018-06-20 14:02:12
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-25 15:57:15
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-30 11:00:18
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -14,6 +14,7 @@ import { Tabs } from 'antd';
 import { openRctTab } from '../../../utils';
 import { url as urlHelper } from '../../../helper';
 import Icon from '../../common/Icon';
+import logable from '../../../decorators/logable';
 import Item from './Item';
 import Modal from './Modal';
 import config from '../config';
@@ -69,6 +70,7 @@ export default class MajorAssets extends PureComponent {
 
   // 点击更多事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '更多' } })
   handleMoreClick() {
     const { push } = this.context;
     const { activeKey } = this.state;

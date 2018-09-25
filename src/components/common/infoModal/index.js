@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-21 14:01:43
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-06-11 15:07:10
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-31 09:37:55
  * 通用信息提示框
  */
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import { Modal } from 'antd';
 
 import Icon from '../Icon';
 import Button from '../Button';
+import logable from '../../../decorators/logable';
 
 import styles from './index.less';
 
@@ -41,6 +42,7 @@ export default class InfoModal extends PureComponent {
    * 确认按钮事件
    */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
   handleConfirm() {
     this.setState({
       visible: !this.state.visible,

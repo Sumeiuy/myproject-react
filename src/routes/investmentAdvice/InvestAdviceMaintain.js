@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-04-24 14:14:04
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-06 17:03:33
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-29 10:00:25
  * @Descripter:投资建议模板 Home页面
  */
 
@@ -15,6 +15,7 @@ import { Button, Collapse, Icon, Mention } from 'antd';
 import Pagination from '../../components/common/Pagination';
 import CommonModal from '../../components/common/biz/CommonModal';
 import confirm from '../../components/common/confirm_';
+import { logPV } from '../../decorators/logable';
 import TemplateForm from '../../components/operationManage/investmentAdvice/TemplateForm';
 
 import { MENTION_PREFIX, MentionTextStyles } from './config';
@@ -87,6 +88,7 @@ export default class InvestmentAdvice extends PureComponent {
 
   // 新增投资建议模板
   @autobind
+  @logPV({ pathname: '/modal/addInvestAdviceTpl', title: '新增投资建议模板' })
   addInvestAdviceTemplate() {
     this.setState({
       showModal: true,
@@ -99,6 +101,7 @@ export default class InvestmentAdvice extends PureComponent {
 
   // 编辑投资建议模板
   @autobind
+  @logPV({ pathname: '/modal/editInvestAdviceTpl', title: '编辑投资建议模板' })
   editInvestAdviceTemplate(item) {
     this.setState({
       showModal: true,
@@ -119,6 +122,7 @@ export default class InvestmentAdvice extends PureComponent {
 
   // 删除投资建议模板确认弹窗
   @autobind
+  @logPV({ pathname: '/modal/deleteConfirmFrame', title: '删除投资建议模板确认弹窗' })
   deleteConfirm(id, e) {
     if (e) {
       e.stopPropagation();

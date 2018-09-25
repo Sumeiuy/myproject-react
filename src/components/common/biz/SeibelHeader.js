@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-08-13 09:41:43
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-10 13:21:05
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 17:44:58
  */
 
 import React, { PureComponent } from 'react';
@@ -567,6 +567,7 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '新建' } })
   handleCreate() {
     this.props.creatSeibelModal();
   }

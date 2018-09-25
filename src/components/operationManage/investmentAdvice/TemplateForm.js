@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-04-25 10:05:32
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-06-07 13:38:35
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-29 17:08:13
  * @Description: 投资模板添加弹窗
  */
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import { Form, Input, Mention, Dropdown, Menu } from 'antd';
 
 import { MENTION_PREFIX, MentionTextStyles } from '../../../routes/investmentAdvice/config';
 import styles from './templateForm_.less';
+import logable from '../../../decorators/logable';
 
 const { EditorState, Modifier } = Draft;
 
@@ -122,6 +123,13 @@ export default class TemplateForm extends PureComponent {
 
   // 插入参数
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '插入参数',
+      value: '$args[0].key',
+    },
+  })
   insertParameter(item) {
     const { value } = item.item.props;
     const editor = this.getMention().mentionEle._editor; // eslint-disable-line

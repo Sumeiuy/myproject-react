@@ -1,8 +1,8 @@
 /**
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-24 08:55:17
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-28 15:11:29
  * @description 售前适当性查询
  */
 
@@ -134,6 +134,7 @@ export default class PreSaleQuery extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '查询' } })
   handleSearch(e) {
     e.preventDefault();
     if (!this.state.selectedCustItem.custNumber) {

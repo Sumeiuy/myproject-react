@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-05-22 19:11:13
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-20 14:40:01
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-09-25 09:51:52
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -16,6 +16,7 @@ import { dva, emp } from '../../helper';
 import { openFspTab, openRctTab, linkTo } from '../../utils';
 import Pagination from '../../components/common/Pagination';
 import Loading from '../../layouts/Loading';
+import logable from '../../decorators/logable';
 import { windowOpen } from '../../utils/fspGlobal';
 import api from '../../api';
 import config from './config';
@@ -101,6 +102,7 @@ export default class MessageCenter extends PureComponent {
 
   // 点击消息通知
   @autobind
+  @logable({ type: 'Click', payload: { name: '页面跳转' } })
   handleRemindMessage(data) {
     const { objectVal, rowId, typeName, title } = data;
     const allocation = '转签待分配';

@@ -70,6 +70,13 @@ export default class ProductsDropdownBox extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '目标产品',
+      value: '$args[1].props.text',
+    },
+  })
   selectProduct(value) {
     this.props.onSelect(value);
   }
@@ -87,6 +94,7 @@ export default class ProductsDropdownBox extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '清空目标产品' } })
   clearValue() {
     if (this.state.iconType === 'close') {
       this.handleClearInput();

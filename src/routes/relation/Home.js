@@ -13,6 +13,7 @@ import withRouter from '../../decorators/withRouter';
 import EditModal from '../../components/relation/EditModal';
 import TreeDetail from '../../components/relation/TreeDetail';
 import Tree from '../../components/relation/Tree';
+import logable from '../../decorators/logable';
 import styles from './home.less';
 import { emp } from '../../helper';
 
@@ -119,6 +120,7 @@ export default class Home extends Component {
 
   // 选中菜单
   @autobind
+  @logable({ type: 'Click', payload: { name: '选中菜单' } })
   handleSelect(menu) {
     if (_.isEmpty(menu)) {
       return;

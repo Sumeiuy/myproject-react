@@ -2,8 +2,8 @@
  * @Description: 大类资产配置分析豆腐块
  * @Author: Liujianshu
  * @Date: 2018-06-20 14:02:12
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-06-25 15:58:07
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-30 10:52:46
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,6 +11,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 
 import { time as timeHelper } from '../../../helper';
+import { logPV } from '../../../decorators/logable';
 import config from '../config';
 import styles from './item.less';
 
@@ -30,6 +31,7 @@ export default class Item extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/detailClickLog', title: '大类资产配置分析' })
   handleDetailClick() {
     const { data: { id = '' }, openModal, modalKey, getDetail } = this.props;
     getDetail({ id }).then(() => {

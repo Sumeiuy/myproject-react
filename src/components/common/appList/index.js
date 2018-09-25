@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-17 14:38:06
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-23 16:49:26
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-31 16:02:32
  * @description 新的左侧列表组件
  */
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import Icon from '../Icon';
 import Pagination from '../../common/Pagination';
+import logable from '../../../decorators/logable';
 import styles from './index.less';
 
 export default class ApplicationList extends PureComponent {
@@ -35,6 +36,7 @@ export default class ApplicationList extends PureComponent {
   };
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '收起' } })
   handleShrinkClick() {
     this.props.onShrink();
   }

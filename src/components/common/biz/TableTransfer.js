@@ -38,6 +38,7 @@ import classnames from 'classnames';
 
 import { dom } from '../../../helper';
 import Icon from '../../common/Icon';
+import logable, { logCommon } from '../../../decorators/logable';
 import styles from './tableTransfer.less';
 
 const Search = Input.Search;
@@ -614,6 +615,14 @@ export default class TableTransfer extends Component {
 
   @autobind
   handleClick(currentTableType, selected) {
+    // 记录log日志
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: currentTableType === 'first' ? '增加' : '删除',
+        value: JSON.stringify(selected),
+      },
+    });
     const { rowKey, defaultCheckKey } = this.props;
     const {
       secondArray,
@@ -679,6 +688,7 @@ export default class TableTransfer extends Component {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '搜索', value: '$args[0]' } })
   handleSearch(keyword) {
     const { supportSearchKey, rowKey, defaultCheckKey } = this.props;
     const { secondArray, totalData } = this.state;

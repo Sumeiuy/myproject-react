@@ -201,7 +201,9 @@ export default class CreateContactModal extends PureComponent {
   }
 
   // 点击号码开始打电话显示蒙层
+  // TODO 日志查看：找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '点击' } })
   handlePhoneClick() {
     this.setState({ showMask: true });
   }
@@ -269,7 +271,9 @@ export default class CreateContactModal extends PureComponent {
   }
 
   // 电话弹出蒙层的点击事件
+  // TODO 日志查看：找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '弹出蒙层' } })
   handleMaskClick() {
     this.setState({ showMask: false });
   }

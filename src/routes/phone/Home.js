@@ -2,8 +2,8 @@
  * @Description: PC电话拨号页面
  * @Author: hongguangqing
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: maoquan@htsc.com
- * @Last Modified time: 2018-04-26 16:53:41
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-28 15:27:21
  */
 
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import { message } from 'antd';
 
 import Phone from '../../components/common/phone';
+import logable from '../../decorators/logable';
 
 const mapStateToProps = () => ({
 
@@ -23,6 +24,7 @@ export default class PhoneHome extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '选中号码' } })
   handleClick() {
     // 可以在这个事件里先发一条服务记录
     console.log('number clicked');

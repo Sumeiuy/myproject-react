@@ -12,6 +12,7 @@ import _ from 'lodash';
 import SelfSelect from '../Edit/SelfSelect';
 import styles from './modalCommon.less';
 import { responseCode } from '../../config';
+import logable, { logCommon } from '../../decorators/logable';
 
 const FormItem = Form.Item;
 const create = Form.create;
@@ -94,6 +95,7 @@ export default class CreateBoardModal extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   closeCreateModal() {
     const { modalKey, closeModal } = this.props;
     // 此处需要将form重置
@@ -136,6 +138,21 @@ export default class CreateBoardModal extends PureComponent {
       name: boardname,
       boardType,
       permitOrgIds,
+    });
+
+    // log日志 --- 确认创建绩效看板
+    logCommon({
+      type: 'Submit',
+      payload: {
+        name: '确认创建绩效看板',
+        title: '创建绩效看板',
+        value: {
+          ownerOrgId,
+          name: boardname,
+          boardType,
+          permitOrgIds,
+        },
+      },
     });
   }
 

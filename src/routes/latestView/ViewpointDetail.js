@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 首席观点详情
  * @Date: 2018-06-21 16:49:57
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-25 16:07:12
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-28 16:43:48
  */
 
 import React, { PureComponent } from 'react';
@@ -70,6 +70,7 @@ export default class ViewpointDetail extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '返回列表' } })
   handleBackClick() {
     const {
       location: {
