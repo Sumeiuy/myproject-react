@@ -2,8 +2,8 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-27 15:20:26
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-09-25 10:46:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -196,7 +196,7 @@ export default class MissionBind extends PureComponent {
 
   // 删除任务下所关联客户反馈选项
   @autobind
-  @logable({ type: 'Click', payload: { name: '删除服务经理可选项', 事件id: '$args[0]', feedbackId: '$args[1]', roleType: '$args[2]' } })
+  @logable({ type: 'Click', payload: { name: '删除服务经理可选项', eventId: '$args[0]', feedbackId: '$args[1]', roleType: '$args[2]' } })
   handleDelCustomerFeedback(missionId, feedbackId, roleType) {
     const {
       location: { query: { childActiveKey, pageNum = 1, pageSize = 20, keyWord } },
