@@ -46,7 +46,7 @@ const effects = {
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
   // 删除文件
   ceFileDelete: 'performerView/ceFileDelete',
-  getMenus: 'global/getMenus',
+  getEmpInfoAndMenu: 'app/getEmpInfoAndMenu',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -58,7 +58,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   ...state.global,
   ...state.app,
-  menus: state.global.menus,
+  menus: state.app.menus,
   loading: state.activity.global,
   loadingForceFull: state.activity.forceFull,
   custRange: state.customerPool.custRange,
@@ -89,6 +89,7 @@ const mapDispatchToProps = {
   getMotCustfeedBackDict: fectchDataFunction(true, effects.getMotCustfeedBackDict),
   // 服务记录和电话记录关联
   addCallRecord: fectchDataFunction(true, effects.addCallRecord),
+  getEmpInfoAndMenu: fectchDataFunction(true, effects.getEmpInfoAndMenu),
 };
 
 const PHONE = 'phone';
@@ -116,6 +117,7 @@ export default class Main extends PureComponent {
     motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     getMotCustfeedBackDict: PropTypes.func.isRequired,
     serviceRecordInfo: PropTypes.object.isRequired,
+    getEmpInfoAndMenu: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -134,6 +136,7 @@ export default class Main extends PureComponent {
   componentDidMount() {
     this.wheelEventArray.forEach(eventType =>
       document.documentElement.addEventListener(eventType, this.handleMousewheel));
+    this.props.getEmpInfoAndMenu();
     this.props.getCustomerScope(); // 加载客户池客户范围
   }
 
@@ -244,7 +247,7 @@ export default class Main extends PureComponent {
           </Helmet>
           <ErrorBoundary location={location}>
             {
-              this.isMenuExists(menus) ?
+              this.isMenuExists(menus) && !_.isEmpty(empInfo) ?
                 <div id="react-layout" className={styles.layout}>
                   <div className={backToTopCls} onClick={this.handleBackToTopClick} />
                   <Header
