@@ -23,6 +23,7 @@ import '../css/skin.less';
 
 const effects = {
   dictionary: 'app/getDictionary',
+  // 获取客户反馈字典
   getMotCustfeedBackDict: 'app/getMotCustfeedBackDict',
   customerScope: 'customerPool/getCustomerScope',
   addServeRecord: 'customerPool/addCommonServeRecord',
