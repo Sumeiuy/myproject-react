@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-09-11 20:39:27
- * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-21 17:50:15
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-09-25 13:45:08
  * @description 投顾空间申请头部筛选
  */
 
@@ -95,7 +95,7 @@ export default class Header extends PureComponent {
   render() {
     const {
       roomData: {
-        smartFrontHallList: roomList,
+        smartFrontHallList: roomList = [],
       },
       empInfo: {
         empInfo: {
