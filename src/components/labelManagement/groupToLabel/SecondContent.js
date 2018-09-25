@@ -1,8 +1,8 @@
 /* 分组转标签第二步
  * @Author: WangJunJun
  * @Date: 2018-08-06 17:42:24
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-14 17:02:53
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-05 16:28:34
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ import Table from '../../common/commonTable';
 import { LABEL_NAME_REG, groupCustColumns } from '../config';
 
 import tableStyles from '../../common/commonTable/index.less';
+import { logCommon } from '../../../decorators/logable';
 import styles from './secondContent.less';
 
 const FormItem = Form.Item;
@@ -75,6 +76,14 @@ export default class SecondContent extends PureComponent {
     form.setFieldsValue({ labelDesc: item.labelDesc });
     this.setState({
       isDisabledLabelDescInput: _.has(item, 'id'),
+    });
+    // 记录log日志 选择标签
+    logCommon({
+      type: 'DropdownSelect',
+      payload: {
+        name: '选择新标签',
+        value: JSON.stringify(item),
+      },
     });
   }
 
@@ -157,6 +166,13 @@ export default class SecondContent extends PureComponent {
     setTimeout(() => {
       form.setFieldsValue({ labelName: option.props.labelName });
     }, 1);
+    // 记录log日志 选择标签
+    logCommon({
+      type: 'DropdownSelect',
+      payload: {
+        name: '选择新标签',
+      },
+    });
   }
 
   // 生成联想词数据项

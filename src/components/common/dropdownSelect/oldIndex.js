@@ -9,6 +9,7 @@ import { Dropdown } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
 import { constants } from '../../../config';
+import logable from '../../../decorators/logable';
 import style from './style.less';
 import HackSearch from '../hackSearch';
 
@@ -155,7 +156,9 @@ export default class DropdownSelect extends PureComponent {
     document.removeEventListener('click', this.hideModal, false);
   }
 
+  // TODO 日志查看：找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '点击' } })
   showDrapDown() {
     this.setState({ isSHowModal: !this.state.isSHowModal });
   }

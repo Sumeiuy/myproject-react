@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-20 10:59:08
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 14:04:28
  * 服务经理维度任务统计
  */
 
@@ -16,6 +16,7 @@ import { Dropdown, Menu } from 'antd';
 import Table from '../../common/commonTable';
 import antdStyles from '../../../css/antd.less';
 import styles from './custManagerDetailScope.less';
+import logable from '../../../decorators/logable';
 import { ORG_LEVEL1, ORG_LEVEL2 } from '../../../config/orgTreeLevel';
 import {
   EMP_MANAGER_SCOPE,
@@ -188,7 +189,9 @@ export default class CustManagerDetailScope extends PureComponent {
   /**
    * 选中一个维度，触发回调，请求当前维度的信息
    */
+  // TODO 日志查看：打开页面无数据 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '选择' } })
   handleSelectMenuItem({ key }) {
     this.setState({
       currentSelectScope: key,

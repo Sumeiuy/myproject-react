@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import styles from './userInfoApproval.less';
 import withRouter from '../../decorators/withRouter';
+import logable from '../../decorators/logable';
 import { closeRctTab } from '../../../src/utils';
 
 // 标签项的标识
@@ -65,6 +66,7 @@ export default class PersonalInfoApproval extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确认' } })
   handleApproval(operate) {
     const {
       location: {

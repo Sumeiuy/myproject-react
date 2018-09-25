@@ -2,8 +2,8 @@
  * @Description: 客户详情
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-10 13:49:01
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 17:31:00
  */
 
 import React, { PureComponent } from 'react';
@@ -138,7 +138,9 @@ export default class CustomerDetail extends PureComponent {
   }
 
   // 服务记录查看更多
+  // TODO 日志查看：打开页面无数据 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '查看更多服务记录' } })
   handleSeeMore() {
     const param = {
       id: 'FSP_360VIEW_M_TAB',

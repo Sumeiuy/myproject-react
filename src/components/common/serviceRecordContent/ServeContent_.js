@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-26 13:27:47
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 15:04:11
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -14,6 +14,7 @@ import cx from 'classnames';
 import _ from 'lodash';
 
 import ChoiceApproverBoard from '../../commissionAdjustment/ChoiceApproverBoard';
+import logable from '../../../decorators/logable';
 import ChoiceInvestAdviceModal from './ChoiceInvestAdviceModal_';
 
 import styles from './index.less';
@@ -125,7 +126,9 @@ export default class ServeContent extends PureComponent {
   }
 
   /** 点击添加内容按钮 | 编辑修改按钮 */
+  // TODO 日志查看：找不到方法 未验证
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '添加内容/编辑修改' } })
   handleBtnClick() {
     this.setState({
       serveContentModal: true,
@@ -189,7 +192,9 @@ export default class ServeContent extends PureComponent {
     return null;
   }
 
+  // TODO 日志查看：找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '点击' } })
   openApproverBoard() {
     this.setState({ approvalModal: true });
   }

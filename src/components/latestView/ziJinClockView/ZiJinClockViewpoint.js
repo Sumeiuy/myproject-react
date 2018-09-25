@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 最新观点首页-紫金时钟观点
  * @Date: 2018-06-22 09:50:10
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-07-02 14:46:37
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-27 11:00:55
  */
 
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 
 import Icon from '../../common/Icon';
+import logable from '../../../decorators/logable';
 import { openRctTab } from '../../../utils';
 import ViewpointListItem from './ViewpointListItem';
 import ZijinClockDetailModal from './ZijinClockDetailModal';
@@ -73,6 +74,7 @@ export default class ZiJinClockViewpoint extends PureComponent {
 
   // 打开弹窗
   @autobind
+  @logable({ type: 'Click', payload: { name: '打开弹窗' } })
   openModal() {
     this.setState({
       [DETAIL_MODAL_VISIBLE]: true,
@@ -88,6 +90,7 @@ export default class ZiJinClockViewpoint extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '更多' } })
   toListPage() {
     const { push } = this.context;
     const param = {

@@ -1,8 +1,8 @@
 /*
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-05-11 10:34:54
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-29 11:02:05
  * @description: 客户分组功能
  */
 
@@ -174,6 +174,7 @@ export default class CustomerGroup extends PureComponent {
 
   /*  添加到已有分组 */
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '保存' } })
   handleSubmit() {
     const { groupId } = this.state;
     /* groupId不为空，表示已经选中了分组 */

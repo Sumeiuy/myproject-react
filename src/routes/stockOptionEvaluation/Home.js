@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-06-05 12:52:08
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-07 17:18:26
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-28 14:26:51
 */
 
 import React, { PureComponent } from 'react';
@@ -270,6 +270,14 @@ export default class StockOptionApplication extends PureComponent {
 
   // 点击列表每条的时候对应请求详情
   @autobind
+  @logable({
+    type: 'ViewItem',
+    payload: {
+      name: '$args[0].title',
+      type: '$args[0].type',
+      subtype: '$args[0].subType',
+    },
+  })
   handleListRowClick(record, index) {
     const { id, flowId } = record;
     const { replace } = this.context;

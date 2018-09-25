@@ -20,7 +20,7 @@ import SearchSelect from '../../components/common/Select/SearchSelect';
 import DigitalTrimmer from '../../components/common/DigitalTrimmer';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
 import EditModal from '../../components/relation/EditModal';
-
+import { logPV } from '../../decorators/logable';
 
 import {
   confirmData,
@@ -57,6 +57,7 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/createPerformanceBoard', title: '创建绩效看板' })
   openCreateModal() {
     this.setState({
       createBoardModal: true,
@@ -64,6 +65,7 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/backPrompt', title: '返回提示' })
   openBackConfirmModal() {
     this.setState({
       backConfirmModal: true,
@@ -71,6 +73,7 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/publishPrompt', title: '发布提示' })
   openPublishConfirmModal() {
     this.setState({
       publishConfirmModal: true,
@@ -78,6 +81,7 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/deletePrompt', title: '删除提示' })
   openDeleteBoardModal() {
     this.setState({
       deleteBoardModal: true,
@@ -85,6 +89,7 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/openShowConfirm', title: '系统提示' })
   openConfirmClick() {
     this.setState({
       confirmModal: true,
@@ -112,6 +117,7 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
+  @logPV({ pathname: '/modal/publicFrame', title: '系统提示' })
   showModal(modal) {
     this.setState({
       [modal]: true,

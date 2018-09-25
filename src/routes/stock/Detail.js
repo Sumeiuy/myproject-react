@@ -2,8 +2,8 @@
  * @Description: 个股详情页面
  * @Author: Liujianshu
  * @Date: 2018-02-28 14:07:50
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-06-21 10:56:17
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-28 14:32:16
  */
 
 import React, { PureComponent } from 'react';
@@ -181,6 +181,7 @@ export default class StockDetail extends PureComponent {
 
   // 查看持仓客户
   @autobind
+  @logable({ type: 'Click', payload: { name: '查看持仓客户' } })
   openCustomerListPage() {
     const {
       location: { query: { code = '', name = '' } } } = this.props;

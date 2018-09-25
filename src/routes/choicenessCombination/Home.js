@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 精选组合home
  * @Date: 2018-04-17 09:22:26
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-06 15:15:13
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-11 09:58:46
  */
 
 import React, { PureComponent } from 'react';

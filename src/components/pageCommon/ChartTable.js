@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-08 15:20:12
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-27 17:07:22
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import ScrollBar from './ScrollBar';
 import { data as helperData, number as helperNumber } from '../../helper';
 import Pagination from '../common/Pagination';
 import { fspContainer, optionsMap, constants } from '../../config';
+import logable from '../../decorators/logable';
 import styles from './ChartTable.less';
 
 // 按类别排序
@@ -261,6 +262,7 @@ export default class ChartTable extends PureComponent {
     return threeEleArr;
   }
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].name' } })
   handleTitleClick(item) {
     if (!_.isEmpty(item.children)) {
       return;
@@ -287,6 +289,7 @@ export default class ChartTable extends PureComponent {
   }
   // 表格标题排序箭头事件
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[1].name' } })
   arrowHandle(e, item, type) {
     const { getTableInfo, indexID, scope } = this.props;
     const { pageNum } = this.state;

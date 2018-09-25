@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-03-30 15:46:03
- * @Last Modified by: WangJunjun
- * @Last Modified time: 2018-05-07 18:17:19
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-31 16:31:27
  * @description 根据需求antd3.x版本下需要重写一个dropdownSelect
  */
 
@@ -14,6 +14,7 @@ import _ from 'lodash';
 import { Popover, Icon } from 'antd';
 
 import { dom } from '../../../helper';
+import logable from '../../../decorators/logable';
 import styles from './dropdownSelect.less';
 
 // const Search = Input.Search;
@@ -135,6 +136,13 @@ export default class DropdownSelect extends React.Component {
 
   // 选择某个项
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择某个项',
+      value: '$args[0]',
+    },
+  })
   handleSelect(e) {
     const index = dom.getAttribute(e.target, 'data-index');
     const { optionList } = this.state;
