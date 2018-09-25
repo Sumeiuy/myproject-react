@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-25 16:19:09
+ * @Last Modified time: 2018-09-25 16:59:53
  */
 
 import React, { PureComponent } from 'react';
@@ -308,10 +308,10 @@ export default class ServiceImplementation extends PureComponent {
     const stateList = _.isEmpty(custId) ? getServiceState(statusCode) : [];
     // 将服务实施的状态记到redux
     changeParameter({
-      state: stateList,
-      activeIndex: '1',
-      preciseInputValue: '1',
-      assetSort: 'desc',
+      state: stateList, // 服务状态选项列表
+      activeIndex: '1', // 选中客户列表项第一个
+      preciseInputValue: '1', // 选中客户列表项第一个
+      assetSort: 'desc', // 总资产排序
     }).then(() => (
       this.queryTargetCustList({
         state: stateList,

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-09-06 09:06:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-25 16:42:04
+ * @Last Modified time: 2018-09-25 16:58:05
  * @description 临时委托他人处理任务驳回后修改
  */
 import React, { Component } from 'react';
@@ -310,9 +310,9 @@ export default class RejectHome extends Component {
       deputeEmpList,
       queryCanDeputeEmp,
     } = this.props;
-    // if (_.isEmpty(detailUpdate)) {
-    //   return null;
-    // }
+    if (_.isEmpty(detailUpdate)) {
+      return null;
+    }
 
     const {
       idea,
