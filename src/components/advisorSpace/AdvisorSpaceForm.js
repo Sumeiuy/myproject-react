@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:31:58
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-20 13:33:46
+ * @Last Modified time: 2018-09-25 15:25:53
  * @description 投顾空间新建表单
  */
 
@@ -201,6 +201,8 @@ export default class AdvisorSpaceForm  extends PureComponent {
         selectedRange,
         // 切换智慧空间，已选时间段需要置空
         defaultRange: {},
+        startTime: '',
+        endTime: '',
       }
     });
     this.props.onChange({
@@ -210,7 +212,10 @@ export default class AdvisorSpaceForm  extends PureComponent {
       siteName,
       selectedRange,
       roomTitle,
+      // 切换智慧空间，已选时间段需要置空
       defaultRange: {},
+      startTime: '',
+      endTime: '',
     });
   }
 
