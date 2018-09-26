@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-25 16:59:53
+ * @Last Modified time: 2018-09-26 10:57:23
  */
 
 import React, { PureComponent } from 'react';
@@ -209,6 +209,17 @@ export default class ServiceImplementation extends PureComponent {
     this.getTaskFlowData(newPageSize);
     // 给FSP折叠菜单按钮注册点击事件
     window.onFspSidebarbtn(this.handleFspLeftMenuClick);
+    // 新增一个在头部筛选选择的客户是不存在数据中的客户时,客户数据将会保存到 redux 中
+    // 导致页面展示无数据图片后，删除客户筛选条件，客户数据没有重置
+    // 此时是服务实施组件为初次加载，因此导致重置条件没有生效
+    const stateList = this.getRealServiceStateList();
+    this.props.changeParameter({
+      rowId: '',
+      state: stateList, // 服务状态选项列表
+      activeIndex: '1', // 选中客户列表项第一个
+      preciseInputValue: '1', // 选中客户列表项第一个
+      assetSort: 'desc', // 总资产排序
+    });
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -296,18 +307,24 @@ export default class ServiceImplementation extends PureComponent {
     return snapshot;
   }
 
-  // 根据当前的任务状态去获取对应的服务状态，再去获取服务实施列表数据
   @autobind
-  getTaskFlowData(pageSize, pageNum = 1) {
+  getRealServiceStateList() {
     const {
       location: { query: { custId } },
-      changeParameter,
       currentTask: { statusCode },
     } = this.props;
     // 如果url中存在custId，表示用户进行了单个客户的筛选，因此需要将详情页面中的服务状态选项改为不限
     const stateList = _.isEmpty(custId) ? getServiceState(statusCode) : [];
+    return stateList;
+  }
+
+  // 根据当前的任务状态去获取对应的服务状态，再去获取服务实施列表数据
+  @autobind
+  getTaskFlowData(pageSize, pageNum = 1) {
+    // 如果url中存在custId，表示用户进行了单个客户的筛选，因此需要将详情页面中的服务状态选项改为不限
+    const stateList = this.getRealServiceStateList();
     // 将服务实施的状态记到redux
-    changeParameter({
+    this.props.changeParameter({
       state: stateList, // 服务状态选项列表
       activeIndex: '1', // 选中客户列表项第一个
       preciseInputValue: '1', // 选中客户列表项第一个
