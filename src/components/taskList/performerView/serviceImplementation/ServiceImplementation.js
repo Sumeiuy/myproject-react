@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-26 10:57:23
+ * @Last Modified time: 2018-09-26 11:04:35
  */
 
 import React, { PureComponent } from 'react';
@@ -214,7 +214,7 @@ export default class ServiceImplementation extends PureComponent {
     // 此时是服务实施组件为初次加载，因此导致重置条件没有生效
     const stateList = this.getRealServiceStateList();
     this.props.changeParameter({
-      rowId: '',
+      rowId: '', // 客户的 RowId,默认值为空即不限
       state: stateList, // 服务状态选项列表
       activeIndex: '1', // 选中客户列表项第一个
       preciseInputValue: '1', // 选中客户列表项第一个
