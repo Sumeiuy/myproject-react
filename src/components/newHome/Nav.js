@@ -14,7 +14,7 @@ import classnames from 'classnames';
 
 import { getFilter } from '../customerPool/helper';
 import { openRctTab } from '../../utils';
-import { url as urlHelper } from '../../helper';
+import { url as urlHelper, number } from '../../helper';
 import { logCommon } from '../../decorators/logable';
 import styles from './nav.less';
 
@@ -64,10 +64,16 @@ export default function Nav(props) {
       title,
       name,
     };
+    const value = number.formatToUnit({
+      // 传入的数字
+      num: data[key],
+      // 是否格式化千分符
+      isThousandFormat: true,
+    });
     return (
       <dl onClick={() => handleOpenTab(payload)}>
         <dt className={iconClass}></dt>
-        <dd className={styles.value}>{data[key] && data[key].toLocaleString()}</dd>
+        <dd className={styles.value}>{value}</dd>
         <dd className={styles.name}>{name}</dd>
       </dl>
     );

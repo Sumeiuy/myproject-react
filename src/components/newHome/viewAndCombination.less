@@ -1,24 +1,70 @@
 @import "../../css/variable.less";
 @import "../../css/util.less";
 .viewAndCombination {
-  h2 {
-    line-height: 20px;
-    font-size: 14px;
-    color: #4a4a4a;
-    font-weight: normal;
-    padding: 0 20px;
-    .one-line-ellipsis;
-    span {
-      float: right;
+  .tab {
+    box-sizing: border-box;
+    padding: 10px 0;
+    .nav {
+      display: flex;
+      height: 38px;
+      line-height: 38px;
+      padding: 0 20px;
+      border-bottom: 1px solid #e5e9f2;
+      & > div {
+        flex: auto;
+        font-size: 14px;
+        text-align: center;
+        transition: .3s;
+        &:first-child {
+          text-align: left;
+        }
+        &:last-child {
+          text-align: right;
+        }
+        a {
+          display: inline-block;
+          line-height: 34px;
+          color: #8995a5;
+          &.active {
+            font-weight: bold;
+            color: #333;
+            border-bottom: 2px solid #108ee9;
+          }
+        }
+      }
     }
   }
-  .view {
-    position: relative;
+  .content {
+    .view {
+      position: relative;
+      margin-top: 14px;
+    }
+    h2 {
+      line-height: 20px;
+      font-size: 14px;
+      color: #4a4a4a;
+      font-weight: normal;
+      padding: 0 20px;
+      .one-line-ellipsis;
+      span {
+        float: right;
+      }
+    }
     .text {
-      height: 226px;
+      padding: 0 20px;
+      height: 222px;
       font-size: 12px;
       line-height: 20px;
-      padding: 0 20px;
+      position: relative;
+      .noData {
+        font-size: 14px;
+        text-align: center;
+        cursor: default;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
     }
     .link {
       position: absolute;
@@ -29,16 +75,6 @@
     }
     .displayNone {
       display: none;
-    }
-  }
-  :global {
-    .ant-tabs-nav .ant-tabs-tab {
-      color: #8995a5;
-    }
-    .ant-tabs-nav .ant-tabs-tab-active {
-      font-size: 14px;
-      font-weight: bold;
-      color: #333;
     }
   }
 }

@@ -40,8 +40,8 @@ const number = {
    * 数字格式化
    * @author sunweibin
    * @param {String|Number} no 需要进行千分位格式化的数字或者数字字符串
-   * @param {String} thousandSeq=',' 千分位格式化符号
    * @param {Boolean} decimalNeedFormat=true 小数部分是否进行格式化
+   * @param {String} thousandSeq=',' 千分位格式化符号
    * @param {Boolean} isRemoveZero=false 小数部分多余的0是否移除
    * @returns {String|null} 格式化后的字符串
    */
@@ -81,10 +81,61 @@ const number = {
       newValue = newValue.toFixed(length);
       // 数字过小时，取两位小数可能等于 0 ，等于 0 时，显示 0.00
       if (Math.abs(newValue) === 0) {
-        newValue = '0.00';
+        const fillZero = _.fill(Array(length), 0);
+        newValue = `0.${fillZero.join('')}`;
       }
     }
     return newValue;
+  },
+
+  formatToUnit({
+    // 传入的数字
+    num = 0,
+    // 是否格式化千分符
+    isThousandFormat = true,
+    // 小数部分长度
+    floatLength = 0,
+    // 单位
+    unit = '',
+    // 是否需要符号
+    needMark = false,
+  }) {
+    // 是否是数字
+    let newNum = Number(num);
+    let result = {};
+    if (isNaN(newNum)) {
+      return num;
+    }
+    // 单位常量
+    const UNIT = unit;
+    const UNIT_WAN = `万${unit}`;
+    const UNIT_YI = `亿${unit}`;
+    const UNIT_WANYI = `万亿${unit}`;
+
+    // 符号
+    result.mark = needMark ? '+' : '';
+    // 传入的有符号则输出有符号
+    result.mark = String(num)[0] === '+' ? '+' : result.mark;
+    // 负数
+    if (newNum < 0) {
+      result.mark = '-';
+    }
+    newNum = Math.abs(newNum);
+    if (newNum >= trillion) {
+      result.number = (newNum / trillion).toFixed(floatLength);
+      result.unit = UNIT_WANYI;
+    } else if (newNum >= yi) {
+      result.number = (newNum / yi).toFixed(floatLength);
+      result.unit = UNIT_YI;
+    } else if (newNum >= wan) {
+      result.number = (newNum / wan).toFixed(floatLength);
+      result.unit = UNIT_WAN;
+    } else {
+      result.number = newNum.toFixed(floatLength);
+      result.unit = UNIT;
+    }
+    result.number = thousandFormat(Number(String(result.number)), true, ',', false );
+    return result.mark + result.number + result.unit;
   },
 };
 
@@ -94,4 +145,5 @@ export { hundred, thousand, wan, million, yi, billion, trillion, percent, permil
 export const {
   thousandFormat,
   toFixed,
+  formatToUnit,
 } = number;

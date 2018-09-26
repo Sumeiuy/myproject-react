@@ -14,11 +14,22 @@ import classnames from 'classnames';
 
 
 import antdStyles from '../../css/antd.less';
+import { number } from '../../helper';
 import styles from './commonCell.less';
 import classes from '../customerPool/home/performanceIndicators__.less';
 
 export default function CommonCell(props) {
-  const { isNeedTitle, title, icon, data, isNeedExtra, extraText, onExtraClick, onValueClick } = props;
+  const {
+    isNeedTitle,
+    title,
+    icon,
+    data,
+    isNeedExtra,
+    extraText,
+    onExtraClick,
+    onClick,
+    valueStyle,
+  } = props;
   // 渲染 Popover
   const renderPopver = item => {
     const { name, description = '' } = item;
@@ -45,11 +56,20 @@ export default function CommonCell(props) {
     const { code, id = '', value, title } = item;
     return (
       <li className={styles.item} key={code || id}>
-        <div>
+        <div onClick={() => onClick(item)}>
           {renderPopver(item)}
         </div>
         <div>
-          <span onClick={() => onValueClick(item)} title={title || value}>{value}</span>
+          <span title={title || value} style={valueStyle}>
+            {number.formatToUnit({
+              // 传入的数字
+              num: value,
+              // 是否格式化千分符
+              isThousandFormat: true,
+              // 小数部分长度
+              floatLength: 1,
+            })}
+          </span>
         </div>
       </li>
     );
@@ -101,7 +121,9 @@ CommonCell.propTypes = {
   // 额外的点击事件
   onExtralick: PropTypes.func,
   // value 的点击事件
-  onValueClick: PropTypes.func,
+  onClick: PropTypes.func,
+  // 数值的样式
+  valueStyle: PropTypes.object,
 };
 
 CommonCell.defaultProps = {
@@ -112,5 +134,6 @@ CommonCell.defaultProps = {
   isNeedExtra: false,
   extraText: '更多',
   onExtralick: _.noop,
-  onValueClick: _.noop,
+  onClick: _.noop,
+  valueStyle: {},
 };

@@ -21,13 +21,13 @@ import ViewAndCombination from '../../components/newHome/ViewAndCombination';
 import CommonCell from '../../components/newHome/CommonCell';
 import ChartsTab from '../../components/newHome/ChartsTab';
 import { LabelModal } from '../../components/customerPool/home';
-import { dva, url as urlHelper, emp } from '../../helper';
+import { dva, url as urlHelper, emp, permission } from '../../helper';
 import { isSightingScope, getFilter, getSortParam } from '../../components/customerPool/helper.js';
 import { openRctTab } from '../../utils';
 import { padSightLabelDesc } from '../../config';
 import styles from './home.less';
 import { MorningBroadcast } from '../../components/customerPool/home';
-import { DATE_FORMAT_STRING, navArray } from './config';
+import { DATE_FORMAT_STRING, MONTH_DATE_FORMAT, navArray } from './config';
 import rankPng from './rank.png';
 
 const effect = dva.generateEffect;
@@ -204,7 +204,7 @@ export default class Home extends PureComponent {
     const isNotSaleDepartment = emp.isManagementHeadquarters(orgId)
       || emp.isFiliale(custRange, orgId);
     // 非营业部登录用户有权限时，传登陆者的orgId
-    queryNumbers({ orgId: isNotSaleDepartment && this.hasTkMampPermission ? orgId : '' });
+    queryNumbers({ orgId: isNotSaleDepartment && permission.hasTkMampPermission() ? orgId : '' });
   }
 
   // 猜你感兴趣-更多点击事件
@@ -320,7 +320,7 @@ export default class Home extends PureComponent {
   // 组合推荐，打开详情页
   @autobind
   @logPV({ pathname: '/choicenessCombination/combinationDetail', title: '精选组合详情' })
-  handleCombinationValueClick(obj) {
+  handleCombinationClick(obj) {
     const { push } = this.props;
     const param = {
       closable: true,
@@ -407,30 +407,32 @@ export default class Home extends PureComponent {
     const keyAttentionProps = {
       title: '重点关注',
       data: keyAttention,
-      onValueClick: this.handleLinkToCustomerList,
+      onClick: this.handleLinkToCustomerList,
     };
     // 猜你感兴趣
     const guessYourInterestsProps = {
       title: '猜你感兴趣',
       data: guessYourInterests,
       isNeedExtra: true,
-      onValueClick: this.handleLinkToCustomerList,
+      onClick: this.handleLinkToCustomerList,
       onExtraClick: this.handleMoreClick,
     };
     // 产品日历
+    const today = moment().format(MONTH_DATE_FORMAT);
     const productCalendarProps = {
       icon: 'calendar',
-      title: '产品日历',
+      title: `${today}产品日历`,
       data: this.transferProductData(),
-      onValueClick: this.handleProductCalendarValueClick,
+      onClick: this.handleProductCalendarValueClick,
     };
     // 组合推荐
     const viewAndCombinationProps = {
+      location,
       push,
       data: {
         view: chiefView,
         combination: introCombination,
-        onValueClick: this.handleCombinationValueClick,
+        onClick: this.handleCombinationClick,
       },
     };
     // 更多感兴趣标签
