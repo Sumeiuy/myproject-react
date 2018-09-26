@@ -15,7 +15,9 @@ import ChartContiner from './ChartContainer';
 import IECharts from '../IECharts';
 import styles from './analysisCharts.less';
 import { seperator } from '../../config';
+import { toFixedNum } from '../chartRealTime/FixNumber';
 import { number } from '../../helper';
+
 import {
   getCustClassChartData,
   getCustomTypeChartData,
@@ -315,8 +317,8 @@ export default class PerformanceIndicators extends PureComponent {
       grid: {
         top: '0px',
         bottom: '0px',
-        left: '30px',
-        right: '30px',
+        left: '25px',
+        right: '49px',
         containLabel: true,
       },
       tooltip: {
@@ -332,7 +334,7 @@ export default class PerformanceIndicators extends PureComponent {
             unit: '人',
           };
           return `${params.data.name} 客户数：${data.value}${data.unit}`;
-        }
+        },
       },
       xAxis: {
         type: 'value',
@@ -363,6 +365,14 @@ export default class PerformanceIndicators extends PureComponent {
               position: 'right',
               show: true,
               color: '#666',
+              formatter: (params) => {
+                const item = toFixedNum(params.data.value);
+                const data = {
+                  value: item.newItem,
+                  unit: item.newUnit,
+                };
+                return `${data.value}${data.unit}`;
+              }
             }
           },
           data: totAsetData,
