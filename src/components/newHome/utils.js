@@ -31,13 +31,21 @@ function getCustClassChartData(data) {
       }
     }
   ];
+
   if (data.custClassRetail) {
     dataSource[0].custNum = data.custClassRetail.custNum || 0;
     dataSource[0].asset = data.custClassRetail.asset || 0;
+  } else {
+    dataSource[0].custNum = 0;
+    dataSource[0].asset = 0;
   }
+
   if (data.custClassHighValue) {
     dataSource[1].custNum = data.custClassHighValue.custNum || 0;
     dataSource[1].asset = data.custClassHighValue.asset || 0;
+  } else {
+    dataSource[1].custNum = 0;
+    dataSource[1].asset = 0;
   }
 
   if (dataSource[0].custNum + dataSource[1].custNum === 0) {
@@ -195,14 +203,23 @@ function getCustomTypeChartData(data) {
   if (data.custTypePer) {
     dataSource[0].custNum = data.custTypePer.custNum || 0;
     dataSource[0].asset = data.custTypePer.asset || 0;
+  } else {
+    dataSource[0].custNum = 0;
+    dataSource[0].asset = 0;
   }
   if (data.custTypeOrg) {
     dataSource[1].custNum = data.custTypeOrg.custNum || 0;
     dataSource[1].asset = data.custTypeOrg.asset || 0;
+  } else {
+    dataSource[1].custNum = 0;
+    dataSource[1].asset = 0;
   }
   if (data.custTypeProd) {
     dataSource[2].custNum = data.custTypeProd.custNum || 0;
     dataSource[2].asset = data.custTypeProd.asset || 0;
+  } else {
+    dataSource[2].custNum = 0;
+    dataSource[2].asset = 0;
   }
 
   const custNumSum = dataSource[0].custNum + dataSource[1].custNum + dataSource[2].custNum;
