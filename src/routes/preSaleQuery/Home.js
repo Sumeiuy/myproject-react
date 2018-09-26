@@ -1,8 +1,8 @@
 /**
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-04-24 08:55:17
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-09-26 11:30:05
  * @description 售前适当性查询
  */
 
@@ -26,6 +26,8 @@ const productRequirementMap = {
   1: '合格投资者-小集合类',
   2: '合格投资者-私募类',
   3: '合格投资者-信托类',
+  5: '收益凭证' ,
+  6: '资管新规类',
 };
 const effects = {
   // 查询客户列表
