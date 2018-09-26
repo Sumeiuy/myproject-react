@@ -41,16 +41,16 @@ function getCustClassChartData(data) {
   }
 
   if (dataSource[0].custNum + dataSource[1].custNum === 0) {
-    dataSource[0].custNumRate = 0;
-    dataSource[1].custNumRate = 0;
+    dataSource[0].custNumRate = 50;
+    dataSource[1].custNumRate = 50;
   } else {
     dataSource[0].custNumRate =
       Math.floor((dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum))*100);
     dataSource[1].custNumRate = 100 - dataSource[0].custNumRate;
   }
   if (dataSource[0].asset + dataSource[1].asset === 0) {
-    dataSource[0].assetRate = 0;
-    dataSource[1].assetRate = 0;
+    dataSource[0].assetRate = 50;
+    dataSource[1].assetRate = 50;
   } else {
     dataSource[0].assetRate =
       Math.floor((dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100);
@@ -209,9 +209,9 @@ function getCustomTypeChartData(data) {
   const assetSum = dataSource[0].asset + dataSource[1].asset + dataSource[2].asset;
 
   if (custNumSum === 0) {
-    dataSource[0].custNumRate = 0;
-    dataSource[1].custNumRate = 0;
-    dataSource[2].custNumRate = 0;
+    dataSource[0].custNumRate = 33.33;
+    dataSource[1].custNumRate = 33.33;
+    dataSource[2].custNumRate = 33.34;
   } else {
     dataSource[0].custNumRate =
       Math.floor((dataSource[0].custNum / custNumSum) * 100);
@@ -225,9 +225,9 @@ function getCustomTypeChartData(data) {
     dataSource[2].custNumRate = 100 - dataSource[0].custNumRate - dataSource[1].custNumRate;
   }
   if (assetSum === 0) {
-    dataSource[0].assetRate = 0;
-    dataSource[1].assetRate = 0;
-    dataSource[2].assetRate = 0;
+    dataSource[0].assetRate = 33.33;
+    dataSource[1].assetRate = 33.33;
+    dataSource[2].assetRate = 33.34;
   } else {
     dataSource[0].assetRate =
       Math.floor((dataSource[0].asset / assetSum) * 100);
@@ -511,8 +511,8 @@ function getMaxCostRateChartData(data) {
 // 盈亏幅度
 function getPftAmtChartData(data) {
   const xAxisLabel = [
-    '-100', '-50', '-30', '-10', '-5', '-1', '0',
-    '1', '5', '10', '30', '50', '100'
+    '-100', '-50', '-10', '-5', '-1', '0',
+    '1', '5', '10', '50', '100'
   ];
   let dataSource = [
     {
@@ -536,27 +536,17 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '亏损在30-50万元',
+      name: '亏损在10-50万元',
       value: 210,
       filterValue: {
         minVal: '-500000',
-        maxVal: '-300000',
-      },
-      filterName: '收益',
-      filterId: 'pftAmt',
-    },
-    {
-      name: '亏损在10-30万元',
-      value: 324,
-      filterValue: {
-        minVal: '-300000',
         maxVal: '-100000',
       },
       filterName: '收益',
       filterId: 'pftAmt',
     },
     {
-      name: '亏损在10-5万元',
+      name: '亏损在5-10万元',
       value: 431,
       filterValue: {
         minVal: '-100000',
@@ -566,7 +556,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '亏损在5-1万元',
+      name: '亏损在1-5万元',
       value: 516,
       filterValue: {
         minVal: '-50000',
@@ -616,20 +606,10 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈利在10-30万元',
-      value: 323,
-      filterValue: {
-        minVal: '100000',
-        maxVal: '300000',
-      },
-      filterName: '收益',
-      filterId: 'pftAmt',
-    },
-    {
-      name: '盈利在30-50万元',
+      name: '盈利在10-50万元',
       value: 183,
       filterValue: {
-        minVal: '300000',
+        minVal: '100000',
         maxVal: '500000',
       },
       filterName: '收益',
@@ -659,7 +639,7 @@ function getPftAmtChartData(data) {
   if (data.profitAndLossMargin) {
     dataSource = _.map(dataSource, (item, index) => ({
       ...item,
-      value:
+     value:
         (data.profitAndLossMargin[index] && data.profitAndLossMargin[index].custNum) || 0,
     }));
   }
