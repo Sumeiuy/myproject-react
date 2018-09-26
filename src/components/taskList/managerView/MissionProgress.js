@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-12-05 21:18:42
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-02 11:04:08
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-05 11:16:41
  * 任务进度
  */
 
@@ -13,6 +13,7 @@ import { Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import styles from './missionProgress.less';
+import logable from '../../../decorators/logable';
 
 // const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -98,6 +99,7 @@ export default class MissionProgress extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '已服务客户进度' } })
   handlePreview({
     missionProgressStatus,
     progressFlag,

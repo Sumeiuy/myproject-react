@@ -11,6 +11,7 @@ import _ from 'lodash';
 import Select from '../common/Select';
 import CustRange from '../pageCommon/SeibelCustRange';
 import AutoComplete from '../common/similarAutoComplete';
+import { logCommon } from '../../decorators/logable';
 import config from './config';
 import styles from './distributeHeader.less';
 
@@ -50,6 +51,14 @@ export default class DistributeHeader extends PureComponent {
     const { filterCallback } = this.props;
     filterCallback({
       queryEmpId: item.ptyMngId,
+    });
+    // log日志，选中服务经理下拉对象
+    logCommon({
+      type: 'DropdownSelect',
+      payload: {
+        name: '服务经理下拉列表',
+        value: JSON.stringify(item),
+      },
     });
   }
 

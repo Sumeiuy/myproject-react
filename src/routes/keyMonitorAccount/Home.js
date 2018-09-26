@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-06-19 15:10:27
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-07 18:03:01
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-28 17:59:10
  * @description 重点监控账户首页
  */
 import React, { Component } from 'react';
@@ -18,6 +18,7 @@ import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
 import { dva, emp, permission } from '../../helper';
 import { openFspTab } from '../../utils';
+import logable from '../../decorators/logable';
 import { LIST_TABLE_COLUMNS, DEFAULT_OPTION, IS_OUR_CUST_OPTIONS } from './config';
 
 import styles from './home.less';
@@ -278,6 +279,7 @@ export default class KeyMonitorAccountHome extends Component {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '重置' } })
   handleRestBtnClick() {
     this.mapObjectToLocation();
     this.queryAccountList({
@@ -292,6 +294,7 @@ export default class KeyMonitorAccountHome extends Component {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '查询' } })
   handleQueryBtnClick() {
     const query = _.pick(this.state, FILTER_INPUT_KEYS);
     this.mapObjectToLocation({

@@ -2,8 +2,8 @@
  * @Description: PC电话拨号页面
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-06-27 18:45:46
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 15:41:13
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import qs from 'query-string';
 import classnames from 'classnames';
 import { Phone as XPhone } from 'lego-soft-phone';
 import sotfCallInstall from './SotfCallInstall0426.msi';
+import logable from '../../../decorators/logable';
 import styles from './phone.less';
 
 const URL = bowser.msie
@@ -162,8 +163,9 @@ export default class Phone extends PureComponent {
     });
   }
 
-
+  // TODO 日志查看:找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '点击' } })
   handleClick() {
     const { number, custType, onClick } = this.props;
     if (this.canCall() !== true) {

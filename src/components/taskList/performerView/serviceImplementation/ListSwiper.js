@@ -12,6 +12,7 @@ import cx from 'classnames';
 import { autobind } from 'core-decorators';
 import ListWrapper from './ListWrapper';
 import Icon from '../../../common/Icon';
+import logable from '../../../../decorators/logable';
 import styles from './listSwiper.less';
 import {
   MALE_CODE,
@@ -43,6 +44,7 @@ export default class ListSwiper extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '前进' } })
   goNext() {
     const { targetCustList, onPageChange } = this.props;
     const { pageNum, pageSize, totalCount } = targetCustList.page;
@@ -53,6 +55,7 @@ export default class ListSwiper extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '后退' } })
   goPrev() {
     const { targetCustList, onPageChange } = this.props;
     const { pageNum } = targetCustList.page;

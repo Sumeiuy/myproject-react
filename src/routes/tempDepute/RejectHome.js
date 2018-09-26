@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-09-06 09:06:15
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-12 11:15:28
+ * @Last Modified time: 2018-09-25 16:58:05
  * @description 临时委托他人处理任务驳回后修改
  */
 import React, { Component } from 'react';
@@ -343,13 +343,13 @@ export default class RejectHome extends Component {
           <div className={styles.modContent}>
             <ul className={styles.propertyList}>
               <li className={styles.item}>
-                <InfoItem label="拟稿人" value={draftInfo} width="70px" />
+                <InfoItem label="拟稿人" value={draftInfo} width="112px" />
               </li>
               <li className={styles.item}>
-                <InfoItem label="申请时间" value={detailUpdate.applyTime} width="70px" />
+                <InfoItem label="申请时间" value={detailUpdate.applyTime} width="112px" />
               </li>
               <li className={styles.item}>
-                <InfoItem label="状态" value={detailUpdate.statusName} width="70px" />
+                <InfoItem label="状态" value={detailUpdate.statusName} width="112px" />
               </li>
             </ul>
           </div>

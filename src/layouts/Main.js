@@ -32,6 +32,7 @@ const effects = {
   handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
   // 删除文件
   ceFileDelete: 'performerView/ceFileDelete',
+  getEmpInfo: 'app/getEmpInfo',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -69,6 +70,7 @@ const mapDispatchToProps = {
   getMotCustfeedBackDict: fectchDataFunction(true, effects.getMotCustfeedBackDict),
   // 服务记录和电话记录关联
   addCallRecord: fectchDataFunction(true, effects.addCallRecord),
+  getEmpInfo: fectchDataFunction(true, effects.getEmpInfo),
 };
 
 const PHONE = 'phone';
@@ -95,6 +97,7 @@ export default class Main extends Component {
     getMotCustfeedBackDict: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     serviceRecordInfo: PropTypes.object.isRequired,
+    getEmpInfo: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -102,6 +105,7 @@ export default class Main extends Component {
   }
 
   componentDidMount() {
+    this.props.getEmpInfo();
     this.props.getCustomerScope(); // 加载客户池客户范围
   }
   render() {
@@ -140,6 +144,7 @@ export default class Main extends Component {
                     <Loading loading={loading} forceFull={loadingForceFull} />
                     {
                       (!_.isEmpty(interfaceState) &&
+                        !_.isEmpty(empInfo) &&
                         !interfaceState[effects.dictionary] &&
                         !interfaceState[effects.customerScope] &&
                         !interfaceState[effects.empInfo]) ?

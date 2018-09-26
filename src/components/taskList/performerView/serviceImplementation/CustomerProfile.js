@@ -2,8 +2,8 @@
  * @Description: 客户的基本信息
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-12 11:59:32
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 17:30:09
  */
 
 import React from 'react';
@@ -125,6 +125,7 @@ export default class CustomerProfile extends React.PureComponent {
 
   // 点击客户名称进入360视图
   @autobind
+  @logable({ type: 'Click', payload: { name: '点击客户名称进入360视图' } })
   handleCustNameClick() {
     const param = {
       id: 'FSP_360VIEW_M_TAB',
@@ -233,6 +234,7 @@ export default class CustomerProfile extends React.PureComponent {
 
   // 点击号码打电话时显示蒙层时关闭蒙层
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭蒙层' } })
   handleMaskClick() {
     this.setState({ showMask: false });
   }

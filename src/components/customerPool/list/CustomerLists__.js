@@ -29,7 +29,7 @@ import {
   ALL_DEPARTMENT_ID,
   ENTERLIST_LEFTMENU,
 } from '../../../routes/customerPool/config';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './customerLists__.less';
 
 // 服务营业部筛选项去重的key
@@ -393,6 +393,7 @@ export default class CustomerLists extends PureComponent {
 
   // 跳转到分组页面或新建任务页面
   @autobind
+  @logPV({ pathname: '/modal/createTaskLog', title: '任务信息' })
   goGroupOrTask({ id, title, url, obj, shouldStay, editPane }) {
     const { push, dataForNextPage } = this.props;
     const newurl = `${url}?${urlHelper.stringify({ ...obj, ...dataForNextPage })}`;

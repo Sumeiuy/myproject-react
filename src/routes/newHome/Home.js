@@ -81,15 +81,15 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   push: routerRedux.push,
   // 重点关注
-  queryKeyAttention: effect(effects.queryKeyAttention, { forceFull: true }),
+  queryKeyAttention: effect(effects.queryKeyAttention, { loading: false }),
   // 猜你感兴趣
-  queryGuessYourInterests: effect(effects.queryGuessYourInterests, { forceFull: true }),
+  queryGuessYourInterests: effect(effects.queryGuessYourInterests, { loading: false }),
   // 产品日历
-  queryProductCalendar: effect(effects.queryProductCalendar, { forceFull: true }),
+  queryProductCalendar: effect(effects.queryProductCalendar, { loading: false }),
   // 首席观点
-  queryChiefView: effect(effects.queryChiefView, { forceFull: true }),
+  queryChiefView: effect(effects.queryChiefView, { loading: false }),
   // 组合推荐
-  queryIntroCombination: effect(effects.queryIntroCombination, { forceFull: true }),
+  queryIntroCombination: effect(effects.queryIntroCombination, { loading: false }),
   getCustCount: effect(effects.getCustCount, { loading: false }),
   getManagerIndicators: effect(effects.getManagerIndicators, { loading: false }),
   getPerformanceIndicators: effect(effects.getPerformanceIndicators, { loading: false }),
@@ -98,7 +98,7 @@ const mapDispatchToProps = {
   queryhomePageNews: effect(effects.queryhomePageNews, { loading: false }),
   queryCustLabelList: effect(effects.queryCustLabelList, { loading: false }),
   custLabelListPaging: effect(effects.custLabelListPaging, { loading: false }),
-  queryNumbers: effect(effects.queryNumbers, { forceFull: true }),
+  queryNumbers: effect(effects.queryNumbers, { loading: false }),
 };
 
 const EMPTY_LIST = [];

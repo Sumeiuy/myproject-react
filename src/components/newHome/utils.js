@@ -45,7 +45,7 @@ function getCustClassChartData(data) {
     dataSource[1].custNumRate = 0;
   } else {
     dataSource[0].custNumRate =
-    ((dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum))*100).toFixed(2);
+      Math.floor((dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum))*100);
     dataSource[1].custNumRate = 100 - dataSource[0].custNumRate;
   }
   if (dataSource[0].asset + dataSource[1].asset === 0) {
@@ -53,7 +53,7 @@ function getCustClassChartData(data) {
     dataSource[1].assetRate = 0;
   } else {
     dataSource[0].assetRate =
-      ((dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100).toFixed(2);
+      Math.floor((dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100);
     dataSource[1].assetRate = 100 - dataSource[0].assetRate;
   }
   const option = {
@@ -214,9 +214,14 @@ function getCustomTypeChartData(data) {
     dataSource[2].custNumRate = 0;
   } else {
     dataSource[0].custNumRate =
-      ((dataSource[0].custNum / custNumSum) * 100).toFixed(2);
+      Math.floor((dataSource[0].custNum / custNumSum) * 100);
     dataSource[1].custNumRate =
-      ((dataSource[1].custNum / custNumSum) * 100).toFixed(2);
+      Math.floor((dataSource[1].custNum / custNumSum) * 100);
+    if (dataSource[1].custNumRate === 0 && dataSource[0].custNumRate !== 100) {
+      if (dataSource[1].custNum > dataSource[2].custNum) {
+        dataSource[1].custNumRate = 1;
+      }
+    }
     dataSource[2].custNumRate = 100 - dataSource[0].custNumRate - dataSource[1].custNumRate;
   }
   if (assetSum === 0) {
@@ -225,10 +230,16 @@ function getCustomTypeChartData(data) {
     dataSource[2].assetRate = 0;
   } else {
     dataSource[0].assetRate =
-      ((dataSource[0].asset / assetSum) * 100).toFixed(2);
+      Math.floor((dataSource[0].asset / assetSum) * 100);
     dataSource[1].assetRate =
-      ((dataSource[1].asset / assetSum) * 100).toFixed(2);
-    dataSource[2].assetRate = 100 - dataSource[0].custNumRate - dataSource[1].custNumRate;
+      Math.floor((dataSource[1].asset / assetSum) * 100);
+
+    if (dataSource[1].assetRate === 0 && dataSource[0].assetRate !== 100) {
+      if (dataSource[1].asset > dataSource[2].asset) {
+        dataSource[1].assetRate = 1;
+      }
+    }
+    dataSource[2].assetRate = 100 - dataSource[0].assetRate - dataSource[1].assetRate;
   }
   const option = {
     grid: {

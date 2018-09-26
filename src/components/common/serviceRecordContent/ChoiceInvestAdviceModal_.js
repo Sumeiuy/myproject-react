@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 14:36:08
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-25 18:32:10
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 15:00:37
  * @description 投资建议弹出层
  */
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { connect } from 'dva';
 import _ from 'lodash';
 
 import { dva } from '../../../helper';
+import logable, { logPV } from '../../../decorators/logable';
 import CommonModal from '../biz/CommonModal';
 import confirm from '../confirm_';
 import FreeMode from './ChoiceInvestAdviceFreeMode';
@@ -241,7 +242,12 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     }
   }
 
+  // TODO 日志查看：找不到方法 未验证
   @autobind
+  @logPV({
+    pathname: '/modal/switchModeChangeConfirm',
+    title: '切换涨乐财富通的服务内容',
+  })
   handleSwitchModeChange() {
     // 当切换涨乐财富通的服务内容的方式的时候，需要提示下用户，修改的东西将会清空
     confirm({
@@ -250,7 +256,9 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     });
   }
 
+  // TODO 日志查看：找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '点击' } })
   handleSelectInvestAdviceTmpl({ id, title }) {
     this.setState({ templateID: id, title });
   }

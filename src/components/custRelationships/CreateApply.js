@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请新建页面
  * @Date: 2018-06-08 13:10:33
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-07-02 15:10:03
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 14:11:05
  */
 
 import React, { PureComponent } from 'react';
@@ -179,7 +179,9 @@ export default class CreateApply extends PureComponent {
     this.setState(obj);
   }
 
+  // TODO 日志查看：打开页面无数据 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '提交' } })
   handleModalBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
     const { valid, msg } = validateData(this.state);

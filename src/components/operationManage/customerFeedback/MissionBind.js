@@ -2,8 +2,8 @@
  * @Description: 任务绑定客户反馈
  * @Author: XuWenKang
  * @Date: 2017-12-21 14:49:16
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-31 15:58:35
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-09-25 10:46:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -14,7 +14,7 @@ import _ from 'lodash';
 import FeedbackAdd from './FeedbackAdd';
 import Pagination from '../../common/Pagination';
 import styles from './missionBind.less';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import {
   TABLIST,
   MOT_TASK,
@@ -196,6 +196,7 @@ export default class MissionBind extends PureComponent {
 
   // 删除任务下所关联客户反馈选项
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除服务经理可选项', eventId: '$args[0]', feedbackId: '$args[1]', roleType: '$args[2]' } })
   handleDelCustomerFeedback(missionId, feedbackId, roleType) {
     const {
       location: { query: { childActiveKey, pageNum = 1, pageSize = 20, keyWord } },
@@ -227,6 +228,7 @@ export default class MissionBind extends PureComponent {
 
   // 显示添加客户反馈弹层
   @autobind
+  @logPV({ pathname: '/modal/increasingCustomerFeedback', title: '新增客户反馈' })
   showAddFeedbackModal(missionId, roleType) {
     this.setState({
       showModal: true,

@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-06-09 20:30:15
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-07-20 15:14:50
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-29 16:37:57
  */
 
 import React, { PureComponent } from 'react';
@@ -362,6 +362,7 @@ export default class CreateApply extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '提交' } })
   handleSubmit(item) {
     // 校验必填项
     this.isValidateError = false;

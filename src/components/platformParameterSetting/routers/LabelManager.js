@@ -14,6 +14,7 @@ import { autobind } from 'core-decorators';
 import { fsp, dva } from '../../../helper';
 import Icon from '../../common/Icon';
 import Pagination from '../../common/Pagination';
+import logable from '../../../decorators/logable';
 
 import styles from './labelManager.less';
 import withRouter from '../../../decorators/withRouter';
@@ -151,6 +152,8 @@ export default class LabelManager extends PureComponent {
       },
     });
   }
+  @autobind
+  @logable({ type: 'Click', payload: { name: '编辑标签' } })
   edit(record) {
     this.setState({
       editorCell: record,
@@ -158,6 +161,7 @@ export default class LabelManager extends PureComponent {
   }
   // 确认是否修改个人标签
   @autobind
+  @logable({ type: 'Click', payload: { name: '确认' } })
   confirmSave() {
     const { allLabels } = this.props;
     const { editorCell } = this.state;
@@ -192,6 +196,7 @@ export default class LabelManager extends PureComponent {
       });
   }
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除' } })
   cancel() {
     this.setState({
       editorCell: EMPTY_OBJ,
@@ -219,18 +224,21 @@ export default class LabelManager extends PureComponent {
   // --删除标签--end
   // --添加标签--start
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '+标签' } })
   openAddLabel() {
     this.setState({
       addLabelState: true,
     });
   }
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭' } })
   closeAddLabel() {
     this.setState({
       addLabelState: false,
     });
   }
   @autobind
+  @logable({ type: 'Click', payload: { name: '添加' } })
   addLabel() {
     const { addLabel } = this.props;
     const { getFieldValue } = this.props.form;

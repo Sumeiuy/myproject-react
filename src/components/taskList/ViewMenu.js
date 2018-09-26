@@ -1,8 +1,8 @@
 /**
  * @Author: xuxiaoqin
  * @Date: 2018-04-13 11:57:34
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2018-05-30 16:08:14
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-29 14:04:07
  * @description 视图切换组件
  */
 
@@ -43,6 +43,13 @@ export default class ViewMenu extends PureComponent {
    * @param {*string} viewType 当前选择的视图类型
    */
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '切换左侧任务视图',
+      viewType: '$args[0]',
+    },
+  })
   handleClick(viewType) {
     const { onViewChange } = this.props;
     onViewChange({

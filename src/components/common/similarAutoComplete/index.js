@@ -10,6 +10,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import confirm from '../confirm_';
+import logable from '../../../decorators/logable';
 
 import styles from './style.less';
 
@@ -125,6 +126,13 @@ export default class SimilarAutoComplete extends PureComponent {
   // 第一个参数是 AutoComplete 组件的optionLabelProp指定的key对应的值
   // 第二个参数是 该节点信息
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择客户',
+      value: '$args[0]',
+    },
+  })
   handleSelect(value, selectItem) {
     if (value) {
       // 更新state中的值
@@ -185,6 +193,7 @@ export default class SimilarAutoComplete extends PureComponent {
 
   // 触发查询搜索信息的方法
   @autobind
+  @logable({ type: 'Click', payload: { name: '搜索' } })
   handleSearch(e) {
     const { typeStyle, value } = this.state;
     if (typeStyle === 'search') {

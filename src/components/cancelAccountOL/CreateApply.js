@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-07-10 13:35:26
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-16 15:07:41
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-24 11:15:32
  * @description 新建线上销户申请弹出框
  */
 import React, { PureComponent } from 'react';
@@ -179,6 +179,7 @@ export default class CreateApply extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '$args[0].btnName' } })
   handleModalBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
     const { valid, msg } = validateData(this.state);

@@ -9,10 +9,9 @@
 import React from 'react';
 import CustomerPool from './Home';
 import NewCustomerPool from '../newHome/Home';
-import { permission } from '../../helper';
 
 export default function CustomerListWrapper(props) {
-  return permission.isGrayFlag() ?
+  return  /newIndex/.test(window.location.pathname) ?
     <NewCustomerPool {...props} /> :
     <CustomerPool {...props} />;
 }

@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-06-12 15:12:22
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-07-23 16:18:19
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 14:11:53
  * @description 融资类业务驳回后修改页面
  */
 import React, { Component } from 'react';
@@ -25,6 +25,8 @@ import { env, dom, dva } from '../../helper';
 
 import { APPROVAL_COLUMNS } from '../../components/custRelationships/config';
 import { validateData } from '../../helper/page/custRelationship';
+import logable from '../../decorators/logable';
+
 
 import styles from './rejectUpdateHome.less';
 
@@ -229,7 +231,9 @@ export default class RejectUpdateHome extends Component {
     });
   }
 
+  // TODO 日志查看：需要先进行可以提交的规则校验 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '提交' } })
   handleBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
     const { valid, msg } = validateData(this.state);

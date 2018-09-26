@@ -44,7 +44,7 @@ function padFixedCust(m, method) {
 
 const FixNumber = {
   // 对小数点进行处理
-  toFixedDecimal(value, isCommissionRate) {
+  toFixedDecimal(value, isCommissionRate, isFixed1) {
     if (value > 10000) {
       return Number.parseFloat(value.toFixed(0));
     }
@@ -53,6 +53,9 @@ const FixNumber = {
     }
     if (isCommissionRate) {
       return Number.parseFloat(value.toFixed(3));
+    }
+    if (isFixed1) {
+      return Number.parseFloat(value.toFixed(1));
     }
     return Number.parseFloat(value.toFixed(2));
   },
@@ -177,6 +180,54 @@ const FixNumber = {
     return {
       newUnit,
       newSeries,
+    };
+  },
+
+  // 对用户数进行特殊处理
+  toFixedCustNum(item) {
+    let newUnit = '人';
+    let newItem = Math.abs(item);
+    // 1. 全部在万元以下的数据不做处理
+    // 2.超过万元的，以‘万元’为单位
+    // 3.超过亿元的，以‘亿元’为单位
+    if (newItem >= 100000000) {
+      newUnit = '亿人';
+      newItem = FixNumber.toFixedDecimal(newItem / 100000000);
+    } else if (newItem > 10000) {
+      newUnit = '万人';
+      newItem = FixNumber.toFixedDecimal(newItem / 10000);
+    } else {
+      newUnit = '人';
+      newItem = FixNumber.toFixedDecimal(newItem);
+    }
+
+    return {
+      newUnit,
+      newItem,
+    };
+  },
+
+  // 对用户数进行特殊处理
+  toFixedNum(item) {
+    let newUnit = '';
+    let newItem = Math.abs(item);
+    // 1. 全部在万元以下的数据不做处理
+    // 2.超过万元的，以‘万元’为单位
+    // 3.超过亿元的，以‘亿元’为单位
+    if (newItem >= 100000000) {
+      newUnit = '亿';
+      newItem = FixNumber.toFixedDecimal(newItem / 100000000, false, true);
+    } else if (newItem >= 10000) {
+      newUnit = '万';
+      newItem = FixNumber.toFixedDecimal(newItem / 10000, false, true);
+    } else {
+      newUnit = '';
+      newItem = FixNumber.toFixedDecimal(newItem, false, true);
+    }
+
+    return {
+      newUnit,
+      newItem,
     };
   },
 
@@ -368,6 +419,8 @@ export const {
   transformItemUnit,
   toFixedNewMoney,
   toFixedCust,
+  toFixedCustNum,
+  toFixedNum,
   toFomatterCust,
   toFixedCI,
   toFixedGE,

@@ -4,8 +4,8 @@
  * @author xiaZhiQiang
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
- * @Last Modified by: hongguangqing
- * @Last Modified time: 2018-08-15 09:20:29
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 14:46:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -22,6 +22,7 @@ import HoldingProductDetail from '../HoldingProductDetail';
 import HoldingCombinationDetail from '../HoldingCombinationDetail';
 import HoldingIndustryDetail from '../HoldingIndustryDetail';
 import Icon from '../../../common/Icon';
+import logable from '../../../../decorators/logable';
 import matchAreaConfig from './config';
 import styles from './matchArea.less';
 
@@ -247,7 +248,9 @@ export default class MatchArea extends PureComponent {
   }
 
   // 点击订购组合名称跳转到详情页面
+  // TODO 日志查看：找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '订购组合' } })
   handleOrderCombinationClick({ name, code }) {
     const { push } = this.context;
     const query = { id: code, name };
@@ -272,7 +275,9 @@ export default class MatchArea extends PureComponent {
     });
   }
 
+  // TODO 日志查看：找不到方法 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '收起/展开' } })
   showAllIndividual() {
     const { showAll } = this.state;
     this.setState({
@@ -286,7 +291,7 @@ export default class MatchArea extends PureComponent {
     const filter = this.getFilters();
     const currentFilter = filter[id];
     const cycleCode = currentFilter[0];
-    const { value } = _.find(kPIDateScopeType, cycleItem => cycleItem.key === cycleCode);
+    const { value } =  _.find(kPIDateScopeType, cycleItem => cycleItem.key === cycleCode) || {};
     return value;
   }
 
