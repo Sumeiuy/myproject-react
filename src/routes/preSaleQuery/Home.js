@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-26 11:30:05
+ * @Last Modified time: 2018-09-26 17:28:13
  * @description 售前适当性查询
  */
 
@@ -373,7 +373,7 @@ export default class PreSaleQuery extends PureComponent {
                             }
                           </span>
                         </Col>
-                        <Col span={8}>
+                        <Col span={10}>
                           <span className={styles.itemName}>客户情况：</span>
                           <span className={styles.itemValue}>
                             {qualifiedCust.fact.custInfo}
@@ -382,7 +382,7 @@ export default class PreSaleQuery extends PureComponent {
                         {
                           qualifiedCust.fact.yxq &&
                             (
-                              <Col span={7}>
+                              <Col span={6}>
                                 <span className={styles.itemName}>有效期：</span>
                                 <span className={styles.itemValue}>
                                   {qualifiedCust.fact.yxq}
