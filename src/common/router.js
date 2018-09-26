@@ -557,7 +557,7 @@ export const getRouterData = (app) => {
         import('../routes/labelManagement/Home') /* webpackChunkName: "labelManagement" */),
     },
     // 临时委托他人处理任务Home页面
-    '/tempDepute': {
+    '/taskCenter/tempDepute': {
       component: dynamicWrapper(app, ['tempDepute'], () =>
         import('../routes/tempDepute/Home') /* webpackChunkName: "tempDepute" */),
     },
