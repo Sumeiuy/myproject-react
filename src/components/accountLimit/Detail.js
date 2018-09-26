@@ -173,6 +173,8 @@ export default class Detail extends PureComponent {
     const filterOperate = _.filter(operateTypeArray, o => o.value === operateType);
     // 操作类型是否是限制解除
     const isRelieve = operateType === RELIEVE_CODE;
+
+    const limitName = isRelieve ? '解除限制类型' : '限制类型';
     return (
       <div className={styles.detailBox}>
         <h2 className={styles.title}>编号{id}</h2>
@@ -203,7 +205,7 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.module}>
           <InfoTitle head="限制信息" />
-          <InfoItem label="限制类型" value={(_.map(limitType, 'label').join('、'))} />
+          <InfoItem label={limitName} value={(_.map(limitType, 'label').join('、'))} />
           {
             isRelieve
             ? null
