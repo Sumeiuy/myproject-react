@@ -1,8 +1,8 @@
 /**
  * @Author: ouchangzhi
  * @Date: 2018-01-19 13:37:08
- * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-02-08 10:53:02
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-09-26 11:29:18
  * @description 合格投资者-产品要求点击问号的弹出框
  */
 import React from 'react';
@@ -63,10 +63,34 @@ export default function QualifiedCustModal(props) {
     </div>
   );
 
+  // 收益凭证
+  const revenueVoucher = (
+    <div className={styles.content}>
+      <p className={styles.item}>
+      个人投资者的金融资产不低于300万元或者最近三年个人年均收入不低于50 万元，
+      机构投资者的净资产不低于1000万元，或为监管机构认可的其他合格投资者。
+      </p>
+    </div>
+  );
+
+  // 资管新规类
+  const managementRegulations = (
+    <div className={styles.content}>
+      <p className={styles.item}>
+      资管新规类是指具备相应风险识别能力和风险承担能力，投资于单只资产管理产品不低于一定金额且符合下列条件的自然人和法人或者其他组织。
+      </p>
+      <p className={styles.item}>（一）具有2年以上投资经历，且满足以下条件之一：家庭金融净资产不低于300万元，家庭金融资产不低于500万元，或者近3年本人年均收入不低于40万元。</p>
+      <p className={styles.item}>（二）最近1年末净资产不低于1000万元的法人单位。</p>
+      <p className={styles.item}>（三）金融管理部门视为合格投资者的其他情形。</p>
+    </div>
+  );
+
   const content = {
     1: smallSet,
     2: privateEquity,
     3: trust,
+    5: revenueVoucher,
+    6: managementRegulations
   };
 
   return (
