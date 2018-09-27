@@ -200,7 +200,8 @@ export default class BroadcastList extends PureComponent {
   @logable({
     type: 'Click',
     payload: {
-      name: '晨报标题',
+      name: '$args[0].title',
+      subtype: '$args[0]',
       value: '$args[0]',
     },
   })
@@ -390,6 +391,7 @@ export default class BroadcastList extends PureComponent {
   }
 
   @autobind()
+  @logable({ type: 'Click', payload: { name: '取消' } })
   handleCancel() {
     this.setState({
       visible: false,

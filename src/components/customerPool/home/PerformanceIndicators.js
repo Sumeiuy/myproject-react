@@ -18,7 +18,7 @@ import IfEmpty from '../common/IfEmpty';
 import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
 import ProgressList from './ProgressList__';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import { homeModelType } from '../config';
 import {
   getHSRate,
@@ -102,13 +102,6 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DrillDown',
-    payload: {
-      name: '业务开通',
-      element: '$args[1].value',
-    },
-  })
   handleClick(labelList, arg) {
     const {
       cycle,
@@ -127,6 +120,15 @@ export default class PerformanceIndicators extends PureComponent {
         item => _.includes(item.value, name)) || {};
     param.value = currentSingleBusinessType.key;
     linkTo(param);
+    // log日志 --- 业务开通
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: '业务开通',
+        subtype: arg.name,
+        value: arg.value,
+      },
+    });
   }
 
   @autobind
@@ -160,6 +162,15 @@ export default class PerformanceIndicators extends PureComponent {
           title: (indicators[descKey] || {}).name || '',
         });
       }, 200);
+    });
+    // log日志 --- 业务开通
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: '业务开通11',
+        subtype: 'arg.name',
+        value: 'arg.value',
+      },
     });
 
     instance.on('mouseout', () => {
@@ -287,6 +298,15 @@ export default class PerformanceIndicators extends PureComponent {
     const { push } = this.context;
     const { cycle, location } = this.props;
     const headLine = { icon: 'kehufuwu', title: param.headLine };
+    // log日志 --- 业务开通
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: '业务开通231',
+        subtype: 'arg.name',
+        value: 'arg.value',
+      },
+    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
@@ -310,6 +330,15 @@ export default class PerformanceIndicators extends PureComponent {
     const { cycle, location } = this.props;
     const data = getCustAndProperty(param.data);
     const headLine = { icon: 'kehu', title: param.headLine };
+    // log日志 --- 客户及资产
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: headLine.title,
+        subtype: param.data,
+        value: '',
+      },
+    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
@@ -364,6 +393,15 @@ export default class PerformanceIndicators extends PureComponent {
       location,
     };
     linkTo(param);
+    // log日志 --- 服务指标
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: '',
+        subtype: param.data,
+        value: '',
+      },
+    });
   }
 
 
@@ -378,6 +416,15 @@ export default class PerformanceIndicators extends PureComponent {
     if (shzNpRate && shzNpRate.description) {
       description = shzNpRate.description;
     }
+    // log日志 --- 服务指标
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: headLine.title,
+        subtype: param.data,
+        value: '',
+      },
+    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame
@@ -421,6 +468,15 @@ export default class PerformanceIndicators extends PureComponent {
     const finalData = getProductSale(argument);
     const headLine = { icon: 'shouru', title: param.headLine };
     const type = param.key === SOURCE_PRODUCT_SALE ? 'productSale' : 'income';
+    // log日志 --- 服务指标
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: headLine.title,
+        subtype: param.data,
+        value: '',
+      },
+    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
@@ -443,6 +499,15 @@ export default class PerformanceIndicators extends PureComponent {
   handleServiceToListClick(instance) {
     instance.on('click', (arg) => {
       this.toList(arg.dataIndex);
+      // log日志 --- 服务指标
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: arg.name,
+        subtype: arg.value,
+        value: '',
+      },
+    });
     });
   }
 
@@ -466,6 +531,15 @@ export default class PerformanceIndicators extends PureComponent {
       };
       linkTo(param);
     }
+    // log日志 --- 业务开通
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: '业务开通',
+        subtype:' arg.name',
+        value: '',
+      },
+    });
   }
 
   // 服务指标（投顾绩效）
@@ -485,6 +559,15 @@ export default class PerformanceIndicators extends PureComponent {
     const headLine = { icon: 'kehufuwu', title: param.headLine };
     const { data } = param;
     const trueStyles = this.props.isNewHome ? classes : styles;
+    // log日志 --- 服务指标
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: headLine.title,
+        subtype: param.data,
+        value: '',
+      },
+    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
@@ -577,6 +660,15 @@ export default class PerformanceIndicators extends PureComponent {
       pureAddData: isEmpty ? [0, 0, 0, 0] : custCount,
     });
     const headLine = { icon: 'kehu', title: `新增客户（${pureAddUnit}）` };
+    // log日志 --- 服务指标
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: headLine.title,
+        subtype: param.data,
+        value: '',
+      },
+    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
@@ -606,6 +698,15 @@ export default class PerformanceIndicators extends PureComponent {
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalTradeingVolumeData = getTradingVolume(argument);
     const headLine = { icon: 'chanpinxiaoshou', title: param.headLine };
+    // log日志 --- 服务指标
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: headLine.title,
+        subtype: param.data,
+        value: '',
+      },
+    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
