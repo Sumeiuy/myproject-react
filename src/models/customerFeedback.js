@@ -8,14 +8,8 @@
  */
 
 import { customerFeedback as api } from '../api';
-import { dva as dvaHelper, url as urlHelper } from '../helper';
 
 const EMPTY_OBJECT = {};
-// const EMPTY_LIST = [];
-// 第一个tab的状态
-const FIRST_TAB = '1';
-// 第二个tab的状态
-const SECOND_TAB = '2';
 
 export default {
   namespace: 'customerFeedback',
@@ -124,45 +118,6 @@ export default {
       yield put({
         type: 'emptyMissionDataSuccess',
         payload: EMPTY_OBJECT,
-      });
-    },
-  },
-  subscriptions: {
-    setup({ dispatch, history }) {
-      return history.listen((location) => {
-        const {
-          pathname,
-          search: newSearch,
-        } = location;
-        if (pathname === '/sysOperate/platformParameterSetting/taskOperation/customerFeedback') {
-          const {
-            search: oldSearch,
-          } = dvaHelper.getLastLocation() || EMPTY_OBJECT;
-          const newQuery = urlHelper.parse(newSearch);
-          const oldQuery = urlHelper.parse(oldSearch);
-
-          const missionPayload = {
-            type: newQuery.childActiveKey || FIRST_TAB,
-            pageNum: newQuery.pageNum || 1,
-            pageSize: newQuery.pageSize || 20,
-          };
-          const feedbackPayload = {
-            keyword: '',
-            pageNum: newQuery.pageNum || 1,
-            pageSize: newQuery.pageSize || 20,
-          };
-          if (newQuery.parentActiveKey !== oldQuery.parentActiveKey) { // 父级tab状态发生变化请求对应面板数据
-            if (newQuery.parentActiveKey === SECOND_TAB) {
-              dispatch({ type: 'getFeedbackList', payload: feedbackPayload });
-            } else {
-              dispatch({ type: 'getMissionList', payload: missionPayload });
-            }
-          } else if (newQuery.childActiveKey !== oldQuery.childActiveKey) { // 任务类型tab状态发生变化
-            if (newQuery.parentActiveKey !== SECOND_TAB) {
-              dispatch({ type: 'getMissionList', payload: missionPayload });
-            }
-          }
-        }
       });
     },
   },

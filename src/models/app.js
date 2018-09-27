@@ -11,6 +11,12 @@ import { EVENT_PROFILE_ACTION } from '../config/log';
 import { emp, permission } from '../helper';
 import { CREATE } from '../config/serviceRecord';
 
+import { dva as dvaHelper, url as urlHelper } from '../helper';
+
+const FIRST_TAB = '1';
+// 第二个tab的状态
+const SECOND_TAB = '2';
+
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 export default {
@@ -415,11 +421,47 @@ export default {
     },
   },
   subscriptions: {
-    setup({ dispatch }) {
+    setup({ dispatch, history }) {
       // 加载员工职责与职位
       dispatch({ type: 'getEmpInfo' });
       // 获取字典
       dispatch({ type: 'getDictionary' });
+  
+      history.listen((location) => {
+        const {
+          pathname,
+          search: newSearch,
+        } = location;
+        if (pathname === '/sysOperate/platformParameterSetting/taskOperation/customerFeedback') {
+          const {
+            search: oldSearch,
+          } = dvaHelper.getLastLocation() || EMPTY_OBJECT;
+          const newQuery = urlHelper.parse(newSearch);
+          const oldQuery = urlHelper.parse(oldSearch);
+
+          const missionPayload = {
+            type: newQuery.childActiveKey || FIRST_TAB,
+            pageNum: newQuery.pageNum || 1,
+            pageSize: newQuery.pageSize || 20,
+          };
+          const feedbackPayload = {
+            keyword: '',
+            pageNum: newQuery.pageNum || 1,
+            pageSize: newQuery.pageSize || 20,
+          };
+          if (newQuery.parentActiveKey !== oldQuery.parentActiveKey) { // 父级tab状态发生变化请求对应面板数据
+            if (newQuery.parentActiveKey === SECOND_TAB) {
+              dispatch({ type: 'customerFeedback/getFeedbackList', payload: feedbackPayload });
+            } else {
+              dispatch({ type: 'customerFeedback/getMissionList', payload: missionPayload });
+            }
+          } else if (newQuery.childActiveKey !== oldQuery.childActiveKey) { // 任务类型tab状态发生变化
+            if (newQuery.parentActiveKey !== SECOND_TAB) {
+              dispatch({ type: 'customerFeedback/getMissionList', payload: missionPayload });
+            }
+          }
+        }
+      });
     },
   },
 };
