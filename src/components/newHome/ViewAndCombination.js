@@ -88,7 +88,7 @@ export default function ViewAndCombination(props, context) {
   // 分割成段，展示，过滤掉非p标签，因为自带样式不符合需求
   const isEmptyText = _.isEmpty(abstract);
   const newFormateAbstract = isEmptyText
-  ? `<div className=${styles.noData}>暂无内容</div>`
+  ? `<div class=${styles.noData}>暂无内容</div>`
   : (
       abstract.replace(
         /<(\/?)([^\s>]+)[^>]*?>/g,
