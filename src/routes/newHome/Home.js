@@ -405,13 +405,13 @@ export default class Home extends PureComponent {
     };
     // 重点关注
     const keyAttentionProps = {
-      title: '重点关注',
+      title: '重点关注（单位：户）',
       data: keyAttention,
       onClick: this.handleLinkToCustomerList,
     };
     // 猜你感兴趣
     const guessYourInterestsProps = {
-      title: '猜你感兴趣',
+      title: '猜你感兴趣（单位：户）',
       data: guessYourInterests,
       isNeedExtra: true,
       onClick: this.handleLinkToCustomerList,

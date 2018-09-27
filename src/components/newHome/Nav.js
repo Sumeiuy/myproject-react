@@ -65,15 +65,14 @@ export default function Nav(props) {
       name,
     };
     const value = number.formatToUnit({
-      // 传入的数字
       num: data[key],
-      // 是否格式化千分符
       isThousandFormat: true,
+      isRound: false,
     });
     return (
       <dl onClick={() => handleOpenTab(payload)}>
         <dt className={iconClass}></dt>
-        <dd className={styles.value}>{value}</dd>
+        <dd className={styles.value} title={data[key] || 0}>{value}</dd>
         <dd className={styles.name}>{name}</dd>
       </dl>
     );
