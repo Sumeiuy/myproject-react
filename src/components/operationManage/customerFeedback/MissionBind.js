@@ -286,8 +286,13 @@ export default class MissionBind extends PureComponent {
    */
   @autobind
   @logable({ type: 'Click', payload: { name: '搜索Mot任务列表', value: '$args[0]' } })
-  searchMotMission(keyWord, pageNum = 1, pageSize = 20) {
-    this.props.queryMissionList({ type: MOT_TASK.key, pageNum, pageSize, keyWord });
+  searchMotMission(keyWord) {
+    this.props.queryMissionList({
+      type: MOT_TASK.key,
+      pageNum: 1,
+      pageSize: 20,
+      keyWord,
+    });
   }
   // 修复tab上input中左右键切换不符合预期
   preventKeyDownPropagation(e) {
