@@ -88,6 +88,47 @@ const number = {
     return newValue;
   },
 
+  /**
+   * @author LiuJianShu
+   * @description 对小数格式化是否四舍五入
+   * @param {String|Number} 需要操作的数字
+   * @param {Number} 保留小数点后几位
+   * @param {Boolean} 是否四舍五入
+   * @returns {String} 格式化后的数字
+   */
+  formatRound(number = 0, floatLength = 2, isRound = true) {
+    let newNumber = number;
+    if (isNaN(newNumber)) {
+      return number;
+    }
+    // 对小数做处理
+    const numberArray = String(newNumber).split('.');
+    if (!_.isEmpty(numberArray[1])) {
+      // 是否四舍五入
+      if (isRound) {
+        newNumber = newNumber.toFixed(floatLength);
+      } else {
+        // 如果小数部分长度大于等于要保留的位数
+        if (numberArray[1].length >= floatLength) {
+          newNumber = `${numberArray[0]}.${numberArray[1].substring(0, floatLength)}`;
+        }
+      }
+    };
+    return newNumber;
+  },
+
+  /**
+   * @author LiuJianShu
+   * @description 数字转化为单位显示
+   * @param {Object} 参数对象
+   * @param {Number|String} num 需要处理的数字
+   * @param {Boolean} isThousandFormat 是否需要千分符
+   * @param {Number} floatLength 小数保留位数
+   * @param {String} unit 单位
+   * @param {Boolean} needMark 是否需要+-符号
+   * @param {Boolean} isRound 是否需要四舍五入
+   * @returns {String} 处理后的数字
+   */
   formatToUnit({
     // 传入的数字
     num = 0,
@@ -99,6 +140,8 @@ const number = {
     unit = '',
     // 是否需要符号
     needMark = false,
+    // 是否四舍五入
+    isRound = true,
   }) {
     // 是否是数字
     let newNum = Number(num);
@@ -122,20 +165,25 @@ const number = {
     }
     newNum = Math.abs(newNum);
     if (newNum >= trillion) {
-      result.number = (newNum / trillion).toFixed(floatLength);
+      result.number = newNum / trillion;
       result.unit = UNIT_WANYI;
     } else if (newNum >= yi) {
-      result.number = (newNum / yi).toFixed(floatLength);
+      result.number = newNum / yi;
       result.unit = UNIT_YI;
     } else if (newNum >= wan) {
-      result.number = (newNum / wan).toFixed(floatLength);
+      result.number = newNum / wan;
       result.unit = UNIT_WAN;
     } else {
-      result.number = newNum.toFixed(floatLength);
+      result.number = newNum;
       result.unit = UNIT;
     }
-    result.number = thousandFormat(Number(String(result.number)), true, ',', false );
-    return result.mark + result.number + result.unit;
+    // 对小数做处理
+    result.number = formatRound(result.number, 1, isRound);
+    // 千位符处理
+    if (isThousandFormat) {
+      result.number = thousandFormat(Number(String(result.number)), true, ',', false );
+    }
+    return `${result.mark}${result.number}${result.unit}`;
   },
 };
 
@@ -145,5 +193,6 @@ export { hundred, thousand, wan, million, yi, billion, trillion, percent, permil
 export const {
   thousandFormat,
   toFixed,
+  formatRound,
   formatToUnit,
 } = number;
