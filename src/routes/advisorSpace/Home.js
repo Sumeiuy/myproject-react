@@ -1,8 +1,8 @@
 /**
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-25 14:10:33
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-09-27 15:38:03
  * @description 投顾空间申请首页
  */
 
@@ -23,6 +23,7 @@ import withRouter from '../../decorators/withRouter';
 import { advisorSpace, getStatusTagProps } from '../../components/advisorSpace/config';
 import seibelHelper from '../../helper/page/seibel';
 import logable, { logPV } from '../../decorators/logable';
+import confirm from '../../components/common/confirm_';
 
 const effect = dva.generateEffect;
 
@@ -84,7 +85,7 @@ export default class AdvisorSpace extends PureComponent {
     participantData: PropTypes.object.isRequired,
     getParticipantList: PropTypes.func.isRequired,
     // 取消预订
-    cancelReservationResult: PropTypes.string.isRequired,
+    cancelReservationResult: PropTypes.bool.isRequired,
     cancelReservation: PropTypes.func.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
@@ -275,7 +276,12 @@ export default class AdvisorSpace extends PureComponent {
   // 点击取消预定
   @autobind
   handleCancelReservation(query) {
-    this.props.cancelReservation(query).then(this.handleCancelReservationSuccess);
+    confirm({
+      content: '确定要取消预定吗？',
+      onOk: () => {
+        this.props.cancelReservation(query).then(this.handleCancelReservationSuccess);
+      },
+    });
   }
 
   // 取消预定点击显示右侧详情
@@ -283,7 +289,7 @@ export default class AdvisorSpace extends PureComponent {
   handleCancelReservationSuccess() {
 
     const { cancelReservationResult } = this.props;
-    if (cancelReservationResult === 'true') {
+    if (cancelReservationResult === true) {
       this.getAppList();
     }
   }
