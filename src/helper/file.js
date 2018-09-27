@@ -2,12 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-05-10 16:33:37
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-05-10 16:44:49
+ * @Last Modified time: 2018-09-26 14:56:53
  * @description 用于上传或者其他与文件类型判断相关的函数集合
  */
 
 const FileType = {
-  // 后缀为 .csv|.xls 的文件
+  // 在 mac 系统下 .csv 文件的 mime 类型
+  csv: 'text/csv',
+  // 后缀为 .csv|.xls 的文件，在 windows 下 .csv 文件也是这个 mime
   xls: 'application/vnd.ms-excel',
   // 后缀为 .xlsx 的文件
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -28,7 +30,7 @@ const file = {
    * @return {Boolean} 是否是Excel相关文件
    */
   isExcel(type) {
-    return type === FileType.xls || type === FileType.xlsx;
+    return type === FileType.xls || type === FileType.xlsx || type === FileType.csv;
   },
 };
 
