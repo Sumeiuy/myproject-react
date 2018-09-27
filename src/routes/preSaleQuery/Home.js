@@ -2,7 +2,7 @@
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-26 17:28:13
+ * @Last Modified time: 2018-09-27 10:33:53
  * @description 售前适当性查询
  */
 
@@ -196,7 +196,7 @@ export default class PreSaleQuery extends PureComponent {
         fact: { yxq: ' ', matchResult: ' ', totalAssets: ' ' },
       },
       doubleRecord = { fact: {} },
-    } = matchResult;
+    } = matchResult || {};
     const columns = [
       {
         title: '类别',
