@@ -55,8 +55,8 @@ export default function CommonCell(props) {
   const renderList = !_.isEmpty(data) && data.map(item => {
     const { code, id = '', value, title } = item;
     return (
-      <li className={styles.item} key={code || id}>
-        <div onClick={() => onClick(item)}>
+      <li className={styles.item} key={code || id} onClick={() => onClick(item)}>
+        <div>
           {renderPopver(item)}
         </div>
         <div>
