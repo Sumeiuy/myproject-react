@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-07-09 09:58:54
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-27 15:38:03
+ * @Last Modified time: 2018-09-27 17:16:09
  * @description 投顾空间申请首页
  */
 
@@ -289,7 +289,7 @@ export default class AdvisorSpace extends PureComponent {
   handleCancelReservationSuccess() {
 
     const { cancelReservationResult } = this.props;
-    if (cancelReservationResult === true) {
+    if (cancelReservationResult) {
       this.getAppList();
     }
   }
