@@ -1,8 +1,8 @@
 /**
  * @Author: ouchangzhi
  * @Date: 2018-01-17 09:28:11
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-28 15:11:29
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-28 09:11:12
  * @description 售前适当性查询
  */
 
@@ -26,6 +26,8 @@ const productRequirementMap = {
   1: '合格投资者-小集合类',
   2: '合格投资者-私募类',
   3: '合格投资者-信托类',
+  5: '收益凭证' ,
+  6: '资管新规类',
 };
 const effects = {
   // 查询客户列表
@@ -195,7 +197,7 @@ export default class PreSaleQuery extends PureComponent {
         fact: { yxq: ' ', matchResult: ' ', totalAssets: ' ' },
       },
       doubleRecord = { fact: {} },
-    } = matchResult;
+    } = matchResult || {};
     const columns = [
       {
         title: '类别',
@@ -372,7 +374,7 @@ export default class PreSaleQuery extends PureComponent {
                             }
                           </span>
                         </Col>
-                        <Col span={8}>
+                        <Col span={10}>
                           <span className={styles.itemName}>客户情况：</span>
                           <span className={styles.itemValue}>
                             {qualifiedCust.fact.custInfo}
@@ -381,7 +383,7 @@ export default class PreSaleQuery extends PureComponent {
                         {
                           qualifiedCust.fact.yxq &&
                             (
-                              <Col span={7}>
+                              <Col span={6}>
                                 <span className={styles.itemName}>有效期：</span>
                                 <span className={styles.itemValue}>
                                   {qualifiedCust.fact.yxq}
