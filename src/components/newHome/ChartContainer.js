@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import IfEmpty from '../customerPool/common/IfEmpty';
 import RectFrame from '../customerPool/home/RectFrame';
 
 export default function ChartContiner(props) {
@@ -10,15 +9,13 @@ export default function ChartContiner(props) {
       isNewHome
       noMargin
     >
-      <IfEmpty isEmpty={props.isEmpty}>
-        {props.children}
-      </IfEmpty>
+      {props.children}
     </RectFrame>
   );
 }
 
 ChartContiner.propTypes = {
   dataSource: PropTypes.object.isRequired,
-  isEmpty: PropTypes.bool.isRequired,
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node.isRequired,
 };
+

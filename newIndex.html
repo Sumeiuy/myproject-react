@@ -90,6 +90,90 @@
     right: 420px !important;
     bottom: auto !important;
   }
+
+  body,
+  .react-body,
+  .react-body.ant-v2-compatible {
+    background-color: rgb(244, 246, 249);
+  }
+
+  .htsc-newIndex-loading-container {
+    position: fixed;
+    top: 40%;
+    left: calc(50% - 250px);
+    width: 500px;
+    height: 100px;
+    background-color: rgb(244, 246, 249);
+  }
+  .htsc-newIndex-content {
+    text-align: center;
+  }
+  .htsc-newIndex-lego {
+    display: inline-block;
+    width: 25px;
+    height: 28px;
+    vertical-align: middle;
+    background:
+      url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAA9CAYAAAAJQPEgAAAACXBIWXMAAAsSAAALEgHS3X78AAADsElEQVRo3u3bX0hTURwH8K9H01bL6ZozK1OwBdFDYhBoL/MtSUJ6yB7CTLSoKMyn/PNQVGYvIj700B8xK6jwwcoQoWgG7SEiFNZDzqi5hfOqV6ejsSneHmRjrv252z1ns3F/b+fcyz37cO495/c7sBRBEOANc5m2FkAtgGIAKlAKolRhT+87x6adBarFN89mp+9c1YBuWACMAujSGTmDtzNFEASYy7RZAAwADlIeFESpQkHfBz5tx261t89pGOSnWurUYBOPdUauFgBSxktz4gqLJ5AAaIw3DACU+kp1XnsPzwh3xlym1adezt/aCyArnjBvpBfuU2QU7eed718pGABTCICCRMDiMIOFJJEw1kCSaBhLINkIMFZAslFgLIBkI8FoAyXhNBfavtOG+QMVJUcSh0tVZduxgUMSzmMx72b541aXHInDzT24W/Tns+EHCxjX0eRym03SUpTx0hxB7OKRXX0OAOA2m+D8OOS7tqvr5Y8th/VFNGGO1099KVlW9XmkKjMBAPMv7mPVKWpGR0Thgq2K07evYPHtc+rAQFheew+v1Ff6xvVMTris9RUKEcAREgsMAHJbu5F57JSv/bvxpORXNBIMANL37FXkPxxyEaVK2jcXaR8LBE61NRSt2G08K1i0QCJ1g/YHrjodsNSUq6MFznQ2W8XCogESGpmHFOBMZ7N1of9RfjQwsUBCK6WKBSgFJgZIaOaKua3dUB0/7RIDpAGLBCS0k2DttU5FJCBNWDggYZHdBwLtty6vey5tWCggYVW2+ANDBU1YIDA1a3salqescwLDsNSUC9ZLVev6xktzhJl7N3mW47pMXyYJq3rM995vC75Mp2l2LLIcd/OBQ/lE8Ljdiai1VmbtmSyf7574NkusDRUZwrLHxWKApeF+j+vrp6DX5p90ZzsNg0xOnFfsNt52sUpD3GYTrPVHFbSBS8P9HvuNi+nh7plqqVPTBq7Ybbylply96nSsbQW0gWJgLID+sHWbOC1gNDCawEDYP+mXVGAsMBrAYLCgiXOsQK6jyRUrTAowFCxkyRMtMLDQjBcwHCxssSoWSBMWDTASLOIxQyQgC5gYoBiYqHPLUECWsHBAsTDRh7JuswmOgT7O2162/bSwhvkD/ds/T5SoRZ5bgiCJQ8bJOBkn42ScjJNxMk7GyTgZJ+OSNxwEgCNJcQYCYCBJcQMEwPUknL0RnZHrJToj9wuAPomAYwCqfAuKzsiNYu3/O4//Y+QYgLM6I1esM3ILAPAXhXh7w6eEnngAAAAASUVORK5CYII=) no-repeat;
+    background-size: 25px 28px
+  }
+  .htsc-newIndex-title {
+    font-size: 24px;
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+  .htsc-newIndex-img {
+    margin-top: 10px;
+    text-align: center;
+  }
+  .htsc-newIndex-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #108ee9;
+    border-top-color: transparent;
+    margin-right: 2px;
+    font-size: 12px;
+    border-radius: 50%;
+    vertical-align: middle;
+    -webkit-animation:animations 1s linear infinite forwards;
+    -moz-animation:animations 1s linear infinite forwards;
+    animation:animations 1s linear infinite forwards;
+  }
+  @-webkit-keyframes animations{
+    0%{-webkit-transform: rotatez(0)}
+    17%{-webkit-transform: rotatez(60deg)}
+    34%{-webkit-transform: rotatez(120deg)}
+    51%{-webkit-transform: rotatez(180deg)}
+    68%{-webkit-transform: rotatez(240deg)}
+    85%{-webkit-transform: rotatez(300deg)}
+    100%{-webkit-transform: rotatez(360deg)}
+  }
+  @-moz-keyframes animations{
+    0%{-moz-transform: rotatez(0)}
+    17%{-moz-transform: rotatez(60deg)}
+    34%{-moz-transform: rotatez(120deg)}
+    51%{-moz-transform: rotatez(180deg)}
+    68%{-moz-transform: rotatez(240deg)}
+    85%{-moz-transform: rotatez(300deg)}
+    100%{-moz-transform: rotatez(360deg)}
+  }
+  @keyframes animations{
+    0%{transform: rotatez(0)}
+    17%{transform: rotatez(60deg)}
+    34%{transform: rotatez(120deg)}
+    51%{transform: rotatez(180deg)}
+    68%{transform: rotatez(240deg)}
+    85%{transform: rotatez(300deg)}
+    100%{transform: rotatez(360deg)}
+  }
+  .htsc-newIndex-loading-text {
+    vertical-align: middle;
+    margin-left: 3px;
+    color: #999;
+    font-size: 12px;
+  }
+
 </style>
 <!-- 全局业务公共脚本 -->
 <script type="text/javascript" src="/fsp/static/business/attach.js"></script>
@@ -112,27 +196,20 @@ eb.component.Loading.defaults.speed = 0;
 <title>华泰证券 - 理财工作平台</title>
 </head>
 <body class="react-body">
-<iframe id="login-iframe" style="height:0px; width: 0px; position: absolute;"></iframe>
-<script>
-  if (location.hostname === 'localhost') {
-    var empId = '002332';
-    var nativeQuery = window.location.search;
-    if (nativeQuery) {
-      var queryList = nativeQuery.slice(1).split('=');
-      if (queryList[0] === 'empId') {
-        empId = queryList[1];
-      }
-    }
-    var iframe = document.getElementById('login-iframe');
-    iframe.src = '/fsp/login?iv-user=' + empId;
-    iframe.onload = function load() {
-      $(document.body).append($('<script type="text/javascript" src="/newIndex.js" />'));
-    }
-  }
-</script>
 <ul id="UTB" style="display: none"></ul>
 <!-- 工作区域 -->
-<div id="exApp" class="react-app">Loading...</div>
+<div id="exApp" class="react-app">
+  <div class="htsc-newIndex-loading-container">
+    <div class="htsc-newIndex-content">
+      <i class="htsc-newIndex-lego"></i>
+      <span class="htsc-newIndex-title">理财服务平台</span>
+      <div class="htsc-newIndex-img">
+        <span class="htsc-newIndex-loading"></span>
+        <span class="htsc-newIndex-loading-text">Loading...</span>
+      </div>
+    </div>
+  </div>
+</div>
 <!--[if IE]>
 <script>
 window.navTo = function() {
