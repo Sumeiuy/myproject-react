@@ -94,7 +94,6 @@ export default class ProgressList extends PureComponent {
     },
   })
   handleClick(index, item) {
-    console.warn('zm:log', item);
     const { cycle, push, location } = this.props;
     const bname = this.transformName(item.cust);
     const param = {

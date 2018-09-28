@@ -90,6 +90,15 @@ function Funney({ dataSource, push, cycle, location }, { empInfo }) {
         };
       }
       linkTo(params);
+      // 手动上传日志
+      logCommon({
+        type: 'DrillDown',
+        payload: {
+          name: '客户及资产',
+          subtype: name,
+          value: '',
+        },
+      });
     });
   };
 

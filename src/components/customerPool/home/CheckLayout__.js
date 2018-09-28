@@ -23,7 +23,6 @@ import {
 const SOURCE = 'assetsTransactions';
 const TYPE_LIST = ['purFinAset', 'gjAmt', 'synthesis', 'gjPurRake'];
 
-
 function renderItem(data = {}, params, itemStyle = null) {
   const param = {
     ...params,

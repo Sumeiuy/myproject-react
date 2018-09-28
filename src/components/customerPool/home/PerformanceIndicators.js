@@ -163,6 +163,7 @@ export default class PerformanceIndicators extends PureComponent {
         });
       }, 200);
     });
+
     instance.on('mouseout', () => {
       clearTimeout(timeout);
       this.setState({
@@ -260,6 +261,7 @@ export default class PerformanceIndicators extends PureComponent {
     ];
   }
 
+  @autobind
   renderIndictors(item, category) {
     if (item.key === 'kehujizichan') {
       return this.renderCustAndPropertyIndicator(item);
@@ -281,6 +283,8 @@ export default class PerformanceIndicators extends PureComponent {
     return null;
   }
 
+  // 服务指标（经营指标）
+  @autobind
   renderManagerServiceIndicators(param) {
     const { push } = this.context;
     const { cycle, location } = this.props;
@@ -301,12 +305,13 @@ export default class PerformanceIndicators extends PureComponent {
     );
   }
 
+  // 客户及资产（投顾绩效）
+  @autobind
   renderCustAndPropertyIndicator(param) {
     const { push } = this.context;
     const { cycle, location } = this.props;
     const data = getCustAndProperty(param.data);
     const headLine = { icon: 'kehu', title: param.headLine };
-
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
@@ -324,7 +329,6 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   // 业务开通数（投顾绩效）
-  @autobind
   renderBusinessIndicator(param) {
     const argument = this.getNameAndValue(param.data, filterEmptyToInteger);
     const { newUnit, items } = getClientsNumber(argument);
@@ -372,7 +376,6 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   // 沪深归集率
-  @autobind
   renderHSRateIndicators(param) {
     const { value = '' } = param.data[0] || {};
     const data = getHSRate([filterEmptyToNumber(value)]);
@@ -482,7 +485,6 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   // 服务指标（投顾绩效）
-  @autobind
   renderServiceIndicators(param) {
     const performanceData = [];
     const colors = ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'];
@@ -634,6 +636,7 @@ export default class PerformanceIndicators extends PureComponent {
       </Col>
     );
   }
+
   render() {
     const { indicators, category, isNewHome } = this.props;
     const { posX, posY, isToolTipVisible, desc, title } = this.state;
