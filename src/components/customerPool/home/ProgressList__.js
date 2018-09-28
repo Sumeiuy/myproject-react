@@ -16,7 +16,8 @@ import logable, { logCommon } from '../../../decorators/logable';
 
 import antdStyles from '../../../css/antd.less';
 import styles from './progressList.less';
-import { homeModelType } from '../config';
+import { homeModelTypeName, homeModelType } from '../config';
+
 
 
 /* 新增客户传给列表页的参数
@@ -111,19 +112,11 @@ export default class ProgressList extends PureComponent {
       linkTo(param);
     }
 
-    function getCurrentName() {
-      if (type === 'income') {
-        return '净收入';
-      } else if(type === 'productSale') {
-        return '产品销售';
-      }
-      return '新增客户';
-    }
     // log日志 --- 业务开通
     logCommon({
       type: 'DrillDown',
       payload: {
-        name: getCurrentName(),
+        name: homeModelTypeName[type],
         subtype: item.cust,
         value: item.count,
       },

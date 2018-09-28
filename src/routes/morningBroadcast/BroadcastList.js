@@ -201,10 +201,10 @@ export default class BroadcastList extends PureComponent {
     type: 'Click',
     payload: {
       name: '$args[0].title',
-      subtype: '$args[1]',
+      subtype: '$args[0].newsTypValue',
     },
   })
-  onHandleToDetail(newsId) {
+  onHandleToDetail({ newsId }) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
     const url = '/broadcastDetail';
@@ -220,7 +220,7 @@ export default class BroadcastList extends PureComponent {
 
   // table -->start
   @autobind
-  onHandleTablecolumns(newBoradcastList) {
+  onHandleTablecolumns() {
     const columns = [{
       title: '标题',
       dataIndex: 'title',
@@ -229,11 +229,9 @@ export default class BroadcastList extends PureComponent {
       width: '35%',
       align: 'left',
       render: (text, record, index) => {
-        const newId = record.newsId;
-        const currentBoradcast = newBoradcastList[index];
         return (
           <span
-            onClick={() => { this.onHandleToDetail(newId, currentBoradcast.newsTypValue); }}
+            onClick={() => { this.onHandleToDetail(record); }}
             className={styles.textOverflow}
             style={{ cursor: 'pointer' }}
             title={text}
@@ -524,7 +522,7 @@ export default class BroadcastList extends PureComponent {
           <div className={styles.broadcastList}>
             <Table
               loading={newsListLoading}
-              columns={this.onHandleTablecolumns(newBoradcastList)}
+              columns={this.onHandleTablecolumns()}
               dataSource={newBoradcastList}
               pagination={false}
             />

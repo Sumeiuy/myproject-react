@@ -18,7 +18,7 @@ function IfEmpty(props) {
 
 IfEmpty.propTypes = {
   isEmpty: PropTypes.bool.isRequired,
-  children: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 export default IfEmpty;
