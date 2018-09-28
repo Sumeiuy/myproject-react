@@ -12,6 +12,7 @@ import _ from 'lodash';
 import { Modal } from 'antd';
 
 import { request } from '../../config';
+import logable, { logCommon } from '../../decorators/logable';
 import Icon from '../common/Icon';
 import styles from './previewImg.less';
 
@@ -117,9 +118,17 @@ export default class PreviewImg extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '预览' } })
   handlePreview() {
     this.setState({
       visible: true,
+    });
+    // log日志，缩略图预览
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: '缩略图预览',
+      },
     });
   }
 

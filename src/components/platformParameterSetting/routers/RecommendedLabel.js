@@ -15,6 +15,7 @@ import { dva, emp, fsp, permission } from '../../../helper';
 import Pagination from '../../../components/common/Pagination';
 import { Search } from '../../../components/customerPool/home';
 import Icon from '../../../components/common/Icon';
+import logable, { logPV } from '../../../decorators/logable';
 import styles from './recommendedLabel.less';
 import withRouter from '../../../decorators/withRouter';
 
@@ -219,6 +220,7 @@ export default class RecommendedLabel extends PureComponent {
   }
   // 取消以选标签
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   cancelSelectedLabel() {
     const { hotWds } = this.props;
     this.setState({
@@ -227,6 +229,7 @@ export default class RecommendedLabel extends PureComponent {
   }
   // 预览
   @autobind
+  @logPV({ pathname: '/modal/previewLabel', title: '预览' })
   handlePreview() {
     this.setState({
       visible: true,
@@ -248,6 +251,7 @@ export default class RecommendedLabel extends PureComponent {
   }
   // 提交
   @autobind
+  @logPV({ pathname: '/modal/submitLabel', title: '提交' })
   handleSubmit() {
     const { updataCustLabels, queryHotWds3 } = this.props;
     const { onQueryLabel } = this;

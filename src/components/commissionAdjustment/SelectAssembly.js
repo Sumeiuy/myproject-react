@@ -13,6 +13,7 @@ import { AutoComplete } from 'antd';
 import SimilarAutoComplete from '../common/similarAutoComplete';
 import { seibelConfig } from '../../config';
 import confirm from '../common/confirm_';
+import logable, { logCommon } from '../../decorators/logable';
 
 import styles from './selectAssembly.less';
 
@@ -165,6 +166,14 @@ export default class SelectAssembly extends PureComponent {
       } else {
         this.props.onSelectValue(cust);
       }
+      // 记录选择的客户信息日志
+      logCommon({
+        type: 'DropdownSelect',
+        payload: {
+          name: '选择客户',
+          value: JSON.stringify(cust),
+        },
+      });
     } else {
       // 此时有可能客户搜索组件会传递一个空对象
       // 将空值传递出去以便可以让父组件更新其他组件数据
@@ -176,6 +185,7 @@ export default class SelectAssembly extends PureComponent {
 
   // 搜索客户列表
   @autobind
+  @logable({ type: 'Click', payload: { name: '搜索客户', value: '$args[0]' } })
   handleSearchCustList(value) {
     this.props.onSearchValue(value);
   }

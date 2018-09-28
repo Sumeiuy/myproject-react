@@ -567,7 +567,7 @@ export const getRouterData = (app) => {
         import('../routes/tempDepute/RejectHome') /* webpackChunkName: "tempDepute_reject" */),
     },
     // 投顾空间申请
-    '/advisorSpace': {
+    '/businessApplyment/advisorSpace': {
       component: dynamicWrapper(app, ['advisorSpace'], () =>
         import('../routes/advisorSpace/Home') /* webpackChunkName: "advisorSpace" */),
     },

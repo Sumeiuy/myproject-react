@@ -9,21 +9,33 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { Tabs } from 'antd';
 import _ from 'lodash';
 
 import CommonCell from './CommonCell';
+import { logCommon } from '../../decorators/logable';
 import { openRctTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
 import styles from './viewAndCombination.less';
 
-const TabPane = Tabs.TabPane;
-export default function ViewAndCombination(props) {
+export default function ViewAndCombination(props, context) {
   const { data } = props;
+  const { replace } = context;
 
-  // 切换标签
-  const callback = (key) => {
-    console.warn(key);
+  // 标签列表
+  const tabArray = [
+    {
+      name: '首席观点',
+      key: 'sxgd',
+    },
+    {
+      name: '组合推荐',
+      key: 'zhtj',
+    },
+  ];
+
+  // 发送日志
+  const sendLog = (payload) => {
+    logCommon(payload);
   };
 
   const openNewTab = (url, query, editPane) => {
@@ -39,9 +51,14 @@ export default function ViewAndCombination(props) {
     });
   };
 
-  // @autobind
-  // @logable({ type: 'Click', payload: { name: '详情' } })
   const handleDetailClick = (id) => {
+    sendLog({
+      type: '$pageview',
+      payload: {
+        title: '打开资讯详情页面',
+        name: '详情',
+      },
+    });
     // 跳转到资讯详情界面
     openNewTab(
       '/latestView/viewpointDetail',
@@ -56,7 +73,7 @@ export default function ViewAndCombination(props) {
   if (_.isEmpty(data)) {
     return null;
   }
-  const { view, combination = [], onValueClick } = data;
+  const { view, combination = [], onClick } = data;
 
   const { infoVOList = [] } = view;
   // 展示第一个新闻
@@ -71,7 +88,7 @@ export default function ViewAndCombination(props) {
   // 分割成段，展示，过滤掉非p标签，因为自带样式不符合需求
   const isEmptyText = _.isEmpty(abstract);
   const newFormateAbstract = isEmptyText
-  ? ('<p>暂无内容</p>')
+  ? `<div className=${styles.noData}>暂无内容</div>`
   : (
       abstract.replace(
         /<(\/?)([^\s>]+)[^>]*?>/g,
@@ -106,34 +123,92 @@ export default function ViewAndCombination(props) {
   const combinationProps = {
     isNeedTitle: false,
     data: newData,
-    onValueClick,
+    onClick,
+    valueStyle: { color: '#e33c39' },
+  };
+
+  // tab 点击事件
+  const handleTabClick = (item) => {
+    const { location: { query } } = props;
+    replace({
+      query: {
+        ...query,
+        activeTab: item.key,
+      }
+    });
+    sendLog({
+      type: 'ButtonClick',
+      payload: {
+        name: `${item.name}`,
+      },
+    });
+  };
+
+  // 渲染 tab 标签
+  const renderTab = () => {
+    const { location: { query: { activeTab = tabArray[0].key } } } = props;
+    const navArray = tabArray.map(item => {
+      const linkClass = classnames({
+        [styles.active]: item.key === activeTab,
+      });
+      return (<div>
+        <a className={linkClass} onClick={() => handleTabClick(item)}>{item.name}</a>
+      </div>);
+    });
+    return (
+      <div className={styles.nav}>
+        {navArray}
+      </div>
+    );
+  };
+
+  // 渲染 tab 内容
+  const renderContent = () => {
+    const { location: { query: { activeTab = tabArray[0].key } } } = props;
+    let contentElement = null;
+    switch (activeTab) {
+      case tabArray[0].key:
+        contentElement = <div className={styles.view}>
+          <h2 className={styles.title} title={newTitle}>{newTitle}</h2>
+          <div
+            className={styles.text}
+            dangerouslySetInnerHTML={{ __html: formateAbstract }}
+          />
+          <a className={linkClass} onClick={() => handleDetailClick(firstNewsId)}>[详情]</a>
+        </div>;
+        break;
+      case tabArray[1].key:
+        contentElement = <div className={styles.view}>
+          <h2 className={styles.combinationTitle}><span>近30天收益率</span>组合名称</h2>
+          <CommonCell {...combinationProps} />
+        </div>;
+        break;
+      default:
+        break;
+    }
+    return contentElement;
   };
 
   return (
     <div className={styles.viewAndCombination}>
-      <Tabs defaultActiveKey="1" onChange={callback}>
-        <TabPane tab="首席观点" key="1">
-          <div className={styles.view}>
-            <h2 className={styles.title} title={newTitle}>{newTitle}</h2>
-            <div
-              className={styles.text}
-              dangerouslySetInnerHTML={{ __html: formateAbstract }}
-            />
-            <a className={linkClass} onClick={() => handleDetailClick(firstNewsId)}>[详情]</a>
-          </div>
-        </TabPane>
-        <TabPane tab="组合推荐" key="2">
-          <h2 className={styles.combinationTitle}><span>近30天收益率</span>组合名称</h2>
-          <CommonCell {...combinationProps} />
-        </TabPane>
-      </Tabs>
+      <div className={styles.tab}>
+        {renderTab()}
+        <div className={styles.content}>
+        {renderContent()}
+        </div>
+      </div>
     </div>
   );
 }
 
 ViewAndCombination.propTypes = {
+  location: PropTypes.object.isRequired,
   push: PropTypes.func.isRequired,
   data: PropTypes.object,
+};
+
+ViewAndCombination.contextTypes = {
+  replace: PropTypes.func.isRequired,
 };
 
 ViewAndCombination.defaultProps = {

@@ -12,6 +12,7 @@ import classnames from 'classnames';
 import ascPng from './img/asc.png';
 import descPng from './img/desc.png';
 import defaultSortDirections from './config';
+import logable from '../../../decorators/logable';
 import styles from './sort.less';
 
 const Option = Select.Option;
@@ -58,6 +59,7 @@ export default class Sort extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '排序' } })
   handleSortChange() {
     const { value: { sortDirection, sortType }, onChange } = this.props;
     const { sortDirections = defaultSortDirections } = this.getCurrentQuota();

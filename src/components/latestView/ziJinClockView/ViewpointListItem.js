@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 首页紫金时钟观点列表 Item
  * @Date: 2018-06-22 13:55:34
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-06-25 14:49:52
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-30 10:45:36
  */
 
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import Icon from '../../common/Icon';
 import { openRctTab } from '../../../utils';
 import { url as urlHelper, time } from '../../../helper';
+import logable from '../../../decorators/logable';
 import config from '../config';
 import styles from './viewpointListItem.less';
 
@@ -71,6 +72,7 @@ export default class ViewpointListItem extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: 'name' ? 'shouqi2' : 'zhankai1' } })
   toggle() {
     this.setState({
       toggle: !this.state.toggle,
@@ -78,6 +80,7 @@ export default class ViewpointListItem extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '$args[0].name' } })
   openStockPage(obj) {
     const { code } = obj;
     const { push } = this.context;

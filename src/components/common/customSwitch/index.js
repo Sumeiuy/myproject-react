@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 
+import logable from '../../../decorators/logable';
 import styles from './index.less';
 
 
@@ -30,6 +31,7 @@ export default class CustomSwitch extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '开关' } })
   handleChange() {
     const { value, onChange, name } = this.props;
     onChange(name, !value);

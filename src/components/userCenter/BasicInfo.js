@@ -14,6 +14,7 @@ import Icon from '../common/Icon';
 import defaultHeader from './img/defaultHeader.jpg';
 import styles from './basicInfo.less';
 import withRouter from '../../decorators/withRouter';
+import logable, { logCommon, logPV } from '../../decorators/logable';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -197,6 +198,14 @@ export default class BasicInfo extends PureComponent {
         };
       });
     }
+    // 记录日志，选择标签
+    logCommon({
+      type: 'DropdownSelect',
+      payload: {
+        name: '选择标签',
+        value: JSON.stringify(labelItem),
+      },
+    });
   }
 
   // 选择标签component
@@ -260,6 +269,7 @@ export default class BasicInfo extends PureComponent {
   }
   // 打开审批人选择审批人model
   @autobind
+  @logPV({ pathname: '/modal/approverBoardFrame', title: '选择审批人弹框' })
   openApproverBoard() {
     const { queryApprovers, LabelAndDescApprover } = this.props;
     if (!LabelAndDescApprover.length) {
@@ -278,6 +288,7 @@ export default class BasicInfo extends PureComponent {
   }
   // 取消编辑状态
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消编辑状态' } })
   cancelEditor() {
     const { changeEditorState, userBaseInfo } = this.props;
     const {
@@ -300,6 +311,7 @@ export default class BasicInfo extends PureComponent {
 
   // 提交审批
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '提交审批' } })
   startApproval() {
     const {
       updateEmpInfo,

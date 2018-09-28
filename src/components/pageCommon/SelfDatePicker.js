@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-08-03 16:04:14
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-12-08 14:31:56
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-27 17:34:42
  */
 
 import React, { PureComponent } from 'react';
@@ -213,6 +213,7 @@ export default class SelfDatePicker extends PureComponent {
   }
   // 取消事件
   @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   cancelHanle() {
     this.saveMoment('cancel');
   }

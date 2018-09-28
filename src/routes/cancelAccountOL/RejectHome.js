@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-07-12 09:02:17
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-15 12:07:18
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-21 14:10:40
  * @description 线上销户的驳回后修改页面
  */
 
@@ -280,7 +280,9 @@ export default class RejectHome extends Component {
     });
   }
 
+  // TODO 日志查看：需要先进行可以提交的规则校验 未验证
   @autobind
+  @logable({ type: 'Click', payload: { name: '提交' } })
   handleBtnGroupClick(btn) {
     // 点击此处，需要先进行可以提交的规则校验
     const { valid, msg } = validateData(this.state);

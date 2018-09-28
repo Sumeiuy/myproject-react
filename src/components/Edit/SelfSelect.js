@@ -177,6 +177,7 @@ export default class SelfSelect extends PureComponent {
   }
   // 打开下拉列表
   @autobind
+  @logable({ type: 'Click', payload: { name: '编辑可见范围' } })
   expandSelect() {
     this.setState({
       expand: true,
