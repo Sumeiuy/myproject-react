@@ -31,29 +31,37 @@ function getCustClassChartData(data) {
       }
     }
   ];
+
   if (data.custClassRetail) {
     dataSource[0].custNum = data.custClassRetail.custNum || 0;
     dataSource[0].asset = data.custClassRetail.asset || 0;
+  } else {
+    dataSource[0].custNum = 0;
+    dataSource[0].asset = 0;
   }
+
   if (data.custClassHighValue) {
     dataSource[1].custNum = data.custClassHighValue.custNum || 0;
     dataSource[1].asset = data.custClassHighValue.asset || 0;
+  } else {
+    dataSource[1].custNum = 0;
+    dataSource[1].asset = 0;
   }
 
   if (dataSource[0].custNum + dataSource[1].custNum === 0) {
-    dataSource[0].custNumRate = 0;
-    dataSource[1].custNumRate = 0;
+    dataSource[0].custNumRate = 50;
+    dataSource[1].custNumRate = 50;
   } else {
     dataSource[0].custNumRate =
-    ((dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum))*100).toFixed(2);
+      Math.floor((dataSource[0].custNum / (dataSource[0].custNum + dataSource[1].custNum))*100);
     dataSource[1].custNumRate = 100 - dataSource[0].custNumRate;
   }
   if (dataSource[0].asset + dataSource[1].asset === 0) {
-    dataSource[0].assetRate = 0;
-    dataSource[1].assetRate = 0;
+    dataSource[0].assetRate = 50;
+    dataSource[1].assetRate = 50;
   } else {
     dataSource[0].assetRate =
-      ((dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100).toFixed(2);
+      Math.floor((dataSource[0].asset / (dataSource[0].asset + dataSource[1].asset)) * 100);
     dataSource[1].assetRate = 100 - dataSource[0].assetRate;
   }
   const option = {
@@ -195,40 +203,60 @@ function getCustomTypeChartData(data) {
   if (data.custTypePer) {
     dataSource[0].custNum = data.custTypePer.custNum || 0;
     dataSource[0].asset = data.custTypePer.asset || 0;
+  } else {
+    dataSource[0].custNum = 0;
+    dataSource[0].asset = 0;
   }
   if (data.custTypeOrg) {
     dataSource[1].custNum = data.custTypeOrg.custNum || 0;
     dataSource[1].asset = data.custTypeOrg.asset || 0;
+  } else {
+    dataSource[1].custNum = 0;
+    dataSource[1].asset = 0;
   }
   if (data.custTypeProd) {
     dataSource[2].custNum = data.custTypeProd.custNum || 0;
     dataSource[2].asset = data.custTypeProd.asset || 0;
+  } else {
+    dataSource[2].custNum = 0;
+    dataSource[2].asset = 0;
   }
 
   const custNumSum = dataSource[0].custNum + dataSource[1].custNum + dataSource[2].custNum;
   const assetSum = dataSource[0].asset + dataSource[1].asset + dataSource[2].asset;
 
   if (custNumSum === 0) {
-    dataSource[0].custNumRate = 0;
-    dataSource[1].custNumRate = 0;
-    dataSource[2].custNumRate = 0;
+    dataSource[0].custNumRate = 33.33;
+    dataSource[1].custNumRate = 33.33;
+    dataSource[2].custNumRate = 33.34;
   } else {
     dataSource[0].custNumRate =
-      ((dataSource[0].custNum / custNumSum) * 100).toFixed(2);
+      Math.floor((dataSource[0].custNum / custNumSum) * 100);
     dataSource[1].custNumRate =
-      ((dataSource[1].custNum / custNumSum) * 100).toFixed(2);
+      Math.floor((dataSource[1].custNum / custNumSum) * 100);
+    if (dataSource[1].custNumRate === 0 && dataSource[0].custNumRate !== 100) {
+      if (dataSource[1].custNum > dataSource[2].custNum) {
+        dataSource[1].custNumRate = 1;
+      }
+    }
     dataSource[2].custNumRate = 100 - dataSource[0].custNumRate - dataSource[1].custNumRate;
   }
   if (assetSum === 0) {
-    dataSource[0].assetRate = 0;
-    dataSource[1].assetRate = 0;
-    dataSource[2].assetRate = 0;
+    dataSource[0].assetRate = 33.33;
+    dataSource[1].assetRate = 33.33;
+    dataSource[2].assetRate = 33.34;
   } else {
     dataSource[0].assetRate =
-      ((dataSource[0].asset / assetSum) * 100).toFixed(2);
+      Math.floor((dataSource[0].asset / assetSum) * 100);
     dataSource[1].assetRate =
-      ((dataSource[1].asset / assetSum) * 100).toFixed(2);
-    dataSource[2].assetRate = 100 - dataSource[0].custNumRate - dataSource[1].custNumRate;
+      Math.floor((dataSource[1].asset / assetSum) * 100);
+
+    if (dataSource[1].assetRate === 0 && dataSource[0].assetRate !== 100) {
+      if (dataSource[1].asset > dataSource[2].asset) {
+        dataSource[1].assetRate = 1;
+      }
+    }
+    dataSource[2].assetRate = 100 - dataSource[0].assetRate - dataSource[1].assetRate;
   }
   const option = {
     grid: {
@@ -500,13 +528,13 @@ function getMaxCostRateChartData(data) {
 // 盈亏幅度
 function getPftAmtChartData(data) {
   const xAxisLabel = [
-    '-100', '-50', '-30', '-10', '-5', '-1', '0',
-    '1', '5', '10', '30', '50', '100'
+    '-100', '-50', '-10', '-5', '-1', '0',
+    '1', '5', '10', '50', '100'
   ];
   let dataSource = [
     {
       name: '亏损大于100万元',
-      value: 100,
+      value: 0,
       filterValue: {
         minVal: null,
         maxVal: '-1000000',
@@ -516,7 +544,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '亏损在50-100万元',
-      value: 52,
+      value: 0,
       filterValue: {
         minVal: '-1000000',
         maxVal: '-500000',
@@ -525,28 +553,18 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '亏损在30-50万元',
-      value: 210,
+      name: '亏损在10-50万元',
+      value: 0,
       filterValue: {
         minVal: '-500000',
-        maxVal: '-300000',
-      },
-      filterName: '收益',
-      filterId: 'pftAmt',
-    },
-    {
-      name: '亏损在10-30万元',
-      value: 324,
-      filterValue: {
-        minVal: '-300000',
         maxVal: '-100000',
       },
       filterName: '收益',
       filterId: 'pftAmt',
     },
     {
-      name: '亏损在10-5万元',
-      value: 431,
+      name: '亏损在5-10万元',
+      value: 0,
       filterValue: {
         minVal: '-100000',
         maxVal: '-50000',
@@ -555,8 +573,8 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '亏损在5-1万元',
-      value: 516,
+      name: '亏损在1-5万元',
+      value: 0,
       filterValue: {
         minVal: '-50000',
         maxVal: '-10000',
@@ -566,7 +584,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '亏损在1万元以内',
-      value: 219,
+      value: 0,
       filterValue: {
         minVal: '-10000',
         maxVal: '0',
@@ -576,7 +594,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '盈利在1万元以内',
-      value: 123,
+      value: 0,
       filterValue: {
         minVal: '0',
         maxVal: '10000',
@@ -586,7 +604,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '盈利在1-5万元',
-      value: 93,
+      value: 0,
       filterValue: {
         minVal: '10000',
         maxVal: '50000',
@@ -596,7 +614,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '盈利在5-10万元',
-      value: 223,
+      value: 0,
       filterValue: {
         minVal: '50000',
         maxVal: '100000',
@@ -605,20 +623,10 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈利在10-30万元',
-      value: 323,
+      name: '盈利在10-50万元',
+      value: 0,
       filterValue: {
         minVal: '100000',
-        maxVal: '300000',
-      },
-      filterName: '收益',
-      filterId: 'pftAmt',
-    },
-    {
-      name: '盈利在30-50万元',
-      value: 183,
-      filterValue: {
-        minVal: '300000',
         maxVal: '500000',
       },
       filterName: '收益',
@@ -626,7 +634,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '盈利在50-100万元',
-      value: 143,
+      value: 0,
       filterValue: {
         minVal: '500000',
         maxVal: '1000000',
@@ -636,7 +644,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '盈利在100万元以上',
-      value: 353,
+      value: 0,
       filterValue: {
         minVal: '1000000',
         maxVal: null,
@@ -648,7 +656,7 @@ function getPftAmtChartData(data) {
   if (data.profitAndLossMargin) {
     dataSource = _.map(dataSource, (item, index) => ({
       ...item,
-      value:
+     value:
         (data.profitAndLossMargin[index] && data.profitAndLossMargin[index].custNum) || 0,
     }));
   }

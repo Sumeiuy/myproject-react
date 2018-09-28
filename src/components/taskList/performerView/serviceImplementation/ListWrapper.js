@@ -2,8 +2,8 @@
  * 服务实施列表显示容器
  * @Author: WangJunJun
  * @Date: 2018-09-11 16:14:31
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-11 18:19:57
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-25 17:23:04
  */
 
 import React, { PureComponent } from 'react';
@@ -48,7 +48,9 @@ export default class ListWrapper extends PureComponent {
 
   render() {
     const { size, children, wrapperClassName } = this.props;
-    const listItemWidth = Math.floor(this.state.wrapperWidth / size);
+    // 有时候算出来的值会不是很合适，导致放置所有的列表项的时候回出现溢出的现象，
+    // 所以这边多扣除 30px 是的在所有情况下均显示正常，不换行
+    const listItemWidth = Math.floor((this.state.wrapperWidth -30) / size);
     const cls = cx(
       styles.list,
       {

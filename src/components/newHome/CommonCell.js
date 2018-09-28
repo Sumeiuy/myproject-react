@@ -14,11 +14,22 @@ import classnames from 'classnames';
 
 
 import antdStyles from '../../css/antd.less';
+import { number } from '../../helper';
 import styles from './commonCell.less';
 import classes from '../customerPool/home/performanceIndicators__.less';
 
 export default function CommonCell(props) {
-  const { isNeedTitle, title, icon, data, isNeedExtra, extraText, onExtraClick, onValueClick } = props;
+  const {
+    isNeedTitle,
+    title,
+    icon,
+    data,
+    isNeedExtra,
+    extraText,
+    onExtraClick,
+    onClick,
+    valueStyle,
+  } = props;
   // 渲染 Popover
   const renderPopver = item => {
     const { name, description = '' } = item;
@@ -41,15 +52,23 @@ export default function CommonCell(props) {
     return <span title={name}>{name}</span>;
   };
   // 渲染列表
-  const renderList = !_.isEmpty(data) && data.map(item => {
+  const renderList = _.map(data, (item, index) => {
     const { code, id = '', value, title } = item;
+    const liKey = `${id || code}${index}`;
+    const showValue = number.formatToUnit({
+      num: value,
+      floatLength: 1,
+      isRound: false,
+    });
     return (
-      <li className={styles.item} key={code || id}>
+      <li className={styles.item} key={liKey} onClick={() => onClick(item)}>
         <div>
           {renderPopver(item)}
         </div>
         <div>
-          <span onClick={() => onValueClick(item)} title={title || value}>{value}</span>
+          <span title={title || value} style={valueStyle}>
+            {showValue}
+          </span>
         </div>
       </li>
     );
@@ -101,7 +120,9 @@ CommonCell.propTypes = {
   // 额外的点击事件
   onExtralick: PropTypes.func,
   // value 的点击事件
-  onValueClick: PropTypes.func,
+  onClick: PropTypes.func,
+  // 数值的样式
+  valueStyle: PropTypes.object,
 };
 
 CommonCell.defaultProps = {
@@ -112,5 +133,6 @@ CommonCell.defaultProps = {
   isNeedExtra: false,
   extraText: '更多',
   onExtralick: _.noop,
-  onValueClick: _.noop,
+  onClick: _.noop,
+  valueStyle: {},
 };

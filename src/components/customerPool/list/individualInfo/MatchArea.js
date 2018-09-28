@@ -4,8 +4,8 @@
  * @author xiaZhiQiang
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 14:46:29
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-09-28 09:12:46
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -291,7 +291,7 @@ export default class MatchArea extends PureComponent {
     const filter = this.getFilters();
     const currentFilter = filter[id];
     const cycleCode = currentFilter[0];
-    const { value } = _.find(kPIDateScopeType, cycleItem => cycleItem.key === cycleCode);
+    const { value } = _.find(kPIDateScopeType, cycleItem => cycleItem.key === cycleCode) || {};
     return value;
   }
 

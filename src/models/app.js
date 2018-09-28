@@ -11,6 +11,12 @@ import { EVENT_PROFILE_ACTION } from '../config/log';
 import { emp, permission } from '../helper';
 import { CREATE } from '../config/serviceRecord';
 
+import { dva as dvaHelper, url as urlHelper } from '../helper';
+
+const FIRST_TAB = '1';
+// 第二个tab的状态
+const SECOND_TAB = '2';
+
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 export default {
@@ -18,6 +24,8 @@ export default {
   state: {
     // 字典数据
     dict: {},
+    // 根据用户权限可以查看的菜单
+    menus: {},
     empInfo: EMPTY_OBJECT,
     // 列表
     seibleList: EMPTY_OBJECT,
@@ -74,6 +82,18 @@ export default {
         ...state,
         empInfo: payload,
         creator,
+      };
+    },
+    // 根据用户权限可以查看的菜单
+    getMenusSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      const { primaryMenu = [], secondaryMenu = [] } = resultData;
+      return {
+        ...state,
+        menus: {
+          primaryMenu,
+          secondaryMenu,
+        },
       };
     },
     // 获取已申请客户列表
@@ -253,6 +273,31 @@ export default {
     },
   },
   effects: {
+    // 获取员工职责与职位, 以及职位对应的菜单
+    * getEmpInfoAndMenu({ payload }, { call, put }) {
+      const response = yield call(api.getEmpInfo);
+      const data = response.resultData;
+      if (data) {
+        // 设置保存用户信息,此处针对接口还未开发完成做的容错处理
+        // 针对该员工信息，后面会使用多个数据，将整个数据对象传递过去，方便扩展
+        emp.setEmpInfo(data);
+        // 初始化权方法
+        permission.init(data.empRespList);
+        yield put({
+          type: 'getEmpInfoSuccess',
+          payload: data,
+        });
+        // 获取菜单
+        yield put({
+          type: 'getMenus',
+          payload: {},
+        });
+        yield put({
+          type: EVENT_PROFILE_ACTION,
+          payload: data.empInfo,
+        });
+      }
+    },
     // 获取员工职责与职位
     * getEmpInfo({ payload }, { call, put }) {
       const response = yield call(api.getEmpInfo);
@@ -272,6 +317,14 @@ export default {
           payload: data.empInfo,
         });
       }
+    },
+    // 获取用户有权限查看的菜单
+    * getMenus({ payload }, { call, put }) {
+      const response = yield call(api.getMenus, payload);
+      yield put({
+        type: 'getMenusSuccess',
+        payload: response,
+      });
     },
     // 显示与隐藏创建服务记录弹框
     * toggleServiceRecordModal({ payload }, { put }) {
@@ -417,11 +470,47 @@ export default {
     },
   },
   subscriptions: {
-    setup({ dispatch }) {
+    setup({ dispatch, history }) {
       // 加载员工职责与职位
       dispatch({ type: 'getEmpInfo' });
       // 获取字典
       dispatch({ type: 'getDictionary' });
+
+      history.listen((location) => {
+        const {
+          pathname,
+          search: newSearch,
+        } = location;
+        if (pathname === '/sysOperate/platformParameterSetting/taskOperation/customerFeedback') {
+          const {
+            search: oldSearch,
+          } = dvaHelper.getLastLocation() || EMPTY_OBJECT;
+          const newQuery = urlHelper.parse(newSearch);
+          const oldQuery = urlHelper.parse(oldSearch);
+
+          const missionPayload = {
+            type: newQuery.childActiveKey || FIRST_TAB,
+            pageNum: newQuery.pageNum || 1,
+            pageSize: newQuery.pageSize || 20,
+          };
+          const feedbackPayload = {
+            keyword: '',
+            pageNum: newQuery.pageNum || 1,
+            pageSize: newQuery.pageSize || 20,
+          };
+          if (newQuery.parentActiveKey !== oldQuery.parentActiveKey) { // 父级tab状态发生变化请求对应面板数据
+            if (newQuery.parentActiveKey === SECOND_TAB) {
+              dispatch({ type: 'customerFeedback/getFeedbackList', payload: feedbackPayload });
+            } else {
+              dispatch({ type: 'customerFeedback/getMissionList', payload: missionPayload });
+            }
+          } else if (newQuery.childActiveKey !== oldQuery.childActiveKey) { // 任务类型tab状态发生变化
+            if (newQuery.parentActiveKey !== SECOND_TAB) {
+              dispatch({ type: 'customerFeedback/getMissionList', payload: missionPayload });
+            }
+          }
+        }
+      });
     },
   },
 };

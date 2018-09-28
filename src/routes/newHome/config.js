@@ -6,6 +6,7 @@
  * @Last Modified time: 2018-09-20 17:37:13
  */
 const DATE_FORMAT_STRING = 'YYYY-MM-DD';
+const MONTH_DATE_FORMAT = 'M月D日';
 const navArray = [
   {
     key: 'todayToDoNumbers',
@@ -39,5 +40,6 @@ const navArray = [
 
 export {
   DATE_FORMAT_STRING,
+  MONTH_DATE_FORMAT,
   navArray,
 };
