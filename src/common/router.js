@@ -489,7 +489,7 @@ export const getRouterData = (app) => {
         import('../routes/keyMonitorAccount/Home' /* webpackChunkName: "keyMonitorAccount" */)),
     },
     // 最新观点，直接进入
-    '/latestView': {
+    '/strategyCenter/latestView': {
       component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/Home' /* webpackChunkName: "latestView" */)),
     },
@@ -514,7 +514,7 @@ export const getRouterData = (app) => {
         import('../routes/latestView/IndustryThemeList' /* webpackChunkName: "industryThemeList" */)),
     },
     // 股票期权评估申请
-    '/stockOptionEvaluation': {
+    '/businessApplyment/option/stockOptionEvaluation': {
       component: dynamicWrapper(app, ['stockOptionEvaluation'], () =>
         import('../routes/stockOptionEvaluation/Home') /* webpackChunkName: "stockOptionEvaluation" */),
     },
@@ -524,7 +524,7 @@ export const getRouterData = (app) => {
         import('../routes/stockOptionEvaluation/ApplyEdit') /* webpackChunkName: "stockOptionEvaluationEdit" */),
     },
     // 线上销户
-    '/cancelAccountOL': {
+    '/businessApplyment/smallCrowd/cancelAccountOL': {
       component: dynamicWrapper(app, ['cancelAccountOL'], () =>
         import('../routes/cancelAccountOL/Home') /* webpackChunkName: "cancelAccountOL" */),
     },
@@ -533,8 +533,8 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['cancelAccountOL'], () =>
         import('../routes/cancelAccountOL/RejectHome') /* webpackChunkName: "cancelAccountOLReject" */),
     },
-    // 直接进入
-    '/accountLimit': {
+    // 账号限制管理
+    '/businessApplyment/smallCrowd/accountLimit': {
       component: dynamicWrapper(app, ['accountLimit'], () =>
         import('../routes/accountLimit/Home' /* webpackChunkName: "accountLimit" */)),
     },
@@ -552,7 +552,7 @@ export const getRouterData = (app) => {
         import('../routes/accountLimit/Notifies' /* webpackChunkName: "accountLimit_notifies" */)),
     },
     // 标签管理
-    '/labelManagement': {
+    '/customerPool/labelManagement': {
       component: dynamicWrapper(app, ['labelManagement'], () =>
         import('../routes/labelManagement/Home') /* webpackChunkName: "labelManagement" */),
     },
