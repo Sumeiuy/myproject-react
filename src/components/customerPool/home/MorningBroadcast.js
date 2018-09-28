@@ -42,7 +42,7 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '收听' } })
+  @logable({ type: 'Click', payload: { name: '收听晨报' } })
   onListen(newsId, audioFileId) {
     const { queryAudioFile, sourceList = [] } = this.props;
     const sourceFile = sourceList[newsId];
@@ -55,7 +55,7 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '停止播放' } })
+  @logable({ type: 'Click', payload: { name: '停止播放晨报' } })
   onHandleClose() {
     this.setState({
       activeMusic: '',
@@ -63,7 +63,7 @@ export default class MorningBroadcast extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '更多' } })
+  @logable({ type: 'Click', payload: { name: '更多晨报' } })
   openNewTab(url) {
     const { push } = this.context;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };

@@ -200,11 +200,11 @@ export default class BroadcastList extends PureComponent {
   @logable({
     type: 'Click',
     payload: {
-      name: '晨报标题',
-      value: '$args[0]',
+      name: '$args[0].title',
+      subtype: '$args[0].newsTypValue',
     },
   })
-  onHandleToDetail(newsId) {
+  onHandleToDetail({ newsId }) {
     const { push } = this.props;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
     const url = '/broadcastDetail';
@@ -228,11 +228,10 @@ export default class BroadcastList extends PureComponent {
       className: 'tableTitle',
       width: '35%',
       align: 'left',
-      render: (text, record) => {
-        const newId = record.newsId;
+      render: (text, record, index) => {
         return (
           <span
-            onClick={() => { this.onHandleToDetail(newId); }}
+            onClick={() => { this.onHandleToDetail(record); }}
             className={styles.textOverflow}
             style={{ cursor: 'pointer' }}
             title={text}
@@ -390,6 +389,7 @@ export default class BroadcastList extends PureComponent {
   }
 
   @autobind()
+  @logable({ type: 'Click', payload: { name: '取消' } })
   handleCancel() {
     this.setState({
       visible: false,

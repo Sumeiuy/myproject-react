@@ -87,7 +87,7 @@ export default class CustomerService extends PureComponent {
 
   // TODO 日志查看：页面中找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
+  @logable({ type: 'Click', payload: { name: '服务指标', subtype: '$args[0]', value: '$args[1]' } })
   handleToList() {
     const { cycle, location, push } = this.props;
     const params = {
@@ -128,7 +128,7 @@ export default class CustomerService extends PureComponent {
         </div>
         <div className={classnames(styles.column, styles.secondColumn)}>
           <IECharts
-            onEvents={{ click: this.handleToList }}
+            onEvents={{ click: () => {this.handleToList(_.last(data).name, _.last(data).value);} }}
             option={serviceOption}
             resizable
             style={{
@@ -144,7 +144,7 @@ export default class CustomerService extends PureComponent {
             overlayClassName={antdStyles.popoverClass}
           >
             <div
-              onClick={this.handleToList}
+              onClick={ () => {this.handleToList(_.last(data).name, _.last(data).value);} }
               className={styles.text}
             >{_.last(data).name || '--'}</div>
           </Popover>

@@ -281,6 +281,13 @@ export const homeModelType = {
   }],
 };
 
+// 首页各模块中不同类别的标识中文名
+export const homeModelTypeName = {
+  custIndicator: '新增客户',
+  productSale: '产品销售',
+  income: '净创收',
+};
+
 // 搜索搜索框中点击的且在客户列表没有筛选器的集合
 export const basicInfoList = [
   { labelName: '搜索的关键词', filterField: 'searchText' },
