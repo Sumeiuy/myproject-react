@@ -29,9 +29,12 @@ export default class MorningBroadcast extends PureComponent {
     isNewHome: PropTypes.bool,
   };
 
+  static defaultProps = {
+    isNewHome: false,
+  }
+
   static contextTypes = {
     push: PropTypes.func.isRequired,
-    isNewHome: false,
   }
 
   constructor(props) {
