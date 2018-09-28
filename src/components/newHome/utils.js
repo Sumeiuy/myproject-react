@@ -534,7 +534,7 @@ function getPftAmtChartData(data) {
   let dataSource = [
     {
       name: '亏损大于100万元',
-      value: 100,
+      value: 0,
       filterValue: {
         minVal: null,
         maxVal: '-1000000',
@@ -544,7 +544,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '亏损在50-100万元',
-      value: 52,
+      value: 0,
       filterValue: {
         minVal: '-1000000',
         maxVal: '-500000',
@@ -554,7 +554,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '亏损在10-50万元',
-      value: 210,
+      value: 0,
       filterValue: {
         minVal: '-500000',
         maxVal: '-100000',
@@ -564,7 +564,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '亏损在5-10万元',
-      value: 431,
+      value: 0,
       filterValue: {
         minVal: '-100000',
         maxVal: '-50000',
@@ -574,7 +574,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '亏损在1-5万元',
-      value: 516,
+      value: 0,
       filterValue: {
         minVal: '-50000',
         maxVal: '-10000',
@@ -584,7 +584,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '亏损在1万元以内',
-      value: 219,
+      value: 0,
       filterValue: {
         minVal: '-10000',
         maxVal: '0',
@@ -594,7 +594,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '盈利在1万元以内',
-      value: 123,
+      value: 0,
       filterValue: {
         minVal: '0',
         maxVal: '10000',
@@ -604,7 +604,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '盈利在1-5万元',
-      value: 93,
+      value: 0,
       filterValue: {
         minVal: '10000',
         maxVal: '50000',
@@ -614,7 +614,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '盈利在5-10万元',
-      value: 223,
+      value: 0,
       filterValue: {
         minVal: '50000',
         maxVal: '100000',
@@ -624,7 +624,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '盈利在10-50万元',
-      value: 183,
+      value: 0,
       filterValue: {
         minVal: '100000',
         maxVal: '500000',
@@ -634,7 +634,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '盈利在50-100万元',
-      value: 143,
+      value: 0,
       filterValue: {
         minVal: '500000',
         maxVal: '1000000',
@@ -644,7 +644,7 @@ function getPftAmtChartData(data) {
     },
     {
       name: '盈利在100万元以上',
-      value: 353,
+      value: 0,
       filterValue: {
         minVal: '1000000',
         maxVal: null,

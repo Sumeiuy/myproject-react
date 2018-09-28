@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-11 14:38:00
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-20 17:06:18
+ * @Last Modified time: 2018-09-27 15:00:26
  * @description models/advisorSpace.js
  */
 
@@ -24,7 +24,7 @@ export default {
     // 参与人列表
     participantData: {},
     // 取消预订结果
-    cancelReservationResult: '',
+    cancelReservationResult: false,
     // 已预订时间段列表
     orderPeriodList: [],
   },

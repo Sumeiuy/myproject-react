@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-07-09 13:57:57
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-09-20 17:23:47
+ * @Last Modified time: 2018-09-27 15:46:10
  * @description 投顾空间申请首页
  */
 import React from 'react';
@@ -68,43 +68,43 @@ export default function Detail(props) {
   return (
     <DetailWrap isEmpty={isEmpty} currentId={`${id}`} extra={cancelBtn}>
       <div className={styles.module}>
-      <InfoTitle head="预定信息" />
-      <div className={styles.modContent}>
-        <ul className={styles.dpertyList}>
-          <li className={styles.item}>
-            <InfoItem label="预约时间" value={orderFullTime} width="130px" />
-          </li>
-          <li className={styles.item}>
-            <InfoItem label="智慧前厅" value={roomName} width="130px" />
-          </li>
-          <li className={styles.item}>
-            <InfoItem label="主题" value={theme} width="130px" />
-          </li>
-          <li className={styles.item}>
-            <InfoItem label="参与人" value={participant} width="130px" />
-          </li>
-          <li className={styles.item}>
-            <InfoItem label="备注" value={remark} width="130px" />
-          </li>
-        </ul>
+        <InfoTitle head="预定信息" />
+        <div className={styles.modContent}>
+          <ul className={styles.dpertyList}>
+            <li className={styles.item}>
+              <InfoItem label="预约时间" value={orderFullTime} width="130px" />
+            </li>
+            <li className={styles.item}>
+              <InfoItem label="智慧前厅" value={roomName} width="130px" />
+            </li>
+            <li className={styles.item}>
+              <InfoItem label="主题" value={theme} width="130px" />
+            </li>
+            <li className={styles.item}>
+              <InfoItem label="参与人" value={participant} width="130px" />
+            </li>
+            <li className={styles.item}>
+              <InfoItem label="备注" value={remark} width="130px" />
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-    <div className={styles.module}>
-      <InfoTitle head="拟稿信息" />
-      <div className={styles.modContent}>
-        <ul className={styles.dpertyList}>
-          <li className={styles.item}>
-            <InfoItem label="拟稿人" value={emp} width="130px" />
-          </li>
-          <li className={styles.item}>
-            <InfoItem label="申请时间" value={createTime} width="130px" />
-          </li>
-          <li className={styles.item}>
-            <InfoItem label="状态" value={statusValue} width="130px" />
-          </li>
-        </ul>
+      <div className={styles.module}>
+        <InfoTitle head="拟稿信息" />
+        <div className={styles.modContent}>
+          <ul className={styles.dpertyList}>
+            <li className={styles.item}>
+              <InfoItem label="拟稿人" value={emp} width="130px" />
+            </li>
+            <li className={styles.item}>
+              <InfoItem label="申请时间" value={createTime} width="130px" />
+            </li>
+            <li className={styles.item}>
+              <InfoItem label="状态" value={statusValue} width="130px" />
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
     </DetailWrap>
   );
 }

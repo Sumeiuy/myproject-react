@@ -52,23 +52,22 @@ export default function CommonCell(props) {
     return <span title={name}>{name}</span>;
   };
   // 渲染列表
-  const renderList = !_.isEmpty(data) && data.map(item => {
+  const renderList = _.map(data, (item, index) => {
     const { code, id = '', value, title } = item;
+    const liKey = `${id || code}${index}`;
+    const showValue = number.formatToUnit({
+      num: value,
+      floatLength: 1,
+      isRound: false,
+    });
     return (
-      <li className={styles.item} key={code || id}>
-        <div onClick={() => onClick(item)}>
+      <li className={styles.item} key={liKey} onClick={() => onClick(item)}>
+        <div>
           {renderPopver(item)}
         </div>
         <div>
           <span title={title || value} style={valueStyle}>
-            {number.formatToUnit({
-              // 传入的数字
-              num: value,
-              // 是否格式化千分符
-              isThousandFormat: true,
-              // 小数部分长度
-              floatLength: 1,
-            })}
+            {showValue}
           </span>
         </div>
       </li>
