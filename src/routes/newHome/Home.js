@@ -103,8 +103,6 @@ const mapDispatchToProps = {
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-// 登陆人的组织 ID
-const orgId = emp.getOrgId();
 // 事件提示的 code
 const TODAY_EVENT_CODE = '4';
 
@@ -162,6 +160,8 @@ export default class Home extends PureComponent {
       // 是否显示查看更多标签弹窗
       showMoreLabelModal: false,
     };
+    // 登陆人的组织 ID
+    this.loginOrgId = emp.getOrgId();
   }
 
   componentDidMount() {
@@ -177,7 +177,7 @@ export default class Home extends PureComponent {
     } = this.props;
     const date = moment().format(DATE_FORMAT_STRING);
     // 重点关注
-    queryKeyAttention({ orgId });
+    queryKeyAttention({ orgId: this.loginOrgId });
     // 猜你感兴趣
     queryGuessYourInterests();
     // 产品日历
@@ -201,10 +201,10 @@ export default class Home extends PureComponent {
 
     // 待办事项, 有任务管理岗时，将岗位id传给后端
     // 判断当前登录用户是否在非营业部
-    const isNotSaleDepartment = emp.isManagementHeadquarters(orgId)
-      || emp.isFiliale(custRange, orgId);
+    const isNotSaleDepartment = emp.isManagementHeadquarters(this.loginOrgId)
+      || emp.isFiliale(custRange, this.loginOrgId);
     // 非营业部登录用户有权限时，传登陆者的orgId
-    queryNumbers({ orgId: isNotSaleDepartment && permission.hasTkMampPermission() ? orgId : '' });
+    queryNumbers({ orgId: isNotSaleDepartment && permission.hasTkMampPermission() ? this.loginOrgId : '' });
   }
 
   // 猜你感兴趣-更多点击事件
