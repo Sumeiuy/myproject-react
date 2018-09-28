@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 15:42:30
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-28 16:18:58
+ * @Last Modified time: 2018-09-28 16:31:48
  * @description 临时委托任务的配置项
  */
 import _ from 'lodash';
@@ -15,6 +15,7 @@ const applyTime = {
     filterName: '申请时间',  // 过滤器中文名称
     filterId: 'applyTime', // 过滤器英文代号, 首字母小写
     type: 'date', // 过滤器类型
+    allowClear: true,
   },
   filterOption: ['createTime', 'createTimeTo'],
 };
