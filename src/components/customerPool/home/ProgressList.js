@@ -89,7 +89,8 @@ export default class ProgressList extends PureComponent {
     type: 'DrillDown',
     payload: {
       name: '新增客户',
-      element: '$args[1].cust',
+      subtype: '$args[1].cust',
+      value: '$args[1].count',
     },
   })
   handleClick(index, item) {

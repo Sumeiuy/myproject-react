@@ -18,7 +18,7 @@ import IfEmpty from '../common/IfEmpty';
 import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
 import ProgressList from './ProgressList__';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import { homeModelType } from '../config';
 import {
   getHSRate,
@@ -102,13 +102,6 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DrillDown',
-    payload: {
-      name: '业务开通',
-      element: '$args[1].value',
-    },
-  })
   handleClick(labelList, arg) {
     const {
       cycle,
@@ -127,6 +120,15 @@ export default class PerformanceIndicators extends PureComponent {
         item => _.includes(item.value, name)) || {};
     param.value = currentSingleBusinessType.key;
     linkTo(param);
+    // log日志 --- 业务开通
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: '业务开通',
+        subtype: arg.name,
+        value: arg.value,
+      },
+    });
   }
 
   @autobind
@@ -350,7 +352,14 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '沪深归集率下钻' } })
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '沪深归集率下钻',
+      subtype: '$args[0]',
+      value: '$args[1]',
+    }
+  })
   aggregationToList() {
     const { push } = this.context;
     const {
@@ -365,7 +374,6 @@ export default class PerformanceIndicators extends PureComponent {
     };
     linkTo(param);
   }
-
 
   // 沪深归集率
   renderHSRateIndicators(param) {
@@ -403,7 +411,7 @@ export default class PerformanceIndicators extends PureComponent {
               >
               <div
                 className={styles.clickContent}
-                onClick={this.aggregationToList}
+                onClick={() => {this.aggregationToList( param.data, data.value || 0 ); }}
               />
               </Popover>
           </IfEmpty>
@@ -448,6 +456,14 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 服务指标（投顾绩效）下钻
   @autobind
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '服务指标',
+      subtype: '$args[1]',
+      value: '$args[2]',
+    }
+  })
   toList(dataIndex) {
     const { push } = this.context;
     const {
@@ -509,7 +525,7 @@ export default class PerformanceIndicators extends PureComponent {
                 >
                   <span
                     className={trueStyles.chartLabel}
-                    onClick={() => { this.toList(0); }}
+                    onClick={() => { this.toList(0, data[0].value, data[0].name); }}
                   >
                     {data[0] && data[0].name}
                   </span>

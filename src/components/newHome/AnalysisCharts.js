@@ -119,7 +119,7 @@ export default class PerformanceIndicators extends PureComponent {
     type: 'DrillDown',
     payload: {
       name: '$args[0].filterName',
-      element: '$args[0].name',
+      subtype: '$args[0].name',
     },
   })
   navToCustomerList(item) {
