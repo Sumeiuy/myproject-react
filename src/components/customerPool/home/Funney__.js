@@ -30,7 +30,6 @@ function getDataConfig(data) {
   }));
 }
 
-
 function Funney({ dataSource, push, cycle, location }, { empInfo }) {
   const { data, color } = dataSource;
   const funnelOption = {
@@ -96,7 +95,7 @@ function Funney({ dataSource, push, cycle, location }, { empInfo }) {
         payload: {
           name: '客户及资产',
           subtype: name,
-          value: '',
+          value: arg.value,
         },
       });
     });
