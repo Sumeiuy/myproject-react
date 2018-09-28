@@ -14,6 +14,7 @@ import classnames from 'classnames';
 import { Popover } from 'antd';
 import _ from 'lodash';
 import antdStyles from '../../../css/antd.less';
+import { logCommon } from '../../../decorators/logable';
 import styles from './checkLayout.less';
 import {
   linkTo,
@@ -22,15 +23,24 @@ import {
 const SOURCE = 'assetsTransactions';
 const TYPE_LIST = ['purFinAset', 'gjAmt', 'synthesis', 'gjPurRake'];
 
+
 function renderItem(data = {}, params, itemStyle = null) {
   const param = {
     ...params,
     source: SOURCE,
     type: data.type,
   };
-
   const linkToList = () => {
     const isLinkTo = data.type !== TYPE_LIST[2];
+    // 手动上传日志 客户及资产
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: '客户及资产',
+        subtype: data.title,
+        value: data.item,
+      },
+    });
     if (isLinkTo) {
       linkTo(param);
     }

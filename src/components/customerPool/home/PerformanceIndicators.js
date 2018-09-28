@@ -163,16 +163,6 @@ export default class PerformanceIndicators extends PureComponent {
         });
       }, 200);
     });
-    // log日志 --- 业务开通
-    logCommon({
-      type: 'DrillDown',
-      payload: {
-        name: '业务开通11',
-        subtype: 'arg.name',
-        value: 'arg.value',
-      },
-    });
-
     instance.on('mouseout', () => {
       clearTimeout(timeout);
       this.setState({
@@ -270,7 +260,6 @@ export default class PerformanceIndicators extends PureComponent {
     ];
   }
 
-  @autobind
   renderIndictors(item, category) {
     if (item.key === 'kehujizichan') {
       return this.renderCustAndPropertyIndicator(item);
@@ -292,21 +281,10 @@ export default class PerformanceIndicators extends PureComponent {
     return null;
   }
 
-  // 服务指标（经营指标）
-  @autobind
   renderManagerServiceIndicators(param) {
     const { push } = this.context;
     const { cycle, location } = this.props;
     const headLine = { icon: 'kehufuwu', title: param.headLine };
-    // log日志 --- 业务开通
-    logCommon({
-      type: 'DrillDown',
-      payload: {
-        name: '业务开通231',
-        subtype: 'arg.name',
-        value: 'arg.value',
-      },
-    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
@@ -323,22 +301,12 @@ export default class PerformanceIndicators extends PureComponent {
     );
   }
 
-  // 客户及资产（投顾绩效）
-  @autobind
   renderCustAndPropertyIndicator(param) {
     const { push } = this.context;
     const { cycle, location } = this.props;
     const data = getCustAndProperty(param.data);
     const headLine = { icon: 'kehu', title: param.headLine };
-    // log日志 --- 客户及资产
-    logCommon({
-      type: 'DrillDown',
-      payload: {
-        name: headLine.title,
-        subtype: param.data,
-        value: '',
-      },
-    });
+
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
@@ -356,6 +324,7 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   // 业务开通数（投顾绩效）
+  @autobind
   renderBusinessIndicator(param) {
     const argument = this.getNameAndValue(param.data, filterEmptyToInteger);
     const { newUnit, items } = getClientsNumber(argument);
@@ -379,7 +348,14 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '沪深归集率下钻' } })
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '沪深归集率下钻',
+      subtype: '$args[0]',
+      value: '$args[1]',
+    }
+  })
   aggregationToList() {
     const { push } = this.context;
     const {
@@ -393,19 +369,10 @@ export default class PerformanceIndicators extends PureComponent {
       location,
     };
     linkTo(param);
-    // log日志 --- 服务指标
-    logCommon({
-      type: 'DrillDown',
-      payload: {
-        name: '',
-        subtype: param.data,
-        value: '',
-      },
-    });
   }
 
-
   // 沪深归集率
+  @autobind
   renderHSRateIndicators(param) {
     const { value = '' } = param.data[0] || {};
     const data = getHSRate([filterEmptyToNumber(value)]);
@@ -416,15 +383,6 @@ export default class PerformanceIndicators extends PureComponent {
     if (shzNpRate && shzNpRate.description) {
       description = shzNpRate.description;
     }
-    // log日志 --- 服务指标
-    logCommon({
-      type: 'DrillDown',
-      payload: {
-        name: headLine.title,
-        subtype: param.data,
-        value: '',
-      },
-    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame
@@ -450,7 +408,7 @@ export default class PerformanceIndicators extends PureComponent {
               >
               <div
                 className={styles.clickContent}
-                onClick={this.aggregationToList}
+                onClick={() => {this.aggregationToList( param.data, data.value || 0 ); }}
               />
               </Popover>
           </IfEmpty>
@@ -468,15 +426,6 @@ export default class PerformanceIndicators extends PureComponent {
     const finalData = getProductSale(argument);
     const headLine = { icon: 'shouru', title: param.headLine };
     const type = param.key === SOURCE_PRODUCT_SALE ? 'productSale' : 'income';
-    // log日志 --- 服务指标
-    logCommon({
-      type: 'DrillDown',
-      payload: {
-        name: headLine.title,
-        subtype: param.data,
-        value: '',
-      },
-    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
@@ -499,20 +448,19 @@ export default class PerformanceIndicators extends PureComponent {
   handleServiceToListClick(instance) {
     instance.on('click', (arg) => {
       this.toList(arg.dataIndex);
-      // log日志 --- 服务指标
-    logCommon({
-      type: 'DrillDown',
-      payload: {
-        name: arg.name,
-        subtype: arg.value,
-        value: '',
-      },
-    });
     });
   }
 
   // 服务指标（投顾绩效）下钻
   @autobind
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '服务指标',
+      subtype: '$args[1]',
+      value: '$args[2]',
+    }
+  })
   toList(dataIndex) {
     const { push } = this.context;
     const {
@@ -531,18 +479,10 @@ export default class PerformanceIndicators extends PureComponent {
       };
       linkTo(param);
     }
-    // log日志 --- 业务开通
-    logCommon({
-      type: 'DrillDown',
-      payload: {
-        name: '业务开通',
-        subtype:' arg.name',
-        value: '',
-      },
-    });
   }
 
   // 服务指标（投顾绩效）
+  @autobind
   renderServiceIndicators(param) {
     const performanceData = [];
     const colors = ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'];
@@ -559,15 +499,6 @@ export default class PerformanceIndicators extends PureComponent {
     const headLine = { icon: 'kehufuwu', title: param.headLine };
     const { data } = param;
     const trueStyles = this.props.isNewHome ? classes : styles;
-    // log日志 --- 服务指标
-    logCommon({
-      type: 'DrillDown',
-      payload: {
-        name: headLine.title,
-        subtype: param.data,
-        value: '',
-      },
-    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
@@ -592,7 +523,7 @@ export default class PerformanceIndicators extends PureComponent {
                 >
                   <span
                     className={trueStyles.chartLabel}
-                    onClick={() => { this.toList(0); }}
+                    onClick={() => { this.toList(0, data[0].value, data[0].name); }}
                   >
                     {data[0] && data[0].name}
                   </span>
@@ -660,15 +591,6 @@ export default class PerformanceIndicators extends PureComponent {
       pureAddData: isEmpty ? [0, 0, 0, 0] : custCount,
     });
     const headLine = { icon: 'kehu', title: `新增客户（${pureAddUnit}）` };
-    // log日志 --- 服务指标
-    logCommon({
-      type: 'DrillDown',
-      payload: {
-        name: headLine.title,
-        subtype: param.data,
-        value: '',
-      },
-    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
@@ -698,15 +620,6 @@ export default class PerformanceIndicators extends PureComponent {
     const argument = this.getNameAndValue(param.data, filterEmptyToNumber);
     const finalTradeingVolumeData = getTradingVolume(argument);
     const headLine = { icon: 'chanpinxiaoshou', title: param.headLine };
-    // log日志 --- 服务指标
-    logCommon({
-      type: 'DrillDown',
-      payload: {
-        name: headLine.title,
-        subtype: param.data,
-        value: '',
-      },
-    });
     return (
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
@@ -721,7 +634,6 @@ export default class PerformanceIndicators extends PureComponent {
       </Col>
     );
   }
-
   render() {
     const { indicators, category, isNewHome } = this.props;
     const { posX, posY, isToolTipVisible, desc, title } = this.state;

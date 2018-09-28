@@ -89,10 +89,12 @@ export default class ProgressList extends PureComponent {
     type: 'DrillDown',
     payload: {
       name: '新增客户',
-      element: '$args[1].cust',
+      subtype: '$args[1].cust',
+      value: '$args[1].count',
     },
   })
   handleClick(index, item) {
+    console.warn('zm:log', item);
     const { cycle, push, location } = this.props;
     const bname = this.transformName(item.cust);
     const param = {

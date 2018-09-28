@@ -12,7 +12,7 @@ import { Progress, Popover } from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { linkTo } from './homeIndicators_';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 
 import antdStyles from '../../../css/antd.less';
 import styles from './progressList.less';
@@ -85,14 +85,8 @@ export default class ProgressList extends PureComponent {
 
   /*
   */
+  // TODO 日志查看：
   @autobind
-  @logable({
-    type: 'DrillDown',
-    payload: {
-      name: '新增客户',
-      element: '$args[1].cust',
-    },
-  })
   handleClick(index, item) {
     const { push } = this.context;
     const { cycle, location, type } = this.props;
@@ -116,6 +110,24 @@ export default class ProgressList extends PureComponent {
       }
       linkTo(param);
     }
+
+    function getCurrentName() {
+      if (type === 'income') {
+        return '净收入';
+      } else if(type === 'productSale') {
+        return '产品销售';
+      }
+      return '新增客户';
+    }
+    // log日志 --- 业务开通
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: getCurrentName(),
+        subtype: item.cust,
+        value: item.count,
+      },
+    });
   }
 
   // 根据现有的name返回列表页所需要展示的 name文案
