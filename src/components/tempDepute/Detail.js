@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 16:26:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-28 15:26:35
+ * @Last Modified time: 2018-09-28 15:58:35
  * @description 临时委托任务右侧详情组件
  */
 
@@ -93,7 +93,7 @@ export default function Detail(props) {
       isEmpty={isEmpty}
       currentId={`${itemId}`}
       extra={revertBtn}
-      extraIsFllowTitle
+      extraIsFllowTitle={hasRevertBtn && disbaledRevertBtn}
     >
       <div className={styles.module}>
         <InfoTitle head="委托信息" />
