@@ -179,7 +179,7 @@ export default class Home extends PureComponent {
     // 重点关注
     queryKeyAttention({ orgId: this.loginOrgId });
     // 猜你感兴趣
-    queryGuessYourInterests();
+    queryGuessYourInterests({ orgId: this.loginOrgId });
     // 产品日历
     queryProductCalendar({date});
     // 首席观点
