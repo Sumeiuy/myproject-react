@@ -51,6 +51,12 @@ module.exports = {
       {
         target: 'http://168.61.8.82:5086', // uat
       },
+      prefix + '/groovynoauth/fsp/campaign/mot/queryCustBacklogTaskList',
+      {
+        // target: 'http://168.61.8.82:5086', // uat
+        // target: 'http://168.61.8.81:5087', // SIT
+        target: 'http://168.61.8.81:5090', // DOClever
+      },
       prefix,
       {
         target: 'http://168.61.8.82:5086', // uat

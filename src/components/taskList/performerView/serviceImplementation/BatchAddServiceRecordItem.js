@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 批量添加服务记录项
  * @Date: 2018-08-17 11:31:18
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 13:38:47
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-10-08 14:57:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -300,6 +300,23 @@ export default class BatchAddServiceRecordItem extends PureComponent {
   @autobind
   handleUploadSuccess(attachment) {
     this.handleFormChange(FEEDBACK_ATTACHMENT_KEY, attachment);
+  }
+
+  @autobind
+  renderTaskTitle(data) {
+    const { eventName, executeType } = data;
+    // 判断是否是必做任务，如果是必做任务，则需要在任务名称后跟随一个必做旗帜
+    const isMustDoneTask = executeType === 'Mission';
+    return (
+      <div className={styles.titleArea}>
+        <span className={styles.titleText}>{eventName}</span>
+        {
+          isMustDoneTask
+          ? (<span className={styles.typeLabel}><Icon type="bizuo" /></span>)
+          : null
+        }
+      </div>
+    );
   }
 
   render() {
