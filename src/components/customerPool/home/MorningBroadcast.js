@@ -131,7 +131,7 @@ export default class MorningBroadcast extends PureComponent {
                   const sourceFile = sourceList[newsId];
                   const audioSrc = sourceFile && this.getAudioSrc(sourceFile);
                   return (
-                    <div key={newsId} className={trueStyles.item}>
+                    <div key={newsId} className={trueStyles.activeItem}>
                       <div
                         className={trueStyles.simpleName}
                       >
