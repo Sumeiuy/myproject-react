@@ -4,7 +4,7 @@
   .title {
     font-size: 14px;
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 18px;
     justify-content: space-between;
     font-weight: bold;
     color: #333;
@@ -12,7 +12,7 @@
       height: 24px;
       line-height: 24px;
       color: #108ee9;
-      font-size: 12px;
+      font-size: 14px;
       cursor: pointer;
       font-weight: bold;
     }
@@ -27,9 +27,9 @@
     justify-content: space-between;
     align-items: center;
     height: 24px;
-    margin: 4px 0;
+    margin: 4px 0 20px;
     .simpleName {
-      display: none;
+      display: block;
       position: relative;
       width: 75px;
       height: 24px;
@@ -77,6 +77,38 @@
       height: 16px;
       background: url(../../../../static/svg/open.svg) round;
       cursor: pointer;
+    }
+  }
+  .activeItem {
+    height: 24px;
+    margin: 4px 0 24px;
+    .simpleName {
+      display: block;
+      position: relative;
+      height: 24px;
+      color: @main-color;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: inherit;
+      white-space: nowrap;
+    }
+    .music {
+      height: 20px;
+      position: relative;
+      background: #fafafa;
+      .close {
+        position: absolute;
+        right: 0;
+        top: 3px;
+        color: #999;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      &:hover {
+        .close {
+          display: block;
+        }
+      }
     }
   }
 }
