@@ -23,6 +23,7 @@ function parseJSON(response, options) {
     ignoreCatch = false,
     isFullUrl,
   } = options;
+
   return response.json().then(
     (res) => {
       if (isFullUrl) {
@@ -33,12 +34,21 @@ function parseJSON(response, options) {
       // 如果是1，则用自定义的dialog弹出错误信息
       const { code, msg, succeed, messageType = 0 } = res;
       const existExclude = _.findIndex(excludeCode, o => o.code === code) > -1;
-      if (!existExclude && !succeed && !ignoreCatch) {
+      const isThrowError = !existExclude && !succeed && !ignoreCatch;
+      if (isThrowError) {
         // 抛出以分隔符为分隔的错误字符串信息
         throw new Error([msg, messageType, code].join(config.ERROR_SEPARATOR));
       }
       return res;
-    },
+    }
+  ).catch(
+    (e) => {
+      const isFSPRequest = /^\/fsp\//.test(options.currentUrl);
+      if (!isFSPRequest) {
+        // 抛出以分隔符为分隔的错误字符串信息
+        throw e;
+      }
+    }
   );
 }
 
@@ -76,7 +86,7 @@ const request = (url, options) => {
   return Promise.race([
     fetch(url, { credentials: 'include', ...options })
       .then(checkStatus)
-      .then(response => parseJSON(response, options)),
+      .then(response => parseJSON(response, { ...options, currentUrl: url})),
     new Promise(
       (rosolve, reject) => {// eslint-disable-line
         setTimeout(

@@ -9,21 +9,6 @@
       <link href="<%= htmlWebpackPlugin.files.css[key] %>" rel="stylesheet">
     <% } %>
     <!--<![endif]-->
-    <script>
-      if (location.hostname === 'localhost') {
-        var empId = '002332';
-        var nativeQuery = window.location.search;
-        if (nativeQuery) {
-          var queryList = nativeQuery.slice(1).split('=');
-          if (queryList[0] === 'empId') {
-            empId = queryList[1];
-          }
-        }
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/fsp/login?iv-user=' + empId)
-        xhr.send();
-      }
-    </script>
   </head>
   <body>
     <!--[if !IE]><!-->
