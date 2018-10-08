@@ -18,8 +18,8 @@ import { fixExternUrl } from '../utils/tab';
 const menuStyle = {
   border: '1px solid #ddd',
   borderRadius: '0 0 4px 4px',
-  minWidth: '100px',
-  maxWidth: '170px',
+  width: '190px',
+  padding: '8px 0',
 };
 
 export default class TabMenu extends PureComponent {
