@@ -37,6 +37,7 @@ import labelManagementAPI from './labelManagement';
 import tempDeputeAPI from './tempDepute';
 import newHomeAPI from './newHome';
 import advisorSpaceAPI from './advisorSpace';
+import customerDetailAPI from './customerDetail';
 
 const api = apiCreator();
 
@@ -152,6 +153,8 @@ const exported = {
   newHome: newHomeAPI(api),
   // ========== 投顾空间申请
   advisorSpace: advisorSpaceAPI(api),
+  // ========== 投顾空间申请
+  customerDetail: customerDetailAPI(api),
 };
 
 export default exported;
@@ -195,4 +198,5 @@ export const {
   tempDepute,
   newHome,
   advisorSpace,
+  customerDetail,
 } = exported;
