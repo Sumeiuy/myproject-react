@@ -28,10 +28,14 @@ function recursiveRouter(parentPath, routerData) {
   let childRouterArr = [];
   for (let j = 0, len = routes.length; j < len; j++) {
     const item = routes[j];
-
-    // 判断二级路由
-    if (item.indexOf('/') !== -1 && childRouterArr.indexOf(item.split('/')[0]) === -1) {
-      childRouterArr.push(item.split('/')[0]);
+    if (parentPath === '/') {
+      if (item.indexOf('/') !== -1 && childRouterArr.indexOf(item.split('/')[0]) === -1) {
+        childRouterArr.push(item.split('/')[0]);
+      }
+    } else {
+      if (item.lastIndexOf('/') > 0 && childRouterArr.indexOf(item.split('/')[1]) === -1) {
+        childRouterArr.push('/' + item.split('/')[1]);
+      }
     }
   }
   // 增加的二级路由存在，并且不在分布式配置路由名单中

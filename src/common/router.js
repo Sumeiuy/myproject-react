@@ -212,6 +212,10 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['customerPool', 'customerLabel'], () =>
         import('../routes/customerPool/CustomerList__' /* webpackChunkName: "customerPool_list" */ )),
     },
+    '/customerPool/list/detail': {
+      component: dynamicWrapper(app, ['customerPool'], () =>
+        import('../routes/customerPool/CustomerDetail' /* webpackChunkName: "customerPool_cust_detail" */)),
+    },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
       component: dynamicWrapper(app, ['customerPool'], () =>
