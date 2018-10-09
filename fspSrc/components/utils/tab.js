@@ -94,13 +94,12 @@ function tureAndstore(item, callback) {
   }
 }
 // 用来本地缓存tab信息的方法函数
-function storeTabInfo({ activeKey, panes, href, currentMenuId, routerHistory }) {
+function storeTabInfo({ activeKey, panes, href, currentMenuId }) {
   if (enableSessionStorage) {
     tureAndstore(activeKey, sessionStore.set.bind(sessionStore, 'activeKey'));
     tureAndstore(panes, sessionStore.set.bind(sessionStore, 'panes'));
     tureAndstore(href, sessionStore.set.bind(sessionStore, 'href'));
     tureAndstore(currentMenuId, sessionStore.set.bind(sessionStore, 'currentMenuId'));
-    tureAndstore(routerHistory, sessionStore.set.bind(sessionStore, 'routerHistory'));
   }
 }
 
@@ -215,7 +214,7 @@ function findTopMenu(location) {
   return _.find(defaultMenu, menu => menu.path.indexOf(pathForMatch) > -1);
 }
 
-function getPanesFromMenu(location, fixPanes, currentMenuId, routerHistory) {
+function getPanesFromMenu(location, fixPanes, currentMenuId) {
   const { pathname, query } = location;
   let isTopMenu = false;
   let isFoundCurrentPane = false;
@@ -328,7 +327,7 @@ function getPanesFromMenu(location, fixPanes, currentMenuId, routerHistory) {
 }
 
 
-function getPanes(location, fixPanes, editPane, currentMenuId, routerHistory) {
+function getPanes(location, fixPanes, editPane, currentMenuId) {
   // 首先在tabConfig里面查找，该path是否能精确匹配某个新开的页面
   // 返回经过修正的panes数组
   if (findPaneFromTabConfig(location)) {
@@ -336,7 +335,7 @@ function getPanes(location, fixPanes, editPane, currentMenuId, routerHistory) {
   }
   // 如果没有精确匹配到某个新开的页面，则说明一定属于主导航菜单的某个页面
   // 在主导航菜单中找到path对应的menu配置，进行修正，并记录下menu的嵌套路径
-  return getPanesFromMenu(location, fixPanes, currentMenuId, routerHistory);
+  return getPanesFromMenu(location, fixPanes, currentMenuId);
 }
 
 // 预处理menu数据，将path字段格式化一下
@@ -391,57 +390,20 @@ function getStayPanes(pathname, query, prevState) {
 }
 
 function getPanesWithPathname(location, shouldRemove, editPane = {}, prevState) {
-  const { panes = [], activeKey = '', currentMenuId, routerHistory } = prevState || {};
+  const { panes = [], activeKey = '', currentMenuId} = prevState || {};
 
   // 如果设置了shouldRemove, 则从当前的panes数组中移除对应的pane
   // 这种情况主要是用来处理跳转到新的tab页面，并关闭当前tab页面的情况
   const fixPanes = shouldRemove ? _.filter(panes, pane => pane.id !== activeKey) : [...panes];
 
   const { newPanes, newActiveKey, newCurrentMenuId } =
-    getPanes(location, fixPanes, editPane, currentMenuId, routerHistory);
+    getPanes(location, fixPanes, editPane, currentMenuId);
 
   return {
     panes: newPanes,
     activeKey: newActiveKey,
     currentMenuId: newCurrentMenuId,
   };
-}
-
-function getNewRouterHistory({ finalActiveKey, currentMenuId, pathname, routerHistory = [] }) {
-  let newRouterHistory = [];
-  if (_.find(routerHistory, router => router.pathname === pathname)) {
-    newRouterHistory = _.filter(routerHistory, router => router.pathname !== pathname);
-    newRouterHistory = [
-      {
-        activeKey: finalActiveKey,
-        currentMenuId,
-        pathname,
-      },
-      ...newRouterHistory,
-    ];
-  }
-  if (routerHistory.length > 10) {
-    newRouterHistory = routerHistory.splice(0, routerHistory.length - 1);
-    newRouterHistory = [
-      {
-        activeKey: finalActiveKey,
-        currentMenuId,
-        pathname,
-      },
-      ...newRouterHistory,
-    ];
-  } else {
-    newRouterHistory = [
-      {
-        activeKey: finalActiveKey,
-        currentMenuId,
-        pathname,
-      },
-      ...routerHistory,
-    ];
-  }
-
-  return newRouterHistory;
 }
 
 export {
@@ -455,5 +417,4 @@ export {
   splitPanesArray,
   getLocalPanes,
   getPanes,
-  getNewRouterHistory,
 };
