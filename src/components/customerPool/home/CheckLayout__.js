@@ -31,11 +31,11 @@ function renderItem(data = {}, params, itemStyle = null) {
   };
   const linkToList = () => {
     const isLinkTo = data.type !== TYPE_LIST[2];
-    // 手动上传日志 客户及资产
+    // 手动上传日志 资产和交易量
     logCommon({
       type: 'DrillDown',
       payload: {
-        name: '客户及资产',
+        name: '资产和交易量',
         subtype: data.title,
         value: data.item,
       },

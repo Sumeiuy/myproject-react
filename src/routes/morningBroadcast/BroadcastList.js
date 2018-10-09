@@ -200,7 +200,7 @@ export default class BroadcastList extends PureComponent {
   @logable({
     type: 'Click',
     payload: {
-      name: '$args[0].title',
+      name: '晨报列表',
       subtype: '$args[0].newsTypValue',
     },
   })
