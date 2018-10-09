@@ -14,7 +14,8 @@ import { constants } from '../../../../config';
 import styles from './custFilter.less';
 
 function transformCustRangeData(list, parent = '') {
-  return list.map((item) => {
+  const data = list || [];
+  return data.map((item) => {
     const obj = {
       label: item.name,
       value: parent
@@ -94,7 +95,7 @@ export default class CustRange extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { custRange, orgId, defaultFirst } = this.props;
+    const { custRange, orgId, defaultFirst } = props;
     this.state = this.getDisplay(orgId, custRange, defaultFirst);
   }
 
