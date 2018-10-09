@@ -11,19 +11,30 @@ import { enableSessionStorage } from '../../../src/config/constants';
 import { sessionStore } from '../../../src/config';
 import commonConfig from '../layout/config';
 
-function traverseMenus(menus, callback) {
+function traverseMenus(menus, callback, level = 1) {
   const newMenus = [
     ...menus,
   ];
   _.forEach(newMenus, (menu, i, array) => {
-    if (callback(menu, i, array)) {
+    if (callback(menu, i, array, level)) {
       return false;
     }
     return menu.children && !_.isEmpty(menu.children) ?
-      traverseMenus(menu.children, callback) : true;
+      traverseMenus(menu.children, callback, level + 1) : true;
   });
 
   return newMenus;
+}
+
+function getCurrentMenuPath(pathname, level) {
+  const pathArray = pathname && pathname.split('/');
+  if (pathArray) {
+    if (pathArray[1] === 'fsp') {
+      return '/' + pathArray.slice(2, level + 2).join('/');
+    } else {
+      return pathArray.slice(0, level + 1).join('/');
+    }
+  }
 }
 
 // 修正外部跳转连接
@@ -149,7 +160,7 @@ function getAndFixTopMenu(
   const { pathname, query } = location;
   let newActiveKey = activeKey;
   let newCurrentMenuId = currentMenuId;
-  let newPanes;
+  let newPanes = panes;
 
   if (topMenu) {
     newPanes = _.map(panes, (pane) => {
@@ -210,7 +221,6 @@ function getPanesFromMenu(location, fixPanes, currentMenuId, routerHistory) {
   let isFoundCurrentPane = false;
   let newActiveKey = '';
   let newCurrentMenuId = currentMenuId;
-  let currentPaneMemory = {};
 
   if (pathname === '/') {
     return {
@@ -222,84 +232,92 @@ function getPanesFromMenu(location, fixPanes, currentMenuId, routerHistory) {
 
   // 找到并修正对应的pane
   // 这里唯一不足之处在于traverseMenus不是纯函数，但是纯函数的代价太高
-  const newPanes = traverseMenus(fixPanes, (pane, i, array) => {
+  const newPanes = traverseMenus(fixPanes, (pane, i, array, level) => {
+    const menuPath = getCurrentMenuPath(pane.path, level);
+    const locationPath = getCurrentMenuPath(pathname, level);
     // 找到当前path对应的pane进行修正
-    if (pane.path === pathname) {
+    if (menuPath === locationPath) {
+      if (pane.path === '/customerPool' && pathname !== '/customerPool') {
+        return false;
+      }
       const currentPane = array[i];
-      currentPane.query = query;
-      if (currentPane.pid === 'ROOT') {
-        isTopMenu = true;
-        newActiveKey = currentPane.id;
-        if (currentPane.name === '首页') {
+      if (level === 1) {
+        currentPane.path = pathname;
+        currentPane.query = query;
+        if (currentPane.pid === 'ROOT') {
+          isTopMenu = true;
+          newActiveKey = currentPane.id;
+          if (currentPane.name === '首页') {
+            isFoundCurrentPane = true;
+            newCurrentMenuId = currentPane.id;
+            return true;
+          }
+          return false;
+        }
+        // 新打开的页面被命中
+        if (!pane.type) {
+          isTopMenu = true;
+          newActiveKey = currentPane.id;
           isFoundCurrentPane = true;
           newCurrentMenuId = currentPane.id;
           return true;
         }
+      }
+
+      // 中间嵌套的菜单不需要修正
+      if (currentPane.children && !_.isEmpty(currentPane.children)) {
         return false;
       }
-      // 新打开的页面被命中
-      if (!pane.type) {
-        isTopMenu = true;
-        newActiveKey = currentPane.id;
-      }
+
+      // 找到叶节点link，修正
+      currentPane.path = pathname;
+      currentPane.query = query;
       isFoundCurrentPane = true;
-      // 保存当前path匹配到的确定菜单到currentMenu
       newCurrentMenuId = currentPane.id;
       return true;
-    }
-    if (pane.id === newCurrentMenuId) {
-      currentPaneMemory = array[i];
     }
     return false;
   });
 
-  if (!isTopMenu || !isFoundCurrentPane) {
+  // 如果没有任何匹配，容错处理
+  if (!isFoundCurrentPane) {
+    let errorPanes = newPanes;
+    // 容错处理，新开一个其他的pane，进行高亮
+    // 如果已经有其他这个pane存在，不再新建其他pane
+    if (!_.find(newPanes, pane => pane.id === 'FSP_ERROR_OTHER')) {
+      errorPanes = [
+        ...newPanes,
+        {
+          id: 'FSP_ERROR_OTHER',
+          name: '其他',
+          pid: 'OTHER',
+          type: 'link',
+          order: Infinity,
+          path: pathname,
+          query,
+        },
+      ];
+    }
+    newActiveKey = 'FSP_ERROR_OTHER';
+    newCurrentMenuId = 'FSP_ERROR_OTHER';
+
+    return {
+      newPanes: errorPanes,
+      newActiveKey,
+      newCurrentMenuId,
+    };
+  }
+
+  // 如果没有命中顶级菜单，继续修正
+  if (!isTopMenu) {
     const topMenu = findTopMenu(location);
-    if (!isFoundCurrentPane) { // 二级菜单需要修正
-      if (topMenu) {
-        currentPaneMemory.path = pathname;
-        currentPaneMemory.query = query;
-      } else { // 如果什么都找不到，在历史记录里面找一下，尝试修正
-        const historyPane = _.find(routerHistory, router => router.pathname === pathname);
-        if (historyPane) {
-          if (historyPane.activeKey === newCurrentMenuId) {
-            currentPaneMemory.path = pathname;
-            currentPaneMemory.query = query;
-            newActiveKey = historyPane.activeKey;
-            isTopMenu = true;
-          } else {
-            // 修正历史记录对应的菜单
-            const panes = traverseMenus(fixPanes, (pane, i, array) => {
-              // 找到当前path对应的pane进行修正
-              if (pane.id === historyPane.activeKey || pane.id === historyPane.currentMenuId) {
-                const currentPane = array[i];
-                currentPane.path = pathname;
-                currentPane.query = query;
-                if (currentPane.pid === 'ROOT') {
-                  return false;
-                }
-                return true;
-              }
-              return false;
-            });
-            return {
-              newPanes: panes,
-              newActiveKey: historyPane.activeKey,
-              newCurrentMenuId: historyPane.currentMenuId,
-            };
-          }
-        }
-      }
-    }
-    if (!isTopMenu) {
-      return getAndFixTopMenu(
-        location,
-        newPanes,
-        newActiveKey,
-        newCurrentMenuId,
-        topMenu,
-      );
-    }
+    return getAndFixTopMenu(
+      location,
+      newPanes,
+      newActiveKey,
+      newCurrentMenuId,
+      topMenu,
+    );
   }
 
   return {
