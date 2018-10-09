@@ -62,7 +62,6 @@ const mapStateToProps = state => ({
   menus: state.app.menus,
   loading: state.activity.global,
   loadingForceFull: state.activity.forceFull,
-  custRange: state.customerPool.custRange,
   dict: state.app.dict,
   empInfo: state.app.empInfo,
   interfaceState: state.loading.effects,
@@ -277,7 +276,6 @@ export default class Main extends PureComponent {
                           (!_.isEmpty(interfaceState) &&
                             !interfaceState[effects.dictionary] &&
                             !interfaceState[effects.customerScope] &&
-                            !interfaceState[effects.empInfo] &&
                             React.isValidElement(children)) ?
                             children :
                             <div />

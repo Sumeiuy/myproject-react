@@ -152,19 +152,14 @@
   z-index: 1;
   :global {
     .ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title {
-      padding-top: 3px;
-      padding-bottom: 3px;
-      margin: 2px 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      font-size: 14px;
+      line-height: 38px;
     }
     .ant-dropdown-menu-item:hover, .ant-dropdown-menu-submenu-title:hover {
-      background: #ecf6fd;
-    }
-
-    .ant-dropdown-menu-item:first-child,
-    .ant-dropdown-menu-submenu-title:first-child,
-    .ant-dropdown-menu-item:first-child > a,
-    .ant-dropdown-menu-submenu-title:first-child > a {
-      border-radius: 0;
+      background: #f5f5f5;
+      color: #2e669a;
     }
   }
 }
@@ -173,7 +168,7 @@
   border: 1px solid #ddd;
   border-radius: 0 0 4px 4px;
   min-width: 100px;
-  max-width: 170px;
+  max-width: 190px;
 }
 
 .subMenuLink {
@@ -184,20 +179,26 @@
     .ant-dropdown-menu {
       border: 1px solid #ddd;
       border-radius: 0 0 4px 4px;
+      width: 190px;
+      padding: 8px 0;
     }
     .ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title {
-      padding-top: 3px;
-      padding-bottom: 3px;
-      margin: 2px 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      font-size: 14px;
+      line-height: 38px;
     }
     .ant-dropdown-menu-item:hover, .ant-dropdown-menu-submenu-title:hover {
-      background: #ecf6fd;
+      background: #f5f5f5;
+      color: #2e669a;
     }
   }
 }
 
 .subItem {
   min-width: 86px;
+  font-size: 14px;
+  line-height: 38px;
 }
 
 .activeItem {
@@ -207,6 +208,14 @@
     .ant-dropdown-menu-submenu-title, .ant-dropdown-menu-submenu-title::after {
       color: #2e669a !important;
     }
+    .ant-dropdown-menu-submenu-title:hover {
+      background: #ecf6fd !important;
+      color: #2e669a !important;
+    }
+  }
+  &:hover {
+    background: #ecf6fd !important;
+    color: #2e669a !important;
   }
 }
 
