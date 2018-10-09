@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-30 20:17:43
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-17 16:07:07
+ * @Last Modified time: 2018-10-09 11:16:23
  * @description 临时任务委托表单
  */
 
@@ -206,13 +206,14 @@ export default class DeputeForm extends PureComponent {
     const {
       formData,
       checkResult,
-      checkResult: { isCheckedAssignee },
+      checkResult: { isCheckedAssignee, isCheckedAssigneeDiff },
     } = this.state;
-    if (!isCheckedAssignee) {
+    if (!isCheckedAssignee || !isCheckedAssigneeDiff) {
       this.setState({
         checkResult: {
           ...checkResult,
           isCheckedAssignee: true,
+          isCheckedAssigneeDiff: true,
         },
       });
     }
