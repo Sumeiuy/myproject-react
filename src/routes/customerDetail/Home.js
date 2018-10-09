@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-09 16:14:37
+ * @Last Modified time: 2018-10-09 17:37:48
  */
 
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import { autobind } from 'core-decorators';
 import { Tabs } from 'antd';
 
 import withRouter from '../../decorators/withRouter';
+import AccountInfo from './tabpages/accountInfo/Home';
 
 import styles from './home.less';
 
@@ -67,6 +68,7 @@ export default class Home extends PureComponent {
             tabBarGutter={40}
           >
             <TabPane tab="账号信息" key="accountInfo">
+              <AccountInfo />
             </TabPane>
             <TabPane tab="客户属性" key="customerInfo">
             </TabPane>

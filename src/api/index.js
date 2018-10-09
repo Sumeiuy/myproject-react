@@ -38,6 +38,7 @@ import tempDeputeAPI from './tempDepute';
 import newHomeAPI from './newHome';
 import advisorSpaceAPI from './advisorSpace';
 import customerDetailAPI from './customerDetail';
+import detailAccountInfoAPI from './detailAccountInfo';
 
 const api = apiCreator();
 
@@ -153,8 +154,10 @@ const exported = {
   newHome: newHomeAPI(api),
   // ========== 投顾空间申请
   advisorSpace: advisorSpaceAPI(api),
-  // ========== 投顾空间申请
+  // ========== 新版客户360详情API
   customerDetail: customerDetailAPI(api),
+  // ========== 新版客户360详情下账户信息Tab组件的API
+  detailAccountInfo: detailAccountInfoAPI(api),
 };
 
 export default exported;
@@ -199,4 +202,5 @@ export const {
   newHome,
   advisorSpace,
   customerDetail,
+  detailAccountInfo,
 } = exported;
