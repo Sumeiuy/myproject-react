@@ -571,6 +571,11 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['advisorSpace'], () =>
         import('../routes/advisorSpace/Home') /* webpackChunkName: "advisorSpace" */),
     },
+    // smart任务分析报表
+    '/statisticalQuery/taskAnalysisReport': {
+      component: dynamicWrapper(app, ['taskAnalysisReport'], () =>
+        import('../routes/taskAnalysisReport/Home') /* webpackChunkName: "taskAnalysisReport" */),
+    }
   };
   return routerConfig;
 };
