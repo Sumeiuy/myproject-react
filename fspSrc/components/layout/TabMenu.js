@@ -93,10 +93,7 @@ export default class TabMenu extends PureComponent {
     }
     const menuPath = menuItem.path;
     if (exact) {
-      if (
-        menuPath === path
-        || path.indexOf(menuPath) > -1
-        || menuItem.id === this.props.currentMenuId) {
+      if (menuItem.id === this.props.currentMenuId) {
         return true;
       }
       return false;
