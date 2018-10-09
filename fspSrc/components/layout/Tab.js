@@ -82,11 +82,11 @@ export default class Tab extends PureComponent {
         });
 
         return {
-          panes,
-          activeKey: finalActiveKey,
-          currentMenuId,
-          location,
-          routerHistory: newRouterHistory,
+          panes, //最终渲染的菜单信息
+          activeKey: finalActiveKey, // 最终高亮的顶级菜单
+          currentMenuId, // 最终高亮的叶节点菜单
+          location, // 当前的路由信息
+          routerHistory: newRouterHistory, // 历史记录
         };
       }
 
