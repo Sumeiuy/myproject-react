@@ -214,7 +214,7 @@ export const getRouterData = (app) => {
     },
     '/customerPool/list/detail': {
       component: dynamicWrapper(app, ['customerPool'], () =>
-        import('../routes/customerPool/CustomerDetail' /* webpackChunkName: "customerPool_cust_detail" */)),
+        import('../routes/customerDetail/CustomerDetail' /* webpackChunkName: "customerPool_cust_detail" */)),
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
