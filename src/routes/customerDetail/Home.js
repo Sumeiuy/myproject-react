@@ -1,29 +1,17 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 14:46:57
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-10-09 16:12:29
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'dva';
 import { Tabs } from 'antd';
 import withRouter from '../../decorators/withRouter';
-import { dva } from '../../helper';
-import styles from './customerDetail.less';
+import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
-const effect = dva.generateEffect;
-const effects = {};
-
-const mapStateToProps = state => ({
-});
-
-const mapDispatchToProps = {
-};
-
-@connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class Home extends PureComponent {
 

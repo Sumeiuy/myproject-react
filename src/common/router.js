@@ -213,8 +213,8 @@ export const getRouterData = (app) => {
         import('../routes/customerPool/CustomerList__' /* webpackChunkName: "customerPool_list" */ )),
     },
     '/customerPool/list/detail': {
-      component: dynamicWrapper(app, ['customerPool'], () =>
-        import('../routes/customerDetail/CustomerDetail' /* webpackChunkName: "customerPool_cust_detail" */)),
+      component: dynamicWrapper(app, ['customerDetail'], () =>
+        import('../routes/customerDetail/connectHome' /* webpackChunkName: "customerPool_customerDetail" */)),
     },
     // customerPool/customerGroup 直接进入，所需数据未知
     '/customerPool/customerGroup': {
