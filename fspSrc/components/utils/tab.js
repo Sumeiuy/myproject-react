@@ -246,7 +246,7 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
         if (currentPane.pid === 'ROOT') {
           isTopMenu = true;
           newActiveKey = currentPane.id;
-          if (currentPane.name === '首页') {
+          if (_.isEmpty(currentPane.children)) {
             isFoundCurrentPane = true;
             newCurrentMenuId = currentPane.id;
             return true;
@@ -264,7 +264,7 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
       }
 
       // 中间嵌套的菜单不需要修正
-      if (currentPane.children && !_.isEmpty(currentPane.children)) {
+      if (!_.isEmpty(currentPane.children)) {
         return false;
       }
 
