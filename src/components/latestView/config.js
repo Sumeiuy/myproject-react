@@ -23,6 +23,11 @@ const exported = {
       label: '每周首席投顾观点',
       value: '2',
     },
+    {
+      show: true,
+      label: '专题研究',
+      value: '3',
+    },
   ],
 
   viewpointTitleList: [

@@ -43,6 +43,8 @@ const mapStateToProps = state => ({
   dayViewpointData: state.latestView.dayViewpointData,
   // 首页每周首席观点
   monthViewpointData: state.latestView.monthViewpointData,
+  // 专题研究数据
+  specialStudyData: state.latestView.specialStudyData,
   // 大类资产配置分析-首页列表
   majorAssetsIndexData: state.latestView.majorAssetsIndexData,
   // 大类资产配置分析-更多列表
@@ -80,6 +82,8 @@ export default class LatestView extends PureComponent {
     dayViewpointData: PropTypes.object.isRequired,
     // 首页每周首席观点
     monthViewpointData: PropTypes.object.isRequired,
+    // 专题研究
+    specialStudyData: PropTypes.object.isRequired,
     // 大类资产配置分析-首页列表
     queryMajorAssetsIndexList: PropTypes.func.isRequired,
     majorAssetsIndexData: PropTypes.object.isRequired,
@@ -125,6 +129,10 @@ export default class LatestView extends PureComponent {
     queryChiefViewpoint({
       type: config.chiefViewpointType[2].value,
     });
+    // 专题研究
+    queryChiefViewpoint({
+      type: config.chiefViewpointType[3].value,
+    });
     // 大类资产配置分析
     queryMajorAssetsIndexList();
     // 首页紫金时钟当前周期数据
@@ -140,6 +148,7 @@ export default class LatestView extends PureComponent {
       location,
       dayViewpointData,
       monthViewpointData,
+      specialStudyData,
       majorAssetsData,
       majorAssetsIndexData,
       majorAssetsDetail,
@@ -149,8 +158,8 @@ export default class LatestView extends PureComponent {
     } = this.props;
     return (
       <div className={styles.latestViewBox}>
-        <div className={`${styles.floor} clearfix`}>
-          <div className={styles.left}>
+        <div className={styles.top}>
+          <div className={styles.item}>
             <ChiefViewpoint
               location={location}
               title="每日首席观点"
@@ -158,12 +167,20 @@ export default class LatestView extends PureComponent {
               type={config.chiefViewpointType[1].value}
             />
           </div>
-          <div className={styles.right}>
+          <div className={styles.item}>
             <ChiefViewpoint
               location={location}
               title="每周首席观点"
               data={monthViewpointData}
               type={config.chiefViewpointType[2].value}
+            />
+          </div>
+          <div className={styles.item}>
+            <ChiefViewpoint
+              location={location}
+              title="专题研究"
+              data={specialStudyData}
+              type={config.chiefViewpointType[3].value}
             />
           </div>
         </div>
