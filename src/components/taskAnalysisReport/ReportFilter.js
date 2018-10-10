@@ -3,18 +3,22 @@
  * @Descripter: 头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-08 22:44:23
+ * @Last Modified time: 2018-10-10 09:16:00
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import moment from 'moment';
+import SingleFilter from 'lego-react-filter/src';
+import DateRangePick from 'lego-react-date/src';
 
-import HtFilter from '../common/htFilter';
-import { executeTypeOptions, eventSourceOptions } from './config';
+import logable from '../../decorators/logable';
+import { defaultStartTime, defaultEndTime, executeTypeOptions, eventSourceOptions } from './config';
 
 import styles from './reportFilter.less';
+
 
 export default class ReportFilter extends PureComponent {
   static propTypes = {
@@ -30,6 +34,14 @@ export default class ReportFilter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'CalendarSelect',
+    payload: {
+      name: '申请时间',
+      min: '$args[0].value[0]',
+      max: '$args[0].value[1]',
+    },
+  })
   handleDateChange(date) {
     const { value } = date;
     if (!_.isEmpty(value)) {
@@ -41,12 +53,26 @@ export default class ReportFilter extends PureComponent {
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '执行类型',
+      value: '$args[0].value.value',
+    },
+  })
   handleExecuteTypeChange(option) {
     const { id, value: { value } } = option;
     this.handleSelectChange(id, value);
   }
 
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '事件来源',
+      value: '$args[0].value.value',
+    },
+  })
   handleEventSourceChange(option) {
     const { id, value: { value } } = option;
     this.handleSelectChange(id, value);
@@ -63,6 +89,18 @@ export default class ReportFilter extends PureComponent {
     });
   }
 
+  // 设置不可选择的开始时间
+  @autobind
+  setDisabledStartTime(start) {
+    return start < moment().subtract(90, 'days') || start >= moment().startOf('day');
+  }
+
+  // 设置不可选择的结束时间
+  @autobind
+  setDisabledEndTime(start, end) {
+    return end < moment().subtract(90, 'days') || end >= moment().startOf('day');
+  }
+
   render() {
     const {
       dateFilterName,
@@ -77,15 +115,18 @@ export default class ReportFilter extends PureComponent {
      } = this.props;
     return (
       <div className={styles.reportFilter}>
-        <HtFilter
+        <DateRangePick
           type='date'
           filterId='filterDate'
-          className='filter'
+          className={styles.filter}
           filterName={dateFilterName}
           value={[startTime, endTime]}
+          filterValue={[defaultStartTime, defaultEndTime]}
           onChange={this.handleDateChange}
+          disabledStart={this.setDisabledStartTime}
+          disabledEnd={this.setDisabledEndTime}
         />
-        <HtFilter
+        <SingleFilter
           filterName='执行类型'
           filterId='executeType'
           className='filter'
@@ -96,7 +137,7 @@ export default class ReportFilter extends PureComponent {
           onChange={this.handleExecuteTypeChange}
           needItemObj
         />
-        <HtFilter
+        <SingleFilter
           filterName='事件来源'
           filterId='eventSource'
           className='filter'

@@ -1,3 +1,12 @@
+import moment from 'moment';
+
+// 日期格式
+const dateFormat = 'YYYY-MM-DD';
+// 筛选项默认开始时间
+const defaultStartTime = moment().subtract(7, 'days').format(dateFormat);
+// 筛选项默认结束时间
+const defaultEndTime = moment().subtract(1, 'days').format(dateFormat);
+// 执行类型选项
 const executeTypeOptions = [
   {
     show: true,
@@ -15,7 +24,7 @@ const executeTypeOptions = [
     value: '02',
   },
 ];
-
+// 任务来源选项
 const eventSourceOptions = [
   {
     show: true,
@@ -35,6 +44,8 @@ const eventSourceOptions = [
 ];
 
 export {
+  defaultStartTime,
+  defaultEndTime,
   executeTypeOptions,
   eventSourceOptions,
 };
