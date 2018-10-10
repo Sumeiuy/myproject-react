@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-09 17:31:07
+ * @Last Modified time: 2018-10-10 09:22:54
  */
 
 import React, { PureComponent } from 'react';
@@ -101,6 +101,7 @@ export default class Home extends PureComponent {
         {/* 中间资产分布和收益走势区域 */}
         <div className={styles.assetAndIncomeArea}></div>
         {/* 底部详细Tabs，目前迭代不进行开发，先占个位置 */}
+        <div className={styles.footTabsArea}></div>
       </div>
     );
   }
