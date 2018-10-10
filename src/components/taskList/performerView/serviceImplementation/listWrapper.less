@@ -1,9 +1,20 @@
 @import '../../../../css/util.less';
 
+@size: 6,9,10,12;
+
+.generate-itemWidtClass(@n, @i: 1) when (@i =< @n) {
+  @widthSize: extract(@size, @i);
+  .width@{widthSize} {
+    width: (96% / @widthSize);
+  }
+  .generate-itemWidtClass(@n, (@i + 1));
+}
 .list {
   height: 100%;
   .item {
     float: left;
   }
+  .generate-itemWidtClass(length(@size));
+
   .clearfix()
 }

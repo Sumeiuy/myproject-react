@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 10:19:47
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-06 09:21:54
+ * @Last Modified time: 2018-10-10 11:00:33
  * @description 临时委托他人处理任务Model
  */
 
@@ -151,17 +151,16 @@ export default {
     },
 
     // 查询可以受托的组织机构和服务经理
-    * queryCanDeputeEmp({ payload }, { put, call }) {
-      yield put({
-        type: 'clearReduxDataSuccess',
-        payload: { deputeEmpList: [] },
-      });
-      const response = yield call(api.queryCanDeputeEmp, payload);
-      yield put({
-        type: 'queryCanDeputeEmpSuccess',
-        payload: response,
-      });
-    },
+    queryCanDeputeEmp: [
+      function * ({ payload }, { put, call }) {
+        const response = yield call(api.queryCanDeputeEmp, payload);
+        yield put({
+          type: 'queryCanDeputeEmpSuccess',
+          payload: response,
+        });
+      },
+      { type: 'takeLatest' }
+    ],
 
     // 获取新建页面的流程按钮和审批人
     * getApprovalInfo({ payload = {} }, { call, put }) {
