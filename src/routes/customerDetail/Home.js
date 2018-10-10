@@ -12,6 +12,7 @@ import { Tabs } from 'antd';
 
 import withRouter from '../../decorators/withRouter';
 import AccountInfo from './tabpages/accountInfo/Home';
+import BreadCrumb from '../../components/customerDetail/Breadcrumb';
 
 import styles from './home.less';
 
@@ -25,6 +26,10 @@ export default class Home extends PureComponent {
     summaryInfo: PropTypes.object.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
+  }
+
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -50,10 +55,16 @@ export default class Home extends PureComponent {
 
   render() {
     const { activeTabKey } = this.state;
+    const { location } = this.props;
+
+    const breadCrumbProps = {
+      push: this.context.push,
+      url: location.state && location.state.url,
+    };
 
     return (
       <div className={styles.container}>
-        <div className={styles.breadCrumb}>面包屑</div>
+        <div className={styles.breadCrumb}><BreadCrumb {...breadCrumbProps} /></div>
         <div className={styles.custInfo}>
           <div className={styles.custBasicInfo}>基本信息</div>
           <div className={styles.custDetailInfo}>详细信息</div>
