@@ -20,6 +20,7 @@ export default class DateFilter extends React.Component {
     onClose: PropTypes.func,
     value: PropTypes.oneOfType([PropTypes.array, PropTypes.string]).isRequired,
     disabledCurrentEnd: PropTypes.bool,
+    allowClear: PropTypes.bool,
   };
   static defaultProps = {
     // example props for the demo
@@ -34,6 +35,7 @@ export default class DateFilter extends React.Component {
     filterId: 'dateOpened',
     onChange: _.noop,
     onClose: _.noop,
+    allowClear: false,
   };
 
   constructor(props) {
@@ -69,6 +71,7 @@ export default class DateFilter extends React.Component {
     }
     return (
       <DateRangePick
+        allowClear={this.props.allowClear}
         className={this.props.className}
         filterName={this.props.filterName}
         filterValue={[initialStartDate, initialEndDate]}

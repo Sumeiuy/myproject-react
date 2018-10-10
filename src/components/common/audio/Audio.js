@@ -2,8 +2,8 @@
  * @Description: 定制audio react 组件
  * @Author: XiaZhiQiang
  * @Date: 2018/2/1 12:48
- * @Last Modified by: XiaZhiQiang
- * @Last Modified time: 2018/2/1 12:48
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-09-27 14:20:32
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -103,7 +103,7 @@ export default class Audio extends PureComponent {
   @logable({
     type: 'Click',
     payload: {
-      name: '暂停音频',
+      name: '暂停晨报音频',
       value: '$props.volume',
     },
   })

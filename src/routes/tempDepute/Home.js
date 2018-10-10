@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 09:28:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-25 17:03:29
+ * @Last Modified time: 2018-10-10 14:05:50
  * @description 临时委托他人处理任务Home页面
  */
 
@@ -57,7 +57,7 @@ const mapDispatchToProps = {
   // 获取右侧详情
   queryApplyDetail: effect('tempDepute/queryApplyDetail', { forceFull: true }),
   // 查询可以受托的组织机构和服务经理
-  queryCanDeputeEmp: effect('tempDepute/queryCanDeputeEmp', { loading: false, forceFull: true }),
+  queryCanDeputeEmp: effect('tempDepute/queryCanDeputeEmp', { loading: false }),
   // 校验是否可以申请任务委托
   checkApplyAbility: effect('tempDepute/checkApplyAbility', { forceFull: true }),
   // 撤销委托申请
@@ -243,9 +243,8 @@ export default class Home extends Component {
   @logable({ type: 'ButtonClick', payload: { name: '撤销委托' } })
   handleRevertBtnOfDetailClick(query) {
     // 撤销按钮点击行为需要弹框提示
-    const today = moment().add(1, 'days').format('MM月DD日');
     confirm({
-      content: `将撤消您委托的任务，委托的所有任务会在明天(${today})划转到您本人名下，今日发起撤销委托后在今晚12点前不可以再次发起委托，是否确定要撤消委托？`,
+      content: '撤销委托确认后所有任务将会在T+1日转到委托人名下，如需要T+1日可再次发起任务委托。是否确定撤销临时委托？',
       onOk: () => this.doRevertTempDepute(query),
     });
   }

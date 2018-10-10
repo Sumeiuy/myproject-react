@@ -79,7 +79,7 @@ module.exports = merge(baseWebpackConfig, {
       template: 'index.html',
       chunks: ['index'],
       lang: 'en',
-      title: '华泰证券理财平台',
+      title: '华泰证券-理财服务平台',
       meta: [
         {
           name: 'charset',
@@ -92,7 +92,7 @@ module.exports = merge(baseWebpackConfig, {
       filename: 'newIndex.html',
       template: 'newIndex.html',
       chunks: ['newIndex'],
-      inject: false
+      inject: true,
     }),
     new webpack.DllReferencePlugin({
       context: __dirname,

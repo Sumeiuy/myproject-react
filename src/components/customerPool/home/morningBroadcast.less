@@ -90,5 +90,64 @@
       cursor: pointer;
     }
   }
+  .activeItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 24px;
+    margin: 4px 0;
+    .simpleName {
+      position: relative;
+      margin-right: 7px;
+      width: 75px;
+      height: 24px;
+      color: @main-color;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: inherit;
+      white-space: nowrap;
+    }
+    .music {
+      width: calc(~"100% - 75px");
+      overflow: hidden;
+      height: 20px;
+      position: relative;
+      background: #fafafa;
+      audio {
+        width: 90%;
+        margin-top: -6px;
+        height: 32px;
+      }
+      .close {
+        position: absolute;
+        right: 8px;
+        top: 1px;
+        display: none;
+        color: #2d86d8;
+        font-size: 17px;
+        cursor: pointer;
+      }
+      &:hover {
+        .close {
+          display: block;
+        }
+      }
+    }
+    .desc {
+      width: 85%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: inherit;
+      white-space: nowrap;
+      cursor: pointer;
+      &:hover {
+        color: #2d86d8;
+      }
+    }
+    .listen {
+      color: #2d86d8;
+      cursor: pointer;
+    }
+  }
 }
 

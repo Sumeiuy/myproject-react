@@ -14,6 +14,7 @@ import classnames from 'classnames';
 import { Popover } from 'antd';
 import _ from 'lodash';
 import antdStyles from '../../../css/antd.less';
+import { logCommon } from '../../../decorators/logable';
 import styles from './checkLayout.less';
 import {
   linkTo,
@@ -28,9 +29,17 @@ function renderItem(data = {}, params, itemStyle = null) {
     source: SOURCE,
     type: data.type,
   };
-
   const linkToList = () => {
     const isLinkTo = data.type !== TYPE_LIST[2];
+    // 手动上传日志 资产和交易量
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: '资产和交易量',
+        subtype: data.title,
+        value: data.item,
+      },
+    });
     if (isLinkTo) {
       linkTo(param);
     }

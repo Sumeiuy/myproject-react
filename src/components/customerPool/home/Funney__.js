@@ -30,7 +30,6 @@ function getDataConfig(data) {
   }));
 }
 
-
 function Funney({ dataSource, push, cycle, location }, { empInfo }) {
   const { data, color } = dataSource;
   const funnelOption = {
@@ -95,7 +94,8 @@ function Funney({ dataSource, push, cycle, location }, { empInfo }) {
         type: 'DrillDown',
         payload: {
           name: '客户及资产',
-          element: name,
+          subtype: name,
+          value: arg.value,
         },
       });
     });
@@ -122,12 +122,13 @@ function Funney({ dataSource, push, cycle, location }, { empInfo }) {
       };
     }
     linkTo(params);
-    // 手动上传日志
+    // 手动上传日志 客户及资产
     logCommon({
       type: 'DrillDown',
       payload: {
         name: '客户及资产',
-        element: name,
+        subtype: name,
+        value: item.value,
       },
     });
   }

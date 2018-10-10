@@ -34,6 +34,7 @@ import '../css/fspFix.less';
 import '../../src/css/skin.less';
 import emp from '../../src/helper/emp';
 import api from '../../src/api';
+import NewHomeLoading from './NewHomeLoading';
 
 const effects = {
   dictionary: 'app/getDictionary',
@@ -61,7 +62,6 @@ const mapStateToProps = state => ({
   menus: state.app.menus,
   loading: state.activity.global,
   loadingForceFull: state.activity.forceFull,
-  custRange: state.customerPool.custRange,
   dict: state.app.dict,
   empInfo: state.app.empInfo,
   interfaceState: state.loading.effects,
@@ -89,7 +89,7 @@ const mapDispatchToProps = {
   getMotCustfeedBackDict: fectchDataFunction(true, effects.getMotCustfeedBackDict),
   // 服务记录和电话记录关联
   addCallRecord: fectchDataFunction(true, effects.addCallRecord),
-  getEmpInfoAndMenu: fectchDataFunction(true, effects.getEmpInfoAndMenu),
+  getEmpInfoAndMenu: fectchDataFunction(false, effects.getEmpInfoAndMenu),
 };
 
 const PHONE = 'phone';
@@ -276,7 +276,6 @@ export default class Main extends PureComponent {
                           (!_.isEmpty(interfaceState) &&
                             !interfaceState[effects.dictionary] &&
                             !interfaceState[effects.customerScope] &&
-                            !interfaceState[effects.empInfo] &&
                             React.isValidElement(children)) ?
                             children :
                             <div />
@@ -309,7 +308,7 @@ export default class Main extends PureComponent {
                       toggleServiceRecordModal={toggleServiceRecordModal}
                     />
                   </div>
-                </div> : <div>Loading...</div>
+                </div> : <NewHomeLoading />
             }
           </ErrorBoundary>
         </ContextProvider>

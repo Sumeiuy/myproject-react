@@ -18,7 +18,7 @@ import IfEmpty from '../common/IfEmpty';
 import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
 import ProgressList from './ProgressList__';
-import logable from '../../../decorators/logable';
+import logable, { logCommon } from '../../../decorators/logable';
 import { homeModelType } from '../config';
 import {
   getHSRate,
@@ -102,14 +102,7 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
-  @logable({
-    type: 'DrillDown',
-    payload: {
-      name: '业务开通',
-      element: '$args[1].value',
-    },
-  })
-  handleClick(labelList, arg) {
+  handleClick(labelList, arg, originData) {
     const {
       cycle,
       location,
@@ -127,10 +120,20 @@ export default class PerformanceIndicators extends PureComponent {
         item => _.includes(item.value, name)) || {};
     param.value = currentSingleBusinessType.key;
     linkTo(param);
+    // log日志 --- 业务开通
+    const { dataIndex } = arg;
+    logCommon({
+      type: 'DrillDown',
+      payload: {
+        name: '业务开通',
+        subtype: arg.name,
+        value: originData[dataIndex].value || 0,
+      },
+    });
   }
 
   @autobind
-  handleBusinessOpenReady(instance) {
+  handleBusinessOpenReady(instance, originData) {
     const {
       indicators,
     } = this.props;
@@ -141,7 +144,7 @@ export default class PerformanceIndicators extends PureComponent {
     }
     const labelList = getLabelList(formatIndicator);
     instance.on('click', (arg) => {
-      this.handleClick(labelList, arg);
+      this.handleClick(labelList, arg, originData);
     });
 
     // timeout变量用于鼠标移出label时，取消显示Popover
@@ -335,8 +338,11 @@ export default class PerformanceIndicators extends PureComponent {
       <Col span={8} key={param.key}>
         <RectFrame dataSource={headLine} isNewHome={this.props.isNewHome}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
+            {/*
+              * 因为神策日志提交的数据需要是原始数据，所以此处需要在onReady的时候将原始数据传递出去
+            */}
             <IECharts
-              onReady={this.handleBusinessOpenReady}
+              onReady={instance => this.handleBusinessOpenReady(instance, param.data)}
               option={items}
               resizable
               style={{
@@ -350,7 +356,14 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '沪深归集率下钻' } })
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '沪深归集率下钻',
+      subtype: '沪深归集率',
+      value: '$args[1]',
+    }
+  })
   aggregationToList() {
     const { push } = this.context;
     const {
@@ -365,7 +378,6 @@ export default class PerformanceIndicators extends PureComponent {
     };
     linkTo(param);
   }
-
 
   // 沪深归集率
   renderHSRateIndicators(param) {
@@ -403,7 +415,7 @@ export default class PerformanceIndicators extends PureComponent {
               >
               <div
                 className={styles.clickContent}
-                onClick={this.aggregationToList}
+                onClick={() => {this.aggregationToList( param.data, data.value || 0 ); }}
               />
               </Popover>
           </IfEmpty>
@@ -448,6 +460,14 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 服务指标（投顾绩效）下钻
   @autobind
+  @logable({
+    type: 'DrillDown',
+    payload: {
+      name: '服务指标',
+      subtype: '$args[2]',
+      value: '$args[1]',
+    }
+  })
   toList(dataIndex) {
     const { push } = this.context;
     const {
@@ -507,9 +527,12 @@ export default class PerformanceIndicators extends PureComponent {
                   overlayStyle={{ maxWidth: '320px' }}
                   overlayClassName={antdStyles.popoverClass}
                 >
+                {/*
+                  *data.value为null,给定默认值为0
+                */}
                   <span
                     className={trueStyles.chartLabel}
-                    onClick={() => { this.toList(0); }}
+                    onClick={() => { this.toList(0, data[0].value || 0, data[0].name); }}
                   >
                     {data[0] && data[0].name}
                   </span>
@@ -524,7 +547,7 @@ export default class PerformanceIndicators extends PureComponent {
                 >
                   <span
                     className={trueStyles.chartLabel}
-                    onClick={() => { this.toList(1); }}
+                    onClick={() => { this.toList(1, data[1].value || 0, data[1].name); }}
                   >
                     {data[1] &&data[1].name}
                   </span>
@@ -538,7 +561,7 @@ export default class PerformanceIndicators extends PureComponent {
                   overlayClassName={antdStyles.popoverClass}
                 >
                   <span
-                    onClick={() => { this.toList(2); }}
+                    onClick={() => { this.toList(2, data[2].value || 0, data[2].name); }}
                     className={trueStyles.chartLabel}
                   >
                     {data[2] &&data[2].name}
@@ -553,7 +576,7 @@ export default class PerformanceIndicators extends PureComponent {
                   overlayClassName={antdStyles.popoverClass}
                 >
                   <span
-                    onClick={() => { this.toList(3); }}
+                    onClick={() => { this.toList(3, data[3].value || 0, data[3].name); }}
                     className={trueStyles.chartLabel}
                   >
                     {data[3] &&data[3].name}

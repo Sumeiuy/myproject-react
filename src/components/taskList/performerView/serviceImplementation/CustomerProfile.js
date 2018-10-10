@@ -111,7 +111,7 @@ export default class CustomerProfile extends React.PureComponent {
     const { custNature, custId, rowId, ptyId } = targetCustDetail;
     const type = (!custNature || custNature === PER_CODE) ? PER_CODE : ORG_CODE;
     const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`;
-    const pathname = '/customerCenter/fspcustomerDetail';
+    const pathname = '/fsp/customerCenter/customer360';
     openFspTab({
       routerAction: this.context.push,
       url,

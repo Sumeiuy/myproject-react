@@ -126,7 +126,7 @@ const helper = {
     const { pOrO, custId, rowId, ptyId } = itemData;
     const type = (!pOrO || pOrO === PER_CODE) ? PER_CODE : ORG_CODE;
     const url = `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}&keyword=${keyword}`;
-    const pathname = '/customerCenter/fspcustomerDetail';
+    const pathname = '/fsp/customerCenter/customer360';
     openFspTab({
       routerAction,
       url,

@@ -1,14 +1,14 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-08-29 16:26:43
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-12 16:52:52
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-10-09 15:03:39
  * @description 临时委托任务右侧详情组件
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'antd';
+import { Button, Icon } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -57,6 +57,7 @@ export default function Detail(props) {
     )
     : (
       <div className={styles.hasLaunchRevert}>
+        <Icon type="exclamation-circle" />
         {`已发起委托撤销申请，${moment().add(1, 'days').format('MM月DD日')}生效。`}
       </div>
     );
@@ -88,7 +89,12 @@ export default function Detail(props) {
   };
 
   return (
-    <DetailWrap isEmpty={isEmpty} currentId={`${itemId}`} extra={revertBtn}>
+    <DetailWrap
+      isEmpty={isEmpty}
+      currentId={`${itemId}`}
+      extra={revertBtn}
+      extraIsFllowTitle={hasRevertBtn && disbaledRevertBtn}
+    >
       <div className={styles.module}>
         <InfoTitle head="委托信息" />
         <div className={styles.modContent}>

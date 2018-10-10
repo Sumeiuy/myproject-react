@@ -19,7 +19,7 @@ import createSensorsLogger from '../src/middlewares/sensorsLogger';
 import createActivityIndicator from '../src/middlewares/createActivityIndicator';
 import routerConfig from './router';
 import { request as requestConfig, persist as persistConfig } from '../src/config';
-import { dva as dvaHelper, dom } from '../src/helper';
+import { dva as dvaHelper, dom, emp } from '../src/helper';
 import { logCommon } from '../src/decorators/logable';
 import { fspGlobal } from '../src/utils';
 
@@ -29,6 +29,18 @@ dom.addClass(document.body, 'ant-v2-compatible');
 const extraEnhancers = [];
 if (persistConfig.active) {
   extraEnhancers.push(autoRehydrate());
+}
+
+function navToUserLogin() {
+  const { getMocker, getId } = emp;
+  const mockerUserId = getMocker().mocker;
+  const currentUserId = getId();
+  // 如果是代登录，登录代登录人的id号
+  if (mockerUserId) {
+    window.location.href = `/fsp/login?iv-user=${mockerUserId}`;
+  } else {
+    window.location.href = `/fsp/login?iv-user=${currentUserId}`;
+  }
 }
 
 // 错误处理
@@ -60,9 +72,9 @@ const onError = (e) => {
     }
   } else if (e.name === 'SyntaxError'
     && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
-    window.location.reload();
+    navToUserLogin();
   } else if (stack && stack.indexOf('SyntaxError') > -1) {
-    window.location.reload();
+    navToUserLogin();
   } else {
     message.error(msg);
   }

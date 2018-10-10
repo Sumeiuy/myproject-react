@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-08-29 13:10:29
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-28 09:49:19
+ * @Last Modified time: 2018-10-08 13:10:52
  * @description 临时委托他人处理任务的 API
  */
 
@@ -25,6 +25,6 @@ export default function tempDepute(api) {
     // 查询可以受托的部门列表
     queryCanDeputeOrg: query => api.post('/groovynoauth/fsp/emp/org/queryDrafterOrgList', query),
     // 根据受托部门以及关键字查询受托的服务经理
-    queryCanDeputeEmp: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryEmpList', query),
+    queryCanDeputeEmp: query => api.post('/groovynoauth/fsp/emp/org/queryCurrentOrgEmpList', query),
   };
 }
