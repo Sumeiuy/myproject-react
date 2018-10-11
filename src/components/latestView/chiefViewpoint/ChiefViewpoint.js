@@ -44,12 +44,14 @@ export default class ChiefViewpoint extends PureComponent {
     const query = {
       type,
     };
+    const pathname = '/latestView/viewpointList';
     const url = `/latestView/viewpointList?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: url,
+      pathname,
+      query,
     });
   }
 
