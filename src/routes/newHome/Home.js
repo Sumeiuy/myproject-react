@@ -416,6 +416,7 @@ export default class Home extends PureComponent {
       isNeedExtra: true,
       onClick: this.handleLinkToCustomerList,
       onExtraClick: this.handleMoreClick,
+      hiddenEmptyValue: false,
     };
     // 产品日历
     const today = moment().format(MONTH_DATE_FORMAT);
