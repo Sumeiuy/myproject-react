@@ -95,6 +95,7 @@
   .react-body,
   .react-body.ant-v2-compatible {
     background-color: rgb(244, 246, 249);
+    line-height: 1.5 !important;
   }
 
   .htsc-newIndex-loading-container {
@@ -132,7 +133,9 @@
     height: 20px;
     border: 3px solid #108ee9;
     border-top-color: transparent;
-    margin-right: 2px;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
     font-size: 12px;
     border-radius: 50%;
     vertical-align: middle;
@@ -169,7 +172,7 @@
   }
   .htsc-newIndex-loading-text {
     vertical-align: middle;
-    margin-left: 3px;
+    margin-left: 5px;
     color: #999;
     font-size: 12px;
   }
@@ -201,11 +204,9 @@ eb.component.Loading.defaults.speed = 0;
 <div id="exApp" class="react-app">
   <div class="htsc-newIndex-loading-container">
     <div class="htsc-newIndex-content">
-      <i class="htsc-newIndex-lego"></i>
-      <span class="htsc-newIndex-title">理财服务平台</span>
+      <i class="htsc-newIndex-lego"></i><span class="htsc-newIndex-title">理财服务平台</span>
       <div class="htsc-newIndex-img">
-        <span class="htsc-newIndex-loading"></span>
-        <span class="htsc-newIndex-loading-text">Loading...</span>
+        <span class="htsc-newIndex-loading"></span><span class="htsc-newIndex-loading-text">Loading...</span>
       </div>
     </div>
   </div>
