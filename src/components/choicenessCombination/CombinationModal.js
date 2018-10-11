@@ -18,7 +18,6 @@ import Pagination from '../common/Pagination';
 import Select from '../common/Select';
 import Button from '../common/Button';
 import Icon from '../common/Icon';
-// import { openRctTab } from '../../utils';
 import { time as timeHelper } from '../../helper';
 import {
   timeRange,
