@@ -3,7 +3,7 @@
  * @Descripter: 头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-10 22:49:29
+ * @Last Modified time: 2018-10-11 09:29:25
  */
 
 import React, { PureComponent } from 'react';
@@ -22,7 +22,6 @@ import styles from './reportFilter.less';
 
 export default class ReportFilter extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     // 日期选择对应的filter对应名称
     dateFilterName: PropTypes.string.isRequired,
     // 筛选后调用的Function

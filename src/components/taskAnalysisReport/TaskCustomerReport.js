@@ -3,7 +3,7 @@
  * @Descripter: 任务-客户分析报表
  * @Date: 2018-10-05 14:38:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 09:20:38
+ * @Last Modified time: 2018-10-11 09:43:24
  */
 
 import React, { PureComponent } from 'react';
@@ -24,15 +24,10 @@ const { color, textStyle, toolbox, yAxisSplitLine } = taskCustomerOptions;
 
 export default class TaskCustomerReport extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     // 任务-客户报表
     taskCustomerList: PropTypes.array.isRequired,
     // 获取任务-客户报表
     getTaskCustomer: PropTypes.func.isRequired,
-  }
-
-  static contextTypes = {
-    replace: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -80,7 +75,6 @@ export default class TaskCustomerReport extends PureComponent {
 
   render() {
     const {
-      location,
       taskCustomerList,
     } = this.props;
     const {
@@ -190,7 +184,6 @@ export default class TaskCustomerReport extends PureComponent {
       <div className={styles.taskCustomerReport}>
         <ReportTitle title='每日触发任务及覆盖客户数' />
         <ReportFilter
-          location={location}
           dateFilterName='任务触发时间'
           startTime={startTime}
           endTime={endTime}

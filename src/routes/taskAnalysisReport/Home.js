@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-10 10:07:27
+ * @Last Modified time: 2018-10-11 09:44:02
  */
 
 import React, { PureComponent } from 'react';
@@ -52,10 +52,8 @@ const mapDispatchToProps = {
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
-@withRouter
 export default class TaskAnalysisReport extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     // 任务-客户报表
     taskCustomerList: PropTypes.array.isRequired,
     // 获取任务-客户报表
@@ -75,14 +73,12 @@ export default class TaskAnalysisReport extends PureComponent {
   }
   render() {
     const {
-      location,
       taskCustomerList,
       getTaskCustomer,
     } = this.props;
     return (
       <div className={styles.taskAnalysisReport}>
         <TaskCustomerReport
-          location={location}
           taskCustomerList={taskCustomerList}
           getTaskCustomer={getTaskCustomer}
         />
