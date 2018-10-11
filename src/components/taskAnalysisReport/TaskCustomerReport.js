@@ -3,7 +3,7 @@
  * @Descripter: 任务-客户分析报表
  * @Date: 2018-10-05 14:38:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 09:43:24
+ * @Last Modified time: 2018-10-11 10:42:01
  */
 
 import React, { PureComponent } from 'react';
@@ -68,8 +68,7 @@ export default class TaskCustomerReport extends PureComponent {
     this.setState({
       ...obj,
     }, () => {
-      const query = this.state;
-      this.getTaskCustomer(query);
+      this.getTaskCustomer(this.state);
     });
   }
 
