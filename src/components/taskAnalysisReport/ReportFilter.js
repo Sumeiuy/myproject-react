@@ -3,7 +3,7 @@
  * @Descripter: 头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-10 09:16:00
+ * @Last Modified time: 2018-10-10 22:49:29
  */
 
 import React, { PureComponent } from 'react';
@@ -46,8 +46,8 @@ export default class ReportFilter extends PureComponent {
     const { value } = date;
     if (!_.isEmpty(value)) {
       this.props.filterCallback({
-        startDate: value[0],
-        endDate: value[1],
+        startTime: value[0],
+        endTime: value[1],
       });
     }
   }
@@ -104,14 +104,10 @@ export default class ReportFilter extends PureComponent {
   render() {
     const {
       dateFilterName,
-      location: {
-        query: {
-          executeType,
-          eventSource,
-          startTime,
-          endTime,
-        },
-      },
+      startTime,
+      endTime,
+      executeType,
+      eventSource,
      } = this.props;
     return (
       <div className={styles.reportFilter}>

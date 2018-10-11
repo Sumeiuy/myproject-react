@@ -3,7 +3,7 @@
  * @Descripter: 任务-客户分析报表
  * @Date: 2018-10-05 14:38:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-09 20:51:31
+ * @Last Modified time: 2018-10-11 09:20:38
  */
 
 import React, { PureComponent } from 'react';
@@ -13,124 +13,200 @@ import { autobind } from 'core-decorators';
 import IECharts from '../IECharts';
 import ReportTitle from './ReportTitle';
 import ReportFilter from './ReportFilter';
+import { defaultStartTime, defaultEndTime, taskCustomerOptions, gridOptions, CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME } from './config';
+import { emp, number } from '../../helper';
+import { filterData } from './utils';
 
 import styles from './taskCustomerReport.less';
+
+const { thousandFormat } = number;
+const { color, textStyle, toolbox, yAxisSplitLine } = taskCustomerOptions;
 
 export default class TaskCustomerReport extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
+    // 任务-客户报表
+    taskCustomerList: PropTypes.array.isRequired,
+    // 获取任务-客户报表
+    getTaskCustomer: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
     replace: PropTypes.func.isRequired,
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      // 任务触发开始时间
+      startTime: defaultStartTime,
+      // 任务触发结束时间
+      endTime: defaultEndTime,
+      // 执行类型
+      executeType: '',
+      // 事件来源
+      eventSource: '',
+    };
+  }
+
+  componentDidMount() {
+    const { startTime, endTime } = this.state;
+    // 获取任务-客户报表
+    this.getTaskCustomer({
+      startTime,
+      endTime,
+    });
+  }
+
+  // 获取任务-客户报表
+  @autobind
+  getTaskCustomer(query) {
+    this.props.getTaskCustomer({
+      ...query,
+      orgId: emp.getOrgId(),
+    });
+  }
+
+  // 头部筛选回调函数
   @autobind
   handlefilterCallback(obj) {
-    // 1.将值写入Url
-    const { replace } = this.context;
-    const { location } = this.props;
-    const { query, pathname } = location;
-    // 清空掉消息提醒页面带过来的 id
-    replace({
-      pathname,
-      query: {
-        ...query,
-        pageNum: 1,
-        ...obj,
-      },
+    this.setState({
+      ...obj,
+    }, () => {
+      const query = this.state;
+      this.getTaskCustomer(query);
     });
   }
 
   render() {
-    const { location } = this.props;
+    const {
+      location,
+      taskCustomerList,
+    } = this.props;
+    const {
+      startTime,
+      endTime,
+      executeType,
+      eventSource,
+    } = this.state;
+    // 客户人次数据
+    const customerNumberData = filterData(taskCustomerList, 'customerNumber');
+    // 客户人次最大值
+    const customerNumberMax =  Math.max.apply(null, customerNumberData);
+    // 任务数数据
+    const taskNumberData = filterData(taskCustomerList, 'taskNumber');
+    // 任务数最大值
+    const taskNumberMax =  Math.max.apply(null, taskNumberData);
+    // 任务数间隔
+    // xAxis轴触发时间数据
+    const triggerTimeData = filterData(taskCustomerList, 'triggerTime');
+    // xAxis轴刻度标签的显示间隔, 超过30天，则横坐标改为按周展示
+    const xAxisLabelInterval = triggerTimeData.length > 30 ? 6 : 0;
+    // tooltip 配置项
+    const tooltipOtions = {
+      trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+        },
+        formatter(params) {
+          const triggerTime = params[0].name;
+          const customerSeriesName = params[0].seriesName;
+          const customerNumber = thousandFormat(params[0].value);
+          const taskSeriesName = params[1].seriesName;
+          const taskNumber = thousandFormat(params[1].value);
+          const tips = `
+            <div class="echartTooltipTable">
+              ${triggerTime}
+              <div>${customerSeriesName}: ${customerNumber}</div>
+              <div>${taskSeriesName}: ${taskNumber}</div>
+            </div>
+          `;
+          return tips;
+        },
+        backgroundColor: 'rgba(2, 22, 55, .8)',
+        padding: [12, 10, 12, 10],
+        extraCssText:
+          `box-shadow: 0 2px 4px 0 rgba(0,0,0,0.30);
+           border-radius: 3px 3px 3px 0 0 3px 0 0 0;`,
+    };
     const options = {
-      tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-              type: 'cross',
-              crossStyle: {
-                  color: '#999'
-              }
-          }
-      },
-      color: ['#6fb7ec', '#4c70b3'],
-      textStyle: {
-        color: '#333',
-      },
-      toolbox: {
-          feature: {
-              dataView: {show: true, readOnly: false},
-              magicType: {show: true, type: ['line', 'bar']},
-              restore: {show: true},
-              saveAsImage: {show: true}
-          }
-      },
+      color,
+      textStyle,
+      toolbox,
+      grid: gridOptions,
+      tooltip: tooltipOtions,
       legend: {
-          data:['客户人次','任务数'],
-          right: '30px',
+          data:[CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME],
+          right: '20px',
       },
       xAxis: [
-          {
-              type: 'category',
-              data: ['8月1日','8月2日','8月3日','8月4日','8月5日','8月6日','8月7日','8月8日','8月9日','8月10日','8月11日','8月12日','8月13日','8月14日','8月15日','8月16日','8月17日','8月18日','8月19日','8月20日','8月21日','8月22日','8月23日','8月24日'],
-              axisPointer: {
-                  type: 'shadow',
-              },
-              axisLabel: {
-                interval: 7,
-              }
+        {
+          type: 'category',
+          data: triggerTimeData,
+          axisPointer: {
+              type: 'shadow',
+          },
+          axisLabel: {
+            interval: xAxisLabelInterval,
           }
+        }
       ],
       yAxis: [
-          {
-              type: 'value',
-              min: 0,
-              max: 250,
-              interval: 50,
-              axisLabel: {
-                  formatter: '{value}'
-              }
+        {
+          type: 'value',
+          min: 0,
+          max: customerNumberMax,
+          axisLine: {
+            show: false,
           },
-          {
-              type: 'value',
-              min: 0,
-              max: 25,
-              interval: 5,
-              axisLabel: {
-                  formatter: '{value}'
-              }
-          }
+          splitLine: yAxisSplitLine,
+        },
+        {
+          type: 'value',
+          min: 0,
+          max: taskNumberMax,
+          axisLine: {
+            show: false,
+          },
+          splitLine: yAxisSplitLine,
+        }
       ],
       series: [
-          {
-              name:'客户人次',
-              type:'bar',
-              data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3, 2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
-          },
-          {
-              name:'任务数',
-              type:'line',
-              data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3, 2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
-              smooth: true,
-          }
+        {
+          name: CUSTOMEER_NUMBER_NAME,
+          type: 'bar',
+          data: customerNumberData,
+        },
+        {
+          name: TASK_NUMBER_NAME,
+          type: 'line',
+          yAxisIndex: 1,
+          data: taskNumberData,
+          smooth: true,
+        }
       ]
-  };
+    };
     return (
       <div className={styles.taskCustomerReport}>
         <ReportTitle title='每日触发任务及覆盖客户数' />
         <ReportFilter
           location={location}
           dateFilterName='任务触发时间'
+          startTime={startTime}
+          endTime={endTime}
+          executeType={executeType}
+          eventSource={eventSource}
           filterCallback={this.handlefilterCallback}
         />
-        <IECharts
-          option={options}
-          resizable
-          style={{
-            height: '350px',
-          }}
-        />
+        <div className={styles.taskCustomerChart}>
+          <IECharts
+            option={options}
+            resizable
+            style={{
+              height: '350px',
+            }}
+          />
+        </div>
       </div>
     );
   }
