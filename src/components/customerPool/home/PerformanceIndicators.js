@@ -359,7 +359,7 @@ export default class PerformanceIndicators extends PureComponent {
   @logable({
     type: 'DrillDown',
     payload: {
-      name: '沪深归集率下钻',
+      name: '沪深归集率',
       subtype: '沪深归集率',
       value: '$args[1]',
     }
@@ -452,9 +452,18 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   @autobind
-  handleServiceToListClick(instance) {
+  handleServiceToListClick(instance, originData) {
     instance.on('click', (arg) => {
-      this.toList(arg.dataIndex);
+      const { dataIndex } = arg;
+      this.toList(dataIndex, originData[dataIndex].value || 0, originData[dataIndex].name);
+      logCommon({
+        type: 'DrillDown',
+        payload: {
+          name: '服务指标',
+          subtype: originData[dataIndex].name,
+          value: arg.value,
+        },
+      });
     });
   }
 
@@ -511,7 +520,7 @@ export default class PerformanceIndicators extends PureComponent {
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <div>
               <IECharts
-                onReady={this.handleServiceToListClick}
+                onReady={instance => this.handleServiceToListClick(instance, param.data)}
                 option={option}
                 resizable
                 style={{
