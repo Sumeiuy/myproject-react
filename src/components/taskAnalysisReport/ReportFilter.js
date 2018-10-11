@@ -3,7 +3,7 @@
  * @Descripter: 头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 09:29:25
+ * @Last Modified time: 2018-10-11 10:04:36
  */
 
 import React, { PureComponent } from 'react';
@@ -32,11 +32,12 @@ export default class ReportFilter extends PureComponent {
     filterCallback: _.noop,
   }
 
+  // 选择任务触发时间
   @autobind
   @logable({
     type: 'CalendarSelect',
     payload: {
-      name: '申请时间',
+      name: '任务触发时间',
       min: '$args[0].value[0]',
       max: '$args[0].value[1]',
     },
@@ -51,6 +52,7 @@ export default class ReportFilter extends PureComponent {
     }
   }
 
+  // 选择执行类型
   @autobind
   @logable({
     type: 'DropdownSelect',
@@ -64,6 +66,7 @@ export default class ReportFilter extends PureComponent {
     this.handleSelectChange(id, value);
   }
 
+  // 选择事件来源
   @autobind
   @logable({
     type: 'DropdownSelect',
@@ -77,11 +80,9 @@ export default class ReportFilter extends PureComponent {
     this.handleSelectChange(id, value);
   }
 
+  // select改变
   @autobind
   handleSelectChange(key, v) {
-    this.setState({
-      [key]: v,
-    });
     const { filterCallback } = this.props;
     filterCallback({
       [key]: v,
@@ -91,12 +92,14 @@ export default class ReportFilter extends PureComponent {
   // 设置不可选择的开始时间
   @autobind
   setDisabledStartTime(start) {
+    // 最多选取过去90天的时间
     return start < moment().subtract(90, 'days') || start >= moment().startOf('day');
   }
 
   // 设置不可选择的结束时间
   @autobind
   setDisabledEndTime(start, end) {
+    // 最多选取过去90天的时间
     return end < moment().subtract(90, 'days') || end >= moment().startOf('day');
   }
 

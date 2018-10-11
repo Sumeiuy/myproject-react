@@ -16,12 +16,12 @@ const executeTypeOptions = [
   {
     show: true,
     label: '必做',
-    value: '01',
+    value: 'Mission',
   },
   {
     show: true,
     label: '选做',
-    value: '02',
+    value: 'Chance',
   },
 ];
 // 任务来源选项
@@ -33,13 +33,13 @@ const eventSourceOptions = [
   },
   {
     show: true,
-    label: '自建任务',
-    value: '01',
+    label: 'MOT推送',
+    value: '1',
   },
   {
     show: true,
-    label: 'MOT推送',
-    value: '02',
+    label: '自建任务',
+    value: '2',
   },
 ];
 
