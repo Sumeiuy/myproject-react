@@ -3,7 +3,7 @@
  * @Descripter: 服务客户折线图
  * @Date: 2018-10-11 13:18:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 17:27:01
+ * @Last Modified time: 2018-10-11 17:32:23
  */
 
 import React from 'react';
@@ -44,16 +44,16 @@ export default function ServiceCustChart(props) {
         type: 'line',
       },
       formatter(params) {
-        const triggerTime = params[0].name;
-        const customerSeriesName = params[0].seriesName;
-        const customerNumber = thousandFormat(params[0].value);
-        const taskSeriesName = params[1].seriesName;
-        const taskNumber = thousandFormat(params[1].value);
+        const deadlineTime = params[0].name;
+        const firstSeriesName = params[0].seriesName;
+        const firstDataNumber = thousandFormat(params[0].value);
+        const secondSeriesName = params[1].seriesName;
+        const secondDataNumber = thousandFormat(params[1].value);
         const tips = `
           <div class="echartTooltipTable">
-            ${triggerTime}
-            <div>${customerSeriesName}: ${customerNumber}</div>
-            <div>${taskSeriesName}: ${taskNumber}</div>
+            ${deadlineTime}
+            <div>${firstSeriesName}: ${firstDataNumber}</div>
+            <div>${secondSeriesName}: ${secondDataNumber}</div>
           </div>
         `;
         return tips;
