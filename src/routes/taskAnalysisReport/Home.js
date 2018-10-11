@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 15:28:02
+ * @Last Modified time: 2018-10-11 21:04:13
  */
 
 import React, { PureComponent } from 'react';
@@ -12,8 +12,8 @@ import { connect } from 'dva';
 
 import { dva } from '../../helper';
 import TaskCustomerReport from '../../components/taskAnalysisReport/TaskCustomerReport';
-import CompleteServiceCustReport from '../../components/taskAnalysisReport/CompleteServiceCustReport';
-import ComplianceServiceCustReport from '../../components/taskAnalysisReport/ComplianceServiceCustReport';
+import CompleteServiceCustReport from '../../components/taskAnalysisReport/serviceCust/CompleteServiceCustReport';
+import ComplianceServiceCustReport from '../../components/taskAnalysisReport/serviceCust/ComplianceServiceCustReport';
 
 import styles from './home.less';
 

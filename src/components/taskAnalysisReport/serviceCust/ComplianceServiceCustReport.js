@@ -1,39 +1,39 @@
 /*
  * @Author: zhangjun
- * @Descripter: 完成服务客户统计
+ * @Descripter: 达标服务客户统计
  * @Date: 2018-10-11 10:20:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 16:52:05
+ * @Last Modified time: 2018-10-11 21:05:27
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 
-import ReportTitle from './ReportTitle';
-import ReportFilter from './ReportFilter';
+import ReportTitle from '../ReportTitle';
+import ReportFilter from '../ReportFilter';
 import ServiceCustChart from './ServiceCustChart';
-import { defaultStartTime, defaultEndTime, completeServiceCustOptions } from './config';
-import { emp } from '../../helper';
+import { defaultStartTime, defaultEndTime, complianceServiceCustOptions } from '../config';
+import { emp } from '../../../helper';
 
-import styles from './completeServiceCustReport.less';
+import styles from './complianceServiceCustReport.less';
 
-const { serviceCustOptions } = completeServiceCustOptions;
+const { serviceCustOptions } = complianceServiceCustOptions;
 
-export default class CompleteServiceCustReport extends PureComponent {
+export default class ComplianceServiceCustReport extends PureComponent {
   static propTypes = {
-    // 完成服务客户统计
-    completeServiceCustList: PropTypes.array.isRequired,
-    // 获取完成服务客户统计
-    getCompleteServiceCust: PropTypes.func.isRequired,
+    // 达标服务客户统计
+    complianceServiceCustList: PropTypes.array.isRequired,
+    // 获取达标服务客户统计
+    getComplianceServiceCust: PropTypes.func.isRequired,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      // 任务截止开始时间
+      // 跟踪截止开始时间
       startTime: defaultStartTime,
-      // 任务截止结束时间
+      // 跟踪截止结束时间
       endTime: defaultEndTime,
       // 执行类型
       executeType: '',
@@ -44,17 +44,17 @@ export default class CompleteServiceCustReport extends PureComponent {
 
   componentDidMount() {
     const { startTime, endTime } = this.state;
-    // 获取完成服务客户统计
-    this.getCompleteServiceCust({
+    // 获取达标服务客户统计
+    this.getComplianceServiceCust({
       startTime,
       endTime,
     });
   }
 
-  // 获取完成服务客户统计
+  // 获取达标服务客户统计
   @autobind
-  getCompleteServiceCust(query) {
-    this.props.getCompleteServiceCust({
+  getComplianceServiceCust(query) {
+    this.props.getComplianceServiceCust({
       ...query,
       orgId: emp.getOrgId(),
     });
@@ -66,13 +66,13 @@ export default class CompleteServiceCustReport extends PureComponent {
     this.setState({
       ...obj,
     }, () => {
-      this.getCompleteServiceCust(this.state);
+      this.getComplianceServiceCust(this.state);
     });
   }
 
   render() {
     const {
-      completeServiceCustList,
+      complianceServiceCustList,
     } = this.props;
     const {
       startTime,
@@ -81,10 +81,10 @@ export default class CompleteServiceCustReport extends PureComponent {
       eventSource,
     } = this.state;
     return (
-      <div className={styles.completeServiceCustReport}>
-        <ReportTitle title='完成服务客户统计' />
+      <div className={styles.complianceServiceCustReport}>
+        <ReportTitle title='达标服务客户统计' />
         <ReportFilter
-          dateFilterName='任务截止时间'
+          dateFilterName='跟踪截止时间'
           startTime={startTime}
           endTime={endTime}
           executeType={executeType}
@@ -92,7 +92,7 @@ export default class CompleteServiceCustReport extends PureComponent {
           filterCallback={this.handlefilterCallback}
         />
         <ServiceCustChart
-          reportList={completeServiceCustList}
+          reportList={complianceServiceCustList}
           serviceCustOptions={serviceCustOptions}
         />
       </div>
