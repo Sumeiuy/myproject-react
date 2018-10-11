@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 09:44:02
+ * @Last Modified time: 2018-10-11 10:29:27
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 
 import { dva } from '../../helper';
-import withRouter from '../../decorators/withRouter';
 import TaskCustomerReport from '../../components/taskAnalysisReport/TaskCustomerReport';
 
 import styles from './home.less';
