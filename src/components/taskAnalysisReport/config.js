@@ -90,5 +90,5 @@ export {
   eventSourceOptions,
   taskCustomerOptions,
   CUSTOMEER_NUMBER_NAME,
-  TASK_NUMBER_NAME
+  TASK_NUMBER_NAME,
 };
