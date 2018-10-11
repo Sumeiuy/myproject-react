@@ -1,0 +1,23 @@
+.taskCustomerReport {
+  background: #fff;
+  border-radius: 2px;
+  .taskCustomerChart {
+    height: 356px;
+    :global {
+      .echartTooltipTable {
+        position: relative;
+        .arrow-left {
+          position: absolute;
+          width: 0;
+          height: 0;
+          top: 50%;
+          margin-top: -10px;
+          left: -20px;
+          border-top: 10px solid transparent;
+          border-bottom: 10px solid transparent;
+          border-right: 10px solid rgba(2, 22, 55, .8);
+        }
+      }
+    }
+  }
+}
