@@ -3,7 +3,7 @@
  * @Descripter: 任务-客户分析报表
  * @Date: 2018-10-05 14:38:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 16:58:46
+ * @Last Modified time: 2018-10-11 17:21:41
  */
 
 import React, { PureComponent } from 'react';
@@ -16,9 +16,9 @@ import ReportFilter from './ReportFilter';
 import { defaultStartTime, defaultEndTime, taskCustomerOptions, generalOptions, chartLineOptions, CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME } from './config';
 import { emp, number } from '../../helper';
 import { filterData } from './utils';
-import imgSrc from '../chartRealTime/noChart.png';
 
 import styles from './taskCustomerReport.less';
+import imgSrc from '../chartRealTime/noChart.png';
 
 const { thousandFormat } = number;
 const { yAxisSplitLine, textStyle, toolbox, gridOptions } = generalOptions;

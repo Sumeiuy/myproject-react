@@ -3,7 +3,7 @@
  * @Descripter: 服务客户折线图
  * @Date: 2018-10-11 13:18:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 16:57:47
+ * @Last Modified time: 2018-10-11 17:27:01
  */
 
 import React from 'react';
@@ -14,9 +14,9 @@ import IECharts from '../IECharts';
 import { generalOptions, chartLineOptions } from './config';
 import { number } from '../../helper';
 import { filterData } from './utils';
-import imgSrc from '../chartRealTime/noChart.png';
 
-import styles from './completeServiceCustReport.less';
+import styles from './serviceCustChart.less';
+import imgSrc from '../chartRealTime/noChart.png';
 
 const { thousandFormat } = number;
 const { yAxisSplitLine, textStyle, toolbox, gridOptions } = generalOptions;
