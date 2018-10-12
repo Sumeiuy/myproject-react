@@ -39,7 +39,7 @@ export default class ChiefViewpoint extends PureComponent {
     const { push } = this.context;
     const param = {
       id: 'RTC_TAB_VIEWPOINT',
-      title: '资讯',
+      title: '资讯列表',
     };
     const query = {
       type,
@@ -49,7 +49,8 @@ export default class ChiefViewpoint extends PureComponent {
       routerAction: push,
       url,
       param,
-      pathname: url,
+      query,
+      pathname: '/latestView/viewpointList',
     });
   }
 
@@ -89,7 +90,9 @@ export default class ChiefViewpoint extends PureComponent {
           <span>{title}</span>
           <a onClick={this.toListPage}>更多</a>
         </div>
-        <h4 className={styles.title} title={data.title}>{data.title}</h4>
+        <div>
+          <h4 className={styles.title} title={data.title}>{data.title}</h4>
+        </div>
         <p className={styles.time}>{time.format(data.time, config.dateFormatStr)}</p>
         <p className={styles.content}>
           {slicedContent}

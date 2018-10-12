@@ -3,9 +3,21 @@
   height: 100%;
   overflow-y: auto;
   background-color: #fff;
+  .top {
+    display: flex;
+    .item {
+      flex: 1 auto 0;
+      margin: 0 20px 0 0;
+      width: 33.33%;
+      box-sizing: border-box;
+      &:last-child {
+        margin: 0;
+      }
+    }
+  }
 }
 .floor {
-  margin-bottom: 20px;
+  margin: 20px 0;
   .left {
     float: left;
     width: calc(~"50% - 10px");
