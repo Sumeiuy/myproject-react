@@ -415,7 +415,7 @@ export default class PerformanceIndicators extends PureComponent {
               >
               <div
                 className={styles.clickContent}
-                onClick={() => {this.aggregationToList( param.data, data.value || 0 ); }}
+                onClick={() => { this.aggregationToList(param.data, param.data[0].value || 0 ); }}
               />
               </Popover>
           </IfEmpty>
