@@ -27,10 +27,10 @@ export default function ViewAndCombination(props, context) {
       name: '首席观点',
       key: 'sxgd',
     },
-    {
+  /*   {
       name: '组合推荐',
       key: 'zhtj',
-    },
+    }, */
   ];
 
   // 发送日志
@@ -151,7 +151,7 @@ export default function ViewAndCombination(props, context) {
       const linkClass = classnames({
         [styles.active]: item.key === activeTab,
       });
-      return (<div>
+      return (<div key={item.key}>
         <a className={linkClass} onClick={() => handleTabClick(item)}>{item.name}</a>
       </div>);
     });

@@ -5,21 +5,18 @@
     box-sizing: border-box;
     padding: 10px 0;
     .nav {
-      display: flex;
       height: 38px;
       line-height: 38px;
-      padding: 0 20px;
+      margin: 0 20px;
       border-bottom: 1px solid #e5e9f2;
       & > div {
-        flex: auto;
         font-size: 14px;
-        text-align: center;
         transition: .3s;
+       /*  &:last-child {
+          text-align: right;
+        } */
         &:first-child {
           text-align: left;
-        }
-        &:last-child {
-          text-align: right;
         }
         a {
           display: inline-block;
