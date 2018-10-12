@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 最新观点-首页首席观点
  * @Date: 2018-06-21 16:50:10
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-30 11:04:41
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-10-12 21:08:35
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';

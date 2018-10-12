@@ -5,21 +5,18 @@
     box-sizing: border-box;
     padding: 10px 0;
     .nav {
-      display: flex;
       height: 38px;
       line-height: 38px;
-      padding: 0 20px;
+      margin: 0 20px;
       border-bottom: 1px solid #e5e9f2;
       & > div {
-        flex: auto;
         font-size: 14px;
-        text-align: center;
         transition: .3s;
+       /*  &:last-child {
+          text-align: right;
+        } */
         &:first-child {
           text-align: left;
-        }
-        &:last-child {
-          text-align: right;
         }
         a {
           display: inline-block;
@@ -53,10 +50,11 @@
     }
     .text {
       padding: 0 20px;
-      height: 222px;
+      height: 160px;
       font-size: 12px;
       line-height: 20px;
       position: relative;
+      overflow: hidden;
       .noData {
         font-size: 14px;
         text-align: center;
@@ -70,7 +68,7 @@
     .link {
       position: absolute;
       right: 20px;
-      bottom: 2px;
+      bottom: 36px;
       font-size: 12px;
       color: #2782d7;
     }

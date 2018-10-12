@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-09-14 20:00:43
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-10-12 21:09:08
  */
 
 import React, { PureComponent } from 'react';
