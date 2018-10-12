@@ -140,22 +140,22 @@ export default {
     * queryChiefViewpoint({ payload }, { call, put }) {
       const { type } = payload;
       const response = yield call(api.queryChiefViewpoint, payload);
-      switch (type) {
+      switch (type.toString()) {
         case config.chiefViewpointType[1].value:
           yield put({
             type: 'queryDayViewpointSuccess',
             payload: response,
           });
           break;
-        case config.chiefViewpointType[3].value:
+        case config.chiefViewpointType[2].value:
           yield put({
-            type: 'querySpecialStudySuccess',
+            type: 'queryMonthViewpointSuccess',
             payload: response,
           });
           break;
         default:
           yield put({
-            type: 'queryMonthViewpointSuccess',
+            type: 'querySpecialStudySuccess',
             payload: response,
           });
           break;

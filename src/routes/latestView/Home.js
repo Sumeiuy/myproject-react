@@ -9,6 +9,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
+import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
@@ -20,6 +21,9 @@ import ZiJinClockViewpoint from '../../components/latestView/ziJinClockView/ZiJi
 import config from '../../components/latestView/config';
 import styles from './index.less';
 
+const { chiefViewpointType } = config;
+// 专题研究
+const studyValue = _.map(chiefViewpointType.slice(3), 'value');
 const dispatch = dva.generateEffect;
 // const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
@@ -123,15 +127,15 @@ export default class LatestView extends PureComponent {
     } = this.props;
     // 每日首席观点
     queryChiefViewpoint({
-      type: config.chiefViewpointType[1].value,
+      type: [chiefViewpointType[1].value],
     });
     // 每周首席观点
     queryChiefViewpoint({
-      type: config.chiefViewpointType[2].value,
+      type: [chiefViewpointType[2].value],
     });
     // 专题研究
     queryChiefViewpoint({
-      type: config.chiefViewpointType[3].value,
+      type: studyValue,
     });
     // 大类资产配置分析
     queryMajorAssetsIndexList();
@@ -164,7 +168,7 @@ export default class LatestView extends PureComponent {
               location={location}
               title="每日首席观点"
               data={dayViewpointData}
-              type={config.chiefViewpointType[1].value}
+              type={chiefViewpointType[1].value}
             />
           </div>
           <div className={styles.item}>
@@ -172,7 +176,7 @@ export default class LatestView extends PureComponent {
               location={location}
               title="每周首席观点"
               data={monthViewpointData}
-              type={config.chiefViewpointType[2].value}
+              type={chiefViewpointType[2].value}
             />
           </div>
           <div className={styles.item}>
@@ -180,7 +184,7 @@ export default class LatestView extends PureComponent {
               location={location}
               title="专题研究"
               data={specialStudyData}
-              type={config.chiefViewpointType[3].value}
+              type={studyValue.toString()}
             />
           </div>
         </div>

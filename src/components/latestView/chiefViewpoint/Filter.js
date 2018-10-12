@@ -11,8 +11,10 @@ import { Input, Select } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
+import { MultiFilter } from 'lego-react-filter/src';
 import { autobind } from 'core-decorators';
 import DateRangePick from 'lego-react-date/src';
+
 import logable from '../../../decorators/logable';
 import config from '../config';
 import styles from './filter.less';
@@ -33,7 +35,10 @@ const selectStyle = {
 };
 export default class Filter extends PureComponent {
   static propTypes = {
-    type: PropTypes.string,
+    type: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.array,
+    ]),
     keyword: PropTypes.string,
     startDate: PropTypes.string,
     endDate: PropTypes.string,
@@ -47,6 +52,14 @@ export default class Filter extends PureComponent {
     startDate: '',
     endDate: '',
     filterType: config.viewpointFilterType,
+  }
+
+  constructor(props) {
+    super(props);
+    const { type } = this.props;
+    this.state = {
+      selectedTypeList: type.split(','),
+    };
   }
 
   @autobind
@@ -79,7 +92,26 @@ export default class Filter extends PureComponent {
     });
   }
 
+  // 状态选中
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '选择状态',
+      value: '$args[0].value',
+    },
+  })
+  handleMultiFilterChange(obj) {
+    this.setState({
+      selectedTypeList: obj.value,
+    }, () => {
+      const { onFilter } = this.props;
+      onFilter({type: this.state.selectedTypeList});
+    });
+  }
+
   render() {
+    const { selectedTypeList } = this.state;
     const {
       type,
       keyword,
@@ -92,46 +124,49 @@ export default class Filter extends PureComponent {
       _.isEmpty(startDate) ? null : moment(startDate, dateFormatStr),
       _.isEmpty(endDate) ? null : moment(endDate, dateFormatStr),
     ];
+    const isViewpointFilterType = filterType === config.viewpointFilterType;
+    const filterTypeList = _.filter(config.chiefViewpointType, o => o.value !== '');
+    const decoratedTypeList = filterTypeList.map(item =>
+      ({ key: item.value || '', value: item.label }));
     return (
       <div className={styles.filterBox}>
         <div className={styles.inputBox}>
           <Search
             defaultValue={keyword}
-            placeholder={
-              filterType === config.viewpointFilterType ?
-              '标题'
-              :
-              '行业/主题'
-            }
+            placeholder={isViewpointFilterType ? '标题' : '行业/主题'}
             onSearch={value => onFilter({ keyword: value })}
             style={searchStyle}
             enterButton
           />
         </div>
         <div className={styles.selectBox}>
-          <span className={styles.title}>{
-            filterType === config.viewpointFilterType ?
-            '类型'
-            :
-            '调整方向'
-          }：</span>
-          <Select
-            style={selectStyle}
-            defaultValue={type}
-            onChange={value => onFilter({ type: value })}
-          >
-            {
-              this.getOptionList()
-            }
-          </Select>
+          {
+            isViewpointFilterType
+            ? null
+            : <span className={styles.title}>调整方向：</span>
+          }
+          {
+            isViewpointFilterType
+            ? <MultiFilter
+              filterName="类型"
+              data={decoratedTypeList}
+              value={selectedTypeList}
+              onChange={_.debounce(this.handleMultiFilterChange, 500)}
+            />
+            : <Select
+              style={selectStyle}
+              defaultValue={type}
+              onChange={value => onFilter({ type: value })}
+            >
+              {
+                this.getOptionList()
+              }
+            </Select>
+          }
+
         </div>
         <div className={styles.dateBox}>
-          <span className={styles.title}>{
-            filterType === config.viewpointFilterType ?
-            '报告日期'
-            :
-            '调整时间'
-          }：</span>
+          <span className={styles.title}>{isViewpointFilterType ? '报告日期' : '调整时间'}：</span>
           <DateRangePick
             filterName=""
             filterValue={defaultDate}

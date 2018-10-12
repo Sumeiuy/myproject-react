@@ -8,7 +8,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Table, Popover, Tabs } from 'antd';
+import { Table, Popover } from 'antd';
+// import { Table, Popover, Tabs } from 'antd';
 import classnames from 'classnames';
 
 import InfoTitle from '../common/InfoTitle';
@@ -31,7 +32,7 @@ const titleStyle = {
 const STOCK_CODE = securityTypeConfig[0].value;
 const titleList = titleListConfig.tenStocks;
 
-const TabPane = Tabs.TabPane;
+// const TabPane = Tabs.TabPane;
 
 export default class WeeklySecurityTopTen extends PureComponent {
   static propTypes = {
@@ -199,30 +200,39 @@ export default class WeeklySecurityTopTen extends PureComponent {
           />
         </div>
         <div className={styles.weeklySecurityTopTenContainer}>
-          <Tabs defaultActiveKey="1">
+          <div className={styles.bodyBox}>
+            <Table
+              columns={newTitleList}
+              dataSource={data}
+              pagination={false}
+              scroll={{ y: 289 }}
+              rowKey="code"
+            />
+          </div>
+          {/*<Tabs defaultActiveKey="1">
             <TabPane tab="证券" key="1">
               <div className={styles.bodyBox}>
-              <Table
-                columns={newTitleList}
-                dataSource={data}
-                pagination={false}
-                scroll={{ y: 289 }}
-                rowKey="code"
-              />
-            </div>
+                <Table
+                  columns={newTitleList}
+                  dataSource={data}
+                  pagination={false}
+                  scroll={{ y: 289 }}
+                  rowKey="code"
+                />
+              </div>
             </TabPane>
             <TabPane tab="组合" key="2">
               <div className={styles.bodyBox}>
-              <Table
-                columns={newTitleList}
-                dataSource={data}
-                pagination={false}
-                scroll={{ y: 289 }}
-                rowKey="code"
-              />
-            </div>
+                <Table
+                  columns={newTitleList}
+                  dataSource={data}
+                  pagination={false}
+                  scroll={{ y: 289 }}
+                  rowKey="code"
+                />
+              </div>
             </TabPane>
-          </Tabs>
+          </Tabs>*/}
         </div>
       </div>
     );
