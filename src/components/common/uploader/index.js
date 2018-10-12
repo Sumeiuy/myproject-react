@@ -1,13 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
-<<<<<<< HEAD
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-14 22:24:43
-=======
  * @Last Modified by: Liujianshu
  * @Last Modified time: 2018-09-14 20:00:43
->>>>>>> aee20cc80a468af8bc2d43f9a909b795c414f2ef
  */
 
 import React, { PureComponent } from 'react';
@@ -153,7 +148,7 @@ export default class Uploader extends PureComponent {
     const uploadFile = info.file;
     const { size } = uploadFile;
     if (size === 0) {
-      message.error(`文件大小不能为 0`);
+      message.error('文件大小不能为 0');
       return;
     }
     const { onOperateFile, isSupportUploadMultiple } = this.props;

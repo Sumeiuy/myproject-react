@@ -77,7 +77,7 @@ export default class ViewpointList extends PureComponent {
     queryChiefViewpointList({
       pageSize,
       pageNum,
-      type,
+      type: type.split(','),
       keyword,
       startDate,
       endDate,
@@ -198,12 +198,13 @@ export default class ViewpointList extends PureComponent {
     const newQuery = {
       ...query,
       ...param,
+      type: param.type.join(','),
       pageNum: 1,
     };
     queryChiefViewpointList({
       pageNum: 1,
       pageSize: 20,
-      type: newQuery.type,
+      type: param.type,
       keyword: newQuery.keyword,
       startDate: newQuery.startDate,
       endDate: newQuery.endDate,
