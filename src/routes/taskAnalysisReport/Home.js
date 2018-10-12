@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 10:29:27
+ * @Last Modified time: 2018-10-11 21:04:13
  */
 
 import React, { PureComponent } from 'react';
@@ -12,6 +12,8 @@ import { connect } from 'dva';
 
 import { dva } from '../../helper';
 import TaskCustomerReport from '../../components/taskAnalysisReport/TaskCustomerReport';
+import CompleteServiceCustReport from '../../components/taskAnalysisReport/serviceCust/CompleteServiceCustReport';
+import ComplianceServiceCustReport from '../../components/taskAnalysisReport/serviceCust/ComplianceServiceCustReport';
 
 import styles from './home.less';
 
@@ -74,12 +76,24 @@ export default class TaskAnalysisReport extends PureComponent {
     const {
       taskCustomerList,
       getTaskCustomer,
+      completeServiceCustList,
+      getCompleteServiceCust,
+      complianceServiceCustList,
+      getComplianceServiceCust,
     } = this.props;
     return (
       <div className={styles.taskAnalysisReport}>
         <TaskCustomerReport
           taskCustomerList={taskCustomerList}
           getTaskCustomer={getTaskCustomer}
+        />
+        <CompleteServiceCustReport
+          completeServiceCustList={completeServiceCustList}
+          getCompleteServiceCust={getCompleteServiceCust}
+        />
+        <ComplianceServiceCustReport
+          complianceServiceCustList={complianceServiceCustList}
+          getComplianceServiceCust={getComplianceServiceCust}
         />
       </div>
     );

@@ -55,11 +55,6 @@ const generalOptions = {
     containLabel: true,
     borderWidth: '0',
   },
-};
-
-// 任务-客户报表配置项
-const taskCustomerOptions = {
-  color: ['#6fb7ec', '#4c70b3'],
   textStyle: {
     color: '#333',
   },
@@ -74,6 +69,45 @@ const taskCustomerOptions = {
   },
 };
 
+// 任务-客户报表配置项
+const taskCustomerOptions = {
+  color: ['#6fb7ec', '#4c70b3'],
+};
+
+// 折线图通用配置项
+const chartLineOptions = {
+  color: ['#f7ad33', '#4c70b3'],
+  series: {
+    symbol: 'none',
+    smooth: true,
+    itemStyle: {
+      normal: {
+        lineStyle: {
+          width: 4,
+        }
+      }
+    },
+  }
+};
+
+// 完成服务客户统计配置项
+const completeServiceCustOptions = {
+  serviceCustOptions: {
+    customerNumber: '客户人次',
+    completeCustomerNumber: '完成客户人次',
+  }
+};
+
+// 达标服务客户统计配置项
+const complianceServiceCustOptions = {
+  serviceCustOptions: {
+    completeCustomerNumber: '完成客户人次',
+    complianceCustomerNumber: '达标客户人次',
+  }
+};
+
+const chartLineColors = ['#f7ad33', '#4c70b3'];
+
 // 客户人次
 const CUSTOMEER_NUMBER_NAME = '客户人次';
 // 任务数
@@ -81,14 +115,22 @@ const TASK_NUMBER_NAME = '任务数';
 
 export const {
   gridOptions,
+  textStyle,
+  toolbox,
+  yAxisSplitLine,
 } = generalOptions;
 
 export {
   defaultStartTime,
   defaultEndTime,
+  generalOptions,
+  chartLineOptions,
   executeTypeOptions,
   eventSourceOptions,
   taskCustomerOptions,
+  chartLineColors,
+  completeServiceCustOptions,
+  complianceServiceCustOptions,
   CUSTOMEER_NUMBER_NAME,
   TASK_NUMBER_NAME,
 };

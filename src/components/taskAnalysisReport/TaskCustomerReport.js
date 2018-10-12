@@ -3,7 +3,7 @@
  * @Descripter: 任务-客户分析报表
  * @Date: 2018-10-05 14:38:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 10:42:01
+ * @Last Modified time: 2018-10-12 09:22:49
  */
 
 import React, { PureComponent } from 'react';
@@ -13,14 +13,16 @@ import { autobind } from 'core-decorators';
 import IECharts from '../IECharts';
 import ReportTitle from './ReportTitle';
 import ReportFilter from './ReportFilter';
-import { defaultStartTime, defaultEndTime, taskCustomerOptions, gridOptions, CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME } from './config';
+import { defaultStartTime, defaultEndTime, taskCustomerOptions, generalOptions, chartLineOptions, CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME } from './config';
 import { emp, number } from '../../helper';
 import { filterData } from './utils';
 
 import styles from './taskCustomerReport.less';
+import imgSrc from '../chartRealTime/noChart.png';
 
 const { thousandFormat } = number;
-const { color, textStyle, toolbox, yAxisSplitLine } = taskCustomerOptions;
+const { yAxisSplitLine, textStyle, toolbox, gridOptions } = generalOptions;
+const { series } = chartLineOptions;
 
 export default class TaskCustomerReport extends PureComponent {
   static propTypes = {
@@ -98,39 +100,39 @@ export default class TaskCustomerReport extends PureComponent {
     // tooltip 配置项
     const tooltipOtions = {
       trigger: 'axis',
-        axisPointer: {
-          type: 'shadow',
-        },
-        formatter(params) {
-          const triggerTime = params[0].name;
-          const customerSeriesName = params[0].seriesName;
-          const customerNumber = thousandFormat(params[0].value);
-          const taskSeriesName = params[1].seriesName;
-          const taskNumber = thousandFormat(params[1].value);
-          const tips = `
-            <div class="echartTooltipTable">
-              ${triggerTime}
-              <div>${customerSeriesName}: ${customerNumber}</div>
-              <div>${taskSeriesName}: ${taskNumber}</div>
-            </div>
-          `;
-          return tips;
-        },
-        backgroundColor: 'rgba(2, 22, 55, .8)',
-        padding: [12, 10, 12, 10],
-        extraCssText:
-          `box-shadow: 0 2px 4px 0 rgba(0,0,0,0.30);
-           border-radius: 3px 3px 3px 0 0 3px 0 0 0;`,
+      axisPointer: {
+        type: 'shadow',
+      },
+      formatter(params) {
+        const triggerTime = params[0].name;
+        const customerSeriesName = params[0].seriesName;
+        const customerNumber = thousandFormat(params[0].value);
+        const taskSeriesName = params[1].seriesName;
+        const taskNumber = thousandFormat(params[1].value);
+        const tips = `
+          <div class="echartTooltipTable">
+            ${triggerTime}
+            <div>${customerSeriesName}: ${customerNumber}</div>
+            <div>${taskSeriesName}: ${taskNumber}</div>
+          </div>
+        `;
+        return tips;
+      },
+      backgroundColor: 'rgba(2, 22, 55, .8)',
+      padding: [12, 10, 12, 10],
+      extraCssText:
+        `box-shadow: 0 2px 4px 0 rgba(0,0,0,0.30);
+          border-radius: 3px 3px 3px 0 0 3px 0 0 0;`,
     };
     const options = {
-      color,
+      color: taskCustomerOptions.color,
       textStyle,
       toolbox,
       grid: gridOptions,
       tooltip: tooltipOtions,
       legend: {
-          data:[CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME],
-          right: '20px',
+        data: [CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME],
+        right: '20px',
       },
       xAxis: [
         {
@@ -141,6 +143,7 @@ export default class TaskCustomerReport extends PureComponent {
           },
           axisLabel: {
             interval: xAxisLabelInterval,
+            margin: 20,
           }
         }
       ],
@@ -152,6 +155,9 @@ export default class TaskCustomerReport extends PureComponent {
           axisLine: {
             show: false,
           },
+          axisLabel: {
+            margin: 20,
+          },
           splitLine: yAxisSplitLine,
         },
         {
@@ -160,6 +166,9 @@ export default class TaskCustomerReport extends PureComponent {
           max: taskNumberMax,
           axisLine: {
             show: false,
+          },
+          axisLabel: {
+            margin: 20,
           },
           splitLine: yAxisSplitLine,
         }
@@ -175,7 +184,7 @@ export default class TaskCustomerReport extends PureComponent {
           type: 'line',
           yAxisIndex: 1,
           data: taskNumberData,
-          smooth: true,
+          ...series,
         }
       ]
     };
@@ -191,13 +200,25 @@ export default class TaskCustomerReport extends PureComponent {
           filterCallback={this.handlefilterCallback}
         />
         <div className={styles.taskCustomerChart}>
-          <IECharts
-            option={options}
-            resizable
-            style={{
-              height: '350px',
-            }}
-          />
+          {
+            (taskCustomerList && taskCustomerList.length > 0)
+            ?
+            (
+              <IECharts
+                option={options}
+                resizable
+                style={{
+                  height: '350px',
+                }}
+              />
+            )
+            :
+            (
+              <div className={styles.noChart}>
+                <img src={imgSrc} alt="图表不可见" />
+              </div>
+            )
+          }
         </div>
       </div>
     );
