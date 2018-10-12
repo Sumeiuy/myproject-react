@@ -112,10 +112,6 @@ const chartLineColors = ['#f7ad33', '#4c70b3'];
 const CUSTOMEER_NUMBER_NAME = '客户人次';
 // 任务数
 const TASK_NUMBER_NAME = '任务数';
-// 完成客户人次
-const COMPLETE_CUSTOMEER_NUMBER_NAME = '完成客户人次';
-// 达标客户人次
-const COMPLIANCE_CUSTOMEER_NUMBER_NAME = '达标客户人次';
 
 export const {
   gridOptions,
@@ -137,6 +133,4 @@ export {
   complianceServiceCustOptions,
   CUSTOMEER_NUMBER_NAME,
   TASK_NUMBER_NAME,
-  COMPLETE_CUSTOMEER_NUMBER_NAME,
-  COMPLIANCE_CUSTOMEER_NUMBER_NAME,
 };

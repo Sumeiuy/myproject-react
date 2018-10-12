@@ -3,7 +3,7 @@
  * @Descripter: 任务-客户分析报表
  * @Date: 2018-10-05 14:38:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 17:21:41
+ * @Last Modified time: 2018-10-12 09:22:49
  */
 
 import React, { PureComponent } from 'react';
@@ -131,13 +131,7 @@ export default class TaskCustomerReport extends PureComponent {
       grid: gridOptions,
       tooltip: tooltipOtions,
       legend: {
-        data: [
-          {
-            name: CUSTOMEER_NUMBER_NAME,
-          }, {
-            name: TASK_NUMBER_NAME,
-          },
-        ],
+        data: [CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME],
         right: '20px',
       },
       xAxis: [
