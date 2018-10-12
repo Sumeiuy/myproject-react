@@ -184,7 +184,7 @@ export default class LatestView extends PureComponent {
               location={location}
               title="专题研究"
               data={specialStudyData}
-              type={studyValue.toString()}
+              type={studyValue.join(',')}
             />
           </div>
         </div>

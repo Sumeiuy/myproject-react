@@ -195,7 +195,7 @@ export default class WeeklySecurityTopTen extends PureComponent {
       <div className={styles.weeklySecurityTopTenBox}>
         <div className={styles.weeklyTtitle}>
           <InfoTitle
-            head="近一周表现前十的"
+            head="近一周表现前十的证券"
             titleStyle={titleStyle}
           />
         </div>
