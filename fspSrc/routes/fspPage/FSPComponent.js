@@ -33,7 +33,7 @@ export default class FSPComponent extends PureComponent {
       loading: true,
       isBlocking: false,
     };
-    this.timeoutId = setTimeout(() => this.setState({ loading: false }), 10000);
+    this.timeoutId = setTimeout(() => this.setState({ loading: false }), 1000);
   }
 
   componentDidMount() {
@@ -53,7 +53,7 @@ export default class FSPComponent extends PureComponent {
     if (location.pathname !== pathname || location.state !== state) {
       this.getRouteConfig(location.pathname, location.state);
       this.getFspData({ isinitial: false });
-      this.timeoutId = setTimeout(() => this.setState({ loading: false }), 10000);
+      this.timeoutId = setTimeout(() => this.setState({ loading: false }), 1000);
     }
   }
 
@@ -113,6 +113,16 @@ export default class FSPComponent extends PureComponent {
             loading: false,
           });
         });
+    } else {
+      new Promise((resolve, reject) => {
+        setTimeout(function () {
+          resolve();
+        }, 0);
+      }).then(() => {
+        this.setState({
+          loading: !this.state.loading,
+        });
+      });
     }
   }
 
@@ -143,7 +153,7 @@ export default class FSPComponent extends PureComponent {
         {
           this.action === 'loadInTab' ?
             <div className={styles.fspContent} ref={ref => this.elem = ref} /> :
-            <iframe className={styles.iframe} onLoad={this.onLoad} src={this.url} frameBorder="0">
+            <iframe title={this.url} className={styles.iframe} onLoad={this.onLoad} src={this.url} frameBorder="0">
               你的浏览器不支持iframe,请升级或者更换浏览器
             </iframe>
         }
