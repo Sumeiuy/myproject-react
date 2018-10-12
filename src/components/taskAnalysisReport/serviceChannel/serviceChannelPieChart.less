@@ -1,0 +1,30 @@
+.serviceChannelPieChart {
+  flex: 1;
+  height: 350px;
+  border-right: 1px solid #eee;
+  .noChart {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    img {
+      position: absolute;
+      width: 180px;
+      transform: translate(-50%, -50%);
+      top: 50%;
+      left: 50%;
+    }
+  }
+  :global {
+    .echartTooltipTable {
+      font-size: 12px;
+      color: #333;
+      .echartTooltipName {
+        width: 24px;
+        height: 20px;
+        border-bottom: 1px solid #333;
+        border-radius: 1px;
+        display: inline-block;
+      }
+    }
+  }
+}

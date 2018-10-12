@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 21:04:13
+ * @Last Modified time: 2018-10-12 10:40:44
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import { dva } from '../../helper';
 import TaskCustomerReport from '../../components/taskAnalysisReport/TaskCustomerReport';
 import CompleteServiceCustReport from '../../components/taskAnalysisReport/serviceCust/CompleteServiceCustReport';
 import ComplianceServiceCustReport from '../../components/taskAnalysisReport/serviceCust/ComplianceServiceCustReport';
+import ServiceChannelReport from '../../components/taskAnalysisReport/serviceChannel/ServiceChannelReport';
 
 import styles from './home.less';
 
@@ -38,7 +39,7 @@ const mapStateToProps = state => ({
   // 达标服务客户统计数据
   complianceServiceCustList: state.taskAnalysisReport.complianceServiceCustList,
   // 服务渠道统计数据
-  serviceChannelList: state.taskAnalysisReport.serviceChannelList,
+  serviceChannelData: state.taskAnalysisReport.serviceChannelData,
 });
 
 const mapDispatchToProps = {
@@ -68,7 +69,7 @@ export default class TaskAnalysisReport extends PureComponent {
     // 获取达标服务客户统计
     getComplianceServiceCust: PropTypes.func.isRequired,
     // 服务渠道统计
-    serviceChannelList: PropTypes.array.isRequired,
+    serviceChannelData: PropTypes.object.isRequired,
     // 获取服务渠道统计
     getServiceChannel: PropTypes.func.isRequired,
   }
@@ -80,6 +81,8 @@ export default class TaskAnalysisReport extends PureComponent {
       getCompleteServiceCust,
       complianceServiceCustList,
       getComplianceServiceCust,
+      serviceChannelData,
+      getServiceChannel,
     } = this.props;
     return (
       <div className={styles.taskAnalysisReport}>
@@ -94,6 +97,10 @@ export default class TaskAnalysisReport extends PureComponent {
         <ComplianceServiceCustReport
           complianceServiceCustList={complianceServiceCustList}
           getComplianceServiceCust={getComplianceServiceCust}
+        />
+        <ServiceChannelReport
+          serviceChannelData={serviceChannelData}
+          getServiceChannel={getServiceChannel}
         />
       </div>
     );

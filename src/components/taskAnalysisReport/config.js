@@ -106,6 +106,21 @@ const complianceServiceCustOptions = {
   }
 };
 
+// 服务渠道配置项
+const serviceChannelOptions = {
+  color: ['#f7ad33', '#4c70b3', '#67b8e1', '#cf4b4a'],
+  legendData: {
+    zhangle: '涨乐',
+    message: '短信',
+    telephone: '电话',
+    interview: '面谈',
+  },
+  series: {
+    symbol: 'none',
+    smooth: true,
+  },
+};
+
 const chartLineColors = ['#f7ad33', '#4c70b3'];
 
 // 客户人次
@@ -131,6 +146,7 @@ export {
   chartLineColors,
   completeServiceCustOptions,
   complianceServiceCustOptions,
+  serviceChannelOptions,
   CUSTOMEER_NUMBER_NAME,
   TASK_NUMBER_NAME,
 };
