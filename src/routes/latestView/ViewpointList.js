@@ -198,7 +198,7 @@ export default class ViewpointList extends PureComponent {
     const newQuery = {
       ...query,
       ...param,
-      type: param.type.toString(),
+      type: param.type.join(','),
       pageNum: 1,
     };
     queryChiefViewpointList({
