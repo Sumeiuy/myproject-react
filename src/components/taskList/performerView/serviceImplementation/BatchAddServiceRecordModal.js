@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 批量添加服务记录弹窗
  * @Date: 2018-08-17 11:31:18
- * @Last Modified by: zhangmei
- * @Last Modified time: 2018-09-25 10:09:11
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-10-12 16:13:36
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -144,6 +144,13 @@ export default class BatchAddServiceRecordModal extends PureComponent {
     }
   }
 
+  // 点击取消按钮
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  handleCancle() {
+    this.props.closeModal(false);
+  }
+
   render() {
     const {
       visible,
@@ -156,6 +163,13 @@ export default class BatchAddServiceRecordModal extends PureComponent {
     const selfBtnGroup = (
       <div className={styles.buttonBox}>
         <span className={styles.tips}>已关联 <em>{this.getSelectedTaskList().length}</em> 个任务</span>
+        <Button
+          key="submit"
+          size="large"
+          onClick={this.handleCancle}
+        >
+          取消
+        </Button>
         <Button
           key="submit"
           type="primary"
