@@ -13,6 +13,7 @@ import { Tabs } from 'antd';
 import withRouter from '../../decorators/withRouter';
 import AccountInfo from './tabpages/accountInfo/Home';
 import BreadCrumb from '../../components/customerDetail/Breadcrumb';
+import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo';
 
 import styles from './home.less';
 
@@ -66,7 +67,7 @@ export default class Home extends PureComponent {
       <div className={styles.container}>
         <div className={styles.breadCrumb}><BreadCrumb {...breadCrumbProps} /></div>
         <div className={styles.custInfo}>
-          <div className={styles.custBasicInfo}>基本信息</div>
+          <div className={styles.custBasicInfo}><CustomerBasicInfo /></div>
           <div className={styles.custDetailInfo}>详细信息</div>
         </div>
         <div className={styles.tabContainer}>
