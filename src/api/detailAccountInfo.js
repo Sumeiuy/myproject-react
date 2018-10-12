@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 16:55:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-12 18:17:34
+ * @Last Modified time: 2018-10-12 18:21:04
  * @description 新版客户360详情下的账户信息Tab页的API
  */
 export default function detailAccountInfo(api) {

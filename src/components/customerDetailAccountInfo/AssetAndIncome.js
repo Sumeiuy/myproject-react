@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 14:58:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-12 16:52:49
+ * @Last Modified time: 2018-10-12 18:23:23
  * @Description 新版客户360详情信息下的账户信息Tab下资产分布和收益走势的容器组件
  */
 
