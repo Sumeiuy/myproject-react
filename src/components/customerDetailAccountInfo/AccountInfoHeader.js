@@ -2,11 +2,11 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-12 10:26:16
+ * @Last Modified time: 2018-10-12 11:41:21
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Button, Tabs, Radio } from 'antd';
+import { Button, Tabs, Radio,Table } from 'antd';
 import Modal from '../../components/common/biz/CommonModal';
 
 import style from './accountInfoHeader.less';
@@ -14,10 +14,50 @@ import style from './accountInfoHeader.less';
 const TabPane = Tabs.TabPane;
 //单选框
 const RadioGroup = Radio.Group;
+//实时持仓表格
+const columns = [
+  {
+    title: '产品代码',
+    dataIndex: 'productCode',
+    key: 'productCode'
+  },
+  {
+    title: '产品名称',
+    dataIndex: 'productName',
+    key: 'productName'
+  },
+  {
+    title: '持仓数',
+    dataIndex: 'holdingNumber',
+    key: 'holdingNumber'
+  },
+  {
+    title: '成本',
+    dataIndex: 'cost',
+    key: 'cost'
+  },
+  {
+    title: '现价',
+    dataIndex: 'presentPrice',
+    key: 'presentPrice'
+  },
+  {
+    title: '市值',
+    dataIndex: 'marketValue',
+    key: 'marketValue'
+  },
+  {
+    title: '盈亏',
+    dataIndex: 'profitAndLoss',
+    key: 'profitAndLoss'
+  },
+  {
+    title: '货币类型',
+    dataIndex: 'currencyType',
+    key: 'currencyType'
+  },
+];
 export default class AccountInfoHeader extends PureComponent {
-  state = {
-    modal1Visible: false,
-  }
   constructor(props) {
     super(props);
     this.state = {
@@ -72,23 +112,26 @@ export default class AccountInfoHeader extends PureComponent {
             </div>
           </div>
           <div className={style.tabContainer}>
-          <Tabs defaultActiveKey="securitiesHoldings"
-            onChange={this.callback}
-            animated={false}
+            <Tabs defaultActiveKey="securitiesHoldings"
+              onChange={this.callback}
+              animated={false}
             >
-            <TabPane tab="证券实时持仓" key="securitiesHoldings" className={style.firstTabTitle}>
-              <div><span>账户类型：</span>
-                <RadioGroup name="radiogroup" defaultValue={1}>
-                  <Radio value={1}>全部</Radio>
-                  <Radio value={2}>普通</Radio>
-                  <Radio value={3}>信用</Radio>
-                </RadioGroup>
-              </div>
-            </TabPane>
-            <TabPane tab="产品实时持仓" key="storageOfProducts"
-            className={style.secondTabTitle}
-            >Content of Tab Pane 2</TabPane>
-          </Tabs>
+              <TabPane tab="证券实时持仓" key="securitiesHoldings" className={style.firstTabTitle}>
+                <div><span>账户类型：</span>
+                  <RadioGroup name="radiogroup" defaultValue={1}>
+                    <Radio value={1}>全部</Radio>
+                    <Radio value={2}>普通</Radio>
+                    <Radio value={3}>信用</Radio>
+                  </RadioGroup>
+                </div>
+
+                {/* <Table columns={columns} dataSource={data} /> */}
+
+              </TabPane>
+              <TabPane tab="产品实时持仓" key="storageOfProducts"
+                className={style.secondTabTitle}
+              >Content of Tab Pane 2</TabPane>
+            </Tabs>
           </div>
         </Modal>
       </div>

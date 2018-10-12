@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-11 15:03:35
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-12 11:12:23
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import { connect } from 'dva';
 import { dva } from '../../../../helper';
 import withRouter from '../../../../decorators/withRouter';
 import AssetAndIncome from '../../../../components/customerDetailAccountInfo/AssetAndIncome';
+import AccountInfoHeader from '../../../../components/customerDetailAccountInfo/AccountInfoHeader';
 
 import styles from './home.less';
 
@@ -98,7 +99,9 @@ export default class Home extends PureComponent {
     return (
       <div className={styles.detailAccountInfo}>
         {/* 头部实时持仓、历史持仓、交易流水、资产配置、账户分析 5 个按钮的所占区域*/}
-        <div className={styles.headerBtnsArea}></div>
+        <div className={styles.headerBtnsArea}>
+        <AccountInfoHeader/>
+        </div>
         {/* 中间资产分布和收益走势区域 */}
         <div className={styles.assetAndIncomeArea}>
           <AssetAndIncome />
