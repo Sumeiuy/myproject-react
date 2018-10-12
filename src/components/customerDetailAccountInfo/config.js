@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-12 12:24:31
+ * @Last Modified time: 2018-10-12 15:57:03
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -39,74 +39,61 @@ export const dataSource = [
 ];
 
 // 资产分布雷达图配置
-export const RADAR_OPTIONS = {
-  radar: {
-    radius: '70%',
-    center: ['40%', '50%'],
-    name: {
-      textStyle: {
-        color: '#108ee9',
-        borderRadius: 3,
-        padding: [3, 5]
+export const CHART_RADAR_OPTIONS = {
+  radius: '70%',
+  center: ['40%', '50%'],
+  name: {
+    textStyle: {
+      color: '#108ee9',
+      borderRadius: 3,
+      padding: [3, 5]
+    },
+    formatter: function (name) {
+      // 此时的name中含有了指标的值,并且是用|分割
+      const nameLable = name.split('|');
+      return `{name|${nameLable[0]}}\n{value|${nameLable[1]}}`;
+    },
+    rich: {
+      name: {
+        color:'#108ee9',
+        lineHeight: 14,
+        fontSize: 12,
+        align: 'center',
       },
-      formatter: function (value) {
-        return '{name|' + value + '}\n' + '{value|1000}';
-      },
-      rich: {
-        name: {
-          color:'#108ee9',
-          lineHeight: 14,
-          fontSize: 12,
-          align: 'center',
-        },
-        value: {
-          color: '#333333',
-          lineHeight: 14,
-          align: 'center',
-          fontSize: 12,
-        },
+      value: {
+        color: '#333333',
+        lineHeight: 14,
+        align: 'center',
+        fontSize: 12,
       },
     },
-    nameGap: 0,
-    axisLine: {
-      show: false,
-    },
-    splitNumber: 3,
-    splitArea: {
-      show: false,
-    },
-    indicator: [
-      { name: '销售', max: 6500},
-      { name: '管理', max: 16000},
-      { name: '信息技术', max: 30000},
-      { name: '客服', max: 38000},
-      { name: '研发', max: 52000},
-      { name: '市场', max: 25000}
-    ]
   },
-  series: [{
-    type: 'radar',
-    itemStyle: {
-      normal: {
-        opacity: 0,
-      },
+  nameGap: 0,
+  axisLine: {
+    show: false,
+  },
+  splitNumber: 3,
+  splitArea: {
+    show: false,
+  },
+};
+
+export const CHART_SERIES_OPTIONS = {
+  type: 'radar',
+  itemStyle: {
+    normal: {
+      opacity: 0,
     },
-    lineStyle: {
-      normal: {
-        color: '#f8af87',
-      },
+  },
+  lineStyle: {
+    normal: {
+      color: '#f8af87',
     },
-    areaStyle: {
-      normal: {
-        color: '#ffede2',
-        opacity: 1,
-      },
+  },
+  areaStyle: {
+    normal: {
+      color: '#ffede2',
+      opacity: 1,
     },
-    data : [
-      {
-        value : [4300, 10000, 28000, 35000, 50000, 19000],
-        name : '资产分布'
-      }
-    ]
-  }]
+  }
 };

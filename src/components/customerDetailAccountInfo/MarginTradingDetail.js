@@ -2,16 +2,25 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 09:55:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-12 10:25:33
+ * @Last Modified time: 2018-10-12 17:49:52
  * @description 融资融券明细
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
+
+import DebtDetailItem from './DebtDetailItem';
 
 import styles from './debtDetail.less';
 
 export default function MarginTradingDetail(props) {
+  const { data } = props;
+  if (_.isEmpty(data)) {
+    return null;
+  }
+  // 融资合约金额
+  const financeContractSum = data.financeContractSum;
   return (
     <div className={styles.detailContainer}>
       <div className={styles.header}>
@@ -22,34 +31,12 @@ export default function MarginTradingDetail(props) {
         </div>
       </div>
       <div className={styles.body}>
-        <div className={styles.column}>
-          <div className={styles.item}>
-            <span className={styles.label}>融资合约金额：</span>
-            <span className={styles.value}>478,432.21</span>
-          </div>
-          <div className={styles.item}>
-            <span className={styles.label}>融资费用：</span>
-            <span className={styles.value}>478,432.21</span>
-          </div>
-          <div className={styles.item}>
-            <span className={styles.label}>融券利息：</span>
-            <span className={styles.value}>478,432.21</span>
-          </div>
-        </div>
-        <div className={styles.column}>
-          <div className={styles.item}>
-            <span className={styles.label}>融资利息：</span>
-            <span className={styles.value}>478,432.21</span>
-          </div>
-          <div className={styles.item}>
-            <span className={styles.label}>融券合约金额：</span>
-            <span className={styles.value}>478,432.21</span>
-          </div>
-          <div className={styles.item}>
-            <span className={styles.label}>其他费用：</span>
-            <span className={styles.value}>478,432.21</span>
-          </div>
-        </div>
+        <DebtDetailItem title="融资合约金额" value={financeContractSum} />
+        <DebtDetailItem title="融资费用" value="478,432.21" />
+        <DebtDetailItem title="融券利息" value="478,432.21" />
+        <DebtDetailItem title="融资利息" value="478,432.21" />
+        <DebtDetailItem title="融券合约金额" value="478,432.21" />
+        <DebtDetailItem title="其他费用" value="478,432.21" />
       </div>
     </div>
   );

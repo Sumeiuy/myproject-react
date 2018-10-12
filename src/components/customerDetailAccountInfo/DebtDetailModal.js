@@ -2,23 +2,30 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 08:45:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-12 10:24:44
+ * @Last Modified time: 2018-10-12 17:46:38
  * @description 资产分布的负债详情弹出层
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'antd';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import Modal from '../common/biz/CommonModal';
 import MarginTradindDetail from './MarginTradingDetail';
 import OtherDebtDetail from './OtherDebtDetail';
+import { convertMoney } from './utils';
 
 import styles from './debtDetailModal.less';
 
 export default class DebtDetailModal extends PureComponent {
   static propTypes = {
     onClose: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    // 负债详情数据
+    debtDetail: PropTypes.object.isRequired,
+    // 查询负债详情数据接口
+    queryDebtDetail: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -30,6 +37,8 @@ export default class DebtDetailModal extends PureComponent {
 
   componentDidMount() {
     // 初始进入后需要查询下负债的详情数据
+    // TODO 后期将经济客户号修改为正确的值
+    this.props.queryDebtDetail({ custId: 'xxxx' });
   }
 
   @autobind
@@ -38,6 +47,25 @@ export default class DebtDetailModal extends PureComponent {
   }
 
   render() {
+    const {
+      debtDetail: {
+        totalDebt,
+        marginTrading,
+        smallLoan,
+        bondDebt,
+        stockPledge,
+      },
+    } = this.props;
+    // 总负债
+    const totalDebtMoney = convertMoney({ money: totalDebt, unit: '元', formater: true });
+    // 融资融券
+    const hasNoMargin = _.isEmpty(marginTrading);
+    // 小额贷
+    const hasNoSmallLoan = _.isEmpty(smallLoan);
+    // 债券负债
+    const hasNobondDebt = _.isEmpty(bondDebt);
+    // 股票质押
+    const hasNoStockPledge = _.isEmpty(stockPledge);
     // 底部确定按钮
     const button = (
       <Button type="primary" onClick={this.handleCloseModal}>确定</Button>
@@ -54,12 +82,12 @@ export default class DebtDetailModal extends PureComponent {
         <div className={styles.debtDetailContainer}>
           <div className={styles.totalDebt}>
             <span className={styles.label}>总负债</span>
-            <span className={styles.value}>-2435.5万元</span>
+            <span className={styles.value}>{`${totalDebtMoney.formatedValue}${totalDebtMoney.unit}`}</span>
           </div>
-          <MarginTradindDetail />
-          <OtherDebtDetail title="小额贷" />
-          <OtherDebtDetail title="债券负债" />
-          <OtherDebtDetail title="股票质押" />
+          { _.map(marginTrading, item => <MarginTradindDetail data={item} />)}
+          { _.map(smallLoan, item => <OtherDebtDetail title="小额贷" data={item} />)}
+          { _.map(bondDebt, item => <OtherDebtDetail title="债券负债" data={item} />)}
+          { _.map(stockPledge, item => <OtherDebtDetail title="股票质押" data={item} />)}
         </div>
       </Modal>
     );
