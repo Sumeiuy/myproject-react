@@ -1,0 +1,163 @@
+.container {
+  width: 100%;
+  height: 100%;
+
+  .header {
+    padding: 14px 0;
+    height: 48px;
+    box-sizing: border-box;
+
+    .title {
+      font-size: 14px;
+      font-weight: bold;
+      line-height: 20px;
+      color: #333;
+    }
+
+    .checkbox {
+      margin-left: 10px;
+      font-size: 12px;
+      color: #666;
+      line-height: 20px;
+    }
+  }
+
+  .body {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    display: flex;
+    align-items: flex-start;
+
+    .radarArea, .indexDetailArea {
+      flex: 1 1 auto;
+      width: 50%;
+      height: 260px;
+    }
+
+    .radarArea {
+      .radarChart {
+        height: 220px;
+      }
+      .summary {
+        height: 20px;
+        margin-bottom: 20px;
+
+        .summaryInfo {
+          margin-right: 10px;
+          line-height: 20px;
+
+          .label, .unit {
+            font-size: 12px;
+            color: #666;
+          }
+          .unit {
+            margin-left: 4px;
+          }
+          .value {
+            font-size: 16px;
+            color: #333;
+          }
+
+          .infoIco {
+            margin-left: 4px;
+            font-size: 12px;
+            color: #108ee9;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+
+    .indexDetailArea {
+      .indexDetailTable {
+        .zichanCls {
+          padding-left: 28px !important;
+        }
+        .holdValueCls, .profitCls {
+          text-align: right;
+        }
+
+        :global {
+          .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+            padding: 6px 0;
+            font-size: 12px;
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .ant-table-tbody > .fixRowPadding > td {
+            padding-left: 4px !important;
+          }
+          .ant-table-tbody > .fixRowPadding ~ .ant-table-row-level-1 > td {
+            padding-left: 0 !important;
+          }
+        }
+
+        .indexHoldValueCell {
+          display: flex;
+          font-size: 12px;
+          color: #666;
+
+          .value {
+            width: 80px;
+            flex: 0 0 auto;
+            text-align: left;
+          }
+
+          .percent {
+            width: 60px;
+            flex: 0 0 auto;
+            text-align: right;
+          }
+
+          .profit {
+            padding-left: 15px;
+            width: 80px;
+            flex: 0 0 auto;
+            text-align: left;
+          }
+
+          .profitRate {
+            width: 80px;
+            flex: 0 0 auto;
+            text-align: right;
+            color: #59ae85;
+
+            &.isAsc {
+              color: #f8505b;
+            }
+          }
+        }
+      }
+    }
+
+    .noRadarData {
+      width: 120px;
+      height: 60px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0);
+
+      .noDataHead {
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        color: #108ee9;
+      }
+      .noDataIcon {
+        font-size: 30px;
+        color: #108ee9;
+      }
+      .noDataTip {
+        height: 30px;
+        font-size: 14px;
+        line-height: 30px;
+        text-align: center;
+        color: #666;
+      }
+    }
+  }
+}
