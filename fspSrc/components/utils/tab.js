@@ -340,7 +340,14 @@ function getPanes(location, fixPanes, editPane, currentMenuId) {
 
 // 预处理menu数据，将path字段格式化一下
 function preTreatment(primaryMenu) {
-  const fixMenu = _.filter(primaryMenu, menu => menu.path || !_.isEmpty(menu.children));
+  // 过滤掉所有没有子菜单的顶级菜单
+  let fixMenu = _.filter(primaryMenu, menu => menu.path || !_.isEmpty(menu.children));
+  // 顶级菜单下，如果只有一个级次菜单，并且这个次级菜单没有孩子link，隐藏顶级菜单
+  fixMenu = _.filter(fixMenu, menu => !(
+    menu.children.length === 1 &&
+    menu.children[0].type !== 'link' &&
+    _.isEmpty(menu.children[0].children)));
+
   return traverseMenus(fixMenu, (pane, i, array) => {
     // 找到当前path对应的pane进行修正
     if (pane.name === '客户管理') {
