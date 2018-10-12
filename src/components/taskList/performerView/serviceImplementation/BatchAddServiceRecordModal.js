@@ -3,7 +3,7 @@
  * @Description: 批量添加服务记录弹窗
  * @Date: 2018-08-17 11:31:18
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-12 15:52:24
+ * @Last Modified time: 2018-10-12 16:13:36
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -148,10 +148,7 @@ export default class BatchAddServiceRecordModal extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '取消' } })
   handleCancle() {
-    const {
-      closeModal,
-    } = this.props;
-    closeModal(false);
+    this.props.closeModal(false);
   }
 
   render() {
