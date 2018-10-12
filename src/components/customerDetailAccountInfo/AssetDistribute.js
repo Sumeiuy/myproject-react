@@ -2,20 +2,20 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-11 20:16:40
+ * @Last Modified time: 2018-10-12 12:12:19
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
-import { Checkbox, Icon, Table } from 'antd';
+import { Checkbox, Table } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import cx from 'classnames';
 import { autobind } from 'core-decorators';
 
-import {
-  dataSource,
-  TABLE_SCROLL_SETTING,
-} from './config';
+import IECharts from '../IECharts';
+import Icon from '../common/Icon';
+import DebtDetailModal from './DebtDetailModal';
+import { dataSource, TABLE_SCROLL_SETTING, RADAR_OPTIONS } from './config';
 import styles from './assetDistribute.less';
 
 export default class AssetDistribute extends PureComponent {
@@ -29,6 +29,8 @@ export default class AssetDistribute extends PureComponent {
     this.state = {
       // 选中含信用的checkbox
       checkedCredit: true,
+      // 负债详情弹出层
+      debtDetailModal: false,
     };
   }
 
@@ -76,6 +78,23 @@ export default class AssetDistribute extends PureComponent {
     // TODO 切换含信用的checkbox需要查询雷达图的数据
   }
 
+  // 打开负债详情的弹框
+  @autobind
+  handleDebtDetailIconClick() {
+    this.setState({ debtDetailModal: true });
+  }
+
+  // 关闭负债详情弹框
+  @autobind
+  handleCloseDebtDetailModal() {
+    this.setState({ debtDetailModal: false });
+  }
+
+  @autobind
+  handleRadarChartReady() {
+    console.warn('加载完雷达图');
+  }
+
   // 渲染持仓金额和占比的单元格
   @autobind
   renderTableValueColumn(value, record) {
@@ -110,7 +129,7 @@ export default class AssetDistribute extends PureComponent {
   }
 
   render() {
-    const { checkedCredit } = this.state;
+    const { checkedCredit, debtDetailModal } = this.state;
     // 获取表格的columns数据
     const columns = this.getIndexTableColumns();
 
@@ -129,7 +148,14 @@ export default class AssetDistribute extends PureComponent {
         </div>
         <div className={styles.body}>
           <div className={styles.radarArea}>
-            <div className={styles.radarChart}>2</div>
+            <div className={styles.radarChart}>
+              <IECharts
+                option={RADAR_OPTIONS}
+                resizable
+                onReady={this.handleRadarChartReady}
+                style={{ height: '220px' }}
+              />
+            </div>
             <div className={styles.summary}>
               <span className={styles.summaryInfo}>
                 <span className={styles.label}>总资产：</span>
@@ -140,7 +166,9 @@ export default class AssetDistribute extends PureComponent {
                 <span className={styles.label}>负债：</span>
                 <span className={styles.value}>2436.5</span>
                 <span className={styles.unit}>万元</span>
-                <span className={styles.infoIco}><Icon type="info-circle" theme="outlined" /></span>
+                <span className={styles.infoIco} onClick={this.handleDebtDetailIconClick}>
+                  <Icon type="tishi2" />
+                </span>
               </span>
             </div>
           </div>
@@ -156,6 +184,15 @@ export default class AssetDistribute extends PureComponent {
             />
           </div>
         </div>
+        {
+          debtDetailModal
+            ? (
+                <DebtDetailModal
+                  onClose={this.handleCloseDebtDetailModal}
+                />
+              )
+            : null
+        }
       </div>
     );
   }
