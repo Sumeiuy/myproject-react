@@ -106,7 +106,7 @@ export default class Filter extends PureComponent {
       selectedTypeList: obj.value,
     }, () => {
       const { onFilter } = this.props;
-      onFilter({type: this.state.selectedTypeList});
+      onFilter({type: this.state.selectedTypeList.join(',')});
     });
   }
 
