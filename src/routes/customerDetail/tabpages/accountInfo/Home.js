@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-12 11:12:23
+ * @Last Modified time: 2018-10-15 00:37:44
  */
 
 import React, { PureComponent } from 'react';
@@ -30,6 +30,12 @@ const mapStateToProps = state => ({
   specificIndexData: state.detailAccountInfo.specificIndexData,
   // 负债详情的数据
   debtDetail: state.detailAccountInfo.debtDetail,
+  // 实时持仓中的实时资产
+  realTimeAsset: state.detailAccountInfo.realTimeAsset,
+  // 实时持仓中的证券实时持仓
+  securitiesHolding: state.detailAccountInfo.securitiesHolding,
+  // 实时持仓中的产品实时持仓
+  storageOfProduct: state.detailAccountInfo.storageOfProduct,
 });
 
 const mapDispatchToProps = {
@@ -39,6 +45,12 @@ const mapDispatchToProps = {
   querySpecificIndexData: effect('detailAccountInfo/querySpecificIndexData'),
   // 查询资产分布的负债详情的数据
   queryDebtDetail: effect('detailAccountInfo/queryDebtDetail'),
+  //查询实时持仓中的实时资产
+  getRealTimeAsset: effect('detailAccountInfo/getRealTimeAsset'),
+  //查询实时持仓中的证券实时持仓
+  getSecuritiesHolding: effect('detailAccountInfo/getSecuritiesHolding'),
+  //查询实时持仓中的产品实时持仓
+  getStorageOfProduct: effect('detailAccountInfo/getStorageOfProduct'),
   // 清除Redux中的数据
   clearReduxData: effect('detailAccountInfo/clearReduxData', { loading: false }),
 };
@@ -60,6 +72,18 @@ export default class Home extends PureComponent {
     querySpecificIndexData: PropTypes.func.isRequired,
     // 查询资产分布的负债详情的数据
     queryDebtDetail: PropTypes.func.isRequired,
+    // 实时持仓中的实时资产
+    realTimeAsset: PropTypes.object.isRequired,
+    // 实时持仓中的证券实时持仓
+    securitiesHolding: PropTypes.object.isRequired,
+    // 实时持仓中的产品实时持仓
+    storageOfProduct: PropTypes.object.isRequired,
+    // 查询实时持仓中的实时资产
+    getRealTimeAsset: PropTypes.func.isRequired,
+    // 查询实时持仓中的证券实时持仓
+    getSecuritiesHolding: PropTypes.func.isRequired,
+    // 查询实时持仓中的产品实时持仓
+    getStorageOfProduct: PropTypes.func.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
   }
@@ -96,11 +120,19 @@ export default class Home extends PureComponent {
   }
 
   render() {
+    const { getSecuritiesHolding, securitiesHolding, realTimeAsset, getRealTimeAsset, storageOfProduct, getStorageOfProduct} = this.props;
     return (
       <div className={styles.detailAccountInfo}>
         {/* 头部实时持仓、历史持仓、交易流水、资产配置、账户分析 5 个按钮的所占区域*/}
         <div className={styles.headerBtnsArea}>
-        <AccountInfoHeader/>
+          <AccountInfoHeader
+            getSecuritiesHolding={getSecuritiesHolding}
+            dataSource={securitiesHolding}
+            getRealTimeAsset={getRealTimeAsset}
+            realTimeAsset={realTimeAsset}
+            productDate={storageOfProduct}
+            getStorageOfProduct={getStorageOfProduct}
+          />
         </div>
         {/* 中间资产分布和收益走势区域 */}
         <div className={styles.assetAndIncomeArea}>
