@@ -51,7 +51,7 @@ export default class TabMenu extends PureComponent {
           </Menu.SubMenu>
         );
       }
-      return (
+      return item.type === 'link' ? (
         <Menu.Item
           key={item.id}
           className={classnames({
@@ -67,7 +67,7 @@ export default class TabMenu extends PureComponent {
             {item.name}
           </div>
         </Menu.Item>
-      );
+      ) : null;
     });
   }
 
