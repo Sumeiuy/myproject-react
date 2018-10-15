@@ -64,6 +64,14 @@
         .rank {
           vertical-align: text-top;
           margin-right: 8px;
+          height: 18px;
+          width: 32px;
+        }
+        .vip {
+          vertical-align: text-top;
+          margin-right: 8px;
+          height: 18px;
+          width: 24px;
         }
       }
     }
@@ -78,6 +86,16 @@
         margin-right: 20px;
       }
       .actionGroup {
+        :global {
+          .iconfont {
+            display: inline-block;
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+            line-height: 14px;
+          }
+        }
+        font-size: 14px;
         display: inline-block;
         height: 52px;
         line-height: 52px;
@@ -87,21 +105,33 @@
           display: inline-block;
           margin-right: 20px;
           cursor: pointer;
+          .text {
+            margin-left: 4px;
+          }
         }
         .addTag {
           display: inline-block;
           margin-right: 20px;
           cursor: pointer;
+          .text {
+            margin-left: 4px;
+          }
         }
         .addServiceLog {
           display: inline-block;
           margin-right: 20px;
           cursor: pointer;
+          .text {
+            margin-left: 4px;
+          }
         }
         .navToTask {
           display: inline-block;
           margin-right: 20px;
           cursor: pointer;
+          .text {
+            margin-left: 4px;
+          }
         }
       }
     }

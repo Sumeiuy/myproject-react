@@ -7,5 +7,7 @@
  */
 export default function customerDetail(api) {
   return {
+    // 获取客户基本信息的接口
+    queryCustomerBasicInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryCustBasicInfo', query),
   };
 }
