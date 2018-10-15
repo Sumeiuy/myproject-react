@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 09:55:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-12 17:49:52
+ * @Last Modified time: 2018-10-15 12:33:25
  * @description 融资融券明细
  */
 
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import DebtDetailItem from './DebtDetailItem';
+import { displayDebtMony } from './utils';
 
 import styles from './debtDetail.less';
 
@@ -19,24 +20,36 @@ export default function MarginTradingDetail(props) {
   if (_.isEmpty(data)) {
     return null;
   }
+  // 总金额
+  const totalValue = displayDebtMony(data.totalValue);
   // 融资合约金额
-  const financeContractSum = data.financeContractSum;
+  const financeContractSum = displayDebtMony(data.financeContractSum);
+  // 融资费用
+  const financeCost = displayDebtMony(data.financeCost);
+  // 融券利息
+  const marriageInterest = displayDebtMony(data.marriageInterest);
+  // 融券合约金额
+  const marriageContractSum = displayDebtMony(data.marriageContractSum);
+  // 融资利息
+  const financeInterest = displayDebtMony(data.financeInterest);
+  // 其他费用
+  const otherCost = displayDebtMony(data.otherCost);
   return (
     <div className={styles.detailContainer}>
       <div className={styles.header}>
         <div className={styles.headerContent}>
           <div className={styles.title}>融资融券</div>
-          <div className={styles.value}>-23435.3</div>
+          <div className={styles.value}>{totalValue}</div>
           <div className={styles.checkLink}>查看合同明细</div>
         </div>
       </div>
       <div className={styles.body}>
-        <DebtDetailItem title="融资合约金额" value={financeContractSum} />
-        <DebtDetailItem title="融资费用" value="478,432.21" />
-        <DebtDetailItem title="融券利息" value="478,432.21" />
-        <DebtDetailItem title="融资利息" value="478,432.21" />
-        <DebtDetailItem title="融券合约金额" value="478,432.21" />
-        <DebtDetailItem title="其他费用" value="478,432.21" />
+        <DebtDetailItem title="融资合约金额" content={financeContractSum} />
+        <DebtDetailItem title="融资费用" content={financeCost} />
+        <DebtDetailItem title="融券利息" content={marriageInterest} />
+        <DebtDetailItem title="融资利息" content={financeInterest} />
+        <DebtDetailItem title="融券合约金额" content={marriageContractSum} />
+        <DebtDetailItem title="其他费用" content={otherCost} />
       </div>
     </div>
   );

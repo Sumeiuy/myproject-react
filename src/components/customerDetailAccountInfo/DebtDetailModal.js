@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 08:45:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-12 17:46:38
+ * @Last Modified time: 2018-10-15 10:43:48
  * @description 资产分布的负债详情弹出层
  */
 import React, { PureComponent } from 'react';
@@ -37,8 +37,10 @@ export default class DebtDetailModal extends PureComponent {
 
   componentDidMount() {
     // 初始进入后需要查询下负债的详情数据
-    // TODO 后期将经济客户号修改为正确的值
-    this.props.queryDebtDetail({ custId: 'xxxx' });
+    const {
+      location: { query: { custId } },
+    } = this.props;
+    this.props.queryDebtDetail({ custId });
   }
 
   @autobind
@@ -57,7 +59,7 @@ export default class DebtDetailModal extends PureComponent {
       },
     } = this.props;
     // 总负债
-    const totalDebtMoney = convertMoney({ money: totalDebt, unit: '元', formater: true });
+    const totalDebtMoney = convertMoney(totalDebt, { unit: '元', formater: true });
     // 融资融券
     const hasNoMargin = _.isEmpty(marginTrading);
     // 小额贷
