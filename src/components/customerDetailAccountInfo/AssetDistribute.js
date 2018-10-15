@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-12 17:52:09
+ * @Last Modified time: 2018-10-15 12:30:25
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -16,14 +16,13 @@ import IECharts from '../IECharts';
 import Icon from '../common/Icon';
 import DebtDetailModal from './DebtDetailModal';
 import {
-  dataSource,
   TABLE_SCROLL_SETTING,
   CHART_SERIES_OPTIONS,
   CHART_RADAR_OPTIONS,
 } from './config';
 import { convertMoney } from './utils';
 import { composeIndicatorAndData } from './assetRadarHelper';
-import logable, { logPV } from '../../decorators/logable';
+import logable, { logPV, logCommon } from '../../decorators/logable';
 import styles from './assetDistribute.less';
 
 export default class AssetDistribute extends PureComponent {
@@ -37,6 +36,10 @@ export default class AssetDistribute extends PureComponent {
     debtDetail: PropTypes.object.isRequired,
     // 查询负债详情数据接口
     queryDebtDetail: PropTypes.func.isRequired,
+    // 查询资产分布的雷达上具体指标的数据
+    querySpecificIndexData: PropTypes.func.isRequired,
+    // 资产分布的雷达上具体指标的数据
+    specificIndexData: PropTypes.array.isRequired,
   }
 
   constructor(props) {
@@ -47,6 +50,8 @@ export default class AssetDistribute extends PureComponent {
       checkedCredit: true,
       // 负债详情弹出层
       debtDetailModal: false,
+      // 高亮的哪个雷达图指标的名称
+      radarIndexName: '股票',
     };
   }
 
@@ -92,7 +97,7 @@ export default class AssetDistribute extends PureComponent {
     // 1. 获取雷达图的指标名称及
     const indicators = _.map(radarData, item => ({ name: item.name }));
     // 2. 获取雷达图的每一项指标的值,并且是格式化后的值
-    const data = _.map(radarData, item => convertMoney({ money: item.value || 0, formater: true }));
+    const data = _.map(radarData, item => convertMoney(item.value || 0, { formater: true }));
     // 3. 因为UI图上面需要在指标名称下显示指标的值，但是echart上并没有这个功能
     // 所以此处需要将指标名称和其指标值先进行拼接起来，然后在区分开
     const composedIndicators = composeIndicatorAndData(indicators, data);
@@ -102,6 +107,20 @@ export default class AssetDistribute extends PureComponent {
     return {
       radar: {
         ...CHART_RADAR_OPTIONS,
+        name: {
+          ...CHART_RADAR_OPTIONS.name,
+          formatter: (name) => {
+            // 此时的name中含有了指标的值,并且是用|分割
+            // 三个值分别是指标名称、指标索引、指标值
+            const nameLable = name.split('|');
+            const axisName = nameLable[0];
+            const { radarIndexName } = this.state;
+            if (radarIndexName === axisName) {
+              return `{hightLightName|${axisName}}\n{hightLightValue|${nameLable[2]}}`;
+            }
+            return `{name|${axisName}}\n{value|${nameLable[2]}}`;
+          },
+        },
         indicator: composedIndicators,
       },
       series: [{
@@ -119,10 +138,15 @@ export default class AssetDistribute extends PureComponent {
   @logable({ type: 'Click', payload: { name: '含信用' } })
   handleCreditCheckboxChange(e) {
     const { checked } = e.target;
-    this.setState({ checkedCredit: checked });
+    // 重新渲染数据
+    this.setState({
+      checkedCredit: checked,
+      axiosName: '股票',
+    });
     // 切换含信用的 checkbox 需要查询雷达图的数据
     const creditFlag = checked ? 'Y' : 'N';
-    this.props.onClickCredit({ creditFlag });
+    const { location: { query: { custId } } } = this.props;
+    this.props.onClickCredit({ creditFlag, custId });
   }
 
   // 打开负债详情的弹框
@@ -138,8 +162,48 @@ export default class AssetDistribute extends PureComponent {
     this.setState({ debtDetailModal: false });
   }
 
+  // 当雷达图加载完成后，给雷达图的轴添加点击事件
   @autobind
-  handleRadarChartReady() {
+  handleRadarChartReady(echartInstance) {
+    if (echartInstance) {
+      echartInstance.on('click', (args) => {
+        const { targetType, name } = args;
+        if (targetType === 'axisName') {
+          // 因为雷达图上点击指标名称，实际上点击的是图标轴相应，所以没法找到实际的index值，
+          // 所以只能使用雷达图的轴名称来控制,轴名称实际有3部分组成，指标名称、指标索引、指标值
+          const axisNameData = name.split('\n')[0];
+          if (axisNameData.indexOf('name') > -1) {
+            // 已经高亮的数据不需要再次查询
+            const axisName = axisNameData.match(/\{name\|(.+)\}/)[1];
+            this.hanleRadarAxisNameClick(axisName);
+          }
+        }
+      });
+    }
+  }
+
+  // 点击雷达图上的指标项
+  @autobind
+  hanleRadarAxisNameClick(axisName) {
+    const { checkedCredit } = this.state;
+    // 切换含信用的 checkbox 需要查询雷达图的数据
+    const creditFlag = checkedCredit ? 'Y' : 'N';
+    // 通过 dataIndex 查找到相应资产分布的数据，然后查询其详情
+    const {
+      assetsRadarData: { assetIndexData },
+      location: { query: { custId } },
+    } = this.props;
+    const data = _.find(assetIndexData, item => item.name === axisName);
+    this.setState({ radarIndexName: axisName });
+    this.props.querySpecificIndexData({ indexKey: data.key, creditFlag, custId });
+    // 通过 dataIndex 查找到相应的原始数据，从而上传真实的数据
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: data.name,
+        value: data.value
+      },
+    });
   }
 
   // 渲染持仓金额和占比的单元格
@@ -182,13 +246,14 @@ export default class AssetDistribute extends PureComponent {
       debtDetail,
       queryDebtDetail,
       location,
+      specificIndexData,
     } = this.props;
     // 如果没有雷达图数据，则整块资产分布不显示
     const hasNoRadarData = _.isEmpty(assetIndexData);
     // 总资产
-    const totalMoney = convertMoney({ money: totalAsset, toFixed: 2, unit: '元' });
+    const totalMoney = convertMoney(totalAsset, { unit: '元' });
     // 负债
-    const totalDebt = convertMoney({ money: debt, toFixed: 2, unit: '元' });
+    const totalDebt = convertMoney(debt, { unit: '元' });
     // 获取雷达图的option
     const radarOption = this.getRadarOption(assetIndexData || []);
     // 获取表格的columns数据
@@ -248,7 +313,7 @@ export default class AssetDistribute extends PureComponent {
                   <Table
                     indentSize={0}
                     className={styles.indexDetailTable}
-                    dataSource={dataSource}
+                    dataSource={specificIndexData}
                     columns={columns}
                     pagination={false}
                     rowClassName={this.setRowClassName}

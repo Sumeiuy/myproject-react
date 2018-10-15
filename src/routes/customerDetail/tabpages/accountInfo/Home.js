@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-12 18:21:27
+ * @Last Modified time: 2018-10-15 12:22:18
  */
 
 import React, { PureComponent } from 'react';
@@ -99,8 +99,7 @@ export default class Home extends PureComponent {
   // 查询资产分布雷达图数据
   @autobind
   queryAssetDistributeData(query) {
-    // TODO 客户经纪号，后期需要修改成相应的值
-    const custId = 'xxxx';
+    const { location: { query: { custId } } } = this.props;
     this.props.getAssetRadarData({ ...query, custId });
   }
 
@@ -110,6 +109,8 @@ export default class Home extends PureComponent {
       debtDetail,
       queryDebtDetail,
       location,
+      specificIndexData,
+      querySpecificIndexData,
     } = this.props;
 
     return (
@@ -121,6 +122,8 @@ export default class Home extends PureComponent {
           <AssetAndIncome
             location={location}
             assetsRadarData={assetsRadarData}
+            specificIndexData={specificIndexData}
+            querySpecificIndexData={querySpecificIndexData}
             onClickCredit={this.queryAssetDistributeData}
             queryDebtDetail={queryDebtDetail}
             debtDetail={debtDetail}

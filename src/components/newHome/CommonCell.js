@@ -29,6 +29,7 @@ export default function CommonCell(props) {
     onExtraClick,
     onClick,
     valueStyle,
+    hiddenEmptyValue,
   } = props;
   // 渲染 Popover
   const renderPopver = item => {
@@ -60,6 +61,10 @@ export default function CommonCell(props) {
       floatLength: 1,
       isRound: false,
     });
+    // 如果值是 0 并且需要隐藏空值
+    if (hiddenEmptyValue && showValue === '0' ) {
+      return null;
+    }
     return (
       <li className={styles.item} key={liKey} onClick={() => onClick(item)}>
         <div>
@@ -123,6 +128,8 @@ CommonCell.propTypes = {
   onClick: PropTypes.func,
   // 数值的样式
   valueStyle: PropTypes.object,
+  // 是否隐藏空的值
+  hiddenEmptyValue: PropTypes.bool,
 };
 
 CommonCell.defaultProps = {
@@ -135,4 +142,5 @@ CommonCell.defaultProps = {
   onExtralick: _.noop,
   onClick: _.noop,
   valueStyle: {},
+  hiddenEmptyValue: false,
 };

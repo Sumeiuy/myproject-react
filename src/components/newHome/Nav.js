@@ -70,7 +70,7 @@ export default function Nav(props) {
       isRound: false,
     });
     return (
-      <dl onClick={() => handleOpenTab(payload)}>
+      <dl key={key} onClick={() => handleOpenTab(payload)}>
         <dt className={iconClass}></dt>
         <dd className={styles.value} title={data[key] || 0}>{value}</dd>
         <dd className={styles.name}>{name}</dd>

@@ -171,7 +171,7 @@ export default class Home extends PureComponent {
       queryGuessYourInterests,
       queryProductCalendar,
       queryChiefView,
-      queryIntroCombination,
+      /* queryIntroCombination, */
       queryNumbers,
       queryhomePageNews,
     } = this.props;
@@ -197,7 +197,7 @@ export default class Home extends PureComponent {
     });
 
     // 组合推荐
-    queryIntroCombination();
+    /* queryIntroCombination(); */
 
     // 待办事项, 有任务管理岗时，将岗位id传给后端
     // 判断当前登录用户是否在非营业部
@@ -416,6 +416,7 @@ export default class Home extends PureComponent {
       isNeedExtra: true,
       onClick: this.handleLinkToCustomerList,
       onExtraClick: this.handleMoreClick,
+      hiddenEmptyValue: false,
     };
     // 产品日历
     const today = moment().format(MONTH_DATE_FORMAT);

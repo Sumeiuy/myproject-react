@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 14:58:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-12 18:23:23
+ * @Last Modified time: 2018-10-15 12:23:13
  * @Description 新版客户360详情信息下的账户信息Tab下资产分布和收益走势的容器组件
  */
 
@@ -24,6 +24,10 @@ export default class AssetAndIncome extends PureComponent {
     debtDetail: PropTypes.object.isRequired,
     // 查询负债详情数据接口
     queryDebtDetail: PropTypes.func.isRequired,
+    // 查询资产分布的雷达上具体指标的数据
+    querySpecificIndexData: PropTypes.func.isRequired,
+    // 资产分布的雷达上具体指标的数据
+    specificIndexData: PropTypes.array.isRequired,
   }
 
   render() {
@@ -33,6 +37,8 @@ export default class AssetAndIncome extends PureComponent {
       queryDebtDetail,
       debtDetail,
       location,
+      specificIndexData,
+      querySpecificIndexData,
     } = this.props;
 
     return (
@@ -44,6 +50,8 @@ export default class AssetAndIncome extends PureComponent {
             onClickCredit={onClickCredit}
             queryDebtDetail={queryDebtDetail}
             debtDetail={debtDetail}
+            specificIndexData={specificIndexData}
+            querySpecificIndexData={querySpecificIndexData}
           />
         </div>
         <div className={styles.splitLine}></div>

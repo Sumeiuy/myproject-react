@@ -462,7 +462,7 @@ export default class ServiceResult extends PureComponent {
           <Table
             dataSource={list}
             columns={newColumns}
-            rowKey="brokerNum"
+            rowKey="key"
             title={this.renderCustDetailHeader}
             scroll={{ x: 720 }}
             pagination={false}
