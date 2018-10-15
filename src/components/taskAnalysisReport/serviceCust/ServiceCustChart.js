@@ -3,7 +3,7 @@
  * @Descripter: 服务客户折线图
  * @Date: 2018-10-11 13:18:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 21:00:57
+ * @Last Modified time: 2018-10-15 15:52:34
  */
 
 import React from 'react';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import IECharts from '../../IECharts';
+import ChartLegend from '../ChartLegend';
 import { generalOptions, chartLineOptions } from '../config';
 import { number } from '../../../helper';
 import { filterData } from '../utils';
@@ -26,6 +27,7 @@ export default function ServiceCustChart(props) {
     const {
       reportList,
       serviceCustOptions,
+      legendList,
     } = props;
     const dataKeys = _.keys(serviceCustOptions);
     const dataValues = _.values(serviceCustOptions);
@@ -70,10 +72,6 @@ export default function ServiceCustChart(props) {
       toolbox,
       grid: gridOptions,
       tooltip: tooltipOtions,
-      legend: {
-          data:[dataValues[0], dataValues[1]],
-          right: '20px',
-      },
       xAxis: [
         {
           type: 'category',
@@ -117,13 +115,18 @@ export default function ServiceCustChart(props) {
           (reportList && reportList.length > 0)
           ?
           (
-            <IECharts
-              option={options}
-              resizable
-              style={{
-                height: '350px',
-              }}
-            />
+            <div>
+              <ChartLegend
+                legendList={legendList}
+              />
+              <IECharts
+                option={options}
+                resizable
+                style={{
+                  height: '350px',
+                }}
+              />
+            </div>
           )
           :
           (
@@ -141,4 +144,6 @@ ServiceCustChart.propTypes = {
   reportList: PropTypes.array.isRequired,
   // 配置项
   serviceCustOptions: PropTypes.object.isRequired,
+  // 图例配置项
+  legendList: PropTypes.array.isRequired,
 };

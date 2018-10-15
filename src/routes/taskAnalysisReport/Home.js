@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-12 10:40:44
+ * @Last Modified time: 2018-10-15 15:56:03
  */
 
 import React, { PureComponent } from 'react';
@@ -90,7 +90,7 @@ export default class TaskAnalysisReport extends PureComponent {
           taskCustomerList={taskCustomerList}
           getTaskCustomer={getTaskCustomer}
         />
-        <CompleteServiceCustReport
+         <CompleteServiceCustReport
           completeServiceCustList={completeServiceCustList}
           getCompleteServiceCust={getCompleteServiceCust}
         />

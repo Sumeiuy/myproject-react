@@ -3,7 +3,7 @@
  * @Descripter: 完成服务客户统计
  * @Date: 2018-10-11 10:20:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 20:59:56
+ * @Last Modified time: 2018-10-15 15:53:36
  */
 
 import React, { PureComponent } from 'react';
@@ -18,8 +18,7 @@ import { emp } from '../../../helper';
 
 import styles from './completeServiceCustReport.less';
 
-const { serviceCustOptions } = completeServiceCustOptions;
-
+const { serviceCustOptions, legendList } = completeServiceCustOptions;
 export default class CompleteServiceCustReport extends PureComponent {
   static propTypes = {
     // 完成服务客户统计
@@ -94,6 +93,7 @@ export default class CompleteServiceCustReport extends PureComponent {
         <ServiceCustChart
           reportList={completeServiceCustList}
           serviceCustOptions={serviceCustOptions}
+          legendList={legendList}
         />
       </div>
     );

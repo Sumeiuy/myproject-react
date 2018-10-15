@@ -1,5 +1,22 @@
 import moment from 'moment';
 
+// 客户人次
+const CUSTOMEER_NUMBER_NAME = '客户人次';
+// 任务数
+const TASK_NUMBER_NAME = '任务数';
+// 完成客户人次
+const COMPLETE_CUSTOMEER_NUMBER_NAME = '完成客户人次';
+// 达标客户人次
+const COMPLIANCE_CUSTOMEER_NUMBER_NAME = '达标客户人次';
+// 涨乐
+const ZHANGLE = '涨乐';
+// 短信
+const MESSAGE = '短信';
+// 电话
+const TELEPHONE = '电话';
+// 面谈
+const INTERVIEW = '面谈';
+
 // 日期格式
 const dateFormat = 'YYYY-MM-DD';
 // 筛选项默认开始时间
@@ -72,6 +89,19 @@ const generalOptions = {
 // 任务-客户报表配置项
 const taskCustomerOptions = {
   color: ['#6fb7ec', '#4c70b3'],
+  // 图例配置项
+  legendList: [
+    {
+      type: 'square',
+      color: '#6fb7ec',
+      name: CUSTOMEER_NUMBER_NAME,
+    },
+    {
+      type: 'line',
+      color: '#4c70b3',
+      name: TASK_NUMBER_NAME,
+    },
+  ],
 };
 
 // 折线图通用配置项
@@ -90,30 +120,79 @@ const chartLineOptions = {
   }
 };
 
+
 // 完成服务客户统计配置项
 const completeServiceCustOptions = {
   serviceCustOptions: {
-    customerNumber: '客户人次',
-    completeCustomerNumber: '完成客户人次',
-  }
+    customerNumber: CUSTOMEER_NUMBER_NAME,
+    completeCustomerNumber: COMPLETE_CUSTOMEER_NUMBER_NAME,
+  },
+  // 图例配置项
+  legendList: [
+    {
+      type: 'line',
+      color: '#f7ad33',
+      name: CUSTOMEER_NUMBER_NAME,
+    },
+    {
+      type: 'line',
+      color: '#4c70b3',
+      name: COMPLETE_CUSTOMEER_NUMBER_NAME,
+    },
+  ],
 };
 
 // 达标服务客户统计配置项
 const complianceServiceCustOptions = {
   serviceCustOptions: {
-    completeCustomerNumber: '完成客户人次',
-    complianceCustomerNumber: '达标客户人次',
-  }
+    completeCustomerNumber: COMPLETE_CUSTOMEER_NUMBER_NAME,
+    complianceCustomerNumber: COMPLIANCE_CUSTOMEER_NUMBER_NAME,
+  },
+  // 图例配置项
+  legendList: [
+    {
+      type: 'line',
+      color: '#f7ad33',
+      name: COMPLETE_CUSTOMEER_NUMBER_NAME,
+    },
+    {
+      type: 'line',
+      color: '#4c70b3',
+      name: COMPLIANCE_CUSTOMEER_NUMBER_NAME,
+    },
+  ],
 };
 
+
+
 // 服务渠道配置项
+const zhangle = {
+  color: '#f7ad33',
+  name: ZHANGLE,
+};
+const message = {
+  color: '#4c70b3',
+  name: MESSAGE,
+};
+const telephone = {
+  color: '#67b8e1',
+  name: TELEPHONE,
+};
+const interview = {
+  color: '#cf4b4a',
+  name: INTERVIEW,
+};
 const serviceChannelOptions = {
   color: ['#f7ad33', '#4c70b3', '#67b8e1', '#cf4b4a'],
-  legendData: {
-    zhangle: '涨乐',
-    message: '短信',
-    telephone: '电话',
-    interview: '面谈',
+  zhangle: ZHANGLE,
+  message: MESSAGE,
+  telephone: TELEPHONE,
+  interview: INTERVIEW,
+  legendOptions: {
+    zhangle,
+    message,
+    telephone,
+    interview,
   },
   series: {
     symbol: 'none',
@@ -122,11 +201,6 @@ const serviceChannelOptions = {
 };
 
 const chartLineColors = ['#f7ad33', '#4c70b3'];
-
-// 客户人次
-const CUSTOMEER_NUMBER_NAME = '客户人次';
-// 任务数
-const TASK_NUMBER_NAME = '任务数';
 
 export const {
   gridOptions,

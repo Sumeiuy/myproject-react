@@ -3,13 +3,14 @@
  * @Descripter: 渠道变化趋势
  * @Date: 2018-10-12 15:30:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-12 17:15:25
+ * @Last Modified time: 2018-10-15 16:44:48
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import IECharts from '../../IECharts';
+import ChartLegend from '../ChartLegend';
 import { generalOptions, serviceChannelOptions } from '../config';
 import { number } from '../../../helper';
 import { filterData } from '../utils';
@@ -19,15 +20,17 @@ import imgSrc from '../../chartRealTime/noChart.png';
 
 const { thousandFormat } = number;
 const { yAxisSplitLine, textStyle, toolbox, gridOptions } = generalOptions;
-const { color,
-  legendData: {
-    zhangle,
-    message,
-    telephone,
-    interview,
-  },
+const {
+  color,
+  zhangle,
+  message,
+  telephone,
+  interview,
+  legendOptions,
   series,
 } = serviceChannelOptions;
+
+const legendList = _.map(_.values(legendOptions), item => ({...item, type: 'line'}));
 
 export default function ServiceCustChart(props) {
     const {
@@ -99,10 +102,6 @@ export default function ServiceCustChart(props) {
       title,
       grid: gridOptions,
       tooltip: tooltipOtions,
-      legend: {
-          data:[zhangle, message, telephone, interview],
-          right: '20px',
-      },
       xAxis: [
         {
           type: 'category',
@@ -133,9 +132,10 @@ export default function ServiceCustChart(props) {
           ...series,
         },
         {
-          name: message,
+          name: zhangle,
           type: 'line',
           data: messageData,
+          ...message,
           ...series,
         },
         {
@@ -158,13 +158,18 @@ export default function ServiceCustChart(props) {
           !_.isEmpty(trendData)
           ?
           (
-            <IECharts
-              option={options}
-              resizable
-              style={{
-                height: '350px',
-              }}
-            />
+            <div>
+              <ChartLegend
+                legendList={legendList}
+              />
+              <IECharts
+                option={options}
+                resizable
+                style={{
+                  height: '350px',
+                }}
+              />
+            </div>
           )
           :
           (
