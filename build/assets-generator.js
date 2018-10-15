@@ -53,7 +53,15 @@ module.exports = function (assets) {
     function (asset) {
       var suffix = asset.slice(asset.lastIndexOf('.') + 1);
       if (suffix === 'css') {
-        return 'document.writeln("<link href=' + asset + '  rel=stylesheet>");'
+        var linkString =
+          "var head = document.getElementsByTagName('head')[0];" +
+          "var cssHref = '" + asset + "';" +
+          "var linkTag = document.createElement('link');" +
+          "linkTag.href = cssHref;" +
+          "linkTag.setAttribute('rel', 'stylesheet');" +
+          "linkTag.setAttribute('type', 'text/css');" +
+          "head.appendChild(linkTag);";
+        return linkString;
       } else if (suffix === 'js') {
         return 'document.writeln("<script type=text/javascript src=' + asset + ' defer></script>");'
       }

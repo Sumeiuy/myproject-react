@@ -23,7 +23,6 @@ import {
   storeTabInfo,
   splitPanesArray,
   getLocalPanes,
-  getNewRouterHistory,
  } from '../utils/tab';
 
 @withRouter
@@ -51,8 +50,6 @@ export default class Tab extends PureComponent {
       editPane,
     } = state || {};
 
-    const { routerHistory } = prevState;
-
     // 路由是否发生变化
     const isUrlChange =
       (pathname !== prevState.location.pathname) || (!_.isEqual(query, prevState.location.query));
@@ -69,8 +66,6 @@ export default class Tab extends PureComponent {
 
         const finalActiveKey = (activeKey || paneObj.activeKey);
         const currentMenuId = paneObj.currentMenuId;
-        const newRouterHistory =
-          getNewRouterHistory({ finalActiveKey, currentMenuId, pathname, routerHistory });
 
         // 保存tab菜单信息
         storeTabInfo({
@@ -78,37 +73,29 @@ export default class Tab extends PureComponent {
           currentMenuId,
           panes,
           href: window.location.href,
-          routerHistory: newRouterHistory,
         });
 
         return {
-          panes,
-          activeKey: finalActiveKey,
-          currentMenuId,
-          location,
-          routerHistory: newRouterHistory,
+          panes, //最终渲染的菜单信息
+          activeKey: finalActiveKey, // 最终高亮的顶级菜单
+          currentMenuId, // 最终高亮的叶节点菜单
+          location, // 当前的路由信息
         };
       }
 
       const { panes, currentMenuId } = getStayPanes(pathname, query, prevState);
-      const finalActiveKey = prevState.activeKey;
-
-      const newRouterHistory =
-        getNewRouterHistory({ finalActiveKey, currentMenuId, pathname, routerHistory });
 
       // 保存tab菜单信息
       storeTabInfo({
         panes,
         href: window.location.href,
         currentMenuId,
-        routerHistory: newRouterHistory,
       });
 
       return {
         panes,
         currentMenuId,
         location,
-        routerHistory: newRouterHistory,
       };
     }
 
@@ -132,13 +119,6 @@ export default class Tab extends PureComponent {
       panes,
       activeKey: activeKey || indexPaneKey,
       currentMenuId,
-      routerHistory: [
-        {
-          activeKey: activeKey || indexPaneKey,
-          currentMenuId,
-          pathname: '/customerPool',
-        },
-      ],
     };
 
     // 抛出关闭tab的方法给jsp页面使用

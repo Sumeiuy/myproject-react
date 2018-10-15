@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-09-13 15:08:18
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-09-20 10:43:19
+ * @Last Modified time: 2018-10-12 19:56:22
  * @description 投顾空间新建申请
  */
 
@@ -163,7 +163,7 @@ export default class CreateApply extends PureComponent {
       this.setState({isShowPeriodStatusError: true});
       this.isValidateError = true;
     }
-    if(_.isEmpty(participant)) {
+    if(_.isEmpty(participant) || _.isEmpty(participant.participantName)) {
       this.setState({
         isShowParticipantStatusError: true,
         participantStatusErrorMessage: '请输入参与人',

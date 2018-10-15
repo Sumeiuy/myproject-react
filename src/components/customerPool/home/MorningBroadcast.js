@@ -87,8 +87,8 @@ export default class MorningBroadcast extends PureComponent {
 
   // 跳转至晨报详情
   @autobind
-  @logable({ type: 'Click', payload: { name: '跳转至晨报详情' } })
-  handleToDetail(newsId) {
+  @logable({ type: 'Click', payload: { name: '晨报列表', subtype: '$args[1]' } })
+  handleToDetail(newsId, newsTypValue) {
     const { push } = this.context;
     const param = { id: 'RTC_TAB_NEWS_LIST', title: '晨报' };
     const url = '/broadcastDetail';
@@ -151,7 +151,7 @@ export default class MorningBroadcast extends PureComponent {
                   >
                     <span
                       className={trueStyles.desc}
-                      onClick={() => { this.handleToDetail(newsId); }}
+                      onClick={() => { this.handleToDetail(newsId, newsTypValue); }}
                       title={title}
                     >
                       {`${newsTypValue}：${title}`}
