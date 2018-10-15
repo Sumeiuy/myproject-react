@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 15:05:27
+ * @Last Modified time: 2018-10-15 15:38:06
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -19,6 +19,8 @@ import {
   TABLE_SCROLL_SETTING,
   CHART_SERIES_OPTIONS,
   CHART_RADAR_OPTIONS,
+  SPECIFIC_INITIAL_NAME,
+  SPECIFIC_INITIAL_KEY,
 } from './config';
 import { convertMoney } from './utils';
 import { composeIndicatorAndData } from './assetRadarHelper';
@@ -50,9 +52,20 @@ export default class AssetDistribute extends PureComponent {
       checkedCredit: true,
       // 负债详情弹出层
       debtDetailModal: false,
-      // 高亮的哪个雷达图指标的名称
-      radarIndexName: '股票',
+      // 高亮的哪个雷达图指标的名称和key
+      radarIndexKey: SPECIFIC_INITIAL_KEY,
+      radarIndexName: SPECIFIC_INITIAL_NAME,
     };
+  }
+
+  componentDidMount() {
+    const { radarIndexKey, checkedCredit } = this.state;
+    const {
+      location: { query: { custId } },
+    } = this.props;
+    // 初始化进入需要优先查一把，第一项股票数据
+    const creditFlag = checkedCredit ? 'Y' : 'N';
+    this.props.querySpecificIndexData({ indexKey: radarIndexKey, creditFlag, custId });
   }
 
   // 处理表格表头的配置项
@@ -135,7 +148,9 @@ export default class AssetDistribute extends PureComponent {
     // 重新渲染数据
     this.setState({
       checkedCredit: checked,
-      axiosName: '股票',
+      // 恢复默认值
+      radarIndexKey: SPECIFIC_INITIAL_KEY,
+      radarIndexName: SPECIFIC_INITIAL_NAME,
     });
     // 切换含信用的 checkbox 需要查询雷达图的数据
     const creditFlag = checked ? 'Y' : 'N';
@@ -188,7 +203,7 @@ export default class AssetDistribute extends PureComponent {
       location: { query: { custId } },
     } = this.props;
     const data = _.find(assetIndexData, item => item.name === axisName);
-    this.setState({ radarIndexName: axisName });
+    this.setState({ radarIndexKey: data.key, radarIndexName: axisName });
     this.props.querySpecificIndexData({ indexKey: data.key, creditFlag, custId });
     // 通过 dataIndex 查找到相应的原始数据，从而上传真实的数据
     logCommon({
