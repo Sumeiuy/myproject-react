@@ -166,34 +166,30 @@ const complianceServiceCustOptions = {
 
 
 // 服务渠道配置项
-const zhangle = {
-  color: '#f7ad33',
-  name: ZHANGLE,
-};
-const message = {
-  color: '#4c70b3',
-  name: MESSAGE,
-};
-const telephone = {
-  color: '#67b8e1',
-  name: TELEPHONE,
-};
-const interview = {
-  color: '#cf4b4a',
-  name: INTERVIEW,
-};
 const serviceChannelOptions = {
   color: ['#f7ad33', '#4c70b3', '#67b8e1', '#cf4b4a'],
   zhangle: ZHANGLE,
   message: MESSAGE,
   telephone: TELEPHONE,
   interview: INTERVIEW,
-  legendOptions: {
-    zhangle,
-    message,
-    telephone,
-    interview,
-  },
+  legendOptions: [
+    {
+      color: '#f7ad33',
+      name: ZHANGLE,
+    },
+    {
+      color: '#4c70b3',
+      name: MESSAGE,
+    },
+    {
+      color: '#67b8e1',
+      name: TELEPHONE,
+    },
+    {
+      color: '#cf4b4a',
+      name: INTERVIEW,
+    }
+  ],
   series: {
     symbol: 'none',
     smooth: true,

@@ -3,7 +3,7 @@
  * @Descripter: 渠道变化趋势
  * @Date: 2018-10-12 15:30:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-15 16:44:48
+ * @Last Modified time: 2018-10-15 17:24:00
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -30,7 +30,7 @@ const {
   series,
 } = serviceChannelOptions;
 
-const legendList = _.map(_.values(legendOptions), item => ({...item, type: 'line'}));
+const legendList = _.map(legendOptions, item => ({...item, type: 'line'}));
 
 export default function ServiceCustChart(props) {
     const {

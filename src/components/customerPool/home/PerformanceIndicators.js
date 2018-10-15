@@ -382,11 +382,7 @@ export default class PerformanceIndicators extends PureComponent {
   // 沪深归集率
   renderHSRateIndicators(param) {
     const { value = '' } = param.data[0] || {};
-    console.warn('value', value);
-    console.warn('filterEmptyToNumber(value)', filterEmptyToNumber(value));
     const data = getHSRate([filterEmptyToNumber(value)]);
-    console.warn('param', param);
-    console.warn('data', data);
     const headLine = { icon: 'jiaoyiliang', title: param.headLine };
     // description指标说明
     let description = null;

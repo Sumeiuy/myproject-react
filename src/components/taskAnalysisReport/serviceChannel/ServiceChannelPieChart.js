@@ -3,7 +3,7 @@
  * @Descripter: 渠道占比分布
  * @Date: 2018-10-12 10:10:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-15 16:49:10
+ * @Last Modified time: 2018-10-15 17:24:10
  */
 
 import React from 'react';
@@ -23,7 +23,7 @@ const {
   legendOptions,
 } = serviceChannelOptions;
 
-const legendList = _.map(_.values(legendOptions), item => ({...item, type: 'square'}));
+const legendList = _.map(legendOptions, item => ({...item, type: 'square'}));
 
 export default function ServiceChannelPieChart(props) {
     const {
