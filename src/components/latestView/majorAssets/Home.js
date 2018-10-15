@@ -82,12 +82,14 @@ export default class MajorAssets extends PureComponent {
     const query = {
       type: activeObj.id || '',
     };
+    const pathname = '/latestView/viewpointList';
     const url = `/latestView/majorAssetsList?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: url,
+      pathname,
+      query,
     });
   }
 

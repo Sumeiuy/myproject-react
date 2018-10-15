@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-11 15:03:35
+ * @Last Modified time: 2018-10-15 12:22:18
  */
 
 import React, { PureComponent } from 'react';
@@ -16,8 +16,6 @@ import withRouter from '../../../../decorators/withRouter';
 import AssetAndIncome from '../../../../components/customerDetailAccountInfo/AssetAndIncome';
 
 import styles from './home.less';
-
-// const TabPane = Tabs.TabPane;
 
 // 使用helper里面封装的生成effects的方法
 const effect = dva.generateEffect;
@@ -79,7 +77,11 @@ export default class Home extends PureComponent {
   }
 
   componentDidMount() {
-    // TODO 第一次进入需要查询下资产分布的雷达图数据
+    // 第一次进入需要查询下资产分布的雷达图数据
+    // 默认查询含信用的
+    this.queryAssetDistributeData({
+      creditFlag: 'Y',
+    });
   }
 
   // 关闭负债详情的弹出层
@@ -94,14 +96,38 @@ export default class Home extends PureComponent {
     this.setState({ debtDetailModalVisible: true });
   }
 
+  // 查询资产分布雷达图数据
+  @autobind
+  queryAssetDistributeData(query) {
+    const { location: { query: { custId } } } = this.props;
+    this.props.getAssetRadarData({ ...query, custId });
+  }
+
   render() {
+    const {
+      assetsRadarData,
+      debtDetail,
+      queryDebtDetail,
+      location,
+      specificIndexData,
+      querySpecificIndexData,
+    } = this.props;
+
     return (
       <div className={styles.detailAccountInfo}>
         {/* 头部实时持仓、历史持仓、交易流水、资产配置、账户分析 5 个按钮的所占区域*/}
         <div className={styles.headerBtnsArea}></div>
         {/* 中间资产分布和收益走势区域 */}
         <div className={styles.assetAndIncomeArea}>
-          <AssetAndIncome />
+          <AssetAndIncome
+            location={location}
+            assetsRadarData={assetsRadarData}
+            specificIndexData={specificIndexData}
+            querySpecificIndexData={querySpecificIndexData}
+            onClickCredit={this.queryAssetDistributeData}
+            queryDebtDetail={queryDebtDetail}
+            debtDetail={debtDetail}
+          />
         </div>
         {/* 底部详细Tabs，目前迭代不进行开发，先占个位置 */}
         <div className={styles.footTabsArea}></div>

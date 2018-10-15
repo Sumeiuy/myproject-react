@@ -292,7 +292,7 @@ export default class CustDetail extends PureComponent {
       openFspTab({
         routerAction: push,
         url,
-        pathname: '/customerCenter/fspcustomerDetail',
+        pathname: '/fsp/customerCenter/customer360',
         param,
         state: {
           url,

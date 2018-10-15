@@ -3,7 +3,7 @@
  * @Author: WangJunJun
  * @Date: 2018-09-11 16:14:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-25 17:23:04
+ * @Last Modified time: 2018-10-10 15:32:57
  */
 
 import React, { PureComponent } from 'react';
@@ -48,23 +48,23 @@ export default class ListWrapper extends PureComponent {
 
   render() {
     const { size, children, wrapperClassName } = this.props;
-    // 有时候算出来的值会不是很合适，导致放置所有的列表项的时候回出现溢出的现象，
-    // 所以这边多扣除 30px 是的在所有情况下均显示正常，不换行
-    const listItemWidth = Math.floor((this.state.wrapperWidth -30) / size);
+    // 根据不同的size选择给列表项添加不同的宽度class
+    const listItemWidth = `width${size}`;
     const cls = cx(
       styles.list,
       {
         [wrapperClassName]: wrapperClassName,
       },
     );
+    const listItemCls = cx([
+      styles.item,
+      styles[listItemWidth],
+    ]);
     return (
       <div className={cls} ref={this.wrapperRef}>
         {
           React.Children.map(children, child => (
-            <div
-              className={styles.item}
-              style={{ width: `${listItemWidth}px` }}
-            >
+            <div className={listItemCls}>
               {child}
             </div>
           ))
