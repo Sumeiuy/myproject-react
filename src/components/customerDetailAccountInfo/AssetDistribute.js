@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 15:38:06
+ * @Last Modified time: 2018-10-15 16:43:49
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -235,8 +235,9 @@ export default class AssetDistribute extends PureComponent {
   @autobind
   renderTableValueColumn(value, record) {
     const { percent } = record;
-    const percentText = `${percent * 100}%`;
-    const holdValue = convertMoney(value, { unit: '元' });
+    const fixedPercent = percent || 0;
+    const percentText = `${fixedPercent * 100}%`;
+    const holdValue = convertMoney(value || 0, { unit: '元' });
     return (
       <div className={styles.indexHoldValueCell}>
         <span className={styles.value}>{`${holdValue.value}${holdValue.unit}`}</span>
@@ -249,15 +250,16 @@ export default class AssetDistribute extends PureComponent {
   @autobind
   renderTableProfitColumn(profit, record) {
     const { profitPercent } = record;
+    const fixedPercent = profitPercent || 0;
     // 需要判断数值，如果是>=0的数显示红色并带有加号
     // 如果是<0数显示成绿色，并带有减号
-    const isAsc = profitPercent >=0;
-    const percentText = isAsc ? `+${profitPercent * 100}%` : `${profitPercent * 100}%`;
+    const isAsc = fixedPercent >=0;
+    const percentText = isAsc ? `+${fixedPercent * 100}%` : `${fixedPercent * 100}%`;
     const profitRateCls = cx({
       [styles.profitRate]: true,
       [styles.isAsc]: isAsc,
     });
-    const profitValue = convertMoney(profit, { unit: '元' });
+    const profitValue = convertMoney(profit || 0, { unit: '元' });
     return (
       <div className={styles.indexHoldValueCell}>
         <span className={styles.profit}>{`${profitValue.value}${profitValue.unit}`}</span>
