@@ -31,11 +31,11 @@
 
     .radarArea, .indexDetailArea {
       flex: 1 1 auto;
-      width: 50%;
       height: 260px;
     }
 
     .radarArea {
+      width: 40%;
       .radarChart {
         height: 220px;
       }
@@ -70,28 +70,25 @@
     }
 
     .indexDetailArea {
+      position: relative;
+      width: 60%;
       .indexDetailTable {
-        .zichanCls {
-          padding-left: 28px !important;
-        }
         .holdValueCls, .profitCls {
           text-align: right;
         }
 
         :global {
-          .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
-            padding: 6px 0;
+          .ant-table-thead > tr > th:first-child {
+            padding-left: 28px;
+          }
+          .ant-table-thead > tr > th,
+          .ant-table-tbody > tr > td {
+            padding: 6px 10px;
             font-size: 12px;
             color: #666;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-          }
-          .ant-table-tbody > .fixRowPadding > td {
-            padding-left: 4px !important;
-          }
-          .ant-table-tbody > .fixRowPadding ~ .ant-table-row-level-1 > td {
-            padding-left: 0 !important;
           }
         }
 
@@ -101,32 +98,56 @@
           color: #666;
 
           .value {
-            width: 80px;
+            width: 60%;
             flex: 0 0 auto;
-            text-align: left;
+            text-align: right;
           }
 
           .percent {
-            width: 60px;
+            width: 40%;
             flex: 0 0 auto;
             text-align: right;
           }
 
           .profit {
-            padding-left: 15px;
-            width: 80px;
+            width: 60%;
             flex: 0 0 auto;
-            text-align: left;
+            text-align: right;
           }
 
           .profitRate {
-            width: 80px;
+            width: 40%;
             flex: 0 0 auto;
             text-align: right;
             color: #59ae85;
 
             &.isAsc {
               color: #f8505b;
+            }
+          }
+        }
+
+        .zichanCell {
+          display: inline-block;
+          width: 100%;
+
+          .zichanText {
+            display: flex;
+            max-width: 140px;
+            font-size: 12px;
+            color: #666;
+            align-items: center;
+
+            .value {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .icon {
+              margin-left: 4px;
+              font-size: 12px;
+              color: #e75806;
             }
           }
         }
