@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 12:30:25
+ * @Last Modified time: 2018-10-15 15:05:27
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -55,26 +55,19 @@ export default class AssetDistribute extends PureComponent {
     };
   }
 
-  @autobind
-  setRowClassName(record) {
-    // 给表格的内容区域设置一个类名，来覆盖表头column设置的样式
-    const { children } = record;
-    return _.isEmpty(children) ? '' : 'fixRowPadding';
-  }
-
   // 处理表格表头的配置项
   @autobind
   getIndexTableColumns() {
     return [
       {
-        width: 140,
+        width: '40%',
         title: '资产',
         dataIndex: 'name',
         key: 'name',
-        className: styles.zichanCls,
+        render: this.renderTableZichanColumn,
       },
       {
-        width: 140,
+        width: '30%',
         title: '持仓金额/占比',
         dataIndex: 'value',
         key: 'value',
@@ -82,6 +75,7 @@ export default class AssetDistribute extends PureComponent {
         render: this.renderTableValueColumn,
       },
       {
+        width: '30%',
         title: '收益/收益率',
         dataIndex: 'profit',
         key: 'profit',
@@ -206,14 +200,31 @@ export default class AssetDistribute extends PureComponent {
     });
   }
 
+  // 渲染表格资产列数据
+  @autobind
+  renderTableZichanColumn(value, record) {
+    const { isCreditProduct } = record;
+    return (
+      <div className={styles.zichanCell}>
+        <div className={styles.zichanText}>
+          <span className={styles.value}>{value}</span>
+          {
+            isCreditProduct ? (<span className={styles.icon}><Icon type="rong" /></span>) : null
+          }
+        </div>
+      </div>
+    );
+  }
+
   // 渲染持仓金额和占比的单元格
   @autobind
   renderTableValueColumn(value, record) {
     const { percent } = record;
     const percentText = `${percent * 100}%`;
+    const holdValue = convertMoney(value, { unit: '元' });
     return (
       <div className={styles.indexHoldValueCell}>
-        <span className={styles.value}>{value}</span>
+        <span className={styles.value}>{`${holdValue.value}${holdValue.unit}`}</span>
         <span className={styles.percent}>{percentText}</span>
       </div>
     );
@@ -231,16 +242,17 @@ export default class AssetDistribute extends PureComponent {
       [styles.profitRate]: true,
       [styles.isAsc]: isAsc,
     });
+    const profitValue = convertMoney(profit, { unit: '元' });
     return (
       <div className={styles.indexHoldValueCell}>
-        <span className={styles.profit}>{profit}</span>
+        <span className={styles.profit}>{`${profitValue.value}${profitValue.unit}`}</span>
         <span className={profitRateCls}>{percentText}</span>
       </div>
     );
   }
 
   render() {
-    const { checkedCredit, debtDetailModal } = this.state;
+    const { checkedCredit, debtDetailModal, radarIndexName } = this.state;
     const {
       assetsRadarData: { assetIndexData, totalAsset, debt },
       debtDetail,
@@ -299,26 +311,42 @@ export default class AssetDistribute extends PureComponent {
                       <span className={styles.value}>{totalMoney.value}</span>
                       <span className={styles.unit}>{totalMoney.unit}</span>
                     </span>
-                    <span className={styles.summaryInfo}>
-                      <span className={styles.label}>负债：</span>
-                      <span className={styles.value}>{totalDebt.value}</span>
-                      <span className={styles.unit}>{totalDebt.unit}</span>
-                      <span className={styles.infoIco} onClick={this.handleDebtDetailIconClick}>
-                        <Icon type="tishi2" />
-                      </span>
-                    </span>
+                    {
+                      checkedCredit
+                        ? (
+                          <span className={styles.summaryInfo}>
+                            <span className={styles.label}>负债：</span>
+                            <span className={styles.value}>{totalDebt.value}</span>
+                            <span className={styles.unit}>{totalDebt.unit}</span>
+                            <span className={styles.infoIco} onClick={this.handleDebtDetailIconClick}>
+                              <Icon type="tishi2" />
+                            </span>
+                          </span>
+                        )
+                        : null
+                    }
                   </div>
                 </div>
                 <div className={styles.indexDetailArea}>
-                  <Table
-                    indentSize={0}
-                    className={styles.indexDetailTable}
-                    dataSource={specificIndexData}
-                    columns={columns}
-                    pagination={false}
-                    rowClassName={this.setRowClassName}
-                    scroll={TABLE_SCROLL_SETTING}
-                  />
+                  {
+                    _.isEmpty(specificIndexData)
+                      ? (
+                        <div className={styles.noRadarData}>
+                          <div className={styles.noDataHead}><Icon type="zanwushuju" className={styles.noDataIcon} /></div>
+                          <div className={styles.noDataTip}>{`暂无${radarIndexName}数据`}</div>
+                        </div>
+                      )
+                      : (
+                        <Table
+                          indentSize={0}
+                          className={styles.indexDetailTable}
+                          dataSource={specificIndexData}
+                          columns={columns}
+                          pagination={false}
+                          scroll={TABLE_SCROLL_SETTING}
+                        />
+                      )
+                  }
                 </div>
               </div>
             )

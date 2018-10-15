@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 08:45:31
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 10:43:48
+ * @Last Modified time: 2018-10-15 15:13:20
  * @description 资产分布的负债详情弹出层
  */
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Modal from '../common/biz/CommonModal';
+import Icon from '../common/Icon';
 import MarginTradindDetail from './MarginTradingDetail';
 import OtherDebtDetail from './OtherDebtDetail';
 import { convertMoney } from './utils';
@@ -72,6 +73,8 @@ export default class DebtDetailModal extends PureComponent {
     const button = (
       <Button type="primary" onClick={this.handleCloseModal}>确定</Button>
     );
+    // 判断是否4个分类的数据均为空，如果4个分类数据均为空，则下面显示暂无负债数据
+    const isAllDataEmpty = hasNoMargin && hasNoSmallLoan && hasNobondDebt && hasNoStockPledge;
 
     return (
       <Modal
@@ -86,6 +89,16 @@ export default class DebtDetailModal extends PureComponent {
             <span className={styles.label}>总负债</span>
             <span className={styles.value}>{`${totalDebtMoney.formatedValue}${totalDebtMoney.unit}`}</span>
           </div>
+          {
+            isAllDataEmpty
+            ? (
+              <div className={styles.noRadarData}>
+                <div className={styles.noDataHead}><Icon type="zanwushuju" className={styles.noDataIcon} /></div>
+                <div className={styles.noDataTip}>暂无数据</div>
+              </div>
+            )
+            : null
+          }
           { _.map(marginTrading, item => <MarginTradindDetail data={item} />)}
           { _.map(smallLoan, item => <OtherDebtDetail title="小额贷" data={item} />)}
           { _.map(bondDebt, item => <OtherDebtDetail title="债券负债" data={item} />)}

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 12:24:43
+ * @Last Modified time: 2018-10-15 14:57:08
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -12,7 +12,7 @@ export const TABLE_SCROLL_SETTING = { x: 400, y: 220 };
 // 资产分布雷达图配置
 export const CHART_RADAR_OPTIONS = {
   radius: '65%',
-  center: ['40%', '50%'],
+  center: ['50%', '50%'],
   name: {
     textStyle: {
       color: '#108ee9',
