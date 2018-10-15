@@ -123,7 +123,7 @@ export default class CustRange extends PureComponent {
       value: custRangeName
         ?
         `${custRangeLevel}#${orgId}#${custRangeName}`
-        : custRange[0].id,
+        : custRange && custRange[0] && custRange[0].id,
     };
     this.setState({
       value: changedValue,
@@ -151,12 +151,12 @@ export default class CustRange extends PureComponent {
   @autobind
   getDisplay(orgId, custRange, defaultFirst) {
     const formatCustRange = transformCustRangeData(custRange);
-    walk(formatCustRange, findOrgNameByOrgId(orgId || custRange[0].id), '');
+    walk(formatCustRange, findOrgNameByOrgId(orgId || (custRange && custRange[0] && custRange[0].id)), '');
     let initValue = null;
     if (defaultFirst) {
       initValue = {
         label: custRangeNameDedault || '我的客户',
-        value: custRange[0].id,
+        value: custRange && custRange[0] && custRange[0].id,
       };
     } else {
       initValue = {
