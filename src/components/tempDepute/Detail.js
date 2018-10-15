@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-08-29 16:26:43
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-28 15:58:35
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-10-09 15:03:39
  * @description 临时委托任务右侧详情组件
  */
 

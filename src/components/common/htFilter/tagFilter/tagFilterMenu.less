@@ -10,90 +10,86 @@
       margin-left: 14px;
     }
   }
-}
-
-.checkbox {
-  margin: 0 14px 14px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-
-  :global {
-    .ant-checkbox {
-      top: 0;
+  .container {
+    :global {
+      .ant-select-dropdown-menu-item {
+        height: 30px;
+        line-height: 30px;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+      }
     }
-    .ant-checkbox + span {
-      display: flex;
-      align-items: center;
-      width: 100%;
+    .option {
+      font-family: @font-family;
+      color: @font-color;
+    }
+  }
+  .checkbox {
+    margin: 0 14px 14px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+
+    :global {
+      .ant-checkbox {
+        top: 0;
+      }
+      .ant-checkbox + span {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        flex: 0 0 auto;
+        padding-right: 14px;
+        font-family: @font-family;
+        color: @font-color;
+      }
+    }
+
+    .label {
+      flex: 1 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-family: @font-family;
+      color: @font-color;
+      font-weight: normal;
+      font-size: 14px;
+    }
+
+    .optionSelect {
       flex: 0 0 auto;
-      padding-right: 14px;
+      min-width: 20px;
+      max-width: 110px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-family: @font-family;
       color: @font-color;
+      font-weight: normal;
+      font-size: 14px;
+
+      :global {
+        .ant-select-selection--single {
+          height: 30px;
+          line-height: 30px;
+          font-family: @font-family;
+          color: @font-color;
+        }
+        .ant-select-selection__rendered {
+          line-height: 28px;
+          font-family: @font-family;
+          color: @font-color;
+        }
+      }
     }
   }
-}
+  .btnGroup {
+    padding-top: 6px;
+    margin-right: 14px;
+    text-align: right;
 
-.label {
-  flex: 1 1 auto;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: @font-family;
-  color: @font-color;
-  font-weight: normal;
-  font-size: 14px;
-}
-
-.optionSelect {
-  flex: 0 0 auto;
-  min-width: 20px;
-  max-width: 110px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: @font-family;
-  color: @font-color;
-  font-weight: normal;
-  font-size: 14px;
-
-  :global {
-    .ant-select-selection--single {
-      height: 30px;
-      line-height: 30px;
-      font-family: @font-family;
-      color: @font-color;
+    button {
+      margin-left: 10px;
     }
-    .ant-select-selection__rendered {
-      line-height: 28px;
-      font-family: @font-family;
-      color: @font-color;
-    }
-  }
-}
-
-.container {
-  :global {
-    .ant-select-dropdown-menu-item {
-      height: 30px;
-      line-height: 30px;
-      padding-top: 0 !important;
-      padding-bottom: 0 !important;
-    }
-  }
-}
-
-.option {
-  font-family: @font-family;
-  color: @font-color;
-}
-
-.btnGroup {
-  padding-top: 6px;
-  margin-right: 14px;
-  text-align: right;
-
-  button {
-    margin-left: 10px;
   }
 }
