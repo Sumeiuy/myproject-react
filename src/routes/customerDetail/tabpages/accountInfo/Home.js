@@ -110,7 +110,6 @@ export default class Home extends PureComponent {
     const { location } = nextProps;
     const { query: nextQuery } = location;
     const { location: { query: prevQuery } } = prevState;
-    debugger;
     const isQueryChange = !_.isEqual(nextQuery, prevQuery);
     if(isQueryChange) {
       if(nextQuery && nextQuery.custId) {
