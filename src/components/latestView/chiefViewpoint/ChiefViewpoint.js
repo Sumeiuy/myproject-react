@@ -16,7 +16,7 @@ import logable from '../../../decorators/logable';
 import styles from './chiefViewpoint.less';
 
 // 内容最大长度
-const MAX_LENGTH = 118;
+const MAX_LENGTH = 104;
 export default class ChiefViewpoint extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -58,15 +58,15 @@ export default class ChiefViewpoint extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '详情' } })
   toDetailPage() {
-    const { data: { id }, location: { query } } = this.props;
+    const { type, data: { id }, location: { query } } = this.props;
     const { push } = this.context;
     const param = {
       id: 'RTC_TAB_VIEWPOINT',
       title: '资讯',
     };
     const url = '/latestView/viewpointDetail';
-    const newQuery = { ...query, id, sourceUrl: '/latestView' };
-    linkTo({
+    const newQuery = { ...query, type, id, sourceUrl: '/latestView' };
+    openRctTab({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(newQuery)}`,
       param,
@@ -80,7 +80,7 @@ export default class ChiefViewpoint extends PureComponent {
     const { data, title } = this.props;
     const { content = '' } = data;
     // 去除内容所有html标签
-    const newContent = content.replace(/<[^>]*>/g, '');
+    const newContent = (content || '暂无内容').replace(/<[^>]*>/g, '');
     const slicedContent = newContent.length > MAX_LENGTH ?
       `${newContent.slice(0, MAX_LENGTH)}...` : newContent;
     return (
