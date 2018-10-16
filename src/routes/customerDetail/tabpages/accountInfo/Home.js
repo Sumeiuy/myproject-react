@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 12:22:18
+ * @Last Modified time: 2018-10-16 17:36:39
  */
 
 import React, { PureComponent } from 'react';
@@ -175,9 +175,9 @@ export default class Home extends PureComponent {
     if(query && query.custId) {
       if(prevQuery && prevQuery.custId) {
         if(query.custId !== prevQuery.custId) {
-          this.getProfitRateInfo({
-            initial: true
-          });
+          this.getProfitRateInfo({ initial: true });
+          // custId不同的时候在重新查询下资产分布数据
+          this.queryAssetDistributeData({ creditFlag: 'Y' });
         }
       } else {
         this.getProfitRateInfo({

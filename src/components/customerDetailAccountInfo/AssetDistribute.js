@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 18:56:21
+ * @Last Modified time: 2018-10-16 17:43:28
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -66,6 +66,15 @@ export default class AssetDistribute extends PureComponent {
     // 初始化进入需要优先查一把，第一项股票数据
     const creditFlag = checkedCredit ? 'Y' : 'N';
     this.props.querySpecificIndexData({ indexKey: radarIndexKey, creditFlag, custId });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // 如果 custId不同需要重新查一下数据
+    const { location: { query: { custId: nextCustId } } } = this.props;
+    const { location: { query: { custId: prevCustId } } } = prevProps;
+    if (nextCustId !== prevCustId && _.isEmpty(nextCustId)) {
+      this.freshData();
+    }
   }
 
   // 处理表格表头的配置项
@@ -140,6 +149,23 @@ export default class AssetDistribute extends PureComponent {
     };
   }
 
+  // 刷新数据
+  @autobind
+  freshData() {
+    // 刷新数据时，需要将页面展示成默认
+    const { location: { query: { custId } } } = this.props;
+    this.setState({
+      checkedCredit: true,
+      debtDetailModal: false,
+      radarIndexKey: SPECIFIC_INITIAL_KEY,
+      radarIndexName: SPECIFIC_INITIAL_NAME,
+    });
+    this.props.querySpecificIndexData({
+      indexKey: SPECIFIC_INITIAL_KEY,
+      creditFlag: 'Y',
+      custId,
+    });
+  }
 
   @autobind
   @logable({ type: 'Click', payload: { name: '含信用' } })
@@ -253,7 +279,7 @@ export default class AssetDistribute extends PureComponent {
     const fixedPercent = profitPercent || 0;
     // 需要判断数值，如果是>=0的数显示红色并带有加号
     // 如果是<0数显示成绿色，并带有减号
-    const isAsc = fixedPercent >=0;
+    const isAsc = fixedPercent >= 0;
     const percentText = isAsc ? `+${fixedPercent * 100}%` : `${fixedPercent * 100}%`;
     const profitRateCls = cx({
       [styles.profitRate]: true,
@@ -280,9 +306,9 @@ export default class AssetDistribute extends PureComponent {
     // 如果没有雷达图数据，则整块资产分布不显示
     const hasNoRadarData = _.isEmpty(assetIndexData);
     // 总资产
-    const totalMoney = convertMoney(totalAsset, { unit: '元' });
+    const totalMoney = convertMoney(totalAsset || 0, { unit: '元' });
     // 负债
-    const totalDebt = convertMoney(debt, { unit: '元' });
+    const totalDebt = convertMoney(debt || 0, { unit: '元' });
     // 获取雷达图的option
     const radarOption = this.getRadarOption(assetIndexData || []);
     // 获取表格的columns数据

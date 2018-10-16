@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 14:08:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 18:53:37
+ * @Last Modified time: 2018-10-16 11:00:16
  * @description 资产分布使用的数字转化
  */
 import _ from 'lodash';
@@ -47,6 +47,13 @@ function displayDebtMony(money) {
   return _.isEmpty(result) ? '' : `${result.value}${result.unit}`;
 }
 
+// 将转化后的交易数据金额拼接成字符串
+function displayTransMoney(money) {
+  const result = convertDebtMoney(money);
+  return _.isEmpty(result) ? '' : `${result.value}${result.unit}`;
+}
+
+
 // 给数据添加唯一的key
 function addKeyForData(item) {
   return {
@@ -73,4 +80,5 @@ export {
   convertDebtMoney,
   displayDebtMony,
   updateSpecificIndexData,
+  displayTransMoney,
 };
