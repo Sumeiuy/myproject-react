@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 10:45:19
+ * @Last Modified time: 2018-10-16 15:21:16
  */
 
 import React, { PureComponent } from 'react';
@@ -27,6 +27,10 @@ export default class Home extends PureComponent {
     summaryInfo: PropTypes.object.isRequired,
     // 查询新版客户360详情中的概要信息
     queryCustSummaryInfo: PropTypes.func.isRequired,
+    // 更多重点标签信息
+    moreLabelInfo: PropTypes.object.isRequired,
+    // 查询更多重点标签
+    queryAllKeyLabels: PropTypes.func.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
   }
@@ -60,7 +64,12 @@ export default class Home extends PureComponent {
 
   render() {
     const { activeTabKey } = this.state;
-    const { location, summaryInfo } = this.props;
+    const {
+      location,
+      summaryInfo,
+      moreLabelInfo,
+      queryAllKeyLabels,
+    } = this.props;
 
     const breadCrumbProps = {
       push: this.context.push,
@@ -73,7 +82,12 @@ export default class Home extends PureComponent {
         <div className={styles.custInfo}>
           <div className={styles.custBasicInfo}>基本信息</div>
           <div className={styles.custDetailInfo}>
-            <SummaryInfo data={summaryInfo} />
+            <SummaryInfo
+              location={location}
+              data={summaryInfo}
+              moreLabelInfo={moreLabelInfo}
+              queryAllKeyLabels={queryAllKeyLabels}
+            />
           </div>
         </div>
         <div className={styles.tabContainer}>

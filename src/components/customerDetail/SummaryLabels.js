@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 09:15:12
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 14:14:49
+ * @Last Modified time: 2018-10-16 16:50:15
  * @description 新版客户360详情重点标签区域
  */
 import React, { PureComponent } from 'react';
@@ -11,18 +11,24 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
 import CustLabel from './CustLabel';
-import Modal from '../common/biz/CommonModal';
+import MoreLabelModal from './MoreKeyLabelsModal';
 
 import styles from './summaryLabels.less';
 
 export default class SummaryLabels extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 概要信息中显示的15个标签
     data: PropTypes.array,
+    // 更多重点标签
+    moreLabelInfo: PropTypes.object,
+    // 查询更多重点标签
+    queryAllKeyLabels: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     data: [],
+    moreLabelInfo: {},
   }
 
   constructor(props) {
@@ -37,6 +43,9 @@ export default class SummaryLabels extends PureComponent {
   @autobind
   handleMoreLabelClick() {
     this.setState({ moreLabelsModal: true });
+    // 打开更多标签的弹出层，查询更多的标签
+    const { location: { query: { custId } } } = this.props;
+    this.props.queryAllKeyLabels({ custId });
   }
 
   // 关闭更多重点标签弹出层
@@ -46,7 +55,7 @@ export default class SummaryLabels extends PureComponent {
   }
 
   render() {
-    const { data } = this.props;
+    const { data, moreLabelInfo } = this.props;
     const { moreLabelsModal } = this.state;
     return (
       <div className={styles.wrap}>
@@ -56,20 +65,16 @@ export default class SummaryLabels extends PureComponent {
         </div>
         <div className={styles.body}>
           {
-            _.map(data, label => (<CustLabel labelData={label} />))
+            _.map(data, label => (<CustLabel key={label.id} labelData={label} />))
           }
         </div>
         {
           moreLabelsModal
             ? (
-              <Modal
-                modalKey="custKeyLabelMoreModal"
-                visible={moreLabelsModal}
-                title="重点标签"
-                needBtn={false}
-                closeModal={this.handleMoreLabelModalClose}
-              >
-              </Modal>
+              <MoreLabelModal
+                data={moreLabelInfo}
+                onClose={this.handleMoreLabelModalClose}
+              />
             )
             : null
         }
