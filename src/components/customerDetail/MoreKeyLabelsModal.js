@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 15:22:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 15:59:02
+ * @Last Modified time: 2018-10-16 18:32:05
  * @description 更多重点标签弹出层
  */
 import React, { Component } from 'react';
@@ -30,7 +30,7 @@ export default class MoreKeyLabelsModal extends Component {
     super(props);
     this.state = {
       // 切换标签Tab,默认展示大数据标签
-      activeTabKey: 'bigdataLabels',
+      activeTabKey: 'definedLabels',
     };
   }
 
@@ -40,35 +40,34 @@ export default class MoreKeyLabelsModal extends Component {
     this.setState({ activeTabKey });
   }
 
-
   render() {
     const { onClose, data } = this.props;
     const { activeTabKey } = this.state;
     // 大数据标签
-    const bigDataLabels = _.get(data, 'bigDataLabels.labelList') || [];
+    const bigDataLabels = _.get(data, 'bigDataLabels') || [];
     // 自定义标签
-    const customerLabels = _.get(data, 'customerLabels.labelList') || [];
+    const definedLabels = _.get(data, 'definedLabels') || [];
     return (
       <Modal
         modalKey="custKeyLabelMoreModal"
         visible
-        title="重点标签"
+        title="客户标签"
         needBtn={false}
         closeModal={onClose}
       >
         <div className={styles.wrap}>
           <Tabs
             activeKey={activeTabKey}
-            defaultActiveKey="bigdataLabels"
+            defaultActiveKey="definedLabels"
             onChange={this.handleTabChange}
             animated={false}
             tabBarGutter={5}
           >
+            <TabPane tab="自定义标签" key="definedLabels">
+              <KeyLabelsTable labels={definedLabels} />
+            </TabPane>
             <TabPane tab="大数据标签" key="bigdataLabels">
               <KeyLabelsTable labels={bigDataLabels} />
-            </TabPane>
-            <TabPane tab="自定义标签" key="customerLabels">
-              <KeyLabelsTable labels={customerLabels} />
             </TabPane>
           </Tabs>
         </div>

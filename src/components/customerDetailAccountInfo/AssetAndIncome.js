@@ -10,6 +10,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
 import AssetDistribute from './AssetDistribute';
+import ProfitRateChart from './ProfitRateChart';
 
 import styles from './assetAndIncome.less';
 
@@ -28,6 +29,18 @@ export default class AssetAndIncome extends PureComponent {
     querySpecificIndexData: PropTypes.func.isRequired,
     // 资产分布的雷达上具体指标的数据
     specificIndexData: PropTypes.array.isRequired,
+     // 切换图表时间范围
+    handleTimeSelectChange: PropTypes.func.isRequired,
+    // 切换对比指标
+    handleCodeSelectChange: PropTypes.func.isRequired,
+    // 基本的指标数据
+    custBasicData: PropTypes.object.isRequired,
+    // 对比指标的数据
+    custCompareData: PropTypes.object.isRequired,
+    // 当前对比的指标
+    compareCode: PropTypes.string.isRequired,
+    // 当前选择的时间
+    time: PropTypes.string.isRequired,
   }
 
   render() {
@@ -39,6 +52,12 @@ export default class AssetAndIncome extends PureComponent {
       location,
       specificIndexData,
       querySpecificIndexData,
+      handleTimeSelectChange,
+      handleCodeSelectChange,
+      custBasicData,
+      custCompareData,
+      compareCode,
+      time,
     } = this.props;
 
     return (
@@ -55,7 +74,16 @@ export default class AssetAndIncome extends PureComponent {
           />
         </div>
         <div className={styles.splitLine}></div>
-        <div className={styles.incomeTrend}>收益走势</div>
+        <div className={styles.incomeTrend}>
+          <ProfitRateChart
+            onTimeChange={handleTimeSelectChange}
+            onCompareCodeChange={handleCodeSelectChange}
+            custBasicData={custBasicData}
+            custCompareData={custCompareData}
+            compareCode={compareCode}
+            time={time}
+          />
+        </div>
       </div>
     );
   }

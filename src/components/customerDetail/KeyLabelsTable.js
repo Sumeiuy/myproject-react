@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 15:53:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 16:49:45
+ * @Last Modified time: 2018-10-16 18:55:21
  * @description 重点标签更多中展示的表格
  */
 import React, { Component } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import { Popover } from 'antd';
 
 import Pagination from '../common/Pagination';
+import Icon from '../common/Icon';
 
 import styles from './keyLablesTable.less';
 
@@ -44,8 +45,6 @@ export default class KeyLabelsTable extends Component {
       labelChunks: chunks,
       // 当前页码
       current: 1,
-      // 当前页码下的标签数据数组,当前第一页
-      currentLabels: chunks[0],
       // prevLabels
       prevLabels: props.labels,
     };
@@ -67,10 +66,27 @@ export default class KeyLabelsTable extends Component {
     );
   }
 
+  @autobind
+  renderEmptyDom() {
+    return (
+      <div className={styles.body}>
+        <div className={styles.noRadarData}>
+          <div className={styles.noDataHead}>
+            <Icon type="zanwushuju" className={styles.noDataIcon} />
+          </div>
+          <div className={styles.noDataTip}>暂无标签数据</div>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const { labels } = this.props;
     const { current, labelChunks } = this.state;
     const total = _.size(labels);
+    if (_.isEmpty(labels)) {
+      return this.renderEmptyDom();
+    }
     return (
       <div>
         <div className={styles.container}>

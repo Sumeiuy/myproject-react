@@ -215,7 +215,7 @@ export default class SignCustomerLabel extends PureComponent {
     return (
       <span>
         <Modal
-          title={`${mainPosition ? '添加' : ''}客户标签`}
+          title="客户标签"
           width={650}
           visible={Boolean(custId)}
           wrapClassName={styles.signCustomerLabel}

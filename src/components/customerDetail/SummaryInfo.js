@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 20:31:39
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 15:20:48
+ * @Last Modified time: 2018-10-16 18:13:07
  * @description 客户360详情页面概要信息
  */
 
@@ -31,7 +31,7 @@ export default function SummaryInfo(props) {
     // 交易数据
     transactionData,
     // 重点标签
-    keyLabel,
+    keyLabels,
   } = data;
   return (
     <div className={styles.summaryInfoWrap}>
@@ -50,7 +50,7 @@ export default function SummaryInfo(props) {
       <div className={styles.rightArea}>
         <SummaryLabels
           location={location}
-          data={keyLabel}
+          data={keyLabels}
           moreLabelInfo={moreLabelInfo}
           queryAllKeyLabels={queryAllKeyLabels}
         />

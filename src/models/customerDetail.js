@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 15:38:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 15:14:03
+ * @Last Modified time: 2018-10-16 17:33:58
  * @description 新版客户360详情的model
  */
 import { customerDetail as api } from '../api';
@@ -14,6 +14,9 @@ export default {
     summaryInfo: {},
     // 更多重点标签信息
     moreLabelInfo: {},
+    summaryInfo: {},
+    // 客户概要信息基本数据
+    customerBasicInfo: {},
   },
   reducers: {
     queryCustSummaryInfoSuccess(state, action) {
@@ -36,6 +39,13 @@ export default {
       return {
         ...state,
         ...payload,
+      };
+    },
+    getCustomerBasicInfoSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        customerBasicInfo: resultData,
       };
     },
   },
@@ -61,6 +71,14 @@ export default {
       yield put({
         type: 'clearReduxDataSuccess',
         payload,
+      });
+    },
+    // 获取客户基本信息
+    * getCustomerBasicInfo({ payload }, { call, put }) {
+      const response = yield call(api.queryCustomerBasicInfo, payload);
+      yield put({
+        type: 'getCustomerBasicInfoSuccess',
+        payload: response,
       });
     },
   },
