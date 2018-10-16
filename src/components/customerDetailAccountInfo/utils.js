@@ -2,11 +2,11 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 14:08:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 12:31:42
+ * @Last Modified time: 2018-10-15 18:53:37
  * @description 资产分布使用的数字转化
  */
 import _ from 'lodash';
-import { number } from '../../helper';
+import { number, data } from '../../helper';
 
  // 格式化金额，返回金额数字以及单位，并且金额数字整数部分千分位分割
 function convertMoney(money = 0, { unit = '', formater = false, toFixed = 2}) {
@@ -47,8 +47,30 @@ function displayDebtMony(money) {
   return _.isEmpty(result) ? '' : `${result.value}${result.unit}`;
 }
 
+// 给数据添加唯一的key
+function addKeyForData(item) {
+  return {
+    ...item,
+    key: data.uuid(),
+  };
+}
+
+// 给资产分布详情表格里面的数据添加唯一的key
+function updateSpecificIndexData(data) {
+  return _.map(data, item => {
+    const { children } = item;
+    const childrenData = _.map(children, addKeyForData);
+    const newItem = addKeyForData(item);
+    return {
+      ...newItem,
+      children: childrenData,
+    };
+  });
+}
+
 export {
   convertMoney,
   convertDebtMoney,
   displayDebtMony,
+  updateSpecificIndexData,
 };
