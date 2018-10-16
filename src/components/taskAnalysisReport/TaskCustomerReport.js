@@ -3,7 +3,7 @@
  * @Descripter: 任务-客户分析报表
  * @Date: 2018-10-05 14:38:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-12 09:22:49
+ * @Last Modified time: 2018-10-16 09:13:29
  */
 
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import { autobind } from 'core-decorators';
 import IECharts from '../IECharts';
 import ReportTitle from './ReportTitle';
 import ReportFilter from './ReportFilter';
+import ChartLegend from './ChartLegend';
 import { defaultStartTime, defaultEndTime, taskCustomerOptions, generalOptions, chartLineOptions, CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME } from './config';
 import { emp, number } from '../../helper';
 import { filterData } from './utils';
@@ -23,6 +24,7 @@ import imgSrc from '../chartRealTime/noChart.png';
 const { thousandFormat } = number;
 const { yAxisSplitLine, textStyle, toolbox, gridOptions } = generalOptions;
 const { series } = chartLineOptions;
+const { color, legendList } = taskCustomerOptions;
 
 export default class TaskCustomerReport extends PureComponent {
   static propTypes = {
@@ -125,15 +127,11 @@ export default class TaskCustomerReport extends PureComponent {
           border-radius: 3px 3px 3px 0 0 3px 0 0 0;`,
     };
     const options = {
-      color: taskCustomerOptions.color,
+      color: color,
       textStyle,
       toolbox,
       grid: gridOptions,
       tooltip: tooltipOtions,
-      legend: {
-        data: [CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME],
-        right: '20px',
-      },
       xAxis: [
         {
           type: 'category',
@@ -199,18 +197,23 @@ export default class TaskCustomerReport extends PureComponent {
           eventSource={eventSource}
           filterCallback={this.handlefilterCallback}
         />
-        <div className={styles.taskCustomerChart}>
+        <div className={styles.taskCustomerChartWrapper}>
           {
             (taskCustomerList && taskCustomerList.length > 0)
             ?
             (
-              <IECharts
-                option={options}
-                resizable
-                style={{
-                  height: '350px',
-                }}
-              />
+              <div className={styles.taskCustomerChart}>
+                <ChartLegend
+                  legendList={legendList}
+                />
+                <IECharts
+                  option={options}
+                  resizable
+                  style={{
+                    height: '310px',
+                  }}
+                />
+              </div>
             )
             :
             (

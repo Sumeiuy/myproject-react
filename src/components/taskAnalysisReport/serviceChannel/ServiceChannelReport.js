@@ -1,9 +1,9 @@
 /*
  * @Author: zhangjun
- * @Descripter: 完成服务客户统计
- * @Date: 2018-10-11 10:20:03
+ * @Descripter: 服务渠道统计
+ * @Date: 2018-10-11 17:38:35
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-15 15:53:36
+ * @Last Modified time: 2018-10-12 15:39:50
  */
 
 import React, { PureComponent } from 'react';
@@ -12,19 +12,19 @@ import { autobind } from 'core-decorators';
 
 import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
-import ServiceCustChart from './ServiceCustChart';
-import { defaultStartTime, defaultEndTime, completeServiceCustOptions } from '../config';
+import ServiceChannelPieChart from './ServiceChannelPieChart';
+import ServiceChannelLineChart from './ServiceChannelLineChart';
+import { defaultStartTime, defaultEndTime } from '../config';
 import { emp } from '../../../helper';
 
-import styles from './completeServiceCustReport.less';
+import styles from './serviceChannelReport.less';
 
-const { serviceCustOptions, legendList } = completeServiceCustOptions;
-export default class CompleteServiceCustReport extends PureComponent {
+export default class ServiceChannelReport extends PureComponent {
   static propTypes = {
-    // 完成服务客户统计
-    completeServiceCustList: PropTypes.array.isRequired,
-    // 获取完成服务客户统计
-    getCompleteServiceCust: PropTypes.func.isRequired,
+    // 服务渠道统计
+    serviceChannelData: PropTypes.object.isRequired,
+    // 获取服务渠道统计
+    getServiceChannel: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -43,17 +43,17 @@ export default class CompleteServiceCustReport extends PureComponent {
 
   componentDidMount() {
     const { startTime, endTime } = this.state;
-    // 获取完成服务客户统计
-    this.getCompleteServiceCust({
+    // 获取达标服务客户统计
+    this.getServiceChannel({
       startTime,
       endTime,
     });
   }
 
-  // 获取完成服务客户统计
+  // 获取达标服务客户统计
   @autobind
-  getCompleteServiceCust(query) {
-    this.props.getCompleteServiceCust({
+  getServiceChannel(query) {
+    this.props.getServiceChannel({
       ...query,
       orgId: emp.getOrgId(),
     });
@@ -65,13 +65,18 @@ export default class CompleteServiceCustReport extends PureComponent {
     this.setState({
       ...obj,
     }, () => {
-      this.getCompleteServiceCust(this.state);
+      this.getServiceChannel(this.state);
     });
   }
 
   render() {
     const {
-      completeServiceCustList,
+      serviceChannelData: {
+        // 服务渠道占比统计数据
+        proportionList = [],
+        // 服务渠道变化趋势数据
+        trendData = {},
+      },
     } = this.props;
     const {
       startTime,
@@ -80,8 +85,8 @@ export default class CompleteServiceCustReport extends PureComponent {
       eventSource,
     } = this.state;
     return (
-      <div className={styles.completeServiceCustReport}>
-        <ReportTitle title='完成服务客户统计' />
+      <div className={styles.serviceChannelReport}>
+        <ReportTitle title='服务渠道统计' />
         <ReportFilter
           dateFilterName='任务截止时间'
           startTime={startTime}
@@ -90,11 +95,14 @@ export default class CompleteServiceCustReport extends PureComponent {
           eventSource={eventSource}
           filterCallback={this.handlefilterCallback}
         />
-        <ServiceCustChart
-          reportList={completeServiceCustList}
-          serviceCustOptions={serviceCustOptions}
-          legendList={legendList}
-        />
+        <div className={styles.serviceChannelChart}>
+          <ServiceChannelPieChart
+            proportionList={proportionList}
+          />
+          <ServiceChannelLineChart
+            trendData={trendData}
+          />
+        </div>
       </div>
     );
   }

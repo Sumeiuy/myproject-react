@@ -3,7 +3,7 @@
  * @Descripter: 达标服务客户统计
  * @Date: 2018-10-11 10:20:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-11 21:05:27
+ * @Last Modified time: 2018-10-15 15:50:44
  */
 
 import React, { PureComponent } from 'react';
@@ -18,7 +18,7 @@ import { emp } from '../../../helper';
 
 import styles from './complianceServiceCustReport.less';
 
-const { serviceCustOptions } = complianceServiceCustOptions;
+const { serviceCustOptions, legendList } = complianceServiceCustOptions;
 
 export default class ComplianceServiceCustReport extends PureComponent {
   static propTypes = {
@@ -94,6 +94,7 @@ export default class ComplianceServiceCustReport extends PureComponent {
         <ServiceCustChart
           reportList={complianceServiceCustList}
           serviceCustOptions={serviceCustOptions}
+          legendList={legendList}
         />
       </div>
     );

@@ -3,7 +3,7 @@
  * @Descripter: 任务分析报表models
  * @Date: 2018-10-05 12:11:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-09 21:54:35
+ * @Last Modified time: 2018-10-12 13:32:31
  */
 import { taskAnalysisReport as api } from '../api';
 
@@ -19,7 +19,7 @@ export default {
     // 达标服务客户统计数据
     complianceServiceCustList: [],
     // 服务渠道统计数据
-    serviceChannelList: [],
+    serviceChannelData: {},
   },
   reducers: {
     // 获取任务-客户报表数据成功
@@ -48,10 +48,10 @@ export default {
     },
     // 获取服务渠道统计数据成功
     getServiceChannelSuccess(state, action) {
-      const { payload: { resultData: { reportList = EMPTY_LIST } } } = action;
+      const { payload: { resultData = {} } } = action;
       return {
         ...state,
-        serviceChannelList: reportList,
+        serviceChannelData: resultData,
       };
     },
   },
