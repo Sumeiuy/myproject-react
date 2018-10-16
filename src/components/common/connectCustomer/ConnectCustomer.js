@@ -193,7 +193,7 @@ export default class ConnectCustomer extends React.PureComponent {
         handlePhoneConnected={this.handlePhoneConnected}
         handlePhoneClick={this.handlePhoneClick}
         userData={userData}
-        placement="topRight"
+        placement="bottomRight"
       >
         {this.props.children}
       </ContactInfoPopover>
