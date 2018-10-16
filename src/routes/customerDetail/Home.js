@@ -13,6 +13,7 @@ import { Tabs } from 'antd';
 import withRouter from '../../decorators/withRouter';
 import AccountInfo from './tabpages/accountInfo/Home';
 import BreadCrumb from '../../components/customerDetail/Breadcrumb';
+import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo';
 
 import styles from './home.less';
 
@@ -24,8 +25,18 @@ export default class Home extends PureComponent {
     location: PropTypes.object.isRequired,
     // 新版客户360详情中的概要信息
     summaryInfo: PropTypes.object.isRequired,
+    // 客户基本信息
+    customerBasicInfo: PropTypes.object.isRequired,
+    // 自建任务平台的服务类型、任务反馈字典
+    motSelfBuiltFeedbackList: PropTypes.array.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
+    // 添加服务记录
+    addServeRecord: PropTypes.func.isRequired,
+    // 添加服务记录窗口
+    toggleServiceRecordModal: PropTypes.func.isRequired,
+    // 获取客户基本信息
+    getCustomerBasicInfo: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -44,7 +55,41 @@ export default class Home extends PureComponent {
   }
 
   componentDidMount() {
+    const {
+      getCustomerBasicInfo,
+      getMotCustfeedBackDict,
+      location: { query },
+    } = this.props;
 
+    // 获取客户的基本信息
+    if(query && query.custId) {
+      getCustomerBasicInfo({
+        custId: query.custId,
+      });
+    }
+    // 获取客户反馈字典信息
+    getMotCustfeedBackDict({ pageNum: 1, pageSize: 10000, type: 2 });
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const {
+      location: { query },
+      getCustomerBasicInfo,
+    } = this.props;
+    if(query && query.custId) {
+      if(prevQuery && prevQuery.custId) {
+        if(query.custId !== prevQuery.custId) {
+          getCustomerBasicInfo({
+            custId: query.custId,
+          });
+        }
+      } else {
+        getCustomerBasicInfo({
+          custId: query.custId,
+        });
+      }
+    }
   }
 
   // 切换客户360详情页的Tab
@@ -55,18 +100,33 @@ export default class Home extends PureComponent {
 
   render() {
     const { activeTabKey } = this.state;
-    const { location } = this.props;
+    const {
+      location,
+      addServeRecord,
+      motSelfBuiltFeedbackList,
+      toggleServiceRecordModal,
+      customerBasicInfo,
+    } = this.props;
 
     const breadCrumbProps = {
       push: this.context.push,
       url: location.state && location.state.url,
     };
 
+    // 客户基本信息组件props
+    const CustomerBasicInfoProps = {
+      push: this.context.push,
+      addServeRecord,
+      motSelfBuiltFeedbackList,
+      toggleServiceRecordModal,
+      customerBasicInfo,
+    };
+
     return (
       <div className={styles.container}>
         <div className={styles.breadCrumb}><BreadCrumb {...breadCrumbProps} /></div>
         <div className={styles.custInfo}>
-          <div className={styles.custBasicInfo}>基本信息</div>
+          <div className={styles.custBasicInfo}><CustomerBasicInfo {...CustomerBasicInfoProps}/></div>
           <div className={styles.custDetailInfo}>详细信息</div>
         </div>
         <div className={styles.tabContainer}>

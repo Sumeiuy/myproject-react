@@ -13,5 +13,7 @@ export default function detailAccountInfo(api) {
     querySpecificIndexData: query => api.post('/groovynoauth/fsp/cust/custdetail/queryAssetIndexData', query),
     // 查询新版客户360详情下的账户信息Tab下的资产分布-负债详情数据
     queryDebtDetail: query => api.post('/groovynoauth/fsp/cust/custdetail/queryDebtDetail', query),
+    // 查询新版客户360详情下的账户信息Tab下对应的收益走势对比数据
+    queryProfitRateInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryCustPofitRateChart', query),
   };
 }

@@ -17,11 +17,23 @@ const effect = dva.generateEffect;
 const mapStateToProps = state => ({
   // 新版客户360详情中的概要信息
   summaryInfo: state.customerDetail.summaryInfo,
+  // 自建任务平台的服务类型、任务反馈字典
+  motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
+  // 客户基本信息
+  customerBasicInfo: state.customerDetail.customerBasicInfo,
 });
 
 const mapDispatchToProps = {
   // 清除Redux中的数据
   clearReduxData: effect('customerDetail/clearReduxData', { loading: false }),
+  // 客户列表添加服务记录
+  addServeRecord: effect('customerPool/addCommonServeRecord', { loading: true }),
+  // 获取客户反馈字典
+  getMotCustfeedBackDict: effect('app/getMotCustfeedBackDict', { loading: true }),
+  // 添加服务记录窗口
+  toggleServiceRecordModal: effect('app/toggleServiceRecordModal', {loading: true}),
+  // 获取客户基本信息
+  getCustomerBasicInfo: effect('customerDetail/getCustomerBasicInfo', {loading: true}),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

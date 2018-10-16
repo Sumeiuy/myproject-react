@@ -1,0 +1,139 @@
+.container {
+  :global {
+    .ant-affix {
+      background: #f7faff;
+      box-shadow: 0 1px 4px 0 #ddd;
+    }
+  }
+  .content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    .frontInfo {
+      .name {
+        display: inline-block;
+        margin-right: 25px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        height: 52px;
+        line-height: 52px;
+        vertical-align: middle;
+      }
+      .iconGroup {
+        display: inline-block;
+        height: 52px;
+        line-height: 52px;
+        vertical-align: middle;
+        font-size: 14px;
+        color: #fff;
+        text-align: center;
+        .highWorth {
+          display: inline-block;
+          line-height: 18px;
+          height: 18px;
+          width: 18px;
+          margin-right: 8px;
+          background: #716865;
+        }
+        .riskLevel {
+          display: inline-block;
+          line-height: 18px;
+          height: 18px;
+          width: 18px;
+          margin-right: 8px;
+          background: #d0891b;
+        }
+        .sign {
+          display: inline-block;
+          line-height: 18px;
+          height: 18px;
+          width: 18px;
+          margin-right: 8px;
+          background: #6fb7ec;
+        }
+        .private {
+          display: inline-block;
+          line-height: 18px;
+          height: 18px;
+          width: 18px;
+          margin-right: 8px;
+          background: #6a8ef8;
+        }
+        .rank {
+          vertical-align: text-top;
+          margin-right: 8px;
+          height: 18px;
+          width: 32px;
+        }
+        .vip {
+          vertical-align: text-top;
+          margin-right: 8px;
+          height: 18px;
+          width: 24px;
+        }
+      }
+    }
+    .endInfo {
+      font-size: 14px;
+      .basicInfo {
+        display: inline-block;
+        height: 52px;
+        line-height: 52px;
+        vertical-align: middle;
+        color: #333;
+        margin-right: 20px;
+      }
+      .actionGroup {
+        :global {
+          .iconfont {
+            display: inline-block;
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+            line-height: 14px;
+          }
+        }
+        font-size: 14px;
+        display: inline-block;
+        height: 52px;
+        line-height: 52px;
+        vertical-align: middle;
+        color: #108ee9;
+        .connectCust {
+          display: inline-block;
+          margin-right: 20px;
+          cursor: pointer;
+          .text {
+            margin-left: 4px;
+          }
+        }
+        .addTag {
+          display: inline-block;
+          margin-right: 20px;
+          cursor: pointer;
+          .text {
+            margin-left: 4px;
+          }
+        }
+        .addServiceLog {
+          display: inline-block;
+          margin-right: 20px;
+          cursor: pointer;
+          .text {
+            margin-left: 4px;
+          }
+        }
+        .navToTask {
+          display: inline-block;
+          margin-right: 20px;
+          cursor: pointer;
+          .text {
+            margin-left: 4px;
+          }
+        }
+      }
+    }
+  }
+}

@@ -16,6 +16,10 @@ export default {
     specificIndexData: [],
     // 负债详情的数据
     debtDetail: {},
+    // 收益走势基本指标数据
+    custBasicData: {},
+    // 收益走势对比指标数据
+    custCompareData: {},
   },
   reducers: {
     getAssetRadarDataSuccess(state, action) {
@@ -23,6 +27,34 @@ export default {
       return {
         ...state,
         assetsRadarData: payload || {},
+      };
+    },
+    getProfitRateInfoSuccess(state, action) {
+      const { payload } = action;
+      const { withCustPofit, resultData } = payload;
+      if(withCustPofit) { // 需要同时更新基准数据和对比数据
+        return {
+          ...state,
+          custBasicData: {
+            indexLine: resultData.earningLine,
+            indexData: resultData.earningData,
+            timeLine: resultData.timeLine,
+          },
+          custCompareData: {
+            indexLine: resultData.indexLine,
+            indexData: resultData.indexData,
+            timeLine: resultData.timeLine,
+          },
+        };
+      }
+      // 只需要更新对比数据
+      return {
+        ...state,
+        custCompareData: {
+          indexLine: resultData.indexLine,
+          indexData: resultData.indexData,
+          timeLine: resultData.timeLine,
+        },
       };
     },
     querySpecificIndexDataSuccess(state, action) {
@@ -55,6 +87,15 @@ export default {
       yield put({
         type: 'getAssetRadarDataSuccess',
         payload: resultData,
+      });
+    },
+    // 查询收益走势图表数据
+    * getProfitRateInfo({ payload }, { put, call }) {
+      const { withCustPofit } = payload;
+      const { resultData } = yield call(api.queryProfitRateInfo, payload);
+      yield put({
+        type: 'getProfitRateInfoSuccess',
+        payload: { resultData, withCustPofit },
       });
     },
     // 查询资产分布的雷达上具体指标的数据

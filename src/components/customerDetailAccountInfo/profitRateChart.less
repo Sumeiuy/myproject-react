@@ -1,0 +1,100 @@
+.yieldChartBox {
+  height: 100%;
+  padding: 16px 0 21px;
+
+  .title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 19px;
+    padding-left: 20px;
+  }
+
+  .tabBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 17px;
+    margin-bottom: 10px;
+    padding: 0 20px;
+    .timeSelectBox {
+      flex: 0 0 auto;
+      .timeItem {
+        cursor: pointer;
+        display: inline-block;
+        height: 17px;
+        line-height: 17px;
+        font-size: 12px;
+        color: #333;
+        margin-right: 10px;
+        padding: 0 7px;
+
+        &.activeItem {
+          color: #fff;
+          background: #666;
+          border-radius: 2px;
+        }
+      }
+    }
+    .codeSelectBox {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      .compareCode {
+        flex: 0 0 auto;
+        background: #485a7b;
+        width: 8px;
+        height: 8px;
+        margin-right: 2px;
+      }
+      .codeController {
+        flex: 0 0 auto;
+        font-size: 12px;
+        :global {
+          .lego-filter-filterWrapper {
+            height: 26px;
+          }
+          .lego-filter-filterWrapper > button:first-child {
+            height: 26px;
+            padding: 0 12px 0 0;
+          }
+          .lego-filter-filterWrapper > button:first-child .lego-filter-downIcon {
+            top: 9px;
+            right: 4px;
+            height: 5px;
+            width: 8px;
+          }
+          .lego-filter-filterWrapper > button:first-child .lego-filter-contentShowOnButton .lego-filter-valueShowOnButton {
+            color: #333;
+          }
+          .lego-filter-contentShowOnButton {
+            display: inline-block;
+            font-size: 12px;
+            height: 26px;
+            padding: 0 4px;
+            line-height: 26px;
+            & > span:first-child {
+              color: #666;
+            }
+          }
+          .lego-single-filter-singleFilterMenu {
+            font-size: 12px;
+          }
+        }
+      }
+      .basicCode {
+        flex: 0 0 auto;
+        background: #fe5f03;
+        width: 8px;
+        height: 8px;
+        margin: 0 6px 0 15px;
+      }
+      .text {
+        flex: 0 0 auto;
+        height: 17px;
+        font-size: 12px;
+        color: #333;
+      }
+    }
+  }
+}
