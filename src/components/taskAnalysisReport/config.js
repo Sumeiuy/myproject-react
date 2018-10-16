@@ -191,15 +191,15 @@ const serviceChannelOptions = {
     }
   ],
   // grid
-  // gridOptions: {
-  //   show: true,
-  //   top: '50px',
-  //   left: '20px',
-  //   right: '20px',
-  //   bottom: '0',
-  //   containLabel: true,
-  //   borderWidth: '0',
-  // },
+  gridOptions: {
+    show: true,
+    top: '40px',
+    left: '0',
+    right: '0',
+    bottom: '0',
+    containLabel: true,
+    borderWidth: '0',
+  },
   series: {
     symbol: 'none',
     smooth: true,

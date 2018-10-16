@@ -3,7 +3,7 @@
  * @Descripter: 渠道变化趋势
  * @Date: 2018-10-12 15:30:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-16 13:12:02
+ * @Last Modified time: 2018-10-16 13:32:18
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -19,7 +19,7 @@ import styles from './serviceChannelLineChart.less';
 import imgSrc from '../../chartRealTime/noChart.png';
 
 const { thousandFormat } = number;
-const { yAxisSplitLine, textStyle, toolbox, gridOptions } = generalOptions;
+const { yAxisSplitLine, textStyle, toolbox } = generalOptions;
 const {
   color,
   zhangle,
@@ -27,6 +27,7 @@ const {
   telephone,
   interview,
   legendOptions,
+  gridOptions,
   series,
 } = serviceChannelOptions;
 
