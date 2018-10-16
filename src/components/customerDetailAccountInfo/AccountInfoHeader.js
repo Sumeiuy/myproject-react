@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-16 21:59:06
+ * @Last Modified time: 2018-10-16 22:25:35
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -278,14 +278,14 @@ export default class AccountInfoHeader extends PureComponent {
                 <Table
                   className={styles.tableContainer}
                   columns={columns}
-                  dataSource={dataSource.securitiesHoldings}
+                  dataSource={dataSource}
                   pagination={false} />
 
               </TabPane>
               <TabPane tab="产品实时持仓" key="storageOfProducts">
                 <Table className={styles.tableContainer}
                   columns={productColumns}
-                  dataSource={productDate.storageOfProducts}
+                  dataSource={productDate}
                   pagination={false} />
               </TabPane>
             </Tabs>
