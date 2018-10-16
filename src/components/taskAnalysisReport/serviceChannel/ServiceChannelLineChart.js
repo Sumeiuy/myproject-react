@@ -3,7 +3,7 @@
  * @Descripter: 渠道变化趋势
  * @Date: 2018-10-12 15:30:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-15 17:24:00
+ * @Last Modified time: 2018-10-16 13:12:02
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -58,16 +58,6 @@ export default function ServiceCustChart(props) {
     const deadlineTimeData = filterData(zhangleList, 'deadlineTime');
     // xAxis轴刻度标签的显示间隔, 超过30天，则横坐标改为按周展示
     const xAxisLabelInterval = deadlineTimeData.length > 30 ? 6 : 0;
-    // title 配置项
-    const title = {
-      text: '渠道变化趋势',
-      textStyle: {
-        color: '#333',
-        fontSize: 14,
-        fontWeight: 'normal',
-      },
-      padding: [0, 0, 0, 20],
-    };
     // tooltip 配置项
     const tooltipOtions = {
       trigger: 'axis',
@@ -99,7 +89,6 @@ export default function ServiceCustChart(props) {
       color,
       textStyle,
       toolbox,
-      title,
       grid: gridOptions,
       tooltip: tooltipOtions,
       xAxis: [
@@ -159,14 +148,18 @@ export default function ServiceCustChart(props) {
           ?
           (
             <div>
+              <div className={styles.chartTitle}>
+                渠道变化趋势
+              </div>
               <ChartLegend
                 legendList={legendList}
+                className='serviceChannelLineLegend'
               />
               <IECharts
                 option={options}
                 resizable
                 style={{
-                  height: '350px',
+                  height: '310px',
                 }}
               />
             </div>

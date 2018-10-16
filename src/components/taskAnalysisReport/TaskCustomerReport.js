@@ -3,7 +3,7 @@
  * @Descripter: 任务-客户分析报表
  * @Date: 2018-10-05 14:38:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-15 17:05:20
+ * @Last Modified time: 2018-10-16 09:13:29
  */
 
 import React, { PureComponent } from 'react';
@@ -210,7 +210,7 @@ export default class TaskCustomerReport extends PureComponent {
                   option={options}
                   resizable
                   style={{
-                    height: '350px',
+                    height: '310px',
                   }}
                 />
               </div>

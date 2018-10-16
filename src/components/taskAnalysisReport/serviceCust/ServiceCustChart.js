@@ -3,7 +3,7 @@
  * @Descripter: 服务客户折线图
  * @Date: 2018-10-11 13:18:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-15 15:52:34
+ * @Last Modified time: 2018-10-16 09:13:23
  */
 
 import React from 'react';
@@ -123,7 +123,7 @@ export default function ServiceCustChart(props) {
                 option={options}
                 resizable
                 style={{
-                  height: '350px',
+                  height: '310px',
                 }}
               />
             </div>

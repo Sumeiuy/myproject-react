@@ -68,7 +68,7 @@ const generalOptions = {
     top: '40px',
     left: '20px',
     right: '20px',
-    bottom: '20px',
+    bottom: '0',
     containLabel: true,
     borderWidth: '0',
   },
@@ -190,6 +190,16 @@ const serviceChannelOptions = {
       name: INTERVIEW,
     }
   ],
+  // grid
+  // gridOptions: {
+  //   show: true,
+  //   top: '50px',
+  //   left: '20px',
+  //   right: '20px',
+  //   bottom: '0',
+  //   containLabel: true,
+  //   borderWidth: '0',
+  // },
   series: {
     symbol: 'none',
     smooth: true,

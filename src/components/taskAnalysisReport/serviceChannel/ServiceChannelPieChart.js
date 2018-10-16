@@ -3,7 +3,7 @@
  * @Descripter: 渠道占比分布
  * @Date: 2018-10-12 10:10:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-15 17:24:10
+ * @Last Modified time: 2018-10-16 11:09:46
  */
 
 import React from 'react';
@@ -29,16 +29,6 @@ export default function ServiceChannelPieChart(props) {
     const {
       proportionList,
     } = props;
-    // title 配置项
-    const title = {
-      text: '渠道占比分布',
-      textStyle: {
-        color: '#333',
-        fontSize: 14,
-        fontWeight: 'normal',
-      },
-      padding: [0, 0, 0, 20],
-    };
     // tooltip 配置项
     const tooltipOtions = {
       trigger: 'item',
@@ -64,7 +54,6 @@ export default function ServiceChannelPieChart(props) {
       color,
       textStyle,
       toolbox,
-      title,
       tooltip: tooltipOtions,
       series: [{
         type: 'pie',
@@ -87,6 +76,9 @@ export default function ServiceChannelPieChart(props) {
           ?
           (
             <div>
+              <div className={styles.chartTitle}>
+                渠道占比分布
+              </div>
               <ChartLegend
                 legendList={legendList}
                 className="pieLegend"
@@ -95,7 +87,7 @@ export default function ServiceChannelPieChart(props) {
                   option={options}
                   resizable
                   style={{
-                    height: '350px',
+                    height: '310px',
                   }}
                 />
             </div>
