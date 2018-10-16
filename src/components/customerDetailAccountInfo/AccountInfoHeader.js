@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-16 17:55:35
+ * @Last Modified time: 2018-10-16 21:59:06
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -16,6 +16,21 @@ import { transformItemUnit } from '../chartRealTime/FixNumber';
 const TabPane = Tabs.TabPane;
 //单选框
 const RadioGroup = Radio.Group;
+//单选框list
+const list = [
+  {
+    value: 'all',
+    label: '全部'
+  },
+  {
+    value: 'normal',
+    label: '普通'
+  },
+  {
+    value: 'credit',
+    label: '信用'
+  },
+];
 //证券实时持仓表格
 const columns = [
   {
@@ -145,12 +160,6 @@ export default class AccountInfoHeader extends PureComponent {
     this.state = {
       // 实时持仓的弹出框
       realTimeHoldModalVisible: false,
-      //分页器
-      pagination: false,
-      //证券默认数据
-      bondData: [],
-      //产品默认数据
-      productDate: [],
       //证券分类数据
       classificationData: {},
       // //默认tab显示的key
@@ -177,6 +186,7 @@ export default class AccountInfoHeader extends PureComponent {
     //进入需要查询下证券实时持仓数据
     this.props.getSecuritiesHolding({
       custId: query && query.custId,
+      accountType: 'all'
     });
     //进入需要查询下实时资产数据
     this.props.getRealTimeAsset({
@@ -190,18 +200,14 @@ export default class AccountInfoHeader extends PureComponent {
   //账户类型的筛选
   @autobind
   handleAccountType(e) {
-    const newclassificationData = this.setState({ classificationData: e.target.value });
-    this.props.getSecuritiesHolding({ newclassificationData });
+    const { query } = this.props.location;
+    this.props.getSecuritiesHolding({ custId: query && query.custId, accountType: e.target.value });
   }
   render() {
     const {
       realTimeHoldModalVisible,
     } = this.state;
     const { dataSource, realTimeAsset, productDate } = this.props;
-    //取出证券持仓的数据
-    this.setState({ bondData: dataSource.securitiesHoldings });
-    //取出产品持仓的的数据
-    this.setState({ productDate: productDate.storageOfProducts });
     //取出实时资产的数据
     const { rtimeAssets, availableFunds, advisableFunds } = realTimeAsset;
     //调用处理实时资产数据的方法
@@ -220,6 +226,7 @@ export default class AccountInfoHeader extends PureComponent {
           title="实时持仓"
           size="large"
           showOkBtn={false}
+          destroyOnClose
           visible={realTimeHoldModalVisible}
           closeModal={this.handleRealTimeHoldModalClose}
           onCancel={this.handleRealTimeHoldModalClose}
@@ -252,23 +259,34 @@ export default class AccountInfoHeader extends PureComponent {
                 key="securitiesHoldings">
                 <div className={styles.tabDiv}><span className={styles.tabspan}>账户类型：</span>
                   <RadioGroup name="radiogroup" defaultValue="all" onChange={this.handleAccountType}>
-                    <Radio value="all">全部</Radio>
-                    <Radio value="normal">普通</Radio>
-                    <Radio value="credit">信用</Radio>
+                    {
+                      list.map(item => (
+                        <Radio value={item.value} key={item.value}>
+                          <span
+                            style={{
+                            'paddingLeft': '10px',
+                            'paddingRight': '30px',
+                            }}
+                          >
+                          {item.label}
+                          </span>
+                        </Radio>
+                      ))
+                    }
                   </RadioGroup>
                 </div>
                 <Table
+                  className={styles.tableContainer}
                   columns={columns}
-                  dataSource={this.state.bondData}
-                  pagination={this.state.pagination}
-                  defaultExpandedRowKeys={this.state.defaultExpandedRowKeys} />
+                  dataSource={dataSource.securitiesHoldings}
+                  pagination={false} />
 
               </TabPane>
               <TabPane tab="产品实时持仓" key="storageOfProducts">
-                <Table
+                <Table className={styles.tableContainer}
                   columns={productColumns}
-                  dataSource={this.state.productDate}
-                  pagination={this.state.pagination} />
+                  dataSource={productDate.storageOfProducts}
+                  pagination={false} />
               </TabPane>
             </Tabs>
           </div>
