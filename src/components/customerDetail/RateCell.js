@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 08:50:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 13:34:43
+ * @Last Modified time: 2018-10-16 14:32:54
  * @description 新版客户360详情交易数据中比例展示Cell
  */
 import React from 'react';
@@ -15,7 +15,8 @@ import styles from './cell.less';
 
 export default function RateCell(props) {
   const { title, content, rate } = props;
-  const isAsc = rate >=0;
+  // 如果是小于0的值显示绿色，如果是大于等于0的值显示红色
+  const isAsc = rate >= 0;
   const ascCls = cx({
     [styles.asc]: isAsc,
     [styles.desc]: !isAsc,

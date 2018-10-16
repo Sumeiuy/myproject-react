@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 13:21:57
+ * @Last Modified time: 2018-10-16 14:32:24
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -253,7 +253,7 @@ export default class AssetDistribute extends PureComponent {
     const fixedPercent = profitPercent || 0;
     // 需要判断数值，如果是>=0的数显示红色并带有加号
     // 如果是<0数显示成绿色，并带有减号
-    const isAsc = fixedPercent >=0;
+    const isAsc = fixedPercent >= 0;
     const percentText = isAsc ? `+${fixedPercent * 100}%` : `${fixedPercent * 100}%`;
     const profitRateCls = cx({
       [styles.profitRate]: true,
