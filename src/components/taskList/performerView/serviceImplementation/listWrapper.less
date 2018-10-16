@@ -1,9 +1,21 @@
 @import '../../../../css/util.less';
 
+/* 这个是客户列表一页查询的数据的个数，根据这个值来确认客户列表项的宽度的设置 */
+@size: 6,9,10,12;
+
+.generate-itemWidtClass(@n, @i: 1) when (@i =< @n) {
+  @widthSize: extract(@size, @i);
+  .width@{widthSize} {
+    width: (96% / @widthSize);
+  }
+  .generate-itemWidtClass(@n, (@i + 1));
+}
 .list {
   height: 100%;
   .item {
     float: left;
   }
+  .generate-itemWidtClass(length(@size));
+
   .clearfix()
 }

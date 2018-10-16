@@ -2,15 +2,16 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-15 00:37:44
+ * @Last Modified time: 2018-10-16 17:47:15
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-// import { Tabs } from 'antd';
+import _ from 'lodash';
 import { connect } from 'dva';
-
+import moment from 'moment';
+import { timeList, codeList } from '../../../../config/profitRateConfig';
 import { dva } from '../../../../helper';
 import withRouter from '../../../../decorators/withRouter';
 import AssetAndIncome from '../../../../components/customerDetailAccountInfo/AssetAndIncome';
@@ -18,7 +19,37 @@ import AccountInfoHeader from '../../../../components/customerDetailAccountInfo/
 
 import styles from './home.less';
 
-// const TabPane = Tabs.TabPane;
+// 转化时间范围
+function transformTime(key, format = 'YYYYMMDD') {
+  const today = moment().format(format);
+  switch (key) {
+    case 'month':
+      return {
+        startDate: moment().subtract(1, 'months').format(format),
+        endDate: today,
+      };
+    case 'season':
+      return {
+        startDate: moment().subtract(3, 'months').format(format),
+        endDate: today,
+      };
+    case 'halfYear':
+      return {
+        startDate: moment().subtract(6, 'months').format(format),
+        endDate: today,
+      };
+    case 'currentYear':
+      return {
+        startDate: moment().startOf('year').format(format),
+        endDate: today,
+      };
+    default:
+      return {
+        startDate: moment().subtract(1, 'months').format(format),
+        endDate: today,
+      };
+  }
+}
 
 // 使用helper里面封装的生成effects的方法
 const effect = dva.generateEffect;
@@ -36,6 +67,10 @@ const mapStateToProps = state => ({
   securitiesHolding: state.detailAccountInfo.securitiesHolding,
   // 实时持仓中的产品实时持仓
   storageOfProduct: state.detailAccountInfo.storageOfProduct,
+  // 收益走势基本指标数据
+  custBasicData: state.detailAccountInfo.custBasicData,
+  // 收益走势对比指标数据
+  custCompareData: state.detailAccountInfo.custCompareData,
 });
 
 const mapDispatchToProps = {
@@ -51,6 +86,8 @@ const mapDispatchToProps = {
   getSecuritiesHolding: effect('detailAccountInfo/getSecuritiesHolding'),
   //查询实时持仓中的产品实时持仓
   getStorageOfProduct: effect('detailAccountInfo/getStorageOfProduct'),
+  // 查询收益走势数据
+  queryProfitRateInfo: effect('detailAccountInfo/getProfitRateInfo'),
   // 清除Redux中的数据
   clearReduxData: effect('detailAccountInfo/clearReduxData', { loading: false }),
 };
@@ -84,6 +121,10 @@ export default class Home extends PureComponent {
     getSecuritiesHolding: PropTypes.func.isRequired,
     // 查询实时持仓中的产品实时持仓
     getStorageOfProduct: PropTypes.func.isRequired,
+    custBasicData: PropTypes.object.isRequired,
+    custCompareData: PropTypes.object.isRequired,
+    // 查询收益走势数据
+    queryProfitRateInfo: PropTypes.func.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
   }
@@ -91,20 +132,132 @@ export default class Home extends PureComponent {
   static defaultProps = {
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { location } = nextProps;
+    const { query: nextQuery } = location;
+    const { location: { query: prevQuery } } = prevState;
+    const isQueryChange = !_.isEqual(nextQuery, prevQuery);
+    if(isQueryChange) {
+      if(nextQuery && nextQuery.custId) {
+        if(prevQuery && prevQuery.custId) {
+          if(nextQuery.custId !== prevQuery.custId) {
+            // 回置收益走势的选项
+            return {
+              time: timeList[0].key,
+              compareCode: codeList[0].key,
+              location,
+            };
+          }
+          return {
+            location,
+          };
+        }
+        // 回置收益走势的选项
+        return {
+          time: timeList[0].key,
+          compareCode: codeList[0].key,
+          location,
+        };
+      }
+      return {
+        location,
+      };
+    }
+    return null;
+  }
+
   constructor(props) {
     super(props);
     this.state = {
+      location: props.location,
       // 是否选择含信用checkbox,默认为含信用
       credit: 'Y',
       // 当前雷达图上高亮的指标key
       radarHightlightIndex: 'stock',
       // 是否打开负债详情的Modal
       debtDetailModalVisible: false,
+      // 选中的时间范围
+      time: timeList[0].key,
+      // 选中的对比指标
+      compareCode: codeList[0].key,
     };
   }
 
   componentDidMount() {
-    // TODO 第一次进入需要查询下资产分布的雷达图数据
+    // 第一次进入需要查询下资产分布的雷达图数据
+    // 默认查询含信用的
+    this.queryAssetDistributeData({
+      creditFlag: 'Y',
+    });
+    // 获取收益走势数据
+    this.getProfitRateInfo({ initial: true });
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location: { query: prevQuery } } = prevProps;
+    const { location: { query } } = this.props;
+
+    if(query && query.custId) {
+      if(prevQuery && prevQuery.custId) {
+        if(query.custId !== prevQuery.custId) {
+          this.getProfitRateInfo({
+            initial: true
+          });
+        }
+      } else {
+        this.getProfitRateInfo({
+          initial: true
+        });
+      }
+    }
+  }
+
+  @autobind
+  getProfitRateInfo(options) {
+    const { location: { query }, queryProfitRateInfo } = this.props;
+    if(options.initial) {
+      queryProfitRateInfo({
+        custId: query && query.custId,
+        indexCode: '000300',
+        startDate: transformTime('month').startDate,
+        endDate: transformTime('month').endDate,
+        withCustPofit: true,
+      });
+    } else { // 用户点击触发请求
+      queryProfitRateInfo({
+        custId: query && query.custId,
+        indexCode: options.indexCode,
+        startDate: transformTime(options.time).startDate,
+        endDate: transformTime(options.time).endDate,
+        withCustPofit: options.withCustPofit,
+      });
+    }
+  }
+
+  @autobind
+  handleCodeSelectChange({ value }) {
+    const { time } = this.state;
+    this.getProfitRateInfo({
+      indexCode: value,
+      time,
+      withCustPofit: false,
+    });
+    this.setState({
+      compareCode: value,
+    });
+  }
+
+  @autobind
+  handleTimeSelectChange(key) {
+    const { compareCode } = this.state;
+    this.getProfitRateInfo({
+      indexCode: compareCode,
+      time: key,
+      withCustPofit: true,
+    });
+    this.setState({
+      time: key,
+    });
   }
 
   // 关闭负债详情的弹出层
@@ -119,8 +272,36 @@ export default class Home extends PureComponent {
     this.setState({ debtDetailModalVisible: true });
   }
 
+  // 查询资产分布雷达图数据
+  @autobind
+  queryAssetDistributeData(query) {
+    const { location: { query: { custId } } } = this.props;
+    this.props.getAssetRadarData({ ...query, custId });
+  }
+
   render() {
-    const { getSecuritiesHolding, securitiesHolding, realTimeAsset, getRealTimeAsset, storageOfProduct, getStorageOfProduct} = this.props;
+    const {
+      getSecuritiesHolding,
+      securitiesHolding,
+      realTimeAsset,
+      getRealTimeAsset,
+      storageOfProduct,
+      getStorageOfProduct,
+      assetsRadarData,
+      debtDetail,
+      queryDebtDetail,
+      location,
+      specificIndexData,
+      querySpecificIndexData,
+      custBasicData,
+      custCompareData,
+    } = this.props;
+
+    const {
+      compareCode,
+      time,
+    } = this.state;
+
     return (
       <div className={styles.detailAccountInfo}>
         {/* 头部实时持仓、历史持仓、交易流水、资产配置、账户分析 5 个按钮的所占区域*/}
@@ -132,11 +313,26 @@ export default class Home extends PureComponent {
             realTimeAsset={realTimeAsset}
             productDate={storageOfProduct}
             getStorageOfProduct={getStorageOfProduct}
+            location={location}
           />
         </div>
         {/* 中间资产分布和收益走势区域 */}
         <div className={styles.assetAndIncomeArea}>
-          <AssetAndIncome />
+          <AssetAndIncome
+            location={location}
+            assetsRadarData={assetsRadarData}
+            specificIndexData={specificIndexData}
+            querySpecificIndexData={querySpecificIndexData}
+            onClickCredit={this.queryAssetDistributeData}
+            queryDebtDetail={queryDebtDetail}
+            debtDetail={debtDetail}
+            compareCode={compareCode}
+            time={time}
+            custCompareData={custCompareData}
+            custBasicData={custBasicData}
+            handleCodeSelectChange={this.handleCodeSelectChange}
+            handleTimeSelectChange={this.handleTimeSelectChange}
+          />
         </div>
         {/* 底部详细Tabs，目前迭代不进行开发，先占个位置 */}
         <div className={styles.footTabsArea}></div>

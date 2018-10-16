@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-16 17:13:51
+ * @Last Modified time: 2018-10-16 17:55:35
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -138,6 +138,7 @@ export default class AccountInfoHeader extends PureComponent {
     getSecuritiesHolding: PropTypes.func.isRequired,
     getRealTimeAsset: PropTypes.func.isRequired,
     getStorageOfProduct: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
   constructor(props) {
     super(props);
@@ -166,19 +167,25 @@ export default class AccountInfoHeader extends PureComponent {
   @autobind
   handleRealTimeHoldModalClose() {
     this.setState({ realTimeHoldModalVisible: false, defaultTabKey: 'securitiesHoldings' });
-    console.log('1111');
   }
 
   // 打开实时持仓的弹出层
   @autobind
   handleRealTimeHoldModalOpen() {
+    const { query } = this.props.location;
     this.setState({ realTimeHoldModalVisible: true });
     //进入需要查询下证券实时持仓数据
-    this.props.getSecuritiesHolding();
+    this.props.getSecuritiesHolding({
+      custId: query && query.custId,
+    });
     //进入需要查询下实时资产数据
-    this.props.getRealTimeAsset();
+    this.props.getRealTimeAsset({
+      custId: query && query.custId,
+    });
     //进入需要查询下产品实时持仓数据
-    this.props.getStorageOfProduct();
+    this.props.getStorageOfProduct({
+      custId: query && query.custId,
+    });
   }
   //账户类型的筛选
   @autobind

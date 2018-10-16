@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-08-29 09:28:06
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-28 14:30:20
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-16 18:14:50
  * @description 临时委托他人处理任务Home页面
  */
 
@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 import _ from 'lodash';
-import moment from 'moment';
 
 import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import SeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
@@ -57,7 +56,7 @@ const mapDispatchToProps = {
   // 获取右侧详情
   queryApplyDetail: effect('tempDepute/queryApplyDetail', { forceFull: true }),
   // 查询可以受托的组织机构和服务经理
-  queryCanDeputeEmp: effect('tempDepute/queryCanDeputeEmp', { loading: false, forceFull: true }),
+  queryCanDeputeEmp: effect('tempDepute/queryCanDeputeEmp', { loading: false }),
   // 校验是否可以申请任务委托
   checkApplyAbility: effect('tempDepute/checkApplyAbility', { forceFull: true }),
   // 撤销委托申请
