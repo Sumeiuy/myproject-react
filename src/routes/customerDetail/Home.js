@@ -163,7 +163,7 @@ export default class Home extends PureComponent {
             tabBarGutter={40}
           >
             <TabPane tab="账号信息" key="accountInfo">
-              <AccountInfo />
+              <AccountInfo location={location} />
             </TabPane>
             <TabPane tab="客户属性" key="customerInfo">
             </TabPane>

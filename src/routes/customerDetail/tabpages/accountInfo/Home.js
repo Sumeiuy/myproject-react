@@ -80,7 +80,6 @@ const mapDispatchToProps = {
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
-@withRouter
 export default class Home extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
