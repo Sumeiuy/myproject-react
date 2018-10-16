@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 15:33:02
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-09 16:10:24
+ * @Last Modified time: 2018-10-16 10:42:31
  * @description 此处使用dva的connect包装下新版customer360Detail首页
  */
 import { connect } from 'dva';
@@ -22,6 +22,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   // 清除Redux中的数据
   clearReduxData: effect('customerDetail/clearReduxData', { loading: false }),
+  // 查询客户360详情概要信息
+  queryCustSummaryInfo: effect('customerDetail/queryCustSummaryInfo'),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

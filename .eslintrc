@@ -43,7 +43,7 @@
   },
   "overrides": [
     {
-      "files": ["src/models/*/**.js"],
+      "files": ["src/models/**/*.js"],
       "rules": {
         "import/no-anonymous-default-export": "off"
       }

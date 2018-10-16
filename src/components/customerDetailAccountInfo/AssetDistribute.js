@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 18:56:21
+ * @Last Modified time: 2018-10-16 13:21:57
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -280,9 +280,9 @@ export default class AssetDistribute extends PureComponent {
     // 如果没有雷达图数据，则整块资产分布不显示
     const hasNoRadarData = _.isEmpty(assetIndexData);
     // 总资产
-    const totalMoney = convertMoney(totalAsset, { unit: '元' });
+    const totalMoney = convertMoney(totalAsset || 0, { unit: '元' });
     // 负债
-    const totalDebt = convertMoney(debt, { unit: '元' });
+    const totalDebt = convertMoney(debt || 0, { unit: '元' });
     // 获取雷达图的option
     const radarOption = this.getRadarOption(assetIndexData || []);
     // 获取表格的columns数据

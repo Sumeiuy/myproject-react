@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-12 18:21:02
+ * @Last Modified time: 2018-10-16 10:45:19
  */
 
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import { Tabs } from 'antd';
 import withRouter from '../../decorators/withRouter';
 import AccountInfo from './tabpages/accountInfo/Home';
 import BreadCrumb from '../../components/customerDetail/Breadcrumb';
+import SummaryInfo from '../../components/customerDetail/SummaryInfo';
 
 import styles from './home.less';
 
@@ -24,6 +25,8 @@ export default class Home extends PureComponent {
     location: PropTypes.object.isRequired,
     // 新版客户360详情中的概要信息
     summaryInfo: PropTypes.object.isRequired,
+    // 查询新版客户360详情中的概要信息
+    queryCustSummaryInfo: PropTypes.func.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
   }
@@ -44,7 +47,9 @@ export default class Home extends PureComponent {
   }
 
   componentDidMount() {
-
+    // 初始化的时候查询客户概要信息
+    const { location: { query: { custId } } } = this.props;
+    this.props.queryCustSummaryInfo({ custId });
   }
 
   // 切换客户360详情页的Tab
@@ -55,7 +60,7 @@ export default class Home extends PureComponent {
 
   render() {
     const { activeTabKey } = this.state;
-    const { location } = this.props;
+    const { location, summaryInfo } = this.props;
 
     const breadCrumbProps = {
       push: this.context.push,
@@ -67,7 +72,9 @@ export default class Home extends PureComponent {
         <div className={styles.breadCrumb}><BreadCrumb {...breadCrumbProps} /></div>
         <div className={styles.custInfo}>
           <div className={styles.custBasicInfo}>基本信息</div>
-          <div className={styles.custDetailInfo}>详细信息</div>
+          <div className={styles.custDetailInfo}>
+            <SummaryInfo data={summaryInfo} />
+          </div>
         </div>
         <div className={styles.tabContainer}>
           <Tabs
