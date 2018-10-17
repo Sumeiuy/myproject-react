@@ -7,6 +7,7 @@ import ConnectCustomer from '../common/connectCustomer/ConnectCustomer';
 import { dva, url as urlHelper, emp } from '../../helper';
 import { openRctTab } from '../../utils';
 import styles from './customerBasicInfo.less';
+import logable from '../../decorators/logable';
 
 // 客户等级
 import iconDiamond from '../taskList/performerView/img/iconDiamond.png';
@@ -135,6 +136,7 @@ export default class CustomerBasicInfo extends PureComponent {
 
   // 添加标签
   @autobind
+  @logable({ type: 'Click', payload: { name: '添加标签' } })
   handleAddTagClick() {
     const { customerBasicInfo } = this.props;
     dva.dispatch({
@@ -149,6 +151,7 @@ export default class CustomerBasicInfo extends PureComponent {
 
   // 添加服务记录
   @autobind
+  @logable({ type: 'Click', payload: { name: '添加服务记录' } })
   handleAddServiceClick() {
     const { toggleServiceRecordModal, customerBasicInfo } = this.props;
     toggleServiceRecordModal({
@@ -160,6 +163,7 @@ export default class CustomerBasicInfo extends PureComponent {
 
   // 待处理任务跳转到任务管理页面 //没有任务时是否还要跳转
   @autobind
+  @logable({ type: 'Click', payload: { name: '跳转到任务列表' } })
   hanldeNavToTaskListClick() {
     const { push, customerBasicInfo } = this.props;
     if (customerBasicInfo.motCount <= 0) {
@@ -242,7 +246,9 @@ export default class CustomerBasicInfo extends PureComponent {
                 }
                 {
                   renderCustomerBasicInfo.isSign &&
-                  <span className={styles.sign} title={renderCustomerBasicInfo.signMode}>签</span>
+                  <span
+                    className={styles.sign}
+                    title={`投顾签约：${renderCustomerBasicInfo.signMode}`}>签</span>
                 }
                 {
                   renderCustomerBasicInfo.isPrivate &&
