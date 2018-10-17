@@ -170,6 +170,7 @@ export default class CustomerBasicInfo extends PureComponent {
       custId: customerBasicInfo.custId,
       custName: customerBasicInfo.name,
       missionViewType: 'executor',
+      from: 'cust360',
     };
     const url = `${pathname}?${urlHelper.stringify(query)}`;
     const param = {

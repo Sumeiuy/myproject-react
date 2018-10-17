@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 17:43:28
+ * @Last Modified time: 2018-10-17 12:56:48
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -30,8 +30,8 @@ import styles from './assetDistribute.less';
 export default class AssetDistribute extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    // 点击含信用的checkbox
-    onClickCredit: PropTypes.func.isRequired,
+    // 查询资产分布的雷达图数据
+    getAssetRadarData: PropTypes.func.isRequired,
     // 资产分布雷达图数据
     assetsRadarData: PropTypes.object.isRequired,
     // 负债详情数据
@@ -53,19 +53,13 @@ export default class AssetDistribute extends PureComponent {
       // 负债详情弹出层
       debtDetailModal: false,
       // 高亮的哪个雷达图指标的名称和key
-      radarIndexKey: SPECIFIC_INITIAL_KEY,
+      indexKey: SPECIFIC_INITIAL_KEY,
       radarIndexName: SPECIFIC_INITIAL_NAME,
     };
   }
 
   componentDidMount() {
-    const { radarIndexKey, checkedCredit } = this.state;
-    const {
-      location: { query: { custId } },
-    } = this.props;
-    // 初始化进入需要优先查一把，第一项股票数据
-    const creditFlag = checkedCredit ? 'Y' : 'N';
-    this.props.querySpecificIndexData({ indexKey: radarIndexKey, creditFlag, custId });
+    this.getInitialData();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -73,8 +67,23 @@ export default class AssetDistribute extends PureComponent {
     const { location: { query: { custId: nextCustId } } } = this.props;
     const { location: { query: { custId: prevCustId } } } = prevProps;
     if (nextCustId !== prevCustId && _.isEmpty(nextCustId)) {
-      this.freshData();
+      this.freshDataForDiffUser();
     }
+  }
+
+  // 获取初始化或者刷新数据
+  @autobind
+  getInitialData() {
+    const { indexKey, checkedCredit } = this.state;
+    const {
+      location: { query: { custId } },
+      getAssetRadarData,
+      querySpecificIndexData,
+    } = this.props;
+    // 判断是否含信用
+    const creditFlag = checkedCredit ? 'Y' : 'N';
+    getAssetRadarData({ creditFlag, custId });
+    querySpecificIndexData({ indexKey, creditFlag, custId });
   }
 
   // 处理表格表头的配置项
@@ -151,37 +160,26 @@ export default class AssetDistribute extends PureComponent {
 
   // 刷新数据
   @autobind
-  freshData() {
+  freshDataForDiffUser() {
     // 刷新数据时，需要将页面展示成默认
-    const { location: { query: { custId } } } = this.props;
     this.setState({
       checkedCredit: true,
       debtDetailModal: false,
-      radarIndexKey: SPECIFIC_INITIAL_KEY,
-      radarIndexName: SPECIFIC_INITIAL_NAME,
-    });
-    this.props.querySpecificIndexData({
       indexKey: SPECIFIC_INITIAL_KEY,
-      creditFlag: 'Y',
-      custId,
-    });
+      radarIndexName: SPECIFIC_INITIAL_NAME,
+    }, this.getInitialData);
   }
 
   @autobind
   @logable({ type: 'Click', payload: { name: '含信用' } })
   handleCreditCheckboxChange(e) {
     const { checked } = e.target;
-    // 重新渲染数据
+    // 点击含信用checkbox后，需要指标选项全部更换到默认的初始值，并查询相应的数据
     this.setState({
       checkedCredit: checked,
-      // 恢复默认值
-      radarIndexKey: SPECIFIC_INITIAL_KEY,
+      indexKey: SPECIFIC_INITIAL_KEY,
       radarIndexName: SPECIFIC_INITIAL_NAME,
-    });
-    // 切换含信用的 checkbox 需要查询雷达图的数据
-    const creditFlag = checked ? 'Y' : 'N';
-    const { location: { query: { custId } } } = this.props;
-    this.props.onClickCredit({ creditFlag, custId });
+    }, this.getInitialData);
   }
 
   // 打开负债详情的弹框
@@ -193,6 +191,7 @@ export default class AssetDistribute extends PureComponent {
 
   // 关闭负债详情弹框
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭'} })
   handleCloseDebtDetailModal() {
     this.setState({ debtDetailModal: false });
   }
@@ -229,7 +228,7 @@ export default class AssetDistribute extends PureComponent {
       location: { query: { custId } },
     } = this.props;
     const data = _.find(assetIndexData, item => item.name === axisName);
-    this.setState({ radarIndexKey: data.key, radarIndexName: axisName });
+    this.setState({ indexKey: data.key, radarIndexName: axisName });
     this.props.querySpecificIndexData({ indexKey: data.key, creditFlag, custId });
     // 通过 dataIndex 查找到相应的原始数据，从而上传真实的数据
     logCommon({
