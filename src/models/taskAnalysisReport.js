@@ -2,8 +2,8 @@
  * @Author: zhangjun
  * @Descripter: 任务分析报表models
  * @Date: 2018-10-05 12:11:39
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-09 21:54:35
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-10-16 17:13:58
  */
 import { taskAnalysisReport as api } from '../api';
 
@@ -20,6 +20,10 @@ export default {
     complianceServiceCustList: [],
     // 服务渠道统计数据
     serviceChannelList: [],
+    // 事件分析数据
+    eventAnalysisList: {},
+    // 事件查询数据
+    eventSearchList: {},
   },
   reducers: {
     // 获取任务-客户报表数据成功
@@ -54,6 +58,22 @@ export default {
         serviceChannelList: reportList,
       };
     },
+    // 获取事件分析数据成功
+    getEventAnalysisSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        eventAnalysisList: resultData,
+      };
+    },
+    // 事件查询成功
+    getEventSearchSuccess(state, action) {
+      const { payload: { resultData = {} } } = action;
+      return {
+        ...state,
+        eventSearchList: resultData,
+      };
+    },
   },
   effects: {
     // 获取任务-客户报表数据
@@ -85,6 +105,22 @@ export default {
       const response = yield call(api.queryServiceChannelReport, payload);
       yield put({
         type: 'getServiceChannelSuccess',
+        payload: response,
+      });
+    },
+    // 获取事件分析数据
+    * getEventAnalysis({ payload }, { call, put }) {
+      const response = yield call(api.queryEventAnalysisReport, payload);
+      yield put({
+        type: 'getEventAnalysisSuccess',
+        payload: response,
+      });
+    },
+    // 事件查询数据
+    * getEventSearch({ payload }, { call, put }) {
+      const response = yield call(api.queryEventSearch, payload);
+      yield put({
+        type: 'getEventSearchSuccess',
         payload: response,
       });
     },

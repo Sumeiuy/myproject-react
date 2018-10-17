@@ -2,8 +2,8 @@
  * @Author: zhangjun
  * @Description: SMART任务相关运营报表接口
  * @Date: 2018-10-09 16:45:21
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-09 16:52:31
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-10-16 17:07:07
  */
 
 export default function taskAnalysisReport(api) {
@@ -16,5 +16,9 @@ export default function taskAnalysisReport(api) {
     queryComplianceServiceCustReport: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryComplianceServiceCustReport', query),
     // 获取服务渠道统计数据
     queryServiceChannelReport: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryServiceChannelReport', query),
+    // 获取事件分析表数据
+    queryEventAnalysisReport: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryEventAnalysisReport',query),
+    // 事件查询
+    queryEventSearch: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryEventSearch',query),
   };
 }
