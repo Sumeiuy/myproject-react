@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 20:43:07
  * @Last Modified by: zhangmei
- * @Last Modified time: 2018-10-17 13:19:06
+ * @Last Modified time: 2018-10-17 13:42:29
  * @description 客户360详情左侧服务记录信息
  */
 import React from 'react';
@@ -21,12 +21,12 @@ export default function SummaryService(props) {
   let recentServeText = '暂无';
   if (
     _.isEmpty(recentServe.serviceDate)
-    || _.isEmpty(recentServe.serviceName)
-    || _.isEmpty(recentServe.serviceType)
+    || _.isEmpty(recentServe.serviceRecordType)
+    || _.isEmpty(recentServe.serviceRecordTitle)
   ) {
     recentServeText = '暂无';
   } else {
-    recentServeText = `${recentServe.serviceDate} ${recentServe.serviceName}-${recentServe.serviceType}`;
+    recentServeText = `${recentServe.serviceDate} ${recentServe.serviceRecordType}-${recentServe.serviceRecordTitle}`;
   }
   return (
     <div className={styles.wrap}>
