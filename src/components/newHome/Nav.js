@@ -2,13 +2,12 @@
  * @Description: 首页导航
  * @Author: Liujianshu-K0240007
  * @Date: 2018-09-20 13:45:27
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 15:06:23
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-16 18:17:44
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import classnames from 'classnames';
 
 
