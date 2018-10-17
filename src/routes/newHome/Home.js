@@ -239,11 +239,11 @@ export default class Home extends PureComponent {
   handleProductCalendarValueClick(item) {
     const { push } = this.props;
     const { code } = item;
-    // http://168.61.9.158:15902/htsc-product-base/financial_product_query.do?router=homePage
+    // http://168.61.9.158:15902/htsc-product-base/financial_product_query.do?router=homePage&clientType=crm
     push({
         pathname: '/fsp/productCenter/homePage',
         state: {
-          url: `/htsc-product-base/financial_product_query.do?router=homePage&type=${code}`,
+          url: `/htsc-product-base/financial_product_query.do?router=homePage&type=${code}&clientType=crm`,
         }
     });
   }
