@@ -200,6 +200,7 @@ export default class ConnectCustomer extends React.PureComponent {
         handlePhoneConnected={this.handlePhoneConnected}
         handlePhoneClick={this.handlePhoneClick}
         userData={userData}
+        disablePhone={false}
         placement="bottomRight"
       >
         {this.props.children}
