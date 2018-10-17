@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-16 17:47:15
+ * @Last Modified time: 2018-10-17 11:35:20
  */
 
 import React, { PureComponent } from 'react';
@@ -112,9 +112,9 @@ export default class Home extends PureComponent {
     // 实时持仓中的实时资产
     realTimeAsset: PropTypes.object.isRequired,
     // 实时持仓中的证券实时持仓
-    securitiesHolding: PropTypes.object.isRequired,
+    securitiesHolding: PropTypes.array.isRequired,
     // 实时持仓中的产品实时持仓
-    storageOfProduct: PropTypes.object.isRequired,
+    storageOfProduct: PropTypes.array.isRequired,
     // 查询实时持仓中的实时资产
     getRealTimeAsset: PropTypes.func.isRequired,
     // 查询实时持仓中的证券实时持仓

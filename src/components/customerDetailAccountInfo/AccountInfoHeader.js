@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-16 22:25:35
+ * @Last Modified time: 2018-10-17 11:35:33
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -147,9 +147,9 @@ const productColumns = [
 ];
 export default class AccountInfoHeader extends PureComponent {
   static PropTypes = {
-    dataSource: PropTypes.object.isRequired,
+    dataSource: PropTypes.array.isRequired,
     realTimeAsset: PropTypes.object.isRequired,
-    storageOfProduct: PropTypes.object.isRequired,
+    storageOfProduct: PropTypes.array.isRequired,
     getSecuritiesHolding: PropTypes.func.isRequired,
     getRealTimeAsset: PropTypes.func.isRequired,
     getStorageOfProduct: PropTypes.func.isRequired,
@@ -208,6 +208,7 @@ export default class AccountInfoHeader extends PureComponent {
       realTimeHoldModalVisible,
     } = this.state;
     const { dataSource, realTimeAsset, productDate } = this.props;
+    console.log(dataSource);
     //取出实时资产的数据
     const { rtimeAssets, availableFunds, advisableFunds } = realTimeAsset;
     //调用处理实时资产数据的方法
@@ -276,6 +277,7 @@ export default class AccountInfoHeader extends PureComponent {
                   </RadioGroup>
                 </div>
                 <Table
+                  rowKey='key'
                   className={styles.tableContainer}
                   columns={columns}
                   dataSource={dataSource}

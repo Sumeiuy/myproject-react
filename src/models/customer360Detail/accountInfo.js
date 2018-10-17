@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 16:52:56
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-14 17:19:50
+ * @Last Modified time: 2018-10-17 11:34:59
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailAccountInfo as api } from '../../api';
@@ -13,9 +13,9 @@ export default {
     //实时持仓下的实时资产数据
     realTimeAsset: {},
     //实时持仓下的证券实时持仓数据
-    securitiesHolding: {},
+    securitiesHolding: [],
     //实时持仓下的产品实时持仓数据
-    storageOfProduct: {},
+    storageOfProduct: [],
     // 资产分布的雷达数据
     assetsRadarData: {},
     // 资产分布的雷达上具体指标的数据
