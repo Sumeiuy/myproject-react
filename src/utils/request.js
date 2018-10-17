@@ -48,6 +48,11 @@ function parseJSON(response, options) {
         // 抛出以分隔符为分隔的错误字符串信息
         throw e;
       }
+      // 静默处理，返回一个空的resultData
+      const res = {
+        resultData: {},
+      };
+      return res;
     }
   );
 }
