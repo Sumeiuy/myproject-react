@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-08-29 15:42:30
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-28 16:31:48
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-10-09 15:03:44
  * @description 临时委托任务的配置项
  */
 import _ from 'lodash';

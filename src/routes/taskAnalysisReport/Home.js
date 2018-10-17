@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-17 13:23:00
+ * @Last Modified time: 2018-10-17 13:40:26
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ import TaskCustomerReport from '../../components/taskAnalysisReport/TaskCustomer
 import CompleteServiceCustReport from '../../components/taskAnalysisReport/serviceCust/CompleteServiceCustReport';
 import ComplianceServiceCustReport from '../../components/taskAnalysisReport/serviceCust/ComplianceServiceCustReport';
 import EventAnalysisReport from '../../components/taskAnalysisReport/eventAnalysis/EventAnalysisReport';
+import ServiceChannelReport from '../../components/taskAnalysisReport/serviceChannel/ServiceChannelReport';
 
 import styles from './home.less';
 
@@ -48,6 +49,7 @@ const mapStateToProps = state => ({
   eventAnalysisList: state.taskAnalysisReport.eventAnalysisList,
   // 事件查询数据
   eventSearchList: state.taskAnalysisReport.eventSearchList,
+  serviceChannelData: state.taskAnalysisReport.serviceChannelData,
 });
 
 const mapDispatchToProps = {
@@ -81,7 +83,7 @@ export default class TaskAnalysisReport extends PureComponent {
     // 获取达标服务客户统计
     getComplianceServiceCust: PropTypes.func.isRequired,
     // 服务渠道统计
-    serviceChannelList: PropTypes.array.isRequired,
+    serviceChannelData: PropTypes.object.isRequired,
     // 获取服务渠道统计
     getServiceChannel: PropTypes.func.isRequired,
     // 获取事件分析表
@@ -105,6 +107,8 @@ export default class TaskAnalysisReport extends PureComponent {
       eventAnalysisList,
       getEventSearch,
       eventSearchList,
+      serviceChannelData,
+      getServiceChannel,
     } = this.props;
     return (
       <div className={styles.taskAnalysisReport}>
@@ -112,13 +116,17 @@ export default class TaskAnalysisReport extends PureComponent {
           taskCustomerList={taskCustomerList}
           getTaskCustomer={getTaskCustomer}
         />
-        <CompleteServiceCustReport
+         <CompleteServiceCustReport
           completeServiceCustList={completeServiceCustList}
           getCompleteServiceCust={getCompleteServiceCust}
         />
         <ComplianceServiceCustReport
           complianceServiceCustList={complianceServiceCustList}
           getComplianceServiceCust={getComplianceServiceCust}
+        />
+        <ServiceChannelReport
+          serviceChannelData={serviceChannelData}
+          getServiceChannel={getServiceChannel}
         />
         <EventAnalysisReport
           getEventAnalysis={getEventAnalysis}
