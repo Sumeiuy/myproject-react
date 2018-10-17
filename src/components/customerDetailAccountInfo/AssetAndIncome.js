@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 14:58:06
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 12:23:13
+ * @Last Modified time: 2018-10-17 12:40:55
  * @Description 新版客户360详情信息下的账户信息Tab下资产分布和收益走势的容器组件
  */
 
@@ -17,8 +17,8 @@ import styles from './assetAndIncome.less';
 export default class AssetAndIncome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    // 点击含信用的checkbox
-    onClickCredit: PropTypes.func.isRequired,
+    // 查询资产分布的雷达图数据
+    getAssetRadarData: PropTypes.func.isRequired,
     // 资产分布雷达图数据
     assetsRadarData: PropTypes.object.isRequired,
     // 负债详情数据
@@ -45,7 +45,7 @@ export default class AssetAndIncome extends PureComponent {
 
   render() {
     const {
-      onClickCredit,
+      getAssetRadarData,
       assetsRadarData,
       queryDebtDetail,
       debtDetail,
@@ -66,7 +66,7 @@ export default class AssetAndIncome extends PureComponent {
           <AssetDistribute
             location={location}
             assetsRadarData={assetsRadarData}
-            onClickCredit={onClickCredit}
+            getAssetRadarData={getAssetRadarData}
             queryDebtDetail={queryDebtDetail}
             debtDetail={debtDetail}
             specificIndexData={specificIndexData}
