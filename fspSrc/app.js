@@ -43,6 +43,16 @@ function navToUserLogin() {
   }
 }
 
+window.addEventListener('error', function(e) {
+  const { message: msg, stack } = e;
+  if (e.name === 'SyntaxError'
+    && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
+    navToUserLogin();
+  } else if (stack && stack.indexOf('SyntaxError') > -1) {
+    navToUserLogin();
+  }
+});
+
 // 错误处理
 const onError = (e) => {
   const { message: msg, stack } = e;

@@ -110,6 +110,14 @@ const myHeaders = new Headers({
 const fspRequest = (url, options) => (
   Promise.race([
     fetch(url, { credentials: 'include', ...options, myHeaders })
+      .then((res) => {
+        if(res.status === 302) {
+          if(/\/fsp\/login/.test(res.headers.location)) {
+            window.href = res.headers.location;
+          }
+        }
+        return res;
+      })
       .then(parseText),
     new Promise(
       (rosolve, reject) => {// eslint-disable-line
