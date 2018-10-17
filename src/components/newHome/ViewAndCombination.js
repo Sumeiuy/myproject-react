@@ -151,7 +151,7 @@ export default function ViewAndCombination(props, context) {
       const linkClass = classnames({
         [styles.active]: item.key === activeTab,
       });
-      return (<div key={item.key}>
+      return (<div key={item.key} className={styles.item}>
         <a className={linkClass} onClick={() => handleTabClick(item)}>{item.name}</a>
       </div>);
     });
