@@ -27,10 +27,10 @@ export default function ViewAndCombination(props, context) {
       name: '首席观点',
       key: 'sxgd',
     },
-  /*   {
+    {
       name: '组合推荐',
       key: 'zhtj',
-    }, */
+    },
   ];
 
   // 发送日志
