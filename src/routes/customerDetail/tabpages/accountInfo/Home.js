@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-17 11:35:20
+ * @Last Modified time: 2018-10-17 11:53:34
  */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,6 @@ import { connect } from 'dva';
 import moment from 'moment';
 import { timeList, codeList } from '../../../../config/profitRateConfig';
 import { dva } from '../../../../helper';
-import withRouter from '../../../../decorators/withRouter';
 import AssetAndIncome from '../../../../components/customerDetailAccountInfo/AssetAndIncome';
 import AccountInfoHeader from '../../../../components/customerDetailAccountInfo/AccountInfoHeader';
 
@@ -93,7 +92,6 @@ const mapDispatchToProps = {
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
-@withRouter
 export default class Home extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -200,9 +198,9 @@ export default class Home extends PureComponent {
     if(query && query.custId) {
       if(prevQuery && prevQuery.custId) {
         if(query.custId !== prevQuery.custId) {
-          this.getProfitRateInfo({
-            initial: true
-          });
+          this.getProfitRateInfo({ initial: true });
+          // custId不同的时候在重新查询下资产分布数据
+          this.queryAssetDistributeData({ creditFlag: 'Y' });
         }
       } else {
         this.getProfitRateInfo({

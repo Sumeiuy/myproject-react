@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-12 18:21:02
+ * @Last Modified time: 2018-10-16 17:57:05
  */
 
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import { Tabs } from 'antd';
 import withRouter from '../../decorators/withRouter';
 import AccountInfo from './tabpages/accountInfo/Home';
 import BreadCrumb from '../../components/customerDetail/Breadcrumb';
+import SummaryInfo from '../../components/customerDetail/SummaryInfo';
 import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo';
 
 import styles from './home.less';
@@ -25,6 +26,12 @@ export default class Home extends PureComponent {
     location: PropTypes.object.isRequired,
     // 新版客户360详情中的概要信息
     summaryInfo: PropTypes.object.isRequired,
+    // 查询新版客户360详情中的概要信息
+    queryCustSummaryInfo: PropTypes.func.isRequired,
+    // 更多重点标签信息
+    moreLabelInfo: PropTypes.object.isRequired,
+    // 查询更多重点标签
+    queryAllKeyLabels: PropTypes.func.isRequired,
     // 客户基本信息
     customerBasicInfo: PropTypes.object.isRequired,
     // 自建任务平台的服务类型、任务反馈字典
@@ -55,17 +62,19 @@ export default class Home extends PureComponent {
   }
 
   componentDidMount() {
+    // 初始化的时候查询客户概要信息
+    const { location: { query: { custId } } } = this.props;
     const {
       getCustomerBasicInfo,
       getMotCustfeedBackDict,
-      location: { query },
+      queryCustSummaryInfo,
     } = this.props;
 
-    // 获取客户的基本信息
-    if(query && query.custId) {
-      getCustomerBasicInfo({
-        custId: query.custId,
-      });
+    if(custId) {
+      // 获取客户的基本信息
+      getCustomerBasicInfo({ custId });
+      // 获取概要信息
+      queryCustSummaryInfo({ custId });
     }
     // 获取客户反馈字典信息
     getMotCustfeedBackDict({ pageNum: 1, pageSize: 10000, type: 2 });
@@ -76,18 +85,21 @@ export default class Home extends PureComponent {
     const {
       location: { query },
       getCustomerBasicInfo,
+      queryCustSummaryInfo,
     } = this.props;
     if(query && query.custId) {
       if(prevQuery && prevQuery.custId) {
         if(query.custId !== prevQuery.custId) {
-          getCustomerBasicInfo({
-            custId: query.custId,
-          });
+          // 查询基本信息
+          getCustomerBasicInfo({ custId: query.custId });
+          // 查询概要信息
+          queryCustSummaryInfo({ custId: query.custId });
         }
       } else {
-        getCustomerBasicInfo({
-          custId: query.custId,
-        });
+        // 查询基本信息
+        getCustomerBasicInfo({ custId: query.custId });
+        // 查询概要信息
+        queryCustSummaryInfo({ custId: query.custId });
       }
     }
   }
@@ -102,6 +114,9 @@ export default class Home extends PureComponent {
     const { activeTabKey } = this.state;
     const {
       location,
+      summaryInfo,
+      moreLabelInfo,
+      queryAllKeyLabels,
       addServeRecord,
       motSelfBuiltFeedbackList,
       toggleServiceRecordModal,
@@ -126,8 +141,17 @@ export default class Home extends PureComponent {
       <div className={styles.container}>
         <div className={styles.breadCrumb}><BreadCrumb {...breadCrumbProps} /></div>
         <div className={styles.custInfo}>
-          <div className={styles.custBasicInfo}><CustomerBasicInfo {...CustomerBasicInfoProps}/></div>
-          <div className={styles.custDetailInfo}>详细信息</div>
+          <div className={styles.custBasicInfo}>
+            <CustomerBasicInfo {...CustomerBasicInfoProps}/>
+          </div>
+          <div className={styles.custDetailInfo}>
+            <SummaryInfo
+              location={location}
+              data={summaryInfo}
+              moreLabelInfo={moreLabelInfo}
+              queryAllKeyLabels={queryAllKeyLabels}
+            />
+          </div>
         </div>
         <div className={styles.tabContainer}>
           <Tabs
@@ -139,7 +163,7 @@ export default class Home extends PureComponent {
             tabBarGutter={40}
           >
             <TabPane tab="账号信息" key="accountInfo">
-              <AccountInfo />
+              <AccountInfo location={location} />
             </TabPane>
             <TabPane tab="客户属性" key="customerInfo">
             </TabPane>
