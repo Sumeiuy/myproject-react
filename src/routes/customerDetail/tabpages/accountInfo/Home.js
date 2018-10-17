@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 12:22:18
+ * @Last Modified time: 2018-10-17 12:39:26
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,8 @@ import { timeList, codeList } from '../../../../config/profitRateConfig';
 import { dva } from '../../../../helper';
 import AssetAndIncome from '../../../../components/customerDetailAccountInfo/AssetAndIncome';
 import logable from '../../../../decorators/logable';
+import AccountInfoHeader from '../../../../components/customerDetailAccountInfo/AccountInfoHeader';
+
 import styles from './home.less';
 
 // 转化时间范围
@@ -59,6 +61,12 @@ const mapStateToProps = state => ({
   specificIndexData: state.detailAccountInfo.specificIndexData,
   // 负债详情的数据
   debtDetail: state.detailAccountInfo.debtDetail,
+  // 实时持仓中的实时资产
+  realTimeAsset: state.detailAccountInfo.realTimeAsset,
+  // 实时持仓中的证券实时持仓
+  securitiesHolding: state.detailAccountInfo.securitiesHolding,
+  // 实时持仓中的产品实时持仓
+  storageOfProduct: state.detailAccountInfo.storageOfProduct,
   // 收益走势基本指标数据
   custBasicData: state.detailAccountInfo.custBasicData,
   // 收益走势对比指标数据
@@ -72,6 +80,12 @@ const mapDispatchToProps = {
   querySpecificIndexData: effect('detailAccountInfo/querySpecificIndexData'),
   // 查询资产分布的负债详情的数据
   queryDebtDetail: effect('detailAccountInfo/queryDebtDetail'),
+  //查询实时持仓中的实时资产
+  getRealTimeAsset: effect('detailAccountInfo/getRealTimeAsset'),
+  //查询实时持仓中的证券实时持仓
+  getSecuritiesHolding: effect('detailAccountInfo/getSecuritiesHolding'),
+  //查询实时持仓中的产品实时持仓
+  getStorageOfProduct: effect('detailAccountInfo/getStorageOfProduct'),
   // 查询收益走势数据
   queryProfitRateInfo: effect('detailAccountInfo/getProfitRateInfo'),
   // 清除Redux中的数据
@@ -94,6 +108,18 @@ export default class Home extends PureComponent {
     querySpecificIndexData: PropTypes.func.isRequired,
     // 查询资产分布的负债详情的数据
     queryDebtDetail: PropTypes.func.isRequired,
+    // 实时持仓中的实时资产
+    realTimeAsset: PropTypes.object.isRequired,
+    // 实时持仓中的证券实时持仓
+    securitiesHolding: PropTypes.array.isRequired,
+    // 实时持仓中的产品实时持仓
+    storageOfProduct: PropTypes.array.isRequired,
+    // 查询实时持仓中的实时资产
+    getRealTimeAsset: PropTypes.func.isRequired,
+    // 查询实时持仓中的证券实时持仓
+    getSecuritiesHolding: PropTypes.func.isRequired,
+    // 查询实时持仓中的产品实时持仓
+    getStorageOfProduct: PropTypes.func.isRequired,
     custBasicData: PropTypes.object.isRequired,
     custCompareData: PropTypes.object.isRequired,
     // 查询收益走势数据
@@ -143,10 +169,6 @@ export default class Home extends PureComponent {
     super(props);
     this.state = {
       location: props.location,
-      // 是否选择含信用checkbox,默认为含信用
-      credit: 'Y',
-      // 当前雷达图上高亮的指标key
-      radarHightlightIndex: 'stock',
       // 是否打开负债详情的Modal
       debtDetailModalVisible: false,
       // 选中的时间范围
@@ -157,11 +179,6 @@ export default class Home extends PureComponent {
   }
 
   componentDidMount() {
-    // 第一次进入需要查询下资产分布的雷达图数据
-    // 默认查询含信用的
-    this.queryAssetDistributeData({
-      creditFlag: 'Y',
-    });
     // 获取收益走势数据
     this.getProfitRateInfo({ initial: true });
   }
@@ -173,9 +190,7 @@ export default class Home extends PureComponent {
     if(query && query.custId) {
       if(prevQuery && prevQuery.custId) {
         if(query.custId !== prevQuery.custId) {
-          this.getProfitRateInfo({
-            initial: true
-          });
+          this.getProfitRateInfo({ initial: true });
         }
       } else {
         this.getProfitRateInfo({
@@ -247,15 +262,14 @@ export default class Home extends PureComponent {
     this.setState({ debtDetailModalVisible: true });
   }
 
-  // 查询资产分布雷达图数据
-  @autobind
-  queryAssetDistributeData(query) {
-    const { location: { query: { custId } } } = this.props;
-    this.props.getAssetRadarData({ ...query, custId });
-  }
-
   render() {
     const {
+      getSecuritiesHolding,
+      securitiesHolding,
+      realTimeAsset,
+      getRealTimeAsset,
+      storageOfProduct,
+      getStorageOfProduct,
       assetsRadarData,
       debtDetail,
       queryDebtDetail,
@@ -264,6 +278,7 @@ export default class Home extends PureComponent {
       querySpecificIndexData,
       custBasicData,
       custCompareData,
+      getAssetRadarData,
     } = this.props;
 
     const {
@@ -274,7 +289,17 @@ export default class Home extends PureComponent {
     return (
       <div className={styles.detailAccountInfo}>
         {/* 头部实时持仓、历史持仓、交易流水、资产配置、账户分析 5 个按钮的所占区域*/}
-        <div className={styles.headerBtnsArea}></div>
+        <div className={styles.headerBtnsArea}>
+          <AccountInfoHeader
+            getSecuritiesHolding={getSecuritiesHolding}
+            dataSource={securitiesHolding}
+            getRealTimeAsset={getRealTimeAsset}
+            realTimeAsset={realTimeAsset}
+            productDate={storageOfProduct}
+            getStorageOfProduct={getStorageOfProduct}
+            location={location}
+          />
+        </div>
         {/* 中间资产分布和收益走势区域 */}
         <div className={styles.assetAndIncomeArea}>
           <AssetAndIncome
@@ -282,7 +307,7 @@ export default class Home extends PureComponent {
             assetsRadarData={assetsRadarData}
             specificIndexData={specificIndexData}
             querySpecificIndexData={querySpecificIndexData}
-            onClickCredit={this.queryAssetDistributeData}
+            getAssetRadarData={getAssetRadarData}
             queryDebtDetail={queryDebtDetail}
             debtDetail={debtDetail}
             compareCode={compareCode}
