@@ -129,6 +129,13 @@ export default class ConnectCustomer extends React.PureComponent {
 
   // 点击号码打电话时显示蒙层
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '电话联系',
+      value: '$args[0]',
+    },
+  })
   handlePhoneClick() {
     this.setState({ showMask: true });
   }

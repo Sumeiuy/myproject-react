@@ -14,6 +14,7 @@ import moment from 'moment';
 import { timeList, codeList } from '../../../../config/profitRateConfig';
 import { dva } from '../../../../helper';
 import AssetAndIncome from '../../../../components/customerDetailAccountInfo/AssetAndIncome';
+import logable from '../../../../decorators/logable';
 import AccountInfoHeader from '../../../../components/customerDetailAccountInfo/AccountInfoHeader';
 
 import styles from './home.less';
@@ -222,6 +223,7 @@ export default class Home extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'DropdownSelect', payload: { name: '对比指标', value: '$args[0]' } })
   handleCodeSelectChange({ value }) {
     const { time } = this.state;
     this.getProfitRateInfo({
@@ -235,6 +237,7 @@ export default class Home extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '时间周期', value: '$args[0]' } })
   handleTimeSelectChange(key) {
     const { compareCode } = this.state;
     this.getProfitRateInfo({
