@@ -9,15 +9,10 @@
       line-height: 38px;
       margin: 0 20px;
       border-bottom: 1px solid #e5e9f2;
-      & > div {
+      .item {
+        display: inline-block;
         font-size: 14px;
         transition: .3s;
-       /*  &:last-child {
-          text-align: right;
-        } */
-        &:first-child {
-          text-align: left;
-        }
         a {
           display: inline-block;
           line-height: 34px;
@@ -27,6 +22,9 @@
             color: #333;
             border-bottom: 2px solid #108ee9;
           }
+        }
+        &:first-child {
+          margin-right: 67px;
         }
       }
     }
