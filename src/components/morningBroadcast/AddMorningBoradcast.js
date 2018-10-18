@@ -360,7 +360,7 @@ export default class AddMorningBoradcast extends PureComponent {
     const { saveBoradcast, newsId } = this.props;
     const { audioFileList, finalNewUuid } = this.state;
     this.props.form.validateFields((err, values) => {
-      if (!audioFileList.length) {
+      if (!audioFileList.length || !audioFileList[0].response) {
         this.setState({ audioError: false });
         return;
       }

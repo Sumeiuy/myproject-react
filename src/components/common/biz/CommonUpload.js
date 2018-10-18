@@ -142,7 +142,7 @@ export default class CommonUpload extends PureComponent {
     const uploadFile = info.file;
     const fileSize = uploadFile.size;
     if (fileSize === 0) {
-      message.error(`文件大小不能为 0`);
+      message.error('文件大小不能为 0');
       return;
     }
     // 文件上传不能大于maxFileSize
