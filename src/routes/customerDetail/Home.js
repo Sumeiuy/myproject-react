@@ -44,6 +44,10 @@ export default class Home extends PureComponent {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     // 获取客户基本信息
     getCustomerBasicInfo: PropTypes.func.isRequired,
+    // 添加打电话记录
+    addCallRecord: PropTypes.func.isRequired,
+    // 当前服务记录id
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -121,6 +125,8 @@ export default class Home extends PureComponent {
       motSelfBuiltFeedbackList,
       toggleServiceRecordModal,
       customerBasicInfo,
+      addCallRecord,
+      currentCommonServiceRecord,
     } = this.props;
 
     const breadCrumbProps = {
@@ -135,6 +141,8 @@ export default class Home extends PureComponent {
       motSelfBuiltFeedbackList,
       toggleServiceRecordModal,
       customerBasicInfo,
+      addCallRecord,
+      currentCommonServiceRecord,
     };
 
     return (

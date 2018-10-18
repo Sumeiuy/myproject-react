@@ -28,6 +28,8 @@ export default class ConnectCustomer extends React.PureComponent {
     addServeRecord: PropTypes.func,
     motSelfBuiltFeedbackList: PropTypes.array,
     toggleServiceRecordModal: PropTypes.func.isRequired,
+    addCallRecord: PropTypes.func.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
