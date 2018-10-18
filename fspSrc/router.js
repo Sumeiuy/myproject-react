@@ -30,10 +30,14 @@ function recursiveRouter(parentPath, routerData) {
   let childRouterArr = [];
   for (let j = 0, len = routes.length; j < len; j++) {
     const item = routes[j];
-
-    // 判断二级路由
-    if (item.indexOf('/') !== -1 && childRouterArr.indexOf(item.split('/')[0]) === -1) {
-      childRouterArr.push(item.split('/')[0]);
+    if(parentPath === '/') {
+      if (item.indexOf('/') !== -1 && childRouterArr.indexOf(item.split('/')[0]) === -1) {
+        childRouterArr.push(item.split('/')[0]);
+      }
+    } else {
+      if (item.lastIndexOf('/') > 0 && childRouterArr.indexOf(item.split('/')[1]) === -1) {
+        childRouterArr.push('/' + item.split('/')[1]);
+      }
     }
   }
   // 增加的二级路由存在，并且不在分布式配置路由名单中
@@ -61,6 +65,10 @@ const Routers = ({ history, app }) => {
         <Switch>
           <Redirect exact from="/" to="/customerPool" />
           <Redirect exact from="/invest" to="/statisticalQuery/report" />
+          <Redirect exact from="/invest" to="/statisticalQuery/report" />
+          <Redirect exact from="/custAllot" to="/businessApplyment/customerPartition/custAllot" />
+          <Redirect exact from="/departmentCustAllot" to="/businessApplyment/customerPartition/departmentCustAllot" />
+          <Redirect exact from="/telephoneNumberManageEdit" to="/sysOperate/telephoneNumberManageEdit" />
           {
             recursiveRouter('/', routerData).map(
               item => (
