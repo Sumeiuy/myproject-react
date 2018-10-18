@@ -3,7 +3,7 @@
  * @Descripter: 部门筛选项
  * @Date: 2018-10-16 17:34:52
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-18 15:02:59
+ * @Last Modified time: 2018-10-18 17:19:10
  */
 
 import React, { PureComponent } from 'react';
@@ -113,7 +113,10 @@ export default class DepartmentFilter extends PureComponent {
   @autobind
   getDisplay(orgId, custRange) {
     const formatCustRange = transformCustRangeData(custRange);
-    walk(formatCustRange, findOrgNameByOrgId(orgId || (custRange && custRange[0] && custRange[0].id)), '');
+    walk(formatCustRange, findOrgNameByOrgId(orgId
+      || (custRange
+      && custRange[0]
+      && custRange[0].id)), '');
     const initValue = {
         label: custRangeNameDedault,
         value: custRange && custRange[0] && custRange[0].id,
@@ -137,7 +140,7 @@ export default class DepartmentFilter extends PureComponent {
             onChange={this.handleDepartmentChange}
             key='orgId'
             className={styles.departmentTreeFilter}
-            treeNodeFilterProp={'title'}
+            treeNodeFilterProp='title'
             searchPlaceholder='搜索'
             dropdownMatchSelectWidth={false}
             dropdownStyle={{ width: 250, maxHeight: 300, overflow: 'auto' }}
