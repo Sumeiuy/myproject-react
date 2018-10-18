@@ -22,6 +22,7 @@ function parseJSON(response, options) {
   const {
     ignoreCatch = false,
     isFullUrl,
+    currentUrl,
   } = options;
 
   return response.json().then(
@@ -37,13 +38,13 @@ function parseJSON(response, options) {
       const isThrowError = !existExclude && !succeed && !ignoreCatch;
       if (isThrowError) {
         // 抛出以分隔符为分隔的错误字符串信息
-        throw new Error([msg, messageType, code].join(config.ERROR_SEPARATOR));
+        throw new Error([msg, messageType, code, currentUrl].join(config.ERROR_SEPARATOR));
       }
       return res;
     }
   ).catch(
     (e) => {
-      const isFSPRequest = /^\/fsp\//.test(options.currentUrl);
+      const isFSPRequest = /^\/fsp\//.test(currentUrl);
       if (!isFSPRequest) {
         // 抛出以分隔符为分隔的错误字符串信息
         throw e;
