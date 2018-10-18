@@ -3,7 +3,7 @@
  * @Descripter: 部门筛选项
  * @Date: 2018-10-16 17:34:52
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-18 09:54:33
+ * @Last Modified time: 2018-10-18 14:38:24
  */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,6 @@ import mouseWheel from '../common/mouseWheel';
 import { TreeFilter } from 'lego-tree-filter/src';
 
 import Icon from '../common/Icon';
-import { emp } from '../../helper';
 
 import styles from './departmentFilter.less';
 
@@ -68,15 +67,18 @@ function findOrgNameByOrgId(orgId) {
 @mouseWheel({ eventDom: '.ant-select-dropdown' })
 export default class DepartmentFilter extends PureComponent {
   static propTypes = {
-    // 部门
+    // 部门数据
     custRange: PropTypes.array.isRequired,
     // 选择部门
     onDepartmentChange: PropTypes.func.isRequired,
+    // 部门Id
+    orgId: PropTypes.string.isRequired,
   }
 
   constructor(props) {
     super(props);
-    this.state = this.getDisplay(emp.getOrgId(), props.custRange);
+    const { custRange, orgId } = props;
+    this.state = this.getDisplay(orgId, custRange);
   }
 
   // 选择部门
@@ -111,19 +113,24 @@ export default class DepartmentFilter extends PureComponent {
   @autobind
   getDisplay(orgId, custRange) {
     const formatCustRange = transformCustRangeData(custRange);
-    walk(formatCustRange, findOrgNameByOrgId(orgId || custRange[0].id), '');
+    walk(formatCustRange, findOrgNameByOrgId(orgId || (custRange && custRange[0] && custRange[0].id)), '');
     const initValue = {
         label: custRangeNameDedault,
-        value: custRange[0].id,
+        value: custRange && custRange[0] && custRange[0].id,
       };
     return {
       formatCustRange,
       value: initValue,
     };
+    // this.setState({
+    //   formatCustRange,
+    //   value: initValue,
+    // });
   }
 
   render() {
     const { value, formatCustRange } = this.state;
+    console.warn('formatCustRange', formatCustRange);
     return (
       <div className={styles.departmentFilter}>
         <span className={styles.reportTitle}>任务统计报表</span>
@@ -135,9 +142,10 @@ export default class DepartmentFilter extends PureComponent {
             onChange={this.handleDepartmentChange}
             key='orgId'
             className={styles.departmentTreeFilter}
+            treeNodeFilterProp={'title'}
             searchPlaceholder='搜索'
             dropdownMatchSelectWidth={false}
-            dropdownStyle={{ width: 300, maxHeight: 400, overflow: 'auto' }}
+            dropdownStyle={{ width: 250, maxHeight: 300, overflow: 'auto' }}
             labelInValue
             showSearch
             treeDefaultExpandAll
