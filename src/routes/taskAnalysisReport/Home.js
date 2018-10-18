@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-18 15:04:37
+ * @Last Modified time: 2018-10-18 16:05:57
  */
 
 import React, { PureComponent } from 'react';
@@ -131,7 +131,6 @@ export default class TaskAnalysisReport extends PureComponent {
         }
       }
     });
-
     if (department) {
       return department;
     }
