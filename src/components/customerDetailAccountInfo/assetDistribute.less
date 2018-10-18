@@ -78,6 +78,13 @@
         }
 
         :global {
+          .ant-table-body {
+            overflow: auto !important;
+          }
+          .ant-table-header {
+            margin-bottom: 0 !important;
+            overflow: hidden !important;
+          }
           .ant-table-thead > tr > th:first-child {
             padding-left: 28px;
           }
@@ -128,8 +135,9 @@
         }
 
         .zichanCell {
-          display: flex;
-          // width: 100%;
+          display: inline-block;
+          min-width: 140px;
+          vertical-align: middle;
 
           .zichanText {
             display: flex;
