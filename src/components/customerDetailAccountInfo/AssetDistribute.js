@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-17 12:56:48
+ * @Last Modified time: 2018-10-18 11:23:39
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -24,6 +24,7 @@ import {
 } from './config';
 import { convertMoney, updateSpecificIndexData } from './utils';
 import { composeIndicatorAndData } from './assetRadarHelper';
+import { number } from '../../helper';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 import styles from './assetDistribute.less';
 
@@ -260,8 +261,7 @@ export default class AssetDistribute extends PureComponent {
   @autobind
   renderTableValueColumn(value, record) {
     const { percent } = record;
-    const fixedPercent = percent || 0;
-    const percentText = `${fixedPercent * 100}%`;
+    const percentText = number.convertRate(percent || 0);
     const holdValue = convertMoney(value || 0, { unit: '元' });
     return (
       <div className={styles.indexHoldValueCell}>
@@ -279,7 +279,8 @@ export default class AssetDistribute extends PureComponent {
     // 需要判断数值，如果是>=0的数显示红色并带有加号
     // 如果是<0数显示成绿色，并带有减号
     const isAsc = fixedPercent >= 0;
-    const percentText = isAsc ? `+${fixedPercent * 100}%` : `${fixedPercent * 100}%`;
+    const percentStr = number.convertRate(fixedPercent);
+    const percentText = isAsc ? `+${percentStr}` : `${percentStr}`;
     const profitRateCls = cx({
       [styles.profitRate]: true,
       [styles.isAsc]: isAsc,

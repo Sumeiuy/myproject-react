@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 22:30:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-17 15:34:46
+ * @Last Modified time: 2018-10-18 11:25:10
  * @description 客户360详情交易数据展示模块
  */
 import React from 'react';
@@ -13,6 +13,7 @@ import MoneyCell from './MoneyCell';
 import RateCell from './RateCell';
 import { displayTransMoney } from '../customerDetailAccountInfo/utils';
 import { calcSameTimeRate, convertRate } from './utils';
+import { number } from '../../helper';
 
 import styles from './summaryTransaction.less';
 
@@ -28,7 +29,7 @@ export default function SummaryTransaction(props) {
   // 年日均资产增长率
   const yearAvgAssetsRate = calcSameTimeRate(data.yearAvgAssets, data.lastYearAvgAssets);
   // 年收益率
-  const yearMaxCost = convertRate(data.yearMaxCostRate);
+  const yearMaxCost = number.convertRate(data.yearMaxCostRate);
   // 年收益率增长率
   const yearMaxCostRate = calcSameTimeRate(data.yearMaxCostRate, data.lastYearMaxCostRate);
   // 年股基交易量
@@ -48,9 +49,9 @@ export default function SummaryTransaction(props) {
   // 产品日均保有
   const yearProdHold = displayTransMoney(data.yearProdHold);
   // 归集率
-  const gjlRate = convertRate(data.gjlRate);
+  const gjlRate = number.convertRate(data.gjlRate);
   // 股基佣金率
-  const minFee = convertRate(data.minFee);
+  const minFee = number.convertRate(data.minFee);
   return (
     <div className={styles.wrap}>
       <MoneyCell title="总资产" content={assetText} />

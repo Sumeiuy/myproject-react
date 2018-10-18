@@ -28,6 +28,8 @@ export default class ConnectCustomer extends React.PureComponent {
     addServeRecord: PropTypes.func,
     motSelfBuiltFeedbackList: PropTypes.array,
     toggleServiceRecordModal: PropTypes.func.isRequired,
+    addCallRecord: PropTypes.func.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -108,6 +110,8 @@ export default class ConnectCustomer extends React.PureComponent {
     addServeRecord(payload).then(() => {
       // 关联通话和服务记录
       this.saveServiceRecordAndPhoneRelation();
+       // 回调，关闭电话联系方式弹窗
+      this.setState({ showMask: false });
       // 显示添加服务记录弹窗，todo=update表示更新服务记录
       toggleServiceRecordModal({
         id: custId,
@@ -129,6 +133,13 @@ export default class ConnectCustomer extends React.PureComponent {
 
   // 点击号码打电话时显示蒙层
   @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '电话联系',
+      value: '$args[0]',
+    },
+  })
   handlePhoneClick() {
     this.setState({ showMask: true });
   }
@@ -193,6 +204,7 @@ export default class ConnectCustomer extends React.PureComponent {
         handlePhoneConnected={this.handlePhoneConnected}
         handlePhoneClick={this.handlePhoneClick}
         userData={userData}
+        disablePhone={false}
         placement="bottomRight"
       >
         {this.props.children}

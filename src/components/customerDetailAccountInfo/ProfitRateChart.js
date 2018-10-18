@@ -67,7 +67,7 @@ export default class ProfitRateChart extends Component {
         lineStyle: {
           normal: {
             width: 1,
-            color: '#485a7b',
+            color: '#7289b4',
           },
         },
       },
