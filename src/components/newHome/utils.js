@@ -661,7 +661,7 @@ function getPftAmtChartData(data) {
     }));
   }
   const option = {
-    color: ['#6dcfec'],
+    color: ['#1aa1e0'],
     grid: {
       left: '10px',
       right: '10px',
