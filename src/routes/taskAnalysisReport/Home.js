@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-18 16:05:57
+ * @Last Modified time: 2018-10-18 17:26:50
  */
 
 import React, { PureComponent } from 'react';
@@ -81,8 +81,6 @@ export default class TaskAnalysisReport extends PureComponent {
     getServiceChannel: PropTypes.func.isRequired,
     // 部门
     custRange: PropTypes.array,
-    // 获取部门列表
-    getCustRange: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -103,9 +101,9 @@ export default class TaskAnalysisReport extends PureComponent {
       posOrgId: orgId,
     });
     this.state = {
-      orgId: emp.getOrgId(),
+      orgId,
       // 部门tree数据
-      createCustRange: createCustRange,
+      createCustRange,
     };
   }
 
@@ -123,7 +121,7 @@ export default class TaskAnalysisReport extends PureComponent {
     }
     // posOrgId 在机构树的营业部位置
     let department;
-    _(custRange).forEach((obj) => {
+    _.forEach(custRange, (obj) => {
       if (obj.children && !_.isEmpty(obj.children)) {
         const targetValue = _.find(obj.children, o => o.id === posOrgId);
         if (targetValue) {
