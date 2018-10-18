@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-17 18:24:26
+ * @Last Modified time: 2018-10-18 11:46:53
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -79,8 +79,9 @@ export const CHART_SERIES_OPTIONS = {
 export const SPECIFIC_INITIAL_KEY = 'PA040000';
 export const SPECIFIC_INITIAL_NAME = '股票';
 
-//实时持仓中单选框list
-export const list = [
+const config = {
+  //实时持仓中单选框list
+ list: [
   {
     value: 'all',
     label: '全部'
@@ -93,9 +94,9 @@ export const list = [
     value: 'credit',
     label: '信用'
   },
-];
+],
 //实时持仓中证券实时持仓表格
-export const columns = [
+ columns: [
   {
     title: '产品代码',
     dataIndex: 'productCode',
@@ -158,9 +159,9 @@ export const columns = [
     className: 'currencyType',
     width: '105px',
   },
-];
+],
 //实时持仓中产品实时持仓的表格
-export const productColumns = [
+ productColumns: [
   {
     title: '产品代码',
     dataIndex: 'productCode',
@@ -207,4 +208,11 @@ export const productColumns = [
     width: '130px',
     className: 'currencyType'
   },
-];
+],
+};
+export default config;
+export const {
+  list,
+  productColumns,
+  columns
+} = config;

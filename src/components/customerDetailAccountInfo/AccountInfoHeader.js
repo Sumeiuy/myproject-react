@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-18 10:29:29
+ * @Last Modified time: 2018-10-18 11:34:29
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -23,10 +23,10 @@ export default class AccountInfoHeader extends PureComponent {
   static PropTypes = {
     dataSource: PropTypes.array.isRequired,
     realTimeAsset: PropTypes.object.isRequired,
-    productHoldingDate: PropTypes.array.isRequired,
+    productDate: PropTypes.array.isRequired,
     getSecuritiesHolding: PropTypes.func.isRequired,
     getRealTimeAsset: PropTypes.func.isRequired,
-    getProductHoldingDate: PropTypes.func.isRequired,
+    getProductHoldingData: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
   }
   constructor(props) {
@@ -86,7 +86,7 @@ export default class AccountInfoHeader extends PureComponent {
       custId: query && query.custId,
     });
     //进入需要查询下产品实时持仓数据
-    this.props.getProductHoldingDate({
+    this.props.getProductHoldingData({
       custId: query && query.custId,
     });
   }

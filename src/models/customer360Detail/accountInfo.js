@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 16:52:56
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-18 10:04:13
+ * @Last Modified time: 2018-10-18 11:12:58
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailAccountInfo as api } from '../../api';
@@ -15,7 +15,7 @@ export default {
     //实时持仓下的证券实时持仓数据
     securitiesHolding: [],
     //实时持仓下的产品实时持仓数据
-    productHoldingDate: [],
+    productHoldingData: [],
     // 资产分布的雷达数据
     assetsRadarData: {},
     // 资产分布的雷达上具体指标的数据
@@ -42,11 +42,11 @@ export default {
         securitiesHolding: payload || {},
       };
     },
-    getProductHoldingDateSuccess(state, action) {
+    getProductHoldingDataSuccess(state, action) {
       const { payload } = action;
       return {
         ...state,
-        productHoldingDate: payload || {},
+        productHoldingData: payload || {},
       };
     },
     getAssetRadarDataSuccess(state, action) {
@@ -158,10 +158,10 @@ export default {
       });
     },
     //实时持仓中的产品实时持仓
-    * getProductHoldingDate({ payload }, { put, call }) {
+    * getProductHoldingData({ payload }, { put, call }) {
       const { resultData } = yield call(api.queryStorageOfProduct, payload);
       yield put({
-        type: 'getProductHoldingDateSuccess',
+        type: 'getProductHoldingDataSuccess',
         payload: resultData,
       });
     },
