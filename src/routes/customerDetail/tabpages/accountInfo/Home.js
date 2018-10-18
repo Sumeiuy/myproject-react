@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-18 10:07:15
+ * @Last Modified time: 2018-10-18 10:39:35
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import moment from 'moment';
 import { timeList, codeList } from '../../../../config/profitRateConfig';
 import { dva } from '../../../../helper';
 import AssetAndIncome from '../../../../components/customerDetailAccountInfo/AssetAndIncome';
+import logable from '../../../../decorators/logable';
 import AccountInfoHeader from '../../../../components/customerDetailAccountInfo/AccountInfoHeader';
 
 import styles from './home.less';
@@ -168,10 +169,6 @@ export default class Home extends PureComponent {
     super(props);
     this.state = {
       location: props.location,
-      // 是否选择含信用checkbox,默认为含信用
-      credit: 'Y',
-      // 当前雷达图上高亮的指标key
-      radarHightlightIndex: 'stock',
       // 是否打开负债详情的Modal
       debtDetailModalVisible: false,
       // 选中的时间范围
@@ -182,11 +179,6 @@ export default class Home extends PureComponent {
   }
 
   componentDidMount() {
-    // 第一次进入需要查询下资产分布的雷达图数据
-    // 默认查询含信用的
-    this.queryAssetDistributeData({
-      creditFlag: 'Y',
-    });
     // 获取收益走势数据
     this.getProfitRateInfo({ initial: true });
   }
@@ -199,8 +191,6 @@ export default class Home extends PureComponent {
       if(prevQuery && prevQuery.custId) {
         if(query.custId !== prevQuery.custId) {
           this.getProfitRateInfo({ initial: true });
-          // custId不同的时候在重新查询下资产分布数据
-          this.queryAssetDistributeData({ creditFlag: 'Y' });
         }
       } else {
         this.getProfitRateInfo({
@@ -233,6 +223,7 @@ export default class Home extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'DropdownSelect', payload: { name: '对比指标', value: '$args[0]' } })
   handleCodeSelectChange({ value }) {
     const { time } = this.state;
     this.getProfitRateInfo({
@@ -246,6 +237,7 @@ export default class Home extends PureComponent {
   }
 
   @autobind
+  @logable({ type: 'Click', payload: { name: '时间周期', value: '$args[0]' } })
   handleTimeSelectChange(key) {
     const { compareCode } = this.state;
     this.getProfitRateInfo({
@@ -270,13 +262,6 @@ export default class Home extends PureComponent {
     this.setState({ debtDetailModalVisible: true });
   }
 
-  // 查询资产分布雷达图数据
-  @autobind
-  queryAssetDistributeData(query) {
-    const { location: { query: { custId } } } = this.props;
-    this.props.getAssetRadarData({ ...query, custId });
-  }
-
   render() {
     const {
       getSecuritiesHolding,
@@ -293,6 +278,7 @@ export default class Home extends PureComponent {
       querySpecificIndexData,
       custBasicData,
       custCompareData,
+      getAssetRadarData,
     } = this.props;
 
     const {
@@ -321,7 +307,7 @@ export default class Home extends PureComponent {
             assetsRadarData={assetsRadarData}
             specificIndexData={specificIndexData}
             querySpecificIndexData={querySpecificIndexData}
-            onClickCredit={this.queryAssetDistributeData}
+            getAssetRadarData={getAssetRadarData}
             queryDebtDetail={queryDebtDetail}
             debtDetail={debtDetail}
             compareCode={compareCode}

@@ -47,7 +47,7 @@ const emp = {
   curEmpId: null,
   mocker: '',
 
-  setEmpInfo({ empPostnList, empInfo, mocker = '' }) {
+  setEmpInfo({ empPostnList = [], empInfo = {}, mocker = '' }) {
     // 因为此处是针对新的外部React框架所使用的
     // 因为在独立开发环境下也需要进行初始设置
     if (env.isInFsp()) return;

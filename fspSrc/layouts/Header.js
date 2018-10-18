@@ -288,6 +288,7 @@ export default class Header extends PureComponent {
       push,
       hotPossibleWdsList,
       searchHistoryVal,
+      location,
     } = this.props;
 
     const rightClasses = className({

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 22:30:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 13:40:06
+ * @Last Modified time: 2018-10-17 15:34:46
  * @description 客户360详情交易数据展示模块
  */
 import React from 'react';
@@ -26,15 +26,15 @@ export default function SummaryTransaction(props) {
   // 年日均资产
   const yearAvgAssets = displayTransMoney(data.yearAvgAssets);
   // 年日均资产增长率
-  const yearAvgAssetsRate = convertRate(calcSameTimeRate(data.yearAvgAssets, data.lastYearAvgAssets));
+  const yearAvgAssetsRate = calcSameTimeRate(data.yearAvgAssets, data.lastYearAvgAssets);
   // 年收益率
   const yearMaxCost = convertRate(data.yearMaxCostRate);
   // 年收益率增长率
-  const yearMaxCostRate = convertRate(calcSameTimeRate(data.yearMaxCostRate, data.lastYearMaxCostRate));
+  const yearMaxCostRate = calcSameTimeRate(data.yearMaxCostRate, data.lastYearMaxCostRate);
   // 年股基交易量
   const yearGjAmt = displayTransMoney(data.yearGjAmt);
    // 年股基交易量增长率
-  const yearGjAmtRate = convertRate(calcSameTimeRate(data.yearGjAmt, data.lastYearGjAmt));
+  const yearGjAmtRate = calcSameTimeRate(data.yearGjAmt, data.lastYearGjAmt);
   // 净佣金
   const purRake = displayTransMoney(data.purRake);
   // 利息收入

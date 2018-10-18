@@ -189,7 +189,7 @@ export default class CustomerRow extends PureComponent {
     const { push } = this.props;
     const {
       listItem: {
-        pOrO,
+      pOrO,
       custId,
       rowId,
       ptyId,
@@ -219,9 +219,6 @@ export default class CustomerRow extends PureComponent {
         custId,
       },
       param,
-      state: {
-        url,
-      },
     });
   }
 

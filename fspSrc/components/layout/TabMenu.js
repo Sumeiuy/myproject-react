@@ -182,6 +182,7 @@ export default class TabMenu extends PureComponent {
           placement="bottomLeft"
           overlay={menus}
           trigger={['hover']}
+          mouseLeaveDelay={0.4}
           getPopupContainer={this.getPopupContainer}
         >
           <div
