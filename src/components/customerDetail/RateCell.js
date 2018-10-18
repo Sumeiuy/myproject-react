@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 08:50:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-17 15:44:52
+ * @Last Modified time: 2018-10-18 11:24:24
  * @description 新版客户360详情交易数据中比例展示Cell
  */
 import React from 'react';
@@ -11,7 +11,7 @@ import cx from 'classnames';
 import { Popover } from 'antd';
 
 import Icon from '../common/Icon';
-import { convertRate } from './utils';
+import { number } from '../../helper';
 
 import styles from './cell.less';
 
@@ -21,7 +21,7 @@ export default function RateCell(props) {
   const isAsc = rate > 0;
   // 如果增长率是0，则不展示
   const isZero = rate === 0;
-  const rateText = convertRate(rate);
+  const rateText = number.convertRate(rate);
   const ascCls = cx({
     [styles.asc]: isAsc,
     [styles.desc]: !isAsc,
