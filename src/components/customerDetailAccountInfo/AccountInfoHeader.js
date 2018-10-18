@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-18 11:34:29
+ * @Last Modified time: 2018-10-18 13:50:51
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -123,6 +123,9 @@ export default class AccountInfoHeader extends PureComponent {
     let realTimeColor = {};
     if (rtimeAsset.newItem > 0) {
       realTimeColor = { color: 'red' };
+    }
+    else if (rtimeAsset.newItem === 0) {
+      realTimeColor = { color: '#333' };
     }
     const availableFund = transformItemUnit(availableFunds);
     const advisableFund = transformItemUnit(advisableFunds);
