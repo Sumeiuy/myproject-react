@@ -408,6 +408,12 @@ const newOpenTabConfig = [
     path: '/preSaleQuery',
     pid: '',
   },
+  {
+    name: '专项业务知识',
+    id: 'FSP_SBK_CENTER',
+    path: '/fsp/knowledge',
+    pid: '',
+  },
 ];
 
 // 默认当前激活的主导航菜单项
