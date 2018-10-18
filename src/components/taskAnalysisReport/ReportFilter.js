@@ -3,7 +3,7 @@
  * @Descripter: 头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-17 10:41:17
+ * @Last Modified time: 2018-10-17 13:54:10
  */
 
 import React, { PureComponent } from 'react';
@@ -55,6 +55,7 @@ export default class ReportFilter extends PureComponent {
     eventSourceOptions,
     isEventAnalysis: false,
     eventSearchList: {},
+    eventSearch: _.noop,
   }
 
   // 选择任务触发时间

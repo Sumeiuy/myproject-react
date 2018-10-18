@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-17 13:21:26
+ * @Last Modified time: 2018-10-18 18:17:44
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,9 @@ import _ from 'lodash';
 import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import { emp } from '../../../helper';
+import TaskStatisticsChart from './TaskStatisticsChart';
+import CustomerStatisticsChart from './CustomerStatisticsChart';
+import ServiceChannelsChangeChart from './ServiceChannelsChangeChart';
 
 import styles from './eventAnalysisReport.less';
 
@@ -103,14 +106,12 @@ export default class EventAnalysisReport extends PureComponent {
 
   render() {
     const {
-      eventAnalysisList,
+      eventAnalysisList: {
+        eventData,
+        eventReportList = [],
+      },
       eventSearchList,
     } = this.props;
-    console.warn('eventSearchList',eventSearchList);
-    const {
-      eventData,
-      eventReportList,
-    } = eventAnalysisList;
     const {
       startTime,
       endTime,
@@ -129,26 +130,110 @@ export default class EventAnalysisReport extends PureComponent {
       title: '任务数',
       dataIndex: 'taskNum',
       key: 'taskNum',
+      render: (text,record,index) => {
+        const { eventName } = record;
+        return(
+          <div className={styles.taskStatisticsChart}>
+              <span>{text}</span>
+              <div className={styles.taskStatisticsChartReport}>
+                <TaskStatisticsChart
+                 eventReportList={eventReportList[index]}
+                 eventName={eventName}
+                 />
+              </div>
+          </div>
+        );
+      }
     },{
       title: '完成任务数',
       dataIndex: 'completedTaskNum',
       key: 'completedTaskNum',
+      render: (text,record,index) => {
+        const { eventName } = record;
+        return(
+          <div className={styles.taskStatisticsChart}>
+              <span>{text}</span>
+              <div className={styles.taskStatisticsChartReport}>
+                <TaskStatisticsChart
+                 eventReportList={eventReportList[index]}
+                 eventName={eventName}
+                 />
+              </div>
+          </div>
+        );
+      }
     },{
       title: '任务完成率',
       dataIndex: 'taskCompletionRate',
       key: 'taskCompletionRate',
+      render: (text,record,index) => {
+        const { eventName } = record;
+        return(
+          <div className={styles.taskStatisticsChart}>
+              <span>{text}</span>
+              <div className={styles.taskStatisticsChartReport}>
+                <TaskStatisticsChart
+                 eventReportList={eventReportList[index]}
+                 eventName={eventName}
+                 />
+              </div>
+          </div>
+        );
+      }
     },{
       title: '覆盖客户数',
       dataIndex: 'coveredCustomerNum',
       key: 'coveredCustomerNum',
+      render: (text,record,index) => {
+        const { eventName } = record;
+        return(
+          <div className={styles.taskStatisticsChart}>
+              <span>{text}</span>
+              <div className={styles.taskStatisticsChartReport}>
+                <CustomerStatisticsChart
+                 eventReportList={eventReportList[index]}
+                 eventName={eventName}
+                 />
+              </div>
+          </div>
+        );
+      }
     },{
       title: '已服务客户数',
       dataIndex: 'servedCustomerNum',
       key: 'servedCustomerNum',
+      render: (text,record,index) => {
+        const { eventName } = record;
+        return(
+          <div className={styles.taskStatisticsChart}>
+              <span>{text}</span>
+              <div className={styles.taskStatisticsChartReport}>
+                <CustomerStatisticsChart
+                 eventReportList={eventReportList[index]}
+                 eventName={eventName}
+                 />
+              </div>
+          </div>
+        );
+      }
     },{
       title: '各渠道服务占比',
       dataIndex: 'servicesAccounted',
       key: 'servicesAccounted',
+      render: (text,record,index) => {
+        const { eventName } = record;
+        return(
+          <div className={styles.taskStatisticsChart}>
+              <span>{text}</span>
+              <div className={styles.taskStatisticsChartReport}>
+                <ServiceChannelsChangeChart
+                 eventReportList={eventReportList[index]}
+                 eventName={eventName}
+                 />
+              </div>
+          </div>
+        );
+      }
     }];
     // 表格数据
     const dataSource = eventData;
