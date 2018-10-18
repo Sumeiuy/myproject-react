@@ -3,18 +3,23 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-15 15:56:03
+ * @Last Modified time: 2018-10-18 17:26:50
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
+import _ from 'lodash';
+import { autobind } from 'core-decorators';
 
 import { dva } from '../../helper';
+import DepartmentFilter from '../../components/taskAnalysisReport/DepartmentFilter';
 import TaskCustomerReport from '../../components/taskAnalysisReport/TaskCustomerReport';
 import CompleteServiceCustReport from '../../components/taskAnalysisReport/serviceCust/CompleteServiceCustReport';
 import ComplianceServiceCustReport from '../../components/taskAnalysisReport/serviceCust/ComplianceServiceCustReport';
 import ServiceChannelReport from '../../components/taskAnalysisReport/serviceChannel/ServiceChannelReport';
+import { emp } from '../../helper';
+import logable from '../../decorators/logable';
 
 import styles from './home.less';
 
@@ -40,6 +45,8 @@ const mapStateToProps = state => ({
   complianceServiceCustList: state.taskAnalysisReport.complianceServiceCustList,
   // 服务渠道统计数据
   serviceChannelData: state.taskAnalysisReport.serviceChannelData,
+  // 部门
+  custRange: state.customerPool.custRange,
 });
 
 const mapDispatchToProps = {
@@ -72,7 +79,73 @@ export default class TaskAnalysisReport extends PureComponent {
     serviceChannelData: PropTypes.object.isRequired,
     // 获取服务渠道统计
     getServiceChannel: PropTypes.func.isRequired,
+    // 部门
+    custRange: PropTypes.array,
   }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+    // 部门
+    custRange: [],
+  }
+
+  constructor(props) {
+    super(props);
+    const { custRange } = props;
+    const orgId = emp.getOrgId();
+    const createCustRange = this.handleCreateCustRange({
+      custRange,
+      posOrgId: orgId,
+    });
+    this.state = {
+      orgId,
+      // 部门tree数据
+      createCustRange,
+    };
+  }
+
+  // 创建部门范围组件的tree数据
+  @autobind
+  handleCreateCustRange({ custRange, posOrgId }) {
+    // 用户职位是经总
+    if (posOrgId === (custRange[0] || {}).id) {
+      return custRange;
+    }
+    // posOrgId 在机构树中所处的分公司位置
+    const groupInCustRange = _.find(custRange, item => item.id === posOrgId);
+    if (groupInCustRange) {
+      return [groupInCustRange];
+    }
+    // posOrgId 在机构树的营业部位置
+    let department;
+    _.forEach(custRange, (obj) => {
+      if (obj.children && !_.isEmpty(obj.children)) {
+        const targetValue = _.find(obj.children, o => o.id === posOrgId);
+        if (targetValue) {
+          department = [targetValue];
+        }
+      }
+    });
+    if (department) {
+      return department;
+    }
+  }
+
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '部门',
+      value: '$args[0].orgId',
+    },
+  })
+  handleDepartmentChange(obj) {
+    this.setState(obj);
+  }
+
   render() {
     const {
       taskCustomerList,
@@ -84,24 +157,36 @@ export default class TaskAnalysisReport extends PureComponent {
       serviceChannelData,
       getServiceChannel,
     } = this.props;
+    const { orgId, createCustRange } = this.state;
     return (
-      <div className={styles.taskAnalysisReport}>
-        <TaskCustomerReport
-          taskCustomerList={taskCustomerList}
-          getTaskCustomer={getTaskCustomer}
+      <div>
+        <DepartmentFilter
+          onDepartmentChange={this.handleDepartmentChange}
+          custRange={createCustRange}
+          orgId={orgId}
         />
-         <CompleteServiceCustReport
-          completeServiceCustList={completeServiceCustList}
-          getCompleteServiceCust={getCompleteServiceCust}
-        />
-        <ComplianceServiceCustReport
-          complianceServiceCustList={complianceServiceCustList}
-          getComplianceServiceCust={getComplianceServiceCust}
-        />
-        <ServiceChannelReport
-          serviceChannelData={serviceChannelData}
-          getServiceChannel={getServiceChannel}
-        />
+        <div className={styles.taskAnalysisReport}>
+          <TaskCustomerReport
+            taskCustomerList={taskCustomerList}
+            getTaskCustomer={getTaskCustomer}
+            orgId={orgId}
+          />
+          <CompleteServiceCustReport
+            completeServiceCustList={completeServiceCustList}
+            getCompleteServiceCust={getCompleteServiceCust}
+            orgId={orgId}
+          />
+          <ComplianceServiceCustReport
+            complianceServiceCustList={complianceServiceCustList}
+            getComplianceServiceCust={getComplianceServiceCust}
+            orgId={orgId}
+          />
+          <ServiceChannelReport
+            serviceChannelData={serviceChannelData}
+            getServiceChannel={getServiceChannel}
+            orgId={orgId}
+          />
+        </div>
       </div>
     );
   }

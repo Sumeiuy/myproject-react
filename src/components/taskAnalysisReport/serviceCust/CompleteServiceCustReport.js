@@ -3,7 +3,7 @@
  * @Descripter: 完成服务客户统计
  * @Date: 2018-10-11 10:20:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-15 15:53:36
+ * @Last Modified time: 2018-10-18 09:46:50
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,6 @@ import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import ServiceCustChart from './ServiceCustChart';
 import { defaultStartTime, defaultEndTime, completeServiceCustOptions } from '../config';
-import { emp } from '../../../helper';
 
 import styles from './completeServiceCustReport.less';
 
@@ -25,6 +24,8 @@ export default class CompleteServiceCustReport extends PureComponent {
     completeServiceCustList: PropTypes.array.isRequired,
     // 获取完成服务客户统计
     getCompleteServiceCust: PropTypes.func.isRequired,
+    // 部门
+    orgId: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -50,12 +51,21 @@ export default class CompleteServiceCustReport extends PureComponent {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    const { orgId: prevOrgId } = prevProps;
+    const { orgId } = this.props;
+    if (prevOrgId !== orgId) {
+      this.getCompleteServiceCust(this.state);
+    }
+  }
+
   // 获取完成服务客户统计
   @autobind
   getCompleteServiceCust(query) {
-    this.props.getCompleteServiceCust({
+    const { orgId, getCompleteServiceCust } = this.props;
+    getCompleteServiceCust({
       ...query,
-      orgId: emp.getOrgId(),
+      orgId,
     });
   }
 

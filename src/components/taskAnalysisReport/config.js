@@ -10,8 +10,8 @@ const COMPLETE_CUSTOMEER_NUMBER_NAME = '完成客户人次';
 const COMPLIANCE_CUSTOMEER_NUMBER_NAME = '达标客户人次';
 // 涨乐
 const ZHANGLE = '涨乐';
-// 短信
-const MESSAGE = '短信';
+// 其他
+const OTHER = '其他';
 // 电话
 const TELEPHONE = '电话';
 // 面谈
@@ -169,7 +169,7 @@ const complianceServiceCustOptions = {
 const serviceChannelOptions = {
   color: ['#f7ad33', '#4c70b3', '#67b8e1', '#cf4b4a'],
   zhangle: ZHANGLE,
-  message: MESSAGE,
+  other: OTHER,
   telephone: TELEPHONE,
   interview: INTERVIEW,
   legendOptions: [
@@ -179,15 +179,15 @@ const serviceChannelOptions = {
     },
     {
       color: '#4c70b3',
-      name: MESSAGE,
-    },
-    {
-      color: '#67b8e1',
       name: TELEPHONE,
     },
     {
-      color: '#cf4b4a',
+      color: '#67b8e1',
       name: INTERVIEW,
+    },
+    {
+      color: '#cf4b4a',
+      name: OTHER,
     }
   ],
   // grid
