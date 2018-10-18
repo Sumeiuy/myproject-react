@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 15:35:17
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-18 11:46:53
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -78,3 +78,141 @@ export const CHART_SERIES_OPTIONS = {
 // 初始化查询指定指标的详情数据的key,默认为股票，其key=PA040000
 export const SPECIFIC_INITIAL_KEY = 'PA040000';
 export const SPECIFIC_INITIAL_NAME = '股票';
+
+const config = {
+  //实时持仓中单选框list
+ list: [
+  {
+    value: 'all',
+    label: '全部'
+  },
+  {
+    value: 'normal',
+    label: '普通'
+  },
+  {
+    value: 'credit',
+    label: '信用'
+  },
+],
+//实时持仓中证券实时持仓表格
+ columns: [
+  {
+    title: '产品代码',
+    dataIndex: 'productCode',
+    key: 'productCode',
+    className: 'productCode',
+    width: '115px',
+  },
+  {
+    title: '产品名称',
+    dataIndex: 'productName',
+    key: 'productName',
+    width: '110px',
+  },
+  {
+    title: '持仓数',
+    dataIndex: 'holdingNumber',
+    key: 'holdingNumber',
+    align: 'right',
+    width: '48px',
+  },
+  {
+    title: '可用数',
+    dataIndex: 'availableNumber',
+    key: 'availableNumber',
+    align: 'right',
+    width: '75px',
+  },
+  {
+    title: '成本',
+    dataIndex: 'cost',
+    key: 'cost',
+    align: 'right',
+    width: '95px',
+  },
+  {
+    title: '现价',
+    dataIndex: 'presentPrice',
+    key: 'presentPrice',
+    align: 'right',
+    width: '95px',
+  },
+  {
+    title: '市值',
+    dataIndex: 'marketValue',
+    key: 'marketValue',
+    align: 'right',
+    width: '95px',
+  },
+  {
+    title: '盈亏',
+    dataIndex: 'profitAndLoss',
+    key: 'profitAndLoss',
+    align: 'right',
+    width: '95px',
+  },
+  {
+    title: '货币类型',
+    dataIndex: 'currencyType',
+    key: 'currencyType',
+    className: 'currencyType',
+    width: '105px',
+  },
+],
+//实时持仓中产品实时持仓的表格
+ productColumns: [
+  {
+    title: '产品代码',
+    dataIndex: 'productCode',
+    key: 'productCode',
+    className: 'productCode',
+    width: '140px',
+  },
+  {
+    title: '产品名称',
+    dataIndex: 'productName',
+    key: 'productName',
+    width: '200px',
+  },
+  {
+    title: '份额',
+    dataIndex: 'share',
+    key: 'share',
+    width: '140px',
+  },
+  {
+    title: '收益率/净值',
+    dataIndex: 'yield',
+    key: 'yield',
+    width: '140px',
+  },
+  {
+    title: '市值',
+    dataIndex: 'marketValue',
+    key: 'marketValue',
+    align: 'right',
+    width: '80px',
+  },
+  {
+    title: '盈亏',
+    dataIndex: 'profitAndLoss',
+    key: 'profitAndLoss',
+    align: 'right',
+    width: '160px',
+  },
+  {
+    title: '货币类型',
+    dataIndex: 'currencyType',
+    key: 'currencyType',
+    width: '130px',
+    className: 'currencyType'
+  },
+],
+};
+export default config;
+export const {
+  list,
+  productColumns,
+  columns
+} = config;

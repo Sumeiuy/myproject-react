@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-17 12:39:26
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-18 11:39:08
  */
 
 import React, { PureComponent } from 'react';
@@ -66,7 +66,7 @@ const mapStateToProps = state => ({
   // 实时持仓中的证券实时持仓
   securitiesHolding: state.detailAccountInfo.securitiesHolding,
   // 实时持仓中的产品实时持仓
-  storageOfProduct: state.detailAccountInfo.storageOfProduct,
+  productHoldingData: state.detailAccountInfo.productHoldingData,
   // 收益走势基本指标数据
   custBasicData: state.detailAccountInfo.custBasicData,
   // 收益走势对比指标数据
@@ -85,7 +85,7 @@ const mapDispatchToProps = {
   //查询实时持仓中的证券实时持仓
   getSecuritiesHolding: effect('detailAccountInfo/getSecuritiesHolding'),
   //查询实时持仓中的产品实时持仓
-  getStorageOfProduct: effect('detailAccountInfo/getStorageOfProduct'),
+  getProductHoldingData: effect('detailAccountInfo/getProductHoldingData'),
   // 查询收益走势数据
   queryProfitRateInfo: effect('detailAccountInfo/getProfitRateInfo'),
   // 清除Redux中的数据
@@ -113,13 +113,13 @@ export default class Home extends PureComponent {
     // 实时持仓中的证券实时持仓
     securitiesHolding: PropTypes.array.isRequired,
     // 实时持仓中的产品实时持仓
-    storageOfProduct: PropTypes.array.isRequired,
+    productHoldingData: PropTypes.array.isRequired,
     // 查询实时持仓中的实时资产
     getRealTimeAsset: PropTypes.func.isRequired,
     // 查询实时持仓中的证券实时持仓
     getSecuritiesHolding: PropTypes.func.isRequired,
     // 查询实时持仓中的产品实时持仓
-    getStorageOfProduct: PropTypes.func.isRequired,
+    getProductHoldingData: PropTypes.func.isRequired,
     custBasicData: PropTypes.object.isRequired,
     custCompareData: PropTypes.object.isRequired,
     // 查询收益走势数据
@@ -268,8 +268,8 @@ export default class Home extends PureComponent {
       securitiesHolding,
       realTimeAsset,
       getRealTimeAsset,
-      storageOfProduct,
-      getStorageOfProduct,
+      productHoldingData,
+      getProductHoldingData,
       assetsRadarData,
       debtDetail,
       queryDebtDetail,
@@ -295,8 +295,8 @@ export default class Home extends PureComponent {
             dataSource={securitiesHolding}
             getRealTimeAsset={getRealTimeAsset}
             realTimeAsset={realTimeAsset}
-            productDate={storageOfProduct}
-            getStorageOfProduct={getStorageOfProduct}
+            productDate={productHoldingData}
+            getProductHoldingData={getProductHoldingData}
             location={location}
           />
         </div>
