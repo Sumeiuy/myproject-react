@@ -3,7 +3,7 @@
  * @Descripter: 服务渠道统计
  * @Date: 2018-10-11 17:38:35
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-12 15:39:50
+ * @Last Modified time: 2018-10-18 09:46:21
  */
 
 import React, { PureComponent } from 'react';
@@ -15,7 +15,6 @@ import ReportFilter from '../ReportFilter';
 import ServiceChannelPieChart from './ServiceChannelPieChart';
 import ServiceChannelLineChart from './ServiceChannelLineChart';
 import { defaultStartTime, defaultEndTime } from '../config';
-import { emp } from '../../../helper';
 
 import styles from './serviceChannelReport.less';
 
@@ -25,6 +24,8 @@ export default class ServiceChannelReport extends PureComponent {
     serviceChannelData: PropTypes.object.isRequired,
     // 获取服务渠道统计
     getServiceChannel: PropTypes.func.isRequired,
+    // 部门
+    orgId: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -50,12 +51,21 @@ export default class ServiceChannelReport extends PureComponent {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    const { orgId: prevOrgId } = prevProps;
+    const { orgId } = this.props;
+    if (prevOrgId !== orgId) {
+      this.getServiceChannel(this.state);
+    }
+  }
+
   // 获取达标服务客户统计
   @autobind
   getServiceChannel(query) {
-    this.props.getServiceChannel({
+    const { orgId, getServiceChannel } = this.props;
+    getServiceChannel({
       ...query,
-      orgId: emp.getOrgId(),
+      orgId,
     });
   }
 

@@ -3,7 +3,7 @@
  * @Descripter: 任务-客户分析报表
  * @Date: 2018-10-05 14:38:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-16 09:13:29
+ * @Last Modified time: 2018-10-18 10:16:52
  */
 
 import React, { PureComponent } from 'react';
@@ -15,7 +15,7 @@ import ReportTitle from './ReportTitle';
 import ReportFilter from './ReportFilter';
 import ChartLegend from './ChartLegend';
 import { defaultStartTime, defaultEndTime, taskCustomerOptions, generalOptions, chartLineOptions, CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME } from './config';
-import { emp, number } from '../../helper';
+import { number } from '../../helper';
 import { filterData } from './utils';
 
 import styles from './taskCustomerReport.less';
@@ -32,6 +32,8 @@ export default class TaskCustomerReport extends PureComponent {
     taskCustomerList: PropTypes.array.isRequired,
     // 获取任务-客户报表
     getTaskCustomer: PropTypes.func.isRequired,
+    // 部门
+    orgId: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -57,12 +59,21 @@ export default class TaskCustomerReport extends PureComponent {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    const { orgId: prevOrgId } = prevProps;
+    const { orgId } = this.props;
+    if (prevOrgId !== orgId) {
+      this.getTaskCustomer(this.state);
+    }
+  }
+
   // 获取任务-客户报表
   @autobind
   getTaskCustomer(query) {
-    this.props.getTaskCustomer({
+    const { orgId, getTaskCustomer } = this.props;
+    getTaskCustomer({
       ...query,
-      orgId: emp.getOrgId(),
+      orgId,
     });
   }
 
@@ -156,6 +167,9 @@ export default class TaskCustomerReport extends PureComponent {
           axisLabel: {
             margin: 20,
           },
+          axisTick: {
+            show: false,
+          },
           splitLine: yAxisSplitLine,
         },
         {
@@ -163,6 +177,9 @@ export default class TaskCustomerReport extends PureComponent {
           min: 0,
           max: taskNumberMax,
           axisLine: {
+            show: false,
+          },
+          axisTick: {
             show: false,
           },
           axisLabel: {

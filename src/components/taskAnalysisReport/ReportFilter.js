@@ -1,9 +1,9 @@
 /*
  * @Author: zhangjun
- * @Descripter: 头部筛选项
+ * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-17 13:54:10
+ * @Last Modified time: 2018-10-18 18:45:29
  */
 
 import React, { PureComponent } from 'react';
@@ -63,7 +63,7 @@ export default class ReportFilter extends PureComponent {
   @logable({
     type: 'CalendarSelect',
     payload: {
-      name: '任务触发时间',
+      name: '$props.dateFilterName',
       min: '$args[0].value[0]',
       max: '$args[0].value[1]',
     },
@@ -147,14 +147,14 @@ export default class ReportFilter extends PureComponent {
   @autobind
   setDisabledStartTime(start) {
     // 最多选取过去90天的时间
-    return start < moment().subtract(90, 'days') || start >= moment().startOf('day');
+    return start < moment().subtract(91, 'days') || start >= moment().startOf('day');
   }
 
   // 设置不可选择的结束时间
   @autobind
   setDisabledEndTime(start, end) {
     // 最多选取过去90天的时间
-    return end < moment().subtract(90, 'days') || end >= moment().startOf('day');
+    return end < moment().subtract(91, 'days') || end >= moment().startOf('day');
   }
 
   // 事件搜索

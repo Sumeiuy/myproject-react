@@ -3,7 +3,7 @@
  * @Descripter: 服务客户折线图
  * @Date: 2018-10-11 13:18:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-16 09:13:23
+ * @Last Modified time: 2018-10-18 10:15:37
  */
 
 import React from 'react';
@@ -76,6 +76,7 @@ export default function ServiceCustChart(props) {
         {
           type: 'category',
           data: deadlineTimeData,
+          boundaryGap: false,
           axisLabel: {
             interval: xAxisLabelInterval,
             margin: 20,
@@ -86,6 +87,9 @@ export default function ServiceCustChart(props) {
         {
           type: 'value',
           axisLine: {
+            show: false,
+          },
+          axisTick: {
             show: false,
           },
           axisLabel: {
