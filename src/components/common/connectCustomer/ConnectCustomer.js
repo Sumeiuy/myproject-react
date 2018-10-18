@@ -108,6 +108,8 @@ export default class ConnectCustomer extends React.PureComponent {
     addServeRecord(payload).then(() => {
       // 关联通话和服务记录
       this.saveServiceRecordAndPhoneRelation();
+       // 回调，关闭电话联系方式弹窗
+      this.setState({ showMask: false });
       // 显示添加服务记录弹窗，todo=update表示更新服务记录
       toggleServiceRecordModal({
         id: custId,
