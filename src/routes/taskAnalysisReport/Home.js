@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-18 14:45:39
+ * @Last Modified time: 2018-10-18 15:04:37
  */
 
 import React, { PureComponent } from 'react';
@@ -13,7 +13,6 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 
 import { dva } from '../../helper';
-import withRouter from '../../decorators/withRouter';
 import DepartmentFilter from '../../components/taskAnalysisReport/DepartmentFilter';
 import TaskCustomerReport from '../../components/taskAnalysisReport/TaskCustomerReport';
 import CompleteServiceCustReport from '../../components/taskAnalysisReport/serviceCust/CompleteServiceCustReport';
@@ -35,8 +34,6 @@ const effects = {
   getComplianceServiceCust: 'taskAnalysisReport/getComplianceServiceCust',
   // 服务渠道统计
   getServiceChannel: 'taskAnalysisReport/getServiceChannel',
-  // 部门
-  getCustRange: 'customerPool/getCustomerScope',
 };
 
 const mapStateToProps = state => ({
@@ -61,15 +58,11 @@ const mapDispatchToProps = {
   getComplianceServiceCust: effect(effects.getComplianceServiceCust, { forceFull: true }),
   // 获取服务渠道统计数据
   getServiceChannel: effect(effects.getServiceChannel, { forceFull: true }),
-  // 获取部门
-  getCustRange: effect(effects.getCustRange, { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
-@withRouter
 export default class TaskAnalysisReport extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     // 任务-客户报表
     taskCustomerList: PropTypes.array.isRequired,
     // 获取任务-客户报表

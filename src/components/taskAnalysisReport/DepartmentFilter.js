@@ -3,7 +3,7 @@
  * @Descripter: 部门筛选项
  * @Date: 2018-10-16 17:34:52
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-18 14:38:24
+ * @Last Modified time: 2018-10-18 15:02:59
  */
 
 import React, { PureComponent } from 'react';
@@ -122,15 +122,10 @@ export default class DepartmentFilter extends PureComponent {
       formatCustRange,
       value: initValue,
     };
-    // this.setState({
-    //   formatCustRange,
-    //   value: initValue,
-    // });
   }
 
   render() {
     const { value, formatCustRange } = this.state;
-    console.warn('formatCustRange', formatCustRange);
     return (
       <div className={styles.departmentFilter}>
         <span className={styles.reportTitle}>任务统计报表</span>
