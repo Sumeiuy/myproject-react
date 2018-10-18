@@ -3,7 +3,7 @@
  * @Descripter: 渠道变化趋势
  * @Date: 2018-10-12 15:30:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-16 13:32:18
+ * @Last Modified time: 2018-10-18 10:15:29
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -23,7 +23,7 @@ const { yAxisSplitLine, textStyle, toolbox } = generalOptions;
 const {
   color,
   zhangle,
-  message,
+  other,
   telephone,
   interview,
   legendOptions,
@@ -39,18 +39,18 @@ export default function ServiceCustChart(props) {
       trendData: {
         // 涨乐列表数据
         zhangleList,
-        // 短信列表数据
-        messageList,
         // 电话列表数据
         telephoneList,
         // 面谈列表数据
         interviewList,
+        // 其他列表数据
+        otherList,
       },
     } = props;
     // 涨乐数据
     const zhangleData = filterData(zhangleList, 'value');
     // 短信数据
-    const messageData = filterData(messageList, 'value');
+    const otherData = filterData(otherList, 'value');
     // 电话数据
     const telephoneData = filterData(telephoneList, 'value');
     // 面谈数据
@@ -67,15 +67,21 @@ export default function ServiceCustChart(props) {
       },
       formatter(params) {
         const deadlineTime = params[0].name;
-        const firstSeriesName = params[0].seriesName;
-        const firstDataNumber = thousandFormat(params[0].value);
-        const secondSeriesName = params[1].seriesName;
-        const secondDataNumber = thousandFormat(params[1].value);
+        const zhangleSeriesName = params[0].seriesName;
+        const zhangleDataNumber = thousandFormat(params[0].value);
+        const telephoneSeriesName = params[1].seriesName;
+        const telephoneDataNumber = thousandFormat(params[1].value);
+        const interviewSeriesName = params[2].seriesName;
+        const interviewDataNumber = thousandFormat(params[2].value);
+        const otherSeriesName = params[3].seriesName;
+        const otherDataNumber = thousandFormat(params[3].value);
         const tips = `
           <div class="echartTooltipTable">
             ${deadlineTime}
-            <div>${firstSeriesName}: ${firstDataNumber}</div>
-            <div>${secondSeriesName}: ${secondDataNumber}</div>
+            <div>${zhangleSeriesName}: ${zhangleDataNumber}</div>
+            <div>${telephoneSeriesName}: ${telephoneDataNumber}</div>
+            <div>${interviewSeriesName}: ${interviewDataNumber}</div>
+            <div>${otherSeriesName}: ${otherDataNumber}</div>
           </div>
         `;
         return tips;
@@ -96,6 +102,7 @@ export default function ServiceCustChart(props) {
         {
           type: 'category',
           data: deadlineTimeData,
+          boundaryGap: false,
           axisLabel: {
             interval: xAxisLabelInterval,
             margin: 20,
@@ -106,6 +113,9 @@ export default function ServiceCustChart(props) {
         {
           type: 'value',
           axisLine: {
+            show: false,
+          },
+          axisTick: {
             show: false,
           },
           axisLabel: {
@@ -122,13 +132,6 @@ export default function ServiceCustChart(props) {
           ...series,
         },
         {
-          name: zhangle,
-          type: 'line',
-          data: messageData,
-          ...message,
-          ...series,
-        },
-        {
           name: telephone,
           type: 'line',
           data: telephoneData,
@@ -139,7 +142,14 @@ export default function ServiceCustChart(props) {
           type: 'line',
           data: interviewData,
           ...series,
-        }
+        },
+        {
+          name: other,
+          type: 'line',
+          data: otherData,
+          ...other,
+          ...series,
+        },
       ]
     };
     return (

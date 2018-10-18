@@ -3,7 +3,7 @@
  * @Descripter: 达标服务客户统计
  * @Date: 2018-10-11 10:20:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-15 15:50:44
+ * @Last Modified time: 2018-10-18 09:46:56
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,6 @@ import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import ServiceCustChart from './ServiceCustChart';
 import { defaultStartTime, defaultEndTime, complianceServiceCustOptions } from '../config';
-import { emp } from '../../../helper';
 
 import styles from './complianceServiceCustReport.less';
 
@@ -26,6 +25,8 @@ export default class ComplianceServiceCustReport extends PureComponent {
     complianceServiceCustList: PropTypes.array.isRequired,
     // 获取达标服务客户统计
     getComplianceServiceCust: PropTypes.func.isRequired,
+    // 部门
+    orgId: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -51,12 +52,21 @@ export default class ComplianceServiceCustReport extends PureComponent {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    const { orgId: prevOrgId } = prevProps;
+    const { orgId } = this.props;
+    if (prevOrgId !== orgId) {
+      this.getComplianceServiceCust(this.state);
+    }
+  }
+
   // 获取达标服务客户统计
   @autobind
   getComplianceServiceCust(query) {
-    this.props.getComplianceServiceCust({
+    const { orgId, getComplianceServiceCust } = this.props;
+    getComplianceServiceCust({
       ...query,
-      orgId: emp.getOrgId(),
+      orgId,
     });
   }
 
