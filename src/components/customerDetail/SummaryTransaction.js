@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 22:30:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-18 13:56:40
+ * @Last Modified time: 2018-10-18 17:47:56
  * @description 客户360详情交易数据展示模块
  */
 import React from 'react';
@@ -24,18 +24,6 @@ export default function SummaryTransaction(props) {
   }
   // 总资产
   const assetText = displayMoney(data.asset);
-  // 年日均资产
-  const yearAvgAssets = displayMoney(data.yearAvgAssets);
-  // 年日均资产增长率
-  const yearAvgAssetsRate = calcSameTimeRate(data.yearAvgAssets, data.lastYearAvgAssets);
-  // 年收益率
-  const yearMaxCost = number.convertRate(data.yearMaxCostRate);
-  // 年收益率增长率
-  const yearMaxCostRate = calcSameTimeRate(data.yearMaxCostRate, data.lastYearMaxCostRate);
-  // 年股基交易量
-  const yearGjAmt = displayMoney(data.yearGjAmt);
-   // 年股基交易量增长率
-  const yearGjAmtRate = calcSameTimeRate(data.yearGjAmt, data.lastYearGjAmt);
   // 净佣金
   const purRake = displayMoney(data.purRake);
   // 利息收入
@@ -55,9 +43,9 @@ export default function SummaryTransaction(props) {
   return (
     <div className={styles.wrap}>
       <MoneyCell title="总资产" content={assetText} />
-      <RateCell title="年日均资产" content={yearAvgAssets} rate={yearAvgAssetsRate}/>
-      <RateCell title="年收益率" content={yearMaxCost} rate={yearMaxCostRate}/>
-      <RateCell title="年股基交易量" content={yearGjAmt} rate={yearGjAmtRate}/>
+      <RateCell title="年日均资产" current={data.yearAvgAssets} last={data.lastYearAvgAssets} />
+      <RateCell title="年收益率" current={data.yearMaxCostRate} last={data.lastYearMaxCostRate} isMoney={false} />
+      <RateCell title="年股基交易量" current={data.yearGjAmt} last={data.lastYearGjAmt} />
       <MoneyCell title="净佣金" content={purRake} />
       <MoneyCell title="利息收入" content={netIncome} />
       <MoneyCell title="年产品销量" content={yearProdAmt} />

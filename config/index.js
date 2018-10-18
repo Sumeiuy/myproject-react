@@ -51,6 +51,13 @@ module.exports = {
       {
         target: 'http://168.61.8.82:5086', // uat
       },
+      prefix + '/groovynoauth/fsp/cust/custdetail/queryCustTradeInfo',
+      {
+        // target: 'http://168.61.8.82:5086', // uat
+        // target: 'http://160.9.231.212:8082', // xzx
+        // target: 'http://168.61.8.81:5086', // SIT
+        target: 'http://168.61.8.81:5090', // DOClever
+      },
       prefix,
       {
         target: 'http://168.61.8.82:5086', // uat

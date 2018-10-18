@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-18 14:29:52
+ * @Last Modified time: 2018-10-18 17:54:52
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -254,7 +254,7 @@ export default class AssetDistribute extends PureComponent {
         <div className={styles.zichanText}>
           <span className={styles.value}>{value}</span>
           {
-            isCreditProduct ? (<span className={styles.icon}><Icon type="rong" /></span>) : null
+            isCreditProduct ? (<span className={styles.icon}>融</span>) : null
           }
         </div>
       </div>
@@ -283,7 +283,13 @@ export default class AssetDistribute extends PureComponent {
     // 需要判断数值，如果是>=0的数显示红色并带有加号
     // 如果是<0数显示成绿色，并带有减号
     const isAsc = fixedPercent >= 0;
-    const percentStr = number.convertRate(fixedPercent);
+    // 此处针对超大的百分比数据进行特殊处理
+    let percentStr = number.convertRate(fixedPercent);
+    if (fixedPercent > 10) {
+      percentStr = '>999%';
+    } else if (fixedPercent < -10) {
+      percentStr = '<-999%';
+    }
     const percentText = isAsc ? `+${percentStr}` : `${percentStr}`;
     const profitRateCls = cx({
       [styles.profitRate]: true,

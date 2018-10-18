@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 15:08:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-18 14:12:32
+ * @Last Modified time: 2018-10-18 15:05:40
  * @description 资产分布的雷达图数据处理相关的辅助函数
  */
 import _ from 'lodash';
@@ -21,8 +21,8 @@ export function composeIndicatorAndData(indicators, data) {
     const value = data[index];
     return {
       name: `${name}|${index}|${value}`,
-      max: Math.ceil(max * 1.1),
-      min: Math.floor(min * 0.9),
+      max: Math.ceil((max + 100) * 1.1),
+      min: Math.floor((min - 100) * 0.9),
     };
   });
 };
