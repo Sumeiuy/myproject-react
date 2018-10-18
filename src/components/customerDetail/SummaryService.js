@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 20:43:07
  * @Last Modified by: zhangmei
- * @Last Modified time: 2018-10-17 13:42:29
+ * @Last Modified time: 2018-10-18 18:06:44
  * @description 客户360详情左侧服务记录信息
  */
 import React from 'react';
@@ -18,15 +18,20 @@ export default function SummaryService(props) {
     recentLoginZL,
   } = props;
   // 最近一次服务的文本
+  const {
+    serviceDate,
+    serviceRecordTitle,
+    serviceRecordType,
+  } = recentServe;
   let recentServeText = '暂无';
-  if (
-    _.isEmpty(recentServe.serviceDate)
-    || _.isEmpty(recentServe.serviceRecordType)
-    || _.isEmpty(recentServe.serviceRecordTitle)
-  ) {
+  if (_.isEmpty(serviceDate)) {
     recentServeText = '暂无';
+  } else if ( _.isEmpty(serviceRecordType)) {
+    recentServeText = `${serviceDate} ${serviceRecordTitle}`;
+  } else if (_.isEmpty(serviceRecordTitle)) {
+    recentServeText = `${serviceDate} ${serviceRecordType}`;
   } else {
-    recentServeText = `${recentServe.serviceDate} ${recentServe.serviceRecordType}-${recentServe.serviceRecordTitle}`;
+    recentServeText = `${serviceDate} ${serviceRecordTitle}-${serviceRecordType}`;
   }
   return (
     <div className={styles.wrap}>
