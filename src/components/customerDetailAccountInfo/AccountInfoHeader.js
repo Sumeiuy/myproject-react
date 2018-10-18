@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-17 20:03:36
+ * @Last Modified time: 2018-10-18 10:29:29
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -23,10 +23,10 @@ export default class AccountInfoHeader extends PureComponent {
   static PropTypes = {
     dataSource: PropTypes.array.isRequired,
     realTimeAsset: PropTypes.object.isRequired,
-    storageOfProduct: PropTypes.array.isRequired,
+    productHoldingDate: PropTypes.array.isRequired,
     getSecuritiesHolding: PropTypes.func.isRequired,
     getRealTimeAsset: PropTypes.func.isRequired,
-    getStorageOfProduct: PropTypes.func.isRequired,
+    getProductHoldingDate: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
   }
   constructor(props) {
@@ -41,6 +41,7 @@ export default class AccountInfoHeader extends PureComponent {
     };
   }
 
+  //数据为空时，默认显示空行
   @autobind
   padEmptyRow(data) {
     const len = _.size(data);
@@ -85,7 +86,7 @@ export default class AccountInfoHeader extends PureComponent {
       custId: query && query.custId,
     });
     //进入需要查询下产品实时持仓数据
-    this.props.getStorageOfProduct({
+    this.props.getProductHoldingDate({
       custId: query && query.custId,
     });
   }
@@ -113,7 +114,7 @@ export default class AccountInfoHeader extends PureComponent {
     const productDates = this.padEmptyRow(productDate);
     // 修改Table的Column
     const newColumns = _.map(columns, column => ({...column, render: this.renderColumnValue}));
-    const productColumns = _.map(columns, column => ({...column, render: this.renderColumnValue}));
+    const productColumn = _.map(productColumns, column => ({...column, render: this.renderColumnValue}));
     //取出实时资产的数据
     const { rtimeAssets, availableFunds, advisableFunds } = realTimeAsset;
     //调用处理实时资产数据的方法
@@ -128,11 +129,13 @@ export default class AccountInfoHeader extends PureComponent {
     const { activeKey } = this.state;
     return (
       <div>
-        <Button className={styles.accountHeader}>账户分析</Button>
-        <Button className={styles.accountHeader}>资产配置</Button>
-        <Button className={styles.accountHeader}>交易流水</Button>
-        <Button className={styles.accountHeader}>历史持仓</Button>
+        <div className={styles.accountHeaderContainer}>
         <Button onClick={this.handleRealTimeHoldModalOpen} className={styles.accountHeader}>实时持仓</Button>
+        <Button className={styles.accountHeader}>历史持仓</Button>
+        <Button className={styles.accountHeader}>交易流水</Button>
+        <Button className={styles.accountHeader}>资产配置</Button>
+        <Button className={styles.accountHeader}>账户分析</Button>
+        </div>
         <Modal
           title="实时持仓"
           size="large"
@@ -194,9 +197,9 @@ export default class AccountInfoHeader extends PureComponent {
                   pagination={false}
                 />
               </TabPane>
-              <TabPane tab="产品实时持仓" key="storageOfProducts">
+              <TabPane tab="产品实时持仓" key="productHoldingDate">
                 <Table className={styles.tableContainer}
-                  columns={productColumns}
+                  columns={productColumn}
                   rowKey='productCode'
                   dataSource={productDates}
                   pagination={false} />
