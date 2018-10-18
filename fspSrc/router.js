@@ -68,7 +68,18 @@ const Routers = ({ history, app }) => {
           <Redirect exact from="/invest" to="/statisticalQuery/report" />
           <Redirect exact from="/custAllot" to="/businessApplyment/customerPartition/custAllot" />
           <Redirect exact from="/departmentCustAllot" to="/businessApplyment/customerPartition/departmentCustAllot" />
-          <Redirect exact from="/telephoneNumberManageEdit" to="/sysOperate/telephoneNumberManageEdit" />
+          <Route
+            path="/telephoneNumberManageEdit"
+            exact
+            component={({ location }) => (
+              <Redirect
+                to={{
+                  ...location,
+                  pathname: '/sysOperate/telephoneNumberManageEdit',
+                }}
+              />
+            )}
+          />
           {
             recursiveRouter('/', routerData).map(
               item => (
