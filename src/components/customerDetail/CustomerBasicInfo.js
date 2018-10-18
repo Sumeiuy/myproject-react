@@ -116,6 +116,7 @@ export default class CustomerBasicInfo extends PureComponent {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     // 添加打电话记录
     addCallRecord: PropTypes.func.isRequired,
+    currentCommonServiceRecord: PropTypes.object.isRequired,
   }
 
    static defaultProps = {
@@ -219,6 +220,7 @@ export default class CustomerBasicInfo extends PureComponent {
       motSelfBuiltFeedbackList,
       toggleServiceRecordModal,
       addCallRecord,
+      currentCommonServiceRecord,
     } = this.props;
 
     const renderCustomerBasicInfo = this.transformData(customerBasicInfo);
@@ -229,6 +231,7 @@ export default class CustomerBasicInfo extends PureComponent {
       motSelfBuiltFeedbackList,
       toggleServiceRecordModal,
       addCallRecord,
+      currentCommonServiceRecord,
     };
 
     return (

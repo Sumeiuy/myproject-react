@@ -23,6 +23,8 @@ const mapStateToProps = state => ({
   motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
   // 客户基本信息
   customerBasicInfo: state.customerDetail.customerBasicInfo,
+  // 发送保存服务记录请求成功的服务id
+  currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
 });
 
 const mapDispatchToProps = {
