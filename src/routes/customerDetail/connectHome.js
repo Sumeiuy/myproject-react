@@ -23,6 +23,8 @@ const mapStateToProps = state => ({
   motSelfBuiltFeedbackList: state.app.motSelfBuiltFeedbackList,
   // 客户基本信息
   customerBasicInfo: state.customerDetail.customerBasicInfo,
+  // 发送保存服务记录请求成功的服务id
+  currentCommonServiceRecord: state.customerPool.currentCommonServiceRecord,
 });
 
 const mapDispatchToProps = {
@@ -40,6 +42,7 @@ const mapDispatchToProps = {
   toggleServiceRecordModal: effect('app/toggleServiceRecordModal', {loading: true}),
   // 获取客户基本信息
   getCustomerBasicInfo: effect('customerDetail/getCustomerBasicInfo', {loading: true}),
+  addCallRecord: effect('customerPool/addCallRecord', {loading: true}),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
