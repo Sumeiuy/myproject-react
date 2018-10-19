@@ -1,0 +1,31 @@
+.eventAnalysisReport {
+  background: #fff;
+  margin-top: 20px;
+  border-radius: 2px;
+  .searchEvent {
+    margin-right: 30px;
+  }
+  .eventAnalysisTable {
+    margin: 20px;
+    font-size: 14px;
+    :global {
+      .ant-table {
+        font-size: 14px;
+        color: #666;
+      }
+    }
+  }
+}
+.taskStatisticsChart {
+  position: relative;
+  .taskStatisticsChartReport {
+    position: absolute;
+    display: none;
+    z-index: 100;
+  }
+  &:hover {
+    .taskStatisticsChartReport {
+      display: block;
+    }
+  }
+}

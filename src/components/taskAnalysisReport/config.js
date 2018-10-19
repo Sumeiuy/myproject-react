@@ -60,6 +60,14 @@ const eventSourceOptions = [
   },
 ];
 
+// 事件来源
+const eventSourceTypes = {
+  // 1是MOT推送
+  MOT: '1',
+  // 2是自建
+  SELFBUILD: '2',
+};
+
 // 报表通用配置项
 const generalOptions = {
    // grid
@@ -231,6 +239,7 @@ export {
   generalOptions,
   chartLineOptions,
   executeTypeOptions,
+  eventSourceTypes,
   eventSourceOptions,
   taskCustomerOptions,
   chartLineColors,

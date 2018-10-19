@@ -2,8 +2,8 @@
  * @Descripter: 任务分析报表
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-18 17:26:50
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-10-19 09:44:17
  */
 
 import React, { PureComponent } from 'react';
@@ -17,6 +17,7 @@ import DepartmentFilter from '../../components/taskAnalysisReport/DepartmentFilt
 import TaskCustomerReport from '../../components/taskAnalysisReport/TaskCustomerReport';
 import CompleteServiceCustReport from '../../components/taskAnalysisReport/serviceCust/CompleteServiceCustReport';
 import ComplianceServiceCustReport from '../../components/taskAnalysisReport/serviceCust/ComplianceServiceCustReport';
+import EventAnalysisReport from '../../components/taskAnalysisReport/eventAnalysis/EventAnalysisReport';
 import ServiceChannelReport from '../../components/taskAnalysisReport/serviceChannel/ServiceChannelReport';
 import { emp } from '../../helper';
 import logable from '../../decorators/logable';
@@ -34,6 +35,10 @@ const effects = {
   getComplianceServiceCust: 'taskAnalysisReport/getComplianceServiceCust',
   // 服务渠道统计
   getServiceChannel: 'taskAnalysisReport/getServiceChannel',
+  // 事件分析表
+  getEventAnalysis: 'taskAnalysisReport/getEventAnalysis',
+  // 事件查询
+  getEventSearch: 'taskAnalysisReport/getEventSearch',
 };
 
 const mapStateToProps = state => ({
@@ -44,6 +49,11 @@ const mapStateToProps = state => ({
   // 达标服务客户统计数据
   complianceServiceCustList: state.taskAnalysisReport.complianceServiceCustList,
   // 服务渠道统计数据
+  serviceChannelList: state.taskAnalysisReport.serviceChannelList,
+  // 事件分析表数据
+  eventAnalysisList: state.taskAnalysisReport.eventAnalysisList,
+  // 事件查询数据
+  eventSearchList: state.taskAnalysisReport.eventSearchList,
   serviceChannelData: state.taskAnalysisReport.serviceChannelData,
   // 部门
   custRange: state.customerPool.custRange,
@@ -58,6 +68,10 @@ const mapDispatchToProps = {
   getComplianceServiceCust: effect(effects.getComplianceServiceCust, { forceFull: true }),
   // 获取服务渠道统计数据
   getServiceChannel: effect(effects.getServiceChannel, { forceFull: true }),
+  // 获取事件分析数据
+  getEventAnalysis: effect(effects.getEventAnalysis, { forceFull: true }),
+  // 获取事件查询数据
+  getEventSearch: effect(effects.getEventSearch, { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -79,6 +93,14 @@ export default class TaskAnalysisReport extends PureComponent {
     serviceChannelData: PropTypes.object.isRequired,
     // 获取服务渠道统计
     getServiceChannel: PropTypes.func.isRequired,
+    // 获取事件分析表
+    getEventAnalysis: PropTypes.func.isRequired,
+    // 事件分析表数据
+    eventAnalysisList: PropTypes.object.isRequired,
+    // 事件搜索
+    getEventSearch: PropTypes.func.isRequired,
+    // 事件搜索数据
+    eventSearchList: PropTypes.object.isRequired,
     // 部门
     custRange: PropTypes.array,
   }
@@ -154,6 +176,10 @@ export default class TaskAnalysisReport extends PureComponent {
       getCompleteServiceCust,
       complianceServiceCustList,
       getComplianceServiceCust,
+      getEventAnalysis,
+      eventAnalysisList,
+      getEventSearch,
+      eventSearchList,
       serviceChannelData,
       getServiceChannel,
     } = this.props;
@@ -185,6 +211,12 @@ export default class TaskAnalysisReport extends PureComponent {
             serviceChannelData={serviceChannelData}
             getServiceChannel={getServiceChannel}
             orgId={orgId}
+          />
+          <EventAnalysisReport
+            getEventAnalysis={getEventAnalysis}
+            eventAnalysisList={eventAnalysisList}
+            getEventSearch={getEventSearch}
+            eventSearchList={eventSearchList}
           />
         </div>
       </div>
