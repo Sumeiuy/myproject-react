@@ -141,11 +141,20 @@ export default class SplitPanel extends PureComponent {
     const bottomDistance = 20;
     // FSP头部Tab的高度
     const fspTabHeight = 55;
+    // 新React框架头部功能区的高度
+    const newReactFeatureHegiht = 58;
+    // 新React框架新导航条的高度
+    const newReactNavHeight = 40;
+    // 新React框架下底部copyRight的高度
+    const newReactCRHeight = 40;
 
     // 设置系统容器高度
     let pch = viewHeight;
     if (utb) {
       pch = viewHeight - fspTabHeight;
+    } else if (env.isInReact()) {
+      // 如果在新的React头部框架下，需要减去新的头部高度
+      pch = viewHeight - newReactFeatureHegiht - newReactNavHeight - newReactCRHeight;
     }
     this.setElementStyle(pageContainer, `${pch}px`);
     this.setElementStyle(pageContent, '100%');

@@ -1,7 +1,9 @@
-/**
- * @file feedback/Home.js
- *  问题反馈
- * @author yangquanjian
+/*
+ * @Author: sunweibin
+ * @Date: 2018-10-19 15:24:33
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-10-19 15:24:58
+ * @description 问题反馈
  */
 
 import React, { PureComponent } from 'react';
