@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-19 00:15:42
+ * @Last Modified time: 2018-10-19 14:52:14
  */
 
 import React, { PureComponent } from 'react';
@@ -44,18 +44,20 @@ export default class EventAnalysisReport extends PureComponent {
     } } = context;
     this.state = {
       // 任务开始时间
-      startTime: '',
+      startTime: '2018-10-12',
       // 任务结束时间
-      endTime: '',
+      endTime: '2018-10-18',
       // 事件类型
       eventTypeOptions: [...custServerTypeFeedBackDict,...missionType],
       // 事件来源
       eventSource: '',
+      // 事件名称
+      eventName: '',
     };
   }
 
   componentDidMount() {
-    const { startTime,endTime } = this.state;
+    const {startTime,endTime} = this.state;
     // 获取事件数据
     this.getEventAnalysis({
       startTime,
@@ -78,18 +80,21 @@ export default class EventAnalysisReport extends PureComponent {
     this.setState({
       ...obj,
     }, () => {
-      this.getEventAnalysis(this.state);
+      const query = _.omit(this.state, 'eventTypeOptions');
+      this.getEventAnalysis(query);
     });
   }
 
   // 事件来源更改
   @autobind
   handleEventSource(obj) {
+    console.warn('obj',obj);
     const { eventSource } = obj;
     const { dict: {
       custServerTypeFeedBackDict = [],
       missionType = [],
     } } = this.context;
+    // 此处eventSource为1指的事件来源是MOT推送，为2指事件来源是自建，为''指的不限，通过事件来源控制事件类型
     const eventTypeOptions = eventSource === '1' ? custServerTypeFeedBackDict :
     eventSource === '2' ? missionType : [ ...custServerTypeFeedBackDict,...missionType ];
     this.setState({ eventTypeOptions });
@@ -117,6 +122,7 @@ export default class EventAnalysisReport extends PureComponent {
       endTime,
       eventType,
       eventSource,
+      eventName,
     } = this.state;
     // 事件类型选项
     const { eventTypeOptions } = this.state;
@@ -253,6 +259,7 @@ export default class EventAnalysisReport extends PureComponent {
           eventSelectChange={this.handleEventSource}
           eventSearch={this.getEventSearch}
           eventSearchList={eventSearchList}
+          eventName={eventName}
         />
         <Table className={styles.eventAnalysisTable} columns={columns} dataSource={dataSource}/>
       </div>

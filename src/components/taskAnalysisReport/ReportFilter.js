@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-19 00:26:28
+ * @Last Modified time: 2018-10-19 14:56:03
  */
 
 import React, { PureComponent } from 'react';
@@ -13,12 +13,15 @@ import _ from 'lodash';
 import moment from 'moment';
 import SingleFilter from 'lego-react-filter/src';
 import DateRangePick from 'lego-react-date/src';
+import { AutoComplete  } from 'antd';
 
 import logable from '../../decorators/logable';
 import { defaultStartTime, defaultEndTime, executeTypeOptions, eventSourceOptions } from './config';
 import SimilarAutoComplete from '../common/similarAutoComplete';
 
 import styles from './reportFilter.less';
+
+const Option = AutoComplete.Option;
 
 export default class ReportFilter extends PureComponent {
   static propTypes = {
@@ -46,6 +49,8 @@ export default class ReportFilter extends PureComponent {
     eventSearch: PropTypes.func,
     // 事件搜索数据
     eventSearchList: PropTypes.object,
+    // 事件名称
+    eventName: PropTypes.string,
   }
 
   static defaultProps = {
@@ -56,6 +61,7 @@ export default class ReportFilter extends PureComponent {
     isEventAnalysis: false,
     eventSearchList: {},
     eventSearch: _.noop,
+    eventName: '',
   }
 
   // 选择任务触发时间
@@ -103,11 +109,10 @@ export default class ReportFilter extends PureComponent {
   })
   handleEventSourceChange(option) {
     const { isEventAnalysis } = this.props;
+    const { id, value: { value } } = option;
     if (isEventAnalysis) {
-      const { id, value: { value } } = option;
       this.handleEventSelectChange(id, value);
     }
-    const { id, value: { value } } = option;
     this.handleSelectChange(id, value);
   }
 
@@ -128,8 +133,7 @@ export default class ReportFilter extends PureComponent {
   // select改变
   @autobind
   handleSelectChange(key, v) {
-    const { filterCallback } = this.props;
-    filterCallback({
+    this.props.filterCallback({
       [key]: v,
     });
   }
@@ -137,8 +141,7 @@ export default class ReportFilter extends PureComponent {
   // 事件分析表select改变
   @autobind
   handleEventSelectChange(key, v) {
-    const { eventSelectChange } = this.props;
-    eventSelectChange({
+    this.props.eventSelectChange({
       [key]: v,
     });
   }
@@ -170,18 +173,24 @@ export default class ReportFilter extends PureComponent {
   // 事件选择
   @autobind
   @logable({ type: 'Click', payload: { name: '事件选择', value: '$args[0]' } })
-  handleSelectParticipant(newEvent) {
-    // const { formData } = this.state;
-    // if (_.isEmpty(newEvent)
-    //   || _.get(formData, 'newEvent.eventCode') !== newEvent.eventCode) {
-    //   this.setState({
-    //     formData: {
-    //       ...formData,
-    //       event: newEvent,
-    //     }
-    //   });
-    //   this.props.onChange({ event: newEvent });
-    // }
+  handleEventNameSelect(option) {
+    const { eventName: prevEventName } = this.props;
+    const { eventName } = option;
+    if (eventName !== prevEventName) {
+      this.handleSelectChange('eventName', eventName);
+    }
+  }
+
+  // 渲染事件名
+  @autobind
+  renderEventNameAutoCompleteOption(event) {
+    // 渲染事件名下拉列表的选项DOM
+    const { eventCode, eventName } = event;
+    return (
+      <Option key={eventCode} value={eventName} >
+        <span className={styles.eventAutoCompleteOptionValue} title={eventName}>{eventName}</span>
+      </Option>
+    );
   }
 
   render() {
@@ -197,20 +206,26 @@ export default class ReportFilter extends PureComponent {
       isEventAnalysis,
       eventType,
       eventSearchList,
+      eventName,
      } = this.props;
     const { eventList = [] } = eventSearchList;
     return (
       <div className={styles.reportFilter}>
         {
-          isEventAnalysis?
-          <SimilarAutoComplete
-            placeholder="事件名"
-            style={{ width: 230, height: 30 ,marginRight: 30}}
-            className={styles.searchEvent}
-            optionList={eventList}
-            onSearch={this.handleEventSearch}
-            onSelect={this.handleSelectParticipant}
-          /> : null
+          isEventAnalysis
+          ?
+            <SimilarAutoComplete
+              placeholder="事件名"
+              style={{ width: 230, height: 30 ,marginRight: 30}}
+              className={styles.searchEvent}
+              optionList={eventList}
+              optionKey="eventCode"
+              defaultValue={eventName}
+              onSearch={this.handleEventSearch}
+              onSelect={this.handleEventNameSelect}
+              renderOptionNode={this.renderEventNameAutoCompleteOption}
+            />
+          : null
         }
         <DateRangePick
           type='date'
@@ -224,42 +239,48 @@ export default class ReportFilter extends PureComponent {
           disabledEnd={this.setDisabledEndTime}
         />
         {
-          isEventAnalysis?
-          <SingleFilter
-            filterName='事件类型'
-            filterId='eventType'
-            className='filter'
-            type='single'
-            dataMap={['key', 'value']}
-            data={eventTypeOptions}
-            value={eventType}
-            onChange={this.handleEventTypeChange}
-            needItemObj
-          /> :
-          <SingleFilter
-            filterName='执行类型'
-            filterId='executeType'
-            className='filter'
-            type='single'
-            dataMap={['value', 'label']}
-            data={executeTypeOptions}
-            value={executeType}
-            onChange={this.handleExecuteTypeChange}
-            needItemObj
-          />
+          !isEventAnalysis
+          ?
+            <SingleFilter
+              filterName='执行类型'
+              filterId='executeType'
+              className='filter'
+              type='single'
+              dataMap={['value', 'label']}
+              data={executeTypeOptions}
+              value={executeType}
+              onChange={this.handleExecuteTypeChange}
+              needItemObj
+            />
+          : null
         }
-
-          <SingleFilter
-            filterName='事件来源'
-            filterId='eventSource'
-            className='filter'
-            type='single'
-            dataMap={['value', 'label']}
-            data={eventSourceOptions}
-            value={eventSource}
-            onChange={this.handleEventSourceChange}
-            needItemObj
+        <SingleFilter
+          filterName='事件来源'
+          filterId='eventSource'
+          className='filter'
+          type='single'
+          dataMap={['value', 'label']}
+          data={eventSourceOptions}
+          value={eventSource}
+          onChange={this.handleEventSourceChange}
+          needItemObj
           />
+        {
+          isEventAnalysis
+          ?
+            <SingleFilter
+              filterName='事件类型'
+              filterId='eventType'
+              className='filter'
+              type='single'
+              dataMap={['key', 'value']}
+              data={eventTypeOptions}
+              value={eventType}
+              onChange={this.handleEventTypeChange}
+              needItemObj
+            />
+          : null
+        }
       </div>
     );
   }

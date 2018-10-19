@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-18 18:44:21
+ * @Last Modified time: 2018-10-19 09:44:17
  */
 
 import React, { PureComponent } from 'react';
@@ -191,12 +191,6 @@ export default class TaskAnalysisReport extends PureComponent {
           custRange={createCustRange}
           orgId={orgId}
         />
-        <EventAnalysisReport
-          getEventAnalysis={getEventAnalysis}
-          eventAnalysisList={eventAnalysisList}
-          getEventSearch={getEventSearch}
-          eventSearchList={eventSearchList}
-        />
         <div className={styles.taskAnalysisReport}>
           <TaskCustomerReport
             taskCustomerList={taskCustomerList}
@@ -217,6 +211,12 @@ export default class TaskAnalysisReport extends PureComponent {
             serviceChannelData={serviceChannelData}
             getServiceChannel={getServiceChannel}
             orgId={orgId}
+          />
+          <EventAnalysisReport
+            getEventAnalysis={getEventAnalysis}
+            eventAnalysisList={eventAnalysisList}
+            getEventSearch={getEventSearch}
+            eventSearchList={eventSearchList}
           />
         </div>
       </div>
