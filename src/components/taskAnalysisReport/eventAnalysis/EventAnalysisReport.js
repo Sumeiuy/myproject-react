@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-19 14:52:14
+ * @Last Modified time: 2018-10-19 15:32:24
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import _ from 'lodash';
 import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import { emp } from '../../../helper';
+import { eventSourceTypes } from '../config';
 import TaskStatisticsChart from './TaskStatisticsChart';
 import CustomerStatisticsChart from './CustomerStatisticsChart';
 import ServiceChannelsChangeChart from './ServiceChannelsChangeChart';
@@ -88,15 +89,24 @@ export default class EventAnalysisReport extends PureComponent {
   // 事件来源更改
   @autobind
   handleEventSource(obj) {
-    console.warn('obj',obj);
     const { eventSource } = obj;
+    const { MOT, SELFBUILD } = eventSourceTypes;
     const { dict: {
       custServerTypeFeedBackDict = [],
       missionType = [],
     } } = this.context;
+    let eventTypeOptions = [ ...custServerTypeFeedBackDict,...missionType ];
     // 此处eventSource为1指的事件来源是MOT推送，为2指事件来源是自建，为''指的不限，通过事件来源控制事件类型
-    const eventTypeOptions = eventSource === '1' ? custServerTypeFeedBackDict :
-    eventSource === '2' ? missionType : [ ...custServerTypeFeedBackDict,...missionType ];
+    switch(eventSource) {
+      case MOT:
+        eventTypeOptions = custServerTypeFeedBackDict;
+        break;
+      case SELFBUILD:
+        eventTypeOptions = missionType;
+        break;
+      default:
+        break;
+    }
     this.setState({ eventTypeOptions });
   }
 
@@ -145,7 +155,7 @@ export default class EventAnalysisReport extends PureComponent {
                 <TaskStatisticsChart
                  eventReportList={eventReportList[index]}
                  eventName={eventName}
-                 />
+                />
               </div>
           </div>
         );
@@ -163,7 +173,7 @@ export default class EventAnalysisReport extends PureComponent {
                 <TaskStatisticsChart
                  eventReportList={eventReportList[index]}
                  eventName={eventName}
-                 />
+                />
               </div>
           </div>
         );
@@ -181,7 +191,7 @@ export default class EventAnalysisReport extends PureComponent {
                 <TaskStatisticsChart
                  eventReportList={eventReportList[index]}
                  eventName={eventName}
-                 />
+                />
               </div>
           </div>
         );
@@ -199,7 +209,7 @@ export default class EventAnalysisReport extends PureComponent {
                 <CustomerStatisticsChart
                  eventReportList={eventReportList[index]}
                  eventName={eventName}
-                 />
+                />
               </div>
           </div>
         );
@@ -217,7 +227,7 @@ export default class EventAnalysisReport extends PureComponent {
                 <CustomerStatisticsChart
                  eventReportList={eventReportList[index]}
                  eventName={eventName}
-                 />
+                />
               </div>
           </div>
         );
@@ -235,7 +245,7 @@ export default class EventAnalysisReport extends PureComponent {
                 <ServiceChannelsChangeChart
                  eventReportList={eventReportList[index]}
                  eventName={eventName}
-                 />
+                />
               </div>
           </div>
         );

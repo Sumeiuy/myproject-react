@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-19 14:56:03
+ * @Last Modified time: 2018-10-19 15:36:39
  */
 
 import React, { PureComponent } from 'react';
@@ -264,7 +264,7 @@ export default class ReportFilter extends PureComponent {
           value={eventSource}
           onChange={this.handleEventSourceChange}
           needItemObj
-          />
+        />
         {
           isEventAnalysis
           ?

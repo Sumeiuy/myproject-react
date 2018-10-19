@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-17 14:16:31
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-18 18:00:17
+ * @Last Modified time: 2018-10-19 15:39:12
  */
 
 import React from 'react';
@@ -119,7 +119,7 @@ export default function TaskStatisticsChart(props) {
         (
           <div className={styles.taskStatisticsChart}>
             <div className={styles.chartTitle}>
-                <span>{ eventName }</span>任务统计
+              <span>{ eventName }</span>任务统计
             </div>
             <ChartLegend
               legendList={legendList}
