@@ -3,7 +3,7 @@
  * @Descripter: 服务渠道统计
  * @Date: 2018-10-11 17:38:35
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-18 09:46:21
+ * @Last Modified time: 2018-10-19 16:29:58
  */
 
 import React, { PureComponent } from 'react';
@@ -105,6 +105,7 @@ export default class ServiceChannelReport extends PureComponent {
           eventSource={eventSource}
           filterCallback={this.handlefilterCallback}
         />
+        <div className={styles.divisionLine} />
         <div className={styles.serviceChannelChart}>
           <ServiceChannelPieChart
             proportionList={proportionList}
