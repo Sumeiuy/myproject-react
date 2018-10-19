@@ -3,7 +3,7 @@
  * @Descripter: 服务客户折线图
  * @Date: 2018-10-11 13:18:12
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-18 10:15:37
+ * @Last Modified time: 2018-10-19 12:03:18
  */
 
 import React from 'react';
@@ -20,8 +20,8 @@ import styles from './serviceCustChart.less';
 import imgSrc from '../../chartRealTime/noChart.png';
 
 const { thousandFormat } = number;
-const { yAxisSplitLine, textStyle, toolbox, gridOptions } = generalOptions;
-const { color, series } = chartLineOptions;
+const { yAxisSplitLine, textStyle, toolbox } = generalOptions;
+const { color, series, gridOptions } = chartLineOptions;
 
 export default function ServiceCustChart(props) {
     const {
@@ -122,6 +122,7 @@ export default function ServiceCustChart(props) {
             <div>
               <ChartLegend
                 legendList={legendList}
+                className='lineLegend'
               />
               <IECharts
                 option={options}
