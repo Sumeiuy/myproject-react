@@ -331,6 +331,13 @@ const fspRoutes = [
     containerId: 'FSP_BUSINESS_APPLYMENT_B',
     url: '/bizapply/appointBook/init',
   },
+  // 专项业务知识
+  {
+    path: '/fsp/knowledge',
+    action: 'loadInTab',
+    containerId: 'FSP_M_K_CENTER',
+    url: '/knowledge/initmain',
+  },
 ];
 
 export default fspRoutes;

@@ -408,6 +408,12 @@ const newOpenTabConfig = [
     path: '/preSaleQuery',
     pid: '',
   },
+  {
+    name: '公务手机号码编辑',
+    id: 'FSP_PHONE_EDIT',
+    path: '/sysOperate/telephoneNumberManageEdit',
+    pid: '',
+  },
 ];
 
 // 默认当前激活的主导航菜单项
@@ -457,4 +463,3 @@ const exported = {
 
 export default exported;
 export { newOpenTabConfig, indexPaneKey, defaultMenu };
-

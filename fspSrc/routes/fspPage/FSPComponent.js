@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import store from 'store';
+import { connect } from 'dva';
 import { Prompt } from 'dva/router';
 import _ from 'lodash';
 import { fspRoutes } from '../../../src/config';
@@ -14,14 +15,22 @@ import { os } from '../../../src/helper';
 
 import { BLOCK_JSP_TEST_ELEM, checkJSPValue } from './config';
 
+const mapStateToProps = state => ({
+  isBlocking: state.global.isBlocking,
+});
+
+const mapDispatchToProps = {};
+
 function findRoute(pathname) {
   return os.findBestMatch(pathname, fspRoutes, 'path');
 }
 
+@connect(mapStateToProps, mapDispatchToProps)
 export default class FSPComponent extends PureComponent {
 
-  static contextTypes = {
-    router: PropTypes.object.isRequired,
+  static propTypes = {
+    isBlocking: PropTypes.bool.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -31,20 +40,8 @@ export default class FSPComponent extends PureComponent {
     this.getFspData({ isinitial: true });
     this.state = {
       loading: true,
-      isBlocking: false,
     };
     this.timeoutId = setTimeout(() => this.setState({ loading: false }), 1000);
-  }
-
-  componentDidMount() {
-    const { router } = this.context;
-    this.historyListen = router.history.listen(({ pathname }) => {
-      if (_.find(BLOCK_JSP_TEST_ELEM, item => item.pathname === pathname)) {
-        this.setState({
-          isBlocking: true,
-        });
-      }
-    });
   }
 
   componentDidUpdate(prevProps) {
@@ -58,9 +55,6 @@ export default class FSPComponent extends PureComponent {
   }
 
   componentWillUnmount() {
-    if (this.historyListen) {
-      this.historyListen();
-    }
     return this.timeoutId && clearTimeout(this.timeoutId);
   }
 
@@ -158,14 +152,10 @@ export default class FSPComponent extends PureComponent {
             </iframe>
         }
         <Prompt
-          when={this.state.isBlocking}
+          when={this.props.isBlocking}
           message={this.handlePrompt}
         />
       </div>
     );
   }
 }
-
-FSPComponent.propTypes = {
-  location: PropTypes.object.isRequired,
-};
