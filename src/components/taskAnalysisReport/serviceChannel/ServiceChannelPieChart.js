@@ -3,7 +3,7 @@
  * @Descripter: 渠道占比分布
  * @Date: 2018-10-12 10:10:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-16 11:09:46
+ * @Last Modified time: 2018-10-19 11:09:54
  */
 
 import React from 'react';
@@ -58,6 +58,16 @@ export default function ServiceChannelPieChart(props) {
       series: [{
         type: 'pie',
         radius: ['50%', '70%'],
+        itemStyle: {
+          normal: {
+            shadowBlur: 8,
+            shadowColor: 'rgba(0, 0, 0, 0.3)',
+          },
+          emphasis: {
+            shadowBlur: 8,
+            shadowColor: 'rgba(0, 0, 0, 0.3)',
+          }
+        },
         label: {
           normal: {
             show: false,

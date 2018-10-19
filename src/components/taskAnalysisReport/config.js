@@ -117,7 +117,17 @@ const chartLineOptions = {
         }
       }
     },
-  }
+  },
+  // grid
+  gridOptions: {
+    show: true,
+    top: '40px',
+    left: '0',
+    right: '40px',
+    bottom: '0',
+    containLabel: true,
+    borderWidth: '0',
+  },
 };
 
 
@@ -195,7 +205,7 @@ const serviceChannelOptions = {
     show: true,
     top: '40px',
     left: '0',
-    right: '0',
+    right: '20px',
     bottom: '0',
     containLabel: true,
     borderWidth: '0',
