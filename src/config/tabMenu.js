@@ -409,9 +409,9 @@ const newOpenTabConfig = [
     pid: '',
   },
   {
-    name: '专项业务知识',
-    id: 'FSP_SBK_CENTER',
-    path: '/fsp/knowledge',
+    name: '公务手机号码编辑',
+    id: 'FSP_PHONE_EDIT',
+    path: '/sysOperate/telephoneNumberManageEdit',
     pid: '',
   },
 ];
@@ -463,4 +463,3 @@ const exported = {
 
 export default exported;
 export { newOpenTabConfig, indexPaneKey, defaultMenu };
-
