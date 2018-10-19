@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 10:18:21
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 12:33:31
+ * @Last Modified time: 2018-10-18 14:15:24
  * @description 小额贷、债券负债、股票质押的负债详情
  */
 
@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import DebtDetailItem from './DebtDetailItem';
-import { displayDebtMony } from './utils';
+import { displayMoney } from './utils';
 
 import styles from './debtDetail.less';
 
@@ -21,10 +21,10 @@ export default function OtherDebtDetail(props) {
     return null;
   }
   // 总金额
-  const total = displayDebtMony(data.totalValue);
+  const total = displayMoney(data.totalValue);
   // 当前总利息
-  const currentTotalInterest = displayDebtMony(data.currentTotalInterest);
-  const canBorrowValue = displayDebtMony(data.canBorrowValue);
+  const currentTotalInterest = displayMoney(data.currentTotalInterest);
+  const canBorrowValue = displayMoney(data.canBorrowValue);
   return (
     <div className={styles.detailContainer}>
       <div className={styles.header}>

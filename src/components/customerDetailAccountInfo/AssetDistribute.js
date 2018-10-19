@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-18 11:23:39
+ * @Last Modified time: 2018-10-18 17:54:52
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -22,7 +22,12 @@ import {
   SPECIFIC_INITIAL_NAME,
   SPECIFIC_INITIAL_KEY,
 } from './config';
-import { convertMoney, updateSpecificIndexData } from './utils';
+import {
+  convertMoney,
+  updateSpecificIndexData,
+  displayMoney,
+  displayMoneyWithoutUnit,
+} from './utils';
 import { composeIndicatorAndData } from './assetRadarHelper';
 import { number } from '../../helper';
 import logable, { logPV, logCommon } from '../../decorators/logable';
@@ -92,14 +97,14 @@ export default class AssetDistribute extends PureComponent {
   getIndexTableColumns() {
     return [
       {
-        width: '40%',
+        width: '30%',
         title: '资产',
         dataIndex: 'name',
         key: 'name',
         render: this.renderTableZichanColumn,
       },
       {
-        width: '30%',
+        width: '35%',
         title: '持仓金额/占比',
         dataIndex: 'value',
         key: 'value',
@@ -107,7 +112,7 @@ export default class AssetDistribute extends PureComponent {
         render: this.renderTableValueColumn,
       },
       {
-        width: '30%',
+        width: '35%',
         title: '收益/收益率',
         dataIndex: 'profit',
         key: 'profit',
@@ -122,14 +127,12 @@ export default class AssetDistribute extends PureComponent {
   getRadarOption(radarData) {
     // 1. 获取雷达图的指标名称及
     const indicators = _.map(radarData, item => ({ name: item.name }));
-    // 2. 获取雷达图的每一项指标的值,并且是格式化后的值
-    const data = _.map(radarData, item => convertMoney(item.value || 0, { formater: true }));
+    // 2. 获取雷达图的每一项指标的值
+    const value = _.map(radarData, item => item.value || 0);
     // 3. 因为UI图上面需要在指标名称下显示指标的值，但是echart上并没有这个功能
     // 所以此处需要将指标名称和其指标值先进行拼接起来，然后在区分开
-    const composedIndicators = composeIndicatorAndData(indicators, data);
-    // 4. 取出data中的值的数据
-    const value = _.map(data, item => item.value);
-    // 5. 生成雷达图的配置项
+    const composedIndicators = composeIndicatorAndData(indicators, value);
+    // 4. 生成雷达图的配置项
     return {
       radar: {
         ...CHART_RADAR_OPTIONS,
@@ -141,10 +144,11 @@ export default class AssetDistribute extends PureComponent {
             const nameLable = name.split('|');
             const axisName = nameLable[0];
             const { radarIndexName } = this.state;
+            const value = displayMoneyWithoutUnit(Number(nameLable[2]));
             if (radarIndexName === axisName) {
-              return `{hightLightName|${axisName}}\n{hightLightValue|${nameLable[2]}}`;
+              return `{hightLightName|${axisName}}\n{hightLightValue|${value}}`;
             }
-            return `{name|${axisName}}\n{value|${nameLable[2]}}`;
+            return `{name|${axisName}}\n{value|${value}}`;
           },
         },
         indicator: composedIndicators,
@@ -250,7 +254,7 @@ export default class AssetDistribute extends PureComponent {
         <div className={styles.zichanText}>
           <span className={styles.value}>{value}</span>
           {
-            isCreditProduct ? (<span className={styles.icon}><Icon type="rong" /></span>) : null
+            isCreditProduct ? (<span className={styles.icon}>融</span>) : null
           }
         </div>
       </div>
@@ -262,10 +266,10 @@ export default class AssetDistribute extends PureComponent {
   renderTableValueColumn(value, record) {
     const { percent } = record;
     const percentText = number.convertRate(percent || 0);
-    const holdValue = convertMoney(value || 0, { unit: '元' });
+    const holdText = displayMoney(value || 0);
     return (
       <div className={styles.indexHoldValueCell}>
-        <span className={styles.value}>{`${holdValue.value}${holdValue.unit}`}</span>
+        <span className={styles.value}>{holdText}</span>
         <span className={styles.percent}>{percentText}</span>
       </div>
     );
@@ -279,16 +283,22 @@ export default class AssetDistribute extends PureComponent {
     // 需要判断数值，如果是>=0的数显示红色并带有加号
     // 如果是<0数显示成绿色，并带有减号
     const isAsc = fixedPercent >= 0;
-    const percentStr = number.convertRate(fixedPercent);
+    // 此处针对超大的百分比数据进行特殊处理
+    let percentStr = number.convertRate(fixedPercent);
+    if (fixedPercent > 10) {
+      percentStr = '>999%';
+    } else if (fixedPercent < -10) {
+      percentStr = '<-999%';
+    }
     const percentText = isAsc ? `+${percentStr}` : `${percentStr}`;
     const profitRateCls = cx({
       [styles.profitRate]: true,
       [styles.isAsc]: isAsc,
     });
-    const profitValue = convertMoney(profit || 0, { unit: '元' });
+    const profitText = displayMoney(profit || 0);
     return (
       <div className={styles.indexHoldValueCell}>
-        <span className={styles.profit}>{`${profitValue.value}${profitValue.unit}`}</span>
+        <span className={styles.profit}>{profitText}</span>
         <span className={profitRateCls}>{percentText}</span>
       </div>
     );
