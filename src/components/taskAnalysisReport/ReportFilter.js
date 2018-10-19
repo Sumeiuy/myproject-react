@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-18 18:45:29
+ * @Last Modified time: 2018-10-19 00:26:28
  */
 
 import React, { PureComponent } from 'react';
@@ -205,7 +205,7 @@ export default class ReportFilter extends PureComponent {
           isEventAnalysis?
           <SimilarAutoComplete
             placeholder="事件名"
-            style={{ width: 230, height: 30 }}
+            style={{ width: 230, height: 30 ,marginRight: 30}}
             className={styles.searchEvent}
             optionList={eventList}
             onSearch={this.handleEventSearch}

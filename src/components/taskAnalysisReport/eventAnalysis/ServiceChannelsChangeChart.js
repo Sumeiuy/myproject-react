@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-17 14:16:31
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-18 16:07:55
+ * @Last Modified time: 2018-10-18 23:57:10
  */
 
 import React from 'react';
@@ -43,6 +43,7 @@ const legendList = [
 export default function ServiceChannelsChangeChart(props) {
   const {
     eventReportList,
+    eventName,
     eventReportList: {
       zhangle = [],
       shortMessage = [],
@@ -152,7 +153,7 @@ export default function ServiceChannelsChangeChart(props) {
         (
           <div className={styles.serviceChannelsChangeChart}>
             <div className={styles.chartTitle}>
-                服务渠道变化
+              <span>{ eventName }</span>服务渠道变化
             </div>
             <ChartLegend
               legendList={legendList}

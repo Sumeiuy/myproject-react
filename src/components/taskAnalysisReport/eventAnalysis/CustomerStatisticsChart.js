@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-17 14:16:31
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-18 16:07:48
+ * @Last Modified time: 2018-10-18 23:57:27
  */
 
 import React from 'react';
@@ -33,6 +33,7 @@ const legendList = [
 export default function CustomerStatisticsChart(props) {
   const {
     eventReportList,
+    eventName,
     eventReportList: {
       coveredCustomers = [],
       completedCustomers = [],
@@ -118,7 +119,7 @@ export default function CustomerStatisticsChart(props) {
         (
           <div className={styles.customerStatisticsChart}>
             <div className={styles.chartTitle}>
-                服务客户统计
+              <span>{ eventName }</span>服务客户统计
             </div>
             <ChartLegend
               legendList={legendList}

@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-18 18:17:44
+ * @Last Modified time: 2018-10-19 00:15:42
  */
 
 import React, { PureComponent } from 'react';
@@ -254,7 +254,7 @@ export default class EventAnalysisReport extends PureComponent {
           eventSearch={this.getEventSearch}
           eventSearchList={eventSearchList}
         />
-        <Table columns={columns} dataSource={dataSource}/>
+        <Table className={styles.eventAnalysisTable} columns={columns} dataSource={dataSource}/>
       </div>
     );
   }
