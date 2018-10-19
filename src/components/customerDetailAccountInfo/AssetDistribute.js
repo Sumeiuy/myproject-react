@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-18 17:54:52
+ * @Last Modified time: 2018-10-19 14:25:23
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -252,7 +252,7 @@ export default class AssetDistribute extends PureComponent {
     return (
       <div className={styles.zichanCell}>
         <div className={styles.zichanText}>
-          <span className={styles.value}>{value}</span>
+          <span className={styles.value} title={value}>{value}</span>
           {
             isCreditProduct ? (<span className={styles.icon}>融</span>) : null
           }

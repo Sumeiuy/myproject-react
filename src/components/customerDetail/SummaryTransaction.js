@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 22:30:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-18 17:47:56
+ * @Last Modified time: 2018-10-19 14:19:15
  * @description 客户360详情交易数据展示模块
  */
 import React from 'react';
@@ -12,7 +12,6 @@ import _ from 'lodash';
 import MoneyCell from './MoneyCell';
 import RateCell from './RateCell';
 import { displayMoney } from '../customerDetailAccountInfo/utils';
-import { calcSameTimeRate } from './utils';
 import { number } from '../../helper';
 
 import styles from './summaryTransaction.less';

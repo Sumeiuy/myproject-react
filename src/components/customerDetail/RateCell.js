@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 08:50:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-19 10:24:55
+ * @Last Modified time: 2018-10-19 14:10:57
  * @description 新版客户360详情交易数据中比例展示Cell
  */
 import React from 'react';
@@ -23,7 +23,10 @@ export default function RateCell(props) {
   const newCurrentText = isMoney ? displayMoney(current) : number.convertRate(current);
   // 1.首先判断什么时候显示 Tip
   // 当前去年同期值不等于 0 ，以及计算出来的增长率为0的时候，不显示提示
-  let notDisPlayTip = last !== 0 && calcSameTimeRate(current, last) === 0;
+  const ascRateEqualO = last !== 0 && calcSameTimeRate(current, last) === 0;
+  // 当去年同期值和当前值都等于 0的时候也不显示
+  const isAllZero = last === 0 && current === 0;
+  const notDisPlayTip = ascRateEqualO || isAllZero;
   // 2. 展示的比率提示信息
   const tips = last === 0 ? getRateTipWhenLastEqual0(current) : getRateTip(last, current);
   const ascCls = cx({
