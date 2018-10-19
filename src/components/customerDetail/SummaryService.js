@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 20:43:07
  * @Last Modified by: zhangmei
- * @Last Modified time: 2018-10-18 18:06:44
+ * @Last Modified time: 2018-10-19 14:34:16
  * @description 客户360详情左侧服务记录信息
  */
 import React from 'react';
@@ -40,7 +40,7 @@ export default function SummaryService(props) {
           <span className={styles.title}>可开通业务</span>
           <span className={styles.detail}>详情</span>
         </div>
-        <div className={styles.content}>{openBusiness || '暂无'}</div>
+        <div className={styles.content} title={openBusiness || '暂无'}>{openBusiness || '暂无'}</div>
       </div>
       <div className={styles.serviceCell}>
         <div className={styles.header}>
