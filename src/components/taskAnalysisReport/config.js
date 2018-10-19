@@ -122,7 +122,7 @@ const chartLineOptions = {
   gridOptions: {
     show: true,
     top: '40px',
-    left: '0',
+    left: '20px',
     right: '40px',
     bottom: '0',
     containLabel: true,
