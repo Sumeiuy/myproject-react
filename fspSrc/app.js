@@ -45,7 +45,6 @@ function navToUserLogin() {
 
 // 处理门户超时静态资源请求错误
 window.addEventListener('error', function(e, url) {
-  debugger;
   if (_.isString(e)) { // ie 11
     if ((e === '语法错误' || e.indexOf('Syntax') > -1) && /static/.test(url)) {
       navToUserLogin();
