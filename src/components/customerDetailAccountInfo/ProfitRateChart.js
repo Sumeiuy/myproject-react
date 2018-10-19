@@ -159,6 +159,7 @@ export default class ProfitRateChart extends Component {
         },
         formatter: this.tooltipFormat,
       },
+      color: ['#fe5f03', '#7289b4'],
     };
 
     return (
