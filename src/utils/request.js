@@ -22,6 +22,7 @@ function parseJSON(response, options) {
   const {
     ignoreCatch = false,
     isFullUrl,
+    currentUrl,
   } = options;
 
   return response.json().then(
@@ -37,17 +38,22 @@ function parseJSON(response, options) {
       const isThrowError = !existExclude && !succeed && !ignoreCatch;
       if (isThrowError) {
         // 抛出以分隔符为分隔的错误字符串信息
-        throw new Error([msg, messageType, code].join(config.ERROR_SEPARATOR));
+        throw new Error([msg, messageType, code, currentUrl].join(config.ERROR_SEPARATOR));
       }
       return res;
     }
   ).catch(
     (e) => {
-      const isFSPRequest = /^\/fsp\//.test(options.currentUrl);
+      const isFSPRequest = /^\/fsp\//.test(currentUrl);
       if (!isFSPRequest) {
         // 抛出以分隔符为分隔的错误字符串信息
         throw e;
       }
+      // 静默处理，返回一个空的resultData
+      const res = {
+        resultData: {},
+      };
+      return res;
     }
   );
 }
@@ -105,6 +111,14 @@ const myHeaders = new Headers({
 const fspRequest = (url, options) => (
   Promise.race([
     fetch(url, { credentials: 'include', ...options, myHeaders })
+      .then((res) => {
+        if(res.status === 302) {
+          if(/\/fsp\/login/.test(res.headers.location)) {
+            window.href = res.headers.location;
+          }
+        }
+        return res;
+      })
       .then(parseText),
     new Promise(
       (rosolve, reject) => {// eslint-disable-line
