@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-19 17:23:01
+ * @Last Modified time: 2018-10-22 14:27:57
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -113,7 +113,7 @@ export default class AssetDistribute extends PureComponent {
       },
       {
         width: '35%',
-        title: '收益/收益率',
+        title: '收益',
         dataIndex: 'profit',
         key: 'profit',
         className: styles.profitCls,
@@ -191,7 +191,8 @@ export default class AssetDistribute extends PureComponent {
   @autobind
   @logPV({ pathname: '/modal/custDetailAccountDebtDetailModal', title: '负债详情' })
   handleDebtDetailIconClick() {
-    this.setState({ debtDetailModal: true });
+    // TODO 本期由于后端的数据不一致性，暂时不暂时负债详情弹出框
+    // this.setState({ debtDetailModal: true });
   }
 
   // 关闭负债详情弹框
@@ -278,28 +279,32 @@ export default class AssetDistribute extends PureComponent {
   // 渲染收益/收益率的单元格
   @autobind
   renderTableProfitColumn(profit, record) {
-    const { profitPercent } = record;
-    const fixedPercent = profitPercent || 0;
+    // TODO 本期暂时不展示收益率，后期需要展示，所以暂时保留处理逻辑
+    // const { profitPercent } = record;
+    // const fixedPercent = profitPercent || 0;
     // 需要判断数值，如果是>=0的数显示红色并带有加号
     // 如果是<0数显示成绿色，并带有减号
-    const isAsc = fixedPercent >= 0;
+    // const isAsc = fixedPercent >= 0;
     // 此处针对超大的百分比数据进行特殊处理
-    let percentStr = number.convertRate(fixedPercent);
-    if (fixedPercent > 10) {
-      percentStr = '>999%';
-    } else if (fixedPercent < -10) {
-      percentStr = '<-999%';
-    }
-    const percentText = isAsc ? `+${percentStr}` : `${percentStr}`;
-    const profitRateCls = cx({
-      [styles.profitRate]: true,
-      [styles.isAsc]: isAsc,
-    });
+    // let percentStr = number.convertRate(fixedPercent);
+    // if (fixedPercent > 10) {
+    //   percentStr = '>999%';
+    // } else if (fixedPercent < -10) {
+    //   percentStr = '<-999%';
+    // }
+    // const percentText = isAsc ? `+${percentStr}` : `${percentStr}`;
+    // const profitRateCls = cx({
+    //   [styles.profitRate]: true,
+    //   [styles.isAsc]: isAsc,
+    // });
     const profitText = displayMoney(profit || 0);
     return (
       <div className={styles.indexHoldValueCell}>
         <span className={styles.profit}>{profitText}</span>
-        <span className={profitRateCls}>{percentText}</span>
+        {/*
+          // TODO 本期暂时不展示收益率，后期需要展示
+          <span className={profitRateCls}>{percentText}</span>
+         */}
       </div>
     );
   }
@@ -373,9 +378,11 @@ export default class AssetDistribute extends PureComponent {
                             <span className={styles.label}>负债：</span>
                             <span className={styles.value}>{totalDebt.value}</span>
                             <span className={styles.unit}>{totalDebt.unit}</span>
-                            <span className={styles.infoIco} onClick={this.handleDebtDetailIconClick}>
-                              <Icon type="tishi2" />
-                            </span>
+                            {/*
+                              <span className={styles.infoIco} onClick={this.handleDebtDetailIconClick}>
+                                <Icon type="tishi2" />
+                              </span>
+                            */}
                           </span>
                         )
                         : null
