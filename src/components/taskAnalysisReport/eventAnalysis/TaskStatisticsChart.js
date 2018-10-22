@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-17 14:16:31
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-19 15:39:12
+ * @Last Modified time: 2018-10-22 15:02:01
  */
 
 import React from 'react';
@@ -13,38 +13,49 @@ import IECharts from '../../IECharts';
 import ChartLegend from '../ChartLegend';
 import { filterData } from '../utils';
 import { number } from '../../../helper';
+import { taskOption } from '../config';
 
 import styles from './taskStatisticsChart.less';
 import imgSrc from '../../chartRealTime/noChart.png';
 
 const { thousandFormat } = number;
-const legendList = [
-  {
-    color: '#f7ad33',
-    name: '触发任务数',
-    type: 'line',
-  },
-  {
-    color: '#4c70b3',
-    name: '剩余任务数',
-    type: 'line',
-  }
-];
+const { legendList,color,eventReportName,eventReportOption } = taskOption;
 export default function TaskStatisticsChart(props) {
   const {
     eventReportList,
     eventName,
     eventReportList: {
-      triggerTask = [],
-      completedTask = [],
+      triggerTaskList = [],
+      completedTaskList = [],
+      coveredCustomersList = [],
+      completedCustomersList = [],
+      zhangleList = [],
+      shortMessageList = [],
+      phoneList = [],
+      interviewList = [],
     }
   } = props;
-  // 触发任务数数据
-  const triggerTaskData = filterData(triggerTask, 'triggerTaskNumber');
+  const dataKeys = _.keys(eventReportOption);
+  const dataValues = _.values(eventReportOption);
+  // 第一组数据
+  const triggerTaskData = filterData(triggerTaskList, 'triggerTaskNumber');
   // 完成任务数数据
-  const completedTaskData = filterData(completedTask, 'completedTaskNumber');
+  const completedTaskData = filterData(completedTaskList, 'completedTaskNumber');
+  // 覆盖客户数数据
+  const coveredCustomersData = filterData(coveredCustomersList, 'coveredCustomersNumber');
+  // 完成客户数数据
+  const completedCustomersData = filterData(completedCustomersList, 'completedCustomersNumber');
+  // 涨乐数据
+  const zhangleData = filterData(zhangleList, 'percentage');
+  // 短信数据
+  const shortMessageData = filterData(shortMessageList, 'percentage');
+  // 电话数据
+  const phoneData = filterData(phoneList, 'percentage');
+  // 面谈数据
+  const interviewData = filterData(interviewList, 'percentage');
   // xAxis轴截止时间数据
-  const deadlineTimeData = filterData(triggerTask, 'deadlineTime');
+  const deadlineTimeData = filterData(triggerTaskList, 'deadlineTime');
+
   // tooltip 配置项
   const tooltipOtions = {
     trigger: 'axis',
@@ -73,7 +84,7 @@ export default function TaskStatisticsChart(props) {
         border-radius: 3px 3px 3px 0 0 3px 0 0 0;`,
   };
   const options = {
-    color: ['#f7ad33', '#4c70b3'],
+    color: color,
     toolbox: {
       show: false,
     },
@@ -82,6 +93,7 @@ export default function TaskStatisticsChart(props) {
       {
         type: 'category',
         data: deadlineTimeData,
+        boundaryGap: false,
         axisLabel: {
           interval: 0,
           margin: 20,
@@ -93,6 +105,18 @@ export default function TaskStatisticsChart(props) {
         type: 'value',
         axisLabel: {
           margin: 20,
+        },
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#979797',
+            type: 'dotted',
+          }
         }
       },
     ],
@@ -102,12 +126,14 @@ export default function TaskStatisticsChart(props) {
         type: 'line',
         data: triggerTaskData,
         smooth: true,
+        symbol: 'none',
       },
       {
         name: '已完成任务数',
         type: 'line',
         data: completedTaskData,
         smooth: true,
+        symbol: 'none',
       },
     ],
   };
@@ -119,7 +145,7 @@ export default function TaskStatisticsChart(props) {
         (
           <div className={styles.taskStatisticsChart}>
             <div className={styles.chartTitle}>
-              <span>{ eventName }</span>任务统计
+              { eventName }{ eventReportName }
             </div>
             <ChartLegend
               legendList={legendList}

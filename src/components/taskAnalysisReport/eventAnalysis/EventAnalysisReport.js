@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-19 15:32:24
+ * @Last Modified time: 2018-10-22 16:16:09
  */
 
 import React, { PureComponent } from 'react';
@@ -136,7 +136,6 @@ export default class EventAnalysisReport extends PureComponent {
     } = this.state;
     // 事件类型选项
     const { eventTypeOptions } = this.state;
-
     // 展示表格头部
     const columns = [{
       title: '事件名称',
@@ -148,7 +147,7 @@ export default class EventAnalysisReport extends PureComponent {
       key: 'taskNum',
       render: (text,record,index) => {
         const { eventName } = record;
-        return(
+        return (
           <div className={styles.taskStatisticsChart}>
               <span>{text}</span>
               <div className={styles.taskStatisticsChartReport}>
@@ -166,7 +165,7 @@ export default class EventAnalysisReport extends PureComponent {
       key: 'completedTaskNum',
       render: (text,record,index) => {
         const { eventName } = record;
-        return(
+        return (
           <div className={styles.taskStatisticsChart}>
               <span>{text}</span>
               <div className={styles.taskStatisticsChartReport}>
@@ -184,7 +183,7 @@ export default class EventAnalysisReport extends PureComponent {
       key: 'taskCompletionRate',
       render: (text,record,index) => {
         const { eventName } = record;
-        return(
+        return (
           <div className={styles.taskStatisticsChart}>
               <span>{text}</span>
               <div className={styles.taskStatisticsChartReport}>
@@ -202,7 +201,7 @@ export default class EventAnalysisReport extends PureComponent {
       key: 'coveredCustomerNum',
       render: (text,record,index) => {
         const { eventName } = record;
-        return(
+        return (
           <div className={styles.taskStatisticsChart}>
               <span>{text}</span>
               <div className={styles.taskStatisticsChartReport}>
@@ -220,7 +219,7 @@ export default class EventAnalysisReport extends PureComponent {
       key: 'servedCustomerNum',
       render: (text,record,index) => {
         const { eventName } = record;
-        return(
+        return (
           <div className={styles.taskStatisticsChart}>
               <span>{text}</span>
               <div className={styles.taskStatisticsChartReport}>
@@ -238,7 +237,7 @@ export default class EventAnalysisReport extends PureComponent {
       key: 'servicesAccounted',
       render: (text,record,index) => {
         const { eventName } = record;
-        return(
+        return (
           <div className={styles.taskStatisticsChart}>
               <span>{text}</span>
               <div className={styles.taskStatisticsChartReport}>

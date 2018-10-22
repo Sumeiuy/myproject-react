@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-17 14:16:31
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-18 23:57:10
+ * @Last Modified time: 2018-10-22 15:03:56
  */
 
 import React from 'react';
@@ -13,54 +13,34 @@ import IECharts from '../../IECharts';
 import ChartLegend from '../ChartLegend';
 import { filterData } from '../utils';
 import { number } from '../../../helper';
+import { serviceChannelChangeOption } from '../config';
 
 import styles from './serviceChannelsChangeChart.less';
 import imgSrc from '../../chartRealTime/noChart.png';
 
 const { thousandFormat } = number;
-const legendList = [
-  {
-    color: '#f7ad33',
-    name: '涨乐',
-    type: 'line',
-  },
-  {
-    color: '#4c70b3',
-    name: '短信',
-    type: 'line',
-  },
-  {
-    color: '#67b8e1',
-    name: '电话',
-    type: 'line',
-  },
-  {
-    color: '#cf4b4a',
-    name: '面谈',
-    type: 'line',
-  }
-];
+const { legendList } = serviceChannelChangeOption;
 export default function ServiceChannelsChangeChart(props) {
   const {
     eventReportList,
     eventName,
     eventReportList: {
-      zhangle = [],
-      shortMessage = [],
-      phone = [],
-      interview = [],
+      zhangleList = [],
+      shortMessageList = [],
+      phoneList = [],
+      interviewList = [],
     }
   } = props;
   // 涨乐数据
-  const zhangleData = filterData(zhangle, 'percentage');
+  const zhangleData = filterData(zhangleList, 'percentage');
   // 短信数据
-  const shortMessageData = filterData(shortMessage, 'percentage');
+  const shortMessageData = filterData(shortMessageList, 'percentage');
   // 电话数据
-  const phoneData = filterData(phone, 'percentage');
+  const phoneData = filterData(phoneList, 'percentage');
   // 面谈数据
-  const interviewData = filterData(interview, 'percentage');
+  const interviewData = filterData(interviewList, 'percentage');
   // xAxis轴截止时间数据
-  const deadlineTimeData = filterData(zhangle, 'deadlineTime');
+  const deadlineTimeData = filterData(zhangleList, 'deadlineTime');
   // tooltip 配置项
   const tooltipOtions = {
     trigger: 'axis',
@@ -95,7 +75,6 @@ export default function ServiceChannelsChangeChart(props) {
         border-radius: 3px 3px 3px 0 0 3px 0 0 0;`,
   };
   const options = {
-    color: ['#f7ad33', '#4c70b3', '#67b8e1', '#cf4b4a'],
     toolbox: {
       show: false,
     },
@@ -115,6 +94,18 @@ export default function ServiceChannelsChangeChart(props) {
         type: 'value',
         axisLabel: {
           margin: 20,
+        },
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#979797',
+            type: 'dotted',
+          }
         }
       },
     ],
@@ -124,24 +115,28 @@ export default function ServiceChannelsChangeChart(props) {
         type: 'line',
         data: zhangleData,
         smooth: true,
+        symbol: 'none',
       },
       {
         name: '短信',
         type: 'line',
         data: shortMessageData,
         smooth: true,
+        symbol: 'none',
       },
       {
         name: '电话',
         type: 'line',
         data: phoneData,
         smooth: true,
+        symbol: 'none',
       },
       {
         name: '面谈',
         type: 'line',
         data: interviewData,
         smooth: true,
+        symbol: 'none',
       },
     ],
   };

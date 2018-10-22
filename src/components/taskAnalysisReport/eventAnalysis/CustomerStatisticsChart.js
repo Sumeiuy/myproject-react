@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-17 14:16:31
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-18 23:57:27
+ * @Last Modified time: 2018-10-22 15:04:09
  */
 
 import React from 'react';
@@ -13,38 +13,28 @@ import IECharts from '../../IECharts';
 import ChartLegend from '../ChartLegend';
 import { filterData } from '../utils';
 import { number } from '../../../helper';
+import { customerOption } from '../config';
 
 import styles from './customerStatisticsChart.less';
 import imgSrc from '../../chartRealTime/noChart.png';
 
 const { thousandFormat } = number;
-const legendList = [
-  {
-    color: '#f7ad33',
-    name: '覆盖客户数',
-    type: 'line',
-  },
-  {
-    color: '#4c70b3',
-    name: '完成客户数',
-    type: 'line',
-  }
-];
+const { legendList } = customerOption;
 export default function CustomerStatisticsChart(props) {
   const {
     eventReportList,
     eventName,
     eventReportList: {
-      coveredCustomers = [],
-      completedCustomers = [],
+      coveredCustomersList = [],
+      completedCustomersList = [],
     }
   } = props;
   // 覆盖客户数数据
-  const coveredCustomersData = filterData(coveredCustomers, 'coveredCustomersNumber');
+  const coveredCustomersData = filterData(coveredCustomersList, 'coveredCustomersNumber');
   // 完成客户数数据
-  const completedCustomersData = filterData(completedCustomers, 'completedCustomersNumber');
+  const completedCustomersData = filterData(completedCustomersList, 'completedCustomersNumber');
   // xAxis轴截止时间数据
-  const deadlineTimeData = filterData(coveredCustomers, 'deadlineTime');
+  const deadlineTimeData = filterData(coveredCustomersList, 'deadlineTime');
   // tooltip 配置项
   const tooltipOtions = {
     trigger: 'axis',
@@ -93,6 +83,18 @@ export default function CustomerStatisticsChart(props) {
         type: 'value',
         axisLabel: {
           margin: 20,
+        },
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#979797',
+            type: 'dotted',
+          }
         }
       },
     ],
@@ -102,12 +104,14 @@ export default function CustomerStatisticsChart(props) {
         type: 'line',
         data: coveredCustomersData,
         smooth: true,
+        symbol: 'none',
       },
       {
         name: '完成客户数',
         type: 'line',
         data: completedCustomersData,
         smooth: true,
+        symbol: 'none',
       },
     ],
   };
