@@ -2,8 +2,8 @@
  * @Author: zhangjun
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
- * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-19 15:36:39
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-10-22 13:26:15
  */
 
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
+import classnames from 'classnames';
 import SingleFilter from 'lego-react-filter/src';
 import DateRangePick from 'lego-react-date/src';
 import { AutoComplete  } from 'antd';
@@ -209,6 +210,10 @@ export default class ReportFilter extends PureComponent {
       eventName,
      } = this.props;
     const { eventList = [] } = eventSearchList;
+    const dateRangePicker = classnames({
+      [styles.filter]: true,
+      [styles.dateRangePickFilter]: true,
+    });
     return (
       <div className={styles.reportFilter}>
         {
@@ -230,7 +235,7 @@ export default class ReportFilter extends PureComponent {
         <DateRangePick
           type='date'
           filterId='filterDate'
-          className={styles.filter}
+          className={dateRangePicker}
           filterName={dateFilterName}
           value={[startTime, endTime]}
           filterValue={[defaultStartTime, defaultEndTime]}
