@@ -211,7 +211,7 @@ const serviceChannelOptions = {
     show: true,
     top: '40px',
     left: '0',
-    right: '20px',
+    right: '40px',
     bottom: '0',
     containLabel: true,
     borderWidth: '0',

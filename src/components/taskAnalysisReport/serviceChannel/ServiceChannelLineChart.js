@@ -3,7 +3,7 @@
  * @Descripter: 渠道变化趋势
  * @Date: 2018-10-12 15:30:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-18 10:15:29
+ * @Last Modified time: 2018-10-22 13:35:51
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -58,7 +58,7 @@ export default function ServiceCustChart(props) {
     // xAxis轴截止时间数据
     const deadlineTimeData = filterData(zhangleList, 'deadlineTime');
     // xAxis轴刻度标签的显示间隔, 超过30天，则横坐标改为按周展示
-    const xAxisLabelInterval = deadlineTimeData.length > 30 ? 6 : 0;
+    const xAxisLabelInterval = deadlineTimeData.length > 10 ? 6 : 0;
     // tooltip 配置项
     const tooltipOtions = {
       trigger: 'axis',
