@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-18 13:50:51
+ * @Last Modified time: 2018-10-22 15:15:20
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -12,12 +12,15 @@ import _ from 'lodash';
 import Modal from '../../components/common/biz/CommonModal';
 import Table from '../../components/common/table';
 import styles from './accountInfoHeader.less';
-import { transformItemUnit } from '../chartRealTime/FixNumber';
+import { number } from '../../helper';
+import { displayTransMoney } from './utils';
 import { list, columns, productColumns } from './config';
 //tab栏
 const TabPane = Tabs.TabPane;
 //单选框
 const RadioGroup = Radio.Group;
+//处理千分位以及小数保留后两位
+const { thousandFormat, toFixed, formatRound } = number;
 
 export default class AccountInfoHeader extends PureComponent {
   static PropTypes = {
@@ -40,7 +43,6 @@ export default class AccountInfoHeader extends PureComponent {
       activeKey: 'securitiesHoldings',
     };
   }
-
   //数据为空时，默认显示空行
   @autobind
   padEmptyRow(data) {
@@ -51,7 +53,7 @@ export default class AccountInfoHeader extends PureComponent {
       for (let i = 0; i < padLen; i++) {
         newData = _.concat(newData, [{
           key: `empty_row_${i}`,
-          productCode: `empty_row_${i}`,
+          // productCode: `empty_row_${i}`,
           // 空白行标志
           flag: true,
         }]);
@@ -74,8 +76,8 @@ export default class AccountInfoHeader extends PureComponent {
   // 打开实时持仓的弹出层
   @autobind
   handleRealTimeHoldModalOpen() {
-    const { query } = this.props.location;
     this.setState({ realTimeHoldModalVisible: true });
+    const { query } = this.props.location;
     //进入需要查询下证券实时持仓数据
     this.props.getSecuritiesHolding({
       custId: query && query.custId,
@@ -109,39 +111,74 @@ export default class AccountInfoHeader extends PureComponent {
       realTimeHoldModalVisible,
     } = this.state;
     const { dataSource, realTimeAsset, productDate } = this.props;
-   //空白数据填充
+    //空白数据填充
     const newDateSource = this.padEmptyRow(dataSource);
     const productDates = this.padEmptyRow(productDate);
     // 修改Table的Column
-    const newColumns = _.map(columns, column => ({...column, render: this.renderColumnValue}));
-    const productColumn = _.map(productColumns, column => ({...column, render: this.renderColumnValue}));
+    const newColumns = _.map(columns, column => ({ ...column, render: this.renderColumnValue }));
+    const productColumn = _.map(productColumns, column => ({ ...column, render: this.renderColumnValue }));
+
+    //处理表格数据千分位以及小数保留两（三）位小数
+    const newDateSources = _.map(newDateSource, (item) => {
+      const { profitAndLoss, presentPrice, marketValue, cost, holdingNumber, availableNumber } = item;
+      const newProfitAndLoss = thousandFormat(toFixed(profitAndLoss, 2), true, ',', false);
+      const newPresentPrice = thousandFormat(toFixed(presentPrice, 2), true, ',', false);
+      const newMarketValue = thousandFormat(toFixed(marketValue, 2), true, ',', false);
+      const newCost = thousandFormat(toFixed(cost, 3), true, ',', false);
+      const newHoldingNumber = thousandFormat(holdingNumber, true, ',', false);
+      const newAvailableNumber = thousandFormat(availableNumber, true, ',', false);
+      return {
+        ...item,
+        profitAndLoss: newProfitAndLoss,
+        presentPrice: newPresentPrice,
+        marketValue: newMarketValue,
+        cost: newCost,
+        holdingNumber: newHoldingNumber,
+        availableNumber: newAvailableNumber
+      };
+    });
+
+    const newProductDates = _.map(productDates, (items) => {
+      const { share, netWorth, marketValue, profitAndLoss } = items;
+      const newShare = thousandFormat(toFixed(share, 2), true, ',', false);
+      const newNetWorth = thousandFormat(formatRound(netWorth, 2, false), true, ',', false);
+      const newMarketValue = thousandFormat(toFixed(marketValue, 2), true, ',', false);
+      const newProfitAndLoss = thousandFormat(toFixed(profitAndLoss, 2), true, ',', false);
+      return {
+        ...items,
+        share: newShare,
+        netWorth: newNetWorth,
+        marketValue: newMarketValue,
+        profitAndLoss: newProfitAndLoss
+      };
+    });
     //取出实时资产的数据
     const { rtimeAssets, availableFunds, advisableFunds } = realTimeAsset;
     //调用处理实时资产数据的方法
-    const rtimeAsset = transformItemUnit(rtimeAssets);
+    const rtimeAsset = displayTransMoney(rtimeAssets);
     //根据资产的正负判断实时资产的颜色
     let realTimeColor = {};
-    if (rtimeAsset.newItem > 0) {
+    if (rtimeAssets > 0) {
       realTimeColor = { color: 'red' };
     }
-    else if (rtimeAsset.newItem === 0) {
+    else if (rtimeAssets === 0) {
       realTimeColor = { color: '#333' };
     }
-    const availableFund = transformItemUnit(availableFunds);
-    const advisableFund = transformItemUnit(advisableFunds);
+    const availableFund = displayTransMoney(availableFunds);
+    const advisableFund = displayTransMoney(advisableFunds);
     const { activeKey } = this.state;
     return (
       <div>
         <div className={styles.accountHeaderContainer}>
-        <Button onClick={this.handleRealTimeHoldModalOpen} className={styles.accountHeader}>实时持仓</Button>
-        <Button className={styles.accountHeader}>历史持仓</Button>
-        <Button className={styles.accountHeader}>交易流水</Button>
-        <Button className={styles.accountHeader}>资产配置</Button>
-        <Button className={styles.accountHeader}>账户分析</Button>
+          <Button onClick={this.handleRealTimeHoldModalOpen} className={styles.accountHeader}>实时持仓</Button>
+          <Button className={styles.accountHeader}>历史持仓</Button>
+          <Button className={styles.accountHeader}>交易流水</Button>
+          <Button className={styles.accountHeader}>资产配置</Button>
+          <Button className={styles.accountHeader}>账户分析</Button>
         </div>
         <Modal
           title="实时持仓"
-          size="large"
+          size='large'
           showOkBtn={false}
           destroyOnClose
           visible={realTimeHoldModalVisible}
@@ -149,19 +186,20 @@ export default class AccountInfoHeader extends PureComponent {
           onCancel={this.handleRealTimeHoldModalClose}
           selfBtnGroup={[(<Button onClick={this.handleRealTimeHoldModalClose}>关闭</Button>)]}
           modalKey="realTimeModal"
+          maskClosable={false}
         >
           <div className={styles.assets}>
             <div className={styles.assetsContainer}>
               <span className={styles.rtimeAsset}>实时资产</span>
-              <span className={styles.assetsnewItem} style={realTimeColor}>{rtimeAsset.newItem}{rtimeAsset.newUnit}</span>
+              <span className={styles.assetsnewItem} style={realTimeColor}>{rtimeAsset}</span>
             </div>
             <div className={styles.assetsContainer}>
               <span className={styles.availableFund}>可用资金</span>
-              <span className={styles.assetsnewUnit}>{availableFund.newItem}{availableFund.newUnit}</span>
+              <span className={styles.assetsnewUnit}>{availableFund}</span>
             </div>
             <div className={styles.assetsContainer}>
               <span className={styles.availableFund}>可取资金</span>
-              <span className={styles.assetsnewUnit}>{advisableFund.newItem}{advisableFund.newUnit}</span>
+              <span className={styles.assetsnewUnit}>{advisableFund}</span>
             </div>
           </div>
           <div className={styles.tabContainer}>
@@ -193,19 +231,22 @@ export default class AccountInfoHeader extends PureComponent {
                   </RadioGroup>
                 </div>
                 <Table
-                  rowKey='productCode'
+                  rowKey='dataIndex'
                   className={styles.tableContainer}
                   columns={newColumns}
-                  dataSource={newDateSource}
+                  dataSource={newDateSources}
                   pagination={false}
+                  scroll={{x: '1026px'}}
                 />
               </TabPane>
               <TabPane tab="产品实时持仓" key="productHoldingDate">
                 <Table className={styles.tableContainer}
                   columns={productColumn}
-                  rowKey='productCode'
-                  dataSource={productDates}
-                  pagination={false} />
+                  rowKey='dataIndex'
+                  dataSource={newProductDates}
+                  pagination={false}
+                  scroll={{x: '1026px'}}
+                />
               </TabPane>
             </Tabs>
           </div>
@@ -214,5 +255,3 @@ export default class AccountInfoHeader extends PureComponent {
     );
   }
 }
-
-
