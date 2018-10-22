@@ -7,6 +7,8 @@ import React, { PureComponent } from 'react';
 import { Modal, Form, Input, Select, Upload, Button, message } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
+
 import { request } from '../../config/index';
 import { emp } from '../../helper/index';
 import logable from '../../decorators/logable';
@@ -156,17 +158,6 @@ export default class AddMorningBoradcast extends PureComponent {
   }
 
   @autobind
-  onOtherUploading(fileList) {
-    const otherFileList = fileList.filter((fileItem) => {
-      if (fileItem.response) {
-        return fileItem.response.code === '0';
-      }
-      return true;
-    });
-    this.setState({ otherFileList });
-  }
-
-  @autobind
   onDone(file) {
     const { finalNewUuid } = this.state;
     const sourceState = ['fileAudioList', 'otherFileList'];
@@ -232,9 +223,7 @@ export default class AddMorningBoradcast extends PureComponent {
       message.error('文件大小不能为 0');
       return;
     }
-    if (file.status === 'uploading') {
-      this.onOtherUploading(fileList);
-    }
+    this.setState({ otherFileList: fileList });
     if (file.status === 'done') {
       const res = file.response;
       if (res.code !== '0') {
@@ -257,7 +246,11 @@ export default class AddMorningBoradcast extends PureComponent {
       }
     }
     if (file.status === 'error') {
-      this.setState({ otherFileList: fileList });
+      message.error('上传文件失败');
+      const filterSuccessFile = _.filter(fileList, o => o.status === 'done');
+      this.setState({
+        otherFileList: filterSuccessFile,
+      });
     }
   }
 
