@@ -46,7 +46,7 @@ export default class ProfitRateChart extends Component {
   getSeriesData() {
     const { custBasicData, custCompareData } = this.props;
     const { compareCode } = this.props;
-    const compareCodeItem = _.map(codeList, codeItem => codeItem.key === compareCode);
+    const compareCodeItem = _.find(codeList, codeItem => codeItem.key === compareCode);
     const compareCodeName = compareCodeItem && compareCodeItem.value;
     const seriesData = [
       {
@@ -159,6 +159,7 @@ export default class ProfitRateChart extends Component {
         },
         formatter: this.tooltipFormat,
       },
+      color: ['#fe5f03', '#7289b4'],
     };
 
     return (

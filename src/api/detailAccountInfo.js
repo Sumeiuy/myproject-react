@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-09 16:55:35
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-16 17:42:17
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-10-18 16:28:38
  * @description 新版客户360详情下的账户信息Tab页的API
  */
 export default function detailAccountInfo(api) {
@@ -12,7 +12,7 @@ export default function detailAccountInfo(api) {
     // 查询新版客户360详情下的账户信息Tab下的资产分布-某个雷达指标的数据
     querySpecificIndexData: query => api.post('/groovynoauth/fsp/cust/custdetail/queryAssetIndexData', query),
     // 查询新版客户360详情下的账户信息Tab下的资产分布-负债详情数据
-    queryDebtDetail: query => api.post('/groovynoauth/fsp/cust/account/queryDebtDetail', query),
+    queryDebtDetail: query => api.post('/groovynoauth/fsp/cust/custdetail/queryDebtDetail', query),
     // 查询新版客户360详情下的账户信息Tab下实时持仓-实时资产数据
     queryRealTimeAsset: query => api.post('/groovynoauth/fsp/cust/custdetail/queryCustCurrentAssert',query),
     // 查询新版客户360详情下的账户信息Tab下实时持仓-证券实时持仓数据

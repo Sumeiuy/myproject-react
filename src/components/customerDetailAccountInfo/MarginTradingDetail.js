@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 09:55:22
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-15 12:33:25
+ * @Last Modified time: 2018-10-18 13:55:57
  * @description 融资融券明细
  */
 
@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import DebtDetailItem from './DebtDetailItem';
-import { displayDebtMony } from './utils';
+import { displayMoney } from './utils';
 
 import styles from './debtDetail.less';
 
@@ -21,19 +21,19 @@ export default function MarginTradingDetail(props) {
     return null;
   }
   // 总金额
-  const totalValue = displayDebtMony(data.totalValue);
+  const totalValue = displayMoney(data.totalValue);
   // 融资合约金额
-  const financeContractSum = displayDebtMony(data.financeContractSum);
+  const financeContractSum = displayMoney(data.financeContractSum);
   // 融资费用
-  const financeCost = displayDebtMony(data.financeCost);
+  const financeCost = displayMoney(data.financeCost);
   // 融券利息
-  const marriageInterest = displayDebtMony(data.marriageInterest);
+  const marriageInterest = displayMoney(data.marriageInterest);
   // 融券合约金额
-  const marriageContractSum = displayDebtMony(data.marriageContractSum);
+  const marriageContractSum = displayMoney(data.marriageContractSum);
   // 融资利息
-  const financeInterest = displayDebtMony(data.financeInterest);
+  const financeInterest = displayMoney(data.financeInterest);
   // 其他费用
-  const otherCost = displayDebtMony(data.otherCost);
+  const otherCost = displayMoney(data.otherCost);
   return (
     <div className={styles.detailContainer}>
       <div className={styles.header}>

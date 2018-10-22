@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 14:08:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 11:00:16
+ * @Last Modified time: 2018-10-18 14:52:18
  * @description 资产分布使用的数字转化
  */
 import _ from 'lodash';
@@ -34,25 +34,24 @@ function convertMoney(money = 0, { unit = '', formater = false, toFixed = 2}) {
 }
 
 // 用于转化负债详情的金额数据,
-function convertDebtMoney(money) {
+function formaterMoney(money, options) {
   if (typeof money !== 'number') {
     return null;
   }
-  return convertMoney(money, { unit: '元',  formater: true});
+  return convertMoney(money, { formater: true, ...options });
 }
 
-// 将转化后的负债详情的金额数据拼接成字符串
-function displayDebtMony(money) {
-  const result = convertDebtMoney(money);
-  return _.isEmpty(result) ? '' : `${result.value}${result.unit}`;
+// 格式化金额
+function displayMoney(money) {
+  const result = formaterMoney(money, { unit: '元' });
+  return _.isEmpty(result) ? '' : `${result.formatedValue}${result.unit}`;
 }
 
-// 将转化后的交易数据金额拼接成字符串
-function displayTransMoney(money) {
-  const result = convertDebtMoney(money);
-  return _.isEmpty(result) ? '' : `${result.value}${result.unit}`;
+// 格式化金额不带单位
+function displayMoneyWithoutUnit(money) {
+  const result = formaterMoney(money);
+  return _.isEmpty(result) ? '' : `${result.formatedValue}${result.unit}`;
 }
-
 
 // 给数据添加唯一的key
 function addKeyForData(item) {
@@ -77,8 +76,7 @@ function updateSpecificIndexData(data) {
 
 export {
   convertMoney,
-  convertDebtMoney,
-  displayDebtMony,
+  displayMoney,
+  displayMoneyWithoutUnit,
   updateSpecificIndexData,
-  displayTransMoney,
 };
