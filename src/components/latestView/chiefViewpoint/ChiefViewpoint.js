@@ -8,7 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { linkTo, openRctTab } from '../../../utils';
+import { openRctTab } from '../../../utils';
 import { url as urlHelper, time } from '../../../helper';
 import config from '../config';
 import Icon from '../../common/Icon';
@@ -16,7 +16,7 @@ import logable from '../../../decorators/logable';
 import styles from './chiefViewpoint.less';
 
 // 内容最大长度
-const MAX_LENGTH = 104;
+const MAX_LENGTH = 100;
 export default class ChiefViewpoint extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
