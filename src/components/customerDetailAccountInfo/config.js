@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-22 14:47:35
+ * @Last Modified time: 2018-10-22 19:29:12
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 

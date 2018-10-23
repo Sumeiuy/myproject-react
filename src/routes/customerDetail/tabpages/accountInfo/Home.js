@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-18 11:39:08
+ * @Last Modified time: 2018-10-22 19:42:39
  */
 
 import React, { PureComponent } from 'react';
@@ -292,10 +292,10 @@ export default class Home extends PureComponent {
         <div className={styles.headerBtnsArea}>
           <AccountInfoHeader
             getSecuritiesHolding={getSecuritiesHolding}
-            dataSource={securitiesHolding}
+            securitiesData={securitiesHolding}
             getRealTimeAsset={getRealTimeAsset}
             realTimeAsset={realTimeAsset}
-            productDate={productHoldingData}
+            productData={productHoldingData}
             getProductHoldingData={getProductHoldingData}
             location={location}
           />
