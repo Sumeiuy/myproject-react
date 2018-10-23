@@ -14,7 +14,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
-import { linkTo } from '../../utils';
+import { openRctTab } from '../../utils';
 import { url as urlHelper, dva, time as timeUtil } from '../../helper';
 import config from '../../components/latestView/config';
 import wordSrc from './img/word.png';
@@ -72,30 +72,17 @@ export default class ViewpointDetail extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '返回列表' } })
   handleBackClick() {
-    const {
-      location: {
-        query,
-        query: { sourceUrl = '/latestView/viewpointList' },
-      },
-    } = this.props;
+    const { location: { query } } = this.props;
     const { push } = this.context;
-    const param = {
-      id: 'RTC_TAB_VIEWPOINT',
-      title: '资讯',
-    };
-    const url = sourceUrl;
-    const newQuery = {
-      ...query,
-      id: '',
-      sourceUrl: '',
-    };
-    linkTo({
+    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯列表' };
+    const url = `/latestView/viewpointList?${urlHelper.stringify(query)}`;
+    openRctTab({
       routerAction: push,
-      url: `${url}?${urlHelper.stringify(newQuery)}`,
+      url,
       param,
-      pathname: url,
-      query: newQuery,
-      name: '资讯详情',
+      query,
+      pathname: '/latestView/viewpointList',
+      name: '资讯列表',
     });
   }
 
