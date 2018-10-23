@@ -2,14 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-22 14:27:57
+ * @Last Modified time: 2018-10-22 16:43:59
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
-import { Checkbox, Table } from 'antd';
+import { Checkbox, Table, Popover } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import cx from 'classnames';
+// import cx from 'classnames';
 import { autobind } from 'core-decorators';
 
 import IECharts from '../IECharts';
@@ -28,7 +28,7 @@ import {
   displayMoney,
   displayMoneyWithoutUnit,
 } from './utils';
-import { composeIndicatorAndData } from './assetRadarHelper';
+import { composeIndicatorAndData, pickRadarDisplayData } from './assetRadarHelper';
 import { number } from '../../helper';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 import styles from './assetDistribute.less';
@@ -125,10 +125,12 @@ export default class AssetDistribute extends PureComponent {
   // 获取雷达图的配置
   @autobind
   getRadarOption(radarData) {
+    // TODO 需要将雷达图的数据做一步过滤处理，处理出需要展示到雷达图上的数据
+    const filteredData = pickRadarDisplayData(radarData || []);
     // 1. 获取雷达图的指标名称及
-    const indicators = _.map(radarData, item => ({ name: item.name }));
+    const indicators = _.map(filteredData, item => ({ name: item.name }));
     // 2. 获取雷达图的每一项指标的值
-    const value = _.map(radarData, item => item.value || 0);
+    const value = _.map(filteredData, item => item.value || 0);
     // 3. 因为UI图上面需要在指标名称下显示指标的值，但是echart上并没有这个功能
     // 所以此处需要将指标名称和其指标值先进行拼接起来，然后在区分开
     const composedIndicators = composeIndicatorAndData(indicators, value);
@@ -191,8 +193,7 @@ export default class AssetDistribute extends PureComponent {
   @autobind
   @logPV({ pathname: '/modal/custDetailAccountDebtDetailModal', title: '负债详情' })
   handleDebtDetailIconClick() {
-    // TODO 本期由于后端的数据不一致性，暂时不暂时负债详情弹出框
-    // this.setState({ debtDetailModal: true });
+    this.setState({ debtDetailModal: true });
   }
 
   // 关闭负债详情弹框
@@ -378,11 +379,11 @@ export default class AssetDistribute extends PureComponent {
                             <span className={styles.label}>负债：</span>
                             <span className={styles.value}>{totalDebt.value}</span>
                             <span className={styles.unit}>{totalDebt.unit}</span>
-                            {/*
-                              <span className={styles.infoIco} onClick={this.handleDebtDetailIconClick}>
+                            <span className={styles.infoIco}>
+                              <Popover overlayClassName={styles.labelPopover} content="融资融券负债">
                                 <Icon type="tishi2" />
-                              </span>
-                            */}
+                              </Popover>
+                            </span>
                           </span>
                         )
                         : null
