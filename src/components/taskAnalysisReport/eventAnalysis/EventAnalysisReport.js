@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-23 19:14:50
+ * @Last Modified time: 2018-10-23 20:06:32
  */
 
 import React, { PureComponent } from 'react';
@@ -164,14 +164,14 @@ export default class EventAnalysisReport extends PureComponent {
         break;
       case 'serviceChannels':
         const {
-          zhangleList = [],
+          zhangLeList = [],
           phoneList = [],
           interviewList = [],
           // 短信改成其它
           shortMessageList = [],
         } = eventReportList[index];
         // 涨乐数据
-        const zhangleData = filterData(zhangleList, 'percentage');
+        const zhangleData = filterData(zhangLeList, 'percentage');
         // 电话数据
         const phoneData = filterData(phoneList, 'percentage');
         // 面谈数据
@@ -179,7 +179,7 @@ export default class EventAnalysisReport extends PureComponent {
         // 其他数据
         const otherData = filterData(shortMessageList, 'percentage');
         // xAxis轴截止时间数据
-        deadlineTimeData = filterData(zhangleList, 'deadlineTime');
+        deadlineTimeData = filterData(zhangLeList, 'deadlineTime');
         firstData = zhangleData;
         secondData = phoneData;
         thirdData = interviewData;

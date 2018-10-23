@@ -229,7 +229,7 @@ const taskOption = {
   eventReportName: '任务统计',
   eventDataName: {
     triggerTaskName: '已触发任务数',
-    completedTaskName: '已完成客户数',
+    completedTaskName: '已完成任务数',
   },
   series: {
     type: 'line',
