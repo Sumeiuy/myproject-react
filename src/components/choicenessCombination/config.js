@@ -129,7 +129,7 @@ const config = {
         width: 220,
       },
     ],
-    tenStocks: [
+    ten: [
       {
         dataIndex: 'name',
         key: 'name',
@@ -162,64 +162,6 @@ const config = {
         dataIndex: 'title',
         key: 'title',
         title: '持仓客户',
-        width: '12%',
-        align: 'right',
-      },
-    ],
-    tenCombinations: [
-      {
-        dataIndex: 'name',
-        key: 'name',
-        title: '组合名称',
-        width: '27%',
-        align: 'left',
-      },
-      {
-        dataIndex: 'code',
-        key: 'code',
-        title: '组合代码',
-        width: '22%',
-        align: 'left',
-      },
-      {
-        dataIndex: 'typeName',
-        key: 'typeName',
-        title: '组合类型',
-        width: '22%',
-        align: 'left',
-      },
-      {
-        dataIndex: 'typeCode',
-        key: 'typeCode',
-        title: '组合代码',
-        width: '22%',
-        align: 'left',
-      },
-      {
-        dataIndex: 'priceLimit',
-        key: 'priceLimit',
-        title: '近7天涨跌幅',
-        width: '17%',
-        align: 'left',
-      },
-      {
-        dataIndex: 'empId',
-        key: 'empId',
-        title: '投资顾问',
-        width: '22%',
-        align: 'left',
-      },
-      {
-        dataIndex: 'empName',
-        key: 'empName',
-        title: '投资顾问ID',
-        width: '12%',
-        align: 'left',
-      },
-      {
-        dataIndex: 'customer',
-        key: 'customer',
-        title: '订购客户',
         width: '12%',
         align: 'right',
       },

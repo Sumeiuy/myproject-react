@@ -9,7 +9,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
 import fspPatch from '../../decorators/fspPatch';
@@ -21,9 +20,6 @@ import ZiJinClockViewpoint from '../../components/latestView/ziJinClockView/ZiJi
 import config from '../../components/latestView/config';
 import styles from './index.less';
 
-const { chiefViewpointType } = config;
-// 专题研究
-const studyValue = _.map(chiefViewpointType.slice(3), 'value');
 const dispatch = dva.generateEffect;
 // const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
@@ -47,8 +43,6 @@ const mapStateToProps = state => ({
   dayViewpointData: state.latestView.dayViewpointData,
   // 首页每周首席观点
   monthViewpointData: state.latestView.monthViewpointData,
-  // 专题研究数据
-  specialStudyData: state.latestView.specialStudyData,
   // 大类资产配置分析-首页列表
   majorAssetsIndexData: state.latestView.majorAssetsIndexData,
   // 大类资产配置分析-更多列表
@@ -86,8 +80,6 @@ export default class LatestView extends PureComponent {
     dayViewpointData: PropTypes.object.isRequired,
     // 首页每周首席观点
     monthViewpointData: PropTypes.object.isRequired,
-    // 专题研究
-    specialStudyData: PropTypes.object.isRequired,
     // 大类资产配置分析-首页列表
     queryMajorAssetsIndexList: PropTypes.func.isRequired,
     majorAssetsIndexData: PropTypes.object.isRequired,
@@ -127,15 +119,11 @@ export default class LatestView extends PureComponent {
     } = this.props;
     // 每日首席观点
     queryChiefViewpoint({
-      type: [chiefViewpointType[1].value],
+      type: config.chiefViewpointType[1].value,
     });
     // 每周首席观点
     queryChiefViewpoint({
-      type: [chiefViewpointType[2].value],
-    });
-    // 专题研究
-    queryChiefViewpoint({
-      type: studyValue,
+      type: config.chiefViewpointType[2].value,
     });
     // 大类资产配置分析
     queryMajorAssetsIndexList();
@@ -152,7 +140,6 @@ export default class LatestView extends PureComponent {
       location,
       dayViewpointData,
       monthViewpointData,
-      specialStudyData,
       majorAssetsData,
       majorAssetsIndexData,
       majorAssetsDetail,
@@ -162,29 +149,21 @@ export default class LatestView extends PureComponent {
     } = this.props;
     return (
       <div className={styles.latestViewBox}>
-        <div className={styles.top}>
-          <div className={styles.item}>
+        <div className={`${styles.floor} clearfix`}>
+          <div className={styles.left}>
             <ChiefViewpoint
               location={location}
               title="每日首席观点"
               data={dayViewpointData}
-              type={chiefViewpointType[1].value}
+              type={config.chiefViewpointType[1].value}
             />
           </div>
-          <div className={styles.item}>
+          <div className={styles.right}>
             <ChiefViewpoint
               location={location}
               title="每周首席观点"
               data={monthViewpointData}
-              type={chiefViewpointType[2].value}
-            />
-          </div>
-          <div className={styles.item}>
-            <ChiefViewpoint
-              location={location}
-              title="专题研究"
-              data={specialStudyData}
-              type={studyValue.join(',')}
+              type={config.chiefViewpointType[2].value}
             />
           </div>
         </div>

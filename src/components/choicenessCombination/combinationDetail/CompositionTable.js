@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import { time, number } from '../../../helper';
-import { detailTitleList, formatDateStr, overlayStyle } from '../config';
+import { detailTitleList, formatStr, overlayStyle } from '../config';
 import styles from './compositionTable.less';
 
 // 字符串常量，用于 table columns 对应列的 key 匹配来 render
@@ -46,7 +46,7 @@ export default class CompositionTable extends PureComponent {
     reasonColumn.render = text => this.renderPopover(text);
     // 时间列
     const timeColumn = _.find(newColumns, o => o.key === KEY_TIME) || EMPTY_OBJECT;
-    timeColumn.render = text => (<div>{time.format(text, formatDateStr)}</div>);
+    timeColumn.render = text => (<div>{time.format(text, formatStr)}</div>);
     // 股票、基金名称列
     const nameColumn = _.find(newColumns, o => o.key === KEY_NAME) || EMPTY_OBJECT;
     nameColumn.render = text => this.renderNumberOrText(text);

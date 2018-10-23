@@ -9,7 +9,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table, Popover } from 'antd';
-// import { Table, Popover, Tabs } from 'antd';
 import classnames from 'classnames';
 
 import InfoTitle from '../common/InfoTitle';
@@ -20,7 +19,7 @@ import {
   overlayStyle,
   securityType as securityTypeConfig,
   titleList as titleListConfig,
-  formatDateStr,
+  formatStr,
 } from './config';
 import styles from './weeklySecurityTopTen.less';
 import logable from '../../decorators/logable';
@@ -30,9 +29,7 @@ const titleStyle = {
 };
 // securityType 里股票对应的值
 const STOCK_CODE = securityTypeConfig[0].value;
-const titleList = titleListConfig.tenStocks;
-
-// const TabPane = Tabs.TabPane;
+const titleList = titleListConfig.ten;
 
 export default class WeeklySecurityTopTen extends PureComponent {
   static propTypes = {
@@ -71,10 +68,10 @@ export default class WeeklySecurityTopTen extends PureComponent {
       </div>);
     };
     // 证券调入时间
-    newTitleList[1].render = text => (<div>{time.format(text, formatDateStr)}</div>);
+    newTitleList[1].render = text => (<div>{time.format(text, formatStr)}</div>);
     // 涨跌幅
     newTitleList[2].render = (text) => {
-      const change = this.handlePercentChange((text || 0).toFixed(2));
+      const change = this.handlePercentChange(text.toFixed(2));
       const bigThanZero = text >= 0;
       const changeClassName = classnames({
         [styles.up]: bigThanZero,
@@ -205,34 +202,10 @@ export default class WeeklySecurityTopTen extends PureComponent {
               columns={newTitleList}
               dataSource={data}
               pagination={false}
-              scroll={{ y: 289 }}
+              scroll={{ y: 301 }}
               rowKey="code"
             />
           </div>
-          {/*<Tabs defaultActiveKey="1">
-            <TabPane tab="证券" key="1">
-              <div className={styles.bodyBox}>
-                <Table
-                  columns={newTitleList}
-                  dataSource={data}
-                  pagination={false}
-                  scroll={{ y: 289 }}
-                  rowKey="code"
-                />
-              </div>
-            </TabPane>
-            <TabPane tab="组合" key="2">
-              <div className={styles.bodyBox}>
-                <Table
-                  columns={newTitleList}
-                  dataSource={data}
-                  pagination={false}
-                  scroll={{ y: 289 }}
-                  rowKey="code"
-                />
-              </div>
-            </TabPane>
-          </Tabs>*/}
         </div>
       </div>
     );

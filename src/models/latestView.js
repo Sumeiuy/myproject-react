@@ -21,8 +21,6 @@ export default {
     dayViewpointData: EMPTY_OBJECT,
     // 首页每周首席观点
     monthViewpointData: EMPTY_OBJECT,
-    // 专题研究
-    specialStudyData: EMPTY_OBJECT,
     // 首席观点列表数据
     viewpointData: EMPTY_OBJECT,
     // 首席观点详情
@@ -55,14 +53,6 @@ export default {
       return {
         ...state,
         monthViewpointData: resultData,
-      };
-    },
-    // 专题研究
-    querySpecialStudySuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      return {
-        ...state,
-        specialStudyData: resultData,
       };
     },
     // 获取首席观点列表数据
@@ -140,22 +130,16 @@ export default {
     * queryChiefViewpoint({ payload }, { call, put }) {
       const { type } = payload;
       const response = yield call(api.queryChiefViewpoint, payload);
-      switch (type.join(',')) {
+      switch (type) {
         case config.chiefViewpointType[1].value:
           yield put({
             type: 'queryDayViewpointSuccess',
             payload: response,
           });
           break;
-        case config.chiefViewpointType[2].value:
-          yield put({
-            type: 'queryMonthViewpointSuccess',
-            payload: response,
-          });
-          break;
         default:
           yield put({
-            type: 'querySpecialStudySuccess',
+            type: 'queryMonthViewpointSuccess',
             payload: response,
           });
           break;
