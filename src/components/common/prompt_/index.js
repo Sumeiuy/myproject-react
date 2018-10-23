@@ -14,13 +14,15 @@ export default function (params) {
     type = 'info',
     // 确认框确认按钮调用
     onOk = () => {},
+    // 确认按钮文本
+    okText = '确认',
   } = params;
 
 
   Modal[type]({
     title,
     content,
-    okText: '确认',
+    okText,
     onOk,
   });
 }
