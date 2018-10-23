@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-23 16:13:12
+ * @Last Modified time: 2018-10-23 17:54:33
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -124,13 +124,11 @@ const config = {
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
-    width: '15%',
   },
   {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
-    width: '14%',
     className: 'productCode',
   },
   {
