@@ -10,11 +10,11 @@ const timeList = [
   },
   {
     key: 'halfYear',
-    value: '半年',
+    value: '近半年',
   },
   {
     key: 'currentYear',
-    value: '今年',
+    value: '今年以来',
   },
 ];
 
