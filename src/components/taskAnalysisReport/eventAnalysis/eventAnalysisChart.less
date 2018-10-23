@@ -1,11 +1,13 @@
-.customerStatisticsChart {
+.eventAnalysisChart {
   flex: 1;
-  width: 625px;
+  width: 624px;
   height: 374px;
   position: absolute;
   top: 20px;
-  left: calc(50% - 312px);
+  left: 50%;
+  transform: translateX(-50%);
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.30);
+  border-radius: 3px;
   background: #fff;
   .chartTitle {
     color: #333;
@@ -22,7 +24,8 @@
     border-style: solid;
     position: absolute;
     top: -70px;
-    left: calc(50% - 50px);
+    left: 50%;
+    transform: translateX(-50%);
     z-index: -50;
   }
 }

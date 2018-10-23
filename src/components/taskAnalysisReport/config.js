@@ -227,9 +227,14 @@ const serviceChannelOptions = {
 const taskOption = {
   color: ['#f7ad33', '#4c70b3'],
   eventReportName: '任务统计',
-  eventReportOption: {
-    triggerTaskNumber: '已触发任务数',
-    completedTaskNumber: '已完成任务数',
+  eventDataName: {
+    triggerTaskName: '已触发任务数',
+    completedTaskName: '已完成客户数',
+  },
+  series: {
+    type: 'line',
+    smooth: true,
+    symbol: 'none',
   },
   legendList: [
     {
@@ -248,6 +253,15 @@ const taskOption = {
 const customerOption = {
   color: ['#f7ad33', '#4c70b3'],
   eventReportName: '服务客户统计',
+  eventDataName: {
+    coveredCustomerName: '覆盖客户数',
+    completedCustomerName: '完成客户数',
+  },
+  series: {
+    type: 'line',
+    smooth: true,
+    symbol: 'none',
+  },
   legendList: [
     {
       color: '#f7ad33',
@@ -265,6 +279,17 @@ const customerOption = {
 const serviceChannelChangeOption = {
   color: ['#f7ad33', '#4c70b3', '#67b8e1', '#cf4b4a'],
   eventReportName: '服务渠道变化',
+  eventDataName: {
+    zhangle: '涨乐',
+    phone: '电话',
+    interview: '面谈',
+    other: '其它',
+  },
+  series: {
+    type: 'line',
+    smooth: true,
+    symbol: 'none',
+  },
   legendList: [
     {
       color: '#f7ad33',
