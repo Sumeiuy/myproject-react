@@ -16,7 +16,7 @@ import {
   typeList,
   directionRange,
   overlayStyle,
-  formatDateStr,
+  formatStr,
 } from '../config';
 import { time } from '../../../helper';
 import logable, { logPV } from '../../../decorators/logable';
@@ -74,7 +74,7 @@ export default class AdjustHistory extends PureComponent {
                   </span>
               }
             </span>
-            <span className={styles.time}>{time.format(item.time, formatDateStr)}</span>
+            <span className={styles.time}>{time.format(item.time, formatStr)}</span>
             <span className={styles.const}>{item.price}</span>
             <span className={styles.change}>{item.change || '持仓变化：暂无'}</span>
           </div>

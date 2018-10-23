@@ -19,7 +19,7 @@ import styles from './combinationListItem.less';
 import {
   yieldRankList,
   securityType as securityTypeList,
-  formatDateStr,
+  formatStr,
   sourceType,
 } from '../config';
 
@@ -104,7 +104,7 @@ export default class CombinationListItem extends PureComponent {
             }
           </span>
           <span className={styles.direction}>{item.directionName}</span>
-          <span className={styles.time}>{time.format(item.time, formatDateStr)}</span>
+          <span className={styles.time}>{time.format(item.time, formatStr)}</span>
           <span className={styles.cost}>{item.price}</span>
           <span className={styles.reason} title={item.reason}>{reason || DEFAULT_REASON}</span>
         </div>
