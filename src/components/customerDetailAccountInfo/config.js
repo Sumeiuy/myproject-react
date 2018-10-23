@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-22 17:00:26
+ * @Last Modified time: 2018-10-23 09:06:25
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -116,62 +116,62 @@ const config = {
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
-    width: '115px',
+    width: '15%',
   },
   {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
-    width: '110px',
+    width: '14%',
+    className: 'productCode',
   },
   {
     title: '持仓数',
     dataIndex: 'holdingNumber',
     key: 'holdingNumber',
     align: 'right',
-    width: '48px',
+    className: 'dataInterval',
   },
   {
     title: '可用数',
     dataIndex: 'availableNumber',
     key: 'availableNumber',
     align: 'right',
-    width: '75px',
+    className: 'dataInterval',
   },
   {
     title: '成本',
     dataIndex: 'cost',
     key: 'cost',
     align: 'right',
-    width: '95px',
+    className: 'dataInterval',
   },
   {
     title: '现价',
     dataIndex: 'presentPrice',
     key: 'presentPrice',
     align: 'right',
-    width: '95px',
+    className: 'dataInterval',
   },
   {
     title: '市值',
     dataIndex: 'marketValue',
     key: 'marketValue',
     align: 'right',
-    width: '95px',
+    className: 'dataInterval',
   },
   {
     title: '盈亏',
     dataIndex: 'profitAndLoss',
     key: 'profitAndLoss',
     align: 'right',
-    width: '95px',
+    className: 'dataInterval',
   },
   {
     title: '货币类型',
     dataIndex: 'currencyType',
     key: 'currencyType',
     className: 'currencyType',
-    width: '105px',
   },
 ],
 //实时持仓中产品实时持仓的表格
@@ -181,45 +181,43 @@ const config = {
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
-    width: '140px',
   },
   {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
-    width: '200px',
+    className:'productName'
   },
   {
     title: '份额',
     dataIndex: 'share',
     key: 'share',
-    width: '140px',
+    className:'share'
   },
   {
     title: '收益率/净值',
-    dataIndex: 'yield',
-    key: 'yield',
-    width: '140px',
+    dataIndex: 'netWorth',
+    key: 'netWorth',
+    className:'netWorth'
   },
   {
     title: '市值',
     dataIndex: 'marketValue',
     key: 'marketValue',
     align: 'right',
-    width: '80px',
+    className:'marketValue'
   },
   {
     title: '盈亏',
     dataIndex: 'profitAndLoss',
     key: 'profitAndLoss',
     align: 'right',
-    width: '160px',
+    className:'profitAndLoss'
   },
   {
     title: '货币类型',
     dataIndex: 'currencyType',
     key: 'currencyType',
-    width: '130px',
     className: 'currencyType'
   },
 ],
