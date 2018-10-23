@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-22 19:29:12
+ * @Last Modified time: 2018-10-23 15:28:14
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -79,6 +79,20 @@ export const CHART_SERIES_OPTIONS = {
 export const SPECIFIC_INITIAL_KEY = 'PA040000';
 export const SPECIFIC_INITIAL_NAME = '股票';
 
+// 资产分布雷达图必须显示的五个指标的IDs
+export const RADAR_MUST_DISPLAY_INDICATORS = [
+  // 股票
+  'PA040000',
+  // 现金
+  '99',
+  // 开放式基金
+  'PA050000',
+  // 债券
+  'PA030000',
+  // 理财产品
+  'PA070000',
+];
+
 const config = {
   //实时持仓中单选框list
  list: [
@@ -102,13 +116,11 @@ const config = {
     dataIndex: 'productCode',
     key: 'productCode',
     className: 'productCode',
-    width: '15%',
   },
   {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
-    width: '14%',
     className: 'productCode',
   },
   {
