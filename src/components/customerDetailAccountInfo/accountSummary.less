@@ -1,0 +1,53 @@
+.summaryWrap {
+  padding-bottom: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .summaryBlock {
+    width: 100%;
+
+    .header {
+      display: flex;
+      width: 100%;
+      height: 48px;
+      padding: 14px 0;
+
+      .title {
+        padding-left: 10px;
+        flex: 1 1 auto;
+        position: relative;
+        line-height: 20px;
+        font-size: 14px;
+        color: #333;
+
+        &:before {
+          position: absolute;
+          left: 0;
+          top: 3px;
+          content: " ";
+          display: block;
+          width: 3px;
+          height: 15px;
+          background-color: #108ee9;
+        }
+      }
+
+      .setting {
+        margin: 0 14px;
+        flex: 0 0 auto;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 16px;
+        color: #666;
+      }
+    }
+
+    .body {
+      display: flex;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+  }
+}

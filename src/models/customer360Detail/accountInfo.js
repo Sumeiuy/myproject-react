@@ -1,11 +1,13 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-09 16:52:56
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-18 11:12:58
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-10-23 17:11:20
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailAccountInfo as api } from '../../api';
+
+import _ from 'lodash';
 
 export default {
   namespace: 'detailAccountInfo',
@@ -26,6 +28,14 @@ export default {
     custBasicData: {},
     // 收益走势对比指标数据
     custCompareData: {},
+    // 账户概要信息
+    accountSummaryInfo: {},
+    // 普通账户、信用账户、期权账户信息
+    accountInfo: {
+      normalAccount: {},
+      creditAccount: {},
+      optionAccount: {},
+    },
   },
   reducers: {
     getRealTimeAssetSuccess(state, action) {
@@ -98,6 +108,24 @@ export default {
         debtDetail: payload || {},
       };
     },
+    queryAccountSummarySuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        accountSummaryInfo: payload || {},
+      };
+    },
+    queryAccountInfoSuccess(state, action) {
+      const { payload } = action;
+      const { accountInfo } = state;
+      return {
+        ...state,
+        accountInfo: {
+          ...accountInfo,
+          ...payload,
+        },
+      };
+    },
     // 清除redux数据
     clearReduxDataSuccess(state, action) {
       const { payload = {} } = action;
@@ -157,12 +185,30 @@ export default {
         payload: resultData,
       });
     },
-    //实时持仓中的产品实时持仓
+    // 实时持仓中的产品实时持仓
     * getProductHoldingData({ payload }, { put, call }) {
       const { resultData } = yield call(api.queryStorageOfProduct, payload);
       yield put({
         type: 'getProductHoldingDataSuccess',
         payload: resultData,
+      });
+    },
+    // 查询账户概要信息
+    * queryAccountSummary({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryAccountSummary, payload);
+      yield put({
+        type: 'queryAccountSummarySuccess',
+        payload: resultData,
+      });
+    },
+    // 查询普通账户、信用账户、期权账户
+    * queryAccountInfo({ payload }, { put, call }) {
+      const { accountType } = payload;
+      const { resultData } = yield call(api.queryAccountInfo, payload);
+      const type = `${_.lowerCase(accountType)}Account`;
+      yield put({
+        type: 'queryAccountInfoSuccess',
+        payload: { [type]: resultData || {} },
       });
     },
     // 清空数据

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 16:55:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-18 16:28:38
+ * @Last Modified time: 2018-10-23 17:05:05
  * @description 新版客户360详情下的账户信息Tab页的API
  */
 export default function detailAccountInfo(api) {
@@ -21,5 +21,9 @@ export default function detailAccountInfo(api) {
     queryStorageOfProduct: query => api.post('/groovynoauth/fsp/cust/custdetail/queryFundCurrentPostion',query),
     // 查询新版客户360详情下的账户信息Tab下对应的收益走势对比数据
     queryProfitRateInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryCustPofitRateChart', query),
+    // 查询新版客户360详情下的账户信息Tab下的账户概要信息
+    queryAccountSummary: query => api.post('/groovynoauth/fsp/cust/custdetail/queryAccountSummaryInfo', query),
+    // 查询新版客户360详情下的账户信息Tab下的普通账户、信用账户、期权账户
+    queryAccountInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryAccountInfo', query),
   };
 }

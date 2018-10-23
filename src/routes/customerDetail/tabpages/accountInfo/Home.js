@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-18 11:39:08
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-10-23 17:14:08
  */
 
 import React, { PureComponent } from 'react';
@@ -11,11 +11,13 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { connect } from 'dva';
 import moment from 'moment';
+
 import { timeList, codeList } from '../../../../config/profitRateConfig';
 import { dva } from '../../../../helper';
-import AssetAndIncome from '../../../../components/customerDetailAccountInfo/AssetAndIncome';
-import logable from '../../../../decorators/logable';
 import AccountInfoHeader from '../../../../components/customerDetailAccountInfo/AccountInfoHeader';
+import AssetAndIncome from '../../../../components/customerDetailAccountInfo/AssetAndIncome';
+import AccountInfoTabs from '../../../../components/customerDetailAccountInfo/AccountInfoTabs';
+import logable from '../../../../decorators/logable';
 
 import styles from './home.less';
 
@@ -71,6 +73,10 @@ const mapStateToProps = state => ({
   custBasicData: state.detailAccountInfo.custBasicData,
   // 收益走势对比指标数据
   custCompareData: state.detailAccountInfo.custCompareData,
+  // 账户概要信息
+  accountSummary: state.detailAccountInfo.accountSummaryInfo,
+  // 普通账户、信用账户、期权账户信息
+  accountInfo: state.detailAccountInfo.accountInfo,
 });
 
 const mapDispatchToProps = {
@@ -88,6 +94,10 @@ const mapDispatchToProps = {
   getProductHoldingData: effect('detailAccountInfo/getProductHoldingData'),
   // 查询收益走势数据
   queryProfitRateInfo: effect('detailAccountInfo/getProfitRateInfo'),
+  // 查询账户概要Tab下的信息
+  queryAccountSummary: effect('detailAccountInfo/queryAccountSummary'),
+  // 查询普通账户、信用账户、期权账户
+  queryAccountInfo: effect('detailAccountInfo/queryAccountInfo'),
   // 清除Redux中的数据
   clearReduxData: effect('detailAccountInfo/clearReduxData', { loading: false }),
 };
@@ -124,6 +134,12 @@ export default class Home extends PureComponent {
     custCompareData: PropTypes.object.isRequired,
     // 查询收益走势数据
     queryProfitRateInfo: PropTypes.func.isRequired,
+    // 查询账户概要Tab下的数据
+    queryAccountSummary: PropTypes.func.isRequired,
+    accountSummary: PropTypes.object.isRequired,
+    // 查询普通账户、信用账户、期权账户
+    queryAccountInfo: PropTypes.func.isRequired,
+    accountInfo: PropTypes.object.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
   }
@@ -250,18 +266,6 @@ export default class Home extends PureComponent {
     });
   }
 
-  // 关闭负债详情的弹出层
-  @autobind
-  handleDebtDetailModalClose() {
-    this.setState({ debtDetailModalVisible: false });
-  }
-
-  // 点击负债详情小图标，打开负债详情弹出层
-  @autobind
-  handleDebtDetailClick() {
-    this.setState({ debtDetailModalVisible: true });
-  }
-
   render() {
     const {
       getSecuritiesHolding,
@@ -279,6 +283,10 @@ export default class Home extends PureComponent {
       custBasicData,
       custCompareData,
       getAssetRadarData,
+      accountSummary,
+      queryAccountSummary,
+      queryAccountInfo,
+      accountInfo,
     } = this.props;
 
     const {
@@ -319,7 +327,15 @@ export default class Home extends PureComponent {
           />
         </div>
         {/* 底部详细Tabs，目前迭代不进行开发，先占个位置 */}
-        <div className={styles.footTabsArea}></div>
+        <div className={styles.footTabsArea}>
+          <AccountInfoTabs
+            location={location}
+            queryAccountSummary={queryAccountSummary}
+            accountSummary={accountSummary}
+            queryAccountInfo={queryAccountInfo}
+            accountInfo={accountInfo}
+          />
+        </div>
       </div>
     );
   }

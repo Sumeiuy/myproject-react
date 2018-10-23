@@ -1,8 +1,8 @@
 /*
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-22 15:15:20
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-10-23 10:36:49
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -13,7 +13,7 @@ import Modal from '../../components/common/biz/CommonModal';
 import Table from '../../components/common/table';
 import styles from './accountInfoHeader.less';
 import { number } from '../../helper';
-import { displayTransMoney } from './utils';
+import { displayMoney } from './utils';
 import { list, columns, productColumns } from './config';
 //tab栏
 const TabPane = Tabs.TabPane;
@@ -155,7 +155,7 @@ export default class AccountInfoHeader extends PureComponent {
     //取出实时资产的数据
     const { rtimeAssets, availableFunds, advisableFunds } = realTimeAsset;
     //调用处理实时资产数据的方法
-    const rtimeAsset = displayTransMoney(rtimeAssets);
+    const rtimeAsset = displayMoney(rtimeAssets);
     //根据资产的正负判断实时资产的颜色
     let realTimeColor = {};
     if (rtimeAssets > 0) {
@@ -164,8 +164,8 @@ export default class AccountInfoHeader extends PureComponent {
     else if (rtimeAssets === 0) {
       realTimeColor = { color: '#333' };
     }
-    const availableFund = displayTransMoney(availableFunds);
-    const advisableFund = displayTransMoney(advisableFunds);
+    const availableFund = displayMoney(availableFunds);
+    const advisableFund = displayMoney(advisableFunds);
     const { activeKey } = this.state;
     return (
       <div>
