@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-17 14:16:31
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-23 16:42:53
+ * @Last Modified time: 2018-10-23 18:58:48
  */
 
 import React from 'react';
@@ -113,12 +113,12 @@ export default function EventAnalysisChart(props) {
       type: 'line',
     },
     formatter(params) {
-      console.warn('params',params);
       const deadlineTime = params[0].name;
       const firstSeriesName = params[0].seriesName;
       const firstDataNumber = thousandFormat(params[0].value);
       const secondSeriesName = params[1].seriesName;
       const secondDataNumber = thousandFormat(params[1].value);
+      // 任务分析和客户分析报表有两条数据，服务渠道分析有四条数据判断是否是服务渠道分析
       if(params[2]) {
         const thirdSeriesName = params[2].seriesName;
         const thirdDataNumber = thousandFormat(params[2].value);
