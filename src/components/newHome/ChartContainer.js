@@ -7,7 +7,7 @@ export default function ChartContiner(props) {
     <RectFrame
       dataSource={props.dataSource}
       isNewHome
-      noMargin
+      noMargin={props.margin ? false : true}
     >
       {props.children}
     </RectFrame>

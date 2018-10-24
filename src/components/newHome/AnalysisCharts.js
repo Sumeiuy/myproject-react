@@ -50,7 +50,7 @@ const chartTitles = [
 // 资产分布的数据源
 let totAsetData = [
   {
-    name: '1000万元以上',
+    name: '[1000, +∞)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -60,7 +60,7 @@ let totAsetData = [
     },
   },
   {
-    name: '500-1000万元',
+    name: '[500, 1000)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -70,7 +70,7 @@ let totAsetData = [
     },
   },
   {
-    name: '100-500万元',
+    name: '[100, 500)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -80,7 +80,7 @@ let totAsetData = [
     },
   },
   {
-    name: '30-100万元',
+    name: '[30, 100)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -90,7 +90,7 @@ let totAsetData = [
     },
   },
   {
-    name: '0-30万元',
+    name: '[0, 30)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -109,9 +109,6 @@ export default class PerformanceIndicators extends PureComponent {
     indicators: PropTypes.object.isRequired,
     cycle: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
-  }
-  state = {
-    mouseoverLabelIndex: '',
   }
 
   @autobind
@@ -175,30 +172,6 @@ export default class PerformanceIndicators extends PureComponent {
           filterValue,
         });
       }
-    });
-    instance.on('mouseover', this.handleMouseover);
-    instance.on('mouseout', this.handleMouseout);
-  }
-
-  // 总资产y轴名称hover时改变文本颜色
-  @autobind
-  handleMouseover(arg) {
-    if (arg.componentType !== 'yAxis') {
-      return;
-    }
-    this.setState({
-      mouseoverLabelIndex: _.findIndex(totAsetData, item => item.name === arg.value),
-    });
-  }
-
-  // 总资产y轴名称hover时改变文本颜色
-  @autobind
-  handleMouseout(arg) {
-    if (arg.componentType !== 'yAxis') {
-      return;
-    }
-    this.setState({
-      mouseoverLabelIndex: '',
     });
   }
 
@@ -312,14 +285,13 @@ export default class PerformanceIndicators extends PureComponent {
         value: assetData[index] || 0,
       }));
     }
-    const { mouseoverLabelIndex } = this.state;
     const option = {
       grid: {
         top: '0px',
         bottom: '0px',
-        left: '25px',
-        right: '49px',
-        containLabel: true,
+        left: '5px',
+        right: '25px',
+        containLabel: false,
       },
       tooltip: {
         position: 'top',
@@ -338,28 +310,24 @@ export default class PerformanceIndicators extends PureComponent {
       },
       xAxis: {
         type: 'value',
-        boundaryGap: [0, 0.01],
         show: false,
       },
       yAxis: {
         type: 'category',
         data: _.map(totAsetData, item => item.name),
-        axisTick: {
-          show: false
-        },
         axisLine: {
-          show: false
+          lineStyle: {
+            color: '#ddd',
+          }
         },
-        triggerEvent: true,
-        axisLabel: {
-          color(v, index) {
-            return index === mouseoverLabelIndex ? '#108ee9' : '#8995a5';
-          },
-        },
+        axisTick: {
+          interval: index => (index !== 0),
+        }
       },
       series: [
         {
           type: 'bar',
+          barWidth: 21,
           label: {
             normal: {
               position: 'right',
@@ -381,21 +349,30 @@ export default class PerformanceIndicators extends PureComponent {
               color: '#4ed0f1',
             },
           },
-          barWidth: 15,
         },
       ]
     };
     return (
-      <ChartContiner dataSource={chartTitles[2]}>
+      <div className={styles.chartContainer}>
+        <ChartContiner dataSource={chartTitles[2]} margin>
         <IECharts
           option={option}
           onReady={this.handleTotAsetChartClick}
           style={{
-            height: '205px',
+            height: '160px',
           }}
           resizable
         />
       </ChartContiner>
+      <div className={styles.unitContent}>（万元）</div>
+      <div className={styles.axisLabel}>
+        <span>0</span>
+        <span>30</span>
+        <span>100</span>
+        <span>500</span>
+        <span>1000</span>
+      </div>
+      </div>
     );
   }
   // 盈亏比图表
