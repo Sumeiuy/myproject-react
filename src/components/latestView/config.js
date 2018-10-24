@@ -23,6 +23,26 @@ const exported = {
       label: '每周首席投顾观点',
       value: '2',
     },
+    {
+      show: true,
+      label: '专题',
+      value: '3',
+    },
+    {
+      show: true,
+      label: '点评',
+      value: '4',
+    },
+    {
+      show: true,
+      label: '组合精粹',
+      value: '5',
+    },
+    {
+      show: true,
+      label: '个股精选',
+      value: '6',
+    },
   ],
 
   viewpointTitleList: [
