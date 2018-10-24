@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-24 15:30:53
+ * @Last Modified time: 2018-10-24 15:41:12
  */
 
 import React, { PureComponent } from 'react';
@@ -67,7 +67,6 @@ function checkBowserVersion() {
   }
   return false;
 }
-
 
 // 创建一个会缓存 checkIEHasCallPlugin 结果的函数
 const memoizeCheck = _.memoize(checkIEHasCallPlugin);
@@ -189,7 +188,7 @@ export default class Phone extends PureComponent {
    // 高版本的chrome、firefox浏览器弹框提示
    @autobind
   handleBowserVersionError() {
-    Modal.warning({
+    prompt({
       title: '当前浏览器版本不支持拨号功能！',
       type: 'warning',
       okText: '关闭',
