@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-23 15:28:14
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-10-23 17:54:33
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -92,6 +92,14 @@ export const RADAR_MUST_DISPLAY_INDICATORS = [
   // 理财产品
   'PA070000',
 ];
+
+// 账户信息下的账户概览、普通账户、信用账户、期权账户Tab显示配置
+export const ACCOUNT_INFO_TABS = {
+  accountSummary: '账户概览',
+  normalAccount: '普通账户',
+  creditAccount: '信用账户',
+  optionAccount: '期权账户',
+};
 
 const config = {
   //实时持仓中单选框list
