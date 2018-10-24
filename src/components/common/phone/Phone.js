@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-24 14:48:48
+ * @Last Modified time: 2018-10-24 15:30:53
  */
 
 import React, { PureComponent } from 'react';
@@ -62,7 +62,7 @@ function checkBowserVersion() {
   const bowserVersion = bowser.version.split('.')[0];
   // 判断chrome和firefox浏览器的版本号
   if ((env.isChrome() && bowserVersion > 20)
-    || (env.isFirefox() && bowserVersion > 1000)) {
+    || (env.isFirefox() && bowserVersion > 20)) {
     return true;
   }
   return false;
@@ -189,7 +189,7 @@ export default class Phone extends PureComponent {
    // 高版本的chrome、firefox浏览器弹框提示
    @autobind
   handleBowserVersionError() {
-    prompt({
+    Modal.warning({
       title: '当前浏览器版本不支持拨号功能！',
       type: 'warning',
       okText: '关闭',
