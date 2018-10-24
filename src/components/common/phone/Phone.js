@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-23 13:53:16
+ * @Last Modified time: 2018-10-24 14:48:48
  */
 
 import React, { PureComponent } from 'react';
@@ -60,7 +60,6 @@ function checkIEHasCallPlugin() {
 function checkBowserVersion() {
   // 获取浏览器版本的大版本号
   const bowserVersion = bowser.version.split('.')[0];
-  console.warn('bowserVersion', bowserVersion);
   // 判断chrome和firefox浏览器的版本号
   if ((env.isChrome() && bowserVersion > 20)
     || (env.isFirefox() && bowserVersion > 1000)) {
@@ -192,6 +191,7 @@ export default class Phone extends PureComponent {
   handleBowserVersionError() {
     prompt({
       title: '当前浏览器版本不支持拨号功能！',
+      type: 'warning',
       okText: '关闭',
     });
   }
@@ -208,6 +208,13 @@ export default class Phone extends PureComponent {
     if (bowser.msie) {
       if (!memoizeCheck()) {
         this.handlePluginError();
+        return;
+      }
+    }
+    // 检测chrome、firefox浏览器的版本号， 部分高版本chrome、firefox无法支持PC拨打电话
+    if (env.isChrome() || env.isFirefox()) {
+      if (checkBowserVersion()) {
+        this.handleBowserVersionError();
         return;
       }
     }

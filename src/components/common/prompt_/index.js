@@ -16,13 +16,14 @@ export default function (params) {
     onOk = () => {},
     // 确认按钮文本
     okText = '确认',
+    ...otherParams
   } = params;
-
 
   Modal[type]({
     title,
     content,
     okText,
     onOk,
+    ...otherParams
   });
 }
