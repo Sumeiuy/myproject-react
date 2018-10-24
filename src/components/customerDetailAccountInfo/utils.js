@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 14:08:27
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-18 14:52:18
+ * @Last Modified time: 2018-10-24 13:47:23
  * @description 资产分布使用的数字转化
  */
 import _ from 'lodash';
@@ -74,9 +74,32 @@ function updateSpecificIndexData(data) {
   });
 }
 
+// 生成rowNumber数量的空白数据
+function generateEmptyRow(rowNumber) {
+  let emptyRow = [];
+  for (let i = 0; i < rowNumber; i++) {
+    emptyRow.push({
+      isEmptyRow: true,
+      rowName: 'empty_row',
+    });
+  }
+  return emptyRow;
+}
+
+// 普通账户、信用账户、期权账户中表格中数据默认展示两条空行，所以需要将数据进行不足两行的填满两行
+function supplyEmptyRow(data) {
+  const len = _.size(data);
+  if (len < 2) {
+    const newRows = [...data, ...generateEmptyRow(2 - len)];
+    return _.map(newRows, addKeyForData);
+  }
+  return _.map(data, addKeyForData);
+}
+
 export {
   convertMoney,
   displayMoney,
   displayMoneyWithoutUnit,
   updateSpecificIndexData,
+  supplyEmptyRow,
 };

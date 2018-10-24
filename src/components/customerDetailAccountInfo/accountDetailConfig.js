@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 17:37:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-23 17:45:27
+ * @Last Modified time: 2018-10-24 13:47:27
  * @description 账户详情的配置项
  */
 

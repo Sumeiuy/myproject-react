@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 10:39:57
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-23 17:30:46
+ * @Last Modified time: 2018-10-24 13:31:58
  * @description 新版客户360详情底部概览信息
  */
 import React, { PureComponent } from 'react';
@@ -66,10 +66,10 @@ export default class AccountInfoTabs extends PureComponent {
 
   // 查询普通账户、信用账户、期权账户信息
   @autobind
-  queryAccountInByType(accoutType) {
+  queryAccountInByType(accountType) {
     const { location: { query: { custId } } } = this.props;
     if (!_.isEmpty(custId)) {
-      this.props.queryAccountInfo({ custId, accoutType });
+      this.props.queryAccountInfo({ custId, accountType });
     }
   }
 
@@ -105,8 +105,18 @@ export default class AccountInfoTabs extends PureComponent {
   }
 
   render() {
-    const { accountSummary } = this.props;
+    const { accountSummary, accountInfo } = this.props;
     const { activeTabKey } = this.state;
+
+    // 普通账户下的资金账户，证券账户
+    const normalFundAccount = _.get(accountInfo, 'normalAccount.fundAccount');
+    const normalStockAccount = _.get(accountInfo, 'normalAccount.stockAccount');
+    // 信用账户下的资金账户，证券账户
+    const creditFundAccount = _.get(accountInfo, 'creditAccount.fundAccount');
+    const creditStockAccount = _.get(accountInfo, 'creditAccount.stockAccount');
+    // 期权账户下的资金账户，证券账户
+    const optionFundAccount = _.get(accountInfo, 'optionAccount.fundAccount');
+    const optionStockAccount = _.get(accountInfo, 'optionAccount.stockAccount');
 
     return (
       <div className={styles.tabsContainer}>
@@ -118,17 +128,29 @@ export default class AccountInfoTabs extends PureComponent {
           </TabPane>
           <TabPane tab="普通账户" key="normalAccount">
             <div className={styles.tabPaneWrap}>
-              <AccountDetail type="Normal" />
+              <AccountDetail
+                type="Normal"
+                fundAccount={normalFundAccount}
+                stockAccount={normalStockAccount}
+              />
             </div>
           </TabPane>
           <TabPane tab="信用账户" key="creditAccount">
             <div className={styles.tabPaneWrap}>
-              <AccountDetail type="Credit" />
+              <AccountDetail
+                type="Credit"
+                fundAccount={creditFundAccount}
+                stockAccount={creditStockAccount}
+              />
             </div>
           </TabPane>
           <TabPane tab="期权账户" key="optionAccount">
             <div className={styles.tabPaneWrap}>
-              <AccountDetail type="Option" />
+              <AccountDetail
+                type="Option"
+                fundAccount={optionFundAccount}
+                stockAccount={optionStockAccount}
+              />
             </div>
           </TabPane>
         </Tabs>

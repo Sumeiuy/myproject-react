@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 16:52:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-23 17:11:20
+ * @Last Modified time: 2018-10-24 13:31:51
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailAccountInfo as api } from '../../api';
@@ -204,8 +204,10 @@ export default {
     // 查询普通账户、信用账户、期权账户
     * queryAccountInfo({ payload }, { put, call }) {
       const { accountType } = payload;
+      console.warn('accountType:', accountType);
       const { resultData } = yield call(api.queryAccountInfo, payload);
       const type = `${_.lowerCase(accountType)}Account`;
+      console.warn('type:', type);
       yield put({
         type: 'queryAccountInfoSuccess',
         payload: { [type]: resultData || {} },

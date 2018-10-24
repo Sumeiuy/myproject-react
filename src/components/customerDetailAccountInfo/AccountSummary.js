@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 13:38:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-23 15:58:19
+ * @Last Modified time: 2018-10-24 10:25:24
  * @desription 账户概览
  */
 import React from 'react';
@@ -22,7 +22,7 @@ export default function AccountSummary(props) {
   // 账户状态
   const accountStatus = _.get(data, 'acountRelative.accountStatus');
   // 首次交易日期
-  const firstTransactionDate = _.get(data, 'acountRelative.firstTransactionDate');
+  const firstTradeDate = _.get(data, 'acountRelative.firstTradeDate');
   // 首次交易日期
   const infoCompletionRate = _.get(data, 'acountRelative.infoCompletionRate');
   // 资产/收益相关
@@ -35,47 +35,47 @@ export default function AccountSummary(props) {
   // 年日均资产
   const yearDailyAssets = _.get(data, 'assetsRelative.yearDailyAssets');
   // 本年收益率(%)
-  const thisYearYieldRate = _.get(data, 'assetsRelative.thisYearYieldRate');
+  const yearProfitRate = _.get(data, 'assetsRelative.yearProfitRate');
   // 本年信用账户收益率(%)
-  const thisYearCreditYieldRate = _.get(data, 'assetsRelative.thisYearCreditYieldRate');
+  const yearCreditProfitRate = _.get(data, 'assetsRelative.yearCreditProfitRate');
   // 本年股票收益率(%)
-  const thisYearStockYieldRate = _.get(data, 'assetsRelative.thisYearStockYieldRate');
+  const yearStockProfitRate = _.get(data, 'assetsRelative.yearStockProfitRate');
   // 本年产品收益率(%)
-  const thisYearProductYieldRate = _.get(data, 'assetsRelative.thisYearProductYieldRate');
+  const yearProductProfitRate = _.get(data, 'assetsRelative.yearProductProfitRate');
   // 交易/销售相关
   // 股基交易量（年）
-  const yearStockTransactionValue = _.get(data, 'transactionRelative.yearStockTransactionValue');
+  const yearStockTradeAmt = _.get(data, 'transactionRelative.yearStockTradeAmt');
   // 股基交易量（月）
-  const monthStockTransactionValue = _.get(data, 'transactionRelative.monthStockTransactionValue');
+  const monthStockTradeAmt = _.get(data, 'transactionRelative.monthStockTradeAmt');
   // 信用交易量（年）
-  const yearCreditTransactionValue = _.get(data, 'transactionRelative.yearCreditTransactionValue');
+  const yearCreditTradeAmt = _.get(data, 'transactionRelative.yearCreditTradeAmt');
   // 信用交易量（月）
-  const monthCreditTransactionValue = _.get(data, 'transactionRelative.monthCreditTransactionValue');
+  const monthCreditTradeAmt = _.get(data, 'transactionRelative.monthCreditTradeAmt');
   // 产品销量（年）
-  const yearProductSaleValue = _.get(data, 'transactionRelative.yearProductSaleValue');
+  const yearProductSaleAmt = _.get(data, 'transactionRelative.yearProductSaleAmt');
   // 产品销量（月）
-  const monthProductSaleValue = _.get(data, 'transactionRelative.monthProductSaleValue');
+  const monthProductSaleAmt = _.get(data, 'transactionRelative.monthProductSaleAmt');
   // 收益凭证销量（年）
-  const yearIncomeReceiptSaleValue = _.get(data, 'transactionRelative.yearIncomeReceiptSaleValue');
+  const yearIncomeReceiptSaleAmt = _.get(data, 'transactionRelative.yearIncomeReceiptSaleAmt');
   // 收益凭证销量（月）
-  const monthIncomeReceiptSaleValue = _.get(data, 'transactionRelative.monthIncomeReceiptSaleValue');
+  const monthIncomeReceiptSaleAmt = _.get(data, 'transactionRelative.monthIncomeReceiptSaleAmt');
   // 收入贡献相关
   // 股基净佣金收入（年）
-  const yearStockCommission = _.get(data, 'incomeRelative.yearStockCommission');
+  const yearStockBrokerage = _.get(data, 'incomeRelative.yearStockBrokerage');
   // 股基净佣金收入（月）
-  const monthStockCommission = _.get(data, 'incomeRelative.monthStockCommission');
+  const monthStockBrokerage = _.get(data, 'incomeRelative.monthStockBrokerage');
   // 产品净手续费收入（年）
-  const yearProductCharge = _.get(data, 'incomeRelative.yearProductCharge');
+  const yearProductFee = _.get(data, 'incomeRelative.yearProductFee');
   // 产品净手续费收入（月）
-  const monthProductCharge = _.get(data, 'incomeRelative.monthProductCharge');
+  const monthProductFee = _.get(data, 'incomeRelative.monthProductFee');
   // 融资融券净利息收入（年）
-  const yearMarginInterests = _.get(data, 'incomeRelative.yearMarginInterests');
+  const yearMarginFruits = _.get(data, 'incomeRelative.yearMarginFruits');
   // 融资融券净利息收入（月）
-  const monthMarginInterests = _.get(data, 'incomeRelative.monthMarginInterests');
+  const monthMarginFruits = _.get(data, 'incomeRelative.monthMarginFruits');
   // 质押净利息收入（年）
-  const yearPledgeInterests = _.get(data, 'incomeRelative.yearPledgeInterests');
+  const yearPledgeFruits = _.get(data, 'incomeRelative.yearPledgeFruits');
   // 质押净利息收入（月）
-  const monthPledgeInterests = _.get(data, 'incomeRelative.monthPledgeInterests');
+  const monthPledgeFruits = _.get(data, 'incomeRelative.monthPledgeFruits');
 
   return (
     <div className={styles.summaryWrap}>
@@ -87,7 +87,7 @@ export default function AccountSummary(props) {
         <div className={styles.body}>
           <AccountSummaryCell label="激活日期" type="DATE" content={activationDate} />
           <AccountSummaryCell label="账户状态" type="STRING" content={accountStatus} />
-          <AccountSummaryCell label="首次交易日期" type="DATE" content={firstTransactionDate} />
+          <AccountSummaryCell label="首次交易日期" type="DATE" content={firstTradeDate} />
           <AccountSummaryCell label="信息完善率" type="RATE" content={infoCompletionRate} />
         </div>
       </div>
@@ -101,10 +101,10 @@ export default function AccountSummary(props) {
           <AccountSummaryCell label="资金余额" content={fundBalance} />
           <AccountSummaryCell label="资产峰值" content={assetsPeak} />
           <AccountSummaryCell label="年日均资产" content={yearDailyAssets} />
-          <AccountSummaryCell label="本年收益率(%)" type="RATE" content={thisYearYieldRate} />
-          <AccountSummaryCell label="本年信用账户收益率(%)" type="RATE" content={thisYearCreditYieldRate} />
-          <AccountSummaryCell label="本年股票收益率(%)" type="RATE" content={thisYearStockYieldRate} />
-          <AccountSummaryCell label="本年产品收益率(%)" type="RATE" content={thisYearProductYieldRate} />
+          <AccountSummaryCell label="本年收益率(%)" type="RATE" content={yearProfitRate} />
+          <AccountSummaryCell label="本年信用账户收益率(%)" type="RATE" content={yearCreditProfitRate} />
+          <AccountSummaryCell label="本年股票收益率(%)" type="RATE" content={yearStockProfitRate} />
+          <AccountSummaryCell label="本年产品收益率(%)" type="RATE" content={yearProductProfitRate} />
         </div>
       </div>
       <div className={styles.summaryBlock}>
@@ -113,14 +113,14 @@ export default function AccountSummary(props) {
           <div className={styles.setting}><Icon type="setting" theme="outlined" /></div>
         </div>
         <div className={styles.body}>
-          <AccountSummaryCell label="股基交易量（年）" content={yearStockTransactionValue} />
-          <AccountSummaryCell label="股基交易量（月）" content={monthStockTransactionValue} />
-          <AccountSummaryCell label="信用交易量（年）" content={yearCreditTransactionValue} />
-          <AccountSummaryCell label="信用交易量（月）" content={monthCreditTransactionValue} />
-          <AccountSummaryCell label="产品销量（年）" content={yearProductSaleValue} />
-          <AccountSummaryCell label="产品销量（月）" content={monthProductSaleValue} />
-          <AccountSummaryCell label="收益凭证销量（年）" content={yearIncomeReceiptSaleValue} />
-          <AccountSummaryCell label="收益凭证销量（月）" content={monthIncomeReceiptSaleValue} />
+          <AccountSummaryCell label="股基交易量（年）" content={yearStockTradeAmt} />
+          <AccountSummaryCell label="股基交易量（月）" content={monthStockTradeAmt} />
+          <AccountSummaryCell label="信用交易量（年）" content={yearCreditTradeAmt} />
+          <AccountSummaryCell label="信用交易量（月）" content={monthCreditTradeAmt} />
+          <AccountSummaryCell label="产品销量（年）" content={yearProductSaleAmt} />
+          <AccountSummaryCell label="产品销量（月）" content={monthProductSaleAmt} />
+          <AccountSummaryCell label="收益凭证销量（年）" content={yearIncomeReceiptSaleAmt} />
+          <AccountSummaryCell label="收益凭证销量（月）" content={monthIncomeReceiptSaleAmt} />
         </div>
       </div>
       <div className={styles.summaryBlock}>
@@ -129,14 +129,14 @@ export default function AccountSummary(props) {
           <div className={styles.setting}><Icon type="setting" theme="outlined" /></div>
         </div>
         <div className={styles.body}>
-          <AccountSummaryCell label="股基净佣金收入（年）" content={yearStockCommission} />
-          <AccountSummaryCell label="股基净佣金收入（月）" content={monthStockCommission} />
-          <AccountSummaryCell label="产品净手续费收入（年）" content={yearProductCharge} />
-          <AccountSummaryCell label="产品净手续费收入（月）" content={monthProductCharge} />
-          <AccountSummaryCell label="融资融券净利息收入（年）" content={yearMarginInterests} />
-          <AccountSummaryCell label="融资融券净利息收入（月）" content={monthMarginInterests} />
-          <AccountSummaryCell label="质押净利息收入（年）" content={yearPledgeInterests} />
-          <AccountSummaryCell label="质押净利息收入（月）" content={monthPledgeInterests} />
+          <AccountSummaryCell label="股基净佣金收入（年）" content={yearStockBrokerage} />
+          <AccountSummaryCell label="股基净佣金收入（月）" content={monthStockBrokerage} />
+          <AccountSummaryCell label="产品净手续费收入（年）" content={yearProductFee} />
+          <AccountSummaryCell label="产品净手续费收入（月）" content={monthProductFee} />
+          <AccountSummaryCell label="融资融券净利息收入（年）" content={yearMarginFruits} />
+          <AccountSummaryCell label="融资融券净利息收入（月）" content={monthMarginFruits} />
+          <AccountSummaryCell label="质押净利息收入（年）" content={yearPledgeFruits} />
+          <AccountSummaryCell label="质押净利息收入（月）" content={monthPledgeFruits} />
         </div>
       </div>
     </div>
