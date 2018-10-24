@@ -38,6 +38,38 @@ const navArray = [
   },
 ];
 
+// 首页执行者视图首次引导提示第一步的dom的id名称(搜索栏)
+export const NEW_HOME_INTRO_FIRST_SEEP_IDNAME = 'homePageIntroFirstStep';
+
+// 首页执行者视图首次引导提示第二步的dom的id名称(主导航) tabMenu 元素自带ID
+
+// 首页执行者视图首次引导提示第三步的dom的id名称(重点关注)
+export const NEW_HOME_INTRO_THIRD_SEEP_IDNAME = 'homePageIntroThirdStep';
+
+// 首页执行者视图首次引导提示第四步的dom的id名称(猜你感兴趣)
+export const NEW_HOME_INTRO_FOURTH_SEEP_IDNAME = 'homePageIntroFourthStep';
+
+// 首页执行者视图首次引导提示第五步的dom的id名称(客户分析)
+export const NEW_HOME_INTRO_FIFTH_SEEP_IDNAME = 'homePageIntroFifthStep';
+
+// 首页执行者视图首次引导提示第六步的dom的id名称(产品日历)
+export const NEW_HOME_INTRO_SIXTH_SEEP_IDNAME = 'homePageIntroSixthStep';
+
+// 首页执行者视图首次引导提示第七步的dom的id名称(组合推荐)
+export const NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME = 'homePageIntroSeventhStep';
+
+// 首页执行者视图首次引导提示第八步的dom的id名称(活动栏目)
+export const NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME = 'homePageIntroEighthStep';
+
+// 首页执行者视图首次引导提示第九步的dom的id名称(每日晨报)
+export const NEW_HOME_INTRO_NINTH_SEEP_IDNAME = 'homePageIntroNinthStep';
+
+// 首页执行者视图首次引导提示第十步的dom的id名称(我要提问)
+export const NEW_HOME_INTRO_TENTH_SEEP_IDNAME = 'homePageIntroTenthStep';
+
+// 首页执行者视图首次引导提示第十一步的dom的id名称(常用工具)
+export const NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME = 'homePageIntroEleventhStep';
+
 export {
   DATE_FORMAT_STRING,
   MONTH_DATE_FORMAT,

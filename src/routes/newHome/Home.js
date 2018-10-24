@@ -13,6 +13,8 @@ import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import store from 'store';
+import introJs from 'intro.js';
+import 'intro.js/introjs.css';
 
 import { logPV } from '../../decorators/logable';
 import withRouter from '../../decorators/withRouter';
@@ -29,6 +31,21 @@ import styles from './home.less';
 import { MorningBroadcast } from '../../components/customerPool/home';
 import { DATE_FORMAT_STRING, MONTH_DATE_FORMAT, navArray } from './config';
 import rankPng from './rank.png';
+import {
+  NEW_HOME_INTRO_FIRST_SEEP_IDNAME,
+  NEW_HOME_INTRO_THIRD_SEEP_IDNAME,
+  NEW_HOME_INTRO_FOURTH_SEEP_IDNAME,
+  NEW_HOME_INTRO_FIFTH_SEEP_IDNAME,
+  NEW_HOME_INTRO_SIXTH_SEEP_IDNAME,
+  NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME,
+  NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME,
+  NEW_HOME_INTRO_NINTH_SEEP_IDNAME,
+  NEW_HOME_INTRO_TENTH_SEEP_IDNAME,
+  NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME,
+} from './config';
+
+// 存储在本地用哪个来判断是否在执行者视图中第一次使用'展开收起'
+const NEWHOMEFIRSTUSECOLLAPSE_PERFORMERVIEW = 'NEW_HOME_GUIDE_FIRSTUSECOLLAOSE_PERFORMERVIEW';
 
 const effect = dva.generateEffect;
 
@@ -207,6 +224,14 @@ export default class Home extends PureComponent {
     queryNumbers({ orgId: isNotSaleDepartment && permission.hasTkMampPermission() ? this.loginOrgId : '' });
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    // 第一次渲染完判断是否是第一次进入执行者视图，是的话显示引导 放在didupdate里是为了解决在didmount下并没有渲染完成导致定位不准的问题
+    if (!this.isFirstUseCollapse()) {
+      setTimeout(this.intialGuide, 500);
+      store.set(NEWHOMEFIRSTUSECOLLAPSE_PERFORMERVIEW, 'NO');
+    }
+  }
+
   // 猜你感兴趣-更多点击事件
   @autobind
   @logPV({ pathname: '/modal/showMoreLabelModal', title: '猜你感兴趣标签' })
@@ -363,6 +388,84 @@ export default class Home extends PureComponent {
       type: 'LABEL',
     });
   }
+  // 判断是否在执行者视图中使用'展开收起'功能
+  isFirstUseCollapse() {
+    return store.get(NEWHOMEFIRSTUSECOLLAPSE_PERFORMERVIEW);
+  }
+
+  // 引导功能初始化
+  @autobind
+  intialGuide() {
+    introJs().setOptions({
+      showBullets: true,
+      showProgress: false,
+      overlayOpacity: 0.4,
+      exitOnOverlayClick: false,
+      showStepNumbers: false,
+      tooltipClass: styles.introTooltip,
+      highlightClass: styles.highlightClass,
+      doneLabel: '关闭',
+      prevLabel: '上一个',
+      nextLabel: '下一个',
+      skipLabel: '关闭',
+      steps: this.getIntroStepListInNewHome(),
+      scrollToElement: true,
+      disableInteraction: true,
+    }).start();
+  }
+
+  // 获取新手引导步骤列表
+  @autobind
+  getIntroStepListInNewHome() {
+    const newStepList = [
+      {
+        element: document.querySelector(`#${NEW_HOME_INTRO_FIRST_SEEP_IDNAME}`),
+        intro: '首页搜索栏移到页面顶部，即刻获取您感兴趣的客户信息。',
+        position: 'top',
+      }, {
+        element: document.querySelector(`#tabMenu`),
+        intro: '导航菜单从左侧移到上方，留出更多页面空间为您展现精彩内容。',
+        position: 'top',
+      }, {
+        element: document.querySelector(`#${NEW_HOME_INTRO_THIRD_SEEP_IDNAME}`),
+        intro: '新增值得重点关注的客户类别统计，点击可进入客户列表，助您全方位拓展业务。',
+        position: 'top',
+      }, {
+        element: document.querySelector(`#${NEW_HOME_INTRO_FOURTH_SEEP_IDNAME}`),
+        intro: '“猜你该兴趣”移到这里了，更大的空间里可为您推荐更多种类的服务机会。',
+        position: 'right',
+      }, {
+        element: document.querySelector(`#${NEW_HOME_INTRO_FIFTH_SEEP_IDNAME}`),
+        intro: '新增“客户分析”栏目，从六大维度洞察名下客户，点击各项指标可下钻查看客户明细列表。',
+        position: 'top',
+      }, {
+        element: document.querySelector(`#${NEW_HOME_INTRO_SIXTH_SEEP_IDNAME}`),
+        intro: ' 新增“今日产品”栏目，让您及时掌握首发、开放销售、到期等关键产品信息。点击数字可以查看产品明细列表。',
+        position: 'top',
+      }, {
+        element: document.querySelector(`#${NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME}`),
+        intro: '近30天涨幅排名前五的投资组合在这里，点击即可查看组合详情。',
+        position: 'top',
+      }, {
+        element: document.querySelector(`#${NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME}`),
+        intro: ' 从这里可了解近期的活动讯息，点击可进入活动入口。',
+        position: 'top',
+      }, {
+        element: document.querySelector(`#${NEW_HOME_INTRO_NINTH_SEEP_IDNAME}`),
+        intro: ' 每日晨报让您可听、可看、可下载最新财经热点话题。',
+        position: 'top',
+      },{
+        element: document.querySelector(`#${NEW_HOME_INTRO_TENTH_SEEP_IDNAME}`),
+        intro: '在这里可给理财平台反馈您的使用问题或建议。',
+        position: 'top',
+      }, {
+        element: document.querySelector(`#${NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME}`),
+        intro: '投顾签约、服务订阅、隔离墙、售前查询，常用工具都汇聚在这里。',
+        position: 'top',
+      },
+    ];
+    return newStepList;
+  }
 
   render() {
     const {
@@ -408,6 +511,7 @@ export default class Home extends PureComponent {
       title: '重点关注',
       data: keyAttention,
       onClick: this.handleLinkToCustomerList,
+      introPositionId: NEW_HOME_INTRO_THIRD_SEEP_IDNAME
     };
     // 猜你感兴趣
     const guessYourInterestsProps = {
@@ -417,6 +521,8 @@ export default class Home extends PureComponent {
       onClick: this.handleLinkToCustomerList,
       onExtraClick: this.handleMoreClick,
       hiddenEmptyValue: false,
+      introPositionId: 
+      NEW_HOME_INTRO_FOURTH_SEEP_IDNAME
     };
     // 产品日历
     const today = moment().format(MONTH_DATE_FORMAT);
@@ -425,6 +531,7 @@ export default class Home extends PureComponent {
       title: `${today}产品日历`,
       data: this.transferProductData(),
       onClick: this.handleProductCalendarValueClick,
+      introPositionId: NEW_HOME_INTRO_SIXTH_SEEP_IDNAME
     };
     // 组合推荐
     const viewAndCombinationProps = {
@@ -468,6 +575,7 @@ export default class Home extends PureComponent {
       dataList: initBoradcastList,
       sourceList: initBoradcastFile,
       isNewHome: true,
+      introPositionId: NEW_HOME_INTRO_NINTH_SEEP_IDNAME,
     };
 
     return (
@@ -480,7 +588,12 @@ export default class Home extends PureComponent {
             <CommonCell {...guessYourInterestsProps} />
           </div>
           <div className={styles.competitionsLink}>
-            <img src={rankPng} alt="投顾能力竞赛"  onClick={this.toInvestmentConsultantCompetenceRacePage} />
+            <img
+              src={rankPng}
+              alt="投顾能力竞赛"
+              onClick={this.toInvestmentConsultantCompetenceRacePage}
+              id={NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME}
+            />
           </div>
         </div>
         <div className={styles.mainContent}>

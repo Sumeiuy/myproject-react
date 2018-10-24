@@ -21,7 +21,7 @@ import Icon from '../../common/Icon';
 import { isSightingScope, getFilter, getSortParam } from '../helper';
 import styles from './search.less';
 import classes from './headerSearch.less';
-
+import { NEW_HOME_INTRO_FIRST_SEEP_IDNAME } from './config'
 const Option = AutoComplete.Option;
 const EMPTY_LIST = [];
 const NONE_INFO = '按回车键发起搜索';
@@ -374,7 +374,9 @@ export default class Search extends PureComponent {
     const trueStyles = isOnlySearchable ? classes : styles;
 
     return (
-      <div className={trueStyles.searchBox}>
+      <div className={trueStyles.searchBox}
+        id={NEW_HOME_INTRO_FIRST_SEEP_IDNAME}
+      >
         <div className={trueStyles.inner}>
           <div className={trueStyles.inputBox}>
             <div className="global-search-wrapper">

@@ -27,10 +27,12 @@ export default class MorningBroadcast extends PureComponent {
     sourceList: PropTypes.object.isRequired,
     queryAudioFile: PropTypes.func.isRequired,
     isNewHome: PropTypes.bool,
+    introPositionId: PropTypes.string,
   };
 
   static defaultProps = {
     isNewHome: false,
+    introPositionId:null,
   }
 
   static contextTypes = {
@@ -101,13 +103,13 @@ export default class MorningBroadcast extends PureComponent {
       query,
     });
   }
-
+  
   render() {
-    const { dataList, sourceList = [], isNewHome } = this.props;
+    const { dataList, sourceList = [], isNewHome, introPositionId } = this.props;
     const { activeMusic } = this.state;
     const trueStyles = isNewHome ? classes : styles;
     return (
-      <div className={trueStyles.morning_broadcast}>
+      <div className={trueStyles.morning_broadcast} id={introPositionId}>
         <div className={trueStyles.title}>
           <span>{isNewHome ? '每日晨报' : '晨间播报'}</span>
           <span className={trueStyles.more} onClick={() => this.openNewTab('/strategyCenter/broadcastList')} >
