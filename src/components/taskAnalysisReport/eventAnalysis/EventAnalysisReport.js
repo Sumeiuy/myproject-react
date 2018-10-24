@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-23 20:06:32
+ * @Last Modified time: 2018-10-24 09:28:51
  */
 
 import React, { PureComponent } from 'react';
@@ -120,7 +120,7 @@ export default class EventAnalysisReport extends PureComponent {
 
   // 任务报表渲染
   @autobind
-  ReportRender(text, record, index, type) {
+  renderReportChart(text, record, index, type) {
     const { eventAnalysisList: { eventReportList = [] } } = this.props;
     const { eventName } = record;
     let firstData = [];
@@ -236,32 +236,32 @@ export default class EventAnalysisReport extends PureComponent {
       title: '任务数',
       dataIndex: 'taskNum',
       key: 'taskNum',
-      render: (text, record, index) => this.ReportRender(text, record, index, 'task'),
+      render: (text, record, index) => this.renderReportChart(text, record, index, 'task'),
     },{
       title: '完成任务数',
       dataIndex: 'completedTaskNum',
       key: 'completedTaskNum',
-      render: (text, record, index) => this.ReportRender(text, record, index, 'task'),
+      render: (text, record, index) => this.renderReportChart(text, record, index, 'task'),
     },{
       title: '任务完成率',
       dataIndex: 'taskCompletionRate',
       key: 'taskCompletionRate',
-      render: (text, record, index) => this.ReportRender(text, record, index, 'task'),
+      render: (text, record, index) => this.renderReportChart(text, record, index, 'task'),
     },{
       title: '覆盖客户数',
       dataIndex: 'coveredCustomerNum',
       key: 'coveredCustomerNum',
-      render: (text, record, index) => this.ReportRender(text, record, index, 'customer'),
+      render: (text, record, index) => this.renderReportChart(text, record, index, 'customer'),
     },{
       title: '已服务客户数',
       dataIndex: 'servedCustomerNum',
       key: 'servedCustomerNum',
-      render: (text, record, index) => this.ReportRender(text, record, index, 'customer'),
+      render: (text, record, index) => this.renderReportChart(text, record, index, 'customer'),
     },{
       title: '各渠道服务占比',
       dataIndex: 'servicesAccounted',
       key: 'servicesAccounted',
-      render: (text, record, index) => this.ReportRender(text, record, index, 'serviceChannels'),
+      render: (text, record, index) => this.renderReportChart(text, record, index, 'serviceChannels'),
     }];
     // 表格数据
     const dataSource = eventData;
