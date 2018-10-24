@@ -2,8 +2,8 @@
  * @Description: PC电话拨号页面
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 15:41:13
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-10-24 15:41:12
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,8 @@ import qs from 'query-string';
 import classnames from 'classnames';
 import { Phone as XPhone } from 'lego-soft-phone';
 import sotfCallInstall from './SotfCallInstall0426.msi';
+import prompt from '../prompt_';
+import { env } from '../../../helper';
 import logable from '../../../decorators/logable';
 import styles from './phone.less';
 
@@ -51,6 +53,19 @@ function checkIEHasCallPlugin() {
     xPhone.release();
   }
   return true;
+}
+
+// 检查浏览器的版本
+// 部分高版本chrome、firefox无法支持PC拨打电话
+function checkBowserVersion() {
+  // 获取浏览器版本的大版本号
+  const bowserVersion = bowser.version.split('.')[0];
+  // 判断chrome和firefox浏览器的版本号
+  if ((env.isChrome() && bowserVersion > 20)
+    || (env.isFirefox() && bowserVersion > 20)) {
+    return true;
+  }
+  return false;
 }
 
 // 创建一个会缓存 checkIEHasCallPlugin 结果的函数
@@ -122,6 +137,13 @@ export default class Phone extends PureComponent {
                 return;
               }
             }
+            // 检测chrome、firefox浏览器的版本号， 部分高版本chrome、firefox无法支持PC拨打电话
+            if (env.isChrome() || env.isFirefox()) {
+              if (checkBowserVersion()) {
+                this.handleBowserVersionError();
+                return;
+              }
+            }
             this.prepareCall(number);
             // 点击打电话
             this.props.onClick();
@@ -163,6 +185,16 @@ export default class Phone extends PureComponent {
     });
   }
 
+   // 高版本的chrome、firefox浏览器弹框提示
+   @autobind
+  handleBowserVersionError() {
+    prompt({
+      title: '当前浏览器版本不支持拨号功能！',
+      type: 'warning',
+      okText: '关闭',
+    });
+  }
+
   // TODO 日志查看:找不到方法 未验证
   @autobind
   @logable({ type: 'Click', payload: { name: '点击' } })
@@ -175,6 +207,13 @@ export default class Phone extends PureComponent {
     if (bowser.msie) {
       if (!memoizeCheck()) {
         this.handlePluginError();
+        return;
+      }
+    }
+    // 检测chrome、firefox浏览器的版本号， 部分高版本chrome、firefox无法支持PC拨打电话
+    if (env.isChrome() || env.isFirefox()) {
+      if (checkBowserVersion()) {
+        this.handleBowserVersionError();
         return;
       }
     }
