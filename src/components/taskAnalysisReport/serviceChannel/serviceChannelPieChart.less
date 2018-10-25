@@ -1,12 +1,28 @@
-.serviceChannelPieChart {
+.serviceChannelPieChartWrapper {
   flex: 1;
+  width: 50%;
   height: 368px;
   border-right: 1px solid #eee;
+  box-sizing: border-box;
   position: relative;
   .chartTitle {
     color: #333;
     font-size: 14px;
     margin-bottom: 30px;
+  }
+  .serviceChannelPieChart {
+    display: flex;
+    height: 317px;
+    .serviceChannelPie {
+      width: 70%;
+      height: 310px;
+      margin-top: 3px;
+      position: relative;
+    }
+    .serviceChannelPieLegend {
+      flex: 1;
+      position: relative;
+    }
   }
   .noChart {
     width: 100%;

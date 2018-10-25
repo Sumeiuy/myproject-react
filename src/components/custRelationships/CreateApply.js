@@ -2,8 +2,8 @@
  * @Author: hongguangqing
  * @Descripter: 客户关联关系信息申请新建页面
  * @Date: 2018-06-08 13:10:33
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 14:11:05
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-10-22 17:38:02
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import _ from 'lodash';
 import FinanceCustRelationshipForm from './FinanceCustRelationshipForm';
 import Modal from '../common/biz/CommonModal';
 import confirm from '../common/confirm_';
+import prompt from '../common/prompt_';
 import ApprovalBtnGroup from '../common/approvalBtns';
 import TableDialog from '../common/biz/TableDialog';
 import logable, { logPV, logCommon } from '../../decorators/logable';
@@ -200,6 +201,7 @@ export default class CreateApply extends PureComponent {
         groupName: btn.nextGroupName,
         auditors: !_.isEmpty(btn.flowAuditors) ? btn.flowAuditors[0].login : '',
         nextApproverList: btn.flowAuditors,
+        defaultNextApproverList: btn.flowAuditors,
       }, () => {
         // 如果只有一个审批人情况，则直接提交后端校验接口
         // 校验通过之后则条用新建接口
@@ -222,7 +224,17 @@ export default class CreateApply extends PureComponent {
   @autobind
   @logPV({ pathname: '/modal/choiceApproval', title: '选择审批人' })
   handleSelectApprovalModal() {
-    this.setState({ nextApprovalModal: true });
+    const { defaultNextApproverList } = this.state;
+    if (_.isEmpty(defaultNextApproverList)) {
+      prompt({
+        title: '系统未配置下一步审批人，请联系管理员处理！',
+        type: 'error',
+      });
+    } else {
+      this.setState({
+        nextApprovalModal: true,
+      });
+    }
   }
 
   @autobind
@@ -231,6 +243,22 @@ export default class CreateApply extends PureComponent {
       nextApprovalModal: false,
       auditors: approver.login,
     }, this.doValidateBeforeSubmit);
+  }
+
+  // 搜索下一步审批人
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '搜索下一步审批人',
+      value: '$args[0]',
+    },
+  })
+  handleSearchApproval(value) {
+    const { defaultNextApproverList } = this.state;
+    const filterNextApproverList = _.filter(defaultNextApproverList,
+      item => (item.login.indexOf(value) > -1 || item.empName.indexOf(value) > -1));
+    this.setState({ nextApproverList: filterNextApproverList });
   }
 
   render() {
@@ -264,7 +292,12 @@ export default class CreateApply extends PureComponent {
       title: '选择下一审批人员',
       modalKey: 'relationApplyNextApproverModal',
       rowKey: 'login',
-      searchShow: false,
+      searchShow: true,
+      placeholder: '员工工号/员工姓名',
+      onSearch: this.handleSearchApproval,
+      pagination: {
+        pageSize: 10,
+      },
     };
 
     return (

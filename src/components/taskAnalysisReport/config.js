@@ -181,8 +181,6 @@ const complianceServiceCustOptions = {
   ],
 };
 
-
-
 // 服务渠道配置项
 const serviceChannelOptions = {
   color: ['#f7ad33', '#4c70b3', '#67b8e1', '#cf4b4a'],
@@ -224,6 +222,98 @@ const serviceChannelOptions = {
   },
 };
 
+// 事件分析配置项
+// 触发任务和完成任务配置项
+const taskOption = {
+  color: ['#f7ad33', '#4c70b3'],
+  eventReportName: '任务统计',
+  eventDataName: {
+    triggerTaskName: '已触发任务数',
+    completedTaskName: '已完成任务数',
+  },
+  series: {
+    type: 'line',
+    smooth: true,
+    symbol: 'none',
+  },
+  legendList: [
+    {
+      color: '#f7ad33',
+      name: '触发任务数',
+      type: 'line',
+    },
+    {
+      color: '#4c70b3',
+      name: '剩余任务数',
+      type: 'line',
+    }
+  ]
+};
+// 覆盖客户数和完成客户数配置项
+const customerOption = {
+  color: ['#f7ad33', '#4c70b3'],
+  eventReportName: '服务客户统计',
+  eventDataName: {
+    coveredCustomerName: '覆盖客户数',
+    completedCustomerName: '完成客户数',
+  },
+  series: {
+    type: 'line',
+    smooth: true,
+    symbol: 'none',
+  },
+  legendList: [
+    {
+      color: '#f7ad33',
+      name: '覆盖客户数',
+      type: 'line',
+    },
+    {
+      color: '#4c70b3',
+      name: '完成客户数',
+      type: 'line',
+    }
+  ]
+};
+// 服务渠道占比配置项
+const serviceChannelChangeOption = {
+  color: ['#f7ad33', '#4c70b3', '#67b8e1', '#cf4b4a'],
+  eventReportName: '服务渠道变化',
+  eventDataName: {
+    zhangle: '涨乐',
+    phone: '电话',
+    interview: '面谈',
+    other: '其它',
+  },
+  series: {
+    type: 'line',
+    smooth: true,
+    symbol: 'none',
+  },
+  legendList: [
+    {
+      color: '#f7ad33',
+      name: '涨乐',
+      type: 'line',
+    },
+    {
+      color: '#67b8e1',
+      name: '电话',
+      type: 'line',
+    },
+    {
+      color: '#cf4b4a',
+      name: '面谈',
+      type: 'line',
+    },
+    {
+      color: '#4c70b3',
+      name: '其它',
+      type: 'line',
+    }
+  ]
+};
+
 const chartLineColors = ['#f7ad33', '#4c70b3'];
 
 export const {
@@ -248,4 +338,7 @@ export {
   serviceChannelOptions,
   CUSTOMEER_NUMBER_NAME,
   TASK_NUMBER_NAME,
+  taskOption,
+  customerOption,
+  serviceChannelChangeOption,
 };

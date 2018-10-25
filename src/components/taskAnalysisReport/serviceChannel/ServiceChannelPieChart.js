@@ -3,7 +3,7 @@
  * @Descripter: 渠道占比分布
  * @Date: 2018-10-12 10:10:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-19 11:09:54
+ * @Last Modified time: 2018-10-24 10:22:49
  */
 
 import React from 'react';
@@ -80,7 +80,7 @@ export default function ServiceChannelPieChart(props) {
       }],
     };
     return (
-      <div className={styles.serviceChannelPieChart}>
+      <div className={styles.serviceChannelPieChartWrapper}>
         {
           (proportionList && proportionList.length > 0)
           ?
@@ -89,17 +89,23 @@ export default function ServiceChannelPieChart(props) {
               <div className={styles.chartTitle}>
                 渠道占比分布
               </div>
-              <ChartLegend
-                legendList={legendList}
-                className="pieLegend"
-              />
-              <IECharts
-                  option={options}
-                  resizable
-                  style={{
-                    height: '310px',
-                  }}
-                />
+              <div className={styles.serviceChannelPieChart}>
+                <div className={styles.serviceChannelPie}>
+                  <IECharts
+                    option={options}
+                    resizable
+                    style={{
+                      height: '310px',
+                    }}
+                  />
+                </div>
+                <div className={styles.serviceChannelPieLegend}>
+                  <ChartLegend
+                    legendList={legendList}
+                    className="pieLegend"
+                  />
+                </div>
+              </div>
             </div>
           )
           :
