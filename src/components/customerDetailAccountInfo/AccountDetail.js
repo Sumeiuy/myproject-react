@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 17:18:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-23 17:50:55
+ * @Last Modified time: 2018-10-24 13:40:43
  * @description 账户详情
  */
 
@@ -14,6 +14,9 @@ import {
   FUND_ACCOUNT_TABLE_COLUMNS,
   STOCK_ACCOUNT_TABLE_COLUMNS,
 } from './accountDetailConfig';
+import {
+  supplyEmptyRow,
+} from './utils';
 
 import styles from './accountDetail.less';
 
@@ -36,6 +39,12 @@ export default class AccountDetail extends PureComponent {
   }
 
   render() {
+    const { fundAccount, stockAccount } = this.props;
+    // 补足空白行后的资金账户数据
+    const newFundAccount = supplyEmptyRow(fundAccount);
+    // 补足空白行后的证券账户
+    const newStockAccount = supplyEmptyRow(stockAccount);
+
     return (
       <div className={styles.accountDetailWrap}>
         <div className={styles.accountBlock}>
@@ -44,7 +53,9 @@ export default class AccountDetail extends PureComponent {
           </div>
           <div className={styles.accountTable}>
             <Table
+              pagination={false}
               className={styles.tableBorder}
+              dataSource={newFundAccount}
               columns={FUND_ACCOUNT_TABLE_COLUMNS}
             />
           </div>
@@ -55,7 +66,9 @@ export default class AccountDetail extends PureComponent {
           </div>
           <div className={styles.accountTable}>
             <Table
+              pagination={false}
               className={styles.tableBorder}
+              dataSource={newStockAccount}
               columns={STOCK_ACCOUNT_TABLE_COLUMNS}
             />
           </div>

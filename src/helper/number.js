@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 13:38:29
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-18 11:20:51
+ * @Last Modified time: 2018-10-24 16:51:58
  * @description 此处存放针对数字的通用处理方法
  */
 import _ from 'lodash';
@@ -196,7 +196,19 @@ const number = {
       return `${rate100}%`;
     }
     return '';
-  }
+  },
+
+  /**
+   * 将千分比的数据转换成字符串
+   * @param {Number} rate 比率的数字
+   */
+  convertPermillage(rate) {
+    if (_.isNumber(rate)) {
+      const rate100 = (rate * 1000).toFixed(2);
+      return `${rate100}${permillage}`;
+    }
+    return '';
+  },
 };
 
 export default number;

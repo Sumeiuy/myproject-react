@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-15 22:30:04
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-19 14:19:15
+ * @Last Modified time: 2018-10-24 16:52:45
  * @description 客户360详情交易数据展示模块
  */
 import React from 'react';
@@ -37,8 +37,8 @@ export default function SummaryTransaction(props) {
   const yearProdHold = displayMoney(data.yearProdHold);
   // 归集率
   const gjlRate = number.convertRate(data.gjlRate);
-  // 股基佣金率
-  const minFee = number.convertRate(data.minFee);
+  // 股基佣金率,此值是千分比
+  const minFee = number.convertPermillage(data.minFee);
   return (
     <div className={styles.wrap}>
       <MoneyCell title="总资产" content={assetText} />
