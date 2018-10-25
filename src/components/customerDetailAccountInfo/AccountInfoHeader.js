@@ -1,8 +1,8 @@
 /*
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-23 17:55:52
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-25 10:09:54
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -23,12 +23,18 @@ const RadioGroup = Radio.Group;
 const { thousandFormat, toFixed, formatRound } = number;
 
 export default class AccountInfoHeader extends PureComponent {
-  static PropTypes = {
+  static propTypes = {
+    //证券实时持仓的数据
     securitiesData: PropTypes.array.isRequired,
+    //实时资产的数据
     realTimeAsset: PropTypes.object.isRequired,
+    //产品实时持仓的数据
     productData: PropTypes.array.isRequired,
+    //查询证券实时持仓数据
     getSecuritiesHolding: PropTypes.func.isRequired,
+    //查询实时资产的数据
     getRealTimeAsset: PropTypes.func.isRequired,
+    //查询产品实时持仓数据
     getProductHoldingData: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
   }

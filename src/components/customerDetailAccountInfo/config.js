@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-23 17:54:33
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-25 10:09:52
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -198,12 +198,14 @@ const config = {
     title: '份额',
     dataIndex: 'share',
     key: 'share',
+    align: 'right',
     className:'share'
   },
   {
     title: '收益率/净值',
     dataIndex: 'netWorth',
     key: 'netWorth',
+    align: 'right',
     className:'netWorth'
   },
   {
