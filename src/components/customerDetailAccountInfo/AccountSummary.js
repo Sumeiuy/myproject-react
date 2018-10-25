@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 13:38:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-24 10:25:24
+ * @Last Modified time: 2018-10-25 09:13:37
  * @desription 账户概览
  */
 import React from 'react';
@@ -36,12 +36,6 @@ export default function AccountSummary(props) {
   const yearDailyAssets = _.get(data, 'assetsRelative.yearDailyAssets');
   // 本年收益率(%)
   const yearProfitRate = _.get(data, 'assetsRelative.yearProfitRate');
-  // 本年信用账户收益率(%)
-  const yearCreditProfitRate = _.get(data, 'assetsRelative.yearCreditProfitRate');
-  // 本年股票收益率(%)
-  const yearStockProfitRate = _.get(data, 'assetsRelative.yearStockProfitRate');
-  // 本年产品收益率(%)
-  const yearProductProfitRate = _.get(data, 'assetsRelative.yearProductProfitRate');
   // 交易/销售相关
   // 股基交易量（年）
   const yearStockTradeAmt = _.get(data, 'transactionRelative.yearStockTradeAmt');
@@ -102,9 +96,6 @@ export default function AccountSummary(props) {
           <AccountSummaryCell label="资产峰值" content={assetsPeak} />
           <AccountSummaryCell label="年日均资产" content={yearDailyAssets} />
           <AccountSummaryCell label="本年收益率(%)" type="RATE" content={yearProfitRate} />
-          <AccountSummaryCell label="本年信用账户收益率(%)" type="RATE" content={yearCreditProfitRate} />
-          <AccountSummaryCell label="本年股票收益率(%)" type="RATE" content={yearStockProfitRate} />
-          <AccountSummaryCell label="本年产品收益率(%)" type="RATE" content={yearProductProfitRate} />
         </div>
       </div>
       <div className={styles.summaryBlock}>
