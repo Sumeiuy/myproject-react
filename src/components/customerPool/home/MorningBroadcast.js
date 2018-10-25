@@ -103,7 +103,7 @@ export default class MorningBroadcast extends PureComponent {
       query,
     });
   }
-  
+
   render() {
     const { dataList, sourceList = [], isNewHome, introPositionId } = this.props;
     const { activeMusic } = this.state;

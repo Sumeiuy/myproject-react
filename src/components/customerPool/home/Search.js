@@ -21,7 +21,7 @@ import Icon from '../../common/Icon';
 import { isSightingScope, getFilter, getSortParam } from '../helper';
 import styles from './search.less';
 import classes from './headerSearch.less';
-import { NEW_HOME_INTRO_FIRST_SEEP_IDNAME } from './config'
+import { NEW_HOME_INTRO_FIRST_SEEP_IDNAME } from './config';
 const Option = AutoComplete.Option;
 const EMPTY_LIST = [];
 const NONE_INFO = '按回车键发起搜索';

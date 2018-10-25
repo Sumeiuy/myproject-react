@@ -235,7 +235,7 @@ export default class ChartsTab extends PureComponent {
         onTabClick={this.handleTabClick}
         animated={false}
       >
-        <TabPane 
+        <TabPane
           tab={<span id={NEW_HOME_INTRO_FIFTH_SEEP_IDNAME}>客户分析</span>}
           key="analysis"
         >
