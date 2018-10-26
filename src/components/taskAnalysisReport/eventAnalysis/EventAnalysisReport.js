@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-26 18:41:08
+ * @Last Modified time: 2018-10-26 18:45:24
  */
 
 import React, { PureComponent } from 'react';
@@ -241,13 +241,6 @@ export default class EventAnalysisReport extends PureComponent {
         const reportTop = this.eventAnalysisReportRef.current.offsetTop;
         this.eventAnalysisChartRef.current.style.visibility = 'visible';
         this.eventAnalysisChartRef.current.style.top = (pageY-reportTop+20)+'px';
-
-        const chartSize = this.eventAnalysisChartRef.current.getBoundingClientRect();
-        const chartWidth = chartSize.width;
-        const chartTop = chartSize.top;
-        const chartBottom = chartSize.bottom;
-        const chartLeft = chartSize.left;
-        const chartRight = chartSize.right;
         this.eventAnalysisChartRef.current.style.left = pageX+'px';
       },
       onMouseLeave: () => {
