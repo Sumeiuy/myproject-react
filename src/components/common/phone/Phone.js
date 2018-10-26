@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-26 10:00:42
+ * @Last Modified time: 2018-10-26 14:51:21
  */
 
 import React, { PureComponent } from 'react';
@@ -61,8 +61,8 @@ function checkBowserVersion() {
   // 获取浏览器版本的大版本号
   const bowserVersion = bowser.version.split('.')[0];
   // 判断chrome和firefox浏览器的版本号
-  if ((env.isChrome() && bowserVersion > 20)
-    || (env.isFirefox() && bowserVersion > 20)) {
+  if ((env.isChrome() && bowserVersion > 100)
+    || (env.isFirefox() && bowserVersion > 100)) {
     return true;
   }
   return false;
@@ -212,6 +212,7 @@ export default class Phone extends PureComponent {
       title: '当前浏览器版本不支持拨号功能！',
       type: 'warning',
       okText: '关闭',
+      className: styles.promptError,
     });
   }
 
@@ -222,6 +223,7 @@ export default class Phone extends PureComponent {
       title: '未安装音频设备！',
       type: 'warning',
       okText: '关闭',
+      className: styles.promptError,
     });
   }
 

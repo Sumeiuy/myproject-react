@@ -10,3 +10,42 @@
   margin-top: 8px;
   font-size: 14px;
 }
+.promptError {
+  :global {
+    .ant-modal-content {
+      background: #fff;
+      box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.48);
+      border-radius: 2px;
+      width: 400px;
+      height: 130px;
+    }
+    .ant-confirm-body {
+      .anticon {
+        font-size: 14px;
+        margin-right: 8px;
+        line-height: 1.4;
+      }
+      .ant-confirm-title {
+        font-size: 14px;
+        color: #2c2c2c;
+      }
+    }
+    [ant-click-animating-without-extra-node]:after, .ant-click-animating-node {
+      animation: 0s !important;
+    }
+    .ant-btn-primary {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 2px;
+      width: 78px;
+      height: 28px;
+      font-size: 14px;
+      color: #333;
+      &:active,
+      &:focus {
+        background-color: #fff;
+        border-color: #ddd;
+      }
+    }
+  }
+}
