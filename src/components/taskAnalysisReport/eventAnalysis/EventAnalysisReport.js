@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-26 10:18:21
+ * @Last Modified time: 2018-10-26 10:25:43
  */
 
 import React, { PureComponent } from 'react';
@@ -110,10 +110,10 @@ export default class EventAnalysisReport extends PureComponent {
     // 此处eventSource为1指的事件来源是MOT推送，为2指事件来源是自建，为''指的不限，通过事件来源控制事件类型
     switch(eventSource) {
       case MOT:
-        eventTypeOptions = [...custServerTypeFeedBackDict];
+        eventTypeOptions = custServerTypeFeedBackDict;
         break;
       case SELFBUILD:
-        eventTypeOptions = [missionType];
+        eventTypeOptions = missionType;
         break;
       default:
         break;
