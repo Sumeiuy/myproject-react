@@ -246,7 +246,7 @@ const taskOption = {
     },
     {
       color: '#4c70b3',
-      name: '剩余任务数',
+      name: '已完成任务数',
       type: 'line',
     }
   ]

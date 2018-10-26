@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-26 12:37:16
+ * @Last Modified time: 2018-10-26 18:41:08
  */
 
 import React, { PureComponent } from 'react';
@@ -140,7 +140,7 @@ export default class EventAnalysisReport extends PureComponent {
     if(_.isEmpty(type)){
       return;
     }
-    // 取出增加在接口数据中的eventIndex
+    // 取出增加在接口数据中的eventReportList
     const { eventReportList } = record;
     // 判断是否鼠标是否移入单元格
     let isAlive = false;
@@ -235,14 +235,23 @@ export default class EventAnalysisReport extends PureComponent {
         // 获取鼠标位置
         const pageX = e.pageX;
         const pageY = e.pageY;
+        const reportWidth = this.eventAnalysisReportRef.current.clientWidth;
+        const reportHeight = this.eventAnalysisReportRef.current.clientHeight;
         // 获取表格图表的dom节点
-        const chartTop = this.eventAnalysisReportRef.current.offsetTop;
-        this.eventAnalysisChartRef.current.style.display = 'block';
-        this.eventAnalysisChartRef.current.style.top =(pageY-chartTop+20)+'px';
+        const reportTop = this.eventAnalysisReportRef.current.offsetTop;
+        this.eventAnalysisChartRef.current.style.visibility = 'visible';
+        this.eventAnalysisChartRef.current.style.top = (pageY-reportTop+20)+'px';
+
+        const chartSize = this.eventAnalysisChartRef.current.getBoundingClientRect();
+        const chartWidth = chartSize.width;
+        const chartTop = chartSize.top;
+        const chartBottom = chartSize.bottom;
+        const chartLeft = chartSize.left;
+        const chartRight = chartSize.right;
         this.eventAnalysisChartRef.current.style.left = pageX+'px';
       },
       onMouseLeave: () => {
-        this.eventAnalysisChartRef.current.style.display = 'none';
+        this.eventAnalysisChartRef.current.style.visibility = 'hidden';
         isAlive = false;
       },
     };
@@ -327,7 +336,7 @@ export default class EventAnalysisReport extends PureComponent {
     } = this.state;
     return (
       <div ref = {this.eventAnalysisReportRef} className={styles.eventAnalysisReport}>
-        <ReportTitle title='每日触发任务及覆盖客户数' />
+        <ReportTitle title='事件分析报表' />
         <ReportFilter
           dateFilterName='任务截止时间'
           startTime={startTime}

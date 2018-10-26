@@ -2,12 +2,13 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-17 14:16:31
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-26 11:53:43
+ * @Last Modified time: 2018-10-26 17:16:11
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { autobind } from 'core-decorators';
 
 import IECharts from '../../IECharts';
 import ChartLegend from '../ChartLegend';
@@ -41,21 +42,32 @@ export default class EventAnalysisChart extends PureComponent {
     fourData:[],
   }
 
-  render() {
+  @autobind
+  // 获取xAxis轴刻度标签的显示间隔
+  getXAxisLabelInterval(length) {
+    // 超过10条小于60条按周显示
+    if (length > 10 && length <= 60) {
+      return 6;
+    // 超过60条按月显示
+    } else if (length > 60) {
+      return 30;
+    }
+    return 0;
+  }
+
+  @autobind
+  // 确定seriesData
+  getSeriesData(reportType) {
     //firstData指三个图表的第一个数据，secondData指第二个数据
     const {
-      eventReportList,
-      eventName,
       config,
       firstData,
       secondData,
-      deadlineTimeData,
-      reportType,
       thirdData,
       fourData,
     } = this.props;
-    //legendList图例数据，color颜色，eventReportName图表名称，series图表数据，eventDataName图表数据名称
-    const { legendList,color,eventReportName,series,eventDataName } = config;
+    //series图表数据，eventDataName图表数据名称
+    const { series,eventDataName } = config;
 
     //firstName图表的提示框第一条数据名字，secondName是第二条名字
     let firstName = '';
@@ -130,6 +142,22 @@ export default class EventAnalysisChart extends PureComponent {
       default:
         break;
     }
+    return seriesData;
+  }
+
+  render() {
+    //firstData指三个图表的第一个数据，secondData指第二个数据
+    const {
+      eventReportList,
+      eventName,
+      config,
+      deadlineTimeData,
+      reportType
+    } = this.props;
+    //legendList图例数据，color颜色，eventReportName图表名称
+    const { legendList,color,eventReportName } = config;
+    // xAxis轴刻度标签的显示间隔, 超过30天，则横坐标改为按周展示
+    const xAxisLabelInterval = this.getXAxisLabelInterval(deadlineTimeData.length);
 
     // tooltip 配置项
     const tooltipOtions = {
@@ -188,8 +216,8 @@ export default class EventAnalysisChart extends PureComponent {
           data: deadlineTimeData,
           boundaryGap: false,
           axisLabel: {
-            interval: 0,
             margin: 20,
+            interval: xAxisLabelInterval,
           }
         }
       ],
@@ -213,7 +241,7 @@ export default class EventAnalysisChart extends PureComponent {
           }
         },
       ],
-      series: seriesData,
+      series: this.getSeriesData(reportType),
     };
 
     return (
