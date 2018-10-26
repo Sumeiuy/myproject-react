@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-26 12:30:08
+ * @Last Modified time: 2018-10-26 12:37:16
  */
 
 import React, { PureComponent } from 'react';
@@ -38,8 +38,8 @@ export default class EventAnalysisReport extends PureComponent {
 
   constructor(props,context) {
     super(props);
-    this.eventAnalysisChart = React.createRef();
-    this.eventAnalysisReport = React.createRef();
+    this.eventAnalysisChartRef = React.createRef();
+    this.eventAnalysisReportRef = React.createRef();
     const { dict: {
       custServerTypeFeedBackDict = [],
       missionType = [],
