@@ -2,10 +2,10 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-17 14:16:31
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-24 17:02:14
+ * @Last Modified time: 2018-10-26 11:53:43
  */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
@@ -17,14 +17,20 @@ import styles from './eventAnalysisChart.less';
 import imgSrc from '../../chartRealTime/noChart.png';
 
 const { thousandFormat } = number;
-export default class EventAnalysisChart extends Component {
+export default class EventAnalysisChart extends PureComponent {
   static propTypes = {
+    // 图表数据
     eventReportList: PropTypes.object.isRequired,
+    // 事件名
     eventName: PropTypes.string.isRequired,
+    // firstData指三个表格中的第一个数据 其他类似
     firstData: PropTypes.array.isRequired,
     secondData: PropTypes.array.isRequired,
+    // 截止时间
     deadlineTimeData: PropTypes.array.isRequired,
+    // 配置项
     config: PropTypes.object.isRequired,
+    // 图表类型
     reportType: PropTypes.string.isRequired,
     thirdData: PropTypes.array,
     fourData: PropTypes.array,
