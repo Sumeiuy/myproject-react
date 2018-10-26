@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-25 17:09:36
+ * @Last Modified time: 2018-10-26 10:00:42
  */
 
 import React, { PureComponent } from 'react';
@@ -160,7 +160,7 @@ export default class Phone extends PureComponent {
               }
             }
             // 检查音频设备
-            if (checkAudioDevice()) {
+            if (!checkAudioDevice()) {
               this.handleAudioDeviceError();
               return;
             }
@@ -248,7 +248,7 @@ export default class Phone extends PureComponent {
       }
     }
     // 检查音频设备
-    if (checkAudioDevice()) {
+    if (!checkAudioDevice()) {
       this.handleAudioDeviceError();
       return;
     }
