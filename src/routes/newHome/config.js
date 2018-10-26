@@ -82,7 +82,7 @@ const stepIds = {
   homePageIntroNinthStep: { id: '第九个', name: '每日晨报',step:8},
   homePageIntroTenthStep: { id: '第十个', name: '我要提问',step:9},
   homePageIntroEleventhStep: { id: '第十一个', name: '常用工具',step:10},
-}
+};
 export {
   DATE_FORMAT_STRING,
   MONTH_DATE_FORMAT,

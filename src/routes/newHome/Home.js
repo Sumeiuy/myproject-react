@@ -126,6 +126,70 @@ const TODAY_EVENT_CODE = '4';
 let facingOneModele = '搜索栏';
 let count = -1;
 
+// 获取新手引导步骤列表  因为需求更改了引导顺序 但是NEW_HOME_INTRO_后面的数字不影响顺序  只需要更改newStepList里面的排序顺序就能改变引导显示的顺序
+
+function getIntroStepListInNewHome() {
+  const newStepList = [
+    {
+      // 搜索栏 1
+      element: document.querySelector(`#${NEW_HOME_INTRO_FIRST_SEEP_IDNAME}`),
+      intro: '首页搜索栏移到页面顶部，即刻获取您感兴趣的客户信息。',
+      position: 'top',
+    }, {
+      // 我要提问 2
+      element: document.querySelector(`#${NEW_HOME_INTRO_TENTH_SEEP_IDNAME}`),
+      intro: '在这里可给理财平台反馈您的使用问题或建议。',
+      position: 'top',
+    }, {
+      // 常用工具 3
+      element: document.querySelector(`#${NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME}`),
+      intro: '投顾签约、服务订阅、隔离墙、售前查询，常用工具都汇聚在这里。',
+      position: 'top',
+    }, {
+      // 主导航 4
+      element: document.querySelector('#tabMenu'),
+      intro: '导航菜单从左侧移到上方，留出更多页面空间为您展现精彩内容。',
+      position: 'bottom',
+    }, {
+      // 重点关注客户 5
+      element: document.querySelector(`#${NEW_HOME_INTRO_THIRD_SEEP_IDNAME}`),
+      intro: '新增值得重点关注的客户类别统计，点击可进入客户列表，助您全方位拓展业务。',
+      position: 'right',
+    }, {
+      // 猜你该兴趣 6
+      element: document.querySelector(`#${NEW_HOME_INTRO_FOURTH_SEEP_IDNAME}`),
+      intro: '“猜你该兴趣”移到这里了，更大的空间里可为您推荐更多种类的服务机会。',
+      position: 'right',
+    }, {
+      // 活动栏目 7
+      element: document.querySelector(`#${NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME}`),
+      intro: ' 从这里可了解近期的活动讯息，点击可进入活动入口。',
+      position: 'top',
+    }, {
+      // 客户分析 8
+      element: document.querySelector(`#${NEW_HOME_INTRO_FIFTH_SEEP_IDNAME}`),
+      intro: '新增“客户分析”栏目，从六大维度洞察名下客户，点击各项指标可下钻查看客户明细列表。',
+      position: 'top',
+    }, {
+      // 产品日历 9
+      element: document.querySelector(`#${NEW_HOME_INTRO_SIXTH_SEEP_IDNAME}`),
+      intro: ' 新增“今日产品”栏目，让您及时掌握首发、开放销售、到期等关键产品信息。点击数字可以查看产品明细列表。',
+      position: 'top',
+    }, {
+      //组合推荐 10
+      element: document.querySelector(`#${NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME}`),
+      intro: '近30天涨幅排名前五的投资组合在这里，点击即可查看组合详情。',
+      position: 'top',
+    }, {
+      //每日晨报 11
+      element: document.querySelector(`#${NEW_HOME_INTRO_NINTH_SEEP_IDNAME}`),
+      intro: ' 每日晨报让您可听、可看、可下载最新财经热点话题。',
+      position: 'top',
+    },
+  ];
+  return newStepList;
+}
+
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class Home extends PureComponent {
@@ -397,13 +461,13 @@ export default class Home extends PureComponent {
     return store.get(NEWHOMEFIRSTUSECOLLAPSE_PERFORMERVIEW);
   }
 
-  // 神策埋点 targetElement.id是第几个元素的id名  
+  // 神策埋点 targetElement.id是第几个元素的id名
   @autobind
   handleIntorButtomChange(targetElement){
     const data = stepIds[targetElement.id];
     facingOneModele = data.name;
     // count = -1  data.step从第0开始 判断step是下一步还是上一步
-    let step = count < data.step ? "下一步" : "上一步";
+    let step = count < data.step ? '下一步' : '上一步';
     count = data.step;
     logCommon({
       type: 'Click',
@@ -423,7 +487,7 @@ export default class Home extends PureComponent {
         name:'关闭',
         value: facingOneModele,
       },
-    })
+    });
   }
   // 引导功能初始化
   @autobind
@@ -444,87 +508,24 @@ export default class Home extends PureComponent {
       prevLabel: '上一个',
       nextLabel: '下一个',
       skipLabel: '关闭',
-      steps: this.getIntroStepListInNewHome(),
+      steps: getIntroStepListInNewHome(),
       scrollToElement: true,
       disableInteraction: true,
     }).onchange((targetElement)=> {
-      this.handleIntorButtomChange(targetElement)
+      this.handleIntorButtomChange(targetElement);
       }).onexit(() => {
         // 没到最后一步点关闭按钮 执行onexit
         if(!count){
           count++;
-          this.handleIntorButtomClose(facingOneModele)
+          this.handleIntorButtomClose(facingOneModele);
         }
       }).oncomplete(()=>
         // 到了最后一步点结束按钮 执行oncomplete
         this.handleIntorButtomClose(facingOneModele)
       ).start();
-    
+
   }
 
-  // 获取新手引导步骤列表  因为需求更改了引导顺序 但是NEW_HOME_INTRO_后面的数字不影响顺序  只需要更改newStepList里面的排序顺序就能改变引导显示的顺序 
-  @autobind
-  getIntroStepListInNewHome() {
-    const newStepList = [
-      {
-        // 搜索栏 1
-        element: document.querySelector(`#${NEW_HOME_INTRO_FIRST_SEEP_IDNAME}`),
-        intro: '首页搜索栏移到页面顶部，即刻获取您感兴趣的客户信息。',
-        position: 'top',
-      }, {
-        // 我要提问 2
-        element: document.querySelector(`#${NEW_HOME_INTRO_TENTH_SEEP_IDNAME}`),
-        intro: '在这里可给理财平台反馈您的使用问题或建议。',
-        position: 'top',
-      }, {
-        // 常用工具 3
-        element: document.querySelector(`#${NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME}`),
-        intro: '投顾签约、服务订阅、隔离墙、售前查询，常用工具都汇聚在这里。',
-        position: 'top',
-      }, {
-        // 主导航 4
-        element: document.querySelector('#tabMenu'),
-        intro: '导航菜单从左侧移到上方，留出更多页面空间为您展现精彩内容。',
-        position: 'bottom',
-      }, {
-        // 重点关注客户 5
-        element: document.querySelector(`#${NEW_HOME_INTRO_THIRD_SEEP_IDNAME}`),
-        intro: '新增值得重点关注的客户类别统计，点击可进入客户列表，助您全方位拓展业务。',
-        position: 'right',
-      }, {
-        // 猜你该兴趣 6
-        element: document.querySelector(`#${NEW_HOME_INTRO_FOURTH_SEEP_IDNAME}`),
-        intro: '“猜你该兴趣”移到这里了，更大的空间里可为您推荐更多种类的服务机会。',
-        position: 'right',
-      }, {
-        // 活动栏目 7
-        element: document.querySelector(`#${NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME}`),
-        intro: ' 从这里可了解近期的活动讯息，点击可进入活动入口。',
-        position: 'top',
-      }, {
-        // 客户分析 8
-        element: document.querySelector(`#${NEW_HOME_INTRO_FIFTH_SEEP_IDNAME}`),
-        intro: '新增“客户分析”栏目，从六大维度洞察名下客户，点击各项指标可下钻查看客户明细列表。',
-        position: 'top',
-      }, {
-        // 产品日历 9 
-        element: document.querySelector(`#${NEW_HOME_INTRO_SIXTH_SEEP_IDNAME}`),
-        intro: ' 新增“今日产品”栏目，让您及时掌握首发、开放销售、到期等关键产品信息。点击数字可以查看产品明细列表。',
-        position: 'top',
-      }, {
-        //组合推荐 10
-        element: document.querySelector(`#${NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME}`),
-        intro: '近30天涨幅排名前五的投资组合在这里，点击即可查看组合详情。',
-        position: 'top',
-      }, {
-        //每日晨报 11
-        element: document.querySelector(`#${NEW_HOME_INTRO_NINTH_SEEP_IDNAME}`),
-        intro: ' 每日晨报让您可听、可看、可下载最新财经热点话题。',
-        position: 'top',
-      }, 
-    ];
-    return newStepList;
-  }
 
   render() {
     const {

@@ -18,7 +18,7 @@ import { url as urlHelper } from '../../helper';
 import styles from './viewAndCombination.less';
 
 // 首页执行者视图首次引导提示第七步的dom的id名称(组合推荐)
-export const NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME = 'homePageIntroSeventhStep';
+const NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME = 'homePageIntroSeventhStep';
 
 export default function ViewAndCombination(props, context) {
   const { data } = props;

@@ -32,7 +32,7 @@ export default class MorningBroadcast extends PureComponent {
 
   static defaultProps = {
     isNewHome: false,
-    introPositionId:null,
+    introPositionId:'',
   }
 
   static contextTypes = {
