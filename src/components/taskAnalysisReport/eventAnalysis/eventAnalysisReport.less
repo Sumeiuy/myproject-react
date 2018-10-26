@@ -2,6 +2,8 @@
   background: #fff;
   margin-top: 20px;
   border-radius: 2px;
+  overflow: hidden;
+  position: relative;
   .searchEvent {
     margin-right: 30px;
   }
@@ -15,19 +17,11 @@
       }
     }
   }
-}
-.eventAnalysisChart {
-  position: relative;
-  .eventAnalysisChartReport {
+  .eventAnalysisChart {
     position: absolute;
+    top: 400px;
+    left: 400px;
     display: none;
-    z-index: 100;
-    top: 40px;
-    left: 60px;
-  }
-  &:hover {
-    .eventAnalysisChartReport {
-      display: block;
-    }
   }
 }
+
