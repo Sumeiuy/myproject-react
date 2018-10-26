@@ -3,8 +3,22 @@
  * @Description: SMART任务相关运营报表接口
  * @Date: 2018-10-09 16:45:21
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-16 17:07:07
+ * @Last Modified time: 2018-10-25 21:07:16
  */
+
+// 在eventData字段下每条数据增加一个index
+function fixEventAnalysis(dict) {
+  const { resultData, resultData: { eventData } } = dict;
+  return {
+    ...dict,
+    resultData: {
+      ...resultData,
+      eventData: eventData.map((item,index) => {
+        return { ...item, eventIndex: index };
+      })
+    }
+  };
+}
 
 export default function taskAnalysisReport(api) {
   return {
@@ -17,7 +31,7 @@ export default function taskAnalysisReport(api) {
     // 获取服务渠道统计数据
     queryServiceChannelReport: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryServiceChannelReport', query),
     // 获取事件分析表数据
-    queryEventAnalysisReport: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryEventAnalysisReport',query),
+    queryEventAnalysisReport: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryEventAnalysisReport',query).then(fixEventAnalysis),
     // 事件查询
     queryEventSearch: (query) => api.post('/groovynoauth/fsp/campaign/smart/queryEventSearch',query),
   };
