@@ -172,9 +172,7 @@ export default class ChoicenessCombination extends PureComponent {
     getCombinationTree().then(() => {
       const { combinationTreeList } = this.props;
       getCombinationRankList({
-        combinationType: ((combinationTreeList[0]
-          || EMPTY_OBJECT).children[0]
-          || EMPTY_OBJECT).value,
+        combinationType: (combinationTreeList[0] || {}).value,
       });
     });
   }
@@ -211,12 +209,12 @@ export default class ChoicenessCombination extends PureComponent {
 
   // tab切换
   @autobind
-  handleTabChange(key) {
+  handleTypeChange({ type }) {
     const { getCombinationRankList, combinationRankTabchange } = this.props;
-    combinationRankTabchange({ key });
+    combinationRankTabchange({ key: type });
     // 查询组合排名数据
     getCombinationRankList({
-      combinationType: key,
+      combinationType: type,
     });
   }
 
@@ -424,7 +422,7 @@ export default class ChoicenessCombination extends PureComponent {
           showModal={this.showModal}
           combinationTreeList={combinationTreeList}
           combinationRankList={combinationRankList}
-          tabChange={this.handleTabChange}
+          typeChange={this.handleTypeChange}
           chartTabChange={this.handleChartTabChange}
           getCombinationLineChart={getCombinationLineChart}
           combinationLineChartData={combinationLineChartData}
