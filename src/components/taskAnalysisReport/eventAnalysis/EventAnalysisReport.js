@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-26 10:25:43
+ * @Last Modified time: 2018-10-26 10:50:06
  */
 
 import React, { PureComponent } from 'react';
@@ -134,21 +134,21 @@ export default class EventAnalysisReport extends PureComponent {
   // 表格中图表渲染
   @autobind
   handleTableOnCell(record,type,e) {
+    console.warn('record',record);
     // 事件名称一栏没有type，判断是否有type
     if(_.isEmpty(type)){
       return;
     }
     // 取出增加在接口数据中的eventIndex
-    const { eventIndex } = record;
+    const { eventReportList } = record;
     // 判断是否鼠标是否移入单元格
     let isAlive = false;
     return {
-      onMouseOver: (e) => {
+      onMouseEnter: (e) => {
         if (isAlive) {
           return;
         }
         isAlive = true;
-        const { eventAnalysisList: { eventReportList = [] } } = this.props;
         const { eventName } = record;
         let firstData = [];
         let secondData = [];
@@ -164,7 +164,7 @@ export default class EventAnalysisReport extends PureComponent {
             const {
               triggerTaskList = [],
               completedTaskList = [],
-            } = eventReportList[eventIndex];
+            } = eventReportList;
             // 触发任务数数据
             const triggerTaskData = filterData(triggerTaskList, 'triggerTaskNumber');
             // 完成任务数数据
@@ -179,7 +179,7 @@ export default class EventAnalysisReport extends PureComponent {
             const {
               coveredCustomersList = [],
               completedCustomersList = [],
-            } = eventReportList[eventIndex];
+            } = eventReportList;
             // 覆盖客户数数据
             const coveredCustomersData = filterData(coveredCustomersList, 'coveredCustomersNumber');
             // 完成客户数数据
@@ -197,7 +197,7 @@ export default class EventAnalysisReport extends PureComponent {
               interviewList = [],
               // 短信改成其它
               shortMessageList = [],
-            } = eventReportList[eventIndex];
+            } = eventReportList;
             // 涨乐数据
             const zhangleData = filterData(zhangLeList, 'percentage');
             // 电话数据
@@ -219,7 +219,7 @@ export default class EventAnalysisReport extends PureComponent {
         }
         this.setState({
           option: {
-            eventReportList: eventReportList[eventIndex],
+            eventReportList: eventReportList,
             configData: configData,
             eventDataName: eventName,
             firstData: firstData,

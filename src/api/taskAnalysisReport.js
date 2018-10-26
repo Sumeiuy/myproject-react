@@ -3,19 +3,19 @@
  * @Description: SMART任务相关运营报表接口
  * @Date: 2018-10-09 16:45:21
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-25 21:07:16
+ * @Last Modified time: 2018-10-26 10:45:01
  */
 
+import _ from 'lodash';
+
 // 在eventData字段下每条数据增加一个index
-function fixEventAnalysis(dict) {
-  const { resultData, resultData: { eventData } } = dict;
+function fixEventAnalysis(data) {
+  const { resultData, resultData: { eventData, eventReportList} } = data;
   return {
-    ...dict,
+    ...data,
     resultData: {
       ...resultData,
-      eventData: eventData.map((item,index) => {
-        return { ...item, eventIndex: index };
-      })
+      eventData: _.map(eventData, (item, index) => ({ ...item, eventReportList: eventReportList[index] })),
     }
   };
 }
