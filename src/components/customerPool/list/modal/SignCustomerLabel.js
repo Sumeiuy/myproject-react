@@ -80,7 +80,7 @@ export default class SignCustomerLabel extends PureComponent {
     return (
       <span className={styles.signItemWrap}>
         <span>{replaceKeyWord(value.labelName, searchValue)}</span>
-        <span className={styles.labelType}>{value.labelTypeName}</span>
+        <span className={styles.labelType}>{value.createdOrgName}</span>
       </span>);
   }
 
@@ -122,7 +122,7 @@ export default class SignCustomerLabel extends PureComponent {
     },
   })
   handleSubmitSignLabel() {
-    const { signCustLabels, handleCancelSignLabelCustId, currentPytMng } = this.props;
+    const { signCustLabels, currentPytMng } = this.props;
     const { selectedLabels, custId } = this.state;
     const { ptyMngId } = currentPytMng;
     const labelIds = _.map(selectedLabels, item => item.id);
@@ -130,7 +130,7 @@ export default class SignCustomerLabel extends PureComponent {
       custId,
       labelIds,
       ptyMngId,
-    }).then(handleCancelSignLabelCustId);
+    }).then(this.handleCloseModal);
   }
 
   @autobind
@@ -157,7 +157,7 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
-  getSearchFooter() {
+  getSearchHeader() {
     const { custLikeLabel } = this.props;
     const { value } = this.state;
     const currentLabel = _.find(
@@ -168,11 +168,12 @@ export default class SignCustomerLabel extends PureComponent {
     if (currentLabel) {
       return null;
     }
+    const labelText = value ? `"${value}"` : '';
     return (<div
       className={styles.newLabel}
       onClick={this.handleCloseAddLabelModal}
     >
-      {`+ 新建"${value}"标签`}
+      {`+ 新建${labelText}标签`}
     </div>);
   }
 
@@ -195,6 +196,13 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
+  handleAddLabelBtnClick() {
+    this.setState({
+      showAddLabel: true,
+    });
+  }
+
+  @autobind
   handleCloseNewLabelModal(labelId) {
     const { custId } = this.props;
     const { selectedLabels } = this.state;
@@ -204,14 +212,34 @@ export default class SignCustomerLabel extends PureComponent {
       this.handleSelect({ value });
       this.setState({
         createLabelVisible: false,
+        value: '',
         custId,
       });
     });
   }
 
+  @autobind
+  handleCloseModal() {
+    this.setState({
+      showAddLabel: false,
+    });
+    this.props.handleCancelSignLabelCustId();
+  }
+
   render() {
-    const { handleCancelSignLabelCustId, custLikeLabel, mainPosition, addLabel } = this.props;
-    const { selectedLabels, custId, createLabelVisible, value } = this.state;
+    const {
+      custLikeLabel,
+      mainPosition,
+      addLabel,
+    } = this.props;
+
+    const {
+      selectedLabels,
+      custId,
+      createLabelVisible,
+      value,
+      showAddLabel,
+    } = this.state;
     return (
       <span>
         <Modal
@@ -219,7 +247,7 @@ export default class SignCustomerLabel extends PureComponent {
           width={650}
           visible={Boolean(custId)}
           wrapClassName={styles.signCustomerLabel}
-          onCancel={handleCancelSignLabelCustId}
+          onCancel={this.handleCloseModal}
           destroyOnClose
           maskClosable={false}
           onOk={this.handleSubmitSignLabel}
@@ -236,6 +264,13 @@ export default class SignCustomerLabel extends PureComponent {
                 ? '服务经理还没有给这个客户设置标签'
                 : null
             }
+          </div>
+          <div
+            className={styles.selectedButton}
+            onClick={this.handleAddLabelBtnClick}
+          >
+            <span className={styles.addLabelIcon} />
+            <span className={styles.addLabelText}>添加标签</span>
           </div>
           <div className={styles.singleLabel}>
             {mainPosition ?
@@ -260,7 +295,7 @@ export default class SignCustomerLabel extends PureComponent {
                 )
             }
             {
-              mainPosition ?
+              mainPosition && showAddLabel ?
                 <span
                   className={styles.addLabel}
                 >
@@ -277,7 +312,9 @@ export default class SignCustomerLabel extends PureComponent {
                     getOptionItemValue={this.getOptionItemValue}
                     onChange={this.handleSelect}
                     onInputChange={this.handleSearch}
-                    searchFooter={this.getSearchFooter()}
+                    searchHeader={this.getSearchHeader()}
+                    listStyle={{ maxHeight: 300 }}
+                    dropdownStyle={{ maxHeight: 424 }}
                   />
                 </span> :
                 null
