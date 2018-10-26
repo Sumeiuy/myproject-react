@@ -8,7 +8,7 @@ import { Modal, Form, Input, Select } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-
+import { emp } from '../../../../helper';
 import styles from './customerLabel.less';
 
 const FormItem = Form.Item;
@@ -43,7 +43,11 @@ export default class CreateLabelType extends PureComponent {
     }
     validateFields((error, values) => {
       if (!error) {
-        addLabel({ ...values, labelFlag: 2 })
+        addLabel({
+          ...values,
+          labelFlag: 2,
+          orgId: emp.getOrgId(),
+        })
           .then((duplicationName) => {
             // 当校验标签重名时后端返回null
             if (_.isNull(duplicationName)) {
