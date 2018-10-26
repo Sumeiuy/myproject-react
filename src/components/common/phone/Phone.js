@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-26 14:51:21
+ * @Last Modified time: 2018-10-26 17:16:13
  */
 
 import React, { PureComponent } from 'react';
@@ -61,8 +61,8 @@ function checkBowserVersion() {
   // 获取浏览器版本的大版本号
   const bowserVersion = bowser.version.split('.')[0];
   // 判断chrome和firefox浏览器的版本号
-  if ((env.isChrome() && bowserVersion > 100)
-    || (env.isFirefox() && bowserVersion > 100)) {
+  if ((env.isChrome() && bowserVersion > 20)
+    || (env.isFirefox() && bowserVersion > 20)) {
     return true;
   }
   return false;
@@ -74,10 +74,11 @@ function checkAudioDevice() {
   // navigator.webkitGetUserMedia webkit内核浏览器
   // navigator.mozGetUserMedia Firefox浏览器
   // navigator.getUserMedia 旧版API
-  if (navigator.mediaDevices.getUserMedia
+  if ((navigator.mediaDevices
+    && navigator.mediaDevices.getUserMedia)
+    || navigator.getUserMedia
     || navigator.webkitGetUserMedia
-    || navigator.mozGetUserMedia
-    || navigator.getUserMedia) {
+    || navigator.mozGetUserMedia) {
       return true;
     }
   return false;
