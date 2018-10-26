@@ -203,6 +203,13 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
+  handleSelectVisibleChange(visible) {
+    this.setState({
+      showAddLabel: visible,
+    });
+  }
+
+  @autobind
   handleCloseNewLabelModal(labelId) {
     const { custId } = this.props;
     const { selectedLabels } = this.state;
@@ -315,6 +322,7 @@ export default class SignCustomerLabel extends PureComponent {
                     searchHeader={this.getSearchHeader()}
                     listStyle={{ maxHeight: 300 }}
                     dropdownStyle={{ maxHeight: 424 }}
+                    defaultVisible={true}
                   />
                 </span> :
                 null
@@ -326,6 +334,7 @@ export default class SignCustomerLabel extends PureComponent {
           labelName={value}
           addLabel={addLabel}
           closeModal={this.handleCloseNewLabelModal}
+          handleSelectVisibleChange={this.handleSelectVisibleChange}
         />
       </span>
     );

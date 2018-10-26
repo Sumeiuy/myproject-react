@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import { Modal } from 'antd';
 import _ from 'lodash';
 import { SingleFilterWithSearch } from 'lego-react-filter/src';
-
+import { emp } from '../../helper';
 import CreateLabel from './CreateLabel';
 import logable from '../../../../decorators/logable';
 import { replaceKeyWord } from './SignCustomerLabel';
@@ -102,6 +102,7 @@ export default class SignCustomerLabel extends PureComponent {
       signBatchCustLabels({
         ...payload,
         ptyMngId,
+        orgId: emp.getOrgId(),
       }).then(this.handleCloseModal);
     } else {
       this.setState({
@@ -271,6 +272,7 @@ export default class SignCustomerLabel extends PureComponent {
             searchHeader={this.getSearchHeader()}
             listStyle={{ maxHeight: 300 }}
             dropdownStyle={{ maxHeight: 424 }}
+            defaultVisible={true}
           />
           {
             errorMsg ?

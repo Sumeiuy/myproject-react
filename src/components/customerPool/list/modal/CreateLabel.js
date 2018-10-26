@@ -6,9 +6,10 @@
 import React, { PureComponent } from 'react';
 import { Modal, Form, Input } from 'antd';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { autobind } from 'core-decorators';
-
 import styles from './createLabel.less';
+import { emp } from '../../helper';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -36,7 +37,12 @@ export default class CreateLabelType extends PureComponent {
     closeModal: PropTypes.func.isRequired,
     visible: PropTypes.bool.isRequired,
     addLabel: PropTypes.func.isRequired,
-  };
+    handleSelectVisibleChange: PropTypes.func,
+  }
+
+  static defaultProps = {
+    handleSelectVisibleChange: _.noop,
+  }
 
   constructor(props) {
     super(props);
@@ -55,13 +61,20 @@ export default class CreateLabelType extends PureComponent {
     const {
       addLabel,
       form: { validateFields },
+      handleSelectVisibleChange,
     } = this.props;
 
     const { inputValue } = this.state;
     validateFields((error, values) => {
       if (!error) {
-        addLabel({ ...values, labelName: inputValue, labelFlag: '1' })
+        addLabel({
+          ...values,
+          labelName: inputValue,
+          labelFlag: '1',
+          orgId: emp.getOrgId(),
+        })
           .then((labelId) => {
+            handleSelectVisibleChange();
             this.setState({
               visible: false,
             });
@@ -97,7 +110,7 @@ export default class CreateLabelType extends PureComponent {
 
   render() {
     const { labelName } = this.props;
-    const { visible, inputValue } = this.state;
+    const { visible /* inputValue */ } = this.state;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -108,11 +121,11 @@ export default class CreateLabelType extends PureComponent {
       },
     };
 
-    const labelText = inputValue ? `“${inputValue}”` : '';
+    // const labelText = inputValue ? `“${inputValue}”` : '';
 
     return (
       <Modal
-        title={`新建${labelText}标签`}
+        title="新建标签"
         wrapClassName={styles.addLabel}
         width={540}
         visible={visible}
