@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-26 10:00:42
+ * @Last Modified time: 2018-10-26 17:16:13
  */
 
 import React, { PureComponent } from 'react';
@@ -74,10 +74,11 @@ function checkAudioDevice() {
   // navigator.webkitGetUserMedia webkit内核浏览器
   // navigator.mozGetUserMedia Firefox浏览器
   // navigator.getUserMedia 旧版API
-  if (navigator.mediaDevices.getUserMedia
+  if ((navigator.mediaDevices
+    && navigator.mediaDevices.getUserMedia)
+    || navigator.getUserMedia
     || navigator.webkitGetUserMedia
-    || navigator.mozGetUserMedia
-    || navigator.getUserMedia) {
+    || navigator.mozGetUserMedia) {
       return true;
     }
   return false;
@@ -212,6 +213,7 @@ export default class Phone extends PureComponent {
       title: '当前浏览器版本不支持拨号功能！',
       type: 'warning',
       okText: '关闭',
+      className: styles.promptError,
     });
   }
 
@@ -222,6 +224,7 @@ export default class Phone extends PureComponent {
       title: '未安装音频设备！',
       type: 'warning',
       okText: '关闭',
+      className: styles.promptError,
     });
   }
 
