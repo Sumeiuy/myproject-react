@@ -290,7 +290,7 @@ export default class PerformanceIndicators extends PureComponent {
         top: '0px',
         bottom: '0px',
         left: '5px',
-        right: '25px',
+        right: '34px',
         containLabel: false,
       },
       tooltip: {
