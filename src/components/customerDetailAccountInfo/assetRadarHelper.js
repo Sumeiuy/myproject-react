@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-12 15:08:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-22 16:39:54
+ * @Last Modified time: 2018-10-26 13:49:27
  * @description 资产分布的雷达图数据处理相关的辅助函数
  */
 import _ from 'lodash';
@@ -13,6 +13,11 @@ import { RADAR_MUST_DISPLAY_INDICATORS } from './config';
 export function composeIndicatorAndData(indicators, data) {
   // 找出最大和最小值，并且分别设置雷达图上的最大和最小值区间范围，以便图表展示合理
   let max = Math.max(...data);
+  let min = Math.min(...data);
+  if (max === min && max === 0) {
+    // 如果max和min都是0的时候
+    max = 10;
+  }
   return _.map(indicators, (indicator, index) => {
     const { name } = indicator;
     const value = data[index];
