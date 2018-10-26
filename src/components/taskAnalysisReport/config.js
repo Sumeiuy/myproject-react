@@ -1,13 +1,15 @@
 import moment from 'moment';
 
+// 覆盖客户人次
+const COVER_CUSTOMEER_NUMBER_NAME = '覆盖客户人次';
 // 客户人次
 const CUSTOMEER_NUMBER_NAME = '客户人次';
 // 任务数
-const TASK_NUMBER_NAME = '任务数';
+const TASK_NUMBER_NAME = '触发任务数';
 // 完成客户人次
 const COMPLETE_CUSTOMEER_NUMBER_NAME = '完成客户人次';
 // 达标客户人次
-const COMPLIANCE_CUSTOMEER_NUMBER_NAME = '达标客户人次';
+const COMPLIANCE_CUSTOMEER_NUMBER_NAME = '服务达标人次';
 // 涨乐
 const ZHANGLE = '涨乐';
 // 其他
@@ -102,7 +104,7 @@ const taskCustomerOptions = {
     {
       type: 'square',
       color: '#6fb7ec',
-      name: CUSTOMEER_NUMBER_NAME,
+      name: COVER_CUSTOMEER_NUMBER_NAME,
     },
     {
       type: 'line',
@@ -336,6 +338,7 @@ export {
   completeServiceCustOptions,
   complianceServiceCustOptions,
   serviceChannelOptions,
+  COVER_CUSTOMEER_NUMBER_NAME,
   CUSTOMEER_NUMBER_NAME,
   TASK_NUMBER_NAME,
   taskOption,

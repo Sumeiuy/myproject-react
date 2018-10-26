@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import { Modal } from 'antd';
 import _ from 'lodash';
 import { SingleFilterWithSearch } from 'lego-react-filter/src';
-
+import { emp } from '../../helper';
 import CreateLabel from './CreateLabel';
 import logable from '../../../../decorators/logable';
 import { replaceKeyWord } from './SignCustomerLabel';
@@ -102,6 +102,7 @@ export default class SignCustomerLabel extends PureComponent {
       signBatchCustLabels({
         ...payload,
         ptyMngId,
+        orgId: emp.getOrgId(),
       }).then(this.handleCloseModal);
     } else {
       this.setState({
@@ -169,12 +170,12 @@ export default class SignCustomerLabel extends PureComponent {
     return (
       <div className={styles.labelItemWrap}>
         <div>{replaceKeyWord(value.labelName, labelValue)}</div>
-        <div className={styles.labelType}>{value.labelTypeName}</div>
+        <div className={styles.labelType}>{value.createdOrgName}</div>
       </div>);
   }
 
   @autobind
-  getSearchFooter() {
+  getSearchHeader() {
     const { custLikeLabel } = this.props;
     const { labelValue } = this.state;
     const currentLabel = _.find(
@@ -185,11 +186,12 @@ export default class SignCustomerLabel extends PureComponent {
     if (currentLabel) {
       return null;
     }
+    const labelText = labelValue ? `"${labelValue}"` : '';
     return (<div
       className={styles.newLabel}
       onClick={this.handleCloseAddLabelModal}
     >
-      {`+ 新建"${labelValue}"标签`}
+      {`+ 新建${labelText}标签`}
     </div>);
   }
 
@@ -216,6 +218,7 @@ export default class SignCustomerLabel extends PureComponent {
     if (labelId === '') {
       this.setState({
         createLabelVisible: false,
+        labelValue: '',
         visible: true,
       });
     } else {
@@ -225,6 +228,7 @@ export default class SignCustomerLabel extends PureComponent {
         this.handleSelect({ value: newLabel });
         this.setState({
           createLabelVisible: false,
+          labelValue: '',
           visible: true,
         });
       });
@@ -265,7 +269,10 @@ export default class SignCustomerLabel extends PureComponent {
             getOptionItemValue={this.getOptionItemValue}
             onChange={this.handleSelect}
             onInputChange={this.handleSearch}
-            searchFooter={this.getSearchFooter()}
+            searchHeader={this.getSearchHeader()}
+            listStyle={{ maxHeight: 300 }}
+            dropdownStyle={{ maxHeight: 424 }}
+            defaultVisible={true}
           />
           {
             errorMsg ?

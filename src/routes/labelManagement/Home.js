@@ -12,6 +12,7 @@ import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import { message } from 'antd';
 import _ from 'lodash';
+import { emp } from '../../helper';
 
 import Button from '../../components/common/Button';
 import Table from '../../components/common/commonTable';
@@ -471,6 +472,7 @@ export default class CustomerGroupManage extends PureComponent {
         labelDesc: description,
         custIds: _.isEmpty(custIds) ? null : custIds,
         excludeCustIdList: null,
+        orgId: emp.getOrgId(),
       },
     };
     // 新增标签
@@ -547,6 +549,7 @@ export default class CustomerGroupManage extends PureComponent {
         labelDesc: description,
         custIds: _.isEmpty(custIds) ? null : custIds,
         excludeCustIdList: null,
+        orgId: emp.getOrgId(),
       },
     }).then((res) => {
       if (res.resultData === 'success') {

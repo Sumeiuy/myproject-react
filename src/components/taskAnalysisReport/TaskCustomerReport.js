@@ -3,7 +3,7 @@
  * @Descripter: 任务-客户分析报表
  * @Date: 2018-10-05 14:38:03
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-18 10:16:52
+ * @Last Modified time: 2018-10-25 15:29:47
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import IECharts from '../IECharts';
 import ReportTitle from './ReportTitle';
 import ReportFilter from './ReportFilter';
 import ChartLegend from './ChartLegend';
-import { defaultStartTime, defaultEndTime, taskCustomerOptions, generalOptions, chartLineOptions, CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME } from './config';
+import { defaultStartTime, defaultEndTime, taskCustomerOptions, generalOptions, chartLineOptions, COVER_CUSTOMEER_NUMBER_NAME, TASK_NUMBER_NAME } from './config';
 import { number } from '../../helper';
 import { filterData } from './utils';
 
@@ -190,7 +190,7 @@ export default class TaskCustomerReport extends PureComponent {
       ],
       series: [
         {
-          name: CUSTOMEER_NUMBER_NAME,
+          name: COVER_CUSTOMEER_NUMBER_NAME,
           type: 'bar',
           data: customerNumberData,
         },
