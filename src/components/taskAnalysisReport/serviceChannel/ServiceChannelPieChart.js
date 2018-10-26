@@ -3,7 +3,7 @@
  * @Descripter: 渠道占比分布
  * @Date: 2018-10-12 10:10:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-24 10:22:49
+ * @Last Modified time: 2018-10-26 09:54:41
  */
 
 import React from 'react';
@@ -87,7 +87,7 @@ export default function ServiceChannelPieChart(props) {
           (
             <div>
               <div className={styles.chartTitle}>
-                渠道占比分布
+                服务渠道占比统计
               </div>
               <div className={styles.serviceChannelPieChart}>
                 <div className={styles.serviceChannelPie}>

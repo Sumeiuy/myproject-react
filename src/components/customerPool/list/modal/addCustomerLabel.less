@@ -4,6 +4,23 @@
   .selectedInfo {
     margin-bottom: 10px;
   }
+  .selectedButton {
+    margin: 10px 0 12px;
+    font-size: 14px;
+    color: #108ee9;
+    cursor: pointer;
+    .addLabelIcon {
+      display: inline-block;
+      background: url(../../../../../static/svg/addIcon.svg) round;
+      width: 14px;
+      height: 14px;
+      vertical-align: text-bottom;
+    }
+    .addLabelText {
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+  }
   .singleLabel {
     .addLabel {
       cursor: pointer;
@@ -28,6 +45,7 @@
         }
         .lego-filter-filterWrapper {
           height: 20px;
+          width: 100%;
           & > button:first-child {
             width: 90px;
             height: 20px;
@@ -61,7 +79,6 @@
       float: right;
     }
     .newLabel {
-      padding-left: 14px;
       height: 38px;
       line-height: 38px;
       color: #108ee9;

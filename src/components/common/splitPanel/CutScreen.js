@@ -42,6 +42,8 @@ export default class CutScreen extends PureComponent {
     isSetMarginTop: PropTypes.bool,
     // 自定义header样式，覆盖公用的header样式
     headerStyle: PropTypes.string,
+    // 不计算高度，自适应高度
+    isAutoHeight: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -51,6 +53,7 @@ export default class CutScreen extends PureComponent {
     extraHeight: 0,
     isSetMarginTop: true,
     headerStyle: null,
+    isAutoHeight: false,
   }
 
   constructor(props) {
@@ -60,11 +63,13 @@ export default class CutScreen extends PureComponent {
     };
     this.resize = null;
     this.fnResize = null;
-    this.splitHeight = this.getViewHeight();
+    if(!(env.isInReact() && props.isAutoHeight)) {
+      this.splitHeight = props.isAutoHeight ? 'auto' : this.getViewHeight();
+    }
   }
 
   componentDidMount() {
-    const { isSetMarginTop } = this.props;
+    const { isSetMarginTop, isAutoHeight } = this.props;
     // 初始化当前系统
     this.UTBContentElem = document.querySelector(config.utb);
     // 按照需求要求，完全贴边太丑，要求右侧给一点margin所以修改
@@ -74,11 +79,14 @@ export default class CutScreen extends PureComponent {
     } else {
       this.setUTBContentMargin('10px', '10px', 0);
     }
-    // 监听window.onResize事件
-    this.registerWindowResize();
+
+    if(!(env.isInReact() && isAutoHeight)) {
+      // 监听window.onResize事件
+      this.registerWindowResize();
+      this.setDocumentScroll();
+      this.listenTopPanelHeightChange();
+    }
     this.initPanel();
-    this.setDocumentScroll();
-    this.listenTopPanelHeightChange();
   }
 
   componentWillUnmount() {

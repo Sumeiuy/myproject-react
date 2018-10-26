@@ -3,7 +3,7 @@
  * @Descripter: 渠道变化趋势
  * @Date: 2018-10-12 15:30:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-24 10:25:01
+ * @Last Modified time: 2018-10-26 09:54:56
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -172,7 +172,7 @@ export default function ServiceCustChart(props) {
           (
             <div>
               <div className={styles.chartTitle}>
-                渠道变化趋势
+                服务渠道变化趋势
               </div>
               <ChartLegend
                 legendList={legendList}

@@ -19,11 +19,12 @@ const LABEL_NAME_REG = /^[#&\-_@%A-Za-z0-9\u4e00-\u9fa5]+$/;
 @Form.create()
 export default class CreateLabelType extends PureComponent {
   static getDerivedStateFromProps(props, state) {
-    const { visible } = props;
+    const { visible, labelName } = props;
     if (visible !== state.preVisible) {
       return {
         visible,
         preVisible: visible,
+        inputValue: labelName,
       };
     }
     return null;
@@ -42,28 +43,24 @@ export default class CreateLabelType extends PureComponent {
     const { visible } = this.props;
     this.state = {
       visible,
+      inputValue: props.labelName,
       preVisible: visible,
     };
     // 新建标签id
     this.newLabelId = '';
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (!prevState.visible && this.state.visible) {
-      const { form } = this.props;
-      form.validateFields(['labelName']);
-    }
-  }
-
   @autobind
   handleCreateLabelSubmit() {
-    const { addLabel,
+    const {
+      addLabel,
       form: { validateFields },
-      labelName,
     } = this.props;
+
+    const { inputValue } = this.state;
     validateFields((error, values) => {
       if (!error) {
-        addLabel({ ...values, labelName, labelFlag: '1' })
+        addLabel({ ...values, labelName: inputValue, labelFlag: '1' })
           .then((labelId) => {
             this.setState({
               visible: false,
@@ -91,9 +88,16 @@ export default class CreateLabelType extends PureComponent {
     this.newLabelId = '';
   }
 
+  @autobind
+  handleInputChange(value) {
+    this.setState({
+      inputValue: value.target.value,
+    });
+  }
+
   render() {
     const { labelName } = this.props;
-    const { visible } = this.state;
+    const { visible, inputValue } = this.state;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -104,9 +108,11 @@ export default class CreateLabelType extends PureComponent {
       },
     };
 
+    const labelText = inputValue ? `“${inputValue}”` : '';
+
     return (
       <Modal
-        title={`新建“${labelName}”标签`}
+        title={`新建${labelText}标签`}
         wrapClassName={styles.addLabel}
         width={540}
         visible={visible}
@@ -123,7 +129,7 @@ export default class CreateLabelType extends PureComponent {
           >
             {getFieldDecorator('labelName', {
               rules: [{
-                required: true, message: '请输入标签名称',
+                  required: true, message: '请输入标签名称',
               }, {
                 max: 8, message: '最多为8个字',
               }, {
@@ -133,7 +139,7 @@ export default class CreateLabelType extends PureComponent {
               }],
               initialValue: labelName,
             })(
-              <Input disabled onBlur={this.handleCheckLabelName} />,
+              <Input onChange={this.handleInputChange} />,
             )}
           </FormItem>
           <FormItem
