@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-26 12:12:35
+ * @Last Modified time: 2018-10-26 12:30:08
  */
 
 import React, { PureComponent } from 'react';
@@ -235,13 +235,14 @@ export default class EventAnalysisReport extends PureComponent {
         // 获取鼠标位置
         const pageX = e.pageX;
         const pageY = e.pageY;
-        const chartTop = this.eventAnalysisReport.current.offsetTop;
-        this.eventAnalysisChart.current.style.display = 'block';
-        this.eventAnalysisChart.current.style.top =(pageY-chartTop+20)+'px';
-        this.eventAnalysisChart.current.style.left = pageX+'px';
+        // 获取表格图表的dom节点
+        const chartTop = this.eventAnalysisReportRef.current.offsetTop;
+        this.eventAnalysisChartRef.current.style.display = 'block';
+        this.eventAnalysisChartRef.current.style.top =(pageY-chartTop+20)+'px';
+        this.eventAnalysisChartRef.current.style.left = pageX+'px';
       },
       onMouseLeave: () => {
-        this.eventAnalysisChart.style.display = 'none';
+        this.eventAnalysisChartRef.current.style.display = 'none';
         isAlive = false;
       },
     };
@@ -325,7 +326,7 @@ export default class EventAnalysisReport extends PureComponent {
       }
     } = this.state;
     return (
-      <div ref = {this.eventAnalysisReport} className={styles.eventAnalysisReport}>
+      <div ref = {this.eventAnalysisReportRef} className={styles.eventAnalysisReport}>
         <ReportTitle title='每日触发任务及覆盖客户数' />
         <ReportFilter
           dateFilterName='任务截止时间'
@@ -346,7 +347,7 @@ export default class EventAnalysisReport extends PureComponent {
           columns={columns}
           dataSource={dataSource}
         />
-        <div ref = {this.eventAnalysisChart} className={styles.eventAnalysisChart}>
+        <div ref = {this.eventAnalysisChartRef} className={styles.eventAnalysisChart}>
           <EventAnalysisChart
             eventReportList={eventReportList}
             config={configData}
