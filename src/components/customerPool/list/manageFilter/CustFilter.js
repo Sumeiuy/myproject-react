@@ -180,8 +180,8 @@ export default class CustRange extends PureComponent {
     const widthDown = isDown ? 160 : dropdownWidth;
     const placeholder = isDown ? '机构范围' : '分公司/营业部名称';
     let filterName = isHideFilterName ? '' : '服务营业部';
-    if(this.props.filterName) {
-      filterName = '创建部门';
+    if (!_.isEmpty(this.props.filterName)) {
+      filterName = this.props.filterName;
     }
 
     return (
