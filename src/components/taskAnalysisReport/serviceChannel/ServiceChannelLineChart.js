@@ -3,7 +3,7 @@
  * @Descripter: 渠道变化趋势
  * @Date: 2018-10-12 15:30:10
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-22 13:35:51
+ * @Last Modified time: 2018-10-26 09:54:56
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -33,6 +33,18 @@ const {
 
 const legendList = _.map(legendOptions, item => ({...item, type: 'line'}));
 
+// 获取xAxis轴刻度标签的显示间隔
+function getXAxisLabelInterval(length) {
+  // 超过10条小于60条按周显示
+  if (length > 10 && length <= 60) {
+    return 6;
+  // 超过60条按月显示
+  } else if (length > 60) {
+    return 30;
+  }
+  return 0;
+}
+
 export default function ServiceCustChart(props) {
     const {
       trendData,
@@ -58,7 +70,7 @@ export default function ServiceCustChart(props) {
     // xAxis轴截止时间数据
     const deadlineTimeData = filterData(zhangleList, 'deadlineTime');
     // xAxis轴刻度标签的显示间隔, 超过30天，则横坐标改为按周展示
-    const xAxisLabelInterval = deadlineTimeData.length > 10 ? 6 : 0;
+    const xAxisLabelInterval = getXAxisLabelInterval(deadlineTimeData.length);
     // tooltip 配置项
     const tooltipOtions = {
       trigger: 'axis',
@@ -160,7 +172,7 @@ export default function ServiceCustChart(props) {
           (
             <div>
               <div className={styles.chartTitle}>
-                渠道变化趋势
+                服务渠道变化趋势
               </div>
               <ChartLegend
                 legendList={legendList}

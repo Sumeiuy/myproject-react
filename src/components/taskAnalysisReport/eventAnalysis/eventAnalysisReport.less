@@ -2,6 +2,8 @@
   background: #fff;
   margin-top: 20px;
   border-radius: 2px;
+  overflow: hidden;
+  position: relative;
   .searchEvent {
     margin-right: 30px;
   }
@@ -15,17 +17,11 @@
       }
     }
   }
-}
-.taskStatisticsChart {
-  position: relative;
-  .taskStatisticsChartReport {
+  .eventAnalysisChart {
     position: absolute;
+    top: 400px;
+    left: 400px;
     display: none;
-    z-index: 100;
-  }
-  &:hover {
-    .taskStatisticsChartReport {
-      display: block;
-    }
   }
 }
+
