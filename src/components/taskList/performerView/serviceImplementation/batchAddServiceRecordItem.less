@@ -2,15 +2,32 @@
   padding-left: 10px;
   .title {
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
     :global {
       .ant-checkbox-wrapper {
         vertical-align: middle;
+        margin-right: 5px;
       }
     }
-    .titleText {
-      vertical-align: middle;
-      color: #333;
-      font-size: 15px;
+
+    .titleArea {
+      display: flex;
+
+      .typeLabel {
+        flex: 0 0 auto;
+        margin-top: -2px;
+        margin-left: 4px;
+        font-size: 15px;
+        color: #f9a825;
+      }
+
+      .titleText {
+        flex: 0 0 auto;
+        vertical-align: middle;
+        color: #333;
+        font-size: 15px;
+      }
     }
   }
   .labelText {
