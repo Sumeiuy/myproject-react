@@ -24,6 +24,11 @@ import api from '../../src/api';
 import { Search } from '../../src/components/customerPool/home';
 import { emp, permission } from '../../src/helper';
 
+// 首页执行者视图首次引导提示第十步的dom的id名称(我要提问)
+const NEW_HOME_INTRO_TENTH_SEEP_IDNAME = 'homePageIntroTenthStep';
+// 首页执行者视图首次引导提示第十一步的dom的id名称(常用工具)
+export const NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME = 'homePageIntroEleventhStep';
+
 const effects = {
   getHotPossibleWds: 'customerPool/getHotPossibleWds',
   saveSearchVal: 'customerPool/saveSearchVal',
@@ -254,7 +259,12 @@ export default class Header extends PureComponent {
             >
               <div>
                 <span className={styles.navItem}>
-                  <span>{menu.name}</span>
+                  <span id= {
+                    menu.name === '常用工具'
+                    ? NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME
+                    : ''
+                  }
+                  >{menu.name}</span>
                 </span>
                 {
                   (index !== fixSecondaryMenu.length - 1) ?
@@ -367,7 +377,7 @@ export default class Header extends PureComponent {
           <div onClick={this.handleFeedbackClick}>
             <span className={styles.navItem}>
               <i className={styles.feedbackIcon} />
-              <span>我要提问</span>
+              <span id={NEW_HOME_INTRO_TENTH_SEEP_IDNAME}>我要提问</span>
             </span>
             <span className={styles.splitLine} />
           </div>

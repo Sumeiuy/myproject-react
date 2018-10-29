@@ -1,13 +1,15 @@
 import moment from 'moment';
 
+// 覆盖客户人次
+const COVER_CUSTOMEER_NUMBER_NAME = '覆盖客户人次';
 // 客户人次
 const CUSTOMEER_NUMBER_NAME = '客户人次';
 // 任务数
-const TASK_NUMBER_NAME = '任务数';
+const TASK_NUMBER_NAME = '触发任务数';
 // 完成客户人次
 const COMPLETE_CUSTOMEER_NUMBER_NAME = '完成客户人次';
 // 达标客户人次
-const COMPLIANCE_CUSTOMEER_NUMBER_NAME = '达标客户人次';
+const COMPLIANCE_CUSTOMEER_NUMBER_NAME = '服务达标人次';
 // 涨乐
 const ZHANGLE = '涨乐';
 // 其他
@@ -102,7 +104,7 @@ const taskCustomerOptions = {
     {
       type: 'square',
       color: '#6fb7ec',
-      name: CUSTOMEER_NUMBER_NAME,
+      name: COVER_CUSTOMEER_NUMBER_NAME,
     },
     {
       type: 'line',
@@ -244,7 +246,7 @@ const taskOption = {
     },
     {
       color: '#4c70b3',
-      name: '剩余任务数',
+      name: '已完成任务数',
       type: 'line',
     }
   ]
@@ -314,6 +316,51 @@ const serviceChannelChangeOption = {
   ]
 };
 
+// 表格头部信息
+const tableOption = {
+  columnsItem : [{
+    title: '事件名称',
+    dataIndex: 'eventName',
+    key: 'eventName',
+    width: 150,
+  },{
+    title: '任务数',
+    dataIndex: 'taskNum',
+    key: 'taskNum',
+    eventType: 'task',
+    width: 150,
+  },{
+    title: '完成任务数',
+    dataIndex: 'completedTaskNum',
+    key: 'completedTaskNum',
+    eventType: 'task',
+    width: 150,
+  },{
+    title: '任务完成率',
+    dataIndex: 'taskCompletionRate',
+    key: 'taskCompletionRate',
+    eventType: 'task',
+    width: 150,
+  },{
+    title: '覆盖客户数',
+    dataIndex: 'coveredCustomerNum',
+    key: 'coveredCustomerNum',
+    eventType: 'customer',
+    width: 150,
+  },{
+    title: '已服务客户数',
+    dataIndex: 'servedCustomerNum',
+    key: 'servedCustomerNum',
+    eventType: 'customer',
+    width: 150,
+  },{
+    title: '各渠道服务占比',
+    dataIndex: 'servicesAccounted',
+    key: 'servicesAccounted',
+    eventType: 'serviceChannels',
+  }]
+};
+
 const chartLineColors = ['#f7ad33', '#4c70b3'];
 
 export const {
@@ -336,9 +383,11 @@ export {
   completeServiceCustOptions,
   complianceServiceCustOptions,
   serviceChannelOptions,
+  COVER_CUSTOMEER_NUMBER_NAME,
   CUSTOMEER_NUMBER_NAME,
   TASK_NUMBER_NAME,
   taskOption,
   customerOption,
   serviceChannelChangeOption,
+  tableOption,
 };

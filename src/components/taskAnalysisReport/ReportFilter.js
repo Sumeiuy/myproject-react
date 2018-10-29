@@ -2,8 +2,8 @@
  * @Author: zhangjun
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-22 13:26:15
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-10-26 15:15:43
  */
 
 import React, { PureComponent } from 'react';
@@ -209,6 +209,8 @@ export default class ReportFilter extends PureComponent {
       eventSearchList,
       eventName,
      } = this.props;
+    // 事件类型中字典里面没有不限，新增不限
+    const newEventTypeOptions = [{key: '不限', value: '不限'}, ...eventTypeOptions];
     const { eventList = [] } = eventSearchList;
     const dateRangePicker = classnames({
       [styles.filter]: true,
@@ -279,7 +281,7 @@ export default class ReportFilter extends PureComponent {
               className='filter'
               type='single'
               dataMap={['key', 'value']}
-              data={eventTypeOptions}
+              data={newEventTypeOptions}
               value={eventType}
               onChange={this.handleEventTypeChange}
               needItemObj

@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-24 15:41:12
+ * @Last Modified time: 2018-10-26 17:16:13
  */
 
 import React, { PureComponent } from 'react';
@@ -65,6 +65,22 @@ function checkBowserVersion() {
     || (env.isFirefox() && bowserVersion > 20)) {
     return true;
   }
+  return false;
+}
+
+// 检查音频设备
+function checkAudioDevice() {
+  // navigator.mediaDevices.getUserMedia  最新标准API
+  // navigator.webkitGetUserMedia webkit内核浏览器
+  // navigator.mozGetUserMedia Firefox浏览器
+  // navigator.getUserMedia 旧版API
+  if ((navigator.mediaDevices
+    && navigator.mediaDevices.getUserMedia)
+    || navigator.getUserMedia
+    || navigator.webkitGetUserMedia
+    || navigator.mozGetUserMedia) {
+      return true;
+    }
   return false;
 }
 
@@ -144,6 +160,11 @@ export default class Phone extends PureComponent {
                 return;
               }
             }
+            // 检查音频设备
+            if (!checkAudioDevice()) {
+              this.handleAudioDeviceError();
+              return;
+            }
             this.prepareCall(number);
             // 点击打电话
             this.props.onClick();
@@ -192,6 +213,18 @@ export default class Phone extends PureComponent {
       title: '当前浏览器版本不支持拨号功能！',
       type: 'warning',
       okText: '关闭',
+      className: styles.promptError,
+    });
+  }
+
+  // 检查音频设备弹框提示
+  @autobind
+  handleAudioDeviceError() {
+    prompt({
+      title: '未安装音频设备！',
+      type: 'warning',
+      okText: '关闭',
+      className: styles.promptError,
     });
   }
 
@@ -216,6 +249,11 @@ export default class Phone extends PureComponent {
         this.handleBowserVersionError();
         return;
       }
+    }
+    // 检查音频设备
+    if (!checkAudioDevice()) {
+      this.handleAudioDeviceError();
+      return;
     }
     onClick({
       number,
