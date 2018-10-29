@@ -25,7 +25,7 @@ export default class CombinationRank extends PureComponent {
     // 字典
     dict: PropTypes.object.isRequired,
     // type切换
-    typeChange: PropTypes.func.isRequired,
+    onTypeChange: PropTypes.func.isRequired,
     // 筛选
     // filterChange: PropTypes.func.isRequired,
     // 图表tab切换
@@ -52,6 +52,9 @@ export default class CombinationRank extends PureComponent {
     showModal: PropTypes.func.isRequired,
     // 打开详情页面
     openDetailPage: PropTypes.func.isRequired,
+    // 投资顾问
+    queryCombinationCreator: PropTypes.func.isRequired,
+    creatorList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -95,13 +98,15 @@ export default class CombinationRank extends PureComponent {
   render() {
     const {
       dict,
-      typeChange,
+      onTypeChange,
       // filterChange,
       combinationTreeList,
       yieldRankChange,
       yieldRankValue,
       riskLevelFilter,
       riskLevel,
+      queryCombinationCreator,
+      creatorList,
     } = this.props;
     return (
       <div className={styles.combinationRankBox}>
@@ -117,7 +122,9 @@ export default class CombinationRank extends PureComponent {
             riskLevel={riskLevel}
             composeType={combinationTreeList}
             dict={dict}
-            typeChange={typeChange}
+            onTypeChange={onTypeChange}
+            queryCombinationCreator={queryCombinationCreator}
+            creatorList={creatorList}
           />
           <div className={styles.combinationListBox}>
             {this.getCombinationList()}

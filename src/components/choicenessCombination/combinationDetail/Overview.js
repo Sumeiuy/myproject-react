@@ -62,7 +62,7 @@ export default class Overview extends PureComponent {
     return (
       <div className={styles.overview}>
         <h2 className={styles.title}>{ titleName || EMPTY_TEXT}</h2>
-        <h3 className={styles.composeType}>{composeType} | {empName} ({empId})</h3>
+        <h3 className={styles.composeType}>{`${composeType} | ${empName} (${empId})`}</h3>
         <div className={styles.left}>
           <div className={styles.leftInfo}>
             <h3>

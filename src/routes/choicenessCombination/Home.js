@@ -25,8 +25,6 @@ import { openRctTab } from '../../utils';
 import styles from './index.less';
 
 const dispatch = dva.generateEffect;
-// const EMPTY_LIST = [];
-const EMPTY_OBJECT = {};
 const effects = {
   // 获取调仓历史
   getAdjustWarehouseHistory: 'choicenessCombination/getAdjustWarehouseHistory',
@@ -46,6 +44,8 @@ const effects = {
   riskLevelFilter: 'choicenessCombination/riskLevelFilter',
   // 获取历史报告
   getReportHistoryList: 'choicenessCombination/getReportHistoryList',
+  // 获取投资顾问
+  queryCombinationCreator: 'choicenessCombination/queryCombinationCreator',
 };
 
 const mapStateToProps = state => ({
@@ -73,6 +73,8 @@ const mapStateToProps = state => ({
   riskLevel: state.choicenessCombination.riskLevel,
   // 历史报告
   reportHistoryList: state.choicenessCombination.reportHistoryList,
+  // 投资顾问
+  creatorList: state.choicenessCombination.creatorList,
 });
 const mapDispatchToProps = {
   getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory,
@@ -92,6 +94,8 @@ const mapDispatchToProps = {
   riskLevelFilter: dispatch(effects.riskLevelFilter,
     { loading: true, forceFull: true }),
   getReportHistoryList: dispatch(effects.getReportHistoryList,
+    { loading: true, forceFull: true }),
+  queryCombinationCreator: dispatch(effects.queryCombinationCreator,
     { loading: true, forceFull: true }),
 };
 
@@ -133,6 +137,9 @@ export default class ChoicenessCombination extends PureComponent {
     // 历史报告
     getReportHistoryList: PropTypes.func.isRequired,
     reportHistoryList: PropTypes.object.isRequired,
+    // 投资顾问
+    queryCombinationCreator: PropTypes.func.isRequired,
+    creatorList: PropTypes.array.isRequired,
   }
 
   static contextTypes = {
@@ -364,6 +371,8 @@ export default class ChoicenessCombination extends PureComponent {
       getAdjustWarehouseHistory,
       getReportHistoryList,
       reportHistoryList,
+      queryCombinationCreator,
+      creatorList,
     } = this.props;
     const {
       hasTkMampPermission,
@@ -422,7 +431,7 @@ export default class ChoicenessCombination extends PureComponent {
           showModal={this.showModal}
           combinationTreeList={combinationTreeList}
           combinationRankList={combinationRankList}
-          typeChange={this.handleTypeChange}
+          onTypeChange={this.handleTypeChange}
           chartTabChange={this.handleChartTabChange}
           getCombinationLineChart={getCombinationLineChart}
           combinationLineChartData={combinationLineChartData}
@@ -435,6 +444,8 @@ export default class ChoicenessCombination extends PureComponent {
           openStockPage={this.openStockPage}
           openCustomerListPage={this.openCustomerListPage}
           openDetailPage={this.openDetailPage}
+          queryCombinationCreator={queryCombinationCreator}
+          creatorList={creatorList}
         />
         {
           visible
