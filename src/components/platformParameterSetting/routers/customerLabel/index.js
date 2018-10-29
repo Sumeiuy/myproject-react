@@ -263,7 +263,7 @@ export default class LabelManager extends PureComponent {
       labelList = [],
     } = labelInfo;
 
-    if (custRange && custRange.length <= 0) {
+    if(_.isEmpty(custRange)) {
       return null;
     }
 
