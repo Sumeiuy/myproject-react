@@ -30,6 +30,7 @@ export default function CommonCell(props) {
     onClick,
     valueStyle,
     hiddenEmptyValue,
+    introPositionId,
   } = props;
   // 渲染 Popover
   const renderPopver = item => {
@@ -96,7 +97,7 @@ export default function CommonCell(props) {
   : null;
 
   return (
-    <div className={styles.commonWrapper}>
+    <div className={styles.commonWrapper} id={introPositionId}>
       {renderTitle}
       {
         _.isEmpty(data)
