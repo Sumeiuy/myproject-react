@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-29 15:56:28
+ * @Last Modified time: 2018-10-29 16:07:19
  */
 
 import React, { PureComponent } from 'react';
@@ -75,7 +75,7 @@ function getUserMedia(constrains){
     return navigator.mediaDevices.getUserMedia(constrains);
   } else if (navigator.webkitGetUserMedia){
     //webkit内核浏览器
-      return  navigator.webkitGetUserMedia(constrains);
+    return  navigator.webkitGetUserMedia(constrains);
   } else if (navigator.mozGetUserMedia){
     //Firefox浏览器
     return  navigator.mozGetUserMedia(constrains);
