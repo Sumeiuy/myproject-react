@@ -12,9 +12,10 @@ export default {
   state: {
     // 概要详情数据
     summaryInfo: {},
+    // 客户是否有已实施的流程
+    hasDoingFlow: false,
     // 更多重点标签信息
     moreLabelInfo: {},
-    summaryInfo: {},
     // 客户概要信息基本数据
     customerBasicInfo: {},
   },
@@ -24,6 +25,13 @@ export default {
       return {
         ...state,
         summaryInfo: payload || {},
+      };
+    },
+    queryCheckCustAssetSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        hasDoingFlow: payload || false,
       };
     },
     queryAllKeyLabelsSuccess(state, action) {
@@ -55,6 +63,14 @@ export default {
       const { resultData } = yield call(api.queryCustSummaryInfo, payload);
       yield put({
         type: 'queryCustSummaryInfoSuccess',
+        payload: resultData,
+      });
+    },
+    // 查询客户是否有已实施的流程
+    * queryCheckCustAsset({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryCheckCustAsset, payload);
+      yield put({
+        type: 'queryCheckCustAssetSuccess',
         payload: resultData,
       });
     },

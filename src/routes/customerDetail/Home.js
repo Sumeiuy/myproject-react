@@ -48,6 +48,10 @@ export default class Home extends PureComponent {
     addCallRecord: PropTypes.func.isRequired,
     // 当前服务记录id
     currentCommonServiceRecord: PropTypes.object.isRequired,
+    // 查询是否有已实施的流程
+    queryCheckCustAsset: PropTypes.func.isRequired,
+    // 是否有已实施的流程
+    hasDoingFlow: PropTypes.bool.isRequired,
   }
 
   static contextTypes = {
@@ -72,6 +76,7 @@ export default class Home extends PureComponent {
       getCustomerBasicInfo,
       getMotCustfeedBackDict,
       queryCustSummaryInfo,
+      queryCheckCustAsset,
     } = this.props;
 
     if(custId) {
@@ -79,6 +84,8 @@ export default class Home extends PureComponent {
       getCustomerBasicInfo({ custId });
       // 获取概要信息
       queryCustSummaryInfo({ custId });
+      // 查询是否有已实施的流程
+      queryCheckCustAsset({ custId });
     }
     // 获取客户反馈字典信息
     getMotCustfeedBackDict({ pageNum: 1, pageSize: 10000, type: 2 });
