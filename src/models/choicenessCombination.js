@@ -82,6 +82,7 @@ export default {
     riskLevel: riskDefaultItem.value, // 所筛选的风险等级
     reportHistoryList: EMPTY_OBJECT,  // 历史报告
     reportDetail: EMPTY_OBJECT,  // 历史报告详情
+    creatorList: EMPTY_LIST,  // 投资顾问数据
   },
   reducers: {
     // 风险等级筛选
@@ -208,6 +209,14 @@ export default {
         reportDetail: resultData,
       };
     },
+    // 获取投资顾问
+    queryCombinationCreatorSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        creatorList: resultData,
+      };
+    },
   },
   effects: {
     // 获取调仓历史数据
@@ -302,6 +311,14 @@ export default {
       const response = yield call(api.getHistoryDetail, payload);
       yield put({
         type: 'getReportDetailSuccess',
+        payload: response,
+      });
+    },
+    // 查询投资顾问
+    * queryCombinationCreator({ payload }, { call, put }) {
+      const response = yield call(api.queryCombinationCreator, payload);
+      yield put({
+        type: 'queryCombinationCreatorSuccess',
         payload: response,
       });
     },
