@@ -781,10 +781,11 @@ export default class Filter extends PureComponent {
         query: {
           type,
           q,
+          source,
         }
       }
     } = this.props;
-    const flag = _.includes(custListSearchTypes, type);
+    const flag = _.includes(custListSearchTypes, type) || source === 'search';
     return flag ? decodeURIComponent(q) : '';
   }
 

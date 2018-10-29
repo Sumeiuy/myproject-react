@@ -538,7 +538,7 @@ const exported = {
 };
 
 // 客户列表页面如果url里type是以下类型之一，则把值回填到搜索框
-export const custListSearchTypes = ['NAME', 'SOR_PTY_ID', 'MOBILE', 'ID_NUM', 'search'];
+export const custListSearchTypes = ['NAME', 'SOR_PTY_ID', 'MOBILE', 'ID_NUM'];
 
 export default exported;
 
