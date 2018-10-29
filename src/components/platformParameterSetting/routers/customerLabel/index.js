@@ -20,18 +20,8 @@ import CreateLabel from './CreateLabel';
 import { dva } from '../../../../helper';
 import { logPV } from '../../../../decorators/logable';
 import CustRange from '../../../customerPool/list/manageFilter/CustFilter';
-import styles from './customerLabel.less';
 
-function transformCustRange(data) {
-  return [
-    {
-      id: '',
-      level: 1,
-      name: '不限',
-    },
-    ...data,
-  ];
-}
+import styles from './customerLabel.less';
 
 const DEFAULT_LABEL_TYPE = { id: '', typeName: '不限' };
 
@@ -69,19 +59,11 @@ export default class LabelManager extends PureComponent {
     addLabel: PropTypes.func.isRequired,
     deleteLabel: PropTypes.func.isRequired,
     checkDuplicationName: PropTypes.func.isRequired,
-    updateQueryState: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
-    expandAll: PropTypes.bool,
-    defaultFirst: PropTypes.bool,
   };
 
   static contextTypes = {
     replace: PropTypes.func.isRequired,
-  }
-
-  static defaultProps = {
-    defaultFirst: false,
-    expandAll: false,
   }
 
   constructor(props) {
@@ -235,9 +217,8 @@ export default class LabelManager extends PureComponent {
   @autobind
   handleCustRange(labelTypeItem) {
     const { orgId } = labelTypeItem;
-    this.queryLabelList({
-      orgId: orgId,
-    });
+    console.warn('labelTypeItem: ', labelTypeItem);
+    this.queryLabelList({ orgId });
   }
   @autobind
   closeCreateLabelModal() {
@@ -256,8 +237,17 @@ export default class LabelManager extends PureComponent {
       queryLabelType,
       location: { query: { labelTypeId, orgId } },
       custRange,
-      expandAll,
     } = this.props;
+
+    // 增加一个不限选项
+    const newCustRange = [
+      {
+        id: '',
+        level: 1,
+        name: '不限',
+      },
+      ...custRange
+    ];
 
     const {
       labelList = [],
@@ -285,12 +275,12 @@ export default class LabelManager extends PureComponent {
             />
             <div className={styles.custRange}>
               <CustRange
-                filterName={'创建部门'}
+                filterName="创建部门"
                 defaultFirst
                 orgId={orgId}
-                custRange={transformCustRange(custRange)}
+                custRange={newCustRange}
                 updateQueryState={this.handleCustRange}
-                expandAll={expandAll}
+                expandAll={false}
               />
             </div>
           </div>
