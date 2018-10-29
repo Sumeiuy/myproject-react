@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import styles from './createLabel.less';
-import { emp } from '../../helper';
+import { emp } from '../../../../helper';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
