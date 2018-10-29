@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-29 10:05:31
+ * @Last Modified time: 2018-10-29 10:49:41
  */
 
 import React, { PureComponent } from 'react';
@@ -15,7 +15,7 @@ import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import { emp } from '../../../helper';
 import EventAnalysisChart from './EventAnalysisChart';
-import { taskOption,customerOption,serviceChannelChangeOption,eventSourceTypes } from '../config';
+import { taskOption,customerOption,serviceChannelChangeOption,eventSourceTypes,tableOption } from '../config';
 import { filterData } from '../utils';
 import { dom } from '../../../helper';
 
@@ -235,20 +235,18 @@ export default class EventAnalysisReport extends PureComponent {
             type: type,
           },
         });
-        const {
-          setStyle,
-        } = dom;
         // 获取表格图表的dom节点
         const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
         const reportTop = this.eventAnalysisReportRef.current.offsetTop;
-        setStyle(eventAnalysisChartDom,'visibility','visible');
+        dom.setStyle(eventAnalysisChartDom,'visibility','visible');
         const eventAnalysisChartTop =  `${pageY-reportTop+20}px`;
         const eventAnalysisChartLeft =  `${pageX}px`;
-        setStyle(eventAnalysisChartDom,'top',eventAnalysisChartTop);
-        setStyle(eventAnalysisChartDom,'left',eventAnalysisChartLeft);
+        dom.setStyle(eventAnalysisChartDom,'top',eventAnalysisChartTop);
+        dom.setStyle(eventAnalysisChartDom,'left',eventAnalysisChartLeft);
       },
       onMouseOut: () => {
-        this.eventAnalysisChartRef.current.style.visibility = 'hidden';
+        const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
+        dom.setStyle(eventAnalysisChartDom,'visibility','hidden');
         isAlive = false;
       },
     };
@@ -272,57 +270,14 @@ export default class EventAnalysisReport extends PureComponent {
     } = this.state;
 
     // 展示表格头部
-    const columnsItem = [{
-      title: '事件名称',
-      dataIndex: 'eventName',
-      key: 'eventName',
-      width: 150,
-    },{
-      title: '任务数',
-      dataIndex: 'taskNum',
-      key: 'taskNum',
-      eventType: 'task',
-      width: 150,
-    },{
-      title: '完成任务数',
-      dataIndex: 'completedTaskNum',
-      key: 'completedTaskNum',
-      eventType: 'task',
-      width: 150,
-    },{
-      title: '任务完成率',
-      dataIndex: 'taskCompletionRate',
-      key: 'taskCompletionRate',
-      eventType: 'task',
-      width: 150,
-    },{
-      title: '覆盖客户数',
-      dataIndex: 'coveredCustomerNum',
-      key: 'coveredCustomerNum',
-      eventType: 'customer',
-      width: 150,
-    },{
-      title: '已服务客户数',
-      dataIndex: 'servedCustomerNum',
-      key: 'servedCustomerNum',
-      eventType: 'customer',
-      width: 150,
-    },{
-      title: '各渠道服务占比',
-      dataIndex: 'servicesAccounted',
-      key: 'servicesAccounted',
-      eventType: 'serviceChannels',
-    }];
-
-    const columns = columnsItem.map((col) => {
+    const columnsItem = tableOption.columnsItem;
+    const columns = _.map(columnsItem,(col) => {
       const { eventType } = col;
       return {
         ...col,
         onCell: (record) => this.handleTableOnCell(record,eventType),
       };
     });
-    // 表格数据
-    const dataSource = eventData;
 
     const {
       option: {
@@ -357,7 +312,7 @@ export default class EventAnalysisReport extends PureComponent {
         <Table
           className={styles.eventAnalysisTable}
           columns={columns}
-          dataSource={dataSource}
+          dataSource={eventData}
         />
         <div ref = {this.eventAnalysisChartRef} className={styles.eventAnalysisChart}>
           <EventAnalysisChart
