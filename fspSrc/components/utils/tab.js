@@ -12,18 +12,20 @@ import { sessionStore } from '../../../src/config';
 import commonConfig from '../layout/config';
 
 function traverseMenus(menus, callback, level = 1) {
+  let isFoundMenu = false;
   const newMenus = [
     ...menus,
   ];
   _.forEach(newMenus, (menu, i, array) => {
     if (callback(menu, i, array, level)) {
+      isFoundMenu = true;
       return false;
     }
     return menu.children && !_.isEmpty(menu.children) ?
       traverseMenus(menu.children, callback, level + 1) : true;
   });
 
-  return newMenus;
+  return level === 1 ? newMenus : !isFoundMenu;
 }
 
 function getCurrentMenuPath(pathname, level) {
@@ -236,14 +238,28 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
     const locationPath = getCurrentMenuPath(pathname, level);
     // 找到当前path对应的pane进行修正
     if (menuPath === locationPath) {
+
       if (pane.path === '/customerPool' && pathname !== '/customerPool') {
         return false;
       }
+
       const currentPane = array[i];
+
+      // 新打开的页面被命中，并且没有顶级菜单被命中时
+      if (!pane.type && !isTopMenu) {
+        currentPane.path = pathname;
+        currentPane.query = query;
+        isTopMenu = true;
+        newActiveKey = currentPane.id;
+        isFoundCurrentPane = true;
+        newCurrentMenuId = currentPane.id;
+        return true;
+      }
+
       if (level === 1) {
         currentPane.path = pathname;
         currentPane.query = query;
-        if (currentPane.pid === 'ROOT') {
+        if (currentPane.pid === 'ROOT') { // 是顶级菜单被命中
           isTopMenu = true;
           newActiveKey = currentPane.id;
           if (_.isEmpty(currentPane.children)) {
@@ -252,14 +268,6 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
             return true;
           }
           return false;
-        }
-        // 新打开的页面被命中
-        if (!pane.type) {
-          isTopMenu = true;
-          newActiveKey = currentPane.id;
-          isFoundCurrentPane = true;
-          newCurrentMenuId = currentPane.id;
-          return true;
         }
       }
 
