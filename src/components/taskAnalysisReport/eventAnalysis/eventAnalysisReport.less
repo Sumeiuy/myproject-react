@@ -2,6 +2,8 @@
   background: #fff;
   margin-top: 20px;
   border-radius: 2px;
+  overflow: hidden;
+  position: relative;
   .searchEvent {
     margin-right: 30px;
   }
@@ -13,19 +15,21 @@
         font-size: 14px;
         color: #666;
       }
+      .ant-table-thead {
+        background: #f7f7f7;
+      }
+    }
+    td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
-}
-.taskStatisticsChart {
-  position: relative;
-  .taskStatisticsChartReport {
+  .eventAnalysisChart {
     position: absolute;
-    display: none;
-    z-index: 100;
-  }
-  &:hover {
-    .taskStatisticsChartReport {
-      display: block;
-    }
+    top: 400px;
+    left: 400px;
+    visibility: hidden;
   }
 }
+

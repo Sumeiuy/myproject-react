@@ -79,6 +79,7 @@ export default class CustRange extends PureComponent {
     dropdownWidth: PropTypes.number,
     isDown: PropTypes.bool,
     isHideFilterName: PropTypes.bool,
+    filterName: PropTypes.string,
   }
 
   static defaultProps = {
@@ -91,6 +92,7 @@ export default class CustRange extends PureComponent {
     isDown: false,
     collectData: _.noop,
     isHideFilterName: false,
+    filterName: '',
   }
 
   constructor(props) {
@@ -177,7 +179,10 @@ export default class CustRange extends PureComponent {
     const formatCustRange = transformCustRangeData(custRange);
     const widthDown = isDown ? 160 : dropdownWidth;
     const placeholder = isDown ? '机构范围' : '分公司/营业部名称';
-    const filterName = isHideFilterName ? '' : '服务营业部';
+    let filterName = isHideFilterName ? '' : '服务营业部';
+    if (!_.isEmpty(this.props.filterName)) {
+      filterName = this.props.filterName;
+    }
 
     return (
       <TreeFilter

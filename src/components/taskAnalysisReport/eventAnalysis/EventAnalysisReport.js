@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-19 15:32:24
+ * @Last Modified time: 2018-10-29 10:49:41
  */
 
 import React, { PureComponent } from 'react';
@@ -14,10 +14,10 @@ import _ from 'lodash';
 import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import { emp } from '../../../helper';
-import { eventSourceTypes } from '../config';
-import TaskStatisticsChart from './TaskStatisticsChart';
-import CustomerStatisticsChart from './CustomerStatisticsChart';
-import ServiceChannelsChangeChart from './ServiceChannelsChangeChart';
+import EventAnalysisChart from './EventAnalysisChart';
+import { taskOption,customerOption,serviceChannelChangeOption,eventSourceTypes,tableOption } from '../config';
+import { filterData } from '../utils';
+import { dom } from '../../../helper';
 
 import styles from './eventAnalysisReport.less';
 
@@ -39,6 +39,8 @@ export default class EventAnalysisReport extends PureComponent {
 
   constructor(props,context) {
     super(props);
+    this.eventAnalysisChartRef = React.createRef();
+    this.eventAnalysisReportRef = React.createRef();
     const { dict: {
       custServerTypeFeedBackDict = [],
       missionType = [],
@@ -54,6 +56,18 @@ export default class EventAnalysisReport extends PureComponent {
       eventSource: '',
       // 事件名称
       eventName: '',
+      // 表格数据
+      option: {
+        eventReportList: {},
+        configData: {},
+        eventDataName: '',
+        firstData: [],
+        secondData: [],
+        thirdData: [],
+        fourData: [],
+        deadlineTimeData: [],
+        type: '',
+      },
     };
   }
 
@@ -107,6 +121,7 @@ export default class EventAnalysisReport extends PureComponent {
       default:
         break;
     }
+
     this.setState({ eventTypeOptions });
   }
 
@@ -119,11 +134,128 @@ export default class EventAnalysisReport extends PureComponent {
     });
   }
 
+  // 表格中图表渲染
+  @autobind
+  handleTableOnCell(record,type,e) {
+    // 表格数据中有三种表格，判断type
+    if(_.isEmpty(type)){
+      return;
+    }
+    // 取出增加在接口数据中的eventReportList
+    const { eventReportList } = record;
+    // 判断是否鼠标是否移入单元格
+    let isAlive = false;
+    return {
+      onMouseOver: (e) => {
+        // 获取鼠标位置
+        const pageX = e.pageX;
+        const pageY = e.pageY;
+        if (isAlive) {
+          return;
+        }
+        isAlive = true;
+        const { eventName } = record;
+        let firstData = [];
+        let secondData = [];
+        let thirdData = [];
+        let fourData = [];
+        // 事件轴
+        let deadlineTimeData = [];
+        // 配置项数据
+        let configData = {};
+        // 根据不同type获取相应数据
+        switch(type) {
+          case 'task':
+            const {
+              triggerTaskList = [],
+              completedTaskList = [],
+            } = eventReportList;
+            // 触发任务数数据
+            const triggerTaskData = filterData(triggerTaskList, 'triggerTaskNumber');
+            // 完成任务数数据
+            const completedTaskData = filterData(completedTaskList, 'completedTaskNumber');
+            // xAxis轴截止时间数据
+            deadlineTimeData = filterData(triggerTaskList, 'deadlineTime');
+            firstData = triggerTaskData;
+            secondData = completedTaskData;
+            configData = taskOption;
+            break;
+          case 'customer':
+            const {
+              coveredCustomersList = [],
+              completedCustomersList = [],
+            } = eventReportList;
+            // 覆盖客户数数据
+            const coveredCustomersData = filterData(coveredCustomersList, 'coveredCustomersNumber');
+            // 完成客户数数据
+            const completedCustomersData = filterData(completedCustomersList, 'completedCustomersNumber');
+            // xAxis轴截止时间数据
+            deadlineTimeData = filterData(coveredCustomersList, 'deadlineTime');
+            firstData = coveredCustomersData;
+            secondData = completedCustomersData;
+            configData = customerOption;
+            break;
+          case 'serviceChannels':
+            const {
+              zhangLeList = [],
+              phoneList = [],
+              interviewList = [],
+              // 短信改成其它
+              shortMessageList = [],
+            } = eventReportList;
+            // 涨乐数据
+            const zhangleData = filterData(zhangLeList, 'percentage');
+            // 电话数据
+            const phoneData = filterData(phoneList, 'percentage');
+            // 面谈数据
+            const interviewData = filterData(interviewList, 'percentage');
+            // 其他数据
+            const otherData = filterData(shortMessageList, 'percentage');
+            // xAxis轴截止时间数据
+            deadlineTimeData = filterData(zhangLeList, 'deadlineTime');
+            firstData = zhangleData;
+            secondData = phoneData;
+            thirdData = interviewData;
+            fourData = otherData;
+            configData = serviceChannelChangeOption;
+            break;
+          default:
+            break;
+        }
+        this.setState({
+          option: {
+            eventReportList: eventReportList,
+            configData: configData,
+            eventDataName: eventName,
+            firstData: firstData,
+            secondData: secondData,
+            thirdData: thirdData,
+            fourData: fourData,
+            deadlineTimeData: deadlineTimeData,
+            type: type,
+          },
+        });
+        // 获取表格图表的dom节点
+        const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
+        const reportTop = this.eventAnalysisReportRef.current.offsetTop;
+        dom.setStyle(eventAnalysisChartDom,'visibility','visible');
+        const eventAnalysisChartTop =  `${pageY-reportTop+20}px`;
+        const eventAnalysisChartLeft =  `${pageX}px`;
+        dom.setStyle(eventAnalysisChartDom,'top',eventAnalysisChartTop);
+        dom.setStyle(eventAnalysisChartDom,'left',eventAnalysisChartLeft);
+      },
+      onMouseOut: () => {
+        const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
+        dom.setStyle(eventAnalysisChartDom,'visibility','hidden');
+        isAlive = false;
+      },
+    };
+  }
+
   render() {
     const {
       eventAnalysisList: {
-        eventData,
-        eventReportList = [],
+        eventData
       },
       eventSearchList,
     } = this.props;
@@ -133,132 +265,38 @@ export default class EventAnalysisReport extends PureComponent {
       eventType,
       eventSource,
       eventName,
+      // 事件类型选项
+      eventTypeOptions,
     } = this.state;
-    // 事件类型选项
-    const { eventTypeOptions } = this.state;
 
     // 展示表格头部
-    const columns = [{
-      title: '事件名称',
-      dataIndex: 'eventName',
-      key: 'eventName',
-    },{
-      title: '任务数',
-      dataIndex: 'taskNum',
-      key: 'taskNum',
-      render: (text,record,index) => {
-        const { eventName } = record;
-        return(
-          <div className={styles.taskStatisticsChart}>
-              <span>{text}</span>
-              <div className={styles.taskStatisticsChartReport}>
-                <TaskStatisticsChart
-                 eventReportList={eventReportList[index]}
-                 eventName={eventName}
-                />
-              </div>
-          </div>
-        );
-      }
-    },{
-      title: '完成任务数',
-      dataIndex: 'completedTaskNum',
-      key: 'completedTaskNum',
-      render: (text,record,index) => {
-        const { eventName } = record;
-        return(
-          <div className={styles.taskStatisticsChart}>
-              <span>{text}</span>
-              <div className={styles.taskStatisticsChartReport}>
-                <TaskStatisticsChart
-                 eventReportList={eventReportList[index]}
-                 eventName={eventName}
-                />
-              </div>
-          </div>
-        );
-      }
-    },{
-      title: '任务完成率',
-      dataIndex: 'taskCompletionRate',
-      key: 'taskCompletionRate',
-      render: (text,record,index) => {
-        const { eventName } = record;
-        return(
-          <div className={styles.taskStatisticsChart}>
-              <span>{text}</span>
-              <div className={styles.taskStatisticsChartReport}>
-                <TaskStatisticsChart
-                 eventReportList={eventReportList[index]}
-                 eventName={eventName}
-                />
-              </div>
-          </div>
-        );
-      }
-    },{
-      title: '覆盖客户数',
-      dataIndex: 'coveredCustomerNum',
-      key: 'coveredCustomerNum',
-      render: (text,record,index) => {
-        const { eventName } = record;
-        return(
-          <div className={styles.taskStatisticsChart}>
-              <span>{text}</span>
-              <div className={styles.taskStatisticsChartReport}>
-                <CustomerStatisticsChart
-                 eventReportList={eventReportList[index]}
-                 eventName={eventName}
-                />
-              </div>
-          </div>
-        );
-      }
-    },{
-      title: '已服务客户数',
-      dataIndex: 'servedCustomerNum',
-      key: 'servedCustomerNum',
-      render: (text,record,index) => {
-        const { eventName } = record;
-        return(
-          <div className={styles.taskStatisticsChart}>
-              <span>{text}</span>
-              <div className={styles.taskStatisticsChartReport}>
-                <CustomerStatisticsChart
-                 eventReportList={eventReportList[index]}
-                 eventName={eventName}
-                />
-              </div>
-          </div>
-        );
-      }
-    },{
-      title: '各渠道服务占比',
-      dataIndex: 'servicesAccounted',
-      key: 'servicesAccounted',
-      render: (text,record,index) => {
-        const { eventName } = record;
-        return(
-          <div className={styles.taskStatisticsChart}>
-              <span>{text}</span>
-              <div className={styles.taskStatisticsChartReport}>
-                <ServiceChannelsChangeChart
-                 eventReportList={eventReportList[index]}
-                 eventName={eventName}
-                />
-              </div>
-          </div>
-        );
-      }
-    }];
-    // 表格数据
-    const dataSource = eventData;
+    const columnsItem = tableOption.columnsItem;
+    const columns = _.map(columnsItem,(col) => {
+      const { eventType } = col;
+      return {
+        ...col,
+        onCell: (record) => this.handleTableOnCell(record,eventType),
+      };
+    });
 
+    const {
+      option: {
+        eventReportList = {},
+        configData = {},
+        eventDataName = '',
+        firstData = [],
+        secondData = [],
+        thirdData = [],
+        fourData = [],
+        deadlineTimeData = [],
+        type = '',
+      }
+    } = this.state;
     return (
-      <div className={styles.eventAnalysisReport}>
-        <ReportTitle title='每日触发任务及覆盖客户数' />
+      <div ref = {this.eventAnalysisReportRef} className={styles.eventAnalysisReport}>
+        <ReportTitle title='事件分析报表' />
         <ReportFilter
-          dateFilterName='任务触发时间'
+          dateFilterName='任务截止时间'
           startTime={startTime}
           endTime={endTime}
           eventType={eventType}
@@ -271,7 +309,24 @@ export default class EventAnalysisReport extends PureComponent {
           eventSearchList={eventSearchList}
           eventName={eventName}
         />
-        <Table className={styles.eventAnalysisTable} columns={columns} dataSource={dataSource}/>
+        <Table
+          className={styles.eventAnalysisTable}
+          columns={columns}
+          dataSource={eventData}
+        />
+        <div ref = {this.eventAnalysisChartRef} className={styles.eventAnalysisChart}>
+          <EventAnalysisChart
+            eventReportList={eventReportList}
+            config={configData}
+            eventName={eventDataName}
+            firstData={firstData}
+            secondData={secondData}
+            thirdData={thirdData}
+            fourData={fourData}
+            deadlineTimeData={deadlineTimeData}
+            reportType={type}
+          />
+        </div>
       </div>
     );
   }
