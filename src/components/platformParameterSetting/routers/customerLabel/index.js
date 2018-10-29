@@ -179,6 +179,8 @@ export default class LabelManager extends PureComponent {
     const { value } = labelTypeItem;
     this.queryLabelList({
       labelTypeId: value,
+      currentPage: 1,
+      pageSize: 10,
     });
   }
 
@@ -237,14 +239,18 @@ export default class LabelManager extends PureComponent {
     const { orgId } = labelTypeItem;
     this.queryLabelList({
       orgId: orgId,
+      currentPage: 1,
+      pageSize: 10,
     });
   }
+
   @autobind
   closeCreateLabelModal() {
     this.setState({
       createLabelVisit: false,
     });
   }
+
   // 新建标签 ----end
   render() {
     const {
