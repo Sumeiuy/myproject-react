@@ -161,6 +161,8 @@ export default class LabelManager extends PureComponent {
     const { value } = labelTypeItem;
     this.queryLabelList({
       labelTypeId: value,
+      currentPage: 1,
+      pageSize: 10,
     });
   }
 
@@ -215,17 +217,21 @@ export default class LabelManager extends PureComponent {
 
   // 创建部门change事件
   @autobind
-  handleCustRange(labelTypeItem) {
-    const { orgId } = labelTypeItem;
-    console.warn('labelTypeItem: ', labelTypeItem);
-    this.queryLabelList({ orgId });
+  handleCustRange({ orgId }) {
+    this.queryLabelList({
+      orgId,
+      currentPage: 1,
+      pageSize: 10,
+    });
   }
+
   @autobind
   closeCreateLabelModal() {
     this.setState({
       createLabelVisit: false,
     });
   }
+
   // 新建标签 ----end
   render() {
     const {
