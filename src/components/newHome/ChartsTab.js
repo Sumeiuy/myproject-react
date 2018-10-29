@@ -15,6 +15,7 @@ import {
   CUST_MANAGER,
   ORG,
   MAIN_MAGEGER_ID,
+  NEW_HOME_INTRO_FIFTH_SEEP_IDNAME,
 } from '../../routes/customerPool/config';
 import { emp, time, permission } from '../../helper';
 import { transformDateTypeToDate } from '../customerPool/helper';
@@ -234,7 +235,10 @@ export default class ChartsTab extends PureComponent {
         onTabClick={this.handleTabClick}
         animated={false}
       >
-        <TabPane tab="客户分析" key="analysis">
+        <TabPane
+          tab={<span id={NEW_HOME_INTRO_FIFTH_SEEP_IDNAME}>客户分析</span>}
+          key="analysis"
+        >
           <AnalysisCharts
             indicators={custAnalyticsIndicators}
             location={location}
