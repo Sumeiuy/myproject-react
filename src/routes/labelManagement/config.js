@@ -14,10 +14,7 @@ export const MODALTITLE_CREATELABEL = '新建标签';
 export const MODALTITLE_EDITLABEL = '编辑标签';
 
 // 构造标签列表的表头
-export const COLUMNS_LABELTABLE = [{
-  key: 'labelTypeName',
-  value: '标签类型',
-},
+export const COLUMNS_LABELTABLE = [
 {
   key: 'labelName',
   value: '标签名称',
@@ -27,12 +24,12 @@ export const COLUMNS_LABELTABLE = [{
   value: '标签描述',
 },
 {
-  key: 'custCount',
-  value: '客户数',
+  key: 'createdOrgId',
+  value: '创建部门',
 },
 {
-  key: 'createdTime',
-  value: '创建时间',
+  key: 'custCount',
+  value: '客户数',
 },
 {
   key: 'action',

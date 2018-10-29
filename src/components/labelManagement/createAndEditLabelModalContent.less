@@ -17,6 +17,11 @@
       font-size: 14px;
       padding-top: 5px;
     }
+    & > .onlyName {
+      width: 12%;
+      font-size: 14px;
+      padding-top: 5px;
+    }
     & > .name::before {
       display: inline-block;
       margin-right: 4px;
@@ -50,6 +55,11 @@
     justify-content: flex-start;
     align-items: flex-start;
     & > .description {
+      width: 12%;
+      padding-top: 5px;
+      font-size: 14px;
+    }
+    & > .onlyDescription {
       width: 12%;
       padding-top: 5px;
       font-size: 14px;
@@ -164,6 +174,35 @@
         a {
           font-size: 14px;
           color: #333;
+        }
+      }
+      .btnContainer {
+        display: inline-block;
+        height: 30px;
+        line-height: 30px;
+        background: #fff;
+        .splitLine {
+          display: inline-block;
+          height: 30px;
+          width: 1px;
+          line-height: 30px;
+          background: #ccc;
+          margin-left: 20px;
+        }
+        .createTaskBtn {
+          display: inline-block;
+          width: 80px;
+          height: 30px;
+          line-height: 30px;
+          background: #fff;
+          border: 1px solid #ccc;
+          border-radius: 2px;
+          font-size: 14px;
+          color: #333;
+          text-decoration: none;
+          text-align: center;
+          cursor: pointer;
+          margin-left: 20px;
         }
       }
     }
