@@ -2,8 +2,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-11 10:35:09
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-10-29 11:44:35
  */
 
 import React, { PureComponent } from 'react';
@@ -52,7 +52,7 @@ export default class CommonTable extends PureComponent {
     // 页码change的时候
     onPageChange: PropTypes.func,
     // 表格的className
-    tableClass: PropTypes.string.isRequired,
+    tableClass: PropTypes.string,
     // 表格标题
     titleColumn: PropTypes.array.isRequired,
     // 表格操作列action
@@ -118,6 +118,7 @@ export default class CommonTable extends PureComponent {
   };
 
   static defaultProps = {
+    tableClass: '',
     pageData: EMPTY_OBJECT,
     listData: EMPTY_LIST,
     actionSource: [],
