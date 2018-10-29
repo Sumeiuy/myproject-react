@@ -73,24 +73,24 @@ const onError = (e) => {
   // 后端暂时没有登录超时概念
   // 都走门户的验证，门户返回的html，JSON parse报错即认为超时
   if (msg.indexOf(ERROR_SEPARATOR) > -1) {
-    const [errorMessage, messageType] = msg.split(ERROR_SEPARATOR);
-    if (messageType === '0') {
-      // 错误类型是0，用message.error
+    const [errorMessage, messageType, code, url] = msg.split(ERROR_SEPARATOR);
+    if (messageType === '0' || message === '2') {
+      // 错误类型是0 / 2，用message.error
       message.error(errorMessage);
     } else if (messageType === '1') {
       // 错误类型是1，用dialog
       CommonModal.showErrorDialog(errorMessage);
-    } else if (messageType === '2') {
-      message.error(errorMessage);
-      // 业务错误
-      logCommon({
-        type: 'bizError',
-        payload: {
-          name: '业务错误',
-          value: errorMessage,
-        },
-      });
     }
+    // 业务错误
+    logCommon({
+      type: 'bizError',
+      payload: {
+        name: '业务错误',
+        value: errorMessage,
+        url,
+        code,
+      },
+    });
   } else if (e.name === 'SyntaxError'
     && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
     navToUserLogin();
