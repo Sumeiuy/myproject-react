@@ -115,6 +115,8 @@ export default class CommonTable extends PureComponent {
     position: PropTypes.string,
     // 操作单元格内的class
     actionClass: PropTypes.string,
+    // 自定义删除标签是否显示
+    isCustomerDelete: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -150,6 +152,7 @@ export default class CommonTable extends PureComponent {
     clickableColumnCallbackList: [],
     position: 'bottom',
     actionClass: '',
+    isCustomerDelete: false,
   };
 
   constructor(props) {
@@ -257,6 +260,7 @@ export default class CommonTable extends PureComponent {
       clickableColumnIndexList,
       clickableColumnCallbackList,
       actionClass,
+      isCustomerDelete,
     } = this.props;
     const len = titleColumn.length - 1;
 
@@ -316,16 +320,39 @@ export default class CommonTable extends PureComponent {
               })}
           >
             {
-              _.map(actionSource, itemData => (
-                <span
-                  className={cls}
-                  key={itemData.key || item.type}
-                  onClick={() => itemData.handler(record)}
-                >
-                  {itemData.type}
-                </span>
-              ),
-              )
+              _.map(actionSource, (itemData) => {
+                if (isCustomerDelete && itemData.key === 'delete') { // 如果需要自定义删除图标
+                  return (<span
+                    className={cls}
+                    style={
+                      record.labelTypeId && record.labelTypeId === '0' ? {} : { visibility: 'hidden' }
+                    }
+                    key={itemData.key || item.type}
+                    onClick={() => itemData.handler(record)}
+                  >
+                    {itemData.type}
+                  </span>);
+                }
+                if (isCustomerDelete && itemData.key === 'launchTask') { // 是否隐藏发起任务
+                   return (<span
+                    className={cls}
+                    style={
+                      record.custCount && record.custCount !== '0' ? {} : { visibility: 'hidden' }
+                    }
+                    key={itemData.key || item.type}
+                    onClick={() => itemData.handler(record)}
+                  >
+                    {itemData.type}
+                  </span>);
+                }
+                return (<span
+                    className={cls}
+                    key={itemData.key || item.type}
+                    onClick={() => itemData.handler(record)}
+                  >
+                    {itemData.type}
+                  </span>);
+              })
             }
           </div>);
         }

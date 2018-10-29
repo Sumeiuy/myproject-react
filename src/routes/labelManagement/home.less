@@ -11,6 +11,11 @@
     .actionSource:first-child {
       margin-right: 25px;
     }
+    :global {
+      .operation {
+        padding-left: 20px;
+      }
+    }
   }
   .labelList {
     .launchTaskIcon {
@@ -20,6 +25,9 @@
     .deleteIcon {
       font-size: 14px;
       vertical-align: top;
+    }
+    .editIcon {
+      margin-right: 25px;
     }
     :global {
       .ant-table table {
@@ -72,6 +80,7 @@
     & > .leftSection {
       width: 50%;
       display: flex;
+      font-size: 14px;
       justify-content: flex-start;
       align-items: flex-start;
       & > .groupName {
@@ -138,6 +147,9 @@
 }
 .groupModalContainer {
   box-shadow: 5px 5px 5px #c6c7c8;
+  .labelName {
+    padding-left: 20px;
+  }
   :global {
     & .ant-modal {
       width: 650px !important;
