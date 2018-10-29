@@ -7,7 +7,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
+import { Icon as AntdIcon, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { isSightingScope, getFilter, getSortParam } from '../helper';
@@ -18,8 +18,6 @@ import styles from './custSearch.less';
 
 const Option = AutoComplete.Option;
 const NONE_INFO = '按回车键发起搜索';
-// 标签的类型值
-const LABEL = 'LABEL';
 // 自定义标签类型值
 const DEFINED_LABEL = ['manageFsp', 'personalFsp'];
 
@@ -115,6 +113,15 @@ export default class CustSearch extends PureComponent {
       type: '',
       productName: '',
     });
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: '淘客页面搜索',
+        value,
+        type: '搜索',
+        subtype: '',
+      },
+    });
   }
 
   @autobind
@@ -172,7 +179,7 @@ export default class CustSearch extends PureComponent {
     logCommon({
       type: 'Click',
       payload: {
-        name: '客户列表页面搜索',
+        name: '淘客页面搜索',
         value: item.value,
         type: '联想词选择',
         subtype,
