@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-17 14:16:31
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-26 17:16:11
+ * @Last Modified time: 2018-10-26 18:58:02
  */
 
 import React, { PureComponent } from 'react';
@@ -42,8 +42,8 @@ export default class EventAnalysisChart extends PureComponent {
     fourData:[],
   }
 
-  @autobind
   // 获取xAxis轴刻度标签的显示间隔
+  @autobind
   getXAxisLabelInterval(length) {
     // 超过10条小于60条按周显示
     if (length > 10 && length <= 60) {
@@ -55,8 +55,8 @@ export default class EventAnalysisChart extends PureComponent {
     return 0;
   }
 
-  @autobind
   // 确定seriesData
+  @autobind
   getSeriesData(reportType) {
     //firstData指三个图表的第一个数据，secondData指第二个数据
     const {

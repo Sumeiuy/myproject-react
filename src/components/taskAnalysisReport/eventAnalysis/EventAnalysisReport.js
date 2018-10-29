@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-26 18:45:24
+ * @Last Modified time: 2018-10-29 10:05:31
  */
 
 import React, { PureComponent } from 'react';
@@ -17,6 +17,7 @@ import { emp } from '../../../helper';
 import EventAnalysisChart from './EventAnalysisChart';
 import { taskOption,customerOption,serviceChannelChangeOption,eventSourceTypes } from '../config';
 import { filterData } from '../utils';
+import { dom } from '../../../helper';
 
 import styles from './eventAnalysisReport.less';
 
@@ -145,7 +146,10 @@ export default class EventAnalysisReport extends PureComponent {
     // 判断是否鼠标是否移入单元格
     let isAlive = false;
     return {
-      onMouseEnter: (e) => {
+      onMouseOver: (e) => {
+        // 获取鼠标位置
+        const pageX = e.pageX;
+        const pageY = e.pageY;
         if (isAlive) {
           return;
         }
@@ -231,19 +235,19 @@ export default class EventAnalysisReport extends PureComponent {
             type: type,
           },
         });
-
-        // 获取鼠标位置
-        const pageX = e.pageX;
-        const pageY = e.pageY;
-        const reportWidth = this.eventAnalysisReportRef.current.clientWidth;
-        const reportHeight = this.eventAnalysisReportRef.current.clientHeight;
+        const {
+          setStyle,
+        } = dom;
         // 获取表格图表的dom节点
+        const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
         const reportTop = this.eventAnalysisReportRef.current.offsetTop;
-        this.eventAnalysisChartRef.current.style.visibility = 'visible';
-        this.eventAnalysisChartRef.current.style.top = (pageY-reportTop+20)+'px';
-        this.eventAnalysisChartRef.current.style.left = pageX+'px';
+        setStyle(eventAnalysisChartDom,'visibility','visible');
+        const eventAnalysisChartTop =  `${pageY-reportTop+20}px`;
+        const eventAnalysisChartLeft =  `${pageX}px`;
+        setStyle(eventAnalysisChartDom,'top',eventAnalysisChartTop);
+        setStyle(eventAnalysisChartDom,'left',eventAnalysisChartLeft);
       },
-      onMouseLeave: () => {
+      onMouseOut: () => {
         this.eventAnalysisChartRef.current.style.visibility = 'hidden';
         isAlive = false;
       },
@@ -272,31 +276,37 @@ export default class EventAnalysisReport extends PureComponent {
       title: '事件名称',
       dataIndex: 'eventName',
       key: 'eventName',
+      width: 150,
     },{
       title: '任务数',
       dataIndex: 'taskNum',
       key: 'taskNum',
       eventType: 'task',
+      width: 150,
     },{
       title: '完成任务数',
       dataIndex: 'completedTaskNum',
       key: 'completedTaskNum',
       eventType: 'task',
+      width: 150,
     },{
       title: '任务完成率',
       dataIndex: 'taskCompletionRate',
       key: 'taskCompletionRate',
       eventType: 'task',
+      width: 150,
     },{
       title: '覆盖客户数',
       dataIndex: 'coveredCustomerNum',
       key: 'coveredCustomerNum',
       eventType: 'customer',
+      width: 150,
     },{
       title: '已服务客户数',
       dataIndex: 'servedCustomerNum',
       key: 'servedCustomerNum',
       eventType: 'customer',
+      width: 150,
     },{
       title: '各渠道服务占比',
       dataIndex: 'servicesAccounted',
