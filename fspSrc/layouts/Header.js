@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
- * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-16 16:05:26
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-10-29 16:51:01
  * @description 新头部导航
  */
 
@@ -23,6 +23,7 @@ import withRouter from '../../src/decorators/withRouter';
 import api from '../../src/api';
 import { Search } from '../../src/components/customerPool/home';
 import { emp, permission } from '../../src/helper';
+import EnvironmentalInfo from '../../src/components/environmentalInfo/EnvironmentalInfoModal';
 
 const effects = {
   getHotPossibleWds: 'customerPool/getHotPossibleWds',
@@ -79,6 +80,8 @@ export default class Header extends PureComponent {
     this.state = {
       // 隔离墙modal是否可见
       isolationWallModalVisible: false,
+      // 环境信息modal是否可见
+      environmentalInfoVisible: false,
     };
     // HTSC 任务管理岗
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -190,6 +193,18 @@ export default class Header extends PureComponent {
     if (menuItem.name === '隔离墙') {
       this.handleIsolationWallModalShow();
     }
+    // 点击环境信息
+    if (menuItem.name === '环境信息') {
+      this.handleEnvironmentalInfoModalShow();
+    }
+  }
+
+  // 环境信息弹窗
+  @autobind
+  handleEnvironmentalInfoModalShow() {
+    this.setState({
+      environmentalInfoVisible: true,
+    });
   }
 
   @autobind
@@ -239,6 +254,20 @@ export default class Header extends PureComponent {
     if (!$('#feedback-module')[0]) {
       window.handleFeedbackBtnClick();
     }
+  }
+
+  // 环境信息弹窗点击关闭
+  @autobind
+  handleEnvironmentalInfoHide() {
+    this.setState({
+      environmentalInfoVisible: false,
+    });
+  }
+
+  // 操作系统识别
+  @autobind
+  getOperatingSystem() {
+
   }
 
   @autobind
@@ -312,6 +341,10 @@ export default class Header extends PureComponent {
 
     return (
       <div className={styles.fspHeader}>
+        <EnvironmentalInfo
+          handleEnvironmentalInfoHide={this.handleEnvironmentalInfoHide}
+          environmentalInfoVisible={this.state.environmentalInfoVisible}
+        />
         <Modal
           title="隔离墙"
           width={650}
