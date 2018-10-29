@@ -17,6 +17,8 @@ const effect = dva.generateEffect;
 const mapStateToProps = state => ({
   // 新版客户360详情中的概要信息
   summaryInfo: state.customerDetail.summaryInfo,
+  // 是否有已实施的流程
+  hasDoingFlow: state.customerDetail.hasDoingFlow,
   // 更多重点标签信息
   moreLabelInfo: state.customerDetail.moreLabelInfo,
   // 自建任务平台的服务类型、任务反馈字典
@@ -32,6 +34,8 @@ const mapDispatchToProps = {
   clearReduxData: effect('customerDetail/clearReduxData', { loading: false }),
   // 查询客户360详情概要信息
   queryCustSummaryInfo: effect('customerDetail/queryCustSummaryInfo'),
+  // 查询是否有已实施的流程
+  queryCheckCustAsset:  effect('customerDetail/queryCheckCustAsset'),
   // 查询更多重点标签
   queryAllKeyLabels: effect('customerDetail/queryAllKeyLabels'),
   // 客户列表添加服务记录
