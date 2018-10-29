@@ -49,6 +49,7 @@ export default class CustSearch extends PureComponent {
         value: keyword,
       };
     }
+    return null;
   }
 
   constructor(props) {
