@@ -2,8 +2,8 @@
  * @Description: 首席观点和组合推荐
  * @Author: Liujianshu
  * @Date: 2018-09-11 15:47:01
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 15:05:47
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-30 19:58:23
  */
 
 import React from 'react';
@@ -192,7 +192,7 @@ export default function ViewAndCombination(props, context) {
       case tabArray[1].key:
         contentElement = <div className={styles.view}>
           <h2 className={styles.combinationTitle}><span>近30天收益率</span>组合名称</h2>
-          <CommonCell {...combinationProps} />
+       <CommonCell {...combinationProps} />
         </div>;
         break;
       default:

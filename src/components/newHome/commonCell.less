@@ -1,13 +1,13 @@
 @import "../../css/util.less";
 .commonWrapper {
   box-sizing: border-box;
-  padding: 10px;
   .title {
     font-size: 14px;
     font-weight: bold;
     color: #4a4a4a;
     line-height: 18px;
     padding: 10px;
+    border-bottom: 1px solid #a8b6d4;
     .one-line-ellipsis;
     a {
       float: right;
@@ -19,13 +19,23 @@
       background-size: 16px 14px;
       text-indent: 18px;
     }
+    &.focusAttention {
+      background: url('./focusAttention.png') no-repeat 6px center;
+      background-size: 16px 14px;
+      text-indent: 18px;
+    }
+    &.interested {
+      background: url('./interested.png') no-repeat 6px center;
+      background-size: 16px 14px;
+      text-indent: 18px;
+    }
   }
   .list {
     font-size: 14px;
-    color: #666;
+    color: #333;
     position: relative;
+    padding-top: 10px;
     li {
-      padding: 0 10px;
       height: 32px;
       line-height: 32px;
       cursor: pointer;
@@ -39,6 +49,7 @@
           float: right;
           width: 32%;
           text-align: right;
+          color: #999;
         }
       }
       &:hover {
