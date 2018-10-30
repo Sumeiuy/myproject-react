@@ -155,7 +155,7 @@ export default {
       const { payload: { resultData = EMPTY_LIST } } = action;
       return {
         ...state,
-        rankTabActiveKey: ((resultData[0] || EMPTY_OBJECT).children[0] || EMPTY_OBJECT).key,
+        rankTabActiveKey: '',
         combinationTreeList: resultData,
       };
     },
@@ -215,6 +215,14 @@ export default {
       return {
         ...state,
         creatorList: resultData,
+      };
+    },
+    // 清空数据
+    clearDataSuccess(state, action) {
+      const { payload = { } } = action;
+      return {
+        ...state,
+        ...payload,
       };
     },
   },
@@ -320,6 +328,13 @@ export default {
       yield put({
         type: 'queryCombinationCreatorSuccess',
         payload: response,
+      });
+    },
+    // 清空数据
+    * clearData({ payload }, { call, put }) {
+      yield put({
+        type: 'clearDataSuccess',
+        payload,
       });
     },
   },
