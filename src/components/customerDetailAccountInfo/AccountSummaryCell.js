@@ -2,13 +2,14 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 14:24:16
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-23 16:34:39
+ * @Last Modified time: 2018-10-30 17:06:39
  * @description 账户概览信息展示
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
+import { number } from '../../helper';
 import { displayMoney } from './utils';
 
 import styles from './accountSummaryCell.less';
@@ -26,7 +27,7 @@ export default function AccountSummaryCell(props) {
     // 数字金额，转化成两位小数，带单位，千分位显示
     value = displayMoney(content);
   } else if (type === 'RATE') {
-    value = `${content * 100}%`;
+    value = number.convertRate(content);
   }
   return (
     <div className={styles.cellWrap}>
