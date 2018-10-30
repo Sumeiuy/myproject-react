@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { isSightingScope, getFilter, getSortParam } from '../helper';
 // import { padSightLabelDesc } from '../../../config';
-import logable, { logCommon } from '../../../decorators/logable';
+import { logCommon } from '../../../decorators/logable';
 
 import styles from './custSearch.less';
 
@@ -40,11 +40,24 @@ export default class CustSearch extends PureComponent {
     keyword: '',
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { keyword } = nextProps;
+    const { prevValue } = prevState;
+    if (keyword !== prevValue) {
+      return {
+        prevValue: keyword,
+        value: keyword,
+      };
+    }
+    return null;
+  }
+
   constructor(props) {
     super(props);
     const { keyword } = props;
     this.state = {
       value: keyword,
+      prevValue: keyword,
     };
   }
 

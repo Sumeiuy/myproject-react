@@ -123,11 +123,14 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 // 事件提示的 code
 const TODAY_EVENT_CODE = '4';
+// 默认第一个神策埋点名为 搜索栏 点击下一步或者上一步会重写 facingOneModele 的值
 let facingOneModele = '搜索栏';
-let count = -1;
+// 神策埋点需要知道用户点击下一步还是上一步 第一步搜索栏是0 用来判断  判断完会重绘
+let count = 0;
+// 神策埋点用来判断是第几个弹出框点击了上一步还是下一步
+let countStep = 1 ;
 
 // 获取新手引导步骤列表  因为需求更改了引导顺序 但是NEW_HOME_INTRO_后面的数字不影响顺序  只需要更改newStepList里面的排序顺序就能改变引导显示的顺序
-
 function getIntroStepListInNewHome() {
   const newStepList = [
     {
@@ -466,16 +469,18 @@ export default class Home extends PureComponent {
   handleIntorButtomChange(targetElement){
     const data = stepIds[targetElement.id];
     facingOneModele = data.name;
-    // count = -1  data.step从第0开始 判断step是下一步还是上一步
+    // count = 0  data.step从第0开始 判断step是下一步还是上一步
     let step = count < data.step ? '下一步' : '上一步';
     count = data.step;
     logCommon({
       type: 'Click',
       payload: {
         name: data && step,
-        value: data && data.id,
+        value: data && `第${countStep}个`,
       },
     });
+    // 从第0个开始点下一步是0  第一步点上一步是1  写在这里是神策需要先上报再修改 不然显示会混乱
+    step === '下一步' ? countStep++ : countStep--;
   }
 
   // 神策埋点 显示是第几个弹框点击的关闭
