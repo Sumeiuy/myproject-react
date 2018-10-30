@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-30 10:54:20
+ * @Last Modified time: 2018-10-30 14:16:02
  * @description 新头部导航
  */
 
@@ -267,12 +267,6 @@ export default class Header extends PureComponent {
     this.setState({
       environmentalInfoVisible: false,
     });
-  }
-
-  // 操作系统识别
-  @autobind
-  getOperatingSystem() {
-
   }
 
   @autobind
