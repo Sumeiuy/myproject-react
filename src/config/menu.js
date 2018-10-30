@@ -888,20 +888,9 @@ const primaryMenu = [
         path: '/crossDepartment',
         children: [
           {
-            id: 'FSP_CROSS_DEPARTMENT',
-            name: '分公司人工划转',
-            order: 1,
-            pid: 'FSP_ORGAN_PERSONAL_MANAGE',
-            url: '',
-            type: 'link',
-            action: 'loadInTab',
-            path: '/sysOperate/crossDepartment/filialeCustTransfer',
-            children: [],
-          },
-          {
             id: 'FSP_REPORT_RELATION',
             name: '汇报关系树管理',
-            order: 2,
+            order: 1,
             pid: 'FSP_ORGAN_PERSONAL_MANAGE',
             url: '',
             type: 'link',
@@ -912,7 +901,7 @@ const primaryMenu = [
           {
             id: 'FSP_MAIN_POSTN_MANAGE',
             name: '服务经理主职位管理',
-            order: 3,
+            order: 2,
             pid: 'FSP_ORGAN_PERSONAL_MANAGE',
             url: '',
             type: 'link',
