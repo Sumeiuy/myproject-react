@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-26 12:37:16
+ * @Last Modified time: 2018-10-29 10:49:41
  */
 
 import React, { PureComponent } from 'react';
@@ -15,8 +15,9 @@ import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import { emp } from '../../../helper';
 import EventAnalysisChart from './EventAnalysisChart';
-import { taskOption,customerOption,serviceChannelChangeOption,eventSourceTypes } from '../config';
+import { taskOption,customerOption,serviceChannelChangeOption,eventSourceTypes,tableOption } from '../config';
 import { filterData } from '../utils';
+import { dom } from '../../../helper';
 
 import styles from './eventAnalysisReport.less';
 
@@ -140,12 +141,15 @@ export default class EventAnalysisReport extends PureComponent {
     if(_.isEmpty(type)){
       return;
     }
-    // 取出增加在接口数据中的eventIndex
+    // 取出增加在接口数据中的eventReportList
     const { eventReportList } = record;
     // 判断是否鼠标是否移入单元格
     let isAlive = false;
     return {
-      onMouseEnter: (e) => {
+      onMouseOver: (e) => {
+        // 获取鼠标位置
+        const pageX = e.pageX;
+        const pageY = e.pageY;
         if (isAlive) {
           return;
         }
@@ -231,18 +235,18 @@ export default class EventAnalysisReport extends PureComponent {
             type: type,
           },
         });
-
-        // 获取鼠标位置
-        const pageX = e.pageX;
-        const pageY = e.pageY;
         // 获取表格图表的dom节点
-        const chartTop = this.eventAnalysisReportRef.current.offsetTop;
-        this.eventAnalysisChartRef.current.style.display = 'block';
-        this.eventAnalysisChartRef.current.style.top =(pageY-chartTop+20)+'px';
-        this.eventAnalysisChartRef.current.style.left = pageX+'px';
+        const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
+        const reportTop = this.eventAnalysisReportRef.current.offsetTop;
+        dom.setStyle(eventAnalysisChartDom,'visibility','visible');
+        const eventAnalysisChartTop =  `${pageY-reportTop+20}px`;
+        const eventAnalysisChartLeft =  `${pageX}px`;
+        dom.setStyle(eventAnalysisChartDom,'top',eventAnalysisChartTop);
+        dom.setStyle(eventAnalysisChartDom,'left',eventAnalysisChartLeft);
       },
-      onMouseLeave: () => {
-        this.eventAnalysisChartRef.current.style.display = 'none';
+      onMouseOut: () => {
+        const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
+        dom.setStyle(eventAnalysisChartDom,'visibility','hidden');
         isAlive = false;
       },
     };
@@ -266,51 +270,14 @@ export default class EventAnalysisReport extends PureComponent {
     } = this.state;
 
     // 展示表格头部
-    const columnsItem = [{
-      title: '事件名称',
-      dataIndex: 'eventName',
-      key: 'eventName',
-    },{
-      title: '任务数',
-      dataIndex: 'taskNum',
-      key: 'taskNum',
-      eventType: 'task',
-    },{
-      title: '完成任务数',
-      dataIndex: 'completedTaskNum',
-      key: 'completedTaskNum',
-      eventType: 'task',
-    },{
-      title: '任务完成率',
-      dataIndex: 'taskCompletionRate',
-      key: 'taskCompletionRate',
-      eventType: 'task',
-    },{
-      title: '覆盖客户数',
-      dataIndex: 'coveredCustomerNum',
-      key: 'coveredCustomerNum',
-      eventType: 'customer',
-    },{
-      title: '已服务客户数',
-      dataIndex: 'servedCustomerNum',
-      key: 'servedCustomerNum',
-      eventType: 'customer',
-    },{
-      title: '各渠道服务占比',
-      dataIndex: 'servicesAccounted',
-      key: 'servicesAccounted',
-      eventType: 'serviceChannels',
-    }];
-
-    const columns = columnsItem.map((col) => {
+    const columnsItem = tableOption.columnsItem;
+    const columns = _.map(columnsItem,(col) => {
       const { eventType } = col;
       return {
         ...col,
         onCell: (record) => this.handleTableOnCell(record,eventType),
       };
     });
-    // 表格数据
-    const dataSource = eventData;
 
     const {
       option: {
@@ -327,7 +294,7 @@ export default class EventAnalysisReport extends PureComponent {
     } = this.state;
     return (
       <div ref = {this.eventAnalysisReportRef} className={styles.eventAnalysisReport}>
-        <ReportTitle title='每日触发任务及覆盖客户数' />
+        <ReportTitle title='事件分析报表' />
         <ReportFilter
           dateFilterName='任务截止时间'
           startTime={startTime}
@@ -345,7 +312,7 @@ export default class EventAnalysisReport extends PureComponent {
         <Table
           className={styles.eventAnalysisTable}
           columns={columns}
-          dataSource={dataSource}
+          dataSource={eventData}
         />
         <div ref = {this.eventAnalysisChartRef} className={styles.eventAnalysisChart}>
           <EventAnalysisChart

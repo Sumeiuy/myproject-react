@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import { Modal } from 'antd';
 import _ from 'lodash';
 import { SingleFilterWithSearch } from 'lego-react-filter/src';
-import { emp } from '../../helper';
+import { emp } from '../../../../helper';
 import CreateLabel from './CreateLabel';
 import logable from '../../../../decorators/logable';
 import { replaceKeyWord } from './SignCustomerLabel';

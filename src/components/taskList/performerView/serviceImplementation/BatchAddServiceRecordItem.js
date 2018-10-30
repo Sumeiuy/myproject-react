@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 批量添加服务记录项
  * @Date: 2018-08-17 11:31:18
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-08-20 13:38:47
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-10-10 17:37:20
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -302,6 +302,23 @@ export default class BatchAddServiceRecordItem extends PureComponent {
     this.handleFormChange(FEEDBACK_ATTACHMENT_KEY, attachment);
   }
 
+  @autobind
+  renderTaskTitle(data) {
+    const { eventName, executeType } = data;
+    // 判断是否是必做任务，如果是必做任务，则需要在任务名称后跟随一个必做旗帜
+    const isMustDoneTask = executeType === 'Mission';
+    return (
+      <div className={styles.titleArea}>
+        <span className={styles.titleText}>{eventName}</span>
+        {
+          isMustDoneTask
+          ? (<span className={styles.typeLabel}><Icon type="bizuo" /></span>)
+          : null
+        }
+      </div>
+    );
+  }
+
   render() {
     const {
       data = EMPTY_OBJECT,
@@ -326,7 +343,7 @@ export default class BatchAddServiceRecordItem extends PureComponent {
             checked={data[IS_CHECKED_KEY]}
             onChange={e => this.handleChangeCheckbox(e.target.checked, data.flowId)}
           />
-          <span className={styles.titleText}>{data.eventName}</span>
+          {this.renderTaskTitle(data)}
         </div>
         {/* 非mot回访任务，显示客户反馈下拉框和反馈时间，mot回访任务显示回访结果 */}
         {

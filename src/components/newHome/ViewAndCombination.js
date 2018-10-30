@@ -17,6 +17,9 @@ import { openRctTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
 import styles from './viewAndCombination.less';
 
+// 首页执行者视图首次引导提示第七步的dom的id名称(组合推荐)
+const NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME = 'homePageIntroSeventhStep';
+
 export default function ViewAndCombination(props, context) {
   const { data } = props;
   const { replace } = context;
@@ -152,7 +155,16 @@ export default function ViewAndCombination(props, context) {
         [styles.active]: item.key === activeTab,
       });
       return (<div key={item.key} className={styles.item}>
-        <a className={linkClass} onClick={() => handleTabClick(item)}>{item.name}</a>
+        <a
+          className={linkClass}
+          onClick={() => handleTabClick(item)}
+          id={item.name === '组合推荐'
+            ? NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME
+            : null
+          }
+        >
+        {item.name}
+        </a>
       </div>);
     });
     return (

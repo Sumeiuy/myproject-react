@@ -246,7 +246,7 @@ const taskOption = {
     },
     {
       color: '#4c70b3',
-      name: '剩余任务数',
+      name: '已完成任务数',
       type: 'line',
     }
   ]
@@ -316,6 +316,51 @@ const serviceChannelChangeOption = {
   ]
 };
 
+// 表格头部信息
+const tableOption = {
+  columnsItem : [{
+    title: '事件名称',
+    dataIndex: 'eventName',
+    key: 'eventName',
+    width: 150,
+  },{
+    title: '任务数',
+    dataIndex: 'taskNum',
+    key: 'taskNum',
+    eventType: 'task',
+    width: 150,
+  },{
+    title: '完成任务数',
+    dataIndex: 'completedTaskNum',
+    key: 'completedTaskNum',
+    eventType: 'task',
+    width: 150,
+  },{
+    title: '任务完成率',
+    dataIndex: 'taskCompletionRate',
+    key: 'taskCompletionRate',
+    eventType: 'task',
+    width: 150,
+  },{
+    title: '覆盖客户数',
+    dataIndex: 'coveredCustomerNum',
+    key: 'coveredCustomerNum',
+    eventType: 'customer',
+    width: 150,
+  },{
+    title: '已服务客户数',
+    dataIndex: 'servedCustomerNum',
+    key: 'servedCustomerNum',
+    eventType: 'customer',
+    width: 150,
+  },{
+    title: '各渠道服务占比',
+    dataIndex: 'servicesAccounted',
+    key: 'servicesAccounted',
+    eventType: 'serviceChannels',
+  }]
+};
+
 const chartLineColors = ['#f7ad33', '#4c70b3'];
 
 export const {
@@ -344,4 +389,5 @@ export {
   taskOption,
   customerOption,
   serviceChannelChangeOption,
+  tableOption,
 };
