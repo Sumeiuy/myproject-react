@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-29 16:25:15
+ * @Last Modified time: 2018-10-30 10:19:05
  */
 
 import React, { PureComponent } from 'react';
@@ -56,13 +56,13 @@ function checkIEHasCallPlugin() {
 }
 
 // 检查浏览器的版本
-// 部分高版本chrome、firefox无法支持PC拨打电话
+// 部分高版本chrome、firefox无法支持PC拨打电话,目前在大多数浏览器都能使用，所以先把版本号设置成较大值
 function checkBowserVersion() {
   // 获取浏览器版本的大版本号
   const bowserVersion = parseInt(bowser.version.split('.')[0], 10);
   // 判断chrome和firefox浏览器的版本号
-  if ((env.isChrome() && bowserVersion > 60)
-    || (env.isFirefox() && bowserVersion > 60)) {
+  if ((env.isChrome() && bowserVersion > 1000)
+    || (env.isFirefox() && bowserVersion > 1000)) {
     return true;
   }
   return false;
