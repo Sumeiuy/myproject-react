@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 17:37:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-24 13:47:27
+ * @Last Modified time: 2018-10-30 13:45:53
  * @description 账户详情的配置项
  */
 
@@ -68,7 +68,7 @@ export const STOCK_ACCOUNT_TABLE_COLUMNS = [
     key: 'accountStatus',
   },
   {
-    title: '账户市值（元）',
+    title: '账户市值(元)',
     dataIndex: 'accountValue',
     key: 'accountValue',
   },
