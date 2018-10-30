@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 14:46:57
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-30 19:20:25
  */
 
 import React, { PureComponent } from 'react';
@@ -28,7 +28,7 @@ import { padSightLabelDesc } from '../../config';
 import styles from './home.less';
 import { MorningBroadcast } from '../../components/customerPool/home';
 import { DATE_FORMAT_STRING, MONTH_DATE_FORMAT, navArray } from './config';
-import rankPng from './rank.png';
+import rankPng from './ranks.png';
 
 const effect = dva.generateEffect;
 
@@ -181,7 +181,7 @@ export default class Home extends PureComponent {
     // 猜你感兴趣
     queryGuessYourInterests({ orgId: this.loginOrgId });
     // 产品日历
-    queryProductCalendar({date});
+    queryProductCalendar({ date });
     // 首席观点
     queryChiefView({
       curPageNum: 1,
@@ -241,10 +241,10 @@ export default class Home extends PureComponent {
     const { code } = item;
     // http://168.61.9.158:15902/htsc-product-base/financial_product_query.do?router=homePage&clientType=crm
     push({
-        pathname: '/fsp/productCenter/homePage',
-        state: {
-          url: `/htsc-product-base/financial_product_query.do?router=homePage&type=${code}&clientType=crm`,
-        }
+      pathname: '/fsp/productCenter/homePage',
+      state: {
+        url: `/htsc-product-base/financial_product_query.do?router=homePage&type=${code}&clientType=crm`,
+      }
     });
   }
 
@@ -253,16 +253,16 @@ export default class Home extends PureComponent {
   transferProductData() {
     const { productCalendar } = this.props;
     const productData = _.isEmpty(productCalendar)
-    ? []
-    : productCalendar.map(item => {
-      const newItem = {...item};
-      if (newItem.code === TODAY_EVENT_CODE) {
-        newItem.title = `今日关注事件${item.value}件`;
-      } else {
-        newItem.title = `今日${item.name}${item.value}只`;
-      }
-      return newItem;
-    });
+      ? []
+      : productCalendar.map(item => {
+        const newItem = { ...item };
+        if (newItem.code === TODAY_EVENT_CODE) {
+          newItem.title = `今日关注事件${item.value}件`;
+        } else {
+          newItem.title = `今日${item.name}${item.value}只`;
+        }
+        return newItem;
+      });
     return productData;
   }
 
@@ -405,12 +405,14 @@ export default class Home extends PureComponent {
     };
     // 重点关注
     const keyAttentionProps = {
+      icon: 'focusAttention',
       title: '重点关注',
       data: keyAttention,
       onClick: this.handleLinkToCustomerList,
     };
     // 猜你感兴趣
     const guessYourInterestsProps = {
+      icon: 'interested',
       title: '猜你感兴趣',
       data: guessYourInterests,
       isNeedExtra: true,
@@ -473,14 +475,14 @@ export default class Home extends PureComponent {
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
+          <div className={styles.competitionsLink}>
+            <img src={rankPng} alt="投顾能力竞赛" onClick={this.toInvestmentConsultantCompetenceRacePage} />
+          </div>
           <div className={styles.mostFocusContentLink}>
             <CommonCell {...keyAttentionProps} />
           </div>
           <div className={styles.interestContentLink}>
             <CommonCell {...guessYourInterestsProps} />
-          </div>
-          <div className={styles.competitionsLink}>
-            <img src={rankPng} alt="投顾能力竞赛"  onClick={this.toInvestmentConsultantCompetenceRacePage} />
           </div>
         </div>
         <div className={styles.mainContent}>
