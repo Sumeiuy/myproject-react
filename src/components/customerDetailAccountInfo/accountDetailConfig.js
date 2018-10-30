@@ -2,10 +2,9 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 17:37:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-30 10:58:53
+ * @Last Modified time: 2018-10-30 13:45:53
  * @description 账户详情的配置项
  */
-import { number } from '../../helper';
 
 // 资金账户的配置项
 export const FUND_ACCOUNT_TABLE_COLUMNS = [
@@ -72,9 +71,6 @@ export const STOCK_ACCOUNT_TABLE_COLUMNS = [
     title: '账户市值(元)',
     dataIndex: 'accountValue',
     key: 'accountValue',
-    render(text) {
-      return number.thousandFormat(text, false);
-    }
   },
   {
     title: '开户时间',

@@ -2,21 +2,22 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 17:18:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-24 13:40:43
+ * @Last Modified time: 2018-10-30 14:14:03
  * @description 账户详情
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'antd';
+import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import {
   FUND_ACCOUNT_TABLE_COLUMNS,
   STOCK_ACCOUNT_TABLE_COLUMNS,
 } from './accountDetailConfig';
-import {
-  supplyEmptyRow,
-} from './utils';
+import { supplyEmptyRow } from './utils';
+import { number } from '../../helper';
 
 import styles from './accountDetail.less';
 
@@ -38,12 +39,30 @@ export default class AccountDetail extends PureComponent {
     accountChange: [],
   }
 
+  @autobind
+  getStockTableColumns(columns) {
+    return _.map(columns, column => {
+      const { dataIndex } = column;
+      if (dataIndex === 'accountValue') {
+        return {
+          ...column,
+          render(text) {
+            return (<div className={styles.moneyCell}>{number.thousandFormat(text, false)}</div>);
+          },
+        };
+      }
+      return column;
+    });
+  }
+
   render() {
     const { fundAccount, stockAccount } = this.props;
     // 补足空白行后的资金账户数据
     const newFundAccount = supplyEmptyRow(fundAccount);
     // 补足空白行后的证券账户
     const newStockAccount = supplyEmptyRow(stockAccount);
+    // 修改证券账户表格的columns
+    const stockAccountColumns = this.getStockTableColumns(STOCK_ACCOUNT_TABLE_COLUMNS);
 
     return (
       <div className={styles.accountDetailWrap}>
@@ -69,7 +88,7 @@ export default class AccountDetail extends PureComponent {
               pagination={false}
               className={styles.tableBorder}
               dataSource={newStockAccount}
-              columns={STOCK_ACCOUNT_TABLE_COLUMNS}
+              columns={stockAccountColumns}
             />
           </div>
         </div>
