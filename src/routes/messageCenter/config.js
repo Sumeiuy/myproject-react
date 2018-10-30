@@ -21,8 +21,6 @@ const config = {
   demote: 'HTSC Branch Assignment Inbox Type',
   // 待确认
   taskList: 'HTSC Investment Advice Inbox Type',
-  // 分公司人工划转
-  filialeCustTransfer: 'HTSC Batch Branch Assignment Inbox Type',
   // 用户中心
   userCenter: 'HTSC TG Approval Inbox Type',
   // 我的反馈
