@@ -1,8 +1,8 @@
 /*
  * @Author: WangJunJun
  * @Date: 2018-08-03 13:14:10
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-09 17:46:31
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-10-30 14:32:54
  */
 
  // 标签列表默认数据的页码和一页大小
@@ -24,7 +24,7 @@ export const COLUMNS_LABELTABLE = [
   value: '标签描述',
 },
 {
-  key: 'createdOrgId',
+  key: 'createdOrgName',
   value: '创建部门',
 },
 {
