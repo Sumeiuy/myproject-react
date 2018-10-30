@@ -46,6 +46,8 @@ const effects = {
   getReportHistoryList: 'choicenessCombination/getReportHistoryList',
   // 获取投资顾问
   queryCombinationCreator: 'choicenessCombination/queryCombinationCreator',
+  // 清空数据
+  clearData: 'choicenessCombination/clearData',
 };
 
 const mapStateToProps = state => ({
@@ -97,6 +99,7 @@ const mapDispatchToProps = {
     { loading: true, forceFull: true }),
   queryCombinationCreator: dispatch(effects.queryCombinationCreator,
     { loading: true, forceFull: true }),
+  clearData: dispatch(effects.queryCombinationCreator),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -140,6 +143,8 @@ export default class ChoicenessCombination extends PureComponent {
     // 投资顾问
     queryCombinationCreator: PropTypes.func.isRequired,
     creatorList: PropTypes.array.isRequired,
+    // 清空数据
+    clearData: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -177,9 +182,8 @@ export default class ChoicenessCombination extends PureComponent {
     getCombinationSecurityList();
     // 先获取组合树，然后用组合树的第一个组合类别id查询组合排名数据
     getCombinationTree().then(() => {
-      const { combinationTreeList } = this.props;
       getCombinationRankList({
-        combinationType: (combinationTreeList[0] || {}).value,
+        combinationType: '',
       });
     });
   }
@@ -216,12 +220,14 @@ export default class ChoicenessCombination extends PureComponent {
 
   // tab切换
   @autobind
-  handleTypeChange({ type }) {
+  handleOptionChange(payload) {
+    const { type, adviserId = '' } = payload;
     const { getCombinationRankList, combinationRankTabchange } = this.props;
     combinationRankTabchange({ key: type });
     // 查询组合排名数据
     getCombinationRankList({
       combinationType: type,
+      adviserId,
     });
   }
 
@@ -373,6 +379,7 @@ export default class ChoicenessCombination extends PureComponent {
       reportHistoryList,
       queryCombinationCreator,
       creatorList,
+      clearData,
     } = this.props;
     const {
       hasTkMampPermission,
@@ -431,7 +438,7 @@ export default class ChoicenessCombination extends PureComponent {
           showModal={this.showModal}
           combinationTreeList={combinationTreeList}
           combinationRankList={combinationRankList}
-          onTypeChange={this.handleTypeChange}
+          onTypeChange={this.handleOptionChange}
           chartTabChange={this.handleChartTabChange}
           getCombinationLineChart={getCombinationLineChart}
           combinationLineChartData={combinationLineChartData}
@@ -446,6 +453,7 @@ export default class ChoicenessCombination extends PureComponent {
           openDetailPage={this.openDetailPage}
           queryCombinationCreator={queryCombinationCreator}
           creatorList={creatorList}
+          clearData={clearData}
         />
         {
           visible
