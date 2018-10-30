@@ -2,14 +2,14 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-29 13:17:52
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-30 14:10:58
+ * @Last Modified time: 2018-10-30 14:25:51
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import CommonModal from '../common/biz/CommonModal';
-import env from '../../helper/env';
+import { env } from '../../helper';
 
 import Icon from './img/environmentalInfoIcon.png';
 import styles from  './environmentalInfoModal.less';
@@ -19,7 +19,6 @@ export default function EnvironmentalInfo(props) {
     handleEnvironmentalInfoHide,
     environmentalInfoVisible,
   } = props;
-  const environmentalInfo = env.getEnv();
   const {
     $screen_width,
     $screen_height,
@@ -27,7 +26,7 @@ export default function EnvironmentalInfo(props) {
     $browser_version,
     $os_name,
     $os_version
-  } = environmentalInfo;
+  } = env.getEnv();
   return (
     <CommonModal
       title="环境信息"
