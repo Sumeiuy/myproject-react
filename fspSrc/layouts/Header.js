@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-29 16:51:01
+ * @Last Modified time: 2018-10-30 09:11:19
  * @description 新头部导航
  */
 
@@ -86,7 +86,7 @@ export default class Header extends PureComponent {
       // 隔离墙modal是否可见
       isolationWallModalVisible: false,
       // 环境信息modal是否可见
-      environmentalInfoVisible: false,
+      environmentalInfoVisible: true,
     };
     // HTSC 任务管理岗
     this.hasTkMampPermission = permission.hasTkMampPermission();
