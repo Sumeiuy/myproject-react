@@ -1,6 +1,6 @@
 /*
  * @Author: XuWenKang
- * @Description: 精选组合-组合详情-组合调仓组件
+ * @Description: 精选组合-组合详情-调仓历史
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
  * @Last Modified time: 2018-05-15 09:50:31

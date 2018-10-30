@@ -12,6 +12,7 @@ import { connect } from 'dva';
 import { autobind } from 'core-decorators';
 import { message } from 'antd';
 import _ from 'lodash';
+import { emp } from '../../helper';
 
 import Button from '../../components/common/Button';
 import Table from '../../components/common/commonTable';
@@ -28,6 +29,7 @@ import styles from './home.less';
 import tableStyles from '../../components/common/commonTable/index.less';
 import logable, { logPV, logCommon } from '../../decorators/logable';
 import GroupToLabel from '../../components/labelManagement/groupToLabel';
+import CustRange from '../../components/customerPool/list/manageFilter/CustFilter';
 import effects from './effects';
 import {
   INITIAL_PAGESIZE, INITIAL_CURPAGE,
@@ -58,6 +60,8 @@ const mapStateToProps = state => ({
   possibleLabelListInfo: state.labelManagement.possibleLabelListInfo,
   // 单个标签下的客户信息数据
   labelCustInfo: state.labelManagement.labelCustInfo,
+  // 组织机构树
+  custRange: state.customerPool.custRange,
 });
 
 const mapDispatchToProps = {
@@ -92,6 +96,23 @@ const mapDispatchToProps = {
   // 验证是否名下客户
   isSendCustsServedByEmp: dispatch(effects.isSendCustsServedByEmp, { loading: true }),
 };
+
+// 处理创建部门数据
+function transformCustRange(data) {
+  return [
+    {
+      id: '',
+      level: 1,
+      name: '不限',
+    },
+    {
+      id: 'self',
+      level: 1,
+      name: '我的标签',
+    },
+    ...data,
+  ];
+}
 
 let modalKeyCount = 0;
 
@@ -147,6 +168,8 @@ export default class CustomerGroupManage extends PureComponent {
     queryCustGroupList: PropTypes.func.isRequired,
     // 分组列表数据
     custGroupListInfo: PropTypes.object.isRequired,
+    // 组织机构树
+    custRange: PropTypes.array.isRequired,
   };
 
   static contextTypes = {
@@ -204,6 +227,7 @@ export default class CustomerGroupManage extends PureComponent {
   getLabelList(query = {}, countFlag = 'Y') {
     const {
       keyWord = '',
+      orgId = '',
       curPageNum = INITIAL_CURPAGE,
       curPageSize = INITIAL_PAGESIZE,
     } = query;
@@ -212,6 +236,7 @@ export default class CustomerGroupManage extends PureComponent {
       pageSize: curPageSize,
       labelNameLike: keyWord,
       countFlag,
+      orgId,
     });
   }
 
@@ -247,13 +272,14 @@ export default class CustomerGroupManage extends PureComponent {
     });
   }
 
-  // 编辑标签
+  // 查看标签
   @autobind
-  @logPV({ pathname: '/modal/createAndEditLabelModalContent', title: '编辑标签' })
-  handleEditLabel(record) {
+  @logPV({ pathname: '/modal/createAndEditLabelModalContent', title: '查看标签' })
+  handleEditLabel(record, type) {
     const { id } = record;
     const { queryLabelCust } = this.props;
-    this.showLabelDetailModal(record, false);
+    const canEdit = type !== '标签名称'; // 是否可以编辑标签
+    this.showLabelDetailModal(record, false, canEdit);
     // 获取标签下的客户列表
     queryLabelCust({
       labelId: id,
@@ -286,7 +312,7 @@ export default class CustomerGroupManage extends PureComponent {
       name: '客户标签列表',
     },
   })
-  createTask(record) {
+  createTask(record = {}) {
     const { id, labelName, custCount } = record;
     if (custCount <= 0) {
       message.error('该标签下没有客户，不能发起任务');
@@ -337,11 +363,12 @@ export default class CustomerGroupManage extends PureComponent {
       name: '客户标签列表',
     },
   })
-  handleDeleteBtnClick(record) {
+  handleDeleteBtnClick(record = {}) {
     // 当前删除行记录数据
     confirm({
       onOk: () => this.deleteCustomerGroup(record),
       onCancel: _.noop,
+      content: record.custCount && '删除标签将同时清除被标记客户的对应标签，确定要删除吗？',
     });
   }
 
@@ -351,17 +378,19 @@ export default class CustomerGroupManage extends PureComponent {
    */
   @autobind
   @logPV({ pathname: '/modal/createNewLabel', title: '新建标签' })
-  showLabelDetailModal(record = {}, isCreateLabel = true) {
+  showLabelDetailModal(record = {}, isCreateLabel = true, canEdit = false) {
     const { labelName = '', labelDesc = '', id = '', labelTypeId } = record;
     this.setState({
       visible: true,
       modalKey: `groupModalKey${modalKeyCount++}`,
       // 只可以修改【我的标签】的标签名称和描述，管理标签不可以修改标签名称和描述
-      canEditDetail: labelTypeId && labelTypeId === '0',
+      canEditDetail: canEdit && labelTypeId && labelTypeId === '0',
       name: labelName,
       description: labelDesc,
       id,
       isCreateLabel,
+      canEdit,
+      record,
     });
   }
 
@@ -369,7 +398,7 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   @logPV({ pathname: '/modal/createAndEditLabelModalContent', title: '新建标签' })
   showCreateLabelModal() {
-    this.showLabelDetailModal();
+    this.showLabelDetailModal({}, true, true);
   }
 
   @autobind
@@ -471,6 +500,7 @@ export default class CustomerGroupManage extends PureComponent {
         labelDesc: description,
         custIds: _.isEmpty(custIds) ? null : custIds,
         excludeCustIdList: null,
+        orgId: emp.getOrgId(),
       },
     };
     // 新增标签
@@ -547,6 +577,7 @@ export default class CustomerGroupManage extends PureComponent {
         labelDesc: description,
         custIds: _.isEmpty(custIds) ? null : custIds,
         excludeCustIdList: null,
+        orgId: emp.getOrgId(),
       },
     }).then((res) => {
       if (res.resultData === 'success') {
@@ -560,6 +591,22 @@ export default class CustomerGroupManage extends PureComponent {
           });
         }
       }
+    });
+  }
+
+  // 创建部门change事件
+  @autobind
+  handleCustRange({ orgId }) {
+    const {
+      location: { pathname, query },
+    } = this.props;
+    this.context.replace({
+      pathname,
+      query: {
+        ...query,
+        orgId,
+        curPageNum: INITIAL_CURPAGE,
+      },
     });
   }
 
@@ -598,6 +645,11 @@ export default class CustomerGroupManage extends PureComponent {
       key: 'delete',
       type: <Icon type="shanchu" className={styles.deleteIcon} />,
       handler: this.handleDeleteBtnClick,
+    },
+    {
+      key: 'edit',
+      type: <i className={`icon iconfont icon-shenqing ${styles.editIcon}`} />,
+      handler: this.handleEditLabel,
     },
     {
       key: 'launchTask',
@@ -654,9 +706,9 @@ export default class CustomerGroupManage extends PureComponent {
       location,
       queryBatchCustList,
       batchCustList,
-
+      custRange,
       labelListInfo,
-      location: { query: { keyWord } },
+      location: { query: { keyWord, orgId } },
       checkDuplicationName,
       queryCustGroupList,
       custGroupListInfo,
@@ -680,6 +732,8 @@ export default class CustomerGroupManage extends PureComponent {
       id,
       isShowGroupToLabelModal,
       isCreateLabel,
+      record,
+      canEdit,
     } = this.state;
 
     const {
@@ -696,7 +750,11 @@ export default class CustomerGroupManage extends PureComponent {
     // 构造operation
     const actionSource = this.renderActionSource();
 
-    const modalTitle = isCreateLabel ? MODALTITLE_CREATELABEL : MODALTITLE_EDITLABEL;
+    let  modalTitle = isCreateLabel ?  MODALTITLE_CREATELABEL : MODALTITLE_EDITLABEL;
+
+    if(!isCreateLabel && !canEdit) {
+      modalTitle = '标签信息';
+    }
 
     return (
       <div className={styles.groupPanelContainer}>
@@ -706,10 +764,19 @@ export default class CustomerGroupManage extends PureComponent {
             <SimpleSearch
               defaultValue={keyWord}
               onSearch={this.handleSearchLabel}
-              placeholder="标签名"
+              placeholder="标签名称"
               searchStyle={searchStyle}
               isNeedBtn
             />
+            <div className={styles.custRange}>
+              <CustRange
+                filterName="创建部门"
+                defaultFirst
+                orgId={orgId}
+                custRange={transformCustRange(custRange)}
+                updateQueryState={this.handleCustRange}
+              />
+            </div>
           </div>
           <div className={styles.rightSection}>
             <Button
@@ -740,10 +807,11 @@ export default class CustomerGroupManage extends PureComponent {
             tableClass={`${tableStyles.groupTable} ${styles.labelList}`}
             titleColumn={COLUMNS_LABELTABLE}
             actionSource={actionSource}
-            columnWidth={['10%', '14%', '30%', '8%', '18%', '20%']}
+            columnWidth={['16%', '37%', '17%', '10%', '20%']}
             clickableColumnCallbackList={[this.handleEditLabel]}
-            clickableColumnIndexList={[2]}
+            clickableColumnIndexList={[1]}
             actionClass={styles.actionSource}
+            isCustomerDelete
           />
         </div>
         {
@@ -766,7 +834,7 @@ export default class CustomerGroupManage extends PureComponent {
                 getHotPossibleWds={this.queryHotPossibleWds}
                 customerList={labelCustInfo}
                 getGroupCustomerList={queryLabelCust}
-                detailData={{ name, description, id }}
+                detailData={{ name, description, id, record }}
                 location={location}
                 onUpdateLabel={this.handleUpdateLabel}
                 queryBatchCustList={queryBatchCustList}
@@ -774,6 +842,8 @@ export default class CustomerGroupManage extends PureComponent {
                 checkDuplicationName={checkDuplicationName}
                 isCreateLabel={isCreateLabel}
                 onComparedGetLabelList={this.handleComparedGetLabelList}
+                createTask={this.createTask}
+                title={modalTitle}
               />
             }
           />

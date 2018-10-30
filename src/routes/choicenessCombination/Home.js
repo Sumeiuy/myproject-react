@@ -25,8 +25,6 @@ import { openRctTab } from '../../utils';
 import styles from './index.less';
 
 const dispatch = dva.generateEffect;
-// const EMPTY_LIST = [];
-const EMPTY_OBJECT = {};
 const effects = {
   // 获取调仓历史
   getAdjustWarehouseHistory: 'choicenessCombination/getAdjustWarehouseHistory',
@@ -46,6 +44,10 @@ const effects = {
   riskLevelFilter: 'choicenessCombination/riskLevelFilter',
   // 获取历史报告
   getReportHistoryList: 'choicenessCombination/getReportHistoryList',
+  // 获取投资顾问
+  queryCombinationCreator: 'choicenessCombination/queryCombinationCreator',
+  // 清空数据
+  clearData: 'choicenessCombination/clearData',
 };
 
 const mapStateToProps = state => ({
@@ -73,6 +75,8 @@ const mapStateToProps = state => ({
   riskLevel: state.choicenessCombination.riskLevel,
   // 历史报告
   reportHistoryList: state.choicenessCombination.reportHistoryList,
+  // 投资顾问
+  creatorList: state.choicenessCombination.creatorList,
 });
 const mapDispatchToProps = {
   getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory,
@@ -93,6 +97,9 @@ const mapDispatchToProps = {
     { loading: true, forceFull: true }),
   getReportHistoryList: dispatch(effects.getReportHistoryList,
     { loading: true, forceFull: true }),
+  queryCombinationCreator: dispatch(effects.queryCombinationCreator,
+    { loading: true, forceFull: true }),
+  clearData: dispatch(effects.queryCombinationCreator),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -133,6 +140,11 @@ export default class ChoicenessCombination extends PureComponent {
     // 历史报告
     getReportHistoryList: PropTypes.func.isRequired,
     reportHistoryList: PropTypes.object.isRequired,
+    // 投资顾问
+    queryCombinationCreator: PropTypes.func.isRequired,
+    creatorList: PropTypes.array.isRequired,
+    // 清空数据
+    clearData: PropTypes.func.isRequired,
   }
 
   static contextTypes = {
@@ -170,11 +182,8 @@ export default class ChoicenessCombination extends PureComponent {
     getCombinationSecurityList();
     // 先获取组合树，然后用组合树的第一个组合类别id查询组合排名数据
     getCombinationTree().then(() => {
-      const { combinationTreeList } = this.props;
       getCombinationRankList({
-        combinationType: ((combinationTreeList[0]
-          || EMPTY_OBJECT).children[0]
-          || EMPTY_OBJECT).value,
+        combinationType: '',
       });
     });
   }
@@ -211,12 +220,14 @@ export default class ChoicenessCombination extends PureComponent {
 
   // tab切换
   @autobind
-  handleTabChange(key) {
+  handleOptionChange(payload) {
+    const { type, adviserId = '' } = payload;
     const { getCombinationRankList, combinationRankTabchange } = this.props;
-    combinationRankTabchange({ key });
+    combinationRankTabchange({ key: type });
     // 查询组合排名数据
     getCombinationRankList({
-      combinationType: key,
+      combinationType: type,
+      adviserId,
     });
   }
 
@@ -366,6 +377,9 @@ export default class ChoicenessCombination extends PureComponent {
       getAdjustWarehouseHistory,
       getReportHistoryList,
       reportHistoryList,
+      queryCombinationCreator,
+      creatorList,
+      clearData,
     } = this.props;
     const {
       hasTkMampPermission,
@@ -424,7 +438,7 @@ export default class ChoicenessCombination extends PureComponent {
           showModal={this.showModal}
           combinationTreeList={combinationTreeList}
           combinationRankList={combinationRankList}
-          tabChange={this.handleTabChange}
+          onTypeChange={this.handleOptionChange}
           chartTabChange={this.handleChartTabChange}
           getCombinationLineChart={getCombinationLineChart}
           combinationLineChartData={combinationLineChartData}
@@ -437,6 +451,9 @@ export default class ChoicenessCombination extends PureComponent {
           openStockPage={this.openStockPage}
           openCustomerListPage={this.openCustomerListPage}
           openDetailPage={this.openDetailPage}
+          queryCombinationCreator={queryCombinationCreator}
+          creatorList={creatorList}
+          clearData={clearData}
         />
         {
           visible

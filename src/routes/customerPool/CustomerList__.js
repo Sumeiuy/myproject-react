@@ -343,6 +343,8 @@ const effects = {
   signBatchCustLabels: 'customerLabel/signBatchCustLabels',
   addLabel: 'customerLabel/addLabel',
   queryDefinedLabelsInfo: 'customerPool/queryDefinedLabelsInfo',
+  // 查询搜索联想词
+  getHotPossibleWds: 'customerPool/getHotPossibleWds',
 };
 
 const mapStateToProps = state => ({
@@ -395,6 +397,8 @@ const mapStateToProps = state => ({
   custLikeLabel: state.customerLabel.custLikeLabel,
   // 查询所有自定义标签
   definedLabelsInfo: state.customerPool.definedLabelsInfo,
+  // 联想的推荐热词列表
+  custListHotPossibleWdsList: state.customerPool.custListHotPossibleWdsList,
 });
 
 const mapDispatchToProps = {
@@ -461,6 +465,7 @@ const mapDispatchToProps = {
   signBatchCustLabels: dva.generateEffect(effects.signBatchCustLabels),
   addLabel: dva.generateEffect(effects.addLabel),
   queryDefinedLabelsInfo: dva.generateEffect(effects.queryDefinedLabelsInfo),
+  getHotPossibleWds: dva.generateEffect(effects.getHotPossibleWds, { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -544,6 +549,9 @@ export default class CustomerList extends PureComponent {
     addLabel: PropTypes.func.isRequired,
     queryDefinedLabelsInfo: PropTypes.func.isRequired,
     definedLabelsInfo: PropTypes.array.isRequired,
+    // 搜索联想词
+    getHotPossibleWds: PropTypes.func.isRequired,
+    custListHotPossibleWdsList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -1138,6 +1146,8 @@ export default class CustomerList extends PureComponent {
       custLikeLabel,
       addLabel,
       definedLabelsInfo,
+      getHotPossibleWds,
+      custListHotPossibleWdsList,
     } = this.props;
     const {
       sortDirection,
@@ -1181,6 +1191,8 @@ export default class CustomerList extends PureComponent {
           queryIndustryList={queryIndustryList}
           industryList={industryList}
           definedLabelsInfo={definedLabelsInfo}
+          getHotPossibleWds={getHotPossibleWds}
+          hotPossibleWdsList={custListHotPossibleWdsList}
         />
         <CustomerLists
           getSearchPersonList={getSearchPersonList}

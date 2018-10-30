@@ -10,8 +10,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import InfoTitle from '../../common/InfoTitle';
-// import Icon from '../common/Icon';
-import CombinationTab from './CombinationTab';
 import CombinationFilter from './CombinationFilter';
 import CombinationListItem from './CombinationListItem';
 import styles from './combinationRank.less';
@@ -26,8 +24,8 @@ export default class CombinationRank extends PureComponent {
   static propTypes = {
     // 字典
     dict: PropTypes.object.isRequired,
-    // tab切换
-    tabChange: PropTypes.func.isRequired,
+    // type切换
+    onTypeChange: PropTypes.func.isRequired,
     // 筛选
     // filterChange: PropTypes.func.isRequired,
     // 图表tab切换
@@ -54,6 +52,11 @@ export default class CombinationRank extends PureComponent {
     showModal: PropTypes.func.isRequired,
     // 打开详情页面
     openDetailPage: PropTypes.func.isRequired,
+    // 投资顾问
+    queryCombinationCreator: PropTypes.func.isRequired,
+    creatorList: PropTypes.array.isRequired,
+    // 清空数据
+    clearData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -97,14 +100,16 @@ export default class CombinationRank extends PureComponent {
   render() {
     const {
       dict,
-      tabChange,
+      onTypeChange,
       // filterChange,
       combinationTreeList,
       yieldRankChange,
       yieldRankValue,
       riskLevelFilter,
       riskLevel,
-      rankTabActiveKey,
+      queryCombinationCreator,
+      creatorList,
+      clearData,
     } = this.props;
     return (
       <div className={styles.combinationRankBox}>
@@ -113,17 +118,17 @@ export default class CombinationRank extends PureComponent {
           titleStyle={titleStyle}
         />
         <div className={styles.containerBox}>
-          <CombinationTab
-            tabList={combinationTreeList}
-            tabChange={tabChange}
-            rankTabActiveKey={rankTabActiveKey}
-          />
           <CombinationFilter
             yieldRankChange={yieldRankChange}
             yieldRankValue={yieldRankValue}
             riskLevelFilter={riskLevelFilter}
             riskLevel={riskLevel}
+            composeType={combinationTreeList}
             dict={dict}
+            onTypeChange={onTypeChange}
+            queryCombinationCreator={queryCombinationCreator}
+            creatorList={creatorList}
+            clearData={clearData}
           />
           <div className={styles.combinationListBox}>
             {this.getCombinationList()}
