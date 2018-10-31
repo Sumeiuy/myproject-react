@@ -149,7 +149,7 @@ export default class CombinationRank extends PureComponent {
       type: value,
     }, this.props.onTypeChange({
       type: value,
-      adviser,
+      adviserId: adviser.empId,
     }));
   }
 
