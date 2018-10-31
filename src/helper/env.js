@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:03:01
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-31 17:33:18
+ * @Last Modified time: 2018-10-31 17:42:44
  * @description 此文件用于存放与操作系统，生产/开发环境，浏览器，使用框架相关的公用方法
  */
 import bowser from 'bowser';
@@ -26,9 +26,8 @@ function getFirstMatch(regex) {
 function getOsVersion() {
   if (bowser.windows) {
     return getFirstMatch(/Windows ((NT|XP)( \d\d?.\d)?)/i);
-  } else {
-    return bowser.osversion;
   }
+  return bowser.osversion;
 }
 
 const env = {
