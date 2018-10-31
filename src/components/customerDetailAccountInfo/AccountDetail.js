@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-23 17:18:23
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-31 17:03:45
+ * @Last Modified time: 2018-10-31 17:39:47
  * @description 账户详情
  */
 
@@ -48,6 +48,9 @@ export default class AccountDetail extends PureComponent {
           ...column,
           className: styles.moneyCell,
           render(text) {
+            if (_.isUndefined(text) || _.isNull(text)) {
+              return '';
+            }
             return number.thousandFormat(text, false);
           },
         };
