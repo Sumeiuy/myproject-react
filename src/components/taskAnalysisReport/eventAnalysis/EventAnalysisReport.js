@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-31 10:28:44
+ * @Last Modified time: 2018-10-31 12:18:10
  */
 
 import React, { PureComponent } from 'react';
@@ -160,10 +160,14 @@ export default class EventAnalysisReport extends PureComponent {
     // 获取表格图表的dom节点
     const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
     const eventAnalysisReportDom = this.eventAnalysisReportRef.current;
+    // 获取事件分析报表的top
     const reportTop = this.eventAnalysisReportRef.current.offsetTop;
+    // 获取事件分析报表的宽高
     const { width: reportWidth, height: reportHeight} = dom.getRect(eventAnalysisReportDom);
+    // 图表的悬浮位置 获取相对于报表的位置
     let eventAnalysisChartTop =  `${pageY - reportTop + 20}px`;
     let eventAnalysisChartLeft =  `${pageX}px`;
+    // 图表宽度624px，高度374px
     if (pageX + 624 > reportWidth) {
       eventAnalysisChartLeft = `${reportWidth - 624}px`;
     }
