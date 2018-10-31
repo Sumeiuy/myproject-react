@@ -55,10 +55,17 @@ export default class CreateLabelType extends PureComponent {
   handleCreateLabelSubmit() {
     const {
       addLabel,
-      form: { validateFields },
+      form: { validateFields, getFieldsError },
     } = this.props;
 
     const { inputValue } = this.state;
+    const { labelName: labelNameError } = getFieldsError();
+
+    if (labelNameError) {
+      validateFields(['labelDesc']);
+      return;
+    }
+
     validateFields((error, values) => {
       if (!error) {
         addLabel({
