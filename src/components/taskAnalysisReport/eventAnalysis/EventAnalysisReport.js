@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-29 10:49:41
+ * @Last Modified time: 2018-10-31 10:28:44
  */
 
 import React, { PureComponent } from 'react';
@@ -13,9 +13,8 @@ import _ from 'lodash';
 
 import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
-import { emp } from '../../../helper';
 import EventAnalysisChart from './EventAnalysisChart';
-import { taskOption,customerOption,serviceChannelChangeOption,eventSourceTypes,tableOption } from '../config';
+import { taskOption, customerOption, serviceChannelChangeOption, eventSourceTypes, tableOption } from '../config';
 import { filterData } from '../utils';
 import { dom } from '../../../helper';
 
@@ -35,6 +34,8 @@ export default class EventAnalysisReport extends PureComponent {
     getEventSearch: PropTypes.func.isRequired,
     // 事件搜索数据
     eventSearchList: PropTypes.object.isRequired,
+    // 部门
+    orgId: PropTypes.string.isRequired,
   }
 
   constructor(props,context) {
@@ -50,8 +51,10 @@ export default class EventAnalysisReport extends PureComponent {
       startTime: '2018-10-12',
       // 任务结束时间
       endTime: '2018-10-18',
+      // 事件类型数据
+      eventTypeOptions: [...missionType, ...custServerTypeFeedBackDict],
       // 事件类型
-      eventTypeOptions: [...custServerTypeFeedBackDict,...missionType],
+      eventType: '',
       // 事件来源
       eventSource: '',
       // 事件名称
@@ -80,12 +83,25 @@ export default class EventAnalysisReport extends PureComponent {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    const { orgId: prevOrgId } = prevProps;
+    const {startTime,endTime} = this.state;
+    // 获取事件数据
+    if (prevOrgId !== this.props.orgId) {
+      this.getEventAnalysis({
+        startTime,
+        endTime,
+      });
+    }
+  }
+
   // 获取事件分析数据
   @autobind
   getEventAnalysis(query) {
-    this.props.getEventAnalysis({
+    const { orgId, getEventAnalysis } = this.props;
+    getEventAnalysis({
       ...query,
-      orgId: emp.getOrgId(),
+      orgId,
     });
   }
 
@@ -109,14 +125,14 @@ export default class EventAnalysisReport extends PureComponent {
       custServerTypeFeedBackDict = [],
       missionType = [],
     } } = this.context;
-    let eventTypeOptions = [ ...custServerTypeFeedBackDict,...missionType ];
+    let eventTypeOptions = [ ...missionType ,...custServerTypeFeedBackDict ];
     // 此处eventSource为1指的事件来源是MOT推送，为2指事件来源是自建，为''指的不限，通过事件来源控制事件类型
     switch(eventSource) {
       case MOT:
-        eventTypeOptions = custServerTypeFeedBackDict;
+        eventTypeOptions = missionType;
         break;
       case SELFBUILD:
-        eventTypeOptions = missionType;
+        eventTypeOptions = custServerTypeFeedBackDict;
         break;
       default:
         break;
@@ -128,32 +144,48 @@ export default class EventAnalysisReport extends PureComponent {
   // 事件搜索
   @autobind
   getEventSearch(query) {
-    this.props.getEventSearch({
+    const { getEventSearch, orgId } = this.props;
+    getEventSearch({
       ...query,
-      orgId: emp.getOrgId(),
+      orgId,
     });
+  }
+
+  // 图表位置定位
+  @autobind
+  getChartPosition(e) {
+    // 获取鼠标位置
+    const pageX = e.pageX;
+    const pageY = e.pageY;
+    // 获取表格图表的dom节点
+    const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
+    const eventAnalysisReportDom = this.eventAnalysisReportRef.current;
+    const reportTop = this.eventAnalysisReportRef.current.offsetTop;
+    const { width: reportWidth, height: reportHeight} = dom.getRect(eventAnalysisReportDom);
+    let eventAnalysisChartTop =  `${pageY - reportTop + 20}px`;
+    let eventAnalysisChartLeft =  `${pageX}px`;
+    if (pageX + 624 > reportWidth) {
+      eventAnalysisChartLeft = `${reportWidth - 624}px`;
+    }
+    if (pageY + 374 > reportTop + reportHeight) {
+      eventAnalysisChartTop = `${ reportHeight - 374}px`;
+    }
+    dom.setStyle(eventAnalysisChartDom,'top',eventAnalysisChartTop);
+    dom.setStyle(eventAnalysisChartDom,'left',eventAnalysisChartLeft);
+    dom.setStyle(eventAnalysisChartDom,'visibility','visible');
   }
 
   // 表格中图表渲染
   @autobind
-  handleTableOnCell(record,type,e) {
+  handleTableOnCell(record, type) {
     // 表格数据中有三种表格，判断type
     if(_.isEmpty(type)){
       return;
     }
     // 取出增加在接口数据中的eventReportList
     const { eventReportList } = record;
-    // 判断是否鼠标是否移入单元格
-    let isAlive = false;
     return {
       onMouseOver: (e) => {
-        // 获取鼠标位置
-        const pageX = e.pageX;
-        const pageY = e.pageY;
-        if (isAlive) {
-          return;
-        }
-        isAlive = true;
         const { eventName } = record;
         let firstData = [];
         let secondData = [];
@@ -235,19 +267,11 @@ export default class EventAnalysisReport extends PureComponent {
             type: type,
           },
         });
-        // 获取表格图表的dom节点
-        const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
-        const reportTop = this.eventAnalysisReportRef.current.offsetTop;
-        dom.setStyle(eventAnalysisChartDom,'visibility','visible');
-        const eventAnalysisChartTop =  `${pageY-reportTop+20}px`;
-        const eventAnalysisChartLeft =  `${pageX}px`;
-        dom.setStyle(eventAnalysisChartDom,'top',eventAnalysisChartTop);
-        dom.setStyle(eventAnalysisChartDom,'left',eventAnalysisChartLeft);
+        this.getChartPosition(e);
       },
       onMouseOut: () => {
         const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
         dom.setStyle(eventAnalysisChartDom,'visibility','hidden');
-        isAlive = false;
       },
     };
   }
@@ -275,7 +299,7 @@ export default class EventAnalysisReport extends PureComponent {
       const { eventType } = col;
       return {
         ...col,
-        onCell: (record) => this.handleTableOnCell(record,eventType),
+        onCell: (record) => this.handleTableOnCell(record, eventType),
       };
     });
 
