@@ -24,7 +24,7 @@ export const COLUMNS_LABELTABLE = [
   value: '标签描述',
 },
 {
-  key: 'createdOrgId',
+  key: 'createdOrgName',
   value: '创建部门',
 },
 {
