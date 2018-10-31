@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-29 13:17:52
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-31 13:17:39
+ * @Last Modified time: 2018-10-31 13:28:56
  */
 
 import React from 'react';
@@ -34,7 +34,7 @@ export default function EnvironmentalInfo(props) {
       closeModal={handleEnvironmentalInfoHide}
       wrapClassName={styles.environmentalInfo}
       needBtn={false}
-      modalKey='environmentalInfo'
+      modalKey="environmentalInfo"
     >
       <div className={styles.environmentalInfoContent}>
         <div className={styles.environmentalInfoImg}>

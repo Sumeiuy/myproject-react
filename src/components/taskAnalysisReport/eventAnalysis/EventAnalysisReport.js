@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-31 12:18:10
+ * @Last Modified time: 2018-10-31 13:32:06
  */
 
 import React, { PureComponent } from 'react';
@@ -164,7 +164,7 @@ export default class EventAnalysisReport extends PureComponent {
     const reportTop = this.eventAnalysisReportRef.current.offsetTop;
     // 获取事件分析报表的宽高
     const { width: reportWidth, height: reportHeight} = dom.getRect(eventAnalysisReportDom);
-    // 图表的悬浮位置 获取相对于报表的位置
+    // 当鼠标位置加上图表的宽度/高度大于报表的宽度/高度时候 图表位置放在最右方/最下方
     let eventAnalysisChartTop =  `${pageY - reportTop + 20}px`;
     let eventAnalysisChartLeft =  `${pageX}px`;
     // 图表宽度624px，高度374px
