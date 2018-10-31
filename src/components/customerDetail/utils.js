@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 11:08:03
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-19 10:26:05
+ * @Last Modified time: 2018-10-31 10:39:27
  * @description 客户360详情部分辅助函数
  */
 import _ from 'lodash';
@@ -24,10 +24,11 @@ function calcSameTimeRate(current, last) {
 }
 
 // 在交易数据中针对需要计算增长率的三个指标值，当去年的值为0的时候需要展示的数据
-function getRateTipWhenLastEqual0(current) {
+function getRateTipWhenLastEqual0(current, isMoney = true) {
   let rateText = '';
   // 因为去年同期值为0，所以当前值 >= 0时候显示增长
-  const isAsc = current > 0;
+  const isAsc = current >= 0;
+  const actionText = isAsc ? constant.ASC_MSG : constant.DESC_MSG;
   if (current > 0) {
     rateText = constant.BIG_RATE_MSG;
   } else if (current < 0) {
@@ -37,18 +38,22 @@ function getRateTipWhenLastEqual0(current) {
   }
   return {
     isAsc,
-    tip: `去年同期0元，同比${rateText}`,
+    tip: `去年同期${isMoney ? '0元': '0%'}，同比${actionText}${rateText}`,
     rateText,
   };
 }
 
 // 在交易数据中，当去年同期值不为0时，需要展示的数据
-function getRateTip(last, current) {
-  // 针对超大数据进行特殊处理
-  const rate = calcSameTimeRate(current, last);
-  const lastText = displayMoney(last);
+function getRateTip(last, current, isMoney = true) {
+  if (last === 0) {
+    return getRateTipWhenLastEqual0(current, isMoney);
+  }
+  // 针对超大数据进行特殊处理,展示的百分比需要显示成正数
+  const rate = Math.abs(calcSameTimeRate(current, last));
+  const lastText = isMoney ? displayMoney(last) : number.convertRate(last);
   let rateText = '';
-  const isAsc = rate >= 0;
+  // 当前值大于last则就是升
+  const isAsc = current >= last;
   const actionText = isAsc ? constant.ASC_MSG : constant.DESC_MSG;
   if (rate > 10) {
     rateText = constant.BIG_RATE_MSG;
@@ -68,5 +73,4 @@ function getRateTip(last, current) {
 export {
   calcSameTimeRate,
   getRateTip,
-  getRateTipWhenLastEqual0,
 };
