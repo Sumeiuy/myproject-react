@@ -120,8 +120,6 @@ export default class MessageCenter extends PureComponent {
       this.handleMessageByPrimary(rowId, objectVal);
     } else if (typeName === config.taskList) {
       this.handleMessageByInvestment(objectVal);
-    } else if (typeName === config.filialeCustTransfer) {
-      this.handleMessageByBatch(objectVal, title, rowId);
     } else if (typeName === config.userCenter) {
       this.handleMessageByTG();
     } else if (typeName === config.custAllot) {
@@ -333,53 +331,6 @@ export default class MessageCenter extends PureComponent {
   handleMessageByInvestment(objectVal) {
     this.removeNotice = true;
     windowOpen(`/fspa/spy/approval/html/taskListApproval.html?notifiId=${objectVal}&empId=${emp.getId()}`);
-  }
-
-  // 处理typeName是HTSC Batch Branch Assignment Inbox Type的消息通知
-  @autobind
-  handleMessageByBatch(objectVal, title, rowId) {
-    let type = 'faild';
-    let appId = '';
-    let itemId = '';
-    appId = objectVal.substring(0, objectVal.indexOf(','));
-    itemId = objectVal.substring(objectVal.indexOf(',') + 1, objectVal.length);
-    if (title.indexOf(config.fail) >= 0) {
-      this.removeNotice = true;
-    } else if (title.indexOf(config.abort) >= 0) {
-      type = 'falseOver';
-      this.removeNotice = true;
-    } else {
-      type = 'succ';
-      this.removeNotice = true;
-    }
-    if (type === 'succ') {
-      linkTo({
-        routerAction: this.context.push,
-        pathname: '/filialeCustTransfer/notifies',
-        query: {
-          notifiId: rowId,
-          appId,
-          currentId: itemId,
-          type,
-        },
-      });
-    } else {
-      const url = `/sysOperate/crossDepartment/filialeCustTransfer?id=${itemId}&appId=${appId}`;
-      const param = {
-        id: 'FSP_CROSS_DEPARTMENT',
-        title: '分公司客户人工划转',
-        forceRefresh: true,
-        isSpecialTab: true,
-        closable: true,
-      };
-      const pathName = '/sysOperate/crossDepartment/filialeCustTransfer';
-      openRctTab({
-        routerAction: this.context.push,
-        url,
-        pathName,
-        param,
-      });
-    }
   }
 
   // 处理typeName是HTSC TG Approval Inbox Type的消息通知

@@ -22,7 +22,7 @@ import classes from './reactFrame__.less';
 
 function RectFrame(props) {
   const {
-    dataSource: { title, icon },
+    dataSource: { title, icon, unit },
     children,
     desc,
     isNewHome,
@@ -61,10 +61,13 @@ function RectFrame(props) {
                 <div className={trueStyles.title}>{title}</div>
               </Popover>
             ) :
-            <div className={trueStyles.title}>{title}</div>
+            <div className={trueStyles.titleContent}>
+              <span className={trueStyles.title}>{title}</span>
+              <span className={trueStyles.unit}>{unit}</span>
+            </div>
         }
       </div>
-      <div className={contentCls}>{children}</div>
+      <div className={trueStyles.contentCls}>{children}</div>
     </div>
   );
 }

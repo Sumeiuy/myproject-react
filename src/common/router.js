@@ -295,24 +295,6 @@ export const getRouterData = (app) => {
         import('../routes/messageCenter/Home' /* webpackChunkName: "messgeCenter" */)),
     },
     // 直接进入
-    '/sysOperate/crossDepartment/filialeCustTransfer': {
-      component: dynamicWrapper(app, ['filialeCustTransfer', 'customerPool'], () =>
-        import('../routes/filialeCustTransfer/Home' /* webpackChunkName: "filialeCustTransfer" */)),
-    },
-    // 从 filialeCustTransfer 页面左侧列表中选择一条数据，找到请求回来的 flowId,
-    // 拼接路由 /filialeCustTransfer/edit?flowId=xxxxxxxx&empId=xxxx,
-    // empId 需要设置为 edit 获取到的详情里的审批人
-    // 由此进入为有数据页面
-    '/filialeCustTransfer/edit': {
-      component: dynamicWrapper(app, ['filialeCustTransfer'], () =>
-        import('../routes/filialeCustTransfer/Edit' /* webpackChunkName: "filialeCustTransfer_edit" */)),
-    },
-    // 从 fsp 消息提醒对应类型进入，本地可直接进入，如需要数据，需向后端要一个 appId 以及 type
-    '/filialeCustTransfer/notifies': {
-      component: dynamicWrapper(app, ['filialeCustTransfer'], () =>
-        import('../routes/filialeCustTransfer/Notifies' /* webpackChunkName: "filialeCustTransfer_notifies" */)),
-    },
-    // 直接进入
     '/customerFeedback': {
       component: dynamicWrapper(app, ['customerFeedback'], () =>
         import('../routes/customerFeedback/Home' /* webpackChunkName: "customerFeedback" */)),
