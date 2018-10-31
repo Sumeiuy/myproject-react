@@ -27,6 +27,7 @@ function RectFrame(props) {
     desc,
     isNewHome,
     noMargin,
+    isfromAsset,
   } = props;
 
   const trueStyles = isNewHome ? classes : styles;
@@ -35,7 +36,7 @@ function RectFrame(props) {
   if (noMargin) {
     contentCls = '';
   } else if(isNewHome) {
-    contentCls = classes.content;
+    contentCls = isfromAsset ? classes.assetContent : classes.content;
   }
 
   return (
@@ -67,7 +68,7 @@ function RectFrame(props) {
             </div>
         }
       </div>
-      <div className={trueStyles.contentCls}>{children}</div>
+      <div className={contentCls}>{children}</div>
     </div>
   );
 }
