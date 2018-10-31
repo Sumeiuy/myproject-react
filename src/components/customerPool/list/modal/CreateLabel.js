@@ -6,7 +6,6 @@
 import React, { PureComponent } from 'react';
 import { Modal, Form, Input } from 'antd';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import styles from './createLabel.less';
 import { emp } from '../../../../helper';
@@ -37,11 +36,7 @@ export default class CreateLabelType extends PureComponent {
     closeModal: PropTypes.func.isRequired,
     visible: PropTypes.bool.isRequired,
     addLabel: PropTypes.func.isRequired,
-    handleSelectVisibleChange: PropTypes.func,
-  }
-
-  static defaultProps = {
-    handleSelectVisibleChange: _.noop,
+    checkDuplicationName: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -60,11 +55,17 @@ export default class CreateLabelType extends PureComponent {
   handleCreateLabelSubmit() {
     const {
       addLabel,
-      form: { validateFields },
-      handleSelectVisibleChange,
+      form: { validateFields, getFieldsError },
     } = this.props;
 
     const { inputValue } = this.state;
+    const { labelName: labelNameError } = getFieldsError();
+
+    if (labelNameError) {
+      validateFields(['labelDesc']);
+      return;
+    }
+
     validateFields((error, values) => {
       if (!error) {
         addLabel({
@@ -74,7 +75,6 @@ export default class CreateLabelType extends PureComponent {
           orgId: emp.getOrgId(),
         })
           .then((labelId) => {
-            handleSelectVisibleChange();
             this.setState({
               visible: false,
             });
@@ -105,6 +105,34 @@ export default class CreateLabelType extends PureComponent {
   handleInputChange(value) {
     this.setState({
       inputValue: value.target.value,
+    });
+  }
+
+    // 实时校验标签名是否重复
+  @autobind
+  handleCheckLabelName() {
+    const { checkDuplicationName, form } = this.props;
+    const { labelName: labelNameError } = form.getFieldsError();
+    // 校验规则不通过或编辑标签不校验重名
+    if (labelNameError) {
+      return;
+    }
+    form.validateFields(['labelName'], (error, values) => {
+      if (!error) {
+        checkDuplicationName({
+          labelName: values.labelName,
+          labelFlag: '1'
+        }).then((duplicationName) => {
+          if (duplicationName) {
+            this.props.form.setFields({
+              labelName: {
+                value: values.labelName,
+                errors: [new Error('该标签已存在，请重新输入')],
+              },
+            });
+          }
+        });
+      }
     });
   }
 
@@ -152,7 +180,7 @@ export default class CreateLabelType extends PureComponent {
               }],
               initialValue: labelName,
             })(
-              <Input onChange={this.handleInputChange} />,
+              <Input onChange={this.handleInputChange} onBlur={this.handleCheckLabelName} />,
             )}
           </FormItem>
           <FormItem

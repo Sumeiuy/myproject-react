@@ -784,10 +784,15 @@ function getHoldingChart(data) {
           const formatedV = number.formatToUnit({ num: value, floatLength:2 });
           return `{normal|${text}}\n{normal|${formatedV}}`;
         },
+        axisLine: {
+          lineStyle: {
+              color: '#fec965',
+              },
+      },
         rich: {
-          a: {
+          name: {
             fontSize: 12,
-            color: '#666',
+            color: 'red',
             align: 'center',
           }
         },
@@ -797,10 +802,17 @@ function getHoldingChart(data) {
       {
         type: 'radar',
         name: '持仓分布',
-        itemStyle: {normal: {areaStyle: {color: '#fec965'}}},
-        lineStyle: {
-          color: '#fec965',
-        },
+        itemStyle: {
+          normal: {
+            lineStyle: {
+               color : '#ff8008',
+            },
+            areaStyle: {
+              color: '#fec965',
+            },
+         }
+       },
+        symbol: 'circle',
         data: [
           {
             value: values,

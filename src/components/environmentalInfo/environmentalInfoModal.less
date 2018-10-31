@@ -14,6 +14,7 @@
   .environmentalInfoContent {
     display: flex;
     align-items: center;
+    justify-content: space-around;
     .environmentalInfoImg {
       width: 140px;
       height: 140px;
@@ -28,14 +29,28 @@
       }
     }
     .environmentalInfoText {
-      flex: 1;
       font-size: 14px;
       line-height: 30px;
-      li {
+      & > li {
         span:first-child {
           display: inline-block;
           width: 120px;
           text-align: right;
+        }
+      }
+      & > div {
+        span:first-child {
+          display: inline-block;
+          width: 120px;
+          text-align: right;
+        }
+      }
+      .environmentalInfoTextPart {
+        display: flex;
+        & > ul {
+          &:first-child {
+            margin-right: 50px;
+          }
         }
       }
     }
