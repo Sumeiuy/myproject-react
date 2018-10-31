@@ -37,10 +37,12 @@ const chartTitles = [
     title: '资产分布（户）'
   },
   {
-    title: '盈亏比（百分比）'
+    title: '盈亏比 ',
+    unit: '（X:百分比 Y:户）'
   },
   {
-    title: '盈亏幅度（万元）'
+    title: '盈亏幅度 ',
+    unit: '（X:百分比 Y:户）'
   },
   {
     title: '持仓分布'
@@ -98,6 +100,34 @@ let totAsetData = [
       minVal: '0',
       maxVal: '300000',
     },
+  },
+];
+
+//持仓分布的数据源
+const positionDistribution = [
+  {
+   type: '公募',
+   asset: 0,
+  },
+  {
+    type: '私募',
+    asset: 0,
+  },
+  {
+    type: '债券',
+    asset: 0,
+  },
+  {
+    type: 'OTC',
+    asset: 0,
+  },
+  {
+    type: '紫金',
+    asset: 0,
+  },
+  {
+    type: '股票',
+    asset: 0,
   },
 ];
 
@@ -428,50 +458,31 @@ export default class PerformanceIndicators extends PureComponent {
       </ChartContiner>
     );
   }
+
   // 持仓分布图表
+  @autobind
   renderHoldingChart() {
-    const { dataSource, option } = getHoldingChart(this.props.indicators);
+    const { indicators: { holdingDistribution = [] } } = this.props;
+    let newHoldingDistribution = [...holdingDistribution];
+    if (_.isEmpty(newHoldingDistribution)) {
+      newHoldingDistribution = positionDistribution;
+    };
+    let option = getHoldingChart(newHoldingDistribution);
     return (
       <ChartContiner dataSource={chartTitles[5]}>
         <IECharts
+         className={styles.positionContain}
           option={option}
           style={{
             height: '144px',
           }}
           resizable
         />
-        <div className={styles.holdingchartLegend}>
-          {
-            _.map(_.slice(dataSource, 0, 4), item => (
-              <div className={styles.legendItem} key={item.name}>
-                <span
-                  className={styles.legendColor}
-                  style={item.style}
-                />
-                <span className={styles.legendLabel}>{item.name}</span>
-              </div>
-            ))
-          }
-        </div>
-        <div className={styles.holdingchartLegend}>
-          {
-            _.map(_.slice(dataSource, 4, dataSource.length), item => (
-              <div className={styles.legendItem} key={item.name}>
-                <span
-                  className={styles.legendColor}
-                  style={item.style}
-                />
-                <span className={styles.legendLabel}>{item.name}</span>
-              </div>
-            ))
-          }
-        </div>
       </ChartContiner>
     );
   }
   render() {
     const gutter = 18;
-
     return (
       <div className={styles.indexBox}>
         <div className={styles.listItem}>

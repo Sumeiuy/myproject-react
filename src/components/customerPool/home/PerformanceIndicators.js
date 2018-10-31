@@ -500,7 +500,7 @@ export default class PerformanceIndicators extends PureComponent {
   // 服务指标（投顾绩效）
   renderServiceIndicators(param) {
     const performanceData = [];
-    const colors = ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'];
+    const colors = ['#008fd2', '#008fd2', '#008fd2', '#008fd2'];
     _.forEach(
       param.data,
       (item, index) => (

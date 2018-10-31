@@ -101,8 +101,8 @@ export default class CustomerService extends PureComponent {
 
   render() {
     const { data } = this.props;
-    const motOption = this.getOption(_.head(data), ['#33D0E2', '#d6d6d6']);
-    const serviceOption = this.getOption(_.last(data), ['#6b87d8', '#d6d6d6']);
+    const motOption = this.getOption(_.head(data), ['#008fd2', '#d6d6d6']);
+    const serviceOption = this.getOption(_.last(data), ['#008fd2', '#d6d6d6']);
 
     return (
       <div className={styles.row}>
