@@ -42,7 +42,7 @@ const chartTitles = [
   },
   {
     title: '盈亏幅度 ',
-    unit: '（X:百分比 Y:户）'
+    unit: '（X:万元 Y:户）'
   },
   {
     title: '持仓分布'
