@@ -2,12 +2,11 @@
  * @Author: sunweibin
  * @Date: 2017-11-22 10:03:01
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-31 16:56:07
+ * @Last Modified time: 2018-10-31 17:33:18
  * @description 此文件用于存放与操作系统，生产/开发环境，浏览器，使用框架相关的公用方法
  */
 import bowser from 'bowser';
 import { constants, fspContainer } from '../config';
-console.warn('bowser',bowser);
 
 // 归一化浏览器名称
 function formatBowserName(name) {
@@ -22,6 +21,14 @@ function formatBowserName(name) {
 function getFirstMatch(regex) {
   var match = navigator.userAgent.match(regex);
   return (match && match.length > 1 && match[1]) || '';
+}
+
+function getOsVersion() {
+  if (bowser.windows) {
+    return getFirstMatch(/Windows ((NT|XP)( \d\d?.\d)?)/i);
+  } else {
+    return bowser.osversion;
+  }
 }
 
 const env = {
@@ -56,7 +63,7 @@ const env = {
       $app_version: constants.version,
       $os: env.getOS(),
       $os_name: bowser.osname,
-      $os_version: getFirstMatch(/Windows ((NT|XP)( \d\d?.\d)?)/i),
+      $os_version: getOsVersion(),
       $screen_width: window.screen.width,
       $screen_height: window.screen.height,
       $browser: bowser.name,
