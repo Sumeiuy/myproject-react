@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-30 20:16:05
+ * @Last Modified time: 2018-10-31 09:47:16
  */
 
 import React, { PureComponent } from 'react';
@@ -656,14 +656,6 @@ export default class Home extends PureComponent {
           </div>
           <div className={styles.interestContentLink}>
             <CommonCell {...guessYourInterestsProps} />
-          </div>
-          <div className={styles.competitionsLink}>
-            <img
-              src={rankPng}
-              alt="投顾能力竞赛"
-              onClick={this.toInvestmentConsultantCompetenceRacePage}
-              id={NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME}
-            />
           </div>
         </div>
         <div className={styles.mainContent}>
