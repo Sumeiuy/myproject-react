@@ -47,9 +47,19 @@ export default function CommonTooltip(props) {
 
 CommonTooltip.propTypes = {
   // 标题
-  title: PropTypes.string,
+  title: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.element,
+    PropTypes.node,
+  ]),
   // 正文
-  content: PropTypes.string,
+  content: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.element,
+    PropTypes.node,
+  ]),
   // 位置
   placement: PropTypes.string,
   // 调用的元素
