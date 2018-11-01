@@ -36,6 +36,8 @@ export default {
       creditAccount: {},
       optionAccount: {},
     },
+    // 客户是否有已实施的流程
+    hasDoingFlow: false,
   },
   reducers: {
     getRealTimeAssetSuccess(state, action) {
@@ -134,6 +136,14 @@ export default {
         ...payload,
       };
     },
+    // 查询客户是否有已实施的流程
+    queryHasDoingFlowSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        hasDoingFlow: payload || false,
+      };
+    },
   },
   effects: {
     // 查询资产分布的雷达图数据
@@ -216,6 +226,14 @@ export default {
       yield put({
         type: 'clearReduxDataSuccess',
         payload,
+      });
+    },
+    // 查询客户是否有已实施的流程
+    * queryHasDoingFlow({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryHasDoingFlow, payload);
+      yield put({
+        type: 'queryHasDoingFlowSuccess',
+        payload: resultData,
       });
     },
   },
