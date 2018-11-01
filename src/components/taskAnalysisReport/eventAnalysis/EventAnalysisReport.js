@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-01 14:12:42
+ * @Last Modified time: 2018-11-01 14:16:45
  */
 
 import React, { PureComponent } from 'react';
@@ -190,7 +190,6 @@ export default class EventAnalysisReport extends PureComponent {
     const { eventReportList } = record;
     return {
       onMouseOver: (e) => {
-        console.warn('dom.getRect',dom.getRect(this.eventAnalysisReportRef.current));
         const { eventName } = record;
         let firstData = [];
         let secondData = [];
