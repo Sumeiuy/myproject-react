@@ -31,6 +31,46 @@
       // 关掉动画效果
       transition: none;
     }
+
+    // 为 tooltip 提供统一样式
+    .ant-tooltip-inner {
+      background-color: @tooltip-base-color;
+      border-radius: 3px;
+      padding: 10px;
+      line-height: 20px;
+      -webkit-box-shadow: 0 2px 8px rgba(2, 22, 55, 0.15);
+              box-shadow: 0 2px 8px rgba(2, 22, 55, 0.15);
+    }
+
+    .ant-tooltip-placement-top,
+    .ant-tooltip-placement-topLeft,
+    .ant-tooltip-placement-topRight {
+      .ant-tooltip-arrow {
+        border-top-color: @tooltip-base-color;
+      }
+    }
+
+    .ant-tooltip-placement-right,
+    .ant-tooltip-placement-rightTop,
+    .ant-tooltip-placement-rightBottom {
+      .ant-tooltip-arrow {
+        border-right-color: @tooltip-base-color;
+      }
+    }
+    .ant-tooltip-placement-left,
+    .ant-tooltip-placement-leftTop,
+    .ant-tooltip-placement-leftBottom {
+      .ant-tooltip-arrow {
+        border-left-color: @tooltip-base-color;
+      }
+    }
+    .ant-tooltip-placement-bottom,
+    .ant-tooltip-placement-bottomLeft,
+    .ant-tooltip-placement-bottomRight {
+      .ant-tooltip-arrow {
+        border-bottom-color: @tooltip-base-color;
+      }
+    }
   }
 
   .ant-select-dropdown {
