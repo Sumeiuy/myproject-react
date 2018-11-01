@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-01 14:02:49
+ * @Last Modified time: 2018-11-01 14:12:42
  */
 
 import React, { PureComponent } from 'react';
@@ -174,9 +174,9 @@ export default class EventAnalysisReport extends PureComponent {
     if (pageX + 312 > reportWidth) {
       eventAnalysisChartLeft = `${reportWidth - 624}px`;
     }
-    dom.setStyle(eventAnalysisChartDom,'top',eventAnalysisChartTop);
-    dom.setStyle(eventAnalysisChartDom,'left',eventAnalysisChartLeft);
-    dom.setStyle(eventAnalysisChartDom,'visibility','visible');
+    dom.setStyle(eventAnalysisChartDom, 'top', eventAnalysisChartTop);
+    dom.setStyle(eventAnalysisChartDom, 'left', eventAnalysisChartLeft);
+    dom.setStyle(eventAnalysisChartDom, 'visibility', 'visible');
   }
 
   // 表格中图表渲染
