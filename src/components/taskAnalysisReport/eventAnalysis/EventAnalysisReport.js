@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-31 13:32:06
+ * @Last Modified time: 2018-11-01 13:57:13
  */
 
 import React, { PureComponent } from 'react';
@@ -48,17 +48,17 @@ export default class EventAnalysisReport extends PureComponent {
     } } = context;
     this.state = {
       // 任务开始时间
-      startTime: '2018-10-12',
+      startTime: '2018-10-25',
       // 任务结束时间
-      endTime: '2018-10-18',
+      endTime: '2018-10-31',
       // 事件类型数据
       eventTypeOptions: [...missionType, ...custServerTypeFeedBackDict],
-      // 事件类型
-      eventType: '',
       // 事件来源
       eventSource: '',
       // 事件名称
       eventName: '',
+      // 事件类型
+      eventType: '',
       // 表格数据
       option: {
         eventReportList: {},
@@ -111,7 +111,7 @@ export default class EventAnalysisReport extends PureComponent {
     this.setState({
       ...obj,
     }, () => {
-      const query = _.omit(this.state, 'eventTypeOptions');
+      const query = _.omit(this.state, ['eventTypeOptions', 'option']);
       this.getEventAnalysis(query);
     });
   }
@@ -138,7 +138,10 @@ export default class EventAnalysisReport extends PureComponent {
         break;
     }
 
-    this.setState({ eventTypeOptions });
+    this.setState({
+       eventTypeOptions,
+       eventType: '',
+      });
   }
 
   // 事件搜索
@@ -163,16 +166,13 @@ export default class EventAnalysisReport extends PureComponent {
     // 获取事件分析报表的top
     const reportTop = this.eventAnalysisReportRef.current.offsetTop;
     // 获取事件分析报表的宽高
-    const { width: reportWidth, height: reportHeight} = dom.getRect(eventAnalysisReportDom);
+    const { width: reportWidth} = dom.getRect(eventAnalysisReportDom);
     // 当鼠标位置加上图表的宽度/高度大于报表的宽度/高度时候 图表位置放在最右方/最下方
-    let eventAnalysisChartTop =  `${pageY - reportTop + 20}px`;
-    let eventAnalysisChartLeft =  `${pageX}px`;
+    let eventAnalysisChartTop =  `${pageY - reportTop - 374 - 50}px`;
+    let eventAnalysisChartLeft =  `${pageX - 312}px`;
     // 图表宽度624px，高度374px
-    if (pageX + 624 > reportWidth) {
+    if (pageX + 312 > reportWidth) {
       eventAnalysisChartLeft = `${reportWidth - 624}px`;
-    }
-    if (pageY + 374 > reportTop + reportHeight) {
-      eventAnalysisChartTop = `${ reportHeight - 374}px`;
     }
     dom.setStyle(eventAnalysisChartDom,'top',eventAnalysisChartTop);
     dom.setStyle(eventAnalysisChartDom,'left',eventAnalysisChartLeft);
@@ -190,6 +190,7 @@ export default class EventAnalysisReport extends PureComponent {
     const { eventReportList } = record;
     return {
       onMouseOver: (e) => {
+        console.warn('dom.getRect',dom.getRect(this.eventAnalysisReportRef.current));
         const { eventName } = record;
         let firstData = [];
         let secondData = [];
@@ -290,9 +291,9 @@ export default class EventAnalysisReport extends PureComponent {
     const {
       startTime,
       endTime,
-      eventType,
       eventSource,
       eventName,
+      eventType,
       // 事件类型选项
       eventTypeOptions,
     } = this.state;
@@ -327,10 +328,10 @@ export default class EventAnalysisReport extends PureComponent {
           dateFilterName='任务截止时间'
           startTime={startTime}
           endTime={endTime}
-          eventType={eventType}
           eventSource={eventSource}
           filterCallback={this.handlefilterCallback}
           isEventAnalysis
+          eventType={eventType}
           eventTypeOptions={eventTypeOptions}
           eventSelectChange={this.handleEventSource}
           eventSearch={this.getEventSearch}
