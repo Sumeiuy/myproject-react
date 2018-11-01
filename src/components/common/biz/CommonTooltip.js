@@ -3,7 +3,7 @@
  * @Author: Liujianshu-K0240007
  * @Date: 2018-10-31 10:12:58
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-10-31 18:54:53
+ * @Last Modified time: 2018-11-01 09:59:07
  */
 
 import React from 'react';
@@ -22,7 +22,7 @@ export default function CommonTooltip(props) {
     ...restProps
   } = props;
   const hasContent = !_.isEmpty(content);
-  let tipsNode = null;
+  let tipsNode = title;
   // 如果有正文，渲染自定义的节点
   if (hasContent) {
     tipsNode = (
@@ -31,8 +31,6 @@ export default function CommonTooltip(props) {
         <h4>{content}</h4>
       </div>
     );
-  } else {
-    tipsNode = title;
   }
 
   return (
