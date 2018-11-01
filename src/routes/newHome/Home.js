@@ -657,6 +657,16 @@ export default class Home extends PureComponent {
           <div className={styles.interestContentLink}>
             <CommonCell {...guessYourInterestsProps} />
           </div>
+          <div
+            className={styles.competitionsLink}
+            id={NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME}
+          >
+            <img
+              src={rankPng}
+              alt="投顾能力竞赛"
+              onClick={this.toInvestmentConsultantCompetenceRacePage}
+            />
+          </div>
         </div>
         <div className={styles.mainContent}>
           <div className={styles.shotCutLink}>
