@@ -246,7 +246,7 @@ export default class SignCustomerLabel extends PureComponent {
           <div className={styles.selectedInfo}>
             {
               mainPosition
-                ? '请为已选客户选择或添加一个标签：'
+                ? '请为已选客户选择或添加多个标签：'
                 : null
             }
             {
@@ -255,6 +255,33 @@ export default class SignCustomerLabel extends PureComponent {
                 : null
             }
           </div>
+            {
+              mainPosition ?
+                <div className={styles.addLabelContainer}>
+                  <span className={styles.addLabel}>
+                    <span className={styles.addLabelBtn}>
+                      <span className={styles.addLabelIcon} />
+                      <span className={styles.addLabelText}>添加标签</span>
+                    </span>
+                    <MultiFilterWithSearch
+                      data={custLikeLabel}
+                      value={_.isEmpty(selectedLabels) ? '' : selectedLabels}
+                      className={styles.signSelect}
+                      dataMap={['id', 'labelName']}
+                      filterName="客户标签"
+                      useCustomerFilter
+                      useDefaultLabel
+                      isAlwaysVisible
+                      getOptionItemValue={this.getOptionItemValue}
+                      onChange={this.handleSelect}
+                      onInputChange={this.handleSearch}
+                      searchHeader={this.getSearchHeader()}
+                      listStyle={{ maxHeight: 220 }}
+                      dropdownStyle={{ maxHeight: 324 }}
+                    />
+                  </span>
+                 </div> : null
+            }
           <div className={styles.singleLabel}>
             {mainPosition ?
               selectedLabels
@@ -276,34 +303,6 @@ export default class SignCustomerLabel extends PureComponent {
                     {labelItem.labelName}
                   </Tag>,
                 )
-            }
-            {
-              mainPosition ?
-                <span
-                  className={styles.addLabel}
-                >
-                  <span className={styles.addLabelBtn}>
-                    <span className={styles.addLabelIcon} />
-                    <span className={styles.addLabelText}>添加标签</span>
-                  </span>
-                  <MultiFilterWithSearch
-                    data={custLikeLabel}
-                    value={_.isEmpty(selectedLabels) ? '' : selectedLabels}
-                    className={styles.signSelect}
-                    dataMap={['id', 'labelName']}
-                    filterName="客户标签"
-                    useCustomerFilter
-                    useDefaultLabel
-                    isAlwaysVisible
-                    getOptionItemValue={this.getOptionItemValue}
-                    onChange={this.handleSelect}
-                    onInputChange={this.handleSearch}
-                    searchHeader={this.getSearchHeader()}
-                    listStyle={{ maxHeight: 220 }}
-                    dropdownStyle={{ maxHeight: 324 }}
-                  />
-                </span> :
-                null
             }
           </div>
         </Modal>
