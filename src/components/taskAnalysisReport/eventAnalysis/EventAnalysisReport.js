@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-01 14:16:45
+ * @Last Modified time: 2018-11-01 14:43:23
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import _ from 'lodash';
 import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import EventAnalysisChart from './EventAnalysisChart';
-import { taskOption, customerOption, serviceChannelChangeOption, eventSourceTypes, tableOption } from '../config';
+import { defaultStartTime, defaultEndTime, taskOption, customerOption, serviceChannelChangeOption, eventSourceTypes, tableOption } from '../config';
 import { filterData } from '../utils';
 import { dom } from '../../../helper';
 
@@ -48,9 +48,9 @@ export default class EventAnalysisReport extends PureComponent {
     } } = context;
     this.state = {
       // 任务开始时间
-      startTime: '2018-10-25',
+      startTime: defaultStartTime,
       // 任务结束时间
-      endTime: '2018-10-31',
+      endTime: defaultEndTime,
       // 事件类型数据
       eventTypeOptions: [...missionType, ...custServerTypeFeedBackDict],
       // 事件来源
@@ -75,7 +75,7 @@ export default class EventAnalysisReport extends PureComponent {
   }
 
   componentDidMount() {
-    const {startTime,endTime} = this.state;
+    const { startTime, endTime } = this.state;
     // 获取事件数据
     this.getEventAnalysis({
       startTime,
@@ -85,7 +85,7 @@ export default class EventAnalysisReport extends PureComponent {
 
   componentDidUpdate(prevProps) {
     const { orgId: prevOrgId } = prevProps;
-    const {startTime,endTime} = this.state;
+    const { startTime, endTime } = this.state;
     // 获取事件数据
     if (prevOrgId !== this.props.orgId) {
       this.getEventAnalysis({
@@ -322,9 +322,9 @@ export default class EventAnalysisReport extends PureComponent {
     } = this.state;
     return (
       <div ref = {this.eventAnalysisReportRef} className={styles.eventAnalysisReport}>
-        <ReportTitle title='事件分析报表' />
+        <ReportTitle title="事件分析报表" />
         <ReportFilter
-          dateFilterName='任务截止时间'
+          dateFilterName="任务截止时间"
           startTime={startTime}
           endTime={endTime}
           eventSource={eventSource}
