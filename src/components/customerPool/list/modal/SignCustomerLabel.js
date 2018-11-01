@@ -80,7 +80,7 @@ export default class SignCustomerLabel extends PureComponent {
     return (
       <span className={styles.signItemWrap}>
         <span>{replaceKeyWord(value.labelName, searchValue)}</span>
-        <span className={styles.labelType}>{value.createdOrgName}</span>
+        <span className={styles.labelType} title={value.createdOrgName}>{value.createdOrgName}</span>
       </span>);
   }
 

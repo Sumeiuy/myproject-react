@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
 
-import CommonTooltip from '../../common/biz/CommonTooltip';
+import Tooltip from '../../common/Tooltip';
 import { logCommon } from '../../../decorators/logable';
 import styles from './checkLayout.less';
 import {
@@ -55,14 +55,14 @@ function renderItem(data = {}, params, itemStyle = null) {
           <span>{data.unit || ''}</span>
         </span>
       </div>
-      <CommonTooltip
+      <Tooltip
         title={data.title || ''}
         content={data.description}
         placement="bottom"
         overlayStyle={{ maxWidth: '320px' }}
       >
         <div className={styles.title}>{data.title || ''}</div>
-      </CommonTooltip>
+      </Tooltip>
     </div>
   );
 }

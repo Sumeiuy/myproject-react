@@ -171,7 +171,7 @@ export default class SignCustomerLabel extends PureComponent {
     return (
       <div className={styles.labelItemWrap}>
         <div>{replaceKeyWord(value.labelName, labelValue)}</div>
-        <div className={styles.labelType}>{value.createdOrgName}</div>
+        <div className={styles.labelType} title={value.createdOrgName}>{value.createdOrgName}</div>
       </div>);
   }
 
