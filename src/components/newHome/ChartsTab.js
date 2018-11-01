@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: zhufeiyang
- * @Last Modified time: 2018-09-14 13:46:09
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-30 14:39:46
  */
 
 import React, { PureComponent } from 'react';
@@ -222,7 +222,6 @@ export default class ChartsTab extends PureComponent {
       location,
       cycle
     } = this.props;
-
     const { tgQyFlag } = (empInfo && empInfo.empInfo) || {};
 
     const activeKey = this.getCurrentActiveKey();

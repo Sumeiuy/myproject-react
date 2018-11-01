@@ -1,30 +1,31 @@
 .combinationFilterBox {
-  margin-top: -10px;
+  margin: -10px 0 16px 0;
   .formItem {
     display: inline-block;
-    // &:last-child {
-    //   margin-left: 58px;
-    // }
-    &.treeSelectBox {
+    margin-left: 14px;
+    .searchFilter, .longSearchFilter {
+      max-width: 200px;
+    }
+    .longSearchFilter {
       :global {
-        .ant-select {
-          width: auto !important;
-          min-width: 174px;
-          .ant-select-arrow {
-            transform: scale(.75);
-            border: none;
-            border-top: 10px solid #c2c2c2;
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            height: 0;
-            width: 0;
-            overflow: hidden;
-          }
+        .lego-filter-menuContainer .lego-filter-menu.ant-dropdown-menu {
+          width: 190px;
         }
       }
     }
-    .rankFilter {
-      width: 178px;
+    .moreTextFilter {
+      width: 270px;
+      :global {
+        .lego-filter-menuContainer .lego-filter-menu {
+          width: 180px;
+        }
+        .lego-filter-menuContainer .lego-filter-menu.ant-dropdown-menu {
+          width: 180px;
+        }
+        .lego-filter-filterWrapper > button:first-child .lego-filter-contentShowOnButton .lego-filter-valueShowOnButton {
+          max-width: 180px;
+        }
+      }
     }
   }
 }

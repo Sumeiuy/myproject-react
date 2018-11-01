@@ -111,7 +111,7 @@ export default class MorningBroadcast extends PureComponent {
     return (
       <div className={trueStyles.morning_broadcast} id={introPositionId}>
         <div className={trueStyles.title}>
-          <span>{isNewHome ? '每日晨报' : '晨间播报'}</span>
+          <span className={trueStyles.morningPaper}>{isNewHome ? '每日晨报' : '晨间播报'}</span>
           <span className={trueStyles.more} onClick={() => this.openNewTab('/strategyCenter/broadcastList')} >
             <span>更多</span>
             {

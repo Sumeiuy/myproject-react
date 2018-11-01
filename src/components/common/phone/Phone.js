@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-26 17:16:13
+ * @Last Modified time: 2018-10-31 11:02:01
  */
 
 import React, { PureComponent } from 'react';
@@ -56,31 +56,15 @@ function checkIEHasCallPlugin() {
 }
 
 // 检查浏览器的版本
-// 部分高版本chrome、firefox无法支持PC拨打电话
+// 部分高版本chrome、firefox无法支持PC拨打电话,目前在大多数浏览器都能使用，所以先把版本号设置成较大值
 function checkBowserVersion() {
   // 获取浏览器版本的大版本号
-  const bowserVersion = bowser.version.split('.')[0];
+  const bowserVersion = parseInt(bowser.version.split('.')[0], 10);
   // 判断chrome和firefox浏览器的版本号
-  if ((env.isChrome() && bowserVersion > 20)
-    || (env.isFirefox() && bowserVersion > 20)) {
+  if ((env.isChrome() && bowserVersion > 1000)
+    || (env.isFirefox() && bowserVersion > 1000)) {
     return true;
   }
-  return false;
-}
-
-// 检查音频设备
-function checkAudioDevice() {
-  // navigator.mediaDevices.getUserMedia  最新标准API
-  // navigator.webkitGetUserMedia webkit内核浏览器
-  // navigator.mozGetUserMedia Firefox浏览器
-  // navigator.getUserMedia 旧版API
-  if ((navigator.mediaDevices
-    && navigator.mediaDevices.getUserMedia)
-    || navigator.getUserMedia
-    || navigator.webkitGetUserMedia
-    || navigator.mozGetUserMedia) {
-      return true;
-    }
   return false;
 }
 
@@ -160,11 +144,6 @@ export default class Phone extends PureComponent {
                 return;
               }
             }
-            // 检查音频设备
-            if (!checkAudioDevice()) {
-              this.handleAudioDeviceError();
-              return;
-            }
             this.prepareCall(number);
             // 点击打电话
             this.props.onClick();
@@ -217,17 +196,6 @@ export default class Phone extends PureComponent {
     });
   }
 
-  // 检查音频设备弹框提示
-  @autobind
-  handleAudioDeviceError() {
-    prompt({
-      title: '未安装音频设备！',
-      type: 'warning',
-      okText: '关闭',
-      className: styles.promptError,
-    });
-  }
-
   // TODO 日志查看:找不到方法 未验证
   @autobind
   @logable({ type: 'Click', payload: { name: '点击' } })
@@ -249,11 +217,6 @@ export default class Phone extends PureComponent {
         this.handleBowserVersionError();
         return;
       }
-    }
-    // 检查音频设备
-    if (!checkAudioDevice()) {
-      this.handleAudioDeviceError();
-      return;
     }
     onClick({
       number,

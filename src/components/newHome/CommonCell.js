@@ -2,8 +2,8 @@
  * @Description: 丰富首页-公用单元
  * @Author: Liujianshu
  * @Date: 2018-09-12 17:11:52
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 17:34:15
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-25 19:38:45
  */
 
 import React from 'react';

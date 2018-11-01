@@ -55,6 +55,8 @@ export default class CombinationRank extends PureComponent {
     // 投资顾问
     queryCombinationCreator: PropTypes.func.isRequired,
     creatorList: PropTypes.array.isRequired,
+    // 清空数据
+    clearData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -107,6 +109,7 @@ export default class CombinationRank extends PureComponent {
       riskLevel,
       queryCombinationCreator,
       creatorList,
+      clearData,
     } = this.props;
     return (
       <div className={styles.combinationRankBox}>
@@ -125,6 +128,7 @@ export default class CombinationRank extends PureComponent {
             onTypeChange={onTypeChange}
             queryCombinationCreator={queryCombinationCreator}
             creatorList={creatorList}
+            clearData={clearData}
           />
           <div className={styles.combinationListBox}>
             {this.getCombinationList()}

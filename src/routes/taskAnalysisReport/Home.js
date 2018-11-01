@@ -3,7 +3,7 @@
  * @Author: zhangjun
  * @Date: 2018-10-05 11:24:10
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-25 20:32:39
+ * @Last Modified time: 2018-10-29 15:33:04
  */
 
 import React, { PureComponent } from 'react';
@@ -217,6 +217,7 @@ export default class TaskAnalysisReport extends PureComponent {
             eventAnalysisList={eventAnalysisList}
             getEventSearch={getEventSearch}
             eventSearchList={eventSearchList}
+            orgId={orgId}
           />
         </div>
       </div>
