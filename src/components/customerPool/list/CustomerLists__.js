@@ -166,6 +166,7 @@ export default class CustomerLists extends PureComponent {
     addLabel: PropTypes.func.isRequired,
     // 显示引导页的 ID
     showIntroId: PropTypes.string,
+    checkDuplicationName: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -578,6 +579,7 @@ export default class CustomerLists extends PureComponent {
       signBatchCustLabels,
       addLabel,
       showIntroId,
+      checkDuplicationName,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -788,6 +790,7 @@ export default class CustomerLists extends PureComponent {
           signCustLabels={signCustLabels}
           handleCancelSignLabelCustId={this.removeSignLabelCust}
           addLabel={addLabel}
+          checkDuplicationName={checkDuplicationName}
         />
         <MultiCustomerLabel
           visible={multiSignLabelVisible}
@@ -799,6 +802,7 @@ export default class CustomerLists extends PureComponent {
           condition={condition}
           location={location}
           addLabel={addLabel}
+          checkDuplicationName={checkDuplicationName}
         />
       </div>
     );

@@ -756,6 +756,18 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     );
   }
 
+  // 渲染发起路径按钮
+  @autobind
+  renderCreateTaskButton(title, record) {
+    return title === '标签信息' &&
+      record &&
+      record.custCount > 0 ?
+        (<span className={styles.btnContainer}>
+          <span className={styles.splitLine} />
+          <span className={styles.createTaskBtn} onClick={this.handleCreateTaskBtnClick}>发起任务</span>
+        </span>) : null;
+  }
+
   render() {
     const {
       name = '',
@@ -798,6 +810,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
 
     // 添加id到dataSource
     newDataSource = this.addIdToDataSource(newDataSource);
+
     const uploadProps = {
       data: {
         empId: emp.getId(),
@@ -863,20 +876,14 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
                   // 添加按钮事件
                   addBtnCallback={this.handleAddCustomerFromSearch}
                 />
+                {this.renderCreateTaskButton(title, record)}
               </div>
               :
               <div className={styles.multiCust}>
                 <Spin className={styles.uploadLoading} spinning={uploadLoading} />
                 <span className={styles.importCust}>{uploadElement}</span>
                 <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
-                {
-                  title === '标签信息' && record && record.custCount > 0 ?
-                    <span className={styles.btnContainer}>
-                      <span className={styles.splitLine} />
-                      <span className={styles.createTaskBtn} onClick={this.handleCreateTaskBtnClick}>发起任务</span>
-                    </span>
-                    : null
-                }
+                {this.renderCreateTaskButton(title, record)}
               </div>
           }
           <a className={styles.toggleBtn} onClick={this.toggleAddWay}>

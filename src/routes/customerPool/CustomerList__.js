@@ -345,6 +345,7 @@ const effects = {
   queryDefinedLabelsInfo: 'customerPool/queryDefinedLabelsInfo',
   // 查询搜索联想词
   getHotPossibleWds: 'customerPool/getHotPossibleWds',
+  checkDuplicationName: 'customerLabel/checkDuplicationName', // 检查标签是否唯一
 };
 
 const mapStateToProps = state => ({
@@ -466,6 +467,7 @@ const mapDispatchToProps = {
   addLabel: dva.generateEffect(effects.addLabel),
   queryDefinedLabelsInfo: dva.generateEffect(effects.queryDefinedLabelsInfo),
   getHotPossibleWds: dva.generateEffect(effects.getHotPossibleWds, { loading: false }),
+  checkDuplicationName: dva.generateEffect(effects.checkDuplicationName, { loading: false }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -552,6 +554,7 @@ export default class CustomerList extends PureComponent {
     // 搜索联想词
     getHotPossibleWds: PropTypes.func.isRequired,
     custListHotPossibleWdsList: PropTypes.array.isRequired,
+    checkDuplicationName: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -1148,6 +1151,7 @@ export default class CustomerList extends PureComponent {
       definedLabelsInfo,
       getHotPossibleWds,
       custListHotPossibleWdsList,
+      checkDuplicationName,
     } = this.props;
     const {
       sortDirection,
@@ -1261,6 +1265,7 @@ export default class CustomerList extends PureComponent {
           custLikeLabel={custLikeLabel}
           addLabel={addLabel}
           showIntroId={CUSTOMER_LIST_INTRO_FIRST_STEP_ID}
+          checkDuplicationName={checkDuplicationName}
         />
       </div>
     );

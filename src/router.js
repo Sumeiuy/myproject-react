@@ -61,6 +61,7 @@ const Routers = ({ history, app }) => {
       <Main>
         <Switch>
           <Redirect exact from="/" to="/empty" />
+          <Redirect exact from="/report" to="/statisticalQuery/report" />
           <Redirect exact from="/invest" to="/statisticalQuery/report" />
           <Redirect exact from="/custAllot" to="/businessApplyment/customerPartition/custAllot" />
           <Redirect exact from="/departmentCustAllot" to="/businessApplyment/customerPartition/departmentCustAllot" />
