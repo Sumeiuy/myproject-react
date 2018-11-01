@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-10-31 21:12:02
+ * @Last Modified time: 2018-11-01 09:53:16
  */
 
 import React from 'react';
@@ -375,23 +375,32 @@ export default class CustomerProfile extends React.PureComponent {
               {isAllocate === '0' && '(未分配)'}
             </p>
             <p className={styles.item}>
-              <Tooltip placement="bottom" title="客户类型：高净值">
-                {isHighWorth && <span className={styles.highWorth}>高</span>}
-              </Tooltip>
-              <Tooltip placement="bottom" title={`风险等级：${riskLevel.title}`}>
-                {
-                  riskLevel
-                  && <span className={styles.riskLevel}>
+              {
+                isHighWorth
+                && <Tooltip placement="bottom" title="客户类型：高净值">
+                  <span className={styles.highWorth}>高</span>
+                </Tooltip>
+              }
+              {
+                riskLevel
+                && <Tooltip placement="bottom" title={`风险等级：${riskLevel.title}`}>
+                  <span className={styles.riskLevel}>
                     {riskLevel.name}
                   </span>
-                }
-              </Tooltip>
-              <Tooltip placement="bottom" title="签约客户">
-                {isSign && <span className={styles.sign}>签</span>}
-              </Tooltip>
-              <Tooltip placement="bottom" title={`客户等级：${rankImg.title}`}>
-                {rankImg && <img className={styles.rank} src={rankImg.src} alt="" />}
-              </Tooltip>
+                </Tooltip>
+              }
+              {
+                isSign
+                && <Tooltip placement="bottom" title="签约客户">
+                  <span className={styles.sign}>签</span>
+                </Tooltip>
+              }
+              {
+                rankImg
+                && <Tooltip placement="bottom" title={`客户等级：${rankImg.title}`}>
+                  <img className={styles.rank} src={rankImg.src} alt="" />
+                </Tooltip>
+              }
             </p>
           </div>
           <div className={styles.col}>
