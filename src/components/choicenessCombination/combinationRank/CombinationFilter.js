@@ -16,8 +16,6 @@ import styles from './combinationFilter.less';
 import logable from '../../../decorators/logable';
 import { yieldRankList, riskDefaultItem } from '../config';
 
-// 所有类型的默认 key 值
-const DEFAULT_TYPE = '31001';
 const EMPTY_LIST = [];
 
 export default class CombinationRank extends PureComponent {
@@ -36,6 +34,7 @@ export default class CombinationRank extends PureComponent {
     riskLevel: PropTypes.string,
     queryCombinationCreator: PropTypes.func.isRequired,
     creatorList: PropTypes.array.isRequired,
+    clearData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -48,7 +47,7 @@ export default class CombinationRank extends PureComponent {
     super(props);
     this.state = {
       adviser: '',
-      type: DEFAULT_TYPE,
+      type: '',
     };
   }
 
@@ -103,11 +102,6 @@ export default class CombinationRank extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '搜索投资顾问' } })
   handleCreatorInputChange(value) {
-    // this.setState({
-    //   adviser: value,
-    // }, () => {
-    //   this.props.queryCombinationCreator({ keyword: value});
-    // });
     this.props.queryCombinationCreator({ keyword: value});
   }
 
@@ -116,14 +110,27 @@ export default class CombinationRank extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '组合类型',
+      name: '投资顾问',
       value: '$args[0].value',
     },
   })
   handleCreatorSelectChange(item) {
-    this.setState({
-      adviser: item.value,
-    });
+    const { value } = item;
+    const { type } = this.state;
+    const { onTypeChange, clearData } = this.props;
+    if(!_.isEmpty(item)) {
+      this.setState({
+        adviser: value,
+      }, () => {
+        onTypeChange({
+          type,
+          adviserId: value.empId,
+        });
+        clearData({
+          creatorList: [],
+        });
+      });
+    }
   }
 
   // 切换组合类型
@@ -137,9 +144,13 @@ export default class CombinationRank extends PureComponent {
   })
   handleComposeTypeChange(item) {
     const { value } = item;
+    const { adviser } = this.state;
     this.setState({
       type: value,
-    }, this.props.ypeChange({type: value}));
+    }, this.props.onTypeChange({
+      type: value,
+      adviserId: adviser.empId,
+    }));
   }
 
   render() {
@@ -150,7 +161,8 @@ export default class CombinationRank extends PureComponent {
       creatorList,
     } = this.props;
     const { adviser, type } = this.state;
-    let composeData = [composeType[0]];
+    // 将所有组合的 value 值设置为空
+    let composeData = [{ ...composeType[0], value: '' }];
     if (composeType[0] && !_.isEmpty(composeType[0].children)) {
       composeData = composeData.concat([...composeType[0].children]);
     }
@@ -168,7 +180,7 @@ export default class CombinationRank extends PureComponent {
         </div>
         <div className={styles.formItem}>
           <SingleFilter
-            className={styles.searchFilter}
+            className={styles.longSearchFilter}
             filterName="投资顾问"
             showSearch
             placeholder="员工工号/员工姓名"
@@ -184,6 +196,7 @@ export default class CombinationRank extends PureComponent {
         </div>
         <div className={styles.formItem}>
           <SingleFilter
+            className={styles.moreTextFilter}
             filterName="收益率排序"
             filterId="rankValue"
             data={yieldRankList}
@@ -195,6 +208,7 @@ export default class CombinationRank extends PureComponent {
         </div>
         <div className={styles.formItem}>
           <SingleFilter
+            className={styles.searchFilter}
             filterName="风险等级"
             filterId="riskLevel"
             data={this.getTreeData()}

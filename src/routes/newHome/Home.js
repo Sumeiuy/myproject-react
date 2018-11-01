@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 14:46:57
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-31 09:47:16
  */
 
 import React, { PureComponent } from 'react';
@@ -30,7 +30,7 @@ import { padSightLabelDesc } from '../../config';
 import styles from './home.less';
 import { MorningBroadcast } from '../../components/customerPool/home';
 import { DATE_FORMAT_STRING, MONTH_DATE_FORMAT, navArray } from './config';
-import rankPng from './rank.png';
+import rankPng from './ranks.png';
 import {
   NEW_HOME_INTRO_FIRST_SEEP_IDNAME,
   NEW_HOME_INTRO_THIRD_SEEP_IDNAME,
@@ -123,11 +123,14 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 // 事件提示的 code
 const TODAY_EVENT_CODE = '4';
+// 默认第一个神策埋点名为 搜索栏 点击下一步或者上一步会重写 facingOneModele 的值
 let facingOneModele = '搜索栏';
-let count = -1;
+// 神策埋点需要知道用户点击下一步还是上一步 第一步搜索栏是0 用来判断  判断完会重绘
+let count = 0;
+// 神策埋点用来判断是第几个弹出框点击了上一步还是下一步
+let countStep = 1 ;
 
 // 获取新手引导步骤列表  因为需求更改了引导顺序 但是NEW_HOME_INTRO_后面的数字不影响顺序  只需要更改newStepList里面的排序顺序就能改变引导显示的顺序
-
 function getIntroStepListInNewHome() {
   const newStepList = [
     {
@@ -265,7 +268,7 @@ export default class Home extends PureComponent {
     // 猜你感兴趣
     queryGuessYourInterests({ orgId: this.loginOrgId });
     // 产品日历
-    queryProductCalendar({date});
+    queryProductCalendar({ date });
     // 首席观点
     queryChiefView({
       curPageNum: 1,
@@ -334,10 +337,10 @@ export default class Home extends PureComponent {
     const { code } = item;
     // http://168.61.9.158:15902/htsc-product-base/financial_product_query.do?router=homePage&clientType=crm
     push({
-        pathname: '/fsp/productCenter/homePage',
-        state: {
-          url: `/htsc-product-base/financial_product_query.do?router=homePage&type=${code}&clientType=crm`,
-        }
+      pathname: '/fsp/productCenter/homePage',
+      state: {
+        url: `/htsc-product-base/financial_product_query.do?router=homePage&type=${code}&clientType=crm`,
+      }
     });
   }
 
@@ -346,16 +349,16 @@ export default class Home extends PureComponent {
   transferProductData() {
     const { productCalendar } = this.props;
     const productData = _.isEmpty(productCalendar)
-    ? []
-    : productCalendar.map(item => {
-      const newItem = {...item};
-      if (newItem.code === TODAY_EVENT_CODE) {
-        newItem.title = `今日关注事件${item.value}件`;
-      } else {
-        newItem.title = `今日${item.name}${item.value}只`;
-      }
-      return newItem;
-    });
+      ? []
+      : productCalendar.map(item => {
+        const newItem = { ...item };
+        if (newItem.code === TODAY_EVENT_CODE) {
+          newItem.title = `今日关注事件${item.value}件`;
+        } else {
+          newItem.title = `今日${item.name}${item.value}只`;
+        }
+        return newItem;
+      });
     return productData;
   }
 
@@ -466,16 +469,18 @@ export default class Home extends PureComponent {
   handleIntorButtomChange(targetElement){
     const data = stepIds[targetElement.id];
     facingOneModele = data.name;
-    // count = -1  data.step从第0开始 判断step是下一步还是上一步
+    // count = 0  data.step从第0开始 判断step是下一步还是上一步
     let step = count < data.step ? '下一步' : '上一步';
     count = data.step;
     logCommon({
       type: 'Click',
       payload: {
         name: data && step,
-        value: data && data.id,
+        value: data && `第${countStep}个`,
       },
     });
+    // 从第0个开始点下一步是0  第一步点上一步是1  写在这里是神策需要先上报再修改 不然显示会混乱
+    step === '下一步' ? countStep++ : countStep--;
   }
 
   // 神策埋点 显示是第几个弹框点击的关闭
@@ -568,6 +573,7 @@ export default class Home extends PureComponent {
     };
     // 重点关注
     const keyAttentionProps = {
+      icon: 'focusAttention',
       title: '重点关注',
       data: keyAttention,
       onClick: this.handleLinkToCustomerList,
@@ -575,6 +581,7 @@ export default class Home extends PureComponent {
     };
     // 猜你感兴趣
     const guessYourInterestsProps = {
+      icon: 'interested',
       title: '猜你感兴趣',
       data: guessYourInterests,
       isNeedExtra: true,
@@ -641,18 +648,23 @@ export default class Home extends PureComponent {
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
+          <div className={styles.competitionsLink}>
+            <img src={rankPng} alt="投顾能力竞赛" onClick={this.toInvestmentConsultantCompetenceRacePage} />
+          </div>
           <div className={styles.mostFocusContentLink}>
             <CommonCell {...keyAttentionProps} />
           </div>
           <div className={styles.interestContentLink}>
             <CommonCell {...guessYourInterestsProps} />
           </div>
-          <div className={styles.competitionsLink}>
+          <div
+            className={styles.competitionsLink}
+            id={NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME}
+          >
             <img
               src={rankPng}
               alt="投顾能力竞赛"
               onClick={this.toInvestmentConsultantCompetenceRacePage}
-              id={NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME}
             />
           </div>
         </div>

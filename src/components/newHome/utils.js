@@ -13,21 +13,21 @@ import { number } from '../../helper';
 function getCustClassChartData(data) {
   const dataSource = [
     {
-      name: '零售客户',
+      name: '零售',
       filterValue: 'Y',
       filterId: 'custClass',
       filterName: '客户类型',
       style: {
-        background: '#4ed0f1',
+        background: '#1ac4f8',
       },
     },
     {
-      name: '高净值客户',
+      name: '高净值',
       filterValue: 'N',
       filterId: 'custClass',
       filterName: '客户类型',
       style: {
-        background: '#1aa1e0',
+        background: '#008fd2',
       }
     }
   ];
@@ -172,30 +172,30 @@ function getCustClassChartData(data) {
 function getCustomTypeChartData(data) {
   const dataSource = [
     {
-      name: '个人客户',
+      name: '个人',
       filterValue: 'per',
       filterId: 'customType',
       filterName: '客户性质',
       style: {
-        background: '#ffd5a6',
+        background: '#fec965',
       }
     },
     {
-      name: '普通机构客户',
+      name: '普通机构',
       filterValue: 'org',
       filterId: 'customType',
       filterName: '客户性质',
       style: {
-        background: '#ffb460',
+        background: '#ff8008',
       },
     },
     {
-      name: '产品客户',
+      name: '产品',
       filterValue: 'prod',
       filterId: 'customType',
       filterName: '客户性质',
       style: {
-        background: '#ff8700',
+        background: '#d14c0f',
       },
     }
   ];
@@ -383,7 +383,7 @@ function getMaxCostRateChartData(data) {
   const xAxisLabel = ['-30', '-20', '-10', '0', '10', '20', '30'];
   let dataSource = [
     {
-      name: '盈亏比低于-30%',
+      name: '盈亏比：(-∞,-30%)',
       value: 0,
       filterValue: {
         minVal: null,
@@ -393,7 +393,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：-30% ~ -20%',
+      name: '盈亏比：[-30%, -20%)',
       value: 0,
       filterValue: {
         minVal: '-30',
@@ -403,7 +403,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：-20% ~ -10%',
+      name: '盈亏比：[-20%, -10%)',
       value: 0,
       filterValue: {
         minVal: '-20',
@@ -413,7 +413,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：-10% ~ 0',
+      name: '盈亏比：[-10%, 0)',
       value: 0,
       filterValue: {
         minVal: '-10',
@@ -423,7 +423,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：0 ~ 10%',
+      name: '盈亏比：[0, 10%)',
       value: 0,
       filterValue: {
         minVal: '0',
@@ -433,7 +433,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：10% ~ 20%',
+      name: '盈亏比：[10%, 20%)',
       value: 0,
       filterValue: {
         minVal: '10',
@@ -443,7 +443,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：20% ~ 30%',
+      name: '盈亏比：[20%, 30%)',
       value: 0,
       filterValue: {
         minVal: '20',
@@ -453,7 +453,7 @@ function getMaxCostRateChartData(data) {
       filterId: 'maxCostRate',
     },
     {
-      name: '盈亏比：高于30%',
+      name: '盈亏比：[30%, +∞)',
       value: 0,
       filterValue: {
         minVal: '30',
@@ -477,7 +477,7 @@ function getMaxCostRateChartData(data) {
       right: '10px',
       bottom: '0px',
       top: '15px',
-      containLabel: false
+      containLabel: false,
     },
     tooltip: {
       position: 'top',
@@ -507,7 +507,22 @@ function getMaxCostRateChartData(data) {
     yAxis: [
       {
         type: 'value',
-        show: false,
+        show: true,
+        axisLine: {
+          show: false
+        },
+        axisTick: {
+          show: false
+        },
+        axisLabel: {
+          show: false
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#eee'
+          }
+        },
+       splitNumber: 5,
       }
     ],
     series: [
@@ -533,7 +548,7 @@ function getPftAmtChartData(data) {
   ];
   let dataSource = [
     {
-      name: '亏损大于100万元',
+      name: '盈亏幅度在[-∞, -100)万元',
       value: 0,
       filterValue: {
         minVal: null,
@@ -543,7 +558,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '亏损在50-100万元',
+      name: '盈亏幅度在[-100, -50)万元',
       value: 0,
       filterValue: {
         minVal: '-1000000',
@@ -553,7 +568,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '亏损在10-50万元',
+      name: '盈亏幅度在[-50, -10)万元',
       value: 0,
       filterValue: {
         minVal: '-500000',
@@ -563,7 +578,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '亏损在5-10万元',
+      name: '盈亏幅度在[-10, -5)万元',
       value: 0,
       filterValue: {
         minVal: '-100000',
@@ -573,7 +588,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '亏损在1-5万元',
+      name: '盈亏幅度在[-5, -1)万元',
       value: 0,
       filterValue: {
         minVal: '-50000',
@@ -583,7 +598,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '亏损在1万元以内',
+      name: '盈亏幅度在[-1, 0)万元',
       value: 0,
       filterValue: {
         minVal: '-10000',
@@ -593,7 +608,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈利在1万元以内',
+      name: '盈亏幅度在[0, 1)万元',
       value: 0,
       filterValue: {
         minVal: '0',
@@ -603,7 +618,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈利在1-5万元',
+      name: '盈亏幅度在[1, 5)万元',
       value: 0,
       filterValue: {
         minVal: '10000',
@@ -613,7 +628,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈利在5-10万元',
+      name: '盈亏幅度在[5, 10)万元',
       value: 0,
       filterValue: {
         minVal: '50000',
@@ -623,7 +638,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈利在10-50万元',
+      name: '盈亏幅度在[10, 50)万元',
       value: 0,
       filterValue: {
         minVal: '100000',
@@ -633,7 +648,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈利在50-100万元',
+      name: '盈亏幅度在[50, 100)万元',
       value: 0,
       filterValue: {
         minVal: '500000',
@@ -643,7 +658,7 @@ function getPftAmtChartData(data) {
       filterId: 'pftAmt',
     },
     {
-      name: '盈利在100万元以上',
+      name: '盈亏幅度在[100, +∞)万元',
       value: 0,
       filterValue: {
         minVal: '1000000',
@@ -697,7 +712,22 @@ function getPftAmtChartData(data) {
     yAxis: [
       {
         type: 'value',
-        show: false,
+        show: true,
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
+        axisLabel: {
+          show: false,
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#eee',
+          }
+        },
+       splitNumber: 5,
       }
     ],
     series: [
@@ -717,117 +747,81 @@ function getPftAmtChartData(data) {
 
 // 持仓分布
 function getHoldingChart(data) {
-  let dataSource = [
-    {
-      name: '股票',
-      style: {
-        background: '#d75c5b',
-      }
-    },
-    {
-      name: '债券',
-      style: {
-        background: '#ed7e7d',
-      },
-    },
-    {
-      name: '公募',
-      style: {
-        background: '#fba415',
-      },
-    },
-    {
-      name: '私募',
-      style: {
-        background: '#f8c361',
-      },
-    },
-    {
-      name: '紫金',
-      style: {
-        background: '#9edde6',
-      },
-    },
-    {
-      name: 'OTC',
-      style: {
-        background: '#41a9e4',
-      },
-    }
-  ];
-  if (data.holdingDistribution) {
-    dataSource = _.map(dataSource, (item, index) => ({
-      ...item,
-      value: (data.holdingDistribution[index] && data.holdingDistribution[index].asset) || 0,
-    }));
+  if (_.isEmpty(data)) {
+    return false;
   }
-
-  function reverseData(array) {
-    let returnValue = [];
-    for( let i = array.length - 1; i >= 0; i--) {
-      returnValue.push({
-        value: dataSource[i].value,
-        name: dataSource[i].name,
-        itemStyle: {
-          normal: {
-            color: dataSource[i].style.background,
-          },
-        }
-      });
+  // 1. 获取所有的数据
+  let values = _.map(data, item => item.asset || 0);
+  // 2. 将数据与指标轴名称合并到一起
+  const indicators = _.map(data, item => {
+    const { type, asset } = item;
+    let max = Math.max(...values);
+    let min = Math.min(...values);
+    if (max === min && min === 0) {
+      max = 10;
     }
-    return returnValue;
-  }
+    return {
+      name: `${type}|${asset}`,
+      max: max * 1.1,
+      min: - (max * 0.5),
+    };
+  });
 
   const option = {
     tooltip: {
-      position: 'right',
-      backgroundColor: 'rgba(2, 22, 55, 0.8)',
-      padding: 10,
-      textStyle: {
-        fontSize: 12,
-      },
-      formatter: (params) => {
-        const item = transformItemUnit(params.data.value);
-        const data = {
-          value: item.newItem,
-          unit: item.newUnit,
-        };
-        return `${params.data.name} 资产数：${data.value}${data.unit}`;
-      }
+      trigger: 'axis',
     },
-    grid: {
-      containLabel: false
+    radar: {
+      indicator:  indicators,
+      center: ['50%','50%'],
+      radius: 45,
+      splitNumber: 3,
+      name: {
+        formatter: (name) => {
+          const labels = name.split('|');
+          const text = labels[0];
+          const value = Number(labels[1]);
+          const formatedV = number.formatToUnit({ num: value, floatLength:2 });
+          return `{normal|${text}}\n{normal|${formatedV}}`;
+        },
+        axisLine: {
+          lineStyle: {
+              color: '#fec965',
+              },
+      },
+        rich: {
+          name: {
+            fontSize: 12,
+            color: 'red',
+            align: 'center',
+          }
+        },
+      },
     },
     series: [
       {
-        type: 'pie',
-        radius: ['54%', '78%'],
-        avoidLabelOverlap: false,
-        label: {
+        type: 'radar',
+        name: '持仓分布',
+        itemStyle: {
           normal: {
-            show: false,
-            position: 'center'
+            lineStyle: {
+               color : '#ff8008',
+            },
+            areaStyle: {
+              color: '#fec965',
+            },
+         }
+       },
+        symbol: 'circle',
+        data: [
+          {
+            value: values,
           },
-          emphasis: {
-            show: true,
-            textStyle: {
-              fontSize: '14',
-            }
-          }
-        },
-        labelLine: {
-          normal: {
-            show: false
-          }
-        },
-        data: reverseData(dataSource),
-      }
-    ]
+        ],
+      },
+    ],
   };
-  return {
-    dataSource,
-    option,
-  };
+  return option;
 }
 
 export {

@@ -11,6 +11,7 @@ import { Row, Col, Popover } from 'antd';
 import _ from 'lodash';
 import 'echarts-liquidfill';
 
+import CommonTooltip from '../../common/biz/CommonTooltip';
 import CheckLayout from './CheckLayout__';
 import CustomerService from './CustomerService';
 import Funney from './Funney__';
@@ -406,18 +407,17 @@ export default class PerformanceIndicators extends PureComponent {
                 cursor: 'auto',
               }}
             />
-              <Popover
+              <CommonTooltip
                 title={param.headLine}
                 content={description}
                 placement="bottom"
                 mouseEnterDelay={0.2}
-                overlayClassName={antdStyles.popoverClass}
               >
-              <div
-                className={styles.clickContent}
-                onClick={() => { this.aggregationToList(param.data, param.data[0].value || 0 ); }}
-              />
-              </Popover>
+                <div
+                  className={styles.clickContent}
+                  onClick={() => { this.aggregationToList(param.data, param.data[0].value || 0 ); }}
+                />
+              </CommonTooltip>
           </IfEmpty>
         </RectFrame>
       </Col>
@@ -500,7 +500,7 @@ export default class PerformanceIndicators extends PureComponent {
   // 服务指标（投顾绩效）
   renderServiceIndicators(param) {
     const performanceData = [];
-    const colors = ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'];
+    const colors = ['#008fd2', '#008fd2', '#008fd2', '#008fd2'];
     _.forEach(
       param.data,
       (item, index) => (
@@ -528,69 +528,27 @@ export default class PerformanceIndicators extends PureComponent {
                 }}
               />
               <div className={trueStyles.labelWrap}>
-                <Popover
-                  title={data[0] && data[0].name}
-                  content={data[0] && data[0].description}
-                  placement="bottom"
-                  mouseEnterDelay={0.2}
-                  overlayStyle={{ maxWidth: '320px' }}
-                  overlayClassName={antdStyles.popoverClass}
-                >
-                {/*
-                  *data.value为null,给定默认值为0
-                */}
-                  <span
-                    className={trueStyles.chartLabel}
-                    onClick={() => { this.toList(0, data[0].value || 0, data[0].name); }}
-                  >
-                    {data[0] && data[0].name}
-                  </span>
-                </Popover>
-                <Popover
-                  title={data[1] && data[1].name}
-                  content={data[1] && data[1].description}
-                  placement="bottom"
-                  mouseEnterDelay={0.2}
-                  overlayStyle={{ maxWidth: '320px' }}
-                  overlayClassName={antdStyles.popoverClass}
-                >
-                  <span
-                    className={trueStyles.chartLabel}
-                    onClick={() => { this.toList(1, data[1].value || 0, data[1].name); }}
-                  >
-                    {data[1] &&data[1].name}
-                  </span>
-                </Popover>
-                <Popover
-                  title={data[2] && data[2].name}
-                  content={data[2] && data[2].description}
-                  placement="bottom"
-                  mouseEnterDelay={0.2}
-                  overlayStyle={{ maxWidth: '320px' }}
-                  overlayClassName={antdStyles.popoverClass}
-                >
-                  <span
-                    onClick={() => { this.toList(2, data[2].value || 0, data[2].name); }}
-                    className={trueStyles.chartLabel}
-                  >
-                    {data[2] &&data[2].name}
-                  </span>
-                </Popover>
-                <Popover
-                  title={data[3] && data[3].name}
-                  content={data[3] && data[3].description}
-                  placement="bottom"
-                  mouseEnterDelay={0.2}
-                  overlayStyle={{ maxWidth: '320px' }}
-                  overlayClassName={antdStyles.popoverClass}
-                >
-                  <span
-                    onClick={() => { this.toList(3, data[3].value || 0, data[3].name); }}
-                    className={trueStyles.chartLabel}
-                  >
-                    {data[3] &&data[3].name}
-                  </span>
-                </Popover>
+                {
+                  _.map(data, (item, index) => {
+                    const { name, description, value } = item;
+                    return (
+                      <CommonTooltip
+                        title={name}
+                        content={description}
+                        placement="bottom"
+                        mouseEnterDelay={0.2}
+                        overlayStyle={{ maxWidth: '320px' }}
+                      >
+                        <span
+                          className={trueStyles.chartLabel}
+                          onClick={() => { this.toList(index, value, name); }}
+                        >
+                          {name}
+                        </span>
+                      </CommonTooltip>
+                    );
+                  })
+                }
               </div>
             </div>
           </IfEmpty>
