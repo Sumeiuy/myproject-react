@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-16 08:50:17
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-19 14:10:57
+ * @Last Modified time: 2018-10-31 10:38:54
  * @description 新版客户360详情交易数据中比例展示Cell
  */
 import React from 'react';
@@ -12,7 +12,7 @@ import { Popover } from 'antd';
 
 import Icon from '../common/Icon';
 import { displayMoney } from '../customerDetailAccountInfo/utils';
-import { calcSameTimeRate, getRateTipWhenLastEqual0, getRateTip } from './utils';
+import { calcSameTimeRate, getRateTip } from './utils';
 import { number } from '../../helper';
 
 import styles from './cell.less';
@@ -28,7 +28,7 @@ export default function RateCell(props) {
   const isAllZero = last === 0 && current === 0;
   const notDisPlayTip = ascRateEqualO || isAllZero;
   // 2. 展示的比率提示信息
-  const tips = last === 0 ? getRateTipWhenLastEqual0(current) : getRateTip(last, current);
+  const tips = getRateTip(last, current, isMoney);
   const ascCls = cx({
     [styles.asc]: tips.isAsc,
     [styles.desc]: !tips.isAsc,
