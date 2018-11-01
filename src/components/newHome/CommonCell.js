@@ -87,14 +87,14 @@ export default function CommonCell(props) {
   });
   // 渲染标题
   const renderTitle = isNeedTitle
-  ? <h2 className={titleClass}>
+    ? <h2 className={titleClass} id={introPositionId}>
     {renderMore}
     {title}
   </h2>
   : null;
 
   return (
-    <div className={styles.commonWrapper} id={introPositionId}>
+    <div className={styles.commonWrapper}>
       {renderTitle}
       {
         _.isEmpty(data)
