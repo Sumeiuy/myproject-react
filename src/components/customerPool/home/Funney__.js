@@ -3,14 +3,14 @@
  * @Author: zhangjunli
  * @Date: 2018-10-31 20:04:34
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-10-31 20:10:39
+ * @Last Modified time: 2018-11-01 14:37:48
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-import CommonTooltip from '../../common/biz/CommonTooltip';
+import Tooltip from '../../common/Tooltip';
 import { linkTo } from './homeIndicators_';
 import { homeModelType } from '../config';
 import IECharts from '../../IECharts';
@@ -145,7 +145,7 @@ function Funney({ dataSource, push, cycle, location }, { empInfo }) {
           onClick={() => handleIntroClick(item)}
         >
           <div className={styles.count1}>
-            <CommonTooltip
+            <Tooltip
               title={item.value}
               content={item.description}
               placement="bottom"
@@ -153,10 +153,10 @@ function Funney({ dataSource, push, cycle, location }, { empInfo }) {
               overlayStyle={{ maxWidth: '320px' }}
             >
               {item.value}
-            </CommonTooltip>
+            </Tooltip>
           </div>
           <div className={styles.count2}>
-            <CommonTooltip
+            <Tooltip
               title={`${item.property}${item.unit}`}
               content={item.propertyDesc}
               placement="bottom"
@@ -165,7 +165,7 @@ function Funney({ dataSource, push, cycle, location }, { empInfo }) {
             >
               <span className={styles.properyValue}>{`/ ${item.property}`}</span>
               <span className={styles.unit}>{item.unit}</span>
-            </CommonTooltip>
+            </Tooltip>
           </div>
         </div>
       ),

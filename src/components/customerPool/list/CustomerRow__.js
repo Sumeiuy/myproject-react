@@ -2,15 +2,16 @@
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-10-31 21:39:24
+ * @Last Modified time: 2018-11-01 15:01:04
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox, Tooltip } from 'antd';
+import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+import Tooltip from '../../common/Tooltip';
 import QuickMenu from './QuickMenu';
 import SixMonthEarnings from './SixMonthEarnings';
 import MatchArea from './individualInfo/MatchArea';

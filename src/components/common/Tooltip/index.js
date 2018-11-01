@@ -3,7 +3,7 @@
  * @Author: Liujianshu-K0240007
  * @Date: 2018-10-31 10:12:58
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-11-01 09:59:07
+ * @Last Modified time: 2018-11-01 14:39:00
  */
 
 import React from 'react';
@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { Tooltip } from 'antd';
 import _ from 'lodash';
 
-import styles from './commonTooltip.less';
+import styles from './index.less';
 
 export default function CommonTooltip(props) {
   const {
