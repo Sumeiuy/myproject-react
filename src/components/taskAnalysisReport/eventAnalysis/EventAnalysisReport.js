@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-31 13:32:06
+ * @Last Modified time: 2018-11-01 14:43:23
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,7 @@ import _ from 'lodash';
 import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import EventAnalysisChart from './EventAnalysisChart';
-import { taskOption, customerOption, serviceChannelChangeOption, eventSourceTypes, tableOption } from '../config';
+import { defaultStartTime, defaultEndTime, taskOption, customerOption, serviceChannelChangeOption, eventSourceTypes, tableOption } from '../config';
 import { filterData } from '../utils';
 import { dom } from '../../../helper';
 
@@ -48,17 +48,17 @@ export default class EventAnalysisReport extends PureComponent {
     } } = context;
     this.state = {
       // 任务开始时间
-      startTime: '2018-10-12',
+      startTime: defaultStartTime,
       // 任务结束时间
-      endTime: '2018-10-18',
+      endTime: defaultEndTime,
       // 事件类型数据
       eventTypeOptions: [...missionType, ...custServerTypeFeedBackDict],
-      // 事件类型
-      eventType: '',
       // 事件来源
       eventSource: '',
       // 事件名称
       eventName: '',
+      // 事件类型
+      eventType: '',
       // 表格数据
       option: {
         eventReportList: {},
@@ -75,7 +75,7 @@ export default class EventAnalysisReport extends PureComponent {
   }
 
   componentDidMount() {
-    const {startTime,endTime} = this.state;
+    const { startTime, endTime } = this.state;
     // 获取事件数据
     this.getEventAnalysis({
       startTime,
@@ -85,7 +85,7 @@ export default class EventAnalysisReport extends PureComponent {
 
   componentDidUpdate(prevProps) {
     const { orgId: prevOrgId } = prevProps;
-    const {startTime,endTime} = this.state;
+    const { startTime, endTime } = this.state;
     // 获取事件数据
     if (prevOrgId !== this.props.orgId) {
       this.getEventAnalysis({
@@ -111,7 +111,7 @@ export default class EventAnalysisReport extends PureComponent {
     this.setState({
       ...obj,
     }, () => {
-      const query = _.omit(this.state, 'eventTypeOptions');
+      const query = _.omit(this.state, ['eventTypeOptions', 'option']);
       this.getEventAnalysis(query);
     });
   }
@@ -138,7 +138,10 @@ export default class EventAnalysisReport extends PureComponent {
         break;
     }
 
-    this.setState({ eventTypeOptions });
+    this.setState({
+       eventTypeOptions,
+       eventType: '',
+      });
   }
 
   // 事件搜索
@@ -163,20 +166,17 @@ export default class EventAnalysisReport extends PureComponent {
     // 获取事件分析报表的top
     const reportTop = this.eventAnalysisReportRef.current.offsetTop;
     // 获取事件分析报表的宽高
-    const { width: reportWidth, height: reportHeight} = dom.getRect(eventAnalysisReportDom);
-    // 当鼠标位置加上图表的宽度/高度大于报表的宽度/高度时候 图表位置放在最右方/最下方
-    let eventAnalysisChartTop =  `${pageY - reportTop + 20}px`;
-    let eventAnalysisChartLeft =  `${pageX}px`;
+    const { width: reportWidth} = dom.getRect(eventAnalysisReportDom);
+    // 让图表位置显示在鼠标位置上方50px处，当鼠标位置+图表位置一半的时候图表位置为报表的最右方
+    let eventAnalysisChartTop =  `${pageY - reportTop - 374 - 50}px`;
+    let eventAnalysisChartLeft =  `${pageX - 312}px`;
     // 图表宽度624px，高度374px
-    if (pageX + 624 > reportWidth) {
+    if (pageX + 312 > reportWidth) {
       eventAnalysisChartLeft = `${reportWidth - 624}px`;
     }
-    if (pageY + 374 > reportTop + reportHeight) {
-      eventAnalysisChartTop = `${ reportHeight - 374}px`;
-    }
-    dom.setStyle(eventAnalysisChartDom,'top',eventAnalysisChartTop);
-    dom.setStyle(eventAnalysisChartDom,'left',eventAnalysisChartLeft);
-    dom.setStyle(eventAnalysisChartDom,'visibility','visible');
+    dom.setStyle(eventAnalysisChartDom, 'top', eventAnalysisChartTop);
+    dom.setStyle(eventAnalysisChartDom, 'left', eventAnalysisChartLeft);
+    dom.setStyle(eventAnalysisChartDom, 'visibility', 'visible');
   }
 
   // 表格中图表渲染
@@ -290,9 +290,9 @@ export default class EventAnalysisReport extends PureComponent {
     const {
       startTime,
       endTime,
-      eventType,
       eventSource,
       eventName,
+      eventType,
       // 事件类型选项
       eventTypeOptions,
     } = this.state;
@@ -322,15 +322,15 @@ export default class EventAnalysisReport extends PureComponent {
     } = this.state;
     return (
       <div ref = {this.eventAnalysisReportRef} className={styles.eventAnalysisReport}>
-        <ReportTitle title='事件分析报表' />
+        <ReportTitle title="事件分析报表" />
         <ReportFilter
-          dateFilterName='任务截止时间'
+          dateFilterName="任务截止时间"
           startTime={startTime}
           endTime={endTime}
-          eventType={eventType}
           eventSource={eventSource}
           filterCallback={this.handlefilterCallback}
           isEventAnalysis
+          eventType={eventType}
           eventTypeOptions={eventTypeOptions}
           eventSelectChange={this.handleEventSource}
           eventSearch={this.getEventSearch}
