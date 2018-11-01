@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-23 17:54:16
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-10-31 22:44:35
  */
 
 import React, { PureComponent } from 'react';
@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import moment from 'moment';
 
 import { timeList, codeList } from '../../../../config/profitRateConfig';
@@ -77,9 +78,12 @@ const mapStateToProps = state => ({
   accountSummary: state.detailAccountInfo.accountSummaryInfo,
   // 普通账户、信用账户、期权账户信息
   accountInfo: state.detailAccountInfo.accountInfo,
+  // 是否有已实施的流程
+  hasDoingFlow: state.detailAccountInfo.hasDoingFlow,
 });
 
 const mapDispatchToProps = {
+  push: routerRedux.push,
   // 查询资产分布的雷达图数据
   getAssetRadarData: effect('detailAccountInfo/getAssetRadarData'),
   // 查询资产分布的雷达上具体指标的数据
@@ -100,11 +104,14 @@ const mapDispatchToProps = {
   queryAccountInfo: effect('detailAccountInfo/queryAccountInfo'),
   // 清除Redux中的数据
   clearReduxData: effect('detailAccountInfo/clearReduxData', { loading: false }),
+  // 查询是否有已实施的流程
+  queryHasDoingFlow:  effect('detailAccountInfo/queryHasDoingFlow'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Home extends PureComponent {
   static propTypes = {
+    push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     // 资产分布的雷达数据
     assetsRadarData: PropTypes.object.isRequired,
@@ -142,6 +149,10 @@ export default class Home extends PureComponent {
     accountInfo: PropTypes.object.isRequired,
     // 清除Redux中的数据
     clearReduxData: PropTypes.func.isRequired,
+    // 查询是否有已实施的流程
+    queryHasDoingFlow: PropTypes.func.isRequired,
+    // 是否有已实施的流程
+    hasDoingFlow: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -195,8 +206,15 @@ export default class Home extends PureComponent {
   }
 
   componentDidMount() {
+    const {
+      queryHasDoingFlow,
+      location: { query: { custId } },
+    } = this.props;
     // 获取收益走势数据
     this.getProfitRateInfo({ initial: true });
+
+    // 查询是否有已实施的流程
+    queryHasDoingFlow({ custId });
   }
 
   componentDidUpdate(prevProps) {
@@ -268,6 +286,7 @@ export default class Home extends PureComponent {
 
   render() {
     const {
+      push,
       getSecuritiesHolding,
       securitiesHolding,
       realTimeAsset,
@@ -287,6 +306,7 @@ export default class Home extends PureComponent {
       queryAccountSummary,
       queryAccountInfo,
       accountInfo,
+      hasDoingFlow,
     } = this.props;
 
     const {
@@ -299,6 +319,7 @@ export default class Home extends PureComponent {
         {/* 头部实时持仓、历史持仓、交易流水、资产配置、账户分析 5 个按钮的所占区域*/}
         <div className={styles.headerBtnsArea}>
           <AccountInfoHeader
+            push={push}
             getSecuritiesHolding={getSecuritiesHolding}
             securitiesData={securitiesHolding}
             getRealTimeAsset={getRealTimeAsset}
@@ -306,6 +327,7 @@ export default class Home extends PureComponent {
             productData={productHoldingData}
             getProductHoldingData={getProductHoldingData}
             location={location}
+            hasDoingFlow={hasDoingFlow}
           />
         </div>
         {/* 中间资产分布和收益走势区域 */}

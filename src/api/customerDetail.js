@@ -13,7 +13,5 @@ export default function customerDetail(api) {
     queryAllKeyLabels: query => api.post('/groovynoauth/fsp/cust/custdetail/queryCustImportLabels', query),
     // 获取客户基本信息的接口
     queryCustomerBasicInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryCustBasicInfo', query),
-    // 获取是否有已实施的流程
-    queryCheckCustAsset: query => api.post('/groovynoauth/fsp/cust/custdetail/checkCustAsset', query),
   };
 }
