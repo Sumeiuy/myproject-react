@@ -2,16 +2,18 @@
  * @Author: XuWenKang
  * @Description: 首页-展示更多标签弹窗
  * @Date: 2018-05-23 11:10:49
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 14:21:10
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-11-01 10:56:08
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import store from 'store';
-import { Modal, Tabs, Popover } from 'antd';
+import { Modal, Tabs } from 'antd';
 import _ from 'lodash';
+
+import CommonTooltip from '../../common/biz/CommonTooltip';
 import { url as urlHelper } from '../../../helper';
 import { openRctTab } from '../../../utils';
 import { isSightingScope, getFilter, getSortParam } from '../helper';
@@ -187,15 +189,17 @@ export default class LabelModals extends PureComponent {
   // 设置 popover
   @autobind
   renderPopover(item) {
-    return (<Popover
-      placement="bottomLeft"
-      content={item.description}
-      trigger="hover"
-      overlayStyle={{ maxWidth: 600 }}
-      title={item.name}
-    >
-      <a onClick={() => this.openClientListPage(item)}>{item.name}</a>
-    </Popover>);
+    return (
+      <CommonTooltip
+        title={item.name}
+        content={item.description}
+        placement="bottomLeft"
+        trigger="hover"
+        overlayStyle={{ maxWidth: 600 }}
+      >
+        <a onClick={() => this.openClientListPage(item)}>{item.name}</a>
+      </CommonTooltip>
+    );
   }
 
   render() {
