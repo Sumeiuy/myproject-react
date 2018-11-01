@@ -11,7 +11,7 @@ import 'echarts-liquidfill';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import logable from '../../decorators/logable';
-import Tooltip from '../common/biz/CommonTooltip';
+import Tooltip from '../common/Tooltip';
 import ChartContiner from './ChartContainer';
 import IECharts from '../IECharts';
 import styles from './analysisCharts.less';
