@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-09-12 17:11:52
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-10-31 20:46:39
+ * @Last Modified time: 2018-11-01 14:38:36
  */
 
 import React from 'react';
@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classnames from 'classnames';
 
-import CommonTooltip from '../common/biz/CommonTooltip';
+import Tooltip from '../common/Tooltip';
 import { number } from '../../helper';
 import styles from './commonCell.less';
 import classes from '../customerPool/home/performanceIndicators__.less';
@@ -34,7 +34,7 @@ export default function CommonCell(props) {
   const renderPopver = item => {
     const { name, description = '' } = item;
     if (!_.isEmpty(description)) {
-      return <CommonTooltip
+      return <Tooltip
         title={name}
         content={description}
         placement="bottom"
@@ -46,7 +46,7 @@ export default function CommonCell(props) {
         >
           {name}
         </span>
-      </CommonTooltip>;
+      </Tooltip>;
     }
     return <span title={name}>{name}</span>;
   };

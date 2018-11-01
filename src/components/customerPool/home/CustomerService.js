@@ -10,7 +10,7 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import CommonTooltip from '../../common/biz/CommonTooltip';
+import Tooltip from '../../common/Tooltip';
 import IECharts from '../../IECharts';
 import { linkTo } from './homeIndicators_';
 import styles from './customerService.less';
@@ -113,7 +113,7 @@ export default class CustomerService extends PureComponent {
               height: '115px',
             }}
           />
-          <CommonTooltip
+          <Tooltip
             title={_.head(data).name || ''}
             content={_.head(data).description || '--'}
             mouseEnterDelay={0.2}
@@ -121,7 +121,7 @@ export default class CustomerService extends PureComponent {
             placement="bottom"
           >
             <div className={styles.text}>{_.head(data).name || '--'}</div>
-          </CommonTooltip>
+          </Tooltip>
         </div>
         <div className={classnames(styles.column, styles.secondColumn)}>
           <IECharts
@@ -132,7 +132,7 @@ export default class CustomerService extends PureComponent {
               height: '115px',
             }}
           />
-          <CommonTooltip
+          <Tooltip
             title={_.last(data).name || ''}
             content={_.last(data).description || '--'}
             mouseEnterDelay={0.2}
@@ -143,7 +143,7 @@ export default class CustomerService extends PureComponent {
               onClick={ () => {this.handleToList(_.last(data).name, _.last(data).value || 0);} }
               className={styles.text}
             >{_.last(data).name || '--'}</div>
-          </CommonTooltip>
+          </Tooltip>
         </div>
       </div>
     );
