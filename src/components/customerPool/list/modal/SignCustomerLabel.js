@@ -11,7 +11,6 @@ import { Modal, Tag } from 'antd';
 import { MultiFilterWithSearch } from 'lego-react-filter/src';
 
 import CreateLabel from './CreateLabel';
-import Icon from '../../../common/Icon';
 import styles from './addCustomerLabel.less';
 import logable from '../../../../decorators/logable';
 
@@ -56,6 +55,7 @@ export default class SignCustomerLabel extends PureComponent {
     signCustLabels: PropTypes.func.isRequired,
     handleCancelSignLabelCustId: PropTypes.func.isRequired,
     addLabel: PropTypes.func.isRequired,
+    checkDuplicationName: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -80,7 +80,7 @@ export default class SignCustomerLabel extends PureComponent {
     return (
       <span className={styles.signItemWrap}>
         <span>{replaceKeyWord(value.labelName, searchValue)}</span>
-        <span className={styles.labelType}>{value.createdOrgName}</span>
+        <span className={styles.labelType} title={value.createdOrgName}>{value.createdOrgName}</span>
       </span>);
   }
 
@@ -196,20 +196,6 @@ export default class SignCustomerLabel extends PureComponent {
   }
 
   @autobind
-  handleAddLabelBtnClick() {
-    this.setState({
-      showAddLabel: true,
-    });
-  }
-
-  @autobind
-  handleSelectVisibleChange(visible) {
-    this.setState({
-      showAddLabel: visible,
-    });
-  }
-
-  @autobind
   handleCloseNewLabelModal(labelId) {
     const { custId } = this.props;
     const { selectedLabels } = this.state;
@@ -227,9 +213,6 @@ export default class SignCustomerLabel extends PureComponent {
 
   @autobind
   handleCloseModal() {
-    this.setState({
-      showAddLabel: false,
-    });
     this.props.handleCancelSignLabelCustId();
   }
 
@@ -238,6 +221,7 @@ export default class SignCustomerLabel extends PureComponent {
       custLikeLabel,
       mainPosition,
       addLabel,
+      checkDuplicationName,
     } = this.props;
 
     const {
@@ -245,12 +229,11 @@ export default class SignCustomerLabel extends PureComponent {
       custId,
       createLabelVisible,
       value,
-      showAddLabel,
     } = this.state;
     return (
       <span>
         <Modal
-          title={`${mainPosition ? '添加' : ''}客户标签`}
+          title="客户标签"
           width={650}
           visible={Boolean(custId)}
           wrapClassName={styles.signCustomerLabel}
@@ -263,7 +246,7 @@ export default class SignCustomerLabel extends PureComponent {
           <div className={styles.selectedInfo}>
             {
               mainPosition
-                ? '请为客户选择或添加一个标签：'
+                ? '请为已选客户选择或添加一个标签：'
                 : null
             }
             {
@@ -272,20 +255,13 @@ export default class SignCustomerLabel extends PureComponent {
                 : null
             }
           </div>
-          <div
-            className={styles.selectedButton}
-            onClick={this.handleAddLabelBtnClick}
-          >
-            <span className={styles.addLabelIcon} />
-            <span className={styles.addLabelText}>添加标签</span>
-          </div>
           <div className={styles.singleLabel}>
             {mainPosition ?
               selectedLabels
                 .map(labelItem =>
                   <Tag
                     closable
-                    onClose={() => {
+                    afterClose={() => {
                       this.deleteUserLabel(labelItem.id);
                     }}
                     color="gold"
@@ -302,11 +278,14 @@ export default class SignCustomerLabel extends PureComponent {
                 )
             }
             {
-              mainPosition && showAddLabel ?
+              mainPosition ?
                 <span
                   className={styles.addLabel}
                 >
-                  <span className={styles.addLabelBtn}>点此选择或添加标签<Icon type="more-down-copy" /></span>
+                  <span className={styles.addLabelBtn}>
+                    <span className={styles.addLabelIcon} />
+                    <span className={styles.addLabelText}>添加标签</span>
+                  </span>
                   <MultiFilterWithSearch
                     data={custLikeLabel}
                     value={_.isEmpty(selectedLabels) ? '' : selectedLabels}
@@ -320,9 +299,8 @@ export default class SignCustomerLabel extends PureComponent {
                     onChange={this.handleSelect}
                     onInputChange={this.handleSearch}
                     searchHeader={this.getSearchHeader()}
-                    listStyle={{ maxHeight: 300 }}
-                    dropdownStyle={{ maxHeight: 424 }}
-                    defaultVisible={true}
+                    listStyle={{ maxHeight: 220 }}
+                    dropdownStyle={{ maxHeight: 324 }}
                   />
                 </span> :
                 null
@@ -334,7 +312,7 @@ export default class SignCustomerLabel extends PureComponent {
           labelName={value}
           addLabel={addLabel}
           closeModal={this.handleCloseNewLabelModal}
-          handleSelectVisibleChange={this.handleSelectVisibleChange}
+          checkDuplicationName={checkDuplicationName}
         />
       </span>
     );

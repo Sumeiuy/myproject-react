@@ -147,6 +147,36 @@
     align-items: center;
     padding: 14px 0;
     border-top: 1px solid #eaeaea;
+    .btnContainer {
+      display: inline-block;
+      height: 30px;
+      line-height: 30px;
+      background: #fff;
+      .splitLine {
+        display: inline-block;
+        height: 30px;
+        width: 1px;
+        line-height: 30px;
+        background: #ccc;
+        margin-left: 20px;
+      }
+      .createTaskBtn {
+        display: inline-block;
+        vertical-align: top;
+        width: 80px;
+        height: 30px;
+        line-height: 30px;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        font-size: 14px;
+        color: #333;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        margin-left: 20px;
+      }
+    }
     & > .singleCust {
       display: flex;
       justify-content: flex-start;
@@ -174,35 +204,6 @@
         a {
           font-size: 14px;
           color: #333;
-        }
-      }
-      .btnContainer {
-        display: inline-block;
-        height: 30px;
-        line-height: 30px;
-        background: #fff;
-        .splitLine {
-          display: inline-block;
-          height: 30px;
-          width: 1px;
-          line-height: 30px;
-          background: #ccc;
-          margin-left: 20px;
-        }
-        .createTaskBtn {
-          display: inline-block;
-          width: 80px;
-          height: 30px;
-          line-height: 30px;
-          background: #fff;
-          border: 1px solid #ccc;
-          border-radius: 2px;
-          font-size: 14px;
-          color: #333;
-          text-decoration: none;
-          text-align: center;
-          cursor: pointer;
-          margin-left: 20px;
         }
       }
     }
