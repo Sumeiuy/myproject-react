@@ -471,7 +471,7 @@ function getMaxCostRateChartData(data) {
     }));
   }
   const option = {
-    color: ['#6dcfec'],
+    color: ['#1ac4f8'],
     grid: {
       left: '10px',
       right: '10px',
@@ -676,7 +676,7 @@ function getPftAmtChartData(data) {
     }));
   }
   const option = {
-    color: ['#1aa1e0'],
+    color: ['#008fd2'],
     grid: {
       left: '10px',
       right: '10px',
@@ -764,6 +764,7 @@ function getHoldingChart(data) {
       name: `${type}|${asset}`,
       max: max * 1.1,
       min: - (max * 0.5),
+      color: '#666666',
     };
   });
 
@@ -776,6 +777,12 @@ function getHoldingChart(data) {
       center: ['50%','50%'],
       radius: 45,
       splitNumber: 3,
+      splitArea: {
+        areaStyle: {                            // 分隔区域的样式设置。
+          show: true,
+          color: ['#f4f6f9', '#e9eaec'],
+        }
+      },
       name: {
         formatter: (name) => {
           const labels = name.split('|');
@@ -809,6 +816,7 @@ function getHoldingChart(data) {
             },
             areaStyle: {
               color: '#fec965',
+              opacity: 1
             },
          }
        },

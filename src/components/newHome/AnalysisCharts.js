@@ -376,7 +376,7 @@ export default class PerformanceIndicators extends PureComponent {
           data: totAsetData,
           itemStyle: {
             normal: {
-              color: '#4ed0f1',
+              color: '#1ac4f8',
             },
           },
         },
