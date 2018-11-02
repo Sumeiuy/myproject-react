@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-02 14:50:52
+ * @Last Modified time: 2018-11-02 14:54:36
  */
 
 import React, { PureComponent } from 'react';
@@ -166,13 +166,11 @@ export default class EventAnalysisReport extends PureComponent {
     // 获取鼠标位置
     const pageX = e.pageX;
     const pageY = e.pageY;
-    const screenY = e.screenY;
     // 获取表格图表的dom节点
     const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
     const eventAnalysisReportDom = this.eventAnalysisReportRef.current;
     // 获取事件分析报表的top
     const reportTop = eventAnalysisReportDom.offsetTop;
-    console.warn('screen', eventAnalysisReportDom.scrollTop);
     // 获取事件分析报表的宽高
     const { width: reportWidth} = dom.getRect(eventAnalysisReportDom);
     // 让图表位置显示在鼠标位置上方50px处，当鼠标位置+图表位置一半的时候图表位置为报表的最右方
