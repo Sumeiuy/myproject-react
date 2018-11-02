@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-02 13:52:21
+ * @Last Modified time: 2018-11-02 14:27:40
  */
 
 import React, { PureComponent } from 'react';
@@ -42,6 +42,7 @@ const OPEN_FEATURES = `
 
 const TYPE_CONNECTED = 'connected';
 const TYPE_END = 'end';
+const TYPE_WEBPHONEUNLOAD = 'webPhoneUnload';
 
 // 检查是否安装打电话插件
 function checkIEHasCallPlugin() {
@@ -293,7 +294,7 @@ export default class Phone extends PureComponent {
       this.popWin = null;
     } else if (data && data.type === TYPE_CONNECTED) {
       this.props.onConnected(data);
-    } else if (data && data.type === 'unload') {
+    } else if (data && data.type === TYPE_WEBPHONEUNLOAD) {
       this.hideMask();
     }
   }
