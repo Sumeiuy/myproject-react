@@ -3,7 +3,7 @@
  * @Descripter: 渠道占比分布
  * @Date: 2018-10-12 10:10:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-26 09:54:41
+ * @Last Modified time: 2018-11-02 09:37:39
  */
 
 import React from 'react';
@@ -70,7 +70,10 @@ export default function ServiceChannelPieChart(props) {
         },
         label: {
           normal: {
-            show: false,
+            formatter(params) {
+              const { name, value, percentage } = params.data;
+              return `${name}（${value}、${percentage}%）`;
+            },
           },
           emphasis: {
             show: false,

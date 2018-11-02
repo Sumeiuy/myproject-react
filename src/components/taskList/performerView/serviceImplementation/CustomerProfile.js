@@ -2,8 +2,8 @@
  * @Description: 客户的基本信息
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-11-01 09:53:16
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-02 13:13:51
  */
 
 import React from 'react';
@@ -17,7 +17,6 @@ import { Tooltip } from 'antd';
 import Icon from '../../../common/Icon';
 import { openFspTab } from '../../../../utils';
 import ContactInfoPopover from '../../../common/contactInfoPopover/ContactInfoPopover';
-import Mask from '../../../common/mask';
 import { date } from '../../../../helper';
 import { UPDATE } from '../../../../config/serviceRecord';
 import logable from '../../../../decorators/logable';
@@ -97,7 +96,6 @@ export default class CustomerProfile extends React.PureComponent {
     super(props);
     this.endTime = '';
     this.startTime = '';
-    this.state = { showMask: false };
   }
 
   @autobind
@@ -146,8 +144,6 @@ export default class CustomerProfile extends React.PureComponent {
    */
   @autobind
   handlePhoneEnd(data = {}) {
-    // 点击挂电话隐藏蒙层
-    this.setState({ showMask: false });
     // 没有成功发起通话
     if (!moment.isMoment(this.startTime)) {
       return;
@@ -227,19 +223,6 @@ export default class CustomerProfile extends React.PureComponent {
     this.callId = data.uuid;
   }
 
-  // 点击号码打电话时显示蒙层
-  @autobind
-  handlePhoneClick() {
-    this.setState({ showMask: true });
-  }
-
-  // 点击号码打电话时显示蒙层时关闭蒙层
-  @autobind
-  @logable({ type: 'Click', payload: { name: '关闭蒙层' } })
-  handleMaskClick() {
-    this.setState({ showMask: false });
-  }
-
   /**
    * 渲染联系方式框显示的内容 如果有主联系方式显示主联系方式，没有就任意显示一条号码，没有号码就显示 “无联系电话”
   */
@@ -317,7 +300,6 @@ export default class CustomerProfile extends React.PureComponent {
         orgCustomerContactInfoList={orgCustomerContactInfoList}
         handlePhoneEnd={this.handlePhoneEnd}
         handlePhoneConnected={this.handlePhoneConnected}
-        handlePhoneClick={this.handlePhoneClick}
         disablePhone={!canCall}
         userData={userData}
         placement="topRight"
@@ -332,7 +314,6 @@ export default class CustomerProfile extends React.PureComponent {
   }
 
   render() {
-    const { showMask } = this.state;
     const { targetCustDetail = {}, eventId } = this.props;
     const {
       custName, isAllocate, isHighWorth, custId, genderValue, age,
@@ -418,7 +399,6 @@ export default class CustomerProfile extends React.PureComponent {
             </p>
           </div>
         </div>
-        <Mask visible={showMask} onClick={this.handleMaskClick} />
       </div>
     );
   }

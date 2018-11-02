@@ -11,12 +11,14 @@ import 'echarts-liquidfill';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import logable from '../../decorators/logable';
+import Tooltip from '../common/Tooltip';
 import ChartContiner from './ChartContainer';
 import IECharts from '../IECharts';
 import styles from './analysisCharts.less';
 import { seperator } from '../../config';
 import { toFixedNum } from '../chartRealTime/FixNumber';
 import { number } from '../../helper';
+import { transformItemUnit } from '../chartRealTime/FixNumber';
 
 import {
   getCustClassChartData,
@@ -141,6 +143,18 @@ export default class PerformanceIndicators extends PureComponent {
     location: PropTypes.object.isRequired,
   }
 
+  // 获取客户性质，客户类型的tooltip内容
+  @autobind
+  getTooltipContent(item) {
+    const assetData = transformItemUnit(item.asset);
+    return (
+      <div>
+        <div>客户数：{number.thousandFormat(item.custNum)}人</div>
+        <div>托管资产：{assetData.newItem}{assetData.newUnit}</div>
+      </div>
+    );
+  }
+
   @autobind
   @logable({
     type: 'DrillDown',
@@ -178,6 +192,7 @@ export default class PerformanceIndicators extends PureComponent {
       }
     });
   }
+
   //  客户性质下钻
   @autobind
   handleCustomTypeChartClick(instance) {
@@ -263,7 +278,13 @@ export default class PerformanceIndicators extends PureComponent {
                   className={styles.legendColor}
                   style={item.style}
                 />
-                <span className={styles.legendLabel}>{item.name}</span>
+                <Tooltip
+                  placement="top"
+                  title={`${item.name}客户`}
+                  content={this.getTooltipContent(item)}
+                >
+                  <span className={styles.legendLabel}>{item.name}</span>
+                </Tooltip>
               </div>
             ))
           }
@@ -296,7 +317,13 @@ export default class PerformanceIndicators extends PureComponent {
                   className={styles.legendColor}
                   style={item.style}
                 />
-                <span className={styles.legendLabel}>{item.name}</span>
+                <Tooltip
+                  placement="top"
+                  title={`${item.name}客户`}
+                  content={this.getTooltipContent(item)}
+                >
+                  <span className={styles.legendLabel}>{item.name}</span>
+                </Tooltip>
               </div>
             ))
           }
@@ -376,7 +403,7 @@ export default class PerformanceIndicators extends PureComponent {
           data: totAsetData,
           itemStyle: {
             normal: {
-              color: '#4ed0f1',
+              color: '#1ac4f8',
             },
           },
         },

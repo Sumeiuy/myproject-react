@@ -32,16 +32,11 @@ import { MorningBroadcast } from '../../components/customerPool/home';
 import { DATE_FORMAT_STRING, MONTH_DATE_FORMAT, navArray } from './config';
 import rankPng from './ranks.png';
 import {
-  NEW_HOME_INTRO_FIRST_SEEP_IDNAME,
   NEW_HOME_INTRO_THIRD_SEEP_IDNAME,
-  NEW_HOME_INTRO_FOURTH_SEEP_IDNAME,
   NEW_HOME_INTRO_FIFTH_SEEP_IDNAME,
   NEW_HOME_INTRO_SIXTH_SEEP_IDNAME,
   NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME,
-  NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME,
   NEW_HOME_INTRO_NINTH_SEEP_IDNAME,
-  NEW_HOME_INTRO_TENTH_SEEP_IDNAME,
-  NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME,
   stepIds,
 } from './config';
 
@@ -134,21 +129,6 @@ let countStep = 1 ;
 function getIntroStepListInNewHome() {
   const newStepList = [
     {
-      // 搜索栏 1
-      element: document.querySelector(`#${NEW_HOME_INTRO_FIRST_SEEP_IDNAME}`),
-      intro: '首页搜索栏移到页面顶部，即刻获取您感兴趣的客户信息。',
-      position: 'top',
-    }, {
-      // 我要提问 2
-      element: document.querySelector(`#${NEW_HOME_INTRO_TENTH_SEEP_IDNAME}`),
-      intro: '在这里可给理财平台反馈您的使用问题或建议。',
-      position: 'top',
-    }, {
-      // 常用工具 3
-      element: document.querySelector(`#${NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME}`),
-      intro: '投顾签约、服务订阅、隔离墙、售前查询，常用工具都汇聚在这里。',
-      position: 'top',
-    }, {
       // 主导航 4
       element: document.querySelector('#tabMenu'),
       intro: '导航菜单从左侧移到上方，留出更多页面空间为您展现精彩内容。',
@@ -158,16 +138,6 @@ function getIntroStepListInNewHome() {
       element: document.querySelector(`#${NEW_HOME_INTRO_THIRD_SEEP_IDNAME}`),
       intro: '新增值得重点关注的客户类别统计，点击可进入客户列表，助您全方位拓展业务。',
       position: 'right',
-    }, {
-      // 猜你该兴趣 6
-      element: document.querySelector(`#${NEW_HOME_INTRO_FOURTH_SEEP_IDNAME}`),
-      intro: '“猜你该兴趣”移到这里了，更大的空间里可为您推荐更多种类的服务机会。',
-      position: 'right',
-    }, {
-      // 活动栏目 7
-      element: document.querySelector(`#${NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME}`),
-      intro: ' 从这里可了解近期的活动讯息，点击可进入活动入口。',
-      position: 'top',
     }, {
       // 客户分析 8
       element: document.querySelector(`#${NEW_HOME_INTRO_FIFTH_SEEP_IDNAME}`),
@@ -588,8 +558,6 @@ export default class Home extends PureComponent {
       onClick: this.handleLinkToCustomerList,
       onExtraClick: this.handleMoreClick,
       hiddenEmptyValue: false,
-      introPositionId:
-      NEW_HOME_INTRO_FOURTH_SEEP_IDNAME
     };
     // 产品日历
     const today = moment().format(MONTH_DATE_FORMAT);
@@ -649,7 +617,7 @@ export default class Home extends PureComponent {
       <div className={styles.container}>
         <div className={styles.leftContent}>
           <div className={styles.competitionsLink}>
-            <img src={rankPng} alt="投顾能力竞赛" onClick={this.toInvestmentConsultantCompetenceRacePage} />
+            {/*<img src={rankPng} alt="投顾能力竞赛" onClick={this.toInvestmentConsultantCompetenceRacePage} />*/}
           </div>
           <div className={styles.mostFocusContentLink}>
             <CommonCell {...keyAttentionProps} />
@@ -657,10 +625,7 @@ export default class Home extends PureComponent {
           <div className={styles.interestContentLink}>
             <CommonCell {...guessYourInterestsProps} />
           </div>
-          <div
-            className={styles.competitionsLink}
-            id={NEW_HOME_INTRO_EIGHTH_SEEP_IDNAME}
-          >
+          <div className={styles.competitionsLink}>
             <img
               src={rankPng}
               alt="投顾能力竞赛"

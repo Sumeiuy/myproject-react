@@ -3,14 +3,14 @@
  * @Author: Liujianshu-K0240007
  * @Date: 2018-09-20 13:45:27
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-11-01 10:47:35
+ * @Last Modified time: 2018-11-01 14:57:57
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { Tooltip } from 'antd';
 
+import Tooltip from '../common/Tooltip';
 import { getFilter } from '../customerPool/helper';
 import { openRctTab } from '../../utils';
 import { url as urlHelper, number } from '../../helper';

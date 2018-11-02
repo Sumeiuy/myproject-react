@@ -570,11 +570,12 @@ export default class CustomerGroupManage extends PureComponent {
         value: JSON.stringify(formValues),
       },
     });
+    // 当编辑标签没有编辑标签名称和标签描述的时候，不传标签名称和描述字段
     return operateLabel({
       request: {
         labelIds: [id],
-        labelName: name,
-        labelDesc: description,
+        labelName: !isNeedQueryLabelCust ? name: null,
+        labelDesc: !isNeedQueryLabelCust ? description: null,
         custIds: _.isEmpty(custIds) ? null : custIds,
         excludeCustIdList: null,
         orgId: emp.getOrgId(),

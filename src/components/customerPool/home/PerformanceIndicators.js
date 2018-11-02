@@ -11,7 +11,7 @@ import { Row, Col, Popover } from 'antd';
 import _ from 'lodash';
 import 'echarts-liquidfill';
 
-import CommonTooltip from '../../common/biz/CommonTooltip';
+import Tooltip from '../../common/Tooltip';
 import CheckLayout from './CheckLayout__';
 import CustomerService from './CustomerService';
 import Funney from './Funney__';
@@ -407,7 +407,7 @@ export default class PerformanceIndicators extends PureComponent {
                 cursor: 'auto',
               }}
             />
-              <CommonTooltip
+              <Tooltip
                 title={param.headLine}
                 content={description}
                 placement="bottom"
@@ -417,7 +417,7 @@ export default class PerformanceIndicators extends PureComponent {
                   className={styles.clickContent}
                   onClick={() => { this.aggregationToList(param.data, param.data[0].value || 0 ); }}
                 />
-              </CommonTooltip>
+              </Tooltip>
           </IfEmpty>
         </RectFrame>
       </Col>
@@ -532,7 +532,7 @@ export default class PerformanceIndicators extends PureComponent {
                   _.map(data, (item, index) => {
                     const { name, description, value } = item;
                     return (
-                      <CommonTooltip
+                      <Tooltip
                         title={name}
                         content={description}
                         placement="bottom"
@@ -545,7 +545,7 @@ export default class PerformanceIndicators extends PureComponent {
                         >
                           {name}
                         </span>
-                      </CommonTooltip>
+                      </Tooltip>
                     );
                   })
                 }

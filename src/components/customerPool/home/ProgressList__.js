@@ -13,7 +13,7 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { linkTo } from './homeIndicators_';
 
-import CommonTooltip from '../../common/biz/CommonTooltip';
+import Tooltip from '../../common/Tooltip';
 import { logCommon } from '../../../decorators/logable';
 import styles from './progressList.less';
 import { homeModelTypeName, homeModelType } from '../config';
@@ -166,7 +166,7 @@ export default class ProgressList extends PureComponent {
                 接口传了description字段，则用接口的指标说明
                 接口未传description字段，则用页面中定义的指标说明
               */}
-              <CommonTooltip
+              <Tooltip
                 title={item.cust}
                 content={item.description || description[item.cust]}
                 placement="bottom"
@@ -174,7 +174,7 @@ export default class ProgressList extends PureComponent {
                 mouseEnterDelay={0.2}
               >
                 <div className={styles.title}>{item.cust}</div>
-              </CommonTooltip>
+              </Tooltip>
               <div
                 className={classnames(
                   styles.count,

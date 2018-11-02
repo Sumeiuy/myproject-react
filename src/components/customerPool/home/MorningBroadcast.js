@@ -134,11 +134,11 @@ export default class MorningBroadcast extends PureComponent {
                   const audioSrc = sourceFile && this.getAudioSrc(sourceFile);
                   return (
                     <div key={newsId} className={trueStyles.activeItem}>
-                      <div
+                      <span
                         className={trueStyles.simpleName}
                       >
-                        <Marquee content={`${newsTypValue}：${title}`} speed={40} />
-                      </div>
+                        <span title={title}>{`${newsTypValue}：${title}`}</span>
+                      </span>
                       <div className={trueStyles.music}>
                         <Audio src={audioSrc} autoPlay />
                         <Icon onClick={this.onHandleClose} className={trueStyles.close} type="close-circle" />
