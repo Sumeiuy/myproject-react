@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-10-31 11:02:01
+ * @Last Modified time: 2018-11-02 13:52:21
  */
 
 import React, { PureComponent } from 'react';
@@ -17,6 +17,7 @@ import classnames from 'classnames';
 import { Phone as XPhone } from 'lego-soft-phone';
 import sotfCallInstall from './SotfCallInstall0426.msi';
 import prompt from '../prompt_';
+import Mask from '../mask';
 import { env } from '../../../helper';
 import logable from '../../../decorators/logable';
 import styles from './phone.less';
@@ -25,7 +26,9 @@ const URL = bowser.msie
   // IE10跨域无法和父页面通信，部署在同域下
   ? '/fspa/phone/'
   // Chrome等WebRTC只可用在https域下,所以部署到移动端server
-  : 'https://crm.htsc.com.cn:1443/phone/';
+  // 生产地址 https://crm.htsc.com.cn:1443/phone/
+  // 测试地址 https://crm.htsc.com.cn:2443/phone/
+  : 'https://crm.htsc.com.cn:2443/phone/';
 
 const OPEN_FEATURES = `
   width=300,
@@ -99,8 +102,6 @@ export default class Phone extends PureComponent {
     name: PropTypes.string,
     // 用户数据，回调时回传
     userData: PropTypes.object,
-    // 显示和隐藏通话蒙版
-    onShowMask: PropTypes.func,
   }
 
   static defaultProps = {
@@ -114,11 +115,13 @@ export default class Phone extends PureComponent {
     onConnected: _.noop,
     name: '',
     userData: {},
-    onShowMask: _.noop,
   };
 
   constructor(props) {
     super(props);
+    this.state = {
+      showMask: false,
+    };
     this.popWin = null;
   }
 
@@ -148,7 +151,7 @@ export default class Phone extends PureComponent {
             // 点击打电话
             this.props.onClick();
             // 显示通话蒙版
-            this.props.onShowMask(true);
+            this.showMask();
           }
         },
       );
@@ -223,6 +226,21 @@ export default class Phone extends PureComponent {
       custType,
     });
     this.prepareCall(number);
+    this.showMask();
+  }
+
+  // 显示通话蒙版
+  @autobind
+  @logable({ type: 'Click', payload: { name: '显示' } })
+  showMask() {
+    this.setState({ showMask: true });
+  }
+
+  // 隐藏通话蒙版
+  @autobind
+  @logable({ type: 'Click', payload: { name: '隐藏' } })
+  hideMask() {
+    this.setState({ showMask: false });
   }
 
   prepareCall(number) {
@@ -253,7 +271,6 @@ export default class Phone extends PureComponent {
     ].join('&');
 
     const userQueryString = qs.stringify(userData);
-
     const srcUrl = `${URL}?number=${number}&custType=${custType}&auto=true&name=${name}&${configQueryString}&${userQueryString}`;
     this.popWin.location = srcUrl;
     if (!this.boundMessageEvent) {
@@ -271,30 +288,38 @@ export default class Phone extends PureComponent {
     if (data && data.type === TYPE_END && this.popWin) {
       this.props.onEnd(data);
       // 隐藏通话蒙版
-      this.props.onShowMask(false);
+      this.hideMask();
       this.popWin.close();
       this.popWin = null;
     } else if (data && data.type === TYPE_CONNECTED) {
       this.props.onConnected(data);
+    } else if (data && data.type === 'unload') {
+      this.hideMask();
     }
   }
 
   render() {
     const { headless, number, style } = this.props;
+    const { showMask } = this.state;
     if (headless === true) {
-      return null;
+      return (
+        <Mask visible={showMask} onClick={this.hideMask} />
+      );
     }
     const className = classnames({
       [styles.number]: true,
       [styles.active]: this.canCall(),
     });
     return (
-      <div
+      <div>
+        <div
         className={className}
         onClick={this.handleClick}
         style={style}
-      >
-        {number}
+        >
+          {number}
+        </div>
+        <Mask visible={showMask} onClick={this.hideMask} />
       </div>
     );
   }
