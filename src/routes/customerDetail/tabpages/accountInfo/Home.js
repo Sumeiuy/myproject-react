@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-10-31 22:44:35
+ * @Last Modified time: 2018-11-02 09:13:00
  */
 
 import React, { PureComponent } from 'react';
@@ -83,7 +83,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  push: routerRedux.push,
   // 查询资产分布的雷达图数据
   getAssetRadarData: effect('detailAccountInfo/getAssetRadarData'),
   // 查询资产分布的雷达上具体指标的数据
@@ -155,7 +154,8 @@ export default class Home extends PureComponent {
     hasDoingFlow: PropTypes.bool.isRequired,
   }
 
-  static defaultProps = {
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -286,7 +286,6 @@ export default class Home extends PureComponent {
 
   render() {
     const {
-      push,
       getSecuritiesHolding,
       securitiesHolding,
       realTimeAsset,
@@ -308,7 +307,7 @@ export default class Home extends PureComponent {
       accountInfo,
       hasDoingFlow,
     } = this.props;
-
+    const { push } = this.context;
     const {
       compareCode,
       time,
