@@ -20,7 +20,5 @@ const exported = {
     ],
   },
 };
-// 首页执行者视图首次引导提示第一步的dom的id名称(搜索栏)
-export const NEW_HOME_INTRO_FIRST_SEEP_IDNAME = 'homePageIntroFirstStep';
 
 export default exported;
