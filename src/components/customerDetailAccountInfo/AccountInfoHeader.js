@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-11-01 22:14:17
+ * @Last Modified time: 2018-11-02 13:56:34
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -173,7 +173,7 @@ export default class AccountInfoHeader extends PureComponent {
     // 新建 url
     let url = `/asset/implementation/wizard/main?routeType=true:new:${custId}`;
     // 有执行中的流程，去列表
-    if (!hasDoingFlow) {
+    if (hasDoingFlow) {
       pathname = '/fsp/serviceCenter/asset/implementation';
       url = `/asset/implementation/main?customerIdStr=${custId}`;
     }
