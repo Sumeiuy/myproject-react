@@ -11,7 +11,6 @@ import _ from 'lodash';
 import moment from 'moment';
 import { Modal, Button } from 'antd';
 import Icon from '../../common/Icon';
-import Mask from '../../common/mask';
 import Collapse from './CreateCollapse';
 import { date } from '../../../helper';
 import logable from '../../../decorators/logable';
@@ -81,7 +80,6 @@ export default class CreateContactModal extends PureComponent {
     super(props);
     this.state = {
       visible: props.visible,
-      showMask: false,
     };
     this.startTime = '';
     this.endTime = '';
@@ -124,8 +122,6 @@ export default class CreateContactModal extends PureComponent {
    */
   @autobind
   handlePhoneEnd(data = {}) {
-    // 点击挂电话隐藏蒙层
-    this.setState({ showMask: false });
     // 没有成功发起通话
     if (!moment.isMoment(this.startTime)) {
       return;
@@ -200,14 +196,6 @@ export default class CreateContactModal extends PureComponent {
     this.callId = data.uuid;
   }
 
-  // 点击号码开始打电话显示蒙层
-  // TODO 日志查看：找不到方法 未验证
-  @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
-  handlePhoneClick() {
-    this.setState({ showMask: true });
-  }
-
   /**
    * 通话的uuid关联服务记录
    */
@@ -254,7 +242,6 @@ export default class CreateContactModal extends PureComponent {
         {
           (!_.isEmpty(mainContactInfo.cellInfo) || !_.isEmpty(personalContactInfo.mainTelInfo)) &&
           <Phone
-            onClick={this.handlePhoneClick}
             onConnected={this.handlePhoneConnected}
             onEnd={this.handlePhoneEnd}
             number={custType === 'per' ?
@@ -270,18 +257,9 @@ export default class CreateContactModal extends PureComponent {
     );
   }
 
-  // 电话弹出蒙层的点击事件
-  // TODO 日志查看：找不到方法 未验证
-  @autobind
-  @logable({ type: 'Click', payload: { name: '弹出蒙层' } })
-  handleMaskClick() {
-    this.setState({ showMask: false });
-  }
-
   render() {
     const {
       visible,
-      showMask,
     } = this.state;
     const {
       custContactData = EMPTY_OBJECT,
@@ -408,7 +386,6 @@ export default class CreateContactModal extends PureComponent {
                 orgCustomerContactInfoList={orgCustomerContactInfoList}
                 handlePhoneEnd={this.handlePhoneEnd}
                 handlePhoneConnected={this.handlePhoneConnected}
-                handlePhoneClick={this.handlePhoneClick}
                 disablePhone={false}
                 name={encodeURIComponent(currentCustName)}
                 userData={userData}
@@ -431,7 +408,6 @@ export default class CreateContactModal extends PureComponent {
           getCeFileList={getCeFileList}
           filesList={filesList}
         />
-        <Mask visible={showMask} onClick={this.handleMaskClick} />
       </Modal>
     );
   }
