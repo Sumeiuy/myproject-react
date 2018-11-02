@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-17 14:16:31
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-02 01:00:25
+ * @Last Modified time: 2018-11-02 15:06:21
  */
 
 import React, { PureComponent } from 'react';
@@ -261,7 +261,7 @@ export default class EventAnalysisChart extends PureComponent {
               <IECharts
                 option={options}
                 resizable
-                notMerge={true}
+                notMerge
                 style={{
                   height: '300px',
                 }}

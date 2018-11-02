@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-02 14:54:36
+ * @Last Modified time: 2018-11-02 15:05:11
  */
 
 import React, { PureComponent } from 'react';
@@ -127,18 +127,19 @@ export default class EventAnalysisReport extends PureComponent {
     const { eventSource } = obj;
     const { MOT, SELFBUILD } = eventSourceTypes;
     const { dict: {
-      custServerTypeFeedBackDict = [],
       missionType = [],
     } } = this.context;
     let eventTypeOptions = missionType;
+    // descText为0时候是MOT类型，为1时候是自建类型
     const motDict = _.filter(missionType, {'descText': '0'});
+    const zjDict = _.filter(missionType, {'descText': '1'});
     // 此处eventSource为1指的事件来源是MOT推送，为2指事件来源是自建，为''指的不限，通过事件来源控制事件类型
     switch(eventSource) {
       case MOT:
         eventTypeOptions = motDict;
         break;
       case SELFBUILD:
-        eventTypeOptions = custServerTypeFeedBackDict;
+        eventTypeOptions = zjDict;
         break;
       default:
         break;
