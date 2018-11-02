@@ -1,18 +1,20 @@
 /**
- * @file components/customerPool/home/Funney.js
- * @author zhangjunli
+ * @Description: 客户及资产
+ * @Author: zhangjunli
+ * @Date: 2018-10-31 20:04:34
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-11-01 14:37:48
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Popover } from 'antd';
 
-
+import Tooltip from '../../common/Tooltip';
 import { linkTo } from './homeIndicators_';
 import { homeModelType } from '../config';
 import IECharts from '../../IECharts';
 import { logCommon } from '../../../decorators/logable';
-import antdStyles from '../../../css/antd.less';
 import styles from './funney.less';
 // 客户与资产模块的source
 const SOURCE_CUST_ASSETS = 'custAssets';
@@ -143,29 +145,27 @@ function Funney({ dataSource, push, cycle, location }, { empInfo }) {
           onClick={() => handleIntroClick(item)}
         >
           <div className={styles.count1}>
-            <Popover
-              title={`${item.value}`}
+            <Tooltip
+              title={item.value}
               content={item.description}
               placement="bottom"
               mouseEnterDelay={0.2}
               overlayStyle={{ maxWidth: '320px' }}
-              overlayClassName={antdStyles.popoverClass}
             >
               {item.value}
-            </Popover>
+            </Tooltip>
           </div>
           <div className={styles.count2}>
-            <Popover
+            <Tooltip
               title={`${item.property}${item.unit}`}
               content={item.propertyDesc}
               placement="bottom"
               mouseEnterDelay={0.2}
               overlayStyle={{ maxWidth: '320px' }}
-              overlayClassName={antdStyles.popoverClass}
             >
               <span className={styles.properyValue}>{`/ ${item.property}`}</span>
               <span className={styles.unit}>{item.unit}</span>
-            </Popover>
+            </Tooltip>
           </div>
         </div>
       ),

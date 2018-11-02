@@ -2,18 +2,16 @@
  * @Description: 丰富首页-公用单元
  * @Author: Liujianshu
  * @Date: 2018-09-12 17:11:52
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-25 19:38:45
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-11-01 14:38:36
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Popover } from 'antd';
 import classnames from 'classnames';
 
-
-import antdStyles from '../../css/antd.less';
+import Tooltip from '../common/Tooltip';
 import { number } from '../../helper';
 import styles from './commonCell.less';
 import classes from '../customerPool/home/performanceIndicators__.less';
@@ -36,20 +34,19 @@ export default function CommonCell(props) {
   const renderPopver = item => {
     const { name, description = '' } = item;
     if (!_.isEmpty(description)) {
-      return <Popover
+      return <Tooltip
         title={name}
         content={description}
         placement="bottom"
         mouseEnterDelay={0.2}
         overlayStyle={{ maxWidth: '320px' }}
-        overlayClassName={antdStyles.popoverClass}
       >
         <span
           className={classes.chartLabel}
         >
           {name}
         </span>
-      </Popover>;
+      </Tooltip>;
     }
     return <span title={name}>{name}</span>;
   };
@@ -90,14 +87,14 @@ export default function CommonCell(props) {
   });
   // 渲染标题
   const renderTitle = isNeedTitle
-  ? <h2 className={titleClass}>
+    ? <h2 className={titleClass} id={introPositionId}>
     {renderMore}
     {title}
   </h2>
   : null;
 
   return (
-    <div className={styles.commonWrapper} id={introPositionId}>
+    <div className={styles.commonWrapper}>
       {renderTitle}
       {
         _.isEmpty(data)

@@ -11,7 +11,7 @@ import { Icon as AntdIcon, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { isSightingScope, getFilter, getSortParam } from '../helper';
-// import { padSightLabelDesc } from '../../../config';
+import { emp, permission } from '../../../../src/helper';
 import { logCommon } from '../../../decorators/logable';
 
 import styles from './custSearch.less';
@@ -59,6 +59,10 @@ export default class CustSearch extends PureComponent {
       value: keyword,
       prevValue: keyword,
     };
+    // HTSC 任务管理岗
+    this.hasTkMampPermission = permission.hasTkMampPermission();
+    // 登录用户orgId
+    this.orgId = emp.getOrgId();
   }
 
   componentDidMount() {
@@ -104,6 +108,8 @@ export default class CustSearch extends PureComponent {
       // 和后端约定，传此字段标识请求来自客户列表，和其他地方的搜索热词做区分
       fromCustList: true,
       wd: value,
+      empNo: emp.getId(), // 用户ID
+      orgId: this.hasTkMampPermission ? this.orgId : '', // 组织ID
     });
   }
 

@@ -4,39 +4,30 @@
   .selectedInfo {
     margin-bottom: 10px;
   }
-  .selectedButton {
-    margin: 10px 0 12px;
-    font-size: 14px;
-    color: #108ee9;
-    cursor: pointer;
-    .addLabelIcon {
-      display: inline-block;
-      background: url(../../../../../static/svg/addIcon.svg) round;
-      width: 14px;
-      height: 14px;
-      vertical-align: text-bottom;
-    }
-    .addLabelText {
-      margin-left: 6px;
-      vertical-align: middle;
-    }
-  }
-  .singleLabel {
+  .addLabelContainer {
+    margin: 10px 0;
     .addLabel {
       display: inline-block;
-      vertical-align: top;
       cursor: pointer;
-      color: #ccc;
-      height: 22px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 2px;
       position: relative;
       z-index: 1000;
       .addLabelBtn {
         display: inline-block;
-        padding: 0 7px;
-        font-size: 12px;
+        font-size: 14px;
+        color: #108ee9;
+        cursor: pointer;
+        vertical-align: bottom;
+        .addLabelIcon {
+          display: inline-block;
+          background: url(../../../../../static/svg/addIcon.svg) round;
+          width: 14px;
+          height: 14px;
+          vertical-align: text-bottom;
+        }
+        .addLabelText {
+          margin-left: 6px;
+          vertical-align: middle;
+        }
       }
       :global {
         .lego-filter-filterContainer {
@@ -59,6 +50,8 @@
         }
       }
     }
+  }
+  .singleLabel {
     :global {
       .ant-tag {
         margin-bottom: 10px;
@@ -78,8 +71,12 @@
     .labelType {
       color: #ddd;
       margin-left: 15px;
-      padding-right: 5px;
+      margin-right: 5px;
       float: right;
+      max-width: 96px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
     .newLabel {
       height: 36px;
@@ -96,7 +93,7 @@
       }
       .lego-filter-filterWrapper {
         .lego-filter-menu {
-          min-width: 250px;
+          min-width: 290px;
         }
       }
     }

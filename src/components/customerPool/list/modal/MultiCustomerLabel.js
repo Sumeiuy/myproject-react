@@ -42,6 +42,7 @@ export default class SignCustomerLabel extends PureComponent {
     condition: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     addLabel: PropTypes.func.isRequired,
+    checkDuplicationName: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -170,7 +171,7 @@ export default class SignCustomerLabel extends PureComponent {
     return (
       <div className={styles.labelItemWrap}>
         <div>{replaceKeyWord(value.labelName, labelValue)}</div>
-        <div className={styles.labelType}>{value.createdOrgName}</div>
+        <div className={styles.labelType} title={value.createdOrgName}>{value.createdOrgName}</div>
       </div>);
   }
 
@@ -235,7 +236,7 @@ export default class SignCustomerLabel extends PureComponent {
     }
   }
   render() {
-    const { custLikeLabel, addLabel } = this.props;
+    const { custLikeLabel, addLabel, checkDuplicationName } = this.props;
     const { selectValue,
       errorMsg,
       createLabelVisible,
@@ -246,7 +247,7 @@ export default class SignCustomerLabel extends PureComponent {
     return (
       <span>
         <Modal
-          title="添加客户标签"
+          title="客户标签"
           width={650}
           visible={visible}
           wrapClassName={styles.signCustomerLabel}
@@ -270,9 +271,8 @@ export default class SignCustomerLabel extends PureComponent {
             onChange={this.handleSelect}
             onInputChange={this.handleSearch}
             searchHeader={this.getSearchHeader()}
-            listStyle={{ maxHeight: 300 }}
-            dropdownStyle={{ maxHeight: 424 }}
-            defaultVisible={true}
+            listStyle={{ maxHeight: 220 }}
+            dropdownStyle={{ maxHeight: 324 }}
           />
           {
             errorMsg ?
@@ -285,6 +285,7 @@ export default class SignCustomerLabel extends PureComponent {
           labelName={labelValue}
           addLabel={addLabel}
           closeModal={this.handleCloseNewLabelModal}
+          checkDuplicationName={checkDuplicationName}
         />
       </span>
     );
