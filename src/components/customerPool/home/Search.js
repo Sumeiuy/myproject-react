@@ -133,6 +133,7 @@ export default class Search extends PureComponent {
       this.setState({
         value: '',
       });
+      this.autoComplete.blur();
     }, 0);
   }
 
