@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-01 14:43:23
+ * @Last Modified time: 2018-11-02 14:50:52
  */
 
 import React, { PureComponent } from 'react';
@@ -14,7 +14,13 @@ import _ from 'lodash';
 import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import EventAnalysisChart from './EventAnalysisChart';
-import { defaultStartTime, defaultEndTime, taskOption, customerOption, serviceChannelChangeOption, eventSourceTypes, tableOption } from '../config';
+import { defaultStartTime,
+  defaultEndTime,
+  taskOption,
+  customerOption,
+  serviceChannelChangeOption,
+  eventSourceTypes,
+  tableOption } from '../config';
 import { filterData } from '../utils';
 import { dom } from '../../../helper';
 
@@ -43,7 +49,6 @@ export default class EventAnalysisReport extends PureComponent {
     this.eventAnalysisChartRef = React.createRef();
     this.eventAnalysisReportRef = React.createRef();
     const { dict: {
-      custServerTypeFeedBackDict = [],
       missionType = [],
     } } = context;
     this.state = {
@@ -52,7 +57,7 @@ export default class EventAnalysisReport extends PureComponent {
       // 任务结束时间
       endTime: defaultEndTime,
       // 事件类型数据
-      eventTypeOptions: [...missionType, ...custServerTypeFeedBackDict],
+      eventTypeOptions: missionType,
       // 事件来源
       eventSource: '',
       // 事件名称
@@ -125,11 +130,12 @@ export default class EventAnalysisReport extends PureComponent {
       custServerTypeFeedBackDict = [],
       missionType = [],
     } } = this.context;
-    let eventTypeOptions = [ ...missionType ,...custServerTypeFeedBackDict ];
+    let eventTypeOptions = missionType;
+    const motDict = _.filter(missionType, {'descText': '0'});
     // 此处eventSource为1指的事件来源是MOT推送，为2指事件来源是自建，为''指的不限，通过事件来源控制事件类型
     switch(eventSource) {
       case MOT:
-        eventTypeOptions = missionType;
+        eventTypeOptions = motDict;
         break;
       case SELFBUILD:
         eventTypeOptions = custServerTypeFeedBackDict;
@@ -160,11 +166,13 @@ export default class EventAnalysisReport extends PureComponent {
     // 获取鼠标位置
     const pageX = e.pageX;
     const pageY = e.pageY;
+    const screenY = e.screenY;
     // 获取表格图表的dom节点
     const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
     const eventAnalysisReportDom = this.eventAnalysisReportRef.current;
     // 获取事件分析报表的top
-    const reportTop = this.eventAnalysisReportRef.current.offsetTop;
+    const reportTop = eventAnalysisReportDom.offsetTop;
+    console.warn('screen', eventAnalysisReportDom.scrollTop);
     // 获取事件分析报表的宽高
     const { width: reportWidth} = dom.getRect(eventAnalysisReportDom);
     // 让图表位置显示在鼠标位置上方50px处，当鼠标位置+图表位置一半的时候图表位置为报表的最右方
@@ -176,7 +184,7 @@ export default class EventAnalysisReport extends PureComponent {
     }
     dom.setStyle(eventAnalysisChartDom, 'top', eventAnalysisChartTop);
     dom.setStyle(eventAnalysisChartDom, 'left', eventAnalysisChartLeft);
-    dom.setStyle(eventAnalysisChartDom, 'visibility', 'visible');
+    dom.setStyle(eventAnalysisChartDom, 'display', 'block');
   }
 
   // 表格中图表渲染
@@ -260,22 +268,22 @@ export default class EventAnalysisReport extends PureComponent {
         }
         this.setState({
           option: {
-            eventReportList: eventReportList,
-            configData: configData,
+            eventReportList,
+            configData,
             eventDataName: eventName,
-            firstData: firstData,
-            secondData: secondData,
-            thirdData: thirdData,
-            fourData: fourData,
-            deadlineTimeData: deadlineTimeData,
-            type: type,
+            firstData,
+            secondData,
+            thirdData,
+            fourData,
+            deadlineTimeData,
+            type,
           },
         });
         this.getChartPosition(e);
       },
       onMouseOut: () => {
         const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
-        dom.setStyle(eventAnalysisChartDom,'visibility','hidden');
+        dom.setStyle(eventAnalysisChartDom,'display','none');
       },
     };
   }
@@ -342,7 +350,7 @@ export default class EventAnalysisReport extends PureComponent {
           columns={columns}
           dataSource={eventData}
         />
-        <div ref = {this.eventAnalysisChartRef} className={styles.eventAnalysisChart}>
+        <div ref={this.eventAnalysisChartRef} className={styles.eventAnalysisChart}>
           <EventAnalysisChart
             eventReportList={eventReportList}
             config={configData}
