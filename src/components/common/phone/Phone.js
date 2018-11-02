@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-02 13:48:25
+ * @Last Modified time: 2018-11-02 13:52:21
  */
 
 import React, { PureComponent } from 'react';
@@ -231,12 +231,14 @@ export default class Phone extends PureComponent {
 
   // 显示通话蒙版
   @autobind
+  @logable({ type: 'Click', payload: { name: '显示' } })
   showMask() {
     this.setState({ showMask: true });
   }
 
   // 隐藏通话蒙版
   @autobind
+  @logable({ type: 'Click', payload: { name: '隐藏' } })
   hideMask() {
     this.setState({ showMask: false });
   }
