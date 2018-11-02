@@ -775,7 +775,8 @@ function getHoldingChart(data) {
     radar: {
       indicator:  indicators,
       center: ['50%','50%'],
-      radius: 45,
+      radius: 60,
+      // shape: 'circle',
       splitNumber: 3,
       splitArea: {
         areaStyle: {                            // 分隔区域的样式设置。
@@ -783,6 +784,7 @@ function getHoldingChart(data) {
           color: ['#f4f6f9', '#e9eaec'],
         }
       },
+      nameGap: 10,
       name: {
         formatter: (name) => {
           const labels = name.split('|');
