@@ -494,10 +494,7 @@ export default class Home extends PureComponent {
           count++;
           this.handleIntorButtomClose(facingOneModele);
         }
-      }).oncomplete(()=>
-        // 到了最后一步点结束按钮 执行oncomplete
-        this.handleIntorButtomClose(facingOneModele)
-      ).start();
+      }).start();
 
   }
 
