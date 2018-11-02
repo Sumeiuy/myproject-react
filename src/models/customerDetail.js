@@ -14,7 +14,6 @@ export default {
     summaryInfo: {},
     // 更多重点标签信息
     moreLabelInfo: {},
-    summaryInfo: {},
     // 客户概要信息基本数据
     customerBasicInfo: {},
   },

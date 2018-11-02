@@ -1,8 +1,8 @@
 /*
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-25 10:09:54
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-11-01 22:14:17
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -24,6 +24,7 @@ const { thousandFormat, toFixed, formatRound } = number;
 
 export default class AccountInfoHeader extends PureComponent {
   static propTypes = {
+    push: PropTypes.func.isRequired,
     //证券实时持仓的数据
     securitiesData: PropTypes.array.isRequired,
     //实时资产的数据
@@ -37,6 +38,8 @@ export default class AccountInfoHeader extends PureComponent {
     //查询产品实时持仓数据
     getProductHoldingData: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    // 是否有正在执行中的流程
+    hasDoingFlow: PropTypes.bool.isRequired,
   }
   constructor(props) {
     super(props);
@@ -148,6 +151,7 @@ export default class AccountInfoHeader extends PureComponent {
     });
   }
 
+  //根据资产的正负判断实时资产的颜色
   @autobind
   handleRealTimeAssetsColor(rtimeAssets) {
     let color = '#59ae85';
@@ -159,7 +163,28 @@ export default class AccountInfoHeader extends PureComponent {
     }
     return { color };
   }
-  //根据资产的正负判断实时资产的颜色
+
+  // 跳转到资产配置页面
+  @autobind
+  handleLinkToAssetAllocation() {
+    const { push, hasDoingFlow, location: { query: { custId = ''} } } = this.props;
+    // 新建
+    let pathname = '/fsp/implementation/initsee';
+    // 新建 url
+    let url = `/asset/implementation/wizard/main?routeType=true:new:${custId}`;
+    // 有执行中的流程，去列表
+    if (!hasDoingFlow) {
+      pathname = '/fsp/serviceCenter/asset/implementation';
+      url = `/asset/implementation/main?customerIdStr=${custId}`;
+    }
+    push({
+      pathname,
+      state: {
+        url,
+      }
+    });
+  }
+
   render() {
     const {
       realTimeHoldModalVisible,
@@ -190,7 +215,7 @@ export default class AccountInfoHeader extends PureComponent {
           <Button onClick={this.handleRealTimeHoldModalOpen} className={styles.accountHeader}>实时持仓</Button>
           <Button className={styles.accountHeader}>历史持仓</Button>
           <Button className={styles.accountHeader}>交易流水</Button>
-          <Button className={styles.accountHeader}>资产配置</Button>
+          <Button className={styles.accountHeader} onClick={this.handleLinkToAssetAllocation}>资产配置</Button>
           <Button className={styles.accountHeader}>账户分析</Button>
         </div>
         <Modal

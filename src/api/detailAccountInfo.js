@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-09 16:55:35
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-26 13:16:51
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-11-01 22:17:31
  * @description 新版客户360详情下的账户信息Tab页的API
  */
 export default function detailAccountInfo(api) {
@@ -25,5 +25,7 @@ export default function detailAccountInfo(api) {
     queryAccountSummary: query => api.post('/groovynoauth/fsp/cust/custdetail/queryAccountSummaryInfo', query),
     // 查询新版客户360详情下的账户信息Tab下的普通账户、信用账户、期权账户
     queryAccountInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryFundAndStockAccountInfo', query),
+    // 获取是否有已实施的流程
+    queryHasDoingFlow: query => api.post('/groovynoauth/fsp/cust/custdetail/checkCustAsset', query),
   };
 }
