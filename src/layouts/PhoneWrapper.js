@@ -44,10 +44,6 @@ export default class PhoneWrapper extends Component {
     this.endTime = '';
   }
 
-  componentDidMount() {
-    this.props.getMotCustfeedBackDict({ pageNum: 1, pageSize: 10000, type: 2 });
-  }
-
   // 电话挂断和继续回调函数
   @autobind
   phoneCallback(data) {
@@ -66,6 +62,8 @@ export default class PhoneWrapper extends Component {
   @logable({ type: 'Click', payload: { name: '点击' } })
   handleClickPhone() {
     this.startTime = '';
+     // 获取打完电话发服务记录时需要的字典信息
+    return this.props.getMotCustfeedBackDict({ pageNum: 1, pageSize: 10000, type: 2 });
   }
 
   // 电话接通方法
