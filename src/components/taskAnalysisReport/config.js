@@ -279,7 +279,7 @@ const customerOption = {
 };
 // 服务渠道占比配置项
 const serviceChannelChangeOption = {
-  color: ['#f7ad33', '#4c70b3', '#67b8e1', '#cf4b4a'],
+  color: ['#f7ad33', '#67b8e1', '#cf4b4a', '#4c70b3'],
   eventReportName: '服务渠道变化',
   eventDataName: {
     zhangle: '涨乐',
@@ -342,13 +342,13 @@ const tableOption = {
     eventType: 'task',
     width: 150,
   },{
-    title: '覆盖客户数',
+    title: '覆盖客户人次',
     dataIndex: 'coveredCustomerNum',
     key: 'coveredCustomerNum',
     eventType: 'customer',
     width: 150,
   },{
-    title: '已服务客户数',
+    title: '已服务客户人次',
     dataIndex: 'servedCustomerNum',
     key: 'servedCustomerNum',
     eventType: 'customer',
