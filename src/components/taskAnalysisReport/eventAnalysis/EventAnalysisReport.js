@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-05 10:03:53
+ * @Last Modified time: 2018-11-05 17:49:26
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import _ from 'lodash';
 import ReportTitle from '../ReportTitle';
 import ReportFilter from '../ReportFilter';
 import EventAnalysisChart from './EventAnalysisChart';
+import { env } from '../../../helper';
 import { defaultStartTime,
   defaultEndTime,
   taskOption,
@@ -165,9 +166,14 @@ export default class EventAnalysisReport extends PureComponent {
   @autobind
   getChartPosition(e) {
     const scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
-    const scrollY = document.documentElement.scrollTop || document.body.scrollTop || document.querySelector('#workspace-content').scrollTop;
-    const pageX = e.pageX || e.clientX + scrollX;
-    const pageY = e.pageY || e.clientY + scrollY;
+    const scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+    let pageX = e.pageX || e.clientX + scrollX;
+    let pageY = e.pageY || e.clientY + scrollY;
+    if (env.isInFsp()) {
+      const scrollbar = document.querySelector('.ps-scrollbar-y-rail');
+      const scrollbarTop = dom.getRect(scrollbar, 'top');
+      pageY = pageY + scrollbarTop;
+    }
     // 获取表格图表的dom节点
     const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
     const eventAnalysisReportDom = this.eventAnalysisReportRef.current;
@@ -307,7 +313,7 @@ export default class EventAnalysisReport extends PureComponent {
 
     // 展示表格头部
     const columnsItem = tableOption.columnsItem;
-    const columns = _.map(columnsItem,(col) => {
+    const columns = _.map(columnsItem, (col) => {
       const { eventType } = col;
       return {
         ...col,
