@@ -808,7 +808,7 @@ export default class CustomerGroupManage extends PureComponent {
             tableClass={`${tableStyles.groupTable} ${styles.labelList}`}
             titleColumn={COLUMNS_LABELTABLE}
             actionSource={actionSource}
-            columnWidth={['16%', '37%', '17%', '10%', '20%']}
+            columnWidth={['16%', '35%', '17%', '7%', '25%']}
             clickableColumnCallbackList={[this.handleEditLabel]}
             clickableColumnIndexList={[1]}
             actionClass={styles.actionSource}
