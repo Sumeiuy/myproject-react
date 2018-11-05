@@ -30,7 +30,6 @@ import { padSightLabelDesc } from '../../config';
 import styles from './home.less';
 import { MorningBroadcast } from '../../components/customerPool/home';
 import { DATE_FORMAT_STRING, MONTH_DATE_FORMAT, navArray } from './config';
-import rankPng from './ranks.png';
 import {
   NEW_HOME_INTRO_THIRD_SEEP_IDNAME,
   NEW_HOME_INTRO_FIFTH_SEEP_IDNAME,
