@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 16:52:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-24 14:14:53
+ * @Last Modified time: 2018-11-06 14:34:22
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailAccountInfo as api } from '../../api';
@@ -38,6 +38,12 @@ export default {
     },
     // 客户是否有已实施的流程
     hasDoingFlow: false,
+    // 证券历史持仓明细
+    stockHistoryHoldingData: {},
+    // 产品历史持仓明细
+    productHistoryHoldingData: {},
+    // 期权历史持仓明细
+    optionHistoryHoldingData: {},
   },
   reducers: {
     getRealTimeAssetSuccess(state, action) {
@@ -126,6 +132,27 @@ export default {
           ...accountInfo,
           ...payload,
         },
+      };
+    },
+    queryProductHistoryHoldingSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        productHistoryHoldingData: resultData || {},
+      };
+    },
+    queryStockHistoryHoldingSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        stockHistoryHoldingData: resultData || {},
+      };
+    },
+    queryOptionHistoryHoldingSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        optionHistoryHoldingData: resultData || {},
       };
     },
     // 清除redux数据
@@ -221,19 +248,43 @@ export default {
         payload: { [type]: resultData || {} },
       });
     },
-    // 清空数据
-    * clearReduxData({ payload }, { put }) {
-      yield put({
-        type: 'clearReduxDataSuccess',
-        payload,
-      });
-    },
     // 查询客户是否有已实施的流程
     * queryHasDoingFlow({ payload }, { put, call }) {
       const { resultData } = yield call(api.queryHasDoingFlow, payload);
       yield put({
         type: 'queryHasDoingFlowSuccess',
         payload: resultData,
+      });
+    },
+    // 查询证券历史持仓明细
+    * queryStockHistoryHolding({ payload }, { put, call }) {
+      const response = yield call(api.queryStockHistoryHolding, payload);
+      yield put({
+        type: 'queryStockHistoryHoldingSuccess',
+        payload: response,
+      });
+    },
+    // 查询客户产品历史持仓明细
+    * queryProductHistoryHolding({ payload }, { put, call }) {
+      const response = yield call(api.queryProductHistoryHolding, payload);
+      yield put({
+        type: 'queryProductHistoryHoldingSuccess',
+        payload: response,
+      });
+    },
+    // 查询期权历史持仓明细
+    * queryOptionHistoryHolding({ payload }, { put, call }) {
+      const response = yield call(api.queryOptionHistoryHolding, payload);
+      yield put({
+        type: 'queryOptionHistoryHoldingSuccess',
+        payload: response,
+      });
+    },
+    // 清空数据
+    * clearReduxData({ payload }, { put }) {
+      yield put({
+        type: 'clearReduxDataSuccess',
+        payload,
       });
     },
   },

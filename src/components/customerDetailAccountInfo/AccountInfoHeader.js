@@ -1,30 +1,23 @@
 /*
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-11-02 13:56:34
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-06 19:43:47
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
-import { Button, Tabs, Radio } from 'antd';
-import _ from 'lodash';
-import Modal from '../../components/common/biz/CommonModal';
-import Table from '../../components/common/table';
+import { Button } from 'antd';
+
+import RealTimeHoldingModal from './RealTimeHoldingModal';
+import HistoryHoldingModal from './HistoryHoldingModal';
+import logable, { logPV } from '../../decorators/logable';
+
 import styles from './accountInfoHeader.less';
-import { number } from '../../helper';
-import { displayMoney } from './utils';
-import { list, columns, productColumns } from './config';
-//tab栏
-const TabPane = Tabs.TabPane;
-//单选框
-const RadioGroup = Radio.Group;
-//处理千分位以及小数保留后两位
-const { thousandFormat, toFixed, formatRound } = number;
 
 export default class AccountInfoHeader extends PureComponent {
   static propTypes = {
-    push: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
     //证券实时持仓的数据
     securitiesData: PropTypes.array.isRequired,
     //实时资产的数据
@@ -37,137 +30,71 @@ export default class AccountInfoHeader extends PureComponent {
     getRealTimeAsset: PropTypes.func.isRequired,
     //查询产品实时持仓数据
     getProductHoldingData: PropTypes.func.isRequired,
-    location: PropTypes.object.isRequired,
     // 是否有正在执行中的流程
     hasDoingFlow: PropTypes.bool.isRequired,
+    // 查询历史持仓明细的api集合函数
+    queryHistoryHolding: PropTypes.func.isRequired,
+    // 证券历史持仓明细数据
+    stockHistoryHolding: PropTypes.object.isRequired,
+    // 产品历史持仓明细数据
+    productHistoryHolding: PropTypes.object.isRequired,
+    // 期权历史持仓明细数据
+    optionHistoryHolding: PropTypes.object.isRequired,
   }
+
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       // 实时持仓的弹出框
       realTimeHoldModalVisible: false,
-      //证券分类数据
-      classificationData: {},
-      // //默认tab显示的key
-      activeKey: 'securitiesHoldings',
+      // 历史持仓弹出层，显示隐藏状态
+      historyHoldModalVisible: false,
     };
   }
-  //数据为空时，默认显示空行
+
+  // 打开历史持仓的弹出层
   @autobind
-  padEmptyRow(data) {
-    const len = _.size(data);
-    let newData = _.cloneDeep(data);
-    if (len < 5) {
-      const padLen = 5 - len;
-      for (let i = 0; i < padLen; i++) {
-        newData = _.concat(newData, [{
-          key: `empty_row_${i}`,
-          // productCode: `empty_row_${i}`,
-          // 空白行标志
-          flag: true,
-        }]);
-      }
-    }
-    return newData;
+  @logPV({ pathname: '/modal/cust360DetailHistoryHoldingModal', title: '历史持仓' })
+  handleHistoryHoldingModalOpen() {
+    this.setState({ historyHoldModalVisible: true });
   }
 
-  //tab栏切换的回调
+  // 关闭历史持仓的弹出层
   @autobind
-  handleTabSwitch(key) {
-    this.setState({ activeKey: key });
+  @logable({ type: 'Click', payload: { name: '关闭历史持仓'} })
+  handleHistoryHoldingModalClose() {
+    this.setState({ historyHoldModalVisible: false });
   }
+
   // 关闭实时持仓的弹出层
   @autobind
+  @logable({ type: 'Click', payload: { name: '关闭实时持仓'} })
   handleRealTimeHoldModalClose() {
-    this.setState({ realTimeHoldModalVisible: false, activeKey: 'securitiesHoldings' });
+    this.setState({ realTimeHoldModalVisible: false });
   }
   // 打开实时持仓的弹出层
   @autobind
+  @logPV({ pathname: '/modal/cust360DetailRealTimeHoldingModal', title: '实时持仓' })
   handleRealTimeHoldModalOpen() {
-    const { query } = this.props.location;
-    const { getRealTimeAsset } = this.props;
-    getRealTimeAsset({ custId: query && query.custId }).then(() => {
+    // 实时持仓打开前，有限查询一把实时资产的数据
+    const { location: { query: { custId } } } = this.props;
+    this.props.getRealTimeAsset({ custId }).then(() => {
       this.setState({ realTimeHoldModalVisible: true });
     });
-    //进入需要查询下证券实时持仓数据
-    this.props.getSecuritiesHolding({
-      custId: query && query.custId,
-      accountType: 'all'
-    });
+    //进入需要查询下证券实时持仓数据, 默认查全部
+    this.props.getSecuritiesHolding({ custId, accountType: 'all' });
     //进入需要查询下产品实时持仓数据
-    this.props.getProductHoldingData({
-      custId: query && query.custId,
-    });
-  }
-  //账户类型的筛选
-  @autobind
-  handleAccountType(e) {
-    const { query } = this.props.location;
-    this.props.getSecuritiesHolding({ custId: query && query.custId, accountType: e.target.value });
-  }
-  // 渲染Tabl列的数据
-  @autobind
-  renderColumnValue(text, record) {
-    const { flag } = record;
-    return flag ? '' : text;
-  }
-  //处理表格数据千分位以及小数保留两（三）位小数
-  @autobind
-  handleSecuritiesData(securitiesData = []) {
-    return _.map(securitiesData, (item) => {
-      const { profitAndLoss, presentPrice, marketValue, cost, holdingNumber, availableNumber } = item;
-      const newProfitAndLoss = thousandFormat(toFixed(profitAndLoss, 2), true, ',', false);
-      const newPresentPrice = thousandFormat(toFixed(presentPrice, 2), true, ',', false);
-      const newMarketValue = thousandFormat(toFixed(marketValue, 2), true, ',', false);
-      const newCost = thousandFormat(toFixed(cost, 3), true, ',', false);
-      const newHoldingNumber = thousandFormat(holdingNumber, true, ',', false);
-      const newAvailableNumber = thousandFormat(availableNumber, true, ',', false);
-      return {
-        ...item,
-        profitAndLoss: newProfitAndLoss,
-        presentPrice: newPresentPrice,
-        marketValue: newMarketValue,
-        cost: newCost,
-        holdingNumber: newHoldingNumber,
-        availableNumber: newAvailableNumber
-      };
-    });
-  }
-  @autobind
-  handleProductData(productData = []) {
-    return _.map(productData, (items) => {
-      const { share, netWorth, marketValue, profitAndLoss } = items;
-      const newShare = thousandFormat(toFixed(share, 2), true, ',', false);
-      const newNetWorth = thousandFormat(formatRound(netWorth, 2, false), true, ',', false);
-      const newMarketValue = thousandFormat(toFixed(marketValue, 2), true, ',', false);
-      const newProfitAndLoss = thousandFormat(toFixed(profitAndLoss, 2), true, ',', false);
-      return {
-        ...items,
-        share: newShare,
-        netWorth: newNetWorth,
-        marketValue: newMarketValue,
-        profitAndLoss: newProfitAndLoss
-      };
-    });
-  }
-
-  //根据资产的正负判断实时资产的颜色
-  @autobind
-  handleRealTimeAssetsColor(rtimeAssets) {
-    let color = '#59ae85';
-    if (rtimeAssets > 0) {
-      color = 'red';
-    }
-    else if (rtimeAssets === 0) {
-      color = '#333';
-    }
-    return { color };
+    this.props.getProductHoldingData({ custId });
   }
 
   // 跳转到资产配置页面
   @autobind
   handleLinkToAssetAllocation() {
-    const { push, hasDoingFlow, location: { query: { custId = ''} } } = this.props;
+    const { hasDoingFlow, location: { query: { custId = ''} } } = this.props;
     // 新建
     let pathname = '/fsp/implementation/initsee';
     // 新建 url
@@ -177,7 +104,7 @@ export default class AccountInfoHeader extends PureComponent {
       pathname = '/fsp/serviceCenter/asset/implementation';
       url = `/asset/implementation/main?customerIdStr=${custId}`;
     }
-    push({
+    this.context.push({
       pathname,
       state: {
         url,
@@ -186,113 +113,56 @@ export default class AccountInfoHeader extends PureComponent {
   }
 
   render() {
+    const { realTimeHoldModalVisible, historyHoldModalVisible } = this.state;
     const {
-      realTimeHoldModalVisible,
-    } = this.state;
-    const { securitiesData, realTimeAsset, productData } = this.props;
-    //空白数据填充
-    const newSecuritiesDatas = this.padEmptyRow(securitiesData);
-    const productDatas = this.padEmptyRow(productData);
-    // 修改Table的Column
-    const newColumns = _.map(columns, column => ({ ...column, render: this.renderColumnValue }));
-    const productColumn = _.map(productColumns, column => ({ ...column, render: this.renderColumnValue }));
+      location,
+      securitiesData,
+      realTimeAsset,
+      productData,
+      queryHistoryHolding,
+      stockHistoryHolding,
+      productHistoryHolding,
+      optionHistoryHolding,
+      getSecuritiesHolding,
+    } = this.props;
 
-    //处理表格数据千分位以及小数保留两（三）位小数
-    const newSecuritiesData = this.handleSecuritiesData(newSecuritiesDatas);
-    const newProductData = this.handleProductData(productDatas);
-    //取出实时资产的数据
-    const { rtimeAssets, availableFunds, advisableFunds } = realTimeAsset;
-    //调用处理实时资产数据的方法
-    const rtimeAsset = displayMoney(rtimeAssets);
-    //根据资产的正负判断实时资产的颜色
-    const realTimeAssetsColorStyle = this.handleRealTimeAssetsColor(rtimeAssets);
-    const availableFund = displayMoney(availableFunds);
-    const advisableFund = displayMoney(advisableFunds);
-    const { activeKey } = this.state;
     return (
       <div>
         <div className={styles.accountHeaderContainer}>
-          <Button onClick={this.handleRealTimeHoldModalOpen} className={styles.accountHeader}>实时持仓</Button>
-          <Button className={styles.accountHeader}>历史持仓</Button>
+          <Button className={styles.accountHeader} onClick={this.handleRealTimeHoldModalOpen} >实时持仓</Button>
+          <Button className={styles.accountHeader} onClick={this.handleHistoryHoldingModalOpen}>历史持仓</Button>
           <Button className={styles.accountHeader}>交易流水</Button>
           <Button className={styles.accountHeader} onClick={this.handleLinkToAssetAllocation}>资产配置</Button>
           <Button className={styles.accountHeader}>账户分析</Button>
         </div>
-        <Modal
-          title="实时持仓"
-          size='large'
-          showOkBtn={false}
-          destroyOnClose
-          visible={realTimeHoldModalVisible}
-          closeModal={this.handleRealTimeHoldModalClose}
-          onCancel={this.handleRealTimeHoldModalClose}
-          selfBtnGroup={[(<Button onClick={this.handleRealTimeHoldModalClose}>关闭</Button>)]}
-          modalKey="realTimeModal"
-          maskClosable={false}
-        >
-          <div className={styles.assets}>
-            <div className={styles.assetsContainer}>
-              <span className={styles.rtimeAsset}>实时资产</span>
-              <span className={styles.assetsnewItem} style={realTimeAssetsColorStyle}>{rtimeAsset}</span>
-            </div>
-            <div className={styles.assetsContainer}>
-              <span className={styles.availableFund}>可用资金</span>
-              <span className={styles.assetsnewUnit}>{availableFund}</span>
-            </div>
-            <div className={styles.assetsContainer}>
-              <span className={styles.availableFund}>可取资金</span>
-              <span className={styles.assetsnewUnit}>{advisableFund}</span>
-            </div>
-          </div>
-          <div className={styles.tabContainer}>
-            <Tabs
-              onChange={this.handleTabSwitch}
-              animated={false}
-              className={styles.tab}
-              activeKey={activeKey}
-            >
-              <TabPane
-                tab="证券实时持仓"
-                key="securitiesHoldings">
-                <div className={styles.tabDiv}><span className={styles.tabspan}>账户类型：</span>
-                  <RadioGroup name="radiogroup" defaultValue="all" onChange={this.handleAccountType}>
-                    {
-                      list.map(item => (
-                        <Radio value={item.value} key={item.value}>
-                          <span
-                            style={{
-                              'paddingLeft': '10px',
-                              'paddingRight': '30px',
-                            }}
-                          >
-                            {item.label}
-                          </span>
-                        </Radio>
-                      ))
-                    }
-                  </RadioGroup>
-                </div>
-                <Table
-                  rowKey='dataIndex'
-                  className={styles.tableContainer}
-                  columns={newColumns}
-                  dataSource={newSecuritiesData}
-                  pagination={false}
-                  scroll={{ x: '1026px' }}
-                />
-              </TabPane>
-              <TabPane tab="产品实时持仓" key="productHoldingDate">
-                <Table className={styles.tableContainer}
-                  columns={productColumn}
-                  rowKey='dataIndex'
-                  dataSource={newProductData}
-                  pagination={false}
-                  scroll={{ x: '1026px' }}
-                />
-              </TabPane>
-            </Tabs>
-          </div>
-        </Modal>
+        {
+          historyHoldModalVisible
+            ? (
+              <HistoryHoldingModal
+                location={location}
+                onClose={this.handleHistoryHoldingModalClose}
+                queryHistoryHolding={queryHistoryHolding}
+                stockHistoryHolding={stockHistoryHolding}
+                productHistoryHolding={productHistoryHolding}
+                optionHistoryHolding ={optionHistoryHolding}
+              />
+            )
+            : null
+        }
+        {
+          realTimeHoldModalVisible
+            ? (
+              <RealTimeHoldingModal
+                location={location}
+                realTimeAsset={realTimeAsset}
+                securitiesData={securitiesData}
+                productData={productData}
+                getSecuritiesHolding={getSecuritiesHolding}
+                onClose={this.handleRealTimeHoldModalClose}
+              />
+            )
+            : null
+        }
       </div>
     );
   }

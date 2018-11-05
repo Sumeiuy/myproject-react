@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-11-02 09:13:00
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-06 19:16:31
  */
 
 import React, { PureComponent } from 'react';
@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
 import moment from 'moment';
 
 import { timeList, codeList } from '../../../../config/profitRateConfig';
@@ -80,6 +79,12 @@ const mapStateToProps = state => ({
   accountInfo: state.detailAccountInfo.accountInfo,
   // 是否有已实施的流程
   hasDoingFlow: state.detailAccountInfo.hasDoingFlow,
+  // 证券历史持仓明细
+  stockHistoryHolding: state.detailAccountInfo.stockHistoryHoldingData,
+  // 产品历史持仓明细
+  productHistoryHolding: state.detailAccountInfo.productHistoryHoldingData,
+  // 期权历史持仓明细
+  optionHistoryHolding: state.detailAccountInfo.optionHistoryHoldingData,
 });
 
 const mapDispatchToProps = {
@@ -92,7 +97,7 @@ const mapDispatchToProps = {
   //查询实时持仓中的实时资产
   getRealTimeAsset: effect('detailAccountInfo/getRealTimeAsset'),
   //查询实时持仓中的证券实时持仓
-  getSecuritiesHolding: effect('detailAccountInfo/getSecuritiesHolding'),
+  getSecuritiesHolding: effect('detailAccountInfo/getSecuritiesHolding', { forceFull: true }),
   //查询实时持仓中的产品实时持仓
   getProductHoldingData: effect('detailAccountInfo/getProductHoldingData'),
   // 查询收益走势数据
@@ -104,13 +109,18 @@ const mapDispatchToProps = {
   // 清除Redux中的数据
   clearReduxData: effect('detailAccountInfo/clearReduxData', { loading: false }),
   // 查询是否有已实施的流程
-  queryHasDoingFlow:  effect('detailAccountInfo/queryHasDoingFlow'),
+  queryHasDoingFlow: effect('detailAccountInfo/queryHasDoingFlow'),
+  // 查询证券历史持仓明细
+  queryStockHistoryHolding: effect('detailAccountInfo/queryStockHistoryHolding', { forceFull: true }),
+  // 查询产品历史持仓明细
+  queryProductHistoryHolding: effect('detailAccountInfo/queryProductHistoryHolding', { forceFull: true }),
+  // 查询期权历史持仓明细
+  queryOptionHistoryHolding: effect('detailAccountInfo/queryOptionHistoryHolding', { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Home extends PureComponent {
   static propTypes = {
-    push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     // 资产分布的雷达数据
     assetsRadarData: PropTypes.object.isRequired,
@@ -152,10 +162,18 @@ export default class Home extends PureComponent {
     queryHasDoingFlow: PropTypes.func.isRequired,
     // 是否有已实施的流程
     hasDoingFlow: PropTypes.bool.isRequired,
-  }
-
-  static contextTypes = {
-    push: PropTypes.func.isRequired,
+    // 证券历史持仓明细 api
+    queryStockHistoryHolding: PropTypes.func.isRequired,
+    // 产品历史持仓明细 api
+    queryProductHistoryHolding: PropTypes.func.isRequired,
+    // 期权历史持仓明细 api
+    queryOptionHistoryHolding: PropTypes.func.isRequired,
+    // 证券历史持仓明细数据
+    stockHistoryHolding: PropTypes.object.isRequired,
+    // 产品历史持仓明细数据
+    productHistoryHolding: PropTypes.object.isRequired,
+    // 期权历史持仓明细数据
+    optionHistoryHolding: PropTypes.object.isRequired,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -234,6 +252,28 @@ export default class Home extends PureComponent {
     }
   }
 
+  // 此处将历史持仓明细的3个api接口写到一个函数中，一遍后面传递的时候只需要传递一个函数，
+  // 避免传递过多的props
+  @autobind
+  queryHistoryHolding(query) {
+    const { type, ...resetQ } = query;
+    const {
+      queryStockHistoryHolding,
+      queryProductHistoryHolding,
+      queryOptionHistoryHolding,
+    } = this.props;
+    if (type === 'stock') {
+      // 调用查询证券历史持仓明细 api
+      queryStockHistoryHolding(resetQ);
+    } else if (type === 'product') {
+      // 调用查询产品历史持仓明细 api
+      queryProductHistoryHolding(resetQ);
+    } else {
+      // 调用查询期权历史持仓明细 api
+      queryOptionHistoryHolding(resetQ);
+    }
+  }
+
   @autobind
   getProfitRateInfo(options) {
     const { location: { query }, queryProfitRateInfo } = this.props;
@@ -306,19 +346,18 @@ export default class Home extends PureComponent {
       queryAccountInfo,
       accountInfo,
       hasDoingFlow,
+      stockHistoryHolding,
+      productHistoryHolding,
+      optionHistoryHolding,
     } = this.props;
-    const { push } = this.context;
-    const {
-      compareCode,
-      time,
-    } = this.state;
+
+    const { compareCode, time } = this.state;
 
     return (
       <div className={styles.detailAccountInfo}>
         {/* 头部实时持仓、历史持仓、交易流水、资产配置、账户分析 5 个按钮的所占区域*/}
         <div className={styles.headerBtnsArea}>
           <AccountInfoHeader
-            push={push}
             getSecuritiesHolding={getSecuritiesHolding}
             securitiesData={securitiesHolding}
             getRealTimeAsset={getRealTimeAsset}
@@ -327,6 +366,10 @@ export default class Home extends PureComponent {
             getProductHoldingData={getProductHoldingData}
             location={location}
             hasDoingFlow={hasDoingFlow}
+            queryHistoryHolding={this.queryHistoryHolding}
+            stockHistoryHolding={stockHistoryHolding}
+            productHistoryHolding={productHistoryHolding}
+            optionHistoryHolding={optionHistoryHolding}
           />
         </div>
         {/* 中间资产分布和收益走势区域 */}
