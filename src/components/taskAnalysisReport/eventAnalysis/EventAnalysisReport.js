@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-06 09:54:54
+ * @Last Modified time: 2018-11-06 10:44:25
  */
 
 import React, { PureComponent } from 'react';
@@ -170,7 +170,7 @@ export default class EventAnalysisReport extends PureComponent {
     let pageX = e.pageX || e.clientX + scrollX;
     let pageY = e.pageY || e.clientY + scrollY;
     if (env.isInFsp()) {
-      const scrollbar = document.querySelector('.ps-scrollbar-y-rail');
+      const scrollbar = document.querySelector('#workspace-content .ps-scrollbar-y-rail');
       const scrollbarTop = scrollbar.offsetTop;
       pageY = pageY + scrollbarTop;
     }
