@@ -612,7 +612,8 @@ export default class Home extends PureComponent {
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
-          <div className={styles.competitionsLink}>
+          {/* 投顾能力竞赛 */}
+          <div className={styles.competitionsLink} onClick={this.toInvestmentConsultantCompetenceRacePage}>
           </div>
           <div className={styles.mostFocusContentLink}>
             <CommonCell {...keyAttentionProps} />
