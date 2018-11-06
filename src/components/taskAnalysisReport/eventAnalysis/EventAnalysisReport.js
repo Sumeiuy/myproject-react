@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-06 10:44:25
+ * @Last Modified time: 2018-11-06 13:25:35
  */
 
 import React, { PureComponent } from 'react';
@@ -165,28 +165,22 @@ export default class EventAnalysisReport extends PureComponent {
   // 图表位置定位
   @autobind
   getChartPosition(e) {
-    const scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
-    const scrollY = document.documentElement.scrollTop || document.body.scrollTop;
-    let pageX = e.pageX || e.clientX + scrollX;
-    let pageY = e.pageY || e.clientY + scrollY;
-    if (env.isInFsp()) {
-      const scrollbar = document.querySelector('#workspace-content .ps-scrollbar-y-rail');
-      const scrollbarTop = scrollbar.offsetTop;
-      pageY = pageY + scrollbarTop;
-    }
+    let clientX = e.clientX;
+    let clientY = e.clientY;
     // 获取表格图表的dom节点
     const eventAnalysisChartDom = this.eventAnalysisChartRef.current;
-    const eventAnalysisReportDom = this.eventAnalysisReportRef.current;
-    // 获取事件分析报表的top
-    const reportTop = eventAnalysisReportDom.offsetTop;
-    // 获取事件分析报表的宽高
-    const { width: reportWidth} = dom.getRect(eventAnalysisReportDom);
+    // 获取浏览器宽度
+    const screenWidth = window.screen.width;
     // 让图表位置显示在鼠标位置上方50px处，当鼠标位置+图表位置一半的时候图表位置为报表的最右方
-    let eventAnalysisChartTop =  `${pageY - reportTop - 374 - 50}px`;
-    let eventAnalysisChartLeft =  `${pageX - 312}px`;
+    let eventAnalysisChartTop =  `${clientY - 374 - 50}px`;
+    let eventAnalysisChartLeft =  `${clientX - 312}px`;
     // 图表宽度624px，高度374px
-    if (pageX + 312 > reportWidth) {
-      eventAnalysisChartLeft = `${reportWidth - 624}px`;
+    if (clientX + 312 > screenWidth) {
+      eventAnalysisChartLeft = `${screenWidth - 624 - 20}px`;
+    }
+    // 图表宽度624px，高度374px
+    if (clientX - 312 < 0) {
+      eventAnalysisChartLeft = '20px';
     }
     dom.setStyle(eventAnalysisChartDom, 'top', eventAnalysisChartTop);
     dom.setStyle(eventAnalysisChartDom, 'left', eventAnalysisChartLeft);
@@ -335,7 +329,7 @@ export default class EventAnalysisReport extends PureComponent {
       }
     } = this.state;
     return (
-      <div ref = {this.eventAnalysisReportRef} className={styles.eventAnalysisReport}>
+      <div className={styles.eventAnalysisReport}>
         <ReportTitle title="事件分析报表" />
         <ReportFilter
           dateFilterName="任务截止时间"
