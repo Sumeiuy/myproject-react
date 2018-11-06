@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 16:52:56
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-06 14:34:22
+ * @Last Modified time: 2018-11-06 19:53:58
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailAccountInfo as api } from '../../api';
@@ -285,6 +285,14 @@ export default {
       yield put({
         type: 'clearReduxDataSuccess',
         payload,
+      });
+    },
+    // 查询客户是否有已实施的流程
+    * queryHasDoingFlow({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryHasDoingFlow, payload);
+      yield put({
+        type: 'queryHasDoingFlowSuccess',
+        payload: resultData,
       });
     },
   },

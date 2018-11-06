@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-06 19:16:31
+ * @Last Modified time: 2018-11-06 19:55:23
  */
 
 import React, { PureComponent } from 'react';
@@ -97,7 +97,7 @@ const mapDispatchToProps = {
   //查询实时持仓中的实时资产
   getRealTimeAsset: effect('detailAccountInfo/getRealTimeAsset'),
   //查询实时持仓中的证券实时持仓
-  getSecuritiesHolding: effect('detailAccountInfo/getSecuritiesHolding', { forceFull: true }),
+  getSecuritiesHolding: effect('detailAccountInfo/getSecuritiesHolding', { forceFull: true } ),
   //查询实时持仓中的产品实时持仓
   getProductHoldingData: effect('detailAccountInfo/getProductHoldingData'),
   // 查询收益走势数据

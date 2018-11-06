@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-06 19:43:47
+ * @Last Modified time: 2018-11-06 19:53:50
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
