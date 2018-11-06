@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-14 09:48:58
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-05 17:49:26
+ * @Last Modified time: 2018-11-05 19:45:24
  */
 
 import React, { PureComponent } from 'react';
@@ -171,7 +171,7 @@ export default class EventAnalysisReport extends PureComponent {
     let pageY = e.pageY || e.clientY + scrollY;
     if (env.isInFsp()) {
       const scrollbar = document.querySelector('.ps-scrollbar-y-rail');
-      const scrollbarTop = dom.getRect(scrollbar, 'top');
+      const scrollbarTop = scrollbar.style.top;
       pageY = pageY + scrollbarTop;
     }
     // 获取表格图表的dom节点
