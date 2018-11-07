@@ -246,16 +246,25 @@ function openRctTab(options) {
 function openFspTab(options) {
   const { param } = options;
   const originTabs = window.$('#UTB').data('tabs') || [];
-
-  const newTabs = _.map(originTabs, (tab) => {
-    if (tab.id === param.id) {
-      return {
-        ...tab,
-        ...param,
-      };
-    }
-    return tab;
-  });
+  let newTabs = originTabs;
+  // 是否已经打开
+  const isAlreadyOpen = _.find(originTabs, tab => tab.id === param.id);
+  if (isAlreadyOpen) {
+    newTabs = _.map(originTabs, (tab) => {
+      if (tab.id === param.id) {
+        return {
+          ...tab,
+          ...param,
+        };
+      }
+      return tab;
+    });
+  } else { // 如果没有新打开，则加入tab缓存
+    newTabs = [
+      ...newTabs,
+      { ...param },
+    ];
+  }
   window.$('#UTB').data('tabs', newTabs);
   dispatchTabPane({
     fspAction: 'openFspTab',

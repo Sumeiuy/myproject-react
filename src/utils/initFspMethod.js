@@ -7,7 +7,7 @@ import env from '../helper/env';
 import { findBestMatch } from '../helper/os';
 import { parse, parseUrl } from '../helper/url';
 import { fspRoutes, retTabParam } from '../config';
-import { openRctTab } from './controlPane';
+import { openRctTab, closeRctTab, closeFspTab } from './controlPane';
 
 function findRoute(url) {
   return findBestMatch(url, fspRoutes, 'url');
@@ -202,6 +202,15 @@ function initFspMethod({ store, history, isInReact }) {
       loadPageInIframeTab: {
         run() { },
       },
+    };
+    // 重写eb的关闭tab的方法, 目前只支持关闭当前的active的tab
+    window.closeTabForEB = function (id) {
+      const { path } = findBestMatch(id, fspRoutes, 'containerId');
+      if(/^\/fsp/.test(path)) { // 是jsp页面
+        closeFspTab();
+      } else {
+        closeRctTab();
+      }
     };
 
     window.tabW = _.noop;
