@@ -258,7 +258,7 @@ export default class RecommendedLabel extends PureComponent {
     const { updataCustLabels, queryHotWds3 } = this.props;
     const { onQueryLabel } = this;
     const { selectedLabels } = this.state;
-    const submitTitle = env.isInFsp() ?
+    const submitTitle = env.isInReact() ?
       '请确认选择的标签，提交后数据将实时生效' :
       '选择标签后请点击预览查看在首页的展示情况，标签文字超出部分将不在首页显示，如已查看，确定后将保存数据实时生效';
     confirm({
@@ -293,16 +293,16 @@ export default class RecommendedLabel extends PureComponent {
 
     const previewCls = classnames({
       [styles.preview]: true,
-      [styles.hidden]: env.isInFsp(),
+      [styles.hidden]: env.isInReact(),
     });
 
     // 顶部提示语
-    const headerHelperTip = env.isInFsp() ?
+    const headerHelperTip = env.isInReact() ?
       (<span>在此设置的推荐标签将显示在 <b>首页-猜你感兴趣</b> 中，实时生效。</span>) :
       (<span>在此设置的推荐标签将显示在 <b>首页-猜你感兴趣</b> 中，实时生效，点击下方 <b>预览</b> 可预览展示效果。</span>);
 
     // 标签占位文字
-    const labelPlaceholder = env.isInFsp() ?
+    const labelPlaceholder = env.isInReact() ?
       `请在下方标签列表中选择最多${MAX_SELECT_LABEL_SIZE}个推荐标签，最少${MIN_SELECT_LABEL_SIZE}个推荐标签` : '请在下方标签列表中选择最多5个推荐标签';
 
     const errorMessageCls = classnames({
@@ -319,7 +319,7 @@ export default class RecommendedLabel extends PureComponent {
         选择标签
       </div>
       {
-        env.isInFsp() ?
+        env.isInReact() ?
           <div className={errorMessageCls}><span className="iconfont icon-guanbi"></span>{`最多只能选择${MAX_SELECT_LABEL_SIZE}个推荐标签，最少需要选择${MIN_SELECT_LABEL_SIZE}个推荐标签`}</div>
         : null
       }
@@ -376,7 +376,7 @@ export default class RecommendedLabel extends PureComponent {
       <div className={styles.btnWrap}>
         <Button onClick={this.cancelSelectedLabel}>取消</Button>
         {
-          env.isInFsp() ?
+          env.isInReact() ?
             <Button type="primary" disabled={rangeError} onClick={this.handleSubmit}>提交</Button>
             : <Button type="primary" onClick={this.handleSubmit}>提交</Button>
         }
