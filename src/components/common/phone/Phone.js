@@ -122,9 +122,10 @@ export default class Phone extends PureComponent {
                 return;
               }
             }
-            this.prepareCall(number);
-            // 点击打电话
-            this.props.onClick();
+            // 拨打电话
+            this.props.onClick().then(() => {
+              this.prepareCall(number);
+            });
             // 显示通话蒙版
             this.props.onShowMask(true);
           }
@@ -181,8 +182,9 @@ export default class Phone extends PureComponent {
     onClick({
       number,
       custType,
+     }).then(() => {
+      this.prepareCall(number);
     });
-    this.prepareCall(number);
   }
 
   prepareCall(number) {
