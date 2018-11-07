@@ -414,6 +414,24 @@ const newOpenTabConfig = [
     path: '/sysOperate/telephoneNumberManageEdit',
     pid: '',
   },
+  {
+    name: '专项业务知识',
+    id: 'FSP_KNOWLEDGE',
+    path: '/fsp/knowledge',
+    pid: '',
+  },
+  {
+    name: '业务知识信息',
+    id: 'FSP_KNOWLEDGE_DETAIL',
+    path: '/fsp/showKnowledgeDetail',
+    pid: '',
+  },
+  {
+    name: '新建或编辑专项业务知识',
+    id: 'FSP_KNOWLEDGE_EDIT',
+    path: '/fsp/knowledgeEdit',
+    pid: '',
+  },
 ];
 
 // 默认当前激活的主导航菜单项
