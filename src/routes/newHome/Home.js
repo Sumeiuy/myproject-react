@@ -196,15 +196,18 @@ export default class Home extends PureComponent {
       pageSize: 10,
     });
 
-    // 组合推荐
-    queryIntroCombination();
+     // 这两个接口请求有点慢，延时发送请求
+    new Promise(resolve => resolve()).then(() => {
+      // 组合推荐
+      queryIntroCombination();
 
-    // 待办事项, 有任务管理岗时，将岗位id传给后端
-    // 判断当前登录用户是否在非营业部
-    const isNotSaleDepartment = emp.isManagementHeadquarters(this.loginOrgId)
-      || emp.isFiliale(custRange, this.loginOrgId);
-    // 非营业部登录用户有权限时，传登陆者的orgId
-    queryNumbers({ orgId: isNotSaleDepartment && permission.hasTkMampPermission() ? this.loginOrgId : '' });
+      // 判断当前登录用户是否在营业部
+      const isNotSaleDepartment = emp.isManagementHeadquarters(this.loginOrgId)
+        || emp.isFiliale(custRange, this.loginOrgId);
+    
+      // 非营业部登录用户有权限时，传登陆者的orgId
+      queryNumbers({ orgId: isNotSaleDepartment && permission.hasTkMampPermission() ? this.loginOrgId : '' });
+    });
   }
 
   // 猜你感兴趣-更多点击事件
