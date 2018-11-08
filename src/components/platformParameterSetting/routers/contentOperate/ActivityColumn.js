@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 01:02:01
+ * @Last Modified time: 2018-11-09 01:11:13
  */
 
 import React, { PureComponent } from 'react';
@@ -210,7 +210,7 @@ export default class ActivityColumn extends PureComponent {
           newActivityColumnList = _.concat(activityColumnList, { attachment, attaches, link, description, url});
         } else {
           // 编辑替换栏目
-          activityColumnList[index] = formData;
+          activityColumnList[index] = {...formData, link, description};
           newActivityColumnList = activityColumnList;
         }
         this.setState({ activityColumnList: newActivityColumnList });
