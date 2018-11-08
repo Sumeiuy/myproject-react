@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-10-25 10:09:52
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-06 19:12:44
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -101,24 +101,272 @@ export const ACCOUNT_INFO_TABS = {
   optionAccount: '期权账户',
 };
 
-const config = {
-  //实时持仓中单选框list
- list: [
+// 历史持仓下3个Tab的显示配置
+export const HISTORY_HOLDING_TABS = {
+  stockHistoryHolding: '证券持仓明细',
+  productHistoryHolding: '产品持仓明细',
+  optionHistoryHolding: '期权持仓明细',
+};
+
+export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 1800 };
+export const PRODUCT_HISTORY_HOLDING_TABLE_SCROLL= { x: 2000 };
+export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2500 };
+// 证券历史持仓表格显示的columns
+export const STOCK_HISTORY_HOLDING_COLUMNS = [
   {
-    value: 'all',
-    label: '全部'
+    width: 100,
+    key: 'type',
+    dataIndex: 'type',
+    title: '类型',
   },
   {
-    value: 'normal',
-    label: '普通'
+    width: 160,
+    key: 'industry',
+    dataIndex: 'industry',
+    title: '所属行业',
   },
   {
-    value: 'credit',
-    label: '信用'
+    key: 'name',
+    dataIndex: 'name',
+    title: '名称',
   },
-],
-//实时持仓中证券实时持仓表格
- columns: [
+  {
+    widht: 160,
+    key: 'code',
+    dataIndex: 'code',
+    title: '代码',
+  },
+  {
+    width: 160,
+    key: 'usableAmount',
+    dataIndex: 'usableAmount',
+    title: '可用数量',
+  },
+  {
+    width: 160,
+    key: 'freezeAmount',
+    dataIndex: 'freezeAmount',
+    title: '冻结数量',
+  },
+  {
+    width: 160,
+    key: 'costPrice',
+    dataIndex: 'costPrice',
+    title: '成本价(元)',
+    align: 'right',
+  },
+  {
+    width: 160,
+    key: 'marketPrice',
+    dataIndex: 'marketPrice',
+    title: '市价(元)',
+    align: 'right',
+  },
+  {
+    width: 200,
+    key: 'profit',
+    dataIndex: 'profit',
+    title: '账面盈利(元)',
+    align: 'right',
+  },
+  {
+    width: 100,
+    key: 'holdPercent',
+    dataIndex: 'holdPercent',
+    title: '持仓占比',
+  },
+  {
+    widht: 120,
+    key: 'holdDate',
+    dataIndex: 'holdDate',
+    title: '持仓时间',
+  },
+  {
+    widht: 120,
+    key: 'sharesNature',
+    dataIndex: 'sharesNature',
+    title: '股份性质',
+  },
+];
+
+// 产品历史持仓表格显示的columns
+export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
+  {
+    width: 120,
+    title: '产品大类',
+    key: 'firstType',
+    dataIndex: 'firstType',
+  },
+  {
+    width: 160,
+    title: '产品二级类别',
+    key: 'secondType',
+    dataIndex: 'secondType',
+  },
+  {
+    title: '名称',
+    key: 'name',
+    dataIndex: 'name',
+  },
+  {
+    width: 160,
+    title: '代码',
+    key: 'code',
+    dataIndex: 'code',
+  },
+  {
+    width: 160,
+    title: '可用份额',
+    key: 'usableShare',
+    dataIndex: 'usableShare',
+  },
+  {
+    width: 180,
+    title: '净值/7日年化收益率',
+    key: 'yearRate',
+    dataIndex: 'yearRate',
+  },
+  {
+    width: 180,
+    title: '成本价(元)',
+    key: 'costPrice',
+    dataIndex: 'costPrice',
+    align: 'right',
+  },
+  {
+    width: 180,
+    title: '市值(元)',
+    key: 'marketValue',
+    dataIndex: 'marketValue',
+    align: 'right',
+  },
+  {
+    width: 180,
+    title: '累计收益(元)',
+    key: 'totalProfit',
+    dataIndex: 'totalProfit',
+    align: 'right',
+  },
+  {
+    width: 160,
+    title: '分红方式',
+    key: 'dividendWay',
+    dataIndex: 'dividendWay',
+  },
+  {
+    width: 140,
+    title: '持仓时间',
+    key: 'holdDate',
+    dataIndex: 'holdDate',
+  },
+  {
+    width: 140,
+    title: '持仓占比',
+    key: 'holdPercent',
+    dataIndex: 'holdPercent',
+  },
+];
+
+// 期权历史持仓表格显示的columns
+export const OPTION_HISTORY_HOLDING_COLUMNS = [
+  {
+    width: 120,
+    title: '类别',
+    key: 'type',
+    dataIndex: 'type',
+  },
+  {
+    width: 200,
+    title: '期权名称',
+    key: 'optionName',
+    dataIndex: 'optionName',
+  },
+  {
+    width: 180,
+    title: '期权代码',
+    key: 'optionCode',
+    dataIndex: 'optionCode',
+  },
+  {
+    width: 140,
+    title: '期权种类',
+    key: 'optionKind',
+    dataIndex: 'optionKind',
+  },
+  {
+    width: 160,
+    title: '证劵代码',
+    key: 'stockCode',
+    dataIndex: 'stockCode',
+  },
+  {
+    width: 140,
+    title: '证券类别',
+    key: 'stockKind',
+    dataIndex: 'stockKind',
+  },
+  {
+    width: 160,
+    title: '权益持仓类别',
+    key: 'rightsHoldingType',
+    dataIndex: 'rightsHoldingType',
+  },
+  {
+    width: 180,
+    title: '可用数量',
+    key: 'usableAmount',
+    dataIndex: 'usableAmount',
+  },
+  {
+    width: 180,
+    title: '成本价(元)',
+    key: 'costPrice',
+    dataIndex: 'costPrice',
+    aligin: 'right',
+  },
+  {
+    width: 180,
+    title: '最新价(元)',
+    key: 'newestPrice',
+    dataIndex: 'newestPrice',
+    aligin: 'right',
+  },
+  {
+    width: 180,
+    title: '市值(元)',
+    key: 'marketValue',
+    dataIndex: 'marketValue',
+    aligin: 'right',
+  },
+  {
+    width: 180,
+    title: '账面盈利(元)',
+    key: 'profit',
+    dataIndex: 'profit',
+    aligin: 'right',
+  },
+  {
+    width: 140,
+    title: '持仓时间',
+    key: 'holdDate',
+    dataIndex: 'holdDate',
+  },
+  {
+    width: 140,
+    title: '到期日期',
+    key: 'holdEndDate',
+    dataIndex: 'holdEndDate',
+  },
+  {
+    width: 140,
+    title: '持仓占比',
+    key: 'holdPercent',
+    dataIndex: 'holdPercent',
+  },
+];
+
+// 证券实时持仓columns
+export const STOCK_REALTIME_COLUMNS = [
   {
     title: '产品代码',
     dataIndex: 'productCode',
@@ -179,9 +427,9 @@ const config = {
     key: 'currencyType',
     className: 'currencyType',
   },
-],
-//实时持仓中产品实时持仓的表格
- productColumns: [
+];
+// 产品实时持仓columns
+export const PRODUCT_REALTIME_COLUMNS = [
   {
     title: '产品代码',
     dataIndex: 'productCode',
@@ -228,11 +476,10 @@ const config = {
     key: 'currencyType',
     className: 'currencyType'
   },
-],
+];
+
+// 实时持仓的Tab的显示配置
+export const REALTIME_HOLDING_TABS = {
+  stockRealTimeHolding: '证券实时持仓',
+  productRealTimeHolding: '产品实时持仓',
 };
-export default config;
-export const {
-  list,
-  productColumns,
-  columns
-} = config;
