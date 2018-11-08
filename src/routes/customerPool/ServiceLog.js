@@ -162,8 +162,8 @@ export default class ServiceLog extends PureComponent {
         const viewHeight = topDocument.documentElement.clientHeight || topDocument.body.clientHeight;
         // view360-tabs-main底端距离浏览器窗口顶部的高度
         const tabMainBottom = dom.getRect(view360TabsMainElement, 'bottom');
-        // 各种padding，margin，border的高度再加上底部footer的高度
-        const extraHeight = 75;
+        // 各种padding，margin，border的高度
+        const extraHeight = 35;
         // 计算服务记录iFrame的高度
         const iframeHeight = viewHeight - tabMainBottom - extraHeight;
        dom.setStyle(iframeElement, 'height', `${iframeHeight}px`);
