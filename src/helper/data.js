@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-11-22 10:23:58
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-03 18:06:24
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-06 15:26:09
  * @description 此处存放通用的数据格式/类型处理的方法
  */
 import _ from 'lodash';
@@ -94,6 +94,31 @@ const data = {
    */
   toPercent(num, toFixedNum = 0) {
     return `${(Math.round(num * 10000) / 100).toFixed(toFixedNum)}%`;
+  },
+
+  /**
+   *
+   * 给数组data补足时使用空行数据补足，用于在表格上默认显示几行
+   * @param {Array} data 原始数据
+   * @param {number} [padNum=10]
+   */
+  padEmptyDataForList(data = [], padNum = 10) {
+    const size = _.size(data);
+    if (size >= padNum) {
+      return data;
+    }
+    let emptyRowNum = padNum - size;
+    let newData = [...data];
+    while (emptyRowNum > 0) {
+      const uuid = this.uuid();
+      newData.push({
+        // 空白行标志
+        flag: true,
+        key: `empty_row_${uuid},`
+      });
+      --emptyRowNum;
+    }
+    return newData;
   },
 
   /**
