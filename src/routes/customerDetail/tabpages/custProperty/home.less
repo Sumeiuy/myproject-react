@@ -1,4 +1,48 @@
-.a {
-  display: inline-block;
-  width: 25%;
+.custPropertyBox {
+  padding: 20px 20px 40px;
+  background-color: #f9f9f9;
+  .tabBox {
+    .tab {
+      :global {
+        .ant-tabs-bar {
+          padding-left: 0 !important;
+          .ant-tabs-nav-container {
+            .ant-tabs-nav-wrap {
+              margin-bottom: 0;
+              .ant-tabs-nav {
+                .ant-tabs-tab {
+                  height: 32px;
+                  line-height: 32px;
+                  padding: 0;
+                  width: 77px;
+                  text-align: center;
+                  border: 1px solid #dfe4eb;
+                  background-color: #fff;
+                  &.ant-tabs-tab-active {
+                    font-weight: bold;
+                    border-bottom-color: #fff;
+                  }
+                }
+                .ant-tabs-ink-bar {
+                  display: none !important;
+                }
+              }
+            }
+          }
+        }
+        .ant-tabs-content {
+          margin-top: -1px;
+          border: 1px solid #dfe4eb;
+          background-color: #fff;
+        }
+      }
+    }
+  }
+}
+.custInfoBox {
+  margin-bottom: 20px;
+  padding: 14px;
+  background-color: #fff;
+  border: 1px solid #d0d7e2;
+  border-radius: 2px;
 }

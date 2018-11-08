@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-07 17:09:39
+ * @Last Modified time: 2018-11-08 19:20:49
  */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import withRouter from '../../../../decorators/withRouter';
 import PersonInfo from '../../../../components/customerDetailCustProperty/personInfo';
 import OrganizationInfo from '../../../../components/customerDetailCustProperty/organizationInfo';
 import ProductInfo from '../../../../components/customerDetailCustProperty/productInfo';
+import MemberInfo from '../../../../components/customerDetailCustProperty/memberInfo';
 import config from '../../../../components/customerDetailCustProperty/config';
 
 import styles from './home.less';
@@ -122,8 +123,8 @@ export default class CustProperty extends PureComponent {
         break;
       default:
         component = (
-          <PersonInfo
-            data={person}
+          <ProductInfo
+            data={product}
           />
         );
         break;
@@ -132,9 +133,13 @@ export default class CustProperty extends PureComponent {
   }
 
   render() {
+    const {
+      zlUMemberInfo,
+      zlUMemberLevelChangeRecords,
+    } = this.props;
     return (
       <div className={styles.custPropertyBox}>
-        <div>
+        <div className={styles.custInfoBox}>
           {
             this.renderCustInfo()
           }
@@ -142,9 +147,9 @@ export default class CustProperty extends PureComponent {
         <div className={styles.tabBox}>
           <Tabs
             className={styles.tab}
-            defaultActiveKey={'financeInfo'}
+            defaultActiveKey={'memberInfo'}
             animated={false}
-            tabBarGutter={40}
+            tabBarGutter={2}
           >
             <TabPane tab="财务信息" key="financeInfo">
             </TabPane>
@@ -153,6 +158,10 @@ export default class CustProperty extends PureComponent {
             <TabPane tab="营销与服务" key="marketing">
             </TabPane>
             <TabPane tab="会员信息" key="memberInfo">
+              <MemberInfo
+                zlUMemberInfo={zlUMemberInfo}
+                zlUMemberLevelChangeRecords={zlUMemberLevelChangeRecords}
+              />
             </TabPane>
             <TabPane tab="关系信息" key="relationInfo">
             </TabPane>
