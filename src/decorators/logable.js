@@ -7,6 +7,7 @@
  */
 import _ from 'lodash';
 import { dva } from '../helper';
+import{ constants } from '../config';
 
 // 将部分值替换成context中对应的值
 // 如: context = {
@@ -39,7 +40,10 @@ function replaceValue(data, context, args) {
       });
     },
   );
-  let resultFanal = {};
+  // 神策新加理财平台version字段
+  const version = /newIndex/.test(window.location.pathname) ? constants.newVersion : constants.oldVersion;
+  let resultFanal = { version };
+
   _.forOwn(result, (value, key) => {
     if (_.isPlainObject(value)) {
       resultFanal = {

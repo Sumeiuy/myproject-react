@@ -2,7 +2,7 @@
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-07 20:39:41
+ * @Last Modified time: 2018-11-09 00:56:09
  */
 
 import React, { PureComponent } from 'react';
@@ -205,18 +205,17 @@ export default class Home extends PureComponent {
       pageSize: 10,
     });
 
-    // 组合推荐
-    queryIntroCombination();
+     // 这两个接口请求有点慢，延时发送请求
+    new Promise(resolve => resolve()).then(() => {
+      // 组合推荐
+      queryIntroCombination();
 
-    // 待办事项, 有任务管理岗时，将岗位id传给后端
-    // 判断当前登录用户是否在非营业部
-    const isNotSaleDepartment = emp.isManagementHeadquarters(this.loginOrgId)
-      || emp.isFiliale(custRange, this.loginOrgId);
-    // 非营业部登录用户有权限时，传登陆者的orgId
-    queryNumbers({ orgId: isNotSaleDepartment && permission.hasTkMampPermission() ? this.loginOrgId : '' });
-
-    // 获取活动栏目
-    this.props.queryContent();
+      // 判断当前登录用户是否在营业部
+      const isNotSaleDepartment = emp.isManagementHeadquarters(this.loginOrgId)
+        || emp.isFiliale(custRange, this.loginOrgId);
+      // 非营业部登录用户有权限时，传登陆者的orgId
+      queryNumbers({ orgId: isNotSaleDepartment && permission.hasTkMampPermission() ? this.loginOrgId : '' });
+    });
   }
 
   // 猜你感兴趣-更多点击事件
