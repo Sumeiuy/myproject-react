@@ -110,7 +110,7 @@ export default class ServiceLog extends PureComponent {
   }
 
   componentDidMount() {
-    this.getServiceLogIframeHeight();
+    this.setServiceLogIframeHeight();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -140,29 +140,26 @@ export default class ServiceLog extends PureComponent {
   }
 
   componentDidUpdate() {
-    this.getServiceLogIframeHeight();
+    this.setServiceLogIframeHeight();
   }
 
   // 获取服务记录的iframe的高度
   @autobind
-  getServiceLogIframeHeight() {
-    // 是否在FSP框架内
-    if (env.isInFsp()) {
-      // 服务记录内容元素
-      const serviceLog = document.querySelector(`.${styles.servicecontent}`);
-      if (serviceLog) {
-        // 获取顶层document
-        const topDocument = window.top.document;
-        // 服务记录的iFrame元素
-        const serviceLogIframe = topDocument.querySelector('#view360-tab-serviceRecord-iframe');
-        // 服务记录内容高度
-        const serviceLogHeight = serviceLog.offsetHeight;
-        // FSP的content内容区的上下padding和
-        const extraHeight = 40;
-        // 服务记录iFrame的高度
-        const serviceLogIframeHeight = serviceLogHeight + extraHeight;
-        dom.setStyle(serviceLogIframe, 'height', `${serviceLogIframeHeight}px`);
-      }
+  setServiceLogIframeHeight() {
+    // 服务记录内容元素
+    const serviceLogElement = document.querySelector(`.${styles.servicecontent}`);
+    if (serviceLogElement) {
+      // 获取顶层document
+      const topDocument = window.top.document;
+      // 服务记录的iFrame元素
+      const serviceLogIframe = topDocument.querySelector('#view360-tab-serviceRecord-iframe');
+      // 服务记录内容高度
+      const serviceLogHeight = serviceLogElement.offsetHeight;
+      // FSP的content内容区的上下padding和
+      const extraHeight = 40;
+      // 服务记录iFrame的高度
+      const iframeHeight = serviceLogHeight + extraHeight;
+      dom.setStyle(serviceLogIframe, 'height', `${iframeHeight}px`);
     }
   }
 
