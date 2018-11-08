@@ -30,7 +30,6 @@ import { padSightLabelDesc } from '../../config';
 import styles from './home.less';
 import { MorningBroadcast } from '../../components/customerPool/home';
 import { DATE_FORMAT_STRING, MONTH_DATE_FORMAT, navArray } from './config';
-import rankPng from './ranks.png';
 import {
   NEW_HOME_INTRO_THIRD_SEEP_IDNAME,
   NEW_HOME_INTRO_FIFTH_SEEP_IDNAME,
@@ -494,10 +493,7 @@ export default class Home extends PureComponent {
           count++;
           this.handleIntorButtomClose(facingOneModele);
         }
-      }).oncomplete(()=>
-        // 到了最后一步点结束按钮 执行oncomplete
-        this.handleIntorButtomClose(facingOneModele)
-      ).start();
+      }).start();
 
   }
 
@@ -616,21 +612,14 @@ export default class Home extends PureComponent {
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
-          <div className={styles.competitionsLink}>
-            {/*<img src={rankPng} alt="投顾能力竞赛" onClick={this.toInvestmentConsultantCompetenceRacePage} />*/}
+          {/* 投顾能力竞赛 */}
+          <div className={styles.competitionsLink} onClick={this.toInvestmentConsultantCompetenceRacePage}>
           </div>
           <div className={styles.mostFocusContentLink}>
             <CommonCell {...keyAttentionProps} />
           </div>
           <div className={styles.interestContentLink}>
             <CommonCell {...guessYourInterestsProps} />
-          </div>
-          <div className={styles.competitionsLink}>
-            <img
-              src={rankPng}
-              alt="投顾能力竞赛"
-              onClick={this.toInvestmentConsultantCompetenceRacePage}
-            />
           </div>
         </div>
         <div className={styles.mainContent}>

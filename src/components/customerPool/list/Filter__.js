@@ -848,7 +848,7 @@ export default class Filter extends PureComponent {
               />
             ))
           }
-          <div id={CUSTOMER_LIST_INTRO_SECOND_STEP_ID}>
+          <div id={CUSTOMER_LIST_INTRO_SECOND_STEP_ID} className={styles.filter}>
             {
               <MultiFilterWithSearch
                 data={currentDefinedLabel}
@@ -869,11 +869,13 @@ export default class Filter extends PureComponent {
               />
             }
           </div>
-          {
-            _.map(
-              moreFilterListOpened,
-              obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
-          }
+          <div>
+            {
+              _.map(
+                moreFilterListOpened,
+                obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
+            }
+          </div>
         </div>
         <div className={styles.moreFilterController}>
           {

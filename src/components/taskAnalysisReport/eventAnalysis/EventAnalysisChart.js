@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-10-17 14:16:31
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-10-26 18:58:02
+ * @Last Modified time: 2018-11-02 17:07:33
  */
 
 import React, { PureComponent } from 'react';
@@ -67,7 +67,7 @@ export default class EventAnalysisChart extends PureComponent {
       fourData,
     } = this.props;
     //series图表数据，eventDataName图表数据名称
-    const { series,eventDataName } = config;
+    const { series, eventDataName } = config;
 
     //firstName图表的提示框第一条数据名字，secondName是第二条名字
     let firstName = '';
@@ -77,7 +77,7 @@ export default class EventAnalysisChart extends PureComponent {
     let seriesData = [];
     switch(reportType) {
       case 'task':
-        const { triggerTaskName,completedTaskName } = eventDataName;
+        const { triggerTaskName, completedTaskName } = eventDataName;
         firstName = triggerTaskName;
         secondName = completedTaskName;
         seriesData = [
@@ -94,7 +94,7 @@ export default class EventAnalysisChart extends PureComponent {
         ];
         break;
       case 'customer':
-        const { coveredCustomerName,completedCustomerName } = eventDataName;
+        const { coveredCustomerName, completedCustomerName } = eventDataName;
         firstName = coveredCustomerName;
         secondName = completedCustomerName;
         seriesData = [
@@ -111,7 +111,7 @@ export default class EventAnalysisChart extends PureComponent {
         ];
         break;
       case 'serviceChannels':
-        const { zhangle,phone,interview,other } = eventDataName;
+        const { zhangle, phone, interview, other } = eventDataName;
         firstName = zhangle;
         secondName = phone;
         thirdName = interview;
@@ -155,7 +155,7 @@ export default class EventAnalysisChart extends PureComponent {
       reportType
     } = this.props;
     //legendList图例数据，color颜色，eventReportName图表名称
-    const { legendList,color,eventReportName } = config;
+    const { legendList, color, eventReportName } = config;
     // xAxis轴刻度标签的显示间隔, 超过30天，则横坐标改为按周展示
     const xAxisLabelInterval = this.getXAxisLabelInterval(deadlineTimeData.length);
 
@@ -261,6 +261,7 @@ export default class EventAnalysisChart extends PureComponent {
               <IECharts
                 option={options}
                 resizable
+                notMerge
                 style={{
                   height: '300px',
                 }}

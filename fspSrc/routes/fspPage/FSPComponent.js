@@ -42,6 +42,8 @@ export default class FSPComponent extends PureComponent {
       loading: true,
     };
     this.timeoutId = setTimeout(() => this.setState({ loading: false }), 1000);
+    // 重写eb的closeTab方法，之所以在这里重写，是因为别的地方无法成功覆盖
+    window.eb.utils.closeTab = window.closeTabForEB;
   }
 
   componentDidUpdate(prevProps) {

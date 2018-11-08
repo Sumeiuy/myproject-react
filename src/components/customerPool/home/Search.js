@@ -125,6 +125,18 @@ export default class Search extends PureComponent {
         ...query,
       },
     });
+    // 搜索后跳转到客户列表页面时清空搜索框的值，统一交由客户列表页面的搜索框来处理
+    // 由于AutoComplete组件onSelect触发之后，会在onSelect里动作全部执行完之后自动触发onChange -> setState, 将选中的option的value值置为当前组件的value
+    // 加定时器是利用事件循环将此处的setState执行顺序放到onSelect自动触发的setState之后,
+    // 以达到选择下拉框之后也能清空搜索框value的效果。
+    setTimeout(() => {
+      this.setState({
+        value: '',
+      });
+      if (this.autoComplete) {
+        this.autoComplete.blur();
+      }
+    }, 0);
   }
 
   searchResult(query, hotList) {
@@ -361,6 +373,7 @@ export default class Search extends PureComponent {
       showMoreLabelModal,
       isOnlySearchable,
     } = this.props;
+    const { value } = this.state;
     const autoCompleteOption = isPreview ? {} :
     {
       dataSource: this.renderDatasource(),
@@ -368,6 +381,7 @@ export default class Search extends PureComponent {
       onSearch: this.handleSearch,
       onChange: this.handleChange,
       defaultValue: searchHistoryVal,
+      value,
     };
 
     const trueStyles = isOnlySearchable ? classes : styles;
