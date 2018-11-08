@@ -27,6 +27,7 @@ import padSightLabelDesc from './constructSightLabelDesc';
 import * as createTaskEntry from './createTaskEntry';
 import seperator from './filterSeperator';
 import retTabParam from './retTabParam';
+import tabMenuConfig from './tabMenu';
 
 const sessionStore = engine.createStore([sessionStorage, cookieStorage]);
 
@@ -58,4 +59,5 @@ export {
   createTaskEntry,
   seperator,
   retTabParam,
+  tabMenuConfig,
 };
