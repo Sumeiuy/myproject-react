@@ -14,6 +14,8 @@ import _ from 'lodash';
 import moment from 'moment';
 import DateRangePick from 'lego-react-date/src';
 import { autobind } from 'core-decorators';
+
+import { dom, env } from '../../helper';
 import logable from '../../decorators/logable';
 import Select from '../../components/common/Select';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
@@ -107,6 +109,10 @@ export default class ServiceLog extends PureComponent {
     }
   }
 
+  componentDidMount() {
+    this.setServiceLogIframeHeight();
+  }
+
   componentWillReceiveProps(nextProps) {
     const { serviceLogMoreData, serviceLogData } = nextProps;
     const { serviceLogMoreData: prevServiceLogMoreData,
@@ -130,6 +136,30 @@ export default class ServiceLog extends PureComponent {
           logData: newServiceLogData,
         });
       }
+    }
+  }
+
+  componentDidUpdate() {
+    this.setServiceLogIframeHeight();
+  }
+
+  // 获取服务记录的iframe的高度
+  @autobind
+  setServiceLogIframeHeight() {
+    // 服务记录内容元素
+    const serviceLogElement = document.querySelector(`.${styles.servicecontent}`);
+    if (serviceLogElement) {
+      // 获取顶层document
+      const topDocument = window.top.document;
+      // 服务记录的iFrame元素
+      const serviceLogIframe = topDocument.querySelector('#view360-tab-serviceRecord-iframe');
+      // 服务记录内容高度
+      const serviceLogHeight = serviceLogElement.offsetHeight;
+      // FSP的content内容区的上下padding和
+      const extraHeight = 40;
+      // 服务记录iFrame的高度
+      const iframeHeight = serviceLogHeight + extraHeight;
+      dom.setStyle(serviceLogIframe, 'height', `${iframeHeight}px`);
     }
   }
 
