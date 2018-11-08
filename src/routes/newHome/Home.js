@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 14:46:57
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-07 20:39:41
  */
 
 import React, { PureComponent } from 'react';
@@ -21,6 +21,7 @@ import ViewAndCombination from '../../components/newHome/ViewAndCombination';
 import CommonCell from '../../components/newHome/CommonCell';
 import ChartsTab from '../../components/newHome/ChartsTab';
 import { LabelModal } from '../../components/customerPool/home';
+import ActivityColumnCarousel from '../../components/platformParameterSetting/routers/contentOperate/ActivityColumnCarousel';
 import { dva, url as urlHelper, emp, permission } from '../../helper';
 import { isSightingScope, getFilter, getSortParam } from '../../components/customerPool/helper.js';
 import { openRctTab } from '../../utils';
@@ -28,7 +29,6 @@ import { padSightLabelDesc } from '../../config';
 import styles from './home.less';
 import { MorningBroadcast } from '../../components/customerPool/home';
 import { DATE_FORMAT_STRING, MONTH_DATE_FORMAT, navArray } from './config';
-import rankPng from './rank.png';
 
 const effect = dva.generateEffect;
 
@@ -52,6 +52,8 @@ const effects = {
   queryCustLabelList: 'customerPool/queryCustLabelList',  // 获取首页可用客户标签列表数据
   custLabelListPaging: 'customerPool/custLabelListPaging', // 首页可用客户标签列表弹窗数据分页处理
   queryNumbers: 'newHome/queryNumbers',  // 首页任务概览
+  // 获取活动栏目
+  queryContent: 'morningBoradcast/queryContent',
 };
 
 const mapStateToProps = state => ({
@@ -76,6 +78,8 @@ const mapStateToProps = state => ({
   initBoradcastFile: state.morningBoradcast.initBoradcastFile, // 晨报详情
   pagingCustLabelData: state.customerPool.pagingCustLabelData, // 前端处理过的带分页的所有可用客户标签数据
   taskNumbers: state.newHome.taskNumbers,
+  // 活动栏目
+  activityColumnList: state.morningBoradcast.activityColumnList,
 });
 
 const mapDispatchToProps = {
@@ -99,6 +103,8 @@ const mapDispatchToProps = {
   queryCustLabelList: effect(effects.queryCustLabelList, { loading: false }),
   custLabelListPaging: effect(effects.custLabelListPaging, { loading: false }),
   queryNumbers: effect(effects.queryNumbers, { loading: false }),
+  // 获取活动栏目
+  queryContent: effect(effects.queryContent, { loading: true }),
 };
 
 const EMPTY_LIST = [];
@@ -142,6 +148,9 @@ export default class Home extends PureComponent {
     pagingCustLabelData: PropTypes.object.isRequired,
     queryNumbers: PropTypes.func.isRequired,
     taskNumbers: PropTypes.object.isRequired,
+    // 活动栏目
+    queryContent: PropTypes.func.isRequired,
+    activityColumnList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -205,6 +214,9 @@ export default class Home extends PureComponent {
       || emp.isFiliale(custRange, this.loginOrgId);
     // 非营业部登录用户有权限时，传登陆者的orgId
     queryNumbers({ orgId: isNotSaleDepartment && permission.hasTkMampPermission() ? this.loginOrgId : '' });
+
+    // 获取活动栏目
+    this.props.queryContent();
   }
 
   // 猜你感兴趣-更多点击事件
@@ -390,6 +402,7 @@ export default class Home extends PureComponent {
       custLabelListPaging,
       pagingCustLabelData,
       taskNumbers,
+      activityColumnList,
     } = this.props;
 
     const {
@@ -473,14 +486,14 @@ export default class Home extends PureComponent {
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
+          <div className={styles.competitionsLink}>
+            <ActivityColumnCarousel activityColumnList={activityColumnList}/>
+          </div>
           <div className={styles.mostFocusContentLink}>
             <CommonCell {...keyAttentionProps} />
           </div>
           <div className={styles.interestContentLink}>
             <CommonCell {...guessYourInterestsProps} />
-          </div>
-          <div className={styles.competitionsLink}>
-            <img src={rankPng} alt="投顾能力竞赛"  onClick={this.toInvestmentConsultantCompetenceRacePage} />
           </div>
         </div>
         <div className={styles.mainContent}>
