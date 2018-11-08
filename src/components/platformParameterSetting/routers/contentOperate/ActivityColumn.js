@@ -3,14 +3,13 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-08 20:31:43
+ * @Last Modified time: 2018-11-09 00:41:48
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import _ from 'lodash';
-import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import Button from '../../../common/Button';
 import { dva, data } from '../../../../helper';
@@ -19,7 +18,6 @@ import ColumnModal from './ColumnModal';
 import ColumnItem from './ColumnItem';
 import confirm from '../../../common/confirm_';
 import { request } from '../../../../config';
-import { FUNCTION_ONE, FUNCTION_TWO, FUNCTION_THREE, FUNCTION_FOUR } from './config';
 import logable, { logPV } from '../../../../decorators/logable';
 
 import styles from './activityColumn.less';
@@ -55,15 +53,10 @@ export default class ActivityColumn extends PureComponent {
     submitContent: PropTypes.func.isRequired,
     // 预览活动栏目
     queryContent: PropTypes.func.isRequired,
-    // 获取uuid
-    newUuid: PropTypes.array.isRequired,
-    getUuid: PropTypes.func.isRequired,
   }
   constructor(props) {
     super(props);
     this.state = {
-      // 判断是ColumnForm页面是新建栏目还是编辑栏目，新建是'CREATE' 编辑是 'UPDATE'
-      action: 'CREATE',
       // 栏目表单数据
       formData: {},
       // 新建栏目弹窗是否可见
@@ -72,6 +65,10 @@ export default class ActivityColumn extends PureComponent {
       activityColumnList: [],
       // 编辑栏目附件列表
       attachmentList: [],
+      // 附件校验错误状态
+      isShowAttachmentStatusError: false,
+      // 附件校验错误信息
+      attachmentStatusErrorMessage: '',
     };
   }
 
@@ -119,7 +116,6 @@ export default class ActivityColumn extends PureComponent {
         descriptionCount,
       },
       attachmentList: attaches,
-      action: 'UPDATE',
     }, () => {
       this.handleOpenForm();
     });
@@ -135,25 +131,94 @@ export default class ActivityColumn extends PureComponent {
         shortCut: 'default',
       });
     } else {
-      console.warn('index', index);
       this.handleDeleteColumn(index);
     }
   }
 
   handleDeleteColumn(index) {
-    const { activityColumnList: oldActivityColumnList  } = this.state;
-    oldActivityColumnList.splice(index, 1);
-    console.warn('oldActivityColumnList', oldActivityColumnList);
-    // this.setState({ activityColumnList: oldActivityColumnList });
+    const { activityColumnList } = this.state;
+    // 删除后新的活动栏目
+    const newActivityColumnList = _.remove(activityColumnList, item => item.index !== index);
+    this.setState({ activityColumnList: newActivityColumnList});
   }
 
-  // 打开新建弹窗
+  // 附件校验是否上传
   @autobind
-  handleCreateForm() {
+  checkAttachmentStatus() {
+    const { formData: { attachment } } = this.state;
+    if (_.isEmpty(attachment)) {
+      this.setState({
+        isShowAttachmentStatusError: true,
+        attachmentStatusErrorMessage: '请上传附件',
+      });
+      return true;
+    }
+    return false;
+  }
+
+  // 重置附件错误状态
+  @autobind
+  resetAttachmentErrorStatus() {
     this.setState({
-      action: 'CREATE',
+      isShowAttachmentStatusError: false,
+      attachmentStatusErrorMessage: '',
+    });
+  }
+
+  // 表单数据变化
+  @autobind
+  handleChangeFormData(obj) {
+    const { formData } = this.state;
+    this.setState({
+      formData: {
+        ...formData,
+        ...obj,
+      },
     }, () => {
-      this.handleOpenForm();
+      const { formData: {attachment, attaches} } = this.state;
+      if (!_.isEmpty(attachment) || !_.isEmpty(attaches)) {
+        this.resetAttachmentErrorStatus();
+      }
+    });
+  }
+
+  // 点击确定
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
+  handleConfirm() {
+    const { validateFields } = this.columnForm.getForm();
+    validateFields((err, values) => {
+      if(!err) {
+        // 校验附件失败
+        if (this.checkAttachmentStatus()) {
+          return;
+        }
+        const { link, description } = values;
+        const {
+          activityColumnList,
+          formData,
+          formData: {
+            index,
+            attachment,
+            attaches,
+          }
+        } = this.state;
+        const { attachId, name, creator } = attaches[0];
+        const url = `${request.prefix}/file/${downloadName}?attachId=${attachId}&empId=${creator}&filename=${window.encodeURIComponent(name)}`;
+        // 编辑栏目
+        const editColumn = _.find(activityColumnList, (item) => ( item.index === index ));
+        let newActivityColumnList = [];
+        if (_.isEmpty(editColumn)) {
+          // 新增栏目
+          newActivityColumnList = _.concat(activityColumnList, { attachment, attaches, link, description, url});
+        } else {
+          // 编辑替换栏目
+          activityColumnList[index] = formData;
+          newActivityColumnList = activityColumnList;
+        }
+        this.setState({ activityColumnList: newActivityColumnList });
+        this.handleCloseModal();
+      }
     });
   }
 
@@ -203,61 +268,14 @@ export default class ActivityColumn extends PureComponent {
     });
   }
 
-  // 表单数据变化
-  @autobind
-  handleChangeFormData(obj) {
-    const { formData } = this.state;
-    this.setState({
-      formData: {
-        ...formData,
-        ...obj,
-      },
-    });
-  }
-
-  // 点击确定
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
-  handleConfirm() {
-    const { validateFields } = this.columnForm.getForm();
-    validateFields((err, values) => {
-      if(!err) {
-        const { link, description } = values;
-        const {
-          activityColumnList,
-          formData,
-          formData: {
-            index,
-            attachment,
-            attaches,
-          }
-        } = this.state;
-        const { attachId, name, creator } = attaches[0];
-        const url = `${request.prefix}/file/${downloadName}?attachId=${attachId}&empId=${creator}&filename=${window.encodeURIComponent(name)}`;
-        // 编辑栏目
-        const editColumn = _.find(activityColumnList, (item) => ( item.index === index ));
-        let newActivityColumnList = [];
-        if (_.isEmpty(editColumn)) {
-          // 新增栏目
-          newActivityColumnList = _.concat(activityColumnList, { attachment, attaches, link, description, url});
-        } else {
-          // 编辑替换栏目
-          activityColumnList[index] = formData;
-          newActivityColumnList = activityColumnList;
-        }
-        this.setState({ activityColumnList: newActivityColumnList });
-        this.handleCloseModal();
-      }
-    });
-  }
-
   render() {
     const {
       visible,
-      action,
       formData,
       activityColumnList,
       attachmentList,
+      isShowAttachmentStatusError,
+      attachmentStatusErrorMessage,
     } = this.state;
     // 活动栏目大于等于4条，添加按钮就不可点击
     const createButtonDisabled = activityColumnList.length >= 4;
@@ -265,7 +283,7 @@ export default class ActivityColumn extends PureComponent {
       <div className={styles.activityColumnWrapper}>
         <p className={styles.tip}>在此设置的活动栏目内容将以跑马灯的形式展示在首页左上角，最少一条，最多设置四条。</p>
         <div className={styles.createBox}>
-          <Button type="primary" icon="plus" className={styles.createButton} onClick={this.handleCreateForm} disabled={createButtonDisabled}>添加</Button>
+          <Button type="primary" icon="plus" className={styles.createButton} onClick={this.handleOpenForm} disabled={createButtonDisabled}>添加</Button>
         </div>
         <div className={styles.activityColumn}>
           <div className={styles.previewWrapper}>
@@ -282,9 +300,10 @@ export default class ActivityColumn extends PureComponent {
         </div>
         <ColumnModal
           visible={visible}
-          action={action}
           formData={formData}
           attachmentList={attachmentList}
+          isShowAttachmentStatusError={isShowAttachmentStatusError}
+          attachmentStatusErrorMessage={attachmentStatusErrorMessage}
           onCloseModal={this.handleCloseModal}
           onChangeFormData={this.handleChangeFormData}
           onConfirm={this.handleConfirm}

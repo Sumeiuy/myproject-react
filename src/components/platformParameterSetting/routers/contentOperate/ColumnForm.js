@@ -3,12 +3,11 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-08 17:34:24
+ * @Last Modified time: 2018-11-09 00:46:54
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 import { Form, Input  } from 'antd';
 import CommonUpload from '../../../common/biz/CommonUpload';
 import InfoCell from './InfoCell';
@@ -23,30 +22,21 @@ const create = Form.create;
 export default class ColumnForm extends PureComponent {
   static propTypes = {
     form: PropTypes.object.isRequired,
-    // 判断此组件用于新建页面还是驳回后修改页面，'CREATE'或者'UPDATE'
-    action: PropTypes.oneOf(['CREATE', 'UPDATE']).isRequired,
     formData: PropTypes.object.isRequired,
+    // form数据变化回调
     onChange: PropTypes.func.isRequired,
+    // 编辑状态附件列表
     attachmentList: PropTypes.array.isRequired,
+    // 附件校验错误状态
+    isShowAttachmentStatusError: PropTypes.bool.isRequired,
+    // 附件校验错误信息
+    attachmentStatusErrorMessage: PropTypes.string.isRequired,
   }
-  constructor(props) {
-    super(props);
-    this.state = {
-      // 整个form的数据
-      // formData,
-    };
-  };
 
+  // 获取Form表单
   @autobind
   getForm() {
     return this.props.form;
-  }
-
-  @autobind
-  isCreateForm() {
-    const { action } = this.props;
-    // action 判断当前是新建 'CREATE' 还是 修改'UPDATE'
-    return action === 'CREATE';
   }
 
   @autobind
@@ -71,7 +61,6 @@ export default class ColumnForm extends PureComponent {
       form: {
         getFieldDecorator,
       },
-      formData,
       formData: {
         attachment,
         link,
@@ -79,8 +68,15 @@ export default class ColumnForm extends PureComponent {
         descriptionCount = 0,
       },
       attachmentList = [],
+      isShowAttachmentStatusError,
+      attachmentStatusErrorMessage,
     } = this.props;
-    console.warn('propsFormData', formData);
+    // 附件验证
+    const attachmentStatusErrorProps = isShowAttachmentStatusError ? {
+      hasFeedback: false,
+      validateStatus: 'error',
+      help: attachmentStatusErrorMessage,
+    } : null;
     return (
       <div className={styles.columnForm}>
         <InfoCell
@@ -88,14 +84,13 @@ export default class ColumnForm extends PureComponent {
           className={styles.formCell}
           required
         >
-          <FormItem>
+          <FormItem {...attachmentStatusErrorProps}>
             <CommonUpload
               attachment={attachment}
               attachmentList={attachmentList}
               edit
               uploadAttachment={this.handleUploadAttachment}
               needDefaultText={false}
-              className={styles.columnUpload}
             />
           </FormItem>
         </InfoCell>

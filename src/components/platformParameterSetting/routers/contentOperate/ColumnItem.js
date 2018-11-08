@@ -3,7 +3,7 @@
  * @Descripter: 栏目Item
  * @Date: 2018-11-05 15:16:43
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-08 20:19:35
+ * @Last Modified time: 2018-11-09 00:48:42
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -15,8 +15,7 @@ import styles from './columnItem.less';
 export default function ColumnItem(props) {
   // 编辑栏目
   function handleEditColumn() {
-    const { onEdit } = props;
-    onEdit();
+    props.onEdit();
   }
 
   // 删除栏目
@@ -63,15 +62,10 @@ export default function ColumnItem(props) {
 }
 
 ColumnItem.propTypes = {
-  // 是否是第一个活动栏目
-  isFirstColumn: PropTypes.bool,
   // 活动栏目数据
   columnData: PropTypes.object.isRequired,
   // 编辑栏目
   onEdit: PropTypes.func.isRequired,
   // 删除栏目
   onDelete: PropTypes.func.isRequired,
-};
-ColumnItem.defaultProps = {
-  isFirstColumn: false,
 };
