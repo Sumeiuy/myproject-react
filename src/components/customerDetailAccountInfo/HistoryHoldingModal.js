@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-06 19:49:08
+ * @Last Modified time: 2018-11-08 18:55:02
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import { autobind } from 'core-decorators';
 import { Button, Tabs, Radio, DatePicker, Table } from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
+import cx from 'classnames';
 
 import { data, number } from '../../helper';
 import logable, { logCommon } from '../../decorators/logable';
@@ -54,6 +55,10 @@ export default class HistoryHoldingModal extends PureComponent {
     holdingsData: {},
   }
 
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
+  }
+
   constructor(props) {
     super(props);
     const defaultDeteString = DEFAULT_DATE.format(DATE_FORMATE_API);
@@ -76,6 +81,13 @@ export default class HistoryHoldingModal extends PureComponent {
     this.queryStockHolding();
     this.queryProductHolding();
     this.queryOptionHolding();
+  }
+
+  // 判断证券历史持仓中的数据是否是股票类型
+  // 而后端接口数据中只能根据产品类型code值的前缀是PA04时，才是股票
+  @autobind
+  judgeItemIsStockByTypeCode(typeCode) {
+    return /^PA04/.test(typeCode);
   }
 
   // 查询证券历史持仓明细
@@ -127,6 +139,24 @@ export default class HistoryHoldingModal extends PureComponent {
     });
   }
 
+  // 点击证券历史持仓明细中的名称或者代码跳转到策略中西下个股咨询>个股研报
+  @autobind
+  jumpToStockPage(record) {
+    this.context.push({
+      pathname: '/strategyCenter/stock',
+      query: {
+        keyword: record.code || '',
+      },
+    });
+  }
+
+  // 点击产品历史持仓明细中的产品名称、代码列跳转到产品详情
+  @autobind
+  jumpToProductDetailPage(record) {
+    // this.context.push();
+    console.warn('明天来添加路径');
+  }
+
   // 修改数据金额所在的column
   @autobind
   updateMoneyColumn(column) {
@@ -163,24 +193,86 @@ export default class HistoryHoldingModal extends PureComponent {
     };
   }
 
-  // 需要给信用账户，添加融字
+  // 需要给证券历史持仓下的信用账户，添加融字
   @autobind
-  updateNameColumn(column) {
+  updateStockNameColumn(column) {
     return {
       ...column,
-      render(text, record) {
+      render: (text, record) => {
         if (record.flag) {
           // 表示空数据
           return '';
         }
+        // 因为证券历史持仓明细下点击名称，代码可以跳转到个股咨询页面，并且只有在股票的情况下才能跳转
+        const isStock = this.judgeItemIsStockByTypeCode(record.typeCode || '');
+        const nameCls = cx({
+          [styles.clickAble]: isStock,
+        });
         return (
           <div className={styles.nameCell}>
-            <span>{text}</span>
+            <span className={nameCls}>{text}</span>
             {record.creditFlag ? (<span className={styles.rongIcon}>融</span>) : null }
           </div>
-
         );
+      },
+      onCell: (record) => {
+        // 因为证券历史持仓明细下点击名称，代码可以跳转到个股咨询页面，并且只有在股票的情况下才能跳转
+        const isStock = this.judgeItemIsStockByTypeCode(record.typeCode || '');
+        if (isStock) {
+          return {
+            onClick: () => this.jumpToStockPage(record),
+          };
+        }
       }
+    };
+  }
+
+  // 需要给证券历史持仓下的股票类型的产品可通过点击code列跳转到个股研报中，与名称列一致
+  @autobind
+  updateStockCodeColumn(column) {
+    return {
+      ...column,
+      render: (text, record) => {
+        if (record.flag) {
+          // 表示空数据
+          return '';
+        }
+        // 因为证券历史持仓明细下点击名称，代码可以跳转到个股咨询页面，并且只有在股票的情况下才能跳转
+        const isStock = this.judgeItemIsStockByTypeCode(record.typeCode || '');
+        const nameCls = cx({
+          [styles.clickAble]: isStock,
+        });
+        return (<span className={nameCls}>{text}</span>);
+      },
+      onCell: (record) => {
+        // 因为证券历史持仓明细下点击名称，代码可以跳转到个股咨询页面，并且只有在股票的情况下才能跳转
+        const isStock = this.judgeItemIsStockByTypeCode(record.typeCode || '');
+        if (isStock) {
+          return {
+            onClick: () => this.jumpToStockPage(record),
+          };
+        }
+      }
+    };
+  }
+
+  // 产品历史持仓项点击名称和代码列，需要跳转到产品详情页面中去
+  @autobind
+  updateProductNameAndCodeColumn(column) {
+    return {
+      ...column,
+      render: (text, record) => {
+        if (record.flag) {
+          // 表示空数据
+          return '';
+        }
+        return (<span className={styles.clickAble}>{text}</span>);
+      },
+      onCell: (record) => {
+        return {
+          onClick: () => this.jumpToProductDetailPage(record),
+        };
+      },
     };
   }
 
@@ -199,7 +291,11 @@ export default class HistoryHoldingModal extends PureComponent {
       }
       if (dataIndex === 'name') {
         // 添加 融 图标，如果是信用账户
-        return this.updateNameColumn(column);
+        return this.updateStockNameColumn(column);
+      }
+      if (dataIndex === 'code') {
+        // 如果是股票的名称或者代码,需要能够跳转到个股咨询页面
+        return this.updateStockCodeColumn(column);
       }
       return column;
     });
@@ -217,6 +313,10 @@ export default class HistoryHoldingModal extends PureComponent {
       if (dataIndex === 'holdPercent' || dataIndex === 'yearRate') {
         // 针对比率类型column添加百分比处理render
         return this.updateRateColumn(column);
+      }
+      if (dataIndex === 'name' || dataIndex === 'code') {
+        // 产品历史持仓点击名称或者代码列的时候，需要跳转到产品中心的产品详情页面
+        return this.updateProductNameAndCodeColumn(column);
       }
       return column;
     });
@@ -242,10 +342,12 @@ export default class HistoryHoldingModal extends PureComponent {
   // 将接口返回的分页器数据转换成分页器组件的props
   @autobind
   getPage(page = {}) {
+    // 如果不足1页的数据，不显示分页器
     return {
       pageSize: 10,
       current: page.pageNum || 1,
       total: page.totalCount || 0,
+      hideOnSinglePage: _.isUndefined(page.totalPage) || page.totalPage === 1
     };
   }
 
