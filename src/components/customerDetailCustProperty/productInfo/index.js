@@ -3,14 +3,13 @@
  * @Description: 客户360-客户属性-产品机构客户属性
  * @Date: 2018-11-07 14:39:15
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-07 15:03:41
+ * @Last Modified time: 2018-11-08 20:19:08
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import BasicInfo from './BasicInfo';
 import ContactWay from './ContactWay';
-import styles from './productInfo.less';
 
 export default class ProductInfo extends PureComponent {
   static propTypes = {
@@ -25,7 +24,7 @@ export default class ProductInfo extends PureComponent {
       addresses,
     } = data;
     return (
-      <div className={styles.personInfoBox}>
+      <div>
         <BasicInfo data={data} />
         <ContactWay
           phoneList={phones}
