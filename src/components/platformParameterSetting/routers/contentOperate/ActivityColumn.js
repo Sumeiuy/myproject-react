@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 00:41:48
+ * @Last Modified time: 2018-11-09 01:02:01
  */
 
 import React, { PureComponent } from 'react';
@@ -30,7 +30,6 @@ const mapStateToProps = state => ({
   submitResult: state.activityColumn.submitResult,
   // 活动栏目
   activityColumnList: state.morningBoradcast.activityColumnList,
-  newUuid: state.morningBoradcast.newUuid,
 });
 
 const mapDispatchToProps = {
@@ -38,8 +37,6 @@ const mapDispatchToProps = {
   submitContent: effect('activityColumn/submitContent', { forceFull: true }),
   // 预览活动栏目
   queryContent: effect('morningBoradcast/queryContent', { forceFull: true }),
-  // 获取uuid
-  getUuid: effect('morningBoradcast/getUuid', { forceFull: true }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -84,7 +81,7 @@ export default class ActivityColumn extends PureComponent {
       this.setState({ activityColumnList });
     });
   }
-
+  // 设置form组件引用
   @autobind
   setColumnFormRef(form) {
     this.columnForm = form;

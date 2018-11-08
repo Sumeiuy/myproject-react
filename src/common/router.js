@@ -396,10 +396,6 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['userCenter'], () =>
         import('../components/platformParameterSetting/routers/LabelManager' /* webpackChunkName: "LabelManager" */)),
     },
-    // '/sysOperate/platformParameterSetting/contentOperate': {
-    //   component: dynamicWrapper(app, ['operationCenter'], () =>
-    //     import('../components/platformParameterSetting/routers/RecommendedLabel' /* webpackChunkName: "RecommendedLabel" */)),
-    // },
     '/sysOperate/platformParameterSetting/contentOperate/recommendedLabel': {
       component: dynamicWrapper(app, ['operationCenter'], () =>
         import('../components/platformParameterSetting/routers/RecommendedLabel' /* webpackChunkName: "RecommendedLabel" */)),
