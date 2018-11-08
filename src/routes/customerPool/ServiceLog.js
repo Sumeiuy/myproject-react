@@ -15,13 +15,14 @@ import moment from 'moment';
 import DateRangePick from 'lego-react-date/src';
 import { autobind } from 'core-decorators';
 
-import { dom, env } from '../../helper';
+import { dom } from '../../helper';
 import logable from '../../decorators/logable';
 import Select from '../../components/common/Select';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import withRouter from '../../decorators/withRouter';
 import styles from './serviceLog.less';
 import { ALL_SERVE_SOURCE } from './config';
+import { fspContainer } from '../../config';
 
 const Search = Input.Search;
 const dateFormat = 'YYYY-MM-DD';
@@ -111,6 +112,7 @@ export default class ServiceLog extends PureComponent {
 
   componentDidMount() {
     this.setServiceLogIframeHeight();
+    window.addEventListener('resize', () => this.setServiceLogIframeHeight());
   }
 
   componentWillReceiveProps(nextProps) {
@@ -139,27 +141,33 @@ export default class ServiceLog extends PureComponent {
     }
   }
 
-  componentDidUpdate() {
-    this.setServiceLogIframeHeight();
+  componentWillUnmount() {
+    window.removeEventListener('resize', () => this.setServiceLogIframeHeight());
   }
 
   // 获取服务记录的iframe的高度
   @autobind
   setServiceLogIframeHeight() {
-    // 服务记录内容元素
-    const serviceLogElement = document.querySelector(`.${styles.servicecontent}`);
-    if (serviceLogElement) {
-      // 获取顶层document
-      const topDocument = window.top.document;
+    // 获取顶层document
+    const topDocument = window.top.document;
+    // 在FSP的框架下的时候，需要设置本页面所在的iframe的高度
+    const isInFsp = topDocument.querySelector(fspContainer.container);
+    if (isInFsp) {
       // 服务记录的iFrame元素
-      const serviceLogIframe = topDocument.querySelector('#view360-tab-serviceRecord-iframe');
-      // 服务记录内容高度
-      const serviceLogHeight = serviceLogElement.offsetHeight;
-      // FSP的content内容区的上下padding和
-      const extraHeight = 40;
-      // 服务记录iFrame的高度
-      const iframeHeight = serviceLogHeight + extraHeight;
-      dom.setStyle(serviceLogIframe, 'height', `${iframeHeight}px`);
+      const iframeElement = topDocument.querySelector('#view360-tab-serviceRecord-iframe');
+      // jsp页面的view360-tabs-main元素
+      const view360TabsMainElement = topDocument.querySelector('#view360-tabs-main');
+      if (iframeElement) {
+        // 浏览器窗口的高度
+        const viewHeight = topDocument.documentElement.clientHeight || topDocument.body.clientHeight;
+        // view360-tabs-main底端距离浏览器窗口顶部的高度
+        const tabMainBottom = dom.getRect(view360TabsMainElement, 'bottom');
+        // 各种padding，margin，border的高度再加上底部footer的高度
+        const extraHeight = 75;
+        // 计算服务记录iFrame的高度
+        const iframeHeight = viewHeight - tabMainBottom - extraHeight;
+       dom.setStyle(iframeElement, 'height', `${iframeHeight}px`);
+      }
     }
   }
 
