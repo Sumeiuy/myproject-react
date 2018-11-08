@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-09 15:33:02
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 17:30:05
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-11-07 10:55:22
  * @description 此处使用dva的connect包装下新版customer360Detail首页
  */
 import { connect } from 'dva';

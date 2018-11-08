@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-09 15:39:15
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 17:34:09
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-11-07 10:01:11
  * @description 新版客户360详情 API
  */
 export default function customerDetail(api) {
