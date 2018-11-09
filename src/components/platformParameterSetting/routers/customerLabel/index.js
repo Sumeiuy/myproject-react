@@ -18,7 +18,7 @@ import withRouter from '../../../../decorators/withRouter';
 import CreateLabelType from './CreateLabelType';
 import CreateLabel from './CreateLabel';
 import { dva } from '../../../../helper';
-import { logPV } from '../../../../decorators/logable';
+import logable, { logPV } from '../../../../decorators/logable';
 import CustRange from '../../../customerPool/list/manageFilter/CustFilter';
 
 import styles from './customerLabel.less';
@@ -157,6 +157,13 @@ export default class LabelManager extends PureComponent {
   }
 
   @autobind
+  @logable({
+      type: 'DropdownSelect',
+    payload: {
+      name: '标签类型',
+      value: '$args[0].value',
+    },
+  })
   handleLabelTypeChange(labelTypeItem) {
     const { value } = labelTypeItem;
     this.queryLabelList({
@@ -217,6 +224,13 @@ export default class LabelManager extends PureComponent {
 
   // 创建部门change事件
   @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '创建部门',
+      value: '$args[0].orgId',
+    },
+  })
   handleCustRange({ orgId }) {
     this.queryLabelList({
       orgId,
