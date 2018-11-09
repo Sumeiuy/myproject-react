@@ -279,6 +279,7 @@ export default {
               combinationCode: list[index].combinationCode,
               key: isAsset ? chartTabList[1].key : chartTabList[0].key,
             },
+            loading: false,
           });
           index++;
         }
