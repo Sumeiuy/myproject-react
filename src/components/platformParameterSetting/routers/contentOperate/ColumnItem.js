@@ -3,7 +3,7 @@
  * @Descripter: 栏目Item
  * @Date: 2018-11-05 15:16:43
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 00:48:42
+ * @Last Modified time: 2018-11-09 10:20:35
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -13,15 +13,6 @@ import Icon from '../../../common/Icon';
 import styles from './columnItem.less';
 
 export default function ColumnItem(props) {
-  // 编辑栏目
-  function handleEditColumn() {
-    props.onEdit();
-  }
-
-  // 删除栏目
-  function handleDeleteColumn() {
-    props.onDelete();
-  }
   const {
     columnData: {
       attaches,
@@ -50,10 +41,10 @@ export default function ColumnItem(props) {
         </InfoCell>
       </div>
       <div className={styles.itemOperate}>
-        <div className={styles.edit} onClick={handleEditColumn}>
+        <div className={styles.edit} onClick={props.onEdit}>
           <Icon type="shenqing" />
         </div>
-        <div className={styles.defaultDelete} onClick={handleDeleteColumn}>
+        <div className={styles.defaultDelete} onClick={props.onDelete}>
           <Icon type="shanchu"/>
         </div>
       </div>

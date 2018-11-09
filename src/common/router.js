@@ -402,7 +402,7 @@ export const getRouterData = (app) => {
     },
     '/sysOperate/platformParameterSetting/contentOperate/activityColumn': {
       component: dynamicWrapper(app, ['activityColumn'], () =>
-        import('../components/platformParameterSetting/routers/contentOperate/ActivityColumn' /* webpackChunkName: "RecommendedLabel" */)),
+        import('../components/platformParameterSetting/routers/contentOperate/ActivityColumn' /* webpackChunkName: "ActivityColumn" */)),
     },
     '/sysOperate/platformParameterSetting/customerLabel': {
       component: dynamicWrapper(app, ['customerLabel'], () =>

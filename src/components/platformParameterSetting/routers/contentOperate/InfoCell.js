@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-06-11 14:56:51
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-07 13:30:25
+ * @Last Modified time: 2018-11-09 10:22:55
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -12,10 +12,7 @@ import styles from './infoCell.less';
 
 export default function InfoCell(props) {
   const { children, label, labelWidth, required, className } = props;
-  const infoCellStyles = classnames({
-    [styles.infoCell]: true,
-    [className]: true
-  });
+  const infoCellStyles = classnames([styles.infoCell, className]);
   return (
     <div className={infoCellStyles}>
       <div className={styles.requiredSelectItem} style={{ width: labelWidth }}>

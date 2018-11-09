@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 01:11:13
+ * @Last Modified time: 2018-11-09 09:48:29
  */
 
 import React, { PureComponent } from 'react';
@@ -113,12 +113,11 @@ export default class ActivityColumn extends PureComponent {
         descriptionCount,
       },
       attachmentList: attaches,
-    }, () => {
-      this.handleOpenForm();
-    });
+    }, this.handleOpenForm);
   }
 
   // 删除活动栏目
+  @autobind
   @logable({ type: 'Click', payload: { name: '删除' } })
   handleDeleteColumnConfirm(index) {
     // 活动栏目只剩1条，就不能删除，并给出提示
@@ -132,6 +131,7 @@ export default class ActivityColumn extends PureComponent {
     }
   }
 
+  @autobind
   handleDeleteColumn(index) {
     const { activityColumnList } = this.state;
     // 删除后新的活动栏目

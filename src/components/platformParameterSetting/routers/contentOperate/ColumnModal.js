@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-08 13:46:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 00:46:08
+ * @Last Modified time: 2018-11-09 10:48:34
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -24,17 +24,9 @@ export default function ColumnModal(props) {
     isShowAttachmentStatusError,
     attachmentStatusErrorMessage,
   } = props;
-  // 关闭弹窗
-  function handleCloseModal() {
-    onCloseModal();
-  }
   // 表单数据变化
   function handleChangeFormData(obj) {
     onChangeFormData(obj);
-  }
-  // 点击确定
-  function handleConfirm() {
-    onConfirm();
   }
   // 设置form组件引用
   function setColumnFormRef(form) {
@@ -45,7 +37,7 @@ export default function ColumnModal(props) {
       title="新建内容"
       visible={visible}
       modalKey="activityColumnModal"
-      closeModal={handleCloseModal}
+      closeModal={onCloseModal}
       needBtn={false}
       className={styles.activityColumnModal}
     >
@@ -55,11 +47,11 @@ export default function ColumnModal(props) {
         isShowAttachmentStatusError={isShowAttachmentStatusError}
         attachmentStatusErrorMessage={attachmentStatusErrorMessage}
         onChange={handleChangeFormData}
-        wrappedComponentRef={setColumnFormRef}
+        ref={setColumnFormRef}
       />
       <div className={styles.modalFooterButton}>
-        <Button className={styles.cancelButton} onClick={handleCloseModal}>取消</Button>
-        <Button type="primary" className={styles.submitButton} onClick={handleConfirm}>确定</Button>
+        <Button className={styles.cancelButton} onClick={onCloseModal}>取消</Button>
+        <Button type="primary" className={styles.submitButton} onClick={onConfirm}>确定</Button>
       </div>
     </CommonModal>
   );
