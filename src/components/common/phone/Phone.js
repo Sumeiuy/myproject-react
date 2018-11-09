@@ -3,7 +3,7 @@
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-02 14:27:40
+ * @Last Modified time: 2018-11-09 17:03:56
  */
 
 import React, { PureComponent } from 'react';
@@ -28,7 +28,7 @@ const URL = bowser.msie
   // Chrome等WebRTC只可用在https域下,所以部署到移动端server
   // 生产地址 https://crm.htsc.com.cn:1443/phone/
   // 测试地址 https://crm.htsc.com.cn:2443/phone/
-  : 'https://crm.htsc.com.cn:2443/phone/';
+  : 'https://crm.htsc.com.cn:1443/phone/';
 
 const OPEN_FEATURES = `
   width=300,
