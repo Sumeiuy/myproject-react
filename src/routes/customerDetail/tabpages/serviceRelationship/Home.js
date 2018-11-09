@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-05 17:45:53
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-09 09:26:21
+ * @Last Modified time: 2018-11-09 10:58:12
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -50,9 +50,7 @@ export default class Home extends PureComponent {
   }
   constructor(props) {
     super(props);
-    this.state = {
-      location: props.location,
-    };
+    this.state = {};
   }
   render() {
     const {

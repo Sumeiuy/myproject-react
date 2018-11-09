@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-08 18:52:28
+ * @Last Modified time: 2018-11-09 10:57:08
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -14,7 +14,7 @@ import Table from '../../components/common/table';
 import Modal from '../../components/common/biz/CommonModal';
 import styles from './serviceRelationship.less';
 import { number } from '../../helper';
-import { serviceTeamColumns, introduceColumns, serviceHistoryColumns} from './config';
+import { newServiceTeamColumns, newIntroduceColumns, newServiceHistoryColumns} from './config';
 
 export default class ServiceRelationship extends PureComponent {
   static propTypes = {
@@ -40,8 +40,7 @@ export default class ServiceRelationship extends PureComponent {
     };
   }
   componentDidMount(){
-    const { getCustServiceTeam, getCustDevInfo } = this.props;
-    const { query } = this.props.location;
+    const { getCustServiceTeam, getCustDevInfo, location: {query} } = this.props;
     getCustServiceTeam({
       custId: query && query.custId,
     });
@@ -52,8 +51,7 @@ export default class ServiceRelationship extends PureComponent {
   //打开服务历史的弹框
   @autobind
   handleServiceHistoryModalOpen(){
-    const { query } = this.props.location;
-    const { getCustServiceHistory } = this.props;
+    const { getCustServiceHistory, location: { query } } = this.props;
       getCustServiceHistory({ custId: query && query.custId}).then(() => {
         this.setState({ serviceHistoryModalVisible: true });
       });
@@ -92,28 +90,6 @@ export default class ServiceRelationship extends PureComponent {
      const serviceHistoryDatasLength = _.size(serviceHistoryDatas);
      // 数据超过10条展示分页，反之不展示
      const showServiceHistoryPagination = serviceHistoryDatasLength > 10;
-     // 修改Table的Column
-    const newServiceTeamColumns = _.map(serviceTeamColumns, column => ({
-      ...column,
-      render(text, record) {
-       const { flag } = record;
-       return flag ? '' : text;
-      }
-    }));
-    const newIntroduceColumns = _.map(introduceColumns, column => ({
-       ...column,
-       render(text, record) {
-        const { flag } = record;
-        return flag ? '' : text;
-       }
-    }));
-    const newServiceHistoryColumns = _.map(serviceHistoryColumns, column => ({
-      ...column,
-      render(text, record) {
-       const { flag } = record;
-       return flag ? '' : text;
-      }
-    }));
     //将数据百分比化
     const newIntroduceDatas = _.map(introduceDatas,  (items) => {
       const { weight } = items;
