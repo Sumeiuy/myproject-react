@@ -29,6 +29,7 @@ function parseURL(url) {
       file: (a.pathname.match(/\/([^\/?#]+)$/i) || [,''])[1], //文件名
       hash: a.hash.replace('#',''), //哈希参数
       path: a.pathname.replace(/^([^\/])/,'/$1'), //路径
+      pathname: a.pathname,
       relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [,''])[1],  //相对路径
       segments: a.pathname.replace(/^\//,'').split('/') //路径片段
   };

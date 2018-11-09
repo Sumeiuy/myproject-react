@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 16:05:07
+ * @Last Modified time: 2018-11-09 20:30:06
  */
 
 import React, { PureComponent } from 'react';
@@ -93,11 +93,11 @@ export default class ActivityColumn extends PureComponent {
   @autobind
   renderActivityColumnList() {
     const { activityColumnList } = this.state;
-    return _.map(activityColumnList, (item, index) => (
+    return _.map(activityColumnList, item => (
        <ColumnItem
           columnData={item}
-          onEdit={() => this.handleEditColumn(index)}
-          onDelete={() => this.handleDeleteColumnConfirm(index)}
+          onEdit={() => this.handleEditColumn(item.index)}
+          onDelete={() => this.handleDeleteColumnConfirm(item.index)}
           key={data.uuid()}
         />
     ));
@@ -107,11 +107,12 @@ export default class ActivityColumn extends PureComponent {
   @logable({ type: 'Click', payload: { name: '编辑' } })
   handleEditColumn(index) {
     const { activityColumnList } = this.state;
-    const { description, attaches } = activityColumnList[index];
+    const activityColumnData = _.find(activityColumnList, item => (item.index === index));
+    const { description, attaches } = activityColumnData;
     const descriptionCount = description.length;
     this.setState({
       formData: {
-        ...activityColumnList[index],
+        ...activityColumnData,
         descriptionCount,
       },
       attachmentList: attaches,
@@ -205,14 +206,15 @@ export default class ActivityColumn extends PureComponent {
         const { attachId, name, creator } = attaches[0];
         const url = `${request.prefix}/file/${downloadName}?attachId=${attachId}&empId=${creator}&filename=${window.encodeURIComponent(name)}`;
         // 编辑栏目
-        const editColumn = _.find(activityColumnList, (item) => ( item.index === index ));
+        const editColumnIndex = _.findIndex(activityColumnList, (item) => ( item.index === index ));
         let newActivityColumnList = [];
-        if (_.isEmpty(editColumn)) {
+        if (editColumnIndex < 0) {
+          const activityColumnListLength = activityColumnList.length;
           // 新增栏目
-          newActivityColumnList = _.concat(activityColumnList, { attachment, attaches, link, description, url});
+          newActivityColumnList = _.concat(activityColumnList, { attachment, attaches, link, description, url, index: activityColumnListLength});
         } else {
           // 编辑替换栏目
-          activityColumnList[index] = {...formData, link, description};
+          activityColumnList[editColumnIndex] = {...formData, link, description, url};
           newActivityColumnList = activityColumnList;
         }
         this.setState({ activityColumnList: newActivityColumnList });
@@ -241,6 +243,8 @@ export default class ActivityColumn extends PureComponent {
       formData: {},
       visible: false,
       attachmentList: [],
+      isShowAttachmentStatusError: false,
+      attachmentStatusErrorMessage: '',
    });
   }
 
@@ -285,19 +289,27 @@ export default class ActivityColumn extends PureComponent {
         <div className={styles.createBox}>
           <Button type="primary" icon="plus" className={styles.createButton} onClick={this.handleOpenForm} disabled={createButtonDisabled}>添加</Button>
         </div>
-        <div className={styles.activityColumn}>
-          <div className={styles.previewWrapper}>
-              <ActivityColumnCarousel activityColumnList={activityColumnList} className={styles.activityColumnCarousel}/>
-              <span className={styles.previewTitle}>效果预览</span>
-          </div>
-          <div className={styles.activityColumnList}>
-            {this.renderActivityColumnList()}
-          </div>
-        </div>
-        <div className={styles.footerButton}>
-          <Button className={styles.cancelButton}>取消</Button>
-          <Button type="primary" className={styles.submitButton} onClick={this.handleSubmit}>提交</Button>
-        </div>
+        {
+          !_.isEmpty(activityColumnList)
+          ? (
+            <div className={styles.activityColumnBox}>
+              <div className={styles.activityColumn}>
+                <div className={styles.previewWrapper}>
+                  <ActivityColumnCarousel activityColumnList={activityColumnList} className={styles.activityColumnCarousel}/>
+                  <span className={styles.previewTitle}>效果预览</span>
+                </div>
+                <div className={styles.activityColumnList}>
+                  {this.renderActivityColumnList()}
+                </div>
+              </div>
+              <div className={styles.footerButton}>
+                <Button className={styles.cancelButton}>取消</Button>
+                <Button type="primary" className={styles.submitButton} onClick={this.handleSubmit}>提交</Button>
+              </div>
+            </div>
+          )
+          : null
+        }
         <ColumnModal
           visible={visible}
           formData={formData}

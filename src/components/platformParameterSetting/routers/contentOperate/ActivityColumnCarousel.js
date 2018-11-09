@@ -3,10 +3,10 @@
  * @Descripter: 活动栏目跑马灯
  * @Date: 2018-11-06 13:53:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 17:01:27
+ * @Last Modified time: 2018-11-09 19:35:48
  */
 
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
@@ -17,7 +17,7 @@ import { parseURL, filterData } from './helper';
 import { logPV } from '../../../../decorators/logable';
 import styles from './activityColumnCarousel.less';
 
-export default class ActivityColumnCarousel extends PureComponent {
+export default class ActivityColumnCarousel extends Component {
   static propsTypes = {
     activityColumnList: PropTypes.array.isRequired,
   }
@@ -36,7 +36,9 @@ export default class ActivityColumnCarousel extends PureComponent {
   handleClick(url) {
     // 获取url的信息
     const urlInfo = parseURL(url);
+    console.warn('urlInfo', urlInfo);
     const { hash } = urlInfo;
+    console.warn('hash', hash);
     const defaultMenuPathList = filterData(defaultMenu, 'path');
     // 判断是否是内部网址
     const isInnerPath = _.find(defaultMenuPathList, item => item === hash);
@@ -44,7 +46,7 @@ export default class ActivityColumnCarousel extends PureComponent {
       const { push } = this.context;
       push(hash);
     } else {
-      window.open(url);
+      // window.open(url);
     }
   }
 

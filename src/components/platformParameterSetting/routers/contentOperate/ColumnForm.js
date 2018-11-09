@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 16:22:39
+ * @Last Modified time: 2018-11-09 17:50:41
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -120,7 +120,7 @@ export default class ColumnForm extends PureComponent {
                   { required: true, message: '请输入图片链接' },
                   { whitespace: true, message: '请输入图片链接' },
                   {
-                    validator: this.validateLink,
+                    // validator: this.validateLink,
                   }
                 ],
                 initialValue: link,

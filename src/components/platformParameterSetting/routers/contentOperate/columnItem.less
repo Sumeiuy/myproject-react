@@ -3,6 +3,11 @@
   border-top: 0;
   padding: 14px;
   display: flex;
+  width: calc(~"100% - 204px");
+
+  &:first-child {
+    border-top: 1px solid #efefef;
+  }
 
   .itemInfo {
     flex: 1;
@@ -11,6 +16,7 @@
       font-size: 14px;
       color: #333;
       line-height: 30px;
+      max-width: 70%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
