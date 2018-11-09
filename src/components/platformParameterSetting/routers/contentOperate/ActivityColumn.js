@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 14:32:35
+ * @Last Modified time: 2018-11-09 16:05:07
  */
 
 import React, { PureComponent } from 'react';

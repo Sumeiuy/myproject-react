@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目跑马灯
  * @Date: 2018-11-06 13:53:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 10:59:26
+ * @Last Modified time: 2018-11-09 17:01:27
  */
 
 import React, { PureComponent } from 'react';
@@ -12,12 +12,18 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import Carousel from '../../../common/carousel';
 import { data } from '../../../../helper';
+import { defaultMenu } from '../../../../config/tabMenu';
+import { parseURL, filterData } from './helper';
 import { logPV } from '../../../../decorators/logable';
 import styles from './activityColumnCarousel.less';
 
 export default class ActivityColumnCarousel extends PureComponent {
   static propsTypes = {
     activityColumnList: PropTypes.array.isRequired,
+  }
+
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
   }
 
   @autobind
@@ -28,7 +34,18 @@ export default class ActivityColumnCarousel extends PureComponent {
     },
   })
   handleClick(url) {
-    window.open(url);
+    // 获取url的信息
+    const urlInfo = parseURL(url);
+    const { hash } = urlInfo;
+    const defaultMenuPathList = filterData(defaultMenu, 'path');
+    // 判断是否是内部网址
+    const isInnerPath = _.find(defaultMenuPathList, item => item === hash);
+    if (!_.isEmpty(isInnerPath)) {
+      const { push } = this.context;
+      push(hash);
+    } else {
+      window.open(url);
+    }
   }
 
   render() {

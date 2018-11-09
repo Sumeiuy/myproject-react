@@ -3,12 +3,13 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 13:05:20
+ * @Last Modified time: 2018-11-09 16:22:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Form, Input  } from 'antd';
+import { dva, data, regxp } from '../../../../helper';
 import CommonUpload from '../../../common/biz/CommonUpload';
 import InfoCell from './InfoCell';
 
@@ -54,6 +55,15 @@ export default class ColumnForm extends PureComponent {
     this.props.onChange({
       descriptionCount,
     });
+  }
+
+  // 校验图片链接
+  @autobind
+  validateLink(rule, value, callback) {
+    if (value && !regxp.url.test(value)) {
+      callback('图片链接格式不正确');
+    }
+    callback();
   }
 
   render() {
@@ -109,6 +119,9 @@ export default class ColumnForm extends PureComponent {
                 rules: [
                   { required: true, message: '请输入图片链接' },
                   { whitespace: true, message: '请输入图片链接' },
+                  {
+                    validator: this.validateLink,
+                  }
                 ],
                 initialValue: link,
               })(
