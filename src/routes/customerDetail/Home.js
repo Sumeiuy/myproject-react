@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-16 17:57:05
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-11-07 11:01:06
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ import AccountInfo from './tabpages/accountInfo/Home';
 import BreadCrumb from '../../components/customerDetail/Breadcrumb';
 import SummaryInfo from '../../components/customerDetail/SummaryInfo';
 import CustomerBasicInfo from '../../components/customerDetail/CustomerBasicInfo';
+import CustProperty from './tabpages/custProperty/connectedHome';
 
 import styles from './home.less';
 
@@ -174,6 +175,7 @@ export default class Home extends PureComponent {
               <AccountInfo location={location} />
             </TabPane>
             <TabPane tab="客户属性" key="customerInfo">
+              <CustProperty />
             </TabPane>
             <TabPane tab="业务办理" key="businessProcessing">
             </TabPane>
