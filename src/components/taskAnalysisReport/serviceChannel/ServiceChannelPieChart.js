@@ -3,7 +3,7 @@
  * @Descripter: 渠道占比分布
  * @Date: 2018-10-12 10:10:53
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-02 09:37:39
+ * @Last Modified time: 2018-11-08 22:43:01
  */
 
 import React from 'react';
@@ -57,7 +57,7 @@ export default function ServiceChannelPieChart(props) {
       tooltip: tooltipOtions,
       series: [{
         type: 'pie',
-        radius: ['50%', '70%'],
+        radius: ['40%', '60%'],
         itemStyle: {
           normal: {
             shadowBlur: 8,
