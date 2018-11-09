@@ -798,6 +798,7 @@ export default class Filter extends PureComponent {
       definedLabelsInfo,
       getHotPossibleWds,
       hotPossibleWdsList,
+      onFilterChange,
     } = this.props;
     const {
       filters = '',
@@ -835,6 +836,7 @@ export default class Filter extends PureComponent {
             location={location}
             getHotPossibleWds={getHotPossibleWds}
             hotPossibleWdsList={hotPossibleWdsList}
+            onChange={onFilterChange}
           />
           {
             basicFilters.map(filter => (
@@ -869,13 +871,11 @@ export default class Filter extends PureComponent {
               />
             }
           </div>
-          <div>
-            {
-              _.map(
-                moreFilterListOpened,
-                obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
-            }
-          </div>
+          {
+            _.map(
+              moreFilterListOpened,
+              obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
+          }
         </div>
         <div className={styles.moreFilterController}>
           {
