@@ -396,9 +396,13 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['userCenter'], () =>
         import('../components/platformParameterSetting/routers/LabelManager' /* webpackChunkName: "LabelManager" */)),
     },
-    '/sysOperate/platformParameterSetting/contentOperate': {
+    '/sysOperate/platformParameterSetting/contentOperate/recommendedLabel': {
       component: dynamicWrapper(app, ['operationCenter'], () =>
         import('../components/platformParameterSetting/routers/RecommendedLabel' /* webpackChunkName: "RecommendedLabel" */)),
+    },
+    '/sysOperate/platformParameterSetting/contentOperate/activityColumn': {
+      component: dynamicWrapper(app, ['activityColumn'], () =>
+        import('../components/platformParameterSetting/routers/contentOperate/ActivityColumn' /* webpackChunkName: "ActivityColumn" */)),
     },
     '/sysOperate/platformParameterSetting/customerLabel': {
       component: dynamicWrapper(app, ['customerLabel'], () =>

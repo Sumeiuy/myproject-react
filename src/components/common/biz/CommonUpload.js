@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: Liujianshu
- * @Last Modified time: 2018-09-16 20:03:14
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-08 17:08:21
  */
 /**
  * 常用说明
@@ -166,7 +166,7 @@ export default class CommonUpload extends PureComponent {
           fileList: data.attaches,
           oldFileList: data.attaches,
           attachment: data.attachment,
-        }, uploadAttachment(data.attachment));
+        }, uploadAttachment(data.attachment, data.attaches));
       } else {
         // 上传失败的返回值 MAG0005
         this.setState({
@@ -233,7 +233,6 @@ export default class CommonUpload extends PureComponent {
       title,
       needDefaultText,
     } = this.props;
-
     const actionName = 'ceFileUpload2';
     const uploadProps = {
       data: {
