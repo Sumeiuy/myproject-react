@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-08 18:55:02
+ * @Last Modified time: 2018-11-09 10:31:08
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -14,7 +14,8 @@ import _ from 'lodash';
 import cx from 'classnames';
 
 import { data, number } from '../../helper';
-import logable, { logCommon } from '../../decorators/logable';
+import { jumpToProductDetailPage } from '../../utils/productCenter';
+import logable, { logCommon, logPV } from '../../decorators/logable';
 import Modal from '../common/biz/CommonModal';
 import Pagination from '../common/Pagination';
 import {
@@ -141,6 +142,7 @@ export default class HistoryHoldingModal extends PureComponent {
 
   // 点击证券历史持仓明细中的名称或者代码跳转到策略中西下个股咨询>个股研报
   @autobind
+  @logable({ type: 'Click', payload: { name: '跳转到个股咨询>个股研报', value: '$args[0].name'} })
   jumpToStockPage(record) {
     this.context.push({
       pathname: '/strategyCenter/stock',
@@ -152,9 +154,9 @@ export default class HistoryHoldingModal extends PureComponent {
 
   // 点击产品历史持仓明细中的产品名称、代码列跳转到产品详情
   @autobind
-  jumpToProductDetailPage(record) {
-    // this.context.push();
-    console.warn('明天来添加路径');
+  @logable({ type: 'Click', payload: { name: '跳转到产品详情', value: '$args[0].name'} })
+  hanleProductCellClick(record) {
+    jumpToProductDetailPage({ type: record.firstTypeCode, code: record.code }, this.context.push);
   }
 
   // 修改数据金额所在的column
@@ -270,7 +272,7 @@ export default class HistoryHoldingModal extends PureComponent {
       },
       onCell: (record) => {
         return {
-          onClick: () => this.jumpToProductDetailPage(record),
+          onClick: () => this.hanleProductCellClick(record),
         };
       },
     };
