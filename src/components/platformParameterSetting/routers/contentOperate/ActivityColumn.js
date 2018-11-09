@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 13:26:14
+ * @Last Modified time: 2018-11-09 14:32:35
  */
 
 import React, { PureComponent } from 'react';
@@ -81,6 +81,12 @@ export default class ActivityColumn extends PureComponent {
       const { activityColumnList } = this.props;
       this.setState({ activityColumnList });
     });
+  }
+
+  // 获取活动栏目表单
+  @autobind
+  getColumnForm() {
+    return this.columnFormRef.current;
   }
 
   // 渲染活动栏目
@@ -179,7 +185,7 @@ export default class ActivityColumn extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleConfirm() {
-    const { validateFields } = this.columnFormRef.current.getForm();
+    const { validateFields } = this.getColumnForm().getForm();
     validateFields((err, values) => {
       if(!err) {
         // 校验附件失败
@@ -229,7 +235,8 @@ export default class ActivityColumn extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '取消' } })
   handleCloseModal() {
-    this.columnFormRef.current.getForm().resetFields();
+    // 重置表单
+    this.getColumnForm().getForm().resetFields();
     this.setState({
       formData: {},
       visible: false,
