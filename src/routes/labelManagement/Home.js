@@ -396,7 +396,6 @@ export default class CustomerGroupManage extends PureComponent {
 
   // 显示新建标签模态框
   @autobind
-  @logPV({ pathname: '/modal/createAndEditLabelModalContent', title: '新建标签' })
   showCreateLabelModal() {
     this.showLabelDetailModal({}, true, true);
   }
@@ -597,6 +596,13 @@ export default class CustomerGroupManage extends PureComponent {
 
   // 创建部门change事件
   @autobind
+  @logable({
+      type: 'DropdownSelect',
+    payload: {
+      name: '创建部门',
+      value: '$args[0].orgId',
+    },
+  })
   handleCustRange({ orgId }) {
     const {
       location: { pathname, query },
