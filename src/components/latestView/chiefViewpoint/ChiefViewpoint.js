@@ -16,7 +16,7 @@ import logable from '../../../decorators/logable';
 import styles from './chiefViewpoint.less';
 
 // 内容最大长度
-const MAX_LENGTH = 100;
+const MAX_LENGTH = 96;
 export default class ChiefViewpoint extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -94,9 +94,10 @@ export default class ChiefViewpoint extends PureComponent {
           <h4 className={styles.title} title={data.title}>{data.title}</h4>
         </div>
         <p className={styles.time}>{time.format(data.time, config.dateFormatStr)}</p>
-        <p className={styles.content}>
-          {slicedContent}
-        </p>
+        <p
+          className={styles.content}
+          dangerouslySetInnerHTML={{ __html: slicedContent }} // eslint-disable-line
+        />
         <div className={`${styles.footer} clearfix`}>
           <a onClick={this.toDetailPage}>[详情]</a>
         </div>
