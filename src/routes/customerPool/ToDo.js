@@ -16,6 +16,7 @@ import logable from '../../decorators/logable';
 import styles from './todo.less';
 import ToDoNav from '../../components/customerPool/todo/ToDoNav';
 import { dva } from '../../helper';
+import ReportFilter from '../../components/customerPool/todo/ReportFilter';
 
 const effect = dva.generateEffect;
 const curPageNum = 1;
@@ -166,7 +167,10 @@ export default class ToDo extends PureComponent {
             />
           </TabPane>
           <TabPane key='2' tab='我的申请'>
-
+            <div>
+              <ReportFilter
+              />
+            </div>
           </TabPane>
           <TabPane key='3' tab='我的审批'>
 
