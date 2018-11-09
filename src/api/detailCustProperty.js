@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性相关api
  * @Date: 2018-11-07 10:00:46
- * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-09 11:24:40
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2018-11-07 15:49:10
  */
 export default function detailCustProperty(api) {
   return {
@@ -13,5 +13,9 @@ export default function detailCustProperty(api) {
     queryZLUmemberInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZLUMemberInfo', query),
     // 获取涨乐财富通U会员等级变更记录
     queryZLUmemberLevelChangeRecords: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZLUMemberChangeList', query),
+    // 获取紫金积分会员信息
+    queryZjPointMemberInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZjPointMemberInfo', query),
+    // 获取紫金积分会员积分兑换流水
+    queryZjPointExchangeFlow: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZjPointExchangeFlow', query),
   };
 }

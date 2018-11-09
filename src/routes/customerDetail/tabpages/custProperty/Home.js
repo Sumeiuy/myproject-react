@@ -16,6 +16,7 @@ import OrganizationInfo from '../../../../components/customerDetailCustProperty/
 import ProductInfo from '../../../../components/customerDetailCustProperty/productInfo';
 import MemberInfo from '../../../../components/customerDetailCustProperty/memberInfo';
 import { CUST_TYPE } from '../../../../components/customerDetailCustProperty/config';
+import { permission } from '../../../../helper';
 
 import styles from './home.less';
 
@@ -48,6 +49,12 @@ export default class CustProperty extends PureComponent {
     zlUMemberLevelChangeRecords: PropTypes.object.isRequired,
     // 客户基本信息 从modals/customerDetail中取得
     customerBasicInfo: PropTypes.object.isRequired,
+    // 获取紫金积分会员信息
+    queryZjPointMemberInfo: PropTypes.func.isRequired,
+    zjPointMemberInfo: PropTypes.object.isRequired,
+    // 获取紫金积分会员积分兑换流水
+    queryZjPointExchangeFlow: PropTypes.func.isRequired,
+    zjPointExchangeFlow: PropTypes.object.isRequired,
   }
 
   componentDidMount() {
@@ -59,6 +66,23 @@ export default class CustProperty extends PureComponent {
       },
     } = this.props;
     this.queryData(custId);
+  }
+
+  // 客户信息中有些字段需要做隐私控制，只有主，辅服务经理，拥有“HTSC 客户资料-总部管理岗”或“HTSC 隐私信息查询权限”职责的用户可查看；
+  @autobind
+  hasDuty() {
+    const {
+      customerBasicInfo: {
+        isMainEmp,
+        isAssistantEmp,
+      },
+    } = this.props;
+    return (
+      isMainEmp
+      || isAssistantEmp
+      || permission.hasHTSCPrivateInfoCheck()
+      || permission.hasCIHMPPermission()
+    );
   }
 
   // 和custId相关的接口，初次调用和custId发生变化时调用，接口比较多，避免多次重复写，统一放到一个方法里
@@ -91,6 +115,7 @@ export default class CustProperty extends PureComponent {
     } = this.props;
     return (
       <PersonInfo
+        hasDuty={this.hasDuty()}
         data={person}
       />
     );
@@ -105,6 +130,7 @@ export default class CustProperty extends PureComponent {
     } = this.props;
     return (
       <OrganizationInfo
+        hasDuty={this.hasDuty()}
         data={organization}
       />
     );
@@ -119,6 +145,7 @@ export default class CustProperty extends PureComponent {
     } = this.props;
     return (
       <ProductInfo
+        hasDuty={this.hasDuty()}
         data={product}
       />
     );
@@ -128,7 +155,7 @@ export default class CustProperty extends PureComponent {
   @autobind
   renderCustInfo() {
     const {
-      customerBasicInfo: {
+      custInfo: {
         custNature,
       },
     } = this.props;
@@ -147,7 +174,7 @@ export default class CustProperty extends PureComponent {
         component = this.renderProductInfo();
         break;
       default:
-        component = this.renderProductInfo();
+        component = this.renderPersonInfo();
         break;
     }
     return component;

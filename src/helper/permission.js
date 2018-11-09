@@ -318,6 +318,11 @@ const permission = {
     return hasDuty(dutyList, duty.HTSC_GLGXGLG);
   },
 
+  // HTSC 隐私信息查询权限
+  hasHTSCPrivateInfoCheck() {
+    return hasDuty(dutyList, duty.HTSC_PRIVATEINFO_CHECK);
+  },
+
   /**
    * 封装一下灰度发布的标记，fsp会提供一个grayFlag在window上，
    * 本地开发的时候可以在url上通过?grayFlag=true的方式手动测试，
