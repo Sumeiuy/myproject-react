@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-09 14:54:38
+ * @Last Modified time: 2018-11-09 15:38:23
  */
 
 import React, { PureComponent } from 'react';
@@ -17,11 +17,17 @@ import DateRangePick from 'lego-react-date/src';
 import { AutoComplete, Input } from 'antd';
 
 import logable from '../../../decorators/logable';
-import { defaultStartTime, defaultEndTime, executeTypeOptions, eventSourceOptions } from './config';
 
 import styles from './reportFilter.less';
 
 const Option = AutoComplete.Option;
+
+// 日期格式
+const dateFormat = 'YYYY-MM-DD';
+// 筛选项默认开始时间
+const defaultStartTime = moment().subtract(20, 'days').format(dateFormat);
+// 筛选项默认结束时间
+const defaultEndTime = moment().subtract(1, 'days').format(dateFormat);
 
 export default class ReportFilter extends PureComponent {
   static propTypes = {
@@ -56,8 +62,6 @@ export default class ReportFilter extends PureComponent {
   static defaultProps = {
     filterCallback: _.noop,
     eventTypeOptions: [],
-    executeTypeOptions,
-    eventSourceOptions,
     isEventAnalysis: false,
     eventSearchList: {},
     eventSearch: _.noop,
@@ -195,7 +199,6 @@ export default class ReportFilter extends PureComponent {
 
   render() {
     const {
-      dateFilterName,
       startTime,
       endTime,
       eventSource,

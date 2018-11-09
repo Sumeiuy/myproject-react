@@ -189,9 +189,9 @@ export default {
     // 客户列表自定义标签
     definedLabelsInfo: EMPTY_LIST,
     // 申请列表
-    applyList: EMPTY_LIST,
+    applyList: EMPTY_OBJECT,
     // 审批列表
-    approveList: EMPTY_LIST,
+    approveList: EMPTY_OBJECT,
     // 类型下拉框数据
     typeValue: EMPTY_LIST,
   },
@@ -1015,7 +1015,7 @@ export default {
     },
     // 获取申请列表
     * getApplyList({ payload }, { call, put }) {
-      const { resultData } = yield call(api.getApplyList, payload);
+      const resultData = yield call(api.getApplyList, payload);
       yield put({
         type: 'getApplyListSuccess',
         payload: resultData,
@@ -1023,7 +1023,7 @@ export default {
     },
     // 获取审批列表
     * getApprove({ payload }, { call, put }) {
-      const { resultData } = yield call(api.getApprove, payload);
+      const resultData = yield call(api.getApprove, payload);
       yield put({
         type: 'getApproveSuccess',
         payload: resultData,
@@ -1031,7 +1031,7 @@ export default {
     },
     // 获取类型下拉框
     * getTypeValue({ payload }, { call, put }) {
-      const { resultData } = yield call(api.getTypeValue, payload);
+      const resultData = yield call(api.getTypeValue, payload);
       yield put({
         type: 'getTypeValueSuccess',
         payload: resultData,
@@ -1774,7 +1774,7 @@ export default {
     },
     // 获取申请列表成功
     getApplyListSuccess(state, action) {
-      const { payload: { resultData = {} }} = action;
+      const { payload: { resultData = {} } } = action;
       return {
         ...state,
         applyList: resultData,

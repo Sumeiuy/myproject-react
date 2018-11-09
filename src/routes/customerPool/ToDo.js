@@ -10,8 +10,11 @@ import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import { Input, Row, Col, Tabs } from 'antd';
+import _ from 'lodash';
+
 import withRouter from '../../decorators/withRouter';
 import ToDoList from '../../components/customerPool/todo/ToDoList';
+import TaskList from '../../components/customerPool/todo/TaskList';
 import logable from '../../decorators/logable';
 import styles from './todo.less';
 import ToDoNav from '../../components/customerPool/todo/ToDoNav';
@@ -74,10 +77,26 @@ export default class ToDo extends PureComponent {
     getTaskBasicInfo: PropTypes.func.isRequired,
     taskBasicInfo: PropTypes.object,
     clearCreateTaskData: PropTypes.func.isRequired,
+    getApplyList: PropTypes.func.isRequired,
+    applyList: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
     taskBasicInfo: {},
+  }
+
+  componentDidMount() {
+    const {
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+      getApplyList,
+    } = this.props;
+    getApplyList(pageNum, pageSize);
   }
 
   @autobind
@@ -136,9 +155,13 @@ export default class ToDo extends PureComponent {
       replace,
       taskBasicInfo,
       getTaskBasicInfo,
-      clearCreateTaskData } = this.props;
+      clearCreateTaskData,
+      applyList: {
+        empWorkFlowList,
+      },
+    } = this.props;
     const { query: { keyword } } = location;
-
+    const applyListData = _.map(empWorkFlowList, item =>  _.omit(item, ['id', 'dispatchUri']));
     return (
       <div className={styles.todo}>
         <Tabs defaultActiveKey="1" type='card'>
@@ -169,6 +192,19 @@ export default class ToDo extends PureComponent {
           <TabPane key='2' tab='我的申请'>
             <div>
               <ReportFilter
+              />
+              <TaskList
+                className="todoList"
+                data={applyListData}
+                todolist={applyListData}
+                onPageChange={this.pageChange}
+                onSizeChange={this.sizeChange}
+                location={location}
+                push={push}
+                replace={replace}
+                taskBasicInfo={taskBasicInfo}
+                getTaskBasicInfo={getTaskBasicInfo}
+                clearCreateTaskData={clearCreateTaskData}
               />
             </div>
           </TabPane>
