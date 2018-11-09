@@ -1,0 +1,46 @@
+.columnItemWrapper {
+  border: 1px solid #efefef;
+  border-top: 0;
+  padding: 14px;
+  display: flex;
+
+  .itemInfo {
+    flex: 1;
+
+    .itemContent {
+      font-size: 14px;
+      color: #333;
+      line-height: 30px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .itemOperate {
+    margin: 3px 0;
+    width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #efefef;
+
+    .edit {
+      font-size: 14px;
+      color: #108ee9;
+      margin-right: 30px;
+      cursor: pointer;
+    }
+
+    .defaultDelete {
+      font-size: 14px;
+      color: #108ee9;
+      cursor: pointer;
+    }
+
+    .disabledDelete {
+      color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}

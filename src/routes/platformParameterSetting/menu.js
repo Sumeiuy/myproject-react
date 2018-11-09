@@ -32,10 +32,19 @@ const menu = [
     children: '个人标签',
   },
   {
-    name: '内容运营',
+    name: '首页内容',
     path: '/contentOperate',
     permission: duty.HTSC_HQ_XTGL,
-    children: '推荐标签',
+    children: [
+      {
+        name: '推荐标签',
+        path: '/recommendedLabel',
+      },
+      {
+        name: '活动栏目',
+        path: '/activityColumn',
+      },
+    ]
   },
   {
     name: '客户标签',
