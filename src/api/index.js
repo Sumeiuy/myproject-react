@@ -39,6 +39,7 @@ import newHomeAPI from './newHome';
 import advisorSpaceAPI from './advisorSpace';
 import customerDetailAPI from './customerDetail';
 import detailAccountInfoAPI from './detailAccountInfo';
+import detailCustPropertyAPI from './detailCustProperty';
 
 const api = apiCreator();
 
@@ -158,6 +159,8 @@ const exported = {
   customerDetail: customerDetailAPI(api),
   // ========== 新版客户360详情下账户信息Tab组件的API
   detailAccountInfo: detailAccountInfoAPI(api),
+  // ========== 新版客户360详情下客户属性Tab组件的API
+  detailCustProperty: detailCustPropertyAPI(api),
 };
 
 export default exported;
@@ -203,4 +206,5 @@ export const {
   advisorSpace,
   customerDetail,
   detailAccountInfo,
+  detailCustProperty,
 } = exported;
