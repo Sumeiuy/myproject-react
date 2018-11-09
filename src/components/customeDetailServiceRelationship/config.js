@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 17:08:51
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-09 10:50:42
+ * @Last Modified time: 2018-11-09 16:45:26
  */
 import _ from 'lodash';
  const config = {
@@ -144,7 +144,7 @@ import _ from 'lodash';
       title: '来源 ',
       dataIndex: 'source',
       key: 'source',
-      className: 'sss',
+      className: 'lastStyle',
      },
    ]
  };

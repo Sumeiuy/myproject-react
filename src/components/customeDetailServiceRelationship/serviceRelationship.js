@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-09 10:57:08
+ * @Last Modified time: 2018-11-09 16:21:42
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -61,37 +61,17 @@ export default class ServiceRelationship extends PureComponent {
   handleServiceHistoryModalClose() {
     this.setState({ serviceHistoryModalVisible: false});
   }
-  //数据为空时，默认显示空行
-  @autobind
-  padEmptyRow(data) {
-    const len = _.size(data);
-    let newData = _.cloneDeep(data);
-    if (len < 2) {
-      const padLen = 2 - len;
-      for (let i = 0; i < padLen; i++) {
-        newData = _.concat(newData, [{
-          key: `empty_row_${i}`,
-          flag: true,
-        }]);
-      }
-    }
-    return newData;
-  }
   render(){
     const {
       serviceHistoryModalVisible,
     } = this.state;
     const { serviceTeam, introduce, serviceHistory } = this.props;
-     // 空白数据填充
-     const introduceDatas = this.padEmptyRow(introduce);
-     const serviceTeamDatas = this.padEmptyRow(serviceTeam);
-     const serviceHistoryDatas = this.padEmptyRow(serviceHistory);
     //  服务历史的数据长度
-     const serviceHistoryDatasLength = _.size(serviceHistoryDatas);
+     const serviceHistoryDatasLength = _.size(serviceHistory);
      // 数据超过10条展示分页，反之不展示
      const showServiceHistoryPagination = serviceHistoryDatasLength > 10;
     //将数据百分比化
-    const newIntroduceDatas = _.map(introduceDatas,  (items) => {
+    const newIntroduceDatas = _.map(introduce,  (items) => {
       const { weight } = items;
       const newWeight= number.convertRate(weight);
       return {
@@ -123,7 +103,7 @@ export default class ServiceRelationship extends PureComponent {
              <Table
               pagination={showServiceHistoryPagination}
               className={styles.tabPaneWrap}
-              dataSource={serviceHistoryDatas}
+              dataSource={serviceHistory}
               columns={newServiceHistoryColumns}
               scroll={{ x: '1024px' }}
             />
@@ -134,7 +114,7 @@ export default class ServiceRelationship extends PureComponent {
             <Table
               pagination={false}
               className={styles.tableBorder}
-              dataSource={serviceTeamDatas}
+              dataSource={serviceTeam}
               columns={newServiceTeamColumns}
             />
           </div>
