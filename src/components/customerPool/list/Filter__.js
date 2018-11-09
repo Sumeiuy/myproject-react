@@ -869,13 +869,11 @@ export default class Filter extends PureComponent {
               />
             }
           </div>
-          <div>
-            {
-              _.map(
-                moreFilterListOpened,
-                obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
-            }
-          </div>
+          {
+            _.map(
+              moreFilterListOpened,
+              obj => this.renderMoreFilter(obj, moreFilters, splitLabelList, currentValue))
+          }
         </div>
         <div className={styles.moreFilterController}>
           {
