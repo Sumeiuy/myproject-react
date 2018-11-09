@@ -88,7 +88,7 @@ const mapDispatchToProps = {
   getCombinationRankList: dispatch(effects.getCombinationRankList,
     { loading: false, forceFull: true }),
   getCombinationLineChart: dispatch(effects.getCombinationLineChart,
-    { loading: false, forceFull: true }),
+    { loading: true, forceFull: true }),
   combinationRankTabchange: dispatch(effects.combinationRankTabchange,
     { loading: true, forceFull: true }),
   yieldRankChange: dispatch(effects.yieldRankChange,
