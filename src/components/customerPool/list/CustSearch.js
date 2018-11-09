@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { Icon as AntdIcon, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { isSightingScope, getFilter, getSortParam } from '../helper';
+import { isSightingScope } from '../helper';
 import { emp, permission } from '../../../../src/helper';
 import { logCommon } from '../../../decorators/logable';
 
@@ -18,8 +18,13 @@ import styles from './custSearch.less';
 
 const Option = AutoComplete.Option;
 const NONE_INFO = '按回车键发起搜索';
-// 自定义标签类型值
-const DEFINED_LABEL = ['manageFsp', 'personalFsp'];
+
+const sourceMap = {
+  'SOR_PTY_ID': 'sorPtyId',
+  'ID_NUM': 'idNum',
+  'MOBILE': 'mobile',
+  'NAME': 'name',
+};
 
 export default class CustSearch extends PureComponent {
 
@@ -27,6 +32,7 @@ export default class CustSearch extends PureComponent {
     location: PropTypes.object.isRequired,
     // 搜索联想词
     getHotPossibleWds: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
     hotPossibleWdsList: PropTypes.array.isRequired,
     // 搜索词,从其他页面带过来的
     keyword: PropTypes.string,
@@ -88,15 +94,17 @@ export default class CustSearch extends PureComponent {
 
   @autobind
   clearData() {
+    this.props.onChange({
+      name: this.state.type,
+      value: '',
+    }, true, {
+      q: '',
+      type: '',
+      isSearchFromCust: true,
+    });
+
     this.setState({
       value: '',
-    });
-    this.replaceUrl({
-      source: '',
-      q: '',
-      labelName: '',
-      type: '',
-      productName: '',
     });
   }
 
@@ -125,13 +133,11 @@ export default class CustSearch extends PureComponent {
     }
     // todo 查询客户列表
     const { value } = this.state;
-    this.replaceUrl({
-      source: 'search',
-      q: encodeURIComponent(_.trim(value)),
-      labelName: '',
-      type: '',
-      productName: '',
+
+    this.setState({
+      type: 'searchText',
     });
+
     logCommon({
       type: 'Click',
       payload: {
@@ -140,6 +146,15 @@ export default class CustSearch extends PureComponent {
         type: '搜索',
         subtype: '',
       },
+    });
+
+    this.props.onChange({
+      name: 'searchText',
+      value: _.trim(value),
+    }, false, {
+        q: _.trim(value),
+        type: 'ALL',
+        isSearchFromCust: true,
     });
   }
 
@@ -150,61 +165,34 @@ export default class CustSearch extends PureComponent {
     });
   }
 
-  // 统一处理url
-  @autobind
-  replaceUrl(data) {
-    const { replace } = this.context;
-    const { location: { query = {}, pathname } } = this.props;
-    const filters = getFilter(data);
-    const sortParams = getSortParam(filters);
-    replace({
-      pathname,
-      query: {
-        ...query,
-        ...data,
-        ...sortParams,
-        filters,
-      },
-    });
-  }
-
   @autobind
   handleSelect(value) {
     const { hotPossibleWdsList } = this.props;
     const item = _.find(hotPossibleWdsList, item => item.primaryKey === value);
-    const sightingScopeBool = isSightingScope(item.source);
-    let query = {
-      source: sightingScopeBool ? 'sightingTelescope' : 'association',
-      labelName: encodeURIComponent(item.value),
-      // labelDesc: item.description,
-      q: encodeURIComponent(item.value),
-      type: item.type,
-    };
-    // 自定义标签的选择
-    if (_.includes(DEFINED_LABEL, item.source)) {
-      query = {
-        ...query,
-        source: item.source,
-      };
-    }
+    const name = sourceMap[item.type];
 
-    // 查到的时持仓产品，传持仓产品的名称
-    if (item.type === 'PRODUCT' && item.name) {
-      query = { ...query, productName: item.name };
-    }
+    this.setState({
+      type: name,
+    });
 
-    // log日志 --- 首页搜索选中
-    const subtype = sightingScopeBool ? '瞄准镜' : item.description;
     logCommon({
       type: 'Click',
       payload: {
         name: '淘客页面搜索',
         value: item.value,
         type: '联想词选择',
-        subtype,
+        subtype: item.description,
       },
     });
-    this.replaceUrl(query);
+
+    this.props.onChange({
+      name,
+      value: item.value,
+    }, false, {
+      q: item.value,
+      type: item.type,
+      isSearchFromCust: true,
+    });
   }
 
   @autobind
