@@ -14,22 +14,31 @@ import ContactWay from './ContactWay';
 export default class PersonInfo extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
+    hasDuty: PropTypes.bool.isRequired,
   }
 
   render() {
-    const { data } = this.props;
+    const { data, hasDuty } = this.props;
     const {
       phones,
       others,
       addresses,
+      noMessage,
+      noCall,
     } = data;
     return (
       <div>
-        <BasicInfo data={data} />
+        <BasicInfo
+          data={data}
+          hasDuty={hasDuty}
+        />
         <ContactWay
           phoneList={phones}
           otherList={others}
           addressList={addresses}
+          hasDuty={hasDuty}
+          noMessage={noMessage}
+          noCall={noCall}
         />
       </div>
     );

@@ -10,8 +10,12 @@ export default function detailCustProperty(api) {
     // 获取客户属性信息
     queryCustomerProperty: query => api.post('/groovynoauth/fsp/cust/custdetail/queryCustPropertyInfo', query),
     // 获取涨乐财富通U会员信息
-    queryZLUmemberInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZhangleUMemberInfo', query),
+    queryZLUmemberInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZLUMemberInfo', query),
     // 获取涨乐财富通U会员等级变更记录
-    queryZLUmemberLevelChangeRecords: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZhangeLeUMemberChangeList', query),
+    queryZLUmemberLevelChangeRecords: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZLUMemberChangeList', query),
+    // 获取紫金积分会员信息
+    queryZjPointMemberInfo: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZjPointMemberInfo', query),
+    // 获取紫金积分会员积分兑换流水
+    queryZjPointExchangeFlow: query => api.post('/groovynoauth/fsp/cust/custdetail/queryZjPointExchangeFlow', query),
   };
 }

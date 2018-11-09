@@ -39,6 +39,7 @@ const duty = {
   HTSC_BMXTGLY: '1-1QF7Z', // HTSC 部门系统管理员
   HTSC_XZXZHSPG: '1-5GN5108', // HTSC 限制性账户审批岗
   HTSC_NEW_FEATURE: '1-4LPET44', // HTSC 新功能体验岗
+  HTSC_PRIVATEINFO_CHECK: '1-3S9AVBW', // HTSC 隐私信息查询权限
 };
 
 export default duty;

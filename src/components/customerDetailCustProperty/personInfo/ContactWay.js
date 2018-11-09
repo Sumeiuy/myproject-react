@@ -9,6 +9,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import InfoItem from '../../common/infoItem';
+import { DEFAULT_VALUE, DEFAULT_PRIVATE_VALUE } from '../config';
 import styles from './contactWay.less';
 
 const INFO_ITEM_WITDH = '110px';
@@ -20,6 +21,11 @@ export default class ContactWay extends PureComponent {
     otherList: PropTypes.array.isRequired,
     // 地址列表
     addressList: PropTypes.array.isRequired,
+    hasDuty: PropTypes.bool.isRequired,
+    // 请勿发短信
+    noMessage: PropTypes.bool.isRequired,
+    // 请勿打电话
+    noCall: PropTypes.bool.isRequired,
   }
 
   @autobind
@@ -28,6 +34,10 @@ export default class ContactWay extends PureComponent {
   }
 
   render() {
+    const {
+      noMessage,
+      noCall,
+    } = this.props;
     return (
       <div className={styles.contactWayBox}>
         <div className={styles.title}>联系方式</div>
@@ -67,7 +77,7 @@ export default class ContactWay extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="请勿发短信"
-            value={this.getPhoneNum()}
+            value={noMessage ? '是' : '否'}
             className={styles.infoItem}
           />
         </div>
@@ -75,7 +85,7 @@ export default class ContactWay extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="请勿打电话"
-            value={this.getPhoneNum()}
+            value={noCall ? '是' : '否'}
             className={styles.infoItem}
           />
         </div>

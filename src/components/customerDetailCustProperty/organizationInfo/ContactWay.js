@@ -21,6 +21,7 @@ export default class ContactWay extends PureComponent {
     otherList: PropTypes.array.isRequired,
     // 地址列表
     addressList: PropTypes.array.isRequired,
+    hasDuty: PropTypes.bool.isRequired,
   }
 
   @autobind
