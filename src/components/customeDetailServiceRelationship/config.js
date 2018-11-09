@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 17:08:51
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-08 10:16:24
+ * @Last Modified time: 2018-11-09 09:31:25
  */
 
  const config = {
@@ -144,7 +144,7 @@
       title: '来源 ',
       dataIndex: 'source',
       key: 'source',
-      className: 'rightStyle',
+      className: 'sss',
      },
    ]
  };

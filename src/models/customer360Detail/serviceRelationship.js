@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-05 18:50:57
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-07 10:18:26
+ * @Last Modified time: 2018-11-08 17:29:22
  */
 import { detailServiceRelationship as api } from '../../api';
 export default {
@@ -25,7 +25,7 @@ export default {
       };
     },
     //账户关系下介绍信息的数据
-    getCustDevTeamSuccess(state, action) {
+    getCustDevInfoSuccess(state, action) {
       const { payload } = action;
       return {
         ...state,
@@ -59,10 +59,10 @@ export default {
       });
     },
      //查询账户关系下的介绍信息
-     * getCustDevTeam({ payload }, { put, call }) {
-      const { resultData } = yield call(api.queryCustDevTeam, payload);
+     * getCustDevInfo({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryCustDevInfo, payload);
       yield put({
-        type: 'getCustDevTeamSuccess',
+        type: 'getCustDevInfoSuccess',
         payload: resultData,
       });
     },

@@ -2,11 +2,10 @@
  * @Author: wangyikai
  * @Date: 2018-11-05 17:45:53
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-06 19:20:50
+ * @Last Modified time: 2018-11-09 09:26:21
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { connect } from 'dva';
 import { dva } from '../../../../helper';
@@ -24,7 +23,7 @@ const mapDispatchToProps = {
   // 查询账户关系下的服务团队信息
   getCustServiceTeam: effect('detailServiceRelationship/getCustServiceTeam'),
  // 查询账户关系下的介绍信息
- getCustDevTeam: effect('detailServiceRelationship/getCustDevTeam'),
+ getCustDevInfo: effect('detailServiceRelationship/getCustDevInfo'),
  // 查询账户关系下的服务历史信息
  getCustServiceHistory: effect('detailServiceRelationship/getCustServiceHistory'),
   // 清除Redux中的数据
@@ -43,7 +42,7 @@ export default class Home extends PureComponent {
     //查询账户关系下的服务团队信息
     getCustServiceTeam: PropTypes.func.isRequired,
     // 查询账户关系下的介绍信息
-    getCustDevTeam: PropTypes.func.isRequired,
+    getCustDevInfo: PropTypes.func.isRequired,
     //查询账户关系下的服务历史信息
     getCustServiceHistory: PropTypes.func.isRequired,
       // 清除Redux中的数据
@@ -62,10 +61,9 @@ export default class Home extends PureComponent {
       introduce,
       serviceHistory,
       getCustServiceTeam,
-      getCustDevTeam,
+      getCustDevInfo,
       getCustServiceHistory,
     } = this.props;
-    // console.warn(getCustServiceTeam);
     return (
       <div>
         <ServiceRelationship
@@ -74,7 +72,7 @@ export default class Home extends PureComponent {
         introduce={introduce}
         serviceHistory={serviceHistory}
         getCustServiceTeam={getCustServiceTeam}
-        getCustDevTeam={getCustDevTeam}
+        getCustDevInfo={getCustDevInfo}
         getCustServiceHistory={getCustServiceHistory}
         />
       </div>

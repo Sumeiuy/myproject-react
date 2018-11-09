@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-08 13:35:50
+ * @Last Modified time: 2018-11-08 18:52:28
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -17,19 +17,6 @@ import { number } from '../../helper';
 import { serviceTeamColumns, introduceColumns, serviceHistoryColumns} from './config';
 
 export default class ServiceRelationship extends PureComponent {
-  // static getDerivedStateFromProps(props, state) {
-  //   const { prevProps } = state;
-  //   let nextState = {
-  //     prevProps: props,
-  //   };
-  //   if (props.initialStartDate !== prevProps.initialStartDate) {
-  //     nextState = {
-  //       ...nextState,
-  //       startDate: props.initialStartDate,
-  //     };
-  //   }
-  //   return nextState;
-  // }
   static propTypes = {
     location: PropTypes.object.isRequired,
     // 账户关系下服务团队的数据
@@ -41,7 +28,7 @@ export default class ServiceRelationship extends PureComponent {
     //查询账户关系下的服务团队信息
     getCustServiceTeam: PropTypes.func.isRequired,
     // 查询账户关系下的介绍信息
-    getCustDevTeam: PropTypes.func.isRequired,
+    getCustDevInfo: PropTypes.func.isRequired,
     //查询账户关系下的服务历史信息
     getCustServiceHistory: PropTypes.func.isRequired,
   }
@@ -50,16 +37,15 @@ export default class ServiceRelationship extends PureComponent {
     this.state = {
      // 服务历史的弹出框
      serviceHistoryModalVisible: false,
-     prevProps: props,
     };
   }
   componentDidMount(){
-    const { getCustServiceTeam, getCustDevTeam } = this.props;
+    const { getCustServiceTeam, getCustDevInfo } = this.props;
     const { query } = this.props.location;
     getCustServiceTeam({
       custId: query && query.custId,
     });
-    getCustDevTeam({
+    getCustDevInfo({
       custId: query && query.custId,
     });
   }
@@ -71,7 +57,8 @@ export default class ServiceRelationship extends PureComponent {
       getCustServiceHistory({ custId: query && query.custId}).then(() => {
         this.setState({ serviceHistoryModalVisible: true });
       });
-  }// 关闭服务历史的弹出层
+  }
+  // 关闭服务历史的弹出层
   @autobind
   handleServiceHistoryModalClose() {
     this.setState({ serviceHistoryModalVisible: false});
