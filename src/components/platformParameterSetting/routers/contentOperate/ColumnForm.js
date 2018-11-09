@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 10:54:38
+ * @Last Modified time: 2018-11-09 13:05:20
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';

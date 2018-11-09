@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-08 13:46:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 10:48:34
+ * @Last Modified time: 2018-11-09 13:54:15
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -12,14 +12,13 @@ import ColumnForm from './ColumnForm';
 
 import styles from './columnModal.less';
 
-export default function ColumnModal(props) {
+const ColumnModal = React.forwardRef((props, ref) => {
   const {
     visible,
     formData,
     onCloseModal,
     onChangeFormData,
     onConfirm,
-    onSetColumnFormRef,
     attachmentList,
     isShowAttachmentStatusError,
     attachmentStatusErrorMessage,
@@ -28,18 +27,15 @@ export default function ColumnModal(props) {
   function handleChangeFormData(obj) {
     onChangeFormData(obj);
   }
-  // 设置form组件引用
-  function setColumnFormRef(form) {
-    onSetColumnFormRef(form);
-  }
   return (
     <CommonModal
       title="新建内容"
       visible={visible}
       modalKey="activityColumnModal"
       closeModal={onCloseModal}
-      needBtn={false}
       className={styles.activityColumnModal}
+      onOk={onConfirm}
+      onCancel={onCloseModal}
     >
       <ColumnForm
         formData={formData}
@@ -47,15 +43,11 @@ export default function ColumnModal(props) {
         isShowAttachmentStatusError={isShowAttachmentStatusError}
         attachmentStatusErrorMessage={attachmentStatusErrorMessage}
         onChange={handleChangeFormData}
-        ref={setColumnFormRef}
+        ref={ref}
       />
-      <div className={styles.modalFooterButton}>
-        <Button className={styles.cancelButton} onClick={onCloseModal}>取消</Button>
-        <Button type="primary" className={styles.submitButton} onClick={onConfirm}>确定</Button>
-      </div>
     </CommonModal>
   );
-}
+});
 
 ColumnModal.propTypes = {
   // 弹窗是否可见
@@ -68,8 +60,6 @@ ColumnModal.propTypes = {
   onChangeFormData: PropTypes.func.isRequired,
   // 确定按钮回调
   onConfirm: PropTypes.func.isRequired,
-  // 设置form组件引用
-  onSetColumnFormRef: PropTypes.func.isRequired,
   // 编辑状态附件列表
   attachmentList: PropTypes.array.isRequired,
   // 附件校验错误状态
@@ -77,3 +67,5 @@ ColumnModal.propTypes = {
   // 附件校验错误信息
   attachmentStatusErrorMessage: PropTypes.string.isRequired,
 };
+
+export default ColumnModal;

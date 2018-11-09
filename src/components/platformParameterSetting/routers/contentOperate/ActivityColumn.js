@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 09:48:29
+ * @Last Modified time: 2018-11-09 13:26:14
  */
 
 import React, { PureComponent } from 'react';
@@ -67,6 +67,7 @@ export default class ActivityColumn extends PureComponent {
       // 附件校验错误信息
       attachmentStatusErrorMessage: '',
     };
+    this.columnFormRef = React.createRef();
   }
 
   componentDidMount() {
@@ -80,11 +81,6 @@ export default class ActivityColumn extends PureComponent {
       const { activityColumnList } = this.props;
       this.setState({ activityColumnList });
     });
-  }
-  // 设置form组件引用
-  @autobind
-  setColumnFormRef(form) {
-    this.columnForm = form;
   }
 
   // 渲染活动栏目
@@ -183,7 +179,7 @@ export default class ActivityColumn extends PureComponent {
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleConfirm() {
-    const { validateFields } = this.columnForm.getForm();
+    const { validateFields } = this.columnFormRef.current.getForm();
     validateFields((err, values) => {
       if(!err) {
         // 校验附件失败
@@ -233,7 +229,7 @@ export default class ActivityColumn extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '取消' } })
   handleCloseModal() {
-    this.columnForm.getForm().resetFields();
+    this.columnFormRef.current.getForm().resetFields();
     this.setState({
       formData: {},
       visible: false,
@@ -304,7 +300,7 @@ export default class ActivityColumn extends PureComponent {
           onCloseModal={this.handleCloseModal}
           onChangeFormData={this.handleChangeFormData}
           onConfirm={this.handleConfirm}
-          onSetColumnFormRef={this.setColumnFormRef}
+          ref={this.columnFormRef}
         />
       </div>
     );
