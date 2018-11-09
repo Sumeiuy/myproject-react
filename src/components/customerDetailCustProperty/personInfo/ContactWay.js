@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-08 19:55:33
+ * @Last Modified time: 2018-11-09 09:31:53
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -34,7 +34,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.infoItemBox}>
           <InfoItem
             width={INFO_ITEM_WITDH}
-            label='手机号码'
+            label="手机号码"
             value={this.getPhoneNum()}
             className={styles.infoItem}
           />
@@ -42,7 +42,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.infoItemBox}>
           <InfoItem
             width={INFO_ITEM_WITDH}
-            label='电子邮件'
+            label="电子邮件"
             value={this.getPhoneNum()}
             className={styles.infoItem}
           />
@@ -50,7 +50,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.infoItemBox}>
           <InfoItem
             width={INFO_ITEM_WITDH}
-            label='微信'
+            label="微信"
             value={this.getPhoneNum()}
             className={styles.infoItem}
           />
@@ -58,7 +58,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.infoItemBox}>
           <InfoItem
             width={INFO_ITEM_WITDH}
-            label='QQ'
+            label="QQ"
             value={this.getPhoneNum()}
             className={styles.infoItem}
           />
@@ -66,7 +66,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.infoItemBox}>
           <InfoItem
             width={INFO_ITEM_WITDH}
-            label='请勿发短信'
+            label="请勿发短信"
             value={this.getPhoneNum()}
             className={styles.infoItem}
           />
@@ -74,7 +74,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.infoItemBox}>
           <InfoItem
             width={INFO_ITEM_WITDH}
-            label='请勿打电话'
+            label="请勿打电话"
             value={this.getPhoneNum()}
             className={styles.infoItem}
           />
@@ -82,7 +82,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.infoItemBoxHalf}>
           <InfoItem
             width={INFO_ITEM_WITDH}
-            label='地址'
+            label="地址"
             value={this.getPhoneNum()}
             className={styles.infoItem}
           />

@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-普通机构客户联系方式
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-08 19:55:18
+ * @Last Modified time: 2018-11-09 09:30:54
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -35,7 +35,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.infoItemBox}>
           <InfoItem
             width={INFO_ITEM_WITDH110}
-            label='联络人'
+            label="联络人"
             value={this.getPhoneNum()}
             className={styles.infoItem}
           />
@@ -43,7 +43,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.infoItemBox}>
           <InfoItem
             width={INFO_ITEM_WITDH}
-            label='联系电话'
+            label="联系电话"
             value={this.getPhoneNum()}
             className={styles.infoItem}
           />
@@ -51,7 +51,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.infoItemBoxHalf}>
           <InfoItem
             width={INFO_ITEM_WITDH}
-            label='办公地址'
+            label="办公地址"
             value={this.getPhoneNum()}
             className={styles.infoItem}
           />
@@ -59,7 +59,7 @@ export default class ContactWay extends PureComponent {
         <div className={styles.infoItemBox}>
           <InfoItem
             width={INFO_ITEM_WITDH110}
-            label='电子邮件'
+            label="电子邮件"
             value={this.getPhoneNum()}
             className={styles.infoItem}
           />

@@ -6,7 +6,7 @@
  * @Last Modified time: 2018-11-07 15:25:05
  */
 
-const config = {
+export const CUST_TYPE = {
   // 个人客户类型标识
   personCustType: 'per',
   // 普通机构客户类型标识
@@ -14,5 +14,3 @@ const config = {
   // 产品机构客户类型标识
   productCustType: 'pro',
 };
-
-export default config;

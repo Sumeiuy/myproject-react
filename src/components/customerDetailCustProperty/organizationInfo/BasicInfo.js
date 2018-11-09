@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-普通机构客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-08 19:54:35
+ * @Last Modified time: 2018-11-09 09:30:40
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -26,7 +26,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH110}
-              label='机构简称'
+              label="机构简称"
               value={data.orgShortName}
               className={styles.infoItem}
             />
@@ -34,7 +34,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='机构类型'
+              label="机构类型"
               value={data.orgType}
               className={styles.infoItem}
             />
@@ -42,7 +42,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='机构类别性质'
+              label="机构类别性质"
               value={data.orgNature}
               className={styles.infoItem}
             />
@@ -50,7 +50,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='所属行业'
+              label="所属行业"
               value={data.industry}
               className={styles.infoItem}
             />
@@ -58,7 +58,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH110}
-              label='经营范围'
+              label="经营范围"
               value={data.businessScope}
               className={styles.infoItem}
             />
@@ -66,7 +66,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='注册资金（万元）'
+              label="注册资金（万元）"
               value={data.registeredFund}
               className={styles.infoItem}
             />
@@ -74,7 +74,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='注册地点'
+              label="注册地点"
               value={data.registeredAddress}
               className={styles.infoItem}
             />
@@ -82,7 +82,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='成立时间'
+              label="成立时间"
               value={data.createTime}
               className={styles.infoItem}
             />
@@ -90,7 +90,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH110}
-              label='国有属性'
+              label="国有属性"
               value={data.stateOwnedAttribute}
               className={styles.infoItem}
             />
@@ -98,7 +98,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='资本属性'
+              label="资本属性"
               value={data.capitalAttribute}
               className={styles.infoItem}
             />
@@ -106,7 +106,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='营业执照号码'
+              label="营业执照号码"
               value={data.businessLicenseId}
               className={styles.infoItem}
             />
@@ -114,7 +114,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='营业执照到期日'
+              label="营业执照到期日"
               value={data.businessLicenseValdate}
               className={styles.infoItem}
             />
@@ -122,7 +122,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH110}
-              label='组织机构代码'
+              label="组织机构代码"
               value={data.orgInstitutionCode}
               className={styles.infoItem}
             />
@@ -130,7 +130,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='组织机构到期日'
+              label="组织机构到期日"
               value={data.orgInstitutionValdate}
               className={styles.infoItem}
             />
@@ -138,7 +138,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='国税税务登记号'
+              label="国税税务登记号"
               value={data.nationalTaxId}
               className={styles.infoItem}
             />
@@ -146,7 +146,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='国税务登记到期日'
+              label="国税务登记到期日"
               value={data.nationalTaxValdate}
               className={styles.infoItem}
             />
@@ -154,7 +154,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH110}
-              label='地税税务登记号'
+              label="地税税务登记号"
               value={data.landTaxId}
               className={styles.infoItem}
             />
@@ -162,7 +162,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='地税务登记到期日'
+              label="地税务登记到期日"
               value={data.landTaxValdate}
               className={styles.infoItem}
             />
@@ -170,7 +170,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='是否上市公司'
+              label="是否上市公司"
               value={data.isListed}
               className={styles.infoItem}
             />
@@ -182,7 +182,7 @@ export default class BasicInfo extends PureComponent {
               <div className={styles.infoItemBox}>
                 <InfoItem
                   width={INFO_ITEM_WITDH}
-                  label='证券代码'
+                  label="证券代码"
                   value={data.stockCode}
                   className={styles.infoItem}
                 />

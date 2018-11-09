@@ -15,7 +15,7 @@ import PersonInfo from '../../../../components/customerDetailCustProperty/person
 import OrganizationInfo from '../../../../components/customerDetailCustProperty/organizationInfo';
 import ProductInfo from '../../../../components/customerDetailCustProperty/productInfo';
 import MemberInfo from '../../../../components/customerDetailCustProperty/memberInfo';
-import config from '../../../../components/customerDetailCustProperty/config';
+import { CUST_TYPE } from '../../../../components/customerDetailCustProperty/config';
 
 import styles from './home.less';
 
@@ -31,7 +31,7 @@ const {
   organizationCustType,
   // 产品机构客户类型标识
   productCustType,
-} = config;
+} = CUST_TYPE;
 
 @withRouter
 export default class CustProperty extends PureComponent {
@@ -82,6 +82,48 @@ export default class CustProperty extends PureComponent {
     });
   }
 
+  @autobind
+  renderPersonInfo() {
+    const {
+      custInfo: {
+        person = EMPTY_OBJECT,
+      }
+    } = this.props;
+    return (
+      <PersonInfo
+        data={person}
+      />
+    );
+  }
+
+  @autobind
+  renderOrganizationInfo() {
+    const {
+      custInfo: {
+        organization = EMPTY_OBJECT,
+      }
+    } = this.props;
+    return (
+      <OrganizationInfo
+        data={organization}
+      />
+    );
+  }
+
+  @autobind
+  renderProductInfo() {
+    const {
+      custInfo: {
+        product = EMPTY_OBJECT,
+      }
+    } = this.props;
+    return (
+      <ProductInfo
+        data={product}
+      />
+    );
+  }
+
   // 根据不同的客户类型渲染不同的客户信息组件
   @autobind
   renderCustInfo() {
@@ -89,44 +131,23 @@ export default class CustProperty extends PureComponent {
       customerBasicInfo: {
         custNature,
       },
-      custInfo: {
-        person = EMPTY_OBJECT,
-        organization = EMPTY_OBJECT,
-        product = EMPTY_OBJECT,
-      }
     } = this.props;
     let component = null;
     switch (custNature) {
       // 如果客户类型是个人客户
       case personCustType:
-        component = (
-          <PersonInfo
-            data={person}
-          />
-        );
+        component = this.renderPersonInfo();
         break;
       // 如果客户类型是普通机构客户
       case organizationCustType:
-        component = (
-          <OrganizationInfo
-            data={organization}
-          />
-        );
+        component = this.renderOrganizationInfo();
         break;
       // 如果客户类型是产品机构客户
       case productCustType:
-        component = (
-          <ProductInfo
-            data={product}
-          />
-        );
+        component = this.renderProductInfo();
         break;
       default:
-        component = (
-          <ProductInfo
-            data={product}
-          />
-        );
+        component = this.renderProductInfo();
         break;
     }
     return component;
@@ -147,7 +168,7 @@ export default class CustProperty extends PureComponent {
         <div className={styles.tabBox}>
           <Tabs
             className={styles.tab}
-            defaultActiveKey={'memberInfo'}
+            defaultActiveKey="memberInfo"
             animated={false}
             tabBarGutter={2}
           >

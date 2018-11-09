@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-个人客户基本信息
  * @Date: 2018-11-07 14:33:00
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-08 19:55:27
+ * @Last Modified time: 2018-11-09 09:31:31
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -25,7 +25,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='出生日期'
+              label="出生日期"
               value={data.birthDate}
               className={styles.infoItem}
             />
@@ -33,7 +33,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='职业'
+              label="职业"
               value={data.profession}
               className={styles.infoItem}
             />
@@ -41,7 +41,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='学历'
+              label="学历"
               value={data.education}
               className={styles.infoItem}
             />
@@ -49,7 +49,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='国籍'
+              label="国籍"
               value={data.nationality}
               className={styles.infoItem}
             />
@@ -57,7 +57,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='证件类型'
+              label="证件类型"
               value={data.certType}
               className={styles.infoItem}
             />
@@ -65,7 +65,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='证件号码'
+              label="证件号码"
               value={data.certId}
               className={styles.infoItem}
             />
@@ -73,7 +73,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='证件有效期'
+              label="证件有效期"
               value={data.certValdate}
               className={styles.infoItem}
             />
@@ -81,7 +81,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='是否企业高管'
+              label="是否企业高管"
               value={data.isCompanyLeader}
               className={styles.infoItem}
             />
@@ -89,7 +89,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='婚姻状况'
+              label="婚姻状况"
               value={data.maritalText}
               className={styles.infoItem}
             />
@@ -97,7 +97,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='子女数量'
+              label="子女数量"
               value={data.childNum}
               className={styles.infoItem}
             />
@@ -105,7 +105,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='爱好'
+              label="爱好"
               value={data.hobby}
               className={styles.infoItem}
             />

@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-涨乐财富通会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-08 20:01:58
+ * @Last Modified time: 2018-11-09 09:29:38
  */
 
 import React, { PureComponent } from 'react';
@@ -36,7 +36,7 @@ export default class ZLMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='用户号'
+              label="用户号"
               value={data.custId}
               className={styles.infoItem}
             />
@@ -44,7 +44,7 @@ export default class ZLMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='注册手机号'
+              label="注册手机号"
               value={data.phone}
               className={styles.infoItem}
             />
@@ -52,7 +52,7 @@ export default class ZLMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='当前会员等级'
+              label="当前会员等级"
               value={data.currentLevel}
               className={styles.infoItem}
             />
@@ -60,7 +60,7 @@ export default class ZLMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='历史最高等级'
+              label="历史最高等级"
               value={data.highestLevel}
               className={styles.infoItem}
             />
@@ -68,7 +68,7 @@ export default class ZLMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='付费会员'
+              label="付费会员"
               value={data.isProAccount}
               className={styles.infoItem}
             />
@@ -76,7 +76,7 @@ export default class ZLMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='首次付费日期'
+              label="首次付费日期"
               value={data.firstPayDate}
               className={styles.infoItem}
             />
@@ -84,7 +84,7 @@ export default class ZLMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='等级有效期'
+              label="等级有效期"
               value={data.expiryDate}
               className={styles.infoItem}
             />

@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-紫金积分会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-08 20:01:24
+ * @Last Modified time: 2018-11-09 09:29:11
  */
 
 import React, { PureComponent } from 'react';
@@ -36,7 +36,7 @@ export default class ZJMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='会员编号'
+              label="会员编号"
               value={data.memberNum}
               className={styles.infoItem}
             />
@@ -44,7 +44,7 @@ export default class ZJMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='会员名称'
+              label="会员名称"
               value={data.memberName}
               className={styles.infoItem}
             />
@@ -52,7 +52,7 @@ export default class ZJMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='会员类型'
+              label="会员类型"
               value={data.memberType}
               className={styles.infoItem}
             />
@@ -60,7 +60,7 @@ export default class ZJMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='项目'
+              label="项目"
               value={data.projects}
               className={styles.infoItem}
             />
@@ -68,7 +68,7 @@ export default class ZJMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='注册日期'
+              label="注册日期"
               value={data.registerDate}
               className={styles.infoItem}
             />
@@ -76,7 +76,7 @@ export default class ZJMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='状态'
+              label="状态"
               value={data.states}
               className={styles.infoItem}
             />
@@ -84,7 +84,7 @@ export default class ZJMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='紫金币可用积分'
+              label="紫金币可用积分"
               value={data.zjAvailablePoints}
               className={styles.infoItem}
             />
@@ -92,7 +92,7 @@ export default class ZJMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='涨乐豆可用积分'
+              label="涨乐豆可用积分"
               value={data.zlAvailablePoints}
               className={styles.infoItem}
             />
@@ -100,7 +100,7 @@ export default class ZJMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='资金积分'
+              label="资金积分"
               value={data.fundPoints}
               className={styles.infoItem}
             />
@@ -108,7 +108,7 @@ export default class ZJMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label='贡献度积分'
+              label="贡献度积分"
               value={data.devotePoints}
               className={styles.infoItem}
             />
