@@ -734,6 +734,12 @@ export default class CustomerList extends PureComponent {
       }
     }
 
+    // 客户列表搜索时，传参
+    if (query.isSearchFromCust) {
+      param.searchTypeReq = query.type;
+      param.searchText = query.q;
+    }
+
     if (query.source === 'association') {
       if (query.type === 'PRODUCT' || query.type === 'INDUSTRY') {
         param.searchTypeReq = null;
@@ -946,7 +952,7 @@ export default class CustomerList extends PureComponent {
 
   // 筛选变化
   @autobind
-  handleFilterChange(obj, isDeleteFilterFromLocation = false) {
+  handleFilterChange(obj, isDeleteFilterFromLocation = false, options = {}) {
     const {
       replace,
       location: { query, pathname },
@@ -1000,6 +1006,7 @@ export default class CustomerList extends PureComponent {
         ...nextSort,
         individualInfo: true,
         filters: stringifyFilters,
+        ...options,
         curPageNum: 1,
         selectAll: false,
         selectedIds: '',
