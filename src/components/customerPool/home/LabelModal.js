@@ -225,6 +225,7 @@ export default class LabelModals extends PureComponent {
         visible={show}
         footer={null}
         wrapClassName={styles.modal}
+        transitionName={'noAnimation'}
         onCancel={this.closeModal}
         maskClosable={false}
         width={650}
