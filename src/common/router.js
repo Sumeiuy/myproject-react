@@ -221,6 +221,7 @@ export const getRouterData = (app) => {
           'customerLabel',
           'customerDetail',
           'customer360Detail/accountInfo',
+          'customer360Detail/custProperty',
           'customer360Detail/serviceRelationship',
         ],
         () => import('../routes/customerDetail/connectHome' /* webpackChunkName: "customerPool_customerDetail" */),
