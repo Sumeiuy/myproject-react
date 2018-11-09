@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目跑马灯
  * @Date: 2018-11-06 13:53:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-08 09:59:55
+ * @Last Modified time: 2018-11-09 10:59:26
  */
 
 import React, { PureComponent } from 'react';
@@ -12,7 +12,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import Carousel from '../../../common/carousel';
 import { data } from '../../../../helper';
-import logable from '../../../../decorators/logable';
+import { logPV } from '../../../../decorators/logable';
 import styles from './activityColumnCarousel.less';
 
 export default class ActivityColumnCarousel extends PureComponent {
@@ -21,7 +21,7 @@ export default class ActivityColumnCarousel extends PureComponent {
   }
 
   @autobind
-  @logable({
+  @logPV({
     type: 'Click',
     payload: {
       name: '活动栏目',
