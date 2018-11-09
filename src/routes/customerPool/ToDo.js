@@ -9,44 +9,61 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
-import { Input, Row, Col } from 'antd';
+import { Input, Row, Col, Tabs } from 'antd';
 import withRouter from '../../decorators/withRouter';
 import ToDoList from '../../components/customerPool/todo/ToDoList';
 import logable from '../../decorators/logable';
 import styles from './todo.less';
+import ToDoNav from '../../components/customerPool/todo/ToDoNav';
+import { dva } from '../../helper';
 
+const effect = dva.generateEffect;
 const curPageNum = 1;
 const pageSize = 10;
+const TabPane = Tabs.TabPane;
 
-const fetchDataFunction = (globalLoading, type) => query => ({
-  type,
-  payload: query || {},
-  loading: globalLoading,
-});
-const effects = {
-  getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
-};
+// const fetchDataFunction = (globalLoading, type) => query => ({
+//   type,
+//   payload: query || {},
+//   loading: globalLoading,
+// });
+// const effects = {
+//   getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
+// };
 const mapStateToProps = state => ({
   todolist: state.customerPool.todolist,
   data: state.customerPool.todolistRecord,
   taskBasicInfo: state.tasklist.taskBasicInfo,
+  applyList: state.customerPool.applyList,
+  approveList: state.customerPool.applyList,
+  typeValue: state.customerPool.typeValue,
 });
 
 const mapDispatchToProps = {
-  push: routerRedux.push,
-  replace: routerRedux.replace,
-  getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
-  // 清除自建任务数据
-  clearCreateTaskData: query => ({
-    type: 'customerPool/clearCreateTaskData',
-    payload: query || {},
-  }),
+  // 获取待办列表
+  getToDoList: effect('customerPool/getToDoList', { forceFull: true }),
+  // 获取申请列表
+  getApplyList: effect('customerPool/getApplyList', { forceFull: true }),
+  // 获取审批列表
+  getApprove: effect('customerPool/getApprove', { forceFull: true }),
+  // 获取类型下拉框
+  getTypeValue: effect('customerPool/getTypeValue', { forceFull: true }),
 };
+
+// const mapDispatchToProps = {
+//   push: routerRedux.push,
+//   replace: routerRedux.replace,
+//   getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
+//   // 清除自建任务数据
+//   clearCreateTaskData: query => ({
+//     type: 'customerPool/clearCreateTaskData',
+//     payload: query || {},
+//   }),
+// };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class ToDo extends PureComponent {
-
   static propTypes = {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
@@ -120,13 +137,11 @@ export default class ToDo extends PureComponent {
       getTaskBasicInfo,
       clearCreateTaskData } = this.props;
     const { query: { keyword } } = location;
+
     return (
       <div className={styles.todo}>
-        <Row type="flex" justify="space-between" align="middle">
-          <Col span={12}>
-            <p className="total-num">找到待办流程任务<em>&nbsp;{data.length}&nbsp;</em>个</p>
-          </Col>
-          <Col span={12}>
+        <Tabs defaultActiveKey="1" type='card'>
+          <TabPane key='1' tab='我的待办'>
             <div className="search-box">
               <Input.Search
                 className="search-input"
@@ -136,21 +151,28 @@ export default class ToDo extends PureComponent {
                 enterButton
               />
             </div>
-          </Col>
-        </Row>
-        <ToDoList
-          className="todoList"
-          data={data}
-          todolist={todolist}
-          onPageChange={this.pageChange}
-          onSizeChange={this.sizeChange}
-          location={location}
-          push={push}
-          replace={replace}
-          taskBasicInfo={taskBasicInfo}
-          getTaskBasicInfo={getTaskBasicInfo}
-          clearCreateTaskData={clearCreateTaskData}
-        />
+            <ToDoList
+              className="todoList"
+              data={data}
+              todolist={todolist}
+              onPageChange={this.pageChange}
+              onSizeChange={this.sizeChange}
+              location={location}
+              push={push}
+              replace={replace}
+              taskBasicInfo={taskBasicInfo}
+              getTaskBasicInfo={getTaskBasicInfo}
+              clearCreateTaskData={clearCreateTaskData}
+            />
+          </TabPane>
+          <TabPane key='2' tab='我的申请'>
+
+          </TabPane>
+          <TabPane key='3' tab='我的审批'>
+
+          </TabPane>
+        </Tabs>
+
       </div>
     );
   }

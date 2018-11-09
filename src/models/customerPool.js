@@ -188,6 +188,12 @@ export default {
     industryDetail: EMPTY_OBJECT,
     // 客户列表自定义标签
     definedLabelsInfo: EMPTY_LIST,
+    // 申请列表
+    applyList: EMPTY_LIST,
+    // 审批列表
+    approveList: EMPTY_LIST,
+    // 类型下拉框数据
+    typeValue: EMPTY_LIST,
   },
 
   subscriptions: {
@@ -262,6 +268,7 @@ export default {
       });
     },
   },
+
   effects: {
     // 投顾绩效
     * getCustCount({ payload }, { call, put }) {  //eslint-disable-line
@@ -1006,6 +1013,30 @@ export default {
         payload: finalResultData,
       });
     },
+    // 获取申请列表
+    * getApplyList({ payload }, { call, put }) {
+      const { resultData } = yield call(api.getApplyList, payload);
+      yield put({
+        type: 'getApplyListSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取审批列表
+    * getApprove({ payload }, { call, put }) {
+      const { resultData } = yield call(api.getApprove, payload);
+      yield put({
+        type: 'getApproveSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取类型下拉框
+    * getTypeValue({ payload }, { call, put }) {
+      const { resultData } = yield call(api.getTypeValue, payload);
+      yield put({
+        type: 'getTypeValueSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     ceFileDeleteSuccess(state, action) {
@@ -1741,5 +1772,29 @@ export default {
         definedLabelsInfo: payload,
       };
     },
+    // 获取申请列表成功
+    getApplyListSuccess(state, action) {
+      const { payload: { resultData = {} }} = action;
+      return {
+        ...state,
+        applyList: resultData,
+      };
+    },
+    // 获取审批列表成功
+    getApproveListSuccess(state, action) {
+      const { payload: { resultData = {} }} = action;
+      return {
+        ...state,
+        approveList: resultData,
+      };
+    },
+    // 类型下拉框
+    getTypeValueSuccess(state, action) {
+      const { payload: { resultData = [] }} = action;
+      return {
+        ...state,
+        typeValue: resultData,
+      };
+    }
   },
 };
