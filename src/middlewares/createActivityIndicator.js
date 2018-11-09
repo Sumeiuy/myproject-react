@@ -43,7 +43,8 @@ export default function createActivityIndicator(opts = {}) {
 
   function onEffect(effect, { put }) {
     return function* effectWrapper(...args) {
-      const { loading, forceFull } = args[0];
+      const { loading, forceFull, type } = args[0];
+      console.log(type, loading);
       if (loading !== false) {
         yield put({ type: SHOW, forceFull });
       }
