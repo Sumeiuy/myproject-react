@@ -20,11 +20,10 @@ import emptyImg from './img/empty.png';
 const systemCode = '102330';  // 系统代码（理财服务平台为102330）
 const USER_INFO_APPROVE = '投顾信息维护审核流程'; // 用户基本信息审核标识;
 
-export default class ToDoList extends PureComponent {
+export default class TaskList extends PureComponent {
 
   static propTypes = {
     data: PropTypes.array.isRequired,
-    todolist: PropTypes.array.isRequired,
     className: PropTypes.string.isRequired,
     onPageChange: PropTypes.func.isRequired,
     onSizeChange: PropTypes.func.isRequired,
@@ -50,28 +49,28 @@ export default class ToDoList extends PureComponent {
         title: '任务名称',
         dataIndex: 'subject',
         key: 'subject',
-        render: (item, recode) =>
+        render: (item, record) =>
           (<a
             target="_blank"
             rel="noopener noreferrer"
             title={item.id}
-            data={recode.id}
+            data={record.id}
             onClick={this.handleOpenNewPage}
           >
-            {item.text}
+            {record.subject}
           </a>),
       },
       {
         title: '类型',
         dataIndex: 'workFlowName',
         key: 'workFlowName',
-        render: (item, recode) => (<span>{recode.originator}</span>),
+        // render: (item, record) => (<span>{record.originator}</span>),
       },
       {
         title: '提交时间',
         dataIndex: 'startTime',
         key: 'startTime',
-        render: (item, recode) => (<span>{recode.originatorName}</span>),
+        // render: (item, record) => (<span>{record.originatorName}</span>),
       },
     ];
   }
@@ -121,42 +120,6 @@ export default class ToDoList extends PureComponent {
 
   render() {
     const { className, data, todolist } = this.props;
-    // 没有待办流程
-    if (todolist.length === 0) {
-      return (<div className={styles.empty}>
-        <Table
-          className={`${className} ${styles.todoListEmpty}`}
-          rowKey={record => record.id}
-          columns={this.columns}
-          dataSource={todolist}
-          locale={{ emptyText: '' }}
-        />
-        <div className={styles.emptyWrapper}>
-          <div className="empty-container">
-            <img src={emptyImg} alt="" />
-            <p>暂无待办流程</p>
-          </div>
-        </div>
-      </div>);
-    }
-    // 搜索结果为空
-    if (data.length === 0) {
-      return (<div className={styles.empty}>
-        <Table
-          className={`${className} ${styles.todoListEmpty}`}
-          rowKey={record => record.id}
-          columns={this.columns}
-          dataSource={data}
-          locale={{ emptyText: '' }}
-        />
-        <div className={styles.emptyWrapper}>
-          <div className="empty-container">
-            <img src={emptyImg} alt="" />
-            <p>抱歉！没有找到相关结果</p>
-          </div>
-        </div>
-      </div>);
-    }
     return (
       <Table
         className={className}

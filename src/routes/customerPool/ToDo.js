@@ -169,7 +169,7 @@ export default class ToDo extends PureComponent {
             <div className="search-box">
               <Input.Search
                 className="search-input"
-                placeholder="请输入任务名称"
+                placeholder="任务名称"
                 defaultValue={keyword}
                 onSearch={this.onSearch}
                 enterButton
@@ -196,7 +196,6 @@ export default class ToDo extends PureComponent {
               <TaskList
                 className="todoList"
                 data={applyListData}
-                todolist={applyListData}
                 onPageChange={this.pageChange}
                 onSizeChange={this.sizeChange}
                 location={location}

@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-09 15:38:23
+ * @Last Modified time: 2018-11-10 13:17:59
  */
 
 import React, { PureComponent } from 'react';
@@ -210,11 +210,14 @@ export default class ReportFilter extends PureComponent {
     });
     return (
       <div className={styles.reportFilter}>
-        <Input.Search
-          placeholder="任务名称"
-          style={{ width: 230, height: 30 ,marginRight: 30}}
-          onSearch={this.handleEventSearch}
-        />
+        <div className="search-box">
+          <Input.Search
+            className="search-input"
+            placeholder="任务名称"
+            onSearch={this.handleEventSearch}
+            enterButton
+          />
+        </div>
         <SingleFilter
           filterName='类型'
           filterId='type'

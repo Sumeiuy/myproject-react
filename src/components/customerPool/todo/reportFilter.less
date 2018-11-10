@@ -1,6 +1,5 @@
 .reportFilter {
   display: flex;
-  padding: 0 20px;
   .filter {
     margin-right: 20px;
     font-size: 14px;
@@ -14,6 +13,33 @@
   }
   .dateRangePickFilter {
     margin-left: 20px;
+  }
+
+  :global {
+    .search-box {
+      width: 228px;
+      height: 32px;
+      position: relative;
+      margin-right: 20px;
+      .search-input {
+        height: 100%;
+        .ant-input {
+          border: 1px solid #ddd;
+          padding-right: 30px;
+        }
+        .ant-input-suffix {
+          button {
+            background-color: transparent;
+            border-color: transparent;
+            color: #333;
+            &:visited, &:active {
+              background-color: transparent;
+              border-color: transparent;
+            }
+          }
+        }
+      }
+    }
   }
 }
 
