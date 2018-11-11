@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 20:30:06
+ * @Last Modified time: 2018-11-11 16:03:20
  */
 
 import React, { PureComponent } from 'react';
@@ -18,7 +18,7 @@ import ColumnModal from './ColumnModal';
 import ColumnItem from './ColumnItem';
 import confirm from '../../../common/confirm_';
 import { request } from '../../../../config';
-import logable, { logPV } from '../../../../decorators/logable';
+import logable, { logPV, logCommon } from '../../../../decorators/logable';
 
 import styles from './activityColumn.less';
 
@@ -145,8 +145,8 @@ export default class ActivityColumn extends PureComponent {
   // 附件校验是否上传
   @autobind
   checkAttachmentStatus() {
-    const { formData: { attachment } } = this.state;
-    if (_.isEmpty(attachment)) {
+    const { formData: { attachment, attaches } } = this.state;
+    if (_.isEmpty(attachment) || _.isEmpty(attaches)) {
       this.setState({
         isShowAttachmentStatusError: true,
         attachmentStatusErrorMessage: '请上传附件',
@@ -209,9 +209,8 @@ export default class ActivityColumn extends PureComponent {
         const editColumnIndex = _.findIndex(activityColumnList, (item) => ( item.index === index ));
         let newActivityColumnList = [];
         if (editColumnIndex < 0) {
-          const activityColumnListLength = activityColumnList.length;
           // 新增栏目
-          newActivityColumnList = _.concat(activityColumnList, { attachment, attaches, link, description, url, index: activityColumnListLength});
+          newActivityColumnList = _.concat(activityColumnList, { attachment, attaches, link, description, url, index: data.uuid(16)});
         } else {
           // 编辑替换栏目
           activityColumnList[editColumnIndex] = {...formData, link, description, url};
@@ -262,13 +261,20 @@ export default class ActivityColumn extends PureComponent {
   // 提交活动栏目
   @autobind
   handleSubmit() {
+    const { activityColumnList } = this.state;
     this.props.submitContent({
-      activityColumn: this.state.activityColumnList,
+      activityColumn: activityColumnList,
     }).then(() => {
       // 保存成功
       if (this.props.submitResult) {
         this.queryContent();
       }
+    });
+
+    logCommon({
+      type: 'Submit',
+      name: '活动栏目提交',
+      value: JSON.stringify(activityColumnList),
     });
   }
 
