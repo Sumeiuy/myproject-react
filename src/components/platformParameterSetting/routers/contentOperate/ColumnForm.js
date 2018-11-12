@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-11 23:21:07
+ * @Last Modified time: 2018-11-12 11:13:57
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -114,7 +114,6 @@ export default class ColumnForm extends PureComponent {
             required
           >
             <FormItem>
-              {link}
               {getFieldDecorator('link', {
                 rules: [
                   { required: true, message: '请输入图片链接' },

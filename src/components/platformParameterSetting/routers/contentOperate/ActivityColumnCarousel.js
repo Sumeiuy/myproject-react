@@ -3,17 +3,18 @@
  * @Descripter: 活动栏目跑马灯
  * @Date: 2018-11-06 13:53:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-11 22:07:10
+ * @Last Modified time: 2018-11-12 11:12:25
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import url from 'url';
 import { autobind } from 'core-decorators';
 import Carousel from '../../../common/carousel';
 import { data } from '../../../../helper';
 import { defaultMenu } from '../../../../config/tabMenu';
-import { parseURL, filterData } from './helper';
+import { filterData } from './helper';
 import { logPV } from '../../../../decorators/logable';
 import styles from './activityColumnCarousel.less';
 
@@ -33,18 +34,21 @@ export default class ActivityColumnCarousel extends Component {
       name: '活动栏目',
     },
   })
-  handleClick(url) {
+  handleClick(columnUrl) {
     // 获取url的信息
-    const urlInfo = parseURL(url);
+    const urlInfo = url.parse(columnUrl);
+    console.warn('urlInfo', urlInfo);
     const { hash } = urlInfo;
     const defaultMenuPathList = filterData(defaultMenu, 'path');
     // 判断是否是内部网址
     const isInnerPath = _.find(defaultMenuPathList, item => _.includes(hash, item));
     if (!_.isEmpty(isInnerPath)) {
-      const { push } = this.context;
-      push(hash);
+      // hash返回的数据是'#/***', path需要去掉字符串前面的#
+      const path = hash.slice(1);
+      console.warn('path', path);
+      this.context.push(path);
     } else {
-      window.open(url);
+      window.open(columnUrl);
     }
   }
 

@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-11 16:03:20
+ * @Last Modified time: 2018-11-12 11:02:04
  */
 
 import React, { PureComponent } from 'react';
@@ -278,6 +278,23 @@ export default class ActivityColumn extends PureComponent {
     });
   }
 
+  // 取消提交活动栏目确认框
+  @autobind
+  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
+  handleCancelConfirm() {
+    confirm({
+      title: '直接取消后，您编辑的信息将不会被保存，确认取消？',
+      shortCut: 'default',
+      onOk: this.handleCanel,
+    });
+  }
+
+  // 取消提交活动栏目
+  @autobind
+  handleCanel() {
+    this.setState({ activityColumnList: this.props.activityColumnList });
+  }
+
   render() {
     const {
       visible,
@@ -309,7 +326,7 @@ export default class ActivityColumn extends PureComponent {
                 </div>
               </div>
               <div className={styles.footerButton}>
-                <Button className={styles.cancelButton}>取消</Button>
+                <Button className={styles.cancelButton} onClick={this.handleCancelConfirm}>取消</Button>
                 <Button type="primary" className={styles.submitButton} onClick={this.handleSubmit}>提交</Button>
               </div>
             </div>
