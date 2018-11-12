@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
  * @Last Modified by: zhangmei
- * @Last Modified time: 2018-11-12 13:41:17
+ * @Last Modified time: 2018-11-12 14:37:55
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -14,7 +14,7 @@ import cx from 'classnames';
 import _ from 'lodash';
 
 import ChoiceApproverBoard from '../../commissionAdjustment/ChoiceApproverBoard';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import ChoiceInvestAdviceModal from './ChoiceInvestAdviceModal_';
 
 import styles from './index.less';
@@ -192,7 +192,7 @@ export default class ServeContent extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '选择审批人' } })
+  @logPV({ pathname: '/modal/openApproverBoardModal', title: '选择审批人弹框' })
   openApproverBoard() {
     this.setState({ approvalModal: true });
   }
