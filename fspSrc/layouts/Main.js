@@ -11,11 +11,17 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { Helmet } from 'react-helmet';
 import { autobind } from 'core-decorators';
-import { routerRedux } from 'dva/router';
+import {
+  Route,
+  Switch,
+  Redirect,
+  routerRedux,
+} from 'dva/router';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import classNames from 'classnames';
 import withRouter from '../../src/decorators/withRouter';
+
 
 import Header from './Header';
 import Footer from './Footer';
@@ -35,6 +41,8 @@ import '../../src/css/skin.less';
 import emp from '../../src/helper/emp';
 import api from '../../src/api';
 import NewHomeLoading from './NewHomeLoading';
+import FSPComponent from '../routes/fspPage/FSPComponent';
+import { getRoutes } from '../../src/utils/router';
 
 const effects = {
   dictionary: 'app/getDictionary',
@@ -98,7 +106,6 @@ const PHONE = 'phone';
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Main extends PureComponent {
   static propTypes = {
-    children: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     loading: PropTypes.number.isRequired,
     loadingForceFull: PropTypes.bool,
@@ -200,9 +207,45 @@ export default class Main extends PureComponent {
     return menus && !_.isEmpty(menus) && !_.isEmpty(menus.primaryMenu);
   }
 
+  renderRoutes() {
+    const { routerData, match } = this.props;
+    return (
+      <Switch>
+        <Redirect exact from="/" to="/customerPool" />
+        <Redirect exact from="/invest" to="/statisticalQuery/report" />
+        <Redirect exact from="/report" to="/statisticalQuery/report" />
+        <Redirect exact from="/custAllot" to="/businessApplyment/customerPartition/custAllot" />
+        <Redirect exact from="/departmentCustAllot" to="/businessApplyment/customerPartition/departmentCustAllot" />
+        <Route
+          path="/telephoneNumberManageEdit"
+          exact
+          component={({ location }) => (
+            <Redirect
+              to={{
+                ...location,
+                pathname: '/sysOperate/telephoneNumberManageEdit',
+              }}
+            />
+          )}
+        />
+        {
+          getRoutes(match.path, routerData).map(item => (
+            <Route
+              key={item.key}
+              path={item.path}
+              exact={item.exact}
+              render={props => <item.component {...props} />}
+            />
+          ))
+        }
+        <Route path="/fsp/(.*)" component={FSPComponent} />
+        <Route path="*" render={() => (<Redirect to="/empty" />)} />
+      </Switch>
+    );
+  }
+
   render() {
     const {
-      children,
       location,
       loading,
       loadingForceFull,
@@ -275,9 +318,8 @@ export default class Main extends PureComponent {
                         {
                           (!_.isEmpty(interfaceState) &&
                             !interfaceState[effects.dictionary] &&
-                            !interfaceState[effects.customerScope] &&
-                            React.isValidElement(children)) ?
-                            children :
+                            !interfaceState[effects.customerScope]) ?
+                            this.renderRoutes() :
                             <div />
                         }
                       </div>

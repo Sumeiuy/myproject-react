@@ -12,6 +12,12 @@ import zhCN from 'antd/lib/locale-provider/zh_CN';
 import ErrorBoundary from './ErrorBoundary';
 import Loading from './Loading';
 import withRouter from '../decorators/withRouter';
+import { getRoutes } from '../utils/router';
+import {
+  Route,
+  Switch,
+  Redirect,
+} from 'dva/router';
 
 import ConnectedCreateServiceRecord from '../components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
 import ConnectedSignCustomerLabel from '../components/customerPool/list/modal/ConnectedSignCustomerLabel';
@@ -80,7 +86,6 @@ const PHONE = 'phone';
 export default class Main extends Component {
 
   static propTypes = {
-    children: PropTypes.node.isRequired,
     loading: PropTypes.number.isRequired,
     loadingForceFull: PropTypes.bool,
     getCustomerScope: PropTypes.func.isRequired,
@@ -108,9 +113,45 @@ export default class Main extends Component {
     this.props.getEmpInfo();
     this.props.getCustomerScope(); // 加载客户池客户范围
   }
+
+  renderRoutes() {
+    const { routerData, match } = this.props;
+    return (
+      <Switch>
+        <Redirect exact from="/" to="/customerPool" />
+        <Redirect exact from="/invest" to="/statisticalQuery/report" />
+        <Redirect exact from="/report" to="/statisticalQuery/report" />
+        <Redirect exact from="/custAllot" to="/businessApplyment/customerPartition/custAllot" />
+        <Redirect exact from="/departmentCustAllot" to="/businessApplyment/customerPartition/departmentCustAllot" />
+        <Route
+          path="/telephoneNumberManageEdit"
+          exact
+          component={({ location }) => (
+            <Redirect
+              to={{
+                ...location,
+                pathname: '/sysOperate/telephoneNumberManageEdit',
+              }}
+            />
+          )}
+        />
+        {
+          getRoutes(match.path, routerData).map(item => (
+            <Route
+              key={item.key}
+              path={item.path}
+              exact={item.exact}
+              render={props => <item.component {...props} />}
+            />
+          ))
+        }
+        <Route path="*" render={() => (<Redirect to="/empty" />)} />
+      </Switch>
+    );
+  }
+
   render() {
     const {
-      children,
       loading,
       interfaceState,
       dict,
@@ -149,7 +190,7 @@ export default class Main extends Component {
                         !interfaceState[effects.customerScope] &&
                         !interfaceState[effects.empInfo]) ?
                           <div>
-                            {children}
+                            {this.renderRoutes()}
                             <ConnectedCreateServiceRecord
                               handleCloseClick={handleCloseClick}
                               loading={interfaceState[effects.addServeRecord]}
