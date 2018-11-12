@@ -4,8 +4,8 @@
  * @author xiaZhiQiang
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-28 09:12:46
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 13:58:02
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -249,7 +249,6 @@ export default class MatchArea extends PureComponent {
   }
 
   // 点击订购组合名称跳转到详情页面
-  // TODO 日志查看：找不到方法 未验证
   @autobind
   @logable({ type: 'Click', payload: { name: '订购组合' } })
   handleOrderCombinationClick({ name, code }) {
@@ -276,7 +275,6 @@ export default class MatchArea extends PureComponent {
     });
   }
 
-  // TODO 日志查看：找不到方法 未验证
   @autobind
   @logable({ type: 'Click', payload: { name: '收起/展开' } })
   showAllIndividual() {

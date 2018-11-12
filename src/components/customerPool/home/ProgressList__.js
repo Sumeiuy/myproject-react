@@ -86,7 +86,6 @@ export default class ProgressList extends PureComponent {
 
   /*
   */
-  // TODO 日志查看：
   @autobind
   handleClick(index, item) {
     const { push } = this.context;

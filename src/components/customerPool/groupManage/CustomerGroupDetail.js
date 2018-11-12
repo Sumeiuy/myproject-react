@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 17:38:25
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 13:41:57
  */
 
 import React, { PureComponent } from 'react';
@@ -166,7 +166,6 @@ export default class CustomerGroupDetail extends PureComponent {
     });
   }
 
-  // TODO 日志查看：找不到方法 未验证
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '否' } })
   importHandleCancel() {

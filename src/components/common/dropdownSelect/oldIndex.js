@@ -156,9 +156,8 @@ export default class DropdownSelect extends PureComponent {
     document.removeEventListener('click', this.hideModal, false);
   }
 
-  // TODO 日志查看：找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
+  @logable({ type: 'Click', payload: { name: '显示下拉选框' } })
   showDrapDown() {
     this.setState({ isSHowModal: !this.state.isSHowModal });
   }

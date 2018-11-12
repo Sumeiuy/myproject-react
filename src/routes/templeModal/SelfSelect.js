@@ -159,9 +159,8 @@ export default class SelfSelect extends PureComponent {
     document.removeEventListener('click', this.unExpandSelfSelect);
   }
   // 打开下拉列表
-  // TODO 日志查看：页面中找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
+  @logable({ type: 'Click', payload: { name: '打开下拉列表' } })
   expandSelect() {
     this.setState({
       expand: true,
