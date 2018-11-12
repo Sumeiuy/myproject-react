@@ -27,11 +27,11 @@ const TabPane = Tabs.TabPane;
 const EMPTY_OBJECT = {};
 const {
   // 个人客户类型标识
-  personCustType,
+  PERSON_CUST_TYPE,
   // 普通机构客户类型标识
-  organizationCustType,
+  ORGANIZATION_CUST_TYPE,
   // 产品机构客户类型标识
-  productCustType,
+  PRODUCT_CUST_TYPE,
 } = CUST_TYPE;
 
 // 财务信息TAB的key
@@ -191,15 +191,15 @@ export default class CustProperty extends PureComponent {
     let component = null;
     switch (custNature) {
       // 如果客户类型是个人客户
-      case personCustType:
+      case PERSON_CUST_TYPE:
         component = this.renderPersonInfo();
         break;
       // 如果客户类型是普通机构客户
-      case organizationCustType:
+      case ORGANIZATION_CUST_TYPE:
         component = this.renderOrganizationInfo();
         break;
       // 如果客户类型是产品机构客户
-      case productCustType:
+      case PRODUCT_CUST_TYPE:
         component = this.renderProductInfo();
         break;
       default:
@@ -244,13 +244,13 @@ export default class CustProperty extends PureComponent {
             tabBarGutter={2}
             onChange={this.handleTabChange}
           >
-            <TabPane tab="财务信息" key="financeInfo">
+            <TabPane tab="财务信息" key={FINANCE_INFO_KEY}>
             </TabPane>
-            <TabPane tab="合作业务" key="cooperation">
+            <TabPane tab="合作业务" key={COOPERATION_KEY}>
             </TabPane>
-            <TabPane tab="营销与服务" key="marketing">
+            <TabPane tab="营销与服务" key={MARKETING_KEY}>
             </TabPane>
-            <TabPane tab="会员信息" key="memberInfo">
+            <TabPane tab="会员信息" key={MEMBER_INFO_KEY}>
               <MemberInfo
                 location={location}
                 queryZLUmemberInfo={queryZLUmemberInfo}
@@ -263,7 +263,7 @@ export default class CustProperty extends PureComponent {
                 zjPointExchangeFlow={zjPointExchangeFlow}
               />
             </TabPane>
-            <TabPane tab="关系信息" key="relationInfo">
+            <TabPane tab="关系信息" key={RELATION_INFO_KEY}>
             </TabPane>
           </Tabs>
         </div>

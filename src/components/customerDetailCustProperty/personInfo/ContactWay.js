@@ -14,6 +14,7 @@ import {
   DEFAULT_VALUE,
   DEFAULT_PRIVATE_VALUE,
   LINK_WAY_TYPE,
+  getViewTextByBool,
 } from '../config';
 import styles from './contactWay.less';
 
@@ -21,13 +22,13 @@ const INFO_ITEM_WITDH = '110px';
 const EMPTY_OBJECT = {};
 const {
   // 手机号码的标识
-  mobileTypeCode,
+  MOBILE_TYPE_CODE,
   // 电子邮箱的标识
-  emailTypeCode,
+  EMAIL_TYPE_CODE,
   // 微信的标识
-  weChatTypeCode,
+  WECHAT_TYPE_CODE,
   // qq的标识
-  qqTypeCode,
+  QQ_TYPE_CODE,
 } = LINK_WAY_TYPE;
 export default class ContactWay extends PureComponent {
   static propTypes = {
@@ -67,7 +68,7 @@ export default class ContactWay extends PureComponent {
   @autobind
   getPhoneNum() {
     const { phoneList } = this.props;
-    const list = _.filter(phoneList, item => item.linkWayCode === mobileTypeCode);
+    const list = _.filter(phoneList, item => item.linkWayCode === MOBILE_TYPE_CODE);
     const value = this.getViewData(list).phone;
     return this.getPrivateValue(value);
   }
@@ -76,7 +77,7 @@ export default class ContactWay extends PureComponent {
   @autobind
   getEmail() {
     const { otherList } = this.props;
-    const list = _.filter(otherList, item => item.linkWayCode === emailTypeCode);
+    const list = _.filter(otherList, item => item.linkWayCode === EMAIL_TYPE_CODE);
     const value = this.getViewData(list).number;
     return this.getPrivateValue(value);
   }
@@ -85,7 +86,7 @@ export default class ContactWay extends PureComponent {
   @autobind
   getWechat() {
     const { otherList } = this.props;
-    const list = _.filter(otherList, item => item.linkWayCode === weChatTypeCode);
+    const list = _.filter(otherList, item => item.linkWayCode === WECHAT_TYPE_CODE);
     const value = this.getViewData(list).number;
     return this.getPrivateValue(value);
   }
@@ -94,7 +95,7 @@ export default class ContactWay extends PureComponent {
   @autobind
   getQQ() {
     const { otherList } = this.props;
-    const list = _.filter(otherList, item => item.linkWayCode === qqTypeCode);
+    const list = _.filter(otherList, item => item.linkWayCode === QQ_TYPE_CODE);
     const value = this.getViewData(list).number;
     return this.getPrivateValue(value);
   }
@@ -104,15 +105,6 @@ export default class ContactWay extends PureComponent {
     const { addressList } = this.props;
     const value = this.getViewData(addressList).address;
     return this.getPrivateValue(value);
-  }
-
-  // 根据传入的值（bool || null）决定返回的显示值
-  @autobind
-  getViewTextByBool(bool) {
-    if (_.isBoolean(bool)) {
-      return bool ? '是' : '否';
-    }
-    return DEFAULT_VALUE;
   }
 
   render() {
@@ -159,7 +151,7 @@ export default class ContactWay extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="请勿发短信"
-            value={this.getViewTextByBool(noMessage)}
+            value={getViewTextByBool(noMessage)}
             className={styles.infoItem}
           />
         </div>
@@ -167,7 +159,7 @@ export default class ContactWay extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="请勿打电话"
-            value={this.getViewTextByBool(noCall)}
+            value={getViewTextByBool(noCall)}
             className={styles.infoItem}
           />
         </div>
