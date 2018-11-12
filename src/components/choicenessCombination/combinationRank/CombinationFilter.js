@@ -20,6 +20,8 @@ const EMPTY_LIST = [];
 
 export default class CombinationRank extends PureComponent {
   static propTypes = {
+    replace: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
     // 字典
     dict: PropTypes.object.isRequired,
     composeType: PropTypes.array,
@@ -32,23 +34,21 @@ export default class CombinationRank extends PureComponent {
     // 组合排名风险筛选
     riskLevelFilter: PropTypes.func.isRequired,
     riskLevel: PropTypes.string,
-    queryCombinationCreator: PropTypes.func.isRequired,
     creatorList: PropTypes.array.isRequired,
     clearData: PropTypes.func.isRequired,
+    rankTabActiveKey: PropTypes.string,
+    adviser: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
     yieldRankValue: '',
     riskLevel: '',
     composeType: [],
+    rankTabActiveKey: '',
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      adviser: '',
-      type: '',
-    };
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
   }
 
   @autobind
@@ -74,7 +74,15 @@ export default class CombinationRank extends PureComponent {
     },
   })
   handleYieldSelect(item) {
-    this.props.yieldRankChange({
+    const { replace } = this.context;
+    const { location: { query = { } }, yieldRankChange } = this.props;
+    replace({
+      query: {
+        ...query,
+        yieldRank: item.value,
+      }
+    });
+    yieldRankChange({
       value: item.value,
     });
   }
@@ -92,17 +100,17 @@ export default class CombinationRank extends PureComponent {
     if (_.isEmpty(value)) {
       return;
     }
-    const { riskLevelFilter } = this.props;
+    const { replace } = this.context;
+    const { location: { query = { } }, riskLevelFilter } = this.props;
+    replace({
+      query: {
+        ...query,
+        riskLevel: value,
+      }
+    });
     riskLevelFilter({
       value,
     });
-  }
-
-  // 投资顾问搜索框变化
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '搜索投资顾问' } })
-  handleCreatorInputChange(value) {
-    this.props.queryCombinationCreator({ keyword: value});
   }
 
   // 投资顾问选项变化
@@ -114,21 +122,23 @@ export default class CombinationRank extends PureComponent {
       value: '$args[0].value',
     },
   })
-  handleCreatorSelectChange(item) {
-    const { value } = item;
-    const { type } = this.state;
-    const { onTypeChange, clearData } = this.props;
-    if(!_.isEmpty(item)) {
-      this.setState({
+  handleCreatorSelectChange({value}) {
+    const {
+      onTypeChange,
+      rankTabActiveKey,
+      location: { query = { } },
+    } = this.props;
+    const { replace } = this.context;
+    replace({
+      query: {
+        ...query,
+        adviserId: value.empId || '',
+      }
+    });
+    if(!_.isEmpty(value)) {
+      onTypeChange({
+        type: rankTabActiveKey,
         adviser: value,
-      }, () => {
-        onTypeChange({
-          type,
-          adviserId: value.empId,
-        });
-        clearData({
-          creatorList: [],
-        });
       });
     }
   }
@@ -144,28 +154,47 @@ export default class CombinationRank extends PureComponent {
   })
   handleComposeTypeChange(item) {
     const { value } = item;
-    const { adviser } = this.state;
-    this.setState({
+    const { replace } = this.context;
+    const { location: { query = { } }, adviser, onTypeChange } = this.props;
+    replace({
+      query: {
+        ...query,
+        type: value,
+      }
+    });
+    onTypeChange({
       type: value,
-    }, this.props.onTypeChange({
-      type: value,
-      adviserId: adviser.empId,
-    }));
+      adviser,
+    });
+  }
+
+  @autobind
+  getOptionItemValue({value: { empId, empName }}) {
+    const showEmpId = empId ? `(${empId})` : '';
+    return (<span>{empName}  {showEmpId}</span>);
   }
 
   render() {
     const {
       yieldRankValue,
+      rankTabActiveKey,
       riskLevel,
       composeType,
       creatorList,
+      adviser,
     } = this.props;
-    const { adviser, type } = this.state;
     // 将所有组合的 value 值设置为空
     let composeData = [{ ...composeType[0], value: '' }];
     if (composeType[0] && !_.isEmpty(composeType[0].children)) {
       composeData = composeData.concat([...composeType[0].children]);
     }
+    const creatorData = [
+      {
+        empId: '',
+        empName: '不限',
+      },
+      ...creatorList,
+    ];
     return (
       <div className={styles.combinationFilterBox}>
         <div className={styles.formItem}>
@@ -174,7 +203,7 @@ export default class CombinationRank extends PureComponent {
             filterName="组合类型"
             data={composeData}
             dataMap={['value', 'label']}
-            value={type}
+            value={rankTabActiveKey}
             onChange={this.handleComposeTypeChange}
           />
         </div>
@@ -182,16 +211,14 @@ export default class CombinationRank extends PureComponent {
           <SingleFilter
             className={styles.longSearchFilter}
             filterName="投资顾问"
-            showSearch
-            placeholder="员工工号/员工姓名"
-            data={creatorList}
+            data={creatorData}
             dataMap={['empId', 'empName']}
             defaultSelectLabel={adviser}
             useLabelInValue
             needItemObj
             value={adviser}
             onChange={this.handleCreatorSelectChange}
-            onInputChange={_.debounce(this.handleCreatorInputChange, 500)}
+            getOptionItemValue={this.getOptionItemValue}
           />
         </div>
         <div className={styles.formItem}>

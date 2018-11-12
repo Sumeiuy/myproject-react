@@ -9,6 +9,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+
+
 import InfoTitle from '../../common/InfoTitle';
 import CombinationFilter from './CombinationFilter';
 import CombinationListItem from './CombinationListItem';
@@ -18,10 +20,9 @@ const titleStyle = {
   fontSize: '16px',
 };
 
-// const EMPTY_LIST = [];
-
 export default class CombinationRank extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 字典
     dict: PropTypes.object.isRequired,
     // type切换
@@ -53,10 +54,10 @@ export default class CombinationRank extends PureComponent {
     // 打开详情页面
     openDetailPage: PropTypes.func.isRequired,
     // 投资顾问
-    queryCombinationCreator: PropTypes.func.isRequired,
     creatorList: PropTypes.array.isRequired,
     // 清空数据
     clearData: PropTypes.func.isRequired,
+    adviser: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -99,6 +100,7 @@ export default class CombinationRank extends PureComponent {
 
   render() {
     const {
+      location,
       dict,
       onTypeChange,
       // filterChange,
@@ -107,9 +109,10 @@ export default class CombinationRank extends PureComponent {
       yieldRankValue,
       riskLevelFilter,
       riskLevel,
-      queryCombinationCreator,
       creatorList,
       clearData,
+      rankTabActiveKey,
+      adviser,
     } = this.props;
     return (
       <div className={styles.combinationRankBox}>
@@ -119,6 +122,7 @@ export default class CombinationRank extends PureComponent {
         />
         <div className={styles.containerBox}>
           <CombinationFilter
+            location={location}
             yieldRankChange={yieldRankChange}
             yieldRankValue={yieldRankValue}
             riskLevelFilter={riskLevelFilter}
@@ -126,9 +130,10 @@ export default class CombinationRank extends PureComponent {
             composeType={combinationTreeList}
             dict={dict}
             onTypeChange={onTypeChange}
-            queryCombinationCreator={queryCombinationCreator}
             creatorList={creatorList}
             clearData={clearData}
+            rankTabActiveKey={rankTabActiveKey}
+            adviser={adviser}
           />
           <div className={styles.combinationListBox}>
             {this.getCombinationList()}
