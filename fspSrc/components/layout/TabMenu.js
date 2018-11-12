@@ -34,6 +34,11 @@ export default class TabMenu extends PureComponent {
     currentMenuId: PropTypes.string.isRequired,
   }
 
+  constructor(props) {
+    super(props);
+    window.removeTabpane = props.onRemove;
+  }
+
   getMenus(array, level = 2) {
     const { path } = this.props;
     return array.map((item) => {

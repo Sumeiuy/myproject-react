@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-12 14:43:55
+ * @Last Modified time: 2018-11-12 18:50:34
  */
 
 import React, { PureComponent } from 'react';
@@ -17,6 +17,7 @@ import ProductInfo from '../../../../components/customerDetailCustProperty/produ
 import MemberInfo from '../../../../components/customerDetailCustProperty/memberInfo';
 import { CUST_TYPE } from '../../../../components/customerDetailCustProperty/config';
 import { permission } from '../../../../helper';
+import logable from '../../../../decorators/logable';
 
 import styles from './home.less';
 
@@ -24,15 +25,25 @@ const TabPane = Tabs.TabPane;
 
 // const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
-const PAGE_SIZE = 10;
 const {
   // 个人客户类型标识
-  personCustType,
+  PERSON_CUST_TYPE,
   // 普通机构客户类型标识
-  organizationCustType,
+  ORGANIZATION_CUST_TYPE,
   // 产品机构客户类型标识
-  productCustType,
+  PRODUCT_CUST_TYPE,
 } = CUST_TYPE;
+
+// 财务信息TAB的key
+const FINANCE_INFO_KEY = 'financeInfo';
+// 合作业务TAB的key
+const COOPERATION_KEY = 'cooperation';
+// 营销与服务TAB的key
+const MARKETING_KEY = 'marketing';
+// 会员信息TAB的key
+const MEMBER_INFO_KEY = 'memberInfo';
+// 关系信息TAB的key
+const RELATION_INFO_KEY = 'relationInfo';
 
 @withRouter
 export default class CustProperty extends PureComponent {
@@ -57,6 +68,13 @@ export default class CustProperty extends PureComponent {
     zjPointExchangeFlow: PropTypes.object.isRequired,
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeKey: MEMBER_INFO_KEY,
+    };
+  }
+
   componentDidMount() {
     const {
       location: {
@@ -66,6 +84,27 @@ export default class CustProperty extends PureComponent {
       },
     } = this.props;
     this.queryData(custId);
+  }
+
+  componentDidUpdate(prevProps) {
+    const {
+      location: {
+        query: {
+          custId: prevCustId,
+        },
+      },
+    } = prevProps;
+    const {
+      location: {
+        query: {
+          custId,
+        },
+      },
+    } = this.props;
+    // url中custId发生变化时重新请求相关数据
+    if (prevCustId !== custId) {
+      this.queryData(custId);
+    }
   }
 
   // 客户信息中有些字段需要做隐私控制，只有主，辅服务经理，拥有“HTSC 客户资料-总部管理岗”或“HTSC 隐私信息查询权限”职责的用户可查看；
@@ -85,34 +124,14 @@ export default class CustProperty extends PureComponent {
     );
   }
 
-  // 和custId相关的接口，初次调用和custId发生变化时调用，接口比较多，避免多次重复写，统一放到一个方法里
+  // 和custId相关的接口，初次调用和custId发生变化时调用，避免多次重复写，统一放到一个方法里
   @autobind
   queryData(custId) {
     const {
       queryCustomerProperty,
-      queryZLUmemberInfo,
-      queryZLUmemberLevelChangeRecords,
-      queryZjPointMemberInfo,
-      queryZjPointExchangeFlow,
     } = this.props;
     queryCustomerProperty({
       custId,
-    });
-    queryZLUmemberInfo({
-      custId,
-    });
-    queryZjPointMemberInfo({
-      custId,
-    });
-    queryZLUmemberLevelChangeRecords({
-      custId,
-      pageSize: PAGE_SIZE,
-      pageNum: 1,
-    });
-    queryZjPointExchangeFlow({
-      custId,
-      pageSize: PAGE_SIZE,
-      pageNum: 1,
     });
   }
 
@@ -172,22 +191,29 @@ export default class CustProperty extends PureComponent {
     let component = null;
     switch (custNature) {
       // 如果客户类型是个人客户
-      case personCustType:
+      case PERSON_CUST_TYPE:
         component = this.renderPersonInfo();
         break;
       // 如果客户类型是普通机构客户
-      case organizationCustType:
+      case ORGANIZATION_CUST_TYPE:
         component = this.renderOrganizationInfo();
         break;
       // 如果客户类型是产品机构客户
-      case productCustType:
+      case PRODUCT_CUST_TYPE:
         component = this.renderProductInfo();
         break;
       default:
-        component = this.renderPersonInfo();
         break;
     }
     return component;
+  }
+
+  @autobind
+  @logable({ type: 'Click', payload: { name: '客户属性下tab切换' } })
+  handleTabChange(activeKey) {
+    this.setState({
+      activeKey,
+    });
   }
 
   render() {
@@ -195,11 +221,14 @@ export default class CustProperty extends PureComponent {
       location,
       zlUMemberInfo,
       zlUMemberLevelChangeRecords,
-      zjPointMemberInfo,
-      zjPointExchangeFlow,
+      queryZLUmemberInfo,
       queryZLUmemberLevelChangeRecords,
-      queryZjPointExchangeFlow
+      queryZjPointMemberInfo,
+      zjPointMemberInfo,
+      queryZjPointExchangeFlow,
+      zjPointExchangeFlow,
     } = this.props;
+    const { activeKey } = this.state;
     return (
       <div className={styles.custPropertyBox}>
         <div className={styles.custInfoBox}>
@@ -210,28 +239,31 @@ export default class CustProperty extends PureComponent {
         <div className={styles.tabBox}>
           <Tabs
             className={styles.tab}
-            defaultActiveKey="memberInfo"
+            activeKey={activeKey}
             animated={false}
             tabBarGutter={2}
+            onChange={this.handleTabChange}
           >
-            <TabPane tab="财务信息" key="financeInfo">
+            <TabPane tab="财务信息" key={FINANCE_INFO_KEY}>
             </TabPane>
-            <TabPane tab="合作业务" key="cooperation">
+            <TabPane tab="合作业务" key={COOPERATION_KEY}>
             </TabPane>
-            <TabPane tab="营销与服务" key="marketing">
+            <TabPane tab="营销与服务" key={MARKETING_KEY}>
             </TabPane>
-            <TabPane tab="会员信息" key="memberInfo">
+            <TabPane tab="会员信息" key={MEMBER_INFO_KEY}>
               <MemberInfo
                 location={location}
+                queryZLUmemberInfo={queryZLUmemberInfo}
+                queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
                 zlUMemberInfo={zlUMemberInfo}
                 zlUMemberLevelChangeRecords={zlUMemberLevelChangeRecords}
-                zjPointExchangeFlow={zjPointExchangeFlow}
+                queryZjPointMemberInfo={queryZjPointMemberInfo}
                 zjPointMemberInfo={zjPointMemberInfo}
-                queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
                 queryZjPointExchangeFlow={queryZjPointExchangeFlow}
+                zjPointExchangeFlow={zjPointExchangeFlow}
               />
             </TabPane>
-            <TabPane tab="关系信息" key="relationInfo">
+            <TabPane tab="关系信息" key={RELATION_INFO_KEY}>
             </TabPane>
           </Tabs>
         </div>

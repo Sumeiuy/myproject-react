@@ -18,7 +18,9 @@ import withRouter from '../../../../decorators/withRouter';
 import CreateLabelType from './CreateLabelType';
 import CreateLabel from './CreateLabel';
 import { dva } from '../../../../helper';
-import { logPV } from '../../../../decorators/logable';
+import logable, { logPV } from '../../../../decorators/logable';
+import CustRange from '../../../customerPool/list/manageFilter/CustFilter';
+
 import styles from './customerLabel.less';
 
 const DEFAULT_LABEL_TYPE = { id: '', typeName: '不限' };
@@ -31,6 +33,8 @@ const mapStateToProps = state => ({
   allLabels: state.customerLabel.labelTypeList,
   // 客户标签
   labelInfo: state.customerLabel.labelInfo,
+  // 组织机构树
+  custRange: state.customerPool.custRange,
 });
 
 const mapDisPatchToProps = {
@@ -55,6 +59,7 @@ export default class LabelManager extends PureComponent {
     addLabel: PropTypes.func.isRequired,
     deleteLabel: PropTypes.func.isRequired,
     checkDuplicationName: PropTypes.func.isRequired,
+    custRange: PropTypes.array.isRequired,
   };
 
   static contextTypes = {
@@ -88,6 +93,10 @@ export default class LabelManager extends PureComponent {
     {
       key: 'labelDesc',
       value: '标签描述',
+    },
+    {
+      key: 'createdOrgName',
+      value: '创建部门',
     },
     {
       key: 'createdBy',
@@ -126,7 +135,10 @@ export default class LabelManager extends PureComponent {
   queryLabelList(option) {
     const { location: { pathname, query }, queryLabelInfo } = this.props;
     const { replace } = this.context;
-    const preParams = _.pick(query, ['labelTypeId', 'currentPage', 'pageSize']);
+    const preParams = _.pick(
+      query,
+      ['labelTypeId', 'currentPage', 'pageSize', 'orgId'],
+    );
     const params = {
       currentPage: 1,
       pageSize: 10,
@@ -145,13 +157,23 @@ export default class LabelManager extends PureComponent {
   }
 
   @autobind
+  @logable({
+      type: 'DropdownSelect',
+    payload: {
+      name: '标签类型',
+      value: '$args[0].value',
+    },
+  })
   handleLabelTypeChange(labelTypeItem) {
     const { value } = labelTypeItem;
     this.queryLabelList({
       labelTypeId: value,
+      currentPage: 1,
+      pageSize: 10,
     });
   }
 
+  // 分页事件处理
   @autobind
   handlePageChange(pageNum, pageSize) {
     this.queryLabelList({
@@ -199,14 +221,32 @@ export default class LabelManager extends PureComponent {
       createLabelVisit: true,
     });
   }
+
+  // 创建部门change事件
+  @autobind
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '创建部门',
+      value: '$args[0].orgId',
+    },
+  })
+  handleCustRange({ orgId }) {
+    this.queryLabelList({
+      orgId,
+      currentPage: 1,
+      pageSize: 10,
+    });
+  }
+
   @autobind
   closeCreateLabelModal() {
     this.setState({
       createLabelVisit: false,
     });
   }
-  // 新建标签 ----end
 
+  // 新建标签 ----end
   render() {
     const {
       allLabels = [],
@@ -215,11 +255,28 @@ export default class LabelManager extends PureComponent {
       checkDuplicationName,
       labelInfo = {},
       queryLabelType,
-      location: { query: { labelTypeId } },
+      location: { query: { labelTypeId, orgId } },
+      custRange,
     } = this.props;
+
+    // 增加一个不限选项
+    const newCustRange = [
+      {
+        id: '',
+        level: 1,
+        name: '不限',
+      },
+      ...custRange
+    ];
+
     const {
       labelList = [],
     } = labelInfo;
+
+    if(_.isEmpty(custRange)) {
+      return null;
+    }
+
     const { createTypeVisible, createLabelVisit } = this.state;
 
     const finalLabelTypes = [DEFAULT_LABEL_TYPE, ...allLabels];
@@ -236,6 +293,16 @@ export default class LabelManager extends PureComponent {
               filterName="标签类型"
               onChange={this.handleLabelTypeChange}
             />
+            <div className={styles.custRange}>
+              <CustRange
+                filterName="创建部门"
+                defaultFirst
+                orgId={orgId}
+                custRange={newCustRange}
+                updateQueryState={this.handleCustRange}
+                expandAll={false}
+              />
+            </div>
           </div>
           <div className={styles.operationRight}>
             <Button icon="plus" onClick={this.handleCreateType}>新建类型</Button>
@@ -247,7 +314,7 @@ export default class LabelManager extends PureComponent {
             pageData={this.getTablePagination()}
             listData={labelList}
             titleColumn={this.getClumneTitle()}
-            columnWidth={['15%', '15%', '45%', '10%', '5%']}
+            columnWidth={['15%', '15%', '32%', '16%', '12%', '10%']}
             needPagination
             isFixedColumn
             needShowEmptyRow={false}

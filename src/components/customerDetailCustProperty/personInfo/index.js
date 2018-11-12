@@ -11,25 +11,35 @@ import PropTypes from 'prop-types';
 import BasicInfo from './BasicInfo';
 import ContactWay from './ContactWay';
 
+const EMPTY_ARRAY = [];
 export default class PersonInfo extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
+    hasDuty: PropTypes.bool.isRequired,
   }
 
   render() {
-    const { data } = this.props;
+    const { data, hasDuty } = this.props;
     const {
-      phones,
-      others,
-      addresses,
+      phones = EMPTY_ARRAY,
+      others = EMPTY_ARRAY,
+      addresses = EMPTY_ARRAY,
+      noMessage,
+      noCall,
     } = data;
     return (
       <div>
-        <BasicInfo data={data} />
+        <BasicInfo
+          data={data}
+          hasDuty={hasDuty}
+        />
         <ContactWay
           phoneList={phones}
           otherList={others}
           addressList={addresses}
+          hasDuty={hasDuty}
+          noMessage={noMessage}
+          noCall={noCall}
         />
       </div>
     );

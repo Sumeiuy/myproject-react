@@ -79,6 +79,7 @@ export default class CustRange extends PureComponent {
     dropdownWidth: PropTypes.number,
     isDown: PropTypes.bool,
     isHideFilterName: PropTypes.bool,
+    filterName: PropTypes.string,
   }
 
   static defaultProps = {
@@ -91,6 +92,7 @@ export default class CustRange extends PureComponent {
     isDown: false,
     collectData: _.noop,
     isHideFilterName: false,
+    filterName: '服务营业部',
   }
 
   constructor(props) {
@@ -172,22 +174,29 @@ export default class CustRange extends PureComponent {
   }
 
   render() {
-    const { custRange, expandAll, dropdownWidth, isDown, isHideFilterName } = this.props;
+    const {
+      custRange,
+      expandAll,
+      dropdownWidth,
+      isDown,
+      isHideFilterName,
+      filterName,
+    } = this.props;
     const { value } = this.state;
     const formatCustRange = transformCustRangeData(custRange);
     const widthDown = isDown ? 160 : dropdownWidth;
     const placeholder = isDown ? '机构范围' : '分公司/营业部名称';
-    const filterName = isHideFilterName ? '' : '服务营业部';
+    const newFilterName = isHideFilterName ? '' : filterName;
 
     return (
       <TreeFilter
         dropdownClassName={styles.custFilterWrap}
-        filterName={filterName}
+        filterName={newFilterName}
         value={value}
         treeDefaultExpandAll={expandAll}
         treeData={formatCustRange}
         onChange={this.onChange}
-        treeNodeFilterProp={'title'}
+        treeNodeFilterProp="title"
         treeCheckable={false}
         showSearch
         labelInValue

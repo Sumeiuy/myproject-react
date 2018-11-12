@@ -3,20 +3,20 @@
  * @Description: 客户360-客户属性-会员信息-涨乐财富通会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-12 14:45:53
+ * @Last Modified time: 2018-11-12 18:56:42
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import Icon from '../../common/Icon';
 import { Button } from 'antd';
-import _ from 'lodash';
 import Table from '../../../components/common/table';
 import Modal from '../../../components/common/biz/CommonModal';
 import InfoItem from '../../common/infoItem';
+import { DEFAULT_VALUE, MemberGradeColumns } from '../config';
 import styles from './zlMemberInfo.less';
-import { MemberGradeColumns } from '../config';
 const INFO_ITEM_WITDH = '110px';
 export default class ZLMemberInfo extends PureComponent {
   static propTypes = {
@@ -62,6 +62,11 @@ export default class ZLMemberInfo extends PureComponent {
       pageNum: page,
       custId: query && query.custId,
     });
+  }
+
+  @autobind
+  getViewValue(value) {
+    return _.isEmpty(value) ? DEFAULT_VALUE : value;
   }
 
   render() {
@@ -113,7 +118,7 @@ export default class ZLMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="用户号"
-              value={data.custId}
+              value={this.getViewValue(data.custId)}
               className={styles.infoItem}
             />
           </div>
@@ -121,7 +126,7 @@ export default class ZLMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="注册手机号"
-              value={data.phone}
+              value={this.getViewValue(data.phone)}
               className={styles.infoItem}
             />
           </div>
@@ -129,7 +134,7 @@ export default class ZLMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="当前会员等级"
-              value={data.currentLevel}
+              value={this.getViewValue(data.currentLevel)}
               className={styles.infoItem}
             />
           </div>
@@ -137,7 +142,7 @@ export default class ZLMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="历史最高等级"
-              value={data.highestLevel}
+              value={this.getViewValue(data.highestLevel)}
               className={styles.infoItem}
             />
           </div>
@@ -145,7 +150,7 @@ export default class ZLMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="付费会员"
-              value={data.isProAccount}
+              value={this.getViewValue(data.isProAccount)}
               className={styles.infoItem}
             />
           </div>
@@ -153,7 +158,7 @@ export default class ZLMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="首次付费日期"
-              value={data.firstPayDate}
+              value={this.getViewValue(data.firstPayDate)}
               className={styles.infoItem}
             />
           </div>
@@ -161,7 +166,7 @@ export default class ZLMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="等级有效期"
-              value={data.expiryDate}
+              value={this.getViewValue(data.expiryDate)}
               className={styles.infoItem}
             />
           </div>

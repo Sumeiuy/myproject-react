@@ -10,7 +10,6 @@ import channelsTypeProtocolAPI from './channelsTypeProtocol';
 import seibelCommonAPI from './seibelCommon';
 import performerViewAPI from './performerView';
 import demoteAPI from './demote';
-import filialeCustTransferAPI from './filialeCustTransfer';
 import relationAPI from './relation';
 import customerFeedbackAPI from './customerFeedback';
 import taskFeedbackAPI from './taskFeedback';
@@ -41,6 +40,7 @@ import customerDetailAPI from './customerDetail';
 import detailServiceRelationAPI from './detailServiceRelationship';
 import detailAccountInfoAPI from './detailAccountInfo';
 import detailCustPropertyAPI from './detailCustProperty';
+import taskAnalysisReportAPI from './taskAnalysisReport';
 
 const api = apiCreator();
 
@@ -86,9 +86,6 @@ const exported = {
 
   // ========== 降级客户接口
   demote: demoteAPI(api),
-
-  // ========== 分公司客户划转接口api
-  filialeCustTransfer: filialeCustTransferAPI(api),
 
   // ========== 客户反馈
   customerFeedback: customerFeedbackAPI(api),
@@ -164,6 +161,8 @@ const exported = {
   detailServiceRelationship: detailServiceRelationAPI(api),
   // ========== 新版客户360详情下客户属性Tab组件的API
   detailCustProperty: detailCustPropertyAPI(api),
+  // ========== SMART任务相关运营报表
+  taskAnalysisReport: taskAnalysisReportAPI(api),
 };
 
 export default exported;
@@ -182,7 +181,6 @@ export const {
   relation,
   mainPosition,
   demote,
-  filialeCustTransfer,
   customerFeedback,
   taskFeedback,
   morningBoradcast,
@@ -211,4 +209,5 @@ export const {
   detailServiceRelationship,
   detailAccountInfo,
   detailCustProperty,
+  taskAnalysisReport,
 } = exported;

@@ -11,6 +11,7 @@ import { message, Modal, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import cx from 'classnames';
 import _ from 'lodash';
+import { emp } from '../../../helper';
 
 import FirstContent from './FirstContent';
 import SecondContent from './SecondContent';
@@ -144,6 +145,7 @@ export default class GroupToLabel extends PureComponent {
         labelId: id,
         labelName,
         labelDesc: values.labelDesc,
+        orgId: emp.getOrgId(),
       };
       group2Label(payload).then(({ resultData }) => {
         if (resultData === 'success') {
