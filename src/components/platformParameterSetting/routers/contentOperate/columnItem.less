@@ -4,13 +4,19 @@
   padding: 14px;
   display: flex;
 
+  &:first-child {
+    border-top: 1px solid #efefef;
+  }
+
   .itemInfo {
     flex: 1;
+    max-width: calc(~"100% - 100px");
 
     .itemContent {
       font-size: 14px;
       color: #333;
       line-height: 30px;
+      margin-right: 20px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
