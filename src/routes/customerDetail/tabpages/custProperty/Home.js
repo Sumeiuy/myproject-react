@@ -17,6 +17,7 @@ import ProductInfo from '../../../../components/customerDetailCustProperty/produ
 import MemberInfo from '../../../../components/customerDetailCustProperty/memberInfo';
 import { CUST_TYPE } from '../../../../components/customerDetailCustProperty/config';
 import { permission } from '../../../../helper';
+import logable from '../../../../decorators/logable';
 
 import styles from './home.less';
 
@@ -32,6 +33,17 @@ const {
   // 产品机构客户类型标识
   productCustType,
 } = CUST_TYPE;
+
+// 财务信息TAB的key
+const FINANCE_INFO_KEY = 'financeInfo';
+// 合作业务TAB的key
+const COOPERATION_KEY = 'cooperation';
+// 营销与服务TAB的key
+const MARKETING_KEY = 'marketing';
+// 会员信息TAB的key
+const MEMBER_INFO_KEY = 'memberInfo';
+// 关系信息TAB的key
+const RELATION_INFO_KEY = 'relationInfo';
 
 @withRouter
 export default class CustProperty extends PureComponent {
@@ -54,6 +66,13 @@ export default class CustProperty extends PureComponent {
     // 获取紫金积分会员积分兑换流水
     queryZjPointExchangeFlow: PropTypes.func.isRequired,
     zjPointExchangeFlow: PropTypes.object.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeKey: MEMBER_INFO_KEY,
+    };
   }
 
   componentDidMount() {
@@ -189,6 +208,14 @@ export default class CustProperty extends PureComponent {
     return component;
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '客户属性下tab切换' } })
+  handleTabChange(activeKey) {
+    this.setState({
+      activeKey,
+    });
+  }
+
   render() {
     const {
       location,
@@ -201,6 +228,7 @@ export default class CustProperty extends PureComponent {
       queryZjPointExchangeFlow,
       zjPointExchangeFlow,
     } = this.props;
+    const { activeKey } = this.state;
     return (
       <div className={styles.custPropertyBox}>
         <div className={styles.custInfoBox}>
@@ -211,9 +239,10 @@ export default class CustProperty extends PureComponent {
         <div className={styles.tabBox}>
           <Tabs
             className={styles.tab}
-            defaultActiveKey="memberInfo"
+            activeKey={activeKey}
             animated={false}
             tabBarGutter={2}
+            onChange={this.handleTabChange}
           >
             <TabPane tab="财务信息" key="financeInfo">
             </TabPane>
