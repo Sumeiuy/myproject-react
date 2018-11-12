@@ -2,11 +2,10 @@
  * @Author: zhangjun
  * @Date: 2018-11-08 13:46:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 15:48:52
+ * @Last Modified time: 2018-11-12 12:12:43
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from '../../../common/Button';
 import CommonModal from '../../../common/biz/CommonModal';
 import ColumnForm from './ColumnForm';
 

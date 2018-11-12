@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-12 11:02:04
+ * @Last Modified time: 2018-11-12 14:28:13
  */
 
 import React, { PureComponent } from 'react';
@@ -96,7 +96,7 @@ export default class ActivityColumn extends PureComponent {
     return _.map(activityColumnList, item => (
        <ColumnItem
           columnData={item}
-          onEdit={() => this.handleEditColumn(item.index)}
+          onEdit={() => this.handleEditColumn(item)}
           onDelete={() => this.handleDeleteColumnConfirm(item.index)}
           key={data.uuid()}
         />
@@ -105,14 +105,12 @@ export default class ActivityColumn extends PureComponent {
 
   // 编辑活动栏目
   @logable({ type: 'Click', payload: { name: '编辑' } })
-  handleEditColumn(index) {
-    const { activityColumnList } = this.state;
-    const activityColumnData = _.find(activityColumnList, item => (item.index === index));
-    const { description, attaches } = activityColumnData;
+  handleEditColumn(item) {
+    const { description, attaches } = item;
     const descriptionCount = description.length;
     this.setState({
       formData: {
-        ...activityColumnData,
+        ...item,
         descriptionCount,
       },
       attachmentList: attaches,
@@ -313,8 +311,9 @@ export default class ActivityColumn extends PureComponent {
           <Button type="primary" icon="plus" className={styles.createButton} onClick={this.handleOpenForm} disabled={createButtonDisabled}>添加</Button>
         </div>
         {
-          !_.isEmpty(activityColumnList)
-          ? (
+          _.isEmpty(activityColumnList)
+          ? null
+          : (
             <div className={styles.activityColumnBox}>
               <div className={styles.activityColumn}>
                 <div className={styles.previewWrapper}>
@@ -327,11 +326,10 @@ export default class ActivityColumn extends PureComponent {
               </div>
               <div className={styles.footerButton}>
                 <Button className={styles.cancelButton} onClick={this.handleCancelConfirm}>取消</Button>
-                <Button type="primary" className={styles.submitButton} onClick={this.handleSubmit}>提交</Button>
+                <Button type="primary" className={styles.submitButton} onClick={this.handleSubmitConfirm}>提交</Button>
               </div>
             </div>
           )
-          : null
         }
         <ColumnModal
           visible={visible}

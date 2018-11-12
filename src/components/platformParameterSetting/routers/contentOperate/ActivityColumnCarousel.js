@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目跑马灯
  * @Date: 2018-11-06 13:53:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-12 11:12:25
+ * @Last Modified time: 2018-11-12 14:33:35
  */
 
 import React, { Component } from 'react';
@@ -37,7 +37,6 @@ export default class ActivityColumnCarousel extends Component {
   handleClick(columnUrl) {
     // 获取url的信息
     const urlInfo = url.parse(columnUrl);
-    console.warn('urlInfo', urlInfo);
     const { hash } = urlInfo;
     const defaultMenuPathList = filterData(defaultMenu, 'path');
     // 判断是否是内部网址
@@ -45,7 +44,6 @@ export default class ActivityColumnCarousel extends Component {
     if (!_.isEmpty(isInnerPath)) {
       // hash返回的数据是'#/***', path需要去掉字符串前面的#
       const path = hash.slice(1);
-      console.warn('path', path);
       this.context.push(path);
     } else {
       window.open(columnUrl);
@@ -65,7 +63,10 @@ export default class ActivityColumnCarousel extends Component {
     });
     return (
       <div className={styles.activityColumnCarousel}>
-        <Carousel autoplay>
+        <Carousel
+          autoplay
+          dots={false}
+        >
             {activityColumnListData}
         </Carousel>
       </div>

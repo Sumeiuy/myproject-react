@@ -3,10 +3,11 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-12 11:13:57
+ * @Last Modified time: 2018-11-12 14:33:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Form, Input  } from 'antd';
 import { regxp } from '../../../../helper';
@@ -87,12 +88,14 @@ export default class ColumnForm extends PureComponent {
         help: attachmentStatusErrorMessage,
       }
       : null;
+    // 图片上传样式
+    const formCellUploadStyles = classnames([styles.formCell, styles.formCellUpload]);
     return (
       <div className={styles.columnForm}>
         <Form>
           <InfoCell
             label="图片上传"
-            className={`${styles.formCell} ${styles.formCellUpload}`}
+            className={formCellUploadStyles}
             required
           >
             <FormItem {...attachmentStatusErrorProps}>
