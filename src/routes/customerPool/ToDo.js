@@ -26,14 +26,6 @@ const curPageNum = 1;
 const pageSize = 10;
 const TabPane = Tabs.TabPane;
 
-// const fetchDataFunction = (globalLoading, type) => query => ({
-//   type,
-//   payload: query || {},
-//   loading: globalLoading,
-// });
-// const effects = {
-//   getTaskBasicInfo: 'tasklist/getTaskBasicInfo',
-// };
 const mapStateToProps = state => ({
   todolist: state.customerPool.todolist,
   data: state.customerPool.todolistRecord,
@@ -53,23 +45,12 @@ const mapDispatchToProps = {
   getApproveList: effect('customerPool/getApproveList', { forceFull: true }),
   // 获取类型下拉框
   getTypeValue: effect('customerPool/getTypeValue', { forceFull: true }),
-  // 获取类型下拉框
+  // 获取发起人下拉框
   getInitiator: effect('customerPool/getInitiator', { forceFull: true }),
   getTaskBasicInfo: effect('tasklist/getTaskBasicInfo', { forceFull: true }),
   // 清除自建任务数据
   clearCreateTaskData: effect('customerPool/clearCreateTaskData', { forceFull: true }),
 };
-
-// const mapDispatchToProps = {
-//   push: routerRedux.push,
-//   replace: routerRedux.replace,
-//   getTaskBasicInfo: fetchDataFunction(true, effects.getTaskBasicInfo),
-//   // 清除自建任务数据
-//   clearCreateTaskData: query => ({
-//     type: 'customerPool/clearCreateTaskData',
-//     payload: query || {},
-//   }),
-// };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -146,6 +127,24 @@ export default class ToDo extends PureComponent {
   // 调用列表接口
   @autobind
   getTaskList(query, pageNum, pageSize) {
+    const {
+      location: {
+        query: {
+          taskType
+        }
+      }
+    } = this.props;
+    switch (taskType) {
+      case '2':
+        this.getApplyList(query, pageNum, pageSize);
+        break;
+      case '3':
+        this.getApproveList(query, pageNum, pageSize);
+        break;
+      default:
+        break;
+
+    }
   }
 
   // 获取申请列表
@@ -154,19 +153,21 @@ export default class ToDo extends PureComponent {
     const {
       location: {
         query: {
-          taskType
+          taskType,
         }
       }
     } = this.props;
     const { replace } = this.context;
     if(!_.isEmpty(taskType)) {
-      this.props.getApplyList(query, pageNum = 1, pageSize = 10);
+      this.props.getApplyList(query, pageNum, pageSize);
       this.setState({ activeKey: taskType });
     } else {
       replace({
         query: {
           ...query,
           taskType: '1',
+          pageNum,
+          pageSize,
         },
       });
       this.props.getApplyList(query, pageNum = 1, pageSize = 10);
@@ -231,7 +232,7 @@ export default class ToDo extends PureComponent {
     this.setState({
       ...obj,
     }, () => {
-      this.getApplyList(this.state);
+      this.getTaskList(this.state);
     });
   }
 
@@ -241,7 +242,7 @@ export default class ToDo extends PureComponent {
     this.setState({
       ...obj,
     }, () => {
-      this.getApproveList(this.state);
+      this.getTaskList(this.state);
     });
   }
 
@@ -338,7 +339,7 @@ export default class ToDo extends PureComponent {
           <TabPane key='3' tab='我的审批'>
             <div>
               <ReportFilter
-                filterCallback={this.handlefilterCallback}
+                filterCallback={this.handleInitiatorCallback}
                 onSearch={this.onSearch}
                 startTime={defaultStartTime}
                 endTime={defaultEndTime}

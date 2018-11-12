@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-12 17:35:59
+ * @Last Modified time: 2018-11-12 21:11:33
  */
 
 import React, { PureComponent } from 'react';
@@ -182,7 +182,7 @@ export default class ReportFilter extends PureComponent {
               filterName='发起人'
               filterId='originator'
               className='filter'
-              dataMap={['value', 'label']}
+              dataMap={['key', 'name']}
               data={initiatorData}
               value={initiator}
               onChange={this.handleInitiatorChange}

@@ -1,8 +1,10 @@
-/**
- * @file customerPool/ToDoList.js
- *  目标客户池 待办流程列表
- * @author wangjunjun
+/*
+ * @Author: zuoguangzu
+ * @Date: 2018-11-12 19:25:08
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-11-12 20:35:24
  */
+
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -56,21 +58,6 @@ export default class TaskList extends PureComponent {
     if (emptyTip) {
       emptyTip.style.height = `${winHeight - topBarHeight - 127}px`;
     }
-  }
-
-  @autobind
-  handleChange(page) {
-    this.props.onPageChange({
-      curPageNum: page,
-    });
-  }
-
-  @autobind
-  handleSizeChange(current, size) {
-    this.props.onSizeChange({
-      pageSize: size,
-      curPageNum: 1,
-    });
   }
 
   // 根据type获取列表数据
