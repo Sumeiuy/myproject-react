@@ -11,12 +11,14 @@ import 'echarts-liquidfill';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import logable from '../../decorators/logable';
+import Tooltip from '../common/Tooltip';
 import ChartContiner from './ChartContainer';
 import IECharts from '../IECharts';
 import styles from './analysisCharts.less';
 import { seperator } from '../../config';
 import { toFixedNum } from '../chartRealTime/FixNumber';
 import { number } from '../../helper';
+import { transformItemUnit } from '../chartRealTime/FixNumber';
 
 import {
   getCustClassChartData,
@@ -37,10 +39,12 @@ const chartTitles = [
     title: '资产分布（户）'
   },
   {
-    title: '盈亏比（百分比）'
+    title: '盈亏比 ',
+    unit: '（X:百分比 Y:户）'
   },
   {
-    title: '盈亏幅度（万元）'
+    title: '盈亏幅度 ',
+    unit: '（X:万元 Y:户）'
   },
   {
     title: '持仓分布'
@@ -101,6 +105,34 @@ let totAsetData = [
   },
 ];
 
+//持仓分布的数据源
+const positionDistribution = [
+  {
+   type: '公募',
+   asset: 0,
+  },
+  {
+    type: '私募',
+    asset: 0,
+  },
+  {
+    type: '债券',
+    asset: 0,
+  },
+  {
+    type: 'OTC',
+    asset: 0,
+  },
+  {
+    type: '紫金',
+    asset: 0,
+  },
+  {
+    type: '股票',
+    asset: 0,
+  },
+];
+
 export default class PerformanceIndicators extends PureComponent {
   static contextTypes = {
     push: PropTypes.func.isRequired,
@@ -109,6 +141,18 @@ export default class PerformanceIndicators extends PureComponent {
     indicators: PropTypes.object.isRequired,
     cycle: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
+  }
+
+  // 获取客户性质，客户类型的tooltip内容
+  @autobind
+  getTooltipContent(item) {
+    const assetData = transformItemUnit(item.asset);
+    return (
+      <div>
+        <div>客户数：{number.thousandFormat(item.custNum)}人</div>
+        <div>托管资产：{assetData.newItem}{assetData.newUnit}</div>
+      </div>
+    );
   }
 
   @autobind
@@ -148,6 +192,7 @@ export default class PerformanceIndicators extends PureComponent {
       }
     });
   }
+
   //  客户性质下钻
   @autobind
   handleCustomTypeChartClick(instance) {
@@ -233,7 +278,13 @@ export default class PerformanceIndicators extends PureComponent {
                   className={styles.legendColor}
                   style={item.style}
                 />
-                <span className={styles.legendLabel}>{item.name}</span>
+                <Tooltip
+                  placement="top"
+                  title={`${item.name}客户`}
+                  content={this.getTooltipContent(item)}
+                >
+                  <span className={styles.legendLabel}>{item.name}</span>
+                </Tooltip>
               </div>
             ))
           }
@@ -266,7 +317,13 @@ export default class PerformanceIndicators extends PureComponent {
                   className={styles.legendColor}
                   style={item.style}
                 />
-                <span className={styles.legendLabel}>{item.name}</span>
+                <Tooltip
+                  placement="top"
+                  title={`${item.name}客户`}
+                  content={this.getTooltipContent(item)}
+                >
+                  <span className={styles.legendLabel}>{item.name}</span>
+                </Tooltip>
               </div>
             ))
           }
@@ -290,7 +347,7 @@ export default class PerformanceIndicators extends PureComponent {
         top: '0px',
         bottom: '0px',
         left: '5px',
-        right: '25px',
+        right: '34px',
         containLabel: false,
       },
       tooltip: {
@@ -346,7 +403,7 @@ export default class PerformanceIndicators extends PureComponent {
           data: totAsetData,
           itemStyle: {
             normal: {
-              color: '#4ed0f1',
+              color: '#1ac4f8',
             },
           },
         },
@@ -428,50 +485,31 @@ export default class PerformanceIndicators extends PureComponent {
       </ChartContiner>
     );
   }
+
   // 持仓分布图表
+  @autobind
   renderHoldingChart() {
-    const { dataSource, option } = getHoldingChart(this.props.indicators);
+    const { indicators: { holdingDistribution = [] } } = this.props;
+    let newHoldingDistribution = [...holdingDistribution];
+    if (_.isEmpty(newHoldingDistribution)) {
+      newHoldingDistribution = positionDistribution;
+    };
+    let option = getHoldingChart(newHoldingDistribution);
     return (
       <ChartContiner dataSource={chartTitles[5]}>
         <IECharts
+         className={styles.positionContain}
           option={option}
           style={{
             height: '144px',
           }}
           resizable
         />
-        <div className={styles.holdingchartLegend}>
-          {
-            _.map(_.slice(dataSource, 0, 4), item => (
-              <div className={styles.legendItem} key={item.name}>
-                <span
-                  className={styles.legendColor}
-                  style={item.style}
-                />
-                <span className={styles.legendLabel}>{item.name}</span>
-              </div>
-            ))
-          }
-        </div>
-        <div className={styles.holdingchartLegend}>
-          {
-            _.map(_.slice(dataSource, 4, dataSource.length), item => (
-              <div className={styles.legendItem} key={item.name}>
-                <span
-                  className={styles.legendColor}
-                  style={item.style}
-                />
-                <span className={styles.legendLabel}>{item.name}</span>
-              </div>
-            ))
-          }
-        </div>
       </ChartContiner>
     );
   }
   render() {
     const gutter = 18;
-
     return (
       <div className={styles.indexBox}>
         <div className={styles.listItem}>

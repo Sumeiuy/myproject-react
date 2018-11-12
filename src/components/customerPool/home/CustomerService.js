@@ -9,11 +9,10 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Popover } from 'antd';
+
+import Tooltip from '../../common/Tooltip';
 import IECharts from '../../IECharts';
 import { linkTo } from './homeIndicators_';
-
-import antdStyles from '../../../css/antd.less';
 import styles from './customerService.less';
 import logable from '../../../decorators/logable';
 
@@ -101,8 +100,8 @@ export default class CustomerService extends PureComponent {
 
   render() {
     const { data } = this.props;
-    const motOption = this.getOption(_.head(data), ['#33D0E2', '#d6d6d6']);
-    const serviceOption = this.getOption(_.last(data), ['#6b87d8', '#d6d6d6']);
+    const motOption = this.getOption(_.head(data), ['#008fd2', '#d6d6d6']);
+    const serviceOption = this.getOption(_.last(data), ['#008fd2', '#d6d6d6']);
 
     return (
       <div className={styles.row}>
@@ -114,16 +113,15 @@ export default class CustomerService extends PureComponent {
               height: '115px',
             }}
           />
-          <Popover
+          <Tooltip
             title={_.head(data).name || ''}
             content={_.head(data).description || '--'}
             mouseEnterDelay={0.2}
             overlayStyle={{ maxWidth: '320px' }}
             placement="bottom"
-            overlayClassName={antdStyles.popoverClass}
           >
             <div className={styles.text}>{_.head(data).name || '--'}</div>
-          </Popover>
+          </Tooltip>
         </div>
         <div className={classnames(styles.column, styles.secondColumn)}>
           <IECharts
@@ -134,19 +132,18 @@ export default class CustomerService extends PureComponent {
               height: '115px',
             }}
           />
-          <Popover
+          <Tooltip
             title={_.last(data).name || ''}
             content={_.last(data).description || '--'}
             mouseEnterDelay={0.2}
             overlayStyle={{ maxWidth: '320px' }}
             placement="bottom"
-            overlayClassName={antdStyles.popoverClass}
           >
             <div
               onClick={ () => {this.handleToList(_.last(data).name, _.last(data).value || 0);} }
               className={styles.text}
             >{_.last(data).name || '--'}</div>
-          </Popover>
+          </Tooltip>
         </div>
       </div>
     );
