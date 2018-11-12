@@ -23,7 +23,7 @@ import {
   timeRange,
   directionRange,
   titleList,
-  formatStr,
+  formatDateStr,
   sourceType,
   typeList,
 } from './config';
@@ -128,7 +128,7 @@ export default class CombinationModal extends PureComponent {
     // 持仓历史
     if (type === HISTORY_TYPE) {
       // 时间
-      titleArray[timeIndex].render = text => (<div>{timeHelper.format(text, formatStr)}</div>);
+      titleArray[timeIndex].render = text => (<div>{timeHelper.format(text, formatDateStr)}</div>);
       // 证券名称
       titleArray[securitynameIndex].render = text => this.renderPopover(text);
       // 调仓理由
@@ -153,7 +153,7 @@ export default class CombinationModal extends PureComponent {
       };
     } else {
       // 时间
-      titleArray[timeIndex].render = text => (<div>{timeHelper.format(text, formatStr)}</div>);
+      titleArray[timeIndex].render = text => (<div>{timeHelper.format(text, formatDateStr)}</div>);
       // 设置标题渲染
       titleArray[titleIndex].render = (text, record) => (
         <div title={text}><a onClick={() => this.handleTitleClick(record)}>{text}</a></div>

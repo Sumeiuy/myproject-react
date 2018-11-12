@@ -22,11 +22,12 @@ import classes from './reactFrame__.less';
 
 function RectFrame(props) {
   const {
-    dataSource: { title, icon },
+    dataSource: { title, icon, unit },
     children,
     desc,
     isNewHome,
     noMargin,
+    isfromAsset,
   } = props;
 
   const trueStyles = isNewHome ? classes : styles;
@@ -35,7 +36,7 @@ function RectFrame(props) {
   if (noMargin) {
     contentCls = '';
   } else if(isNewHome) {
-    contentCls = classes.content;
+    contentCls = isfromAsset ? classes.assetContent : classes.content;
   }
 
   return (
@@ -61,7 +62,10 @@ function RectFrame(props) {
                 <div className={trueStyles.title}>{title}</div>
               </Popover>
             ) :
-            <div className={trueStyles.title}>{title}</div>
+            <div className={trueStyles.titleContent}>
+              <span className={trueStyles.title}>{title}</span>
+              <span className={trueStyles.unit}>{unit}</span>
+            </div>
         }
       </div>
       <div className={contentCls}>{children}</div>

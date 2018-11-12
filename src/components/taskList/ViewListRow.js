@@ -199,7 +199,7 @@ export default function AppItem(props) {
                 placement="right"
                 title={() => renderCreatorTooltip(data.creator, data.creatorId)}
                 getPopupContainer={getPopupContainer}
-                overlayClassName={styles.creatorOverlay}
+                overlayStyle={{ minWidth: '120px' }}
               >
                 <div
                   className={cx({

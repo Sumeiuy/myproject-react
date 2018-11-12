@@ -1,0 +1,37 @@
+.eventAnalysisReport {
+  background: #fff;
+  margin-top: 20px;
+  border-radius: 2px;
+  position: relative;
+  .searchEvent {
+    margin-right: 30px;
+  }
+  .eventAnalysisTable {
+    overflow-x: scroll;
+    margin: 20px;
+    font-size: 14px;
+    :global {
+      .ant-table {
+        font-size: 14px;
+        color: #666;
+      }
+      .ant-table-thead {
+        background: #f7f7f7;
+      }
+    }
+    td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+  }
+  .eventAnalysisChart {
+    position: fixed;
+    top: 400px;
+    left: 400px;
+    display: none;
+    z-index: 1000;
+  }
+}
+

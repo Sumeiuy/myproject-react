@@ -60,6 +60,8 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     deleteLabelCust: PropTypes.func.isRequired,
     isCreateLabel: PropTypes.bool,
     onComparedGetLabelList: PropTypes.func.isRequired,
+    createTask: PropTypes.func,
+    title: PropTypes.string,
   };
 
   static defaultProps = {
@@ -67,6 +69,8 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     canEditDetail: true,
     custRiskBearing: [],
     isCreateLabel: true,
+    createTask: _.noop,
+    title: '',
   };
 
   constructor(props) {
@@ -657,6 +661,13 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     });
   }
 
+  // 查看标签时可以发起任务
+  @autobind
+  handleCreateTaskBtnClick() {
+    const { detailData: { record }, createTask } = this.props;
+    createTask(record);
+  }
+
   @autobind
   renderLabelName() {
     const {
@@ -745,6 +756,18 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     );
   }
 
+  // 渲染发起路径按钮
+  @autobind
+  renderCreateTaskButton(title, record) {
+    return title === '标签信息' &&
+      record &&
+      record.custCount > 0 ?
+        (<span className={styles.btnContainer}>
+          <span className={styles.splitLine} />
+          <span className={styles.createTaskBtn} onClick={this.handleCreateTaskBtnClick}>发起任务</span>
+        </span>) : null;
+  }
+
   render() {
     const {
       name = '',
@@ -765,7 +788,12 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     const {
       customerHotPossibleWordsList = EMPTY_LIST,
       getHotPossibleWds,
+      canEditDetail,
+      title,
+      detailData,
     } = this.props;
+
+    const { record } = detailData;
     // 构造operation
     const actionSource = this.renderActionSource();
     // 上传批量客户，不符合要求的报错信息
@@ -782,6 +810,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
 
     // 添加id到dataSource
     newDataSource = this.addIdToDataSource(newDataSource);
+
     const uploadProps = {
       data: {
         empId: emp.getId(),
@@ -808,7 +837,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     return (
       <Form className={styles.groupDetail}>
         <div className={styles.nameSection}>
-          <div className={styles.name}>
+          <div className={canEditDetail ? styles.name : styles.onlyName}>
             标签名称:
           </div>
           <div className={styles.nameContent}>
@@ -816,7 +845,7 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
           </div>
         </div>
         <div className={styles.descriptionSection}>
-          <div className={styles.description}>
+          <div className={canEditDetail ? styles.description : styles.onlyDescription}>
             标签描述:
           </div>
           <div className={styles.descriptionContent}>
@@ -847,12 +876,14 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
                   // 添加按钮事件
                   addBtnCallback={this.handleAddCustomerFromSearch}
                 />
+                {this.renderCreateTaskButton(title, record)}
               </div>
               :
               <div className={styles.multiCust}>
                 <Spin className={styles.uploadLoading} spinning={uploadLoading} />
                 <span className={styles.importCust}>{uploadElement}</span>
                 <a href={customerTemplet} className={styles.downloadLink}>下载模板</a>
+                {this.renderCreateTaskButton(title, record)}
               </div>
           }
           <a className={styles.toggleBtn} onClick={this.toggleAddWay}>

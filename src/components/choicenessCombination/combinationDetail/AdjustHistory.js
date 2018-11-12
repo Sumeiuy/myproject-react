@@ -1,6 +1,6 @@
 /*
  * @Author: XuWenKang
- * @Description: 精选组合-组合详情-组合调仓组件
+ * @Description: 精选组合-组合详情-调仓历史
  * @Date: 2018-04-17 13:43:55
  * @Last Modified by: XuWenKang
  * @Last Modified time: 2018-05-15 09:50:31
@@ -16,7 +16,7 @@ import {
   typeList,
   directionRange,
   overlayStyle,
-  formatStr,
+  formatDateStr,
 } from '../config';
 import { time } from '../../../helper';
 import logable, { logPV } from '../../../decorators/logable';
@@ -74,7 +74,7 @@ export default class AdjustHistory extends PureComponent {
                   </span>
               }
             </span>
-            <span className={styles.time}>{time.format(item.time, formatStr)}</span>
+            <span className={styles.time}>{time.format(item.time, formatDateStr)}</span>
             <span className={styles.const}>{item.price}</span>
             <span className={styles.change}>{item.change || '持仓变化：暂无'}</span>
           </div>
