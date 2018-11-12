@@ -3,15 +3,14 @@
  * @Author: Liujianshu-K0240007
  * @Date: 2018-09-20 13:45:27
  * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 15:06:23
+ * @Last Modified time: 2018-11-01 14:57:57
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import classnames from 'classnames';
 
-
+import Tooltip from '../common/Tooltip';
 import { getFilter } from '../customerPool/helper';
 import { openRctTab } from '../../utils';
 import { url as urlHelper, number } from '../../helper';
@@ -72,7 +71,11 @@ export default function Nav(props) {
     return (
       <dl key={key} onClick={() => handleOpenTab(payload)}>
         <dt className={iconClass}></dt>
-        <dd className={styles.value} title={data[key] || 0}>{value}</dd>
+        <dd className={styles.value}>
+          <Tooltip placement="bottom" title={data[key] || 0}>
+            {value}
+          </Tooltip>
+        </dd>
         <dd className={styles.name}>{name}</dd>
       </dl>
     );

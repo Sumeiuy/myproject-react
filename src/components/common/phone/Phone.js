@@ -2,8 +2,8 @@
  * @Description: PC电话拨号页面
  * @Author: maoquan
  * @Date: 2018-04-11 20:22:50
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 15:41:13
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-12 09:27:26
  */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,9 @@ import qs from 'query-string';
 import classnames from 'classnames';
 import { Phone as XPhone } from 'lego-soft-phone';
 import sotfCallInstall from './SotfCallInstall0426.msi';
+import prompt from '../prompt_';
+import Mask from '../mask';
+import { env } from '../../../helper';
 import logable from '../../../decorators/logable';
 import styles from './phone.less';
 
@@ -23,6 +26,8 @@ const URL = bowser.msie
   // IE10跨域无法和父页面通信，部署在同域下
   ? '/fspa/phone/'
   // Chrome等WebRTC只可用在https域下,所以部署到移动端server
+  // 生产地址 https://crm.htsc.com.cn:1443/phone/
+  // 测试地址 https://crm.htsc.com.cn:2443/phone/
   : 'https://crm.htsc.com.cn:1443/phone/';
 
 const OPEN_FEATURES = `
@@ -37,6 +42,7 @@ const OPEN_FEATURES = `
 
 const TYPE_CONNECTED = 'connected';
 const TYPE_END = 'end';
+const TYPE_WEBPHONEUNLOAD = 'webPhoneUnload';
 
 // 检查是否安装打电话插件
 function checkIEHasCallPlugin() {
@@ -51,6 +57,19 @@ function checkIEHasCallPlugin() {
     xPhone.release();
   }
   return true;
+}
+
+// 检查浏览器的版本
+// 部分高版本chrome、firefox无法支持PC拨打电话,目前在大多数浏览器都能使用，所以先把版本号设置成较大值
+function checkBowserVersion() {
+  // 获取浏览器版本的大版本号
+  const bowserVersion = parseInt(bowser.version.split('.')[0], 10);
+  // 判断chrome和firefox浏览器的版本号
+  if ((env.isChrome() && bowserVersion > 1000)
+    || (env.isFirefox() && bowserVersion > 1000)) {
+    return true;
+  }
+  return false;
 }
 
 // 创建一个会缓存 checkIEHasCallPlugin 结果的函数
@@ -84,8 +103,6 @@ export default class Phone extends PureComponent {
     name: PropTypes.string,
     // 用户数据，回调时回传
     userData: PropTypes.object,
-    // 显示和隐藏通话蒙版
-    onShowMask: PropTypes.func,
   }
 
   static defaultProps = {
@@ -99,11 +116,13 @@ export default class Phone extends PureComponent {
     onConnected: _.noop,
     name: '',
     userData: {},
-    onShowMask: _.noop,
   };
 
   constructor(props) {
     super(props);
+    this.state = {
+      showMask: false,
+    };
     this.popWin = null;
   }
 
@@ -122,12 +141,18 @@ export default class Phone extends PureComponent {
                 return;
               }
             }
-            // 拨打电话
-            this.props.onClick().then(() => {
-              this.prepareCall(number);
-            });
+            // 检测chrome、firefox浏览器的版本号， 部分高版本chrome、firefox无法支持PC拨打电话
+            if (env.isChrome() || env.isFirefox()) {
+              if (checkBowserVersion()) {
+                this.handleBowserVersionError();
+                return;
+              }
+            }
+            this.prepareCall(number);
+            // 点击打电话
+            this.props.onClick();
             // 显示通话蒙版
-            this.props.onShowMask(true);
+            this.showMask();
           }
         },
       );
@@ -164,6 +189,17 @@ export default class Phone extends PureComponent {
     });
   }
 
+   // 高版本的chrome、firefox浏览器弹框提示
+   @autobind
+  handleBowserVersionError() {
+    prompt({
+      title: '当前浏览器版本不支持拨号功能！',
+      type: 'warning',
+      okText: '关闭',
+      className: styles.promptError,
+    });
+  }
+
   // TODO 日志查看:找不到方法 未验证
   @autobind
   @logable({ type: 'Click', payload: { name: '点击' } })
@@ -179,12 +215,35 @@ export default class Phone extends PureComponent {
         return;
       }
     }
+    // 检测chrome、firefox浏览器的版本号， 部分高版本chrome、firefox无法支持PC拨打电话
+    if (env.isChrome() || env.isFirefox()) {
+      if (checkBowserVersion()) {
+        this.handleBowserVersionError();
+        return;
+      }
+    }
     onClick({
       number,
       custType,
      }).then(() => {
       this.prepareCall(number);
     });
+    this.prepareCall(number);
+    this.showMask();
+  }
+
+  // 显示通话蒙版
+  @autobind
+  @logable({ type: 'Click', payload: { name: '显示' } })
+  showMask() {
+    this.setState({ showMask: true });
+  }
+
+  // 隐藏通话蒙版
+  @autobind
+  @logable({ type: 'Click', payload: { name: '隐藏' } })
+  hideMask() {
+    this.setState({ showMask: false });
   }
 
   prepareCall(number) {
@@ -215,7 +274,6 @@ export default class Phone extends PureComponent {
     ].join('&');
 
     const userQueryString = qs.stringify(userData);
-
     const srcUrl = `${URL}?number=${number}&custType=${custType}&auto=true&name=${name}&${configQueryString}&${userQueryString}`;
     this.popWin.location = srcUrl;
     if (!this.boundMessageEvent) {
@@ -233,30 +291,38 @@ export default class Phone extends PureComponent {
     if (data && data.type === TYPE_END && this.popWin) {
       this.props.onEnd(data);
       // 隐藏通话蒙版
-      this.props.onShowMask(false);
+      this.hideMask();
       this.popWin.close();
       this.popWin = null;
     } else if (data && data.type === TYPE_CONNECTED) {
       this.props.onConnected(data);
+    } else if (data && data.type === TYPE_WEBPHONEUNLOAD) {
+      this.hideMask();
     }
   }
 
   render() {
     const { headless, number, style } = this.props;
+    const { showMask } = this.state;
     if (headless === true) {
-      return null;
+      return (
+        <Mask visible={showMask} onClick={this.hideMask} />
+      );
     }
     const className = classnames({
       [styles.number]: true,
       [styles.active]: this.canCall(),
     });
     return (
-      <div
+      <div>
+        <div
         className={className}
         onClick={this.handleClick}
         style={style}
-      >
-        {number}
+        >
+          {number}
+        </div>
+        <Mask visible={showMask} onClick={this.hideMask} />
       </div>
     );
   }

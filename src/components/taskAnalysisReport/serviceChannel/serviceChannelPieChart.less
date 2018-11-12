@@ -1,0 +1,52 @@
+.serviceChannelPieChartWrapper {
+  flex: 1;
+  width: 50%;
+  height: 368px;
+  border-right: 1px solid #eee;
+  box-sizing: border-box;
+  position: relative;
+  .chartTitle {
+    color: #333;
+    font-size: 14px;
+    margin-bottom: 30px;
+  }
+  .serviceChannelPieChart {
+    display: flex;
+    height: 317px;
+    .serviceChannelPie {
+      width: 75%;
+      height: 310px;
+      margin-top: 3px;
+      position: relative;
+    }
+    .serviceChannelPieLegend {
+      flex: 1;
+      position: relative;
+    }
+  }
+  .noChart {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    img {
+      position: absolute;
+      width: 180px;
+      transform: translate(-50%, -50%);
+      top: 50%;
+      left: 50%;
+    }
+  }
+  :global {
+    .echartTooltipTable {
+      font-size: 12px;
+      color: #333;
+      .echartTooltipName {
+        width: 24px;
+        height: 20px;
+        border-bottom: 1px solid #333;
+        border-radius: 1px;
+        display: inline-block;
+      }
+    }
+  }
+}

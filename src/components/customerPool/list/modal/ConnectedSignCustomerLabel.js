@@ -26,6 +26,7 @@ const mapDispatchToProps = {
   addLabel: dva.generateEffect('customerLabel/addLabel', { loading: true }),
   clearSignLabelCust: dva.generateEffect('customerLabel/clearSignLabelCust', { loading: true }),
   queryCustSignedLabels: dva.generateEffect('customerLabel/queryCustSignedLabels', { loading: true }),
+  checkDuplicationName: dva.generateEffect('customerLabel/checkDuplicationName', { loading: false }) // 检查标签是否唯一
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -39,6 +40,7 @@ export default class ConnectedSignCustomerLabel extends PureComponent {
     signCustLabels: PropTypes.func.isRequired,
     addLabel: PropTypes.func.isRequired,
     clearSignLabelCust: PropTypes.func.isRequired,
+    checkDuplicationName: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -81,6 +83,7 @@ export default class ConnectedSignCustomerLabel extends PureComponent {
       queryLikeLabelInfo,
       signCustLabels,
       addLabel,
+      checkDuplicationName,
     } = this.props;
     const { custId } = this.state;
     const { currentPytMng = {}, mainPosition } = signLabelCust;
@@ -95,6 +98,7 @@ export default class ConnectedSignCustomerLabel extends PureComponent {
         handleCancelSignLabelCustId={this.handleClearCust}
         addLabel={addLabel}
         mainPosition={mainPosition}
+        checkDuplicationName={checkDuplicationName}
       />
     );
   }
