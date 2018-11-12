@@ -2,8 +2,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-11 10:35:09
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-10-29 11:44:35
  */
 
 import React, { PureComponent } from 'react';
@@ -52,7 +52,7 @@ export default class CommonTable extends PureComponent {
     // 页码change的时候
     onPageChange: PropTypes.func,
     // 表格的className
-    tableClass: PropTypes.string.isRequired,
+    tableClass: PropTypes.string,
     // 表格标题
     titleColumn: PropTypes.array.isRequired,
     // 表格操作列action
@@ -115,9 +115,12 @@ export default class CommonTable extends PureComponent {
     position: PropTypes.string,
     // 操作单元格内的class
     actionClass: PropTypes.string,
+    // 自定义删除标签是否显示
+    isCustomerDelete: PropTypes.bool,
   };
 
   static defaultProps = {
+    tableClass: '',
     pageData: EMPTY_OBJECT,
     listData: EMPTY_LIST,
     actionSource: [],
@@ -150,6 +153,7 @@ export default class CommonTable extends PureComponent {
     clickableColumnCallbackList: [],
     position: 'bottom',
     actionClass: '',
+    isCustomerDelete: false,
   };
 
   constructor(props) {
@@ -257,6 +261,7 @@ export default class CommonTable extends PureComponent {
       clickableColumnIndexList,
       clickableColumnCallbackList,
       actionClass,
+      isCustomerDelete,
     } = this.props;
     const len = titleColumn.length - 1;
 
@@ -316,16 +321,39 @@ export default class CommonTable extends PureComponent {
               })}
           >
             {
-              _.map(actionSource, itemData => (
-                <span
-                  className={cls}
-                  key={itemData.key || item.type}
-                  onClick={() => itemData.handler(record)}
-                >
-                  {itemData.type}
-                </span>
-              ),
-              )
+              _.map(actionSource, (itemData) => {
+                if (isCustomerDelete && itemData.key === 'delete') { // 如果需要自定义删除图标
+                  return (<span
+                    className={cls}
+                    style={
+                      record.labelTypeId && record.labelTypeId === '0' ? {} : { visibility: 'hidden' }
+                    }
+                    key={itemData.key || item.type}
+                    onClick={() => itemData.handler(record)}
+                  >
+                    {itemData.type}
+                  </span>);
+                }
+                if (isCustomerDelete && itemData.key === 'launchTask') { // 是否隐藏发起任务
+                   return (<span
+                    className={cls}
+                    style={
+                      record.custCount && record.custCount !== '0' ? {} : { visibility: 'hidden' }
+                    }
+                    key={itemData.key || item.type}
+                    onClick={() => itemData.handler(record)}
+                  >
+                    {itemData.type}
+                  </span>);
+                }
+                return (<span
+                    className={cls}
+                    key={itemData.key || item.type}
+                    onClick={() => itemData.handler(record)}
+                  >
+                    {itemData.type}
+                  </span>);
+              })
             }
           </div>);
         }

@@ -30,5 +30,7 @@ export default function choicenessCombination(api) {
     getCompositionPie: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryStatsticSecurityList', query),
     // 订购客户列表
     queryHoldRepeatProportion: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryHoldRepeatProportion', query),
+    // 查询投资顾问列表
+    queryCombinationCreator: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryCombinationCreator', query),
   };
 }

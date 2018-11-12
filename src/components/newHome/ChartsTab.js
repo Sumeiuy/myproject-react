@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: zhufeiyang
- * @Last Modified time: 2018-09-14 13:46:09
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-30 14:39:46
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ import {
   CUST_MANAGER,
   ORG,
   MAIN_MAGEGER_ID,
+  NEW_HOME_INTRO_FIFTH_SEEP_IDNAME,
 } from '../../routes/customerPool/config';
 import { emp, time, permission } from '../../helper';
 import { transformDateTypeToDate } from '../customerPool/helper';
@@ -221,7 +222,6 @@ export default class ChartsTab extends PureComponent {
       location,
       cycle
     } = this.props;
-
     const { tgQyFlag } = (empInfo && empInfo.empInfo) || {};
 
     const activeKey = this.getCurrentActiveKey();
@@ -234,7 +234,10 @@ export default class ChartsTab extends PureComponent {
         onTabClick={this.handleTabClick}
         animated={false}
       >
-        <TabPane tab="客户分析" key="analysis">
+        <TabPane
+          tab={<span id={NEW_HOME_INTRO_FIFTH_SEEP_IDNAME}>客户分析</span>}
+          key="analysis"
+        >
           <AnalysisCharts
             indicators={custAnalyticsIndicators}
             location={location}

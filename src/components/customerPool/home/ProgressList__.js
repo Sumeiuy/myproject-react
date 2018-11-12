@@ -8,13 +8,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Progress, Popover } from 'antd';
+import { Progress } from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { linkTo } from './homeIndicators_';
 import { logCommon } from '../../../decorators/logable';
-
-import antdStyles from '../../../css/antd.less';
+import Tooltip from '../../common/Tooltip';
 import styles from './progressList.less';
 import { homeModelTypeName, homeModelType } from '../config';
 
@@ -166,16 +165,15 @@ export default class ProgressList extends PureComponent {
                 接口传了description字段，则用接口的指标说明
                 接口未传description字段，则用页面中定义的指标说明
               */}
-              <Popover
+              <Tooltip
                 title={item.cust}
                 content={item.description || description[item.cust]}
                 placement="bottom"
                 overlayStyle={{ maxWidth: '320px' }}
                 mouseEnterDelay={0.2}
-                overlayClassName={antdStyles.popoverClass}
               >
                 <div className={styles.title}>{item.cust}</div>
-              </Popover>
+              </Tooltip>
               <div
                 className={classnames(
                   styles.count,

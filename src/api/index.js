@@ -10,7 +10,6 @@ import channelsTypeProtocolAPI from './channelsTypeProtocol';
 import seibelCommonAPI from './seibelCommon';
 import performerViewAPI from './performerView';
 import demoteAPI from './demote';
-import filialeCustTransferAPI from './filialeCustTransfer';
 import relationAPI from './relation';
 import customerFeedbackAPI from './customerFeedback';
 import taskFeedbackAPI from './taskFeedback';
@@ -37,6 +36,8 @@ import labelManagementAPI from './labelManagement';
 import tempDeputeAPI from './tempDepute';
 import newHomeAPI from './newHome';
 import advisorSpaceAPI from './advisorSpace';
+import activityColumnAPI from './activityColumn';
+import taskAnalysisReportAPI from './taskAnalysisReport';
 
 const api = apiCreator();
 
@@ -82,9 +83,6 @@ const exported = {
 
   // ========== 降级客户接口
   demote: demoteAPI(api),
-
-  // ========== 分公司客户划转接口api
-  filialeCustTransfer: filialeCustTransferAPI(api),
 
   // ========== 客户反馈
   customerFeedback: customerFeedbackAPI(api),
@@ -152,6 +150,10 @@ const exported = {
   newHome: newHomeAPI(api),
   // ========== 投顾空间申请
   advisorSpace: advisorSpaceAPI(api),
+  // ========== 平台参数设置-首页内容-活动栏目
+  activityColumn: activityColumnAPI(api),
+  // ========== SMART任务相关运营报表
+  taskAnalysisReport: taskAnalysisReportAPI(api),
 };
 
 export default exported;
@@ -170,7 +172,6 @@ export const {
   relation,
   mainPosition,
   demote,
-  filialeCustTransfer,
   customerFeedback,
   taskFeedback,
   morningBoradcast,
@@ -195,4 +196,6 @@ export const {
   tempDepute,
   newHome,
   advisorSpace,
+  activityColumn,
+  taskAnalysisReport,
 } = exported;

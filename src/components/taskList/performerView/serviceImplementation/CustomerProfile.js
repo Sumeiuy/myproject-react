@@ -2,8 +2,8 @@
  * @Description: 客户的基本信息
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:44
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 17:30:09
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-02 13:13:51
  */
 
 import React from 'react';
@@ -12,11 +12,11 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
 import cx from 'classnames';
+import { Tooltip } from 'antd';
 
 import Icon from '../../../common/Icon';
 import { openFspTab } from '../../../../utils';
 import ContactInfoPopover from '../../../common/contactInfoPopover/ContactInfoPopover';
-import Mask from '../../../common/mask';
 import { date } from '../../../../helper';
 import { UPDATE } from '../../../../config/serviceRecord';
 import logable from '../../../../decorators/logable';
@@ -96,7 +96,6 @@ export default class CustomerProfile extends React.PureComponent {
     super(props);
     this.endTime = '';
     this.startTime = '';
-    this.state = { showMask: false };
   }
 
   @autobind
@@ -145,8 +144,6 @@ export default class CustomerProfile extends React.PureComponent {
    */
   @autobind
   handlePhoneEnd(data = {}) {
-    // 点击挂电话隐藏蒙层
-    this.setState({ showMask: false });
     // 没有成功发起通话
     if (!moment.isMoment(this.startTime)) {
       return;
@@ -226,19 +223,6 @@ export default class CustomerProfile extends React.PureComponent {
     this.callId = data.uuid;
   }
 
-  // 点击号码打电话时显示蒙层
-  @autobind
-  handlePhoneClick() {
-    this.setState({ showMask: true });
-  }
-
-  // 点击号码打电话时显示蒙层时关闭蒙层
-  @autobind
-  @logable({ type: 'Click', payload: { name: '关闭蒙层' } })
-  handleMaskClick() {
-    this.setState({ showMask: false });
-  }
-
   /**
    * 渲染联系方式框显示的内容 如果有主联系方式显示主联系方式，没有就任意显示一条号码，没有号码就显示 “无联系电话”
   */
@@ -316,7 +300,6 @@ export default class CustomerProfile extends React.PureComponent {
         orgCustomerContactInfoList={orgCustomerContactInfoList}
         handlePhoneEnd={this.handlePhoneEnd}
         handlePhoneConnected={this.handlePhoneConnected}
-        handlePhoneClick={this.handlePhoneClick}
         disablePhone={!canCall}
         userData={userData}
         placement="topRight"
@@ -331,7 +314,6 @@ export default class CustomerProfile extends React.PureComponent {
   }
 
   render() {
-    const { showMask } = this.state;
     const { targetCustDetail = {}, eventId } = this.props;
     const {
       custName, isAllocate, isHighWorth, custId, genderValue, age,
@@ -374,15 +356,32 @@ export default class CustomerProfile extends React.PureComponent {
               {isAllocate === '0' && '(未分配)'}
             </p>
             <p className={styles.item}>
-              {isHighWorth && <span className={styles.highWorth} title="客户类型：高净值">高</span>}
+              {
+                isHighWorth
+                && <Tooltip placement="bottom" title="客户类型：高净值">
+                  <span className={styles.highWorth}>高</span>
+                </Tooltip>
+              }
               {
                 riskLevel
-                && <span className={styles.riskLevel} title={`风险等级：${riskLevel.title}`}>
-                  {riskLevel.name}
-                </span>
+                && <Tooltip placement="bottom" title={`风险等级：${riskLevel.title}`}>
+                  <span className={styles.riskLevel}>
+                    {riskLevel.name}
+                  </span>
+                </Tooltip>
               }
-              {isSign && <span className={styles.sign} title="签约客户">签</span>}
-              {rankImg && <img className={styles.rank} title={`客户等级：${rankImg.title}`} src={rankImg.src} alt="" />}
+              {
+                isSign
+                && <Tooltip placement="bottom" title="签约客户">
+                  <span className={styles.sign}>签</span>
+                </Tooltip>
+              }
+              {
+                rankImg
+                && <Tooltip placement="bottom" title={`客户等级：${rankImg.title}`}>
+                  <img className={styles.rank} src={rankImg.src} alt="" />
+                </Tooltip>
+              }
             </p>
           </div>
           <div className={styles.col}>
@@ -400,7 +399,6 @@ export default class CustomerProfile extends React.PureComponent {
             </p>
           </div>
         </div>
-        <Mask visible={showMask} onClick={this.handleMaskClick} />
       </div>
     );
   }

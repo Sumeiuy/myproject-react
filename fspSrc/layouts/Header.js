@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-01-04 15:29:15
- * @Last Modified by: ouchangzhi
- * @Last Modified time: 2018-01-16 16:05:26
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-10-30 14:28:21
  * @description 新头部导航
  */
 
@@ -23,6 +23,12 @@ import withRouter from '../../src/decorators/withRouter';
 import api from '../../src/api';
 import { Search } from '../../src/components/customerPool/home';
 import { emp, permission } from '../../src/helper';
+import EnvironmentalInfo from '../../src/components/environmentalInfo/EnvironmentalInfoModal';
+
+// 首页执行者视图首次引导提示第十步的dom的id名称(我要提问)
+const NEW_HOME_INTRO_TENTH_SEEP_IDNAME = 'homePageIntroTenthStep';
+// 首页执行者视图首次引导提示第十一步的dom的id名称(常用工具)
+export const NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME = 'homePageIntroEleventhStep';
 
 const effects = {
   getHotPossibleWds: 'customerPool/getHotPossibleWds',
@@ -79,6 +85,8 @@ export default class Header extends PureComponent {
     this.state = {
       // 隔离墙modal是否可见
       isolationWallModalVisible: false,
+      // 环境信息modal是否可见
+      environmentalInfoVisible: false,
     };
     // HTSC 任务管理岗
     this.hasTkMampPermission = permission.hasTkMampPermission();
@@ -97,6 +105,16 @@ export default class Header extends PureComponent {
         }
       </Menu>
     );
+  }
+
+  getCurrentId(menu) {
+    if(menu.name === '问题反馈') {
+      return NEW_HOME_INTRO_TENTH_SEEP_IDNAME;
+    }
+    if(menu.name === '常用工具') {
+      return NEW_HOME_INTRO_ELEVENTH_SEEP_IDNAME;
+    }
+    return '';
   }
 
   getMenus(array, level = 2) {
@@ -194,6 +212,18 @@ export default class Header extends PureComponent {
     if (menuItem.name === '隔离墙') {
       this.handleIsolationWallModalShow();
     }
+    // 点击环境信息
+    if (menuItem.name === '环境信息') {
+      this.handleEnvironmentalInfoModalShow();
+    }
+  }
+
+  // 环境信息弹窗
+  @autobind
+  handleEnvironmentalInfoModalShow() {
+    this.setState({
+      environmentalInfoVisible: true,
+    });
   }
 
   @autobind
@@ -245,6 +275,14 @@ export default class Header extends PureComponent {
     }
   }
 
+  // 环境信息弹窗点击关闭
+  @autobind
+  handleEnvironmentalInfoHide() {
+    this.setState({
+      environmentalInfoVisible: false,
+    });
+  }
+
   @autobind
   renderSecondaryMenu(secondaryMenu) {
     const fixSecondaryMenu = this.preTreatment(secondaryMenu);
@@ -259,7 +297,7 @@ export default class Header extends PureComponent {
               <div>
                 <span className={styles.navItem}>
                   { menu.name === '问题反馈' ? <i className={styles.feedbackIcon} /> : null}
-                  <span>{menu.name}</span>
+                  <span id={this.getCurrentId(menu)}>{menu.name}</span>
                 </span>
                 {
                   (index !== fixSecondaryMenu.length - 1) ?
@@ -318,6 +356,10 @@ export default class Header extends PureComponent {
     return (
       <div className={styles.fspHeaderContainer}>
         <div className={styles.fspHeader}>
+          <EnvironmentalInfo
+            handleEnvironmentalInfoHide={this.handleEnvironmentalInfoHide}
+            environmentalInfoVisible={this.state.environmentalInfoVisible}
+          />
           <Modal
             title="隔离墙"
             width={650}

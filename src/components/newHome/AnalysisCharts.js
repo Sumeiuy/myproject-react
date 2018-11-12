@@ -11,12 +11,14 @@ import 'echarts-liquidfill';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import logable from '../../decorators/logable';
+import Tooltip from '../common/Tooltip';
 import ChartContiner from './ChartContainer';
 import IECharts from '../IECharts';
 import styles from './analysisCharts.less';
 import { seperator } from '../../config';
 import { toFixedNum } from '../chartRealTime/FixNumber';
 import { number } from '../../helper';
+import { transformItemUnit } from '../chartRealTime/FixNumber';
 
 import {
   getCustClassChartData,
@@ -37,10 +39,12 @@ const chartTitles = [
     title: '资产分布（户）'
   },
   {
-    title: '盈亏比（百分比）'
+    title: '盈亏比 ',
+    unit: '（X:百分比 Y:户）'
   },
   {
-    title: '盈亏幅度（万元）'
+    title: '盈亏幅度 ',
+    unit: '（X:万元 Y:户）'
   },
   {
     title: '持仓分布'
@@ -50,7 +54,7 @@ const chartTitles = [
 // 资产分布的数据源
 let totAsetData = [
   {
-    name: '1000万元以上',
+    name: '[1000, +∞)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -60,7 +64,7 @@ let totAsetData = [
     },
   },
   {
-    name: '500-1000万元',
+    name: '[500, 1000)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -70,7 +74,7 @@ let totAsetData = [
     },
   },
   {
-    name: '100-500万元',
+    name: '[100, 500)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -80,7 +84,7 @@ let totAsetData = [
     },
   },
   {
-    name: '30-100万元',
+    name: '[30, 100)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -90,7 +94,7 @@ let totAsetData = [
     },
   },
   {
-    name: '0-30万元',
+    name: '[0, 30)万元',
     filterName: '总资产',
     filterId: 'totAset',
     value: 0,
@@ -98,6 +102,34 @@ let totAsetData = [
       minVal: '0',
       maxVal: '300000',
     },
+  },
+];
+
+//持仓分布的数据源
+const positionDistribution = [
+  {
+   type: '公募',
+   asset: 0,
+  },
+  {
+    type: '私募',
+    asset: 0,
+  },
+  {
+    type: '债券',
+    asset: 0,
+  },
+  {
+    type: 'OTC',
+    asset: 0,
+  },
+  {
+    type: '紫金',
+    asset: 0,
+  },
+  {
+    type: '股票',
+    asset: 0,
   },
 ];
 
@@ -110,8 +142,17 @@ export default class PerformanceIndicators extends PureComponent {
     cycle: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
   }
-  state = {
-    mouseoverLabelIndex: '',
+
+  // 获取客户性质，客户类型的tooltip内容
+  @autobind
+  getTooltipContent(item) {
+    const assetData = transformItemUnit(item.asset);
+    return (
+      <div>
+        <div>客户数：{number.thousandFormat(item.custNum)}人</div>
+        <div>托管资产：{assetData.newItem}{assetData.newUnit}</div>
+      </div>
+    );
   }
 
   @autobind
@@ -151,6 +192,7 @@ export default class PerformanceIndicators extends PureComponent {
       }
     });
   }
+
   //  客户性质下钻
   @autobind
   handleCustomTypeChartClick(instance) {
@@ -175,30 +217,6 @@ export default class PerformanceIndicators extends PureComponent {
           filterValue,
         });
       }
-    });
-    instance.on('mouseover', this.handleMouseover);
-    instance.on('mouseout', this.handleMouseout);
-  }
-
-  // 总资产y轴名称hover时改变文本颜色
-  @autobind
-  handleMouseover(arg) {
-    if (arg.componentType !== 'yAxis') {
-      return;
-    }
-    this.setState({
-      mouseoverLabelIndex: _.findIndex(totAsetData, item => item.name === arg.value),
-    });
-  }
-
-  // 总资产y轴名称hover时改变文本颜色
-  @autobind
-  handleMouseout(arg) {
-    if (arg.componentType !== 'yAxis') {
-      return;
-    }
-    this.setState({
-      mouseoverLabelIndex: '',
     });
   }
 
@@ -260,7 +278,13 @@ export default class PerformanceIndicators extends PureComponent {
                   className={styles.legendColor}
                   style={item.style}
                 />
-                <span className={styles.legendLabel}>{item.name}</span>
+                <Tooltip
+                  placement="top"
+                  title={`${item.name}客户`}
+                  content={this.getTooltipContent(item)}
+                >
+                  <span className={styles.legendLabel}>{item.name}</span>
+                </Tooltip>
               </div>
             ))
           }
@@ -293,7 +317,13 @@ export default class PerformanceIndicators extends PureComponent {
                   className={styles.legendColor}
                   style={item.style}
                 />
-                <span className={styles.legendLabel}>{item.name}</span>
+                <Tooltip
+                  placement="top"
+                  title={`${item.name}客户`}
+                  content={this.getTooltipContent(item)}
+                >
+                  <span className={styles.legendLabel}>{item.name}</span>
+                </Tooltip>
               </div>
             ))
           }
@@ -312,14 +342,13 @@ export default class PerformanceIndicators extends PureComponent {
         value: assetData[index] || 0,
       }));
     }
-    const { mouseoverLabelIndex } = this.state;
     const option = {
       grid: {
         top: '0px',
         bottom: '0px',
-        left: '25px',
-        right: '49px',
-        containLabel: true,
+        left: '5px',
+        right: '34px',
+        containLabel: false,
       },
       tooltip: {
         position: 'top',
@@ -338,28 +367,24 @@ export default class PerformanceIndicators extends PureComponent {
       },
       xAxis: {
         type: 'value',
-        boundaryGap: [0, 0.01],
         show: false,
       },
       yAxis: {
         type: 'category',
         data: _.map(totAsetData, item => item.name),
-        axisTick: {
-          show: false
-        },
         axisLine: {
-          show: false
+          lineStyle: {
+            color: '#ddd',
+          }
         },
-        triggerEvent: true,
-        axisLabel: {
-          color(v, index) {
-            return index === mouseoverLabelIndex ? '#108ee9' : '#8995a5';
-          },
-        },
+        axisTick: {
+          interval: index => (index !== 0),
+        }
       },
       series: [
         {
           type: 'bar',
+          barWidth: 21,
           label: {
             normal: {
               position: 'right',
@@ -378,24 +403,33 @@ export default class PerformanceIndicators extends PureComponent {
           data: totAsetData,
           itemStyle: {
             normal: {
-              color: '#4ed0f1',
+              color: '#1ac4f8',
             },
           },
-          barWidth: 15,
         },
       ]
     };
     return (
-      <ChartContiner dataSource={chartTitles[2]}>
+      <div className={styles.chartContainer}>
+        <ChartContiner dataSource={chartTitles[2]} margin>
         <IECharts
           option={option}
           onReady={this.handleTotAsetChartClick}
           style={{
-            height: '205px',
+            height: '160px',
           }}
           resizable
         />
       </ChartContiner>
+      <div className={styles.unitContent}>（万元）</div>
+      <div className={styles.axisLabel}>
+        <span>0</span>
+        <span>30</span>
+        <span>100</span>
+        <span>500</span>
+        <span>1000</span>
+      </div>
+      </div>
     );
   }
   // 盈亏比图表
@@ -451,50 +485,31 @@ export default class PerformanceIndicators extends PureComponent {
       </ChartContiner>
     );
   }
+
   // 持仓分布图表
+  @autobind
   renderHoldingChart() {
-    const { dataSource, option } = getHoldingChart(this.props.indicators);
+    const { indicators: { holdingDistribution = [] } } = this.props;
+    let newHoldingDistribution = [...holdingDistribution];
+    if (_.isEmpty(newHoldingDistribution)) {
+      newHoldingDistribution = positionDistribution;
+    };
+    let option = getHoldingChart(newHoldingDistribution);
     return (
       <ChartContiner dataSource={chartTitles[5]}>
         <IECharts
+         className={styles.positionContain}
           option={option}
           style={{
             height: '144px',
           }}
           resizable
         />
-        <div className={styles.holdingchartLegend}>
-          {
-            _.map(_.slice(dataSource, 0, 4), item => (
-              <div className={styles.legendItem} key={item.name}>
-                <span
-                  className={styles.legendColor}
-                  style={item.style}
-                />
-                <span className={styles.legendLabel}>{item.name}</span>
-              </div>
-            ))
-          }
-        </div>
-        <div className={styles.holdingchartLegend}>
-          {
-            _.map(_.slice(dataSource, 4, dataSource.length), item => (
-              <div className={styles.legendItem} key={item.name}>
-                <span
-                  className={styles.legendColor}
-                  style={item.style}
-                />
-                <span className={styles.legendLabel}>{item.name}</span>
-              </div>
-            ))
-          }
-        </div>
       </ChartContiner>
     );
   }
   render() {
     const gutter = 18;
-
     return (
       <div className={styles.indexBox}>
         <div className={styles.listItem}>
