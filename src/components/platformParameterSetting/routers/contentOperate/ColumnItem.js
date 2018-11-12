@@ -3,7 +3,7 @@
  * @Descripter: 栏目Item
  * @Date: 2018-11-05 15:16:43
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 10:20:35
+ * @Last Modified time: 2018-11-12 15:37:07
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -27,17 +27,17 @@ export default function ColumnItem(props) {
         <InfoCell
           label="图片"
         >
-          <span className={styles.itemContent}>{name}</span>
+          <span className={styles.itemContent} title={name}>{name}</span>
         </InfoCell>
         <InfoCell
           label="图片链接"
         >
-          <span className={styles.itemContent}>{link}</span>
+          <span className={styles.itemContent} title={link}>{link}</span>
         </InfoCell>
         <InfoCell
           label="功能描述"
         >
-          <span className={styles.itemContent}>{description}</span>
+          <span className={styles.itemContent} title={description}>{description}</span>
         </InfoCell>
       </div>
       <div className={styles.itemOperate}>
