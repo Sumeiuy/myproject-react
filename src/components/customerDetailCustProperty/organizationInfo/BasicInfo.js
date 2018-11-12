@@ -11,7 +11,11 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import InfoItem from '../../common/infoItem';
 import { number } from '../../../helper';
-import { DEFAULT_VALUE, DEFAULT_PRIVATE_VALUE } from '../config';
+import {
+  DEFAULT_VALUE,
+  DEFAULT_PRIVATE_VALUE,
+  getViewTextByBool,
+} from '../config';
 import styles from './basicInfo.less';
 
 const INFO_ITEM_WITDH110 = '110px';
@@ -33,15 +37,6 @@ export default class BasicInfo extends PureComponent {
   @autobind
   getViewTextByNum(value) {
     return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
-  }
-
-  // 根据传入的值（bool || null）决定返回的显示值
-  @autobind
-  getViewTextByBool(bool) {
-    if (_.isBoolean(bool)) {
-      return bool ? '是' : '否';
-    }
-    return DEFAULT_VALUE;
   }
 
   render() {
@@ -198,7 +193,7 @@ export default class BasicInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="是否上市公司"
-              value={this.getViewTextByBool(data.isListed)}
+              value={getViewTextByBool(data.isListed)}
               className={styles.infoItem}
             />
           </div>

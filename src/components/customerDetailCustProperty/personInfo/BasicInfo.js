@@ -10,7 +10,11 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import InfoItem from '../../common/infoItem';
-import { DEFAULT_VALUE, DEFAULT_PRIVATE_VALUE } from '../config';
+import {
+  DEFAULT_VALUE,
+  DEFAULT_PRIVATE_VALUE,
+  getViewTextByBool,
+} from '../config';
 import styles from './basicInfo.less';
 
 const INFO_ITEM_WITDH = '110px';
@@ -25,15 +29,6 @@ export default class BasicInfo extends PureComponent {
   getPrivateValue(value) {
     const { hasDuty } = this.props;
     return hasDuty ? (value || DEFAULT_VALUE) : DEFAULT_PRIVATE_VALUE;
-  }
-
-  // 根据传入的值（bool || null）决定返回的显示值
-  @autobind
-  getViewTextByBool(bool) {
-    if (_.isBoolean(bool)) {
-      return bool ? '是' : '否';
-    }
-    return DEFAULT_VALUE;
   }
 
   // 获取子女数量显示数据，由于InfoItem value只接受string,所以转了一次字符串
@@ -108,7 +103,7 @@ export default class BasicInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="是否企业高管"
-              value={this.getViewTextByBool(data.isCompanyLeader)}
+              value={getViewTextByBool(data.isCompanyLeader)}
               className={styles.infoItem}
             />
           </div>

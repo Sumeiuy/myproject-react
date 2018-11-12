@@ -22,7 +22,7 @@ const INFO_ITEM_WITDH = '126px';
 const EMPTY_OBJECT = {};
 const {
   // 公司地址标识(办公地址)
-  companyAddressTypeCode,
+  COMPANY_ADDRESS_TYPE_CODE,
 } = LINK_WAY_TYPE;
 export default class ContactWay extends PureComponent {
   static propTypes = {
@@ -84,7 +84,7 @@ export default class ContactWay extends PureComponent {
   getCompanyAddress() {
     const { addressList } = this.props;
     const list = _.filter(
-      addressList, item => item.typeCode === companyAddressTypeCode
+      addressList, item => item.typeCode === COMPANY_ADDRESS_TYPE_CODE
     );
     const value = this.getViewData(list).address;
     return this.getPrivateValue(value);
