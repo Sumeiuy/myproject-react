@@ -114,6 +114,7 @@ export default class Header extends PureComponent {
       return (
         <Menu.Item
           key={item.id}
+          className={styles.menuItem}
         >
           <div
             title={item.name}
@@ -161,6 +162,9 @@ export default class Header extends PureComponent {
       const externUrl = fixExternUrl(menuItem.url);
       window.open(externUrl, '_blank');
     } else if (menuItem.action === 'loadInModal') {
+      if(menuItem.name === '我要反馈') {
+        this.handleFeedbackClick();
+      }
       this.handleShowDialog(menuItem);
     } else if (menuItem.path !== location.pathname) {
       push({
@@ -254,6 +258,7 @@ export default class Header extends PureComponent {
             >
               <div>
                 <span className={styles.navItem}>
+                  { menu.name === '问题反馈' ? <i className={styles.feedbackIcon} /> : null}
                   <span>{menu.name}</span>
                 </span>
                 {
@@ -365,13 +370,6 @@ export default class Header extends PureComponent {
             />
           </div>
           <div className={styles.headerContent}>
-            <div onClick={this.handleFeedbackClick}>
-              <span className={styles.navItem}>
-                <i className={styles.feedbackIcon} />
-                <span>我要提问</span>
-              </span>
-              <span className={styles.splitLine} />
-            </div>
             {
               !_.isEmpty(secondaryMenu) ?
                 this.renderSecondaryMenu(secondaryMenu) : null
