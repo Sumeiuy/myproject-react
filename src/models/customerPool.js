@@ -194,6 +194,8 @@ export default {
     approveList: EMPTY_OBJECT,
     // 类型下拉框数据
     typeValue: EMPTY_LIST,
+    // 发起人下拉框数据
+    initiator: EMPTY_LIST,
   },
 
   subscriptions: {
@@ -1022,10 +1024,10 @@ export default {
       });
     },
     // 获取审批列表
-    * getApprove({ payload }, { call, put }) {
-      const resultData = yield call(api.getApprove, payload);
+    * getApproveList({ payload }, { call, put }) {
+      const resultData = yield call(api.getApproveList, payload);
       yield put({
-        type: 'getApproveSuccess',
+        type: 'getApproveListSuccess',
         payload: resultData,
       });
     },
@@ -1034,6 +1036,14 @@ export default {
       const resultData = yield call(api.getTypeValue, payload);
       yield put({
         type: 'getTypeValueSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取发起人下拉框
+    * getInitiator({ payload }, { call, put }) {
+      const resultData = yield call(api.getInitiator, payload);
+      yield put({
+        type: 'getInitiatorSuccess',
         payload: resultData,
       });
     },
@@ -1794,6 +1804,14 @@ export default {
       return {
         ...state,
         typeValue: resultData,
+      };
+    },
+    // 发起人下拉框
+    getInitiatorSuccess(state, action) {
+      const { payload: { resultData = [] }} = action;
+      return {
+        ...state,
+        initiator: resultData,
       };
     }
   },

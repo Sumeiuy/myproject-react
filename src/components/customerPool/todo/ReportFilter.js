@@ -3,69 +3,52 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-10 13:17:59
+ * @Last Modified time: 2018-11-12 17:35:59
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import moment from 'moment';
 import classnames from 'classnames';
 import SingleFilter from 'lego-react-filter/src';
 import DateRangePick from 'lego-react-date/src';
-import { AutoComplete, Input } from 'antd';
+import { Input } from 'antd';
+import moment from 'moment';
 
 import logable from '../../../decorators/logable';
+import { defaultStartTime, defaultEndTime } from './config';
 
 import styles from './reportFilter.less';
 
-const Option = AutoComplete.Option;
-
-// 日期格式
-const dateFormat = 'YYYY-MM-DD';
-// 筛选项默认开始时间
-const defaultStartTime = moment().subtract(20, 'days').format(dateFormat);
-// 筛选项默认结束时间
-const defaultEndTime = moment().subtract(1, 'days').format(dateFormat);
-
 export default class ReportFilter extends PureComponent {
   static propTypes = {
-    // 日期选择对应的filter对应名称
-    dateFilterName: PropTypes.string.isRequired,
     // 筛选后调用的Function
     filterCallback: PropTypes.func,
     // 开始时间
     startTime: PropTypes.string.isRequired,
     // 结束时间
     endTime: PropTypes.string.isRequired,
-    // 执行类型
-    executeType: PropTypes.string,
-    // 事件来源
-    eventSource: PropTypes.string.isRequired,
-    // 执行类型选项
-    executeTypeOptions: PropTypes.array,
-    // 事件类型选项
-    eventTypeOptions: PropTypes.array,
-    // 事件来源选项
-    eventSourceOptions: PropTypes.array,
-    //是否是事件分析报表
-    isEventAnalysis: PropTypes.bool,
-    // 事件搜索
-    eventSearch: PropTypes.func,
-    // 事件搜索数据
-    eventSearchList: PropTypes.object,
-    // 事件名称
-    eventName: PropTypes.string,
+    // 任务搜索
+    onSearch: PropTypes.func.isRequired,
+    // 是否是审批列表
+    isApprove: PropTypes.bool,
+    // 类型数据
+    typeData: PropTypes.array.isRequired,
+    // 类型
+    type: PropTypes.string.isRequired,
+    // 发起人数据
+    initiatorData: PropTypes.array.isRequired,
+    // 发起人
+    initiator: PropTypes.string.isRequired,
+    // 发起人下拉筛选
+    InitiatorCallback: PropTypes.func,
   }
 
   static defaultProps = {
     filterCallback: _.noop,
-    eventTypeOptions: [],
-    isEventAnalysis: false,
-    eventSearchList: {},
-    eventSearch: _.noop,
-    eventName: '',
+    isApprove: false,
+    InitiatorCallback: _.noop,
   }
 
   // 选择任务触发时间
@@ -88,68 +71,6 @@ export default class ReportFilter extends PureComponent {
     }
   }
 
-  // 选择执行类型
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '执行类型',
-      value: '$args[0].value.value',
-    },
-  })
-  handleExecuteTypeChange(option) {
-    const { id, value: { value } } = option;
-    this.handleSelectChange(id, value);
-  }
-
-  // 选择事件来源
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '事件来源',
-      value: '$args[0].value.value',
-    },
-  })
-  handleEventSourceChange(option) {
-    const { isEventAnalysis } = this.props;
-    const { id, value: { value } } = option;
-    if (isEventAnalysis) {
-      this.handleEventSelectChange(id, value);
-    }
-    this.handleSelectChange(id, value);
-  }
-
-  // 选择事件类型
-  @autobind
-  @logable({
-    type: 'DropdownSelect',
-    payload: {
-      name: '事件类型',
-      value: '$args[0].value.value',
-    },
-  })
-  handleEventTypeChange(option) {
-    const { id, value: { key } } = option;
-    this.handleSelectChange(id, key);
-  }
-
-  // select改变
-  @autobind
-  handleSelectChange(key, v) {
-    this.props.filterCallback({
-      [key]: v,
-    });
-  }
-
-  // 事件分析表select改变
-  @autobind
-  handleEventSelectChange(key, v) {
-    this.props.eventSelectChange({
-      [key]: v,
-    });
-  }
-
   // 设置不可选择的开始时间
   @autobind
   setDisabledStartTime(start) {
@@ -164,71 +85,114 @@ export default class ReportFilter extends PureComponent {
     return end < moment().subtract(91, 'days') || end >= moment().startOf('day');
   }
 
-  // 事件搜索
   @autobind
-  @logable({ type: 'Click', payload: { name: '事件搜索', value: '$args[0]' } })
-  handleEventSearch(keyword) {
-    if (_.isEmpty(keyword)) {
-      return;
-    }
-    this.props.eventSearch({ keyword });
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '任务名称',
+      value: '$args[0]',
+    },
+  })
+  handleTaskSearch(value) {
+    this.props.onSearch();
   }
 
-  // 事件选择
+  // 类型下拉框change
   @autobind
-  @logable({ type: 'Click', payload: { name: '事件选择', value: '$args[0]' } })
-  handleEventNameSelect(option) {
-    const { eventName: prevEventName } = this.props;
-    const { eventName } = option;
-    if (eventName !== prevEventName) {
-      this.handleSelectChange('eventName', eventName);
-    }
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '类型',
+      value: '$args[0].value.value',
+    },
+  })
+  handleTypeChange(option) {
+    const {
+      id,
+      value: {
+        label,
+      }
+    } = option;
+    this.handleSelectChange(id, label);
   }
 
-  // 渲染事件名
+  // 发起人下拉框change
   @autobind
-  renderEventNameAutoCompleteOption(event) {
-    // 渲染事件名下拉列表的选项DOM
-    const { eventCode, eventName } = event;
-    return (
-      <Option key={eventCode} value={eventName} >
-        <span className={styles.eventAutoCompleteOptionValue} title={eventName}>{eventName}</span>
-      </Option>
-    );
+  @logable({
+    type: 'DropdownSelect',
+    payload: {
+      name: '发起人',
+      value: '$args[0].value.value',
+    },
+  })
+  handleInitiatorChange(option) {
+    const {
+      id,
+      value: {
+        name,
+      }
+    } = option;
+    this.handleSelectChange(id, name);
+  }
+
+  // select改变
+  @autobind
+  handleSelectChange(key, v) {
+    this.props.filterCallback({
+      [key]: v,
+    });
   }
 
   render() {
     const {
       startTime,
       endTime,
-      eventSource,
-      eventSourceOptions,
+      isApprove,
+      typeData,
+      type,
+      initiatorData,
+      initiator
      } = this.props;
-    const dateRangePicker = classnames({
-      [styles.filter]: true,
-      [styles.dateRangePickFilter]: true,
-    });
+     const dateRangePicker = classnames([styles.filter, styles.dateRangePickFilter]);
     return (
       <div className={styles.reportFilter}>
         <div className="search-box">
           <Input.Search
             className="search-input"
             placeholder="任务名称"
-            onSearch={this.handleEventSearch}
+            onSearch={this.handleTaskSearch}
             enterButton
           />
         </div>
         <SingleFilter
           filterName='类型'
-          filterId='type'
+          filterId='category'
           className='filter'
-          type='single'
           dataMap={['value', 'label']}
-          data={eventSourceOptions}
-          value={eventSource}
-          onChange={this.handleEventSourceChange}
+          data={typeData}
+          value={type}
+          onChange={this.handleTypeChange}
+          showSearch
+          placeholder='业务类型'
           needItemObj
         />
+        {
+          isApprove ?
+            <SingleFilter
+              filterName='发起人'
+              filterId='originator'
+              className='filter'
+              dataMap={['value', 'label']}
+              data={initiatorData}
+              value={initiator}
+              onChange={this.handleInitiatorChange}
+              needItemObj
+              placeholder='员工工号/员工姓名'
+              showSearch
+            />
+            :
+            null
+        }
         <DateRangePick
           type='date'
           filterId='filterDate'

@@ -7,36 +7,20 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Table, message } from 'antd';
+import { Table } from 'antd';
 import _ from 'lodash';
-import {
-  RETURN_TASK_FROM_TODOLIST,
-} from '../../../config/createTaskEntry';
-import { openRctTab } from '../../../utils';
-import styles from './toDoList.less';
-import logable from '../../../decorators/logable';
-import emptyImg from './img/empty.png';
-
-const systemCode = '102330';  // 系统代码（理财服务平台为102330）
-const USER_INFO_APPROVE = '投顾信息维护审核流程'; // 用户基本信息审核标识;
+import styles from './taskList.less';
 
 export default class TaskList extends PureComponent {
 
   static propTypes = {
     data: PropTypes.array.isRequired,
     className: PropTypes.string.isRequired,
-    onPageChange: PropTypes.func.isRequired,
-    onSizeChange: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
-    getTaskBasicInfo: PropTypes.func.isRequired,
-    taskBasicInfo: PropTypes.object,
-    clearCreateTaskData: PropTypes.func.isRequired,
-  }
-
-  static defaultProps = {
-    taskBasicInfo: {},
+    // 数据类型
+    listType: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -44,42 +28,13 @@ export default class TaskList extends PureComponent {
     this.state = {
       flowId: null,
     };
-    this.columns = [
-      {
-        title: '任务名称',
-        dataIndex: 'subject',
-        key: 'subject',
-        render: (item, record) =>
-          (<a
-            target="_blank"
-            rel="noopener noreferrer"
-            title={item.id}
-            data={record.id}
-            onClick={this.handleOpenNewPage}
-          >
-            {record.subject}
-          </a>),
-      },
-      {
-        title: '类型',
-        dataIndex: 'workFlowName',
-        key: 'workFlowName',
-        // render: (item, record) => (<span>{record.originator}</span>),
-      },
-      {
-        title: '提交时间',
-        dataIndex: 'startTime',
-        key: 'startTime',
-        // render: (item, record) => (<span>{record.originatorName}</span>),
-      },
-    ];
+    this.columns = this.columnsType();
   }
 
   componentDidMount() {
     this.updateEmptyHeight();
     window.addEventListener('resize', () => this.updateEmptyHeight());
   }
-
 
   componentDidUpdate() {
     this.updateEmptyHeight();
@@ -118,8 +73,88 @@ export default class TaskList extends PureComponent {
     });
   }
 
+  // 根据type获取列表数据
+  @autobind
+  columnsType() {
+    let taskColumns = [];
+    switch (this.props.listType) {
+      case 'apply':
+        taskColumns =  [
+          {
+            title: '任务名称',
+            dataIndex: 'subject',
+            key: 'subject',
+            render: (item, record) =>
+              (<a
+                target="_blank"
+                title={item.id}
+                className={styles.applySubject}
+              >
+                {record.subject}
+              </a>),
+          },
+          {
+            title: '类型',
+            dataIndex: 'workFlowName',
+            key: 'workFlowName',
+            render: (item, record) => (<span className={styles.applyWorkFlowName}>{record.workFlowName}</span>),
+          },
+          {
+            title: '提交时间',
+            dataIndex: 'startTime',
+            key: 'startTime',
+            render: (item, record) => (<span className={styles.applyStartTime}>{record.startTime}</span>),
+          },
+        ];
+        break;
+      case 'approve':
+        taskColumns =  [
+          {
+            title: '任务名称',
+            dataIndex: 'subject',
+            key: 'subject',
+            render: (item, record) =>
+              (<a
+                target="_blank"
+                title={item.id}
+              >
+                {record.subject}
+              </a>),
+          },
+          {
+            title: '类型',
+            dataIndex: 'workFlowName',
+            key: 'workFlowName',
+          },
+          {
+            title: '提交人工号',
+            dataIndex: 'originator',
+            key: 'originator',
+          },
+          {
+            title: '提交人姓名',
+            dataIndex: 'originatorName',
+            key: 'originatorName',
+          },
+          {
+            title: '提交时间',
+            dataIndex: 'startTime',
+            key: 'startTime',
+          },
+          {
+            title: '审批时间',
+            dataIndex: 'endTime',
+            key: 'endTime',
+          },
+        ];
+        break;
+        default:
+          break;
+    }
+    return taskColumns;
+  }
   render() {
-    const { className, data, todolist } = this.props;
+    const { className, data } = this.props;
     return (
       <Table
         className={className}

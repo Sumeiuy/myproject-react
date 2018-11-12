@@ -17,9 +17,9 @@ import ToDoList from '../../components/customerPool/todo/ToDoList';
 import TaskList from '../../components/customerPool/todo/TaskList';
 import logable from '../../decorators/logable';
 import styles from './todo.less';
-import ToDoNav from '../../components/customerPool/todo/ToDoNav';
 import { dva } from '../../helper';
 import ReportFilter from '../../components/customerPool/todo/ReportFilter';
+import { defaultStartTime, defaultEndTime } from '../../components/customerPool/todo/config';
 
 const effect = dva.generateEffect;
 const curPageNum = 1;
@@ -39,8 +39,9 @@ const mapStateToProps = state => ({
   data: state.customerPool.todolistRecord,
   taskBasicInfo: state.tasklist.taskBasicInfo,
   applyList: state.customerPool.applyList,
-  approveList: state.customerPool.applyList,
+  approveList: state.customerPool.approveList,
   typeValue: state.customerPool.typeValue,
+  initiator: state.customerPool.initiator,
 });
 
 const mapDispatchToProps = {
@@ -49,9 +50,14 @@ const mapDispatchToProps = {
   // 获取申请列表
   getApplyList: effect('customerPool/getApplyList', { forceFull: true }),
   // 获取审批列表
-  getApprove: effect('customerPool/getApprove', { forceFull: true }),
+  getApproveList: effect('customerPool/getApproveList', { forceFull: true }),
   // 获取类型下拉框
   getTypeValue: effect('customerPool/getTypeValue', { forceFull: true }),
+  // 获取类型下拉框
+  getInitiator: effect('customerPool/getInitiator', { forceFull: true }),
+  getTaskBasicInfo: effect('tasklist/getTaskBasicInfo', { forceFull: true }),
+  // 清除自建任务数据
+  clearCreateTaskData: effect('customerPool/clearCreateTaskData', { forceFull: true }),
 };
 
 // const mapDispatchToProps = {
@@ -79,10 +85,44 @@ export default class ToDo extends PureComponent {
     clearCreateTaskData: PropTypes.func.isRequired,
     getApplyList: PropTypes.func.isRequired,
     applyList: PropTypes.object.isRequired,
+    getApproveList: PropTypes.func.isRequired,
+    approveList: PropTypes.object.isRequired,
+    getTypeValue: PropTypes.func.isRequired,
+    typeValue: PropTypes.array.isRequired,
+    getInitiator: PropTypes.func.isRequired,
+    initiator: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
     taskBasicInfo: {},
+  }
+
+  static contextTypes = {
+    replace: PropTypes.func.isRequired,
+    empInfo: PropTypes.object.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    const {
+      location: {
+        query: {
+          taskType
+        }
+      }
+    } = props;
+    this.state = {
+      // 任务开始时间
+      startTime: defaultStartTime,
+      // 任务结束时间
+      endTime: defaultEndTime,
+      // 标签类型
+      activeKey: taskType,
+      // 类型下拉框value
+      category: '',
+      // 发起人下拉value
+      originator: '',
+    };
   }
 
   componentDidMount() {
@@ -94,9 +134,50 @@ export default class ToDo extends PureComponent {
           pageSize,
         },
       },
-      getApplyList,
+      getTypeValue,
+      getInitiator,
     } = this.props;
-    getApplyList(pageNum, pageSize);
+    this.getApplyList(query, pageNum, pageSize);
+    this.getApproveList(query, pageNum, pageSize);
+    getTypeValue();
+    getInitiator();
+  }
+
+  // 调用列表接口
+  @autobind
+  getTaskList(query, pageNum, pageSize) {
+  }
+
+  // 获取申请列表
+  @autobind
+  getApplyList(query, pageNum, pageSize) {
+    const {
+      location: {
+        query: {
+          taskType
+        }
+      }
+    } = this.props;
+    const { replace } = this.context;
+    if(!_.isEmpty(taskType)) {
+      this.props.getApplyList(query, pageNum = 1, pageSize = 10);
+      this.setState({ activeKey: taskType });
+    } else {
+      replace({
+        query: {
+          ...query,
+          taskType: '1',
+        },
+      });
+      this.props.getApplyList(query, pageNum = 1, pageSize = 10);
+      this.setState({ activeKey: '1' });
+    }
+  }
+
+  // 获取审批列表
+  @autobind
+  getApproveList(query, pageNum, pageSize) {
+    this.props.getApproveList(query, pageNum = 1, pageSize = 10);
   }
 
   @autobind
@@ -108,7 +189,6 @@ export default class ToDo extends PureComponent {
     },
   })
   onSearch(value) {
-    // this.props.search(value);
     const { replace, location: { pathname, query } } = this.props;
     replace({
       pathname,
@@ -131,7 +211,6 @@ export default class ToDo extends PureComponent {
         ...obj,
       },
     });
-    // this.props.pageChange(obj);
   }
 
   @autobind
@@ -146,6 +225,43 @@ export default class ToDo extends PureComponent {
     });
   }
 
+  // 头部类型筛选回调函数
+  @autobind
+  handlefilterCallback(obj) {
+    this.setState({
+      ...obj,
+    }, () => {
+      this.getApplyList(this.state);
+    });
+  }
+
+  // 头部发起人筛选回调函数
+  @autobind
+  handleInitiatorCallback(obj) {
+    this.setState({
+      ...obj,
+    }, () => {
+      this.getApproveList(this.state);
+    });
+  }
+
+  // 标签切换
+  @autobind
+  handleTabsChange(obj) {
+    const { location: { query, query: { taskType } } } = this.props;
+    const { replace } = this.context;
+    if (obj === taskType) {
+      return;
+    }
+    replace({
+      query: {
+        ...query,
+        taskType: obj,
+      },
+    });
+    this.setState({ activeKey: obj });
+  }
+
   render() {
     const {
       data,
@@ -157,14 +273,19 @@ export default class ToDo extends PureComponent {
       getTaskBasicInfo,
       clearCreateTaskData,
       applyList: {
-        empWorkFlowList,
+        empWorkFlowList: applyListData,
       },
+      approveList: {
+        empWorkFlowList: approveListData,
+      },
+      typeValue,
+      initiator,
     } = this.props;
+    const { category, originator } = this.state;
     const { query: { keyword } } = location;
-    const applyListData = _.map(empWorkFlowList, item =>  _.omit(item, ['id', 'dispatchUri']));
     return (
       <div className={styles.todo}>
-        <Tabs defaultActiveKey="1" type='card'>
+        <Tabs defaultActiveKey="1" activeKey={this.state.activeKey} type='card' onChange={this.handleTabsChange}>
           <TabPane key='1' tab='我的待办'>
             <div className="search-box">
               <Input.Search
@@ -192,23 +313,55 @@ export default class ToDo extends PureComponent {
           <TabPane key='2' tab='我的申请'>
             <div>
               <ReportFilter
+                filterCallback={this.handlefilterCallback}
+                onSearch={this.onSearch}
+                startTime={defaultStartTime}
+                endTime={defaultEndTime}
+                typeData={typeValue}
+                type={['', category]}
               />
-              <TaskList
-                className="todoList"
-                data={applyListData}
-                onPageChange={this.pageChange}
-                onSizeChange={this.sizeChange}
-                location={location}
-                push={push}
-                replace={replace}
-                taskBasicInfo={taskBasicInfo}
-                getTaskBasicInfo={getTaskBasicInfo}
-                clearCreateTaskData={clearCreateTaskData}
-              />
+              {
+                !_.isEmpty(data) ?
+                <TaskList
+                  className="todoList"
+                  data={applyListData}
+                  location={location}
+                  push={push}
+                  replace={replace}
+                  listType='apply'
+                />
+                : null
+              }
+
             </div>
           </TabPane>
           <TabPane key='3' tab='我的审批'>
+            <div>
+              <ReportFilter
+                filterCallback={this.handlefilterCallback}
+                onSearch={this.onSearch}
+                startTime={defaultStartTime}
+                endTime={defaultEndTime}
+                typeData={typeValue}
+                type={['', category]}
+                initiatorData={initiator}
+                initiator={['', originator]}
+                isApprove
+              />
+              {
+                !_.isEmpty(data) ?
+                <TaskList
+                  className="todoList"
+                  data={approveListData}
+                  location={location}
+                  push={push}
+                  replace={replace}
+                  listType='approve'
+                />
+                : null
+              }
 
+            </div>
           </TabPane>
         </Tabs>
 
