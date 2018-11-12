@@ -356,9 +356,10 @@ export const getRouterData = (app) => {
         import('../routes/stock/Home' /* webpackChunkName: "stock" */)),
     },
     // 在 stock 页面的列表中点击任意记录进入
-    '/stock/detail': {
+    '/strategyCenter/stock/detail': {
       component: dynamicWrapper(app, ['stock'], () =>
         import('../routes/stock/Detail' /* webpackChunkName: "stock_detail" */)),
+      isPrimary: true,
     },
     // 直接进入
     // 用户中心
@@ -437,15 +438,17 @@ export const getRouterData = (app) => {
         import('../routes/choicenessCombination/Home' /* webpackChunkName: "choicenessCombination" */)),
     },
     // 组合详情 /choicenessCombination/combinationDetail?id=xxx  id为组合id
-    '/choicenessCombination/combinationDetail': {
+    '/strategyCenter/choicenessCombination/combinationDetail': {
       component: dynamicWrapper(app, ['combinationDetail'], () =>
         import('../routes/choicenessCombination/CombinationDetail' /* webpackChunkName: "choicenessCombination_combinationDetail" */)),
+      isPrimary: true,
     },
     // 历史报告详情 /choicenessCombination/reportDetail?id=xxx&combinationCode=xxx
     // id为报告 id，combinationCode 为组合 id
-    '/choicenessCombination/reportDetail': {
+    '/strategyCenter/choicenessCombination/reportDetail': {
       component: dynamicWrapper(app, ['choicenessCombination'], () =>
         import('../routes/choicenessCombination/ReportDetail' /* webpackChunkName: "choicenessCombination_reportDetail" */)),
+      isPrimary: true,
     },
     // 投顾业务能力竞赛
     '/investmentConsultantRace': {

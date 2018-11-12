@@ -287,14 +287,15 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
         return false;
       }
 
+      // 在修正前保存面包屑
+      newBreadcrumbRoutes.push({
+        ...currentPane,
+      });
       // 找到叶节点link，修正
       currentPane.path = pathname;
       currentPane.query = query;
       isFoundCurrentPane = true;
       newCurrentMenuId = currentPane.id;
-      newBreadcrumbRoutes.push({
-        ...currentPane,
-      });
       return true;
     }
     return false;

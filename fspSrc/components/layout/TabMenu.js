@@ -62,6 +62,7 @@ export default class TabMenu extends PureComponent {
           className={classnames({
             [styles.subItem]: true,
             [styles.activeItem]: this.isActiveMenu(path, item, level, true),
+            [styles.informationCenterItem]: item.name === '资讯中心',
           })}
           onClick={() => this.handleLinkClick(item)}
         >

@@ -395,7 +395,7 @@ export default class Home extends PureComponent {
 
   // 组合推荐，打开详情页
   @autobind
-  @logPV({ pathname: '/choicenessCombination/combinationDetail', title: '精选组合详情' })
+  @logPV({ pathname: '/strategyCenter/choicenessCombination/combinationDetail', title: '精选组合详情' })
   handleCombinationClick(obj) {
     const { push } = this.props;
     const param = {
@@ -410,12 +410,12 @@ export default class Home extends PureComponent {
       id: obj.code,
       name: obj.name,
     };
-    const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
+    const url = `/strategyCenter/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: '/choicenessCombination/combinationDetail',
+      pathname: '/strategyCenter/choicenessCombination/combinationDetail',
       query,
     });
   }
