@@ -20,7 +20,7 @@ import {
   overlayStyle,
   securityType as configSecurityType,
   typeList,
-  formatStr,
+  formatDateStr,
 } from './config';
 import styles from './combinationAdjustHistory.less';
 import logable, { logPV } from '../../decorators/logable';
@@ -204,7 +204,7 @@ export default class CombinationAdjustHistory extends PureComponent {
                             </a>
                           </div>
                           <div className={styles.timeBox}>
-                            <span>{time.format(child.time, formatStr)}</span>
+                            <span>{time.format(child.time, formatDateStr)}</span>
                             <a
                               className={styles.customerLink}
                               onClick={() => this.handleOpenCustomerListPage(openPayload)}

@@ -11,9 +11,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { Popover } from 'antd';
 import _ from 'lodash';
-import antdStyles from '../../../css/antd.less';
+
+import Tooltip from '../../common/Tooltip';
 import { logCommon } from '../../../decorators/logable';
 import styles from './checkLayout.less';
 import {
@@ -55,15 +55,14 @@ function renderItem(data = {}, params, itemStyle = null) {
           <span>{data.unit || ''}</span>
         </span>
       </div>
-      <Popover
+      <Tooltip
         title={data.title || ''}
         content={data.description}
         placement="bottom"
         overlayStyle={{ maxWidth: '320px' }}
-        overlayClassName={antdStyles.popoverClass}
       >
         <div className={styles.title}>{data.title || ''}</div>
-      </Popover>
+      </Tooltip>
     </div>
   );
 }

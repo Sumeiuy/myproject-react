@@ -71,6 +71,8 @@ const CUSTOMER_LIST_INTRO_SECOND_STEP_ID = 'customer_list_intro_second_step_id';
 const CUSTOMER_LIST_INTRO_THIRD_STEP_ID = 'customer_list_intro_third_step_id';
 const CUSTOMER_LIST_INTRO_FOURTH_STEP_ID = 'customer_list_intro_fourth_step_id';
 
+// 首页执行者视图首次引导提示第五步的dom的id名称(客户分析)
+const NEW_HOME_INTRO_FIFTH_SEEP_IDNAME = 'homePageIntroFifthStep';
 
 /**
  * 由于antd升级到3.8之后treeselect组件value为空字符串时无法回填数据，
@@ -100,4 +102,5 @@ export {
   CUSTOMER_LIST_INTRO_THIRD_STEP_ID,
   CUSTOMER_LIST_INTRO_FOURTH_STEP_ID,
   ALL_SERVE_SOURCE,
+  NEW_HOME_INTRO_FIFTH_SEEP_IDNAME,
 };

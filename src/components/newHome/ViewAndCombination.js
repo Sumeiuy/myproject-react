@@ -2,8 +2,8 @@
  * @Description: 首席观点和组合推荐
  * @Author: Liujianshu
  * @Date: 2018-09-11 15:47:01
- * @Last Modified by: Liujianshu-K0240007
- * @Last Modified time: 2018-09-21 15:05:47
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-10-30 19:58:23
  */
 
 import React from 'react';
@@ -16,6 +16,9 @@ import { logCommon } from '../../decorators/logable';
 import { openRctTab } from '../../utils';
 import { url as urlHelper } from '../../helper';
 import styles from './viewAndCombination.less';
+
+// 首页执行者视图首次引导提示第七步的dom的id名称(组合推荐)
+const NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME = 'homePageIntroSeventhStep';
 
 export default function ViewAndCombination(props, context) {
   const { data } = props;
@@ -152,7 +155,16 @@ export default function ViewAndCombination(props, context) {
         [styles.active]: item.key === activeTab,
       });
       return (<div key={item.key} className={styles.item}>
-        <a className={linkClass} onClick={() => handleTabClick(item)}>{item.name}</a>
+        <a
+          className={linkClass}
+          onClick={() => handleTabClick(item)}
+          id={item.name === '组合推荐'
+            ? NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME
+            : null
+          }
+        >
+        {item.name}
+        </a>
       </div>);
     });
     return (
@@ -180,7 +192,7 @@ export default function ViewAndCombination(props, context) {
       case tabArray[1].key:
         contentElement = <div className={styles.view}>
           <h2 className={styles.combinationTitle}><span>近30天收益率</span>组合名称</h2>
-          <CommonCell {...combinationProps} />
+       <CommonCell {...combinationProps} />
         </div>;
         break;
       default:

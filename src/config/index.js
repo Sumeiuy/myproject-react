@@ -28,6 +28,7 @@ import * as createTaskEntry from './createTaskEntry';
 import seperator from './filterSeperator';
 import retTabParam from './retTabParam';
 import profitRateConfig from './profitRateConfig';
+import tabMenuConfig from './tabMenu';
 
 const sessionStore = engine.createStore([sessionStorage, cookieStorage]);
 
@@ -60,4 +61,5 @@ export {
   seperator,
   retTabParam,
   profitRateConfig,
+  tabMenuConfig,
 };

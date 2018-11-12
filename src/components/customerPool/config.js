@@ -369,17 +369,21 @@ export const CONFIG_TAB_PRODUCTCENTER = {
   PA100000: {
     title: '私募产品',
     id: 'FSP_PRIVATE_PRD_TAB',
+    pathname: '/fsp/productCenter/privateFund',
   },
   PA050000: {
     title: '公募产品',
     id: 'FSP_PUBLIC_FUND_TAB',
+    pathname: '/fsp/productCenter/publicFund',
   },
   PA070000: {
     title: '紫金产品',
     id: 'FSP_PRD_PURPLE_GOLD_PROD',
+    pathname: '/fsp/productCenter/finance',
   },
   PA090000: {
     title: '收益凭证',
     id: 'FSP_PRD_REVENCE_VOUCHER',
+    pathname: '/fsp/productCenter/receipt',
   },
 };

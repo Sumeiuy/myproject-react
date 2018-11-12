@@ -196,6 +196,7 @@ function dispatchTabPane(options) {
       removePanes = [], // 可选参数， 数组元素为key值，string类型，需要移除的tabpane，支持同时移除多个
       activeTabKey = '', // 可选参数，string类型，表示当前活动的tabPane，值需要与key值相对应
       state, // 可选参数，其他可附加的数据
+      id, // 可选参数，如果需要关闭tab，指定需要关闭的tab id
     } = options;
 
     // 如果没有传入任何参数，则在react框架下什么都不做，
@@ -219,13 +220,18 @@ function dispatchTabPane(options) {
       });
     } else if (url) { // 由于push方法不支持接受两个参数了，所以这里如果传url字符串，将无法携带state对象，需要注意。
       routerAction(url);
-    } else if (routerAction === 'remove') { // 如果不传入url相关的参数，则表示关闭当前tabpane，跳转到前面的tabpane
-      // 这里之所以传递'remove'作为参数，是为了避免传递push方法，引起不必要的花销。
-      const elem = document.querySelector('#activeTabPane');
-      if (elem) {
-        elem.click();
+    } else if (routerAction === 'remove') {
+      if(id) {
+        window.removeTabpane && window.removeTabpane(id);
       } else {
-        warning(false, '请确认是在react框架下执行该操作，tabpane上的关闭按钮没有找到!');
+        // 如果不传入url相关的参数，则表示关闭当前tabpane，跳转到前面的tabpane
+        // 这里之所以传递'remove'作为参数，是为了避免传递push方法，引起不必要的花销。
+        const elem = document.querySelector('#activeTabPane');
+        if (elem) {
+          elem.click();
+        } else {
+          warning(false, '请确认是在react框架下执行该操作，tabpane上的关闭按钮没有找到!');
+        }
       }
     }
   }
@@ -274,7 +280,7 @@ function linkTo(options) {
   });
 }
 
-// 关闭当前的RctTab, 跳转到前一个tab
+// 关闭指定的RctTab, 跳转到前一个tab
 function closeRctTab(options) {
   dispatchTabPane({
     ...options,
@@ -283,7 +289,7 @@ function closeRctTab(options) {
   });
 }
 
-// 关闭当前的FspTab，跳转到前一个tab
+// 关闭指定的FspTab，跳转到前一个tab
 function closeFspTab(options) {
   dispatchTabPane({
     ...options,
