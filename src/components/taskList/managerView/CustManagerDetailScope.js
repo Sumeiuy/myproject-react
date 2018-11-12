@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2018-04-09 21:41:03
  * @Last Modified by: zhangmei
- * @Last Modified time: 2018-11-12 13:59:06
+ * @Last Modified time: 2018-11-12 16:56:15
  * 服务经理维度任务统计
  */
 
@@ -190,7 +190,7 @@ export default class CustManagerDetailScope extends PureComponent {
    * 选中一个维度，触发回调，请求当前维度的信息
    */
   @autobind
-  @logable({ type: 'Click', payload: { name: '选择' } })
+  @logable({ type: 'Click', payload: { name: '选择查看维度' } })
   handleSelectMenuItem({ key }) {
     this.setState({
       currentSelectScope: key,
