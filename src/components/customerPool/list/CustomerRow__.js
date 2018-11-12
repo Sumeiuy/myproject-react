@@ -1,8 +1,8 @@
 /**
  * @Author: zhuyanwen
  * @Date: 2018-01-30 14:11:19
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-09-07 21:12:09
+ * @Last Modified by: Liujianshu-K0240007
+ * @Last Modified time: 2018-11-01 15:01:04
  */
 
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+import Tooltip from '../../common/Tooltip';
 import QuickMenu from './QuickMenu';
 import SixMonthEarnings from './SixMonthEarnings';
 import MatchArea from './individualInfo/MatchArea';
@@ -425,16 +426,18 @@ export default class CustomerRow extends PureComponent {
                     <div
                       className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
                     >
-                      <div className="itemText">{`风险等级：${riskLevelConfig[rskLev].title}`}</div>
-                      {riskLevelConfig[rskLev].name}
+                      <Tooltip placement="left" title={`风险等级：${riskLevelConfig[rskLev].title}`}>
+                        {riskLevelConfig[rskLev].name}
+                      </Tooltip>
                     </div>
                 }
                 {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
                 {
                   listItem.contactFlag ?
                     <div className="iconSingned">
-                      签约
-                      <div className="itemText">签约客户</div>
+                      <Tooltip placement="topRight" title="签约客户">
+                        签约
+                      </Tooltip>
                     </div> : null
                 }
               </div>

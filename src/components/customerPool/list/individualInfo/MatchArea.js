@@ -9,10 +9,11 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Tooltip } from 'antd';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { autobind } from 'core-decorators';
+
+import Tooltip from '../../../common/Tooltip';
 import { isSightingScope, isLocalScope, handleOpenFsp360TabAction, openProductDetailPage, getDetailBtnVisible } from '../../helper';
 import { url as urlHelper, url, number } from '../../../../helper';
 import { seperator, sessionStore } from '../../../../config';
@@ -498,7 +499,6 @@ export default class MatchArea extends PureComponent {
       const labelInfo = index === fspLabel.length - 1 ? name : `${name},`;
       return (
         <Tooltip
-          overlayClassName={styles.labelsToolTip}
           placement="bottomLeft"
           title={description}
           key={description}
@@ -556,7 +556,6 @@ export default class MatchArea extends PureComponent {
           const tempKey = `${description}${index}`;
           return (
             <Tooltip
-              overlayClassName={styles.labelsToolTip}
               placement="bottomLeft"
               title={description}
               key={tempKey}

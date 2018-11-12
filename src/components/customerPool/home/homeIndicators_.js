@@ -95,7 +95,7 @@ export function getPureAddCust({ pureAddData }) {
   const param = {
     dataArray: pureAddData,
     categoryArray: ['新增有效户', '新增高净值客户', '新增高端产品户', '新增产品客户'],
-    colorArray: ['#1aa1e0', '#1aa1e0', '#1aa1e0', '#1aa1e0'],
+    colorArray: ['#1ac4f8', '#1ac4f8', '#1ac4f8', '#1ac4f8'],
     formatterMethod: toFixedCust,
   };
   return getProgressDataSource(param);
@@ -112,7 +112,7 @@ export function getProductSale({
     descArray,
     dataArray: numberArray,
     categoryArray: nameArray,
-    colorArray: ['#1aa1e0', '#1aa1e0', '#1aa1e0', '#1aa1e0'],
+    colorArray: ['#1ac4f8', '#1ac4f8', '#1ac4f8', '#1ac4f8'],
     formatterMethod: getNewFormattedUnitAndItem,
     type: 'productSale',
   };
@@ -174,7 +174,7 @@ export function getClientsNumber({
     series: singleColorBar({
       data: newSeries,
       barWidth: '85%',
-      basicColor: '#4ed0f1',
+      basicColor: '#008fd2',
       colourfulTotal: colourfulTotalNumber,
       colourfulData,
       colourfulIndex,
@@ -226,7 +226,7 @@ export function getServiceIndicatorOfPerformance({ performanceData }) {
       axisTick: { show: false },
       axisLine: { show: false },
       axisLabel: {
-        color: '#999',
+        color: '#008fd2',
         fontSize: '12',
         interval: 0,
         margin: 6,
@@ -241,7 +241,7 @@ export function getServiceIndicatorOfPerformance({ performanceData }) {
       data: performanceData,
       width: 25,
       maxValue: 100,
-      bgColor: '#d8d8d8',
+      bgColor: '#008fd2',
     }),
   };
 }
@@ -266,7 +266,7 @@ export function getCustAndProperty(dataArray) {
   // 降序排列
   const descData = _.orderBy(datas, ['value'], ['desc']);
   // 设置背景色 #7D9BE0
-  const colors = ['#7ee1fa', '#abb2ff', '#ffc874'];
+  const colors = ['#42c7e8', '#8a93ec', '#fec965'];
   const newDatas = _.map(
     descData,
     (item, index) => ({ ...item, bgColor: colors[index] }),
@@ -296,7 +296,7 @@ export function getHSRate(array) {
       itemStyle: {
         normal: {
           opacity: 0.95,
-          color: '#2ea1f3',
+          color: '#1ac4f8',
           shadowBlur: 0,
         },
         emphasis: { opacity: 0.8 },

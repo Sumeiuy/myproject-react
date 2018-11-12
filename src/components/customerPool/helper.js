@@ -187,15 +187,18 @@ const helper = {
     // upPrdtTypeId：产品所属类型id, code：产品代码
     const { upPrdtTypeId, code, name } = data;
     const param = CONFIG_TAB_PRODUCTCENTER[upPrdtTypeId];
-    const pathname = '/htsc-product-base/htsc-prdt-web/index.html/?_#/productDetailPage';
+    const pathname = CONFIG_TAB_PRODUCTCENTER[upPrdtTypeId].pathname;
+    const path = '/htsc-product-base/htsc-prdt-web/index.html/?_#/productDetailPage';
     const query = { prdtId: code };
-    const url = `${pathname}?${urlHelper.stringify(query)}`;
+    const url = `${path}?${urlHelper.stringify(query)}`;
     openFspIframeTab({
       routerAction,
       url,
-      query,
       pathname,
       param,
+      state: {
+        url,
+      }
     });
     // 神策日志
     logCommon({
