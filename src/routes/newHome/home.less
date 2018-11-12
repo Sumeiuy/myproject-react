@@ -4,19 +4,19 @@
   position: relative;
   z-index: 10;
   background: #f4f6f9;
-  padding: 10px;
-
+  margin-top: 20px;
   .leftContent {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    width: 222px;
+    width: 182px;
+    margin-left: 50px;
+    margin-right: 30px;
     & > div {
       position: relative;
       flex: 0 0 auto;
-      background: #fff;
-      margin-bottom: 10px;
-      border: 1px solid #e5e9f2;
+      background: #f4f6f9;
+      margin-bottom: 27px;
     }
     .mostFocusContentLink {
       height: 160px;
@@ -34,32 +34,31 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    width: 816px;
-    padding: 0 10px;
+    width: 756px;
     .shotCutLink {
       flex: 0 0 auto;
       height: 80px;
-      background: #fff;
+      background: #f4f6f9;
       margin-bottom: 10px;
-      border: 1px solid #e5e9f2;
     }
     .tabPanesContainer {
+      margin-top: 8px;
       flex: 0 0 auto;
       height: 570px;
-      background: #fff;
-      border: 1px solid #e5e9f2;
+      background: #f4f6f9;
     }
   }
   .rightContent {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    width: 222px;
+    width: 182px;
+    margin-left: 30px;
+    margin-right: 50px;
     & > div {
       position: relative;
       flex: 0 0 auto;
-      background: #fff;
-      border: 1px solid #e5e9f2;
+      background: #f4f6f9;
       margin-bottom: 10px;
     }
     .productDateLink {
@@ -71,6 +70,18 @@
     .newsInfoContainer {
       height: 166px;
       margin-bottom: 0;
+    }
+  }
+}
+
+.introTooltip {
+  :global {
+    .introjs-tooltiptext {
+      font-size: 14px;
+      color: #000;
+    }
+    .introjs-tooltipbuttons {
+      text-align: center;
     }
   }
 }
