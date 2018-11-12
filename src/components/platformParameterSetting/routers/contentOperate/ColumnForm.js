@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-11 21:10:10
+ * @Last Modified time: 2018-11-11 23:21:07
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -62,15 +62,6 @@ export default class ColumnForm extends PureComponent {
     this.props.onChange({
       descriptionCount,
     });
-  }
-
-  // 校验图片链接
-  @autobind
-  validateLink(rule, value, callback) {
-    if (value && !regxp.url.test(value)) {
-      callback('图片链接格式不正确');
-    }
-    callback();
   }
 
   render() {
