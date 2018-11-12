@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-08 17:08:21
+ * @Last Modified time: 2018-11-11 15:55:09
  */
 /**
  * 常用说明
@@ -65,6 +65,8 @@ export default class CommonUpload extends PureComponent {
     deleteAttachment: PropTypes.func,
     // 上传附件方法
     uploadAttachment: PropTypes.func,
+    // 删除成功后回调方法
+    deleteCallback: PropTypes.func,
     // 每个单子对应的唯一附件表 ID，默认为 ''
     attachment: PropTypes.string,
     attachmentList: PropTypes.array,
@@ -90,6 +92,8 @@ export default class CommonUpload extends PureComponent {
     title: '',
     // 最大上传文件限制，单位 MB
     maxFileSize: 20,
+    // 删除成功后回调方法
+    deleteCallback: _.noop,
   }
 
   constructor(props) {
@@ -197,7 +201,10 @@ export default class CommonUpload extends PureComponent {
       attachId,
       attachment,
     };
-    deleteAttachment(deleteObj);
+    deleteAttachment(deleteObj).then(() => {
+      const { deleteCallback, deleteAttachmentList } = this.props;
+      deleteCallback(deleteAttachmentList);
+    });
   }
 
   // 空方法，用于日志上传

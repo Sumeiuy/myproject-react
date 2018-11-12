@@ -53,7 +53,7 @@ const onError = (e) => {
       payload: {
         name: '业务错误',
         value: errorMessage,
-        url,
+        url: url.slice(0, url.lastIndexOf('?')),
         code,
       },
     });

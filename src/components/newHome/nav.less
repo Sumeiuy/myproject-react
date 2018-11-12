@@ -1,50 +1,49 @@
 .navWrapper {
   display: flex;
-  min-width: 800px;
   margin: 0 auto;
   .icon {
-    width: 26px;
-    height: 26px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    background-repeat: no-repeat;
-    background-position: center center;
+    background: no-repeat center center;
   }
   .todayToDoNumbers {
-    background-color: #d8e6ff;
-    background-image: url('./dclrw.png');
-    background-size: 16px 3px;
+    background: #c6ecfe url('./dclrw.png') no-repeat 7px;
+    background-size: 21px 4px;
   }
   .businessNumbers {
-    background-color: #ffedd4;
-    background-image: url('./qzmbkh.png');
-    background-size: 12px 12px;
+    background: #fbe4ca url('./qzmbkh.png') no-repeat 9px 8px;
+    background-size: 16px 16px;
   }
   .workFlowNumbers {
-    background-color: #ffe2e2;
-    background-image: url('./dblc.png');
-    background-size: 12px 12px;
+    background: #fcd1d1 url('./dblc.png') no-repeat 9px 9px;
+    background-size: 16px 16px;
   }
   .notificationNumbers {
-    background-color: #cff5ff;
-    background-image: url('./xxtx.png');
-    background-size: 10px 12px;
+    background: #cbf7fa url('./xxtx.png') no-repeat 9px 9px;
+    background-size: 16px 16px;
   }
   dl {
     flex: 1 auto 0;
-    margin-top: 22px;
-    border-right: 1px solid #e5e9f2;
+    margin-right: 8px;
+    padding-top: 20px;
     float: left;
+    background: #fff;
+    border-bottom: 1px solid #dee4f0;
+    border-radius: 2px;
+    height: 80px;
     cursor: pointer;
     &:last-child {
-      border-right: 0;
+      margin-right: 0;
     }
     dt {
       float: left;
-      margin-left: 47px;
+      margin-left: 25px;
     }
     dd {
-      margin-left: 84px;
       line-height: 18px;
+      text-align: right;
+      padding-right: 25px;
     }
   }
   .value {

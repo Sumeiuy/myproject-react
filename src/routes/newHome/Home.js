@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 00:56:09
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-12 10:13:25
  */
 
 import React, { PureComponent } from 'react';
@@ -13,8 +13,10 @@ import { routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import store from 'store';
+import introJs from 'intro.js';
+import 'intro.js/introjs.css';
 
-import { logPV } from '../../decorators/logable';
+import { logPV, logCommon} from '../../decorators/logable';
 import withRouter from '../../decorators/withRouter';
 import Nav from '../../components/newHome/Nav';
 import ViewAndCombination from '../../components/newHome/ViewAndCombination';
@@ -29,6 +31,17 @@ import { padSightLabelDesc } from '../../config';
 import styles from './home.less';
 import { MorningBroadcast } from '../../components/customerPool/home';
 import { DATE_FORMAT_STRING, MONTH_DATE_FORMAT, navArray } from './config';
+import {
+  NEW_HOME_INTRO_THIRD_SEEP_IDNAME,
+  NEW_HOME_INTRO_FIFTH_SEEP_IDNAME,
+  NEW_HOME_INTRO_SIXTH_SEEP_IDNAME,
+  NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME,
+  NEW_HOME_INTRO_NINTH_SEEP_IDNAME,
+  stepIds,
+} from './config';
+
+// 存储在本地用哪个来判断是否在执行者视图中第一次使用'展开收起'
+const NEWHOMEFIRSTUSECOLLAPSE_PERFORMERVIEW = 'NEW_HOME_GUIDE_FIRSTUSECOLLAOSE_PERFORMERVIEW';
 
 const effect = dva.generateEffect;
 
@@ -111,6 +124,50 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 // 事件提示的 code
 const TODAY_EVENT_CODE = '4';
+// 默认第一个神策埋点名为 搜索栏 点击下一步或者上一步会重写 facingOneModele 的值
+let facingOneModele = '搜索栏';
+// 神策埋点需要知道用户点击下一步还是上一步 第一步搜索栏是0 用来判断  判断完会重绘
+let count = 0;
+// 神策埋点用来判断是第几个弹出框点击了上一步还是下一步
+let countStep = 1 ;
+
+// 获取新手引导步骤列表  因为需求更改了引导顺序 但是NEW_HOME_INTRO_后面的数字不影响顺序  只需要更改newStepList里面的排序顺序就能改变引导显示的顺序
+function getIntroStepListInNewHome() {
+  const newStepList = [
+    {
+      // 主导航 4
+      element: document.querySelector('#tabMenu'),
+      intro: '导航菜单从左侧移到上方，留出更多页面空间为您展现精彩内容。',
+      position: 'bottom',
+    }, {
+      // 重点关注客户 5
+      element: document.querySelector(`#${NEW_HOME_INTRO_THIRD_SEEP_IDNAME}`),
+      intro: '新增值得重点关注的客户类别统计，点击可进入客户列表，助您全方位拓展业务。',
+      position: 'right',
+    }, {
+      // 客户分析 8
+      element: document.querySelector(`#${NEW_HOME_INTRO_FIFTH_SEEP_IDNAME}`),
+      intro: '新增“客户分析”栏目，从六大维度洞察名下客户，点击各项指标可下钻查看客户明细列表。',
+      position: 'top',
+    }, {
+      // 产品日历 9
+      element: document.querySelector(`#${NEW_HOME_INTRO_SIXTH_SEEP_IDNAME}`),
+      intro: ' 新增“今日产品”栏目，让您及时掌握首发、开放销售、到期等关键产品信息。点击数字可以查看产品明细列表。',
+      position: 'top',
+    }, {
+      //组合推荐 10
+      element: document.querySelector(`#${NEW_HOME_INTRO_SEVENTH_SEEP_IDNAME}`),
+      intro: '近30天涨幅排名前五的投资组合在这里，点击即可查看组合详情。',
+      position: 'top',
+    }, {
+      //每日晨报 11
+      element: document.querySelector(`#${NEW_HOME_INTRO_NINTH_SEEP_IDNAME}`),
+      intro: ' 每日晨报让您可听、可看、可下载最新财经热点话题。',
+      position: 'top',
+    },
+  ];
+  return newStepList;
+}
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -190,7 +247,7 @@ export default class Home extends PureComponent {
     // 猜你感兴趣
     queryGuessYourInterests({ orgId: this.loginOrgId });
     // 产品日历
-    queryProductCalendar({date});
+    queryProductCalendar({ date });
     // 首席观点
     queryChiefView({
       curPageNum: 1,
@@ -209,13 +266,21 @@ export default class Home extends PureComponent {
     new Promise(resolve => resolve()).then(() => {
       // 组合推荐
       queryIntroCombination();
-
-      // 判断当前登录用户是否在营业部
+      // 待办事项, 有任务管理岗时，将岗位id传给后端
+      // 判断当前登录用户是否在非营业部
       const isNotSaleDepartment = emp.isManagementHeadquarters(this.loginOrgId)
         || emp.isFiliale(custRange, this.loginOrgId);
       // 非营业部登录用户有权限时，传登陆者的orgId
       queryNumbers({ orgId: isNotSaleDepartment && permission.hasTkMampPermission() ? this.loginOrgId : '' });
     });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // 第一次渲染完判断是否是第一次进入执行者视图，是的话显示引导 放在didupdate里是为了解决在didmount下并没有渲染完成导致定位不准的问题
+    if (!this.isFirstUseCollapse()) {
+      setTimeout(this.intialGuide, 500);
+      store.set(NEWHOMEFIRSTUSECOLLAPSE_PERFORMERVIEW, true);
+    }
   }
 
   // 猜你感兴趣-更多点击事件
@@ -252,10 +317,10 @@ export default class Home extends PureComponent {
     const { code } = item;
     // http://168.61.9.158:15902/htsc-product-base/financial_product_query.do?router=homePage&clientType=crm
     push({
-        pathname: '/fsp/productCenter/homePage',
-        state: {
-          url: `/htsc-product-base/financial_product_query.do?router=homePage&type=${code}&clientType=crm`,
-        }
+      pathname: '/fsp/productCenter/homePage',
+      state: {
+        url: `/htsc-product-base/financial_product_query.do?router=homePage&type=${code}&clientType=crm`,
+      }
     });
   }
 
@@ -264,16 +329,16 @@ export default class Home extends PureComponent {
   transferProductData() {
     const { productCalendar } = this.props;
     const productData = _.isEmpty(productCalendar)
-    ? []
-    : productCalendar.map(item => {
-      const newItem = {...item};
-      if (newItem.code === TODAY_EVENT_CODE) {
-        newItem.title = `今日关注事件${item.value}件`;
-      } else {
-        newItem.title = `今日${item.name}${item.value}只`;
-      }
-      return newItem;
-    });
+      ? []
+      : productCalendar.map(item => {
+        const newItem = { ...item };
+        if (newItem.code === TODAY_EVENT_CODE) {
+          newItem.title = `今日关注事件${item.value}件`;
+        } else {
+          newItem.title = `今日${item.name}${item.value}只`;
+        }
+        return newItem;
+      });
     return productData;
   }
 
@@ -374,6 +439,75 @@ export default class Home extends PureComponent {
       type: 'LABEL',
     });
   }
+  // 判断是否在执行者视图中使用'展开收起'功能
+  isFirstUseCollapse() {
+    return store.get(NEWHOMEFIRSTUSECOLLAPSE_PERFORMERVIEW);
+  }
+
+  // 神策埋点 targetElement.id是第几个元素的id名
+  @autobind
+  handleIntorButtomChange(targetElement){
+    const data = stepIds[targetElement.id];
+    facingOneModele = data.name;
+    // count = 0  data.step从第0开始 判断step是下一步还是上一步
+    let step = count < data.step ? '下一步' : '上一步';
+    count = data.step;
+    logCommon({
+      type: 'Click',
+      payload: {
+        name: data && step,
+        value: data && `第${countStep}个`,
+      },
+    });
+    // 从第0个开始点下一步是0  第一步点上一步是1  写在这里是神策需要先上报再修改 不然显示会混乱
+    step === '下一步' ? countStep++ : countStep--;
+  }
+
+  // 神策埋点 显示是第几个弹框点击的关闭
+  @autobind
+  handleIntorButtomClose(facingOneModele){
+    logCommon({
+      type: 'Click',
+      payload: {
+        name:'关闭',
+        value: facingOneModele,
+      },
+    });
+  }
+  // 引导功能初始化
+  @autobind
+  intialGuide() {
+    // onexit会执行2次  使用count只执行一次
+    let count = 0;
+    introJs().setOptions({
+      hidePrev:true,
+      hideNext:true,
+      showBullets: true,
+      showProgress: false,
+      overlayOpacity: 0.4,
+      exitOnOverlayClick: false,
+      showStepNumbers: false,
+      tooltipClass: styles.introTooltip,
+      highlightClass: styles.highlightClass,
+      doneLabel: '结束',
+      prevLabel: '上一个',
+      nextLabel: '下一个',
+      skipLabel: '关闭',
+      steps: getIntroStepListInNewHome(),
+      scrollToElement: true,
+      disableInteraction: true,
+    }).onchange((targetElement)=> {
+      this.handleIntorButtomChange(targetElement);
+      }).onexit(() => {
+        // 没到最后一步点关闭按钮 执行onexit
+        if(!count){
+          count++;
+          this.handleIntorButtomClose(facingOneModele);
+        }
+      }).start();
+
+  }
+
 
   render() {
     const {
@@ -417,12 +551,15 @@ export default class Home extends PureComponent {
     };
     // 重点关注
     const keyAttentionProps = {
+      icon: 'focusAttention',
       title: '重点关注',
       data: keyAttention,
       onClick: this.handleLinkToCustomerList,
+      introPositionId: NEW_HOME_INTRO_THIRD_SEEP_IDNAME
     };
     // 猜你感兴趣
     const guessYourInterestsProps = {
+      icon: 'interested',
       title: '猜你感兴趣',
       data: guessYourInterests,
       isNeedExtra: true,
@@ -437,6 +574,7 @@ export default class Home extends PureComponent {
       title: `${today}产品日历`,
       data: this.transferProductData(),
       onClick: this.handleProductCalendarValueClick,
+      introPositionId: NEW_HOME_INTRO_SIXTH_SEEP_IDNAME
     };
     // 组合推荐
     const viewAndCombinationProps = {
@@ -480,6 +618,7 @@ export default class Home extends PureComponent {
       dataList: initBoradcastList,
       sourceList: initBoradcastFile,
       isNewHome: true,
+      introPositionId: NEW_HOME_INTRO_NINTH_SEEP_IDNAME,
     };
 
     return (

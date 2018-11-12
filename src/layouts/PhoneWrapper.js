@@ -1,8 +1,8 @@
 /*
  * @Author: zhangjun
  * @Date: 2018-05-28 19:14:00
- * @Last Modified by: zhangmei
- * @Last Modified time: 2018-09-25 09:53:06
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-01 23:01:33
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -10,7 +10,6 @@ import moment from 'moment';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import Phone from '../components/common/phone';
-import Mask from '../components/common/mask';
 import { transformCustFeecbackData } from '../components/customerPool/helper';
 import logable from '../decorators/logable';
 import fspGlobal from '../utils/fspGlobal';
@@ -37,9 +36,6 @@ export default class PhoneWrapper extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      showMask: false,
-    };
     this.startTime = '';
     this.endTime = '';
   }
@@ -147,8 +143,6 @@ export default class PhoneWrapper extends Component {
     addServeRecord(payload).then(() => {
       // 关联通话和服务记录
       this.saveServiceRecordAndPhoneRelation();
-      // 回调，关闭电话联系方式弹窗
-      this.setState({ showMask: false });
       // 显示添加服务记录弹窗，todo=update表示更新服务记录
       toggleServiceRecordModal({
         id: custId,
@@ -161,28 +155,14 @@ export default class PhoneWrapper extends Component {
     });
   }
 
-  // 显示和隐藏通话蒙版
-  // TODO 日志查看：找不到方法 未验证
-  @autobind
-  @logable({ type: 'Click', payload: { name: '显示/隐藏' } })
-  handleShowMask(data) {
-    this.setState({ showMask: data });
-  }
-
   render() {
-    const { showMask } = this.state;
     return (
       <div className="phoneWrapper">
         <Phone
           headless
           onEnd={this.phoneCallback}
           onConnected={this.phoneCallback}
-          onShowMask={this.handleShowMask}
           onClick={this.handleClickPhone}
-        />
-        <Mask
-          visible={showMask}
-          onClick={() => { this.handleShowMask(false); }}
         />
       </div>
     );

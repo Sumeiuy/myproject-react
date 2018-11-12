@@ -73,6 +73,8 @@ export default {
     monthlyProfits: {},
     hotWdsList: [],
     hotPossibleWdsList: [],
+    // 客户列表搜索的热词
+    custListHotPossibleWdsList: [],
     // 目标客户列表数据
     custList: [],
     // 目标客户列表页码
@@ -376,7 +378,10 @@ export default {
       function* getHotPossibleWds({ payload }, { call, put }) {
         const response = yield call(api.getHotPossibleWds, payload);
         yield put({
-          type: 'getHotPossibleWdsSuccess',
+          // 由于头部公共搜索组件和客户列表搜索组件共存的情况，所以要用不同的字段区分
+          type: payload.fromCustList
+            ? 'getHotPossibleWdsByCustListSuccess'
+            : 'getHotPossibleWdsSuccess',
           payload: { response },
         });
       }, { type: 'takeLatest' }],
@@ -1162,6 +1167,16 @@ export default {
       return {
         ...state,
         hotPossibleWdsList: _.uniqBy(possibleWdsList, 'primaryKey'),
+      };
+    },
+    // 客户列表使用的的推荐热词列表
+    getHotPossibleWdsByCustListSuccess(state, action) {
+      const { payload: { response } } = action;
+      const { possibleWdsList } = response.resultData;
+      // 返回的数据的primaryKey不能重复
+      return {
+        ...state,
+        custListHotPossibleWdsList: _.uniqBy(possibleWdsList, 'primaryKey'),
       };
     },
     getCustomerListSuccess(state, action) {

@@ -1,0 +1,58 @@
+.environmentalInfo {
+  :global {
+    .ant-modal {
+      width: 650px !important;
+      height: auto !important;
+    }
+    .ant-modal-content {
+      width: 100%;
+    }
+    .ant-modal-body {
+      padding: 50px 40px;
+    }
+  }
+  .environmentalInfoContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    .environmentalInfoImg {
+      width: 140px;
+      height: 140px;
+      background: #f2f7fd;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      img {
+        width: 90px;
+        height: 60px;
+        align-self: center;
+      }
+    }
+    .environmentalInfoText {
+      font-size: 14px;
+      line-height: 30px;
+      & > li {
+        span:first-child {
+          display: inline-block;
+          width: 120px;
+          text-align: right;
+        }
+      }
+      & > div {
+        span:first-child {
+          display: inline-block;
+          width: 120px;
+          text-align: right;
+        }
+      }
+      .environmentalInfoTextPart {
+        display: flex;
+        & > ul {
+          &:first-child {
+            margin-right: 50px;
+          }
+        }
+      }
+    }
+  }
+}

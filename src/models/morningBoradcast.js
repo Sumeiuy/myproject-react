@@ -8,17 +8,18 @@ import { message } from 'antd';
 import _ from 'lodash';
 import { request } from '../config';
 import { morningBoradcast as api } from '../api';
+import { data } from '../helper';
 
 const downloadName = 'ceFileDownload2';
 
 // 后端返回数据没有预览地址，需要转化成预览地址
-function activityColumnUrlTransform(data) {
-  return _.map(data, (item, index) => {
+function activityColumnUrlTransform(list) {
+  return _.map(list, item => {
     const { attaches } = item;
     const { name, attachId, creator } = attaches[0];
     return {
       ...item,
-      index,
+      index: data.uuid(16),
       url: `${request.prefix}/file/${downloadName}?attachId=${attachId}&empId=${creator}&filename=${window.encodeURIComponent(name)}`
     };
   });
