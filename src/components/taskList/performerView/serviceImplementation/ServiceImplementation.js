@@ -3,7 +3,7 @@
  * @Author: WangJunjun
  * @Date: 2018-05-22 14:52:01
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-18 14:53:58
+ * @Last Modified time: 2018-11-12 13:42:33
  */
 
 import React, { PureComponent } from 'react';
@@ -202,7 +202,7 @@ export default class ServiceImplementation extends PureComponent {
   }
 
   componentDidMount() {
-    const { isFold, getPageSize } = this.props;
+    const { isFold, getPageSize, basicInfo: { missionId } } = this.props;
     const isFoldFspLeftMenu = fsp.isFSPLeftMenuFold();
     const newPageSize = getPageSize(isFoldFspLeftMenu, isFold);
     // 首次进入，请求服务实施列表
@@ -215,7 +215,8 @@ export default class ServiceImplementation extends PureComponent {
       // 客户列表联动首先要将服务状态切换成 不限
       // 将客户选择到location中联动的那个客户,因为查询客户列表的接口需要客户rowId,
       // 所以必须先查一把客户信息
-      queryCustomer({ keyWord: custId }).then(this.handleCustListCascadeAfterCust);
+      // 此处的查询相关的客户列表修改成新的接口，在执行者视图详情的区域中查询，需要传递missionId，以便能够查询某个任务下的客户列表
+      queryCustomer({ keyWord: custId, missionId }).then(this.handleCustListCascadeAfterCust);
     } else {
       // 新增一个在头部筛选选择的客户是不存在数据中的客户时,客户数据将会保存到 redux 中
       // 导致页面展示无数据图片后，删除客户筛选条件，客户数据没有重置
@@ -407,11 +408,12 @@ export default class ServiceImplementation extends PureComponent {
   handleCustListCascade({ needCascadeCustList, needResetDefault }) {
     // 如果location变化之后，需要判断是否进行客户列表联动
     if (needCascadeCustList) {
-      const { location: { query: { custId } }, queryCustomer } = this.props;
+      const { location: { query: { custId } }, queryCustomer, basicInfo: { missionId } } = this.props;
       // 客户列表联动首先要将服务状态切换成 不限
       // 将客户选择到location中联动的那个客户,因为查询客户列表的接口需要客户rowId,
       // 所以必须先查一把客户信息
-      queryCustomer({ keyWord: custId }).then(this.handleCustListCascadeAfterCust);
+      // 此处的查询相关的客户列表修改成新的接口，在执行者视图详情的区域中查询，需要传递missionId，以便能够查询某个任务下的客户列表
+      queryCustomer({ keyWord: custId, missionId }).then(this.handleCustListCascadeAfterCust);
     }
     // 如果location不存在custId的时候，比如去除客户筛选
     if (needResetDefault) {
