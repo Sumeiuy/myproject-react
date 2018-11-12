@@ -311,80 +311,82 @@ export default class Header extends PureComponent {
     const errorIconClasses = className(['iconfont', 'icon-tixing', styles.errorIcon]);
 
     return (
-      <div className={styles.fspHeader}>
-        <Modal
-          title="隔离墙"
-          width={650}
-          className={styles.modal}
-          destroyOnClose
-          visible={this.state.isolationWallModalVisible}
-          onOk={this.handleSubmitExistCp}
-          onCancel={this.handleIsolationWallModalHide}
-          footer={[
-            <Button key="back" onClick={this.handleIsolationWallModalHide}>取消</Button>,
-            <Button
-              key="submit"
-              type="primary"
-              onClick={this.handleSubmitExistCp}
-            >
-              验证
-            </Button>,
-          ]}
-        >
-          <div className={styles.selectedInfo}>股票代码：</div>
-          <Input
-            value={this.state.stockCode}
-            onChange={e => this.handleInputChange(e.target.value)}
-            onPressEnter={this.handleSubmitExistCp}
-          />
-          <div className={rightClasses}>
-            <i className={rightIconClasses} />
-            <span>此产品验证通过</span>
+      <div className={styles.fspHeaderContainer}>
+        <div className={styles.fspHeader}>
+          <Modal
+            title="隔离墙"
+            width={650}
+            className={styles.modal}
+            destroyOnClose
+            visible={this.state.isolationWallModalVisible}
+            onOk={this.handleSubmitExistCp}
+            onCancel={this.handleIsolationWallModalHide}
+            footer={[
+              <Button key="back" onClick={this.handleIsolationWallModalHide}>取消</Button>,
+              <Button
+                key="submit"
+                type="primary"
+                onClick={this.handleSubmitExistCp}
+              >
+                验证
+              </Button>,
+            ]}
+          >
+            <div className={styles.selectedInfo}>股票代码：</div>
+            <Input
+              value={this.state.stockCode}
+              onChange={e => this.handleInputChange(e.target.value)}
+              onPressEnter={this.handleSubmitExistCp}
+            />
+            <div className={rightClasses}>
+              <i className={rightIconClasses} />
+              <span>此产品验证通过</span>
+            </div>
+            <div className={errorClasses}>
+              <i className={errorIconClasses} />
+              <span>此产品验证不通过</span>
+            </div>
+            <div className={errorEmptyClasses}>
+              <i className={errorIconClasses} />
+              <span>产品代码不能为空</span>
+            </div>
+          </Modal>
+          <div><Logo /></div>
+          <div className={styles.search}>
+            <Search
+              orgId={this.orgId}
+              queryHotPossibleWds={this.queryHotPossibleWds}
+              queryHotWdsData={hotPossibleWdsList}
+              push={push}
+              searchHistoryVal={searchHistoryVal}
+              saveSearchVal={this.handleSaveSearchVal}
+              location={location}
+              isOnlySearchable
+            />
           </div>
-          <div className={errorClasses}>
-            <i className={errorIconClasses} />
-            <span>此产品验证不通过</span>
+          <div className={styles.headerContent}>
+            <div onClick={this.handleFeedbackClick}>
+              <span className={styles.navItem}>
+                <i className={styles.feedbackIcon} />
+                <span>我要提问</span>
+              </span>
+              <span className={styles.splitLine} />
+            </div>
+            {
+              !_.isEmpty(secondaryMenu) ?
+                this.renderSecondaryMenu(secondaryMenu) : null
+            }
+            {
+              (!_.isEmpty(empRspList)) ?
+                (<EmpRsp
+                  empRspList={empRspList}
+                  empCurrentPosition={empCurrentPosition}
+                  empInfo={empInfo}
+                  onSwitchRsp={this.handleSwitchRsp}
+                />) :
+                null
+            }
           </div>
-          <div className={errorEmptyClasses}>
-            <i className={errorIconClasses} />
-            <span>产品代码不能为空</span>
-          </div>
-        </Modal>
-        <div><Logo /></div>
-        <div className={styles.search}>
-          <Search
-            orgId={this.orgId}
-            queryHotPossibleWds={this.queryHotPossibleWds}
-            queryHotWdsData={hotPossibleWdsList}
-            push={push}
-            searchHistoryVal={searchHistoryVal}
-            saveSearchVal={this.handleSaveSearchVal}
-            location={location}
-            isOnlySearchable
-          />
-        </div>
-        <div className={styles.headerContent}>
-          <div onClick={this.handleFeedbackClick}>
-            <span className={styles.navItem}>
-              <i className={styles.feedbackIcon} />
-              <span>我要提问</span>
-            </span>
-            <span className={styles.splitLine} />
-          </div>
-          {
-            !_.isEmpty(secondaryMenu) ?
-              this.renderSecondaryMenu(secondaryMenu) : null
-          }
-          {
-            (!_.isEmpty(empRspList)) ?
-              (<EmpRsp
-                empRspList={empRspList}
-                empCurrentPosition={empCurrentPosition}
-                empInfo={empInfo}
-                onSwitchRsp={this.handleSwitchRsp}
-              />) :
-              null
-          }
         </div>
       </div>
     );
