@@ -118,6 +118,7 @@ export default class Header extends PureComponent {
   }
 
   getMenus(array, level = 2) {
+    let isFoundFeedback = false;
     return array.map((item) => {
       if (item.children && !_.isEmpty(item.children)) {
         return (
@@ -128,6 +129,13 @@ export default class Header extends PureComponent {
             {this.getMenus(item.children, level + 1)}
           </Menu.SubMenu>
         );
+      }
+      if(item.name === '反馈管理') {
+        isFoundFeedback = true;
+      }
+      // 在有反馈管理菜单的情况下，不显示反馈记录菜单
+      if(item.name === '反馈记录' && isFoundFeedback) {
+        return null;
       }
       return (
         <Menu.Item
