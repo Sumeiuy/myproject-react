@@ -106,6 +106,15 @@ export default class ContactWay extends PureComponent {
     return this.getPrivateValue(value);
   }
 
+  // 根据传入的值（bool || null）决定返回的显示值
+  @autobind
+  getViewTextByBool(bool) {
+    if (_.isBoolean(bool)) {
+      return bool ? '是' : '否';
+    }
+    return DEFAULT_VALUE;
+  }
+
   render() {
     const {
       noMessage,
@@ -150,7 +159,7 @@ export default class ContactWay extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="请勿发短信"
-            value={noMessage ? '是' : '否'}
+            value={this.getViewTextByBool(noMessage)}
             className={styles.infoItem}
           />
         </div>
@@ -158,7 +167,7 @@ export default class ContactWay extends PureComponent {
           <InfoItem
             width={INFO_ITEM_WITDH}
             label="请勿打电话"
-            value={noCall ? '是' : '否'}
+            value={this.getViewTextByBool(noCall)}
             className={styles.infoItem}
           />
         </div>

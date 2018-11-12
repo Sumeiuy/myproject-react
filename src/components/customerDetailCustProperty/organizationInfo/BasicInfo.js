@@ -22,6 +22,7 @@ export default class BasicInfo extends PureComponent {
     hasDuty: PropTypes.bool.isRequired,
   }
 
+  // 获取需要隐私控制的数据，有权限则展示字段，有权限没有数据则展示--，无权限则展示***
   @autobind
   getPrivateValue(value) {
     const { hasDuty } = this.props;
@@ -32,6 +33,15 @@ export default class BasicInfo extends PureComponent {
   @autobind
   getViewTextByNum(value) {
     return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
+  }
+
+  // 根据传入的值（bool || null）决定返回的显示值
+  @autobind
+  getViewTextByBool(bool) {
+    if (_.isBoolean(bool)) {
+      return bool ? '是' : '否';
+    }
+    return DEFAULT_VALUE;
   }
 
   render() {
@@ -188,7 +198,7 @@ export default class BasicInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="是否上市公司"
-              value={data.isListed ? '是' : '否'}
+              value={this.getViewTextByBool(data.isListed)}
               className={styles.infoItem}
             />
           </div>

@@ -20,15 +20,16 @@ export default class BasicInfo extends PureComponent {
     hasDuty: PropTypes.bool.isRequired,
   }
 
+  // 获取需要隐私控制的数据，有权限则展示字段，有权限没有数据则展示--，无权限则展示***
   @autobind
   getPrivateValue(value) {
     const { hasDuty } = this.props;
     return hasDuty ? (value || DEFAULT_VALUE) : DEFAULT_PRIVATE_VALUE;
   }
 
-  // 获取是否企业高管显示数据
+  // 根据传入的值（bool || null）决定返回的显示值
   @autobind
-  getIsCompanyLeaderText(bool) {
+  getViewTextByBool(bool) {
     if (_.isBoolean(bool)) {
       return bool ? '是' : '否';
     }
@@ -107,7 +108,7 @@ export default class BasicInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="是否企业高管"
-              value={this.getIsCompanyLeaderText(data.isCompanyLeader)}
+              value={this.getViewTextByBool(data.isCompanyLeader)}
               className={styles.infoItem}
             />
           </div>

@@ -67,8 +67,8 @@ export default class MemberInfo extends PureComponent {
       queryZLUmemberInfo,
       queryZjPointMemberInfo,
     } = this.props;
-    queryZLUmemberInfo({custId});
-    queryZjPointMemberInfo({custId});
+    queryZLUmemberInfo({ custId });
+    queryZjPointMemberInfo({ custId });
   }
 
 

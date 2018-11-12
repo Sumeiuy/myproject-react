@@ -22,6 +22,7 @@ export default class BasicInfo extends PureComponent {
     hasDuty: PropTypes.bool.isRequired,
   }
 
+  // 获取需要隐私控制的数据，有权限则展示字段，有权限没有数据则展示--，无权限则展示***
   @autobind
   getPrivateValue(value) {
     const { hasDuty } = this.props;
