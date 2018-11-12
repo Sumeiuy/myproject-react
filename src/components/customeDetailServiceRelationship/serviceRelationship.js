@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-09 16:21:42
+ * @Last Modified time: 2018-11-12 00:11:15
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -14,7 +14,7 @@ import Table from '../../components/common/table';
 import Modal from '../../components/common/biz/CommonModal';
 import styles from './serviceRelationship.less';
 import { number } from '../../helper';
-import { newServiceTeamColumns, newIntroduceColumns, newServiceHistoryColumns} from './config';
+import { serviceTeamColumns, introduceColumns, serviceHistoryColumns} from './config';
 
 export default class ServiceRelationship extends PureComponent {
   static propTypes = {
@@ -104,7 +104,7 @@ export default class ServiceRelationship extends PureComponent {
               pagination={showServiceHistoryPagination}
               className={styles.tabPaneWrap}
               dataSource={serviceHistory}
-              columns={newServiceHistoryColumns}
+              columns={serviceHistoryColumns}
               scroll={{ x: '1024px' }}
             />
           </div>
@@ -115,7 +115,7 @@ export default class ServiceRelationship extends PureComponent {
               pagination={false}
               className={styles.tableBorder}
               dataSource={serviceTeam}
-              columns={newServiceTeamColumns}
+              columns={serviceTeamColumns}
             />
           </div>
         </div>
@@ -128,7 +128,7 @@ export default class ServiceRelationship extends PureComponent {
               pagination={false}
               className={styles.tableBorder}
               dataSource={newIntroduceDatas}
-              columns={newIntroduceColumns}
+              columns={introduceColumns}
             />
           </div>
         </div>

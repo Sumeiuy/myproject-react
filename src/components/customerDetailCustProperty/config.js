@@ -3,7 +3,7 @@
  * @Description: 客户360，客户属性tab相关配置
  * @Date: 2018-11-07 15:17:38
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-09 17:21:48
+ * @Last Modified time: 2018-11-12 10:24:08
  */
 
 export const CUST_TYPE = {
@@ -26,19 +26,19 @@ const config = {
       title: '变更后等级',
       dataIndex: 'afterChangeLevel',
       key: 'afterChangeLevel',
-      className: 'firstStyle',
+      className: 'publicStyle',
     },
     {
       title: '操作来源',
       dataIndex: 'source',
       key: 'source',
-      className: 'firstStyle',
+      className: 'publicStyle',
     },
     {
       title: '操作时间',
       dataIndex: 'time',
       key: 'time',
-      className: 'firstStyle',
+      className: 'lastStyle',
     },
   ],
   integralFlowColumns: [
@@ -52,73 +52,74 @@ const config = {
       title: '交易日期',
       dataIndex: 'tradeDate',
       key: 'tradeDate',
-      className: 'firstStyle',
+      className: 'publicStyle',
     },
     {
       title: '交易渠道',
       dataIndex: 'tradeChannel',
       key: 'tradeChannel',
-      className: 'firstStyle',
+      className: 'publicStyle',
     },
     {
       title: '类型',
       dataIndex: 'type',
       key: 'type',
-      className: 'firstStyle',
+      className: 'publicStyle',
     },
     {
       title: '子类型',
       dataIndex: 'subType',
       key: 'subType',
-      className: 'firstStyle',
+      className: 'publicStyle',
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      className: 'firstStyle',
+      className: 'publicStyle',
     },
     {
       title: '产品名称',
       dataIndex: 'productName',
       key: 'productName',
-      className: 'firstStyle',
+      className: 'publicStyle',
     },
     {
       title: '产品数量',
       dataIndex: 'productQuantity',
       key: 'productQuantity',
-      className: 'firstStyle',
+      className: 'publicStyle',
     },
     {
       title: '基本点数',
       dataIndex: 'basePoints',
       key: 'basePoints',
-      className: 'firstStyle',
+      align: 'right',
+      className: 'lastStyle',
     },
     {
-      title: '变更前等级',
-      dataIndex: 'beforeChangeLevel',
-      key: 'beforeChangeLevel',
-      className: 'firstStyle',
+      title: '点数类型',
+      dataIndex: 'pointType',
+      key: 'pointType',
+      className: 'publicStyle',
     },
     {
-      title: '变更前等级',
-      dataIndex: 'beforeChangeLevel',
-      key: 'beforeChangeLevel',
-      className: 'firstStyle',
+      title: '处理日期',
+      dataIndex: 'processDate',
+      key: 'processDate',
+      className: 'publicStyle',
     },
     {
-      title: '变更前等级',
-      dataIndex: 'beforeChangeLevel',
-      key: 'beforeChangeLevel',
-      className: 'firstStyle',
+      title: '所有者',
+      dataIndex: 'owners',
+      key: 'owners',
+      className: 'publicStyle',
     },
     {
-      title: '变更前等级',
-      dataIndex: 'beforeChangeLevel',
-      key: 'beforeChangeLevel',
-      className: 'firstStyle',
+      title: '取消的交易ID	',
+      dataIndex: 'cancelledId',
+      key: 'cancelledId',
+      className: 'lastStyle',
     },
   ]
 };

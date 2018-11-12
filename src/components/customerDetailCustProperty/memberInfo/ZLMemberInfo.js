@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-涨乐财富通会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-09 19:08:30
+ * @Last Modified time: 2018-11-12 14:45:53
  */
 
 import React, { PureComponent } from 'react';
@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import Icon from '../../common/Icon';
 import { Button } from 'antd';
+import _ from 'lodash';
 import Table from '../../../components/common/table';
 import Modal from '../../../components/common/biz/CommonModal';
 import InfoItem from '../../common/infoItem';
@@ -19,36 +20,64 @@ import { MemberGradeColumns } from '../config';
 const INFO_ITEM_WITDH = '110px';
 export default class ZLMemberInfo extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 涨乐财富通会员信息
     data: PropTypes.object.isRequired,
+    // 涨乐U会员等级变更记录
+    dataSource: PropTypes.object.isRequired,
+    // 获取涨乐财富通U会员等级变更记录
+    queryZLUmemberLevelChangeRecords: PropTypes.func.isRequired,
   }
   constructor(props){
     super(props);
     this.state = {
-     // 会员等级变更弹框
-     memberGradeModalVisible: false,
+      // 会员等级变更弹框
+      memberGradeModalVisible: false,
+      // 当前页码
+      pageNum: 1,
     };
   }
-// 打开会员变更弹出框
-@autobind
-handleMemberGradeModalOpen(){
- this.setState({memberGradeModalVisible: true});
-}
-// 关闭会员变更弹出框
-@autobind
-handleMemberGradeModalClose(){
- this.setState({memberGradeModalVisible: false});
-}
+
+  // 打开会员变更弹出框
+  @autobind
+  handleMemberGradeModalOpen(){
+    this.setState({memberGradeModalVisible: true});
+  }
+
+  // 关闭会员变更弹出框
+  @autobind
+  handleMemberGradeModalClose(){
+    this.setState({memberGradeModalVisible: false});
+  }
+
+  // 页码改变的回调
+  @autobind
+  handlePaginationChange(page){
+    const { queryZLUmemberLevelChangeRecords, location: { query} } = this.props;
+    this.setState({
+      pageNum: page,
+    });
+    queryZLUmemberLevelChangeRecords({
+      pageSize: 10,
+      pageNum: page,
+      custId: query && query.custId,
+    });
+  }
+
   render() {
-    const { memberGradeModalVisible } = this.state;
-    const { data } = this.props;
-    // const { list = [], page = {} } = listData;
-    // const PaginationOption = {
-    //   current: page.pageNum || 1,
-    //   total: page.totalCount || 0,
-    //   pageSize: page.pageSize || 10,
-    //   onChange: this.handlePaginationChange,
-    // };
+    const { memberGradeModalVisible, pageNum } = this.state;
+    const { data, dataSource} = this.props;
+    const { list = [], page = {} } = dataSource;
+    const PaginationOption = {
+      current: pageNum || 1,
+      total: page.totalCount || 0,
+      pageSize: page.pageSize || 10,
+      onChange: this.handlePaginationChange,
+    };
+     //  涨乐U会员等级变更记录的数据长度
+     const memberGradeDatasLength = _.size(list);
+     // 数据超过10条展示分页，反之不展示
+     const showMemberGradePagination = memberGradeDatasLength > 10 ? PaginationOption : false;
     return (
       <div className={styles.zlMemberInfoBox}>
         <div className={`${styles.title} clearfix`}>
@@ -68,15 +97,14 @@ handleMemberGradeModalClose(){
              modalKey="memberGrade"
              maskClosable={false}
             >
-             {/* <div className={styles.tabContainer}>
+             <div className={styles.tabContainer}>
              <Table
-              // pagination={showMemberGradePagination}
-              className={styles.tabPaneWrap}
-              // dataSource={obj}
+              pagination={showMemberGradePagination}
+              dataSource={list}
               columns={MemberGradeColumns}
-              scroll={{ x: '1030px' }}
+              scroll={{ x: '1024px' }}
             />
-          </div> */}
+          </div>
           </Modal>
           </span>
         </div>

@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 17:08:51
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-09 16:45:26
+ * @Last Modified time: 2018-11-12 00:13:38
  */
 import _ from 'lodash';
  const config = {
@@ -154,25 +154,3 @@ import _ from 'lodash';
   introduceColumns,
   serviceHistoryColumns
  } = config;
- // 修改Table的Column
- export const newServiceTeamColumns = _.map(serviceTeamColumns, column => ({
-  ...column,
-  render(text, record) {
-   const { flag } = record;
-   return flag ? '' : text;
-  }
-}));
-export const newIntroduceColumns = _.map(introduceColumns, column => ({
-   ...column,
-   render(text, record) {
-    const { flag } = record;
-    return flag ? '' : text;
-   }
-}));
-export const newServiceHistoryColumns = _.map(serviceHistoryColumns, column => ({
-  ...column,
-  render(text, record) {
-   const { flag } = record;
-   return flag ? '' : text;
-  }
-}));

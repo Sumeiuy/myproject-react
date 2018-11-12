@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-08 19:20:49
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-11-12 14:43:55
  */
 
 import React, { PureComponent } from 'react';
@@ -92,6 +92,8 @@ export default class CustProperty extends PureComponent {
       queryCustomerProperty,
       queryZLUmemberInfo,
       queryZLUmemberLevelChangeRecords,
+      queryZjPointMemberInfo,
+      queryZjPointExchangeFlow,
     } = this.props;
     queryCustomerProperty({
       custId,
@@ -99,7 +101,15 @@ export default class CustProperty extends PureComponent {
     queryZLUmemberInfo({
       custId,
     });
+    queryZjPointMemberInfo({
+      custId,
+    });
     queryZLUmemberLevelChangeRecords({
+      custId,
+      pageSize: PAGE_SIZE,
+      pageNum: 1,
+    });
+    queryZjPointExchangeFlow({
       custId,
       pageSize: PAGE_SIZE,
       pageNum: 1,
@@ -182,8 +192,13 @@ export default class CustProperty extends PureComponent {
 
   render() {
     const {
+      location,
       zlUMemberInfo,
       zlUMemberLevelChangeRecords,
+      zjPointMemberInfo,
+      zjPointExchangeFlow,
+      queryZLUmemberLevelChangeRecords,
+      queryZjPointExchangeFlow
     } = this.props;
     return (
       <div className={styles.custPropertyBox}>
@@ -207,8 +222,13 @@ export default class CustProperty extends PureComponent {
             </TabPane>
             <TabPane tab="会员信息" key="memberInfo">
               <MemberInfo
+                location={location}
                 zlUMemberInfo={zlUMemberInfo}
                 zlUMemberLevelChangeRecords={zlUMemberLevelChangeRecords}
+                zjPointExchangeFlow={zjPointExchangeFlow}
+                zjPointMemberInfo={zjPointMemberInfo}
+                queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
+                queryZjPointExchangeFlow={queryZjPointExchangeFlow}
               />
             </TabPane>
             <TabPane tab="关系信息" key="relationInfo">
