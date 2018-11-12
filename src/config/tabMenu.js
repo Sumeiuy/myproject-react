@@ -163,8 +163,14 @@ const newOpenTabConfig = [
     pid: 'FSP_STRATEGY_CENTER',
   },
   {
+    name: '每日晨报',
+    id: 'FSP_BROADCAST_LIST',
+    path: '/strategyCenter/broadcastList',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
+  },
+  {
     name: '晨报详情',
-    id: 'FSP_BROADCAST_DETAIL',
+    id: 'FSP_BROADCAST_LIST',
     path: '/broadcastDetail',
     pid: 'FSP_STRATEGY_CENTER',
   },
@@ -473,11 +479,26 @@ const defaultMenu = [
   },
 ];
 
+const tabNotUseGlobalBreadcrumb = [
+  '/customerPool/list/detail',
+  '/customerPool/createTaskFromTaskRejection2',
+  '/taskCenter/taskList',
+  '/statisticalQuery/report',
+  '/sysOperate/platformParameterSetting',
+  '/sysOperate/telephoneNumberManage'
+];
+
 const exported = {
   newOpenTabConfig,
   indexPaneKey,
   defaultMenu,
+  tabNotUseGlobalBreadcrumb,
 };
 
 export default exported;
-export { newOpenTabConfig, indexPaneKey, defaultMenu };
+export {
+  newOpenTabConfig,
+  indexPaneKey,
+  defaultMenu,
+  tabNotUseGlobalBreadcrumb,
+};

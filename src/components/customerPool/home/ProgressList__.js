@@ -12,7 +12,7 @@ import { Progress, Popover } from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { linkTo } from './homeIndicators_';
-import logable, { logCommon } from '../../../decorators/logable';
+import { logCommon } from '../../../decorators/logable';
 
 import antdStyles from '../../../css/antd.less';
 import styles from './progressList.less';

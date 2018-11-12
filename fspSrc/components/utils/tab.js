@@ -37,6 +37,7 @@ function getCurrentMenuPath(pathname, level) {
       return pathArray.slice(0, level + 1).join('/');
     }
   }
+  return '';
 }
 
 // 修正外部跳转连接
@@ -148,6 +149,7 @@ function getPanesFromTabCongfig(location, fixPanes, editPane) {
     newPanes,
     newActiveKey,
     newCurrentMenuId,
+    newBreadcrumbRoutes: [],
   };
 }
 
@@ -157,6 +159,7 @@ function getAndFixTopMenu(
   activeKey,
   currentMenuId,
   topMenu,
+  newBreadcrumbRoutes,
 ) {
   const { pathname, query } = location;
   let newActiveKey = activeKey;
@@ -199,6 +202,7 @@ function getAndFixTopMenu(
     newPanes,
     newActiveKey,
     newCurrentMenuId,
+    newBreadcrumbRoutes,
   };
 }
 
@@ -222,12 +226,14 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
   let isFoundCurrentPane = false;
   let newActiveKey = '';
   let newCurrentMenuId = currentMenuId;
+  let newBreadcrumbRoutes = [];
 
   if (pathname === '/') {
     return {
       newPanes: fixPanes,
       newActiveKey: fixPanes[0].id,
       newCurrentMenuId: fixPanes[0].id,
+      newBreadcrumbRoutes,
     };
   }
 
@@ -236,15 +242,20 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
   const newPanes = traverseMenus(fixPanes, (pane, i, array, level) => {
     const menuPath = getCurrentMenuPath(pane.path, level);
     const locationPath = getCurrentMenuPath(pathname, level);
+
+    if (!_.isEmpty(pane.children) && pane.pid !== 'ROOT') { // 中间级菜单，目前只有二级中间菜单
+      if ((locationPath.split('/'))[2] === (menuPath.split('/'))[1]) { // 面包屑匹配二级中间菜单
+        newBreadcrumbRoutes.push({
+          ...pane,
+        });
+      }
+    }
     // 找到当前path对应的pane进行修正
     if (menuPath === locationPath) {
-
       if (pane.path === '/customerPool' && pathname !== '/customerPool') {
         return false;
       }
-
       const currentPane = array[i];
-
       // 新打开的页面被命中，并且没有顶级菜单被命中时
       if (!pane.type && !isTopMenu) {
         currentPane.path = pathname;
@@ -281,6 +292,9 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
       currentPane.query = query;
       isFoundCurrentPane = true;
       newCurrentMenuId = currentPane.id;
+      newBreadcrumbRoutes.push({
+        ...currentPane,
+      });
       return true;
     }
     return false;
@@ -312,6 +326,7 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
       newPanes: errorPanes,
       newActiveKey,
       newCurrentMenuId,
+      newBreadcrumbRoutes: [],
     };
   }
 
@@ -324,6 +339,7 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
       newActiveKey,
       newCurrentMenuId,
       topMenu,
+      newBreadcrumbRoutes,
     );
   }
 
@@ -331,6 +347,7 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
     newPanes,
     newActiveKey,
     newCurrentMenuId,
+    newBreadcrumbRoutes,
   };
 }
 
@@ -411,14 +428,46 @@ function getPanesWithPathname(location, shouldRemove, editPane = {}, prevState) 
   // 这种情况主要是用来处理跳转到新的tab页面，并关闭当前tab页面的情况
   const fixPanes = shouldRemove ? _.filter(panes, pane => pane.id !== activeKey) : [...panes];
 
-  const { newPanes, newActiveKey, newCurrentMenuId } =
+  const { newPanes, newActiveKey, newCurrentMenuId, newBreadcrumbRoutes } =
     getPanes(location, fixPanes, editPane, currentMenuId);
 
   return {
     panes: newPanes,
     activeKey: newActiveKey,
     currentMenuId: newCurrentMenuId,
+    breadcrumbRoutes: newBreadcrumbRoutes,
   };
+}
+
+function getNewRouterHistory({
+  pathname,
+  query,
+  routerHistory = [],
+}) {
+  let newRouterHistory = routerHistory;
+  if (_.find(routerHistory, router => router.pathname === pathname)) {
+    newRouterHistory = _.filter(routerHistory, router => router.pathname !== pathname);
+  }
+  if (routerHistory.length >= 15) {
+    newRouterHistory = routerHistory.splice(0, routerHistory.length - 1);
+    newRouterHistory = [
+      {
+        pathname,
+        query,
+      },
+      ...newRouterHistory,
+    ];
+  } else {
+    newRouterHistory = [
+      {
+        pathname,
+        query,
+      },
+      ...newRouterHistory,
+    ];
+  }
+
+  return newRouterHistory;
 }
 
 export {
@@ -432,4 +481,5 @@ export {
   splitPanesArray,
   getLocalPanes,
   getPanes,
+  getNewRouterHistory,
 };
