@@ -3,21 +3,28 @@
  * @Descripter: 活动栏目跑马灯
  * @Date: 2018-11-06 13:53:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 10:59:26
+ * @Last Modified time: 2018-11-12 14:33:35
  */
 
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import url from 'url';
 import { autobind } from 'core-decorators';
 import Carousel from '../../../common/carousel';
 import { data } from '../../../../helper';
+import { defaultMenu } from '../../../../config/tabMenu';
+import { filterData } from './helper';
 import { logPV } from '../../../../decorators/logable';
 import styles from './activityColumnCarousel.less';
 
-export default class ActivityColumnCarousel extends PureComponent {
+export default class ActivityColumnCarousel extends Component {
   static propsTypes = {
     activityColumnList: PropTypes.array.isRequired,
+  }
+
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
   }
 
   @autobind
@@ -27,8 +34,20 @@ export default class ActivityColumnCarousel extends PureComponent {
       name: '活动栏目',
     },
   })
-  handleClick(url) {
-    window.open(url);
+  handleClick(columnUrl) {
+    // 获取url的信息
+    const urlInfo = url.parse(columnUrl);
+    const { hash } = urlInfo;
+    const defaultMenuPathList = filterData(defaultMenu, 'path');
+    // 判断是否是内部网址
+    const isInnerPath = _.find(defaultMenuPathList, item => _.includes(hash, item));
+    if (!_.isEmpty(isInnerPath)) {
+      // hash返回的数据是'#/***', path需要去掉字符串前面的#
+      const path = hash.slice(1);
+      this.context.push(path);
+    } else {
+      window.open(columnUrl);
+    }
   }
 
   render() {
@@ -44,7 +63,10 @@ export default class ActivityColumnCarousel extends PureComponent {
     });
     return (
       <div className={styles.activityColumnCarousel}>
-        <Carousel autoplay>
+        <Carousel
+          autoplay
+          dots={false}
+        >
             {activityColumnListData}
         </Carousel>
       </div>

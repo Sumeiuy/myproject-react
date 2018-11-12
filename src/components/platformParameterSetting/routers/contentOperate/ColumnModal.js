@@ -2,11 +2,10 @@
  * @Author: zhangjun
  * @Date: 2018-11-08 13:46:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 13:54:15
+ * @Last Modified time: 2018-11-12 12:12:43
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from '../../../common/Button';
 import CommonModal from '../../../common/biz/CommonModal';
 import ColumnForm from './ColumnForm';
 
@@ -37,14 +36,21 @@ const ColumnModal = React.forwardRef((props, ref) => {
       onOk={onConfirm}
       onCancel={onCloseModal}
     >
-      <ColumnForm
-        formData={formData}
-        attachmentList={attachmentList}
-        isShowAttachmentStatusError={isShowAttachmentStatusError}
-        attachmentStatusErrorMessage={attachmentStatusErrorMessage}
-        onChange={handleChangeFormData}
-        ref={ref}
-      />
+      {
+        visible
+          ? (
+            <ColumnForm
+              formData={formData}
+              attachmentList={attachmentList}
+              isShowAttachmentStatusError={isShowAttachmentStatusError}
+              attachmentStatusErrorMessage={attachmentStatusErrorMessage}
+              onChange={handleChangeFormData}
+              ref={ref}
+            />
+          )
+          : null
+      }
+
     </CommonModal>
   );
 });
