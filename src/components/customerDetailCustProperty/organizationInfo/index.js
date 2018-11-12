@@ -9,8 +9,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import BasicInfo from './BasicInfo';
-import ContactWay from './ContactWay';
+import ContactWay from '../common/ContactWay';
 
+const EMPTY_ARRAY = [];
 export default class OrganizationInfo extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
@@ -20,8 +21,8 @@ export default class OrganizationInfo extends PureComponent {
   render() {
     const { data, hasDuty } = this.props;
     const {
-      phones,
-      others,
+      phones = EMPTY_ARRAY,
+      others = EMPTY_ARRAY,
       addresses,
     } = data;
     return (

@@ -19,11 +19,13 @@ export const DEFAULT_VALUE = '--';
 export const DEFAULT_PRIVATE_VALUE = '***';
 export const LINK_WAY_TYPE = {
   // 手机号码的标识
-  mobile: 'mobile',
+  mobileTypeCode: '104123',
   // 电子邮箱的标识
-  email: 'email',
+  emailTypeCode: '104124',
   // 微信的标识
-  weChat: 'weChat',
+  weChatTypeCode: '104131',
   // qq的标识
-  qq: 'qq',
+  qqTypeCode: '104127',
+  // 公司地址标识(办公地址)
+  companyAddressTypeCode: '117115',
 };

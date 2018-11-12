@@ -8,9 +8,12 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-// import { autobind } from 'core-decorators';
+import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import Icon from '../../common/Icon';
 import InfoItem from '../../common/infoItem';
+import { DEFAULT_VALUE } from '../config';
+import { number } from '../../../helper';
 import styles from './zjMemberInfo.less';
 
 const INFO_ITEM_WITDH = '110px';
@@ -18,6 +21,17 @@ export default class ZJMemberInfo extends PureComponent {
   static propTypes = {
     // 会员信息
     data: PropTypes.object.isRequired,
+  }
+
+  @autobind
+  getViewValue(value) {
+    return _.isEmpty(value) ? DEFAULT_VALUE : value;
+  }
+
+  // 获取数值显示数据
+  @autobind
+  getViewTextByNum(value) {
+    return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
   }
 
   render() {
@@ -37,7 +51,7 @@ export default class ZJMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="会员编号"
-              value={data.memberNum}
+              value={this.getViewValue(data.memberNum)}
               className={styles.infoItem}
             />
           </div>
@@ -45,7 +59,7 @@ export default class ZJMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="会员名称"
-              value={data.memberName}
+              value={this.getViewValue(data.memberName)}
               className={styles.infoItem}
             />
           </div>
@@ -53,7 +67,7 @@ export default class ZJMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="会员类型"
-              value={data.memberType}
+              value={this.getViewValue(data.memberType)}
               className={styles.infoItem}
             />
           </div>
@@ -61,7 +75,7 @@ export default class ZJMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="项目"
-              value={data.projects}
+              value={this.getViewValue(data.projects)}
               className={styles.infoItem}
             />
           </div>
@@ -69,7 +83,7 @@ export default class ZJMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="注册日期"
-              value={data.registerDate}
+              value={this.getViewValue(data.registerDate)}
               className={styles.infoItem}
             />
           </div>
@@ -77,7 +91,7 @@ export default class ZJMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="状态"
-              value={data.states}
+              value={this.getViewValue(data.states)}
               className={styles.infoItem}
             />
           </div>
@@ -85,7 +99,7 @@ export default class ZJMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="紫金币可用积分"
-              value={data.zjAvailablePoints}
+              value={this.getViewTextByNum(data.zjAvailablePoints)}
               className={styles.infoItem}
             />
           </div>
@@ -93,7 +107,7 @@ export default class ZJMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="涨乐豆可用积分"
-              value={data.zlAvailablePoints}
+              value={this.getViewTextByNum(data.zlAvailablePoints)}
               className={styles.infoItem}
             />
           </div>
@@ -101,7 +115,7 @@ export default class ZJMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="资金积分"
-              value={data.fundPoints}
+              value={this.getViewTextByNum(data.fundPoints)}
               className={styles.infoItem}
             />
           </div>
@@ -109,7 +123,7 @@ export default class ZJMemberInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="贡献度积分"
-              value={data.devotePoints}
+              value={this.getViewTextByNum(data.devotePoints)}
               className={styles.infoItem}
             />
           </div>

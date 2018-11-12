@@ -24,9 +24,9 @@ const mapStateToProps = state => ({
   // 客户基本信息
   customerBasicInfo: state.customerDetail.customerBasicInfo,
   // 紫金积分会员信息
-  zjPointMemberInfo: state.customerDetail.zjPointMemberInfo,
+  zjPointMemberInfo: state.detailCustProperty.zjPointMemberInfo,
   // 紫金积分会员积分兑换流水
-  zjPointExchangeFlow: state.customerDetail.zjPointExchangeFlow,
+  zjPointExchangeFlow: state.detailCustProperty.zjPointExchangeFlow,
 });
 
 const mapDispatchToProps = {

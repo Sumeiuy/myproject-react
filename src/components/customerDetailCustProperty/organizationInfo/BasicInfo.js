@@ -8,7 +8,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import InfoItem from '../../common/infoItem';
+import { number } from '../../../helper';
 import { DEFAULT_VALUE, DEFAULT_PRIVATE_VALUE } from '../config';
 import styles from './basicInfo.less';
 
@@ -24,6 +26,12 @@ export default class BasicInfo extends PureComponent {
   getPrivateValue(value) {
     const { hasDuty } = this.props;
     return hasDuty ? (value || DEFAULT_VALUE) : DEFAULT_PRIVATE_VALUE;
+  }
+
+  // 获取数值显示数据
+  @autobind
+  getViewTextByNum(value) {
+    return _.isNumber(value) ? number.thousandFormat(value) : DEFAULT_VALUE;
   }
 
   render() {
@@ -76,7 +84,7 @@ export default class BasicInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="注册资金（万元）"
-              value={data.registeredFund || DEFAULT_VALUE}
+              value={this.getViewTextByNum(data.registeredFund)}
               className={styles.infoItem}
             />
           </div>
@@ -172,7 +180,7 @@ export default class BasicInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="地税务登记到期日"
-              value={(this.getPrivateValuedata.landTaxValdate)}
+              value={this.getPrivateValue(data.landTaxValdate)}
               className={styles.infoItem}
             />
           </div>

@@ -24,7 +24,6 @@ const TabPane = Tabs.TabPane;
 
 // const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
-const PAGE_SIZE = 10;
 const {
   // 个人客户类型标识
   personCustType,
@@ -68,6 +67,27 @@ export default class CustProperty extends PureComponent {
     this.queryData(custId);
   }
 
+  componentDidUpdate(prevProps) {
+    const {
+      location: {
+        query: {
+          custId: prevCustId,
+        },
+      },
+    } = prevProps;
+    const {
+      location: {
+        query: {
+          custId,
+        },
+      },
+    } = this.props;
+    // url中custId发生变化时重新请求相关数据
+    if (prevCustId !== custId) {
+      this.queryData(custId);
+    }
+  }
+
   // 客户信息中有些字段需要做隐私控制，只有主，辅服务经理，拥有“HTSC 客户资料-总部管理岗”或“HTSC 隐私信息查询权限”职责的用户可查看；
   @autobind
   hasDuty() {
@@ -85,24 +105,14 @@ export default class CustProperty extends PureComponent {
     );
   }
 
-  // 和custId相关的接口，初次调用和custId发生变化时调用，接口比较多，避免多次重复写，统一放到一个方法里
+  // 和custId相关的接口，初次调用和custId发生变化时调用，避免多次重复写，统一放到一个方法里
   @autobind
   queryData(custId) {
     const {
       queryCustomerProperty,
-      queryZLUmemberInfo,
-      queryZLUmemberLevelChangeRecords,
     } = this.props;
     queryCustomerProperty({
       custId,
-    });
-    queryZLUmemberInfo({
-      custId,
-    });
-    queryZLUmemberLevelChangeRecords({
-      custId,
-      pageSize: PAGE_SIZE,
-      pageNum: 1,
     });
   }
 
@@ -174,7 +184,6 @@ export default class CustProperty extends PureComponent {
         component = this.renderProductInfo();
         break;
       default:
-        component = this.renderPersonInfo();
         break;
     }
     return component;
@@ -182,8 +191,15 @@ export default class CustProperty extends PureComponent {
 
   render() {
     const {
+      location,
       zlUMemberInfo,
       zlUMemberLevelChangeRecords,
+      queryZLUmemberInfo,
+      queryZLUmemberLevelChangeRecords,
+      queryZjPointMemberInfo,
+      zjPointMemberInfo,
+      queryZjPointExchangeFlow,
+      zjPointExchangeFlow,
     } = this.props;
     return (
       <div className={styles.custPropertyBox}>
@@ -207,8 +223,15 @@ export default class CustProperty extends PureComponent {
             </TabPane>
             <TabPane tab="会员信息" key="memberInfo">
               <MemberInfo
+                location={location}
+                queryZLUmemberInfo={queryZLUmemberInfo}
+                queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
                 zlUMemberInfo={zlUMemberInfo}
                 zlUMemberLevelChangeRecords={zlUMemberLevelChangeRecords}
+                queryZjPointMemberInfo={queryZjPointMemberInfo}
+                zjPointMemberInfo={zjPointMemberInfo}
+                queryZjPointExchangeFlow={queryZjPointExchangeFlow}
+                zjPointExchangeFlow={zjPointExchangeFlow}
               />
             </TabPane>
             <TabPane tab="关系信息" key="relationInfo">

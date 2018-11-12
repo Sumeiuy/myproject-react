@@ -8,6 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import InfoItem from '../../common/infoItem';
 import { DEFAULT_VALUE, DEFAULT_PRIVATE_VALUE } from '../config';
 import styles from './basicInfo.less';
@@ -23,6 +24,21 @@ export default class BasicInfo extends PureComponent {
   getPrivateValue(value) {
     const { hasDuty } = this.props;
     return hasDuty ? (value || DEFAULT_VALUE) : DEFAULT_PRIVATE_VALUE;
+  }
+
+  // 获取是否企业高管显示数据
+  @autobind
+  getIsCompanyLeaderText(bool) {
+    if (_.isBoolean(bool)) {
+      return bool ? '是' : '否';
+    }
+    return DEFAULT_VALUE;
+  }
+
+  // 获取子女数量显示数据，由于InfoItem value只接受string,所以转了一次字符串
+  @autobind
+  getChildNumText(value) {
+    return _.isNumber(value) ? value.toString() : DEFAULT_VALUE;
   }
 
   render() {
@@ -91,7 +107,7 @@ export default class BasicInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="是否企业高管"
-              value={data.isCompanyLeader || DEFAULT_VALUE}
+              value={this.getIsCompanyLeaderText(data.isCompanyLeader)}
               className={styles.infoItem}
             />
           </div>
@@ -107,7 +123,7 @@ export default class BasicInfo extends PureComponent {
             <InfoItem
               width={INFO_ITEM_WITDH}
               label="子女数量"
-              value={data.childNum || DEFAULT_VALUE}
+              value={this.getChildNumText(data.childNum)}
               className={styles.infoItem}
             />
           </div>
