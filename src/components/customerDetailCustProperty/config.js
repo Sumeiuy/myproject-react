@@ -12,5 +12,20 @@ export const CUST_TYPE = {
   // 普通机构客户类型标识
   organizationCustType: 'org',
   // 产品机构客户类型标识
-  productCustType: 'pro',
+  productCustType: 'prod',
+};
+
+export const DEFAULT_VALUE = '--';
+export const DEFAULT_PRIVATE_VALUE = '***';
+export const LINK_WAY_TYPE = {
+  // 手机号码的标识
+  mobileTypeCode: '104123',
+  // 电子邮箱的标识
+  emailTypeCode: '104124',
+  // 微信的标识
+  weChatTypeCode: '104131',
+  // qq的标识
+  qqTypeCode: '104127',
+  // 公司地址标识(办公地址)
+  companyAddressTypeCode: '117115',
 };

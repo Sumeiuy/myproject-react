@@ -23,6 +23,10 @@ const mapStateToProps = state => ({
   zlUMemberLevelChangeRecords: state.detailCustProperty.zlUMemberLevelChangeRecords,
   // 客户基本信息
   customerBasicInfo: state.customerDetail.customerBasicInfo,
+  // 紫金积分会员信息
+  zjPointMemberInfo: state.detailCustProperty.zjPointMemberInfo,
+  // 紫金积分会员积分兑换流水
+  zjPointExchangeFlow: state.detailCustProperty.zjPointExchangeFlow,
 });
 
 const mapDispatchToProps = {
@@ -32,6 +36,10 @@ const mapDispatchToProps = {
   queryZLUmemberInfo: effect('detailCustProperty/queryZLUmemberInfo', { loading: true }),
   // 获取涨乐财富通U会员等级变更记录
   queryZLUmemberLevelChangeRecords: effect('detailCustProperty/queryZLUmemberLevelChangeRecords', { loading: true }),
+  // 获取紫金积分会员信息
+  queryZjPointMemberInfo: effect('detailCustProperty/queryZjPointMemberInfo', { loading: true }),
+  // 获取紫金积分会员积分兑换流水
+  queryZjPointExchangeFlow: effect('detailCustProperty/queryZjPointExchangeFlow', { loading: true }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

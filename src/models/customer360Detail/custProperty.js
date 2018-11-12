@@ -19,6 +19,10 @@ export default {
     zlUMemberInfo: EMPTY_OBJECT,
     // 涨乐U会员等级变更记录
     zlUMemberLevelChangeRecords: EMPTY_OBJECT,
+    // 紫金积分会员信息
+    zjPointMemberInfo: EMPTY_OBJECT,
+    // 紫金积分会员积分兑换流水
+    zjPointExchangeFlow: EMPTY_OBJECT,
   },
   reducers: {
     queryCustomerPropertySuccess(state, action) {
@@ -35,11 +39,25 @@ export default {
         zlUMemberInfo: payload || EMPTY_OBJECT,
       };
     },
-    queryZLUmemberLevelChangeRecords(state, action) {
+    queryZLUmemberLevelChangeRecordsSuccess(state, action) {
       const { payload } = action;
       return {
         ...state,
         zlUMemberLevelChangeRecords: payload || EMPTY_OBJECT,
+      };
+    },
+    queryZjPointMemberInfoSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        zjPointMemberInfo: payload || EMPTY_OBJECT,
+      };
+    },
+    queryZjPointExchangeFlowSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        zjPointExchangeFlow: payload || EMPTY_OBJECT,
       };
     },
   },
@@ -65,6 +83,22 @@ export default {
       const { resultData } = yield call(api.queryZLUmemberLevelChangeRecords, payload);
       yield put({
         type: 'queryZLUmemberLevelChangeRecordsSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取紫金积分会员信息
+    * queryZjPointMemberInfo({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryZjPointMemberInfo, payload);
+      yield put({
+        type: 'queryZjPointMemberInfoSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取紫金积分会员积分兑换流水
+    * queryZjPointExchangeFlow({ payload }, { put, call }) {
+      const { resultData } = yield call(api.queryZjPointExchangeFlow, payload);
+      yield put({
+        type: 'queryZjPointExchangeFlowSuccess',
         payload: resultData,
       });
     },
