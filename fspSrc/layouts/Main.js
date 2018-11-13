@@ -21,7 +21,7 @@ import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import classNames from 'classnames';
 import withRouter from '../../src/decorators/withRouter';
-
+import { redirectRoutes } from '../../src/common/router';
 
 import Header from './Header';
 import Footer from './Footer';
@@ -211,23 +211,23 @@ export default class Main extends PureComponent {
     const { routerData, match } = this.props;
     return (
       <Switch>
-        <Redirect exact from="/" to="/customerPool" />
-        <Redirect exact from="/invest" to="/statisticalQuery/report" />
-        <Redirect exact from="/report" to="/statisticalQuery/report" />
-        <Redirect exact from="/custAllot" to="/businessApplyment/customerPartition/custAllot" />
-        <Redirect exact from="/departmentCustAllot" to="/businessApplyment/customerPartition/departmentCustAllot" />
-        <Route
-          path="/telephoneNumberManageEdit"
-          exact
-          component={({ location }) => (
-            <Redirect
-              to={{
-                ...location,
-                pathname: '/sysOperate/telephoneNumberManageEdit',
-              }}
+        {
+          redirectRoutes.map(item => (
+            <Route
+              key={item.from}
+              path={item.from}
+              exact
+              component={({ location }) => (
+                <Redirect
+                  to={{
+                    ...location,
+                    pathname: item.to,
+                  }}
+                />
+              )}
             />
-          )}
-        />
+          ))
+        }
         {
           getRoutes(match.path, routerData).map(item => (
             <Route
