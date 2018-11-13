@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-12 10:13:25
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-13 10:22:19
  */
 
 import React, { PureComponent } from 'react';
@@ -240,6 +240,7 @@ export default class Home extends PureComponent {
       queryIntroCombination,
       queryNumbers,
       queryhomePageNews,
+      queryContent,
     } = this.props;
     const date = moment().format(DATE_FORMAT_STRING);
     // 重点关注
@@ -261,6 +262,8 @@ export default class Home extends PureComponent {
       pageNum: 1,
       pageSize: 10,
     });
+    // 获取活动栏目
+  	queryContent();
 
      // 这两个接口请求有点慢，延时发送请求
     new Promise(resolve => resolve()).then(() => {
