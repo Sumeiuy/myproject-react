@@ -23,8 +23,6 @@ const titleStyle = {
 export default class CombinationRank extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    // 字典
-    dict: PropTypes.object.isRequired,
     // type切换
     onTypeChange: PropTypes.func.isRequired,
     // 筛选
@@ -65,6 +63,10 @@ export default class CombinationRank extends PureComponent {
     riskLevel: '',
   }
 
+  static contextTypes = {
+    dict: PropTypes.object.isRequired,
+  }
+
   @autobind
   getCombinationList() {
     const {
@@ -74,12 +76,12 @@ export default class CombinationRank extends PureComponent {
       getCombinationLineChart,
       rankTabActiveKey,
       yieldRankValue,
-      dict,
       openStockPage,
       openCustomerListPage,
       showModal,
       openDetailPage,
     } = this.props;
+    const { dict } = this.context;
     return combinationRankList.map(item => (
       <CombinationListItem
         showModal={showModal}
@@ -101,7 +103,6 @@ export default class CombinationRank extends PureComponent {
   render() {
     const {
       location,
-      dict,
       onTypeChange,
       // filterChange,
       combinationTreeList,
@@ -114,6 +115,8 @@ export default class CombinationRank extends PureComponent {
       rankTabActiveKey,
       adviser,
     } = this.props;
+    const { dict } = this.context;
+    console.warn('dict', dict);
     return (
       <div className={styles.combinationRankBox}>
         <InfoTitle

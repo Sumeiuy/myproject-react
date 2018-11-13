@@ -75,7 +75,7 @@ export default class CombinationRank extends PureComponent {
   })
   handleYieldSelect(item) {
     const { replace } = this.context;
-    const { location: { query = { } }, yieldRankChange } = this.props;
+    const { location: { query = {} }, yieldRankChange } = this.props;
     replace({
       query: {
         ...query,
@@ -101,7 +101,7 @@ export default class CombinationRank extends PureComponent {
       return;
     }
     const { replace } = this.context;
-    const { location: { query = { } }, riskLevelFilter } = this.props;
+    const { location: { query = {} }, riskLevelFilter } = this.props;
     replace({
       query: {
         ...query,
@@ -126,7 +126,7 @@ export default class CombinationRank extends PureComponent {
     const {
       onTypeChange,
       rankTabActiveKey,
-      location: { query = { } },
+      location: { query = {} },
     } = this.props;
     const { replace } = this.context;
     replace({
@@ -155,7 +155,7 @@ export default class CombinationRank extends PureComponent {
   handleComposeTypeChange(item) {
     const { value } = item;
     const { replace } = this.context;
-    const { location: { query = { } }, adviser, onTypeChange } = this.props;
+    const { location: { query = {} }, adviser, onTypeChange } = this.props;
     replace({
       query: {
         ...query,
@@ -183,7 +183,8 @@ export default class CombinationRank extends PureComponent {
       creatorList,
       adviser,
     } = this.props;
-    // 将所有组合的 value 值设置为空
+    // 所有组合有个 value， 而在请求所有组合数据时，后端需要 value 为空
+    // 所以手动将所有组合的 value 值设置为空
     let composeData = [{ ...composeType[0], value: '' }];
     if (composeType[0] && !_.isEmpty(composeType[0].children)) {
       composeData = composeData.concat([...composeType[0].children]);
