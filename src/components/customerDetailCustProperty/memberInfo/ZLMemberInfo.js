@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-涨乐财富通会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-12 18:56:42
+ * @Last Modified time: 2018-11-13 16:27:09
  */
 
 import React, { PureComponent } from 'react';
@@ -17,6 +17,9 @@ import Modal from '../../../components/common/biz/CommonModal';
 import InfoItem from '../../common/infoItem';
 import { DEFAULT_VALUE, MemberGradeColumns } from '../config';
 import styles from './zlMemberInfo.less';
+import moment from 'moment';
+import logable, { logPV } from '../../../decorators/logable';
+
 const INFO_ITEM_WITDH = '110px';
 export default class ZLMemberInfo extends PureComponent {
   static propTypes = {
@@ -40,18 +43,27 @@ export default class ZLMemberInfo extends PureComponent {
 
   // 打开会员变更弹出框
   @autobind
+  @logPV ({
+    pathname: '/modal/memberGradeModal',
+    title: '涨乐会员变更弹框',
+  })
   handleMemberGradeModalOpen(){
     this.setState({memberGradeModalVisible: true});
   }
 
   // 关闭会员变更弹出框
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '涨乐会员等级变更' }
+ })
   handleMemberGradeModalClose(){
     this.setState({memberGradeModalVisible: false});
   }
 
   // 页码改变的回调
   @autobind
+  @logable({ type: 'Click', payload: { name: '页码切换' } })
   handlePaginationChange(page){
     const { queryZLUmemberLevelChangeRecords, location: { query} } = this.props;
     this.setState({
@@ -75,14 +87,21 @@ export default class ZLMemberInfo extends PureComponent {
     const { list = [], page = {} } = dataSource;
     const PaginationOption = {
       current: pageNum || 1,
-      total: page.totalCount || 0,
+      total: page.totalRecordNum || 0,
       pageSize: page.pageSize || 10,
       onChange: this.handlePaginationChange,
     };
-     //  涨乐U会员等级变更记录的数据长度
-     const memberGradeDatasLength = _.size(list);
-     // 数据超过10条展示分页，反之不展示
-     const showMemberGradePagination = memberGradeDatasLength > 10 ? PaginationOption : false;
+    // 数据长达大于10显示分页
+    const showMemberGradePagination =  page.totalPageNum !== 1 ? PaginationOption : false;
+    //  处理日期
+     const newmemberGradeDatas = _.map(list,  (items) => {
+      const { time } = items;
+      const newTime = moment(time).format('YYYY-MM-DD hh:mm:ss');
+      return {
+        ...items,
+        time: newTime,
+      };
+    });
     return (
       <div className={styles.zlMemberInfoBox}>
         <div className={`${styles.title} clearfix`}>
@@ -92,24 +111,32 @@ export default class ZLMemberInfo extends PureComponent {
             <Icon type='huiyuandengjibiangeng' />
             <span onClick={this.handleMemberGradeModalOpen}>会员等级变更</span>
             <Modal
-             title="会员等级变更"
-             size='large'
-             showOkBtn={false}
-             visible={memberGradeModalVisible}
-             closeModal={this.handleMemberGradeModalClose}
-             onCancel={this.handleMemberGradeModalClose}
-             selfBtnGroup={[(<Button onClick={this.handleMemberGradeModalClose}>关闭</Button>)]}
-             modalKey="memberGrade"
-             maskClosable={false}
+                className={styles.memberGradeModal}
+                title="会员等级变更"
+                size='large'
+                showOkBtn={false}
+                visible={memberGradeModalVisible}
+                closeModal={this.handleMemberGradeModalClose}
+                onCancel={this.handleMemberGradeModalClose}
+                selfBtnGroup={[(<Button onClick={this.handleMemberGradeModalClose}>关闭</Button>)]}
+                modalKey="memberGrade"
+                maskClosable={false}
             >
-             <div className={styles.tabContainer}>
+            {
+              _.isEmpty(list)
+              ? <div className={styles.noDataContainer}>
+                  <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
+                  <div className={styles.noDataText}>没有符合条件的记录</div>
+              </div>
+              : <div className={styles.tabContainer}>
              <Table
-              pagination={showMemberGradePagination}
-              dataSource={list}
-              columns={MemberGradeColumns}
-              scroll={{ x: '1024px' }}
+                pagination={showMemberGradePagination}
+                dataSource={newmemberGradeDatas}
+                columns={MemberGradeColumns}
+                scroll={{ x: '1024px' }}
             />
           </div>
+        }
           </Modal>
           </span>
         </div>
