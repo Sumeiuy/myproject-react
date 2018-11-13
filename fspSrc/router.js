@@ -18,6 +18,16 @@ import { getRoutes } from '../src/utils/router';
 import App from './layouts/Main';
 import FSPComponent from './routes/fspPage/FSPComponent';
 
+import { findBestMatch } from '../src/helper/os';
+import { fspRoutes } from '../src/config';
+
+function findRoute(url) {
+  return findBestMatch(url, fspRoutes, 'url');
+}
+// fsp 跳转
+const fspJumpString = '/fspjump/';
+// 普通跳转
+const jumpString = '/jump/';
 const { ConnectedRouter } = routerRedux;
 
 // 递归创建路由
@@ -68,6 +78,33 @@ const Routers = ({ history, app }) => {
           <Redirect exact from="/report" to="/statisticalQuery/report" />
           <Redirect exact from="/custAllot" to="/businessApplyment/customerPartition/custAllot" />
           <Redirect exact from="/departmentCustAllot" to="/businessApplyment/customerPartition/departmentCustAllot" />
+          <Route
+            path={`${fspJumpString}(.*)`}
+            exact
+            component={({ location }) => {
+              const pathname = location.pathname.slice(fspJumpString.length - 1);
+              const { path } = findRoute(pathname);
+              return <Redirect
+                to={{
+                  ...location,
+                  pathname: path,
+                }}
+              />;
+            }}
+          />
+          <Route
+            path={`${jumpString}(.*)`}
+            exact
+            component={({ location }) => {
+              const pathname = location.pathname.slice(jumpString.length - 1);
+              return <Redirect
+                to={{
+                  ...location,
+                  pathname,
+                }}
+              />;
+            }}
+          />
           <Route
             path="/telephoneNumberManageEdit"
             exact
