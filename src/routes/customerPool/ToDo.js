@@ -100,56 +100,40 @@ export default class ToDo extends PureComponent {
       // 标签类型
       activeKey: taskType,
       // 类型下拉框value
+      applyType: [],
+      approveType: [],
       category: '',
-      // 发起人下拉value
+      // 发起人
       originator: '',
+      // 发起人下拉value
+      initiatorValue: [],
     };
   }
 
   componentDidMount() {
     const {
-      location: {
-        query,
-        query: {
-          pageNum,
-          pageSize,
-        },
-      },
       getTypeValue,
       getInitiator,
+      location: {
+        query: {
+          pageSize = 10,
+          pageNum = 1,
+        }
+      }
     } = this.props;
-    this.getApplyList(query, pageNum, pageSize);
-    this.getApproveList(query, pageNum, pageSize);
+    const {
+      startTime,
+      endTime,
+    } = this.state;
+    this.getApplyList({startTime, endTime, pageSize, pageNum});
+    this.getApproveList({startTime, endTime, pageSize, pageNum});
     getTypeValue();
     getInitiator();
   }
 
-  // 调用列表接口
-  @autobind
-  getTaskList(query, pageNum, pageSize) {
-    const {
-      location: {
-        query: {
-          taskType
-        }
-      }
-    } = this.props;
-    switch (taskType) {
-      case '2':
-        this.getApplyList(query, pageNum, pageSize);
-        break;
-      case '3':
-        this.getApproveList(query, pageNum, pageSize);
-        break;
-      default:
-        break;
-
-    }
-  }
-
   // 获取申请列表
   @autobind
-  getApplyList(query, pageNum, pageSize) {
+  getApplyList(query) {
     const {
       location: {
         query: {
@@ -159,26 +143,23 @@ export default class ToDo extends PureComponent {
     } = this.props;
     const { replace } = this.context;
     if(!_.isEmpty(taskType)) {
-      this.props.getApplyList(query, pageNum, pageSize);
+      this.props.getApplyList(query);
       this.setState({ activeKey: taskType });
     } else {
       replace({
         query: {
-          ...query,
           taskType: '1',
-          pageNum,
-          pageSize,
         },
       });
-      this.props.getApplyList(query, pageNum = 1, pageSize = 10);
+      this.props.getApplyList(query);
       this.setState({ activeKey: '1' });
     }
   }
 
   // 获取审批列表
   @autobind
-  getApproveList(query, pageNum, pageSize) {
-    this.props.getApproveList(query, pageNum = 1, pageSize = 10);
+  getApproveList(query) {
+    this.props.getApproveList(query);
   }
 
   @autobind
@@ -190,6 +171,7 @@ export default class ToDo extends PureComponent {
     },
   })
   onSearch(value) {
+    // this.props.search(value);
     const { replace, location: { pathname, query } } = this.props;
     replace({
       pathname,
@@ -201,6 +183,37 @@ export default class ToDo extends PureComponent {
       },
     });
   }
+
+  // 申请搜索
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '关键字搜索任务',
+      value: '$args[0]',
+    },
+  })
+  handleApplySearch(value) {
+    const { location: { query: { pageSize, pageNum } } } = this.props;
+    const { startTime, endTime } = this.state;
+    this.getApplyList({ startTime, endTime, pageSize, pageNum });
+  }
+
+  // 审批搜索
+  @autobind
+  @logable({
+    type: 'Click',
+    payload: {
+      name: '关键字搜索任务',
+      value: '$args[0]',
+    },
+  })
+  handleApproveSearch(value) {
+    const { location: { query: { pageSize, pageNum } } } = this.props;
+    const { startTime, endTime } = this.state;
+    this.getApplyList({ startTime, endTime, pageSize, pageNum });
+  }
+
 
   @autobind
   pageChange(obj) {
@@ -229,20 +242,50 @@ export default class ToDo extends PureComponent {
   // 头部类型筛选回调函数
   @autobind
   handlefilterCallback(obj) {
-    this.setState({
-      ...obj,
-    }, () => {
-      this.getTaskList(this.state);
-    });
+    const {
+      location: {
+        query: { taskType }
+      }
+    } = this.props;
+    const {
+      label,
+      value,
+    } = obj;
+    // taskType为2是我的申请 3是我的审批
+    switch (taskType) {
+      case '2':
+        this.setState({
+          category: value,
+          applyType: [value, label],
+        }, () => {
+          this.getApplyList(this.state);
+        });
+        break;
+      case '3':
+        this.setState({
+          category: value,
+          approveType: [value, label]
+        }, () => {
+          this.getApproveList(this.state);
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   // 头部发起人筛选回调函数
   @autobind
   handleInitiatorCallback(obj) {
+    const {
+      name,
+      key,
+    } = obj;
     this.setState({
-      ...obj,
+      originator: name,
+      initiatorValue: [key, name]
     }, () => {
-      this.getTaskList(this.state);
+      this.getApproveList(this.state);
     });
   }
 
@@ -282,7 +325,7 @@ export default class ToDo extends PureComponent {
       typeValue,
       initiator,
     } = this.props;
-    const { category, originator } = this.state;
+    const { applyType, approveType, initiatorValue } = this.state;
     const { query: { keyword } } = location;
     return (
       <div className={styles.todo}>
@@ -315,52 +358,46 @@ export default class ToDo extends PureComponent {
             <div>
               <ReportFilter
                 filterCallback={this.handlefilterCallback}
-                onSearch={this.onSearch}
+                onSearch={this.handleApplySearch}
                 startTime={defaultStartTime}
                 endTime={defaultEndTime}
                 typeData={typeValue}
-                type={['', category]}
+                type={applyType}
               />
-              {
-                !_.isEmpty(data) ?
-                <TaskList
-                  className="todoList"
-                  data={applyListData}
-                  location={location}
-                  push={push}
-                  replace={replace}
-                  listType='apply'
-                />
-                : null
-              }
+              <TaskList
+                className="todoList"
+                data={applyListData}
+                location={location}
+                push={push}
+                replace={replace}
+                listType='apply'
+                clearCreateTaskData={clearCreateTaskData}
+              />
 
             </div>
           </TabPane>
           <TabPane key='3' tab='我的审批'>
             <div>
               <ReportFilter
-                filterCallback={this.handleInitiatorCallback}
-                onSearch={this.onSearch}
+                filterCallback={this.handlefilterCallback}
+                initiatorCallback={this.handleInitiatorCallback}
+                onSearch={this.handleApproveSearch}
                 startTime={defaultStartTime}
                 endTime={defaultEndTime}
                 typeData={typeValue}
-                type={['', category]}
+                type={approveType}
                 initiatorData={initiator}
-                initiator={['', originator]}
+                initiator={initiatorValue}
                 isApprove
               />
-              {
-                !_.isEmpty(data) ?
-                <TaskList
-                  className="todoList"
-                  data={approveListData}
-                  location={location}
-                  push={push}
-                  replace={replace}
-                  listType='approve'
-                />
-                : null
-              }
+              <TaskList
+                className="todoList"
+                data={approveListData}
+                location={location}
+                push={push}
+                replace={replace}
+                listType='approve'
+              />
 
             </div>
           </TabPane>

@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-12 21:11:33
+ * @Last Modified time: 2018-11-13 21:29:22
  */
 
 import React, { PureComponent } from 'react';
@@ -36,11 +36,11 @@ export default class ReportFilter extends PureComponent {
     // 类型数据
     typeData: PropTypes.array.isRequired,
     // 类型
-    type: PropTypes.string.isRequired,
+    type: PropTypes.array.isRequired,
     // 发起人数据
     initiatorData: PropTypes.array.isRequired,
     // 发起人
-    initiator: PropTypes.string.isRequired,
+    initiator: PropTypes.array.isRequired,
     // 发起人下拉筛选
     InitiatorCallback: PropTypes.func,
   }
@@ -108,12 +108,12 @@ export default class ReportFilter extends PureComponent {
   })
   handleTypeChange(option) {
     const {
-      id,
       value: {
         label,
+        value,
       }
     } = option;
-    this.handleSelectChange(id, label);
+    this.handleSelectChange({value, label});
   }
 
   // 发起人下拉框change
@@ -127,20 +127,18 @@ export default class ReportFilter extends PureComponent {
   })
   handleInitiatorChange(option) {
     const {
-      id,
       value: {
         name,
+        key,
       }
     } = option;
-    this.handleSelectChange(id, name);
+    this.handleSelectChange(name, key);
   }
 
   // select改变
   @autobind
-  handleSelectChange(key, v) {
-    this.props.filterCallback({
-      [key]: v,
-    });
+  handleSelectChange(obj) {
+    this.props.filterCallback(obj);
   }
 
   render() {
@@ -166,37 +164,37 @@ export default class ReportFilter extends PureComponent {
         </div>
         <SingleFilter
           filterName='类型'
-          filterId='category'
-          className='filter'
+          filterId="category"
+          className="filter"
           dataMap={['value', 'label']}
           data={typeData}
           value={type}
           onChange={this.handleTypeChange}
           showSearch
-          placeholder='业务类型'
+          placeholder="业务类型"
           needItemObj
         />
         {
           isApprove ?
             <SingleFilter
-              filterName='发起人'
-              filterId='originator'
-              className='filter'
+              filterName="发起人"
+              filterId="originator"
+              className="filter"
               dataMap={['key', 'name']}
               data={initiatorData}
               value={initiator}
               onChange={this.handleInitiatorChange}
               needItemObj
-              placeholder='员工工号/员工姓名'
+              placeholder="员工工号/员工姓名"
               showSearch
             />
             :
             null
         }
         <DateRangePick
-          type='date'
-          filterId='filterDate'
-          filterName='申请时间'
+          type="date"
+          filterId="filterDate"
+          filterName="申请时间"
           className={dateRangePicker}
           value={[startTime, endTime]}
           filterValue={[defaultStartTime, defaultEndTime]}
