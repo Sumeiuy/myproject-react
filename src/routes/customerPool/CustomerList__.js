@@ -734,7 +734,7 @@ export default class CustomerList extends PureComponent {
         param.searchTypeReq = 'SOR_PTY_ID';
       }
     }
-    
+
     if (query.source === 'tag' || query.source === 'sightingTelescope') {
       param.searchTypeReq = null;
       param.searchText = null;

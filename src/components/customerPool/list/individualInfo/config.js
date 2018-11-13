@@ -126,7 +126,7 @@ const matchRule = {
       render: 'renderDefaultVal',
     }],
   },
-  shareholderSccountNumber: {
+  stkAccts: {
     inset: true,
     key: [{
       name: '股东账号',
