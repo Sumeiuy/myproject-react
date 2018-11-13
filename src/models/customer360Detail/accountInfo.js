@@ -44,6 +44,18 @@ export default {
     productHistoryHoldingData: {},
     // 期权历史持仓明细
     optionHistoryHoldingData: {},
+    // 业务类别
+    busnTypeDict: {},
+    // 产品代码
+    finProductList: {},
+    // 全产品目录
+    productCatalogTree: {},
+    // 普通账户交易流水
+    standardTradeFlowRes: {},
+    // 信用账户交易流水
+    creditTradeFlowRes: {},
+    // 期权账户交易流水
+    optionTradeFlowRes: {},
   },
   reducers: {
     getRealTimeAssetSuccess(state, action) {
@@ -153,6 +165,48 @@ export default {
       return {
         ...state,
         optionHistoryHoldingData: resultData || {},
+      };
+    },
+    queryBusnTypeDictSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        busnTypeDict: resultData || {},
+      };
+    },
+    queryFinProductListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        finProductList: resultData || {},
+      };
+    },
+    queryProductCatalogTreeSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        productCatalogTree: resultData || {},
+      };
+    },
+    queryStandardTradeFlowSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        standardTradeFlowRes: resultData || {},
+      };
+    },
+    queryCreditTradeFlowSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        creditTradeFlowRes: resultData || {},
+      };
+    },
+    queryOptionTradeFlowSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        optionTradeFlowRes: resultData || {},
       };
     },
     // 清除redux数据
@@ -277,6 +331,54 @@ export default {
       const response = yield call(api.queryOptionHistoryHolding, payload);
       yield put({
         type: 'queryOptionHistoryHoldingSuccess',
+        payload: response,
+      });
+    },
+    // 查询业务类别
+    * queryBusnTypeDict({ payload }, { put, call }) {
+      const response = yield call(api.queryBusnTypeDict, payload);
+      yield put({
+        type: 'queryBusnTypeDictSuccess',
+        payload: response,
+      });
+    },
+    // 查询产品代码
+    * queryFinProductList({ payload }, { put, call }) {
+      const response = yield call(api.queryFinProductList, payload);
+      yield put({
+        type: 'queryFinProductListSuccess',
+        payload: response,
+      });
+    },
+    // 查询全产品目录
+    * queryProductCatalogTree({ payload }, { put, call }) {
+      const response = yield call(api.queryProductCatalogTree, payload);
+      yield put({
+        type: 'queryProductCatalogTreeSuccess',
+        payload: response,
+      });
+    },
+    // 查询普通账户交易流水
+    * queryStandardTradeFlow({ payload }, { put, call }) {
+      const response = yield call(api.queryStandardTradeFlow, payload);
+      yield put({
+        type: 'queryStandardTradeFlowSuccess',
+        payload: response,
+      });
+    },
+    // 查询信用账户交易流水
+    * queryCreditTradeFlow({ payload }, { put, call }) {
+      const response = yield call(api.queryCreditTradeFlow, payload);
+      yield put({
+        type: 'queryCreditTradeFlowSuccess',
+        payload: response,
+      });
+    },
+    // 查询期权账户交易流水
+    * queryOptionTradeFlow({ payload }, { put, call }) {
+      const response = yield call(api.queryOptionTradeFlow, payload);
+      yield put({
+        type: 'queryOptionTradeFlowSuccess',
         payload: response,
       });
     },

@@ -108,9 +108,20 @@ export const HISTORY_HOLDING_TABS = {
   optionHistoryHolding: '期权持仓明细',
 };
 
+// 交易流水下3个Tab的显示配置
+export const TRADE_FLOW_TABS = {
+  standardAccountTrade: '普通账户历史交易',
+  creditAccountTrade: '信用账户历史交易',
+  optionAccountTrade: '期权账户历史交易',
+};
+
 export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 1800 };
 export const PRODUCT_HISTORY_HOLDING_TABLE_SCROLL= { x: 2000 };
 export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2500 };
+export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 1800 };
+export const CREDIT_TRADE_FLOW_TABLE_SCROLL= { x: 2000 };
+export const OPTION_TRADE_FLOW_TABLE_SCROLL = { x: 2500 };
+
 // 证券历史持仓表格显示的columns
 export const STOCK_HISTORY_HOLDING_COLUMNS = [
   {
@@ -362,6 +373,258 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     title: '持仓占比',
     key: 'holdPercent',
     dataIndex: 'holdPercent',
+  },
+];
+
+// 交易流水中普通账户流水的columns
+export const STANDARD_TRADE_FLOW_COLUMNS = [
+  {
+    title: '交易日期',
+    dataIndex: 'tradeDate',
+    key: 'tradeDate',
+    className: 'tradeDate',
+    fixed: 'left',
+    width: 150,
+  },
+  {
+    title: '产品名称',
+    dataIndex: 'productName',
+    key: 'productName',
+    className:'productName',
+    fixed: 'left',
+    width: 150,
+  },
+  {
+    title: '产品代码',
+    dataIndex: 'productCode',
+    key: 'productCode',
+    className:'productCode',
+    fixed: 'left',
+    width: 150,
+  },
+  {
+    title: '业务类别',
+    dataIndex: 'bussinessType',
+    key: 'bussinessType',
+    className:'bussinessType',
+  },
+  {
+    title: '成交价格',
+    dataIndex: 'dealPrice',
+    key: 'dealPrice',
+    className:'dealPrice',
+  },
+  {
+    title: '成交数量',
+    dataIndex: 'dealNumber',
+    key: 'dealNumber',
+    className:'dealNumber',
+  },
+  {
+    title: '成交金额',
+    dataIndex: 'dealMoney',
+    key: 'dealMoney',
+    className: 'dealMoney',
+  },
+  {
+    title: '佣金',
+    dataIndex: 'commission',
+    key: 'commission',
+    className: 'commission',
+  },
+  {
+    title: '净佣金',
+    dataIndex: 'realCommission',
+    key: 'realCommission',
+    className: 'realCommission',
+  },
+  {
+    title: '印花税',
+    dataIndex: 'stampTax',
+    key: 'stampTax',
+    className: 'stampTax',
+  },
+  {
+    title: '风险金',
+    dataIndex: 'riskMoney',
+    key: 'riskMoney',
+    className: 'riskMoney',
+  },
+  {
+    title: '产品类型',
+    dataIndex: 'productType',
+    key: 'productType',
+    className: 'productType',
+  },
+  {
+    title: '交易渠道',
+    dataIndex: 'tradeChannel',
+    key: 'tradeChannel',
+    className: 'tradeChannel',
+  },
+];
+// 交易流水中信用账户流水的columns
+export const CREDIT_TRADE_FLOW_COLUMNS = [
+  {
+    title: '交易日期',
+    dataIndex: 'tradeDate',
+    key: 'tradeDate',
+    className: 'tradeDate',
+    fixed: 'left',
+    width: 150,
+  },
+  {
+    title: '产品名称',
+    dataIndex: 'productName',
+    key: 'productName',
+    className:'productName',
+    fixed: 'left',
+    width: 150,
+  },
+  {
+    title: '产品代码',
+    dataIndex: 'productCode',
+    key: 'productCode',
+    className:'productCode',
+    fixed: 'left',
+    width: 150,
+  },
+  {
+    title: '业务类别',
+    dataIndex: 'bussinessType',
+    key: 'bussinessType',
+    className:'bussinessType',
+  },
+  {
+    title: '成交价格',
+    dataIndex: 'dealPrice',
+    key: 'dealPrice',
+    className:'dealPrice',
+  },
+  {
+    title: '成交数量',
+    dataIndex: 'dealNumber',
+    key: 'dealNumber',
+    className:'dealNumber',
+  },
+  {
+    title: '成交金额',
+    dataIndex: 'dealMoney',
+    key: 'dealMoney',
+    className: 'dealMoney',
+  },
+  {
+    title: '佣金',
+    dataIndex: 'commission',
+    key: 'commission',
+    className: 'commission',
+  },
+  {
+    title: '净佣金',
+    dataIndex: 'realCommission',
+    key: 'realCommission',
+    className: 'realCommission',
+  },
+  {
+    title: '印花税',
+    dataIndex: 'stampTax',
+    key: 'stampTax',
+    className: 'stampTax',
+  },
+  {
+    title: '交易渠道',
+    dataIndex: 'tradeChannel',
+    key: 'tradeChannel',
+    className: 'tradeChannel',
+  },
+];
+// 交易流水中期权账户流水的columns
+export const OPTION_TRADE_FLOW_COLUMNS = [
+  {
+    title: '交易日期',
+    dataIndex: 'tradeDate',
+    key: 'tradeDate',
+    className: 'tradeDate',
+    fixed: 'left',
+    width: 150,
+  },
+  {
+    title: '业务类别',
+    dataIndex: 'bussinessType',
+    key: 'bussinessType',
+    className:'bussinessType',
+  },
+  {
+    title: '成交价格',
+    dataIndex: 'dealPrice',
+    key: 'dealPrice',
+    className:'dealPrice',
+  },
+  {
+    title: '成交数量',
+    dataIndex: 'dealNumber',
+    key: 'dealNumber',
+    className:'dealNumber',
+  },
+  {
+    title: '成交金额',
+    dataIndex: 'dealMoney',
+    key: 'dealMoney',
+    className: 'dealMoney',
+  },
+  {
+    title: '佣金',
+    dataIndex: 'commission',
+    key: 'commission',
+    className: 'commission',
+  },
+  {
+    title: '净佣金',
+    dataIndex: 'realCommission',
+    key: 'realCommission',
+    className: 'realCommission',
+  },
+  {
+    title: '一级经手费',
+    dataIndex: 'oneLevelBrokerage',
+    key: 'oneLevelBrokerage',
+    className: 'oneLevelBrokerage',
+  },
+  {
+    title: '其他费(结算费)',
+    dataIndex: 'otherCost',
+    key: 'otherCost',
+    className: 'otherCost',
+  },
+  {
+    title: '期权种类',
+    dataIndex: 'optionCategory',
+    key: 'optionCategory',
+    className: 'optionCategory',
+  },
+  {
+    title: '期权持仓类别',
+    dataIndex: 'optionPositionsCategory',
+    key: 'optionPositionsCategory',
+    className: 'optionPositionsCategory',
+  },
+  {
+    title: '证券代码',
+    dataIndex: 'stockCode',
+    key: 'stockCode',
+    className: 'stockCode',
+  },
+  {
+    title: '买卖方向',
+    dataIndex: 'businessDirection',
+    key: 'businessDirection',
+    className: 'businessDirection',
+  },
+  {
+    title: '开平仓方向',
+    dataIndex: 'openStorageDirection',
+    key: 'openStorageDirection',
+    className: 'openStorageDirection',
   },
 ];
 
