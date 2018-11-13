@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-08 13:46:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-12 12:12:43
+ * @Last Modified time: 2018-11-13 20:33:20
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -34,7 +34,7 @@ const ColumnModal = React.forwardRef((props, ref) => {
       closeModal={onCloseModal}
       className={styles.activityColumnModal}
       onOk={onConfirm}
-      onCancel={onCloseModal}
+      showCancelBtn={false}
     >
       {
         visible
