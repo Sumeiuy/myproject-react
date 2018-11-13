@@ -4,6 +4,8 @@
  * @author zhufeiyang
  */
 
+import _ from 'lodash';
+
 // 前端可以完全控制主导航的菜单行为
 const newOpenTabConfig = [
   {
@@ -514,12 +516,32 @@ const locationNeedBreadcrumb = [
   },
 ];
 
+function findParentBreadcrumb(breadcrumbs, path) {
+  if(_.isArray(breadcrumbs)) {
+    return _.some(breadcrumbs, item => {
+      if(item.parent) {
+        return findParentBreadcrumb(item.parent, path);
+      }
+      return false;
+    });
+  }
+  if(_.isObject(breadcrumbs)) {
+    if(breadcrumbs.path === path) {
+      return true;
+    } else {
+      return findParentBreadcrumb(breadcrumbs.parent, path);
+    }
+  }
+  return false;
+}
+
 const exported = {
   newOpenTabConfig,
   indexPaneKey,
   defaultMenu,
   tabNotUseGlobalBreadcrumb,
   locationNeedBreadcrumb,
+  findParentBreadcrumb,
 };
 
 export default exported;
@@ -529,4 +551,5 @@ export {
   indexPaneKey,
   defaultMenu,
   tabNotUseGlobalBreadcrumb,
+  findParentBreadcrumb,
 };
