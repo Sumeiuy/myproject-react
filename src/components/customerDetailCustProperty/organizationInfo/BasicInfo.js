@@ -168,7 +168,7 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label="国税务登记到期日"
+              label="国税登记到期日"
               value={this.getPrivateValue(data.nationalTaxValdate)}
               className={styles.infoItem}
             />
@@ -184,8 +184,16 @@ export default class BasicInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
-              label="地税务登记到期日"
+              label="地税登记到期日"
               value={this.getPrivateValue(data.landTaxValdate)}
+              className={styles.infoItem}
+            />
+          </div>
+          <div className={styles.infoItemBox}>
+            <InfoItem
+              width={INFO_ITEM_WITDH}
+              label="企业类型"
+              value={data.companyType || DEFAULT_VALUE}
               className={styles.infoItem}
             />
           </div>
@@ -203,7 +211,7 @@ export default class BasicInfo extends PureComponent {
               ? (
               <div className={styles.infoItemBox}>
                 <InfoItem
-                  width={INFO_ITEM_WITDH}
+                  width={INFO_ITEM_WITDH110}
                   label="证券代码"
                   value={data.stockCode || DEFAULT_VALUE}
                   className={styles.infoItem}

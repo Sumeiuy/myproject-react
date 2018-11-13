@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性tab-会员信息组件
  * @Date: 2018-11-08 18:56:49
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-08 20:02:35
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-11-12 18:51:52
  */
 
 import React, { PureComponent } from 'react';
@@ -74,16 +74,27 @@ export default class MemberInfo extends PureComponent {
 
   render() {
     const {
+      location,
       zlUMemberInfo,
+      zlUMemberLevelChangeRecords,
       zjPointMemberInfo,
+      zjPointExchangeFlow,
+      queryZLUmemberLevelChangeRecords,
+      queryZjPointExchangeFlow,
     } = this.props;
     return (
       <div>
         <ZLMemberInfo
+          location={location}
           data={zlUMemberInfo}
+          dataSource={zlUMemberLevelChangeRecords}
+          queryZLUmemberLevelChangeRecords={queryZLUmemberLevelChangeRecords}
         />
         <ZJMemberInfo
+          location={location}
           data={zjPointMemberInfo}
+          dataSource={zjPointExchangeFlow}
+          queryZjPointExchangeFlow={queryZjPointExchangeFlow}
         />
       </div>
     );
