@@ -459,6 +459,29 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  //匹配股东账号
+  renderShareholderSccountNumber() {
+    const {
+      listItem,
+    } = this.props;
+    const { searchText = '' } = this.getFilters();
+    if (listItem.stkAccts
+      && listItem.stkAccts.indexOf(searchText) > -1) {
+      const markedEle = replaceWord({ value: listItem.stkAccts, searchText });
+      return (
+        <li key={listItem.stkAccts}>
+          <span>
+            <i className="label">股东账号：</i>
+            <i
+              dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
+            />
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
   // 匹配经纪客户号
   renderCustId() {
     const {

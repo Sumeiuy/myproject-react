@@ -728,8 +728,13 @@ export default class CustomerList extends PureComponent {
         param.searchTypeReq = null;
         param.searchText = null;
       }
+      if (query.type === 'STK_ACCTS') {
+        // 股东账号,要求传入客户经济和和类型(SOR_PTY_ID)
+        param.searchText = query.labelMapping;
+        param.searchTypeReq = 'SOR_PTY_ID';
+      }
     }
-
+    
     if (query.source === 'tag' || query.source === 'sightingTelescope') {
       param.searchTypeReq = null;
       param.searchText = null;

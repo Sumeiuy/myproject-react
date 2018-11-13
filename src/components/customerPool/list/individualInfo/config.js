@@ -126,6 +126,14 @@ const matchRule = {
       render: 'renderDefaultVal',
     }],
   },
+  shareholderSccountNumber: {
+    inset: true,
+    key: [{
+      name: '股东账号',
+      id: 'stkAccts',
+      render: 'renderDefaultVal',
+    }],
+  },
   primaryKeyPrdts: {
     inset: true,
     key: [
@@ -195,6 +203,11 @@ const matchRule = {
         name: '联系电话',
         id: 'telephone',
         render: 'renderTelephone',
+      },
+      {
+        name: '股东账号',
+        id: 'stkAccts',
+        render: 'renderShareholderSccountNumber',
       },
       {
         name: '经纪客户号',
@@ -495,6 +508,7 @@ export const {
   serviceRecord,
   sorPtyId,
   mobile,
+  shareholderSccountNumber,
   primaryKeyPrdts,
   rights,
   businessOpened,
