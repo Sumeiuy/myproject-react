@@ -12,9 +12,8 @@ import { Progress } from 'antd';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { linkTo } from './homeIndicators_';
-
-import Tooltip from '../../common/Tooltip';
 import { logCommon } from '../../../decorators/logable';
+import Tooltip from '../../common/Tooltip';
 import styles from './progressList.less';
 import { homeModelTypeName, homeModelType } from '../config';
 

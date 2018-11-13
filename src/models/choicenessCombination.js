@@ -83,6 +83,7 @@ export default {
     reportHistoryList: EMPTY_OBJECT,  // 历史报告
     reportDetail: EMPTY_OBJECT,  // 历史报告详情
     creatorList: EMPTY_LIST,  // 投资顾问数据
+    adviser: {},  // 切换的投资顾问
   },
   reducers: {
     // 风险等级筛选
@@ -117,6 +118,14 @@ export default {
       return {
         ...state,
         rankTabActiveKey: key,
+      };
+    },
+    // 切换投资顾问
+    combinationAdviserChange(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        adviser: payload,
       };
     },
     // 获取调仓历史数据
@@ -155,7 +164,6 @@ export default {
       const { payload: { resultData = EMPTY_LIST } } = action;
       return {
         ...state,
-        rankTabActiveKey: '',
         combinationTreeList: resultData,
       };
     },

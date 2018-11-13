@@ -25,7 +25,7 @@ import logable, { logCommon } from '../../decorators/logable';
 const TabPane = Tabs.TabPane;
 const { typeList } = config;
 const EMPTY_PARAM = '暂无';
-const pathname = '/stock/detail';
+const pathname = '/strategyCenter/stock/detail';
 
 const fetchDataFunction = (globalLoading, type, forceFull) => query => ({
   type,

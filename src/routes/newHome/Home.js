@@ -1,8 +1,8 @@
 /**
  * @Author: zhufeiyang
  * @Date: 2018-01-30 13:37:45
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-12 10:13:25
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-11-13 10:22:19
  */
 
 import React, { PureComponent } from 'react';
@@ -16,7 +16,7 @@ import store from 'store';
 import introJs from 'intro.js';
 import 'intro.js/introjs.css';
 
-import { logPV, logCommon} from '../../decorators/logable';
+import logable, { logPV, logCommon} from '../../decorators/logable';
 import withRouter from '../../decorators/withRouter';
 import Nav from '../../components/newHome/Nav';
 import ViewAndCombination from '../../components/newHome/ViewAndCombination';
@@ -240,6 +240,7 @@ export default class Home extends PureComponent {
       queryIntroCombination,
       queryNumbers,
       queryhomePageNews,
+      queryContent,
     } = this.props;
     const date = moment().format(DATE_FORMAT_STRING);
     // 重点关注
@@ -261,6 +262,8 @@ export default class Home extends PureComponent {
       pageNum: 1,
       pageSize: 10,
     });
+    // 获取活动栏目
+  	queryContent();
 
      // 这两个接口请求有点慢，延时发送请求
     new Promise(resolve => resolve()).then(() => {
@@ -294,7 +297,7 @@ export default class Home extends PureComponent {
 
   // 跳转到投顾业务能力竞赛页面
   @autobind
-  @logPV({ pathname: '/investmentConsultantRace', title: '投顾业务能力竞赛页面' })
+  @logable({ type: 'ButtonClick', payload: { name: '点击投顾能力竞赛' } })
   toInvestmentConsultantCompetenceRacePage() {
     const { push } = this.props;
     const url = '/investmentConsultantRace';
@@ -311,11 +314,10 @@ export default class Home extends PureComponent {
 
   // 产品日历的数值点击事件
   @autobind
-  @logPV({ pathname: '/fsp/productCenter/homePage', title: '产品中心页面' })
+  @logable({ type: 'ButtonClick', payload: { name: '点击产品中心' } })
   handleProductCalendarValueClick(item) {
     const { push } = this.props;
     const { code } = item;
-    // http://168.61.9.158:15902/htsc-product-base/financial_product_query.do?router=homePage&clientType=crm
     push({
       pathname: '/fsp/productCenter/homePage',
       state: {
@@ -395,7 +397,7 @@ export default class Home extends PureComponent {
 
   // 组合推荐，打开详情页
   @autobind
-  @logPV({ pathname: '/choicenessCombination/combinationDetail', title: '精选组合详情' })
+  @logPV({ pathname: '/strategyCenter/choicenessCombination/combinationDetail', title: '精选组合详情' })
   handleCombinationClick(obj) {
     const { push } = this.props;
     const param = {
@@ -410,19 +412,22 @@ export default class Home extends PureComponent {
       id: obj.code,
       name: obj.name,
     };
-    const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
+    const url = `/strategyCenter/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: '/choicenessCombination/combinationDetail',
+      pathname: '/strategyCenter/choicenessCombination/combinationDetail',
       query,
     });
   }
 
   // 重点关注、猜你感兴趣 跳转客户列表的点击事件
   @autobind
-  @logPV({ pathname: '/customerPool/list', title: '客户列表' })
+  @logable({ type: 'ButtonClick', payload: {
+      name: '点击$args[0].name',
+    }
+  })
   handleLinkToCustomerList(item) {
     this.handleOpenTab({
       source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',
