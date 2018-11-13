@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-13 13:01:48
+ * @Last Modified time: 2018-11-13 18:43:28
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -80,7 +80,7 @@ export default class TradeFlowModal extends PureComponent {
       // 普通账户
       currentStandBusnTypeValue: '', // 选择的业务类别
       currentStandProValue: '',  // 选择的产品代码
-      currentAllProMenuValue: [],  // 选择的产品代码,
+      currentAllProMenuValue: '',  // 选择的产品代码,
       // 信用账户
       currentCreditBusnTypeValue: '', // 选择的业务类别
       currentCreditProValue: '',  // 选择的产品代码
@@ -113,25 +113,30 @@ export default class TradeFlowModal extends PureComponent {
   queryFinProductList(e) {
     const { location: { query: { custId } } } = this.props;
     const { activeTabKey } = this.state;
-    if(activeTabKey==='standardAccountTrade'){
-      this.props.querytradeFlow({
-        type: 'finProduct',
-        custId,
-        keyWord: e,
-      });
-    }else if (activeTabKey==='creditAccountTrade'){
-      this.props.querytradeFlow({
-        type: 'finProduct',
-        custId,
-        keyWord: e,
-      });
-    }else {
-      this.props.querytradeFlow({
-        type: 'finProduct',
-        custId,
-        keyWord: e,
-      });
+    if (!_.isEmpty(e)) {
+      if(activeTabKey==='standardAccountTrade'){
+        this.props.querytradeFlow({
+          type: 'finProduct',
+          custId,
+          keyWord: e,
+        });
+      }else if (activeTabKey==='creditAccountTrade'){
+        this.props.querytradeFlow({
+          type: 'finProduct',
+          custId,
+          keyWord: e,
+        });
+      }else {
+        this.props.querytradeFlow({
+          type: 'finProduct',
+          custId,
+          keyWord: e,
+        });
+      }
+    } else {
+      return;
     }
+
   }
 
   // 查询全产品目录树
@@ -485,6 +490,7 @@ export default class TradeFlowModal extends PureComponent {
       creditTradeFlowRes,
       optionTradeFlowRes,
     } = this.props;
+    const treeData = productCatalogTree && productCatalogTree.allProductMenuTree && productCatalogTree.allProductMenuTree.children;
     // 补足普通账户流水数据
     const standardData = data.padEmptyDataForList(standardTradeFlowRes.list);
     // 修改普通账户Table 的 columns
@@ -555,7 +561,7 @@ export default class TradeFlowModal extends PureComponent {
                       dataMap={['prdtCode', 'prdtShortName']}
                       needItemObj
                       showSearch
-                      data={finProductList.list}
+                      data={finProductList.list || []}
                       value={currentStandProValue}
                       onInputChange={this.queryFinProductList}
                       onChange={this.handleFilterPro}
@@ -569,7 +575,7 @@ export default class TradeFlowModal extends PureComponent {
                       filterId="allProductMenuTree"
                       // placeholder="请输入全产品目录"
                       dropdownStyle={{zIndex: 10000}}
-                      treeData={productCatalogTree.allProductMenuTree}
+                      treeData={treeData}
                       multiple
                       showSearch
                       treeCheckable
@@ -635,7 +641,7 @@ export default class TradeFlowModal extends PureComponent {
                       dataMap={['prdtCode', 'prdtShortName']}
                       showSearch
                       needItemObj
-                      data={finProductList.list}
+                      data={finProductList.list || []}
                       value={currentCreditProValue}
                       onInputChange={this.queryFinProductList}
                       onChange={this.handleFilterPro}
@@ -684,7 +690,7 @@ export default class TradeFlowModal extends PureComponent {
                       dataMap={['prdtCode', 'prdtShortName']}
                       showSearch
                       needItemObj
-                      data={finProductList.list}
+                      data={finProductList.list || []}
                       value={currentOptionProValue}
                       onInputChange={this.queryFinProductList}
                       onChange={this.handleFilterPro}
