@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 14:59:53
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-07 16:50:03
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-11-12 01:17:02
  */
 import { detailCustProperty as api } from '../../api';
 
