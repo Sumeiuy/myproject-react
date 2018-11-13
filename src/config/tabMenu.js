@@ -473,6 +473,7 @@ const locationNeedBreadcrumb = [
     parent: {
       name: '最新观点',
       path: '/strategyCenter/latestView',
+      type: 'link',
     }
   },
   {
@@ -481,6 +482,7 @@ const locationNeedBreadcrumb = [
     parent: {
       name: '最新观点',
       path: '/strategyCenter/latestView',
+      type: 'link',
     }
   },
   {
@@ -489,6 +491,7 @@ const locationNeedBreadcrumb = [
     parent: {
       name: '个股资讯',
       path: '/strategyCenter/stock',
+      type: 'link',
     }
   },
   {
@@ -497,6 +500,7 @@ const locationNeedBreadcrumb = [
     parent: {
       name: '精选组合',
       path: '/strategyCenter/choicenessCombination',
+      type: 'link',
     }
   },
   {
@@ -505,6 +509,7 @@ const locationNeedBreadcrumb = [
     parent: {
       name: '精选组合',
       path: '/strategyCenter/choicenessCombination',
+      type: 'link',
     }
   },
 ];
