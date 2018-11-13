@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-13 11:22:56
+ * @Last Modified time: 2018-11-13 18:00:28
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -152,12 +152,14 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     key: 'usableAmount',
     dataIndex: 'usableAmount',
     title: '可用数量',
+    align: 'right',
   },
   {
     width: 160,
     key: 'freezeAmount',
     dataIndex: 'freezeAmount',
     title: '冻结数量',
+    align: 'right',
   },
   {
     width: 160,
@@ -185,6 +187,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     key: 'holdPercent',
     dataIndex: 'holdPercent',
     title: '持仓占比',
+    align: 'right',
   },
   {
     widht: 120,
@@ -230,12 +233,14 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     title: '可用份额',
     key: 'usableShare',
     dataIndex: 'usableShare',
+    align: 'right',
   },
   {
     width: 180,
     title: '净值/7日年化收益率',
     key: 'yearRate',
     dataIndex: 'yearRate',
+    align: 'right',
   },
   {
     width: 180,
@@ -275,6 +280,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     title: '持仓占比',
     key: 'holdPercent',
     dataIndex: 'holdPercent',
+    align: 'right',
   },
 ];
 
@@ -327,6 +333,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     title: '可用数量',
     key: 'usableAmount',
     dataIndex: 'usableAmount',
+    align: 'right',
   },
   {
     width: 180,
@@ -373,6 +380,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     title: '持仓占比',
     key: 'holdPercent',
     dataIndex: 'holdPercent',
+    align: 'right',
   },
 ];
 
