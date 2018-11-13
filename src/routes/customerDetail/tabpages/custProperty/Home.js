@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-08 19:20:49
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-11-12 18:50:34
  */
 
 import React, { PureComponent } from 'react';

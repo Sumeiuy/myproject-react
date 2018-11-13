@@ -2,8 +2,8 @@
  * @Author: XuWenKang
  * @Description: 客户360-客户属性相关effect,mapStateToProps,mapDispatchToProps
  * @Date: 2018-11-06 14:50:44
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2018-11-07 15:15:01
+ * @Last Modified by: wangyikai
+ * @Last Modified time: 2018-11-12 14:29:28
  */
 import { connect } from 'dva';
 

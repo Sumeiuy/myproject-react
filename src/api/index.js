@@ -37,6 +37,7 @@ import tempDeputeAPI from './tempDepute';
 import newHomeAPI from './newHome';
 import advisorSpaceAPI from './advisorSpace';
 import customerDetailAPI from './customerDetail';
+import detailServiceRelationAPI from './detailServiceRelationship';
 import detailAccountInfoAPI from './detailAccountInfo';
 import detailCustPropertyAPI from './detailCustProperty';
 import taskAnalysisReportAPI from './taskAnalysisReport';
@@ -156,6 +157,8 @@ const exported = {
   customerDetail: customerDetailAPI(api),
   // ========== 新版客户360详情下账户信息Tab组件的API
   detailAccountInfo: detailAccountInfoAPI(api),
+  // ========== 新版客户360详情下服务关系的API
+  detailServiceRelationship: detailServiceRelationAPI(api),
   // ========== 新版客户360详情下客户属性Tab组件的API
   detailCustProperty: detailCustPropertyAPI(api),
   // ========== SMART任务相关运营报表
@@ -203,6 +206,7 @@ export const {
   newHome,
   advisorSpace,
   customerDetail,
+  detailServiceRelationship,
   detailAccountInfo,
   detailCustProperty,
   taskAnalysisReport,
