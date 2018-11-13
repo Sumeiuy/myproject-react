@@ -7,18 +7,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'dva';
+import {
+  Route,
+  Switch,
+  Redirect,
+} from 'dva/router';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import ErrorBoundary from './ErrorBoundary';
 import Loading from './Loading';
 import withRouter from '../decorators/withRouter';
 import { getRoutes } from '../utils/router';
-import {
-  Route,
-  Switch,
-  Redirect,
-} from 'dva/router';
-
 import ConnectedCreateServiceRecord from '../components/customerPool/list/createServiceRecord/ConnectedCreateServiceRecord';
 import ConnectedSignCustomerLabel from '../components/customerPool/list/modal/ConnectedSignCustomerLabel';
 import ContextProvider from './ContextProvider';
@@ -26,6 +25,7 @@ import IEWarningModal from '../components/common/IEWarningModal';
 import PhoneWrapper from './PhoneWrapper';
 import styles from './main.less';
 import '../css/skin.less';
+import { redirectRoutes } from '../../src/common/router';
 
 const effects = {
   dictionary: 'app/getDictionary',
@@ -118,23 +118,23 @@ export default class Main extends Component {
     const { routerData, match } = this.props;
     return (
       <Switch>
-        <Redirect exact from="/" to="/customerPool" />
-        <Redirect exact from="/invest" to="/statisticalQuery/report" />
-        <Redirect exact from="/report" to="/statisticalQuery/report" />
-        <Redirect exact from="/custAllot" to="/businessApplyment/customerPartition/custAllot" />
-        <Redirect exact from="/departmentCustAllot" to="/businessApplyment/customerPartition/departmentCustAllot" />
-        <Route
-          path="/telephoneNumberManageEdit"
-          exact
-          component={({ location }) => (
-            <Redirect
-              to={{
-                ...location,
-                pathname: '/sysOperate/telephoneNumberManageEdit',
-              }}
+        {
+          redirectRoutes.map(item => (
+            <Route
+              key={item.from}
+              path={item.from}
+              exact
+              component={({ location }) => (
+                <Redirect
+                  to={{
+                    ...location,
+                    pathname: item.to,
+                  }}
+                />
+              )}
             />
-          )}
-        />
+          ))
+        }
         {
           getRoutes(match.path, routerData).map(item => (
             <Route
