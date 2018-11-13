@@ -207,11 +207,9 @@ function initFspMethod({ store, history, isInReact }) {
     // 重写eb的关闭tab的方法, 目前只支持关闭当前的active的tab
     window.closeTabForEB = function (id) {
       const tabNeedClose = _.find(tabMenuConfig.newOpenTabConfig, tabItem => tabItem.id === id);
-      if (tabNeedClose) {
-        closeFspTab({
-          id: tabNeedClose.id,
-        });
-      }
+      closeFspTab({
+        id: tabNeedClose && tabNeedClose.id,
+      });
     };
 
     window.tabW = _.noop;
