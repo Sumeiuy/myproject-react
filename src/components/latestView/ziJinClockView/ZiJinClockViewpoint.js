@@ -97,7 +97,7 @@ export default class ZiJinClockViewpoint extends PureComponent {
       id: 'RTC_TAB_ZIJIN_CLOCK_VIEWPOINT_LIST',
       title: '行业/主题调整',
     };
-    const url = '/latestView/industryThemeList';
+    const url = '/strategyCenter/latestView/industryThemeList';
     openRctTab({
       routerAction: push,
       url,
