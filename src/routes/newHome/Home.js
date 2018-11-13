@@ -16,7 +16,7 @@ import store from 'store';
 import introJs from 'intro.js';
 import 'intro.js/introjs.css';
 
-import { logPV, logCommon} from '../../decorators/logable';
+import logable, { logPV, logCommon} from '../../decorators/logable';
 import withRouter from '../../decorators/withRouter';
 import Nav from '../../components/newHome/Nav';
 import ViewAndCombination from '../../components/newHome/ViewAndCombination';
@@ -297,7 +297,7 @@ export default class Home extends PureComponent {
 
   // 跳转到投顾业务能力竞赛页面
   @autobind
-  @logPV({ pathname: '/investmentConsultantRace', title: '投顾业务能力竞赛页面' })
+  @logable({ type: 'ButtonClick', payload: { name: '点击投顾能力竞赛' } })
   toInvestmentConsultantCompetenceRacePage() {
     const { push } = this.props;
     const url = '/investmentConsultantRace';
@@ -314,11 +314,10 @@ export default class Home extends PureComponent {
 
   // 产品日历的数值点击事件
   @autobind
-  @logPV({ pathname: '/fsp/productCenter/homePage', title: '产品中心页面' })
+  @logable({ type: 'ButtonClick', payload: { name: '点击产品中心' } })
   handleProductCalendarValueClick(item) {
     const { push } = this.props;
     const { code } = item;
-    // http://168.61.9.158:15902/htsc-product-base/financial_product_query.do?router=homePage&clientType=crm
     push({
       pathname: '/fsp/productCenter/homePage',
       state: {
@@ -425,7 +424,10 @@ export default class Home extends PureComponent {
 
   // 重点关注、猜你感兴趣 跳转客户列表的点击事件
   @autobind
-  @logPV({ pathname: '/customerPool/list', title: '客户列表' })
+  @logable({ type: 'ButtonClick', payload: {
+      name: '点击$args[0].name',
+    }
+  })
   handleLinkToCustomerList(item) {
     this.handleOpenTab({
       source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',

@@ -38,6 +38,8 @@ const effects = {
   getCombinationLineChart: 'choicenessCombination/getCombinationLineChart',
   // 切换组合排名tab
   combinationRankTabchange: 'choicenessCombination/combinationRankTabchange',
+  // 投资顾问切换事件
+  combinationAdviserChange: 'choicenessCombination/combinationAdviserChange',
   // 组合排名收益率排序
   yieldRankChange: 'choicenessCombination/yieldRankChange',
   // 组合排名风险筛选
@@ -75,8 +77,9 @@ const mapStateToProps = state => ({
   riskLevel: state.choicenessCombination.riskLevel,
   // 历史报告
   reportHistoryList: state.choicenessCombination.reportHistoryList,
-  // 投资顾问
+  // 投资顾问列表
   creatorList: state.choicenessCombination.creatorList,
+  adviser: state.choicenessCombination.adviser,
 });
 const mapDispatchToProps = {
   getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory,
@@ -86,10 +89,12 @@ const mapDispatchToProps = {
   getCombinationTree: dispatch(effects.getCombinationTree,
     { loading: true, forceFull: true }),
   getCombinationRankList: dispatch(effects.getCombinationRankList,
-    { loading: false, forceFull: true }),
+    { loading: true, forceFull: true }),
   getCombinationLineChart: dispatch(effects.getCombinationLineChart,
     { loading: true, forceFull: true }),
   combinationRankTabchange: dispatch(effects.combinationRankTabchange,
+    { loading: true, forceFull: true }),
+  combinationAdviserChange: dispatch(effects.combinationAdviserChange,
     { loading: true, forceFull: true }),
   yieldRankChange: dispatch(effects.yieldRankChange,
     { loading: true, forceFull: true }),
@@ -145,6 +150,8 @@ export default class ChoicenessCombination extends PureComponent {
     creatorList: PropTypes.array.isRequired,
     // 清空数据
     clearData: PropTypes.func.isRequired,
+    combinationAdviserChange: PropTypes.func.isRequired,
+    adviser: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -173,6 +180,8 @@ export default class ChoicenessCombination extends PureComponent {
       getCombinationSecurityList,
       getCombinationTree,
       getCombinationRankList,
+      queryCombinationCreator,
+      location: { query: { type = '', adviserId = '' } },
     } = this.props;
     // 调仓方向传 3 视为取最新两条数据
     const payload = {
@@ -183,9 +192,12 @@ export default class ChoicenessCombination extends PureComponent {
     // 先获取组合树，然后用组合树的第一个组合类别id查询组合排名数据
     getCombinationTree().then(() => {
       getCombinationRankList({
-        combinationType: '',
+        combinationType: type,
+        adviserId: adviserId,
       });
     });
+    // 获取投资顾问列表
+    queryCombinationCreator({ keyword: '' });
   }
 
   // 打开弹窗
@@ -221,13 +233,14 @@ export default class ChoicenessCombination extends PureComponent {
   // tab切换
   @autobind
   handleOptionChange(payload) {
-    const { type, adviserId = '' } = payload;
-    const { getCombinationRankList, combinationRankTabchange } = this.props;
+    const { type, adviser } = payload;
+    const { getCombinationRankList, combinationRankTabchange, combinationAdviserChange } = this.props;
     combinationRankTabchange({ key: type });
+    combinationAdviserChange(adviser);
     // 查询组合排名数据
     getCombinationRankList({
       combinationType: type,
-      adviserId,
+      adviserId: adviser.empId,
     });
   }
 
@@ -377,9 +390,9 @@ export default class ChoicenessCombination extends PureComponent {
       getAdjustWarehouseHistory,
       getReportHistoryList,
       reportHistoryList,
-      queryCombinationCreator,
       creatorList,
       clearData,
+      adviser,
     } = this.props;
     const {
       hasTkMampPermission,
@@ -435,6 +448,7 @@ export default class ChoicenessCombination extends PureComponent {
           </div>
         </div>
         <CombinationRank
+          location={location}
           showModal={this.showModal}
           combinationTreeList={combinationTreeList}
           combinationRankList={combinationRankList}
@@ -451,9 +465,9 @@ export default class ChoicenessCombination extends PureComponent {
           openStockPage={this.openStockPage}
           openCustomerListPage={this.openCustomerListPage}
           openDetailPage={this.openDetailPage}
-          queryCombinationCreator={queryCombinationCreator}
           creatorList={creatorList}
           clearData={clearData}
+          adviser={adviser}
         />
         {
           visible

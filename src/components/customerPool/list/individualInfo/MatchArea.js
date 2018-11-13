@@ -5,7 +5,7 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: zhangmei
- * @Last Modified time: 2018-11-12 13:58:02
+ * @Last Modified time: 2018-11-13 17:34:15
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -344,6 +344,70 @@ export default class MatchArea extends PureComponent {
     }
     return null;
   }
+
+  // 投资期限
+  @autobind
+  renderInvestPeriod(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { custId, investPeriod } = listItem;
+    const { dataTurn, id } = currentItem;
+    if (investPeriod) {
+      return (
+        <li key={`${id}${custId}`} title={dataTurn[investPeriod]}>
+            <span>
+              <i className="label">投资期限：</i>
+              {dataTurn[investPeriod]}
+            </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 投资品种
+  @autobind
+  renderInvestVariety(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { custId, investVariety } = listItem;
+    const { dataTurn, id } = currentItem;
+    if (investVariety) {
+      return (
+        <li key={`${id}${custId}`} title={dataTurn[investVariety]}>
+            <span>
+              <i className="label">投资品种：</i>
+              {dataTurn[investVariety]}
+            </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 天天发份额
+  @autobind
+  renderTtfMktVal(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { name, id } = currentItem;
+    if (listItem.ttfMktVal) {
+      return (
+        <li key={`${id}${listItem.custId}`}>
+          <span>
+            <i className="label">{name}：</i>
+            {listItem.ttfMktVal}份
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+
   // 精选组合页面的订购组合
   @autobind
   renderOrderCombination() {
@@ -497,6 +561,7 @@ export default class MatchArea extends PureComponent {
       const labelInfo = index === fspLabel.length - 1 ? name : `${name},`;
       return (
         <Tooltip
+          overlayClassName={styles.labelsToolTip}
           placement="bottomLeft"
           title={description}
           key={description}
@@ -554,6 +619,7 @@ export default class MatchArea extends PureComponent {
           const tempKey = `${description}${index}`;
           return (
             <Tooltip
+              overlayClassName={styles.labelsToolTip}
               placement="bottomLeft"
               title={description}
               key={tempKey}

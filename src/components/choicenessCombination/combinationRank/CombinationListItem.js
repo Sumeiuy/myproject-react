@@ -34,8 +34,6 @@ const REPORT_TYPE = 'report';
 
 export default class CombinationListItem extends PureComponent {
   static propTypes = {
-    // 字典
-    dict: PropTypes.object.isRequired,
     // 图表tab切换
     chartTabChange: PropTypes.func.isRequired,
     // 组合item数据
@@ -58,6 +56,7 @@ export default class CombinationListItem extends PureComponent {
   static contextTypes = {
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
+    dict: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -143,7 +142,8 @@ export default class CombinationListItem extends PureComponent {
 
   @autobind
   getRiskLevelName() {
-    const { data, dict } = this.props;
+    const { data } = this.props;
+    const { dict } = this.context;
     const riskLevelData = dict.prodRiskLevelList;
     const { riskLevel = '' } = data;
     const riskLevelName = ((_.filter(riskLevelData, item => item.key === riskLevel)
@@ -213,7 +213,6 @@ export default class CombinationListItem extends PureComponent {
 
   render() {
     const {
-      // dict,
       data,
       data: {
         combinationCode,

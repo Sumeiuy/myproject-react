@@ -273,17 +273,17 @@ function getBuyAmtInfo({ filterField, labelName, unit = '元' }, filterObj, kPID
  * @param {*} labelName 要显示在页面中的名称
  * @param {*} filterObj url中解析出来的filter字段
  */
-function getCapitalRangInfo({ filterField, labelName }, filterObj) {
+function getCapitalRangInfo({ filterField, labelName, unit = '元' }, filterObj) {
   const range = filterObj[filterField];
   if (!_.isEmpty(range)) {
     if (range[0] && range[1]) {
-      return `${labelName}： ${range[0]}元 - ${range[1]}元`;
+      return `${labelName}： ${range[0]}${unit} - ${range[1]}${unit}`;
     }
     if (range[0]) {
-      return `${labelName}： 大于等于${range[0]}元`;
+      return `${labelName}： 大于等于${range[0]}${unit}`;
     }
     if (range[1]) {
-      return `${labelName}： 小于等于${range[1]}元`;
+      return `${labelName}： 小于等于${range[1]}${unit}`;
     }
   }
   return '';
