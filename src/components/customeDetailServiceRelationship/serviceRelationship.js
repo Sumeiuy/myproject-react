@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-12 00:11:15
+ * @Last Modified time: 2018-11-13 16:17:17
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -14,6 +14,7 @@ import Table from '../../components/common/table';
 import Modal from '../../components/common/biz/CommonModal';
 import styles from './serviceRelationship.less';
 import { number } from '../../helper';
+import logable, { logPV } from '../../decorators/logable';
 import { serviceTeamColumns, introduceColumns, serviceHistoryColumns} from './config';
 
 export default class ServiceRelationship extends PureComponent {
@@ -50,6 +51,10 @@ export default class ServiceRelationship extends PureComponent {
   }
   //打开服务历史的弹框
   @autobind
+  @logPV ({
+    pathname: '/modal/serviceHistoryModal',
+    title: '服务历史的弹框',
+  })
   handleServiceHistoryModalOpen(){
     const { getCustServiceHistory, location: { query } } = this.props;
       getCustServiceHistory({ custId: query && query.custId}).then(() => {
@@ -58,6 +63,10 @@ export default class ServiceRelationship extends PureComponent {
   }
   // 关闭服务历史的弹出层
   @autobind
+  @logable({
+     type: 'ButtonClick',
+     payload: { name: '服务历史' }
+  })
   handleServiceHistoryModalClose() {
     this.setState({ serviceHistoryModalVisible: false});
   }
@@ -89,6 +98,7 @@ export default class ServiceRelationship extends PureComponent {
             <Icon type="huiyuandengjibiangeng" className={styles.serviceHistoryIcon}/>
             <div className={styles.serviceHistory} onClick={this.handleServiceHistoryModalOpen}>服务历史</div>
             <Modal
+             className={styles.serviceHistoryModal}
              title="服务历史"
              size='large'
              showOkBtn={false}
@@ -99,21 +109,29 @@ export default class ServiceRelationship extends PureComponent {
              modalKey="serviceHistory"
              maskClosable={false}
             >
-             <div className={styles.tabContainer}>
-             <Table
-              pagination={showServiceHistoryPagination}
-              className={styles.tabPaneWrap}
-              dataSource={serviceHistory}
-              columns={serviceHistoryColumns}
-              scroll={{ x: '1024px' }}
-            />
-          </div>
+            {
+               _.isEmpty(serviceHistory)
+               ? <div className={styles.noDataContainer}>
+                   <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
+                   <div className={styles.noDataText}>没有符合条件的记录</div>
+               </div>
+               :   <div className={styles.tabContainer}>
+               <Table
+                pagination={showServiceHistoryPagination}
+                className={styles.tabPaneWrap}
+                dataSource={serviceHistory}
+                columns={serviceHistoryColumns}
+                scroll={{ x: '1024px' }}
+              />
+            </div>
+          }
           </Modal>
           </div>
           <div className={styles.accountTable}>
             <Table
               pagination={false}
               className={styles.tableBorder}
+              isNeedEmptyRow
               dataSource={serviceTeam}
               columns={serviceTeamColumns}
             />
@@ -127,6 +145,7 @@ export default class ServiceRelationship extends PureComponent {
             <Table
               pagination={false}
               className={styles.tableBorder}
+              isNeedEmptyRow
               dataSource={newIntroduceDatas}
               columns={introduceColumns}
             />

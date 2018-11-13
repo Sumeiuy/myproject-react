@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性-会员信息-紫金积分会员信息
  * @Date: 2018-11-08 18:59:50
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-12 18:55:56
+ * @Last Modified time: 2018-11-13 16:27:10
  */
 
 import React, { PureComponent } from 'react';
@@ -20,6 +20,7 @@ import { Button } from 'antd';
 import Table from '../../../components/common/table';
 import { integralFlowColumns } from '../config';
 import moment from 'moment';
+import logable, { logPV } from '../../../decorators/logable';
 
 const INFO_ITEM_WITDH110 = '110px';
 const INFO_ITEM_WITDH = '126px';
@@ -45,18 +46,27 @@ export default class ZJMemberInfo extends PureComponent {
 
   // 打开积分兑换流水弹框
   @autobind
+  @logPV ({
+    pathname: '/modal/integralFlowModal',
+    title: '积分兑换流水弹框',
+  })
   handleIntegralFlowModalOpen(){
     this.setState({integralFlowModalVisible: true});
   }
 
   // 关闭积分兑换流水弹框
   @autobind
+  @logable({
+    type: 'ButtonClick',
+    payload: { name: '紫金会员兑换流水' }
+ })
   handleIntegralFlowModalClose(){
     this.setState({integralFlowModalVisible: false});
   }
 
   // 页码切换的回调
   @autobind
+  @logable({ type: 'Click', payload: { name: '页码切换' } })
   handlePaginationChange(page){
     const { queryZjPointExchangeFlow, location: { query} } = this.props;
     this.setState({
@@ -101,18 +111,16 @@ export default class ZJMemberInfo extends PureComponent {
 
   render() {
     const { integralFlowModalVisible, pageNum } = this.state;
-    const { data, dataSource} = this.props;
+    const { data, dataSource } = this.props;
     const { tradeFlow = [], page = {} } = dataSource;
     const PaginationOption = {
       current: pageNum || 1,
-      total: page.totalCount || 0,
+      total: page.totalRecordNum || 0,
       pageSize: page.pageSize || 10,
       onChange: this.handlePaginationChange,
     };
-      // 紫金积分会员积分兑换流水的数据长度
-     const IntegralFlowDatasLength = _.size(tradeFlow);
-    //  数据超过10条展示分页，反之不展示
-     const showIntegralFlowPagination = IntegralFlowDatasLength > 10 ? PaginationOption : false;
+    // 数据长达大于10显示分页
+    const showIntegralFlowPagination =  page.totalPageNum !== 1 ? PaginationOption : false;
      //处理数据
      const newIntegralFlowDatas = _.map(tradeFlow,  (items) => {
       const { productQuantity } = items;
@@ -147,12 +155,13 @@ export default class ZJMemberInfo extends PureComponent {
               _.isEmpty(tradeFlow)
               ? <div className={styles.noDataContainer}>
                 <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
-                <div className={styles.noDataText}>没有符合条件的客户</div>
+                <div className={styles.noDataText}>没有符合条件的记录</div>
               </div>
-              : <div className={styles.tabContainer}>
+               : <div className={styles.tabContainer}>
                 <Table
                   pagination={showIntegralFlowPagination}
                   dataSource={newIntegralFlowDatas}
+                  isNeedEmptyRow
                   columns={this.renderColumns()}
                   scroll={{ x: '1024px' }}
                 />

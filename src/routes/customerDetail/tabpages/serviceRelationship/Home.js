@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-11-05 17:45:53
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-09 10:58:12
+ * @Last Modified time: 2018-11-13 10:16:16
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -47,10 +47,6 @@ export default class Home extends PureComponent {
     getCustServiceHistory: PropTypes.func.isRequired,
       // 清除Redux中的数据
    clearReduxData: PropTypes.func.isRequired,
-  }
-  constructor(props) {
-    super(props);
-    this.state = {};
   }
   render() {
     const {
