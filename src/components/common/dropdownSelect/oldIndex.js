@@ -9,7 +9,6 @@ import { Dropdown } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
 import { constants } from '../../../config';
-import logable from '../../../decorators/logable';
 import style from './style.less';
 import HackSearch from '../hackSearch';
 
@@ -157,7 +156,6 @@ export default class DropdownSelect extends PureComponent {
   }
 
   @autobind
-  @logable({ type: 'Click', payload: { name: '显示下拉选框' } })
   showDrapDown() {
     this.setState({ isSHowModal: !this.state.isSHowModal });
   }

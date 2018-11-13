@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-05-28 19:14:00
  * @Last Modified by: zhangmei
- * @Last Modified time: 2018-11-12 14:10:30
+ * @Last Modified time: 2018-11-13 10:21:30
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -54,7 +54,7 @@ export default class PhoneWrapper extends Component {
 
   // 点击电话号码打电话
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击电话打电话' } })
+  @logable({ type: 'Click', payload: { name: '点击号码拨打电话' } })
   handleClickPhone() {
     this.startTime = '';
      // 获取打完电话发服务记录时需要的字典信息

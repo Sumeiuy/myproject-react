@@ -12,7 +12,6 @@ import _ from 'lodash';
 
 import { dom } from '../../helper';
 import styles from './SelfSelect.less';
-import logable from '../../decorators/logable';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -160,7 +159,6 @@ export default class SelfSelect extends PureComponent {
   }
   // 打开下拉列表
   @autobind
-  @logable({ type: 'Click', payload: { name: '打开下拉列表' } })
   expandSelect() {
     this.setState({
       expand: true,

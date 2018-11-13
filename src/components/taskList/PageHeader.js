@@ -232,7 +232,7 @@ export default class Pageheader extends PureComponent {
   @logable({
     type: 'DropdownSelect',
     payload: {
-      name: '方式',
+      name: '执行方式',
       value: '$args[0].value.label',
     },
   })
