@@ -3,12 +3,14 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-09 13:05:20
+ * @Last Modified time: 2018-11-12 15:33:29
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Form, Input  } from 'antd';
+import { urlRegExp } from './config';
 import CommonUpload from '../../../common/biz/CommonUpload';
 import InfoCell from './InfoCell';
 
@@ -39,12 +41,19 @@ export default class ColumnForm extends PureComponent {
     return this.props.form;
   }
 
+  // 上传附件
   @autobind
   handleUploadAttachment(attachment, attaches) {
     this.props.onChange({
       attachment,
       attaches,
     });
+  }
+
+  // 删除附件回调
+  @autobind
+  handleDeleteAttachment(attaches) {
+    this.props.onChange({ attaches });
   }
 
   // 功能描述改变
@@ -54,6 +63,16 @@ export default class ColumnForm extends PureComponent {
     this.props.onChange({
       descriptionCount,
     });
+  }
+
+  // 校验图片链接
+  @autobind
+  validateLink(rule, value, callback) {
+    if (value && !urlRegExp.test(value)) {
+      callback('图片链接格式不正确');
+    } else {
+      callback();
+    }
   }
 
   render() {
@@ -79,12 +98,14 @@ export default class ColumnForm extends PureComponent {
         help: attachmentStatusErrorMessage,
       }
       : null;
+    // 图片上传样式
+    const formCellUploadStyles = classnames([styles.formCell, styles.formCellUpload]);
     return (
       <div className={styles.columnForm}>
         <Form>
           <InfoCell
             label="图片上传"
-            className={styles.formCell}
+            className={formCellUploadStyles}
             required
           >
             <FormItem {...attachmentStatusErrorProps}>
@@ -94,6 +115,7 @@ export default class ColumnForm extends PureComponent {
                   attachmentList={attachmentList}
                   edit
                   uploadAttachment={this.handleUploadAttachment}
+                  deleteCallback={this.handleDeleteAttachment}
                   needDefaultText={false}
                 />
               </div>
@@ -109,6 +131,7 @@ export default class ColumnForm extends PureComponent {
                 rules: [
                   { required: true, message: '请输入图片链接' },
                   { whitespace: true, message: '请输入图片链接' },
+                  { validator: this.validateLink },
                 ],
                 initialValue: link,
               })(

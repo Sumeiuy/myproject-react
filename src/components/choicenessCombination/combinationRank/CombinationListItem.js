@@ -19,7 +19,7 @@ import styles from './combinationListItem.less';
 import {
   yieldRankList,
   securityType as securityTypeList,
-  formatStr,
+  formatDateStr,
   sourceType,
 } from '../config';
 
@@ -34,8 +34,6 @@ const REPORT_TYPE = 'report';
 
 export default class CombinationListItem extends PureComponent {
   static propTypes = {
-    // 字典
-    dict: PropTypes.object.isRequired,
     // 图表tab切换
     chartTabChange: PropTypes.func.isRequired,
     // 组合item数据
@@ -58,6 +56,7 @@ export default class CombinationListItem extends PureComponent {
   static contextTypes = {
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
+    dict: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -104,7 +103,7 @@ export default class CombinationListItem extends PureComponent {
             }
           </span>
           <span className={styles.direction}>{item.directionName}</span>
-          <span className={styles.time}>{time.format(item.time, formatStr)}</span>
+          <span className={styles.time}>{time.format(item.time, formatDateStr)}</span>
           <span className={styles.cost}>{item.price}</span>
           <span className={styles.reason} title={item.reason}>{reason || DEFAULT_REASON}</span>
         </div>
@@ -143,7 +142,8 @@ export default class CombinationListItem extends PureComponent {
 
   @autobind
   getRiskLevelName() {
-    const { data, dict } = this.props;
+    const { data } = this.props;
+    const { dict } = this.context;
     const riskLevelData = dict.prodRiskLevelList;
     const { riskLevel = '' } = data;
     const riskLevelName = ((_.filter(riskLevelData, item => item.key === riskLevel)
@@ -213,59 +213,77 @@ export default class CombinationListItem extends PureComponent {
 
   render() {
     const {
-      // dict,
       data,
+      data: {
+        combinationCode,
+        combinationName,
+        productCode,
+        show,
+        isRecommend,
+        composeType,
+        empName,
+        empId,
+        securityList,
+      },
       chartTabChange,
       getCombinationLineChart,
       combinationLineChartData,
       rankTabActiveKey,
     } = this.props;
-    const chartData = combinationLineChartData[data.combinationCode] || EMPTY_OBJECT;
+    const chartData = combinationLineChartData[combinationCode] || EMPTY_OBJECT;
     const yieldName = this.getYieldName();
     const classNames = classnames({
       [styles.itemBox]: true,
       clearfix: true,
-      [styles.show]: data.show,
+      [styles.show]: show,
     });
     const openPayload = {
-      name: data.combinationName,
-      code: data.productCode,
+      name: combinationName,
+      code: productCode,
       source: sourceType.combination,
-      combinationCode: data.combinationCode,
+      combinationCode,
     };
     const openDetailPayload = {
-      id: data.combinationCode,
-      name: data.combinationName,
+      id: combinationCode,
+      name: combinationName,
     };
     return (
       <div className={classNames}>
         <div className={styles.left}>
-          <div className={`${styles.headBox} clearfix`}>
-            <span className={styles.combinationName} title={data.combinationName}>
-              <a onClick={() => this.handleNameClick(openDetailPayload)}>
-                {data.combinationName}
-              </a>
-            </span>
-            <span className={styles.earnings}>
-              <i>{yieldName}</i>
-              {this.getYieldNode()}
-            </span>
-            <span className={styles.tips}>
-              {this.getRiskLevelName()}
-              {
-                data.isRecommend ?
-                  <em>推荐</em>
-                :
-                  null
-              }
-            </span>
-            <span className={styles.link}>
-              <a onClick={() => this.handleNameClick(openDetailPayload)}>组合详情 </a>
-              |
-              <a onClick={() => this.viewHistoryReport(data.combinationCode)}> 历史报告 </a>
-              |
-              <a onClick={() => this.handleOpenCustomerListPage(openPayload)}> 订购客户</a>
-            </span>
+          <div className={styles.headBox}>
+            <div className={styles.firstLine}>
+              {/* 组合名称 */}
+              <span className={styles.combinationName} title={combinationName}>
+                <a onClick={() => this.handleNameClick(openDetailPayload)}>
+                  {combinationName}
+                </a>
+              </span>
+              {/* 推荐、风险 */}
+              <span className={styles.tips}>
+                {this.getRiskLevelName()}
+                {
+                  isRecommend ?
+                    <em>推荐</em>
+                  :
+                    null
+                }
+              </span>
+              {/* 收益率 */}
+              <span className={styles.earnings}>
+                <em>{yieldName}</em>
+                {this.getYieldNode()}
+              </span>
+            </div>
+            <div className={styles.secondLine}>
+               <span>{composeType} | {empName} ({empId})</span>
+              <span className={styles.link}>
+                <a onClick={() => this.handleNameClick(openDetailPayload)}>组合详情 </a>
+                |
+                <a onClick={() => this.viewHistoryReport(combinationCode)}> 历史报告 </a>
+                |
+                <a onClick={() => this.handleOpenCustomerListPage(openPayload)}> 订购客户</a>
+              </span>
+            </div>
           </div>
           <div className={styles.tableBox}>
             <div className={`${styles.titleBox} clearfix`}>
@@ -281,7 +299,7 @@ export default class CombinationListItem extends PureComponent {
             </div>
           </div>
           {
-            _.isEmpty(data.securityList) ?
+            _.isEmpty(securityList) ?
               <div className={styles.noData}>
                 <Icon type="meiyouxiangguanjieguo" />
                 <span>此组合暂无调仓记录</span>
@@ -293,7 +311,7 @@ export default class CombinationListItem extends PureComponent {
         <div className={styles.right}>
           <CombinationYieldChart
             combinationItemData={data}
-            combinationCode={data.combinationCode}
+            combinationCode={combinationCode}
             chartData={chartData}
             getCombinationLineChart={getCombinationLineChart}
             tabChange={chartTabChange}

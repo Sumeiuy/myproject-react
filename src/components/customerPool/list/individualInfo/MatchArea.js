@@ -4,15 +4,16 @@
  * @author xiaZhiQiang
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-28 09:12:46
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-11-13 12:28:10
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Tooltip } from 'antd';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { autobind } from 'core-decorators';
+
+import Tooltip from '../../../common/Tooltip';
 import { isSightingScope, isLocalScope, handleOpenFsp360TabAction, openProductDetailPage, getDetailBtnVisible } from '../../helper';
 import { url as urlHelper, url, number } from '../../../../helper';
 import { seperator, sessionStore } from '../../../../config';
@@ -254,7 +255,7 @@ export default class MatchArea extends PureComponent {
   handleOrderCombinationClick({ name, code }) {
     const { push } = this.context;
     const query = { id: code, name };
-    const pathname = '/choicenessCombination/combinationDetail';
+    const pathname = '/strategyCenter/choicenessCombination/combinationDetail';
     const detailURL = `${pathname}?${urlHelper.stringify(query)}`;
     const param = {
       closable: true,
@@ -345,6 +346,70 @@ export default class MatchArea extends PureComponent {
     }
     return null;
   }
+
+  // 投资期限
+  @autobind
+  renderInvestPeriod(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { custId, investPeriod } = listItem;
+    const { dataTurn, id } = currentItem;
+    if (investPeriod) {
+      return (
+        <li key={`${id}${custId}`} title={dataTurn[investPeriod]}>
+            <span>
+              <i className="label">投资期限：</i>
+              {dataTurn[investPeriod]}
+            </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 投资品种
+  @autobind
+  renderInvestVariety(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { custId, investVariety } = listItem;
+    const { dataTurn, id } = currentItem;
+    if (investVariety) {
+      return (
+        <li key={`${id}${custId}`} title={dataTurn[investVariety]}>
+            <span>
+              <i className="label">投资品种：</i>
+              {dataTurn[investVariety]}
+            </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 天天发份额
+  @autobind
+  renderTtfMktVal(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { name, id } = currentItem;
+    if (listItem.ttfMktVal) {
+      return (
+        <li key={`${id}${listItem.custId}`}>
+          <span>
+            <i className="label">{name}：</i>
+            {listItem.ttfMktVal}份
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+
   // 精选组合页面的订购组合
   @autobind
   renderOrderCombination() {

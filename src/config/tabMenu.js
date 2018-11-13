@@ -86,13 +86,13 @@ const newOpenTabConfig = [
   },
   {
     name: '投顾签约变更向导',
-    id: 'FSP_CUST_M_360OPERATETYPE',
+    id: 'FSP_360VIEW_OPERATE_TAB',
     path: '/fsp/customerCenter/360OperateType',
     pid: 'FSP_CUST_M_360',
   },
   {
     name: '投顾签约转签向导',
-    id: 'FSP_CUST_M_TGCONTRACT_TRANSFER',
+    id: 'utb-stockcontracttransfer-wizard',
     path: '/fsp/customerCenter/tgcontracttransfer',
     pid: 'FSP_MESSAGE_CENTER',
   },
@@ -103,20 +103,26 @@ const newOpenTabConfig = [
     pid: 'FSP_CUST_M_360',
   },
   {
+    name: '投顾协议退订向导',
+    id: 'utb-stockcontracttmnte-wizard',
+    path: '/fsp/customerCenter/tgcontracttmnte',
+    pid: 'FSP_CUST_M_360',
+  },
+  {
     name: '佣金调整向导',
     id: 'utb-serviceOrdering-wizard',
     path: '/fsp/serviceOrderingWizard',
     pid: 'FSP_CUST_M_360',
   },
   {
-    name: '合约详情',
+    name: '签约流程详细视图信息',
     id: 'FSP_CUST_M_ORDERDETAIL',
     path: '/fsp/customerCenter/360OrderDetail',
     pid: 'FSP_CUST_M_360',
   },
   {
-    name: '合约历史记录',
-    id: 'FSP_CUST_M_ORDERHISDETAIL',
+    name: '投顾签约历史记录',
+    id: 'FSP_360VIEW_AGREEHIS_TAB',
     path: '/fsp/customerCenter/360orderHisDetail',
     pid: 'FSP_CUST_M_360',
   },
@@ -145,26 +151,14 @@ const newOpenTabConfig = [
     pid: 'asset_implementation_tab',
   },
   {
-    name: '个股详情',
-    id: 'FSP_STOCK_DETAIL',
-    path: '/stock/detail',
-    pid: 'FSP_STRATEGY_CENTER',
-  },
-  {
-    name: '组合详情',
-    id: 'FSP_COMBINATION_DETAIL',
-    path: '/choicenessCombination/combinationDetail',
-    pid: 'FSP_STRATEGY_CENTER',
-  },
-  {
-    name: '历史报告',
-    id: 'FSP_REPORT_DETAIL',
-    path: '/choicenessCombination/reportDetail',
-    pid: 'FSP_STRATEGY_CENTER',
+    name: '每日晨报',
+    id: 'FSP_BROADCAST_LIST',
+    path: '/strategyCenter/broadcastList',
+    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
   },
   {
     name: '晨报详情',
-    id: 'FSP_BROADCAST_DETAIL',
+    id: 'FSP_BROADCAST_LIST',
     path: '/broadcastDetail',
     pid: 'FSP_STRATEGY_CENTER',
   },
@@ -325,18 +319,6 @@ const newOpenTabConfig = [
     pid: 'FSP_LATEST_VIEW',
   },
   {
-    name: '大类资产配置分析列表',
-    id: 'FSP_MAJOR_ASSETSLIST',
-    path: '/latestView/majorAssetsList',
-    pid: 'FSP_MAJOR_ASSETSLIST',
-  },
-  {
-    name: '行业主题调整信息列表',
-    id: 'FSP_INDUSTRY_THEMELIST',
-    path: '/latestView/industryThemeList',
-    pid: 'FSP_INDUSTRY_THEMELIST',
-  },
-  {
     name: '超额快取信息',
     id: 'FSP_BIZAPPLY_EXCESSCACHE_EDIT',
     path: '/fsp/bizapply/excesscacheView',
@@ -473,11 +455,78 @@ const defaultMenu = [
   },
 ];
 
+// 暂时不需要共用的面包屑的路由
+const tabNotUseGlobalBreadcrumb = [
+  '/customerPool/list/detail',
+  '/customerPool/createTaskFromTaskRejection2',
+  '/taskCenter/taskList',
+  '/statisticalQuery/report',
+  '/sysOperate/platformParameterSetting',
+  '/sysOperate/telephoneNumberManage'
+];
+
+// 不在菜单中需要使用面包屑的路由
+const locationNeedBreadcrumb = [
+  {
+    name: '大类资产配置分析列表',
+    path: '/strategyCenter/latestView/majorAssetsList',
+    parent: {
+      name: '最新观点',
+      path: '/strategyCenter/latestView',
+      type: 'link',
+    }
+  },
+  {
+    name: '行业主题调整信息列表',
+    path: '/strategyCenter/latestView/industryThemeList',
+    parent: {
+      name: '最新观点',
+      path: '/strategyCenter/latestView',
+      type: 'link',
+    }
+  },
+  {
+    name: '个股详情',
+    path: '/strategyCenter/stock/detail',
+    parent: {
+      name: '个股资讯',
+      path: '/strategyCenter/stock',
+      type: 'link',
+    }
+  },
+  {
+    name: '组合详情',
+    path: '/strategyCenter/choicenessCombination/combinationDetail',
+    parent: {
+      name: '精选组合',
+      path: '/strategyCenter/choicenessCombination',
+      type: 'link',
+    }
+  },
+  {
+    name: '历史报告',
+    path: '/strategyCenter/choicenessCombination/reportDetail',
+    parent: {
+      name: '精选组合',
+      path: '/strategyCenter/choicenessCombination',
+      type: 'link',
+    }
+  },
+];
+
 const exported = {
   newOpenTabConfig,
   indexPaneKey,
   defaultMenu,
+  tabNotUseGlobalBreadcrumb,
+  locationNeedBreadcrumb,
 };
 
 export default exported;
-export { newOpenTabConfig, indexPaneKey, defaultMenu };
+export {
+  locationNeedBreadcrumb,
+  newOpenTabConfig,
+  indexPaneKey,
+  defaultMenu,
+  tabNotUseGlobalBreadcrumb,
+};

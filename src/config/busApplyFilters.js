@@ -2,8 +2,8 @@
  * @Author: zhangjun
  * @Description: 业务申请头部筛选组件公共筛选项
  * @Date: 2018-07-31 14:39:37
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-06 15:02:33
+ * @Last Modified by: zhangjun
+ * @Last Modified time: 2018-10-22 15:03:07
  */
 
 const exported = {
@@ -18,7 +18,7 @@ const exported = {
       handleInputChange: 'handleCustSearch',
       showSearch: true,
       needItemObj: true,
-      placeholder: '工号或名称',
+      placeholder: '经纪客户号或客户名称',
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',

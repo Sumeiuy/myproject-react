@@ -1,51 +1,66 @@
 @import "../../src/css/variable.less";
-.fspHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  position: relative;
-  height: 58px;
-  padding: 0 16px;
+.fspHeaderContainer {
   background: linear-gradient(-1deg, #02132a 0%, #003864 100%);
-  .headerContent {
+  .fspHeader {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
-    color: #fff;
-    .navItem {
-      color: #979598;
-      line-height: 16px;
-      padding: 3px 6px;
-      border-radius: 3px;
-      font-size: 12px;
-      .feedbackIcon {
-        position: relative;
-        top: -1px;
-        height: 14px;
-        width: 14px;
-        display: inline-block;
-        vertical-align: text-bottom;
-        margin-right: 4px;
-        background: url(../../static/svg/feedback.svg) round;
-      }
-      &:hover {
-        background-color: #e1e7f3;
-        color: #333;
-        cursor: pointer;
-      }
-      .icon {
-        margin-left: 2px;
-      }
+    width: 100%;
+    position: relative;
+    height: 58px;
+    padding: 0 16px;
+    max-width: 1536px;
+    margin: 0 auto;
+    background: linear-gradient(-1deg, #02132a 0%, #003864 100%);
+    .search {
+      flex: 1 1 auto;
+      min-width: 540px;
+      max-width: 648px;
+      margin: 0 62px 0 42px;
     }
-    .splitLine {
-      display: inline-block;
-      width: 1px;
-      height: 9px;
-      background-color: #999;
-      margin: 0 4px;
+    .headerContent {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      color: #fff;
+      .navItem {
+        color: #979598;
+        line-height: 16px;
+        padding: 3px 6px;
+        border-radius: 3px;
+        font-size: 12px;
+        .feedbackIcon {
+          position: relative;
+          top: -1px;
+          height: 14px;
+          width: 14px;
+          display: inline-block;
+          vertical-align: text-bottom;
+          margin-right: 4px;
+          background: url(../../static/svg/feedback.svg) round;
+        }
+        &:hover {
+          background-color: #e1e7f3;
+          color: #333;
+          cursor: pointer;
+        }
+        .icon {
+          margin-left: 2px;
+        }
+      }
+      .splitLine {
+        display: inline-block;
+        width: 1px;
+        height: 9px;
+        background-color: #999;
+        margin: 0 4px;
+      }
     }
   }
+}
+
+.menuItem {
+  min-width: 132px;
 }
 
 .popovermenu {

@@ -9,9 +9,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+
+
 import InfoTitle from '../../common/InfoTitle';
-// import Icon from '../common/Icon';
-import CombinationTab from './CombinationTab';
 import CombinationFilter from './CombinationFilter';
 import CombinationListItem from './CombinationListItem';
 import styles from './combinationRank.less';
@@ -20,16 +20,11 @@ const titleStyle = {
   fontSize: '16px',
 };
 
-// const EMPTY_LIST = [];
-
 export default class CombinationRank extends PureComponent {
   static propTypes = {
-    // 字典
-    dict: PropTypes.object.isRequired,
-    // tab切换
-    tabChange: PropTypes.func.isRequired,
-    // 筛选
-    // filterChange: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    // type切换
+    onTypeChange: PropTypes.func.isRequired,
     // 图表tab切换
     chartTabChange: PropTypes.func.isRequired,
     // 组合排名列表数据
@@ -54,11 +49,20 @@ export default class CombinationRank extends PureComponent {
     showModal: PropTypes.func.isRequired,
     // 打开详情页面
     openDetailPage: PropTypes.func.isRequired,
+    // 投资顾问
+    creatorList: PropTypes.array.isRequired,
+    // 清空数据
+    clearData: PropTypes.func.isRequired,
+    adviser: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
     yieldRankValue: '',
     riskLevel: '',
+  }
+
+  static contextTypes = {
+    dict: PropTypes.object.isRequired,
   }
 
   @autobind
@@ -70,7 +74,6 @@ export default class CombinationRank extends PureComponent {
       getCombinationLineChart,
       rankTabActiveKey,
       yieldRankValue,
-      dict,
       openStockPage,
       openCustomerListPage,
       showModal,
@@ -86,7 +89,6 @@ export default class CombinationRank extends PureComponent {
         getCombinationLineChart={getCombinationLineChart}
         combinationLineChartData={combinationLineChartData}
         yieldRankValue={yieldRankValue}
-        dict={dict}
         openStockPage={openStockPage}
         openCustomerListPage={openCustomerListPage}
         openDetailPage={openDetailPage}
@@ -96,15 +98,18 @@ export default class CombinationRank extends PureComponent {
 
   render() {
     const {
-      dict,
-      tabChange,
+      location,
+      onTypeChange,
       // filterChange,
       combinationTreeList,
       yieldRankChange,
       yieldRankValue,
       riskLevelFilter,
       riskLevel,
+      creatorList,
+      clearData,
       rankTabActiveKey,
+      adviser,
     } = this.props;
     return (
       <div className={styles.combinationRankBox}>
@@ -113,17 +118,18 @@ export default class CombinationRank extends PureComponent {
           titleStyle={titleStyle}
         />
         <div className={styles.containerBox}>
-          <CombinationTab
-            tabList={combinationTreeList}
-            tabChange={tabChange}
-            rankTabActiveKey={rankTabActiveKey}
-          />
           <CombinationFilter
+            location={location}
             yieldRankChange={yieldRankChange}
             yieldRankValue={yieldRankValue}
             riskLevelFilter={riskLevelFilter}
             riskLevel={riskLevel}
-            dict={dict}
+            composeType={combinationTreeList}
+            onTypeChange={onTypeChange}
+            creatorList={creatorList}
+            clearData={clearData}
+            rankTabActiveKey={rankTabActiveKey}
+            adviser={adviser}
           />
           <div className={styles.combinationListBox}>
             {this.getCombinationList()}

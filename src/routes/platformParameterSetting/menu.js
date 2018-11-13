@@ -4,7 +4,24 @@
  * @Date: 2018/4/15
  */
 import duty from '../../helper/config/duty';
-
+import { env } from '../../helper';
+// 推荐标签菜单
+const recommendedLabelMenu = {
+  name: '推荐标签',
+  path: '/recommendedLabel',
+};
+// 活动栏目菜单
+const activityColumnMenu = {
+  name: '活动栏目',
+  path: '/activityColumn',
+};
+// 首页内容菜单, 只有新菜单才展示活动栏目
+let contentOperateMenu = [];
+if (env.isInFsp()) {
+  contentOperateMenu = [recommendedLabelMenu];
+} else {
+  contentOperateMenu = [recommendedLabelMenu, activityColumnMenu];
+}
 const menu = [
   {
     name: '任务管理',
@@ -35,16 +52,7 @@ const menu = [
     name: '首页内容',
     path: '/contentOperate',
     permission: duty.HTSC_HQ_XTGL,
-    children: [
-      {
-        name: '推荐标签',
-        path: '/recommendedLabel',
-      },
-      {
-        name: '活动栏目',
-        path: '/activityColumn',
-      },
-    ]
+    children: contentOperateMenu,
   },
   {
     name: '客户标签',

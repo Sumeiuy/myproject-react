@@ -82,6 +82,8 @@ export default {
     riskLevel: riskDefaultItem.value, // 所筛选的风险等级
     reportHistoryList: EMPTY_OBJECT,  // 历史报告
     reportDetail: EMPTY_OBJECT,  // 历史报告详情
+    creatorList: EMPTY_LIST,  // 投资顾问数据
+    adviser: {},  // 切换的投资顾问
   },
   reducers: {
     // 风险等级筛选
@@ -116,6 +118,14 @@ export default {
       return {
         ...state,
         rankTabActiveKey: key,
+      };
+    },
+    // 切换投资顾问
+    combinationAdviserChange(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        adviser: payload,
       };
     },
     // 获取调仓历史数据
@@ -154,7 +164,6 @@ export default {
       const { payload: { resultData = EMPTY_LIST } } = action;
       return {
         ...state,
-        rankTabActiveKey: ((resultData[0] || EMPTY_OBJECT).children[0] || EMPTY_OBJECT).key,
         combinationTreeList: resultData,
       };
     },
@@ -206,6 +215,22 @@ export default {
       return {
         ...state,
         reportDetail: resultData,
+      };
+    },
+    // 获取投资顾问
+    queryCombinationCreatorSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        creatorList: resultData,
+      };
+    },
+    // 清空数据
+    clearDataSuccess(state, action) {
+      const { payload = { } } = action;
+      return {
+        ...state,
+        ...payload,
       };
     },
   },
@@ -262,6 +287,7 @@ export default {
               combinationCode: list[index].combinationCode,
               key: isAsset ? chartTabList[1].key : chartTabList[0].key,
             },
+            loading: false,
           });
           index++;
         }
@@ -303,6 +329,21 @@ export default {
       yield put({
         type: 'getReportDetailSuccess',
         payload: response,
+      });
+    },
+    // 查询投资顾问
+    * queryCombinationCreator({ payload }, { call, put }) {
+      const response = yield call(api.queryCombinationCreator, payload);
+      yield put({
+        type: 'queryCombinationCreatorSuccess',
+        payload: response,
+      });
+    },
+    // 清空数据
+    * clearData({ payload }, { call, put }) {
+      yield put({
+        type: 'clearDataSuccess',
+        payload,
       });
     },
   },

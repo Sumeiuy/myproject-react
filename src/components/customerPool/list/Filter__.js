@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { NormalTag, MultiFilterWithSearch } from 'lego-react-filter/src';
 import logable from '../../../decorators/logable';
+import CustSearch from './CustSearch';
 import HtFilter, { TagFilter } from '../../common/htFilter';
 import { url, check } from '../../../helper';
 import { seperator, sessionStore } from '../../../config';
@@ -18,6 +19,7 @@ import {
   moreFilterData,
   moreFilterCategories,
   moreFilters,
+  custListSearchTypes,
 } from './config/filterConfig';
 
 import {
@@ -140,6 +142,9 @@ export default class Filter extends PureComponent {
     queryIndustryList: PropTypes.func.isRequired,
     industryList: PropTypes.array.isRequired,
     definedLabelsInfo: PropTypes.array.isRequired,
+    // 搜索联想词
+    getHotPossibleWds: PropTypes.func.isRequired,
+    hotPossibleWdsList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -583,6 +588,7 @@ export default class Filter extends PureComponent {
       this.props.onFilterChange({
         name: obj.id,
         value: obj.value,
+        fromMoreFilter: true, // 用于告诉CustomerList__组件筛选条件是否是从更多中取出，如果是从更多中取出，少执行一次recordPrevFilterValue。
       }, obj.isDeleteFilterFromLocation);
 
       if (!obj.isDeleteFilterFromLocation) {
@@ -769,6 +775,21 @@ export default class Filter extends PureComponent {
       />) : null;
   }
 
+  @autobind
+  getCustSearchDefaultValue() {
+    const {
+      location: {
+        query: {
+          type,
+          q,
+          source,
+        }
+      }
+    } = this.props;
+    const flag = _.includes(custListSearchTypes, type) || source === 'search';
+    return flag ? decodeURIComponent(q) : '';
+  }
+
   render() {
     const {
       dict,
@@ -776,6 +797,9 @@ export default class Filter extends PureComponent {
       filtersOfAllSightingTelescope,
       hashString,
       definedLabelsInfo,
+      getHotPossibleWds,
+      hotPossibleWdsList,
+      onFilterChange,
     } = this.props;
     const {
       filters = '',
@@ -808,6 +832,13 @@ export default class Filter extends PureComponent {
     return (
       <div className={styles.filterContainer}>
         <div className={styles.normalFilter}>
+          <CustSearch
+            keyword={this.getCustSearchDefaultValue()}
+            location={location}
+            getHotPossibleWds={getHotPossibleWds}
+            hotPossibleWdsList={hotPossibleWdsList}
+            onChange={onFilterChange}
+          />
           {
             basicFilters.map(filter => (
               <HtFilter
@@ -820,7 +851,7 @@ export default class Filter extends PureComponent {
               />
             ))
           }
-          <div id={CUSTOMER_LIST_INTRO_SECOND_STEP_ID}>
+          <div id={CUSTOMER_LIST_INTRO_SECOND_STEP_ID} className={styles.filter}>
             {
               <MultiFilterWithSearch
                 data={currentDefinedLabel}

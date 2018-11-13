@@ -576,7 +576,7 @@ export default class MatchArea extends PureComponent {
   handleOrderCombinationClick({ name, code }) {
     const { push } = this.context;
     const query = { id: code, name };
-    const pathname = '/choicenessCombination/combinationDetail';
+    const pathname = '/strategyCenter/choicenessCombination/combinationDetail';
     const url = `${pathname}?${urlHelper.stringify(query)}`;
     const param = {
       closable: true,

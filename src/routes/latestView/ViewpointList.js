@@ -17,7 +17,7 @@ import { linkTo } from '../../utils';
 import { url as urlHelper, dva, time } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import Pagination from '../../components/common/Pagination';
-import Fiter from '../../components/latestView/chiefViewpoint/Filter';
+import Filter from '../../components/latestView/chiefViewpoint/Filter';
 import styles from './viewpointList.less';
 import logable from '../../decorators/logable';
 import config from '../../components/latestView/config';
@@ -77,7 +77,7 @@ export default class ViewpointList extends PureComponent {
     queryChiefViewpointList({
       pageSize,
       pageNum,
-      type,
+      type: type && type.split(','),
       keyword,
       startDate,
       endDate,
@@ -176,7 +176,7 @@ export default class ViewpointList extends PureComponent {
     queryChiefViewpointList({
       pageNum,
       pageSize: 20,
-      type,
+      type: type && type.split(','),
       keyword,
       startDate,
       endDate,
@@ -203,7 +203,7 @@ export default class ViewpointList extends PureComponent {
     queryChiefViewpointList({
       pageNum: 1,
       pageSize: 20,
-      type: newQuery.type,
+      type: newQuery.type.split(','),
       keyword: newQuery.keyword,
       startDate: newQuery.startDate,
       endDate: newQuery.endDate,
@@ -239,7 +239,7 @@ export default class ViewpointList extends PureComponent {
         <div
           className={styles.inner}
         >
-          <Fiter
+          <Filter
             type={type}
             keyword={keyword}
             startDate={startDate}

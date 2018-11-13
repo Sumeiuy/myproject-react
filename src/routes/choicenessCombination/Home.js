@@ -25,8 +25,6 @@ import { openRctTab } from '../../utils';
 import styles from './index.less';
 
 const dispatch = dva.generateEffect;
-// const EMPTY_LIST = [];
-const EMPTY_OBJECT = {};
 const effects = {
   // 获取调仓历史
   getAdjustWarehouseHistory: 'choicenessCombination/getAdjustWarehouseHistory',
@@ -40,12 +38,18 @@ const effects = {
   getCombinationLineChart: 'choicenessCombination/getCombinationLineChart',
   // 切换组合排名tab
   combinationRankTabchange: 'choicenessCombination/combinationRankTabchange',
+  // 投资顾问切换事件
+  combinationAdviserChange: 'choicenessCombination/combinationAdviserChange',
   // 组合排名收益率排序
   yieldRankChange: 'choicenessCombination/yieldRankChange',
   // 组合排名风险筛选
   riskLevelFilter: 'choicenessCombination/riskLevelFilter',
   // 获取历史报告
   getReportHistoryList: 'choicenessCombination/getReportHistoryList',
+  // 获取投资顾问
+  queryCombinationCreator: 'choicenessCombination/queryCombinationCreator',
+  // 清空数据
+  clearData: 'choicenessCombination/clearData',
 };
 
 const mapStateToProps = state => ({
@@ -73,6 +77,9 @@ const mapStateToProps = state => ({
   riskLevel: state.choicenessCombination.riskLevel,
   // 历史报告
   reportHistoryList: state.choicenessCombination.reportHistoryList,
+  // 投资顾问列表
+  creatorList: state.choicenessCombination.creatorList,
+  adviser: state.choicenessCombination.adviser,
 });
 const mapDispatchToProps = {
   getAdjustWarehouseHistory: dispatch(effects.getAdjustWarehouseHistory,
@@ -87,12 +94,17 @@ const mapDispatchToProps = {
     { loading: true, forceFull: true }),
   combinationRankTabchange: dispatch(effects.combinationRankTabchange,
     { loading: true, forceFull: true }),
+  combinationAdviserChange: dispatch(effects.combinationAdviserChange,
+    { loading: true, forceFull: true }),
   yieldRankChange: dispatch(effects.yieldRankChange,
     { loading: true, forceFull: true }),
   riskLevelFilter: dispatch(effects.riskLevelFilter,
     { loading: true, forceFull: true }),
   getReportHistoryList: dispatch(effects.getReportHistoryList,
     { loading: true, forceFull: true }),
+  queryCombinationCreator: dispatch(effects.queryCombinationCreator,
+    { loading: true, forceFull: true }),
+  clearData: dispatch(effects.queryCombinationCreator),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -133,6 +145,13 @@ export default class ChoicenessCombination extends PureComponent {
     // 历史报告
     getReportHistoryList: PropTypes.func.isRequired,
     reportHistoryList: PropTypes.object.isRequired,
+    // 投资顾问
+    queryCombinationCreator: PropTypes.func.isRequired,
+    creatorList: PropTypes.array.isRequired,
+    // 清空数据
+    clearData: PropTypes.func.isRequired,
+    combinationAdviserChange: PropTypes.func.isRequired,
+    adviser: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -161,6 +180,8 @@ export default class ChoicenessCombination extends PureComponent {
       getCombinationSecurityList,
       getCombinationTree,
       getCombinationRankList,
+      queryCombinationCreator,
+      location: { query: { type = '', adviserId = '' } },
     } = this.props;
     // 调仓方向传 3 视为取最新两条数据
     const payload = {
@@ -170,13 +191,13 @@ export default class ChoicenessCombination extends PureComponent {
     getCombinationSecurityList();
     // 先获取组合树，然后用组合树的第一个组合类别id查询组合排名数据
     getCombinationTree().then(() => {
-      const { combinationTreeList } = this.props;
       getCombinationRankList({
-        combinationType: ((combinationTreeList[0]
-          || EMPTY_OBJECT).children[0]
-          || EMPTY_OBJECT).value,
+        combinationType: type,
+        adviserId: adviserId,
       });
     });
+    // 获取投资顾问列表
+    queryCombinationCreator({ keyword: '' });
   }
 
   // 打开弹窗
@@ -211,12 +232,15 @@ export default class ChoicenessCombination extends PureComponent {
 
   // tab切换
   @autobind
-  handleTabChange(key) {
-    const { getCombinationRankList, combinationRankTabchange } = this.props;
-    combinationRankTabchange({ key });
+  handleOptionChange(payload) {
+    const { type, adviser } = payload;
+    const { getCombinationRankList, combinationRankTabchange, combinationAdviserChange } = this.props;
+    combinationRankTabchange({ key: type });
+    combinationAdviserChange(adviser);
     // 查询组合排名数据
     getCombinationRankList({
-      combinationType: key,
+      combinationType: type,
+      adviserId: adviser.empId,
     });
   }
 
@@ -312,12 +336,12 @@ export default class ChoicenessCombination extends PureComponent {
     };
     // 传入的 obj 为两个参数，id 、 name
     const query = { ...obj };
-    const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
+    const url = `/strategyCenter/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: '/choicenessCombination/combinationDetail',
+      pathname: '/strategyCenter/choicenessCombination/combinationDetail',
       query,
     });
   }
@@ -366,6 +390,9 @@ export default class ChoicenessCombination extends PureComponent {
       getAdjustWarehouseHistory,
       getReportHistoryList,
       reportHistoryList,
+      creatorList,
+      clearData,
+      adviser,
     } = this.props;
     const {
       hasTkMampPermission,
@@ -421,10 +448,11 @@ export default class ChoicenessCombination extends PureComponent {
           </div>
         </div>
         <CombinationRank
+          location={location}
           showModal={this.showModal}
           combinationTreeList={combinationTreeList}
           combinationRankList={combinationRankList}
-          tabChange={this.handleTabChange}
+          onTypeChange={this.handleOptionChange}
           chartTabChange={this.handleChartTabChange}
           getCombinationLineChart={getCombinationLineChart}
           combinationLineChartData={combinationLineChartData}
@@ -437,6 +465,9 @@ export default class ChoicenessCombination extends PureComponent {
           openStockPage={this.openStockPage}
           openCustomerListPage={this.openCustomerListPage}
           openDetailPage={this.openDetailPage}
+          creatorList={creatorList}
+          clearData={clearData}
+          adviser={adviser}
         />
         {
           visible

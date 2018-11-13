@@ -232,6 +232,14 @@ export const sourceFilter = {
         riskFlag: 'risklover',
       },
     }],
+    investPeriod: [{
+      // 投资期限
+      filterName: 'investPeriod',
+    }],
+    investVariety: [{
+      // 投资品种
+      filterName: 'investVariety',
+    }],
   },
   custAssets: {
     newOpen: [{
@@ -311,6 +319,8 @@ export const commonFilterList = [
   { labelName: '风险等级', filterField: 'riskLevels', dictField: 'custRiskBearing' },
   { labelName: '客户等级', filterField: 'customerLevel', dictField: 'custLevelList' },
   { labelName: '未完备信息', filterField: 'completedRate', dictField: 'completenessRateList' },
+  { labelName: '投资期限', filterField: 'investPeriod', dictField: 'investPeriodDictionary' },
+  { labelName: '投资品种', filterField: 'investVariety', dictField: 'investVarietyDictionary' },
   { labelName: '账户状态', filterField: 'accountStatus', dictField: 'accountStatusList' },
   { labelName: '持仓行业', filterField: 'primaryKeyIndustry', dictField: 'industryList' },
 ];
@@ -362,6 +372,7 @@ export const capitalFilterList = [
   { labelName: '总市值（含信用）', filterField: 'totMktVal' },
   { labelName: '归集率', filterField: 'gjlRate' },
   { labelName: '外部市值', filterField: 'outMktVal' },
+  { labelName: '天天发份额', filterField: 'ttfMktVal', unit: '份' },
 ];
 
 // 个人对应的code码
@@ -375,17 +386,21 @@ export const CONFIG_TAB_PRODUCTCENTER = {
   PA100000: {
     title: '私募产品',
     id: 'FSP_PRIVATE_PRD_TAB',
+    pathname: '/fsp/productCenter/privateFund',
   },
   PA050000: {
     title: '公募产品',
     id: 'FSP_PUBLIC_FUND_TAB',
+    pathname: '/fsp/productCenter/publicFund',
   },
   PA070000: {
     title: '紫金产品',
     id: 'FSP_PRD_PURPLE_GOLD_PROD',
+    pathname: '/fsp/productCenter/finance',
   },
   PA090000: {
     title: '收益凭证',
     id: 'FSP_PRD_REVENCE_VOUCHER',
+    pathname: '/fsp/productCenter/receipt',
   },
 };
