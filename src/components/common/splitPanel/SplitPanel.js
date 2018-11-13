@@ -218,7 +218,7 @@ export default class SplitPanel extends PureComponent {
     if (this.UTBContentElem) {
       containerElem = this.UTBContentElem.querySelector(splitConfig.container);
     } else {
-      containerElem = document.querySelector(splitConfig.container);
+      containerElem = document.querySelector(splitConfig.reactContainer);
     }
     containerElem.style.height = 'auto';
   }

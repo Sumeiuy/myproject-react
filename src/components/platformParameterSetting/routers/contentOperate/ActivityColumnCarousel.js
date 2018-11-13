@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目跑马灯
  * @Date: 2018-11-06 13:53:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-12 16:09:07
+ * @Last Modified time: 2018-11-12 21:51:12
  */
 
 import React, { Component } from 'react';
@@ -15,6 +15,7 @@ import Carousel from '../../../common/carousel';
 import { data } from '../../../../helper';
 import { defaultMenu } from '../../../../config/tabMenu';
 import { filterData } from './helper';
+import { urlRegExp } from './config';
 import { logPV } from '../../../../decorators/logable';
 import styles from './activityColumnCarousel.less';
 
@@ -27,6 +28,15 @@ export default class ActivityColumnCarousel extends Component {
     push: PropTypes.func.isRequired,
   }
 
+  // 判断URL，把www开头的URL转换成http开头
+  @autobind
+  replaceUrl(text) {
+    return text.replace(urlRegExp, (match) => {
+      const isWWW = /^www\./.test(match);
+      return isWWW ? `http://${match}` : match;
+    });
+  }
+
   @autobind
   @logPV({
     type: 'Click',
@@ -35,8 +45,9 @@ export default class ActivityColumnCarousel extends Component {
     },
   })
   handleClick(columnUrl) {
+    const finalUrl = this.replaceUrl(columnUrl);
     // 获取url的信息
-    const urlInfo = url.parse(columnUrl);
+    const urlInfo = url.parse(finalUrl);
     const { hash } = urlInfo;
     const defaultMenuPathList = filterData(defaultMenu, 'path');
     // 判断是否是内部网址
@@ -46,7 +57,7 @@ export default class ActivityColumnCarousel extends Component {
       const path = hash.slice(1);
       this.context.push(path);
     } else {
-      window.open(columnUrl);
+      window.open(finalUrl);
     }
   }
 

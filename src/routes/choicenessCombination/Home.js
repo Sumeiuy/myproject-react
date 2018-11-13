@@ -323,12 +323,12 @@ export default class ChoicenessCombination extends PureComponent {
     };
     // 传入的 obj 为两个参数，id 、 name
     const query = { ...obj };
-    const url = `/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
+    const url = `/strategyCenter/choicenessCombination/combinationDetail?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: '/choicenessCombination/combinationDetail',
+      pathname: '/strategyCenter/choicenessCombination/combinationDetail',
       query,
     });
   }
