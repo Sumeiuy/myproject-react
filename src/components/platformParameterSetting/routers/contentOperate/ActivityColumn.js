@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-12 14:28:13
+ * @Last Modified time: 2018-11-12 22:52:34
  */
 
 import React, { PureComponent } from 'react';
@@ -97,7 +97,7 @@ export default class ActivityColumn extends PureComponent {
        <ColumnItem
           columnData={item}
           onEdit={() => this.handleEditColumn(item)}
-          onDelete={() => this.handleDeleteColumnConfirm(item.index)}
+          onDelete={() => this.handleDeleteColumnConfirm(item)}
           key={data.uuid()}
         />
     ));
@@ -120,7 +120,7 @@ export default class ActivityColumn extends PureComponent {
   // 删除活动栏目
   @autobind
   @logable({ type: 'Click', payload: { name: '删除' } })
-  handleDeleteColumnConfirm(index) {
+  handleDeleteColumnConfirm(item) {
     // 活动栏目只剩1条，就不能删除，并给出提示
     if (this.state.activityColumnList.length === 1) {
       confirm({
@@ -128,15 +128,15 @@ export default class ActivityColumn extends PureComponent {
         shortCut: 'default',
       });
     } else {
-      this.handleDeleteColumn(index);
+      this.handleDeleteColumn(item);
     }
   }
 
   @autobind
-  handleDeleteColumn(index) {
+  handleDeleteColumn(item) {
     const { activityColumnList } = this.state;
     // 删除后新的活动栏目
-    const newActivityColumnList = _.remove(activityColumnList, item => item.index !== index);
+    const newActivityColumnList = _.without(activityColumnList, item);
     this.setState({ activityColumnList: newActivityColumnList});
   }
 
