@@ -33,5 +33,17 @@ export default function detailAccountInfo(api) {
     queryProductHistoryHolding: query => api.post('/groovynoauth/fsp/cust/custdetail/queryProductHoldingDetail', query),
     // 查询期权历史持仓明细
     queryOptionHistoryHolding: query => api.post('/groovynoauth/fsp/cust/custdetail/queryOptionHoldingDetail', query),
+    // 查询业务类别
+    queryBusnTypeDict: query => api.post('/groovynoauth/fsp/cust/custdetail/queryBusnTypeDict', query),
+    // 查询产品代码
+    queryFinProductList: query => api.post('/groovynoauth/fsp/cust/custdetail/queryProductList', query),
+    // 查询全产品目录
+    queryProductCatalogTree: query => api.post('/groovynoauth/fsp/cust/custdetail/queryProductCatalogTree', query),
+    // 查询普通账户交易流水
+    queryStandardTradeFlow: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryStandardTradeFlow', query),
+    // 查询信用账户交易流水
+    queryCreditTradeFlow: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryCreditTradeFlow', query),
+    // 查询期权账户交易流水
+    queryOptionTradeFlow: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryOptionTradeFlow', query),
   };
 }
