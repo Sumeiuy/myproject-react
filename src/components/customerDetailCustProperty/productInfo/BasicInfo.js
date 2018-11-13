@@ -8,7 +8,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 import InfoItem from '../../common/infoItem';
 import {
   DEFAULT_VALUE,
