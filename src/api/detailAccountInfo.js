@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-09 16:55:35
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-06 19:54:35
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-11-13 16:44:53
  * @description 新版客户360详情下的账户信息Tab页的API
  */
 export default function detailAccountInfo(api) {
@@ -40,10 +40,10 @@ export default function detailAccountInfo(api) {
     // 查询全产品目录
     queryProductCatalogTree: query => api.post('/groovynoauth/fsp/cust/custdetail/queryProductCatalogTree', query),
     // 查询普通账户交易流水
-    queryStandardTradeFlow: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryStandardTradeFlow', query),
+    queryStandardTradeFlow: query => api.post('/groovynoauth/fsp/cust/custdetail/queryStandardTradeFlow', query),
     // 查询信用账户交易流水
-    queryCreditTradeFlow: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryCreditTradeFlow', query),
+    queryCreditTradeFlow: query => api.post('/groovynoauth/fsp/cust/custdetail/queryCreditTradeFlow', query),
     // 查询期权账户交易流水
-    queryOptionTradeFlow: query => api.post('/groovynoauth/fsp/product/portfolioInfoProd/queryOptionTradeFlow', query),
+    queryOptionTradeFlow: query => api.post('/groovynoauth/fsp/cust/custdetail/queryOptionTradeFlow', query),
   };
 }

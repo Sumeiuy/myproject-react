@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-13 13:01:48
+ * @Last Modified time: 2018-11-13 19:28:50
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -61,9 +61,6 @@ export default class TradeFlowModal extends PureComponent {
     optionTradeFlowRes: PropTypes.object.isRequired,
   }
 
-  static defaultProps = {
-  }
-
   constructor(props) {
     super(props);
     const defaultStartDateString = DEFAULT_START_DATE.format(DATE_FORMATE_API);
@@ -80,7 +77,7 @@ export default class TradeFlowModal extends PureComponent {
       // 普通账户
       currentStandBusnTypeValue: '', // 选择的业务类别
       currentStandProValue: '',  // 选择的产品代码
-      currentAllProMenuValue: [],  // 选择的产品代码,
+      currentAllProMenuValue: '',  // 选择的产品代码,
       // 信用账户
       currentCreditBusnTypeValue: '', // 选择的业务类别
       currentCreditProValue: '',  // 选择的产品代码
@@ -90,7 +87,7 @@ export default class TradeFlowModal extends PureComponent {
   }
 
   componentDidMount() {
-    this.queryBusnTypeDict({accountType: 'normal'});
+    this.queryBusnTypeDict({ accountType: 'normal' });
     this.queryProductCatalogTree();
     this.queryStandardTradeFlow();
   }
@@ -113,30 +110,32 @@ export default class TradeFlowModal extends PureComponent {
   queryFinProductList(e) {
     const { location: { query: { custId } } } = this.props;
     const { activeTabKey } = this.state;
-    if(activeTabKey==='standardAccountTrade'){
-      this.props.querytradeFlow({
-        type: 'finProduct',
-        custId,
-        keyWord: e,
-      });
-    }else if (activeTabKey==='creditAccountTrade'){
-      this.props.querytradeFlow({
-        type: 'finProduct',
-        custId,
-        keyWord: e,
-      });
-    }else {
-      this.props.querytradeFlow({
-        type: 'finProduct',
-        custId,
-        keyWord: e,
-      });
+    if (!_.isEmpty(e)) {
+      if (activeTabKey === 'standardAccountTrade') {
+        this.props.querytradeFlow({
+          type: 'finProduct',
+          custId,
+          keyWord: e,
+        });
+      } else if (activeTabKey === 'creditAccountTrade') {
+        this.props.querytradeFlow({
+          type: 'finProduct',
+          custId,
+          keyWord: e,
+        });
+      } else {
+        this.props.querytradeFlow({
+          type: 'finProduct',
+          custId,
+          keyWord: e,
+        });
+      }
     }
   }
 
   // 查询全产品目录树
   @autobind
-  queryProductCatalogTree(query) {
+  queryProductCatalogTree() {
     const { location: { query: { custId } } } = this.props;
     // type 值用于到Home页面中区分调用哪个具体api接口
     this.props.querytradeFlow({
@@ -244,12 +243,12 @@ export default class TradeFlowModal extends PureComponent {
         value: TRADE_FLOW_TABS[activeTabKey],
       },
     });
-    if(activeTabKey==='standardAccountTrade'){
+    if (activeTabKey === 'standardAccountTrade') {
       this.queryStandardTradeFlow();
-    }else if (activeTabKey==='creditAccountTrade'){
-      this.queryBusnTypeDict({accountType: 'credit'});
+    } else if (activeTabKey === 'creditAccountTrade') {
+      this.queryBusnTypeDict({ accountType: 'credit' });
       this.queryCreditTradeFlow();
-    }else {
+    } else {
       this.queryOptionTradeFlow();
     }
   }
@@ -293,7 +292,7 @@ export default class TradeFlowModal extends PureComponent {
   })
   handleChangeDate(e) {
     const { activeTabKey } = this.state;
-    if(activeTabKey==='standardAccountTrade'){
+    if (activeTabKey === 'standardAccountTrade') {
       this.setState({
         standardStartDate: e.value[0],
         standardEndDate: e.value[1],
@@ -302,7 +301,7 @@ export default class TradeFlowModal extends PureComponent {
         startDate: e.value[0],
         endDate: e.value[1],
       });
-    }else if (activeTabKey==='creditAccountTrade'){
+    } else if (activeTabKey === 'creditAccountTrade') {
       this.setState({
         creditStartDate: e.value[0],
         creditEndDate: e.value[1],
@@ -311,7 +310,7 @@ export default class TradeFlowModal extends PureComponent {
         startDate: e.value[0],
         endDate: e.value[1],
       });
-    }else {
+    } else {
       this.setState({
         optionStartDate: e.value[0],
         optionEndDate: e.value[1],
@@ -334,13 +333,13 @@ export default class TradeFlowModal extends PureComponent {
   })
   handleFilterBussinessType(e) {
     const { activeTabKey } = this.state;
-    if(activeTabKey==='standardAccountTrade'){
-      this.setState({currentStandBusnTypeValue: e.value});
+    if (activeTabKey === 'standardAccountTrade') {
+      this.setState({ currentStandBusnTypeValue: e.value });
       this.queryStandardTradeFlow({
         bussinessType: e.value,
       });
-    }else if (activeTabKey==='creditAccountTrade'){
-      this.setState({currentCreditBusnTypeValue: e.value});
+    } else if (activeTabKey === 'creditAccountTrade') {
+      this.setState({ currentCreditBusnTypeValue: e.value });
       this.queryCreditTradeFlow({
         bussinessType: e.value,
       });
@@ -358,20 +357,20 @@ export default class TradeFlowModal extends PureComponent {
   })
   handleFilterPro(e) {
     const { activeTabKey } = this.state;
-    if(activeTabKey==='standardAccountTrade'){
-      this.setState({currentStandProValue: e.value.prdtCode}, () => {
+    if (activeTabKey === 'standardAccountTrade') {
+      this.setState({ currentStandProValue: e.value.prdtCode }, () => {
         this.queryStandardTradeFlow({
           productCode: e.value.prdtCode,
         });
       });
-    }else if (activeTabKey==='creditAccountTrade'){
-      this.setState({currentCreditProValue: e.value.prdtCode}, () => {
+    } else if (activeTabKey === 'creditAccountTrade') {
+      this.setState({ currentCreditProValue: e.value.prdtCode }, () => {
         this.queryCreditTradeFlow({
           productCode: e.value.prdtCode,
         });
       });
-    }else {
-      this.setState({currentOptionProValue: e.value.prdtCode}, () => {
+    } else {
+      this.setState({ currentOptionProValue: e.value.prdtCode }, () => {
         this.queryOptionTradeFlow({
           productCode: e.value.prdtCode,
         });
@@ -388,7 +387,7 @@ export default class TradeFlowModal extends PureComponent {
     },
   })
   handleFilterTree(e) {
-    this.setState({currentAllProMenuValue: e.join(',')});
+    this.setState({ currentAllProMenuValue: e.join(',') });
     this.queryStandardTradeFlow({
       allProductMenu: e.join(','),
     });
@@ -485,6 +484,7 @@ export default class TradeFlowModal extends PureComponent {
       creditTradeFlowRes,
       optionTradeFlowRes,
     } = this.props;
+    const treeData = productCatalogTree.allProductMenuTree.children;
     // 补足普通账户流水数据
     const standardData = data.padEmptyDataForList(standardTradeFlowRes.list);
     // 修改普通账户Table 的 columns
@@ -536,9 +536,7 @@ export default class TradeFlowModal extends PureComponent {
                         overflowY: 'auto',
                         width: 252,
                       }}
-
                       onChange={this.handleFilterBussinessType}
-                      // dataMap={['bussinessId', 'bussinessName']}
                     />
 
                   </div>
@@ -569,7 +567,7 @@ export default class TradeFlowModal extends PureComponent {
                       filterId="allProductMenuTree"
                       // placeholder="请输入全产品目录"
                       dropdownStyle={{zIndex: 10000}}
-                      treeData={productCatalogTree.allProductMenuTree}
+                      treeData={treeData}
                       multiple
                       showSearch
                       treeCheckable
