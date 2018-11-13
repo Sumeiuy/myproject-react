@@ -19,7 +19,7 @@ import Filter from '../../components/customerPool/list/Filter__';
 import CustomerLists from '../../components/customerPool/list/CustomerLists__';
 import MatchArea from '../../components/customerPool/list/individualInfo/MatchArea';
 import { dynamicInsertQuota } from '../../components/customerPool/list/sort/config';
-import { permission, emp, url, check, dva } from '../../helper';
+import { permission, emp, url, check, dva, env } from '../../helper';
 import withRouter from '../../decorators/withRouter';
 import { seperator, sessionStore } from '../../config';
 
@@ -1180,8 +1180,10 @@ export default class CustomerList extends PureComponent {
       custRange: serviceDepartment,
       expandAll,
     };
+
+    const customerListStyle = env.isInReact() ? { marginTop: 0 } : null;
     return (
-      <div className={styles.customerlist}>
+      <div className={styles.customerlist} style={customerListStyle}>
         <Filter
           filtersOfAllSightingTelescope={allSightingTelescopeFilters}
           getFiltersOfSightingTelescopeSequence={getFiltersOfSightingTelescopeSequence}

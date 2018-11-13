@@ -118,7 +118,6 @@ export default class Header extends PureComponent {
   }
 
   getMenus(array, level = 2) {
-    let isFoundFeedback = false;
     return array.map((item) => {
       if (item.children && !_.isEmpty(item.children)) {
         return (
@@ -129,13 +128,6 @@ export default class Header extends PureComponent {
             {this.getMenus(item.children, level + 1)}
           </Menu.SubMenu>
         );
-      }
-      if(item.name === '反馈管理') {
-        isFoundFeedback = true;
-      }
-      // 在有反馈管理菜单的情况下，不显示反馈记录菜单
-      if(item.name === '反馈记录' && isFoundFeedback) {
-        return null;
       }
       return (
         <Menu.Item
@@ -154,11 +146,24 @@ export default class Header extends PureComponent {
   }
 
   preTreatment(secondaryMenu) {
-    return _.filter(secondaryMenu,
+    const filterMenu =  _.filter(secondaryMenu,
       menu =>
         menu.name === '移动版'
         || (!_.isEmpty(menu.children))
         || (!!menu.path));
+
+    let feedbackMenu = _.find(filterMenu, menu => menu.name === '问题反馈') || {};
+
+    if(_.find(feedbackMenu.children, menu => menu.name === '反馈管理')) {
+      feedbackMenu = _.filter(feedbackMenu.children, menu => menu.name !== '反馈记录');
+      return _.map(filterMenu, menu => {
+        if(menu.name === '问题反馈') {
+          menu.children = feedbackMenu;
+        }
+        return menu;
+      });
+    }
+    return filterMenu;
   }
 
   // 获取联想数据

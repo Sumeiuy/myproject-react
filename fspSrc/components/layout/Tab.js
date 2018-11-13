@@ -14,7 +14,7 @@ import Breadcrumb from './Breadcrumb';
 import { indexPaneKey } from '../../../src/config/tabMenu';
 import { enableSessionStorage } from '../../../src/config/constants';
 import withRouter from '../../../src/decorators/withRouter';
-
+import styles from './tab.less';
 import {
   getFinalPanes,
   getPanes,
@@ -299,7 +299,7 @@ export default class Tab extends PureComponent {
     const finalpanesObj = splitPanesArray(panes, this.menuWidth);
     return (
       <div>
-        <div style={{background: '#fff', borderBottom: '1px solid #bed6f9'}}>
+        <div className={styles.tabMenuContainer}>
           <TabMenu
             mainArray={finalpanesObj.mainArray}
             moreMenuObject={finalpanesObj.moreMenuObject}
@@ -311,7 +311,7 @@ export default class Tab extends PureComponent {
             path={location.pathname}
           />
         </div>
-        <div style={{background: '#fff' }}>
+        <div className={styles.breadcrumbContainer}>
           <Breadcrumb
             breadcrumbRoutes={breadcrumbRoutes}
             routerHistory={routerHistory}
