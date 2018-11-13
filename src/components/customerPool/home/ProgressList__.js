@@ -110,13 +110,13 @@ export default class ProgressList extends PureComponent {
       linkTo(param);
     }
 
-    // log日志 --- 业务开通
+    // log日志 --- 经营指标
     logCommon({
       type: 'DrillDown',
       payload: {
         name: homeModelTypeName[type],
         subtype: item.cust,
-        value: item.count,
+        value: {value:'' + item.count},
       },
     });
   }
