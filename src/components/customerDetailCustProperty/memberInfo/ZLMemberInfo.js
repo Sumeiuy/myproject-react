@@ -17,7 +17,9 @@ import Modal from '../../../components/common/biz/CommonModal';
 import InfoItem from '../../common/infoItem';
 import { DEFAULT_VALUE, MemberGradeColumns } from '../config';
 import styles from './zlMemberInfo.less';
-const INFO_ITEM_WITDH = '110px';
+
+const INFO_ITEM_WITDH110 = '110px';
+const INFO_ITEM_WITDH = '126px';
 export default class ZLMemberInfo extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -116,7 +118,7 @@ export default class ZLMemberInfo extends PureComponent {
         <div className={styles.container}>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH}
+              width={INFO_ITEM_WITDH110}
               label="用户号"
               value={this.getViewValue(data.custId)}
               className={styles.infoItem}
@@ -148,7 +150,7 @@ export default class ZLMemberInfo extends PureComponent {
           </div>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH}
+              width={INFO_ITEM_WITDH110}
               label="付费会员"
               value={this.getViewValue(data.isProAccount)}
               className={styles.infoItem}
