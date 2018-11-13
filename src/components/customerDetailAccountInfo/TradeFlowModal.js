@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-13 19:22:03
+ * @Last Modified time: 2018-11-13 19:28:50
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -123,7 +123,7 @@ export default class TradeFlowModal extends PureComponent {
           custId,
           keyWord: e,
         });
-      }else {
+      } else {
         this.props.querytradeFlow({
           type: 'finProduct',
           custId,
@@ -245,7 +245,7 @@ export default class TradeFlowModal extends PureComponent {
     });
     if (activeTabKey === 'standardAccountTrade') {
       this.queryStandardTradeFlow();
-    } else if (activeTabKey === 'creditAccountTrade'){
+    } else if (activeTabKey === 'creditAccountTrade') {
       this.queryBusnTypeDict({ accountType: 'credit' });
       this.queryCreditTradeFlow();
     } else {
