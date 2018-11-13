@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-09 10:31:08
+ * @Last Modified time: 2018-11-13 11:14:51
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -15,7 +15,7 @@ import cx from 'classnames';
 
 import { data, number } from '../../helper';
 import { jumpToProductDetailPage } from '../../utils/productCenter';
-import logable, { logCommon, logPV } from '../../decorators/logable';
+import logable, { logCommon } from '../../decorators/logable';
 import Modal from '../common/biz/CommonModal';
 import Pagination from '../common/Pagination';
 import {

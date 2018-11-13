@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-06 19:12:44
+ * @Last Modified time: 2018-11-13 11:22:56
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -322,28 +322,28 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     title: '成本价(元)',
     key: 'costPrice',
     dataIndex: 'costPrice',
-    aligin: 'right',
+    align: 'right',
   },
   {
     width: 180,
     title: '最新价(元)',
     key: 'newestPrice',
     dataIndex: 'newestPrice',
-    aligin: 'right',
+    align: 'right',
   },
   {
     width: 180,
     title: '市值(元)',
     key: 'marketValue',
     dataIndex: 'marketValue',
-    aligin: 'right',
+    align: 'right',
   },
   {
     width: 180,
     title: '账面盈利(元)',
     key: 'profit',
     dataIndex: 'profit',
-    aligin: 'right',
+    align: 'right',
   },
   {
     width: 140,
