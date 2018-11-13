@@ -25,8 +25,6 @@ export default class CombinationRank extends PureComponent {
     location: PropTypes.object.isRequired,
     // type切换
     onTypeChange: PropTypes.func.isRequired,
-    // 筛选
-    // filterChange: PropTypes.func.isRequired,
     // 图表tab切换
     chartTabChange: PropTypes.func.isRequired,
     // 组合排名列表数据
@@ -81,7 +79,6 @@ export default class CombinationRank extends PureComponent {
       showModal,
       openDetailPage,
     } = this.props;
-    const { dict } = this.context;
     return combinationRankList.map(item => (
       <CombinationListItem
         showModal={showModal}
@@ -92,7 +89,6 @@ export default class CombinationRank extends PureComponent {
         getCombinationLineChart={getCombinationLineChart}
         combinationLineChartData={combinationLineChartData}
         yieldRankValue={yieldRankValue}
-        dict={dict}
         openStockPage={openStockPage}
         openCustomerListPage={openCustomerListPage}
         openDetailPage={openDetailPage}
@@ -115,8 +111,6 @@ export default class CombinationRank extends PureComponent {
       rankTabActiveKey,
       adviser,
     } = this.props;
-    const { dict } = this.context;
-    console.warn('dict', dict);
     return (
       <div className={styles.combinationRankBox}>
         <InfoTitle
@@ -131,7 +125,6 @@ export default class CombinationRank extends PureComponent {
             riskLevelFilter={riskLevelFilter}
             riskLevel={riskLevel}
             composeType={combinationTreeList}
-            dict={dict}
             onTypeChange={onTypeChange}
             creatorList={creatorList}
             clearData={clearData}

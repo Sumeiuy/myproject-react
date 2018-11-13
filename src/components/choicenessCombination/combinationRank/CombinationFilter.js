@@ -20,14 +20,9 @@ const EMPTY_LIST = [];
 
 export default class CombinationRank extends PureComponent {
   static propTypes = {
-    replace: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    // 字典
-    dict: PropTypes.object.isRequired,
     composeType: PropTypes.array,
     onTypeChange: PropTypes.func.isRequired,
-    // 筛选
-    // filterChange: PropTypes.func.isRequired,
     // 组合排名收益率排序
     yieldRankChange: PropTypes.func.isRequired,
     yieldRankValue: PropTypes.string,
@@ -48,12 +43,13 @@ export default class CombinationRank extends PureComponent {
   }
 
   static contextTypes = {
+    dict: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
   }
 
   @autobind
   getTreeData() {
-    const { dict: { prodRiskLevelList = EMPTY_LIST } } = this.props;
+    const { dict: { prodRiskLevelList = EMPTY_LIST } } = this.context;
     const treeDataList = [riskDefaultItem];
     prodRiskLevelList.forEach((item) => {
       treeDataList.push({
