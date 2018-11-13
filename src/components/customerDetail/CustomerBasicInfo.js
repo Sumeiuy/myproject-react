@@ -18,7 +18,7 @@ import iconMoney from '../taskList/performerView/img/iconMoney.png';
 import iconNull from '../taskList/performerView/img/iconNull.png';
 
 // 财富通会员等级
-import iconU1 from '../taskList/performerView/img/iconU2.png';
+import iconU1 from '../taskList/performerView/img/iconU1.png';
 import iconU2 from '../taskList/performerView/img/iconU2.png';
 import iconU3 from '../taskList/performerView/img/iconU3.png';
 
