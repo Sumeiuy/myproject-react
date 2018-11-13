@@ -9,11 +9,20 @@ import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import { Button } from 'antd';
 
+import TradeFlowModal from './TradeFlowModal';
 import RealTimeHoldingModal from './RealTimeHoldingModal';
 import HistoryHoldingModal from './HistoryHoldingModal';
 import logable, { logPV } from '../../decorators/logable';
 
 import styles from './accountInfoHeader.less';
+
+
+const If = ({ when, children }) => {
+  if(when) {
+    return children;
+  }
+  return null;
+};
 
 export default class AccountInfoHeader extends PureComponent {
   static propTypes = {
@@ -40,6 +49,20 @@ export default class AccountInfoHeader extends PureComponent {
     productHistoryHolding: PropTypes.object.isRequired,
     // 期权历史持仓明细数据
     optionHistoryHolding: PropTypes.object.isRequired,
+    // 查询交易流水的api集合函数
+    querytradeFlow: PropTypes.func.isRequired,
+    // 业务类别
+    busnTypeDict: PropTypes.object.isRequired,
+    // 产品代码
+    finProductList: PropTypes.object.isRequired,
+    // 全产品目录
+    productCatalogTree: PropTypes.object.isRequired,
+    // 普通账户交易流水
+    standardTradeFlowRes: PropTypes.object.isRequired,
+    // 信用账户交易流水
+    creditTradeFlowRes: PropTypes.object.isRequired,
+    // 期权账户交易流水
+    optionTradeFlowRes: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -51,6 +74,8 @@ export default class AccountInfoHeader extends PureComponent {
     this.state = {
       // 实时持仓的弹出框
       realTimeHoldModalVisible: false,
+      // 交易流出弹出框
+      tradeFlowModalVisible: false,
       // 历史持仓弹出层，显示隐藏状态
       historyHoldModalVisible: false,
     };
@@ -68,6 +93,20 @@ export default class AccountInfoHeader extends PureComponent {
   @logable({ type: 'Click', payload: { name: '关闭历史持仓'} })
   handleHistoryHoldingModalClose() {
     this.setState({ historyHoldModalVisible: false });
+  }
+
+  // 打开交易流水的弹出层
+  @autobind
+  @logPV({ pathname: '/modal/cust360DetailTradeFlowModal', title: '交易流水' })
+  handleTradeFlowModalOpen() {
+    this.setState({ tradeFlowModalVisible: true });
+  }
+
+  // 关闭交易流水的弹出层
+  @autobind
+  @logable({ type: 'Click', payload: { name: '关闭交易流水'} })
+  handleTradeFlowModalClose() {
+    this.setState({ tradeFlowModalVisible: false });
   }
 
   // 关闭实时持仓的弹出层
@@ -113,7 +152,11 @@ export default class AccountInfoHeader extends PureComponent {
   }
 
   render() {
-    const { realTimeHoldModalVisible, historyHoldModalVisible } = this.state;
+    const {
+      realTimeHoldModalVisible,
+      historyHoldModalVisible,
+      tradeFlowModalVisible
+    } = this.state;
     const {
       location,
       securitiesData,
@@ -124,6 +167,13 @@ export default class AccountInfoHeader extends PureComponent {
       productHistoryHolding,
       optionHistoryHolding,
       getSecuritiesHolding,
+      querytradeFlow,
+      busnTypeDict,
+      finProductList,
+      productCatalogTree,
+      standardTradeFlowRes,
+      creditTradeFlowRes,
+      optionTradeFlowRes,
     } = this.props;
 
     return (
@@ -131,38 +181,44 @@ export default class AccountInfoHeader extends PureComponent {
         <div className={styles.accountHeaderContainer}>
           <Button className={styles.accountHeader} onClick={this.handleRealTimeHoldModalOpen} >实时持仓</Button>
           <Button className={styles.accountHeader} onClick={this.handleHistoryHoldingModalOpen}>历史持仓</Button>
-          <Button className={styles.accountHeader}>交易流水</Button>
+          <Button className={styles.accountHeader} onClick={this.handleTradeFlowModalOpen}>交易流水</Button>
           <Button className={styles.accountHeader} onClick={this.handleLinkToAssetAllocation}>资产配置</Button>
           <Button className={styles.accountHeader}>账户分析</Button>
         </div>
-        {
-          historyHoldModalVisible
-            ? (
-              <HistoryHoldingModal
-                location={location}
-                onClose={this.handleHistoryHoldingModalClose}
-                queryHistoryHolding={queryHistoryHolding}
-                stockHistoryHolding={stockHistoryHolding}
-                productHistoryHolding={productHistoryHolding}
-                optionHistoryHolding ={optionHistoryHolding}
-              />
-            )
-            : null
-        }
-        {
-          realTimeHoldModalVisible
-            ? (
-              <RealTimeHoldingModal
-                location={location}
-                realTimeAsset={realTimeAsset}
-                securitiesData={securitiesData}
-                productData={productData}
-                getSecuritiesHolding={getSecuritiesHolding}
-                onClose={this.handleRealTimeHoldModalClose}
-              />
-            )
-            : null
-        }
+        <If  when={historyHoldModalVisible}>
+          <HistoryHoldingModal
+            location={location}
+            onClose={this.handleHistoryHoldingModalClose}
+            queryHistoryHolding={queryHistoryHolding}
+            stockHistoryHolding={stockHistoryHolding}
+            productHistoryHolding={productHistoryHolding}
+            optionHistoryHolding ={optionHistoryHolding}
+          />
+        </If>
+        <If when={realTimeHoldModalVisible}>
+          <RealTimeHoldingModal
+            location={location}
+            realTimeAsset={realTimeAsset}
+            securitiesData={securitiesData}
+            productData={productData}
+            getSecuritiesHolding={getSecuritiesHolding}
+            onClose={this.handleRealTimeHoldModalClose}
+          />
+
+        </If>
+        <If when={tradeFlowModalVisible}>
+          <TradeFlowModal
+            location={location}
+            onClose={this.handleTradeFlowModalClose}
+            querytradeFlow={querytradeFlow}
+            busnTypeDict={busnTypeDict}
+            finProductList={finProductList}
+            productCatalogTree ={productCatalogTree}
+            standardTradeFlowRes ={standardTradeFlowRes}
+            creditTradeFlowRes ={creditTradeFlowRes}
+            optionTradeFlowRes ={optionTradeFlowRes}
+          />
+        </If>
       </div>
     );
   }

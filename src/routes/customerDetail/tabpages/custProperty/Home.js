@@ -3,7 +3,7 @@
  * @Description: 客户360-客户属性
  * @Date: 2018-11-06 16:17:28
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-12 18:50:34
+ * @Last Modified time: 2018-11-13 10:53:07
  */
 
 import React, { PureComponent } from 'react';
@@ -44,6 +44,8 @@ const MARKETING_KEY = 'marketing';
 const MEMBER_INFO_KEY = 'memberInfo';
 // 关系信息TAB的key
 const RELATION_INFO_KEY = 'relationInfo';
+// 表格每页显示数据
+const PAGE_SIZE = 10;
 
 @withRouter
 export default class CustProperty extends PureComponent {
@@ -129,9 +131,21 @@ export default class CustProperty extends PureComponent {
   queryData(custId) {
     const {
       queryCustomerProperty,
+      queryZLUmemberLevelChangeRecords,
+      queryZjPointExchangeFlow
     } = this.props;
+    queryZLUmemberLevelChangeRecords({
+      custId,
+      pageSize: PAGE_SIZE,
+      pageNum: 1,
+    });
     queryCustomerProperty({
       custId,
+    });
+    queryZjPointExchangeFlow({
+      custId,
+      pageSize: PAGE_SIZE,
+      pageNum: 1,
     });
   }
 

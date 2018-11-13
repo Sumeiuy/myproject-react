@@ -14,10 +14,12 @@ export default class CommonTable extends PureComponent {
   static propTypes = {
     // 分页器class
     paginationClass: PropTypes.string,
+    isNeedEmptyRow: PropTypes.bool,
   };
 
   static defaultProps = {
     paginationClass: '',
+    isNeedEmptyRow: false,
   };
 
  //数据为空时，默认显示空行
@@ -38,16 +40,19 @@ export default class CommonTable extends PureComponent {
    return newData;
  }
 
-
-
   render() {
-    const { paginationClass, ...restProps } = this.props;
-    let dataSource = this.padEmptyRow();
+    const {
+      paginationClass,
+      isNeedEmptyRow,
+      dataSource,
+      ...restProps
+    } = this.props;
+    let newDataSource = isNeedEmptyRow ? this.padEmptyRow() : dataSource;
     return (
       <div className={styles.groupTable}>
         <Table
           {...restProps}
-          dataSource={dataSource}
+          dataSource={newDataSource}
           paginationClass={`${styles.pagination} ${paginationClass}`}
         />
       </div>
