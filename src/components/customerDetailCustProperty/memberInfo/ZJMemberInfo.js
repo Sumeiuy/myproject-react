@@ -22,7 +22,8 @@ import { integralFlowColumns } from '../config';
 import moment from 'moment';
 import logable, { logPV } from '../../../decorators/logable';
 
-const INFO_ITEM_WITDH = '110px';
+const INFO_ITEM_WITDH110 = '110px';
+const INFO_ITEM_WITDH = '126px';
 export default class ZJMemberInfo extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -172,7 +173,7 @@ export default class ZJMemberInfo extends PureComponent {
         <div className={styles.container}>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH}
+              width={INFO_ITEM_WITDH110}
               label="会员编号"
               value={this.getViewValue(data.memberNum)}
               className={styles.infoItem}
@@ -204,7 +205,7 @@ export default class ZJMemberInfo extends PureComponent {
           </div>
           <div className={styles.infoItemBox}>
             <InfoItem
-              width={INFO_ITEM_WITDH}
+              width={INFO_ITEM_WITDH110}
               label="注册日期"
               value={this.getViewValue(data.registerDate)}
               className={styles.infoItem}
@@ -229,8 +230,24 @@ export default class ZJMemberInfo extends PureComponent {
           <div className={styles.infoItemBox}>
             <InfoItem
               width={INFO_ITEM_WITDH}
+              label="紫金币累计积分"
+              value={this.getViewTextByNum(data.zjSumPoints)}
+              className={styles.infoItem}
+            />
+          </div>
+          <div className={styles.infoItemBox}>
+            <InfoItem
+              width={INFO_ITEM_WITDH110}
               label="涨乐豆可用积分"
               value={this.getViewTextByNum(data.zlAvailablePoints)}
+              className={styles.infoItem}
+            />
+          </div>
+          <div className={styles.infoItemBox}>
+            <InfoItem
+              width={INFO_ITEM_WITDH}
+              label="涨乐豆累计积分"
+              value={this.getViewTextByNum(data.zlSumPoints)}
               className={styles.infoItem}
             />
           </div>
