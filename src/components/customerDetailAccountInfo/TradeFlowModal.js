@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-13 19:28:50
+ * @Last Modified time: 2018-11-14 15:41:18
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -484,7 +484,6 @@ export default class TradeFlowModal extends PureComponent {
       creditTradeFlowRes,
       optionTradeFlowRes,
     } = this.props;
-    const treeData = productCatalogTree.allProductMenuTree.children;
     // 补足普通账户流水数据
     const standardData = data.padEmptyDataForList(standardTradeFlowRes.list);
     // 修改普通账户Table 的 columns
@@ -505,6 +504,7 @@ export default class TradeFlowModal extends PureComponent {
       <Modal
         visible
         size="large"
+        maskClosable={false}
         modalKey="cust360DetailTradeFlowModal"
         closeModal={this.handleModalClose}
         title="交易流水"
@@ -566,8 +566,8 @@ export default class TradeFlowModal extends PureComponent {
                       filterName="全产品目录"
                       filterId="allProductMenuTree"
                       // placeholder="请输入全产品目录"
-                      dropdownStyle={{zIndex: 10000}}
-                      treeData={treeData}
+                      dropdownStyle={{zIndex: 1000}}
+                      treeData={productCatalogTree.allProductMenuTree}
                       multiple
                       showSearch
                       treeCheckable
