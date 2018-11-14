@@ -183,13 +183,7 @@ const exported = {
     {
       filterName: '投资期限',
       filterId: 'investPeriod',
-      // dictField: 'investPeriodDictionary', // 过滤器数据在字典中对应的字段
-      data: [
-        {key: '', value: '不限'},
-        {key: '8110141', value: '0-1年'},
-        {key: '8110142', value: '1-5年'},
-        {key: '8110143', value: '无特别要求'},
-      ],
+      dictField: 'investPeriodDictionary', // 过滤器数据在字典中对应的字段
       type: 'multi',
       dropdownStyle: {
         maxHeight: 324,
@@ -201,14 +195,6 @@ const exported = {
       filterName: '投资偏好',
       filterId: 'investVariety',
       dictField: 'investVarietyDictionary', // 过滤器数据在字典中对应的字段
-      // data: [
-      //   {key: '', value: '不限'},
-      //   {key: '8110131', value: 'A.固收类'},
-      //   {key: '8110132', value: 'B.固收类、权益类'},
-      //   {key: '8110133', value: 'C.固收类、权益类、期货和两融'},
-      //   {key: '8110134', value: 'D.固收类、权益类、期货和两融、复杂或高风险产品'},
-      //   {key: '8110135', value: 'E.固收类、权益类、期货和两融、复杂或高风险产品、其他产品'},
-      // ],
       type: 'single',
       dropdownStyle: {
         maxHeight: 324,

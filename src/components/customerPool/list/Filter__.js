@@ -245,43 +245,6 @@ export default class Filter extends PureComponent {
           businessType: dict[filter.dictField[1]],
         };
       }
-      if (filter.filterId === 'investVariety') {
-        // 投资偏好的数据从字典拿了之后再选项前加上ABCDE的处理
-        let investVarietyData = [];
-        dict[filter.dictField].map((item, index) => {
-          let temp = '';
-          switch(index) {
-            // 不限
-            case 0:
-            temp = '';
-            break;
-            // 第一个选项
-            case 1:
-            temp = 'A.';
-            break;
-            case 2:
-            temp = 'B.';
-            break;
-            case 3:
-            temp = 'C.';
-            break;
-            case 4:
-            temp = 'D.';
-            break;
-            case 5:
-            temp = 'E.';
-            break;
-            default:
-            break;
-          };
-          investVarietyData.push({
-            key: item.key,
-            value: `${temp}${item.value}`
-          });
-          return investVarietyData;
-        });
-        return investVarietyData;
-      }
       return dict[filter.dictField];
     }
     return filter.data;
