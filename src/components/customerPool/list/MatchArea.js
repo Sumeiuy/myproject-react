@@ -166,32 +166,6 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
-    // 匹配股东账号
-  renderPrimaryKey() {
-    const {
-      q = '',
-      listItem,
-      location: { query: { source } },
-    } = this.props;
-    if (_.includes(['search', 'association'], source)
-      && listItem.primaryKey
-      && listItem.primaryKey.indexOf(q) > -1) {
-      const markedEle = replaceWord({ value: listItem.primaryKey, q });
-      return (
-        <li>
-          <span>
-            <i className="label">联系电话：</i>
-            <i
-              dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
-            />
-          </span>
-        </li>
-      );
-    }
-    return null;
-  }
-
-
   // 匹配经纪客户号
   renderCustId() {
     const {

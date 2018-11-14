@@ -135,12 +135,12 @@ const matchRule = {
       render: 'renderDefaultVal',
     }],
   },
-  stkAccts: {
+  primaryKey: {
     inset: true,
     key: [{
       name: '股东账号',
       id: 'stkAccts',
-      render: 'renderDefaultVal',
+      render: 'renderShareholderSccountNumber',
     }],
   },
   primaryKeyPrdts: {
@@ -215,7 +215,7 @@ const matchRule = {
       },
       {
         name: '股东账号',
-        id: 'stkAccts',
+        id: 'primaryKey',
         render: 'renderShareholderSccountNumber',
       },
       {

@@ -92,6 +92,8 @@ export default class BottomFixedBox extends PureComponent {
           // 客户列表页的筛选条件
           filters,
           bizFlag,
+          q,
+          type,
         },
         pathname,
         search,
@@ -116,7 +118,9 @@ export default class BottomFixedBox extends PureComponent {
       const selectedIdsArr = selectedIds.split(',');
       param.ids = selectedIdsArr;
       param.count = selectedIdsArr.length;
+
       if (filters) {
+
         param.filters = filters;
       }
       this.openByIds(param);
@@ -135,12 +139,14 @@ export default class BottomFixedBox extends PureComponent {
     const { location: { query: {
       source,
       labelMapping,
+      q,
     } }, clearCreateTaskData } = this.props;
 
     const url = '/customerPool/createTask';
     const title = '自建任务';
     const id = 'RCT_FSP_CREATE_TASK_FROM_CUSTLIST';
 
+    console.warn('source', source);
     // 有标签描述需要将描述存到storage
     if (source === PRODUCT_POTENTIAL_TARGET_CUST_ENTRY) {
       // 如果是外部平台，产品潜在客户跳转进来的，需要添加一个任务提示插入参数，

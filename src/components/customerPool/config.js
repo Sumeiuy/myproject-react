@@ -54,10 +54,10 @@ export const sourceFilter = {
       filterName: 'mobile',
       value: ['labelMapping'],
     }],
-    PRIMARYKEY: [{
-      // mobile: 股东账号
+    STK_ACCTS: [{
+      // primaryKey: 股东账号
       filterName: 'primaryKey',
-      value: ['labelMapping'],
+      value: ['q'],
     }],
     NAME: [{
       // name: 姓名

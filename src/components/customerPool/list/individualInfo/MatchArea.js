@@ -311,7 +311,7 @@ export default class MatchArea extends PureComponent {
         renderValue = number.thousandFormat(Number(renderValue).toFixed(2), false);
       }
       return (
-        <li kye={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
+        <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
           <span>
             <i className="label">
               {hasCycle ? this.convertCycle(id) : ''}
@@ -525,21 +525,23 @@ export default class MatchArea extends PureComponent {
   }
 
   //匹配股东账号
-  renderShareholderSccountNumber() {
+  renderShareholderSccountNumber(item) {
     const {
       listItem,
+      q,
     } = this.props;
-    const { searchText = '' } = this.getFilters();
-    if (listItem.stkAccts
-      && listItem.stkAccts.indexOf(searchText) > -1) {
-      const markedEle = replaceWord({ value: listItem.stkAccts, searchText });
+    const { name, id, unit = '', hasCycle } = item;
+    let renderValue = listItem[id];
+    if (!_.isNull(renderValue)) {
+
       return (
-        <li key={listItem.stkAccts}>
+        <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
           <span>
-            <i className="label">股东账号：</i>
-            <i
-              dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
-            />
+            <i className="label">
+              {hasCycle ? this.convertCycle(id) : ''}
+              {name}：
+            </i>
+            {q}
           </span>
         </li>
       );
