@@ -968,7 +968,7 @@ export default class CustomerList extends PureComponent {
       const messageContent = '取自T-1日数据，仅供用于客户筛查，不能作为客户适当性判定的最终依据！';
       message.warning(
          `${obj.name === 'investPeriod' ? '投资期限' : (obj.name === 'investVariety' ? '投资偏好' : '风险等级')}${messageContent}`
-         ,1);
+         ,4);
     }
     prevFilterValue[obj.name] = obj.value;
   }
