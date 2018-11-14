@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-13 21:39:15
+ * @Last Modified time: 2018-11-14 09:17:36
  */
 
 import React, { PureComponent } from 'react';
@@ -15,6 +15,7 @@ import { openRctTab } from '../../../utils';
 import {
   RETURN_TASK_FROM_TODOLIST,
 } from '../../../config/createTaskEntry';
+import { env } from '../../../helper';
 
 import styles from './taskList.less';
 
@@ -131,12 +132,10 @@ export default class TaskList extends PureComponent {
   updateEmptyHeight() {
     let topBarHeight = 0;
     const winHeight = document.body.clientHeight || document.documentElement.clientHeight;
-    const topBar = document.getElementById('workspace-taskbar');
-    if (topBar) {
+    if (!env.isInReact()) {
+      const topBar = document.getElementById('workspace-taskbar');
       topBarHeight = topBar.offsetHeight;
-    }
-    const emptyTip = document.querySelector('.ant-table-placeholder');
-    if (emptyTip) {
+      const emptyTip = document.querySelector('.ant-table-placeholder');
       emptyTip.style.height = `${winHeight - topBarHeight - 127}px`;
     }
   }
