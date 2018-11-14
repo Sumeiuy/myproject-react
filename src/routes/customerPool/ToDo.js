@@ -55,8 +55,6 @@ const mapDispatchToProps = {
 @withRouter
 export default class ToDo extends PureComponent {
   static propTypes = {
-    push: PropTypes.func.isRequired,
-    replace: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     data: PropTypes.array.isRequired,
     todolist: PropTypes.array.isRequired,
@@ -78,6 +76,7 @@ export default class ToDo extends PureComponent {
   }
 
   static contextTypes = {
+    push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
   }
