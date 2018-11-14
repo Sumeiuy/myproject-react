@@ -30,23 +30,25 @@ const fspPatch = (...arg) => (ComposedComponent) => {
     componentDidMount() {
       // 初始化当前系统
       this.UTBContentElem = document.querySelector(config.utb);
+      if(this.UTBContentElem) {
+        // 设置新的 系统的 margin
+        this.setUTBContentMargin(config.newUTBContentMargin);
 
-      // 设置新的 系统的 margin
-      this.setUTBContentMargin(config.newUTBContentMargin);
+        // 添加监听 window.onResize 事件
+        this.registerWindowResize();
 
-      // 添加监听 window.onResize 事件
-      this.registerWindowResize();
-
-      // 设置滚动区域
-      this.setContentStyle();
+        // 设置滚动区域
+        this.setContentStyle();
+      }
     }
 
     componentWillUnmount() {
-      // 重置外层容器 margin 样式,防止影响其他界面
-      this.setUTBContentMargin(config.UTBContentMargin);
-
-      // 取消监听 window.onResize 事件
-      this.cancelWindowResize();
+      if(this.UTBContentElem) {
+        // 重置外层容器 margin 样式,防止影响其他界面
+        this.setUTBContentMargin(config.UTBContentMargin);
+        // 取消监听 window.onResize 事件
+        this.cancelWindowResize();
+      }
     }
 
     // Resize事件

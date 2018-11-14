@@ -30,7 +30,7 @@ function getRelation(str1, str2) {
   return 3;
 }
 
-function getRenderArr(routes) {
+function getRenderArr(routes, routerData, path) {
   let renderArr = [];
   renderArr.push(routes[0]);
   for (let i = 1; i < routes.length; i += 1) {
@@ -43,6 +43,11 @@ function getRenderArr(routes) {
       renderArr.push(routes[i]);
     }
   }
+
+  // 增加isPrimary标志位为true的路由
+  renderArr = renderArr.concat(routes.filter(route => routerData[path + route].isPrimary));
+  // 去重
+  renderArr = [...new Set(renderArr)];
   return renderArr;
 }
 
@@ -52,18 +57,27 @@ function getRenderArr(routes) {
  * @param {string} path
  * @param {routerData} routerData
  */
-export function getRoutes(path, routerData) {
-  let routes = Object.keys(routerData).filter(routePath =>
-    routePath.indexOf(path) === 0 && routePath !== path);
+export function getRoutes(path, routerData, defaultPrimary = false) {
+  const routerDataCopy = Object.assign({}, routerData);
+  Object.keys(routerDataCopy).forEach((key) => {
+    if (routerDataCopy[key].isPrimary === undefined) {
+      routerDataCopy[key].isPrimary = defaultPrimary;
+    }
+  });
+  let routes = Object.keys(routerDataCopy)
+    .filter(routePath => routePath.indexOf(path) === 0 && routePath !== path);
   // Replace path to '' eg. path='user' /user/name => name
   routes = routes.map(item => item.replace(path, ''));
   // Get the route to be rendered to remove the deep rendering
-  const renderArr = getRenderArr(routes);
+  const renderArr = getRenderArr(routes, routerDataCopy, path);
   // Conversion and stitching parameters
   const renderRoutes = renderArr.map((item) => {
-    const exact = !routes.some(route => route !== item && getRelation(route, item) === 1);
+    // 对于 item， 存在 isPrimary 为 false 的子路由，则 exact 为 false
+    const exact = !routes.some(route => route !== item
+      && !routerDataCopy[path + route].isPrimary
+      && getRelation(route, item) === 1);
     return {
-      ...routerData[`${path}${item}`],
+      ...routerDataCopy[`${path}${item}`],
       key: `${path}${item}`,
       path: `${path}${item}`,
       exact,
@@ -71,7 +85,6 @@ export function getRoutes(path, routerData) {
   });
   return renderRoutes;
 }
-
 
 /* eslint no-useless-escape:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/g;

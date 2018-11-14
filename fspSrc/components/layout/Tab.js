@@ -10,10 +10,11 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { sessionStore } from '../../../src/config';
 import TabMenu from './TabMenu';
+import Breadcrumb from './Breadcrumb';
 import { indexPaneKey } from '../../../src/config/tabMenu';
 import { enableSessionStorage } from '../../../src/config/constants';
 import withRouter from '../../../src/decorators/withRouter';
-
+import styles from './tab.less';
 import {
   getFinalPanes,
   getPanes,
@@ -23,6 +24,7 @@ import {
   storeTabInfo,
   splitPanesArray,
   getLocalPanes,
+  getNewRouterHistory,
  } from '../utils/tab';
 
 @withRouter
@@ -50,6 +52,8 @@ export default class Tab extends PureComponent {
       editPane,
     } = state || {};
 
+    const { routerHistory } = prevState;
+
     // 路由是否发生变化
     const isUrlChange =
       (pathname !== prevState.location.pathname) || (!_.isEqual(query, prevState.location.query));
@@ -66,13 +70,18 @@ export default class Tab extends PureComponent {
 
         const finalActiveKey = (activeKey || paneObj.activeKey);
         const currentMenuId = paneObj.currentMenuId;
-
+        const breadcrumbRoutes = paneObj.breadcrumbRoutes;
+        // 更新路由历史记录
+        const newRouterHistory =
+          getNewRouterHistory({ pathname, query, routerHistory });
         // 保存tab菜单信息
         storeTabInfo({
           activeKey: finalActiveKey,
           currentMenuId,
           panes,
           href: window.location.href,
+          breadcrumbRoutes,
+          routerHistory: newRouterHistory,
         });
 
         return {
@@ -80,22 +89,29 @@ export default class Tab extends PureComponent {
           activeKey: finalActiveKey, // 最终高亮的顶级菜单
           currentMenuId, // 最终高亮的叶节点菜单
           location, // 当前的路由信息
+          breadcrumbRoutes, //当前路由对应的面包屑
+          routerHistory: newRouterHistory, // 历史记录
         };
       }
 
       const { panes, currentMenuId } = getStayPanes(pathname, query, prevState);
 
+      const newRouterHistory =
+        getNewRouterHistory({ pathname, query, routerHistory });
       // 保存tab菜单信息
       storeTabInfo({
         panes,
         href: window.location.href,
         currentMenuId,
+        routerHistory: newRouterHistory,
       });
 
       return {
         panes,
         currentMenuId,
         location,
+        routerHistory: newRouterHistory,
+        breadcrumbRoutes: [], // 对于linkTo页面暂时去除面包屑
       };
     }
 
@@ -111,7 +127,10 @@ export default class Tab extends PureComponent {
       panes,
       activeKey,
       currentMenuId,
+      breadcrumbRoutes,
     } = this.getInitialPanesWithPathname(props.location);
+
+    const { pathname, query } = props.location;
 
     this.state = {
       location: props.location,
@@ -119,6 +138,13 @@ export default class Tab extends PureComponent {
       panes,
       activeKey: activeKey || indexPaneKey,
       currentMenuId,
+      breadcrumbRoutes,
+      routerHistory: [
+        {
+          pathname,
+          query,
+        }
+      ],
     };
 
     // 抛出关闭tab的方法给jsp页面使用
@@ -198,7 +224,8 @@ export default class Tab extends PureComponent {
         return {
           panes: localPanes,
           activeKey: sessionStore.get('activeKey'),
-          currentMenuId: sessionStorage.getItem('currentMenuId'),
+          currentMenuId: sessionStore.get('currentMenuId'),
+          breadcrumbRoutes: sessionStore.get('breadcrumbRoutes'),
         };
       }
     }
@@ -207,12 +234,18 @@ export default class Tab extends PureComponent {
     // const fixPanes = this.preTreatment(localeMenu);
     const fixPanes = preTreatment(this.props.primaryMenu);
 
-    const { newPanes, newActiveKey, newCurrentMenuId } = getPanes(location, fixPanes);
+    const {
+      newPanes,
+      newActiveKey,
+      newCurrentMenuId,
+      newBreadcrumbRoutes,
+    } = getPanes(location, fixPanes);
 
     return {
       panes: newPanes,
       activeKey: newActiveKey,
       currentMenuId: newCurrentMenuId,
+      breadcrumbRoutes: newBreadcrumbRoutes,
     };
   }
 
@@ -254,20 +287,39 @@ export default class Tab extends PureComponent {
   }
 
   render() {
-    const { activeKey, panes, currentMenuId, location } = this.state;
+    const {
+      activeKey,
+      panes,
+      currentMenuId,
+      location,
+      breadcrumbRoutes,
+      routerHistory,
+    } = this.state;
     // 将panes数组划分为两个数组，一个是视口可以容纳的tab，一个是放在更多下拉菜单中的tab
     const finalpanesObj = splitPanesArray(panes, this.menuWidth);
     return (
-      <TabMenu
-        mainArray={finalpanesObj.mainArray}
-        moreMenuObject={finalpanesObj.moreMenuObject}
-        onChange={this.onChange}
-        activeKey={activeKey}
-        currentMenuId={currentMenuId}
-        onRemove={this.onRemove}
-        push={this.props.push}
-        path={location.pathname}
-      />
+      <div>
+        <div className={styles.tabMenuContainer}>
+          <TabMenu
+            mainArray={finalpanesObj.mainArray}
+            moreMenuObject={finalpanesObj.moreMenuObject}
+            onChange={this.onChange}
+            activeKey={activeKey}
+            currentMenuId={currentMenuId}
+            onRemove={this.onRemove}
+            push={this.props.push}
+            path={location.pathname}
+          />
+        </div>
+        <div className={styles.breadcrumbContainer}>
+          <Breadcrumb
+            breadcrumbRoutes={breadcrumbRoutes}
+            routerHistory={routerHistory}
+            location={location}
+            push={this.props.push}
+          />
+        </div>
+      </div>
     );
   }
 }

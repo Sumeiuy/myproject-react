@@ -76,6 +76,22 @@
   .ant-select-dropdown {
     .fsp-fontfamily();
   }
+
+  // 去除所有modal的动画样式
+  .ant-modal.zoom-enter,
+  .ant-modal.zoom-appear {
+    animation: none !important;
+    animation-duration: 0 !important;
+    transform: none; // reset scale avoid mousePosition bug
+    opacity: 0;
+    user-select: none; // https://github.com/ant-design/ant-design/issues/11777
+  }
+  .fade-enter,
+  .fade-appear,
+  .fade-leave {
+    animation: none !important;
+    animation-duration: 0 !important;
+  }
 }
 // 目标客户池首页指标区域浮层的三角样式
 .popoverClass {

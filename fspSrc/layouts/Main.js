@@ -11,11 +11,17 @@ import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { Helmet } from 'react-helmet';
 import { autobind } from 'core-decorators';
-import { routerRedux } from 'dva/router';
+import {
+  Route,
+  Switch,
+  Redirect,
+  routerRedux,
+} from 'dva/router';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import classNames from 'classnames';
 import withRouter from '../../src/decorators/withRouter';
+import { redirectRoutes } from '../../src/common/router';
 
 import Header from './Header';
 import Footer from './Footer';
@@ -29,12 +35,16 @@ import ContextProvider from '../../src/layouts/ContextProvider';
 import IEWarningModal from '../../src/components/common/IEWarningModal';
 import ErrorBoundary from '../../src/layouts/ErrorBoundary';
 import PhoneWrapper from '../../src/layouts/PhoneWrapper';
+import { findBestMatch } from '../../src/helper/os';
 import styles from './main.less';
 import '../css/fspFix.less';
 import '../../src/css/skin.less';
 import emp from '../../src/helper/emp';
 import api from '../../src/api';
 import NewHomeLoading from './NewHomeLoading';
+import FSPComponent from '../routes/fspPage/FSPComponent';
+import { getRoutes } from '../../src/utils/router';
+import { fspRoutes } from '../../src/config';
 
 const effects = {
   dictionary: 'app/getDictionary',
@@ -93,12 +103,18 @@ const mapDispatchToProps = {
 };
 
 const PHONE = 'phone';
+function findRoute(url) {
+  return findBestMatch(url, fspRoutes, 'url');
+}
+// fsp 跳转
+const fspJumpString = '/fspjump/';
+// 普通跳转
+const jumpString = '/jump/';
 
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Main extends PureComponent {
   static propTypes = {
-    children: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     loading: PropTypes.number.isRequired,
     loadingForceFull: PropTypes.bool,
@@ -200,9 +216,72 @@ export default class Main extends PureComponent {
     return menus && !_.isEmpty(menus) && !_.isEmpty(menus.primaryMenu);
   }
 
+  renderRoutes() {
+    const { routerData, match } = this.props;
+    return (
+      <Switch>
+        {
+          redirectRoutes.map(item => (
+            <Route
+              key={item.from}
+              path={item.from}
+              exact
+              component={({ location }) => (
+                <Redirect
+                  to={{
+                    ...location,
+                    pathname: item.to,
+                  }}
+                />
+              )}
+            />
+          ))
+        }
+        {
+          getRoutes(match.path, routerData).map(item => (
+            <Route
+              key={item.key}
+              path={item.path}
+              exact={item.exact}
+              render={props => <item.component {...props} />}
+            />
+          ))
+        }
+        <Route
+          path={`${fspJumpString}(.*)`}
+          exact
+          component={({ location }) => {
+            const pathname = location.pathname.slice(fspJumpString.length - 1);
+            const { path } = findRoute(pathname);
+            return <Redirect
+              to={{
+                ...location,
+                pathname: path,
+              }}
+            />;
+          }}
+        />
+        <Route
+          path={`${jumpString}(.*)`}
+          exact
+          component={({ location }) => {
+            const pathname = location.pathname.slice(jumpString.length - 1);
+            return <Redirect
+              to={{
+                ...location,
+                pathname,
+              }}
+            />;
+          }}
+        />
+        <Route path="/fsp/(.*)" component={FSPComponent} />
+        <Route path="*" render={() => (<Redirect to="/empty" />)} />
+      </Switch>
+    );
+  }
+
   render() {
     const {
-      children,
       location,
       loading,
       loadingForceFull,
@@ -275,9 +354,8 @@ export default class Main extends PureComponent {
                         {
                           (!_.isEmpty(interfaceState) &&
                             !interfaceState[effects.dictionary] &&
-                            !interfaceState[effects.customerScope] &&
-                            React.isValidElement(children)) ?
-                            children :
+                            !interfaceState[effects.customerScope]) ?
+                            this.renderRoutes() :
                             <div />
                         }
                       </div>

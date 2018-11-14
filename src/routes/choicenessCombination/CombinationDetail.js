@@ -376,12 +376,12 @@ export default class CombinationDetail extends PureComponent {
     const query = {
       id,
     };
-    const url = `/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
+    const url = `/strategyCenter/choicenessCombination/reportDetail?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
-      pathname: '/choicenessCombination/reportDetail',
+      pathname: '/strategyCenter/choicenessCombination/reportDetail',
       query,
     });
   }
