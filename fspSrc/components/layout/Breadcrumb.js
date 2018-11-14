@@ -8,6 +8,7 @@ import {
   tabNotUseGlobalBreadcrumb,
   locationNeedBreadcrumb,
   findParentBreadcrumb,
+  getAllBreadcrumbItem,
 } from '../../../src/config/tabMenu';
 
 import styles from './breadcrumb.less';
@@ -23,10 +24,7 @@ function getFinalBreadcrumbRoutes(location, breadcrumbRoutes, routerHistory) {
   ];
 
   if(breadcrumbItem) {
-    newBreadcrumbRoutes = [
-      breadcrumbItem.parent,
-      breadcrumbItem,
-    ];
+    newBreadcrumbRoutes = getAllBreadcrumbItem(breadcrumbItem);
   }
 
   newBreadcrumbRoutes = _.map(newBreadcrumbRoutes, (item) => {

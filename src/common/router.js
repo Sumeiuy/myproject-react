@@ -494,14 +494,16 @@ export const getRouterData = (app) => {
         import('../routes/latestView/Home' /* webpackChunkName: "latestView" */)),
     },
     // 首席观点列表页面
-    '/latestView/viewpointList': {
+    '/strategyCenter/latestView/viewpointList': {
       component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/ViewpointList' /* webpackChunkName: "latestViewpointList" */)),
+      isPrimary: true,
     },
     // 首席观点详情页
-    '/latestView/viewpointDetail': {
+    '/strategyCenter/latestView/viewpointDetail': {
       component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/ViewpointDetail' /* webpackChunkName: "latestViewpointDetail" */)),
+      isPrimary: true,
     },
     // 大类资产配置分析列表
     '/strategyCenter/latestView/majorAssetsList': {
@@ -607,6 +609,14 @@ export const redirectRoutes = [
   {
     from: '/telephoneNumberManageEdit',
     to: '/sysOperate/telephoneNumberManageEdit',
+  },
+  {
+    from: '/latestView/viewpointList',
+    to: '/strategyCenter/latestView/viewpointList',
+  },
+  {
+    from: '/latestView/viewpointDetail',
+    to: '/strategyCenter/latestView/viewpointDetail',
   },
   {
     from: '/latestView/majorAssetsList',

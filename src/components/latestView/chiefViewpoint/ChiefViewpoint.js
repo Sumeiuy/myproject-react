@@ -44,13 +44,13 @@ export default class ChiefViewpoint extends PureComponent {
     const query = {
       type,
     };
-    const url = `/latestView/viewpointList?${urlHelper.stringify(query)}`;
+    const url = `/strategyCenter/latestView/viewpointList?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
       query,
-      pathname: '/latestView/viewpointList',
+      pathname: '/strategyCenter/latestView/viewpointList',
     });
   }
 
@@ -64,7 +64,7 @@ export default class ChiefViewpoint extends PureComponent {
       id: 'RTC_TAB_VIEWPOINT',
       title: '资讯',
     };
-    const url = '/latestView/viewpointDetail';
+    const url = '/strategyCenter/latestView/viewpointDetail';
     const newQuery = { ...query, type, id, sourceUrl: '/latestView' };
     openRctTab({
       routerAction: push,
