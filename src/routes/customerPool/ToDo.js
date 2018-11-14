@@ -402,6 +402,7 @@ export default class ToDo extends PureComponent {
                 push={push}
                 replace={replace}
                 listType='approve'
+                clearCreateTaskData={clearCreateTaskData}
               />
 
             </div>

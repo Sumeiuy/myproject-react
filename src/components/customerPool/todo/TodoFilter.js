@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 02:28:54
+ * @Last Modified time: 2018-11-14 11:01:15
  */
 
 import React, { PureComponent } from 'react';
@@ -34,13 +34,13 @@ export default class TodoFilter extends PureComponent {
     // 是否是审批列表
     isApprove: PropTypes.bool,
     // 类型数据
-    typeData: PropTypes.array.isRequired,
+    typeData: PropTypes.array,
     // 类型
-    type: PropTypes.array.isRequired,
+    type: PropTypes.array,
     // 发起人数据
-    initiatorData: PropTypes.array.isRequired,
+    initiatorData: PropTypes.array,
     // 发起人
-    initiator: PropTypes.array.isRequired,
+    initiator: PropTypes.array,
     // 发起人下拉筛选
     InitiatorCallback: PropTypes.func,
     // 下拉框输入
@@ -52,6 +52,10 @@ export default class TodoFilter extends PureComponent {
     isApprove: false,
     InitiatorCallback: _.noop,
     InputChange: _.noop,
+    type: [],
+    initiator: [],
+    typeData: [],
+    initiatorData: [],
   }
 
   // 选择任务触发时间

@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 09:17:36
+ * @Last Modified time: 2018-11-14 11:24:09
  */
 
 import React, { PureComponent } from 'react';
@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Table, message } from 'antd';
 import _ from 'lodash';
+
 import logable from '../../../decorators/logable';
 import { openRctTab } from '../../../utils';
 import {
@@ -45,7 +46,7 @@ export default class TaskList extends PureComponent {
 
   componentDidMount() {
     this.updateEmptyHeight();
-    window.addEventListener('resize', () => this.updateEmptyHeight());
+    window.addEventListener('resize', this.handlewindowResize());
   }
 
   componentDidUpdate() {
@@ -53,7 +54,12 @@ export default class TaskList extends PureComponent {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', () => this.updateEmptyHeight());
+    window.removeEventListener('resize', this.handlewindowResize());
+  }
+
+  @autobind
+  handlewindowResize() {
+    this.updateEmptyHeight();
   }
 
   @autobind
@@ -63,11 +69,9 @@ export default class TaskList extends PureComponent {
       name: '任务名称',
     },
   })
-  handleOpenNewPage(e) {
+  handleOpenNewPage(id) {
     const { data, getTaskBasicInfo, clearCreateTaskData } = this.props;
-    const tardetLab = e.target;
-    const flowId = tardetLab.getAttribute('data');
-    const flowData = _.find(data, ['id', Number(flowId)]);
+    const flowData = _.find(data, ['id', Number(id)]);
     // 判断是否被驳回任务，进行不同页面跳转
     // 后台无法返回状态码，只能判断文字
     clearCreateTaskData(RETURN_TASK_FROM_TODOLIST);
@@ -158,7 +162,7 @@ export default class TaskList extends PureComponent {
                 rel="noopener noreferrer"
                 title={item}
                 data={record.id}
-                onClick={this.handleOpenNewPage}
+                onClick={() => this.handleOpenNewPage(record.id)}
               >
                 {record.subject}
               </a>),
@@ -189,7 +193,7 @@ export default class TaskList extends PureComponent {
                 rel="noopener noreferrer"
                 title={item}
                 data={record.id}
-                onClick={this.handleOpenNewPage}
+                onClick={() => this.handleOpenNewPage(record.id)}
               >
                 {record.subject}
               </a>),
