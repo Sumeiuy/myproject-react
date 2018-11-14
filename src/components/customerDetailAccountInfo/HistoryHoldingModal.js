@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-13 11:14:51
+ * @Last Modified time: 2018-11-14 09:55:06
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -491,6 +491,7 @@ export default class HistoryHoldingModal extends PureComponent {
     return (
       <Modal
         visible
+        maskClosable={false}
         size="large"
         modalKey="cust360DetailHistoryHoldingModal"
         closeModal={this.handleModalClose}
