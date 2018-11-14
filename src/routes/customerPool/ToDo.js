@@ -238,7 +238,11 @@ export default class ToDo extends PureComponent {
   handlefilterCallback(obj) {
     const {
       location: {
-        query: { taskType }
+        query: {
+          taskType,
+          pageSize = 10,
+          pageNum = 1
+        }
       }
     } = this.props;
     const {
@@ -252,7 +256,7 @@ export default class ToDo extends PureComponent {
           category: value,
           applyType: [value, label],
         }, () => {
-          this.getApplyList(this.state);
+          this.getApplyList({pageSize, pageNum, ...obj});
         });
         break;
       case '3':
@@ -260,7 +264,7 @@ export default class ToDo extends PureComponent {
           category: value,
           approveType: [value, label]
         }, () => {
-          this.getApproveList(this.state);
+          this.getApproveList({pageSize, pageNum, ...obj});
         });
         break;
       default:
