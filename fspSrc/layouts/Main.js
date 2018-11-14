@@ -35,6 +35,7 @@ import ContextProvider from '../../src/layouts/ContextProvider';
 import IEWarningModal from '../../src/components/common/IEWarningModal';
 import ErrorBoundary from '../../src/layouts/ErrorBoundary';
 import PhoneWrapper from '../../src/layouts/PhoneWrapper';
+import { findBestMatch } from '../../src/helper/os';
 import styles from './main.less';
 import '../css/fspFix.less';
 import '../../src/css/skin.less';
@@ -43,6 +44,7 @@ import api from '../../src/api';
 import NewHomeLoading from './NewHomeLoading';
 import FSPComponent from '../routes/fspPage/FSPComponent';
 import { getRoutes } from '../../src/utils/router';
+import { fspRoutes } from '../../src/config';
 
 const effects = {
   dictionary: 'app/getDictionary',
@@ -101,6 +103,13 @@ const mapDispatchToProps = {
 };
 
 const PHONE = 'phone';
+function findRoute(url) {
+  return findBestMatch(url, fspRoutes, 'url');
+}
+// fsp 跳转
+const fspJumpString = '/fspjump/';
+// 普通跳转
+const jumpString = '/jump/';
 
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
@@ -238,6 +247,33 @@ export default class Main extends PureComponent {
             />
           ))
         }
+        <Route
+          path={`${fspJumpString}(.*)`}
+          exact
+          component={({ location }) => {
+            const pathname = location.pathname.slice(fspJumpString.length - 1);
+            const { path } = findRoute(pathname);
+            return <Redirect
+              to={{
+                ...location,
+                pathname: path,
+              }}
+            />;
+          }}
+        />
+        <Route
+          path={`${jumpString}(.*)`}
+          exact
+          component={({ location }) => {
+            const pathname = location.pathname.slice(jumpString.length - 1);
+            return <Redirect
+              to={{
+                ...location,
+                pathname,
+              }}
+            />;
+          }}
+        />
         <Route path="/fsp/(.*)" component={FSPComponent} />
         <Route path="*" render={() => (<Redirect to="/empty" />)} />
       </Switch>
