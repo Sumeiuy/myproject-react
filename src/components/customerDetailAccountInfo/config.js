@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-13 18:00:28
+ * @Last Modified time: 2018-11-14 10:26:57
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -115,7 +115,7 @@ export const TRADE_FLOW_TABS = {
   optionAccountTrade: '期权账户历史交易',
 };
 
-export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 1800 };
+export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 2000 };
 export const PRODUCT_HISTORY_HOLDING_TABLE_SCROLL= { x: 2000 };
 export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2500 };
 export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 1800 };
@@ -142,7 +142,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     title: '名称',
   },
   {
-    widht: 160,
+    width: 160,
     key: 'code',
     dataIndex: 'code',
     title: '代码',
@@ -176,6 +176,13 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     align: 'right',
   },
   {
+    width: 160,
+    key: 'marketValue',
+    dataIndex: 'marketValue',
+    title: '市值(元)',
+    align: 'right',
+  },
+  {
     width: 200,
     key: 'profit',
     dataIndex: 'profit',
@@ -183,20 +190,20 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     align: 'right',
   },
   {
-    width: 100,
+    width: 140,
     key: 'holdPercent',
     dataIndex: 'holdPercent',
     title: '持仓占比',
     align: 'right',
   },
   {
-    widht: 120,
+    width: 120,
     key: 'holdDate',
     dataIndex: 'holdDate',
     title: '持仓时间',
   },
   {
-    widht: 120,
+    width: 120,
     key: 'sharesNature',
     dataIndex: 'sharesNature',
     title: '股份性质',

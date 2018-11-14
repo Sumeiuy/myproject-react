@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-14 09:55:06
+ * @Last Modified time: 2018-11-14 10:21:08
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -172,7 +172,7 @@ export default class HistoryHoldingModal extends PureComponent {
           // 表示空数据
           return '';
         }
-        return number.thousandFormat(text, false);
+        return number.thousandFormat(number.toFixed(text), false);
       },
     };
   }
@@ -283,7 +283,7 @@ export default class HistoryHoldingModal extends PureComponent {
   getStockTableColumns(columns) {
     return _.map(columns, column => {
       const { dataIndex } = column;
-      if (dataIndex === 'costPrice' || dataIndex === 'marketPrice' || dataIndex === 'profit') {
+      if (dataIndex === 'costPrice' || dataIndex === 'marketPrice' || dataIndex === 'profit' || dataIndex === 'marketValue') {
         // 针对数字金额类的column添加数字处理render
         return this.updateMoneyColumn(column);
       }
