@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 13:24:40
+ * @Last Modified time: 2018-11-14 14:08:36
  */
 
 import React, { PureComponent } from 'react';
@@ -233,7 +233,7 @@ export default class TaskList extends PureComponent {
     return (
       <Table
         className={className}
-        rowKey={record => record.id}
+        rowKey='id'
         columns={this.columns}
         dataSource={data}
       />
