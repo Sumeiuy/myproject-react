@@ -64,11 +64,11 @@ export default function ViewAndCombination(props, context) {
     });
     // 跳转到资讯详情界面
     openNewTab(
-      '/latestView/viewpointDetail',
+      '/strategyCenter/latestView/viewpointDetail',
       { id },
       {
         name: '资讯详情',
-        path: '/latestView/viewpointDetail',
+        path: '/strategyCenter/latestView/viewpointDetail',
       }
     );
   };

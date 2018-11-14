@@ -15,7 +15,7 @@ import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
 import { openRctTab } from '../../utils';
-import { url as urlHelper, dva, time as timeUtil } from '../../helper';
+import { url as urlHelper, dva, time as timeUtil, env } from '../../helper';
 import config from '../../components/latestView/config';
 import wordSrc from './img/word.png';
 import pdfSrc from './img/pdf.png';
@@ -75,13 +75,13 @@ export default class ViewpointDetail extends PureComponent {
     const { location: { query } } = this.props;
     const { push } = this.context;
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯列表' };
-    const url = `/latestView/viewpointList?${urlHelper.stringify(query)}`;
+    const url = `/strategyCenter/latestView/viewpointList?${urlHelper.stringify(query)}`;
     openRctTab({
       routerAction: push,
       url,
       param,
       query,
-      pathname: '/latestView/viewpointList',
+      pathname: '/strategyCenter/latestView/viewpointList',
       name: '资讯列表',
     });
   }
@@ -120,15 +120,18 @@ export default class ViewpointDetail extends PureComponent {
           <div className={styles.content}>
             <div className={styles.head}>
               <div className={styles.titleRow}>
-                <div
-                  className={classnames(styles.backColumn, styles.upper)}
-                  onClick={this.handleBackClick}
-                >
-                  <div className={styles.iconContainer}>
-                    <Icon type="fanhui" className={styles.backIcon} />
-                  </div>
-                  <div className={styles.backTitle}>返回列表</div>
-                </div>
+                {
+                  env.isInReact() ? null :
+                    <div
+                      className={classnames(styles.backColumn, styles.upper)}
+                      onClick={this.handleBackClick}
+                    >
+                      <div className={styles.iconContainer}>
+                        <Icon type="fanhui" className={styles.backIcon} />
+                      </div>
+                      <div className={styles.backTitle}>返回列表</div>
+                    </div>
+                }
                 <div className={styles.title}>
                   {title || '暂无标题'}
                 </div>
@@ -206,15 +209,18 @@ export default class ViewpointDetail extends PureComponent {
                   </a>
                 </div>
               </div>
-              <div
-                className={classnames(styles.backColumn, styles.under)}
-                onClick={this.handleBackClick}
-              >
-                <div className={styles.iconContainer}>
-                  <Icon type="fanhui" className={styles.backIcon} />
+              {
+                env.isInReact() ? null :
+                <div
+                  className={classnames(styles.backColumn, styles.under)}
+                  onClick={this.handleBackClick}
+                >
+                  <div className={styles.iconContainer}>
+                    <Icon type="fanhui" className={styles.backIcon} />
+                  </div>
+                  <div className={styles.backTitle}>返回列表</div>
                 </div>
-                <div className={styles.backTitle}>返回列表</div>
-              </div>
+              }
             </div>
           </div>
         </div>
