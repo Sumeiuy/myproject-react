@@ -116,7 +116,7 @@ export default class ProgressList extends PureComponent {
       payload: {
         name: homeModelTypeName[type],
         subtype: item.cust,
-        value: {value:'' + item.count},
+        value: item.count,
       },
     });
   }

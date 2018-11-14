@@ -3,7 +3,7 @@
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
  * @Last Modified by: zhangmei
- * @Last Modified time: 2018-11-13 17:51:36
+ * @Last Modified time: 2018-11-14 08:55:55
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -122,7 +122,7 @@ export default class Stock extends PureComponent {
       type: 'ViewItem',
       payload: {
         name: '个股资讯',
-        value: { value: '' + id },
+        value: id,
         title,
         code,
         type: logType,
