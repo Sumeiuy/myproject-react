@@ -138,7 +138,6 @@ export default class CustomerDetail extends PureComponent {
   }
 
   // 服务记录查看更多
-  // TODO 日志查看：打开页面无数据 未验证
   @autobind
   @logable({ type: 'Click', payload: { name: '查看更多服务记录' } })
   handleSeeMore() {

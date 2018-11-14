@@ -121,7 +121,6 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
   }
 
   // 导入数据
-  // TODO 日志查看：打开页面无数据 未验证
   @autobind
   @logable({ type: 'Click', payload: { name: '客户导入' } })
   onImportHandle() {
@@ -130,7 +129,6 @@ export default class CreateAndEditLabelModalContent extends PureComponent {
     });
   }
 
-  // TODO 日志查看：打开页面无数据 未验证
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '否' } })
   importHandleCancel() {

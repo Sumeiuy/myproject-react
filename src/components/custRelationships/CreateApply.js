@@ -180,7 +180,6 @@ export default class CreateApply extends PureComponent {
     this.setState(obj);
   }
 
-  // TODO 日志查看：打开页面无数据 未验证
   @autobind
   @logable({ type: 'Click', payload: { name: '提交' } })
   handleModalBtnGroupClick(btn) {

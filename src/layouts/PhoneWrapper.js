@@ -53,9 +53,8 @@ export default class PhoneWrapper extends Component {
   }
 
   // 点击电话号码打电话
-  // TODO 日志查看：找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
+  @logable({ type: 'Click', payload: { name: '点击号码拨打电话' } })
   handleClickPhone() {
     this.startTime = '';
      // 获取打完电话发服务记录时需要的字典信息

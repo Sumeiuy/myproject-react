@@ -104,9 +104,7 @@ export default class BatchAddServiceRecordModal extends PureComponent {
     return true;
   }
 
-  // TODO 日志查看：找不到方法 未验证
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '确定' } })
   handleSubmit() {
     const {
       closeModal,

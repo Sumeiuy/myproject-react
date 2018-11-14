@@ -242,7 +242,6 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     }
   }
 
-  // TODO 日志查看：找不到方法 未验证
   @autobind
   @logPV({
     pathname: '/modal/switchModeChangeConfirm',
@@ -256,9 +255,8 @@ export default class ChoiceInvestAdviceModal extends PureComponent {
     });
   }
 
-  // TODO 日志查看：找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
+  @logable({ type: 'Click', payload: { name: '选择服务内容模板' } })
   handleSelectInvestAdviceTmpl({ id, title }) {
     this.setState({ templateID: id, title });
   }

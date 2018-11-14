@@ -158,9 +158,8 @@ export default class LabelModals extends PureComponent {
     });
   }
 
-  // TODO 日志查看：页面中找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
+  @logable({ type: 'Click', payload: { name: '选择标签' } })
   openClientListPage(item) {
     const options = {
       source: isSightingScope(item.source) ? 'sightingTelescope' : 'tag',

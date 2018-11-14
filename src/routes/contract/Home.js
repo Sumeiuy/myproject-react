@@ -852,8 +852,8 @@ export default class Contract extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '合作合约左侧列表项',
-      type: '$props.location.query.type',
-      subType: '$props.location.query.subType',
+      type: '$args[0].title',
+      subType: '$args[0].subType',
     },
   })
   handleListRowClick(record, index) {

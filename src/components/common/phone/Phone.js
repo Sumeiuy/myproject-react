@@ -200,9 +200,8 @@ export default class Phone extends PureComponent {
     });
   }
 
-  // TODO 日志查看:找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
+  @logable({ type: 'Click', payload: { name: '拨打电话' } })
   handleClick() {
     const { number, custType, onClick } = this.props;
     if (this.canCall() !== true) {

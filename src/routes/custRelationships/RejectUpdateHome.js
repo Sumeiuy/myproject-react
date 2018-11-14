@@ -231,7 +231,6 @@ export default class RejectUpdateHome extends Component {
     });
   }
 
-  // TODO 日志查看：需要先进行可以提交的规则校验 未验证
   @autobind
   @logable({ type: 'Click', payload: { name: '提交' } })
   handleBtnGroupClick(btn) {

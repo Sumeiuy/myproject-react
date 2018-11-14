@@ -189,9 +189,8 @@ export default class CustManagerDetailScope extends PureComponent {
   /**
    * 选中一个维度，触发回调，请求当前维度的信息
    */
-  // TODO 日志查看：打开页面无数据 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '选择' } })
+  @logable({ type: 'Click', payload: { name: '选择查看维度' } })
   handleSelectMenuItem({ key }) {
     this.setState({
       currentSelectScope: key,

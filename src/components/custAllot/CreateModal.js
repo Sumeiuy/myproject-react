@@ -496,7 +496,6 @@ export default class CreateModal extends PureComponent {
   }
 
   // 发送添加客户、服务经理请求
-  // TODO 日志查看：打开页面无数据 未验证
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '添加' } })
   sendRequest(modalKey) {
