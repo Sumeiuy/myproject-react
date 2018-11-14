@@ -254,7 +254,7 @@ export default {
       });
     },
     // 获取组合排名列表
-    * getCombinationRankList({ payload }, { call, put, take }) {
+    * getCombinationRankList({ payload }, { call, put, take, select }) {
       const { combinationType } = payload;
       const response = yield call(api.getCombinationRankList, payload);
       // 防止多次请求情况下前面的请求数据覆盖后面的请求数据，添加一个key,用来判断当前返回数据是否和当前tab的key匹配
@@ -262,28 +262,29 @@ export default {
         ...response,
         combinationType,
       };
-      const list = newResponse.resultData;
       let index = 0;
 
       yield put({
         type: 'getCombinationRankListSuccess',
         payload: newResponse,
       });
+      // 取到排序之后的列表，根据排序后的列表请求图表数据
+      const sortedList = yield select(state => state.choicenessCombination.combinationRankList);
       // 拿到组合排名的列表数据之后，按顺序同步调图表数据接口
-      if (!_.isEmpty(list)) {
+      if (!_.isEmpty(sortedList)) {
         do {
-          const isAsset = _.isNull(list[index].weekEarnings);
+          const isAsset = _.isNull(sortedList[index].weekEarnings);
           yield put({
             type: 'getCombinationLineChart',
             payload: {
-              combinationCode: list[index].combinationCode,
+              combinationCode: sortedList[index].combinationCode,
               key: isAsset ? chartTabList[1].key : chartTabList[0].key,
             },
             loading: false,
           });
           index++;
         }
-        while (index < list.length && (yield take('getCombinationLineChartComplete')));
+        while (index < sortedList.length && (yield take('getCombinationLineChartComplete')));
       }
     },
     // 根据组合id获取对应趋势图数据

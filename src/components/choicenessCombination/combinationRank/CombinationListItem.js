@@ -9,6 +9,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { Spin } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import Icon from '../../common/Icon';
@@ -310,15 +311,25 @@ export default class CombinationListItem extends PureComponent {
           }
         </div>
         <div className={styles.right}>
-          <CombinationYieldChart
-            combinationItemData={data}
-            combinationCode={combinationCode}
-            chartData={chartData}
-            getCombinationLineChart={getCombinationLineChart}
-            tabChange={chartTabChange}
-            rankTabActiveKey={rankTabActiveKey}
-            ref={ref => this.chartComponent = ref}
-          />
+          {
+            _.isEmpty(chartData)
+              ? (
+                <div className={styles.chartLoading}>
+                  <Spin />
+                </div>
+              )
+              : (
+                  <CombinationYieldChart
+                  combinationItemData={data}
+                  combinationCode={combinationCode}
+                  chartData={chartData}
+                  getCombinationLineChart={getCombinationLineChart}
+                  tabChange={chartTabChange}
+                  rankTabActiveKey={rankTabActiveKey}
+                  ref={ref => this.chartComponent = ref}
+                />
+              )
+          }
         </div>
       </div>
     );
