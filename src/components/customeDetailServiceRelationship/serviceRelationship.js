@@ -82,7 +82,7 @@ export default class ServiceRelationship extends PureComponent {
     //将数据百分比化
     const newIntroduceDatas = _.map(introduce,  (items) => {
       const { weight } = items;
-      const newWeight= number.convertRate(weight);
+      const newWeight= `${number.toFixed(weight)}%`;
       return {
         ...items,
         weight: newWeight,
