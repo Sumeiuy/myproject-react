@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 14:08:36
+ * @Last Modified time: 2018-11-14 15:03:52
  */
 
 import React, { PureComponent } from 'react';
@@ -93,7 +93,8 @@ export default class TaskList extends PureComponent {
   // 跳转到基本信息审核页面
   @autobind
   toApproveUserInfo(flowId) {
-    const { push, location: { query } } = this.props;
+    const { location: { query } } = this.props;
+    const { push } = this.context;
     const param = {
       id: 'USER_CENTER_BACKLOG_FLOW',
       title: '待办流程',
@@ -109,7 +110,8 @@ export default class TaskList extends PureComponent {
   // 请求基本信息成功，页面跳转
   @autobind
   handleSuccess() {
-    const { push, location: { query }, taskBasicInfo } = this.props;
+    const { location: { query }, taskBasicInfo } = this.props;
+    const { push } = this.context;
     const { flowId } = this.state;
     // 判断返回信息中msg是否报错
     if (!_.isEmpty(taskBasicInfo.msg)) {
