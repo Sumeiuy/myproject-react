@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-12-19 11:01:47
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-24 14:02:32
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-14 14:46:16
  * @description 用于神策日志统一记录的装饰器函数，用于需要记录日志的方法上
  */
 import _ from 'lodash';
@@ -85,6 +85,34 @@ function makeLogger({ type, payload = {} }) {
   };
 }
 
+// 处理生产上value为数字的报错
+function makeCommonLogger({ type, payload = {} }) {
+  const formatValue = (value)=>{
+    if(_.isObject(value)){
+      return JSON.stringify(value);
+    }
+    if(_.isNumber(value)){
+      return ''+value;
+    }
+    return value;
+  };
+  try {
+    if (_.isString(type) && !_.isEmpty(type)) {
+      dva.dispatch({ type, payload:{
+          ...payload,
+          value: formatValue(payload.value || ''),
+        }
+      });
+    }
+  } catch (e) {
+    dva.dispatch({
+      type: 'LogError',
+      payload: {
+        message: e.message,
+      },
+    });
+  }
+}
 /**
  *
  * @param {Object} action
@@ -146,7 +174,7 @@ function logPV({ pathname, title, payload = {} }) {
  */
 function logCommon({ type = 'Click', payload = {} }) {
   const location = dva.getLastLocation();
-  dva.dispatch({
+  makeCommonLogger({
     type,
     payload: {
       ...location,
