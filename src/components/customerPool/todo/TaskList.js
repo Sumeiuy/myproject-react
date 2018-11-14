@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 13:21:39
+ * @Last Modified time: 2018-11-14 13:24:40
  */
 
 import React, { PureComponent } from 'react';
@@ -148,7 +148,7 @@ export default class TaskList extends PureComponent {
     let taskColumns = [];
     switch (this.props.listType) {
       case 'apply':
-        taskColumns =  [
+        taskColumns = [
           {
             title: '任务名称',
             dataIndex: 'subject',
