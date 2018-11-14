@@ -765,7 +765,7 @@ export default class CustomerGroupManage extends PureComponent {
 
     return (
       <div className={styles.groupPanelContainer}>
-        <div className={styles.title}>标签管理</div>
+        {/* <div className={styles.title}>标签管理</div> */}
         <div className={styles.operationRow}>
           <div className={styles.leftSection}>
             <SimpleSearch

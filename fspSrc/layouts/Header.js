@@ -24,6 +24,7 @@ import api from '../../src/api';
 import { Search } from '../../src/components/customerPool/home';
 import { emp, permission } from '../../src/helper';
 import EnvironmentalInfo from '../../src/components/environmentalInfo/EnvironmentalInfoModal';
+import { logCommon, logPV } from '../../src/decorators/logable';
 
 // 首页执行者视图首次引导提示第十步的dom的id名称(我要提问)
 const NEW_HOME_INTRO_TENTH_SEEP_IDNAME = 'homePageIntroTenthStep';
@@ -118,7 +119,6 @@ export default class Header extends PureComponent {
   }
 
   getMenus(array, level = 2) {
-    let isFoundFeedback = false;
     return array.map((item) => {
       if (item.children && !_.isEmpty(item.children)) {
         return (
@@ -129,13 +129,6 @@ export default class Header extends PureComponent {
             {this.getMenus(item.children, level + 1)}
           </Menu.SubMenu>
         );
-      }
-      if(item.name === '反馈管理') {
-        isFoundFeedback = true;
-      }
-      // 在有反馈管理菜单的情况下，不显示反馈记录菜单
-      if(item.name === '反馈记录' && isFoundFeedback) {
-        return null;
       }
       return (
         <Menu.Item
@@ -154,11 +147,24 @@ export default class Header extends PureComponent {
   }
 
   preTreatment(secondaryMenu) {
-    return _.filter(secondaryMenu,
+    const filterMenu =  _.filter(secondaryMenu,
       menu =>
         menu.name === '移动版'
         || (!_.isEmpty(menu.children))
         || (!!menu.path));
+
+    let feedbackMenu = _.find(filterMenu, menu => menu.name === '问题反馈') || {};
+
+    if(_.find(feedbackMenu.children, menu => menu.name === '反馈管理')) {
+      feedbackMenu = _.filter(feedbackMenu.children, menu => menu.name !== '反馈记录');
+      return _.map(filterMenu, menu => {
+        if(menu.name === '问题反馈') {
+          menu.children = feedbackMenu;
+        }
+        return menu;
+      });
+    }
+    return filterMenu;
   }
 
   // 获取联想数据
@@ -186,6 +192,14 @@ export default class Header extends PureComponent {
     const { push, location } = this.props;
     if (menuItem.action === 'loadExternSystemPage') {
       const externUrl = fixExternUrl(menuItem.url);
+      logCommon({
+        type: 'NavClick',
+        payload: {
+          name: '次级导航',
+          value: externUrl,
+          url: externUrl,
+        },
+      });
       window.open(externUrl, '_blank');
     } else if (menuItem.action === 'loadInModal') {
       if(menuItem.name === '我要反馈') {
@@ -193,6 +207,14 @@ export default class Header extends PureComponent {
       }
       this.handleShowDialog(menuItem);
     } else if (menuItem.path !== location.pathname) {
+      logCommon({
+        type: 'NavClick',
+        payload: {
+          name: '次级导航',
+          value: menuItem.path,
+          url: menuItem.path,
+        },
+      });
       push({
         pathname: menuItem.path,
         query: menuItem.query,
@@ -228,6 +250,10 @@ export default class Header extends PureComponent {
 
   // 环境信息弹窗
   @autobind
+  @logPV({
+    pathname: '',
+    title: '环境信息弹窗',
+  })
   handleEnvironmentalInfoModalShow() {
     this.setState({
       environmentalInfoVisible: true,
@@ -235,6 +261,10 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '',
+    title: '隔离墙弹框',
+  })
   handleIsolationWallModalShow() {
     this.setState({
       isolationWallModalVisible: true,
@@ -242,6 +272,10 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '',
+    title: '关闭隔离墙弹框',
+  })
   handleIsolationWallModalHide() {
     this.setState({
       isolationWallModalVisible: false,
@@ -277,6 +311,10 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '',
+    title: '我要反馈弹框',
+  })
   handleFeedbackClick() {
     if (!$('#feedback-module')[0]) {
       window.handleFeedbackBtnClick();
@@ -285,6 +323,10 @@ export default class Header extends PureComponent {
 
   // 环境信息弹窗点击关闭
   @autobind
+  @logPV({
+    pathname: '',
+    title: '关闭环境信息弹框',
+  })
   handleEnvironmentalInfoHide() {
     this.setState({
       environmentalInfoVisible: false,

@@ -14,7 +14,8 @@ import Breadcrumb from './Breadcrumb';
 import { indexPaneKey } from '../../../src/config/tabMenu';
 import { enableSessionStorage } from '../../../src/config/constants';
 import withRouter from '../../../src/decorators/withRouter';
-
+import { logCommon } from '../../../src/decorators/logable';
+import styles from './tab.less';
 import {
   getFinalPanes,
   getPanes,
@@ -181,6 +182,14 @@ export default class Tab extends PureComponent {
     const { push } = this.props;
     const { panes } = this.state;
     const pane = _.find(panes, item => item.id === activeKey);
+    logCommon({
+      type: 'NavClick',
+      payload: {
+        name: '主导航',
+        value: pane.path,
+        url: pane.path,
+      },
+    });
     // 调用push时同时传递pathname，query
     push({
       pathname: pane.path,
@@ -204,6 +213,14 @@ export default class Tab extends PureComponent {
       { panes: changePanes },
       () => {
         if (pane.path !== pathname) {
+          logCommon({
+            type: 'NavClick',
+            payload: {
+              name: '主导航',
+              value: pane.path,
+              url: pane.path,
+            },
+          });
           push({
             pathname: pane.path,
             query: pane.query,
@@ -261,6 +278,14 @@ export default class Tab extends PureComponent {
     } else { // 如果移除的当前tab不是最后一个,向后跳转
       pane = panes[index + 1];
     }
+    logCommon({
+      type: 'NavClick',
+      payload: {
+        name: '主导航',
+        value: pane.path,
+        url: pane.path,
+      },
+    });
     push({
       pathname: pane.path,
       query: pane.query,
@@ -276,6 +301,14 @@ export default class Tab extends PureComponent {
     // 现在暂时先返回首页
     const pane = panes[0];
     if (pane.path !== pathname) {
+      logCommon({
+        type: 'NavClick',
+        payload: {
+          name: '主导航',
+          value: pane.path,
+          url: pane.path,
+        },
+      });
       push({
         pathname: pane.path,
         query: pane.query,
@@ -299,7 +332,7 @@ export default class Tab extends PureComponent {
     const finalpanesObj = splitPanesArray(panes, this.menuWidth);
     return (
       <div>
-        <div style={{background: '#fff', borderBottom: '1px solid #bed6f9'}}>
+        <div className={styles.tabMenuContainer}>
           <TabMenu
             mainArray={finalpanesObj.mainArray}
             moreMenuObject={finalpanesObj.moreMenuObject}
@@ -311,7 +344,7 @@ export default class Tab extends PureComponent {
             path={location.pathname}
           />
         </div>
-        <div style={{background: '#fff' }}>
+        <div className={styles.breadcrumbContainer}>
           <Breadcrumb
             breadcrumbRoutes={breadcrumbRoutes}
             routerHistory={routerHistory}

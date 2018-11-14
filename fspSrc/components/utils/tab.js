@@ -344,8 +344,11 @@ function getPanesFromMenu(location, fixPanes, currentMenuId) {
     );
   }
 
+  // 过滤掉panes里面容错处理的pane
+  const finalPanes = _.filter(newPanes, menu => menu.id !== 'FSP_ERROR_OTHER');
+
   return {
-    newPanes,
+    newPanes: finalPanes,
     newActiveKey,
     newCurrentMenuId,
     newBreadcrumbRoutes,

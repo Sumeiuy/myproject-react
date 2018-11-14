@@ -3,14 +3,14 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-12 15:33:29
+ * @Last Modified time: 2018-11-13 17:35:01
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Form, Input  } from 'antd';
-import { urlRegExp } from './config';
+import { urlRegExp, acceptType } from './config';
 import CommonUpload from '../../../common/biz/CommonUpload';
 import InfoCell from './InfoCell';
 
@@ -117,6 +117,7 @@ export default class ColumnForm extends PureComponent {
                   uploadAttachment={this.handleUploadAttachment}
                   deleteCallback={this.handleDeleteAttachment}
                   needDefaultText={false}
+                  accept={acceptType}
                 />
               </div>
             </FormItem>

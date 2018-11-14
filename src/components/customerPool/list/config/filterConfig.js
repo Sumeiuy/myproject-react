@@ -183,7 +183,13 @@ const exported = {
     {
       filterName: '投资期限',
       filterId: 'investPeriod',
-      dictField: 'investPeriodDictionary', // 过滤器数据在字典中对应的字段
+      // dictField: 'investPeriodDictionary', // 过滤器数据在字典中对应的字段
+      data: [
+        {key: '', value: '不限'},
+        {key: '8110141', value: '0-1年'},
+        {key: '8110142', value: '1-5年'},
+        {key: '8110143', value: '无特别要求'},
+      ],
       type: 'multi',
       dropdownStyle: {
         maxHeight: 324,
@@ -195,11 +201,19 @@ const exported = {
       filterName: '投资偏好',
       filterId: 'investVariety',
       dictField: 'investVarietyDictionary', // 过滤器数据在字典中对应的字段
+      // data: [
+      //   {key: '', value: '不限'},
+      //   {key: '8110131', value: 'A.固收类'},
+      //   {key: '8110132', value: 'B.固收类、权益类'},
+      //   {key: '8110133', value: 'C.固收类、权益类、期货和两融'},
+      //   {key: '8110134', value: 'D.固收类、权益类、期货和两融、复杂或高风险产品'},
+      //   {key: '8110135', value: 'E.固收类、权益类、期货和两融、复杂或高风险产品、其他产品'},
+      // ],
       type: 'single',
       dropdownStyle: {
         maxHeight: 324,
         overflowY: 'auto',
-        width: 250,
+        width: 250
       },
       menuFooter: getIndicatorDescription(),
     },
@@ -524,7 +538,7 @@ const exported = {
     { value: '收益率', key: 'maxCostRate' },
     { value: '天天发份额', key: 'ttfMktVal' },
     { value: '投资期限', key: 'investPeriod' },
-    { value: '投资品种', key: 'investVariety' },
+    { value: '投资偏好', key: 'investVariety' },
   ],
 
   moreFilterCategories: [

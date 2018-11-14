@@ -237,7 +237,7 @@ export const sourceFilter = {
       filterName: 'investPeriod',
     }],
     investVariety: [{
-      // 投资品种
+      // 投资偏好
       filterName: 'investVariety',
     }],
   },
@@ -320,7 +320,7 @@ export const commonFilterList = [
   { labelName: '客户等级', filterField: 'customerLevel', dictField: 'custLevelList' },
   { labelName: '未完备信息', filterField: 'completedRate', dictField: 'completenessRateList' },
   { labelName: '投资期限', filterField: 'investPeriod', dictField: 'investPeriodDictionary' },
-  { labelName: '投资品种', filterField: 'investVariety', dictField: 'investVarietyDictionary' },
+  { labelName: '投资偏好', filterField: 'investVariety', dictField: 'investVarietyDictionary' },
   { labelName: '账户状态', filterField: 'accountStatus', dictField: 'accountStatusList' },
   { labelName: '持仓行业', filterField: 'primaryKeyIndustry', dictField: 'industryList' },
 ];
