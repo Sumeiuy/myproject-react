@@ -215,7 +215,7 @@ const matchRule = {
       },
       {
         name: '股东账号',
-        id: 'primaryKey',
+        id: 'stkAccts',
         render: 'renderShareholderSccountNumber',
       },
       {
