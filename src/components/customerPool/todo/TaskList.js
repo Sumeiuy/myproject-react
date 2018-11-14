@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 15:03:52
+ * @Last Modified time: 2018-11-14 15:15:56
  */
 
 import React, { PureComponent } from 'react';
@@ -32,6 +32,11 @@ export default class TaskList extends PureComponent {
     // 数据类型
     listType: PropTypes.string.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
+  }
+
+  static contextTypes = {
+    push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   }
 
   constructor(props) {
