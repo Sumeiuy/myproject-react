@@ -7,9 +7,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
-import { Input, Row, Col, Tabs } from 'antd';
+import { Input, Tabs } from 'antd';
 import _ from 'lodash';
 
 import withRouter from '../../decorators/withRouter';
@@ -193,8 +192,7 @@ export default class ToDo extends PureComponent {
   })
   handleApplySearch(value) {
     const { location: { query: { pageSize = 10, pageNum = 1 } } } = this.props;
-    const { startTime, endTime } = this.state;
-    this.getApplyList({startTime, endTime, pageSize, pageNum, subject: value});
+    this.getApplyList({pageSize, pageNum, subject: value});
   }
 
   // 审批搜索
@@ -208,10 +206,8 @@ export default class ToDo extends PureComponent {
   })
   handleApproveSearch(value) {
     const { location: { query: { pageSize = 10, pageNum = 1 } } } = this.props;
-    const { startTime, endTime } = this.state;
-    this.getApproveList({ startTime, endTime, pageSize, pageNum, subject: value });
+    this.getApproveList({ pageSize, pageNum, subject: value });
   }
-
 
   @autobind
   pageChange(obj) {
