@@ -619,7 +619,6 @@ export default class MatchArea extends PureComponent {
           {this.renderName()}
           {this.renderIdNum()}
           {this.renderTelephone()}
-          {this.renderPrimaryKey()}
           {this.renderCustId()}
           {this.renderRelatedLabels()}
           {this.renderUnrightType()}

@@ -525,15 +525,15 @@ export default class MatchArea extends PureComponent {
   }
 
   //匹配股东账号
+  // 特殊处理 搜股东账号实际上匹配客户经济号 因为股东账号是精确匹配 所以q是url字段的股东账号  这里需要把客户经济号替换成股东账号显示
   renderShareholderSccountNumber(item) {
     const {
       listItem,
       q,
     } = this.props;
-    const { name, id, unit = '', hasCycle } = item;
+    const { name, id, hasCycle } = item;
     let renderValue = listItem[id];
     if (!_.isNull(renderValue)) {
-
       return (
         <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
           <span>
