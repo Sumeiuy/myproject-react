@@ -3,7 +3,14 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import { tabNotUseGlobalBreadcrumb, locationNeedBreadcrumb } from '../../../src/config/tabMenu';
+import { logCommon } from '../../../src/decorators/logable';
+import {
+  tabNotUseGlobalBreadcrumb,
+  locationNeedBreadcrumb,
+  findParentBreadcrumb,
+  getAllBreadcrumbItem,
+} from '../../../src/config/tabMenu';
+
 import styles from './breadcrumb.less';
 
 function getFinalBreadcrumbRoutes(location, breadcrumbRoutes, routerHistory) {
@@ -17,10 +24,7 @@ function getFinalBreadcrumbRoutes(location, breadcrumbRoutes, routerHistory) {
   ];
 
   if(breadcrumbItem) {
-    newBreadcrumbRoutes = [
-      breadcrumbItem.parent,
-      breadcrumbItem,
-    ];
+    newBreadcrumbRoutes = getAllBreadcrumbItem(breadcrumbItem);
   }
 
   newBreadcrumbRoutes = _.map(newBreadcrumbRoutes, (item) => {
@@ -50,6 +54,14 @@ export default class Breadcrumb extends PureComponent {
   @autobind
   handleBreadcrumbItemClick(breadcrumbItem, canClick) {
     if(canClick) {
+      logCommon({
+        type: 'NavClick',
+        payload: {
+          name: '面包屑',
+          value: breadcrumbItem.path,
+          url: breadcrumbItem.path,
+        },
+      });
       this.props.push({
         pathname: breadcrumbItem.path,
         query: breadcrumbItem.query,
@@ -58,9 +70,12 @@ export default class Breadcrumb extends PureComponent {
   }
 
   renderBreadcrumbItem(breadcrumbItem, index, breadcrumbItemCount) {
+    const { location: { pathname } } = this.props;
     const canClick = breadcrumbItem.type === 'link' && index < (breadcrumbItemCount - 1);
+    const shouldrenderDivider = findParentBreadcrumb(locationNeedBreadcrumb, pathname);
     const breadcrumbItemCls = classnames({
       [styles.breadcrumbItem]: true,
+      [styles.lastBreadcrumbItem]: index === (breadcrumbItemCount - 1),
       [styles.canClick]: canClick,
     });
     return (
@@ -73,7 +88,7 @@ export default class Breadcrumb extends PureComponent {
           onClick={() => this.handleBreadcrumbItemClick(breadcrumbItem, canClick)}
         >{breadcrumbItem.name}</span>
         {
-          (index < (breadcrumbItemCount - 1)) ?
+          (index < (breadcrumbItemCount - 1) || shouldrenderDivider) ?
           <span className={styles.breadcrumbDivide}>/</span> : null
         }
       </div>

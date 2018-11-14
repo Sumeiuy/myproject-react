@@ -42,10 +42,10 @@ export default class Viewpoint extends PureComponent {
   @logable({ type: 'Click', payload: { name: '更多 >' } })
   handleMoreClick() {
     // 跳转到资讯列表界面
-    this.openNewTab('/latestView/viewpointList', null,
+    this.openNewTab('/strategyCenter/latestView/viewpointList', null,
       {
         name: '资讯列表',
-        path: '/latestView/viewpointList',
+        path: '/strategyCenter/latestView/viewpointList',
       });
   }
 
@@ -53,12 +53,12 @@ export default class Viewpoint extends PureComponent {
   @logable({ type: 'Click', payload: { name: '详情' } })
   handleDetailClick(id) {
     // 跳转到资讯详情界面
-    this.openNewTab('/latestView/viewpointDetail', {
+    this.openNewTab('/strategyCenter/latestView/viewpointDetail', {
       id,
     },
       {
         name: '资讯详情',
-        path: '/latestView/viewpointDetail',
+        path: '/strategyCenter/latestView/viewpointDetail',
       });
   }
 

@@ -1,7 +1,9 @@
 import React from 'react';
 import _ from 'lodash';
+import { Icon, Popover} from 'antd';
 import BusinessOpenedMenu from '../../../common/htFilter/bussinessOpened/';
 
+import styles from './filterConfig.less';
 function getBusinessOpenedFilterLabel(obj) {
   const findDateType = _.find(obj.data.dateType,
     item => item.key === obj.value[0]);
@@ -20,6 +22,27 @@ function getBusinessOpenedFilterLabel(obj) {
       <span className="lego-postfixValue">{`${postfix}`}</span>
     </span>
   );
+}
+
+// 获取投资偏好指标说明
+function getIndicatorDescription() {
+  const content = (
+    <div>
+      <p>固收类：债券、货币市场基金、债券基金等固定收益类投资品种</p>
+      <p>权益类：股票、混合型基金、偏股型基金、股票型基金等权益类投资品种</p>
+      <p>期货和两融：期货、融资融券</p>
+      <p>复杂或高风险产品：复杂或高风险金融产品</p>
+      <p>其他产品：其他产品</p>
+    </div>
+  );
+  return(<div className={styles.investphFooterWrapper}>
+    <div className={styles.explainContent}>
+      <Popover content={content} title="指标说明" placement="right">
+        <span className={styles.explainIcon}><Icon type="exclamation-circle" className={styles.icon}/></span>
+        <span className={styles.explainText}>指标说明</span>
+      </Popover>
+    </div>
+  </div>);
 }
 
 const exported = {
@@ -156,6 +179,43 @@ const exported = {
         overflowY: 'auto',
         width: 195,
       },
+    },
+    {
+      filterName: '投资期限',
+      filterId: 'investPeriod',
+      // dictField: 'investPeriodDictionary', // 过滤器数据在字典中对应的字段
+      data: [
+        {key: '', value: '不限'},
+        {key: '8110141', value: '0-1年'},
+        {key: '8110142', value: '1-5年'},
+        {key: '8110143', value: '无特别要求'},
+      ],
+      type: 'multi',
+      dropdownStyle: {
+        maxHeight: 324,
+        overflowY: 'auto',
+        width: 197,
+      },
+    },
+    {
+      filterName: '投资偏好',
+      filterId: 'investVariety',
+      dictField: 'investVarietyDictionary', // 过滤器数据在字典中对应的字段
+      // data: [
+      //   {key: '', value: '不限'},
+      //   {key: '8110131', value: 'A.固收类'},
+      //   {key: '8110132', value: 'B.固收类、权益类'},
+      //   {key: '8110133', value: 'C.固收类、权益类、期货和两融'},
+      //   {key: '8110134', value: 'D.固收类、权益类、期货和两融、复杂或高风险产品'},
+      //   {key: '8110135', value: 'E.固收类、权益类、期货和两融、复杂或高风险产品、其他产品'},
+      // ],
+      type: 'single',
+      dropdownStyle: {
+        maxHeight: 324,
+        overflowY: 'auto',
+        width: 250
+      },
+      menuFooter: getIndicatorDescription(),
     },
     {
       filterName: '可开通业务',
@@ -427,6 +487,15 @@ const exported = {
         right: 8,
       },
     },
+    {
+      filterName: '天天发份额',
+      filterId: 'ttfMktVal',
+      type: 'range',
+      unit: '份',
+      unitStyle: {
+        right: 8,
+      },
+    },
   ],
 
   moreFilterData: [
@@ -467,6 +536,9 @@ const exported = {
     { value: '净转入资产', key: 'purFinAset' },
     { value: '收益', key: 'pftAmt' },
     { value: '收益率', key: 'maxCostRate' },
+    { value: '天天发份额', key: 'ttfMktVal' },
+    { value: '投资期限', key: 'investPeriod' },
+    { value: '投资偏好', key: 'investVariety' },
   ],
 
   moreFilterCategories: [
@@ -496,6 +568,8 @@ const exported = {
         'tgSignDate',
         'validDt',
         'completedRate',
+        'investPeriod',
+        'investVariety',
       ],
     },
     {
@@ -532,6 +606,7 @@ const exported = {
         'purFinAset',
         'pftAmt',
         'maxCostRate',
+        'ttfMktVal',
       ],
     },
   ],

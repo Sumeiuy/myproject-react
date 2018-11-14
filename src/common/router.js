@@ -5,14 +5,12 @@ import CustomerPoolWrapper from '../routes/customerPool/CustomerPoolWrapper';
 import { env } from '../helper';
 
 let routerDataCache;
-
 const modelNotExisted = (app, model) => (
   // eslint-disable-next-line
   !app._models.some(({ namespace }) => {
     return namespace === model.substring(model.lastIndexOf('/') + 1);
   })
 );
-
 // wrapper of dynamic
 const dynamicWrapper = (app, models, component) => {
   // () => require('module')
@@ -59,7 +57,6 @@ const dynamicWrapper = (app, models, component) => {
     },
   });
 };
-
 export const getRouterData = (app) => {
   const routerConfig = {
     '/empty': {
@@ -497,14 +494,16 @@ export const getRouterData = (app) => {
         import('../routes/latestView/Home' /* webpackChunkName: "latestView" */)),
     },
     // 首席观点列表页面
-    '/latestView/viewpointList': {
+    '/strategyCenter/latestView/viewpointList': {
       component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/ViewpointList' /* webpackChunkName: "latestViewpointList" */)),
+      isPrimary: true,
     },
     // 首席观点详情页
-    '/latestView/viewpointDetail': {
+    '/strategyCenter/latestView/viewpointDetail': {
       component: dynamicWrapper(app, ['latestView'], () =>
         import('../routes/latestView/ViewpointDetail' /* webpackChunkName: "latestViewpointDetail" */)),
+      isPrimary: true,
     },
     // 大类资产配置分析列表
     '/strategyCenter/latestView/majorAssetsList': {
@@ -585,3 +584,58 @@ export const getRouterData = (app) => {
   };
   return routerConfig;
 };
+// 需要进行重定向的路由配置
+export const redirectRoutes = [
+  {
+    from: '/',
+    to: '/customerPool',
+  },
+  {
+    from: '/invest',
+    to: '/statisticalQuery/report',
+  },
+  {
+    from: '/report',
+    to: '/statisticalQuery/report',
+  },
+  {
+    from: '/custAllot',
+    to: '/businessApplyment/customerPartition/custAllot',
+  },
+  {
+    from: '/departmentCustAllot',
+    to: '/businessApplyment/customerPartition/departmentCustAllot',
+  },
+  {
+    from: '/telephoneNumberManageEdit',
+    to: '/sysOperate/telephoneNumberManageEdit',
+  },
+  {
+    from: '/latestView/viewpointList',
+    to: '/strategyCenter/latestView/viewpointList',
+  },
+  {
+    from: '/latestView/viewpointDetail',
+    to: '/strategyCenter/latestView/viewpointDetail',
+  },
+  {
+    from: '/latestView/majorAssetsList',
+    to: '/strategyCenter/latestView/majorAssetsList',
+  },
+  {
+    from: '/latestView/industryThemeList',
+    to: '/strategyCenter/latestView/industryThemeList',
+  },
+  {
+    from: '/stock/detail',
+    to: '/strategyCenter/stock/detail',
+  },
+  {
+    from: '/choicenessCombination/combinationDetail',
+    to: '/strategyCenter/choicenessCombination/combinationDetail',
+  },
+  {
+    from: '/choicenessCombination/reportDetail',
+    to: '/strategyCenter/choicenessCombination/reportDetail',
+  },
+];

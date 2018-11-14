@@ -227,6 +227,14 @@ export const sourceFilter = {
         riskFlag: 'risklover',
       },
     }],
+    investPeriod: [{
+      // 投资期限
+      filterName: 'investPeriod',
+    }],
+    investVariety: [{
+      // 投资偏好
+      filterName: 'investVariety',
+    }],
   },
   custAssets: {
     newOpen: [{
@@ -305,6 +313,8 @@ export const commonFilterList = [
   { labelName: '风险等级', filterField: 'riskLevels', dictField: 'custRiskBearing' },
   { labelName: '客户等级', filterField: 'customerLevel', dictField: 'custLevelList' },
   { labelName: '未完备信息', filterField: 'completedRate', dictField: 'completenessRateList' },
+  { labelName: '投资期限', filterField: 'investPeriod', dictField: 'investPeriodDictionary' },
+  { labelName: '投资偏好', filterField: 'investVariety', dictField: 'investVarietyDictionary' },
   { labelName: '账户状态', filterField: 'accountStatus', dictField: 'accountStatusList' },
   { labelName: '持仓行业', filterField: 'primaryKeyIndustry', dictField: 'industryList' },
 ];
@@ -356,6 +366,7 @@ export const capitalFilterList = [
   { labelName: '总市值（含信用）', filterField: 'totMktVal' },
   { labelName: '归集率', filterField: 'gjlRate' },
   { labelName: '外部市值', filterField: 'outMktVal' },
+  { labelName: '天天发份额', filterField: 'ttfMktVal', unit: '份' },
 ];
 
 // 个人对应的code码

@@ -21,7 +21,7 @@ import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import classNames from 'classnames';
 import withRouter from '../../src/decorators/withRouter';
-
+import { redirectRoutes } from '../../src/common/router';
 
 import Header from './Header';
 import Footer from './Footer';
@@ -35,6 +35,7 @@ import ContextProvider from '../../src/layouts/ContextProvider';
 import IEWarningModal from '../../src/components/common/IEWarningModal';
 import ErrorBoundary from '../../src/layouts/ErrorBoundary';
 import PhoneWrapper from '../../src/layouts/PhoneWrapper';
+import { findBestMatch } from '../../src/helper/os';
 import styles from './main.less';
 import '../css/fspFix.less';
 import '../../src/css/skin.less';
@@ -43,6 +44,8 @@ import api from '../../src/api';
 import NewHomeLoading from './NewHomeLoading';
 import FSPComponent from '../routes/fspPage/FSPComponent';
 import { getRoutes } from '../../src/utils/router';
+import { fspRoutes } from '../../src/config';
+import { logCommon } from '../../src/decorators/logable';
 
 const effects = {
   dictionary: 'app/getDictionary',
@@ -101,6 +104,13 @@ const mapDispatchToProps = {
 };
 
 const PHONE = 'phone';
+function findRoute(url) {
+  return findBestMatch(url, fspRoutes, 'url');
+}
+// fsp 跳转
+const FSP_JUMP_STRING = '/fspjump/';
+// 普通跳转
+const JUMP_STRING = '/jump/';
 
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
@@ -207,27 +217,55 @@ export default class Main extends PureComponent {
     return menus && !_.isEmpty(menus) && !_.isEmpty(menus.primaryMenu);
   }
 
+  // 处理外部系统跳入
+  @autobind
+  handleOutSystemJumpIn(value) {
+    return (<Route
+      path={`${value}(.*)`}
+      exact
+      component={({ location }) => {
+        let pathname = location.pathname.slice(value.length - 1);
+        if (value === FSP_JUMP_STRING) {
+          pathname = findRoute(pathname).path || '';
+        }
+        logCommon({
+          type: 'JumpIn',
+          payload: {
+            name: '外部系统跳入',
+            path: pathname,
+          },
+        });
+        return (<Redirect
+          to={{
+            ...location,
+            pathname,
+          }}
+        />);
+      }}
+    />);
+  }
+
   renderRoutes() {
     const { routerData, match } = this.props;
     return (
       <Switch>
-        <Redirect exact from="/" to="/customerPool" />
-        <Redirect exact from="/invest" to="/statisticalQuery/report" />
-        <Redirect exact from="/report" to="/statisticalQuery/report" />
-        <Redirect exact from="/custAllot" to="/businessApplyment/customerPartition/custAllot" />
-        <Redirect exact from="/departmentCustAllot" to="/businessApplyment/customerPartition/departmentCustAllot" />
-        <Route
-          path="/telephoneNumberManageEdit"
-          exact
-          component={({ location }) => (
-            <Redirect
-              to={{
-                ...location,
-                pathname: '/sysOperate/telephoneNumberManageEdit',
-              }}
+        {
+          redirectRoutes.map(item => (
+            <Route
+              key={item.from}
+              path={item.from}
+              exact
+              component={({ location }) => (
+                <Redirect
+                  to={{
+                    ...location,
+                    pathname: item.to,
+                  }}
+                />
+              )}
             />
-          )}
-        />
+          ))
+        }
         {
           getRoutes(match.path, routerData).map(item => (
             <Route
@@ -238,6 +276,8 @@ export default class Main extends PureComponent {
             />
           ))
         }
+        {this.handleOutSystemJumpIn(FSP_JUMP_STRING)}
+        {this.handleOutSystemJumpIn(JUMP_STRING)}
         <Route path="/fsp/(.*)" component={FSPComponent} />
         <Route path="*" render={() => (<Redirect to="/empty" />)} />
       </Switch>
