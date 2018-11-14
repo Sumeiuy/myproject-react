@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-13 21:39:37
+ * @Last Modified time: 2018-11-14 09:53:37
  */
 
 import React, { PureComponent } from 'react';
@@ -318,7 +318,15 @@ export default class ActivityColumn extends PureComponent {
           <span className={styles.warningTip}>您的操作将实时生效，请谨慎操作！</span>
         </p>
         <div className={styles.createBox}>
-          <Button type="primary" icon="plus" className={styles.createButton} onClick={this.handleOpenForm} disabled={createButtonDisabled}>添加</Button>
+          <Button
+            type="primary"
+            icon="plus"
+            className={styles.createButton}
+            onClick={this.handleOpenForm}
+            disabled={createButtonDisabled}
+          >
+            添加
+          </Button>
         </div>
         {
           _.isEmpty(activityColumnList)
