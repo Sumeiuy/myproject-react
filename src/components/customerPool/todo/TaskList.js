@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 11:24:09
+ * @Last Modified time: 2018-11-14 13:21:39
  */
 
 import React, { PureComponent } from 'react';
@@ -29,8 +29,6 @@ export default class TaskList extends PureComponent {
     data: PropTypes.array.isRequired,
     className: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
-    push: PropTypes.func.isRequired,
-    replace: PropTypes.func.isRequired,
     // 数据类型
     listType: PropTypes.string.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
@@ -46,7 +44,7 @@ export default class TaskList extends PureComponent {
 
   componentDidMount() {
     this.updateEmptyHeight();
-    window.addEventListener('resize', this.handlewindowResize());
+    window.addEventListener('resize', this.handlewindowResize);
   }
 
   componentDidUpdate() {
@@ -54,7 +52,7 @@ export default class TaskList extends PureComponent {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.handlewindowResize());
+    window.removeEventListener('resize', this.handlewindowResize);
   }
 
   @autobind

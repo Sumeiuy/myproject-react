@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 11:01:15
+ * @Last Modified time: 2018-11-14 12:22:43
  */
 
 import React, { PureComponent } from 'react';
@@ -148,9 +148,15 @@ export default class TodoFilter extends PureComponent {
     this.props.filterCallback(obj);
   }
 
-  // 输入查询
+  // 类型输入查询
   @autobind
-  handleInputChange(value) {
+  handleTypeInputChange(value) {
+    this.props.InputChange(value);
+  }
+
+  // 发起人输入查询
+  @autobind
+  handleInitiatorInputChange(value) {
     this.props.InputChange(value);
   }
 
@@ -186,7 +192,7 @@ export default class TodoFilter extends PureComponent {
           showSearch
           placeholder="业务类型"
           needItemObj
-          onInputChange={this.handleInputChange}
+          onInputChange={this.handleTypeInputChange}
         />
         {
           isApprove ?
@@ -201,6 +207,7 @@ export default class TodoFilter extends PureComponent {
               needItemObj
               placeholder="员工工号/员工姓名"
               showSearch
+              onInputChange={this.handleInitiatorInputChange}
             />
             :
             null

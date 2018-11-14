@@ -55,6 +55,7 @@ const mapDispatchToProps = {
 @withRouter
 export default class ToDo extends PureComponent {
   static propTypes = {
+    push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     data: PropTypes.array.isRequired,
@@ -303,10 +304,16 @@ export default class ToDo extends PureComponent {
     this.setState({ activeKey: obj });
   }
 
-  // 下拉框输入
+  // 类型下拉框输入
   @autobind
-  handleInputChange(value) {
+  handleTypeInputChange(value) {
     this.props.getTypeValue({category: value});
+  }
+
+  // 发起人下拉框输入
+  @autobind
+  handleInitiatorInputChange(value) {
+    this.props.getTypeValue({name: value});
   }
 
   render() {
@@ -361,7 +368,7 @@ export default class ToDo extends PureComponent {
             <div>
               <TodoFilter
                 filterCallback={this.handlefilterCallback}
-                InputChange={this.handleInputChange}
+                InputChange={this.handleTypeInputChange}
                 onSearch={this.handleApplySearch}
                 startTime={defaultStartTime}
                 endTime={defaultEndTime}
@@ -372,8 +379,6 @@ export default class ToDo extends PureComponent {
                 className="todoList"
                 data={applyListData}
                 location={location}
-                push={push}
-                replace={replace}
                 listType='apply'
                 clearCreateTaskData={clearCreateTaskData}
               />
@@ -386,6 +391,7 @@ export default class ToDo extends PureComponent {
                 filterCallback={this.handlefilterCallback}
                 initiatorCallback={this.handleInitiatorCallback}
                 onSearch={this.handleApproveSearch}
+                InputChange={this.handleInitiatorInputChange}
                 startTime={defaultStartTime}
                 endTime={defaultEndTime}
                 typeData={typeValue}
@@ -398,8 +404,6 @@ export default class ToDo extends PureComponent {
                 className="todoList"
                 data={approveListData}
                 location={location}
-                push={push}
-                replace={replace}
                 listType='approve'
                 clearCreateTaskData={clearCreateTaskData}
               />
