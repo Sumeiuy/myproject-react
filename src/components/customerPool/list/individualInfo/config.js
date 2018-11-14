@@ -486,7 +486,7 @@ const matchRule = {
   investVariety: {
     inset: true,
     key: [{
-      name: '投资品种',
+      name: '投资偏好',
       id: 'investVariety',
       render: 'renderInvestVariety',
       dataTurn: {
