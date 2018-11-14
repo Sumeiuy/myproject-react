@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-01-04 14:19:46
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-01-05 17:48:25
+ * @Last Modified by: zuoguangzu
+ * @Last Modified time: 2018-11-14 01:56:13
  * @description 头部用户名称以及岗位信息展示部件
  */
 
@@ -72,6 +72,9 @@ export default class EmpRp extends PureComponent {
         <Menu.Divider />
         <Menu.Item key="userCenter">
           <Link to="/userCenter" className={styles.empRspItem}>用户中心</Link>
+        </Menu.Item>
+        <Menu.Item key="myProcess">
+          <Link to="/customerPool/todo" className={styles.empRspItem}>我的流程</Link>
         </Menu.Item>
       </Menu>
     );

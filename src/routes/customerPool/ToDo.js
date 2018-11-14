@@ -18,7 +18,7 @@ import TaskList from '../../components/customerPool/todo/TaskList';
 import logable from '../../decorators/logable';
 import styles from './todo.less';
 import { dva } from '../../helper';
-import ReportFilter from '../../components/customerPool/todo/ReportFilter';
+import TodoFilter from '../../components/customerPool/todo/TodoFilter';
 import { defaultStartTime, defaultEndTime } from '../../components/customerPool/todo/config';
 
 const effect = dva.generateEffect;
@@ -112,7 +112,6 @@ export default class ToDo extends PureComponent {
 
   componentDidMount() {
     const {
-      getTypeValue,
       getInitiator,
       location: {
         query: {
@@ -127,7 +126,6 @@ export default class ToDo extends PureComponent {
     } = this.state;
     this.getApplyList({startTime, endTime, pageSize, pageNum});
     this.getApproveList({startTime, endTime, pageSize, pageNum});
-    getTypeValue();
     getInitiator();
   }
 
@@ -194,9 +192,9 @@ export default class ToDo extends PureComponent {
     },
   })
   handleApplySearch(value) {
-    const { location: { query: { pageSize, pageNum } } } = this.props;
+    const { location: { query: { pageSize = 10, pageNum = 1 } } } = this.props;
     const { startTime, endTime } = this.state;
-    this.getApplyList({ startTime, endTime, pageSize, pageNum });
+    this.getApplyList({startTime, endTime, pageSize, pageNum, subject: value});
   }
 
   // 审批搜索
@@ -209,9 +207,9 @@ export default class ToDo extends PureComponent {
     },
   })
   handleApproveSearch(value) {
-    const { location: { query: { pageSize, pageNum } } } = this.props;
+    const { location: { query: { pageSize = 10, pageNum = 1 } } } = this.props;
     const { startTime, endTime } = this.state;
-    this.getApplyList({ startTime, endTime, pageSize, pageNum });
+    this.getApproveList({ startTime, endTime, pageSize, pageNum, subject: value });
   }
 
 
@@ -306,6 +304,12 @@ export default class ToDo extends PureComponent {
     this.setState({ activeKey: obj });
   }
 
+  // 下拉框输入
+  @autobind
+  handleInputChange(value) {
+    this.props.getTypeValue({category: value});
+  }
+
   render() {
     const {
       data,
@@ -356,8 +360,9 @@ export default class ToDo extends PureComponent {
           </TabPane>
           <TabPane key='2' tab='我的申请'>
             <div>
-              <ReportFilter
+              <TodoFilter
                 filterCallback={this.handlefilterCallback}
+                InputChange={this.handleInputChange}
                 onSearch={this.handleApplySearch}
                 startTime={defaultStartTime}
                 endTime={defaultEndTime}
@@ -378,7 +383,7 @@ export default class ToDo extends PureComponent {
           </TabPane>
           <TabPane key='3' tab='我的审批'>
             <div>
-              <ReportFilter
+              <TodoFilter
                 filterCallback={this.handlefilterCallback}
                 initiatorCallback={this.handleInitiatorCallback}
                 onSearch={this.handleApproveSearch}

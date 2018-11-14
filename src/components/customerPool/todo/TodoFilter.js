@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-13 21:29:22
+ * @Last Modified time: 2018-11-14 02:28:54
  */
 
 import React, { PureComponent } from 'react';
@@ -19,9 +19,9 @@ import moment from 'moment';
 import logable from '../../../decorators/logable';
 import { defaultStartTime, defaultEndTime } from './config';
 
-import styles from './reportFilter.less';
+import styles from './todoFilter.less';
 
-export default class ReportFilter extends PureComponent {
+export default class TodoFilter extends PureComponent {
   static propTypes = {
     // 筛选后调用的Function
     filterCallback: PropTypes.func,
@@ -43,12 +43,15 @@ export default class ReportFilter extends PureComponent {
     initiator: PropTypes.array.isRequired,
     // 发起人下拉筛选
     InitiatorCallback: PropTypes.func,
+    // 下拉框输入
+    InputChange: PropTypes.func,
   }
 
   static defaultProps = {
     filterCallback: _.noop,
     isApprove: false,
     InitiatorCallback: _.noop,
+    InputChange: _.noop,
   }
 
   // 选择任务触发时间
@@ -94,7 +97,7 @@ export default class ReportFilter extends PureComponent {
     },
   })
   handleTaskSearch(value) {
-    this.props.onSearch();
+    this.props.onSearch(value);
   }
 
   // 类型下拉框change
@@ -141,6 +144,12 @@ export default class ReportFilter extends PureComponent {
     this.props.filterCallback(obj);
   }
 
+  // 输入查询
+  @autobind
+  handleInputChange(value) {
+    this.props.InputChange(value);
+  }
+
   render() {
     const {
       startTime,
@@ -173,6 +182,7 @@ export default class ReportFilter extends PureComponent {
           showSearch
           placeholder="业务类型"
           needItemObj
+          onInputChange={this.handleInputChange}
         />
         {
           isApprove ?
