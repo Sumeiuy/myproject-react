@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 15:15:56
+ * @Last Modified time: 2018-11-14 17:34:45
  */
 
 import React, { PureComponent } from 'react';
@@ -63,6 +63,22 @@ export default class TaskList extends PureComponent {
   @autobind
   handlewindowResize() {
     this.updateEmptyHeight();
+  }
+
+  // 空列表时空数据样式的盒子的高度
+  updateEmptyHeight() {
+    if (!env.isInReact()) {
+      let topBarHeight = 0;
+      const winHeight = document.body.clientHeight || document.documentElement.clientHeight;
+      const topBar = document.querySelector('#workspace-taskbar');
+      if (topBar) {
+        topBarHeight = topBar.offsetHeight;
+      }
+      const emptyTip = document.querySelector('.ant-table-placeholder');
+      if (emptyTip) {
+        emptyTip.style.height = `${winHeight - topBarHeight - 127}px`;
+      }
+    }
   }
 
   @autobind
@@ -134,18 +150,6 @@ export default class TaskList extends PureComponent {
         pathname: '/customerPool/createTaskFromTaskRejection1',
         query,
       });
-    }
-  }
-
-  // 空列表时空数据样式的盒子的高度
-  updateEmptyHeight() {
-    let topBarHeight = 0;
-    const winHeight = document.body.clientHeight || document.documentElement.clientHeight;
-    if (!env.isInReact()) {
-      const topBar = document.getElementById('workspace-taskbar');
-      topBarHeight = topBar.offsetHeight;
-      const emptyTip = document.querySelector('.ant-table-placeholder');
-      emptyTip.style.height = `${winHeight - topBarHeight - 127}px`;
     }
   }
 
