@@ -546,7 +546,7 @@ export const {
   serviceRecord,
   sorPtyId,
   mobile,
-  shareholderSccountNumber,
+  primaryKey,
   primaryKeyPrdts,
   rights,
   businessOpened,
