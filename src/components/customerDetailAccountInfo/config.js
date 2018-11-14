@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-14 15:50:05
+ * @Last Modified time: 2018-11-14 20:20:24
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -120,7 +120,7 @@ export const PRODUCT_HISTORY_HOLDING_TABLE_SCROLL= { x: 2000 };
 export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2500 };
 export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 2100 };
 export const CREDIT_TRADE_FLOW_TABLE_SCROLL= { x: 1800 };
-export const OPTION_TRADE_FLOW_TABLE_SCROLL = { x: 2200 };
+export const OPTION_TRADE_FLOW_TABLE_SCROLL = { x: 2500 };
 
 // 证券历史持仓表格显示的columns
 export const STOCK_HISTORY_HOLDING_COLUMNS = [
@@ -592,6 +592,20 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     key: 'tradeDate',
     className: 'tradeDate',
     fixed: 'left',
+    width: 150,
+  },
+  {
+    title: '期权合约简称',
+    dataIndex: 'optionContractName',
+    key: 'optionContractName',
+    className:'optionContractName',
+    width: 150,
+  },
+  {
+    title: '期权合约编码',
+    dataIndex: 'optionContractCode',
+    key: 'optionContractCode',
+    className:'optionContractCode',
     width: 150,
   },
   {
