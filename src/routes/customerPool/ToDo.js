@@ -168,7 +168,8 @@ export default class ToDo extends PureComponent {
   })
   onSearch(value) {
     // this.props.search(value);
-    const { replace, location: { pathname, query } } = this.props;
+    const { location: { pathname, query } } = this.props;
+    const { replace } = this.context;
     replace({
       pathname,
       query: {
@@ -210,7 +211,8 @@ export default class ToDo extends PureComponent {
 
   @autobind
   pageChange(obj) {
-    const { replace, location: { pathname, query } } = this.props;
+    const { location: { pathname, query } } = this.props;
+    const { replace } = this.context;
     replace({
       pathname,
       query: {
@@ -222,7 +224,8 @@ export default class ToDo extends PureComponent {
 
   @autobind
   sizeChange(obj) {
-    const { replace, location: { pathname, query } } = this.props;
+    const { location: { pathname, query } } = this.props;
+    const { replace } = this.context;
     replace({
       pathname,
       query: {
@@ -320,8 +323,6 @@ export default class ToDo extends PureComponent {
       data,
       todolist,
       location,
-      push,
-      replace,
       taskBasicInfo,
       getTaskBasicInfo,
       clearCreateTaskData,
@@ -334,6 +335,7 @@ export default class ToDo extends PureComponent {
       typeValue,
       initiator,
     } = this.props;
+    const { push, replace } = this.context;
     const { applyType, approveType, initiatorValue } = this.state;
     const { query: { keyword } } = location;
     return (
