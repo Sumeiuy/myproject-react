@@ -375,13 +375,17 @@ export default class ToDo extends PureComponent {
                 typeData={typeValue}
                 type={applyType}
               />
-              <TaskList
-                className="todoList"
-                data={applyListData}
-                location={location}
-                listType='apply'
-                clearCreateTaskData={clearCreateTaskData}
-              />
+              {
+                !_.isEmpty(applyListData) ?
+                <TaskList
+                  className="todoList"
+                  data={applyListData}
+                  location={location}
+                  listType='apply'
+                  clearCreateTaskData={clearCreateTaskData}
+                />
+                : null
+              }
 
             </div>
           </TabPane>
@@ -400,13 +404,18 @@ export default class ToDo extends PureComponent {
                 initiator={initiatorValue}
                 isApprove
               />
-              <TaskList
-                className="todoList"
-                data={approveListData}
-                location={location}
-                listType='approve'
-                clearCreateTaskData={clearCreateTaskData}
-              />
+              {
+                !_.isEmpty(approveListData) ?
+                  <TaskList
+                    className="todoList"
+                    data={approveListData}
+                    location={location}
+                    listType='approve'
+                    clearCreateTaskData={clearCreateTaskData}
+                  />
+                  : null
+              }
+
 
             </div>
           </TabPane>
