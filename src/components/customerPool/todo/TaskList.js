@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 17:28:07
+ * @Last Modified time: 2018-11-14 17:34:45
  */
 
 import React, { PureComponent } from 'react';
@@ -70,7 +70,7 @@ export default class TaskList extends PureComponent {
     if (!env.isInReact()) {
       let topBarHeight = 0;
       const winHeight = document.body.clientHeight || document.documentElement.clientHeight;
-      const topBar = document.getElementById('workspace-taskbar');
+      const topBar = document.querySelector('#workspace-taskbar');
       if (topBar) {
         topBarHeight = topBar.offsetHeight;
       }
