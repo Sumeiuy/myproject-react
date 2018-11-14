@@ -45,6 +45,7 @@ import NewHomeLoading from './NewHomeLoading';
 import FSPComponent from '../routes/fspPage/FSPComponent';
 import { getRoutes } from '../../src/utils/router';
 import { fspRoutes } from '../../src/config';
+import { logCommon } from '../../src/decorators/logable';
 
 const effects = {
   dictionary: 'app/getDictionary',
@@ -107,9 +108,9 @@ function findRoute(url) {
   return findBestMatch(url, fspRoutes, 'url');
 }
 // fsp 跳转
-const fspJumpString = '/fspjump/';
+const FSP_JUMP_STRING = '/fspjump/';
 // 普通跳转
-const jumpString = '/jump/';
+const JUMP_STRING = '/jump/';
 
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
@@ -216,6 +217,34 @@ export default class Main extends PureComponent {
     return menus && !_.isEmpty(menus) && !_.isEmpty(menus.primaryMenu);
   }
 
+  // 处理外部系统跳入
+  @autobind
+  handleOutSystemJumpIn(value) {
+    return (<Route
+      path={`${value}(.*)`}
+      exact
+      component={({ location }) => {
+        let pathname = location.pathname.slice(value.length - 1);
+        if (value === FSP_JUMP_STRING) {
+          pathname = findRoute(pathname).path || '';
+        }
+        logCommon({
+          type: 'JumpIn',
+          payload: {
+            name: '外部系统跳入',
+            path: pathname,
+          },
+        });
+        return (<Redirect
+          to={{
+            ...location,
+            pathname,
+          }}
+        />);
+      }}
+    />);
+  }
+
   renderRoutes() {
     const { routerData, match } = this.props;
     return (
@@ -247,33 +276,8 @@ export default class Main extends PureComponent {
             />
           ))
         }
-        <Route
-          path={`${fspJumpString}(.*)`}
-          exact
-          component={({ location }) => {
-            const pathname = location.pathname.slice(fspJumpString.length - 1);
-            const { path } = findRoute(pathname);
-            return (<Redirect
-              to={{
-                ...location,
-                pathname: path,
-              }}
-            />);
-          }}
-        />
-        <Route
-          path={`${jumpString}(.*)`}
-          exact
-          component={({ location }) => {
-            const pathname = location.pathname.slice(jumpString.length - 1);
-            return (<Redirect
-              to={{
-                ...location,
-                pathname,
-              }}
-            />);
-          }}
-        />
+        {this.handleOutSystemJumpIn(FSP_JUMP_STRING)}
+        {this.handleOutSystemJumpIn(JUMP_STRING)}
         <Route path="/fsp/(.*)" component={FSPComponent} />
         <Route path="*" render={() => (<Redirect to="/empty" />)} />
       </Switch>
