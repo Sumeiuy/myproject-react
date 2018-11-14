@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 15:15:56
+ * @Last Modified time: 2018-11-14 16:26:30
  */
 
 import React, { PureComponent } from 'react';
@@ -45,24 +45,6 @@ export default class TaskList extends PureComponent {
       flowId: null,
     };
     this.columns = this.getColumnsByListType();
-  }
-
-  componentDidMount() {
-    this.updateEmptyHeight();
-    window.addEventListener('resize', this.handlewindowResize);
-  }
-
-  componentDidUpdate() {
-    this.updateEmptyHeight();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.handlewindowResize);
-  }
-
-  @autobind
-  handlewindowResize() {
-    this.updateEmptyHeight();
   }
 
   @autobind
@@ -134,18 +116,6 @@ export default class TaskList extends PureComponent {
         pathname: '/customerPool/createTaskFromTaskRejection1',
         query,
       });
-    }
-  }
-
-  // 空列表时空数据样式的盒子的高度
-  updateEmptyHeight() {
-    let topBarHeight = 0;
-    const winHeight = document.body.clientHeight || document.documentElement.clientHeight;
-    if (!env.isInReact()) {
-      const topBar = document.getElementById('workspace-taskbar');
-      topBarHeight = topBar.offsetHeight;
-      const emptyTip = document.querySelector('.ant-table-placeholder');
-      emptyTip.style.height = `${winHeight - topBarHeight - 127}px`;
     }
   }
 
