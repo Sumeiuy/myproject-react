@@ -253,12 +253,12 @@ export default class Main extends PureComponent {
           component={({ location }) => {
             const pathname = location.pathname.slice(fspJumpString.length - 1);
             const { path } = findRoute(pathname);
-            return <Redirect
+            return (<Redirect
               to={{
                 ...location,
                 pathname: path,
               }}
-            />;
+            />);
           }}
         />
         <Route
@@ -266,12 +266,12 @@ export default class Main extends PureComponent {
           exact
           component={({ location }) => {
             const pathname = location.pathname.slice(jumpString.length - 1);
-            return <Redirect
+            return (<Redirect
               to={{
                 ...location,
                 pathname,
               }}
-            />;
+            />);
           }}
         />
         <Route path="/fsp/(.*)" component={FSPComponent} />

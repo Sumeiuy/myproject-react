@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目跑马灯
  * @Date: 2018-11-06 13:53:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-12 21:51:12
+ * @Last Modified time: 2018-11-13 20:49:26
  */
 
 import React, { Component } from 'react';
@@ -77,7 +77,7 @@ export default class ActivityColumnCarousel extends Component {
         <Carousel
           autoplay
           autoplaySpeed={3000}
-          dots={false}
+          pauseOnHover={false}
         >
             {activityColumnListData}
         </Carousel>
