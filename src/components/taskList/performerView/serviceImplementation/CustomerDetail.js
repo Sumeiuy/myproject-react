@@ -2,8 +2,8 @@
  * @Description: 客户详情
  * @Author: WangJunjun
  * @Date: 2018-05-27 15:30:06
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 17:31:00
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 14:04:12
  */
 
 import React, { PureComponent } from 'react';

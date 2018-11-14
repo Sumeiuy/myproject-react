@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 15:04:11
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 14:37:55
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 

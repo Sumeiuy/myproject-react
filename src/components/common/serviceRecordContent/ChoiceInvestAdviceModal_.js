@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 14:36:08
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 15:00:37
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 13:39:41
  * @description 投资建议弹出层
  */
 import React, { PureComponent } from 'react';

@@ -2,8 +2,8 @@
  * 标签管理新建编辑标签模态框
  * @Author: WangJunJun
  * @Date: 2018-08-05 20:41:23
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 17:31:27
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 13:58:42
  */
 
 import React, { PureComponent } from 'react';
