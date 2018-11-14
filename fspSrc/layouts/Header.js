@@ -24,6 +24,7 @@ import api from '../../src/api';
 import { Search } from '../../src/components/customerPool/home';
 import { emp, permission } from '../../src/helper';
 import EnvironmentalInfo from '../../src/components/environmentalInfo/EnvironmentalInfoModal';
+import { logCommon, logPV } from '../../src/decorators/logable';
 
 // 首页执行者视图首次引导提示第十步的dom的id名称(我要提问)
 const NEW_HOME_INTRO_TENTH_SEEP_IDNAME = 'homePageIntroTenthStep';
@@ -191,6 +192,14 @@ export default class Header extends PureComponent {
     const { push, location } = this.props;
     if (menuItem.action === 'loadExternSystemPage') {
       const externUrl = fixExternUrl(menuItem.url);
+      logCommon({
+        type: 'NavClick',
+        payload: {
+          name: '次级导航',
+          value: externUrl,
+          url: externUrl,
+        },
+      });
       window.open(externUrl, '_blank');
     } else if (menuItem.action === 'loadInModal') {
       if(menuItem.name === '我要反馈') {
@@ -198,6 +207,14 @@ export default class Header extends PureComponent {
       }
       this.handleShowDialog(menuItem);
     } else if (menuItem.path !== location.pathname) {
+      logCommon({
+        type: 'NavClick',
+        payload: {
+          name: '次级导航',
+          value: menuItem.path,
+          url: menuItem.path,
+        },
+      });
       push({
         pathname: menuItem.path,
         query: menuItem.query,
@@ -233,6 +250,10 @@ export default class Header extends PureComponent {
 
   // 环境信息弹窗
   @autobind
+  @logPV({
+    pathname: '',
+    title: '环境信息弹窗',
+  })
   handleEnvironmentalInfoModalShow() {
     this.setState({
       environmentalInfoVisible: true,
@@ -240,6 +261,10 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '',
+    title: '隔离墙弹框',
+  })
   handleIsolationWallModalShow() {
     this.setState({
       isolationWallModalVisible: true,
@@ -247,6 +272,10 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '',
+    title: '关闭隔离墙弹框',
+  })
   handleIsolationWallModalHide() {
     this.setState({
       isolationWallModalVisible: false,
@@ -282,6 +311,10 @@ export default class Header extends PureComponent {
   }
 
   @autobind
+  @logPV({
+    pathname: '',
+    title: '我要反馈弹框',
+  })
   handleFeedbackClick() {
     if (!$('#feedback-module')[0]) {
       window.handleFeedbackBtnClick();
@@ -290,6 +323,10 @@ export default class Header extends PureComponent {
 
   // 环境信息弹窗点击关闭
   @autobind
+  @logPV({
+    pathname: '',
+    title: '关闭环境信息弹框',
+  })
   handleEnvironmentalInfoHide() {
     this.setState({
       environmentalInfoVisible: false,
