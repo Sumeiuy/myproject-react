@@ -1036,14 +1036,6 @@ export default {
         payload: resultData,
       });
     },
-    // 获取类型下拉框
-    * getTypeValue({ payload }, { call, put }) {
-      const resultData = yield call(api.getTypeValue, payload);
-      yield put({
-        type: 'getTypeValueSuccess',
-        payload: resultData,
-      });
-    },
     // 获取发起人下拉框
     * getInitiator({ payload }, { call, put }) {
       const resultData = yield call(api.getInitiator, payload);
@@ -1811,14 +1803,6 @@ export default {
       return {
         ...state,
         approveList: resultData,
-      };
-    },
-    // 类型下拉框
-    getTypeValueSuccess(state, action) {
-      const { payload: { resultData = [] }} = action;
-      return {
-        ...state,
-        typeValue: resultData,
       };
     },
     // 发起人下拉框

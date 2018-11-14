@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 12:22:43
+ * @Last Modified time: 2018-11-14 20:02:55
  */
 
 import React, { PureComponent } from 'react';
@@ -185,7 +185,7 @@ export default class TodoFilter extends PureComponent {
           filterName='类型'
           filterId="category"
           className="filter"
-          dataMap={['value', 'label']}
+          dataMap={['key', 'value']}
           data={typeData}
           value={type}
           onChange={this.handleTypeChange}
