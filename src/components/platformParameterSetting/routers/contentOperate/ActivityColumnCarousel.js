@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目跑马灯
  * @Date: 2018-11-06 13:53:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-13 20:49:26
+ * @Last Modified time: 2018-11-14 16:25:04
  */
 
 import React, { Component } from 'react';
@@ -13,7 +13,7 @@ import url from 'url';
 import { autobind } from 'core-decorators';
 import Carousel from '../../../common/carousel';
 import { data } from '../../../../helper';
-import { defaultMenu } from '../../../../config/tabMenu';
+import { defaultMenu, newOpenTabConfig } from '../../../../config/tabMenu';
 import { filterData } from './helper';
 import { urlRegExp } from './config';
 import { logPV } from '../../../../decorators/logable';
@@ -49,15 +49,36 @@ export default class ActivityColumnCarousel extends Component {
     // 获取url的信息
     const urlInfo = url.parse(finalUrl);
     const { hash } = urlInfo;
-    const defaultMenuPathList = filterData(defaultMenu, 'path');
-    // 判断是否是内部网址
-    const isInnerPath = _.find(defaultMenuPathList, item => _.includes(hash, item));
-    if (!_.isEmpty(isInnerPath)) {
-      // hash返回的数据是'#/***', path需要去掉字符串前面的#
-      const path = hash.slice(1);
+    // hash返回的数据是'#/***', path需要去掉字符串前面的#
+    const path = hash.slice(1);
+    // 检测是否在新开tab中
+    const isInNewOpenTabResult = this.isInNewOpenTab(path);
+    const isInDefaultMenuResult = this.isInDefaultMenu(path);
+    if (!_.isEmpty(isInNewOpenTabResult) || !_.isEmpty(isInDefaultMenuResult)) {
       this.context.push(path);
     } else {
       window.open(finalUrl);
+    }
+  }
+
+  // 检测是否在新开tab中
+  @autobind
+  isInNewOpenTab(path) {
+    const newOpenTabPathList = filterData(newOpenTabConfig, 'path');
+    return _.find(newOpenTabPathList, item => _.includes(path, item));
+  }
+
+  // 检测是否在defaultMenu中,如果是/fsp开头的话，需要去掉/fsp去匹配defaultMenu,否则直接匹配defaultMenu
+  @autobind
+  isInDefaultMenu(path) {
+    // 已fsp开头的路径
+    const isStartOfFsp = /^\/fsp\./.test(path);
+    const defaultMenuPathList = filterData(defaultMenu, 'path');
+    if (isStartOfFsp) {
+      const finalPath = path.slice(3);
+      return _.find(defaultMenuPathList, item => _.includes(finalPath, item));
+    } else {
+      return _.find(defaultMenuPathList, item => _.includes(path, item));
     }
   }
 
@@ -74,13 +95,18 @@ export default class ActivityColumnCarousel extends Component {
     });
     return (
       <div className={styles.activityColumnCarousel}>
-        <Carousel
-          autoplay
-          autoplaySpeed={3000}
-          pauseOnHover={false}
-        >
-            {activityColumnListData}
-        </Carousel>
+        {
+          _.isEmpty(activityColumnListData)
+            ? null
+            : (
+              <Carousel
+                // autoplay
+                autoplaySpeed={3000}
+              >
+                {activityColumnListData}
+              </Carousel>
+            )
+        }
       </div>
     );
   }

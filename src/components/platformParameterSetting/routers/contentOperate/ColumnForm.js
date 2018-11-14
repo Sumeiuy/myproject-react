@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-13 17:35:01
+ * @Last Modified time: 2018-11-14 14:59:09
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -129,6 +129,7 @@ export default class ColumnForm extends PureComponent {
           >
             <FormItem>
               {getFieldDecorator('link', {
+                validateTrigger: ['onBlur'],
                 rules: [
                   { required: true, message: '请输入图片链接' },
                   { whitespace: true, message: '请输入图片链接' },
@@ -148,6 +149,7 @@ export default class ColumnForm extends PureComponent {
             <FormItem>
               <div className={styles.descBox}>
                 {getFieldDecorator('description', {
+                  validateTrigger: ['onBlur'],
                   rules: [
                     { required: true, message: '请输入功能描述' },
                     { whitespace: true, message: '请输入功能描述' },

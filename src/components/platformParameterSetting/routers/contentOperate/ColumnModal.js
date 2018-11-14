@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-08 13:46:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-13 20:33:20
+ * @Last Modified time: 2018-11-14 13:04:12
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -21,14 +21,21 @@ const ColumnModal = React.forwardRef((props, ref) => {
     attachmentList,
     isShowAttachmentStatusError,
     attachmentStatusErrorMessage,
+    action,
   } = props;
+  function isCreateColumn() {
+    // action 判断当前是新建 'CREATE' 还是 修改'UPDATE'
+    return action === 'CREATE';
+  }
   // 表单数据变化
   function handleChangeFormData(obj) {
     onChangeFormData(obj);
   }
+  // 栏目弹框标题
+  const columnTitle = isCreateColumn() ? '新建内容' : '编辑内容';
   return (
     <CommonModal
-      title="新建内容"
+      title={columnTitle}
       visible={visible}
       modalKey="activityColumnModal"
       closeModal={onCloseModal}
@@ -72,6 +79,8 @@ ColumnModal.propTypes = {
   isShowAttachmentStatusError: PropTypes.bool.isRequired,
   // 附件校验错误信息
   attachmentStatusErrorMessage: PropTypes.string.isRequired,
+  // 判断此组件用于新建页面还是修改页面，'CREATE'或者'UPDATE'
+  action: PropTypes.oneOf(['CREATE', 'UPDATE']).isRequired,
 };
 
 export default ColumnModal;
