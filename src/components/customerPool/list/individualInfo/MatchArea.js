@@ -5,7 +5,7 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-13 12:28:10
+ * @Last Modified time: 2018-11-13 22:38:45
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -368,7 +368,7 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
-  // 投资品种
+  // 投资偏好
   @autobind
   renderInvestVariety(currentItem) {
     const {
@@ -380,7 +380,7 @@ export default class MatchArea extends PureComponent {
       return (
         <li key={`${id}${custId}`} title={dataTurn[investVariety]}>
             <span>
-              <i className="label">投资品种：</i>
+              <i className="label">投资偏好：</i>
               {dataTurn[investVariety]}
             </span>
         </li>
