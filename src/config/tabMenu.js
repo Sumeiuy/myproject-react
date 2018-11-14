@@ -9,18 +9,6 @@ import _ from 'lodash';
 // 前端可以完全控制主导航的菜单行为
 const newOpenTabConfig = [
   {
-    name: '资讯列表',
-    id: 'FSP_VIEWPOINT_LIST',
-    path: '/latestView/viewpointList',
-    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
-  },
-  {
-    name: '资讯详情',
-    id: 'FSP_VIEWPOINT_LIST',
-    path: '/latestView/viewpointDetail',
-    pid: 'FSP_NEW_HOMEPAGE_PRIMARY',
-  },
-  {
     name: '自建任务',
     id: 'FSP_CUSTOMER_GROUPMANAGE_CREATETASK',
     path: '/customerCenter/customerGroupManage/createTask',
@@ -469,6 +457,29 @@ const tabNotUseGlobalBreadcrumb = [
 
 // 不在菜单中需要使用面包屑的路由
 const locationNeedBreadcrumb = [
+ {
+    name: '资讯列表',
+    path: '/strategyCenter/latestView/viewpointList',
+    parent: {
+      name: '最新观点',
+      path: '/strategyCenter/latestView',
+      type: 'link',
+    }
+  },
+  {
+    name: '资讯详情',
+    path: '/strategyCenter/latestView/viewpointDetail',
+    parent: {
+      name: '资讯列表',
+      path: '/strategyCenter/latestView/viewpointList',
+      type: 'link',
+      parent: {
+        name: '最新观点',
+        path: '/strategyCenter/latestView',
+        type: 'link',
+      }
+    }
+  },
   {
     name: '大类资产配置分析列表',
     path: '/strategyCenter/latestView/majorAssetsList',
@@ -535,6 +546,20 @@ function findParentBreadcrumb(breadcrumbs, path) {
   return false;
 }
 
+function getAllBreadcrumbItem(breadcrumbItem, breadcrumbRoutes = []) {
+  let newBreadcrumbRoutes = breadcrumbRoutes;
+  if (breadcrumbItem) {
+    newBreadcrumbRoutes = [
+      breadcrumbItem,
+       ...breadcrumbRoutes,
+    ];
+    if (breadcrumbItem.parent) {
+      return getAllBreadcrumbItem(breadcrumbItem.parent, newBreadcrumbRoutes);
+    }
+  }
+  return newBreadcrumbRoutes;
+}
+
 const exported = {
   newOpenTabConfig,
   indexPaneKey,
@@ -542,6 +567,7 @@ const exported = {
   tabNotUseGlobalBreadcrumb,
   locationNeedBreadcrumb,
   findParentBreadcrumb,
+  getAllBreadcrumbItem,
 };
 
 export default exported;
@@ -552,4 +578,5 @@ export {
   defaultMenu,
   tabNotUseGlobalBreadcrumb,
   findParentBreadcrumb,
+  getAllBreadcrumbItem,
 };

@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-12 22:52:34
+ * @Last Modified time: 2018-11-14 09:53:37
  */
 
 import React, { PureComponent } from 'react';
@@ -92,7 +92,7 @@ export default class ActivityColumn extends PureComponent {
   // 渲染活动栏目
   @autobind
   renderActivityColumnList() {
-    const { activityColumnList } = this.state;
+    const { activityColumnList } = this.props;
     return _.map(activityColumnList, item => (
        <ColumnItem
           columnData={item}
@@ -128,7 +128,11 @@ export default class ActivityColumn extends PureComponent {
         shortCut: 'default',
       });
     } else {
-      this.handleDeleteColumn(item);
+      confirm({
+        title: '确定要删除吗？',
+        shortCut: 'default',
+        onOk: () => this.handleDeleteColumn(item),
+      });
     }
   }
 
@@ -137,8 +141,24 @@ export default class ActivityColumn extends PureComponent {
     const { activityColumnList } = this.state;
     // 删除后新的活动栏目
     const newActivityColumnList = _.without(activityColumnList, item);
-    this.setState({ activityColumnList: newActivityColumnList});
+    this.setState({ activityColumnList: newActivityColumnList}, this.handleDeleteContent);
   }
+
+  // 删除活动栏目数据
+  @autobind
+  handleDeleteContent() {
+    const { activityColumnList } = this.state;
+    this.props.submitContent({
+      activityColumn: activityColumnList,
+    }).then(() => {
+      // 删除成功
+      if (this.props.submitResult) {
+        this.queryContent();
+      }
+    });
+  }
+
+
 
   // 附件校验是否上传
   @autobind
@@ -211,11 +231,15 @@ export default class ActivityColumn extends PureComponent {
           newActivityColumnList = _.concat(activityColumnList, { attachment, attaches, link, description, url, index: data.uuid(16)});
         } else {
           // 编辑替换栏目
-          activityColumnList[editColumnIndex] = {...formData, link, description, url};
-          newActivityColumnList = activityColumnList;
+          newActivityColumnList = _.map(activityColumnList, item => {
+            if (item.index === index) {
+              return { ...formData, link, description, url };
+            } else {
+              return item;
+            }
+          });
         }
-        this.setState({ activityColumnList: newActivityColumnList });
-        this.handleCloseModal();
+        this.setState({ activityColumnList: newActivityColumnList }, this.handleSubmitConfirm);
       }
     });
   }
@@ -247,7 +271,6 @@ export default class ActivityColumn extends PureComponent {
 
   // 确认提交活动栏目
   @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '提交' } })
   handleSubmitConfirm() {
     confirm({
       title: '请确认配置的内容，提交后数据将实时生效',
@@ -256,7 +279,7 @@ export default class ActivityColumn extends PureComponent {
     });
   }
 
-  // 提交活动栏目
+  // 弹窗提交活动栏目数据
   @autobind
   handleSubmit() {
     const { activityColumnList } = this.state;
@@ -265,6 +288,7 @@ export default class ActivityColumn extends PureComponent {
     }).then(() => {
       // 保存成功
       if (this.props.submitResult) {
+        this.handleCloseModal();
         this.queryContent();
       }
     });
@@ -276,39 +300,33 @@ export default class ActivityColumn extends PureComponent {
     });
   }
 
-  // 取消提交活动栏目确认框
-  @autobind
-  @logable({ type: 'ButtonClick', payload: { name: '取消' } })
-  handleCancelConfirm() {
-    confirm({
-      title: '直接取消后，您编辑的信息将不会被保存，确认取消？',
-      shortCut: 'default',
-      onOk: this.handleCanel,
-    });
-  }
-
-  // 取消提交活动栏目
-  @autobind
-  handleCanel() {
-    this.setState({ activityColumnList: this.props.activityColumnList });
-  }
-
   render() {
     const {
       visible,
       formData,
-      activityColumnList,
       attachmentList,
       isShowAttachmentStatusError,
       attachmentStatusErrorMessage,
     } = this.state;
+    const { activityColumnList } = this.props;
     // 活动栏目大于等于4条，添加按钮就不可点击
     const createButtonDisabled = activityColumnList.length >= 4;
     return (
       <div className={styles.activityColumnWrapper}>
-        <p className={styles.tip}>在此设置的活动栏目内容将以跑马灯的形式展示在首页左上角，最少一条，最多设置四条。</p>
+        <p className={styles.tip}>
+          在此设置的活动栏目内容将以跑马灯的形式展示在首页左上角，最少一条，最多设置四条。
+          <span className={styles.warningTip}>您的操作将实时生效，请谨慎操作！</span>
+        </p>
         <div className={styles.createBox}>
-          <Button type="primary" icon="plus" className={styles.createButton} onClick={this.handleOpenForm} disabled={createButtonDisabled}>添加</Button>
+          <Button
+            type="primary"
+            icon="plus"
+            className={styles.createButton}
+            onClick={this.handleOpenForm}
+            disabled={createButtonDisabled}
+          >
+            添加
+          </Button>
         </div>
         {
           _.isEmpty(activityColumnList)
@@ -323,10 +341,6 @@ export default class ActivityColumn extends PureComponent {
                 <div className={styles.activityColumnList}>
                   {this.renderActivityColumnList()}
                 </div>
-              </div>
-              <div className={styles.footerButton}>
-                <Button className={styles.cancelButton} onClick={this.handleCancelConfirm}>取消</Button>
-                <Button type="primary" className={styles.submitButton} onClick={this.handleSubmitConfirm}>提交</Button>
               </div>
             </div>
           )
