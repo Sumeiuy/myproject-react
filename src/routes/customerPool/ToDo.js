@@ -113,13 +113,13 @@ export default class ToDo extends PureComponent {
       startTime,
       endTime,
     } = this.state;
-    this.getApplyList({startTime, endTime, pageSize, pageNum});
-    this.getApproveList({startTime, endTime, pageSize, pageNum});
+    this.getApplyData({startTime, endTime, pageSize, pageNum});
+    this.getApproveData({startTime, endTime, pageSize, pageNum});
   }
 
   // 获取申请列表
   @autobind
-  getApplyList(query) {
+  getApplyData(query) {
     const {
       location: {
         query: {
@@ -144,7 +144,7 @@ export default class ToDo extends PureComponent {
 
   // 获取审批列表
   @autobind
-  getApproveList(query) {
+  getApproveData(query) {
     this.props.getApproveList(query);
   }
 
@@ -182,7 +182,7 @@ export default class ToDo extends PureComponent {
   })
   handleApplySearch(value) {
     const { location: { query: { pageSize = 10, pageNum = 1 } } } = this.props;
-    this.getApplyList({pageSize, pageNum, subject: value});
+    this.getApplyData({pageSize, pageNum, subject: value});
   }
 
   // 审批搜索
@@ -196,7 +196,7 @@ export default class ToDo extends PureComponent {
   })
   handleApproveSearch(value) {
     const { location: { query: { pageSize = 10, pageNum = 1 } } } = this.props;
-    this.getApproveList({ pageSize, pageNum, subject: value });
+    this.getApproveData({ pageSize, pageNum, subject: value });
   }
 
   @autobind
@@ -247,14 +247,14 @@ export default class ToDo extends PureComponent {
         this.setState({
           applyType: [key, value],
         }, () => {
-          this.getApplyList({pageSize, pageNum, category: key});
+          this.getApplyData({pageSize, pageNum, category: key});
         });
         break;
       case '3':
         this.setState({
           approveType: [key, value],
         }, () => {
-          this.getApproveList({pageSize, pageNum, category: key});
+          this.getApproveData({pageSize, pageNum, category: key});
         });
         break;
       default:
@@ -280,7 +280,7 @@ export default class ToDo extends PureComponent {
     this.setState({
       initiatorValue: [key, name]
     }, () => {
-      this.getApproveList({pageSize, pageNum, originator: name});
+      this.getApproveData({pageSize, pageNum, originator: name});
     });
   }
 
