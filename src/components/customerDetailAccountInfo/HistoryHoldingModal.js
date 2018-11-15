@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-15 10:18:34
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-11-15 14:24:53
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';

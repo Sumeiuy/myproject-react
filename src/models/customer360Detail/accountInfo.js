@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-09 16:52:56
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-13 19:10:59
+ * @Last Modified time: 2018-11-14 15:24:31
  * @description 新版客户360详情下的账户信息Tab页面的model
  */
 import { detailAccountInfo as api } from '../../api';
@@ -52,9 +52,7 @@ export default {
     },
     // 全产品目录
     productCatalogTree: {
-      allProductMenuTree: {
-        children: [],
-      }
+      allProductMenuTree: []
     },
     // 普通账户交易流水
     standardTradeFlowRes: {},
