@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-15 10:31:45
+ * @Last Modified time: 2018-11-15 14:08:04
  */
 
 import React, { PureComponent } from 'react';
@@ -172,10 +172,10 @@ export default class ActivityColumn extends PureComponent {
   // 附件校验是否上传
   @autobind
   checkAttachmentStatus() {
-    const { formData: { attachment }, attachmentList } = this.state;
+    const { formData: { attachment, attaches }, attachmentList } = this.state;
     if (this.isCreateColumn()) {
       // 新建状态判断附件是否上传
-      if (_.isEmpty(attachment) || _.isEmpty(attachmentList)) {
+      if (_.isEmpty(attachment) || _.isEmpty(attaches)) {
         this.setAttachmentErrorStatus();
         return true;
       }
@@ -306,12 +306,6 @@ export default class ActivityColumn extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '关闭活动栏目弹窗' } })
   handleCloseModal() {
-    // 编辑活动栏目
-    if (!this.isCreateColumn()) {
-      if (this.checkAttachmentStatus()) {
-        return;
-      }
-    }
     this.clearColumnData();
   }
 
