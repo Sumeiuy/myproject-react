@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-15 14:08:27
+ * @Last Modified time: 2018-11-15 14:47:19
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -452,9 +452,12 @@ export default class TradeFlowModal extends PureComponent {
   @autobind
   transformColumnsData(columns) {
     return _.map(columns, column => {
-      const { isNumber = false, isAmount = false } = column;
+      const { isNumber = false, isAmount = false, width } = column;
       if (isNumber || isAmount) {
         return this.updateMoneyColumn(column);
+      }
+      if (!width) {
+        column.width = 150;
       }
       return column;
     });
