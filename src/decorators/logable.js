@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { dva } from '../helper';
 import{ constants } from '../config';
 
-// 目前日志中的value需要将bool值和number都转换成Stirng格式
+// 神策埋点中的value需为string类型，否则报错
 function convertToString(payload) {
   const { value } = payload;
   if (!_.isString(value)) {
@@ -43,7 +43,7 @@ function replaceValue(data, context, args) {
           object = { args };
         }
         let valueFinal = _.get(object, variableName, expression);
-        // 如果这个解析出来的 valueFinal 是对象，则需要对其进行字符串化
+        // 如果这个解析出来的 valueFinal不是string类型，则需要对其进行字符串化
         if (!_.isString(valueFinal)) {
           valueFinal = JSON.stringify(valueFinal);
         }
