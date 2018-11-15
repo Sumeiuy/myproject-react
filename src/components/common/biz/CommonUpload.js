@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-15 10:16:24
+ * @Last Modified time: 2018-11-15 11:03:53
  */
 /**
  * 常用说明
@@ -233,11 +233,8 @@ export default class CommonUpload extends PureComponent {
         ...defaultData,
         attachId,
       };
-    } else {
-      return {
-        ...defaultData,
-      };
     }
+    return { ...defaultData };
   }
 
   // 清空数据
@@ -290,7 +287,7 @@ export default class CommonUpload extends PureComponent {
       fileListElement = (
         <div className={styles.fileList}>
           {
-            fileList.map((item, index) => {
+            _.map(fileList, (item, index) => {
               // 假删除，删除后不需要渲染元素
               if (item.isDelete) {
                 return null;
