@@ -96,7 +96,7 @@ export default class ToDo extends PureComponent {
       applyType: [],
       approveType: [],
       // 发起人下拉value
-      initiatorValue: [],
+      initiatorValue: '',
     };
   }
 
@@ -278,7 +278,7 @@ export default class ToDo extends PureComponent {
       key,
     } = obj;
     this.setState({
-      initiatorValue: [key, name]
+      initiatorValue: key
     }, () => {
       this.getApproveData({pageSize, pageNum, originator: name});
     });
