@@ -95,9 +95,6 @@ export default class ToDo extends PureComponent {
       // 类型下拉框value
       applyType: [],
       approveType: [],
-      category: '',
-      // 发起人
-      originator: '',
       // 发起人下拉value
       initiatorValue: [],
     };
@@ -248,18 +245,16 @@ export default class ToDo extends PureComponent {
     switch (taskType) {
       case '2':
         this.setState({
-          category: value,
           applyType: [key, value],
         }, () => {
-          this.getApplyList({pageSize, pageNum, category: value});
+          this.getApplyList({pageSize, pageNum, category: key});
         });
         break;
       case '3':
         this.setState({
-          category: value,
           approveType: [key, value],
         }, () => {
-          this.getApproveList({pageSize, pageNum, category: value});
+          this.getApproveList({pageSize, pageNum, category: key});
         });
         break;
       default:
@@ -271,14 +266,21 @@ export default class ToDo extends PureComponent {
   @autobind
   handleInitiatorCallback(obj) {
     const {
+      location: {
+        query: {
+          pageSize = 10,
+          pageNum = 1
+        }
+      }
+    } = this.props;
+    const {
       name,
       key,
     } = obj;
     this.setState({
-      originator: name,
       initiatorValue: [key, name]
     }, () => {
-      this.getApproveList(this.state);
+      this.getApproveList({pageSize, pageNum, originator: name});
     });
   }
 
@@ -405,7 +407,6 @@ export default class ToDo extends PureComponent {
                   />
                   : null
               }
-
 
             </div>
           </TabPane>
