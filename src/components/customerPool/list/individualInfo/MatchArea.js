@@ -526,12 +526,19 @@ export default class MatchArea extends PureComponent {
   // 特殊处理 搜股东账号实际上匹配客户经济号 因为股东账号是精确匹配 所以q是url字段的股东账号  这里需要把客户经济号替换成股东账号显示
   renderShareholderSccountNumber(item) {
     const {
+      location: {
+        query: {
+          type,
+        },
+      },
       listItem,
       q,
     } = this.props;
     const { name, id, hasCycle } = item;
     let renderValue = listItem[id];
-    if (!_.isNull(renderValue)) {
+    // 股东账号匹配项必须是搜索框点击下拉时才显示出来，回车热词或者其他搜索都不显示匹配股东账户
+    // 此处的type应该只有从公共的搜索框和客户列表页面筛选部分的搜索框才能往里面塞值
+    if (!_.isNull(renderValue) && type === 'STK_ACCTS') {
       return (
         <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
           <span>
