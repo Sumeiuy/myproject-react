@@ -85,7 +85,6 @@ export default class ProgressList extends PureComponent {
 
   /*
   */
-  // TODO 日志查看：
   @autobind
   handleClick(index, item) {
     const { push } = this.context;
@@ -111,7 +110,7 @@ export default class ProgressList extends PureComponent {
       linkTo(param);
     }
 
-    // log日志 --- 业务开通
+    // log日志 --- 经营指标
     logCommon({
       type: 'DrillDown',
       payload: {

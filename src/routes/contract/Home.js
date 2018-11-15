@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: zhangjun
- * @Last Modified time: 2018-08-07 17:00:24
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-14 11:20:50
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -852,8 +852,8 @@ export default class Contract extends PureComponent {
     type: 'ViewItem',
     payload: {
       name: '合作合约左侧列表项',
-      type: '$props.location.query.type',
-      subType: '$props.location.query.subType',
+      type: '$args[0].title',
+      subType: '$args[0].subType',
     },
   })
   handleListRowClick(record, index) {
