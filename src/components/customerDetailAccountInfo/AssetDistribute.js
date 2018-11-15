@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 16:30:07
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-10-22 16:43:59
+ * @Last Modified time: 2018-11-15 15:35:43
  * @description 新版客户360详情下账户信息Tab下的资产分布组件
  */
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import _ from 'lodash';
 // import cx from 'classnames';
 import { autobind } from 'core-decorators';
 
+import IFWrap from '../common/biz/IfWrap';
 import IECharts from '../IECharts';
 import Icon from '../common/Icon';
 import DebtDetailModal from './DebtDetailModal';
@@ -372,22 +373,18 @@ export default class AssetDistribute extends PureComponent {
                       <span className={styles.value}>{totalMoney.value}</span>
                       <span className={styles.unit}>{totalMoney.unit}</span>
                     </span>
-                    {
-                      checkedCredit
-                        ? (
-                          <span className={styles.summaryInfo}>
-                            <span className={styles.label}>负债：</span>
-                            <span className={styles.value}>{totalDebt.value}</span>
-                            <span className={styles.unit}>{totalDebt.unit}</span>
-                            <span className={styles.infoIco}>
-                              <Popover overlayClassName={styles.labelPopover} content="融资融券负债">
-                                <Icon type="tishi2" />
-                              </Popover>
-                            </span>
-                          </span>
-                        )
-                        : null
-                    }
+                    <IFWrap isRender={checkedCredit}>
+                      <span className={styles.summaryInfo}>
+                        <span className={styles.label}>负债：</span>
+                        <span className={styles.value}>{totalDebt.value}</span>
+                        <span className={styles.unit}>{totalDebt.unit}</span>
+                        <span className={styles.infoIco}>
+                          <Popover overlayClassName={styles.labelPopover} content="融资融券负债">
+                            <Icon type="tishi2" />
+                          </Popover>
+                        </span>
+                      </span>
+                    </IFWrap>
                   </div>
                 </div>
                 <div className={styles.indexDetailArea}>
@@ -415,18 +412,14 @@ export default class AssetDistribute extends PureComponent {
               </div>
             )
         }
-        {
-          debtDetailModal
-            ? (
-                <DebtDetailModal
-                  location={location}
-                  onClose={this.handleCloseDebtDetailModal}
-                  queryDebtDetail={queryDebtDetail}
-                  debtDetail={debtDetail}
-                />
-              )
-            : null
-        }
+        <IFWrap isRender={debtDetailModal}>
+          <DebtDetailModal
+            location={location}
+            onClose={this.handleCloseDebtDetailModal}
+            queryDebtDetail={queryDebtDetail}
+            debtDetail={debtDetail}
+          />
+        </IFWrap>
       </div>
     );
   }

@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-13 11:22:56
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-11-15 16:32:54
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -108,9 +108,20 @@ export const HISTORY_HOLDING_TABS = {
   optionHistoryHolding: '期权持仓明细',
 };
 
-export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 1800 };
+// 交易流水下3个Tab的显示配置
+export const TRADE_FLOW_TABS = {
+  standardAccountTrade: '普通账户历史交易',
+  creditAccountTrade: '信用账户历史交易',
+  optionAccountTrade: '期权账户历史交易',
+};
+
+export const STOCK_HISTORY_HOLDING_TABLE_SCROLL = { x: 2000 };
 export const PRODUCT_HISTORY_HOLDING_TABLE_SCROLL= { x: 2000 };
 export const OPTION_HISTORY_HOLDING_TABLE_SCROLL = { x: 2500 };
+export const STANDARD_TRADE_FLOW_TABLE_SCROLL = { x: 2100 };
+export const CREDIT_TRADE_FLOW_TABLE_SCROLL= { x: 1800 };
+export const OPTION_TRADE_FLOW_TABLE_SCROLL = { x: 2500 };
+
 // 证券历史持仓表格显示的columns
 export const STOCK_HISTORY_HOLDING_COLUMNS = [
   {
@@ -131,7 +142,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     title: '名称',
   },
   {
-    widht: 160,
+    width: 160,
     key: 'code',
     dataIndex: 'code',
     title: '代码',
@@ -141,12 +152,16 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     key: 'usableAmount',
     dataIndex: 'usableAmount',
     title: '可用数量',
+    align: 'right',
+    isAmount: true,
   },
   {
     width: 160,
     key: 'freezeAmount',
     dataIndex: 'freezeAmount',
     title: '冻结数量',
+    align: 'right',
+    isAmount: true,
   },
   {
     width: 160,
@@ -154,6 +169,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'costPrice',
     title: '成本价(元)',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 160,
@@ -161,6 +177,15 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'marketPrice',
     title: '市价(元)',
     align: 'right',
+    isNumber: true,
+  },
+  {
+    width: 160,
+    key: 'marketValue',
+    dataIndex: 'marketValue',
+    title: '市值(元)',
+    align: 'right',
+    isNumber: true,
   },
   {
     width: 200,
@@ -168,21 +193,23 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'profit',
     title: '账面盈利(元)',
     align: 'right',
+    isNumber: true,
   },
   {
-    width: 100,
+    width: 140,
     key: 'holdPercent',
     dataIndex: 'holdPercent',
     title: '持仓占比',
+    align: 'right',
   },
   {
-    widht: 120,
+    width: 120,
     key: 'holdDate',
     dataIndex: 'holdDate',
     title: '持仓时间',
   },
   {
-    widht: 120,
+    width: 120,
     key: 'sharesNature',
     dataIndex: 'sharesNature',
     title: '股份性质',
@@ -210,7 +237,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
   },
   {
     width: 160,
-    title: '代码',
+    title: '产品代码',
     key: 'code',
     dataIndex: 'code',
   },
@@ -219,19 +246,23 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     title: '可用份额',
     key: 'usableShare',
     dataIndex: 'usableShare',
+    align: 'right',
+    isAmount: true,
   },
   {
     width: 180,
     title: '净值/7日年化收益率',
     key: 'yearRate',
     dataIndex: 'yearRate',
+    align: 'right',
   },
   {
     width: 180,
-    title: '成本价(元)',
+    title: '成本(元)',
     key: 'costPrice',
     dataIndex: 'costPrice',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -239,6 +270,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     key: 'marketValue',
     dataIndex: 'marketValue',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -246,6 +278,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     key: 'totalProfit',
     dataIndex: 'totalProfit',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 160,
@@ -264,6 +297,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     title: '持仓占比',
     key: 'holdPercent',
     dataIndex: 'holdPercent',
+    align: 'right',
   },
 ];
 
@@ -316,6 +350,8 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     title: '可用数量',
     key: 'usableAmount',
     dataIndex: 'usableAmount',
+    align: 'right',
+    isAmount: true,
   },
   {
     width: 180,
@@ -323,6 +359,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'costPrice',
     dataIndex: 'costPrice',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -330,6 +367,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'newestPrice',
     dataIndex: 'newestPrice',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -337,6 +375,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'marketValue',
     dataIndex: 'marketValue',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -344,6 +383,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'profit',
     dataIndex: 'profit',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 140,
@@ -362,6 +402,305 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     title: '持仓占比',
     key: 'holdPercent',
     dataIndex: 'holdPercent',
+    align: 'right',
+  },
+];
+
+// 交易流水中普通账户流水的columns
+export const STANDARD_TRADE_FLOW_COLUMNS = [
+  {
+    title: '交易日期',
+    dataIndex: 'tradeDate',
+    key: 'tradeDate',
+    className: 'tradeDate',
+    fixed: 'left',
+  },
+  {
+    title: '产品名称',
+    dataIndex: 'productName',
+    key: 'productName',
+    className:'productName',
+    fixed: 'left',
+  },
+  {
+    title: '产品代码',
+    dataIndex: 'productCode',
+    key: 'productCode',
+    className:'productCode',
+    fixed: 'left',
+  },
+  {
+    title: '业务类别',
+    dataIndex: 'bussinessType',
+    key: 'bussinessType',
+    className:'bussinessType',
+  },
+  {
+    title: '成交价格',
+    dataIndex: 'dealPrice',
+    key: 'dealPrice',
+    className:'dealPrice',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '成交数量',
+    dataIndex: 'dealNumber',
+    key: 'dealNumber',
+    className:'dealNumber',
+    align: 'right',
+    isAmount: true,
+  },
+  {
+    title: '成交金额',
+    dataIndex: 'dealMoney',
+    key: 'dealMoney',
+    className: 'dealMoney',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '佣金',
+    dataIndex: 'commission',
+    key: 'commission',
+    className: 'commission',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '净佣金',
+    dataIndex: 'realCommission',
+    key: 'realCommission',
+    className: 'realCommission',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '印花税',
+    dataIndex: 'stampTax',
+    key: 'stampTax',
+    className: 'stampTax',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '风险金',
+    dataIndex: 'riskMoney',
+    key: 'riskMoney',
+    className: 'riskMoney',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '产品类型',
+    dataIndex: 'productType',
+    key: 'productType',
+    className: 'productType',
+  },
+  {
+    title: '交易渠道',
+    dataIndex: 'tradeChannel',
+    key: 'tradeChannel',
+    className: 'tradeChannel',
+  },
+];
+// 交易流水中信用账户流水的columns
+export const CREDIT_TRADE_FLOW_COLUMNS = [
+  {
+    title: '交易日期',
+    dataIndex: 'tradeDate',
+    key: 'tradeDate',
+    className: 'tradeDate',
+    fixed: 'left',
+  },
+  {
+    title: '产品名称',
+    dataIndex: 'productName',
+    key: 'productName',
+    className:'productName',
+    fixed: 'left',
+  },
+  {
+    title: '产品代码',
+    dataIndex: 'productCode',
+    key: 'productCode',
+    className:'productCode',
+    fixed: 'left',
+  },
+  {
+    title: '业务类别',
+    dataIndex: 'bussinessType',
+    key: 'bussinessType',
+    className:'bussinessType',
+  },
+  {
+    title: '成交价格',
+    dataIndex: 'dealPrice',
+    key: 'dealPrice',
+    className:'dealPrice',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '成交数量',
+    dataIndex: 'dealNumber',
+    key: 'dealNumber',
+    className:'dealNumber',
+    align: 'right',
+    isAmount: true,
+  },
+  {
+    title: '成交金额',
+    dataIndex: 'dealMoney',
+    key: 'dealMoney',
+    className: 'dealMoney',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '佣金',
+    dataIndex: 'commission',
+    key: 'commission',
+    className: 'commission',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '净佣金',
+    dataIndex: 'realCommission',
+    key: 'realCommission',
+    className: 'realCommission',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '印花税',
+    dataIndex: 'stampTax',
+    key: 'stampTax',
+    className: 'stampTax',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '交易渠道',
+    dataIndex: 'tradeChannel',
+    key: 'tradeChannel',
+    className: 'tradeChannel',
+  },
+];
+// 交易流水中期权账户流水的columns
+export const OPTION_TRADE_FLOW_COLUMNS = [
+  {
+    title: '交易日期',
+    dataIndex: 'tradeDate',
+    key: 'tradeDate',
+    className: 'tradeDate',
+    fixed: 'left',
+  },
+  {
+    title: '期权合约简称',
+    dataIndex: 'optionContractName',
+    key: 'optionContractName',
+    className:'optionContractName',
+    fixed: 'left',
+  },
+  {
+    title: '期权合约编码',
+    dataIndex: 'optionContractCode',
+    key: 'optionContractCode',
+    className:'optionContractCode',
+    fixed: 'left',
+  },
+  {
+    title: '业务类别',
+    dataIndex: 'bussinessType',
+    key: 'bussinessType',
+    className:'bussinessType',
+  },
+  {
+    title: '成交价格',
+    dataIndex: 'dealPrice',
+    key: 'dealPrice',
+    className:'dealPrice',
+    isNumber: true,
+  },
+  {
+    title: '成交数量',
+    dataIndex: 'dealNumber',
+    key: 'dealNumber',
+    className:'dealNumber',
+    align: 'right',
+    isAmount: true,
+  },
+  {
+    title: '成交金额',
+    dataIndex: 'dealMoney',
+    key: 'dealMoney',
+    className: 'dealMoney',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '佣金',
+    dataIndex: 'commission',
+    key: 'commission',
+    className: 'commission',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '净佣金',
+    dataIndex: 'realCommission',
+    key: 'realCommission',
+    className: 'realCommission',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '一级经手费',
+    dataIndex: 'oneLevelBrokerage',
+    key: 'oneLevelBrokerage',
+    className: 'oneLevelBrokerage',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '其他费(结算费)',
+    dataIndex: 'otherCost',
+    key: 'otherCost',
+    className: 'otherCost',
+    align: 'right',
+    isNumber: true,
+  },
+  {
+    title: '期权种类',
+    dataIndex: 'optionCategory',
+    key: 'optionCategory',
+    className: 'optionCategory',
+  },
+  {
+    title: '期权持仓类别',
+    dataIndex: 'optionPositionsCategory',
+    key: 'optionPositionsCategory',
+    className: 'optionPositionsCategory',
+  },
+  {
+    title: '证券代码',
+    dataIndex: 'stockCode',
+    key: 'stockCode',
+    className: 'stockCode',
+  },
+  {
+    title: '买卖方向',
+    dataIndex: 'businessDirection',
+    key: 'businessDirection',
+    className: 'businessDirection',
+  },
+  {
+    title: '开平仓方向',
+    dataIndex: 'openStorageDirection',
+    key: 'openStorageDirection',
+    className: 'openStorageDirection',
   },
 ];
 

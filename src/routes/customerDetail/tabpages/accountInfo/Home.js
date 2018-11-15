@@ -85,6 +85,18 @@ const mapStateToProps = state => ({
   productHistoryHolding: state.detailAccountInfo.productHistoryHoldingData,
   // 期权历史持仓明细
   optionHistoryHolding: state.detailAccountInfo.optionHistoryHoldingData,
+  // 业务类别
+  busnTypeDict: state.detailAccountInfo.busnTypeDict,
+  // 产品代码
+  finProductList: state.detailAccountInfo.finProductList,
+  // 全产品目录
+  productCatalogTree: state.detailAccountInfo.productCatalogTree,
+  // 普通账户交易流水
+  standardTradeFlowRes: state.detailAccountInfo.standardTradeFlowRes,
+  // 信用账户交易流水
+  creditTradeFlowRes: state.detailAccountInfo.creditTradeFlowRes,
+  // 期权账户交易流水
+  optionTradeFlowRes: state.detailAccountInfo.optionTradeFlowRes,
 });
 
 const mapDispatchToProps = {
@@ -116,6 +128,19 @@ const mapDispatchToProps = {
   queryProductHistoryHolding: effect('detailAccountInfo/queryProductHistoryHolding', { forceFull: true }),
   // 查询期权历史持仓明细
   queryOptionHistoryHolding: effect('detailAccountInfo/queryOptionHistoryHolding', { forceFull: true }),
+  // 获取业务类别
+  queryBusnTypeDict: effect('detailAccountInfo/queryBusnTypeDict', { forceFull: true }),
+  // 获取产品代码
+  queryFinProductList: effect('detailAccountInfo/queryFinProductList', { loading: false }),
+  // 获取全产品目录
+  queryProductCatalogTree: effect('detailAccountInfo/queryProductCatalogTree', { forceFull: true }),
+  // 获取普通账户交易流水
+  queryStandardTradeFlow: effect('detailAccountInfo/queryStandardTradeFlow', { forceFull: true }),
+  // 获取信用账户交易流水
+  queryCreditTradeFlow: effect('detailAccountInfo/queryCreditTradeFlow', { forceFull: true }),
+  // 获取期权账户交易流水
+  queryOptionTradeFlow: effect('detailAccountInfo/queryOptionTradeFlow', { forceFull: true }),
+
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -174,6 +199,30 @@ export default class Home extends PureComponent {
     productHistoryHolding: PropTypes.object.isRequired,
     // 期权历史持仓明细数据
     optionHistoryHolding: PropTypes.object.isRequired,
+    // 获取业务类别
+    queryBusnTypeDict: PropTypes.func.isRequired,
+    // 获取产品代码
+    queryFinProductList: PropTypes.func.isRequired,
+    // 获取全产品目录
+    queryProductCatalogTree: PropTypes.func.isRequired,
+    // 获取普通账户交易流水
+    queryStandardTradeFlow: PropTypes.func.isRequired,
+    // 获取信用账户交易流水
+    queryCreditTradeFlow: PropTypes.func.isRequired,
+    // 获取期权账户交易流水
+    queryOptionTradeFlow: PropTypes.func.isRequired,
+    // 业务类别
+    busnTypeDict: PropTypes.object.isRequired,
+    // 产品代码
+    finProductList: PropTypes.object.isRequired,
+    // 全产品目录
+    productCatalogTree: PropTypes.object.isRequired,
+    // 普通账户交易流水
+    standardTradeFlowRes: PropTypes.object.isRequired,
+    // 信用账户交易流水
+    creditTradeFlowRes: PropTypes.object.isRequired,
+    // 期权账户交易流水
+    optionTradeFlowRes: PropTypes.object.isRequired,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -274,6 +323,29 @@ export default class Home extends PureComponent {
     }
   }
 
+  // 交易流水
+  @autobind
+  querytradeFlow(query) {
+    const { type, ...otherQuery } = query;
+    const {
+      queryBusnTypeDict,
+      queryFinProductList,
+      queryProductCatalogTree,
+      queryStandardTradeFlow,
+      queryCreditTradeFlow,
+      queryOptionTradeFlow,
+    } = this.props;
+    const tradeFlowMap = {
+      busnType: queryBusnTypeDict,
+      finProduct: queryFinProductList,
+      productTree: queryProductCatalogTree,
+      standard: queryStandardTradeFlow,
+      credit: queryCreditTradeFlow,
+      option: queryOptionTradeFlow,
+    };
+    _.isFunction(tradeFlowMap[type]) && tradeFlowMap[type](otherQuery);
+  }
+
   @autobind
   getProfitRateInfo(options) {
     const { location: { query }, queryProfitRateInfo } = this.props;
@@ -349,6 +421,12 @@ export default class Home extends PureComponent {
       stockHistoryHolding,
       productHistoryHolding,
       optionHistoryHolding,
+      busnTypeDict,
+      finProductList,
+      productCatalogTree,
+      standardTradeFlowRes,
+      creditTradeFlowRes,
+      optionTradeFlowRes,
     } = this.props;
 
     const { compareCode, time } = this.state;
@@ -370,6 +448,13 @@ export default class Home extends PureComponent {
             stockHistoryHolding={stockHistoryHolding}
             productHistoryHolding={productHistoryHolding}
             optionHistoryHolding={optionHistoryHolding}
+            querytradeFlow={this.querytradeFlow}
+            busnTypeDict={busnTypeDict}
+            finProductList={finProductList}
+            productCatalogTree={productCatalogTree}
+            standardTradeFlowRes={standardTradeFlowRes}
+            creditTradeFlowRes={creditTradeFlowRes}
+            optionTradeFlowRes={optionTradeFlowRes}
           />
         </div>
         {/* 中间资产分布和收益走势区域 */}
