@@ -54,6 +54,11 @@ export const sourceFilter = {
       filterName: 'mobile',
       value: ['labelMapping'],
     }],
+    STK_ACCTS: [{
+      // primaryKey: 股东账号
+      filterName: 'primaryKey',
+      value: ['q'],
+    }],
     NAME: [{
       // name: 姓名
       filterName: 'name',
@@ -302,6 +307,7 @@ export const basicInfoList = [
   { labelName: '身份证号码', filterField: 'idNum' },
   { labelName: '联系电话', filterField: 'mobile' },
   { labelName: '经济客户号', filterField: 'sorPtyId' },
+  { labelName: '股东账号', filterField: 'primaryKey' },
 ];
 
 // 普通的筛选组件（包括单选和多选）
