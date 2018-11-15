@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-15 15:16:36
+ * @Last Modified time: 2018-11-15 15:34:15
  */
 
 import React, { PureComponent } from 'react';
@@ -139,7 +139,7 @@ export default class TodoFilter extends PureComponent {
         key,
       }
     } = option;
-    this.handleSelectChange(name, key);
+    this.props.initiatorCallback({key, name});
   }
 
   // select改变
