@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-15 10:06:38
+ * @Last Modified time: 2018-11-15 10:16:24
  */
 /**
  * 常用说明
@@ -226,11 +226,7 @@ export default class CommonUpload extends PureComponent {
   getUploadData() {
     const { empId, file, attachment, fileList } = this.state;
     const { isFalseDelete } = this.props;
-    const defaultData = {
-      empId,
-      file,
-      attachment,
-    };
+    const defaultData = { empId, file, attachment };
     if (isFalseDelete) {
       const attachId = fileList[0];
       return {
@@ -283,7 +279,6 @@ export default class CommonUpload extends PureComponent {
       headers: {
         accept: '*/*',
       },
-      beforeUpload: this.beforeUpload,
       onChange: this.onChange,
       showUploadList: false,
       fileList,
@@ -296,6 +291,7 @@ export default class CommonUpload extends PureComponent {
         <div className={styles.fileList}>
           {
             fileList.map((item, index) => {
+              // 假删除，删除后不需要渲染元素
               if (item.isDelete) {
                 return null;
               }

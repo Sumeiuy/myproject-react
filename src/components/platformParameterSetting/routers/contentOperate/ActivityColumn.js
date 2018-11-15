@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-15 09:49:30
+ * @Last Modified time: 2018-11-15 10:18:01
  */
 
 import React, { PureComponent } from 'react';
@@ -293,7 +293,6 @@ export default class ActivityColumn extends PureComponent {
     this.setState({ action: 'CREATE' }, this.handleOpenForm);
   }
 
-
   // 打开弹窗
   @autobind
   @logPV({
@@ -308,7 +307,7 @@ export default class ActivityColumn extends PureComponent {
   @autobind
   @logable({ type: 'Click', payload: { name: '关闭活动栏目弹窗' } })
   handleCloseModal() {
-    // 新建活动栏目
+    // 编辑活动栏目
     if (!this.isCreateColumn()) {
       if (this.checkAttachmentStatus()) {
         return;
