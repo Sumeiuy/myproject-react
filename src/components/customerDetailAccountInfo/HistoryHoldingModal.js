@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
- * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-15 14:24:53
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2018-11-15 15:34:15
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -494,7 +494,7 @@ export default class HistoryHoldingModal extends PureComponent {
     const optionPage = this.getPage(optionHistoryHolding.page);
     // 弹出层的自定义关闭按钮
     const closeBtn = [(
-      <Button onClick={this.handleModalClose}>关闭</Button>
+      <Button key="historyHoldingModalCloseBtn" onClick={this.handleModalClose}>关闭</Button>
     )];
 
     return (
