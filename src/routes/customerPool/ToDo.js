@@ -6,10 +6,10 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 import { Input, Tabs } from 'antd';
 import _ from 'lodash';
+import { autobind } from 'core-decorators';
 
 import withRouter from '../../decorators/withRouter';
 import ToDoList from '../../components/customerPool/todo/ToDoList';
@@ -105,12 +105,11 @@ export default class ToDo extends PureComponent {
 
   componentDidMount() {
     const {
-      getInitiator,
       location: {
         query: {
           pageSize = 10,
           pageNum = 1,
-        }
+        },
       }
     } = this.props;
     const {
@@ -119,7 +118,6 @@ export default class ToDo extends PureComponent {
     } = this.state;
     this.getApplyList({startTime, endTime, pageSize, pageNum});
     this.getApproveList({startTime, endTime, pageSize, pageNum});
-    getInitiator();
   }
 
   // 获取申请列表
@@ -243,7 +241,7 @@ export default class ToDo extends PureComponent {
       }
     } = this.props;
     const {
-      label,
+      key,
       value,
     } = obj;
     // taskType为2是我的申请 3是我的审批
@@ -251,17 +249,17 @@ export default class ToDo extends PureComponent {
       case '2':
         this.setState({
           category: value,
-          applyType: [value, label],
+          applyType: [key, value],
         }, () => {
-          this.getApplyList({pageSize, pageNum, ...obj});
+          this.getApplyList({pageSize, pageNum, category: value});
         });
         break;
       case '3':
         this.setState({
           category: value,
-          approveType: [value, label]
+          approveType: [key, value],
         }, () => {
-          this.getApproveList({pageSize, pageNum, ...obj});
+          this.getApproveList({pageSize, pageNum, category: value});
         });
         break;
       default:
@@ -301,15 +299,12 @@ export default class ToDo extends PureComponent {
     this.setState({ activeKey: obj });
   }
 
-  // 类型下拉框输入
-  @autobind
-  handleTypeInputChange(value) {
-
-  }
-
   // 发起人下拉框输入
   @autobind
   handleInitiatorInputChange(value) {
+    if (value.length < 4) {
+      return;
+    }
     this.props.getInitiator({ emp: value });
   }
 

@@ -3,7 +3,7 @@
  * @Descripter: 报表头部筛选项
  * @Date: 2018-10-06 14:21:06
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 20:02:55
+ * @Last Modified time: 2018-11-15 02:51:34
  */
 
 import React, { PureComponent } from 'react';
@@ -116,11 +116,11 @@ export default class TodoFilter extends PureComponent {
   handleTypeChange(option) {
     const {
       value: {
-        label,
+        key,
         value,
       }
     } = option;
-    this.handleSelectChange({value, label});
+    this.handleSelectChange({key, value});
   }
 
   // 发起人下拉框change
@@ -146,12 +146,6 @@ export default class TodoFilter extends PureComponent {
   @autobind
   handleSelectChange(obj) {
     this.props.filterCallback(obj);
-  }
-
-  // 类型输入查询
-  @autobind
-  handleTypeInputChange(value) {
-    this.props.InputChange(value);
   }
 
   // 发起人输入查询
@@ -184,25 +178,22 @@ export default class TodoFilter extends PureComponent {
         <SingleFilter
           filterName='类型'
           filterId="category"
-          className="filter"
-          dataMap={['key', 'value']}
+          className={styles.category}
           data={typeData}
           value={type}
           onChange={this.handleTypeChange}
-          showSearch
           placeholder="业务类型"
           needItemObj
-          onInputChange={this.handleTypeInputChange}
         />
         {
           isApprove ?
             <SingleFilter
               filterName="发起人"
               filterId="originator"
-              className="filter"
+              className={styles.initiator}
               dataMap={['key', 'name']}
               data={initiatorData}
-              value={initiator}
+              value=''
               onChange={this.handleInitiatorChange}
               needItemObj
               placeholder="员工工号/员工姓名"

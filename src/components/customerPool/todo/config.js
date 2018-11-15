@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-08 14:56:43
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 19:52:28
+ * @Last Modified time: 2018-11-14 21:30:05
  */
 
 import moment from 'moment';
@@ -16,6 +16,10 @@ const defaultEndTime = moment().subtract(1, 'days').format(dateFormat);
 
 const typeOption = [
   {
+    key: '',
+    value: '不限'
+  },
+  {
     key: '1',
     value: '自定义投资建议'
   },
@@ -23,10 +27,6 @@ const typeOption = [
     key: '2',
     value: '投顾个性化信息',
   },
-  {
-    key: '',
-    value: '不限'
-  }
 ];
 
 export {

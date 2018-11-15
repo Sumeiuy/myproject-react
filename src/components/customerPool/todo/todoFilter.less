@@ -1,5 +1,17 @@
 .reportFilter {
   display: flex;
+  :global {
+    .lego-filter-filterContainer {
+      margin-left: 20px;
+    }
+  }
+  .initiator {
+    :global {
+      .ant-dropdown > ul {
+        width: 250px;
+      }
+    }
+  }
   .filter {
     margin-right: 30px;
     font-size: 14px;
