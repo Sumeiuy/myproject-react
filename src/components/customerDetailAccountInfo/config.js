@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-15 10:14:14
+ * @Last Modified time: 2018-11-15 14:14:43
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -237,7 +237,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
   },
   {
     width: 160,
-    title: '代码',
+    title: '产品代码',
     key: 'code',
     dataIndex: 'code',
   },
