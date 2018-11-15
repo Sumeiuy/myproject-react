@@ -2,7 +2,7 @@
  * @Author: zhangjun
  * @Date: 2018-11-08 13:46:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-14 13:04:12
+ * @Last Modified time: 2018-11-14 21:37:57
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -22,6 +22,7 @@ const ColumnModal = React.forwardRef((props, ref) => {
     isShowAttachmentStatusError,
     attachmentStatusErrorMessage,
     action,
+    onFalseDelete,
   } = props;
   function isCreateColumn() {
     // action 判断当前是新建 'CREATE' 还是 修改'UPDATE'
@@ -52,6 +53,8 @@ const ColumnModal = React.forwardRef((props, ref) => {
               isShowAttachmentStatusError={isShowAttachmentStatusError}
               attachmentStatusErrorMessage={attachmentStatusErrorMessage}
               onChange={handleChangeFormData}
+              onFalseDelete={onFalseDelete}
+              action={action}
               ref={ref}
             />
           )
@@ -81,6 +84,8 @@ ColumnModal.propTypes = {
   attachmentStatusErrorMessage: PropTypes.string.isRequired,
   // 判断此组件用于新建页面还是修改页面，'CREATE'或者'UPDATE'
   action: PropTypes.oneOf(['CREATE', 'UPDATE']).isRequired,
+  // 假删除方法
+  onFalseDelete: PropTypes.func.isRequired,
 };
 
 export default ColumnModal;

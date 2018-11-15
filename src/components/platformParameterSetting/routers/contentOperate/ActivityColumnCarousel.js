@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目跑马灯
  * @Date: 2018-11-06 13:53:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-14 16:25:04
+ * @Last Modified time: 2018-11-15 09:31:28
  */
 
 import React, { Component } from 'react';
@@ -49,13 +49,17 @@ export default class ActivityColumnCarousel extends Component {
     // 获取url的信息
     const urlInfo = url.parse(finalUrl);
     const { hash } = urlInfo;
-    // hash返回的数据是'#/***', path需要去掉字符串前面的#
-    const path = hash.slice(1);
     // 检测是否在新开tab中
-    const isInNewOpenTabResult = this.isInNewOpenTab(path);
-    const isInDefaultMenuResult = this.isInDefaultMenu(path);
-    if (!_.isEmpty(isInNewOpenTabResult) || !_.isEmpty(isInDefaultMenuResult)) {
-      this.context.push(path);
+    if (!_.isEmpty(hash)) {
+      const isInNewOpenTabResult = this.isInNewOpenTab(hash);
+      const isInDefaultMenuResult = this.isInDefaultMenu(hash);
+      if (!_.isEmpty(isInNewOpenTabResult) || !_.isEmpty(isInDefaultMenuResult)) {
+        // hash返回的数据是'#/***', path需要去掉字符串前面的#
+        const path = hash.slice(1);
+        this.context.push(path);
+      } else {
+        window.open(finalUrl);
+      }
     } else {
       window.open(finalUrl);
     }
@@ -63,14 +67,16 @@ export default class ActivityColumnCarousel extends Component {
 
   // 检测是否在新开tab中
   @autobind
-  isInNewOpenTab(path) {
+  isInNewOpenTab(hash) {
+    const path = hash.slice(1);
     const newOpenTabPathList = filterData(newOpenTabConfig, 'path');
     return _.find(newOpenTabPathList, item => _.includes(path, item));
   }
 
   // 检测是否在defaultMenu中,如果是/fsp开头的话，需要去掉/fsp去匹配defaultMenu,否则直接匹配defaultMenu
   @autobind
-  isInDefaultMenu(path) {
+  isInDefaultMenu(hash) {
+    const path = hash.slice(1);
     // 已fsp开头的路径
     const isStartOfFsp = /^\/fsp\./.test(path);
     const defaultMenuPathList = filterData(defaultMenu, 'path');
@@ -100,7 +106,7 @@ export default class ActivityColumnCarousel extends Component {
             ? null
             : (
               <Carousel
-                // autoplay
+                autoplay
                 autoplaySpeed={3000}
               >
                 {activityColumnListData}

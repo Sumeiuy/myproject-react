@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-14 18:02:25
+ * @Last Modified time: 2018-11-15 09:49:30
  */
 
 import React, { PureComponent } from 'react';
@@ -172,15 +172,31 @@ export default class ActivityColumn extends PureComponent {
   // 附件校验是否上传
   @autobind
   checkAttachmentStatus() {
-    const { formData: { attachment, attaches } } = this.state;
-    if (_.isEmpty(attachment) || _.isEmpty(attaches)) {
-      this.setState({
-        isShowAttachmentStatusError: true,
-        attachmentStatusErrorMessage: '请上传附件',
-      });
-      return true;
+    const { formData: { attachment }, attachmentList } = this.state;
+    if (this.isCreateColumn()) {
+      // 新建状态判断附件是否上传
+      if (_.isEmpty(attachment) || _.isEmpty(attachmentList)) {
+        this.setAttachmentErrorStatus();
+        return true;
+      }
+    } else {
+      // 编辑状态判断附件是否上传
+      const { isDelete } = attachmentList[0];
+      if (_.isEmpty(attachment) || isDelete) {
+        this.setAttachmentErrorStatus();
+        return true;
+      }
     }
     return false;
+  }
+
+  // 设置附件错误状态
+  @autobind
+  setAttachmentErrorStatus() {
+    this.setState({
+      isShowAttachmentStatusError: true,
+      attachmentStatusErrorMessage: '请上传附件',
+    });
   }
 
   // 重置附件错误状态
@@ -197,18 +213,27 @@ export default class ActivityColumn extends PureComponent {
   handleChangeFormData(obj) {
     const { formData } = this.state;
     const { attaches } = obj;
-    this.setState({
-      formData: {
-        ...formData,
-        ...obj,
-      },
-      attachmentList: attaches,
-    }, () => {
-      const { formData: {attachment, attaches} } = this.state;
-      if (!_.isEmpty(attachment) || !_.isEmpty(attaches)) {
-        this.resetAttachmentErrorStatus();
-      }
-    });
+    if (!_.isEmpty(attaches)) {
+      this.setState({
+        formData: {
+          ...formData,
+          ...obj,
+        },
+        attachmentList: attaches,
+      }, () => {
+        const { formData: {attachment}, attachmentList } = this.state;
+        if (!_.isEmpty(attachment) || !_.isEmpty(attachmentList)) {
+          this.resetAttachmentErrorStatus();
+        }
+      });
+    } else {
+      this.setState({
+        formData: {
+          ...formData,
+          ...obj,
+        },
+      });
+    }
   }
 
   // 点击确定
@@ -244,7 +269,13 @@ export default class ActivityColumn extends PureComponent {
           // 编辑替换栏目
           newActivityColumnList = _.map(activityColumnList, item => {
             if (item.index === index) {
-              return { ...formData, link, description, url };
+              return {
+                ...formData,
+                link,
+                description,
+                url,
+                attaches,
+              };
             } else {
               return item;
             }
@@ -340,7 +371,12 @@ export default class ActivityColumn extends PureComponent {
 
   @autobind
   handleFalseDelete() {
-    this.setState({ attachmentList: [] });
+    const { attachmentList } = this.state;
+    const newAttachmentList = _.map(attachmentList, item => ({
+      ...item,
+      isDelete: true,
+    }));
+    this.setState({ attachmentList: newAttachmentList });
   }
 
   render() {
