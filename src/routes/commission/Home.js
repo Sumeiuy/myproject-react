@@ -25,7 +25,6 @@ import { emp, permission } from '../../helper';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 import withRouter from '../../decorators/withRouter';
-import './home.less';
 import logable, { logPV } from '../../decorators/logable';
 
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
