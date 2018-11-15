@@ -1,8 +1,8 @@
 /*
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-15 15:09:04
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-11-15 16:32:54
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -602,12 +602,14 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     dataIndex: 'optionContractName',
     key: 'optionContractName',
     className:'optionContractName',
+    fixed: 'left',
   },
   {
     title: '期权合约编码',
     dataIndex: 'optionContractCode',
     key: 'optionContractCode',
     className:'optionContractCode',
+    fixed: 'left',
   },
   {
     title: '业务类别',
