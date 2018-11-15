@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目
  * @Date: 2018-11-05 14:17:20
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-14 09:53:37
+ * @Last Modified time: 2018-11-15 10:31:45
  */
 
 import React, { PureComponent } from 'react';
@@ -66,6 +66,8 @@ export default class ActivityColumn extends PureComponent {
       isShowAttachmentStatusError: false,
       // 附件校验错误信息
       attachmentStatusErrorMessage: '',
+      // 判断ColumnForm页面是新建页面 'CREATE' 还是 编辑页面 'UPDATE'
+      action: 'CREATE',
     };
     this.columnFormRef = React.createRef();
   }
@@ -87,6 +89,13 @@ export default class ActivityColumn extends PureComponent {
   @autobind
   getColumnForm() {
     return this.columnFormRef.current;
+  }
+
+  // 判断活动栏目弹窗是否新建还是编辑
+  @autobind
+  isCreateColumn() {
+    // action 判断当前是新建 'CREATE' 还是 修改'UPDATE'
+    return this.state.action === 'CREATE';
   }
 
   // 渲染活动栏目
@@ -114,12 +123,12 @@ export default class ActivityColumn extends PureComponent {
         descriptionCount,
       },
       attachmentList: attaches,
+      action: 'UPDATE',
     }, this.handleOpenForm);
   }
 
-  // 删除活动栏目
+  // 删除活动栏目确认框
   @autobind
-  @logable({ type: 'Click', payload: { name: '删除' } })
   handleDeleteColumnConfirm(item) {
     // 活动栏目只剩1条，就不能删除，并给出提示
     if (this.state.activityColumnList.length === 1) {
@@ -129,14 +138,16 @@ export default class ActivityColumn extends PureComponent {
       });
     } else {
       confirm({
-        title: '确定要删除吗？',
+        title: '数据将实时删除，确认要删除吗？',
         shortCut: 'default',
         onOk: () => this.handleDeleteColumn(item),
       });
     }
   }
 
+  // 删除活动栏目
   @autobind
+  @logable({ type: 'Click', payload: { name: '删除活动栏目' } })
   handleDeleteColumn(item) {
     const { activityColumnList } = this.state;
     // 删除后新的活动栏目
@@ -158,20 +169,34 @@ export default class ActivityColumn extends PureComponent {
     });
   }
 
-
-
   // 附件校验是否上传
   @autobind
   checkAttachmentStatus() {
-    const { formData: { attachment, attaches } } = this.state;
-    if (_.isEmpty(attachment) || _.isEmpty(attaches)) {
-      this.setState({
-        isShowAttachmentStatusError: true,
-        attachmentStatusErrorMessage: '请上传附件',
-      });
-      return true;
+    const { formData: { attachment }, attachmentList } = this.state;
+    if (this.isCreateColumn()) {
+      // 新建状态判断附件是否上传
+      if (_.isEmpty(attachment) || _.isEmpty(attachmentList)) {
+        this.setAttachmentErrorStatus();
+        return true;
+      }
+    } else {
+      // 编辑状态判断附件是否上传
+      const { isDelete } = attachmentList[0];
+      if (_.isEmpty(attachment) || isDelete) {
+        this.setAttachmentErrorStatus();
+        return true;
+      }
     }
     return false;
+  }
+
+  // 设置附件错误状态
+  @autobind
+  setAttachmentErrorStatus() {
+    this.setState({
+      isShowAttachmentStatusError: true,
+      attachmentStatusErrorMessage: '请上传附件',
+    });
   }
 
   // 重置附件错误状态
@@ -187,17 +212,28 @@ export default class ActivityColumn extends PureComponent {
   @autobind
   handleChangeFormData(obj) {
     const { formData } = this.state;
-    this.setState({
-      formData: {
-        ...formData,
-        ...obj,
-      },
-    }, () => {
-      const { formData: {attachment, attaches} } = this.state;
-      if (!_.isEmpty(attachment) || !_.isEmpty(attaches)) {
-        this.resetAttachmentErrorStatus();
-      }
-    });
+    const { attaches } = obj;
+    if (!_.isEmpty(attaches)) {
+      this.setState({
+        formData: {
+          ...formData,
+          ...obj,
+        },
+        attachmentList: attaches,
+      }, () => {
+        const { formData: {attachment}, attachmentList } = this.state;
+        if (!_.isEmpty(attachment) || !_.isEmpty(attachmentList)) {
+          this.resetAttachmentErrorStatus();
+        }
+      });
+    } else {
+      this.setState({
+        formData: {
+          ...formData,
+          ...obj,
+        },
+      });
+    }
   }
 
   // 点击确定
@@ -233,15 +269,27 @@ export default class ActivityColumn extends PureComponent {
           // 编辑替换栏目
           newActivityColumnList = _.map(activityColumnList, item => {
             if (item.index === index) {
-              return { ...formData, link, description, url };
-            } else {
-              return item;
+              return {
+                ...formData,
+                link,
+                description,
+                url,
+                attaches,
+              };
             }
+            return item;
           });
         }
         this.setState({ activityColumnList: newActivityColumnList }, this.handleSubmitConfirm);
       }
     });
+  }
+
+  // 新建活动栏目
+  @autobind
+  @logable({ type: 'Click', payload: { name: '新建活动栏目' } })
+  handleCreateForm() {
+    this.setState({ action: 'CREATE' }, this.handleOpenForm);
   }
 
   // 打开弹窗
@@ -256,8 +304,20 @@ export default class ActivityColumn extends PureComponent {
 
   // 关闭弹窗
   @autobind
-  @logable({ type: 'Click', payload: { name: '取消' } })
+  @logable({ type: 'Click', payload: { name: '关闭活动栏目弹窗' } })
   handleCloseModal() {
+    // 编辑活动栏目
+    if (!this.isCreateColumn()) {
+      if (this.checkAttachmentStatus()) {
+        return;
+      }
+    }
+    this.clearColumnData();
+  }
+
+  // 清楚数据
+  @autobind
+  clearColumnData() {
     // 重置表单
     this.getColumnForm().getForm().resetFields();
     this.setState({
@@ -266,16 +326,17 @@ export default class ActivityColumn extends PureComponent {
       attachmentList: [],
       isShowAttachmentStatusError: false,
       attachmentStatusErrorMessage: '',
-   });
+    });
   }
 
   // 确认提交活动栏目
   @autobind
   handleSubmitConfirm() {
     confirm({
-      title: '请确认配置的内容，提交后数据将实时生效',
+      title: '数据将实时生效，请确认配置的内容',
       shortCut: 'default',
       onOk: this.handleSubmit,
+      onCancel: this.handleCancelSubmit,
     });
   }
 
@@ -300,6 +361,24 @@ export default class ActivityColumn extends PureComponent {
     });
   }
 
+  @autobind
+  @logable({ type: 'Click', payload: { name: '取消活动栏目提交' } })
+  handleCancelSubmit() {
+    this.setState({ activityColumnList: this.props.activityColumnList });
+  }
+
+  // 假删除的回调函数
+  @autobind
+  handleFalseDelete() {
+    const { attachmentList } = this.state;
+    // 假删除增加一个表示，isDelete属性，设置为true
+    const newAttachmentList = _.map(attachmentList, item => ({
+      ...item,
+      isDelete: true,
+    }));
+    this.setState({ attachmentList: newAttachmentList });
+  }
+
   render() {
     const {
       visible,
@@ -307,6 +386,7 @@ export default class ActivityColumn extends PureComponent {
       attachmentList,
       isShowAttachmentStatusError,
       attachmentStatusErrorMessage,
+      action,
     } = this.state;
     const { activityColumnList } = this.props;
     // 活动栏目大于等于4条，添加按钮就不可点击
@@ -322,7 +402,7 @@ export default class ActivityColumn extends PureComponent {
             type="primary"
             icon="plus"
             className={styles.createButton}
-            onClick={this.handleOpenForm}
+            onClick={this.handleCreateForm}
             disabled={createButtonDisabled}
           >
             添加
@@ -349,11 +429,13 @@ export default class ActivityColumn extends PureComponent {
           visible={visible}
           formData={formData}
           attachmentList={attachmentList}
+          action={action}
           isShowAttachmentStatusError={isShowAttachmentStatusError}
           attachmentStatusErrorMessage={attachmentStatusErrorMessage}
           onCloseModal={this.handleCloseModal}
           onChangeFormData={this.handleChangeFormData}
           onConfirm={this.handleConfirm}
+          onFalseDelete={this.handleFalseDelete}
           ref={this.columnFormRef}
         />
       </div>
