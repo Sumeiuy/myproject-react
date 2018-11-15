@@ -194,8 +194,6 @@ export default {
     applyList: EMPTY_OBJECT,
     // 审批列表
     approveList: EMPTY_OBJECT,
-    // 类型下拉框数据
-    typeValue: EMPTY_LIST,
     // 发起人下拉框数据
     initiator: EMPTY_LIST,
   },
@@ -252,7 +250,7 @@ export default {
             });
           },
           todo(params) {
-            const { keyword } = params;
+            const { keyword, taskType } = params;
             if (keyword) {
               dispatch({
                 type: 'search',
@@ -261,10 +259,12 @@ export default {
               });
               return;
             }
-            dispatch({
-              type: 'getToDoList',
-              loading: true,
-            });
+            if (taskType === '1') {
+              dispatch({
+                type: 'getToDoList',
+                loading: true,
+              });
+            }
           },
         };
         const matchRouteAndCallback = matchRouteAndexec.bind(this, pathname, query);
@@ -1036,14 +1036,6 @@ export default {
         payload: resultData,
       });
     },
-    // 获取类型下拉框
-    * getTypeValue({ payload }, { call, put }) {
-      const resultData = yield call(api.getTypeValue, payload);
-      yield put({
-        type: 'getTypeValueSuccess',
-        payload: resultData,
-      });
-    },
     // 获取发起人下拉框
     * getInitiator({ payload }, { call, put }) {
       const resultData = yield call(api.getInitiator, payload);
@@ -1811,14 +1803,6 @@ export default {
       return {
         ...state,
         approveList: resultData,
-      };
-    },
-    // 类型下拉框
-    getTypeValueSuccess(state, action) {
-      const { payload: { resultData = [] }} = action;
-      return {
-        ...state,
-        typeValue: resultData,
       };
     },
     // 发起人下拉框

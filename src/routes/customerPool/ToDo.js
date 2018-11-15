@@ -6,10 +6,10 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { autobind } from 'core-decorators';
 import { connect } from 'dva';
 import { Input, Tabs } from 'antd';
 import _ from 'lodash';
+import { autobind } from 'core-decorators';
 
 import withRouter from '../../decorators/withRouter';
 import ToDoList from '../../components/customerPool/todo/ToDoList';
@@ -18,7 +18,7 @@ import logable from '../../decorators/logable';
 import styles from './todo.less';
 import { dva } from '../../helper';
 import TodoFilter from '../../components/customerPool/todo/TodoFilter';
-import { defaultStartTime, defaultEndTime } from '../../components/customerPool/todo/config';
+import { defaultStartTime, defaultEndTime, typeOption } from '../../components/customerPool/todo/config';
 
 const effect = dva.generateEffect;
 const curPageNum = 1;
@@ -31,7 +31,6 @@ const mapStateToProps = state => ({
   taskBasicInfo: state.tasklist.taskBasicInfo,
   applyList: state.customerPool.applyList,
   approveList: state.customerPool.approveList,
-  typeValue: state.customerPool.typeValue,
   initiator: state.customerPool.initiator,
 });
 
@@ -42,8 +41,6 @@ const mapDispatchToProps = {
   getApplyList: effect('customerPool/getApplyList', { forceFull: true }),
   // 获取审批列表
   getApproveList: effect('customerPool/getApproveList', { forceFull: true }),
-  // 获取类型下拉框
-  getTypeValue: effect('customerPool/getTypeValue', { forceFull: true }),
   // 获取发起人下拉框
   getInitiator: effect('customerPool/getInitiator', { forceFull: true }),
   getTaskBasicInfo: effect('tasklist/getTaskBasicInfo', { forceFull: true }),
@@ -65,8 +62,6 @@ export default class ToDo extends PureComponent {
     applyList: PropTypes.object.isRequired,
     getApproveList: PropTypes.func.isRequired,
     approveList: PropTypes.object.isRequired,
-    getTypeValue: PropTypes.func.isRequired,
-    typeValue: PropTypes.array.isRequired,
     getInitiator: PropTypes.func.isRequired,
     initiator: PropTypes.array.isRequired,
   }
@@ -110,12 +105,11 @@ export default class ToDo extends PureComponent {
 
   componentDidMount() {
     const {
-      getInitiator,
       location: {
         query: {
           pageSize = 10,
           pageNum = 1,
-        }
+        },
       }
     } = this.props;
     const {
@@ -124,7 +118,6 @@ export default class ToDo extends PureComponent {
     } = this.state;
     this.getApplyList({startTime, endTime, pageSize, pageNum});
     this.getApproveList({startTime, endTime, pageSize, pageNum});
-    getInitiator();
   }
 
   // 获取申请列表
@@ -248,7 +241,7 @@ export default class ToDo extends PureComponent {
       }
     } = this.props;
     const {
-      label,
+      key,
       value,
     } = obj;
     // taskType为2是我的申请 3是我的审批
@@ -256,17 +249,17 @@ export default class ToDo extends PureComponent {
       case '2':
         this.setState({
           category: value,
-          applyType: [value, label],
+          applyType: [key, value],
         }, () => {
-          this.getApplyList({pageSize, pageNum, ...obj});
+          this.getApplyList({pageSize, pageNum, category: value});
         });
         break;
       case '3':
         this.setState({
           category: value,
-          approveType: [value, label]
+          approveType: [key, value],
         }, () => {
-          this.getApproveList({pageSize, pageNum, ...obj});
+          this.getApproveList({pageSize, pageNum, category: value});
         });
         break;
       default:
@@ -306,16 +299,13 @@ export default class ToDo extends PureComponent {
     this.setState({ activeKey: obj });
   }
 
-  // 类型下拉框输入
-  @autobind
-  handleTypeInputChange(value) {
-    this.props.getTypeValue({category: value});
-  }
-
   // 发起人下拉框输入
   @autobind
   handleInitiatorInputChange(value) {
-    this.props.getTypeValue({name: value});
+    if (value.length < 4) {
+      return;
+    }
+    this.props.getInitiator({ emp: value });
   }
 
   render() {
@@ -332,7 +322,6 @@ export default class ToDo extends PureComponent {
       approveList: {
         empWorkFlowList: approveListData,
       },
-      typeValue,
       initiator,
     } = this.props;
     const { push, replace } = this.context;
@@ -373,7 +362,7 @@ export default class ToDo extends PureComponent {
                 onSearch={this.handleApplySearch}
                 startTime={defaultStartTime}
                 endTime={defaultEndTime}
-                typeData={typeValue}
+                typeData={typeOption}
                 type={applyType}
               />
               {
@@ -399,7 +388,7 @@ export default class ToDo extends PureComponent {
                 InputChange={this.handleInitiatorInputChange}
                 startTime={defaultStartTime}
                 endTime={defaultEndTime}
-                typeData={typeValue}
+                typeData={typeOption}
                 type={approveType}
                 initiatorData={initiator}
                 initiator={initiatorValue}
