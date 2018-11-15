@@ -1,14 +1,25 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-12-19 11:01:47
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-08-24 14:02:32
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-14 14:46:16
  * @description 用于神策日志统一记录的装饰器函数，用于需要记录日志的方法上
  */
 import _ from 'lodash';
 import { dva } from '../helper';
 import{ constants } from '../config';
 
+// 神策埋点中的value需为string类型，否则报错
+function convertToString(payload) {
+  const { value } = payload;
+  if (!_.isString(value)) {
+    return {
+      ...payload,
+      value: JSON.stringify(value),
+    };
+  }
+  return payload;
+}
 // 将部分值替换成context中对应的值
 // 如: context = {
 //   props: { a: 1 },
@@ -32,8 +43,8 @@ function replaceValue(data, context, args) {
           object = { args };
         }
         let valueFinal = _.get(object, variableName, expression);
-        // 如果这个解析出来的 valueFinal 是对象，则需要对其进行字符串化
-        if (_.isObject(valueFinal)) {
+        // 如果这个解析出来的 valueFinal不是string类型，则需要对其进行字符串化
+        if (!_.isString(valueFinal)) {
           valueFinal = JSON.stringify(valueFinal);
         }
         return valueFinal;
@@ -136,6 +147,7 @@ function logPV({ pathname, title, payload = {} }) {
 }
 
 /**
+ * zhangmeiceshi
  * 通用日志打印
  * @param {Object} action
  * @param {String} action.type 日志类型：
@@ -145,14 +157,22 @@ function logPV({ pathname, title, payload = {} }) {
  * @returns {Function}
  */
 function logCommon({ type = 'Click', payload = {} }) {
-  const location = dva.getLastLocation();
-  dva.dispatch({
-    type,
-    payload: {
-      ...location,
-      ...payload,
-    },
-  });
+  const fixedPayload = {
+    pathname: dva.getLastLocation(),
+    ...payload,
+  };
+  try {
+    if (_.isString(type) && !_.isEmpty(type)) {
+      dva.dispatch({ type, payload: convertToString(fixedPayload) });
+    }
+  } catch (e) {
+    dva.dispatch({
+      type: 'LogError',
+      payload: {
+        message: e.message,
+      },
+    });
+  }
 }
 
 export default logable;
