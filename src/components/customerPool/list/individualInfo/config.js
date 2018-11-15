@@ -213,11 +213,12 @@ const matchRule = {
         id: 'telephone',
         render: 'renderTelephone',
       },
-      {
-        name: '股东账号',
-        id: 'stkAccts',
-        render: 'renderShareholderSccountNumber',
-      },
+      // 后期改造可能需要改到这边
+      // {
+      //   name: '股东账号',
+      //   id: 'stkAccts',
+      //   render: 'renderShareholderSccountNumber',
+      // },
       {
         name: '经纪客户号',
         id: 'custId',
