@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-14 10:26:57
+ * @Last Modified time: 2018-11-15 10:14:14
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -153,6 +153,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'usableAmount',
     title: '可用数量',
     align: 'right',
+    isAmount: true,
   },
   {
     width: 160,
@@ -160,6 +161,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'freezeAmount',
     title: '冻结数量',
     align: 'right',
+    isAmount: true,
   },
   {
     width: 160,
@@ -167,6 +169,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'costPrice',
     title: '成本价(元)',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 160,
@@ -174,6 +177,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'marketPrice',
     title: '市价(元)',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 160,
@@ -181,6 +185,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'marketValue',
     title: '市值(元)',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 200,
@@ -188,6 +193,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'profit',
     title: '账面盈利(元)',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 140,
@@ -241,6 +247,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     key: 'usableShare',
     dataIndex: 'usableShare',
     align: 'right',
+    isAmount: true,
   },
   {
     width: 180,
@@ -251,10 +258,11 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
   },
   {
     width: 180,
-    title: '成本价(元)',
+    title: '成本(元)',
     key: 'costPrice',
     dataIndex: 'costPrice',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -262,6 +270,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     key: 'marketValue',
     dataIndex: 'marketValue',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -269,6 +278,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     key: 'totalProfit',
     dataIndex: 'totalProfit',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 160,
@@ -341,6 +351,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'usableAmount',
     dataIndex: 'usableAmount',
     align: 'right',
+    isAmount: true,
   },
   {
     width: 180,
@@ -348,6 +359,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'costPrice',
     dataIndex: 'costPrice',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -355,6 +367,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'newestPrice',
     dataIndex: 'newestPrice',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -362,6 +375,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'marketValue',
     dataIndex: 'marketValue',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -369,6 +383,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'profit',
     dataIndex: 'profit',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 140,

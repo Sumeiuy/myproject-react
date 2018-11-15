@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-11-05 13:31:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-14 10:21:08
+ * @Last Modified time: 2018-11-15 10:18:34
  * @description 新版客户360详情的历史持仓的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -162,8 +162,9 @@ export default class HistoryHoldingModal extends PureComponent {
   // 修改数据金额所在的column
   @autobind
   updateMoneyColumn(column) {
+    const { isNumber = false, isAmount = false, ...restColumn } = column;
     return {
-      ...column,
+      ...restColumn,
       render(text, record) {
         if (_.isNull(text)) {
           return '-';
@@ -172,7 +173,15 @@ export default class HistoryHoldingModal extends PureComponent {
           // 表示空数据
           return '';
         }
-        return number.thousandFormat(number.toFixed(text), false);
+        // 比如可用数量，不需要保留两位小数
+        if (isAmount) {
+          return number.thousandFormat(text, false);
+        }
+        // 数字金额等需要保留2位小数
+        if (isNumber) {
+          return number.thousandFormat(number.toFixed(text), false);
+        }
+        return '';
       },
     };
   }
@@ -282,8 +291,8 @@ export default class HistoryHoldingModal extends PureComponent {
   @autobind
   getStockTableColumns(columns) {
     return _.map(columns, column => {
-      const { dataIndex } = column;
-      if (dataIndex === 'costPrice' || dataIndex === 'marketPrice' || dataIndex === 'profit' || dataIndex === 'marketValue') {
+      const { dataIndex, isNumber = false, isAmount = false } = column;
+      if (isNumber || isAmount) {
         // 针对数字金额类的column添加数字处理render
         return this.updateMoneyColumn(column);
       }
@@ -307,8 +316,8 @@ export default class HistoryHoldingModal extends PureComponent {
   @autobind
   getProductTableColumns(columns) {
     return _.map(columns, column => {
-      const { dataIndex } = column;
-      if (dataIndex === 'costPrice' || dataIndex === 'marketValue' || dataIndex === 'totalProfit') {
+      const { dataIndex, isNumber = false, isAmount = false } = column;
+      if (isNumber || isAmount) {
         // 针对数字金额类的column添加数字处理render
         return this.updateMoneyColumn(column);
       }
@@ -328,9 +337,9 @@ export default class HistoryHoldingModal extends PureComponent {
   @autobind
   getOptionTableColumns(columns) {
     return _.map(columns, column => {
-      const { dataIndex } = column;
+      const { dataIndex, isNumber = false, isAmount = false } = column;
       // 针对数字金额类的column添加数字处理render
-      if (dataIndex === 'costPrice' || dataIndex === 'newestPrice' || dataIndex === 'marketValue' || dataIndex === 'profit') {
+      if (isNumber || isAmount) {
         return this.updateMoneyColumn(column);
       }
       if (dataIndex === 'holdPercent') {
