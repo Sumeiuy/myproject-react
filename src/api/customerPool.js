@@ -42,8 +42,6 @@ export default function customerPool(api) {
     getApplyList: query => api.post('/groovynoauth/fsp/emp/workflow/queryStartProcessTaskList', query),
     // 我的审批
     getApproveList: query => api.post('/groovynoauth/fsp/emp/workflow/queryParticipateProcessTaskList', query),
-    // 类型下拉框
-    getTypeValue: query => api.post('/groovynoauth/fsp/emp/workflow/queryCatoryVaules', query),
     // 发起人下拉框
     getInitiator: query => api.post('/groovynoauth/fsp/emp/workflow/queryOriginValues', query),
 
