@@ -74,6 +74,15 @@ const matchRule = {
       unit: '元',
     }],
   },
+  ttfMktVal: {
+    inset: true,
+    key: [{
+      name: '天天发份额',
+      id: 'ttfMktVal',
+      render: 'renderTtfMktVal',
+      unit: '份',
+    }],
+  },
   primaryKeyJxgrps: {
     inset: true,
     key: [{
@@ -124,6 +133,14 @@ const matchRule = {
       name: '联系电话',
       id: 'telephone',
       render: 'renderDefaultVal',
+    }],
+  },
+  primaryKey: {
+    inset: true,
+    key: [{
+      name: '股东账号',
+      id: 'stkAccts',
+      render: 'renderShareholderSccountNumber',
     }],
   },
   primaryKeyPrdts: {
@@ -195,6 +212,11 @@ const matchRule = {
         name: '联系电话',
         id: 'telephone',
         render: 'renderTelephone',
+      },
+      {
+        name: '股东账号',
+        id: 'stkAccts',
+        render: 'renderShareholderSccountNumber',
       },
       {
         name: '经纪客户号',
@@ -461,6 +483,34 @@ const matchRule = {
       render: 'renderNoCompleted',
     }],
   },
+  investPeriod: {
+    inset: true,
+    key: [{
+      name: '投资期限',
+      id: 'investPeriod',
+      render: 'renderInvestPeriod',
+      dataTurn: {
+        '8110141': '0-1年',
+        '8110142': '1-5年',
+        '8110143': '无特别要求',
+      }
+    }],
+  },
+  investVariety: {
+    inset: true,
+    key: [{
+      name: '投资偏好',
+      id: 'investVariety',
+      render: 'renderInvestVariety',
+      dataTurn: {
+        '8110131': '债券、货币市场基金、债券基金等固定收益类投资品种',
+        '8110132': '债券、货币市场基金、债券基金等固定收益类投资品种、股票、混合型基金、偏股型基金、股票型基金等权益类投资品种',
+        '8110133': '债券、货币市场基金、债券基金等固定收益类投资品种、股票、混合型基金、偏股型基金、股票型基金等权益类投资品种、期货、融资融券',
+        '8110134': '债券、货币市场基金、债券基金等固定收益类投资品种、股票、混合型基金、偏股型基金、股票型基金等权益类投资品种、期货、融资融券、复杂或高风险金融产品',
+        '8110135': '债券、货币市场基金、债券基金等固定收益类投资品种、股票、混合型基金、偏股型基金、股票型基金等权益类投资品种、期货、融资融券、复杂或高风险金融产品、其他产品',
+      },
+    }],
+  },
   primaryKeyIndustry: {
     inset: true,
     key: [{
@@ -488,6 +538,7 @@ export const {
   avlAmt,
   avlAmtCrdt,
   totMktVal,
+  ttfMktVal,
   primaryKeyJxgrps,
   name,
   accountStatus,
@@ -495,6 +546,7 @@ export const {
   serviceRecord,
   sorPtyId,
   mobile,
+  primaryKey,
   primaryKeyPrdts,
   rights,
   businessOpened,
@@ -519,5 +571,7 @@ export const {
   netIncome,
   gjlRate,
   completedRate,
+  investPeriod,
+  investVariety,
   primaryKeyIndustry,
 } = matchRule;

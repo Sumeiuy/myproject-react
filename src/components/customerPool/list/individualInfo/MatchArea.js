@@ -4,8 +4,8 @@
  * @author xiaZhiQiang
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
- * @Last Modified by: sunweibin
- * @Last Modified time: 2018-09-28 09:12:46
+ * @Last Modified by: liqianwen
+ * @Last Modified time: 2018-11-13 22:38:45
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -311,7 +311,7 @@ export default class MatchArea extends PureComponent {
         renderValue = number.thousandFormat(Number(renderValue).toFixed(2), false);
       }
       return (
-        <li kye={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
+        <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
           <span>
             <i className="label">
               {hasCycle ? this.convertCycle(id) : ''}
@@ -346,6 +346,70 @@ export default class MatchArea extends PureComponent {
     }
     return null;
   }
+
+  // 投资期限
+  @autobind
+  renderInvestPeriod(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { custId, investPeriod } = listItem;
+    const { dataTurn, id } = currentItem;
+    if (investPeriod) {
+      return (
+        <li key={`${id}${custId}`} title={dataTurn[investPeriod]}>
+            <span>
+              <i className="label">投资期限：</i>
+              {dataTurn[investPeriod]}
+            </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 投资偏好
+  @autobind
+  renderInvestVariety(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { custId, investVariety } = listItem;
+    const { dataTurn, id } = currentItem;
+    if (investVariety) {
+      return (
+        <li key={`${id}${custId}`} title={dataTurn[investVariety]}>
+            <span>
+              <i className="label">投资偏好：</i>
+              {dataTurn[investVariety]}
+            </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  // 天天发份额
+  @autobind
+  renderTtfMktVal(currentItem) {
+    const {
+      listItem,
+    } = this.props;
+    const { name, id } = currentItem;
+    if (listItem.ttfMktVal) {
+      return (
+        <li key={`${id}${listItem.custId}`}>
+          <span>
+            <i className="label">{name}：</i>
+            {listItem.ttfMktVal}份
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+
   // 精选组合页面的订购组合
   @autobind
   renderOrderCombination() {
@@ -460,6 +524,31 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
+  //匹配股东账号
+  // 特殊处理 搜股东账号实际上匹配客户经济号 因为股东账号是精确匹配 所以q是url字段的股东账号  这里需要把客户经济号替换成股东账号显示
+  renderShareholderSccountNumber(item) {
+    const {
+      listItem,
+      q,
+    } = this.props;
+    const { name, id, hasCycle } = item;
+    let renderValue = listItem[id];
+    if (!_.isNull(renderValue)) {
+      return (
+        <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
+          <span>
+            <i className="label">
+              {hasCycle ? this.convertCycle(id) : ''}
+              {name}：
+            </i>
+            {q}
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
   // 匹配经纪客户号
   renderCustId() {
     const {
@@ -499,6 +588,7 @@ export default class MatchArea extends PureComponent {
       const labelInfo = index === fspLabel.length - 1 ? name : `${name},`;
       return (
         <Tooltip
+          overlayClassName={styles.labelsToolTip}
           placement="bottomLeft"
           title={description}
           key={description}
@@ -556,6 +646,7 @@ export default class MatchArea extends PureComponent {
           const tempKey = `${description}${index}`;
           return (
             <Tooltip
+              overlayClassName={styles.labelsToolTip}
               placement="bottomLeft"
               title={description}
               key={tempKey}
