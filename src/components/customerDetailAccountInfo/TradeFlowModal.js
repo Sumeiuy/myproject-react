@@ -2,7 +2,7 @@
  * @Author: liqianwen
  * @Date: 2018-11-07 13:31:51
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-15 13:04:50
+ * @Last Modified time: 2018-11-15 14:08:27
  * @description 新版客户360详情的交易流水的弹出层
  */
 import React, { PureComponent } from 'react';
@@ -425,8 +425,9 @@ export default class TradeFlowModal extends PureComponent {
   // 修改数据金额所在的column
   @autobind
   updateMoneyColumn(column) {
+    const { isNumber, isAmount, ...restColumn } = column;
     return {
-      ...column,
+      ...restColumn,
       render(text, record) {
         if (_.isNull(text)) {
           return '-';
@@ -435,87 +436,25 @@ export default class TradeFlowModal extends PureComponent {
           // 表示空数据
           return '';
         }
-        return number.thousandFormat(number.toFixed(text), false);
+        // 比如可用数量，不需要保留两位小数
+        if (isAmount) {
+          return number.thousandFormat(text, false);
+        }
+        // 数字金额等需要保留2位小数
+        if (isNumber) {
+          return number.thousandFormat(number.toFixed(text), false);
+        }
       },
     };
   }
 
-  // 修改数量所在的column
+  // 修改部分列的显示
   @autobind
-  updateNumberColumn(column) {
-    return {
-      ...column,
-      render(text, record) {
-        if (_.isNull(text)) {
-          return '-';
-        }
-        if (record.flag) {
-          // 表示空数据
-          return '';
-        }
-        return number.thousandFormat(text, false);
-      },
-    };
-  }
-
-  // 修改普通账户部分列的显示
-  @autobind
-  getStandardTradeColumns(columns) {
+  transformColumnsData(columns) {
     return _.map(columns, column => {
-      const { dataIndex } = column;
-      if (dataIndex === 'dealPrice'
-        || dataIndex === 'dealMoney'
-        || dataIndex === 'commission'
-        || dataIndex === 'realCommission'
-        || dataIndex === 'stampTax'
-        || dataIndex === 'riskMoney' ) {
-        // 针对数字金额类的column添加数字处理render
+      const { isNumber = false, isAmount = false } = column;
+      if (isNumber || isAmount) {
         return this.updateMoneyColumn(column);
-      }
-      if (dataIndex === 'dealNumber') {
-        // 针对数量类的column添加数字处理render
-        return this.updateNumberColumn(column);
-      }
-      return column;
-    });
-  }
-  // 修改信用账户部分列的显示
-  @autobind
-  getCreditTradeColumns(columns) {
-    return _.map(columns, column => {
-      const { dataIndex } = column;
-      if (dataIndex === 'dealPrice'
-        || dataIndex === 'dealMoney'
-        || dataIndex === 'commission'
-        || dataIndex === 'realCommission'
-        || dataIndex === 'stampTax' ) {
-        // 针对数字金额类的column添加数字处理render
-        return this.updateMoneyColumn(column);
-      }
-      if (dataIndex === 'dealNumber') {
-        // 针对数量类的column添加数字处理render
-        return this.updateNumberColumn(column);
-      }
-      return column;
-    });
-  }
-  // 修改期权账户部分列的显示
-  @autobind
-  getOptionTradeColumns(columns) {
-    return _.map(columns, column => {
-      const { dataIndex } = column;
-      if (dataIndex === 'dealPrice'
-        || dataIndex === 'dealMoney'
-        || dataIndex === 'commission'
-        || dataIndex === 'realCommission'
-        || dataIndex === 'oneLevelBrokerage'
-        || dataIndex === 'otherCost' ) {
-        // 针对数字金额类的column添加数字处理render
-        return this.updateMoneyColumn(column);
-      }
-      if (dataIndex === 'dealNumber') {
-        // 针对数量类的column添加数字处理render
-        return this.updateNumberColumn(column);
       }
       return column;
     });
@@ -547,14 +486,14 @@ export default class TradeFlowModal extends PureComponent {
     // 补足普通账户流水数据
     const standardData = data.padEmptyDataForList(standardTradeFlowRes.list);
     // 修改普通账户Table 的 columns
-    const standardTradeColumns = this.getStandardTradeColumns(STANDARD_TRADE_FLOW_COLUMNS);
+    const standardTradeColumns = this.transformColumnsData(STANDARD_TRADE_FLOW_COLUMNS);
     // 获取普通账户表格的分页器信息
     const standardPage = this.getPage(standardTradeFlowRes.page);
     const creditData = data.padEmptyDataForList(creditTradeFlowRes.list);
-    const creditTradeColumns = this.getCreditTradeColumns(CREDIT_TRADE_FLOW_COLUMNS);
+    const creditTradeColumns = this.transformColumnsData(CREDIT_TRADE_FLOW_COLUMNS);
     const creditPage = this.getPage(creditTradeFlowRes.page);
     const optionData = data.padEmptyDataForList(optionTradeFlowRes.list);
-    const optionTradeColumns = this.getOptionTradeColumns(OPTION_TRADE_FLOW_COLUMNS);
+    const optionTradeColumns = this.transformColumnsData(OPTION_TRADE_FLOW_COLUMNS);
     const optionPage = this.getPage(optionTradeFlowRes.page);
     // 弹出层的自定义关闭按钮
     const closeBtn = [(

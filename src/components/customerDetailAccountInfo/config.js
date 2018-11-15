@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2018-10-11 18:37:20
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-14 20:20:24
+ * @Last Modified time: 2018-11-15 14:00:01
  * @description 新版客户360详情的账户信息Tab下页面的配置项
  */
 
@@ -153,6 +153,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'usableAmount',
     title: '可用数量',
     align: 'right',
+    isAmount: true,
   },
   {
     width: 160,
@@ -160,6 +161,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'freezeAmount',
     title: '冻结数量',
     align: 'right',
+    isAmount: true,
   },
   {
     width: 160,
@@ -167,6 +169,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'costPrice',
     title: '成本价(元)',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 160,
@@ -174,6 +177,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'marketPrice',
     title: '市价(元)',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 160,
@@ -181,6 +185,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'marketValue',
     title: '市值(元)',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 200,
@@ -188,6 +193,7 @@ export const STOCK_HISTORY_HOLDING_COLUMNS = [
     dataIndex: 'profit',
     title: '账面盈利(元)',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 140,
@@ -241,6 +247,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     key: 'usableShare',
     dataIndex: 'usableShare',
     align: 'right',
+    isAmount: true,
   },
   {
     width: 180,
@@ -251,10 +258,11 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
   },
   {
     width: 180,
-    title: '成本价(元)',
+    title: '成本(元)',
     key: 'costPrice',
     dataIndex: 'costPrice',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -262,6 +270,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     key: 'marketValue',
     dataIndex: 'marketValue',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -269,6 +278,7 @@ export const PRODUCT_HISTORY_HOLDING_COLUMNS = [
     key: 'totalProfit',
     dataIndex: 'totalProfit',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 160,
@@ -341,6 +351,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'usableAmount',
     dataIndex: 'usableAmount',
     align: 'right',
+    isAmount: true,
   },
   {
     width: 180,
@@ -348,6 +359,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'costPrice',
     dataIndex: 'costPrice',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -355,6 +367,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'newestPrice',
     dataIndex: 'newestPrice',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -362,6 +375,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'marketValue',
     dataIndex: 'marketValue',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 180,
@@ -369,6 +383,7 @@ export const OPTION_HISTORY_HOLDING_COLUMNS = [
     key: 'profit',
     dataIndex: 'profit',
     align: 'right',
+    isNumber: true,
   },
   {
     width: 140,
@@ -431,6 +446,7 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     className:'dealPrice',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '成交数量',
@@ -439,6 +455,7 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     className:'dealNumber',
     align: 'right',
     width: 150,
+    isAmount: true,
   },
   {
     title: '成交金额',
@@ -447,6 +464,7 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     className: 'dealMoney',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '佣金',
@@ -455,6 +473,7 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     className: 'commission',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '净佣金',
@@ -463,6 +482,7 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     className: 'realCommission',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '印花税',
@@ -471,6 +491,7 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     className: 'stampTax',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '风险金',
@@ -479,6 +500,7 @@ export const STANDARD_TRADE_FLOW_COLUMNS = [
     className: 'riskMoney',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '产品类型',
@@ -535,6 +557,7 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     className:'dealPrice',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '成交数量',
@@ -543,6 +566,7 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     className:'dealNumber',
     align: 'right',
     width: 150,
+    isAmount: true,
   },
   {
     title: '成交金额',
@@ -551,6 +575,7 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     className: 'dealMoney',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '佣金',
@@ -559,6 +584,7 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     className: 'commission',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '净佣金',
@@ -567,6 +593,7 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     className: 'realCommission',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '印花税',
@@ -575,6 +602,7 @@ export const CREDIT_TRADE_FLOW_COLUMNS = [
     className: 'stampTax',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '交易渠道',
@@ -621,6 +649,7 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     key: 'dealPrice',
     className:'dealPrice',
     width: 150,
+    isNumber: true,
   },
   {
     title: '成交数量',
@@ -629,6 +658,7 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     className:'dealNumber',
     align: 'right',
     width: 150,
+    isAmount: true,
   },
   {
     title: '成交金额',
@@ -637,6 +667,7 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     className: 'dealMoney',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '佣金',
@@ -645,6 +676,7 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     className: 'commission',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '净佣金',
@@ -653,6 +685,7 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     className: 'realCommission',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '一级经手费',
@@ -661,6 +694,7 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     className: 'oneLevelBrokerage',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '其他费(结算费)',
@@ -669,6 +703,7 @@ export const OPTION_TRADE_FLOW_COLUMNS = [
     className: 'otherCost',
     align: 'right',
     width: 150,
+    isNumber: true,
   },
   {
     title: '期权种类',
