@@ -2,20 +2,19 @@
  * @Author: wangyikai
  * @Date: 2018-11-06 13:23:32
  * @Last Modified by: wangyikai
- * @Last Modified time: 2018-11-13 16:17:17
+ * @Last Modified time: 2018-11-15 18:13:59
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Button } from 'antd';
 import Icon from '../../components/common/Icon';
 import Table from '../../components/common/table';
-import Modal from '../../components/common/biz/CommonModal';
 import styles from './serviceRelationship.less';
 import { number } from '../../helper';
 import logable, { logPV } from '../../decorators/logable';
-import { serviceTeamColumns, introduceColumns, serviceHistoryColumns} from './config';
+import ServiceHistoryModal from './serviceHistoryModal';
+import { serviceTeamColumns, introduceColumns } from './config';
 
 export default class ServiceRelationship extends PureComponent {
   static propTypes = {
@@ -71,14 +70,14 @@ export default class ServiceRelationship extends PureComponent {
     this.setState({ serviceHistoryModalVisible: false});
   }
   render(){
+    const { serviceHistoryModalVisible } = this.state;
     const {
-      serviceHistoryModalVisible,
-    } = this.state;
-    const { serviceTeam, introduce, serviceHistory } = this.props;
-    //  服务历史的数据长度
-     const serviceHistoryDatasLength = _.size(serviceHistory);
-     // 数据超过10条展示分页，反之不展示
-     const showServiceHistoryPagination = serviceHistoryDatasLength > 10;
+      location,
+      serviceTeam,
+      introduce,
+      serviceHistory,
+      getCustServiceHistory,
+      } = this.props;
     //将数据百分比化
     const newIntroduceDatas = _.map(introduce,  (items) => {
       const { weight } = items;
@@ -97,35 +96,18 @@ export default class ServiceRelationship extends PureComponent {
             <div className={styles.title}>服务团队</div>
             <Icon type="huiyuandengjibiangeng" className={styles.serviceHistoryIcon}/>
             <div className={styles.serviceHistory} onClick={this.handleServiceHistoryModalOpen}>服务历史</div>
-            <Modal
-             className={styles.serviceHistoryModal}
-             title="服务历史"
-             size='large'
-             showOkBtn={false}
-             visible={serviceHistoryModalVisible}
-             closeModal={this.handleServiceHistoryModalClose}
-             onCancel={this.handleServiceHistoryModalClose}
-             selfBtnGroup={[(<Button onClick={this.handleServiceHistoryModalClose}>关闭</Button>)]}
-             modalKey="serviceHistory"
-             maskClosable={false}
-            >
             {
-               _.isEmpty(serviceHistory)
-               ? <div className={styles.noDataContainer}>
-                   <Icon type="wushujuzhanweitu-" className={styles.noDataIcon}/>
-                   <div className={styles.noDataText}>没有符合条件的记录</div>
-               </div>
-               :   <div className={styles.tabContainer}>
-               <Table
-                pagination={showServiceHistoryPagination}
-                className={styles.tabPaneWrap}
-                dataSource={serviceHistory}
-                columns={serviceHistoryColumns}
-                scroll={{ x: '1024px' }}
-              />
-            </div>
-          }
-          </Modal>
+              serviceHistoryModalVisible
+              ? (
+                <ServiceHistoryModal
+                  location={location}
+                  serviceHistory={serviceHistory}
+                  getCustServiceHistory={getCustServiceHistory}
+                  onClose={this.handleServiceHistoryModalClose}
+                />
+              )
+              : null
+            }
           </div>
           <div className={styles.accountTable}>
             <Table
