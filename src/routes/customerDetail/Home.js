@@ -185,8 +185,6 @@ export default class Home extends PureComponent {
             <TabPane tab="服务关系" key="serviceRelation">
               <ServiceRelationship location={location} />
             </TabPane>
-            <TabPane tab="涨乐会员" key="zhangleVIP">
-            </TabPane>
             <TabPane tab="合约管理" key="contractManagement">
             </TabPane>
             <TabPane tab="投资者评估" key="investorAssessment">
