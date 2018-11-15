@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-13 17:35:01
+ * @Last Modified time: 2018-11-14 21:39:53
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -33,12 +33,23 @@ export default class ColumnForm extends PureComponent {
     isShowAttachmentStatusError: PropTypes.bool.isRequired,
     // 附件校验错误信息
     attachmentStatusErrorMessage: PropTypes.string.isRequired,
+    // 假删除方法
+    onFalseDelete: PropTypes.func.isRequired,
+    // 判断此组件用于新建页面还是修改页面，'CREATE'或者'UPDATE'
+    action: PropTypes.oneOf(['CREATE', 'UPDATE']).isRequired,
   }
 
   // 获取Form表单
   @autobind
   getForm() {
     return this.props.form;
+  }
+
+  // 判断是否是新建
+  @autobind
+  isCreate() {
+    // action 判断当前是新建 'CREATE' 还是 修改'UPDATE'
+    return this.props.action === 'CREATE';
   }
 
   // 上传附件
@@ -86,9 +97,10 @@ export default class ColumnForm extends PureComponent {
         description,
         descriptionCount = 0,
       },
-      attachmentList = [],
+      attachmentList,
       isShowAttachmentStatusError,
       attachmentStatusErrorMessage,
+      onFalseDelete,
     } = this.props;
     // 附件验证
     const attachmentStatusErrorProps = isShowAttachmentStatusError
@@ -118,6 +130,8 @@ export default class ColumnForm extends PureComponent {
                   deleteCallback={this.handleDeleteAttachment}
                   needDefaultText={false}
                   accept={acceptType}
+                  onFalseDelete={onFalseDelete}
+                  isFalseDelete={!this.isCreate()}
                 />
               </div>
             </FormItem>
@@ -129,6 +143,7 @@ export default class ColumnForm extends PureComponent {
           >
             <FormItem>
               {getFieldDecorator('link', {
+                validateTrigger: ['onBlur'],
                 rules: [
                   { required: true, message: '请输入图片链接' },
                   { whitespace: true, message: '请输入图片链接' },
@@ -148,6 +163,7 @@ export default class ColumnForm extends PureComponent {
             <FormItem>
               <div className={styles.descBox}>
                 {getFieldDecorator('description', {
+                  validateTrigger: ['onBlur'],
                   rules: [
                     { required: true, message: '请输入功能描述' },
                     { whitespace: true, message: '请输入功能描述' },

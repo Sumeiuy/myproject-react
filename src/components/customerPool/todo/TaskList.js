@@ -2,7 +2,7 @@
  * @Author: zuoguangzu
  * @Date: 2018-11-12 19:25:08
  * @Last Modified by: zuoguangzu
- * @Last Modified time: 2018-11-14 17:34:45
+ * @Last Modified time: 2018-11-14 20:53:20
  */
 
 import React, { PureComponent } from 'react';
@@ -91,6 +91,7 @@ export default class TaskList extends PureComponent {
   handleOpenNewPage(id) {
     const { data, getTaskBasicInfo, clearCreateTaskData } = this.props;
     const flowData = _.find(data, ['id', Number(id)]);
+    console.warn('flowData');
     // 判断是否被驳回任务，进行不同页面跳转
     // 后台无法返回状态码，只能判断文字
     clearCreateTaskData(RETURN_TASK_FROM_TODOLIST);
@@ -107,7 +108,7 @@ export default class TaskList extends PureComponent {
       this.toApproveUserInfo(flowData.flowId);
     } else {
       // 跳转到审批页面
-      window.open(`${flowData.dispatchUri}&workFlowName=${encodeURI(flowData.flowClass)}`);
+      window.open(`${flowData.dispatchUri}&workFlowName=${encodeURI(flowData.workFlowName)}`);
     }
   }
 
