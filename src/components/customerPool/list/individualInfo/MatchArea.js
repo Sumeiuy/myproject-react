@@ -527,7 +527,6 @@ export default class MatchArea extends PureComponent {
   //匹配股东账号
   // 特殊处理 搜股东账号实际上匹配客户经济号 因为股东账号是精确匹配 所以q是url字段的股东账号  这里需要把客户经济号替换成股东账号显示
   renderShareholderSccountNumber(item) {
-    debugger
     const {
       listItem,
       q,
