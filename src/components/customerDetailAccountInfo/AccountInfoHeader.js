@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-15 15:33:13
+ * @Last Modified time: 2018-11-15 16:21:04
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -197,7 +197,6 @@ export default class AccountInfoHeader extends PureComponent {
             getSecuritiesHolding={getSecuritiesHolding}
             onClose={this.handleRealTimeHoldModalClose}
           />
-
         </IfWrap>
         <IfWrap isRender={tradeFlowModalVisible}>
           <TradeFlowModal
