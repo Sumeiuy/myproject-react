@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2018-04-12 12:03:56
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-21 15:04:11
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-12 14:37:55
  * @description 创建服务记录中的服务记录文本输入框组件
  */
 
@@ -14,7 +14,7 @@ import cx from 'classnames';
 import _ from 'lodash';
 
 import ChoiceApproverBoard from '../../commissionAdjustment/ChoiceApproverBoard';
-import logable from '../../../decorators/logable';
+import logable, { logPV } from '../../../decorators/logable';
 import ChoiceInvestAdviceModal from './ChoiceInvestAdviceModal_';
 
 import styles from './index.less';
@@ -37,7 +37,7 @@ export default class ServeContent extends PureComponent {
       contentMode: '',
       // 弹出修改服务内容的弹出层
       serveContentModal: false,
-      // 选择审批人弹出岑
+      // 选择审批人弹出层
       approvalModal: false,
       // 审批人
       approverName: '',
@@ -126,7 +126,6 @@ export default class ServeContent extends PureComponent {
   }
 
   /** 点击添加内容按钮 | 编辑修改按钮 */
-  // TODO 日志查看：找不到方法 未验证
   @autobind
   @logable({ type: 'ButtonClick', payload: { name: '添加内容/编辑修改' } })
   handleBtnClick() {
@@ -192,9 +191,8 @@ export default class ServeContent extends PureComponent {
     return null;
   }
 
-  // TODO 日志查看：找不到方法 未验证
   @autobind
-  @logable({ type: 'Click', payload: { name: '点击' } })
+  @logPV({ pathname: '/modal/openApproverBoardModal', title: '选择审批人弹框' })
   openApproverBoard() {
     this.setState({ approvalModal: true });
   }

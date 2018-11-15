@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目表单
  * @Date: 2018-11-07 10:39:41
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-14 21:39:53
+ * @Last Modified time: 2018-11-15 15:34:03
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -151,7 +151,7 @@ export default class ColumnForm extends PureComponent {
                 ],
                 initialValue: link,
               })(
-                <Input />
+                <Input autocomplete="off" />
               )}
             </FormItem>
           </InfoCell>

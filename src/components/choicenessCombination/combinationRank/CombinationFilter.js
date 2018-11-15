@@ -202,6 +202,7 @@ export default class CombinationRank extends PureComponent {
             dataMap={['value', 'label']}
             value={rankTabActiveKey}
             onChange={this.handleComposeTypeChange}
+            dropdownStyle={{ width: 190 }}
           />
         </div>
         <div className={styles.formItem}>
@@ -216,6 +217,7 @@ export default class CombinationRank extends PureComponent {
             value={adviser}
             onChange={this.handleCreatorSelectChange}
             getOptionItemValue={this.getOptionItemValue}
+            dropdownStyle={{ width: 190 }}
           />
         </div>
         <div className={styles.formItem}>
@@ -228,6 +230,7 @@ export default class CombinationRank extends PureComponent {
             defaultSelectLabel={yieldRankValue}
             value={yieldRankValue}
             onChange={this.handleYieldSelect}
+            dropdownStyle={{ width: 270 }}
           />
         </div>
         <div className={styles.formItem}>
@@ -240,6 +243,7 @@ export default class CombinationRank extends PureComponent {
             defaultSelectLabel={riskLevel}
             value={riskLevel}
             onChange={this.handleRiskChange}
+            dropdownStyle={{ width: 190 }}
           />
         </div>
       </div>

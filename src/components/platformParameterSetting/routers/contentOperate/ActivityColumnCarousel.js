@@ -3,7 +3,7 @@
  * @Descripter: 活动栏目跑马灯
  * @Date: 2018-11-06 13:53:39
  * @Last Modified by: zhangjun
- * @Last Modified time: 2018-11-15 09:31:28
+ * @Last Modified time: 2018-11-15 16:18:20
  */
 
 import React, { Component } from 'react';
@@ -12,6 +12,7 @@ import _ from 'lodash';
 import url from 'url';
 import { autobind } from 'core-decorators';
 import Carousel from '../../../common/carousel';
+import Tooltip from '../../../common/Tooltip';
 import { data } from '../../../../helper';
 import { defaultMenu, newOpenTabConfig } from '../../../../config/tabMenu';
 import { filterData } from './helper';
@@ -95,7 +96,9 @@ export default class ActivityColumnCarousel extends Component {
       const { name } = attaches[0];
       return (
         <div className={styles.itemSlide} onClick={() => this.handleClick(link)} key={data.uuid()}>
-          <img src={url} alt={name} title={description} />
+          <Tooltip title={description}>
+            <img src={url} alt={name} />
+          </Tooltip>
         </div>
       );
     });

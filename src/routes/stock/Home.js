@@ -2,8 +2,8 @@
  * @Description: 个股页面
  * @Author: Liujianshu
  * @Date: 2018-02-26 16:22:05
- * @Last Modified by: WangJunJun
- * @Last Modified time: 2018-08-02 15:30:16
+ * @Last Modified by: zhangmei
+ * @Last Modified time: 2018-11-14 08:55:55
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
