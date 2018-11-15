@@ -9,6 +9,17 @@ import _ from 'lodash';
 import { dva } from '../helper';
 import{ constants } from '../config';
 
+// 目前日志中的value需要将bool值和number都转换成Stirng格式
+function convertToString(payload) {
+  const { value } = payload;
+  if (!_.isString(value)) {
+    return {
+      ...payload,
+      value: JSON.stringify(value),
+    };
+  }
+  return payload;
+}
 // 将部分值替换成context中对应的值
 // 如: context = {
 //   props: { a: 1 },
@@ -33,7 +44,7 @@ function replaceValue(data, context, args) {
         }
         let valueFinal = _.get(object, variableName, expression);
         // 如果这个解析出来的 valueFinal 是对象，则需要对其进行字符串化
-        if (_.isObject(valueFinal)) {
+        if (!_.isString(valueFinal)) {
           valueFinal = JSON.stringify(valueFinal);
         }
         return valueFinal;
@@ -85,25 +96,6 @@ function makeLogger({ type, payload = {} }) {
   };
 }
 
-// 处理生产上value为数字的报错
-function makeCommonLogger({ type, payload = {} }) {
-  try {
-    if (_.isString(type) && !_.isEmpty(type)) {
-      dva.dispatch({ type, payload:{
-          ...payload,
-        value: JSON.stringify(payload.value || ''),
-        }
-      });
-    }
-  } catch (e) {
-    dva.dispatch({
-      type: 'LogError',
-      payload: {
-        message: e.message,
-      },
-    });
-  }
-}
 /**
  *
  * @param {Object} action
@@ -165,14 +157,22 @@ function logPV({ pathname, title, payload = {} }) {
  * @returns {Function}
  */
 function logCommon({ type = 'Click', payload = {} }) {
-  const location = dva.getLastLocation();
-  makeCommonLogger({
-    type,
-    payload: {
-      ...location,
-      ...payload,
-    },
-  });
+  const fixedPayload = {
+    pathname: dva.getLastLocation(),
+    ...payload,
+  };
+  try {
+    if (_.isString(type) && !_.isEmpty(type)) {
+      dva.dispatch({ type, payload: convertToString(fixedPayload) });
+    }
+  } catch (e) {
+    dva.dispatch({
+      type: 'LogError',
+      payload: {
+        message: e.message,
+      },
+    });
+  }
 }
 
 export default logable;
