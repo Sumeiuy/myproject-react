@@ -107,7 +107,7 @@ export default class ZLMemberInfo extends PureComponent {
       <div className={styles.zlMemberInfoBox}>
         <div className={`${styles.title} clearfix`}>
           <span className={styles.colorBlock}></span>
-          <span className={styles.titleText}>涨乐财富通会员</span>
+          <span className={styles.titleText}>涨乐U会员</span>
           <span className={styles.iconButton}>
             <Icon type='huiyuandengjibiangeng' />
             <span onClick={this.handleMemberGradeModalOpen}>会员等级变更</span>
