@@ -2,7 +2,7 @@
  * @Author: wangyikai
  * @Date: 2018-10-11 14:05:51
  * @Last Modified by: sunweibin
- * @Last Modified time: 2018-11-06 19:53:50
+ * @Last Modified time: 2018-11-15 15:10:36
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -12,17 +12,10 @@ import { Button } from 'antd';
 import TradeFlowModal from './TradeFlowModal';
 import RealTimeHoldingModal from './RealTimeHoldingModal';
 import HistoryHoldingModal from './HistoryHoldingModal';
+import IfWrap from '../common/biz/IfWrap';
 import logable, { logPV } from '../../decorators/logable';
 
 import styles from './accountInfoHeader.less';
-
-
-const If = ({ when, children }) => {
-  if(when) {
-    return children;
-  }
-  return null;
-};
 
 export default class AccountInfoHeader extends PureComponent {
   static propTypes = {
@@ -185,7 +178,7 @@ export default class AccountInfoHeader extends PureComponent {
           <Button className={styles.accountHeader} onClick={this.handleLinkToAssetAllocation}>资产配置</Button>
           <Button className={styles.accountHeader}>账户分析</Button>
         </div>
-        <If  when={historyHoldModalVisible}>
+        <IfWrap isRender={historyHoldModalVisible}>
           <HistoryHoldingModal
             location={location}
             onClose={this.handleHistoryHoldingModalClose}
@@ -194,8 +187,8 @@ export default class AccountInfoHeader extends PureComponent {
             productHistoryHolding={productHistoryHolding}
             optionHistoryHolding ={optionHistoryHolding}
           />
-        </If>
-        <If when={realTimeHoldModalVisible}>
+        </IfWrap>
+        <IfWrap isRender={realTimeHoldModalVisible}>
           <RealTimeHoldingModal
             location={location}
             realTimeAsset={realTimeAsset}
@@ -204,9 +197,8 @@ export default class AccountInfoHeader extends PureComponent {
             getSecuritiesHolding={getSecuritiesHolding}
             onClose={this.handleRealTimeHoldModalClose}
           />
-
-        </If>
-        <If when={tradeFlowModalVisible}>
+        </IfWrap>
+        <IfWrap isRender={tradeFlowModalVisible}>
           <TradeFlowModal
             location={location}
             onClose={this.handleTradeFlowModalClose}
@@ -218,7 +210,7 @@ export default class AccountInfoHeader extends PureComponent {
             creditTradeFlowRes ={creditTradeFlowRes}
             optionTradeFlowRes ={optionTradeFlowRes}
           />
-        </If>
+        </IfWrap>
       </div>
     );
   }

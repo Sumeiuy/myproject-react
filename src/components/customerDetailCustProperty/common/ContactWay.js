@@ -39,7 +39,7 @@ export default class ContactWay extends PureComponent {
   @autobind
   getViewData(list) {
     const mainData = this.getMainFlagData(list);
-    return _.isEmpty(mainData) ? (list[0] || EMPTY_OBJECT) : mainData[0];
+    return _.isEmpty(mainData) ? (list[0] || EMPTY_OBJECT) : mainData;
   }
 
   @autobind
