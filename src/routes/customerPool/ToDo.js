@@ -122,23 +122,24 @@ export default class ToDo extends PureComponent {
   getApplyData(item) {
     const {
       location: {
+        pathname,
         query: {
           taskType,
         }
       }
     } = this.props;
-    const { replace } = this.context;
     if(!_.isEmpty(taskType)) {
       this.props.getApplyList(item);
       this.setState({ activeKey: taskType });
     } else {
-      replace({
+      this.context.replace({
+        pathname,
         query: {
-          taskType: '1',
+          taskType: 'MY_TODO',
         },
       });
       this.props.getApplyList(item);
-      this.setState({ activeKey: '1' });
+      this.setState({ activeKey: 'MY_TODO' });
     }
   }
 
@@ -159,8 +160,7 @@ export default class ToDo extends PureComponent {
   onSearch(value) {
     // this.props.search(value);
     const { location: { pathname, query } } = this.props;
-    const { replace } = this.context;
-    replace({
+    this.context.replace({
       pathname,
       query: {
         ...query,
@@ -202,8 +202,7 @@ export default class ToDo extends PureComponent {
   @autobind
   pageChange(obj) {
     const { location: { pathname, query } } = this.props;
-    const { replace } = this.context;
-    replace({
+    this.context.replace({
       pathname,
       query: {
         ...query,
@@ -215,8 +214,7 @@ export default class ToDo extends PureComponent {
   @autobind
   sizeChange(obj) {
     const { location: { pathname, query } } = this.props;
-    const { replace } = this.context;
-    replace({
+    this.context.replace({
       pathname,
       query: {
         ...query,
@@ -287,12 +285,12 @@ export default class ToDo extends PureComponent {
   // 标签切换
   @autobind
   handleTabsChange(obj) {
-    const { location: { query, query: { taskType } } } = this.props;
-    const { replace } = this.context;
+    const { location: { pathname, query, query: { taskType } } } = this.props;
     if (obj === taskType) {
       return;
     }
-    replace({
+    this.context.replace({
+      pathname,
       query: {
         ...query,
         taskType: obj,
@@ -331,8 +329,8 @@ export default class ToDo extends PureComponent {
     const { query: { keyword } } = location;
     return (
       <div className={styles.todo}>
-        <Tabs defaultActiveKey="1" activeKey={this.state.activeKey} type='card' onChange={this.handleTabsChange}>
-          <TabPane key='1' tab='我的待办'>
+        <Tabs defaultActiveKey="MY_TODO" activeKey={this.state.activeKey} type='card' onChange={this.handleTabsChange}>
+          <TabPane key='MY_TODO' tab='我的待办'>
             <div className="search-box">
               <Input.Search
                 className="search-input"
@@ -356,7 +354,7 @@ export default class ToDo extends PureComponent {
               clearCreateTaskData={clearCreateTaskData}
             />
           </TabPane>
-          <TabPane key='2' tab='我的申请'>
+          <TabPane key='MY_APPLY' tab='我的申请'>
             <div>
               <TodoFilter
                 filterCallback={this.handlefilterCallback}
@@ -381,7 +379,7 @@ export default class ToDo extends PureComponent {
 
             </div>
           </TabPane>
-          <TabPane key='3' tab='我的审批'>
+          <TabPane key='MY_APPROVE' tab='我的审批'>
             <div>
               <TodoFilter
                 filterCallback={this.handlefilterCallback}
