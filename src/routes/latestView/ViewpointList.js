@@ -135,7 +135,7 @@ export default class ViewpointList extends PureComponent {
   @logable({
     type: 'ViewItem',
     payload: {
-      name: '咨询详情',
+      name: '资讯详情',
       type: '$args[0].typeName',
       subType: '$args[0].title',
     },
@@ -145,8 +145,8 @@ export default class ViewpointList extends PureComponent {
     const { id } = data;
     const { push } = this.context;
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
-    const url = '/latestView/viewpointDetail';
-    const newQuery = { ...query, id, sourceUrl: '/latestView/viewpointList' };
+    const url = '/strategyCenter/latestView/viewpointDetail';
+    const newQuery = { ...query, id, sourceUrl: '/strategyCenter/latestView/viewpointList' };
     linkTo({
       routerAction: push,
       url: `${url}?${urlHelper.stringify(newQuery)}`,

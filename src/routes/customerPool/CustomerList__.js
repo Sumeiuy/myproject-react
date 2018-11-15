@@ -186,7 +186,7 @@ function addSingleParams(filterObj) {
   const singleParams = [
     'customType',  // 客户性质
     'custClass',  // 客户类型
-    'investVariety', // 投资品种
+    'investVariety', // 投资偏好
   ];
 
   _.each(singleParams, (key) => {
@@ -751,6 +751,11 @@ export default class CustomerList extends PureComponent {
         param.searchTypeReq = null;
         param.searchText = null;
       }
+      if (query.type === 'STK_ACCTS') {
+        // 股东账号,要求传入客户经济和和类型(SOR_PTY_ID)
+        param.searchText = query.labelMapping;
+        param.searchTypeReq = 'SOR_PTY_ID';
+      }
     }
 
     if (query.source === 'tag' || query.source === 'sightingTelescope') {
@@ -959,12 +964,16 @@ export default class CustomerList extends PureComponent {
 
   //记录是否第一次选择风险三要素（风险等级、投资期限、投资偏好）
   @autobind
-  recordPrevFilterValue(obj) {
+  recordPrevFilterValue(obj, isDel) {
+    if(isDel || obj.fromMoreFilter){
+      prevFilterValue[obj.name] = ''; // 关闭过滤组件时清空值。
+      return;
+    }
     if(!prevFilterValue[obj.name]){
       const messageContent = '取自T-1日数据，仅供用于客户筛查，不能作为客户适当性判定的最终依据！';
       message.warning(
-        `${obj.name === 'investPeriod' ? '投资期限' : (obj.name === 'investVariety' ? '投资偏好' : '风险等级')}${messageContent}`
-        ,3);
+         `${obj.name === 'investPeriod' ? '投资期限' : (obj.name === 'investVariety' ? '投资偏好' : '风险等级')}${messageContent}`
+         ,4);
     }
     prevFilterValue[obj.name] = obj.value;
   }
@@ -972,10 +981,11 @@ export default class CustomerList extends PureComponent {
   // 筛选变化
   @autobind
   handleFilterChange(obj, isDeleteFilterFromLocation = false, options = {}) {
-    if(!isDeleteFilterFromLocation
-      && !obj.fromMoreFilter
-      && (obj.name === 'investPeriod' || obj.name === 'investVariety' || obj.name === 'riskLevels' )) {
-      this.recordPrevFilterValue(obj);
+    if (
+      obj.name === 'investPeriod'
+      || obj.name === 'investVariety'
+      || obj.name === 'riskLevels' ) {
+      this.recordPrevFilterValue(obj, isDeleteFilterFromLocation);
     }
     const {
       replace,

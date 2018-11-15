@@ -5,7 +5,7 @@
  *  客户列表项中的匹配出来的数据
  * @author wangjunjun
  * @Last Modified by: liqianwen
- * @Last Modified time: 2018-11-13 12:28:10
+ * @Last Modified time: 2018-11-13 22:38:45
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -311,7 +311,7 @@ export default class MatchArea extends PureComponent {
         renderValue = number.thousandFormat(Number(renderValue).toFixed(2), false);
       }
       return (
-        <li kye={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
+        <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
           <span>
             <i className="label">
               {hasCycle ? this.convertCycle(id) : ''}
@@ -368,7 +368,7 @@ export default class MatchArea extends PureComponent {
     return null;
   }
 
-  // 投资品种
+  // 投资偏好
   @autobind
   renderInvestVariety(currentItem) {
     const {
@@ -380,7 +380,7 @@ export default class MatchArea extends PureComponent {
       return (
         <li key={`${id}${custId}`} title={dataTurn[investVariety]}>
             <span>
-              <i className="label">投资品种：</i>
+              <i className="label">投资偏好：</i>
               {dataTurn[investVariety]}
             </span>
         </li>
@@ -517,6 +517,31 @@ export default class MatchArea extends PureComponent {
             <i
               dangerouslySetInnerHTML={{ __html: markedEle }} // eslint-disable-line
             />
+          </span>
+        </li>
+      );
+    }
+    return null;
+  }
+
+  //匹配股东账号
+  // 特殊处理 搜股东账号实际上匹配客户经济号 因为股东账号是精确匹配 所以q是url字段的股东账号  这里需要把客户经济号替换成股东账号显示
+  renderShareholderSccountNumber(item) {
+    const {
+      listItem,
+      q,
+    } = this.props;
+    const { name, id, hasCycle } = item;
+    let renderValue = listItem[id];
+    if (!_.isNull(renderValue)) {
+      return (
+        <li key={`${renderValue}${id}${listItem.custId}`} title={renderValue}>
+          <span>
+            <i className="label">
+              {hasCycle ? this.convertCycle(id) : ''}
+              {name}：
+            </i>
+            {q}
           </span>
         </li>
       );

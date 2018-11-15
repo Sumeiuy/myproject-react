@@ -135,6 +135,14 @@ const matchRule = {
       render: 'renderDefaultVal',
     }],
   },
+  primaryKey: {
+    inset: true,
+    key: [{
+      name: '股东账号',
+      id: 'stkAccts',
+      render: 'renderShareholderSccountNumber',
+    }],
+  },
   primaryKeyPrdts: {
     inset: true,
     key: [
@@ -204,6 +212,11 @@ const matchRule = {
         name: '联系电话',
         id: 'telephone',
         render: 'renderTelephone',
+      },
+      {
+        name: '股东账号',
+        id: 'stkAccts',
+        render: 'renderShareholderSccountNumber',
       },
       {
         name: '经纪客户号',
@@ -486,7 +499,7 @@ const matchRule = {
   investVariety: {
     inset: true,
     key: [{
-      name: '投资品种',
+      name: '投资偏好',
       id: 'investVariety',
       render: 'renderInvestVariety',
       dataTurn: {
@@ -533,6 +546,7 @@ export const {
   serviceRecord,
   sorPtyId,
   mobile,
+  primaryKey,
   primaryKeyPrdts,
   rights,
   businessOpened,

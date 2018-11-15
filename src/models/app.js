@@ -19,6 +19,46 @@ const SECOND_TAB = '2';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
+
+// 投资偏好加上ABCDE的处理
+const preTreatDict = (dict) => {
+  let newInvestVarietyDictionary = [];
+  dict.investVarietyDictionary.map((item, index) => {
+    let temp = '';
+    switch(index) {
+      // 不限
+      case 0:
+      temp = '';
+      break;
+      // 第一个选项
+      case 1:
+      temp = 'A.';
+      break;
+      case 2:
+      temp = 'B.';
+      break;
+      case 3:
+      temp = 'C.';
+      break;
+      case 4:
+      temp = 'D.';
+      break;
+      case 5:
+      temp = 'E.';
+      break;
+      default:
+      break;
+    };
+    newInvestVarietyDictionary.push({
+      key: item.key,
+      value: `${temp}${item.value}`
+    });
+    return newInvestVarietyDictionary;
+  });
+  dict.investVarietyDictionary = newInvestVarietyDictionary;
+  return dict;
+};
+
 export default {
   namespace: 'app',
   state: {
@@ -218,7 +258,8 @@ export default {
     },
     getDictionarySuccess(state, action) {
       const { payload: { response } } = action;
-      const dict = response.resultData;
+      const tempDict = response.resultData;
+      const dict = preTreatDict(tempDict);
       return {
         ...state,
         dict,

@@ -6,7 +6,7 @@
  * @Last Modified time: 2018-05-21 19:12:51
 */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -22,7 +22,7 @@ const EMPTY_ARRAY = [];
 // 图表legend文字显示最大长度
 const LEGEND_MAX_LENGTH = 8;
 
-export default class CombinationYieldChart extends Component {
+export default class CombinationYieldChart extends PureComponent {
   static propTypes = {
     // tab切换
     tabChange: PropTypes.func.isRequired,
