@@ -87,20 +87,11 @@ function makeLogger({ type, payload = {} }) {
 
 // 处理生产上value为数字的报错
 function makeCommonLogger({ type, payload = {} }) {
-  const formatValue = (value)=>{
-    if(_.isObject(value)){
-      return JSON.stringify(value);
-    }
-    if(_.isNumber(value)){
-      return ''+value;
-    }
-    return value;
-  };
   try {
     if (_.isString(type) && !_.isEmpty(type)) {
       dva.dispatch({ type, payload:{
           ...payload,
-          value: formatValue(payload.value || ''),
+        value: JSON.stringify(payload.value || ''),
         }
       });
     }
